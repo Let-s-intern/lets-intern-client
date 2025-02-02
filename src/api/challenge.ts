@@ -331,6 +331,7 @@ export const usePatchChallengeAttendance = ({
       status,
       result,
       comments,
+      review,
       reviewIsVisible,
     }: {
       attendanceId: number;
@@ -338,6 +339,7 @@ export const usePatchChallengeAttendance = ({
       status?: AttendanceStatus | null;
       result?: AttendanceResult | null;
       comments?: string;
+      review?: string;
       reviewIsVisible?: boolean;
     }) => {
       const res = await axios.patch(`/attendance/${attendanceId}`, {
@@ -345,6 +347,7 @@ export const usePatchChallengeAttendance = ({
         status,
         result,
         comments,
+        review,
         reviewIsVisible,
       });
       return res.data;

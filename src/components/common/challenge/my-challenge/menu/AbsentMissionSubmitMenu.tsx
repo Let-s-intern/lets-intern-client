@@ -1,10 +1,13 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 
+import {
+  usePatchChallengeAttendance,
+  usePostChallengeAttendance,
+} from '@/api/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { UserChallengeMissionDetail } from '@/schema';
-import axios from '@/utils/axios';
 import ParsedCommentBox from '../ParsedCommentBox';
 
 interface Props {
@@ -25,32 +28,22 @@ const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
   const [value, setValue] = useState(
     currentSchedule?.attendanceInfo?.link || '',
   );
-  const review = currentSchedule?.attendanceInfo?.review || '';
+  const [review, setReview] = useState(
+    currentSchedule?.attendanceInfo?.review || '',
+  );
   const [isLinkChecked, setIsLinkChecked] = useState(false);
   const [isValidLinkValue, setIsValidLinkValue] = useState(isAttended);
   const [isStartedHttp, setIsStartedHttp] = useState(false);
 
-  const submitMissionLink = useMutation({
-    mutationFn: async () => {
-      let res;
-      if (currentSchedule?.attendanceInfo.result === 'WRONG') {
-        res = await axios.patch(
-          `/attendance/${currentSchedule?.attendanceInfo.id}`,
-          {
-            link: value,
-          },
-        );
-      } else {
-        res = await axios.post(`/attendance/${missionDetail.id}`, {
-          link: value,
-        });
-      }
-      const data = res.data;
-      return data;
-    },
-    onSuccess: async () => {
+  const { mutate: postAttendance } = usePostChallengeAttendance({
+    successCallback: async () => {
       setIsAttended(true);
-      await queryClient.invalidateQueries({ queryKey: ['challenge'] });
+    },
+  });
+
+  const { mutate: patchAttendance } = usePatchChallengeAttendance({
+    successCallback: async () => {
+      setIsAttended(true);
     },
   });
 
@@ -78,7 +71,20 @@ const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
 
   const handleMissionLinkSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    submitMissionLink.mutate();
+
+    if (currentSchedule?.attendanceInfo.result === 'WRONG') {
+      patchAttendance({
+        attendanceId: currentSchedule?.attendanceInfo.id || 0,
+        link: value,
+        review,
+      });
+    } else {
+      postAttendance({
+        missionId: missionDetail.id,
+        link: value,
+        review,
+      });
+    }
   };
 
   useEffect(() => {
@@ -183,17 +189,24 @@ const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
               미션 소감
             </h3>
             <textarea
-              className="rounded-md p-3 h-20 text-xsmall14 outline-none resize-none"
+              className="rounded-md p-3 h-20 text-xsmall14 outline-none bg-neutral-95 resize-none"
               placeholder={`오늘의 미션은 어떠셨나요?\n새롭게 배운 점, 어려운 부분, 궁금증 등 떠오르는 생각을 남겨 주세요.`}
               value={review}
-              disabled={true}
+              onChange={(e) => setReview(e.target.value)}
+              disabled={isAttended}
             />
           </div>
           <div className="mt-6 text-right">
             <button
               type="submit"
               className="rounded border border-[#DCDCDC] bg-white px-5 py-2 text-center font-semibold disabled:bg-gray-50 disabled:text-gray-600"
-              disabled={isAttended || !value || !isLinkChecked}
+              disabled={
+                isAttended ||
+                !value ||
+                !isLinkChecked ||
+                !isValidLinkValue ||
+                !review
+              }
             >
               {isAttended ? '제출 완료' : '제출'}
             </button>
