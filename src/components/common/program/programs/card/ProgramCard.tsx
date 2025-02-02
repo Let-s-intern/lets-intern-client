@@ -60,7 +60,7 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
     >
       <img
         className="aspect-[540/421] h-auto w-full bg-neutral-80 object-cover md:rounded-xs"
-        src={program.programInfo.thumbnail!}
+        src={program.programInfo.thumbnail || undefined}
         alt="프로그램 썸네일 배경"
       />
       <div className="flex flex-col gap-2 py-2">
