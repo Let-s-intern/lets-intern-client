@@ -113,6 +113,7 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
         await tryPatchAttendance({
           attendanceId,
           link: value,
+          review,
         });
       } else {
         await tryPostAttendance({
