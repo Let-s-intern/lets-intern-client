@@ -32,6 +32,7 @@ import {
   usePostReportMutation,
 } from '../../../api/report';
 import { ReportContent, ReportEditingPrice } from '../../../types/interface';
+import AdminReportActiveGuide from './AdminReportActiveGuide';
 
 const initialReport: Omit<CreateReportData, 'contents'> = {
   reportType: 'PERSONAL_STATEMENT',
@@ -160,8 +161,8 @@ const AdminReportCreatePage = () => {
       </header>
 
       <main className="max-w-screen-xl">
-        <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-4">
-          <div className="flex-no-wrap flex items-center gap-4"></div>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
+          <div className="flex flex-no-wrap items-center gap-4"></div>
 
           {/* 기본 설정 */}
           <section className="flex items-center gap-2">
@@ -209,11 +210,12 @@ const AdminReportCreatePage = () => {
                     : null
                 }
                 onChange={(value) => {
-                  value?.isValid() &&
+                  if (value?.isValid()) {
                     setEditingValue({
                       ...editingValue,
                       visibleDate: value?.format('YYYY-MM-DDTHH:mm:ss'),
                     });
+                  }
                 }}
                 ampm={false}
                 format="YYYY.MM.DD HH:mm"
@@ -258,6 +260,8 @@ const AdminReportCreatePage = () => {
               label="노출 여부"
             />
           </section>
+
+          <AdminReportActiveGuide />
 
           <hr />
 
@@ -392,7 +396,7 @@ const AdminReportCreatePage = () => {
           <hr />
 
           <section>
-            <header className="mb-2 flex items-center justify-between">
+            <header className="flex items-center justify-between mb-2">
               <Heading2>옵션 설정</Heading2>
               <Button
                 variant="outlined"
@@ -585,7 +589,7 @@ const AdminReportCreatePage = () => {
             />
           </section>
 
-          <div className="mb-1 flex items-center justify-end gap-4 text-right">
+          <div className="flex items-center justify-end gap-4 mb-1 text-right">
             <Button
               variant="outlined"
               type="button"
