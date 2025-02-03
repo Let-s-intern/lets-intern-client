@@ -1,4 +1,5 @@
 import {
+  useGetChallengeReviewStatus,
   usePatchChallengeAttendance,
   usePostChallengeAttendance,
 } from '@/api/challenge';
@@ -45,6 +46,10 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
   );
   const [isAlertShown, setIsAlertShown] = useState(false);
   const [lastMissionModal, setLastMissionModal] = useState(false);
+
+  const { data: reviewCompleted } = useGetChallengeReviewStatus(
+    currentChallenge?.id,
+  );
 
   const { mutateAsync: tryPostAttendance } = usePostChallengeAttendance({});
 
@@ -113,6 +118,7 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
         await tryPatchAttendance({
           attendanceId,
           link: value,
+          review,
         });
       } else {
         await tryPostAttendance({
@@ -143,19 +149,19 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
   return (
     <>
       <form onSubmit={handleMissionLinkSubmit}>
-        <h3 className="text-xsmall16 mb-6 font-semibold">미션 제출하기</h3>
+        <h3 className="mb-6 font-semibold text-xsmall16">미션 제출하기</h3>
         <label
           htmlFor="link"
-          className="text-xsmall14 font-semibold text-neutral-0"
+          className="font-semibold text-xsmall14 text-neutral-0"
         >
           링크
         </label>
-        <p className="text-xsmall14 mt-1">
+        <p className="mt-1 text-xsmall14">
           {isEditing
             ? '미션 링크가 잘 열리는지 확인해 주세요. 제출 후 미션과 소감을 카톡으로 공유해야 미션 제출이 인정됩니다.'
             : '미션 제출이 완료되었습니다.'}
         </p>
-        <div className="mt-3 flex items-stretch gap-4">
+        <div className="flex items-stretch gap-4 mt-3">
           <input
             type="text"
             className={clsx(
@@ -176,7 +182,7 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
           />
           <button
             type="button"
-            className="rounded-sm bg-primary px-5 font-medium text-static-100 disabled:bg-neutral-70"
+            className="px-5 font-medium rounded-sm bg-primary text-static-100 disabled:bg-neutral-70"
             onClick={() => {
               if (value) {
                 Object.assign(document.createElement('a'), {
@@ -211,34 +217,39 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
               URL을 올바르게 입력하셨습니다. 링크 확인을 진행해주세요.
             </div>
           ))}
-        <div className="mt-6 flex w-full flex-col gap-y-5">
-          <h3 className="text-xsmall16 font-semibold text-neutral-0">
+        <div className="flex flex-col w-full mt-6 gap-y-5">
+          <h3 className="font-semibold text-xsmall16 text-neutral-0">
             미션 소감
           </h3>
           <div
             className={clsx('flex rounded-md p-3 flex-col gap-y-2', {
-              'bg-neutral-95': !isEditing || !!attendanceReview,
-              'bg-white': isEditing && !attendanceReview,
+              'bg-neutral-95': !isEditing,
+              'bg-white': isEditing,
             })}
           >
             <textarea
-              className="flex-1 text-xsmall14 h-20 outline-none disabled:bg-neutral-95 resize-none"
+              className={clsx(
+                'flex-1 h-20 outline-none resize-none text-xsmall14 disabled:bg-neutral-95',
+                {
+                  'text-neutral-400': !isEditing,
+                },
+              )}
               placeholder={`오늘의 미션은 어떠셨나요?\n새롭게 배운 점, 어려운 부분, 궁금증 등 떠오르는 생각을 남겨 주세요.`}
               value={review}
               onChange={handleMissionReviewChanged}
-              disabled={!isEditing || !!attendanceReview}
+              disabled={!isEditing}
               maxLength={500}
             />
-            <span className="text-xxsmall12 w-full text-right text-neutral-0/35">
+            <span className="w-full text-right text-xxsmall12 text-neutral-0/35">
               {review.length}/500
             </span>
           </div>
         </div>
-        <div className="mt-6 flex gap-x-6">
+        <div className="flex mt-6 gap-x-6">
           {attendanceLink && (
             <button
               type="button"
-              className="text-small18 flex-1 h-12 rounded-md bg-white border border-gray-50 px-6 py-3 text-center disabled:bg-gray-50 disabled:text-gray-600 font-medium"
+              className="flex-1 h-12 px-6 py-3 font-medium text-center bg-white border rounded-md text-small18 border-gray-50 disabled:bg-gray-50 disabled:text-gray-600"
               onClick={() => {
                 if (isEditing) {
                   cancelMisiionLinkChange();
@@ -253,7 +264,7 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
           )}
           <button
             type="submit"
-            className="text-small18 flex-1 h-12 rounded-md bg-primary text-white px-6 py-3 text-center disabled:bg-neutral-70 disabled:text-white font-medium"
+            className="flex-1 h-12 px-6 py-3 font-medium text-center text-white rounded-md text-small18 bg-primary disabled:bg-neutral-70 disabled:text-white"
             disabled={!isEditing || !value || !review || !isLinkChecked}
           >
             {isEditing ? '미션 제출' : '제출 완료'}
@@ -266,15 +277,15 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
             onClose={() => setIsAlertShown(false)}
             className="max-w-[20rem] md:max-w-[28rem]"
           >
-            <div className="border-b border-neutral-80 px-6 py-5">
-              <span className="mb-3 block text-xsmall16 font-semibold">
+            <div className="px-6 py-5 border-b border-neutral-80">
+              <span className="block mb-3 font-semibold text-xsmall16">
                 지금 취소하시면 수정사항이 삭제됩니다.
               </span>
               <p className="text-xsmall14">링크 변경을 취소하시겠어요?</p>
             </div>
             <div className="flex items-center text-xsmall14 ">
               <ModalButton
-                className="border-r border-neutral-80 font-medium"
+                className="font-medium border-r border-neutral-80"
                 onClick={() => setIsAlertShown(false)}
               >
                 수정 계속하기
@@ -292,7 +303,7 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
           </BaseModal>
         )}
       </form>
-      {lastMissionModal && (
+      {lastMissionModal && !reviewCompleted?.isCompleted && (
         <LastMissionSubmitModal
           onClose={() => setLastMissionModal(false)}
           title={currentChallenge?.title ?? ''}

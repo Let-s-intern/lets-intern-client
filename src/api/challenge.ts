@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { z } from 'zod';
 import {
   activeChallengeResponse,
   AttendanceResult,
@@ -207,6 +208,7 @@ export const useEditReviewVisible = () => {
   });
 };
 
+// 모집 중인 챌린지 조회
 export const useGetActiveChallenge = (type: ChallengeType) => {
   return useQuery({
     queryKey: ['useGetSameTypeChallenge', type],
@@ -331,6 +333,7 @@ export const usePatchChallengeAttendance = ({
       status,
       result,
       comments,
+      review,
       reviewIsVisible,
     }: {
       attendanceId: number;
@@ -338,6 +341,7 @@ export const usePatchChallengeAttendance = ({
       status?: AttendanceStatus | null;
       result?: AttendanceResult | null;
       comments?: string;
+      review?: string;
       reviewIsVisible?: boolean;
     }) => {
       const res = await axios.patch(`/attendance/${attendanceId}`, {
@@ -345,6 +349,7 @@ export const usePatchChallengeAttendance = ({
         status,
         result,
         comments,
+        review,
         reviewIsVisible,
       });
       return res.data;
@@ -361,5 +366,23 @@ export const usePatchChallengeAttendance = ({
     onError: (e) => {
       return errorCallback && errorCallback(e);
     },
+  });
+};
+
+const reviewStatusSchema = z.object({
+  isCompleted: z.boolean(),
+});
+
+// 챌린지 리뷰 작성 여부 조회
+export const useGetChallengeReviewStatus = (
+  challengeId: number | undefined,
+) => {
+  return useQuery({
+    queryKey: ['challenge', challengeId, 'review-status'],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${challengeId}/my/review-status`);
+      return reviewStatusSchema.parse(res.data.data);
+    },
+    enabled: !!challengeId,
   });
 };

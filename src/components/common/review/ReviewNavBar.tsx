@@ -19,9 +19,7 @@ function ReviewNavBar() {
               href="/review/program"
               subHref={['/review/mission', '/review/program']}
             >
-              프로그램 참여
-              <br />
-              후기
+              프로그램 참여 후기
             </MobileNavItem>
             <MobileNavItem href="/review/blog">블로그 후기</MobileNavItem>
             <MobileNavItem href="/blog/list?category=PROGRAM_REVIEWS">
@@ -86,7 +84,7 @@ function MobileNavItem({
   return (
     <li
       className={clsx(
-        'flex-1 leading-4 text-center flex items-center justify-center pt-4 pb-3',
+        'flex-1 leading-4 text-center flex items-center justify-center pt-3 pb-3',
         {
           'border-b-2 border-primary': active,
         },
