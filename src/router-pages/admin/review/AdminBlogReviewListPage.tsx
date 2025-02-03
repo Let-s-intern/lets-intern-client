@@ -31,7 +31,6 @@ import AdminReviewHeader from './AdminReviewHeader';
 type Row = AdminBlogReview & {
   id: number | string;
   isNew: boolean;
-  isDelete: boolean;
 };
 
 export default function AdminBlogReviewListPage() {
@@ -169,7 +168,6 @@ export default function AdminBlogReviewListPage() {
     thumbnail: undefined,
     isVisible: false,
     isNew: true,
-    isDelete: false,
   });
 
   const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
@@ -253,7 +251,6 @@ export default function AdminBlogReviewListPage() {
         ...review,
         id: review.blogReviewId,
         isNew: false,
-        isDelete: false,
       })) ?? [];
 
     setRows(initialRows);
