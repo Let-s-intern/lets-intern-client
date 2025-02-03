@@ -32,6 +32,8 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+export const dynamic = 'force-dynamic';
+
 const Page = async () => {
   const report = await fetchReport({
     type: 'RESUME',
