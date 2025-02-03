@@ -1,13 +1,14 @@
 'use client';
 
-import CheckboxActive from '@/assets/icons/checkbox-active.svg?react';
-import CheckboxInActive from '@/assets/icons/checkbox-inactive.svg?react';
-import { twMerge } from '@/lib/twMerge';
-import BaseBottomSheet from '@components/ui/BaseBottomSheet';
 import { useMediaQuery } from '@mui/material';
 import { Check, ChevronDown } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { memo, ReactNode, useEffect, useState } from 'react';
+
+import CheckboxActive from '@/assets/icons/checkbox-active.svg?react';
+import CheckboxInActive from '@/assets/icons/checkbox-inactive.svg?react';
+import { twMerge } from '@/lib/twMerge';
+import BaseBottomSheet from '@components/ui/BaseBottomSheet';
 
 export interface ReviewFilterItem {
   caption: string;
@@ -32,15 +33,6 @@ function ReviewFilter({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
-  const findItem = (
-    value: string | undefined,
-  ): ReviewFilterItem | undefined => {
-    if (value === undefined) return undefined;
-    return list.find((item) => item.value === value) as
-      | ReviewFilterItem
-      | undefined;
-  };
 
   const [isOpen, setIsOpen] = useState(false);
   // 단일 선택
@@ -113,6 +105,15 @@ function ReviewFilter({
   };
 
   useEffect(() => {
+    const findItem = (
+      value: string | undefined,
+    ): ReviewFilterItem | undefined => {
+      if (value === undefined) return undefined;
+      return list.find((item) => item.value === value) as
+        | ReviewFilterItem
+        | undefined;
+    };
+
     const paramValue = searchParams.get(labelValue);
 
     if (!multiSelect) {
@@ -128,7 +129,7 @@ function ReviewFilter({
           : [],
       );
     }
-  }, [searchParams, labelValue, multiSelect]);
+  }, [searchParams, labelValue, multiSelect, list]);
 
   return (
     <div className="flex flex-col relative w-fit">
