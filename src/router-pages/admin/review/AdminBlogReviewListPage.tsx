@@ -174,6 +174,7 @@ export default function AdminBlogReviewListPage() {
     setRowModesModel(newRowModesModel);
   };
 
+  // 수정 중인 행 바깥을 클릭해도 수정 모드 유지
   const handleRowEditStop: GridEventListener<'rowEditStop'> = (
     params,
     event,
