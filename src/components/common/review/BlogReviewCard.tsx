@@ -1,14 +1,13 @@
 'use client';
 
-import Image from 'next/image';
-import Link from 'next/link';
-
 import { BlogReview } from '@/api/review';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import ReviewBadge, {
   getBadgeTypeFromProgramType,
 } from '@components/ReviewBadge';
+import Image from 'next/image';
+import Link from 'next/link';
 
 interface Props {
   blogReview: BlogReview;
@@ -20,39 +19,39 @@ function BlogReviewCard({ blogReview }: Props) {
   return (
     <Link
       href={blogReview.url ?? ''}
-      className="flex flex-col gap-4 p-4 border rounded-sm md:gap-11 md:justify-between md:flex-row border-neutral-80"
+      className="flex flex-col gap-4 rounded-sm border border-neutral-80 p-4 md:flex-row md:justify-between md:gap-11"
       target="_blank"
       rel="noreferrer noopener"
     >
       <div>
-        <div className="flex flex-col items-start gap-1 mb-2 md:flex-row md:items-center md:gap-2">
+        <div className="mb-2 flex flex-col items-start gap-1 md:flex-row md:items-center md:gap-2">
           <ReviewBadge type={badgeType} />
-          <span className="block font-bold truncate text-xsmall14 text-primary ">
+          <span className="block truncate text-xsmall14 font-bold text-primary">
             {blogReview.programTitle}
           </span>
         </div>
-        <h3 className="mb-2 overflow-hidden font-bold text-xsmall16 line-clamp-2 text-neutral-0 text-ellipsis">
+        <h3 className="mb-2 line-clamp-2 overflow-hidden text-ellipsis text-xsmall16 font-bold text-neutral-0">
           {blogReview.title}
         </h3>
-        <p className="mb-4 overflow-hidden text-neutral-20 md:h-11 text-xsmall14 line-clamp-2 text-ellipsis">
+        <p className="mb-4 line-clamp-2 overflow-hidden text-ellipsis text-xsmall14 text-neutral-20 md:h-11">
           {blogReview.description}
         </p>
-        <div className="mb-2 flex items-center md:max-w-[22rem] gap-2">
+        <div className="mb-2 flex items-center gap-2 md:max-w-[22rem]">
           <img
-            className="w-5 h-5"
-            src={`${blogReview.url}/favicon.ico`}
+            className="h-5 w-5"
+            src={`${new URL(blogReview.url ?? '').origin}/favicon.ico`}
             alt={blogReview.title + ' 파비콘'}
           />
-          <span className="text-xsmall14 text-neutral-35 truncate">
+          <span className="truncate text-xsmall14 text-neutral-35">
             {blogReview.url}
           </span>
         </div>
-        <span className="text-neutral-40 text-xxsmall12">
+        <span className="text-xxsmall12 text-neutral-40">
           {dayjs(blogReview.postDate).format(YYYY_MM_DD)} 작성
         </span>
       </div>
 
-      <div className="w-40 h-[5.625rem] shrink-0 relative overflow-hidden md:w-60 md:h-[8.5rem] bg-neutral-85 rounded-sm">
+      <div className="relative h-[5.625rem] w-40 shrink-0 overflow-hidden rounded-sm bg-neutral-85 md:h-[8.5rem] md:w-60">
         <Image
           className="object-cover"
           src={blogReview.thumbnail ?? ''}
