@@ -1,8 +1,9 @@
 'use client';
 
+import { Suspense } from 'react';
+
 import { ProgramTypeEnum } from '@/schema';
 import ReviewFilter from '@components/common/review/ReviewFilter';
-import { Suspense } from 'react';
 import BlogReviewListSection from './BlogReviewListSection';
 
 const { CHALLENGE, LIVE, REPORT } = ProgramTypeEnum.enum;
@@ -22,7 +23,19 @@ const filterList = [
   },
 ];
 
-function BlogReviewWrapper() {
+interface Props {
+  htmlText?: string;
+}
+
+function BlogReviewWrapper({ htmlText }: Props) {
+  // useEffect(() => {
+  //   // [테스트] 파비콘 가져오기
+  //   const domParser = new DOMParser();
+  //   const document = domParser.parseFromString(htmlText, 'text/html');
+  //   const link = document.querySelector("link[rel='icon']") as HTMLLinkElement;
+  //   console.log('href:', link.href);
+  // }, [htmlText]);
+
   return (
     <Suspense>
       <div className="py-6">

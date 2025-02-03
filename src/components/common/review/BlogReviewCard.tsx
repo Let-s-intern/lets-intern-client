@@ -37,8 +37,15 @@ function BlogReviewCard({ blogReview }: Props) {
         <p className="mb-4 overflow-hidden text-neutral-20 md:h-11 text-xsmall14 line-clamp-2 text-ellipsis">
           {blogReview.description}
         </p>
-        <div className="mb-2 text-xsmall14 md:max-w-[22rem] text-neutral-35 truncate">
-          {blogReview.url}
+        <div className="mb-2 flex items-center md:max-w-[22rem] gap-2">
+          <img
+            className="w-5 h-5"
+            src={`${blogReview.url}/favicon.ico`}
+            alt={blogReview.title + ' 파비콘'}
+          />
+          <span className="text-xsmall14 text-neutral-35 truncate">
+            {blogReview.url}
+          </span>
         </div>
         <span className="text-neutral-40 text-xxsmall12">
           {dayjs(blogReview.postDate).format(YYYY_MM_DD)} 작성
