@@ -20,7 +20,7 @@ function MainBlogReviewSection() {
       {isLoading ? (
         <LoadingContainer className="h-[45rem] md:h-[24rem]" />
       ) : (
-        <div className="grid grid-cols-2 mt-6 md:gap-5 md:grid-cols-4 gap-x-5 gap-y-6">
+        <div className="mt-6 grid grid-cols-2 gap-x-5 gap-y-6 md:grid-cols-4 md:gap-5">
           {data?.reviewList.map((review) => (
             <ReviewLinkCard
               key={review.blogReviewId}
@@ -29,10 +29,10 @@ function MainBlogReviewSection() {
               description={review.description}
               thumbnail={review.thumbnail}
               externalLink={review.url}
-              favicon={null}
               programTitle={review.programTitle}
               programType={review.programType}
               url={review.url}
+              favicon={new URL(review.url ?? '').origin + '/favicon.ico'}
             />
           ))}
         </div>

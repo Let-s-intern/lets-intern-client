@@ -39,10 +39,10 @@ function ReviewLinkCard({
   const isInternal = url?.startsWith('/');
 
   return (
-    <div className="relative flex flex-col gap-3 group">
-      <div className="w-full h-[7rem] relative overflow-hidden">
+    <div className="group relative flex flex-col gap-3">
+      <div className="relative h-[7rem] w-full overflow-hidden">
         <Image
-          className="object-cover rounded-sm group-has-[a:hover]:opacity-80 transition"
+          className="rounded-sm object-cover transition group-has-[a:hover]:opacity-80"
           src={thumbnail ?? ''}
           alt={title + ' 블로그 썸네일'}
           fill
@@ -50,17 +50,17 @@ function ReviewLinkCard({
         />
       </div>
       <div>
-        <div className="flex flex-col items-start gap-1 mb-2">
+        <div className="mb-2 flex flex-col items-start gap-1">
           {badgeType ? <ReviewBadge type={badgeType} /> : null}
 
           {programTitle ? (
-            <span className="block font-bold truncate text-xsmall14 text-primary">
+            <span className="block truncate text-xsmall14 font-bold text-primary">
               {programTitle}
             </span>
           ) : null}
         </div>
 
-        <h3 className="h-12 mb-2 overflow-hidden font-bold text-xsmall16 line-clamp-2 text-neutral-0 text-ellipsis">
+        <h3 className="mb-2 line-clamp-2 h-12 overflow-hidden text-ellipsis text-xsmall16 font-bold text-neutral-0">
           <Link
             href={url ?? ''}
             {...(!isInternal
@@ -73,16 +73,18 @@ function ReviewLinkCard({
           >
             {title}
             {/* ring-1 ring-inset ring-gray-200 hover:ring-gray-400 */}
-            <span className="absolute inset-0 transition rounded-md "></span>
+            <span className="absolute inset-0 rounded-md transition"></span>
           </Link>
         </h3>
-        <p className="mb-4 overflow-hidden text-neutral-20 text-xsmall14 line-clamp-2 text-ellipsis">
+        <p className="mb-4 line-clamp-2 overflow-hidden text-ellipsis text-xsmall14 text-neutral-20">
           {description}
         </p>
         {externalLink || favicon ? (
-          <div className="flex items-center mb-1">
+          <div className="mb-1 flex items-center gap-2">
             {/* TODO: 파비콘 추가 */}
-            {favicon ? null : null}
+            {favicon && (
+              <img className="h-5 w-5" src={favicon} alt={title + ' 파비콘'} />
+            )}
             {externalLink ? (
               <span className="block truncate text-xsmall14 text-neutral-35">
                 {externalLink}
@@ -91,7 +93,7 @@ function ReviewLinkCard({
           </div>
         ) : null}
         {date ? (
-          <span className="text-neutral-40 text-xxsmall12">
+          <span className="text-xxsmall12 text-neutral-40">
             {dayjs(date).format(YYYY_MM_DD)} 작성
           </span>
         ) : null}
