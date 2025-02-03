@@ -13,17 +13,15 @@ const PAGE_SIZE = 10;
 
 function BlogReviewListSection() {
   const [page, setPage] = useState(1);
-  const searchParams = useSearchParams();
-  const types = searchParams
-    .get('type')
-    ?.toUpperCase()
-    .split(',')
-    .map((type) => type as ProgramTypeUpperCase);
 
+  const searchParams = useSearchParams();
   const { data, isLoading } = useGetBlogReviewList({
     page,
     size: PAGE_SIZE,
-    types: types ?? ['CHALLENGE', 'LIVE', 'REPORT'],
+    types:searchParams
+    .get('type')
+    ?.toUpperCase()
+    .split(',') as ProgramTypeUpperCase[]
   });
 
   if (isLoading) return <LoadingContainer className="h-[50vh]" />;
