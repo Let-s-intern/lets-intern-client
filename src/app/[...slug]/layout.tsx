@@ -1,9 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  other: {
-    abd: 'asdf',
-  },
+  other: {},
 };
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
