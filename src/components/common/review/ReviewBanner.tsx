@@ -1,15 +1,8 @@
 'use client';
 
+import { useGetReviewCount } from '@/api/review';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-
-const heading = {
-  all: '렛츠커리어 100% 솔직 후기 총 NN개',
-  program: '프로그램 참여 후기',
-  mission: '미션 수행 후기',
-  blog: '블로그 후기',
-  interview: '프로그램 참여자 인터뷰',
-};
 
 const description = {
   blog: (
@@ -29,10 +22,19 @@ const description = {
   ),
 };
 
-type HeadingKey = keyof typeof heading;
-
 function ReviewBanner() {
   const pathname = usePathname();
+  const { data } = useGetReviewCount();
+
+  const heading = {
+    all: `렛츠커리어 100% 솔직 후기 ${data?.count ? `총 ${data.count}개` : ''}`,
+    program: '프로그램 참여 후기',
+    mission: '미션 수행 후기',
+    blog: '블로그 후기',
+    interview: '프로그램 참여자 인터뷰',
+  };
+
+  type HeadingKey = keyof typeof heading;
 
   return (
     <header className="relative flex bg-secondary px-5 md:justify-center py-10 h-[11.125rem] md:h-[10.75rem]">
