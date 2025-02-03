@@ -54,7 +54,7 @@ export default function AdminBlogReviewListPage() {
       editable: true,
       sortable: false,
       type: 'singleSelect',
-      valueOptions: Object.values(ProgramTypeEnum.enum),
+      valueOptions: Object.values(ProgramTypeEnum.exclude(["VOD"]).enum),
     },
     {
       field: 'programTitle',
@@ -279,6 +279,7 @@ export default function AdminBlogReviewListPage() {
         onRowModesModelChange={handleRowModesModelChange}
         onRowEditStop={handleRowEditStop}
         processRowUpdate={processRowUpdate}
+        onProcessRowUpdateError={(error) => console.error(error)}
         disableRowSelectionOnClick
         hideFooter
       />
