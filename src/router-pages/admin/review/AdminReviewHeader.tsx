@@ -35,13 +35,13 @@ export default function AdminReviewHeader() {
             </NavLink>
           </li>
           <li>
-            <NavLink to="/admin/review/blog" className={getNavLinkClassName}>
-              블로그
+            <NavLink to="/admin/review/report" className={getNavLinkClassName}>
+              리포트
             </NavLink>
           </li>
           <li>
-            <NavLink to="/admin/review/report" className={getNavLinkClassName}>
-              리포트
+            <NavLink to="/admin/review/blog" className={getNavLinkClassName}>
+              블로그
             </NavLink>
           </li>
         </ul>
