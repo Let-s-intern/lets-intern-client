@@ -119,8 +119,7 @@ export const useGetBlogReviewList = ({
   return useQuery({
     queryKey: ['useGetBlogReviewList', ...types, page, size],
     queryFn: async () => {
-      const queryString = `page=${page}&size=${size}${types.map((type) => `&type=${type}`).join('')}`;
-      const res = await axiosV2.get(`/review/blog?${queryString}`);
+      const res = await axiosV2.get(`/review/blog`, {params: {page, size, type: types.join(',')}});
 
       return blogReviewListSchema.parse(res.data.data);
     },
