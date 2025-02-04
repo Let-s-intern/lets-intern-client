@@ -370,7 +370,7 @@ export const usePatchChallengeAttendance = ({
 };
 
 const reviewStatusSchema = z.object({
-  isCompleted: z.boolean(),
+  reviewId: z.number().nullable(),
 });
 
 export const getChallengeReviewStatusQueryKey = (
