@@ -56,14 +56,14 @@ function ReviewNavBar() {
             프로그램 참여 후기
           </DesktopNavItem>
           {isMissionOrProgramReviewPage && (
-            <ul>
+            <>
               <DesktopNavSubItem href="/review/mission">
                 미션 수행 후기
               </DesktopNavSubItem>
               <DesktopNavSubItem href="/review/program">
                 프로그램 참여 후기
               </DesktopNavSubItem>
-            </ul>
+            </>
           )}
           <DesktopNavItem href="/review/blog">블로그 후기</DesktopNavItem>
           <DesktopNavItem href="/blog/list?category=PROGRAM_REVIEWS">
