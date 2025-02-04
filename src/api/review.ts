@@ -12,6 +12,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 
 import { mypageApplicationsSchema } from './application';
+import { getChallengeReviewStatusQueryKey } from './challenge';
 
 export const getAllApplicationsForReviewQueryKey = ['applications', 'review'];
 
@@ -119,7 +120,9 @@ export const useGetBlogReviewList = ({
   return useQuery({
     queryKey: ['useGetBlogReviewList', ...types, page, size],
     queryFn: async () => {
-      const res = await axiosV2.get(`/review/blog`, {params: {page, size, type: types.join(',')}});
+      const res = await axiosV2.get(`/review/blog`, {
+        params: { page, size, type: types.join(',') },
+      });
 
       return blogReviewListSchema.parse(res.data.data);
     },
@@ -144,9 +147,11 @@ export type PostReviewParams = {
  * @returns : 프로그램 리뷰 등록
  */
 export const usePostReviewMutation = ({
+  challengeId,
   errorCallback,
   successCallback,
 }: {
+  challengeId?: number;
   successCallback?: () => void;
   errorCallback?: (error: Error) => void;
 }) => {
@@ -166,6 +171,11 @@ export const usePostReviewMutation = ({
       client.invalidateQueries({
         queryKey: getAllApplicationsForReviewQueryKey,
       });
+      if (challengeId) {
+        client.invalidateQueries({
+          queryKey: getChallengeReviewStatusQueryKey(challengeId),
+        });
+      }
       return successCallback && successCallback();
     },
     onError: (error: Error) => {

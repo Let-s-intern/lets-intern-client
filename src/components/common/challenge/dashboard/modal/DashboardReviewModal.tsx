@@ -1,10 +1,8 @@
 import { useMediaQuery } from '@mui/material';
 import { josa } from 'es-hangul';
-import { useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
-import { useGetChallengeGoal, useGetChallengeTitle } from '@/api/challenge';
-import { usePostReviewMutation } from '@/api/review';
+import { useGetChallengeTitle } from '@/api/challenge';
+import { useGetProgramReviewDetail } from '@/api/review';
 import { useUserQuery } from '@/api/user';
 import GoalOrConcernsBox from '@components/common/review/GoalOrConcernsBox';
 import ReviewInstruction from '@components/common/review/ReviewInstruction';
@@ -13,82 +11,43 @@ import ReviewQuestion from '@components/common/review/ReviewQuestion';
 import ReviewTextarea from '@components/common/review/ReviewTextarea';
 import TenScore from '@components/common/review/score/TenScore';
 
-const ChallengeReviewCreatePage = () => {
-  const params = useParams();
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+interface DashboardReviewModalProps {
+  programId: string;
+  reviewId: string;
+  onClose: () => void;
+}
+
+const DashboardReviewModal = ({
+  programId,
+  reviewId,
+  onClose,
+}: DashboardReviewModalProps) => {
   const isDesktop = useMediaQuery('(min-width:768px)');
-  const programId = params.programId;
-  const applicationId = searchParams.get('application');
 
   const { data: user } = useUserQuery({ enabled: true });
 
-  const { data: challengeGoal } = useGetChallengeGoal(programId);
-
   const { data: programTitle } = useGetChallengeTitle(Number(programId));
 
-  const { mutateAsync: tryPostReview, isPending: postReviewwIsPending } =
-    usePostReviewMutation({
-      challengeId: Number(programId),
-      successCallback: () => {
-        navigate('/mypage/review', { replace: true });
-      },
-      errorCallback: (error) => {
-        console.error('error', error);
-      },
-    });
-
-  const [score, setScore] = useState<number | null>(null); // 만족도
-  const [npsScore, setNpsScore] = useState<number | null>(null);
-  const [goodPoint, setGoodPoint] = useState<string>('');
-  const [badPoint, setBadPoint] = useState<string>('');
-  const [goalResult, setGoalResult] = useState<string>('');
-
-  const isDisabled =
-    !score || !npsScore || !goodPoint || !badPoint || !goalResult;
-
-  const onClickSubmit = async () => {
-    if (postReviewwIsPending) return;
-
-    if (isDisabled) {
-      alert('모든 항목을 입력해주세요.');
-      return;
-    }
-
-    try {
-      await tryPostReview({
-        applicationId: applicationId ?? '',
-        reviewForm: {
-          type: 'CHALLENGE_REVIEW',
-          score,
-          npsScore,
-          reviewItemList: [
-            {
-              questionType: 'GOOD_POINT',
-              answer: goodPoint,
-            },
-            {
-              questionType: 'BAD_POINT',
-              answer: badPoint,
-            },
-            {
-              questionType: 'GOAL_RESULT',
-              answer: goalResult,
-            },
-          ],
-        },
-      });
-    } catch (error) {
-      console.error(error);
-      alert('리뷰 작성에 실패했습니다. 다시 시도해주세요.');
-    }
-  };
+  const { data: reviewData } = useGetProgramReviewDetail(
+    'CHALLENGE_REVIEW',
+    Number(reviewId),
+  );
+  const review = reviewData?.reviewInfo;
+  const goal = review?.reviewItemList?.find(
+    (r) => r.questionType === 'GOAL',
+  )?.answer;
+  const goalResult = review?.reviewItemList?.find(
+    (r) => r.questionType === 'GOAL_RESULT',
+  )?.answer;
+  const goodPoint = review?.reviewItemList?.find(
+    (r) => r.questionType === 'GOOD_POINT',
+  )?.answer;
+  const badPoint = review?.reviewItemList?.find(
+    (r) => r.questionType === 'BAD_POINT',
+  )?.answer;
 
   return (
-    <ReviewModal
-      disabled={postReviewwIsPending || isDisabled}
-      onSubmit={onClickSubmit}
-    >
+    <ReviewModal readOnly onClose={onClose}>
       {/* 만족도 평가 */}
       <section>
         <ReviewQuestion required className="mb-1">
@@ -97,7 +56,7 @@ const ChallengeReviewCreatePage = () => {
         <ReviewInstruction className="mb-5">
           {programTitle?.title}의 만족도를 0~10점 사이로 평가해주세요!
         </ReviewInstruction>
-        <TenScore tenScore={score} setTenScore={setScore} />
+        <TenScore tenScore={review?.reviewInfo.score ?? 0} />
       </section>
 
       {/* 추천 정도*/}
@@ -109,7 +68,7 @@ const ChallengeReviewCreatePage = () => {
         <ReviewInstruction className="mb-5">
           {programTitle?.title}의 만족도를 0~10점 사이로 평가해주세요!
         </ReviewInstruction>
-        <TenScore tenScore={npsScore} setTenScore={setNpsScore} />
+        <TenScore tenScore={review?.reviewInfo.npsScore ?? 0} />
       </section>
 
       {/* 목표 달성 */}
@@ -118,7 +77,7 @@ const ChallengeReviewCreatePage = () => {
           3. {josa(programTitle?.title ?? '', '을/를')} 참여하기 전의 목표를
           어떻게 달성하셨나요?
         </ReviewQuestion>
-        {challengeGoal?.goal && (
+        {goal && (
           <GoalOrConcernsBox className="mb-3">
             <div className="max-h-64 overflow-y-auto px-5 py-3 md:max-h-[9.5rem]">
               <span className="text-xsmall14">
@@ -127,15 +86,13 @@ const ChallengeReviewCreatePage = () => {
               </span>
               <br />
               {/* TODO: 사용자가 설정한 목표가 들어가야 함 */}
-              <p className="text-xsmall16 font-bold">
-                {challengeGoal?.goal ?? '-'}
-              </p>
+              <p className="text-xsmall16 font-bold">{goal ?? '-'}</p>
             </div>
           </GoalOrConcernsBox>
         )}
         <ReviewTextarea
-          value={goalResult}
-          onChange={(e) => setGoalResult(e.target.value)}
+          value={goalResult ?? '-'}
+          readOnly
           placeholder={`챌린지 참여 전의 목표를 어느 정도 달성하셨는지, ${isDesktop ? '\n' : ''}그 과정에서 챌린지가 어떤 도움을 주었는지 작성해주세요.`}
         />
       </section>
@@ -147,8 +104,8 @@ const ChallengeReviewCreatePage = () => {
           점을 남겨주세요!
         </ReviewQuestion>
         <ReviewTextarea
-          value={goodPoint}
-          onChange={(e) => setGoodPoint(e.target.value)}
+          value={goodPoint ?? '-'}
+          readOnly
           placeholder="가장 도움이 되었던 미션이나 학습 콘텐츠와 같이 참여하면서 가장 만족했던 점을 자유롭게 작성해주세요."
         />
       </section>
@@ -160,8 +117,8 @@ const ChallengeReviewCreatePage = () => {
           점을 남겨주세요!
         </ReviewQuestion>
         <ReviewTextarea
-          value={badPoint}
-          onChange={(e) => setBadPoint(e.target.value)}
+          value={badPoint ?? '-'}
+          readOnly
           placeholder="참여하면서 아쉬웠던 점이나 추가되었으면 좋겠는 내용이 있다면 자유롭게 작성해주세요."
         />
       </section>
@@ -169,4 +126,4 @@ const ChallengeReviewCreatePage = () => {
   );
 };
 
-export default ChallengeReviewCreatePage;
+export default DashboardReviewModal;

@@ -1,25 +1,39 @@
-import { useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 
 import {
+  useGetChallengeReviewStatus,
   usePatchChallengeAttendance,
   usePostChallengeAttendance,
 } from '@/api/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
-import { UserChallengeMissionDetail } from '@/schema';
+import { Schedule, UserChallengeMissionDetail } from '@/schema';
 import ParsedCommentBox from '../ParsedCommentBox';
 
 interface Props {
   missionDetail: UserChallengeMissionDetail;
+  currentSchedule: Schedule;
+  setOpenReviewModal?: (value: boolean) => void;
 }
 
-const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
-  const queryClient = useQueryClient();
-  const { schedules } = useCurrentChallenge();
-  const currentSchedule = schedules.find((schedule) => {
-    return schedule.missionInfo.id === missionDetail.id;
-  });
+const AbsentMissionSubmitMenu = ({
+  missionDetail,
+  currentSchedule,
+  setOpenReviewModal,
+}: Props) => {
+  const { schedules, currentChallenge } = useCurrentChallenge();
+  const lastMission = schedules.reduce((acc: Schedule | null, schedule) => {
+    if (acc === null) return schedule;
+
+    return schedule.missionInfo.th &&
+      acc.missionInfo.th &&
+      schedule.missionInfo.th > acc.missionInfo.th
+      ? schedule
+      : acc;
+  }, null);
+  const isLastMission =
+    lastMission?.missionInfo.th === currentSchedule.missionInfo.th;
+
   const [isAttended, setIsAttended] = useState(
     currentSchedule?.attendanceInfo.result === 'WRONG'
       ? false
@@ -35,17 +49,13 @@ const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
   const [isValidLinkValue, setIsValidLinkValue] = useState(isAttended);
   const [isStartedHttp, setIsStartedHttp] = useState(false);
 
-  const { mutate: postAttendance } = usePostChallengeAttendance({
-    successCallback: async () => {
-      setIsAttended(true);
-    },
-  });
+  const { data: reviewCompleted } = useGetChallengeReviewStatus(
+    currentChallenge?.id,
+  );
 
-  const { mutate: patchAttendance } = usePatchChallengeAttendance({
-    successCallback: async () => {
-      setIsAttended(true);
-    },
-  });
+  const { mutateAsync: tryPostAttendance } = usePostChallengeAttendance({});
+
+  const { mutateAsync: tryPatchAttendance } = usePatchChallengeAttendance({});
 
   const handleMissionLinkChanged = (e: any) => {
     const inputValue = e.target.value;
@@ -69,151 +79,177 @@ const AbsentMissionSubmitMenu = ({ missionDetail }: Props) => {
     }
   };
 
-  const handleMissionLinkSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (currentSchedule?.attendanceInfo.result === 'WRONG') {
-      patchAttendance({
-        attendanceId: currentSchedule?.attendanceInfo.id || 0,
-        link: value,
-        review,
-      });
-    } else {
-      postAttendance({
-        missionId: missionDetail.id,
-        link: value,
-        review,
-      });
-    }
-  };
-
   useEffect(() => {
     handleMissionLinkChanged({ target: { value } });
   }, [value]);
 
+  const handleMissionLinkSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!isValidLinkValue || !isLinkChecked || !value || !review) {
+      alert('올바른 URL 또는 미션 소감을 입력해주세요.');
+      return;
+    }
+
+    try {
+      if (
+        currentSchedule.attendanceInfo.result === 'WRONG' &&
+        currentSchedule.attendanceInfo.id !== null
+      ) {
+        await tryPatchAttendance({
+          attendanceId: currentSchedule.attendanceInfo.id,
+          link: value,
+          review,
+        });
+      } else {
+        await tryPostAttendance({
+          missionId: missionDetail.id,
+          link: value,
+          review,
+        });
+
+        if (
+          isLastMission &&
+          reviewCompleted &&
+          reviewCompleted.reviewId === null &&
+          setOpenReviewModal
+        ) {
+          setOpenReviewModal(true);
+        }
+      }
+      setIsAttended(true);
+    } catch (error) {
+      console.error(error);
+      alert('미션 제출에 실패했습니다. 다시 시도해주세요.');
+      return;
+    }
+  };
+
   return (
-    <form onSubmit={handleMissionLinkSubmit} className="px-3">
-      <h3 className="text-lg font-semibold">
-        {currentSchedule?.attendanceInfo.result === 'WRONG' &&
-        currentSchedule?.attendanceInfo.status === 'UPDATED'
-          ? '해당 미션은 총 2회 반려되었으므로, 재제출이 불가능한 미션입니다.'
-          : '미션 제출하기'}
-      </h3>
-      {isAttended ? (
-        <p className="mt-1 text-sm">미션 제출이 완료되었습니다.</p>
-      ) : (
-        currentSchedule?.attendanceInfo.result === 'WRONG' &&
-        currentSchedule?.attendanceInfo.status !== 'UPDATED' && (
-          <p className="mt-1 text-sm">
-            아래 반려 사유를 확인하여, 다시 제출해주세요!
-          </p>
-        )
-      )}
-      {currentSchedule?.attendanceInfo.comments && (
-        <div className="mt-4">
-          <ParsedCommentBox
-            className="rounded-md bg-[#F2F2F2] px-8 py-6 text-sm"
-            comment={currentSchedule?.attendanceInfo.comments}
-          />
-        </div>
-      )}
-      {!(
-        currentSchedule?.attendanceInfo.result === 'WRONG' &&
-        currentSchedule?.attendanceInfo.status === 'UPDATED'
-      ) && (
-        <>
-          <div className="mt-4 flex items-stretch gap-4">
-            <label
-              htmlFor="link"
-              className="flex items-center font-semibold text-[#626262]"
-            >
-              링크
-            </label>
-            <input
-              type="text"
-              className={clsx(
-                'flex-1 cursor-text rounded-lg border border-[#A3A3A3] px-3 py-2 text-sm outline-none',
-                {
-                  'text-neutral-400': isAttended,
-                  'border-red-500': !isValidLinkValue && value && !isAttended,
-                  'border-primary': isValidLinkValue && value && !isAttended,
-                },
-              )}
-              id="link"
-              name="link"
-              placeholder="제출할 링크를 입력해주세요."
-              autoComplete="off"
-              onChange={handleMissionLinkChanged}
-              value={value}
-              disabled={isAttended}
+    <>
+      <form onSubmit={handleMissionLinkSubmit} className="px-3">
+        <h3 className="text-lg font-semibold">
+          {currentSchedule?.attendanceInfo.result === 'WRONG' &&
+          currentSchedule?.attendanceInfo.status === 'UPDATED'
+            ? '해당 미션은 총 2회 반려되었으므로, 재제출이 불가능한 미션입니다.'
+            : '미션 제출하기'}
+        </h3>
+        {isAttended ? (
+          <p className="mt-1 text-sm">미션 제출이 완료되었습니다.</p>
+        ) : (
+          currentSchedule?.attendanceInfo.result === 'WRONG' &&
+          currentSchedule?.attendanceInfo.status !== 'UPDATED' && (
+            <p className="mt-1 text-sm">
+              아래 반려 사유를 확인하여, 다시 제출해주세요!
+            </p>
+          )
+        )}
+        {currentSchedule?.attendanceInfo.comments && (
+          <div className="mt-4">
+            <ParsedCommentBox
+              className="rounded-md bg-[#F2F2F2] px-8 py-6 text-sm"
+              comment={currentSchedule?.attendanceInfo.comments}
             />
-            <button
-              type="button"
-              className="rounded bg-primary px-5 font-medium text-white disabled:bg-[#c7c7c7]"
-              onClick={() => {
-                if (value) {
-                  Object.assign(document.createElement('a'), {
-                    target: '_blank',
-                    href: value,
-                    rel: 'noopenner noreferrer',
-                  }).click();
-                  setIsLinkChecked(true);
-                }
-              }}
-              disabled={(!value && !isAttended) || !isValidLinkValue}
-            >
-              링크 확인
-            </button>
           </div>
-          {value &&
-            !isAttended &&
-            (isLinkChecked ? (
-              <div className="ml-12 mt-1 text-xs font-medium text-primary">
-                링크 확인을 완료하셨습니다. 링크가 올바르다면 제출 버튼을
-                눌러주세요.
-              </div>
-            ) : !isValidLinkValue ? (
-              <div className="ml-12 mt-1 text-xs font-medium text-red-500">
-                URL 형식이 올바르지 않습니다.
-                {!isStartedHttp && (
-                  <> (https:// 또는 http://로 시작해야 합니다.)</>
+        )}
+        {!(
+          currentSchedule?.attendanceInfo.result === 'WRONG' &&
+          currentSchedule?.attendanceInfo.status === 'UPDATED'
+        ) && (
+          <>
+            <div className="mt-4 flex items-stretch gap-4">
+              <label
+                htmlFor="link"
+                className="flex items-center font-semibold text-[#626262]"
+              >
+                링크
+              </label>
+              <input
+                type="text"
+                className={clsx(
+                  'flex-1 cursor-text rounded-lg border border-[#A3A3A3] px-3 py-2 text-sm outline-none',
+                  {
+                    'text-neutral-400': isAttended,
+                    'border-red-500': !isValidLinkValue && value && !isAttended,
+                    'border-primary': isValidLinkValue && value && !isAttended,
+                  },
                 )}
-              </div>
-            ) : (
-              <div className="ml-12 mt-1 text-xs font-medium text-primary">
-                URL을 올바르게 입력하셨습니다. 링크 확인을 진행해주세요.
-              </div>
-            ))}
-          <div className="mt-6 flex w-full flex-col gap-y-5">
-            <h3 className="text-xsmall16 font-semibold text-neutral-0">
-              미션 소감
-            </h3>
-            <textarea
-              className="rounded-md p-3 h-20 text-xsmall14 outline-none bg-neutral-95 resize-none"
-              placeholder={`오늘의 미션은 어떠셨나요?\n새롭게 배운 점, 어려운 부분, 궁금증 등 떠오르는 생각을 남겨 주세요.`}
-              value={review}
-              onChange={(e) => setReview(e.target.value)}
-              disabled={isAttended}
-            />
-          </div>
-          <div className="mt-6 text-right">
-            <button
-              type="submit"
-              className="rounded border border-[#DCDCDC] bg-white px-5 py-2 text-center font-semibold disabled:bg-gray-50 disabled:text-gray-600"
-              disabled={
-                isAttended ||
-                !value ||
-                !isLinkChecked ||
-                !isValidLinkValue ||
-                !review
-              }
-            >
-              {isAttended ? '제출 완료' : '제출'}
-            </button>
-          </div>
-        </>
-      )}
-    </form>
+                id="link"
+                name="link"
+                placeholder="제출할 링크를 입력해주세요."
+                autoComplete="off"
+                onChange={handleMissionLinkChanged}
+                value={value}
+                disabled={isAttended}
+              />
+              <button
+                type="button"
+                className="rounded bg-primary px-5 font-medium text-white disabled:bg-[#c7c7c7]"
+                onClick={() => {
+                  if (value) {
+                    Object.assign(document.createElement('a'), {
+                      target: '_blank',
+                      href: value,
+                      rel: 'noopenner noreferrer',
+                    }).click();
+                    setIsLinkChecked(true);
+                  }
+                }}
+                disabled={(!value && !isAttended) || !isValidLinkValue}
+              >
+                링크 확인
+              </button>
+            </div>
+            {value &&
+              !isAttended &&
+              (isLinkChecked ? (
+                <div className="ml-12 mt-1 text-xs font-medium text-primary">
+                  링크 확인을 완료하셨습니다. 링크가 올바르다면 제출 버튼을
+                  눌러주세요.
+                </div>
+              ) : !isValidLinkValue ? (
+                <div className="ml-12 mt-1 text-xs font-medium text-red-500">
+                  URL 형식이 올바르지 않습니다.
+                  {!isStartedHttp && (
+                    <> (https:// 또는 http://로 시작해야 합니다.)</>
+                  )}
+                </div>
+              ) : (
+                <div className="ml-12 mt-1 text-xs font-medium text-primary">
+                  URL을 올바르게 입력하셨습니다. 링크 확인을 진행해주세요.
+                </div>
+              ))}
+            <div className="mt-6 flex w-full flex-col gap-y-5">
+              <h3 className="text-xsmall16 font-semibold text-neutral-0">
+                미션 소감
+              </h3>
+              <textarea
+                className="h-20 resize-none rounded-md bg-neutral-95 p-3 text-xsmall14 outline-none"
+                placeholder={`오늘의 미션은 어떠셨나요?\n새롭게 배운 점, 어려운 부분, 궁금증 등 떠오르는 생각을 남겨 주세요.`}
+                value={review}
+                onChange={(e) => setReview(e.target.value)}
+                disabled={isAttended}
+              />
+            </div>
+            <div className="mt-6 text-right">
+              <button
+                type="submit"
+                className="rounded border border-[#DCDCDC] bg-white px-5 py-2 text-center font-semibold disabled:bg-gray-50 disabled:text-gray-600"
+                disabled={
+                  isAttended ||
+                  !value ||
+                  !isLinkChecked ||
+                  !isValidLinkValue ||
+                  !review
+                }
+              >
+                {isAttended ? '제출 완료' : '제출'}
+              </button>
+            </div>
+          </>
+        )}
+      </form>
+    </>
   );
 };
 

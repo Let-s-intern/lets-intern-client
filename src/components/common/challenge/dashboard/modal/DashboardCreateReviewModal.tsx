@@ -1,3 +1,7 @@
+import { useMediaQuery } from '@mui/material';
+import { josa } from 'es-hangul';
+import { useState } from 'react';
+
 import { useGetChallengeGoal, useGetChallengeTitle } from '@/api/challenge';
 import { usePostReviewMutation } from '@/api/review';
 import { useUserQuery } from '@/api/user';
@@ -7,41 +11,29 @@ import ReviewModal from '@components/common/review/ReviewModal';
 import ReviewQuestion from '@components/common/review/ReviewQuestion';
 import ReviewTextarea from '@components/common/review/ReviewTextarea';
 import TenScore from '@components/common/review/score/TenScore';
-import { useMediaQuery } from '@mui/material';
-import { josa } from 'es-hangul';
-import { useState } from 'react';
-import { useParams } from 'react-router-dom';
 
-interface LastMissionSubmitModalProps {
+interface DashboardCreateReviewModalProps {
+  programId: string;
+  applicationId: string;
   onClose: () => void;
-  challengeId: number | undefined;
 }
 
-const LastMissionSubmitModal = ({
+const DashboardCreateReviewModal = ({
+  programId,
+  applicationId,
   onClose,
-  challengeId,
-}: LastMissionSubmitModalProps) => {
-  const params = useParams();
-  const applicationId = params.applicationId;
+}: DashboardCreateReviewModalProps) => {
   const isDesktop = useMediaQuery('(min-width:768px)');
-
-  const [score, setScore] = useState<number | null>(null); // 만족도
-  const [npsScore, setNpsScore] = useState<number | null>(null);
-  const [goodPoint, setGoodPoint] = useState<string>('');
-  const [badPoint, setBadPoint] = useState<string>('');
-  const [goalResult, setGoalResult] = useState<string>('');
 
   const { data: user } = useUserQuery({ enabled: true });
 
-  const { data: challengeGoal } = useGetChallengeGoal(challengeId?.toString());
+  const { data: challengeGoal } = useGetChallengeGoal(programId);
 
-  const { data: programTitle } = useGetChallengeTitle(challengeId ?? 0);
-
-  const title = programTitle?.title;
+  const { data: programTitle } = useGetChallengeTitle(Number(programId));
 
   const { mutateAsync: tryPostReview, isPending: postReviewwIsPending } =
     usePostReviewMutation({
-      challengeId,
+      challengeId: Number(programId),
       successCallback: () => {
         onClose();
       },
@@ -49,6 +41,15 @@ const LastMissionSubmitModal = ({
         console.error('error', error);
       },
     });
+
+  const [score, setScore] = useState<number | null>(null); // 만족도
+  const [npsScore, setNpsScore] = useState<number | null>(null);
+  const [goodPoint, setGoodPoint] = useState<string>('');
+  const [badPoint, setBadPoint] = useState<string>('');
+  const [goalResult, setGoalResult] = useState<string>('');
+
+  const isDisabled =
+    !score || !npsScore || !goodPoint || !badPoint || !goalResult;
 
   const onClickSubmit = async () => {
     if (postReviewwIsPending) return;
@@ -87,25 +88,19 @@ const LastMissionSubmitModal = ({
     }
   };
 
-  const isDisabled =
-    !score || !npsScore || !goodPoint || !badPoint || !goalResult;
-
   return (
     <ReviewModal
-      title={title + ' 회고'}
       disabled={postReviewwIsPending || isDisabled}
       onSubmit={onClickSubmit}
-      isLastMission
       onClose={onClose}
-      programTitle={title ?? '챌린지'}
     >
       {/* 만족도 평가 */}
       <section>
         <ReviewQuestion required className="mb-1">
-          1. {josa(title ?? '', '은/는')} 어떠셨나요?
+          1. {josa(programTitle?.title ?? '', '은/는')} 어떠셨나요?
         </ReviewQuestion>
         <ReviewInstruction className="mb-5">
-          {title}의 만족도를 0~10점 사이로 평가해주세요!
+          {programTitle?.title}의 만족도를 0~10점 사이로 평가해주세요!
         </ReviewInstruction>
         <TenScore tenScore={score} setTenScore={setScore} />
       </section>
@@ -113,10 +108,11 @@ const LastMissionSubmitModal = ({
       {/* 추천 정도*/}
       <section>
         <ReviewQuestion required className="mb-1">
-          2. {josa(title ?? '', '을/를')} 주변에 얼마나 추천하고 싶으신가요?
+          2. {josa(programTitle?.title ?? '', '을/를')} 주변에 얼마나 추천하고
+          싶으신가요?
         </ReviewQuestion>
         <ReviewInstruction className="mb-5">
-          {title}의 만족도를 0~10점 사이로 평가해주세요!
+          {programTitle?.title}의 만족도를 0~10점 사이로 평가해주세요!
         </ReviewInstruction>
         <TenScore tenScore={npsScore} setTenScore={setNpsScore} />
       </section>
@@ -124,8 +120,8 @@ const LastMissionSubmitModal = ({
       {/* 목표 달성 */}
       <section>
         <ReviewQuestion required className="mb-5">
-          3. {josa(title ?? '', '을/를')} 참여하기 전의 목표를 어떻게
-          달성하셨나요?
+          3. {josa(programTitle?.title ?? '', '을/를')} 참여하기 전의 목표를
+          어떻게 달성하셨나요?
         </ReviewQuestion>
         {challengeGoal?.goal && (
           <GoalOrConcernsBox className="mb-3">
@@ -152,8 +148,8 @@ const LastMissionSubmitModal = ({
       {/* 만족했던 점 */}
       <section>
         <ReviewQuestion required className="mb-5">
-          4. {josa(title ?? '', '을/를')} 참여하면서 가장 만족했던 점을
-          남겨주세요!
+          4. {josa(programTitle?.title ?? '', '을/를')} 참여하면서 가장 만족했던
+          점을 남겨주세요!
         </ReviewQuestion>
         <ReviewTextarea
           value={goodPoint}
@@ -165,8 +161,8 @@ const LastMissionSubmitModal = ({
       {/* 아쉬웠던 점 */}
       <section>
         <ReviewQuestion required className="mb-5">
-          5. {josa(title ?? '', '을/를')} 참여하면서 가장 아쉬웠던 점을
-          남겨주세요!
+          5. {josa(programTitle?.title ?? '', '을/를')} 참여하면서 가장 아쉬웠던
+          점을 남겨주세요!
         </ReviewQuestion>
         <ReviewTextarea
           value={badPoint}
@@ -178,4 +174,4 @@ const LastMissionSubmitModal = ({
   );
 };
 
-export default LastMissionSubmitModal;
+export default DashboardCreateReviewModal;

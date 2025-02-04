@@ -370,15 +370,21 @@ export const usePatchChallengeAttendance = ({
 };
 
 const reviewStatusSchema = z.object({
-  isCompleted: z.boolean(),
+  reviewId: z.number().nullable(),
 });
+
+export const getChallengeReviewStatusQueryKey = (
+  challengeId: number | undefined,
+) => {
+  return ['challenge', challengeId, 'review-status'];
+};
 
 // 챌린지 리뷰 작성 여부 조회
 export const useGetChallengeReviewStatus = (
   challengeId: number | undefined,
 ) => {
   return useQuery({
-    queryKey: ['challenge', challengeId, 'review-status'],
+    queryKey: getChallengeReviewStatusQueryKey(challengeId),
     queryFn: async () => {
       const res = await axios.get(`/challenge/${challengeId}/my/review-status`);
       return reviewStatusSchema.parse(res.data.data);
