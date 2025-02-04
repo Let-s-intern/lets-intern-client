@@ -9,9 +9,11 @@ export default function ReviewLayout({
   return (
     <>
       <ReviewBanner />
-      <div className="flex flex-col max-w-[1100px] md:py-8 w-full mx-auto md:flex-row">
+      <div className="mx-auto flex w-full max-w-[1100px] flex-col md:flex-row md:py-8">
         <ReviewNavBar />
-        <main className="w-full overflow-x-hidden">{children}</main>
+        <main className="w-full overflow-x-hidden pb-12 md:pb-[7rem]">
+          {children}
+        </main>
       </div>
     </>
   );
