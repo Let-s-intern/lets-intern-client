@@ -14,9 +14,10 @@ import AbsentMissionDetailMenu from './AbsentMissionDetailMenu';
 interface Props {
   mission: MyChallengeMissionByType;
   isDone: boolean;
+  setOpenReviewModal?: (value: boolean) => void;
 }
 
-const AbsentMissionItem = ({ mission, isDone }: Props) => {
+const AbsentMissionItem = ({ mission, isDone, setOpenReviewModal }: Props) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { currentChallenge, schedules } = useCurrentChallenge();
   const currentSchedule = schedules.find((schedule) => {
@@ -104,6 +105,7 @@ const AbsentMissionItem = ({ mission, isDone }: Props) => {
               <AbsentMissionDetailMenu
                 missionDetail={missionDetail}
                 currentSchedule={currentSchedule}
+                setOpenReviewModal={setOpenReviewModal}
               />
             ))}
     </li>

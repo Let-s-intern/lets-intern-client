@@ -1,7 +1,8 @@
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
+  useGetChallengeReviewStatus,
   usePatchChallengeAttendance,
   usePostChallengeAttendance,
 } from '@/api/challenge';
@@ -12,21 +13,26 @@ import ParsedCommentBox from '../ParsedCommentBox';
 interface Props {
   missionDetail: UserChallengeMissionDetail;
   currentSchedule: Schedule;
+  setOpenReviewModal?: (value: boolean) => void;
 }
 
-const AbsentMissionSubmitMenu = ({ missionDetail, currentSchedule }: Props) => {
-  const { schedules } = useCurrentChallenge();
-  // const lastMission = schedules.reduce((acc: Schedule | null, schedule) => {
-  //   if (acc === null) return schedule;
+const AbsentMissionSubmitMenu = ({
+  missionDetail,
+  currentSchedule,
+  setOpenReviewModal,
+}: Props) => {
+  const { schedules, currentChallenge } = useCurrentChallenge();
+  const lastMission = schedules.reduce((acc: Schedule | null, schedule) => {
+    if (acc === null) return schedule;
 
-  //   return schedule.missionInfo.th &&
-  //     acc.missionInfo.th &&
-  //     schedule.missionInfo.th > acc.missionInfo.th
-  //     ? schedule
-  //     : acc;
-  // }, null);
-  // const isLastMission =
-  //   lastMission?.missionInfo.th === currentSchedule.missionInfo.th;
+    return schedule.missionInfo.th &&
+      acc.missionInfo.th &&
+      schedule.missionInfo.th > acc.missionInfo.th
+      ? schedule
+      : acc;
+  }, null);
+  const isLastMission =
+    lastMission?.missionInfo.th === currentSchedule.missionInfo.th;
 
   const [isAttended, setIsAttended] = useState(
     currentSchedule?.attendanceInfo.result === 'WRONG'
@@ -43,11 +49,9 @@ const AbsentMissionSubmitMenu = ({ missionDetail, currentSchedule }: Props) => {
   const [isValidLinkValue, setIsValidLinkValue] = useState(isAttended);
   const [isStartedHttp, setIsStartedHttp] = useState(false);
 
-  // const [lastMissionModal, setLastMissionModal] = useState(true);
-
-  // const { data: reviewCompleted } = useGetChallengeReviewStatus(
-  //   currentChallenge?.id,
-  // );
+  const { data: reviewCompleted } = useGetChallengeReviewStatus(
+    currentChallenge?.id,
+  );
 
   const { mutateAsync: tryPostAttendance } = usePostChallengeAttendance({});
 
@@ -75,6 +79,10 @@ const AbsentMissionSubmitMenu = ({ missionDetail, currentSchedule }: Props) => {
     }
   };
 
+  useEffect(() => {
+    handleMissionLinkChanged({ target: { value } });
+  }, [value]);
+
   const handleMissionLinkSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -99,8 +107,16 @@ const AbsentMissionSubmitMenu = ({ missionDetail, currentSchedule }: Props) => {
           link: value,
           review,
         });
-      }
 
+        if (
+          isLastMission &&
+          reviewCompleted &&
+          reviewCompleted.reviewId === null &&
+          setOpenReviewModal
+        ) {
+          setOpenReviewModal(true);
+        }
+      }
       setIsAttended(true);
     } catch (error) {
       console.error(error);

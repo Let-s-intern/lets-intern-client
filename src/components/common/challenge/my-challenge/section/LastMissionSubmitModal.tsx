@@ -1,4 +1,4 @@
-import { useGetChallengeGoal } from '@/api/challenge';
+import { useGetChallengeGoal, useGetChallengeTitle } from '@/api/challenge';
 import { usePostReviewMutation } from '@/api/review';
 import { useUserQuery } from '@/api/user';
 import GoalOrConcernsBox from '@components/common/review/GoalOrConcernsBox';
@@ -15,12 +15,10 @@ import { useParams } from 'react-router-dom';
 interface LastMissionSubmitModalProps {
   onClose: () => void;
   challengeId: number | undefined;
-  title: string;
 }
 
 const LastMissionSubmitModal = ({
   onClose,
-  title,
   challengeId,
 }: LastMissionSubmitModalProps) => {
   const params = useParams();
@@ -36,6 +34,10 @@ const LastMissionSubmitModal = ({
   const { data: user } = useUserQuery({ enabled: true });
 
   const { data: challengeGoal } = useGetChallengeGoal(challengeId?.toString());
+
+  const { data: programTitle } = useGetChallengeTitle(challengeId ?? 0);
+
+  const title = programTitle?.title;
 
   const { mutateAsync: tryPostReview, isPending: postReviewwIsPending } =
     usePostReviewMutation({
@@ -95,7 +97,7 @@ const LastMissionSubmitModal = ({
       onSubmit={onClickSubmit}
       isLastMission
       onClose={onClose}
-      programTitle={title}
+      programTitle={title ?? '챌린지'}
     >
       {/* 만족도 평가 */}
       <section>

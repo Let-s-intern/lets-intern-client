@@ -5,9 +5,14 @@ import AbsentMissionSubmitMenu from '../menu/AbsentMissionSubmitMenu';
 interface Props {
   missionDetail: UserChallengeMissionDetail;
   currentSchedule: Schedule;
+  setOpenReviewModal?: (value: boolean) => void;
 }
 
-const AbsentMissionDetailMenu = ({ missionDetail, currentSchedule }: Props) => {
+const AbsentMissionDetailMenu = ({
+  missionDetail,
+  currentSchedule,
+  setOpenReviewModal,
+}: Props) => {
   return (
     <>
       <hr className="my-4 border-[#DEDEDE]" />
@@ -27,6 +32,7 @@ const AbsentMissionDetailMenu = ({ missionDetail, currentSchedule }: Props) => {
       <AbsentMissionSubmitMenu
         missionDetail={missionDetail}
         currentSchedule={currentSchedule}
+        setOpenReviewModal={setOpenReviewModal}
       />
     </>
   );

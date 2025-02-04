@@ -308,7 +308,6 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
           reviewCompleted?.reviewId === undefined) && (
           <LastMissionSubmitModal
             onClose={() => setLastMissionModal(false)}
-            title={currentChallenge?.title ?? ''}
             challengeId={currentChallenge?.id}
           />
         )}
