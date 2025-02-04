@@ -10,11 +10,12 @@ function MainBlogReviewSection() {
     page: 1,
     size: 4,
   });
+
   return (
     <section className="py-9 md:p-0">
       <MoreHeader
         title="블로그 후기"
-        subtitle={data ? `${data?.reviewList.length}개` : ''}
+        subtitle={data ? `${data.pageInfo.totalElements}개` : ''}
         href="/review/blog"
       />
       {isLoading ? (

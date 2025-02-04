@@ -18,10 +18,10 @@ function BlogReviewListSection() {
   const { data, isLoading } = useGetBlogReviewList({
     page,
     size: PAGE_SIZE,
-    types:searchParams
-    .get('type')
-    ?.toUpperCase()
-    .split(',') as ProgramTypeUpperCase[]
+    types: searchParams
+      .get('type')
+      ?.toUpperCase()
+      .split(',') as ProgramTypeUpperCase[],
   });
 
   if (isLoading) return <LoadingContainer className="h-[50vh]" />;
@@ -30,7 +30,7 @@ function BlogReviewListSection() {
 
   return (
     <section className="mb-12 md:mb-20">
-      <div className="flex flex-col gap-6 mb-8 md:mb-12">
+      <div className="mb-8 flex flex-col gap-6 md:mb-12">
         {data?.reviewList.map((review) => (
           <BlogReviewCard key={review.blogReviewId} blogReview={review} />
         ))}
