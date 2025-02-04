@@ -32,7 +32,9 @@ function MainBlogReviewSection() {
               programTitle={review.programTitle}
               programType={review.programType}
               url={review.url}
-              favicon={new URL(review.url ?? '').origin + '/favicon.ico'}
+              {...(review.url && {
+                favicon: new URL(review.url).origin + '/favicon.ico',
+              })}
             />
           ))}
         </div>
