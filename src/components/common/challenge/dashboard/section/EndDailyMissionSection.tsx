@@ -12,7 +12,7 @@ const EndDailyMissionSection = () => {
   const { data: reviewStatus } = useGetChallengeReviewStatus(
     currentChallenge?.id,
   );
-  const isReviewCompleted = reviewStatus?.isCompleted;
+  const isReviewCompleted = reviewStatus && reviewStatus.reviewId !== null;
 
   return (
     <>
@@ -46,7 +46,7 @@ const EndDailyMissionSection = () => {
         isReviewCompleted ? (
           <DashboardReviewModal
             programId={currentChallenge?.id.toString() ?? ''}
-            reviewId="0"
+            reviewId={reviewStatus?.reviewId?.toString() ?? ''}
             onClose={() => setModalOpen(false)}
           />
         ) : (
