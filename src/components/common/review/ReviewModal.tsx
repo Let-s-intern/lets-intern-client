@@ -87,7 +87,11 @@ function ReviewModal({
                   className="hidden h-6 w-6 cursor-pointer md:block"
                   onClick={() => {
                     if (readOnly) {
-                      navigate('/mypage/review', { replace: true });
+                      if (onClose) {
+                        onClose();
+                      } else {
+                        navigate('/mypage/review', { replace: true });
+                      }
                     } else {
                       setIsExitOpen(true);
                     }
@@ -96,7 +100,7 @@ function ReviewModal({
               )}
             </div>
             {isLastMission && programTitle && (
-              <p className="text-xsmall16 font-medium mb-8 text-neutral-20">
+              <p className="mb-8 text-xsmall16 font-medium text-neutral-20">
                 참여한 {josa(programTitle, '을/를')} 회고하고, 나 자신이 얼마나
                 성장했는지 확인해보세요!
               </p>
@@ -118,7 +122,7 @@ function ReviewModal({
           {/* 데스크탑 버튼 (아래 고정) */}
           <div
             className={clsx(
-              'sticky inset-x-0 bottom-0 hidden gap-y-4 bg-white px-14 pb-8 pt-6 drop-shadow-[0_-3px_6px_0_rgba(0,0,0,0.04)] md:flex flex-col items-center',
+              'sticky inset-x-0 bottom-0 hidden flex-col items-center gap-y-4 bg-white px-14 pb-8 pt-6 drop-shadow-[0_-3px_6px_0_rgba(0,0,0,0.04)] md:flex',
               { 'md:hidden': readOnly },
             )}
           >
@@ -131,7 +135,7 @@ function ReviewModal({
             </BaseButton>
             {isLastMission && (
               <span
-                className="text-small18 font-medium text-neutral-50 cursor-pointer hover:underline"
+                className="cursor-pointer text-small18 font-medium text-neutral-50 hover:underline"
                 onClick={() => onClose && onClose()}
               >
                 다음에 할게요
@@ -143,7 +147,13 @@ function ReviewModal({
       <ReviewExitModal
         isOpen={isExitOpen}
         onClose={() => setIsExitOpen(false)}
-        onClickConfirm={() => navigate('/mypage/review', { replace: true })}
+        onClickConfirm={() => {
+          if (onClose) {
+            onClose();
+          } else {
+            navigate('/mypage/review', { replace: true });
+          }
+        }}
       />
     </>
   );
