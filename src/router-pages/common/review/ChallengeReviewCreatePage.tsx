@@ -29,6 +29,7 @@ const ChallengeReviewCreatePage = () => {
 
   const { mutateAsync: tryPostReview, isPending: postReviewwIsPending } =
     usePostReviewMutation({
+      challengeId: Number(programId),
       successCallback: () => {
         navigate('/mypage/review', { replace: true });
       },

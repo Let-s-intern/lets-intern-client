@@ -39,6 +39,7 @@ const LastMissionSubmitModal = ({
 
   const { mutateAsync: tryPostReview, isPending: postReviewwIsPending } =
     usePostReviewMutation({
+      challengeId,
       successCallback: () => {
         onClose();
       },
