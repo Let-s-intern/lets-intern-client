@@ -54,7 +54,7 @@ export default function AdminBlogReviewListPage() {
       editable: true,
       sortable: false,
       type: 'singleSelect',
-      valueOptions: Object.values(ProgramTypeEnum.exclude(["VOD"]).enum),
+      valueOptions: Object.values(ProgramTypeEnum.exclude(['VOD']).enum),
     },
     {
       field: 'programTitle',
@@ -260,14 +260,20 @@ export default function AdminBlogReviewListPage() {
   return (
     <div className="p-5">
       <AdminReviewHeader />
-      <div className="flex  justify-between pb-2">
-        <p className="text-xsmall14 ">
+      <div className="flex items-center justify-between pb-2">
+        <p className="text-xsmall14">
           <span className="block text-requirement">
             *등록: 한 번에 하나만 가능
           </span>
           <span className="block">*편집: 한 번에 여러 개 가능</span>
         </p>
-        <Button variant="outlined" onClick={handleAddRow}>
+        <p className="text-xsmall14">
+          <span className="block">*생성 시에는 노출 불가능</span>
+          <span className="block text-requirement">
+            *URL이 없는 리뷰를 노출하지 마세요 (에러 발생)
+          </span>
+        </p>
+        <Button className="h-fit" variant="outlined" onClick={handleAddRow}>
           등록
         </Button>
       </div>
