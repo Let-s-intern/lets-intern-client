@@ -101,7 +101,10 @@ const AbsentMissionItem = ({ mission, isDone }: Props) => {
           : !isDetailLoading &&
             missionDetail &&
             currentSchedule && (
-              <AbsentMissionDetailMenu missionDetail={missionDetail} />
+              <AbsentMissionDetailMenu
+                missionDetail={missionDetail}
+                currentSchedule={currentSchedule}
+              />
             ))}
     </li>
   );

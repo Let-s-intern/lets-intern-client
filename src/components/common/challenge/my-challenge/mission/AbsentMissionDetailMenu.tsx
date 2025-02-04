@@ -1,12 +1,13 @@
-import { UserChallengeMissionDetail } from '../../../../../schema';
+import { Schedule, UserChallengeMissionDetail } from '../../../../../schema';
 import AbsentContentsInfoMenu from '../menu/AbsentContentsInfoMenu';
 import AbsentMissionSubmitMenu from '../menu/AbsentMissionSubmitMenu';
 
 interface Props {
   missionDetail: UserChallengeMissionDetail;
+  currentSchedule: Schedule;
 }
 
-const AbsentMissionDetailMenu = ({ missionDetail }: Props) => {
+const AbsentMissionDetailMenu = ({ missionDetail, currentSchedule }: Props) => {
   return (
     <>
       <hr className="my-4 border-[#DEDEDE]" />
@@ -23,7 +24,10 @@ const AbsentMissionDetailMenu = ({ missionDetail }: Props) => {
       </div>
       <AbsentContentsInfoMenu missionDetail={missionDetail} />
       <hr className="my-6 border-[0.5px] border-[#DEDEDE]" />
-      <AbsentMissionSubmitMenu missionDetail={missionDetail} />
+      <AbsentMissionSubmitMenu
+        missionDetail={missionDetail}
+        currentSchedule={currentSchedule}
+      />
     </>
   );
 };
