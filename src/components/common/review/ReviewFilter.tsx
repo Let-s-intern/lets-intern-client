@@ -1,10 +1,11 @@
 'use client';
 
 import { useMediaQuery } from '@mui/material';
-import { Check, ChevronDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { memo, ReactNode, useEffect, useState } from 'react';
 
+import Check from '@/assets/icons/check-box.svg';
 import CheckboxActive from '@/assets/icons/checkbox-active.svg?react';
 import CheckboxInActive from '@/assets/icons/checkbox-inactive.svg?react';
 import { twMerge } from '@/lib/twMerge';
