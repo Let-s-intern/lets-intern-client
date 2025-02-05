@@ -16,7 +16,7 @@ function ReviewNavBar() {
   return (
     <>
       {/* 모바일 네비 바 */}
-      <div>
+      <div className="sticky top-[3.75rem] z-10 bg-white">
         <nav className="px-5 md:hidden">
           <ul className="flex items-stretch">
             <MobileNavItem
@@ -47,7 +47,7 @@ function ReviewNavBar() {
       </div>
 
       {/* 데스크탑 네비 바 */}
-      <nav className="relative mr-8 hidden md:block">
+      <nav className="mr-8 hidden md:block">
         <ul className="sticky top-[106px] flex w-[11.5rem] flex-col items-stretch">
           <DesktopNavItem
             href="/review/mission"
