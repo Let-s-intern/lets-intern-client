@@ -20,7 +20,7 @@ function ReviewNavBar() {
         <nav className="px-5 md:hidden">
           <ul className="flex items-stretch">
             <MobileNavItem
-              href="/review/program"
+              href="/review/mission"
               subHref={['/review/mission', '/review/program']}
             >
               프로그램 참여 후기
