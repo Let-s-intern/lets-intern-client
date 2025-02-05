@@ -10,11 +10,10 @@ import { ActiveChallengeType, ChallengeType, PageInfo } from '@/schema';
 import MuiPagination from '@components/common/program/pagination/MuiPagination';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import ReviewCard from '@components/ReviewCard';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 const ProgramReviewContentSection = () => {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageInfo, setPageInfo] = useState<PageInfo | null>(null);
@@ -115,11 +114,11 @@ const ProgramReviewContentSection = () => {
   }, [reviewData, pageInfo]);
 
   return (
-    <div className="flex flex-col w-full px-5 pb-12 gap-y-6 md:pr-5 md:pl-0 lg:px-0 md:pb-8">
+    <div className="flex w-full flex-col gap-y-6 px-5 pb-12 md:pb-8 md:pl-0 md:pr-5 lg:px-0">
       {isLoading ? (
         <LoadingContainer className="h-64" />
       ) : !reviewData || reviewData.reviewList.length < 1 ? (
-        <div className="flex items-center justify-center bg-neutral-95 rounded-ms text-xsmall14 text-neutral-40 h-60">
+        <div className="flex h-60 items-center justify-center rounded-ms bg-neutral-95 text-xsmall14 text-neutral-40">
           등록된 후기가 없습니다.
         </div>
       ) : (
