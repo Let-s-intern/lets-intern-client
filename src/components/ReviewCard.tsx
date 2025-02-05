@@ -163,11 +163,11 @@ const ReviewCard = ({
           ))}
         </div>
 
-        <div className="mb-2 mt-auto flex items-center gap-2 text-xxsmall12">
+        <div className="mb-2 mt-auto flex items-center gap-2 text-xxsmall12 md:flex-col md:items-start">
           <span className="whitespace-pre font-medium text-neutral-20">
             {review.reviewInfo.name ? `${review.reviewInfo.name[0]}**` : '익명'}
           </span>
-          <span className="text-neutral-70">|</span>
+          <span className="text-neutral-70 md:hidden">|</span>
           <span className="text-neutral-20">
             희망직무{' '}
             <span className="font-medium">{review.reviewInfo.wishJob}</span> ·
