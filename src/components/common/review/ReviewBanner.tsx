@@ -37,22 +37,22 @@ function ReviewBanner() {
   type HeadingKey = keyof typeof heading;
 
   return (
-    <header className="relative flex bg-secondary px-5 md:justify-center py-10 h-[11.125rem] md:h-[10.75rem]">
+    <header className="relative flex h-[11.125rem] bg-secondary px-5 py-10 md:h-[10.75rem] md:justify-center">
       {/* 본문 */}
-      <div className="flex flex-col z-10 gap-1 w-full md:pl-3 md:gap-2 max-w-[1100px]">
+      <div className="z-10 flex w-full max-w-[1100px] flex-col gap-1 md:gap-2 md:pl-3">
         {/* pathname에 따라 제목 불러오기 */}
-        <h1 className="text-white md:text-medium24 text-small20 font-bold">
+        <h1 className="text-small20 font-semibold text-white md:text-medium24">
           {pathname === '/review'
             ? heading.all
-            : heading[pathname.slice(8) as HeadingKey]}
+            : heading[pathname.split('/')[2] as HeadingKey]}
         </h1>
-        <p className="text-neutral-90 md:text-xsmall16 text-xsmall14 text-justify md:text-left">
+        <p className="text-justify text-xsmall14 text-neutral-90 md:text-left md:text-xsmall16">
           {pathname === '/review/blog' ? description.blog : description.program}
         </p>
       </div>
 
       {/* 이미지 */}
-      <div className="w-full md:w-[36rem] md:h-full bg-light absolute bottom-0 md:top-0 md:left-auto left-0 right-0 h-[6.75rem]">
+      <div className="bg-light absolute bottom-0 left-0 right-0 h-[6.75rem] w-full md:left-auto md:top-0 md:h-full md:w-[36rem]">
         <Image
           className="object-cover"
           src="/images/review-banner.png"
@@ -62,7 +62,7 @@ function ReviewBanner() {
           priority
         />
         {/* 이미지 위에 올라가는 Gradient 배경 */}
-        <div className="absolute w-full bottom-0 md:top-0 md:left-auto left-0 right-0 h-full bg-gradient-to-t md:bg-gradient-to-l from-secondary/0 to-secondary" />
+        <div className="absolute bottom-0 left-0 right-0 h-full w-full bg-gradient-to-t from-secondary/0 to-secondary md:left-auto md:top-0 md:bg-gradient-to-l" />
       </div>
     </header>
   );
