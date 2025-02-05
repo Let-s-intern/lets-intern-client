@@ -35,22 +35,22 @@ const TextArea = ({
   return (
     <div
       className={twMerge(
-        'flex flex-col rounded-md bg-neutral-95 p-3',
+        'flex flex-col rounded-md bg-neutral-95',
         wrapperClassName,
       )}
     >
       <textarea
         {...props}
         className={twMerge(
-          'h-full w-full resize-none bg-neutral-95 text-xsmall14 font-normal outline-none placeholder:font-normal placeholder:text-black/35',
+          'h-full w-full resize-none bg-neutral-95 p-3 text-xsmall14 font-normal outline-none placeholder:font-normal placeholder:text-black/35',
           props.className,
         )}
         maxLength={maxLength}
         onChange={handleTextAreaChange}
       />
       {maxLength && (
-        <div className="text-right">
-          <span className="text-xxsmall12 text-black/35">
+        <div className="pb-3 pr-3 text-right">
+          <span className="float-right block text-xxsmall12 text-black/35">
             {textLength}/{maxLength}
           </span>
         </div>
