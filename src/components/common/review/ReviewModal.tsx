@@ -116,8 +116,8 @@ function ReviewModal({
             <div className="w-full flex-1 md:overflow-y-auto">
               {isLastMission && programTitle && (
                 <p className="mb-8 text-xsmall16 font-medium text-neutral-20">
-                  참여한 {josa(programTitle, '을/를')} 회고하고, 나 자신이
-                  얼마나 성장했는지 확인해보세요!
+                  참여한 {josa(programTitle, '을/를')} 회고하고,
+                  <br />나 자신이 얼마나 성장했는지 확인해보세요!
                 </p>
               )}
 
