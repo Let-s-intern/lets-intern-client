@@ -68,7 +68,7 @@ function ReviewModal({
           <div
             ref={scrollRef}
             className={twMerge(
-              'w-full px-5 pb-8 md:h-full md:w-[45rem] md:overflow-y-auto md:pl-12 md:pt-6',
+              'w-screen px-5 pb-8 md:h-full md:w-[45rem] md:overflow-y-auto md:pl-12 md:pt-6',
               // 스크롤 너비를 padding에서 제외 (치우침 방지)
               hasScroll ? 'pr-8' : 'pr-12',
               isLastMission ? 'md:pb-40' : 'md:pb-32',
