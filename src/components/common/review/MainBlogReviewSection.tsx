@@ -21,7 +21,7 @@ function MainBlogReviewSection() {
       {isLoading ? (
         <LoadingContainer className="h-[45rem] md:h-[24rem]" />
       ) : (
-        <div className="mt-6 grid grid-cols-2 gap-x-5 gap-y-6 md:grid-cols-4 md:gap-5">
+        <div className="mt-6 grid grid-cols-2 gap-x-5 gap-y-9 md:grid-cols-4 md:gap-5 md:gap-y-6">
           {data?.reviewList.map((review) => (
             <ReviewLinkCard
               key={review.blogReviewId}
