@@ -63,8 +63,22 @@ function ReviewModal({
   return (
     <>
       {/* 바탕 */}
-      <div className="mx-auto bg-neutral-0/50 md:fixed md:inset-0 md:z-50 md:flex md:flex-col md:items-center md:justify-center md:py-24">
-        <main className="relative bg-white md:overflow-hidden md:rounded-ms">
+      <div
+        className="mx-auto bg-neutral-0/50 md:fixed md:inset-0 md:z-50 md:flex md:flex-col md:items-center md:justify-center md:py-24"
+        onClick={() => {
+          if (readOnly) {
+            if (onClose) {
+              onClose();
+            } else {
+              navigate('/mypage/review', { replace: true });
+            }
+          }
+        }}
+      >
+        <main
+          className="relative bg-white md:overflow-hidden md:rounded-ms"
+          onClick={(e) => e.stopPropagation()} // 바탕 클릭 시 모달 닫힘 방지
+        >
           <div
             ref={scrollRef}
             className={twMerge(
