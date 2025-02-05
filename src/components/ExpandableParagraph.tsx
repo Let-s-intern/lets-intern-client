@@ -10,7 +10,7 @@ const ExpandableParagraph = ({
   lineClamp = 2,
 }: {
   content: string;
-  lineClamp?: 1 | 2 | 3 | 4;
+  lineClamp?: 1 | 2 | 3 | 4 | 5;
   className?: string;
   buttonClassName?: string;
 }) => {
@@ -58,14 +58,16 @@ const ExpandableParagraph = ({
                 ? 'line-clamp-3'
                 : lineClamp === 4
                   ? 'line-clamp-4'
-                  : null,
+                  : lineClamp === 5
+                    ? 'line-clamp-5'
+                    : null,
 
         className,
       )}
     >
       <button
         className={twMerge(
-          'float-right text-primary hover:underline [shape-outside:border-box]',
+          'float-right text-primary [shape-outside:border-box] hover:underline',
           expanding && 'hidden',
           !isOverflown && 'hidden',
           buttonClassName,
@@ -87,7 +89,7 @@ const ExpandableParagraph = ({
         {expanding ? (
           <button
             className={twMerge(
-              ' text-primary ml-0.5 hover:underline',
+              'ml-0.5 text-primary hover:underline',
               buttonClassName,
             )}
             onClick={(e) => {

@@ -83,7 +83,7 @@ const ReviewCard = ({
 }: {
   review: GetReview;
   missionTitleClamp?: 1 | 2;
-  reviewItemLineClamp?: 1 | 2 | 3 | 4;
+  reviewItemLineClamp?: 1 | 2 | 3 | 4 | 5;
   expandable?: boolean;
   showThumbnail?: boolean;
   thumbnailLink?: string;
@@ -144,7 +144,7 @@ const ReviewCard = ({
                 questionText="미션 수행 후기"
                 questionType={null}
                 answer={review.reviewInfo.attendanceReview}
-                lineClamp={expandable ? reviewItemLineClamp : 4}
+                lineClamp={expandable ? reviewItemLineClamp : 5}
                 icon={questionIcon(null)}
                 expandable={expandable}
               />
@@ -206,7 +206,7 @@ const ReviewCard = ({
 const ReviewItemBlock = (props: {
   answer?: string | null;
   questionType?: QuestionType | null;
-  lineClamp?: 1 | 2 | 3 | 4;
+  lineClamp?: 1 | 2 | 3 | 4 | 5;
   /** 이게 있을 경우 우선함. */
   questionText?: string;
   expandable?: boolean;
@@ -242,7 +242,9 @@ const ReviewItemBlock = (props: {
                   ? 'line-clamp-3'
                   : props.lineClamp === 4
                     ? 'line-clamp-4'
-                    : null,
+                    : props.lineClamp === 5
+                      ? 'line-clamp-5'
+                      : null,
           )}
         >
           {props.answer}
