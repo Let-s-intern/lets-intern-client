@@ -1,13 +1,6 @@
 'use client';
 
 import { GetReview, QuestionType } from '@/api/review';
-import { YYYY_MM_DD } from '@/data/dayjsFormat';
-import dayjs from '@/lib/dayjs';
-import { twMerge } from '@/lib/twMerge';
-import { questionTypeToText } from '@/utils/convert';
-import ExpandableParagraph from './ExpandableParagraph';
-import ReviewBadge from './ReviewBadge';
-
 import Bubble from '@/assets/graphic/bubble.svg?react';
 import Heart from '@/assets/graphic/heart.svg?react';
 import Lightbulb from '@/assets/graphic/lightbulb.svg?react';
@@ -15,9 +8,15 @@ import Pen from '@/assets/graphic/pen.svg?react';
 import PinBlue from '@/assets/graphic/pin_blue.svg?react';
 import PinRed from '@/assets/graphic/pin_red.svg?react';
 import Trophy from '@/assets/graphic/trophy.svg?react';
+import { YYYY_MM_DD } from '@/data/dayjsFormat';
+import dayjs from '@/lib/dayjs';
+import { twMerge } from '@/lib/twMerge';
+import { questionTypeToText } from '@/utils/convert';
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
+import ExpandableParagraph from './ExpandableParagraph';
+import ReviewBadge from './ReviewBadge';
 
 export const getTitle = (review: GetReview) => {
   switch (review.reviewInfo.type) {
@@ -80,6 +79,7 @@ const ReviewCard = ({
   thumbnailLink,
   reviewItemNums,
   href,
+  className,
 }: {
   review: GetReview;
   missionTitleClamp?: 1 | 2;
@@ -89,6 +89,7 @@ const ReviewCard = ({
   thumbnailLink?: string;
   reviewItemNums?: number;
   href?: string;
+  className?: string;
 }) => {
   const router = useRouter();
   const reviewItems = review.reviewItemList
@@ -100,9 +101,10 @@ const ReviewCard = ({
     .slice(0, reviewItemNums);
   return (
     <div
-      className={clsx(
+      className={twMerge(
         'flex flex-col gap-4 rounded-sm border border-neutral-80 p-4 sm:flex-row sm:gap-10',
-        { 'cursor-pointer': !!href },
+        href && 'cursor-pointer',
+        className,
       )}
       onClick={() => {
         if (href) {
