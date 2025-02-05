@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
 import { useControlScroll } from '@/hooks/useControlScroll';
-import useHasScroll from '@/hooks/useHasScroll';
 import { twMerge } from '@/lib/twMerge';
 import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
@@ -37,7 +36,6 @@ function ReviewModal({
   const navigate = useNavigate();
   const [isExitOpen, setIsExitOpen] = useState(false);
   const isDesktop = useMediaQuery('(min-width:768px)');
-  const { scrollRef, hasScroll } = useHasScroll();
   useControlScroll(isDesktop); // 데스크탑(모달)에서는 body 스크롤 제어
 
   const buttonText = isLastMission ? '제출하기' : '등록하기';
@@ -80,16 +78,18 @@ function ReviewModal({
           onClick={(e) => e.stopPropagation()} // 바탕 클릭 시 모달 닫힘 방지
         >
           <div
-            ref={scrollRef}
             className={twMerge(
-              'w-screen px-5 pb-8 md:h-full md:w-[45rem] md:overflow-y-auto md:pl-12 md:pt-6',
-              // 스크롤 너비를 padding에서 제외 (치우침 방지)
-              hasScroll ? 'pr-8' : 'pr-12',
+              'relative flex h-full w-screen flex-col px-5 pb-8 md:w-[45rem] md:px-12 md:pt-6',
               isLastMission ? 'md:pb-40' : 'md:pb-32',
               readOnly && 'md:pb-8',
             )}
           >
-            <div className="flex items-center justify-between">
+            <div
+              className={twMerge(
+                'flex w-full items-center justify-between bg-white',
+                !isDesktop ? 'sticky left-0 top-[3.75rem] z-10' : '',
+              )}
+            >
               <BackHeader to="/mypage/review" hideBack={isDesktop}>
                 {title ?? `${readOnly ? '후기 확인하기' : '후기 작성하기'}`}
               </BackHeader>
@@ -113,24 +113,26 @@ function ReviewModal({
                 />
               )}
             </div>
-            {isLastMission && programTitle && (
-              <p className="mb-8 text-xsmall16 font-medium text-neutral-20">
-                참여한 {josa(programTitle, '을/를')} 회고하고, 나 자신이 얼마나
-                성장했는지 확인해보세요!
-              </p>
-            )}
+            <div className="w-full flex-1 md:overflow-y-auto">
+              {isLastMission && programTitle && (
+                <p className="mb-8 text-xsmall16 font-medium text-neutral-20">
+                  참여한 {josa(programTitle, '을/를')} 회고하고,
+                  <br />나 자신이 얼마나 성장했는지 확인해보세요!
+                </p>
+              )}
 
-            <div className="flex flex-col gap-16 md:gap-8">
-              {children}
+              <div className="flex flex-col gap-16 md:gap-8">
+                {children}
 
-              {/* 모바일 버튼 */}
-              <BaseButton
-                className={`md:hidden ${readOnly ? 'hidden' : ''}`}
-                onClick={onSubmit}
-                disabled={disabled}
-              >
-                {buttonText}
-              </BaseButton>
+                {/* 모바일 버튼 */}
+                <BaseButton
+                  className={`md:hidden ${readOnly ? 'hidden' : ''}`}
+                  onClick={onSubmit}
+                  disabled={disabled}
+                >
+                  {buttonText}
+                </BaseButton>
+              </div>
             </div>
           </div>
           {/* 데스크탑 버튼 (아래 고정) */}
