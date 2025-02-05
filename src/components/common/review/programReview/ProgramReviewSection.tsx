@@ -37,23 +37,23 @@ const ProgramReviewSection = () => {
     missionIsLoading || challengeIsLoading || liveIsLoading || reportIsLoading;
 
   return (
-    <section className="w-full flex pt-6 pb-9 md:p-0 flex-col gap-y-6">
+    <section className="flex w-full flex-col gap-y-6 pb-9 pt-6 md:p-0">
       <MoreHeader
         title="프로그램 참여 후기"
         subtitle={`${totalReview?.pageInfo.totalElements ?? '-'}개`}
       />
       {isLoading || !reviewData ? (
-        <div className="flex justify-center items-center h-40">
+        <div className="flex h-40 items-center justify-center">
           <LoadingContainer />
         </div>
       ) : (
-        <div className="grid grid-rows-4 grid-cols-1 md:grid-rows-1 md:grid-cols-4 gap-6 md:gap-3">
+        <div className="grid grid-cols-1 grid-rows-4 gap-6 md:grid-cols-4 md:grid-rows-1 md:gap-3">
           {reviewData.map((review) => (
             <ReviewCard
               key={review.reviewInfo.reviewId}
               review={review}
+              reviewItemLineClamp={2}
               missionTitleClamp={1}
-              expandable
               reviewItemNums={2}
               href={`/review/${review.reviewInfo.type === 'MISSION_REVIEW' ? 'mission' : 'program'}${review.reviewInfo.type !== 'MISSION_REVIEW' ? `?program=${review.reviewInfo.type?.toLowerCase()}` : ''}`}
             />

@@ -137,14 +137,16 @@ const ReviewCard = ({
                 {review.reviewInfo.missionTitle}
               </p>
             </div>
-            <ReviewItemBlock
-              questionText="미션 수행 후기"
-              questionType={null}
-              answer={review.reviewInfo.attendanceReview}
-              lineClamp={reviewItemLineClamp}
-              icon={questionIcon(null)}
-              expandable={expandable}
-            />
+            <div className="flex-1">
+              <ReviewItemBlock
+                questionText="미션 수행 후기"
+                questionType={null}
+                answer={review.reviewInfo.attendanceReview}
+                lineClamp={expandable ? reviewItemLineClamp : 4}
+                icon={questionIcon(null)}
+                expandable={expandable}
+              />
+            </div>
           </>
         ) : null}
         <div className="mb-4 space-y-2.5">
@@ -227,7 +229,20 @@ const ReviewItemBlock = (props: {
           className={twMerge('text-xsmall14 font-normal text-neutral-10')}
         />
       ) : (
-        <p className={twMerge('text-xsmall14 font-normal text-neutral-10')}>
+        <p
+          className={twMerge(
+            'text-xsmall14 font-normal text-neutral-10',
+            props.lineClamp === 1
+              ? 'line-clamp-1'
+              : props.lineClamp === 2
+                ? 'line-clamp-2'
+                : props.lineClamp === 3
+                  ? 'line-clamp-3'
+                  : props.lineClamp === 4
+                    ? 'line-clamp-4'
+                    : null,
+          )}
+        >
           {props.answer}
         </p>
       )}
