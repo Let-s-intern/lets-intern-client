@@ -48,7 +48,7 @@ function ReviewNavBar() {
 
       {/* 데스크탑 네비 바 */}
       <nav className="relative mr-8 hidden md:block">
-        <ul className="sticky top-20 flex w-[11.5rem] flex-col items-stretch">
+        <ul className="sticky top-[106px] flex w-[11.5rem] flex-col items-stretch">
           <DesktopNavItem
             href="/review/mission"
             subHref={['/review/mission', '/review/program']}
