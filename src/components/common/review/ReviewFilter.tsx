@@ -132,9 +132,9 @@ function ReviewFilter({
   }, [searchParams, labelValue, multiSelect, list]);
 
   return (
-    <div className="flex flex-col relative w-fit">
+    <div className="relative flex w-fit flex-col">
       <div
-        className={`cursor-pointer rounded-xxs md:text-xsmall16 text-xxsmall12 py-2 flex gap-2 min-w-[8.5rem] px-3 border  bg-[#FBFBFC] ${isOpen ? 'border-primary' : 'border-neutral-90'}`}
+        className={`flex min-w-[8.5rem] cursor-pointer gap-2 rounded-xxs border bg-[#FBFBFC] px-3 py-2 text-xxsmall12 md:text-xsmall16 ${isOpen ? 'border-primary' : 'border-neutral-90'}`}
         onClick={() => setIsOpen((prev) => !prev)}
       >
         <span className="font-medium text-neutral-20">{label}</span>
@@ -152,7 +152,7 @@ function ReviewFilter({
       {!isDesktop && (
         <BaseBottomSheet isOpen={isOpen} onClose={() => setIsOpen(false)}>
           <div className="px-1">
-            <span className="block mb-4 text-small18 font-semibold text-neutral-0 ">
+            <span className="mb-4 block text-small18 font-semibold text-neutral-0">
               {label}
             </span>
             <ul>
@@ -174,7 +174,7 @@ function ReviewFilter({
 
       {/* 데스크탑 드롭다운 */}
       {isOpen && isDesktop && (
-        <ul className="bg-white z-10 absolute w-full top-12 shadow-[0_0_20px_0_rgba(164,168,179,0.25)] rounded-xxs py-2 px-3">
+        <ul className="absolute top-12 z-10 w-full rounded-xxs bg-white px-3 py-2 shadow-[0_0_20px_0_rgba(164,168,179,0.25)]">
           {list.map((item, index) => (
             <FilterList
               key={item.value}
@@ -216,7 +216,7 @@ const FilterList = ({
     <li
       key={item.value}
       className={twMerge(
-        'cursor-pointer justify-between flex items-center py-3',
+        'flex cursor-pointer items-center justify-between py-3',
         isLastItem ? '' : 'border-b border-neutral-90',
         className,
       )}
@@ -246,9 +246,9 @@ const FilterCaption = memo(function FilterCaption({
       {multiSelect ? (
         <div className="flex items-center gap-2">
           {checked ? (
-            <CheckboxActive className="w-6 h-6" />
+            <CheckboxActive className="h-6 w-6 shrink-0" />
           ) : (
-            <CheckboxInActive className="w-6 h-6" />
+            <CheckboxInActive className="h-6 w-6 shrink-0" />
           )}
           {children}
         </div>
