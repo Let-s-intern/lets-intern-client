@@ -1,13 +1,6 @@
 'use client';
 
 import { GetReview, QuestionType } from '@/api/review';
-import { YYYY_MM_DD } from '@/data/dayjsFormat';
-import dayjs from '@/lib/dayjs';
-import { twMerge } from '@/lib/twMerge';
-import { questionTypeToText } from '@/utils/convert';
-import ExpandableParagraph from './ExpandableParagraph';
-import ReviewBadge from './ReviewBadge';
-
 import Bubble from '@/assets/graphic/bubble.svg?react';
 import Heart from '@/assets/graphic/heart.svg?react';
 import Lightbulb from '@/assets/graphic/lightbulb.svg?react';
@@ -15,9 +8,15 @@ import Pen from '@/assets/graphic/pen.svg?react';
 import PinBlue from '@/assets/graphic/pin_blue.svg?react';
 import PinRed from '@/assets/graphic/pin_red.svg?react';
 import Trophy from '@/assets/graphic/trophy.svg?react';
+import { YYYY_MM_DD } from '@/data/dayjsFormat';
+import dayjs from '@/lib/dayjs';
+import { twMerge } from '@/lib/twMerge';
+import { questionTypeToText } from '@/utils/convert';
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
+import ExpandableParagraph from './ExpandableParagraph';
+import ReviewBadge from './ReviewBadge';
 
 export const getTitle = (review: GetReview) => {
   switch (review.reviewInfo.type) {
@@ -80,6 +79,7 @@ const ReviewCard = ({
   thumbnailLink,
   reviewItemNums,
   href,
+  className,
 }: {
   review: GetReview;
   missionTitleClamp?: 1 | 2;
@@ -89,6 +89,7 @@ const ReviewCard = ({
   thumbnailLink?: string;
   reviewItemNums?: number;
   href?: string;
+  className?: string;
 }) => {
   const router = useRouter();
   const reviewItems = review.reviewItemList
@@ -100,9 +101,10 @@ const ReviewCard = ({
     .slice(0, reviewItemNums);
   return (
     <div
-      className={clsx(
-        'flex flex-col gap-4 p-4 border rounded-sm sm:flex-row border-neutral-80 sm:gap-10',
-        { 'cursor-pointer': !!href },
+      className={twMerge(
+        'flex flex-col gap-4 rounded-sm border border-neutral-80 p-4 sm:flex-row sm:gap-10',
+        href && 'cursor-pointer',
+        className,
       )}
       onClick={() => {
         if (href) {
@@ -110,23 +112,23 @@ const ReviewCard = ({
         }
       }}
     >
-      <div className="flex flex-col max-w-full mr-auto">
+      <div className="mr-auto flex max-w-full flex-col">
         <div className="mb-2">
           <ReviewBadge type={review.reviewInfo.type ?? 'CHALLENGE_REVIEW'} />
         </div>
-        <h3 className="mb-2 font-bold truncate text-xsmall16 text-neutral-0">
+        <h3 className="mb-2 truncate text-xsmall16 font-bold text-neutral-0">
           {review.reviewInfo.programTitle}
         </h3>
         {review.reviewInfo.type === 'MISSION_REVIEW' ? (
           <>
-            <div className="flex items-center gap-2 mb-3 text-xxsmall12">
+            <div className="mb-3 flex items-center gap-2 text-xxsmall12">
               <span className="whitespace-pre text-neutral-20">
                 {review.reviewInfo.missionTh}회차
               </span>
               <span className="text-neutral-70">|</span>
               <p
                 className={twMerge(
-                  ' font-medium text-neutral-20',
+                  'font-medium text-neutral-20',
                   missionTitleClamp === 1
                     ? 'line-clamp-1'
                     : missionTitleClamp === 2
@@ -147,7 +149,7 @@ const ReviewCard = ({
             />
           </>
         ) : null}
-        <div className="mb-4 space-y-2.5 ">
+        <div className="mb-4 space-y-2.5">
           {reviewItems?.map((reviewItem, index) => (
             <ReviewItemBlock
               key={index}
@@ -159,19 +161,19 @@ const ReviewCard = ({
           ))}
         </div>
 
-        <div className="flex items-center gap-2 mt-auto mb-2 text-xxsmall12">
-          <span className="font-medium whitespace-pre text-neutral-20">
-            {review.reviewInfo.name?.[0]}**
+        <div className="mb-2 mt-auto flex items-center gap-2 text-xxsmall12">
+          <span className="whitespace-pre font-medium text-neutral-20">
+            {review.reviewInfo.name ? `${review.reviewInfo.name[0]}**` : '익명'}
           </span>
           <span className="text-neutral-70">|</span>
-          <span className="text-neutral-20 ">
+          <span className="text-neutral-20">
             희망직무{' '}
             <span className="font-medium">{review.reviewInfo.wishJob}</span> ·
             희망산업{' '}
             <span className="font-medium">{review.reviewInfo.wishCompany}</span>
           </span>
         </div>
-        <div className="text-neutral-40 text-xxsmall12">
+        <div className="text-xxsmall12 text-neutral-40">
           {review.reviewInfo.createDate
             ? dayjs(review.reviewInfo.createDate).format(YYYY_MM_DD)
             : ''}{' '}
@@ -183,7 +185,7 @@ const ReviewCard = ({
           src={review.reviewInfo.programThumbnail ?? ''}
           alt={review.reviewInfo.programTitle ?? ''}
           className={clsx(
-            'block object-cover w-[120px] h-[90px] sm:w-[180px] sm:h-[135px] rounded-sm sm:mt-10',
+            'block h-[90px] w-[120px] rounded-sm object-cover sm:mt-10 sm:h-[135px] sm:w-[180px]',
             {
               'cursor-pointer': !!thumbnailLink,
             },
@@ -214,9 +216,9 @@ const ReviewItemBlock = (props: {
 
   return (
     <div>
-      <div className="flex w-fit mb-0.5 items-center gap-1">
+      <div className="mb-0.5 flex w-fit items-center gap-1">
         {props.icon && props.icon}
-        <span className="font-semibold text-xxsmall12 text-neutral-10">
+        <span className="text-xxsmall12 font-semibold text-neutral-10">
           {questionText}
         </span>
       </div>

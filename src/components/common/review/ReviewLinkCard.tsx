@@ -54,7 +54,7 @@ function ReviewLinkCard({
           {badgeType ? <ReviewBadge type={badgeType} /> : null}
 
           {programTitle ? (
-            <span className="block truncate text-xsmall14 font-bold text-primary">
+            <span className="block max-w-full truncate text-xsmall14 font-bold text-primary">
               {programTitle}
             </span>
           ) : null}
