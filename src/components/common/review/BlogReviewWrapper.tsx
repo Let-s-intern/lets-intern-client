@@ -6,7 +6,7 @@ import { ProgramTypeEnum } from '@/schema';
 import ReviewFilter from '@components/common/review/ReviewFilter';
 import BlogReviewListSection from './BlogReviewListSection';
 
-const { CHALLENGE, LIVE, REPORT, VOD } = ProgramTypeEnum.enum;
+const { CHALLENGE, LIVE, REPORT } = ProgramTypeEnum.enum;
 
 const filterList = [
   {
