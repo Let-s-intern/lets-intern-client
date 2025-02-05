@@ -11,6 +11,10 @@ const MyPage = () => {
   const navigate = useNavigate();
 
   const isReviewCreatePage = location.pathname.startsWith('/mypage/review/new');
+  const isReviewPage =
+    location.pathname.startsWith('/mypage/review/challenge') ||
+    location.pathname.startsWith('/mypage/review/live') ||
+    location.pathname.startsWith('/mypage/review/report');
 
   useEffect(() => {
     // login 페이지로 넘어간 이후 이 useEffect가 한번 더 실행되는 케이스가 있어서 방어로직 추가
@@ -29,7 +33,7 @@ const MyPage = () => {
           className={clsx(
             'flex w-full items-center justify-center md:w-auto',
             // 후기 작성 화면에서는 네비 바 숨김
-            { hidden: isReviewCreatePage },
+            { hidden: isReviewCreatePage || isReviewPage },
           )}
         >
           <div className="flex w-full items-center justify-center py-8 md:w-[12.5rem] md:p-0">
@@ -91,7 +95,7 @@ const MyPage = () => {
             </div>
           </div>
         </nav>
-        <div className="flex flex-col items-start justify-center w-full pb-8 grow md:w-auto">
+        <div className="flex w-full grow flex-col items-start justify-center pb-8 md:w-auto">
           <div className="flex w-full flex-col items-start justify-center gap-y-8 lg:mx-auto lg:max-w-[37.5rem]">
             <Outlet />
           </div>
