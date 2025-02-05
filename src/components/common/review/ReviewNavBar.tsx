@@ -91,14 +91,14 @@ function MobileNavItem({
   return (
     <li
       className={clsx(
-        'flex flex-1 items-center justify-center pb-3 pt-3 text-center leading-4',
+        'flex flex-1 items-center justify-center pb-2 pt-3 text-center leading-4',
         {
           'border-b-2 border-primary': active,
         },
       )}
     >
       <Link
-        className={`text-xxsmall12 ${active ? 'font-semibold text-primary' : 'text-neutral-35'}`}
+        className={`text-xsmall14 ${active ? 'font-semibold text-primary' : 'text-neutral-35'}`}
         href={href}
       >
         {children}
