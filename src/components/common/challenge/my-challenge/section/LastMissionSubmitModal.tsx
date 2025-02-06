@@ -43,6 +43,7 @@ const LastMissionSubmitModal = ({
     usePostReviewMutation({
       challengeId,
       successCallback: () => {
+        alert('챌린지 회고 작성이 완료되었습니다.');
         onClose();
       },
       errorCallback: (error) => {
