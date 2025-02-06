@@ -61,4 +61,6 @@ export const challengeSubmitDetailCellWidthList = [
   'w-[10%]',
   'w-[7%]',
   'w-[10%]',
+  'flex-1',
+  'w-[10%]',
 ];

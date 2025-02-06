@@ -6,6 +6,7 @@ import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tabl
 import ChoiceCheckbox from './ChoiceCheckbox';
 import CommentCell from './CommentCell';
 import ResultDropdown from './ResultDropdown';
+import ReviewCell from './ReviewCell';
 import StatusDropdown from './StatusDropdown';
 
 interface Props {
@@ -141,6 +142,18 @@ const TableRow = ({
         setIsRefunded={setIsRefunded}
       /> */}
       <CommentCell attendance={attendance} cellWidthListIndex={8} />
+      <ReviewCell
+        review={attendance.review ?? undefined}
+        cellWidthListIndex={9}
+      />
+      <div
+        className={clsx(
+          'overflow-hidden text-ellipsis py-3 text-center text-sm',
+          cellWidthList[10],
+        )}
+      >
+        {attendance.isVisible ? '노출' : '비노출'}
+      </div>
     </div>
   );
 };

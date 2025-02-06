@@ -1,10 +1,10 @@
 import clsx from 'clsx';
 
+import { Attendance } from '../../../../../../schema';
 import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
-import AllChoiceCheckbox from '../table-body/AllChoiceCheckbox';
 import ResultFilter from '../../filter/ResultFilter';
 import StatusFilter from '../../filter/StatusFilter';
-import { Attendance } from '../../../../../../schema';
+import AllChoiceCheckbox from '../table-body/AllChoiceCheckbox';
 
 interface Props {
   className?: string;
@@ -108,7 +108,30 @@ const TableHead = ({
       >
         환급여부
       </div> */}
-      <div className={clsx('py-3 text-center', cellWidthList[8])}>코멘트</div>
+      <div
+        className={clsx(
+          'border-r border-[#D9D9D9] py-3 text-center',
+          cellWidthList[8],
+        )}
+      >
+        코멘트
+      </div>
+      <div
+        className={clsx(
+          'border-r border-[#D9D9D9] py-3 text-center',
+          cellWidthList[9],
+        )}
+      >
+        미션 소감
+      </div>
+      <div
+        className={clsx(
+          'border-r border-[#D9D9D9] py-3 text-center',
+          cellWidthList[10],
+        )}
+      >
+        노출 여부
+      </div>
     </div>
   );
 };

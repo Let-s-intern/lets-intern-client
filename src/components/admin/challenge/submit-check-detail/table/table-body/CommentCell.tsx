@@ -59,7 +59,7 @@ const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
     <>
       <div
         className={clsx(
-          'cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap px-2 py-3 text-center text-sm',
+          'cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap border-r border-[#D9D9D9] px-2 py-3 text-center text-sm',
           cellWidthList[cellWidthListIndex],
         )}
         onClick={() => setModalShown(true)}

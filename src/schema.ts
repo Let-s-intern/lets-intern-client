@@ -704,6 +704,8 @@ export const attendances = z
         email: z.string().nullable(),
         status: attendanceStatus.nullable(),
         link: z.string().nullable(),
+        review: z.string().nullable().optional(),
+        isVisible: z.boolean().nullable().optional(),
         result: attendanceResult.nullable(),
         comments: z.string().nullable().optional(),
         createDate: z.string().nullable(),
