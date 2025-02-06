@@ -7,6 +7,7 @@ interface MoreReviewButtonProps {
   mainColor: string;
   subColor: string;
   challengeType?: ChallengeType;
+  liveJob?: string;
 }
 
 const MoreReviewButton = ({
@@ -14,12 +15,13 @@ const MoreReviewButton = ({
   subColor,
   type,
   challengeType,
+  liveJob,
 }: MoreReviewButtonProps) => {
   return (
     <>
       <Link
         className="more_reviews flex w-full items-center justify-center px-5 md:px-0"
-        href={`/review/program?program=${type.toLowerCase()}_review${challengeType ? `&challenge=${challengeType.toLowerCase()}` : ''}`}
+        href={`/review/program?program=${type.toLowerCase()}_review${challengeType ? `&challenge=${challengeType.toLowerCase()}` : ''}${liveJob ? `&liveJob=${liveJob}` : ''}`}
         scroll
       >
         <div

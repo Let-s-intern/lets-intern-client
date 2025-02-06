@@ -67,8 +67,8 @@ const LiveView: React.FC<{ live: LiveIdPrimitive; isPreview?: boolean }> = ({
   }, [live]);
 
   return (
-    <div className="flex flex-col w-full">
-      <div className="flex flex-col items-center w-full">
+    <div className="flex w-full flex-col">
+      <div className="flex w-full flex-col items-center">
         <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
           <NextBackHeader to="/program">{live.title ?? ''}</NextBackHeader>
           {live.vod && <LiveVod />}
@@ -81,7 +81,7 @@ const LiveView: React.FC<{ live: LiveIdPrimitive; isPreview?: boolean }> = ({
           isReady={!faqIsLoading}
         />
 
-        <div className="flex flex-col items-center w-full overflow-x-hidden">
+        <div className="flex w-full flex-col items-center overflow-x-hidden">
           <LiveMentor
             id={LIVE_MENTOR_INTRO_ID}
             mentor={mentor}
@@ -127,6 +127,7 @@ const LiveView: React.FC<{ live: LiveIdPrimitive; isPreview?: boolean }> = ({
                 type={'LIVE'}
                 mainColor={'#4D55F5'}
                 subColor={'#E45BFF'}
+                liveJob={live.job ?? undefined}
               />
             </div>
             {receivedContent.blogReview && (
