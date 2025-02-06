@@ -145,7 +145,7 @@ function ReviewFilter({
           onClick={() => setIsOpen((prev) => !prev)}
         >
           <span className="font-medium text-neutral-20">{label}</span>
-          <span className="font-bold text-primary">
+          <span className="font-semibold text-primary">
             {multiSelect
               ? multiSelectCaption
               : selectedItem
