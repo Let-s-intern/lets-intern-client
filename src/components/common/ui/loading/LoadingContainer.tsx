@@ -13,7 +13,11 @@ const LoadingContainer = ({ text, className }: LoadingContainerProps) => {
         className,
       )}
     >
-      <img src="/logo/logo-simple.svg" alt="로딩 중" />
+      <img
+        src="/logo/logo-simple.svg"
+        className="animate-pulse"
+        alt="로딩 중"
+      />
       <div className="text-sm text-neutral-30">{text || '로딩 중...'}</div>
     </div>
   );

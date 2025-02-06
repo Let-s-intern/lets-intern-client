@@ -4,6 +4,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { AxiosError } from 'axios';
 import axios from '../../../utils/axios';
 
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useMutation } from '@tanstack/react-query';
 import SocialLogin from '../../../components/common/auth/ui/SocialLogin';
 import Button from '../../../components/common/ui/button/Button';
@@ -37,6 +38,7 @@ const TextLink = ({ to, dark, className, children }: TextLinkProps) => {
  */
 const Login = () => {
   const { isLoggedIn, login } = useAuthStore();
+  const [isLoading, setIsLoading] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -88,12 +90,18 @@ const Login = () => {
     }
 
     if (searchParams.get('result')) {
+      setIsLoading(true);
       const parsedToken = JSON.parse(searchParams.get('result') || '');
       const newSearchParams = new URLSearchParams(searchParams);
       newSearchParams.delete('result');
+      newSearchParams.set('isLoading', 'true');
       setSearchParams(newSearchParams);
       handleLoginSuccess(parsedToken);
       return;
+    }
+
+    if (searchParams.get('isLoading')) {
+      setIsLoading(true);
     }
 
     if (isLoggedIn) {
@@ -119,6 +127,7 @@ const Login = () => {
       login(token.accessToken, token.refreshToken);
       window.location.href = redirect;
     }
+    setIsLoading(false);
   };
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
@@ -128,42 +137,49 @@ const Login = () => {
   };
 
   return (
-    <main className="min-h-screen px-4 mx-auto sm:max-w-md">
-      <header>
-        <h1 className="mt-12 mb-8 text-xl font-semibold text-center">
-          반갑습니다!
-        </h1>
-      </header>
-      <form className="flex flex-col gap-2" onSubmit={handleLogin}>
-        <Input
-          type="email"
-          label="이메일"
-          value={email}
-          onChange={(e: any) => setEmail(e.target.value)}
-        />
-        <Input
-          type="password"
-          label="비밀번호"
-          value={password}
-          onChange={(e: any) => setPassword(e.target.value)}
-        />
-        {errorMessage && (
-          <span className="text-sm font-medium text-center text-red-600">
-            {errorMessage}
-          </span>
-        )}
-        <Button type="submit" disabled={buttonDisabled}>
-          로그인
-        </Button>
-      </form>
-      <SocialLogin type="LOGIN" />
-      <div className="flex justify-center gap-8 mt-8">
-        <TextLink to={`/signup?redirect=${redirect}`}>회원가입</TextLink>
-        <TextLink to="/find-password" dark>
-          비밀번호 찾기
-        </TextLink>
-      </div>
-    </main>
+    <>
+      <main className="mx-auto min-h-screen px-4 sm:max-w-md">
+        <header>
+          <h1 className="mb-8 mt-12 text-center text-xl font-semibold">
+            반갑습니다!
+          </h1>
+        </header>
+        <form className="flex flex-col gap-2" onSubmit={handleLogin}>
+          <Input
+            type="email"
+            label="이메일"
+            value={email}
+            onChange={(e: any) => setEmail(e.target.value)}
+          />
+          <Input
+            type="password"
+            label="비밀번호"
+            value={password}
+            onChange={(e: any) => setPassword(e.target.value)}
+          />
+          {errorMessage && (
+            <span className="text-center text-sm font-medium text-red-600">
+              {errorMessage}
+            </span>
+          )}
+          <Button type="submit" disabled={buttonDisabled}>
+            로그인
+          </Button>
+        </form>
+        <SocialLogin type="LOGIN" />
+        <div className="mt-8 flex justify-center gap-8">
+          <TextLink to={`/signup?redirect=${redirect}`}>회원가입</TextLink>
+          <TextLink to="/find-password" dark>
+            비밀번호 찾기
+          </TextLink>
+        </div>
+      </main>
+      {isLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-70">
+          <LoadingContainer />
+        </div>
+      )}
+    </>
   );
 };
 
