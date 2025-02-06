@@ -36,11 +36,11 @@ const ProgramReviewFilterSection = () => {
   // const reviewType = searchParams.get('REVIEW');
 
   return (
-    <section className="flex gap-x-2 overflow-x-auto px-5 py-6 scrollbar-hide md:gap-x-3 md:p-0">
+    <section className="flex gap-x-2 overflow-auto px-5 py-6 scrollbar-hide md:gap-x-3 md:overflow-visible md:p-0">
       <ReviewFilter
         label="프로그램 후기"
         labelValue="program"
-        childLabelValue={['challenge']}
+        childLabelValue={['challenge', 'liveJob']}
         list={programTypeFilterList}
       />
       {programType === 'CHALLENGE_REVIEW'.toLowerCase() && (

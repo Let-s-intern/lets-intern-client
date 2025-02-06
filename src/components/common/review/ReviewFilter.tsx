@@ -141,18 +141,18 @@ function ReviewFilter({
 
       <div className="relative flex w-fit shrink-0 flex-col">
         <div
-          className={`flex min-w-[8.5rem] shrink-0 cursor-pointer items-center gap-2 rounded-xxs border bg-[#FBFBFC] px-3 py-2 text-xxsmall12 md:text-xsmall16 ${isOpen ? 'border-primary' : 'border-neutral-90'}`}
+          className={`flex min-w-[8.5rem] cursor-pointer items-center gap-2 rounded-xxs border bg-[#FBFBFC] px-3 py-2 text-xxsmall12 md:text-xsmall16 ${isOpen ? 'border-primary' : 'border-neutral-90'}`}
           onClick={() => setIsOpen((prev) => !prev)}
         >
-          <span className="shrink-0 font-medium text-neutral-20">{label}</span>
-          <span className="shrink-0 font-bold text-primary">
+          <span className="font-medium text-neutral-20">{label}</span>
+          <span className="font-bold text-primary">
             {multiSelect
               ? multiSelectCaption
               : selectedItem
                 ? selectedItem.caption
                 : '전체'}
           </span>
-          <ChevronDown className="shrink-0" size={20} />
+          <ChevronDown size={20} />
         </div>
 
         {/* 모바일 바텀 시트 */}
@@ -162,7 +162,7 @@ function ReviewFilter({
               <span className="mb-4 block text-small18 font-semibold text-neutral-0">
                 {label}
               </span>
-              <ul>
+              <ul className="max-h-[60vh] overflow-y-auto">
                 {list.map((item, index) => (
                   <FilterList
                     key={item.value}
