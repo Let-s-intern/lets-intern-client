@@ -15,7 +15,7 @@ const ReviewCell = ({ review, cellWidthListIndex }: ReviewCellProps) => {
     <>
       <div
         className={clsx(
-          'cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap border-r border-[#D9D9D9] py-3 text-center text-sm',
+          'cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap border-r border-[#D9D9D9] p-3 text-center text-sm',
           challengeSubmitDetailCellWidthList[cellWidthListIndex],
         )}
         onClick={() => setIsReviewShown(true)}
