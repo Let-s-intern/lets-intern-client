@@ -28,7 +28,7 @@ function ReviewBanner() {
 
   const heading = {
     all: `렛츠커리어 100% 솔직 후기 ${data?.count ? `총 ${data.count}개` : ''}`,
-    program: '프로그램 참여 후기',
+    program: '참여 후기',
     mission: '미션 수행 후기',
     blog: '블로그 후기',
     interview: '프로그램 참여자 인터뷰',
