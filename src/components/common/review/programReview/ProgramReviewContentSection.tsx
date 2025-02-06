@@ -20,11 +20,12 @@ const ProgramReviewContentSection = () => {
 
   const programType = searchParams.get('program')?.toUpperCase();
   const challengeType = searchParams.get('challenge')?.toUpperCase();
-  // const reviewType = searchParams.get('REVIEW');
+  const liveJobType = searchParams.get('liveJob');
 
   const challengeTypeList = challengeType
     ?.split(',')
     .map((value) => value as ChallengeType);
+  const liveJobTypeList = liveJobType?.split(',');
 
   // const onlyMissionReview = reviewType === 'MISSION_REVIEW';
 
@@ -39,6 +40,7 @@ const ProgramReviewContentSection = () => {
       ? [programType as ReviewType]
       : ['CHALLENGE_REVIEW', 'LIVE_REVIEW', 'REPORT_REVIEW'],
     challengeTypes: challengeTypeList,
+    liveJob: liveJobTypeList,
     page: currentPage,
     size: 10,
   };

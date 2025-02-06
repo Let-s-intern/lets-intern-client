@@ -530,6 +530,23 @@ export const liveAndVodJob = z.enum([
   '공정연구',
 ]);
 
+export type LiveAndVodJob = z.infer<typeof liveAndVodJob>;
+export const liveJobList: LiveAndVodJob[] = [
+  '경영관리',
+  '금융',
+  '마케팅',
+  '광고',
+  '디자인',
+  '방송',
+  '개발',
+  '영업',
+  '서비스기획',
+  '사업전략',
+  '컨설팅',
+  '유통',
+  '공정연구',
+];
+
 const vodInfoSchema = z.object({
   id: z.number(),
   title: z.string().nullable().optional(),

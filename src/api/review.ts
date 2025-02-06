@@ -187,6 +187,7 @@ export const usePostReviewMutation = ({
 export type programReviewParam = {
   types?: ReviewType[];
   challengeTypes?: ChallengeType[];
+  liveJob?: string[];
   page?: number;
   size?: number;
 };
@@ -205,16 +206,24 @@ const getProgramReviewQueryKey = (param?: programReviewParam) => [
 export const useGetProgramReview = ({
   types,
   challengeTypes,
+  liveJob,
   page = 0,
   size = 10,
 }: programReviewParam) => {
   return useQuery({
-    queryKey: getProgramReviewQueryKey({ types, challengeTypes, page, size }),
+    queryKey: getProgramReviewQueryKey({
+      types,
+      challengeTypes,
+      liveJob,
+      page,
+      size,
+    }),
     queryFn: async () => {
       const res = await axiosV2.get('/review', {
         params: {
           type: types ? types.join(',') : undefined,
           challengeType: challengeTypes ? challengeTypes.join(',') : undefined,
+          liveJob: liveJob ? liveJob.join(',') : undefined,
           page,
           size,
         },
