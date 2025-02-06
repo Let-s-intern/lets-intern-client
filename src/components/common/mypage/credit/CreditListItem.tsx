@@ -29,6 +29,7 @@ const CreditListItem = ({ payment }: { payment: PaymentType }) => {
       />
       <div className="flex w-full items-center gap-x-[14px]">
         <img
+          alt="thumbnail"
           src={
             payment.programInfo.programType === 'REPORT'
               ? '/images/report-banner.jpg'
@@ -59,6 +60,7 @@ const CreditListItem = ({ payment }: { payment: PaymentType }) => {
           <button className="flex items-center justify-start text-xs font-semibold text-primary md:text-sm">
             결제상세
             <img
+              alt="chevron-right"
               src="/icons/Chevron_Right_MD_primary.svg"
               className="h-4 w-4"
             />
