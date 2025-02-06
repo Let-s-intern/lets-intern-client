@@ -1,11 +1,12 @@
 import { z } from 'zod';
 
-import { ProgramTypeEnum } from '@/schema';
+import { ProgramTypeEnum, reportTypeSchema } from '@/schema';
 
 export const programInfoType = z.object({
   paymentId: z.number().nullable().optional(),
   applicationId: z.number().nullable().optional(),
   programType: ProgramTypeEnum.nullable().optional(),
+  reportType: reportTypeSchema.nullable().optional(),
   title: z.string().nullable().optional(),
   thumbnail: z.string().nullable().optional(),
   price: z.number().nullable().optional(),

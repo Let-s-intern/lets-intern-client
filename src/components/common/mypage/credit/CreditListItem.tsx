@@ -1,7 +1,21 @@
+import { ReportType } from '@/api/report';
 import { twMerge } from '@/lib/twMerge';
 import { Link } from 'react-router-dom';
 import { PaymentType } from '../../../../api/paymentSchema';
 import CardStatus from './CardStatus';
+
+const getReportThumbnail = (reportType: ReportType | null) => {
+  switch (reportType) {
+    case 'RESUME':
+      return '/images/report/thumbnail_resume.png';
+    case 'PERSONAL_STATEMENT':
+      return '/images/report/thumbnail_personal.png';
+    case 'PORTFOLIO':
+      return '/images/report/thumbnail_portfolio.png';
+    default:
+      return '/images/report-banner.jpg';
+  }
+};
 
 const CreditListItem = ({ payment }: { payment: PaymentType }) => {
   return (
@@ -32,7 +46,7 @@ const CreditListItem = ({ payment }: { payment: PaymentType }) => {
           alt="thumbnail"
           src={
             payment.programInfo.programType === 'REPORT'
-              ? '/images/report-banner.jpg'
+              ? getReportThumbnail(payment.programInfo.reportType || null)
               : payment.programInfo.thumbnail || ''
           }
           className={twMerge(
