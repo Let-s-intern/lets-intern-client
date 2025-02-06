@@ -1,5 +1,6 @@
 'use client';
 
+import { ReportType } from '@/api/report';
 import { GetReview, QuestionType } from '@/api/review';
 import Bubble from '@/assets/graphic/bubble.svg?react';
 import Heart from '@/assets/graphic/heart.svg?react';
@@ -67,6 +68,22 @@ const questionPriority = (questionType: QuestionType | null) => {
       return 6;
     default:
       return 7;
+  }
+};
+
+const getThumbnail = (
+  reportType: ReportType | null,
+  programThumbnail: string | null,
+) => {
+  switch (reportType) {
+    case 'RESUME':
+      return '/images/report/thumbnail_resume.png';
+    case 'PERSONAL_STATEMENT':
+      return '/images/report/thumbnail_personal.png';
+    case 'PORTFOLIO':
+      return '/images/report/thumbnail_portfolio.png';
+    default:
+      return programThumbnail ?? '';
   }
 };
 
@@ -182,9 +199,13 @@ const ReviewCard = ({
           작성
         </div>
       </div>
-      {showThumbnail && review.reviewInfo.programThumbnail ? (
+      {showThumbnail &&
+      (review.reviewInfo.programThumbnail || review.reviewInfo.reportType) ? (
         <img
-          src={review.reviewInfo.programThumbnail ?? ''}
+          src={getThumbnail(
+            review.reviewInfo.reportType ?? null,
+            review.reviewInfo.programThumbnail ?? null,
+          )}
           alt={review.reviewInfo.programTitle ?? ''}
           className={clsx(
             'block h-[90px] w-[120px] rounded-sm object-cover sm:mt-10 sm:h-[135px] sm:w-[180px]',

@@ -65,6 +65,7 @@ export const getReviewSchema = z.object({
     programTitle: z.string().nullable().optional(),
     programThumbnail: z.string().nullable().optional(),
     challengeType: challengeTypeSchema.nullable().optional(),
+    reportType: reportTypeSchema.nullable().optional(),
     missionTitle: z.string().nullable().optional(),
     missionTh: z.number().nullable().optional(),
     attendanceReview: z.string().nullable().optional(), // 미션 수행 후기
