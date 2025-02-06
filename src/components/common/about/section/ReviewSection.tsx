@@ -15,11 +15,11 @@ const reviewList = [
   },
   {
     img: '/images/home/review_hybe.png',
-    url: 'https://blog.naver.com/letsintern/223402704433',
+    url: 'https://www.letscareer.co.kr/blog/27',
   },
   {
     img: '/images/home/review_samsung.png',
-    url: 'https://blog.naver.com/letsintern/223415067865',
+    url: 'https://www.letscareer.co.kr/blog/21',
   },
   {
     img: '/images/home/review_cj.png',
