@@ -705,7 +705,7 @@ export const attendances = z
         status: attendanceStatus.nullable(),
         link: z.string().nullable(),
         review: z.string().nullable().optional(),
-        isVisible: z.boolean().nullable().optional(),
+        reviewIsVisible: z.boolean().nullable().optional(),
         result: attendanceResult.nullable(),
         comments: z.string().nullable().optional(),
         createDate: z.string().nullable(),

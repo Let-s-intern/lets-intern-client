@@ -152,7 +152,7 @@ const TableRow = ({
           cellWidthList[10],
         )}
       >
-        {attendance.isVisible ? '노출' : '비노출'}
+        {attendance.reviewIsVisible ? '노출' : '비노출'}
       </div>
     </div>
   );
