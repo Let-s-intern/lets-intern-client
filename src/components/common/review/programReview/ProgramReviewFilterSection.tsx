@@ -36,7 +36,7 @@ const ProgramReviewFilterSection = () => {
   // const reviewType = searchParams.get('REVIEW');
 
   return (
-    <section className="flex w-full flex-col gap-y-2 px-5 py-6 md:flex-row md:gap-x-2 md:p-0">
+    <section className="flex gap-x-2 overflow-x-auto px-5 py-6 scrollbar-hide md:gap-x-3 md:p-0">
       <ReviewFilter
         label="프로그램 후기"
         labelValue="program"
