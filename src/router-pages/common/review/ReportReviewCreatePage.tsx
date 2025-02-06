@@ -32,6 +32,7 @@ const ReportReviewCreatePage = () => {
   const { mutateAsync: tryPostReview, isPending: postReviewwIsPending } =
     usePostReviewMutation({
       successCallback: () => {
+        alert('리뷰 작성이 완료되었습니다.');
         navigate('/mypage/review', { replace: true });
       },
       errorCallback: (error) => {
