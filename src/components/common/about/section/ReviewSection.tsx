@@ -15,7 +15,6 @@ const title = {
 const ReviewSection = () => {
   const data = useGetBlogParticipationReview(5);
   const { scrollRef, hasScroll } = useHasScroll();
-  console.log(hasScroll);
 
   return (
     <section className="bg-[#101348] px-5 py-[3.75rem] sm:px-10 sm:py-[6.25rem] xl:py-[8.75rem]">
