@@ -1,6 +1,10 @@
+'use client';
+
+import useGetBlogParticipationReview from '@/hooks/useGetParticipationReviews';
 import useHasScroll from '@/hooks/useHasScroll';
 import { twMerge } from '@/lib/twMerge';
-import { Link } from 'react-router-dom';
+import { getBlogPathname } from '@/utils/url';
+import Link from 'next/link';
 import AboutTitleDark from '../ui/AboutTitleDark';
 
 const title = {
@@ -8,27 +12,10 @@ const title = {
   mainTitle: '렛츠커리어와 함께한 사람들의 이야기',
 };
 
-const reviewList = [
-  {
-    img: '/images/home/review_naver_webtoon.png',
-    url: 'https://blog.naver.com/letsintern/223342477519',
-  },
-  {
-    img: '/images/home/review_hybe.png',
-    url: 'https://www.letscareer.co.kr/blog/27',
-  },
-  {
-    img: '/images/home/review_samsung.png',
-    url: 'https://www.letscareer.co.kr/blog/21',
-  },
-  {
-    img: '/images/home/review_cj.png',
-    url: 'https://blog.naver.com/letsintern/223407562305',
-  },
-];
-
 const ReviewSection = () => {
+  const data = useGetBlogParticipationReview(5);
   const { scrollRef, hasScroll } = useHasScroll();
+  console.log(hasScroll);
 
   return (
     <section className="bg-[#101348] px-5 py-[3.75rem] sm:px-10 sm:py-[6.25rem] xl:py-[8.75rem]">
@@ -41,17 +28,15 @@ const ReviewSection = () => {
           !hasScroll && 'justify-center',
         )}
       >
-        {reviewList.map((review) => (
+        {data.map(({ blogThumbnailInfo }) => (
           <Link
-            to={review.url}
-            key={review.url}
-            className="w-72 flex-shrink-0 overflow-hidden rounded-md lg:w-96 lg:min-w-96"
-            target="_blank"
-            rel="noreferrer noopener"
+            href={getBlogPathname(blogThumbnailInfo)}
+            key={blogThumbnailInfo.id}
+            className="review_card shrink-0"
           >
             <img
-              className="h-auto w-full"
-              src={review.img}
+              className="h-[11.25rem] w-auto rounded-xs object-contain sm:h-[250px]"
+              src={blogThumbnailInfo.thumbnail ?? undefined}
               alt="참여 후기 썸네일"
             />
           </Link>
