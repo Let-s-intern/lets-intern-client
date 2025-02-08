@@ -116,7 +116,7 @@ const ProgramReviewContentSection = () => {
   }, [reviewData, pageInfo]);
 
   return (
-    <div className="flex w-full flex-col gap-y-6 px-5 pb-12 md:pb-8 md:pl-0 md:pr-5 lg:px-0">
+    <div className="flex w-full flex-col gap-y-6 px-5 pb-12 md:px-0 md:pb-8">
       {isLoading ? (
         <LoadingContainer className="h-64" />
       ) : !reviewData || reviewData.reviewList.length < 1 ? (
@@ -133,6 +133,7 @@ const ProgramReviewContentSection = () => {
               review.reviewInfo.challengeType ?? null,
             )}
             expandable
+            gap="large"
           />
         ))
       )}

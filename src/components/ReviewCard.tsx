@@ -97,6 +97,7 @@ const ReviewCard = ({
   reviewItemNums,
   href,
   className,
+  gap = 'normal',
 }: {
   review: GetReview;
   missionTitleClamp?: 1 | 2;
@@ -107,6 +108,7 @@ const ReviewCard = ({
   reviewItemNums?: number;
   href?: string;
   className?: string;
+  gap?: 'normal' | 'large';
 }) => {
   const router = useRouter();
   const reviewItems = review.reviewItemList
@@ -119,7 +121,7 @@ const ReviewCard = ({
   return (
     <div
       className={twMerge(
-        'flex flex-col gap-4 rounded-sm border border-neutral-80 p-4 sm:flex-row sm:gap-10',
+        'flex flex-col gap-4 rounded-sm border border-neutral-80 p-4 sm:flex-row sm:gap-[50px]',
         href && 'cursor-pointer',
         className,
       )}
@@ -130,15 +132,24 @@ const ReviewCard = ({
       }}
     >
       <div className="mr-auto flex max-w-full flex-col">
-        <div className="mb-2">
+        <div
+          className={twMerge(
+            gap === 'normal' ? 'mb-2' : gap === 'large' ? 'mb-3' : '',
+          )}
+        >
           <ReviewBadge type={review.reviewInfo.type ?? 'CHALLENGE_REVIEW'} />
         </div>
-        <h3 className="mb-2 truncate text-xsmall16 font-bold text-neutral-0">
+        <h3
+          className={twMerge(
+            'truncate text-xsmall16 font-bold text-neutral-0',
+            gap === 'normal' ? 'mb-2' : gap === 'large' ? 'mb-3' : '',
+          )}
+        >
           {review.reviewInfo.programTitle}
         </h3>
         {review.reviewInfo.type === 'MISSION_REVIEW' ? (
           <>
-            <div className="mb-3 flex items-center gap-2 text-xxsmall12">
+            <div className="mb-3 flex items-center gap-2 text-xxsmall12 font-medium">
               <span className="whitespace-pre text-neutral-20">
                 {review.reviewInfo.missionTh}회차
               </span>
@@ -168,7 +179,12 @@ const ReviewCard = ({
             </div>
           </>
         ) : null}
-        <div className="mb-4 space-y-2.5">
+        <div
+          className={twMerge(
+            'mb-4',
+            gap === 'normal' ? 'space-y-2' : gap === 'large' ? 'space-y-3' : '',
+          )}
+        >
           {reviewItems?.map((reviewItem, index) => (
             <ReviewItemBlock
               key={index}
@@ -180,7 +196,12 @@ const ReviewCard = ({
           ))}
         </div>
 
-        <div className="mb-2 mt-auto flex items-center gap-2 text-xxsmall12 md:flex-col md:items-start">
+        <div
+          className={twMerge(
+            'mt-auto flex items-center gap-2 text-xxsmall12 md:flex-col md:items-start',
+            gap === 'normal' ? 'mb-2' : gap === 'large' ? 'mb-3' : '',
+          )}
+        >
           <span className="whitespace-pre font-medium text-neutral-20">
             {review.reviewInfo.name ? `${review.reviewInfo.name[0]}**` : '익명'}
           </span>
@@ -208,7 +229,7 @@ const ReviewCard = ({
           )}
           alt={review.reviewInfo.programTitle ?? ''}
           className={clsx(
-            'block h-[90px] w-[120px] rounded-sm object-cover sm:mt-10 sm:h-[135px] sm:w-[180px]',
+            'block aspect-[4/3] max-w-[150px] self-start rounded-sm object-cover sm:mt-10 sm:max-w-[200px]',
             {
               'cursor-pointer': !!thumbnailLink,
             },
@@ -232,6 +253,7 @@ const ReviewItemBlock = (props: {
   questionText?: string;
   expandable?: boolean;
   icon?: ReactNode;
+  gap?: 'normal' | 'large';
 }) => {
   const questionText =
     props.questionText ||
@@ -239,9 +261,9 @@ const ReviewItemBlock = (props: {
 
   return (
     <div>
-      <div className="mb-0.5 flex w-fit items-center gap-1">
-        {props.icon && props.icon}
-        <span className="text-xxsmall12 font-semibold text-neutral-10">
+      <div className="flex w-fit items-center gap-1">
+        {/* {props.icon && props.icon} */}
+        <span className="text-xsmall14 font-semibold text-neutral-10">
           {questionText}
         </span>
       </div>
@@ -249,12 +271,12 @@ const ReviewItemBlock = (props: {
         <ExpandableParagraph
           content={props.answer ?? ''}
           lineClamp={props.lineClamp}
-          className={twMerge('text-xsmall14 font-normal text-neutral-10')}
+          className={twMerge('text-xsmall14 font-normal text-neutral-20')}
         />
       ) : (
         <p
           className={twMerge(
-            'text-xsmall14 font-normal text-neutral-10',
+            'text-xsmall14 font-normal text-neutral-20',
             props.lineClamp === 1
               ? 'line-clamp-1'
               : props.lineClamp === 2

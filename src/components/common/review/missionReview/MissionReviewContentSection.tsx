@@ -104,11 +104,11 @@ const MissionReviewContentSection = () => {
   }, [reviewData, pageInfo]);
 
   return (
-    <div className="flex flex-col w-full px-5 pb-12 gap-y-6 md:pr-5 md:pl-0 lg:px-0 md:pb-8">
+    <div className="flex w-full flex-col gap-y-6 px-5 pb-12 md:px-0 md:pb-8">
       {isLoading ? (
         <LoadingContainer className="h-64" />
       ) : !reviewData || reviewData.reviewList.length < 1 ? (
-        <div className="flex items-center justify-center bg-neutral-95 rounded-ms text-xsmall14 text-neutral-40 h-60">
+        <div className="flex h-60 items-center justify-center rounded-ms bg-neutral-95 text-xsmall14 text-neutral-40">
           등록된 후기가 없습니다.
         </div>
       ) : (
@@ -121,6 +121,7 @@ const MissionReviewContentSection = () => {
               review.reviewInfo.challengeType ?? null,
             )}
             expandable
+            gap="large"
           />
         ))
       )}

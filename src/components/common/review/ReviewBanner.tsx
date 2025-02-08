@@ -15,7 +15,7 @@ const description = {
   ),
   program: (
     <>
-      렛츠커리어만의 취업 노하우가 잔뜩 담긴 프로그램에 참여한
+      렛츠커리어만의 취업 노하우가 잔뜩 담긴 프로그램에 참여한{' '}
       <br className="hidden md:block" />
       참여자들의 100% 솔직 후기를 가감 없이 그대로 보여드립니다.
     </>
@@ -39,7 +39,7 @@ function ReviewBanner() {
   return (
     <header className="relative flex h-[11.125rem] bg-secondary px-5 py-10 md:h-[10.75rem] md:justify-center">
       {/* 본문 */}
-      <div className="z-10 flex w-full max-w-[1100px] flex-col gap-1 md:gap-2 md:pl-3">
+      <div className="z-10 flex w-full max-w-[1100px] flex-col gap-1 md:gap-2 md:px-3">
         {/* pathname에 따라 제목 불러오기 */}
         <h1 className="text-small20 font-semibold text-white md:text-medium24">
           {pathname === '/review'

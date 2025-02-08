@@ -5,7 +5,7 @@ import ProgramReviewFilterSection from '@components/common/review/programReview/
 
 const Page = () => {
   return (
-    <div className="flex w-full flex-col md:gap-y-6 md:pr-5 lg:pr-0">
+    <div className="flex w-full flex-col md:gap-y-6">
       <Suspense>
         <ProgramReviewFilterSection />
         <ProgramReviewContentSection />
