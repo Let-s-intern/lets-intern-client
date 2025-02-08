@@ -1,11 +1,10 @@
-import { useNavigate } from 'react-router-dom';
-
 import { useControlScroll } from '@/hooks/useControlScroll';
 import { twMerge } from '@/lib/twMerge';
 import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
 import { josa } from 'es-hangul';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import BackHeader from '../ui/BackHeader';
 import BaseButton from '../ui/button/BaseButton';
 import ReviewExitModal from './ReviewExitModal';
@@ -39,24 +38,6 @@ function ReviewModal({
   useControlScroll(isDesktop); // 데스크탑(모달)에서는 body 스크롤 제어
 
   const buttonText = isLastMission ? '제출하기' : '등록하기';
-
-  // useEffect(() => {
-  //   if (typeof window === 'undefined') return;
-
-  //   const handlePopstate = () => {
-
-  //     console.log('뒤로가기 감지', window.history.state);
-
-  //     history.go(1); // 뒤로가기 방지
-  //   };
-  //   history.pushState(null, '', location.href); // 뒤로가기 방지
-
-  //   window.addEventListener('popstate', handlePopstate);
-
-  //   return () => {
-  //     window.removeEventListener('popstate', handlePopstate);
-  //   };
-  // }, [isExitOpen]);
 
   return (
     <>
