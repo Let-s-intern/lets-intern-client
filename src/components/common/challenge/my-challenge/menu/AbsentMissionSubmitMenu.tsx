@@ -231,13 +231,29 @@ const AbsentMissionSubmitMenu = ({
               <h3 className="text-xsmall16 font-semibold text-neutral-0">
                 미션 소감
               </h3>
-              <textarea
-                className="h-20 resize-none rounded-md bg-neutral-95 p-3 text-xsmall14 outline-none"
-                placeholder={`오늘의 미션은 어떠셨나요?\n새롭게 배운 점, 어려운 부분, 궁금증 등 떠오르는 생각을 남겨 주세요.`}
-                value={review}
-                onChange={(e) => setReview(e.target.value)}
-                disabled={isAttended}
-              />
+              <div
+                className={clsx('flex flex-col gap-y-2 rounded-md p-3', {
+                  'bg-neutral-95': !isAttended,
+                  'bg-white': isAttended,
+                })}
+              >
+                <textarea
+                  className={clsx(
+                    'h-20 flex-1 resize-none bg-neutral-95 text-xsmall14 outline-none disabled:bg-white',
+                    {
+                      'text-neutral-400': isAttended,
+                    },
+                  )}
+                  placeholder={`오늘의 미션은 어떠셨나요?\n새롭게 배운 점, 어려운 부분, 궁금증 등 떠오르는 생각을 남겨 주세요.`}
+                  value={review}
+                  onChange={(e) => setReview(e.target.value)}
+                  disabled={isAttended}
+                  maxLength={500}
+                />
+                <span className="w-full text-right text-xxsmall12 text-neutral-0/35">
+                  {review.length}/500
+                </span>
+              </div>
             </div>
             <div className="mt-6 text-right">
               <button
