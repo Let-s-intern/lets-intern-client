@@ -5,7 +5,7 @@ import MissionReviewFilterSection from '@components/common/review/missionReview/
 
 const Page = () => {
   return (
-    <div className="flex w-full flex-col md:gap-y-6">
+    <div className="flex w-full flex-col md:gap-y-8">
       <Suspense>
         <MissionReviewFilterSection />
         <MissionReviewContentSection />
