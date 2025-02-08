@@ -22,6 +22,7 @@ interface Props {
   childLabelValue?: string[];
   list: ReviewFilterItem[];
   multiSelect?: boolean;
+  dropdownClassName?: string;
 }
 
 function ReviewFilter({
@@ -30,6 +31,7 @@ function ReviewFilter({
   childLabelValue,
   list,
   multiSelect = false,
+  dropdownClassName,
 }: Props) {
   const router = useRouter();
   const pathname = usePathname();
@@ -164,9 +166,9 @@ function ReviewFilter({
         <div className="fixed inset-0" onClick={() => setIsOpen(false)} />
       )}
 
-      <div className="relative flex w-fit shrink-0 flex-col">
+      <div className="relative flex flex-col">
         <div
-          className={`flex min-w-[8.5rem] cursor-pointer items-center gap-2 rounded-xxs border bg-[#FBFBFC] px-3 py-2 text-xxsmall12 md:text-xsmall16 ${isOpen ? 'border-primary' : 'border-neutral-90'}`}
+          className={`flex min-w-[8.5rem] max-w-fit cursor-pointer items-center gap-2 rounded-xxs border bg-[#FBFBFC] px-3 py-2 text-xxsmall12 md:text-xsmall16 ${isOpen ? 'border-primary' : 'border-neutral-90'}`}
           onClick={() => setIsOpen((prev) => !prev)}
         >
           <span className="font-medium text-neutral-20">{label}</span>
@@ -224,7 +226,12 @@ function ReviewFilter({
 
         {/* 데스크탑 드롭다운 */}
         {isOpen && isDesktop && (
-          <ul className="absolute top-12 z-10 w-full rounded-xxs bg-white px-3 py-2 shadow-[0_0_20px_0_rgba(164,168,179,0.25)]">
+          <ul
+            className={twMerge(
+              'absolute top-12 z-10 w-full rounded-xxs bg-white px-3 py-2 shadow-[0_0_20px_0_rgba(164,168,179,0.25)]',
+              dropdownClassName,
+            )}
+          >
             {multiSelect ? (
               <FilterList
                 key="all"
@@ -312,9 +319,9 @@ const FilterCaption = memo(function FilterCaption({
       {multiSelect ? (
         <div className="flex items-center gap-2">
           {checked ? (
-            <CheckboxActive className="h-6 w-6 shrink-0" />
+            <CheckboxActive className="h-6 w-6" />
           ) : (
-            <CheckboxInActive className="h-6 w-6 shrink-0" />
+            <CheckboxInActive className="h-6 w-6" />
           )}
           {children}
         </div>

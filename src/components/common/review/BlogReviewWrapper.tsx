@@ -32,6 +32,7 @@ function BlogReviewWrapper() {
           labelValue="type"
           list={filterList}
           multiSelect
+          dropdownClassName="max-w-fit"
         />
       </div>
       <BlogReviewListSection />
