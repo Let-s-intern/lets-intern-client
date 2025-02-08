@@ -104,7 +104,7 @@ const MissionReviewContentSection = () => {
   }, [reviewData, pageInfo]);
 
   return (
-    <div className="flex w-full flex-col gap-y-8 px-5 pb-12 md:gap-y-12 md:px-0 md:pb-8">
+    <div className="flex w-full flex-col gap-y-8 px-5 md:gap-y-12 md:px-0">
       {isLoading ? (
         <LoadingContainer className="h-64" />
       ) : !reviewData || reviewData.reviewList.length < 1 ? (
