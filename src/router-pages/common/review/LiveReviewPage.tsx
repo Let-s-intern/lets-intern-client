@@ -1,7 +1,7 @@
 import { josa } from 'es-hangul';
 import { useParams, useSearchParams } from 'react-router-dom';
 
-import { useGetChallengeTitle } from '@/api/challenge';
+import { useGetLiveTitle } from '@/api/program';
 import { useGetProgramReviewDetail } from '@/api/review';
 import ReviewInstruction from '@components/common/review/ReviewInstruction';
 import ReviewModal from '@components/common/review/ReviewModal';
@@ -15,7 +15,7 @@ const LiveReviewPage = () => {
   const programId = params.programId;
   const reviewId = searchParams.get('reviewId');
 
-  const { data: programTitle } = useGetChallengeTitle(Number(programId));
+  const { data: programTitle } = useGetLiveTitle(Number(programId));
 
   const { data: reviewData } = useGetProgramReviewDetail(
     'LIVE_REVIEW',
