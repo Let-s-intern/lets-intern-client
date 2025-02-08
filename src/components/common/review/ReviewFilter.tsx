@@ -3,7 +3,7 @@
 import { useMediaQuery } from '@mui/material';
 import { ChevronDown } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { memo, ReactNode, useEffect, useState } from 'react';
+import { memo, ReactNode, useCallback, useEffect, useState } from 'react';
 
 import Check from '@/assets/icons/check-box.svg';
 import CheckboxActive from '@/assets/icons/checkbox-active.svg?react';
@@ -51,6 +51,9 @@ function ReviewFilter({
         ? `${checkedList[0].caption} 외 ${checkedList.length - 1}개`
         : checkedList[0].caption
       : '전체';
+
+  const isAllSelected =
+    checkedList.length === 0 || checkedList.length === list.length;
 
   const handleQueryParams = (item: ReviewFilterItem) => {
     // 쿼리 스트링으로 선택된 아이템 추가
@@ -102,8 +105,30 @@ function ReviewFilter({
 
   const handleClickItem = (item: ReviewFilterItem) => {
     handleQueryParams(item);
-    if (!multiSelect) setIsOpen(false);
+    if (!multiSelect) {
+      setIsOpen(false);
+    }
   };
+
+  const handleAllClick = useCallback(() => {
+    if (isAllSelected) {
+      return;
+    }
+    setCheckedList([]);
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete(labelValue);
+    childLabelValue?.forEach((childLabel) => {
+      params.delete(childLabel);
+    });
+    router.replace(`${pathname}?${params.toString()}`);
+  }, [
+    childLabelValue,
+    isAllSelected,
+    labelValue,
+    pathname,
+    router,
+    searchParams,
+  ]);
 
   useEffect(() => {
     const findItem = (
@@ -163,6 +188,20 @@ function ReviewFilter({
                 {label}
               </span>
               <ul className="max-h-[60vh] overflow-y-auto">
+                {multiSelect ? (
+                  <FilterList
+                    key="all"
+                    item={{
+                      caption: '전체',
+                      value: 'all',
+                    }}
+                    isLastItem={false}
+                    multiSelect={true}
+                    checked={isAllSelected}
+                    selected={false}
+                    onClick={handleAllClick}
+                  />
+                ) : null}
                 {list.map((item, index) => (
                   <FilterList
                     key={item.value}
@@ -186,6 +225,21 @@ function ReviewFilter({
         {/* 데스크탑 드롭다운 */}
         {isOpen && isDesktop && (
           <ul className="absolute top-12 z-10 w-full rounded-xxs bg-white px-3 py-2 shadow-[0_0_20px_0_rgba(164,168,179,0.25)]">
+            {multiSelect ? (
+              <FilterList
+                key="all"
+                className="py-2"
+                item={{
+                  caption: '전체',
+                  value: 'all',
+                }}
+                isLastItem={false}
+                multiSelect={true}
+                checked={isAllSelected}
+                selected={false}
+                onClick={handleAllClick}
+              />
+            ) : null}
             {list.map((item, index) => (
               <FilterList
                 key={item.value}
