@@ -37,7 +37,7 @@ const TextArea = ({
       <textarea
         {...props}
         className={twMerge(
-          'p h-full w-full resize-none rounded-md bg-neutral-95 p-3 text-xsmall14 font-normal outline-none scrollbar-hide placeholder:font-normal placeholder:text-black/35',
+          'p h-full w-full resize-none rounded-md bg-neutral-95 p-3 text-xsmall14 font-normal outline-none placeholder:font-normal placeholder:text-black/35',
           props.className,
         )}
         maxLength={maxLength}
