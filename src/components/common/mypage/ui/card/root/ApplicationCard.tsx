@@ -1,6 +1,7 @@
 import dayjs from '@/lib/dayjs';
 import clsx from 'clsx';
 
+import { getReportThumbnail } from '@components/common/mypage/credit/CreditListItem';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MypageApplication } from '../../../../../../api/application';
@@ -30,8 +31,8 @@ const ApplicationCard = ({
   });
 
   const thumbnail =
-    application.programType === 'REPORT'
-      ? '/images/report-banner.jpg'
+    application.programType === 'REPORT' && application.reportType
+      ? getReportThumbnail(application.reportType)
       : (application.programThumbnail ?? '');
 
   const programLink =

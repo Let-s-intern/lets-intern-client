@@ -6,6 +6,7 @@ import {
   liveApplicationPriceType,
   ProgramStatusEnum,
   ProgramTypeEnum,
+  reportTypeSchema,
 } from '../schema';
 import { UsePaymentDetailQueryKey, UsePaymentQueryKey } from './payment';
 
@@ -190,6 +191,7 @@ export const mypageApplicationsSchema = z
         programId: z.number().nullable().optional(),
         programType: ProgramTypeEnum.nullable().optional(),
         programStatusType: ProgramStatusEnum.nullable().optional(),
+        reportType: reportTypeSchema.nullable().optional(),
         programTitle: z.string().nullable().optional(),
         programShortDesc: z.string().nullable().optional(),
         programThumbnail: z.string().nullable().optional(),
