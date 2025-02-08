@@ -143,7 +143,7 @@ function ReviewFilter({
 
       <div className="relative flex flex-col">
         <div
-          className={`flex w-fit min-w-[8.5rem] cursor-pointer items-center gap-2 rounded-xxs border bg-[#FBFBFC] px-3 py-2 text-xxsmall12 md:text-xsmall16 ${isOpen ? 'border-primary' : 'border-neutral-90'}`}
+          className={`flex min-w-[8.5rem] max-w-fit cursor-pointer items-center gap-2 rounded-xxs border bg-[#FBFBFC] px-3 py-2 text-xxsmall12 md:text-xsmall16 ${isOpen ? 'border-primary' : 'border-neutral-90'}`}
           onClick={() => setIsOpen((prev) => !prev)}
         >
           <span className="font-medium text-neutral-20">{label}</span>
@@ -235,7 +235,7 @@ const FilterList = ({
     <li
       key={item.value}
       className={twMerge(
-        'flex w-full min-w-fit cursor-pointer items-center justify-between py-3',
+        'flex cursor-pointer items-center justify-between py-3',
         isLastItem ? '' : 'border-b border-neutral-90',
         className,
       )}
