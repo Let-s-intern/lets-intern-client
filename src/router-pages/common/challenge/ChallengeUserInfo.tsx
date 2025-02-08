@@ -92,7 +92,9 @@ const ChallengeUserInfo = () => {
   };
 
   const handleSubmit = async () => {
-    if (patchUserIsPending || postGoalIsPending || !programId) return;
+    if (patchUserIsPending || postGoalIsPending || !programId) {
+      return;
+    }
 
     try {
       await tryPatchUser({
@@ -108,7 +110,7 @@ const ChallengeUserInfo = () => {
         goal: value.goal,
       });
 
-      navigate(`/challenge/${params.applicationId}/${params.programId}`);
+      navigate(`/challenge/${params.applicationId}/${programId}`);
     } catch (error) {
       console.error(error);
       alert('입력에 실패했습니다. 다시 시도해주세요.');
@@ -127,14 +129,16 @@ const ChallengeUserInfo = () => {
   }, [value]);
 
   useEffect(() => {
-    if (isLoading) return;
+    if (isLoading) {
+      return;
+    }
     if (isStartAfterGoal) {
       if (isValidUserInfo && hasChallengeGoal) {
-        navigate(`/challenge/${programId}`);
+        navigate(`/challenge/${params.applicationId}/${programId}`);
         return;
       }
     } else if (isValidUserInfo) {
-      navigate(`/challenge/${programId}`);
+      navigate(`/challenge/${params.applicationId}/${programId}`);
       return;
     }
   }, [
@@ -142,8 +146,9 @@ const ChallengeUserInfo = () => {
     isLoading,
     navigate,
     hasChallengeGoal,
-    programId,
     isStartAfterGoal,
+    params.applicationId,
+    programId,
   ]);
 
   return (
