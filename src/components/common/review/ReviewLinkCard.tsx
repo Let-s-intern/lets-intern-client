@@ -41,13 +41,17 @@ function ReviewLinkCard({
   return (
     <div className="group relative flex flex-col gap-3">
       <div className="relative aspect-[4/3] w-full overflow-hidden">
-        <Image
-          className="rounded-sm object-cover transition group-has-[a:hover]:opacity-80"
-          src={thumbnail ?? ''}
-          alt={title + ' 블로그 썸네일'}
-          fill
-          sizes="(min-width:768px) 13rem , 50vw"
-        />
+        {thumbnail ? (
+          <Image
+            className="rounded-sm object-cover transition group-has-[a:hover]:opacity-80"
+            src={thumbnail}
+            alt={title + ' 블로그 썸네일'}
+            fill
+            sizes="(min-width:768px) 13rem , 50vw"
+          />
+        ) : (
+          <div className="h-full w-full rounded-sm bg-primary-light/10"></div>
+        )}
       </div>
       <div>
         <div className="mb-2 flex flex-col items-start gap-1">
@@ -81,7 +85,6 @@ function ReviewLinkCard({
         </p>
         {externalLink || favicon ? (
           <div className="mb-1 flex items-center gap-2">
-            {/* TODO: 파비콘 추가 */}
             {favicon && (
               <img className="h-5 w-5" src={favicon} alt={title + ' 파비콘'} />
             )}
