@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import dayjs from '@/lib/dayjs';
 import { z } from 'zod';
 
 export interface Pageable {

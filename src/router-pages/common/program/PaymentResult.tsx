@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import dayjs from '@/lib/dayjs';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 

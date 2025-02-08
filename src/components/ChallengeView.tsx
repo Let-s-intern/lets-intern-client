@@ -1,6 +1,6 @@
 'use client';
 
-import dayjs from 'dayjs';
+import dayjs from '@/lib/dayjs';
 import { useEffect, useMemo } from 'react';
 
 import { useGetActiveChallenge, useGetChallengeFaq } from '@/api/challenge';
@@ -213,8 +213,8 @@ const ChallengeView: React.FC<{
   }, [challenge]);
 
   return (
-    <div className="flex flex-col w-full">
-      <div className="flex flex-col items-center w-full">
+    <div className="flex w-full flex-col">
+      <div className="flex w-full flex-col items-center">
         <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
           <NextBackHeader to="/program">{challenge.title ?? ''}</NextBackHeader>
           <ChallengeBasicInfo
@@ -232,10 +232,10 @@ const ChallengeView: React.FC<{
           isReady={!faqIsLoading}
         />
 
-        <div className="flex flex-col items-center w-full overflow-x-hidden">
+        <div className="flex w-full flex-col items-center overflow-x-hidden">
           <div
             id={PROGRAM_INTRO_ID}
-            className="flex flex-col items-center w-full challenge_program"
+            className="challenge_program flex w-full flex-col items-center"
           >
             <section className="flex w-full flex-col items-center pt-[70px] md:pt-40">
               <ChallengePointView
@@ -256,7 +256,7 @@ const ChallengeView: React.FC<{
               </section>
             )}
 
-            <section className="flex flex-col w-full md:items-center">
+            <section className="flex w-full flex-col md:items-center">
               {challenge.challengeType === PORTFOLIO ? (
                 <ChallengeIntroPortfolio />
               ) : challenge.challengeType === CAREER_START ? (
@@ -287,7 +287,7 @@ const ChallengeView: React.FC<{
             receivedContent.curriculum.length > 0 && (
               <section
                 id={PROGRAM_CURRICULUM_ID}
-                className="flex flex-col items-center w-full challenge_curriculum"
+                className="challenge_curriculum flex w-full flex-col items-center"
                 style={{ backgroundColor: colors.curriculumBg }}
               >
                 <ChallengeCurriculum

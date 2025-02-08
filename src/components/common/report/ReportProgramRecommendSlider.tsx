@@ -1,9 +1,9 @@
 import { useGetProgramRecommend } from '@/api/program';
 import { ReportType } from '@/api/report';
+import dayjs from '@/lib/dayjs';
 import { personalStatementColors } from '@/router-pages/common/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/router-pages/common/report/ReportResumePage';
 import { ReportProgramRecommend } from '@/types/interface';
-import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import ProgramRecommendSlider from '../ui/ProgramRecommendSlider';
@@ -230,7 +230,7 @@ const ReportProgramRecommendSlider = ({
   return (
     <section
       data-section="recommend"
-      className="w-full px-5 py-16 bg-neutral-95 md:py-24 lg:px-0"
+      className="w-full bg-neutral-95 px-5 py-16 md:py-24 lg:px-0"
     >
       <SubHeader className="mb-1 md:mb-3" style={subHeaderStyle}>
         {SUPER_TITLE}

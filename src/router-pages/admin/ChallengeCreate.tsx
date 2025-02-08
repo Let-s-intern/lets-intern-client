@@ -10,6 +10,7 @@ import FaqSection from '@/components/FaqSection';
 import ProgramRecommendEditor from '@/components/ProgramRecommendEditor';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { challengeToCreateInput } from '@/hooks/useDuplicateProgram';
+import dayjs from '@/lib/dayjs';
 import {
   CreateChallengeReq,
   getChallengeIdSchema,
@@ -24,7 +25,6 @@ import Heading from '@components/admin/ui/heading/Heading';
 import Heading2 from '@components/admin/ui/heading/Heading2';
 import Heading3 from '@components/admin/ui/heading/Heading3';
 import { Button, TextField } from '@mui/material';
-import dayjs from 'dayjs';
 import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';

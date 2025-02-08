@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import dayjs from '@/lib/dayjs';
 import { useMemo } from 'react';
 
 import { usePaymentDetailQuery } from '@/api/payment';

@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { CiTrash } from 'react-icons/ci';
 import { Link } from 'react-router-dom';
 
-import dayjs from 'dayjs';
+import dayjs from '@/lib/dayjs';
 import { ChangeEvent, useCallback, useState } from 'react';
 import {
   useBlogListQuery,
@@ -109,11 +109,11 @@ export default function BlogTable() {
       ) : data?.blogInfos.length === 0 ? (
         <div className="py-6 text-center">개설된 블로그가 없습니다.</div>
       ) : (
-        <div className="flex flex-col gap-2 mt-3 mb-16">
+        <div className="mb-16 mt-3 flex flex-col gap-2">
           {data?.blogInfos.map((blogInfo) => (
             <div
               key={blogInfo.blogThumbnailInfo.id}
-              className="flex border rounded-md border-neutral-200"
+              className="flex rounded-md border border-neutral-200"
             >
               <TableBodyCell widthClassName={blogColumnWidth.id}>
                 <Link

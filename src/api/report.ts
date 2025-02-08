@@ -1,9 +1,10 @@
+import dayjs from '@/lib/dayjs';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 import { number, z } from 'zod';
 
 import { faqSchema, reportTypeSchema } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
+import { Dayjs } from 'dayjs';
 import axios from '../utils/axios';
 import { tossInfoType } from './paymentSchema';
 
@@ -144,8 +145,8 @@ export function convertFeedbackStatusToDisplayName({
   isReportSubmitted,
 }: {
   status: ReportFeedbackStatus | null | undefined;
-  reportFeedback: dayjs.Dayjs | null | undefined;
-  now: dayjs.Dayjs;
+  reportFeedback: Dayjs | null | undefined;
+  now: Dayjs;
   isAdmin?: boolean;
   isReportSubmitted: boolean;
 }) {
@@ -178,8 +179,8 @@ export function convertFeedbackStatusToBadgeStatus({
   isReportSubmitted,
 }: {
   status: ReportFeedbackStatus | null | undefined;
-  reportFeedback: dayjs.Dayjs | null | undefined;
-  now: dayjs.Dayjs;
+  reportFeedback: Dayjs | null | undefined;
+  now: Dayjs;
   isReportSubmitted: boolean;
 }): 'info' | 'success' | 'warning' {
   if (!status) {

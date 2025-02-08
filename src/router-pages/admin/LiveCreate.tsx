@@ -1,5 +1,5 @@
+import dayjs from '@/lib/dayjs';
 import { Button, Checkbox, FormControlLabel, TextField } from '@mui/material';
-import dayjs from 'dayjs';
 import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';

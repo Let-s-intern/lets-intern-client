@@ -1,3 +1,4 @@
+import '@/styles/date-pickers-toolbar.scss';
 import {
   FormControl,
   InputLabel,
@@ -9,9 +10,6 @@ import { DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { Dayjs } from 'dayjs';
-import 'dayjs/locale/ko';
-
-import '@/styles/date-pickers-toolbar.scss';
 
 const DATE_TIME_PICKER_SX = {
   width: '100%',

@@ -160,14 +160,14 @@ const BlogEditPage = () => {
       content: blogData.blogDetailInfo.content || '',
       ctaLink: blogData.blogDetailInfo.ctaLink || '',
       ctaText: blogData.blogDetailInfo.ctaText || '',
-      displayDate: displayDate,
+      displayDate,
       tagList: blogData.tagDetailInfos,
     });
     setDateTime(displayDate);
   }, [isLoading, blogData]);
 
   return (
-    <div className="mx-3 mt-3 mb-40">
+    <div className="mx-3 mb-40 mt-3">
       <header>
         <h1 className="text-2xl font-semibold">블로그 수정</h1>
       </header>
@@ -175,8 +175,8 @@ const BlogEditPage = () => {
         <span>로딩 중...</span>
       ) : blogData ? (
         <main className="max-w-screen-xl">
-          <div className="flex flex-col gap-4 mt-4">
-            <div className="flex flex-no-wrap items-center gap-4">
+          <div className="mt-4 flex flex-col gap-4">
+            <div className="flex-no-wrap flex items-center gap-4">
               <FormControl size="small" required>
                 <InputLabel id="category-label">카테고리</InputLabel>
                 <Select
@@ -284,7 +284,7 @@ const BlogEditPage = () => {
               </div>
             </div>
 
-            <div className="px-6 py-10 border">
+            <div className="border px-6 py-10">
               <h2 className="mb-4">태그 설정</h2>
               <TagSelector
                 selectedTagList={editingValue.tagList}
@@ -308,7 +308,7 @@ const BlogEditPage = () => {
               />
             </div>
 
-            <div className="px-6 py-10 border">
+            <div className="border px-6 py-10">
               <h2 className="mb-2">게시 일자</h2>
               <DateTimePicker
                 label="게시 일자"
@@ -323,7 +323,7 @@ const BlogEditPage = () => {
               onChange={onChangeEditor}
             />
             <div className="text-right">
-              <div className="flex items-center justify-end gap-4 mb-1">
+              <div className="mb-1 flex items-center justify-end gap-4">
                 <Button
                   variant="outlined"
                   type="button"

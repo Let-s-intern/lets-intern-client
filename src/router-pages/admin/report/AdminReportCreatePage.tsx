@@ -1,3 +1,11 @@
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import dayjs from '@/lib/dayjs';
+import { ProgramTypeEnum } from '@/schema';
+import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
+import ReportProgramRecommendEditor from '@components/admin/report/ReportProgramRecommendEditor';
+import ReportReviewEditor from '@components/admin/report/ReportReviewEditor';
+import Heading2 from '@components/admin/ui/heading/Heading2';
+import FaqSection from '@components/FaqSection';
 import {
   Button,
   Checkbox,
@@ -12,19 +20,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { useQueryClient } from '@tanstack/react-query';
-import dayjs from 'dayjs';
-import 'dayjs/locale/ko';
 import { ChangeEvent, useState } from 'react';
 import { FaTrashCan } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
-
-import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import { ProgramTypeEnum } from '@/schema';
-import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
-import ReportProgramRecommendEditor from '@components/admin/report/ReportProgramRecommendEditor';
-import ReportReviewEditor from '@components/admin/report/ReportReviewEditor';
-import Heading2 from '@components/admin/ui/heading/Heading2';
-import FaqSection from '@components/FaqSection';
 import {
   CreateReportData,
   getReportsForAdminQueryKey,
@@ -161,8 +159,8 @@ const AdminReportCreatePage = () => {
       </header>
 
       <main className="max-w-screen-xl">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
-          <div className="flex flex-no-wrap items-center gap-4"></div>
+        <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-4">
+          <div className="flex-no-wrap flex items-center gap-4"></div>
 
           {/* 기본 설정 */}
           <section className="flex items-center gap-2">
@@ -396,7 +394,7 @@ const AdminReportCreatePage = () => {
           <hr />
 
           <section>
-            <header className="flex items-center justify-between mb-2">
+            <header className="mb-2 flex items-center justify-between">
               <Heading2>옵션 설정</Heading2>
               <Button
                 variant="outlined"
@@ -589,7 +587,7 @@ const AdminReportCreatePage = () => {
             />
           </section>
 
-          <div className="flex items-center justify-end gap-4 mb-1 text-right">
+          <div className="mb-1 flex items-center justify-end gap-4 text-right">
             <Button
               variant="outlined"
               type="button"

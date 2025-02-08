@@ -33,16 +33,11 @@ const TextArea = ({
   }, [props.value]);
 
   return (
-    <div
-      className={twMerge(
-        'flex flex-col rounded-md bg-neutral-95',
-        wrapperClassName,
-      )}
-    >
+    <div className={twMerge('flex flex-col', wrapperClassName)}>
       <textarea
         {...props}
         className={twMerge(
-          'h-full w-full resize-none bg-neutral-95 p-3 text-xsmall14 font-normal outline-none placeholder:font-normal placeholder:text-black/35',
+          'h-full w-full resize-none rounded-md bg-neutral-95 p-3 text-xsmall14 font-normal outline-none placeholder:font-normal placeholder:text-black/35',
           props.className,
         )}
         maxLength={maxLength}

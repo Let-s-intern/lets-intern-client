@@ -1,5 +1,5 @@
+import dayjs from '@/lib/dayjs';
 import { FormControl, RadioGroup, SelectChangeEvent } from '@mui/material';
-import dayjs, { Dayjs } from 'dayjs';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -29,6 +29,7 @@ import BottomSheet from '@components/common/ui/BottomSheeet';
 import BaseButton from '@components/common/ui/button/BaseButton';
 import HorizontalRule from '@components/ui/HorizontalRule';
 import RequiredStar from '@components/ui/RequiredStar';
+import { ConfigType, Dayjs } from 'dayjs';
 
 const ReportApplyPage = () => {
   const navigate = useNavigate();
@@ -460,7 +461,7 @@ export const ScheduleSection = () => {
   type Key = keyof typeof data;
 
   const onChangeDate = (date: Dayjs | null, name?: string) => {
-    const hour = dayjs(data[name as Key] as dayjs.ConfigType).hour();
+    const hour = dayjs(data[name as Key] as ConfigType).hour();
 
     date?.set('hour', hour);
     setReportApplication({
@@ -476,7 +477,7 @@ export const ScheduleSection = () => {
     }
 
     setReportApplication({
-      [e.target.name]: dayjs(prev as dayjs.ConfigType)
+      [e.target.name]: dayjs(prev as ConfigType)
         .set('hour', e.target.value as number)
         .format('YYYY-MM-DDTHH:00'),
     });

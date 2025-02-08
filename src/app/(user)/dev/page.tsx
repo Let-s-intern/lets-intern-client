@@ -6,6 +6,7 @@ import { Metadata } from 'next';
 import Image from 'next/image';
 import { Suspense } from 'react';
 import img from './font-test.png';
+import TextAreaTest from './text-area-test';
 
 export const metadata: Metadata = {
   robots: 'noindex, nofollow',
@@ -148,7 +149,7 @@ const multiReveiwFilterList = [
 
 const Page = () => {
   return (
-    <div className="max-w-[844px] mx-auto my-20">
+    <div className="mx-auto my-20 max-w-[844px]">
       <div className="grid grid-cols-3 gap-5">
         <ReviewCard review={mock1} missionTitleClamp={1} />
         {/* <ReviewCard review={mock2} missionTitleClamp={1} /> */}
@@ -185,7 +186,7 @@ const Page = () => {
         </Suspense>
       </div>
 
-      <div className="flex gap-2 my-20 text-xsmall14 text-neutral-20">
+      <div className="my-20 flex gap-2 text-xsmall14 text-neutral-20">
         <div>
           {/* <p className="font-thin">
           폰트 테스트입니다. 14px 가나다라마바사 abcdefg ABCDEFG -_=
@@ -219,6 +220,9 @@ const Page = () => {
           <Image src={img} width={367} alt="ho" />
         </div>
       </div>
+      <hr className="my-10"></hr>
+      <h2 className="text-2xl font-semibold">TextArea 테스트</h2>
+      <TextAreaTest />
     </div>
   );
 };

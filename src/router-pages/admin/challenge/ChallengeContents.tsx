@@ -1,5 +1,5 @@
+import dayjs from '@/lib/dayjs';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
 
 import Button from '../../../components/admin/challenge/ui/button/Button';
