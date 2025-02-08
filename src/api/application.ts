@@ -1,5 +1,5 @@
+import dayjs from '@/lib/dayjs';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 import { z } from 'zod';
 import {
   challengeApplicationPriceType,

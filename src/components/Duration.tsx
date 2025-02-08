@@ -1,5 +1,6 @@
+import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
-import dayjs, { Dayjs } from 'dayjs';
+import { Dayjs } from 'dayjs';
 import duration, { Duration as DayjsDuration } from 'dayjs/plugin/duration';
 import { ReactNode, useEffect, useState } from 'react';
 

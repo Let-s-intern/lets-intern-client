@@ -1,3 +1,4 @@
+import dayjs from '@/lib/dayjs';
 import {
   Button,
   FormControl,
@@ -9,11 +10,11 @@ import {
 } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { isAxiosError } from 'axios';
-import dayjs, { Dayjs } from 'dayjs';
 import { ChangeEvent, FormEvent, MouseEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import { Dayjs } from 'dayjs';
 import {
   useBlogTagQuery,
   useDeleteBlogTagMutation,

@@ -10,6 +10,7 @@ import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { useDeleteProgram } from '@/hooks/useDeleteProgram';
 import { useDuplicateProgram } from '@/hooks/useDuplicateProgram';
 import { usePatchVisibleProgram } from '@/hooks/usePatchVisibleProgram';
+import dayjs from '@/lib/dayjs';
 import { ProgramAdminListItem } from '@/schema';
 import {
   newProgramTypeToText,
@@ -20,7 +21,6 @@ import TD from '@components/admin/ui/table/regacy/TD';
 import TH from '@components/admin/ui/table/regacy/TH';
 import { Button, Switch } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 import { useState } from 'react';
 import {
   FaCopy,

@@ -1,6 +1,6 @@
+import dayjs from '@/lib/dayjs';
 import { useMediaQuery } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 import { useEffect, useReducer, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate, useParams } from 'react-router-dom';

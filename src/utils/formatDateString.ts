@@ -1,5 +1,5 @@
-import dayjs, { Dayjs } from 'dayjs';
-import 'dayjs/locale/ko';
+import dayjs from '@/lib/dayjs';
+import { Dayjs } from 'dayjs';
 
 const formatDateString = (
   dateString: string,

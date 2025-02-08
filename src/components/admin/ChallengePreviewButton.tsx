@@ -1,11 +1,11 @@
 import { useGetFaq } from '@/api/faq';
+import dayjs from '@/lib/dayjs';
 import {
   ChallengeIdSchema,
   CreateChallengeReq,
   UpdateChallengeReq,
 } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
-import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
 
 // TODO: 검증 필요. 필요 시 CREATE / UPDATE 분리.

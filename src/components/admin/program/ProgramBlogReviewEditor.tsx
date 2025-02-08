@@ -1,9 +1,9 @@
 import { useBlogListQuery } from '@/api/blog';
+import dayjs from '@/lib/dayjs';
 import { ProgramBlogReview } from '@/types/interface';
 import { blogCategory } from '@/utils/convert';
 import Heading2 from '@components/admin/ui/heading/Heading2';
 import { Box, Button, Modal, Typography } from '@mui/material';
-import dayjs from 'dayjs';
 import React, { useMemo, useState } from 'react';
 
 // 모달 스타일
@@ -87,14 +87,14 @@ const ProgramBlogReviewEditor: React.FC<{
           {blogReview.list.map((item) => (
             <div
               key={item.id}
-              className="flex-none w-32 border h-28 rounded-xs"
+              className="h-28 w-32 flex-none rounded-xs border"
               style={{
                 backgroundImage: `url(${item.thumbnail})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
               }}
             >
-              <div className="flex items-center justify-center h-full p-2 bg-black bg-opacity-30 text-xxsmall12">
+              <div className="flex h-full items-center justify-center bg-black bg-opacity-30 p-2 text-xxsmall12">
                 <span className="text-white">{item.title}</span>
               </div>
             </div>
@@ -146,7 +146,7 @@ const ProgramBlogReviewEditor: React.FC<{
                       >
                         <td className="px-2 py-1">
                           <input
-                            className="w-4 h-4"
+                            className="h-4 w-4"
                             type="checkbox"
                             checked={blogReview.list.some(
                               (v) => v.id === item.blogThumbnailInfo.id,
@@ -192,7 +192,7 @@ const ProgramBlogReviewEditor: React.FC<{
                             </span>
                           </div>
                         </td>
-                        <td className="p-1 whitespace-nowrap text-xsmall14">
+                        <td className="whitespace-nowrap p-1 text-xsmall14">
                           {item.blogThumbnailInfo.createDate
                             ? dayjs(item.blogThumbnailInfo.createDate).format(
                                 'YYYY.MM.DD',

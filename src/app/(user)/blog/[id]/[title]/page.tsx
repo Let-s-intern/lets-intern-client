@@ -1,6 +1,7 @@
 import { fetchBlogData, fetchRecommendBlogData } from '@/api/blog';
 import LexicalContent from '@/components/common/blog/LexicalContent';
 import RecommendBlogCard from '@/components/common/blog/RecommendBlogCard';
+import dayjs from '@/lib/dayjs';
 import { blogCategory } from '@/utils/convert';
 import {
   getBaseUrlFromServer,
@@ -12,7 +13,6 @@ import BlogHashtag from '@components/common/blog/BlogHashtag';
 import BlogHomeButton from '@components/common/blog/BlogHomeButton';
 import BlogRating from '@components/common/blog/BlogRating';
 import BlogShareSection from '@components/common/blog/BlogShareSection';
-import dayjs from 'dayjs';
 import { Metadata } from 'next';
 
 // SSR 메타데이터 생성

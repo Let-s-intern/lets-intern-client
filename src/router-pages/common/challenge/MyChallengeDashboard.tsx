@@ -1,5 +1,5 @@
+import dayjs from '@/lib/dayjs';
 import { useQuery } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 import { useParams } from 'react-router-dom';
 import DailyMissionSection from '../../../components/common/challenge/my-challenge/section/DailyMissionSection';
 import MissionCalendarSection from '../../../components/common/challenge/my-challenge/section/MissionCalendarSection';

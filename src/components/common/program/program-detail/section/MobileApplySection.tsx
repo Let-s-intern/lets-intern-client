@@ -1,6 +1,6 @@
+import dayjs from '@/lib/dayjs';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import { twMerge } from '@/lib/twMerge';
-import dayjs from 'dayjs';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProgramApplicationQuery } from '../../../../../api/application';
@@ -239,7 +239,7 @@ const MobileApplySection = ({
         'fixed bottom-0 left-0 right-0 z-30 flex max-h-[80%] w-screen flex-col items-center overflow-hidden rounded-t-lg bg-static-100 shadow-05 scrollbar-hide',
       )}
     >
-      <div className="sticky top-0 flex justify-center w-full py-3 bg-static-100">
+      <div className="sticky top-0 flex w-full justify-center bg-static-100 py-3">
         <div
           onClick={() =>
             drawerDispatch({

@@ -1,5 +1,5 @@
+import dayjs from '@/lib/dayjs';
 import { useQuery } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 // import MissionCalendar from '../../../components/common/challenge/dashboard/mission-calendar/MissionCalendar';
 import { useParams } from 'react-router-dom';
 import { useUserQuery } from '../../../api/user';

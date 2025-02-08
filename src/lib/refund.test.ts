@@ -4,7 +4,8 @@ import {
   ReportFeedbackStatus,
   ReportPaymentInfo,
 } from '@/api/report';
-import dayjs from 'dayjs';
+import dayjs from '@/lib/dayjs';
+import { Dayjs } from 'dayjs';
 import { expect, test } from 'vitest';
 import { getTotalRefund } from './refund';
 
@@ -17,7 +18,7 @@ function createMockPaymentInfo({
 }): {
   reportApplicationInfo: ReportApplicationInfo;
   reportPaymentInfo: ReportPaymentInfo;
-  reportFeedbackDesiredDate: dayjs.Dayjs | null | undefined;
+  reportFeedbackDesiredDate: Dayjs | null | undefined;
 } {
   return {
     reportApplicationInfo: {
@@ -102,7 +103,7 @@ const timings: Record<
   string,
   {
     message: string;
-    time: dayjs.Dayjs;
+    time: Dayjs;
     reportApplicationStatus: ReportApplicationStatus;
     reportFeedbackStatus: ReportFeedbackStatus | null | undefined;
   }
@@ -216,7 +217,7 @@ const createTest = (
   },
   now: {
     message: string;
-    time: dayjs.Dayjs;
+    time: Dayjs;
     reportApplicationStatus: ReportApplicationStatus;
     reportFeedbackStatus: ReportFeedbackStatus | null | undefined;
   },

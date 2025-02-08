@@ -1,12 +1,9 @@
-import dayjs from 'dayjs';
+import dayjs from '@/lib/dayjs';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
 import { ApplicationResult } from '@/api/paymentSchema';
-import {
-  convertReportPriceType,
-  useGetReportDetailQuery,
-} from '@/api/report';
+import { convertReportPriceType, useGetReportDetailQuery } from '@/api/report';
 import DescriptionBox from '@/components/common/program/paymentSuccess/DescriptionBox';
 import PaymentInfoRow from '@/components/common/program/paymentSuccess/PaymentInfoRow';
 import Heading1 from '@/components/common/report/Heading1';

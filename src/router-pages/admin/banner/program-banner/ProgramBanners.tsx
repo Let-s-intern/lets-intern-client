@@ -7,7 +7,7 @@ import {
   useEditProgramBannerMutation,
   useGetProgramBannerListQuery,
 } from '@/api/program';
-import dayjs from 'dayjs';
+import dayjs from '@/lib/dayjs';
 import { CiTrash } from 'react-icons/ci';
 import { Link } from 'react-router-dom';
 import TableCell from '../../../../components/admin/ui/table/new/TableCell';

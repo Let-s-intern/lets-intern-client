@@ -1,18 +1,18 @@
+import dayjs from '@/lib/dayjs';
+import { Checkbox } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { CiTrash } from 'react-icons/ci';
-import { Checkbox } from '@mui/material';
-import dayjs from 'dayjs';
+import { Link } from 'react-router-dom';
 
+import TableCell from '../../../../components/admin/ui/table/new/TableCell';
+import TableManageContent from '../../../../components/admin/ui/table/new/TableManageContent';
+import TableRow from '../../../../components/admin/ui/table/new/TableRow';
 import TableTemplate, {
   TableTemplateProps,
 } from '../../../../components/admin/ui/table/new/TableTemplate';
-import axios from '../../../../utils/axios';
-import TableCell from '../../../../components/admin/ui/table/new/TableCell';
-import TableRow from '../../../../components/admin/ui/table/new/TableRow';
-import TableManageContent from '../../../../components/admin/ui/table/new/TableManageContent';
 import AlertModal from '../../../../components/ui/alert/AlertModal';
+import axios from '../../../../utils/axios';
 
 type PopUpTableKey =
   | 'title'

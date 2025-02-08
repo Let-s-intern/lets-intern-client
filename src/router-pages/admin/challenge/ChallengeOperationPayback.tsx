@@ -1,5 +1,6 @@
 import { usePatchChallengePayback } from '@/api/challenge';
 import { useAdminChallengeTitle } from '@/context/CurrentAdminChallengeProvider';
+import dayjs from '@/lib/dayjs';
 import { Button, Modal, Snackbar, Switch } from '@mui/material';
 import {
   DataGrid,
@@ -9,7 +10,6 @@ import {
   useGridApiContext,
 } from '@mui/x-data-grid';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { z } from 'zod';
@@ -121,7 +121,7 @@ function createColumns(ths: number[]): GridColDef<Row>[] {
       cellClassName: 'p-0',
       renderEditCell(params) {
         return (
-          <div className="flex items-center justify-start w-full h-full px-2">
+          <div className="flex h-full w-full items-center justify-start px-2">
             <Switch
               checked={params.value}
               onChange={(e) => {
@@ -468,14 +468,14 @@ const ChallengeOperationPayback = () => {
       {paybackConfirm && (
         <div className="flex py-5">
           <div className="flex min-w-[500px] flex-col gap-y-4 rounded-sm bg-neutral-80 p-4">
-            <div className="flex items-center w-full gap-x-4">
-              <h3 className="text-lg font-semibold w-28 shrink-0">
+            <div className="flex w-full items-center gap-x-4">
+              <h3 className="w-28 shrink-0 text-lg font-semibold">
                 페이백 금액
               </h3>
-              <div className="flex items-center flex-1 p-2 bg-white gap-x-3">
+              <div className="flex flex-1 items-center gap-x-3 bg-white p-2">
                 <input
                   type="number"
-                  className="border-none outline-none grow focus:outline-none"
+                  className="grow border-none outline-none focus:outline-none"
                   onWheel={(e) => e.currentTarget.blur()}
                   onChange={(e) =>
                     sestPaybackInfo({
@@ -488,15 +488,15 @@ const ChallengeOperationPayback = () => {
                 <p>원</p>
               </div>
             </div>
-            <div className="flex items-center w-full gap-x-4">
-              <h3 className="text-lg font-semibold w-28 shrink-0">
+            <div className="flex w-full items-center gap-x-4">
+              <h3 className="w-28 shrink-0 text-lg font-semibold">
                 취소사유 (선택)
               </h3>
-              <div className="flex items-center flex-1 p-2 bg-white gap-x-3">
+              <div className="flex flex-1 items-center gap-x-3 bg-white p-2">
                 <input
                   type="text"
                   placeholder='취소사유를 입력해주세요. (ex. "참여 취소")'
-                  className="border-none outline-none grow focus:outline-none"
+                  className="grow border-none outline-none focus:outline-none"
                   onChange={(e) =>
                     sestPaybackInfo({
                       ...paybackInfo,
@@ -507,7 +507,7 @@ const ChallengeOperationPayback = () => {
                 />
               </div>
             </div>
-            <div className="flex items-center justify-end w-full mt-4 gap-x-4">
+            <div className="mt-4 flex w-full items-center justify-end gap-x-4">
               <Button
                 variant="outlined"
                 onClick={() => {
@@ -617,35 +617,35 @@ const ChallengeOperationPayback = () => {
           setIsPaybackModalOpen(false);
         }}
       >
-        <div className="absolute flex flex-col w-2/5 p-6 transform -translate-x-1/2 -translate-y-1/2 shadow-md left-1/2 top-1/2 gap-y-4 rounded-xxs bg-neutral-100">
+        <div className="absolute left-1/2 top-1/2 flex w-2/5 -translate-x-1/2 -translate-y-1/2 transform flex-col gap-y-4 rounded-xxs bg-neutral-100 p-6 shadow-md">
           <>
             <h3 className="text-lg font-bold">페이백 정보 확인</h3>
             <div className="flex w-full gap-x-4">
-              <h4 className="font-semibold w-52">챌린지 명</h4>
+              <h4 className="w-52 font-semibold">챌린지 명</h4>
               <p className="grow text-end">{challengeTitle}</p>
             </div>
             <div className="flex w-full gap-x-4">
-              <h4 className="font-semibold w-52">페이백 금액</h4>
+              <h4 className="w-52 font-semibold">페이백 금액</h4>
               <p className="grow text-end">
                 {(paybackInfo.price?.toLocaleString() || '0') + '원'}
               </p>
             </div>
             <div className="flex w-full gap-x-4">
-              <h4 className="font-semibold w-52">인원 수(페이백/전체)</h4>
+              <h4 className="w-52 font-semibold">인원 수(페이백/전체)</h4>
               <p className="grow text-end">
                 {selectedIds.length + '명/' + rows.length + '명'}
               </p>
             </div>
             <hr />
             <div className="flex w-full gap-x-4">
-              <h4 className="font-semibold w-52">전체 페이백 금액</h4>
+              <h4 className="w-52 font-semibold">전체 페이백 금액</h4>
               <p className="grow text-end">
                 {(
                   selectedIds.length * (paybackInfo.price || 0)
                 ).toLocaleString() + '원'}
               </p>
             </div>
-            <div className="flex items-center justify-end w-full mt-4 gap-x-4">
+            <div className="mt-4 flex w-full items-center justify-end gap-x-4">
               <Button
                 variant="outlined"
                 onClick={() => {
@@ -660,9 +660,9 @@ const ChallengeOperationPayback = () => {
             </div>
           </>
           {isPaybackLoading && (
-            <div className="absolute top-0 left-0 flex items-center justify-center w-full h-full bg-neutral-100 bg-opacity-90">
+            <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-neutral-100 bg-opacity-90">
               <div className="flex items-center gap-x-2">
-                <div className="w-6 h-6 border-2 rounded-full animate-spin border-primary"></div>
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary"></div>
                 <p>페이백 중...</p>
               </div>
             </div>

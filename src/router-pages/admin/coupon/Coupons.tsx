@@ -1,13 +1,13 @@
-import clsx from 'clsx';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import clsx from 'clsx';
+import { useState } from 'react';
 import { CiTrash } from 'react-icons/ci';
+import { Link } from 'react-router-dom';
 
+import dayjs from '@/lib/dayjs';
+import AlertModal from '../../../components/ui/alert/AlertModal';
 import axios from '../../../utils/axios';
 import { couponTypeToText } from '../../../utils/convert';
-import AlertModal from '../../../components/ui/alert/AlertModal';
-import dayjs from 'dayjs';
 
 interface Coupon {
   id: number;

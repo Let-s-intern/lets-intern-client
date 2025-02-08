@@ -1,6 +1,6 @@
 import useCredit from '@/hooks/useCredit';
+import dayjs from '@/lib/dayjs';
 import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
-import dayjs from 'dayjs';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUserQuery } from '../../../api/user';
 import MoreButton from '../../../components/common/mypage/ui/button/MoreButton';

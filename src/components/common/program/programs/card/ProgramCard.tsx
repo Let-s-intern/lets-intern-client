@@ -1,5 +1,5 @@
+import dayjs from '@/lib/dayjs';
 import clsx from 'clsx';
-import dayjs from 'dayjs';
 import { memo, useEffect, useState } from 'react';
 
 import { ProgramInfo } from '../../../../../schema';

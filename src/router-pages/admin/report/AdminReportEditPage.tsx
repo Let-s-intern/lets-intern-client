@@ -1,4 +1,23 @@
 import {
+  convertReportTypeToLandingPath,
+  getReportDetailForAdminQueryKey,
+  getReportsForAdminQueryKey,
+  ReportType,
+  UpdateReportData,
+  useGetReportDetailAdminQuery,
+  usePatchReportMutation,
+} from '@/api/report';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import dayjs from '@/lib/dayjs';
+import { ProgramTypeEnum } from '@/schema';
+import { ReportContent, ReportEditingPrice } from '@/types/interface';
+import EditorApp from '@components/admin/lexical/EditorApp';
+import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
+import ReportProgramRecommendEditor from '@components/admin/report/ReportProgramRecommendEditor';
+import ReportReviewEditor from '@components/admin/report/ReportReviewEditor';
+import Heading2 from '@components/admin/ui/heading/Heading2';
+import FaqSection from '@components/FaqSection';
+import {
   Button,
   Checkbox,
   FormControl,
@@ -12,30 +31,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { useQueryClient } from '@tanstack/react-query';
-import dayjs from 'dayjs';
-import 'dayjs/locale/ko';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { FaTrashCan } from 'react-icons/fa6';
 import { useNavigate, useParams } from 'react-router-dom';
-
-import {
-  convertReportTypeToLandingPath,
-  getReportDetailForAdminQueryKey,
-  getReportsForAdminQueryKey,
-  ReportType,
-  UpdateReportData,
-  useGetReportDetailAdminQuery,
-  usePatchReportMutation,
-} from '@/api/report';
-import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import { ProgramTypeEnum } from '@/schema';
-import { ReportContent, ReportEditingPrice } from '@/types/interface';
-import EditorApp from '@components/admin/lexical/EditorApp';
-import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
-import ReportProgramRecommendEditor from '@components/admin/report/ReportProgramRecommendEditor';
-import ReportReviewEditor from '@components/admin/report/ReportReviewEditor';
-import Heading2 from '@components/admin/ui/heading/Heading2';
-import FaqSection from '@components/FaqSection';
 import AdminReportActiveGuide from './AdminReportActiveGuide';
 
 const initialReport: Omit<UpdateReportData, 'contents'> = {
@@ -246,8 +244,8 @@ const AdminReportEditPage = () => {
         <h1 className="text-2xl font-semibold">서류 진단 등록</h1>
       </header>
       <main className="max-w-screen-xl">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
-          <div className="flex flex-no-wrap items-center gap-4"></div>
+        <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-4">
+          <div className="flex-no-wrap flex items-center gap-4"></div>
 
           <div className="flex items-center gap-2">
             <FormControl size="small" className="w-60">
@@ -503,7 +501,7 @@ const AdminReportEditPage = () => {
             </div>
           </div>
           <hr />
-          <header className="flex items-center justify-between mb-2">
+          <header className="mb-2 flex items-center justify-between">
             <Heading2>옵션 설정</Heading2>
             <Button
               variant="outlined"
@@ -701,7 +699,7 @@ const AdminReportEditPage = () => {
           )}
 
           <div className="text-right">
-            <div className="flex items-center justify-end gap-4 mb-1">
+            <div className="mb-1 flex items-center justify-end gap-4">
               <Button
                 variant="outlined"
                 type="button"

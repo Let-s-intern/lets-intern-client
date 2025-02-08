@@ -1,18 +1,18 @@
+import { Checkbox } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { Checkbox } from '@mui/material';
 
+import dayjs from '@/lib/dayjs';
+import { CiTrash } from 'react-icons/ci';
+import { Link } from 'react-router-dom';
+import TableCell from '../../../../components/admin/ui/table/new/TableCell';
+import TableManageContent from '../../../../components/admin/ui/table/new/TableManageContent';
+import TableRow from '../../../../components/admin/ui/table/new/TableRow';
 import TableTemplate, {
   TableTemplateProps,
 } from '../../../../components/admin/ui/table/new/TableTemplate';
-import axios from '../../../../utils/axios';
-import TableCell from '../../../../components/admin/ui/table/new/TableCell';
-import TableRow from '../../../../components/admin/ui/table/new/TableRow';
-import { Link } from 'react-router-dom';
-import { CiTrash } from 'react-icons/ci';
-import TableManageContent from '../../../../components/admin/ui/table/new/TableManageContent';
 import AlertModal from '../../../../components/ui/alert/AlertModal';
-import dayjs from 'dayjs';
+import axios from '../../../../utils/axios';
 
 type MainBannersTableKey =
   | 'title'

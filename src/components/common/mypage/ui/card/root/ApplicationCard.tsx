@@ -1,5 +1,5 @@
+import dayjs from '@/lib/dayjs';
 import clsx from 'clsx';
-import dayjs from 'dayjs';
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
