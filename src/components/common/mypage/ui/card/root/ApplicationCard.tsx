@@ -52,7 +52,7 @@ const ApplicationCard = ({
           },
         )}
       >
-        <Link to={programLink}>
+        <Link to={programLink} reloadDocument>
           <img
             src={thumbnail}
             alt="프로그램 썸네일"

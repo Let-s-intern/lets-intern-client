@@ -26,6 +26,7 @@ const ApplySection = ({ applicationList, refetch }: ApplySectionProps) => {
           <Link
             to="/program"
             className="other_program rounded-sm border-2 border-primary-xlight bg-white px-5 py-2 font-medium text-neutral-35"
+            reloadDocument
           >
             다른 프로그램 둘러보기
           </Link>
@@ -46,7 +47,11 @@ const ApplySection = ({ applicationList, refetch }: ApplySectionProps) => {
         <MoreButton
           className={`md:flex ${showMore ? 'other-program border-2 border-primary bg-neutral-100 text-primary-dark' : ''}`}
           onClick={() => {
-            showMore ? navigate('/program') : setShowMore(true);
+            if (showMore) {
+              navigate('/program');
+            } else {
+              setShowMore(true);
+            }
           }}
         >
           {showMore ? '다른 프로그램 둘러보기' : `더보기`}
