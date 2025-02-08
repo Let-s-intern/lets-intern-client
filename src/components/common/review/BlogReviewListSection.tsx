@@ -29,7 +29,7 @@ function BlogReviewListSection() {
     return <p className="text-center text-xsmall14">작성된 후기가 없습니다</p>;
 
   return (
-    <section className="mb-12 md:mb-20">
+    <section>
       <div className="mb-8 flex flex-col gap-6 md:mb-12">
         {data?.reviewList.map((review) => (
           <BlogReviewCard key={review.blogReviewId} blogReview={review} />
