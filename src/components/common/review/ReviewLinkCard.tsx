@@ -40,7 +40,7 @@ function ReviewLinkCard({
 
   return (
     <div className="group relative flex flex-col gap-3">
-      <div className="relative h-[9.625rem] w-full overflow-hidden">
+      <div className="relative aspect-[4/3] w-full overflow-hidden">
         <Image
           className="rounded-sm object-cover transition group-has-[a:hover]:opacity-80"
           src={thumbnail ?? ''}
