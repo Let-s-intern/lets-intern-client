@@ -49,6 +49,7 @@ const ProgramReviewFilterSection = () => {
           labelValue="challenge"
           list={challengeTypeFilterList}
           multiSelect
+          dropdownClassName="w-60"
         />
       )}
       {programType === 'LIVE_REVIEW'.toLowerCase() && (

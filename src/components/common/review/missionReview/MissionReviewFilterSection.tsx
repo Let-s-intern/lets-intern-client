@@ -12,12 +12,13 @@ const challengeTypeFilterList: ReviewFilterItem[] = challengeTypes
 
 const MissionReviewFilterSection = () => {
   return (
-    <section className="w-full flex gap-x-3 md:gap-x-2 px-5 py-6 md:p-0">
+    <section className="flex w-full gap-x-3 px-5 py-6 md:gap-x-2 md:p-0">
       <ReviewFilter
         label="챌린지 구분"
         labelValue="challenge"
         list={challengeTypeFilterList}
         multiSelect
+        dropdownClassName="w-60"
       />
     </section>
   );
