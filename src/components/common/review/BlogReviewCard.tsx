@@ -26,7 +26,7 @@ function BlogReviewCard({ blogReview }: Props) {
       <div>
         <div className="mb-2 flex flex-col items-start gap-1 md:flex-row md:items-center md:gap-2">
           <ReviewBadge type={badgeType} />
-          <span className="block max-w-full truncate text-xsmall14 font-bold text-primary">
+          <span className="block max-w-full truncate text-xsmall14 font-semibold text-primary">
             {blogReview.programTitle}
           </span>
         </div>
