@@ -337,7 +337,7 @@ const ReportApplyBottomSheet = React.forwardRef<
             }
           >
             <GradientButton
-              className="w-full apply_button"
+              className="apply_button w-full"
               onClick={() => {
                 if (isInstagram && !showInstagramAlert) {
                   setShowInstagramAlert(true);
@@ -350,12 +350,12 @@ const ReportApplyBottomSheet = React.forwardRef<
             </GradientButton>
           </MobileCTA>
           {/* 데스크탑에서만 표시 */}
-          <DesktopCTA className="items-center justify-between hidden lg:flex">
+          <DesktopCTA className="hidden items-center justify-between lg:flex">
             <div className="flex flex-col items-start gap-0.5">
-              <span className="font-bold text-xsmall16 text-neutral-100">
+              <span className="text-xsmall16 font-bold text-neutral-100">
                 {report.title} 피드백 REPORT
               </span>
-              <span className="font-medium text-xsmall14 text-neutral-80">
+              <span className="text-xsmall14 font-medium text-neutral-80">
                 서류 합격에 한걸음 더 가까워지고 싶다면?
               </span>
             </div>
@@ -373,14 +373,14 @@ const ReportApplyBottomSheet = React.forwardRef<
         <div
           ref={ref}
           className={twMerge(
-            'fixed bottom-0 left-1/2 z-40 mx-auto h-[36rem] w-full max-w-[1000px] -translate-x-1/2 overflow-hidden rounded-t-xl border-t border-neutral-0/5 bg-white shadow-lg transition md:h-[50rem]',
+            'fixed bottom-0 left-1/2 z-40 mx-auto h-[36rem] w-full max-w-[1000px] -translate-x-1/2 overflow-hidden rounded-t-xl border-t border-neutral-0/5 bg-white shadow-lg transition md:h-[50rem] md:max-h-[85vh]',
             !show && 'hidden',
           )}
         >
-          <div className="relative flex flex-col justify-between h-full px-5 overflow-y-scroll">
+          <div className="relative flex h-full flex-col justify-between overflow-y-scroll px-5">
             <div>
               {/* 상단 닫기 버튼 */}
-              <div className="sticky top-0 z-10 w-full py-2 bg-white">
+              <div className="sticky top-0 z-10 w-full bg-white py-2">
                 <div
                   className="mx-auto h-[5px] w-16 cursor-pointer rounded-full bg-neutral-80"
                   onClick={() => setIsDrawerOpen(false)}
@@ -388,7 +388,7 @@ const ReportApplyBottomSheet = React.forwardRef<
               </div>
 
               {/* 본문 */}
-              <div className="flex flex-col gap-8 mt-2 mb-5">
+              <div className="mb-5 mt-2 flex flex-col gap-8">
                 {/* 서류 진단 플랜 */}
                 <FormControl fullWidth>
                   <Heading2 className="mb-4">
@@ -586,7 +586,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                   {/* 선택한 상품 */}
                   {(selectedReportPlan || optionIds.length > 0) && (
                     <>
-                      <div className="mt-3 overflow-hidden border rounded-xs border-neutral-80">
+                      <div className="mt-3 overflow-hidden rounded-xs border border-neutral-80">
                         {/*  선택한 서류 진단 플랜 */}
                         {selectedReportPlan && (
                           <SelectedItemBox
@@ -661,7 +661,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                     </>
                   )}
                   {/* 가격 */}
-                  <span className="block mt-3 font-bold text-right text-small18 text-neutral-10">
+                  <span className="mt-3 block text-right text-small18 font-bold text-neutral-10">
                     {(
                       reportFinalPrice +
                       feedbackFinalPrice -
@@ -674,7 +674,7 @@ const ReportApplyBottomSheet = React.forwardRef<
               </div>
             </div>
 
-            <div className="sticky bottom-0 flex items-center gap-2 pb-2 bg-white rounded-md">
+            <div className="sticky bottom-0 flex items-center gap-2 rounded-md bg-white pb-2">
               <BaseButton
                 className="flex-1"
                 variant="outlined"
@@ -686,7 +686,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                 이전 단계로
               </BaseButton>
               <BaseButton
-                className="flex-1 next_button_click"
+                className="next_button_click flex-1"
                 onClick={onClickApply}
               >
                 신청하기
@@ -724,17 +724,17 @@ const ReportPriceView = memo(function ReportPriceView(props: {
   const hasDiscount = discount > 0;
 
   return (
-    <div className="flex flex-col items-end shrink-0">
+    <div className="flex shrink-0 flex-col items-end">
       {hasDiscount && (
-        <span className="inline-flex gap-1 font-medium leading-none text-xxsmall12">
+        <span className="inline-flex gap-1 text-xxsmall12 font-medium leading-none">
           <span className="text-system-error/90">{percent}%</span>
-          <span className="line-through text-neutral-50">
+          <span className="text-neutral-50 line-through">
             {price.toLocaleString()}원
           </span>
         </span>
       )}
 
-      <span className="font-bold text-xsmall14 text-neutral-10">
+      <span className="text-xsmall14 font-bold text-neutral-10">
         {discountedPrice.toLocaleString()}원
       </span>
     </div>
@@ -754,12 +754,12 @@ const SelectedItemBox = ({
 }) => {
   return (
     <div className={twMerge('bg-neutral-100 p-3', className)}>
-      <div className="flex items-center justify-between mb-2">
-        <span className="font-medium text-xsmall14 text-neutral-10">
+      <div className="mb-2 flex items-center justify-between">
+        <span className="text-xsmall14 font-medium text-neutral-10">
           {title}
         </span>
         <IoCloseCircle
-          className="w-6 h-6 cursor-pointer"
+          className="h-6 w-6 cursor-pointer"
           color="#D8D8D8"
           onClick={onClickDelete}
         />
