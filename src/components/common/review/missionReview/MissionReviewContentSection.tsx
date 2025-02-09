@@ -9,6 +9,7 @@ import {
 } from '@/api/review';
 import { ActiveChallengeType, ChallengeType, PageInfo } from '@/schema';
 import MuiPagination from '@components/common/program/pagination/MuiPagination';
+import EmptyContainer from '@components/common/ui/EmptyContainer';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import ReviewCard from '@components/ReviewCard';
 import { useSearchParams } from 'next/navigation';
@@ -153,9 +154,7 @@ const MissionReviewContentSection = () => {
       {isLoading ? (
         <LoadingContainer className="h-64" />
       ) : !reviewData || reviewData.reviewList.length < 1 ? (
-        <div className="flex h-60 items-center justify-center rounded-ms bg-neutral-95 text-xsmall14 text-neutral-40">
-          등록된 후기가 없습니다.
-        </div>
+        <EmptyContainer text="등록된 후기가 없습니다." />
       ) : (
         reviewData.reviewList.map((review) => (
           <ReviewCard
