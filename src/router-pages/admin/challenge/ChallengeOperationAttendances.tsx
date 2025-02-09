@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useGetChallengeAttendances } from '@/api/challenge';
 import React, { useMemo, useState } from 'react';
 import ChallengeSubmitDetail from '../../../components/admin/challenge/submit-check/table/table-body/ChallengeSubmitDetail';
 import LineTableBody from '../../../components/admin/challenge/ui/lineTable/LineTableBody';
@@ -10,8 +10,7 @@ import {
   useAdminCurrentChallenge,
   useAdminMissionsOfCurrentChallenge,
 } from '../../../context/CurrentAdminChallengeProvider';
-import { attendances, Mission } from '../../../schema';
-import axios from '../../../utils/axios';
+import { Mission } from '../../../schema';
 import { missionStatusToText, TABLE_CONTENT } from '../../../utils/convert';
 
 type Row = Mission &
@@ -34,21 +33,9 @@ const ChallengeOperationAttendances = () => {
   const missions = useAdminMissionsOfCurrentChallenge();
   const [detailedMission, setDetailedMission] = useState<Mission | null>(null);
 
-  const { data: detailedAttendances, refetch } = useQuery({
-    queryKey: [
-      'admin',
-      'challenge',
-      currentChallenge?.id,
-      'attendances',
-      detailedMission?.id,
-    ],
-    enabled: Boolean(currentChallenge?.id) && Boolean(detailedMission?.id),
-    queryFn: async () => {
-      const res = await axios.get(
-        `/challenge/${currentChallenge?.id}/mission/${detailedMission?.id}/attendances`,
-      );
-      return attendances.parse(res.data.data).attendanceList ?? [];
-    },
+  const { data: detailedAttendances, refetch } = useGetChallengeAttendances({
+    challengeId: currentChallenge?.id,
+    detailedMissionId: detailedMission?.id,
   });
 
   const rows = useMemo(() => {

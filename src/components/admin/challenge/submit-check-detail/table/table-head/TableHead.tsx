@@ -42,14 +42,6 @@ const TableHead = ({
         isCheckedList={isCheckedList}
         setIsCheckedList={setIsCheckedList}
       />
-      {/* <div
-        className={clsx(
-          'border-r border-[#D9D9D9] py-3 text-center',
-          cellWidthList[1],
-        )}
-      >
-        번호
-      </div> */}
       <div
         className={clsx(
           'border-r border-[#D9D9D9] py-3 text-center',
@@ -74,44 +66,28 @@ const TableHead = ({
       >
         메일
       </div>
-      {/* <div
-        className={clsx(
-          'border-r border-[#D9D9D9] py-3 text-center',
-          cellWidthList[4],
-        )}
-      >
-        계좌번호
-      </div> */}
       <StatusFilter
-        cellWidthListIndex={5}
+        cellWidthListIndex={4}
         statusFilter={statusFilter}
         setStatusFilter={setStatusFilter}
       />
       <div
         className={clsx(
           'border-r border-[#D9D9D9] py-3 text-center',
-          cellWidthList[6],
+          cellWidthList[5],
         )}
       >
         미션
       </div>
       <ResultFilter
-        cellWidthListIndex={7}
+        cellWidthListIndex={6}
         resultFilter={resultFilter}
         setResultFilter={setResultFilter}
       />
-      {/* <div
-        className={clsx(
-          'border-r border-[#D9D9D9] py-3 text-center',
-          cellWidthList[8],
-        )}
-      >
-        환급여부
-      </div> */}
       <div
         className={clsx(
           'border-r border-[#D9D9D9] py-3 text-center',
-          cellWidthList[8],
+          cellWidthList[7],
         )}
       >
         코멘트
@@ -119,7 +95,7 @@ const TableHead = ({
       <div
         className={clsx(
           'border-r border-[#D9D9D9] py-3 text-center',
-          cellWidthList[9],
+          cellWidthList[8],
         )}
       >
         미션 소감
@@ -127,7 +103,7 @@ const TableHead = ({
       <div
         className={clsx(
           'border-r border-[#D9D9D9] py-3 text-center',
-          cellWidthList[10],
+          cellWidthList[9],
         )}
       >
         노출 여부

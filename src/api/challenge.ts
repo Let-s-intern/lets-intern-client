@@ -3,6 +3,7 @@ import { z } from 'zod';
 import {
   activeChallengeResponse,
   AttendanceResult,
+  attendances,
   AttendanceStatus,
   ChallengeIdPrimitive,
   challengeTitleSchema,
@@ -328,7 +329,9 @@ export const usePatchChallengeAttendance = ({
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
+      challengeId,
       attendanceId,
+      missionId,
       link,
       status,
       result,
@@ -336,7 +339,9 @@ export const usePatchChallengeAttendance = ({
       review,
       reviewIsVisible,
     }: {
+      challengeId?: number;
       attendanceId: number;
+      missionId?: number;
       link?: string;
       status?: AttendanceStatus | null;
       result?: AttendanceResult | null;
@@ -352,14 +357,20 @@ export const usePatchChallengeAttendance = ({
         review,
         reviewIsVisible,
       });
-      return res.data;
+      return { data: res.data, challengeId, missionId };
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({
         queryKey: ['challenge'],
       });
       queryClient.invalidateQueries({
         queryKey: getAdminProgramReviewQueryKey('MISSION_REVIEW'),
+      });
+      queryClient.invalidateQueries({
+        queryKey: getChallengeAttendancesQueryKey(
+          data.challengeId,
+          data.missionId,
+        ),
       });
       return successCallback && successCallback();
     },
@@ -390,5 +401,31 @@ export const useGetChallengeReviewStatus = (
       return reviewStatusSchema.parse(res.data.data);
     },
     enabled: !!challengeId,
+  });
+};
+
+const getChallengeAttendancesQueryKey = (
+  challengeId: number | undefined,
+  missionId: number | undefined,
+) => {
+  return ['admin', 'challenge', challengeId, 'attendances', missionId];
+};
+
+export const useGetChallengeAttendances = ({
+  challengeId,
+  detailedMissionId,
+}: {
+  challengeId?: number;
+  detailedMissionId?: number;
+}) => {
+  return useQuery({
+    queryKey: getChallengeAttendancesQueryKey(challengeId, detailedMissionId),
+    enabled: Boolean(challengeId) && Boolean(detailedMissionId),
+    queryFn: async () => {
+      const res = await axios.get(
+        `/challenge/${challengeId}/mission/${detailedMissionId}/attendances`,
+      );
+      return attendances.parse(res.data.data).attendanceList ?? [];
+    },
   });
 };
