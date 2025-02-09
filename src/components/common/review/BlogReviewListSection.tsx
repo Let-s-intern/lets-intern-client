@@ -41,7 +41,10 @@ function BlogReviewListSection() {
           <MuiPagination
             pageInfo={data.pageInfo}
             page={page}
-            onChange={(_, page) => setPage(page)}
+            onChange={(_, page) => {
+              setPage(page);
+              window.scroll({ top: 0, behavior: 'smooth' });
+            }}
           />
         )}
       </div>
