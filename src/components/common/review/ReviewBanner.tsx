@@ -7,17 +7,19 @@ import { usePathname } from 'next/navigation';
 const description = {
   blog: (
     <>
-      렛츠커리어 프로그램 참여자들이 직접 작성한 생생한 블로그 후기를 한곳에
-      모았습니다.
+      렛츠커리어 프로그램 참여자들이 직접 작성한 <br className="md:hidden" />
+      생생한 블로그 후기를 한곳에 모았습니다.
       <br />
       실제 참여자들의 솔직한 이야기를 지금 바로 확인해보세요!
     </>
   ),
   program: (
     <>
-      렛츠커리어만의 취업 노하우가 잔뜩 담긴 프로그램에 참여한{' '}
-      <br className="hidden md:block" />
-      참여자들의 100% 솔직 후기를 가감 없이 그대로 보여드립니다.
+      렛츠커리어만의 취업 노하우가 잔뜩 담긴 프로그램에
+      <br className="md:hidden" /> 참여한
+      <br className="hidden md:block" /> 참여자들의 100% 솔직 후기를 가감 없이
+      <br className="md:hidden" />
+      그대로 보여드립니다.
     </>
   ),
 };
