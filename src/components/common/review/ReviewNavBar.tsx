@@ -43,8 +43,8 @@ function ReviewNavBar() {
             </ul>
           )}
         </nav>
-        <HorizontalRule className="h-3 w-full" />
       </div>
+      <HorizontalRule className="h-3 w-full md:hidden" />
 
       {/* 데스크탑 네비 바 */}
       <nav className="mr-8 hidden md:block">
