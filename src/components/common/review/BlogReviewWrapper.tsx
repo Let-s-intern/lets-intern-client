@@ -31,6 +31,7 @@ function BlogReviewWrapper() {
           label="프로그램 유형"
           labelValue="type"
           list={filterList}
+          className="program_filter"
           multiSelect
           dropdownClassName="max-w-fit"
         />

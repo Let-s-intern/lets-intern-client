@@ -32,7 +32,11 @@ function BlogReviewListSection() {
     <section>
       <div className="mb-8 flex flex-col gap-6 md:mb-12">
         {data?.reviewList.map((review) => (
-          <BlogReviewCard key={review.blogReviewId} blogReview={review} />
+          <BlogReviewCard
+            key={review.blogReviewId}
+            blogReview={review}
+            className="blog_review"
+          />
         ))}
       </div>
 

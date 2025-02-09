@@ -251,7 +251,7 @@ const ReviewCard = ({
           )}
           alt={review.reviewInfo.programTitle ?? ''}
           className={clsx(
-            'block aspect-[4/3] max-w-[150px] self-start rounded-sm object-cover sm:mt-10 sm:max-w-[200px]',
+            'review_thumbnail block aspect-[4/3] max-w-[150px] self-start rounded-sm object-cover sm:mt-10 sm:max-w-[200px]',
             {
               'cursor-pointer': !!thumbnailLink,
             },

@@ -6,20 +6,25 @@ import dayjs from '@/lib/dayjs';
 import ReviewBadge, {
   getBadgeTypeFromProgramType,
 } from '@components/ReviewBadge';
+import clsx from 'clsx';
 import Image from 'next/image';
 import Link from 'next/link';
 
 interface Props {
   blogReview: BlogReview;
+  className?: string;
 }
 
-function BlogReviewCard({ blogReview }: Props) {
+function BlogReviewCard({ blogReview, className }: Props) {
   const badgeType = getBadgeTypeFromProgramType(blogReview.programType);
 
   return (
     <Link
       href={blogReview.url ?? ''}
-      className="flex flex-col gap-4 rounded-sm border border-neutral-80 p-4 md:flex-row md:justify-between md:gap-11"
+      className={clsx(
+        'flex flex-col gap-4 rounded-sm border border-neutral-80 p-4 md:flex-row md:justify-between md:gap-11',
+        className,
+      )}
       target="_blank"
       rel="noreferrer noopener"
       data-program-name={blogReview.programTitle}

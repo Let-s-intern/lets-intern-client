@@ -10,6 +10,7 @@ import CheckboxActive from '@/assets/icons/checkbox-active.svg?react';
 import CheckboxInActive from '@/assets/icons/checkbox-inactive.svg?react';
 import { twMerge } from '@/lib/twMerge';
 import BaseBottomSheet from '@components/ui/BaseBottomSheet';
+import clsx from 'clsx';
 
 export interface ReviewFilterItem {
   caption: string;
@@ -23,6 +24,7 @@ interface Props {
   list: ReviewFilterItem[];
   multiSelect?: boolean;
   dropdownClassName?: string;
+  className?: string;
 }
 
 function ReviewFilter({
@@ -32,6 +34,7 @@ function ReviewFilter({
   list,
   multiSelect = false,
   dropdownClassName,
+  className,
 }: Props) {
   const router = useRouter();
   const pathname = usePathname();
@@ -174,7 +177,10 @@ function ReviewFilter({
       {/* 필터 바디 */}
       <div className="relative flex shrink-0 flex-col">
         <div
-          className={`flex min-w-[8.5rem] max-w-fit cursor-pointer items-center gap-2 rounded-xxs border bg-[#FBFBFC] px-3 py-2 text-xsmall14 md:text-xsmall16 ${isOpen ? 'border-primary' : 'border-neutral-90'}`}
+          className={clsx(
+            `flex min-w-[8.5rem] max-w-fit cursor-pointer items-center gap-2 rounded-xxs border bg-[#FBFBFC] px-3 py-2 text-xsmall14 md:text-xsmall16 ${isOpen ? 'border-primary' : 'border-neutral-90'}`,
+            className,
+          )}
           onClick={() => setIsOpen((prev) => !prev)}
         >
           <span className="font-medium text-neutral-20">{label}</span>

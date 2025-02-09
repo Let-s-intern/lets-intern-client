@@ -25,6 +25,7 @@ function ProgramInterviewSection() {
         <div className="mt-6 grid grid-cols-2 gap-x-5 gap-y-9 md:grid-cols-4 md:gap-5 md:gap-y-6">
           {data?.blogInfos.map((blog) => (
             <ReviewLinkCard
+              className="interview_review"
               key={blog.blogThumbnailInfo.id}
               date={blog.blogThumbnailInfo.displayDate}
               title={blog.blogThumbnailInfo.title ?? undefined}

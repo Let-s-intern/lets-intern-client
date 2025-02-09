@@ -22,6 +22,7 @@ const ProgramReviewFilterSection = () => {
         label="프로그램 유형"
         labelValue="program"
         childLabelValue={['challenge', 'liveJob']}
+        className="program_filter"
         list={programTypeFilterList}
       />
       {programType === 'CHALLENGE_REVIEW'.toLowerCase() && (
@@ -29,6 +30,7 @@ const ProgramReviewFilterSection = () => {
           label="챌린지 구분"
           labelValue="challenge"
           list={challengeTypeFilter}
+          className="challenge_filter"
           multiSelect
           dropdownClassName="w-60"
         />
@@ -37,6 +39,7 @@ const ProgramReviewFilterSection = () => {
         <ReviewFilter
           label="LIVE 구분"
           labelValue="liveJob"
+          className="live_filter"
           list={liveJobTypeFilter}
           multiSelect
         />

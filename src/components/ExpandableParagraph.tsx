@@ -59,7 +59,7 @@ const ExpandableParagraph = ({
           {!isOverflown ? null : !expanding ? (
             <button
               className={twMerge(
-                'z-1 absolute bottom-0 right-0 block bg-gradient-to-r from-transparent via-white via-40% to-white pl-8 text-primary hover:underline',
+                'review_more z-1 absolute bottom-0 right-0 block bg-gradient-to-r from-transparent via-white via-40% to-white pl-8 text-primary hover:underline',
                 buttonClassName,
               )}
               onClick={(e) => {

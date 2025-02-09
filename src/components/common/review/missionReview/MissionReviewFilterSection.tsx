@@ -10,6 +10,7 @@ const MissionReviewFilterSection = () => {
       <ReviewFilter
         label="챌린지 구분"
         labelValue="challenge"
+        className="challenge_filter"
         list={challengeTypeFilter}
         multiSelect
         dropdownClassName="w-60"

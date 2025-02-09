@@ -48,7 +48,7 @@ const ProgramReviewSection = () => {
         </div>
       ) : (
         <div className="flex flex-col gap-6 md:grid md:grid-cols-4 md:grid-rows-1 md:gap-3">
-          {reviewData.map((review) => (
+          {reviewData.map((review, i) => (
             <ReviewCard
               key={(review.reviewInfo.type ?? '') + review.reviewInfo.reviewId}
               review={review}
@@ -56,6 +56,7 @@ const ProgramReviewSection = () => {
               missionTitleClamp={1}
               reviewItemNums={2}
               href={`/review/${review.reviewInfo.type === 'MISSION_REVIEW' ? 'mission' : 'program'}${review.reviewInfo.type !== 'MISSION_REVIEW' ? `?program=${review.reviewInfo.type?.toLowerCase()}` : ''}`}
+              className={i === 0 ? 'mission_review' : 'program_review'}
             />
           ))}
         </div>
