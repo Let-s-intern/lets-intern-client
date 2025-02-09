@@ -28,7 +28,7 @@ function BlogReviewWrapper() {
     <Suspense>
       <div className="py-6 md:pt-0">
         <ReviewFilter
-          label="프로그램 후기"
+          label="프로그램 유형"
           labelValue="type"
           list={filterList}
           multiSelect

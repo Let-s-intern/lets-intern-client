@@ -38,7 +38,7 @@ const ProgramReviewFilterSection = () => {
   return (
     <section className="flex gap-x-2 overflow-auto px-5 py-6 scrollbar-hide md:gap-x-3 md:overflow-visible md:p-0">
       <ReviewFilter
-        label="프로그램 후기"
+        label="프로그램 유형"
         labelValue="program"
         childLabelValue={['challenge', 'liveJob']}
         list={programTypeFilterList}
