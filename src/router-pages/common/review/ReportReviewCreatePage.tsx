@@ -119,19 +119,21 @@ const ReportReviewCreatePage = () => {
         <ReviewQuestion required className="mb-5">
           3. {programTitle?.title} 이용 후에 서류 작성 고민이 해결되셨나요?
         </ReviewQuestion>
-        <GoalOrConcernsBox className="mb-3">
-          <div className="max-h-64 overflow-y-auto px-5 py-3 md:max-h-[9.5rem]">
-            <span className="text-xsmall14">
-              {/* TODO: 사용자 이름 넣어야 함 */}
-              🤔 <b>{user?.name}</b>님이 작성하신 서류 고민
-            </span>
-            <br />
-            {/* TODO: 사용자가 설정한 고민이 들어가야 함 */}
-            <p className="text-xsmall16 font-bold">
-              {reportMessage?.message ?? '-'}
-            </p>
-          </div>
-        </GoalOrConcernsBox>
+        {reportMessage?.message && (
+          <GoalOrConcernsBox className="mb-3">
+            <div className="max-h-64 overflow-y-auto px-5 py-3 md:max-h-[9.5rem]">
+              <span className="text-xsmall14">
+                {/* TODO: 사용자 이름 넣어야 함 */}
+                🤔 <b>{user?.name}</b>님이 작성하신 서류 고민
+              </span>
+              <br />
+              {/* TODO: 사용자가 설정한 고민이 들어가야 함 */}
+              <p className="text-xsmall16 font-bold">
+                {reportMessage?.message ?? '-'}
+              </p>
+            </div>
+          </GoalOrConcernsBox>
+        )}
         <ReviewTextarea
           placeholder={`${programTitle?.title} 이용 전의 고민을 어느 정도 해결하셨는지, ${isDesktop ? '\n' : ''}그 과정에서 ${programTitle?.title}가 어떤 도움을 주었는지 작성해주세요.`}
           value={worryResult}
