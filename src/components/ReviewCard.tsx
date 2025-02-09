@@ -1,7 +1,7 @@
 'use client';
 
 import { ReportType } from '@/api/report';
-import { GetReview, QuestionType } from '@/api/review';
+import { GetReview, QuestionType, ReviewType } from '@/api/review';
 import Bubble from '@/assets/graphic/bubble.svg?react';
 import Heart from '@/assets/graphic/heart.svg?react';
 import Lightbulb from '@/assets/graphic/lightbulb.svg?react';
@@ -12,12 +12,27 @@ import Trophy from '@/assets/graphic/trophy.svg?react';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
+import { ProgramTypeUpperCase } from '@/schema';
 import { questionTypeToText } from '@/utils/convert';
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
 import ExpandableParagraph from './ExpandableParagraph';
 import ReviewBadge from './ReviewBadge';
+
+function reviewTypeToProgramType(reviewType: ReviewType): ProgramTypeUpperCase {
+  switch (reviewType) {
+    case 'CHALLENGE_REVIEW':
+    case 'MISSION_REVIEW':
+      return 'CHALLENGE';
+    case 'LIVE_REVIEW':
+      return 'LIVE';
+    case 'VOD_REVIEW':
+      return 'VOD';
+    case 'REPORT_REVIEW':
+      return 'REPORT';
+  }
+}
 
 export const getTitle = (review: GetReview) => {
   switch (review.reviewInfo.type) {
@@ -125,6 +140,13 @@ const ReviewCard = ({
         href && 'cursor-pointer',
         className,
       )}
+      data-review-type={review.reviewInfo.type}
+      data-program-name={review.reviewInfo.programTitle}
+      data-program-type={
+        review.reviewInfo.type
+          ? reviewTypeToProgramType(review.reviewInfo.type)
+          : undefined
+      }
       onClick={() => {
         if (href) {
           router.push(href);

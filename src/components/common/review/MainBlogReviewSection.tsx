@@ -26,7 +26,7 @@ function MainBlogReviewSection() {
             <ReviewLinkCard
               key={review.blogReviewId}
               date={review.postDate}
-              title={review.title}
+              title={review.title ?? undefined}
               description={review.description}
               thumbnail={review.thumbnail}
               externalLink={review.url}
@@ -36,6 +36,9 @@ function MainBlogReviewSection() {
               {...(review.url && {
                 favicon: new URL(review.url).origin + '/favicon.ico',
               })}
+              data-program-type={review.programType}
+              data-program-name={review.programTitle}
+              data-review-type={`${review.programType}_REVIEW`}
             />
           ))}
         </div>
