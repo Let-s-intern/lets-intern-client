@@ -53,11 +53,7 @@ const AbsentMissionSubmitMenu = ({
     currentChallenge?.id,
   );
 
-  const { mutateAsync: tryPostAttendance } = usePostChallengeAttendance({
-    successCallback: () => {
-      alert('미션 제출이 완료되었습니다.');
-    },
-  });
+  const { mutateAsync: tryPostAttendance } = usePostChallengeAttendance({});
 
   const { mutateAsync: tryPatchAttendance } = usePatchChallengeAttendance({
     successCallback: () => {

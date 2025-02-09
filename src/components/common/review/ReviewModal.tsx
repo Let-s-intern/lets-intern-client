@@ -133,7 +133,12 @@ function ReviewModal({
             {isLastMission && (
               <span
                 className="cursor-pointer text-small18 font-medium text-neutral-50 hover:underline"
-                onClick={() => onClose && onClose()}
+                onClick={() => {
+                  if (onClose) {
+                    onClose();
+                    alert('미션 제출이 완료되었습니다.');
+                  }
+                }}
               >
                 다음에 할게요
               </span>
