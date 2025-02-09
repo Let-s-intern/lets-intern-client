@@ -25,6 +25,7 @@ function BlogReviewCard({ blogReview }: Props) {
       data-program-name={blogReview.programTitle}
       data-program-type={blogReview.programType}
       data-review-type={`${blogReview.programType}_REVIEW`}
+      data-blog-name={blogReview.title}
     >
       <div>
         <div className="mb-2 flex flex-col items-start gap-1 md:flex-row md:items-center md:gap-2">
