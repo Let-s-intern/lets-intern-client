@@ -96,7 +96,7 @@ const ReportReviewPage = () => {
       {/* 만족했던 점 */}
       <section>
         <ReviewQuestion required className="mb-5">
-          4. {josa(programTitle?.title ?? '', '을/를')} 참여하면서 가장 만족했던
+          4. {josa(programTitle?.title ?? '', '을/를')} 이용하면서 가장 만족했던
           점을 남겨주세요!
         </ReviewQuestion>
         <ReviewTextarea
@@ -109,11 +109,11 @@ const ReportReviewPage = () => {
       {/* 아쉬웠던 점 */}
       <section>
         <ReviewQuestion required className="mb-5">
-          5. {josa(programTitle?.title ?? '', '을/를')} 참여하면서 가장 아쉬웠던
+          5. {josa(programTitle?.title ?? '', '을/를')} 이용하면서 가장 아쉬웠던
           점을 남겨주세요!
         </ReviewQuestion>
         <ReviewTextarea
-          placeholder={`참여하면서 아쉬웠던 점이나 추가되었으면 좋겠는 내용이 있다면 ${isDesktop ? '\n' : ''}자유롭게 작성해주세요.`}
+          placeholder={`이용하면서 아쉬웠던 점이나 추가되었으면 좋겠는 내용이 있다면 ${isDesktop ? '\n' : ''}자유롭게 작성해주세요.`}
           value={badPoint ?? '-'}
           readOnly
         />
