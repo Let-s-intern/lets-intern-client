@@ -17,6 +17,7 @@ import { twMerge } from '@/lib/twMerge';
 import { ReportTypePathnameEnum } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
+import { getReportThumbnail } from '@components/common/mypage/credit/CreditListItem';
 import { ReportFormRadioControlLabel } from '@components/common/report/ControlLabel';
 import DateTimePicker from '@components/common/report/DateTimePicker';
 import FilledInput from '@components/common/report/FilledInput';
@@ -232,7 +233,7 @@ const ProgramInfoSection = ({
     value: string,
   ) => void;
 }) => {
-  const { title, product, option } = useReportProgramInfo();
+  const { title, product, option, reportType } = useReportProgramInfo();
 
   const tooltipContent = {
     description:
@@ -266,7 +267,7 @@ const ProgramInfoSection = ({
         </Tooltip>
       </div>
       <ProgramCard
-        imgSrc="/images/report-thumbnail.png"
+        imgSrc={getReportThumbnail(reportType ?? null)}
         imgAlt="서류 진단서 프로그램 썸네일"
         title={title ?? ''}
         content={[
