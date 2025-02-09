@@ -39,6 +39,7 @@ function MainBlogReviewSection() {
               data-program-type={review.programType}
               data-program-name={review.programTitle}
               data-review-type={`${review.programType}_REVIEW`}
+              data-blog-name={review.title}
             />
           ))}
         </div>
