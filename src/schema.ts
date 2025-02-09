@@ -515,6 +515,8 @@ export type UpdateLiveReq = {
 
 // ADMIN LIVE 클래스 및 VOD 클래스 직무
 export const liveAndVodJob = z.enum([
+  '대기업 준비',
+  '렛커시리즈',
   '경영관리',
   '금융',
   '마케팅',
@@ -532,6 +534,8 @@ export const liveAndVodJob = z.enum([
 
 export type LiveAndVodJob = z.infer<typeof liveAndVodJob>;
 export const liveJobList: LiveAndVodJob[] = [
+  '대기업 준비',
+  '렛커시리즈',
   '경영관리',
   '금융',
   '마케팅',

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { PaymentType } from '../../../../api/paymentSchema';
 import CardStatus from './CardStatus';
 
-const getReportThumbnail = (reportType: ReportType | null) => {
+export const getReportThumbnail = (reportType: ReportType | null) => {
   switch (reportType) {
     case 'RESUME':
       return '/images/report/thumbnail_resume.png';

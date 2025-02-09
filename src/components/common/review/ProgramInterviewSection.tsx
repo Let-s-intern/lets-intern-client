@@ -27,7 +27,7 @@ function ProgramInterviewSection() {
             <ReviewLinkCard
               key={blog.blogThumbnailInfo.id}
               date={blog.blogThumbnailInfo.displayDate}
-              title={blog.blogThumbnailInfo.title}
+              title={blog.blogThumbnailInfo.title ?? undefined}
               description={blog.blogThumbnailInfo.description}
               thumbnail={blog.blogThumbnailInfo.thumbnail}
               externalLink={null}
@@ -35,6 +35,8 @@ function ProgramInterviewSection() {
               programTitle={'프로그램 후기'}
               programType={null}
               url={getBlogPathname(blog.blogThumbnailInfo)}
+              data-review-type="PROGRAM_REVIEWS"
+              data-blog-name={blog.blogThumbnailInfo.title}
             />
           ))}
         </div>

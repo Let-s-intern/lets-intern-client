@@ -54,7 +54,7 @@ const ProgramReviewFilterSection = () => {
       )}
       {programType === 'LIVE_REVIEW'.toLowerCase() && (
         <ReviewFilter
-          label="직무 구분"
+          label="LIVE 구분"
           labelValue="liveJob"
           list={liveJobFilterList}
           multiSelect

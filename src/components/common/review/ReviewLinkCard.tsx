@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { ComponentProps } from 'react';
 
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
@@ -10,7 +11,7 @@ import ReviewBadge, {
   getBadgeTypeFromProgramType,
 } from '@components/ReviewBadge';
 
-interface IReviewLinkCardProps {
+type ReviewLinkCardProps = {
   url?: string | null;
   thumbnail?: string | null;
   title?: string | null;
@@ -20,7 +21,7 @@ interface IReviewLinkCardProps {
   externalLink?: string | null;
   favicon?: string | null;
   date?: string | null;
-}
+} & ComponentProps<'div'>;
 
 function ReviewLinkCard({
   date,
@@ -32,14 +33,19 @@ function ReviewLinkCard({
   thumbnail,
   title,
   url,
-}: IReviewLinkCardProps) {
+  className,
+  ...restProps
+}: ReviewLinkCardProps) {
   const badgeType = programType
     ? getBadgeTypeFromProgramType(programType)
     : null;
   const isInternal = url?.startsWith('/');
 
   return (
-    <div className="group relative flex flex-col gap-3">
+    <div
+      className={`group relative flex flex-col gap-3 ${className ?? ''}`}
+      {...restProps}
+    >
       <div className="relative aspect-[4/3] w-full overflow-hidden">
         {thumbnail ? (
           <Image

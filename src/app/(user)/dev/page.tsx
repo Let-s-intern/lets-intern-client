@@ -132,7 +132,7 @@ const singleReviewFilterList = [
   },
 ];
 
-const multiReveiwFilterList = [
+const multiReviewFilterList = [
   {
     caption: '긍정적 리뷰',
     value: 'positive',
@@ -180,7 +180,7 @@ const Page = () => {
           <ReviewFilter
             label="나는 필터야"
             labelValue="filter"
-            list={multiReveiwFilterList}
+            list={multiReviewFilterList}
             multiSelect
           />
         </Suspense>

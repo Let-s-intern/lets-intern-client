@@ -54,8 +54,9 @@ function ReviewFilter({
         : checkedList[0].caption
       : '전체';
 
-  const isAllSelected =
-    checkedList.length === 0 || checkedList.length === list.length;
+  const isAllSelected = multiSelect
+    ? checkedList.length === 0 || checkedList.length === list.length
+    : !selectedItem;
 
   const handleQueryParams = (item: ReviewFilterItem) => {
     // 쿼리 스트링으로 선택된 아이템 추가
@@ -117,6 +118,9 @@ function ReviewFilter({
       return;
     }
     setCheckedList([]);
+    if (!multiSelect) {
+      setIsOpen(false);
+    }
     const params = new URLSearchParams(searchParams.toString());
     params.delete(labelValue);
     childLabelValue?.forEach((childLabel) => {
@@ -127,6 +131,7 @@ function ReviewFilter({
     childLabelValue,
     isAllSelected,
     labelValue,
+    multiSelect,
     pathname,
     router,
     searchParams,
@@ -191,20 +196,19 @@ function ReviewFilter({
                 {label}
               </span>
               <ul className="max-h-[60vh] overflow-y-auto">
-                {multiSelect ? (
-                  <FilterList
-                    key="all"
-                    item={{
-                      caption: '전체',
-                      value: 'all',
-                    }}
-                    isLastItem={false}
-                    multiSelect={true}
-                    checked={isAllSelected}
-                    selected={false}
-                    onClick={handleAllClick}
-                  />
-                ) : null}
+                <FilterList
+                  key="all"
+                  item={{
+                    caption: '전체',
+                    value: 'all',
+                  }}
+                  isLastItem={false}
+                  multiSelect={multiSelect}
+                  checked={isAllSelected}
+                  selected={isAllSelected}
+                  onClick={handleAllClick}
+                />
+
                 {list.map((item, index) => (
                   <FilterList
                     key={item.value}
@@ -233,21 +237,20 @@ function ReviewFilter({
               dropdownClassName,
             )}
           >
-            {multiSelect ? (
-              <FilterList
-                key="all"
-                className="py-2"
-                item={{
-                  caption: '전체',
-                  value: 'all',
-                }}
-                isLastItem={false}
-                multiSelect={true}
-                checked={isAllSelected}
-                selected={false}
-                onClick={handleAllClick}
-              />
-            ) : null}
+            <FilterList
+              key="all"
+              className="py-2"
+              item={{
+                caption: '전체',
+                value: 'all',
+              }}
+              isLastItem={false}
+              multiSelect={multiSelect}
+              checked={isAllSelected}
+              selected={isAllSelected}
+              onClick={handleAllClick}
+            />
+
             {list.map((item, index) => (
               <FilterList
                 key={item.value}

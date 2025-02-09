@@ -22,6 +22,10 @@ function BlogReviewCard({ blogReview }: Props) {
       className="flex flex-col gap-4 rounded-sm border border-neutral-80 p-4 md:flex-row md:justify-between md:gap-11"
       target="_blank"
       rel="noreferrer noopener"
+      data-program-name={blogReview.programTitle}
+      data-program-type={blogReview.programType}
+      data-review-type={`${blogReview.programType}_REVIEW`}
+      data-blog-name={blogReview.title}
     >
       <div>
         <div className="mb-2 flex flex-col items-start gap-1 md:flex-row md:items-center md:gap-2">
