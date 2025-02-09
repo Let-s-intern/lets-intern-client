@@ -221,7 +221,7 @@ export default function AdminBlogReviewListPage() {
     setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
 
     if (target?.isNew) {
-      // API 생성
+      // [API] 리뷰 생성
       await postReview.mutateAsync({
         programType: programType ?? ProgramTypeEnum.enum.CHALLENGE,
         programTitle,
@@ -230,7 +230,7 @@ export default function AdminBlogReviewListPage() {
         postDate: dayjs(postDate).format(YYYY_MMDD_THHmmss),
       });
     } else {
-      // API 수정
+      // [API] 리뷰 수정
       await patchReview.mutateAsync({
         blogReviewId,
         programType: programType ?? ProgramTypeEnum.enum.CHALLENGE,
@@ -260,19 +260,43 @@ export default function AdminBlogReviewListPage() {
   return (
     <div className="p-5">
       <AdminReviewHeader />
-      <div className="flex items-center justify-between pb-2">
-        <p className="text-xsmall14">
-          <span className="block text-requirement">
-            *등록: 한 번에 하나만 가능
-          </span>
-          <span className="block">*편집: 한 번에 여러 개 가능</span>
-        </p>
-        <p className="text-xsmall14">
-          <span className="block">*생성 시에는 노출 불가능</span>
-          <span className="block text-requirement">
-            *URL이 없는 리뷰를 노출하지 마세요 (에러 발생)
-          </span>
-        </p>
+      <div className="flex items-end justify-between pb-2">
+        <div>
+          <h2 className="font-semibold">동작 설명</h2>
+          <p className="text-xsmall14">
+            <span className="block text-requirement">
+              *<b>등록</b>: 한 번에 하나만 가능
+            </span>
+            <span className="block">
+              *<b>편집</b>: 한 번에 여러 개 가능
+            </span>
+            <span className="block">
+              *생성 시에는 노출 불가능 (default: false)
+            </span>
+            <span className="block">
+              *편집 후에는 <b className="text-requirement">새로고침</b> 해야
+              URL이 수정됩니다.
+            </span>
+            <span className="block">
+              *URL이 없는 리뷰를 노출하지 마세요{' '}
+              <span className="text-requirement">
+                (USER 페이지에서 에러 발생)
+              </span>
+            </span>
+          </p>
+        </div>
+        <div>
+          <h2 className="font-semibold">등록할 수 있는 URL 목록</h2>
+          <ul className="list-disc pl-6 text-xsmall14">
+            <li>
+              네이버 블로그 (<b className="text-requirement">모바일</b>)
+            </li>
+            <li>티스토리 블로그</li>
+            <li>미디엄 Medium</li>
+            <li>벨로그 Velog</li>
+            <li>디스콰이엇 Disquiet</li>
+          </ul>
+        </div>
         <Button className="h-fit" variant="outlined" onClick={handleAddRow}>
           등록
         </Button>
