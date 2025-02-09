@@ -7,8 +7,7 @@ import channelService from '@/ChannelService';
 import { twMerge } from '@/lib/twMerge';
 import { usePathname } from 'next/navigation';
 
-const programDetailPathRegex = /^\/program\/(live|challenge|vod)\/\d+$/; // /program/live/:programId
-
+const programDetailPathRegex = /^\/program\/(live|challenge|vod)\/\d+/; // 프로그램 상세페이지
 const ChannelTalkBtn = () => {
   const pathname = usePathname() ?? '';
   const isUpTo991 = useMediaQuery('(max-width: 991px)');
