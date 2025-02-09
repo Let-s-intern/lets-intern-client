@@ -1,7 +1,12 @@
 'use client';
 
 import { useGetActiveChallenge } from '@/api/challenge';
-import { programReviewParam, useGetProgramReview } from '@/api/review';
+import { convertReportTypeToLandingPath, ReportType } from '@/api/report';
+import {
+  programReviewParam,
+  ReviewType,
+  useGetProgramReview,
+} from '@/api/review';
 import { ActiveChallengeType, ChallengeType, PageInfo } from '@/schema';
 import MuiPagination from '@components/common/program/pagination/MuiPagination';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
@@ -66,25 +71,65 @@ const MissionReviewContentSection = () => {
     return `/program/challenge/${list[0].id}`;
   };
 
-  const getChallengeLink = (challengeType: ChallengeType | null) => {
+  const getChallengeLink = (
+    challengeType: ChallengeType | null,
+    programId: number | null,
+  ) => {
+    const defaultLink = `/program/challenge/${programId}`;
+
     switch (challengeType) {
       case 'CAREER_START':
-        return getActiveChallenge(careerStartChallenge?.challengeList);
+        return (
+          getActiveChallenge(careerStartChallenge?.challengeList) ?? defaultLink
+        );
       case 'DOCUMENT_PREPARATION':
-        return getActiveChallenge(documentPreparationChallenge?.challengeList);
+        return (
+          getActiveChallenge(documentPreparationChallenge?.challengeList) ??
+          defaultLink
+        );
       case 'MEETING_PREPARATION':
-        return getActiveChallenge(meetingPreparationChallenge?.challengeList);
+        return (
+          getActiveChallenge(meetingPreparationChallenge?.challengeList) ??
+          defaultLink
+        );
       case 'ETC':
-        return getActiveChallenge(etcChallenge?.challengeList);
+        return getActiveChallenge(etcChallenge?.challengeList) ?? defaultLink;
       case 'PERSONAL_STATEMENT':
-        return getActiveChallenge(personalStatementChallenge?.challengeList);
+        return (
+          getActiveChallenge(personalStatementChallenge?.challengeList) ??
+          defaultLink
+        );
       case 'PORTFOLIO':
-        return getActiveChallenge(portfolioChallenge?.challengeList);
+        return (
+          getActiveChallenge(portfolioChallenge?.challengeList) ?? defaultLink
+        );
       case 'PERSONAL_STATEMENT_LARGE_CORP':
-        return getActiveChallenge(largeCorpChallenge?.challengeList);
+        return (
+          getActiveChallenge(largeCorpChallenge?.challengeList) ?? defaultLink
+        );
       default:
-        return undefined;
+        return defaultLink;
     }
+  };
+
+  const getThumbnailLink = (
+    reviewType: ReviewType | null,
+    challengeType: ChallengeType | null,
+    reportType: ReportType | null,
+    programId: number | null,
+  ): string | undefined => {
+    if (reviewType === 'CHALLENGE_REVIEW' || reviewType === 'MISSION_REVIEW') {
+      return getChallengeLink(challengeType, programId);
+    }
+    if (reviewType === 'LIVE_REVIEW') {
+      return `/program/live/${programId}`;
+    }
+    if (reviewType === 'REPORT_REVIEW') {
+      return reportType
+        ? convertReportTypeToLandingPath(reportType)
+        : undefined;
+    }
+    return undefined;
   };
 
   const isLoading =
@@ -117,8 +162,11 @@ const MissionReviewContentSection = () => {
             key={review.reviewInfo.reviewId}
             review={review}
             showThumbnail
-            thumbnailLink={getChallengeLink(
+            thumbnailLink={getThumbnailLink(
+              review.reviewInfo.type ?? null,
               review.reviewInfo.challengeType ?? null,
+              review.reviewInfo.reportType ?? null,
+              review.reviewInfo.programId ?? null,
             )}
             expandable
             gap="large"

@@ -62,6 +62,7 @@ export const getReviewSchema = z.object({
     npsScore: z.number().nullable().optional(),
     type: reviewTypeSchema.nullable().optional(),
     createDate: z.string().nullable().optional(),
+    programId: z.number().nullable().optional(),
     programTitle: z.string().nullable().optional(),
     programThumbnail: z.string().nullable().optional(),
     challengeType: challengeTypeSchema.nullable().optional(),
