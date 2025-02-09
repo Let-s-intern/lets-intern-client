@@ -44,7 +44,7 @@ const Footer = () => {
       });
   };
   return (
-    <footer className="w-full px-5 pt-10 pb-6 border-t-1 border-neutral-80 bg-neutral-85 lg:px-10 xl:px-52">
+    <footer className="border-t-1 w-full border-neutral-80 bg-neutral-85 px-5 pb-16 pt-10 lg:px-10 xl:px-52">
       <div className="flex flex-col gap-[3.25rem] lg:justify-between lg:gap-7">
         <div className="flex flex-col gap-[3.25rem] lg:flex-row-reverse lg:justify-between">
           <div className="flex flex-col gap-[3.25rem] lg:flex-row lg:items-start lg:gap-[6.25rem]">
@@ -54,7 +54,8 @@ const Footer = () => {
               <MenuLink to="/program">프로그램</MenuLink>
               <MenuLink to="/blog/list">블로그</MenuLink>
               <MenuLink to="/report/landing">서류 진단 서비스</MenuLink>
-              <MenuLink to="https://letscareer.framer.website" 
+              <MenuLink
+                to="https://letscareer.framer.website"
                 target="_blank"
                 rel="noopenner noreferrer"
               >
@@ -91,7 +92,7 @@ const Footer = () => {
               {/* 고객센터 */}
               <div className="text-0.875 w-80">
                 <span className="text-neutral-0">{CUSTOEMR_CENTER.title}</span>
-                <p className="flex flex-col mt-2 text-neutral-0/65">
+                <p className="mt-2 flex flex-col text-neutral-0/65">
                   {CUSTOEMR_CENTER.content.map((item) => (
                     <span key={item}>{item}</span>
                   ))}
@@ -103,7 +104,7 @@ const Footer = () => {
           <div className="text-0.75-medium flex flex-col gap-5 text-neutral-45">
             {/* 로고 */}
             <Link to="/" className="w-[7.5rem]" reloadDocument>
-              <img className="w-full h-auto" src="/logo/logo.svg" alt="Logo" />
+              <img className="h-auto w-full" src="/logo/logo.svg" alt="Logo" />
             </Link>
             {/* 사업자 정보 */}
             <div className="text-0.75-medium flex flex-col gap-2 text-neutral-45">
@@ -155,7 +156,7 @@ const Footer = () => {
         </div>
       </div>
 
-      <hr className="mt-8 mb-10" />
+      <hr className="mb-10 mt-8" />
     </footer>
   );
 };
