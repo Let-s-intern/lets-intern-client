@@ -313,15 +313,16 @@ export const usePostAdminBlogReview = () => {
 // [어드민] 블로그 후기 업데이트
 interface AdminBlogReviewPatchReq {
   blogReviewId: number | string;
-  programType: ProgramTypeUpperCase;
+  programType?: ProgramTypeUpperCase;
   programTitle?: string | null;
   name?: string | null;
   url?: string | null;
   postDate?: string | null;
-  isVisible: boolean;
+  isVisible?: boolean;
 }
 
 export const usePatchAdminBlogReview = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (updatedReview: AdminBlogReviewPatchReq) => {
       const res = await axiosV2.patch(
@@ -330,6 +331,10 @@ export const usePatchAdminBlogReview = () => {
       );
       return res;
     },
+    onSuccess: async () =>
+      await queryClient.invalidateQueries({
+        queryKey: [adminBlogReviewListQueryKey],
+      }),
   });
 };
 
