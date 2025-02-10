@@ -1,14 +1,13 @@
-import { usePostBannerForAdmin } from '@/api/banner';
+import { BannerItemType, usePostBannerForAdmin } from '@/api/banner';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TopBarBannerInputContent from '../../../../components/admin/banner/top-bar-banner/TopBarBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
-import { ILineBannerForm } from '../../../../types/interface';
 
 const TopBarBannerCreate = () => {
   const navigate = useNavigate();
 
-  const [value, setValue] = useState<ILineBannerForm>({
+  const [value, setValue] = useState<BannerItemType>({
     title: '',
     contents: '',
     link: '',
@@ -20,8 +19,10 @@ const TopBarBannerCreate = () => {
 
   const { mutate: addTopBarBanner } = usePostBannerForAdmin({
     successCallback: () => {
-      alert('상단 띠 배너가 등록되었습니다.');
       navigate('/admin/banner/top-bar-banners');
+    },
+    errorCallback: (error) => {
+      alert(error);
     },
   });
 

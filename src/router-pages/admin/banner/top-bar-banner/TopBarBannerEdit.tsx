@@ -32,9 +32,11 @@ const TopBarBannerEdit = () => {
     });
 
   const { mutate: editTopBarBanner } = useEditBannerForAdmin({
-    successCallback: async () => {
-      alert('상단 띠 배너가 수정되었습니다.');
+    successCallback: () => {
       navigate('/admin/banner/top-bar-banners');
+    },
+    errorCallback: (error) => {
+      alert(error);
     },
   });
 
