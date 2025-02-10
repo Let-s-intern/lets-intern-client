@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Button, Checkbox } from '@mui/material';
 import {
   DataGrid,
   GridActionsCellItem,
@@ -88,10 +88,19 @@ export default function AdminBlogReviewListPage() {
       headerName: '노출여부',
       sortable: false,
       width: 80,
-      editable: true,
       type: 'boolean',
-      renderCell: (params: GridRenderCellParams<Row, boolean>) =>
-        params.value ? '✅' : '❌',
+      renderCell: (params: GridRenderCellParams<Row, boolean>) => (
+        <Checkbox
+          checked={params.value}
+          onChange={async () => {
+            const { blogReviewId } = params.row;
+            await patchReview.mutateAsync({
+              blogReviewId,
+              isVisible: !params.value,
+            });
+          }}
+        />
+      ),
     },
     {
       field: 'actions',
@@ -265,17 +274,10 @@ export default function AdminBlogReviewListPage() {
           <h2 className="font-semibold">동작 설명</h2>
           <p className="text-xsmall14">
             <span className="block text-requirement">
-              *<b>등록</b>: 한 번에 하나만 가능
-            </span>
-            <span className="block">
-              *<b>편집</b>: 한 번에 여러 개 가능
+              *<b>등록/편집</b>: 한 번에 하나만 가능
             </span>
             <span className="block">
               *생성 시에는 노출 불가능 (default: false)
-            </span>
-            <span className="block">
-              *편집 후에는 <b className="text-requirement">새로고침</b> 해야
-              URL이 수정됩니다.
             </span>
             <span className="block">
               *URL이 없는 리뷰를 노출하지 마세요{' '}
