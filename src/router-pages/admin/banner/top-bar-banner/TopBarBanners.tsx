@@ -1,25 +1,20 @@
-import { Checkbox } from '@mui/material';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMemo, useState } from 'react';
 
+import {
+  BannerAdminListItemType,
+  useGetBannerListForAdmin,
+} from '@/api/banner';
 import dayjs from '@/lib/dayjs';
-import { CiTrash } from 'react-icons/ci';
+import BannerVisibilityToggle from '@components/admin/banner/BannerVisibilityToggle';
+import TableLayout from '@components/admin/ui/table/TableLayout';
+import EmptyContainer from '@components/common/ui/EmptyContainer';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
+import WarningModal from '@components/ui/alert/WarningModal';
+import { DataGrid, GridColDef, GridRowParams } from '@mui/x-data-grid';
+import { Pencil, Trash } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import TableCell from '../../../../components/admin/ui/table/new/TableCell';
-import TableManageContent from '../../../../components/admin/ui/table/new/TableManageContent';
-import TableRow from '../../../../components/admin/ui/table/new/TableRow';
-import TableTemplate, {
-  TableTemplateProps,
-} from '../../../../components/admin/ui/table/new/TableTemplate';
-import AlertModal from '../../../../components/ui/alert/AlertModal';
 import axios from '../../../../utils/axios';
-
-type TopBarBannersTableKey =
-  | 'title'
-  | 'link'
-  | 'visible'
-  | 'visiblePeriod'
-  | 'management';
 
 const TopBarBanners = () => {
   const queryClient = useQueryClient();
@@ -27,58 +22,11 @@ const TopBarBanners = () => {
   const [isDeleteModalShown, setIsDeleteModalShown] = useState<boolean>(false);
   const [bannerIdForDeleting, setBannerIdForDeleting] = useState<number>();
 
-  const columnMetaData: TableTemplateProps<TopBarBannersTableKey>['columnMetaData'] =
-    {
-      title: {
-        headLabel: '제목',
-        cellWidth: 'w-3/12',
-      },
-      link: {
-        headLabel: '링크',
-        cellWidth: 'w-3/12',
-      },
-      visible: {
-        headLabel: '노출 여부',
-        cellWidth: 'w-1/12',
-      },
-      visiblePeriod: {
-        headLabel: '노출 기간',
-        cellWidth: 'w-3/12',
-      },
-      management: {
-        headLabel: '관리',
-        cellWidth: 'w-2/12',
-      },
-    };
-
-  const { data, isLoading, error } = useQuery({
-    queryKey: [
-      'banner',
-      'admin',
-      {
-        type: 'LINE',
-      },
-    ],
-    queryFn: async () => {
-      const res = await axios('/banner/admin', {
-        params: {
-          type: 'LINE',
-        },
-      });
-      return res.data;
-    },
-  });
-
-  const topBarBannerList: {
-    id: number;
-    title: string;
-    link: string;
-    startDate: string;
-    endDate: string;
-    isValid: boolean;
-    isVisible: boolean;
-    imgUrl: string;
-  }[] = data?.data?.bannerList || [];
+  const {
+    data: topBannerList,
+    isLoading,
+    error,
+  } = useGetBannerListForAdmin({ type: 'LINE' });
 
   const deleteTopBarBanner = useMutation({
     mutationFn: async (bannerId: number) => {
@@ -95,125 +43,102 @@ const TopBarBanners = () => {
     },
   });
 
-  const editTopBarBannerVisible = useMutation({
-    mutationFn: async (params: { bannerId: number; formData: FormData }) => {
-      const { bannerId, formData } = params;
-      const res = await axios.patch(`/banner/${bannerId}`, formData, {
-        params: {
-          type: 'LINE',
-        },
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      return res.data;
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['banner'] });
-    },
-  });
-
-  const handleVisibleCheckboxClicked = (
-    bannerId: number,
-    isVisible: boolean,
-  ) => {
-    const formData = new FormData();
-    formData.append(
-      'requestDto',
-      new Blob(
-        [
-          JSON.stringify({
-            isVisible,
-          }),
-        ],
-        {
-          type: 'application/json',
-        },
-      ),
-    );
-    editTopBarBannerVisible.mutate({ bannerId, formData });
-  };
-
-  const handleDeleteButtonClicked = async (bannerId: number) => {
+  const handleDeleteButtonClicked = (bannerId: number) => {
     setBannerIdForDeleting(bannerId);
     setIsDeleteModalShown(true);
   };
 
+  const columns = useMemo<GridColDef<BannerAdminListItemType>[]>(
+    () => [
+      {
+        field: 'title',
+        headerName: '제목',
+        flex: 1,
+        valueGetter: (_, row) => row.title || '-',
+      },
+      {
+        field: 'link',
+        headerName: '링크',
+        width: 250,
+        valueGetter: (_, row) => row.link || '-',
+      },
+      {
+        field: 'isVisible',
+        headerName: '노출 여부',
+        width: 150,
+        type: 'boolean',
+        renderCell: ({ row }) => (
+          <BannerVisibilityToggle type="LINE" row={row} />
+        ),
+      },
+      {
+        field: 'date',
+        headerName: '노출 기간',
+        width: 250,
+        valueGetter: (_, row) =>
+          `${dayjs(row.startDate).format('YYYY-MM-DD')} ~ ${dayjs(
+            row.endDate,
+          ).format('YYYY-MM-DD')}`,
+      },
+      {
+        field: 'management',
+        type: 'actions',
+        headerName: '관리',
+        width: 150,
+        getActions: (params: GridRowParams<BannerAdminListItemType>) => {
+          const id = params.id;
+
+          return [
+            <Link
+              to={`/admin/banner/top-bar-banners/${id}/edit`}
+              key={'edit' + id}
+            >
+              <Pencil />
+            </Link>,
+            <Trash
+              key={'delete' + id}
+              className="ml-4 cursor-pointer"
+              color="red"
+              onClick={() => handleDeleteButtonClicked(Number(id))}
+            />,
+          ];
+        },
+      },
+    ],
+    [],
+  );
+
   return (
     <>
-      <TableTemplate<TopBarBannersTableKey>
+      <TableLayout
         title="상단 띠 배너 관리"
         headerButton={{
           label: '등록',
           href: '/admin/banner/top-bar-banners/new',
         }}
-        columnMetaData={columnMetaData}
-        minWidth="60rem"
       >
         {isLoading ? (
-          <div className="py-6 text-center">로딩 중...</div>
-        ) : error ? (
-          <div className="py-6 text-center">에러 발생</div>
-        ) : topBarBannerList.length === 0 ? (
-          <div className="py-6 text-center">상단 띠 배너가 없습니다.</div>
+          <LoadingContainer />
+        ) : error || !topBannerList || topBannerList.bannerList.length === 0 ? (
+          <EmptyContainer />
         ) : (
-          topBarBannerList.map((banner) => (
-            <TableRow key={banner.id} minWidth="60rem">
-              <TableCell cellWidth={columnMetaData.title.cellWidth}>
-                {banner.title}
-              </TableCell>
-              <TableCell cellWidth={columnMetaData.link.cellWidth} textEllipsis>
-                <Link
-                  to={banner.link}
-                  target="_blank"
-                  rel="noopenner noreferrer"
-                  className="hover:underline"
-                >
-                  {banner.link}
-                </Link>
-              </TableCell>
-              <TableCell cellWidth={columnMetaData.visible.cellWidth}>
-                <Checkbox
-                  checked={banner.isVisible}
-                  onChange={() =>
-                    handleVisibleCheckboxClicked(banner.id, !banner.isVisible)
-                  }
-                />
-              </TableCell>
-              <TableCell cellWidth={columnMetaData.visiblePeriod.cellWidth}>
-                {dayjs(banner.startDate).format('YYYY년 MM월 DD일')} ~{' '}
-                {dayjs(banner.endDate).format('YYYY년 MM월 DD일')}
-              </TableCell>
-              <TableCell cellWidth={columnMetaData.management.cellWidth}>
-                <TableManageContent>
-                  <Link to={`/admin/banner/top-bar-banners/${banner.id}/edit`}>
-                    <i>
-                      <img src="/icons/edit-icon.svg" alt="수정 아이콘" />
-                    </i>
-                  </Link>
-                  <button onClick={() => handleDeleteButtonClicked(banner.id)}>
-                    <i className="text-[1.75rem]">
-                      <CiTrash />
-                    </i>
-                  </button>
-                </TableManageContent>
-              </TableCell>
-            </TableRow>
-          ))
+          <DataGrid
+            rows={topBannerList?.bannerList || []}
+            columns={columns}
+            hideFooter
+          />
         )}
-      </TableTemplate>
-      {isDeleteModalShown && (
-        <AlertModal
-          title="띠 배너 삭제"
-          onConfirm={() =>
-            bannerIdForDeleting &&
-            deleteTopBarBanner.mutate(bannerIdForDeleting)
-          }
-          onCancel={() => setIsDeleteModalShown(false)}
-        >
-          정말로 띠 배너를 삭제하시겠습니까?
-        </AlertModal>
-      )}
+      </TableLayout>
+      <WarningModal
+        isOpen={isDeleteModalShown}
+        title="띠 배너 삭제"
+        content="정말로 띠 배너를 삭제하시겠습니까?"
+        onConfirm={() =>
+          bannerIdForDeleting && deleteTopBarBanner.mutate(bannerIdForDeleting)
+        }
+        onCancel={() => setIsDeleteModalShown(false)}
+        confirmText="삭제"
+      />
     </>
   );
 };
