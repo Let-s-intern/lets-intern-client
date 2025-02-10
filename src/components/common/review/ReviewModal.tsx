@@ -3,7 +3,7 @@ import { twMerge } from '@/lib/twMerge';
 import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
 import { josa } from 'es-hangul';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BackHeader from '../ui/BackHeader';
 import BaseButton from '../ui/button/BaseButton';
@@ -38,6 +38,22 @@ function ReviewModal({
   useControlScroll(isDesktop); // 데스크탑(모달)에서는 body 스크롤 제어
 
   const buttonText = isLastMission ? '제출하기' : '등록하기';
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (!readOnly) {
+        e.preventDefault();
+        e.returnValue = '';
+        return '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [readOnly]);
 
   return (
     <>
