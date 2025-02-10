@@ -1,15 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { usePostBannerForAdmin } from '@/api/banner';
+import { BannerItemType, usePostBannerForAdmin } from '@/api/banner';
 import PopUpBannerInputContent from '../../../../components/admin/banner/pop-up-banner/PopUpBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
-import { IBannerForm } from '../../../../types/interface';
 
 const PopUpBannerCreate = () => {
   const navigate = useNavigate();
 
-  const [value, setValue] = useState<IBannerForm>({
+  const [value, setValue] = useState<BannerItemType>({
     title: '',
     link: '',
     startDate: '',
