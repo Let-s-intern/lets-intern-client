@@ -3,7 +3,8 @@ import {
   useEditBannerForAdmin,
   useGetBannerDetailForAdmin,
 } from '@/api/banner';
-import { useQueryClient } from '@tanstack/react-query';
+import EmptyContainer from '@components/common/ui/EmptyContainer';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import PopUpBannerInputContent from '../../../../components/admin/banner/pop-up-banner/PopUpBannerInputContent';
@@ -13,7 +14,6 @@ const PopUpBannerEdit = () => {
   const navigate = useNavigate();
   const params = useParams();
   const bannerId = Number(params.bannerId);
-  const queryClient = useQueryClient();
 
   const [value, setValue] = useState<BannerItemType>({
     title: '',
@@ -32,6 +32,7 @@ const PopUpBannerEdit = () => {
 
   const { mutate: editPopUpBanner } = useEditBannerForAdmin({
     successCallback: () => {
+      alert('팝업이 수정되었습니다.');
       navigate('/admin/banner/pop-up');
     },
     errorCallback: (error) => {
@@ -92,7 +93,13 @@ const PopUpBannerEdit = () => {
         to: '-1',
       }}
     >
-      <PopUpBannerInputContent value={value} onChange={handleChange} />
+      {bannerIsLoading ? (
+        <LoadingContainer />
+      ) : !banner ? (
+        <EmptyContainer />
+      ) : (
+        <PopUpBannerInputContent value={value} onChange={handleChange} />
+      )}
     </EditorTemplate>
   );
 };

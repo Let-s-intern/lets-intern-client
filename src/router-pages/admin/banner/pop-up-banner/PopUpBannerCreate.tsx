@@ -19,6 +19,7 @@ const PopUpBannerCreate = () => {
 
   const { mutate: addPopUpBanner } = usePostBannerForAdmin({
     successCallback: () => {
+      alert('팝업이 등록되었습니다.');
       navigate('/admin/banner/pop-up');
     },
     errorCallback: (error) => {

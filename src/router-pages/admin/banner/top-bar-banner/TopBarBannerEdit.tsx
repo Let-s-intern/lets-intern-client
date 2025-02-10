@@ -33,6 +33,7 @@ const TopBarBannerEdit = () => {
 
   const { mutate: editTopBarBanner } = useEditBannerForAdmin({
     successCallback: () => {
+      alert('상단 띠 배너가 수정되었습니다.');
       navigate('/admin/banner/top-bar-banners');
     },
     errorCallback: (error) => {

@@ -19,6 +19,7 @@ const TopBarBannerCreate = () => {
 
   const { mutate: addTopBarBanner } = usePostBannerForAdmin({
     successCallback: () => {
+      alert('상단 띠 배너가 등록되었습니다.');
       navigate('/admin/banner/top-bar-banners');
     },
     errorCallback: (error) => {
