@@ -1,13 +1,11 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { usePostBannerForAdmin } from '@/api/banner';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TopBarBannerInputContent from '../../../../components/admin/banner/top-bar-banner/TopBarBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
 import { ILineBannerForm } from '../../../../types/interface';
-import axios from '../../../../utils/axios';
 
 const TopBarBannerCreate = () => {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const [value, setValue] = useState<ILineBannerForm>({
@@ -20,20 +18,9 @@ const TopBarBannerCreate = () => {
     colorCode: '#000000',
   });
 
-  const addTopBarBanner = useMutation({
-    mutationFn: async (formData: FormData) => {
-      const res = await axios.post('/banner', formData, {
-        params: {
-          type: 'LINE',
-        },
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      return res.data;
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['banner'] });
+  const { mutate: addTopBarBanner } = usePostBannerForAdmin({
+    successCallback: () => {
+      alert('상단 띠 배너가 등록되었습니다.');
       navigate('/admin/banner/top-bar-banners');
     },
   });
@@ -67,7 +54,7 @@ const TopBarBannerCreate = () => {
     );
     formData.append('file', new Blob([], { type: 'application/json' }));
 
-    addTopBarBanner.mutate(formData);
+    addTopBarBanner({ type: 'LINE', formData });
   };
 
   return (
