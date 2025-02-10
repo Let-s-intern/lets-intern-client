@@ -1,14 +1,12 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { usePostBannerForAdmin } from '@/api/banner';
 import PopUpBannerInputContent from '../../../../components/admin/banner/pop-up-banner/PopUpBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
 import { IBannerForm } from '../../../../types/interface';
-import axios from '../../../../utils/axios';
 
 const PopUpBannerCreate = () => {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const [value, setValue] = useState<IBannerForm>({
@@ -20,21 +18,12 @@ const PopUpBannerCreate = () => {
     file: null,
   });
 
-  const addPopUpBanner = useMutation({
-    mutationFn: async (formData: FormData) => {
-      const res = await axios.post('/banner', formData, {
-        params: {
-          type: 'POPUP',
-        },
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      return res.data;
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['banner'] });
+  const { mutate: addPopUpBanner } = usePostBannerForAdmin({
+    successCallback: () => {
       navigate('/admin/banner/pop-up');
+    },
+    errorCallback: (error) => {
+      alert(error);
     },
   });
 
@@ -70,7 +59,7 @@ const PopUpBannerCreate = () => {
     );
     formData.append('file', value.file);
 
-    addPopUpBanner.mutate(formData);
+    addPopUpBanner({ type: 'POPUP', formData });
   };
 
   return (
