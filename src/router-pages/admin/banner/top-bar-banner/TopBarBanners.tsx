@@ -1,8 +1,9 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 
 import {
   BannerAdminListItemType,
+  useDeleteBannerForAdmin,
   useGetBannerListForAdmin,
 } from '@/api/banner';
 import dayjs from '@/lib/dayjs';
@@ -14,7 +15,6 @@ import WarningModal from '@components/ui/alert/WarningModal';
 import { DataGrid, GridColDef, GridRowParams } from '@mui/x-data-grid';
 import { Pencil, Trash } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import axios from '../../../../utils/axios';
 
 const TopBarBanners = () => {
   const queryClient = useQueryClient();
@@ -28,17 +28,8 @@ const TopBarBanners = () => {
     error,
   } = useGetBannerListForAdmin({ type: 'LINE' });
 
-  const deleteTopBarBanner = useMutation({
-    mutationFn: async (bannerId: number) => {
-      const res = await axios.delete(`/banner/${bannerId}`, {
-        params: {
-          type: 'LINE',
-        },
-      });
-      return res.data;
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['banner'] });
+  const deleteTopBarBanner = useDeleteBannerForAdmin({
+    successCallback: async () => {
       setIsDeleteModalShown(false);
     },
   });
@@ -134,7 +125,11 @@ const TopBarBanners = () => {
         title="띠 배너 삭제"
         content="정말로 띠 배너를 삭제하시겠습니까?"
         onConfirm={() =>
-          bannerIdForDeleting && deleteTopBarBanner.mutate(bannerIdForDeleting)
+          bannerIdForDeleting &&
+          deleteTopBarBanner.mutate({
+            bannerId: bannerIdForDeleting,
+            type: 'LINE',
+          })
         }
         onCancel={() => setIsDeleteModalShown(false)}
         confirmText="삭제"
