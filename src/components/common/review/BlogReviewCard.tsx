@@ -60,7 +60,7 @@ function BlogReviewCard({ blogReview, className }: Props) {
         </span>
       </div>
 
-      <div className="relative h-[5.625rem] w-40 shrink-0 overflow-hidden rounded-sm bg-neutral-85 md:h-[8.5rem] md:w-60">
+      <div className="relative h-[5.625rem] w-40 shrink-0 overflow-hidden rounded-sm bg-neutral-85 md:h-[8.125rem] md:w-[14.375rem]">
         <Image
           className="object-cover"
           src={blogReview.thumbnail ?? ''}
