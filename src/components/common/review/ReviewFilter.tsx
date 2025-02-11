@@ -63,6 +63,7 @@ function ReviewFilter({
     : !selectedItem;
 
   const handleQueryParams = (item: ReviewFilterItem) => {
+    if (onChange) onChange();
     // 쿼리 스트링으로 선택된 아이템 추가
     if (labelValue) {
       const params = new URLSearchParams(searchParams.toString());
@@ -115,16 +116,12 @@ function ReviewFilter({
     if (!multiSelect) {
       setIsOpen(false);
     }
-    if (onChange) onChange();
   };
 
   const handleAllClick = useCallback(() => {
+    if (onChange) onChange();
     if (isAllSelected) {
       return;
-    }
-    setCheckedList([]);
-    if (!multiSelect) {
-      setIsOpen(false);
     }
     const params = new URLSearchParams(searchParams.toString());
     params.delete(labelValue);
@@ -132,8 +129,6 @@ function ReviewFilter({
       params.delete(childLabel);
     });
     router.replace(`${pathname}?${params.toString()}`);
-
-    if (onChange) onChange();
   }, [
     childLabelValue,
     isAllSelected,

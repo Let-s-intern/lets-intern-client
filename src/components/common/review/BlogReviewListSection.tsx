@@ -5,14 +5,17 @@ import { ProgramTypeUpperCase } from '@/schema';
 import MuiPagination from '@components/common/program/pagination/MuiPagination';
 import BlogReviewCard from '@components/common/review/BlogReviewCard';
 import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import LoadingContainer from '../ui/loading/LoadingContainer';
 
 const PAGE_SIZE = 10;
 
-function BlogReviewListSection() {
-  const [page, setPage] = useState(1);
+interface Props {
+  page: number;
+  setPage: Dispatch<SetStateAction<number>>;
+}
 
+function BlogReviewListSection({ page, setPage }: Props) {
   const searchParams = useSearchParams();
   const { data, isLoading } = useGetBlogReviewList({
     page,
