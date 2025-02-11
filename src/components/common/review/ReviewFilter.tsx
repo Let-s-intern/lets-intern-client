@@ -1,16 +1,15 @@
 'use client';
 
-import { useMediaQuery } from '@mui/material';
-import { ChevronDown } from 'lucide-react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { memo, ReactNode, useCallback, useEffect, useState } from 'react';
-
-import Check from '@/assets/icons/check-box.svg';
+import Check from '@/assets/icons/check-box.svg?react';
 import CheckboxActive from '@/assets/icons/checkbox-active.svg?react';
 import CheckboxInActive from '@/assets/icons/checkbox-inactive.svg?react';
 import { twMerge } from '@/lib/twMerge';
 import BaseBottomSheet from '@components/ui/BaseBottomSheet';
+import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
+import { ChevronDown } from 'lucide-react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { memo, ReactNode, useCallback, useEffect, useState } from 'react';
 
 export interface ReviewFilterItem {
   caption: string;
@@ -25,6 +24,7 @@ interface Props {
   multiSelect?: boolean;
   dropdownClassName?: string;
   className?: string;
+  onChange?: () => void;
 }
 
 function ReviewFilter({
@@ -35,6 +35,7 @@ function ReviewFilter({
   multiSelect = false,
   dropdownClassName,
   className,
+  onChange,
 }: Props) {
   const router = useRouter();
   const pathname = usePathname();
@@ -114,6 +115,7 @@ function ReviewFilter({
     if (!multiSelect) {
       setIsOpen(false);
     }
+    if (onChange) onChange();
   };
 
   const handleAllClick = useCallback(() => {
@@ -130,6 +132,8 @@ function ReviewFilter({
       params.delete(childLabel);
     });
     router.replace(`${pathname}?${params.toString()}`);
+
+    if (onChange) onChange();
   }, [
     childLabelValue,
     isAllSelected,
@@ -138,6 +142,7 @@ function ReviewFilter({
     pathname,
     router,
     searchParams,
+    onChange,
   ]);
 
   useEffect(() => {
@@ -311,7 +316,9 @@ const FilterList = ({
         {item.caption}
       </FilterCaption>
       {/* [단일 선택] 선택된 아이템에 체크 표시 */}
-      {!multiSelect && selected && <Check size={16} color="#4D55F5" />}
+      {!multiSelect && selected && (
+        <Check className="h-auto w-4" fill="#4D55F5" />
+      )}
     </li>
   );
 };

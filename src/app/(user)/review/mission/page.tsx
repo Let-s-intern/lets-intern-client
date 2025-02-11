@@ -1,14 +1,11 @@
+import MissionReview from '@components/common/review/missionReview/MissionReview';
 import { Suspense } from 'react';
-
-import MissionReviewContentSection from '@components/common/review/missionReview/MissionReviewContentSection';
-import MissionReviewFilterSection from '@components/common/review/missionReview/MissionReviewFilterSection';
 
 const Page = () => {
   return (
     <div className="flex w-full flex-col md:gap-y-8">
       <Suspense>
-        <MissionReviewFilterSection />
-        <MissionReviewContentSection />
+        <MissionReview />
       </Suspense>
     </div>
   );
