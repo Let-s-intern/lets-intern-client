@@ -154,7 +154,7 @@ const Programs = () => {
         headerName: '프로그램 관리',
         width: 400,
         getActions: (params) => {
-          const id = params.id;
+          const id = params.row.programInfo.id;
           return [
             <Button
               key={`edit${id}`}
