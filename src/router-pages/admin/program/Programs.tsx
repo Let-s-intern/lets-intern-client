@@ -56,7 +56,7 @@ const Programs = () => {
 
   const { data, isLoading, error } = useGetProgramAdminQuery({
     page: 1,
-    size: 100,
+    size: 1000,
   });
 
   const deleteProgram = useDeleteProgram({
