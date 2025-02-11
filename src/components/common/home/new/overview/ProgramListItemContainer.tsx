@@ -1,6 +1,5 @@
 import axios from '@/utils/axios';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { IProgram } from '../../../../../types/Program.interface';
 import {
   PROGRAM_STATUS,
@@ -9,7 +8,6 @@ import {
 import ProgramStatusTag from '../../../program/programs/card/ProgramStatusTag';
 
 const ProgramListItemContainer = ({ program }: { program: IProgram }) => {
-  const navigate = useNavigate();
   const [link, setLink] = useState(
     `/program/${program.programInfo.programType.toLowerCase()}/${
       program.programInfo.id
@@ -40,13 +38,15 @@ const ProgramListItemContainer = ({ program }: { program: IProgram }) => {
     return new Date(date).toLocaleDateString().replaceAll(' ', '').slice(0, -1);
   };
   return (
-    <div className="flex w-full items-center justify-center">
+    <div className="flex items-center justify-center w-full">
       <div
         className="calendar_program flex w-full cursor-pointer items-center justify-center gap-x-4 rounded-md border border-neutral-85 bg-neutral-100 p-2.5"
         onClick={() => {
-          program.programInfo.programType === PROGRAM_TYPE.VOD
-            ? window.open(link)
-            : navigate(link);
+          if (program.programInfo.programType === PROGRAM_TYPE.VOD) {
+            window.open(link);
+          } else {
+            window.location.href = link;
+          }
         }}
         data-program-text={program.programInfo.title}
       >
@@ -61,10 +61,10 @@ const ProgramListItemContainer = ({ program }: { program: IProgram }) => {
               status={PROGRAM_STATUS[program.programInfo.programStatusType]}
             />
             <div className="flex w-full flex-col items-start justify-center gap-y-[2px] py-1">
-              <div className="line-clamp-1 font-semibold">
+              <div className="font-semibold line-clamp-1">
                 {program.programInfo.title}
               </div>
-              <div className="line-clamp-1 text-sm font-medium text-neutral-30">
+              <div className="text-sm font-medium line-clamp-1 text-neutral-30">
                 {program.programInfo.shortDesc}
               </div>
             </div>

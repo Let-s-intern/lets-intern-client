@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import ListItem from '../ui/ListItem';
 import AlertModal from '../../../../../../../ui/alert/AlertModal';
+import ListItem from '../ui/ListItem';
 
 interface MemberTypeContentProps {
   memberChecked: 'USER' | 'GUEST' | '';
@@ -25,9 +25,11 @@ const MemberTypeContent = ({
 
   const onCancel = () => {
     setIsLoginModal(false);
-    memberChecked === 'GUEST'
-      ? setMemberChecked('GUEST')
-      : setMemberChecked('');
+    if (memberChecked === 'GUEST') {
+      setMemberChecked('GUEST');
+    } else {
+      setMemberChecked('');
+    }
   };
 
   return (

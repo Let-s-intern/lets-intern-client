@@ -2,9 +2,9 @@ import { CSSProperties, memo, ReactNode } from 'react';
 
 import { convertReportTypeToDisplayName, ReportType } from '@/api/report';
 import { twMerge } from '@/lib/twMerge';
-import { REPORT_GUIDE_ID } from '@/pages/common/report/ReportNavigation';
-import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
-import { resumeColors } from '@/pages/common/report/ReportResumePage';
+import { REPORT_GUIDE_ID } from '@/router-pages/common/report/ReportNavigation';
+import { personalStatementColors } from '@/router-pages/common/report/ReportPersonalStatementPage';
+import { resumeColors } from '@/router-pages/common/report/ReportResumePage';
 import clsx from 'clsx';
 import MainHeader from './MainHeader';
 import SectionHeader from './SectionHeader';
@@ -56,7 +56,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
       id={REPORT_GUIDE_ID}
       className="w-full px-5 py-16 md:py-28 lg:px-0"
     >
-      <header>
+      <div>
         <SectionHeader className="mb-6 md:mb-14">
           {SECTION_HEADER}
         </SectionHeader>
@@ -68,7 +68,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
           <br /> {convertReportTypeToDisplayName(reportType)} 피드백 REPORT은
           <br className="md:hidden" /> 이렇게 진행됩니다.
         </MainHeader>
-      </header>
+      </div>
 
       <main className="mx-auto mt-10 flex max-w-[690px] flex-col items-center gap-5 md:mt-11 md:gap-8">
         {/* 1단계 */}

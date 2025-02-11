@@ -1,15 +1,15 @@
-import { Link, useLocation, useParams } from 'react-router-dom';
 import clsx from 'clsx';
+import { Link, useLocation, useParams } from 'react-router-dom';
 
 const NavBar = () => {
   const params = useParams();
   const location = useLocation();
-
+  const applicationId = params.applicationId;
   const activeStatus = /^\/challenge\/(\d+)\/others/.test(location.pathname)
     ? 'OTHERS_DASHBOARD'
     : /^\/challenge\/(\d+)\/me/.test(location.pathname)
-    ? 'MY_DASHBOARD'
-    : /^\/challenge\/(\d+)$/.test(location.pathname) && 'DASHBOARD';
+      ? 'MY_DASHBOARD'
+      : /^\/challenge\/(\d+)$/.test(location.pathname) && 'DASHBOARD';
 
   return (
     <>
@@ -17,7 +17,7 @@ const NavBar = () => {
         <ul className="flex w-40 flex-col gap-1">
           <li>
             <Link
-              to={`/challenge/${params.programId}`}
+              to={`/challenge/${applicationId}/${params.programId}`}
               className={clsx('block px-3 py-2', {
                 'rounded bg-[#E6E4FD] font-semibold text-primary':
                   activeStatus === 'DASHBOARD',
@@ -29,7 +29,7 @@ const NavBar = () => {
           </li>
           <li>
             <Link
-              to={`/challenge/${params.programId}/me`}
+              to={`/challenge/${applicationId}/${params.programId}/me`}
               className={clsx('block px-3 py-2', {
                 'rounded bg-[#E6E4FD] font-medium text-primary':
                   activeStatus === 'MY_DASHBOARD',

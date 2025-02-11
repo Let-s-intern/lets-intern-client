@@ -6,8 +6,8 @@ import {
   ReportType,
 } from '@/api/report';
 import { twMerge } from '@/lib/twMerge';
-import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
-import { resumeColors } from '@/pages/common/report/ReportResumePage';
+import { personalStatementColors } from '@/router-pages/common/report/ReportPersonalStatementPage';
+import { resumeColors } from '@/router-pages/common/report/ReportResumePage';
 import clsx from 'clsx';
 import MainHeader from './MainHeader';
 import SubHeader from './SubHeader';
@@ -55,12 +55,12 @@ function PromoSection({ reportType }: PromoSectionProps) {
       className="w-full px-5 py-16 md:pb-32 md:pt-28 lg:px-0"
       style={sectionStyle}
     >
-      <header className="mb-10">
+      <div className="mb-10">
         <SubHeader className="mb-2 md:mb-3" style={subHeaderStyle}>
           {SUB_HEADER}
         </SubHeader>
         <MainHeader>{MAIN_HEADER}</MainHeader>
-      </header>
+      </div>
 
       <main className="relative flex max-w-[50rem] flex-col items-center gap-5 bg-white px-5 py-7 text-center text-neutral-0 md:mx-auto md:gap-11 md:py-10">
         <div

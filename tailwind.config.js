@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 /** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
   content: [
     './{pages,renderer,layouts,components,src}/**/*.{html,js,jsx,ts,tsx,vue}',
   ],
@@ -28,6 +28,7 @@ export default {
         lg: '991px',
         xl: '1280px',
         '2xl': '1440px',
+        '3xl': '1600px',
       },
       colors: {
         primary: {

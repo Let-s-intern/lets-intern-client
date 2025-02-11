@@ -1,5 +1,5 @@
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-
+import dayjs from '@/lib/dayjs';
+import { useRouter } from 'next/navigation';
 import { BlogInfoSchema } from '../../../api/blogSchema';
 import { blogCategory } from '../../../utils/convert';
 import { getBlogPathname } from '../../../utils/url';
@@ -10,24 +10,22 @@ interface BlogCardProps {
 }
 
 const BlogCard = ({ blogInfo }: BlogCardProps) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const router = useRouter();
 
   return (
     <div
-      className="flex w-full cursor-pointer flex-col gap-y-2 py-3"
+      className="flex flex-col w-full py-3 cursor-pointer gap-y-2"
       onClick={() => {
-        navigate(getBlogPathname(blogInfo.blogThumbnailInfo));
+        router.push(getBlogPathname(blogInfo.blogThumbnailInfo));
       }}
     >
-      <span className="w-full text-xsmall16 font-bold text-primary">
+      <span className="w-full font-bold text-xsmall16 text-primary">
         {blogCategory[blogInfo.blogThumbnailInfo.category || '']}
       </span>
-      <div className="flex w-full flex-col gap-y-4">
+      <div className="flex flex-col w-full gap-y-4">
         <div className="flex w-full gap-x-5">
-          <div className="flex flex-1 flex-col gap-y-2">
-            <h2 className="line-clamp-3 font-bold text-neutral-0">
+          <div className="flex flex-col flex-1 gap-y-2">
+            <h2 className="font-bold line-clamp-3 text-neutral-0">
               {blogInfo.blogThumbnailInfo.title}{' '}
               {!blogInfo.blogThumbnailInfo.isDisplayed && (
                 <span className="text-xsmall14 text-system-error">
@@ -39,9 +37,11 @@ const BlogCard = ({ blogInfo }: BlogCardProps) => {
               {blogInfo.blogThumbnailInfo.description}
             </p>
             <p className="w-full text-xsmall14 text-neutral-45">
-              {blogInfo.blogThumbnailInfo.displayDate?.format(
-                'YYYY년 MM월 DD일',
-              )}
+              {blogInfo.blogThumbnailInfo.displayDate
+                ? dayjs(blogInfo.blogThumbnailInfo.displayDate).format(
+                    'YYYY년 MM월 DD일',
+                  )
+                : null}
             </p>
           </div>
           <img
@@ -52,23 +52,7 @@ const BlogCard = ({ blogInfo }: BlogCardProps) => {
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
           {blogInfo.tagDetailInfos.map((tag) => (
-            <BlogHashtag
-              key={tag.id}
-              text={tag.title || ''}
-              onClick={(e) => {
-                e.stopPropagation();
-
-                if (location.pathname === '/blog/hashtag') {
-                  searchParams.set('tagId', tag.id.toString());
-                  setSearchParams(searchParams);
-                  return;
-                }
-
-                const params = new URLSearchParams();
-                params.set('tagId', tag.id.toString());
-                navigate(`/blog/hashtag?${params.toString()}`);
-              }}
-            />
+            <BlogHashtag key={tag.id} text={tag.title || ''} tagId={tag.id} />
           ))}
         </div>
       </div>

@@ -17,7 +17,7 @@ const navData = [
       },
       {
         name: '후기 관리',
-        url: '/admin/reviews',
+        url: '/admin/review/challenge',
       },
     ],
   },
@@ -137,8 +137,8 @@ const AdminLayout = () => {
         <nav className="sticky left-0 top-0 z-50 flex h-screen w-48 flex-col gap-4 overflow-y-auto bg-[#353535] py-20 pt-4 text-white shadow-xl">
           {navData.map((navSection, index) => (
             <div key={index}>
-              <div className="flex items-center justify-between border-b border-b-neutral-600 pb-3 pl-4 pr-8">
-                <h3 className="text-xsmall16 font-medium">
+              <div className="flex items-center justify-between pb-3 pl-4 pr-8 border-b border-b-neutral-600">
+                <h3 className="font-medium text-xsmall16">
                   {navSection.title}
                 </h3>
                 <i className="text-xl text-neutral-600">

@@ -1,10 +1,3 @@
-import { twMerge } from '@/lib/twMerge';
-import { Dayjs } from 'dayjs';
-import { josa } from 'es-hangul';
-import { ReactNode, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { clientOnly } from 'vike-react/clientOnly';
-
 import { getVod } from '@/api/program';
 import Check from '@/assets/icons/chevron-down.svg?react';
 import HoleIcon from '@/assets/icons/hole.svg?react';
@@ -18,8 +11,16 @@ import { ChallengeColor } from '@components/ChallengeView';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import Heading2 from '@components/common/ui/Heading2';
 import ProgramRecommendSlider from '@components/common/ui/ProgramRecommendSlider';
+import { josa } from 'es-hangul';
+import { ReactNode, useMemo } from 'react';
 
-const Balancer = clientOnly(() => import('react-wrap-balancer'));
+// const Balancer = clientOnly(() => import('react-wrap-balancer'));
+import { twMerge } from '@/lib/twMerge';
+import { Dayjs } from 'dayjs';
+import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
+
+const Balancer = dynamic(() => import('react-wrap-balancer'), { ssr: false });
 
 type ProgressItemType = {
   index: number;
@@ -38,10 +39,12 @@ const MISSION = {
   ],
 };
 
-
-
-const { CAREER_START, PERSONAL_STATEMENT, PORTFOLIO, PERSONAL_STATEMENT_LARGE_CORP } =
-  challengeTypeSchema.enum;
+const {
+  CAREER_START,
+  PERSONAL_STATEMENT,
+  PORTFOLIO,
+  PERSONAL_STATEMENT_LARGE_CORP,
+} = challengeTypeSchema.enum;
 
 const ChallengePointView = ({
   point,
@@ -60,7 +63,7 @@ const ChallengePointView = ({
   challengeTitle: string;
   programRecommend?: ProgramRecommend;
 }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const progress = [
     {
@@ -87,13 +90,21 @@ const ChallengePointView = ({
     {
       index: 6,
       title: '챌린지 종료 및 평가',
-      subTitle: '*총 챌린지 참여 점수 80점 이상시,\n' + (challengeType === PERSONAL_STATEMENT_LARGE_CORP ? "수료증 발급" : "3만원 페이백 및 수료증 발급"),
+      subTitle:
+        '*총 챌린지 참여 점수 80점 이상시,\n' +
+        (challengeType === PERSONAL_STATEMENT_LARGE_CORP
+          ? '수료증 발급'
+          : '3만원 페이백 및 수료증 발급'),
     },
   ];
 
   const reward = {
     title: '챌린지에 성공해 뿌듯함과\n리워드까지 가져가세요!',
-    content: '챌린지 참여 점수 80점 이상시,\n' + (challengeType === PERSONAL_STATEMENT_LARGE_CORP ? "수료증 발급" : "3만원 페이백 및 수료증 발급"),
+    content:
+      '챌린지 참여 점수 80점 이상시,\n' +
+      (challengeType === PERSONAL_STATEMENT_LARGE_CORP
+        ? '수료증 발급'
+        : '3만원 페이백 및 수료증 발급'),
   };
 
   const programSchedule = [
@@ -172,7 +183,7 @@ const ChallengePointView = ({
             return;
           }
 
-          navigate(
+          router.push(
             `/program/${item.programInfo.programType.toLowerCase()}/${item.programInfo.id}`,
           );
         },
@@ -237,15 +248,16 @@ const ChallengePointView = ({
                 <br className="md:hidden" /> 별도로 준비되어 있습니다.
               </p>
             )}
-            {challengeType === PERSONAL_STATEMENT || challengeType === PERSONAL_STATEMENT_LARGE_CORP && (
-              <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
-                본 프로그램은 취업의 기초가 되는
-                <br className="md:hidden" />{' '}
-                <span className="font-bold">자기소개서 작성</span>을 다룹니다.
-                <br /> 서류 기초 완성 및 포트폴리오 완성 프로그램은
-                <br className="md:hidden" /> 별도로 준비되어 있습니다.
-              </p>
-            )}
+            {challengeType === PERSONAL_STATEMENT ||
+              (challengeType === PERSONAL_STATEMENT_LARGE_CORP && (
+                <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
+                  본 프로그램은 취업의 기초가 되는
+                  <br className="md:hidden" />{' '}
+                  <span className="font-bold">자기소개서 작성</span>을 다룹니다.
+                  <br /> 서류 기초 완성 및 포트폴리오 완성 프로그램은
+                  <br className="md:hidden" /> 별도로 준비되어 있습니다.
+                </p>
+              ))}
             {challengeType === PORTFOLIO && (
               <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
                 본 프로그램은 나만의 필살기를 만들 수 있는
@@ -375,11 +387,13 @@ const ChallengePointView = ({
               </Box>
               <Box className="relative overflow-hidden md:flex-1">
                 <BoxItem title={reward.title}>{reward.content}</BoxItem>
-                {challengeType !== PERSONAL_STATEMENT_LARGE_CORP && <img
-                  className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
-                  src={paypackImgSrc}
-                  alt="페이백 3만원"
-                />}
+                {challengeType !== PERSONAL_STATEMENT_LARGE_CORP && (
+                  <img
+                    className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
+                    src={paypackImgSrc}
+                    alt="페이백 3만원"
+                  />
+                )}
               </Box>
             </div>
           </div>

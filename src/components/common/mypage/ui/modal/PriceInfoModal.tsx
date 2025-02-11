@@ -1,5 +1,5 @@
+import dayjs from '@/lib/dayjs';
 import { useQuery } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 import axios from '../../../../../utils/axios';
 import { bankTypeToText } from '../../../../../utils/convert';
 import LoadingContainer from '../../../ui/loading/LoadingContainer';

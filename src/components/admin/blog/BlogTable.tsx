@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { CiTrash } from 'react-icons/ci';
 import { Link } from 'react-router-dom';
 
-import dayjs from 'dayjs';
+import dayjs from '@/lib/dayjs';
 import { ChangeEvent, useCallback, useState } from 'react';
 import {
   useBlogListQuery,
@@ -55,7 +55,7 @@ export default function BlogTable() {
         id: checkedBlog.id,
         isDisplayed: true,
         displayDate: checkedBlog.displayDate
-          ? checkedBlog.displayDate.format('YYYY-MM-DDTHH:mm')
+          ? dayjs(checkedBlog.displayDate).format('YYYY-MM-DDTHH:mm')
           : dayjs().format('YYYY-MM-DDTHH:mm'),
       };
       patchBlogMutation.mutate(reqBody);
@@ -124,9 +124,11 @@ export default function BlogTable() {
                 </Link>
               </TableBodyCell>
               <TableBodyCell widthClassName={blogColumnWidth.displayDate}>
-                {blogInfo.blogThumbnailInfo.displayDate?.format(
-                  'YYYY년 M월 D일',
-                )}
+                {blogInfo.blogThumbnailInfo.displayDate
+                  ? dayjs(blogInfo.blogThumbnailInfo.displayDate).format(
+                      'YYYY년 M월 D일',
+                    )
+                  : null}
               </TableBodyCell>
               <TableBodyCell widthClassName={blogColumnWidth.category}>
                 {blogCategory[blogInfo.blogThumbnailInfo.category!]}
@@ -154,6 +156,7 @@ export default function BlogTable() {
                 <div className="flex items-center gap-4">
                   <Link
                     to={`/admin/blog/edit/${blogInfo.blogThumbnailInfo.id}`}
+                    reloadDocument
                   >
                     <i>
                       <img src="/icons/edit-icon.svg" alt="수정 아이콘" />

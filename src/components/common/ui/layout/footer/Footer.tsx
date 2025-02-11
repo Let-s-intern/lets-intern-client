@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import DocumentLink from './DocumentLink';
@@ -27,8 +29,8 @@ const BUSINESS_INFORMATION = {
 
 const Footer = () => {
   useEffect(() => {
-    if (!window.Kakao.isInitialized()) {
-      window.Kakao.init('fe2307dd60e05ff8cbb06d777a13e31c');
+    if (!window.Kakao?.isInitialized()) {
+      window.Kakao?.init('fe2307dd60e05ff8cbb06d777a13e31c');
     }
   }, []);
 
@@ -42,7 +44,7 @@ const Footer = () => {
       });
   };
   return (
-    <footer className="border-t-1 w-full border-neutral-80 bg-neutral-85 px-5 pb-6 pt-10 lg:px-10 xl:px-52">
+    <footer className="border-t-1 w-full border-neutral-80 bg-neutral-85 px-5 pb-16 pt-10 md:pb-12 lg:px-10 xl:px-52">
       <div className="flex flex-col gap-[3.25rem] lg:justify-between lg:gap-7">
         <div className="flex flex-col gap-[3.25rem] lg:flex-row-reverse lg:justify-between">
           <div className="flex flex-col gap-[3.25rem] lg:flex-row lg:items-start lg:gap-[6.25rem]">
@@ -52,7 +54,8 @@ const Footer = () => {
               <MenuLink to="/program">프로그램</MenuLink>
               <MenuLink to="/blog/list">블로그</MenuLink>
               <MenuLink to="/report/landing">서류 진단 서비스</MenuLink>
-              <MenuLink to="https://letscareer.framer.website" 
+              <MenuLink
+                to="https://letscareer.framer.website"
                 target="_blank"
                 rel="noopenner noreferrer"
               >
@@ -100,7 +103,7 @@ const Footer = () => {
 
           <div className="text-0.75-medium flex flex-col gap-5 text-neutral-45">
             {/* 로고 */}
-            <Link to="/" className="w-[7.5rem]">
+            <Link to="/" className="w-[7.5rem]" reloadDocument>
               <img className="h-auto w-full" src="/logo/logo.svg" alt="Logo" />
             </Link>
             {/* 사업자 정보 */}

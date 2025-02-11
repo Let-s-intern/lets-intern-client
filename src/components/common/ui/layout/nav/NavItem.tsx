@@ -11,6 +11,7 @@ interface NavItemProps {
   children: React.ReactNode;
   hoverItem?: NavSubItemProps[];
   isItemLoaded?: boolean;
+  reloadDocument?: boolean;
   rel?: string;
   target?: string;
 }
@@ -22,8 +23,9 @@ const NavItem = ({
   children,
   hoverItem,
   isItemLoaded = true,
+  reloadDocument,
   rel,
-  target
+  target,
 }: NavItemProps) => {
   const [hover, setHover] = useState(false);
   const Wrapper = as || Link;
@@ -35,12 +37,17 @@ const NavItem = ({
   return (
     <Wrapper
       to={to || '#'}
+      {...(Wrapper === Link
+        ? {
+            reloadDocument,
+            target,
+            rel,
+          }
+        : {})}
       className={clsx(
         style,
-        'relative hidden h-full cursor-pointer items-center xl:flex',
+        '3xl:flex relative hidden h-full cursor-pointer items-center',
       )}
-      target={target}
-      rel={rel}
     >
       {children}
       <div

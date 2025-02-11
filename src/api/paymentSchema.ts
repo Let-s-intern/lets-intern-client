@@ -1,14 +1,16 @@
 import { z } from 'zod';
 
-import { ProgramTypeEnum } from '@/schema';
+import { ProgramTypeEnum, reportTypeSchema } from '@/schema';
 
 export const programInfoType = z.object({
   paymentId: z.number().nullable().optional(),
   applicationId: z.number().nullable().optional(),
   programType: ProgramTypeEnum.nullable().optional(),
+  reportType: reportTypeSchema.nullable().optional(),
   title: z.string().nullable().optional(),
   thumbnail: z.string().nullable().optional(),
   price: z.number().nullable().optional(),
+  paybackPrice: z.number().nullable().optional(),
   isCanceled: z.boolean().nullable().optional(),
   isRefunded: z.boolean().nullable().optional(),
   createDate: z.string().nullable().optional(),

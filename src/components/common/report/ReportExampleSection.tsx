@@ -4,9 +4,9 @@ import NextButton from '@/assets/icons/next-button.svg?react';
 import PrevButton from '@/assets/icons/prev-button.svg?react';
 import { REPORT_EXAMPLE } from '@/data/reportConstant';
 import { useControlScroll } from '@/hooks/useControlScroll';
-import { REPORT_EXAMPLE_ID } from '@/pages/common/report/ReportNavigation';
-import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
-import { resumeColors } from '@/pages/common/report/ReportResumePage';
+import { REPORT_EXAMPLE_ID } from '@/router-pages/common/report/ReportNavigation';
+import { personalStatementColors } from '@/router-pages/common/report/ReportPersonalStatementPage';
+import { resumeColors } from '@/router-pages/common/report/ReportResumePage';
 import { ReportExample } from '@/types/interface';
 import { useRef, useState } from 'react';
 import ReportExampleCard from './ReportExampleCard';
@@ -150,7 +150,9 @@ const ReportExampleSection = ({
                 {example.map((example, index) => (
                   <div
                     key={index}
-                    ref={(el) => (itemRefs.current[index] = el)}
+                    ref={(el) => {
+                      itemRefs.current[index] = el;
+                    }}
                     className="flex w-[90%] shrink-0 cursor-pointer snap-start flex-col md:w-[calc(50%-6px)]"
                     onClick={() => setClickedExample(index)}
                   >

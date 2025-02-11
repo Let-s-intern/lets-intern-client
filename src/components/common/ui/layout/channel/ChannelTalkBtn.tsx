@@ -1,14 +1,15 @@
+'use client';
+
 import { useMediaQuery } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
 import channelService from '@/ChannelService';
 import { twMerge } from '@/lib/twMerge';
+import { usePathname } from 'next/navigation';
 
-const programDetailPathRegex = /^\/program\/(live|challenge|vod)\/\d+$/; // /program/live/:programId
-
+const programDetailPathRegex = /^\/program\/(live|challenge|vod)\/\d+/; // 프로그램 상세페이지
 const ChannelTalkBtn = () => {
-  const location = useLocation();
+  const pathname = usePathname() ?? '';
   const isUpTo991 = useMediaQuery('(max-width: 991px)');
   const isUpTo1280 = useMediaQuery('(max-width: 1280px)');
 
@@ -37,18 +38,18 @@ const ChannelTalkBtn = () => {
   /** 특정 페이지에서 버튼 숨김 */
   useEffect(() => {
     // 결제 페이지
-    if (location.pathname.endsWith('payment')) setIsHidden(true);
-  }, [location.pathname]);
+    if (pathname.endsWith('payment')) setIsHidden(true);
+  }, [pathname]);
 
   return (
     <button
       id="custom-channel-button"
       className={twMerge(
         'fixed right-4 z-30 flex items-center rounded-[25rem] bg-neutral-100 shadow-05',
-        programDetailPathRegex.test(location.pathname) ||
-          (location.pathname.startsWith('/report') && isUpTo1280) ||
-          location.pathname.startsWith('/report/landing') ||
-          (location.pathname.startsWith('/payment-input') && isUpTo991)
+        programDetailPathRegex.test(pathname) ||
+          (pathname.startsWith('/report') && isUpTo1280) ||
+          pathname.startsWith('/report/landing') ||
+          (pathname.startsWith('/payment-input') && isUpTo991)
           ? 'bottom-32'
           : 'bottom-20',
         isHidden && 'hidden',

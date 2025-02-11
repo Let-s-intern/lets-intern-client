@@ -1,13 +1,12 @@
-import { useQuery } from '@tanstack/react-query';
-import { useEffect, useRef, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-
 import { ReportDetail, useGetActiveReports } from '@/api/report';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
 import useScrollStore from '@/store/useScrollStore';
 import axios from '@/utils/axios';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useRef, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import KakaoChannel from './KakaoChannel';
 import NavItem from './NavItem';
 import { NavSubItemProps } from './NavSubItem';
@@ -47,8 +46,9 @@ const NavBar = () => {
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [reportItems, setReportItems] = useState<NavSubItemProps[]>([]);
+  /** TODO: Next.js 스럽게 수정하기 */
   const [activeLink, setActiveLink] = useState<
-    'HOME' | 'ABOUT' | 'PROGRAM' | 'ADMIN' | 'BLOG' | 'REPORT' | ''
+    'HOME' | 'ABOUT' | 'PROGRAM' | 'ADMIN' | 'BLOG' | 'REPORT' | 'REVIEW' | ''
   >('');
 
   const { isLoggedIn, logout } = useAuthStore();
@@ -135,6 +135,8 @@ const NavBar = () => {
       setActiveLink('BLOG');
     } else if (location.pathname.startsWith('/report')) {
       setActiveLink('REPORT');
+    } else if (location.pathname.startsWith('/review')) {
+      setActiveLink('REVIEW');
     } else if (location.pathname.startsWith('/')) {
       setActiveLink('HOME');
     }
@@ -184,13 +186,13 @@ const NavBar = () => {
       <div
         className={`lg:p-30 fixed top-0 z-30 h-[3.75rem] w-screen border-b border-neutral-80 bg-static-100 px-5 sm:px-20 md:h-[4.375rem] lg:h-[4.75rem] lg:px-28 ${scrollDirection === 'DOWN' ? '-translate-y-full' : 'translate-y-0'} transition-transform duration-300`}
       >
-        <div className="flex h-full items-center justify-between">
-          <div className="flex h-full items-center gap-4 sm:gap-9">
+        <div className="flex items-center justify-between h-full">
+          <div className="flex items-center h-full gap-4 sm:gap-9">
             <Link to="/" className="h-[1.75rem] md:h-[2.2rem]">
               <img
                 src="/logo/logo-gradient-text.svg"
                 alt="렛츠커리어 로고"
-                className="h-full w-auto"
+                className="w-auto h-full"
               />
             </Link>
             {/* 메뉴 아이템 */}
@@ -200,7 +202,18 @@ const NavBar = () => {
             <NavItem to="/program" active={activeLink === 'PROGRAM'}>
               프로그램
             </NavItem>
-            <NavItem to="/blog/list" active={activeLink === 'BLOG'}>
+            <NavItem
+              to="/review"
+              active={activeLink === 'REVIEW'}
+              reloadDocument
+            >
+              100% 솔직 후기
+            </NavItem>
+            <NavItem
+              to="/blog/list"
+              active={activeLink === 'BLOG'}
+              reloadDocument
+            >
               블로그
             </NavItem>
             <NavItem
@@ -209,19 +222,22 @@ const NavBar = () => {
               active={activeLink === 'REPORT'}
               hoverItem={reportItems}
               isItemLoaded={!isLoading && !!data}
+              reloadDocument
             >
               🔥 서류 진단받고 합격하기
             </NavItem>
-            <NavItem to="https://letscareer.framer.website" 
+            <NavItem
+              to="https://letscareer.framer.website"
               target="_blank"
-              rel="noopenner noreferrer">
+              rel="noopenner noreferrer"
+            >
               🔎 모의 면접하고 합격하기
             </NavItem>
           </div>
           <div className="flex items-center gap-4">
             {isLoggedIn ? (
               <div
-                className="hidden cursor-pointer gap-2 sm:flex"
+                className="hidden gap-2 cursor-pointer sm:flex"
                 onClick={() => navigate('/mypage/application')}
               >
                 <span className="text-1.125-medium block">{user?.name} 님</span>
@@ -232,10 +248,9 @@ const NavBar = () => {
                 />
               </div>
             ) : (
-              <div className="hidden items-center gap-2 sm:flex">
+              <div className="items-center hidden gap-2 sm:flex">
                 <Link
-                  to="/login"
-                  state={{ prevPath: location.pathname }}
+                  to={`/login?redirect=${encodeURIComponent(location.pathname)}`}
                   className="text-0.75 rounded-xxs bg-primary px-3 py-1 text-static-100"
                 >
                   로그인
@@ -271,17 +286,17 @@ const NavBar = () => {
           isOpen ? 'translate-x-0' : 'translate-x-full',
         )}
       >
-        <div className="flex w-full items-center justify-between p-5">
+        <div className="flex items-center justify-between w-full p-5">
           <div className="h-7">
             <img
-              className="h-full w-auto"
+              className="w-auto h-full"
               src="/logo/logo-gradient-text.svg"
               alt="렛츠커리어 로고"
             />
           </div>
-          <i className="h-6 w-6 cursor-pointer" onClick={closeMenu}>
+          <i className="w-6 h-6 cursor-pointer" onClick={closeMenu}>
             <img
-              className="h-auto w-full"
+              className="w-full h-auto"
               src="/icons/x-close.svg"
               alt="닫기 아이콘"
             />
@@ -289,10 +304,10 @@ const NavBar = () => {
         </div>
         <hr />
         <KakaoChannel />
-        <div className="flex h-full flex-col gap-5 overflow-y-auto py-10">
-          <div className="mx-5 flex justify-between">
+        <div className="flex flex-col h-full gap-5 py-10 overflow-y-auto">
+          <div className="flex justify-between mx-5">
             {isLoggedIn ? (
-              <span className="flex w-full items-center justify-between gap-4 text-neutral-0 sm:p-0">
+              <span className="flex items-center justify-between w-full gap-4 text-neutral-0 sm:p-0">
                 <span>
                   환영합니다, <span className="text-primary">{user?.name}</span>
                   님
@@ -312,9 +327,8 @@ const NavBar = () => {
               <div className="text-0.875 flex gap-6">
                 <Link
                   className="text-primary"
-                  to="/login"
+                  to={`/login?redirect=${encodeURIComponent(location.pathname)}`}
                   onClick={closeMenu}
-                  state={{ prevPath: location.pathname }}
                 >
                   로그인
                 </Link>
@@ -324,7 +338,7 @@ const NavBar = () => {
               </div>
             )}
           </div>
-          <div className="flex flex-1 flex-col gap-2">
+          <div className="flex flex-col flex-1 gap-2">
             <SideNavItem to="/mypage/application" onClick={closeMenu}>
               마이페이지
             </SideNavItem>
@@ -335,20 +349,26 @@ const NavBar = () => {
             <SideNavItem to="/program" onClick={closeMenu}>
               프로그램
             </SideNavItem>
-            <SideNavItem to="/blog/list" onClick={closeMenu}>
+            <SideNavItem to="/review" onClick={closeMenu} reloadDocument>
+              100% 솔직 후기
+            </SideNavItem>
+            <SideNavItem to="/blog/list" onClick={closeMenu} reloadDocument>
               블로그
             </SideNavItem>
             <SideNavItem
               to="/report/landing"
               onClick={closeMenu}
               hoverItem={reportItems}
+              reloadDocument
             >
               🔥 서류 진단받고 합격하기
             </SideNavItem>
-            <SideNavItem 
-              to="https://letscareer.framer.website" 
+            <SideNavItem
+              to="https://letscareer.framer.website"
               target="_blank"
-              rel="noopenner noreferrer" onClick={closeMenu}>
+              rel="noopenner noreferrer"
+              onClick={closeMenu}
+            >
               🔎 모의 면접하고 합격하기
             </SideNavItem>
             <hr className="h-1 bg-neutral-80" />

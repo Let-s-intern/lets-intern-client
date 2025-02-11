@@ -1,3 +1,4 @@
+import { QuestionType } from '@/api/review';
 import {
   AttendanceResult,
   AttendanceStatus,
@@ -27,6 +28,15 @@ export const newProgramTypeDetailToText: Record<string, string> = {
   PASS: '합격 후 성장',
 };
 
+export const questionTypeToText: Record<QuestionType, string> = {
+  GOOD_POINT: '좋았던 점',
+  BAD_POINT: '아쉬웠던 점',
+  GOAL: '프로그램 참여 전 목표',
+  GOAL_RESULT: '목표 달성 여부',
+  WORRY: '서류 작성 고민', // report
+  WORRY_RESULT: '고민 해결 여부', // report
+};
+
 export const programClassificationToText: Record<
   ProgramClassification,
   string
@@ -45,6 +55,16 @@ export const challengeTypeToText: Record<ChallengeType, string> = {
   PERSONAL_STATEMENT: '자기소개서',
   PORTFOLIO: '포트폴리오',
   PERSONAL_STATEMENT_LARGE_CORP: '대기업 자소서',
+};
+
+export const challengeTypeToDisplay: Record<ChallengeType, string> = {
+  CAREER_START: '취준 기필코 시작 챌린지',
+  DOCUMENT_PREPARATION: '서류 완성 챌린지',
+  MEETING_PREPARATION: '면접 완성 챌린지',
+  ETC: '기타',
+  PERSONAL_STATEMENT: '자기소개서 완성 챌린지',
+  PORTFOLIO: '포트폴리오 완성 챌린지',
+  PERSONAL_STATEMENT_LARGE_CORP: '대기업 공채 자소서 완성 챌린지',
 };
 
 export const challengeTypes: ChallengeType[] = [

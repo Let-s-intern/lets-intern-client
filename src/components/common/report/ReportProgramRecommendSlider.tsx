@@ -1,12 +1,11 @@
-import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-
 import { useGetProgramRecommend } from '@/api/program';
 import { ReportType } from '@/api/report';
-import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
-import { resumeColors } from '@/pages/common/report/ReportResumePage';
+import dayjs from '@/lib/dayjs';
+import { personalStatementColors } from '@/router-pages/common/report/ReportPersonalStatementPage';
+import { resumeColors } from '@/router-pages/common/report/ReportResumePage';
 import { ReportProgramRecommend } from '@/types/interface';
-import dayjs from 'dayjs';
+import { useRouter } from 'next/navigation';
+import { useMemo } from 'react';
 import ProgramRecommendSlider from '../ui/ProgramRecommendSlider';
 import MainHeader from './MainHeader';
 import SubHeader from './SubHeader';
@@ -37,7 +36,7 @@ const ReportProgramRecommendSlider = ({
     border: `1px solid ${reportType === 'PERSONAL_STATEMENT' ? personalStatementColors.C34AFF : resumeColors._4FDA46}`,
   };
 
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const { data: recommendData } = useGetProgramRecommend();
 
@@ -60,7 +59,8 @@ const ReportProgramRecommendSlider = ({
             reportProgramRecommend.challengeCareerStart?.cta ??
             '경험정리 하러 가기',
           to: `/program/challenge/${careerStart.id}`,
-          onClickButton: () => navigate(`/program/challenge/${careerStart.id}`),
+          onClickButton: () =>
+            router.push(`/program/challenge/${careerStart.id}`),
         });
       }
 
@@ -81,7 +81,7 @@ const ReportProgramRecommendSlider = ({
             '자소서 완성하러 가기',
           to: `/program/challenge/${personalStatement.id}`,
           onClickButton: () =>
-            navigate(`/program/challenge/${personalStatement.id}`),
+            router.push(`/program/challenge/${personalStatement.id}`),
         });
       }
 
@@ -98,7 +98,8 @@ const ReportProgramRecommendSlider = ({
             reportProgramRecommend.challengePortfolio?.cta ??
             '포폴 완성하러 가기',
           to: `/program/challenge/${portfolio.id}`,
-          onClickButton: () => navigate(`/program/challenge/${portfolio.id}`),
+          onClickButton: () =>
+            router.push(`/program/challenge/${portfolio.id}`),
         });
       }
     }
@@ -113,7 +114,7 @@ const ReportProgramRecommendSlider = ({
         title: reportProgramRecommend.live?.title,
         cta: reportProgramRecommend.live?.cta ?? '라이브 참여하러 가기',
         to: `/program/live/${live?.id}`,
-        onClickButton: () => navigate(`/program/live/${live?.id}`),
+        onClickButton: () => router.push(`/program/live/${live?.id}`),
       });
     }
 
@@ -131,7 +132,7 @@ const ReportProgramRecommendSlider = ({
         title: reportProgramRecommend.vod?.title,
         cta: reportProgramRecommend.vod?.cta ?? 'VOD 참여하러 가기',
         to: `/program/live/${vod?.link}`,
-        onClickButton: () => navigate(`/program/live/${vod?.link}`),
+        onClickButton: () => router.push(`/program/live/${vod?.link}`),
       });
     }
 
@@ -160,7 +161,7 @@ const ReportProgramRecommendSlider = ({
         cta:
           reportProgramRecommend.reportResume?.cta ?? '이력서 진단받으러 가기',
         to: '/report/landing/resume',
-        onClickButton: () => navigate('/report/landing/resume'),
+        onClickButton: () => router.push('/report/landing/resume'),
       });
     }
 
@@ -180,7 +181,7 @@ const ReportProgramRecommendSlider = ({
           reportProgramRecommend.reportPersonalStatement?.cta ??
           '자기소개서 진단받으러 가기',
         to: '/report/landing/personal-statement',
-        onClickButton: () => navigate('/report/landing/personal-statement'),
+        onClickButton: () => router.push('/report/landing/personal-statement'),
       });
     }
 
@@ -197,12 +198,34 @@ const ReportProgramRecommendSlider = ({
           reportProgramRecommend.reportPortfolio?.cta ??
           '포트폴리오 진단받으러 가기',
         to: '/report/landing/portfolio',
-        onClickButton: () => navigate('/report/landing/portfolio'),
+        onClickButton: () => router.push('/report/landing/portfolio'),
       });
     }
 
     return list;
-  }, [recommendData, navigate, reportProgramRecommend]);
+  }, [
+    recommendData?.challengeList,
+    recommendData?.live,
+    recommendData?.reportList,
+    recommendData?.vodList,
+    reportProgramRecommend.challengeCareerStart?.cta,
+    reportProgramRecommend.challengeCareerStart?.title,
+    reportProgramRecommend.challengePersonalStatement?.cta,
+    reportProgramRecommend.challengePersonalStatement?.title,
+    reportProgramRecommend.challengePortfolio?.cta,
+    reportProgramRecommend.challengePortfolio?.title,
+    reportProgramRecommend.live?.cta,
+    reportProgramRecommend.live?.title,
+    reportProgramRecommend.reportPersonalStatement?.cta,
+    reportProgramRecommend.reportPersonalStatement?.title,
+    reportProgramRecommend.reportPortfolio?.cta,
+    reportProgramRecommend.reportPortfolio?.title,
+    reportProgramRecommend.reportResume?.cta,
+    reportProgramRecommend.reportResume?.title,
+    reportProgramRecommend.vod?.cta,
+    reportProgramRecommend.vod?.title,
+    router,
+  ]);
 
   return (
     <section

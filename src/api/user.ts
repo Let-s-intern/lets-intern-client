@@ -52,16 +52,14 @@ export const useDeleteUserMutation = (
       await axios.delete(`/user/admin?number=${phoneNumber}`);
     },
     onSuccess: () => {
-      client
-        .invalidateQueries({
-          queryKey: [UseUserAdminQueryKey],
-        })
-        .then(() => {
-          successCallback && successCallback();
-        });
+      client.invalidateQueries({
+        queryKey: [UseUserAdminQueryKey],
+      });
+
+      return successCallback && successCallback();
     },
     onError: (error: Error) => {
-      errorCallback && errorCallback(error);
+      return errorCallback && errorCallback(error);
     },
   });
 };
@@ -117,10 +115,10 @@ export const usePatchUserAdminMutation = ({
       client.invalidateQueries({
         queryKey: [UseUserAdminQueryKey, UseUserDetailAdminQueryKey, userId],
       });
-      successCallback && successCallback();
+      return successCallback && successCallback();
     },
     onError: (error: Error) => {
-      errorCallback && errorCallback(error);
+      return errorCallback && errorCallback(error);
     },
   });
 };
@@ -153,6 +151,7 @@ export const useUserQuery = ({ enabled }: { enabled?: boolean } = {}) => {
       const res = await axios.get(`/user`);
       return userSchema.parse(res.data.data);
     },
+    refetchOnWindowFocus: false,
   });
 };
 
@@ -170,10 +169,21 @@ export type PatchUserBody = {
   marketingAgree?: boolean;
 };
 
-export const usePatchUser = () => {
+export const usePatchUser = (
+  successCallback?: () => void,
+  errorCallback?: (error: Error) => void,
+) => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (body: PatchUserBody) => {
       return await axios.patch('/user', body);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [useUserQueryKey] });
+      return successCallback && successCallback();
+    },
+    onError: (error: Error) => {
+      return errorCallback && errorCallback(error);
     },
   });
 };

@@ -1,7 +1,10 @@
+import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
-import dayjs, { Dayjs } from 'dayjs';
-import { Duration as DayjsDuration } from 'dayjs/plugin/duration';
+import { Dayjs } from 'dayjs';
+import duration, { Duration as DayjsDuration } from 'dayjs/plugin/duration';
 import { ReactNode, useEffect, useState } from 'react';
+
+dayjs.extend(duration);
 
 export function Duration({
   deadline,

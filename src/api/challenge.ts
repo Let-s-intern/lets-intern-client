@@ -1,13 +1,25 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { z } from 'zod';
 import {
   activeChallengeResponse,
+  AttendanceResult,
+  attendances,
+  AttendanceStatus,
+  ChallengeIdPrimitive,
   challengeTitleSchema,
   ChallengeType,
   faqSchema,
+  getChallengeIdPrimitiveSchema,
   getChallengeIdSchema,
   reviewTotalSchema,
 } from '../schema';
 import axios from '../utils/axios';
+import {
+  challengeGoalSchema,
+  challengeUserInfoSchema,
+  challengeValidUserSchema,
+} from './challengeSchema';
+import { getAdminProgramReviewQueryKey } from './review';
 
 const useChallengeQueryKey = 'useChallengeQueryKey';
 
@@ -26,6 +38,21 @@ export const useChallengeQuery = ({
       return getChallengeIdSchema.parse(res.data.data);
     },
   });
+};
+
+export const fetchChallengeData = async (
+  challengeId: string,
+): Promise<ChallengeIdPrimitive> => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_API}/challenge/${challengeId}`,
+  );
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch challenge data');
+  }
+
+  const data = await res.json();
+  return getChallengeIdPrimitiveSchema.parse(data.data);
 };
 
 export const usePatchChallengePayback = ({
@@ -182,6 +209,7 @@ export const useEditReviewVisible = () => {
   });
 };
 
+// 모집 중인 챌린지 조회
 export const useGetActiveChallenge = (type: ChallengeType) => {
   return useQuery({
     queryKey: ['useGetSameTypeChallenge', type],
@@ -192,6 +220,212 @@ export const useGetActiveChallenge = (type: ChallengeType) => {
         },
       });
       return activeChallengeResponse.parse(res.data.data);
+    },
+  });
+};
+
+export const getChallengeGoalQueryKey = (challengeId: string | undefined) => {
+  return ['useGetChallengeGoal', challengeId];
+};
+
+export const useGetChallengeGoal = (challengeId: string | undefined) => {
+  return useQuery({
+    queryKey: getChallengeGoalQueryKey(challengeId),
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${challengeId}/goal`);
+      return challengeGoalSchema.parse(res.data.data);
+    },
+    enabled: !!challengeId,
+  });
+};
+
+export const usePostChallengeGoal = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      challengeId,
+      goal,
+    }: {
+      challengeId: string;
+      goal: string;
+    }) => {
+      const res = await axios.patch(`/challenge/${challengeId}/goal`, {
+        goal,
+      });
+      return { data: res.data, challengeId };
+    },
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({
+        queryKey: getChallengeGoalQueryKey(data.challengeId),
+      });
+    },
+  });
+};
+
+export const useGetUserChallengeInfo = () => {
+  return useQuery({
+    queryKey: ['user', 'challenge-info'],
+    queryFn: async () => {
+      const res = await axios.get('/user/challenge-info');
+      return challengeUserInfoSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const useGetChallengeValideUser = (challengeId: string | undefined) => {
+  return useQuery({
+    queryKey: ['challenge', challengeId, 'access'],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${challengeId}/access`);
+      return challengeValidUserSchema.parse(res.data.data);
+    },
+    enabled: !!challengeId,
+  });
+};
+
+export const usePostChallengeAttendance = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: () => void;
+}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      missionId,
+      link,
+      review,
+    }: {
+      missionId: number;
+      link: string;
+      review: string;
+    }) => {
+      const res = await axios.post(`/attendance/${missionId}`, {
+        link,
+        review,
+      });
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['challenge'],
+      });
+      return successCallback && successCallback();
+    },
+    onError: () => {
+      return errorCallback && errorCallback();
+    },
+  });
+};
+
+export const usePatchChallengeAttendance = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      challengeId,
+      attendanceId,
+      missionId,
+      link,
+      status,
+      result,
+      comments,
+      review,
+      reviewIsVisible,
+    }: {
+      challengeId?: number;
+      attendanceId: number;
+      missionId?: number;
+      link?: string;
+      status?: AttendanceStatus | null;
+      result?: AttendanceResult | null;
+      comments?: string;
+      review?: string;
+      reviewIsVisible?: boolean;
+    }) => {
+      const res = await axios.patch(`/attendance/${attendanceId}`, {
+        link,
+        status,
+        result,
+        comments,
+        review,
+        reviewIsVisible,
+      });
+      return { data: res.data, challengeId, missionId };
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ['challenge'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: getAdminProgramReviewQueryKey('MISSION_REVIEW'),
+      });
+      queryClient.invalidateQueries({
+        queryKey: getChallengeAttendancesQueryKey(
+          data.challengeId,
+          data.missionId,
+        ),
+      });
+      return successCallback && successCallback();
+    },
+    onError: (e) => {
+      return errorCallback && errorCallback(e);
+    },
+  });
+};
+
+const reviewStatusSchema = z.object({
+  reviewId: z.number().nullable(),
+});
+
+export const getChallengeReviewStatusQueryKey = (
+  challengeId: number | undefined,
+) => {
+  return ['challenge', challengeId, 'review-status'];
+};
+
+// 챌린지 리뷰 작성 여부 조회
+export const useGetChallengeReviewStatus = (
+  challengeId: number | undefined,
+) => {
+  return useQuery({
+    queryKey: getChallengeReviewStatusQueryKey(challengeId),
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${challengeId}/my/review-status`);
+      return reviewStatusSchema.parse(res.data.data);
+    },
+    enabled: !!challengeId,
+  });
+};
+
+const getChallengeAttendancesQueryKey = (
+  challengeId: number | undefined,
+  missionId: number | undefined,
+) => {
+  return ['admin', 'challenge', challengeId, 'attendances', missionId];
+};
+
+export const useGetChallengeAttendances = ({
+  challengeId,
+  detailedMissionId,
+}: {
+  challengeId?: number;
+  detailedMissionId?: number;
+}) => {
+  return useQuery({
+    queryKey: getChallengeAttendancesQueryKey(challengeId, detailedMissionId),
+    enabled: Boolean(challengeId) && Boolean(detailedMissionId),
+    queryFn: async () => {
+      const res = await axios.get(
+        `/challenge/${challengeId}/mission/${detailedMissionId}/attendances`,
+      );
+      return attendances.parse(res.data.data).attendanceList ?? [];
     },
   });
 };

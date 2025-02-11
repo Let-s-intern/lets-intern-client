@@ -12,6 +12,7 @@ const DocumentLink = ({ to, children }: DocumentLinkProps) => {
       className="text-0.75-medium lg:text-0.875-medium"
       rel="noopener noreferrer"
       target="_blank"
+      reloadDocument
     >
       {children}
     </Link>

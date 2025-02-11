@@ -25,7 +25,9 @@ const TopBanner = ({
   });
 
   useEffect(() => {
-    data && setIsShow(true);
+    if (data) {
+      setIsShow(true);
+    }
   }, [data, setIsShow]);
 
   const clickBanner = () => {
@@ -56,7 +58,7 @@ const TopBanner = ({
         </div>
         <img
           onClick={closeBanner}
-          className="absolute right-0 top-0 h-6 w-6"
+          className="absolute top-0 right-0 w-6 h-6"
           src="/icons/Close_MD.svg"
           alt="상단띠배너 닫기"
         />

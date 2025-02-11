@@ -25,7 +25,7 @@ const MissionTodayIcon = ({
       <Link
         to={
           !isDone
-            ? `/challenge/${params.programId}/me?scroll_to=daily-mission`
+            ? `/challenge/${params.applicationId}/${params.programId}/me?scroll_to=daily-mission`
             : '#'
         }
         replace

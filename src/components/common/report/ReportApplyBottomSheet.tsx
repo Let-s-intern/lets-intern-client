@@ -9,7 +9,6 @@ import React, {
   useState,
 } from 'react';
 import { IoCloseCircle } from 'react-icons/io5';
-import { useNavigate } from 'react-router-dom';
 
 import {
   ActiveReport,
@@ -28,6 +27,7 @@ import useReportApplicationStore from '@/store/useReportApplicationStore';
 import ModalOverlay from '@components/ui/ModalOverlay';
 import RequiredStar from '@components/ui/RequiredStar';
 import clsx from 'clsx';
+import { useRouter } from 'next/navigation';
 import { DesktopCTA, MobileCTA } from '../ApplyCTA';
 import PaymentErrorNotification from '../PaymentErrorNotification';
 import GradientButton from '../program/program-detail/button/GradientButton';
@@ -72,7 +72,7 @@ const ReportApplyBottomSheet = React.forwardRef<
   HTMLDivElement,
   ReportApplyBottomSheetProps
 >(({ report, priceDetail, show = true }, ref) => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -198,14 +198,14 @@ const ReportApplyBottomSheet = React.forwardRef<
       reportId: report.reportId,
     });
 
-    navigate(
+    router.push(
       `/report/apply/${convertReportTypeToPathname(report.reportType ?? 'RESUME')}/${report.reportId}`,
     );
   }, [
-    navigate,
     radioValue,
     report.reportId,
     report.reportType,
+    router,
     setReportApplication,
   ]);
 
@@ -373,7 +373,7 @@ const ReportApplyBottomSheet = React.forwardRef<
         <div
           ref={ref}
           className={twMerge(
-            'fixed bottom-0 left-1/2 z-40 mx-auto h-[36rem] w-full max-w-[1000px] -translate-x-1/2 overflow-hidden rounded-t-xl border-t border-neutral-0/5 bg-white shadow-lg transition md:h-[50rem]',
+            'fixed bottom-0 left-1/2 z-40 mx-auto h-[36rem] w-full max-w-[1000px] -translate-x-1/2 overflow-hidden rounded-t-xl border-t border-neutral-0/5 bg-white shadow-lg transition md:h-[50rem] md:max-h-[85vh]',
             !show && 'hidden',
           )}
         >

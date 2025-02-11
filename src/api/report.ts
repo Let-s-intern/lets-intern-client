@@ -1,9 +1,10 @@
+import dayjs from '@/lib/dayjs';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 import { number, z } from 'zod';
 
 import { faqSchema, reportTypeSchema } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
+import { Dayjs } from 'dayjs';
 import axios from '../utils/axios';
 import { tossInfoType } from './paymentSchema';
 
@@ -144,8 +145,8 @@ export function convertFeedbackStatusToDisplayName({
   isReportSubmitted,
 }: {
   status: ReportFeedbackStatus | null | undefined;
-  reportFeedback: dayjs.Dayjs | null | undefined;
-  now: dayjs.Dayjs;
+  reportFeedback: Dayjs | null | undefined;
+  now: Dayjs;
   isAdmin?: boolean;
   isReportSubmitted: boolean;
 }) {
@@ -178,8 +179,8 @@ export function convertFeedbackStatusToBadgeStatus({
   isReportSubmitted,
 }: {
   status: ReportFeedbackStatus | null | undefined;
-  reportFeedback: dayjs.Dayjs | null | undefined;
-  now: dayjs.Dayjs;
+  reportFeedback: Dayjs | null | undefined;
+  now: Dayjs;
   isReportSubmitted: boolean;
 }): 'info' | 'success' | 'warning' {
   if (!status) {
@@ -462,6 +463,56 @@ export const useGetActiveReports = () => {
       return getActiveReportsSchema.parse(res.data.data);
     },
   });
+};
+
+/**
+ * 진단서 데이터 조회
+ * TODO: 구조 더 깔끔하게 정리하기. 현재 하나의 id라도 전체 Active Reports를 가져오는 구조
+ */
+export const fetchReport = async ({
+  type,
+  id,
+}: {
+  type: ReportType;
+  id?: number;
+}): Promise<ReportDetail | null> => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_API}/report/active`,
+  );
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch report data');
+  }
+
+  const data = await res.json();
+
+  const activeReports = getActiveReportsSchema.parse(data.data);
+
+  let list: ReportDetail[];
+
+  if (type === 'PERSONAL_STATEMENT') {
+    list = activeReports.personalStatementInfoList;
+  } else if (type === 'PORTFOLIO') {
+    list = activeReports.portfolioInfoList;
+  } else if (type === 'RESUME') {
+    list = activeReports.resumeInfoList;
+  } else {
+    throw new Error('Invalid report type');
+  }
+  const visibleList = list.filter(
+    (item) =>
+      item.isVisible === true &&
+      item.visibleDate &&
+      new Date(item.visibleDate) <= new Date(),
+  );
+
+  const report = !id
+    ? visibleList.length > 0
+      ? visibleList[0]
+      : undefined
+    : list.find((item) => item.reportId === id);
+
+  return report ?? null;
 };
 
 // GET /api/v1/report/{reportId}/admin
@@ -770,10 +821,14 @@ export const usePatchApplicationDocument = ({
       queryClient.invalidateQueries({
         queryKey: [useGetReportApplicationsForAdminQueryKey],
       });
-      successCallback && successCallback();
+      if (successCallback) {
+        successCallback();
+      }
     },
     onError: (error: Error) => {
-      errorCallback && errorCallback(error);
+      if (errorCallback) {
+        errorCallback(error);
+      }
     },
   });
 };
@@ -903,10 +958,14 @@ export const usePatchReportApplicationSchedule = ({
       queryClient.invalidateQueries({
         queryKey: [useGetReportApplicationsForAdminQueryKey],
       });
-      successCallback && successCallback();
+      if (successCallback) {
+        successCallback();
+      }
     },
     onError: (error: Error) => {
-      errorCallback && errorCallback(error);
+      if (errorCallback) {
+        errorCallback(error);
+      }
     },
   });
 };
@@ -1124,38 +1183,50 @@ export const useDeleteReportApplication = ({
       queryClient.invalidateQueries({
         queryKey: [useGetReportPaymentDetailQueryKey],
       });
-      successCallback && successCallback();
+      if (successCallback) {
+        successCallback();
+      }
     },
     onError: (error: Error) => {
-      errorCallback && errorCallback(error);
+      if (errorCallback) {
+        errorCallback(error);
+      }
     },
   });
 };
 
-// Utility function to generate mock data (for demonstration purposes)
-// const generateMockData = <T extends z.ZodType>(schema: T): z.infer<T> => {
-//   const shape = schema._def.shape();
-//   const mockData: any = {};
+export const reportTitleSchema = z.object({
+  title: z.string().optional().nullable(),
+});
 
-//   for (const [key, value] of Object.entries(shape)) {
-//     if (value instanceof z.ZodString) {
-//       mockData[key] = 'mock string';
-//     } else if (value instanceof z.ZodNumber) {
-//       mockData[key] = 123;
-//     } else if (value instanceof z.ZodBoolean) {
-//       mockData[key] = true;
-//     } else if (value instanceof z.ZodArray) {
-//       mockData[key] = [generateMockData(value.element)];
-//     } else if (value instanceof z.ZodObject) {
-//       mockData[key] = generateMockData(value);
-//     } else if (value instanceof z.ZodEnum) {
-//       mockData[key] = value.options[0];
-//     } else if (value instanceof z.ZodNullable) {
-//       mockData[key] = null;
-//     } else {
-//       mockData[key] = undefined;
-//     }
-//   }
+export const useGetReportTitle = (reportId: number) => {
+  return useQuery({
+    queryKey: ['useGetReportTitle', reportId],
+    queryFn: async () => {
+      const res = await axios.get(`/report/${reportId}/title`);
+      return reportTitleSchema.parse(res.data.data);
+    },
+  });
+};
 
-//   return schema.parse(mockData);
-// };
+// 서류 진단 고민 조회
+export const getReportMessageQueryKey = (applicationId: number) => [
+  'getReportMessage',
+  applicationId,
+];
+
+export const reportMessageSchema = z.object({
+  message: z.string(),
+});
+
+export const useGetReportMessage = (applicationId: number) => {
+  return useQuery({
+    queryKey: getReportMessageQueryKey(applicationId),
+    queryFn: async () => {
+      const res = await axios.get(
+        `/report/application/${applicationId}/message`,
+      );
+      return reportMessageSchema.parse(res.data.data);
+    },
+  });
+};

@@ -8,7 +8,7 @@ interface CardProps {
 const ProgramCard = ({ imgSrc, imgAlt, title, content }: CardProps) => {
   return (
     <div className="flex items-start gap-4">
-      <div className="h-20 w-28 rounded-sm bg-neutral-90">
+      <div className="h-20 w-28 overflow-hidden rounded-sm bg-neutral-90">
         <img className="h-auto w-full" src={imgSrc} alt={imgAlt} />
       </div>
       <div>

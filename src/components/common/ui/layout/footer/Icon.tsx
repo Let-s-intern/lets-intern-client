@@ -11,6 +11,7 @@ const Icon = ({ src, alt, to = '#', className }: IconProps) => {
   return (
     <Link
       to={to}
+      reloadDocument
       {...(to !== '#' && { target: '_blank', rel: 'noopener noreferrer' })}
       className={className}
     >

@@ -1,30 +1,35 @@
-import { useNavigate } from 'react-router-dom';
+'use client';
+
+import dayjs from '@/lib/dayjs';
+import { useRouter } from 'next/navigation';
 import { BlogInfoSchema } from '../../../api/blogSchema';
 import { blogCategory } from '../../../utils/convert';
 import BlogHashtag from './BlogHashtag';
 
 const RecommendBlogCard = (blogInfo: BlogInfoSchema) => {
-  const navigate = useNavigate();
+  const router = useRouter();
   return (
     <div
-      className="flex w-full cursor-pointer flex-col gap-y-2 py-3"
+      className="flex flex-col w-full py-3 cursor-pointer gap-y-2"
       onClick={() => {
-        navigate(`/blog/${blogInfo.blogThumbnailInfo.id}`);
+        router.push(`/blog/${blogInfo.blogThumbnailInfo.id}`);
       }}
     >
-      <span className="w-full text-xsmall16 font-bold text-primary">
+      <span className="w-full font-bold text-xsmall16 text-primary">
         {blogCategory[blogInfo.blogThumbnailInfo.category || '']}
       </span>
-      <div className="flex w-full flex-col gap-y-4">
+      <div className="flex flex-col w-full gap-y-4">
         <div className="flex w-full gap-x-5">
-          <div className="flex flex-1 flex-col gap-y-2">
-            <h2 className="line-clamp-3 font-bold text-neutral-0">
+          <div className="flex flex-col flex-1 gap-y-2">
+            <h2 className="font-bold line-clamp-3 text-neutral-0">
               {blogInfo.blogThumbnailInfo.title}
             </h2>
             <p className="text-xsmall14 text-neutral-45">
-              {blogInfo.blogThumbnailInfo.lastModifiedDate?.format(
-                'YYYY년 MM월 DD일',
-              )}
+              {blogInfo.blogThumbnailInfo.lastModifiedDate
+                ? dayjs(blogInfo.blogThumbnailInfo.lastModifiedDate).format(
+                    'YYYY년 MM월 DD일',
+                  )
+                : null}
             </p>
           </div>
           <img
@@ -36,14 +41,7 @@ const RecommendBlogCard = (blogInfo: BlogInfoSchema) => {
         {blogInfo.tagDetailInfos.length > 0 && (
           <div className="flex flex-wrap items-center gap-1.5">
             {blogInfo.tagDetailInfos.map((tag) => (
-              <BlogHashtag
-                key={tag.id}
-                text={tag.title || ''}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate(`/blog/hashtag`, { state: tag });
-                }}
-              />
+              <BlogHashtag key={tag.id} text={tag.title || ''} tagId={tag.id} />
             ))}
           </div>
         )}

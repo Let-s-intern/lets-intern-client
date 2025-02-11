@@ -1,16 +1,5 @@
+import throttle from '@/utils/throttle';
 import { useEffect, useRef, useState } from 'react';
-
-const throttle = (callback: () => void, delay: number) => {
-  let timeId: NodeJS.Timeout | null;
-
-  return () => {
-    if (timeId) return;
-    timeId = setTimeout(() => {
-      callback();
-      timeId = null;
-    }, delay);
-  };
-};
 
 /** 스크롤이 있는지 없는지 판단하는 커스텀 훅
  * scrollRef를 스크롤이 생길 수 있는 div element에 전달

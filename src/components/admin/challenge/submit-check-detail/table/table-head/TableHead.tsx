@@ -1,10 +1,10 @@
 import clsx from 'clsx';
 
+import { Attendance } from '../../../../../../schema';
 import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
-import AllChoiceCheckbox from '../table-body/AllChoiceCheckbox';
 import ResultFilter from '../../filter/ResultFilter';
 import StatusFilter from '../../filter/StatusFilter';
-import { Attendance } from '../../../../../../schema';
+import AllChoiceCheckbox from '../table-body/AllChoiceCheckbox';
 
 interface Props {
   className?: string;
@@ -42,14 +42,6 @@ const TableHead = ({
         isCheckedList={isCheckedList}
         setIsCheckedList={setIsCheckedList}
       />
-      {/* <div
-        className={clsx(
-          'border-r border-[#D9D9D9] py-3 text-center',
-          cellWidthList[1],
-        )}
-      >
-        번호
-      </div> */}
       <div
         className={clsx(
           'border-r border-[#D9D9D9] py-3 text-center',
@@ -74,41 +66,48 @@ const TableHead = ({
       >
         메일
       </div>
-      {/* <div
-        className={clsx(
-          'border-r border-[#D9D9D9] py-3 text-center',
-          cellWidthList[4],
-        )}
-      >
-        계좌번호
-      </div> */}
       <StatusFilter
-        cellWidthListIndex={5}
+        cellWidthListIndex={4}
         statusFilter={statusFilter}
         setStatusFilter={setStatusFilter}
       />
       <div
         className={clsx(
           'border-r border-[#D9D9D9] py-3 text-center',
-          cellWidthList[6],
+          cellWidthList[5],
         )}
       >
         미션
       </div>
       <ResultFilter
-        cellWidthListIndex={7}
+        cellWidthListIndex={6}
         resultFilter={resultFilter}
         setResultFilter={setResultFilter}
       />
-      {/* <div
+      <div
+        className={clsx(
+          'border-r border-[#D9D9D9] py-3 text-center',
+          cellWidthList[7],
+        )}
+      >
+        코멘트
+      </div>
+      <div
         className={clsx(
           'border-r border-[#D9D9D9] py-3 text-center',
           cellWidthList[8],
         )}
       >
-        환급여부
-      </div> */}
-      <div className={clsx('py-3 text-center', cellWidthList[8])}>코멘트</div>
+        미션 소감
+      </div>
+      <div
+        className={clsx(
+          'border-r border-[#D9D9D9] py-3 text-center',
+          cellWidthList[9],
+        )}
+      >
+        노출 여부
+      </div>
     </div>
   );
 };

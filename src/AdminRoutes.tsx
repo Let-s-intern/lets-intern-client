@@ -3,62 +3,56 @@ import { Route } from 'react-router-dom';
 import ChallengeOperationAdminLayout from './components/admin/challenge/ui/ChallengeOperationAdminLayout';
 import AdminLayout from './components/admin/ui/layout/AdminLayout';
 import { CurrentAdminChallengeProvider } from './context/CurrentAdminChallengeProvider';
-import AdminHome from './pages/admin/AdminHome';
-import MainBannerCreate from './pages/admin/banner/main-banner/MainBannerCreate';
-import MainBannerEdit from './pages/admin/banner/main-banner/MainBannerEdit';
-import MainBanners from './pages/admin/banner/main-banner/MainBanners';
-import PopUpBannerCreate from './pages/admin/banner/pop-up-banner/PopUpBannerCreate';
-import PopUpBannerEdit from './pages/admin/banner/pop-up-banner/PopUpBannerEdit';
-import PopUpBanners from './pages/admin/banner/pop-up-banner/PopUpBanners';
-import ProgramBannerCreate from './pages/admin/banner/program-banner/ProgramBannerCreate';
-import ProgramBannerEdit from './pages/admin/banner/program-banner/ProgramBannerEdit';
-import ProgramBanners from './pages/admin/banner/program-banner/ProgramBanners';
-import TopBarBannerCreate from './pages/admin/banner/top-bar-banner/TopBarBannerCreate';
-import TopBarBannerEdit from './pages/admin/banner/top-bar-banner/TopBarBannerEdit';
-import TopBarBanners from './pages/admin/banner/top-bar-banner/TopBarBanners';
-import BlogCreatePage from './pages/admin/BlogCreatePage';
-import BlogEditPage from './pages/admin/BlogEditPage';
-import BlogPostListPage from './pages/admin/BlogPostListPage';
-import BlogRatingListPage from './pages/admin/BlogRatingListPage';
-import ChallengeContents from './pages/admin/challenge/ChallengeContents';
-import ChallengeMissionManagement from './pages/admin/challenge/ChallengeMissionManagement';
-import ChallengeOperationAttendances from './pages/admin/challenge/ChallengeOperationAttendances';
-import ChallengeOperationHome from './pages/admin/challenge/ChallengeOperationHome';
-import ChallengeOperationOnboarding from './pages/admin/challenge/ChallengeOperationOnboarding';
-import ChallengeOperationParticipants from './pages/admin/challenge/ChallengeOperationParticipants';
-import ChallengeOperationPayback from './pages/admin/challenge/ChallengeOperationPayback';
-import ChallengeOperationRegisterMission from './pages/admin/challenge/ChallengeOperationRegisterMission';
-import ChallengeCreate from './pages/admin/ChallengeCreate';
-import ChallengeEdit from './pages/admin/ChallengeEdit';
-import CouponCreate from './pages/admin/coupon/CouponCreate';
-import CouponEdit from './pages/admin/coupon/CouponEdit';
-import Coupons from './pages/admin/coupon/Coupons';
-import LiveCreate from './pages/admin/LiveCreate';
-import LiveEdit from './pages/admin/LiveEdit';
-import OnlineContents from './pages/admin/online-contents/OnlineContents';
-import OnlineContentsCreate from './pages/admin/online-contents/OnlineContentsCreate';
-import OnlineContentsEdit from './pages/admin/online-contents/OnlineContentsEdit';
-import ProgramCreate from './pages/admin/program/ProgramCreate';
-import ProgramEdit from './pages/admin/program/ProgramEdit';
-import AdminPrograms from './pages/admin/program/Programs';
-import ProgramUsers from './pages/admin/program/ProgramUsers';
-import Reminders from './pages/admin/reminder/Reminders';
-import RemindersBootcamp from './pages/admin/reminder/RemindersBootcamp';
-import RemindersChallenge from './pages/admin/reminder/RemindersChallenge';
-import RemindersLetsChat from './pages/admin/reminder/RemindersLetsChat';
-import AdminReportCreatePage from './pages/admin/report/AdminReportCreatePage';
-import AdminReportEditPage from './pages/admin/report/AdminReportEditPage';
-import AdminReportListPage from './pages/admin/report/AdminReportListPage';
-import ReportApplicationsPage from './pages/admin/report/ReportApplicationsPage';
-import AdminReviews from './pages/admin/review/Reviews';
-import AdminReviewsDetail from './pages/admin/review/ReviewsDetail';
-import UserCreate from './pages/admin/user/UserCreate';
-import UserDetail from './pages/admin/user/UserDetail';
-import UserEdit from './pages/admin/user/UserEdit';
-import UserMemo from './pages/admin/user/UserMemo';
-import Users from './pages/admin/user/Users';
-import VodCreate from './pages/admin/VodCreate';
-import VodEdit from './pages/admin/VodEdit';
+import AdminHome from './router-pages/admin/AdminHome';
+import MainBannerCreate from './router-pages/admin/banner/main-banner/MainBannerCreate';
+import MainBannerEdit from './router-pages/admin/banner/main-banner/MainBannerEdit';
+import MainBanners from './router-pages/admin/banner/main-banner/MainBanners';
+import PopUpBannerCreate from './router-pages/admin/banner/pop-up-banner/PopUpBannerCreate';
+import PopUpBannerEdit from './router-pages/admin/banner/pop-up-banner/PopUpBannerEdit';
+import PopUpBanners from './router-pages/admin/banner/pop-up-banner/PopUpBanners';
+import ProgramBannerCreate from './router-pages/admin/banner/program-banner/ProgramBannerCreate';
+import ProgramBannerEdit from './router-pages/admin/banner/program-banner/ProgramBannerEdit';
+import ProgramBanners from './router-pages/admin/banner/program-banner/ProgramBanners';
+import TopBarBannerCreate from './router-pages/admin/banner/top-bar-banner/TopBarBannerCreate';
+import TopBarBannerEdit from './router-pages/admin/banner/top-bar-banner/TopBarBannerEdit';
+import TopBarBanners from './router-pages/admin/banner/top-bar-banner/TopBarBanners';
+import BlogCreatePage from './router-pages/admin/BlogCreatePage';
+import BlogEditPage from './router-pages/admin/BlogEditPage';
+import BlogPostListPage from './router-pages/admin/BlogPostListPage';
+import BlogRatingListPage from './router-pages/admin/BlogRatingListPage';
+import ChallengeContents from './router-pages/admin/challenge/ChallengeContents';
+import ChallengeMissionManagement from './router-pages/admin/challenge/ChallengeMissionManagement';
+import ChallengeOperationAttendances from './router-pages/admin/challenge/ChallengeOperationAttendances';
+import ChallengeOperationHome from './router-pages/admin/challenge/ChallengeOperationHome';
+import ChallengeOperationOnboarding from './router-pages/admin/challenge/ChallengeOperationOnboarding';
+import ChallengeOperationParticipants from './router-pages/admin/challenge/ChallengeOperationParticipants';
+import ChallengeOperationPayback from './router-pages/admin/challenge/ChallengeOperationPayback';
+import ChallengeOperationRegisterMission from './router-pages/admin/challenge/ChallengeOperationRegisterMission';
+import ChallengeCreate from './router-pages/admin/ChallengeCreate';
+import ChallengeEdit from './router-pages/admin/ChallengeEdit';
+import CouponCreate from './router-pages/admin/coupon/CouponCreate';
+import CouponEdit from './router-pages/admin/coupon/CouponEdit';
+import Coupons from './router-pages/admin/coupon/Coupons';
+import LiveCreate from './router-pages/admin/LiveCreate';
+import LiveEdit from './router-pages/admin/LiveEdit';
+import ProgramCreate from './router-pages/admin/program/ProgramCreate';
+import ProgramEdit from './router-pages/admin/program/ProgramEdit';
+import AdminPrograms from './router-pages/admin/program/Programs';
+import ProgramUsers from './router-pages/admin/program/ProgramUsers';
+import AdminReportCreatePage from './router-pages/admin/report/AdminReportCreatePage';
+import AdminReportEditPage from './router-pages/admin/report/AdminReportEditPage';
+import AdminReportListPage from './router-pages/admin/report/AdminReportListPage';
+import ReportApplicationsPage from './router-pages/admin/report/ReportApplicationsPage';
+import AdminBlogReviewListPage from './router-pages/admin/review/AdminBlogReviewListPage';
+import AdminChallengeReviewListPage from './router-pages/admin/review/AdminChallengeReviewListPage';
+import AdminLiveReviewListPage from './router-pages/admin/review/AdminLiveReviewListPage';
+import AdminMissionReviewListPage from './router-pages/admin/review/AdminMissionReviewListPage';
+import AdminReportReviewListPage from './router-pages/admin/review/AdminReportReviewListPage';
+import UserDetail from './router-pages/admin/user/UserDetail';
+import UserEdit from './router-pages/admin/user/UserEdit';
+import Users from './router-pages/admin/user/Users';
+import VodCreate from './router-pages/admin/VodCreate';
+import VodEdit from './router-pages/admin/VodEdit';
 
 // TODO: 평탄화(flatten) 작업 하기
 export const getAdminRoutes = () => {
@@ -66,23 +60,21 @@ export const getAdminRoutes = () => {
     <Route path="/admin" element={<AdminLayout />}>
       {/* /admin */}
       <Route path="" element={<AdminHome />} />
+      <Route path="review/mission" element={<AdminMissionReviewListPage />} />
+      <Route
+        path="review/challenge"
+        element={<AdminChallengeReviewListPage />}
+      />
+      <Route path="review/live" element={<AdminLiveReviewListPage />} />
+      <Route path="review/blog" element={<AdminBlogReviewListPage />} />
+      <Route path="review/report" element={<AdminReportReviewListPage />} />
 
-      <Route path="reviews">
-        {/* /admin/reviews */}
-        <Route path="" element={<AdminReviews />} />
-        {/* /admin/reviews/1 */}
-        <Route path=":programId" element={<AdminReviewsDetail />} />
-      </Route>
       <Route path="users">
         {/* /admin/users */}
         <Route path="" element={<Users />} />
-        {/* /admin/users/create */}
-        <Route path="create" element={<UserCreate />} />
         <Route path=":userId">
           {/* /admin/users/1 */}
           <Route path="" element={<UserDetail />} />
-          {/* /admin/users/1/memo */}
-          <Route path="memo" element={<UserMemo />} />
           {/* /admin/users/1/edit */}
           <Route path="edit" element={<UserEdit />} />
         </Route>
@@ -117,17 +109,6 @@ export const getAdminRoutes = () => {
           <Route path="new" element={<ProgramBannerCreate />} />
           <Route path=":bannerId/edit" element={<ProgramBannerEdit />} />
         </Route>
-      </Route>
-      <Route path="online-contents">
-        <Route path="" element={<OnlineContents />} />
-        <Route path="new" element={<OnlineContentsCreate />} />
-        <Route path=":bannerId/edit" element={<OnlineContentsEdit />} />
-      </Route>
-      <Route path="reminders">
-        <Route path="" element={<Reminders />} />
-        <Route path="challenge" element={<RemindersChallenge />} />
-        <Route path="bootcamp" element={<RemindersBootcamp />} />
-        <Route path="lets-chat" element={<RemindersLetsChat />} />
       </Route>
       {/* /admin/challenge/operation */}
       <Route

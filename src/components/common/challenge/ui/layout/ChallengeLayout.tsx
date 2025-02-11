@@ -1,37 +1,50 @@
-import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 
+import {
+  useGetChallengeGoal,
+  useGetChallengeValideUser,
+  useGetUserChallengeInfo,
+} from '@/api/challenge';
+import { useGetChallengeQuery } from '@/api/program';
+import dayjs from '@/lib/dayjs';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import useAuthStore from '../../../../../store/useAuthStore';
-import axios from '../../../../../utils/axios';
 import NavBar from './NavBar';
 
+export const GOAL_DATE = dayjs('2025-01-19');
+
 const ChallengeLayout = () => {
-  const params = useParams();
   const navigate = useNavigate();
+  const params = useParams();
   const { isLoggedIn } = useAuthStore();
+  const programId = params.programId;
+  const applicationId = params.applicationId;
 
-  const { isLoading: isValidUserAccessLoading } = useQuery({
-    enabled: isLoggedIn,
-    queryKey: ['challenge', params.programId, 'access'],
-    queryFn: async () => {
-      const res = await axios.get(`/challenge/${params.programId}/access`);
-      return res.data as { data: { isAccessible?: boolean | null } };
-    },
-  });
-
-  const { data: isValidUserInfoData, isLoading: isValidUserInfoLoading } =
-    useQuery({
-      enabled: isLoggedIn,
-      queryKey: ['user', 'challenge-info'],
-      queryFn: async () => {
-        const res = await axios.get(`/user/challenge-info`);
-        return res.data as { data: { pass?: boolean | null } };
-      },
+  const { data: challenge, isLoading: challengeIsLoading } =
+    useGetChallengeQuery({
+      challengeId: Number(programId),
+      enabled: !!programId && !isNaN(Number(programId)),
     });
 
-  const isValidUserInfo = isValidUserInfoData?.data?.pass;
-  const isLoading = isValidUserInfoLoading || isValidUserAccessLoading;
+  const { data: accessibleData, isLoading: isValidUserAccessLoading } =
+    useGetChallengeValideUser(programId);
+
+  const { data: isValidUserInfoData, isLoading: isValidUserInfoLoading } =
+    useGetUserChallengeInfo();
+
+  const { data: challengeGoal, isLoading: challengeGoalLoading } =
+    useGetChallengeGoal(programId);
+
+  const isValidUserInfo = isValidUserInfoData?.pass;
+  const hasChallengeGoal = challengeGoal?.goal;
+  const isLoading =
+    isValidUserInfoLoading ||
+    isValidUserAccessLoading ||
+    challengeGoalLoading ||
+    challengeIsLoading;
+  const isStartAfterGoal =
+    challenge?.startDate && GOAL_DATE.isBefore(challenge.startDate);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -42,15 +55,33 @@ const ChallengeLayout = () => {
       return;
     }
 
-    if (isLoading) {
+    if (isLoading) return;
+
+    if (!accessibleData) {
+      alert('접근 권한이 없습니다.');
+      navigate('/');
       return;
     }
 
-    if (!isValidUserInfo) {
-      navigate(`/challenge/${params.programId}/user/info`);
+    if (!isValidUserInfo || (isStartAfterGoal && !hasChallengeGoal)) {
+      navigate(`/challenge/${applicationId}/${programId}/user/info`);
       return;
     }
-  }, [isLoading, isLoggedIn, isValidUserInfo, navigate, params.programId]);
+  }, [
+    isLoading,
+    isLoggedIn,
+    isValidUserInfo,
+    navigate,
+    programId,
+    applicationId,
+    accessibleData,
+    hasChallengeGoal,
+    isStartAfterGoal,
+  ]);
+
+  if (isLoading) {
+    return <LoadingContainer />;
+  }
 
   return (
     <div className="min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-6rem)]">

@@ -1,4 +1,4 @@
-/* eslint-disable no-empty-pattern */
+/* eslint-disable react-hooks/rules-of-hooks */
 // import { expect, test } from 'vitest';
 // import {
 //   challengeGuides,
@@ -20,7 +20,7 @@ import { test } from 'vitest';
  *****************************/
 
 const requestPromise = (async () => {
-  const res = await fetch(`${process.env.VITE_SERVER_API}/user/signin`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_API}/user/signin`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ const requestPromise = (async () => {
     method: string;
     body?: Record<string, unknown>;
   }) => {
-    return fetch(`${process.env.VITE_SERVER_API}${path}`, {
+    return fetch(`${process.env.NEXT_PUBLIC_SERVER_API}${path}`, {
       method,
       headers: {
         'Content-Type': 'application/json',

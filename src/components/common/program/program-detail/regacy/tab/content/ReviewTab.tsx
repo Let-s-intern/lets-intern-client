@@ -1,5 +1,5 @@
-import styled from 'styled-components';
 import { useEffect } from 'react';
+import styled from 'styled-components';
 
 import Star from '../../../../../review/regacy/ui/Star';
 

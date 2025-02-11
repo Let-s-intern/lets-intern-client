@@ -1,5 +1,10 @@
-import dayjs from 'dayjs';
+import dayjs from '@/lib/dayjs';
 import { z } from 'zod';
+
+export interface Pageable {
+  page: number;
+  size: number;
+}
 
 export const reportTypeSchema = z.enum([
   'RESUME',
@@ -13,7 +18,7 @@ export const ReportTypePathnameEnum = z.enum([
   'portfolio',
 ]);
 
-export type ReportTypePathname = z.infer<typeof ReportTypePathnameEnum>
+export type ReportTypePathname = z.infer<typeof ReportTypePathnameEnum>;
 
 export const pageInfo = z.object({
   pageNum: z.number().gte(0),
@@ -21,6 +26,8 @@ export const pageInfo = z.object({
   totalElements: z.number().gte(0),
   totalPages: z.number().gte(0),
 });
+
+export type PageInfo = z.infer<typeof pageInfo>;
 
 /** GET /api/v1/challenge */
 export const challengeSchema = z
@@ -185,51 +192,59 @@ const missionStatusType = z.union([
   z.literal('REFUND_DONE'),
 ]);
 
-/** GET /api/v1/challenge/{id} 챌린지 상세 조회 (어드민, 유저 겸용) */
-export const getChallengeIdSchema = z
-  .object({
-    title: z.string().optional(),
-    shortDesc: z.string().optional(),
-    desc: z.string().optional(),
-    criticalNotice: z.string().nullable().optional(),
-    participationCount: z.number().optional(),
-    thumbnail: z.string().optional(),
-    startDate: z.string().optional(),
-    endDate: z.string().optional(),
-    beginning: z.string().optional(),
-    deadline: z.string().optional(),
-    chatLink: z.string().optional(),
-    chatPassword: z.string().optional(),
-    challengeType: challengeTypeSchema,
-    classificationInfo: z.array(
-      z.object({
-        programClassification: ProgramClassificationEnum,
-      }),
-    ),
-    adminClassificationInfo: z.array(
+export const getChallengeIdPrimitiveSchema = z.object({
+  title: z.string().optional(),
+  shortDesc: z.string().optional(),
+  desc: z.string().optional(),
+  criticalNotice: z.string().nullable().optional(),
+  participationCount: z.number().optional(),
+  thumbnail: z.string().optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+  beginning: z.string().optional(),
+  deadline: z.string().optional(),
+  chatLink: z.string().optional(),
+  chatPassword: z.string().optional(),
+  challengeType: challengeTypeSchema,
+  classificationInfo: z.array(
+    z.object({
+      programClassification: ProgramClassificationEnum,
+    }),
+  ),
+  adminClassificationInfo: z
+    .array(
       z.object({
         programAdminClassification: ProgramAdminClassificationEnum,
       }),
-    ).nullable().optional(),
-    priceInfo: z.array(
-      z.object({
-        priceId: z.number(),
-        price: z.number().optional().nullable(),
-        refund: z.number().optional().nullable(),
-        discount: z.number().optional().nullable(),
-        accountNumber: z.string().optional().nullable(),
-        deadline: z.string().optional().nullable(),
-        accountType: accountType.optional().nullable(),
-        challengePriceType: challengePriceType.optional().nullable(),
-        challengeUserType: challengeUserType.optional().nullable(),
-        challengeParticipationType: challengeParticipationType
-          .optional()
-          .nullable(),
-      }),
-    ),
-    faqInfo: z.array(faq),
-  })
-  .transform((data) => {
+    )
+    .nullable()
+    .optional(),
+  priceInfo: z.array(
+    z.object({
+      priceId: z.number(),
+      price: z.number().optional().nullable(),
+      refund: z.number().optional().nullable(),
+      discount: z.number().optional().nullable(),
+      accountNumber: z.string().optional().nullable(),
+      deadline: z.string().optional().nullable(),
+      accountType: accountType.optional().nullable(),
+      challengePriceType: challengePriceType.optional().nullable(),
+      challengeUserType: challengeUserType.optional().nullable(),
+      challengeParticipationType: challengeParticipationType
+        .optional()
+        .nullable(),
+    }),
+  ),
+  faqInfo: z.array(faq),
+});
+
+export type ChallengeIdPrimitive = z.infer<
+  typeof getChallengeIdPrimitiveSchema
+>;
+
+/** GET /api/v1/challenge/{id} 챌린지 상세 조회 (어드민, 유저 겸용) */
+export const getChallengeIdSchema = getChallengeIdPrimitiveSchema.transform(
+  (data) => {
     return {
       ...data,
       startDate: data.startDate ? dayjs(data.startDate) : null,
@@ -241,7 +256,8 @@ export const getChallengeIdSchema = z
         deadline: price.deadline ? dayjs(price.deadline) : null,
       })),
     };
-  });
+  },
+);
 
 export type ChallengeIdSchema = z.infer<typeof getChallengeIdSchema>;
 
@@ -335,65 +351,68 @@ export const liveProgressSchema = z.union([
 
 export type LiveProgressType = z.infer<typeof liveProgressSchema>;
 
-/** GET /api/v1/live/{id} 라이브 상세 조회 (어드민, 유저 겸용) */
-export const getLiveIdSchema = z
-  .object({
-    title: z.string().optional(),
-    shortDesc: z.string().optional().nullable(),
-    desc: z.string().optional().nullable(),
-    criticalNotice: z.string().optional().nullable(),
-    participationCount: z.number().optional(),
-    thumbnail: z.string().optional().nullable(),
-    mentorName: z.string().optional().nullable(),
-    mentorImg: z.string().optional().nullable(),
-    mentorCompany: z.string().optional().nullable(),
-    mentorJob: z.string().optional().nullable(),
-    mentorCareer: z.string().optional().nullable(),
-    mentorIntroduction: z.string().optional().nullable(),
-    job: z.string().optional().nullable(),
-    place: z.string().optional().nullable(),
-    startDate: z.string().optional(),
-    endDate: z.string().optional(),
-    beginning: z.string().optional(),
-    deadline: z.string().optional(),
-    progressType: liveProgressSchema.nullable().optional(),
-    classificationInfo: z.array(
-      z.object({
-        programClassification: ProgramClassificationEnum,
-      }),
-    ),
-    adminClassificationInfo: z.array(
+export const getLiveIdPrimitiveSchema = z.object({
+  title: z.string().optional(),
+  shortDesc: z.string().optional().nullable(),
+  desc: z.string().optional().nullable(),
+  criticalNotice: z.string().optional().nullable(),
+  participationCount: z.number().optional(),
+  thumbnail: z.string().optional().nullable(),
+  mentorName: z.string().optional().nullable(),
+  mentorImg: z.string().optional().nullable(),
+  mentorCompany: z.string().optional().nullable(),
+  mentorJob: z.string().optional().nullable(),
+  mentorCareer: z.string().optional().nullable(),
+  mentorIntroduction: z.string().optional().nullable(),
+  job: z.string().optional().nullable(),
+  place: z.string().optional().nullable(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+  beginning: z.string().optional(),
+  deadline: z.string().optional(),
+  progressType: liveProgressSchema.nullable().optional(),
+  classificationInfo: z.array(
+    z.object({
+      programClassification: ProgramClassificationEnum,
+    }),
+  ),
+  adminClassificationInfo: z
+    .array(
       z.object({
         programAdminClassification: ProgramAdminClassificationEnum,
       }),
-    ).nullable().optional(),
-    priceInfo: z.object({
-      priceId: z.number(),
-      price: z.number().optional().nullable(),
-      discount: z.number().optional().nullable(),
-      accountNumber: z.string().optional().nullable(),
-      deadline: z.string().optional().nullable(),
-      accountType: accountType.optional().nullable(),
-      livePriceType: livePriceTypeSchema.optional().nullable(),
-    }),
-    faqInfo: z.array(faq),
-    vod: z.boolean().nullable().optional(),
-  })
-  .transform((data) => {
-    return {
-      ...data,
-      startDate: data.startDate ? dayjs(data.startDate) : null,
-      endDate: data.endDate ? dayjs(data.endDate) : null,
-      beginning: data.beginning ? dayjs(data.beginning) : null,
-      deadline: data.deadline ? dayjs(data.deadline) : null,
-      priceInfo: {
-        ...data.priceInfo,
-        deadline: data.priceInfo.deadline
-          ? dayjs(data.priceInfo.deadline)
-          : null,
-      },
-    };
-  });
+    )
+    .nullable()
+    .optional(),
+  priceInfo: z.object({
+    priceId: z.number(),
+    price: z.number().optional().nullable(),
+    discount: z.number().optional().nullable(),
+    accountNumber: z.string().optional().nullable(),
+    deadline: z.string().optional().nullable(),
+    accountType: accountType.optional().nullable(),
+    livePriceType: livePriceTypeSchema.optional().nullable(),
+  }),
+  faqInfo: z.array(faq),
+  vod: z.boolean().nullable().optional(),
+});
+
+export type LiveIdPrimitive = z.infer<typeof getLiveIdPrimitiveSchema>;
+
+/** GET /api/v1/live/{id} 라이브 상세 조회 (어드민, 유저 겸용) */
+export const getLiveIdSchema = getLiveIdPrimitiveSchema.transform((data) => {
+  return {
+    ...data,
+    startDate: data.startDate ? dayjs(data.startDate) : null,
+    endDate: data.endDate ? dayjs(data.endDate) : null,
+    beginning: data.beginning ? dayjs(data.beginning) : null,
+    deadline: data.deadline ? dayjs(data.deadline) : null,
+    priceInfo: {
+      ...data.priceInfo,
+      deadline: data.priceInfo.deadline ? dayjs(data.priceInfo.deadline) : null,
+    },
+  };
+});
 
 export type LiveIdSchema = z.infer<typeof getLiveIdSchema>;
 
@@ -496,6 +515,8 @@ export type UpdateLiveReq = {
 
 // ADMIN LIVE 클래스 및 VOD 클래스 직무
 export const liveAndVodJob = z.enum([
+  '대기업 준비',
+  '렛커시리즈',
   '경영관리',
   '금융',
   '마케팅',
@@ -510,6 +531,25 @@ export const liveAndVodJob = z.enum([
   '유통',
   '공정연구',
 ]);
+
+export type LiveAndVodJob = z.infer<typeof liveAndVodJob>;
+export const liveJobList: LiveAndVodJob[] = [
+  '대기업 준비',
+  '렛커시리즈',
+  '경영관리',
+  '금융',
+  '마케팅',
+  '광고',
+  '디자인',
+  '방송',
+  '개발',
+  '영업',
+  '서비스기획',
+  '사업전략',
+  '컨설팅',
+  '유통',
+  '공정연구',
+];
 
 const vodInfoSchema = z.object({
   id: z.number(),
@@ -532,11 +572,14 @@ export const getVodIdSchema = z.object({
     )
     .nullable()
     .optional(),
-  adminProgramTypeInfo: z.array(
-    z.object({
-      programAdminClassification: ProgramAdminClassificationEnum,
-    }),
-  ).nullable().optional(),
+  adminProgramTypeInfo: z
+    .array(
+      z.object({
+        programAdminClassification: ProgramAdminClassificationEnum,
+      }),
+    )
+    .nullable()
+    .optional(),
 });
 
 export type VodIdSchema = z.infer<typeof getVodIdSchema>;
@@ -665,6 +708,8 @@ export const attendances = z
         email: z.string().nullable(),
         status: attendanceStatus.nullable(),
         link: z.string().nullable(),
+        review: z.string().nullable().optional(),
+        reviewIsVisible: z.boolean().nullable().optional(),
         result: attendanceResult.nullable(),
         comments: z.string().nullable().optional(),
         createDate: z.string().nullable(),
@@ -1070,6 +1115,7 @@ export const challengeSchedule = z
           submitted: z.boolean().nullable(),
           id: z.number().nullable(),
           link: z.string().nullable(),
+          review: z.string().nullable().optional(),
           comments: z.string().nullable(),
           status: attendanceStatus.nullable(),
           result: attendanceResult.nullable(),
@@ -1230,6 +1276,7 @@ export const myDailyMission = z
         submitted: z.boolean(),
         id: z.number().nullable(),
         link: z.string().nullable(),
+        review: z.string().nullable().optional(),
         comments: z.string().nullable(),
         status: attendanceStatus.nullable(),
         result: attendanceResult.nullable(),
@@ -1544,11 +1591,14 @@ export const programAdminSchema = z
           thumbnail: z.string().nullable().optional(),
         }),
         classificationList: z.array(classificationSchema),
-        adminClassificationList: z.array(
-          z.object({
-            programAdminClassification: ProgramAdminClassificationEnum,
-          }),
-        ).nullable().optional(),
+        adminClassificationList: z
+          .array(
+            z.object({
+              programAdminClassification: ProgramAdminClassificationEnum,
+            }),
+          )
+          .nullable()
+          .optional(),
       }),
     ),
     pageInfo,

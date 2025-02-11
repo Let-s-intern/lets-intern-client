@@ -1,3 +1,6 @@
+import { usePatchChallengeAttendance } from '@/api/challenge';
+import { useAdminCurrentChallenge } from '@/context/CurrentAdminChallengeProvider';
+import { Switch } from '@mui/material';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -6,6 +9,7 @@ import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tabl
 import ChoiceCheckbox from './ChoiceCheckbox';
 import CommentCell from './CommentCell';
 import ResultDropdown from './ResultDropdown';
+import ReviewCell from './ReviewCell';
 import StatusDropdown from './StatusDropdown';
 
 interface Props {
@@ -27,14 +31,25 @@ const TableRow = ({
   setIsCheckedList,
   refetch,
 }: Props) => {
+  const { currentChallenge } = useAdminCurrentChallenge();
   const [attendanceResult, setAttendanceResult] = useState(attendance.result);
-  // const [isRefunded, setIsRefunded] = useState(attendance?.isRefund);
+
+  const { mutate: updateAttendance } = usePatchChallengeAttendance({
+    errorCallback: (error) => {
+      alert(error);
+    },
+  });
 
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
-  // useEffect(() => {
-  //   setIsRefunded(attendance.isRefund);
-  // }, [attendance]);
+  const handleToggle = () => {
+    updateAttendance({
+      attendanceId: attendance.id,
+      challengeId: currentChallenge?.id,
+      missionId: missionDetail?.id,
+      reviewIsVisible: !attendance.reviewIsVisible,
+    });
+  };
 
   return (
     <div
@@ -49,21 +64,11 @@ const TableRow = ({
         isChecked={isChecked}
         setIsCheckedList={setIsCheckedList}
       />
-      {/* 번호 */}
-      {/* <div
-        className={clsx(
-          'overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
-          cellWidthList[1],
-        )}
-      >
-        {th || ''}
-      </div> */}
-
       {/* 제출일자 */}
       <div
         className={clsx(
-          'overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
-          cellWidthList[2],
+          'my-auto overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
+          cellWidthList[1],
         )}
       >
         {attendance?.createDate?.format('YYYY-MM-DD HH:mm')}
@@ -72,7 +77,7 @@ const TableRow = ({
       {/* 이름 */}
       <div
         className={clsx(
-          'overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
+          'my-auto overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
           cellWidthList[2],
         )}
       >
@@ -82,34 +87,24 @@ const TableRow = ({
       {/* 메일 */}
       <div
         className={clsx(
-          'overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
+          'my-auto overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
           cellWidthList[3],
         )}
       >
         {attendance.email}
       </div>
-      {/* <div
-        className={clsx(
-          'overflow-hidden text-ellipsis whitespace-nowrap border-r border-[#D9D9D9] py-3 text-center text-sm',
-          cellWidthList[4],
-        )}
-      >
-        {attendance. || ''}{' '}
-        {attendance?.userAccountNumber || ''}
-      </div> */}
-
       {/* 제출현황 */}
       <StatusDropdown
         attendance={attendance}
-        cellWidthListIndex={5}
+        cellWidthListIndex={4}
         refetch={refetch}
       />
 
       {/* 미션 */}
       <div
         className={clsx(
-          'overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
-          cellWidthList[6],
+          'my-auto overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
+          cellWidthList[5],
         )}
       >
         {attendance.link && (
@@ -130,17 +125,24 @@ const TableRow = ({
         attendanceResult={attendanceResult}
         setAttendanceResult={setAttendanceResult}
         setIsRefunded={() => {}}
-        cellWidthListIndex={7}
+        cellWidthListIndex={6}
       />
-      {/* <RefundCheckbox
-        attendance={attendance}
-        attendanceResult={attendanceResult}
-        missionDetail={missionDetail}
+      <CommentCell attendance={attendance} cellWidthListIndex={7} />
+      <ReviewCell
+        review={attendance.review ?? undefined}
         cellWidthListIndex={8}
-        isRefunded={isRefunded}
-        setIsRefunded={setIsRefunded}
-      /> */}
-      <CommentCell attendance={attendance} cellWidthListIndex={8} />
+      />
+      <div
+        className={clsx(
+          'overflow-hidden text-ellipsis py-3 text-center text-sm',
+          cellWidthList[9],
+        )}
+      >
+        <Switch
+          checked={attendance.reviewIsVisible ?? false}
+          onChange={handleToggle}
+        />
+      </div>
     </div>
   );
 };

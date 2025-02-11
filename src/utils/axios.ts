@@ -5,14 +5,14 @@ import useAuthStore from '../store/useAuthStore';
 const limiter = new Limiter();
 
 const reissuer = Axios.create({
-  baseURL: import.meta.env.VITE_SERVER_API,
+  baseURL: process.env.NEXT_PUBLIC_SERVER_API,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
 const axios = Axios.create({
-  baseURL: import.meta.env.VITE_SERVER_API,
+  baseURL: process.env.NEXT_PUBLIC_SERVER_API,
   headers: {
     'Content-Type': 'application/json',
   },

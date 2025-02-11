@@ -1,11 +1,12 @@
+import dayjs from '@/lib/dayjs';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 import { z } from 'zod';
 import {
   challengeApplicationPriceType,
   liveApplicationPriceType,
   ProgramStatusEnum,
   ProgramTypeEnum,
+  reportTypeSchema,
 } from '../schema';
 import { UsePaymentDetailQueryKey, UsePaymentQueryKey } from './payment';
 
@@ -13,33 +14,47 @@ import { ProgramType } from '../types/common';
 import axios from '../utils/axios';
 import { tossInfoType } from './paymentSchema';
 
-const programApplicationSchema = z
-  .object({
-    applied: z.boolean().nullable().optional(),
-    name: z.string().nullable().optional(),
-    email: z.string().nullable().optional(),
-    contactEmail: z.string().nullable().optional(),
-    phoneNumber: z.string().nullable().optional(),
-    criticalNotice: z.string().nullable().optional(),
-    startDate: z.string().nullable().optional(),
-    endDate: z.string().nullable().optional(),
-    deadline: z.string().nullable().optional(),
-    statusType: ProgramStatusEnum,
-    priceList: z.array(challengeApplicationPriceType).nullable().optional(),
-    price: liveApplicationPriceType.nullable().optional(),
-  })
-  .transform((data) => {
-    return {
-      ...data,
-      startDate: data.startDate ? dayjs(data.startDate) : null,
-      endDate: data.endDate ? dayjs(data.endDate) : null,
-      deadline: data.deadline ? dayjs(data.deadline) : null,
-    };
-  });
+export const programApplicationSchema = z.object({
+  applied: z.boolean().nullable().optional(),
+  name: z.string().nullable().optional(),
+  email: z.string().nullable().optional(),
+  contactEmail: z.string().nullable().optional(),
+  phoneNumber: z.string().nullable().optional(),
+  criticalNotice: z.string().nullable().optional(),
+  startDate: z.string().nullable().optional(),
+  endDate: z.string().nullable().optional(),
+  deadline: z.string().nullable().optional(),
+  statusType: ProgramStatusEnum,
+  priceList: z.array(challengeApplicationPriceType).nullable().optional(),
+  price: liveApplicationPriceType.nullable().optional(),
+});
+// .transform((data) => {
+//   return {
+//     ...data,
+//     startDate: data.startDate ? dayjs(data.startDate) : null,
+//     endDate: data.endDate ? dayjs(data.endDate) : null,
+//     deadline: data.deadline ? dayjs(data.deadline) : null,
+//   };
+// });
 
 export type ProgramApplicationFormInfo = z.infer<
   typeof programApplicationSchema
 >;
+
+export const fetchProgramApplication = async (
+  programId: string,
+): Promise<ProgramApplicationFormInfo> => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_API}/challenge/${programId}/application`,
+  );
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch application data');
+  }
+
+  const data = await res.json();
+  return programApplicationSchema.parse(data.data);
+};
 
 const UseProgramApplicationQueryKey = 'useProgramApplicationQueryKey';
 
@@ -143,13 +158,17 @@ export const useCancelApplicationMutation = ({
       return res.data;
     },
     onSuccess: () => {
-      successCallback && successCallback();
+      if (successCallback) {
+        successCallback();
+      }
       client.invalidateQueries({
         queryKey: [UsePaymentQueryKey, UsePaymentDetailQueryKey, applicationId],
       });
     },
     onError: (error) => {
-      errorCallback && errorCallback(error);
+      if (errorCallback) {
+        errorCallback(error);
+      }
     },
   });
 };
@@ -172,6 +191,7 @@ export const mypageApplicationsSchema = z
         programId: z.number().nullable().optional(),
         programType: ProgramTypeEnum.nullable().optional(),
         programStatusType: ProgramStatusEnum.nullable().optional(),
+        reportType: reportTypeSchema.nullable().optional(),
         programTitle: z.string().nullable().optional(),
         programShortDesc: z.string().nullable().optional(),
         programThumbnail: z.string().nullable().optional(),

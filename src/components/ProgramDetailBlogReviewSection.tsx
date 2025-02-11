@@ -1,8 +1,7 @@
-import { MdChevronRight } from 'react-icons/md';
-import { Link } from 'react-router-dom';
-
 import { ProgramType } from '@/types/common';
 import { ProgramBlogReview } from '@/types/interface';
+import Link from 'next/link';
+import { MdChevronRight } from 'react-icons/md';
 import Description from './common/program/program-detail/Description';
 import Heading2 from './common/ui/Heading2';
 
@@ -18,19 +17,19 @@ const ProgramDetailBlogReviewSection = ({
 }) => {
   return (
     <section className="flex w-full max-w-[1000px] flex-col px-5 md:items-center md:px-10 lg:px-0">
-      <div className="mb-6 w-full md:mb-16">
-        <div className="relative mb-3 flex items-start justify-between md:mb-7 md:block">
+      <div className="w-full mb-6 md:mb-16">
+        <div className="relative flex items-start justify-between mb-3 md:mb-7 md:block">
           <Heading2 className="text-small20 md:text-center md:text-xlarge28">
             {programType === 'live' ? '클래스 ' : ''}참여자들의
             <br /> 생생한 후기를 더 만나보세요
           </Heading2>
           <Link
-            to="/blog/list"
+            href="/blog/list"
             target="_blank"
-            className="mt-1 flex items-center whitespace-nowrap text-xsmall14 font-medium text-neutral-35 md:absolute md:right-0 md:top-0"
+            className="flex items-center mt-1 font-medium whitespace-nowrap text-xsmall14 text-neutral-35 md:absolute md:right-0 md:top-0"
           >
             더보기
-            <MdChevronRight className="h-5 w-5" />
+            <MdChevronRight className="w-5 h-5" />
           </Link>
         </div>
         <Description className="md:text-center">
@@ -40,18 +39,17 @@ const ProgramDetailBlogReviewSection = ({
       </div>
 
       {/* 슬라이드 */}
-      <div className="custom-scrollbar w-full overflow-x-auto">
-        <div className="flex w-fit gap-4">
+      <div className="w-full overflow-x-auto custom-scrollbar">
+        <div className="flex gap-4 w-fit">
           {review.list.map((review) => (
             <Link
-              to={`/blog/${review.id}`}
+              href={`/blog/${review.id}`}
               key={review.id}
               className="shrink-0"
               target="_blank"
-              rel="noreferrer noopener"
             >
               <img
-                className="h-28 w-auto rounded-sm transition hover:opacity-85 md:h-64"
+                className="w-auto transition rounded-sm h-28 hover:opacity-85 md:h-64"
                 src={review.thumbnail}
                 alt="참여 후기 썸네일"
               />

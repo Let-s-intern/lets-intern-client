@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import dayjs from '@/lib/dayjs';
 import { Link } from 'react-router-dom';
 import { usePaymentQuery } from '../../../../../api/payment';
 import { PaymentType } from '../../../../../api/paymentSchema';

@@ -45,6 +45,7 @@ const ProgramCard = ({
           'flex transition hover:opacity-80',
           thumbnailLinkClassName,
         )}
+        reloadDocument
       >
         <img
           src={thumbnail}

@@ -119,12 +119,12 @@ const ChallengeDifferent = ({
       className="flex w-full flex-col gap-y-[70px] py-16 md:gap-y-40 md:py-40"
     >
       {/* 차별점 */}
-      <div className="flex w-full flex-col gap-y-8 md:gap-y-20">
-        <div className="flex w-full flex-col gap-y-6 md:gap-y-12">
+      <div className="flex flex-col w-full gap-y-8 md:gap-y-20">
+        <div className="flex flex-col w-full gap-y-6 md:gap-y-12">
           <SuperTitle style={{ color: colors.primary }}>차별점</SuperTitle>
           <div className="flex flex-col gap-y-3 md:items-center">
             <p
-              className="text-xsmall16 font-bold md:text-small18"
+              className="font-bold text-xsmall16 md:text-small18"
               style={{ color: colors.primary }}
             >
               비교 불가!
@@ -135,7 +135,7 @@ const ChallengeDifferent = ({
               <span>
                 차별점, 이 모든걸{' '}
                 <img
-                  className="inline-block h-auto w-8 md:w-10"
+                  className="inline-block w-8 h-auto md:w-10"
                   src={`/icons/${iconName}`}
                 />{' '}
                 얻어가실 수 있어요!
@@ -143,7 +143,7 @@ const ChallengeDifferent = ({
             </div>
           </div>
         </div>
-        <div className="flex w-full flex-col gap-y-6">
+        <div className="flex flex-col w-full gap-y-6">
           {differentList.map((different) => (
             <DifferentCard
               key={different.title}
@@ -162,7 +162,7 @@ const ChallengeDifferent = ({
             }}
           >
             <span style={{ color: colors.primary }}>혜택</span>
-            <p className="z-10 whitespace-pre text-black">
+            <p className="z-10 text-black whitespace-pre">
               모든 커리큘럼을 따라오기만 하면,
               <br className="md:hidden" /> 3만원을 페이백해드려요!
             </p>
@@ -176,31 +176,31 @@ const ChallengeDifferent = ({
       </div>
 
       {/* 혜택 */}
-      <div className="flex w-full flex-col gap-y-8 md:items-center md:gap-y-16">
-        <p className="whitespace-pre-line text-small20 font-bold md:text-center md:text-xlarge28">
+      <div className="flex flex-col w-full gap-y-8 md:items-center md:gap-y-16">
+        <p className="font-bold whitespace-pre-line text-small20 md:text-center md:text-xlarge28">
           여기서 끝이 아니죠
           <br />
           {challengeTitle}
           <br className="md:hidden" /> 참여자만을 위한 트리플 혜택!
         </p>
         <div
-          className="-mx-5 flex w-fit flex-col gap-y-4 overflow-x-auto px-5 md:-mx-10 md:px-10 lg:px-0"
+          className="flex flex-col px-5 -mx-5 overflow-x-auto w-fit gap-y-4 md:-mx-10 md:px-10 lg:px-0"
           style={{ color: colors.primary }}
         >
           <BenefitCard
             title={tripleBenefits[0].title}
             options={tripleBenefits[0].options}
-            imgUrl={tripleBenefits[0].imgUrl}
+            imgUrl={tripleBenefits[0].imgUrl.src}
           />
           <BenefitCard
             title={tripleBenefits[1].title}
             options={tripleBenefits[1].options}
-            imgUrl={tripleBenefits[1].imgUrl}
+            imgUrl={tripleBenefits[1].imgUrl.src}
           />
           <BenefitCard
             title={tripleBenefits[2].title}
             options={tripleBenefits[2].options}
-            imgUrl={tripleBenefits[2].imgUrl}
+            imgUrl={tripleBenefits[2].imgUrl.src}
           />
         </div>
       </div>

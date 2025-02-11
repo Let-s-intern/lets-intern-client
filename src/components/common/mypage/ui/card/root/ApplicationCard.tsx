@@ -1,6 +1,7 @@
+import dayjs from '@/lib/dayjs';
 import clsx from 'clsx';
-import dayjs from 'dayjs';
 
+import { getReportThumbnail } from '@components/common/mypage/credit/CreditListItem';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MypageApplication } from '../../../../../../api/application';
@@ -30,8 +31,8 @@ const ApplicationCard = ({
   });
 
   const thumbnail =
-    application.programType === 'REPORT'
-      ? '/images/report-banner.jpg'
+    application.programType === 'REPORT' && application.reportType
+      ? getReportThumbnail(application.reportType)
       : (application.programThumbnail ?? '');
 
   const programLink =
@@ -52,7 +53,7 @@ const ApplicationCard = ({
           },
         )}
       >
-        <Link to={programLink}>
+        <Link to={programLink} reloadDocument>
           <img
             src={thumbnail}
             alt="프로그램 썸네일"
@@ -86,7 +87,7 @@ const ApplicationCard = ({
         showChallengeButton &&
         application.programStartDate?.isBefore(dayjs()) && (
           <LinkButton
-            to={`/challenge/${application.programId}`}
+            to={`/challenge/${application.id}/${application.programId}`}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -96,15 +97,15 @@ const ApplicationCard = ({
       {hasReviewButton && (
         <LinkButton
           to={`/mypage/review/${
-            reviewType === 'CREATE' ? 'new' : 'edit'
-          }/program/${application.programType}/${application.programId}${
+            reviewType === 'CREATE' ? 'new/' : ''
+          }${application.programType?.toLowerCase()}/${application.programId}${
             application.reviewId
-              ? `/${application.reviewId}`
+              ? `?reviewId=${application.reviewId}`
               : `?application=${application.id}`
           }`}
           className={clsx(reviewType === 'CREATE' && 'review_button')}
         >
-          {reviewType === 'CREATE' ? '후기 작성하기' : '수정하기'}
+          {reviewType === 'CREATE' ? '후기 작성하기' : '후기 확인하기'}
         </LinkButton>
       )}
       {isPriceInfoOpen.isOpen && (

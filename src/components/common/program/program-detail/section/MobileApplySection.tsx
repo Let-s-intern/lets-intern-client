@@ -1,3 +1,4 @@
+import dayjs from '@/lib/dayjs';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import { twMerge } from '@/lib/twMerge';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -162,10 +163,18 @@ const MobileApplySection = ({
   const programDate =
     program && program.query.data
       ? {
-          beginning: program.query.data.beginning,
-          deadline: program.query.data.deadline,
-          startDate: program.query.data.startDate,
-          endDate: program.query.data.endDate,
+          beginning: program.query.data.beginning
+            ? dayjs(program.query.data.beginning)
+            : null,
+          deadline: program.query.data.deadline
+            ? dayjs(program.query.data.deadline)
+            : null,
+          startDate: program.query.data.startDate
+            ? dayjs(program.query.data.startDate)
+            : null,
+          endDate: program.query.data.endDate
+            ? dayjs(program.query.data.endDate)
+            : null,
         }
       : null;
 

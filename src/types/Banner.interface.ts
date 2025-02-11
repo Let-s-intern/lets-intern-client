@@ -32,13 +32,3 @@ export interface IBannerForm {
   file: File | null;
   mobileFile?: File | null;
 }
-
-export interface ILineBannerForm {
-  title: string;
-  colorCode: string;
-  contents: string;
-  startDate: string;
-  endDate: string;
-  link: string;
-  textColorCode: string;
-}

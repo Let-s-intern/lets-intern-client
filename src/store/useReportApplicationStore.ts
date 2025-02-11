@@ -1,5 +1,5 @@
 import { ReportPriceType } from '@/api/report';
-import dayjs from 'dayjs';
+import dayjs from '@/lib/dayjs';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 

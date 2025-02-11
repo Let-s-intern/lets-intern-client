@@ -26,7 +26,6 @@ const DoneMissionItem = ({ mission }: Props) => {
     data: missionDetail,
     isLoading: isDetailLoading,
     error: detailError,
-    refetch,
   } = useQuery({
     enabled: Boolean(currentChallenge?.id) && isDetailShown,
     queryKey: [

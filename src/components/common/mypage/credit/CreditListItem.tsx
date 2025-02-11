@@ -1,9 +1,25 @@
+import { ReportType } from '@/api/report';
 import { twMerge } from '@/lib/twMerge';
 import { Link } from 'react-router-dom';
 import { PaymentType } from '../../../../api/paymentSchema';
 import CardStatus from './CardStatus';
 
+export const getReportThumbnail = (reportType: ReportType | null) => {
+  switch (reportType) {
+    case 'RESUME':
+      return '/images/report/thumbnail_resume.png';
+    case 'PERSONAL_STATEMENT':
+      return '/images/report/thumbnail_personal.png';
+    case 'PORTFOLIO':
+      return '/images/report/thumbnail_portfolio.png';
+    default:
+      return '/images/report-banner.jpg';
+  }
+};
+
 const CreditListItem = ({ payment }: { payment: PaymentType }) => {
+  const originPrice =
+    (payment.programInfo.price || 0) + (payment.programInfo.paybackPrice || 0);
   return (
     <Link
       className="flex w-full flex-col items-start justify-center gap-y-2"
@@ -29,9 +45,10 @@ const CreditListItem = ({ payment }: { payment: PaymentType }) => {
       />
       <div className="flex w-full items-center gap-x-[14px]">
         <img
+          alt="thumbnail"
           src={
             payment.programInfo.programType === 'REPORT'
-              ? '/images/report-banner.jpg'
+              ? getReportThumbnail(payment.programInfo.reportType || null)
               : payment.programInfo.thumbnail || ''
           }
           className={twMerge(
@@ -47,7 +64,7 @@ const CreditListItem = ({ payment }: { payment: PaymentType }) => {
           </div>
           <div className="flex grow flex-col items-start justify-start">
             <div className="text-xs font-medium text-neutral-40 line-through">
-              {payment.programInfo.price?.toLocaleString()}원
+              {originPrice.toLocaleString()}원
             </div>
             <div className="text-sm font-semibold text-neutral-0 md:text-base">
               {payment.tossInfo && payment.tossInfo.totalAmount
@@ -59,6 +76,7 @@ const CreditListItem = ({ payment }: { payment: PaymentType }) => {
           <button className="flex items-center justify-start text-xs font-semibold text-primary md:text-sm">
             결제상세
             <img
+              alt="chevron-right"
               src="/icons/Chevron_Right_MD_primary.svg"
               className="h-4 w-4"
             />

@@ -1,8 +1,9 @@
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from '@/lib/dayjs';
 import { useEffect, useState } from 'react';
 
 import { ReportType } from '@/api/report';
 import { ReportApplication } from '@/store/useReportApplicationStore';
+import { Dayjs } from 'dayjs';
 
 export default function useMinDate({
   application,

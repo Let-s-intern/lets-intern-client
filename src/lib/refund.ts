@@ -4,7 +4,8 @@ import {
   ReportFeedbackStatus,
   ReportPaymentInfo,
 } from '@/api/report';
-import dayjs from 'dayjs';
+import dayjs from '@/lib/dayjs';
+import { Dayjs } from 'dayjs';
 
 /** 10의 자리에서 내림합니다. */
 export const nearestTen = (amount: number): number => {
@@ -107,7 +108,7 @@ export const getReportRefundPercent = ({
 }: {
   applicationInfo?: ReportApplicationInfo | null | undefined;
   paymentInfo?: ReportPaymentInfo | null | undefined;
-  now: dayjs.Dayjs;
+  now: Dayjs;
   reportApplicationStatus: ReportApplicationStatus;
 }) => {
   if (!paymentInfo || !applicationInfo) {
@@ -156,9 +157,9 @@ export const getFeedbackRefundPercent = ({
   reportFeedbackDesiredDate,
 }: {
   paymentInfo?: ReportPaymentInfo | null | undefined;
-  now: dayjs.Dayjs;
+  now: Dayjs;
   reportFeedbackStatus: ReportFeedbackStatus | null | undefined;
-  reportFeedbackDesiredDate?: dayjs.Dayjs | null | undefined;
+  reportFeedbackDesiredDate?: Dayjs | null | undefined;
 }) => {
   if (!paymentInfo || !paymentInfo.feedbackPriceInfo || !reportFeedbackStatus) {
     return 0;
@@ -213,9 +214,9 @@ export const getTotalRefund = ({
   applicationInfo?: ReportApplicationInfo | null | undefined;
   paymentInfo?: ReportPaymentInfo | null | undefined;
   reportApplicationStatus: ReportApplicationStatus;
-  now: dayjs.Dayjs;
+  now: Dayjs;
   reportFeedbackStatus: ReportFeedbackStatus | null | undefined;
-  reportFeedbackDesiredDate: dayjs.Dayjs | null | undefined;
+  reportFeedbackDesiredDate: Dayjs | null | undefined;
 }) => {
   if (!paymentInfo || paymentInfo.finalPrice === 0) {
     return 0;

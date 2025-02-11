@@ -28,12 +28,7 @@ const DailyMissionSection = ({ myDailyMission }: Props) => {
     }
   }, [sectionRef, searchParams, setSearchParams]);
 
-  const {
-    data: missionDetail,
-    isLoading: isDetailLoading,
-    error: detailError,
-    refetch,
-  } = useQuery({
+  const { data: missionDetail } = useQuery({
     enabled: Boolean(currentChallenge?.id),
     queryKey: [
       'challenge',
@@ -55,11 +50,11 @@ const DailyMissionSection = ({ myDailyMission }: Props) => {
       ref={sectionRef}
     >
       <h2 className="text-lg font-bold">미션 수행하기</h2>
-      <div className="rounded mt-2 bg-[#F6F8FB] px-12 py-8">
+      <div className="rounded-md mt-2 bg-[#F6F8FB] px-5 py-8">
         {missionDetail && (
           <DailyMissionInfoSection missionDetail={missionDetail} />
         )}
-        <hr className="my-8 border-[0.5px] border-[#DEDEDE]" />
+        <hr className="mt-11 my-6 border-[0.5px] border-[#DEDEDE]" />
         {myDailyMission && (
           <DailyMissionSubmitSection myDailyMission={myDailyMission} />
         )}

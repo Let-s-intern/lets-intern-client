@@ -1,6 +1,6 @@
 import { ReportType, useGetReportFaqs } from '@/api/report';
-import { personalStatementColors } from '@/pages/common/report/ReportPersonalStatementPage';
-import { resumeColors } from '@/pages/common/report/ReportResumePage';
+import { personalStatementColors } from '@/router-pages/common/report/ReportPersonalStatementPage';
+import { resumeColors } from '@/router-pages/common/report/ReportResumePage';
 import FaqChat from '../ui/FaqChat';
 import FaqDropdown from '../ui/FaqDropdown';
 import MainHeader from './MainHeader';
@@ -29,12 +29,12 @@ const ReportFaqSection = ({ reportType, reportId }: ReportFaqSectionProps) => {
       data-section="faq"
       className="w-full px-5 pb-16 md:pb-32 md:pt-24 lg:px-0"
     >
-      <header>
+      <div>
         <SubHeader className="mb-2 md:mb-3" style={subHeaderStyle}>
           {SUB_HEADER}
         </SubHeader>
         <MainHeader>{MAIN_HEADER}</MainHeader>
-      </header>
+      </div>
 
       <main className="mx-auto mt-10 md:mt-20">
         <div className="mx-auto mb-10 flex max-w-[800px] flex-col gap-3 md:mb-16">

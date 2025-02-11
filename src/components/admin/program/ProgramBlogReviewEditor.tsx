@@ -1,9 +1,9 @@
 import { useBlogListQuery } from '@/api/blog';
+import dayjs from '@/lib/dayjs';
 import { ProgramBlogReview } from '@/types/interface';
 import { blogCategory } from '@/utils/convert';
 import Heading2 from '@components/admin/ui/heading/Heading2';
 import { Box, Button, Modal, Typography } from '@mui/material';
-import dayjs from 'dayjs';
 import React, { useMemo, useState } from 'react';
 
 // 모달 스타일
@@ -57,24 +57,19 @@ const ProgramBlogReviewEditor: React.FC<{
 
   const list = useMemo(() => {
     const l = [...(res.data?.blogInfos ?? [])];
-    l.sort(
-      (a, b) =>
-        b.blogThumbnailInfo.createDate?.diff(
-          a.blogThumbnailInfo.createDate ?? dayjs(),
-        ) ?? 0,
-    );
+    l.sort((a, b) => {
+      if (!a.blogThumbnailInfo.createDate) {
+        return -1;
+      }
+      if (!b.blogThumbnailInfo.createDate) {
+        return 1;
+      }
+      const aCreateDate = dayjs(a.blogThumbnailInfo.createDate);
+      const bCreateDate = dayjs(b.blogThumbnailInfo.createDate);
+      return bCreateDate.diff(aCreateDate);
+    });
     return l;
   }, [res.data?.blogInfos]);
-
-  //       displayDate: Dayjs | null;
-  //       createDate: Dayjs | null;
-  //       lastModifiedDate: Dayjs | null;
-  //       id: number;
-  //       title?: string | null | undefined;
-  //       category?: string | ... 1 more ... | undefined;
-  //       thumbnail?: string | ... 1 more ... | undefined;
-  //       description?: string | ... 1 more ... | undefined;
-  //       isDisplayed?: boolean | ... 1 more ... | undefi
 
   const onClose = () => setSelectModalOpen(false);
   const onOpen = () => setSelectModalOpen(true);
@@ -198,9 +193,11 @@ const ProgramBlogReviewEditor: React.FC<{
                           </div>
                         </td>
                         <td className="whitespace-nowrap p-1 text-xsmall14">
-                          {item.blogThumbnailInfo.createDate?.format(
-                            'YYYY.MM.DD',
-                          )}
+                          {item.blogThumbnailInfo.createDate
+                            ? dayjs(item.blogThumbnailInfo.createDate).format(
+                                'YYYY.MM.DD',
+                              )
+                            : null}
                         </td>
                         <td className="whitespace-nowrap">
                           {item.blogThumbnailInfo.title}
