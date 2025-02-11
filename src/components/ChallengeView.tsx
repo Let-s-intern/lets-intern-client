@@ -1,9 +1,7 @@
 'use client';
 
-import dayjs from '@/lib/dayjs';
-import { useEffect, useMemo } from 'react';
-
 import { useGetActiveChallenge, useGetChallengeFaq } from '@/api/challenge';
+import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import {
   ChallengeIdPrimitive,
@@ -17,6 +15,7 @@ import ChallengeCurriculum from '@components/challenge-view/ChallengeCurriculum'
 import ChallengeFaq from '@components/challenge-view/ChallengeFaq';
 import ChallengeResult from '@components/challenge-view/ChallengeResult';
 import { useParams } from 'next/navigation';
+import { useEffect, useMemo } from 'react';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
 import ChallengeBrand from './challenge-view/ChallengeBrand';
 import ChallengeDifferent from './challenge-view/ChallengeDifferent';
@@ -37,12 +36,8 @@ import ProgramDetailNavigation, {
   PROGRAM_REVIEW_ID,
 } from './ProgramDetailNavigation';
 
-const {
-  CAREER_START,
-  PERSONAL_STATEMENT,
-  PORTFOLIO,
-  PERSONAL_STATEMENT_LARGE_CORP,
-} = challengeTypeSchema.enum;
+const { CAREER_START, PORTFOLIO, PERSONAL_STATEMENT_LARGE_CORP } =
+  challengeTypeSchema.enum;
 
 export type ChallengeColor = {
   primary: string;
@@ -216,7 +211,9 @@ const ChallengeView: React.FC<{
     <div className="flex w-full flex-col">
       <div className="flex w-full flex-col items-center">
         <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
-          <NextBackHeader to="/program">{challenge.title ?? ''}</NextBackHeader>
+          <NextBackHeader hideBack to="/program">
+            {challenge.title ?? ''}
+          </NextBackHeader>
           <ChallengeBasicInfo
             colors={colors}
             challengeId={id}

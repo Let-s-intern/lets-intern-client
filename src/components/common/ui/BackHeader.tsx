@@ -1,7 +1,6 @@
+import { twMerge } from '@/lib/twMerge';
 import { MdOutlineArrowBack } from 'react-icons/md';
 import { Link } from 'react-router-dom';
-
-import { twMerge } from '@/lib/twMerge';
 
 interface BackHeaderProps {
   to?: string;

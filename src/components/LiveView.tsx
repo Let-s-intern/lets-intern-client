@@ -1,13 +1,12 @@
 'use client';
 
-import { useMemo } from 'react';
-
 import { useGetLiveFaq } from '@/api/program';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { LiveIdPrimitive, LiveIdSchema } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import { useParams } from 'next/navigation';
+import { useMemo } from 'react';
 import LexicalContent from './common/blog/LexicalContent';
 import MoreReviewButton from './common/review/MoreReviewButton';
 import NextBackHeader from './common/ui/NextBackHeader';
@@ -70,7 +69,9 @@ const LiveView: React.FC<{ live: LiveIdPrimitive; isPreview?: boolean }> = ({
     <div className="flex w-full flex-col">
       <div className="flex w-full flex-col items-center">
         <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
-          <NextBackHeader to="/program">{live.title ?? ''}</NextBackHeader>
+          <NextBackHeader hideBack to="/program">
+            {live.title ?? ''}
+          </NextBackHeader>
           {live.vod && <LiveVod />}
           <LiveBasicInfo live={liveTransformed} />
         </div>

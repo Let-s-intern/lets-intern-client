@@ -21,7 +21,7 @@ export const getDiscountPercent = (
 
 const LiveBasicInfo = ({ live }: { live: LiveIdSchema }) => {
   return (
-    <section className="flex flex-col gap-6 pb-10 pt-8 md:flex-row md:pb-20 md:pt-[50px]">
+    <section className="flex flex-col gap-6 pb-10 md:flex-row md:pb-20">
       <img
         src={live.thumbnail ?? undefined}
         alt="챌린지 썸네일"
