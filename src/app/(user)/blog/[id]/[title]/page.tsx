@@ -14,6 +14,7 @@ import BlogHomeButton from '@components/common/blog/BlogHomeButton';
 import BlogRating from '@components/common/blog/BlogRating';
 import BlogShareSection from '@components/common/blog/BlogShareSection';
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
 // SSR 메타데이터 생성
 export async function generateMetadata({
@@ -23,6 +24,12 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const blog = await fetchBlogData(id);
+  if (!blog) {
+    return {
+      title: '존재하지 않는 블로그 | 렛츠커리어',
+      description: '존재하지 않는 블로그입니다.',
+    };
+  }
 
   return {
     title: getBlogTitle(blog.blogDetailInfo),
@@ -50,6 +57,9 @@ const BlogDetailPage = async ({
 }) => {
   const { id } = await params;
   const blog = await fetchBlogData(id);
+  if (!blog) {
+    notFound();
+  }
   const recommendData = await fetchRecommendBlogData({
     type: blog?.blogDetailInfo.category,
     pageable: { page: 0, size: 4 },

@@ -468,6 +468,7 @@ export const useGetActiveReports = () => {
 /**
  * 진단서 데이터 조회
  * TODO: 구조 더 깔끔하게 정리하기. 현재 하나의 id라도 전체 Active Reports를 가져오는 구조
+ * TODO: 찾아올 수 없을 시 notFound 처리
  */
 export const fetchReport = async ({
   type,

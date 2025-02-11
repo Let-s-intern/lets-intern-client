@@ -139,11 +139,10 @@ export const useGetChallengeQuery = ({
   challengeId,
   enabled,
   refetchOnWindowFocus = true,
-
 }: {
   challengeId: number;
   enabled?: boolean;
-  refetchOnWindowFocus?: boolean 
+  refetchOnWindowFocus?: boolean;
 }) => {
   return useQuery({
     enabled,
@@ -235,13 +234,13 @@ export const useGetLiveQuery = ({
 
 export const fetchLiveData = async (
   liveId: string,
-): Promise<LiveIdPrimitive> => {
+): Promise<LiveIdPrimitive | null> => {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_SERVER_API}/live/${liveId}`,
   );
 
   if (!res.ok) {
-    throw new Error('Failed to fetch live data');
+    return null;
   }
 
   const data = await res.json();

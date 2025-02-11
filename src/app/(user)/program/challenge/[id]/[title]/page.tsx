@@ -8,7 +8,7 @@ import {
 import ChallengeCTAButtons from '@components/ChallengeCTAButtons';
 import ChallengeView from '@components/ChallengeView';
 import { Metadata } from 'next';
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
 // SSR 메타데이터 생성
 export async function generateMetadata({
@@ -18,6 +18,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const program = await fetchChallengeData(id);
+  if (!program) {
+    return {
+      title: '존재하지 않는 프로그램 | 렛츠커리어',
+      description: '존재하지 않는 프로그램입니다.',
+    };
+  }
+
   const url =
     getBaseUrlFromServer() +
     getProgramPathname({
@@ -54,6 +61,10 @@ const Page = async ({
   const { id } = await params;
 
   const [challenge] = await Promise.all([fetchChallengeData(id)]);
+
+  if (!challenge) {
+    notFound();
+  }
 
   const isDeprecated = isDeprecatedProgram(challenge);
 

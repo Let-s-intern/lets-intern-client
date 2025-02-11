@@ -42,13 +42,13 @@ export const useChallengeQuery = ({
 
 export const fetchChallengeData = async (
   challengeId: string,
-): Promise<ChallengeIdPrimitive> => {
+): Promise<ChallengeIdPrimitive | null> => {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_SERVER_API}/challenge/${challengeId}`,
   );
 
   if (!res.ok) {
-    throw new Error('Failed to fetch challenge data');
+    return null;
   }
 
   const data = await res.json();

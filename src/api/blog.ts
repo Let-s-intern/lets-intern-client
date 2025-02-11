@@ -254,11 +254,11 @@ export const usePostBlogRatingMutation = ({
   });
 };
 
-export const fetchBlogData = async (id: string): Promise<BlogSchema> => {
+export const fetchBlogData = async (id: string): Promise<BlogSchema | null> => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_API}/blog/${id}`);
 
   if (!res.ok) {
-    throw new Error('Failed to fetch blog data');
+    return null;
   }
 
   const data = await res.json();

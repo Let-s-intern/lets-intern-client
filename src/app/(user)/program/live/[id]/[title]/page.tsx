@@ -8,7 +8,7 @@ import {
 import LiveCTAButtons from '@components/LiveCTAButtons';
 import LiveView from '@components/LiveView';
 import { Metadata } from 'next';
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
 // SSR 메타데이터 생성
 export async function generateMetadata({
@@ -18,6 +18,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const program = await fetchLiveData(id);
+  if (!program) {
+    return {
+      title: '존재하지 않는 프로그램 | 렛츠커리어',
+      description: '존재하지 않는 프로그램입니다.',
+    };
+  }
+
   const url =
     getBaseUrlFromServer() +
     getProgramPathname({ id, programType: 'live', title: program.title });
@@ -49,7 +56,10 @@ const Page = async ({
 }) => {
   const { id } = await params;
 
-  const [live] = await Promise.all([fetchLiveData(id)]);
+  const live = await fetchLiveData(id);
+  if (!live) {
+    notFound();
+  }
 
   const isDeprecated = isDeprecatedProgram(live);
 
