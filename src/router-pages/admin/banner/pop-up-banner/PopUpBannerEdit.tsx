@@ -1,17 +1,21 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import {
+  BannerItemType,
+  useEditBannerForAdmin,
+  useGetBannerDetailForAdmin,
+} from '@/api/banner';
+import EmptyContainer from '@components/common/ui/EmptyContainer';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import PopUpBannerInputContent from '../../../../components/admin/banner/pop-up-banner/PopUpBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
-import { IBannerForm } from '../../../../types/interface';
-import axios from '../../../../utils/axios';
 
 const PopUpBannerEdit = () => {
-  const params = useParams();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const params = useParams();
+  const bannerId = Number(params.bannerId);
 
-  const [value, setValue] = useState<IBannerForm>({
+  const [value, setValue] = useState<BannerItemType>({
     title: '',
     link: '',
     startDate: '',
@@ -20,46 +24,27 @@ const PopUpBannerEdit = () => {
     file: null,
   });
 
-  const bannerId = Number(params.bannerId);
-
-  useQuery({
-    queryKey: [
-      'banner',
-      'admin',
+  const { data: banner, isLoading: bannerIsLoading } =
+    useGetBannerDetailForAdmin({
       bannerId,
-      {
-        type: 'POPUP',
-      },
-    ],
-    queryFn: async () => {
-      const res = await axios.get(`/banner/admin/${bannerId}`, {
-        params: {
-          type: 'POPUP',
-        },
-      });
-      setValue(res.data.data.bannerAdminDetailVo);
-      return res.data;
-    },
-    refetchOnWindowFocus: false,
-  });
+      type: 'POPUP',
+    });
 
-  const editPopUpBanner = useMutation({
-    mutationFn: async (formData: FormData) => {
-      const res = await axios.patch(`/banner/${bannerId}`, formData, {
-        params: {
-          type: 'POPUP',
-        },
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      return res.data;
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['banner'] });
+  const { mutate: editPopUpBanner } = useEditBannerForAdmin({
+    successCallback: () => {
+      alert('팝업이 수정되었습니다.');
       navigate('/admin/banner/pop-up');
     },
+    errorCallback: (error) => {
+      alert(error);
+    },
   });
+
+  useEffect(() => {
+    if (banner) {
+      setValue(banner.bannerAdminDetailVo);
+    }
+  }, [banner]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -93,7 +78,7 @@ const PopUpBannerEdit = () => {
       formData.append('file', value.file);
     }
 
-    editPopUpBanner.mutate(formData);
+    editPopUpBanner({ bannerId, type: 'POPUP', formData });
   };
 
   return (
@@ -108,7 +93,13 @@ const PopUpBannerEdit = () => {
         to: '-1',
       }}
     >
-      <PopUpBannerInputContent value={value} onChange={handleChange} />
+      {bannerIsLoading ? (
+        <LoadingContainer />
+      ) : !banner ? (
+        <EmptyContainer />
+      ) : (
+        <PopUpBannerInputContent value={value} onChange={handleChange} />
+      )}
     </EditorTemplate>
   );
 };

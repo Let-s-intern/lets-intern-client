@@ -10,6 +10,7 @@ export const programInfoType = z.object({
   title: z.string().nullable().optional(),
   thumbnail: z.string().nullable().optional(),
   price: z.number().nullable().optional(),
+  paybackPrice: z.number().nullable().optional(),
   isCanceled: z.boolean().nullable().optional(),
   isRefunded: z.boolean().nullable().optional(),
   createDate: z.string().nullable().optional(),

@@ -1,17 +1,21 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import {
+  BannerItemType,
+  useEditBannerForAdmin,
+  useGetBannerDetailForAdmin,
+} from '@/api/banner';
+import EmptyContainer from '@components/common/ui/EmptyContainer';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import TopBarBannerInputContent from '../../../../components/admin/banner/top-bar-banner/TopBarBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
-import { ILineBannerForm } from '../../../../types/interface';
-import axios from '../../../../utils/axios';
 
 const TopBarBannerEdit = () => {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const params = useParams();
+  const bannerId = Number(params.bannerId);
 
-  const [value, setValue] = useState<ILineBannerForm>({
+  const [value, setValue] = useState<BannerItemType>({
     title: '',
     link: '',
     startDate: '',
@@ -21,42 +25,27 @@ const TopBarBannerEdit = () => {
     colorCode: '#000000',
   });
 
-  const bannerId = Number(params.bannerId);
-
-  useQuery({
-    queryKey: [
-      'banner',
-      'admin',
+  const { data: banner, isLoading: bannerIsLoading } =
+    useGetBannerDetailForAdmin({
       bannerId,
-      {
-        type: 'LINE',
-      },
-    ],
-    queryFn: async () => {
-      const res = await axios.get(`/banner/admin/${bannerId}`, {
-        params: {
-          type: 'LINE',
-        },
-      });
-      setValue(res.data.data.bannerAdminDetailVo);
-      return res.data;
-    },
-    refetchOnWindowFocus: false,
-  });
+      type: 'LINE',
+    });
 
-  const editTopBarBanner = useMutation({
-    mutationFn: async (formData: FormData) => {
-      const res = await axios.patch(`/banner/${params.bannerId}`, formData, {
-        params: { type: 'LINE' },
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      return res.data;
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['banner'] });
+  const { mutate: editTopBarBanner } = useEditBannerForAdmin({
+    successCallback: () => {
+      alert('상단 띠 배너가 수정되었습니다.');
       navigate('/admin/banner/top-bar-banners');
     },
+    errorCallback: (error) => {
+      alert(error);
+    },
   });
+
+  useEffect(() => {
+    if (banner) {
+      setValue(banner.bannerAdminDetailVo);
+    }
+  }, [banner]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue({ ...value, [e.target.name]: e.target.value });
@@ -86,7 +75,7 @@ const TopBarBannerEdit = () => {
       ),
     );
 
-    editTopBarBanner.mutate(formData);
+    editTopBarBanner({ bannerId, type: 'LINE', formData });
   };
 
   return (
@@ -101,7 +90,13 @@ const TopBarBannerEdit = () => {
         to: '-1',
       }}
     >
-      <TopBarBannerInputContent value={value} onChange={handleChange} />
+      {bannerIsLoading ? (
+        <LoadingContainer />
+      ) : !banner ? (
+        <EmptyContainer />
+      ) : (
+        <TopBarBannerInputContent value={value} onChange={handleChange} />
+      )}
     </EditorTemplate>
   );
 };

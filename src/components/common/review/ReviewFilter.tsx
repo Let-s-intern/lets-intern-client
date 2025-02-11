@@ -179,7 +179,6 @@ function ReviewFilter({
         <div
           className={clsx(
             `flex min-w-[8.5rem] max-w-fit cursor-pointer items-center gap-2 rounded-xxs border bg-[#FBFBFC] px-3 py-2 text-xsmall14 md:text-xsmall16 ${isOpen ? 'border-primary' : 'border-neutral-90'}`,
-            className,
           )}
           onClick={() => setIsOpen((prev) => !prev)}
         >
@@ -204,6 +203,7 @@ function ReviewFilter({
               <ul className="max-h-[60vh] overflow-y-auto">
                 <FilterList
                   key="all"
+                  className={clsx(className)}
                   item={{
                     caption: '전체',
                     value: 'all',
@@ -218,6 +218,7 @@ function ReviewFilter({
                 {list.map((item, index) => (
                   <FilterList
                     key={item.value}
+                    className={clsx(className)}
                     item={item}
                     isLastItem={index === list.length - 1}
                     multiSelect={multiSelect}
@@ -245,7 +246,7 @@ function ReviewFilter({
           >
             <FilterList
               key="all"
-              className="py-2"
+              className={clsx('py-2', className)}
               item={{
                 caption: '전체',
                 value: 'all',
@@ -260,7 +261,7 @@ function ReviewFilter({
             {list.map((item, index) => (
               <FilterList
                 key={item.value}
-                className="py-2"
+                className={clsx('py-2', className)}
                 item={item}
                 isLastItem={index === list.length - 1}
                 multiSelect={multiSelect}

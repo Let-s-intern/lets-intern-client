@@ -18,6 +18,8 @@ export const getReportThumbnail = (reportType: ReportType | null) => {
 };
 
 const CreditListItem = ({ payment }: { payment: PaymentType }) => {
+  const originPrice =
+    (payment.programInfo.price || 0) + (payment.programInfo.paybackPrice || 0);
   return (
     <Link
       className="flex w-full flex-col items-start justify-center gap-y-2"
@@ -62,7 +64,7 @@ const CreditListItem = ({ payment }: { payment: PaymentType }) => {
           </div>
           <div className="flex grow flex-col items-start justify-start">
             <div className="text-xs font-medium text-neutral-40 line-through">
-              {payment.programInfo.price?.toLocaleString()}원
+              {originPrice.toLocaleString()}원
             </div>
             <div className="text-sm font-semibold text-neutral-0 md:text-base">
               {payment.tossInfo && payment.tossInfo.totalAmount
