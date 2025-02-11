@@ -347,8 +347,9 @@ const ReportPaymentSection = () => {
           <span>
             └{' '}
             {Math.ceil(
-              (reportAndOptionsDiscount / (payment.report + payment.option)) *
-                100,
+              (payment.report + payment.option !== 0
+                ? reportAndOptionsDiscount / (payment.report + payment.option)
+                : 0) * 100,
             )}
             % 할인
           </span>
@@ -371,7 +372,11 @@ const ReportPaymentSection = () => {
             <PaymentRowSub>
               <span>
                 └{' '}
-                {Math.ceil((payment.feedbackDiscount / payment.feedback) * 100)}
+                {Math.ceil(
+                  (payment.feedback !== 0
+                    ? payment.feedbackDiscount / payment.feedback
+                    : 0) * 100,
+                )}
                 % 할인
               </span>
               <span>
