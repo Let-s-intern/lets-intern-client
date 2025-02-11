@@ -86,7 +86,15 @@ export const useUserProgramQuery = ({
   });
 };
 
-export const useGetProgramAdminQueryKey = 'useGetProgramAdminQueryKey';
+export const useGetProgramAdminQueryKey = (params: {
+  type?: ProgramTypeUpperCase;
+  classification?: ProgramClassification;
+  status?: ProgramStatus;
+  startDate?: string;
+  endDate?: string;
+  page: number | string;
+  size: number | string;
+}) => ['useGetProgramAdminQuery', params];
 
 export const useGetProgramAdminQuery = (params: {
   type?: ProgramTypeUpperCase;
@@ -98,7 +106,7 @@ export const useGetProgramAdminQuery = (params: {
   size: number | string;
 }) => {
   return useQuery({
-    queryKey: [useGetProgramAdminQueryKey, params],
+    queryKey: useGetProgramAdminQueryKey(params),
     queryFn: async () => {
       const res = await axios.get(`/program/admin`, { params });
       return programAdminSchema.parse(res.data.data);
@@ -139,11 +147,10 @@ export const useGetChallengeQuery = ({
   challengeId,
   enabled,
   refetchOnWindowFocus = true,
-
 }: {
   challengeId: number;
   enabled?: boolean;
-  refetchOnWindowFocus?: boolean 
+  refetchOnWindowFocus?: boolean;
 }) => {
   return useQuery({
     enabled,

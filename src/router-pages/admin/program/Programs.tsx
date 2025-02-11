@@ -56,6 +56,13 @@ const Programs = () => {
   const queryClient = useQueryClient();
   const { snackbar } = useAdminSnackbar();
 
+  const sizePerPage = 20;
+
+  const { data, isLoading, error } = useGetProgramAdminQuery({
+    page: pageNum,
+    size: sizePerPage,
+  });
+
   const deleteProgram = useDeleteProgram({
     successCallback: () => {
       queryClient.invalidateQueries({ queryKey: [useGetProgramAdminQueryKey] });
@@ -73,14 +80,6 @@ const Programs = () => {
     },
   });
   const [visibleLoading, setVisibleLoading] = useState(false);
-
-  const sizePerPage = 20;
-
-  const { data, isLoading, error } = useGetProgramAdminQuery({
-    page: pageNum,
-    size: sizePerPage,
-  });
-
   const programList = data?.programList || [];
   const maxPage = data?.pageInfo?.totalPages || 1;
 
