@@ -1,5 +1,6 @@
 'use client';
 
+import { useBlogListQuery } from '@/api/blog';
 import { useGetReviewCount } from '@/api/review';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -27,9 +28,16 @@ const description = {
 function ReviewBanner() {
   const pathname = usePathname();
   const { data } = useGetReviewCount();
+  const { data: blogData } = useBlogListQuery({
+    pageable: { page: 1, size: 0 },
+    type: 'PROGRAM_REVIEWS',
+  });
+
+  const reviewsCount =
+    (data?.count ?? 0) + (blogData?.pageInfo.totalElements ?? 0);
 
   const heading = {
-    all: `렛츠커리어 100% 솔직 후기 ${data?.count ? `총 ${data.count.toLocaleString()}개` : ''}`,
+    all: `렛츠커리어 100% 솔직 후기 ${reviewsCount !== 0 ? `총 ${reviewsCount.toLocaleString()}개` : ''}`,
     program: '참여 후기',
     mission: '미션 수행 후기',
     blog: '블로그 후기',
