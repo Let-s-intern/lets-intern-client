@@ -4,7 +4,6 @@ import {
 } from '@/api/program';
 import Header from '@/components/admin/ui/header/Header';
 import Heading from '@/components/admin/ui/heading/Heading';
-import AdminPagination from '@/components/admin/ui/pagination/AdminPagination';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { useDeleteProgram } from '@/hooks/useDeleteProgram';
 import { useDuplicateProgram } from '@/hooks/useDuplicateProgram';
@@ -51,16 +50,13 @@ type Row = ProgramAdminListItem & {
 };
 
 const Programs = () => {
-  const [pageNum, setPageNum] = useState<number>(1);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { snackbar } = useAdminSnackbar();
 
-  const sizePerPage = 20;
-
   const { data, isLoading, error } = useGetProgramAdminQuery({
-    page: pageNum,
-    size: sizePerPage,
+    page: 1,
+    size: 100,
   });
 
   const deleteProgram = useDeleteProgram({
@@ -81,7 +77,6 @@ const Programs = () => {
   });
   const [visibleLoading, setVisibleLoading] = useState(false);
   const programList = data?.programList || [];
-  const maxPage = data?.pageInfo?.totalPages || 1;
 
   const columns = useMemo<GridColDef<Row>[]>(
     () => [
@@ -364,17 +359,12 @@ const Programs = () => {
                 ...p,
               }))}
               columns={columns}
-              hideFooter
+              pagination
+              pageSizeOptions={[10, 20, 50, 100]}
+              initialState={{
+                pagination: { paginationModel: { pageSize: 20 } },
+              }}
             />
-            {programList.length > 0 && (
-              <div className="mt-4">
-                <AdminPagination
-                  maxPage={maxPage}
-                  pageNum={pageNum}
-                  setPageNum={setPageNum}
-                />
-              </div>
-            )}
           </>
         )}
       </main>
