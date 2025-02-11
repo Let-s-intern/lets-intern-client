@@ -10,7 +10,11 @@ const programTypeFilterList: ReviewFilterItem[] = [
   { caption: '서류 피드백 REPORT', value: 'REPORT_REVIEW' },
 ];
 
-const ProgramReviewFilterSection = () => {
+interface Props {
+  onChangeFilter: () => void;
+}
+
+const ProgramReviewFilterSection = ({ onChangeFilter }: Props) => {
   const searchParams = useSearchParams();
   const { challengeTypeFilter, liveJobTypeFilter } = useGetActiveReviews();
 
@@ -24,6 +28,7 @@ const ProgramReviewFilterSection = () => {
         childLabelValue={['challenge', 'liveJob']}
         className="program_filter"
         list={programTypeFilterList}
+        onChange={onChangeFilter}
       />
       {programType === 'CHALLENGE_REVIEW'.toLowerCase() && (
         <ReviewFilter
@@ -33,6 +38,7 @@ const ProgramReviewFilterSection = () => {
           className="challenge_filter"
           multiSelect
           dropdownClassName="w-60"
+          onChange={onChangeFilter}
         />
       )}
       {programType === 'LIVE_REVIEW'.toLowerCase() && (
@@ -42,6 +48,7 @@ const ProgramReviewFilterSection = () => {
           className="live_filter"
           list={liveJobTypeFilter}
           multiSelect
+          onChange={onChangeFilter}
         />
       )}
     </section>

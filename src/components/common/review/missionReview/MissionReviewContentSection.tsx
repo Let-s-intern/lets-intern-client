@@ -13,11 +13,18 @@ import EmptyContainer from '@components/common/ui/EmptyContainer';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import ReviewCard from '@components/ReviewCard';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
-const MissionReviewContentSection = () => {
+interface Props {
+  currentPage: number;
+  setCurrentPage: Dispatch<SetStateAction<number>>;
+}
+
+const MissionReviewContentSection = ({
+  currentPage,
+  setCurrentPage,
+}: Props) => {
   const searchParams = useSearchParams();
-  const [currentPage, setCurrentPage] = useState(1);
   const [pageInfo, setPageInfo] = useState<PageInfo | null>(null);
 
   const challengeType = searchParams.get('challenge')?.toUpperCase();

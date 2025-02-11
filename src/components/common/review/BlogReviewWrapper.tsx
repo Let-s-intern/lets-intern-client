@@ -1,9 +1,8 @@
 'use client';
 
-import { Suspense } from 'react';
-
 import { ProgramTypeEnum } from '@/schema';
 import ReviewFilter from '@components/common/review/ReviewFilter';
+import { Suspense, useState } from 'react';
 import BlogReviewListSection from './BlogReviewListSection';
 
 const { CHALLENGE, LIVE, REPORT } = ProgramTypeEnum.enum;
@@ -24,6 +23,8 @@ const filterList = [
 ];
 
 function BlogReviewWrapper() {
+  const [page, setPage] = useState(1);
+
   return (
     <Suspense>
       <div className="py-6 md:pt-0">
@@ -34,9 +35,10 @@ function BlogReviewWrapper() {
           className="program_filter"
           multiSelect
           dropdownClassName="max-w-fit"
+          onChange={() => setPage(1)} // 필터 변경 시 페이지 초기화
         />
       </div>
-      <BlogReviewListSection />
+      <BlogReviewListSection page={page} setPage={setPage} />
     </Suspense>
   );
 }
