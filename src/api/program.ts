@@ -139,11 +139,10 @@ export const useGetChallengeQuery = ({
   challengeId,
   enabled,
   refetchOnWindowFocus = true,
-
 }: {
   challengeId: number;
   enabled?: boolean;
-  refetchOnWindowFocus?: boolean 
+  refetchOnWindowFocus?: boolean;
 }) => {
   return useQuery({
     enabled,
