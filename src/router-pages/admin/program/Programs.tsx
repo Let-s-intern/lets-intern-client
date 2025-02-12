@@ -135,9 +135,10 @@ const Programs = () => {
         width: 200,
         valueGetter: (_, row) =>
           row.programInfo.programType === 'VOD'
-            ? '온라인'
+            ? null
             : dayjs(row.programInfo.deadline).toDate(),
-        valueFormatter: (value) => dayjs(value).format(`M/D(dd) HH:mm까지`),
+        valueFormatter: (value) =>
+          value ? dayjs(value).format(`M/D(dd) HH:mm까지`) : '-', // value가 null일 경우 '-'로 표시
       },
       {
         field: 'startDate',
@@ -146,10 +147,10 @@ const Programs = () => {
         width: 200,
         valueGetter: (_, row) =>
           row.programInfo.programType === 'VOD'
-            ? '온라인'
+            ? null
             : dayjs(row.programInfo.startDate).toDate(),
         valueFormatter: (value) =>
-          dayjs(value).format(`YYYY/M/D(dd) HH:mm까지`),
+          value ? dayjs(value).format(`YYYY/M/D(dd) HH:mm까지`) : '-', // value가 null일 경우 '-'로 표시
       },
       {
         field: 'management',
