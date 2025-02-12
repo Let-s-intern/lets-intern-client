@@ -1579,6 +1579,7 @@ export const programAdminItemSchema = z.object({
     programType: ProgramTypeEnum,
     programStatusType: ProgramStatusEnum,
     title: z.string().nullable().optional(),
+    createdAt: z.string().nullable().optional(),
     startDate: z.string().nullable().optional(),
     endDate: z.string().nullable().optional(),
     beginning: z.string().nullable().optional(),

@@ -81,6 +81,14 @@ const Programs = () => {
   const columns = useMemo<GridColDef<Row>[]>(
     () => [
       {
+        field: 'createdAt',
+        headerName: '개설일자',
+        type: 'dateTime',
+        width: 200,
+        valueGetter: (_, row) => dayjs(row.programInfo.createdAt).toDate(),
+        valueFormatter: (value) => dayjs(value).format(`YYYY/M/D(dd) HH:mm`),
+      },
+      {
         field: 'programClassification',
         headerName: '프로그램',
         width: 100,
