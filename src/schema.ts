@@ -134,6 +134,8 @@ export const ProgramTypeEnum = z.enum(['CHALLENGE', 'LIVE', 'VOD', 'REPORT']);
 
 export type ProgramTypeUpperCase = z.infer<typeof ProgramTypeEnum>;
 
+export const programTypeList = ['CHALLENGE', 'LIVE', 'VOD', 'REPORT'];
+
 export const accountType = z.union([
   z.literal('KB'),
   z.literal('HANA'),
@@ -1460,6 +1462,8 @@ export const adminMentorInfoSchema = z.object({
 export const ProgramStatusEnum = z.enum(['PREV', 'PROCEEDING', 'POST']);
 export type ProgramStatus = z.infer<typeof ProgramStatusEnum>;
 
+export const programStatusList = ['PREV', 'PROCEEDING', 'POST'];
+
 export const challengeApplicationPriceType = z.object({
   priceId: z.number().nullable().optional(),
   price: z.number().nullable().optional(),
@@ -1569,63 +1573,42 @@ export const programSchema = z.object({
 
 export type ProgramInfo = z.infer<typeof programSchema>['programList'][0];
 
-/** GET /api/v1/program/admin */
-export const programAdminSchema = z
-  .object({
-    programList: z.array(
+export const programAdminItemSchema = z.object({
+  programInfo: z.object({
+    id: z.number(),
+    programType: ProgramTypeEnum,
+    programStatusType: ProgramStatusEnum,
+    title: z.string().nullable().optional(),
+    createdAt: z.string().nullable().optional(),
+    startDate: z.string().nullable().optional(),
+    endDate: z.string().nullable().optional(),
+    beginning: z.string().nullable().optional(),
+    deadline: z.string().nullable().optional(),
+    currentCount: z.number().nullable().optional(),
+    participationCount: z.number().nullable().optional(),
+    zoomLink: z.string().nullable().optional(),
+    zoomPassword: z.string().nullable().optional(),
+    isVisible: z.boolean().nullable().optional(),
+    thumbnail: z.string().nullable().optional(),
+  }),
+  classificationList: z.array(classificationSchema),
+  adminClassificationList: z
+    .array(
       z.object({
-        programInfo: z.object({
-          id: z.number(),
-          programType: ProgramTypeEnum,
-          programStatusType: ProgramStatusEnum,
-          title: z.string().nullable().optional(),
-          startDate: z.string().nullable().optional(),
-          endDate: z.string().nullable().optional(),
-          beginning: z.string().nullable().optional(),
-          deadline: z.string().nullable().optional(),
-          currentCount: z.number().nullable().optional(),
-          participationCount: z.number().nullable().optional(),
-          zoomLink: z.string().nullable().optional(),
-          zoomPassword: z.string().nullable().optional(),
-          isVisible: z.boolean().nullable().optional(),
-          thumbnail: z.string().nullable().optional(),
-        }),
-        classificationList: z.array(classificationSchema),
-        adminClassificationList: z
-          .array(
-            z.object({
-              programAdminClassification: ProgramAdminClassificationEnum,
-            }),
-          )
-          .nullable()
-          .optional(),
+        programAdminClassification: ProgramAdminClassificationEnum,
       }),
-    ),
-    pageInfo,
-  })
-  .transform((data) => {
-    return {
-      programList: data.programList.map((program) => ({
-        ...program,
-        programInfo: {
-          ...program.programInfo,
-          startDate: program.programInfo.startDate
-            ? dayjs(program.programInfo.startDate)
-            : null,
-          endDate: program.programInfo.endDate
-            ? dayjs(program.programInfo.endDate)
-            : null,
-          beginning: program.programInfo.beginning
-            ? dayjs(program.programInfo.beginning)
-            : null,
-          deadline: program.programInfo.deadline
-            ? dayjs(program.programInfo.deadline)
-            : null,
-        },
-      })),
-      pageInfo: data.pageInfo,
-    };
-  });
+    )
+    .nullable()
+    .optional(),
+});
+
+export type ProgramAdminItem = z.infer<typeof programAdminItemSchema>;
+
+/** GET /api/v1/program/admin */
+export const programAdminSchema = z.object({
+  programList: z.array(programAdminItemSchema),
+  pageInfo,
+});
 
 export type ProgramAdminList = z.infer<
   typeof programAdminSchema
