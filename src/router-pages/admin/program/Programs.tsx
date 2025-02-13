@@ -43,7 +43,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Pencil } from 'lucide-react';
 import { useMemo, useRef, useState } from 'react';
 import { FaCopy, FaList, FaPlus, FaTrashCan } from 'react-icons/fa6';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 type Row = ProgramAdminListItem & {
   id: number | string;
@@ -110,6 +110,27 @@ const Programs = () => {
         headerName: '프로그램 제목',
         width: 200,
         valueGetter: (_, row) => row.programInfo.title || '-',
+      },
+      {
+        field: 'userPage',
+        headerName: '페이지 이동',
+        width: 150,
+        type: 'actions',
+        getActions: (params) => [
+          <Link
+            key={
+              'view' +
+              params.row.programInfo.programType +
+              params.row.programInfo.id
+            }
+            className="text-blue-500 underline transition hover:text-blue-300"
+            to={`/program/${params.row.programInfo.programType.toLowerCase()}/${params.row.programInfo.id}`}
+            reloadDocument
+            target="_blank"
+          >
+            보기
+          </Link>,
+        ],
       },
       {
         field: 'programStatusType',
