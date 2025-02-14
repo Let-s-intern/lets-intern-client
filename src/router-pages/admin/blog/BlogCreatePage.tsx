@@ -20,19 +20,19 @@ import {
   useDeleteBlogTagMutation,
   usePostBlogMutation,
   usePostBlogTagMutation,
-} from '../../api/blog';
+} from '../../../api/blog';
 import {
   PostBlogReqBody,
   PostTag,
   postTagSchema,
   TagDetail,
-} from '../../api/blogSchema';
-import { uploadFile } from '../../api/file';
-import TagSelector from '../../components/admin/blog/TagSelector';
-import TextFieldLimit from '../../components/admin/blog/TextFieldLimit';
-import EditorApp from '../../components/admin/lexical/EditorApp';
-import ImageUpload from '../../components/admin/program/ui/form/ImageUpload';
-import { blogCategory } from '../../utils/convert';
+} from '../../../api/blogSchema';
+import { uploadFile } from '../../../api/file';
+import TagSelector from '../../../components/admin/blog/TagSelector';
+import TextFieldLimit from '../../../components/admin/blog/TextFieldLimit';
+import EditorApp from '../../../components/admin/lexical/EditorApp';
+import ImageUpload from '../../../components/admin/program/ui/form/ImageUpload';
+import { blogCategory } from '../../../utils/convert';
 
 const maxCtaTextLength = 23;
 const maxTitleLength = 49;

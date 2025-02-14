@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import BlogTable from '../../components/admin/blog/BlogTable';
+import BlogTable from '../../../components/admin/blog/BlogTable';
 
 export default function BlogPostListPage() {
   return (

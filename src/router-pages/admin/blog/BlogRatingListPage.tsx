@@ -1,4 +1,4 @@
-import BlogRatingTable from '../../components/admin/blog/BlogRatingTable';
+import BlogRatingTable from '../../../components/admin/blog/BlogRatingTable';
 
 export default function BlogRatingListPage() {
   return (
