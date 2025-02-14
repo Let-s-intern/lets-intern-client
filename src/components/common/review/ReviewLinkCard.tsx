@@ -1,15 +1,15 @@
 'use client';
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { ComponentProps } from 'react';
-
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
+import { twMerge } from '@/lib/twMerge';
 import { ProgramTypeUpperCase } from '@/schema';
 import ReviewBadge, {
   getBadgeTypeFromProgramType,
 } from '@components/ReviewBadge';
+import Image from 'next/image';
+import Link from 'next/link';
+import { ComponentProps } from 'react';
 
 type ReviewLinkCardProps = {
   url?: string | null;
@@ -21,6 +21,7 @@ type ReviewLinkCardProps = {
   externalLink?: string | null;
   favicon?: string | null;
   date?: string | null;
+  imgClassName?: string;
 } & ComponentProps<'div'>;
 
 function ReviewLinkCard({
@@ -34,6 +35,7 @@ function ReviewLinkCard({
   title,
   url,
   className,
+  imgClassName,
   ...restProps
 }: ReviewLinkCardProps) {
   const badgeType = programType
@@ -49,7 +51,10 @@ function ReviewLinkCard({
       <div className="relative aspect-[4/3] w-full overflow-hidden">
         {thumbnail ? (
           <Image
-            className="rounded-sm object-cover transition group-has-[a:hover]:opacity-80"
+            className={twMerge(
+              'rounded-sm object-cover transition group-has-[a:hover]:opacity-80',
+              imgClassName,
+            )}
             src={thumbnail}
             alt={title + ' 블로그 썸네일'}
             fill
@@ -82,7 +87,6 @@ function ReviewLinkCard({
             className="transition hover:text-neutral-30"
           >
             {title}
-            {/* ring-1 ring-inset ring-gray-200 hover:ring-gray-400 */}
             <span className="absolute inset-0 rounded-md transition"></span>
           </Link>
         </h3>
