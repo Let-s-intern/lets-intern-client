@@ -1,6 +1,7 @@
 import { LOCALIZED_YYYY_MDdd_HHmm } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { generateUuid } from '@/utils/random';
+import Heading from '@components/admin/ui/heading/Heading';
 import { Button, Checkbox } from '@mui/material';
 import {
   DataGrid,
@@ -11,6 +12,7 @@ import {
 } from '@mui/x-data-grid';
 import { Pencil, Trash } from 'lucide-react';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const mockData = [
   {
@@ -64,6 +66,8 @@ const mockData = [
 ];
 
 export default function BlogBannerListPage() {
+  const navigate = useNavigate();
+
   const rows = useMemo(() => {
     return mockData.map((data) => ({
       ...data,
@@ -134,9 +138,13 @@ export default function BlogBannerListPage() {
 
   return (
     <div className="p-5">
-      <h1 className="mb-2 text-medium22 font-bold">블로그 광고 배너 관리</h1>
+      <Heading>블로그 광고 배너 관리</Heading>
       <div className="flex justify-end pb-2">
-        <Button className="h-fit" variant="outlined" onClick={() => {}}>
+        <Button
+          className="h-fit"
+          variant="outlined"
+          onClick={() => navigate('/admin/blog/banner/create')}
+        >
           등록
         </Button>
       </div>
