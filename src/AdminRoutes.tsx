@@ -16,6 +16,7 @@ import ProgramBanners from './router-pages/admin/banner/program-banner/ProgramBa
 import TopBarBannerCreate from './router-pages/admin/banner/top-bar-banner/TopBarBannerCreate';
 import TopBarBannerEdit from './router-pages/admin/banner/top-bar-banner/TopBarBannerEdit';
 import TopBarBanners from './router-pages/admin/banner/top-bar-banner/TopBarBanners';
+import BlogBannerListPage from './router-pages/admin/blog/BlogBannerListPage';
 import BlogCreatePage from './router-pages/admin/blog/BlogCreatePage';
 import BlogEditPage from './router-pages/admin/blog/BlogEditPage';
 import BlogPostListPage from './router-pages/admin/blog/BlogPostListPage';
@@ -158,6 +159,7 @@ export const getAdminRoutes = () => {
       <Route path="blog/create" element={<BlogCreatePage />} />
       <Route path="blog/edit/:id" element={<BlogEditPage />} />
       <Route path="blog/reviews" element={<BlogRatingListPage />} />
+      <Route path="blog/banner" element={<BlogBannerListPage />} />
 
       {/* 서류진단 */}
       <Route path="report/list" element={<AdminReportListPage />} />
