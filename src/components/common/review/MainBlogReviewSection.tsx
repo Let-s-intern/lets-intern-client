@@ -25,6 +25,7 @@ function MainBlogReviewSection() {
           {data?.reviewList.map((review) => (
             <ReviewLinkCard
               className="blog_review"
+              imgClassName="border border-neutral-80"
               key={review.blogReviewId}
               date={review.postDate}
               title={review.title ?? undefined}
