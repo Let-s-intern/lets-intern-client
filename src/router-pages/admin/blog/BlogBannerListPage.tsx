@@ -1,11 +1,12 @@
 import { LOCALIZED_YYYY_MDdd_HHmm } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { generateUuid } from '@/utils/random';
-import { Button } from '@mui/material';
+import { Button, Checkbox } from '@mui/material';
 import {
   DataGrid,
   GridActionsCellItem,
   GridColDef,
+  GridRenderCellParams,
   GridRowParams,
 } from '@mui/x-data-grid';
 import { Pencil, Trash } from 'lucide-react';
@@ -96,6 +97,13 @@ export default function BlogBannerListPage() {
       headerName: '노출 여부',
       sortable: false,
       width: 100,
+      type: 'boolean',
+      renderCell: (params: GridRenderCellParams<Row, boolean>) => (
+        <Checkbox
+          checked={params.value}
+          onChange={async () => console.log('Change isVisible')}
+        />
+      ),
     },
     { field: 'startDate', headerName: '시작일', width: 240 },
     { field: 'endDate', headerName: '종료일', width: 240 },
