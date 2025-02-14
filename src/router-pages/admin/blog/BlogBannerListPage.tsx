@@ -123,7 +123,7 @@ export default function BlogBannerListPage() {
             key={'edit' + id}
             icon={<Pencil size={20} />}
             label="Edit"
-            onClick={() => {}}
+            onClick={() => navigate(`/admin/blog/banner/edit/${id}`)}
           />,
           <GridActionsCellItem
             key={'delete' + id}
