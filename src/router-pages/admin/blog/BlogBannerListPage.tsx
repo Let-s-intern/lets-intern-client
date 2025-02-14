@@ -1,15 +1,18 @@
 import { LOCALIZED_YYYY_MDdd_HHmm } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { generateUuid } from '@/utils/random';
-import { Button } from '@mui/material';
+import Heading from '@components/admin/ui/heading/Heading';
+import { Button, Checkbox } from '@mui/material';
 import {
   DataGrid,
   GridActionsCellItem,
   GridColDef,
+  GridRenderCellParams,
   GridRowParams,
 } from '@mui/x-data-grid';
 import { Pencil, Trash } from 'lucide-react';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const mockData = [
   {
@@ -63,6 +66,8 @@ const mockData = [
 ];
 
 export default function BlogBannerListPage() {
+  const navigate = useNavigate();
+
   const rows = useMemo(() => {
     return mockData.map((data) => ({
       ...data,
@@ -96,6 +101,13 @@ export default function BlogBannerListPage() {
       headerName: '노출 여부',
       sortable: false,
       width: 100,
+      type: 'boolean',
+      renderCell: (params: GridRenderCellParams<Row, boolean>) => (
+        <Checkbox
+          checked={params.value}
+          onChange={async () => console.log('Change isVisible')}
+        />
+      ),
     },
     { field: 'startDate', headerName: '시작일', width: 240 },
     { field: 'endDate', headerName: '종료일', width: 240 },
@@ -126,9 +138,13 @@ export default function BlogBannerListPage() {
 
   return (
     <div className="p-5">
-      <h1 className="mb-2 text-medium22 font-bold">블로그 광고 배너 관리</h1>
+      <Heading>블로그 광고 배너 관리</Heading>
       <div className="flex justify-end pb-2">
-        <Button className="h-fit" variant="outlined" onClick={() => {}}>
+        <Button
+          className="h-fit"
+          variant="outlined"
+          onClick={() => navigate('/admin/blog/banner/create')}
+        >
           등록
         </Button>
       </div>

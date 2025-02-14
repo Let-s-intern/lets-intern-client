@@ -25,7 +25,7 @@ const ImageUpload = ({
   const [imageFile, setImageFile] = useState<string>('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange && onChange(e);
+    if (onChange) onChange(e);
     if (imageInputRef.current && imageInputRef.current.files) {
       const file = imageInputRef.current.files[0];
       const reader = new FileReader();
