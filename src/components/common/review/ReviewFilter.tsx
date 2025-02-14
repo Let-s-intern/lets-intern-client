@@ -1,6 +1,5 @@
 'use client';
 
-import Check from '@/assets/icons/check-box.svg?react';
 import CheckboxActive from '@/assets/icons/checkbox-active.svg?react';
 import CheckboxInActive from '@/assets/icons/checkbox-inactive.svg?react';
 import { twMerge } from '@/lib/twMerge';
@@ -312,7 +311,7 @@ const FilterList = ({
       </FilterCaption>
       {/* [단일 선택] 선택된 아이템에 체크 표시 */}
       {!multiSelect && selected && (
-        <Check className="h-auto w-4" fill="#4D55F5" />
+        <img className="h-6 w-6" src="/icons/check-box.svg" alt="체크박스" />
       )}
     </li>
   );
