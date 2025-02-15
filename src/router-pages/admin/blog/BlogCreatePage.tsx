@@ -1,4 +1,25 @@
+import {
+  useBlogListQuery,
+  useBlogTagQuery,
+  useDeleteBlogTagMutation,
+  usePostBlogMutation,
+  usePostBlogTagMutation,
+} from '@/api/blog';
+import {
+  PostBlogReqBody,
+  PostTag,
+  postTagSchema,
+  TagDetail,
+} from '@/api/blogSchema';
+import { uploadFile } from '@/api/file';
+import TagSelector from '@/components/admin/blog/TagSelector';
+import TextFieldLimit from '@/components/admin/blog/TextFieldLimit';
+import EditorApp from '@/components/admin/lexical/EditorApp';
+import ImageUpload from '@/components/admin/program/ui/form/ImageUpload';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import dayjs from '@/lib/dayjs';
+import { blogCategory } from '@/utils/convert';
+import Heading2 from '@components/admin/ui/heading/Heading2';
 import {
   Button,
   FormControl,
@@ -10,29 +31,9 @@ import {
 } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { isAxiosError } from 'axios';
-import { ChangeEvent, FormEvent, MouseEvent, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
-import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { Dayjs } from 'dayjs';
-import {
-  useBlogTagQuery,
-  useDeleteBlogTagMutation,
-  usePostBlogMutation,
-  usePostBlogTagMutation,
-} from '../../../api/blog';
-import {
-  PostBlogReqBody,
-  PostTag,
-  postTagSchema,
-  TagDetail,
-} from '../../../api/blogSchema';
-import { uploadFile } from '../../../api/file';
-import TagSelector from '../../../components/admin/blog/TagSelector';
-import TextFieldLimit from '../../../components/admin/blog/TextFieldLimit';
-import EditorApp from '../../../components/admin/lexical/EditorApp';
-import ImageUpload from '../../../components/admin/program/ui/form/ImageUpload';
-import { blogCategory } from '../../../utils/convert';
+import { ChangeEvent, FormEvent, MouseEvent, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const maxCtaTextLength = 23;
 const maxTitleLength = 49;
@@ -59,6 +60,9 @@ const BlogCreatePage = () => {
 
   const [dateTime, setDateTime] = useState<Dayjs | null>(null);
 
+  const { data: blogData } = useBlogListQuery({
+    pageable: { page: 1, size: 10000 },
+  });
   const { data: tags = [] } = useBlogTagQuery();
   const createBlogTagMutation = usePostBlogTagMutation();
   const deleteBlogTagMutation = useDeleteBlogTagMutation({
@@ -69,6 +73,19 @@ const BlogCreatePage = () => {
     },
   });
   const createBlogMutation = usePostBlogMutation();
+
+  const blogMenuItems = useMemo(
+    () =>
+      blogData?.blogInfos.map((info) => (
+        <MenuItem
+          key={info.blogThumbnailInfo.id}
+          value={info.blogThumbnailInfo.id}
+        >
+          {`[${info.blogThumbnailInfo.id}] ${info.blogThumbnailInfo.title}`}
+        </MenuItem>
+      )),
+    [blogData],
+  );
 
   const selectedTagList = tags.filter((tag) =>
     editingValue.tagList.includes(tag.id),
@@ -262,6 +279,101 @@ const BlogCreatePage = () => {
               onChange={onChangeTag}
               onSubmit={onSubmitTag}
             />
+          </div>
+
+          <div className="flex gap-5">
+            <div className="flex-1">
+              <Heading2 className="mb-3">프로그램 추천</Heading2>
+              <div className="flex flex-col gap-3">
+                <TextField
+                  size="small"
+                  label="CTA 소제목1"
+                  placeholder="CTA 소제목1"
+                  name="ctaTitle1"
+                  required
+                  fullWidth
+                />
+                <TextField
+                  size="small"
+                  label="CTA 링크1"
+                  placeholder="CTA 링크1"
+                  name="ctaLink1"
+                  required
+                  fullWidth
+                />
+                <TextField
+                  size="small"
+                  label="CTA 소제목2"
+                  placeholder="CTA 소제목2"
+                  name="ctaTitle2"
+                  fullWidth
+                />
+                <TextField
+                  size="small"
+                  label="CTA 링크2"
+                  placeholder="CTA 링크2"
+                  name="ctaLink2"
+                  fullWidth
+                />
+                <TextField
+                  size="small"
+                  label="CTA 소제목3"
+                  placeholder="CTA 소제목3"
+                  name="ctaTitle3"
+                  fullWidth
+                />
+                <TextField
+                  size="small"
+                  label="CTA 링크3"
+                  placeholder="CTA 링크3"
+                  name="ctaLink3"
+                  fullWidth
+                />
+                <TextField
+                  size="small"
+                  label="CTA 소제목4"
+                  placeholder="CTA 소제목4"
+                  name="ctaTitle4"
+                  fullWidth
+                />
+                <TextField
+                  size="small"
+                  label="CTA 링크4"
+                  placeholder="CTA 링크4"
+                  name="ctaLink4"
+                  fullWidth
+                />
+              </div>
+            </div>
+            <div className="flex-1">
+              <Heading2 className="mb-3">블로그 추천</Heading2>
+              <div className="flex flex-col gap-3">
+                <FormControl size="small" required>
+                  <InputLabel>블로그 ID 1</InputLabel>
+                  <Select fullWidth size="small" label="블로그 ID 1">
+                    {blogMenuItems}
+                  </Select>
+                </FormControl>
+                <FormControl size="small">
+                  <InputLabel>블로그 ID 2</InputLabel>
+                  <Select fullWidth size="small" label="블로그 ID 2">
+                    {blogMenuItems}
+                  </Select>
+                </FormControl>
+                <FormControl size="small">
+                  <InputLabel>블로그 ID 3</InputLabel>
+                  <Select fullWidth size="small" label="블로그 ID 3">
+                    {blogMenuItems}
+                  </Select>
+                </FormControl>
+                <FormControl size="small">
+                  <InputLabel>블로그 ID 4</InputLabel>
+                  <Select fullWidth size="small" label="블로그 ID 4">
+                    {blogMenuItems}
+                  </Select>
+                </FormControl>
+              </div>
+            </div>
           </div>
 
           <div className="border px-6 py-10">
