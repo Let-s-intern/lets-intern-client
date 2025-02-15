@@ -4,6 +4,7 @@ import { personalStatementColors } from '@/router-pages/common/report/ReportPers
 import { resumeColors } from '@/router-pages/common/report/ReportResumePage';
 import { ReportReview } from '@/types/interface';
 import { useMediaQuery } from '@mui/material';
+import MoreReviewButton from '../review/MoreReviewButton';
 import ReportInterviewCard from './ReportInterviewCard';
 
 interface ReportReviewSectionProps {
@@ -53,7 +54,7 @@ const ReportReviewSection = ({
             </p>
           </div>
         </div>
-        <div className="flex w-full flex-col gap-y-[60px] text-white md:gap-y-20">
+        <div className="flex w-full flex-col text-white">
           {reportReview && reportReview.list.length > 0 && (
             <>
               <div className="w-full overflow-x-hidden">
@@ -84,15 +85,18 @@ const ReportReviewSection = ({
                   ))}
                 </div>
               </div>
-              {/* <MoreReviewButton
+              <MoreReviewButton
                 mainColor={'#3E4148'}
                 subColor={
                   type === 'PERSONAL_STATEMENT'
                     ? personalStatementColors.CA60FF
                     : resumeColors._2CE282
                 }
+                subTextColor={
+                  type === 'PERSONAL_STATEMENT' ? '#FFFFFF' : '#000000'
+                }
                 type="REPORT"
-              /> */}
+              />
             </>
           )}
         </div>
