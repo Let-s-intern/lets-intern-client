@@ -118,9 +118,11 @@ const BlogCreatePage = () => {
     await createBlogMutation.mutateAsync({
       ...editingValue,
       displayDate:
-        name === 'publish'
+        // 게시일자를 선택하지 않고 발행 버튼을 누르면
+        // '지금'을 게시일자로 설정
+        name === 'publish' && !dateTime
           ? dayjs().format('YYYY-MM-DDTHH:mm')
-          : dateTime?.format('YYYY-MM-DDTHH:mm') || '',
+          : (dateTime?.format('YYYY-MM-DDTHH:mm') ?? ''),
     });
 
     setSnackbar('블로그가 생성되었습니다.');
@@ -427,7 +429,7 @@ const BlogCreatePage = () => {
             <div className="flex-1">
               <Heading2 className="mb-3">블로그 추천</Heading2>
               <div className="flex flex-col gap-3">
-                <FormControl size="small" required>
+                <FormControl size="small">
                   <InputLabel>블로그 ID 1</InputLabel>
                   <Select value="" fullWidth size="small" label="블로그 ID 1">
                     {blogMenuItems}

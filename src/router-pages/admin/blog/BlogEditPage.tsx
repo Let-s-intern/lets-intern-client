@@ -180,12 +180,7 @@ const BlogEditPage = () => {
       id: Number(id),
       isDisplayed: name === 'publish',
       tagList: editingValue.tagList.map((tag) => tag.id),
-      displayDate:
-        name === 'publish'
-          ? dateTime
-            ? dateTime?.format('YYYY-MM-DDTHH:mm')
-            : dayjs().format('YYYY-MM-DDTHH:mm')
-          : (dateTime?.format('YYYY-MM-DDTHH:mm') ?? ''),
+      displayDate: dateTime?.format('YYYY-MM-DDTHH:mm'),
     });
 
     setSnackbar('블로그가 수정되었습니다.');
@@ -477,7 +472,7 @@ const BlogEditPage = () => {
               <div className="flex-1">
                 <Heading2 className="mb-3">블로그 추천</Heading2>
                 <div className="flex flex-col gap-3">
-                  <FormControl size="small" required>
+                  <FormControl size="small">
                     <InputLabel>블로그 ID 1</InputLabel>
                     <Select value="" fullWidth size="small" label="블로그 ID 1">
                       {blogMenuItems}
