@@ -163,21 +163,23 @@ const MissionReviewContentSection = ({
       ) : !reviewData || reviewData.reviewList.length < 1 ? (
         <EmptyContainer text="등록된 후기가 없습니다." />
       ) : (
-        reviewData.reviewList.map((review) => (
-          <ReviewCard
-            key={review.reviewInfo.reviewId}
-            review={review}
-            showThumbnail
-            thumbnailLink={getThumbnailLink(
-              review.reviewInfo.type ?? null,
-              review.reviewInfo.challengeType ?? null,
-              review.reviewInfo.reportType ?? null,
-              review.reviewInfo.programId ?? null,
-            )}
-            expandable
-            gap="large"
-          />
-        ))
+        <div className="flex w-full flex-col gap-y-6">
+          {reviewData.reviewList.map((review) => (
+            <ReviewCard
+              key={review.reviewInfo.reviewId}
+              review={review}
+              showThumbnail
+              thumbnailLink={getThumbnailLink(
+                review.reviewInfo.type ?? null,
+                review.reviewInfo.challengeType ?? null,
+                review.reviewInfo.reportType ?? null,
+                review.reviewInfo.programId ?? null,
+              )}
+              expandable
+              gap="large"
+            />
+          ))}
+        </div>
       )}
       {pageInfo && pageInfo.totalPages > 0 && (
         <MuiPagination
