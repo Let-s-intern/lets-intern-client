@@ -1,4 +1,23 @@
+import {
+  useBlogListQuery,
+  useBlogQuery,
+  useBlogTagQuery,
+  useDeleteBlogTagMutation,
+  usePatchBlogMutation,
+  usePostBlogTagMutation,
+} from '@/api/blog';
+import { PostTag, postTagSchema, TagDetail } from '@/api/blogSchema';
+import { uploadFile } from '@/api/file';
+import { useGetProgramAdminQuery } from '@/api/program';
+import TagSelector from '@/components/admin/blog/TagSelector';
+import TextFieldLimit from '@/components/admin/blog/TextFieldLimit';
+import EditorApp from '@/components/admin/lexical/EditorApp';
+import ImageUpload from '@/components/admin/program/ui/form/ImageUpload';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import dayjs from '@/lib/dayjs';
+import { ProgramStatusEnum } from '@/schema';
+import { blogCategory } from '@/utils/convert';
+import Heading2 from '@components/admin/ui/heading/Heading2';
 import {
   Button,
   FormControl,
@@ -10,6 +29,7 @@ import {
 } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { isAxiosError } from 'axios';
+import { Dayjs } from 'dayjs';
 import {
   ChangeEvent,
   FormEvent,
@@ -19,25 +39,6 @@ import {
   useState,
 } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-
-import {
-  useBlogListQuery,
-  useBlogQuery,
-  useBlogTagQuery,
-  useDeleteBlogTagMutation,
-  usePatchBlogMutation,
-  usePostBlogTagMutation,
-} from '@/api/blog';
-import { PostTag, postTagSchema, TagDetail } from '@/api/blogSchema';
-import { uploadFile } from '@/api/file';
-import TagSelector from '@/components/admin/blog/TagSelector';
-import TextFieldLimit from '@/components/admin/blog/TextFieldLimit';
-import EditorApp from '@/components/admin/lexical/EditorApp';
-import ImageUpload from '@/components/admin/program/ui/form/ImageUpload';
-import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import { blogCategory } from '@/utils/convert';
-import Heading2 from '@components/admin/ui/heading/Heading2';
-import { Dayjs } from 'dayjs';
 
 const maxCtaTextLength = 23;
 const maxTitleLength = 49;
@@ -54,6 +55,7 @@ const initialBlog = {
   isDisplayed: '',
   tagList: [],
 };
+const { PROCEEDING, PREV } = ProgramStatusEnum.enum;
 
 interface EditBlog {
   title: string;
@@ -78,6 +80,11 @@ const BlogEditPage = () => {
 
   const [dateTime, setDateTime] = useState<Dayjs | null>(null);
 
+  const { data: programData } = useGetProgramAdminQuery({
+    page: 1,
+    size: 10000,
+    status: [PROCEEDING, PREV],
+  });
   const { data: blogListData } = useBlogListQuery({
     pageable: { page: 1, size: 10000 },
   });
@@ -104,6 +111,18 @@ const BlogEditPage = () => {
         </MenuItem>
       )),
     [blogListData],
+  );
+  const programMenuItems = useMemo(
+    () =>
+      programData?.programList.map((program) => (
+        <MenuItem
+          key={program.programInfo.programType + program.programInfo.id}
+          value={`${program.programInfo.programType}-${program.programInfo.id}`}
+        >
+          {`[${program.programInfo.programType}] ${program.programInfo.title}`}
+        </MenuItem>
+      )),
+    [programData],
   );
 
   const initialEditorStateJsonString =
@@ -336,66 +355,122 @@ const BlogEditPage = () => {
             <div className="flex gap-5">
               {/* 프로그램 추천 */}
               <div className="flex-1">
-                <Heading2 className="mb-3">프로그램 추천</Heading2>
-                <div className="flex flex-col gap-3">
-                  <TextField
-                    size="small"
-                    label="CTA 소제목1"
-                    placeholder="CTA 소제목1"
-                    name="ctaTitle1"
-                    required
-                    fullWidth
-                  />
-                  <TextField
-                    size="small"
-                    label="CTA 링크1"
-                    placeholder="CTA 링크1"
-                    name="ctaLink1"
-                    required
-                    fullWidth
-                  />
-                  <TextField
-                    size="small"
-                    label="CTA 소제목2"
-                    placeholder="CTA 소제목2"
-                    name="ctaTitle2"
-                    fullWidth
-                  />
-                  <TextField
-                    size="small"
-                    label="CTA 링크2"
-                    placeholder="CTA 링크2"
-                    name="ctaLink2"
-                    fullWidth
-                  />
-                  <TextField
-                    size="small"
-                    label="CTA 소제목3"
-                    placeholder="CTA 소제목3"
-                    name="ctaTitle3"
-                    fullWidth
-                  />
-                  <TextField
-                    size="small"
-                    label="CTA 링크3"
-                    placeholder="CTA 링크3"
-                    name="ctaLink3"
-                    fullWidth
-                  />
-                  <TextField
-                    size="small"
-                    label="CTA 소제목4"
-                    placeholder="CTA 소제목4"
-                    name="ctaTitle4"
-                    fullWidth
-                  />
-                  <TextField
-                    size="small"
-                    label="CTA 링크4"
-                    placeholder="CTA 링크4"
-                    name="ctaLink4"
-                    fullWidth
-                  />
+                <div className="mb-3 flex items-center gap-2">
+                  <Heading2>프로그램 추천</Heading2>
+                  <span className="text-xsmall14 text-neutral-40">
+                    *모집중, 모집예정인 프로그램만 불러옵니다.
+                  </span>
+                </div>
+                <div className="flex flex-col gap-5">
+                  <div className="flex flex-col gap-3">
+                    <FormControl size="small">
+                      <InputLabel>프로그램 선택</InputLabel>
+                      <Select
+                        value=""
+                        fullWidth
+                        size="small"
+                        label="프로그램 선택"
+                      >
+                        {programMenuItems}
+                      </Select>
+                    </FormControl>
+                    <TextField
+                      size="small"
+                      label="CTA 소제목1"
+                      placeholder="CTA 소제목1"
+                      name="ctaTitle1"
+                      fullWidth
+                    />
+                    {/* 선택한 프로그램이 있으면 링크 입력란 숨기기 */}
+                    <TextField
+                      size="small"
+                      label="CTA 링크1"
+                      placeholder="CTA 링크1"
+                      name="ctaLink1"
+                      fullWidth
+                    />
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    <FormControl size="small">
+                      <InputLabel>프로그램 선택</InputLabel>
+                      <Select
+                        value=""
+                        fullWidth
+                        size="small"
+                        label="프로그램 선택"
+                      >
+                        {programMenuItems}
+                      </Select>
+                    </FormControl>
+                    <TextField
+                      size="small"
+                      label="CTA 소제목2"
+                      placeholder="CTA 소제목2"
+                      name="ctaTitle2"
+                      fullWidth
+                    />
+                    <TextField
+                      size="small"
+                      label="CTA 링크2"
+                      placeholder="CTA 링크2"
+                      name="ctaLink2"
+                      fullWidth
+                    />
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    <FormControl size="small">
+                      <InputLabel>프로그램 선택</InputLabel>
+                      <Select
+                        value=""
+                        fullWidth
+                        size="small"
+                        label="프로그램 선택"
+                      >
+                        {programMenuItems}
+                      </Select>
+                    </FormControl>
+                    <TextField
+                      size="small"
+                      label="CTA 소제목3"
+                      placeholder="CTA 소제목3"
+                      name="ctaTitle3"
+                      fullWidth
+                    />
+                    <TextField
+                      size="small"
+                      label="CTA 링크3"
+                      placeholder="CTA 링크3"
+                      name="ctaLink3"
+                      fullWidth
+                    />
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    <FormControl size="small">
+                      <InputLabel>프로그램 선택</InputLabel>
+                      <Select
+                        value=""
+                        fullWidth
+                        size="small"
+                        label="프로그램 선택"
+                      >
+                        {programMenuItems}
+                      </Select>
+                    </FormControl>
+                    <TextField
+                      size="small"
+                      label="CTA 소제목4"
+                      placeholder="CTA 소제목4"
+                      name="ctaTitle4"
+                      fullWidth
+                    />
+                    <TextField
+                      size="small"
+                      label="CTA 링크4"
+                      placeholder="CTA 링크4"
+                      name="ctaLink4"
+                      fullWidth
+                    />
+                  </div>
                 </div>
               </div>
               {/* 블로그 추천 */}
@@ -404,25 +479,25 @@ const BlogEditPage = () => {
                 <div className="flex flex-col gap-3">
                   <FormControl size="small" required>
                     <InputLabel>블로그 ID 1</InputLabel>
-                    <Select fullWidth size="small" label="블로그 ID 1">
+                    <Select value="" fullWidth size="small" label="블로그 ID 1">
                       {blogMenuItems}
                     </Select>
                   </FormControl>
                   <FormControl size="small">
                     <InputLabel>블로그 ID 2</InputLabel>
-                    <Select fullWidth size="small" label="블로그 ID 2">
+                    <Select value="" fullWidth size="small" label="블로그 ID 2">
                       {blogMenuItems}
                     </Select>
                   </FormControl>
                   <FormControl size="small">
                     <InputLabel>블로그 ID 3</InputLabel>
-                    <Select fullWidth size="small" label="블로그 ID 3">
+                    <Select value="" fullWidth size="small" label="블로그 ID 3">
                       {blogMenuItems}
                     </Select>
                   </FormControl>
                   <FormControl size="small">
                     <InputLabel>블로그 ID 4</InputLabel>
-                    <Select fullWidth size="small" label="블로그 ID 4">
+                    <Select value="" fullWidth size="small" label="블로그 ID 4">
                       {blogMenuItems}
                     </Select>
                   </FormControl>
