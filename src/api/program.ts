@@ -91,7 +91,7 @@ export const useGetProgramAdminQueryKey = 'useGetProgramAdminQueryKey';
 export const useGetProgramAdminQuery = (params: {
   type?: ProgramTypeUpperCase;
   classification?: ProgramClassification;
-  status?: ProgramStatus;
+  status?: ProgramStatus[];
   startDate?: string;
   endDate?: string;
   page: number | string;
@@ -100,7 +100,9 @@ export const useGetProgramAdminQuery = (params: {
   return useQuery({
     queryKey: [useGetProgramAdminQueryKey, params],
     queryFn: async () => {
-      const res = await axios.get(`/program/admin`, { params });
+      const res = await axios.get(`/program/admin`, {
+        params: { ...params, status: params.status?.join(',') },
+      });
       return programAdminSchema.parse(res.data.data);
     },
   });
