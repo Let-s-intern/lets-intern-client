@@ -282,6 +282,7 @@ const BlogCreatePage = () => {
           </div>
 
           <div className="flex gap-5">
+            {/* 프로그램 추천 */}
             <div className="flex-1">
               <Heading2 className="mb-3">프로그램 추천</Heading2>
               <div className="flex flex-col gap-3">
@@ -345,6 +346,7 @@ const BlogCreatePage = () => {
                 />
               </div>
             </div>
+            {/* 블로그 추천 */}
             <div className="flex-1">
               <Heading2 className="mb-3">블로그 추천</Heading2>
               <div className="flex flex-col gap-3">
