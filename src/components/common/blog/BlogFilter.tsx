@@ -13,23 +13,19 @@ import { memo, ReactNode, useCallback, useEffect, useState } from 'react';
 
 interface Props {
   label: string;
-  labelValue: string;
-  childLabelValue?: string[];
   list: FilterItem[];
-  multiSelect?: boolean;
   dropdownClassName?: string;
-  className?: string;
-  onChange?: () => void;
+  listItemClassName?: string;
+  paramKey: string;
+  onChange?: () => void; // 필터를 선택했을 때 핸들링
 }
 
-function ReviewFilter({
+function BlogFilter({
   label,
-  labelValue,
-  childLabelValue,
   list,
-  multiSelect = false,
   dropdownClassName,
-  className,
+  listItemClassName,
+  paramKey,
   onChange,
 }: Props) {
   const router = useRouter();
@@ -37,128 +33,87 @@ function ReviewFilter({
   const searchParams = useSearchParams();
 
   const [isOpen, setIsOpen] = useState(false);
-  // 단일 선택
-  const [selectedItem, setSelectedItem] = useState<FilterItem | undefined>(
-    undefined,
-  );
-  // 중복 선택
   const [checkedList, setCheckedList] = useState<FilterItem[]>([]);
 
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
-  const multiSelectCaption =
+  const caption =
     checkedList.length > 0
       ? checkedList.length > 1
         ? `${checkedList[0].caption} 외 ${checkedList.length - 1}개`
         : checkedList[0].caption
       : '전체';
+  const isAllSelected =
+    checkedList.length === 0 || checkedList.length === list.length;
 
-  const isAllSelected = multiSelect
-    ? checkedList.length === 0 || checkedList.length === list.length
-    : !selectedItem;
-
-  const handleQueryParams = (item: FilterItem) => {
-    if (onChange) onChange();
-    // 쿼리 스트링으로 선택된 아이템 추가
-    if (labelValue) {
-      const params = new URLSearchParams(searchParams.toString());
-
-      if (multiSelect) {
-        const alreadyIncluded = checkedList.some(
-          (ele: FilterItem) => ele.value === item.value,
-        );
-        if (alreadyIncluded) {
-          const filtered = checkedList.filter(
-            (ele) => ele.value !== item.value,
-          );
-          if (filtered.length === 0) {
-            params.delete(labelValue);
-          } else {
-            params.set(
-              labelValue,
-              filtered
-                .map((ele) => ele.value)
-                .join(',')
-                .toLowerCase(),
-            );
-          }
-        } else {
-          params.set(
-            labelValue,
-            [...checkedList, item]
-              .map((ele) => ele.value)
-              .join(',')
-              .toLowerCase(),
-          );
-        }
-      } else {
-        if (selectedItem?.value === item.value) {
-          params.delete(labelValue);
-        } else {
-          params.set(labelValue, item.value.toLowerCase());
-        }
-      }
-      childLabelValue?.forEach((childLabel) => {
-        params.delete(childLabel);
-      });
-
+  const updateParams = useCallback(
+    (params: URLSearchParams) => {
       router.replace(`${pathname}?${params.toString()}`);
-    }
-  };
+    },
+    [pathname, router],
+  );
 
   const handleClickItem = (item: FilterItem) => {
-    handleQueryParams(item);
-    if (!multiSelect) {
-      setIsOpen(false);
+    if (onChange) onChange();
+    /* 쿼리 스트링으로 선택된 아이템 추가 */
+    const params = new URLSearchParams(searchParams.toString());
+    const alreadyIncluded = checkedList.some(
+      (ele: FilterItem) => ele.value === item.value,
+    );
+
+    if (alreadyIncluded) {
+      const filtered = checkedList.filter((ele) => ele.value !== item.value);
+      if (filtered.length === 0) {
+        params.delete(paramKey);
+      } else {
+        params.set(
+          paramKey,
+          filtered
+            .map((ele) => ele.value)
+            .join(',')
+            .toLowerCase(),
+        );
+      }
+    } else {
+      params.set(
+        paramKey,
+        [...checkedList, item]
+          .map((ele) => ele.value)
+          .join(',')
+          .toLowerCase(),
+      );
     }
+    updateParams(params);
   };
 
   const handleAllClick = useCallback(() => {
     if (onChange) onChange();
-    if (isAllSelected) {
-      return;
-    }
-    const params = new URLSearchParams(searchParams.toString());
-    params.delete(labelValue);
-    childLabelValue?.forEach((childLabel) => {
-      params.delete(childLabel);
-    });
-    router.replace(`${pathname}?${params.toString()}`);
-  }, [
-    childLabelValue,
-    isAllSelected,
-    labelValue,
-    multiSelect,
-    pathname,
-    router,
-    searchParams,
-    onChange,
-  ]);
+    // 선택을 모두 해제하거나 필터를 모두 선택하면
+    if (isAllSelected) return;
 
+    // '전체'를 선택하면
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete(paramKey);
+    updateParams(params);
+  }, [isAllSelected, updateParams, searchParams, onChange, paramKey]);
+
+  /* 쿼리 파라미터로 필터 설정 */
   useEffect(() => {
     const findItem = (value: string | undefined): FilterItem | undefined => {
       if (value === undefined) return undefined;
+
       return list.find((item) => item.value === value) as
         | FilterItem
         | undefined;
     };
 
-    const paramValue = searchParams.get(labelValue);
-
-    if (!multiSelect) {
-      setSelectedItem(findItem(paramValue?.toUpperCase() ?? undefined));
-    } else {
-      setCheckedList(
-        paramValue
-          ? (paramValue
-              .toUpperCase()
-              .split(',')
-              .map(findItem)
-              .filter(Boolean) as FilterItem[])
-          : [],
-      );
-    }
-  }, [searchParams, labelValue, multiSelect, list]);
+    const paramValue = searchParams.get(paramKey);
+    setCheckedList(
+      paramValue
+        ? (paramValue.toUpperCase().split(',').map(findItem) as FilterItem[])
+        : [],
+    );
+  }, [searchParams, list, paramKey]);
 
   return (
     <>
@@ -176,13 +131,7 @@ function ReviewFilter({
           onClick={() => setIsOpen((prev) => !prev)}
         >
           <span className="font-medium text-neutral-20">{label}</span>
-          <span className="font-semibold text-primary">
-            {multiSelect
-              ? multiSelectCaption
-              : selectedItem
-                ? selectedItem.caption
-                : '전체'}
-          </span>
+          <span className="font-semibold text-primary">{caption}</span>
           <ChevronDown size={20} />
         </div>
 
@@ -194,33 +143,28 @@ function ReviewFilter({
                 {label}
               </span>
               <ul className="max-h-[60vh] overflow-y-auto">
-                <FilterList
+                <FilterListItem
                   key="all"
-                  className={clsx(className)}
+                  className={listItemClassName}
                   item={{
                     caption: '전체',
                     value: 'all',
                   }}
                   isLastItem={false}
-                  multiSelect={multiSelect}
                   checked={isAllSelected}
                   selected={isAllSelected}
                   onClick={handleAllClick}
                 />
 
                 {list.map((item, index) => (
-                  <FilterList
+                  <FilterListItem
                     key={item.value}
-                    className={clsx(className)}
+                    className={listItemClassName}
                     item={item}
                     isLastItem={index === list.length - 1}
-                    multiSelect={multiSelect}
                     checked={checkedList.some(
                       (ele) => ele.value === item.value,
                     )}
-                    selected={
-                      !multiSelect && item.value === selectedItem?.value
-                    }
                     onClick={() => handleClickItem(item)}
                   />
                 ))}
@@ -237,29 +181,26 @@ function ReviewFilter({
               dropdownClassName,
             )}
           >
-            <FilterList
+            <FilterListItem
               key="all"
-              className={clsx('py-2', className)}
+              className={twMerge('py-2', listItemClassName)}
               item={{
                 caption: '전체',
                 value: 'all',
               }}
               isLastItem={false}
-              multiSelect={multiSelect}
               checked={isAllSelected}
               selected={isAllSelected}
               onClick={handleAllClick}
             />
 
             {list.map((item, index) => (
-              <FilterList
+              <FilterListItem
                 key={item.value}
-                className={clsx('py-2', className)}
+                className={twMerge('py-2', listItemClassName)}
                 item={item}
                 isLastItem={index === list.length - 1}
-                multiSelect={multiSelect}
                 checked={checkedList.some((ele) => ele.value === item.value)}
-                selected={!multiSelect && item.value === selectedItem?.value}
                 onClick={() => handleClickItem(item)}
               />
             ))}
@@ -270,20 +211,17 @@ function ReviewFilter({
   );
 }
 
-export default memo(ReviewFilter);
+export default memo(BlogFilter);
 
-const FilterList = ({
+const FilterListItem = ({
   item,
   isLastItem,
-  multiSelect = false,
   checked = false,
-  selected = false,
   onClick,
   className,
 }: {
   item: FilterItem;
   isLastItem: boolean;
-  multiSelect?: boolean;
   checked?: boolean;
   selected?: boolean;
   onClick?: (item: FilterItem) => void;
@@ -300,40 +238,28 @@ const FilterList = ({
       value={item.value}
       onClick={() => onClick && onClick(item)}
     >
-      <FilterCaption multiSelect={multiSelect} checked={checked}>
-        {item.caption}
-      </FilterCaption>
-      {/* [단일 선택] 선택된 아이템에 체크 표시 */}
-      {!multiSelect && selected && (
-        <img className="h-6 w-6" src="/icons/check-box.svg" alt="체크박스" />
-      )}
+      <FilterCaption checked={checked}>{item.caption}</FilterCaption>
     </li>
   );
 };
 
 const FilterCaption = memo(function FilterCaption({
-  multiSelect,
   checked = false,
   children,
 }: {
-  multiSelect: boolean;
   checked?: boolean;
   children: ReactNode;
 }) {
   return (
     <div className="text-xsmall14 font-medium text-neutral-10">
-      {multiSelect ? (
-        <div className="flex items-center gap-2">
-          {checked ? (
-            <CheckboxActive className="h-6 w-6" />
-          ) : (
-            <CheckboxInActive className="h-6 w-6" />
-          )}
-          {children}
-        </div>
-      ) : (
-        children
-      )}
+      <div className="flex items-center gap-2">
+        {checked ? (
+          <CheckboxActive className="h-6 w-6" />
+        ) : (
+          <CheckboxInActive className="h-6 w-6" />
+        )}
+        {children}
+      </div>
     </div>
   );
 });

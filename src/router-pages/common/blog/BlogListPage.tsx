@@ -1,9 +1,9 @@
+import { useInfiniteBlogListQuery } from '@/api/blog';
+import BlogCard from '@/components/common/blog/BlogCard';
+import BlogCategoryTag from '@/components/common/blog/BlogCategoryTag';
+import { blogCategory } from '@/utils/convert';
 import React, { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
-import { useInfiniteBlogListQuery } from '../../../api/blog';
-import BlogCard from '../../../components/common/blog/BlogCard';
-import BlogCategoryTag from '../../../components/common/blog/BlogCategoryTag';
-import { blogCategory } from '../../../utils/convert';
 
 const BlogListPage = () => {
   const params = new URLSearchParams(window.location.search);
