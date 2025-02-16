@@ -50,7 +50,7 @@ function BlogList({ type }: { type?: string | null }) {
   if (isLoading)
     return (
       <LoadingContainer
-        className="pb-[26rem]"
+        className="pb-[60vh]"
         text="블로그를 가져오는 중입니다.."
       />
     );
