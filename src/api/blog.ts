@@ -29,11 +29,17 @@ export interface BlogQueryParams {
   tagId?: number | null;
 }
 
-export const useBlogListQuery = ({ pageable, type }: BlogQueryParams) => {
+export const useBlogListQuery = ({
+  pageable,
+  type,
+  tagId,
+}: BlogQueryParams) => {
   return useQuery({
     queryKey: [blogListQueryKey, pageable, type],
     queryFn: async () => {
-      const res = await axios.get(`/blog`, { params: { ...pageable, type } });
+      const res = await axios.get(`/blog`, {
+        params: { ...pageable, type, tagId },
+      });
       return blogListSchema.parse(res.data.data);
     },
   });
