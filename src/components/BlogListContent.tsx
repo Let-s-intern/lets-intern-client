@@ -1,12 +1,16 @@
 'use client';
 
-import { useInfiniteBlogListQuery } from '@/api/blog';
+import { useBlogListQuery } from '@/api/blog';
+import BellIcon from '@/assets/icons/Bell.svg';
+import LockKeyHoleIcon from '@/assets/icons/lock-keyhole.svg';
+import { YYYY_MM_DD } from '@/data/dayjsFormat';
+import dayjs from '@/lib/dayjs';
 import { blogCategory } from '@/utils/convert';
-import BlogCard from '@components/common/blog/BlogCard';
 import { useSearchParams } from 'next/navigation';
-import React, { Suspense } from 'react';
-import InfiniteScroll from 'react-infinite-scroller';
+import { Suspense } from 'react';
+import BlogCard from './common/blog/BlogCard';
 import BlogFilter from './common/blog/BlogFilter';
+import BaseButton from './common/ui/button/BaseButton';
 import LoadingContainer from './common/ui/loading/LoadingContainer';
 
 const filterList = Object.entries(blogCategory).map(([key, value]) => ({
@@ -24,7 +28,7 @@ const Content = () => {
 
   return (
     <>
-      <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between md:gap-0">
+      <div className="mb-6 flex flex-col gap-6 md:mb-8 md:flex-row md:items-center md:justify-between md:gap-0">
         <h2 className="text-small20 font-semibold">블로그 콘텐츠</h2>
         <BlogFilter
           label="콘텐츠 카테고리"
@@ -41,11 +45,13 @@ const Content = () => {
 };
 
 function BlogList({ type }: { type?: string | null }) {
-  const { data, fetchNextPage, hasNextPage, isLoading } =
-    useInfiniteBlogListQuery({
-      type,
-      pageable: { page: 1, size: 5 },
-    });
+  const { data, isLoading } = useBlogListQuery({
+    pageable: { page: 1, size: 6 },
+    type,
+  });
+
+  // 공개 예정 여부
+  const willBePublished = (date: string) => dayjs(date).isAfter(dayjs());
 
   if (isLoading)
     return (
@@ -56,36 +62,54 @@ function BlogList({ type }: { type?: string | null }) {
     );
 
   return (
-    <InfiniteScroll
-      className="w-full flex-1 gap-y-[30px]"
-      hasMore={hasNextPage}
-      loadMore={() => {
-        fetchNextPage();
-      }}
-    >
-      <div className="flex w-full flex-wrap gap-4">
-        {!data || data.pages[0].blogInfos.length < 1 ? (
-          <div className="w-full py-6 text-center text-neutral-40">
-            등록된 글이 없습니다.
-          </div>
-        ) : (
-          data.pages.map((page, pageIdx) =>
-            page.blogInfos.map((blogInfo, blogIdx) => (
-              <React.Fragment key={blogInfo.blogThumbnailInfo.id}>
-                <BlogCard
-                  key={blogInfo.blogThumbnailInfo.id}
-                  blogInfo={blogInfo}
-                />
-                {!(
-                  pageIdx === data.pages.length - 1 &&
-                  blogIdx === page.blogInfos.length - 1
-                ) && <hr className="h-0.5 w-full border-t border-neutral-80" />}
-              </React.Fragment>
-            )),
-          )
-        )}
-      </div>
-    </InfiniteScroll>
+    <div className="grid grid-cols-1 gap-y-8 md:grid-cols-4 md:gap-x-5 md:gap-y-[4.25rem]">
+      {data?.blogInfos.map(({ blogThumbnailInfo }) => (
+        <BlogCard
+          key={blogThumbnailInfo.id}
+          title={blogThumbnailInfo.title ?? ''}
+          superTitle={
+            blogThumbnailInfo.category
+              ? blogCategory[blogThumbnailInfo.category]
+              : '전체'
+          }
+          thumbnailItem={
+            <>
+              <img
+                className="h-full w-full object-cover"
+                src={blogThumbnailInfo.thumbnail ?? undefined}
+                alt={blogThumbnailInfo.title ?? undefined}
+              />
+              {willBePublished(blogThumbnailInfo.displayDate ?? '') && (
+                <div className="absolute inset-0 flex justify-end bg-black/30 p-3">
+                  <div className="flex h-fit w-fit items-center rounded-full bg-white/50 py-1 pl-1 pr-1.5">
+                    <LockKeyHoleIcon width={16} height={16} />
+                    <span className="text-xxsmall12 font-semibold text-[#484848]">
+                      공개예정
+                    </span>
+                  </div>
+                </div>
+              )}
+            </>
+          }
+          date={
+            blogThumbnailInfo.displayDate
+              ? `${dayjs(blogThumbnailInfo.displayDate).format(YYYY_MM_DD)} 작성`
+              : undefined
+          }
+          buttonItem={
+            willBePublished(blogThumbnailInfo.displayDate ?? '') ? (
+              <BaseButton
+                variant="point"
+                className="flex items-center gap-1 rounded-xs p-2.5 text-xxsmall12 font-medium"
+              >
+                <BellIcon width={16} height={16} />
+                <span>공개 예정</span>
+              </BaseButton>
+            ) : null
+          }
+        />
+      ))}
+    </div>
   );
 }
 
