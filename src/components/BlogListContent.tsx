@@ -22,12 +22,6 @@ const ParamKeyEnum = {
 const Content = () => {
   const params = useSearchParams();
 
-  const { data, fetchNextPage, hasNextPage, isLoading } =
-    useInfiniteBlogListQuery({
-      type: params.get(ParamKeyEnum.type),
-      pageable: { page: 1, size: 5 },
-    });
-
   return (
     <>
       <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between md:gap-0">
@@ -40,49 +34,60 @@ const Content = () => {
       </div>
 
       <div className="flex flex-col items-center">
-        <InfiniteScroll
-          className="w-full flex-1 gap-y-[30px]"
-          hasMore={hasNextPage}
-          loadMore={() => {
-            fetchNextPage();
-          }}
-        >
-          {isLoading ? (
-            <LoadingContainer
-              className="pb-[26rem]"
-              text="블로그를 가져오는 중입니다.."
-            />
-          ) : (
-            <div className="flex w-full flex-wrap gap-4">
-              {!data || data.pages[0].blogInfos.length < 1 ? (
-                <div className="w-full py-6 text-center text-neutral-40">
-                  등록된 글이 없습니다.
-                </div>
-              ) : (
-                data.pages.map((page, pageIdx) =>
-                  page.blogInfos.map((blogInfo, blogIdx) => (
-                    <React.Fragment key={blogInfo.blogThumbnailInfo.id}>
-                      <BlogCard
-                        key={blogInfo.blogThumbnailInfo.id}
-                        blogInfo={blogInfo}
-                      />
-                      {!(
-                        pageIdx === data.pages.length - 1 &&
-                        blogIdx === page.blogInfos.length - 1
-                      ) && (
-                        <hr className="h-0.5 w-full border-t border-neutral-80" />
-                      )}
-                    </React.Fragment>
-                  )),
-                )
-              )}
-            </div>
-          )}
-        </InfiniteScroll>
+        <BlogList type={params.get(ParamKeyEnum.type)} />
       </div>
     </>
   );
 };
+
+function BlogList({ type }: { type?: string | null }) {
+  const { data, fetchNextPage, hasNextPage, isLoading } =
+    useInfiniteBlogListQuery({
+      type,
+      pageable: { page: 1, size: 5 },
+    });
+
+  if (isLoading)
+    return (
+      <LoadingContainer
+        className="pb-[26rem]"
+        text="블로그를 가져오는 중입니다.."
+      />
+    );
+
+  return (
+    <InfiniteScroll
+      className="w-full flex-1 gap-y-[30px]"
+      hasMore={hasNextPage}
+      loadMore={() => {
+        fetchNextPage();
+      }}
+    >
+      <div className="flex w-full flex-wrap gap-4">
+        {!data || data.pages[0].blogInfos.length < 1 ? (
+          <div className="w-full py-6 text-center text-neutral-40">
+            등록된 글이 없습니다.
+          </div>
+        ) : (
+          data.pages.map((page, pageIdx) =>
+            page.blogInfos.map((blogInfo, blogIdx) => (
+              <React.Fragment key={blogInfo.blogThumbnailInfo.id}>
+                <BlogCard
+                  key={blogInfo.blogThumbnailInfo.id}
+                  blogInfo={blogInfo}
+                />
+                {!(
+                  pageIdx === data.pages.length - 1 &&
+                  blogIdx === page.blogInfos.length - 1
+                ) && <hr className="h-0.5 w-full border-t border-neutral-80" />}
+              </React.Fragment>
+            )),
+          )
+        )}
+      </div>
+    </InfiniteScroll>
+  );
+}
 
 export default function BlogListContent() {
   return (
