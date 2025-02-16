@@ -1,5 +1,4 @@
 import {
-  useBlogListQuery,
   useBlogQuery,
   useBlogTagQuery,
   useDeleteBlogTagMutation,
@@ -13,6 +12,7 @@ import TextFieldLimit from '@/components/admin/blog/TextFieldLimit';
 import EditorApp from '@/components/admin/lexical/EditorApp';
 import ImageUpload from '@/components/admin/program/ui/form/ImageUpload';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import useBlogMenuItems from '@/hooks/useBlogMenuItems';
 import useProgramMenuItems from '@/hooks/useProgramMenuItems';
 import dayjs from '@/lib/dayjs';
 import { blogCategory } from '@/utils/convert';
@@ -29,14 +29,7 @@ import {
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { isAxiosError } from 'axios';
 import { Dayjs } from 'dayjs';
-import {
-  ChangeEvent,
-  FormEvent,
-  MouseEvent,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { ChangeEvent, FormEvent, MouseEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const maxCtaTextLength = 23;
@@ -73,14 +66,10 @@ const BlogEditPage = () => {
 
   const [editingValue, setEditingValue] = useState<EditBlog>(initialBlog);
   const [newTag, setNewTag] = useState('');
+  const [dateTime, setDateTime] = useState<Dayjs | null>(null);
 
   const { snackbar: setSnackbar } = useAdminSnackbar();
 
-  const [dateTime, setDateTime] = useState<Dayjs | null>(null);
-
-  const { data: blogListData } = useBlogListQuery({
-    pageable: { page: 1, size: 10000 },
-  });
   const { data: tags = [] } = useBlogTagQuery();
   const { data: blogData, isLoading } = useBlogQuery(id!);
   const createBlogTagMutation = usePostBlogTagMutation();
@@ -94,18 +83,7 @@ const BlogEditPage = () => {
   });
 
   const programMenuItems = useProgramMenuItems();
-  const blogMenuItems = useMemo(
-    () =>
-      blogListData?.blogInfos.map((info) => (
-        <MenuItem
-          key={info.blogThumbnailInfo.id}
-          value={info.blogThumbnailInfo.id}
-        >
-          {`[${info.blogThumbnailInfo.id}] ${info.blogThumbnailInfo.title}`}
-        </MenuItem>
-      )),
-    [blogListData],
-  );
+  const blogMenuItems = useBlogMenuItems();
 
   const initialEditorStateJsonString =
     !blogData?.blogDetailInfo.content || blogData?.blogDetailInfo.content === ''

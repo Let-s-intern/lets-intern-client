@@ -1,5 +1,4 @@
 import {
-  useBlogListQuery,
   useBlogTagQuery,
   useDeleteBlogTagMutation,
   usePostBlogMutation,
@@ -17,9 +16,9 @@ import TextFieldLimit from '@/components/admin/blog/TextFieldLimit';
 import EditorApp from '@/components/admin/lexical/EditorApp';
 import ImageUpload from '@/components/admin/program/ui/form/ImageUpload';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import useBlogMenuItems from '@/hooks/useBlogMenuItems';
 import useProgramMenuItems from '@/hooks/useProgramMenuItems';
 import dayjs from '@/lib/dayjs';
-import { ProgramStatusEnum } from '@/schema';
 import { blogCategory } from '@/utils/convert';
 import Heading2 from '@components/admin/ui/heading/Heading2';
 import {
@@ -34,7 +33,7 @@ import {
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { isAxiosError } from 'axios';
 import { Dayjs } from 'dayjs';
-import { ChangeEvent, FormEvent, MouseEvent, useMemo, useState } from 'react';
+import { ChangeEvent, FormEvent, MouseEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const maxCtaTextLength = 23;
@@ -51,7 +50,6 @@ const initialBlog = {
   displayDate: '',
   tagList: [],
 };
-const { PROCEEDING, PREV } = ProgramStatusEnum.enum;
 
 const BlogCreatePage = () => {
   const navgiate = useNavigate();
@@ -59,12 +57,10 @@ const BlogCreatePage = () => {
   const [editingValue, setEditingValue] =
     useState<PostBlogReqBody>(initialBlog);
   const [newTag, setNewTag] = useState('');
+  const [dateTime, setDateTime] = useState<Dayjs | null>(null);
+
   const { snackbar: setSnackbar } = useAdminSnackbar();
 
-  const [dateTime, setDateTime] = useState<Dayjs | null>(null);
-  const { data: blogData } = useBlogListQuery({
-    pageable: { page: 1, size: 10000 },
-  });
   const { data: tags = [] } = useBlogTagQuery();
   const createBlogTagMutation = usePostBlogTagMutation();
   const deleteBlogTagMutation = useDeleteBlogTagMutation({
@@ -77,18 +73,7 @@ const BlogCreatePage = () => {
   const createBlogMutation = usePostBlogMutation();
 
   const programMenuItems = useProgramMenuItems();
-  const blogMenuItems = useMemo(
-    () =>
-      blogData?.blogInfos.map((info) => (
-        <MenuItem
-          key={info.blogThumbnailInfo.id}
-          value={info.blogThumbnailInfo.id}
-        >
-          {`[${info.blogThumbnailInfo.id}] ${info.blogThumbnailInfo.title}`}
-        </MenuItem>
-      )),
-    [blogData],
-  );
+  const blogMenuItems = useBlogMenuItems();
 
   const selectedTagList = tags.filter((tag) =>
     editingValue.tagList.includes(tag.id),
