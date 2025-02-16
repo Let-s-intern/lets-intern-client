@@ -18,7 +18,7 @@ export default function Page() {
       </header>
 
       {/* 블로그 콘텐츠 */}
-      <main className="mx-auto w-full max-w-[1100px] px-5 md:px-0">
+      <main className="mx-auto mb-12 w-full max-w-[1100px] px-5 md:mb-20 md:px-0">
         <BlogListContent />
       </main>
     </div>

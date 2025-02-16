@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 
 interface Props {
   title: string;
-  date?: string;
+  displayDate?: string;
   superTitle: string;
   buttonItem?: ReactNode;
   thumbnailItem: ReactNode;
@@ -10,7 +10,7 @@ interface Props {
 
 const BlogCard = ({
   title,
-  date,
+  displayDate,
   superTitle,
   buttonItem,
   thumbnailItem,
@@ -26,7 +26,11 @@ const BlogCard = ({
         </span>
         <h3 className="text-xsmall16 font-bold text-neutral-0">{title}</h3>
         <div className="flex items-center justify-between py-2">
-          <span className="text-xxsmall12 text-neutral-40">{date}</span>
+          {displayDate && (
+            <span className="text-xxsmall12 text-neutral-40">
+              {displayDate} 작성
+            </span>
+          )}
           {buttonItem}
         </div>
       </div>
