@@ -1,10 +1,11 @@
 'use client';
 
 import useGetActiveReviews from '@/hooks/useGetActiveReviews';
+import { FilterItem } from '@/types/common';
 import { useSearchParams } from 'next/navigation';
-import ReviewFilter, { ReviewFilterItem } from '../ReviewFilter';
+import ReviewFilter from '../ReviewFilter';
 
-const programTypeFilterList: ReviewFilterItem[] = [
+const programTypeFilterList: FilterItem[] = [
   { caption: '챌린지', value: 'CHALLENGE_REVIEW' },
   { caption: 'LIVE 클래스', value: 'LIVE_REVIEW' },
   { caption: '서류 피드백 REPORT', value: 'REPORT_REVIEW' },

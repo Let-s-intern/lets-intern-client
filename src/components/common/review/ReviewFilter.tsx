@@ -3,6 +3,7 @@
 import CheckboxActive from '@/assets/icons/checkbox-active.svg?react';
 import CheckboxInActive from '@/assets/icons/checkbox-inactive.svg?react';
 import { twMerge } from '@/lib/twMerge';
+import { FilterItem } from '@/types/common';
 import BaseBottomSheet from '@components/ui/BaseBottomSheet';
 import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
@@ -10,16 +11,11 @@ import { ChevronDown } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { memo, ReactNode, useCallback, useEffect, useState } from 'react';
 
-export interface ReviewFilterItem {
-  caption: string;
-  value: string;
-}
-
 interface Props {
   label: string;
   labelValue: string;
   childLabelValue?: string[];
-  list: ReviewFilterItem[];
+  list: FilterItem[];
   multiSelect?: boolean;
   dropdownClassName?: string;
   className?: string;
@@ -42,11 +38,11 @@ function ReviewFilter({
 
   const [isOpen, setIsOpen] = useState(false);
   // 단일 선택
-  const [selectedItem, setSelectedItem] = useState<
-    ReviewFilterItem | undefined
-  >(undefined);
+  const [selectedItem, setSelectedItem] = useState<FilterItem | undefined>(
+    undefined,
+  );
   // 중복 선택
-  const [checkedList, setCheckedList] = useState<ReviewFilterItem[]>([]);
+  const [checkedList, setCheckedList] = useState<FilterItem[]>([]);
 
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
@@ -61,7 +57,7 @@ function ReviewFilter({
     ? checkedList.length === 0 || checkedList.length === list.length
     : !selectedItem;
 
-  const handleQueryParams = (item: ReviewFilterItem) => {
+  const handleQueryParams = (item: FilterItem) => {
     if (onChange) onChange();
     // 쿼리 스트링으로 선택된 아이템 추가
     if (labelValue) {
@@ -69,7 +65,7 @@ function ReviewFilter({
 
       if (multiSelect) {
         const alreadyIncluded = checkedList.some(
-          (ele: ReviewFilterItem) => ele.value === item.value,
+          (ele: FilterItem) => ele.value === item.value,
         );
         if (alreadyIncluded) {
           const filtered = checkedList.filter(
@@ -110,7 +106,7 @@ function ReviewFilter({
     }
   };
 
-  const handleClickItem = (item: ReviewFilterItem) => {
+  const handleClickItem = (item: FilterItem) => {
     handleQueryParams(item);
     if (!multiSelect) {
       setIsOpen(false);
@@ -140,12 +136,10 @@ function ReviewFilter({
   ]);
 
   useEffect(() => {
-    const findItem = (
-      value: string | undefined,
-    ): ReviewFilterItem | undefined => {
+    const findItem = (value: string | undefined): FilterItem | undefined => {
       if (value === undefined) return undefined;
       return list.find((item) => item.value === value) as
-        | ReviewFilterItem
+        | FilterItem
         | undefined;
     };
 
@@ -160,7 +154,7 @@ function ReviewFilter({
               .toUpperCase()
               .split(',')
               .map(findItem)
-              .filter(Boolean) as ReviewFilterItem[])
+              .filter(Boolean) as FilterItem[])
           : [],
       );
     }
@@ -287,12 +281,12 @@ const FilterList = ({
   onClick,
   className,
 }: {
-  item: ReviewFilterItem;
+  item: FilterItem;
   isLastItem: boolean;
   multiSelect?: boolean;
   checked?: boolean;
   selected?: boolean;
-  onClick?: (item: ReviewFilterItem) => void;
+  onClick?: (item: FilterItem) => void;
   className?: string;
 }) => {
   return (
