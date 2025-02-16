@@ -8,14 +8,13 @@ import {
 } from '@/api/blog';
 import { PostTag, postTagSchema, TagDetail } from '@/api/blogSchema';
 import { uploadFile } from '@/api/file';
-import { useGetProgramAdminQuery } from '@/api/program';
 import TagSelector from '@/components/admin/blog/TagSelector';
 import TextFieldLimit from '@/components/admin/blog/TextFieldLimit';
 import EditorApp from '@/components/admin/lexical/EditorApp';
 import ImageUpload from '@/components/admin/program/ui/form/ImageUpload';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import useProgramMenuItems from '@/hooks/useProgramMenuItems';
 import dayjs from '@/lib/dayjs';
-import { ProgramStatusEnum } from '@/schema';
 import { blogCategory } from '@/utils/convert';
 import Heading2 from '@components/admin/ui/heading/Heading2';
 import {
@@ -55,7 +54,6 @@ const initialBlog = {
   isDisplayed: '',
   tagList: [],
 };
-const { PROCEEDING, PREV } = ProgramStatusEnum.enum;
 
 interface EditBlog {
   title: string;
@@ -80,11 +78,6 @@ const BlogEditPage = () => {
 
   const [dateTime, setDateTime] = useState<Dayjs | null>(null);
 
-  const { data: programData } = useGetProgramAdminQuery({
-    page: 1,
-    size: 10000,
-    status: [PROCEEDING, PREV],
-  });
   const { data: blogListData } = useBlogListQuery({
     pageable: { page: 1, size: 10000 },
   });
@@ -100,6 +93,7 @@ const BlogEditPage = () => {
     },
   });
 
+  const programMenuItems = useProgramMenuItems();
   const blogMenuItems = useMemo(
     () =>
       blogListData?.blogInfos.map((info) => (
@@ -111,18 +105,6 @@ const BlogEditPage = () => {
         </MenuItem>
       )),
     [blogListData],
-  );
-  const programMenuItems = useMemo(
-    () =>
-      programData?.programList.map((program) => (
-        <MenuItem
-          key={program.programInfo.programType + program.programInfo.id}
-          value={`${program.programInfo.programType}-${program.programInfo.id}`}
-        >
-          {`[${program.programInfo.programType}] ${program.programInfo.title}`}
-        </MenuItem>
-      )),
-    [programData],
   );
 
   const initialEditorStateJsonString =
@@ -361,7 +343,7 @@ const BlogEditPage = () => {
                     <FormControl size="small">
                       <InputLabel>프로그램 선택</InputLabel>
                       <Select
-                        value=""
+                        defaultValue="not select"
                         fullWidth
                         size="small"
                         label="프로그램 선택"
@@ -389,7 +371,7 @@ const BlogEditPage = () => {
                     <FormControl size="small">
                       <InputLabel>프로그램 선택</InputLabel>
                       <Select
-                        value=""
+                        defaultValue="not select"
                         fullWidth
                         size="small"
                         label="프로그램 선택"
@@ -416,7 +398,7 @@ const BlogEditPage = () => {
                     <FormControl size="small">
                       <InputLabel>프로그램 선택</InputLabel>
                       <Select
-                        value=""
+                        defaultValue="not select"
                         fullWidth
                         size="small"
                         label="프로그램 선택"
@@ -443,7 +425,7 @@ const BlogEditPage = () => {
                     <FormControl size="small">
                       <InputLabel>프로그램 선택</InputLabel>
                       <Select
-                        value=""
+                        defaultValue="not select"
                         fullWidth
                         size="small"
                         label="프로그램 선택"
