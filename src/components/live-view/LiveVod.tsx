@@ -1,8 +1,19 @@
+import { twMerge } from '@/lib/twMerge';
+
 const title = 'VOD 녹화본 제공 🎬';
 
-function LiveVod() {
+interface Props {
+  className?: string;
+}
+
+function LiveVod({ className }: Props) {
   return (
-    <div className="rounded-md bg-neutral-95 px-5 py-6 md:text-center">
+    <div
+      className={twMerge(
+        'rounded-md bg-neutral-95 px-5 py-6 md:text-center',
+        className,
+      )}
+    >
       <span className="text-small18 font-bold text-primary md:text-medium22">
         {title}
       </span>

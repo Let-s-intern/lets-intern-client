@@ -76,7 +76,7 @@ const LiveView: React.FC<{ live: LiveIdPrimitive; isPreview?: boolean }> = ({
           <NextBackHeader hideBack to="/program">
             {live.title ?? ''}
           </NextBackHeader>
-          {live.vod && <LiveVod />}
+          {live.vod && <LiveVod className="mb-8 md:mb-12" />}
           <LiveBasicInfo live={liveTransformed} />
         </div>
 
