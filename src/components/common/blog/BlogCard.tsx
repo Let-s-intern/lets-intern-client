@@ -6,6 +6,7 @@ interface Props {
   superTitle: string;
   buttonItem?: ReactNode;
   thumbnailItem: ReactNode;
+  onClick?: () => void;
 }
 
 const BlogCard = ({
@@ -14,9 +15,10 @@ const BlogCard = ({
   superTitle,
   buttonItem,
   thumbnailItem,
+  onClick,
 }: Props) => {
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3" onClick={onClick}>
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-neutral-70">
         {thumbnailItem}
       </div>
