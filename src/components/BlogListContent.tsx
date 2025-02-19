@@ -9,9 +9,10 @@ import { blogCategory } from '@/utils/convert';
 import { useMediaQuery } from '@mui/material';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Fragment, ReactNode, Suspense, useMemo } from 'react';
+import { Fragment, ReactNode, Suspense, useMemo, useState } from 'react';
 import BlogCard from './common/blog/BlogCard';
 import BlogFilter from './common/blog/BlogFilter';
+import MuiPagination from './common/program/pagination/MuiPagination';
 import BaseButton from './common/ui/button/BaseButton';
 import EmptyContainer from './common/ui/EmptyContainer';
 import LoadingContainer from './common/ui/loading/LoadingContainer';
@@ -55,6 +56,8 @@ const blogBannerMockData = {
 const Content = () => {
   const params = useSearchParams();
 
+  const [page, setPage] = useState(1);
+
   return (
     <>
       <section className="mb-6 flex flex-col gap-6 md:mb-8 md:flex-row md:items-center md:justify-between md:gap-0">
@@ -63,10 +66,15 @@ const Content = () => {
           label="콘텐츠 카테고리"
           list={filterList}
           paramKey={ParamKeyEnum.type}
+          onChange={() => setPage(1)} // 페이지 초기화
         />
       </section>
 
-      <BlogList type={params.get(ParamKeyEnum.type)?.toUpperCase()} />
+      <BlogList
+        type={params.get(ParamKeyEnum.type)?.toUpperCase()}
+        page={page}
+        onChangePage={(page) => setPage(page)}
+      />
     </>
   );
 };
@@ -75,12 +83,20 @@ function Heading2({ children }: { children?: ReactNode }) {
   return <h2 className="text-small20 font-semibold">{children}</h2>;
 }
 
-function BlogList({ type }: { type?: string | null }) {
+function BlogList({
+  type,
+  page,
+  onChangePage,
+}: {
+  type?: string | null;
+  page: number;
+  onChangePage?: (page: number) => void;
+}) {
   const router = useRouter();
 
   const isMobile = useMediaQuery('(max-width: 768px)');
   const { data, isLoading } = useBlogListQuery({
-    pageable: { page: 1, size: isMobile ? 6 : 14 },
+    pageable: { page, size: isMobile ? 6 : 14 },
     type,
   });
 
@@ -127,112 +143,124 @@ function BlogList({ type }: { type?: string | null }) {
   }
 
   return (
-    <section className="grid grid-cols-1 gap-y-8 md:grid-cols-4 md:gap-x-5 md:gap-y-[4.25rem]">
-      {data?.blogInfos.map(({ blogThumbnailInfo }, index) => {
-        /**
-         * 블로그 광고 배너 노출
-         * 모바일: 인덱스 2, 5일 때 함께 노출
-         * PC: 인덱스 3, 7일 때 함께 노출
-         */
-        const blogBanners = blogBannerMockData.blogBannerList;
-        let blogBannerCard = null;
+    <section>
+      <div className="mb-8 grid grid-cols-1 gap-y-8 md:mb-16 md:grid-cols-4 md:gap-x-5 md:gap-y-[4.25rem]">
+        {data?.blogInfos.map(({ blogThumbnailInfo }, index) => {
+          /**
+           * 블로그 광고 배너 노출
+           * 모바일: 인덱스 2, 5일 때 함께 노출
+           * PC: 인덱스 3, 7일 때 함께 노출
+           */
+          const blogBanners = blogBannerMockData.blogBannerList;
+          let blogBannerCard = null;
 
-        if (isMobile && index === 2) {
-          blogBannerCard = (
-            <BlogCard
-              key={blogBanners[0].blogBannerId}
-              title={blogBanners[0].title}
-              superTitle="커스텀"
-              thumbnailItem={
-                <img className="h-full w-full object-cover" src="" alt="" />
-              }
-            />
-          );
-        }
+          if (isMobile && index === 2) {
+            blogBannerCard = (
+              <BlogCard
+                key={blogBanners[0].blogBannerId}
+                title={blogBanners[0].title}
+                superTitle="커스텀"
+                thumbnailItem={
+                  <img className="h-full w-full object-cover" src="" alt="" />
+                }
+              />
+            );
+          }
 
-        if (isMobile && index === 5)
-          blogBannerCard = (
-            <BlogCard
-              key={blogBanners[1].blogBannerId}
-              title={blogBanners[1].title}
-              superTitle="커스텀"
-              thumbnailItem={
-                <img className="h-full w-full object-cover" src="" alt="" />
-              }
-            />
-          );
+          if (isMobile && index === 5)
+            blogBannerCard = (
+              <BlogCard
+                key={blogBanners[1].blogBannerId}
+                title={blogBanners[1].title}
+                superTitle="커스텀"
+                thumbnailItem={
+                  <img className="h-full w-full object-cover" src="" alt="" />
+                }
+              />
+            );
 
-        if (!isMobile && index === 3)
-          blogBannerCard = (
-            <BlogCard
-              key={blogBanners[1].blogBannerId}
-              title={blogBanners[1].title}
-              superTitle="커스텀"
-              thumbnailItem={
-                <img className="h-full w-full object-cover" src="" alt="" />
-              }
-            />
-          );
+          if (!isMobile && index === 3)
+            blogBannerCard = (
+              <BlogCard
+                key={blogBanners[1].blogBannerId}
+                title={blogBanners[1].title}
+                superTitle="커스텀"
+                thumbnailItem={
+                  <img className="h-full w-full object-cover" src="" alt="" />
+                }
+              />
+            );
 
-        if (!isMobile && index === 7)
-          blogBannerCard = (
-            <BlogCard
-              key={blogBanners[1].blogBannerId}
-              title={blogBanners[1].title}
-              superTitle="커스텀"
-              thumbnailItem={
-                <img className="h-full w-full object-cover" src="" alt="" />
-              }
-            />
-          );
+          if (!isMobile && index === 7)
+            blogBannerCard = (
+              <BlogCard
+                key={blogBanners[1].blogBannerId}
+                title={blogBanners[1].title}
+                superTitle="커스텀"
+                thumbnailItem={
+                  <img className="h-full w-full object-cover" src="" alt="" />
+                }
+              />
+            );
 
-        return (
-          <Fragment key={blogThumbnailInfo.id}>
-            {blogBannerCard}
-            <BlogCard
-              title={blogThumbnailInfo.title ?? ''}
-              superTitle={
-                blogThumbnailInfo.category
-                  ? blogCategory[blogThumbnailInfo.category]
-                  : '전체'
-              }
-              thumbnailItem={
-                <>
-                  <img
-                    className="h-full w-full object-cover"
-                    src={blogThumbnailInfo.thumbnail ?? undefined}
-                    alt={blogThumbnailInfo.title ?? undefined}
-                  />
-                  {willBePublished(blogThumbnailInfo.displayDate ?? '') && (
-                    <div className="absolute inset-0 flex justify-end bg-black/30 p-3">
-                      <div className="flex h-fit w-fit items-center rounded-full bg-white/50 py-1 pl-1 pr-1.5">
-                        <LockKeyHoleIcon width={16} height={16} />
-                        <span className="text-xxsmall12 font-semibold text-[#484848]">
-                          공개예정
-                        </span>
+          return (
+            <Fragment key={blogThumbnailInfo.id}>
+              {blogBannerCard}
+              <BlogCard
+                title={blogThumbnailInfo.title ?? ''}
+                superTitle={
+                  blogThumbnailInfo.category
+                    ? blogCategory[blogThumbnailInfo.category]
+                    : '전체'
+                }
+                thumbnailItem={
+                  <>
+                    <img
+                      className="h-full w-full object-cover"
+                      src={blogThumbnailInfo.thumbnail ?? undefined}
+                      alt={blogThumbnailInfo.title ?? undefined}
+                    />
+                    {willBePublished(blogThumbnailInfo.displayDate ?? '') && (
+                      <div className="absolute inset-0 flex justify-end bg-black/30 p-3">
+                        <div className="flex h-fit w-fit items-center rounded-full bg-white/50 py-1 pl-1 pr-1.5">
+                          <LockKeyHoleIcon width={16} height={16} />
+                          <span className="text-xxsmall12 font-semibold text-[#484848]">
+                            공개예정
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </>
-              }
-              displayDate={dayjs(blogThumbnailInfo.displayDate).format(
-                YYYY_MM_DD,
-              )}
-              buttonItem={
-                willBePublished(blogThumbnailInfo.displayDate ?? '') ? (
-                  <BaseButton
-                    variant="point"
-                    className="flex items-center gap-1 rounded-xs p-2.5 text-xxsmall12 font-medium"
-                  >
-                    <BellIcon width={16} height={16} />
-                    <span>공개 예정</span>
-                  </BaseButton>
-                ) : null
-              }
-            />
-          </Fragment>
-        );
-      })}
+                    )}
+                  </>
+                }
+                displayDate={dayjs(blogThumbnailInfo.displayDate).format(
+                  YYYY_MM_DD,
+                )}
+                buttonItem={
+                  willBePublished(blogThumbnailInfo.displayDate ?? '') ? (
+                    <BaseButton
+                      variant="point"
+                      className="flex items-center gap-1 rounded-xs p-2.5 text-xxsmall12 font-medium"
+                    >
+                      <BellIcon width={16} height={16} />
+                      <span>공개 예정</span>
+                    </BaseButton>
+                  ) : null
+                }
+              />
+            </Fragment>
+          );
+        })}
+      </div>
+      {data?.pageInfo && (
+        <MuiPagination
+          className="flex justify-center"
+          page={page}
+          pageInfo={data?.pageInfo}
+          onChange={(_, page) => {
+            if (onChangePage) onChangePage(page);
+          }}
+        />
+      )}
     </section>
   );
 }
