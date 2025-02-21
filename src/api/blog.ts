@@ -4,6 +4,7 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import { IPageable } from '../types/interface';
 import axios from '../utils/axios';
 import {
@@ -17,6 +18,7 @@ import {
   blogTagSchema,
   PatchAdminBlogBannerReqBody,
   PatchBlogReqBody,
+  PostAdminBlogBannerReqBody,
   PostBlogReqBody,
   TagDetail,
 } from './blogSchema';
@@ -330,6 +332,28 @@ export const usePatchAdminBlogBanner = () => {
       });
     },
     onError: (e) => console.error('Fail usePatchBlogBanner:', e),
+  });
+};
+
+export const usePostAdminBlogBanner = () => {
+  const client = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (reqBody: PostAdminBlogBannerReqBody) => {
+      const res = await axios.post('/admin/blog-banner', reqBody);
+      console.log('req body:', reqBody);
+      return res;
+    },
+    onSuccess: async () => {
+      await client.invalidateQueries({
+        queryKey: [useGetAdminBlogBannerListKey],
+      });
+    },
+    onError: (e) => {
+      if (isAxiosError(e)) {
+        console.error(e.response?.data.message);
+      }
+    },
   });
 };
 

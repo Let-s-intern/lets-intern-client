@@ -34,7 +34,7 @@ const BlogBannerEditPage = () => {
   return (
     <div className="p-5">
       <Heading className="mb-5">블로그 광고 배너 수정</Heading>
-      <div className="w-1/2">
+      <div className="w-1/2 min-w-[37.5rem]">
         <div className="mb-5 flex gap-3">
           <TextField
             className="w-full"

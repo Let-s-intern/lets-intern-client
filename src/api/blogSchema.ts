@@ -148,6 +148,15 @@ export interface PatchAdminBlogBannerReqBody {
   weight?: number;
 }
 
+export interface PostAdminBlogBannerReqBody {
+  title?: string;
+  link?: string;
+  startDate?: string;
+  endDate?: string;
+  file: string | null;
+  weight: number;
+}
+
 export const adminBlogBannerSchema = z.object({
   blogBannerInfo: z.object({
     blogBannerId: z.number(),
