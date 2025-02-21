@@ -331,7 +331,11 @@ export const usePatchAdminBlogBanner = () => {
         queryKey: [useGetAdminBlogBannerKey],
       });
     },
-    onError: (e) => console.error('Fail usePatchBlogBanner:', e),
+    onError: (e) => {
+      if (isAxiosError(e)) {
+        console.error(e.response?.data.message);
+      }
+    },
   });
 };
 
