@@ -7,6 +7,7 @@ import {
 import { IPageable } from '../types/interface';
 import axios from '../utils/axios';
 import {
+  blogBannerListSchema,
   BlogList,
   blogListSchema,
   blogRatingListSchema,
@@ -287,4 +288,15 @@ export const fetchRecommendBlogData = async ({
   const data = await res.json();
 
   return blogListSchema.parse(data.data);
+};
+
+/* 블로그 광고 배너 */
+export const useGetBlogBannerList = () => {
+  return useQuery({
+    queryKey: ['useGetBlogBannerList'],
+    queryFn: async () => {
+      const res = await axios.get('/admin/blog-banner');
+      return blogBannerListSchema.parse(res.data.data);
+    },
+  });
 };

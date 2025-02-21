@@ -117,3 +117,19 @@ export const blogRatingListSchema = z.object({
   ),
   pageInfo,
 });
+
+const blogBannerSchema = z.object({
+  blogBannerId: z.number(),
+  title: z.string().optional().nullable(),
+  link: z.string().optional().nullable(),
+  startDate: z.string().optional().nullable(),
+  endDate: z.string().optional().nullable(),
+  weight: z.number().optional().nullable(),
+  isVisible: z.boolean(),
+});
+
+export type BlogBanner = z.infer<typeof blogBannerSchema>;
+
+export const blogBannerListSchema = z.object({
+  blogBannerList: z.array(blogBannerSchema),
+});
