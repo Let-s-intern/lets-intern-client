@@ -7,13 +7,14 @@ import {
 import { IPageable } from '../types/interface';
 import axios from '../utils/axios';
 import {
-  blogBannerListSchema,
+  adminBlogBannerListSchema,
   BlogList,
   blogListSchema,
   blogRatingListSchema,
   BlogSchema,
   blogSchema,
   blogTagSchema,
+  PatchAdminBlogBannerReqBody,
   PatchBlogReqBody,
   PostBlogReqBody,
   TagDetail,
@@ -291,12 +292,38 @@ export const fetchRecommendBlogData = async ({
 };
 
 /* 블로그 광고 배너 */
-export const useGetBlogBannerList = () => {
+const useGetBlogBannerListQueryKey = 'useGetBlogBannerList';
+
+export const useGetAdminBlogBannerList = () => {
   return useQuery({
-    queryKey: ['useGetBlogBannerList'],
+    queryKey: [useGetBlogBannerListQueryKey],
     queryFn: async () => {
       const res = await axios.get('/admin/blog-banner');
-      return blogBannerListSchema.parse(res.data.data);
+      return adminBlogBannerListSchema.parse(res.data.data);
     },
+  });
+};
+
+export const usePatchAdminBlogBanner = () => {
+  const client = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (reqBody: PatchAdminBlogBannerReqBody) => {
+      const body: any = { ...reqBody };
+      delete body.blogBannerId;
+
+      const res = await axios.patch(
+        `/admin/blog-banner/${reqBody.blogBannerId}`,
+        body,
+      );
+      console.log('req body:', reqBody);
+      return res;
+    },
+    onSuccess: async () => {
+      await client.invalidateQueries({
+        queryKey: [useGetBlogBannerListQueryKey],
+      });
+    },
+    onError: (e) => console.error('Fail usePatchBlogBanner:', e),
   });
 };

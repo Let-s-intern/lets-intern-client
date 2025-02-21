@@ -118,7 +118,8 @@ export const blogRatingListSchema = z.object({
   pageInfo,
 });
 
-const blogBannerSchema = z.object({
+// 블로그 배너
+const adminBlogBannerSchema = z.object({
   blogBannerId: z.number(),
   title: z.string().optional().nullable(),
   link: z.string().optional().nullable(),
@@ -128,8 +129,19 @@ const blogBannerSchema = z.object({
   isVisible: z.boolean(),
 });
 
-export type BlogBanner = z.infer<typeof blogBannerSchema>;
+export type AdminBlogBanner = z.infer<typeof adminBlogBannerSchema>;
 
-export const blogBannerListSchema = z.object({
-  blogBannerList: z.array(blogBannerSchema),
+export const adminBlogBannerListSchema = z.object({
+  blogBannerList: z.array(adminBlogBannerSchema),
 });
+
+export interface PatchAdminBlogBannerReqBody {
+  blogBannerId: number;
+  title?: string;
+  link?: string;
+  isVisible?: boolean;
+  startDate?: string;
+  endDate?: string;
+  file?: string;
+  weight?: number;
+}

@@ -1,5 +1,5 @@
-import { useGetBlogBannerList } from '@/api/blog';
-import { BlogBanner } from '@/api/blogSchema';
+import { useGetAdminBlogBannerList, usePatchAdminBlogBanner } from '@/api/blog';
+import { AdminBlogBanner } from '@/api/blogSchema';
 import { LOCALIZED_YYYY_MDdd_HHmm } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import Heading from '@components/admin/ui/heading/Heading';
@@ -17,12 +17,13 @@ import { useNavigate } from 'react-router-dom';
 
 type Row = {
   id: number;
-} & BlogBanner;
+} & AdminBlogBanner;
 
 export default function BlogBannerListPage() {
   const navigate = useNavigate();
 
-  const { data } = useGetBlogBannerList();
+  const { data } = useGetAdminBlogBannerList();
+  const patch = usePatchAdminBlogBanner();
 
   const rows = useMemo(() => {
     return data?.blogBannerList.map((data) => ({
@@ -54,7 +55,12 @@ export default function BlogBannerListPage() {
       renderCell: (params: GridRenderCellParams<Row, boolean>) => (
         <Checkbox
           checked={params.value}
-          onChange={async () => console.log('Change isVisible')}
+          onChange={async () => {
+            await patch.mutateAsync({
+              blogBannerId: params.row.blogBannerId,
+              isVisible: !params.value,
+            });
+          }}
         />
       ),
     },
