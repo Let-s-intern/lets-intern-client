@@ -1,6 +1,7 @@
+import { useGetAdminBlogBannerList, usePatchAdminBlogBanner } from '@/api/blog';
+import { AdminBlogBannerListItem } from '@/api/blogSchema';
 import { LOCALIZED_YYYY_MDdd_HHmm } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
-import { generateUuid } from '@/utils/random';
 import Heading from '@components/admin/ui/heading/Heading';
 import { Button, Checkbox } from '@mui/material';
 import {
@@ -14,75 +15,24 @@ import { Pencil, Trash } from 'lucide-react';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const mockData = [
-  {
-    id: generateUuid(),
-    title: '메인 배너 제목입니다1',
-    url: 'https://www.naver.com/',
-    isVisible: true,
-    startDate: '2025-02-14T13:29:26',
-    endDate: '2025-04-26T13:29:26',
-  },
-  {
-    id: generateUuid(),
-    title: '메인 배너 제목입니다2',
-    url: 'https://www.naver.com/',
-    isVisible: false,
-    startDate: '2025-02-14T13:29:26',
-    endDate: '2025-04-26T13:29:26',
-  },
-  {
-    id: generateUuid(),
-    title: '메인 배너 제목입니다3',
-    url: 'https://www.naver.com/',
-    isVisible: true,
-    startDate: '2025-02-14T13:29:26',
-    endDate: '2025-04-26T13:29:26',
-  },
-  {
-    id: generateUuid(),
-    title: '메인 배너 제목입니다4',
-    url: 'https://www.naver.com/',
-    isVisible: true,
-    startDate: '2025-02-14T13:29:26',
-    endDate: '2025-04-26T13:29:26',
-  },
-  {
-    id: generateUuid(),
-    title: '메인 배너 제목입니다5',
-    url: 'https://www.naver.com/',
-    isVisible: false,
-    startDate: '2025-02-14T13:29:26',
-    endDate: '2025-04-26T13:29:26',
-  },
-  {
-    id: generateUuid(),
-    title: '메인 배너 제목입니다6',
-    url: 'https://www.naver.com/',
-    isVisible: true,
-    startDate: '2025-02-14T13:29:26',
-    endDate: '2025-04-26T13:29:26',
-  },
-];
+type Row = {
+  id: number;
+} & AdminBlogBannerListItem;
 
 export default function BlogBannerListPage() {
   const navigate = useNavigate();
 
+  const { data } = useGetAdminBlogBannerList();
+  const patch = usePatchAdminBlogBanner();
+
   const rows = useMemo(() => {
-    return mockData.map((data) => ({
+    return data?.blogBannerList.map((data) => ({
       ...data,
+      id: data.blogBannerId,
       startDate: dayjs(data.startDate).format(LOCALIZED_YYYY_MDdd_HHmm),
       endDate: dayjs(data.endDate).format(LOCALIZED_YYYY_MDdd_HHmm),
     }));
-  }, []);
-  type Row = {
-    id: string;
-    title: string;
-    url: string;
-    isVisible: boolean;
-    startDate: string;
-    endDate: string;
-  };
+  }, [data]);
 
   const columns: GridColDef<Row>[] = [
     {
@@ -91,7 +41,7 @@ export default function BlogBannerListPage() {
       width: 200,
     },
     {
-      field: 'url',
+      field: 'link',
       headerName: '링크',
       width: 150,
       sortable: false,
@@ -105,7 +55,12 @@ export default function BlogBannerListPage() {
       renderCell: (params: GridRenderCellParams<Row, boolean>) => (
         <Checkbox
           checked={params.value}
-          onChange={async () => console.log('Change isVisible')}
+          onChange={async () => {
+            await patch.mutateAsync({
+              blogBannerId: params.row.blogBannerId,
+              isVisible: !params.value,
+            });
+          }}
         />
       ),
     },

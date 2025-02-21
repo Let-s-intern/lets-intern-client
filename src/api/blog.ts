@@ -4,16 +4,21 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import { IPageable } from '../types/interface';
 import axios from '../utils/axios';
 import {
+  adminBlogBannerListSchema,
+  adminBlogBannerSchema,
   BlogList,
   blogListSchema,
   blogRatingListSchema,
   BlogSchema,
   blogSchema,
   blogTagSchema,
+  PatchAdminBlogBannerReqBody,
   PatchBlogReqBody,
+  PostAdminBlogBannerReqBody,
   PostBlogReqBody,
   TagDetail,
 } from './blogSchema';
@@ -287,4 +292,81 @@ export const fetchRecommendBlogData = async ({
   const data = await res.json();
 
   return blogListSchema.parse(data.data);
+};
+
+/* 블로그 광고 배너 */
+const useGetAdminBlogBannerListKey = 'useGetAdminBlogBannerList';
+const useGetAdminBlogBannerKey = 'useGetAdminBlogBanner';
+
+export const useGetAdminBlogBannerList = () => {
+  return useQuery({
+    queryKey: [useGetAdminBlogBannerListKey],
+    queryFn: async () => {
+      const res = await axios.get('/admin/blog-banner');
+      return adminBlogBannerListSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const usePatchAdminBlogBanner = () => {
+  const client = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (reqBody: PatchAdminBlogBannerReqBody) => {
+      const body: any = { ...reqBody };
+      delete body.blogBannerId;
+
+      const res = await axios.patch(
+        `/admin/blog-banner/${reqBody.blogBannerId}`,
+        body,
+      );
+      console.log('req body:', reqBody);
+      return res;
+    },
+    onSuccess: async () => {
+      await client.invalidateQueries({
+        queryKey: [useGetAdminBlogBannerListKey],
+      });
+      await client.invalidateQueries({
+        queryKey: [useGetAdminBlogBannerKey],
+      });
+    },
+    onError: (e) => {
+      if (isAxiosError(e)) {
+        console.error(e.response?.data.message);
+      }
+    },
+  });
+};
+
+export const usePostAdminBlogBanner = () => {
+  const client = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (reqBody: PostAdminBlogBannerReqBody) => {
+      const res = await axios.post('/admin/blog-banner', reqBody);
+      console.log('req body:', reqBody);
+      return res;
+    },
+    onSuccess: async () => {
+      await client.invalidateQueries({
+        queryKey: [useGetAdminBlogBannerListKey],
+      });
+    },
+    onError: (e) => {
+      if (isAxiosError(e)) {
+        console.error(e.response?.data.message);
+      }
+    },
+  });
+};
+
+export const useGetAdminBlogBanner = (id: number) => {
+  return useQuery({
+    queryKey: [useGetAdminBlogBannerKey, id],
+    queryFn: async () => {
+      const res = await axios.get(`/admin/blog-banner/${id}`);
+      return adminBlogBannerSchema.parse(res.data.data);
+    },
+  });
 };
