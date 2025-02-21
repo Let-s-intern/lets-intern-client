@@ -8,6 +8,7 @@ import { IPageable } from '../types/interface';
 import axios from '../utils/axios';
 import {
   adminBlogBannerListSchema,
+  adminBlogBannerSchema,
   BlogList,
   blogListSchema,
   blogRatingListSchema,
@@ -292,11 +293,12 @@ export const fetchRecommendBlogData = async ({
 };
 
 /* 블로그 광고 배너 */
-const useGetBlogBannerListQueryKey = 'useGetBlogBannerList';
+const useGetAdminBlogBannerListKey = 'useGetAdminBlogBannerList';
+const useGetAdminBlogBannerKey = 'useGetAdminBlogBanner';
 
 export const useGetAdminBlogBannerList = () => {
   return useQuery({
-    queryKey: [useGetBlogBannerListQueryKey],
+    queryKey: [useGetAdminBlogBannerListKey],
     queryFn: async () => {
       const res = await axios.get('/admin/blog-banner');
       return adminBlogBannerListSchema.parse(res.data.data);
@@ -321,9 +323,22 @@ export const usePatchAdminBlogBanner = () => {
     },
     onSuccess: async () => {
       await client.invalidateQueries({
-        queryKey: [useGetBlogBannerListQueryKey],
+        queryKey: [useGetAdminBlogBannerListKey],
+      });
+      await client.invalidateQueries({
+        queryKey: [useGetAdminBlogBannerKey],
       });
     },
     onError: (e) => console.error('Fail usePatchBlogBanner:', e),
+  });
+};
+
+export const useGetAdminBlogBanner = (id: number) => {
+  return useQuery({
+    queryKey: [useGetAdminBlogBannerKey, id],
+    queryFn: async () => {
+      const res = await axios.get(`/admin/blog-banner/${id}`);
+      return adminBlogBannerSchema.parse(res.data.data);
+    },
   });
 };
