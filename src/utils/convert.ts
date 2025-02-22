@@ -1,4 +1,4 @@
-import { CurationLocationType } from '@/api/curation';
+import { CurationLocationType, CurationType } from '@/api/curation';
 import { QuestionType } from '@/api/review';
 import {
   AttendanceResult,
@@ -386,5 +386,22 @@ export const convertCurationLocationTypeToText = (
       return '블로그 하단';
     default:
       return '-';
+  }
+};
+
+export const convertCurationTypeToText = (type: CurationType | null) => {
+  switch (type) {
+    case 'CHALLENGE':
+      return '챌린지';
+    case 'LIVE':
+      return '라이브';
+    case 'REPORT':
+      return '서류 진단';
+    case 'BLOG':
+      return '블로그';
+    case 'ETC':
+      return '기타';
+    default:
+      return '';
   }
 };
