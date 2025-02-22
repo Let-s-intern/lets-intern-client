@@ -36,6 +36,7 @@ import ChallengeEdit from './router-pages/admin/ChallengeEdit';
 import CouponCreate from './router-pages/admin/coupon/CouponCreate';
 import CouponEdit from './router-pages/admin/coupon/CouponEdit';
 import Coupons from './router-pages/admin/coupon/Coupons';
+import HomeCurationListPage from './router-pages/admin/home/curation/HomeCurationListPage';
 import LiveCreate from './router-pages/admin/LiveCreate';
 import LiveEdit from './router-pages/admin/LiveEdit';
 import ProgramCreate from './router-pages/admin/program/ProgramCreate';
@@ -90,6 +91,9 @@ export const getAdminRoutes = () => {
         <Route path="new" element={<CouponCreate />} />
         {/* /admin/coupons/1/edit */}
         <Route path=":couponId/edit" element={<CouponEdit />} />
+      </Route>
+      <Route path="home">
+        <Route path="curation" element={<HomeCurationListPage />} />
       </Route>
       <Route path="banner">
         <Route path="main-banners">

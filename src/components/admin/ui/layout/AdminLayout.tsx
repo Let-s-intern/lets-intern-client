@@ -52,7 +52,16 @@ const navData = [
     ],
   },
   {
-    title: '홈페이지 관리',
+    title: '홈 관리',
+    itemList: [
+      {
+        name: '큐레이션 관리',
+        url: '/admin/home/curation',
+      },
+    ],
+  },
+  {
+    title: '배너/팝업 관리',
     itemList: [
       {
         name: '메인 배너 관리',
