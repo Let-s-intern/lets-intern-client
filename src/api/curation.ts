@@ -8,6 +8,7 @@ export const curationLocationSchema = z.enum([
   'UNDER_BLOG',
 ]);
 export type CurationLocationType = z.infer<typeof curationLocationSchema>;
+export const CurationLocationTypeValues = curationLocationSchema._def.values;
 
 // ADMIN-SCHEMA
 export const curationListItemSchema = z.object({
@@ -61,6 +62,24 @@ export type CurationEditBodyType = {
   endDate?: string;
   locationType?: CurationLocationType;
   isVisible?: boolean;
+};
+
+export const curationTypeSchema = z.enum([
+  'CHALLENGE',
+  'LIVE',
+  'REPORT',
+  'BLOG',
+  'ETC',
+]);
+export type CurationType = z.infer<typeof curationTypeSchema>;
+export const CurationTypeValues = curationTypeSchema._def.values;
+
+export type CurationItemType = {
+  curationType: CurationType;
+  typeId?: number;
+  thumbnail?: string;
+  title?: string;
+  url?: string;
 };
 
 // ADMIN-API
