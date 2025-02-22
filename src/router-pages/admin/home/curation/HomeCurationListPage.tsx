@@ -93,7 +93,7 @@ const HomeCurationListPage = () => {
               key={'edit' + id}
               icon={<Pencil size={16} />}
               label="수정"
-              onClick={() => navigate(`/admin/home/curation/${id}`)}
+              onClick={() => navigate(`/admin/home/curation/${id}/edit`)}
             />,
             <GridActionsCellItem
               key={'delete' + id}

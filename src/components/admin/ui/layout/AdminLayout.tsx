@@ -55,18 +55,22 @@ const navData = [
     title: '홈 관리',
     itemList: [
       {
-        name: '큐레이션 관리',
+        name: '홈 큐레이션 관리',
         url: '/admin/home/curation',
+      },
+      {
+        name: '홈 상단 배너 관리',
+        url: '/admin/home/main-banners',
+      },
+      {
+        name: '홈 하단 배너 관리',
+        url: '/admin/home/bottom-banners',
       },
     ],
   },
   {
     title: '배너/팝업 관리',
     itemList: [
-      {
-        name: '메인 배너 관리',
-        url: '/admin/banner/main-banners',
-      },
       {
         name: '상단 띠 배너 관리',
         url: '/admin/banner/top-bar-banners',
