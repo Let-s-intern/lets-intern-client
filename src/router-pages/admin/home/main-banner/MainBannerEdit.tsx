@@ -8,7 +8,7 @@ import {
 } from '@/api/banner';
 import EmptyContainer from '@components/common/ui/EmptyContainer';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import MainBannerInputContent from '../../../../components/admin/banner/main-banner/MainBannerInputContent';
+import MainBannerInputContent from '../../../../components/admin/home/main-banner/MainBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
 
 const MainBannerEdit = () => {

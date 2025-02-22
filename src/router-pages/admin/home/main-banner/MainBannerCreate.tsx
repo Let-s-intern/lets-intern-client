@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { BannerItemType, usePostBannerForAdmin } from '@/api/banner';
-import MainBannerInputContent from '../../../../components/admin/banner/main-banner/MainBannerInputContent';
+import MainBannerInputContent from '../../../../components/admin/home/main-banner/MainBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
 
 const MainBannerCreate = () => {
