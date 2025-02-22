@@ -67,6 +67,7 @@ export type CurationEditBodyType = {
 export const curationTypeSchema = z.enum([
   'CHALLENGE',
   'LIVE',
+  'VOD',
   'REPORT',
   'BLOG',
   'ETC',
@@ -75,8 +76,9 @@ export type CurationType = z.infer<typeof curationTypeSchema>;
 export const CurationTypeValues = curationTypeSchema._def.values;
 
 export type CurationItemType = {
+  id: number;
   curationType: CurationType;
-  typeId?: number;
+  itemId?: number;
   thumbnail?: string;
   title?: string;
   url?: string;
