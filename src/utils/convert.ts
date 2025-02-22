@@ -1,3 +1,4 @@
+import { CurationLocationType } from '@/api/curation';
 import { QuestionType } from '@/api/review';
 import {
   AttendanceResult,
@@ -371,4 +372,19 @@ export const blogCategory: Record<string, string> = {
   WORK_EXPERIENCES: '근무 후기',
   JUNIOR_STORIES: '주니어 이야기',
   LETSCAREER_NEWS: '렛츠커리어 소식',
+};
+
+export const convertCurationLocationTypeToText = (
+  locationType: CurationLocationType,
+) => {
+  switch (locationType) {
+    case 'UNDER_BANNER':
+      return '배너 하단';
+    case 'UNDER_REVIEW':
+      return '리뷰 하단';
+    case 'UNDER_BLOG':
+      return '블로그 하단';
+    default:
+      return '-';
+  }
 };
