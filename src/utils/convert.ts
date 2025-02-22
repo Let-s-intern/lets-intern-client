@@ -395,6 +395,8 @@ export const convertCurationTypeToText = (type: CurationType | null) => {
       return '챌린지';
     case 'LIVE':
       return '라이브';
+    case 'VOD':
+      return 'VOD';
     case 'REPORT':
       return '서류 진단';
     case 'BLOG':
