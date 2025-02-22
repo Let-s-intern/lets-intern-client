@@ -67,7 +67,7 @@ const BlogBannerEditPage = () => {
 
             const imgUrl = await uploadFile({
               file: e.target.files[0],
-              type: fileType.enum.BLOG,
+              type: fileType.enum.BLOG_BANNER,
             });
 
             setReqBody((prev) => ({ ...prev, file: imgUrl }));
