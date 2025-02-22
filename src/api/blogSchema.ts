@@ -125,7 +125,6 @@ const adminBlogBannerListItemScheam = z.object({
   link: z.string().optional().nullable(),
   startDate: z.string().optional().nullable(),
   endDate: z.string().optional().nullable(),
-  weight: z.number().optional().nullable(),
   isVisible: z.boolean(),
 });
 
@@ -145,7 +144,6 @@ export interface PatchAdminBlogBannerReqBody {
   startDate?: string;
   endDate?: string;
   file?: string;
-  weight?: number;
 }
 
 export interface PostAdminBlogBannerReqBody {
@@ -154,18 +152,23 @@ export interface PostAdminBlogBannerReqBody {
   startDate?: string;
   endDate?: string;
   file: string | null;
-  weight: number;
 }
 
+const blogBannerSchema = z.object({
+  blogBannerId: z.number(),
+  title: z.string().optional().nullable(),
+  link: z.string().optional().nullable(),
+  file: z.string().optional().nullable(),
+  startDate: z.string().optional().nullable(),
+  endDate: z.string().optional().nullable(),
+  isVisible: z.boolean(),
+});
+
 export const adminBlogBannerSchema = z.object({
-  blogBannerInfo: z.object({
-    blogBannerId: z.number(),
-    title: z.string(),
-    link: z.string(),
-    file: z.string(),
-    startDate: z.string(),
-    endDate: z.string(),
-    weight: z.number(),
-    isVisible: z.boolean(),
-  }),
+  blogBannerInfo: blogBannerSchema,
+});
+
+export const blogBannerListSchema = z.object({
+  blogBannerList: z.array(blogBannerSchema),
+  pageInfo,
 });

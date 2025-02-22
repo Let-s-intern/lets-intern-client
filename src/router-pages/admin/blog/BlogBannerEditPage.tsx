@@ -61,13 +61,13 @@ const BlogBannerEditPage = () => {
           label="배너 이미지 업로드"
           id="file"
           name="file"
-          image={data?.blogBannerInfo.file}
+          image={data?.blogBannerInfo.file ?? undefined}
           onChange={async (e) => {
             if (!e.target.files) return;
 
             const imgUrl = await uploadFile({
               file: e.target.files[0],
-              type: fileType.enum.BLOG,
+              type: fileType.enum.BLOG_BANNER,
             });
 
             setReqBody((prev) => ({ ...prev, file: imgUrl }));

@@ -9,8 +9,6 @@ import FindPassword from './router-pages/common/auth/FindPassword';
 import Login from './router-pages/common/auth/Login';
 import SignUp from './router-pages/common/auth/SignUp';
 // import BlogDetailSSRPage from './pages/common/blog/BlogDetailSSRPage';
-import BlogHashtagListPage from './router-pages/common/blog/BlogHashtagListPage';
-import BlogListPage from './router-pages/common/blog/BlogListPage';
 import ChallengeDashboard from './router-pages/common/challenge/ChallengeDashboard';
 import ChallengeUserInfo from './router-pages/common/challenge/ChallengeUserInfo';
 import MyChallengeDashboard from './router-pages/common/challenge/MyChallengeDashboard';
@@ -69,9 +67,6 @@ export const routes: RouteObject[] = [
       { path: 'order/result', element: <PaymentResult /> },
       { path: 'order/fail', element: <PaymentFail /> },
       { path: 'program', element: <Programs /> },
-      { path: 'blog', element: <BlogListPage /> },
-      { path: 'blog/hashtag', element: <BlogHashtagListPage /> },
-      // { path: 'blog/:id/:title?', element: <BlogDetailSSRPage /> },
       {
         path: 'mypage',
         element: <MyPage />,

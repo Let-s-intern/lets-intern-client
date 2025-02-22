@@ -1,6 +1,6 @@
 'use client';
 
-import { useBlogListQuery } from '@/api/blog';
+import { useBlogListQuery, useGetBlogBannerList } from '@/api/blog';
 import BellIcon from '@/assets/icons/Bell.svg';
 import LockKeyHoleIcon from '@/assets/icons/lock-keyhole.svg';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
@@ -95,10 +95,12 @@ function BlogList({
   const router = useRouter();
 
   const isMobile = useMediaQuery('(max-width: 768px)');
+
   const { data, isLoading } = useBlogListQuery({
     pageable: { page, size: isMobile ? 6 : 14 },
     type,
   });
+  const { data: blogBannerData } = useGetBlogBannerList({ page, size: 2 });
 
   if (isLoading) {
     return (
@@ -151,54 +153,44 @@ function BlogList({
            * 모바일: 인덱스 2, 5일 때 함께 노출
            * PC: 인덱스 3, 7일 때 함께 노출
            */
-          const blogBanners = blogBannerMockData.blogBannerList;
+          const blogBanners = blogBannerData?.blogBannerList ?? [];
           let blogBannerCard = null;
 
-          if (isMobile && index === 2) {
+          if (
+            blogBanners.length > 0 &&
+            ((isMobile && index === 2) || (!isMobile && index === 3))
+          ) {
             blogBannerCard = (
               <BlogCard
                 key={blogBanners[0].blogBannerId}
-                title={blogBanners[0].title}
-                superTitle="커스텀"
+                title={blogBanners[0].title ?? ''}
+                superTitle="AD"
                 thumbnailItem={
-                  <img className="h-full w-full object-cover" src="" alt="" />
+                  <img
+                    className="h-full w-full object-cover"
+                    src={blogBanners[0].file ?? undefined}
+                    alt={blogBanners[0].title ?? undefined}
+                  />
                 }
               />
             );
           }
 
-          if (isMobile && index === 5)
+          if (
+            blogBanners.length > 1 &&
+            ((isMobile && index === 5) || (!isMobile && index === 7))
+          )
             blogBannerCard = (
               <BlogCard
                 key={blogBanners[1].blogBannerId}
-                title={blogBanners[1].title}
-                superTitle="커스텀"
+                title={blogBanners[1].title ?? ''}
+                superTitle="AD"
                 thumbnailItem={
-                  <img className="h-full w-full object-cover" src="" alt="" />
-                }
-              />
-            );
-
-          if (!isMobile && index === 3)
-            blogBannerCard = (
-              <BlogCard
-                key={blogBanners[1].blogBannerId}
-                title={blogBanners[1].title}
-                superTitle="커스텀"
-                thumbnailItem={
-                  <img className="h-full w-full object-cover" src="" alt="" />
-                }
-              />
-            );
-
-          if (!isMobile && index === 7)
-            blogBannerCard = (
-              <BlogCard
-                key={blogBanners[1].blogBannerId}
-                title={blogBanners[1].title}
-                superTitle="커스텀"
-                thumbnailItem={
-                  <img className="h-full w-full object-cover" src="" alt="" />
+                  <img
+                    className="h-full w-full object-cover"
+                    src={blogBanners[1].file ?? undefined}
+                    alt={blogBanners[1].title ?? undefined}
+                  />
                 }
               />
             );
