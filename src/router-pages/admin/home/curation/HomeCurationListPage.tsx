@@ -118,9 +118,9 @@ const HomeCurationListPage = () => {
               variant="contained"
               color="primary"
               startIcon={<Plus size={12} />}
-              onClick={() => navigate(`/admin/home/curation/new`)}
+              onClick={() => navigate(`/admin/home/curation/create`)}
             >
-              챌린지 등록
+              등록
             </Button>
           </div>
         </Header>

@@ -36,6 +36,8 @@ import ChallengeEdit from './router-pages/admin/ChallengeEdit';
 import CouponCreate from './router-pages/admin/coupon/CouponCreate';
 import CouponEdit from './router-pages/admin/coupon/CouponEdit';
 import Coupons from './router-pages/admin/coupon/Coupons';
+import HomeCurationCreatePage from './router-pages/admin/home/curation/HomeCurationCreatePage';
+import HomeCurationEditPage from './router-pages/admin/home/curation/HomeCurationEditPage';
 import HomeCurationListPage from './router-pages/admin/home/curation/HomeCurationListPage';
 import LiveCreate from './router-pages/admin/LiveCreate';
 import LiveEdit from './router-pages/admin/LiveEdit';
@@ -94,6 +96,8 @@ export const getAdminRoutes = () => {
       </Route>
       <Route path="home">
         <Route path="curation" element={<HomeCurationListPage />} />
+        <Route path="curation/create" element={<HomeCurationCreatePage />} />
+        <Route path="curation/:id" element={<HomeCurationEditPage />} />
       </Route>
       <Route path="banner">
         <Route path="main-banners">
