@@ -32,12 +32,14 @@ export interface BlogQueryParams {
   pageable: IPageable;
   type?: string | null;
   tagId?: number | null;
+  enabled?: boolean;
 }
 
 export const useBlogListQuery = ({
   pageable,
   type,
   tagId,
+  enabled,
 }: BlogQueryParams) => {
   return useQuery({
     queryKey: [blogListQueryKey, pageable, type],
@@ -47,6 +49,7 @@ export const useBlogListQuery = ({
       });
       return blogListSchema.parse(res.data.data);
     },
+    enabled,
   });
 };
 
