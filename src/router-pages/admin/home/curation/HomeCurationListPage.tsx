@@ -93,7 +93,7 @@ const HomeCurationListPage = () => {
               key={'edit' + id}
               icon={<Pencil size={16} />}
               label="수정"
-              onClick={() => navigate(`/admin/home/curation/${id}`)}
+              onClick={() => navigate(`/admin/home/curation/${id}/edit`)}
             />,
             <GridActionsCellItem
               key={'delete' + id}
@@ -118,9 +118,9 @@ const HomeCurationListPage = () => {
               variant="contained"
               color="primary"
               startIcon={<Plus size={12} />}
-              onClick={() => navigate(`/admin/home/curation/new`)}
+              onClick={() => navigate(`/admin/home/curation/create`)}
             >
-              챌린지 등록
+              큐레이션 등록
             </Button>
           </div>
         </Header>
@@ -149,6 +149,7 @@ const HomeCurationListPage = () => {
       </div>
       <WarningModal
         isOpen={!!deleteId}
+        isLoading={deleteIsLoading}
         onCancel={() => setDeleteId(null)}
         onConfirm={async () => {
           await deleteCuration(deleteId as number);

@@ -4,9 +4,6 @@ import ChallengeOperationAdminLayout from './components/admin/challenge/ui/Chall
 import AdminLayout from './components/admin/ui/layout/AdminLayout';
 import { CurrentAdminChallengeProvider } from './context/CurrentAdminChallengeProvider';
 import AdminHome from './router-pages/admin/AdminHome';
-import MainBannerCreate from './router-pages/admin/banner/main-banner/MainBannerCreate';
-import MainBannerEdit from './router-pages/admin/banner/main-banner/MainBannerEdit';
-import MainBanners from './router-pages/admin/banner/main-banner/MainBanners';
 import PopUpBannerCreate from './router-pages/admin/banner/pop-up-banner/PopUpBannerCreate';
 import PopUpBannerEdit from './router-pages/admin/banner/pop-up-banner/PopUpBannerEdit';
 import PopUpBanners from './router-pages/admin/banner/pop-up-banner/PopUpBanners';
@@ -36,7 +33,15 @@ import ChallengeEdit from './router-pages/admin/ChallengeEdit';
 import CouponCreate from './router-pages/admin/coupon/CouponCreate';
 import CouponEdit from './router-pages/admin/coupon/CouponEdit';
 import Coupons from './router-pages/admin/coupon/Coupons';
+import BottomBannerCreate from './router-pages/admin/home/bottom-banner/BottomBannerCreate';
+import BottomBannerEdit from './router-pages/admin/home/bottom-banner/BottomBannerEdit';
+import BottomBanners from './router-pages/admin/home/bottom-banner/BottomBanners';
+import HomeCurationCreatePage from './router-pages/admin/home/curation/HomeCurationCreatePage';
+import HomeCurationEditPage from './router-pages/admin/home/curation/HomeCurationEditPage';
 import HomeCurationListPage from './router-pages/admin/home/curation/HomeCurationListPage';
+import MainBannerCreate from './router-pages/admin/home/main-banner/MainBannerCreate';
+import MainBannerEdit from './router-pages/admin/home/main-banner/MainBannerEdit';
+import MainBanners from './router-pages/admin/home/main-banner/MainBanners';
 import LiveCreate from './router-pages/admin/LiveCreate';
 import LiveEdit from './router-pages/admin/LiveEdit';
 import ProgramCreate from './router-pages/admin/program/ProgramCreate';
@@ -93,14 +98,23 @@ export const getAdminRoutes = () => {
         <Route path=":couponId/edit" element={<CouponEdit />} />
       </Route>
       <Route path="home">
-        <Route path="curation" element={<HomeCurationListPage />} />
-      </Route>
-      <Route path="banner">
+        <Route path="curation">
+          <Route path="" element={<HomeCurationListPage />} />
+          <Route path="create" element={<HomeCurationCreatePage />} />
+          <Route path=":id/edit" element={<HomeCurationEditPage />} />
+        </Route>
         <Route path="main-banners">
           <Route path="" element={<MainBanners />} />
           <Route path="new" element={<MainBannerCreate />} />
           <Route path=":bannerId/edit" element={<MainBannerEdit />} />
         </Route>
+        <Route path="bottom-banners">
+          <Route path="" element={<BottomBanners />} />
+          <Route path="new" element={<BottomBannerCreate />} />
+          <Route path=":bannerId/edit" element={<BottomBannerEdit />} />
+        </Route>
+      </Route>
+      <Route path="banner">
         <Route path="top-bar-banners">
           <Route path="" element={<TopBarBanners />} />
           <Route path="new" element={<TopBarBannerCreate />} />

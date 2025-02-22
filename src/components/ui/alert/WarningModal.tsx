@@ -9,6 +9,7 @@ interface WarningModalProps {
   content?: string;
   cancelText?: string;
   confirmText?: string;
+  isLoading?: boolean;
 }
 
 const WarningModal = ({
@@ -19,12 +20,14 @@ const WarningModal = ({
   content = '작성했던 내용이 저장되지 않을 수 있습니다.',
   cancelText = '취소',
   confirmText = '나가기',
+  isLoading,
 }: WarningModalProps) => {
   return (
     <BaseModal
       isOpen={isOpen}
       onClose={onCancel}
       className="max-w-[20rem] md:max-w-[28rem]"
+      isLoading={isLoading}
     >
       <div className="border-b border-neutral-80 px-6 py-5">
         <span className="mb-3 block text-xsmall16 font-semibold">{title}</span>

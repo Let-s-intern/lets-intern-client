@@ -96,6 +96,7 @@ export const useGetProgramAdminQuery = (params: {
   endDate?: string;
   page: number | string;
   size: number | string;
+  enabled?: boolean;
 }) => {
   return useQuery({
     queryKey: [useGetProgramAdminQueryKey, params],
@@ -105,6 +106,7 @@ export const useGetProgramAdminQuery = (params: {
       });
       return programAdminSchema.parse(res.data.data);
     },
+    enabled: params.enabled,
   });
 };
 

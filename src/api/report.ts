@@ -305,7 +305,7 @@ const getReportsForAdminSchema = z
 
 export const getReportsForAdminQueryKey = 'getReportsForAdmin';
 
-export const useGetReportsForAdmin = () => {
+export const useGetReportsForAdmin = ({ enabled }: { enabled?: boolean }) => {
   return useQuery({
     queryKey: [getReportsForAdminQueryKey],
     queryFn: async () => {
@@ -316,6 +316,7 @@ export const useGetReportsForAdmin = () => {
       });
       return getReportsForAdminSchema.parse(res.data.data);
     },
+    enabled,
   });
 };
 

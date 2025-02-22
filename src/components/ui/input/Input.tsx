@@ -50,12 +50,23 @@ const Input = ({
   const textFieldStyle = !error
     ? {
         backgroundColor: 'white',
+        '& .Mui-disabled': {
+          backgroundColor: '#f9f9f9',
+        },
         '& .MuiOutlinedInput-root': {
           '&:hover .MuiOutlinedInput-notchedOutline': {
             borderColor: '#6963f6',
           },
           '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
             borderColor: '#6963f6',
+          },
+        },
+        '& .MuiOutlinedInput-root.Mui-disabled': {
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#B9B9B9',
+          },
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#B9B9B9',
           },
         },
         '& label.Mui-focused': {

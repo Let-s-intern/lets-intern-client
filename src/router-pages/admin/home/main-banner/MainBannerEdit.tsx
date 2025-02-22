@@ -1,13 +1,14 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import MainBannerInputContent from '../../../../components/admin/banner/main-banner/MainBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
 import { IBannerForm } from '../../../../types/Banner.interface';
 import axios from '../../../../utils/axios';
 
-const MainBannerCreate = () => {
+const MainBannerEdit = () => {
+  const params = useParams();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -21,9 +22,32 @@ const MainBannerCreate = () => {
     mobileFile: null,
   });
 
-  const addMainBanner = useMutation({
+  const bannerId = Number(params.bannerId);
+
+  useQuery({
+    queryKey: [
+      'banner',
+      'admin',
+      bannerId,
+      {
+        type: 'MAIN',
+      },
+    ],
+    queryFn: async () => {
+      const res = await axios.get(`/banner/admin/${bannerId}`, {
+        params: {
+          type: 'MAIN',
+        },
+      });
+      setValue(res.data.data.bannerAdminDetailVo);
+      return res.data;
+    },
+    refetchOnWindowFocus: false,
+  });
+
+  const editMainBanner = useMutation({
     mutationFn: async (formData: FormData) => {
-      const res = await axios.post('/banner', formData, {
+      const res = await axios.patch(`/banner/${bannerId}`, formData, {
         params: {
           type: 'MAIN',
         },
@@ -35,7 +59,7 @@ const MainBannerCreate = () => {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['banner'] });
-      navigate('/admin/banner/main-banners');
+      navigate('/admin/home/main-banners');
     },
   });
 
@@ -49,8 +73,6 @@ const MainBannerCreate = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!value.file || !value.mobileFile) return;
 
     const formData = new FormData();
     formData.append(
@@ -69,18 +91,22 @@ const MainBannerCreate = () => {
         },
       ),
     );
-    formData.append('file', value.file);
-    formData.append('mobileFile', value.mobileFile);
+    if (value.file) {
+      formData.append('file', value.file);
+    }
+    if (value.mobileFile) {
+      formData.append('mobileFile', value.mobileFile);
+    }
 
-    addMainBanner.mutate(formData);
+    editMainBanner.mutate(formData);
   };
 
   return (
     <EditorTemplate
-      title="메인 배너 등록"
+      title="메인 배너 수정"
       onSubmit={handleSubmit}
       submitButton={{
-        text: '등록',
+        text: '수정',
       }}
       cancelButton={{
         text: '취소',
@@ -92,4 +118,4 @@ const MainBannerCreate = () => {
   );
 };
 
-export default MainBannerCreate;
+export default MainBannerEdit;
