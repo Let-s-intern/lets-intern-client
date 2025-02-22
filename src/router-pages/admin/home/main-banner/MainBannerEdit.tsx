@@ -1,18 +1,22 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import {
+  BannerItemType,
+  useEditBannerForAdmin,
+  useGetBannerDetailForAdmin,
+} from '@/api/banner';
+import EmptyContainer from '@components/common/ui/EmptyContainer';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import MainBannerInputContent from '../../../../components/admin/banner/main-banner/MainBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
-import { IBannerForm } from '../../../../types/Banner.interface';
-import axios from '../../../../utils/axios';
 
 const MainBannerEdit = () => {
-  const params = useParams();
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const params = useParams();
+  const bannerId = Number(params.bannerId);
 
-  const [value, setValue] = useState<IBannerForm>({
+  const [value, setValue] = useState<BannerItemType>({
     title: '',
     link: '',
     startDate: '',
@@ -22,46 +26,27 @@ const MainBannerEdit = () => {
     mobileFile: null,
   });
 
-  const bannerId = Number(params.bannerId);
-
-  useQuery({
-    queryKey: [
-      'banner',
-      'admin',
+  const { data: banner, isLoading: bannerIsLoading } =
+    useGetBannerDetailForAdmin({
       bannerId,
-      {
-        type: 'MAIN',
-      },
-    ],
-    queryFn: async () => {
-      const res = await axios.get(`/banner/admin/${bannerId}`, {
-        params: {
-          type: 'MAIN',
-        },
-      });
-      setValue(res.data.data.bannerAdminDetailVo);
-      return res.data;
-    },
-    refetchOnWindowFocus: false,
-  });
+      type: 'MAIN',
+    });
 
-  const editMainBanner = useMutation({
-    mutationFn: async (formData: FormData) => {
-      const res = await axios.patch(`/banner/${bannerId}`, formData, {
-        params: {
-          type: 'MAIN',
-        },
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      return res.data;
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['banner'] });
+  const { mutate: editMainBanner } = useEditBannerForAdmin({
+    successCallback: () => {
+      alert('홈 상단 배너가 수정되었습니다.');
       navigate('/admin/home/main-banners');
     },
+    errorCallback: (error) => {
+      alert(error);
+    },
   });
+
+  useEffect(() => {
+    if (banner) {
+      setValue(banner.bannerAdminDetailVo);
+    }
+  }, [banner]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -98,12 +83,12 @@ const MainBannerEdit = () => {
       formData.append('mobileFile', value.mobileFile);
     }
 
-    editMainBanner.mutate(formData);
+    editMainBanner({ bannerId, type: 'MAIN', formData });
   };
 
   return (
     <EditorTemplate
-      title="메인 배너 수정"
+      title="홈 상단 배너 수정"
       onSubmit={handleSubmit}
       submitButton={{
         text: '수정',
@@ -113,7 +98,13 @@ const MainBannerEdit = () => {
         to: '-1',
       }}
     >
-      <MainBannerInputContent value={value} onChange={handleChange} />
+      {bannerIsLoading ? (
+        <LoadingContainer />
+      ) : !banner ? (
+        <EmptyContainer />
+      ) : (
+        <MainBannerInputContent value={value} onChange={handleChange} />
+      )}
     </EditorTemplate>
   );
 };

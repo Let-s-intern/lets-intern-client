@@ -1,17 +1,14 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { BannerItemType, usePostBannerForAdmin } from '@/api/banner';
 import MainBannerInputContent from '../../../../components/admin/banner/main-banner/MainBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
-import { IBannerForm } from '../../../../types/Banner.interface';
-import axios from '../../../../utils/axios';
 
 const MainBannerCreate = () => {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const [value, setValue] = useState<IBannerForm>({
+  const [value, setValue] = useState<BannerItemType>({
     title: '',
     link: '',
     startDate: '',
@@ -21,21 +18,13 @@ const MainBannerCreate = () => {
     mobileFile: null,
   });
 
-  const addMainBanner = useMutation({
-    mutationFn: async (formData: FormData) => {
-      const res = await axios.post('/banner', formData, {
-        params: {
-          type: 'MAIN',
-        },
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      return res.data;
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['banner'] });
+  const { mutate: addMainBanner } = usePostBannerForAdmin({
+    successCallback: () => {
+      alert('홈 상단 배너가 등록되었습니다.');
       navigate('/admin/home/main-banners');
+    },
+    errorCallback: (error) => {
+      alert(error);
     },
   });
 
@@ -72,12 +61,12 @@ const MainBannerCreate = () => {
     formData.append('file', value.file);
     formData.append('mobileFile', value.mobileFile);
 
-    addMainBanner.mutate(formData);
+    addMainBanner({ type: 'MAIN', formData });
   };
 
   return (
     <EditorTemplate
-      title="메인 배너 등록"
+      title="홈 상단 배너 등록"
       onSubmit={handleSubmit}
       submitButton={{
         text: '등록',

@@ -32,6 +32,7 @@ export type BannerItemType = {
   colorCode?: string | null;
   textColorCode?: string | null;
   file?: File | null;
+  mobileFile?: File | null;
 };
 
 export const bannerAdminListSchema = z.object({
