@@ -156,7 +156,10 @@ function BlogList({
           const blogBanners = blogBannerData?.blogBannerList ?? [];
           let blogBannerCard = null;
 
-          if ((isMobile && index === 2) || (!isMobile && index === 3)) {
+          if (
+            blogBanners.length > 0 &&
+            ((isMobile && index === 2) || (!isMobile && index === 3))
+          ) {
             blogBannerCard = (
               <BlogCard
                 key={blogBanners[0].blogBannerId}
@@ -173,7 +176,10 @@ function BlogList({
             );
           }
 
-          if ((isMobile && index === 5) || (!isMobile && index === 7))
+          if (
+            blogBanners.length > 1 &&
+            ((isMobile && index === 5) || (!isMobile && index === 7))
+          )
             blogBannerCard = (
               <BlogCard
                 key={blogBanners[1].blogBannerId}
