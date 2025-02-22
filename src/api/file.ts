@@ -12,6 +12,7 @@ export const fileType = z.enum([
   'VOD',
   'BLOG',
   'REPORT',
+  'CURATION',
 ]);
 
 export type FileType = z.infer<typeof fileType>;
