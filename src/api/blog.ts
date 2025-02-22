@@ -10,6 +10,7 @@ import axios from '../utils/axios';
 import {
   adminBlogBannerListSchema,
   adminBlogBannerSchema,
+  blogBannerListSchema,
   BlogList,
   blogListSchema,
   blogRatingListSchema,
@@ -371,12 +372,12 @@ export const useGetAdminBlogBanner = (id: number) => {
   });
 };
 
-export const useGetBlogBannerList = (id: number) => {
+export const useGetBlogBannerList = (pageable: IPageable) => {
   return useQuery({
     queryKey: ['useGetBlogBannerList'],
     queryFn: async () => {
-      const res = await axios.get('/blog-banner');
-      return adminBlogBannerSchema.parse(res.data.data);
+      const res = await axios.get('/blog-banner', { params: pageable });
+      return blogBannerListSchema.parse(res.data.data);
     },
   });
 };

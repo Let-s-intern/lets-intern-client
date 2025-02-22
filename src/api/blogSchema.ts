@@ -154,34 +154,21 @@ export interface PostAdminBlogBannerReqBody {
   file: string | null;
 }
 
-export const adminBlogBannerSchema = z.object({
-  blogBannerInfo: z.object({
-    blogBannerId: z.number(),
-    title: z.string().optional().nullable(),
-    link: z.string().optional().nullable(),
-    file: z.string().optional().nullable(),
-    startDate: z.string().optional().nullable(),
-    endDate: z.string().optional().nullable(),
-    isVisible: z.boolean(),
-  }),
+const blogBannerSchema = z.object({
+  blogBannerId: z.number(),
+  title: z.string().optional().nullable(),
+  link: z.string().optional().nullable(),
+  file: z.string().optional().nullable(),
+  startDate: z.string().optional().nullable(),
+  endDate: z.string().optional().nullable(),
+  isVisible: z.boolean(),
 });
 
-export const blogBannerSchema = z.object({
-  blogBannerList: z.array(
-    z.object({
-      blogBannerId: z.number(),
-      title: z.string(),
-      link: z.string(),
-      file: z.string(),
-      startDate: z.string(),
-      endDate: z.string(),
-      isVisible: z.boolean(),
-    }),
-  ),
-  pageInfo: z.object({
-    pageNum: z.number(),
-    pageSize: z.number(),
-    totalElements: z.number(),
-    totalPages: z.number(),
-  }),
+export const adminBlogBannerSchema = z.object({
+  blogBannerInfo: blogBannerSchema,
+});
+
+export const blogBannerListSchema = z.object({
+  blogBannerList: z.array(blogBannerSchema),
+  pageInfo,
 });
