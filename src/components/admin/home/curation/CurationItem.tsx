@@ -18,14 +18,20 @@ import {
 } from '@mui/material';
 import { Trash } from 'lucide-react';
 import { useState } from 'react';
+import CurationSelectModal from './CurationSelectModal';
 
 interface CurationItemProps {
   item: CurationItemType;
   onChangeItem: (item: CurationItemType) => void;
+  onDeleteItem: (id: number) => void;
 }
 
-const CurationItem = ({ item, onChangeItem }: CurationItemProps) => {
-  const [selectedTitle, setSelectedTitle] = useState<string>(item.title || '');
+const CurationItem = ({
+  item,
+  onChangeItem,
+  onDeleteItem,
+}: CurationItemProps) => {
+  const [modalType, setModalType] = useState<CurationType | null>(null);
 
   const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -37,67 +43,93 @@ const CurationItem = ({ item, onChangeItem }: CurationItemProps) => {
   };
 
   return (
-    <div className="flex w-full gap-x-5">
-      <FormControl size="small" className="w-[200px]">
-        <InputLabel id="curationType">큐레이션 분류</InputLabel>
-        <Select
-          labelId="curationType"
-          label="큐레이션 분류"
-          id="curationType"
-          name="curationType"
-          defaultValue={item.curationType}
-          onChange={(e) => {
-            const value = e.target.value as CurationType;
-            onChangeItem({ ...item, curationType: value });
-          }}
-        >
-          {CurationTypeValues.map((curationType) => (
-            <MenuItem key={curationType} value={curationType}>
-              {convertCurationTypeToText(curationType)}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      {item.curationType !== 'ETC' ? (
-        <Button variant="outlined" className="w-52">
-          프로그램 선택
-        </Button>
-      ) : (
-        <div className="flex flex-1 items-center gap-x-5">
-          <Box className="flex h-full w-52 items-center justify-center overflow-hidden rounded-xs bg-neutral-90">
-            <ImageUpload
-              label="썸네일"
-              image={item.thumbnail}
-              onChange={onChangeImage}
-              simpleMode
-            />
-          </Box>
-          <div className="flex flex-1 flex-col gap-y-2.5">
-            <Input
-              label="제목"
-              type="text"
-              name="title"
-              placeholder="제목을 입력하세요"
-              size="small"
-              value={selectedTitle}
-              onChange={(e) => setSelectedTitle(e.target.value)}
-            />
-            <Input
-              label="url"
-              type="text"
-              name="url"
-              placeholder="URL을 입력하세요"
-              size="small"
-            />
+    <>
+      <div className="flex w-full gap-x-5">
+        <FormControl size="small" className="w-[200px]">
+          <InputLabel id="curationType">큐레이션 분류</InputLabel>
+          <Select
+            labelId="curationType"
+            label="큐레이션 분류"
+            id="curationType"
+            name="curationType"
+            value={item.curationType}
+            onChange={(e) => {
+              const value = e.target.value as CurationType;
+              onChangeItem({
+                ...item,
+                curationType: value,
+                itemId: undefined,
+                title: undefined,
+                url: undefined,
+              });
+            }}
+          >
+            {CurationTypeValues.map((curationType) => (
+              <MenuItem key={curationType} value={curationType}>
+                {convertCurationTypeToText(curationType)}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        {item.curationType !== 'ETC' ? (
+          <Button
+            variant="outlined"
+            className="line-clamp-1 min-w-[200px]"
+            onClick={() => setModalType(item.curationType)}
+          >
+            {item.title ||
+              `${convertCurationTypeToText(item.curationType)} 선택`}
+          </Button>
+        ) : (
+          <div className="flex flex-1 items-center gap-x-5">
+            <Box className="flex h-full w-52 items-center justify-center overflow-hidden rounded-xs bg-neutral-90">
+              <ImageUpload
+                label="썸네일"
+                image={item.thumbnail}
+                onChange={onChangeImage}
+                simpleMode
+              />
+            </Box>
+            <div className="flex flex-1 flex-col gap-y-2.5">
+              <Input
+                label="제목"
+                type="text"
+                name="title"
+                placeholder="제목을 입력하세요"
+                size="small"
+                value={item.title}
+                onChange={(e) =>
+                  onChangeItem({ ...item, title: e.target.value })
+                }
+              />
+              <Input
+                label="url"
+                type="text"
+                name="url"
+                placeholder="latest:{text}로 설정하면, 텍스트를 제목에 포함하는 챌린지 상세페이지로 이동합니다."
+                size="small"
+                value={item.url}
+                onChange={(e) => onChangeItem({ ...item, url: e.target.value })}
+              />
+            </div>
           </div>
+        )}
+        <div className="my-auto flex w-fit items-center justify-center">
+          <IconButton size="small" onClick={() => onDeleteItem(item.id)}>
+            <Trash size={24} color="red" />
+          </IconButton>
         </div>
-      )}
-      <div className="my-auto flex w-fit items-center justify-center">
-        <IconButton size="small" onClick={() => onChangeItem(item)}>
-          <Trash size={24} color="red" />
-        </IconButton>
       </div>
-    </div>
+      <CurationSelectModal
+        isOpen={modalType !== null}
+        type={modalType}
+        onSelect={({ id, title }) => {
+          onChangeItem({ ...item, itemId: id, title });
+          setModalType(null);
+        }}
+        onClose={() => setModalType(null)}
+      />
+    </>
   );
 };
 
