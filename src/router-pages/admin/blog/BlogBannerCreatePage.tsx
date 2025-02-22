@@ -19,7 +19,6 @@ const BlogBannerCreatePage = () => {
     file: null,
     startDate: undefined,
     endDate: undefined,
-    weight: 0,
   });
 
   const post = usePostAdminBlogBanner();

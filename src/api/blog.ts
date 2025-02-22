@@ -370,3 +370,13 @@ export const useGetAdminBlogBanner = (id: number) => {
     },
   });
 };
+
+export const useGetBlogBannerList = (id: number) => {
+  return useQuery({
+    queryKey: ['useGetBlogBannerList'],
+    queryFn: async () => {
+      const res = await axios.get('/blog-banner');
+      return adminBlogBannerSchema.parse(res.data.data);
+    },
+  });
+};

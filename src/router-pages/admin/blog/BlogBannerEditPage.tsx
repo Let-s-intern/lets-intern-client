@@ -61,7 +61,7 @@ const BlogBannerEditPage = () => {
           label="배너 이미지 업로드"
           id="file"
           name="file"
-          image={data?.blogBannerInfo.file}
+          image={data?.blogBannerInfo.file ?? undefined}
           onChange={async (e) => {
             if (!e.target.files) return;
 
