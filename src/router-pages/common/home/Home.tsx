@@ -5,6 +5,7 @@ import { useState } from 'react';
 import TopBanner from '@/components/common/home/new/banner/TopBanner';
 import Popup from '@/components/common/home/new/ui/Popup';
 import IntroSection from '@components/common/home/section/IntroSection';
+import RoadMapSection from '@components/common/home/section/RoadMapSection';
 
 const Home = () => {
   const [isShow, setIsShow] = useState(false);
@@ -15,6 +16,7 @@ const Home = () => {
       <div className="flex justify-center pt-10 md:pt-20">
         <div className="mb-6 flex w-full max-w-[1160px] flex-col gap-16 lg:gap-20">
           <IntroSection />
+          <RoadMapSection />
           {/* <Banner />
           <ProgramSection />
           <ProgramOverviewSection />
