@@ -2,6 +2,7 @@ import { CurationItemType } from '@/api/curation';
 import Heading2 from '@components/admin/ui/heading/Heading2';
 import EmptyContainer from '@components/common/ui/EmptyContainer';
 import { Button } from '@mui/material';
+import dayjs from 'dayjs';
 import React from 'react';
 import CurationItem from '../CurationItem';
 
@@ -18,6 +19,7 @@ const CurationItemsSection = ({
     setCurationItems((prev) => [
       ...prev,
       {
+        id: dayjs().valueOf(),
         curationType: 'CHALLENGE',
         typeId: undefined,
       },
@@ -49,6 +51,11 @@ const CurationItemsSection = ({
                   newItems[index] = item;
                   return newItems;
                 });
+              }}
+              onDeleteItem={(id) => {
+                setCurationItems((prev) =>
+                  prev.filter((item) => item.id !== id),
+                );
               }}
             />
           ))
