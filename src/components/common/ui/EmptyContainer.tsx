@@ -10,7 +10,7 @@ const EmptyContainer = ({ text, className }: EmptyContainerProps) => {
   return (
     <div
       className={twMerge(
-        'flex h-60 w-full flex-col items-center justify-center gap-y-6 py-10',
+        'flex h-60 w-full flex-col items-center justify-center gap-y-6 rounded-sm py-10',
         className,
       )}
     >
