@@ -120,7 +120,7 @@ const HomeCurationListPage = () => {
               startIcon={<Plus size={12} />}
               onClick={() => navigate(`/admin/home/curation/create`)}
             >
-              등록
+              큐레이션 등록
             </Button>
           </div>
         </Header>
