@@ -149,6 +149,7 @@ const HomeCurationListPage = () => {
       </div>
       <WarningModal
         isOpen={!!deleteId}
+        isLoading={deleteIsLoading}
         onCancel={() => setDeleteId(null)}
         onConfirm={async () => {
           await deleteCuration(deleteId as number);
