@@ -1,5 +1,5 @@
 import {
-  CurationItemBodyType,
+  CurationItemType,
   CurationType,
   CurationTypeValues,
 } from '@/api/curation';
@@ -21,8 +21,8 @@ import { useState } from 'react';
 import CurationSelectModal from './CurationSelectModal';
 
 interface CurationItemProps {
-  item: CurationItemBodyType;
-  onChangeItem: (item: CurationItemBodyType) => void;
+  item: CurationItemType;
+  onChangeItem: (item: CurationItemType) => void;
   onDeleteItem: () => void;
 }
 

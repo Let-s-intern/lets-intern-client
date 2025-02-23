@@ -1,12 +1,14 @@
-import { CurationItemBodyType } from '@/api/curation';
+import { CurationItemType } from '@/api/curation';
+import dayjs from '@/lib/dayjs';
 import Heading2 from '@components/admin/ui/heading/Heading2';
 import EmptyContainer from '@components/common/ui/EmptyContainer';
 import { Button } from '@mui/material';
+import React from 'react';
 import CurationItem from '../CurationItem';
 
 interface CurationItemsSectionProps {
-  curationItems: CurationItemBodyType[];
-  setCurationItems: (curationItems: CurationItemBodyType[]) => void;
+  curationItems: CurationItemType[];
+  setCurationItems: React.Dispatch<React.SetStateAction<CurationItemType[]>>;
 }
 
 const CurationItemsSection = ({
@@ -17,6 +19,7 @@ const CurationItemsSection = ({
     setCurationItems([
       ...curationItems,
       {
+        id: dayjs().valueOf(),
         programType: 'CHALLENGE',
         programId: undefined,
       },

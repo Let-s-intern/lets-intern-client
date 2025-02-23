@@ -1,6 +1,6 @@
 import {
   CurationBodyType,
-  CurationItemBodyType,
+  CurationItemType,
   CurationLocationType,
   usePostAdminCuration,
 } from '@/api/curation';
@@ -29,6 +29,7 @@ const HomeCurationCreatePage = () => {
     endDate: '',
     curationItemList: [],
   });
+  const [curationItems, setCurationItems] = useState<CurationItemType[]>([]);
 
   const { mutateAsync: createCuration, isPending: createCurationIsPending } =
     usePostAdminCuration({
@@ -38,17 +39,19 @@ const HomeCurationCreatePage = () => {
       },
     });
 
-  const setCurationItems = (curationItems: CurationItemBodyType[]) => {
-    setForm({
-      ...form,
-      curationItemList: curationItems,
-    });
-  };
-
   const onClickCreate = async () => {
     await createCuration({
       locationType,
-      body: form,
+      body: {
+        ...form,
+        curationItemList: curationItems.map((item) => ({
+          programType: item.programType,
+          programId: item.programId || undefined,
+          title: item.title || undefined,
+          url: item.url || undefined,
+          thumbnail: item.thumbnail || undefined,
+        })),
+      },
     });
   };
 
@@ -61,15 +64,13 @@ const HomeCurationCreatePage = () => {
         <div className="flex w-full flex-col gap-y-8">
           <div className="flex w-full gap-x-5">
             <CurationInfoSection
-              locationType={locationType}
               setLocationType={setLocationType}
-              form={form}
               setForm={setForm}
             />
-            <CurationVisibleSection form={form} setForm={setForm} />
+            <CurationVisibleSection setForm={setForm} />
           </div>
           <CurationItemsSection
-            curationItems={form.curationItemList}
+            curationItems={curationItems}
             setCurationItems={setCurationItems}
           />
         </div>

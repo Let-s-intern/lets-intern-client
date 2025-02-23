@@ -1,5 +1,7 @@
 import {
   CurationBodyType,
+  CurationEditBodyType,
+  CurationInfoType,
   CurationLocationType,
   CurationLocationTypeValues,
 } from '@/api/curation';
@@ -9,21 +11,23 @@ import Input from '@components/ui/input/Input';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { Dispatch } from 'react';
 
-interface CurationInfoSectionProps {
-  locationType: CurationLocationType;
+interface CurationInfoSectionProps<
+  T extends CurationBodyType | CurationEditBodyType,
+> {
+  defaultValue?: CurationInfoType;
   setLocationType: Dispatch<React.SetStateAction<CurationLocationType>>;
-  form: CurationBodyType;
-  setForm: Dispatch<React.SetStateAction<CurationBodyType>>;
+  setForm: Dispatch<React.SetStateAction<T>>;
 }
 
-const CurationInfoSection = ({
-  locationType,
+const CurationInfoSection = <
+  T extends CurationBodyType | CurationEditBodyType,
+>({
+  defaultValue,
   setLocationType,
-  form,
   setForm,
-}: CurationInfoSectionProps) => {
+}: CurationInfoSectionProps<T>) => {
   const onChangeForm = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   return (
@@ -58,7 +62,9 @@ const CurationInfoSection = ({
           label="노출 영역 선택"
           id="locationType"
           name="locationType"
-          value={locationType}
+          defaultValue={
+            defaultValue?.locationType || CurationLocationTypeValues[0]
+          }
           onChange={(e) =>
             setLocationType(e.target.value as CurationLocationType)
           }
@@ -76,7 +82,7 @@ const CurationInfoSection = ({
         name="title"
         placeholder="제목을 입력하세요"
         size="small"
-        value={form.title}
+        defaultValue={defaultValue?.title || ''}
         onChange={onChangeForm}
       />
       <Input
@@ -85,7 +91,7 @@ const CurationInfoSection = ({
         name="subTitle"
         placeholder="소제목을 입력하세요"
         size="small"
-        value={form.subTitle}
+        defaultValue={defaultValue?.subTitle || ''}
         onChange={onChangeForm}
       />
     </div>

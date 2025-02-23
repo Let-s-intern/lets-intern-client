@@ -1,4 +1,8 @@
-import { CurationBodyType } from '@/api/curation';
+import {
+  CurationBodyType,
+  CurationEditBodyType,
+  CurationInfoType,
+} from '@/api/curation';
 import dayjs from '@/lib/dayjs';
 import Heading3 from '@components/admin/ui/heading/Heading3';
 import Input from '@components/ui/input/Input';
@@ -12,9 +16,11 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Dayjs } from 'dayjs';
 import { useState } from 'react';
 
-interface CurationVisibleSectionProps {
-  form: CurationBodyType;
-  setForm: React.Dispatch<React.SetStateAction<CurationBodyType>>;
+interface CurationVisibleSectionProps<
+  T extends CurationBodyType | CurationEditBodyType,
+> {
+  defaultValue?: CurationInfoType;
+  setForm: React.Dispatch<React.SetStateAction<T>>;
 }
 
 const dateTimePickerSlotProps: DateTimePickerSlotProps<Dayjs, false> = {
@@ -27,14 +33,18 @@ const dateTimePickerSlotProps: DateTimePickerSlotProps<Dayjs, false> = {
   },
 };
 
-const CurationVisibleSection = ({
-  form,
+const CurationVisibleSection = <
+  T extends CurationBodyType | CurationEditBodyType,
+>({
+  defaultValue,
   setForm,
-}: CurationVisibleSectionProps) => {
-  const [showMoreButton, setShowMoreButton] = useState(false);
+}: CurationVisibleSectionProps<T>) => {
+  const [showMoreButton, setShowMoreButton] = useState(
+    defaultValue?.moreUrl !== '' && typeof defaultValue?.moreUrl === 'string',
+  );
 
   const onChangeForm = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const dateForm = (date: Dayjs | null) => {
@@ -52,9 +62,11 @@ const CurationVisibleSection = ({
             format="YYYY.MM.DD(dd) HH:mm"
             ampm={false}
             slotProps={dateTimePickerSlotProps}
-            value={form.startDate ? dayjs(form.startDate) : null}
+            value={
+              defaultValue?.startDate ? dayjs(defaultValue.startDate) : null
+            }
             onChange={(date) => {
-              setForm({ ...form, startDate: dateForm(date) });
+              setForm((prev) => ({ ...prev, startDate: dateForm(date) }));
             }}
           />
           <DateTimePicker
@@ -63,9 +75,9 @@ const CurationVisibleSection = ({
             format="YYYY.MM.DD(dd) HH:mm"
             ampm={false}
             slotProps={dateTimePickerSlotProps}
-            value={form.endDate ? dayjs(form.endDate) : null}
+            value={defaultValue?.endDate ? dayjs(defaultValue.endDate) : null}
             onChange={(date) => {
-              setForm({ ...form, endDate: dateForm(date) });
+              setForm((prev) => ({ ...prev, endDate: dateForm(date) }));
             }}
           />
         </LocalizationProvider>
@@ -74,18 +86,20 @@ const CurationVisibleSection = ({
         <FormControlLabel
           control={<Checkbox />}
           label="모집 마감 5일 남은 프로그램 자동 노출 여부"
-          value={form.showImminentList}
-          onChange={() =>
-            setForm({ ...form, showImminentList: !form.showImminentList })
-          }
+          defaultChecked={true}
+          onChange={() => {
+            setForm((prev) => ({
+              ...prev,
+              showImminentList: !prev.showImminentList,
+            }));
+          }}
         />
         <FormControlLabel
-          control={<Checkbox />}
+          control={<Checkbox checked={showMoreButton} />}
           label="더보기 버튼 노출 여부"
-          value={showMoreButton}
           onChange={() => {
             setShowMoreButton(!showMoreButton);
-            setForm({ ...form, moreUrl: '' });
+            setForm((prev) => ({ ...prev, moreUrl: '' }));
           }}
         />
         <Input
@@ -95,7 +109,7 @@ const CurationVisibleSection = ({
           placeholder="더보기 버튼 URL을 입력하세요"
           size="small"
           disabled={!showMoreButton}
-          value={form.moreUrl}
+          defaultValue={defaultValue?.moreUrl || ''}
           onChange={onChangeForm}
         />
       </FormGroup>

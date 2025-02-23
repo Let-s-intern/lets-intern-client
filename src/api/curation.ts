@@ -11,6 +11,17 @@ export type CurationLocationType = z.infer<typeof curationLocationSchema>;
 export const CurationLocationTypeValues = curationLocationSchema._def.values;
 
 // ADMIN-SCHEMA
+export const curationTypeSchema = z.enum([
+  'CHALLENGE',
+  'LIVE',
+  'VOD',
+  'REPORT',
+  'BLOG',
+  'ETC',
+]);
+export type CurationType = z.infer<typeof curationTypeSchema>;
+export const CurationTypeValues = curationTypeSchema._def.values;
+
 export const curationListItemSchema = z.object({
   curationId: z.number(),
   locationType: curationLocationSchema,
@@ -31,17 +42,28 @@ export const curationInfoSchema = z.object({
   locationType: curationLocationSchema,
   title: z.string(),
   subTitle: z.string().nullable().optional(),
+  moreUrl: z.string().nullable().optional(),
   startDate: z.string(),
   endDate: z.string(),
-  listSize: z.number(),
-  content: z.string().nullable().optional(),
   isVisible: z.boolean(),
 });
 
 export type CurationInfoType = z.infer<typeof curationInfoSchema>;
 
+export const curationItemSchema = z.object({
+  id: z.number(),
+  programType: curationTypeSchema,
+  programId: z.number().nullable().optional(),
+  title: z.string().nullable().optional(),
+  url: z.string().nullable().optional(),
+  thumbnail: z.string().nullable().optional(),
+});
+
+export type CurationItemType = z.infer<typeof curationItemSchema>;
+
 export const curationDetailSchema = z.object({
   curationInfo: curationInfoSchema,
+  curationItemList: z.array(curationItemSchema),
 });
 
 export type CurationBodyType = {
@@ -74,17 +96,6 @@ export type CurationEditBodyType = {
   curationItemList?: CurationItemBodyType[];
 };
 
-export const curationTypeSchema = z.enum([
-  'CHALLENGE',
-  'LIVE',
-  'VOD',
-  'REPORT',
-  'BLOG',
-  'ETC',
-]);
-export type CurationType = z.infer<typeof curationTypeSchema>;
-export const CurationTypeValues = curationTypeSchema._def.values;
-
 // ADMIN-API
 export const useGetAdminCurationList = (
   locationType?: CurationLocationType,
@@ -102,13 +113,14 @@ export const useGetAdminCurationList = (
   });
 };
 
-export const useGetAdminCurationDetail = (id: number) => {
+export const useGetAdminCurationDetail = (id: number | undefined) => {
   return useQuery({
     queryKey: ['admin-curation', 'detail', id],
     queryFn: async () => {
       const res = await axios.get(`/admin/curation/${id}`);
       return curationDetailSchema.parse(res.data.data);
     },
+    enabled: !!id,
   });
 };
 
