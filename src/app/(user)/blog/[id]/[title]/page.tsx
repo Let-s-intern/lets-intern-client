@@ -117,7 +117,7 @@ const BlogDetailPage = async ({
 
   return (
     <main className="mx-auto w-full max-w-[1100px] pb-12 pt-6">
-      <div className="flex flex-col items-center md:flex-row md:gap-20">
+      <div className="flex flex-col items-center md:flex-row md:items-start md:gap-20">
         {/* 본문 */}
         <section className="w-full px-5 md:px-0">
           <article className="flex flex-col gap-8">
@@ -227,8 +227,8 @@ const BlogDetailPage = async ({
         </section>
 
         {/* 프로그램 추천 */}
-        <aside className="w-full px-5 py-9">
-          <Heading2>
+        <aside className="w-full px-5 py-9 md:sticky md:top-[100px] md:max-w-[328px] md:rounded-md md:border md:border-neutral-80 md:px-6 md:py-5">
+          <Heading2 className="md:text-xsmall16">
             렛츠커리어 프로그램 참여하고
             <br />
             취뽀 성공해요!
@@ -255,7 +255,7 @@ const BlogDetailPage = async ({
             <BlogRecommendCard key={item.id} blog={item} />
           ))}
         </div>
-        <MoreLink href="/program">더 많은 블로그 글 보기</MoreLink>
+        <MoreLink href="/blog/list">더 많은 블로그 글 보기</MoreLink>
       </section>
 
       {/* 블로그 CTA */}
