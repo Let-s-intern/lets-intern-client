@@ -1,8 +1,8 @@
 'use client';
 
-import { programSchema } from '@/schema';
+import { ProgramInfo, programSchema } from '@/schema';
+import axios from '@/utils/axios';
 import { PROGRAM_STATUS_KEY, PROGRAM_TYPE_KEY } from '@/utils/programConst';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 interface BlogCTAProps {
@@ -10,7 +10,9 @@ interface BlogCTAProps {
   ctaLink: string;
 }
 
-const findProgramIncludingKeyword = async (keyword: string) => {
+const findProgramIncludingKeyword = async (
+  keyword: string,
+): Promise<ProgramInfo> => {
   const res = await axios.get('/program', {
     params: {
       pageable: { page: 1, size: 10000 },
@@ -33,28 +35,48 @@ const findProgramIncludingKeyword = async (keyword: string) => {
 
 const BlogCTA = ({ ctaText, ctaLink }: BlogCTAProps) => {
   const [showCTA, setShowCTA] = useState(false);
+  const [programIncludingKeyword, setProgramIncludingKeyword] =
+    useState<ProgramInfo | null>(null);
+  const isLatest = ctaLink?.startsWith('latest:');
+
+  useEffect(() => {
+    if (!ctaLink) {
+      return;
+    }
+
+    if (isLatest) {
+      const keyword = ctaLink.split('latest:')[1].trim();
+      findProgramIncludingKeyword(keyword).then((program) => {
+        setProgramIncludingKeyword(program);
+      });
+    }
+  }, [ctaLink, isLatest]);
 
   const handleCtaButtonClick = () => {
-    // [이슈] iOS에서 비동기 함수 내의 window.open() 차단 이슈로 open() 함수를 미리 선언
-    const open = window.open('', '_self');
-
-    // 모집 중인 챌린지 상세 페이지로 이동
-    if (ctaLink!.startsWith('latest:')) {
-      const keyword = ctaLink!.split('latest:')[1].trim();
-      findProgramIncludingKeyword(keyword).then((program) => {
-        ctaLink =
-          program === undefined
-            ? ''
-            : window.location.origin +
-              `/program/challenge/${program?.programInfo?.id}`;
-        open?.location.assign(ctaLink);
-      });
-    } else {
-      window.open(
-        ctaLink!,
-        ctaLink?.includes(window.location.origin) ? '_self' : '_blank',
-      );
+    if (!ctaLink) {
+      return;
     }
+
+    if (isLatest) {
+      if (!programIncludingKeyword) {
+        // eslint-disable-next-line no-console
+        console.log(`no latest program for ${ctaLink}`);
+        return;
+      }
+
+      window.open(
+        window.location.origin +
+          `/program/challenge/${programIncludingKeyword.programInfo.id}`,
+        '_self',
+      );
+
+      return;
+    }
+
+    window.open(
+      ctaLink,
+      ctaLink.includes(window.location.origin) ? '_self' : '_blank',
+    );
   };
 
   useEffect(() => {
@@ -73,7 +95,7 @@ const BlogCTA = ({ ctaText, ctaLink }: BlogCTAProps) => {
       <div className="flex w-full max-w-[1200px] flex-col items-center px-5 md:px-10">
         <div className="flex w-full flex-col items-center md:px-[100px]">
           <button
-            className="w-full px-6 py-3 font-medium rounded-md blog_cta bg-primary text-small18 text-neutral-100"
+            className="blog_cta w-full rounded-md bg-primary px-6 py-3 text-small18 font-medium text-neutral-100"
             onClick={handleCtaButtonClick}
           >
             {ctaText}
