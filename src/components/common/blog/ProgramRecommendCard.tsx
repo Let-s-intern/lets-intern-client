@@ -29,6 +29,7 @@ function ProgramRecommendCard({ program }: Props) {
       {/* 4:3 비율 */}
       <div className="relative h-[3.375rem] w-[4.5rem] shrink-0 bg-neutral-95">
         <Image
+          priority
           className="rounded-xxs object-cover"
           src={program.thumbnail}
           alt={program.title + ' 썸네일'}
