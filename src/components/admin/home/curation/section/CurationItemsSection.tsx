@@ -1,14 +1,12 @@
-import { CurationItemType } from '@/api/curation';
+import { CurationItemBodyType } from '@/api/curation';
 import Heading2 from '@components/admin/ui/heading/Heading2';
 import EmptyContainer from '@components/common/ui/EmptyContainer';
 import { Button } from '@mui/material';
-import dayjs from 'dayjs';
-import React from 'react';
 import CurationItem from '../CurationItem';
 
 interface CurationItemsSectionProps {
-  curationItems: CurationItemType[];
-  setCurationItems: React.Dispatch<React.SetStateAction<CurationItemType[]>>;
+  curationItems: CurationItemBodyType[];
+  setCurationItems: (curationItems: CurationItemBodyType[]) => void;
 }
 
 const CurationItemsSection = ({
@@ -16,12 +14,11 @@ const CurationItemsSection = ({
   setCurationItems,
 }: CurationItemsSectionProps) => {
   const onClickAdd = () => {
-    setCurationItems((prev) => [
-      ...prev,
+    setCurationItems([
+      ...curationItems,
       {
-        id: dayjs().valueOf(),
-        curationType: 'CHALLENGE',
-        typeId: undefined,
+        programType: 'CHALLENGE',
+        programId: undefined,
       },
     ]);
   };
@@ -30,7 +27,7 @@ const CurationItemsSection = ({
     <div className="flex w-full flex-col gap-y-5">
       <div className="flex w-full items-center justify-between">
         <Heading2>큐레이션 리스트</Heading2>
-        <Button variant="contained" color="primary" onClick={onClickAdd}>
+        <Button variant="outlined" color="primary" onClick={onClickAdd}>
           추가
         </Button>
       </div>
@@ -46,16 +43,14 @@ const CurationItemsSection = ({
               key={index}
               item={item}
               onChangeItem={(item) => {
-                setCurationItems((prev) => {
-                  const newItems = [...prev];
-                  newItems[index] = item;
-                  return newItems;
-                });
+                const newItems = [...curationItems];
+                newItems[index] = item;
+                setCurationItems(newItems);
               }}
-              onDeleteItem={(id) => {
-                setCurationItems((prev) =>
-                  prev.filter((item) => item.id !== id),
-                );
+              onDeleteItem={() => {
+                const newItems = [...curationItems];
+                newItems.splice(index, 1);
+                setCurationItems(newItems);
               }}
             />
           ))

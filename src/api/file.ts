@@ -13,7 +13,7 @@ export const fileType = z.enum([
   'BLOG',
   'REPORT',
   'BLOG_BANNER',
-  'CURATION',
+  'CURATION_ITEM',
 ]);
 
 export type FileType = z.infer<typeof fileType>;

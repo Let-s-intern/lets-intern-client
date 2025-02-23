@@ -1,5 +1,5 @@
 import {
-  CurationItemType,
+  CurationItemBodyType,
   CurationType,
   CurationTypeValues,
 } from '@/api/curation';
@@ -21,9 +21,9 @@ import { useState } from 'react';
 import CurationSelectModal from './CurationSelectModal';
 
 interface CurationItemProps {
-  item: CurationItemType;
-  onChangeItem: (item: CurationItemType) => void;
-  onDeleteItem: (id: number) => void;
+  item: CurationItemBodyType;
+  onChangeItem: (item: CurationItemBodyType) => void;
+  onDeleteItem: () => void;
 }
 
 const CurationItem = ({
@@ -37,7 +37,7 @@ const CurationItem = ({
     if (!e.target.files) return;
     const url = await uploadFile({
       file: e.target.files[0],
-      type: fileType.enum.BANNER_MAIN,
+      type: fileType.enum.CURATION_ITEM,
     });
     onChangeItem({ ...item, thumbnail: url });
   };
@@ -52,13 +52,13 @@ const CurationItem = ({
             label="큐레이션 분류"
             id="curationType"
             name="curationType"
-            value={item.curationType}
+            value={item.programType}
             onChange={(e) => {
               const value = e.target.value as CurationType;
               onChangeItem({
                 ...item,
-                curationType: value,
-                itemId: undefined,
+                programType: value,
+                programId: undefined,
                 title: undefined,
                 url: undefined,
               });
@@ -71,14 +71,14 @@ const CurationItem = ({
             ))}
           </Select>
         </FormControl>
-        {item.curationType !== 'ETC' ? (
+        {item.programType !== 'ETC' ? (
           <Button
             variant="outlined"
             className="line-clamp-1 min-w-[200px]"
-            onClick={() => setModalType(item.curationType)}
+            onClick={() => setModalType(item.programType)}
           >
             {item.title ||
-              `${convertCurationTypeToText(item.curationType)} 선택`}
+              `${convertCurationTypeToText(item.programType)} 선택`}
           </Button>
         ) : (
           <div className="flex flex-1 items-center gap-x-5">
@@ -115,7 +115,7 @@ const CurationItem = ({
           </div>
         )}
         <div className="my-auto flex w-fit items-center justify-center">
-          <IconButton size="small" onClick={() => onDeleteItem(item.id)}>
+          <IconButton size="small" onClick={onDeleteItem}>
             <Trash size={24} color="red" />
           </IconButton>
         </div>
@@ -124,7 +124,7 @@ const CurationItem = ({
         isOpen={modalType !== null}
         type={modalType}
         onSelect={({ id, title }) => {
-          onChangeItem({ ...item, itemId: id, title });
+          onChangeItem({ ...item, programId: id, title });
           setModalType(null);
         }}
         onClose={() => setModalType(null)}

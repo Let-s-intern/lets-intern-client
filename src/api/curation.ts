@@ -47,21 +47,31 @@ export const curationDetailSchema = z.object({
 export type CurationBodyType = {
   title: string;
   subTitle?: string;
-  listSize: number;
-  content?: string;
+  moreUrl?: string;
+  showImminentList: boolean;
   startDate: string;
   endDate: string;
+  curationItemList: CurationItemBodyType[];
+};
+
+export type CurationItemBodyType = {
+  programType: CurationType;
+  programId?: number;
+  title?: string;
+  url?: string;
+  thumbnail?: string;
 };
 
 export type CurationEditBodyType = {
   title?: string;
   subTitle?: string;
-  listSize?: number;
-  content?: string;
+  moreUrl?: string;
+  showImminentList?: boolean;
   startDate?: string;
   endDate?: string;
   locationType?: CurationLocationType;
   isVisible?: boolean;
+  curationItemList?: CurationItemBodyType[];
 };
 
 export const curationTypeSchema = z.enum([
@@ -74,15 +84,6 @@ export const curationTypeSchema = z.enum([
 ]);
 export type CurationType = z.infer<typeof curationTypeSchema>;
 export const CurationTypeValues = curationTypeSchema._def.values;
-
-export type CurationItemType = {
-  id: number;
-  curationType: CurationType;
-  itemId?: number;
-  thumbnail?: string;
-  title?: string;
-  url?: string;
-};
 
 // ADMIN-API
 export const useGetAdminCurationList = (
