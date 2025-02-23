@@ -1,3 +1,4 @@
+import { twMerge } from '@/lib/twMerge';
 import { ReactNode } from 'react';
 
 interface Props {
@@ -6,6 +7,7 @@ interface Props {
   superTitle: string;
   buttonItem?: ReactNode;
   thumbnailItem: ReactNode;
+  className?: string;
   onClick?: () => void;
 }
 
@@ -15,10 +17,14 @@ const BlogCard = ({
   superTitle,
   buttonItem,
   thumbnailItem,
+  className,
   onClick,
 }: Props) => {
   return (
-    <div className="flex flex-col gap-3" onClick={onClick}>
+    <div
+      className={twMerge('flex flex-col gap-3', className)}
+      onClick={onClick}
+    >
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-neutral-70">
         {thumbnailItem}
       </div>

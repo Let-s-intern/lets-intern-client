@@ -199,6 +199,8 @@ function BlogList({
             <Fragment key={blogThumbnailInfo.id}>
               {blogBannerCard}
               <BlogCard
+                className="cursor-pointer"
+                onClick={() => router.push(`/blog/${blogThumbnailInfo.id}`)}
                 title={blogThumbnailInfo.title ?? ''}
                 superTitle={
                   blogThumbnailInfo.category
