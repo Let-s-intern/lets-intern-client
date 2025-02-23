@@ -60,6 +60,7 @@ const blogMockData = [
     thumbnail:
       'https://letsintern-bucket.s3.ap-northeast-2.amazonaws.com/blog/FeRrTQbYvJ_Frame%201984080307.png',
     category: '렛츠커리어 소식',
+    displayDate: dayjs().format(YYYY_MM_DD),
   },
   {
     id: generateUuid(),
@@ -67,6 +68,7 @@ const blogMockData = [
     thumbnail:
       'https://letsintern-bucket.s3.ap-northeast-2.amazonaws.com/blog/FeRrTQbYvJ_Frame%201984080307.png',
     category: '렛츠커리어 소식',
+    displayDate: dayjs().format(YYYY_MM_DD),
   },
   {
     id: generateUuid(),
@@ -74,6 +76,7 @@ const blogMockData = [
     thumbnail:
       'https://letsintern-bucket.s3.ap-northeast-2.amazonaws.com/blog/FeRrTQbYvJ_Frame%201984080307.png',
     category: '렛츠커리어 소식',
+    displayDate: dayjs().format(YYYY_MM_DD),
   },
 ];
 
@@ -257,16 +260,18 @@ const BlogDetailPage = async ({
 
       {/* 다른 블로그 글 */}
       <section className="px-5 py-9 md:mt-[11.25rem] md:p-0">
-        <MoreHeader href="/blog">
+        <MoreHeader href="/blog/list">
           이 글을 읽으셨다면, <br className="md:hidden" />
           이런 글도 좋아하실 거예요.
         </MoreHeader>
-        <div className="mb-6 mt-5 flex flex-col gap-6 md:mt-6">
+        <div className="mb-6 mt-5 flex flex-col gap-6 md:mt-6 md:flex-row md:gap-5">
           {blogMockData.map((item) => (
             <BlogRecommendCard key={item.id} blog={item} />
           ))}
         </div>
-        <MoreLink href="/blog/list">더 많은 블로그 글 보기</MoreLink>
+        <MoreLink href="/blog/list" className="md:hidden">
+          더 많은 블로그 글 보기
+        </MoreLink>
       </section>
 
       {/* 블로그 CTA */}
@@ -299,11 +304,22 @@ function Heading2({
   );
 }
 
-function MoreLink({ href, children }: { href: string; children?: ReactNode }) {
+function MoreLink({
+  href,
+  children,
+  className,
+}: {
+  href: string;
+  children?: ReactNode;
+  className?: string;
+}) {
   return (
     <Link
       href={href}
-      className="block w-full rounded-xs border border-neutral-85 px-5 py-3 text-center font-medium text-neutral-20"
+      className={twMerge(
+        'block w-full rounded-xs border border-neutral-85 px-5 py-3 text-center font-medium text-neutral-20',
+        className,
+      )}
     >
       {children}
     </Link>
