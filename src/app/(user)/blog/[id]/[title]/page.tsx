@@ -1,6 +1,7 @@
 import { fetchBlogData, fetchRecommendBlogData } from '@/api/blog';
 import LexicalContent from '@/components/common/blog/LexicalContent';
 import RecommendBlogCard from '@/components/common/blog/RecommendBlogCard';
+import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { blogCategory } from '@/utils/convert';
 import {
@@ -11,9 +12,11 @@ import {
 import BlogCTA from '@components/common/blog/BlogCTA';
 import BlogHashtag from '@components/common/blog/BlogHashtag';
 import BlogHomeButton from '@components/common/blog/BlogHomeButton';
+import BlogLinkShareBtn from '@components/common/blog/BlogLilnkShareBtn';
 import BlogRating from '@components/common/blog/BlogRating';
 import BlogShareSection from '@components/common/blog/BlogShareSection';
 import { Metadata } from 'next';
+import Image from 'next/image';
 
 // SSR 메타데이터 생성
 export async function generateMetadata({
@@ -56,8 +59,76 @@ const BlogDetailPage = async ({
   });
 
   return (
-    <div className="mx-auto flex w-full flex-1 flex-col items-center">
-      <div className="flex w-full max-w-[1200px] flex-col items-center px-5 md:px-10 md:pt-10">
+    <main className="mx-auto w-full max-w-[1100px]">
+      <div className="flex flex-col items-center md:flex-row md:gap-20">
+        {/* 본문 */}
+        <section className="w-full px-5 md:px-0">
+          <article className="flex flex-col gap-8">
+            {/* 썸네일 */}
+            <div className="relative h-[16rem] overflow-hidden rounded-md bg-neutral-95 md:h-[25.5rem]">
+              <Image
+                className="object-contain"
+                priority
+                fill
+                src={blog.blogDetailInfo.thumbnail ?? ''}
+                alt="블로그 썸네일"
+                sizes="(max-width: 768px) 100vw, 26rem"
+              />
+            </div>
+            <div className="flex flex-col gap-y-4">
+              {/* 제목 */}
+              <div>
+                {blog.blogDetailInfo.category && (
+                  <h2 className="mb-2 text-small20 font-semibold text-primary">
+                    {blogCategory[blog.blogDetailInfo.category]}
+                  </h2>
+                )}
+                <h1 className="line-clamp-3 text-xlarge28 font-bold text-neutral-0 md:line-clamp-2">
+                  {blog.blogDetailInfo.title}{' '}
+                  {!blog.blogDetailInfo.isDisplayed && (
+                    <span className="text-xsmall14 text-system-error">
+                      (비공개)
+                    </span>
+                  )}
+                </h1>
+              </div>
+              <div className="flex items-center justify-between">
+                {/* 게시 일자 */}
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-7 w-7 justify-center overflow-hidden rounded-full">
+                      <Image
+                        width={20}
+                        height={20}
+                        src="/logo/logo-simple.svg"
+                        alt="쥬디 프로필 사진"
+                      />
+                    </div>
+                    <span className="text-xsmall14 font-semibold text-neutral-0">
+                      쥬디
+                    </span>
+                  </div>
+                  {blog.blogDetailInfo.displayDate && (
+                    <p className="text-xsmall14 text-neutral-35">
+                      {dayjs(blog.blogDetailInfo.displayDate).format(
+                        YYYY_MM_DD,
+                      )}{' '}
+                      작성
+                    </p>
+                  )}
+                </div>
+                {/* 공유 버튼 */}
+                <BlogLinkShareBtn />
+              </div>
+            </div>
+          </article>
+        </section>
+        <aside></aside>
+      </div>
+      {/* 프로그램 추천 */}
+      <section></section>
+
+      <div className="flex w-full max-w-[1100px] flex-col items-center px-5 md:px-10 md:pt-10">
         <div className="flex w-full flex-col items-center gap-y-8 pt-8 md:px-[100px] md:pt-8">
           <div className="flex w-full flex-col gap-y-3 py-3">
             <h2 className="w-full text-xl font-bold text-primary">
@@ -128,6 +199,7 @@ const BlogDetailPage = async ({
           <BlogHomeButton />
         </div>
       </div>
+      {/* 함께 읽어보면 좋아요 */}
       <div className="mt-8 flex w-full flex-col items-center bg-neutral-100 py-10 md:py-[60px] md:pb-10">
         <div className="flex w-full max-w-[1200px] flex-col px-5 md:px-10">
           <div className="flex w-full flex-col items-center md:px-[100px]">
@@ -157,13 +229,14 @@ const BlogDetailPage = async ({
           </div>
         </div>
       </div>
+      {/* 블로그 CTA */}
       {blog.blogDetailInfo.ctaText && blog.blogDetailInfo.ctaLink && (
         <BlogCTA
           ctaText={blog.blogDetailInfo.ctaText}
           ctaLink={blog.blogDetailInfo.ctaLink}
         />
       )}
-    </div>
+    </main>
   );
 };
 
