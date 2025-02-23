@@ -3,6 +3,7 @@
 import useGetBlogParticipationReview from '@/hooks/useGetParticipationReviews';
 import { getBlogPathname } from '@/utils/url';
 import Link from 'next/link';
+import { twMerge } from 'tailwind-merge';
 import AboutTitleDark from '../ui/AboutTitleDark';
 
 const title = {
@@ -18,11 +19,15 @@ const ReviewSection = () => {
       <AboutTitleDark {...title} />
 
       <div className="custom-scrollbar -mx-5 mt-10 flex w-auto flex-nowrap gap-4 overflow-x-auto px-5 sm:-mx-10 sm:px-10 xl:pl-16">
-        {data.map(({ blogThumbnailInfo }) => (
+        {data.map(({ blogThumbnailInfo }, index) => (
           <Link
             href={getBlogPathname(blogThumbnailInfo)}
             key={blogThumbnailInfo.id}
-            className="review_card shrink-0"
+            className={twMerge(
+              'review_card shrink-0',
+              index === 0 && 'ml-auto',
+              index === data.length - 1 && 'mr-auto',
+            )}
           >
             <img
               className="h-[11.25rem] w-auto rounded-xs object-contain sm:h-[250px]"

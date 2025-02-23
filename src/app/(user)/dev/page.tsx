@@ -1,4 +1,5 @@
 import { GetReview } from '@/api/review';
+import ReviewSection from '@components/common/about/section/ReviewSection';
 import ReviewFilter from '@components/common/review/ReviewFilter';
 import MoreHeader from '@components/common/ui/MoreHeader';
 import ReviewCard from '@components/ReviewCard';
@@ -196,6 +197,9 @@ const Page = () => {
       <hr className="my-10"></hr>
       <h2 className="text-2xl font-semibold">TextArea 테스트</h2>
       <TextAreaTest />
+      <hr className="my-10"></hr>
+      <h2 className="text-2xl font-semibold">ReviewSection 테스트</h2>
+      <ReviewSection />
     </div>
   );
 };
