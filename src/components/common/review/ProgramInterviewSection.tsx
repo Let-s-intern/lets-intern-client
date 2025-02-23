@@ -15,10 +15,11 @@ function ProgramInterviewSection() {
   return (
     <section className="py-9 md:p-0">
       <MoreHeader
-        title="프로그램 참여자 인터뷰"
         subtitle={data ? `${data?.pageInfo.totalElements}개` : ''}
         href="/blog/list?category=PROGRAM_REVIEWS"
-      />
+      >
+        프로그램 참여자 인터뷰
+      </MoreHeader>
       {isLoading ? (
         <LoadingContainer className="h-[45rem] md:h-[24rem]" />
       ) : (

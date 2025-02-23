@@ -15,6 +15,7 @@ import BlogKakaoShareBtn from '@components/common/blog/BlogKakaoShareBtn';
 import BlogLinkShareBtn from '@components/common/blog/BlogLilnkShareBtn';
 import BlogRecommendCard from '@components/common/blog/BlogRecommendCard';
 import ProgramRecommendCard from '@components/common/blog/ProgramRecommendCard';
+import MoreHeader from '@components/common/ui/MoreHeader';
 import HorizontalRule from '@components/ui/HorizontalRule';
 import { CircleChevronRight, Heart } from 'lucide-react';
 import { Metadata } from 'next';
@@ -116,7 +117,7 @@ const BlogDetailPage = async ({
   const blogInfo = blog.blogDetailInfo;
 
   return (
-    <main className="mx-auto w-full max-w-[1100px] pb-12 pt-6">
+    <main className="mx-auto w-full max-w-[1100px] pb-12 pt-6 md:pb-[7.5rem]">
       <div className="flex flex-col items-center md:flex-row md:items-start md:gap-20">
         {/* 본문 */}
         <section className="w-full px-5 md:px-0">
@@ -132,12 +133,13 @@ const BlogDetailPage = async ({
                 sizes="(max-width: 768px) 100vw, 26rem"
               />
             </div>
+
             {/* 블로그 헤더 */}
             <div className="flex flex-col gap-y-4">
               {/* 제목 */}
               <div>
                 {blogInfo.category && (
-                  <Heading2 className="text-primary">
+                  <Heading2 className="mb-2 text-primary">
                     {blogCategory[blogInfo.category]}
                   </Heading2>
                 )}
@@ -150,9 +152,10 @@ const BlogDetailPage = async ({
                   )}
                 </h1>
               </div>
+
               <div className="flex items-center justify-between">
                 {/* 게시 일자 */}
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 md:gap-4">
                   <div className="flex items-center gap-2">
                     <div className="flex h-7 w-7 justify-center overflow-hidden rounded-full">
                       <Image
@@ -167,7 +170,7 @@ const BlogDetailPage = async ({
                     </span>
                   </div>
                   {blogInfo.displayDate && (
-                    <p className="text-xsmall14 text-neutral-35">
+                    <p className="text-xsmall14 text-neutral-35 md:text-xsmall16">
                       {dayjs(blogInfo.displayDate).format(YYYY_MM_DD)} 작성
                     </p>
                   )}
@@ -176,6 +179,7 @@ const BlogDetailPage = async ({
                 <BlogLinkShareBtn />
               </div>
             </div>
+
             {/* 블로그 본문 */}
             {blogInfo?.content && (
               <div className="w-full break-all text-xsmall16">
@@ -184,7 +188,7 @@ const BlogDetailPage = async ({
             )}
           </article>
 
-          <section className="mb-9 mt-10 flex items-center justify-between">
+          <section className="mb-9 mt-10 flex items-center justify-between md:mb-8">
             {/* 좋아요 */}
             <button type="button" className="flex items-center gap-2">
               <Heart width={20} height={20} color="#4D55F5" />
@@ -194,6 +198,9 @@ const BlogDetailPage = async ({
             </button>
             {/* 공유하기 */}
             <div className="flex items-center">
+              <span className="mr-1.5 hidden text-xsmall14 font-medium text-neutral-35 md:block">
+                나만 보기 아깝다면 공유하기
+              </span>
               <BlogLinkShareBtn
                 className="border-none p-2"
                 hideCaption
@@ -207,7 +214,7 @@ const BlogDetailPage = async ({
                 thumbnail={blogInfo.thumbnail ?? ''}
                 pathname={getBlogPathname(blogInfo)}
               />
-              <span className="text-xsmall14 font-medium text-neutral-35">
+              <span className="text-xsmall14 font-medium text-neutral-35 md:hidden">
                 공유하기
               </span>
             </div>
@@ -216,18 +223,22 @@ const BlogDetailPage = async ({
           <HorizontalRule className="-mx-5 h-3 md:hidden" />
           <Link
             href="/blog/list"
-            className="flex w-full items-center justify-center gap-2 py-5"
+            className="flex w-full items-center justify-center gap-2 py-5 md:rounded-xs md:bg-neutral-95"
           >
-            <p className="text-xsmall14 font-semibold text-neutral-0">
-              <span className="text-primary">블로그 홈</span> 바로가기
+            <p className="text-xsmall14 font-semibold text-neutral-0 md:text-xsmall16 md:font-medium">
+              <span className="font-semibold text-primary">블로그 홈</span>{' '}
+              바로가기
             </p>
-            <CircleChevronRight width={16} height={16} color="#5F66F6" />
+            <CircleChevronRight
+              className="h-4 w-4 md:h-5 md:w-5"
+              color="#5F66F6"
+            />
           </Link>
           <HorizontalRule className="-mx-5 h-3 md:hidden" />
         </section>
 
         {/* 프로그램 추천 */}
-        <aside className="w-full px-5 py-9 md:sticky md:top-[100px] md:max-w-[328px] md:rounded-md md:border md:border-neutral-80 md:px-6 md:py-5">
+        <aside className="w-full px-5 py-9 md:sticky md:top-[100px] md:max-w-[20.5rem] md:rounded-md md:border md:border-neutral-80 md:px-6 md:py-5">
           <Heading2 className="md:text-xsmall16">
             렛츠커리어 프로그램 참여하고
             <br />
@@ -245,12 +256,12 @@ const BlogDetailPage = async ({
       <HorizontalRule className="h-3 md:hidden" />
 
       {/* 다른 블로그 글 */}
-      <section className="px-5 py-9 md:px-0">
-        <Heading2>
+      <section className="px-5 py-9 md:mt-[11.25rem] md:p-0">
+        <MoreHeader href="/blog">
           이 글을 읽으셨다면, <br className="md:hidden" />
           이런 글도 좋아하실 거예요.
-        </Heading2>
-        <div className="mb-6 mt-5 flex flex-col gap-6">
+        </MoreHeader>
+        <div className="mb-6 mt-5 flex flex-col gap-6 md:mt-6">
           {blogMockData.map((item) => (
             <BlogRecommendCard key={item.id} blog={item} />
           ))}
