@@ -6,6 +6,7 @@ interface MoreReviewButtonProps {
   type: 'CHALLENGE' | 'LIVE' | 'VOD' | 'REPORT';
   mainColor: string;
   subColor: string;
+  subTextColor?: string;
   challengeType?: ChallengeType;
   liveJob?: string;
 }
@@ -13,6 +14,7 @@ interface MoreReviewButtonProps {
 const MoreReviewButton = ({
   mainColor,
   subColor,
+  subTextColor = '#FFFFFF',
   type,
   challengeType,
   liveJob,
@@ -34,7 +36,7 @@ const MoreReviewButton = ({
           <ArrowCircle className="h-6 w-6" />
           <div
             className="absolute bottom-[calc(100%-7px)] rounded-xs px-2.5 py-1.5 text-xxsmall12 font-medium md:text-xsmall14"
-            style={{ backgroundColor: subColor }}
+            style={{ backgroundColor: subColor, color: subTextColor }}
           >
             자세한 수강생들의 후기가 궁금하다면?
           </div>

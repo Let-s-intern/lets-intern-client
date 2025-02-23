@@ -1,21 +1,19 @@
 import Link from 'next/link';
-import { twJoin } from 'tailwind-merge';
+import { ReactNode } from 'react';
 
 interface MoreHeaderProps {
-  title: string;
+  children?: ReactNode;
   subtitle?: string;
   href?: string;
   titleClass?: string;
 }
 
-const MoreHeader = ({ title, subtitle, href, titleClass }: MoreHeaderProps) => {
+const MoreHeader = ({ children, subtitle, href }: MoreHeaderProps) => {
   return (
     <div className="flex w-full items-center justify-between">
-      <div className="flex flex-1 select-none items-center gap-x-2">
-        <h2 className={twJoin('text-small20 font-semibold', titleClass)}>
-          {title}
-        </h2>
-        <p className="text-xsmall14">{subtitle}</p>
+      <div className="flex flex-1 select-none items-center gap-x-2 text-neutral-0">
+        <h2 className="text-small20 font-semibold">{children}</h2>
+        {subtitle && <p className="text-xsmall14">{subtitle}</p>}
       </div>
       {href && (
         <Link

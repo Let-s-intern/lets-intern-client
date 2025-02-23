@@ -1,5 +1,6 @@
 import { useGetProgramAdminQuery } from '@/api/program';
 import { ProgramStatusEnum } from '@/schema';
+import { newProgramTypeToText, programStatusToText } from '@/utils/convert';
 import { MenuItem } from '@mui/material';
 import { useMemo } from 'react';
 
@@ -22,7 +23,7 @@ export default function useProgramMenuItems() {
           key={program.programInfo.programType + program.programInfo.id}
           value={`${program.programInfo.programType}-${program.programInfo.id}`}
         >
-          {`[${program.programInfo.programType}] ${program.programInfo.title}`}
+          {`[${newProgramTypeToText[program.programInfo.programType]}/${programStatusToText[program.programInfo.programStatusType]}] ${program.programInfo.title}`}
         </MenuItem>
       )) ?? []),
     ],

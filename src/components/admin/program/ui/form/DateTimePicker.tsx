@@ -2,10 +2,11 @@ interface DateTimePickerProps {
   label: string;
   id: string;
   name: string;
-  value?: string;
+  value?: string | null;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
+/** @depredated MUI datepicker를 쓰세용 */
 const DateTimePicker = ({
   label,
   id,
@@ -22,7 +23,7 @@ const DateTimePicker = ({
         id={id}
         type="datetime-local"
         name={name}
-        value={value}
+        value={value ?? undefined}
         onChange={onChange}
       />
     </div>

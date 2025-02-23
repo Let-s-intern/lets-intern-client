@@ -28,8 +28,8 @@ const BlogShareSection = ({
       kakao.Share.sendDefault({
         objectType: 'feed',
         content: {
-          title: title,
-          description: description,
+          title,
+          description,
           imageUrl: thumbnail,
           link: {
             mobileWebUrl: `${window.location.origin}${pathname}`,

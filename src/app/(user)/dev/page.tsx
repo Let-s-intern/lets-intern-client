@@ -1,4 +1,5 @@
 import { GetReview } from '@/api/review';
+import ReviewSection from '@components/common/about/section/ReviewSection';
 import ReviewFilter from '@components/common/review/ReviewFilter';
 import MoreHeader from '@components/common/ui/MoreHeader';
 import ReviewCard from '@components/ReviewCard';
@@ -16,31 +17,6 @@ const mock1: GetReview = {
   reviewInfo: {
     reviewId: 1,
     type: 'MISSION_REVIEW',
-    programTitle: '기필코 챌린지',
-    challengeType: 'DOCUMENT_PREPARATION',
-    createDate: '2021-09-01',
-    missionTh: 1,
-    missionTitle:
-      '미션명 미션명 미션명 미션명 미션명 미션명 미션명 미션명미션명',
-    name: '임호정',
-    programThumbnail: 'https://placehold.co/600x400',
-    wishCompany: 'PM',
-    wishJob: 'IT',
-  },
-  reviewItemList: [
-    {
-      reviewItemId: 1,
-      answer:
-        '진짜 너무 미친 퀄리티 너무 좋았다. 내인생에 이런 챌린지는 없다 최고다 렛츠커리어 짱이다 진짜 너무 미친 퀄리티 너무 좋았다. 내인생에 이런 챌린지는 없다 최고다 렛츠커리어 짱이다 내인생에 이런 챌린지는 없다 내인생에 이런 챌린지는 없다',
-      questionType: 'WORRY',
-    },
-  ],
-};
-
-const mock2: GetReview = {
-  reviewInfo: {
-    reviewId: 1,
-    type: 'CHALLENGE_REVIEW',
     programTitle: '기필코 챌린지',
     challengeType: 'DOCUMENT_PREPARATION',
     createDate: '2021-09-01',
@@ -165,11 +141,9 @@ const Page = () => {
           showThumbnail
         />
       </div>
-      <MoreHeader
-        title="프로그램 참여 후기"
-        subtitle="4개"
-        href="/review/program"
-      />
+      <MoreHeader subtitle="4개" href="/review/program">
+        프로그램 참여 후기{' '}
+      </MoreHeader>
       <div className="my-20">
         <Suspense>
           <ReviewFilter
@@ -223,6 +197,9 @@ const Page = () => {
       <hr className="my-10"></hr>
       <h2 className="text-2xl font-semibold">TextArea 테스트</h2>
       <TextAreaTest />
+      <hr className="my-10"></hr>
+      <h2 className="text-2xl font-semibold">ReviewSection 테스트</h2>
+      <ReviewSection />
     </div>
   );
 };
