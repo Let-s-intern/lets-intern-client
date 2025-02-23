@@ -5,12 +5,12 @@ import Header from '../../../components/admin/ui/header/Header';
 import Heading from '../../../components/admin/ui/heading/Heading';
 import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
 import Table from '../../../components/admin/ui/table/regacy/Table';
-import Filter from '../../../components/admin/user/users/filter/Filter';
+import AdminUserFilter from '../../../components/admin/user/users/filter/AdminUserFilter';
 import TableBody from '../../../components/admin/user/users/table-content/TableBody';
 import TableHead from '../../../components/admin/user/users/table-content/TableHead';
 import AlertModal from '../../../components/ui/alert/AlertModal';
 
-const Users = () => {
+const AdminUsersPage = () => {
   const [pageNum, setPageNum] = useState<number>(1);
   const [searchValues, setSearchValues] = useState<{
     name: string;
@@ -53,7 +53,7 @@ const Users = () => {
       </Header>
       <main>
         <div className="mb-4">
-          <Filter setSearchValues={setSearchValues} />
+          <AdminUserFilter setSearchValues={setSearchValues} />
         </div>
         {isLoading ? (
           <div className="py-4 text-center">로딩 중...</div>
@@ -113,4 +113,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default AdminUsersPage;

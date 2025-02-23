@@ -6,7 +6,7 @@ interface ImageUploaderProps {
   label: string;
   id?: string;
   name?: string;
-  image?: string;
+  image?: string | null;
   imageFormat?: {
     width?: number;
     height?: number;

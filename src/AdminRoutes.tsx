@@ -57,9 +57,9 @@ import AdminChallengeReviewListPage from './router-pages/admin/review/AdminChall
 import AdminLiveReviewListPage from './router-pages/admin/review/AdminLiveReviewListPage';
 import AdminMissionReviewListPage from './router-pages/admin/review/AdminMissionReviewListPage';
 import AdminReportReviewListPage from './router-pages/admin/review/AdminReportReviewListPage';
+import AdminUsersPage from './router-pages/admin/user/AdminUsersPage';
 import UserDetail from './router-pages/admin/user/UserDetail';
 import UserEdit from './router-pages/admin/user/UserEdit';
-import Users from './router-pages/admin/user/Users';
 import VodCreate from './router-pages/admin/VodCreate';
 import VodEdit from './router-pages/admin/VodEdit';
 
@@ -80,7 +80,7 @@ export const getAdminRoutes = () => {
 
       <Route path="users">
         {/* /admin/users */}
-        <Route path="" element={<Users />} />
+        <Route path="" element={<AdminUsersPage />} />
         <Route path=":userId">
           {/* /admin/users/1 */}
           <Route path="" element={<UserDetail />} />

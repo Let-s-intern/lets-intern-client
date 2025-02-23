@@ -9,7 +9,7 @@ interface InputProps {
   placeholder?: string;
   name?: string;
   label?: string;
-  value?: string;
+  value?: string | null;
   defaultValue?: string;
   disabled?: boolean;
   multiline?: boolean;
@@ -38,6 +38,7 @@ const Input = ({
   error,
   fullWidth = true,
   onChange,
+  onKeyDown,
 }: InputProps) => {
   const [focused, setFocused] = useState(false);
 
@@ -88,6 +89,7 @@ const Input = ({
       multiline={multiline}
       rows={rows}
       onChange={onChange}
+      onKeyDown={onKeyDown}
       autoComplete="off"
       fullWidth={fullWidth}
       className={className}
