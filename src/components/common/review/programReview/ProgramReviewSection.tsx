@@ -38,10 +38,9 @@ const ProgramReviewSection = () => {
 
   return (
     <section className="flex w-full flex-col gap-y-6 pb-9 pt-6 md:p-0">
-      <MoreHeader
-        title="프로그램 참여 후기"
-        subtitle={`${totalReview?.pageInfo.totalElements ?? '-'}개`}
-      />
+      <MoreHeader subtitle={`${totalReview?.pageInfo.totalElements ?? '-'}개`}>
+        프로그램 참여 후기{' '}
+      </MoreHeader>
       {isLoading || !reviewData ? (
         <div className="flex h-40 items-center justify-center">
           <LoadingContainer />

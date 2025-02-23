@@ -14,10 +14,11 @@ function MainBlogReviewSection() {
   return (
     <section className="py-9 md:p-0">
       <MoreHeader
-        title="블로그 후기"
         subtitle={data ? `${data.pageInfo.totalElements}개` : ''}
         href="/review/blog"
-      />
+      >
+        블로그 후기
+      </MoreHeader>
       {isLoading ? (
         <LoadingContainer className="h-[45rem] md:h-[24rem]" />
       ) : (
