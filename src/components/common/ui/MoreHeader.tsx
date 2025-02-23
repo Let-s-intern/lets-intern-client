@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import Link from 'next/link';
 import { ReactNode } from 'react';
 
@@ -8,11 +9,18 @@ interface MoreHeaderProps {
   titleClass?: string;
 }
 
-const MoreHeader = ({ children, subtitle, href }: MoreHeaderProps) => {
+const MoreHeader = ({
+  children,
+  subtitle,
+  href,
+  titleClass,
+}: MoreHeaderProps) => {
   return (
     <div className="flex w-full items-center justify-between">
       <div className="flex flex-1 select-none items-center gap-x-2 text-neutral-0">
-        <h2 className="text-small20 font-semibold">{children}</h2>
+        <h2 className={clsx('text-small20 font-semibold', titleClass)}>
+          {children}
+        </h2>
         {subtitle && <p className="text-xsmall14">{subtitle}</p>}
       </div>
       {href && (
