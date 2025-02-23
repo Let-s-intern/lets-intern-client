@@ -65,6 +65,10 @@ const LiveView: React.FC<{ live: LiveIdPrimitive; isPreview?: boolean }> = ({
     };
   }, [live]);
 
+  const hasLiveReview = receivedContent.liveReview;
+  const hasBlogReview =
+    receivedContent.blogReview && receivedContent.blogReview.list.length > 0;
+
   return (
     <div className="flex w-full flex-col">
       <div className="flex w-full flex-col items-center">
@@ -72,7 +76,7 @@ const LiveView: React.FC<{ live: LiveIdPrimitive; isPreview?: boolean }> = ({
           <NextBackHeader hideBack to="/program">
             {live.title ?? ''}
           </NextBackHeader>
-          {live.vod && <LiveVod />}
+          {live.vod && <LiveVod className="mb-8 md:mb-12" />}
           <LiveBasicInfo live={liveTransformed} />
         </div>
 
@@ -115,29 +119,36 @@ const LiveView: React.FC<{ live: LiveIdPrimitive; isPreview?: boolean }> = ({
 
           <LiveIntro />
 
-          <section
-            id={LIVE_REVIEW_ID}
-            className="live_review flex w-full flex-col items-center gap-y-[70px] md:gap-y-40"
-          >
-            <div className="flex w-full flex-col items-center bg-neutral-95 py-[70px] md:pb-[130px] md:pt-[110px]">
-              <ProgramBestReviewSection
-                reviews={receivedContent.liveReview}
-                type="live"
-              />
-              <MoreReviewButton
-                type={'LIVE'}
-                mainColor={'#4D55F5'}
-                subColor={'#E45BFF'}
-                liveJob={live.job ?? undefined}
-              />
-            </div>
-            {receivedContent.blogReview && (
-              <ProgramDetailBlogReviewSection
-                review={receivedContent.blogReview}
-                programType="live"
-              />
-            )}
-          </section>
+          {/* 리뷰 세션 */}
+          {(hasLiveReview || hasBlogReview) && (
+            <section
+              id={LIVE_REVIEW_ID}
+              className="live_review flex w-full flex-col items-center gap-y-[70px] md:gap-y-40"
+            >
+              {/* 프로그램 리뷰 */}
+              {hasLiveReview && (
+                <div className="flex w-full flex-col items-center bg-neutral-95 py-[70px] md:pb-[130px] md:pt-[110px]">
+                  <ProgramBestReviewSection
+                    reviews={receivedContent.liveReview}
+                    type="live"
+                  />
+                  <MoreReviewButton
+                    type={'LIVE'}
+                    mainColor={'#4D55F5'}
+                    subColor={'#E45BFF'}
+                    liveJob={live.job ?? undefined}
+                  />
+                </div>
+              )}
+              {/* 블로그 리뷰 */}
+              {hasBlogReview && (
+                <ProgramDetailBlogReviewSection
+                  review={receivedContent.blogReview!}
+                  programType="live"
+                />
+              )}
+            </section>
+          )}
           <LiveFaq faqData={faqData} />
           <LiveInfoBottom live={liveTransformed} />
         </div>
