@@ -9,6 +9,9 @@ import RoadMapSection from '@components/common/home/section/RoadMapSection';
 
 const Home = () => {
   const [isShow, setIsShow] = useState(false);
+
+  // const { data } = useGetUserCuration({ locationType: 'UNDER_REVIEW' });
+  // console.log(data);
   return (
     <>
       <TopBanner isShow={isShow} setIsShow={setIsShow} />

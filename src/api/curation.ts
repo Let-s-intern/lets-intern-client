@@ -227,4 +227,50 @@ export const useDeleteAdminCuration = ({
   });
 };
 
+// USER SCHEMA
+export const userCurationInfoSchema = z.object({
+  curationId: z.number(),
+  locationType: curationLocationSchema,
+  title: z.string(),
+  subTitle: z.string().nullable().optional(),
+  moreUrl: z.string().nullable().optional(),
+  startDate: z.string(),
+  endDate: z.string(),
+});
+
+export const userCurationItemSchema = z.object({
+  id: z.number(),
+  programType: curationTypeSchema,
+  programId: z.number().nullable().optional(),
+  startDate: z.string().nullable().optional(),
+  endDate: z.string().nullable().optional(),
+  deadline: z.string().nullable().optional(),
+  reportType: z.string().nullable().optional(),
+  title: z.string().nullable().optional(),
+  url: z.string().nullable().optional(),
+  thumbnail: z.string().nullable().optional(),
+});
+
+export const userCurationSchema = z.object({
+  curationInfo: userCurationInfoSchema,
+  curationItemList: z.array(userCurationItemSchema),
+});
+
 // USER
+export const useGetUserCuration = ({
+  locationType,
+}: {
+  locationType: CurationLocationType;
+}) => {
+  return useQuery({
+    queryKey: ['curation', 'list', locationType],
+    queryFn: async () => {
+      const res = await axios.get(`/curation`, {
+        params: {
+          locationType,
+        },
+      });
+      return userCurationSchema.parse(res.data.data);
+    },
+  });
+};
