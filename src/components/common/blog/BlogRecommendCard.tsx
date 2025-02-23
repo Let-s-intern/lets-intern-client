@@ -34,6 +34,7 @@ function BlogRecommendCard({ blog }: Props) {
       {/* 4:3 비율 */}
       <div className="relative h-[3.375rem] w-[4.5rem] shrink-0 overflow-hidden rounded-xxs bg-neutral-95 md:aspect-[4/3] md:h-auto md:w-full">
         <Image
+          priority
           className="object-cover"
           src={blog.thumbnail}
           alt={blog.title + ' 썸네일'}

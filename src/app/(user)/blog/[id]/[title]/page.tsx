@@ -12,12 +12,13 @@ import {
 } from '@/utils/url';
 import BlogCTA from '@components/common/blog/BlogCTA';
 import BlogKakaoShareBtn from '@components/common/blog/BlogKakaoShareBtn';
+import BlogLikeBtn from '@components/common/blog/BlogLikeBtn';
 import BlogLinkShareBtn from '@components/common/blog/BlogLilnkShareBtn';
 import BlogRecommendCard from '@components/common/blog/BlogRecommendCard';
 import ProgramRecommendCard from '@components/common/blog/ProgramRecommendCard';
 import MoreHeader from '@components/common/ui/MoreHeader';
 import HorizontalRule from '@components/ui/HorizontalRule';
-import { CircleChevronRight, Heart } from 'lucide-react';
+import { CircleChevronRight } from 'lucide-react';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -193,12 +194,7 @@ const BlogDetailPage = async ({
 
           <section className="mb-9 mt-10 flex items-center justify-between md:mb-8">
             {/* 좋아요 */}
-            <button type="button" className="flex items-center gap-2">
-              <Heart width={20} height={20} color="#4D55F5" />
-              <span className="text-xsmall14 font-medium text-primary">
-                좋아요 NNN
-              </span>
-            </button>
+            <BlogLikeBtn />
             {/* 공유하기 */}
             <div className="flex items-center">
               <span className="mr-1.5 hidden text-xsmall14 font-medium text-neutral-35 md:block">
