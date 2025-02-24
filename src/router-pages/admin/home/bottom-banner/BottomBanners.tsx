@@ -23,7 +23,7 @@ const BottomBanners = () => {
     data: bottomBannerList,
     isLoading,
     error,
-  } = useGetBannerListForAdmin({ type: 'HOME_BOTTOM' });
+  } = useGetBannerListForAdmin({ type: 'MAIN_BOTTOM' });
 
   const { mutate: deleteBottomBanner } = useDeleteBannerForAdmin({
     successCallback: async () => {
