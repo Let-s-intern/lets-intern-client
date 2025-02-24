@@ -1,8 +1,7 @@
+import useAuthStore from '@/store/useAuthStore';
+import { ProgramType } from '@/types/common';
+import { newProgramTypeToText } from '@/utils/convert';
 import { Dayjs } from 'dayjs';
-import { useNavigate } from 'react-router-dom';
-import useAuthStore from '../../../../../../store/useAuthStore';
-import { ProgramType } from '../../../../../../types/common';
-import { newProgramTypeToText } from '../../../../../../utils/convert';
 import NotiButton from '../../button/NotiButton';
 import DateToggle from '../../toggle/DateToggle';
 
@@ -29,11 +28,11 @@ const OverviewContent = ({
   isApplied,
 }: OverviewContentProps) => {
   const { isLoggedIn } = useAuthStore();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleNextButtonClick = () => {
     if (!isLoggedIn) {
-      navigate(`/login?redirect=${window.location.pathname}`);
+      // navigate(`/login?redirect=${window.location.pathname}`);
       return;
     }
     setContentIndex(contentIndex + 2);

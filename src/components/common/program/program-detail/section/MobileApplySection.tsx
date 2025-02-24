@@ -2,7 +2,7 @@ import dayjs from '@/lib/dayjs';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import { twMerge } from '@/lib/twMerge';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { useProgramApplicationQuery } from '../../../../../api/application';
 import { useProgramQuery } from '../../../../../api/program';
 import useRunOnce from '../../../../../hooks/useRunOnce';
@@ -24,6 +24,7 @@ interface MobileApplySectionProps {
   dispatchDrawerIsOpen: (value: IApplyDrawerAction) => void;
 }
 
+/** @deprecated */
 const MobileApplySection = ({
   programType,
   programId,
@@ -31,7 +32,6 @@ const MobileApplySection = ({
   toggleDrawer,
   dispatchDrawerIsOpen: drawerDispatch,
 }: MobileApplySectionProps) => {
-  const navigate = useNavigate();
   const {
     data: programApplicationForm,
     setProgramApplicationForm,
@@ -218,9 +218,9 @@ const MobileApplySection = ({
     });
 
     if (isFree) {
-      navigate(`/order/result?orderId=${orderId}`);
+      // navigate(`/order/result?orderId=${orderId}`);
     } else {
-      navigate(`/payment`);
+      // navigate(`/payment`);
     }
 
     toggleDrawer();
