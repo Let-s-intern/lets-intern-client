@@ -61,6 +61,7 @@ const CurationItem = ({
                 programId: undefined,
                 title: undefined,
                 url: undefined,
+                thumbnail: undefined,
               });
             }}
           >
