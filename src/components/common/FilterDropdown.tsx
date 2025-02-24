@@ -13,23 +13,23 @@ import { memo, ReactNode, useCallback, useEffect, useState } from 'react';
 
 interface Props {
   label: string;
-  labelValue: string;
-  childLabelValue?: string[];
+  paramKey: string;
+  childParamKeys?: string[];
   list: FilterItem[];
   multiSelect?: boolean;
   dropdownClassName?: string;
-  className?: string;
+  listItemClassName?: string;
   onChange?: () => void;
 }
 
-function ReviewFilter({
+function FilterDropdown({
   label,
-  labelValue,
-  childLabelValue,
+  paramKey,
+  childParamKeys,
   list,
   multiSelect = false,
   dropdownClassName,
-  className,
+  listItemClassName,
   onChange,
 }: Props) {
   const router = useRouter();
@@ -60,7 +60,7 @@ function ReviewFilter({
   const handleQueryParams = (item: FilterItem) => {
     if (onChange) onChange();
     // 쿼리 스트링으로 선택된 아이템 추가
-    if (labelValue) {
+    if (paramKey) {
       const params = new URLSearchParams(searchParams.toString());
 
       if (multiSelect) {
@@ -72,10 +72,10 @@ function ReviewFilter({
             (ele) => ele.value !== item.value,
           );
           if (filtered.length === 0) {
-            params.delete(labelValue);
+            params.delete(paramKey);
           } else {
             params.set(
-              labelValue,
+              paramKey,
               filtered
                 .map((ele) => ele.value)
                 .join(',')
@@ -84,7 +84,7 @@ function ReviewFilter({
           }
         } else {
           params.set(
-            labelValue,
+            paramKey,
             [...checkedList, item]
               .map((ele) => ele.value)
               .join(',')
@@ -93,12 +93,12 @@ function ReviewFilter({
         }
       } else {
         if (selectedItem?.value === item.value) {
-          params.delete(labelValue);
+          params.delete(paramKey);
         } else {
-          params.set(labelValue, item.value.toLowerCase());
+          params.set(paramKey, item.value.toLowerCase());
         }
       }
-      childLabelValue?.forEach((childLabel) => {
+      childParamKeys?.forEach((childLabel) => {
         params.delete(childLabel);
       });
 
@@ -119,16 +119,15 @@ function ReviewFilter({
       return;
     }
     const params = new URLSearchParams(searchParams.toString());
-    params.delete(labelValue);
-    childLabelValue?.forEach((childLabel) => {
+    params.delete(paramKey);
+    childParamKeys?.forEach((childLabel) => {
       params.delete(childLabel);
     });
     router.replace(`${pathname}?${params.toString()}`);
   }, [
-    childLabelValue,
+    childParamKeys,
     isAllSelected,
-    labelValue,
-    multiSelect,
+    paramKey,
     pathname,
     router,
     searchParams,
@@ -143,7 +142,7 @@ function ReviewFilter({
         | undefined;
     };
 
-    const paramValue = searchParams.get(labelValue);
+    const paramValue = searchParams.get(paramKey);
 
     if (!multiSelect) {
       setSelectedItem(findItem(paramValue?.toUpperCase() ?? undefined));
@@ -158,7 +157,7 @@ function ReviewFilter({
           : [],
       );
     }
-  }, [searchParams, labelValue, multiSelect, list]);
+  }, [searchParams, paramKey, multiSelect, list]);
 
   return (
     <>
@@ -196,7 +195,7 @@ function ReviewFilter({
               <ul className="max-h-[60vh] overflow-y-auto">
                 <FilterList
                   key="all"
-                  className={clsx(className)}
+                  className={clsx(listItemClassName)}
                   item={{
                     caption: '전체',
                     value: 'all',
@@ -211,7 +210,7 @@ function ReviewFilter({
                 {list.map((item, index) => (
                   <FilterList
                     key={item.value}
-                    className={clsx(className)}
+                    className={clsx(listItemClassName)}
                     item={item}
                     isLastItem={index === list.length - 1}
                     multiSelect={multiSelect}
@@ -233,13 +232,13 @@ function ReviewFilter({
         {isOpen && isDesktop && (
           <ul
             className={twMerge(
-              'absolute top-12 z-10 w-full rounded-xxs bg-white px-3 py-2 shadow-[0_0_20px_0_rgba(164,168,179,0.25)]',
+              'absolute top-12 z-10 w-max rounded-xxs bg-white px-3 py-2 shadow-[0_0_20px_0_rgba(164,168,179,0.25)]',
               dropdownClassName,
             )}
           >
             <FilterList
               key="all"
-              className={clsx('py-2', className)}
+              className={clsx(listItemClassName)}
               item={{
                 caption: '전체',
                 value: 'all',
@@ -254,7 +253,7 @@ function ReviewFilter({
             {list.map((item, index) => (
               <FilterList
                 key={item.value}
-                className={clsx('py-2', className)}
+                className={clsx(listItemClassName)}
                 item={item}
                 isLastItem={index === list.length - 1}
                 multiSelect={multiSelect}
@@ -270,7 +269,7 @@ function ReviewFilter({
   );
 }
 
-export default memo(ReviewFilter);
+export default memo(FilterDropdown);
 
 const FilterList = ({
   item,
@@ -293,7 +292,7 @@ const FilterList = ({
     <li
       key={item.value}
       className={twMerge(
-        'flex cursor-pointer items-center justify-between py-3',
+        'flex h-10 cursor-pointer items-center justify-between pr-2',
         isLastItem ? '' : 'border-b border-neutral-90',
         className,
       )}

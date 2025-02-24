@@ -11,7 +11,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Fragment, ReactNode, Suspense, useMemo, useState } from 'react';
 import BlogCard from './common/blog/BlogCard';
-import BlogFilter from './common/blog/BlogFilter';
+import FilterDropdown from './common/FilterDropdown';
 import MuiPagination from './common/program/pagination/MuiPagination';
 import BaseButton from './common/ui/button/BaseButton';
 import EmptyContainer from './common/ui/EmptyContainer';
@@ -62,11 +62,13 @@ const Content = () => {
     <>
       <section className="mb-6 flex flex-col gap-6 md:mb-8 md:flex-row md:items-center md:justify-between md:gap-0">
         <Heading2>블로그 콘텐츠</Heading2>
-        <BlogFilter
+        <FilterDropdown
           label="콘텐츠 카테고리"
           list={filterList}
           paramKey={ParamKeyEnum.type}
+          multiSelect
           onChange={() => setPage(1)} // 페이지 초기화
+          dropdownClassName="w-full"
         />
       </section>
 

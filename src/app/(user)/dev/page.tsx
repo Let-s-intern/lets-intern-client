@@ -1,6 +1,6 @@
 import { GetReview } from '@/api/review';
 import ReviewSection from '@components/common/about/section/ReviewSection';
-import ReviewFilter from '@components/common/review/ReviewFilter';
+import FilterDropdown from '@components/common/FilterDropdown';
 import MoreHeader from '@components/common/ui/MoreHeader';
 import ReviewCard from '@components/ReviewCard';
 import { Metadata } from 'next';
@@ -146,14 +146,14 @@ const Page = () => {
       </MoreHeader>
       <div className="my-20">
         <Suspense>
-          <ReviewFilter
+          <FilterDropdown
             label="나는 필터야"
-            labelValue="filter"
+            paramKey="filter"
             list={singleReviewFilterList}
           />
-          <ReviewFilter
+          <FilterDropdown
             label="나는 필터야"
-            labelValue="filter"
+            paramKey="filter"
             list={multiReviewFilterList}
             multiSelect
           />
