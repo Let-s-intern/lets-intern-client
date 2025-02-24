@@ -1,7 +1,7 @@
 import { useGetBannerListForUser } from '@/api/banner';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useMediaQuery } from '@mui/material';
-import { Autoplay, Pagination } from 'swiper/modules';
+import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 const MainBannerSection = () => {
@@ -18,12 +18,13 @@ const MainBannerSection = () => {
           <div className="w-full">
             <Swiper
               autoplay={{ delay: 2500 }}
-              modules={[Pagination, Autoplay]}
+              modules={[Pagination, Autoplay, Navigation]}
+              navigation
               pagination={{
                 type: 'fraction',
                 renderFraction: (currentClass, totalClass) =>
                   `<div class="flex items-center justify-end px-2">
-                  <div class="flex w-fit items-center justify-center bg-white/20 px-2 py-0.5 rounded-full text-xxsmall10 text-white">
+                  <div class="flex w-fit items-center justify-center bg-white/20 px-2 py-0.5 rounded-full text-xxsmall10 md:text-xxsmall12 text-white">
                   <span class="${currentClass}"></span> / <span class="${totalClass}"></span>
                   </div>
                 </div>`,
