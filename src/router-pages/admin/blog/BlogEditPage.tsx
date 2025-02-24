@@ -5,7 +5,12 @@ import {
   usePatchBlogMutation,
   usePostBlogTagMutation,
 } from '@/api/blog';
-import { PostTag, postTagSchema, TagDetail } from '@/api/blogSchema';
+import {
+  BlogContent,
+  PostTag,
+  postTagSchema,
+  TagDetail,
+} from '@/api/blogSchema';
 import { uploadFile } from '@/api/file';
 import TagSelector from '@/components/admin/blog/TagSelector';
 import TextFieldLimit from '@/components/admin/blog/TextFieldLimit';
@@ -17,6 +22,7 @@ import useProgramMenuItems from '@/hooks/useProgramMenuItems';
 import dayjs from '@/lib/dayjs';
 import { blogCategory } from '@/utils/convert';
 import Heading2 from '@components/admin/ui/heading/Heading2';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import {
   Button,
   FormControl,
@@ -24,12 +30,20 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  SelectChangeEvent,
   TextField,
 } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { isAxiosError } from 'axios';
 import { Dayjs } from 'dayjs';
-import { ChangeEvent, FormEvent, MouseEvent, useEffect, useState } from 'react';
+import {
+  ChangeEvent,
+  FormEvent,
+  MouseEvent,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const maxCtaTextLength = 23;
@@ -40,7 +54,6 @@ const initialBlog = {
   category: '',
   thumbnail: '',
   description: '',
-  content: '',
   ctaLink: '',
   ctaText: '',
   displayDate: null,
@@ -64,10 +77,6 @@ const BlogEditPage = () => {
   const navgiate = useNavigate();
   const { id } = useParams();
 
-  const [editingValue, setEditingValue] = useState<EditBlog>(initialBlog);
-  const [newTag, setNewTag] = useState('');
-  const [dateTime, setDateTime] = useState<Dayjs | null>(null);
-
   const { snackbar: setSnackbar } = useAdminSnackbar();
 
   const { data: tags = [] } = useBlogTagQuery();
@@ -82,13 +91,43 @@ const BlogEditPage = () => {
     },
   });
 
+  const initialRecommend = {
+    programRecommend: Array(4).fill({
+      id: null,
+      ctaTitle: undefined,
+      ctaLink: undefined,
+    }),
+    blogRecommend: new Array(4),
+  };
+
+  const isContentExist =
+    blogData?.blogDetailInfo.content && blogData?.blogDetailInfo.content !== '';
+
+  // 구버전: content에 렉시컬 저장
+  // 신버전: content에 렉시컬과 추천 콘텐츠 저장
+  // 구버전을 신버전 구조로 만드는 과정..
+  const initialContent: BlogContent = useMemo(() => {
+    if (!isContentExist) return initialRecommend;
+
+    const json = JSON.parse(blogData?.blogDetailInfo.content ?? '{}');
+    if (json.blogRecommend) return json;
+
+    return {
+      ...initialRecommend,
+      lexical: blogData?.blogDetailInfo.content,
+    };
+  }, [blogData?.blogDetailInfo.content]);
+
+  const initialEditorStateJsonString = initialContent.lexical;
+
+  const [editingValue, setEditingValue] =
+    useState<Omit<EditBlog, 'content'>>(initialBlog);
+  const [newTag, setNewTag] = useState('');
+  const [dateTime, setDateTime] = useState<Dayjs | null>(null);
+  const [content, setContent] = useState<BlogContent>(initialContent);
+
   const programMenuItems = useProgramMenuItems();
   const blogMenuItems = useBlogMenuItems();
-
-  const initialEditorStateJsonString =
-    !blogData?.blogDetailInfo.content || blogData?.blogDetailInfo.content === ''
-      ? undefined
-      : blogData?.blogDetailInfo.content;
 
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEditingValue({
@@ -129,7 +168,7 @@ const BlogEditPage = () => {
   };
 
   const onChangeEditor = (jsonString: string) => {
-    setEditingValue((prev) => ({ ...prev, content: jsonString }));
+    setContent((prev) => ({ ...prev, lexical: jsonString }));
   };
 
   const patchBlog = async (event: MouseEvent<HTMLButtonElement>) => {
@@ -137,6 +176,7 @@ const BlogEditPage = () => {
 
     await patchBlogMutation.mutateAsync({
       ...editingValue,
+      content: JSON.stringify(content),
       id: Number(id),
       isDisplayed: name === 'publish',
       tagList: editingValue.tagList.map((tag) => tag.id),
@@ -144,6 +184,45 @@ const BlogEditPage = () => {
     });
 
     setSnackbar('블로그가 수정되었습니다.');
+  };
+
+  const handleChangeProgramRecommend = (
+    e:
+      | SelectChangeEvent<string | null>
+      | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    index: number,
+  ) => {
+    setContent((prev) => {
+      const list = [...prev.programRecommend!];
+      const item = {
+        ...list[index],
+        [e.target.name]: e.target.value === 'null' ? null : e.target.value,
+      };
+
+      return {
+        ...prev,
+        programRecommend: [
+          ...list.slice(0, index),
+          item,
+          ...list.slice(index + 1),
+        ],
+      };
+    });
+  };
+
+  const handleChangeBlogRecommend = (
+    e: SelectChangeEvent<number>,
+    index: number,
+  ) => {
+    setContent((prev) => {
+      const list = [...prev.blogRecommend!];
+      list[index] = Number(e.target.value);
+
+      return {
+        ...prev,
+        blogRecommend: list,
+      };
+    });
   };
 
   useEffect(() => {
@@ -156,14 +235,16 @@ const BlogEditPage = () => {
       category: blogData.blogDetailInfo.category!,
       thumbnail: blogData.blogDetailInfo.thumbnail || '',
       description: blogData.blogDetailInfo.description || '',
-      content: blogData.blogDetailInfo.content || '',
       ctaLink: blogData.blogDetailInfo.ctaLink || '',
       ctaText: blogData.blogDetailInfo.ctaText || '',
       displayDate,
       tagList: blogData.tagDetailInfos,
     });
     setDateTime(displayDate);
+    setContent(initialContent);
   }, [isLoading, blogData]);
+
+  if (isLoading) return <LoadingContainer className="mt-[20%]" />;
 
   return (
     <div className="mx-3 mb-40 mt-3">
@@ -317,145 +398,73 @@ const BlogEditPage = () => {
                   </span>
                 </div>
                 <div className="flex flex-col gap-5">
-                  <div className="flex flex-col gap-3">
-                    <FormControl size="small">
-                      <InputLabel>프로그램 선택</InputLabel>
-                      <Select
-                        defaultValue="not select"
-                        fullWidth
+                  {content.programRecommend?.map((item, index) => (
+                    <div key={index} className="flex flex-col gap-3">
+                      <FormControl size="small">
+                        <InputLabel>프로그램 선택</InputLabel>
+                        <Select
+                          name="id"
+                          value={item.id ?? 'null'}
+                          fullWidth
+                          size="small"
+                          label="프로그램 선택"
+                          onChange={(e) =>
+                            handleChangeProgramRecommend(e, index)
+                          }
+                        >
+                          {programMenuItems}
+                        </Select>
+                      </FormControl>
+                      <TextField
                         size="small"
-                        label="프로그램 선택"
-                      >
-                        {programMenuItems}
-                      </Select>
-                    </FormControl>
-                    <TextField
-                      size="small"
-                      label="CTA 소제목1"
-                      placeholder="CTA 소제목1"
-                      name="ctaTitle1"
-                      fullWidth
-                    />
-                    {/* 선택한 프로그램이 있으면 링크 입력란 숨기기 */}
-                    <TextField
-                      size="small"
-                      label="CTA 링크1"
-                      placeholder="CTA 링크1"
-                      name="ctaLink1"
-                      fullWidth
-                    />
-                  </div>
-                  <div className="flex flex-col gap-3">
-                    <FormControl size="small">
-                      <InputLabel>프로그램 선택</InputLabel>
-                      <Select
-                        defaultValue="not select"
+                        value={item.ctaTitle}
+                        label={'CTA 소제목' + (index + 1)}
+                        placeholder={'CTA 소제목' + (index + 1)}
+                        name="ctaTitle"
                         fullWidth
-                        size="small"
-                        label="프로그램 선택"
-                      >
-                        {programMenuItems}
-                      </Select>
-                    </FormControl>
-                    <TextField
-                      size="small"
-                      label="CTA 소제목2"
-                      placeholder="CTA 소제목2"
-                      name="ctaTitle2"
-                      fullWidth
-                    />
-                    <TextField
-                      size="small"
-                      label="CTA 링크2"
-                      placeholder="CTA 링크2"
-                      name="ctaLink2"
-                      fullWidth
-                    />
-                  </div>
-                  <div className="flex flex-col gap-3">
-                    <FormControl size="small">
-                      <InputLabel>프로그램 선택</InputLabel>
-                      <Select
-                        defaultValue="not select"
-                        fullWidth
-                        size="small"
-                        label="프로그램 선택"
-                      >
-                        {programMenuItems}
-                      </Select>
-                    </FormControl>
-                    <TextField
-                      size="small"
-                      label="CTA 소제목3"
-                      placeholder="CTA 소제목3"
-                      name="ctaTitle3"
-                      fullWidth
-                    />
-                    <TextField
-                      size="small"
-                      label="CTA 링크3"
-                      placeholder="CTA 링크3"
-                      name="ctaLink3"
-                      fullWidth
-                    />
-                  </div>
-                  <div className="flex flex-col gap-3">
-                    <FormControl size="small">
-                      <InputLabel>프로그램 선택</InputLabel>
-                      <Select
-                        defaultValue="not select"
-                        fullWidth
-                        size="small"
-                        label="프로그램 선택"
-                      >
-                        {programMenuItems}
-                      </Select>
-                    </FormControl>
-                    <TextField
-                      size="small"
-                      label="CTA 소제목4"
-                      placeholder="CTA 소제목4"
-                      name="ctaTitle4"
-                      fullWidth
-                    />
-                    <TextField
-                      size="small"
-                      label="CTA 링크4"
-                      placeholder="CTA 링크4"
-                      name="ctaLink4"
-                      fullWidth
-                    />
-                  </div>
+                        onChange={(e) => handleChangeProgramRecommend(e, index)}
+                      />
+                      {/* 선택한 프로그램이 있으면 링크 입력란 숨기기 */}
+                      {!content.programRecommend![index].id && (
+                        <TextField
+                          size="small"
+                          value={item.ctaLink}
+                          label={'CTA 링크' + (index + 1)}
+                          placeholder={'CTA 링크' + (index + 1)}
+                          name="ctaLink"
+                          fullWidth
+                          onChange={(e) =>
+                            handleChangeProgramRecommend(e, index)
+                          }
+                        />
+                      )}
+                    </div>
+                  ))}
+                  <span className="text-0.875 text-neutral-35">
+                    {
+                      "*CTA링크: 'latest:{text}'으로 설정하면, text를 제목에 포함하는 챌린지 상세페이지로 이동합니다. (예시) latest:인턴"
+                    }
+                  </span>
                 </div>
               </div>
               {/* 블로그 추천 */}
               <div className="flex-1">
                 <Heading2 className="mb-3">블로그 추천</Heading2>
                 <div className="flex flex-col gap-3">
-                  <FormControl size="small">
-                    <InputLabel>블로그 ID 1</InputLabel>
-                    <Select value="" fullWidth size="small" label="블로그 ID 1">
-                      {blogMenuItems}
-                    </Select>
-                  </FormControl>
-                  <FormControl size="small">
-                    <InputLabel>블로그 ID 2</InputLabel>
-                    <Select value="" fullWidth size="small" label="블로그 ID 2">
-                      {blogMenuItems}
-                    </Select>
-                  </FormControl>
-                  <FormControl size="small">
-                    <InputLabel>블로그 ID 3</InputLabel>
-                    <Select value="" fullWidth size="small" label="블로그 ID 3">
-                      {blogMenuItems}
-                    </Select>
-                  </FormControl>
-                  <FormControl size="small">
-                    <InputLabel>블로그 ID 4</InputLabel>
-                    <Select value="" fullWidth size="small" label="블로그 ID 4">
-                      {blogMenuItems}
-                    </Select>
-                  </FormControl>
+                  {content.blogRecommend?.map((id, index) => (
+                    <FormControl key={index} size="small">
+                      <InputLabel>블로그 ID {index + 1}</InputLabel>
+                      <Select
+                        value={id ?? ''}
+                        fullWidth
+                        size="small"
+                        label={'블로그 ID' + (index + 1)}
+                        onChange={(e) => handleChangeBlogRecommend(e, index)}
+                      >
+                        {blogMenuItems}
+                      </Select>
+                    </FormControl>
+                  ))}
                 </div>
               </div>
             </div>
