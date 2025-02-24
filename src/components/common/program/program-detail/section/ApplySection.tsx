@@ -37,6 +37,7 @@ interface ApplySectionProps {
   programTitle: string;
 }
 
+/** @deprecated */
 const ApplySection = ({
   programType,
   programId,

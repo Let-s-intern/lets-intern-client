@@ -217,9 +217,9 @@ const MobileApplySection = ({
     });
 
     if (isFree) {
-      navigate(`/order/result?orderId=${orderId}`);
+      // navigate(`/order/result?orderId=${orderId}`);
     } else {
-      navigate(`/payment`);
+      // navigate(`/payment`);
     }
 
     toggleDrawer();
