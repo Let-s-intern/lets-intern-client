@@ -74,19 +74,28 @@ function FilterDropdown({
           if (filtered.length === 0) {
             params.delete(paramKey);
           } else {
-            params.set(paramKey, filtered.map((ele) => ele.value).join(','));
+            params.set(
+              paramKey,
+              filtered
+                .map((ele) => ele.value)
+                .join(',')
+                .toLowerCase(),
+            );
           }
         } else {
           params.set(
             paramKey,
-            [...checkedList, item].map((ele) => ele.value).join(','),
+            [...checkedList, item]
+              .map((ele) => ele.value)
+              .join(',')
+              .toLowerCase(),
           );
         }
       } else {
         if (selectedItem?.value === item.value) {
           params.delete(paramKey);
         } else {
-          params.set(paramKey, item.value);
+          params.set(paramKey, item.value.toLowerCase());
         }
       }
       childParamKeys?.forEach((childLabel) => {
@@ -136,11 +145,12 @@ function FilterDropdown({
     const paramValue = searchParams.get(paramKey);
 
     if (!multiSelect) {
-      setSelectedItem(findItem(paramValue ?? undefined));
+      setSelectedItem(findItem(paramValue?.toUpperCase() ?? undefined));
     } else {
       setCheckedList(
         paramValue
           ? (paramValue
+              .toUpperCase()
               .split(',')
               .map(findItem)
               .filter(Boolean) as FilterItem[])
