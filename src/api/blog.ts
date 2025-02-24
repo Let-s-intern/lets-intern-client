@@ -5,6 +5,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
+import { z } from 'zod';
 import { IPageable } from '../types/interface';
 import axios from '../utils/axios';
 import {
@@ -31,22 +32,40 @@ const blogRatingQueryKey = 'blogRatingQueryKey';
 
 export interface BlogQueryParams {
   pageable: IPageable;
-  type?: string | null;
+  types?: BlogType[] | null;
   tagId?: number | null;
   enabled?: boolean;
 }
 
+export enum BlogType {
+  JOB_PREPARATION_TIPS = 'JOB_PREPARATION_TIPS',
+  PROGRAM_REVIEWS = 'PROGRAM_REVIEWS',
+  JOB_SUCCESS_STORIES = 'JOB_SUCCESS_STORIES',
+  WORK_EXPERIENCES = 'WORK_EXPERIENCES',
+  JUNIOR_STORIES = 'JUNIOR_STORIES',
+  LETSCAREER_NEWS = 'LETSCAREER_NEWS',
+}
+
+export const blogTypeSchema = z.enum([
+  BlogType.JOB_PREPARATION_TIPS,
+  BlogType.PROGRAM_REVIEWS,
+  BlogType.JOB_SUCCESS_STORIES,
+  BlogType.WORK_EXPERIENCES,
+  BlogType.JUNIOR_STORIES,
+  BlogType.LETSCAREER_NEWS,
+]);
+
 export const useBlogListQuery = ({
   pageable,
-  type,
+  types,
   tagId,
   enabled,
 }: BlogQueryParams) => {
   return useQuery({
-    queryKey: [blogListQueryKey, pageable, type],
+    queryKey: [blogListQueryKey, pageable, types],
     queryFn: async () => {
       const res = await axios.get(`/blog`, {
-        params: { ...pageable, type, tagId },
+        params: { ...pageable, type: types, tagId },
       });
       return blogListSchema.parse(res.data.data);
     },
@@ -54,7 +73,10 @@ export const useBlogListQuery = ({
   });
 };
 
-export const useBlogListTypeQuery = ({ pageable, type }: BlogQueryParams) => {
+export const useBlogListTypeQuery = ({
+  pageable,
+  types: type,
+}: BlogQueryParams) => {
   return useQuery({
     queryKey: [blogListQueryKey, pageable],
     queryFn: async () => {
@@ -71,7 +93,7 @@ export const useBlogListTypeQuery = ({ pageable, type }: BlogQueryParams) => {
 };
 
 export const useInfiniteBlogListQuery = ({
-  type,
+  types: type,
   tagId,
   pageable,
 }: BlogQueryParams) => {
@@ -283,7 +305,7 @@ export const fetchBlogData = async (id: string): Promise<BlogSchema> => {
 // Fetching 추천 블로그 데이터
 export const fetchRecommendBlogData = async ({
   pageable,
-  type,
+  types: type,
 }: BlogQueryParams): Promise<BlogList> => {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_SERVER_API}/blog?type=${type}&page=${pageable.page}&size=${pageable.size}`,

@@ -1,6 +1,6 @@
 'use client';
 
-import { useBlogListQuery } from '@/api/blog';
+import { BlogType, useBlogListQuery } from '@/api/blog';
 import { useGetReviewCount } from '@/api/review';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -29,7 +29,7 @@ function ReviewBanner() {
   const { data } = useGetReviewCount();
   const { data: blogData } = useBlogListQuery({
     pageable: { page: 1, size: 0 },
-    type: 'PROGRAM_REVIEWS',
+    types: [BlogType.PROGRAM_REVIEWS],
   });
 
   const reviewsCount =

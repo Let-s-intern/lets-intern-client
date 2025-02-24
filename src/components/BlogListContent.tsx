@@ -1,6 +1,11 @@
 'use client';
 
-import { useBlogListQuery, useGetBlogBannerList } from '@/api/blog';
+import {
+  BlogType,
+  blogTypeSchema,
+  useBlogListQuery,
+  useGetBlogBannerList,
+} from '@/api/blog';
 import BellIcon from '@/assets/icons/Bell.svg';
 import LockKeyHoleIcon from '@/assets/icons/lock-keyhole.svg';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
@@ -21,11 +26,6 @@ const filterList = Object.entries(blogCategory).map(([key, value]) => ({
   caption: value,
   value: key,
 }));
-
-// 블로그 목록 조회 API에서 사용하는 쿼리 파라미터 key
-const ParamKeyEnum = {
-  type: 'type',
-} as const;
 
 // 공개 예정 여부
 const willBePublished = (date: string) => dayjs(date).isAfter(dayjs());
@@ -55,6 +55,10 @@ const blogBannerMockData = {
 
 const Content = () => {
   const params = useSearchParams();
+  const typeRaw = params.get('type');
+  const types = typeRaw
+    ? typeRaw.split(',').map((name) => blogTypeSchema.parse(name))
+    : null;
 
   const [page, setPage] = useState(1);
 
@@ -65,7 +69,7 @@ const Content = () => {
         <FilterDropdown
           label="콘텐츠 카테고리"
           list={filterList}
-          paramKey={ParamKeyEnum.type}
+          paramKey="type"
           multiSelect
           onChange={() => setPage(1)} // 페이지 초기화
           dropdownClassName="w-full"
@@ -73,7 +77,7 @@ const Content = () => {
       </section>
 
       <BlogList
-        type={params.get(ParamKeyEnum.type)?.toUpperCase()}
+        types={types}
         page={page}
         onChangePage={(page) => setPage(page)}
       />
@@ -86,11 +90,11 @@ function Heading2({ children }: { children?: ReactNode }) {
 }
 
 function BlogList({
-  type,
+  types,
   page,
   onChangePage,
 }: {
-  type?: string | null;
+  types?: BlogType[] | null;
   page: number;
   onChangePage?: (page: number) => void;
 }) {
@@ -100,7 +104,7 @@ function BlogList({
 
   const { data, isLoading } = useBlogListQuery({
     pageable: { page, size: isMobile ? 6 : 14 },
-    type,
+    types,
   });
   const { data: blogBannerData } = useGetBlogBannerList({ page, size: 2 });
 
