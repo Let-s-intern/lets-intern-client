@@ -19,8 +19,7 @@ const description = {
       렛츠커리어만의 취업 노하우가 잔뜩 담긴 프로그램에
       <br className="md:hidden" /> 참여한
       <br className="hidden md:block" /> 참여자들의 100% 솔직 후기를 가감 없이
-      <br className="md:hidden" />
-      그대로 보여드립니다.
+      <br className="md:hidden" /> 그대로 보여드립니다.
     </>
   ),
 };
