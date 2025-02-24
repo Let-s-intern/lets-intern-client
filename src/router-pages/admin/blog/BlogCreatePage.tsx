@@ -55,7 +55,7 @@ const initialContent = {
   programRecommend: Array(4).fill({
     id: null,
     ctaTitle: undefined,
-    ctaLink: null,
+    ctaLink: undefined,
   }),
   blogRecommend: new Array(4),
 };
@@ -154,7 +154,7 @@ const BlogCreatePage = () => {
     index: number,
   ) => {
     setContent((prev) => {
-      const list = [...prev.programRecommend];
+      const list = [...prev.programRecommend!];
       const item = {
         ...list[index],
         [e.target.name]: e.target.value === 'null' ? null : e.target.value,
@@ -318,7 +318,7 @@ const BlogCreatePage = () => {
                 </span>
               </div>
               <div className="flex flex-col gap-5">
-                {content.programRecommend.map((_, index) => (
+                {content.programRecommend!.map((_, index) => (
                   <div key={index} className="flex flex-col gap-3">
                     <FormControl size="small">
                       <InputLabel>프로그램 선택</InputLabel>
@@ -342,7 +342,7 @@ const BlogCreatePage = () => {
                       onChange={(e) => handleChangeProgramRecommend(e, index)}
                     />
                     {/* 선택한 프로그램이 있으면 링크 입력란 숨기기 */}
-                    {!content.programRecommend[index].id && (
+                    {!content.programRecommend![index].id && (
                       <TextField
                         size="small"
                         label={'CTA 링크' + (index + 1)}
