@@ -6,19 +6,36 @@ interface MoreHeaderProps {
   children?: ReactNode;
   subtitle?: string;
   href?: string;
-  titleClass?: string;
+  isBig?: boolean;
+  isVertical?: boolean;
 }
 
 const MoreHeader = ({
   children,
   subtitle,
   href,
-  titleClass,
+  isBig,
+  isVertical,
 }: MoreHeaderProps) => {
   return (
-    <div className="flex w-full items-center justify-between">
-      <div className="flex flex-1 select-none items-center gap-x-2 text-neutral-0">
-        <h2 className={clsx('text-small20 font-semibold', titleClass)}>
+    <div
+      className={clsx(
+        'flex w-full justify-between',
+        isVertical ? 'items-start' : 'items-center',
+      )}
+    >
+      <div
+        className={clsx(
+          'flex flex-1 select-none gap-x-2 text-neutral-0',
+          isVertical ? 'flex-col items-start gap-y-1' : 'items-center',
+        )}
+      >
+        <h2
+          className={clsx(
+            'text-small20',
+            isBig ? 'font-bold md:text-large26' : 'font-semibold',
+          )}
+        >
           {children}
         </h2>
         {subtitle && <p className="text-xsmall14">{subtitle}</p>}
@@ -26,7 +43,11 @@ const MoreHeader = ({
       {href && (
         <Link
           href={href}
-          className="py-2 pl-3 text-xsmall14 font-medium text-neutral-45"
+          target={href.startsWith('http') ? '_blank' : undefined}
+          className={clsx(
+            'font-medium text-neutral-45',
+            isBig ? 'text-xsmall16' : 'text-xsmall14',
+          )}
         >
           더보기
         </Link>
