@@ -2,6 +2,8 @@ import { useBlogListQuery } from '@/api/blog';
 import { CurationType } from '@/api/curation';
 import { useGetProgramAdminQuery } from '@/api/program';
 import { useGetReportsForAdmin } from '@/api/report';
+import { YY_MM_DD } from '@/data/dayjsFormat';
+import dayjs from '@/lib/dayjs';
 import { convertCurationTypeToText } from '@/utils/convert';
 import Heading3 from '@components/admin/ui/heading/Heading3';
 import { getReportThumbnail } from '@components/common/mypage/credit/CreditListItem';
@@ -13,6 +15,8 @@ type CurationSelectItemType = {
   id: number;
   title: string;
   thumbnail: string;
+  visibleDate?: string;
+  isVisible?: boolean;
 };
 
 interface CurationSelectModalProps {
@@ -79,6 +83,7 @@ const CurationSelectModal = ({
             id: program.programInfo.id || 0,
             title: program.programInfo.title || '',
             thumbnail: program.programInfo.thumbnail || '',
+            isVisible: program.programInfo.isVisible || false,
           })) || []
         );
       case 'LIVE':
@@ -87,6 +92,7 @@ const CurationSelectModal = ({
             id: program.programInfo.id || 0,
             title: program.programInfo.title || '',
             thumbnail: program.programInfo.thumbnail || '',
+            isVisible: program.programInfo.isVisible || false,
           })) || []
         );
       case 'VOD':
@@ -95,6 +101,7 @@ const CurationSelectModal = ({
             id: program.programInfo.id || 0,
             title: program.programInfo.title || '',
             thumbnail: program.programInfo.thumbnail || '',
+            isVisible: program.programInfo.isVisible || false,
           })) || []
         );
       case 'REPORT':
@@ -103,6 +110,10 @@ const CurationSelectModal = ({
             id: report.reportId || 0,
             title: report.title || '',
             thumbnail: getReportThumbnail(report.reportType || null),
+            isVisible: report.isVisible || false,
+            visibleDate: report.visibleDate
+              ? dayjs(report.visibleDate).format(YY_MM_DD)
+              : '-',
           })) || []
         );
       case 'BLOG':
@@ -111,6 +122,9 @@ const CurationSelectModal = ({
             id: blog.blogThumbnailInfo.id || 0,
             title: blog.blogThumbnailInfo.title || '',
             thumbnail: blog.blogThumbnailInfo.thumbnail || '',
+            isVisible: blog.blogThumbnailInfo.isDisplayed || false,
+            visibleDate:
+              dayjs(blog.blogThumbnailInfo.displayDate).format(YY_MM_DD) || '-',
           })) || []
         );
       default:
@@ -131,7 +145,7 @@ const CurationSelectModal = ({
             {data().map((item) => (
               <div
                 key={item.id}
-                className="flex w-full flex-1 cursor-pointer flex-col items-center gap-y-2 transition-all hover:scale-110"
+                className="flex w-full flex-1 cursor-pointer flex-col items-center transition-all hover:scale-110"
                 onClick={() => onSelect({ id: item.id, title: item.title })}
               >
                 <img
@@ -139,9 +153,11 @@ const CurationSelectModal = ({
                   alt={item.title}
                   className="aspect-[3/2] w-full rounded-xxs object-cover"
                 />
-                <span className="line-clamp-2 w-full text-center">
+                <span className="mt-2 line-clamp-2 w-full text-center">
                   {item.title}
                 </span>
+                <span className="mt-0.5 text-xxsmall12 text-neutral-30">{`노출일자 : ${item.visibleDate ?? '-'}`}</span>
+                <span className="mt-0.5 text-xxsmall12 text-neutral-30">{`노출여부 : ${item.isVisible ? '노출' : '비노출'}`}</span>
               </div>
             ))}
           </div>
