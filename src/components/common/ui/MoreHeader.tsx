@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import Link from 'next/link';
 import { ReactNode } from 'react';
 
 interface MoreHeaderProps {
@@ -41,7 +40,8 @@ const MoreHeader = ({
         {subtitle && <p className="text-xsmall14">{subtitle}</p>}
       </div>
       {href && (
-        <Link
+        // home에서 program으로 갈 경우 react, 나머지는 next라서 a태그 사용
+        <a
           href={href}
           target={href.startsWith('http') ? '_blank' : undefined}
           className={clsx(
@@ -50,7 +50,7 @@ const MoreHeader = ({
           )}
         >
           더보기
-        </Link>
+        </a>
       )}
     </div>
   );
