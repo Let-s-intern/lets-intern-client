@@ -2,7 +2,7 @@ import dayjs from '@/lib/dayjs';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import { twMerge } from '@/lib/twMerge';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { useProgramApplicationQuery } from '../../../../../api/application';
 import { useProgramQuery } from '../../../../../api/program';
 import useRunOnce from '../../../../../hooks/useRunOnce';
@@ -31,7 +31,6 @@ const MobileApplySection = ({
   toggleDrawer,
   dispatchDrawerIsOpen: drawerDispatch,
 }: MobileApplySectionProps) => {
-  const navigate = useNavigate();
   const {
     data: programApplicationForm,
     setProgramApplicationForm,

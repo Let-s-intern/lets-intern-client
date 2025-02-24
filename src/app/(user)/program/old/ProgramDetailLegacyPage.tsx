@@ -1,45 +1,39 @@
-import dayjs from '@/lib/dayjs';
-import { useMediaQuery } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
-import { useEffect, useReducer, useState } from 'react';
-import { Helmet } from 'react-helmet';
-import { useNavigate, useParams } from 'react-router-dom';
+'use client';
 
 import { useProgramApplicationQuery } from '@/api/application';
 import { useProgramQuery } from '@/api/program';
 import FilledButton from '@/components/common/program/program-detail/button/FilledButton';
 import NotiButton from '@/components/common/program/program-detail/button/NotiButton';
 import ApplySection from '@/components/common/program/program-detail/section/ApplySection';
-import MobileApplySection from '@/components/common/program/program-detail/section/MobileApplySection';
 import TabSection from '@/components/common/program/program-detail/section/TabSection';
-import Header from '@/components/common/ui/BackHeader';
+import NextBackHeader from '@/components/common/ui/NextBackHeader';
 import useRunOnce from '@/hooks/useRunOnce';
+import dayjs from '@/lib/dayjs';
 import { isNewProgram } from '@/lib/isDeprecatedProgram';
 import { twMerge } from '@/lib/twMerge';
 import drawerReducer from '@/reducers/drawerReducer';
 import useAuthStore from '@/store/useAuthStore';
 import { ProgramType } from '@/types/common';
 import axios from '@/utils/axios';
-import PaymentErrorNotification from '@components/common/PaymentErrorNotification';
+import { useMediaQuery } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useReducer, useState } from 'react';
 
 interface ProgramDetailProps {
   programType: ProgramType;
+  programId: number;
 }
 
-const ProgramDetailLegacy = ({ programType }: ProgramDetailProps) => {
-  const params = useParams<{ programId: string }>();
-  const navigate = useNavigate();
-
+const ProgramDetailLegacyPage = ({
+  programType,
+  programId,
+}: ProgramDetailProps) => {
   const [isNew, setIsNew] = useState(true);
 
   const [programTitle, setProgramTitle] = useState('');
-  const [isInstagramAlertOpen, setIsInstagramAlertOpen] = useState(false);
 
   const isDesktop = useMediaQuery('(min-width: 991px)');
   const [isDrawerOpen, dispatchIsDrawerOpen] = useReducer(drawerReducer, false);
-
-  const programId = Number(params.programId);
-  const isInstagram = navigator.userAgent.includes('Instagram');
 
   const { isLoggedIn } = useAuthStore();
 
@@ -75,12 +69,12 @@ const ProgramDetailLegacy = ({ programType }: ProgramDetailProps) => {
   useEffect(() => {
     if (programType && program?.query.data) {
       if (isNewProgram({ desc: program.query.data.desc })) {
-        navigate(`/program/${programType}/${programId}`, { replace: true });
+        window.location.href = `/program/${programType}/${programId}`;
       } else {
         setIsNew(false);
       }
     }
-  }, [navigate, program.query.data, programId, programType]);
+  }, [program.query.data, programId, programType]);
 
   const programDate =
     program && program.query.data
@@ -101,56 +95,35 @@ const ProgramDetailLegacy = ({ programType }: ProgramDetailProps) => {
       : false;
 
   const toggleDrawer = () => {
-    if (isInstagram && !isInstagramAlertOpen) {
-      setIsInstagramAlertOpen(true);
-      return;
-    }
-
     if (!isLoggedIn) {
       alert('로그인 후 이용해주세요.');
       const params = new URLSearchParams();
       params.set('redirect', window.location.pathname);
-      navigate(`/login?${params.toString()}`);
+      window.location.href = `/login?${params.toString()}`;
       return;
     }
     dispatchIsDrawerOpen({ type: 'toggle' });
   };
 
-  const programTypeKor =
-    programType === 'challenge'
-      ? '챌린지'
-      : programType === 'live'
-        ? 'LIVE 클래스'
-        : '프로그램';
-  const title = `${programTitle ?? programTypeKor} | ${programTypeKor} - 렛츠커리어`;
-  const url = `${window.location.origin}/program/${programType}/${programId}`;
-  const description = program?.query?.data?.shortDesc ?? '';
+  // const programTypeKor =
+  //   programType === 'challenge'
+  //     ? '챌린지'
+  //     : programType === 'live'
+  //       ? 'LIVE 클래스'
+  //       : '프로그램';
+  // const title = `${programTitle ?? programTypeKor} | ${programTypeKor} - 렛츠커리어`;
+  // const url = `${window.location.origin}/program/${programType}/${programId}`;
+  // const description = program?.query?.data?.shortDesc ?? '';
 
   return (
     <div className="px-5">
-      <Helmet>
-        <title>{title}</title>
-        <link rel="canonical" href={url} />
-        {description ? <meta name="description" content={description} /> : null}
-        <meta property="og:title" content={title} />
-        <meta property="og:url" content={url} />
-
-        {description ? (
-          <meta property="og:description" content={description} />
-        ) : null}
-        <meta name="twitter:title" content={title} />
-        <meta name="twitter:url" content={url} />
-        {description ? (
-          <meta name="twitter:description" content={description} />
-        ) : null}
-      </Helmet>
       {isNew ? (
         <div className="flex min-h-screen items-center justify-center">
           <div className="h-32 w-32 animate-spin rounded-full border-b-2 border-gray-900" />
         </div>
       ) : (
         <div className="mx-auto max-w-5xl">
-          <Header to="/program">{programTitle}</Header>
+          <NextBackHeader to="/program">{programTitle}</NextBackHeader>
           <div className="flex min-h-screen flex-col">
             {/* 프로그램 상세 */}
             <section className="flex items-start gap-10 md:mt-8">
@@ -171,13 +144,7 @@ const ProgramDetailLegacy = ({ programType }: ProgramDetailProps) => {
             {/* 모바일 신청 세션 */}
             {!isDesktop &&
               (isDrawerOpen ? (
-                <MobileApplySection
-                  programTitle={programTitle}
-                  programType={programType}
-                  programId={programId}
-                  toggleDrawer={toggleDrawer}
-                  dispatchDrawerIsOpen={dispatchIsDrawerOpen}
-                />
+                <></>
               ) : (
                 <div
                   className={twMerge(
@@ -194,7 +161,7 @@ const ProgramDetailLegacy = ({ programType }: ProgramDetailProps) => {
                       className="h-[5px] w-[70px] shrink-0 cursor-pointer rounded-full bg-neutral-80"
                     />
                   </div>
-                  {isInstagramAlertOpen && <PaymentErrorNotification />}
+
                   {loading ? (
                     <FilledButton
                       caption={'로딩 중 ...'}
@@ -223,4 +190,4 @@ const ProgramDetailLegacy = ({ programType }: ProgramDetailProps) => {
   );
 };
 
-export default ProgramDetailLegacy;
+export default ProgramDetailLegacyPage;

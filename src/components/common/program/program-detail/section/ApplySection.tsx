@@ -1,7 +1,6 @@
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import { Dayjs } from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useProgramApplicationQuery } from '../../../../../api/application';
 import { useProgramQuery } from '../../../../../api/program';
 import useRunOnce from '../../../../../hooks/useRunOnce';
@@ -43,7 +42,7 @@ const ApplySection = ({
   programId,
   programTitle,
 }: ApplySectionProps) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const {
     data: programApplicationForm,
     setProgramApplicationForm,
@@ -212,10 +211,10 @@ const ApplySection = ({
     });
 
     if (isFree) {
-      navigate(`/order/result?orderId=${orderId}`);
+      // navigate(`/order/result?orderId=${orderId}`);
       return;
     } else {
-      navigate(`/payment`);
+      // navigate(`/payment`);
       return;
     }
   };

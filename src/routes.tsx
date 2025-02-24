@@ -9,6 +9,7 @@ import FindPassword from './router-pages/common/auth/FindPassword';
 import Login from './router-pages/common/auth/Login';
 import SignUp from './router-pages/common/auth/SignUp';
 // import BlogDetailSSRPage from './pages/common/blog/BlogDetailSSRPage';
+import ProgramDetailLegacyPage from './app/(user)/program/old/ProgramDetailLegacyPage';
 import BlogHashtagListPage from './router-pages/common/blog/BlogHashtagListPage';
 import BlogListPage from './router-pages/common/blog/BlogListPage';
 import ChallengeDashboard from './router-pages/common/challenge/ChallengeDashboard';
@@ -29,7 +30,6 @@ import LiveDetailSSRPage from './router-pages/common/program/LiveDetailSSRPage';
 import Payment from './router-pages/common/program/Payment';
 import PaymentFail from './router-pages/common/program/PaymentFail';
 import PaymentResult from './router-pages/common/program/PaymentResult';
-import ProgramDetailLegacy from './router-pages/common/program/ProgramDetailLegacy';
 import Programs from './router-pages/common/program/Programs';
 import ReportApplyPage from './router-pages/common/report/ReportApplyPage';
 import ReportManagementPage from './router-pages/common/report/ReportManagementPage';
@@ -54,11 +54,11 @@ export const routes: RouteObject[] = [
       { path: 'about', element: <About /> },
       {
         path: 'program/old/challenge/:programId',
-        element: <ProgramDetailLegacy programType="challenge" />,
+        element: <ProgramDetailLegacyPage programType="challenge" />,
       },
       {
         path: 'program/old/live/:programId',
-        element: <ProgramDetailLegacy programType="live" />,
+        element: <ProgramDetailLegacyPage programType="live" />,
       },
       {
         path: 'program/challenge/:id/:title?',

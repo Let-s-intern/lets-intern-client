@@ -1,5 +1,5 @@
 import { twMerge } from '@/lib/twMerge';
-import { REMINDER_LINK } from '../../../../../utils/programConst';
+import { REMINDER_LINK } from '@/utils/programConst';
 
 interface NotiButtonProps {
   text: string;
