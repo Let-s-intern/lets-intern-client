@@ -1,11 +1,11 @@
+import { ReactNode } from 'react';
 import MoreHeader from '../ui/MoreHeader';
 import ProgramItem, { ProgramItemProps } from './ProgramItem';
 
 interface ProgramContainerProps {
-  title: string;
+  title: ReactNode;
   subTitle?: string;
   moreUrl?: string;
-  showImminentList: boolean;
   programs: ProgramItemProps[];
 }
 
