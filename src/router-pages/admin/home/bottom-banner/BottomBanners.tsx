@@ -56,7 +56,7 @@ const BottomBanners = () => {
         width: 150,
         type: 'boolean',
         renderCell: ({ row }) => (
-          <BannerVisibilityToggle type="MAIN" row={row} />
+          <BannerVisibilityToggle type="MAIN_BOTTOM" row={row} />
         ),
       },
       {
@@ -127,7 +127,7 @@ const BottomBanners = () => {
           bannerIdForDeleting &&
           deleteBottomBanner({
             bannerId: bannerIdForDeleting,
-            type: 'MAIN',
+            type: 'MAIN_BOTTOM',
           })
         }
         onCancel={() => setIsDeleteModalShown(false)}
