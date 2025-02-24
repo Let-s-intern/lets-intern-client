@@ -52,8 +52,6 @@ const HomeCurationCreatePage = () => {
             (!item.title || !item.url || !item.thumbnail)),
       )
     ) {
-      console.log(form);
-      console.log(curationItems);
       snackbar('필수 항목을 입력해주세요.');
       return;
     }
