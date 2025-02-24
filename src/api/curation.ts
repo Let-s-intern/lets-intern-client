@@ -43,6 +43,7 @@ export const curationInfoSchema = z.object({
   title: z.string(),
   subTitle: z.string().nullable().optional(),
   moreUrl: z.string().nullable().optional(),
+  showImminentList: z.boolean(),
   startDate: z.string(),
   endDate: z.string(),
   isVisible: z.boolean(),

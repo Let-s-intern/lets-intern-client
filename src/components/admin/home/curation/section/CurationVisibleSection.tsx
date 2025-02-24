@@ -62,7 +62,7 @@ const CurationVisibleSection = <
             format="YYYY.MM.DD(dd) HH:mm"
             ampm={false}
             slotProps={dateTimePickerSlotProps}
-            value={
+            defaultValue={
               defaultValue?.startDate ? dayjs(defaultValue.startDate) : null
             }
             onChange={(date) => {
@@ -75,7 +75,9 @@ const CurationVisibleSection = <
             format="YYYY.MM.DD(dd) HH:mm"
             ampm={false}
             slotProps={dateTimePickerSlotProps}
-            value={defaultValue?.endDate ? dayjs(defaultValue.endDate) : null}
+            defaultValue={
+              defaultValue?.endDate ? dayjs(defaultValue.endDate) : null
+            }
             onChange={(date) => {
               setForm((prev) => ({ ...prev, endDate: dateForm(date) }));
             }}
@@ -84,15 +86,18 @@ const CurationVisibleSection = <
       </div>
       <FormGroup>
         <FormControlLabel
-          control={<Checkbox />}
+          control={
+            <Checkbox
+              defaultChecked={defaultValue?.showImminentList}
+              onChange={(e) =>
+                setForm((prev) => ({
+                  ...prev,
+                  showImminentList: e.target.checked,
+                }))
+              }
+            />
+          }
           label="모집 마감 5일 남은 프로그램 자동 노출 여부"
-          defaultChecked={true}
-          onChange={() => {
-            setForm((prev) => ({
-              ...prev,
-              showImminentList: !prev.showImminentList,
-            }));
-          }}
         />
         <FormControlLabel
           control={<Checkbox checked={showMoreButton} />}
