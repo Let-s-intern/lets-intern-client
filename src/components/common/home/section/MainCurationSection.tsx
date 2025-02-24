@@ -6,7 +6,23 @@ import {
 } from '@/api/report';
 import { MMDD, YY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
+import { getReportThumbnail } from '@components/common/mypage/credit/CreditListItem';
 import ProgramContainer from '../ProgramContainer';
+
+export const getProgramThumbnail = ({
+  type,
+  reportType,
+  thumbnail,
+}: {
+  type: CurationType;
+  reportType: ReportType | null;
+  thumbnail?: string;
+}) => {
+  if (type === 'REPORT') {
+    return getReportThumbnail(reportType);
+  }
+  return thumbnail ?? '';
+};
 
 export const getProgramUrl = ({
   type,
@@ -86,7 +102,11 @@ const MainCurationSection = () => {
             subTitle={data.curationInfo.subTitle ?? undefined}
             moreUrl={data.curationInfo.moreUrl ?? undefined}
             programs={data.curationItemList.map((item) => ({
-              thumbnail: item.thumbnail ?? '',
+              thumbnail: getProgramThumbnail({
+                type: item.programType,
+                reportType: item.reportType ?? null,
+                thumbnail: item.thumbnail ?? undefined,
+              }),
               title: item.title ?? '',
               url: getProgramUrl({
                 type: item.programType,
