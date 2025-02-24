@@ -22,6 +22,7 @@ const ActiveProgramSection = () => {
       <section className="mt-16 flex w-full max-w-[1160px] flex-col md:mt-24">
         {!data ? null : (
           <ProgramContainer
+            showGrid
             title={
               <>
                 지금 모집 중인 프로그램을
