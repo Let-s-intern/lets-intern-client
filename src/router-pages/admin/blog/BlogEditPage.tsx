@@ -110,9 +110,8 @@ const BlogEditPage = () => {
     if (!isContentExist) return initialRecommend;
 
     const json = JSON.parse(blogData?.blogDetailInfo.content ?? '{}');
-    if (json.blogRecommend) {
-      return json;
-    }
+    if (json.blogRecommend) return json;
+
     return {
       ...initialRecommend,
       lexical: blogData?.blogDetailInfo.content,
@@ -207,6 +206,21 @@ const BlogEditPage = () => {
           item,
           ...list.slice(index + 1),
         ],
+      };
+    });
+  };
+
+  const handleChangeBlogRecommend = (
+    e: SelectChangeEvent<number>,
+    index: number,
+  ) => {
+    setContent((prev) => {
+      const list = [...prev.blogRecommend!];
+      list[index] = Number(e.target.value);
+
+      return {
+        ...prev,
+        blogRecommend: list,
       };
     });
   };
@@ -437,30 +451,20 @@ const BlogEditPage = () => {
               <div className="flex-1">
                 <Heading2 className="mb-3">블로그 추천</Heading2>
                 <div className="flex flex-col gap-3">
-                  <FormControl size="small">
-                    <InputLabel>블로그 ID 1</InputLabel>
-                    <Select value="" fullWidth size="small" label="블로그 ID 1">
-                      {blogMenuItems}
-                    </Select>
-                  </FormControl>
-                  <FormControl size="small">
-                    <InputLabel>블로그 ID 2</InputLabel>
-                    <Select value="" fullWidth size="small" label="블로그 ID 2">
-                      {blogMenuItems}
-                    </Select>
-                  </FormControl>
-                  <FormControl size="small">
-                    <InputLabel>블로그 ID 3</InputLabel>
-                    <Select value="" fullWidth size="small" label="블로그 ID 3">
-                      {blogMenuItems}
-                    </Select>
-                  </FormControl>
-                  <FormControl size="small">
-                    <InputLabel>블로그 ID 4</InputLabel>
-                    <Select value="" fullWidth size="small" label="블로그 ID 4">
-                      {blogMenuItems}
-                    </Select>
-                  </FormControl>
+                  {content.blogRecommend?.map((id, index) => (
+                    <FormControl key={index} size="small">
+                      <InputLabel>블로그 ID {index + 1}</InputLabel>
+                      <Select
+                        value={id ?? ''}
+                        fullWidth
+                        size="small"
+                        label={'블로그 ID' + (index + 1)}
+                        onChange={(e) => handleChangeBlogRecommend(e, index)}
+                      >
+                        {blogMenuItems}
+                      </Select>
+                    </FormControl>
+                  ))}
                 </div>
               </div>
             </div>
