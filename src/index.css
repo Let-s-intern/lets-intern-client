@@ -335,3 +335,7 @@ input[type='number'] {
 .swiper-button-disabled {
   @apply opacity-70 !important;
 }
+
+.swiper-wrapper {
+  @apply gap-y-12 !important;
+}

@@ -17,7 +17,7 @@ const ProgramItem = ({ ...props }: ProgramItemProps) => {
   return (
     <>
       <Link
-        className="flex w-[154px] shrink-0 flex-col md:w-full"
+        className="flex w-full flex-col"
         href={props.url}
         target={props.url.startsWith('http') ? '_blank' : undefined}
       >

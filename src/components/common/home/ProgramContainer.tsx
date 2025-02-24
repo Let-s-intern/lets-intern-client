@@ -1,4 +1,7 @@
+import { useMediaQuery } from '@mui/material';
 import { ReactNode } from 'react';
+import { Grid } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
 import MoreHeader from '../ui/MoreHeader';
 import ProgramItem, { ProgramItemProps } from './ProgramItem';
 
@@ -7,9 +10,12 @@ interface ProgramContainerProps {
   subTitle?: string;
   moreUrl?: string;
   programs: ProgramItemProps[];
+  showGrid?: boolean;
 }
 
 const ProgramContainer = ({ ...props }: ProgramContainerProps) => {
+  const isMobile = useMediaQuery('(max-width: 768px)');
+
   return (
     <div className="flex w-full max-w-[1160px] flex-col gap-y-6">
       <div className="px-5 md:px-0">
@@ -22,11 +28,26 @@ const ProgramContainer = ({ ...props }: ProgramContainerProps) => {
           {props.title}
         </MoreHeader>
       </div>
-      <div className="flex w-fit max-w-full gap-x-3 overflow-auto px-5 scrollbar-hide md:grid md:w-full md:grid-cols-5 md:gap-x-4 md:gap-y-12 md:px-0">
+      <Swiper
+        className="w-full"
+        autoplay={{ delay: 2500 }}
+        modules={[Grid]}
+        slidesPerView={isMobile ? 2.4 : 5}
+        grid={
+          !isMobile && props.showGrid
+            ? { rows: 2, fill: 'row' }
+            : { rows: 1, fill: 'row' }
+        }
+        spaceBetween={isMobile ? 12 : 26}
+        slidesOffsetBefore={isMobile ? 20 : 0}
+        slidesOffsetAfter={isMobile ? 20 : 0}
+      >
         {props.programs.map((program, index) => (
-          <ProgramItem key={index} {...program} />
+          <SwiperSlide key={index}>
+            <ProgramItem {...program} />
+          </SwiperSlide>
         ))}
-      </div>
+      </Swiper>
     </div>
   );
 };
