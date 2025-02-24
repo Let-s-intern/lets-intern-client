@@ -39,7 +39,7 @@ export const bannerAdminListSchema = z.object({
   bannerList: z.array(bannerAdminListItemSchema),
 });
 
-export type bannerType = 'MAIN' | 'PROGRAM' | 'LINE' | 'POPUP' | 'HOME_BOTTOM';
+export type bannerType = 'MAIN' | 'PROGRAM' | 'LINE' | 'POPUP' | 'MAIN_BOTTOM';
 
 export const getBnnerListForAdminQueryKey = (type: bannerType) => [
   'banner',

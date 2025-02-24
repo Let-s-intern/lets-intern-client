@@ -29,7 +29,7 @@ const BottomBannerEdit = () => {
   const { data: banner, isLoading: bannerIsLoading } =
     useGetBannerDetailForAdmin({
       bannerId,
-      type: 'HOME_BOTTOM',
+      type: 'MAIN_BOTTOM',
     });
 
   const { mutate: editBottomBanner } = useEditBannerForAdmin({
@@ -83,7 +83,7 @@ const BottomBannerEdit = () => {
       formData.append('mobileFile', value.mobileFile);
     }
 
-    editBottomBanner({ bannerId, type: 'HOME_BOTTOM', formData });
+    editBottomBanner({ bannerId, type: 'MAIN_BOTTOM', formData });
   };
 
   return (

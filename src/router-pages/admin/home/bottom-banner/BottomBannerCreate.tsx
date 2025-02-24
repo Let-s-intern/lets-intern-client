@@ -61,7 +61,7 @@ const BottomBannerCreate = () => {
     formData.append('file', value.file);
     formData.append('mobileFile', value.mobileFile);
 
-    addBottomBanner({ type: 'HOME_BOTTOM', formData });
+    addBottomBanner({ type: 'MAIN_BOTTOM', formData });
   };
 
   return (
