@@ -209,3 +209,37 @@ export const useDeleteBannerForAdmin = ({
     },
   });
 };
+
+export const bannerUserListItemSchema = z.object({
+  id: z.number(),
+  title: z.string().nullable().optional(),
+  link: z.string().nullable().optional(),
+  startDate: z.string().nullable().optional(),
+  endDate: z.string().nullable().optional(),
+  isValid: z.boolean().nullable().optional(),
+  imgUrl: z.string().nullable().optional(),
+  mobileImgUrl: z.string().nullable().optional(),
+  contents: z.string().nullable().optional(),
+  colorCode: z.string().nullable().optional(),
+  textColorCode: z.string().nullable().optional(),
+});
+
+export type BannerUserListItemType = z.infer<typeof bannerUserListItemSchema>;
+
+export const bannerUserListSchema = z.object({
+  bannerList: z.array(bannerUserListItemSchema),
+});
+
+export const useGetBannerListForUser = ({ type }: { type: bannerType }) => {
+  return useQuery({
+    queryKey: ['banner', type],
+    queryFn: async () => {
+      const res = await axios('/banner', {
+        params: {
+          type,
+        },
+      });
+      return bannerUserListSchema.parse(res.data.data);
+    },
+  });
+};
