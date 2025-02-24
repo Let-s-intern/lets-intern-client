@@ -13,6 +13,16 @@ export interface PostBlogReqBody {
   tagList: number[];
 }
 
+export interface BlogContent {
+  lexical?: string;
+  programRecommend: {
+    id: string | null; // VOD-1, CHALLENGE-1, LIVE-2 형태
+    ctaTitle?: string;
+    ctaLink: string | null;
+  }[];
+  blogRecommend: number[]; // 블로그 id 배열,
+}
+
 export interface PatchBlogReqBody {
   id: number;
   title?: string;

@@ -15,7 +15,7 @@ export default function useProgramMenuItems() {
 
   const programMenuItems = useMemo(
     () => [
-      <MenuItem key="not select" value="not select">
+      <MenuItem key="null" value="null">
         선택 안 함
       </MenuItem>,
       ...(data?.programList.map((program) => (
