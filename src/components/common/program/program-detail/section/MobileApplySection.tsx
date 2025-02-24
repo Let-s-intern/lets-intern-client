@@ -24,6 +24,7 @@ interface MobileApplySectionProps {
   dispatchDrawerIsOpen: (value: IApplyDrawerAction) => void;
 }
 
+/** @deprecated */
 const MobileApplySection = ({
   programType,
   programId,
