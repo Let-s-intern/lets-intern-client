@@ -85,7 +85,6 @@ const MainCurationSection = () => {
             title={data.curationInfo.title}
             subTitle={data.curationInfo.subTitle ?? undefined}
             moreUrl={data.curationInfo.moreUrl ?? undefined}
-            showImminentList={data.curationInfo.showImminentList}
             programs={data.curationItemList.map((item) => ({
               thumbnail: item.thumbnail ?? '',
               title: item.title ?? '',
