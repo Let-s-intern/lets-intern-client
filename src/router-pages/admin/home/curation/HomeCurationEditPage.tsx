@@ -42,6 +42,21 @@ const HomeCurationEditPage = () => {
     });
 
   const onClickEdit = async () => {
+    if (
+      form.title === '' ||
+      form.startDate === '' ||
+      form.endDate === '' ||
+      curationItems.some(
+        (item) =>
+          (item.programType !== 'ETC' && !item.programId) ||
+          (item.programType === 'ETC' &&
+            (!item.title || !item.url || !item.thumbnail)),
+      )
+    ) {
+      snackbar('필수 항목을 입력해주세요.');
+      return;
+    }
+
     await updateCuration({
       id: Number(id),
       body: {

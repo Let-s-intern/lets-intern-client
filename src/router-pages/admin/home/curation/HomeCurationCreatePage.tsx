@@ -40,10 +40,29 @@ const HomeCurationCreatePage = () => {
     });
 
   const onClickCreate = async () => {
+    if (
+      !form.title ||
+      !form.startDate ||
+      !form.endDate ||
+      curationItems.length < 1 ||
+      curationItems.some(
+        (item) =>
+          (item.programType !== 'ETC' && !item.programId) ||
+          (item.programType === 'ETC' &&
+            (!item.title || !item.url || !item.thumbnail)),
+      )
+    ) {
+      console.log(form);
+      console.log(curationItems);
+      snackbar('필수 항목을 입력해주세요.');
+      return;
+    }
+
     await createCuration({
       locationType,
       body: {
         ...form,
+        moreUrl: form.moreUrl === '' ? undefined : form.moreUrl,
         curationItemList: curationItems.map((item) => ({
           programType: item.programType,
           programId: item.programId || undefined,
