@@ -312,3 +312,26 @@ input[type='number'] {
     display: none; /* Chrome, Safari, Opera*/
   }
 }
+
+.swiper-button-prev,
+.swiper-button-next {
+  @apply hidden h-10 w-10 items-center justify-center rounded-full border border-neutral-80 bg-white/75 md:flex !important;
+}
+
+.swiper-button-prev::after,
+.swiper-button-next::after {
+  @apply text-small20 font-bold text-white !important;
+}
+
+.swiper-button-prev::after {
+  @apply -ml-1;
+}
+
+.swiper-button-next::after {
+  @apply -mr-1;
+}
+
+.swiper-button-disabled,
+.swiper-button-disabled {
+  @apply opacity-70 !important;
+}
