@@ -47,9 +47,7 @@ const RoadMapSection = () => {
     <>
       <section className="mt-10 flex w-full max-w-[1160px] flex-col gap-y-6 md:mt-16">
         <div className="px-5 md:px-0">
-          <MoreHeader titleClass="md:text-large26 md:font-bold">
-            합격으로 가는 취업 로드맵
-          </MoreHeader>
+          <MoreHeader isBig>합격으로 가는 취업 로드맵</MoreHeader>
         </div>
         <div className="flex w-fit gap-x-2.5 overflow-auto px-5 scrollbar-hide md:w-full md:px-0">
           {ROADMAP_ITEMS.map((item, index) => (

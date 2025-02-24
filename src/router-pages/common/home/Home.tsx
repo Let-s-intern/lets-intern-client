@@ -8,6 +8,7 @@ import IntroSection from '@components/common/home/section/IntroSection';
 import MainBannerSection from '@components/common/home/section/MainBannerSection';
 import RoadMapSection from '@components/common/home/section/RoadMapSection';
 
+import MainCurationSection from '@components/common/home/section/MainCurationSection';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -15,8 +16,6 @@ import 'swiper/css/pagination';
 const Home = () => {
   const [isShow, setIsShow] = useState(false);
 
-  // const { data } = useGetUserCuration({ locationType: 'UNDER_REVIEW' });
-  // console.log(data);
   return (
     <>
       <TopBanner isShow={isShow} setIsShow={setIsShow} />
@@ -25,6 +24,7 @@ const Home = () => {
         <IntroSection />
         <RoadMapSection />
         <MainBannerSection />
+        <MainCurationSection />
         {/* <Banner />
           <ProgramSection />
           <ProgramOverviewSection />

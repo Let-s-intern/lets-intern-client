@@ -1,3 +1,4 @@
+import { reportTypeSchema } from '@/schema';
 import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
@@ -235,6 +236,7 @@ export const userCurationInfoSchema = z.object({
   title: z.string(),
   subTitle: z.string().nullable().optional(),
   moreUrl: z.string().nullable().optional(),
+  showImminentList: z.boolean(),
   startDate: z.string(),
   endDate: z.string(),
 });
@@ -246,7 +248,7 @@ export const userCurationItemSchema = z.object({
   startDate: z.string().nullable().optional(),
   endDate: z.string().nullable().optional(),
   deadline: z.string().nullable().optional(),
-  reportType: z.string().nullable().optional(),
+  reportType: reportTypeSchema.nullable().optional(),
   title: z.string().nullable().optional(),
   url: z.string().nullable().optional(),
   thumbnail: z.string().nullable().optional(),
