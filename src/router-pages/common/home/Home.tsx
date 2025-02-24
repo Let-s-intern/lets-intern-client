@@ -8,6 +8,7 @@ import IntroSection from '@components/common/home/section/IntroSection';
 import MainBannerSection from '@components/common/home/section/MainBannerSection';
 import RoadMapSection from '@components/common/home/section/RoadMapSection';
 
+import ActiveProgramSection from '@components/common/home/section/ActiveProgramSection';
 import MainCurationSection from '@components/common/home/section/MainCurationSection';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -25,6 +26,7 @@ const Home = () => {
         <RoadMapSection />
         <MainBannerSection />
         <MainCurationSection />
+        <ActiveProgramSection />
         {/* <Banner />
           <ProgramSection />
           <ProgramOverviewSection />
