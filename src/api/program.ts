@@ -88,6 +88,34 @@ export const useUserProgramQuery = ({
 
 export const useGetProgramAdminQueryKey = 'useGetProgramAdminQueryKey';
 
+export const useGetUserProgramQuery = ({
+  pageable,
+  searchParams,
+}: {
+  pageable: IPageable;
+  searchParams: {
+    type?: ProgramTypeUpperCase;
+    status?: ProgramStatus[];
+    classification?: ProgramClassification;
+    startDate?: string;
+    endDate?: string;
+  };
+}) => {
+  return useQuery({
+    queryKey: [useGetProgramAdminQueryKey, pageable, searchParams],
+    queryFn: async () => {
+      const res = await axios.get(`/program`, {
+        params: {
+          ...searchParams,
+          ...pageable,
+        },
+      });
+
+      return programSchema.parse(res.data.data);
+    },
+  });
+};
+
 export const useGetProgramAdminQuery = (params: {
   type?: ProgramTypeUpperCase;
   classification?: ProgramClassification;
