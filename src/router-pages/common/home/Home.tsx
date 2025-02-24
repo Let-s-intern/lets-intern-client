@@ -9,8 +9,10 @@ import MainBannerSection from '@components/common/home/section/MainBannerSection
 import RoadMapSection from '@components/common/home/section/RoadMapSection';
 
 import ActiveProgramSection from '@components/common/home/section/ActiveProgramSection';
+import LetsCareerSection from '@components/common/home/section/LetsCareerSection';
 import MainCurationSection from '@components/common/home/section/MainCurationSection';
 import 'swiper/css';
+import 'swiper/css/grid';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
@@ -27,6 +29,7 @@ const Home = () => {
         <MainBannerSection />
         <MainCurationSection />
         <ActiveProgramSection />
+        <LetsCareerSection />
         {/* <Banner />
           <ProgramSection />
           <ProgramOverviewSection />
