@@ -11,7 +11,7 @@ const MainBannerSection = () => {
 
   return (
     <>
-      <section className="mt-16 w-full max-w-[1160px] px-5 md:mt-24 md:px-0">
+      <section className="mt-16 w-full max-w-[1160px] px-5 md:mt-24 xl:px-0">
         {isLoading ? (
           <LoadingContainer />
         ) : !data || !data.bannerList || data.bannerList.length === 0 ? null : (
