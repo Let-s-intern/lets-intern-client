@@ -9,6 +9,7 @@ import MainBannerSection from '@components/common/home/section/MainBannerSection
 import RoadMapSection from '@components/common/home/section/RoadMapSection';
 
 import ActiveProgramSection from '@components/common/home/section/ActiveProgramSection';
+import BlogCurationSection from '@components/common/home/section/BlogCurationSection';
 import BottomBannerSection from '@components/common/home/section/BottomBannerSection';
 import CurrentBlogSection from '@components/common/home/section/CurrentBlogSection';
 import InterviewSection from '@components/common/home/section/InterviewSection';
@@ -42,6 +43,7 @@ const Home = () => {
         <BottomBannerSection />
         <InterviewSection />
         <CurrentBlogSection />
+        <BlogCurationSection />
       </div>
       <Popup />
     </>
