@@ -145,6 +145,8 @@ function BlogList({
           ) {
             blogBannerCard = (
               <BlogCard
+                onClick={() => router.push(blogBanners[0].link ?? '')}
+                className="cursor-pointer"
                 key={blogBanners[0].blogBannerId}
                 title={blogBanners[0].title ?? ''}
                 superTitle="AD"
@@ -165,6 +167,8 @@ function BlogList({
           )
             blogBannerCard = (
               <BlogCard
+                onClick={() => router.push(blogBanners[1].link ?? '')}
+                className="cursor-pointer"
                 key={blogBanners[1].blogBannerId}
                 title={blogBanners[1].title ?? ''}
                 superTitle="AD"
