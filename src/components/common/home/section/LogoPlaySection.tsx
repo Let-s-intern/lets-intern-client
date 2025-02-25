@@ -126,7 +126,7 @@ const LogoList: LogoPlayItemProps[] = [
 const LogoPlaySection = () => {
   return (
     <>
-      <section className="mt-16 w-full max-w-[1160px] px-5 md:mt-36 md:px-0">
+      <section className="mt-16 w-full max-w-[1160px] px-5 md:mt-36 xl:px-0">
         <div className="w-full">
           <MoreHeader isBig>
             <>
