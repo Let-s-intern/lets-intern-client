@@ -30,7 +30,7 @@ const Home = () => {
     <>
       <TopBanner isShow={isShow} setIsShow={setIsShow} />
       {isShow && <div className="h-20 w-full md:h-14" />}
-      <div className="mb-6 flex w-full flex-col items-center justify-center pt-10 md:pt-20">
+      <div className="mb-20 flex w-full flex-col items-center justify-center pt-10 md:mb-44 md:pt-20">
         <IntroSection />
         <RoadMapSection />
         <MainBannerSection />
