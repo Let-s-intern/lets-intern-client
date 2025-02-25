@@ -1,4 +1,4 @@
-import { useGetLiveListQuery, useGetVodListQuery } from '@/api/program';
+import { useGetUserProgramQuery, useGetVodListQuery } from '@/api/program';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useEffect, useMemo, useState } from 'react';
 import ProgramContainer from '../ProgramContainer';
@@ -11,10 +11,14 @@ const LetsCareerSection = () => {
   const [active, setActive] = useState<string>('전체');
   const [data, setData] = useState<ProgramItemProps[]>([]);
 
-  const { data: liveData, isLoading: liveIsLoading } = useGetLiveListQuery({
+  const { data: liveData, isLoading: liveIsLoading } = useGetUserProgramQuery({
     pageable: {
       size: 5,
       page: 1,
+    },
+    searchParams: {
+      type: 'LIVE',
+      status: ['PROCEEDING'],
     },
   });
 
@@ -38,18 +42,18 @@ const LetsCareerSection = () => {
   const livePrograms = useMemo(
     () =>
       liveData?.programList.map((live) => ({
-        thumbnail: live.thumbnail ?? '',
-        title: live.title ?? '',
-        url: `/program/live/${live.id}`,
+        thumbnail: live.programInfo.thumbnail ?? '',
+        title: live.programInfo.title ?? '',
+        url: `/program/live/${live.programInfo.id}`,
         duration: getDuration({
           type: 'LIVE',
-          startDate: live.startDate ?? '',
-          endDate: live.endDate ?? '',
+          startDate: live.programInfo.startDate ?? '',
+          endDate: live.programInfo.endDate ?? '',
         }),
         badge: {
           text: getBadgeText({
             type: 'LIVE',
-            deadline: live.deadline ?? '',
+            deadline: live.programInfo.deadline ?? '',
           }),
         },
       })) ?? [],
@@ -61,7 +65,7 @@ const LetsCareerSection = () => {
       vodData?.programList.map((vod) => ({
         thumbnail: vod.thumbnail ?? '',
         title: vod.title ?? '',
-        url: `/program/vod/${vod.id}`,
+        url: vod.link ?? '',
         duration: undefined,
         badge: {
           text: getBadgeText({
@@ -89,7 +93,7 @@ const LetsCareerSection = () => {
         setData(vodPrograms);
       } else {
         // 취업 가이드북만 저장
-        setData([]);
+        setData(vodPrograms.filter((vod) => vod.title.includes('가이드북')));
       }
     }
   }, [livePrograms, vodPrograms, isLoading, active]);
