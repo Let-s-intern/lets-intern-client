@@ -1,5 +1,4 @@
 import { fetchBlogData } from '@/api/blog';
-import LexicalContent from '@/components/common/blog/LexicalContent';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
@@ -15,6 +14,7 @@ import BlogKakaoShareBtn from '@components/common/blog/BlogKakaoShareBtn';
 import BlogLikeBtn from '@components/common/blog/BlogLikeBtn';
 import BlogLinkShareBtn from '@components/common/blog/BlogLilnkShareBtn';
 import BlogRecommendCard from '@components/common/blog/BlogRecommendCard';
+import LexicalContent from '@components/common/blog/LexicalContent';
 import ProgramRecommendCard from '@components/common/blog/ProgramRecommendCard';
 import MoreHeader from '@components/common/ui/MoreHeader';
 import HorizontalRule from '@components/ui/HorizontalRule';
@@ -119,6 +119,9 @@ const BlogDetailPage = async ({
   const blog = await fetchBlogData(id);
 
   const blogInfo = blog.blogDetailInfo;
+  const contentJson = JSON.parse(blogInfo?.content ?? '{}');
+  const lexical = contentJson.blogRecommend ? contentJson.lexical : contentJson;
+  console.log(contentJson);
 
   return (
     <main className="mx-auto w-full max-w-[1100px] pb-12 pt-6 md:pb-[7.5rem]">
@@ -185,9 +188,9 @@ const BlogDetailPage = async ({
             </div>
 
             {/* 블로그 본문 */}
-            {blogInfo?.content && (
+            {lexical && (
               <div className="w-full break-all text-xsmall16">
-                <LexicalContent node={JSON.parse(blogInfo.content).root} />
+                <LexicalContent node={JSON.parse(lexical).root} />
               </div>
             )}
           </article>
