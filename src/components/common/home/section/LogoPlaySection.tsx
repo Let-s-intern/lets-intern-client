@@ -128,7 +128,7 @@ const LogoPlaySection = () => {
     <>
       <section className="mt-16 w-full max-w-[1160px] px-5 md:mt-36 md:px-0">
         <div className="w-full">
-          <MoreHeader>
+          <MoreHeader isBig>
             <>
               렛츠커리어인들은 <br className="md:hidden" />
               어디서 커리어를 시작했을까요?
@@ -136,7 +136,7 @@ const LogoPlaySection = () => {
           </MoreHeader>
         </div>
         <Swiper
-          className="slide-per-auto slide-rolling mt-6"
+          className="slide-per-auto slide-rolling mt-6 md:mt-10"
           modules={[Autoplay]}
           freeMode
           loop
