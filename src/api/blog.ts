@@ -291,7 +291,9 @@ export const usePostBlogRatingMutation = ({
   });
 };
 
-export const fetchBlogData = async (id: string): Promise<BlogSchema> => {
+export const fetchBlogData = async (
+  id: string | number,
+): Promise<BlogSchema> => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_API}/blog/${id}`);
 
   if (!res.ok) {

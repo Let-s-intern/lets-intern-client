@@ -1,19 +1,20 @@
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
+import { blogCategory } from '@/utils/convert';
 import Image from 'next/image';
 import Link from 'next/link';
 
 interface Props {
   blog: {
-    id: string | number;
-    title: string;
-    category: string;
-    thumbnail: string;
-    displayDate: string;
+    id: number;
+    category?: string | null;
+    title?: string | null;
+    thumbnail?: string | null;
+    displayDate?: string | null;
   };
 }
 
-function BlogRecommendCard({ blog }: Props) {
+async function BlogRecommendCard({ blog }: Props) {
   return (
     <Link
       key={blog.id}
@@ -22,7 +23,7 @@ function BlogRecommendCard({ blog }: Props) {
     >
       <div className="flex flex-col gap-1 md:gap-2">
         <h4 className="text-xxsmall12 font-semibold text-primary md:text-xsmall14">
-          {blog.category}
+          {blogCategory[blog.category ?? ''] ?? '전체'}
         </h4>
         <h3 className="line-clamp-3 font-semibold text-neutral-20 md:line-clamp-2 md:font-bold">
           {blog.title}
@@ -36,7 +37,7 @@ function BlogRecommendCard({ blog }: Props) {
         <Image
           priority
           className="object-cover"
-          src={blog.thumbnail}
+          src={blog.thumbnail ?? ''}
           alt={blog.title + ' 썸네일'}
           fill
           sizes="(max-width: 768px) 4.5rem, 260px"

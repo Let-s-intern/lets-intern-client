@@ -1,12 +1,16 @@
 'use client';
 
 import { Heart } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const LIKE = 'like';
 
 function BlogLikeBtn() {
-  const [alreadyLike, setAlreadyLike] = useState(!!localStorage.getItem(LIKE));
+  const [alreadyLike, setAlreadyLike] = useState(false);
+
+  useEffect(() => {
+    setAlreadyLike(!!localStorage.getItem(LIKE));
+  }, []);
 
   return (
     <button
