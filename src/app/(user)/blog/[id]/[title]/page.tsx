@@ -61,6 +61,10 @@ const BlogDetailPage = async ({
 
   const blog = await fetchBlogData(id);
 
+  // 공개 예정 여부
+  const willBePublished = dayjs(blog.blogDetailInfo.displayDate).isAfter(
+    dayjs(),
+  );
   const blogInfo = blog.blogDetailInfo;
   const contentJson: BlogContent = JSON.parse(blogInfo?.content ?? '{}');
   const lexical = contentJson.blogRecommend
@@ -134,7 +138,8 @@ const BlogDetailPage = async ({
                   </div>
                   {blogInfo.displayDate && (
                     <p className="text-xsmall14 text-neutral-35 md:text-xsmall16">
-                      {dayjs(blogInfo.displayDate).format(YYYY_MM_DD)} 작성
+                      {dayjs(blogInfo.displayDate).format(YYYY_MM_DD)}{' '}
+                      {willBePublished ? '공개 예정' : '작성'}
                     </p>
                   )}
                 </div>
@@ -144,10 +149,16 @@ const BlogDetailPage = async ({
             </div>
 
             {/* 블로그 본문 */}
-            {lexical && (
-              <div className="w-full break-all text-xsmall16">
-                <LexicalContent node={JSON.parse(lexical as string).root} />
-              </div>
+            {willBePublished ? (
+              <p className="py-16 text-center">
+                아직 공개되지 않은 블로그입니다 🫥
+              </p>
+            ) : (
+              lexical && (
+                <div className="w-full break-all text-xsmall16">
+                  <LexicalContent node={JSON.parse(lexical as string).root} />
+                </div>
+              )
             )}
           </article>
 

@@ -183,7 +183,13 @@ function BlogList({
               {blogBannerCard}
               <BlogCard
                 className="cursor-pointer"
-                onClick={() => router.push(`/blog/${blogThumbnailInfo.id}`)}
+                onClick={() => {
+                  if (willBePublished(blogThumbnailInfo.displayDate ?? '')) {
+                    console.log('알람 설정 페이지로 이동');
+                    return;
+                  }
+                  router.push(`/blog/${blogThumbnailInfo.id}`);
+                }}
                 title={blogThumbnailInfo.title ?? ''}
                 superTitle={
                   blogThumbnailInfo.category
