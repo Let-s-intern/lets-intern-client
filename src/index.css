@@ -339,3 +339,11 @@ input[type='number'] {
 .swiper-wrapper {
   @apply gap-y-12 !important;
 }
+
+.slide-per-auto .swiper-slide {
+  width: auto !important;
+}
+
+.slide-rolling .swiper-wrapper {
+  transition-timing-function: linear;
+}
