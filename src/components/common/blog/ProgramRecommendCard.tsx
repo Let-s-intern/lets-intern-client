@@ -2,11 +2,11 @@ import { ProgramRecommendItem } from '@/api/blogSchema';
 import {
   fetchChallenge,
   fetchLive,
-  fetchProgram,
   fetchVod,
+  getChallengeByKeyword,
 } from '@/api/program';
 import { convertReportTypeToPathname, fetchReportId } from '@/api/report';
-import { ProgramStatusEnum, ProgramTypeEnum } from '@/schema';
+import { ProgramTypeEnum } from '@/schema';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -51,32 +51,13 @@ async function ProgramRecommendCard({ program }: Props) {
           ctaLink = `/report/landing/${convertReportTypeToPathname(report.reportType ?? 'RESUME')}`;
       }
     } else if (program.ctaLink?.startsWith('latest')) {
-      const searchKeyword = program.ctaLink.split('latest:')[1].trim();
-      // 챌린지 가져오기
-      const programs = await fetchProgram({
-        page: 1,
-        size: 10,
-        type: [CHALLENGE],
-        status: [ProgramStatusEnum.enum.PROCEEDING],
-      });
+      const keyword = program.ctaLink.split('latest:')[1].trim();
+      const challenge = await getChallengeByKeyword(keyword);
 
-      const filtered = programs.programList.filter((item) =>
-        item.programInfo.title?.includes(searchKeyword),
-      );
-
-      if (filtered.length > 0) {
-        // 모집 마감일 제일 빠른 챌린지 찾기
-        filtered.sort(
-          (a, b) =>
-            new Date(a.programInfo.deadline ?? '').getTime() -
-            new Date(b.programInfo.deadline ?? '').getTime(),
-        );
-
-        const target = filtered[0];
-
-        title = target.programInfo.title ?? undefined;
-        thumbnail = target.programInfo.thumbnail ?? '';
-        ctaLink = `/program/${CHALLENGE.toLowerCase()}/${target.programInfo.id}`;
+      if (challenge) {
+        title = challenge.programInfo.title ?? undefined;
+        thumbnail = challenge.programInfo.thumbnail ?? '';
+        ctaLink = `/program/${CHALLENGE.toLowerCase()}/${challenge.programInfo.id}`;
       }
     }
 

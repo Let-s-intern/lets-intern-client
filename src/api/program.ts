@@ -25,6 +25,8 @@ import {
   programRecommendSchema,
   programSchema,
   ProgramStatus,
+  ProgramStatusEnum,
+  ProgramTypeEnum,
   ProgramTypeUpperCase,
   UpdateChallengeReq,
   UpdateLiveReq,
@@ -714,4 +716,29 @@ export const fetchProgram = async (params: {
   });
 
   return programSchema.parse(data);
+};
+
+export const getChallengeByKeyword = async (keyword: string) => {
+  // 챌린지 가져오기
+  const programs = await fetchProgram({
+    page: 1,
+    size: 10,
+    type: [ProgramTypeEnum.enum.CHALLENGE],
+    status: [ProgramStatusEnum.enum.PROCEEDING],
+  });
+
+  const filtered = programs.programList.filter((item) =>
+    item.programInfo.title?.includes(keyword),
+  );
+
+  if (filtered.length === 0) return undefined;
+
+  // 모집 마감일 제일 빠른 챌린지 찾기
+  filtered.sort(
+    (a, b) =>
+      new Date(a.programInfo.deadline ?? '').getTime() -
+      new Date(b.programInfo.deadline ?? '').getTime(),
+  );
+
+  return filtered[0];
 };
