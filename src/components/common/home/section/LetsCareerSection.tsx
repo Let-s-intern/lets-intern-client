@@ -107,7 +107,7 @@ const LetsCareerSection = () => {
                 렛츠커리어의 독보적 콘텐츠 🚀
               </>
             }
-            // moreUrl=""
+            moreUrl="/program?type=LIVE&type=VOD"
             programs={data}
             navigation={navigation}
           />

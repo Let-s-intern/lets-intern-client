@@ -200,8 +200,9 @@ const Programs = () => {
         break;
       }
       case PROGRAM_QUERY_KEY.TYPE: {
-        searchParams.delete(PROGRAM_QUERY_KEY.TYPE);
-        typeDispatch({ type: 'init' });
+        const filterKey = getKeyByValue(PROGRAM_FILTER_TYPE, value);
+        typeDispatch({ type: 'uncheck', value: filterKey });
+        deleteParam(filterKey as string, PROGRAM_QUERY_KEY.TYPE);
         break;
       }
       case PROGRAM_QUERY_KEY.STATUS: {
