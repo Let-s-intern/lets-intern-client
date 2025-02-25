@@ -14,7 +14,6 @@ import { useEffect, useRef, useState } from 'react';
 const ReviewSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const reviewContainerRef = useRef<HTMLDivElement>(null);
-  const [displayedCount, setDisplayedCount] = useState<number[]>([]);
   const [isVisible, setIsVisible] = useState(false);
   const { data: reviewCount } = useGetReviewCount();
   const { data: blogData } = useBlogListQuery({
@@ -30,6 +29,7 @@ const ReviewSection = () => {
   useEffect(() => {
     const current = sectionRef.current;
     if (!current) return;
+    if (reviewsCount === 0) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -45,10 +45,6 @@ const ReviewSection = () => {
     return () => {
       observer.unobserve(current);
     };
-  }, []);
-
-  useEffect(() => {
-    setDisplayedCount([reviewsCount - 1, reviewsCount]);
   }, [reviewsCount]);
 
   useEffect(() => {
@@ -89,35 +85,40 @@ const ReviewSection = () => {
     <>
       <section
         ref={sectionRef}
-        className="mt-16 flex w-full max-w-[1160px] flex-col px-5 md:mt-36 md:px-0"
+        className="mt-16 flex w-full max-w-[1160px] flex-col gap-y-6 px-5 md:mt-36 md:flex-row md:px-0"
       >
-        <span className="text-xsmall16 font-bold text-primary">
-          망설이는 순간, 누군가는 한 걸음 앞서갑니다.
-        </span>
-        <div className="mt-1 text-small20 font-bold text-neutral-0">
-          렛츠커리어 챌린지는 지금도 진행 중!
-          <br />
-          <div className="inline-flex">
-            <div className="h-[1.75rem] overflow-hidden">
-              {displayedCount.map((count, index) => (
-                <div key={index}>{count}</div>
-              ))}
+        <div className="flex flex-col md:w-1/2">
+          <span className="text-xsmall16 font-bold text-primary md:text-medium22">
+            망설이는 순간, 누군가는 한 걸음 앞서갑니다.
+          </span>
+          <div className="mt-1 text-small20 font-bold text-neutral-0 md:mt-2 md:text-xxlarge32">
+            렛츠커리어 챌린지는 지금도 진행 중!
+            <br />
+            <div className="flex h-7 overflow-hidden break-keep md:h-11">
+              <div
+                className={`transition-transform delay-200 duration-500 ease-out ${
+                  isVisible ? '-translate-y-full' : 'translate-y-0'
+                }`}
+              >
+                <div>{reviewsCount - 1}</div>
+                <div className="mt-0.5">{reviewsCount}</div>
+              </div>
+              <span>개의 후기가 실시간으로</span>
             </div>
-            개의 후기가 실시간으로
-            <br className="md:hidden" /> 공유되고 있어요.
+            <span> 공유되고 있어요.</span>
           </div>
+          <Button
+            className="mt-4 w-fit rounded-xs px-3 py-2.5 text-xsmall14 font-semibold md:mt-8 md:rounded-sm md:px-5 md:py-4 md:text-small20"
+            to="/review"
+          >
+            수강생들의 생생 후기 더 보기
+          </Button>
         </div>
-        <Button
-          className="mt-4 w-fit rounded-xs px-3 py-2.5 text-xsmall14 font-semibold"
-          to="/review"
-        >
-          수강생들의 생생 후기 더 보기
-        </Button>
         <div
           ref={reviewContainerRef}
-          className="mt-6 h-72 w-full overflow-auto bg-primary-5 px-7 scrollbar-hide"
+          className="h-72 w-full overflow-auto bg-primary-5 px-7 scrollbar-hide md:h-[520px] md:w-1/2 md:px-32"
         >
-          <div className="h-5" />
+          <div className="h-5 md:h-6" />
           <div className="flex w-full flex-col gap-4">
             {totalReview?.reviewList?.map((review, index) => (
               <ReviewItem
@@ -126,7 +127,7 @@ const ReviewSection = () => {
               />
             ))}
           </div>
-          <div className="h-5" />
+          <div className="h-5 md:h-6" />
         </div>
       </section>
     </>
@@ -137,8 +138,8 @@ export default ReviewSection;
 
 export const ReviewItem = ({ review }: { review: GetReview }) => {
   return (
-    <div className="flex flex-col rounded-sm bg-white px-5 py-4">
-      <div className="flex flex-col gap-y-1.5 text-xsmall14">
+    <div className="flex w-full flex-col rounded-sm bg-white px-5 py-4">
+      <div className="flex flex-col gap-y-1.5 text-xsmall14 md:gap-y-2">
         <span className="font-medium text-primary">
           {dayjs(review.reviewInfo.createDate).format(YYYY_MM_DD)} 작성
         </span>
