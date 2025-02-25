@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
+  ChallengeIdSchema,
   challengeSchema,
   CreateChallengeReq,
   CreateLiveReq,
@@ -11,6 +12,7 @@ import {
   getLiveIdSchema,
   getVodIdSchema,
   LiveIdPrimitive,
+  LiveIdSchema,
   liveListResponseSchema,
   liveTitleSchema,
   programAdminSchema,
@@ -25,6 +27,7 @@ import {
   UpdateChallengeReq,
   UpdateLiveReq,
   UpdateVodReq,
+  VodIdSchema,
   vodListResponseSchema,
 } from '../schema';
 import { IPageable } from '../types/interface';
@@ -648,4 +651,41 @@ export const useGetVodListQuery = ({
       return vodListResponseSchema.parse(res.data.data);
     },
   });
+};
+
+export const fetchChallenge = async (
+  id: string | number,
+): Promise<ChallengeIdSchema> => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_API}/challenge/${id}`,
+  );
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch challenge data');
+  }
+
+  const data = await res.json();
+  return getChallengeIdSchema.parse(data.data);
+};
+
+export const fetchVod = async (id: string | number): Promise<VodIdSchema> => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_API}/vod/${id}`);
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch vod data');
+  }
+
+  const data = await res.json();
+  return getVodIdSchema.parse(data.data);
+};
+
+export const fetchLive = async (id: string | number): Promise<LiveIdSchema> => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_API}/live/${id}`);
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch live data');
+  }
+
+  const data = await res.json();
+  return getLiveIdSchema.parse(data.data);
 };

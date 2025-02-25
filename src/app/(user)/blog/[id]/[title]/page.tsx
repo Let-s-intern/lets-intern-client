@@ -1,4 +1,5 @@
 import { fetchBlogData } from '@/api/blog';
+import { BlogContent } from '@/api/blogSchema';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
@@ -23,36 +24,6 @@ import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ReactNode } from 'react';
-
-const programMockData = [
-  {
-    id: generateUuid(),
-    ctaTitle: '취업 일단 시작!',
-    title: '2월 3주차 인턴/신입 채용공고 [외국계 기업]',
-    thumbnail:
-      'https://letsintern-bucket.s3.ap-northeast-2.amazonaws.com/blog/FeRrTQbYvJ_Frame%201984080307.png',
-    ctaLink:
-      'https://www.letscareer.co.kr/blog/63/2%EC%9B%94-3%EC%A3%BC%EC%B0%A8-%EC%9D%B8%ED%84%B4-%EC%8B%A0%EC%9E%85-%EC%B1%84%EC%9A%A9%EA%B3%B5%EA%B3%A0-%5B%EC%99%B8%EA%B5%AD%EA%B3%84-%EA%B8%B0%EC%97%85%5D',
-  },
-  {
-    id: generateUuid(),
-    ctaTitle: '취업 일단 시작!',
-    title: '2월 3주차 인턴/신입 채용공고 [외국계 기업]',
-    thumbnail:
-      'https://letsintern-bucket.s3.ap-northeast-2.amazonaws.com/blog/FeRrTQbYvJ_Frame%201984080307.png',
-    ctaLink:
-      'https://www.letscareer.co.kr/blog/63/2%EC%9B%94-3%EC%A3%BC%EC%B0%A8-%EC%9D%B8%ED%84%B4-%EC%8B%A0%EC%9E%85-%EC%B1%84%EC%9A%A9%EA%B3%B5%EA%B3%A0-%5B%EC%99%B8%EA%B5%AD%EA%B3%84-%EA%B8%B0%EC%97%85%5D',
-  },
-  {
-    id: generateUuid(),
-    ctaTitle: '취업 일단 시작!',
-    title: '2월 3주차 인턴/신입 채용공고 [외국계 기업]',
-    thumbnail:
-      'https://letsintern-bucket.s3.ap-northeast-2.amazonaws.com/blog/FeRrTQbYvJ_Frame%201984080307.png',
-    ctaLink:
-      'https://www.letscareer.co.kr/blog/63/2%EC%9B%94-3%EC%A3%BC%EC%B0%A8-%EC%9D%B8%ED%84%B4-%EC%8B%A0%EC%9E%85-%EC%B1%84%EC%9A%A9%EA%B3%B5%EA%B3%A0-%5B%EC%99%B8%EA%B5%AD%EA%B3%84-%EA%B8%B0%EC%97%85%5D',
-  },
-];
 
 const blogMockData = [
   {
@@ -119,9 +90,8 @@ const BlogDetailPage = async ({
   const blog = await fetchBlogData(id);
 
   const blogInfo = blog.blogDetailInfo;
-  const contentJson = JSON.parse(blogInfo?.content ?? '{}');
+  const contentJson: BlogContent = JSON.parse(blogInfo?.content ?? '{}');
   const lexical = contentJson.blogRecommend ? contentJson.lexical : contentJson;
-  console.log(contentJson);
 
   return (
     <main className="mx-auto w-full max-w-[1100px] pb-12 pt-6 md:pb-[7.5rem]">
@@ -190,7 +160,7 @@ const BlogDetailPage = async ({
             {/* 블로그 본문 */}
             {lexical && (
               <div className="w-full break-all text-xsmall16">
-                <LexicalContent node={JSON.parse(lexical).root} />
+                <LexicalContent node={JSON.parse(lexical as string).root} />
               </div>
             )}
           </article>
@@ -247,7 +217,7 @@ const BlogDetailPage = async ({
             취뽀 성공해요!
           </Heading2>
           <section className="mb-6 mt-5 flex flex-col gap-6">
-            {programMockData.map((item) => (
+            {contentJson.programRecommend?.map((item) => (
               <ProgramRecommendCard key={item.id} program={item} />
             ))}
           </section>

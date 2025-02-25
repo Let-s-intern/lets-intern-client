@@ -13,13 +13,15 @@ export interface PostBlogReqBody {
   tagList: number[];
 }
 
+export interface ProgramRecommendItem {
+  id: string | null; // VOD-1, CHALLENGE-1, LIVE-2 형태
+  ctaTitle?: string;
+  ctaLink?: string;
+}
+
 export interface BlogContent {
   lexical?: string;
-  programRecommend?: {
-    id: string | null; // VOD-1, CHALLENGE-1, LIVE-2 형태
-    ctaTitle?: string;
-    ctaLink?: string;
-  }[];
+  programRecommend?: ProgramRecommendItem[];
   blogRecommend?: number[]; // 블로그 id 배열,
 }
 
