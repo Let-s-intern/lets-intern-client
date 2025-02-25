@@ -9,6 +9,7 @@ import MainBannerSection from '@components/common/home/section/MainBannerSection
 import RoadMapSection from '@components/common/home/section/RoadMapSection';
 
 import ActiveProgramSection from '@components/common/home/section/ActiveProgramSection';
+import BottomBannerSection from '@components/common/home/section/BottomBannerSection';
 import LetsCareerSection from '@components/common/home/section/LetsCareerSection';
 import LogoPlaySection from '@components/common/home/section/LogoPlaySection';
 import MainCurationSection from '@components/common/home/section/MainCurationSection';
@@ -34,6 +35,7 @@ const Home = () => {
         <LetsCareerSection />
         <ReviewSection />
         <LogoPlaySection />
+        <BottomBannerSection />
         {/* <Banner />
           <ProgramSection />
           <ProgramOverviewSection />
