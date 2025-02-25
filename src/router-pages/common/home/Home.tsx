@@ -10,6 +10,7 @@ import RoadMapSection from '@components/common/home/section/RoadMapSection';
 
 import ActiveProgramSection from '@components/common/home/section/ActiveProgramSection';
 import LetsCareerSection from '@components/common/home/section/LetsCareerSection';
+import LogoPlaySection from '@components/common/home/section/LogoPlaySection';
 import MainCurationSection from '@components/common/home/section/MainCurationSection';
 import ReviewSection from '@components/common/home/section/ReviewSection';
 import 'swiper/css';
@@ -32,6 +33,7 @@ const Home = () => {
         <ActiveProgramSection />
         <LetsCareerSection />
         <ReviewSection />
+        <LogoPlaySection />
         {/* <Banner />
           <ProgramSection />
           <ProgramOverviewSection />
