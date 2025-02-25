@@ -15,6 +15,7 @@ import InterviewSection from '@components/common/home/section/InterviewSection';
 import LetsCareerSection from '@components/common/home/section/LetsCareerSection';
 import LogoPlaySection from '@components/common/home/section/LogoPlaySection';
 import MainCurationSection from '@components/common/home/section/MainCurationSection';
+import ReviewCurationSection from '@components/common/home/section/ReviewCurationSection';
 import ReviewSection from '@components/common/home/section/ReviewSection';
 import 'swiper/css';
 import 'swiper/css/grid';
@@ -36,16 +37,11 @@ const Home = () => {
         <ActiveProgramSection />
         <LetsCareerSection />
         <ReviewSection />
+        <ReviewCurationSection />
         <LogoPlaySection />
         <BottomBannerSection />
         <InterviewSection />
         <CurrentBlogSection />
-        {/* <Banner />
-          <ProgramSection />
-          <ProgramOverviewSection />
-          <AdvantageSection />
-          <PassReviewSection />
-          <ReviewSection /> */}
       </div>
       <Popup />
     </>
