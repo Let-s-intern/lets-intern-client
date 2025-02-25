@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import { client } from '@/utils/client';
 import {
   ChallengeIdSchema,
   challengeSchema,
@@ -15,6 +16,7 @@ import {
   LiveIdSchema,
   liveListResponseSchema,
   liveTitleSchema,
+  Program,
   programAdminSchema,
   programBannerAdminDetailSchema,
   programBannerAdminListSchema,
@@ -688,4 +690,28 @@ export const fetchLive = async (id: string | number): Promise<LiveIdSchema> => {
 
   const data = await res.json();
   return getLiveIdSchema.parse(data.data);
+};
+
+export const fetchProgram = async (params: {
+  type?: ProgramTypeUpperCase[];
+  classification?: ProgramClassification[];
+  status?: ProgramStatus[];
+  startDate?: string;
+  endDate?: string;
+  page: number | string;
+  size: number | string;
+}): Promise<Program> => {
+  const data = await client<Program>('/v1/program', {
+    method: 'GET',
+    params: {
+      ...params,
+      type: params.type?.join(',') ?? '',
+      classification: params.classification?.join(',') ?? '',
+      status: params.status?.join(',') ?? '',
+      page: String(params.page),
+      size: String(params.size),
+    },
+  });
+
+  return programSchema.parse(data);
 };

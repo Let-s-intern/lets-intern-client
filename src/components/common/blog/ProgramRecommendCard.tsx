@@ -1,11 +1,16 @@
 import { ProgramRecommendItem } from '@/api/blogSchema';
-import { fetchChallenge, fetchLive, fetchVod } from '@/api/program';
+import {
+  fetchChallenge,
+  fetchLive,
+  fetchProgram,
+  fetchVod,
+} from '@/api/program';
 import { convertReportTypeToPathname, fetchReportId } from '@/api/report';
-import { ProgramTypeEnum } from '@/schema';
+import { ProgramStatusEnum, ProgramTypeEnum } from '@/schema';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const { CHALLENGE, LIVE, REPORT, VOD } = ProgramTypeEnum.enum;
+const { CHALLENGE, LIVE, VOD } = ProgramTypeEnum.enum;
 interface Props {
   program: ProgramRecommendItem;
 }
@@ -39,13 +44,40 @@ async function ProgramRecommendCard({ program }: Props) {
           ctaLink = vod.vodInfo.link ?? '';
           break;
         default:
+          // type === REPORT
           const report = await fetchReportId(id);
           title = report.title ?? undefined;
           thumbnail = '/images/report/thumbnail-resume.svg';
           ctaLink = `/report/landing/${convertReportTypeToPathname(report.reportType ?? 'RESUME')}`;
       }
-    } else if (program.ctaLink) {
+    } else if (program.ctaLink?.startsWith('latest')) {
+      const searchKeyword = program.ctaLink.split('latest:')[1].trim();
       // 챌린지 가져오기
+      const programs = await fetchProgram({
+        page: 1,
+        size: 10,
+        type: [CHALLENGE],
+        status: [ProgramStatusEnum.enum.PROCEEDING],
+      });
+
+      const filtered = programs.programList.filter((item) =>
+        item.programInfo.title?.includes(searchKeyword),
+      );
+
+      if (filtered.length > 0) {
+        // 모집 마감일 제일 빠른 챌린지 찾기
+        filtered.sort(
+          (a, b) =>
+            new Date(a.programInfo.deadline ?? '').getTime() -
+            new Date(b.programInfo.deadline ?? '').getTime(),
+        );
+
+        const target = filtered[0];
+
+        title = target.programInfo.title ?? undefined;
+        thumbnail = target.programInfo.thumbnail ?? '';
+        ctaLink = `/program/${CHALLENGE.toLowerCase()}/${target.programInfo.id}`;
+      }
     }
 
     return { title, thumbnail, ctaLink };
