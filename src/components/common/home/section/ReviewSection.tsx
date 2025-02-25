@@ -85,7 +85,7 @@ const ReviewSection = () => {
     <>
       <section
         ref={sectionRef}
-        className="mt-16 flex w-full max-w-[1160px] flex-col gap-y-6 px-5 md:mt-36 md:flex-row md:px-0"
+        className="mt-16 flex w-full max-w-[1160px] flex-col gap-6 px-5 md:mt-36 md:flex-row xl:px-0"
       >
         <div className="flex flex-col md:w-1/2">
           <span className="text-xsmall16 font-bold text-primary md:text-medium22">
@@ -116,10 +116,10 @@ const ReviewSection = () => {
         </div>
         <div
           ref={reviewContainerRef}
-          className="h-72 w-full overflow-auto bg-primary-5 px-7 scrollbar-hide md:h-[520px] md:w-1/2 md:px-32"
+          className="h-72 w-full items-center overflow-auto bg-primary-5 scrollbar-hide md:h-[520px] md:w-1/2"
         >
           <div className="h-5 md:h-6" />
-          <div className="flex w-full flex-col gap-4">
+          <div className="flex w-full flex-col items-center gap-4">
             {totalReview?.reviewList?.map((review, index) => (
               <ReviewItem
                 key={review.reviewInfo.reviewId + index.toString()}
@@ -138,7 +138,7 @@ export default ReviewSection;
 
 export const ReviewItem = ({ review }: { review: GetReview }) => {
   return (
-    <div className="flex w-full flex-col rounded-sm bg-white px-5 py-4">
+    <div className="flex w-[260px] flex-col rounded-sm bg-white px-5 py-4 lg:w-[380px]">
       <div className="flex flex-col gap-y-1.5 text-xsmall14 md:gap-y-2">
         <span className="font-medium text-primary">
           {dayjs(review.reviewInfo.createDate).format(YYYY_MM_DD)} 작성
