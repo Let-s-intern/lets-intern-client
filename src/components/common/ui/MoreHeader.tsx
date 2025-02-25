@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 
 interface MoreHeaderProps {
   children?: ReactNode;
-  subtitle?: string;
+  subtitle?: ReactNode;
   href?: string;
   isBig?: boolean;
   isVertical?: boolean;
@@ -47,6 +47,7 @@ const MoreHeader = ({
           className={clsx(
             'font-medium text-neutral-45',
             isBig ? 'text-xsmall16' : 'text-xsmall14',
+            isVertical ? 'mt-0.5' : '',
           )}
         >
           더보기
