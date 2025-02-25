@@ -660,38 +660,24 @@ export const useGetVodListQuery = ({
 export const fetchChallenge = async (
   id: string | number,
 ): Promise<ChallengeIdSchema> => {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_API}/challenge/${id}`,
-  );
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch challenge data');
-  }
-
-  const data = await res.json();
-  return getChallengeIdSchema.parse(data.data);
+  const data = await client<VodIdSchema>(`/v1//challenge/${id}`, {
+    method: 'GET',
+  });
+  return getChallengeIdSchema.parse(data);
 };
 
 export const fetchVod = async (id: string | number): Promise<VodIdSchema> => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_API}/vod/${id}`);
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch vod data');
-  }
-
-  const data = await res.json();
-  return getVodIdSchema.parse(data.data);
+  const data = await client<VodIdSchema>(`/v1//vod/${id}`, {
+    method: 'GET',
+  });
+  return getVodIdSchema.parse(data);
 };
 
 export const fetchLive = async (id: string | number): Promise<LiveIdSchema> => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_API}/live/${id}`);
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch live data');
-  }
-
-  const data = await res.json();
-  return getLiveIdSchema.parse(data.data);
+  const data = await client<LiveIdSchema>(`/v1//live/${id}`, {
+    method: 'GET',
+  });
+  return getLiveIdSchema.parse(data);
 };
 
 export const fetchProgram = async (params: {
