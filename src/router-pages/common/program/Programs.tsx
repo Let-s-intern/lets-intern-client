@@ -134,11 +134,11 @@ const Programs = () => {
           const filterKey = getKeyByValue(PROGRAM_FILTER_TYPE, value);
           const isChecked = filterType[filterKey as filterTypekey];
 
-          // 파라미터 설정
-          searchParams.delete(PROGRAM_QUERY_KEY.TYPE);
-          typeDispatch({ type: 'init' });
-          if (!isChecked) {
-            searchParams.set(PROGRAM_QUERY_KEY.TYPE, filterKey as string);
+          if (isChecked) {
+            typeDispatch({ type: 'uncheck', value: filterKey });
+            deleteParam(filterKey as string, PROGRAM_QUERY_KEY.TYPE);
+          } else {
+            searchParams.append(PROGRAM_QUERY_KEY.TYPE, filterKey as string);
             typeDispatch({ type: 'check', value: filterKey });
           }
           break;
@@ -355,18 +355,14 @@ const Programs = () => {
                   }
                 />
               ))}
-            {searchParams.get(PROGRAM_QUERY_KEY.TYPE) && (
+            {searchParams.getAll(PROGRAM_QUERY_KEY.TYPE).map((item) => (
               <FilterItem
                 programType={PROGRAM_QUERY_KEY.TYPE}
                 handleClick={cancelFilter}
-                key={PROGRAM_QUERY_KEY.TYPE}
-                caption={
-                  PROGRAM_FILTER_TYPE[
-                    searchParams.get(PROGRAM_QUERY_KEY.TYPE)! as filterTypekey
-                  ]
-                }
+                key={item}
+                caption={PROGRAM_FILTER_TYPE[item as filterTypekey]}
               />
-            )}
+            ))}
             {searchParams.getAll(PROGRAM_QUERY_KEY.STATUS).map((item) => (
               <FilterItem
                 programType={PROGRAM_QUERY_KEY.STATUS}
