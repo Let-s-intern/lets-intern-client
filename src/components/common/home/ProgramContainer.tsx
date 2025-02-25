@@ -24,7 +24,7 @@ const ProgramContainer = ({ ...props }: ProgramContainerProps) => {
 
   return (
     <div className="flex w-full max-w-[1160px] flex-col gap-y-6 md:gap-y-10">
-      <div className="flex w-full flex-col gap-y-4 px-5 md:px-0">
+      <div className="flex w-full flex-col gap-y-4 px-5 xl:px-0">
         <MoreHeader
           subtitle={props.subTitle}
           href={props.moreUrl}
@@ -58,15 +58,41 @@ const ProgramContainer = ({ ...props }: ProgramContainerProps) => {
           className="w-full"
           autoplay={{ delay: 2500 }}
           modules={[Grid]}
-          slidesPerView={isMobile ? 2.4 : 5}
+          slidesPerView={2.4}
           grid={
             !isMobile && props.showGrid
               ? { rows: 2, fill: 'row' }
               : { rows: 1, fill: 'row' }
           }
-          spaceBetween={isMobile ? 12 : 26}
-          slidesOffsetBefore={isMobile ? 20 : 0}
-          slidesOffsetAfter={isMobile ? 20 : 0}
+          spaceBetween={12}
+          slidesOffsetBefore={20}
+          slidesOffsetAfter={20}
+          breakpoints={{
+            768: {
+              spaceBetween: 26,
+              slidesPerView: 3,
+              slidesOffsetBefore: 20,
+              slidesOffsetAfter: 20,
+            },
+            820: {
+              spaceBetween: 26,
+              slidesPerView: 4,
+              slidesOffsetBefore: 20,
+              slidesOffsetAfter: 20,
+            },
+            1040: {
+              spaceBetween: 26,
+              slidesPerView: 5,
+              slidesOffsetBefore: 20,
+              slidesOffsetAfter: 20,
+            },
+            1280: {
+              spaceBetween: 26,
+              slidesPerView: 5,
+              slidesOffsetBefore: 0,
+              slidesOffsetAfter: 0,
+            },
+          }}
         >
           {props.programs.map((program, index) => (
             <SwiperSlide key={index}>
