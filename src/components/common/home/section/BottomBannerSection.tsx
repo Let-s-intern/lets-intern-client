@@ -39,7 +39,7 @@ const BottomBannerSection = () => {
                       isMobile ? banner.mobileImgUrl || '' : banner.imgUrl || ''
                     }
                     alt={'main-banner' + banner.id}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full rounded-sm object-cover"
                   />
                 </SwiperSlide>
               ))}
