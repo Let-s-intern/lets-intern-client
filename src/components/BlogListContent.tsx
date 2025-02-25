@@ -57,7 +57,7 @@ const Content = () => {
   const params = useSearchParams();
   const typeRaw = params.get('type');
   const types = typeRaw
-    ? typeRaw.split(',').map((name) => blogTypeSchema.parse(name))
+    ? typeRaw.split(',').map((name) => blogTypeSchema.parse(name.toUpperCase()))
     : null;
 
   const [page, setPage] = useState(1);

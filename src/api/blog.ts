@@ -65,7 +65,11 @@ export const useBlogListQuery = ({
     queryKey: [blogListQueryKey, pageable, types],
     queryFn: async () => {
       const res = await axios.get(`/blog`, {
-        params: { ...pageable, type: types, tagId },
+        params: {
+          ...pageable,
+          tagId,
+          types: types?.map((type) => type).join(','),
+        },
       });
       return blogListSchema.parse(res.data.data);
     },
