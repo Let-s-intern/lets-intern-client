@@ -45,21 +45,21 @@ const ChannelTalkBtn = () => {
     <button
       id="custom-channel-button"
       className={twMerge(
-        'fixed right-4 z-30 flex items-center rounded-[25rem] bg-neutral-100 shadow-05',
+        'fixed right-4 z-30 flex w-32 items-center rounded-full bg-neutral-100 shadow-05 md:right-6 md:w-36',
         programDetailPathRegex.test(pathname) ||
           (pathname.startsWith('/report') && isUpTo1280) ||
           pathname.startsWith('/report/landing') ||
           (pathname.startsWith('/payment-input') && isUpTo991)
           ? 'bottom-32'
-          : 'bottom-20',
+          : 'bottom-14',
         isHidden && 'hidden',
       )}
       onClick={() => channelService.showMessenger()}
     >
-      <div className="text-1-medium sm:text-1.125-medium flex w-20 items-center justify-center pl-2 sm:h-[4.25rem] sm:w-[105px]">
-        채팅문의
+      <div className="flex flex-1 items-center justify-center pl-2 text-xsmall14 font-semibold md:text-xsmall16">
+        문의하기
       </div>
-      <div className="flex h-14 w-14 translate-x-px items-center justify-center rounded-full bg-primary sm:h-[4.25rem] sm:w-[4.25rem]">
+      <div className="flex h-12 w-12 translate-x-px items-center justify-center rounded-full bg-primary sm:h-14 sm:w-14">
         <img
           className="h-7 w-7 sm:h-8 sm:w-8"
           src="/icons/channel.svg"
