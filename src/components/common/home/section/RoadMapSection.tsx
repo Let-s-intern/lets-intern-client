@@ -50,30 +50,32 @@ const RoadMapSection = () => {
   return (
     <>
       <section className="mt-10 flex w-full max-w-[1160px] flex-col gap-y-6 md:mt-16">
-        <div className="px-5 md:px-0">
+        <div className="px-5 xl:px-0">
           <MoreHeader isBig>합격으로 가는 취업 로드맵</MoreHeader>
         </div>
-        <Swiper
-          className={clsx('w-full', isMobile && 'slide-per-auto')}
-          slidesPerView={'auto'}
-          spaceBetween={10}
-          slidesOffsetBefore={20}
-          slidesOffsetAfter={20}
-          breakpoints={{
-            768: {
-              slidesPerView: 3,
-              spaceBetween: 16,
-              slidesOffsetBefore: 0,
-              slidesOffsetAfter: 0,
-            },
-          }}
-        >
-          {ROADMAP_ITEMS.map((item, index) => (
-            <SwiperSlide key={index}>
-              <RoadMapItem {...item} />
-            </SwiperSlide>
-          ))}
-        </Swiper>
+        <div className="w-full md:px-5 xl:px-0">
+          <Swiper
+            className={clsx('w-full', isMobile && 'slide-per-auto')}
+            slidesPerView={'auto'}
+            spaceBetween={10}
+            slidesOffsetBefore={20}
+            slidesOffsetAfter={20}
+            breakpoints={{
+              768: {
+                slidesPerView: 3,
+                spaceBetween: 16,
+                slidesOffsetBefore: 0,
+                slidesOffsetAfter: 0,
+              },
+            }}
+          >
+            {ROADMAP_ITEMS.map((item, index) => (
+              <SwiperSlide key={index}>
+                <RoadMapItem {...item} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
       </section>
     </>
   );
