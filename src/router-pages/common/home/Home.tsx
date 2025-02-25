@@ -10,6 +10,7 @@ import RoadMapSection from '@components/common/home/section/RoadMapSection';
 
 import ActiveProgramSection from '@components/common/home/section/ActiveProgramSection';
 import BottomBannerSection from '@components/common/home/section/BottomBannerSection';
+import CurrentBlogSection from '@components/common/home/section/CurrentBlogSection';
 import InterviewSection from '@components/common/home/section/InterviewSection';
 import LetsCareerSection from '@components/common/home/section/LetsCareerSection';
 import LogoPlaySection from '@components/common/home/section/LogoPlaySection';
@@ -38,6 +39,7 @@ const Home = () => {
         <LogoPlaySection />
         <BottomBannerSection />
         <InterviewSection />
+        <CurrentBlogSection />
         {/* <Banner />
           <ProgramSection />
           <ProgramOverviewSection />
