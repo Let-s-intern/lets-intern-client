@@ -50,6 +50,7 @@ const initialBlog = {
   ctaText: '',
   displayDate: '',
   tagList: [],
+  isDisplayed: false,
 };
 const initialContent: BlogContent = {
   programRecommend: Array(4).fill({
@@ -94,6 +95,7 @@ const BlogCreatePage = () => {
     const reqBody = {
       ...editingValue,
       content: JSON.stringify(content),
+      isDisplayed: name === 'publish',
       displayDate:
         // 게시일자를 선택하지 않고 발행 버튼을 누르면
         // '지금'을 게시일자로 설정

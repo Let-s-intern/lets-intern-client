@@ -11,6 +11,7 @@ export interface PostBlogReqBody {
   ctaText: string;
   displayDate: string;
   tagList: number[];
+  isDisplayed: boolean;
 }
 
 export interface ProgramRecommendItem {
