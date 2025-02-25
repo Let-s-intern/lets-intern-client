@@ -1,0 +1,124 @@
+import { useGetUserProgramQuery, useGetVodListQuery } from '@/api/program';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
+import { useEffect, useMemo, useState } from 'react';
+import ProgramContainer from '../ProgramContainer';
+import { ProgramItemProps } from '../ProgramItem';
+import { getBadgeText, getDuration } from './MainCurationSection';
+
+const NAV_ITEMS = ['전체', 'LIVE 클래스', '취업 가이드북', 'VOD'];
+
+const LetsCareerSection = () => {
+  const [active, setActive] = useState<string>('전체');
+  const [data, setData] = useState<ProgramItemProps[]>([]);
+
+  const { data: liveData, isLoading: liveIsLoading } = useGetUserProgramQuery({
+    pageable: {
+      size: 5,
+      page: 1,
+    },
+    searchParams: {
+      type: 'LIVE',
+      status: ['PROCEEDING'],
+    },
+  });
+
+  const { data: vodData, isLoading: vodIsLoading } = useGetVodListQuery({
+    pageable: {
+      size: 5,
+      page: 1,
+    },
+  });
+
+  const navigation = useMemo(
+    () =>
+      NAV_ITEMS.map((nav) => ({
+        text: nav,
+        active: nav === active,
+        onClick: () => setActive(nav),
+      })),
+    [active],
+  );
+
+  const livePrograms = useMemo(
+    () =>
+      liveData?.programList.map((live) => ({
+        thumbnail: live.programInfo.thumbnail ?? '',
+        title: live.programInfo.title ?? '',
+        url: `/program/live/${live.programInfo.id}`,
+        duration: getDuration({
+          type: 'LIVE',
+          startDate: live.programInfo.startDate ?? '',
+          endDate: live.programInfo.endDate ?? '',
+        }),
+        badge: {
+          text: getBadgeText({
+            type: 'LIVE',
+            deadline: live.programInfo.deadline ?? '',
+          }),
+        },
+      })) ?? [],
+    [liveData],
+  );
+
+  const vodPrograms = useMemo(
+    () =>
+      vodData?.programList.map((vod) => ({
+        thumbnail: vod.thumbnail ?? '',
+        title: vod.title ?? '',
+        url: vod.link ?? '',
+        duration: undefined,
+        badge: {
+          text: getBadgeText({
+            type: 'VOD',
+          }),
+        },
+      })) ?? [],
+    [vodData],
+  );
+
+  const isLoading = liveIsLoading || vodIsLoading;
+
+  useEffect(() => {
+    if (isLoading || !livePrograms) return;
+
+    if (livePrograms) {
+      if (active === '전체') {
+        // 모든 데이터 저장
+        setData([...vodPrograms, ...livePrograms]);
+      } else if (active === 'LIVE 클래스') {
+        // LIVE 클래스만 저장
+        setData(livePrograms);
+      } else if (active === 'VOD') {
+        // VOD만 저장
+        setData(vodPrograms);
+      } else {
+        // 취업 가이드북만 저장
+        setData(vodPrograms.filter((vod) => vod.title.includes('가이드북')));
+      }
+    }
+  }, [livePrograms, vodPrograms, isLoading, active]);
+
+  return (
+    <>
+      <section className="mt-16 flex w-full max-w-[1160px] flex-col md:mt-24">
+        {isLoading ? (
+          <LoadingContainer />
+        ) : (
+          <ProgramContainer
+            title={
+              <>
+                취준 꿀팁만 모아둔 <br className="md:hidden" />
+                렛츠커리어의 독보적 콘텐츠 🚀
+              </>
+            }
+            moreUrl="/program?type=LIVE&type=VOD"
+            programs={data}
+            navigation={navigation}
+          />
+        )}
+      </section>
+    </>
+  );
+};
+
+export default LetsCareerSection;

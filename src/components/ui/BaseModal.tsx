@@ -1,5 +1,6 @@
 import { useControlScroll } from '@/hooks/useControlScroll';
 import { twMerge } from '@/lib/twMerge';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import ModalOverlay from './ModalOverlay';
 import ModalPortal from './ModalPortal';
 
@@ -17,12 +18,14 @@ interface BaseModalProps {
   onClose: () => void;
   children?: React.ReactNode;
   className?: string;
+  isLoading?: boolean;
 }
 const BaseModal = ({
   isOpen,
   onClose,
   children,
   className,
+  isLoading,
 }: BaseModalProps) => {
   // 스크롤 제어
   useControlScroll(isOpen);
@@ -43,6 +46,14 @@ const BaseModal = ({
             className,
           )}
         >
+          {
+            // 로딩 중일 경우
+            isLoading && (
+              <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/70">
+                <LoadingContainer />
+              </div>
+            )
+          }
           {children}
         </div>
       </div>

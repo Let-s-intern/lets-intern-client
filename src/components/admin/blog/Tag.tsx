@@ -22,7 +22,7 @@ export default function Tag({ id, title, onClick, onDelete }: TagProps) {
         size={18}
         onClick={(event) => {
           event.stopPropagation();
-          onDelete && onDelete(event);
+          if (onDelete) onDelete(event);
         }}
       />
     </div>

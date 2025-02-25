@@ -1,7 +1,7 @@
 'use client';
 
 import { ProgramTypeEnum } from '@/schema';
-import ReviewFilter from '@components/common/review/ReviewFilter';
+import FilterDropdown from '@components/common/FilterDropdown';
 import { Suspense, useState } from 'react';
 import BlogReviewListSection from './BlogReviewListSection';
 
@@ -28,11 +28,11 @@ function BlogReviewWrapper() {
   return (
     <Suspense>
       <div className="py-6 md:pt-0">
-        <ReviewFilter
+        <FilterDropdown
           label="프로그램 유형"
-          labelValue="type"
+          paramKey="type"
           list={filterList}
-          className="program_filter"
+          listItemClassName="program_filter"
           multiSelect
           dropdownClassName="max-w-fit"
           onChange={() => setPage(1)} // 필터 변경 시 페이지 초기화

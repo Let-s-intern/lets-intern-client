@@ -13,6 +13,16 @@ export interface PostBlogReqBody {
   tagList: number[];
 }
 
+export interface BlogContent {
+  lexical?: string;
+  programRecommend?: {
+    id: string | null; // VOD-1, CHALLENGE-1, LIVE-2 형태
+    ctaTitle?: string;
+    ctaLink?: string;
+  }[];
+  blogRecommend?: number[]; // 블로그 id 배열,
+}
+
 export interface PatchBlogReqBody {
   id: number;
   title?: string;
@@ -115,5 +125,60 @@ export const blogRatingListSchema = z.object({
   ratingInfos: z.array(
     ratingSchema.extend({ category: z.string().nullable().optional() }),
   ),
+  pageInfo,
+});
+
+// 블로그 배너
+const adminBlogBannerListItemScheam = z.object({
+  blogBannerId: z.number(),
+  title: z.string().optional().nullable(),
+  link: z.string().optional().nullable(),
+  startDate: z.string().optional().nullable(),
+  endDate: z.string().optional().nullable(),
+  isVisible: z.boolean(),
+});
+
+export type AdminBlogBannerListItem = z.infer<
+  typeof adminBlogBannerListItemScheam
+>;
+
+export const adminBlogBannerListSchema = z.object({
+  blogBannerList: z.array(adminBlogBannerListItemScheam),
+});
+
+export interface PatchAdminBlogBannerReqBody {
+  blogBannerId: number;
+  title?: string;
+  link?: string;
+  isVisible?: boolean;
+  startDate?: string;
+  endDate?: string;
+  file?: string;
+}
+
+export interface PostAdminBlogBannerReqBody {
+  title?: string;
+  link?: string;
+  startDate?: string;
+  endDate?: string;
+  file: string | null;
+}
+
+const blogBannerSchema = z.object({
+  blogBannerId: z.number(),
+  title: z.string().optional().nullable(),
+  link: z.string().optional().nullable(),
+  file: z.string().optional().nullable(),
+  startDate: z.string().optional().nullable(),
+  endDate: z.string().optional().nullable(),
+  isVisible: z.boolean(),
+});
+
+export const adminBlogBannerSchema = z.object({
+  blogBannerInfo: blogBannerSchema,
+});
+
+export const blogBannerListSchema = z.object({
+  blogBannerList: z.array(blogBannerSchema),
   pageInfo,
 });

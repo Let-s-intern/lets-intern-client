@@ -1,25 +1,57 @@
-import Link from 'next/link';
+import clsx from 'clsx';
+import { ReactNode } from 'react';
 
 interface MoreHeaderProps {
-  title: string;
-  subtitle: string;
+  children?: ReactNode;
+  subtitle?: ReactNode;
   href?: string;
+  isBig?: boolean;
+  isVertical?: boolean;
 }
 
-const MoreHeader = ({ title, subtitle, href }: MoreHeaderProps) => {
+const MoreHeader = ({
+  children,
+  subtitle,
+  href,
+  isBig,
+  isVertical,
+}: MoreHeaderProps) => {
   return (
-    <div className="w-full flex items-center justify-between">
-      <div className="flex flex-1 items-center select-none gap-x-2">
-        <h2 className="text-small20 font-semibold">{title}</h2>
-        <p className="text-xsmall14">{subtitle}</p>
+    <div
+      className={clsx(
+        'flex w-full justify-between',
+        isVertical ? 'items-start' : 'items-center',
+      )}
+    >
+      <div
+        className={clsx(
+          'flex flex-1 select-none gap-x-2 text-neutral-0',
+          isVertical ? 'flex-col items-start gap-y-1' : 'items-center',
+        )}
+      >
+        <h2
+          className={clsx(
+            'text-small20',
+            isBig ? 'font-bold md:text-large26' : 'font-semibold',
+          )}
+        >
+          {children}
+        </h2>
+        {subtitle && <p className="text-xsmall14">{subtitle}</p>}
       </div>
       {href && (
-        <Link
+        // home에서 program으로 갈 경우 react, 나머지는 next라서 a태그 사용
+        <a
           href={href}
-          className="text-xsmall14 font-medium py-2 pl-3 text-neutral-45"
+          target={href.startsWith('http') ? '_blank' : undefined}
+          className={clsx(
+            'font-medium text-neutral-45',
+            isBig ? 'text-xsmall16' : 'text-xsmall14',
+            isVertical ? 'mt-0.5' : '',
+          )}
         >
           더보기
-        </Link>
+        </a>
       )}
     </div>
   );

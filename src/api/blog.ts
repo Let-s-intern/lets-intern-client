@@ -4,16 +4,23 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
+import { z } from 'zod';
 import { IPageable } from '../types/interface';
 import axios from '../utils/axios';
 import {
+  adminBlogBannerListSchema,
+  adminBlogBannerSchema,
+  blogBannerListSchema,
   BlogList,
   blogListSchema,
   blogRatingListSchema,
   BlogSchema,
   blogSchema,
   blogTagSchema,
+  PatchAdminBlogBannerReqBody,
   PatchBlogReqBody,
+  PostAdminBlogBannerReqBody,
   PostBlogReqBody,
   TagDetail,
 } from './blogSchema';
@@ -25,21 +32,55 @@ const blogRatingQueryKey = 'blogRatingQueryKey';
 
 export interface BlogQueryParams {
   pageable: IPageable;
-  type?: string | null;
+  types?: BlogType[] | null;
   tagId?: number | null;
+  enabled?: boolean;
 }
 
-export const useBlogListQuery = ({ pageable, type }: BlogQueryParams) => {
+export enum BlogType {
+  JOB_PREPARATION_TIPS = 'JOB_PREPARATION_TIPS',
+  PROGRAM_REVIEWS = 'PROGRAM_REVIEWS',
+  JOB_SUCCESS_STORIES = 'JOB_SUCCESS_STORIES',
+  WORK_EXPERIENCES = 'WORK_EXPERIENCES',
+  JUNIOR_STORIES = 'JUNIOR_STORIES',
+  LETSCAREER_NEWS = 'LETSCAREER_NEWS',
+}
+
+export const blogTypeSchema = z.enum([
+  BlogType.JOB_PREPARATION_TIPS,
+  BlogType.PROGRAM_REVIEWS,
+  BlogType.JOB_SUCCESS_STORIES,
+  BlogType.WORK_EXPERIENCES,
+  BlogType.JUNIOR_STORIES,
+  BlogType.LETSCAREER_NEWS,
+]);
+
+export const useBlogListQuery = ({
+  pageable,
+  types,
+  tagId,
+  enabled,
+}: BlogQueryParams) => {
   return useQuery({
-    queryKey: [blogListQueryKey, pageable, type],
+    queryKey: [blogListQueryKey, pageable, types],
     queryFn: async () => {
-      const res = await axios.get(`/blog`, { params: { ...pageable, type } });
+      const res = await axios.get(`/blog`, {
+        params: {
+          ...pageable,
+          tagId,
+          types: types?.map((type) => type).join(','),
+        },
+      });
       return blogListSchema.parse(res.data.data);
     },
+    enabled,
   });
 };
 
-export const useBlogListTypeQuery = ({ pageable, type }: BlogQueryParams) => {
+export const useBlogListTypeQuery = ({
+  pageable,
+  types: type,
+}: BlogQueryParams) => {
   return useQuery({
     queryKey: [blogListQueryKey, pageable],
     queryFn: async () => {
@@ -56,7 +97,7 @@ export const useBlogListTypeQuery = ({ pageable, type }: BlogQueryParams) => {
 };
 
 export const useInfiniteBlogListQuery = ({
-  type,
+  types: type,
   tagId,
   pageable,
 }: BlogQueryParams) => {
@@ -268,7 +309,7 @@ export const fetchBlogData = async (id: string): Promise<BlogSchema> => {
 // Fetching 추천 블로그 데이터
 export const fetchRecommendBlogData = async ({
   pageable,
-  type,
+  types: type,
 }: BlogQueryParams): Promise<BlogList> => {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_SERVER_API}/blog?type=${type}&page=${pageable.page}&size=${pageable.size}`,
@@ -281,4 +322,91 @@ export const fetchRecommendBlogData = async ({
   const data = await res.json();
 
   return blogListSchema.parse(data.data);
+};
+
+/* 블로그 광고 배너 */
+const useGetAdminBlogBannerListKey = 'useGetAdminBlogBannerList';
+const useGetAdminBlogBannerKey = 'useGetAdminBlogBanner';
+
+export const useGetAdminBlogBannerList = () => {
+  return useQuery({
+    queryKey: [useGetAdminBlogBannerListKey],
+    queryFn: async () => {
+      const res = await axios.get('/admin/blog-banner');
+      return adminBlogBannerListSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const usePatchAdminBlogBanner = () => {
+  const client = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (reqBody: PatchAdminBlogBannerReqBody) => {
+      const body: any = { ...reqBody };
+      delete body.blogBannerId;
+
+      const res = await axios.patch(
+        `/admin/blog-banner/${reqBody.blogBannerId}`,
+        body,
+      );
+      console.log('req body:', reqBody);
+      return res;
+    },
+    onSuccess: async () => {
+      await client.invalidateQueries({
+        queryKey: [useGetAdminBlogBannerListKey],
+      });
+      await client.invalidateQueries({
+        queryKey: [useGetAdminBlogBannerKey],
+      });
+    },
+    onError: (e) => {
+      if (isAxiosError(e)) {
+        console.error(e.response?.data.message);
+      }
+    },
+  });
+};
+
+export const usePostAdminBlogBanner = () => {
+  const client = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (reqBody: PostAdminBlogBannerReqBody) => {
+      const res = await axios.post('/admin/blog-banner', reqBody);
+      console.log('req body:', reqBody);
+      return res;
+    },
+    onSuccess: async () => {
+      await client.invalidateQueries({
+        queryKey: [useGetAdminBlogBannerListKey],
+      });
+    },
+    onError: (e) => {
+      if (isAxiosError(e)) {
+        console.error(e.response?.data.message);
+      }
+    },
+  });
+};
+
+export const useGetAdminBlogBanner = (id: number) => {
+  return useQuery({
+    queryKey: [useGetAdminBlogBannerKey, id],
+    queryFn: async () => {
+      const res = await axios.get(`/admin/blog-banner/${id}`);
+      return adminBlogBannerSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const useGetBlogBannerList = (pageable: IPageable) => {
+  return useQuery({
+    queryKey: ['useGetBlogBannerList', pageable.page],
+    queryFn: async () => {
+      const res = await axios.get('/blog-banner', { params: pageable });
+      return blogBannerListSchema.parse(res.data.data);
+    },
+  });
 };

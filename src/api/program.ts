@@ -11,6 +11,7 @@ import {
   getLiveIdSchema,
   getVodIdSchema,
   LiveIdPrimitive,
+  liveListResponseSchema,
   liveTitleSchema,
   programAdminSchema,
   programBannerAdminDetailSchema,
@@ -24,6 +25,7 @@ import {
   UpdateChallengeReq,
   UpdateLiveReq,
   UpdateVodReq,
+  vodListResponseSchema,
 } from '../schema';
 import { IPageable } from '../types/interface';
 import axios from '../utils/axios';
@@ -88,21 +90,57 @@ export const useUserProgramQuery = ({
 
 export const useGetProgramAdminQueryKey = 'useGetProgramAdminQueryKey';
 
+export const useGetUserProgramQuery = ({
+  pageable,
+  searchParams,
+}: {
+  pageable: IPageable;
+  searchParams: {
+    type?: ProgramTypeUpperCase;
+    status?: ProgramStatus[];
+    classification?: ProgramClassification[];
+    startDate?: string;
+    endDate?: string;
+  };
+}) => {
+  return useQuery({
+    queryKey: [useGetProgramAdminQueryKey, pageable, searchParams],
+    queryFn: async () => {
+      const res = await axios.get(`/program`, {
+        params: {
+          status: searchParams.status?.join(','),
+          classification: searchParams.classification?.join(','),
+          type: searchParams.type,
+          startDate: searchParams.startDate,
+          endDate: searchParams.endDate,
+          ...pageable,
+        },
+      });
+
+      return programSchema.parse(res.data.data);
+    },
+  });
+};
+
 export const useGetProgramAdminQuery = (params: {
   type?: ProgramTypeUpperCase;
   classification?: ProgramClassification;
-  status?: ProgramStatus;
+  status?: ProgramStatus[];
   startDate?: string;
   endDate?: string;
   page: number | string;
   size: number | string;
+  enabled?: boolean;
 }) => {
   return useQuery({
     queryKey: [useGetProgramAdminQueryKey, params],
     queryFn: async () => {
-      const res = await axios.get(`/program/admin`, { params });
+      const res = await axios.get(`/program/admin`, {
+        params: { ...params, status: params.status?.join(',') },
+      });
       return programAdminSchema.parse(res.data.data);
     },
+    enabled: params.enabled,
   });
 };
 
@@ -560,6 +598,54 @@ export const useDeleteProgramBannerMutation = ({
     },
     onError: (error) => {
       return onError && onError(error);
+    },
+  });
+};
+
+export const useGetLiveListQuery = ({
+  typeList,
+  statusList,
+  pageable,
+  enabled = true,
+}: {
+  typeList?: ProgramClassification[];
+  statusList?: ProgramStatus[];
+  pageable: IPageable;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    enabled,
+    queryKey: ['live', 'list', typeList, statusList, pageable],
+    queryFn: async () => {
+      const res = await axios.get('/live', {
+        params: {
+          typeList: typeList?.join(','),
+          statusList: statusList?.join(','),
+          ...pageable,
+        },
+      });
+      return liveListResponseSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const useGetVodListQuery = ({
+  type,
+  pageable,
+}: {
+  type?: ProgramClassification;
+  pageable: IPageable;
+}) => {
+  return useQuery({
+    queryKey: ['vod', 'list', type, pageable],
+    queryFn: async () => {
+      const res = await axios.get('/vod', {
+        params: {
+          type,
+          ...pageable,
+        },
+      });
+      return vodListResponseSchema.parse(res.data.data);
     },
   });
 };

@@ -52,12 +52,25 @@ const navData = [
     ],
   },
   {
-    title: '홈페이지 관리',
+    title: '홈 관리',
     itemList: [
       {
-        name: '메인 배너 관리',
-        url: '/admin/banner/main-banners',
+        name: '홈 큐레이션 관리',
+        url: '/admin/home/curation',
       },
+      {
+        name: '홈 상단 배너 관리',
+        url: '/admin/home/main-banners',
+      },
+      {
+        name: '홈 하단 배너 관리',
+        url: '/admin/home/bottom-banners',
+      },
+    ],
+  },
+  {
+    title: '배너/팝업 관리',
+    itemList: [
       {
         name: '상단 띠 배너 관리',
         url: '/admin/banner/top-bar-banners',
@@ -82,6 +95,10 @@ const navData = [
       {
         name: '블로그 후기',
         url: '/admin/blog/reviews',
+      },
+      {
+        name: '블로그 광고 배너',
+        url: '/admin/blog/banner',
       },
     ],
   },
@@ -137,8 +154,8 @@ const AdminLayout = () => {
         <nav className="sticky left-0 top-0 z-50 flex h-screen w-48 flex-col gap-4 overflow-y-auto bg-[#353535] py-20 pt-4 text-white shadow-xl">
           {navData.map((navSection, index) => (
             <div key={index}>
-              <div className="flex items-center justify-between pb-3 pl-4 pr-8 border-b border-b-neutral-600">
-                <h3 className="font-medium text-xsmall16">
+              <div className="flex items-center justify-between border-b border-b-neutral-600 pb-3 pl-4 pr-8">
+                <h3 className="text-xsmall16 font-medium">
                   {navSection.title}
                 </h3>
                 <i className="text-xl text-neutral-600">

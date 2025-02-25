@@ -1,3 +1,4 @@
+import { Upload } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { FiUpload } from 'react-icons/fi';
 
@@ -5,11 +6,12 @@ interface ImageUploaderProps {
   label: string;
   id?: string;
   name?: string;
-  image?: string;
+  image?: string | null;
   imageFormat?: {
     width?: number;
     height?: number;
   };
+  simpleMode?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -20,12 +22,13 @@ const ImageUpload = ({
   id,
   name,
   onChange,
+  simpleMode,
 }: ImageUploaderProps) => {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [imageFile, setImageFile] = useState<string>('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange && onChange(e);
+    if (onChange) onChange(e);
     if (imageInputRef.current && imageInputRef.current.files) {
       const file = imageInputRef.current.files[0];
       const reader = new FileReader();
@@ -48,7 +51,32 @@ const ImageUpload = ({
     setImageFile(image);
   }, [image, imageInputRef]);
 
-  return (
+  return simpleMode ? (
+    <div
+      className="flex h-full w-full cursor-pointer items-center justify-center bg-neutral-90"
+      onClick={handleImageUpload}
+    >
+      {image ? (
+        <img
+          className="aspect-video h-auto w-full object-cover"
+          src={image}
+          alt="업로드 이미지"
+        />
+      ) : (
+        <Upload />
+      )}
+
+      <input
+        type="file"
+        id={id}
+        name={name}
+        accept="image/*"
+        className="hidden"
+        onChange={handleChange}
+        ref={imageInputRef}
+      />
+    </div>
+  ) : (
     <div className="flex h-fit flex-col gap-4 rounded-xxs bg-neutral-90 px-6 py-4">
       <div>
         <label htmlFor={id} className="text-1-medium block">

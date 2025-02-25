@@ -1686,3 +1686,34 @@ export const programBannerUserListSchema = z.object({
 export const programBannerAdminDetailSchema = z.object({
   bannerAdminDetailVo: programBannerAdminSchema,
 });
+
+export const liveListItemSchema = z.object({
+  id: z.number(),
+  title: z.string().nullable().optional(),
+  shortDesc: z.string().nullable().optional(),
+  thumbnail: z.string().nullable().optional(),
+  startDate: z.string().nullable().optional(),
+  endDate: z.string().nullable().optional(),
+  deadline: z.string().nullable().optional(),
+  createDate: z.string(),
+  job: z.string().nullable().optional(),
+});
+
+export const liveListResponseSchema = z.object({
+  programList: z.array(liveListItemSchema),
+  pageInfo,
+});
+
+export const vodListItemSchema = z.object({
+  id: z.number(),
+  title: z.string().nullable().optional(),
+  shortDesc: z.string().nullable().optional(),
+  thumbnail: z.string().nullable().optional(),
+  link: z.string().nullable().optional(),
+  job: z.string().nullable().optional(),
+});
+
+export const vodListResponseSchema = z.object({
+  programList: z.array(vodListItemSchema),
+  pageInfo,
+});

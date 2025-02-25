@@ -9,7 +9,7 @@ interface InputProps {
   placeholder?: string;
   name?: string;
   label?: string;
-  value?: string;
+  value?: string | null;
   defaultValue?: string;
   disabled?: boolean;
   multiline?: boolean;
@@ -38,6 +38,7 @@ const Input = ({
   error,
   fullWidth = true,
   onChange,
+  onKeyDown,
 }: InputProps) => {
   const [focused, setFocused] = useState(false);
 
@@ -50,12 +51,23 @@ const Input = ({
   const textFieldStyle = !error
     ? {
         backgroundColor: 'white',
+        '& .Mui-disabled': {
+          backgroundColor: '#f9f9f9',
+        },
         '& .MuiOutlinedInput-root': {
           '&:hover .MuiOutlinedInput-notchedOutline': {
             borderColor: '#6963f6',
           },
           '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
             borderColor: '#6963f6',
+          },
+        },
+        '& .MuiOutlinedInput-root.Mui-disabled': {
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#B9B9B9',
+          },
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#B9B9B9',
           },
         },
         '& label.Mui-focused': {
@@ -77,6 +89,7 @@ const Input = ({
       multiline={multiline}
       rows={rows}
       onChange={onChange}
+      onKeyDown={onKeyDown}
       autoComplete="off"
       fullWidth={fullWidth}
       className={className}

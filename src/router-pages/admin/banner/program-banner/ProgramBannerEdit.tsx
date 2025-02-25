@@ -1,3 +1,4 @@
+import { BannerItemType } from '@/api/banner';
 import {
   useEditProgramBannerMutation,
   useGetProgramBannerDetailQuery,
@@ -7,14 +8,13 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ProgramBannerInputContent from '../../../../components/admin/banner/program-banner/ProgramBannerInputContent';
 import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
-import { IBannerForm } from '../../../../types/interface';
 
 const ProgramBannerEdit = () => {
   const { bannerId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const [value, setValue] = useState<IBannerForm>({
+  const [value, setValue] = useState<BannerItemType>({
     title: '',
     link: '',
     startDate: '',

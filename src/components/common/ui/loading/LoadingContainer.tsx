@@ -15,7 +15,7 @@ const LoadingContainer = ({ text, className }: LoadingContainerProps) => {
     >
       <img
         src="/logo/logo-simple.svg"
-        className="animate-pulse"
+        className="h-[2.125rem] w-[2.125rem] animate-pulse"
         alt="로딩 중"
       />
       <div className="text-sm text-neutral-30">{text || '로딩 중...'}</div>

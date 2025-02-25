@@ -1,9 +1,9 @@
 import { useGetProgramReview } from '@/api/review';
+import { FilterItem } from '@/types/common';
 import { challengeTypes, challengeTypeToDisplay } from '@/utils/convert';
-import { ReviewFilterItem } from '@components/common/review/ReviewFilter';
 import { useEffect, useState } from 'react';
 
-export const challengeTypeFilterList: ReviewFilterItem[] = challengeTypes
+export const challengeTypeFilterList: FilterItem[] = challengeTypes
   .filter((type) => type !== 'ETC')
   .map((item) => ({
     caption: challengeTypeToDisplay[item],
@@ -11,9 +11,9 @@ export const challengeTypeFilterList: ReviewFilterItem[] = challengeTypes
   }));
 
 const useGetActiveMissionReviews = () => {
-  const [challengeTypeFilter, setChallengeTypeFilter] = useState<
-    ReviewFilterItem[]
-  >(challengeTypeFilterList);
+  const [challengeTypeFilter, setChallengeTypeFilter] = useState<FilterItem[]>(
+    challengeTypeFilterList,
+  );
   const { data: careerStartReview, isLoading: careerStartIsLoding } =
     useGetProgramReview({
       types: ['MISSION_REVIEW'],

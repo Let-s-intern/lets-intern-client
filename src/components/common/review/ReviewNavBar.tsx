@@ -26,7 +26,7 @@ function ReviewNavBar() {
               프로그램 후기
             </MobileNavItem>
             <MobileNavItem href="/review/blog">블로그 후기</MobileNavItem>
-            <MobileNavItem href="/blog/list?category=PROGRAM_REVIEWS">
+            <MobileNavItem href="/blog/list?type=PROGRAM_REVIEWS">
               프로그램
               <br />
               참여자 인터뷰
@@ -66,7 +66,7 @@ function ReviewNavBar() {
             </>
           )}
           <DesktopNavItem href="/review/blog">블로그 후기</DesktopNavItem>
-          <DesktopNavItem href="/blog/list?category=PROGRAM_REVIEWS">
+          <DesktopNavItem href="/blog/list?type=PROGRAM_REVIEWS">
             프로그램 참여자 인터뷰
           </DesktopNavItem>
         </ul>

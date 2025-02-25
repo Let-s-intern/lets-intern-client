@@ -1,10 +1,10 @@
-import { IBannerForm } from '../../../../types/interface';
+import { BannerItemType } from '@/api/banner';
 import Input from '../../../ui/input/Input';
 import DateTimePicker from '../../program/ui/form/DateTimePicker';
 import ImageUpload from '../../program/ui/form/ImageUpload';
 
 interface ProgramBannerInputContentProps {
-  value: IBannerForm;
+  value: BannerItemType;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
