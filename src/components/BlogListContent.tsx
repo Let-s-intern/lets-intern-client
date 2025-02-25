@@ -30,29 +30,6 @@ const filterList = Object.entries(blogCategory).map(([key, value]) => ({
 // 공개 예정 여부
 const willBePublished = (date: string) => dayjs(date).isAfter(dayjs());
 
-const blogBannerMockData = {
-  blogBannerList: [
-    {
-      blogBannerId: 45,
-      title: '블로그 배너1',
-      link: 'https://www.naver.com/',
-      startDate: '2025-02-10T11:27:45.897Z',
-      endDate: '2025-04-19T11:27:45.897Z',
-      weight: 0,
-      isVisible: true,
-    },
-    {
-      blogBannerId: 23,
-      title: '블로그 배너2',
-      link: 'https://www.naver.com/',
-      startDate: '2025-02-18T11:27:45.897Z',
-      endDate: '2025-02-20T11:27:45.897Z',
-      weight: 0,
-      isVisible: true,
-    },
-  ],
-};
-
 const Content = () => {
   const params = useSearchParams();
   const typeRaw = params.get('type');

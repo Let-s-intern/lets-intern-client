@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import { client } from '@/utils/client';
 import {
+  ChallengeIdSchema,
   challengeSchema,
   CreateChallengeReq,
   CreateLiveReq,
@@ -11,8 +13,10 @@ import {
   getLiveIdSchema,
   getVodIdSchema,
   LiveIdPrimitive,
+  LiveIdSchema,
   liveListResponseSchema,
   liveTitleSchema,
+  Program,
   programAdminSchema,
   programBannerAdminDetailSchema,
   programBannerAdminListSchema,
@@ -21,10 +25,13 @@ import {
   programRecommendSchema,
   programSchema,
   ProgramStatus,
+  ProgramStatusEnum,
+  ProgramTypeEnum,
   ProgramTypeUpperCase,
   UpdateChallengeReq,
   UpdateLiveReq,
   UpdateVodReq,
+  VodIdSchema,
   vodListResponseSchema,
 } from '../schema';
 import { IPageable } from '../types/interface';
@@ -648,4 +655,76 @@ export const useGetVodListQuery = ({
       return vodListResponseSchema.parse(res.data.data);
     },
   });
+};
+
+export const fetchChallenge = async (
+  id: string | number,
+): Promise<ChallengeIdSchema> => {
+  const data = await client<VodIdSchema>(`/v1//challenge/${id}`, {
+    method: 'GET',
+  });
+  return getChallengeIdSchema.parse(data);
+};
+
+export const fetchVod = async (id: string | number): Promise<VodIdSchema> => {
+  const data = await client<VodIdSchema>(`/v1//vod/${id}`, {
+    method: 'GET',
+  });
+  return getVodIdSchema.parse(data);
+};
+
+export const fetchLive = async (id: string | number): Promise<LiveIdSchema> => {
+  const data = await client<LiveIdSchema>(`/v1//live/${id}`, {
+    method: 'GET',
+  });
+  return getLiveIdSchema.parse(data);
+};
+
+export const fetchProgram = async (params: {
+  type?: ProgramTypeUpperCase[];
+  classification?: ProgramClassification[];
+  status?: ProgramStatus[];
+  startDate?: string;
+  endDate?: string;
+  page: number | string;
+  size: number | string;
+}): Promise<Program> => {
+  const data = await client<Program>('/v1/program', {
+    method: 'GET',
+    params: {
+      ...params,
+      type: params.type?.join(',') ?? '',
+      classification: params.classification?.join(',') ?? '',
+      status: params.status?.join(',') ?? '',
+      page: String(params.page),
+      size: String(params.size),
+    },
+  });
+
+  return programSchema.parse(data);
+};
+
+export const getChallengeByKeyword = async (keyword: string) => {
+  // 챌린지 가져오기
+  const programs = await fetchProgram({
+    page: 1,
+    size: 10,
+    type: [ProgramTypeEnum.enum.CHALLENGE],
+    status: [ProgramStatusEnum.enum.PROCEEDING],
+  });
+
+  const filtered = programs.programList.filter((item) =>
+    item.programInfo.title?.includes(keyword),
+  );
+
+  if (filtered.length === 0) return undefined;
+
+  // 모집 마감일 제일 빠른 챌린지 찾기
+  filtered.sort(
+    (a, b) =>
+      new Date(a.programInfo.deadline ?? '').getTime() -
+      new Date(b.programInfo.deadline ?? '').getTime(),
+  );
+
+  return filtered[0];
 };

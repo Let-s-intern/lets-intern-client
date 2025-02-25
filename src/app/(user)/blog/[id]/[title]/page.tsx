@@ -1,10 +1,9 @@
 import { fetchBlogData } from '@/api/blog';
-import LexicalContent from '@/components/common/blog/LexicalContent';
+import { BlogContent } from '@/api/blogSchema';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { blogCategory } from '@/utils/convert';
-import { generateUuid } from '@/utils/random';
 import {
   getBaseUrlFromServer,
   getBlogPathname,
@@ -15,6 +14,7 @@ import BlogKakaoShareBtn from '@components/common/blog/BlogKakaoShareBtn';
 import BlogLikeBtn from '@components/common/blog/BlogLikeBtn';
 import BlogLinkShareBtn from '@components/common/blog/BlogLilnkShareBtn';
 import BlogRecommendCard from '@components/common/blog/BlogRecommendCard';
+import LexicalContent from '@components/common/blog/LexicalContent';
 import ProgramRecommendCard from '@components/common/blog/ProgramRecommendCard';
 import MoreHeader from '@components/common/ui/MoreHeader';
 import HorizontalRule from '@components/ui/HorizontalRule';
@@ -23,63 +23,6 @@ import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ReactNode } from 'react';
-
-const programMockData = [
-  {
-    id: generateUuid(),
-    ctaTitle: '취업 일단 시작!',
-    title: '2월 3주차 인턴/신입 채용공고 [외국계 기업]',
-    thumbnail:
-      'https://letsintern-bucket.s3.ap-northeast-2.amazonaws.com/blog/FeRrTQbYvJ_Frame%201984080307.png',
-    ctaLink:
-      'https://www.letscareer.co.kr/blog/63/2%EC%9B%94-3%EC%A3%BC%EC%B0%A8-%EC%9D%B8%ED%84%B4-%EC%8B%A0%EC%9E%85-%EC%B1%84%EC%9A%A9%EA%B3%B5%EA%B3%A0-%5B%EC%99%B8%EA%B5%AD%EA%B3%84-%EA%B8%B0%EC%97%85%5D',
-  },
-  {
-    id: generateUuid(),
-    ctaTitle: '취업 일단 시작!',
-    title: '2월 3주차 인턴/신입 채용공고 [외국계 기업]',
-    thumbnail:
-      'https://letsintern-bucket.s3.ap-northeast-2.amazonaws.com/blog/FeRrTQbYvJ_Frame%201984080307.png',
-    ctaLink:
-      'https://www.letscareer.co.kr/blog/63/2%EC%9B%94-3%EC%A3%BC%EC%B0%A8-%EC%9D%B8%ED%84%B4-%EC%8B%A0%EC%9E%85-%EC%B1%84%EC%9A%A9%EA%B3%B5%EA%B3%A0-%5B%EC%99%B8%EA%B5%AD%EA%B3%84-%EA%B8%B0%EC%97%85%5D',
-  },
-  {
-    id: generateUuid(),
-    ctaTitle: '취업 일단 시작!',
-    title: '2월 3주차 인턴/신입 채용공고 [외국계 기업]',
-    thumbnail:
-      'https://letsintern-bucket.s3.ap-northeast-2.amazonaws.com/blog/FeRrTQbYvJ_Frame%201984080307.png',
-    ctaLink:
-      'https://www.letscareer.co.kr/blog/63/2%EC%9B%94-3%EC%A3%BC%EC%B0%A8-%EC%9D%B8%ED%84%B4-%EC%8B%A0%EC%9E%85-%EC%B1%84%EC%9A%A9%EA%B3%B5%EA%B3%A0-%5B%EC%99%B8%EA%B5%AD%EA%B3%84-%EA%B8%B0%EC%97%85%5D',
-  },
-];
-
-const blogMockData = [
-  {
-    id: generateUuid(),
-    title: '2월 3주차 인턴/신입 채용공고 [외국계 기업]',
-    thumbnail:
-      'https://letsintern-bucket.s3.ap-northeast-2.amazonaws.com/blog/FeRrTQbYvJ_Frame%201984080307.png',
-    category: '렛츠커리어 소식',
-    displayDate: dayjs().format(YYYY_MM_DD),
-  },
-  {
-    id: generateUuid(),
-    title: '2월 3주차 인턴/신입 채용공고 [외국계 기업]',
-    thumbnail:
-      'https://letsintern-bucket.s3.ap-northeast-2.amazonaws.com/blog/FeRrTQbYvJ_Frame%201984080307.png',
-    category: '렛츠커리어 소식',
-    displayDate: dayjs().format(YYYY_MM_DD),
-  },
-  {
-    id: generateUuid(),
-    title: '2월 3주차 인턴/신입 채용공고 [외국계 기업]',
-    thumbnail:
-      'https://letsintern-bucket.s3.ap-northeast-2.amazonaws.com/blog/FeRrTQbYvJ_Frame%201984080307.png',
-    category: '렛츠커리어 소식',
-    displayDate: dayjs().format(YYYY_MM_DD),
-  },
-];
 
 // SSR 메타데이터 생성
 export async function generateMetadata({
@@ -119,6 +62,22 @@ const BlogDetailPage = async ({
   const blog = await fetchBlogData(id);
 
   const blogInfo = blog.blogDetailInfo;
+  const contentJson: BlogContent = JSON.parse(blogInfo?.content ?? '{}');
+  const lexical = contentJson.blogRecommend
+    ? contentJson.lexical
+    : blogInfo?.content; // 기존 구버전 content에서 렉시컬 내용 가져오기
+  const blogRecommendData = await Promise.all(
+    contentJson.blogRecommend
+      ?.filter((id) => id !== null)
+      ?.map((id) => fetchBlogData(id)) ?? [],
+  );
+  const blogRecommendList = blogRecommendData.map((data) => ({
+    id: data.blogDetailInfo.id,
+    title: data.blogDetailInfo.title,
+    category: data.blogDetailInfo.category,
+    thumbnail: data.blogDetailInfo.thumbnail,
+    displayDate: data.blogDetailInfo.displayDate,
+  }));
 
   return (
     <main className="mx-auto w-full max-w-[1100px] pb-12 pt-6 md:pb-[7.5rem]">
@@ -185,9 +144,9 @@ const BlogDetailPage = async ({
             </div>
 
             {/* 블로그 본문 */}
-            {blogInfo?.content && (
+            {lexical && (
               <div className="w-full break-all text-xsmall16">
-                <LexicalContent node={JSON.parse(blogInfo.content).root} />
+                <LexicalContent node={JSON.parse(lexical as string).root} />
               </div>
             )}
           </article>
@@ -244,7 +203,7 @@ const BlogDetailPage = async ({
             취뽀 성공해요!
           </Heading2>
           <section className="mb-6 mt-5 flex flex-col gap-6">
-            {programMockData.map((item) => (
+            {contentJson.programRecommend?.map((item) => (
               <ProgramRecommendCard key={item.id} program={item} />
             ))}
           </section>
@@ -260,9 +219,9 @@ const BlogDetailPage = async ({
           이 글을 읽으셨다면, <br className="md:hidden" />
           이런 글도 좋아하실 거예요.
         </MoreHeader>
-        <div className="mb-6 mt-5 flex flex-col gap-6 md:mt-6 md:flex-row md:gap-5">
-          {blogMockData.map((item) => (
-            <BlogRecommendCard key={item.id} blog={item} />
+        <div className="mb-6 mt-5 grid grid-cols-1 gap-6 md:mt-6 md:grid-cols-4 md:flex-row md:gap-5">
+          {blogRecommendList.map((blog) => (
+            <BlogRecommendCard key={blog.id} blog={blog} />
           ))}
         </div>
         <MoreLink href="/blog/list" className="md:hidden">

@@ -1571,6 +1571,7 @@ export const programSchema = z.object({
   pageInfo,
 });
 
+export type Program = z.infer<typeof programSchema>;
 export type ProgramInfo = z.infer<typeof programSchema>['programList'][0];
 
 export const programAdminItemSchema = z.object({

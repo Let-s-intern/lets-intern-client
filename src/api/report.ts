@@ -385,9 +385,13 @@ export type ReportDetail = z.infer<typeof getReportDetailSchema>;
 
 export const getReportDetailQueryKey = 'getReportDetail';
 
-export const useGetReportDetailQuery = (reportId: number) => {
+export const useGetReportDetailQuery = (
+  reportId: number,
+  enabled?: boolean,
+) => {
   return useQuery({
     queryKey: [getReportDetailQueryKey, reportId],
+    enabled,
     queryFn: async () => {
       const res = await axios.get(`/report/${reportId}`);
       return getReportDetailSchema.parse(res.data.data);
@@ -1230,4 +1234,17 @@ export const useGetReportMessage = (applicationId: number) => {
       return reportMessageSchema.parse(res.data.data);
     },
   });
+};
+
+export const fetchReportId = async (
+  id: string | number,
+): Promise<ReportDetail> => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_API}/report/${id}`);
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch report data');
+  }
+
+  const data = await res.json();
+  return getReportDetailSchema.parse(data.data);
 };

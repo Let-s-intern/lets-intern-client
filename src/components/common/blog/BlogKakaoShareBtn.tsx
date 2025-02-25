@@ -1,7 +1,6 @@
 'use client';
 
-import KakaoIcon from '@/assets/icons/kakao_path.svg';
-import { twMerge } from 'tailwind-merge';
+import KakaoIcon from '@/assets/icons/kakao_path.svg?react';
 
 interface Props {
   title: string;
@@ -52,7 +51,9 @@ function BlogKakaoShareBtn({
   return (
     <button type="button" className={className} onClick={handleShareKakaoClick}>
       <KakaoIcon
-        className={twMerge('h-5 w-5', iconClassName)}
+        height={20}
+        width={20}
+        className={iconClassName}
         fill={fill ?? '#5C5F66'}
       />
     </button>
