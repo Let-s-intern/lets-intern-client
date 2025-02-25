@@ -67,9 +67,10 @@ const BlogDetailPage = async ({
   );
   const blogInfo = blog.blogDetailInfo;
   const contentJson: BlogContent = JSON.parse(blogInfo?.content ?? '{}');
+  // 구버전은 기존 content에서 렉시컬 내용 가져오기
   const lexical = contentJson.blogRecommend
     ? contentJson.lexical
-    : blogInfo?.content; // 기존 구버전 content에서 렉시컬 내용 가져오기
+    : blogInfo?.content;
   const blogRecommendData = await Promise.all(
     contentJson.blogRecommend
       ?.filter((id) => id !== null)
@@ -164,7 +165,10 @@ const BlogDetailPage = async ({
 
           <section className="mb-9 mt-10 flex items-center justify-between md:mb-8">
             {/* 좋아요 */}
-            <BlogLikeBtn />
+            <BlogLikeBtn
+              likeCount={blogInfo.likeCount ?? 0}
+              blogId={blogInfo.id}
+            />
             {/* 공유하기 */}
             <div className="flex items-center">
               <span className="mr-1.5 hidden text-xsmall14 font-medium text-neutral-35 md:block">

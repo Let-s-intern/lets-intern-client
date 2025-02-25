@@ -70,6 +70,7 @@ export const blogDetailInfo = z.object({
   displayDate: z.string().nullable().optional(),
   createDate: z.string().nullable().optional(),
   lastModifiedDate: z.string().nullable().optional(),
+  likeCount: z.number().nonnegative().nullable().optional(),
 });
 
 export const tagSchema = z.object({
