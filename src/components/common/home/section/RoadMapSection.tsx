@@ -2,9 +2,11 @@ import Bag from '@/assets/graphic/bag.svg?react';
 import Folder from '@/assets/graphic/folder.svg?react';
 import QnA from '@/assets/graphic/qna.svg?react';
 import MoreHeader from '@components/common/ui/MoreHeader';
+import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { ReactNode } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 const ROADMAP_ITEMS: {
   title: string;
@@ -43,17 +45,35 @@ const ROADMAP_ITEMS: {
 ];
 
 const RoadMapSection = () => {
+  const isMobile = useMediaQuery('(max-width: 768px)');
+
   return (
     <>
       <section className="mt-10 flex w-full max-w-[1160px] flex-col gap-y-6 md:mt-16">
         <div className="px-5 md:px-0">
           <MoreHeader isBig>합격으로 가는 취업 로드맵</MoreHeader>
         </div>
-        <div className="flex w-fit gap-x-2.5 overflow-auto px-5 scrollbar-hide md:w-full md:px-0">
+        <Swiper
+          className={clsx('w-full', isMobile && 'slide-per-auto')}
+          slidesPerView={'auto'}
+          spaceBetween={10}
+          slidesOffsetBefore={20}
+          slidesOffsetAfter={20}
+          breakpoints={{
+            768: {
+              slidesPerView: 3,
+              spaceBetween: 16,
+              slidesOffsetBefore: 0,
+              slidesOffsetAfter: 0,
+            },
+          }}
+        >
           {ROADMAP_ITEMS.map((item, index) => (
-            <RoadMapItem key={index} {...item} />
+            <SwiperSlide key={index}>
+              <RoadMapItem {...item} />
+            </SwiperSlide>
           ))}
-        </div>
+        </Swiper>
       </section>
     </>
   );
@@ -98,7 +118,7 @@ const RoadMapItem = ({
     <Link
       href={href}
       className={clsx(
-        'relative flex h-[100px] shrink-0 flex-col justify-start gap-y-1 overflow-hidden rounded-xs border px-4 py-5 text-neutral-0 md:h-32 md:w-1/3 md:px-6',
+        'relative flex h-[100px] w-fit shrink-0 flex-col justify-start gap-y-1 overflow-hidden rounded-xs border px-4 py-5 text-neutral-0 md:h-32 md:w-full md:px-6',
         COLOR_THEME[theme].main,
       )}
     >
