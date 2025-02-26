@@ -2,6 +2,7 @@ import { CurationType, useGetUserCuration } from '@/api/curation';
 import { convertReportTypeToLandingPath, ReportType } from '@/api/report';
 import { MMDD, YY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
+import { blogCategory } from '@/utils/convert';
 import { getReportThumbnail } from '@components/common/mypage/credit/CreditListItem';
 import ProgramContainer from '../ProgramContainer';
 
@@ -105,7 +106,7 @@ export const getCategory = ({
   category?: string;
 }) => {
   if (type !== 'BLOG' || !category) return undefined;
-  return category;
+  return blogCategory[category];
 };
 
 const MainCurationSection = () => {
@@ -113,50 +114,55 @@ const MainCurationSection = () => {
     locationType: 'UNDER_BANNER',
   });
 
-  if (!data) return null;
+  const curationList = data?.curationList.slice(0, 1);
+
+  if (!curationList || curationList.length === 0) return null;
 
   return (
     <>
-      <section className="mt-16 flex w-full max-w-[1160px] flex-col md:mt-24">
-        <ProgramContainer
-          title={data.curationInfo.title}
-          subTitle={data.curationInfo.subTitle ?? undefined}
-          moreUrl={data.curationInfo.moreUrl ?? undefined}
-          programs={data.curationItemList.map((item) => ({
-            thumbnail: getProgramThumbnail({
-              type: item.programType,
-              reportType: item.reportType ?? null,
-              thumbnail: item.thumbnail ?? undefined,
-            }),
-            title: item.title ?? '',
-            url: getProgramUrl({
-              type: item.programType,
-              programId: item.programId ?? undefined,
-              reportType: item.reportType ?? undefined,
-              url: item.url ?? undefined,
-            }),
-            duration: getDuration({
-              type: item.programType,
-              startDate: item.startDate ?? undefined,
-              endDate: item.endDate ?? undefined,
-            }),
-            badge: {
-              text: getBadgeText({
+      <section className="mt-16 flex w-full max-w-[1160px] flex-col gap-y-5 md:mt-24">
+        {curationList.map((curation, index) => (
+          <ProgramContainer
+            key={'reviewCuration' + index}
+            title={curation.curationInfo.title}
+            subTitle={curation.curationInfo.subTitle ?? undefined}
+            moreUrl={curation.curationInfo.moreUrl ?? undefined}
+            programs={curation.curationItemList.map((item) => ({
+              thumbnail: getProgramThumbnail({
                 type: item.programType,
-                deadline: item.deadline ?? undefined,
-                tagText: item.tagText ?? undefined,
+                reportType: item.reportType ?? null,
+                thumbnail: item.thumbnail ?? undefined,
               }),
-            },
-            createdDate: getCreatedDate({
-              type: item.programType,
-              createdAt: item.createdAt ?? undefined,
-            }),
-            category: getCategory({
-              type: item.programType,
-              category: item.category ?? undefined,
-            }),
-          }))}
-        />
+              title: item.title ?? '',
+              url: getProgramUrl({
+                type: item.programType,
+                programId: item.programId ?? undefined,
+                reportType: item.reportType ?? undefined,
+                url: item.url ?? undefined,
+              }),
+              duration: getDuration({
+                type: item.programType,
+                startDate: item.startDate ?? undefined,
+                endDate: item.endDate ?? undefined,
+              }),
+              badge: {
+                text: getBadgeText({
+                  type: item.programType,
+                  deadline: item.deadline ?? undefined,
+                  tagText: item.tag ?? undefined,
+                }),
+              },
+              createdDate: getCreatedDate({
+                type: item.programType,
+                createdAt: item.programCreateDate ?? undefined,
+              }),
+              category: getCategory({
+                type: item.programType,
+                category: item.category ?? undefined,
+              }),
+            }))}
+          />
+        ))}
       </section>
     </>
   );

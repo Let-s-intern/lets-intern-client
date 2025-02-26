@@ -254,14 +254,18 @@ export const userCurationItemSchema = z.object({
   title: z.string().nullable().optional(),
   url: z.string().nullable().optional(),
   thumbnail: z.string().nullable().optional(),
-  createdAt: z.string().nullable().optional(),
+  programCreateDate: z.string().nullable().optional(),
   category: z.string().nullable().optional(),
-  tagText: z.string().nullable().optional(),
+  tag: z.string().nullable().optional(),
+});
+
+export const userCurationListItemSchema = z.object({
+  curationInfo: userCurationInfoSchema,
+  curationItemList: z.array(userCurationItemSchema),
 });
 
 export const userCurationSchema = z.object({
-  curationInfo: userCurationInfoSchema,
-  curationItemList: z.array(userCurationItemSchema),
+  curationList: z.array(userCurationListItemSchema),
 });
 
 // USER

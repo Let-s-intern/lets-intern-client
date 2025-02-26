@@ -1,4 +1,3 @@
-import { blogCategory } from '@/utils/convert';
 import Link from 'next/link';
 import React from 'react';
 
@@ -30,8 +29,8 @@ const ProgramItem = ({ ...props }: ProgramItemProps) => {
           className="aspect-[3/2] w-full rounded-sm object-cover"
         />
         {props.category && (
-          <span className="text-xsmall14 font-semibold text-primary md:mt-3">
-            {blogCategory[props.category]}
+          <span className="text-xsmall14 font-semibold text-primary md:-mb-1 md:mt-3">
+            {props.category}
           </span>
         )}
         <h3 className="mt-2 line-clamp-2 text-xsmall16 font-semibold text-neutral-0 md:mt-3 md:text-small18 md:font-bold">

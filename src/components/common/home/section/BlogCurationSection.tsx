@@ -14,49 +14,54 @@ const BlogCurationSection = () => {
     locationType: 'UNDER_BLOG',
   });
 
-  if (!data) return null;
+  const blogCurationList = data?.curationList.slice(0, 4);
+
+  if (!blogCurationList || blogCurationList.length === 0) return null;
   return (
     <>
-      <section className="mt-16 flex w-full max-w-[1160px] flex-col md:mt-24">
-        <ProgramContainer
-          title={data.curationInfo.title}
-          subTitle={data.curationInfo.subTitle ?? undefined}
-          moreUrl={data.curationInfo.moreUrl ?? undefined}
-          programs={data.curationItemList.map((item) => ({
-            thumbnail: getProgramThumbnail({
-              type: item.programType,
-              reportType: item.reportType ?? null,
-              thumbnail: item.thumbnail ?? undefined,
-            }),
-            title: item.title ?? '',
-            url: getProgramUrl({
-              type: item.programType,
-              programId: item.programId ?? undefined,
-              reportType: item.reportType ?? undefined,
-              url: item.url ?? undefined,
-            }),
-            duration: getDuration({
-              type: item.programType,
-              startDate: item.startDate ?? undefined,
-              endDate: item.endDate ?? undefined,
-            }),
-            badge: {
-              text: getBadgeText({
+      <section className="mt-16 flex w-full max-w-[1160px] flex-col gap-y-5 md:mt-24">
+        {blogCurationList.map((curation, index) => (
+          <ProgramContainer
+            key={'blogCuration' + index}
+            title={curation.curationInfo.title}
+            subTitle={curation.curationInfo.subTitle ?? undefined}
+            moreUrl={curation.curationInfo.moreUrl ?? undefined}
+            programs={curation.curationItemList.map((item) => ({
+              thumbnail: getProgramThumbnail({
                 type: item.programType,
-                deadline: item.deadline ?? undefined,
-                tagText: item.tagText ?? undefined,
+                reportType: item.reportType ?? null,
+                thumbnail: item.thumbnail ?? undefined,
               }),
-            },
-            createdDate: getCreatedDate({
-              type: item.programType,
-              createdAt: item.createdAt ?? undefined,
-            }),
-            category: getCategory({
-              type: item.programType,
-              category: item.category ?? undefined,
-            }),
-          }))}
-        />
+              title: item.title ?? '',
+              url: getProgramUrl({
+                type: item.programType,
+                programId: item.programId ?? undefined,
+                reportType: item.reportType ?? undefined,
+                url: item.url ?? undefined,
+              }),
+              duration: getDuration({
+                type: item.programType,
+                startDate: item.startDate ?? undefined,
+                endDate: item.endDate ?? undefined,
+              }),
+              badge: {
+                text: getBadgeText({
+                  type: item.programType,
+                  deadline: item.deadline ?? undefined,
+                  tagText: item.tag ?? undefined,
+                }),
+              },
+              createdDate: getCreatedDate({
+                type: item.programType,
+                createdAt: item.programCreateDate ?? undefined,
+              }),
+              category: getCategory({
+                type: item.programType,
+                category: item.category ?? undefined,
+              }),
+            }))}
+          />
+        ))}
       </section>
     </>
   );

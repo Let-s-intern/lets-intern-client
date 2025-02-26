@@ -68,6 +68,7 @@ const HomeCurationEditPage = () => {
           title: item.title || undefined,
           url: item.url || undefined,
           thumbnail: item.thumbnail || undefined,
+          tagText: item.tagText || undefined,
         })),
       },
     });
@@ -109,7 +110,7 @@ const HomeCurationEditPage = () => {
                 setCurationItems={setCurationItems}
               />
             </div>
-            <div className="flex justify-end gap-x-5">
+            <div className="mt-5 flex justify-end gap-x-5">
               <Button
                 variant="contained"
                 color="error"
