@@ -22,6 +22,7 @@ import {
   programBannerAdminListSchema,
   programBannerUserListSchema,
   ProgramClassification,
+  ProgramRecommend,
   programRecommendSchema,
   programSchema,
   ProgramStatus,
@@ -727,4 +728,11 @@ export const getChallengeByKeyword = async (keyword: string) => {
   );
 
   return filtered[0];
+};
+
+export const fetchProgramRecommend = async () => {
+  const data = await client<ProgramRecommend>('/v1/program/recommend', {
+    method: 'GET',
+  });
+  return programRecommendSchema.parse(data);
 };

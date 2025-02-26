@@ -1,9 +1,15 @@
 import { fetchBlogData } from '@/api/blog';
-import { BlogContent } from '@/api/blogSchema';
+import { BlogContent, ProgramRecommendItem } from '@/api/blogSchema';
+import { fetchProgramRecommend } from '@/api/program';
+import {
+  convertReportTypeToDisplayName,
+  convertReportTypeToPathname,
+} from '@/api/report';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
-import { blogCategory } from '@/utils/convert';
+import { ProgramTypeEnum } from '@/schema';
+import { blogCategory, newProgramTypeToText } from '@/utils/convert';
 import {
   getBaseUrlFromServer,
   getBlogPathname,
@@ -23,6 +29,8 @@ import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ReactNode } from 'react';
+
+const { CHALLENGE, VOD, LIVE, REPORT } = ProgramTypeEnum.enum;
 
 // SSR 메타데이터 생성
 export async function generateMetadata({
@@ -83,6 +91,58 @@ const BlogDetailPage = async ({
     thumbnail: data.blogDetailInfo.thumbnail,
     displayDate: data.blogDetailInfo.displayDate,
   }));
+  const programRecommendList = await getProgramRecommendList();
+
+  async function getProgramRecommendList() {
+    const result = contentJson.programRecommend?.filter(
+      (item) => item.ctaTitle !== undefined,
+    );
+
+    if (result?.length !== 0) return result;
+
+    const data = await fetchProgramRecommend();
+    const list: ProgramRecommendItem[] = [];
+
+    if (data.challengeList.length > 0) {
+      const target = data.challengeList[0];
+
+      list.push({
+        id: `${CHALLENGE}-${target.id}`,
+        ctaLink: `/program/${target.programType?.toLowerCase()}/${target.id}`,
+        ctaTitle: newProgramTypeToText[CHALLENGE],
+      });
+    }
+
+    if (data.live) {
+      list.push({
+        id: `${LIVE}-${data.live.id}`,
+        ctaLink: `/program/${data.live.programType?.toLowerCase()}/${data.live.id}`,
+        ctaTitle: newProgramTypeToText[LIVE],
+      });
+    }
+
+    if (data.vodList.length > 0) {
+      const target = data.vodList[0];
+
+      list.push({
+        id: `${VOD}-${target.id}`,
+        ctaLink: target.link ?? '',
+        ctaTitle: newProgramTypeToText[VOD],
+      });
+    }
+
+    if (data.reportList.length > 0) {
+      const target = data.reportList[0];
+
+      list.push({
+        id: `${REPORT}-${target.id}`,
+        ctaLink: `/report/landing/${convertReportTypeToPathname(target.reportType ?? 'RESUME')}`,
+        ctaTitle: convertReportTypeToDisplayName(target.reportType),
+      });
+    }
+
+    return list;
+  }
 
   return (
     <main className="mx-auto w-full max-w-[1100px] pb-12 pt-6 md:pb-[7.5rem]">
@@ -215,7 +275,7 @@ const BlogDetailPage = async ({
             취뽀 성공해요!
           </Heading2>
           <section className="mb-6 mt-5 flex flex-col gap-6">
-            {contentJson.programRecommend?.map((item) => (
+            {programRecommendList?.map((item) => (
               <ProgramRecommendCard key={item.id} program={item} />
             ))}
           </section>
@@ -226,20 +286,22 @@ const BlogDetailPage = async ({
       <HorizontalRule className="h-3 md:hidden" />
 
       {/* 다른 블로그 글 */}
-      <section className="px-5 py-9 md:mt-[11.25rem] md:p-0">
-        <MoreHeader href="/blog/list">
-          이 글을 읽으셨다면, <br className="md:hidden" />
-          이런 글도 좋아하실 거예요.
-        </MoreHeader>
-        <div className="mb-6 mt-5 grid grid-cols-1 gap-6 md:mt-6 md:grid-cols-4 md:flex-row md:gap-5">
-          {blogRecommendList.map((blog) => (
-            <BlogRecommendCard key={blog.id} blog={blog} />
-          ))}
-        </div>
-        <MoreLink href="/blog/list" className="md:hidden">
-          더 많은 블로그 글 보기
-        </MoreLink>
-      </section>
+      {blogRecommendList.length !== 0 && (
+        <section className="px-5 py-9 md:mt-[11.25rem] md:p-0">
+          <MoreHeader href="/blog/list">
+            이 글을 읽으셨다면, <br className="md:hidden" />
+            이런 글도 좋아하실 거예요.
+          </MoreHeader>
+          <div className="mb-6 mt-5 grid grid-cols-1 gap-6 md:mt-6 md:grid-cols-4 md:flex-row md:gap-5">
+            {blogRecommendList.map((blog) => (
+              <BlogRecommendCard key={blog.id} blog={blog} />
+            ))}
+          </div>
+          <MoreLink href="/blog/list" className="md:hidden">
+            더 많은 블로그 글 보기
+          </MoreLink>
+        </section>
+      )}
 
       {/* 블로그 CTA */}
       {blog.blogDetailInfo.ctaText && blog.blogDetailInfo.ctaLink && (
