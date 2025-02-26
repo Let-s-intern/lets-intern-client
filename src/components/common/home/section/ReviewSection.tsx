@@ -21,12 +21,15 @@ const ReviewSection = () => {
     types: [BlogType.PROGRAM_REVIEWS],
   });
 
-  const { data: totalReview } = useGetProgramReview({ size: 20 });
+  const { data: totalReview, isLoading: totalReviewIsLoading } =
+    useGetProgramReview({ size: 20 });
 
   const reviewsCount =
     (reviewCount?.count ?? 0) + (blogData?.pageInfo.totalElements ?? 0);
 
   useEffect(() => {
+    if (totalReviewIsLoading) return;
+
     const current = sectionRef.current;
     if (!current) return;
     if (reviewsCount === 0) return;
@@ -45,7 +48,7 @@ const ReviewSection = () => {
     return () => {
       observer.unobserve(current);
     };
-  }, [reviewsCount]);
+  }, [reviewsCount, totalReviewIsLoading]);
 
   useEffect(() => {
     const container = reviewContainerRef.current;
@@ -96,7 +99,7 @@ const ReviewSection = () => {
             <br />
             <div className="flex h-7 overflow-hidden break-keep md:h-11">
               <div
-                className={`transition-transform delay-200 duration-500 ease-out ${
+                className={`transition-transform delay-500 duration-1000 ease-out ${
                   isVisible ? '-translate-y-full' : 'translate-y-0'
                 }`}
               >
