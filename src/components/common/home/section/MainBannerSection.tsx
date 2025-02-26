@@ -34,13 +34,28 @@ const MainBannerSection = () => {
             >
               {data.bannerList.map((banner) => (
                 <SwiperSlide key={banner.id}>
-                  <img
-                    src={
-                      isMobile ? banner.mobileImgUrl || '' : banner.imgUrl || ''
+                  <a
+                    href={banner.link || '#'}
+                    target={
+                      banner.link?.includes('letscareer.co.kr') ||
+                      banner.link?.includes(
+                        'lets-intern-client-test.vercel.app',
+                      )
+                        ? '_self'
+                        : '_blank'
                     }
-                    alt={'main-banner' + banner.id}
-                    className="h-full w-full rounded-sm object-cover"
-                  />
+                    rel="noreferrer"
+                  >
+                    <img
+                      src={
+                        isMobile
+                          ? banner.mobileImgUrl || ''
+                          : banner.imgUrl || ''
+                      }
+                      alt={'main-banner' + banner.id}
+                      className="h-full w-full rounded-sm object-cover"
+                    />
+                  </a>
                 </SwiperSlide>
               ))}
             </Swiper>
