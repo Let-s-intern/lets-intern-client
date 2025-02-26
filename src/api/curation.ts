@@ -56,10 +56,12 @@ export const curationItemSchema = z.object({
   id: z.number(),
   programType: curationTypeSchema,
   programId: z.number().nullable().optional(),
+  programCreateDate: z.string().nullable().optional(),
+  reportType: reportTypeSchema.nullable().optional(),
+  tag: z.string().nullable().optional(),
   title: z.string().nullable().optional(),
   url: z.string().nullable().optional(),
   thumbnail: z.string().nullable().optional(),
-  tagText: z.string().nullable().optional(),
 });
 
 export type CurationItemType = z.infer<typeof curationItemSchema>;
@@ -82,10 +84,10 @@ export type CurationBodyType = {
 export type CurationItemBodyType = {
   programType: CurationType;
   programId?: number;
+  tag?: string;
   title?: string;
   url?: string;
   thumbnail?: string;
-  tagText?: string;
 };
 
 export type CurationEditBodyType = {

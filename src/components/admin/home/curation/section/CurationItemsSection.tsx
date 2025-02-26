@@ -16,6 +16,11 @@ const CurationItemsSection = ({
   setCurationItems,
 }: CurationItemsSectionProps) => {
   const onClickAdd = () => {
+    if (curationItems.length >= 5) {
+      alert('큐레이션 아이템은 최대 5개까지 등록 가능합니다.');
+      return;
+    }
+
     setCurationItems([
       ...curationItems,
       {

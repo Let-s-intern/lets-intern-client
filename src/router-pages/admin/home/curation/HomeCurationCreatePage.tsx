@@ -67,7 +67,7 @@ const HomeCurationCreatePage = () => {
           title: item.title || undefined,
           url: item.url || undefined,
           thumbnail: item.thumbnail || undefined,
-          tagText: item.tagText || undefined,
+          tag: item.tag || undefined,
         })),
       },
     });
