@@ -59,6 +59,7 @@ export const curationItemSchema = z.object({
   title: z.string().nullable().optional(),
   url: z.string().nullable().optional(),
   thumbnail: z.string().nullable().optional(),
+  tagText: z.string().nullable().optional(),
 });
 
 export type CurationItemType = z.infer<typeof curationItemSchema>;
@@ -84,6 +85,7 @@ export type CurationItemBodyType = {
   title?: string;
   url?: string;
   thumbnail?: string;
+  tagText?: string;
 };
 
 export type CurationEditBodyType = {
@@ -252,6 +254,9 @@ export const userCurationItemSchema = z.object({
   title: z.string().nullable().optional(),
   url: z.string().nullable().optional(),
   thumbnail: z.string().nullable().optional(),
+  createdAt: z.string().nullable().optional(),
+  category: z.string().nullable().optional(),
+  tagText: z.string().nullable().optional(),
 });
 
 export const userCurationSchema = z.object({

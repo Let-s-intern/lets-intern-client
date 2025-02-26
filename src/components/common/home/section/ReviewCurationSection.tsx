@@ -2,6 +2,8 @@ import { useGetUserCuration } from '@/api/curation';
 import ProgramContainer from '../ProgramContainer';
 import {
   getBadgeText,
+  getCategory,
+  getCreatedDate,
   getDuration,
   getProgramThumbnail,
   getProgramUrl,
@@ -42,10 +44,18 @@ const ReviewCurationSection = () => {
             badge: {
               text: getBadgeText({
                 type: item.programType,
-                reportType: item.reportType ?? undefined,
                 deadline: item.deadline ?? undefined,
+                tagText: item.tagText ?? undefined,
               }),
             },
+            createdDate: getCreatedDate({
+              type: item.programType,
+              createdAt: item.createdAt ?? undefined,
+            }),
+            category: getCategory({
+              type: item.programType,
+              category: item.category ?? undefined,
+            }),
           }))}
         />
       </section>

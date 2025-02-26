@@ -1,9 +1,5 @@
 import { CurationType, useGetUserCuration } from '@/api/curation';
-import {
-  convertReportTypeToDisplayName,
-  convertReportTypeToLandingPath,
-  ReportType,
-} from '@/api/report';
+import { convertReportTypeToLandingPath, ReportType } from '@/api/report';
 import { MMDD, YY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { getReportThumbnail } from '@components/common/mypage/credit/CreditListItem';
@@ -74,20 +70,42 @@ export const getDuration = ({
 
 export const getBadgeText = ({
   type,
-  reportType,
   deadline,
+  tagText,
 }: {
   type: CurationType;
-  reportType?: ReportType;
   deadline?: string;
+  tagText?: string;
 }) => {
   if (type !== 'REPORT' && deadline) {
     return `~${dayjs(deadline).format(MMDD)} 모집 마감`;
   }
-  if (type === 'REPORT' && reportType) {
-    return convertReportTypeToDisplayName(reportType);
+  if (type === 'REPORT' && tagText) {
+    return tagText;
   }
   return undefined;
+};
+
+export const getCreatedDate = ({
+  type,
+  createdAt,
+}: {
+  type: CurationType;
+  createdAt?: string;
+}) => {
+  if (type !== 'BLOG' || !createdAt) return undefined;
+  return dayjs(createdAt).format(YY_MM_DD) + ' 작성';
+};
+
+export const getCategory = ({
+  type,
+  category,
+}: {
+  type: CurationType;
+  category?: string;
+}) => {
+  if (type !== 'BLOG' || !category) return undefined;
+  return category;
 };
 
 const MainCurationSection = () => {
@@ -125,10 +143,18 @@ const MainCurationSection = () => {
             badge: {
               text: getBadgeText({
                 type: item.programType,
-                reportType: item.reportType ?? undefined,
                 deadline: item.deadline ?? undefined,
+                tagText: item.tagText ?? undefined,
               }),
             },
+            createdDate: getCreatedDate({
+              type: item.programType,
+              createdAt: item.createdAt ?? undefined,
+            }),
+            category: getCategory({
+              type: item.programType,
+              category: item.category ?? undefined,
+            }),
           }))}
         />
       </section>
