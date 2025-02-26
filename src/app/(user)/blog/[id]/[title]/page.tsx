@@ -165,10 +165,7 @@ const BlogDetailPage = async ({
 
           <section className="mb-9 mt-10 flex items-center justify-between md:mb-8">
             {/* 좋아요 */}
-            <BlogLikeBtn
-              likeCount={blogInfo.likeCount ?? 0}
-              blogId={blogInfo.id}
-            />
+            <BlogLikeBtn likeCount={blogInfo.likeCount ?? 0} />
             {/* 공유하기 */}
             <div className="flex items-center">
               <span className="mr-1.5 hidden text-xsmall14 font-medium text-neutral-35 md:block">
