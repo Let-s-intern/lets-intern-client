@@ -1,3 +1,10 @@
+import Intro1 from '@/assets/graphic/home/intro/1.svg?react';
+import Intro2 from '@/assets/graphic/home/intro/2.svg?react';
+import Intro3 from '@/assets/graphic/home/intro/3.svg?react';
+import Intro4 from '@/assets/graphic/home/intro/4.svg?react';
+import Intro5 from '@/assets/graphic/home/intro/5.svg?react';
+import Intro6 from '@/assets/graphic/home/intro/6.svg?react';
+import Intro7 from '@/assets/graphic/home/intro/7.svg?react';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { ReactNode, useState } from 'react';
@@ -26,7 +33,7 @@ const HOME_INTRO = {
             &강점찾기
           </>
         ),
-        img: '/images/home/intro/1.png',
+        icon: <Intro1 width={44} height={44} />,
         href: '/program',
       },
       {
@@ -37,7 +44,7 @@ const HOME_INTRO = {
             준비하기
           </>
         ),
-        img: '/images/home/intro/2.png',
+        icon: <Intro2 width={44} height={44} />,
         href: '/program',
       },
       {
@@ -48,7 +55,7 @@ const HOME_INTRO = {
             준비하기
           </>
         ),
-        img: '/images/home/intro/3.png',
+        icon: <Intro3 width={44} height={44} />,
         href: '/program',
       },
       {
@@ -59,7 +66,7 @@ const HOME_INTRO = {
             면접 준비하기
           </>
         ),
-        img: '/images/home/intro/4.png',
+        icon: <Intro4 width={44} height={44} />,
         href: '/program',
       },
       {
@@ -70,7 +77,7 @@ const HOME_INTRO = {
             피드백 받기
           </>
         ),
-        img: '/images/home/intro/4.png',
+        icon: <Intro5 width={44} height={44} />,
         href: '/program',
       },
       {
@@ -81,7 +88,7 @@ const HOME_INTRO = {
             피드백 받기
           </>
         ),
-        img: '/images/home/intro/4.png',
+        icon: <Intro6 width={44} height={44} />,
         href: '/program',
       },
       {
@@ -92,7 +99,7 @@ const HOME_INTRO = {
             피드백 받기
           </>
         ),
-        img: '/images/home/intro/4.png',
+        icon: <Intro7 width={44} height={44} />,
         href: '/program',
       },
     ],
@@ -105,7 +112,7 @@ const HOME_INTRO = {
             &강점찾기
           </>
         ),
-        img: '/images/home/intro/1.png',
+        icon: <Intro1 width={44} height={44} />,
         href: '/program',
       },
       {
@@ -116,7 +123,7 @@ const HOME_INTRO = {
             준비하기
           </>
         ),
-        img: '/images/home/intro/2.png',
+        icon: <Intro2 width={44} height={44} />,
         href: '/program',
       },
       {
@@ -127,7 +134,7 @@ const HOME_INTRO = {
             준비하기
           </>
         ),
-        img: '/images/home/intro/3.png',
+        icon: <Intro3 width={44} height={44} />,
         href: '/program',
       },
       {
@@ -138,7 +145,7 @@ const HOME_INTRO = {
             면접 준비하기
           </>
         ),
-        img: '/images/home/intro/4.png',
+        icon: <Intro4 width={44} height={44} />,
         href: '/program',
       },
       {
@@ -149,7 +156,7 @@ const HOME_INTRO = {
             피드백 받기
           </>
         ),
-        img: '/images/home/intro/4.png',
+        icon: <Intro5 width={44} height={44} />,
         href: '/program',
       },
       {
@@ -160,7 +167,7 @@ const HOME_INTRO = {
             피드백 받기
           </>
         ),
-        img: '/images/home/intro/4.png',
+        icon: <Intro6 width={44} height={44} />,
         href: '/program',
       },
     ],
@@ -177,8 +184,8 @@ const IntroSection = () => {
           {HOME_INTRO.description}
           {HOME_INTRO.title}
         </div>
-        <div className="flex w-full flex-col gap-y-6 md:mx-auto md:w-fit">
-          <div className="flex w-full items-stretch justify-center gap-x-2 md:justify-start">
+        <div className="mx-auto flex w-full flex-col items-center gap-y-8 md:w-fit md:gap-y-11">
+          <div className="flex w-fit items-center justify-center gap-x-2 rounded-xs bg-neutral-90 p-1.5">
             <IntroButton
               active={basic}
               text="일반 채용"
@@ -203,18 +210,16 @@ const IntroSection = () => {
               ? HOME_INTRO.items.basic.map((item, index) => (
                   <IntroItem
                     key={index}
-                    index={index}
                     title={item.title}
-                    img={item.img}
+                    icon={item.icon}
                     href={item.href}
                   />
                 ))
               : HOME_INTRO.items.enterprise.map((item, index) => (
                   <IntroItem
                     key={index}
-                    index={index}
                     title={item.title}
-                    img={item.img}
+                    icon={item.icon}
                     href={item.href}
                   />
                 ))}
@@ -239,10 +244,10 @@ const IntroButton = ({
   return (
     <button
       className={clsx(
-        'rounded-xs px-3 py-2 text-center text-xsmall14 md:px-4 md:py-1.5',
+        'rounded-xs px-4 py-1.5 text-center text-xsmall14 md:px-4 md:py-1.5 md:text-xsmall16',
         {
-          'bg-primary text-white': active,
-          'bg-neutral-90 text-neutral-35': !active,
+          'shadow-10 bg-white font-semibold text-neutral-0': active,
+          'bg-transparent font-medium text-neutral-45': !active,
         },
       )}
       onClick={onClick}
@@ -253,26 +258,22 @@ const IntroButton = ({
 };
 
 const IntroItem = ({
-  index,
   title,
-  img,
+  icon,
   href,
 }: {
-  index: number;
   title: ReactNode;
-  img: string;
+  icon: ReactNode;
   href: string;
 }) => {
   return (
     <Link
-      className="flex w-full flex-col gap-y-2 text-center text-xxsmall12 font-medium text-neutral-20 md:text-xsmall16"
+      className="flex w-full flex-col gap-y-4 text-center text-xxsmall12 font-medium text-neutral-20 md:text-xsmall16"
       href={href}
     >
-      <img
-        className="aspect-square w-full rounded-xs bg-neutral-80 object-cover"
-        src={img}
-        alt={'intro-item-' + index}
-      />
+      <div className="flex aspect-square items-center justify-center rounded-xxs bg-[#F7F7F7] md:w-full">
+        {icon}
+      </div>
       {title}
     </Link>
   );
