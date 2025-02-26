@@ -12,6 +12,7 @@ import {
   adminBlogBannerListSchema,
   adminBlogBannerSchema,
   blogBannerListSchema,
+  blogLikeSchema,
   BlogList,
   blogListSchema,
   blogRatingListSchema,
@@ -416,13 +417,23 @@ export const useGetBlogBannerList = (pageable: IPageable) => {
 export const usePostBlogLike = () => {
   return useMutation({
     mutationFn: async (blogId: number | string) => {
-      const res = await axios.post(`/blog/${blogId}/like`, { blogId });
+      const res = await axios.post(`/blog-like/${blogId}`, { blogId });
       return res;
     },
     onError: (err) => {
       if (isAxiosError(err) && err.response?.status === 409) {
         alert('이미 좋아요 한 블로그입니다.');
       }
+    },
+  });
+};
+
+export const useGetBlogLike = () => {
+  return useQuery({
+    queryKey: ['useGetBlogLike'],
+    queryFn: async () => {
+      const res = await axios.get('/blog-like');
+      return blogLikeSchema.parse(res.data.data);
     },
   });
 };

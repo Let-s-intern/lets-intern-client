@@ -186,3 +186,7 @@ export const blogBannerListSchema = z.object({
   blogBannerList: z.array(blogBannerSchema),
   pageInfo,
 });
+
+export const blogLikeSchema = z.object({
+  blogIds: z.array(z.number()),
+});
