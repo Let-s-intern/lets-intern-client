@@ -112,6 +112,15 @@ const CurationItem = ({
                 value={item.url}
                 onChange={(e) => onChangeItem({ ...item, url: e.target.value })}
               />
+              <Input
+                label="tag"
+                type="text"
+                name="tag"
+                placeholder="태그를 입력하세요"
+                size="small"
+                value={item.tag}
+                onChange={(e) => onChangeItem({ ...item, tag: e.target.value })}
+              />
             </div>
           </div>
         )}

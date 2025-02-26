@@ -372,6 +372,8 @@ export const blogCategory: Record<string, string> = {
   WORK_EXPERIENCES: '근무 후기',
   JUNIOR_STORIES: '주니어 이야기',
   LETSCAREER_NEWS: '렛츠커리어 소식',
+  CAREER_STORIES: '커리어 이야기',
+  JOB_POSTING: '채용 공고',
 };
 
 export const convertCurationLocationTypeToText = (

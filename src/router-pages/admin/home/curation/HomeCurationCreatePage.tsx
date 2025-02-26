@@ -67,6 +67,7 @@ const HomeCurationCreatePage = () => {
           title: item.title || undefined,
           url: item.url || undefined,
           thumbnail: item.thumbnail || undefined,
+          tag: item.tag || undefined,
         })),
       },
     });
@@ -91,7 +92,7 @@ const HomeCurationCreatePage = () => {
             setCurationItems={setCurationItems}
           />
         </div>
-        <div className="flex justify-end gap-x-5">
+        <div className="mt-5 flex justify-end gap-x-5">
           <Button
             variant="contained"
             color="error"

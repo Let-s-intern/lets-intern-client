@@ -56,10 +56,12 @@ export const curationItemSchema = z.object({
   id: z.number(),
   programType: curationTypeSchema,
   programId: z.number().nullable().optional(),
+  programCreateDate: z.string().nullable().optional(),
+  reportType: reportTypeSchema.nullable().optional(),
+  tag: z.string().nullable().optional(),
   title: z.string().nullable().optional(),
   url: z.string().nullable().optional(),
   thumbnail: z.string().nullable().optional(),
-  tagText: z.string().nullable().optional(),
 });
 
 export type CurationItemType = z.infer<typeof curationItemSchema>;
@@ -82,10 +84,10 @@ export type CurationBodyType = {
 export type CurationItemBodyType = {
   programType: CurationType;
   programId?: number;
+  tag?: string;
   title?: string;
   url?: string;
   thumbnail?: string;
-  tagText?: string;
 };
 
 export type CurationEditBodyType = {
@@ -254,14 +256,18 @@ export const userCurationItemSchema = z.object({
   title: z.string().nullable().optional(),
   url: z.string().nullable().optional(),
   thumbnail: z.string().nullable().optional(),
-  createdAt: z.string().nullable().optional(),
+  programCreateDate: z.string().nullable().optional(),
   category: z.string().nullable().optional(),
-  tagText: z.string().nullable().optional(),
+  tag: z.string().nullable().optional(),
+});
+
+export const userCurationListItemSchema = z.object({
+  curationInfo: userCurationInfoSchema,
+  curationItemList: z.array(userCurationItemSchema),
 });
 
 export const userCurationSchema = z.object({
-  curationInfo: userCurationInfoSchema,
-  curationItemList: z.array(userCurationItemSchema),
+  curationList: z.array(userCurationListItemSchema),
 });
 
 // USER
