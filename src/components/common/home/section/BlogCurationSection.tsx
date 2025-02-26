@@ -35,14 +35,14 @@ const BlogCurationSection = () => {
             }),
             duration: getDuration({
               type: item.programType,
-              startDate: data.curationInfo.startDate,
-              endDate: data.curationInfo.endDate,
+              startDate: item.startDate ?? undefined,
+              endDate: item.endDate ?? undefined,
             }),
             badge: {
               text: getBadgeText({
                 type: item.programType,
                 reportType: item.reportType ?? undefined,
-                deadline: data.curationInfo.endDate,
+                deadline: item.deadline ?? undefined,
               }),
             },
           }))}
