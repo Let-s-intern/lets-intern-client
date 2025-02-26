@@ -2,10 +2,8 @@
 
 import { ReportDetail, useGetReportPriceDetail } from '@/api/report';
 import ReportApplyBottomSheet from '@/components/common/report/ReportApplyBottomSheet';
-import { personalStatementReportDescription } from '@/data/description';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { ReportContent } from '@/types/interface';
-import { getReportLandingTitle } from '@/utils/url';
 import PromoSection from '@components/common/report/PromoSection';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
 import ReportExampleSection from '@components/common/report/ReportExampleSection';
@@ -34,8 +32,6 @@ const ReportPersonalStatementPage = ({
 }) => {
   const { initReportApplication } = useReportApplicationStore();
 
-  const description = personalStatementReportDescription;
-  const title = getReportLandingTitle(report?.title ?? '자기소개서');
   const personalStatementContent: ReportContent = JSON.parse(
     report?.contents ?? '{}',
   );
@@ -50,7 +46,7 @@ const ReportPersonalStatementPage = ({
 
   return (
     <>
-      <div className="flex flex-col items-center w-full">
+      <div className="flex w-full flex-col items-center">
         <div className="flex w-full flex-col bg-black pb-10 text-white md:pb-[60px]">
           <div className="mx-auto flex w-full max-w-[1000px] flex-col px-5 lg:px-0">
             <div className="h-[56px] md:h-[66px]" />
@@ -68,7 +64,7 @@ const ReportPersonalStatementPage = ({
         <div
           id="content"
           data-page-type="personal-statement"
-          className="flex flex-col items-center w-full"
+          className="flex w-full flex-col items-center"
         >
           {/* 서비스 소개 */}
           <ReportIntroSection type="PERSONAL_STATEMENT" />

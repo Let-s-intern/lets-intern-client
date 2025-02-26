@@ -75,7 +75,7 @@ function ProgramRecommendSlider({
               style={buttonStyle}
               onClick={(e) => {
                 pushDataLayer(item); // GA 데이터 전송
-                item.onClickButton && item.onClickButton(e);
+                if (item.onClickButton) item.onClickButton(e);
               }}
             >
               {item.cta}
