@@ -40,6 +40,7 @@ function BlogLikeBtn({ likeCount, blogId }: Props) {
       className="flex items-center gap-2"
       onClick={async () => {
         if (!isLoggedIn) {
+          // 비회원 리다이렉트
           const params = new URLSearchParams();
           params.set('redirect', pathname);
           redirect(`/login?redirect=${encodeURIComponent(pathname)}`);

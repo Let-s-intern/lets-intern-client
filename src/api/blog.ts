@@ -416,7 +416,7 @@ export const useGetBlogBannerList = (pageable: IPageable) => {
 export const usePostBlogLike = () => {
   return useMutation({
     mutationFn: async (blogId: number | string) => {
-      const res = await axios.post(`/blog/${blogId}/like`, { blogId });
+      const res = await axios.post(`/blog-like/${blogId}`, { blogId });
       return res;
     },
     onError: (err) => {
