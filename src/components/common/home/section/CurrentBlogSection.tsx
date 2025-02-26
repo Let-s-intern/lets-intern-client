@@ -7,7 +7,7 @@ import BlogContainer from '../BlogContainer';
 
 const CurrentBlogSection = () => {
   const { data, isLoading } = useBlogListQuery({
-    pageable: { page: 1, size: 4 },
+    pageable: { page: 1, size: 10 },
   });
 
   return (
@@ -25,17 +25,25 @@ const CurrentBlogSection = () => {
               </>
             }
             moreUrl="/blog/list"
-            blogs={data.blogInfos.map((blog) => ({
-              thumbnail: blog.blogThumbnailInfo.thumbnail || '',
-              category: blog.blogThumbnailInfo.category
-                ? blogCategory[blog.blogThumbnailInfo.category]
-                : '-',
-              title: blog.blogThumbnailInfo.title || '',
-              date: blog.blogThumbnailInfo.createDate
-                ? dayjs(blog.blogThumbnailInfo.createDate).format(YYYY_MM_DD)
-                : '-',
-              url: `/blog/${blog.blogThumbnailInfo.id}`,
-            }))}
+            blogs={data.blogInfos
+              .filter(
+                (b) =>
+                  b.blogThumbnailInfo.isDisplayed &&
+                  b.blogThumbnailInfo.displayDate &&
+                  dayjs(b.blogThumbnailInfo.displayDate).isBefore(dayjs()),
+              )
+              .slice(0, 4)
+              .map((blog) => ({
+                thumbnail: blog.blogThumbnailInfo.thumbnail || '',
+                category: blog.blogThumbnailInfo.category
+                  ? blogCategory[blog.blogThumbnailInfo.category]
+                  : '-',
+                title: blog.blogThumbnailInfo.title || '',
+                date: blog.blogThumbnailInfo.createDate
+                  ? dayjs(blog.blogThumbnailInfo.createDate).format(YYYY_MM_DD)
+                  : '-',
+                url: `/blog/${blog.blogThumbnailInfo.id}`,
+              }))}
           />
         )}
       </section>
