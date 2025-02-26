@@ -47,7 +47,7 @@ async function ProgramRecommendCard({ program }: Props) {
           // type === REPORT
           const report = await fetchReportId(id);
           title = report.title ?? undefined;
-          thumbnail = '/images/report/thumbnail-resume.svg';
+          thumbnail = `/images/report/thumbnail-${convertReportTypeToPathname(report.reportType ?? 'RESUME')}.svg`;
           ctaLink = `/report/landing/${convertReportTypeToPathname(report.reportType ?? 'RESUME')}`;
       }
     } else if (program.ctaLink?.startsWith('latest')) {
