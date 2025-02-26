@@ -62,17 +62,37 @@ const LetsCareerSection = () => {
 
   const vodPrograms = useMemo(
     () =>
-      vodData?.programList.map((vod) => ({
-        thumbnail: vod.thumbnail ?? '',
-        title: vod.title ?? '',
-        url: vod.link ?? '',
-        duration: undefined,
-        badge: {
-          text: getBadgeText({
-            type: 'VOD',
-          }),
-        },
-      })) ?? [],
+      vodData?.programList
+        .filter((vod) => vod.title && !vod.title.includes('가이드북'))
+        .map((vod) => ({
+          thumbnail: vod.thumbnail ?? '',
+          title: vod.title ?? '',
+          url: vod.link ?? '',
+          duration: undefined,
+          badge: {
+            text: getBadgeText({
+              type: 'VOD',
+            }),
+          },
+        })) ?? [],
+    [vodData],
+  );
+
+  const guideBookPrograms = useMemo(
+    () =>
+      vodData?.programList
+        .filter((vod) => vod.title && vod.title.includes('가이드북'))
+        .map((vod) => ({
+          thumbnail: vod.thumbnail ?? '',
+          title: vod.title ?? '',
+          url: vod.link ?? '',
+          duration: undefined,
+          badge: {
+            text: getBadgeText({
+              type: 'VOD',
+            }),
+          },
+        })) ?? [],
     [vodData],
   );
 
@@ -84,7 +104,7 @@ const LetsCareerSection = () => {
     if (livePrograms) {
       if (active === '전체') {
         // 모든 데이터 저장
-        setData([...vodPrograms, ...livePrograms]);
+        setData([...livePrograms, ...guideBookPrograms, ...vodPrograms]);
       } else if (active === 'LIVE 클래스') {
         // LIVE 클래스만 저장
         setData(livePrograms);
@@ -93,10 +113,10 @@ const LetsCareerSection = () => {
         setData(vodPrograms);
       } else {
         // 취업 가이드북만 저장
-        setData(vodPrograms.filter((vod) => vod.title.includes('가이드북')));
+        setData(guideBookPrograms);
       }
     }
-  }, [livePrograms, vodPrograms, isLoading, active]);
+  }, [livePrograms, vodPrograms, guideBookPrograms, isLoading, active]);
 
   return (
     <>
