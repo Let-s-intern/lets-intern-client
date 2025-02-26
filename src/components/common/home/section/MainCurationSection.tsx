@@ -78,11 +78,14 @@ export const getBadgeText = ({
   deadline?: string;
   tagText?: string;
 }) => {
-  if (type !== 'REPORT' && deadline) {
-    return `~${dayjs(deadline).format(MMDD)} 모집 마감`;
+  if (type === 'REPORT') {
+    return '48시간 이내 진단';
   }
-  if (type === 'REPORT' && tagText) {
+  if (type === 'ETC') {
     return tagText;
+  }
+  if (deadline) {
+    return `~${dayjs(deadline).format(MMDD)} 모집 마감`;
   }
   return undefined;
 };
