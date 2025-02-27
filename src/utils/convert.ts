@@ -368,11 +368,11 @@ export const getKeyByValue = (obj: any, value: string) => {
 export const blogCategory: Record<string, string> = {
   JOB_PREPARATION_TIPS: '취준 TIP ',
   PROGRAM_REVIEWS: '프로그램 후기',
-  JOB_SUCCESS_STORIES: '취뽀 후기',
-  WORK_EXPERIENCES: '근무 후기',
+  CAREER_STORIES: '취뽀 & 근무 후기',
+  JOB_SUCCESS_STORIES: '취뽀 후기', // LEGACY
+  WORK_EXPERIENCES: '근무 후기', // LEGACY
   JUNIOR_STORIES: '주니어 이야기',
   LETSCAREER_NEWS: '렛츠커리어 소식',
-  CAREER_STORIES: '커리어 이야기',
   JOB_POSTING: '채용 공고',
 };
 
