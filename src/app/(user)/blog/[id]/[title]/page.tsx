@@ -167,7 +167,7 @@ const BlogDetailPage = async ({
               {/* 제목 */}
               <div>
                 {blogInfo.category && (
-                  <Heading2 className="mb-2 text-primary">
+                  <Heading2 className="mb-2 text-primary" id="blog-category">
                     {blogCategory[blogInfo.category]}
                   </Heading2>
                 )}
@@ -317,12 +317,15 @@ const BlogDetailPage = async ({
 function Heading2({
   children,
   className,
+  id,
 }: {
   children?: ReactNode;
   className?: string;
+  id?: string;
 }) {
   return (
     <h2
+      id={id}
       className={twMerge(
         'text-small20 font-semibold text-neutral-0',
         className,
