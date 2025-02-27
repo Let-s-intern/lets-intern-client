@@ -32,7 +32,7 @@ const HOME_INTRO = {
           <>
             경험 정리
             <br />
-            &강점찾기
+            &이력서 준비
           </>
         ),
         icon: <Intro1 width={44} height={44} />,
@@ -85,7 +85,7 @@ const HOME_INTRO = {
       {
         title: (
           <>
-            자소서
+            자기소개서
             <br />
             피드백 받기
           </>
@@ -111,7 +111,7 @@ const HOME_INTRO = {
           <>
             경험 정리
             <br />
-            &강점찾기
+            &이력서 준비
           </>
         ),
         icon: <Intro1 width={44} height={44} />,
@@ -120,7 +120,7 @@ const HOME_INTRO = {
       {
         title: (
           <>
-            대기업 자소서
+            자기소개서
             <br />
             준비하기
           </>
@@ -164,7 +164,7 @@ const HOME_INTRO = {
       {
         title: (
           <>
-            자소서
+            자기소개서
             <br />
             피드백 받기
           </>
@@ -215,12 +215,12 @@ const IntroSection = () => {
           <div className="flex w-fit items-center justify-center gap-x-2 rounded-xs bg-neutral-90 p-1.5">
             <IntroButton
               active={basic}
-              text="일반 채용"
+              text="스타트업"
               onClick={() => setBasic(true)}
             />
             <IntroButton
               active={!basic}
-              text="대기업 공채"
+              text="대기업"
               onClick={() => setBasic(false)}
             />
           </div>
