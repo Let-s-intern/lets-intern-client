@@ -8,7 +8,7 @@ import BlogContainer from '../BlogContainer';
 const InterviewSection = () => {
   const { data, isLoading } = useBlogListQuery({
     pageable: { page: 1, size: 4 },
-    types: [BlogType.JOB_SUCCESS_STORIES],
+    types: [BlogType.CAREER_STORIES],
   });
 
   return (
