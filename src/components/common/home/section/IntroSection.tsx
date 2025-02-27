@@ -1,10 +1,12 @@
+import { useGetUserProgramQuery } from '@/api/program';
+import { convertReportTypeToLandingPath } from '@/api/report';
 import Intro1 from '@/assets/graphic/home/intro/1.svg?react';
 import Intro2 from '@/assets/graphic/home/intro/2.svg?react';
 import Intro3 from '@/assets/graphic/home/intro/3.svg?react';
 import Intro4 from '@/assets/graphic/home/intro/4.svg?react';
 import Intro5 from '@/assets/graphic/home/intro/5.svg?react';
 import Intro6 from '@/assets/graphic/home/intro/6.svg?react';
-import Intro7 from '@/assets/graphic/home/intro/7.svg?react';
+// import Intro7 from '@/assets/graphic/home/intro/7.svg?react';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { ReactNode, useState } from 'react';
@@ -34,7 +36,7 @@ const HOME_INTRO = {
           </>
         ),
         icon: <Intro1 width={44} height={44} />,
-        href: '/program',
+        href: 'current=기필코',
       },
       {
         title: (
@@ -45,7 +47,7 @@ const HOME_INTRO = {
           </>
         ),
         icon: <Intro2 width={44} height={44} />,
-        href: '/program',
+        href: 'current=자기소개서',
       },
       {
         title: (
@@ -56,7 +58,7 @@ const HOME_INTRO = {
           </>
         ),
         icon: <Intro3 width={44} height={44} />,
-        href: '/program',
+        href: 'current=포트폴리오',
       },
       {
         title: (
@@ -67,7 +69,7 @@ const HOME_INTRO = {
           </>
         ),
         icon: <Intro4 width={44} height={44} />,
-        href: '/program',
+        href: 'https://letscareer.framer.website/',
       },
       {
         title: (
@@ -78,7 +80,7 @@ const HOME_INTRO = {
           </>
         ),
         icon: <Intro5 width={44} height={44} />,
-        href: '/program',
+        href: convertReportTypeToLandingPath('RESUME'),
       },
       {
         title: (
@@ -89,19 +91,19 @@ const HOME_INTRO = {
           </>
         ),
         icon: <Intro6 width={44} height={44} />,
-        href: '/program',
+        href: convertReportTypeToLandingPath('PERSONAL_STATEMENT'),
       },
-      {
-        title: (
-          <>
-            포트폴리오
-            <br />
-            피드백 받기
-          </>
-        ),
-        icon: <Intro7 width={44} height={44} />,
-        href: '/program',
-      },
+      // {
+      //   title: (
+      //     <>
+      //       포트폴리오
+      //       <br />
+      //       피드백 받기
+      //     </>
+      //   ),
+      //   icon: <Intro7 width={44} height={44} />,
+      //   href: convertReportTypeToLandingPath('PORTFOLIO'),
+      // },
     ],
     enterprise: [
       {
@@ -113,7 +115,7 @@ const HOME_INTRO = {
           </>
         ),
         icon: <Intro1 width={44} height={44} />,
-        href: '/program',
+        href: 'current=기필코',
       },
       {
         title: (
@@ -124,7 +126,7 @@ const HOME_INTRO = {
           </>
         ),
         icon: <Intro2 width={44} height={44} />,
-        href: '/program',
+        href: 'current=대기업,자기소개서',
       },
       {
         title: (
@@ -135,7 +137,7 @@ const HOME_INTRO = {
           </>
         ),
         icon: <Intro3 width={44} height={44} />,
-        href: '/program',
+        href: 'https://litt.ly/letscareer/sale/0U6p79r',
       },
       {
         title: (
@@ -146,7 +148,7 @@ const HOME_INTRO = {
           </>
         ),
         icon: <Intro4 width={44} height={44} />,
-        href: '/program',
+        href: 'https://letscareer.framer.website/',
       },
       {
         title: (
@@ -157,7 +159,7 @@ const HOME_INTRO = {
           </>
         ),
         icon: <Intro5 width={44} height={44} />,
-        href: '/program',
+        href: convertReportTypeToLandingPath('RESUME'),
       },
       {
         title: (
@@ -168,7 +170,7 @@ const HOME_INTRO = {
           </>
         ),
         icon: <Intro6 width={44} height={44} />,
-        href: '/program',
+        href: convertReportTypeToLandingPath('PERSONAL_STATEMENT'),
       },
     ],
   },
@@ -176,6 +178,31 @@ const HOME_INTRO = {
 
 const IntroSection = () => {
   const [basic, setBasic] = useState(true);
+
+  const { data } = useGetUserProgramQuery({
+    pageable: { page: 1, size: 20 },
+    searchParams: {
+      type: 'CHALLENGE',
+      status: ['PROCEEDING'],
+    },
+  });
+
+  const getCurrentChallenge = (keyword: string): string | undefined => {
+    const keywordList = keyword.split(',');
+
+    // 모든 keyword를 포함하고 있는 챌린지
+    const currentChallenge = data?.programList.find((program) => {
+      return keywordList.every((keyword) =>
+        program.programInfo.title?.includes(keyword),
+      );
+    });
+
+    if (currentChallenge) {
+      return `/program/challenge/${currentChallenge.programInfo.id}`;
+    }
+
+    return undefined;
+  };
 
   return (
     <>
@@ -199,9 +226,9 @@ const IntroSection = () => {
           </div>
           <div
             className={clsx(
-              'grid w-full grid-cols-4 gap-x-4 gap-y-6 px-1 md:grid-rows-1 md:gap-x-10',
+              'grid w-full grid-cols-4 gap-x-4 gap-y-6 px-1 md:grid-cols-6 md:grid-rows-1 md:gap-x-10',
               {
-                'md:grid-cols-7': basic,
+                // 'md:grid-cols-7': basic,
                 'md:grid-cols-6': !basic,
               },
             )}
@@ -212,7 +239,11 @@ const IntroSection = () => {
                     key={index}
                     title={item.title}
                     icon={item.icon}
-                    href={item.href}
+                    href={
+                      item.href.startsWith('current=')
+                        ? getCurrentChallenge(item.href.split('=')[1])
+                        : item.href
+                    }
                   />
                 ))
               : HOME_INTRO.items.enterprise.map((item, index) => (
@@ -220,7 +251,11 @@ const IntroSection = () => {
                     key={index}
                     title={item.title}
                     icon={item.icon}
-                    href={item.href}
+                    href={
+                      item.href.startsWith('current=')
+                        ? getCurrentChallenge(item.href.split('=')[1])
+                        : item.href
+                    }
                   />
                 ))}
           </div>
@@ -246,7 +281,7 @@ const IntroButton = ({
       className={clsx(
         'rounded-xs px-4 py-1.5 text-center text-xsmall14 md:px-4 md:py-1.5 md:text-xsmall16',
         {
-          'shadow-10 bg-white font-semibold text-neutral-0': active,
+          'bg-white font-semibold text-neutral-0 shadow-10': active,
           'bg-transparent font-medium text-neutral-45': !active,
         },
       )}
@@ -264,12 +299,18 @@ const IntroItem = ({
 }: {
   title: ReactNode;
   icon: ReactNode;
-  href: string;
+  href?: string;
 }) => {
   return (
     <Link
       className="flex w-full flex-col gap-y-4 text-center text-xxsmall12 font-medium text-neutral-20 md:text-xsmall16"
-      href={href}
+      href={href ?? '#'}
+      target={href && href.startsWith('http') ? '_blank' : undefined}
+      onClick={() => {
+        if (!href || href === '#') {
+          alert('준비중입니다.');
+        }
+      }}
     >
       <div className="flex aspect-square items-center justify-center rounded-xxs bg-[#F7F7F7] md:w-full">
         {icon}
