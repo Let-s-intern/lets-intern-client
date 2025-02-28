@@ -72,25 +72,25 @@ const ProgramContainer = (props: ProgramContainerProps) => {
           slidesOffsetAfter={20}
           breakpoints={{
             768: {
-              spaceBetween: 26,
+              spaceBetween: 16,
               slidesPerView: 3,
               slidesOffsetBefore: 20,
               slidesOffsetAfter: 20,
             },
             820: {
-              spaceBetween: 26,
+              spaceBetween: 16,
               slidesPerView: 4,
               slidesOffsetBefore: 20,
               slidesOffsetAfter: 20,
             },
             1040: {
-              spaceBetween: 26,
+              spaceBetween: 16,
               slidesPerView: 5,
               slidesOffsetBefore: 20,
               slidesOffsetAfter: 20,
             },
             1280: {
-              spaceBetween: 26,
+              spaceBetween: 16,
               slidesPerView: 5,
               slidesOffsetBefore: 0,
               slidesOffsetAfter: 0,
