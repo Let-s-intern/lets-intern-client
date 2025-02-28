@@ -141,6 +141,7 @@ const LogoPlaySection = () => {
         <Swiper
           className="slide-per-auto slide-rolling mt-6 md:mt-10"
           modules={[Autoplay]}
+          allowTouchMove={false}
           freeMode
           loop
           spaceBetween={12}
@@ -170,7 +171,7 @@ const LogoPlayItem = (props: LogoPlayItemProps) => {
   return (
     <div
       className={clsx(
-        'flex w-[218px] justify-between rounded-sm p-3 pb-4 md:w-80 md:p-5 md:pb-6',
+        'flex w-[218px] select-none justify-between rounded-sm p-3 pb-4 md:w-80 md:p-5 md:pb-6',
       )}
       style={{
         backgroundColor: LOGO_THEME[props.theme],
