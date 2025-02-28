@@ -6,6 +6,7 @@ import Intro3 from '@/assets/graphic/home/intro/3.svg?react';
 import Intro4 from '@/assets/graphic/home/intro/4.svg?react';
 import Intro5 from '@/assets/graphic/home/intro/5.svg?react';
 import Intro6 from '@/assets/graphic/home/intro/6.svg?react';
+import Intro8 from '@/assets/graphic/home/intro/8.svg?react';
 // import Intro7 from '@/assets/graphic/home/intro/7.svg?react';
 import clsx from 'clsx';
 import Link from 'next/link';
@@ -42,7 +43,7 @@ const HOME_INTRO = {
       {
         title: (
           <>
-            자기소개서
+            자소서
             <br />
             준비하기
           </>
@@ -50,6 +51,19 @@ const HOME_INTRO = {
         icon: <Intro2 width={44} height={44} />,
         href: 'current=자기소개서',
         gaTitle: '자기소개서 준비하기',
+      },
+      {
+        title: (
+          <>
+            대기업 자소서
+            <br />
+            준비하기
+          </>
+        ),
+        subTitle: '대기업',
+        icon: <Intro8 width={44} height={44} />,
+        href: 'current=대기업,자기소개서',
+        gaTitle: '대기업 자기소개서 준비하기',
       },
       {
         title: (
@@ -66,18 +80,6 @@ const HOME_INTRO = {
       {
         title: (
           <>
-            멘토와 1:1
-            <br />
-            면접 준비하기
-          </>
-        ),
-        icon: <Intro4 width={44} height={44} />,
-        href: 'https://letscareer.framer.website/',
-        gaTitle: '멘토와 1:1 면접 준비하기',
-      },
-      {
-        title: (
-          <>
             이력서
             <br />
             피드백 받기
@@ -90,7 +92,7 @@ const HOME_INTRO = {
       {
         title: (
           <>
-            자기소개서
+            자소서
             <br />
             피드백 받기
           </>
@@ -98,6 +100,18 @@ const HOME_INTRO = {
         icon: <Intro6 width={44} height={44} />,
         href: convertReportTypeToLandingPath('PERSONAL_STATEMENT'),
         gaTitle: '자기소개서 피드백 받기',
+      },
+      {
+        title: (
+          <>
+            멘토와 1:1
+            <br />
+            면접 준비하기
+          </>
+        ),
+        icon: <Intro4 width={44} height={44} />,
+        href: 'https://letscareer.framer.website/',
+        gaTitle: '멘토와 1:1 면접 준비하기',
       },
       // {
       //   title: (
@@ -111,80 +125,80 @@ const HOME_INTRO = {
       //   href: convertReportTypeToLandingPath('PORTFOLIO'),
       // },
     ],
-    enterprise: [
-      {
-        title: (
-          <>
-            경험 정리
-            <br />
-            &이력서 준비
-          </>
-        ),
-        icon: <Intro1 width={44} height={44} />,
-        href: 'current=기필코',
-        gaTitle: '경험 정리 & 이력서 준비',
-      },
-      {
-        title: (
-          <>
-            자기소개서
-            <br />
-            준비하기
-          </>
-        ),
-        icon: <Intro2 width={44} height={44} />,
-        href: 'current=대기업,자기소개서',
-        gaTitle: '자기소개서 준비하기',
-      },
-      {
-        title: (
-          <>
-            인적성
-            <br />
-            준비하기
-          </>
-        ),
-        icon: <Intro3 width={44} height={44} />,
-        href: 'https://litt.ly/letscareer/sale/0U6p79r',
-        gaTitle: '인적성 준비하기',
-      },
-      {
-        title: (
-          <>
-            멘토와 1:1
-            <br />
-            면접 준비하기
-          </>
-        ),
-        icon: <Intro4 width={44} height={44} />,
-        href: 'https://letscareer.framer.website/',
-        gaTitle: '멘토와 1:1 면접 준비하기',
-      },
-      {
-        title: (
-          <>
-            이력서
-            <br />
-            피드백 받기
-          </>
-        ),
-        icon: <Intro5 width={44} height={44} />,
-        href: convertReportTypeToLandingPath('RESUME'),
-        gaTitle: '이력서 피드백 받기',
-      },
-      {
-        title: (
-          <>
-            자기소개서
-            <br />
-            피드백 받기
-          </>
-        ),
-        icon: <Intro6 width={44} height={44} />,
-        href: convertReportTypeToLandingPath('PERSONAL_STATEMENT'),
-        gaTitle: '자기소개서 피드백 받기',
-      },
-    ],
+    // enterprise: [
+    //   {
+    //     title: (
+    //       <>
+    //         경험 정리
+    //         <br />
+    //         &이력서 준비
+    //       </>
+    //     ),
+    //     icon: <Intro1 width={44} height={44} />,
+    //     href: 'current=기필코',
+    //     gaTitle: '경험 정리 & 이력서 준비',
+    //   },
+    //   {
+    //     title: (
+    //       <>
+    //         자기소개서
+    //         <br />
+    //         준비하기
+    //       </>
+    //     ),
+    //     icon: <Intro2 width={44} height={44} />,
+    //     href: 'current=대기업,자기소개서',
+    //     gaTitle: '자기소개서 준비하기',
+    //   },
+    //   {
+    //     title: (
+    //       <>
+    //         인적성
+    //         <br />
+    //         준비하기
+    //       </>
+    //     ),
+    //     icon: <Intro3 width={44} height={44} />,
+    //     href: 'https://litt.ly/letscareer/sale/0U6p79r',
+    //     gaTitle: '인적성 준비하기',
+    //   },
+    //   {
+    //     title: (
+    //       <>
+    //         멘토와 1:1
+    //         <br />
+    //         면접 준비하기
+    //       </>
+    //     ),
+    //     icon: <Intro4 width={44} height={44} />,
+    //     href: 'https://letscareer.framer.website/',
+    //     gaTitle: '멘토와 1:1 면접 준비하기',
+    //   },
+    //   {
+    //     title: (
+    //       <>
+    //         이력서
+    //         <br />
+    //         피드백 받기
+    //       </>
+    //     ),
+    //     icon: <Intro5 width={44} height={44} />,
+    //     href: convertReportTypeToLandingPath('RESUME'),
+    //     gaTitle: '이력서 피드백 받기',
+    //   },
+    //   {
+    //     title: (
+    //       <>
+    //         자기소개서
+    //         <br />
+    //         피드백 받기
+    //       </>
+    //     ),
+    //     icon: <Intro6 width={44} height={44} />,
+    //     href: convertReportTypeToLandingPath('PERSONAL_STATEMENT'),
+    //     gaTitle: '자기소개서 피드백 받기',
+    //   },
+    // ],
   },
 };
 
@@ -224,7 +238,7 @@ const IntroSection = () => {
           {HOME_INTRO.title}
         </div>
         <div className="mx-auto flex w-full flex-col items-center gap-y-8 md:w-fit md:gap-y-11">
-          <div className="flex w-fit items-center justify-center gap-x-2 rounded-xs bg-neutral-90 p-1.5">
+          {/* <div className="flex w-fit items-center justify-center gap-x-2 rounded-xs bg-neutral-90 p-1.5">
             <IntroButton
               active={basic}
               text="스타트업"
@@ -235,17 +249,31 @@ const IntroSection = () => {
               text="대기업"
               onClick={() => setBasic(false)}
             />
-          </div>
+          </div> */}
           <div
             className={clsx(
-              'grid grid-cols-4 gap-x-4 gap-y-6 px-1 md:grid-cols-6 md:grid-rows-1 md:gap-x-10',
-              {
-                // 'md:grid-cols-7': basic,
-                'md:grid-cols-6': !basic,
-              },
+              'grid grid-cols-4 gap-x-4 gap-y-6 px-1 md:grid-cols-7 md:grid-rows-1 md:gap-x-10',
+              // {
+              //   // 'md:grid-cols-7': basic,
+              //   'md:grid-cols-6': !basic,
+              // },
             )}
           >
-            {basic
+            {HOME_INTRO.items.basic.map((item, index) => (
+              <IntroItem
+                key={index}
+                title={item.title}
+                subTitle={item.subTitle}
+                icon={item.icon}
+                href={
+                  item.href.startsWith('current=')
+                    ? getCurrentChallenge(item.href.split('=')[1])
+                    : item.href
+                }
+                gaTitle={item.gaTitle}
+              />
+            ))}
+            {/* {basic
               ? HOME_INTRO.items.basic.map((item, index) => (
                   <IntroItem
                     key={index}
@@ -271,7 +299,7 @@ const IntroSection = () => {
                     }
                     gaTitle={item.gaTitle}
                   />
-                ))}
+                ))} */}
           </div>
         </div>
       </section>
@@ -309,11 +337,13 @@ const IntroButton = ({
 
 const IntroItem = ({
   title,
+  subTitle,
   icon,
   href,
   gaTitle,
 }: {
   title: ReactNode;
+  subTitle?: ReactNode;
   gaTitle: string;
   icon: ReactNode;
   href?: string;
@@ -331,8 +361,13 @@ const IntroItem = ({
       data-url={href}
       data-text={gaTitle}
     >
-      <div className="w-15 flex aspect-square items-center justify-center rounded-xxs bg-[#F7F7F7] md:w-16">
+      <div className="w-15 relative flex aspect-square items-center justify-center rounded-xxs bg-[#F7F7F7] md:w-16">
         {icon}
+        {subTitle && (
+          <span className="absolute -right-[14px] top-0 -translate-y-1/2 rounded-full bg-primary px-2 py-[5px] text-[13px] font-medium leading-none text-white">
+            {subTitle}
+          </span>
+        )}
       </div>
       {title}
     </Link>
