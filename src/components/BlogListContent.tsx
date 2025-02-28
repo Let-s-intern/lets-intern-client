@@ -209,15 +209,17 @@ function BlogList({
                     ? 'blog_upcoming'
                     : 'blog_item',
                 )}
-                href={`/blog/${blogThumbnailInfo.id}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (willBePublished(blogThumbnailInfo.displayDate ?? '')) {
-                    console.log('알람 설정 페이지로 이동');
-                    return;
-                  }
-                  router.push(`/blog/${blogThumbnailInfo.id}`);
-                }}
+                target={
+                  willBePublished(blogThumbnailInfo.displayDate ?? '')
+                    ? '_blank'
+                    : '_self'
+                }
+                href={
+                  willBePublished(blogThumbnailInfo.displayDate ?? '')
+                    ? 'https://forms.gle/HshjtnqqXWPQJ5DH6'
+                    : `/blog/${blogThumbnailInfo.id}`
+                }
+                rel=""
                 key={`blog-${blogThumbnailInfo.id}`}
                 data-url={`/blog/${blogThumbnailInfo.id}`}
                 data-text={blogThumbnailInfo.title}
