@@ -47,7 +47,7 @@ const MoreHeader = ({
           href={href}
           target={href.startsWith('http') ? '_blank' : undefined}
           className={clsx(
-            'font-medium text-neutral-45',
+            'more_btn font-medium text-neutral-45',
             isBig ? 'text-xsmall16' : 'text-xsmall14',
             isVertical ? 'mt-0.5' : '',
           )}
