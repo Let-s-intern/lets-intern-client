@@ -69,7 +69,6 @@ const BlogDetailPage = async ({
     dayjs(),
   );
   const blogInfo = blog.blogDetailInfo;
-  console.log(blogInfo);
   const contentJson: BlogContent = JSON.parse(blogInfo?.content ?? '{}');
   // 구버전은 기존 content에서 렉시컬 내용 가져오기
   const lexical = contentJson.blogRecommend
