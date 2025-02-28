@@ -17,7 +17,9 @@ const CurrentBlogSection = () => {
           <LoadingContainer />
         ) : !data || data.blogInfos.length === 0 ? null : (
           <BlogContainer
+            gaItem="home_blogrec"
             title="지금 가장 인기있는 블로그 게시글"
+            gaTitle="지금 가장 인기있는 블로그 게시글"
             subTitle={
               <>
                 렛츠커리어 블로그에서 사람들이 <br className="md:hidden" />

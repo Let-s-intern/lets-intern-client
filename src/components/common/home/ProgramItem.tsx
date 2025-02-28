@@ -1,3 +1,4 @@
+import { twMerge } from '@/lib/twMerge';
 import Link from 'next/link';
 import React from 'react';
 
@@ -19,9 +20,11 @@ const ProgramItem = ({ ...props }: ProgramItemProps) => {
   return (
     <>
       <Link
-        className="flex w-full flex-col"
+        className={twMerge('flex w-full flex-col', props.className)}
         href={props.url}
         target={props.url.startsWith('http') ? '_blank' : undefined}
+        data-url={props.url}
+        data-text={props.title}
       >
         <img
           src={props.thumbnail}

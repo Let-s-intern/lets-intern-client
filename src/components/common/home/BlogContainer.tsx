@@ -8,6 +8,8 @@ interface BlogContainerProps {
   subTitle?: ReactNode;
   moreUrl?: string;
   blogs: BlogItemProps[];
+  gaItem: string;
+  gaTitle: string;
 }
 
 const BlogContainer = (props: BlogContainerProps) => {
@@ -18,6 +20,7 @@ const BlogContainer = (props: BlogContainerProps) => {
         href={props.moreUrl}
         isVertical
         isBig
+        gaText={props.gaTitle}
       >
         {props.title}
       </MoreHeader>
@@ -33,6 +36,7 @@ const BlogContainer = (props: BlogContainerProps) => {
               title={blog.title}
               date={blog.date}
               url={blog.url}
+              className={props.gaItem}
             />
           ))}
         </div>

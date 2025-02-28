@@ -1,3 +1,4 @@
+import { twMerge } from '@/lib/twMerge';
 import Link from 'next/link';
 
 export interface BlogItemProps {
@@ -6,15 +7,18 @@ export interface BlogItemProps {
   title: string;
   date?: string;
   url: string;
+  className?: string;
 }
 
 const BlogItem = (props: BlogItemProps) => {
   return (
     <>
       <Link
-        className="flex w-full flex-col"
+        className={twMerge('flex w-full flex-col', props.className)}
         href={props.url}
         target={props.url.startsWith('http') ? '_blank' : undefined}
+        data-url={props.url}
+        data-text={props.title}
       >
         <img
           src={props.thumbnail}

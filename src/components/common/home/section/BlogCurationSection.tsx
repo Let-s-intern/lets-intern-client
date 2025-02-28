@@ -23,6 +23,8 @@ const BlogCurationSection = () => {
         {blogCurationList.map((curation, index) => (
           <ProgramContainer
             key={'blogCuration' + index}
+            gaItem={'blog_curation_' + curation.curationInfo.curationId}
+            gaTitle={curation.curationInfo.title}
             title={curation.curationInfo.title}
             subTitle={curation.curationInfo.subTitle ?? undefined}
             moreUrl={curation.curationInfo.moreUrl ?? undefined}

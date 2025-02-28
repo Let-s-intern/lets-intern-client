@@ -1,9 +1,9 @@
 'use client';
 
 import useGetBlogParticipationReview from '@/hooks/useGetParticipationReviews';
+import { twMerge } from '@/lib/twMerge';
 import { getBlogPathname } from '@/utils/url';
 import Link from 'next/link';
-import { twMerge } from 'tailwind-merge';
 import AboutTitleDark from '../ui/AboutTitleDark';
 
 const title = {

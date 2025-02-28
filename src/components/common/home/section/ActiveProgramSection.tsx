@@ -22,6 +22,8 @@ const ActiveProgramSection = () => {
       <section className="mt-16 flex w-full max-w-[1160px] flex-col md:mt-24">
         {!data ? null : (
           <ProgramContainer
+            gaItem="proceeding_program"
+            gaTitle="지금 모집 중인 프로그램을 한눈에 확인해보세요"
             showGrid
             title={
               <>

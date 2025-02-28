@@ -46,6 +46,7 @@ const BottomBannerSection = () => {
                     }
                     rel="noreferrer"
                     data-url={banner.link}
+                    className="bottom_banner"
                   >
                     <img
                       src={
