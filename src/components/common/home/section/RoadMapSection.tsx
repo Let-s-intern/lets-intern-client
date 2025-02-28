@@ -49,7 +49,7 @@ const RoadMapSection = () => {
 
   return (
     <>
-      <section className="mt-10 flex w-full max-w-[1160px] flex-col gap-y-6 md:mt-16">
+      <section className="mt-10 flex w-full max-w-[1120px] flex-col gap-y-6 md:mt-16">
         <div className="px-5 xl:px-0">
           <MoreHeader isBig gaText="합격으로 가는 취업 로드맵">
             합격으로 가는 취업 로드맵
@@ -137,7 +137,7 @@ const RoadMapItem = ({
       >
         {subTitle}
       </span>
-      <span className="z-10 text-xsmall14 font-semibold text-neutral-0 md:text-small20">
+      <span className="z-10 text-xsmall16 font-semibold text-neutral-0 md:text-small20">
         {title}
       </span>
     </Link>

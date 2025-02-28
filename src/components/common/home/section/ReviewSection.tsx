@@ -88,7 +88,7 @@ const ReviewSection = () => {
     <>
       <section
         ref={sectionRef}
-        className="mt-16 flex w-full max-w-[1160px] flex-col gap-6 px-5 md:mt-36 md:flex-row xl:px-0"
+        className="mt-16 flex w-full max-w-[1120px] flex-col gap-6 px-5 md:mt-36 md:flex-row xl:px-0"
       >
         <div className="flex flex-col md:w-1/2">
           <span className="text-xsmall16 font-bold text-primary md:text-medium22">
