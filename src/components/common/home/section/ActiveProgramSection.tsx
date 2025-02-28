@@ -17,23 +17,30 @@ const ActiveProgramSection = () => {
     },
   });
 
+  if (!data) return null;
+
   return (
     <>
       <section className="md:mt-21 mt-16 flex w-full max-w-[1120px] flex-col">
-        {!data ? null : (
-          <ProgramContainer
-            gaItem="proceeding_program"
-            gaTitle="지금 모집 중인 프로그램을 한눈에 확인해보세요"
-            showGrid
-            title={
-              <>
-                지금 모집 중인 프로그램을
-                <br className="md:hidden" />
-                한눈에 확인해보세요 📢
-              </>
-            }
-            moreUrl="/program?status=PROCEEDING"
-            programs={data.programList.map((program) => ({
+        <ProgramContainer
+          gaItem="proceeding_program"
+          gaTitle="지금 모집 중인 프로그램을 한눈에 확인해보세요"
+          showGrid
+          title={
+            <>
+              지금 모집 중인 프로그램을
+              <br className="md:hidden" />
+              한눈에 확인해보세요 📢
+            </>
+          }
+          moreUrl="/program?status=PROCEEDING"
+          programs={data.programList
+            .filter(
+              (p) =>
+                p.programInfo.programType === 'CHALLENGE' ||
+                p.programInfo.programType === 'LIVE',
+            )
+            .map((program) => ({
               thumbnail: program.programInfo.thumbnail ?? '',
               title: program.programInfo.title ?? '',
               url: getProgramUrl({
@@ -52,8 +59,7 @@ const ActiveProgramSection = () => {
                 }),
               },
             }))}
-          />
-        )}
+        />
       </section>
     </>
   );
