@@ -1,4 +1,4 @@
-import { fetchBlogData } from '@/api/blog';
+import { fetchBlogData, fetchRecommendBlogData } from '@/api/blog';
 import { BlogContent, ProgramRecommendItem } from '@/api/blogSchema';
 import { fetchProgramRecommend } from '@/api/program';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
@@ -75,18 +75,7 @@ const BlogDetailPage = async ({
   const lexical = contentJson.blogRecommend
     ? contentJson.lexical
     : blogInfo?.content;
-  const blogRecommendData = await Promise.all(
-    contentJson.blogRecommend
-      ?.filter((id) => id !== null)
-      ?.map((id) => fetchBlogData(id)) ?? [],
-  );
-  const blogRecommendList = blogRecommendData.map((data) => ({
-    id: data.blogDetailInfo.id,
-    title: data.blogDetailInfo.title,
-    category: data.blogDetailInfo.category,
-    thumbnail: data.blogDetailInfo.thumbnail,
-    displayDate: data.blogDetailInfo.displayDate,
-  }));
+  const blogRecommendList = await getBlogRecommendList();
   const programRecommendList = await getProgramRecommendList();
 
   async function getProgramRecommendList() {
@@ -115,6 +104,43 @@ const BlogDetailPage = async ({
     }
 
     return list;
+  }
+
+  async function getBlogRecommendList() {
+    const data = await Promise.all(
+      contentJson.blogRecommend
+        ?.filter((id) => id !== null)
+        ?.map((id) => fetchBlogData(id)) ?? [],
+    );
+    const list = data.map((item) => ({
+      id: item.blogDetailInfo.id,
+      title: item.blogDetailInfo.title,
+      category: item.blogDetailInfo.category,
+      thumbnail: item.blogDetailInfo.thumbnail,
+      displayDate: item.blogDetailInfo.displayDate,
+    }));
+
+    if (list.length !== 0) return list;
+
+    const recommendData = await fetchRecommendBlogData({
+      pageable: { page: 1, size: 10 },
+    });
+
+    return recommendData.blogInfos
+      .filter(
+        (info) =>
+          info.blogThumbnailInfo.isDisplayed &&
+          info.blogThumbnailInfo.displayDate &&
+          new Date(info.blogThumbnailInfo.displayDate) <= new Date(),
+      )
+      .slice(0, 4)
+      .map((item) => ({
+        id: item.blogThumbnailInfo.id,
+        title: item.blogThumbnailInfo.title,
+        category: item.blogThumbnailInfo.category,
+        thumbnail: item.blogThumbnailInfo.thumbnail,
+        displayDate: item.blogThumbnailInfo.displayDate,
+      }));
   }
 
   return (
@@ -261,7 +287,7 @@ const BlogDetailPage = async ({
       <HorizontalRule className="h-3 md:hidden" />
 
       {/* 다른 블로그 글 */}
-      {blogRecommendList.length !== 0 && (
+      {blogRecommendList.length > 0 && (
         <section className="px-5 py-9 md:mt-[11.25rem] md:p-0">
           <MoreHeader
             href="/blog/list"
@@ -270,7 +296,7 @@ const BlogDetailPage = async ({
             이 글을 읽으셨다면, <br className="md:hidden" />
             이런 글도 좋아하실 거예요.
           </MoreHeader>
-          <div className="mb-6 mt-5 grid grid-cols-1 gap-6 md:mt-6 md:grid-cols-4 md:flex-row md:gap-5">
+          <div className="mb-6 mt-5 grid grid-cols-1 gap-6 md:mt-6 md:grid-cols-4 md:items-start md:gap-5">
             {blogRecommendList.map((blog) => (
               <BlogRecommendCard key={blog.id} blog={blog} />
             ))}

@@ -27,7 +27,7 @@ async function BlogRecommendCard({ blog }: Props) {
         <h4 className="text-xxsmall12 font-semibold text-primary md:text-xsmall14">
           {blogCategory[blog.category ?? ''] ?? '전체'}
         </h4>
-        <h3 className="line-clamp-3 font-semibold text-neutral-20 md:line-clamp-2 md:font-bold">
+        <h3 className="line-clamp-3 font-semibold text-neutral-20 md:line-clamp-2 md:min-h-12 md:font-bold">
           {blog.title}
         </h3>
         <span className="hidden py-2 text-xxsmall12 text-neutral-40 md:block">
