@@ -8,8 +8,12 @@ interface MoreHeaderProps {
   isBig?: boolean;
   isVertical?: boolean;
   gaText: string;
+  hideMoreWhenMobile?: boolean;
 }
 
+/**
+ * @param hideMoreWhenMobile 모바일일 때 더보기 숨기기기
+ */
 const MoreHeader = ({
   children,
   subtitle,
@@ -17,6 +21,7 @@ const MoreHeader = ({
   isBig,
   isVertical,
   gaText,
+  hideMoreWhenMobile,
 }: MoreHeaderProps) => {
   return (
     <div
@@ -50,6 +55,7 @@ const MoreHeader = ({
             'more_btn font-medium text-neutral-45',
             isBig ? 'text-xsmall16' : 'text-xsmall14',
             isVertical ? 'mt-0.5' : '',
+            hideMoreWhenMobile ? 'hidden md:block' : '',
           )}
           data-text={gaText}
           data-url={href}
