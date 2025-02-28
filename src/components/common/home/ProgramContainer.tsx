@@ -58,6 +58,7 @@ const ProgramContainer = (props: ProgramContainerProps) => {
         <EmptyContainer />
       ) : (
         <Swiper
+          key={props.programs[0].title + props.programs.length + '-slide'}
           className="w-full"
           autoplay={{ delay: 2500 }}
           modules={[Grid]}
