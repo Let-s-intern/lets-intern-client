@@ -238,7 +238,7 @@ const IntroSection = () => {
           </div>
           <div
             className={clsx(
-              'grid w-full grid-cols-4 gap-x-4 gap-y-6 px-1 md:grid-cols-6 md:grid-rows-1 md:gap-x-10',
+              'grid grid-cols-4 gap-x-4 gap-y-6 px-1 md:grid-cols-6 md:grid-rows-1 md:gap-x-10',
               {
                 // 'md:grid-cols-7': basic,
                 'md:grid-cols-6': !basic,
@@ -320,7 +320,7 @@ const IntroItem = ({
 }) => {
   return (
     <Link
-      className="icon_menu flex w-full flex-col gap-y-4 text-center text-xxsmall12 font-medium text-neutral-20 md:text-xsmall16"
+      className="icon_menu flex w-full flex-col items-center gap-y-4 text-center text-xxsmall12 font-medium text-neutral-20 md:text-xsmall16"
       href={href ?? '#'}
       target={href && href.startsWith('http') ? '_blank' : undefined}
       onClick={() => {
@@ -331,7 +331,7 @@ const IntroItem = ({
       data-url={href}
       data-text={gaTitle}
     >
-      <div className="flex aspect-square items-center justify-center rounded-xxs bg-[#F7F7F7] md:w-full">
+      <div className="w-15 flex aspect-square items-center justify-center rounded-xxs bg-[#F7F7F7] md:w-16">
         {icon}
       </div>
       {title}
