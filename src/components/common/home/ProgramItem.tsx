@@ -36,7 +36,7 @@ const ProgramItem = ({ ...props }: ProgramItemProps) => {
             {props.category}
           </span>
         )}
-        <h3 className="mt-2 line-clamp-2 text-xsmall16 font-semibold text-neutral-0 md:mt-3 md:text-small18 md:font-bold">
+        <h3 className="mt-2 line-clamp-2 text-xsmall16 font-semibold text-neutral-0 md:mt-3 md:text-small18">
           {props.title}
         </h3>
         {props.duration && (
