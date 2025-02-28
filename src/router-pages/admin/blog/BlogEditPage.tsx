@@ -313,7 +313,7 @@ const BlogEditPage = () => {
             />
 
             <div className="flex gap-4">
-              <div className="w-56">
+              <div className="w-72">
                 <ImageUpload
                   label="블로그 썸네일"
                   id="file"
@@ -330,7 +330,8 @@ const BlogEditPage = () => {
                   }}
                 />
               </div>
-              <div className="flex-1">
+              {/* [삭제하지 마세요] CTA 임시로 사용 중지 */}
+              {/* <div className="flex-1">
                 <div className="mb-5">
                   <TextField
                     type="text"
@@ -361,7 +362,7 @@ const BlogEditPage = () => {
                   fullWidth
                   maxLength={maxCtaTextLength}
                 />
-              </div>
+              </div> */}
             </div>
 
             <div className="border px-6 py-10">
