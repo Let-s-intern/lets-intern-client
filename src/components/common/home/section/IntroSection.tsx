@@ -364,7 +364,7 @@ const IntroItem = ({
       <div className="w-15 relative flex aspect-square items-center justify-center rounded-xxs bg-[#F7F7F7] md:w-16">
         {icon}
         {subTitle && (
-          <span className="absolute -right-[14px] top-0 -translate-y-1/2 rounded-full bg-primary px-2 py-[5px] text-[13px] font-medium leading-none text-white">
+          <span className="absolute -right-[14px] top-0 -translate-y-1/2 rounded-full bg-primary px-2 py-[5px] text-[11px] font-medium leading-none text-white md:text-[13px]">
             {subTitle}
           </span>
         )}
