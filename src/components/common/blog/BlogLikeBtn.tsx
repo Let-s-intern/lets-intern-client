@@ -44,7 +44,7 @@ function BlogLikeBtn({ likeCount }: Props) {
   return (
     <button
       type="button"
-      className="flex items-center gap-2"
+      className="blog_likes flex items-center gap-2"
       onClick={async () => {
         if (!isLoggedIn) {
           // 비회원 리다이렉트

@@ -19,7 +19,9 @@ async function BlogRecommendCard({ blog }: Props) {
     <Link
       key={blog.id}
       href={`/blog/${blog.id}`}
-      className="flex justify-between gap-4 md:max-w-[16.25rem] md:flex-col-reverse md:justify-normal md:gap-3"
+      className="blog_recommend flex justify-between gap-4 md:max-w-[16.25rem] md:flex-col-reverse md:justify-normal md:gap-3"
+      data-url={`/blog/${blog.id}`}
+      data-text={blog.title}
     >
       <div className="flex flex-col gap-1 md:gap-2">
         <h4 className="text-xxsmall12 font-semibold text-primary md:text-xsmall14">
