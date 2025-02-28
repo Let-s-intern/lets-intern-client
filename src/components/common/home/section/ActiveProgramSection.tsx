@@ -1,4 +1,5 @@
 import { useGetUserProgramQuery } from '@/api/program';
+import { useMemo } from 'react';
 import ProgramContainer from '../ProgramContainer';
 import {
   getBadgeText,
@@ -9,7 +10,7 @@ import {
 const ActiveProgramSection = () => {
   const { data } = useGetUserProgramQuery({
     pageable: {
-      size: 10,
+      size: 20,
       page: 1,
     },
     searchParams: {
@@ -17,7 +18,17 @@ const ActiveProgramSection = () => {
     },
   });
 
-  if (!data) return null;
+  const filteredData = useMemo(() => {
+    return data?.programList
+      .filter(
+        (p) =>
+          p.programInfo.programType === 'CHALLENGE' ||
+          p.programInfo.programType === 'LIVE',
+      )
+      .slice(0, 10);
+  }, [data]);
+
+  if (!filteredData || filteredData.length === 0) return null;
 
   return (
     <>
@@ -34,31 +45,25 @@ const ActiveProgramSection = () => {
             </>
           }
           moreUrl="/program?status=PROCEEDING"
-          programs={data.programList
-            .filter(
-              (p) =>
-                p.programInfo.programType === 'CHALLENGE' ||
-                p.programInfo.programType === 'LIVE',
-            )
-            .map((program) => ({
-              thumbnail: program.programInfo.thumbnail ?? '',
-              title: program.programInfo.title ?? '',
-              url: getProgramUrl({
+          programs={filteredData.map((program) => ({
+            thumbnail: program.programInfo.thumbnail ?? '',
+            title: program.programInfo.title ?? '',
+            url: getProgramUrl({
+              type: program.programInfo.programType,
+              programId: program.programInfo.id ?? undefined,
+            }),
+            duration: getDuration({
+              type: program.programInfo.programType,
+              startDate: program.programInfo.startDate ?? '',
+              endDate: program.programInfo.endDate ?? '',
+            }),
+            badge: {
+              text: getBadgeText({
                 type: program.programInfo.programType,
-                programId: program.programInfo.id ?? undefined,
+                deadline: program.programInfo.deadline ?? '',
               }),
-              duration: getDuration({
-                type: program.programInfo.programType,
-                startDate: program.programInfo.startDate ?? '',
-                endDate: program.programInfo.endDate ?? '',
-              }),
-              badge: {
-                text: getBadgeText({
-                  type: program.programInfo.programType,
-                  deadline: program.programInfo.deadline ?? '',
-                }),
-              },
-            }))}
+            },
+          }))}
         />
       </section>
     </>
