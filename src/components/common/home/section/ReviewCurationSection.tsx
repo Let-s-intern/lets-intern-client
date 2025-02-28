@@ -20,7 +20,7 @@ const ReviewCurationSection = () => {
 
   return (
     <>
-      <section className="mt-16 flex w-full max-w-[1160px] flex-col gap-y-5 md:mt-36">
+      <section className="mt-16 flex w-full max-w-[1160px] flex-col gap-y-16 md:mt-36 md:gap-y-36">
         {reviewCurationList.map((curation, index) => (
           <ProgramContainer
             gaItem="home_blogreview"
