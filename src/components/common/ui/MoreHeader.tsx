@@ -8,8 +8,12 @@ interface MoreHeaderProps {
   isBig?: boolean;
   isVertical?: boolean;
   gaText: string;
+  hideMoreWhenMobile?: boolean;
 }
 
+/**
+ * @param hideMoreWhenMobile 모바일일 때 더보기 숨기기기
+ */
 const MoreHeader = ({
   children,
   subtitle,
@@ -17,6 +21,7 @@ const MoreHeader = ({
   isBig,
   isVertical,
   gaText,
+  hideMoreWhenMobile,
 }: MoreHeaderProps) => {
   return (
     <div
@@ -33,13 +38,16 @@ const MoreHeader = ({
       >
         <h2
           className={clsx(
-            'text-small20',
-            isBig ? 'font-bold md:text-large26' : 'font-semibold',
+            isBig ? 'font-bold md:text-medium22' : 'text-small20 font-semibold',
           )}
         >
           {children}
         </h2>
-        {subtitle && <p className="text-xsmall14">{subtitle}</p>}
+        {subtitle && (
+          <p className={clsx(isBig ? 'text-small18' : 'text-xsmall14')}>
+            {subtitle}
+          </p>
+        )}
       </div>
       {href && (
         // home에서 program으로 갈 경우 react, 나머지는 next라서 a태그 사용
@@ -50,6 +58,7 @@ const MoreHeader = ({
             'more_btn font-medium text-neutral-45',
             isBig ? 'text-xsmall16' : 'text-xsmall14',
             isVertical ? 'mt-0.5' : '',
+            hideMoreWhenMobile ? 'hidden md:block' : '',
           )}
           data-text={gaText}
           data-url={href}

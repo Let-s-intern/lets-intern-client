@@ -70,9 +70,7 @@ const LetsCareerSection = () => {
           url: vod.link ?? '',
           duration: undefined,
           badge: {
-            text: getBadgeText({
-              type: 'VOD',
-            }),
+            text: '즉시 수강 가능',
           },
         })) ?? [],
     [vodData],
@@ -88,9 +86,7 @@ const LetsCareerSection = () => {
           url: vod.link ?? '',
           duration: undefined,
           badge: {
-            text: getBadgeText({
-              type: 'VOD',
-            }),
+            text: '평생 소장 가능',
           },
         })) ?? [],
     [vodData],
@@ -120,7 +116,7 @@ const LetsCareerSection = () => {
 
   return (
     <>
-      <section className="mt-16 flex w-full max-w-[1160px] flex-col md:mt-24">
+      <section className="md:mt-21 mt-16 flex w-full max-w-[1120px] flex-col">
         {isLoading ? (
           <LoadingContainer />
         ) : (

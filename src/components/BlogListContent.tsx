@@ -15,14 +15,7 @@ import { blogCategory } from '@/utils/convert';
 import { useMediaQuery } from '@mui/material';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import {
-  Fragment,
-  ReactNode,
-  Suspense,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { Fragment, ReactNode, Suspense, useMemo, useState } from 'react';
 import BlogCard from './common/blog/BlogCard';
 import FilterDropdown from './common/FilterDropdown';
 import MuiPagination from './common/program/pagination/MuiPagination';
@@ -92,10 +85,6 @@ function BlogList({
     types,
   });
   const { data: blogBannerData } = useGetBlogBannerList({ page, size: 2 });
-
-  useEffect(() => {
-    console.log('data?.blogInfos', data?.blogInfos);
-  }, [data?.blogInfos]);
 
   if (isLoading) {
     return (
@@ -209,6 +198,7 @@ function BlogList({
               />
             );
           }
+
           return (
             <Fragment key={blogThumbnailInfo.id}>
               {blogBannerCard}
@@ -219,15 +209,17 @@ function BlogList({
                     ? 'blog_upcoming'
                     : 'blog_item',
                 )}
-                href={`/blog/${blogThumbnailInfo.id}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (willBePublished(blogThumbnailInfo.displayDate ?? '')) {
-                    console.log('알람 설정 페이지로 이동');
-                    return;
-                  }
-                  router.push(`/blog/${blogThumbnailInfo.id}`);
-                }}
+                target={
+                  willBePublished(blogThumbnailInfo.displayDate ?? '')
+                    ? '_blank'
+                    : '_self'
+                }
+                href={
+                  willBePublished(blogThumbnailInfo.displayDate ?? '')
+                    ? 'https://forms.gle/HshjtnqqXWPQJ5DH6'
+                    : `/blog/${blogThumbnailInfo.id}`
+                }
+                rel=""
                 key={`blog-${blogThumbnailInfo.id}`}
                 data-url={`/blog/${blogThumbnailInfo.id}`}
                 data-text={blogThumbnailInfo.title}
@@ -244,6 +236,7 @@ function BlogList({
                       src={blogThumbnailInfo.thumbnail ?? undefined}
                       alt={blogThumbnailInfo.title ?? undefined}
                     />
+                    {/* 공계 예정인 썸네일에만 적용 */}
                     {willBePublished(blogThumbnailInfo.displayDate ?? '') && (
                       <div className="absolute inset-0 flex justify-end bg-black/30 p-3">
                         <div className="flex h-fit w-fit items-center rounded-full bg-white/50 py-1 pl-1 pr-1.5">
@@ -291,7 +284,7 @@ function BlogList({
 
 function BlogRecommendList() {
   const { data, isLoading } = useBlogListQuery({
-    pageable: { page: 1, size: 8 },
+    pageable: { page: 1, size: 10 },
   });
   const router = useRouter();
   // 공개된 블로그 중 최신 게시글 4개 추천

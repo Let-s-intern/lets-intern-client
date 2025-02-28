@@ -1,10 +1,10 @@
 'use client';
 
-import { useGetBlogLike, usePostBlogLike } from '@/api/blog';
+import { usePatchBlogDislike, usePatchBlogLike } from '@/api/blog';
 import useAuthStore from '@/store/useAuthStore';
 import { Heart } from 'lucide-react';
 import { redirect, useParams, usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const LIKE = 'like';
 
@@ -14,38 +14,31 @@ interface Props {
 
 function BlogLikeBtn({ likeCount }: Props) {
   const { id } = useParams<{ id: string }>();
-  //const likedBlogs = useRef<string[]>([]); // 이미 좋아요한 블로그 id 리스트
+  const likedBlogs = useRef<string[]>([]); // 이미 좋아요한 블로그 id 리스트
+  const pathname = usePathname();
 
   const { isLoggedIn } = useAuthStore();
-
-  const pathname = usePathname();
-  const postLikeMutation = usePostBlogLike();
-  const { data } = useGetBlogLike();
+  const patchLikeMutation = usePatchBlogLike();
+  const patchDislikeMutation = usePatchBlogDislike();
 
   const [alreadyLike, setAlreadyLike] = useState(false);
-  // 좋아요 클릭 시 1을 카운트하는 state (블로그 내용 전체를 invalidate하지 않기 위함)
+  // 좋아요 클릭 시 1씩 카운트하는 state
   const [countOne, setCountOne] = useState(0);
 
   /* 로컬 스토리지에서 좋아요 여부 확인 */
-  // useEffect(() => {
-  //   const value = localStorage.getItem(LIKE);
-  //   if (!value) return;
-
-  //   likedBlogs.current = value.split(','); // 1,2,3,4 문자열
-  //   if (likedBlogs.current.includes(String(blogId))) setAlreadyLike(true);
-  // }, [blogId]);
-
   useEffect(() => {
-    if (!id || !data?.blogIds) return;
+    const value = localStorage.getItem(LIKE);
+    if (!value) return;
 
-    setAlreadyLike(data.blogIds.includes(Number(id)) ?? false);
-  }, [id, data?.blogIds]);
+    likedBlogs.current = value.split(','); // 1,2,3,4 문자열
+    if (likedBlogs.current.includes(id)) setAlreadyLike(true);
+  }, [id]);
 
   return (
     <button
       type="button"
       className="blog_likes flex items-center gap-2"
-      onClick={async () => {
+      onClick={() => {
         if (!isLoggedIn) {
           // 비회원 리다이렉트
           const params = new URLSearchParams();
@@ -53,15 +46,26 @@ function BlogLikeBtn({ likeCount }: Props) {
           redirect(`/login?redirect=${encodeURIComponent(pathname)}`);
         }
 
-        try {
-          // if (alreadyLike) return; // 좋아요 취소 못 함
-          await postLikeMutation.mutateAsync(id);
-          setCountOne(1);
+        if (alreadyLike) {
+          // 좋아요 취소
+          patchDislikeMutation.mutate(id);
+          setCountOne((prev) => prev - 1);
+          setAlreadyLike(false);
+
+          const index = likedBlogs.current.findIndex((i) => i === id);
+          likedBlogs.current = [
+            ...likedBlogs.current.slice(0, index),
+            ...likedBlogs.current.slice(index + 1),
+          ];
+        } else {
+          // 좋아요
+          patchLikeMutation.mutate(id);
+          setCountOne((prev) => prev + 1);
           setAlreadyLike(true);
-          //likedBlogs.current.push(String(blogId));
-          // localStorage.setItem(LIKE, likedBlogs.current.toString());
-          // setAlreadyLike(true);
-        } catch (err) {}
+          likedBlogs.current.push(id);
+        }
+
+        localStorage.setItem(LIKE, likedBlogs.current.toString()); // 로컬 스토리지에 저장
       }}
     >
       <Heart

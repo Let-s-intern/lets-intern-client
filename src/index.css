@@ -347,3 +347,22 @@ input[type='number'] {
 .slide-rolling .swiper-wrapper {
   transition-timing-function: linear;
 }
+
+.speech-bubble {
+  position: relative;
+  border-radius: 0.4em;
+}
+
+.speech-bubble:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border: 5px solid transparent;
+  /* border-right-color: #00aabb; */
+  border-left: 0;
+  margin-top: -5px;
+  margin-left: -5px;
+}

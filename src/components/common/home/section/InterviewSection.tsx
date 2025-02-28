@@ -13,7 +13,7 @@ const InterviewSection = () => {
 
   return (
     <>
-      <section className="mt-16 w-full max-w-[1160px] px-5 md:mt-24 xl:px-0">
+      <section className="md:mt-22.5 mt-16 w-full max-w-[1120px] px-5 xl:px-0">
         {isLoading ? (
           <LoadingContainer />
         ) : !data || data.blogInfos.length === 0 ? null : (
@@ -27,7 +27,7 @@ const InterviewSection = () => {
                 성공의 비결을 확인하세요!
               </>
             }
-            moreUrl="/blog/list?type=job_success_stories"
+            moreUrl="/blog/list?type=career_stories"
             blogs={data.blogInfos.map((blog) => ({
               thumbnail: blog.blogThumbnailInfo.thumbnail || '',
               category: blog.blogThumbnailInfo.category

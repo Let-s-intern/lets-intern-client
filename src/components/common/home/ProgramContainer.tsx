@@ -24,8 +24,10 @@ interface ProgramContainerProps {
 const ProgramContainer = (props: ProgramContainerProps) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
 
+  if (props.programs.length < 1) return null;
+
   return (
-    <div className="flex w-full max-w-[1160px] flex-col gap-y-6 md:gap-y-10">
+    <div className="flex w-full max-w-[1120px] flex-col gap-y-6 md:gap-y-10">
       <div className="flex w-full flex-col gap-y-4 px-5 xl:px-0">
         <MoreHeader
           subtitle={props.subTitle}
@@ -58,6 +60,8 @@ const ProgramContainer = (props: ProgramContainerProps) => {
         <EmptyContainer />
       ) : (
         <Swiper
+          // program 바뀔 경우 스크롤 위치 초기화 위해 key로 리렌더링 적용
+          key={props.programs[0].title + props.programs.length + '-slide'}
           className="w-full"
           autoplay={{ delay: 2500 }}
           modules={[Grid]}
@@ -72,25 +76,25 @@ const ProgramContainer = (props: ProgramContainerProps) => {
           slidesOffsetAfter={20}
           breakpoints={{
             768: {
-              spaceBetween: 26,
+              spaceBetween: 16,
               slidesPerView: 3,
               slidesOffsetBefore: 20,
               slidesOffsetAfter: 20,
             },
             820: {
-              spaceBetween: 26,
+              spaceBetween: 16,
               slidesPerView: 4,
               slidesOffsetBefore: 20,
               slidesOffsetAfter: 20,
             },
             1040: {
-              spaceBetween: 26,
+              spaceBetween: 16,
               slidesPerView: 5,
               slidesOffsetBefore: 20,
               slidesOffsetAfter: 20,
             },
             1280: {
-              spaceBetween: 26,
+              spaceBetween: 16,
               slidesPerView: 5,
               slidesOffsetBefore: 0,
               slidesOffsetAfter: 0,

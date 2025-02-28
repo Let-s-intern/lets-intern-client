@@ -12,7 +12,6 @@ import {
   adminBlogBannerListSchema,
   adminBlogBannerSchema,
   blogBannerListSchema,
-  blogLikeSchema,
   BlogList,
   blogListSchema,
   blogRatingListSchema,
@@ -52,11 +51,11 @@ export enum BlogType {
 export const blogTypeSchema = z.enum([
   BlogType.JOB_PREPARATION_TIPS,
   BlogType.PROGRAM_REVIEWS,
+  BlogType.LETSCAREER_NEWS,
   BlogType.CAREER_STORIES,
   BlogType.JOB_SUCCESS_STORIES, // LEGACY
   BlogType.WORK_EXPERIENCES, // LEGACY
   BlogType.JUNIOR_STORIES,
-  BlogType.LETSCAREER_NEWS,
   BlogType.JOB_POSTING,
 ]);
 
@@ -418,26 +417,21 @@ export const useGetBlogBannerList = (pageable: IPageable) => {
   });
 };
 
-export const usePostBlogLike = () => {
+// 블로그 좋아요
+export const usePatchBlogLike = () => {
   return useMutation({
     mutationFn: async (blogId: number | string) => {
-      const res = await axios.post(`/blog-like/${blogId}`, { blogId });
+      const res = await axios.patch(`/blog/${blogId}/like`, { blogId });
       return res;
-    },
-    onError: (err) => {
-      if (isAxiosError(err) && err.response?.status === 409) {
-        alert('이미 좋아요 한 블로그입니다.');
-      }
     },
   });
 };
 
-export const useGetBlogLike = () => {
-  return useQuery({
-    queryKey: ['useGetBlogLike'],
-    queryFn: async () => {
-      const res = await axios.get('/blog-like');
-      return blogLikeSchema.parse(res.data.data);
+export const usePatchBlogDislike = () => {
+  return useMutation({
+    mutationFn: async (blogId: number | string) => {
+      const res = await axios.patch(`/blog/${blogId}/dislike`, { blogId });
+      return res;
     },
   });
 };

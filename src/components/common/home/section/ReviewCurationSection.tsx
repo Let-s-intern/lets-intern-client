@@ -16,11 +16,16 @@ const ReviewCurationSection = () => {
 
   const reviewCurationList = data?.curationList.slice(0, 4);
 
-  if (!reviewCurationList || reviewCurationList.length === 0) return null;
+  if (
+    !reviewCurationList ||
+    reviewCurationList.length === 0 ||
+    reviewCurationList.every((r) => r.curationItemList.length === 0)
+  )
+    return null;
 
   return (
     <>
-      <section className="mt-16 flex w-full max-w-[1160px] flex-col gap-y-5 md:mt-36">
+      <section className="md:gap-y-21 md:mt-22.5 mt-16 flex w-full max-w-[1120px] flex-col gap-y-16">
         {reviewCurationList.map((curation, index) => (
           <ProgramContainer
             gaItem="home_blogreview"

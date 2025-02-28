@@ -16,10 +16,15 @@ const BlogCurationSection = () => {
 
   const blogCurationList = data?.curationList.slice(0, 4);
 
-  if (!blogCurationList || blogCurationList.length === 0) return null;
+  if (
+    !blogCurationList ||
+    blogCurationList.length === 0 ||
+    blogCurationList.every((b) => b.curationItemList.length === 0)
+  )
+    return null;
   return (
     <>
-      <section className="mt-16 flex w-full max-w-[1160px] flex-col gap-y-5 md:mt-24">
+      <section className="md:gap-y-21 mt-16 flex w-full max-w-[1120px] flex-col gap-y-16 md:mt-24">
         {blogCurationList.map((curation, index) => (
           <ProgramContainer
             key={'blogCuration' + index}
