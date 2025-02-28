@@ -29,7 +29,7 @@ const ProgramItem = ({ ...props }: ProgramItemProps) => {
         <img
           src={props.thumbnail}
           alt="thumbnail"
-          className="aspect-[3/2] w-full rounded-sm object-cover"
+          className="aspect-[1.3/1] w-full rounded-sm object-cover"
         />
         {props.category && (
           <span className="text-xsmall14 font-semibold text-primary md:-mb-1 md:mt-3">
