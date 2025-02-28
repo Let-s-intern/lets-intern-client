@@ -24,6 +24,8 @@ interface ProgramContainerProps {
 const ProgramContainer = (props: ProgramContainerProps) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
 
+  if (props.programs.length < 1) return null;
+
   return (
     <div className="flex w-full max-w-[1120px] flex-col gap-y-6 md:gap-y-10">
       <div className="flex w-full flex-col gap-y-4 px-5 xl:px-0">
