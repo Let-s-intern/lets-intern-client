@@ -11,7 +11,6 @@ import {
   getBlogPathname,
   getBlogTitle,
 } from '@/utils/url';
-import BlogCTA from '@components/common/blog/BlogCTA';
 import BlogKakaoShareBtn from '@components/common/blog/BlogKakaoShareBtn';
 import BlogLikeBtn from '@components/common/blog/BlogLikeBtn';
 import BlogLinkShareBtn from '@components/common/blog/BlogLilnkShareBtn';
@@ -308,13 +307,13 @@ const BlogDetailPage = async ({
         </section>
       )}
 
-      {/* 블로그 CTA */}
-      {blog.blogDetailInfo.ctaText && blog.blogDetailInfo.ctaLink && (
+      {/* [삭제하지 마세요] 블로그 CTA */}
+      {/* {blog.blogDetailInfo.ctaText && blog.blogDetailInfo.ctaLink && (
         <BlogCTA
           ctaText={blog.blogDetailInfo.ctaText}
           ctaLink={blog.blogDetailInfo.ctaLink}
         />
-      )}
+      )} */}
     </main>
   );
 };
