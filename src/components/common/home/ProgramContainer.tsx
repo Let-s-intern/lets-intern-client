@@ -25,7 +25,7 @@ const ProgramContainer = (props: ProgramContainerProps) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   return (
-    <div className="flex w-full max-w-[1160px] flex-col gap-y-6 md:gap-y-10">
+    <div className="flex w-full max-w-[1120px] flex-col gap-y-6 md:gap-y-10">
       <div className="flex w-full flex-col gap-y-4 px-5 xl:px-0">
         <MoreHeader
           subtitle={props.subTitle}

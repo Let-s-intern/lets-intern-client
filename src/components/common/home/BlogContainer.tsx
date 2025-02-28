@@ -14,7 +14,7 @@ interface BlogContainerProps {
 
 const BlogContainer = (props: BlogContainerProps) => {
   return (
-    <div className="flex w-full max-w-[1160px] flex-col gap-y-8 md:gap-y-9">
+    <div className="flex w-full max-w-[1120px] flex-col gap-y-8 md:gap-y-9">
       <MoreHeader
         subtitle={props.subTitle}
         href={props.moreUrl}
