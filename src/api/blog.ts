@@ -52,11 +52,11 @@ export enum BlogType {
 export const blogTypeSchema = z.enum([
   BlogType.JOB_PREPARATION_TIPS,
   BlogType.PROGRAM_REVIEWS,
+  BlogType.LETSCAREER_NEWS,
   BlogType.CAREER_STORIES,
   BlogType.JOB_SUCCESS_STORIES, // LEGACY
   BlogType.WORK_EXPERIENCES, // LEGACY
   BlogType.JUNIOR_STORIES,
-  BlogType.LETSCAREER_NEWS,
   BlogType.JOB_POSTING,
 ]);
 
