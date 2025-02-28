@@ -292,6 +292,7 @@ const BlogDetailPage = async ({
           <MoreHeader
             href="/blog/list"
             gaText="이 글을 읽으셨다면, 이런 글도 좋아하실 거예요."
+            hideMoreWhenMobile
           >
             이 글을 읽으셨다면, <br className="md:hidden" />
             이런 글도 좋아하실 거예요.
