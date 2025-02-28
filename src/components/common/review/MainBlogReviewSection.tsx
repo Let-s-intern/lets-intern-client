@@ -16,6 +16,7 @@ function MainBlogReviewSection() {
       <MoreHeader
         subtitle={data ? `${data.pageInfo.totalElements}개` : ''}
         href="/review/blog"
+        gaText="블로그 후기"
       >
         블로그 후기
       </MoreHeader>

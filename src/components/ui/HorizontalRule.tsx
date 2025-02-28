@@ -1,5 +1,5 @@
+import { twMerge } from '@/lib/twMerge';
 import { memo } from 'react';
-import { twMerge } from 'tailwind-merge';
 
 interface HorizontalRuleProps {
   className?: string;

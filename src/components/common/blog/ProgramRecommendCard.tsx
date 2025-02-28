@@ -73,7 +73,11 @@ async function ProgramRecommendCard({ program }: Props) {
     <Link
       key={program.id}
       href={ctaLink}
-      className="programs-center flex justify-between gap-4"
+      className="programs-center blog_programrec flex justify-between gap-4"
+      data-url={ctaLink}
+      data-text={title}
+      data-program-name={program.ctaTitle}
+      data-program-id={program.id}
     >
       <div>
         <h4 className="mb-0.5 text-xxsmall12 font-medium text-neutral-40">
@@ -85,14 +89,16 @@ async function ProgramRecommendCard({ program }: Props) {
       </div>
       {/* 4:3 비율 */}
       <div className="relative h-[3.375rem] w-[4.5rem] shrink-0 bg-neutral-95">
-        <Image
-          priority
-          className="rounded-xxs object-cover"
-          src={thumbnail}
-          alt={title + ' 썸네일'}
-          fill
-          sizes="4.5rem"
-        />
+        {thumbnail ? (
+          <Image
+            priority
+            className="rounded-xxs object-cover"
+            src={thumbnail}
+            alt={title + ' 썸네일'}
+            fill
+            sizes="4.5rem"
+          />
+        ) : null}
       </div>
     </Link>
   );

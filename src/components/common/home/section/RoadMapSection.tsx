@@ -51,7 +51,9 @@ const RoadMapSection = () => {
     <>
       <section className="mt-10 flex w-full max-w-[1160px] flex-col gap-y-6 md:mt-16">
         <div className="px-5 xl:px-0">
-          <MoreHeader isBig>합격으로 가는 취업 로드맵</MoreHeader>
+          <MoreHeader isBig gaText="합격으로 가는 취업 로드맵">
+            합격으로 가는 취업 로드맵
+          </MoreHeader>
         </div>
         <div className="w-full md:px-5 xl:px-0">
           <Swiper
@@ -120,9 +122,11 @@ const RoadMapItem = ({
     <Link
       href={href}
       className={clsx(
-        'relative flex h-[100px] w-[154px] shrink-0 flex-col justify-start gap-y-1 overflow-hidden rounded-xs px-4 py-5 text-neutral-0 md:h-32 md:w-full md:px-6',
+        'roadmap_card relative flex h-[100px] w-[154px] shrink-0 flex-col justify-start gap-y-1 overflow-hidden rounded-xs px-4 py-5 text-neutral-0 md:h-32 md:w-full md:px-6',
         COLOR_THEME[theme].main,
       )}
+      data-url={href}
+      data-text={title}
     >
       {icon}
       <span

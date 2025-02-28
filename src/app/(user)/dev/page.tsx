@@ -141,7 +141,11 @@ const Page = () => {
           showThumbnail
         />
       </div>
-      <MoreHeader subtitle="4개" href="/review/program">
+      <MoreHeader
+        subtitle="4개"
+        href="/review/program"
+        gaText="프로그램 참여 후기"
+      >
         프로그램 참여 후기{' '}
       </MoreHeader>
       <div className="my-20">

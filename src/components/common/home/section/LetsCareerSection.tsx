@@ -125,6 +125,8 @@ const LetsCareerSection = () => {
           <LoadingContainer />
         ) : (
           <ProgramContainer
+            gaTitle="취준 꿀팁만 모아둔 렛츠커리어의 독보적 콘텐츠"
+            gaItem="made_contents"
             title={
               <>
                 취준 꿀팁만 모아둔 <br className="md:hidden" />

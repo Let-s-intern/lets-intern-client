@@ -17,6 +17,7 @@ function ProgramInterviewSection() {
       <MoreHeader
         subtitle={data ? `${data?.pageInfo.totalElements}개` : ''}
         href="/blog/list?type=PROGRAM_REVIEWS"
+        gaText="프로그램 참여자 인터뷰"
       >
         프로그램 참여자 인터뷰
       </MoreHeader>

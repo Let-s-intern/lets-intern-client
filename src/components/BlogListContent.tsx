@@ -10,11 +10,19 @@ import BellIcon from '@/assets/icons/Bell.svg';
 import LockKeyHoleIcon from '@/assets/icons/lock-keyhole.svg';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
+import { twMerge } from '@/lib/twMerge';
 import { blogCategory } from '@/utils/convert';
 import { useMediaQuery } from '@mui/material';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Fragment, ReactNode, Suspense, useMemo, useState } from 'react';
+import {
+  Fragment,
+  ReactNode,
+  Suspense,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import BlogCard from './common/blog/BlogCard';
 import FilterDropdown from './common/FilterDropdown';
 import MuiPagination from './common/program/pagination/MuiPagination';
@@ -85,6 +93,10 @@ function BlogList({
   });
   const { data: blogBannerData } = useGetBlogBannerList({ page, size: 2 });
 
+  useEffect(() => {
+    console.log('data?.blogInfos', data?.blogInfos);
+  }, [data?.blogInfos]);
+
   if (isLoading) {
     return (
       <LoadingContainer
@@ -145,8 +157,14 @@ function BlogList({
           ) {
             blogBannerCard = (
               <BlogCard
-                onClick={() => router.push(blogBanners[0].link ?? '')}
-                className="cursor-pointer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  router.push(blogBanners[0].link ?? '');
+                }}
+                href={blogBanners[0].link ?? ''}
+                data-url={blogBanners[0].link ?? ''}
+                data-text={blogBanners[0].title ?? ''}
+                className="blog_banner cursor-pointer"
                 key={blogBanners[0].blogBannerId}
                 title={blogBanners[0].title ?? ''}
                 superTitle="AD"
@@ -164,36 +182,55 @@ function BlogList({
           if (
             blogBanners.length > 1 &&
             ((isMobile && index === 5) || (!isMobile && index === 7))
-          )
+          ) {
+            const link = blogBanners[1].link ?? '';
+            const title = blogBanners[1].title ?? '';
+
             blogBannerCard = (
               <BlogCard
-                onClick={() => router.push(blogBanners[1].link ?? '')}
-                className="cursor-pointer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  router.push(link);
+                }}
+                href={link}
+                data-url={link}
+                data-text={title}
+                className="blog_banner cursor-pointer"
                 key={blogBanners[1].blogBannerId}
-                title={blogBanners[1].title ?? ''}
+                title={title}
                 superTitle="AD"
                 thumbnailItem={
                   <img
                     className="h-full w-full object-cover"
                     src={blogBanners[1].file ?? undefined}
-                    alt={blogBanners[1].title ?? undefined}
+                    alt={title ?? undefined}
                   />
                 }
               />
             );
-
+          }
           return (
             <Fragment key={blogThumbnailInfo.id}>
               {blogBannerCard}
               <BlogCard
-                className="cursor-pointer"
-                onClick={() => {
+                className={twMerge(
+                  'cursor-pointer',
+                  willBePublished(blogThumbnailInfo.displayDate ?? '')
+                    ? 'blog_upcoming'
+                    : 'blog_item',
+                )}
+                href={`/blog/${blogThumbnailInfo.id}`}
+                onClick={(e) => {
+                  e.preventDefault();
                   if (willBePublished(blogThumbnailInfo.displayDate ?? '')) {
                     console.log('알람 설정 페이지로 이동');
                     return;
                   }
                   router.push(`/blog/${blogThumbnailInfo.id}`);
                 }}
+                key={`blog-${blogThumbnailInfo.id}`}
+                data-url={`/blog/${blogThumbnailInfo.id}`}
+                data-text={blogThumbnailInfo.title}
                 title={blogThumbnailInfo.title ?? ''}
                 superTitle={
                   blogThumbnailInfo.category
@@ -256,6 +293,7 @@ function BlogRecommendList() {
   const { data, isLoading } = useBlogListQuery({
     pageable: { page: 1, size: 8 },
   });
+  const router = useRouter();
   // 공개된 블로그 중 최신 게시글 4개 추천
   const displayedBlogblogInfos = useMemo(
     () =>
@@ -282,6 +320,14 @@ function BlogRecommendList() {
               ? blogCategory[blogThumbnailInfo.category]
               : '전체'
           }
+          href={`/blog/${blogThumbnailInfo.id}`}
+          onClick={(e) => {
+            e.preventDefault();
+            router.push(`/blog/${blogThumbnailInfo.id}`);
+          }}
+          data-url={`/blog/${blogThumbnailInfo.id}`}
+          data-text={blogThumbnailInfo.title}
+          className="blog_empty_recommended cursor-pointer"
           thumbnailItem={
             <img
               className="h-full w-full object-cover"

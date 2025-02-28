@@ -111,7 +111,7 @@ const ReviewSection = () => {
             <span> 공유되고 있어요.</span>
           </div>
           <Button
-            className="mt-4 w-fit rounded-xs px-3 py-2.5 text-xsmall14 font-semibold md:mt-8 md:rounded-sm md:px-5 md:py-4 md:text-small20"
+            className="review_cta mt-4 w-fit rounded-xs px-3 py-2.5 text-xsmall14 font-semibold md:mt-8 md:rounded-sm md:px-5 md:py-4 md:text-small20"
             to="/review"
           >
             수강생들의 생생 후기 더 보기

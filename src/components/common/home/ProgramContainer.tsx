@@ -17,9 +17,11 @@ interface ProgramContainerProps {
   moreUrl?: string;
   programs: ProgramItemProps[];
   showGrid?: boolean;
+  gaItem: string;
+  gaTitle: string;
 }
 
-const ProgramContainer = ({ ...props }: ProgramContainerProps) => {
+const ProgramContainer = (props: ProgramContainerProps) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   return (
@@ -30,6 +32,7 @@ const ProgramContainer = ({ ...props }: ProgramContainerProps) => {
           href={props.moreUrl}
           isVertical
           isBig
+          gaText={props.gaTitle}
         >
           {props.title}
         </MoreHeader>
@@ -96,7 +99,7 @@ const ProgramContainer = ({ ...props }: ProgramContainerProps) => {
         >
           {props.programs.map((program, index) => (
             <SwiperSlide key={index}>
-              <ProgramItem {...program} />
+              <ProgramItem {...program} className={props.gaItem} />
             </SwiperSlide>
           ))}
         </Swiper>

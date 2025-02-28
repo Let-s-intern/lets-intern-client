@@ -37,6 +37,7 @@ const HOME_INTRO = {
         ),
         icon: <Intro1 width={44} height={44} />,
         href: 'current=기필코',
+        gaTitle: '경험 정리 & 이력서 준비',
       },
       {
         title: (
@@ -48,6 +49,7 @@ const HOME_INTRO = {
         ),
         icon: <Intro2 width={44} height={44} />,
         href: 'current=자기소개서',
+        gaTitle: '자기소개서 준비하기',
       },
       {
         title: (
@@ -59,6 +61,7 @@ const HOME_INTRO = {
         ),
         icon: <Intro3 width={44} height={44} />,
         href: 'current=포트폴리오',
+        gaTitle: '포트폴리오 준비하기',
       },
       {
         title: (
@@ -70,6 +73,7 @@ const HOME_INTRO = {
         ),
         icon: <Intro4 width={44} height={44} />,
         href: 'https://letscareer.framer.website/',
+        gaTitle: '멘토와 1:1 면접 준비하기',
       },
       {
         title: (
@@ -81,6 +85,7 @@ const HOME_INTRO = {
         ),
         icon: <Intro5 width={44} height={44} />,
         href: convertReportTypeToLandingPath('RESUME'),
+        gaTitle: '이력서 피드백 받기',
       },
       {
         title: (
@@ -92,6 +97,7 @@ const HOME_INTRO = {
         ),
         icon: <Intro6 width={44} height={44} />,
         href: convertReportTypeToLandingPath('PERSONAL_STATEMENT'),
+        gaTitle: '자기소개서 피드백 받기',
       },
       // {
       //   title: (
@@ -116,6 +122,7 @@ const HOME_INTRO = {
         ),
         icon: <Intro1 width={44} height={44} />,
         href: 'current=기필코',
+        gaTitle: '경험 정리 & 이력서 준비',
       },
       {
         title: (
@@ -127,6 +134,7 @@ const HOME_INTRO = {
         ),
         icon: <Intro2 width={44} height={44} />,
         href: 'current=대기업,자기소개서',
+        gaTitle: '자기소개서 준비하기',
       },
       {
         title: (
@@ -138,6 +146,7 @@ const HOME_INTRO = {
         ),
         icon: <Intro3 width={44} height={44} />,
         href: 'https://litt.ly/letscareer/sale/0U6p79r',
+        gaTitle: '인적성 준비하기',
       },
       {
         title: (
@@ -149,6 +158,7 @@ const HOME_INTRO = {
         ),
         icon: <Intro4 width={44} height={44} />,
         href: 'https://letscareer.framer.website/',
+        gaTitle: '멘토와 1:1 면접 준비하기',
       },
       {
         title: (
@@ -160,6 +170,7 @@ const HOME_INTRO = {
         ),
         icon: <Intro5 width={44} height={44} />,
         href: convertReportTypeToLandingPath('RESUME'),
+        gaTitle: '이력서 피드백 받기',
       },
       {
         title: (
@@ -171,6 +182,7 @@ const HOME_INTRO = {
         ),
         icon: <Intro6 width={44} height={44} />,
         href: convertReportTypeToLandingPath('PERSONAL_STATEMENT'),
+        gaTitle: '자기소개서 피드백 받기',
       },
     ],
   },
@@ -244,6 +256,7 @@ const IntroSection = () => {
                         ? getCurrentChallenge(item.href.split('=')[1])
                         : item.href
                     }
+                    gaTitle={item.gaTitle}
                   />
                 ))
               : HOME_INTRO.items.enterprise.map((item, index) => (
@@ -256,6 +269,7 @@ const IntroSection = () => {
                         ? getCurrentChallenge(item.href.split('=')[1])
                         : item.href
                     }
+                    gaTitle={item.gaTitle}
                   />
                 ))}
           </div>
@@ -286,6 +300,7 @@ const IntroButton = ({
         },
       )}
       onClick={onClick}
+      data-intro-tab-active={active}
     >
       {text}
     </button>
@@ -296,14 +311,16 @@ const IntroItem = ({
   title,
   icon,
   href,
+  gaTitle,
 }: {
   title: ReactNode;
+  gaTitle: string;
   icon: ReactNode;
   href?: string;
 }) => {
   return (
     <Link
-      className="flex w-full flex-col gap-y-4 text-center text-xxsmall12 font-medium text-neutral-20 md:text-xsmall16"
+      className="icon_menu flex w-full flex-col gap-y-4 text-center text-xxsmall12 font-medium text-neutral-20 md:text-xsmall16"
       href={href ?? '#'}
       target={href && href.startsWith('http') ? '_blank' : undefined}
       onClick={() => {
@@ -311,6 +328,8 @@ const IntroItem = ({
           alert('준비중입니다.');
         }
       }}
+      data-url={href}
+      data-text={gaTitle}
     >
       <div className="flex aspect-square items-center justify-center rounded-xxs bg-[#F7F7F7] md:w-full">
         {icon}

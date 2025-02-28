@@ -128,7 +128,10 @@ const LogoPlaySection = () => {
     <>
       <section className="mt-16 w-full max-w-[1160px] px-5 md:mt-36 xl:px-0">
         <div className="w-full">
-          <MoreHeader isBig>
+          <MoreHeader
+            isBig
+            gaText="렛츠커리어인들은 어디서 커리어를 시작했을까요?"
+          >
             <>
               렛츠커리어인들은 <br className="md:hidden" />
               어디서 커리어를 시작했을까요?

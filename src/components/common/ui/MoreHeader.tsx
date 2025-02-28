@@ -7,6 +7,7 @@ interface MoreHeaderProps {
   href?: string;
   isBig?: boolean;
   isVertical?: boolean;
+  gaText: string;
 }
 
 const MoreHeader = ({
@@ -15,6 +16,7 @@ const MoreHeader = ({
   href,
   isBig,
   isVertical,
+  gaText,
 }: MoreHeaderProps) => {
   return (
     <div
@@ -45,10 +47,12 @@ const MoreHeader = ({
           href={href}
           target={href.startsWith('http') ? '_blank' : undefined}
           className={clsx(
-            'font-medium text-neutral-45',
+            'more_btn font-medium text-neutral-45',
             isBig ? 'text-xsmall16' : 'text-xsmall14',
             isVertical ? 'mt-0.5' : '',
           )}
+          data-text={gaText}
+          data-url={href}
         >
           더보기
         </a>
