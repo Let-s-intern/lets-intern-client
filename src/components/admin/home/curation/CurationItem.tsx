@@ -72,7 +72,7 @@ const CurationItem = ({
             ))}
           </Select>
         </FormControl>
-        {item.programType !== 'ETC' ? (
+        {item.programType !== 'ETC' && item.programType !== 'VOD' ? (
           <Button
             variant="outlined"
             className="line-clamp-1 min-w-[200px]"
@@ -81,6 +81,26 @@ const CurationItem = ({
             {item.title ||
               `${convertCurationTypeToText(item.programType)} 선택`}
           </Button>
+        ) : item.programType === 'VOD' ? (
+          <div className="flex flex-1 items-center gap-x-5">
+            <Button
+              variant="outlined"
+              className="line-clamp-1 min-w-[200px]"
+              onClick={() => setModalType(item.programType)}
+            >
+              {item.title ||
+                `${convertCurationTypeToText(item.programType)} 선택`}
+            </Button>
+            <Input
+              label="tag"
+              type="text"
+              name="tag"
+              placeholder="태그를 입력하세요"
+              size="small"
+              value={item.tag}
+              onChange={(e) => onChangeItem({ ...item, tag: e.target.value })}
+            />
+          </div>
         ) : (
           <div className="flex flex-1 items-center gap-x-5">
             <Box className="flex h-full w-52 items-center justify-center overflow-hidden rounded-xs bg-neutral-90">
