@@ -70,9 +70,7 @@ const LetsCareerSection = () => {
           url: vod.link ?? '',
           duration: undefined,
           badge: {
-            text: getBadgeText({
-              type: 'VOD',
-            }),
+            text: '즉시 수강 가능',
           },
         })) ?? [],
     [vodData],
@@ -88,9 +86,7 @@ const LetsCareerSection = () => {
           url: vod.link ?? '',
           duration: undefined,
           badge: {
-            text: getBadgeText({
-              type: 'VOD',
-            }),
+            text: '평생 소장 가능',
           },
         })) ?? [],
     [vodData],

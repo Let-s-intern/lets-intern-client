@@ -58,6 +58,8 @@ const ProgramContainer = (props: ProgramContainerProps) => {
         <EmptyContainer />
       ) : (
         <Swiper
+          // program 바뀔 경우 스크롤 위치 초기화 위해 key로 리렌더링 적용
+          key={props.programs[0].title + props.programs.length + '-slide'}
           className="w-full"
           autoplay={{ delay: 2500 }}
           modules={[Grid]}

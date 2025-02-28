@@ -78,12 +78,14 @@ export const getBadgeText = ({
   deadline?: string;
   tagText?: string;
 }) => {
+  if (tagText) {
+    return tagText;
+  }
+
   if (type === 'REPORT') {
     return '48시간 이내 진단';
   }
-  if (type === 'ETC') {
-    return tagText;
-  }
+
   if (deadline) {
     return `~${dayjs(deadline).format(MMDD)} 모집 마감`;
   }
@@ -123,7 +125,7 @@ const MainCurationSection = () => {
 
   return (
     <>
-      <section className="mt-16 flex w-full max-w-[1120px] flex-col gap-y-5 md:mt-22.5">
+      <section className="md:mt-22.5 mt-16 flex w-full max-w-[1120px] flex-col gap-y-5">
         {curationList.map((curation, index) => (
           <ProgramContainer
             gaItem="curation_card"
