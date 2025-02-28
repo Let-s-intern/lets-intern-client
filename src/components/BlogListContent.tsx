@@ -164,7 +164,7 @@ function BlogList({
                 href={blogBanners[0].link ?? ''}
                 data-url={blogBanners[0].link ?? ''}
                 data-text={blogBanners[0].title ?? ''}
-                className="cursor-pointer"
+                className="blog_banner cursor-pointer"
                 key={blogBanners[0].blogBannerId}
                 title={blogBanners[0].title ?? ''}
                 superTitle="AD"
@@ -195,7 +195,7 @@ function BlogList({
                 href={link}
                 data-url={link}
                 data-text={title}
-                className="cursor-pointer"
+                className="blog_banner cursor-pointer"
                 key={blogBanners[1].blogBannerId}
                 title={title}
                 superTitle="AD"
@@ -217,7 +217,7 @@ function BlogList({
                   'cursor-pointer',
                   willBePublished(blogThumbnailInfo.displayDate ?? '')
                     ? 'blog_upcoming'
-                    : '',
+                    : 'blog_item',
                 )}
                 href={`/blog/${blogThumbnailInfo.id}`}
                 onClick={(e) => {
@@ -327,7 +327,7 @@ function BlogRecommendList() {
           }}
           data-url={`/blog/${blogThumbnailInfo.id}`}
           data-text={blogThumbnailInfo.title}
-          className="cursor-pointer"
+          className="blog_empty_recommended cursor-pointer"
           thumbnailItem={
             <img
               className="h-full w-full object-cover"
