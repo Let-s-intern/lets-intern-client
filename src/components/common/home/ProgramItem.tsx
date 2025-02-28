@@ -32,7 +32,7 @@ const ProgramItem = ({ ...props }: ProgramItemProps) => {
           className="aspect-[1.3/1] w-full rounded-sm object-cover"
         />
         {props.category && (
-          <span className="text-xsmall14 font-semibold text-primary md:-mb-1 md:mt-3">
+          <span className="-mb-1 mt-3 text-xsmall14 font-semibold text-primary">
             {props.category}
           </span>
         )}

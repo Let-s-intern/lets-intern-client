@@ -122,7 +122,7 @@ const RoadMapItem = ({
     <Link
       href={href}
       className={clsx(
-        'roadmap_card relative flex h-[100px] w-[154px] shrink-0 flex-col justify-start gap-y-1 overflow-hidden rounded-xs px-4 py-5 text-neutral-0 md:h-32 md:w-full md:px-6',
+        'roadmap_card relative flex h-[100px] w-[170px] shrink-0 flex-col justify-start gap-y-0.5 overflow-hidden rounded-xs px-3 py-5 text-neutral-0 md:h-32 md:w-full md:px-6',
         COLOR_THEME[theme].main,
       )}
       data-url={href}

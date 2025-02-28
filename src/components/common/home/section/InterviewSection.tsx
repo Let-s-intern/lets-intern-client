@@ -27,7 +27,7 @@ const InterviewSection = () => {
                 성공의 비결을 확인하세요!
               </>
             }
-            moreUrl="/blog/list?type=job_success_stories"
+            moreUrl="/blog/list?type=career_stories"
             blogs={data.blogInfos.map((blog) => ({
               thumbnail: blog.blogThumbnailInfo.thumbnail || '',
               category: blog.blogThumbnailInfo.category

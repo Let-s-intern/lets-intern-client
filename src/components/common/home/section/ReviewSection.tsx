@@ -91,27 +91,27 @@ const ReviewSection = () => {
         className="mt-16 flex w-full max-w-[1120px] flex-col gap-6 px-5 md:mt-36 md:flex-row xl:px-0"
       >
         <div className="flex flex-col md:w-1/2">
-          <span className="text-xsmall16 font-bold text-primary md:text-medium22">
+          <span className="text-xsmall16 font-bold text-primary md:text-small20 md:font-semibold">
             망설이는 순간, 누군가는 한 걸음 앞서갑니다.
           </span>
-          <div className="mt-1 text-small20 font-bold text-neutral-0 md:mt-2 md:text-xxlarge32">
+          <div className="mt-1 text-small20 font-bold text-neutral-0 md:mt-2 md:text-xlarge28">
             렛츠커리어 챌린지는 지금도 진행 중!
             <br />
-            <div className="flex h-7 overflow-hidden break-keep md:h-11">
+            <div className="flex h-7 overflow-hidden break-keep md:h-9">
               <div
                 className={`transition-transform delay-500 duration-1000 ease-out ${
                   isVisible ? '-translate-y-full' : 'translate-y-0'
                 }`}
               >
                 <div>{reviewsCount - 1}</div>
-                <div className="mt-0.5">{reviewsCount}</div>
+                <div>{reviewsCount}</div>
               </div>
               <span>개의 후기가 실시간으로</span>
             </div>
             <span> 공유되고 있어요.</span>
           </div>
           <Button
-            className="review_cta mt-4 w-fit rounded-xs px-3 py-2.5 text-xsmall14 font-semibold md:mt-8 md:rounded-sm md:px-5 md:py-4 md:text-small20"
+            className="review_cta mt-4 w-fit rounded-xs px-3 py-2.5 text-xsmall14 font-semibold md:mt-8 md:rounded-sm md:px-4 md:py-3 md:text-small18"
             to="/review"
           >
             수강생들의 생생 후기 더 보기
@@ -141,8 +141,8 @@ export default ReviewSection;
 
 export const ReviewItem = ({ review }: { review: GetReview }) => {
   return (
-    <div className="flex w-[260px] flex-col rounded-sm bg-white px-5 py-4 lg:w-[380px]">
-      <div className="flex flex-col gap-y-1.5 text-xsmall14 md:gap-y-2">
+    <div className="flex w-[260px] flex-col rounded-sm bg-white px-5 py-4 lg:w-[400px]">
+      <div className="flex flex-col gap-y-1.5 text-xsmall14">
         <span className="font-medium text-primary">
           {dayjs(review.reviewInfo.createDate).format(YYYY_MM_DD)} 작성
         </span>
@@ -159,11 +159,11 @@ export const ReviewItem = ({ review }: { review: GetReview }) => {
           />
         ))}
       </div>
-      <div className="mt-4 flex w-full items-center gap-2 text-xxsmall12">
+      <div className="mt-3 flex w-full items-center gap-2 text-xxsmall12">
         <span className="whitespace-pre font-medium text-neutral-20">
           {review.reviewInfo.name ? `${review.reviewInfo.name[0]}**` : '익명'}
         </span>
-        <span className="text-neutral-70 md:hidden">|</span>
+        <span className="text-neutral-70">|</span>
         <span className="line-clamp-1">
           희망직무{' '}
           <span className="font-medium">{review.reviewInfo.wishJob}</span> ·

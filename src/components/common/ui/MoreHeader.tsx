@@ -38,13 +38,16 @@ const MoreHeader = ({
       >
         <h2
           className={clsx(
-            'text-small20',
-            isBig ? 'font-bold md:text-large26' : 'font-semibold',
+            isBig ? 'font-bold md:text-medium22' : 'text-small20 font-semibold',
           )}
         >
           {children}
         </h2>
-        {subtitle && <p className="text-xsmall14">{subtitle}</p>}
+        {subtitle && (
+          <p className={clsx(isBig ? 'text-small18' : 'text-xsmall14')}>
+            {subtitle}
+          </p>
+        )}
       </div>
       {href && (
         // home에서 program으로 갈 경우 react, 나머지는 next라서 a태그 사용
