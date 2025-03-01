@@ -33,13 +33,11 @@ const MentorNotificationAfter = () => {
     retry: 0,
   });
 
-  console.log(notification);
-
   useEffect(() => {
-    // if (error) {
-    //   alert('잘못된 접근입니다.');
-    //   navigate('/');
-    // }
+    if (error) {
+      alert('잘못된 접근입니다.');
+      navigate('/');
+    }
   }, [error, navigate]);
 
   return (
