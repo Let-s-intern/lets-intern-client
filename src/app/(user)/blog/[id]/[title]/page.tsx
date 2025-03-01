@@ -147,9 +147,9 @@ const BlogDetailPage = async ({
       <div className="flex flex-col items-center md:flex-row md:items-start md:gap-20">
         {/* 본문 */}
         <section className="w-full px-5 md:px-0">
-          <article className="flex flex-col gap-8">
+          <article>
             {/* 썸네일 */}
-            <div className="relative h-[16rem] overflow-hidden rounded-md bg-neutral-95 md:h-[25.5rem]">
+            <div className="relative mb-8 h-[16rem] overflow-hidden rounded-md bg-neutral-95 md:h-[25.5rem]">
               <Image
                 className="object-contain"
                 priority
@@ -161,11 +161,11 @@ const BlogDetailPage = async ({
             </div>
 
             {/* 블로그 헤더 */}
-            <div className="flex flex-col gap-y-4">
+            <div className="mb-7 flex flex-col gap-y-4">
               {/* 제목 */}
               <div>
                 {blogInfo.category && (
-                  <Heading2 className="mb-2 text-primary" id="blog-category">
+                  <Heading2 className="mb-1.5 text-primary" id="blog-category">
                     {blogCategory[blogInfo.category]}
                   </Heading2>
                 )}
@@ -221,7 +221,7 @@ const BlogDetailPage = async ({
             )}
           </article>
 
-          <section className="mb-9 mt-10 flex items-center justify-between md:mb-8">
+          <section className="mb-9 mt-10 flex items-center justify-between md:mb-6">
             {/* 좋아요 */}
             <BlogLikeBtn likeCount={blogInfo.likeCount ?? 0} />
             {/* 공유하기 */}
@@ -291,7 +291,7 @@ const BlogDetailPage = async ({
 
       {/* 다른 블로그 글 */}
       {blogRecommendList.length > 0 && (
-        <section className="px-5 py-9 md:mt-[11.25rem] md:p-0">
+        <section className="px-5 py-9 md:mt-[6.25rem] md:p-0">
           <MoreHeader
             href="/blog/list"
             gaText="이 글을 읽으셨다면, 이런 글도 좋아하실 거예요."
