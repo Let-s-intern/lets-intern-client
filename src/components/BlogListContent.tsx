@@ -85,7 +85,6 @@ function BlogList({
   onChangePage?: (page: number) => void;
 }) {
   const router = useRouter();
-
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   const { data, isLoading } = useBlogListQuery({
