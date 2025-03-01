@@ -49,7 +49,9 @@ const Content = () => {
           list={filterList}
           paramKey="type"
           multiSelect
-          onChange={() => setPage(1)} // 페이지 초기화
+          onChange={() => {
+            setPage(1); // 페이지 초기화
+          }}
           dropdownClassName="w-full"
         />
       </section>
@@ -57,7 +59,13 @@ const Content = () => {
       <BlogList
         types={types}
         page={page}
-        onChangePage={(page) => setPage(page)}
+        onChangePage={(page) => {
+          setPage(page);
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+          });
+        }}
       />
     </>
   );
