@@ -257,9 +257,9 @@ function BlogList({
                     )}
                   </>
                 }
-                displayDate={dayjs(blogThumbnailInfo.displayDate).format(
+                displayDateItem={`${dayjs(blogThumbnailInfo.displayDate).format(
                   YYYY_MM_DD,
-                )}
+                )} ${willBePublished(blogThumbnailInfo.displayDate ?? '') ? '예정' : '작성'}`}
                 buttonItem={
                   willBePublished(blogThumbnailInfo.displayDate ?? '') ? (
                     <BaseButton
@@ -336,9 +336,10 @@ function BlogRecommendList() {
               alt={blogThumbnailInfo.title ?? undefined}
             />
           }
-          displayDate={
+          displayDateItem={
             blogThumbnailInfo.displayDate
-              ? dayjs(blogThumbnailInfo.displayDate).format(YYYY_MM_DD)
+              ? dayjs(blogThumbnailInfo.displayDate).format(YYYY_MM_DD) +
+                ' 작성'
               : undefined
           }
         />
