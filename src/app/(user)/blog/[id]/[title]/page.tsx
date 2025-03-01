@@ -4,7 +4,7 @@ import { fetchProgramRecommend } from '@/api/program';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
-import { ProgramTypeEnum } from '@/schema';
+import { ProgramStatusEnum, ProgramTypeEnum } from '@/schema';
 import { blogCategory } from '@/utils/convert';
 import {
   getBaseUrlFromServer,
@@ -278,7 +278,11 @@ const BlogDetailPage = async ({
                 <ProgramRecommendCard key={item.id} program={item} />
               ))}
             </section>
-            <MoreLink href="/program">모집 중인 프로그램 보기</MoreLink>
+            <MoreLink
+              href={`/program/?status=${ProgramStatusEnum.enum.PROCEEDING}`}
+            >
+              모집 중인 프로그램 보기
+            </MoreLink>
           </aside>
         )}
       </div>
