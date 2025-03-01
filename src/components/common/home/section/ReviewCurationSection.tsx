@@ -16,7 +16,12 @@ const ReviewCurationSection = () => {
 
   const reviewCurationList = data?.curationList.slice(0, 4);
 
-  if (!reviewCurationList || reviewCurationList.length === 0) return null;
+  if (
+    !reviewCurationList ||
+    reviewCurationList.length === 0 ||
+    reviewCurationList.every((r) => r.curationItemList.length === 0)
+  )
+    return null;
 
   return (
     <>

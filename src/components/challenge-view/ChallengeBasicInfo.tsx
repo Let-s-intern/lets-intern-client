@@ -2,7 +2,6 @@ import Announcement from '@/assets/icons/announcement.svg?react';
 import ChevronDown from '@/assets/icons/chevron-down.svg?react';
 import ClockIcon from '@/assets/icons/clock.svg?react';
 import Pin from '@/assets/icons/pin.svg?react';
-import Polygon from '@/assets/icons/polygon-sharp.svg?react';
 import {
   LOCALIZED_YYYY_MDdd_HH,
   LOCALIZED_YYYY_MDdd_HHmm,
@@ -114,10 +113,10 @@ const ChallengeBasicInfo = ({
       : formatFullDateTime(challenge.endDate);
 
   return (
-    <div className="flex flex-col w-full pb-10 gap-y-6 md:gap-y-5 md:pb-20">
+    <div className="flex w-full flex-col gap-y-6 pb-10 md:gap-y-5 md:pb-20">
       <div className="flex w-full gap-x-4">
         <div
-          className="flex items-center justify-center flex-1 overflow-hidden rounded-ms"
+          className="flex flex-1 items-center justify-center overflow-hidden rounded-ms"
           style={{ backgroundColor: colors.thumbnailBg }}
         >
           <img
@@ -127,9 +126,9 @@ const ChallengeBasicInfo = ({
           />
         </div>
         <div className="hidden w-[354px] shrink-0 flex-col items-center justify-center gap-y-3 rounded-ms bg-neutral-95 p-5 pb-6 md:flex">
-          <div className="flex flex-col justify-between flex-1 w-full gap-y-4">
-            <div className="flex flex-col w-full gap-y-2">
-              <p className="font-bold text-small20">{challenge.title}</p>
+          <div className="flex w-full flex-1 flex-col justify-between gap-y-4">
+            <div className="flex w-full flex-col gap-y-2">
+              <p className="text-small20 font-bold">{challenge.title}</p>
               <div className="flex w-full flex-col gap-y-0.5 text-xsmall14 font-medium text-neutral-0">
                 {priceReason.map((reason, index) => (
                   <div key={index} className="flex w-full gap-x-0.5">
@@ -138,7 +137,7 @@ const ChallengeBasicInfo = ({
                       width={24}
                       height={24}
                     />
-                    <p className="whitespace-pre grow text-wrap break-keep">
+                    <p className="grow whitespace-pre text-wrap break-keep">
                       {reason}
                     </p>
                   </div>
@@ -146,12 +145,12 @@ const ChallengeBasicInfo = ({
               </div>
             </div>
             {priceInfo && (
-              <div className="flex flex-col w-full pb-2 border-b gap-y-1 border-neutral-80 text-neutral-0">
-                <div className="flex items-center justify-between w-full gap-x-4 text-xsmall16">
+              <div className="flex w-full flex-col gap-y-1 border-b border-neutral-80 pb-2 text-neutral-0">
+                <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
                   <span className="font-medium">정가</span>
                   <span>{regularPrice?.toLocaleString()}원</span>
                 </div>
-                <div className="flex items-center justify-between w-full gap-x-4 text-xsmall16">
+                <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
                   <span
                     className="font-bold"
                     style={{ color: colors.basicInfoPrimary ?? colors.primary }}
@@ -165,7 +164,7 @@ const ChallengeBasicInfo = ({
                   <span>-{priceInfo.discount?.toLocaleString()}원</span>
                 </div>
                 {priceInfo.challengePriceType === 'REFUND' && (
-                  <div className="flex items-center justify-between w-full gap-x-4 text-xsmall16">
+                  <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
                     <span className="font-bold text-black">
                       미션 모두 수행시, 환급
                     </span>
@@ -176,20 +175,20 @@ const ChallengeBasicInfo = ({
             )}
           </div>
           {priceInfo && (
-            <div className="flex flex-col w-full gap-y-2">
-              <div className="flex items-center justify-between w-full font-semibold text-xsmall16 text-neutral-0">
+            <div className="flex w-full flex-col gap-y-2">
+              <div className="flex w-full items-center justify-between text-xsmall16 font-semibold text-neutral-0">
                 <p>할인 적용가</p>
                 <p className="text-small18 text-neutral-0">
                   {totalPrice.toLocaleString()}원
                 </p>
               </div>
               {showMonthlyPrice && (
-                <div className="flex flex-col items-end w-full">
+                <div className="flex w-full flex-col items-end">
                   <div
                     style={{ color: colors.basicInfoPrimary ?? colors.primary }}
                   >
-                    <span className="mr-1 font-semibold text-medium22">월</span>
-                    <span className="font-bold text-xlarge28">
+                    <span className="mr-1 text-medium22 font-semibold">월</span>
+                    <span className="text-xlarge28 font-bold">
                       {monthlyPrice
                         ? `${monthlyPrice.toLocaleString()}원`
                         : '계산 중'}
@@ -207,34 +206,26 @@ const ChallengeBasicInfo = ({
         </div>
       </div>
       <div
-        className="flex flex-col w-full gap-3 md:flex-row"
+        className="flex w-full flex-col gap-3 md:flex-row"
         style={{ color: colors.basicInfoPrimary ?? colors.primary }}
       >
         {!activeOnly && (
-          <div className="flex flex-col w-full px-4 pt-3 pb-5 gap-y-2 rounded-ms bg-neutral-95 md:flex-1 md:p-5 md:pt-4">
-            <div className="flex items-center w-full gap-x-2">
+          <div className="flex w-full flex-col gap-y-2 rounded-ms bg-neutral-95 px-4 pb-5 pt-3 md:flex-1 md:p-5 md:pt-4">
+            <div className="flex w-full items-center gap-x-2">
               <Pin className="shrink-0" width={20} height={20} />
-              <p className="font-semibold text-xsmall16 text-neutral-0">
+              <p className="text-xsmall16 font-semibold text-neutral-0">
                 시작 일자
               </p>
-              <div className="relative ml-3 animate-bounce-x">
-                <Polygon
-                  className="absolute left-0 top-1/2 -translate-x-[8px] -translate-y-[3px] transform"
-                  style={{ color: colors.basicInfoPrimary ?? colors.primary }}
-                  width={10}
-                  height={8}
-                />
-                <span
-                  className="px-2 py-1 font-normal text-white rounded-xxs text-xxsmall12"
-                  style={{
-                    backgroundColor: colors.basicInfoPrimary ?? colors.primary,
-                  }}
-                >
-                  참여 가능한 일자를 선택해주세요!
-                </span>
-              </div>
+              <span
+                className="speech-bubble relative ml-3 animate-bounce-x rounded-xxs px-2 py-1 text-xxsmall12 font-normal text-white after:border-r-primary"
+                style={{
+                  backgroundColor: colors.basicInfoPrimary ?? colors.primary,
+                }}
+              >
+                참여 가능한 일자를 선택해주세요!
+              </span>
             </div>
-            <div className="flex flex-col w-full gap-y-2">
+            <div className="flex w-full flex-col gap-y-2">
               {challengeId !== undefined &&
                 activeChallengeList !== undefined &&
                 activeChallengeList.length > 0 &&
@@ -256,13 +247,13 @@ const ChallengeBasicInfo = ({
             </div>
           </div>
         )}
-        <div className="flex-col hidden w-full px-4 pt-3 pb-5 gap-y-3 rounded-ms bg-neutral-95 md:flex md:flex-1 md:p-5 md:pt-4">
+        <div className="hidden w-full flex-col gap-y-3 rounded-ms bg-neutral-95 px-4 pb-5 pt-3 md:flex md:flex-1 md:p-5 md:pt-4">
           {activeOnly ? (
             <>
-              <div className="flex flex-col w-full gap-y-2">
-                <div className="flex items-center w-full gap-x-2">
+              <div className="flex w-full flex-col gap-y-2">
+                <div className="flex w-full items-center gap-x-2">
                   <Pin className="shrink-0" width={20} height={20} />
-                  <p className="font-semibold text-xsmall16 text-neutral-0">
+                  <p className="text-xsmall16 font-semibold text-neutral-0">
                     시작 일자
                   </p>
                 </div>
@@ -284,7 +275,7 @@ const ChallengeBasicInfo = ({
             />
           )}
         </div>
-        <div className="flex flex-col w-full px-4 pt-3 pb-5 gap-y-3 rounded-ms bg-neutral-95 md:flex-1 md:p-5 md:pt-4">
+        <div className="flex w-full flex-col gap-y-3 rounded-ms bg-neutral-95 px-4 pb-5 pt-3 md:flex-1 md:p-5 md:pt-4">
           <div className="w-full md:hidden">
             <BasicInfoRow
               icon={<Announcement />}
@@ -314,13 +305,13 @@ const ChallengeBasicInfo = ({
             }
           />
         </div>
-        <div className="flex flex-col items-center justify-center w-full px-4 pt-5 pb-6 gap-y-3 rounded-ms bg-neutral-95 md:hidden">
-          <div className="flex flex-col w-full gap-y-4">
-            <div className="flex flex-col w-full gap-y-2">
-              <p className="font-bold text-small18 text-neutral-0">
+        <div className="flex w-full flex-col items-center justify-center gap-y-3 rounded-ms bg-neutral-95 px-4 pb-6 pt-5 md:hidden">
+          <div className="flex w-full flex-col gap-y-4">
+            <div className="flex w-full flex-col gap-y-2">
+              <p className="text-small18 font-bold text-neutral-0">
                 {challenge.title}
               </p>
-              <div className="flex flex-col w-full gap-y-1 text-xsmall14 text-neutral-0">
+              <div className="flex w-full flex-col gap-y-1 text-xsmall14 text-neutral-0">
                 {priceReason.map((reason, index) => (
                   <div key={index} className="flex w-full gap-x-0.5">
                     <ChevronDown
@@ -328,7 +319,7 @@ const ChallengeBasicInfo = ({
                       width={24}
                       height={24}
                     />
-                    <p className="whitespace-pre grow text-wrap break-keep">
+                    <p className="grow whitespace-pre text-wrap break-keep">
                       {reason}
                     </p>
                   </div>
@@ -336,12 +327,12 @@ const ChallengeBasicInfo = ({
               </div>
             </div>
             {priceInfo && (
-              <div className="flex flex-col w-full pb-2 border-b gap-y-2 border-neutral-80 text-neutral-0">
-                <div className="flex items-center justify-between w-full gap-x-4 text-xsmall16">
+              <div className="flex w-full flex-col gap-y-2 border-b border-neutral-80 pb-2 text-neutral-0">
+                <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
                   <span className="font-medium">정가</span>
                   <span>{regularPrice?.toLocaleString()}원</span>
                 </div>
-                <div className="flex items-center justify-between w-full gap-x-4 text-xsmall16">
+                <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
                   <span
                     className="font-bold"
                     style={{ color: colors.basicInfoPrimary ?? colors.primary }}
@@ -355,7 +346,7 @@ const ChallengeBasicInfo = ({
                   <span>-{priceInfo.discount?.toLocaleString()}원</span>
                 </div>
                 {priceInfo.challengePriceType === 'REFUND' && (
-                  <div className="flex items-center justify-between w-full gap-x-4 text-xsmall16">
+                  <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
                     <span className="font-bold text-black">
                       미션 모두 수행시, 환급
                     </span>
@@ -366,20 +357,20 @@ const ChallengeBasicInfo = ({
             )}
           </div>
           {priceInfo && (
-            <div className="flex flex-col w-full gap-y-4">
-              <div className="flex items-center justify-between w-full font-medium text-xsmall16 text-neutral-0">
+            <div className="flex w-full flex-col gap-y-4">
+              <div className="flex w-full items-center justify-between text-xsmall16 font-medium text-neutral-0">
                 <p>할인 적용가</p>
-                <p className="font-medium text-small18 text-neutral-0">
+                <p className="text-small18 font-medium text-neutral-0">
                   {totalPrice.toLocaleString()}원
                 </p>
               </div>
               {showMonthlyPrice && (
-                <div className="flex flex-col items-end w-full gap-y-2">
+                <div className="flex w-full flex-col items-end gap-y-2">
                   <div
                     style={{ color: colors.basicInfoPrimary ?? colors.primary }}
                   >
-                    <span className="mr-1 font-semibold text-medium22">월</span>
-                    <span className="font-bold text-xlarge28">
+                    <span className="mr-1 text-medium22 font-semibold">월</span>
+                    <span className="text-xlarge28 font-bold">
                       {monthlyPrice
                         ? `${monthlyPrice.toLocaleString()}원`
                         : '계산 중'}

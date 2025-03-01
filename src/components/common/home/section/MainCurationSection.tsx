@@ -121,7 +121,12 @@ const MainCurationSection = () => {
 
   const curationList = data?.curationList.slice(0, 1);
 
-  if (!curationList || curationList.length === 0) return null;
+  if (
+    !curationList ||
+    curationList.length === 0 ||
+    curationList.every((c) => c.curationItemList.length === 0)
+  )
+    return null;
 
   return (
     <>
