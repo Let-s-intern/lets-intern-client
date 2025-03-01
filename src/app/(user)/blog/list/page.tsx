@@ -10,9 +10,9 @@ export default function Page() {
             렛츠커리어 블로그
           </h1>
           <p className="text-xsmall14 text-white/90 md:text-xsmall16">
-            취업 준비부터 실무까지, 성공적인 커리어의 시작을 돕습니다.{' '}
-            <br className="hidden md:block" />
-            렛츠커리어의 독자적인 커리어 교육 콘텐츠를 확인해보세요.
+            취업 준비부터 실무까지, 커리어의 시작을 돕습니다.
+            <br />
+            독자적인 커리어 교육 콘텐츠를 확인해보세요.
           </p>
         </div>
       </header>
