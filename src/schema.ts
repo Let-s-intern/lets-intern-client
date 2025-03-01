@@ -1433,7 +1433,12 @@ export const mentorNotificationSchema = z
     }),
     questionList: z.array(z.string()).nullable().optional(),
     motivateList: z.array(z.string()).nullable().optional(),
-    reviewList: z.array(z.string()).nullable().optional(),
+    reviewList: z.array(
+      z.object({
+        questionType: z.string().optional().nullable(),
+        answer: z.string().optional().nullable(),
+      }),
+    ),
   })
   .transform((data) => {
     return {
