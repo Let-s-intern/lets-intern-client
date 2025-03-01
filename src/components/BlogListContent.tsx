@@ -137,7 +137,7 @@ function BlogList({
 
   return (
     <section>
-      <div className="mb-8 grid grid-cols-1 gap-y-8 md:mb-16 md:grid-cols-4 md:gap-x-5 md:gap-y-[4.25rem]">
+      <div className="mb-8 grid grid-cols-1 gap-y-7 md:mb-16 md:grid-cols-4 md:gap-x-5 md:gap-y-[3.375rem]">
         {data?.blogInfos.map(({ blogThumbnailInfo }, index) => {
           /**
            * 블로그 광고 배너 노출
