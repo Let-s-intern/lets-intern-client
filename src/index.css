@@ -366,3 +366,9 @@ input[type='number'] {
   margin-top: -5px;
   margin-left: -5px;
 }
+
+/* MUI Snackbar 메시지 스타일 */
+.MuiSnackbarContent-message {
+  font-family: 'Pretendard Variable', '-apple-system', 'BlinkMacSystemFont',
+    'system-ui', 'Roboto', 'sans-serif';
+}

@@ -32,8 +32,9 @@ export const AdminSnackbarProvider: React.FC<{
     <adminSnackbarContext.Provider value={{ snackbar: setMessage }}>
       {children}
       <Snackbar
+        className="test"
         open={snackbarState.open}
-        autoHideDuration={6000}
+        autoHideDuration={3000}
         onClose={() => setSnackbarState({ open: false, message: '' })}
         message={snackbarState.message}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}

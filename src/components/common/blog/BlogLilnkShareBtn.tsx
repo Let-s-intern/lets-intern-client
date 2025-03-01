@@ -1,5 +1,6 @@
 'use client';
 
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { twMerge } from '@/lib/twMerge';
 import { Link } from 'lucide-react';
 
@@ -18,6 +19,8 @@ function BlogLinkShareBtn({
   iconHeight,
   iconColor,
 }: Props) {
+  const { snackbar } = useAdminSnackbar();
+
   return (
     <button
       type="button"
@@ -30,7 +33,7 @@ function BlogLinkShareBtn({
           await navigator.clipboard.writeText(
             window.location.origin + location.pathname,
           );
-          alert('클립보드에 복사되었습니다.');
+          snackbar('클립보드에 복사되었습니다.');
         } catch (err) {
           console.error(err);
         }
