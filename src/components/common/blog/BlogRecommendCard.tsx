@@ -19,15 +19,15 @@ async function BlogRecommendCard({ blog }: Props) {
     <Link
       key={blog.id}
       href={`/blog/${blog.id}`}
-      className="blog_recommend flex justify-between gap-4 md:max-w-[16.25rem] md:flex-col-reverse md:justify-normal md:gap-3"
+      className="blog_recommend flex justify-between gap-4 md:max-w-[16.25rem] md:flex-col-reverse md:justify-normal md:gap-2.5"
       data-url={`/blog/${blog.id}`}
       data-text={blog.title}
     >
       <div className="flex flex-col gap-1 md:gap-2">
-        <h4 className="text-xxsmall12 font-semibold text-primary md:text-xsmall14">
+        <h4 className="mb-1 text-xxsmall12 font-semibold text-primary md:text-xsmall14">
           {blogCategory[blog.category ?? ''] ?? '전체'}
         </h4>
-        <h3 className="line-clamp-3 font-semibold text-neutral-20 md:line-clamp-2 md:min-h-12 md:font-bold">
+        <h3 className="line-clamp-3 font-semibold text-neutral-0 md:line-clamp-2 md:min-h-12">
           {blog.title}
         </h3>
         <span className="hidden py-2 text-xxsmall12 text-neutral-40 md:block">

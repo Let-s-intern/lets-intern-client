@@ -38,6 +38,7 @@ const MoreHeader = ({
       >
         <h2
           className={clsx(
+            'text-neutral-0',
             isBig ? 'font-bold md:text-medium22' : 'text-small20 font-semibold',
           )}
         >

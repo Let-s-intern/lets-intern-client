@@ -268,7 +268,7 @@ const BlogDetailPage = async ({
         {/* 프로그램 추천 */}
         {(programRecommendList ?? []).length > 0 && (
           <aside className="w-full px-5 py-9 md:sticky md:top-[100px] md:max-w-[20.5rem] md:rounded-md md:border md:border-neutral-80 md:px-6 md:py-5">
-            <Heading2 className="md:text-xsmall16">
+            <Heading2 className="text-neutral-0 md:text-xsmall16">
               렛츠커리어 프로그램 참여하고
               <br />
               취뽀 성공해요!

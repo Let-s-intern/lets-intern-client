@@ -16,11 +16,17 @@ interface Props {
 }
 
 async function ProgramRecommendCard({ program }: Props) {
-  const getProgramInfo = async () => {
+  const isProgramExist = program.id || program.ctaTitle;
+  if (!isProgramExist) return null;
+
+  const { title, thumbnail, ctaLink } = await getProgramInfo();
+
+  async function getProgramInfo() {
     let title: string | undefined;
     let thumbnail: string = '';
     let ctaLink = program.ctaLink ?? '';
 
+    // 관리자가 추천 프로그램을 등록한 경우
     if (program.id) {
       const [type, id] = program.id.split('-');
 
@@ -51,6 +57,7 @@ async function ProgramRecommendCard({ program }: Props) {
           ctaLink = `/report/landing/${convertReportTypeToPathname(report.reportType ?? 'RESUME')}`;
       }
     } else if (program.ctaLink?.startsWith('latest')) {
+      // latest:{keyword} 사용한 경우
       const keyword = program.ctaLink.split('latest:')[1].trim();
       const challenge = await getChallengeByKeyword(keyword);
 
@@ -62,12 +69,7 @@ async function ProgramRecommendCard({ program }: Props) {
     }
 
     return { title, thumbnail, ctaLink };
-  };
-
-  const isProgramExist = program.id || program.ctaTitle;
-  if (!isProgramExist) return null;
-
-  const { title, thumbnail, ctaLink } = await getProgramInfo();
+  }
 
   return (
     <Link
@@ -80,10 +82,10 @@ async function ProgramRecommendCard({ program }: Props) {
       data-program-id={program.id}
     >
       <div>
-        <h4 className="mb-0.5 text-xxsmall12 font-medium text-neutral-40">
+        <h4 className="mb-0.5 text-xxsmall12 font-medium text-neutral-20">
           {program.ctaTitle}
         </h4>
-        <h3 className="line-clamp-2 font-semibold text-neutral-20 md:text-xsmall14">
+        <h3 className="line-clamp-2 font-semibold text-neutral-0 md:text-xsmall14">
           {title}
         </h3>
       </div>
