@@ -357,7 +357,7 @@ function MoreLink({
     <Link
       href={href}
       className={twMerge(
-        'block w-full rounded-xs border border-neutral-85 px-5 py-3 text-center font-medium text-neutral-20',
+        'block w-full rounded-xs border border-neutral-80 px-5 py-3 text-center font-medium text-neutral-20',
         className,
       )}
     >
