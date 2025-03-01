@@ -49,7 +49,9 @@ const Content = () => {
           list={filterList}
           paramKey="type"
           multiSelect
-          onChange={() => setPage(1)} // 페이지 초기화
+          onChange={() => {
+            setPage(1); // 페이지 초기화
+          }}
           dropdownClassName="w-full"
         />
       </section>
@@ -57,7 +59,13 @@ const Content = () => {
       <BlogList
         types={types}
         page={page}
-        onChangePage={(page) => setPage(page)}
+        onChangePage={(page) => {
+          setPage(page);
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+          });
+        }}
       />
     </>
   );
@@ -77,7 +85,6 @@ function BlogList({
   onChangePage?: (page: number) => void;
 }) {
   const router = useRouter();
-
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   const { data, isLoading } = useBlogListQuery({
@@ -130,7 +137,7 @@ function BlogList({
 
   return (
     <section>
-      <div className="mb-8 grid grid-cols-1 gap-y-8 md:mb-16 md:grid-cols-4 md:gap-x-5 md:gap-y-[4.25rem]">
+      <div className="mb-8 grid grid-cols-1 gap-y-7 md:mb-16 md:grid-cols-4 md:gap-x-5 md:gap-y-[3.375rem]">
         {data?.blogInfos.map(({ blogThumbnailInfo }, index) => {
           /**
            * 블로그 광고 배너 노출
@@ -249,9 +256,9 @@ function BlogList({
                     )}
                   </>
                 }
-                displayDate={dayjs(blogThumbnailInfo.displayDate).format(
+                displayDateItem={`${dayjs(blogThumbnailInfo.displayDate).format(
                   YYYY_MM_DD,
-                )}
+                )} ${willBePublished(blogThumbnailInfo.displayDate ?? '') ? '예정' : '작성'}`}
                 buttonItem={
                   willBePublished(blogThumbnailInfo.displayDate ?? '') ? (
                     <BaseButton
@@ -328,9 +335,10 @@ function BlogRecommendList() {
               alt={blogThumbnailInfo.title ?? undefined}
             />
           }
-          displayDate={
+          displayDateItem={
             blogThumbnailInfo.displayDate
-              ? dayjs(blogThumbnailInfo.displayDate).format(YYYY_MM_DD)
+              ? dayjs(blogThumbnailInfo.displayDate).format(YYYY_MM_DD) +
+                ' 작성'
               : undefined
           }
         />

@@ -46,7 +46,7 @@ function ReviewBanner() {
   type HeadingKey = keyof typeof heading;
 
   return (
-    <header className="relative flex h-[11.125rem] bg-secondary px-5 py-10 md:h-[10.75rem] md:justify-center">
+    <header className="relative flex h-[152px] items-center bg-secondary px-5 md:h-[168px] md:justify-center">
       {/* 본문 */}
       <div className="z-10 flex w-full max-w-[1100px] flex-col gap-1 md:gap-2 md:px-3">
         {/* pathname에 따라 제목 불러오기 */}
