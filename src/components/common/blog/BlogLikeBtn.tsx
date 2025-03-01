@@ -3,7 +3,7 @@
 import { usePatchBlogDislike, usePatchBlogLike } from '@/api/blog';
 import useAuthStore from '@/store/useAuthStore';
 import { Heart } from 'lucide-react';
-import { redirect, useParams, usePathname } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 const LIKE = 'like';
@@ -39,13 +39,6 @@ function BlogLikeBtn({ likeCount }: Props) {
       type="button"
       className="blog_likes flex items-center gap-2"
       onClick={() => {
-        if (!isLoggedIn) {
-          // 비회원 리다이렉트
-          const params = new URLSearchParams();
-          params.set('redirect', pathname);
-          redirect(`/login?redirect=${encodeURIComponent(pathname)}`);
-        }
-
         if (alreadyLike) {
           // 좋아요 취소
           patchDislikeMutation.mutate(id);
