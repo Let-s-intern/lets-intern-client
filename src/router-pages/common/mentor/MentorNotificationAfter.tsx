@@ -1,11 +1,10 @@
+import { QuestionType } from '@/api/review';
+import { mentorNotificationSchema, MentorNotificationType } from '@/schema';
+import axios from '@/utils/axios';
+import { questionTypeToText } from '@/utils/convert';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import {
-  mentorNotificationSchema,
-  MentorNotificationType,
-} from '../../../schema';
-import axios from '../../../utils/axios';
 
 const MentorNotificationAfter = () => {
   const params = useParams();
@@ -34,11 +33,13 @@ const MentorNotificationAfter = () => {
     retry: 0,
   });
 
+  console.log(notification);
+
   useEffect(() => {
-    if (error) {
-      alert('잘못된 접근입니다.');
-      navigate('/');
-    }
+    // if (error) {
+    //   alert('잘못된 접근입니다.');
+    //   navigate('/');
+    // }
   }, [error, navigate]);
 
   return (
@@ -63,7 +64,10 @@ const MentorNotificationAfter = () => {
       {(notification?.reviewList.length ?? 0) > 0 ? (
         <ul className="mb-8 flex list-disc flex-col gap-1 pl-4">
           {notification?.reviewList.map((review, index) => (
-            <li key={index}>{review}</li>
+            <li key={index}>
+              <b>{questionTypeToText[review.questionType as QuestionType]}</b>:{' '}
+              {review.answer}
+            </li>
           ))}
         </ul>
       ) : (
