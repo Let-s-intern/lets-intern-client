@@ -15,7 +15,7 @@ import { ReactNode, useState } from 'react';
 const HOME_INTRO = {
   description: (
     <span className="text-xsmall16 font-bold text-primary md:text-medium22">
-      취업 준비, 어디까지 완성 되었나요?
+      취업 준비, 어디까지 완성되었나요?
     </span>
   ),
   title: (
