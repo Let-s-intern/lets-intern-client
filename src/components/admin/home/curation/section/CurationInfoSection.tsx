@@ -15,6 +15,7 @@ interface CurationInfoSectionProps<
   T extends CurationBodyType | CurationEditBodyType,
 > {
   defaultValue?: CurationInfoType;
+  form: T;
   setLocationType: Dispatch<React.SetStateAction<CurationLocationType>>;
   setForm: Dispatch<React.SetStateAction<T>>;
 }
@@ -22,6 +23,7 @@ interface CurationInfoSectionProps<
 const CurationInfoSection = <
   T extends CurationBodyType | CurationEditBodyType,
 >({
+  form,
   defaultValue,
   setLocationType,
   setForm,
@@ -82,8 +84,9 @@ const CurationInfoSection = <
         name="title"
         placeholder="제목을 입력하세요"
         size="small"
-        defaultValue={defaultValue?.title || ''}
+        value={form.title}
         onChange={onChangeForm}
+        maxLength={35}
       />
       <Input
         label="소제목"
