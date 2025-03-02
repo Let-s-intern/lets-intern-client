@@ -1,4 +1,4 @@
-import { useGetUserProgramQuery } from '@/api/program';
+import { useGetActiveChallenge } from '@/api/challenge';
 import { convertReportTypeToLandingPath } from '@/api/report';
 import Intro1 from '@/assets/graphic/home/intro/1.svg?react';
 import Intro2 from '@/assets/graphic/home/intro/2.svg?react';
@@ -37,7 +37,7 @@ const HOME_INTRO = {
           </>
         ),
         icon: <Intro1 width={44} height={44} />,
-        href: 'current=기필코',
+        href: 'type=CAREER_START',
         gaTitle: '경험 정리 & 이력서 준비',
       },
       {
@@ -49,7 +49,7 @@ const HOME_INTRO = {
           </>
         ),
         icon: <Intro2 width={44} height={44} />,
-        href: 'current=자기소개서',
+        href: 'type=PERSONAL_STATEMENT',
         gaTitle: '자기소개서 준비하기',
       },
       {
@@ -62,7 +62,7 @@ const HOME_INTRO = {
         ),
         subTitle: '대기업',
         icon: <Intro8 width={44} height={44} />,
-        href: 'current=대기업,자기소개서',
+        href: 'type=PERSONAL_STATEMENT_LARGE_CORP',
         gaTitle: '대기업 자기소개서 준비하기',
       },
       {
@@ -74,7 +74,7 @@ const HOME_INTRO = {
           </>
         ),
         icon: <Intro3 width={44} height={44} />,
-        href: 'current=포트폴리오',
+        href: 'type=PORTFOLIO',
         gaTitle: '포트폴리오 준비하기',
       },
       {
@@ -205,29 +205,37 @@ const HOME_INTRO = {
 const IntroSection = () => {
   const [basic, setBasic] = useState(true);
 
-  const { data } = useGetUserProgramQuery({
-    pageable: { page: 1, size: 20 },
-    searchParams: {
-      type: 'CHALLENGE',
-      status: ['PROCEEDING'],
-    },
-  });
+  const { data: careerStartData } = useGetActiveChallenge('CAREER_START');
+  const { data: personalStatementData } =
+    useGetActiveChallenge('PERSONAL_STATEMENT');
+  const { data: personalStatementLargeCorpData } = useGetActiveChallenge(
+    'PERSONAL_STATEMENT_LARGE_CORP',
+  );
+  const { data: portfolioData } = useGetActiveChallenge('PORTFOLIO');
 
-  const getCurrentChallenge = (keyword: string): string | undefined => {
-    const keywordList = keyword.split(',');
-
-    // 모든 keyword를 포함하고 있는 챌린지
-    const currentChallenge = data?.programList.find((program) => {
-      return keywordList.every((keyword) =>
-        program.programInfo.title?.includes(keyword),
-      );
-    });
-
-    if (currentChallenge) {
-      return `/program/challenge/${currentChallenge.programInfo.id}`;
+  const getCurrentChallenge = (type: string): string | undefined => {
+    switch (type) {
+      case 'CAREER_START':
+        return careerStartData && careerStartData.challengeList.length > 0
+          ? `/program/challenge/${careerStartData.challengeList[0].id}`
+          : undefined;
+      case 'PERSONAL_STATEMENT':
+        return personalStatementData &&
+          personalStatementData.challengeList.length > 0
+          ? `/program/challenge/${personalStatementData.challengeList[0].id}`
+          : undefined;
+      case 'PERSONAL_STATEMENT_LARGE_CORP':
+        return personalStatementLargeCorpData &&
+          personalStatementLargeCorpData.challengeList.length > 0
+          ? `/program/challenge/${personalStatementLargeCorpData.challengeList[0].id}`
+          : undefined;
+      case 'PORTFOLIO':
+        return portfolioData && portfolioData.challengeList.length > 0
+          ? `/program/challenge/${portfolioData.challengeList[0].id}`
+          : undefined;
+      default:
+        return undefined;
     }
-
-    return undefined;
   };
 
   return (
@@ -266,7 +274,7 @@ const IntroSection = () => {
                 subTitle={item.subTitle}
                 icon={item.icon}
                 href={
-                  item.href.startsWith('current=')
+                  item.href.startsWith('type=')
                     ? getCurrentChallenge(item.href.split('=')[1])
                     : item.href
                 }
