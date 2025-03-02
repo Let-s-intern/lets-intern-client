@@ -116,6 +116,7 @@ const ProgramContainer = (props: ProgramContainerProps) => {
             <SwiperSlide key={index}>
               <ProgramItem
                 {...program}
+                gaTitle={props.gaTitle}
                 className={props.gaItem}
                 isDeadline={props.isDeadline}
               />
