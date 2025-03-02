@@ -1,5 +1,5 @@
 import { useMediaQuery } from '@mui/material';
-import { ReactNode } from 'react';
+import { Fragment, ReactNode } from 'react';
 import { Grid } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import EmptyContainer from '../ui/EmptyContainer';
@@ -36,7 +36,17 @@ const ProgramContainer = (props: ProgramContainerProps) => {
           isBig
           gaText={props.gaTitle}
         >
-          {props.title}
+          {typeof props.title === 'string' ? (
+            <>
+              {props.title.split('\\n').map((line, index) => (
+                <Fragment key={index}>
+                  {line} <br className="md:hidden" />
+                </Fragment>
+              ))}
+            </>
+          ) : (
+            props.title
+          )}
         </MoreHeader>
         {props.navigation && (
           <div className="flex w-fit items-center gap-x-2 overflow-auto scrollbar-hide">
