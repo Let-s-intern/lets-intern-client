@@ -39,9 +39,8 @@ const ActiveProgramSection = () => {
           showGrid
           title={
             <>
-              지금 모집 중인 프로그램을
-              <br className="md:hidden" />
-              한눈에 확인해보세요 📢
+              지금 모집 중인 프로그램을 <br className="md:hidden" />
+              한눈에 확인해 보세요 📢
             </>
           }
           moreUrl="/program?status=PROCEEDING"
