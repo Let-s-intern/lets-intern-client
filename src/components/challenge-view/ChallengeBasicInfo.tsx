@@ -213,13 +213,15 @@ const ChallengeBasicInfo = ({
           <div className="flex w-full flex-col gap-y-2 rounded-ms bg-neutral-95 px-4 pb-5 pt-3 md:flex-1 md:p-5 md:pt-4">
             <div className="flex w-full items-center gap-x-2">
               <Pin className="shrink-0" width={20} height={20} />
-              <p className="text-xsmall16 font-semibold text-neutral-0">
+              <p className="shrink-0 text-xsmall16 font-semibold text-neutral-0">
                 시작 일자
               </p>
               <span
-                className="speech-bubble relative ml-3 animate-bounce-x rounded-xxs px-2 py-1 text-xxsmall12 font-normal text-white after:border-r-primary"
+                className="speech-bubble relative ml-3 animate-bounce-x break-keep rounded-xxs px-2 py-1 text-xxsmall12 font-normal text-white"
                 style={{
                   backgroundColor: colors.basicInfoPrimary ?? colors.primary,
+                  ['--after-border-color' as any]:
+                    colors.basicInfoPrimary ?? colors.primary,
                 }}
               >
                 참여 가능한 일자를 선택해주세요!
