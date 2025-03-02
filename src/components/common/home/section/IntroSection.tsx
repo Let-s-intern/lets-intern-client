@@ -350,7 +350,7 @@ const IntroItem = ({
 }) => {
   return (
     <Link
-      className="icon_menu flex w-full flex-col items-center gap-y-4 text-center text-xxsmall12 font-medium text-neutral-20 md:text-xsmall16"
+      className="icon_menu flex w-full flex-col items-center gap-y-4 text-center text-xxsmall12 font-medium text-neutral-20 md:text-xsmall14"
       href={href ?? '#'}
       target={href && href.startsWith('http') ? '_blank' : undefined}
       onClick={() => {
@@ -361,7 +361,7 @@ const IntroItem = ({
       data-url={href}
       data-text={gaTitle}
     >
-      <div className="w-15 relative flex aspect-square items-center justify-center rounded-xxs bg-[#F7F7F7] md:w-16">
+      <div className="relative flex aspect-square w-15 items-center justify-center rounded-xxs bg-[#F7F7F7] md:w-16">
         {icon}
         {subTitle && (
           <span className="absolute -right-[14px] top-0 -translate-y-1/2 rounded-full bg-primary px-2 py-[5px] text-[11px] font-medium leading-none text-white md:text-[13px]">
