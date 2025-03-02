@@ -297,7 +297,8 @@ const PaymentInputPage = () => {
           </div>
           {!isLoading &&
             programApplicationData.programType === 'challenge' &&
-            !programApplicationData.programTitle?.includes('마케팅') && (
+            !programApplicationData.programTitle?.includes('마케팅') &&
+            !programApplicationData.programTitle?.includes('대기업') && (
               <div className="relative rounded-sm bg-[#E8F9F2] px-4 py-6 text-xsmall14 md:px-5">
                 <p className="font-medium">
                   모든 미션을 성공하면
