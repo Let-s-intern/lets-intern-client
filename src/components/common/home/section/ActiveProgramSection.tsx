@@ -32,7 +32,7 @@ const ActiveProgramSection = () => {
 
   return (
     <>
-      <section className="md:mt-21 mt-16 flex w-full max-w-[1120px] flex-col">
+      <section className="mt-16 flex w-full max-w-[1120px] flex-col md:mt-21">
         <ProgramContainer
           gaItem="proceeding_program"
           gaTitle="지금 모집 중인 프로그램을 한눈에 확인해보세요"
