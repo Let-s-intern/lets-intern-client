@@ -48,7 +48,7 @@ const MainBannerSection = () => {
                 <SwiperSlide key={banner.id}>
                   <a
                     href={banner.link || '#'}
-                    className="top_banner"
+                    className="top_banner select-none"
                     data-url={banner.link}
                     target={
                       banner.link?.includes('letscareer.co.kr') ||

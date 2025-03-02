@@ -58,7 +58,7 @@ const BottomBannerSection = () => {
                     }
                     rel="noreferrer"
                     data-url={banner.link}
-                    className="bottom_banner"
+                    className="bottom_banner select-none"
                     onClick={handleClickBanner}
                   >
                     <img
