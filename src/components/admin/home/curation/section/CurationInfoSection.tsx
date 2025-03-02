@@ -15,6 +15,7 @@ interface CurationInfoSectionProps<
   T extends CurationBodyType | CurationEditBodyType,
 > {
   defaultValue?: CurationInfoType;
+  form: T;
   setLocationType: Dispatch<React.SetStateAction<CurationLocationType>>;
   setForm: Dispatch<React.SetStateAction<T>>;
 }
@@ -22,6 +23,7 @@ interface CurationInfoSectionProps<
 const CurationInfoSection = <
   T extends CurationBodyType | CurationEditBodyType,
 >({
+  form,
   defaultValue,
   setLocationType,
   setForm,
@@ -82,8 +84,9 @@ const CurationInfoSection = <
         name="title"
         placeholder="제목을 입력하세요"
         size="small"
-        defaultValue={defaultValue?.title || ''}
+        value={form.title}
         onChange={onChangeForm}
+        maxLength={35}
       />
       <Input
         label="소제목"
@@ -94,6 +97,12 @@ const CurationInfoSection = <
         defaultValue={defaultValue?.subTitle || ''}
         onChange={onChangeForm}
       />
+      <span className="text-xsmall14 text-requirement">
+        *제목의 모바일 줄넘김을 위해 개행문자(\n)를 사용해주세요. (ex: 첫번째
+        줄\n두번째 줄)
+        <br />
+        *소제목은 줄넘김 개행문자 적용 안됨
+      </span>
     </div>
   );
 };

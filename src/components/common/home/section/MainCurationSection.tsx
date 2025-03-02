@@ -114,6 +114,10 @@ export const getCategory = ({
   return blogCategory[category];
 };
 
+export const getIsDeadline = ({ title }: { title: string }) => {
+  return title.includes('마감');
+};
+
 const MainCurationSection = () => {
   const { data } = useGetUserCuration({
     locationType: 'UNDER_BANNER',
@@ -130,7 +134,7 @@ const MainCurationSection = () => {
 
   return (
     <>
-      <section className="md:mt-22.5 mt-16 flex w-full max-w-[1120px] flex-col gap-y-5">
+      <section className="mt-16 flex w-full max-w-[1120px] flex-col gap-y-5 md:mt-22.5">
         {curationList.map((curation, index) => (
           <ProgramContainer
             gaItem="curation_card"
@@ -139,6 +143,7 @@ const MainCurationSection = () => {
             title={curation.curationInfo.title}
             subTitle={curation.curationInfo.subTitle ?? undefined}
             moreUrl={curation.curationInfo.moreUrl ?? undefined}
+            isDeadline={getIsDeadline({ title: curation.curationInfo.title })}
             programs={curation.curationItemList.map((item) => ({
               thumbnail: getProgramThumbnail({
                 type: item.programType,

@@ -7,7 +7,7 @@ import BlogContainer from '../BlogContainer';
 
 const CurrentBlogSection = () => {
   const { data, isLoading } = useBlogListQuery({
-    pageable: { page: 1, size: 10 },
+    pageable: { page: 1, size: 20 },
   });
 
   return (

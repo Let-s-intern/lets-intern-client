@@ -75,17 +75,17 @@ const CurationItem = ({
         {item.programType !== 'ETC' && item.programType !== 'VOD' ? ( // 기본 : 프로그램 선택
           <Button
             variant="outlined"
-            className="line-clamp-1 min-w-[200px]"
+            className="line-clamp-1 h-10 min-w-[200px]"
             onClick={() => setModalType(item.programType)}
           >
             {item.title ||
               `${convertCurationTypeToText(item.programType)} 선택`}
           </Button>
         ) : item.programType === 'VOD' ? ( // VOD의 경우 프로그램 선택 + tag 입력
-          <div className="flex flex-1 items-center gap-x-5">
+          <div className="flex flex-1 items-start gap-x-5">
             <Button
               variant="outlined"
-              className="line-clamp-1 min-w-[200px]"
+              className="line-clamp-1 h-10 min-w-[200px]"
               onClick={() => setModalType(item.programType)}
             >
               {item.title ||
@@ -100,6 +100,7 @@ const CurationItem = ({
                 size="small"
                 value={item.tag}
                 onChange={(e) => onChangeItem({ ...item, tag: e.target.value })}
+                maxLength={11}
               />
             </div>
           </div>
@@ -143,6 +144,7 @@ const CurationItem = ({
                 size="small"
                 value={item.tag}
                 onChange={(e) => onChangeItem({ ...item, tag: e.target.value })}
+                maxLength={11}
               />
             </div>
           </div>

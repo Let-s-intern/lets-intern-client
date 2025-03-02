@@ -26,7 +26,7 @@ const MoreHeader = ({
   return (
     <div
       className={clsx(
-        'flex w-full justify-between',
+        'flex w-full justify-between gap-x-8',
         isVertical ? 'items-start' : 'items-center',
       )}
     >
@@ -38,17 +38,15 @@ const MoreHeader = ({
       >
         <h2
           className={clsx(
-            'text-neutral-0',
-            isBig ? 'font-bold md:text-medium22' : 'text-small20 font-semibold',
+            'line-clamp-2 overflow-hidden break-all text-neutral-0',
+            isBig
+              ? 'text-small20 font-bold md:text-medium24'
+              : 'text-small20 font-semibold',
           )}
         >
           {children}
         </h2>
-        {subtitle && (
-          <p className={clsx(isBig ? 'text-small18' : 'text-xsmall14')}>
-            {subtitle}
-          </p>
-        )}
+        {subtitle && <p className={clsx('text-xsmall14')}>{subtitle}</p>}
       </div>
       {href && (
         // home에서 program으로 갈 경우 react, 나머지는 next라서 a태그 사용
@@ -56,7 +54,7 @@ const MoreHeader = ({
           href={href}
           target={href.startsWith('http') ? '_blank' : undefined}
           className={clsx(
-            'more_btn font-medium text-neutral-45',
+            'more_btn shrink-0 font-medium text-neutral-45',
             isBig ? 'text-xsmall16' : 'text-xsmall14',
             isVertical ? 'mt-0.5' : '',
             hideMoreWhenMobile ? 'hidden md:block' : '',

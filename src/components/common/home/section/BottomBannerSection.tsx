@@ -1,6 +1,7 @@
 import { useGetBannerListForUser } from '@/api/banner';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useMediaQuery } from '@mui/material';
+import { MouseEvent } from 'react';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
@@ -9,17 +10,28 @@ const BottomBannerSection = () => {
 
   const { data, isLoading } = useGetBannerListForUser({ type: 'MAIN_BOTTOM' });
 
+  const handleClickBanner = (e: MouseEvent<HTMLAnchorElement>) => {
+    const target = e.target as HTMLElement;
+    if (
+      target.closest('.swiper-button-prev') ||
+      target.closest('.swiper-button-next')
+    ) {
+      e.preventDefault(); // a태그 이동 방지
+    }
+  };
+
   return (
     <>
-      <section className="md:mt-22.5 mt-16 w-full max-w-[1120px] px-5 xl:px-0">
+      <section className="mt-16 w-full max-w-[1120px] px-5 md:mt-22.5 xl:px-0">
         {isLoading ? (
           <LoadingContainer />
         ) : !data || !data.bannerList || data.bannerList.length === 0 ? null : (
           <div className="w-full">
             <Swiper
-              autoplay={{ delay: 2500 }}
+              autoplay={data.bannerList.length > 1 ? { delay: 2500 } : false}
               modules={[Pagination, Autoplay, Navigation]}
-              navigation
+              loop={data.bannerList.length > 1}
+              navigation={data.bannerList.length > 1}
               pagination={{
                 type: 'fraction',
                 renderFraction: (currentClass, totalClass) =>
@@ -46,7 +58,8 @@ const BottomBannerSection = () => {
                     }
                     rel="noreferrer"
                     data-url={banner.link}
-                    className="bottom_banner"
+                    className="bottom_banner select-none"
+                    onClick={handleClickBanner}
                   >
                     <img
                       src={

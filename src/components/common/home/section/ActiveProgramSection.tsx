@@ -32,19 +32,19 @@ const ActiveProgramSection = () => {
 
   return (
     <>
-      <section className="md:mt-21 mt-16 flex w-full max-w-[1120px] flex-col">
+      <section className="mt-16 flex w-full max-w-[1120px] flex-col md:mt-21">
         <ProgramContainer
           gaItem="proceeding_program"
           gaTitle="지금 모집 중인 프로그램을 한눈에 확인해보세요"
           showGrid
           title={
             <>
-              지금 모집 중인 프로그램을
-              <br className="md:hidden" />
-              한눈에 확인해보세요 📢
+              지금 모집 중인 프로그램을 <br className="md:hidden" />
+              한눈에 확인해 보세요 📢
             </>
           }
           moreUrl="/program?status=PROCEEDING"
+          isDeadline={false}
           programs={filteredData.map((program) => ({
             thumbnail: program.programInfo.thumbnail ?? '',
             title: program.programInfo.title ?? '',

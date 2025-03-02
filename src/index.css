@@ -356,12 +356,12 @@ input[type='number'] {
 .speech-bubble:after {
   content: '';
   position: absolute;
-  left: 0;
+  left: 0.5;
   top: 50%;
   width: 0;
   height: 0;
   border: 5px solid transparent;
-  /* border-right-color: #00aabb; */
+  border-right-color: var(--after-border-color);
   border-left: 0;
   margin-top: -5px;
   margin-left: -5px;

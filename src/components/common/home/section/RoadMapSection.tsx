@@ -13,7 +13,7 @@ const ROADMAP_ITEMS: {
   subTitle: string;
   icon: ReactNode;
   href: string;
-  theme: 'GREEN' | 'PURPLE' | 'PINK';
+  theme: keyof typeof COLOR_THEME;
 }[] = [
   {
     title: '일반 채용 로드맵',
@@ -22,7 +22,7 @@ const ROADMAP_ITEMS: {
       <Roadmap1 className="absolute bottom-0 right-0 h-[61px] w-[58px] md:right-5 md:h-[129px] md:w-[110px]" />
     ),
     href: '/program',
-    theme: 'GREEN',
+    theme: 'BLUE',
   },
   {
     title: '대기업 로드맵',
@@ -91,9 +91,9 @@ const COLOR_THEME: {
     main: string;
   };
 } = {
-  GREEN: {
-    sub: 'text-secondary',
-    main: 'bg-[#E3FBF1]',
+  BLUE: {
+    sub: 'text-[#2EA6D5]',
+    main: 'bg-[#E8F6FF]',
   },
   PURPLE: {
     sub: 'text-primary',
@@ -116,7 +116,7 @@ const RoadMapItem = ({
   subTitle: string;
   icon: ReactNode;
   href: string;
-  theme: 'GREEN' | 'PURPLE' | 'PINK';
+  theme: keyof typeof COLOR_THEME;
 }) => {
   return (
     <Link

@@ -24,7 +24,7 @@ const HomeCurationEditPage = () => {
 
   const [locationType, setLocationType] =
     useState<CurationLocationType>('UNDER_BANNER');
-  const [form, setForm] = useState<CurationEditBodyType>({});
+  const [form, setForm] = useState<CurationEditBodyType>({ title: '' });
   const [curationItems, setCurationItems] = useState<CurationItemType[]>([]);
 
   const {
@@ -46,6 +46,7 @@ const HomeCurationEditPage = () => {
       form.title === '' ||
       form.startDate === '' ||
       form.endDate === '' ||
+      (!form.showImminentList && curationItems.length < 1) ||
       curationItems.some(
         (item) =>
           (item.programType !== 'ETC' && !item.programId) ||
@@ -53,6 +54,7 @@ const HomeCurationEditPage = () => {
             (!item.title || !item.url || !item.thumbnail)),
       )
     ) {
+      console.log(form);
       snackbar('필수 항목을 입력해주세요.');
       return;
     }
@@ -76,6 +78,10 @@ const HomeCurationEditPage = () => {
 
   useEffect(() => {
     if (curation) {
+      setForm({
+        title: curation.curationInfo.title,
+        showImminentList: curation.curationInfo.showImminentList,
+      });
       setLocationType(curation.curationInfo.locationType);
       setCurationItems(curation.curationItemList);
     }
@@ -96,6 +102,7 @@ const HomeCurationEditPage = () => {
             <div className="flex w-full flex-col gap-y-8">
               <div className="flex w-full gap-x-5">
                 <CurationInfoSection
+                  form={form}
                   defaultValue={curation.curationInfo}
                   setLocationType={setLocationType}
                   setForm={setForm}

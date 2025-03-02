@@ -5,6 +5,7 @@ import {
   getCategory,
   getCreatedDate,
   getDuration,
+  getIsDeadline,
   getProgramThumbnail,
   getProgramUrl,
 } from './MainCurationSection';
@@ -24,7 +25,7 @@ const BlogCurationSection = () => {
     return null;
   return (
     <>
-      <section className="md:gap-y-21 mt-16 flex w-full max-w-[1120px] flex-col gap-y-16 md:mt-24">
+      <section className="mt-16 flex w-full max-w-[1120px] flex-col gap-y-16 md:mt-24 md:gap-y-21">
         {blogCurationList.map((curation, index) => (
           <ProgramContainer
             key={'blogCuration' + index}
@@ -33,6 +34,7 @@ const BlogCurationSection = () => {
             title={curation.curationInfo.title}
             subTitle={curation.curationInfo.subTitle ?? undefined}
             moreUrl={curation.curationInfo.moreUrl ?? undefined}
+            isDeadline={getIsDeadline({ title: curation.curationInfo.title })}
             programs={curation.curationItemList.map((item) => ({
               thumbnail: getProgramThumbnail({
                 type: item.programType,

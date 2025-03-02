@@ -3,19 +3,6 @@ import clsx from 'clsx';
 import { Autoplay } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-const LOGO_THEME = {
-  GREEN: '#DAF9DB',
-  YELLOW: '#FFE8A0',
-  BLUE: '#DFE6FF',
-  RED: '#FFD5D9',
-  RED_ORANGE: '#FFE1D4',
-  LIGHT_BLUE: '#E0F7FF',
-  MINT: '#DBF6F2',
-  ORANGE: '#FFDBC3',
-};
-
-type LogoThemeType = keyof typeof LOGO_THEME;
-
 const LOGO_IMG = {
   DAANGN: '/images/home/company/daangn.png',
   HANA: '/images/home/company/hana.png',
@@ -27,12 +14,22 @@ const LOGO_IMG = {
   NAVER_CLOUD: '/images/home/company/naver-cloud.png',
   PWC: '/images/home/company/pwc.png',
   SAMSUNG_BIOLOGICS: '/images/home/company/samsung-biologics.png',
+  HYBE: '/images/home/company/hybe.png',
+  HYUNDAI_AUTOEVER: '/images/home/company/hyundai-autoever.png',
+  NAVER_WEBTOON: '/images/home/company/naver-webtoon.png',
+  BINGRAE: '/images/home/company/bingrae.png',
+  BAT: '/images/home/company/bat.png',
+  SPARTA: '/images/home/company/sparta.png',
+  POSCO: '/images/home/company/posco.png',
+  HD: '/images/home/company/hd.png',
+  K_WATER: '/images/home/company/k-water.png',
+  CATCH_TABLE: '/images/home/company/catch-table.png',
 };
 
 type LogoImgType = keyof typeof LOGO_IMG;
 
 interface LogoPlayItemProps {
-  theme: LogoThemeType;
+  theme: string;
   img: LogoImgType;
   company: string;
   job: string;
@@ -42,7 +39,7 @@ interface LogoPlayItemProps {
 
 const LogoList: LogoPlayItemProps[] = [
   {
-    theme: 'GREEN',
+    theme: '#DAF9DB',
     img: 'NAVER_CLOUD',
     company: '네이버 클라우드',
     job: 'IT/데이터분석',
@@ -50,7 +47,7 @@ const LogoList: LogoPlayItemProps[] = [
     pass: '2024',
   },
   {
-    theme: 'YELLOW',
+    theme: '#FFE8A0',
     img: 'KAKAO_MOBILITY',
     company: '카카오 모빌리티',
     job: '사업기획/서비스기획',
@@ -58,7 +55,15 @@ const LogoList: LogoPlayItemProps[] = [
     pass: '2024',
   },
   {
-    theme: 'BLUE',
+    theme: '#FFDED4',
+    img: 'CATCH_TABLE',
+    company: '캐치테이블',
+    job: '데이터분석',
+    name: '이**',
+    pass: '2023',
+  },
+  {
+    theme: '#DFE6FF',
     img: 'SAMSUNG_BIOLOGICS',
     company: '삼성 바이오로직스',
     job: '생산/엔지니어링',
@@ -66,7 +71,7 @@ const LogoList: LogoPlayItemProps[] = [
     pass: '2024',
   },
   {
-    theme: 'RED',
+    theme: '#FFD5D9',
     img: 'LG',
     company: 'LG전자',
     job: '상품기획/MD',
@@ -74,7 +79,7 @@ const LogoList: LogoPlayItemProps[] = [
     pass: '2023',
   },
   {
-    theme: 'GREEN',
+    theme: '#DAF9DB',
     img: 'LINE',
     company: '라인',
     job: '인사/조직문화',
@@ -82,7 +87,7 @@ const LogoList: LogoPlayItemProps[] = [
     pass: '2023',
   },
   {
-    theme: 'RED_ORANGE',
+    theme: '#FFE1D4',
     img: 'PWC',
     company: '삼일회계법인',
     job: '컨설팅/ESG',
@@ -90,7 +95,7 @@ const LogoList: LogoPlayItemProps[] = [
     pass: '2023',
   },
   {
-    theme: 'LIGHT_BLUE',
+    theme: '#E0F7FF',
     img: 'MYREALTRIP',
     company: '마이리얼트립',
     job: '사업개발/전략',
@@ -98,7 +103,7 @@ const LogoList: LogoPlayItemProps[] = [
     pass: '2024',
   },
   {
-    theme: 'RED',
+    theme: '#FFD5D9',
     img: 'LG_ENERGY',
     company: 'LG에너지솔루션',
     job: '해외영업/무역',
@@ -106,7 +111,7 @@ const LogoList: LogoPlayItemProps[] = [
     pass: '2023',
   },
   {
-    theme: 'MINT',
+    theme: '#DBF6F2',
     img: 'HANA',
     company: '하나은행',
     job: '디자인',
@@ -114,12 +119,84 @@ const LogoList: LogoPlayItemProps[] = [
     pass: '2024',
   },
   {
-    theme: 'ORANGE',
+    theme: '#FFDBC3',
     img: 'DAANGN',
     company: '당근',
     job: 'PM',
     name: '송**',
     pass: '2024',
+  },
+  {
+    theme: '#FCFFC1',
+    img: 'HYBE',
+    company: '하이브',
+    job: '콘텐츠/미디어',
+    name: '배**',
+    pass: '2023',
+  },
+  {
+    theme: '#DAECFF',
+    img: 'HYUNDAI_AUTOEVER',
+    company: '현대오토에버',
+    job: 'IT/컨설팅',
+    name: '류**',
+    pass: '2023',
+  },
+  {
+    theme: '#DAF9DB',
+    img: 'NAVER_WEBTOON',
+    company: '네이버웹툰',
+    job: '글로벌사업/운영',
+    name: '이**',
+    pass: '2023',
+  },
+  {
+    theme: '#FFD8D7',
+    img: 'BINGRAE',
+    company: '빙그레',
+    job: '영업',
+    name: '정*',
+    pass: '2024',
+  },
+  {
+    theme: '#D8E1FF',
+    img: 'BAT',
+    company: 'BAT',
+    job: '마케팅/광고',
+    name: '최**',
+    pass: '2023',
+  },
+  {
+    theme: '#FFD4DA',
+    img: 'SPARTA',
+    company: '팀스파르타',
+    job: '마케팅/광고',
+    name: '위**',
+    pass: '2023',
+  },
+  {
+    theme: '#DDF2FF',
+    img: 'POSCO',
+    company: '포스코',
+    job: '마케팅/광고',
+    name: '이**',
+    pass: '2023',
+  },
+  {
+    theme: '#D7FFD5',
+    img: 'HD',
+    company: 'HD현대마린솔루션테크',
+    job: '재무/회계',
+    name: '이**',
+    pass: '2023',
+  },
+  {
+    theme: '#D7F1FF',
+    img: 'K_WATER',
+    company: '한국수자원공사',
+    job: '환경/공공기관',
+    name: '진**',
+    pass: '2023',
   },
 ];
 
@@ -174,7 +251,7 @@ const LogoPlayItem = (props: LogoPlayItemProps) => {
         'flex w-[218px] select-none justify-between rounded-sm p-3 pb-4 md:w-80 md:p-5 md:pb-6',
       )}
       style={{
-        backgroundColor: LOGO_THEME[props.theme],
+        backgroundColor: props.theme,
       }}
     >
       <div className="flex flex-col text-neutral-0">

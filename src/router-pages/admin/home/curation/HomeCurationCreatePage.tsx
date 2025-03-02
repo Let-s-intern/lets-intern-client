@@ -44,7 +44,7 @@ const HomeCurationCreatePage = () => {
       !form.title ||
       !form.startDate ||
       !form.endDate ||
-      curationItems.length < 1 ||
+      (!form.showImminentList && curationItems.length < 1) ||
       curationItems.some(
         (item) =>
           (item.programType !== 'ETC' && !item.programId) ||
@@ -82,6 +82,7 @@ const HomeCurationCreatePage = () => {
         <div className="flex w-full flex-col gap-y-8">
           <div className="flex w-full gap-x-5">
             <CurationInfoSection
+              form={form}
               setLocationType={setLocationType}
               setForm={setForm}
             />
