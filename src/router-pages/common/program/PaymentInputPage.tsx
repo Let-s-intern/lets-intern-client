@@ -295,9 +295,9 @@ const PaymentInputPage = () => {
               <span>{totalPrice.toLocaleString()}원</span>
             </div>
           </div>
-          {!programApplicationData.programTitle?.includes('마케팅') &&
+          {!isLoading &&
             programApplicationData.programType === 'challenge' &&
-            !isLoading && (
+            !programApplicationData.programTitle?.includes('마케팅') && (
               <div className="relative rounded-sm bg-[#E8F9F2] px-4 py-6 text-xsmall14 md:px-5">
                 <p className="font-medium">
                   모든 미션을 성공하면
