@@ -82,6 +82,7 @@ const HomeCurationCreatePage = () => {
         <div className="flex w-full flex-col gap-y-8">
           <div className="flex w-full gap-x-5">
             <CurationInfoSection
+              form={form}
               setLocationType={setLocationType}
               setForm={setForm}
             />
