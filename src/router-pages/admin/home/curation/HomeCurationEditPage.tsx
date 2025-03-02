@@ -46,6 +46,7 @@ const HomeCurationEditPage = () => {
       form.title === '' ||
       form.startDate === '' ||
       form.endDate === '' ||
+      (!form.showImminentList && curationItems.length < 1) ||
       curationItems.some(
         (item) =>
           (item.programType !== 'ETC' && !item.programId) ||
@@ -53,6 +54,7 @@ const HomeCurationEditPage = () => {
             (!item.title || !item.url || !item.thumbnail)),
       )
     ) {
+      console.log(form);
       snackbar('필수 항목을 입력해주세요.');
       return;
     }
@@ -76,6 +78,7 @@ const HomeCurationEditPage = () => {
 
   useEffect(() => {
     if (curation) {
+      setForm({ showImminentList: curation.curationInfo.showImminentList });
       setLocationType(curation.curationInfo.locationType);
       setCurationItems(curation.curationItemList);
     }

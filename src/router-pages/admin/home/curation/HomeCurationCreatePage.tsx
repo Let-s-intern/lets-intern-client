@@ -44,7 +44,7 @@ const HomeCurationCreatePage = () => {
       !form.title ||
       !form.startDate ||
       !form.endDate ||
-      curationItems.length < 1 ||
+      (!form.showImminentList && curationItems.length < 1) ||
       curationItems.some(
         (item) =>
           (item.programType !== 'ETC' && !item.programId) ||
