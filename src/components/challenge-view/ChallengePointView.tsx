@@ -389,13 +389,14 @@ const ChallengePointView = ({
               </Box>
               <Box className="relative overflow-hidden md:flex-1">
                 <BoxItem title={reward.title}>{reward.content}</BoxItem>
-                {challengeType !== PERSONAL_STATEMENT_LARGE_CORP && (
-                  <img
-                    className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
-                    src={paypackImgSrc}
-                    alt="페이백 3만원"
-                  />
-                )}
+                {challengeType !== PERSONAL_STATEMENT_LARGE_CORP &&
+                  !challengeTitle.includes('마케팅') && (
+                    <img
+                      className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
+                      src={paypackImgSrc}
+                      alt="페이백 3만원"
+                    />
+                  )}
               </Box>
             </div>
           </div>
