@@ -5,6 +5,7 @@ import {
   getCategory,
   getCreatedDate,
   getDuration,
+  getIsDeadline,
   getProgramThumbnail,
   getProgramUrl,
 } from './MainCurationSection';
@@ -25,7 +26,7 @@ const ReviewCurationSection = () => {
 
   return (
     <>
-      <section className="md:gap-y-21 md:mt-22.5 mt-16 flex w-full max-w-[1120px] flex-col gap-y-16">
+      <section className="mt-16 flex w-full max-w-[1120px] flex-col gap-y-16 md:mt-22.5 md:gap-y-21">
         {reviewCurationList.map((curation, index) => (
           <ProgramContainer
             gaItem="home_blogreview"
@@ -34,6 +35,7 @@ const ReviewCurationSection = () => {
             title={curation.curationInfo.title}
             subTitle={curation.curationInfo.subTitle ?? undefined}
             moreUrl={curation.curationInfo.moreUrl ?? undefined}
+            isDeadline={getIsDeadline({ title: curation.curationInfo.title })}
             programs={curation.curationItemList.map((item) => ({
               thumbnail: getProgramThumbnail({
                 type: item.programType,

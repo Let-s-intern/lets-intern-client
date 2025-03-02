@@ -14,18 +14,24 @@ export interface ProgramItemProps extends React.HTMLAttributes<HTMLDivElement> {
   badge?: BadgeProps;
   createdDate?: string;
   category?: string;
+  isDeadline?: boolean;
 }
 
 const ProgramItem = ({ ...props }: ProgramItemProps) => {
   return (
     <>
       <Link
-        className={twMerge('flex w-full flex-col', props.className)}
+        className={twMerge('relative flex w-full flex-col', props.className)}
         href={props.url}
         target={props.url.startsWith('http') ? '_blank' : undefined}
         data-url={props.url}
         data-text={props.title}
       >
+        {props.isDeadline && (
+          <span className="absolute left-2.5 top-2.5 rounded-xxs bg-neutral-10 px-1.5 py-[5px] text-xxsmall12 text-neutral-100">
+            마감임박🔥
+          </span>
+        )}
         <img
           src={props.thumbnail}
           alt="thumbnail"

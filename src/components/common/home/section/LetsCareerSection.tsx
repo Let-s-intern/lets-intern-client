@@ -116,7 +116,7 @@ const LetsCareerSection = () => {
 
   return (
     <>
-      <section className="md:mt-21 mt-16 flex w-full max-w-[1120px] flex-col">
+      <section className="mt-16 flex w-full max-w-[1120px] flex-col md:mt-21">
         {isLoading ? (
           <LoadingContainer />
         ) : (
@@ -130,6 +130,7 @@ const LetsCareerSection = () => {
               </>
             }
             moreUrl="/program?type=LIVE&type=VOD"
+            isDeadline={false}
             programs={data}
             navigation={navigation}
           />

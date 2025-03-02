@@ -44,6 +44,7 @@ const ActiveProgramSection = () => {
             </>
           }
           moreUrl="/program?status=PROCEEDING"
+          isDeadline={false}
           programs={filteredData.map((program) => ({
             thumbnail: program.programInfo.thumbnail ?? '',
             title: program.programInfo.title ?? '',

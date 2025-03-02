@@ -19,6 +19,7 @@ interface ProgramContainerProps {
   showGrid?: boolean;
   gaItem: string;
   gaTitle: string;
+  isDeadline?: boolean;
 }
 
 const ProgramContainer = (props: ProgramContainerProps) => {
@@ -113,7 +114,11 @@ const ProgramContainer = (props: ProgramContainerProps) => {
         >
           {props.programs.map((program, index) => (
             <SwiperSlide key={index}>
-              <ProgramItem {...program} className={props.gaItem} />
+              <ProgramItem
+                {...program}
+                className={props.gaItem}
+                isDeadline={props.isDeadline}
+              />
             </SwiperSlide>
           ))}
         </Swiper>
