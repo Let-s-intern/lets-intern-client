@@ -266,7 +266,7 @@ function BlogList({
                       className="flex items-center gap-1 rounded-xs p-2.5 text-xxsmall12 font-medium"
                     >
                       <BellIcon width={16} height={16} />
-                      <span>공개 예정</span>
+                      <span>알림신청</span>
                     </BaseButton>
                   ) : null
                 }
