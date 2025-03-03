@@ -16,6 +16,8 @@ interface Props {
 }
 
 async function ProgramRecommendCard({ program }: Props) {
+  console.log('program >>', program);
+
   const isProgramExist = program.id || program.ctaTitle;
   if (!isProgramExist) return null;
 
@@ -23,16 +25,19 @@ async function ProgramRecommendCard({ program }: Props) {
 
   async function getProgramInfo() {
     let title: string | undefined;
-    let thumbnail: string = '';
+    let thumbnail = '';
     let ctaLink = program.ctaLink ?? '';
 
     // 관리자가 추천 프로그램을 등록한 경우
     if (program.id) {
       const [type, id] = program.id.split('-');
+      console.log('splited >>', program.id.split('-'));
 
       switch (type) {
         case CHALLENGE:
           const challenge = await fetchChallenge(id);
+          console.log('challenge >>', challenge);
+
           title = challenge.title;
           thumbnail = challenge.thumbnail ?? '';
           ctaLink = `/program/${type.toLowerCase()}/${id}`;
@@ -73,7 +78,6 @@ async function ProgramRecommendCard({ program }: Props) {
 
   return (
     <Link
-      key={program.id}
       href={ctaLink}
       className="programs-center blog_programrec flex justify-between gap-4"
       data-url={ctaLink}
