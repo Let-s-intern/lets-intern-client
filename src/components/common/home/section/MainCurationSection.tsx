@@ -139,7 +139,7 @@ const MainCurationSection = () => {
           <ProgramContainer
             gaItem="curation_card"
             gaTitle={curation.curationInfo.title}
-            key={'reviewCuration' + index}
+            key={'mainCuration' + index}
             title={curation.curationInfo.title}
             subTitle={curation.curationInfo.subTitle ?? undefined}
             moreUrl={curation.curationInfo.moreUrl ?? undefined}
