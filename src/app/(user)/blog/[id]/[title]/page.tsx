@@ -1,6 +1,5 @@
 import { fetchBlogData, fetchRecommendBlogData } from '@/api/blog';
-import { BlogContent, ProgramRecommendItem } from '@/api/blogSchema';
-import { fetchProgramRecommend } from '@/api/program';
+import { BlogContent } from '@/api/blogSchema';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
@@ -81,27 +80,7 @@ const BlogDetailPage = async ({
       (item) => item.ctaTitle !== undefined,
     );
 
-    if (result?.length !== 0) return result;
-
-    const data = await fetchProgramRecommend();
-    const list: ProgramRecommendItem[] = [];
-    const ctaTitles: Record<string, string> = {
-      CAREER_START: '경험 정리부터 이력서 완성까지',
-      PERSONAL_STATEMENT: '합격을 만드는 자소서 작성법',
-      PORTFOLIO: '나를 돋보이게 하는 포트폴리오',
-      PERSONAL_STATEMENT_LARGE_CORP: '합격을 만드는 자소서 작성법',
-    };
-
-    if (data.challengeList.length > 0) {
-      const targets = data.challengeList.slice(0, 3).map((item) => ({
-        id: `${CHALLENGE}-${item.id}`,
-        ctaLink: `/program/${item.programType?.toLowerCase()}/${item.id}`,
-        ctaTitle: ctaTitles[item.challengeType ?? 'CAREER_START'],
-      }));
-      list.push(...targets);
-    }
-
-    return list;
+    if (result && result?.length > 0) return result;
   }
 
   async function getBlogRecommendList() {
