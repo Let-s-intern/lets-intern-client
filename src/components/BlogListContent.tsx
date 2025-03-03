@@ -226,7 +226,6 @@ function BlogList({
                     ? 'https://forms.gle/HshjtnqqXWPQJ5DH6'
                     : `/blog/${blogThumbnailInfo.id}`
                 }
-                rel=""
                 key={`blog-${blogThumbnailInfo.id}`}
                 data-url={`/blog/${blogThumbnailInfo.id}`}
                 data-text={blogThumbnailInfo.title}

@@ -1,12 +1,15 @@
 import { twMerge } from '@/lib/twMerge';
+import Link, { LinkProps } from 'next/link';
 import { ReactNode } from 'react';
 
-interface Props extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+interface Props extends LinkProps {
   title: string;
   displayDateItem?: string;
   superTitle: string;
   buttonItem?: ReactNode;
   thumbnailItem: ReactNode;
+  className?: string;
+  target?: string;
 }
 
 const BlogCard = ({
@@ -15,12 +18,15 @@ const BlogCard = ({
   superTitle,
   buttonItem,
   thumbnailItem,
+  className,
+  target,
   ...restProps
 }: Props) => {
   return (
-    <a
+    <Link
       {...restProps}
-      className={twMerge('flex flex-col gap-2.5', restProps.className)}
+      className={twMerge('flex flex-col gap-2.5', className)}
+      target={target}
     >
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-neutral-70">
         {thumbnailItem}
@@ -41,7 +47,7 @@ const BlogCard = ({
           {buttonItem}
         </div>
       </div>
-    </a>
+    </Link>
   );
 };
 
