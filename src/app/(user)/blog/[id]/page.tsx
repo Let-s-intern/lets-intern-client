@@ -6,12 +6,22 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
   const blog = await fetchBlogData(id);
 
-  redirect(
-    getBlogPathname({
-      id,
-      title: blog.blogDetailInfo.title,
-    }),
-  );
+  try {
+    redirect(
+      getBlogPathname({
+        id,
+        title: blog.blogDetailInfo.title,
+      }),
+    );
+  } catch (err) {
+    console.log(err);
+    redirect(
+      getBlogPathname({
+        id,
+        title: blog.blogDetailInfo.title,
+      }),
+    );
+  }
 };
 
 export default Page;
