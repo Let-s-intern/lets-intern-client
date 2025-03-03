@@ -62,7 +62,8 @@ const HOME_INTRO = {
         ),
         subTitle: '대기업',
         icon: <Intro8 width={44} height={44} />,
-        href: 'type=PERSONAL_STATEMENT_LARGE_CORP',
+        // href: 'type=PERSONAL_STATEMENT_LARGE_CORP',
+        href: 'https://www.letscareer.co.kr/program/challenge/67/%EB%8C%80%EA%B8%B0%EC%97%85-%EA%B3%B5%EC%B1%84-%EC%9E%90%EA%B8%B0%EC%86%8C%EA%B0%9C%EC%84%9C-3%EC%A3%BC-%EC%99%84%EC%84%B1-%EC%B1%8C%EB%A6%B0%EC%A7%80-2%EA%B8%B0',
         gaTitle: '대기업 자기소개서 준비하기',
       },
       {
