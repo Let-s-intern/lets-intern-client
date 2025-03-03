@@ -23,7 +23,9 @@ const MainBannerSection = () => {
   return (
     <>
       {isLoading ? (
-        <LoadingContainer />
+        <div className="mt-16 w-full max-w-[1120px] px-5 md:mt-22.5 xl:px-0">
+          <LoadingContainer />
+        </div>
       ) : !data || !data.bannerList || data.bannerList.length === 0 ? null : (
         <section className="mt-16 w-full max-w-[1120px] px-5 md:mt-22.5 xl:px-0">
           <Swiper
