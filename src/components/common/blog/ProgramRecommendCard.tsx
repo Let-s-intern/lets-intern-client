@@ -16,7 +16,7 @@ interface Props {
 }
 
 async function ProgramRecommendCard({ program }: Props) {
-  console.log('program >>', program);
+  console.log('programRecommend >>', program);
 
   const isProgramExist = program.id || program.ctaTitle;
   if (!isProgramExist) return null;
@@ -31,12 +31,10 @@ async function ProgramRecommendCard({ program }: Props) {
     // 관리자가 추천 프로그램을 등록한 경우
     if (program.id) {
       const [type, id] = program.id.split('-');
-      console.log('splited >>', program.id.split('-'));
 
       switch (type) {
         case CHALLENGE:
           const challenge = await fetchChallenge(id);
-          console.log('challenge >>', challenge);
 
           title = challenge.title;
           thumbnail = challenge.thumbnail ?? '';
