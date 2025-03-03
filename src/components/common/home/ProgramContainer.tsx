@@ -26,7 +26,7 @@ interface ProgramContainerProps {
 const ProgramContainer = (props: ProgramContainerProps) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
 
-  if (props.programs.length < 1) return null;
+  if (!props.navigation && props.programs.length < 1) return null;
 
   return (
     <div className="flex w-full max-w-[1120px] flex-col gap-y-6 md:gap-y-10">
@@ -69,12 +69,18 @@ const ProgramContainer = (props: ProgramContainerProps) => {
         )}
       </div>
       {(!props.navigation && props.programs.length < 1) ||
-      (props.navigation && props.totalPrograms && props.totalPrograms < 1) ? (
-        <EmptyContainer />
+      (props.navigation &&
+        props.totalPrograms &&
+        props.totalPrograms > 0 &&
+        props.programs.length < 1) ? (
+        <EmptyContainer
+          className="h-[201px] md:h-[266px]"
+          text="등록된 콘텐츠가 없습니다."
+        />
       ) : (
         <Swiper
           // program 바뀔 경우 스크롤 위치 초기화 위해 key로 리렌더링 적용
-          key={props.programs[0].title + props.programs.length + '-slide'}
+          key={props.title + '-slide'}
           className="w-full"
           autoplay={{ delay: 2500 }}
           modules={[Grid]}
