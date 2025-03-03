@@ -68,6 +68,9 @@ const BlogDetailPage = async ({
   const willBePublished = dayjs(blog.blogDetailInfo.displayDate).isAfter(
     dayjs(),
   );
+  console.log('게시일자:', blog.blogDetailInfo.displayDate);
+  console.log('발행여부:', willBePublished);
+
   const blogInfo = blog.blogDetailInfo;
   const contentJson: BlogContent = JSON.parse(blogInfo?.content ?? '{}');
   // 구버전은 기존 content에서 렉시컬 내용 가져오기
