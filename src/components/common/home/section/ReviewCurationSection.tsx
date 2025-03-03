@@ -29,7 +29,7 @@ const ReviewCurationSection = () => {
       <section className="mt-16 flex w-full max-w-[1120px] flex-col gap-y-16 md:mt-22.5 md:gap-y-21">
         {reviewCurationList.map((curation, index) => (
           <ProgramContainer
-            gaItem="home_blogreview"
+            gaItem="curation_card"
             gaTitle={curation.curationInfo.title}
             key={'reviewCuration' + index}
             title={curation.curationInfo.title}

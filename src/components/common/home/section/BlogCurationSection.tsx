@@ -28,9 +28,9 @@ const BlogCurationSection = () => {
       <section className="mt-16 flex w-full max-w-[1120px] flex-col gap-y-16 md:mt-24 md:gap-y-21">
         {blogCurationList.map((curation, index) => (
           <ProgramContainer
-            key={'blogCuration' + index}
-            gaItem={'blog_curation_' + curation.curationInfo.curationId}
+            gaItem="curation_card"
             gaTitle={curation.curationInfo.title}
+            key={'blogCuration' + index}
             title={curation.curationInfo.title}
             subTitle={curation.curationInfo.subTitle ?? undefined}
             moreUrl={curation.curationInfo.moreUrl ?? undefined}
