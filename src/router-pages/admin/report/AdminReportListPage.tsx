@@ -125,7 +125,7 @@ function Toolbar() {
 }
 
 const AdminReportListPage = () => {
-  const { data: reportsData } = useGetReportsForAdmin();
+  const { data: reportsData } = useGetReportsForAdmin({});
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { snackbar: setSnackbar } = useAdminSnackbar();

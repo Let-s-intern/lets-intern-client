@@ -1,6 +1,6 @@
 import RadioChecked from '@/assets/icons/radio-checked.svg?react';
 import RadioEmpty from '@/assets/icons/radio-empty.svg?react';
-import { twMerge } from 'tailwind-merge';
+import { twMerge } from '@/lib/twMerge';
 
 interface RadioButtonProps {
   color: string;

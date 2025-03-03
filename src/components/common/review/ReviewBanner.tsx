@@ -1,6 +1,6 @@
 'use client';
 
-import { useBlogListQuery } from '@/api/blog';
+import { BlogType, useBlogListQuery } from '@/api/blog';
 import { useGetReviewCount } from '@/api/review';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -19,8 +19,7 @@ const description = {
       렛츠커리어만의 취업 노하우가 잔뜩 담긴 프로그램에
       <br className="md:hidden" /> 참여한
       <br className="hidden md:block" /> 참여자들의 100% 솔직 후기를 가감 없이
-      <br className="md:hidden" />
-      그대로 보여드립니다.
+      <br className="md:hidden" /> 그대로 보여드립니다.
     </>
   ),
 };
@@ -30,7 +29,7 @@ function ReviewBanner() {
   const { data } = useGetReviewCount();
   const { data: blogData } = useBlogListQuery({
     pageable: { page: 1, size: 0 },
-    type: 'PROGRAM_REVIEWS',
+    types: [BlogType.PROGRAM_REVIEWS],
   });
 
   const reviewsCount =
@@ -47,7 +46,7 @@ function ReviewBanner() {
   type HeadingKey = keyof typeof heading;
 
   return (
-    <header className="relative flex h-[11.125rem] bg-secondary px-5 py-10 md:h-[10.75rem] md:justify-center">
+    <header className="relative flex h-[152px] items-center bg-secondary px-5 md:h-[168px] md:justify-center">
       {/* 본문 */}
       <div className="z-10 flex w-full max-w-[1100px] flex-col gap-1 md:gap-2 md:px-3">
         {/* pathname에 따라 제목 불러오기 */}

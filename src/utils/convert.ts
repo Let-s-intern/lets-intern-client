@@ -1,3 +1,4 @@
+import { CurationLocationType, CurationType } from '@/api/curation';
 import { QuestionType } from '@/api/review';
 import {
   AttendanceResult,
@@ -367,8 +368,44 @@ export const getKeyByValue = (obj: any, value: string) => {
 export const blogCategory: Record<string, string> = {
   JOB_PREPARATION_TIPS: '취준 TIP ',
   PROGRAM_REVIEWS: '프로그램 후기',
-  JOB_SUCCESS_STORIES: '취뽀 후기',
-  WORK_EXPERIENCES: '근무 후기',
-  JUNIOR_STORIES: '주니어 이야기',
   LETSCAREER_NEWS: '렛츠커리어 소식',
+  CAREER_STORIES: '취뽀 & 근무 후기',
+  // JOB_SUCCESS_STORIES: '취뽀 후기', // LEGACY
+  // WORK_EXPERIENCES: '근무 후기', // LEGACY
+  // JUNIOR_STORIES: '주니어 이야기',
+  // JOB_POSTING: '채용 공고',
+};
+
+export const convertCurationLocationTypeToText = (
+  locationType: CurationLocationType,
+) => {
+  switch (locationType) {
+    case 'UNDER_BANNER':
+      return '배너 하단';
+    case 'UNDER_REVIEW':
+      return '리뷰 하단';
+    case 'UNDER_BLOG':
+      return '블로그 하단';
+    default:
+      return '-';
+  }
+};
+
+export const convertCurationTypeToText = (type: CurationType | null) => {
+  switch (type) {
+    case 'CHALLENGE':
+      return '챌린지';
+    case 'LIVE':
+      return '라이브';
+    case 'VOD':
+      return 'VOD';
+    case 'REPORT':
+      return '서류 진단';
+    case 'BLOG':
+      return '블로그';
+    case 'ETC':
+      return '기타';
+    default:
+      return '';
+  }
 };

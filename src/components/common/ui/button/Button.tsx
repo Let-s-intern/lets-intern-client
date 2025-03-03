@@ -1,5 +1,3 @@
-import { useNavigate } from 'react-router-dom';
-
 interface ButtonProps {
   to?: string;
   type?: 'button' | 'submit' | 'reset';
@@ -21,8 +19,6 @@ const Button = ({
   id,
   onClick,
 }: ButtonProps) => {
-  const navigate = useNavigate();
-
   return (
     <button
       type={type}
@@ -35,8 +31,11 @@ const Button = ({
       }`}
       onClick={() => {
         if (disabled) return;
-        onClick && onClick();
-        to !== '' && navigate(to);
+        onClick?.();
+        if (to) {
+          // next react 혼용으로 navigate 사용 불가
+          window.location.href = to;
+        }
       }}
       {...(id && { id })}
     >

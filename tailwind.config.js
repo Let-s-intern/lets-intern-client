@@ -20,6 +20,7 @@ module.exports = {
         xsmall16: ['1rem', { lineHeight: '1.5rem' }],
         xsmall14: ['0.875rem', { lineHeight: '1.25rem' }],
         xxsmall12: ['0.75rem', { lineHeight: '1rem' }],
+        xxsmall10: ['0.625rem', { lineHeight: '1rem' }],
       },
       screens: {
         xs: '390px',
@@ -29,6 +30,20 @@ module.exports = {
         xl: '1280px',
         '2xl': '1440px',
         '3xl': '1600px',
+      },
+      margin: {
+        21: '5.25rem',
+        22: '5.5rem',
+        22.5: '5.625rem',
+        23: '5.75rem',
+        24: '6rem',
+      },
+      width: {
+        15: '3.75rem',
+      },
+      gap: {
+        21: '5.25rem',
+        22.5: '5.625rem',
       },
       colors: {
         primary: {
@@ -122,6 +137,7 @@ module.exports = {
           '0px 0px 12px 0px rgba(255, 255, 255, 0.45)',
           '4px 4px 8px 0px rgba(0, 0, 0, 0.04)',
         ],
+        10: ['0px 0px 10px 0px rgba(0, 0, 0, 0.08)'],
         button:
           '0px 16px 20px 0px rgba(0, 0, 0, 0.12), 0px 8px 16px 0px rgba(0, 0, 0, 0.08), 0px 0px 8px 0px rgba(0, 0, 0, 0.08)',
       },

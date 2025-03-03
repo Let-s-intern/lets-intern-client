@@ -1,6 +1,6 @@
 'use client';
 
-import { useBlogListQuery } from '@/api/blog';
+import { BlogType, useBlogListQuery } from '@/api/blog';
 import { getBlogPathname } from '@/utils/url';
 import LoadingContainer from '../ui/loading/LoadingContainer';
 import MoreHeader from '../ui/MoreHeader';
@@ -9,16 +9,18 @@ import ReviewLinkCard from './ReviewLinkCard';
 function ProgramInterviewSection() {
   const { data, isLoading } = useBlogListQuery({
     pageable: { page: 1, size: 4 },
-    type: 'PROGRAM_REVIEWS',
+    types: [BlogType.PROGRAM_REVIEWS],
   });
 
   return (
     <section className="py-9 md:p-0">
       <MoreHeader
-        title="프로그램 참여자 인터뷰"
         subtitle={data ? `${data?.pageInfo.totalElements}개` : ''}
-        href="/blog/list?category=PROGRAM_REVIEWS"
-      />
+        href="/blog/list?type=PROGRAM_REVIEWS"
+        gaText="프로그램 참여자 인터뷰"
+      >
+        프로그램 참여자 인터뷰
+      </MoreHeader>
       {isLoading ? (
         <LoadingContainer className="h-[45rem] md:h-[24rem]" />
       ) : (

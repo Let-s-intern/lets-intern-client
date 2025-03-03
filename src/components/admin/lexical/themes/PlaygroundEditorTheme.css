@@ -15,6 +15,7 @@
 .PlaygroundEditorTheme__paragraph {
   margin: 0;
   position: relative;
+  font-weight: 300;
 }
 .PlaygroundEditorTheme__quote {
   margin: 0;

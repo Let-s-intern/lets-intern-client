@@ -203,7 +203,7 @@ const ReviewCard = ({
         ) : null}
         <div
           className={twMerge(
-            'mb-4',
+            'mb-[22px]',
             gap === 'normal' ? 'space-y-2' : gap === 'large' ? 'space-y-3' : '',
           )}
         >
@@ -220,7 +220,7 @@ const ReviewCard = ({
 
         <div
           className={twMerge(
-            'mt-auto flex items-center gap-2 text-xxsmall12 md:flex-col md:items-start',
+            'mt-auto flex items-center gap-2 text-xsmall14 md:flex-col md:items-start',
             gap === 'normal' ? 'mb-2' : gap === 'large' ? 'mb-3' : '',
           )}
         >

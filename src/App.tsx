@@ -26,7 +26,7 @@ declare global {
   }
 }
 
-const fontFamily = [
+export const fontFamily = [
   'Pretendard Variable',
   '-apple-system',
   'BlinkMacSystemFont',

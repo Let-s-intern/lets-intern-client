@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import { client } from '@/utils/client';
 import {
+  ChallengeIdSchema,
   challengeSchema,
   CreateChallengeReq,
   CreateLiveReq,
@@ -11,19 +13,27 @@ import {
   getLiveIdSchema,
   getVodIdSchema,
   LiveIdPrimitive,
+  LiveIdSchema,
+  liveListResponseSchema,
   liveTitleSchema,
+  Program,
   programAdminSchema,
   programBannerAdminDetailSchema,
   programBannerAdminListSchema,
   programBannerUserListSchema,
   ProgramClassification,
+  ProgramRecommend,
   programRecommendSchema,
   programSchema,
   ProgramStatus,
+  ProgramStatusEnum,
+  ProgramTypeEnum,
   ProgramTypeUpperCase,
   UpdateChallengeReq,
   UpdateLiveReq,
   UpdateVodReq,
+  VodIdSchema,
+  vodListResponseSchema,
 } from '../schema';
 import { IPageable } from '../types/interface';
 import axios from '../utils/axios';
@@ -88,21 +98,57 @@ export const useUserProgramQuery = ({
 
 export const useGetProgramAdminQueryKey = 'useGetProgramAdminQueryKey';
 
+export const useGetUserProgramQuery = ({
+  pageable,
+  searchParams,
+}: {
+  pageable: IPageable;
+  searchParams: {
+    type?: ProgramTypeUpperCase;
+    status?: ProgramStatus[];
+    classification?: ProgramClassification[];
+    startDate?: string;
+    endDate?: string;
+  };
+}) => {
+  return useQuery({
+    queryKey: [useGetProgramAdminQueryKey, pageable, searchParams],
+    queryFn: async () => {
+      const res = await axios.get(`/program`, {
+        params: {
+          status: searchParams.status?.join(','),
+          classification: searchParams.classification?.join(','),
+          type: searchParams.type,
+          startDate: searchParams.startDate,
+          endDate: searchParams.endDate,
+          ...pageable,
+        },
+      });
+
+      return programSchema.parse(res.data.data);
+    },
+  });
+};
+
 export const useGetProgramAdminQuery = (params: {
   type?: ProgramTypeUpperCase;
   classification?: ProgramClassification;
-  status?: ProgramStatus;
+  status?: ProgramStatus[];
   startDate?: string;
   endDate?: string;
   page: number | string;
   size: number | string;
+  enabled?: boolean;
 }) => {
   return useQuery({
     queryKey: [useGetProgramAdminQueryKey, params],
     queryFn: async () => {
-      const res = await axios.get(`/program/admin`, { params });
+      const res = await axios.get(`/program/admin`, {
+        params: { ...params, status: params.status?.join(',') },
+      });
       return programAdminSchema.parse(res.data.data);
     },
+    enabled: params.enabled,
   });
 };
 
@@ -562,4 +608,131 @@ export const useDeleteProgramBannerMutation = ({
       return onError && onError(error);
     },
   });
+};
+
+export const useGetLiveListQuery = ({
+  typeList,
+  statusList,
+  pageable,
+  enabled = true,
+}: {
+  typeList?: ProgramClassification[];
+  statusList?: ProgramStatus[];
+  pageable: IPageable;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    enabled,
+    queryKey: ['live', 'list', typeList, statusList, pageable],
+    queryFn: async () => {
+      const res = await axios.get('/live', {
+        params: {
+          typeList: typeList?.join(','),
+          statusList: statusList?.join(','),
+          ...pageable,
+        },
+      });
+      return liveListResponseSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const useGetVodListQuery = ({
+  type,
+  pageable,
+}: {
+  type?: ProgramClassification;
+  pageable: IPageable;
+}) => {
+  return useQuery({
+    queryKey: ['vod', 'list', type, pageable],
+    queryFn: async () => {
+      const res = await axios.get('/vod', {
+        params: {
+          type,
+          ...pageable,
+        },
+      });
+      return vodListResponseSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const fetchChallenge = async (
+  id: string | number,
+): Promise<ChallengeIdSchema> => {
+  const data = await client<VodIdSchema>(`/v1//challenge/${id}`, {
+    method: 'GET',
+  });
+  return getChallengeIdSchema.parse(data);
+};
+
+export const fetchVod = async (id: string | number): Promise<VodIdSchema> => {
+  const data = await client<VodIdSchema>(`/v1//vod/${id}`, {
+    method: 'GET',
+  });
+  return getVodIdSchema.parse(data);
+};
+
+export const fetchLive = async (id: string | number): Promise<LiveIdSchema> => {
+  const data = await client<LiveIdSchema>(`/v1//live/${id}`, {
+    method: 'GET',
+  });
+  return getLiveIdSchema.parse(data);
+};
+
+export const fetchProgram = async (params: {
+  type?: ProgramTypeUpperCase[];
+  classification?: ProgramClassification[];
+  status?: ProgramStatus[];
+  startDate?: string;
+  endDate?: string;
+  page: number | string;
+  size: number | string;
+}): Promise<Program> => {
+  const data = await client<Program>('/v1/program', {
+    method: 'GET',
+    params: {
+      ...params,
+      type: params.type?.join(',') ?? '',
+      classification: params.classification?.join(',') ?? '',
+      status: params.status?.join(',') ?? '',
+      page: String(params.page),
+      size: String(params.size),
+    },
+  });
+
+  return programSchema.parse(data);
+};
+
+export const getChallengeByKeyword = async (keyword: string) => {
+  // 챌린지 가져오기
+  const programs = await fetchProgram({
+    page: 1,
+    size: 10,
+    type: [ProgramTypeEnum.enum.CHALLENGE],
+    status: [ProgramStatusEnum.enum.PROCEEDING],
+  });
+
+  const filtered = programs.programList.filter((item) =>
+    item.programInfo.title?.includes(keyword),
+  );
+
+  if (filtered.length === 0) return undefined;
+
+  // 모집 마감일 제일 빠른 챌린지 찾기
+  filtered.sort(
+    (a, b) =>
+      new Date(a.programInfo.deadline ?? '').getTime() -
+      new Date(b.programInfo.deadline ?? '').getTime(),
+  );
+
+  return filtered[0];
+};
+
+export const fetchProgramRecommend = async () => {
+  const data = await client<ProgramRecommend>('/v1/program/recommend', {
+    method: 'GET',
+  });
+  return programRecommendSchema.parse(data);
 };

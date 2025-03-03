@@ -1,13 +1,13 @@
-import { useBlogListQuery } from '@/api/blog';
+import { BlogType, useBlogListQuery } from '@/api/blog';
 
 export default function useGetBlogParticipationReview(size: number) {
   const { data: programReviewsData } = useBlogListQuery({
     pageable: { page: 1, size },
-    type: 'PROGRAM_REVIEWS',
+    types: [BlogType.PROGRAM_REVIEWS],
   });
   const { data: jobSuccessStoriesData } = useBlogListQuery({
     pageable: { page: 1, size },
-    type: 'JOB_SUCCESS_STORIES',
+    types: [BlogType.JOB_SUCCESS_STORIES],
   });
 
   const data = [

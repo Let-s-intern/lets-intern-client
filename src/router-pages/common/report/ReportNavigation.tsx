@@ -1,8 +1,8 @@
 import useSectionObserver from '@/hooks/useSectionObserver';
+import { twMerge } from '@/lib/twMerge';
 import useScrollStore from '@/store/useScrollStore';
 import { NavItem } from '@components/ProgramDetailNavigation';
 import { useEffect, useState } from 'react';
-import { twMerge } from 'tailwind-merge';
 
 export const REPORT_INTRO_ID = 'report-intro';
 export const REPORT_EXAMPLE_ID = 'report-example';

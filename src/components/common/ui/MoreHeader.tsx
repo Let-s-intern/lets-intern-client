@@ -1,25 +1,69 @@
-import Link from 'next/link';
+import clsx from 'clsx';
+import { ReactNode } from 'react';
 
 interface MoreHeaderProps {
-  title: string;
-  subtitle: string;
+  children?: ReactNode;
+  subtitle?: ReactNode;
   href?: string;
+  isBig?: boolean;
+  isVertical?: boolean;
+  gaText: string;
+  hideMoreWhenMobile?: boolean;
 }
 
-const MoreHeader = ({ title, subtitle, href }: MoreHeaderProps) => {
+/**
+ * @param hideMoreWhenMobile 모바일일 때 더보기 숨기기기
+ */
+const MoreHeader = ({
+  children,
+  subtitle,
+  href,
+  isBig,
+  isVertical,
+  gaText,
+  hideMoreWhenMobile,
+}: MoreHeaderProps) => {
   return (
-    <div className="w-full flex items-center justify-between">
-      <div className="flex flex-1 items-center select-none gap-x-2">
-        <h2 className="text-small20 font-semibold">{title}</h2>
-        <p className="text-xsmall14">{subtitle}</p>
+    <div
+      className={clsx(
+        'flex w-full justify-between gap-x-8',
+        isVertical ? 'items-start' : 'items-center',
+      )}
+    >
+      <div
+        className={clsx(
+          'flex flex-1 select-none gap-x-2 text-neutral-0',
+          isVertical ? 'flex-col items-start gap-y-1' : 'items-center',
+        )}
+      >
+        <h2
+          className={clsx(
+            'line-clamp-2 overflow-hidden break-all text-neutral-0',
+            isBig
+              ? 'text-small20 font-bold md:text-medium24'
+              : 'text-small20 font-semibold',
+          )}
+        >
+          {children}
+        </h2>
+        {subtitle && <p className={clsx('text-xsmall14')}>{subtitle}</p>}
       </div>
       {href && (
-        <Link
+        // home에서 program으로 갈 경우 react, 나머지는 next라서 a태그 사용
+        <a
           href={href}
-          className="text-xsmall14 font-medium py-2 pl-3 text-neutral-45"
+          target={href.startsWith('http') ? '_blank' : undefined}
+          className={clsx(
+            'more_btn shrink-0 font-medium text-neutral-45',
+            isBig ? 'text-xsmall16' : 'text-xsmall14',
+            isVertical ? 'mt-0.5' : '',
+            hideMoreWhenMobile ? 'hidden md:block' : '',
+          )}
+          data-text={gaText}
+          data-url={href}
         >
           더보기
-        </Link>
+        </a>
       )}
     </div>
   );

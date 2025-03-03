@@ -1,5 +1,5 @@
+import { twMerge } from '@/lib/twMerge';
 import React from 'react';
-import { twMerge } from 'tailwind-merge';
 
 const ModalButton = ({
   className,

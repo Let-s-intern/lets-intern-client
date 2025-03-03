@@ -2,30 +2,47 @@
 
 import { useState } from 'react';
 
-import AdvantageSection from '@/components/common/home/new/advantage/AdvantageSection';
-import Banner from '@/components/common/home/new/banner/Banner';
 import TopBanner from '@/components/common/home/new/banner/TopBanner';
-import ProgramOverviewSection from '@/components/common/home/new/overview/ProgramOverviewSection';
-import PassReviewSection from '@/components/common/home/new/pass-review/PassReviewSection';
-import ProgramSection from '@/components/common/home/new/program/ProgramSection';
-import ReviewSection from '@/components/common/home/new/review/ReviewSection';
 import Popup from '@/components/common/home/new/ui/Popup';
+import IntroSection from '@components/common/home/section/IntroSection';
+import MainBannerSection from '@components/common/home/section/MainBannerSection';
+
+import ActiveProgramSection from '@components/common/home/section/ActiveProgramSection';
+import BlogCurationSection from '@components/common/home/section/BlogCurationSection';
+import BottomBannerSection from '@components/common/home/section/BottomBannerSection';
+import CurrentBlogSection from '@components/common/home/section/CurrentBlogSection';
+import InterviewSection from '@components/common/home/section/InterviewSection';
+import LetsCareerSection from '@components/common/home/section/LetsCareerSection';
+import LogoPlaySection from '@components/common/home/section/LogoPlaySection';
+import MainCurationSection from '@components/common/home/section/MainCurationSection';
+import ReviewCurationSection from '@components/common/home/section/ReviewCurationSection';
+import ReviewSection from '@components/common/home/section/ReviewSection';
+import 'swiper/css';
+import 'swiper/css/grid';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
 const Home = () => {
   const [isShow, setIsShow] = useState(false);
+
   return (
     <>
       <TopBanner isShow={isShow} setIsShow={setIsShow} />
-      {isShow && <div className="w-full h-20 md:h-10" />}
-      <div className="flex justify-center py-5">
-        <div className="mb-6 flex w-full max-w-[1080px] flex-col gap-16 lg:gap-20">
-          <Banner />
-          <ProgramSection />
-          <ProgramOverviewSection />
-          <AdvantageSection />
-          <PassReviewSection />
-          <ReviewSection />
-        </div>
+      {isShow && <div className="h-20 w-full md:h-14" />}
+      <div className="mb-20 flex w-full flex-col items-center justify-center pt-10 md:mb-44 md:pt-16">
+        <IntroSection />
+        {/* <RoadMapSection /> */}
+        <MainBannerSection />
+        <MainCurationSection />
+        <ActiveProgramSection />
+        <LetsCareerSection />
+        <ReviewSection />
+        <ReviewCurationSection />
+        <LogoPlaySection />
+        <BottomBannerSection />
+        <InterviewSection />
+        <CurrentBlogSection />
+        <BlogCurationSection />
       </div>
       <Popup />
     </>

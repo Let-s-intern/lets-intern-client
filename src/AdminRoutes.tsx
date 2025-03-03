@@ -4,9 +4,6 @@ import ChallengeOperationAdminLayout from './components/admin/challenge/ui/Chall
 import AdminLayout from './components/admin/ui/layout/AdminLayout';
 import { CurrentAdminChallengeProvider } from './context/CurrentAdminChallengeProvider';
 import AdminHome from './router-pages/admin/AdminHome';
-import MainBannerCreate from './router-pages/admin/banner/main-banner/MainBannerCreate';
-import MainBannerEdit from './router-pages/admin/banner/main-banner/MainBannerEdit';
-import MainBanners from './router-pages/admin/banner/main-banner/MainBanners';
 import PopUpBannerCreate from './router-pages/admin/banner/pop-up-banner/PopUpBannerCreate';
 import PopUpBannerEdit from './router-pages/admin/banner/pop-up-banner/PopUpBannerEdit';
 import PopUpBanners from './router-pages/admin/banner/pop-up-banner/PopUpBanners';
@@ -16,10 +13,13 @@ import ProgramBanners from './router-pages/admin/banner/program-banner/ProgramBa
 import TopBarBannerCreate from './router-pages/admin/banner/top-bar-banner/TopBarBannerCreate';
 import TopBarBannerEdit from './router-pages/admin/banner/top-bar-banner/TopBarBannerEdit';
 import TopBarBanners from './router-pages/admin/banner/top-bar-banner/TopBarBanners';
-import BlogCreatePage from './router-pages/admin/BlogCreatePage';
-import BlogEditPage from './router-pages/admin/BlogEditPage';
-import BlogPostListPage from './router-pages/admin/BlogPostListPage';
-import BlogRatingListPage from './router-pages/admin/BlogRatingListPage';
+import BlogBannerCreatePage from './router-pages/admin/blog/BlogBannerCreatePage';
+import BlogBannerEditPage from './router-pages/admin/blog/BlogBannerEditPage';
+import BlogBannerListPage from './router-pages/admin/blog/BlogBannerListPage';
+import BlogCreatePage from './router-pages/admin/blog/BlogCreatePage';
+import BlogEditPage from './router-pages/admin/blog/BlogEditPage';
+import BlogPostListPage from './router-pages/admin/blog/BlogPostListPage';
+import BlogRatingListPage from './router-pages/admin/blog/BlogRatingListPage';
 import ChallengeContents from './router-pages/admin/challenge/ChallengeContents';
 import ChallengeMissionManagement from './router-pages/admin/challenge/ChallengeMissionManagement';
 import ChallengeOperationAttendances from './router-pages/admin/challenge/ChallengeOperationAttendances';
@@ -33,6 +33,15 @@ import ChallengeEdit from './router-pages/admin/ChallengeEdit';
 import CouponCreate from './router-pages/admin/coupon/CouponCreate';
 import CouponEdit from './router-pages/admin/coupon/CouponEdit';
 import Coupons from './router-pages/admin/coupon/Coupons';
+import BottomBannerCreate from './router-pages/admin/home/bottom-banner/BottomBannerCreate';
+import BottomBannerEdit from './router-pages/admin/home/bottom-banner/BottomBannerEdit';
+import BottomBanners from './router-pages/admin/home/bottom-banner/BottomBanners';
+import HomeCurationCreatePage from './router-pages/admin/home/curation/HomeCurationCreatePage';
+import HomeCurationEditPage from './router-pages/admin/home/curation/HomeCurationEditPage';
+import HomeCurationListPage from './router-pages/admin/home/curation/HomeCurationListPage';
+import MainBannerCreate from './router-pages/admin/home/main-banner/MainBannerCreate';
+import MainBannerEdit from './router-pages/admin/home/main-banner/MainBannerEdit';
+import MainBanners from './router-pages/admin/home/main-banner/MainBanners';
 import LiveCreate from './router-pages/admin/LiveCreate';
 import LiveEdit from './router-pages/admin/LiveEdit';
 import ProgramCreate from './router-pages/admin/program/ProgramCreate';
@@ -48,9 +57,9 @@ import AdminChallengeReviewListPage from './router-pages/admin/review/AdminChall
 import AdminLiveReviewListPage from './router-pages/admin/review/AdminLiveReviewListPage';
 import AdminMissionReviewListPage from './router-pages/admin/review/AdminMissionReviewListPage';
 import AdminReportReviewListPage from './router-pages/admin/review/AdminReportReviewListPage';
+import AdminUsersPage from './router-pages/admin/user/AdminUsersPage';
 import UserDetail from './router-pages/admin/user/UserDetail';
 import UserEdit from './router-pages/admin/user/UserEdit';
-import Users from './router-pages/admin/user/Users';
 import VodCreate from './router-pages/admin/VodCreate';
 import VodEdit from './router-pages/admin/VodEdit';
 
@@ -71,7 +80,7 @@ export const getAdminRoutes = () => {
 
       <Route path="users">
         {/* /admin/users */}
-        <Route path="" element={<Users />} />
+        <Route path="" element={<AdminUsersPage />} />
         <Route path=":userId">
           {/* /admin/users/1 */}
           <Route path="" element={<UserDetail />} />
@@ -88,12 +97,24 @@ export const getAdminRoutes = () => {
         {/* /admin/coupons/1/edit */}
         <Route path=":couponId/edit" element={<CouponEdit />} />
       </Route>
-      <Route path="banner">
+      <Route path="home">
+        <Route path="curation">
+          <Route path="" element={<HomeCurationListPage />} />
+          <Route path="create" element={<HomeCurationCreatePage />} />
+          <Route path=":id/edit" element={<HomeCurationEditPage />} />
+        </Route>
         <Route path="main-banners">
           <Route path="" element={<MainBanners />} />
           <Route path="new" element={<MainBannerCreate />} />
           <Route path=":bannerId/edit" element={<MainBannerEdit />} />
         </Route>
+        <Route path="bottom-banners">
+          <Route path="" element={<BottomBanners />} />
+          <Route path="new" element={<BottomBannerCreate />} />
+          <Route path=":bannerId/edit" element={<BottomBannerEdit />} />
+        </Route>
+      </Route>
+      <Route path="banner">
         <Route path="top-bar-banners">
           <Route path="" element={<TopBarBanners />} />
           <Route path="new" element={<TopBarBannerCreate />} />
@@ -158,6 +179,9 @@ export const getAdminRoutes = () => {
       <Route path="blog/create" element={<BlogCreatePage />} />
       <Route path="blog/edit/:id" element={<BlogEditPage />} />
       <Route path="blog/reviews" element={<BlogRatingListPage />} />
+      <Route path="blog/banner" element={<BlogBannerListPage />} />
+      <Route path="blog/banner/create" element={<BlogBannerCreatePage />} />
+      <Route path="blog/banner/edit/:id" element={<BlogBannerEditPage />} />
 
       {/* 서류진단 */}
       <Route path="report/list" element={<AdminReportListPage />} />

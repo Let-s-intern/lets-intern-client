@@ -312,3 +312,63 @@ input[type='number'] {
     display: none; /* Chrome, Safari, Opera*/
   }
 }
+
+.swiper-button-prev,
+.swiper-button-next {
+  @apply hidden h-10 w-10 items-center justify-center rounded-full border border-neutral-80 bg-white/75 md:flex !important;
+}
+
+.swiper-button-prev::after,
+.swiper-button-next::after {
+  @apply text-small20 font-bold text-white !important;
+}
+
+.swiper-button-prev::after {
+  @apply -ml-1;
+}
+
+.swiper-button-next::after {
+  @apply -mr-1;
+}
+
+.swiper-button-disabled,
+.swiper-button-disabled {
+  @apply opacity-70 !important;
+}
+
+.swiper-wrapper {
+  @apply gap-y-12 !important;
+}
+
+.slide-per-auto .swiper-slide {
+  width: auto !important;
+}
+
+.slide-rolling .swiper-wrapper {
+  transition-timing-function: linear;
+}
+
+.speech-bubble {
+  position: relative;
+  border-radius: 0.4em;
+}
+
+.speech-bubble:after {
+  content: '';
+  position: absolute;
+  left: 0.5;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border: 5px solid transparent;
+  border-right-color: var(--after-border-color);
+  border-left: 0;
+  margin-top: -5px;
+  margin-left: -5px;
+}
+
+/* MUI Snackbar 메시지 스타일 */
+.MuiSnackbarContent-message {
+  font-family: 'Pretendard Variable', '-apple-system', 'BlinkMacSystemFont',
+    'system-ui', 'Roboto', 'sans-serif';
+}
