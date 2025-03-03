@@ -36,6 +36,7 @@ import { Dayjs } from 'dayjs';
 import { ChangeEvent, FormEvent, MouseEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+// const maxCtaTextLength = 23;
 const maxTitleLength = 49;
 const maxDescriptionLength = 100;
 const initialBlog = {

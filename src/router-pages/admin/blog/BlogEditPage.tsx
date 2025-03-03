@@ -44,7 +44,7 @@ import {
 } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-const maxCtaTextLength = 23;
+// const maxCtaTextLength = 23;
 const maxTitleLength = 49;
 const maxDescriptionLength = 100;
 const initialBlog = {
