@@ -91,13 +91,11 @@ const ReviewSection = () => {
         className="mt-16 flex w-full max-w-[1120px] flex-col gap-6 px-5 md:mt-36 md:flex-row xl:px-0"
       >
         <div className="flex flex-col md:w-1/2">
-          <span className="text-xsmall16 font-bold text-primary md:text-small20 md:font-semibold">
-            망설이는 순간, 누군가는 한 걸음 앞서갑니다.
-          </span>
-          <div className="mt-1 text-small20 font-bold text-neutral-0 md:mt-2 md:text-xlarge28">
-            렛츠커리어 챌린지는 지금도 진행 중!
-            <br />
-            <div className="flex h-7 overflow-hidden break-keep md:h-9">
+          <div className="text-small20 font-bold text-neutral-0 md:mt-2 md:text-xlarge28">
+            <span className="text-primary">
+              렛츠커리어 챌린지는 지금도 진행 중!
+            </span>
+            <div className="flex h-7 overflow-hidden break-keep md:h-[2.375rem]">
               <div
                 className={`transition-transform delay-500 duration-1000 ease-out ${
                   isVisible ? '-translate-y-full' : 'translate-y-0'

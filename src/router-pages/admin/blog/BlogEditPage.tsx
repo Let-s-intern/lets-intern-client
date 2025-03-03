@@ -21,7 +21,6 @@ import useBlogMenuItems from '@/hooks/useBlogMenuItems';
 import useProgramMenuItems from '@/hooks/useProgramMenuItems';
 import dayjs from '@/lib/dayjs';
 import { blogCategory } from '@/utils/convert';
-import Heading2 from '@components/admin/ui/heading/Heading2';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import {
   Button,
@@ -31,7 +30,6 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
-  TextField,
 } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { isAxiosError } from 'axios';
@@ -389,8 +387,8 @@ const BlogEditPage = () => {
               />
             </div>
 
-            <div className="flex gap-5">
-              {/* 프로그램 추천 */}
+            {/* <div className="flex gap-5">
+              
               <div className="flex-1">
                 <div className="mb-3 flex items-center gap-2">
                   <Heading2>프로그램 추천</Heading2>
@@ -425,7 +423,7 @@ const BlogEditPage = () => {
                         fullWidth
                         onChange={(e) => handleChangeProgramRecommend(e, index)}
                       />
-                      {/* 선택한 프로그램이 있으면 링크 입력란 숨기기 */}
+                      
                       {!content.programRecommend![index].id && (
                         <TextField
                           size="small"
@@ -448,7 +446,7 @@ const BlogEditPage = () => {
                   </span>
                 </div>
               </div>
-              {/* 블로그 추천 */}
+              
               <div className="flex-1">
                 <Heading2 className="mb-3">블로그 추천</Heading2>
                 <div className="flex flex-col gap-3">
@@ -468,7 +466,7 @@ const BlogEditPage = () => {
                   ))}
                 </div>
               </div>
-            </div>
+            </div> */}
 
             <div className="border px-6 py-10">
               <h2 className="mb-2">게시 일자</h2>

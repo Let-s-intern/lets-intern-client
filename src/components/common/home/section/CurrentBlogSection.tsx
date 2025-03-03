@@ -41,8 +41,8 @@ const CurrentBlogSection = () => {
                   ? blogCategory[blog.blogThumbnailInfo.category]
                   : '-',
                 title: blog.blogThumbnailInfo.title || '',
-                date: blog.blogThumbnailInfo.createDate
-                  ? dayjs(blog.blogThumbnailInfo.createDate).format(YYYY_MM_DD)
+                date: blog.blogThumbnailInfo.displayDate
+                  ? dayjs(blog.blogThumbnailInfo.displayDate).format(YYYY_MM_DD)
                   : '-',
                 url: `/blog/${blog.blogThumbnailInfo.id}`,
               }))}
