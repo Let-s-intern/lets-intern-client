@@ -62,7 +62,9 @@ const BlogDetailPage = async ({
   const blog = await fetchBlogData(id);
 
   const blogInfo = blog.blogDetailInfo;
-  const contentJson: BlogContent = JSON.parse(blogInfo?.content ?? '{}');
+  const contentJson: BlogContent = JSON.parse(
+    !blogInfo?.content || blogInfo?.content === '' ? '{}' : blogInfo.content,
+  );
   // 구버전은 기존 content에서 렉시컬 내용 가져오기
   const lexical = contentJson.blogRecommend
     ? contentJson.lexical
