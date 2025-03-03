@@ -191,11 +191,11 @@ const BlogDetailPage = async ({
                         width={20}
                         height={20}
                         src="/logo/logo-gradient.svg"
-                        alt="쥬디 프로필 사진"
+                        alt="렛츠커리어 프로필 사진"
                       />
                     </div>
                     <span className="text-xsmall14 font-semibold text-neutral-0">
-                      쥬디
+                      렛츠커리어
                     </span>
                   </div>
                   {blogInfo.displayDate && (
