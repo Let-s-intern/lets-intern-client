@@ -73,6 +73,8 @@ export const blogDetailInfo = z.object({
   likeCount: z.number().nonnegative().nullable().optional(),
 });
 
+export type BlogDetailInfo = z.infer<typeof blogDetailInfo>;
+
 export const tagSchema = z.object({
   id: z.number(),
   title: z.string().nullable().optional(),
