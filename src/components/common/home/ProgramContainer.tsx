@@ -15,6 +15,7 @@ interface ProgramContainerProps {
   }[];
   subTitle?: string;
   moreUrl?: string;
+  totalPrograms?: number;
   programs: ProgramItemProps[];
   showGrid?: boolean;
   gaItem: string;
@@ -67,7 +68,8 @@ const ProgramContainer = (props: ProgramContainerProps) => {
           </div>
         )}
       </div>
-      {props.programs.length < 1 ? (
+      {(!props.navigation && props.programs.length < 1) ||
+      (props.navigation && props.totalPrograms && props.totalPrograms < 1) ? (
         <EmptyContainer />
       ) : (
         <Swiper
