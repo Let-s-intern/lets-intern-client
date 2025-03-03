@@ -127,7 +127,11 @@ const BlogDetailPage = async ({
 
     return recommendData.blogInfos
       .filter(
+        // 현재 블로그가 아니고
+        // 노출되어 있으며
+        // 게시일자가 과거인 게시글
         (info) =>
+          info.blogThumbnailInfo.id !== Number(id) &&
           info.blogThumbnailInfo.isDisplayed &&
           info.blogThumbnailInfo.displayDate &&
           new Date(info.blogThumbnailInfo.displayDate) <= new Date(),
