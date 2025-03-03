@@ -661,7 +661,7 @@ export const useGetVodListQuery = ({
 export const fetchChallenge = async (
   id: string | number,
 ): Promise<ChallengeIdSchema> => {
-  const data = await client<VodIdSchema>(`/v1//challenge/${id}`, {
+  const data = await client<ChallengeIdSchema>(`/v1/challenge/${id}`, {
     method: 'GET',
   });
   return getChallengeIdSchema.parse(data);
