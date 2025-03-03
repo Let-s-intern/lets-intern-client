@@ -95,8 +95,6 @@ const BlogDetailPage = async ({
       PERSONAL_STATEMENT_LARGE_CORP: '합격을 만드는 자소서 작성법',
     };
 
-    console.log('ProgramRecommendData >>', data);
-
     if (data.challengeList.length > 0) {
       const targets = data.challengeList.slice(0, 3).map((item) => ({
         id: `${CHALLENGE}-${item.id}`,
