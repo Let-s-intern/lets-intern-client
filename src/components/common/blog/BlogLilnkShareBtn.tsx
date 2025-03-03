@@ -25,7 +25,7 @@ function BlogLinkShareBtn({
     <button
       type="button"
       className={twMerge(
-        'flex items-center gap-1.5 rounded-full border border-neutral-80 px-3 py-2',
+        'blog_share flex items-center gap-1.5 rounded-full border border-neutral-80 px-3 py-2',
         className,
       )}
       onClick={async () => {

@@ -239,7 +239,7 @@ const BlogDetailPage = async ({
                 iconHeight={20}
               />
               <BlogKakaoShareBtn
-                className="p-2"
+                className="blog_share p-2"
                 title={blogInfo.title ?? ''}
                 description={blogInfo.description ?? ''}
                 thumbnail={blogInfo.thumbnail ?? ''}
@@ -254,7 +254,7 @@ const BlogDetailPage = async ({
           <HorizontalRule className="-mx-5 h-3 md:hidden" />
           <Link
             href="/blog/list"
-            className="flex w-full items-center justify-center gap-2 py-5 md:rounded-xs md:bg-neutral-95"
+            className="blog_home flex w-full items-center justify-center gap-2 py-5 md:rounded-xs md:bg-neutral-95"
           >
             <p className="text-xsmall14 font-semibold text-neutral-0 md:text-xsmall16 md:font-medium">
               <span className="font-semibold text-primary">블로그 홈</span>{' '}
