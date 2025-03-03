@@ -131,6 +131,9 @@ const LetsCareerSection = () => {
             }
             moreUrl="/program?type=LIVE&type=VOD"
             isDeadline={false}
+            totalPrograms={
+              [...livePrograms, ...guideBookPrograms, ...vodPrograms].length
+            }
             programs={data}
             navigation={navigation}
           />
