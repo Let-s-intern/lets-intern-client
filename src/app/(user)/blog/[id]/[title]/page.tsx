@@ -1,5 +1,6 @@
 import { fetchBlogData, fetchRecommendBlogData } from '@/api/blog';
-import { BlogContent } from '@/api/blogSchema';
+import { BlogContent, ProgramRecommendItem } from '@/api/blogSchema';
+import { fetchProgramRecommend } from '@/api/program';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
@@ -76,31 +77,38 @@ const BlogDetailPage = async ({
   const programRecommendList = await getProgramRecommendList();
 
   async function getProgramRecommendList() {
-    const result = contentJson.programRecommend?.filter(
-      (item) => item.ctaTitle !== undefined,
-    );
+    console.log('content.programRecommend >>', contentJson.programRecommend);
+    const result = contentJson.programRecommend
+      ? contentJson.programRecommend.filter(
+          (item) => item.ctaTitle !== undefined,
+        )
+      : [];
 
-    if (result && result?.length > 0) return result;
+    console.log('result >>', result);
 
-    // const data = await fetchProgramRecommend();
-    // const list: ProgramRecommendItem[] = [];
-    // const ctaTitles: Record<string, string> = {
-    //   CAREER_START: '경험 정리부터 이력서 완성까지',
-    //   PERSONAL_STATEMENT: '합격을 만드는 자소서 작성법',
-    //   PORTFOLIO: '나를 돋보이게 하는 포트폴리오',
-    //   PERSONAL_STATEMENT_LARGE_CORP: '합격을 만드는 자소서 작성법',
-    // };
+    if (result.length > 0) return result;
 
-    // if (data.challengeList.length > 0) {
-    //   const targets = data.challengeList.slice(0, 3).map((item) => ({
-    //     id: `${CHALLENGE}-${item.id}`,
-    //     ctaLink: `/program/${item.programType?.toLowerCase()}/${item.id}`,
-    //     ctaTitle: ctaTitles[item.challengeType ?? 'CAREER_START'],
-    //   }));
-    //   list.push(...targets);
-    // }
+    const data = await fetchProgramRecommend();
+    const list: ProgramRecommendItem[] = [];
+    const ctaTitles: Record<string, string> = {
+      CAREER_START: '경험 정리부터 이력서 완성까지',
+      PERSONAL_STATEMENT: '합격을 만드는 자소서 작성법',
+      PORTFOLIO: '나를 돋보이게 하는 포트폴리오',
+      PERSONAL_STATEMENT_LARGE_CORP: '합격을 만드는 자소서 작성법',
+    };
 
-    // return list;
+    console.log('ProgramRecommendData >>', data);
+
+    if (data.challengeList.length > 0) {
+      const targets = data.challengeList.slice(0, 3).map((item) => ({
+        id: `${CHALLENGE}-${item.id}`,
+        ctaLink: `/program/${item.programType?.toLowerCase()}/${item.id}`,
+        ctaTitle: ctaTitles[item.challengeType ?? 'CAREER_START'],
+      }));
+      list.push(...targets);
+    }
+
+    return list;
   }
 
   async function getBlogRecommendList() {
