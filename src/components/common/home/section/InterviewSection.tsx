@@ -19,7 +19,7 @@ const InterviewSection = () => {
         ) : !data || data.blogInfos.length === 0 ? null : (
           <BlogContainer
             gaItem="home_blogreview"
-            title="렛츠커리어 챌린지부터 합격까지"
+            title="렛츠커리어 챌린지부터\n합격까지"
             gaTitle="렛츠커리어 챌린지부터 합격까지"
             subTitle={
               <>

@@ -18,7 +18,7 @@ const CurrentBlogSection = () => {
         ) : !data || data.blogInfos.length === 0 ? null : (
           <BlogContainer
             gaItem="home_blogrec"
-            title="지금 가장 인기있는 블로그 게시글"
+            title="지금 가장 인기있는\n블로그 게시글"
             gaTitle="지금 가장 인기있는 블로그 게시글"
             subTitle={
               <>
