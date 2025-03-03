@@ -6,7 +6,6 @@ import TopBanner from '@/components/common/home/new/banner/TopBanner';
 import Popup from '@/components/common/home/new/ui/Popup';
 import IntroSection from '@components/common/home/section/IntroSection';
 import MainBannerSection from '@components/common/home/section/MainBannerSection';
-import RoadMapSection from '@components/common/home/section/RoadMapSection';
 
 import ActiveProgramSection from '@components/common/home/section/ActiveProgramSection';
 import BlogCurationSection from '@components/common/home/section/BlogCurationSection';
@@ -32,7 +31,7 @@ const Home = () => {
       {isShow && <div className="h-20 w-full md:h-14" />}
       <div className="mb-20 flex w-full flex-col items-center justify-center pt-10 md:mb-44 md:pt-16">
         <IntroSection />
-        <RoadMapSection />
+        {/* <RoadMapSection /> */}
         <MainBannerSection />
         <MainCurationSection />
         <ActiveProgramSection />
