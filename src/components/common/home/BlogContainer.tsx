@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { Fragment, ReactNode } from 'react';
 import EmptyContainer from '../ui/EmptyContainer';
 import MoreHeader from '../ui/MoreHeader';
 import BlogItem, { BlogItemProps } from './BlogItem';
@@ -22,7 +22,17 @@ const BlogContainer = (props: BlogContainerProps) => {
         isBig
         gaText={props.gaTitle}
       >
-        {props.title}
+        {typeof props.title === 'string' ? (
+          <>
+            {props.title.split('\\n').map((line, index) => (
+              <Fragment key={index}>
+                {line} <br className="md:hidden" />
+              </Fragment>
+            ))}
+          </>
+        ) : (
+          props.title
+        )}
       </MoreHeader>
       {props.blogs.length < 1 ? (
         <EmptyContainer />
