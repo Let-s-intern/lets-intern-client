@@ -19,7 +19,6 @@ async function ProgramRecommendCard({ program }: Props) {
   console.log('programRecommend >>', program);
 
   const isProgramExist = program.id || program.ctaTitle;
-  if (!isProgramExist) return null;
 
   const { title, thumbnail, ctaLink } = await getProgramInfo();
 
@@ -73,6 +72,8 @@ async function ProgramRecommendCard({ program }: Props) {
 
     return { title, thumbnail, ctaLink };
   }
+
+  if (!isProgramExist) return null;
 
   return (
     <Link
