@@ -74,16 +74,14 @@ const BlogDetailPage = async ({
     : blogInfo?.content;
   const blogRecommendList = await getBlogRecommendList();
   const programRecommendList = await getProgramRecommendList();
+  console.log('programRecommendList >>', programRecommendList);
 
   async function getProgramRecommendList() {
-    console.log('content.programRecommend >>', contentJson.programRecommend);
     const result = contentJson.programRecommend
       ? contentJson.programRecommend.filter(
           (item) => item.ctaTitle !== undefined,
         )
       : [];
-
-    console.log('result >>', result);
 
     if (result.length > 0) return result;
 
