@@ -9,6 +9,7 @@ import {
   getBlogTitle,
 } from '@/utils/url';
 import BlogArticle from '@components/common/blog/BlogArticle';
+import Heading2 from '@components/common/blog/BlogHeading2';
 import BlogKakaoShareBtn from '@components/common/blog/BlogKakaoShareBtn';
 import BlogLikeBtn from '@components/common/blog/BlogLikeBtn';
 import BlogLinkShareBtn from '@components/common/blog/BlogLilnkShareBtn';
@@ -249,28 +250,6 @@ const BlogDetailPage = async ({
     </main>
   );
 };
-
-function Heading2({
-  children,
-  className,
-  id,
-}: {
-  children?: ReactNode;
-  className?: string;
-  id?: string;
-}) {
-  return (
-    <h2
-      id={id}
-      className={twMerge(
-        'text-small20 font-semibold text-neutral-0',
-        className,
-      )}
-    >
-      {children}
-    </h2>
-  );
-}
 
 function MoreLink({
   href,
