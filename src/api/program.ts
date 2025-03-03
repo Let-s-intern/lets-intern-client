@@ -668,14 +668,14 @@ export const fetchChallenge = async (
 };
 
 export const fetchVod = async (id: string | number): Promise<VodIdSchema> => {
-  const data = await client<VodIdSchema>(`/v1//vod/${id}`, {
+  const data = await client<VodIdSchema>(`/v1/vod/${id}`, {
     method: 'GET',
   });
   return getVodIdSchema.parse(data);
 };
 
 export const fetchLive = async (id: string | number): Promise<LiveIdSchema> => {
-  const data = await client<LiveIdSchema>(`/v1//live/${id}`, {
+  const data = await client<LiveIdSchema>(`/v1/live/${id}`, {
     method: 'GET',
   });
   return getLiveIdSchema.parse(data);
