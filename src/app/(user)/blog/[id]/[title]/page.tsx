@@ -4,7 +4,7 @@ import { fetchProgramRecommend } from '@/api/program';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
-import { ProgramStatusEnum, ProgramTypeEnum } from '@/schema';
+import { ProgramTypeEnum } from '@/schema';
 import { blogCategory } from '@/utils/convert';
 import {
   getBaseUrlFromServer,
@@ -16,7 +16,6 @@ import BlogLikeBtn from '@components/common/blog/BlogLikeBtn';
 import BlogLinkShareBtn from '@components/common/blog/BlogLilnkShareBtn';
 import BlogRecommendCard from '@components/common/blog/BlogRecommendCard';
 import LexicalContent from '@components/common/blog/LexicalContent';
-import ProgramRecommendCard from '@components/common/blog/ProgramRecommendCard';
 import MoreHeader from '@components/common/ui/MoreHeader';
 import HorizontalRule from '@components/ui/HorizontalRule';
 import { CircleChevronRight } from 'lucide-react';
@@ -102,7 +101,7 @@ const BlogDetailPage = async ({
     if (data.challengeList.length > 0) {
       const targets = data.challengeList.slice(0, 3).map((item) => ({
         id: `${CHALLENGE}-${item.id}`,
-        ctaLink: `/program/${item.programType?.toLowerCase()}/${item.id}`,
+        ctaLink: `/program/${CHALLENGE.toLowerCase()}/${item.id}`,
         ctaTitle: ctaTitles[item.challengeType ?? 'CAREER_START'],
       }));
       list.push(...targets);
@@ -276,7 +275,7 @@ const BlogDetailPage = async ({
         </section>
 
         {/* 프로그램 추천 */}
-        {(programRecommendList ?? []).length > 0 && (
+        {/* {(programRecommendList ?? []).length > 0 && (
           <aside className="w-full px-5 py-9 md:sticky md:top-[100px] md:max-w-[20.5rem] md:rounded-md md:border md:border-neutral-80 md:px-6 md:py-5">
             <Heading2 className="text-neutral-0 md:text-xsmall16">
               렛츠커리어 프로그램 참여하고
@@ -294,7 +293,7 @@ const BlogDetailPage = async ({
               모집 중인 프로그램 보기
             </MoreLink>
           </aside>
-        )}
+        )} */}
       </div>
 
       <HorizontalRule className="h-3 md:hidden" />
