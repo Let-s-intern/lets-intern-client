@@ -65,12 +65,8 @@ const BlogDetailPage = async ({
   const blog = await fetchBlogData(id);
 
   // 공개 예정 여부
-  const willBePublished = dayjs(blog.blogDetailInfo.displayDate).isAfter(
-    dayjs(),
-  );
-  console.log('게시일자:', blog.blogDetailInfo.displayDate);
-  console.log('발행여부:', willBePublished);
-
+  const willBePublished =
+    new Date(blog.blogDetailInfo.displayDate ?? '') > new Date();
   const blogInfo = blog.blogDetailInfo;
   const contentJson: BlogContent = JSON.parse(blogInfo?.content ?? '{}');
   // 구버전은 기존 content에서 렉시컬 내용 가져오기
