@@ -23,15 +23,16 @@ function BlogLikeBtn({ likeCount }: Props) {
 
   /* 로컬 스토리지에서 좋아요 여부 확인 */
   useEffect(() => {
-    if (!id) return;
+    const checkLikedStatus = () => {
+      const value = localStorage.getItem(LIKE);
+      if (value && id) {
+        const likedBlogList = value.split(',');
+        likedBlogs.current = likedBlogList;
+        setAlreadyLike(likedBlogList.includes(id));
+      }
+    };
 
-    const value = localStorage.getItem(LIKE);
-    if (!value) return;
-
-    const likedBlogList = value.split(',');
-
-    likedBlogs.current = likedBlogList; // 1,2,3,4 문자열
-    if (likedBlogList.includes(id)) setAlreadyLike(true);
+    checkLikedStatus();
   }, [id]);
 
   return (
