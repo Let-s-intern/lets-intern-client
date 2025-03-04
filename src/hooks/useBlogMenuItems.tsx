@@ -8,15 +8,19 @@ export default function useBlogMenuItems() {
   });
 
   const blogMenuItems = useMemo(
-    () =>
-      data?.blogInfos.map((info) => (
+    () => [
+      <MenuItem key="null" value="null">
+        선택 안 함
+      </MenuItem>,
+      ...(data?.blogInfos.map((info) => (
         <MenuItem
           key={info.blogThumbnailInfo.id}
           value={info.blogThumbnailInfo.id}
         >
           {`[${info.blogThumbnailInfo.id}] ${info.blogThumbnailInfo.title}`}
         </MenuItem>
-      )),
+      )) ?? []),
+    ],
     [data],
   );
 

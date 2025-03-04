@@ -9,6 +9,7 @@ import {
   PostBlogReqBody,
   PostTag,
   postTagSchema,
+  ProgramRecommendItem,
   TagDetail,
 } from '@/api/blogSchema';
 import { uploadFile } from '@/api/file';
@@ -21,6 +22,7 @@ import useBlogMenuItems from '@/hooks/useBlogMenuItems';
 import useProgramMenuItems from '@/hooks/useProgramMenuItems';
 import dayjs from '@/lib/dayjs';
 import { blogCategory } from '@/utils/convert';
+import Heading2 from '@components/common/blog/BlogHeading2';
 import {
   Button,
   FormControl,
@@ -29,6 +31,7 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
+  TextField,
 } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { isAxiosError } from 'axios';
@@ -56,7 +59,7 @@ const initialContent: BlogContent = {
     ctaTitle: undefined,
     ctaLink: undefined,
   }),
-  blogRecommend: new Array(4).fill(undefined),
+  blogRecommend: new Array(4).fill(null),
 };
 
 const BlogCreatePage = () => {
@@ -155,10 +158,18 @@ const BlogCreatePage = () => {
   ) => {
     setContent((prev) => {
       const list = [...prev.programRecommend!];
-      const item = {
+      const notSelectProgram = e.target.value === 'null';
+      const item: ProgramRecommendItem = {
         ...list[index],
-        [e.target.name]: e.target.value === 'null' ? null : e.target.value,
+        [e.target.name]: e.target.value,
       };
+
+      // 프로그램이 '선택 안 함'이면 CTA 초기화
+      if (e.target.name === 'id' && notSelectProgram) {
+        item.id = null;
+        item.ctaLink = undefined;
+        item.ctaTitle = undefined;
+      }
 
       return {
         ...prev,
@@ -170,6 +181,7 @@ const BlogCreatePage = () => {
       };
     });
   };
+  console.log(content.programRecommend);
 
   const handleChangeBlogRecommend = (
     e: SelectChangeEvent<unknown>,
@@ -177,7 +189,8 @@ const BlogCreatePage = () => {
   ) => {
     setContent((prev) => {
       const list = [...prev.blogRecommend!];
-      list[index] = Number(e.target.value);
+
+      list[index] = e.target.value === 'null' ? null : Number(e.target.value);
 
       return {
         ...prev,
@@ -300,6 +313,7 @@ const BlogCreatePage = () => {
             </div> */}
           </div>
 
+          {/* 태그 설정 */}
           <div className="border px-6 py-10">
             <h2 className="mb-2">태그 설정</h2>
             <TagSelector
@@ -324,7 +338,8 @@ const BlogCreatePage = () => {
             />
           </div>
 
-          {/* <div className="flex gap-5">
+          <div className="flex gap-5">
+            {/* 프로그램 추천 */}
             <div className="flex-1">
               <div className="mb-3 flex items-center gap-2">
                 <Heading2>프로그램 추천</Heading2>
@@ -333,7 +348,7 @@ const BlogCreatePage = () => {
                 </span>
               </div>
               <div className="flex flex-col gap-5">
-                {content.programRecommend!.map((_, index) => (
+                {content.programRecommend!.map((item, index) => (
                   <div key={index} className="flex flex-col gap-3">
                     <FormControl size="small">
                       <InputLabel>프로그램 선택</InputLabel>
@@ -353,6 +368,7 @@ const BlogCreatePage = () => {
                       label={'CTA 소제목' + (index + 1)}
                       placeholder={'CTA 소제목' + (index + 1)}
                       name="ctaTitle"
+                      value={item.ctaTitle}
                       fullWidth
                       onChange={(e) => handleChangeProgramRecommend(e, index)}
                     />
@@ -363,6 +379,7 @@ const BlogCreatePage = () => {
                         label={'CTA 링크' + (index + 1)}
                         placeholder={'CTA 링크' + (index + 1)}
                         name="ctaLink"
+                        value={item.ctaLink}
                         fullWidth
                         onChange={(e) => handleChangeProgramRecommend(e, index)}
                       />
@@ -377,6 +394,7 @@ const BlogCreatePage = () => {
               </div>
             </div>
 
+            {/* 블로그 추천 */}
             <div className="flex-1">
               <Heading2 className="mb-3">블로그 추천</Heading2>
               <div className="flex flex-col gap-3">
@@ -385,6 +403,7 @@ const BlogCreatePage = () => {
                     <InputLabel>블로그 ID {index + 1}</InputLabel>
                     <Select
                       fullWidth
+                      defaultValue="null"
                       size="small"
                       label={'블로그 ID' + (index + 1)}
                       onChange={(e) => handleChangeBlogRecommend(e, index)}
@@ -395,7 +414,7 @@ const BlogCreatePage = () => {
                 ))}
               </div>
             </div>
-          </div> */}
+          </div>
 
           <div className="border px-6 py-10">
             <h2 className="mb-2">게시 일자</h2>
