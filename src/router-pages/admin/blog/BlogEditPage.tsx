@@ -21,6 +21,7 @@ import useBlogMenuItems from '@/hooks/useBlogMenuItems';
 import useProgramMenuItems from '@/hooks/useProgramMenuItems';
 import dayjs from '@/lib/dayjs';
 import { blogCategory } from '@/utils/convert';
+import Heading2 from '@components/common/blog/BlogHeading2';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import {
   Button,
@@ -30,6 +31,7 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
+  TextField,
 } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { isAxiosError } from 'axios';
@@ -194,8 +196,16 @@ const BlogEditPage = () => {
       const list = [...prev.programRecommend!];
       const item = {
         ...list[index],
-        [e.target.name]: e.target.value === 'null' ? null : e.target.value,
+        [e.target.name]: e.target.value,
       };
+      const notSelectProgram = e.target.value === 'null';
+
+      // 프로그램이 '선택 안 함'이면 CTA 초기화
+      if (e.target.name === 'id' && notSelectProgram) {
+        item.id = null;
+        delete item.ctaLink;
+        delete item.ctaTitle;
+      }
 
       return {
         ...prev,
@@ -209,7 +219,7 @@ const BlogEditPage = () => {
   };
 
   const handleChangeBlogRecommend = (
-    e: SelectChangeEvent<number>,
+    e: SelectChangeEvent<number | 'null'>,
     index: number,
   ) => {
     setContent((prev) => {
@@ -387,8 +397,7 @@ const BlogEditPage = () => {
               />
             </div>
 
-            {/* <div className="flex gap-5">
-              
+            <div className="flex gap-5">
               <div className="flex-1">
                 <div className="mb-3 flex items-center gap-2">
                   <Heading2>프로그램 추천</Heading2>
@@ -423,7 +432,7 @@ const BlogEditPage = () => {
                         fullWidth
                         onChange={(e) => handleChangeProgramRecommend(e, index)}
                       />
-                      
+
                       {!content.programRecommend![index].id && (
                         <TextField
                           size="small"
@@ -446,7 +455,7 @@ const BlogEditPage = () => {
                   </span>
                 </div>
               </div>
-              
+
               <div className="flex-1">
                 <Heading2 className="mb-3">블로그 추천</Heading2>
                 <div className="flex flex-col gap-3">
@@ -454,7 +463,7 @@ const BlogEditPage = () => {
                     <FormControl key={index} size="small">
                       <InputLabel>블로그 ID {index + 1}</InputLabel>
                       <Select
-                        value={id ?? ''}
+                        value={id ?? 'null'}
                         fullWidth
                         size="small"
                         label={'블로그 ID' + (index + 1)}
@@ -466,7 +475,7 @@ const BlogEditPage = () => {
                   ))}
                 </div>
               </div>
-            </div> */}
+            </div>
 
             <div className="border px-6 py-10">
               <h2 className="mb-2">게시 일자</h2>

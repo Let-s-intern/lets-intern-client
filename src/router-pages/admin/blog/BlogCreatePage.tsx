@@ -179,7 +179,6 @@ const BlogCreatePage = () => {
       };
     });
   };
-  console.log(content.programRecommend);
 
   const handleChangeBlogRecommend = (
     e: SelectChangeEvent<unknown>,
