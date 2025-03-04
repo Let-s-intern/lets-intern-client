@@ -87,11 +87,16 @@ function BlogList({
   const router = useRouter();
   const isMobile = useMediaQuery('(max-width: 768px)');
 
+  const { data: blogBannerData } = useGetBlogBannerList({
+    page,
+    size: isMobile ? 1 : 2,
+  });
+  const bannerLength = blogBannerData?.blogBannerList.length ?? 0;
+
   const { data, isLoading } = useBlogListQuery({
-    pageable: { page, size: isMobile ? 8 : 16 },
+    pageable: { page, size: isMobile ? 8 - bannerLength : 16 - bannerLength },
     types,
   });
-  const { data: blogBannerData } = useGetBlogBannerList({ page, size: 2 });
 
   if (isLoading) {
     return (
@@ -141,74 +146,71 @@ function BlogList({
         {data?.blogInfos.map(({ blogThumbnailInfo }, index) => {
           /**
            * 블로그 광고 배너 노출
-           * 모바일: 인덱스 2, 5일 때 함께 노출
+           * 모바일: 인덱스 3일 때 함께 노출
            * PC: 인덱스 3, 7일 때 함께 노출
            */
-          // const blogBanners = blogBannerData?.blogBannerList ?? [];
-          // let blogBannerCard = null;
+          const blogBanners = blogBannerData?.blogBannerList ?? [];
+          let blogBannerCard = null;
 
-          // if (
-          //   blogBanners.length > 0 &&
-          //   ((isMobile && index === 2) || (!isMobile && index === 3))
-          // ) {
-          //   blogBannerCard = (
-          //     <BlogCard
-          //       onClick={(e) => {
-          //         e.preventDefault();
-          //         router.push(blogBanners[0].link ?? '');
-          //       }}
-          //       href={blogBanners[0].link ?? ''}
-          //       data-url={blogBanners[0].link ?? ''}
-          //       data-text={blogBanners[0].title ?? ''}
-          //       className="blog_banner cursor-pointer"
-          //       key={blogBanners[0].blogBannerId}
-          //       title={blogBanners[0].title ?? ''}
-          //       superTitle="AD"
-          //       thumbnailItem={
-          //         <img
-          //           className="h-full w-full object-cover"
-          //           src={blogBanners[0].file ?? undefined}
-          //           alt={blogBanners[0].title ?? undefined}
-          //         />
-          //       }
-          //     />
-          //   );
-          // }
+          if (
+            blogBanners.length > 0 &&
+            ((isMobile && index === 3) || (!isMobile && index === 3))
+          ) {
+            blogBannerCard = (
+              <BlogCard
+                onClick={(e) => {
+                  e.preventDefault();
+                  router.push(blogBanners[0].link ?? '');
+                }}
+                href={blogBanners[0].link ?? ''}
+                data-url={blogBanners[0].link ?? ''}
+                data-text={blogBanners[0].title ?? ''}
+                className="blog_banner cursor-pointer"
+                key={blogBanners[0].blogBannerId}
+                title={blogBanners[0].title ?? ''}
+                superTitle="AD"
+                thumbnailItem={
+                  <img
+                    className="h-full w-full object-cover"
+                    src={blogBanners[0].file ?? undefined}
+                    alt={blogBanners[0].title ?? undefined}
+                  />
+                }
+              />
+            );
+          }
 
-          // if (
-          //   blogBanners.length > 1 &&
-          //   ((isMobile && index === 5) || (!isMobile && index === 7))
-          // ) {
-          //   const link = blogBanners[1].link ?? '';
-          //   const title = blogBanners[1].title ?? '';
+          if (blogBanners.length > 1 && !isMobile && index === 7) {
+            const link = blogBanners[1].link ?? '';
+            const title = blogBanners[1].title ?? '';
 
-          //   blogBannerCard = (
-          //     <BlogCard
-          //       onClick={(e) => {
-          //         e.preventDefault();
-          //         router.push(link);
-          //       }}
-          //       href={link}
-          //       data-url={link}
-          //       data-text={title}
-          //       className="blog_banner cursor-pointer"
-          //       key={blogBanners[1].blogBannerId}
-          //       title={title}
-          //       superTitle="AD"
-          //       thumbnailItem={
-          //         <img
-          //           className="h-full w-full object-cover"
-          //           src={blogBanners[1].file ?? undefined}
-          //           alt={title ?? undefined}
-          //         />
-          //       }
-          //     />
-          //   );
-          // }
+            blogBannerCard = (
+              <BlogCard
+                onClick={(e) => {
+                  e.preventDefault();
+                  router.push(link);
+                }}
+                href={link}
+                data-url={link}
+                data-text={title}
+                className="blog_banner cursor-pointer"
+                key={blogBanners[1].blogBannerId}
+                title={title}
+                superTitle="AD"
+                thumbnailItem={
+                  <img
+                    className="h-full w-full object-cover"
+                    src={blogBanners[1].file ?? undefined}
+                    alt={title ?? undefined}
+                  />
+                }
+              />
+            );
+          }
 
           return (
             <Fragment key={blogThumbnailInfo.id}>
-              {/* {blogBannerCard} */}
+              {blogBannerCard}
               <BlogCard
                 className={twMerge(
                   'cursor-pointer',
@@ -226,7 +228,6 @@ function BlogList({
                     ? 'https://forms.gle/HshjtnqqXWPQJ5DH6'
                     : `/blog/${blogThumbnailInfo.id}`
                 }
-                rel=""
                 key={`blog-${blogThumbnailInfo.id}`}
                 data-url={`/blog/${blogThumbnailInfo.id}`}
                 data-text={blogThumbnailInfo.title}

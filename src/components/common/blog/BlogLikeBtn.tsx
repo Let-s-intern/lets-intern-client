@@ -1,9 +1,8 @@
 'use client';
 
 import { usePatchBlogDislike, usePatchBlogLike } from '@/api/blog';
-import useAuthStore from '@/store/useAuthStore';
 import { Heart } from 'lucide-react';
-import { useParams, usePathname } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 const LIKE = 'like';
@@ -15,9 +14,6 @@ interface Props {
 function BlogLikeBtn({ likeCount }: Props) {
   const { id } = useParams<{ id: string }>();
   const likedBlogs = useRef<string[]>([]); // 이미 좋아요한 블로그 id 리스트
-  const pathname = usePathname();
-
-  const { isLoggedIn } = useAuthStore();
   const patchLikeMutation = usePatchBlogLike();
   const patchDislikeMutation = usePatchBlogDislike();
 
@@ -27,11 +23,16 @@ function BlogLikeBtn({ likeCount }: Props) {
 
   /* 로컬 스토리지에서 좋아요 여부 확인 */
   useEffect(() => {
-    const value = localStorage.getItem(LIKE);
-    if (!value) return;
+    const checkLikedStatus = () => {
+      const value = localStorage.getItem(LIKE);
+      if (value && id) {
+        const likedBlogList = value.split(',');
+        likedBlogs.current = likedBlogList;
+        setAlreadyLike(likedBlogList.includes(id));
+      }
+    };
 
-    likedBlogs.current = value.split(','); // 1,2,3,4 문자열
-    if (likedBlogs.current.includes(id)) setAlreadyLike(true);
+    checkLikedStatus();
   }, [id]);
 
   return (

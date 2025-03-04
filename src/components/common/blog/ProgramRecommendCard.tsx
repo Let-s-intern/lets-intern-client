@@ -16,45 +16,51 @@ interface Props {
 }
 
 async function ProgramRecommendCard({ program }: Props) {
-  const isProgramExist = program.id || program.ctaTitle;
-  if (!isProgramExist) return null;
-
+  console.log('programRecommend >>', program);
   const { title, thumbnail, ctaLink } = await getProgramInfo();
+
+  const isProgramAvailable = title && thumbnail !== "" && ctaLink !== "";
 
   async function getProgramInfo() {
     let title: string | undefined;
-    let thumbnail: string = '';
+    let thumbnail = '';
     let ctaLink = program.ctaLink ?? '';
 
     // 관리자가 추천 프로그램을 등록한 경우
     if (program.id) {
-      const [type, id] = program.id.split('-');
+      // 프로그램이 삭제된 경우 예외처리
+      try {
+        const [type, id] = program.id.split('-');
 
-      switch (type) {
-        case CHALLENGE:
-          const challenge = await fetchChallenge(id);
-          title = challenge.title;
-          thumbnail = challenge.thumbnail ?? '';
-          ctaLink = `/program/${type.toLowerCase()}/${id}`;
-          break;
-        case LIVE:
-          const live = await fetchLive(id);
-          title = live.title;
-          thumbnail = live.thumbnail ?? '';
-          ctaLink = `/program/${type.toLowerCase()}/${id}`;
-          break;
-        case VOD:
-          const vod = await fetchVod(id);
-          title = vod.vodInfo.title ?? undefined;
-          thumbnail = vod.vodInfo.thumbnail ?? '';
-          ctaLink = vod.vodInfo.link ?? '';
-          break;
-        default:
-          // type === REPORT
-          const report = await fetchReportId(id);
-          title = report.title ?? undefined;
-          thumbnail = `/images/report/thumbnail-${convertReportTypeToPathname(report.reportType ?? 'RESUME')}.svg`;
-          ctaLink = `/report/landing/${convertReportTypeToPathname(report.reportType ?? 'RESUME')}`;
+        switch (type) {
+          case CHALLENGE:
+            const challenge = await fetchChallenge(id);
+
+            title = challenge.title;
+            thumbnail = challenge.thumbnail ?? '';
+            ctaLink = `/program/${type.toLowerCase()}/${id}`;
+            break;
+          case LIVE:
+            const live = await fetchLive(id);
+            title = live.title;
+            thumbnail = live.thumbnail ?? '';
+            ctaLink = `/program/${type.toLowerCase()}/${id}`;
+            break;
+          case VOD:
+            const vod = await fetchVod(id);
+            title = vod.vodInfo.title ?? undefined;
+            thumbnail = vod.vodInfo.thumbnail ?? '';
+            ctaLink = vod.vodInfo.link ?? '';
+            break;
+          default:
+            // type === REPORT
+            const report = await fetchReportId(id);
+            title = report.title ?? undefined;
+            thumbnail = `/images/report/thumbnail-${convertReportTypeToPathname(report.reportType ?? 'RESUME')}.svg`;
+            ctaLink = `/report/landing/${convertReportTypeToPathname(report.reportType ?? 'RESUME')}`;
+        }
+      } catch (err) {
+        console.error('The program is not available.');
       }
     } else if (program.ctaLink?.startsWith('latest')) {
       // latest:{keyword} 사용한 경우
@@ -71,9 +77,10 @@ async function ProgramRecommendCard({ program }: Props) {
     return { title, thumbnail, ctaLink };
   }
 
+  if (!isProgramAvailable) return null;
+
   return (
     <Link
-      key={program.id}
       href={ctaLink}
       className="programs-center blog_programrec flex justify-between gap-4"
       data-url={ctaLink}

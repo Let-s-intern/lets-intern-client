@@ -1,27 +1,24 @@
 import { fetchBlogData, fetchRecommendBlogData } from '@/api/blog';
 import { BlogContent, ProgramRecommendItem } from '@/api/blogSchema';
 import { fetchProgramRecommend } from '@/api/program';
-import { YYYY_MM_DD } from '@/data/dayjsFormat';
-import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { ProgramStatusEnum, ProgramTypeEnum } from '@/schema';
-import { blogCategory } from '@/utils/convert';
 import {
   getBaseUrlFromServer,
   getBlogPathname,
   getBlogTitle,
 } from '@/utils/url';
+import BlogArticle from '@components/common/blog/BlogArticle';
+import Heading2 from '@components/common/blog/BlogHeading2';
 import BlogKakaoShareBtn from '@components/common/blog/BlogKakaoShareBtn';
 import BlogLikeBtn from '@components/common/blog/BlogLikeBtn';
 import BlogLinkShareBtn from '@components/common/blog/BlogLilnkShareBtn';
 import BlogRecommendCard from '@components/common/blog/BlogRecommendCard';
-import LexicalContent from '@components/common/blog/LexicalContent';
 import ProgramRecommendCard from '@components/common/blog/ProgramRecommendCard';
 import MoreHeader from '@components/common/ui/MoreHeader';
 import HorizontalRule from '@components/ui/HorizontalRule';
 import { CircleChevronRight } from 'lucide-react';
 import { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { ReactNode } from 'react';
 
@@ -64,11 +61,10 @@ const BlogDetailPage = async ({
 
   const blog = await fetchBlogData(id);
 
-  // 공개 예정 여부
-  const willBePublished =
-    new Date(blog.blogDetailInfo.displayDate ?? '') > new Date();
   const blogInfo = blog.blogDetailInfo;
-  const contentJson: BlogContent = JSON.parse(blogInfo?.content ?? '{}');
+  const contentJson: BlogContent = JSON.parse(
+    !blogInfo?.content || blogInfo?.content === '' ? '{}' : blogInfo.content,
+  );
   // 구버전은 기존 content에서 렉시컬 내용 가져오기
   const lexical = contentJson.blogRecommend
     ? contentJson.lexical
@@ -77,11 +73,13 @@ const BlogDetailPage = async ({
   const programRecommendList = await getProgramRecommendList();
 
   async function getProgramRecommendList() {
-    const result = contentJson.programRecommend?.filter(
-      (item) => item.ctaTitle !== undefined,
-    );
+    const result = contentJson.programRecommend
+      ? contentJson.programRecommend.filter(
+          (item) => item.ctaTitle !== undefined,
+        )
+      : [];
 
-    if (result?.length !== 0) return result;
+    if (result.length > 0) return result;
 
     const data = await fetchProgramRecommend();
     const list: ProgramRecommendItem[] = [];
@@ -95,30 +93,40 @@ const BlogDetailPage = async ({
     if (data.challengeList.length > 0) {
       const targets = data.challengeList.slice(0, 3).map((item) => ({
         id: `${CHALLENGE}-${item.id}`,
-        ctaLink: `/program/${item.programType?.toLowerCase()}/${item.id}`,
+        ctaLink: `/program/${CHALLENGE.toLowerCase()}/${item.id}`,
         ctaTitle: ctaTitles[item.challengeType ?? 'CAREER_START'],
       }));
       list.push(...targets);
     }
 
+    console.log('programRecommendList >>', list);
+
     return list;
   }
 
   async function getBlogRecommendList() {
-    const data = await Promise.all(
+    const data = await Promise.allSettled(
       contentJson.blogRecommend
         ?.filter((id) => id !== null)
         ?.map((id) => fetchBlogData(id)) ?? [],
     );
-    const list = data.map((item) => ({
-      id: item.blogDetailInfo.id,
-      title: item.blogDetailInfo.title,
-      category: item.blogDetailInfo.category,
-      thumbnail: item.blogDetailInfo.thumbnail,
-      displayDate: item.blogDetailInfo.displayDate,
-    }));
+    // 노출된 블로그만 추천
+    const list = data.map((item) => {
+      if (
+        item.status === 'fulfilled' &&
+        item.value.blogDetailInfo.isDisplayed
+      ) {
+        return {
+          id: item.value.blogDetailInfo.id,
+          title: item.value.blogDetailInfo.title,
+          category: item.value.blogDetailInfo.category,
+          thumbnail: item.value.blogDetailInfo.thumbnail,
+          displayDate: item.value.blogDetailInfo.displayDate,
+        };
+      }
+    });
 
-    if (list.length !== 0) return list;
+    if (list.length > 0) return list;
 
     const recommendData = await fetchRecommendBlogData({
       pageable: { page: 1, size: 10 },
@@ -150,79 +158,7 @@ const BlogDetailPage = async ({
       <div className="flex flex-col items-center md:flex-row md:items-start md:gap-20">
         {/* 본문 */}
         <section className="w-full px-5 md:px-0">
-          <article>
-            {/* 썸네일 */}
-            <div className="relative mb-8 h-[16rem] overflow-hidden rounded-md bg-neutral-95 md:h-[25.5rem]">
-              <Image
-                className="object-contain"
-                priority
-                fill
-                src={blogInfo.thumbnail ?? ''}
-                alt="블로그 썸네일"
-                sizes="(max-width: 768px) 100vw, 26rem"
-              />
-            </div>
-
-            {/* 블로그 헤더 */}
-            <div className="mb-7 flex flex-col gap-y-4">
-              {/* 제목 */}
-              <div>
-                {blogInfo.category && (
-                  <Heading2 className="mb-1.5 text-primary" id="blog-category">
-                    {blogCategory[blogInfo.category]}
-                  </Heading2>
-                )}
-                <h1 className="line-clamp-3 text-xlarge28 font-bold text-neutral-0 md:line-clamp-2">
-                  {blogInfo.title}{' '}
-                  {!blogInfo.isDisplayed && (
-                    <span className="text-xsmall14 text-system-error">
-                      (비공개)
-                    </span>
-                  )}
-                </h1>
-              </div>
-
-              <div className="flex items-center justify-between">
-                {/* 게시 일자 */}
-                <div className="flex items-center gap-3 md:gap-4">
-                  <div className="flex items-center gap-2">
-                    <div className="flex h-7 w-7 justify-center overflow-hidden rounded-full">
-                      <Image
-                        width={20}
-                        height={20}
-                        src="/logo/logo-gradient.svg"
-                        alt="렛츠커리어 프로필 사진"
-                      />
-                    </div>
-                    <span className="text-xsmall14 font-semibold text-neutral-0">
-                      렛츠커리어
-                    </span>
-                  </div>
-                  {blogInfo.displayDate && (
-                    <p className="text-xsmall14 text-neutral-35 md:text-xsmall16">
-                      {dayjs(blogInfo.displayDate).format(YYYY_MM_DD)}{' '}
-                      {willBePublished ? '공개 예정' : '작성'}
-                    </p>
-                  )}
-                </div>
-                {/* 공유 버튼 */}
-                <BlogLinkShareBtn />
-              </div>
-            </div>
-
-            {/* 블로그 본문 */}
-            {willBePublished ? (
-              <p className="py-16 text-center">
-                아직 공개되지 않은 블로그입니다 🫥
-              </p>
-            ) : (
-              lexical && (
-                <div className="w-full break-all text-xsmall16">
-                  <LexicalContent node={JSON.parse(lexical as string).root} />
-                </div>
-              )
-            )}
-          </article>
+          <BlogArticle blogInfo={blogInfo} lexical={lexical} />
 
           <section className="mb-9 mt-10 flex items-center justify-between md:mb-6">
             {/* 좋아요 */}
@@ -304,9 +240,9 @@ const BlogDetailPage = async ({
             이런 글도 좋아하실 거예요.
           </MoreHeader>
           <div className="mb-6 mt-5 grid grid-cols-1 gap-6 md:mt-6 md:grid-cols-4 md:items-start md:gap-5">
-            {blogRecommendList.map((blog) => (
-              <BlogRecommendCard key={blog.id} blog={blog} />
-            ))}
+            {blogRecommendList.map(
+              (blog) => blog && <BlogRecommendCard key={blog.id} blog={blog} />,
+            )}
           </div>
           <MoreLink href="/blog/list" className="md:hidden">
             더 많은 블로그 글 보기
@@ -324,28 +260,6 @@ const BlogDetailPage = async ({
     </main>
   );
 };
-
-function Heading2({
-  children,
-  className,
-  id,
-}: {
-  children?: ReactNode;
-  className?: string;
-  id?: string;
-}) {
-  return (
-    <h2
-      id={id}
-      className={twMerge(
-        'text-small20 font-semibold text-neutral-0',
-        className,
-      )}
-    >
-      {children}
-    </h2>
-  );
-}
 
 function MoreLink({
   href,

@@ -23,7 +23,7 @@ export interface ProgramRecommendItem {
 export interface BlogContent {
   lexical?: string;
   programRecommend?: ProgramRecommendItem[];
-  blogRecommend?: number[]; // 블로그 id 배열,
+  blogRecommend?: (number | null)[]; // 블로그 id 배열,
 }
 
 export interface PatchBlogReqBody {
@@ -72,6 +72,8 @@ export const blogDetailInfo = z.object({
   lastModifiedDate: z.string().nullable().optional(),
   likeCount: z.number().nonnegative().nullable().optional(),
 });
+
+export type BlogDetailInfo = z.infer<typeof blogDetailInfo>;
 
 export const tagSchema = z.object({
   id: z.number(),
