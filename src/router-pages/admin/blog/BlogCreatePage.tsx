@@ -56,8 +56,6 @@ const initialBlog = {
 const initialContent: BlogContent = {
   programRecommend: Array(4).fill({
     id: null,
-    ctaTitle: undefined,
-    ctaLink: undefined,
   }),
   blogRecommend: new Array(4).fill(null),
 };
@@ -167,8 +165,8 @@ const BlogCreatePage = () => {
       // 프로그램이 '선택 안 함'이면 CTA 초기화
       if (e.target.name === 'id' && notSelectProgram) {
         item.id = null;
-        item.ctaLink = undefined;
-        item.ctaTitle = undefined;
+        delete item.ctaLink;
+        delete item.ctaTitle;
       }
 
       return {
@@ -372,7 +370,7 @@ const BlogCreatePage = () => {
                       fullWidth
                       onChange={(e) => handleChangeProgramRecommend(e, index)}
                     />
-
+                    {/* 프로그램 '선택 안 함'일때만 표시 */}
                     {!content.programRecommend![index].id && (
                       <TextField
                         size="small"
