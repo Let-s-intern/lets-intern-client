@@ -409,7 +409,7 @@ export const useGetAdminBlogBanner = (id: number) => {
 
 export const useGetBlogBannerList = (pageable: IPageable) => {
   return useQuery({
-    queryKey: ['useGetBlogBannerList', pageable.page],
+    queryKey: ['useGetBlogBannerList', pageable],
     queryFn: async () => {
       const res = await axios.get('/blog-banner', { params: pageable });
       return blogBannerListSchema.parse(res.data.data);
