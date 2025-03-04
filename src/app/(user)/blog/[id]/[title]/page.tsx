@@ -105,18 +105,26 @@ const BlogDetailPage = async ({
   }
 
   async function getBlogRecommendList() {
-    const data = await Promise.all(
+    const data = await Promise.allSettled(
       contentJson.blogRecommend
         ?.filter((id) => id !== null)
         ?.map((id) => fetchBlogData(id)) ?? [],
     );
-    const list = data.map((item) => ({
-      id: item.blogDetailInfo.id,
-      title: item.blogDetailInfo.title,
-      category: item.blogDetailInfo.category,
-      thumbnail: item.blogDetailInfo.thumbnail,
-      displayDate: item.blogDetailInfo.displayDate,
-    }));
+    // 노출된 블로그만 추천
+    const list = data.map((item) => {
+      if (
+        item.status === 'fulfilled' &&
+        item.value.blogDetailInfo.isDisplayed
+      ) {
+        return {
+          id: item.value.blogDetailInfo.id,
+          title: item.value.blogDetailInfo.title,
+          category: item.value.blogDetailInfo.category,
+          thumbnail: item.value.blogDetailInfo.thumbnail,
+          displayDate: item.value.blogDetailInfo.displayDate,
+        };
+      }
+    });
 
     if (list.length > 0) return list;
 
@@ -232,9 +240,9 @@ const BlogDetailPage = async ({
             이런 글도 좋아하실 거예요.
           </MoreHeader>
           <div className="mb-6 mt-5 grid grid-cols-1 gap-6 md:mt-6 md:grid-cols-4 md:items-start md:gap-5">
-            {blogRecommendList.map((blog) => (
-              <BlogRecommendCard key={blog.id} blog={blog} />
-            ))}
+            {blogRecommendList.map(
+              (blog) => blog && <BlogRecommendCard key={blog.id} blog={blog} />,
+            )}
           </div>
           <MoreLink href="/blog/list" className="md:hidden">
             더 많은 블로그 글 보기

@@ -23,7 +23,7 @@ export interface ProgramRecommendItem {
 export interface BlogContent {
   lexical?: string;
   programRecommend?: ProgramRecommendItem[];
-  blogRecommend?: number[]; // 블로그 id 배열,
+  blogRecommend?: (number | null)[]; // 블로그 id 배열,
 }
 
 export interface PatchBlogReqBody {
