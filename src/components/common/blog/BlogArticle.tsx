@@ -14,7 +14,9 @@ interface Props {
 
 export default function BlogArticle({ blogInfo, lexical }: Props) {
   // 공개 예정 여부
-  const willBePublished = dayjs(blogInfo.displayDate).isAfter(dayjs());
+  const willBePublished = dayjs(blogInfo.displayDate).isAfter(
+    dayjs().tz('Asia/Seoul'),
+  );
   console.log('displayDate >>', blogInfo.displayDate);
   console.log('dayjs >>', dayjs());
   console.log('willBePublished >>', willBePublished);
