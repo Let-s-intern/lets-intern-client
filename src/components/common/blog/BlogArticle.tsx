@@ -1,3 +1,5 @@
+'use client';
+
 import { BlogDetailInfo } from '@/api/blogSchema';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
@@ -14,12 +16,7 @@ interface Props {
 
 export default function BlogArticle({ blogInfo, lexical }: Props) {
   // 공개 예정 여부
-  const willBePublished = dayjs(blogInfo.displayDate).isAfter(
-    dayjs().tz('Asia/Seoul'),
-  );
-  console.log('displayDate >>', blogInfo.displayDate);
-  console.log('dayjs >>', dayjs());
-  console.log('willBePublished >>', willBePublished);
+  const willBePublished = dayjs(blogInfo.displayDate).isAfter(dayjs());
 
   return (
     <article>
