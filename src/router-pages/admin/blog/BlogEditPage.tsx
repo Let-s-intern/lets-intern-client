@@ -207,6 +207,8 @@ const BlogEditPage = () => {
         delete item.ctaTitle;
       }
 
+      console.log(item);
+
       return {
         ...prev,
         programRecommend: [
@@ -425,7 +427,7 @@ const BlogEditPage = () => {
                       </FormControl>
                       <TextField
                         size="small"
-                        value={item.ctaTitle}
+                        value={item.ctaTitle ?? ''}
                         label={'CTA 소제목' + (index + 1)}
                         placeholder={'CTA 소제목' + (index + 1)}
                         name="ctaTitle"
@@ -436,7 +438,7 @@ const BlogEditPage = () => {
                       {!content.programRecommend![index].id && (
                         <TextField
                           size="small"
-                          value={item.ctaLink}
+                          value={item.ctaLink ?? ''}
                           label={'CTA 링크' + (index + 1)}
                           placeholder={'CTA 링크' + (index + 1)}
                           name="ctaLink"

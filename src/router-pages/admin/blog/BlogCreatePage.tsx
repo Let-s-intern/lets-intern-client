@@ -365,7 +365,7 @@ const BlogCreatePage = () => {
                       label={'CTA 소제목' + (index + 1)}
                       placeholder={'CTA 소제목' + (index + 1)}
                       name="ctaTitle"
-                      value={item.ctaTitle}
+                      value={item.ctaTitle ?? ''}
                       fullWidth
                       onChange={(e) => handleChangeProgramRecommend(e, index)}
                     />
@@ -376,7 +376,7 @@ const BlogCreatePage = () => {
                         label={'CTA 링크' + (index + 1)}
                         placeholder={'CTA 링크' + (index + 1)}
                         name="ctaLink"
-                        value={item.ctaLink}
+                        value={item.ctaLink ?? ''}
                         fullWidth
                         onChange={(e) => handleChangeProgramRecommend(e, index)}
                       />
