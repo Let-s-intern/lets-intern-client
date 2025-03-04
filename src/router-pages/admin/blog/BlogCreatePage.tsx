@@ -341,7 +341,7 @@ const BlogCreatePage = () => {
               <div className="mb-3 flex items-center gap-2">
                 <Heading2>프로그램 추천</Heading2>
                 <span className="text-xsmall14 text-neutral-40">
-                  *모집중, 모집예정인 프로그램만 불러옵니다.
+                  *노출된 프로그램 중 모집중, 모집예정인 프로그램만 불러옵니다.
                 </span>
               </div>
               <div className="flex flex-col gap-5">

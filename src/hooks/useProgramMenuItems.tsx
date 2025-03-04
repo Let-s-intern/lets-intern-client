@@ -18,14 +18,17 @@ export default function useProgramMenuItems() {
       <MenuItem key="null" value="null">
         선택 안 함
       </MenuItem>,
-      ...(data?.programList.map((program) => (
-        <MenuItem
-          key={program.programInfo.programType + program.programInfo.id}
-          value={`${program.programInfo.programType}-${program.programInfo.id}`}
-        >
-          {`[${newProgramTypeToText[program.programInfo.programType]}/${programStatusToText[program.programInfo.programStatusType]}] ${program.programInfo.title}`}
-        </MenuItem>
-      )) ?? []),
+      ...(data?.programList.map((program) => {
+        if (program.programInfo.isVisible)
+          return (
+            <MenuItem
+              key={program.programInfo.programType + program.programInfo.id}
+              value={`${program.programInfo.programType}-${program.programInfo.id}`}
+            >
+              {`[${newProgramTypeToText[program.programInfo.programType]}/${programStatusToText[program.programInfo.programStatusType]}] ${program.programInfo.title}`}
+            </MenuItem>
+          );
+      }) ?? []),
     ],
     [data],
   );
