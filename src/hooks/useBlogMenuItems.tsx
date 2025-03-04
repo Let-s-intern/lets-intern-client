@@ -12,14 +12,22 @@ export default function useBlogMenuItems() {
       <MenuItem key="null" value="null">
         선택 안 함
       </MenuItem>,
-      ...(data?.blogInfos.map((info) => (
-        <MenuItem
-          key={info.blogThumbnailInfo.id}
-          value={info.blogThumbnailInfo.id}
-        >
-          {`[${info.blogThumbnailInfo.id}] ${info.blogThumbnailInfo.title}`}
-        </MenuItem>
-      )) ?? []),
+      ...(data?.blogInfos
+        .filter(
+          (info) =>
+            // 공개된 블로그이고, 게시일자가 있으며, 게시일이 과거인 블로그
+            info.blogThumbnailInfo.isDisplayed &&
+            info.blogThumbnailInfo.displayDate &&
+            new Date(info.blogThumbnailInfo.displayDate) <= new Date(),
+        )
+        .map((info) => (
+          <MenuItem
+            key={info.blogThumbnailInfo.id}
+            value={info.blogThumbnailInfo.id}
+          >
+            {`[${info.blogThumbnailInfo.id}] ${info.blogThumbnailInfo.title}`}
+          </MenuItem>
+        )) ?? []),
     ],
     [data],
   );
