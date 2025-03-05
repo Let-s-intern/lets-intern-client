@@ -8,6 +8,7 @@ import {
   SerializedTableNode,
   SerializedTableRowNode,
 } from '@lexical/table';
+import clsx from 'clsx';
 import {
   SerializedLexicalNode,
   SerializedParagraphNode,
@@ -296,7 +297,10 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       const style = parseStyle(_node.style);
 
       return (
-        <span className={className.trim()} style={style}>
+        <span
+          className={clsx(className.trim(), 'leading-[25px]')}
+          style={style}
+        >
           {_node.text}
         </span>
       );
