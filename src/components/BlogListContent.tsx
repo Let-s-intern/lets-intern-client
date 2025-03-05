@@ -158,10 +158,6 @@ function BlogList({
           ) {
             blogBannerCard = (
               <BlogCard
-                onClick={(e) => {
-                  e.preventDefault();
-                  router.push(blogBanners[0].link ?? '');
-                }}
                 href={blogBanners[0].link ?? ''}
                 data-url={blogBanners[0].link ?? ''}
                 data-text={blogBanners[0].title ?? ''}
@@ -186,10 +182,6 @@ function BlogList({
 
             blogBannerCard = (
               <BlogCard
-                onClick={(e) => {
-                  e.preventDefault();
-                  router.push(link);
-                }}
                 href={link}
                 data-url={link}
                 data-text={title}
@@ -295,7 +287,6 @@ function BlogRecommendList() {
   const { data, isLoading } = useBlogListQuery({
     pageable: { page: 1, size: 10 },
   });
-  const router = useRouter();
   // 공개된 블로그 중 최신 게시글 4개 추천
   const displayedBlogblogInfos = useMemo(
     () =>
@@ -322,11 +313,7 @@ function BlogRecommendList() {
               ? blogCategory[blogThumbnailInfo.category]
               : '전체'
           }
-          href={`/blog/${blogThumbnailInfo.id}`}
-          onClick={(e) => {
-            e.preventDefault();
-            router.push(`/blog/${blogThumbnailInfo.id}`);
-          }}
+          href={`/blog/${blogThumbnailInfo.id}/${encodeURIComponent(blogThumbnailInfo.title ?? '')}`}
           data-url={`/blog/${blogThumbnailInfo.id}`}
           data-text={blogThumbnailInfo.title}
           className="blog_empty_recommended cursor-pointer"
