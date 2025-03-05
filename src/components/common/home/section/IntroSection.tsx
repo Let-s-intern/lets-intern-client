@@ -14,12 +14,12 @@ import { ReactNode, useState } from 'react';
 
 const HOME_INTRO = {
   description: (
-    <span className="text-xsmall16 font-bold text-primary md:text-medium22">
+    <span className="text-xsmall16 font-semibold text-primary md:text-medium22">
       취업 준비, 어디까지 완성되었나요?
     </span>
   ),
   title: (
-    <h1 className="text-medium24 font-semibold text-neutral-0 md:text-xxlarge32 md:font-bold">
+    <h1 className="text-medium24 font-bold text-neutral-0 md:text-xxlarge32 md:font-semibold">
       서류 작성부터 피드백, 면접까지
       <br />
       지금 나에게 필요한
@@ -244,7 +244,7 @@ const IntroSection = () => {
   return (
     <>
       <section className="flex w-full max-w-[1120px] flex-col gap-y-9 px-5 md:gap-y-12 xl:px-0">
-        <div className="flex flex-col gap-y-1 text-center">
+        <div className="flex flex-col gap-y-1 text-center md:gap-y-2">
           {HOME_INTRO.description}
           {HOME_INTRO.title}
         </div>
