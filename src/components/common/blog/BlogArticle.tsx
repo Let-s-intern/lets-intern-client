@@ -1,4 +1,4 @@
-'use client';
+'use client'; // 클라이언트 timezone을 사용하기 위함
 
 import { BlogDetailInfo } from '@/api/blogSchema';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
