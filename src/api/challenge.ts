@@ -6,11 +6,14 @@ import {
   attendances,
   AttendanceStatus,
   ChallengeIdPrimitive,
+  challengeListSchema,
   challengeTitleSchema,
   ChallengeType,
   faqSchema,
   getChallengeIdPrimitiveSchema,
   getChallengeIdSchema,
+  ProgramClassification,
+  ProgramStatus,
   reviewTotalSchema,
 } from '../schema';
 import axios from '../utils/axios';
@@ -220,6 +223,34 @@ export const useGetActiveChallenge = (type: ChallengeType) => {
         },
       });
       return activeChallengeResponse.parse(res.data.data);
+    },
+  });
+};
+
+// 챌린지 목록 조회
+export const useGetChallengeList = ({
+  typeList,
+  statusList,
+  type,
+  pageable,
+}: {
+  typeList?: ProgramClassification[];
+  statusList?: ProgramStatus[];
+  type?: ChallengeType;
+  pageable?: { page: number; size: number };
+}) => {
+  return useQuery({
+    queryKey: ['challenge', typeList, statusList, type, pageable],
+    queryFn: async () => {
+      const res = await axios.get('/challenge', {
+        params: {
+          typeList,
+          statusList,
+          type,
+          pageable,
+        },
+      });
+      return challengeListSchema.parse(res.data.data);
     },
   });
 };

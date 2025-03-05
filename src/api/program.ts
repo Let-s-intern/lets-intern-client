@@ -3,7 +3,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { client } from '@/utils/client';
 import {
   ChallengeIdSchema,
-  challengeSchema,
   CreateChallengeReq,
   CreateLiveReq,
   CreateVodReq,
@@ -158,23 +157,6 @@ export const useGetProgramRecommend = () => {
     queryFn: async () => {
       const res = await axios.get(`/program/recommend`);
       return programRecommendSchema.parse(res.data.data);
-    },
-  });
-};
-
-export const useGetChallengeListQuery = ({
-  pageable,
-  enabled = true,
-}: {
-  pageable: IPageable;
-  enabled?: boolean;
-}) => {
-  return useQuery({
-    enabled,
-    queryKey: ['useGetChallengeListQuery'],
-    queryFn: async () => {
-      const res = await axios.get('/challenge', { params: pageable });
-      return challengeSchema.parse(res.data.data);
     },
   });
 };
