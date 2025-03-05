@@ -1,4 +1,5 @@
 import { useGetUserProgramQuery } from '@/api/program';
+import dayjs from '@/lib/dayjs';
 import { useMemo } from 'react';
 import ProgramContainer from '../ProgramContainer';
 import {
@@ -25,6 +26,12 @@ const ActiveProgramSection = () => {
           p.programInfo.programType === 'CHALLENGE' ||
           p.programInfo.programType === 'LIVE',
       )
+      .sort((a, b) => {
+        return (
+          dayjs(a.programInfo.deadline).unix() -
+          dayjs(b.programInfo.deadline).unix()
+        );
+      })
       .slice(0, 10);
   }, [data]);
 
