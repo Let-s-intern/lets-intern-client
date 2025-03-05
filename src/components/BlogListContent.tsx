@@ -226,7 +226,7 @@ function BlogList({
                 href={
                   willBePublished(blogThumbnailInfo.displayDate ?? '')
                     ? 'https://forms.gle/HshjtnqqXWPQJ5DH6'
-                    : `/blog/${blogThumbnailInfo.id}`
+                    : `/blog/${blogThumbnailInfo.id}/${encodeURIComponent(blogThumbnailInfo.title ?? '')}`
                 }
                 key={`blog-${blogThumbnailInfo.id}`}
                 data-url={`/blog/${blogThumbnailInfo.id}`}
@@ -276,6 +276,7 @@ function BlogList({
           );
         })}
       </div>
+
       {data?.pageInfo && (
         <MuiPagination
           className="flex justify-center"

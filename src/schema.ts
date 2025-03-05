@@ -103,6 +103,23 @@ export type ProgramAdminClassification = z.infer<
   typeof ProgramAdminClassificationEnum
 >;
 
+export const challengeListItemSchema = z.object({
+  id: z.number(),
+  title: z.string().nullable().optional(),
+  shortDesc: z.string().nullable().optional(),
+  thumbnail: z.string().nullable().optional(),
+  startDate: z.string().nullable().optional(),
+  endDate: z.string().nullable().optional(),
+  beginning: z.string().nullable().optional(),
+  deadline: z.string().nullable().optional(),
+  createDate: z.string(),
+});
+
+export const challengeListSchema = z.object({
+  programList: z.array(challengeListItemSchema),
+  pageInfo,
+});
+
 export const challengePriceType = z.union([
   z.literal('CHARGE'),
   z.literal('REFUND'),

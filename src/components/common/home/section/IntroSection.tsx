@@ -1,4 +1,4 @@
-import { useGetActiveChallenge } from '@/api/challenge';
+import { useGetChallengeList } from '@/api/challenge';
 import { convertReportTypeToLandingPath } from '@/api/report';
 import Intro1 from '@/assets/graphic/home/intro/1.svg?react';
 import Intro2 from '@/assets/graphic/home/intro/2.svg?react';
@@ -14,12 +14,12 @@ import { ReactNode, useState } from 'react';
 
 const HOME_INTRO = {
   description: (
-    <span className="text-xsmall16 font-bold text-primary md:text-medium22">
+    <span className="text-xsmall16 font-semibold text-primary md:text-medium22">
       취업 준비, 어디까지 완성되었나요?
     </span>
   ),
   title: (
-    <h1 className="text-medium24 font-semibold text-neutral-0 md:text-xxlarge32 md:font-bold">
+    <h1 className="text-medium24 font-bold text-neutral-0 md:text-xxlarge32 md:font-semibold">
       서류 작성부터 피드백, 면접까지
       <br />
       지금 나에게 필요한
@@ -62,8 +62,7 @@ const HOME_INTRO = {
         ),
         subTitle: '대기업',
         icon: <Intro8 width={44} height={44} />,
-        // href: 'type=PERSONAL_STATEMENT_LARGE_CORP',
-        href: 'https://www.letscareer.co.kr/program/challenge/67/%EB%8C%80%EA%B8%B0%EC%97%85-%EA%B3%B5%EC%B1%84-%EC%9E%90%EA%B8%B0%EC%86%8C%EA%B0%9C%EC%84%9C-3%EC%A3%BC-%EC%99%84%EC%84%B1-%EC%B1%8C%EB%A6%B0%EC%A7%80-2%EA%B8%B0',
+        href: 'type=PERSONAL_STATEMENT_LARGE_CORP',
         gaTitle: '대기업 자기소개서 준비하기',
       },
       {
@@ -206,33 +205,36 @@ const HOME_INTRO = {
 const IntroSection = () => {
   const [basic, setBasic] = useState(true);
 
-  const { data: careerStartData } = useGetActiveChallenge('CAREER_START');
-  const { data: personalStatementData } =
-    useGetActiveChallenge('PERSONAL_STATEMENT');
-  const { data: personalStatementLargeCorpData } = useGetActiveChallenge(
-    'PERSONAL_STATEMENT_LARGE_CORP',
-  );
-  const { data: portfolioData } = useGetActiveChallenge('PORTFOLIO');
+  const { data: careerStartData } = useGetChallengeList({
+    type: 'CAREER_START',
+  });
+  const { data: personalStatementData } = useGetChallengeList({
+    type: 'PERSONAL_STATEMENT',
+  });
+  const { data: personalStatementLargeCorpData } = useGetChallengeList({
+    type: 'PERSONAL_STATEMENT_LARGE_CORP',
+  });
+  const { data: portfolioData } = useGetChallengeList({ type: 'PORTFOLIO' });
 
   const getCurrentChallenge = (type: string): string | undefined => {
     switch (type) {
       case 'CAREER_START':
-        return careerStartData && careerStartData.challengeList.length > 0
-          ? `/program/challenge/${careerStartData.challengeList[0].id}`
+        return careerStartData && careerStartData.programList.length > 0
+          ? `/program/challenge/${careerStartData.programList[0].id}`
           : undefined;
       case 'PERSONAL_STATEMENT':
         return personalStatementData &&
-          personalStatementData.challengeList.length > 0
-          ? `/program/challenge/${personalStatementData.challengeList[0].id}`
+          personalStatementData.programList.length > 0
+          ? `/program/challenge/${personalStatementData.programList[0].id}`
           : undefined;
       case 'PERSONAL_STATEMENT_LARGE_CORP':
         return personalStatementLargeCorpData &&
-          personalStatementLargeCorpData.challengeList.length > 0
-          ? `/program/challenge/${personalStatementLargeCorpData.challengeList[0].id}`
+          personalStatementLargeCorpData.programList.length > 0
+          ? `/program/challenge/${personalStatementLargeCorpData.programList[0].id}`
           : undefined;
       case 'PORTFOLIO':
-        return portfolioData && portfolioData.challengeList.length > 0
-          ? `/program/challenge/${portfolioData.challengeList[0].id}`
+        return portfolioData && portfolioData.programList.length > 0
+          ? `/program/challenge/${portfolioData.programList[0].id}`
           : undefined;
       default:
         return undefined;
@@ -242,7 +244,7 @@ const IntroSection = () => {
   return (
     <>
       <section className="flex w-full max-w-[1120px] flex-col gap-y-9 px-5 md:gap-y-12 xl:px-0">
-        <div className="flex flex-col gap-y-1 text-center">
+        <div className="flex flex-col gap-y-1 text-center md:gap-y-2">
           {HOME_INTRO.description}
           {HOME_INTRO.title}
         </div>
