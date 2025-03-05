@@ -55,6 +55,7 @@ function $convertImageElement(domNode: Node): null | DOMConversionOutput {
   if (img.src.startsWith('file:///') || isGoogleDocCheckboxImg(img)) {
     return null;
   }
+  console.log(img);
   const { alt: altText, src, width, height } = img;
   const node = $createImageNode({ altText, height, src, width });
   return { node };

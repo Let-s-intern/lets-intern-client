@@ -46,12 +46,33 @@ export function convertImage({
   });
 }
 
-export async function createImageSet(data: File): Promise<{
-  webpMobile: File;
-  webpDesktop: File;
-  jpegMobile: File;
-  jpegDesktop: File;
+export async function createImageSet(
+  data: File,
+  isDesktop?: boolean,
+): Promise<{
+  webpMobile?: File;
+  webpDesktop?: File;
+  jpegMobile?: File;
+  jpegDesktop?: File;
 }> {
+  if (isDesktop) {
+    return Promise.all([
+      convertImage({
+        data,
+        maxWidth: 1440,
+        imageType: 'image/webp',
+      }),
+      convertImage({
+        data,
+        maxWidth: 1440,
+        imageType: 'image/jpeg',
+      }),
+    ]).then(([webpDesktop, jpegDesktop]) => ({
+      webpDesktop,
+      jpegDesktop,
+    }));
+  }
+
   return Promise.all([
     convertImage({
       data,
@@ -63,20 +84,8 @@ export async function createImageSet(data: File): Promise<{
       maxWidth: 768,
       imageType: 'image/jpeg',
     }),
-    convertImage({
-      data,
-      maxWidth: 1440,
-      imageType: 'image/webp',
-    }),
-    convertImage({
-      data,
-      maxWidth: 1440,
-      imageType: 'image/jpeg',
-    }),
-  ]).then(([webpMobile, jpegMobile, webpDesktop, jpegDesktop]) => ({
+  ]).then(([webpMobile, jpegMobile]) => ({
     webpMobile,
-    webpDesktop,
     jpegMobile,
-    jpegDesktop,
   }));
 }
