@@ -28,7 +28,7 @@ const BlogItem = (props: BlogItemProps) => {
         <span className="mt-3 text-xsmall14 font-semibold text-primary">
           {props.category}
         </span>
-        <h3 className="mt-1 text-wrap text-xsmall16 font-semibold text-neutral-0 md:text-small18">
+        <h3 className="mt-1 line-clamp-2 text-wrap text-xsmall16 font-semibold text-neutral-0 md:text-small18">
           {props.title}
         </h3>
         <span className="mt-2 text-xxsmall12 text-neutral-40">
