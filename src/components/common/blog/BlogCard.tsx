@@ -31,14 +31,14 @@ const BlogCard = ({
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-neutral-70">
         {thumbnailItem}
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col">
         <span className="mb-1 text-xsmall14 font-semibold text-primary">
           {superTitle}
         </span>
         <h3 className="text-small18 font-semibold text-neutral-0 md:text-xsmall16">
           {title}
         </h3>
-        <div className="flex items-center justify-between py-2">
+        <div className="mt-2 flex items-center justify-between py-2">
           {displayDateItem && (
             <span className="text-xxsmall12 text-neutral-40">
               {displayDateItem}
