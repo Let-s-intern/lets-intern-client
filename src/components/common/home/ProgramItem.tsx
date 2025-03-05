@@ -29,7 +29,7 @@ const ProgramItem = ({ ...props }: ProgramItemProps) => {
         data-text={props.gaTitle}
       >
         {props.isDeadline && (
-          <span className="absolute left-2.5 top-2.5 rounded-xxs bg-neutral-10 px-1.5 py-[5px] text-xxsmall12 text-neutral-100">
+          <span className="absolute left-2 top-2 rounded-xxs bg-neutral-10 p-1 text-[0.6875rem] text-xxsmall12 font-medium text-neutral-100 md:left-2.5 md:top-2.5 md:px-1.5 md:py-[5px]">
             마감임박🔥
           </span>
         )}
