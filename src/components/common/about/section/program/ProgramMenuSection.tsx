@@ -19,7 +19,7 @@ const content = [
     bgColorClassName: 'bg-[#3283FF]',
     description:
       '커리어 선배를 통해 지원부터 합격,\n그리고 직무이야기를 들을 수 있어요.',
-    link: '/program?type=LIVE',
+    link: '/program?type=LIVE&type=VOD',
   },
   {
     title: '서류 피드백 REPORT',
