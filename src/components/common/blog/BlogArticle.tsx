@@ -19,14 +19,15 @@ interface Props {
 export default function BlogArticle({ blogInfo, lexical }: Props) {
   // 공개 예정 여부
   const willBePublished = dayjs(blogInfo.displayDate).isAfter(dayjs());
-  const img = document.getElementById('blogThumbnail');
 
   useEffect(() => {
-    if (!img) return;
-    const [r, g, b] = getDominantColor(img as HTMLImageElement);
-    const thumbnailDiv = document.getElementById('thumbnailDiv');
-    thumbnailDiv!.style.backgroundColor = `rgb(${r} ${g} ${b} / 10%)`;
-  }, [img]);
+    const img = document.getElementById('blogThumbnail');
+    if (img) {
+      const [r, g, b] = getDominantColor(img as HTMLImageElement);
+      const thumbnailDiv = document.getElementById('thumbnailDiv');
+      thumbnailDiv!.style.backgroundColor = `rgb(${r} ${g} ${b} / 10%)`;
+    }
+  }, []);
 
   return (
     <article>
