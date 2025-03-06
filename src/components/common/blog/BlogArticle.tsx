@@ -4,7 +4,9 @@ import { BlogDetailInfo } from '@/api/blogSchema';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { blogCategory } from '@/utils/convert';
+import getDominantColor from '@/utils/dominantColor';
 import Image from 'next/image';
+import { useEffect } from 'react';
 import Heading2 from './BlogHeading2';
 import BlogLinkShareBtn from './BlogLilnkShareBtn';
 import LexicalContent from './LexicalContent';
@@ -18,11 +20,22 @@ export default function BlogArticle({ blogInfo, lexical }: Props) {
   // 공개 예정 여부
   const willBePublished = dayjs(blogInfo.displayDate).isAfter(dayjs());
 
+  useEffect(() => {
+    const img = document.getElementById('blogThumbnail');
+    const [r, g, b] = getDominantColor(img as HTMLImageElement);
+    const thumbnailDiv = document.getElementById('thumbnailDiv');
+    thumbnailDiv!.style.backgroundColor = `rgb(${r} ${g} ${b} / 80%)`;
+  }, []);
+
   return (
     <article>
       {/* 썸네일 */}
-      <div className="relative mb-8 h-[16rem] overflow-hidden rounded-md bg-neutral-95 md:h-[25.5rem]">
+      <div
+        id="thumbnailDiv"
+        className="relative mb-8 h-[16rem] overflow-hidden rounded-md bg-neutral-95 md:h-[25.5rem]"
+      >
         <Image
+          id="blogThumbnail"
           className="object-contain"
           priority
           fill
