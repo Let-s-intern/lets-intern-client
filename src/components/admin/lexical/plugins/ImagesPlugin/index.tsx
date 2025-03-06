@@ -114,34 +114,49 @@ export function InsertImageUploadedDialogBody({
 
   const isDisabled = urls.src === '';
 
-  const loadImage = async (files: FileList | null) => {
+  const loadMobileImage = async (files: FileList | null) => {
     const file = files?.[0];
     if (!file) {
       setSnackbar('파일이 없습니다.');
       return;
     }
-    const {
-      webpMobile: webpMobileFile,
-      webpDesktop: webpDesktopFile,
-      jpegMobile: jpegMobileFile,
-      jpegDesktop: jpegDesktopFile,
-    } = await createImageSet(file);
-    const [url, webpMobileUrl, webpDesktopUrl, jpegMobileUrl, jpegDesktopUrl] =
-      await Promise.all([
-        uploadFile({ file, type: 'BLOG' }),
-        uploadFile({ file: webpMobileFile, type: 'BLOG' }),
-        uploadFile({ file: webpDesktopFile, type: 'BLOG' }),
-        uploadFile({ file: jpegMobileFile, type: 'BLOG' }),
-        uploadFile({ file: jpegDesktopFile, type: 'BLOG' }),
-      ]);
+    const { webpMobile: webpMobileFile, jpegMobile: jpegMobileFile } =
+      await createImageSet(file);
+    const [url, webpMobileUrl, jpegMobileUrl] = await Promise.all([
+      uploadFile({ file, type: 'BLOG' }),
+      uploadFile({ file: webpMobileFile!, type: 'BLOG' }),
+      uploadFile({ file: jpegMobileFile!, type: 'BLOG' }),
+    ]);
 
-    setUrls({
+    setUrls((prev) => ({
+      ...prev,
       src: url,
       webMobile: webpMobileUrl,
-      webDesktop: webpDesktopUrl,
       jpegMobile: jpegMobileUrl,
+    }));
+
+    setSnackbar(`파일이 업로드되었습니다: ${url}`);
+  };
+
+  const loadDesktopImage = async (files: FileList | null) => {
+    const file = files?.[0];
+    if (!file) {
+      setSnackbar('파일이 없습니다.');
+      return;
+    }
+    const { webpDesktop: webpDesktopFile, jpegDesktop: jpegDesktopFile } =
+      await createImageSet(file, true);
+    const [url, webpDesktopUrl, jpegDesktopUrl] = await Promise.all([
+      uploadFile({ file, type: 'BLOG' }),
+      uploadFile({ file: webpDesktopFile!, type: 'BLOG' }),
+      uploadFile({ file: jpegDesktopFile!, type: 'BLOG' }),
+    ]);
+
+    setUrls((prev) => ({
+      ...prev,
+      webDesktop: webpDesktopUrl,
       jpegDesktop: jpegDesktopUrl,
-    });
+    }));
 
     setSnackbar(`파일이 업로드되었습니다: ${url}`);
   };
@@ -149,8 +164,14 @@ export function InsertImageUploadedDialogBody({
   return (
     <>
       <FileInput
-        label="Image Upload"
-        onChange={loadImage}
+        label="*Mobile Image Upload"
+        onChange={loadMobileImage}
+        accept="image/*"
+        data-test-id="image-modal-file-upload"
+      />
+      <FileInput
+        label="Desktop Image Upload"
+        onChange={loadDesktopImage}
         accept="image/*"
         data-test-id="image-modal-file-upload"
       />
