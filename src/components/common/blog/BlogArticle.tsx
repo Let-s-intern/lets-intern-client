@@ -22,12 +22,12 @@ export default function BlogArticle({ blogInfo, lexical }: Props) {
 
   useEffect(() => {
     const img = document.getElementById('blogThumbnail');
-    if (img) {
+    if (img && blogInfo.thumbnail) {
       const [r, g, b] = getDominantColor(img as HTMLImageElement);
       const thumbnailDiv = document.getElementById('thumbnailDiv');
       thumbnailDiv!.style.backgroundColor = `rgb(${r} ${g} ${b} / 10%)`;
     }
-  }, []);
+  }, [blogInfo.thumbnail]);
 
   return (
     <article>
