@@ -24,7 +24,7 @@ export default function BlogArticle({ blogInfo, lexical }: Props) {
     const img = document.getElementById('blogThumbnail');
     const [r, g, b] = getDominantColor(img as HTMLImageElement);
     const thumbnailDiv = document.getElementById('thumbnailDiv');
-    thumbnailDiv!.style.backgroundColor = `rgb(${r} ${g} ${b} / 80%)`;
+    thumbnailDiv!.style.backgroundColor = `rgb(${r} ${g} ${b} / 10%)`;
   }, []);
 
   return (
