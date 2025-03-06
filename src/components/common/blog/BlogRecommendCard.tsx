@@ -18,7 +18,7 @@ async function BlogRecommendCard({ blog }: Props) {
   return (
     <Link
       key={blog.id}
-      href={`/blog/${blog.id}`}
+      href={`/blog/${blog.id}/${encodeURIComponent(blog.title ?? '')}`}
       className="blog_recommend flex justify-between gap-4 md:max-w-[16.25rem] md:flex-col-reverse md:justify-normal md:gap-2.5"
       data-url={`/blog/${blog.id}`}
       data-text={blog.title}
