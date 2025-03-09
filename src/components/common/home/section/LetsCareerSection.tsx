@@ -136,6 +136,7 @@ const LetsCareerSection = () => {
             }
             programs={data}
             navigation={navigation}
+            emptyText={`취업에 도움 되는 콘텐츠를 준비중이에요.\n잠시만 기다려주세요!`}
           />
         )}
       </section>
