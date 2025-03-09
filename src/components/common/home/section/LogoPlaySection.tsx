@@ -254,7 +254,7 @@ const LogoPlayItem = (props: LogoPlayItemProps) => {
       }}
     >
       <div className="flex flex-col text-neutral-0">
-        <span className="text-xsmall16 font-semibold md:text-medium22">
+        <span className="text-xsmall14 font-semibold md:text-medium22">
           {props.company}
         </span>
         <span className="mt-3 text-xsmall16 font-medium md:mt-6 md:text-small20">
