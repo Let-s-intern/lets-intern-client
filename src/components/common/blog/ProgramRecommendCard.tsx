@@ -7,7 +7,6 @@ import {
 } from '@/api/program';
 import { convertReportTypeToPathname, fetchReportId } from '@/api/report';
 import { ProgramTypeEnum } from '@/schema';
-import Image from 'next/image';
 import Link from 'next/link';
 
 const { CHALLENGE, LIVE, VOD } = ProgramTypeEnum.enum;
@@ -19,7 +18,7 @@ async function ProgramRecommendCard({ program }: Props) {
   console.log('programRecommend >>', program);
   const { title, thumbnail, ctaLink } = await getProgramInfo();
 
-  const isProgramAvailable = title && thumbnail !== "" && ctaLink !== "";
+  const isProgramAvailable = title && thumbnail !== '' && ctaLink !== '';
 
   async function getProgramInfo() {
     let title: string | undefined;
@@ -96,18 +95,13 @@ async function ProgramRecommendCard({ program }: Props) {
           {title}
         </h3>
       </div>
-      {/* 4:3 비율 */}
+
       <div className="relative h-[3.375rem] w-[4.5rem] shrink-0 bg-neutral-95">
-        {thumbnail ? (
-          <Image
-            priority
-            className="rounded-xxs object-cover"
-            src={thumbnail}
-            alt={title + ' 썸네일'}
-            fill
-            sizes="4.5rem"
-          />
-        ) : null}
+        <img
+          className="h-full w-full rounded-xxs object-cover"
+          src={thumbnail}
+          alt={title + ' 썸네일'}
+        />
       </div>
     </Link>
   );
