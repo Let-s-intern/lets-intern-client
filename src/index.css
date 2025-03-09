@@ -339,9 +339,16 @@ input[type='number'] {
 .swiper-wrapper {
   @apply gap-y-12 !important;
 }
+.swiper-vertical > .swiper-wrapper {
+  @apply gap-y-0 !important;
+}
 
 .slide-per-auto .swiper-slide {
   width: auto !important;
+}
+
+.slide-per-auto-vertical .swiper-slide {
+  height: auto !important;
 }
 
 .slide-rolling .swiper-wrapper {

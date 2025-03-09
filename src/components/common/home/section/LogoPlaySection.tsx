@@ -219,7 +219,6 @@ const LogoPlaySection = () => {
           className="slide-per-auto slide-rolling mt-6 md:mt-10"
           modules={[Autoplay]}
           allowTouchMove={false}
-          freeMode
           loop
           spaceBetween={12}
           slidesPerView={'auto'}
