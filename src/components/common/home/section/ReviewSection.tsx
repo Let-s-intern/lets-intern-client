@@ -10,6 +10,8 @@ import dayjs from '@/lib/dayjs';
 import { questionTypeToText } from '@/utils/convert';
 import Button from '@components/common/ui/button/Button';
 import { useEffect, useRef, useState } from 'react';
+import { Autoplay } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 const ReviewSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -50,39 +52,8 @@ const ReviewSection = () => {
     };
   }, [reviewsCount, totalReviewIsLoading]);
 
-  useEffect(() => {
-    const container = reviewContainerRef.current;
-    if (!container) return;
-
-    const scrollSpeed = 1; // 속도 조절
-    let animationFrameId: number;
-
-    const scrollContent = () => {
-      if (!container) return;
-
-      container.scrollTop += scrollSpeed;
-
-      // 스크롤이 끝까지 도달하면 처음으로 이동
-      if (
-        container.scrollTop + container.clientHeight >=
-        container.scrollHeight
-      ) {
-        container.scrollTop = 0;
-      }
-
-      animationFrameId = requestAnimationFrame(scrollContent);
-    };
-
-    // 2초 뒤에 스크롤 시작 (자연스럽게)
-    const timeoutId = setTimeout(() => {
-      animationFrameId = requestAnimationFrame(scrollContent);
-    }, 2000);
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-      clearTimeout(timeoutId);
-    };
-  }, [totalReview]); // 리뷰 데이터가 변경될 때마다 실행
+  if (totalReviewIsLoading || !totalReview || totalReview.reviewList.length < 1)
+    return null;
 
   return (
     <>
@@ -115,20 +86,32 @@ const ReviewSection = () => {
             수강생들의 생생 후기 더 보기
           </Button>
         </div>
-        <div
-          ref={reviewContainerRef}
-          className="h-72 w-full items-center overflow-auto bg-primary-5 scrollbar-hide md:h-[520px] md:w-1/2"
-        >
-          <div className="h-5 md:h-6" />
-          <div className="flex w-full flex-col items-center gap-4">
-            {totalReview?.reviewList?.map((review, index) => (
-              <ReviewItem
-                key={review.reviewInfo.reviewId + index.toString()}
-                review={review}
-              />
+        <div className="h-72 w-full items-center bg-primary-5 md:h-[520px] md:w-1/2">
+          <Swiper
+            className="slide-per-auto-vertical slide-rolling h-full"
+            modules={[Autoplay]}
+            allowTouchMove={false}
+            direction="vertical"
+            loop
+            spaceBetween={16}
+            slidesOffsetBefore={20}
+            slidesOffsetAfter={20}
+            slidesPerView={'auto'}
+            autoplay={{ delay: 1 }}
+            speed={5000}
+            breakpoints={{
+              768: {
+                slidesOffsetBefore: 24,
+                slidesOffsetAfter: 24,
+              },
+            }}
+          >
+            {totalReview.reviewList.map((review, index) => (
+              <SwiperSlide key={'review' + review.reviewInfo.reviewId + index}>
+                <ReviewItem review={review} />
+              </SwiperSlide>
             ))}
-          </div>
-          <div className="h-5 md:h-6" />
+          </Swiper>
         </div>
       </section>
     </>
@@ -139,7 +122,7 @@ export default ReviewSection;
 
 export const ReviewItem = ({ review }: { review: GetReview }) => {
   return (
-    <div className="flex w-[260px] flex-col rounded-sm bg-white px-5 py-4 lg:w-[400px]">
+    <div className="mx-auto flex w-[260px] select-none flex-col rounded-sm bg-white px-5 py-4 lg:w-[400px]">
       <div className="flex flex-col gap-y-1.5 text-xsmall14">
         <span className="font-medium text-primary">
           {dayjs(review.reviewInfo.createDate).format(YYYY_MM_DD)} 작성

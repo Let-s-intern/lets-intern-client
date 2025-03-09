@@ -35,7 +35,7 @@ const CompleteSection = ({ applicationList }: CompleteSectionProps) => {
       )}
       {applicationList.length > 3 && !showMore && (
         <Button
-          className="hidden md:flex"
+          className="md:flex"
           onClick={() => {
             setShowMore(true);
           }}

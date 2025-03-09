@@ -34,7 +34,7 @@ const ParticipateSection = ({ applicationList }: ParticipateSectionProps) => {
       )}
       {applicationList.length > 3 && !showMore && (
         <MoreButton
-          className="hidden md:flex"
+          className="md:flex"
           onClick={() => {
             setShowMore(true);
           }}
