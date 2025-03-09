@@ -36,14 +36,11 @@ export default function BlogArticle({ blogInfo, lexical }: Props) {
         id="thumbnailDiv"
         className="relative mb-8 h-[16rem] overflow-hidden rounded-md bg-neutral-95 md:h-[25.5rem]"
       >
-        <Image
+        <img
           id="blogThumbnail"
-          className="object-contain"
-          priority
-          fill
+          className="mx-auto h-full w-auto object-contain"
           src={blogInfo.thumbnail ?? ''}
           alt="블로그 썸네일"
-          sizes="(max-width: 768px) 100vw, 26rem"
         />
       </div>
 
