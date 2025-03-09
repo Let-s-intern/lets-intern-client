@@ -1,4 +1,4 @@
-import { useGetChallengeList } from '@/api/challenge';
+import { useGetChallengeHome } from '@/api/challenge';
 import { convertReportTypeToLandingPath } from '@/api/report';
 import Intro1 from '@/assets/graphic/home/intro/1.svg?react';
 import Intro2 from '@/assets/graphic/home/intro/2.svg?react';
@@ -205,16 +205,16 @@ const HOME_INTRO = {
 const IntroSection = () => {
   const [basic, setBasic] = useState(true);
 
-  const { data: careerStartData } = useGetChallengeList({
+  const { data: careerStartData } = useGetChallengeHome({
     type: 'CAREER_START',
   });
-  const { data: personalStatementData } = useGetChallengeList({
+  const { data: personalStatementData } = useGetChallengeHome({
     type: 'PERSONAL_STATEMENT',
   });
-  const { data: personalStatementLargeCorpData } = useGetChallengeList({
+  const { data: personalStatementLargeCorpData } = useGetChallengeHome({
     type: 'PERSONAL_STATEMENT_LARGE_CORP',
   });
-  const { data: portfolioData } = useGetChallengeList({ type: 'PORTFOLIO' });
+  const { data: portfolioData } = useGetChallengeHome({ type: 'PORTFOLIO' });
 
   const getCurrentChallenge = (type: string): string | undefined => {
     switch (type) {
