@@ -255,6 +255,34 @@ export const useGetChallengeList = ({
   });
 };
 
+// 챌린지 목록 조회-홈 (노출상태, 정렬: 모집중(모집마감빠른순)-모집마감-모집예정순)
+export const useGetChallengeHome = ({
+  typeList,
+  statusList,
+  type,
+  pageable,
+}: {
+  typeList?: ProgramClassification[];
+  statusList?: ProgramStatus[];
+  type?: ChallengeType;
+  pageable?: { page: number; size: number };
+}) => {
+  return useQuery({
+    queryKey: ['challenge', 'home', typeList, statusList, type, pageable],
+    queryFn: async () => {
+      const res = await axios.get('/challenge/home', {
+        params: {
+          typeList,
+          statusList,
+          type,
+          pageable,
+        },
+      });
+      return challengeListSchema.parse(res.data.data);
+    },
+  });
+};
+
 export const getChallengeGoalQueryKey = (challengeId: string | undefined) => {
   return ['useGetChallengeGoal', challengeId];
 };

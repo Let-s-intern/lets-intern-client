@@ -125,8 +125,15 @@ const ReportApplyBottomSheet = React.forwardRef<
     const basicLabel = `베이직 플랜${report.reportType === PERSONAL_STATEMENT ? '(1문항)' : ''}`;
     const premiumLabel = `프리미엄 플랜(${report.reportType === PERSONAL_STATEMENT ? '4문항+총평 페이지 추가' : '채용 공고 맞춤 진단 추가'})`;
 
-    return [
-      {
+    const returnList = [];
+
+    if (
+      reportPremiumInfo &&
+      feedbackInfo &&
+      feedbackInfo.feedbackPrice &&
+      feedbackInfo.feedbackPrice >= 0
+    ) {
+      returnList.push({
         value: REPORT_RADIO_VALUES.premiumFeedback,
         label: '[추천] 프리미엄 + 1:1 온라인 상담(40분) 패키지',
         price:
@@ -134,8 +141,16 @@ const ReportApplyBottomSheet = React.forwardRef<
         discount:
           (reportPremiumInfo?.discountPrice ?? 0) +
           (feedbackInfo?.feedbackDiscountPrice ?? 0),
-      },
-      {
+      });
+    }
+
+    if (
+      reportBasicInfo &&
+      feedbackInfo &&
+      feedbackInfo.feedbackPrice &&
+      feedbackInfo.feedbackPrice >= 0
+    ) {
+      returnList.push({
         value: REPORT_RADIO_VALUES.basicFeedback,
         label: '[추천] 베이직 + 1:1 온라인 상담(40분) 패키지',
         price:
@@ -143,20 +158,28 @@ const ReportApplyBottomSheet = React.forwardRef<
         discount:
           (reportBasicInfo?.discountPrice ?? 0) +
           (feedbackInfo?.feedbackDiscountPrice ?? 0),
-      },
-      {
+      });
+    }
+
+    if (reportPremiumInfo) {
+      returnList.push({
         value: REPORT_RADIO_VALUES.premium,
         label: premiumLabel,
         price: reportPremiumInfo?.price,
         discount: reportPremiumInfo?.discountPrice,
-      },
-      {
+      });
+    }
+
+    if (reportBasicInfo) {
+      returnList.push({
         value: REPORT_RADIO_VALUES.basic,
         label: basicLabel,
-        price: reportBasicInfo?.price,
-        discount: reportBasicInfo?.discountPrice,
-      },
-    ];
+        price: reportBasicInfo.price,
+        discount: reportBasicInfo.discountPrice,
+      });
+    }
+
+    return returnList;
   }, [priceDetail, report.reportType]);
 
   const selectedReportPlan = useMemo(() => {

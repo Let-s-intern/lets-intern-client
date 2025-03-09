@@ -142,6 +142,12 @@ const PaymentInputPage = () => {
       if (!allowNavigation) {
         e.preventDefault();
         e.returnValue = '';
+
+        setCoupon({
+          id: null,
+          price: 0,
+        });
+
         return '';
       }
     };
@@ -153,7 +159,7 @@ const PaymentInputPage = () => {
       // 컴포넌트 언마운트 시 이벤트 리스너 제거
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [allowNavigation]);
+  }, [allowNavigation, setCoupon]);
 
   // allowNavigation이 true로 변경되면 navigation 수행
   useEffect(() => {

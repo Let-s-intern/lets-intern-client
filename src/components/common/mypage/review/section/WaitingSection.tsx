@@ -44,7 +44,7 @@ const WaitingSection = ({ applicationList }: WaitingSectionProps) => {
 
       {applicationList.length > 3 && !showMore && (
         <MoreButton
-          className="hidden md:flex"
+          className="md:flex"
           onClick={() => {
             setShowMore(true);
           }}

@@ -21,6 +21,7 @@ interface ProgramContainerProps {
   gaItem: string;
   gaTitle: string;
   isDeadline?: boolean;
+  emptyText?: string;
 }
 
 const ProgramContainer = (props: ProgramContainerProps) => {
@@ -75,7 +76,7 @@ const ProgramContainer = (props: ProgramContainerProps) => {
         props.programs.length < 1) ? (
         <EmptyContainer
           className="h-[201px] md:h-[266px]"
-          text="등록된 콘텐츠가 없습니다."
+          text={props.emptyText || '등록된 콘텐츠가 없습니다.'}
         />
       ) : (
         <Swiper
