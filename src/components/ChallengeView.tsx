@@ -152,13 +152,13 @@ const ChallengeView: React.FC<{
         subTitle = '#FF9C34';
         subBg = '#FFF7EF';
         gradientBg =
-          'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)'; // ??
+          'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)';
         curriculumBg = '#EFF4F7';
         recommendBg = '#F1FBFF';
         recommendLogo = '#DDF5FF';
         thumbnailBg = '#E6F9DE';
         break;
-      default:
+      default: // 자소서, 마케팅
         primary = '#14BCFF';
         secondary = '#FF9C34';
         primaryLight = '#EEFAFF';
@@ -169,7 +169,7 @@ const ChallengeView: React.FC<{
         subTitle = '#FF9C34';
         subBg = '#FFF7EF';
         gradientBg =
-          'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)'; // ??
+          'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)';
         curriculumBg = '#EFF4F7';
         recommendBg = '#F1FBFF';
         recommendLogo = '#DDF5FF';
