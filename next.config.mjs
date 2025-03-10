@@ -41,6 +41,7 @@ const nextConfig = {
         search: '',
       },
     ],
+    unoptimized: true,
   },
 };
 
