@@ -44,6 +44,7 @@ const {
   PERSONAL_STATEMENT,
   PORTFOLIO,
   PERSONAL_STATEMENT_LARGE_CORP,
+  MARKETING,
 } = challengeTypeSchema.enum;
 
 const ChallengePointView = ({
@@ -93,7 +94,7 @@ const ChallengePointView = ({
       subTitle:
         '*총 챌린지 참여 점수 80점 이상시,\n' +
         (challengeType === PERSONAL_STATEMENT_LARGE_CORP ||
-        challengeTitle.includes('마케팅')
+        challengeType === MARKETING
           ? '수료증 발급'
           : '3만원 페이백 및 수료증 발급'),
     },
@@ -104,7 +105,7 @@ const ChallengePointView = ({
     content:
       '챌린지 참여 점수 80점 이상시,\n' +
       (challengeType === PERSONAL_STATEMENT_LARGE_CORP ||
-      challengeTitle.includes('마케팅')
+      challengeType === MARKETING
         ? '수료증 발급'
         : '3만원 페이백 및 수료증 발급'),
   };
@@ -390,7 +391,7 @@ const ChallengePointView = ({
               <Box className="relative overflow-hidden md:flex-1">
                 <BoxItem title={reward.title}>{reward.content}</BoxItem>
                 {challengeType !== PERSONAL_STATEMENT_LARGE_CORP &&
-                  !challengeTitle.includes('마케팅') && (
+                  challengeType !== MARKETING && (
                     <img
                       className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
                       src={paypackImgSrc}
