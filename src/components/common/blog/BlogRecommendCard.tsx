@@ -1,6 +1,7 @@
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { blogCategory } from '@/utils/convert';
+import Image from 'next/image';
 import Link from 'next/link';
 
 interface Props {
@@ -35,10 +36,13 @@ async function BlogRecommendCard({ blog }: Props) {
       </div>
       {/* 4:3 비율 */}
       <div className="relative h-[3.375rem] w-[4.5rem] shrink-0 overflow-hidden rounded-xxs bg-neutral-95 md:aspect-[4/3] md:h-auto md:w-full">
-        <img
+        <Image
           className="h-full w-full object-cover"
           src={blog.thumbnail ?? ''}
           alt={blog.title + ' 썸네일'}
+          fill
+          unoptimized
+          sizes="(max-width: 768px) 4.5rem, 17rem"
         />
       </div>
     </Link>

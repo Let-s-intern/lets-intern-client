@@ -7,6 +7,7 @@ import {
 } from '@/api/program';
 import { convertReportTypeToPathname, fetchReportId } from '@/api/report';
 import { ProgramTypeEnum } from '@/schema';
+import Image from 'next/image';
 import Link from 'next/link';
 
 const { CHALLENGE, LIVE, VOD } = ProgramTypeEnum.enum;
@@ -97,7 +98,10 @@ async function ProgramRecommendCard({ program }: Props) {
       </div>
 
       <div className="relative h-[3.375rem] w-[4.5rem] shrink-0 bg-neutral-95">
-        <img
+        <Image
+          unoptimized
+          fill
+          sizes="4.5rem"
           className="h-full w-full rounded-xxs object-cover"
           src={thumbnail}
           alt={title + ' 썸네일'}
