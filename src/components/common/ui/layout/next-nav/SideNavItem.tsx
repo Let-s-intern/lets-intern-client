@@ -31,7 +31,7 @@ const SideNavItem = ({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="flex flex-col w-full px-5">
+    <div className="flex w-full flex-col px-5">
       <Wrapper
         href={to}
         className={clsx(
@@ -65,6 +65,8 @@ const SideNavItem = ({
             <Link
               key={item.to}
               href={item.to}
+              target={target}
+              rel={rel}
               onClick={(e) => {
                 onClick?.();
                 if (force) {
@@ -72,7 +74,7 @@ const SideNavItem = ({
                   window.location.href = item.to;
                 }
               }}
-              className="flex w-full px-8 py-2 font-semibold text-xsmall16 text-neutral-20"
+              className="flex w-full px-8 py-2 text-xsmall16 font-semibold text-neutral-20"
             >
               {item.text}
             </Link>
