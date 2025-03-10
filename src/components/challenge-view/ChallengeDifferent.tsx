@@ -11,7 +11,7 @@ import DifferentCard, {
 } from '@components/common/program/program-detail/different/DifferentCard';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 
-const { PORTFOLIO, CAREER_START, PERSONAL_STATEMENT_LARGE_CORP } =
+const { PORTFOLIO, CAREER_START, PERSONAL_STATEMENT_LARGE_CORP, MARKETING } =
   challengeTypeSchema.enum;
 
 export const tripleBenefits = [
@@ -157,7 +157,7 @@ const ChallengeDifferent = ({
             />
           ))}
           {challengeType !== PERSONAL_STATEMENT_LARGE_CORP &&
-            !challengeTitle.includes('마케팅') && (
+            challengeType !== MARKETING && (
               <div
                 className="relative flex w-full gap-x-2 overflow-hidden rounded-md px-5 pb-10 pt-[30px] text-small18 font-bold md:px-10 md:py-[50px] md:text-medium22"
                 style={{
