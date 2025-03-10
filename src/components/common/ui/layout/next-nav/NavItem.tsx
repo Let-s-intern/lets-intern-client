@@ -71,6 +71,8 @@ const NavItem = ({
               ) : (
                 hoverItem.map((item, idx) => (
                   <NavSubItem
+                    target={target}
+                    rel={rel}
                     key={item.to}
                     isLast={idx === hoverItem.length - 1}
                     {...item}

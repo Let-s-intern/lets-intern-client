@@ -28,7 +28,7 @@ const SideNavItem = ({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="flex flex-col w-full px-5">
+    <div className="flex w-full flex-col px-5">
       <Wrapper
         to={to}
         className={clsx(
@@ -63,8 +63,10 @@ const SideNavItem = ({
               key={item.to}
               to={item.to}
               onClick={onClick}
-              className="flex w-full px-8 py-2 font-semibold text-xsmall16 text-neutral-20"
+              className="flex w-full px-8 py-2 text-xsmall16 font-semibold text-neutral-20"
               reloadDocument={reloadDocument}
+              target={target}
+              rel={rel}
             >
               {item.text}
             </Link>
