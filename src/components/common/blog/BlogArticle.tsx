@@ -22,10 +22,12 @@ export default function BlogArticle({ blogInfo, lexical }: Props) {
 
   useEffect(() => {
     const img = document.getElementById('blogThumbnail');
+
     if (img && blogInfo.thumbnail) {
       const [r, g, b] = getDominantColor(img as HTMLImageElement);
+      const isDefault = r === 249 && g === 249 && b === 248;
       const thumbnailDiv = document.getElementById('thumbnailDiv');
-      thumbnailDiv!.style.backgroundColor = `rgb(${r} ${g} ${b} / 10%)`;
+      thumbnailDiv!.style.backgroundColor = `rgb(${r} ${g} ${b} / ${isDefault ? 100 : 10}%)`;
     }
   }, [blogInfo.thumbnail]);
 
@@ -36,11 +38,15 @@ export default function BlogArticle({ blogInfo, lexical }: Props) {
         id="thumbnailDiv"
         className="relative mb-8 h-[16rem] overflow-hidden rounded-md bg-neutral-95 md:h-[25.5rem]"
       >
-        <img
+        <Image
           id="blogThumbnail"
-          className="mx-auto h-full w-auto object-contain"
+          className="object-contain"
+          priority
+          unoptimized
+          fill
           src={blogInfo.thumbnail ?? ''}
           alt="블로그 썸네일"
+          sizes="(max-width: 768px) 100vw, 26rem"
         />
       </div>
 
@@ -66,9 +72,8 @@ export default function BlogArticle({ blogInfo, lexical }: Props) {
           <div className="flex items-center gap-3 md:gap-4">
             <div className="flex items-center gap-2">
               <div className="flex h-7 w-7 justify-center overflow-hidden rounded-full">
-                <Image
-                  width={20}
-                  height={20}
+                <img
+                  className="h-5 w-5"
                   src="/logo/logo-gradient.svg"
                   alt="렛츠커리어 프로필 사진"
                 />
