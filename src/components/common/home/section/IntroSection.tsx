@@ -7,6 +7,8 @@ import Intro4 from '@/assets/graphic/home/intro/4.svg?react';
 import Intro5 from '@/assets/graphic/home/intro/5.svg?react';
 import Intro6 from '@/assets/graphic/home/intro/6.svg?react';
 import Intro8 from '@/assets/graphic/home/intro/8.svg?react';
+import Intro9 from '@/assets/graphic/home/intro/9.svg?react';
+import { twMerge } from '@/lib/twMerge';
 // import Intro7 from '@/assets/graphic/home/intro/7.svg?react';
 import clsx from 'clsx';
 import Link from 'next/link';
@@ -109,10 +111,25 @@ const HOME_INTRO = {
             면접 준비하기
           </>
         ),
-        icon: <Intro4 width={44} height={44} />,
-        href: 'https://letscareer.framer.website/',
+        subTitle: '대기업',
+        icon: <Intro9 />,
+        href: 'https://letscareerinterview.imweb.me/',
         gaTitle: '멘토와 1:1 면접 준비하기',
       },
+      {
+        title: (
+          <>
+            멘토와 1:1
+            <br />
+            면접 준비하기
+          </>
+        ),
+        subTitle: '스타트업',
+        icon: <Intro4 width={44} height={44} />,
+        href: 'https://letscareerinterview.imweb.me/Startupinterview',
+        gaTitle: '멘토와 1:1 면접 준비하기',
+      },
+
       // {
       //   title: (
       //     <>
@@ -263,7 +280,7 @@ const IntroSection = () => {
           </div> */}
           <div
             className={clsx(
-              'grid grid-cols-4 gap-x-4 gap-y-6 px-1 md:grid-cols-7 md:grid-rows-1 md:gap-x-10',
+              'grid grid-cols-4 gap-x-4 gap-y-6 px-1 md:grid-cols-8 md:grid-rows-1 md:gap-x-10',
               // {
               //   // 'md:grid-cols-7': basic,
               //   'md:grid-cols-6': !basic,
@@ -282,6 +299,7 @@ const IntroSection = () => {
                     : item.href
                 }
                 gaTitle={item.gaTitle}
+                badgeClassName={index === 7 ? 'bg-[#34BFFF]' : undefined}
               />
             ))}
             {/* {basic
@@ -352,12 +370,14 @@ const IntroItem = ({
   icon,
   href,
   gaTitle,
+  badgeClassName,
 }: {
   title: ReactNode;
   subTitle?: ReactNode;
   gaTitle: string;
   icon: ReactNode;
   href?: string;
+  badgeClassName?: string;
 }) => {
   return (
     <Link
@@ -375,7 +395,12 @@ const IntroItem = ({
       <div className="relative flex aspect-square w-15 items-center justify-center rounded-xxs bg-[#F7F7F7] md:w-16">
         {icon}
         {subTitle && (
-          <span className="absolute -right-[14px] top-0 -translate-y-1/2 rounded-full bg-primary px-2 py-[5px] text-[11px] font-medium leading-none text-white md:text-[13px]">
+          <span
+            className={twMerge(
+              'absolute -right-[14px] top-0 -translate-y-1/2 rounded-full bg-primary px-2 py-[5px] text-[11px] font-medium leading-none text-white md:text-[13px]',
+              badgeClassName,
+            )}
+          >
             {subTitle}
           </span>
         )}
