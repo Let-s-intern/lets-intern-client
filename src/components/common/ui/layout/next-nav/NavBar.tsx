@@ -35,6 +35,17 @@ const reportHoverItem: NavSubItemProps[] = [
   },
 ];
 
+const interviewHoverItem: NavSubItemProps[] = [
+  {
+    text: '대기업 모의 면접',
+    to: 'https://letscareerinterview.imweb.me',
+  },
+  {
+    text: '스타트업 모의면접',
+    to: 'https://letscareerinterview.imweb.me/Startupinterview',
+  },
+];
+
 const scrollEventPage = [
   '/report/landing',
   '/program/challenge',
@@ -190,13 +201,13 @@ const NavBar = () => {
       <div
         className={`lg:p-30 fixed top-0 z-30 h-[3.75rem] w-screen border-b border-neutral-80 bg-static-100 px-5 sm:px-20 md:h-[4.375rem] lg:h-[4.75rem] lg:px-28 ${scrollDirection === 'DOWN' ? '-translate-y-full' : 'translate-y-0'} transition-transform duration-300`}
       >
-        <div className="flex items-center justify-between h-full">
-          <div className="flex items-center h-full gap-4 sm:gap-9">
+        <div className="flex h-full items-center justify-between">
+          <div className="flex h-full items-center gap-4 sm:gap-9">
             <Link href={'/'} className="h-[1.75rem] md:h-[2.2rem]">
               <img
                 src="/logo/logo-gradient-text.svg"
                 alt="렛츠커리어 로고"
-                className="w-auto h-full"
+                className="h-full w-auto"
               />
               <h1 className="sr-only">렛츠커리어</h1>
             </Link>
@@ -223,7 +234,8 @@ const NavBar = () => {
               🔥 서류 진단받고 합격하기
             </NavItem>
             <NavItem
-              to="https://letscareer.framer.website"
+              as="div"
+              hoverItem={interviewHoverItem}
               target="_blank"
               rel="noopenner noreferrer"
             >
@@ -233,7 +245,7 @@ const NavBar = () => {
           <div className="flex items-center gap-4">
             {isLoggedIn ? (
               <div
-                className="hidden gap-2 cursor-pointer sm:flex"
+                className="hidden cursor-pointer gap-2 sm:flex"
                 onClick={() => {
                   window.location.href = '/mypage/application';
                 }}
@@ -246,7 +258,7 @@ const NavBar = () => {
                 />
               </div>
             ) : (
-              <div className="items-center hidden gap-2 sm:flex">
+              <div className="hidden items-center gap-2 sm:flex">
                 <Link
                   href={{
                     pathname: '/login',
@@ -298,17 +310,17 @@ const NavBar = () => {
           isOpen ? 'translate-x-0' : 'translate-x-full',
         )}
       >
-        <div className="flex items-center justify-between w-full p-5">
+        <div className="flex w-full items-center justify-between p-5">
           <div className="h-7">
             <img
-              className="w-auto h-full"
+              className="h-full w-auto"
               src="/logo/logo-gradient-text.svg"
               alt="렛츠커리어 로고"
             />
           </div>
-          <i className="w-6 h-6 cursor-pointer" onClick={closeMenu}>
+          <i className="h-6 w-6 cursor-pointer" onClick={closeMenu}>
             <img
-              className="w-full h-auto"
+              className="h-auto w-full"
               src="/icons/x-close.svg"
               alt="닫기 아이콘"
             />
@@ -316,10 +328,10 @@ const NavBar = () => {
         </div>
         <hr />
         <KakaoChannel />
-        <div className="flex flex-col h-full gap-5 py-10 overflow-y-auto">
-          <div className="flex justify-between mx-5">
+        <div className="flex h-full flex-col gap-5 overflow-y-auto py-10">
+          <div className="mx-5 flex justify-between">
             {isLoggedIn ? (
-              <span className="flex items-center justify-between w-full gap-4 text-neutral-0 sm:p-0">
+              <span className="flex w-full items-center justify-between gap-4 text-neutral-0 sm:p-0">
                 <span>
                   환영합니다, <span className="text-primary">{user?.name}</span>
                   님
@@ -364,7 +376,7 @@ const NavBar = () => {
               </div>
             )}
           </div>
-          <div className="flex flex-col flex-1 gap-2">
+          <div className="flex flex-1 flex-col gap-2">
             <SideNavItem to="/mypage/application" onClick={closeMenu} force>
               마이페이지
             </SideNavItem>
@@ -389,10 +401,11 @@ const NavBar = () => {
               🔥 서류 진단받고 합격하기
             </SideNavItem>
             <SideNavItem
-              to="https://letscareer.framer.website"
+              to="#"
+              onClick={closeMenu}
+              hoverItem={interviewHoverItem}
               target="_blank"
               rel="noopenner noreferrer"
-              onClick={closeMenu}
             >
               🔎 모의 면접하고 합격하기
             </SideNavItem>
