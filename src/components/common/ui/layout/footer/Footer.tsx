@@ -56,7 +56,7 @@ const Footer = () => {
               <MenuLink to="/blog/list">블로그</MenuLink>
               <MenuLink to="/report/landing">서류 진단 서비스</MenuLink>
               <MenuLink
-                to="https://letscareer.framer.website"
+                to="https://letscareerinterview.imweb.me/"
                 target="_blank"
                 rel="noopenner noreferrer"
               >
