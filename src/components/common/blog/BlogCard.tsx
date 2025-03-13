@@ -35,7 +35,7 @@ const BlogCard = ({
         <span className="mb-1 text-xsmall14 font-semibold text-primary">
           {superTitle}
         </span>
-        <h3 className="text-small18 font-semibold text-neutral-0 md:text-xsmall16">
+        <h3 className="line-clamp-3 text-small18 font-semibold text-neutral-0 md:text-xsmall16">
           {title}
         </h3>
         <div className="mt-2 flex items-center justify-between py-2">
