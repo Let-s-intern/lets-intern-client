@@ -41,6 +41,7 @@ export default function BlogArticle({ blogInfo, lexical }: Props) {
         <Image
           id="blogThumbnail"
           className="object-contain"
+          crossOrigin="use-credentials"
           priority
           unoptimized
           fill
