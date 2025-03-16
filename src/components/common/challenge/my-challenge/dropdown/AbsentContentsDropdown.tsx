@@ -1,7 +1,7 @@
+import { UserChallengeMissionDetail } from '@/schema';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { IoIosLink } from 'react-icons/io';
-import { UserChallengeMissionDetail } from '../../../../../schema';
+import { Link } from 'react-router-dom';
 
 interface Props {
   missionDetail: UserChallengeMissionDetail;
@@ -38,20 +38,22 @@ const AbsentContentsDropdown = ({ missionDetail }: Props) => {
               </Link>
             </li>
           )}
-          {additionalContentsLink && (
-            <li>
-              <Link
-                to={additionalContentsLink}
-                className="flex flex-1 items-center justify-between px-4 py-3 text-primary hover:bg-gray-200"
-                target="_blank"
-                rel="noopenner noreferrer"
-              >
-                <span>추가 콘텐츠</span>
-                <i>
-                  <IoIosLink />
-                </i>
-              </Link>
-            </li>
+          {missionDetail.additionalContentsList.map((item) =>
+            item.link ? (
+              <li key={item.id}>
+                <Link
+                  to={item.link}
+                  className="flex w-full items-center justify-between px-4 py-3 text-primary hover:bg-gray-200"
+                  target="_blank"
+                  rel="noopenner noreferrer"
+                >
+                  <span>{item.title}</span>
+                  <i>
+                    <IoIosLink />
+                  </i>
+                </Link>
+              </li>
+            ) : null,
           )}
         </ul>
       )}

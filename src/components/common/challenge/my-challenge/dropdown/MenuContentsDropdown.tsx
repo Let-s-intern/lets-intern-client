@@ -1,7 +1,7 @@
+import { UserChallengeMissionDetail } from '@/schema';
 import { useState } from 'react';
 import { IoIosLink } from 'react-icons/io';
 import { Link } from 'react-router-dom';
-import { UserChallengeMissionDetail } from '../../../../../schema';
 
 interface Props {
   missionDetail: UserChallengeMissionDetail;
@@ -9,8 +9,7 @@ interface Props {
 
 const MenuContentsDropdown = ({ missionDetail }: Props) => {
   const [isMenuShown, setIsMenuShown] = useState(false);
-  const additionalContentsLink =
-    missionDetail.additionalContentsList?.[0]?.link;
+
   const essentialContentsLink = missionDetail.essentialContentsList?.[0]?.link;
 
   return (
@@ -38,20 +37,22 @@ const MenuContentsDropdown = ({ missionDetail }: Props) => {
               </Link>
             </li>
           )}
-          {additionalContentsLink && (
-            <li>
-              <Link
-                to={additionalContentsLink}
-                className="flex items-center justify-between px-5 py-3 text-center text-primary duration-200 hover:bg-gray-100"
-                target="_blank"
-                rel="noopenner noreferrer"
-              >
-                <span>추가 콘텐츠</span>
-                <i>
-                  <IoIosLink />
-                </i>
-              </Link>
-            </li>
+          {missionDetail.additionalContentsList.map((item) =>
+            item.link ? (
+              <li key={item.id}>
+                <Link
+                  to={item.link}
+                  className="flex w-full items-center justify-between px-4 py-3 text-primary hover:bg-gray-200"
+                  target="_blank"
+                  rel="noopenner noreferrer"
+                >
+                  <span>{item.title}</span>
+                  <i>
+                    <IoIosLink />
+                  </i>
+                </Link>
+              </li>
+            ) : null,
           )}
         </ul>
       )}

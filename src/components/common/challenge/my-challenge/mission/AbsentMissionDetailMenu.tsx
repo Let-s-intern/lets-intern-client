@@ -1,4 +1,4 @@
-import { Schedule, UserChallengeMissionDetail } from '../../../../../schema';
+import { Schedule, UserChallengeMissionDetail } from '@/schema';
 import AbsentContentsInfoMenu from '../menu/AbsentContentsInfoMenu';
 import AbsentMissionSubmitMenu from '../menu/AbsentMissionSubmitMenu';
 
