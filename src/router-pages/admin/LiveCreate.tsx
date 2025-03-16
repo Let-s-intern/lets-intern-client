@@ -1,9 +1,3 @@
-import dayjs from '@/lib/dayjs';
-import { Button, Checkbox, FormControlLabel, TextField } from '@mui/material';
-import { useCallback, useState } from 'react';
-import { FaSave } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
-
 import { fileType, uploadFile } from '@/api/file';
 import { usePostLiveMutation } from '@/api/program';
 import LiveBasic from '@/components/admin/program/LiveBasic';
@@ -17,6 +11,7 @@ import FaqSection from '@/components/FaqSection';
 import ProgramRecommendEditor from '@/components/ProgramRecommendEditor';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { liveToCreateInput } from '@/hooks/useDuplicateProgram';
+import dayjs from '@/lib/dayjs';
 import { CreateLiveReq, getLiveIdSchema, ProgramTypeEnum } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import EditorApp from '@components/admin/lexical/EditorApp';
@@ -25,6 +20,10 @@ import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
 import Heading2 from '@components/admin/ui/heading/Heading2';
+import { Button, Checkbox, FormControlLabel, TextField } from '@mui/material';
+import { useCallback, useState } from 'react';
+import { FaSave } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import ProgramSchedule from './program/ProgramSchedule';
 const LiveCreate: React.FC = () => {
   const navigate = useNavigate();
@@ -236,7 +235,7 @@ const LiveCreate: React.FC = () => {
         </div>
       </section>
       <LiveInformation
-        recommendFields={content.recommend ?? ['']}
+        recommendFields={content.recommend ?? []}
         reasonFields={content.reason ?? [{ title: '', content: '' }]}
         setContent={setContent}
       />

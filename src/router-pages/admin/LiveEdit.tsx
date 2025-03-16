@@ -1,9 +1,3 @@
-import { Button, Checkbox, FormControlLabel } from '@mui/material';
-import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { FaSave } from 'react-icons/fa';
-import { useNavigate, useParams } from 'react-router-dom';
-
 import { fileType, uploadFile } from '@/api/file';
 import {
   useGetLiveQuery,
@@ -31,6 +25,11 @@ import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
 import Heading2 from '@components/admin/ui/heading/Heading2';
+import { Button, Checkbox, FormControlLabel } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { FaSave } from 'react-icons/fa';
+import { useNavigate, useParams } from 'react-router-dom';
 import ProgramSchedule from './program/ProgramSchedule';
 
 const LiveEdit: React.FC = () => {
@@ -207,9 +206,10 @@ const LiveEdit: React.FC = () => {
       </section>
 
       <LiveInformation
-        recommendFields={content.recommend || ['']}
+        recommendFields={content.recommend || []}
         reasonFields={content.reason || [{ title: '', content: '' }]}
         setContent={setContent}
+        editorContent={content.mainDescription}
       />
 
       {/* 프로그램 추천 */}
