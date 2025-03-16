@@ -195,7 +195,7 @@ const Page = () => {
         </p> */}
         </div>
         <div className="pt-1.5">
-          <Image src={img} width={367} alt="ho" />
+          <Image src={img} width={367} unoptimized alt="ho" />
         </div>
       </div>
       <hr className="my-10"></hr>

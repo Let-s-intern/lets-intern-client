@@ -63,6 +63,7 @@ function ReviewBanner() {
       {/* 이미지 */}
       <div className="bg-light absolute bottom-0 left-0 right-0 h-[6.75rem] w-full md:left-auto md:top-0 md:h-full md:w-[36rem]">
         <Image
+          unoptimized
           className="object-cover"
           src="/images/review-banner.png"
           alt="렛츠커리어 행사 사진"
