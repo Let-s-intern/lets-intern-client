@@ -62,6 +62,7 @@ function BlogReviewCard({ blogReview, className }: Props) {
 
       <div className="relative h-[5.625rem] w-40 shrink-0 overflow-hidden rounded-sm bg-neutral-85 md:h-[8.125rem] md:w-[14.375rem]">
         <Image
+          unoptimized
           className="border border-neutral-80 object-cover"
           src={blogReview.thumbnail ?? ''}
           alt={blogReview.title + ' 블로그 썸네일'}
