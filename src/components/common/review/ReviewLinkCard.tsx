@@ -55,6 +55,7 @@ function ReviewLinkCard({
               'rounded-sm object-cover transition group-has-[a:hover]:opacity-80',
               imgClassName,
             )}
+            unoptimized
             src={thumbnail}
             alt={title + ' 블로그 썸네일'}
             fill
