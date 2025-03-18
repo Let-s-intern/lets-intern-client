@@ -15,7 +15,6 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 
 const ReviewSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const reviewContainerRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const { data: reviewCount } = useGetReviewCount();
   const { data: blogData } = useBlogListQuery({
@@ -25,6 +24,7 @@ const ReviewSection = () => {
 
   const { data: totalReview, isLoading: totalReviewIsLoading } =
     useGetProgramReview({ size: 20 });
+  console.log(totalReview);
 
   const reviewsCount =
     (reviewCount?.count ?? 0) + (blogData?.pageInfo.totalElements ?? 0);
@@ -121,6 +121,8 @@ const ReviewSection = () => {
 export default ReviewSection;
 
 export const ReviewItem = ({ review }: { review: GetReview }) => {
+  if (review.reviewItemList?.length === 0) return null;
+
   return (
     <div className="mx-auto flex w-[260px] select-none flex-col rounded-sm bg-white px-5 py-4 lg:w-[400px]">
       <div className="flex flex-col gap-y-1.5 text-xsmall14">
