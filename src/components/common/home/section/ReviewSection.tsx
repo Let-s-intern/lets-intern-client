@@ -24,7 +24,6 @@ const ReviewSection = () => {
 
   const { data: totalReview, isLoading: totalReviewIsLoading } =
     useGetProgramReview({ size: 20 });
-  console.log(totalReview);
 
   const reviewsCount =
     (reviewCount?.count ?? 0) + (blogData?.pageInfo.totalElements ?? 0);
