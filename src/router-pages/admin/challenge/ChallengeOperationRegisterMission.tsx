@@ -1,29 +1,10 @@
-import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import dayjs from '@/lib/dayjs';
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  IconButton,
-} from '@mui/material';
-import {
-  DataGrid,
-  GridColDef,
-  GridToolbarContainer,
-  useGridApiRef,
-} from '@mui/x-data-grid';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import React, { useCallback, useMemo, useState } from 'react';
-import { FaCheck, FaTrashCan, FaX } from 'react-icons/fa6';
-import { z } from 'zod';
 import {
   useAdminCurrentChallenge,
   useAdminMissionsOfCurrentChallenge,
   useMissionsOfCurrentChallengeRefetch,
-} from '../../../context/CurrentAdminChallengeProvider';
+} from '@/context/CurrentAdminChallengeProvider';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import dayjs from '@/lib/dayjs';
 import {
   CreateMissionReq,
   getContentsAdminSimple,
@@ -31,8 +12,33 @@ import {
   missionTemplateAdmin,
   MissionTemplateResItem,
   UpdateMissionReq,
-} from '../../../schema';
-import axios from '../../../utils/axios';
+} from '@/schema';
+import axios from '@/utils/axios';
+import {
+  Button,
+  Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+} from '@mui/material';
+import {
+  DataGrid,
+  GridColDef,
+  GridEditCellValueParams,
+  GridToolbarContainer,
+  useGridApiRef,
+} from '@mui/x-data-grid';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import React, { useCallback, useMemo, useState } from 'react';
+import { FaCheck, FaTrashCan, FaX } from 'react-icons/fa6';
+import { z } from 'zod';
 
 type Content = z.infer<
   typeof getContentsAdminSimple
@@ -226,46 +232,67 @@ const columns: GridColDef<Row>[] = [
   {
     field: 'additionalContentsList',
     headerName: '추가 콘텐츠',
-    width: 160,
+    width: 400,
     editable: true,
     valueFormatter(_, row) {
-      return `${
-        row.additionalContentsList?.[0]?.id
-          ? `(${row.additionalContentsList?.[0]?.id}) `
-          : ''
-      }${row.additionalContentsList?.map((c) => c?.title)?.join(', ') || ''}`;
+      return row.additionalContentsList
+        ?.map((item) => `(${item?.id}) ${item?.title}`)
+        .join(', ');
     },
     renderCell(params) {
       return (
-        params.formattedValue || (
+        params.formattedValue ?? (
           <span className="text-gray-400">더블클릭하여 편집</span>
         )
       );
     },
     renderEditCell(params) {
       return (
-        <select
-          className="w-full"
-          value={params.row.additionalContentsList?.[0]?.id ?? ''}
-          onChange={(e) => {
-            const content = params.row.additionalContentsOptions.find(
-              (c) => String(c.id) === e.target.value,
-            );
+        <FormControl fullWidth>
+          <InputLabel id="additionalContentsList-label">추가 콘텐츠</InputLabel>
+          <Select
+            labelId="additionalContentsList-label"
+            multiple
+            className="w-full"
+            // 콘텐츠1, 콘텐츠2 문자열로 표시
+            value={params.row.additionalContentsList?.map((item) => item?.id)}
+            renderValue={() =>
+              params.row.additionalContentsList
+                ?.map((item) => item?.id)
+                .join(', ')
+            }
+            onChange={(e) => {
+              const newList: GridEditCellValueParams['value'] = [];
 
-            params.api.setEditCellValue({
-              id: params.id,
-              field: 'additionalContentsList',
-              value: content ? [content] : [],
-            });
-          }}
-        >
-          <option value="">선택</option>
-          {params.row.additionalContentsOptions.map((c) => (
-            <option key={c.id} value={c.id ?? ''}>
-              ({c.id}) {c.title}
-            </option>
-          ))}
-        </select>
+              // additionalContentsOptions에서 선택한 id를 찾아 배열에 추가
+              (e.target.value as Array<number>).forEach((v) => {
+                const newItem = params.row.additionalContentsOptions.find(
+                  (item) => item.id === v,
+                );
+                newList.push(newItem);
+              });
+
+              params.api.setEditCellValue({
+                id: params.id,
+                field: 'additionalContentsList',
+                value: newList,
+              });
+            }}
+          >
+            {params.row.additionalContentsOptions.map((c) => (
+              <MenuItem key={c.id} value={c.id ?? ''}>
+                <Checkbox
+                  checked={
+                    params.row.additionalContentsList?.findIndex(
+                      (item) => item?.id === c.id,
+                    ) !== -1
+                  }
+                />
+                ({c.id}) {c.title}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       );
     },
   },
@@ -500,6 +527,7 @@ const ChallengeOperationRegisterMission = () => {
           refetchMissions();
           apiRef.current?.forceUpdate();
           return;
+
         case 'edit':
           if (!row.missionTemplateId) {
             return;
@@ -535,12 +563,14 @@ const ChallengeOperationRegisterMission = () => {
           refetchMissions();
           apiRef.current?.forceUpdate();
           return;
+
         case 'delete':
           await deleteMission.mutateAsync(row.id);
           setSnackbar('미션을 삭제했습니다.');
           refetchMissions();
           apiRef.current?.forceUpdate();
           return;
+
         case 'cancel':
           if (apiRef.current?.getRowMode(row.id) === 'edit') {
             apiRef.current?.stopRowEditMode({
