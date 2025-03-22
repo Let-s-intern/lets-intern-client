@@ -1,13 +1,13 @@
+import { useProgramQuery } from '@/api/program';
+import { useUserQuery } from '@/api/user';
+import { PaymentMethodKey } from '@/data/getPaymentSearchParams';
+import useProgramStore from '@/store/useProgramStore';
 import {
   loadTossPayments,
   WidgetPaymentMethodWidget,
 } from '@tosspayments/tosspayments-sdk';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useProgramQuery } from '../../../api/program';
-import { useUserQuery } from '../../../api/user';
-import { PaymentMethodKey } from '../../../data/getPaymentSearchParams';
-import useProgramStore from '../../../store/useProgramStore';
 
 type TossPaymentsWidgets = ReturnType<
   Awaited<ReturnType<typeof loadTossPayments>>['widgets']

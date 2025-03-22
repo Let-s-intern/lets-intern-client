@@ -14,7 +14,6 @@ import ProgramRecommendSlider from '@components/common/ui/ProgramRecommendSlider
 import { josa } from 'es-hangul';
 import { ReactNode, useMemo } from 'react';
 
-// const Balancer = clientOnly(() => import('react-wrap-balancer'));
 import { twMerge } from '@/lib/twMerge';
 import { Dayjs } from 'dayjs';
 import dynamic from 'next/dynamic';
