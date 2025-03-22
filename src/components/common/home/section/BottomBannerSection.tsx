@@ -43,7 +43,7 @@ const BottomBannerSection = () => {
                 </div>`,
             }}
             slidesPerView={1}
-            className="h-[6.25rem] rounded-sm md:h-[11.25rem]"
+            className="aspect-[3.2/1] rounded-sm md:aspect-[6.4/1]"
           >
             {data.bannerList.map((banner) => (
               <SwiperSlide key={banner.id}>
