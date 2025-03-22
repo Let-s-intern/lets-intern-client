@@ -37,13 +37,8 @@ import ProgramDetailNavigation, {
   PROGRAM_REVIEW_ID,
 } from './ProgramDetailNavigation';
 
-const {
-  CAREER_START,
-  PORTFOLIO,
-  PERSONAL_STATEMENT_LARGE_CORP,
-  EXPERIENCE_SUMMARY,
-  ETC,
-} = challengeTypeSchema.enum;
+const { CAREER_START, PORTFOLIO, PERSONAL_STATEMENT_LARGE_CORP, ETC } =
+  challengeTypeSchema.enum;
 
 export type ChallengeColor = {
   primary: string;
