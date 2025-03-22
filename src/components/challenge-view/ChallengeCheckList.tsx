@@ -10,6 +10,7 @@ import OutlinedBox from '@components/common/program/program-detail/OutlineBox';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import Heading2 from '@components/common/ui/Heading2';
 import { josa } from 'es-hangul';
+import { twMerge } from 'tailwind-merge';
 
 const superTitle = '취업 준비 현황 체크리스트';
 const title = [
@@ -171,6 +172,36 @@ const CAREER_START_CHECK_LIST = [
   },
 ];
 
+const EXPERIENCE_SUMMARY_CHECK_LIST = [
+  {
+    title: ['서류 제출 전까지 어떤 경험을', '써야할지 고민하고 있어요.. '],
+    content: [
+      ['어떤 기준으로 경험을 정리해야할지', ' 모르겠어요.'],
+      ['경험을 논리적으로 정리하는게 어려워요.'],
+    ],
+    solution: ['→ 경험정리에서 서류로 발전시킨 사례 공유!'],
+  },
+  {
+    title: ['제가 한 경험들이 의미있는', '활동인지 모르겠어요.'],
+    content: [
+      ['어떤 점을 강조해야 할지 모르겠어요'],
+      ['일상적인 경험까지 정리해야 하나요?'],
+    ],
+    solution: [
+      '→ 경험 재해석과 자가 점검을 도와줄',
+      '경험정리 특화 질문지, 체크리스트 제공',
+    ],
+  },
+  {
+    title: ['경험정리, 계속 미루고 있어서', '강제성이 필요해요!'],
+    content: [['혼자 하려니까 미루게 돼요'], ['중간에 자꾸 포기하게 돼요']],
+    solution: [
+      '→ 오픈카톡방 실시간 소감 및 작업물 공유와',
+      '미션 동기부여 페이백으로 강제성 부여',
+    ],
+  },
+];
+
 interface ChallengeCheckListProps {
   colors: ChallengeColor;
   challengeType: ChallengeIdSchema['challengeType'];
@@ -188,12 +219,14 @@ function ChallengeCheckList({
   ];
 
   const checkList = useMemo(() => {
-    const { PORTFOLIO, CAREER_START } = challengeTypeSchema.enum;
+    const { PORTFOLIO, CAREER_START, ETC } = challengeTypeSchema.enum;
     switch (challengeType) {
       case CAREER_START:
         return CAREER_START_CHECK_LIST;
       case PORTFOLIO:
         return PORTFOLIO_CHECK_LIST;
+      case ETC:
+        return EXPERIENCE_SUMMARY_CHECK_LIST;
       default:
         return PERSONAL_STATEMENT_CHECK_LIST;
     }
@@ -235,7 +268,13 @@ function ChallengeCheckList({
             </Box>
             <div className="flex w-fit flex-col gap-5 px-5 md:items-center md:px-0">
               {item.content.map((group) => (
-                <CheckList key={group[0]} colors={colors}>
+                <CheckList
+                  key={group[0]}
+                  colors={colors}
+                  className={
+                    group.length > 1 ? 'justify-start' : 'items-center'
+                  }
+                >
                   {group.map((ele) => (
                     <span
                       key={ele}
@@ -291,15 +330,17 @@ function Badge({
 function CheckList({
   children,
   colors,
+  className,
 }: {
   children?: ReactNode;
   colors: ChallengeColor;
+  className?: string;
 }) {
   const isDesktop = useMediaQuery('(min-width: 991px)');
 
   return (
-    <div className="flex w-full justify-start gap-4 md:items-center">
-      <div className="pt-1 md:pt-0">
+    <div className={twMerge('flex w-full gap-4 md:items-center', className)}>
+      <div>
         <RxCheckbox color={colors.primary} size={isDesktop ? 36 : 24} />
       </div>
       <div className="flex flex-col md:flex-row md:gap-1">{children}</div>

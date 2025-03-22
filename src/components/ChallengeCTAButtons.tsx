@@ -37,6 +37,7 @@ const ChallengeCTAButtons = ({
     }
 
     const payInfo = application ? getPayInfo(application) : null;
+
     if (!payInfo) {
       window.alert('정보를 불러오는 중입니다. 잠시만 기다려주세요.');
       return;
@@ -85,13 +86,14 @@ const ChallengeCTAButtons = ({
       programId: Number(challengeId),
       programOrderId: orderId,
       isFree,
+      deposit: challenge.priceInfo[0].refund ?? 0,
     });
 
     router.push(`/payment-input`);
     // navigate(`/payment-input`);
   }, [
     application,
-    challenge.title,
+    challenge,
     challengeId,
     isLoggedIn,
     router,

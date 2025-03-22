@@ -1,3 +1,5 @@
+'use client';
+
 import { useProgramQuery } from '@/api/program';
 import { usePatchUser } from '@/api/user';
 import CreditCardIcon from '@/assets/icons/credit-card.svg?react';
@@ -42,7 +44,6 @@ function calculateTotalPrice({
 const PaymentInputPage = () => {
   const navigate = useNavigate();
   const { data: programApplicationData } = useProgramStore();
-
   const { isLoggedIn } = useAuthStore();
   const { isLoading, months, banks } = useInstallmentPayment();
 
@@ -301,22 +302,26 @@ const PaymentInputPage = () => {
               <span>{totalPrice.toLocaleString()}원</span>
             </div>
           </div>
+          {/* [TODO] 제목 포함 조건 지워야 함 */}
           {!isLoading &&
             programApplicationData.programType === 'challenge' &&
-            !programApplicationData.programTitle?.includes('마케팅') &&
-            !programApplicationData.programTitle?.includes('대기업') && (
+            programApplicationData.deposit > 0 && (
               <div className="relative rounded-sm bg-[#E8F9F2] px-4 py-6 text-xsmall14 md:px-5">
                 <p className="font-medium">
                   모든 미션을 성공하면
                   <br className="md:hidden" />{' '}
-                  <span className="text-secondary-dark">3만원 페이백</span>{' '}
+                  <span className="text-secondary-dark">
+                    {programApplicationData.deposit / 10000}만원 페이백
+                  </span>{' '}
                   해드려요!
                 </p>
-                <img
-                  className="absolute bottom-0 right-0 h-full w-auto"
-                  src={PaybackImage.src}
-                  alt="3만원 페이백"
-                />
+                {programApplicationData.deposit === 30000 && (
+                  <img
+                    className="absolute bottom-0 right-0 h-full w-auto"
+                    src={PaybackImage.src}
+                    alt="3만원 페이백"
+                  />
+                )}
               </div>
             )}
         </div>

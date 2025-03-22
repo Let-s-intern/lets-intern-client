@@ -20,6 +20,7 @@ interface ProgramApplicationFormStore {
     programId: number | null;
     programOrderId: string | null;
     isFree: boolean | null;
+    deposit: number;
   };
   setProgramApplicationForm: (
     params: Partial<ProgramApplicationFormStore['data']>,
@@ -49,6 +50,7 @@ const useProgramStore = create(
         programId: null,
         programOrderId: null,
         isFree: null,
+        deposit: 0,
       },
       setProgramApplicationForm: (params) => {
         const currentData = get().data;
@@ -79,6 +81,7 @@ const useProgramStore = create(
             programId: null,
             programOrderId: null,
             isFree: null,
+            deposit: 0,
           },
         });
       },

@@ -14,7 +14,6 @@ import ProgramRecommendSlider from '@components/common/ui/ProgramRecommendSlider
 import { josa } from 'es-hangul';
 import { ReactNode, useMemo } from 'react';
 
-// const Balancer = clientOnly(() => import('react-wrap-balancer'));
 import { twMerge } from '@/lib/twMerge';
 import { Dayjs } from 'dayjs';
 import dynamic from 'next/dynamic';
@@ -45,6 +44,7 @@ const {
   PORTFOLIO,
   PERSONAL_STATEMENT_LARGE_CORP,
   MARKETING,
+  ETC,
 } = challengeTypeSchema.enum;
 
 const ChallengePointView = ({
@@ -78,7 +78,7 @@ const ChallengePointView = ({
     {
       index: 3,
       title: 'OT',
-      subTitle: '*실시간 진행',
+      subTitle: challengeType === ETC ? '비대면 진행' : '*실시간 진행',
     },
     {
       index: 4,
@@ -96,7 +96,7 @@ const ChallengePointView = ({
         (challengeType === PERSONAL_STATEMENT_LARGE_CORP ||
         challengeType === MARKETING
           ? '수료증 발급'
-          : '3만원 페이백 및 수료증 발급'),
+          : `${challengeType === ETC ? 2 : 3}만원 페이백 및 수료증 발급`),
     },
   ];
 
@@ -107,7 +107,7 @@ const ChallengePointView = ({
       (challengeType === PERSONAL_STATEMENT_LARGE_CORP ||
       challengeType === MARKETING
         ? '수료증 발급'
-        : '3만원 페이백 및 수료증 발급'),
+        : `${challengeType === ETC ? 2 : 3}만원 페이백 및 수료증 발급`),
   };
 
   const programSchedule = [
@@ -223,7 +223,9 @@ const ChallengePointView = ({
             >
               하루 30분
             </span>
-            , 단 {point.weekText}만에 서류 준비를 <br className="lg:hidden" />
+            , 단 {point.weekText}만에{' '}
+            {challengeType === ETC ? '경험 정리' : '서류 준비'}를{' '}
+            <br className="lg:hidden" />
             끝낼 수 있어요
           </Heading2>
 
@@ -271,6 +273,13 @@ const ChallengePointView = ({
                 <br className="md:hidden" /> 별도로 준비되어 있습니다.
               </p>
             )}
+            {challengeType === ETC && (
+              <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
+                본 프로그램은 서류 준비의 기초가 되는 경험정리를 다룹니다.
+                <br className="hidden md:block" /> 이력서, 자기소개서,
+                포트폴리오 프로그램에 앞서 수강하기를 권장드립니다.
+              </p>
+            )}
           </div>
         </div>
       )}
@@ -304,6 +313,7 @@ const ChallengePointView = ({
           <img
             className="absolute -right-14 top-8 h-auto w-[362px] md:-top-12 md:w-[838px] lg:right-48"
             src={recommendLogoSrc}
+            alt=""
           />
 
           {/* 본문 */}
@@ -391,7 +401,8 @@ const ChallengePointView = ({
               <Box className="relative overflow-hidden md:flex-1">
                 <BoxItem title={reward.title}>{reward.content}</BoxItem>
                 {challengeType !== PERSONAL_STATEMENT_LARGE_CORP &&
-                  challengeType !== MARKETING && (
+                  challengeType !== MARKETING &&
+                  challengeType !== ETC && (
                     <img
                       className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
                       src={paypackImgSrc}
