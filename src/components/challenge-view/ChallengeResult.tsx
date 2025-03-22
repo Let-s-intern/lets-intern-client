@@ -62,8 +62,28 @@ const CAREER_START_CONTENT = [
   },
 ];
 
-const { PORTFOLIO, PERSONAL_STATEMENT, CAREER_START } =
-  challengeTypeSchema.enum;
+const EXPERIENCE_SUMMARY_CONTENT = [
+  {
+    beforeImg: '/images/experience-summary-before1.jpg',
+    beforeCaption: '매번 마감 기한 전까지 소재 고민하기',
+    afterImg: '/images/experience-summary-after1.jpg',
+    afterCaption: '경험 서랍에서 바로 직무 FIT한 소재 뽑기',
+  },
+  {
+    beforeImg: '/images/experience-summary-before2.jpg',
+    beforeCaption: '여기저기 분산된 경험들',
+    afterImg: '/images/experience-summary-after2.jpg',
+    afterCaption: '경험 마인드맵과 STAR로 논리적인 경험 정리',
+  },
+  {
+    beforeImg: '/images/experience-summary-before3.jpg',
+    beforeCaption: '자기소개서 소재 무한 고민 굴레',
+    afterImg: '/images/experience-summary-after3.jpg',
+    afterCaption: '경험별로 명확하게 연결된 나만의 역량',
+  },
+];
+
+const { PORTFOLIO, ETC, CAREER_START } = challengeTypeSchema.enum;
 
 interface ChallengeResultProps {
   colors: ChallengeColor;
@@ -84,6 +104,8 @@ function ChallengeResult({
         return PORTFOLIO_CONTENT;
       case CAREER_START:
         return CAREER_START_CONTENT;
+      case ETC:
+        return EXPERIENCE_SUMMARY_CONTENT;
       default:
         return PERSONAL_STATEMENT_CONTENT;
     }
@@ -114,14 +136,24 @@ function ChallengeResult({
             {superTitle}
           </SuperTitle>
           <Heading2 className="text-white">
-            서류 합격률을 300%{' '}
-            <img
-              className="mb-1 inline-block h-auto w-7 md:mb-2 md:w-10"
-              src={`/icons/${iconName}`}
-            />{' '}
-            <br className="md:hidden" />
-            높일 수 있는 <br className="hidden md:block" />
-            {challengeTitle}
+            {challengeType === ETC ? (
+              <>
+                나만의 강점을 파악하게 해줄
+                <br /> 기필코 경험정리 챌린지
+              </>
+            ) : (
+              <>
+                서류 합격률을 300%{' '}
+                <img
+                  className="mb-1 inline-block h-auto w-7 md:mb-2 md:w-10"
+                  src={`/icons/${iconName}`}
+                  alt=""
+                />{' '}
+                <br className="md:hidden" />
+                높일 수 있는 <br className="hidden md:block" />
+                {challengeTitle}
+              </>
+            )}
           </Heading2>
         </div>
         {contents.map((content) => (
@@ -187,7 +219,7 @@ function BadgedBox({
   return (
     <Box
       className={twMerge(
-        'flex min-w-[260px] flex-col overflow-hidden p-0 md:p-0',
+        'flex w-full min-w-[260px] flex-col overflow-hidden p-0 md:p-0',
         className,
       )}
       style={{
@@ -221,7 +253,9 @@ function ResultImg({
   React.ImgHTMLAttributes<HTMLImageElement>,
   HTMLImageElement
 >) {
-  return <img className="h-auto w-full" src={src} alt={alt} />;
+  return (
+    <img className="aspect-[13000/7947] h-full w-full" src={src} alt={alt} />
+  );
 }
 
 export default ChallengeResult;

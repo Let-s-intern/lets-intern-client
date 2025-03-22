@@ -21,6 +21,7 @@ import ChallengeBrand from './challenge-view/ChallengeBrand';
 import ChallengeDifferent from './challenge-view/ChallengeDifferent';
 import ChallengeInfoBottom from './challenge-view/ChallengeInfoBottom';
 import ChallengeIntroCareerStart from './challenge-view/ChallengeIntroCareerStart';
+import ChallengeIntroExpericeSummary from './challenge-view/ChallengeIntroExpericeSummary';
 import ChallengeIntroPersonalStatement from './challenge-view/ChallengeIntroPersonalStatement';
 import ChallengeIntroPortfolio from './challenge-view/ChallengeIntroPortfolio';
 import ChallengePointView from './challenge-view/ChallengePointView';
@@ -36,7 +37,7 @@ import ProgramDetailNavigation, {
   PROGRAM_REVIEW_ID,
 } from './ProgramDetailNavigation';
 
-const { CAREER_START, PORTFOLIO, PERSONAL_STATEMENT_LARGE_CORP } =
+const { CAREER_START, PORTFOLIO, PERSONAL_STATEMENT_LARGE_CORP, ETC } =
   challengeTypeSchema.enum;
 
 export type ChallengeColor = {
@@ -96,7 +97,6 @@ const ChallengeView: React.FC<{
     let gradient = ''; // After 배지 배경색에 사용
     let dark = ''; // 진행방식,결과물 배경색
     let basicInfoPrimary = null; // 기본정보 기본색
-
     let subTitle = '';
     let subBg = '';
     let gradientBg = '';
@@ -157,6 +157,23 @@ const ChallengeView: React.FC<{
         recommendBg = '#F1FBFF';
         recommendLogo = '#DDF5FF';
         thumbnailBg = '#E6F9DE';
+        break;
+      case ETC:
+        primary = '#4D55F5';
+        secondary = '#E45BFF';
+        primaryLight = '#F3F4FF';
+        secondaryLight = '#FDF6FF';
+        gradient = '#763CFF';
+        dark = '#1A1D5F';
+
+        subTitle = '#757BFF';
+        subBg = '#5C63FF';
+        gradientBg =
+          'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)';
+        curriculumBg = '#F2F2F5';
+        recommendBg = '#F3F4FF';
+        recommendLogo = '#E8EAFF';
+        thumbnailBg = '#EDEEFE';
         break;
       default: // 자소서, 마케팅
         primary = '#14BCFF';
@@ -262,6 +279,8 @@ const ChallengeView: React.FC<{
                   challengeTitle={challenge.title ?? ''}
                   weekText={receivedContent.challengePoint.weekText}
                 />
+              ) : challenge.challengeType === ETC ? (
+                <ChallengeIntroExpericeSummary colors={colors} />
               ) : (
                 <ChallengeIntroPersonalStatement />
               )}
