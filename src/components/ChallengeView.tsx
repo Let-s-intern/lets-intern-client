@@ -96,7 +96,6 @@ const ChallengeView: React.FC<{
     let gradient = ''; // After 배지 배경색에 사용
     let dark = ''; // 진행방식,결과물 배경색
     let basicInfoPrimary = null; // 기본정보 기본색
-
     let subTitle = '';
     let subBg = '';
     let gradientBg = '';

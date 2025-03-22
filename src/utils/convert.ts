@@ -57,6 +57,7 @@ export const challengeTypeToText: Record<ChallengeType, string> = {
   PORTFOLIO: '포트폴리오',
   PERSONAL_STATEMENT_LARGE_CORP: '대기업 자소서',
   MARKETING: '마케팅',
+  EXPERIENCE_SUMMARY: '경험 정리',
 };
 
 export const challengeTypeToDisplay: Record<ChallengeType, string> = {
@@ -68,6 +69,7 @@ export const challengeTypeToDisplay: Record<ChallengeType, string> = {
   PORTFOLIO: '포트폴리오 완성 챌린지',
   PERSONAL_STATEMENT_LARGE_CORP: '대기업 공채 자소서 완성 챌린지',
   MARKETING: '마케팅',
+  EXPERIENCE_SUMMARY: '경험 정리 챌린지',
 };
 
 export const challengeTypes: ChallengeType[] = [
@@ -79,6 +81,7 @@ export const challengeTypes: ChallengeType[] = [
   'PORTFOLIO',
   'PERSONAL_STATEMENT_LARGE_CORP',
   'MARKETING',
+  'EXPERIENCE_SUMMARY',
 ];
 
 export const programStatusToText: Record<string, string> = {

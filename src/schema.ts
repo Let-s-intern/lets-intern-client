@@ -70,6 +70,7 @@ export const challengeTypeSchema = z.enum([
   'PORTFOLIO',
   'PERSONAL_STATEMENT_LARGE_CORP',
   'MARKETING',
+  'EXPERIENCE_SUMMARY',
 ]);
 
 export type ChallengeType = z.infer<typeof challengeTypeSchema>;
