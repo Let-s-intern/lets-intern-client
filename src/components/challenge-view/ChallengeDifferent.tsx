@@ -11,8 +11,13 @@ import DifferentCard, {
 } from '@components/common/program/program-detail/different/DifferentCard';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 
-const { PORTFOLIO, CAREER_START, PERSONAL_STATEMENT_LARGE_CORP, MARKETING } =
-  challengeTypeSchema.enum;
+const {
+  PORTFOLIO,
+  CAREER_START,
+  PERSONAL_STATEMENT_LARGE_CORP,
+  MARKETING,
+  ETC,
+} = challengeTypeSchema.enum;
 
 export const tripleBenefits = [
   {
@@ -168,13 +173,16 @@ const ChallengeDifferent = ({
                 <span style={{ color: colors.primary }}>혜택</span>
                 <p className="z-10 whitespace-pre text-black">
                   모든 커리큘럼을 따라오기만 하면,
-                  <br className="md:hidden" /> 3만원을 페이백해드려요!
+                  <br className="md:hidden" /> {challengeType === ETC ? 2 : 3}
+                  만원을 페이백해드려요!
                 </p>
-                <img
-                  className="absolute bottom-0 right-0 h-auto w-28 md:top-0 md:w-48"
-                  src={paypackImgSrc}
-                  alt="페이백 3만원"
-                />
+                {challengeType !== ETC && (
+                  <img
+                    className="absolute bottom-0 right-0 h-auto w-28 md:top-0 md:w-48"
+                    src={paypackImgSrc}
+                    alt="페이백 3만원"
+                  />
+                )}
               </div>
             )}
         </div>
@@ -188,6 +196,7 @@ const ChallengeDifferent = ({
           {challengeTitle}
           <br className="md:hidden" /> 참여자만을 위한 트리플 혜택!
         </p>
+
         <div
           className="-mx-5 flex w-fit flex-col gap-y-4 overflow-x-auto px-5 md:-mx-10 md:px-10 lg:px-0"
           style={{ color: colors.primary }}
@@ -207,6 +216,14 @@ const ChallengeDifferent = ({
             options={tripleBenefits[2].options}
             imgUrl={tripleBenefits[2].imgUrl.src}
           />
+          {challengeType === ETC && (
+            <p className="mt-6 text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
+              미션 80점 이상 완료 시<br /> 이력서, 자기소개서, 포트폴리오 완성
+              챌린지
+              <br className="md:hidden" /> 할인 쿠폰 발급! (챌린지 3종 중 1회
+              적용 가능)
+            </p>
+          )}
         </div>
       </div>
     </section>
