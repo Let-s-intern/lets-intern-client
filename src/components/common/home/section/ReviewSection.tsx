@@ -105,11 +105,15 @@ const ReviewSection = () => {
               },
             }}
           >
-            {totalReview.reviewList.map((review, index) => (
-              <SwiperSlide key={'review' + review.reviewInfo.reviewId + index}>
-                <ReviewItem review={review} />
-              </SwiperSlide>
-            ))}
+            {totalReview.reviewList
+              .filter((r) => r.reviewItemList && r.reviewItemList?.length > 0)
+              .map((review, index) => (
+                <SwiperSlide
+                  key={'review' + review.reviewInfo.reviewId + index}
+                >
+                  <ReviewItem review={review} />
+                </SwiperSlide>
+              ))}
           </Swiper>
         </div>
       </section>
@@ -120,8 +124,6 @@ const ReviewSection = () => {
 export default ReviewSection;
 
 export const ReviewItem = ({ review }: { review: GetReview }) => {
-  if (review.reviewItemList?.length === 0) return null;
-
   return (
     <div className="mx-auto flex w-[260px] select-none flex-col rounded-sm bg-white px-5 py-4 lg:w-[400px]">
       <div className="flex flex-col gap-y-1.5 text-xsmall14">
