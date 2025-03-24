@@ -11,13 +11,7 @@ import DifferentCard, {
 } from '@components/common/program/program-detail/different/DifferentCard';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 
-const {
-  PORTFOLIO,
-  CAREER_START,
-  PERSONAL_STATEMENT_LARGE_CORP,
-  MARKETING,
-  ETC,
-} = challengeTypeSchema.enum;
+const { PORTFOLIO, CAREER_START, ETC } = challengeTypeSchema.enum;
 
 export const tripleBenefits = [
   {

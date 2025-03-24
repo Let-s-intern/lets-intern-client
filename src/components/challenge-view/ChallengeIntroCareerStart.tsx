@@ -94,7 +94,7 @@ const ChallengeIntroCareerStart = ({
               취업 성공 전략
             </p>
             <Heading2>
-              2024 채용 트렌드는{' '}
+              {new Date().getFullYear()} 채용 트렌드는{' '}
               <span className="text-primary">직무 연관성</span>
               , <br className="hidden md:block" />
               나에 <br className="md:hidden" />

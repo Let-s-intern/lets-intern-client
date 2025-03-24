@@ -83,7 +83,8 @@ const EXPERIENCE_SUMMARY_CONTENT = [
   },
 ];
 
-const { PORTFOLIO, ETC, CAREER_START } = challengeTypeSchema.enum;
+const { PORTFOLIO, EXPERIENCE_SUMMARY, CAREER_START } =
+  challengeTypeSchema.enum;
 
 interface ChallengeResultProps {
   colors: ChallengeColor;
@@ -104,7 +105,7 @@ function ChallengeResult({
         return PORTFOLIO_CONTENT;
       case CAREER_START:
         return CAREER_START_CONTENT;
-      case ETC:
+      case EXPERIENCE_SUMMARY:
         return EXPERIENCE_SUMMARY_CONTENT;
       default:
         return PERSONAL_STATEMENT_CONTENT;
@@ -136,7 +137,7 @@ function ChallengeResult({
             {superTitle}
           </SuperTitle>
           <Heading2 className="text-white">
-            {challengeType === ETC ? (
+            {challengeType === EXPERIENCE_SUMMARY ? (
               <>
                 나만의 강점을 파악하게 해줄
                 <br /> 기필코 경험정리 챌린지

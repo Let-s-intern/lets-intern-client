@@ -37,8 +37,12 @@ import ProgramDetailNavigation, {
   PROGRAM_REVIEW_ID,
 } from './ProgramDetailNavigation';
 
-const { CAREER_START, PORTFOLIO, PERSONAL_STATEMENT_LARGE_CORP, ETC } =
-  challengeTypeSchema.enum;
+const {
+  CAREER_START,
+  PORTFOLIO,
+  PERSONAL_STATEMENT_LARGE_CORP,
+  EXPERIENCE_SUMMARY,
+} = challengeTypeSchema.enum;
 
 export type ChallengeColor = {
   primary: string;
@@ -88,6 +92,10 @@ const ChallengeView: React.FC<{
       return { initialized: false };
     }
   }, [challenge.desc]);
+
+  const reviewExists =
+    (receivedContent.challengeReview ?? []).length > 0 &&
+    receivedContent.blogReview;
 
   const colors = useMemo<ChallengeColor>(() => {
     let primary = '';
@@ -158,7 +166,7 @@ const ChallengeView: React.FC<{
         recommendLogo = '#DDF5FF';
         thumbnailBg = '#E6F9DE';
         break;
-      case ETC:
+      case EXPERIENCE_SUMMARY:
         primary = '#4D55F5';
         secondary = '#E45BFF';
         primaryLight = '#F3F4FF';
@@ -280,7 +288,7 @@ const ChallengeView: React.FC<{
                   challengeTitle={challenge.title ?? ''}
                   weekText={receivedContent.challengePoint.weekText}
                 />
-              ) : challenge.challengeType === ETC ? (
+              ) : challenge.challengeType === EXPERIENCE_SUMMARY ? (
                 <ChallengeIntroExpericeSummary colors={colors} />
               ) : (
                 <ChallengeIntroPersonalStatement />
@@ -316,6 +324,7 @@ const ChallengeView: React.FC<{
               </section>
             )}
 
+          {/* 차별점 */}
           <div
             id={CHALLENGE_DIFFERENT_ID}
             className="challenge_difference flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0"
@@ -329,30 +338,36 @@ const ChallengeView: React.FC<{
             <ChallengeBrand colors={colors} />
           </div>
 
-          <section
-            id={PROGRAM_REVIEW_ID}
-            className="challenge_review flex w-full flex-col items-center gap-y-[70px] md:gap-y-40"
-          >
-            <div className="flex w-full flex-col items-center bg-neutral-95 py-[70px] md:py-[110px]">
-              <ProgramBestReviewSection
-                type="challenge"
-                reviews={receivedContent.challengeReview}
-                colors={colors}
-              />
-              <MoreReviewButton
-                type={'CHALLENGE'}
-                challengeType={challenge.challengeType}
-                mainColor={colors.dark}
-                subColor={colors.secondary}
-              />
-            </div>
-            {receivedContent.blogReview && (
-              <ProgramDetailBlogReviewSection
-                review={receivedContent.blogReview}
-                programType="challenge"
-              />
-            )}
-          </section>
+          {/* 후기 섹션 */}
+          {reviewExists && (
+            <section
+              id={PROGRAM_REVIEW_ID}
+              className="challenge_review flex w-full flex-col items-center gap-y-[70px] md:gap-y-40"
+            >
+              {(receivedContent.challengeReview ?? []).length > 0 &&
+                receivedContent.blogReview && (
+                  <div className="flex w-full flex-col items-center bg-neutral-95 py-[70px] md:py-[110px]">
+                    <ProgramBestReviewSection
+                      type="challenge"
+                      reviews={receivedContent.challengeReview}
+                      colors={colors}
+                    />
+                    <MoreReviewButton
+                      type={'CHALLENGE'}
+                      challengeType={challenge.challengeType}
+                      mainColor={colors.dark}
+                      subColor={colors.secondary}
+                    />
+                  </div>
+                )}
+              {receivedContent.blogReview && (
+                <ProgramDetailBlogReviewSection
+                  review={receivedContent.blogReview}
+                  programType="challenge"
+                />
+              )}
+            </section>
+          )}
           <ChallengeFaq
             faqData={faqData}
             colors={colors}
