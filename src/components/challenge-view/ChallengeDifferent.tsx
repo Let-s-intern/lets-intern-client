@@ -48,10 +48,12 @@ const ChallengeDifferent = ({
   colors,
   challengeType,
   challengeTitle,
+  deposit,
 }: {
   colors: ChallengeColor;
   challengeType: ChallengeType;
   challengeTitle: string;
+  deposit: number;
 }) => {
   const differentList: DifferentCardProps[] = [
     {
@@ -161,30 +163,29 @@ const ChallengeDifferent = ({
               colors={colors}
             />
           ))}
-          {challengeType !== PERSONAL_STATEMENT_LARGE_CORP &&
-            challengeType !== MARKETING && (
-              <div
-                className="relative flex w-full gap-x-2 overflow-hidden rounded-md px-5 pb-10 pt-[30px] text-small18 font-bold md:px-10 md:py-[50px] md:text-medium22"
-                style={{
-                  backgroundColor: colors.primaryLight,
-                  color: colors.primaryLight,
-                }}
-              >
-                <span style={{ color: colors.primary }}>혜택</span>
-                <p className="z-10 whitespace-pre text-black">
-                  모든 커리큘럼을 따라오기만 하면,
-                  <br className="md:hidden" /> {challengeType === ETC ? 2 : 3}
-                  만원을 페이백해드려요!
-                </p>
-                {challengeType !== ETC && (
-                  <img
-                    className="absolute bottom-0 right-0 h-auto w-28 md:top-0 md:w-48"
-                    src={paypackImgSrc}
-                    alt="페이백 3만원"
-                  />
-                )}
-              </div>
-            )}
+          {deposit >= 10000 && (
+            <div
+              className="relative flex w-full gap-x-2 overflow-hidden rounded-md px-5 pb-10 pt-[30px] text-small18 font-bold md:px-10 md:py-[50px] md:text-medium22"
+              style={{
+                backgroundColor: colors.primaryLight,
+                color: colors.primaryLight,
+              }}
+            >
+              <span style={{ color: colors.primary }}>혜택</span>
+              <p className="z-10 whitespace-pre text-black">
+                모든 커리큘럼을 따라오기만 하면,
+                <br className="md:hidden" /> {deposit / 10000}
+                만원을 페이백해드려요!
+              </p>
+              {deposit === 30000 && (
+                <img
+                  className="absolute bottom-0 right-0 h-auto w-28 md:top-0 md:w-48"
+                  src={paypackImgSrc}
+                  alt="페이백 3만원"
+                />
+              )}
+            </div>
+          )}
         </div>
       </div>
 

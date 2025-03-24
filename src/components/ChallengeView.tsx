@@ -260,6 +260,7 @@ const ChallengeView: React.FC<{
                 endDate={dayjs(challenge.endDate)}
                 challengeTitle={challenge.title ?? ''}
                 programRecommend={receivedContent.programRecommend}
+                deposit={challenge.priceInfo[0].refund ?? 0}
               />
             </section>
 
@@ -323,6 +324,7 @@ const ChallengeView: React.FC<{
               challengeTitle={challenge.title ?? ''}
               colors={colors}
               challengeType={challenge.challengeType}
+              deposit={challenge.priceInfo[0].refund ?? 0}
             />
             <ChallengeBrand colors={colors} />
           </div>

@@ -5,19 +5,18 @@ import {
   LOCALIZED_YYYY_MDdd_HH,
   LOCALIZED_YYYY_MDdd_HHmm,
 } from '@/data/dayjsFormat';
+import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema, ProgramTypeEnum } from '@/schema';
 import { ChallengePoint, ProgramRecommend } from '@/types/interface';
 import { ChallengeColor } from '@components/ChallengeView';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import Heading2 from '@components/common/ui/Heading2';
 import ProgramRecommendSlider from '@components/common/ui/ProgramRecommendSlider';
-import { josa } from 'es-hangul';
-import { ReactNode, useMemo } from 'react';
-
-import { twMerge } from '@/lib/twMerge';
 import { Dayjs } from 'dayjs';
+import { josa } from 'es-hangul';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
+import { ReactNode, useMemo } from 'react';
 
 const Balancer = dynamic(() => import('react-wrap-balancer'), { ssr: false });
 
@@ -55,6 +54,7 @@ const ChallengePointView = ({
   challengeType,
   challengeTitle,
   programRecommend,
+  deposit,
 }: {
   point: ChallengePoint;
   startDate: Dayjs;
@@ -63,6 +63,7 @@ const ChallengePointView = ({
   challengeType: ChallengeType;
   challengeTitle: string;
   programRecommend?: ProgramRecommend;
+  deposit: number;
 }) => {
   const router = useRouter();
 
@@ -96,7 +97,7 @@ const ChallengePointView = ({
         (challengeType === PERSONAL_STATEMENT_LARGE_CORP ||
         challengeType === MARKETING
           ? '수료증 발급'
-          : `${challengeType === ETC ? 2 : 3}만원 페이백 및 수료증 발급`),
+          : `${deposit / 10000}만원 페이백 및 수료증 발급`),
     },
   ];
 
@@ -107,7 +108,7 @@ const ChallengePointView = ({
       (challengeType === PERSONAL_STATEMENT_LARGE_CORP ||
       challengeType === MARKETING
         ? '수료증 발급'
-        : `${challengeType === ETC ? 2 : 3}만원 페이백 및 수료증 발급`),
+        : `${deposit / 10000}만원 페이백 및 수료증 발급`),
   };
 
   const programSchedule = [
@@ -400,15 +401,13 @@ const ChallengePointView = ({
               </Box>
               <Box className="relative overflow-hidden md:flex-1">
                 <BoxItem title={reward.title}>{reward.content}</BoxItem>
-                {challengeType !== PERSONAL_STATEMENT_LARGE_CORP &&
-                  challengeType !== MARKETING &&
-                  challengeType !== ETC && (
-                    <img
-                      className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
-                      src={paypackImgSrc}
-                      alt="페이백 3만원"
-                    />
-                  )}
+                {deposit === 30000 && (
+                  <img
+                    className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
+                    src={paypackImgSrc}
+                    alt="페이백 3만원"
+                  />
+                )}
               </Box>
             </div>
           </div>
