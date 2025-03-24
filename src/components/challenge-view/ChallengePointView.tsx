@@ -43,7 +43,7 @@ const {
   PORTFOLIO,
   PERSONAL_STATEMENT_LARGE_CORP,
   MARKETING,
-  ETC,
+  EXPERIENCE_SUMMARY,
 } = challengeTypeSchema.enum;
 
 const ChallengePointView = ({
@@ -79,7 +79,8 @@ const ChallengePointView = ({
     {
       index: 3,
       title: 'OT',
-      subTitle: challengeType === ETC ? '비대면 진행' : '*실시간 진행',
+      subTitle:
+        challengeType === EXPERIENCE_SUMMARY ? '비대면 진행' : '*실시간 진행',
     },
     {
       index: 4,
@@ -195,7 +196,7 @@ const ChallengePointView = ({
     }
 
     return list;
-  }, []);
+  }, [programRecommend?.list, router]);
 
   return (
     <div className="flex w-full flex-col items-center">
@@ -225,7 +226,7 @@ const ChallengePointView = ({
               하루 30분
             </span>
             , 단 {point.weekText}만에{' '}
-            {challengeType === ETC ? '경험 정리' : '서류 준비'}를{' '}
+            {challengeType === EXPERIENCE_SUMMARY ? '경험 정리' : '서류 준비'}를{' '}
             <br className="lg:hidden" />
             끝낼 수 있어요
           </Heading2>
@@ -274,7 +275,7 @@ const ChallengePointView = ({
                 <br className="md:hidden" /> 별도로 준비되어 있습니다.
               </p>
             )}
-            {challengeType === ETC && (
+            {challengeType === EXPERIENCE_SUMMARY && (
               <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
                 본 프로그램은 서류 준비의 기초가 되는 경험정리를 다룹니다.
                 <br className="hidden md:block" /> 이력서, 자기소개서,
