@@ -283,7 +283,7 @@ const ChallengeView: React.FC<{
         </div>
 
         <ProgramDetailNavigation
-          color={colors}
+          challengeType={challenge.challengeType}
           programType="challenge"
           className={twMerge(isPreview && 'top-0 md:top-0 lg:top-0')}
           isReady={!faqIsLoading}
