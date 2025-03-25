@@ -44,6 +44,42 @@ const {
   EXPERIENCE_SUMMARY,
 } = challengeTypeSchema.enum;
 
+export const challengeColors = {
+  _4D55F5: '#4D55F5',
+  E45BFF: '#E45BFF',
+  F3F4FF: '#F3F4FF',
+  FDF6FF: '#FDF6FF',
+  _763CFF: '#763CFF',
+  _1A1D5F: '#1A1D5F',
+  _757BFF: '#757BFF',
+  _5C63FF: '#5C63FF',
+  _222A7E: '#222A7E',
+  _111449: '#111449',
+  F2F2F5: '#F2F2F5',
+  E8EAFF: '#E8EAFF',
+  EDEEFE: '#EDEEFE',
+  _4A76FF: '#4A76FF',
+  F8AE00: '#F8AE00',
+  F0F4FF: '#F0F4FF',
+  FFF9EA: '#FFF9EA',
+  _4A56FF: '#4A56FF',
+  _1A2A5D: '#1A2A5D',
+  F3F3F3: '#F3F3F3',
+  DEE7FF: '#DEE7FF',
+  FFF4DB: '#FFF4DB',
+  _14BCFF: '#14BCFF',
+  _32B750: '#32B750',
+  FF9C34: '#FF9C34',
+  EEFAFF: '#EEFAFF',
+  FFF7EF: '#FFF7EF',
+  _39DEFF: '#39DEFF',
+  _20304F: '#20304F',
+  EFF4F7: '#EFF4F7',
+  F1FBFF: '#F1FBFF',
+  DDF5FF: '#DDF5FF',
+  E6F9DE: '#E6F9DE',
+};
+
 export type ChallengeColor = {
   primary: string;
   basicInfoPrimary?: string | null;
@@ -240,7 +276,6 @@ const ChallengeView: React.FC<{
             {challenge.title ?? ''}
           </NextBackHeader>
           <ChallengeBasicInfo
-            colors={colors}
             challengeId={id}
             challenge={challengeTransformed}
             activeChallengeList={activeChallengeList?.challengeList}

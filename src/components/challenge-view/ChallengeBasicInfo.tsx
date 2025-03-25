@@ -19,13 +19,20 @@ import {
   formatFullDateTimeWithOutYear,
 } from '@/utils/formatDateString';
 import { getProgramPathname } from '@/utils/url';
-import { ChallengeColor } from '@components/ChallengeView';
+import { challengeColors } from '@components/ChallengeView';
 import BasicInfoRow from '@components/common/program/program-detail/basicInfo/BasicInfoRow';
 import { useRouter } from 'next/navigation';
+import { useMemo } from 'react';
 import { LuCalendarDays } from 'react-icons/lu';
 import RadioButton from './RadioButton';
 
-const { PERSONAL_STATEMENT } = challengeTypeSchema.enum;
+const {
+  PERSONAL_STATEMENT,
+  CAREER_START,
+  PORTFOLIO,
+  PERSONAL_STATEMENT_LARGE_CORP,
+  EXPERIENCE_SUMMARY,
+} = challengeTypeSchema.enum;
 
 export const getDiscountPercent = (
   originalPrice: number,
@@ -39,13 +46,61 @@ const ChallengeBasicInfo = ({
   challenge,
   challengeId,
   activeChallengeList,
-  colors,
 }: {
   challenge: ChallengeIdSchema;
   challengeId: string | undefined;
   activeChallengeList: ActiveChallengeType[] | undefined;
-  colors: ChallengeColor;
 }) => {
+  const styles = useMemo(() => {
+    switch (challenge.challengeType) {
+      case CAREER_START:
+        return {
+          thumbnailStyle: {
+            backgroundColor: challengeColors.EDEEFE,
+          },
+          basicInfoStyle: {
+            color: challengeColors._4D55F5,
+          },
+        };
+      case PORTFOLIO:
+        return {
+          thumbnailStyle: {
+            backgroundColor: challengeColors.FFF4DB,
+          },
+          basicInfoStyle: {
+            color: challengeColors._4A76FF,
+          },
+        };
+      case PERSONAL_STATEMENT_LARGE_CORP:
+        return {
+          thumbnailStyle: {
+            backgroundColor: challengeColors.E6F9DE,
+          },
+          basicInfoStyle: {
+            color: challengeColors._32B750,
+          },
+        };
+      case EXPERIENCE_SUMMARY:
+        return {
+          thumbnailStyle: {
+            backgroundColor: challengeColors.EDEEFE,
+          },
+          basicInfoStyle: {
+            color: challengeColors._4D55F5,
+          },
+        };
+      default:
+        return {
+          thumbnailStyle: {
+            backgroundColor: challengeColors.EEFAFF,
+          },
+          basicInfoStyle: {
+            color: challengeColors._14BCFF,
+          },
+        };
+    }
+  }, [challenge.challengeType]);
+
   const {
     isLoading,
     months: installmentMonths,
@@ -117,7 +172,7 @@ const ChallengeBasicInfo = ({
       <div className="flex w-full gap-x-4">
         <div
           className="flex flex-1 items-center justify-center overflow-hidden rounded-ms"
-          style={{ backgroundColor: colors.thumbnailBg }}
+          style={styles.thumbnailStyle}
         >
           <img
             src={challenge.thumbnail}
@@ -151,10 +206,7 @@ const ChallengeBasicInfo = ({
                   <span>{regularPrice?.toLocaleString()}원</span>
                 </div>
                 <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
-                  <span
-                    className="font-bold"
-                    style={{ color: colors.basicInfoPrimary ?? colors.primary }}
-                  >
+                  <span className="font-bold" style={styles.basicInfoStyle}>
                     {getDiscountPercent(
                       regularPrice || 0,
                       priceInfo.discount || 0,
@@ -184,9 +236,7 @@ const ChallengeBasicInfo = ({
               </div>
               {showMonthlyPrice && (
                 <div className="flex w-full flex-col items-end">
-                  <div
-                    style={{ color: colors.basicInfoPrimary ?? colors.primary }}
-                  >
+                  <div style={styles.basicInfoStyle}>
                     <span className="mr-1 text-medium22 font-semibold">월</span>
                     <span className="text-xlarge28 font-bold">
                       {monthlyPrice
@@ -207,7 +257,7 @@ const ChallengeBasicInfo = ({
       </div>
       <div
         className="flex w-full flex-col gap-3 md:flex-row"
-        style={{ color: colors.basicInfoPrimary ?? colors.primary }}
+        style={styles.basicInfoStyle}
       >
         {!activeOnly && (
           <div className="flex w-full flex-col gap-y-2 rounded-ms bg-neutral-95 px-4 pb-5 pt-3 md:flex-1 md:p-5 md:pt-4">
@@ -219,9 +269,8 @@ const ChallengeBasicInfo = ({
               <span
                 className="speech-bubble relative ml-3 animate-bounce-x break-keep rounded-xxs px-2 py-1 text-xxsmall12 font-normal text-white"
                 style={{
-                  backgroundColor: colors.basicInfoPrimary ?? colors.primary,
-                  ['--after-border-color' as any]:
-                    colors.basicInfoPrimary ?? colors.primary,
+                  backgroundColor: styles.basicInfoStyle.color,
+                  ['--after-border-color' as any]: styles.basicInfoStyle.color,
                 }}
               >
                 참여 가능한 일자를 선택해주세요!
@@ -238,7 +287,7 @@ const ChallengeBasicInfo = ({
                   .map((activeChallenge, index) => (
                     <RadioButton
                       key={index}
-                      color={colors.basicInfoPrimary ?? colors.primary}
+                      color={styles.basicInfoStyle.color}
                       checked={activeChallenge.id === Number(challengeId)}
                       label={formatFullDate(dayjs(activeChallenge.startDate))}
                       onClick={() =>
@@ -335,10 +384,7 @@ const ChallengeBasicInfo = ({
                   <span>{regularPrice?.toLocaleString()}원</span>
                 </div>
                 <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
-                  <span
-                    className="font-bold"
-                    style={{ color: colors.basicInfoPrimary ?? colors.primary }}
-                  >
+                  <span className="font-bold" style={styles.basicInfoStyle}>
                     {getDiscountPercent(
                       regularPrice || 0,
                       priceInfo.discount || 0,
@@ -368,9 +414,7 @@ const ChallengeBasicInfo = ({
               </div>
               {showMonthlyPrice && (
                 <div className="flex w-full flex-col items-end gap-y-2">
-                  <div
-                    style={{ color: colors.basicInfoPrimary ?? colors.primary }}
-                  >
+                  <div style={styles.basicInfoStyle}>
                     <span className="mr-1 text-medium22 font-semibold">월</span>
                     <span className="text-xlarge28 font-bold">
                       {monthlyPrice

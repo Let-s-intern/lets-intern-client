@@ -2,10 +2,8 @@
 
 import { ReportDetail, useGetReportPriceDetail } from '@/api/report';
 import ReportApplyBottomSheet from '@/components/common/report/ReportApplyBottomSheet';
-import { resumeReportDescription } from '@/data/description';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { ReportContent } from '@/types/interface';
-import { getReportLandingTitle } from '@/utils/url';
 import PromoSection from '@components/common/report/PromoSection';
 import ReportBasicInfo from '@components/common/report/ReportBasicInfo';
 import ReportExampleSection from '@components/common/report/ReportExampleSection';
@@ -34,9 +32,6 @@ export const resumeColors = {
 };
 
 const ReportResumePage = ({ report }: { report: ReportDetail | null }) => {
-  const description = resumeReportDescription;
-
-  const title = getReportLandingTitle(report?.title ?? '이력서');
   const resumeContent: ReportContent = JSON.parse(report?.contents ?? '{}');
 
   const { data: priceDetail, isLoading: priceIsLoading } =
@@ -46,13 +41,12 @@ const ReportResumePage = ({ report }: { report: ReportDetail | null }) => {
 
   useEffect(() => {
     initReportApplication();
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <>
-      <div className="flex flex-col items-center w-full">
+      <div className="flex w-full flex-col items-center">
         <div className="flex w-full flex-col bg-black pb-10 text-white md:pb-[60px]">
           <div className="mx-auto flex w-full max-w-[1000px] flex-col px-5 lg:px-0">
             <div className="h-[56px] md:h-[66px]" />
@@ -72,7 +66,7 @@ const ReportResumePage = ({ report }: { report: ReportDetail | null }) => {
         <div
           id="content"
           data-page-type="resume"
-          className="flex flex-col items-center w-full"
+          className="flex w-full flex-col items-center"
         >
           {/* 서비스 소개 */}
           <ReportIntroSection type="RESUME" />
