@@ -73,8 +73,6 @@ const ProgramDetailNavigation = ({
         return challengeColors._4D55F5;
       case PORTFOLIO:
         return challengeColors._4A76FF;
-      case PERSONAL_STATEMENT_LARGE_CORP:
-        return challengeColors._14BCFF;
       case EXPERIENCE_SUMMARY:
         return challengeColors._4D55F5;
       default:
