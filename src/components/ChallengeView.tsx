@@ -318,7 +318,7 @@ const ChallengeView: React.FC<{
                 <ChallengeIntroPortfolio />
               ) : challenge.challengeType === CAREER_START ? (
                 <ChallengeIntroCareerStart
-                  colors={colors}
+                  challengeType={challenge.challengeType}
                   challengeTitle={challenge.title ?? ''}
                   weekText={receivedContent.challengePoint.weekText}
                 />
