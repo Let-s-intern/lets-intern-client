@@ -5,12 +5,8 @@ import { ProgramType } from '@/types/common';
 import { useEffect, useMemo, useState } from 'react';
 import { challengeColors } from './ChallengeView';
 
-const {
-  CAREER_START,
-  PORTFOLIO,
-  PERSONAL_STATEMENT_LARGE_CORP,
-  EXPERIENCE_SUMMARY,
-} = challengeTypeSchema.enum;
+const { CAREER_START, PORTFOLIO, EXPERIENCE_SUMMARY } =
+  challengeTypeSchema.enum;
 
 export interface NavItem {
   title: string;
@@ -21,7 +17,7 @@ interface ProgramDetailNavigationProps {
   programType: ProgramType;
   className?: string;
   isReady?: boolean;
-  challengeType: ChallengeType;
+  challengeType?: ChallengeType;
 }
 
 // TODO: GA에 맞게 수정해야 함.
