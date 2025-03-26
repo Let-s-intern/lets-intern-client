@@ -44,6 +44,42 @@ const {
   EXPERIENCE_SUMMARY,
 } = challengeTypeSchema.enum;
 
+export const challengeColors = {
+  _4D55F5: '#4D55F5',
+  E45BFF: '#E45BFF',
+  F3F4FF: '#F3F4FF',
+  FDF6FF: '#FDF6FF',
+  _763CFF: '#763CFF',
+  _1A1D5F: '#1A1D5F',
+  _757BFF: '#757BFF',
+  _5C63FF: '#5C63FF',
+  _222A7E: '#222A7E',
+  _111449: '#111449',
+  F2F2F5: '#F2F2F5',
+  E8EAFF: '#E8EAFF',
+  EDEEFE: '#EDEEFE',
+  _4A76FF: '#4A76FF',
+  F8AE00: '#F8AE00',
+  F0F4FF: '#F0F4FF',
+  FFF9EA: '#FFF9EA',
+  _4A56FF: '#4A56FF',
+  _1A2A5D: '#1A2A5D',
+  F3F3F3: '#F3F3F3',
+  DEE7FF: '#DEE7FF',
+  FFF4DB: '#FFF4DB',
+  _14BCFF: '#14BCFF',
+  _32B750: '#32B750',
+  FF9C34: '#FF9C34',
+  EEFAFF: '#EEFAFF',
+  FFF7EF: '#FFF7EF',
+  _39DEFF: '#39DEFF',
+  _20304F: '#20304F',
+  EFF4F7: '#EFF4F7',
+  F1FBFF: '#F1FBFF',
+  DDF5FF: '#DDF5FF',
+  E6F9DE: '#E6F9DE',
+};
+
 export type ChallengeColor = {
   primary: string;
   basicInfoPrimary?: string | null;
@@ -232,6 +268,36 @@ const ChallengeView: React.FC<{
     };
   }, [challenge]);
 
+  const moreReviewBtnColors = useMemo(() => {
+    switch (challenge.challengeType) {
+      case CAREER_START:
+        return {
+          main: challengeColors._1A1D5F,
+          sub: challengeColors.E45BFF,
+        };
+      case PORTFOLIO:
+        return {
+          main: challengeColors._1A2A5D,
+          sub: challengeColors.F8AE00,
+        };
+      case PERSONAL_STATEMENT_LARGE_CORP:
+        return {
+          main: challengeColors._20304F,
+          sub: challengeColors.FF9C34,
+        };
+      case EXPERIENCE_SUMMARY:
+        return {
+          main: challengeColors._1A1D5F,
+          sub: challengeColors.E45BFF,
+        };
+      default:
+        return {
+          main: challengeColors._20304F,
+          sub: challengeColors.FF9C34,
+        };
+    }
+  }, [challenge.challengeType]);
+
   return (
     <div className="flex w-full flex-col">
       <div className="flex w-full flex-col items-center">
@@ -240,7 +306,6 @@ const ChallengeView: React.FC<{
             {challenge.title ?? ''}
           </NextBackHeader>
           <ChallengeBasicInfo
-            colors={colors}
             challengeId={id}
             challenge={challengeTransformed}
             activeChallengeList={activeChallengeList?.challengeList}
@@ -248,7 +313,7 @@ const ChallengeView: React.FC<{
         </div>
 
         <ProgramDetailNavigation
-          color={colors}
+          challengeType={challenge.challengeType}
           programType="challenge"
           className={twMerge(isPreview && 'top-0 md:top-0 lg:top-0')}
           isReady={!faqIsLoading}
@@ -261,7 +326,6 @@ const ChallengeView: React.FC<{
           >
             <section className="flex w-full flex-col items-center pt-[70px] md:pt-40">
               <ChallengePointView
-                colors={colors}
                 challengeType={challenge.challengeType}
                 point={receivedContent.challengePoint}
                 startDate={dayjs(challenge.startDate)}
@@ -284,26 +348,26 @@ const ChallengeView: React.FC<{
                 <ChallengeIntroPortfolio />
               ) : challenge.challengeType === CAREER_START ? (
                 <ChallengeIntroCareerStart
-                  colors={colors}
+                  challengeType={challenge.challengeType}
                   challengeTitle={challenge.title ?? ''}
                   weekText={receivedContent.challengePoint.weekText}
                 />
               ) : challenge.challengeType === EXPERIENCE_SUMMARY ? (
-                <ChallengeIntroExpericeSummary colors={colors} />
+                <ChallengeIntroExpericeSummary
+                  challengeType={challenge.challengeType}
+                />
               ) : (
                 <ChallengeIntroPersonalStatement />
               )}
             </section>
 
             <ChallengeCheckList
-              colors={colors}
               challengeType={challenge.challengeType}
               challengeTitle={challenge.title ?? ''}
             />
 
             <ChallengeResult
               challengeType={challenge.challengeType}
-              colors={colors}
               challengeTitle={challenge.title ?? ''}
             />
           </div>
@@ -319,7 +383,6 @@ const ChallengeView: React.FC<{
                   challengeType={challenge.challengeType}
                   curriculum={receivedContent.curriculum}
                   challengeTitle={challenge.title ?? ''}
-                  colors={colors}
                 />
               </section>
             )}
@@ -331,11 +394,10 @@ const ChallengeView: React.FC<{
           >
             <ChallengeDifferent
               challengeTitle={challenge.title ?? ''}
-              colors={colors}
               challengeType={challenge.challengeType}
               deposit={challenge.priceInfo[0].refund ?? 0}
             />
-            <ChallengeBrand colors={colors} />
+            <ChallengeBrand challengeType={challenge.challengeType} />
           </div>
 
           {/* 후기 섹션 */}
@@ -350,13 +412,13 @@ const ChallengeView: React.FC<{
                     <ProgramBestReviewSection
                       type="challenge"
                       reviews={receivedContent.challengeReview}
-                      colors={colors}
+                      challengeType={challenge.challengeType}
                     />
                     <MoreReviewButton
-                      type={'CHALLENGE'}
+                      type="CHALLENGE"
                       challengeType={challenge.challengeType}
-                      mainColor={colors.dark}
-                      subColor={colors.secondary}
+                      mainColor={moreReviewBtnColors.main}
+                      subColor={moreReviewBtnColors.sub}
                     />
                   </div>
                 )}
@@ -370,13 +432,10 @@ const ChallengeView: React.FC<{
           )}
           <ChallengeFaq
             faqData={faqData}
-            colors={colors}
+            challengeType={challenge.challengeType}
             faqCategory={receivedContent.faqCategory}
           />
-          <ChallengeInfoBottom
-            challenge={challengeTransformed}
-            colors={colors}
-          />
+          <ChallengeInfoBottom challenge={challengeTransformed} />
         </div>
       </div>
     </div>

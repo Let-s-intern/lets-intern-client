@@ -1,5 +1,3 @@
-import { LuCalendarDays } from 'react-icons/lu';
-
 import Announcement from '@/assets/icons/announcement.svg?react';
 import ChevronDown from '@/assets/icons/chevron-down.svg?react';
 import ClockIcon from '@/assets/icons/clock.svg?react';
@@ -14,14 +12,21 @@ import {
   formatFullDateTime,
   formatFullDateTimeWithOutYear,
 } from '@/utils/formatDateString';
-import { ChallengeColor } from '@components/ChallengeView';
+import { challengeColors } from '@components/ChallengeView';
 import BasicInfoBottomRow from '@components/common/program/program-detail/basicInfo/BasicInfoBottomRow';
 import BasicInfoRow from '@components/common/program/program-detail/basicInfo/BasicInfoRow';
 import Heading2 from '@components/common/ui/Heading2';
 import { useMediaQuery } from '@mui/material';
+import { useMemo } from 'react';
+import { LuCalendarDays } from 'react-icons/lu';
 
-const { PERSONAL_STATEMENT, PERSONAL_STATEMENT_LARGE_CORP } =
-  challengeTypeSchema.enum;
+const {
+  PORTFOLIO,
+  CAREER_START,
+  PERSONAL_STATEMENT_LARGE_CORP,
+  PERSONAL_STATEMENT,
+  EXPERIENCE_SUMMARY,
+} = challengeTypeSchema.enum;
 
 export const getDiscountPercent = (
   originalPrice: number,
@@ -33,10 +38,8 @@ export const getDiscountPercent = (
 
 const ChallengeInfoBottom = ({
   challenge,
-  colors,
 }: {
   challenge: ChallengeIdSchema;
-  colors: ChallengeColor;
 }) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const {
@@ -61,6 +64,27 @@ const ChallengeInfoBottom = ({
     priceInfo.challengePriceType === 'CHARGE'
       ? priceInfo.price
       : (priceInfo.price ?? 0) + (priceInfo.refund ?? 0); // 정가
+
+  const styles = useMemo(() => {
+    switch (challenge.challengeType) {
+      case CAREER_START:
+        return {
+          primaryColor: challengeColors._4D55F5,
+        };
+      case PORTFOLIO:
+        return {
+          primaryColor: challengeColors._4A76FF,
+        };
+      case EXPERIENCE_SUMMARY:
+        return {
+          primaryColor: challengeColors._4D55F5,
+        };
+      default:
+        return {
+          primaryColor: challengeColors._14BCFF,
+        };
+    }
+  }, [challenge.challengeType]);
 
   const priceReason = (() => {
     switch (challenge.challengeType) {
@@ -99,7 +123,7 @@ const ChallengeInfoBottom = ({
       <Heading2>모집개요</Heading2>
       <div
         className="flex w-full flex-col gap-3 md:flex-row"
-        style={{ color: colors.primary }}
+        style={{ color: styles.primaryColor }}
       >
         {isMobile ? (
           <div className="flex w-full flex-1 items-center justify-center rounded-md bg-neutral-95 px-6 py-5">
@@ -143,7 +167,7 @@ const ChallengeInfoBottom = ({
         ) : (
           <div
             className="flex w-full flex-1 flex-col gap-y-4"
-            style={{ color: colors.primary }}
+            style={{ color: styles.primaryColor }}
           >
             <BasicInfoBottomRow
               icon={<Announcement />}
@@ -208,7 +232,10 @@ const ChallengeInfoBottom = ({
                   <span>{regularPrice?.toLocaleString()}원</span>
                 </div>
                 <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
-                  <span className="font-bold" style={{ color: colors.primary }}>
+                  <span
+                    className="font-bold"
+                    style={{ color: styles.primaryColor }}
+                  >
                     {getDiscountPercent(
                       regularPrice || 0,
                       priceInfo.discount || 0,
@@ -239,7 +266,7 @@ const ChallengeInfoBottom = ({
               </div>
               {showMonthlyPrice && (
                 <div className="flex w-full flex-col items-end gap-y-2">
-                  <div style={{ color: colors.primary }}>
+                  <div style={{ color: styles.primaryColor }}>
                     <span className="mr-1 text-medium22 font-semibold">월</span>
                     <span className="text-xxlarge32 font-bold">
                       {monthlyPrice

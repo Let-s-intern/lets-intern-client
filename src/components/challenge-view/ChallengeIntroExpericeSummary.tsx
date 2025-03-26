@@ -1,10 +1,10 @@
-import { ReactNode } from 'react';
-
 import { twMerge } from '@/lib/twMerge';
-import { ChallengeColor } from '@components/ChallengeView';
+import { ChallengeType, challengeTypeSchema } from '@/schema';
+import { challengeColors } from '@components/ChallengeView';
 import Description from '@components/common/program/program-detail/Description';
 import CircularBox from '@components/common/ui/CircularBox';
 import Heading2 from '@components/common/ui/Heading2';
+import { ReactNode, useMemo } from 'react';
 
 const boxes = [
   `같은 경험을 더\n강력하게 보이게\n할 수 있는\n방법은 없을까?`,
@@ -17,11 +17,48 @@ const boxes = [
   `내가 가진\n역량은 뭘까?`,
 ];
 
+const {
+  CAREER_START,
+  PORTFOLIO,
+  PERSONAL_STATEMENT_LARGE_CORP,
+  EXPERIENCE_SUMMARY,
+} = challengeTypeSchema.enum;
+
 const ChallengeIntroExpericeSummary = ({
-  colors,
+  challengeType,
 }: {
-  colors: ChallengeColor;
+  challengeType: ChallengeType;
 }) => {
+  const styles = useMemo(() => {
+    switch (challengeType) {
+      case CAREER_START:
+        return {
+          primaryColor: challengeColors._4D55F5,
+          primaryLightColor: challengeColors.F3F4FF,
+        };
+      case PORTFOLIO:
+        return {
+          primaryColor: challengeColors._4A76FF,
+          primaryLightColor: challengeColors.F0F4FF,
+        };
+      case PERSONAL_STATEMENT_LARGE_CORP:
+        return {
+          primaryColor: challengeColors._14BCFF,
+          primaryLightColor: challengeColors.EEFAFF,
+        };
+      case EXPERIENCE_SUMMARY:
+        return {
+          primaryColor: challengeColors._4D55F5,
+          primaryLightColor: challengeColors.F3F4FF,
+        };
+      default:
+        return {
+          primaryColor: challengeColors._14BCFF,
+          primaryLightColor: challengeColors.EEFAFF,
+        };
+    }
+  }, [challengeType]);
+
   return (
     <section className="flex w-full flex-col md:items-center">
       <div className="flex w-full flex-col items-center bg-neutral-90">
@@ -64,13 +101,13 @@ const ChallengeIntroExpericeSummary = ({
       </div>
       <div
         className="flex w-full flex-col md:items-center"
-        style={{ backgroundColor: colors.primaryLight }}
+        style={{ backgroundColor: styles.primaryLightColor }}
       >
         <div className="flex w-full max-w-[1000px] flex-col gap-y-[50px] px-5 py-[70px] md:gap-y-20 md:px-10 md:py-[120px] lg:px-0">
           <div className="flex w-full flex-col gap-y-3 md:items-center">
             <p
               className="text-xsmall16 font-bold md:text-small20"
-              style={{ color: colors.primary }}
+              style={{ color: styles.primaryColor }}
             >
               취업 성공 전략
             </p>

@@ -1,18 +1,57 @@
+import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ContentReviewType } from '@/types/interface';
 import ProgramDetailReviewItem from '@components/common/program/program-detail/review/ProgramDetailReviewItem';
-import { ChallengeColor } from './ChallengeView';
+import { useMemo } from 'react';
+import { challengeColors } from './ChallengeView';
+
+const {
+  PORTFOLIO,
+  CAREER_START,
+  PERSONAL_STATEMENT_LARGE_CORP,
+  EXPERIENCE_SUMMARY,
+} = challengeTypeSchema.enum;
 
 interface ProgramBestReviewSectionProps {
   type: 'challenge' | 'live';
   reviews?: ContentReviewType[];
-  colors?: ChallengeColor;
+  challengeType: ChallengeType;
 }
 
 const ProgramBestReviewSection = ({
   type,
   reviews,
-  colors,
+  challengeType,
 }: ProgramBestReviewSectionProps) => {
+  const styles = useMemo(() => {
+    switch (challengeType) {
+      case CAREER_START:
+        return {
+          primaryColor: challengeColors._4D55F5,
+          primaryLightColor: challengeColors.F3F4FF,
+        };
+      case PORTFOLIO:
+        return {
+          primaryColor: challengeColors._4A76FF,
+          primaryLightColor: challengeColors.F0F4FF,
+        };
+      case PERSONAL_STATEMENT_LARGE_CORP:
+        return {
+          primaryColor: challengeColors._14BCFF,
+          primaryLightColor: challengeColors.EEFAFF,
+        };
+      case EXPERIENCE_SUMMARY:
+        return {
+          primaryColor: challengeColors._4D55F5,
+          primaryLightColor: challengeColors.F3F4FF,
+        };
+      default:
+        return {
+          primaryColor: challengeColors._14BCFF,
+          primaryLightColor: challengeColors.EEFAFF,
+        };
+    }
+  }, [challengeType]);
+
   if (!reviews || reviews.length === 0) return;
 
   return (
@@ -20,7 +59,7 @@ const ProgramBestReviewSection = ({
       <div className="flex flex-col gap-y-6 px-5 md:items-center md:gap-y-[50px] md:px-10 lg:px-0">
         <p
           className="text-xsmall14 font-semibold text-primary md:text-small20"
-          style={{ color: colors?.primary }}
+          style={{ color: styles.primaryColor }}
         >
           후기
         </p>
@@ -30,7 +69,7 @@ const ProgramBestReviewSection = ({
           <p
             className={`text-xsmall14 font-semibold md:text-small18 ${type === 'challenge' ? '' : 'w-fit rounded-[10px] bg-[#FFEACC] px-2 py-1'}`}
             style={{
-              color: type === 'challenge' ? colors?.primary : '#E98900',
+              color: type === 'challenge' ? styles.primaryColor : '#E98900',
             }}
           >
             참여 만족도 4.9점
@@ -47,11 +86,9 @@ const ProgramBestReviewSection = ({
               key={index}
               type={type}
               review={review}
-              color={
-                type === 'challenge' && colors ? colors.primary : '#4d55f5'
-              }
+              color={type === 'challenge' ? styles.primaryColor : '#4d55f5'}
               bgColor={
-                type === 'challenge' && colors ? colors.primaryLight : '#edeefe'
+                type === 'challenge' ? styles.primaryLightColor : '#edeefe'
               }
             />
           ))}
