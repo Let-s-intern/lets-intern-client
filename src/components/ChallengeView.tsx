@@ -338,7 +338,6 @@ const ChallengeView: React.FC<{
 
             <ChallengeResult
               challengeType={challenge.challengeType}
-              colors={colors}
               challengeTitle={challenge.title ?? ''}
             />
           </div>
