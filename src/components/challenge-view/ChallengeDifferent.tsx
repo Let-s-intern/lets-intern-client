@@ -14,7 +14,6 @@ import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 const {
   PORTFOLIO,
   CAREER_START,
-  ETC,
   PERSONAL_STATEMENT_LARGE_CORP,
   EXPERIENCE_SUMMARY,
 } = challengeTypeSchema.enum;
@@ -245,7 +244,7 @@ const ChallengeDifferent = ({
             options={tripleBenefits[2].options}
             imgUrl={tripleBenefits[2].imgUrl.src}
           />
-          {challengeType === ETC && (
+          {challengeType === EXPERIENCE_SUMMARY && (
             <p className="mt-6 text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
               미션 80점 이상 완료 시<br /> 이력서, 자기소개서, 포트폴리오 완성
               챌린지
