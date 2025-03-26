@@ -1,28 +1,29 @@
 import dayjs from '@/lib/dayjs';
-import { useMediaQuery } from '@mui/material';
-import { useMemo, useState } from 'react';
-import { IoIosArrowDown } from 'react-icons/io';
-
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ChallengeCurriculum as ChallengeCurriculumType } from '@/types/interface';
-import { ChallengeColor } from '@components/ChallengeView';
+import { challengeColors } from '@components/ChallengeView';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import Heading2 from '@components/common/ui/Heading2';
+import { useMediaQuery } from '@mui/material';
+import { CSSProperties, useMemo, useState } from 'react';
+import { IoIosArrowDown } from 'react-icons/io';
 
-const { PORTFOLIO, PERSONAL_STATEMENT, CAREER_START } =
-  challengeTypeSchema.enum;
+const {
+  PORTFOLIO,
+  CAREER_START,
+  PERSONAL_STATEMENT_LARGE_CORP,
+  EXPERIENCE_SUMMARY,
+} = challengeTypeSchema.enum;
 
 interface ChallengeCurriculumProps {
   curriculum: ChallengeCurriculumType[];
-  colors: ChallengeColor;
   challengeType: ChallengeType;
   challengeTitle: string;
 }
 
 function ChallengeCurriculum({
   curriculum,
-  colors,
   challengeType,
   challengeTitle,
 }: ChallengeCurriculumProps) {
@@ -37,6 +38,41 @@ function ChallengeCurriculum({
     }
   }, [challengeType]);
 
+  const styles = useMemo(() => {
+    switch (challengeType) {
+      case CAREER_START:
+        return {
+          superTitleStyle: { color: challengeColors._4D55F5 },
+          titleStyle: { color: challengeColors._4D55F5 },
+          curriculumDateStyle: { color: challengeColors._4D55F5 },
+        };
+      case PORTFOLIO:
+        return {
+          superTitleStyle: { color: challengeColors._4A76FF },
+          titleStyle: { color: challengeColors.F8AE00 },
+          curriculumDateStyle: { color: challengeColors._4A76FF },
+        };
+      case PERSONAL_STATEMENT_LARGE_CORP:
+        return {
+          superTitleStyle: { color: challengeColors._14BCFF },
+          titleStyle: { color: challengeColors.FF9C34 },
+          curriculumDateStyle: { color: challengeColors._14BCFF },
+        };
+      case EXPERIENCE_SUMMARY:
+        return {
+          superTitleStyle: { color: challengeColors._4D55F5 },
+          titleStyle: { color: challengeColors.E45BFF },
+          curriculumDateStyle: { color: challengeColors._4D55F5 },
+        };
+      default:
+        return {
+          superTitleStyle: { color: challengeColors._14BCFF },
+          titleStyle: { color: challengeColors.FF9C34 },
+          curriculumDateStyle: { color: challengeColors._14BCFF },
+        };
+    }
+  }, [challengeType]);
+
   if (!curriculum || !curriculum[0]) {
     return <></>;
   }
@@ -45,17 +81,18 @@ function ChallengeCurriculum({
 
   return (
     <div className="flex w-full max-w-[1000px] flex-col px-5 py-20 md:items-center md:py-32 md:pb-36 lg:px-0">
-      <SuperTitle className="mb-6 md:mb-12" style={{ color: colors.primary }}>
+      <SuperTitle className="mb-6 md:mb-12" style={styles.superTitleStyle}>
         커리큘럼
       </SuperTitle>
       <div
         className="mb-4 flex w-fit gap-x-2 rounded-sm bg-white px-2 py-1 text-xsmall14 font-bold sm:items-center md:gap-x-3 md:rounded-md md:px-4 md:py-2.5 md:text-[18px]"
-        style={{
-          color:
-            challengeType === CAREER_START ? colors.primary : colors.secondary,
-        }}
+        style={styles.titleStyle}
       >
-        <img className="h-6 w-6 md:h-8 md:w-8" src={`/icons/${iconName}`} />
+        <img
+          className="h-6 w-6 md:h-8 md:w-8"
+          src={`/icons/${iconName}`}
+          alt=""
+        />
         {challengeTitle}에서는
         <br className="sm:hidden" /> 이런 걸 가져갈 수 있어요
       </div>
@@ -65,7 +102,11 @@ function ChallengeCurriculum({
 
       <div className="flex w-full flex-col gap-4 md:grid md:grid-cols-2 md:gap-x-6 md:gap-y-8">
         {curriculum.map((item) => (
-          <CurriculumItem key={item.id} item={item} colors={colors} />
+          <CurriculumItem
+            key={item.id}
+            item={item}
+            dateStyle={styles.curriculumDateStyle}
+          />
         ))}
       </div>
     </div>
@@ -74,10 +115,10 @@ function ChallengeCurriculum({
 
 function CurriculumItem({
   item,
-  colors,
+  dateStyle,
 }: {
   item: ChallengeCurriculumType;
-  colors: ChallengeColor;
+  dateStyle?: CSSProperties;
 }) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
@@ -90,7 +131,7 @@ function CurriculumItem({
     >
       <div
         className="mb-2 flex items-center gap-2.5 text-xsmall16 font-semibold md:text-small20"
-        style={{ color: colors.primary }}
+        style={dateStyle}
       >
         <span>{item.session}</span>
         <span>

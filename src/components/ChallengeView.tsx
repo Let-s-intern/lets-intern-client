@@ -353,7 +353,6 @@ const ChallengeView: React.FC<{
                   challengeType={challenge.challengeType}
                   curriculum={receivedContent.curriculum}
                   challengeTitle={challenge.title ?? ''}
-                  colors={colors}
                 />
               </section>
             )}
