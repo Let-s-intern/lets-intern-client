@@ -332,7 +332,6 @@ const ChallengeView: React.FC<{
             </section>
 
             <ChallengeCheckList
-              colors={colors}
               challengeType={challenge.challengeType}
               challengeTitle={challenge.title ?? ''}
             />
