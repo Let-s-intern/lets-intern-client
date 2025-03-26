@@ -364,7 +364,6 @@ const ChallengeView: React.FC<{
           >
             <ChallengeDifferent
               challengeTitle={challenge.title ?? ''}
-              colors={colors}
               challengeType={challenge.challengeType}
               deposit={challenge.priceInfo[0].refund ?? 0}
             />

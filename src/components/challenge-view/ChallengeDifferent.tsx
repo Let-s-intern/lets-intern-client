@@ -4,14 +4,20 @@ import benefitImg1 from '@/assets/benefit1.jpg';
 import benefitImg2 from '@/assets/benefit2.jpg';
 import benefitImg3 from '@/assets/benefit3.jpg';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
-import { ChallengeColor } from '@components/ChallengeView';
+import { challengeColors } from '@components/ChallengeView';
 import BenefitCard from '@components/common/program/program-detail/different/BenefitCard';
 import DifferentCard, {
   DifferentCardProps,
 } from '@components/common/program/program-detail/different/DifferentCard';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 
-const { PORTFOLIO, CAREER_START, ETC } = challengeTypeSchema.enum;
+const {
+  PORTFOLIO,
+  CAREER_START,
+  ETC,
+  PERSONAL_STATEMENT_LARGE_CORP,
+  EXPERIENCE_SUMMARY,
+} = challengeTypeSchema.enum;
 
 export const tripleBenefits = [
   {
@@ -39,16 +45,44 @@ export const tripleBenefits = [
 ];
 
 const ChallengeDifferent = ({
-  colors,
   challengeType,
   challengeTitle,
   deposit,
 }: {
-  colors: ChallengeColor;
   challengeType: ChallengeType;
   challengeTitle: string;
   deposit: number;
 }) => {
+  const styles = useMemo(() => {
+    switch (challengeType) {
+      case CAREER_START:
+        return {
+          primaryColor: challengeColors._4D55F5,
+          primaryLightColor: challengeColors.F3F4FF,
+        };
+      case PORTFOLIO:
+        return {
+          primaryColor: challengeColors._4A76FF,
+          primaryLightColor: challengeColors.F0F4FF,
+        };
+      case PERSONAL_STATEMENT_LARGE_CORP:
+        return {
+          primaryColor: challengeColors._14BCFF,
+          primaryLightColor: challengeColors.EEFAFF,
+        };
+      case EXPERIENCE_SUMMARY:
+        return {
+          primaryColor: challengeColors._4D55F5,
+          primaryLightColor: challengeColors.F3F4FF,
+        };
+      default:
+        return {
+          primaryColor: challengeColors._14BCFF,
+          primaryLightColor: challengeColors.EEFAFF,
+        };
+    }
+  }, [challengeType]);
+
   const differentList: DifferentCardProps[] = [
     {
       order: 1,
@@ -62,7 +96,7 @@ const ChallengeDifferent = ({
         desktop: '/challenge-detail/different/desktop/contents_desktop.gif',
         mobile: '/challenge-detail/different/mobile/contents_mobile.gif',
       },
-      colors,
+      styles,
     },
     {
       order: 2,
@@ -76,7 +110,7 @@ const ChallengeDifferent = ({
         desktop: '/challenge-detail/different/desktop/template_desktop.gif',
         mobile: '/challenge-detail/different/mobile/template_mobile.gif',
       },
-      colors,
+      styles,
     },
     {
       order: 3,
@@ -89,7 +123,7 @@ const ChallengeDifferent = ({
         desktop: '/challenge-detail/different/desktop/community_desktop.gif',
         mobile: '/challenge-detail/different/mobile/community_mobile.gif',
       },
-      colors,
+      styles,
     },
   ];
 
@@ -123,11 +157,11 @@ const ChallengeDifferent = ({
       {/* 차별점 */}
       <div className="flex w-full flex-col gap-y-8 md:gap-y-20">
         <div className="flex w-full flex-col gap-y-6 md:gap-y-12">
-          <SuperTitle style={{ color: colors.primary }}>차별점</SuperTitle>
+          <SuperTitle style={{ color: styles.primaryColor }}>차별점</SuperTitle>
           <div className="flex flex-col gap-y-3 md:items-center">
             <p
               className="text-xsmall16 font-bold md:text-small18"
-              style={{ color: colors.primary }}
+              style={{ color: styles.primaryColor }}
             >
               비교 불가!
             </p>
@@ -154,18 +188,18 @@ const ChallengeDifferent = ({
               title={different.title}
               options={different.options}
               imageUrl={different.imageUrl}
-              colors={colors}
+              styles={styles}
             />
           ))}
           {deposit >= 10000 && (
             <div
               className="relative flex w-full gap-x-2 overflow-hidden rounded-md px-5 pb-10 pt-[30px] text-small18 font-bold md:px-10 md:py-[50px] md:text-medium22"
               style={{
-                backgroundColor: colors.primaryLight,
-                color: colors.primaryLight,
+                backgroundColor: styles.primaryLightColor,
+                color: styles.primaryLightColor,
               }}
             >
-              <span style={{ color: colors.primary }}>혜택</span>
+              <span style={{ color: styles.primaryColor }}>혜택</span>
               <p className="z-10 whitespace-pre text-black">
                 모든 커리큘럼을 따라오기만 하면,
                 <br className="md:hidden" /> {deposit / 10000}
@@ -194,7 +228,7 @@ const ChallengeDifferent = ({
 
         <div
           className="-mx-5 flex w-fit flex-col gap-y-4 overflow-x-auto px-5 md:-mx-10 md:px-10 lg:px-0"
-          style={{ color: colors.primary }}
+          style={{ color: styles.primaryColor }}
         >
           <BenefitCard
             title={tripleBenefits[0].title}
