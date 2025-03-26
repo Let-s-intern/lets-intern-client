@@ -323,7 +323,9 @@ const ChallengeView: React.FC<{
                   weekText={receivedContent.challengePoint.weekText}
                 />
               ) : challenge.challengeType === EXPERIENCE_SUMMARY ? (
-                <ChallengeIntroExpericeSummary colors={colors} />
+                <ChallengeIntroExpericeSummary
+                  challengeType={challenge.challengeType}
+                />
               ) : (
                 <ChallengeIntroPersonalStatement />
               )}
