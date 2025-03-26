@@ -8,7 +8,7 @@ import {
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema, ProgramTypeEnum } from '@/schema';
 import { ChallengePoint, ProgramRecommend } from '@/types/interface';
-import { ChallengeColor } from '@components/ChallengeView';
+import { challengeColors } from '@components/ChallengeView';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import Heading2 from '@components/common/ui/Heading2';
 import ProgramRecommendSlider from '@components/common/ui/ProgramRecommendSlider';
@@ -50,7 +50,6 @@ const ChallengePointView = ({
   point,
   startDate,
   endDate,
-  colors,
   challengeType,
   challengeTitle,
   programRecommend,
@@ -59,7 +58,6 @@ const ChallengePointView = ({
   point: ChallengePoint;
   startDate: Dayjs;
   endDate: Dayjs;
-  colors: ChallengeColor;
   challengeType: ChallengeType;
   challengeTitle: string;
   programRecommend?: ProgramRecommend;
@@ -198,6 +196,51 @@ const ChallengePointView = ({
     return list;
   }, [programRecommend?.list, router]);
 
+  const styles = useMemo(() => {
+    switch (challengeType) {
+      case CAREER_START:
+        return {
+          primaryColor: challengeColors._4D55F5,
+          introHeadingColor: challengeColors._4D55F5,
+          darkColor: challengeColors._1A1D5F,
+          recommendBgColor: challengeColors.EDEEFE,
+          primaryLightColor: challengeColors.F3F4FF,
+        };
+      case PORTFOLIO:
+        return {
+          primaryColor: challengeColors._4A76FF,
+          introHeadingColor: challengeColors.F8AE00,
+          darkColor: challengeColors._1A2A5D,
+          recommendBgColor: challengeColors.F0F4FF,
+          primaryLightColor: challengeColors.F0F4FF,
+        };
+      case PERSONAL_STATEMENT_LARGE_CORP:
+        return {
+          primaryColor: challengeColors._14BCFF,
+          introHeadingColor: challengeColors.FF9C34,
+          darkColor: challengeColors._20304F,
+          recommendBgColor: challengeColors.F1FBFF,
+          primaryLightColor: challengeColors.EEFAFF,
+        };
+      case EXPERIENCE_SUMMARY:
+        return {
+          primaryColor: challengeColors._4D55F5,
+          introHeadingColor: challengeColors._757BFF,
+          darkColor: challengeColors._1A1D5F,
+          recommendBgColor: challengeColors.F3F4FF,
+          primaryLightColor: challengeColors.F3F4FF,
+        };
+      default:
+        return {
+          primaryColor: challengeColors._14BCFF,
+          introHeadingColor: challengeColors.FF9C34,
+          darkColor: challengeColors._20304F,
+          recommendBgColor: challengeColors.F1FBFF,
+          primaryLightColor: challengeColors.EEFAFF,
+        };
+    }
+  }, [challengeType]);
+
   return (
     <div className="flex w-full flex-col items-center">
       {/* 프로그램 소개 */}
@@ -207,7 +250,7 @@ const ChallengePointView = ({
           <SuperTitle
             className="mb-6 lg:mb-10"
             style={{
-              color: colors.primary,
+              color: styles.primaryColor,
             }}
           >
             프로그램 소개
@@ -217,10 +260,7 @@ const ChallengePointView = ({
             <br />
             <span
               style={{
-                color:
-                  challengeType === CAREER_START
-                    ? colors.primary
-                    : colors.subTitle,
+                color: styles.introHeadingColor,
               }}
             >
               하루 30분
@@ -238,7 +278,8 @@ const ChallengePointView = ({
                   key={item.id}
                   item={item}
                   index={index}
-                  colors={colors}
+                  listBgColor={styles.primaryLightColor}
+                  listPointBgColor={styles.primaryColor}
                 />
               ))}
             </ul>
@@ -290,7 +331,7 @@ const ChallengePointView = ({
       {programRecommend && programRecommend.list.length > 0 && (
         <div
           className="relative w-full overflow-hidden"
-          style={{ backgroundColor: colors.recommendBg }}
+          style={{ backgroundColor: styles.recommendBgColor }}
         >
           <div className="relative z-10 mx-7 flex justify-between">
             <HoleIcon className="h-auto w-4 md:w-5" />
@@ -338,14 +379,14 @@ const ChallengePointView = ({
         <div
           className="flex w-full flex-col items-center"
           style={{
-            backgroundColor: colors.dark,
+            backgroundColor: styles.darkColor,
           }}
         >
           <div className="flex w-full max-w-[1000px] flex-col px-5 py-[60px] md:px-10 md:py-[120px] lg:px-0">
             <div className="flex w-full flex-col md:items-center">
               <p
                 className="text-xsmall16 font-bold md:text-small20"
-                style={{ color: colors.primary }}
+                style={{ color: styles.primaryColor }}
               >
                 진행 방식
               </p>
@@ -361,7 +402,7 @@ const ChallengePointView = ({
             <div className="mb-[30px] flex w-full flex-col md:mb-[23px]">
               <div
                 className="flex w-full items-center rounded-t-md px-4 py-2.5 text-xsmall14 font-semibold text-white md:justify-center md:px-2.5"
-                style={{ backgroundColor: colors.primary }}
+                style={{ backgroundColor: styles.primaryColor }}
               >
                 {point.weekText} 과정
               </div>
@@ -370,7 +411,7 @@ const ChallengePointView = ({
                   <ProgressItem
                     key={item.index}
                     item={item}
-                    bgColor={colors.primary}
+                    bgColor={styles.primaryColor}
                   />
                 ))}
               </div>
@@ -392,7 +433,7 @@ const ChallengePointView = ({
                           width={24}
                           height={24}
                           className="shrink-0"
-                          style={{ color: colors.primary }}
+                          style={{ color: styles.primaryColor }}
                         />
                         {item}
                       </li>
@@ -421,7 +462,8 @@ const ChallengePointView = ({
 function PointList({
   item,
   index,
-  colors,
+  listBgColor,
+  listPointBgColor,
 }: {
   item: {
     id: string;
@@ -429,18 +471,19 @@ function PointList({
     subtitle: string;
   };
   index: number;
-  colors: ChallengeColor;
+  listBgColor: string;
+  listPointBgColor: string;
 }) {
   return (
     <li
       key={item.id}
       className="mx-auto flex w-full flex-col items-center gap-5 self-stretch rounded-md p-8 md:pb-10"
-      style={{ backgroundColor: colors.primaryLight }}
+      style={{ backgroundColor: listBgColor }}
     >
       <div className="break-keep text-center">
         <span
           className="rounded-md px-3.5 py-1.5 text-xsmall14 font-semibold text-white md:text-small18"
-          style={{ backgroundColor: colors.primary }}
+          style={{ backgroundColor: listPointBgColor }}
         >
           Point {index + 1}
         </span>

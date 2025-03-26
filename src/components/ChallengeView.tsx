@@ -296,7 +296,6 @@ const ChallengeView: React.FC<{
           >
             <section className="flex w-full flex-col items-center pt-[70px] md:pt-40">
               <ChallengePointView
-                colors={colors}
                 challengeType={challenge.challengeType}
                 point={receivedContent.challengePoint}
                 startDate={dayjs(challenge.startDate)}
