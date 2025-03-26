@@ -1,9 +1,9 @@
 import ArrowCircle from '@/assets/icons/arrow-circle.svg?react';
-import { ChallengeType } from '@/schema';
+import { ChallengeType, ProgramTypeUpperCase } from '@/schema';
 import Link from 'next/link';
 
 interface MoreReviewButtonProps {
-  type: 'CHALLENGE' | 'LIVE' | 'VOD' | 'REPORT';
+  type: ProgramTypeUpperCase;
   mainColor: string;
   subColor: string;
   subTextColor?: string;

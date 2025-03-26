@@ -268,6 +268,36 @@ const ChallengeView: React.FC<{
     };
   }, [challenge]);
 
+  const moreReviewBtnColors = useMemo(() => {
+    switch (challenge.challengeType) {
+      case CAREER_START:
+        return {
+          main: challengeColors._1A1D5F,
+          sub: challengeColors.E45BFF,
+        };
+      case PORTFOLIO:
+        return {
+          main: challengeColors._1A2A5D,
+          sub: challengeColors.F8AE00,
+        };
+      case PERSONAL_STATEMENT_LARGE_CORP:
+        return {
+          main: challengeColors._20304F,
+          sub: challengeColors.FF9C34,
+        };
+      case EXPERIENCE_SUMMARY:
+        return {
+          main: challengeColors._1A1D5F,
+          sub: challengeColors.E45BFF,
+        };
+      default:
+        return {
+          main: challengeColors._20304F,
+          sub: challengeColors.FF9C34,
+        };
+    }
+  }, [challenge.challengeType]);
+
   return (
     <div className="flex w-full flex-col">
       <div className="flex w-full flex-col items-center">
@@ -382,13 +412,13 @@ const ChallengeView: React.FC<{
                     <ProgramBestReviewSection
                       type="challenge"
                       reviews={receivedContent.challengeReview}
-                      colors={colors}
+                      challengeType={challenge.challengeType}
                     />
                     <MoreReviewButton
-                      type={'CHALLENGE'}
+                      type="CHALLENGE"
                       challengeType={challenge.challengeType}
-                      mainColor={colors.dark}
-                      subColor={colors.secondary}
+                      mainColor={moreReviewBtnColors.main}
+                      subColor={moreReviewBtnColors.sub}
                     />
                   </div>
                 )}
