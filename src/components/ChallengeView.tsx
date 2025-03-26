@@ -367,7 +367,7 @@ const ChallengeView: React.FC<{
               challengeType={challenge.challengeType}
               deposit={challenge.priceInfo[0].refund ?? 0}
             />
-            <ChallengeBrand colors={colors} />
+            <ChallengeBrand challengeType={challenge.challengeType} />
           </div>
 
           {/* 후기 섹션 */}
