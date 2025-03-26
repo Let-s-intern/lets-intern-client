@@ -34,6 +34,7 @@ function ChallengeFaq({
 
   const faqList = faqData?.faqList;
   const categoryList = [...new Set(faqCategory)];
+
   const styles = useMemo(() => {
     switch (challengeType) {
       case CAREER_START:
