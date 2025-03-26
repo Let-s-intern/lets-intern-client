@@ -14,7 +14,7 @@ const {
 interface ProgramBestReviewSectionProps {
   type: 'challenge' | 'live';
   reviews?: ContentReviewType[];
-  challengeType: ChallengeType;
+  challengeType?: ChallengeType;
 }
 
 const ProgramBestReviewSection = ({
