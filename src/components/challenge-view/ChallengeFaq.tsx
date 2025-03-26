@@ -1,29 +1,68 @@
 import { twMerge } from '@/lib/twMerge';
-import { ReactNode, useState } from 'react';
-
-import { faqSchemaType } from '@/schema';
+import { ChallengeType, challengeTypeSchema, faqSchemaType } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
-import { ChallengeColor } from '@components/ChallengeView';
+import { challengeColors } from '@components/ChallengeView';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import FaqChat from '@components/common/ui/FaqChat';
 import FaqDropdown from '@components/common/ui/FaqDropdown';
 import Heading2 from '@components/common/ui/Heading2';
 import { PROGRAM_FAQ_ID } from '@components/ProgramDetailNavigation';
+import { CSSProperties, ReactNode, useMemo, useState } from 'react';
 
 const superTitle = '자주 묻는 질문';
 const title = '궁금한 점이 있으신가요?';
 
+const {
+  PORTFOLIO,
+  CAREER_START,
+  PERSONAL_STATEMENT_LARGE_CORP,
+  EXPERIENCE_SUMMARY,
+} = challengeTypeSchema.enum;
+
 interface ChallengeFaqProps {
   faqData?: faqSchemaType;
-  colors: ChallengeColor;
   faqCategory: ChallengeContent['faqCategory'];
+  challengeType: ChallengeType;
 }
 
-function ChallengeFaq({ faqData, colors, faqCategory }: ChallengeFaqProps) {
+function ChallengeFaq({
+  faqData,
+  faqCategory,
+  challengeType,
+}: ChallengeFaqProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const faqList = faqData?.faqList;
   const categoryList = [...new Set(faqCategory)];
+  const styles = useMemo(() => {
+    switch (challengeType) {
+      case CAREER_START:
+        return {
+          primaryColor: challengeColors._4D55F5,
+          primaryLightColor: challengeColors.F3F4FF,
+        };
+      case PORTFOLIO:
+        return {
+          primaryColor: challengeColors._4A76FF,
+          primaryLightColor: challengeColors.F0F4FF,
+        };
+      case PERSONAL_STATEMENT_LARGE_CORP:
+        return {
+          primaryColor: challengeColors._14BCFF,
+          primaryLightColor: challengeColors.EEFAFF,
+        };
+      case EXPERIENCE_SUMMARY:
+        return {
+          primaryColor: challengeColors._4D55F5,
+          primaryLightColor: challengeColors.F3F4FF,
+        };
+      default:
+        return {
+          primaryColor: challengeColors._14BCFF,
+          primaryLightColor: challengeColors.EEFAFF,
+        };
+    }
+  }, [challengeType]);
 
   if (!faqList) return <></>;
 
@@ -34,11 +73,11 @@ function ChallengeFaq({ faqData, colors, faqCategory }: ChallengeFaqProps) {
     >
       <SuperTitle
         className="mb-6 text-neutral-45 md:mb-12"
-        style={{ color: colors.primary }}
+        style={{ color: styles.primaryColor }}
       >
         FAQ
       </SuperTitle>
-      <SuperTitle className="mb-3" style={{ color: colors.primary }}>
+      <SuperTitle className="mb-3" style={{ color: styles.primaryColor }}>
         {superTitle}
       </SuperTitle>
       <Heading2 className="mb-10 md:mb-20">{title}</Heading2>
@@ -48,9 +87,13 @@ function ChallengeFaq({ faqData, colors, faqCategory }: ChallengeFaqProps) {
         {categoryList?.map((category, index) => (
           <FaqCategory
             key={category}
-            colors={colors}
             selected={selectedIndex === index}
             onClick={() => setSelectedIndex(index)}
+            selectedStyle={{
+              borderColor: styles.primaryColor,
+              backgroundColor: styles.primaryLightColor,
+              color: styles.primaryColor,
+            }}
           >
             {category}
           </FaqCategory>
@@ -69,30 +112,22 @@ function ChallengeFaq({ faqData, colors, faqCategory }: ChallengeFaqProps) {
 }
 
 function FaqCategory({
-  colors,
   children,
   selected,
   onClick,
+  selectedStyle,
 }: {
-  colors: ChallengeColor;
   children?: ReactNode;
   selected: boolean;
   onClick?: () => void;
+  selectedStyle?: CSSProperties;
 }) {
   return (
     <div
       className={twMerge(
         'min-w-16 cursor-pointer rounded-full border border-neutral-70 px-5 py-2 text-center text-xxsmall12 font-semibold text-neutral-45 md:min-w-36 md:py-4 md:text-medium22',
       )}
-      style={
-        selected
-          ? {
-              borderColor: colors.primary,
-              backgroundColor: colors.primaryLight,
-              color: colors.primary,
-            }
-          : {}
-      }
+      style={selected ? selectedStyle : undefined}
       onClick={onClick}
     >
       {children}

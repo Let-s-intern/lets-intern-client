@@ -432,7 +432,7 @@ const ChallengeView: React.FC<{
           )}
           <ChallengeFaq
             faqData={faqData}
-            colors={colors}
+            challengeType={challenge.challengeType}
             faqCategory={receivedContent.faqCategory}
           />
           <ChallengeInfoBottom
