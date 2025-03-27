@@ -134,8 +134,7 @@ function ChallengeResult({
             backgroundColor: challengeColors.F3F4FF,
           },
           sectionStyle: {
-            background:
-              'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)',
+            background: `linear-gradient(180deg,${challengeColors._222A7E} 0%,${challengeColors._111449} 50%,${challengeColors._111449} 100%)`,
           },
           checkIconColor: challengeColors._763CFF,
           badgeBoxStyle: {
@@ -192,8 +191,7 @@ function ChallengeResult({
             backgroundColor: challengeColors.F3F4FF,
           },
           sectionStyle: {
-            background:
-              'linear-gradient(180deg,#_14BCFF 0%,#111449 50%,#111449 100%)',
+            background: `linear-gradient(180deg,${challengeColors._222A7E} 0%,${challengeColors._111449} 50%,${challengeColors._111449} 100%)`,
           },
           checkIconColor: challengeColors._763CFF,
           badgeBoxStyle: {
