@@ -57,11 +57,13 @@ const ProgramDetailNavigation = ({
   challengeType,
 }: ProgramDetailNavigationProps) => {
   const { scrollDirection } = useScrollStore();
+
   const isLive = programType === 'live';
+  const navItems = isLive ? liveNavigateItems : challengeNavigateItems;
+
   const [activeSection, setActiveSection] = useState<string>(
     isLive ? liveNavigateItems[0].to : challengeNavigateItems[0].to,
   );
-  const navItems = isLive ? liveNavigateItems : challengeNavigateItems;
 
   const primaryColor = useMemo(() => {
     switch (challengeType) {
@@ -70,7 +72,7 @@ const ProgramDetailNavigation = ({
       case PORTFOLIO:
         return challengeColors._4A76FF;
       case EXPERIENCE_SUMMARY:
-        return challengeColors._4D55F5;
+        return challengeColors.F26646;
       default:
         return challengeColors._14BCFF;
     }
