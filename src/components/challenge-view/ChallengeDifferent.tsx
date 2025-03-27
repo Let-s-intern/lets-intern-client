@@ -16,6 +16,7 @@ const {
   PERSONAL_STATEMENT_LARGE_CORP,
   EXPERIENCE_SUMMARY,
   PERSONAL_STATEMENT,
+  ETC,
 } = challengeTypeSchema.enum;
 
 export const tripleBenefits = [
@@ -85,6 +86,12 @@ const ChallengeDifferent = ({
           primaryLightColor: challengeColors.FFF6F4,
           borderColor: challengeColors.FFC6B9,
         };
+      case ETC:
+        return {
+          primaryColor: challengeColors.F26646,
+          primaryLightColor: challengeColors.FFF6F4,
+          borderColor: challengeColors.FFC6B9,
+        };
       // 자소서
       default:
         return {
@@ -147,6 +154,8 @@ const ChallengeDifferent = ({
         return '/images/payback-career-start.png';
       case EXPERIENCE_SUMMARY:
         return '/images/payback-experience-summary.svg';
+      case ETC:
+        return '/images/payback-experience-summary.svg';
       // 자소서
       case PERSONAL_STATEMENT:
         return '/images/payback-personal-statement.png';
@@ -162,6 +171,8 @@ const ChallengeDifferent = ({
       case CAREER_START:
         return 'different-icon-career-start.svg';
       case EXPERIENCE_SUMMARY:
+        return 'different-icon-experience-summary.svg';
+      case ETC:
         return 'different-icon-experience-summary.svg';
       case PERSONAL_STATEMENT:
         return 'different-icon-personal-statement.svg';
@@ -249,7 +260,7 @@ const ChallengeDifferent = ({
           className="-mx-5 flex w-fit flex-col gap-y-4 overflow-x-auto px-5 md:-mx-10 md:px-10 lg:px-0"
           style={{ color: styles.primaryColor }}
         >
-          {challengeType === EXPERIENCE_SUMMARY && (
+          {(challengeType === EXPERIENCE_SUMMARY || challengeType === ETC) && (
             <BenefitCard
               title={tripleBenefits[0].title}
               options={tripleBenefits[0].options}

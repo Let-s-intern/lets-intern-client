@@ -32,6 +32,7 @@ const {
   PORTFOLIO,
   PERSONAL_STATEMENT_LARGE_CORP,
   EXPERIENCE_SUMMARY,
+  ETC,
 } = challengeTypeSchema.enum;
 
 export const getDiscountPercent = (
@@ -81,6 +82,15 @@ const ChallengeBasicInfo = ({
           },
         };
       case EXPERIENCE_SUMMARY:
+        return {
+          thumbnailStyle: {
+            backgroundColor: challengeColors.FFF6F4,
+          },
+          basicInfoStyle: {
+            color: challengeColors.F26646,
+          },
+        };
+      case ETC:
         return {
           thumbnailStyle: {
             backgroundColor: challengeColors.FFF6F4,

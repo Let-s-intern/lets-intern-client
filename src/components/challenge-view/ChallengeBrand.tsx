@@ -14,6 +14,7 @@ const {
   CAREER_START,
   PERSONAL_STATEMENT_LARGE_CORP,
   EXPERIENCE_SUMMARY,
+  ETC,
 } = challengeTypeSchema.enum;
 
 interface Props {
@@ -30,6 +31,8 @@ const ChallengeBrand = ({ challengeType }: Props) => {
       case PERSONAL_STATEMENT_LARGE_CORP:
         return challengeColors._14BCFF;
       case EXPERIENCE_SUMMARY:
+        return challengeColors.F26646;
+      case ETC:
         return challengeColors.F26646;
       // 자소서
       default:
