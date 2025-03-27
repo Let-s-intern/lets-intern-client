@@ -576,7 +576,7 @@ function Box({
   return (
     <div
       className={twMerge(
-        'flex min-h-60 flex-col gap-2.5 rounded-md bg-neutral-95 p-5',
+        'flex min-h-60 flex-col gap-2.5 rounded-md bg-neutral-100 p-5',
         className,
       )}
     >
