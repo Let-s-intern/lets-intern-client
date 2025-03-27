@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 import benefitImg1 from '@/assets/benefit1.jpg';
 import benefitImg2 from '@/assets/benefit2.jpg';
 import benefitImg3 from '@/assets/benefit3.jpg';
@@ -10,19 +8,28 @@ import DifferentCard, {
   DifferentCardProps,
 } from '@components/common/program/program-detail/different/DifferentCard';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
+import { useMemo } from 'react';
 
 const {
   PORTFOLIO,
   CAREER_START,
   PERSONAL_STATEMENT_LARGE_CORP,
   EXPERIENCE_SUMMARY,
+  PERSONAL_STATEMENT,
 } = challengeTypeSchema.enum;
 
 export const tripleBenefits = [
   {
-    title: '나만의 챌린지 대시보드를 통해 참여',
+    title: '챌린지 수료시, 챌린지 3종 할인 쿠폰 제공',
     options: [
-      `챌린지 참여가 종료되어도, 참여했던 미션 무한 열람 및 아카이빙`,
+      '미션 80점 이상 완료 시 이력서, 자기소개서, 포트폴리오 완성 챌린지 할인 쿠폰 발급!\n(챌린지 3종 중 1회 적용 가능)',
+    ],
+    imgUrl: { src: '/images/benefit0.svg' },
+  },
+  {
+    title: '온라인 대시보드',
+    options: [
+      `학습부터 미션 수행까지 올인원으로 관리할 수 있는 전용 대시보드`,
       `미션 현황과 기수별 주요 공지도 함께 열람할 수 있어 몰입감 UP!`,
     ],
     imgUrl: benefitImg1,
@@ -58,26 +65,32 @@ const ChallengeDifferent = ({
         return {
           primaryColor: challengeColors._4D55F5,
           primaryLightColor: challengeColors.F3F4FF,
+          borderColor: challengeColors._4D55F5,
         };
       case PORTFOLIO:
         return {
           primaryColor: challengeColors._4A76FF,
           primaryLightColor: challengeColors.F0F4FF,
+          borderColor: challengeColors._4A76FF,
         };
       case PERSONAL_STATEMENT_LARGE_CORP:
         return {
           primaryColor: challengeColors._14BCFF,
           primaryLightColor: challengeColors.EEFAFF,
+          borderColor: challengeColors._14BCFF,
         };
       case EXPERIENCE_SUMMARY:
         return {
-          primaryColor: challengeColors._4D55F5,
-          primaryLightColor: challengeColors.F3F4FF,
+          primaryColor: challengeColors.F26646,
+          primaryLightColor: challengeColors.FFF6F4,
+          borderColor: challengeColors.FFC6B9,
         };
+      // 자소서
       default:
         return {
           primaryColor: challengeColors._14BCFF,
           primaryLightColor: challengeColors.EEFAFF,
+          borderColor: challengeColors._14BCFF,
         };
     }
   }, [challengeType]);
@@ -132,8 +145,13 @@ const ChallengeDifferent = ({
         return '/images/payback-portfolio.png';
       case CAREER_START:
         return '/images/payback-career-start.png';
-      default:
+      case EXPERIENCE_SUMMARY:
+        return '/images/payback-experience-summary.svg';
+      // 자소서
+      case PERSONAL_STATEMENT:
         return '/images/payback-personal-statement.png';
+      default:
+        return undefined;
     }
   })();
 
@@ -143,8 +161,12 @@ const ChallengeDifferent = ({
         return 'different-icon-portfolio.svg';
       case CAREER_START:
         return 'different-icon-career-start.svg';
-      default:
+      case EXPERIENCE_SUMMARY:
+        return 'different-icon-experience-summary.svg';
+      case PERSONAL_STATEMENT:
         return 'different-icon-personal-statement.svg';
+      default:
+        return undefined;
     }
   }, [challengeType]);
 
@@ -204,13 +226,11 @@ const ChallengeDifferent = ({
                 <br className="md:hidden" /> {deposit / 10000}
                 만원을 페이백해드려요!
               </p>
-              {deposit === 30000 && (
-                <img
-                  className="absolute bottom-0 right-0 h-auto w-28 md:top-0 md:w-48"
-                  src={paypackImgSrc}
-                  alt="페이백 3만원"
-                />
-              )}
+              <img
+                className="absolute bottom-0 right-0 h-auto w-28 md:top-0 md:w-48"
+                src={paypackImgSrc}
+                alt={`페이백 ${deposit / 10000}만원`}
+              />
             </div>
           )}
         </div>
@@ -229,11 +249,13 @@ const ChallengeDifferent = ({
           className="-mx-5 flex w-fit flex-col gap-y-4 overflow-x-auto px-5 md:-mx-10 md:px-10 lg:px-0"
           style={{ color: styles.primaryColor }}
         >
-          <BenefitCard
-            title={tripleBenefits[0].title}
-            options={tripleBenefits[0].options}
-            imgUrl={tripleBenefits[0].imgUrl.src}
-          />
+          {challengeType === EXPERIENCE_SUMMARY && (
+            <BenefitCard
+              title={tripleBenefits[0].title}
+              options={tripleBenefits[0].options}
+              imgUrl={tripleBenefits[0].imgUrl.src}
+            />
+          )}
           <BenefitCard
             title={tripleBenefits[1].title}
             options={tripleBenefits[1].options}
@@ -243,15 +265,12 @@ const ChallengeDifferent = ({
             title={tripleBenefits[2].title}
             options={tripleBenefits[2].options}
             imgUrl={tripleBenefits[2].imgUrl.src}
+          />{' '}
+          <BenefitCard
+            title={tripleBenefits[3].title}
+            options={tripleBenefits[3].options}
+            imgUrl={tripleBenefits[3].imgUrl.src}
           />
-          {challengeType === EXPERIENCE_SUMMARY && (
-            <p className="mt-6 text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
-              미션 80점 이상 완료 시<br /> 이력서, 자기소개서, 포트폴리오 완성
-              챌린지
-              <br className="md:hidden" /> 할인 쿠폰 발급! (챌린지 3종 중 1회
-              적용 가능)
-            </p>
-          )}
         </div>
       </div>
     </section>

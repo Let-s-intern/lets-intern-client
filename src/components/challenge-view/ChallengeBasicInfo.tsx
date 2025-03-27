@@ -83,10 +83,10 @@ const ChallengeBasicInfo = ({
       case EXPERIENCE_SUMMARY:
         return {
           thumbnailStyle: {
-            backgroundColor: challengeColors.EDEEFE,
+            backgroundColor: challengeColors.FFF6F4,
           },
           basicInfoStyle: {
-            color: challengeColors._4D55F5,
+            color: challengeColors.F26646,
           },
         };
       default:

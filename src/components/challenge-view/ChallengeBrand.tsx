@@ -30,7 +30,8 @@ const ChallengeBrand = ({ challengeType }: Props) => {
       case PERSONAL_STATEMENT_LARGE_CORP:
         return challengeColors._14BCFF;
       case EXPERIENCE_SUMMARY:
-        return challengeColors._4D55F5;
+        return challengeColors.F26646;
+      // 자소서
       default:
         return challengeColors._14BCFF;
     }

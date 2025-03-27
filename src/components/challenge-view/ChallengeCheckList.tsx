@@ -177,15 +177,15 @@ const EXPERIENCE_SUMMARY_CHECK_LIST = [
     title: ['서류 제출 전까지 어떤 경험을', '써야할지 고민하고 있어요.. '],
     content: [
       ['어떤 기준으로 경험을 정리해야할지', ' 모르겠어요.'],
-      ['경험을 논리적으로 정리하는게 어려워요.'],
+      ['경험을 논리적으로 정리하는게 너무', '어려워요.'],
     ],
     solution: ['→ 경험정리에서 서류로 발전시킨 사례 공유!'],
   },
   {
     title: ['제가 한 경험들이 의미있는', '활동인지 모르겠어요.'],
     content: [
-      ['어떤 점을 강조해야 할지 모르겠어요'],
-      ['일상적인 경험까지 정리해야 하나요?'],
+      ['경험 중에 어떤 부분을 강조해야 할지', '감조차 안 와요.'],
+      ['사소하다고 생각하는 일상적인 경험까지', '정리해야 하나요?'],
     ],
     solution: [
       '→ 경험 재해석과 자가 점검을 도와줄',
@@ -194,7 +194,10 @@ const EXPERIENCE_SUMMARY_CHECK_LIST = [
   },
   {
     title: ['경험정리, 계속 미루고 있어서', '강제성이 필요해요!'],
-    content: [['혼자 하려니까 미루게 돼요'], ['중간에 자꾸 포기하게 돼요']],
+    content: [
+      ['혼자 하려니까 동기부여도 안돼고 자꾸', '미루게 돼요.'],
+      ['처음에는 의욕이 넘쳤는데 결국 중간에', '포기하게 돼요.'],
+    ],
     solution: [
       '→ 오픈카톡방 실시간 소감 및 작업물 공유와',
       '미션 동기부여 페이백으로 강제성 부여',
@@ -290,19 +293,19 @@ function ChallengeCheckList({
         };
       case EXPERIENCE_SUMMARY:
         return {
-          superTitleStyle: { color: challengeColors._4D55F5 },
+          superTitleStyle: { color: challengeColors.F26646 },
           boxStyle: {
-            backgroundColor: challengeColors.F3F4FF,
+            backgroundColor: challengeColors.FFF6F4,
           },
           badgeStyle: {
-            backgroundColor: challengeColors._4D55F5,
+            backgroundColor: challengeColors.F26646,
           },
           outlinedBoxStyle: {
-            backgroundColor: challengeColors.FDF6FF,
-            borderColor: challengeColors.E45BFF,
-            color: challengeColors.E45BFF,
+            backgroundColor: challengeColors.FFF7EF,
+            borderColor: challengeColors.FF9C34,
+            color: challengeColors.EB7900,
           },
-          checkboxColor: challengeColors._4D55F5,
+          checkboxColor: challengeColors.F26646,
         };
       default:
         return {

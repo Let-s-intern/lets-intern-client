@@ -78,6 +78,19 @@ export const challengeColors = {
   F1FBFF: '#F1FBFF',
   DDF5FF: '#DDF5FF',
   E6F9DE: '#E6F9DE',
+  F26646: '#F26646',
+  FFF6F4: '#FFF6F4',
+  EB7900: '#EB7900',
+  FF8E36: '#FF8E36 ',
+  FFC6B9: '#FFC6B9',
+  FFF0ED: '#FFF0ED',
+  FB8100: '#FB8100',
+  _202776: '#202776',
+  FFC8BC: '#FFC8BC',
+  _261F1E: '#261F1E',
+  ADC3FF: '#ADC3FF',
+  B8BBFB: '#B8BBFB',
+  A8E6FF: '#A8E6FF',
 };
 
 export type ChallengeColor = {
@@ -133,127 +146,6 @@ const ChallengeView: React.FC<{
     (receivedContent.challengeReview ?? []).length > 0 &&
     receivedContent.blogReview;
 
-  const colors = useMemo<ChallengeColor>(() => {
-    let primary = '';
-    let primaryLight = '';
-    let secondary = '';
-    let secondaryLight = '';
-    let gradient = ''; // After 배지 배경색에 사용
-    let dark = ''; // 진행방식,결과물 배경색
-    let basicInfoPrimary = null; // 기본정보 기본색
-    let subTitle = '';
-    let subBg = '';
-    let gradientBg = '';
-    let curriculumBg = ''; // 커리큘럼 배경색
-    let recommendBg = ''; // 프로그램 추천 배경색
-    let recommendLogo = ''; // 프로그램 추천 로고색
-    let thumbnailBg = ''; // 썸네일 배경색
-
-    switch (challenge.challengeType) {
-      case CAREER_START:
-        primary = '#4D55F5';
-        secondary = '#E45BFF';
-        primaryLight = '#F3F4FF';
-        secondaryLight = '#FDF6FF';
-        gradient = '#763CFF';
-        dark = '#1A1D5F';
-
-        subTitle = '#757BFF';
-        subBg = '#5C63FF';
-        gradientBg =
-          'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)';
-        curriculumBg = '#F2F2F5';
-        recommendBg = '#F3F4FF';
-        recommendLogo = '#E8EAFF';
-        thumbnailBg = '#EDEEFE';
-        break;
-      case PORTFOLIO:
-        primary = '#4A76FF';
-        secondary = '#F8AE00';
-        primaryLight = '#F0F4FF';
-        secondaryLight = '#FFF9EA';
-        gradient = '#4A56FF';
-        dark = '#1A2A5D';
-
-        subTitle = '#F8AE00';
-        subBg = '#FFF9EA';
-        gradientBg =
-          'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)';
-        curriculumBg = '#F3F3F3';
-        recommendBg = '#F0F4FF';
-        recommendLogo = '#DEE7FF';
-        thumbnailBg = '#FFF4DB';
-        break;
-      case PERSONAL_STATEMENT_LARGE_CORP:
-        primary = '#14BCFF';
-        basicInfoPrimary = '#32B750';
-        secondary = '#FF9C34';
-        primaryLight = '#EEFAFF';
-        secondaryLight = '#FFF7EF';
-        gradient = '#39DEFF';
-        dark = '#20304F';
-
-        subTitle = '#FF9C34';
-        subBg = '#FFF7EF';
-        gradientBg =
-          'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)';
-        curriculumBg = '#EFF4F7';
-        recommendBg = '#F1FBFF';
-        recommendLogo = '#DDF5FF';
-        thumbnailBg = '#E6F9DE';
-        break;
-      case EXPERIENCE_SUMMARY:
-        primary = '#4D55F5';
-        secondary = '#E45BFF';
-        primaryLight = '#F3F4FF';
-        secondaryLight = '#FDF6FF';
-        gradient = '#763CFF';
-        dark = '#1A1D5F';
-
-        subTitle = '#757BFF';
-        subBg = '#5C63FF';
-        gradientBg =
-          'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)';
-        curriculumBg = '#F2F2F5';
-        recommendBg = '#F3F4FF';
-        recommendLogo = '#E8EAFF';
-        thumbnailBg = '#EDEEFE';
-        break;
-      default: // 자소서, 마케팅
-        primary = '#14BCFF';
-        secondary = '#FF9C34';
-        primaryLight = '#EEFAFF';
-        secondaryLight = '#FFF7EF';
-        gradient = '#39DEFF';
-        dark = '#20304F';
-
-        subTitle = '#FF9C34';
-        subBg = '#FFF7EF';
-        gradientBg =
-          'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)';
-        curriculumBg = '#EFF4F7';
-        recommendBg = '#F1FBFF';
-        recommendLogo = '#DDF5FF';
-        thumbnailBg = '#EEFAFF';
-    }
-    return {
-      primary,
-      basicInfoPrimary,
-      primaryLight,
-      secondary,
-      secondaryLight,
-      gradient,
-      dark,
-      subTitle,
-      subBg,
-      gradientBg,
-      curriculumBg,
-      recommendBg,
-      recommendLogo,
-      thumbnailBg,
-    };
-  }, [challenge.challengeType]);
-
   const challengeTransformed = useMemo<ChallengeIdSchema>(() => {
     return {
       ...challenge,
@@ -268,32 +160,37 @@ const ChallengeView: React.FC<{
     };
   }, [challenge]);
 
-  const moreReviewBtnColors = useMemo(() => {
+  const styles = useMemo(() => {
     switch (challenge.challengeType) {
       case CAREER_START:
         return {
-          main: challengeColors._1A1D5F,
-          sub: challengeColors.E45BFF,
+          moreReviewMainColor: challengeColors._1A1D5F,
+          moreReviewSubColor: challengeColors.E45BFF,
+          curriculumBgColor: challengeColors.F2F2F5,
         };
       case PORTFOLIO:
         return {
-          main: challengeColors._1A2A5D,
-          sub: challengeColors.F8AE00,
+          moreReviewMainColor: challengeColors._1A2A5D,
+          moreReviewSubColor: challengeColors.F8AE00,
+          curriculumBgColor: challengeColors.F3F3F3,
         };
       case PERSONAL_STATEMENT_LARGE_CORP:
         return {
-          main: challengeColors._20304F,
-          sub: challengeColors.FF9C34,
+          moreReviewMainColor: challengeColors._20304F,
+          moreReviewSubColor: challengeColors.FF9C34,
+          curriculumBgColor: challengeColors.EFF4F7,
         };
       case EXPERIENCE_SUMMARY:
         return {
-          main: challengeColors._1A1D5F,
-          sub: challengeColors.E45BFF,
+          moreReviewMainColor: challengeColors._202776,
+          moreReviewSubColor: challengeColors.FB8100,
+          curriculumBgColor: challengeColors.F2F2F5,
         };
       default:
         return {
-          main: challengeColors._20304F,
-          sub: challengeColors.FF9C34,
+          moreReviewMainColor: challengeColors._20304F,
+          moreReviewSubColor: challengeColors.FF9C34,
+          curriculumBgColor: challengeColors.EFF4F7,
         };
     }
   }, [challenge.challengeType]);
@@ -377,7 +274,7 @@ const ChallengeView: React.FC<{
               <section
                 id={PROGRAM_CURRICULUM_ID}
                 className="challenge_curriculum flex w-full flex-col items-center"
-                style={{ backgroundColor: colors.curriculumBg }}
+                style={{ backgroundColor: styles.curriculumBgColor }}
               >
                 <ChallengeCurriculum
                   challengeType={challenge.challengeType}
@@ -417,8 +314,8 @@ const ChallengeView: React.FC<{
                     <MoreReviewButton
                       type="CHALLENGE"
                       challengeType={challenge.challengeType}
-                      mainColor={moreReviewBtnColors.main}
-                      subColor={moreReviewBtnColors.sub}
+                      mainColor={styles.moreReviewMainColor}
+                      subColor={styles.moreReviewSubColor}
                     />
                   </div>
                 )}

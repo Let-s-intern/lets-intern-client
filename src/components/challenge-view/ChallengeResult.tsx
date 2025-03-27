@@ -120,6 +120,9 @@ function ChallengeResult({
         return 'result-arrow-icon-portfolio.svg';
       case CAREER_START:
         return 'result-arrow-icon-career-start.svg';
+      case EXPERIENCE_SUMMARY:
+        return 'result-arrow-icon-experience-summary.svg';
+      // 자소서
       default:
         return 'result-arrow-icon-personal-statement.svg';
     }
@@ -130,18 +133,10 @@ function ChallengeResult({
       case CAREER_START:
         return {
           superTitleStyle: { color: challengeColors._4D55F5 },
-          boxStyle: {
-            backgroundColor: challengeColors.F3F4FF,
-          },
           sectionStyle: {
-            background:
-              'linear-gradient(180deg,#222A7E 0%,#111449 50%,#111449 100%)',
+            background: `linear-gradient(180deg,${challengeColors._222A7E} 0%,${challengeColors._111449} 50%,${challengeColors._111449} 100%)`,
           },
           checkIconColor: challengeColors._763CFF,
-          badgeBoxStyle: {
-            backgroundColor: challengeColors.F3F4FF,
-            borderColor: challengeColors._4D55F5,
-          },
           badgeStyle: {
             backgroundColor: challengeColors._4D55F5,
             background: `linear-gradient(45deg, ${challengeColors._4D55F5}, ${challengeColors._763CFF})`,
@@ -150,17 +145,10 @@ function ChallengeResult({
       case PORTFOLIO:
         return {
           superTitleStyle: { color: challengeColors._4A76FF },
-          boxStyle: {
-            backgroundColor: challengeColors.F0F4FF,
-          },
           sectionStyle: {
             background: challengeColors._1A2A5D,
           },
           checkIconColor: challengeColors._4A56FF,
-          badgeBoxStyle: {
-            backgroundColor: challengeColors.F0F4FF,
-            borderColor: challengeColors._4A76FF,
-          },
           badgeStyle: {
             backgroundColor: challengeColors._4A76FF,
             background: `linear-gradient(45deg, ${challengeColors._4D55F5}, ${challengeColors._4A56FF})`,
@@ -169,17 +157,10 @@ function ChallengeResult({
       case PERSONAL_STATEMENT_LARGE_CORP:
         return {
           superTitleStyle: { color: challengeColors._14BCFF },
-          boxStyle: {
-            backgroundColor: challengeColors.EEFAFF,
-          },
           sectionStyle: {
             background: challengeColors._20304F,
           },
           checkIconColor: challengeColors._39DEFF,
-          badgeBoxStyle: {
-            backgroundColor: challengeColors.EEFAFF,
-            borderColor: challengeColors._14BCFF,
-          },
           badgeStyle: {
             backgroundColor: challengeColors._14BCFF,
             background: `linear-gradient(45deg, ${challengeColors._14BCFF}, ${challengeColors._39DEFF})`,
@@ -187,30 +168,20 @@ function ChallengeResult({
         };
       case EXPERIENCE_SUMMARY:
         return {
-          superTitleStyle: { color: challengeColors._4D55F5 },
-          boxStyle: {
-            backgroundColor: challengeColors.F3F4FF,
-          },
+          superTitleStyle: { color: challengeColors.F26646 },
           sectionStyle: {
-            background:
-              'linear-gradient(180deg,#_14BCFF 0%,#111449 50%,#111449 100%)',
+            background: challengeColors._261F1E,
           },
-          checkIconColor: challengeColors._763CFF,
-          badgeBoxStyle: {
-            backgroundColor: challengeColors.F3F4FF,
-            borderColor: challengeColors._4D55F5,
-          },
+          checkIconColor: challengeColors.F26646,
           badgeStyle: {
             backgroundColor: challengeColors._4D55F5,
-            background: `linear-gradient(45deg, ${challengeColors._4D55F5}, ${challengeColors._763CFF})`,
+            background: `linear-gradient(90deg, ${challengeColors.F26646} 0%, ${challengeColors.FF8E36} 100%)`,
           },
         };
+      // 자소서
       default:
         return {
           superTitleStyle: { color: challengeColors._14BCFF },
-          boxStyle: {
-            backgroundColor: challengeColors.EEFAFF,
-          },
           sectionStyle: {
             background: challengeColors._20304F,
           },
@@ -240,7 +211,13 @@ function ChallengeResult({
           <Heading2 className="text-white">
             {challengeType === EXPERIENCE_SUMMARY ? (
               <>
-                나만의 강점을 파악하게 해줄
+                나만의 강점을{' '}
+                <img
+                  className="mb-1 inline-block h-auto w-7 md:mb-2 md:w-10"
+                  src={`/icons/${iconName}`}
+                  alt=""
+                />{' '}
+                파악하게 해줄
                 <br /> 기필코 경험정리 챌린지
               </>
             ) : (
@@ -279,7 +256,6 @@ function ChallengeResult({
                 <div className="flex flex-1 flex-col items-center gap-4">
                   <BadgedBox
                     badgeContent="After"
-                    boxStyle={styles.badgeBoxStyle}
                     badgeStyle={styles.badgeStyle}
                   >
                     <ResultImg
@@ -312,14 +288,12 @@ function BadgedBox({
   badgeColor,
   className,
   children,
-  boxStyle,
   badgeStyle,
 }: {
   badgeContent: string;
   badgeColor?: string;
   className?: string;
   children?: ReactNode;
-  boxStyle?: CSSProperties;
   badgeStyle?: CSSProperties;
 }) {
   const style = { color: badgeColor, ...badgeStyle };
@@ -330,7 +304,6 @@ function BadgedBox({
         'flex w-full min-w-[260px] flex-col overflow-hidden p-0 md:p-0',
         className,
       )}
-      style={boxStyle}
     >
       <div
         className={twMerge(

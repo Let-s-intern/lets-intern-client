@@ -77,8 +77,9 @@ const ChallengeInfoBottom = ({
         };
       case EXPERIENCE_SUMMARY:
         return {
-          primaryColor: challengeColors._4D55F5,
+          primaryColor: challengeColors.F26646,
         };
+      // 자소서
       default:
         return {
           primaryColor: challengeColors._14BCFF,

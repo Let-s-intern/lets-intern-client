@@ -41,9 +41,10 @@ const ProgramBestReviewSection = ({
         };
       case EXPERIENCE_SUMMARY:
         return {
-          primaryColor: challengeColors._4D55F5,
-          primaryLightColor: challengeColors.F3F4FF,
+          primaryColor: challengeColors.F26646,
+          primaryLightColor: challengeColors.FFF0ED,
         };
+      // 자소서
       default:
         return {
           primaryColor: challengeColors._14BCFF,
