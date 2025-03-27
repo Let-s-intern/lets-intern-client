@@ -101,7 +101,10 @@ const ChallengePointView = ({
   ];
 
   const reward = {
-    title: '챌린지에 성공해 뿌듯함과\n리워드까지 가져가세요!',
+    title:
+      challengeType === EXPERIENCE_SUMMARY
+        ? '단돈 9,900원으로 완성하는\n나만의 경험&역량 데이터베이스!'
+        : '챌린지에 성공해 뿌듯함과\n리워드까지 가져가세요!',
     content:
       '챌린지 참여 점수 80점 이상시,\n' +
       (challengeType === PERSONAL_STATEMENT_LARGE_CORP ||
@@ -151,11 +154,18 @@ const ChallengePointView = ({
           '/images/payback-career-start.png',
           '/icons/bg-logo-career-start.svg',
         ];
-      default:
+      case EXPERIENCE_SUMMARY:
+        return [
+          '/images/payback-experience-summary.svg',
+          '/icons/bg-logo-experience-summary.svg',
+        ];
+      case PERSONAL_STATEMENT:
         return [
           '/images/payback-personal-statement.png',
           '/icons/bg-logo-personal-statement.svg',
         ];
+      default:
+        return ['', ''];
     }
   }, [challengeType]);
 
@@ -205,6 +215,7 @@ const ChallengePointView = ({
           darkColor: challengeColors._1A1D5F,
           recommendBgColor: challengeColors.EDEEFE,
           primaryLightColor: challengeColors.F3F4FF,
+          buttonBgColor: challengeColors._4D55F5,
         };
       case PORTFOLIO:
         return {
@@ -213,6 +224,7 @@ const ChallengePointView = ({
           darkColor: challengeColors._1A2A5D,
           recommendBgColor: challengeColors.F0F4FF,
           primaryLightColor: challengeColors.F0F4FF,
+          buttonBgColor: challengeColors._4A76FF,
         };
       case PERSONAL_STATEMENT_LARGE_CORP:
         return {
@@ -221,15 +233,18 @@ const ChallengePointView = ({
           darkColor: challengeColors._20304F,
           recommendBgColor: challengeColors.F1FBFF,
           primaryLightColor: challengeColors.EEFAFF,
+          buttonBgColor: challengeColors._14BCFF,
         };
       case EXPERIENCE_SUMMARY:
         return {
-          primaryColor: challengeColors._4D55F5,
-          introHeadingColor: challengeColors._757BFF,
-          darkColor: challengeColors._1A1D5F,
-          recommendBgColor: challengeColors.F3F4FF,
-          primaryLightColor: challengeColors.F3F4FF,
+          primaryColor: challengeColors.F26646,
+          introHeadingColor: challengeColors.F26646,
+          darkColor: challengeColors._27272D,
+          recommendBgColor: challengeColors.FFF6F4,
+          primaryLightColor: challengeColors.FFF6F4,
+          buttonBgColor: challengeColors.F26646,
         };
+      // 자소서
       default:
         return {
           primaryColor: challengeColors._14BCFF,
@@ -237,6 +252,7 @@ const ChallengePointView = ({
           darkColor: challengeColors._20304F,
           recommendBgColor: challengeColors.F1FBFF,
           primaryLightColor: challengeColors.EEFAFF,
+          buttonBgColor: challengeColors._14BCFF,
         };
     }
   }, [challengeType]);
@@ -367,6 +383,7 @@ const ChallengePointView = ({
               <br className="md:hidden" /> 추천드려요
             </Heading2>
             <ProgramRecommendSlider
+              buttonStyle={{ backgroundColor: styles.buttonBgColor }}
               className="-mx-5 mt-8 max-w-[1000px] px-5 md:mx-auto md:mt-16 lg:px-0"
               list={slideList}
             />
@@ -443,13 +460,11 @@ const ChallengePointView = ({
               </Box>
               <Box className="relative overflow-hidden md:flex-1">
                 <BoxItem title={reward.title}>{reward.content}</BoxItem>
-                {deposit === 30000 && (
-                  <img
-                    className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
-                    src={paypackImgSrc}
-                    alt="페이백 3만원"
-                  />
-                )}
+                <img
+                  className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
+                  src={paypackImgSrc}
+                  alt={`페이백 ${deposit / 10000}만원`}
+                />
               </Box>
             </div>
           </div>

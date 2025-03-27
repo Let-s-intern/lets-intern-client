@@ -87,6 +87,7 @@ export const challengeColors = {
   FB8100: '#FB8100',
   _202776: '#202776',
   FFC8BC: '#FFC8BC',
+  _27272D: '#27272D',
 };
 
 export type ChallengeColor = {
