@@ -41,26 +41,26 @@ function ChallengeFaq({
         return {
           primaryColor: challengeColors._4D55F5,
           primaryLightColor: challengeColors.F3F4FF,
+          borderColor: challengeColors.B8BBFB,
         };
       case PORTFOLIO:
         return {
           primaryColor: challengeColors._4A76FF,
           primaryLightColor: challengeColors.F0F4FF,
-        };
-      case PERSONAL_STATEMENT_LARGE_CORP:
-        return {
-          primaryColor: challengeColors._14BCFF,
-          primaryLightColor: challengeColors.EEFAFF,
+          borderColor: challengeColors.ADC3FF,
         };
       case EXPERIENCE_SUMMARY:
         return {
-          primaryColor: challengeColors._4D55F5,
-          primaryLightColor: challengeColors.F3F4FF,
+          primaryColor: challengeColors.F26646,
+          primaryLightColor: challengeColors.FFF6F4,
+          borderColor: challengeColors.FFC8BC,
         };
+      // 자소서, 대기업, 마케팅
       default:
         return {
           primaryColor: challengeColors._14BCFF,
           primaryLightColor: challengeColors.EEFAFF,
+          borderColor: challengeColors.A8E6FF,
         };
     }
   }, [challengeType]);
@@ -91,7 +91,7 @@ function ChallengeFaq({
             selected={selectedIndex === index}
             onClick={() => setSelectedIndex(index)}
             selectedStyle={{
-              borderColor: styles.primaryColor,
+              borderColor: styles.borderColor,
               backgroundColor: styles.primaryLightColor,
               color: styles.primaryColor,
             }}

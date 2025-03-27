@@ -88,6 +88,9 @@ export const challengeColors = {
   _202776: '#202776',
   FFC8BC: '#FFC8BC',
   _261F1E: '#261F1E',
+  ADC3FF: '#ADC3FF',
+  B8BBFB: '#B8BBFB',
+  A8E6FF: '#A8E6FF',
 };
 
 export type ChallengeColor = {
@@ -179,8 +182,8 @@ const ChallengeView: React.FC<{
         };
       case EXPERIENCE_SUMMARY:
         return {
-          moreReviewMainColor: challengeColors._1A1D5F,
-          moreReviewSubColor: challengeColors.E45BFF,
+          moreReviewMainColor: challengeColors._202776,
+          moreReviewSubColor: challengeColors.FB8100,
           curriculumBgColor: challengeColors.F2F2F5,
         };
       default:
