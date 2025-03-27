@@ -239,7 +239,7 @@ const ChallengePointView = ({
         return {
           primaryColor: challengeColors.F26646,
           introHeadingColor: challengeColors.F26646,
-          darkColor: challengeColors._27272D,
+          darkColor: challengeColors._261F1E,
           recommendBgColor: challengeColors.FFF6F4,
           primaryLightColor: challengeColors.FFF6F4,
           buttonBgColor: challengeColors.F26646,

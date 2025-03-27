@@ -10,8 +10,9 @@ const BenefitCard = ({ title, options, imgUrl }: BenefitCardProps) => {
   return (
     <div className={`flex flex-col gap-2.5 md:h-[186px] md:flex-row`}>
       <img
-        src={imgUrl}
-        className="h-full w-full shrink-0 rounded-md border border-neutral-70 md:w-[256px]"
+        src={imgUrl as string}
+        className="h-full w-full shrink-0 rounded-md border border-neutral-70 bg-neutral-90 md:w-[256px]"
+        alt=""
       />
       <div
         className={`flex w-full shrink-0 flex-col gap-y-3 rounded-md bg-neutral-95 px-5 py-8 md:w-[734px] md:flex-1 md:rounded-md md:px-[30px] md:py-10`}
@@ -24,7 +25,7 @@ const BenefitCard = ({ title, options, imgUrl }: BenefitCardProps) => {
             {options.map((option, index) => (
               <div key={index} className="flex items-start">
                 <ChevronDown className="shrink-0" width={24} height={24} />
-                <p className="break-keep pt-px text-xsmall14 font-medium text-neutral-30 md:whitespace-normal md:pt-0 lg:text-small18">
+                <p className="whitespace-pre-line break-keep pt-px text-xsmall14 font-medium text-neutral-30 md:pt-0 lg:text-small18">
                   {option}
                 </p>
               </div>

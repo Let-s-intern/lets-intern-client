@@ -33,6 +33,9 @@ function ChallengeCurriculum({
         return 'folder-icon-portfolio.svg';
       case CAREER_START:
         return 'folder-icon-career-start.svg';
+      case EXPERIENCE_SUMMARY:
+        return 'folder-icon-experience-summary.svg';
+      // 자소서
       default:
         return 'folder-icon-personal-statement.svg';
     }
@@ -60,9 +63,9 @@ function ChallengeCurriculum({
         };
       case EXPERIENCE_SUMMARY:
         return {
-          superTitleStyle: { color: challengeColors._4D55F5 },
-          titleStyle: { color: challengeColors.E45BFF },
-          curriculumDateStyle: { color: challengeColors._4D55F5 },
+          superTitleStyle: { color: challengeColors.F26646 },
+          titleStyle: { color: challengeColors.F26646 },
+          curriculumDateStyle: { color: challengeColors.F26646 },
         };
       default:
         return {

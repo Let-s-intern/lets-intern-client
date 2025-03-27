@@ -12,6 +12,7 @@ export interface DifferentCardProps {
   styles: {
     primaryColor: string;
     primaryLightColor: string;
+    borderColor: string;
   };
 }
 
@@ -29,7 +30,7 @@ const DifferentCard = ({
       className="flex w-full flex-col gap-x-[50px] gap-y-6 rounded-md border p-4 pb-[26px] text-black md:flex-row md:items-center md:px-10 md:pt-6"
       style={{
         backgroundColor: styles.primaryLightColor,
-        borderColor: styles.primaryColor,
+        borderColor: styles.borderColor,
       }}
     >
       {imageUrl && (
