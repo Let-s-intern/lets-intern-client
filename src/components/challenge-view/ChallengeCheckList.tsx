@@ -3,7 +3,7 @@ import { CSSProperties, ReactNode, useMemo } from 'react';
 import { RxCheckbox } from 'react-icons/rx';
 
 import { ChallengeIdSchema, challengeTypeSchema } from '@/schema';
-import { ChallengeColor } from '@components/ChallengeView';
+import { challengeColors } from '@components/ChallengeView';
 import Box from '@components/common/program/program-detail/Box';
 import Description from '@components/common/program/program-detail/Description';
 import OutlinedBox from '@components/common/program/program-detail/OutlineBox';
@@ -177,15 +177,15 @@ const EXPERIENCE_SUMMARY_CHECK_LIST = [
     title: ['서류 제출 전까지 어떤 경험을', '써야할지 고민하고 있어요.. '],
     content: [
       ['어떤 기준으로 경험을 정리해야할지', ' 모르겠어요.'],
-      ['경험을 논리적으로 정리하는게 어려워요.'],
+      ['경험을 논리적으로 정리하는게 너무', '어려워요.'],
     ],
     solution: ['→ 경험정리에서 서류로 발전시킨 사례 공유!'],
   },
   {
     title: ['제가 한 경험들이 의미있는', '활동인지 모르겠어요.'],
     content: [
-      ['어떤 점을 강조해야 할지 모르겠어요'],
-      ['일상적인 경험까지 정리해야 하나요?'],
+      ['경험 중에 어떤 부분을 강조해야 할지', '감조차 안 와요.'],
+      ['사소하다고 생각하는 일상적인 경험까지', '정리해야 하나요?'],
     ],
     solution: [
       '→ 경험 재해석과 자가 점검을 도와줄',
@@ -194,7 +194,10 @@ const EXPERIENCE_SUMMARY_CHECK_LIST = [
   },
   {
     title: ['경험정리, 계속 미루고 있어서', '강제성이 필요해요!'],
-    content: [['혼자 하려니까 미루게 돼요'], ['중간에 자꾸 포기하게 돼요']],
+    content: [
+      ['혼자 하려니까 동기부여도 안돼고 자꾸', '미루게 돼요.'],
+      ['처음에는 의욕이 넘쳤는데 결국 중간에', '포기하게 돼요.'],
+    ],
     solution: [
       '→ 오픈카톡방 실시간 소감 및 작업물 공유와',
       '미션 동기부여 페이백으로 강제성 부여',
@@ -202,14 +205,20 @@ const EXPERIENCE_SUMMARY_CHECK_LIST = [
   },
 ];
 
+const {
+  CAREER_START,
+  PORTFOLIO,
+  PERSONAL_STATEMENT_LARGE_CORP,
+  EXPERIENCE_SUMMARY,
+  ETC,
+} = challengeTypeSchema.enum;
+
 interface ChallengeCheckListProps {
-  colors: ChallengeColor;
   challengeType: ChallengeIdSchema['challengeType'];
   challengeTitle: string;
 }
 
 function ChallengeCheckList({
-  colors,
   challengeType,
   challengeTitle,
 }: ChallengeCheckListProps) {
@@ -219,16 +228,118 @@ function ChallengeCheckList({
   ];
 
   const checkList = useMemo(() => {
-    const { PORTFOLIO, CAREER_START, ETC } = challengeTypeSchema.enum;
     switch (challengeType) {
       case CAREER_START:
         return CAREER_START_CHECK_LIST;
       case PORTFOLIO:
         return PORTFOLIO_CHECK_LIST;
+      case EXPERIENCE_SUMMARY:
+        return EXPERIENCE_SUMMARY_CHECK_LIST;
       case ETC:
         return EXPERIENCE_SUMMARY_CHECK_LIST;
       default:
         return PERSONAL_STATEMENT_CHECK_LIST;
+    }
+  }, [challengeType]);
+
+  const styles = useMemo(() => {
+    switch (challengeType) {
+      case CAREER_START:
+        return {
+          superTitleStyle: { color: challengeColors._4D55F5 },
+          boxStyle: {
+            backgroundColor: challengeColors.F3F4FF,
+          },
+          badgeStyle: {
+            backgroundColor: challengeColors._4D55F5,
+          },
+          outlinedBoxStyle: {
+            backgroundColor: challengeColors.FDF6FF,
+            borderColor: challengeColors.E45BFF,
+            color: challengeColors.E45BFF,
+          },
+          checkboxColor: challengeColors._4D55F5,
+        };
+      case PORTFOLIO:
+        return {
+          superTitleStyle: { color: challengeColors._4A76FF },
+          boxStyle: {
+            backgroundColor: challengeColors.F0F4FF,
+          },
+          badgeStyle: {
+            backgroundColor: challengeColors._4A76FF,
+          },
+          outlinedBoxStyle: {
+            backgroundColor: challengeColors.FFF9EA,
+            borderColor: challengeColors.F8AE00,
+            color: challengeColors.F8AE00,
+          },
+          checkboxColor: challengeColors._4A76FF,
+        };
+      case PERSONAL_STATEMENT_LARGE_CORP:
+        return {
+          superTitleStyle: { color: challengeColors._14BCFF },
+          boxStyle: {
+            backgroundColor: challengeColors.EEFAFF,
+          },
+          badgeStyle: {
+            backgroundColor: challengeColors._14BCFF,
+          },
+          outlinedBoxStyle: {
+            backgroundColor: challengeColors.FFF7EF,
+            borderColor: challengeColors.FF9C34,
+            color: challengeColors.FF9C34,
+          },
+          checkboxColor: challengeColors._14BCFF,
+        };
+      case EXPERIENCE_SUMMARY:
+        return {
+          superTitleStyle: { color: challengeColors.F26646 },
+          boxStyle: {
+            backgroundColor: challengeColors.FFF6F4,
+          },
+          badgeStyle: {
+            backgroundColor: challengeColors.F26646,
+          },
+          outlinedBoxStyle: {
+            backgroundColor: challengeColors.FFF7EF,
+            borderColor: challengeColors.FF9C34,
+            color: challengeColors.EB7900,
+          },
+          checkboxColor: challengeColors.F26646,
+        };
+      case ETC:
+        return {
+          superTitleStyle: { color: challengeColors.F26646 },
+          boxStyle: {
+            backgroundColor: challengeColors.FFF6F4,
+          },
+          badgeStyle: {
+            backgroundColor: challengeColors.F26646,
+          },
+          outlinedBoxStyle: {
+            backgroundColor: challengeColors.FFF7EF,
+            borderColor: challengeColors.FF9C34,
+            color: challengeColors.EB7900,
+          },
+          checkboxColor: challengeColors.F26646,
+        };
+      default:
+        return {
+          superTitleStyle: { color: challengeColors._14BCFF },
+          boxStyle: {
+            backgroundColor: challengeColors.EEFAFF,
+          },
+          badgeStyle: {
+            backgroundColor: challengeColors._14BCFF,
+          },
+          outlinedBoxStyle: {
+            backgroundColor: challengeColors.FFF7EF,
+            borderColor: challengeColors.FF9C34,
+            color: challengeColors.FF9C34,
+          },
+          checkboxColor: challengeColors._14BCFF,
+        };
     }
   }, [challengeType]);
 
@@ -237,7 +348,7 @@ function ChallengeCheckList({
       <div className="mb-16 md:mb-20">
         <SuperTitle
           className="mb-3 md:text-center"
-          style={{ color: colors.primary }}
+          style={styles.superTitleStyle}
         >
           {superTitle}
         </SuperTitle>
@@ -255,11 +366,9 @@ function ChallengeCheckList({
           >
             <Box
               className="relative flex w-full max-w-[860px] flex-col py-6 text-small18 font-bold md:flex-row md:justify-center md:gap-1 md:p-10 md:text-medium24"
-              style={{ backgroundColor: colors.primaryLight }}
+              style={styles.boxStyle}
             >
-              <Badge style={{ backgroundColor: colors.primary }}>
-                Check {index + 1}
-              </Badge>
+              <Badge style={styles.badgeStyle}>Check {index + 1}</Badge>
               {item.title.map((ele) => (
                 <span key={ele} className="shrink-0">
                   {ele}
@@ -270,7 +379,7 @@ function ChallengeCheckList({
               {item.content.map((group) => (
                 <CheckList
                   key={group[0]}
-                  colors={colors}
+                  checkboxColor={styles.checkboxColor}
                   className={
                     group.length > 1 ? 'justify-start' : 'items-center'
                   }
@@ -288,11 +397,7 @@ function ChallengeCheckList({
             </div>
             <OutlinedBox
               className="flex w-full max-w-[860px] flex-col items-center md:p-10 lg:flex-row lg:justify-center lg:gap-1"
-              style={{
-                backgroundColor: colors.secondaryLight,
-                borderColor: colors.secondary,
-                color: colors.secondary,
-              }}
+              style={styles.outlinedBoxStyle}
             >
               {item.solution.map((ele) => (
                 <span
@@ -329,11 +434,11 @@ function Badge({
 
 function CheckList({
   children,
-  colors,
+  checkboxColor,
   className,
 }: {
   children?: ReactNode;
-  colors: ChallengeColor;
+  checkboxColor?: string;
   className?: string;
 }) {
   const isDesktop = useMediaQuery('(min-width: 991px)');
@@ -341,7 +446,7 @@ function CheckList({
   return (
     <div className={twMerge('flex w-full gap-4 md:items-center', className)}>
       <div>
-        <RxCheckbox color={colors.primary} size={isDesktop ? 36 : 24} />
+        <RxCheckbox color={checkboxColor} size={isDesktop ? 36 : 24} />
       </div>
       <div className="flex flex-col md:flex-row md:gap-1">{children}</div>
     </div>

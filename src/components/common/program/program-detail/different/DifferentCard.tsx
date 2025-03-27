@@ -1,5 +1,4 @@
 import ChevronDown from '@/assets/icons/chevron-down.svg?react';
-import { ChallengeColor } from '@components/ChallengeView';
 import { useMediaQuery } from '@mui/material';
 
 export interface DifferentCardProps {
@@ -10,7 +9,11 @@ export interface DifferentCardProps {
     desktop: string;
     mobile: string;
   };
-  colors: ChallengeColor;
+  styles: {
+    primaryColor: string;
+    primaryLightColor: string;
+    borderColor: string;
+  };
 }
 
 const DifferentCard = ({
@@ -18,7 +21,7 @@ const DifferentCard = ({
   title,
   options,
   imageUrl,
-  colors,
+  styles,
 }: DifferentCardProps) => {
   const isDesktop = useMediaQuery('(min-width: 991px)');
 
@@ -26,8 +29,8 @@ const DifferentCard = ({
     <div
       className="flex w-full flex-col gap-x-[50px] gap-y-6 rounded-md border p-4 pb-[26px] text-black md:flex-row md:items-center md:px-10 md:pt-6"
       style={{
-        backgroundColor: colors.primaryLight,
-        borderColor: colors.primary,
+        backgroundColor: styles.primaryLightColor,
+        borderColor: styles.borderColor,
       }}
     >
       {imageUrl && (
@@ -42,7 +45,7 @@ const DifferentCard = ({
           <p
             className="flex w-fit rounded-md px-[14px] py-1.5 text-xsmall14 font-semibold text-white lg:text-small18"
             style={{
-              backgroundColor: colors.primary,
+              backgroundColor: styles.primaryColor,
             }}
           >{`Point ${order}`}</p>
         )}
@@ -55,7 +58,7 @@ const DifferentCard = ({
               <div key={index} className="flex items-start">
                 <ChevronDown
                   className="shrink-0"
-                  style={{ color: colors.primary }}
+                  style={{ color: styles.primaryColor }}
                   width={24}
                   height={24}
                 />

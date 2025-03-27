@@ -1,10 +1,10 @@
 import { useMediaQuery } from '@mui/material';
-import { ReactNode, useMemo } from 'react';
+import { CSSProperties, ReactNode, useMemo } from 'react';
 import { FaCheck } from 'react-icons/fa6';
 
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
-import { ChallengeColor } from '@components/ChallengeView';
+import { challengeColors } from '@components/ChallengeView';
 import Box from '@components/common/program/program-detail/Box';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import Heading2 from '@components/common/ui/Heading2';
@@ -83,16 +83,20 @@ const EXPERIENCE_SUMMARY_CONTENT = [
   },
 ];
 
-const { PORTFOLIO, ETC, CAREER_START } = challengeTypeSchema.enum;
+const {
+  PORTFOLIO,
+  EXPERIENCE_SUMMARY,
+  CAREER_START,
+  PERSONAL_STATEMENT_LARGE_CORP,
+  ETC,
+} = challengeTypeSchema.enum;
 
 interface ChallengeResultProps {
-  colors: ChallengeColor;
   challengeType: ChallengeType;
   challengeTitle: string;
 }
 
 function ChallengeResult({
-  colors,
   challengeType,
   challengeTitle,
 }: ChallengeResultProps) {
@@ -104,6 +108,8 @@ function ChallengeResult({
         return PORTFOLIO_CONTENT;
       case CAREER_START:
         return CAREER_START_CONTENT;
+      case EXPERIENCE_SUMMARY:
+        return EXPERIENCE_SUMMARY_CONTENT;
       case ETC:
         return EXPERIENCE_SUMMARY_CONTENT;
       default:
@@ -117,28 +123,118 @@ function ChallengeResult({
         return 'result-arrow-icon-portfolio.svg';
       case CAREER_START:
         return 'result-arrow-icon-career-start.svg';
+      case EXPERIENCE_SUMMARY:
+        return 'result-arrow-icon-experience-summary.svg';
+      case ETC:
+        return 'result-arrow-icon-experience-summary.svg';
+      // 자소서
       default:
         return 'result-arrow-icon-personal-statement.svg';
     }
   })();
 
+  const styles = useMemo(() => {
+    switch (challengeType) {
+      case CAREER_START:
+        return {
+          superTitleStyle: { color: challengeColors._4D55F5 },
+          sectionStyle: {
+            background: `linear-gradient(180deg,${challengeColors._222A7E} 0%,${challengeColors._111449} 50%,${challengeColors._111449} 100%)`,
+          },
+          checkIconColor: challengeColors._763CFF,
+          badgeStyle: {
+            backgroundColor: challengeColors._4D55F5,
+            background: `linear-gradient(45deg, ${challengeColors._4D55F5}, ${challengeColors._763CFF})`,
+          },
+        };
+      case PORTFOLIO:
+        return {
+          superTitleStyle: { color: challengeColors._4A76FF },
+          sectionStyle: {
+            background: challengeColors._1A2A5D,
+          },
+          checkIconColor: challengeColors._4A56FF,
+          badgeStyle: {
+            backgroundColor: challengeColors._4A76FF,
+            background: `linear-gradient(45deg, ${challengeColors._4D55F5}, ${challengeColors._4A56FF})`,
+          },
+        };
+      case PERSONAL_STATEMENT_LARGE_CORP:
+        return {
+          superTitleStyle: { color: challengeColors._14BCFF },
+          sectionStyle: {
+            background: challengeColors._20304F,
+          },
+          checkIconColor: challengeColors._39DEFF,
+          badgeStyle: {
+            backgroundColor: challengeColors._14BCFF,
+            background: `linear-gradient(45deg, ${challengeColors._14BCFF}, ${challengeColors._39DEFF})`,
+          },
+        };
+      case EXPERIENCE_SUMMARY:
+        return {
+          superTitleStyle: { color: challengeColors.F26646 },
+          sectionStyle: {
+            background: challengeColors._261F1E,
+          },
+          checkIconColor: challengeColors.F26646,
+          badgeStyle: {
+            backgroundColor: challengeColors._4D55F5,
+            background: `linear-gradient(90deg, ${challengeColors.F26646} 0%, ${challengeColors.FF8E36} 100%)`,
+          },
+        };
+      case ETC:
+        return {
+          superTitleStyle: { color: challengeColors.F26646 },
+          sectionStyle: {
+            background: challengeColors._261F1E,
+          },
+          checkIconColor: challengeColors.F26646,
+          badgeStyle: {
+            backgroundColor: challengeColors._4D55F5,
+            background: `linear-gradient(90deg, ${challengeColors.F26646} 0%, ${challengeColors.FF8E36} 100%)`,
+          },
+        };
+      // 자소서
+      default:
+        return {
+          superTitleStyle: { color: challengeColors._14BCFF },
+          sectionStyle: {
+            background: challengeColors._20304F,
+          },
+          checkIconColor: challengeColors._39DEFF,
+          badgeBoxStyle: {
+            backgroundColor: challengeColors.EEFAFF,
+            borderColor: challengeColors._14BCFF,
+          },
+          badgeStyle: {
+            backgroundColor: challengeColors._14BCFF,
+            background: `linear-gradient(45deg, ${challengeColors._14BCFF}, ${challengeColors._39DEFF})`,
+          },
+        };
+    }
+  }, [challengeType]);
+
   return (
     <section
       className="flex w-full flex-col items-center"
-      style={{
-        background:
-          challengeType === CAREER_START ? colors.gradientBg : colors.dark,
-      }}
+      style={styles.sectionStyle}
     >
       <div className="flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-20 md:gap-y-20 md:pb-[150px] md:pt-[140px] lg:px-0">
         <div className="flex w-full flex-col gap-y-3 md:items-center">
-          <SuperTitle className="mb-1" style={{ color: colors.primary }}>
+          <SuperTitle className="mb-1" style={styles.superTitleStyle}>
             {superTitle}
           </SuperTitle>
           <Heading2 className="text-white">
-            {challengeType === ETC ? (
+            {challengeType === EXPERIENCE_SUMMARY || challengeType === ETC ? (
               <>
-                나만의 강점을 파악하게 해줄
+                나만의 강점을{' '}
+                <img
+                  className="mb-1 inline-block h-auto w-7 md:mb-2 md:w-10"
+                  src={`/icons/${iconName}`}
+                  alt=""
+                />{' '}
+                파악하게 해줄
                 <br /> 기필코 경험정리 챌린지
               </>
             ) : (
@@ -175,7 +271,10 @@ function ChallengeResult({
                   </span>
                 </div>
                 <div className="flex flex-1 flex-col items-center gap-4">
-                  <BadgedBox badgeContent="After" colors={colors} isGradient>
+                  <BadgedBox
+                    badgeContent="After"
+                    badgeStyle={styles.badgeStyle}
+                  >
                     <ResultImg
                       src={content.afterImg}
                       alt={content.afterCaption}
@@ -184,7 +283,7 @@ function ChallengeResult({
                   <div className="flex items-start gap-1">
                     <FaCheck
                       className="mt-1"
-                      color={colors.gradient}
+                      color={styles.checkIconColor}
                       size={isDesktop ? 20 : 16}
                     />
                     <span className="text-xsmall14 font-semibold text-white md:text-small20">
@@ -203,41 +302,31 @@ function ChallengeResult({
 
 function BadgedBox({
   badgeContent,
-  colors,
-  isGradient = false,
   badgeColor,
   className,
   children,
+  badgeStyle,
 }: {
   badgeContent: string;
-  colors?: ChallengeColor;
-  isGradient?: boolean;
   badgeColor?: string;
   className?: string;
   children?: ReactNode;
+  badgeStyle?: CSSProperties;
 }) {
+  const style = { color: badgeColor, ...badgeStyle };
+
   return (
     <Box
       className={twMerge(
         'flex w-full min-w-[260px] flex-col overflow-hidden p-0 md:p-0',
         className,
       )}
-      style={{
-        backgroundColor: colors?.primaryLight,
-        borderColor: colors?.primary,
-      }}
     >
       <div
         className={twMerge(
           'w-full bg-neutral-75 px-2.5 py-1 text-center text-xsmall16 font-semibold text-white md:py-2.5 md:text-small20',
         )}
-        style={{
-          color: badgeColor,
-          backgroundColor: colors?.primary,
-          background: isGradient
-            ? `linear-gradient(45deg, ${colors?.primary}, ${colors?.gradient})`
-            : undefined,
-        }}
+        style={style}
       >
         {badgeContent}
       </div>

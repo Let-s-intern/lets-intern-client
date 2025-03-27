@@ -1,10 +1,9 @@
-import { ReactNode } from 'react';
-
 import { twMerge } from '@/lib/twMerge';
-import { ChallengeColor } from '@components/ChallengeView';
+import { ChallengeType, challengeTypeSchema } from '@/schema';
 import Description from '@components/common/program/program-detail/Description';
 import CircularBox from '@components/common/ui/CircularBox';
 import Heading2 from '@components/common/ui/Heading2';
+import { ReactNode } from 'react';
 
 const boxes = [
   `같은 경험을 더\n강력하게 보이게\n할 수 있는\n방법은 없을까?`,
@@ -17,10 +16,17 @@ const boxes = [
   `내가 가진\n역량은 뭘까?`,
 ];
 
+const {
+  CAREER_START,
+  PORTFOLIO,
+  PERSONAL_STATEMENT_LARGE_CORP,
+  EXPERIENCE_SUMMARY,
+} = challengeTypeSchema.enum;
+
 const ChallengeIntroExpericeSummary = ({
-  colors,
+  challengeType,
 }: {
-  colors: ChallengeColor;
+  challengeType: ChallengeType;
 }) => {
   return (
     <section className="flex w-full flex-col md:items-center">
@@ -29,9 +35,9 @@ const ChallengeIntroExpericeSummary = ({
           <div className="flex w-full flex-col gap-y-3 md:gap-y-[30px]">
             <Heading2>
               200명의 합격자가 입을 모아 강조한 <br className="md:hidden" />
-              <span className="text-primary">경험 정리</span>의 중요성!
+              경험 정리의 중요성!
               <br /> 기필코 경험 정리 챌린지로 <br className="md:hidden" />
-              <span className="text-primary">2주 안에</span> 완성해요
+              <span className="text-[#F26646]">2주 안에 완성</span>해요
             </Heading2>
             <Description className="md:text-center">
               렛츠커리어의 체계적인 커리큘럼으로
@@ -62,21 +68,15 @@ const ChallengeIntroExpericeSummary = ({
           </div>
         </div>
       </div>
-      <div
-        className="flex w-full flex-col md:items-center"
-        style={{ backgroundColor: colors.primaryLight }}
-      >
+      <div className="flex w-full flex-col bg-neutral-95 md:items-center">
         <div className="flex w-full max-w-[1000px] flex-col gap-y-[50px] px-5 py-[70px] md:gap-y-20 md:px-10 md:py-[120px] lg:px-0">
           <div className="flex w-full flex-col gap-y-3 md:items-center">
-            <p
-              className="text-xsmall16 font-bold md:text-small20"
-              style={{ color: colors.primary }}
-            >
+            <p className="text-xsmall16 font-bold text-[#F26646] md:text-small20">
               취업 성공 전략
             </p>
             <Heading2>
-              2024 채용 트렌드는{' '}
-              <span className="text-primary">직무 연관성</span>
+              {new Date().getFullYear()} 채용 트렌드는{' '}
+              <span className="text-[#F26646]">직무 연관성</span>
               , <br className="hidden md:block" />
               나에 <br className="md:hidden" />
               대한 이해를 직무와 결합시켜야 해요
@@ -86,7 +86,7 @@ const ChallengeIntroExpericeSummary = ({
             <div>
               <div className="mb-8 md:mb-20 md:flex md:items-center md:justify-between">
                 <div className="md:flex md:gap-3">
-                  <CircularBox className="mb-2 h-5 w-5 shrink-0 bg-primary text-xsmall14 font-semibold md:mt-0.5 md:h-8 md:w-8 md:text-small20">
+                  <CircularBox className="mb-2 h-5 w-5 shrink-0 bg-[#F26646] text-xsmall14 font-semibold md:mt-0.5 md:h-8 md:w-8 md:text-small20">
                     1
                   </CircularBox>
                   <div>
@@ -94,7 +94,7 @@ const ChallengeIntroExpericeSummary = ({
                       스펙 나열하기는 그만!
                       <br className="hidden md:block" /> 나만의 경험에서{' '}
                       <br className="md:hidden" />
-                      <span className="text-primary">차별화 포인트</span>부터
+                      <span className="text-[#F26646]">차별화 포인트</span>부터
                       찾아야 해요
                     </Title>
                     <Paragraph>
@@ -105,7 +105,7 @@ const ChallengeIntroExpericeSummary = ({
                   </div>
                 </div>
                 <img
-                  src="/images/challenge-trend-1.svg"
+                  src="/images/strategy-experience-summary-1.svg"
                   alt="K(지식), S(스킬), A(태도)"
                 />
               </div>
@@ -113,14 +113,14 @@ const ChallengeIntroExpericeSummary = ({
             <div>
               <div className="mb-8 md:flex md:items-center md:justify-between">
                 <div className="md:flex md:gap-3">
-                  <CircularBox className="mb-2 h-5 w-5 bg-primary text-xsmall14 font-semibold md:mt-0.5 md:h-8 md:w-8 md:text-small20">
+                  <CircularBox className="mb-2 h-5 w-5 bg-[#F26646] text-xsmall14 font-semibold md:mt-0.5 md:h-8 md:w-8 md:text-small20">
                     2
                   </CircularBox>
                   <div>
                     <Title>
                       뻔한 말은 그만!
                       <br className="hidden md:block" />{' '}
-                      <span className="text-primary">나만의 컨셉</span>
+                      <span className="text-[#F26646]">나만의 컨셉</span>
                       이 있어야 <br className="md:hidden" />더 보고 싶은 서류가
                       완성돼요
                     </Title>
@@ -132,7 +132,7 @@ const ChallengeIntroExpericeSummary = ({
                   </div>
                 </div>
                 <img
-                  src="/images/challenge-trend-2.svg"
+                  src="/images/strategy-experience-summary-2.svg"
                   alt="형식적이고 뻔한 내용이 아니라 역량 키워드에 맞춰 서류를 정리해야 합니다."
                 />
               </div>

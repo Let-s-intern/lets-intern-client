@@ -1,11 +1,11 @@
-import { ReactNode } from 'react';
-
 import { twMerge } from '@/lib/twMerge';
+import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ChallengePoint } from '@/types/interface';
-import { ChallengeColor } from '@components/ChallengeView';
+import { challengeColors } from '@components/ChallengeView';
 import Description from '@components/common/program/program-detail/Description';
 import CircularBox from '@components/common/ui/CircularBox';
 import Heading2 from '@components/common/ui/Heading2';
+import { ReactNode, useMemo } from 'react';
 
 const boxes = [
   `나의 경험을\n전략적으로\n서류에 녹일 수\n없을까?`,
@@ -18,15 +18,56 @@ const boxes = [
   `면접 전략까지\n세울 수 있는\n서류는 뭘까?`,
 ];
 
+const {
+  CAREER_START,
+  PORTFOLIO,
+  PERSONAL_STATEMENT_LARGE_CORP,
+  EXPERIENCE_SUMMARY,
+} = challengeTypeSchema.enum;
+
 const ChallengeIntroCareerStart = ({
-  colors,
   challengeTitle,
   weekText,
+  challengeType,
 }: {
-  colors: ChallengeColor;
   challengeTitle: string;
   weekText: ChallengePoint['weekText'];
+  challengeType: ChallengeType;
 }) => {
+  const styles = useMemo(() => {
+    switch (challengeType) {
+      case CAREER_START:
+        return {
+          primaryColor: challengeColors._4D55F5,
+          primaryLightColor: challengeColors.F3F4FF,
+        };
+      case PORTFOLIO:
+        return {
+          primaryColor: challengeColors._4A76FF,
+
+          primaryLightColor: challengeColors.F0F4FF,
+        };
+      case PERSONAL_STATEMENT_LARGE_CORP:
+        return {
+          primaryColor: challengeColors._14BCFF,
+
+          primaryLightColor: challengeColors.EEFAFF,
+        };
+      case EXPERIENCE_SUMMARY:
+        return {
+          primaryColor: challengeColors._4D55F5,
+
+          primaryLightColor: challengeColors.F3F4FF,
+        };
+      default:
+        return {
+          primaryColor: challengeColors._14BCFF,
+
+          primaryLightColor: challengeColors.EEFAFF,
+        };
+    }
+  }, [challengeType]);
+
   return (
     <section className="flex w-full flex-col md:items-center">
       <div className="flex w-full flex-col items-center bg-neutral-90">
@@ -83,18 +124,18 @@ const ChallengeIntroCareerStart = ({
       </div>
       <div
         className="flex w-full flex-col md:items-center"
-        style={{ backgroundColor: colors.primaryLight }}
+        style={{ backgroundColor: styles.primaryLightColor }}
       >
         <div className="flex w-full max-w-[1000px] flex-col gap-y-[50px] px-5 py-[70px] md:gap-y-20 md:px-10 md:py-[120px] lg:px-0">
           <div className="flex w-full flex-col gap-y-3 md:items-center">
             <p
               className="text-xsmall16 font-bold md:text-small20"
-              style={{ color: colors.primary }}
+              style={{ color: styles.primaryColor }}
             >
               취업 성공 전략
             </p>
             <Heading2>
-              2024 채용 트렌드는{' '}
+              {new Date().getFullYear()} 채용 트렌드는{' '}
               <span className="text-primary">직무 연관성</span>
               , <br className="hidden md:block" />
               나에 <br className="md:hidden" />

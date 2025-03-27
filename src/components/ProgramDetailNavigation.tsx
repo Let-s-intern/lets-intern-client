@@ -1,8 +1,12 @@
 import { twMerge } from '@/lib/twMerge';
+import { ChallengeType, challengeTypeSchema } from '@/schema';
 import useScrollStore from '@/store/useScrollStore';
 import { ProgramType } from '@/types/common';
-import { useEffect, useState } from 'react';
-import { ChallengeColor } from './ChallengeView';
+import { useEffect, useMemo, useState } from 'react';
+import { challengeColors } from './ChallengeView';
+
+const { CAREER_START, PORTFOLIO, EXPERIENCE_SUMMARY, ETC } =
+  challengeTypeSchema.enum;
 
 export interface NavItem {
   title: string;
@@ -10,10 +14,10 @@ export interface NavItem {
 }
 
 interface ProgramDetailNavigationProps {
-  color?: ChallengeColor;
   programType: ProgramType;
   className?: string;
   isReady?: boolean;
+  challengeType?: ChallengeType;
 }
 
 // TODO: GA에 맞게 수정해야 함.
@@ -47,17 +51,34 @@ export const liveNavigateItems: NavItem[] = [
 ];
 
 const ProgramDetailNavigation = ({
-  color,
   programType,
   className,
   isReady,
+  challengeType,
 }: ProgramDetailNavigationProps) => {
   const { scrollDirection } = useScrollStore();
+
   const isLive = programType === 'live';
+  const navItems = isLive ? liveNavigateItems : challengeNavigateItems;
+
   const [activeSection, setActiveSection] = useState<string>(
     isLive ? liveNavigateItems[0].to : challengeNavigateItems[0].to,
   );
-  const navItems = isLive ? liveNavigateItems : challengeNavigateItems;
+
+  const primaryColor = useMemo(() => {
+    switch (challengeType) {
+      case CAREER_START:
+        return challengeColors._4D55F5;
+      case PORTFOLIO:
+        return challengeColors._4A76FF;
+      case EXPERIENCE_SUMMARY:
+        return challengeColors.F26646;
+      case ETC:
+        return challengeColors.F26646;
+      default:
+        return challengeColors._14BCFF;
+    }
+  }, [challengeType]);
 
   useEffect(() => {
     if (!isReady || typeof window === 'undefined') return;
@@ -126,13 +147,13 @@ const ProgramDetailNavigation = ({
                 navItem.to === activeSection
                   ? isLive
                     ? '#4d55f5'
-                    : color?.primary
+                    : primaryColor
                   : 'transparent',
               color:
                 navItem.to === activeSection
                   ? isLive
                     ? '#4d55f5'
-                    : color?.primary
+                    : primaryColor
                   : '#989ba2',
             }}
             onClick={() => handleScroll(navItem.to)}
