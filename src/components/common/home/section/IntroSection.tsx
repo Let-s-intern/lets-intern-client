@@ -9,10 +9,18 @@ import Intro6 from '@/assets/graphic/home/intro/6.svg?react';
 import Intro8 from '@/assets/graphic/home/intro/8.svg?react';
 import Intro9 from '@/assets/graphic/home/intro/9.svg?react';
 import { twMerge } from '@/lib/twMerge';
+import { challengeTypeSchema } from '@/schema';
 // import Intro7 from '@/assets/graphic/home/intro/7.svg?react';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { ReactNode, useState } from 'react';
+
+const {
+  EXPERIENCE_SUMMARY,
+  PERSONAL_STATEMENT,
+  PERSONAL_STATEMENT_LARGE_CORP,
+  PORTFOLIO,
+} = challengeTypeSchema.enum;
 
 const HOME_INTRO = {
   description: (
@@ -39,7 +47,7 @@ const HOME_INTRO = {
           </>
         ),
         icon: <Intro1 width={44} height={44} />,
-        href: 'type=CAREER_START',
+        href: `type=${EXPERIENCE_SUMMARY}`,
         gaTitle: '경험 정리 & 이력서 준비',
       },
       {
@@ -51,7 +59,7 @@ const HOME_INTRO = {
           </>
         ),
         icon: <Intro2 width={44} height={44} />,
-        href: 'type=PERSONAL_STATEMENT',
+        href: `type=${PERSONAL_STATEMENT}`,
         gaTitle: '자기소개서 준비하기',
       },
       {
@@ -64,7 +72,7 @@ const HOME_INTRO = {
         ),
         subTitle: '대기업',
         icon: <Intro8 width={44} height={44} />,
-        href: 'type=PERSONAL_STATEMENT_LARGE_CORP',
+        href: `type=${PERSONAL_STATEMENT_LARGE_CORP}`,
         gaTitle: '대기업 자기소개서 준비하기',
       },
       {
@@ -76,7 +84,7 @@ const HOME_INTRO = {
           </>
         ),
         icon: <Intro3 width={44} height={44} />,
-        href: 'type=PORTFOLIO',
+        href: `type=${PORTFOLIO}`,
         gaTitle: '포트폴리오 준비하기',
       },
       {
@@ -222,34 +230,35 @@ const HOME_INTRO = {
 const IntroSection = () => {
   const [basic, setBasic] = useState(true);
 
-  const { data: careerStartData } = useGetChallengeHome({
-    type: 'CAREER_START',
+  const { data: experienceSummaryData } = useGetChallengeHome({
+    type: EXPERIENCE_SUMMARY,
   });
   const { data: personalStatementData } = useGetChallengeHome({
-    type: 'PERSONAL_STATEMENT',
+    type: PERSONAL_STATEMENT,
   });
   const { data: personalStatementLargeCorpData } = useGetChallengeHome({
-    type: 'PERSONAL_STATEMENT_LARGE_CORP',
+    type: PERSONAL_STATEMENT_LARGE_CORP,
   });
-  const { data: portfolioData } = useGetChallengeHome({ type: 'PORTFOLIO' });
+  const { data: portfolioData } = useGetChallengeHome({ type: PORTFOLIO });
 
   const getCurrentChallenge = (type: string): string | undefined => {
     switch (type) {
-      case 'CAREER_START':
-        return careerStartData && careerStartData.programList.length > 0
-          ? `/program/challenge/${careerStartData.programList[0].id}`
+      case EXPERIENCE_SUMMARY:
+        return experienceSummaryData &&
+          experienceSummaryData.programList.length > 0
+          ? `/program/challenge/${experienceSummaryData.programList[0].id}`
           : undefined;
-      case 'PERSONAL_STATEMENT':
+      case PERSONAL_STATEMENT:
         return personalStatementData &&
           personalStatementData.programList.length > 0
           ? `/program/challenge/${personalStatementData.programList[0].id}`
           : undefined;
-      case 'PERSONAL_STATEMENT_LARGE_CORP':
+      case PERSONAL_STATEMENT_LARGE_CORP:
         return personalStatementLargeCorpData &&
           personalStatementLargeCorpData.programList.length > 0
           ? `/program/challenge/${personalStatementLargeCorpData.programList[0].id}`
           : undefined;
-      case 'PORTFOLIO':
+      case PORTFOLIO:
         return portfolioData && portfolioData.programList.length > 0
           ? `/program/challenge/${portfolioData.programList[0].id}`
           : undefined;
