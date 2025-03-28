@@ -27,7 +27,7 @@ const ProgramDetailReviewItem = ({
     <div className="flex h-[340px] w-[300px] flex-col md:h-[366px] md:w-[371px]">
       {type !== 'live' && (
         <div
-          className={`flex w-full rounded-t-[10px] px-[22px] py-4 text-white md:text-small18`}
+          className="line-clamp-2 flex w-full rounded-t-[10px] px-[22px] py-4 text-white md:text-small18"
           style={{ backgroundColor: color }}
         >
           {`${review.passedState} 합격`}
@@ -50,7 +50,7 @@ const ProgramDetailReviewItem = ({
           {review.title}
         </p>
       </div>
-      <div className="flex w-full grow flex-col gap-y-2 rounded-[10px] border-[1.5px] border-t-0 border-neutral-85 bg-white px-[22px] pb-9 pt-7">
+      <div className="flex w-full grow flex-col gap-y-2 rounded-[10px] border-[1.5px] border-t-0 border-neutral-85 bg-white px-[22px] pt-7">
         <div className="flex w-full items-center gap-x-2">
           <span className="text-xsmall14 font-medium text-neutral-45 md:text-xsmall16">
             {maskingName(review.name)}

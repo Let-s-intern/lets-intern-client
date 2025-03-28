@@ -14,6 +14,7 @@ const {
   CAREER_START,
   PERSONAL_STATEMENT_LARGE_CORP,
   EXPERIENCE_SUMMARY,
+  ETC,
 } = challengeTypeSchema.enum;
 
 interface ChallengeCurriculumProps {
@@ -34,6 +35,8 @@ function ChallengeCurriculum({
       case CAREER_START:
         return 'folder-icon-career-start.svg';
       case EXPERIENCE_SUMMARY:
+        return 'folder-icon-experience-summary.svg';
+      case ETC:
         return 'folder-icon-experience-summary.svg';
       // 자소서
       default:
@@ -62,6 +65,12 @@ function ChallengeCurriculum({
           curriculumDateStyle: { color: challengeColors._14BCFF },
         };
       case EXPERIENCE_SUMMARY:
+        return {
+          superTitleStyle: { color: challengeColors.F26646 },
+          titleStyle: { color: challengeColors.F26646 },
+          curriculumDateStyle: { color: challengeColors.F26646 },
+        };
+      case ETC:
         return {
           superTitleStyle: { color: challengeColors.F26646 },
           titleStyle: { color: challengeColors.F26646 },

@@ -42,6 +42,7 @@ const {
   PORTFOLIO,
   PERSONAL_STATEMENT_LARGE_CORP,
   EXPERIENCE_SUMMARY,
+  ETC,
 } = challengeTypeSchema.enum;
 
 export const challengeColors = {
@@ -186,6 +187,12 @@ const ChallengeView: React.FC<{
           moreReviewSubColor: challengeColors.FB8100,
           curriculumBgColor: challengeColors.F2F2F5,
         };
+      case ETC:
+        return {
+          moreReviewMainColor: challengeColors._202776,
+          moreReviewSubColor: challengeColors.FB8100,
+          curriculumBgColor: challengeColors.F2F2F5,
+        };
       default:
         return {
           moreReviewMainColor: challengeColors._20304F,
@@ -249,7 +256,8 @@ const ChallengeView: React.FC<{
                   challengeTitle={challenge.title ?? ''}
                   weekText={receivedContent.challengePoint.weekText}
                 />
-              ) : challenge.challengeType === EXPERIENCE_SUMMARY ? (
+              ) : challenge.challengeType === EXPERIENCE_SUMMARY ||
+                challenge.challengeType === ETC ? (
                 <ChallengeIntroExpericeSummary
                   challengeType={challenge.challengeType}
                 />

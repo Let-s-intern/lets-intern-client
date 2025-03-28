@@ -210,6 +210,7 @@ const {
   PORTFOLIO,
   PERSONAL_STATEMENT_LARGE_CORP,
   EXPERIENCE_SUMMARY,
+  ETC,
 } = challengeTypeSchema.enum;
 
 interface ChallengeCheckListProps {
@@ -227,14 +228,14 @@ function ChallengeCheckList({
   ];
 
   const checkList = useMemo(() => {
-    const { PORTFOLIO, CAREER_START, EXPERIENCE_SUMMARY } =
-      challengeTypeSchema.enum;
     switch (challengeType) {
       case CAREER_START:
         return CAREER_START_CHECK_LIST;
       case PORTFOLIO:
         return PORTFOLIO_CHECK_LIST;
       case EXPERIENCE_SUMMARY:
+        return EXPERIENCE_SUMMARY_CHECK_LIST;
+      case ETC:
         return EXPERIENCE_SUMMARY_CHECK_LIST;
       default:
         return PERSONAL_STATEMENT_CHECK_LIST;
@@ -292,6 +293,22 @@ function ChallengeCheckList({
           checkboxColor: challengeColors._14BCFF,
         };
       case EXPERIENCE_SUMMARY:
+        return {
+          superTitleStyle: { color: challengeColors.F26646 },
+          boxStyle: {
+            backgroundColor: challengeColors.FFF6F4,
+          },
+          badgeStyle: {
+            backgroundColor: challengeColors.F26646,
+          },
+          outlinedBoxStyle: {
+            backgroundColor: challengeColors.FFF7EF,
+            borderColor: challengeColors.FF9C34,
+            color: challengeColors.EB7900,
+          },
+          checkboxColor: challengeColors.F26646,
+        };
+      case ETC:
         return {
           superTitleStyle: { color: challengeColors.F26646 },
           boxStyle: {

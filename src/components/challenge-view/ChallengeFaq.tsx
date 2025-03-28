@@ -12,12 +12,8 @@ import { CSSProperties, ReactNode, useMemo, useState } from 'react';
 const superTitle = '자주 묻는 질문';
 const title = '궁금한 점이 있으신가요?';
 
-const {
-  PORTFOLIO,
-  CAREER_START,
-  PERSONAL_STATEMENT_LARGE_CORP,
-  EXPERIENCE_SUMMARY,
-} = challengeTypeSchema.enum;
+const { PORTFOLIO, CAREER_START, ETC, EXPERIENCE_SUMMARY } =
+  challengeTypeSchema.enum;
 
 interface ChallengeFaqProps {
   faqData?: faqSchemaType;
@@ -50,6 +46,12 @@ function ChallengeFaq({
           borderColor: challengeColors.ADC3FF,
         };
       case EXPERIENCE_SUMMARY:
+        return {
+          primaryColor: challengeColors.F26646,
+          primaryLightColor: challengeColors.FFF6F4,
+          borderColor: challengeColors.FFC8BC,
+        };
+      case ETC:
         return {
           primaryColor: challengeColors.F26646,
           primaryLightColor: challengeColors.FFF6F4,

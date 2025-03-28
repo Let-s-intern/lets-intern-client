@@ -9,6 +9,7 @@ const {
   CAREER_START,
   PERSONAL_STATEMENT_LARGE_CORP,
   EXPERIENCE_SUMMARY,
+  ETC,
 } = challengeTypeSchema.enum;
 
 interface ProgramBestReviewSectionProps {
@@ -40,6 +41,11 @@ const ProgramBestReviewSection = ({
           primaryLightColor: challengeColors.EEFAFF,
         };
       case EXPERIENCE_SUMMARY:
+        return {
+          primaryColor: challengeColors.F26646,
+          primaryLightColor: challengeColors.FFF0ED,
+        };
+      case ETC:
         return {
           primaryColor: challengeColors.F26646,
           primaryLightColor: challengeColors.FFF0ED,

@@ -88,6 +88,7 @@ const {
   EXPERIENCE_SUMMARY,
   CAREER_START,
   PERSONAL_STATEMENT_LARGE_CORP,
+  ETC,
 } = challengeTypeSchema.enum;
 
 interface ChallengeResultProps {
@@ -109,6 +110,8 @@ function ChallengeResult({
         return CAREER_START_CONTENT;
       case EXPERIENCE_SUMMARY:
         return EXPERIENCE_SUMMARY_CONTENT;
+      case ETC:
+        return EXPERIENCE_SUMMARY_CONTENT;
       default:
         return PERSONAL_STATEMENT_CONTENT;
     }
@@ -121,6 +124,8 @@ function ChallengeResult({
       case CAREER_START:
         return 'result-arrow-icon-career-start.svg';
       case EXPERIENCE_SUMMARY:
+        return 'result-arrow-icon-experience-summary.svg';
+      case ETC:
         return 'result-arrow-icon-experience-summary.svg';
       // 자소서
       default:
@@ -178,6 +183,18 @@ function ChallengeResult({
             background: `linear-gradient(90deg, ${challengeColors.F26646} 0%, ${challengeColors.FF8E36} 100%)`,
           },
         };
+      case ETC:
+        return {
+          superTitleStyle: { color: challengeColors.F26646 },
+          sectionStyle: {
+            background: challengeColors._261F1E,
+          },
+          checkIconColor: challengeColors.F26646,
+          badgeStyle: {
+            backgroundColor: challengeColors._4D55F5,
+            background: `linear-gradient(90deg, ${challengeColors.F26646} 0%, ${challengeColors.FF8E36} 100%)`,
+          },
+        };
       // 자소서
       default:
         return {
@@ -209,7 +226,7 @@ function ChallengeResult({
             {superTitle}
           </SuperTitle>
           <Heading2 className="text-white">
-            {challengeType === EXPERIENCE_SUMMARY ? (
+            {challengeType === EXPERIENCE_SUMMARY || challengeType === ETC ? (
               <>
                 나만의 강점을{' '}
                 <img

@@ -5,7 +5,7 @@ import { ProgramType } from '@/types/common';
 import { useEffect, useMemo, useState } from 'react';
 import { challengeColors } from './ChallengeView';
 
-const { CAREER_START, PORTFOLIO, EXPERIENCE_SUMMARY } =
+const { CAREER_START, PORTFOLIO, EXPERIENCE_SUMMARY, ETC } =
   challengeTypeSchema.enum;
 
 export interface NavItem {
@@ -72,6 +72,8 @@ const ProgramDetailNavigation = ({
       case PORTFOLIO:
         return challengeColors._4A76FF;
       case EXPERIENCE_SUMMARY:
+        return challengeColors.F26646;
+      case ETC:
         return challengeColors.F26646;
       default:
         return challengeColors._14BCFF;

@@ -44,6 +44,7 @@ const {
   PERSONAL_STATEMENT_LARGE_CORP,
   MARKETING,
   EXPERIENCE_SUMMARY,
+  ETC,
 } = challengeTypeSchema.enum;
 
 const ChallengePointView = ({
@@ -78,7 +79,9 @@ const ChallengePointView = ({
       index: 3,
       title: 'OT',
       subTitle:
-        challengeType === EXPERIENCE_SUMMARY ? '비대면 진행' : '*실시간 진행',
+        challengeType === EXPERIENCE_SUMMARY || challengeType === ETC
+          ? '비대면 진행'
+          : '*실시간 진행',
     },
     {
       index: 4,
@@ -102,7 +105,7 @@ const ChallengePointView = ({
 
   const reward = {
     title:
-      challengeType === EXPERIENCE_SUMMARY
+      challengeType === EXPERIENCE_SUMMARY || challengeType === ETC
         ? '단돈 9,900원으로 완성하는\n나만의 경험&역량 데이터베이스!'
         : '챌린지에 성공해 뿌듯함과\n리워드까지 가져가세요!',
     content:
@@ -155,6 +158,11 @@ const ChallengePointView = ({
           '/icons/bg-logo-career-start.svg',
         ];
       case EXPERIENCE_SUMMARY:
+        return [
+          '/images/payback-experience-summary.svg',
+          '/icons/bg-logo-experience-summary.svg',
+        ];
+      case ETC:
         return [
           '/images/payback-experience-summary.svg',
           '/icons/bg-logo-experience-summary.svg',
@@ -244,6 +252,15 @@ const ChallengePointView = ({
           primaryLightColor: challengeColors.FFF6F4,
           buttonBgColor: challengeColors.F26646,
         };
+      case ETC:
+        return {
+          primaryColor: challengeColors.F26646,
+          introHeadingColor: challengeColors.F26646,
+          darkColor: challengeColors._261F1E,
+          recommendBgColor: challengeColors.FFF6F4,
+          primaryLightColor: challengeColors.FFF6F4,
+          buttonBgColor: challengeColors.F26646,
+        };
       // 자소서
       default:
         return {
@@ -282,8 +299,10 @@ const ChallengePointView = ({
               하루 30분
             </span>
             , 단 {point.weekText}만에{' '}
-            {challengeType === EXPERIENCE_SUMMARY ? '경험 정리' : '서류 준비'}를{' '}
-            <br className="lg:hidden" />
+            {challengeType === EXPERIENCE_SUMMARY || challengeType === ETC
+              ? '경험 정리'
+              : '서류 준비'}
+            를 <br className="lg:hidden" />
             끝낼 수 있어요
           </Heading2>
 
@@ -312,16 +331,16 @@ const ChallengePointView = ({
                 <br className="md:hidden" /> 별도로 준비되어 있습니다.
               </p>
             )}
-            {challengeType === PERSONAL_STATEMENT ||
-              (challengeType === PERSONAL_STATEMENT_LARGE_CORP && (
-                <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
-                  본 프로그램은 취업의 기초가 되는
-                  <br className="md:hidden" />{' '}
-                  <span className="font-bold">자기소개서 작성</span>을 다룹니다.
-                  <br /> 서류 기초 완성 및 포트폴리오 완성 프로그램은
-                  <br className="md:hidden" /> 별도로 준비되어 있습니다.
-                </p>
-              ))}
+            {(challengeType === PERSONAL_STATEMENT ||
+              challengeType === PERSONAL_STATEMENT_LARGE_CORP) && (
+              <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
+                본 프로그램은 취업의 기초가 되는
+                <br className="md:hidden" />{' '}
+                <span className="font-bold">자기소개서 작성</span>을 다룹니다.
+                <br /> 서류 기초 완성 및 포트폴리오 완성 프로그램은
+                <br className="md:hidden" /> 별도로 준비되어 있습니다.
+              </p>
+            )}
             {challengeType === PORTFOLIO && (
               <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
                 본 프로그램은 나만의 필살기를 만들 수 있는
@@ -332,7 +351,8 @@ const ChallengePointView = ({
                 <br className="md:hidden" /> 별도로 준비되어 있습니다.
               </p>
             )}
-            {challengeType === EXPERIENCE_SUMMARY && (
+            {(challengeType === EXPERIENCE_SUMMARY ||
+              challengeType === ETC) && (
               <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
                 본 프로그램은 서류 준비의 기초가 되는 경험정리를 다룹니다.
                 <br className="hidden md:block" /> 이력서, 자기소개서,
@@ -556,7 +576,7 @@ function Box({
   return (
     <div
       className={twMerge(
-        'flex min-h-60 flex-col gap-2.5 rounded-md bg-neutral-95 p-5',
+        'flex min-h-60 flex-col gap-2.5 rounded-md bg-neutral-100 p-5',
         className,
       )}
     >
