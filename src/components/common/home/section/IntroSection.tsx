@@ -8,6 +8,7 @@ import Intro5 from '@/assets/graphic/home/intro/5.svg?react';
 import Intro6 from '@/assets/graphic/home/intro/6.svg?react';
 import Intro8 from '@/assets/graphic/home/intro/8.svg?react';
 import Intro9 from '@/assets/graphic/home/intro/9.svg?react';
+import useActiveReports from '@/hooks/useActiveReports';
 import { twMerge } from '@/lib/twMerge';
 import { challengeTypeSchema } from '@/schema';
 // import Intro7 from '@/assets/graphic/home/intro/7.svg?react';
@@ -241,6 +242,8 @@ const IntroSection = () => {
   });
   const { data: portfolioData } = useGetChallengeHome({ type: PORTFOLIO });
 
+  const { hasActiveResume, hasActivePersonalStatement } = useActiveReports();
+
   const getCurrentChallenge = (type: string): string | undefined => {
     switch (type) {
       case EXPERIENCE_SUMMARY:
@@ -289,28 +292,72 @@ const IntroSection = () => {
           </div> */}
           <div
             className={clsx(
-              'grid grid-cols-4 gap-x-4 gap-y-6 px-1 md:grid-cols-8 md:grid-rows-1 md:gap-x-10',
+              'grid grid-cols-4 gap-x-4 gap-y-6 px-1 md:flex md:gap-10',
               // {
               //   // 'md:grid-cols-7': basic,
               //   'md:grid-cols-6': !basic,
               // },
             )}
           >
-            {HOME_INTRO.items.basic.map((item, index) => (
-              <IntroItem
-                key={index}
-                title={item.title}
-                subTitle={item.subTitle}
-                icon={item.icon}
-                href={
-                  item.href.startsWith('type=')
-                    ? getCurrentChallenge(item.href.split('=')[1])
-                    : item.href
+            {HOME_INTRO.items.basic.map((item, index) => {
+              // 이력서 피드백 받기
+              if (index === 4) {
+                if (hasActiveResume) {
+                  return (
+                    <IntroItem
+                      key={index}
+                      title={item.title}
+                      subTitle={item.subTitle}
+                      icon={item.icon}
+                      href={
+                        item.href.startsWith('type=')
+                          ? getCurrentChallenge(item.href.split('=')[1])
+                          : item.href
+                      }
+                      gaTitle={item.gaTitle}
+                    />
+                  );
                 }
-                gaTitle={item.gaTitle}
-                badgeClassName={index === 7 ? 'bg-[#34BFFF]' : undefined}
-              />
-            ))}
+                return null;
+              }
+
+              // 자소서 피드백 받기
+              if (index === 5) {
+                if (hasActivePersonalStatement) {
+                  return (
+                    <IntroItem
+                      key={index}
+                      title={item.title}
+                      subTitle={item.subTitle}
+                      icon={item.icon}
+                      href={
+                        item.href.startsWith('type=')
+                          ? getCurrentChallenge(item.href.split('=')[1])
+                          : item.href
+                      }
+                      gaTitle={item.gaTitle}
+                    />
+                  );
+                }
+                return null;
+              }
+
+              return (
+                <IntroItem
+                  key={index}
+                  title={item.title}
+                  subTitle={item.subTitle}
+                  icon={item.icon}
+                  href={
+                    item.href.startsWith('type=')
+                      ? getCurrentChallenge(item.href.split('=')[1])
+                      : item.href
+                  }
+                  gaTitle={item.gaTitle}
+                  badgeClassName={index === 7 ? 'bg-[#34BFFF]' : undefined}
+                />
+              );
+            })}
             {/* {basic
               ? HOME_INTRO.items.basic.map((item, index) => (
                   <IntroItem
@@ -390,7 +437,7 @@ const IntroItem = ({
 }) => {
   return (
     <Link
-      className="icon_menu flex w-full flex-col items-center gap-y-4 text-center text-xxsmall12 font-medium text-neutral-20 md:text-xsmall14"
+      className="icon_menu flex min-w-fit flex-col items-center gap-y-4 text-center text-xxsmall12 font-medium text-neutral-20 md:text-xsmall14"
       href={href ?? '#'}
       target={href && href.startsWith('http') ? '_blank' : undefined}
       onClick={() => {
