@@ -32,6 +32,8 @@ import {
   DataGrid,
   GridColDef,
   GridEditCellValueParams,
+  GridEventListener,
+  GridRowEditStopReasons,
   GridToolbarContainer,
   useGridApiRef,
 } from '@mui/x-data-grid';
@@ -441,6 +443,16 @@ const ChallengeOperationRegisterMission = () => {
     },
   });
 
+  // 수정 중인 행 바깥을 클릭해도 수정 모드 유지
+  const handleRowEditStop: GridEventListener<'rowEditStop'> = (
+    params,
+    event,
+  ) => {
+    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
+      event.defaultMuiPrevented = true;
+    }
+  };
+
   const { data: missionTemplates } = useQuery({
     queryKey: ['admin', 'challenge', 'missionTemplates'],
     enabled: Boolean(currentChallenge),
@@ -661,12 +673,12 @@ const ChallengeOperationRegisterMission = () => {
         columns={columns}
         disableRowSelectionOnClick
         rowHeight={48}
-        autoHeight
         getDetailPanelContent={() => 'hello!'}
         hideFooter
         processRowUpdate={(updatedRow, originalRow) => {
           return originalRow;
         }}
+        onRowEditStop={handleRowEditStop}
       />
     </main>
   );
