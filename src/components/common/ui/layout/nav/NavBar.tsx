@@ -1,4 +1,5 @@
-import { ReportDetail, useGetActiveReports } from '@/api/report';
+import { useGetActiveReports } from '@/api/report';
+import { hasActiveReport } from '@/hooks/useActiveReports';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
@@ -94,17 +95,6 @@ const NavBar = () => {
   });
 
   const { data, isLoading } = useGetActiveReports();
-
-  const hasActiveReport = (list: ReportDetail[]) => {
-    return (
-      list.filter(
-        (item) =>
-          item.isVisible === true &&
-          item.visibleDate &&
-          new Date(item.visibleDate) <= new Date(),
-      ).length > 0
-    );
-  };
 
   useEffect(() => {
     if (data) {
