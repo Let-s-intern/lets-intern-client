@@ -1,4 +1,5 @@
-import { ReportDetail, useGetActiveReports } from '@/api/report';
+import { useGetActiveReports } from '@/api/report';
+import { hasActiveReport } from '@/hooks/useActiveReports';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
@@ -47,17 +48,6 @@ const scrollEventPage = [
   '/program/challenge',
   '/program/live',
 ];
-
-const hasActiveReport = (list: ReportDetail[]) => {
-  return (
-    list.filter(
-      (item) =>
-        item.isVisible === true &&
-        item.visibleDate &&
-        new Date(item.visibleDate) <= new Date(),
-    ).length > 0
-  );
-};
 
 const NavBar = () => {
   const navigate = useNavigate();

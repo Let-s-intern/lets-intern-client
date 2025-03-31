@@ -1,6 +1,6 @@
 import { ReportDetail, useGetActiveReports } from '@/api/report';
 
-const hasActiveReport = (list: ReportDetail[]) => {
+export const hasActiveReport = (list: ReportDetail[]) => {
   return (
     list.filter(
       (item) =>
