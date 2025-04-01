@@ -94,7 +94,7 @@ const ReportPlanSection = ({
             {/* 플랜 카드가 하나일 때는 줄바꿈 X */}
             <br
               className={clsx({
-                'md:hidden': basicPriceInfo && premiumPriceInfo,
+                'md:hidden': !basicPriceInfo || !premiumPriceInfo,
               })}
             />{' '}
             직무적합성을 강화할 키워드 제안
