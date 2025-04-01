@@ -1,7 +1,3 @@
-import { useMediaQuery } from '@mui/material';
-import clsx from 'clsx';
-import { CSSProperties, memo, ReactNode, useMemo } from 'react';
-
 import {
   convertReportTypeToDisplayName,
   convertReportTypeToPathname,
@@ -13,6 +9,9 @@ import { REPORT_PLAN_ID } from '@/router-pages/common/report/ReportNavigation';
 import { personalStatementColors } from '@/router-pages/common/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/router-pages/common/report/ReportResumePage';
 import { uuid } from '@components/admin/lexical/plugins/AutocompletePlugin';
+import { useMediaQuery } from '@mui/material';
+import clsx from 'clsx';
+import { CSSProperties, memo, ReactNode, useMemo } from 'react';
 import MainHeader from './MainHeader';
 import SectionHeader from './SectionHeader';
 import SubHeader from './SubHeader';
@@ -44,6 +43,21 @@ const ReportPlanSection = ({
         : resumeColors._2CE282,
   };
 
+  const basicPriceInfo = priceDetail.reportPriceInfos?.find(
+    (info) => info.reportPriceType === 'BASIC',
+  );
+  const premiumPriceInfo = priceDetail.reportPriceInfos?.find(
+    (info) => info.reportPriceType === 'PREMIUM',
+  );
+  const optionInfos = priceDetail.reportOptionInfos;
+  const feedbackInfo = priceDetail.feedbackPriceInfo;
+  const optionTitles = optionInfos
+    ?.map((item) => item.optionTitle)
+    .filter((title) => !title?.startsWith('+'));
+  const isOptionOrFeedbackExist =
+    (optionInfos && optionInfos.length > 0) ||
+    (feedbackInfo?.feedbackPrice ?? -1) > -1;
+
   const basicPlan = useMemo(() => {
     switch (reportType) {
       case 'PERSONAL_STATEMENT':
@@ -64,6 +78,7 @@ const ReportPlanSection = ({
 
   const premiumPlan = useMemo(() => {
     switch (reportType) {
+      // 자기소개서만
       case 'PERSONAL_STATEMENT':
         return [
           <p key={uuid}>
@@ -78,8 +93,14 @@ const ReportPlanSection = ({
             <strong>‘전체 총평 페이지’</strong> 제공
           </p>,
           <p key={uuid}>
-            문항별 연관성을 바탕으로 직무적합성을
-            <br className="hidden md:block" /> 강화할 키워드 제안
+            문항별 연관성을 바탕으로
+            {/* 플랜 카드가 하나일 때는 줄바꿈 X */}
+            <br
+              className={clsx({
+                'md:hidden': !basicPriceInfo || !premiumPriceInfo,
+              })}
+            />{' '}
+            직무적합성을 강화할 키워드 제안
           </p>,
         ];
 
@@ -114,18 +135,6 @@ const ReportPlanSection = ({
     }
   }, [reportType]);
 
-  const basicPriceInfo = priceDetail.reportPriceInfos?.find(
-    (info) => info.reportPriceType === 'BASIC',
-  );
-  const premiumPriceInfo = priceDetail.reportPriceInfos?.find(
-    (info) => info.reportPriceType === 'PREMIUM',
-  );
-  const optionInfos = priceDetail.reportOptionInfos;
-  const feedbackInfo = priceDetail.feedbackPriceInfo;
-  const optionTitles = optionInfos
-    ?.map((item) => item.optionTitle)
-    .filter((title) => !title?.startsWith('+'));
-
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   return (
@@ -149,167 +158,177 @@ const ReportPlanSection = ({
           data-section="price-1"
           className="custom-scrollbar -mx-5 mb-14 overflow-x-auto overflow-y-clip px-5 pt-1 lg:mx-0 lg:px-0"
         >
-          <div className="mx-auto flex min-w-fit gap-3">
+          <div className="flex min-w-fit gap-3">
             {/* 프리미엄 플랜 */}
-            <PriceCard
-              className="min-w-[18rem] px-5 py-4 md:gap-5 md:px-6 md:py-7"
-              reportType={reportType}
-              bannerText={
-                reportType === 'PERSONAL_STATEMENT'
-                  ? '저렴한 가격에 전체 피드백을 받고 싶다면'
-                  : `채용 공고 맞춤형 ${convertReportTypeToDisplayName(reportType)}를 원한다면,`
-              }
-              bannerColor={
-                reportType === 'PERSONAL_STATEMENT'
-                  ? personalStatementColors.CA60FF
-                  : resumeColors._2CE282
-              }
-              bannerClassName={clsx({
-                'text-white': reportType === 'PERSONAL_STATEMENT',
-              })}
-              showBubbleTail={isMobile ? false : true}
-              floatingBannerClassName="left-5 -top-1 md:left-auto md:right-4 md:top-4"
-            >
-              <PlanCard title="프리미엄 플랜">
-                <div className="flex flex-col gap-3">
-                  {premiumPlan.map((item, index) => {
-                    return (
-                      <NumberedListItem
-                        key={index}
-                        number={index + 1}
-                        numberStyle={index >= 3 ? numberStyle : {}}
-                        numberClassName={clsx({
-                          'text-black': reportType === 'RESUME' && index >= 3,
-                        })}
-                      >
-                        {item}
-                      </NumberedListItem>
-                    );
-                  })}
-                </div>
-              </PlanCard>
-              <PriceSection
-                wrapperClassName="mt-3"
-                originalPrice={premiumPriceInfo?.price ?? 0}
-                discountPrice={premiumPriceInfo?.discountPrice ?? 0}
-              />
-            </PriceCard>
+            {premiumPriceInfo && (
+              <PriceCard
+                className="mx-auto min-w-[18rem] max-w-[600px] px-5 py-4 md:gap-5 md:px-6 md:py-7"
+                reportType={reportType}
+                bannerText={
+                  reportType === 'PERSONAL_STATEMENT'
+                    ? '저렴한 가격에 전체 피드백을 받고 싶다면'
+                    : `채용 공고 맞춤형 ${convertReportTypeToDisplayName(reportType)}를 원한다면,`
+                }
+                bannerColor={
+                  reportType === 'PERSONAL_STATEMENT'
+                    ? personalStatementColors.CA60FF
+                    : resumeColors._2CE282
+                }
+                bannerClassName={clsx({
+                  'text-white': reportType === 'PERSONAL_STATEMENT',
+                })}
+                showBubbleTail={isMobile ? false : true}
+                floatingBannerClassName="left-5 -top-1 md:left-auto md:right-4 md:top-4"
+              >
+                <PlanCard title="프리미엄 플랜">
+                  <div className="flex flex-col gap-3">
+                    {premiumPlan.map((item, index) => {
+                      return (
+                        <NumberedListItem
+                          key={index}
+                          number={index + 1}
+                          numberStyle={index >= 3 ? numberStyle : {}}
+                          numberClassName={clsx({
+                            'text-black': reportType === 'RESUME' && index >= 3,
+                          })}
+                        >
+                          {item}
+                        </NumberedListItem>
+                      );
+                    })}
+                  </div>
+                </PlanCard>
+                <PriceSection
+                  wrapperClassName="mt-3"
+                  originalPrice={premiumPriceInfo?.price ?? 0}
+                  discountPrice={premiumPriceInfo?.discountPrice ?? 0}
+                />
+              </PriceCard>
+            )}
 
             {/* 베이직 플랜 */}
-            <PriceCard className="flex min-w-[18rem] flex-col justify-between px-5 py-4 md:px-6 md:py-7">
-              <PlanCard
-                title="베이직 플랜"
-                wrapperClassName="h-full flex flex-col"
-                childrenClassName="h-full"
-              >
-                <div className="flex flex-col gap-3">
-                  {basicPlan.map((item, index) => (
-                    <NumberedListItem key={index} number={index + 1}>
-                      {item}
-                    </NumberedListItem>
-                  ))}
-                </div>
-              </PlanCard>
-              <PriceSection
-                wrapperClassName="mt-3"
-                originalPrice={basicPriceInfo?.price ?? 0}
-                discountPrice={basicPriceInfo?.discountPrice ?? 0}
-              />
-            </PriceCard>
+            {basicPriceInfo && (
+              <PriceCard className="mx-auto flex min-w-[18rem] max-w-[600px] flex-col justify-between px-5 py-4 md:px-6 md:py-7">
+                <PlanCard
+                  title="베이직 플랜"
+                  wrapperClassName="h-full flex flex-col"
+                  childrenClassName="h-full"
+                >
+                  <div className="flex flex-col gap-3">
+                    {basicPlan.map((item, index) => (
+                      <NumberedListItem key={index} number={index + 1}>
+                        {item}
+                      </NumberedListItem>
+                    ))}
+                  </div>
+                </PlanCard>
+                <PriceSection
+                  wrapperClassName="mt-3"
+                  originalPrice={basicPriceInfo?.price ?? 0}
+                  discountPrice={basicPriceInfo?.discountPrice ?? 0}
+                />
+              </PriceCard>
+            )}
           </div>
         </div>
 
-        <MainHeader>{OPTION_HEADER}</MainHeader>
-        <div
-          data-section="price-2"
-          className="mt-4 flex flex-col gap-5 md:mt-12 md:flex-row md:gap-3"
-        >
-          {/* 옵션 */}
-          {optionInfos && optionInfos.length > 0 && (
-            <PriceCard className="flex flex-col md:justify-between">
-              <div className="mb-5 md:mb-6">
-                <Badge className="mb-1">선택 옵션 1</Badge>
-                <CardMainHeader>현직자 서면 피드백</CardMainHeader>
-                <p className="mb-2 mt-1 text-xsmall14 text-neutral-0 md:text-small18">
-                  현직자가 제공하는 심층 서류 피드백 및 작성 노하우
-                </p>
-                <p className="mb-1.5 text-xxsmall12 font-light text-neutral-35 md:text-xsmall14">
-                  *피드백 받고 싶은 현직자 여러 명 옵션 추가 가능
-                </p>
-                <div
-                  className={twMerge(
-                    'mt-3',
-                    // 자소서 옵션은 flex, 그 외는 grid
-                    reportType === 'PERSONAL_STATEMENT'
-                      ? 'flex flex-col gap-1.5 md:gap-2'
-                      : 'grid grid-cols-2 gap-x-1.5 gap-y-2 md:gap-2',
-                  )}
-                >
-                  {(optionTitles ?? []).map((title, index) => (
+        {isOptionOrFeedbackExist && (
+          <>
+            <MainHeader>{OPTION_HEADER}</MainHeader>
+            <div
+              data-section="price-2"
+              className="mt-4 flex flex-col gap-5 md:mt-12 md:flex-row md:gap-3"
+            >
+              {/* 옵션 */}
+              {optionInfos && optionInfos.length > 0 && (
+                <PriceCard className="flex flex-col md:justify-between">
+                  <div className="mb-5 md:mb-6">
+                    <Badge className="mb-1">선택 옵션 1</Badge>
+                    <CardMainHeader>현직자 서면 피드백</CardMainHeader>
+                    <p className="mb-2 mt-1 text-xsmall14 text-neutral-0 md:text-small18">
+                      현직자가 제공하는 심층 서류 피드백 및 작성 노하우
+                    </p>
+                    <p className="mb-1.5 text-xxsmall12 font-light text-neutral-35 md:text-xsmall14">
+                      *피드백 받고 싶은 현직자 여러 명 옵션 추가 가능
+                    </p>
                     <div
-                      key={index}
-                      className="rounded-xs bg-[#EEFAFF] py-2 text-center text-xxsmall12 font-medium md:text-xsmall14"
+                      className={twMerge(
+                        'mt-3',
+                        // 자소서 옵션은 flex, 그 외는 grid
+                        reportType === 'PERSONAL_STATEMENT'
+                          ? 'flex flex-col gap-1.5 md:gap-2'
+                          : 'grid grid-cols-2 gap-x-1.5 gap-y-2 md:gap-2',
+                      )}
                     >
-                      {title}
+                      {(optionTitles ?? []).map((title, index) => (
+                        <div
+                          key={index}
+                          className="rounded-xs bg-[#EEFAFF] py-2 text-center text-xxsmall12 font-medium md:text-xsmall14"
+                        >
+                          {title}
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <span className="mb-1.5 block text-xxsmall12 text-neutral-45 md:text-xsmall16">
-                  현직자 택 1인 옵션 추가 금액
-                </span>
-                {/* 첫 번째 옵션 가격 표시 */}
-                <PriceSection
-                  originalPrice={optionInfos[0].price ?? 0}
-                  discountPrice={optionInfos[0].discountPrice ?? 0}
-                />
-              </div>
-            </PriceCard>
-          )}
+                  </div>
+                  <div>
+                    <span className="mb-1.5 block text-xxsmall12 text-neutral-45 md:text-xsmall16">
+                      현직자 택 1인 옵션 추가 금액
+                    </span>
+                    {/* 첫 번째 옵션 가격 표시 */}
+                    <PriceSection
+                      originalPrice={optionInfos[0].price ?? 0}
+                      discountPrice={optionInfos[0].discountPrice ?? 0}
+                    />
+                  </div>
+                </PriceCard>
+              )}
 
-          {/* 1:1 피드백 */}
-          <PriceCard
-            className="flex flex-col md:justify-between"
-            reportType={reportType}
-            bannerText="무한 질문 & 심층 피드백을 받고 싶다면,"
-            bannerColor={
-              reportType === 'PERSONAL_STATEMENT'
-                ? personalStatementColors.CA60FF
-                : resumeColors._2CE282
-            }
-            bannerClassName={clsx({
-              'text-white': reportType === 'PERSONAL_STATEMENT',
-            })}
-            showBubbleTail={isMobile ? false : true}
-            floatingBannerClassName="left-5 -top-2 md:left-auto md:right-2 md:-top-3"
-          >
-            <div className="mb-5 md:mb-6">
-              <Badge className="mb-1">선택 옵션 2</Badge>
-              <CardMainHeader>
-                무제한 질문으로 고민 해결,
-                <br />
-                1:1 온라인 상담
-              </CardMainHeader>
-              <div className="flex flex-col gap-3">
-                {feedback.map((item, index) => (
-                  <NumberedListItem key={index} number={index + 1}>
-                    {/* 예외 문항 */}
-                    {index === 0 ? (
-                      <span className="font-bold">{item}</span>
-                    ) : (
-                      item
-                    )}
-                  </NumberedListItem>
-                ))}
-              </div>
+              {/* 1:1 피드백 */}
+              {(feedbackInfo?.feedbackPrice ?? -1) > -1 && (
+                <PriceCard
+                  className="flex flex-col md:justify-between"
+                  reportType={reportType}
+                  bannerText="무한 질문 & 심층 피드백을 받고 싶다면,"
+                  bannerColor={
+                    reportType === 'PERSONAL_STATEMENT'
+                      ? personalStatementColors.CA60FF
+                      : resumeColors._2CE282
+                  }
+                  bannerClassName={clsx({
+                    'text-white': reportType === 'PERSONAL_STATEMENT',
+                  })}
+                  showBubbleTail={isMobile ? false : true}
+                  floatingBannerClassName="left-5 -top-2 md:left-auto md:right-2 md:-top-3"
+                >
+                  <div className="mb-5 md:mb-6">
+                    <Badge className="mb-1">선택 옵션 2</Badge>
+                    <CardMainHeader>
+                      무제한 질문으로 고민 해결,
+                      <br />
+                      1:1 온라인 상담
+                    </CardMainHeader>
+                    <div className="flex flex-col gap-3">
+                      {feedback.map((item, index) => (
+                        <NumberedListItem key={index} number={index + 1}>
+                          {/* 예외 문항 */}
+                          {index === 0 ? (
+                            <span className="font-bold">{item}</span>
+                          ) : (
+                            item
+                          )}
+                        </NumberedListItem>
+                      ))}
+                    </div>
+                  </div>
+                  <PriceSection
+                    originalPrice={feedbackInfo?.feedbackPrice ?? 0}
+                    discountPrice={feedbackInfo?.feedbackDiscountPrice ?? 0}
+                  />
+                </PriceCard>
+              )}
             </div>
-            <PriceSection
-              originalPrice={feedbackInfo?.feedbackPrice ?? 0}
-              discountPrice={feedbackInfo?.feedbackDiscountPrice ?? 0}
-            />
-          </PriceCard>
-        </div>
+          </>
+        )}
       </main>
     </section>
   );
@@ -448,7 +467,10 @@ const PriceSection = memo(function PriceSection({
   discountPrice: number;
 }) {
   const finalPrice = originalPrice - discountPrice;
-  const discountRate = ((discountPrice / originalPrice) * 100).toFixed(0);
+  const discountRate =
+    originalPrice === 0
+      ? 0
+      : ((discountPrice / originalPrice) * 100).toFixed(0);
 
   return (
     <div className={wrapperClassName}>
