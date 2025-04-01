@@ -43,9 +43,7 @@ const ChallengeOperationAttendances = () => {
       missions?.map((mission) => {
         return {
           ...mission,
-          currentAttendance: `${
-            mission.attendanceCount ?? 0
-          }(제출)/${mission.applicationCount ?? 0}(전체)`,
+          currentAttendance: `${mission.attendanceCount ?? 0}(제출)/${mission.applicationCount ?? 0}(전체)`,
         };
       }) ?? []
     );
