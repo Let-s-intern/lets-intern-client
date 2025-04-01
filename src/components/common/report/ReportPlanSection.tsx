@@ -1,7 +1,3 @@
-import { useMediaQuery } from '@mui/material';
-import clsx from 'clsx';
-import { CSSProperties, memo, ReactNode, useMemo } from 'react';
-
 import {
   convertReportTypeToDisplayName,
   convertReportTypeToPathname,
@@ -13,6 +9,9 @@ import { REPORT_PLAN_ID } from '@/router-pages/common/report/ReportNavigation';
 import { personalStatementColors } from '@/router-pages/common/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/router-pages/common/report/ReportResumePage';
 import { uuid } from '@components/admin/lexical/plugins/AutocompletePlugin';
+import { useMediaQuery } from '@mui/material';
+import clsx from 'clsx';
+import { CSSProperties, memo, ReactNode, useMemo } from 'react';
 import MainHeader from './MainHeader';
 import SectionHeader from './SectionHeader';
 import SubHeader from './SubHeader';
@@ -64,6 +63,7 @@ const ReportPlanSection = ({
 
   const premiumPlan = useMemo(() => {
     switch (reportType) {
+      // 자기소개서만
       case 'PERSONAL_STATEMENT':
         return [
           <p key={uuid}>
@@ -151,71 +151,75 @@ const ReportPlanSection = ({
         >
           <div className="mx-auto flex min-w-fit gap-3">
             {/* 프리미엄 플랜 */}
-            <PriceCard
-              className="min-w-[18rem] px-5 py-4 md:gap-5 md:px-6 md:py-7"
-              reportType={reportType}
-              bannerText={
-                reportType === 'PERSONAL_STATEMENT'
-                  ? '저렴한 가격에 전체 피드백을 받고 싶다면'
-                  : `채용 공고 맞춤형 ${convertReportTypeToDisplayName(reportType)}를 원한다면,`
-              }
-              bannerColor={
-                reportType === 'PERSONAL_STATEMENT'
-                  ? personalStatementColors.CA60FF
-                  : resumeColors._2CE282
-              }
-              bannerClassName={clsx({
-                'text-white': reportType === 'PERSONAL_STATEMENT',
-              })}
-              showBubbleTail={isMobile ? false : true}
-              floatingBannerClassName="left-5 -top-1 md:left-auto md:right-4 md:top-4"
-            >
-              <PlanCard title="프리미엄 플랜">
-                <div className="flex flex-col gap-3">
-                  {premiumPlan.map((item, index) => {
-                    return (
-                      <NumberedListItem
-                        key={index}
-                        number={index + 1}
-                        numberStyle={index >= 3 ? numberStyle : {}}
-                        numberClassName={clsx({
-                          'text-black': reportType === 'RESUME' && index >= 3,
-                        })}
-                      >
-                        {item}
-                      </NumberedListItem>
-                    );
-                  })}
-                </div>
-              </PlanCard>
-              <PriceSection
-                wrapperClassName="mt-3"
-                originalPrice={premiumPriceInfo?.price ?? 0}
-                discountPrice={premiumPriceInfo?.discountPrice ?? 0}
-              />
-            </PriceCard>
+            {premiumPriceInfo && (
+              <PriceCard
+                className="min-w-[18rem] px-5 py-4 md:gap-5 md:px-6 md:py-7"
+                reportType={reportType}
+                bannerText={
+                  reportType === 'PERSONAL_STATEMENT'
+                    ? '저렴한 가격에 전체 피드백을 받고 싶다면'
+                    : `채용 공고 맞춤형 ${convertReportTypeToDisplayName(reportType)}를 원한다면,`
+                }
+                bannerColor={
+                  reportType === 'PERSONAL_STATEMENT'
+                    ? personalStatementColors.CA60FF
+                    : resumeColors._2CE282
+                }
+                bannerClassName={clsx({
+                  'text-white': reportType === 'PERSONAL_STATEMENT',
+                })}
+                showBubbleTail={isMobile ? false : true}
+                floatingBannerClassName="left-5 -top-1 md:left-auto md:right-4 md:top-4"
+              >
+                <PlanCard title="프리미엄 플랜">
+                  <div className="flex flex-col gap-3">
+                    {premiumPlan.map((item, index) => {
+                      return (
+                        <NumberedListItem
+                          key={index}
+                          number={index + 1}
+                          numberStyle={index >= 3 ? numberStyle : {}}
+                          numberClassName={clsx({
+                            'text-black': reportType === 'RESUME' && index >= 3,
+                          })}
+                        >
+                          {item}
+                        </NumberedListItem>
+                      );
+                    })}
+                  </div>
+                </PlanCard>
+                <PriceSection
+                  wrapperClassName="mt-3"
+                  originalPrice={premiumPriceInfo?.price ?? 0}
+                  discountPrice={premiumPriceInfo?.discountPrice ?? 0}
+                />
+              </PriceCard>
+            )}
 
             {/* 베이직 플랜 */}
-            <PriceCard className="flex min-w-[18rem] flex-col justify-between px-5 py-4 md:px-6 md:py-7">
-              <PlanCard
-                title="베이직 플랜"
-                wrapperClassName="h-full flex flex-col"
-                childrenClassName="h-full"
-              >
-                <div className="flex flex-col gap-3">
-                  {basicPlan.map((item, index) => (
-                    <NumberedListItem key={index} number={index + 1}>
-                      {item}
-                    </NumberedListItem>
-                  ))}
-                </div>
-              </PlanCard>
-              <PriceSection
-                wrapperClassName="mt-3"
-                originalPrice={basicPriceInfo?.price ?? 0}
-                discountPrice={basicPriceInfo?.discountPrice ?? 0}
-              />
-            </PriceCard>
+            {basicPriceInfo && (
+              <PriceCard className="flex min-w-[18rem] flex-col justify-between px-5 py-4 md:px-6 md:py-7">
+                <PlanCard
+                  title="베이직 플랜"
+                  wrapperClassName="h-full flex flex-col"
+                  childrenClassName="h-full"
+                >
+                  <div className="flex flex-col gap-3">
+                    {basicPlan.map((item, index) => (
+                      <NumberedListItem key={index} number={index + 1}>
+                        {item}
+                      </NumberedListItem>
+                    ))}
+                  </div>
+                </PlanCard>
+                <PriceSection
+                  wrapperClassName="mt-3"
+                  originalPrice={basicPriceInfo?.price ?? 0}
+                  discountPrice={basicPriceInfo?.discountPrice ?? 0}
+                />
+              </PriceCard>
+            )}
           </div>
         </div>
 
@@ -448,7 +452,10 @@ const PriceSection = memo(function PriceSection({
   discountPrice: number;
 }) {
   const finalPrice = originalPrice - discountPrice;
-  const discountRate = ((discountPrice / originalPrice) * 100).toFixed(0);
+  const discountRate =
+    originalPrice === 0
+      ? 0
+      : ((discountPrice / originalPrice) * 100).toFixed(0);
 
   return (
     <div className={wrapperClassName}>
