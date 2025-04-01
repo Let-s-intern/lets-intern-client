@@ -43,6 +43,18 @@ const ReportPlanSection = ({
         : resumeColors._2CE282,
   };
 
+  const basicPriceInfo = priceDetail.reportPriceInfos?.find(
+    (info) => info.reportPriceType === 'BASIC',
+  );
+  const premiumPriceInfo = priceDetail.reportPriceInfos?.find(
+    (info) => info.reportPriceType === 'PREMIUM',
+  );
+  const optionInfos = priceDetail.reportOptionInfos;
+  const feedbackInfo = priceDetail.feedbackPriceInfo;
+  const optionTitles = optionInfos
+    ?.map((item) => item.optionTitle)
+    .filter((title) => !title?.startsWith('+'));
+
   const basicPlan = useMemo(() => {
     switch (reportType) {
       case 'PERSONAL_STATEMENT':
@@ -78,8 +90,14 @@ const ReportPlanSection = ({
             <strong>‘전체 총평 페이지’</strong> 제공
           </p>,
           <p key={uuid}>
-            문항별 연관성을 바탕으로 직무적합성을
-            <br className="hidden md:block" /> 강화할 키워드 제안
+            문항별 연관성을 바탕으로
+            {/* 플랜 카드가 하나일 때는 줄바꿈 X */}
+            <br
+              className={clsx({
+                'md:hidden': basicPriceInfo && premiumPriceInfo,
+              })}
+            />{' '}
+            직무적합성을 강화할 키워드 제안
           </p>,
         ];
 
@@ -114,18 +132,6 @@ const ReportPlanSection = ({
     }
   }, [reportType]);
 
-  const basicPriceInfo = priceDetail.reportPriceInfos?.find(
-    (info) => info.reportPriceType === 'BASIC',
-  );
-  const premiumPriceInfo = priceDetail.reportPriceInfos?.find(
-    (info) => info.reportPriceType === 'PREMIUM',
-  );
-  const optionInfos = priceDetail.reportOptionInfos;
-  const feedbackInfo = priceDetail.feedbackPriceInfo;
-  const optionTitles = optionInfos
-    ?.map((item) => item.optionTitle)
-    .filter((title) => !title?.startsWith('+'));
-
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   return (
@@ -149,7 +155,7 @@ const ReportPlanSection = ({
           data-section="price-1"
           className="custom-scrollbar -mx-5 mb-14 overflow-x-auto overflow-y-clip px-5 pt-1 lg:mx-0 lg:px-0"
         >
-          <div className="mx-auto flex min-w-fit gap-3">
+          <div className="flex min-w-fit gap-3">
             {/* 프리미엄 플랜 */}
             {premiumPriceInfo && (
               <PriceCard
@@ -345,7 +351,7 @@ const PriceCard = memo(function PriceCard({
   };
 
   return (
-    <div className="relative w-full">
+    <div className="relative mx-auto w-full max-w-[600px]">
       {bannerText && (
         <div className={twMerge('absolute', floatingBannerClassName)}>
           <div
