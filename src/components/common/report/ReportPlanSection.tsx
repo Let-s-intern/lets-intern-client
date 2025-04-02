@@ -243,7 +243,10 @@ const ReportPlanSection = ({
               {optionInfos && optionInfos.length > 0 && (
                 <PriceCard className="flex flex-col md:justify-between">
                   <div className="mb-5 md:mb-6">
-                    <Badge className="mb-1">선택 옵션 1</Badge>
+                    {/* 옵션 카드가 하나일 때는 배지 숨기기 */}
+                    {!isOptionOrFeedbackExist && (
+                      <Badge className="mb-1">선택 옵션 1</Badge>
+                    )}
                     <CardMainHeader>현직자 서면 피드백</CardMainHeader>
                     <p className="mb-2 mt-1 text-xsmall14 text-neutral-0 md:text-small18">
                       현직자가 제공하는 심층 서류 피드백 및 작성 노하우
@@ -301,7 +304,10 @@ const ReportPlanSection = ({
                   floatingBannerClassName="left-5 -top-2 md:left-auto md:right-2 md:-top-3"
                 >
                   <div className="mb-5 md:mb-6">
-                    <Badge className="mb-1">선택 옵션 2</Badge>
+                    {/* 옵션 카드가 하나일 때는 배지 숨기기 */}
+                    {!isOptionOrFeedbackExist && (
+                      <Badge className="mb-1">선택 옵션 2</Badge>
+                    )}
                     <CardMainHeader>
                       무제한 질문으로 고민 해결,
                       <br />
