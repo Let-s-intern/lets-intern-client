@@ -57,6 +57,10 @@ const ReportPlanSection = ({
   const isOptionOrFeedbackExist =
     (optionInfos && optionInfos.length > 0) ||
     (feedbackInfo?.feedbackPrice ?? -1) > -1;
+  const isOptionAndFeedbackExist =
+    optionInfos &&
+    optionInfos.length > 0 &&
+    (feedbackInfo?.feedbackPrice ?? -1) > -1;
 
   const basicPlan = useMemo(() => {
     switch (reportType) {
@@ -243,8 +247,8 @@ const ReportPlanSection = ({
               {optionInfos && optionInfos.length > 0 && (
                 <PriceCard className="flex flex-col md:justify-between">
                   <div className="mb-5 md:mb-6">
-                    {/* 옵션 카드가 하나일 때는 배지 숨기기 */}
-                    {!isOptionOrFeedbackExist && (
+                    {/* 옵션 카드가 두 개일 때만 배지 표시 */}
+                    {isOptionAndFeedbackExist && (
                       <Badge className="mb-1">선택 옵션 1</Badge>
                     )}
                     <CardMainHeader>현직자 서면 피드백</CardMainHeader>
@@ -304,8 +308,8 @@ const ReportPlanSection = ({
                   floatingBannerClassName="left-5 -top-2 md:left-auto md:right-2 md:-top-3"
                 >
                   <div className="mb-5 md:mb-8">
-                    {/* 옵션 카드가 하나일 때는 배지 숨기기 */}
-                    {!isOptionOrFeedbackExist && (
+                    {/* 옵션 카드가 두 개일 때만 배지 표시 */}
+                    {isOptionAndFeedbackExist && (
                       <Badge className="mb-1">선택 옵션 2</Badge>
                     )}
                     <CardMainHeader>
