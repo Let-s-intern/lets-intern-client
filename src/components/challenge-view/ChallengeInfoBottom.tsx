@@ -50,7 +50,6 @@ const ChallengeInfoBottom = ({
   } = useInstallmentPayment();
 
   const priceInfo = challenge.priceInfo[0];
-
   const monthlyPrice =
     installmentMonths && priceInfo
       ? Math.round(
@@ -237,23 +236,35 @@ const ChallengeInfoBottom = ({
                   <span className="font-medium">정가</span>
                   <span>{regularPrice?.toLocaleString()}원</span>
                 </div>
-                <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
-                  <span
-                    className="font-bold"
-                    style={{ color: styles.primaryColor }}
-                  >
-                    {getDiscountPercent(
-                      regularPrice || 0,
-                      priceInfo.discount || 0,
-                    )}
-                    % 할인
-                  </span>
-                  <span>-{priceInfo.discount?.toLocaleString()}원</span>
-                </div>
+
+                {/* 할인 금액이 0이면 숨김 */}
+                {priceInfo.discount !== 0 && (
+                  <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
+                    <span
+                      className="font-bold"
+                      style={{ color: styles.primaryColor }}
+                    >
+                      {getDiscountPercent(
+                        regularPrice || 0,
+                        priceInfo.discount || 0,
+                      )}
+                      % 할인
+                    </span>
+                    <span>-{priceInfo.discount?.toLocaleString()}원</span>
+                  </div>
+                )}
+
                 {/* 환급이 없으면 숨기기 */}
                 {priceInfo.refund !== 0 && (
                   <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
-                    <span className="font-bold text-black">
+                    <span
+                      style={
+                        priceInfo.discount === 0
+                          ? { color: styles.primaryColor }
+                          : undefined
+                      }
+                      className="font-bold text-black"
+                    >
                       미션 모두 수행시, 환급
                     </span>
                     <span>-{priceInfo.refund?.toLocaleString()}원</span>
