@@ -8,7 +8,7 @@ import {
 import { YYYY_MMDD_THHmmss } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { ProgramTypeEnum } from '@/schema';
-import { generateUuid } from '@/utils/random';
+import { generateUUID } from '@/utils/random';
 import { Button, Checkbox } from '@mui/material';
 import {
   DataGrid,
@@ -165,7 +165,7 @@ export default function AdminBlogReviewListPage() {
   };
 
   const createRow = () => ({
-    id: generateUuid(),
+    id: generateUUID(),
     blogReviewId: 0, // 의미 없는 값
     postDate: new Date(),
     programType: ProgramTypeEnum.enum.CHALLENGE,
