@@ -8,7 +8,7 @@ import { twMerge } from '@/lib/twMerge';
 import { REPORT_PLAN_ID } from '@/router-pages/common/report/ReportNavigation';
 import { personalStatementColors } from '@/router-pages/common/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/router-pages/common/report/ReportResumePage';
-import { uuid } from '@components/admin/lexical/plugins/AutocompletePlugin';
+import { generateUUID } from '@/utils/random';
 import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
 import { CSSProperties, memo, ReactNode, useMemo } from 'react';
@@ -73,7 +73,7 @@ const ReportPlanSection = ({
 
       default:
         return [
-          '6가지 핵심 기준 기반 이력서 진단\n및 피드백',
+          <p>6가지 핵심 기준 기반 이력서 진단 및 피드백</p>,
           '서류 작성 고민 상담 및 솔루션',
           '직무/산업별 합격자 예시 자료 제공',
         ];
@@ -85,18 +85,18 @@ const ReportPlanSection = ({
       // 자기소개서만
       case 'PERSONAL_STATEMENT':
         return [
-          <p key={uuid}>
+          <p key={generateUUID()}>
             <s className="block">자소서 1문항 피드백 제공</s>
             자소서 4문항 피드백 제공
           </p>,
-          <p key={uuid}>서류 작성 고민 상담 및 솔루션</p>,
-          <p key={uuid}>직무/산업별 합격자 예시 자료 제공</p>,
-          <p key={uuid}>
+          <p key={generateUUID()}>서류 작성 고민 상담 및 솔루션</p>,
+          <p key={generateUUID()}>직무/산업별 합격자 예시 자료 제공</p>,
+          <p key={generateUUID()}>
             자소서 완성도를 높이는
             <br />
             <strong>‘전체 총평 페이지’</strong> 제공
           </p>,
-          <p key={uuid}>
+          <p key={generateUUID()}>
             문항별 연관성을 바탕으로
             {/* 플랜 카드가 하나일 때는 줄바꿈 X */}
             <br
@@ -114,7 +114,7 @@ const ReportPlanSection = ({
           '서류 작성 고민 상담 및 솔루션',
           '직무/산업별 합격자 예시 자료 제공',
           '채용공고 기반 직무 역량 분석 및\n맞춤 피드백 제공',
-          <p key={uuid}>
+          <p key={generateUUID()}>
             공고 요구사항 반영 여부 및 적합 키워드
             <br className="hidden md:block" /> 제안
           </p>,
