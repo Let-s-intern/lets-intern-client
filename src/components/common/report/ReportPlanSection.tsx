@@ -303,7 +303,7 @@ const ReportPlanSection = ({
                   showBubbleTail={isMobile ? false : true}
                   floatingBannerClassName="left-5 -top-2 md:left-auto md:right-2 md:-top-3"
                 >
-                  <div className="mb-5 md:mb-6">
+                  <div className="mb-5 md:mb-8">
                     {/* 옵션 카드가 하나일 때는 배지 숨기기 */}
                     {!isOptionOrFeedbackExist && (
                       <Badge className="mb-1">선택 옵션 2</Badge>
