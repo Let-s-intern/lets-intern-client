@@ -8,7 +8,7 @@ import { twMerge } from '@/lib/twMerge';
 import { REPORT_PLAN_ID } from '@/router-pages/common/report/ReportNavigation';
 import { personalStatementColors } from '@/router-pages/common/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/router-pages/common/report/ReportResumePage';
-import { uuid } from '@components/admin/lexical/plugins/AutocompletePlugin';
+import { generateUUID } from '@/utils/random';
 import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
 import { CSSProperties, memo, ReactNode, useMemo } from 'react';
@@ -57,6 +57,10 @@ const ReportPlanSection = ({
   const isOptionOrFeedbackExist =
     (optionInfos && optionInfos.length > 0) ||
     (feedbackInfo?.feedbackPrice ?? -1) > -1;
+  const isOptionAndFeedbackExist =
+    optionInfos &&
+    optionInfos.length > 0 &&
+    (feedbackInfo?.feedbackPrice ?? -1) > -1;
 
   const basicPlan = useMemo(() => {
     switch (reportType) {
@@ -69,7 +73,11 @@ const ReportPlanSection = ({
 
       default:
         return [
-          '6가지 핵심 기준 기반 이력서 진단\n및 피드백',
+          <p key={generateUUID()}>
+            6가지 핵심 기준 기반{' '}
+            <br className={clsx({ 'md:hidden': !premiumPriceInfo })} />
+            이력서 진단 및 피드백
+          </p>,
           '서류 작성 고민 상담 및 솔루션',
           '직무/산업별 합격자 예시 자료 제공',
         ];
@@ -81,18 +89,18 @@ const ReportPlanSection = ({
       // 자기소개서만
       case 'PERSONAL_STATEMENT':
         return [
-          <p key={uuid}>
+          <p key={generateUUID()}>
             <s className="block">자소서 1문항 피드백 제공</s>
             자소서 4문항 피드백 제공
           </p>,
-          <p key={uuid}>서류 작성 고민 상담 및 솔루션</p>,
-          <p key={uuid}>직무/산업별 합격자 예시 자료 제공</p>,
-          <p key={uuid}>
+          <p key={generateUUID()}>서류 작성 고민 상담 및 솔루션</p>,
+          <p key={generateUUID()}>직무/산업별 합격자 예시 자료 제공</p>,
+          <p key={generateUUID()}>
             자소서 완성도를 높이는
             <br />
             <strong>‘전체 총평 페이지’</strong> 제공
           </p>,
-          <p key={uuid}>
+          <p key={generateUUID()}>
             문항별 연관성을 바탕으로
             {/* 플랜 카드가 하나일 때는 줄바꿈 X */}
             <br
@@ -106,13 +114,18 @@ const ReportPlanSection = ({
 
       default:
         return [
-          '6가지 핵심 기준 기반 이력서 진단\n및 피드백',
+          <p key={generateUUID()}>
+            6가지 핵심 기준 기반{' '}
+            <br className={clsx({ 'md:hidden': !basicPriceInfo })} />
+            이력서 진단 및 피드백
+          </p>,
           '서류 작성 고민 상담 및 솔루션',
           '직무/산업별 합격자 예시 자료 제공',
           '채용공고 기반 직무 역량 분석 및\n맞춤 피드백 제공',
-          <p key={uuid}>
-            공고 요구사항 반영 여부 및 적합 키워드
-            <br className="hidden md:block" /> 제안
+          <p key={generateUUID()}>
+            공고 요구사항 반영 여부 및{' '}
+            <br className={clsx({ 'md:hidden': !basicPriceInfo })} />
+            적합 키워드 제안
           </p>,
         ];
     }
@@ -162,7 +175,7 @@ const ReportPlanSection = ({
             {/* 프리미엄 플랜 */}
             {premiumPriceInfo && (
               <PriceCard
-                className="mx-auto min-w-[18rem] max-w-[600px] px-5 py-4 md:gap-5 md:px-6 md:py-7"
+                className="min-w-[18rem] px-5 py-4 md:gap-5 md:px-6 md:py-7"
                 reportType={reportType}
                 bannerText={
                   reportType === 'PERSONAL_STATEMENT'
@@ -208,11 +221,11 @@ const ReportPlanSection = ({
 
             {/* 베이직 플랜 */}
             {basicPriceInfo && (
-              <PriceCard className="mx-auto flex min-w-[18rem] max-w-[600px] flex-col justify-between px-5 py-4 md:px-6 md:py-7">
+              <PriceCard className="flex min-w-[18rem] flex-col justify-between px-5 py-4 md:px-6 md:py-7">
                 <PlanCard
                   title="베이직 플랜"
-                  wrapperClassName="h-full flex flex-col"
-                  childrenClassName="h-full"
+                  wrapperClassName="h-full flex flex-col "
+                  childrenClassName="h-full pb-16 md:pb-5 md:min-h-[200px]"
                 >
                   <div className="flex flex-col gap-3">
                     {basicPlan.map((item, index) => (
@@ -243,7 +256,10 @@ const ReportPlanSection = ({
               {optionInfos && optionInfos.length > 0 && (
                 <PriceCard className="flex flex-col md:justify-between">
                   <div className="mb-5 md:mb-6">
-                    <Badge className="mb-1">선택 옵션 1</Badge>
+                    {/* 옵션 카드가 두 개일 때만 배지 표시 */}
+                    {isOptionAndFeedbackExist && (
+                      <Badge className="mb-1">선택 옵션 1</Badge>
+                    )}
                     <CardMainHeader>현직자 서면 피드백</CardMainHeader>
                     <p className="mb-2 mt-1 text-xsmall14 text-neutral-0 md:text-small18">
                       현직자가 제공하는 심층 서류 피드백 및 작성 노하우
@@ -300,8 +316,11 @@ const ReportPlanSection = ({
                   showBubbleTail={isMobile ? false : true}
                   floatingBannerClassName="left-5 -top-2 md:left-auto md:right-2 md:-top-3"
                 >
-                  <div className="mb-5 md:mb-6">
-                    <Badge className="mb-1">선택 옵션 2</Badge>
+                  <div className="mb-5 md:mb-8">
+                    {/* 옵션 카드가 두 개일 때만 배지 표시 */}
+                    {isOptionAndFeedbackExist && (
+                      <Badge className="mb-1">선택 옵션 2</Badge>
+                    )}
                     <CardMainHeader>
                       무제한 질문으로 고민 해결,
                       <br />
@@ -360,7 +379,7 @@ const PriceCard = memo(function PriceCard({
   };
 
   return (
-    <div className="relative w-full">
+    <div className="relative mx-auto w-full max-w-[680px]">
       {bannerText && (
         <div className={twMerge('absolute', floatingBannerClassName)}>
           <div

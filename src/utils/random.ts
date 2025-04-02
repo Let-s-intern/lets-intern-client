@@ -7,7 +7,7 @@ export const generateRandomString = customAlphabet(
 
 export const generateRandomNumber = customAlphabet('1234567890', 6);
 
-export const generateUuid = () =>
+export const generateUUID = () =>
   Math.random()
     .toString(36)
     .replace(/[^a-z]+/g, '')
