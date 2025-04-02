@@ -162,7 +162,7 @@ const ReportPlanSection = ({
             {/* 프리미엄 플랜 */}
             {premiumPriceInfo && (
               <PriceCard
-                className="mx-auto min-w-[18rem] max-w-[600px] px-5 py-4 md:gap-5 md:px-6 md:py-7"
+                className="min-w-[18rem] px-5 py-4 md:gap-5 md:px-6 md:py-7"
                 reportType={reportType}
                 bannerText={
                   reportType === 'PERSONAL_STATEMENT'
@@ -208,11 +208,11 @@ const ReportPlanSection = ({
 
             {/* 베이직 플랜 */}
             {basicPriceInfo && (
-              <PriceCard className="mx-auto flex min-w-[18rem] max-w-[600px] flex-col justify-between px-5 py-4 md:px-6 md:py-7">
+              <PriceCard className="flex min-w-[18rem] flex-col justify-between px-5 py-4 md:px-6 md:py-7">
                 <PlanCard
                   title="베이직 플랜"
-                  wrapperClassName="h-full flex flex-col"
-                  childrenClassName="h-full"
+                  wrapperClassName="h-full flex flex-col "
+                  childrenClassName="h-full pb-16 md:pb-5"
                 >
                   <div className="flex flex-col gap-3">
                     {basicPlan.map((item, index) => (
@@ -360,7 +360,7 @@ const PriceCard = memo(function PriceCard({
   };
 
   return (
-    <div className="relative w-full">
+    <div className="relative mx-auto w-full max-w-[680px]">
       {bannerText && (
         <div className={twMerge('absolute', floatingBannerClassName)}>
           <div
