@@ -493,14 +493,17 @@ const PriceSection = memo(function PriceSection({
 
   return (
     <div className={wrapperClassName}>
-      <div className="flex items-center gap-1">
-        <span className="text-small20 font-bold text-[#FC5555]">
-          {discountRate}%
-        </span>
-        <s className="text-small20 font-bold text-neutral-45">
-          {originalPrice.toLocaleString()}원
-        </s>
-      </div>
+      {/* 할인 금액이 0이면 표시 X */}
+      {discountPrice !== 0 && (
+        <div className="flex items-center gap-1">
+          <span className="text-small20 font-bold text-[#FC5555]">
+            {discountRate}%
+          </span>
+          <s className="text-small20 font-bold text-neutral-45">
+            {originalPrice.toLocaleString()}원
+          </s>
+        </div>
+      )}
       <span className="text-xlarge28 font-bold">
         {finalPrice.toLocaleString()}원
       </span>
