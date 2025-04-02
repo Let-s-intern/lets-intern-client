@@ -73,7 +73,11 @@ const ReportPlanSection = ({
 
       default:
         return [
-          <p>6가지 핵심 기준 기반 이력서 진단 및 피드백</p>,
+          <p key={generateUUID()}>
+            6가지 핵심 기준 기반{' '}
+            <br className={clsx({ 'md:hidden': !premiumPriceInfo })} />
+            이력서 진단 및 피드백
+          </p>,
           '서류 작성 고민 상담 및 솔루션',
           '직무/산업별 합격자 예시 자료 제공',
         ];
@@ -110,13 +114,18 @@ const ReportPlanSection = ({
 
       default:
         return [
-          '6가지 핵심 기준 기반 이력서 진단\n및 피드백',
+          <p key={generateUUID()}>
+            6가지 핵심 기준 기반{' '}
+            <br className={clsx({ 'md:hidden': !basicPriceInfo })} />
+            이력서 진단 및 피드백
+          </p>,
           '서류 작성 고민 상담 및 솔루션',
           '직무/산업별 합격자 예시 자료 제공',
           '채용공고 기반 직무 역량 분석 및\n맞춤 피드백 제공',
           <p key={generateUUID()}>
-            공고 요구사항 반영 여부 및 적합 키워드
-            <br className="hidden md:block" /> 제안
+            공고 요구사항 반영 여부 및{' '}
+            <br className={clsx({ 'md:hidden': !basicPriceInfo })} />
+            적합 키워드 제안
           </p>,
         ];
     }
