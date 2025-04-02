@@ -212,7 +212,7 @@ const ReportPlanSection = ({
                 <PlanCard
                   title="베이직 플랜"
                   wrapperClassName="h-full flex flex-col "
-                  childrenClassName="h-full pb-16 md:pb-5"
+                  childrenClassName="h-full pb-16 md:pb-5 md:min-h-[200px]"
                 >
                   <div className="flex flex-col gap-3">
                     {basicPlan.map((item, index) => (
