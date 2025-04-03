@@ -16,6 +16,8 @@ import NavItem from './NavItem';
 import { NavSubItemProps } from './NavSubItem';
 import SideNavItem from './SideNavItem';
 
+console.log('is next nav bar');
+
 const reportHoverItem: NavSubItemProps[] = [
   {
     text: '이력서 진단 받기',
@@ -319,7 +321,7 @@ const NavBar = () => {
         </div>
         <hr />
         <KakaoChannel />
-        <div className="flex h-full flex-col gap-5 overflow-y-auto pb-48 pt-10">
+        <div className="flex h-full flex-col gap-5 overflow-y-auto pb-36 pt-10">
           <div className="mx-5 flex justify-between">
             {isLoggedIn ? (
               <span className="flex w-full items-center justify-between gap-4 text-neutral-0 sm:p-0">
