@@ -13,8 +13,6 @@ import NavItem from './NavItem';
 import { NavSubItemProps } from './NavSubItem';
 import SideNavItem from './SideNavItem';
 
-console.log('is just nav bar');
-
 const reportHoverItem: NavSubItemProps[] = [
   {
     text: '이력서 진단 받기',
