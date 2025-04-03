@@ -284,7 +284,7 @@ const NavBar = () => {
       {/* 사이드 네비게이션 바 */}
       <div
         className={twMerge(
-          'fixed right-0 top-0 z-50 h-screen w-full flex-col bg-white shadow-md transition-all duration-300 sm:w-[22rem]',
+          'fixed right-0 top-0 z-50 h-screen w-[17.5rem] flex-col bg-white shadow-md transition-all duration-300 sm:w-[22rem]',
           isOpen ? 'translate-x-0' : 'translate-x-full',
         )}
       >
@@ -306,7 +306,7 @@ const NavBar = () => {
         </div>
         <hr />
         <KakaoChannel />
-        <div className="flex h-full flex-col gap-5 overflow-y-auto pb-28 pt-10">
+        <div className="flex h-full flex-col gap-5 overflow-y-auto pb-36 pt-10">
           <div className="mx-5 flex justify-between">
             {isLoggedIn ? (
               <span className="flex w-full items-center justify-between gap-4 text-neutral-0 sm:p-0">
@@ -394,7 +394,7 @@ const NavBar = () => {
               target="_blank"
               rel="noopener noreferrer"
               onClick={closeMenu}
-              className="q&a_gnb"
+              className="q&a_gnb mb-36"
             >
               자주 묻는 질문
             </SideNavItem>

@@ -21,12 +21,13 @@ const KakaoChannel = () => {
 
   return (
     <button
-      className="flex w-full items-center justify-center gap-x-3 bg-[#FEE500] px-6 py-3"
+      className="flex w-full items-center justify-start gap-x-3 bg-[#FEE500] px-6 py-3 sm:justify-center"
       onClick={onClickAddChannel}
     >
       <img src="/images/kakao_channel.png" alt="카카오 채널 추가" />
-      <p className="font-medium break-keep">
-        채널 추가하고, 프로그램 모집 알림 받기
+      <p className="break-keep text-start font-medium">
+        채널 추가하고 <br className="sm:hidden" />
+        프로그램 모집 알림 받기
       </p>
     </button>
   );
