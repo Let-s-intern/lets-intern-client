@@ -319,7 +319,7 @@ const NavBar = () => {
         </div>
         <hr />
         <KakaoChannel />
-        <div className="flex h-full flex-col gap-5 overflow-y-auto pb-28 pt-10">
+        <div className="flex h-full flex-col gap-5 overflow-y-auto pb-48 pt-10">
           <div className="mx-5 flex justify-between">
             {isLoggedIn ? (
               <span className="flex w-full items-center justify-between gap-4 text-neutral-0 sm:p-0">
