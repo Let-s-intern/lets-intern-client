@@ -227,14 +227,14 @@ const NavBar = () => {
             >
               🔥 서류 진단받고 합격하기
             </NavItem>
-            <NavItem
+            {/* <NavItem
               as="div"
               hoverItem={interviewHoverItem}
               target="_blank"
               rel="noopenner noreferrer"
             >
               🔎 모의 면접하고 합격하기
-            </NavItem>
+            </NavItem> */}
           </div>
           <div className="flex items-center gap-4">
             {isLoggedIn ? (
@@ -365,7 +365,7 @@ const NavBar = () => {
             >
               🔥 서류 진단받고 합격하기
             </SideNavItem>
-            <SideNavItem
+            {/* <SideNavItem
               to="#"
               onClick={closeMenu}
               hoverItem={interviewHoverItem}
@@ -373,7 +373,7 @@ const NavBar = () => {
               rel="noopenner noreferrer"
             >
               🔎 모의 면접하고 합격하기
-            </SideNavItem>
+            </SideNavItem> */}
             <hr className="h-1 bg-neutral-80" />
             {isAdmin && (
               <SideNavItem to="/admin" onClick={closeMenu}>

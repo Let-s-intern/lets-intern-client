@@ -63,13 +63,13 @@ const Footer = () => {
               <MenuLink to="/report/landing" force>
                 서류 진단 서비스
               </MenuLink>
-              <MenuLink
+              {/* <MenuLink
                 to="https://letscareerinterview.imweb.me/"
                 target="_blank"
                 rel="noopenner noreferrer"
               >
                 모의 면접 서비스
-              </MenuLink>
+              </MenuLink> */}
             </div>
 
             {/* 기타 */}
