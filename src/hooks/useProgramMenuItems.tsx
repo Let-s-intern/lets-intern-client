@@ -1,37 +1,45 @@
 import { useGetProgramAdminQuery } from '@/api/program';
-import { ProgramStatusEnum } from '@/schema';
+import { ProgramStatus } from '@/schema';
 import { newProgramTypeToText, programStatusToText } from '@/utils/convert';
 import { MenuItem } from '@mui/material';
 import { useMemo } from 'react';
 
-const { PROCEEDING, PREV } = ProgramStatusEnum.enum;
-
-export default function useProgramMenuItems() {
+export default function useProgramMenuItems(
+  status: ProgramStatus[],
+  hasNull = true,
+) {
   const { data } = useGetProgramAdminQuery({
     page: 1,
     size: 10000,
-    status: [PROCEEDING, PREV],
+    status,
   });
 
-  const programMenuItems = useMemo(
-    () => [
-      <MenuItem key="null" value="null">
-        선택 안 함
-      </MenuItem>,
-      ...(data?.programList.map((program) => {
-        if (program.programInfo.isVisible)
+  const programMenuItems = useMemo(() => {
+    const items =
+      data?.programList.map(({ programInfo }) => {
+        if (programInfo.isVisible) {
           return (
             <MenuItem
-              key={program.programInfo.programType + program.programInfo.id}
-              value={`${program.programInfo.programType}-${program.programInfo.id}`}
+              key={programInfo.programType + programInfo.id}
+              value={`${programInfo.programType}-${programInfo.id}`}
             >
-              {`[${newProgramTypeToText[program.programInfo.programType]}/${programStatusToText[program.programInfo.programStatusType]}] ${program.programInfo.title}`}
+              {`[${newProgramTypeToText[programInfo.programType]}/${programStatusToText[programInfo.programStatusType]}] ${programInfo.title}`}
             </MenuItem>
           );
-      }) ?? []),
-    ],
-    [data],
-  );
+        }
+      }) ?? [];
+
+    if (hasNull) {
+      return [
+        <MenuItem key="null" value="null">
+          선택 안 함
+        </MenuItem>,
+        ...items,
+      ];
+    }
+
+    return items;
+  }, [data, hasNull]);
 
   return programMenuItems;
 }
