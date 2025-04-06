@@ -49,6 +49,10 @@ const navData = [
         name: '쿠폰 관리',
         url: '/admin/coupons',
       },
+      {
+        name: '출시 알림 신청',
+        url: '/admin/notification/list',
+      },
     ],
   },
   {

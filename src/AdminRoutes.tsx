@@ -1,5 +1,4 @@
 import { Route } from 'react-router-dom';
-
 import ChallengeOperationAdminLayout from './components/admin/challenge/ui/ChallengeOperationAdminLayout';
 import AdminLayout from './components/admin/ui/layout/AdminLayout';
 import { CurrentAdminChallengeProvider } from './context/CurrentAdminChallengeProvider';
@@ -44,6 +43,7 @@ import MainBannerEdit from './router-pages/admin/home/main-banner/MainBannerEdit
 import MainBanners from './router-pages/admin/home/main-banner/MainBanners';
 import LiveCreate from './router-pages/admin/LiveCreate';
 import LiveEdit from './router-pages/admin/LiveEdit';
+import NotificationListPage from './router-pages/admin/notification/NotificationListPage';
 import ProgramCreate from './router-pages/admin/program/ProgramCreate';
 import ProgramEdit from './router-pages/admin/program/ProgramEdit';
 import AdminPrograms from './router-pages/admin/program/Programs';
@@ -206,6 +206,9 @@ export const getAdminRoutes = () => {
 
       {/* 프로그램 참여자 */}
       <Route path="programs/:programId/users" element={<ProgramUsers />} />
+
+      {/* 출시알림신청 */}
+      <Route path="notification/list" element={<NotificationListPage />} />
     </Route>
   );
 };
