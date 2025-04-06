@@ -12,6 +12,7 @@ import {
   GridRowParams,
 } from '@mui/x-data-grid';
 import { Pencil, Trash } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 type Row = {
   title: string;
@@ -23,6 +24,8 @@ type Row = {
 };
 
 const NotificationListPage = () => {
+  const navigate = useNavigate();
+
   const columns: GridColDef<Row>[] = [
     {
       field: 'title',
@@ -64,7 +67,7 @@ const NotificationListPage = () => {
             key={'edit' + id}
             icon={<Pencil size={20} />}
             label="Edit"
-            onClick={() => console.log('수정')}
+            onClick={() => navigate(`/admin/notification/edit/${id}`)}
           />,
           <GridActionsCellItem
             key={'delete' + id}
@@ -97,7 +100,10 @@ const NotificationListPage = () => {
     <div className="p-5">
       <Header>
         <Heading>출시 알림 신청</Heading>
-        <Button variant="outlined" onClick={() => console.log('추가')}>
+        <Button
+          variant="outlined"
+          onClick={() => navigate('/admin/notification/create')}
+        >
           추가
         </Button>
       </Header>
