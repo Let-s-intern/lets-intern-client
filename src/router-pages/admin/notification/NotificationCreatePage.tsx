@@ -1,115 +1,87 @@
-import { LOCALIZED_YYYY_MDdd_HHmm } from '@/data/dayjsFormat';
-import dayjs from '@/lib/dayjs';
-import { generateUUID } from '@/utils/random';
-import Header from '@components/admin/ui/header/Header';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import useProgramMenuItems from '@/hooks/useProgramMenuItems';
+import { ProgramStatusEnum } from '@/schema';
 import Heading from '@components/admin/ui/heading/Heading';
-import { Button, Checkbox } from '@mui/material';
 import {
-  DataGrid,
-  GridActionsCellItem,
-  GridColDef,
-  GridRenderCellParams,
-  GridRowParams,
-} from '@mui/x-data-grid';
-import { Pencil, Trash } from 'lucide-react';
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  TextField,
+} from '@mui/material';
+import { DateTimePicker } from '@mui/x-date-pickers';
+import { useNavigate } from 'react-router-dom';
 
-type Row = {
-  title: string;
-  startDate: string;
-  endDate: string;
-  isVisible: boolean;
-} & {
-  id: number | string;
-};
+const { PREV } = ProgramStatusEnum.enum;
 
 const NotificationCreatePage = () => {
-  const columns: GridColDef<Row>[] = [
-    {
-      field: 'title',
-      headerName: '제목',
-      width: 200,
-    },
-    { field: 'startDate', headerName: '시작일', width: 240 },
-    { field: 'endDate', headerName: '종료일', width: 240 },
-    {
-      field: 'isVisible',
-      headerName: '노출 여부',
-      sortable: false,
-      width: 80,
-      type: 'boolean',
-      renderCell: (params: GridRenderCellParams<Row, boolean>) => (
-        <Checkbox
-          checked={params.value}
-          onChange={async () => {
-            // const { blogReviewId } = params.row;
-            // await patchReview.mutateAsync({
-            //   blogReviewId,
-            //   isVisible: !params.value,
-            // });
-            console.log('노출 여부 수정');
-          }}
-        />
-      ),
-    },
-    {
-      field: 'actions',
-      type: 'actions',
-      headerName: '관리',
-      width: 100,
-      getActions: (params: GridRowParams<Row>) => {
-        const id = params.id;
+  const navigate = useNavigate();
 
-        return [
-          <GridActionsCellItem
-            key={'edit' + id}
-            icon={<Pencil size={20} />}
-            label="Edit"
-            onClick={() => console.log('수정')}
-          />,
-          <GridActionsCellItem
-            key={'delete' + id}
-            icon={<Trash color="red" size={20} />}
-            label="Delete"
-            onClick={() => console.log('삭제')}
-          />,
-        ];
-      },
-    },
-  ];
-  const rows = [
-    {
-      id: generateUUID(),
-      title: '추천 프로그램 1',
-      startDate: dayjs('2025-04-06T08:37:00').format(LOCALIZED_YYYY_MDdd_HHmm),
-      endDate: dayjs('2025-05-06T08:37:00').format(LOCALIZED_YYYY_MDdd_HHmm),
-      isVisible: true,
-    },
-    {
-      id: generateUUID(),
-      title: '추천 프로그램 2',
-      startDate: dayjs('2025-04-06T08:37:00').format(LOCALIZED_YYYY_MDdd_HHmm),
-      endDate: dayjs('2025-08-06T08:37:00').format(LOCALIZED_YYYY_MDdd_HHmm),
-      isVisible: false,
-    },
-  ];
+  const { snackbar } = useAdminSnackbar();
+  const programMenuItems = useProgramMenuItems([PREV], false); // 모집 예정 AND 노출된 프로그램
 
   return (
     <div className="p-5">
-      <Header>
-        <Heading>출시 알림 신청</Heading>
-        <Button variant="outlined" onClick={() => console.log('추가')}>
-          추가
-        </Button>
-      </Header>
+      <Heading className="mb-5">출시 알림 신청 등록</Heading>
 
-      <main>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          disableRowSelectionOnClick
-          hideFooter
+      <div className="w-1/2 min-w-[37.5rem]">
+        <div className="mb-5">
+          <span className="mb-3 block text-xsmall14 text-neutral-40">
+            모집 예정 AND 노출된 프로그램만 선택할 수 있습니다.
+          </span>
+          <FormControl required fullWidth>
+            <InputLabel>프로그램 선택</InputLabel>
+            <Select label="프로그램 선택">{programMenuItems}</Select>
+          </FormControl>
+        </div>
+        <TextField
+          className="w-full"
+          variant="outlined"
+          name="title"
+          required
+          label="제목"
+          placeholder="제목을 입력하세요"
         />
-      </main>
+
+        <div className="my-5">
+          <p className="mb-3 text-xsmall14 text-neutral-40">
+            * 노출 여부 체크박스를 비활성화(off) 한 경우
+            <br />→ 노출 기간과 관계없이 홈 화면에 노출되지 않음
+            <br />* 노출 기간이 만료된 경우
+            <br />→ 노출 여부와 관계없이 홈 화면에서 비노출 처리
+          </p>
+          <div className="flex gap-3">
+            <DateTimePicker
+              className="w-full"
+              label="시작 일자"
+              name="startDate"
+            />
+            <DateTimePicker
+              className="w-full"
+              label="종료 일자"
+              name="endDate"
+            />
+          </div>
+        </div>
+
+        <div className="flex w-full justify-end gap-5">
+          <Button
+            variant="contained"
+            onClick={async () => {
+              // await post.mutateAsync(reqBody);
+              snackbar('등록되었습니다');
+            }}
+          >
+            저장
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => navigate('/admin/notification/list')}
+          >
+            취소
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };

@@ -17,6 +17,7 @@ export default function useProgramMenuItems(
   const programMenuItems = useMemo(() => {
     const items =
       data?.programList.map(({ programInfo }) => {
+        // 노출된 프로그램만 가져오기
         if (programInfo.isVisible) {
           return (
             <MenuItem
