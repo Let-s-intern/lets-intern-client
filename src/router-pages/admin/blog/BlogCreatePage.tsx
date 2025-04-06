@@ -21,6 +21,7 @@ import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import useBlogMenuItems from '@/hooks/useBlogMenuItems';
 import useProgramMenuItems from '@/hooks/useProgramMenuItems';
 import dayjs from '@/lib/dayjs';
+import { ProgramStatusEnum } from '@/schema';
 import { blogCategory } from '@/utils/convert';
 import Heading2 from '@components/common/blog/BlogHeading2';
 import {
@@ -39,7 +40,6 @@ import { Dayjs } from 'dayjs';
 import { ChangeEvent, FormEvent, MouseEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// const maxCtaTextLength = 23;
 const maxTitleLength = 49;
 const maxDescriptionLength = 100;
 const initialBlog = {
@@ -59,6 +59,8 @@ const initialContent: BlogContent = {
   }),
   blogRecommend: new Array(4).fill(null),
 };
+
+const { PROCEEDING, PREV } = ProgramStatusEnum.enum;
 
 const BlogCreatePage = () => {
   const navgiate = useNavigate();
@@ -82,7 +84,7 @@ const BlogCreatePage = () => {
   });
   const createBlogMutation = usePostBlogMutation();
 
-  const programMenuItems = useProgramMenuItems();
+  const programMenuItems = useProgramMenuItems([PROCEEDING, PREV]);
   const blogMenuItems = useBlogMenuItems();
 
   const selectedTagList = tags.filter((tag) =>

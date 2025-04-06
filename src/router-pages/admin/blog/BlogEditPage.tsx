@@ -20,6 +20,7 @@ import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import useBlogMenuItems from '@/hooks/useBlogMenuItems';
 import useProgramMenuItems from '@/hooks/useProgramMenuItems';
 import dayjs from '@/lib/dayjs';
+import { ProgramStatusEnum } from '@/schema';
 import { blogCategory } from '@/utils/convert';
 import Heading2 from '@components/common/blog/BlogHeading2';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
@@ -60,6 +61,8 @@ const initialBlog = {
   isDisplayed: '',
   tagList: [],
 };
+
+const { PROCEEDING, PREV } = ProgramStatusEnum.enum;
 
 interface EditBlog {
   title: string;
@@ -126,7 +129,7 @@ const BlogEditPage = () => {
   const [dateTime, setDateTime] = useState<Dayjs | null>(null);
   const [content, setContent] = useState<BlogContent>(initialContent);
 
-  const programMenuItems = useProgramMenuItems();
+  const programMenuItems = useProgramMenuItems([PROCEEDING, PREV]);
   const blogMenuItems = useBlogMenuItems();
 
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {
