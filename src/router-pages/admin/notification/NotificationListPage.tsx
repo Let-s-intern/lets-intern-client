@@ -100,12 +100,20 @@ const NotificationListPage = () => {
     <div className="p-5">
       <Header>
         <Heading>출시 알림 신청</Heading>
-        <Button
-          variant="outlined"
-          onClick={() => navigate('/admin/notification/create')}
-        >
-          추가
-        </Button>
+        <div className="flex items-center gap-4">
+          <Button
+            variant="outlined"
+            onClick={() => navigate('/admin/notification/create')}
+          >
+            출시 알림 신청 현황
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => navigate('/admin/notification/create')}
+          >
+            + 추가
+          </Button>
+        </div>
       </Header>
 
       <main>
