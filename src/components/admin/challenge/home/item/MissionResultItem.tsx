@@ -20,6 +20,9 @@ const MissionResultItem = ({ mission }: { mission: Mission }) => {
         <div className="text-center text-sm">
           지각 {mission.lateAttendanceCount}
         </div>
+        <div className="text-center text-sm">
+          반려 {mission.wrongAttendanceCount}
+        </div>
       </div>
       <div className="mt-2 flex items-center justify-center">
         <span
