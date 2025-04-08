@@ -3,11 +3,9 @@ import { convertReportTypeToLandingPath } from '@/api/report';
 import Intro1 from '@/assets/graphic/home/intro/1.svg?react';
 import Intro2 from '@/assets/graphic/home/intro/2.svg?react';
 import Intro3 from '@/assets/graphic/home/intro/3.svg?react';
-import Intro4 from '@/assets/graphic/home/intro/4.svg?react';
 import Intro5 from '@/assets/graphic/home/intro/5.svg?react';
 import Intro6 from '@/assets/graphic/home/intro/6.svg?react';
 import Intro8 from '@/assets/graphic/home/intro/8.svg?react';
-import Intro9 from '@/assets/graphic/home/intro/9.svg?react';
 import useActiveReports from '@/hooks/useActiveReports';
 import { twMerge } from '@/lib/twMerge';
 import { challengeTypeSchema } from '@/schema';
@@ -110,32 +108,33 @@ const HOME_INTRO = {
         href: convertReportTypeToLandingPath('PERSONAL_STATEMENT'),
         gaTitle: '자기소개서 피드백 받기',
       },
-      {
-        title: (
-          <>
-            멘토와 1:1
-            <br />
-            면접 준비하기
-          </>
-        ),
-        subTitle: '대기업',
-        icon: <Intro9 />,
-        href: 'https://letscareerinterview.imweb.me/',
-        gaTitle: '멘토와 1:1 면접 준비하기',
-      },
-      {
-        title: (
-          <>
-            멘토와 1:1
-            <br />
-            면접 준비하기
-          </>
-        ),
-        subTitle: '스타트업',
-        icon: <Intro4 width={44} height={44} />,
-        href: 'https://letscareerinterview.imweb.me/Startupinterview',
-        gaTitle: '멘토와 1:1 면접 준비하기',
-      },
+      // 면접 메뉴
+      // {
+      //   title: (
+      //     <>
+      //       멘토와 1:1
+      //       <br />
+      //       면접 준비하기
+      //     </>
+      //   ),
+      //   subTitle: '대기업',
+      //   icon: <Intro9 />,
+      //   href: 'https://letscareerinterview.imweb.me/',
+      //   gaTitle: '멘토와 1:1 면접 준비하기',
+      // },
+      // {
+      //   title: (
+      //     <>
+      //       멘토와 1:1
+      //       <br />
+      //       면접 준비하기
+      //     </>
+      //   ),
+      //   subTitle: '스타트업',
+      //   icon: <Intro4 width={44} height={44} />,
+      //   href: 'https://letscareerinterview.imweb.me/Startupinterview',
+      //   gaTitle: '멘토와 1:1 면접 준비하기',
+      // },
     ],
   },
 };
