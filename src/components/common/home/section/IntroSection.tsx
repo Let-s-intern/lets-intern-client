@@ -3,18 +3,14 @@ import { convertReportTypeToLandingPath } from '@/api/report';
 import Intro1 from '@/assets/graphic/home/intro/1.svg?react';
 import Intro2 from '@/assets/graphic/home/intro/2.svg?react';
 import Intro3 from '@/assets/graphic/home/intro/3.svg?react';
-import Intro4 from '@/assets/graphic/home/intro/4.svg?react';
 import Intro5 from '@/assets/graphic/home/intro/5.svg?react';
 import Intro6 from '@/assets/graphic/home/intro/6.svg?react';
 import Intro8 from '@/assets/graphic/home/intro/8.svg?react';
-import Intro9 from '@/assets/graphic/home/intro/9.svg?react';
 import useActiveReports from '@/hooks/useActiveReports';
 import { twMerge } from '@/lib/twMerge';
 import { challengeTypeSchema } from '@/schema';
-// import Intro7 from '@/assets/graphic/home/intro/7.svg?react';
-import clsx from 'clsx';
 import Link from 'next/link';
-import { ReactNode, useState } from 'react';
+import { ReactNode } from 'react';
 
 const {
   EXPERIENCE_SUMMARY,
@@ -112,125 +108,38 @@ const HOME_INTRO = {
         href: convertReportTypeToLandingPath('PERSONAL_STATEMENT'),
         gaTitle: '자기소개서 피드백 받기',
       },
-      {
-        title: (
-          <>
-            멘토와 1:1
-            <br />
-            면접 준비하기
-          </>
-        ),
-        subTitle: '대기업',
-        icon: <Intro9 />,
-        href: 'https://letscareerinterview.imweb.me/',
-        gaTitle: '멘토와 1:1 면접 준비하기',
-      },
-      {
-        title: (
-          <>
-            멘토와 1:1
-            <br />
-            면접 준비하기
-          </>
-        ),
-        subTitle: '스타트업',
-        icon: <Intro4 width={44} height={44} />,
-        href: 'https://letscareerinterview.imweb.me/Startupinterview',
-        gaTitle: '멘토와 1:1 면접 준비하기',
-      },
-
+      // 면접 메뉴
       // {
       //   title: (
       //     <>
-      //       포트폴리오
+      //       멘토와 1:1
       //       <br />
-      //       피드백 받기
+      //       면접 준비하기
       //     </>
       //   ),
-      //   icon: <Intro7 width={44} height={44} />,
-      //   href: convertReportTypeToLandingPath('PORTFOLIO'),
+      //   subTitle: '대기업',
+      //   icon: <Intro9 />,
+      //   href: 'https://letscareerinterview.imweb.me/',
+      //   gaTitle: '멘토와 1:1 면접 준비하기',
+      // },
+      // {
+      //   title: (
+      //     <>
+      //       멘토와 1:1
+      //       <br />
+      //       면접 준비하기
+      //     </>
+      //   ),
+      //   subTitle: '스타트업',
+      //   icon: <Intro4 width={44} height={44} />,
+      //   href: 'https://letscareerinterview.imweb.me/Startupinterview',
+      //   gaTitle: '멘토와 1:1 면접 준비하기',
       // },
     ],
-    // enterprise: [
-    //   {
-    //     title: (
-    //       <>
-    //         경험 정리
-    //         <br />
-    //         &이력서 준비
-    //       </>
-    //     ),
-    //     icon: <Intro1 width={44} height={44} />,
-    //     href: 'current=기필코',
-    //     gaTitle: '경험 정리 & 이력서 준비',
-    //   },
-    //   {
-    //     title: (
-    //       <>
-    //         자기소개서
-    //         <br />
-    //         준비하기
-    //       </>
-    //     ),
-    //     icon: <Intro2 width={44} height={44} />,
-    //     href: 'current=대기업,자기소개서',
-    //     gaTitle: '자기소개서 준비하기',
-    //   },
-    //   {
-    //     title: (
-    //       <>
-    //         인적성
-    //         <br />
-    //         준비하기
-    //       </>
-    //     ),
-    //     icon: <Intro3 width={44} height={44} />,
-    //     href: 'https://litt.ly/letscareer/sale/0U6p79r',
-    //     gaTitle: '인적성 준비하기',
-    //   },
-    //   {
-    //     title: (
-    //       <>
-    //         멘토와 1:1
-    //         <br />
-    //         면접 준비하기
-    //       </>
-    //     ),
-    //     icon: <Intro4 width={44} height={44} />,
-    //     href: 'https://letscareer.framer.website/',
-    //     gaTitle: '멘토와 1:1 면접 준비하기',
-    //   },
-    //   {
-    //     title: (
-    //       <>
-    //         이력서
-    //         <br />
-    //         피드백 받기
-    //       </>
-    //     ),
-    //     icon: <Intro5 width={44} height={44} />,
-    //     href: convertReportTypeToLandingPath('RESUME'),
-    //     gaTitle: '이력서 피드백 받기',
-    //   },
-    //   {
-    //     title: (
-    //       <>
-    //         자기소개서
-    //         <br />
-    //         피드백 받기
-    //       </>
-    //     ),
-    //     icon: <Intro6 width={44} height={44} />,
-    //     href: convertReportTypeToLandingPath('PERSONAL_STATEMENT'),
-    //     gaTitle: '자기소개서 피드백 받기',
-    //   },
-    // ],
   },
 };
 
 const IntroSection = () => {
-  const [basic, setBasic] = useState(true);
-
   const { data: experienceSummaryData } = useGetChallengeHome({
     type: EXPERIENCE_SUMMARY,
   });
@@ -278,27 +187,7 @@ const IntroSection = () => {
           {HOME_INTRO.title}
         </div>
         <div className="mx-auto flex w-full flex-col items-center gap-y-8 md:w-fit md:gap-y-11">
-          {/* <div className="flex w-fit items-center justify-center gap-x-2 rounded-xs bg-neutral-90 p-1.5">
-            <IntroButton
-              active={basic}
-              text="스타트업"
-              onClick={() => setBasic(true)}
-            />
-            <IntroButton
-              active={!basic}
-              text="대기업"
-              onClick={() => setBasic(false)}
-            />
-          </div> */}
-          <div
-            className={clsx(
-              'grid grid-cols-4 gap-x-4 gap-y-6 px-1 md:flex md:gap-10',
-              // {
-              //   // 'md:grid-cols-7': basic,
-              //   'md:grid-cols-6': !basic,
-              // },
-            )}
-          >
+          <div className="grid grid-cols-4 gap-x-4 gap-y-6 px-1 md:flex md:gap-10">
             {HOME_INTRO.items.basic.map((item, index) => {
               // 이력서 피드백 받기
               if (index === 4) {
@@ -358,33 +247,6 @@ const IntroSection = () => {
                 />
               );
             })}
-            {/* {basic
-              ? HOME_INTRO.items.basic.map((item, index) => (
-                  <IntroItem
-                    key={index}
-                    title={item.title}
-                    icon={item.icon}
-                    href={
-                      item.href.startsWith('current=')
-                        ? getCurrentChallenge(item.href.split('=')[1])
-                        : item.href
-                    }
-                    gaTitle={item.gaTitle}
-                  />
-                ))
-              : HOME_INTRO.items.enterprise.map((item, index) => (
-                  <IntroItem
-                    key={index}
-                    title={item.title}
-                    icon={item.icon}
-                    href={
-                      item.href.startsWith('current=')
-                        ? getCurrentChallenge(item.href.split('=')[1])
-                        : item.href
-                    }
-                    gaTitle={item.gaTitle}
-                  />
-                ))} */}
           </div>
         </div>
       </section>
@@ -393,32 +255,6 @@ const IntroSection = () => {
 };
 
 export default IntroSection;
-
-const IntroButton = ({
-  active,
-  text,
-  onClick,
-}: {
-  active: boolean;
-  text: string;
-  onClick: () => void;
-}) => {
-  return (
-    <button
-      className={clsx(
-        'rounded-xs px-4 py-1.5 text-center text-xsmall14 md:px-4 md:py-1.5 md:text-xsmall16',
-        {
-          'bg-white font-semibold text-neutral-0 shadow-10': active,
-          'bg-transparent font-medium text-neutral-45': !active,
-        },
-      )}
-      onClick={onClick}
-      data-intro-tab-active={active}
-    >
-      {text}
-    </button>
-  );
-};
 
 const IntroItem = ({
   title,
