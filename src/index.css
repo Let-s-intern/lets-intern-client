@@ -374,6 +374,11 @@ input[type='number'] {
   margin-left: -5px;
 }
 
+.required-star::after {
+  content: '*';
+  color: #fc5555;
+}
+
 /* MUI Snackbar 메시지 스타일 */
 .MuiSnackbarContent-message {
   font-family: 'Pretendard Variable', '-apple-system', 'BlinkMacSystemFont',
