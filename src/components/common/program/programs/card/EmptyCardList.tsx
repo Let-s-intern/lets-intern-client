@@ -1,4 +1,8 @@
-import { REMINDER_LINK } from '../../../../../utils/programConst';
+/**
+ * @deprecated 프로그램 출시 알림 신청 카드 리스트
+ */
+
+import { REMINDER_LINK } from '@/utils/programConst';
 
 const emptyList = [
   {
