@@ -8,7 +8,6 @@ import Banner from '@/components/common/program/banner/Banner';
 import FilterItem from '@/components/common/program/filter/FilterItem';
 import FilterSideBar from '@/components/common/program/filter/FilterSideBar';
 import MuiPagination from '@/components/common/program/pagination/MuiPagination';
-import EmptyCardList from '@/components/common/program/programs/card/EmptyCardList';
 import ProgramCard from '@/components/common/program/programs/card/ProgramCard';
 import LoadingContainer from '@/components/common/ui/loading/LoadingContainer';
 import {
@@ -382,20 +381,21 @@ const Programs = () => {
           isSuccess &&
           programData &&
           (programData.programList.length < 1 ? (
-            <>
-              <p className="text-1 py-2 text-center text-neutral-0/40">
+            <div className="mt-10 flex flex-col items-center gap-6">
+              <p className="text-center text-neutral-0/65">
                 혹시, 찾으시는 프로그램이 없으신가요?
-                <span className="flex flex-col md:flex-row md:justify-center md:gap-1">
-                  <span>
-                    출시 알림 신청을 통해 가장 먼저 신규 프로그램 소식을
-                    받아보세요.
-                  </span>
-                </span>
+                <br />
+                출시 알림 신청을 통해 <br className="md:hidden" />
+                가장 먼저 신규 프로그램 소식을 받아보세요.
               </p>
-              <section className="grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-3 md:gap-4">
-                <EmptyCardList />
-              </section>
-            </>
+              <button
+                type="button"
+                className="rounded-md border border-primary px-6 py-3 font-medium text-primary"
+                onClick={() => console.log('출시 알림 신청 모달 오픈')}
+              >
+                프로그램 출시 알림 신청하러 가기
+              </button>
+            </div>
           ) : (
             <>
               <section className="min-h-2/4 mb-4 grid grid-cols-2 gap-x-4 gap-y-5 md:mb-0 md:grid-cols-3 md:gap-4 xl:grid-cols-4">
