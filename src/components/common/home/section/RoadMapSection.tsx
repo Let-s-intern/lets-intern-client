@@ -1,3 +1,6 @@
+/**
+ * @description 홈에 추가될려고 했던 것.. 현재 사용 안 함
+ */
 import Roadmap1 from '@/assets/graphic/home/roadmap/1.svg?react';
 import Roadmap2 from '@/assets/graphic/home/roadmap/2.svg?react';
 import Roadmap3 from '@/assets/graphic/home/roadmap/3.svg?react';

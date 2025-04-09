@@ -1,4 +1,5 @@
 import { useMediaQuery } from '@mui/material';
+import { ChevronRight } from 'lucide-react';
 import { Fragment, ReactNode } from 'react';
 import { Grid } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -131,6 +132,26 @@ const ProgramContainer = (props: ProgramContainerProps) => {
               />
             </SwiperSlide>
           ))}
+          {props.programs.length <= 2 && (
+            <SwiperSlide>
+              <div className="flex aspect-[1.3/1] w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-sm bg-primary-5 md:gap-3">
+                <p className="text-center text-xxsmall10 font-medium text-neutral-0/65 md:text-xsmall14">
+                  원하는 프로그램이 없어서
+                  <br />
+                  아쉽다면,
+                </p>
+                <button
+                  type="button"
+                  className="flex items-center rounded-xxs bg-white p-2 pr-1 text-primary"
+                >
+                  <span className="text-xxsmall12 font-medium md:text-xsmall14">
+                    출시 알림 신청하기
+                  </span>
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </SwiperSlide>
+          )}
         </Swiper>
       )}
     </div>
