@@ -99,6 +99,7 @@ const Programs = () => {
   const resetPageable = () => {
     setPageable(initialPageable);
   };
+
   // 필터링 체크박스 클릭 이벤트
   const handleClickCheckbox = useCallback(
     (programType: string, value: string) => {
@@ -282,6 +283,7 @@ const Programs = () => {
         />
         <meta name="twitter:card" content="summary" />
       </Helmet>
+
       {/* 필터링 사이드바 */}
       <FilterSideBar
         setIsOpen={setIsOpen}
@@ -373,11 +375,15 @@ const Programs = () => {
             ))}
           </div>
         </section>
+
         {isError ? (
+          // 에러 메시지 표시
           <p className="whitespace-pre-line text-center">{ERROR_MESSAGE}</p>
         ) : loading || isLoading || isFetching ? (
+          // 로딩 표시
           <LoadingContainer text="프로그램 조회 중" />
         ) : (
+          // 프로그램이 없을 때
           isSuccess &&
           programData &&
           (programData.programList.length < 1 ? (
@@ -397,6 +403,7 @@ const Programs = () => {
               </button>
             </div>
           ) : (
+            // 프로그램이 있을 때
             <>
               <section className="min-h-2/4 mb-4 grid grid-cols-2 gap-x-4 gap-y-5 md:mb-0 md:grid-cols-3 md:gap-4 xl:grid-cols-4">
                 {programData.programList.map((program) => (
@@ -416,6 +423,7 @@ const Programs = () => {
             </>
           ))
         )}
+        {/* 프로그램 배너 */}
         <Banner />
       </main>
     </div>
