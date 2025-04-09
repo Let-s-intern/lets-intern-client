@@ -14,6 +14,7 @@ import MainBannerSection from '@components/common/home/section/MainBannerSection
 import MainCurationSection from '@components/common/home/section/MainCurationSection';
 import ReviewCurationSection from '@components/common/home/section/ReviewCurationSection';
 import ReviewSection from '@components/common/home/section/ReviewSection';
+import ProgramNotificationModal from '@components/common/program/ProgramNotificationModal';
 import { useState } from 'react';
 import 'swiper/css';
 import 'swiper/css/grid';
@@ -42,6 +43,7 @@ const Home = () => {
         <BlogCurationSection />
       </div>
       <Popup />
+      <ProgramNotificationModal isOpen={true} />
     </>
   );
 };

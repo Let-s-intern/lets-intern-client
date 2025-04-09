@@ -1,3 +1,5 @@
+'use client';
+
 import { useControlScroll } from '@/hooks/useControlScroll';
 import { twMerge } from '@/lib/twMerge';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
@@ -5,28 +7,30 @@ import ModalOverlay from './ModalOverlay';
 import ModalPortal from './ModalPortal';
 
 /**
- * 기본 모달 컴포넌트
- *
+ * 반응형 모달 컴포넌트
+ * @description 모바일에서는 페이지, 데스크탑에서는 모달처럼 보이는 모달 컴포넌트
  * 사용예시:
- * <BaseModal isOpen={isOpen} onClose={handleClose}>
+ * <ResponsiveModal isOpen={isOpen} onClose={handleClose}>
  *   <div>모달 내용</div>
- * </BaseModal>
+ * </ResponsiveModal>
  */
 
-interface BaseModalProps {
+interface Props {
   isOpen: boolean;
   onClose?: () => void;
   children?: React.ReactNode;
   className?: string;
+  wrapperClassName?: string;
   isLoading?: boolean;
 }
-const BaseModal = ({
+const ResponsiveModal = ({
   isOpen,
   onClose,
   children,
   className,
+  wrapperClassName,
   isLoading,
-}: BaseModalProps) => {
+}: Props) => {
   // 스크롤 제어
   useControlScroll(isOpen);
 
@@ -35,14 +39,17 @@ const BaseModal = ({
   return (
     <ModalPortal>
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center"
+        className={twMerge(
+          'fixed inset-0 z-20 flex items-center justify-center md:z-50',
+          wrapperClassName,
+        )}
         role="dialog"
         aria-modal="true"
       >
-        <ModalOverlay onClose={onClose} />
+        <ModalOverlay className="hidden md:block" onClose={onClose} />
         <div
           className={twMerge(
-            'relative w-full overflow-hidden rounded-ms bg-white',
+            'relative h-full w-full overflow-hidden bg-white pt-20 md:h-fit md:w-fit md:rounded-ms md:pt-0',
             className,
           )}
         >
@@ -61,4 +68,4 @@ const BaseModal = ({
   );
 };
 
-export default BaseModal;
+export default ResponsiveModal;
