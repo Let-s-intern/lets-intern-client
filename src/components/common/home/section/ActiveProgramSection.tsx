@@ -1,6 +1,7 @@
 import { useGetUserProgramQuery } from '@/api/program';
 import dayjs from '@/lib/dayjs';
-import { useMemo } from 'react';
+import ProgramNotificationModal from '@components/common/program/ProgramNotificationModal';
+import { useMemo, useState } from 'react';
 import ProgramContainer from '../ProgramContainer';
 import {
   getBadgeText,
@@ -9,6 +10,8 @@ import {
 } from './MainCurationSection';
 
 const ActiveProgramSection = () => {
+  const [isOpenModal, setIsOpenModal] = useState(false);
+
   const { data } = useGetUserProgramQuery({
     pageable: {
       size: 20,
@@ -44,6 +47,8 @@ const ActiveProgramSection = () => {
           gaItem="proceeding_program"
           gaTitle="지금 모집 중인 프로그램을 한눈에 확인해보세요"
           showGrid
+          isShowNotification
+          onClickNotification={() => setIsOpenModal(true)}
           title={
             <>
               지금 모집 중인 프로그램을 <br className="md:hidden" />
@@ -73,6 +78,11 @@ const ActiveProgramSection = () => {
           }))}
         />
       </section>
+      {/* 출시 알림 신청 모달 */}
+      <ProgramNotificationModal
+        isOpen={isOpenModal}
+        onClose={() => setIsOpenModal(false)}
+      />
     </>
   );
 };

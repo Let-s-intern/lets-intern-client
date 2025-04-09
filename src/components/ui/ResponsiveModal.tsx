@@ -40,7 +40,7 @@ const ResponsiveModal = ({
     <ModalPortal>
       <div
         className={twMerge(
-          'fixed inset-0 z-20 flex items-center justify-center md:z-50',
+          'fixed inset-0 z-10 flex items-center justify-center md:z-50',
           wrapperClassName,
         )}
         role="dialog"
@@ -49,7 +49,7 @@ const ResponsiveModal = ({
         <ModalOverlay className="hidden md:block" onClose={onClose} />
         <div
           className={twMerge(
-            'relative h-full w-full overflow-hidden bg-white pt-20 md:h-fit md:w-fit md:rounded-ms md:pt-0',
+            'relative min-h-screen w-full overflow-hidden bg-white pt-[60px] md:h-fit md:min-h-0 md:w-fit md:rounded-ms md:pt-0',
             className,
           )}
         >
