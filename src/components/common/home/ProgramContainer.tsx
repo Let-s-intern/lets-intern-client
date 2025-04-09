@@ -134,7 +134,7 @@ const ProgramContainer = (props: ProgramContainerProps) => {
           ))}
           {props.programs.length <= 2 && (
             <SwiperSlide>
-              <div className="flex aspect-[1.3/1] w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-sm bg-primary-5 md:gap-3">
+              <div className="flex aspect-[1.3/1] w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-sm bg-primary-5 bg-[url('/images/notification-bg.svg')] bg-cover bg-no-repeat md:gap-3">
                 <p className="text-center text-xxsmall10 font-medium text-neutral-0/65 md:text-xsmall14">
                   원하는 프로그램이 없어서
                   <br />
