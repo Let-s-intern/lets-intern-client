@@ -38,12 +38,10 @@ if (process.env.NO_INDEX === 'true') {
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <Providers>
-      <div>
-        <NavBar />
-        <div className="min-h-[31rem] w-full">{children}</div>
-        <Footer />
-        <ChannelTalkBtn />
-      </div>
+      <NavBar />
+      <main className="min-h-[31rem] w-full">{children}</main>
+      <Footer />
+      <ChannelTalkBtn />
     </Providers>
   );
 };

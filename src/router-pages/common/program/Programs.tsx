@@ -293,7 +293,7 @@ const Programs = () => {
         filterClassification={filterClassification}
         filterStatus={filterStatus}
       />
-      <main
+      <section
         className={clsx(
           'flex w-full flex-col items-center gap-4 px-5 py-8 md:gap-16 md:px-10 lg:px-[10%]',
         )}
@@ -425,7 +425,7 @@ const Programs = () => {
         )}
         {/* 프로그램 배너 */}
         <Banner />
-      </main>
+      </section>
     </div>
   );
 };

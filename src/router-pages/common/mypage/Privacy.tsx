@@ -32,7 +32,7 @@ const Privacy = () => {
   });
 
   return (
-    <main className="flex w-full flex-col gap-16 px-5 pb-16 md:w-4/5">
+    <section className="flex w-full flex-col gap-16 px-5 pb-16 md:w-4/5">
       <BasicInfo />
       {/* <AccountInfo /> */}
       <ChangePassword />
@@ -61,7 +61,7 @@ const Privacy = () => {
           </div>
         </AlertModal>
       )}
-    </main>
+    </section>
   );
 };
 

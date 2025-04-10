@@ -70,7 +70,7 @@ function ReviewModal({
           }
         }}
       >
-        <main
+        <section
           className="relative bg-white md:overflow-hidden md:rounded-ms"
           onClick={(e) => e.stopPropagation()} // 바탕 클릭 시 모달 닫힘 방지
         >
@@ -160,7 +160,7 @@ function ReviewModal({
               </span>
             )}
           </div>
-        </main>
+        </section>
       </div>
       <ReviewExitModal
         isOpen={isExitOpen}

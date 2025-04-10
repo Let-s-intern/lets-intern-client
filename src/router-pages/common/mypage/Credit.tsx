@@ -2,9 +2,9 @@ import CreditList from '../../../components/common/mypage/credit/section/CreditL
 
 const Credit = () => {
   return (
-    <main className="flex w-full flex-col gap-16 px-5 pb-20 md:px-0">
+    <section className="flex w-full flex-col gap-16 px-5 pb-20 md:px-0">
       <CreditList />
-    </main>
+    </section>
   );
 };
 

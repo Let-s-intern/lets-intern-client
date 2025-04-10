@@ -2,7 +2,11 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { uploadFile } from '@/api/file';
-import { convertReportTypeToDisplayName, ReportType, usePatchMyApplication } from '@/api/report';
+import {
+  convertReportTypeToDisplayName,
+  ReportType,
+  usePatchMyApplication,
+} from '@/api/report';
 import useRunOnce from '@/hooks/useRunOnce';
 import { ReportTypePathnameEnum } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
@@ -89,7 +93,7 @@ const ReportApplicationPage = () => {
       <div className="w-full">
         <BackHeader to="/report/management">제출하기</BackHeader>
 
-        <main className="mb-8 flex flex-col gap-10">
+        <section className="mb-8 flex flex-col gap-10">
           <CallOut
             className="bg-neutral-100"
             header="❗ 제출 전 꼭 읽어주세요"
@@ -101,7 +105,8 @@ const ReportApplicationPage = () => {
 
           {/* 프리미엄 채용공고 */}
           {reportApplication.reportPriceType === 'PREMIUM' &&
-            reportType !== ReportTypePathnameEnum.enum['personal-statement']  && (
+            reportType !==
+              ReportTypePathnameEnum.enum['personal-statement'] && (
               <PremiumSection
                 file={recruitmentFile}
                 dispatch={setRecruitmentFile}
@@ -144,7 +149,7 @@ const ReportApplicationPage = () => {
           >
             제출하기
           </BaseButton>
-        </main>
+        </section>
       </div>
 
       {/* 모바일 바텀시트 */}
