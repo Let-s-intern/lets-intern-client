@@ -1,9 +1,7 @@
-import CheckboxActive from '@/assets/icons/checkbox-active.svg?react';
-import CheckboxInActive from '@/assets/icons/checkbox-inactive.svg?react';
+import CheckListItem from '@components/common/notification/CheckListItem';
+import TermsAgreement from '@components/common/notification/TermsAgreement';
 import Input from '@components/common/ui/input/Input';
 import Select from '@components/common/ui/Select';
-
-import { memo, ReactNode } from 'react';
 
 const defaultOption = {
   value: '',
@@ -125,15 +123,13 @@ export default function Page() {
         </section>
         <hr />
         <section>
-          <ul>
-            {terms.map((item, index) => (
-              <TermsAgreement
-                key={index}
-                title={item.title}
-                description={item.description}
-              />
-            ))}
-          </ul>
+          {terms.map((item, index) => (
+            <TermsAgreement
+              key={index}
+              title={item.title}
+              description={item.description}
+            />
+          ))}
         </section>
       </section>
       {/* 하단 */}
@@ -141,46 +137,3 @@ export default function Page() {
     </>
   );
 }
-
-const CheckListItem = memo(function CheckListItem({
-  checked = false,
-  children,
-}: {
-  checked?: boolean;
-  children?: ReactNode;
-}) {
-  return (
-    <li className="flex items-center gap-2">
-      {checked ? (
-        <CheckboxActive className="shrink-0" />
-      ) : (
-        <CheckboxInActive className="shrink-0" />
-      )}
-      <span>{children}</span>
-    </li>
-  );
-});
-
-const TermsAgreement = memo(function TermsAgreement({
-  checked = false,
-  title,
-  description,
-}: {
-  checked?: boolean;
-  title: string;
-  description: string;
-}) {
-  return (
-    <li>
-      <div className="flex items-center gap-2">
-        {checked ? (
-          <CheckboxActive className="shrink-0" />
-        ) : (
-          <CheckboxInActive className="shrink-0" />
-        )}
-        <span>{title}</span>
-      </div>
-      <p className="whitespace-pre-line">{description}</p>
-    </li>
-  );
-});

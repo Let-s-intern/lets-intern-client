@@ -30,11 +30,14 @@ const Select = ({
 
   return (
     <div className="relative">
+      {/* label */}
       {label && (
         <label className={clsx({ 'required-star': required })} htmlFor={id}>
           {label}
         </label>
       )}
+
+      {/* select */}
       <div
         className={clsx(
           'mt-1 flex w-full cursor-pointer items-center justify-between rounded-md bg-neutral-95 p-3 text-xsmall14 outline-none',
@@ -54,6 +57,7 @@ const Select = ({
         <ChevronDown className="max-h-[204px] text-neutral-40" />
       </div>
 
+      {/* option 리스트 */}
       {isOpen && (
         <ul className="absolute mt-2 max-h-[204px] w-full overflow-y-auto rounded-md bg-white px-3 py-2">
           {options.map((opt, index) => (
