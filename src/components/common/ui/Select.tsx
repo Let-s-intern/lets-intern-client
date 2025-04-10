@@ -1,3 +1,5 @@
+'use client';
+
 import clsx from 'clsx';
 import { ChevronDown } from 'lucide-react';
 import React, { Fragment, useState } from 'react';

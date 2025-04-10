@@ -1,5 +1,6 @@
 import { useMediaQuery } from '@mui/material';
 import { ChevronRight } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { Fragment, ReactNode } from 'react';
 import { Grid } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -24,7 +25,6 @@ interface ProgramContainerProps {
   isDeadline?: boolean;
   emptyText?: string;
   isShowNotification?: boolean;
-  onClickNotification?: () => void;
 }
 
 const ProgramContainer = ({
@@ -40,8 +40,8 @@ const ProgramContainer = ({
   isDeadline,
   emptyText,
   isShowNotification = false,
-  onClickNotification,
 }: ProgramContainerProps) => {
+  const router = useRouter();
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   if (!navigation && programs.length < 1) return null;
@@ -155,7 +155,7 @@ const ProgramContainer = ({
             ((isMobile && programs.length <= 1) ||
               (!isMobile && programs.length <= 2)) && (
               <SwiperSlide>
-                <NotificationBtn onClick={onClickNotification} />
+                <NotificationBtn onClick={() => router.push('/notification')} />
               </SwiperSlide>
             )}
         </Swiper>

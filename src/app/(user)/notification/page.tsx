@@ -1,10 +1,9 @@
 import CheckboxActive from '@/assets/icons/checkbox-active.svg?react';
 import CheckboxInActive from '@/assets/icons/checkbox-inactive.svg?react';
-import ResponsiveModal from '@components/ui/ResponsiveModal';
-import { X } from 'lucide-react';
+import Input from '@components/common/ui/input/Input';
+import Select from '@components/common/ui/Select';
+
 import { memo, ReactNode } from 'react';
-import Input from '../ui/input/Input';
-import Select from '../ui/Select';
 
 const programs = [
   '[LIVE 워크숍] 링크드인 시작 방법부터 아티클 작성 계획까지 세우고 싶다면?',
@@ -48,27 +47,28 @@ const jobOptions = [
   },
 ];
 
-interface Props {
-  isOpen: boolean;
-  onClose?: () => void;
-  isLoading?: boolean;
-}
+const terms = [
+  {
+    title: '개인정보 수집 및 이용 동의 (필수)',
+    description:
+      '렛츠커리어는 앞서와 같이 귀하로부터 수집한 개인정보를 이용하여 수집일로부터 고객 동의 철회 시까지 앱 내 푸쉬 알림, 이메일, 문자메시지(SMS, MMS, 모바일 메시징 서비스 포함) 등을 통하여 귀하에게 렛츠커리어의 서비스 및 상품 추천, 각종 이벤트/혜택 등의 광고성 정보를 전달할 수 있습니다. 귀하는 이에 대한 동의를 거절할 수 있습니다. 다만, 동의를 거부할 경우 상품 및 이벤트 정보를 받을 수 없습니다.',
+  },
+  {
+    title: '마케팅 및 광고 수신 동의 (필수)',
+    description:
+      '렛츠커리어는 귀하의 개인정보를 다음과 같이 수집 및 이용하고자 합니다.\n수집 및 이용 목적: 렛츠커리어의 서비스 및 상품 추천, 각종 이벤트/혜택 등의 광고성 정보 전달\n수집하는 개인정보 항목: 성명, 취업 상태, 연락처(휴대전화번호, 이메일 주소 등) 등 앞의 문답 절차를 통해 제출한 개인정보 일체\n개인정보의 보유 및 이용기간, 렛츠커리어의 서비스 및 상품 추천, 각종 이벤트/혜택 등의 광고성 정보 전달을 위해 수집일로부터 고객 동의 철회 시까지 보관됩니다. 동의거부권 및 거부 시 불이익: 위와 같은 개인정보의 수집 및 이용을 거부할 권리가 있습니다. 다만, 동의를 거부할 경우 상품 및 이벤트 정보를 받을 수 없습니다.',
+  },
+];
 
-function ProgramNotificationModal({ isOpen, isLoading, onClose }: Props) {
+export default function Page() {
   return (
-    <ResponsiveModal
-      className="max-w-[45rem] overflow-y-auto md:h-full md:w-full"
-      wrapperClassName="md:py-[6.5rem]"
-      isOpen={isOpen}
-      isLoading={isLoading}
-    >
+    <>
       {/* 헤더 */}
       <section className="flex items-center justify-between px-5 py-6">
         <p>프로그램 출시 알림 신청</p>
-        <X onClick={onClose} />
       </section>
       {/* 본문 */}
-      <div className="px-5">
+      <section className="px-5">
         <section>
           <p>
             출시 알림을 받고 싶은 프로그램을 <br className="md:hidden" />
@@ -114,11 +114,21 @@ function ProgramNotificationModal({ isOpen, isLoading, onClose }: Props) {
           <Select label="관심 직무" required options={jobOptions} />
         </section>
         <hr />
-        <section>약관 동의</section>
-      </div>
+        <section>
+          <ul>
+            {terms.map((item, index) => (
+              <TermsAgreement
+                key={index}
+                title={item.title}
+                description={item.description}
+              />
+            ))}
+          </ul>
+        </section>
+      </section>
       {/* 하단 */}
       <section>버튼</section>
-    </ResponsiveModal>
+    </>
   );
 }
 
@@ -141,4 +151,26 @@ const CheckListItem = memo(function CheckListItem({
   );
 });
 
-export default ProgramNotificationModal;
+const TermsAgreement = memo(function TermsAgreement({
+  checked = false,
+  title,
+  description,
+}: {
+  checked?: boolean;
+  title: string;
+  description: string;
+}) {
+  return (
+    <li>
+      <div className="flex items-center gap-2">
+        {checked ? (
+          <CheckboxActive className="shrink-0" />
+        ) : (
+          <CheckboxInActive className="shrink-0" />
+        )}
+        <span>{title}</span>
+      </div>
+      <p className="whitespace-pre-line">{description}</p>
+    </li>
+  );
+});
