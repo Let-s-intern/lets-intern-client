@@ -4,11 +4,6 @@ import clsx from 'clsx';
 import { ChevronDown } from 'lucide-react';
 import React, { Fragment, useState } from 'react';
 
-const DEFAULT_OPTION = {
-  value: '',
-  caption: '관심 직무를 선택해주세요',
-};
-
 interface Option {
   value: string;
   caption: string;
@@ -17,6 +12,7 @@ interface Option {
 interface Props {
   label?: string;
   options: Option[];
+  defaultOption?: Option;
 }
 
 const Select = ({
@@ -24,9 +20,13 @@ const Select = ({
   id,
   options,
   required,
+  defaultOption = {
+    value: '',
+    caption: label ?? '선택해주세요',
+  },
 }: Props & React.SelectHTMLAttributes<HTMLSelectElement>) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState<Option>(DEFAULT_OPTION);
+  const [selected, setSelected] = useState<Option>(defaultOption);
 
   return (
     <div className="relative">

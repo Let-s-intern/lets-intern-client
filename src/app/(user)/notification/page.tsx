@@ -5,6 +5,11 @@ import Select from '@components/common/ui/Select';
 
 import { memo, ReactNode } from 'react';
 
+const defaultOption = {
+  value: '',
+  caption: '관심 직무를 선택해주세요',
+};
+
 const programs = [
   '[LIVE 워크숍] 링크드인 시작 방법부터 아티클 작성 계획까지 세우고 싶다면?',
   '[피드백] 이력서 진단 REPORT, 자기소개서 진단 REPORT ',
@@ -111,7 +116,12 @@ export default function Page() {
               <Input className="w-14" required name="phoneNumber-3" />
             </div>
           </div>
-          <Select label="관심 직무" required options={jobOptions} />
+          <Select
+            label="관심 직무"
+            required
+            options={jobOptions}
+            defaultOption={defaultOption}
+          />
         </section>
         <hr />
         <section>
