@@ -6,9 +6,9 @@ import { ChangeEvent, ReactNode, useCallback, useState } from 'react';
 import BaseButton from '../ui/button/BaseButton';
 import Input from '../ui/input/Input';
 import Label from '../ui/input/Label';
-import CheckListItem from './CheckListItem';
 import InstructionText from './InstructionText';
 import JobSelect from './JobSelect';
+import ProgramSection from './ProgramSection';
 import TermsAgreement from './TermsAgreement';
 
 const jobOptions = [
@@ -19,27 +19,6 @@ const jobOptions = [
   '마케팅/영업',
   '운영/CX',
   '기타',
-];
-
-const programs = [
-  {
-    programId: 1,
-    title:
-      '[LIVE 워크숍] 링크드인 시작 방법부터 아티클 작성 계획까지 세우고 싶다면?',
-  },
-  {
-    programId: 2,
-    title: '[피드백] 이력서 진단 REPORT, 자기소개서 진단 REPORT ',
-  },
-  {
-    programId: 3,
-    title: '[챌린지] 자기소개서 2주 완성 / 포트폴리오 2주 완성 챌린지',
-  },
-  {
-    programId: 4,
-    title:
-      '[LIVE 워크숍] 링크드인 시작 방법부터 아티클 작성 계획까지 세우고 싶다면?',
-  },
 ];
 
 const terms = [
@@ -100,17 +79,6 @@ function NotificationContainer() {
   const [agreements, setAgreements] = useState([false, false]); // 약관 동의
 
   const isOtherJob = selectedJobs.includes('기타');
-  const instruction = pid ? (
-    <>
-      ✅ 선택하신 프로그램이 출시되면 제일 먼저 알려드릴게요. <br />
-      추가로 알림을 받고 싶은 프로그램이 있다면 모두 선택해 주세요.
-    </>
-  ) : (
-    <>
-      출시 알림을 받고 싶은 프로그램을 <br className="md:hidden" />
-      모두 선택해 주세요.
-    </>
-  );
 
   const handleChangeUsername = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -142,26 +110,14 @@ function NotificationContainer() {
   return (
     <>
       {/* 프로그램 리스트 */}
-      <section className="mb-8">
-        <InstructionText>{instruction}</InstructionText>
-        <ul className="mt-5 flex flex-col gap-4">
-          {programs.map((item) => (
-            <CheckListItem
-              key={item.programId}
-              checked={selectedPids.includes(item.programId)}
-              onChange={(checked) =>
-                checked
-                  ? setSelectedPids((prev) => [...prev, item.programId])
-                  : setSelectedPids((prev) =>
-                      prev.filter((id) => id !== item.programId),
-                    )
-              }
-            >
-              {item.title}
-            </CheckListItem>
-          ))}
-        </ul>
-      </section>
+      <ProgramSection
+        selectedPids={selectedPids}
+        onChange={(checked, pid) =>
+          checked
+            ? setSelectedPids((prev) => [...prev, pid])
+            : setSelectedPids((prev) => prev.filter((id) => id !== pid))
+        }
+      />
       <hr />
 
       {/* 사용자 정보 */}
