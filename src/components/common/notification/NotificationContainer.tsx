@@ -7,6 +7,7 @@ import BaseButton from '../ui/button/BaseButton';
 import Input from '../ui/input/Input';
 import Label from '../ui/input/Label';
 import CheckListItem from './CheckListItem';
+import InstructionText from './InstructionText';
 import JobSelect from './JobSelect';
 import TermsAgreement from './TermsAgreement';
 
@@ -284,10 +285,6 @@ function NotificationContainer() {
       </BaseButton>
     </>
   );
-}
-
-function InstructionText({ children }: { children: ReactNode }) {
-  return <p className="font-semibold text-neutral-0">{children}</p>;
 }
 
 function UnderlineText({ children }: { children: ReactNode }) {
