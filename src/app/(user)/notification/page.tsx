@@ -4,8 +4,7 @@ import Input from '@components/common/ui/input/Input';
 import Select from '@components/common/ui/Select';
 
 const defaultOption = {
-  value: '',
-  caption: '관심 직무를 선택해주세요',
+  '': '관심 직무를 선택해주세요',
 };
 
 const programs = [
@@ -15,40 +14,15 @@ const programs = [
   '[LIVE 워크숍] 링크드인 시작 방법부터 아티클 작성 계획까지 세우고 싶다면?',
 ];
 
-const jobOptions = [
-  {
-    value: 'developer',
-    caption: '웹 개발자',
-  },
-  {
-    value: 'marketer',
-    caption: '마케터',
-  },
-  {
-    value: 'planner',
-    caption: '기획자',
-  },
-  {
-    value: 'designer',
-    caption: '디자이너',
-  },
-  {
-    value: 'assetManager',
-    caption: '자산운용가',
-  },
-  {
-    value: 'game developer',
-    caption: '게임 개발자',
-  },
-  {
-    value: 'accountant',
-    caption: '회계사',
-  },
-  {
-    value: 'content marketer',
-    caption: '콘텐츠 마케터',
-  },
-];
+const jobOptions = {
+  business: '경영/인사/재무',
+  strategy: '전략/기획/관리',
+  engineering: '기술/개발/엔지니어링',
+  design: '디자인/크리에이티브',
+  marketing: '마케팅/영업',
+  operation: '운영/CX',
+  other: '기타',
+};
 
 const terms = [
   {
@@ -63,6 +37,7 @@ const terms = [
   },
 ];
 
+// TODO: 쿼리로 프로그램 아이디 받기
 export default function Page() {
   return (
     <>
@@ -118,7 +93,7 @@ export default function Page() {
             label="관심 직무"
             required
             options={jobOptions}
-            defaultOption={defaultOption}
+            placeholder="관심 직무를 선택해주세요"
           />
         </section>
         <hr />
