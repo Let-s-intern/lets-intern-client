@@ -4,18 +4,21 @@ import { memo, ReactNode, useState } from 'react';
 import CheckListItem from './CheckListItem';
 
 interface Props {
-  checked?: boolean;
+  checked: boolean;
   title: string;
   description: ReactNode;
+  onChange: (value: boolean) => void;
 }
 
-function TermsAgreement({ checked = false, title, description }: Props) {
+function TermsAgreement({ checked, title, description, onChange }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div>
       <ul className="flex items-center justify-between">
-        <CheckListItem checked={checked}>{title}</CheckListItem>
+        <CheckListItem checked={checked} onChange={onChange}>
+          {title}
+        </CheckListItem>
         <span
           className="cursor-pointer text-xsmall14 text-neutral-50"
           onClick={() => setIsOpen(!isOpen)}
@@ -32,4 +35,7 @@ function TermsAgreement({ checked = false, title, description }: Props) {
   );
 }
 
-export default memo(TermsAgreement);
+export default memo(
+  TermsAgreement,
+  (oldProps, newProps) => oldProps.checked === newProps.checked,
+);

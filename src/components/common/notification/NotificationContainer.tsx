@@ -21,10 +21,24 @@ const jobOptions = [
 ];
 
 const programs = [
-  '[LIVE 워크숍] 링크드인 시작 방법부터 아티클 작성 계획까지 세우고 싶다면?',
-  '[피드백] 이력서 진단 REPORT, 자기소개서 진단 REPORT ',
-  '[챌린지] 자기소개서 2주 완성 / 포트폴리오 2주 완성 챌린지',
-  '[LIVE 워크숍] 링크드인 시작 방법부터 아티클 작성 계획까지 세우고 싶다면?',
+  {
+    programId: 1,
+    title:
+      '[LIVE 워크숍] 링크드인 시작 방법부터 아티클 작성 계획까지 세우고 싶다면?',
+  },
+  {
+    programId: 2,
+    title: '[피드백] 이력서 진단 REPORT, 자기소개서 진단 REPORT ',
+  },
+  {
+    programId: 3,
+    title: '[챌린지] 자기소개서 2주 완성 / 포트폴리오 2주 완성 챌린지',
+  },
+  {
+    programId: 4,
+    title:
+      '[LIVE 워크숍] 링크드인 시작 방법부터 아티클 작성 계획까지 세우고 싶다면?',
+  },
 ];
 
 const terms = [
@@ -79,7 +93,10 @@ function NotificationContainer() {
   const [selectedJobs, setSelectedJobs] = useState<string[]>([]);
   const [isOpenDropdown, setIsOpenDropdown] = useState(false);
   const [userInfo, setUserInfo] = useState(defaultUserInfo);
-  const [selectedPids, setSelectedPids] = useState(pid ? [pid] : []); // 선택한 프로그램 ID 리스트
+  const [selectedPids, setSelectedPids] = useState(
+    Number(pid) ? [Number(pid)] : [],
+  ); // 선택한 프로그램 ID 리스트
+  const [agreements, setAgreements] = useState([false, false]); // 약관 동의
 
   const isOtherJob = selectedJobs.includes('기타');
   const instruction = pid ? (
@@ -127,8 +144,20 @@ function NotificationContainer() {
       <section className="mb-8">
         <InstructionText>{instruction}</InstructionText>
         <ul className="mt-5 flex flex-col gap-4">
-          {programs.map((item, index) => (
-            <CheckListItem key={index}>{item}</CheckListItem>
+          {programs.map((item) => (
+            <CheckListItem
+              key={item.programId}
+              checked={selectedPids.includes(item.programId)}
+              onChange={(checked) =>
+                checked
+                  ? setSelectedPids((prev) => [...prev, item.programId])
+                  : setSelectedPids((prev) =>
+                      prev.filter((id) => id !== item.programId),
+                    )
+              }
+            >
+              {item.title}
+            </CheckListItem>
           ))}
         </ul>
       </section>
@@ -237,6 +266,14 @@ function NotificationContainer() {
             key={index}
             title={item.title}
             description={item.description}
+            checked={agreements[index]}
+            onChange={(checked) =>
+              setAgreements((prev) => {
+                const newArr = [...prev];
+                newArr[index] = checked;
+                return newArr;
+              })
+            }
           />
         ))}
       </section>

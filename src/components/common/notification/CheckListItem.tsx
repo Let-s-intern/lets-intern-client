@@ -1,23 +1,20 @@
-'use client';
-
 import CheckboxActive from '@/assets/icons/checkbox-active.svg?react';
 import CheckboxInActive from '@/assets/icons/checkbox-inactive.svg?react';
-import { memo, ReactNode, useState } from 'react';
+import { memo, ReactNode } from 'react';
 
 interface Props {
-  checked?: boolean;
+  checked: boolean;
   children?: ReactNode;
+  onChange: (value: boolean) => void;
 }
 
-function CheckListItem({ checked = false, children }: Props) {
-  const [selected, setSelected] = useState(checked);
-
+function CheckListItem({ checked = false, children, onChange }: Props) {
   return (
     <li
       className="flex cursor-pointer items-center gap-2"
-      onClick={() => setSelected(!selected)}
+      onClick={() => onChange && onChange(!checked)}
     >
-      {selected ? (
+      {checked ? (
         <CheckboxActive className="shrink-0" />
       ) : (
         <CheckboxInActive className="shrink-0" />
@@ -29,4 +26,7 @@ function CheckListItem({ checked = false, children }: Props) {
   );
 }
 
-export default memo(CheckListItem);
+export default memo(
+  CheckListItem,
+  (oldProps, newProps) => oldProps.checked === newProps.checked,
+);
