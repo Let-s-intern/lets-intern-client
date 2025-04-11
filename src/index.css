@@ -355,6 +355,7 @@ input[type='number'] {
   transition-timing-function: linear;
 }
 
+/* speech-bubble */
 .speech-bubble {
   position: relative;
   border-radius: 0.4em;
@@ -383,4 +384,10 @@ input[type='number'] {
 .MuiSnackbarContent-message {
   font-family: 'Pretendard Variable', '-apple-system', 'BlinkMacSystemFont',
     'system-ui', 'Roboto', 'sans-serif';
+}
+
+/* maw width */
+.mw-720 {
+  max-width: 720px;
+  margin: 0 auto;
 }

@@ -12,16 +12,15 @@ interface Props {
 function CheckListItem({ checked = false, children }: Props) {
   const [selected, setSelected] = useState(checked);
 
-  const handleClick = () => {
-    setSelected(!selected);
-  };
-
   return (
-    <li className="flex items-center gap-2">
+    <li
+      className="flex cursor-pointer items-center gap-2"
+      onClick={() => setSelected(!selected)}
+    >
       {selected ? (
-        <CheckboxActive onClick={handleClick} className="shrink-0" />
+        <CheckboxActive className="shrink-0" />
       ) : (
-        <CheckboxInActive onClick={handleClick} className="shrink-0" />
+        <CheckboxInActive className="shrink-0" />
       )}
       <span className="text-xsmall14 font-medium text-neutral-10">
         {children}
