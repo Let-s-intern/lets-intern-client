@@ -97,7 +97,7 @@ const ReportApplyPage = () => {
           진단서 신청하기
         </BackHeader>
 
-        <main className="mb-8 mt-6 flex flex-col gap-10">
+        <section className="mb-8 mt-6 flex flex-col gap-10">
           {/* 프로그램 정보 */}
           <ProgramInfoSection
             onChangeRadio={(_, value) => setIsSubmitNow(value)}
@@ -165,7 +165,7 @@ const ReportApplyPage = () => {
           >
             다음
           </BaseButton>
-        </main>
+        </section>
       </div>
 
       <BottomSheet className="mx-auto max-w-[55rem] md:hidden">

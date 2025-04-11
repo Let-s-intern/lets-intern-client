@@ -187,3 +187,24 @@ export const usePatchUser = (
     },
   });
 };
+
+const participationInfoSchema = z.object({
+  name: z.string(),
+  phoneNumber: z.string(),
+  email: z.string(),
+  contactEmail: z.string().optional().nullable(),
+});
+
+export type ParticipationInfo = z.infer<typeof participationInfoSchema>;
+
+export const useGetParticipationInfo = () => {
+  return useQuery({
+    queryKey: ['useGetParticipationInfo'],
+    queryFn: async () => {
+      const res = await axios.get('/user/participation-info');
+      return participationInfoSchema.parse(res.data.data);
+    },
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+};

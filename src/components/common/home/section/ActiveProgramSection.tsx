@@ -44,6 +44,7 @@ const ActiveProgramSection = () => {
           gaItem="proceeding_program"
           gaTitle="지금 모집 중인 프로그램을 한눈에 확인해보세요"
           showGrid
+          isShowNotification
           title={
             <>
               지금 모집 중인 프로그램을 <br className="md:hidden" />

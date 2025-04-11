@@ -27,14 +27,14 @@ const Application = () => {
   if (isLoading) return <></>;
 
   return (
-    <main className="flex w-full flex-col gap-16 px-5 pb-20">
+    <section className="flex w-full flex-col gap-16 px-5 pb-20">
       <ApplySection
         applicationList={waitingApplicationList}
         refetch={() => refetch()}
       />
       <ParticipateSection applicationList={inProgressApplicationList} />
       <CompleteSection applicationList={completedApplicationList} />
-    </main>
+    </section>
   );
 };
 

@@ -35,7 +35,7 @@ const About = () => {
         <meta name="twitter:card" content="summary" />
       </Helmet>
       <AboutHeader />
-      <main>
+      <div>
         <ProblemSection />
         <SolutionSection />
         <IntroSection />
@@ -46,7 +46,7 @@ const About = () => {
         <PartnerSection />
         <EndSection />
         <ContactSection />
-      </main>
+      </div>
     </div>
   );
 };

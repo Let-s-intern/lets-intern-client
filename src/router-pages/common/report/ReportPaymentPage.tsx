@@ -32,7 +32,7 @@ const ReportPaymentPage = () => {
       >
         결제하기
       </BackHeader>
-      <main className="mb-8 flex flex-col gap-10">
+      <section className="mb-8 flex flex-col gap-10">
         <ProgramInfoSection />
         <UsereInfoSection />
         <ReportPaymentSection />
@@ -59,7 +59,7 @@ const ReportPaymentPage = () => {
         >
           결제하기
         </BaseButton>
-      </main>
+      </section>
 
       {/* 모바일 바텀시트 */}
       <BottomSheet className="mx-auto md:hidden">

@@ -21,12 +21,12 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 const Home = () => {
-  const [isShow, setIsShow] = useState(false);
+  const [isShowBanner, setIsShowBanner] = useState(false);
 
   return (
     <>
-      <TopBanner isShow={isShow} setIsShow={setIsShow} />
-      {isShow && <div className="h-20 w-full md:h-14" />}
+      <TopBanner isShow={isShowBanner} setIsShow={setIsShowBanner} />
+      {isShowBanner && <div className="h-20 w-full md:h-14" />}
       <div className="mb-20 flex w-full flex-col items-center justify-center pt-10 md:mb-44 md:pt-16">
         <IntroSection />
         <MainBannerSection />

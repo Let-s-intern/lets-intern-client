@@ -238,9 +238,9 @@ export const useMypageApplicationsQuery = () => {
 };
 
 const participationInfoSchema = z.object({
-  name: z.string().nullable().optional(),
-  phoneNumber: z.string().nullable().optional(),
-  email: z.string().nullable().optional(),
+  name: z.string(),
+  phoneNumber: z.string(),
+  email: z.string(),
   contactEmail: z.string().nullable().optional(),
 });
 

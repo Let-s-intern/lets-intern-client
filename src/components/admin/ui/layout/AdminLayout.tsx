@@ -153,7 +153,7 @@ const AdminLayout = () => {
   if (!isAdmin) return null;
 
   return (
-    <div className="flex">
+    <main className="flex">
       <aside>
         <nav className="sticky left-0 top-0 z-50 flex h-screen w-48 flex-col gap-4 overflow-y-auto bg-[#353535] py-20 pt-4 text-white shadow-xl">
           {navData.map((navSection, index) => (
@@ -192,7 +192,7 @@ const AdminLayout = () => {
           <Outlet />
         </AdminSnackbarProvider>
       </section>
-    </div>
+    </main>
   );
 };
 

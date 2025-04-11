@@ -18,7 +18,7 @@ const NextBackHeader = ({
   onClick,
 }: BackHeaderProps) => {
   return (
-    <header className={twMerge('my-6 flex items-center gap-3', className)}>
+    <section className={twMerge('my-6 flex items-center gap-3', className)}>
       {!hideBack && (
         <Link href={to ?? '#'} onClick={onClick}>
           <MdOutlineArrowBack size={'1.5rem'} />
@@ -26,7 +26,7 @@ const NextBackHeader = ({
       )}
 
       <h1 className="text-small20 font-semibold">{children}</h1>
-    </header>
+    </section>
   );
 };
 
