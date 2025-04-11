@@ -23,9 +23,11 @@ const Select = ({
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
 
+  const hasSelectedValues = selectedValues.length > 0;
+
   return (
     <>
-      {/* 필터 바깥 클릭 시 필터 닫기 */}
+      {/* 드롭다운 바깥 쪽 클릭 시 닫기 */}
       {isOpen && (
         <div className="fixed inset-0" onClick={() => setIsOpen(false)} />
       )}
@@ -48,14 +50,14 @@ const Select = ({
         >
           <span
             className={
-              selectedValues.length === 0
-                ? 'text-neutral-0/35'
-                : 'font-medium text-neutral-10'
+              hasSelectedValues
+                ? 'font-medium text-neutral-10'
+                : 'text-neutral-0/35'
             }
           >
-            {selectedValues.length === 0
-              ? placeholder
-              : selectedValues.map((v) => options[v]).join(', ')}
+            {hasSelectedValues
+              ? selectedValues.map((v) => options[v]).join(', ')
+              : placeholder}
           </span>
           <ChevronDown className="max-h-[204px] text-neutral-40" />
         </div>
