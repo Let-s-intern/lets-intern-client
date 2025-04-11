@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useState } from 'react';
+import { memo, ReactNode, useState } from 'react';
 import CheckListItem from './CheckListItem';
 
 interface Props {
@@ -32,4 +32,4 @@ function TermsAgreement({ checked = false, title, description }: Props) {
   );
 }
 
-export default TermsAgreement;
+export default memo(TermsAgreement);

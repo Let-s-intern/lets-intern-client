@@ -1,5 +1,5 @@
 import { twMerge } from '@/lib/twMerge';
-import { ReactNode } from 'react';
+import { memo, ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
@@ -26,4 +26,4 @@ function Label({
   );
 }
 
-export default Label;
+export default memo(Label);

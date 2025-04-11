@@ -1,4 +1,5 @@
 import { twMerge } from '@/lib/twMerge';
+import { memo } from 'react';
 
 const Input = ({
   className,
@@ -19,4 +20,4 @@ const Input = ({
   );
 };
 
-export default Input;
+export default memo(Input);
