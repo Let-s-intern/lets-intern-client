@@ -2,6 +2,7 @@ import CheckListItem from '@components/common/notification/CheckListItem';
 import TermsAgreement from '@components/common/notification/TermsAgreement';
 import Input from '@components/common/ui/input/Input';
 import Label from '@components/common/ui/input/Label';
+import NextBackHeader from '@components/common/ui/NextBackHeader';
 import Select from '@components/common/ui/Select';
 
 const programs = [
@@ -38,12 +39,9 @@ const terms = [
 export default function Page() {
   return (
     <>
-      {/* 헤더 */}
-      <section className="flex items-center justify-between px-5 py-6">
-        <p>프로그램 출시 알림 신청</p>
-      </section>
-      {/* 본문 */}
       <section className="px-5">
+        {/* 헤더 */}
+        <NextBackHeader hideBack>프로그램 출시 알림 신청</NextBackHeader>
         <section>
           <p>
             출시 알림을 받고 싶은 프로그램을 <br className="md:hidden" />
