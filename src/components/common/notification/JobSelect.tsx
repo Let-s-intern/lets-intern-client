@@ -109,4 +109,9 @@ const OptionListItem = memo(
   (oldProps, newProps) => oldProps.isSelected === newProps.isSelected,
 );
 
-export default JobSelect;
+export default memo(
+  JobSelect,
+  (oldProps, newProps) =>
+    oldProps.selectedOpts.length === newProps.selectedOpts.length &&
+    oldProps.isOpen === newProps.isOpen,
+);

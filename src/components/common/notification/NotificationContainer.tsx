@@ -4,22 +4,9 @@ import { useGetParticipationInfo } from '@/api/application';
 import { useSearchParams } from 'next/navigation';
 import { ChangeEvent, ReactNode, useCallback, useState } from 'react';
 import BaseButton from '../ui/button/BaseButton';
-import Input from '../ui/input/Input';
-import Label from '../ui/input/Label';
-import InstructionText from './InstructionText';
-import JobSelect from './JobSelect';
 import ProgramSection from './ProgramSection';
 import TermsAgreement from './TermsAgreement';
-
-const jobOptions = [
-  '경영/인사/재무',
-  '전략/기획/관리',
-  '기술/개발/엔지니어링',
-  '디자인/크리에이티브',
-  '마케팅/영업',
-  '운영/CX',
-  '기타',
-];
+import UserSection from './UserSection';
 
 const terms = [
   {
@@ -78,8 +65,6 @@ function NotificationContainer() {
   ); // 선택한 프로그램 ID 리스트
   const [agreements, setAgreements] = useState([false, false]); // 약관 동의
 
-  const isOtherJob = selectedJobs.includes('기타');
-
   const handleChangeUsername = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       setUserInfo((prev) => ({
@@ -107,6 +92,24 @@ function NotificationContainer() {
     [],
   );
 
+  const handleChangeOption = useCallback(
+    (opt: string) => {
+      // '기타'를 선택한 경우
+      if (opt === '기타' && !selectedJobs.includes(opt)) {
+        setSelectedJobs(['기타']);
+        setIsOpenDropdown(false);
+        return;
+      }
+      // 있으면 삭제, 없으면 추가
+      setSelectedJobs((prev) =>
+        prev.includes(opt)
+          ? prev.filter((v) => v !== opt)
+          : [...prev.filter((v) => v !== '기타'), opt],
+      );
+    },
+    [selectedJobs],
+  );
+
   return (
     <>
       {/* 프로그램 리스트 */}
@@ -121,99 +124,15 @@ function NotificationContainer() {
       <hr />
 
       {/* 사용자 정보 */}
-      <section className="flex flex-col gap-5 py-8">
-        <InstructionText>
-          출시 알림을 받을 수 있도록 <br className="md:hidden" />
-          아래 정보를 입력해주세요
-        </InstructionText>
-        {/* 이름 */}
-        <div>
-          <Label htmlFor="name" required>
-            이름
-          </Label>
-          <Input
-            id="name"
-            className="mt-1 w-full"
-            required
-            name="name"
-            placeholder="이름을 입력해주세요"
-            readOnly={!!userData}
-            defaultValue={userData ? userData.name : undefined}
-            onChange={handleChangeUsername}
-            maxLength={100}
-          />
-        </div>
-        {/* 휴대폰 번호 */}
-        <div>
-          <Label required>휴대폰 번호</Label>
-          <div className="mt-1 flex items-center gap-1.5">
-            <Input
-              className="w-14"
-              defaultValue="010"
-              required
-              name="phoneNumber-0"
-              readOnly={!!userData}
-              maxLength={3}
-              onChange={handleChangePhoneNumber}
-            />
-            <Input
-              className="w-16"
-              required
-              name="phoneNumber-1"
-              defaultValue={
-                userData ? userData.phoneNumber.slice(4, 8) : undefined
-              }
-              readOnly={!!userData}
-              maxLength={4}
-              onChange={handleChangePhoneNumber}
-            />
-            <Input
-              className="w-16"
-              required
-              name="phoneNumber-2"
-              defaultValue={
-                userData ? userData.phoneNumber.slice(9, 13) : undefined
-              }
-              readOnly={!!userData}
-              maxLength={4}
-              onChange={handleChangePhoneNumber}
-            />
-          </div>
-        </div>
-        {/* 관심 직무 */}
-        <div>
-          <JobSelect
-            options={jobOptions}
-            selectedOpts={selectedJobs}
-            isOpen={isOpenDropdown}
-            openDispatch={setIsOpenDropdown}
-            onClose={() => setIsOpenDropdown(false)}
-            onChange={(opt) => {
-              // '기타'를 선택한 경우
-              if (opt === '기타' && !selectedJobs.includes(opt)) {
-                setSelectedJobs(['기타']);
-                setIsOpenDropdown(false);
-                return;
-              }
-              // 있으면 삭제, 없으면 추가
-              setSelectedJobs((prev) =>
-                prev.includes(opt)
-                  ? prev.filter((v) => v !== opt)
-                  : [...prev.filter((v) => v !== '기타'), opt],
-              );
-            }}
-          />
-          {/* 기타 직무 */}
-          {isOtherJob && (
-            <Input
-              className="mt-2 w-full"
-              required
-              name="job"
-              placeholder="관심 직무를 입력해주세요"
-            />
-          )}
-        </div>
-      </section>
+      <UserSection
+        userData={userData}
+        selectedJobs={selectedJobs}
+        isOpen={isOpenDropdown}
+        openDispatch={setIsOpenDropdown}
+        onChangeOption={handleChangeOption}
+        onChangeUsername={handleChangeUsername}
+        onChangePhoneNumber={handleChangePhoneNumber}
+      />
       <hr />
 
       {/* 약관 동의 */}
