@@ -67,7 +67,7 @@ export default function Page() {
             </Label>
             <Input
               id="name"
-              className="w-full"
+              className="mt-1 w-full"
               required
               name="name"
               placeholder="이름을 입력해주세요"
@@ -75,7 +75,7 @@ export default function Page() {
           </div>
           <div>
             <Label required>휴대폰 번호</Label>
-            <div className="flex items-center gap-1.5">
+            <div className="mt-1 flex items-center gap-1.5">
               <Input
                 className="w-14"
                 defaultValue="010"

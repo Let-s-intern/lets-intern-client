@@ -3,6 +3,7 @@
 import clsx from 'clsx';
 import { ChevronDown } from 'lucide-react';
 import React, { Fragment, useState } from 'react';
+import Label from './input/Label';
 
 // value: caption
 type Options = Record<string, string>;
@@ -35,9 +36,9 @@ const Select = ({
       <div className="relative">
         {/* label */}
         {label && (
-          <label className={clsx({ 'required-star': required })} htmlFor={id}>
+          <Label htmlFor={id} required={required}>
             {label}
-          </label>
+          </Label>
         )}
 
         {/* select */}

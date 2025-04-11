@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import { memo } from 'react';
 
 interface FilterCheckboxProps {
   caption: string;
@@ -33,10 +32,5 @@ const FilterCheckbox = ({
     </div>
   );
 };
-
-const isEqual = (
-  oldProps: FilterCheckboxProps,
-  newProps: FilterCheckboxProps,
-) => oldProps.isChecked === newProps.isChecked;
 
 export default FilterCheckbox;
