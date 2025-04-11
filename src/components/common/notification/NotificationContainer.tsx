@@ -1,7 +1,8 @@
 'use client';
 
+import { useGetParticipationInfo } from '@/api/application';
 import { useSearchParams } from 'next/navigation';
-import { ReactNode, useState } from 'react';
+import { ChangeEvent, ReactNode, useCallback, useState } from 'react';
 import BaseButton from '../ui/button/BaseButton';
 import Input from '../ui/input/Input';
 import Label from '../ui/input/Label';
@@ -64,13 +65,21 @@ const terms = [
   },
 ];
 
-// TODO: 쿼리로 프로그램 아이디 받기
+const defaultUserInfo = {
+  name: '',
+  phoneNumber: Array(3).fill(''),
+};
+
 function NotificationContainer() {
   const searchParams = useSearchParams();
-  const pid = searchParams.get('pid');
+  const pid = searchParams.get('pid'); // 프로그램 ID
+
+  const { data: userData } = useGetParticipationInfo();
 
   const [selectedJobs, setSelectedJobs] = useState<string[]>([]);
   const [isOpenDropdown, setIsOpenDropdown] = useState(false);
+  const [userInfo, setUserInfo] = useState(defaultUserInfo);
+  const [selectedPids, setSelectedPids] = useState(pid ? [pid] : []); // 선택한 프로그램 ID 리스트
 
   const isOtherJob = selectedJobs.includes('기타');
   const instruction = pid ? (
@@ -83,6 +92,33 @@ function NotificationContainer() {
       출시 알림을 받고 싶은 프로그램을 <br className="md:hidden" />
       모두 선택해 주세요.
     </>
+  );
+
+  const handleChangeUsername = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setUserInfo((prev) => ({
+        ...prev,
+        name: e.target.value,
+      }));
+    },
+    [],
+  );
+
+  const handleChangePhoneNumber = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setUserInfo((prev) => {
+        const phoneNumber = prev.phoneNumber;
+        const targetName = e.target.name;
+        const index = Number(targetName.at(targetName.length - 1));
+        phoneNumber[index] = e.target.value;
+
+        return {
+          ...prev,
+          phoneNumber,
+        };
+      });
+    },
+    [],
   );
 
   return (
@@ -115,6 +151,10 @@ function NotificationContainer() {
             required
             name="name"
             placeholder="이름을 입력해주세요"
+            readOnly={!!userData}
+            defaultValue={userData ? userData.name : undefined}
+            onChange={handleChangeUsername}
+            maxLength={100}
           />
         </div>
         {/* 휴대폰 번호 */}
@@ -125,10 +165,33 @@ function NotificationContainer() {
               className="w-14"
               defaultValue="010"
               required
-              name="phoneNumber-1"
+              name="phoneNumber-0"
+              readOnly={!!userData}
+              maxLength={3}
+              onChange={handleChangePhoneNumber}
             />
-            <Input className="w-14" required name="phoneNumber-2" />
-            <Input className="w-14" required name="phoneNumber-3" />
+            <Input
+              className="w-16"
+              required
+              name="phoneNumber-1"
+              defaultValue={
+                userData ? userData.phoneNumber.slice(4, 8) : undefined
+              }
+              readOnly={!!userData}
+              maxLength={4}
+              onChange={handleChangePhoneNumber}
+            />
+            <Input
+              className="w-16"
+              required
+              name="phoneNumber-2"
+              defaultValue={
+                userData ? userData.phoneNumber.slice(9, 13) : undefined
+              }
+              readOnly={!!userData}
+              maxLength={4}
+              onChange={handleChangePhoneNumber}
+            />
           </div>
         </div>
         {/* 관심 직무 */}
@@ -154,6 +217,7 @@ function NotificationContainer() {
               );
             }}
           />
+          {/* 기타 직무 */}
           {isOtherJob && (
             <Input
               className="mt-2 w-full"
