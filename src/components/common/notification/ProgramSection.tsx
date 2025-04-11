@@ -63,4 +63,8 @@ function ProgramSection({ selectedPids, onChange }: Props) {
   );
 }
 
-export default memo(ProgramSection);
+export default memo(
+  ProgramSection,
+  (oldProps, newProps) =>
+    oldProps.selectedPids.length === newProps.selectedPids.length,
+);
