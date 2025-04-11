@@ -1,11 +1,8 @@
 import CheckListItem from '@components/common/notification/CheckListItem';
 import TermsAgreement from '@components/common/notification/TermsAgreement';
 import Input from '@components/common/ui/input/Input';
+import Label from '@components/common/ui/input/Label';
 import Select from '@components/common/ui/Select';
-
-const defaultOption = {
-  '': '관심 직무를 선택해주세요',
-};
 
 const programs = [
   '[LIVE 워크숍] 링크드인 시작 방법부터 아티클 작성 계획까지 세우고 싶다면?',
@@ -65,9 +62,9 @@ export default function Page() {
             아래 정보를 입력해주세요
           </p>
           <div>
-            <label htmlFor="name" className="required-star">
+            <Label htmlFor="name" required>
               이름
-            </label>
+            </Label>
             <Input
               id="name"
               className="w-full"
@@ -77,7 +74,7 @@ export default function Page() {
             />
           </div>
           <div>
-            <label className="required-star">휴대폰 번호</label>
+            <Label required>휴대폰 번호</Label>
             <div className="flex items-center gap-1.5">
               <Input
                 className="w-14"
