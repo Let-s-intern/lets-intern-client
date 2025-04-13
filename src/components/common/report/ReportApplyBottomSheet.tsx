@@ -32,12 +32,12 @@ import { DesktopCTA, MobileCTA } from '../ApplyCTA';
 import PaymentErrorNotification from '../PaymentErrorNotification';
 import GradientButton from '../program/program-detail/button/GradientButton';
 import { default as BaseButton } from '../ui/button/BaseButton';
+import {
+  OptionFormCheckboxControlLabel,
+  OptionFormRadioControlLabel,
+} from '../ui/ControlLabel';
 import DrawerCloseBtn from '../ui/DrawerCloseBtn';
 import OptionDropdown from '../ui/OptionDropdown';
-import {
-  ReportFormCheckboxControlLabel,
-  ReportFormRadioControlLabel,
-} from './ControlLabel';
 
 const { BASIC, PREMIUM } = reportPriceTypeEnum.enum;
 const { PERSONAL_STATEMENT } = reportTypeSchema.enum;
@@ -436,7 +436,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                       }}
                     >
                       {reportDiagnosisPlan.map((item, index) => (
-                        <ReportFormRadioControlLabel
+                        <OptionFormRadioControlLabel
                           key={item.label}
                           label={item.label}
                           value={item.value}
@@ -559,7 +559,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                           );
 
                           return (
-                            <ReportFormCheckboxControlLabel
+                            <OptionFormCheckboxControlLabel
                               key={option.reportOptionId}
                               checked={checked}
                               onChange={(_, checked) => {
