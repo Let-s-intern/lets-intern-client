@@ -169,7 +169,7 @@ export function DesktopApplyCTA({
   );
 }
 
-export const DesktopCTA = memo(function DesktopCTA({
+export function DesktopCTA({
   children,
   className,
 }: {
@@ -186,4 +186,4 @@ export const DesktopCTA = memo(function DesktopCTA({
       {children}
     </div>
   );
-});
+}

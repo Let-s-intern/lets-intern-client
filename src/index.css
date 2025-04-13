@@ -313,6 +313,7 @@ input[type='number'] {
   }
 }
 
+/* Swiper */
 .swiper-button-prev,
 .swiper-button-next {
   @apply hidden h-10 w-10 items-center justify-center rounded-full border border-neutral-80 bg-white/75 md:flex !important;
@@ -378,4 +379,9 @@ input[type='number'] {
 .MuiSnackbarContent-message {
   font-family: 'Pretendard Variable', '-apple-system', 'BlinkMacSystemFont',
     'system-ui', 'Roboto', 'sans-serif';
+}
+
+.required-star::after {
+  content: '*';
+  color: #fc5555;
 }

@@ -7,8 +7,9 @@ import { ChallengeIdPrimitive } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import useProgramStore from '@/store/useProgramStore';
 import { useRouter } from 'next/navigation';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { DesktopApplyCTA, MobileApplyCTA } from './common/ApplyCTA';
+import BottomSheet from './common/ui/BottomSheeet';
 
 const ChallengeCTAButtons = ({
   challenge,
@@ -19,6 +20,8 @@ const ChallengeCTAButtons = ({
 }) => {
   const { isLoggedIn } = useAuthStore();
   const router = useRouter();
+
+  const [isOpen, setIsOpen] = useState(false);
 
   const { data: application } = useProgramApplicationQuery(
     'challenge',
@@ -33,6 +36,11 @@ const ChallengeCTAButtons = ({
   const onApplyClick = useCallback(() => {
     if (!isLoggedIn) {
       window.location.href = `/login?redirect=${encodeURIComponent(`/program/challenge/${challengeId}`)}`;
+      return;
+    }
+
+    if (!isOpen) {
+      setIsOpen(true);
       return;
     }
 
@@ -99,6 +107,15 @@ const ChallengeCTAButtons = ({
     router,
     setProgramApplicationForm,
   ]);
+
+  if (isOpen)
+    return (
+      <BottomSheet>
+        <label className="required-star text-xsmall14 font-semibold">
+          챌린지 플랜 선택 (필수)
+        </label>
+      </BottomSheet>
+    );
 
   return (
     <>

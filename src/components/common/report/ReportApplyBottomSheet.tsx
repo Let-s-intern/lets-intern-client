@@ -32,6 +32,7 @@ import { DesktopCTA, MobileCTA } from '../ApplyCTA';
 import PaymentErrorNotification from '../PaymentErrorNotification';
 import GradientButton from '../program/program-detail/button/GradientButton';
 import { default as BaseButton } from '../ui/button/BaseButton';
+import DrawerCloseBtn from '../ui/DrawerCloseBtn';
 import {
   ReportFormCheckboxControlLabel,
   ReportFormRadioControlLabel,
@@ -403,12 +404,7 @@ const ReportApplyBottomSheet = React.forwardRef<
           <div className="relative flex h-full flex-col justify-between overflow-y-scroll px-5">
             <div>
               {/* 상단 닫기 버튼 */}
-              <div className="sticky top-0 z-10 w-full bg-white py-2">
-                <div
-                  className="mx-auto h-[5px] w-16 cursor-pointer rounded-full bg-neutral-80"
-                  onClick={() => setIsDrawerOpen(false)}
-                />
-              </div>
+              <DrawerCloseBtn onClose={() => setIsDrawerOpen(false)} />
 
               {/* 본문 */}
               <div className="mb-5 mt-2 flex flex-col gap-8">
