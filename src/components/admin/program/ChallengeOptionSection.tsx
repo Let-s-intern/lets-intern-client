@@ -8,7 +8,7 @@ const inputLabelProps = {
   style: { fontSize: '14px' },
 };
 
-interface Option {
+export interface Option {
   title: string;
   optionPrice: number;
   optionDiscountPrice: number;

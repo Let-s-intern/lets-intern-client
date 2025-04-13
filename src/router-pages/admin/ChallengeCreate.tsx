@@ -90,6 +90,7 @@ const ChallengeCreate: React.FC = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  // TODO: 디폴트 값 설정해야 함
   const [editingOptions, setEditingOptions] = useState<Option[]>([]);
 
   const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -249,6 +250,8 @@ const ChallengeCreate: React.FC = () => {
               },
             ]}
             setInput={setInput}
+            defaultPricePlan="베이직"
+            options={editingOptions}
           />
           <ProgramSchedule
             defaultValue={{

@@ -1,4 +1,5 @@
 import {
+  Checkbox,
   FormControl,
   InputLabel,
   MenuItem,
@@ -15,12 +16,15 @@ import {
 import { newProgramFeeTypeToText } from '@/utils/convert';
 import Input from '@components/ui/input/Input';
 import { useState } from 'react';
+import { Option } from './ChallengeOptionSection';
 
 interface IChallengePriceProps<
   T extends CreateChallengeReq | UpdateChallengeReq,
 > {
   defaultValue?: ChallengeIdSchema['priceInfo'];
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
+  defaultPricePlan: string;
+  options: Option[];
 }
 
 const initialPrice: ChallengePriceReq = {
@@ -51,7 +55,12 @@ const priceTypeMenuList = {
 
 export default function ChallengePrice<
   T extends CreateChallengeReq | UpdateChallengeReq,
->({ defaultValue, setInput }: IChallengePriceProps<T>) {
+>({
+  defaultValue,
+  setInput,
+  defaultPricePlan,
+  options,
+}: IChallengePriceProps<T>) {
   const defaultPriceReq: ChallengePriceReq = {
     challengeParticipationType:
       defaultValue?.[0]?.challengeParticipationType ??
@@ -76,10 +85,21 @@ export default function ChallengePrice<
     refund: defaultValue?.[0]?.refund ?? initialPrice.refund,
   };
 
+  const generateOptionMenuList = () => {
+    const result: Record<string, string> = {};
+    options.forEach(
+      (item) =>
+        (result[item.optionCode] = `[${item.optionCode}] ${item.title}`),
+    );
+    return result;
+  };
+
   // 보증금 인풋 표시/숨김 용도
   const [isDeposit, setIsDeposit] = useState(
     defaultPriceReq.challengePriceType === 'REFUND',
   );
+  const [pricePlanValue, setPricePlanValue] = useState(defaultPricePlan);
+  const [standardOptions, setStandardOptions] = useState<string[]>([]); // TODO: 상위로 이동
 
   return (
     <div className="flex flex-col gap-3">
@@ -90,6 +110,7 @@ export default function ChallengePrice<
         name="challengePricePlan"
         label="가격 플랜"
         defaultValue="베이직"
+        value={pricePlanValue}
         menuList={pricePlanMenuList}
       />
       {/* 금액 유형 */}
@@ -205,21 +226,46 @@ export default function ChallengePrice<
           }));
         }}
       />
+      <SelectControl
+        labelId="standardOptionsLabel"
+        id="standardOptions"
+        name="standardOptions"
+        label="스탠다드 옵션"
+        multiple
+        value={standardOptions}
+        renderValue={() => standardOptions.join(', ')}
+        menuList={generateOptionMenuList()}
+        onChange={(e) => {
+          const value = e.target.value as string[];
+          setStandardOptions(value);
+        }}
+      />
     </div>
   );
 }
 
 function SelectControl({
   menuList,
-  ...selectProps
+  labelId,
+  label,
+  multiple,
+  value,
+  ...restProps
 }: { menuList: Record<string, string> } & SelectProps) {
   return (
     <FormControl fullWidth size="small">
-      <InputLabel id={selectProps.labelId}>{selectProps.label}</InputLabel>
-      <Select {...selectProps}>
-        {Object.entries(menuList).map(([key, value]) => (
-          <MenuItem key={key} value={key}>
-            {value}
+      <InputLabel id={labelId}>{label}</InputLabel>
+      <Select multiple={multiple} {...restProps} value={value}>
+        {Object.entries(menuList).map(([optValue, optCaption]) => (
+          <MenuItem key={optValue} value={optValue}>
+            {multiple && (
+              <Checkbox
+                checked={(value as Array<string>).includes(optValue)}
+                sx={{ padding: 0, margin: '1px 0', marginRight: '4px' }}
+                size="small"
+              />
+            )}
+            <span>{optCaption}</span>
           </MenuItem>
         ))}
       </Select>

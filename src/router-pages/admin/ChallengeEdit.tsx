@@ -10,6 +10,7 @@ import { ProgramTypeEnum, UpdateChallengeReq } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import ChallengePreviewButton from '@components/admin/ChallengePreviewButton';
 import EditorApp from '@components/admin/lexical/EditorApp';
+import { Option } from '@components/admin/program/ChallengeOptionSection';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
@@ -89,6 +90,9 @@ const ChallengeEdit: React.FC = () => {
 
   const [input, setInput] = useState<Omit<UpdateChallengeReq, 'desc'>>({});
   const [loading, setLoading] = useState(false);
+  // TODO: 디폴트 값 설정해야 함
+  const [editingOptions, setEditingOptions] = useState<Option[]>([]);
+
   const { snackbar } = useAdminSnackbar();
 
   const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -164,6 +168,8 @@ const ChallengeEdit: React.FC = () => {
           <ChallengePrice
             defaultValue={challenge.priceInfo}
             setInput={setInput}
+            defaultPricePlan='베이직'
+            options={editingOptions}
           />
           {/* 일정 */}
           <ProgramSchedule
