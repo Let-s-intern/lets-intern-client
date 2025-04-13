@@ -33,7 +33,6 @@ import ProgramSchedule from './program/ProgramSchedule';
 
 /**
  * 챌린지 생성 페이지
- *
  * - 가격구분은 무조건 BASIC으로 고정
  */
 const ChallengeCreate: React.FC = () => {
@@ -245,7 +244,7 @@ const ChallengeCreate: React.FC = () => {
               mainDescription: json,
             }))
           }
-        ></EditorApp>
+        />
       </section>
 
       {/* 프로그램 추천 */}

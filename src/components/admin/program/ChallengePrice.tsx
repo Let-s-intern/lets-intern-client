@@ -1,4 +1,10 @@
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectProps,
+} from '@mui/material';
 
 import {
   ChallengeIdSchema,
@@ -32,6 +38,17 @@ const initialPrice: ChallengePriceReq = {
   refund: 0,
 };
 
+const pricePlanMenuList = {
+  베이직: '베이직',
+  '베이직+스탠다드': '베이직+스탠다드',
+  '베이직+스탠다드+프리미엄': '베이직+스탠다드+프리미엄',
+};
+
+const priceTypeMenuList = {
+  CHARGE: newProgramFeeTypeToText['CHARGE'],
+  REFUND: newProgramFeeTypeToText['REFUND'],
+};
+
 export default function ChallengePrice<
   T extends CreateChallengeReq | UpdateChallengeReq,
 >({ defaultValue, setInput }: IChallengePriceProps<T>) {
@@ -60,64 +77,66 @@ export default function ChallengePrice<
   };
 
   // 보증금 인풋 표시/숨김 용도
-  const [isRefund, setIsRefund] = useState(
+  const [isDeposit, setIsDeposit] = useState(
     defaultPriceReq.challengePriceType === 'REFUND',
   );
 
   return (
     <div className="flex flex-col gap-3">
-      <FormControl fullWidth size="small">
-        <InputLabel id="challengePriceTypeLabel">금액유형</InputLabel>
-        <Select
-          labelId="challengePriceTypeLabel"
-          id="challengePriceType"
-          name="challengePriceType"
-          label="금액유형"
-          defaultValue={defaultPriceReq.challengePriceType}
-          onChange={(e) => {
-            const value = e.target.value;
+      {/* 가격 플랜 */}
+      <SelectControl
+        labelId="challengePricePlanLabel"
+        id="challengePricePlan"
+        name="challengePricePlan"
+        label="가격 플랜"
+        defaultValue="베이직"
+        menuList={pricePlanMenuList}
+      />
+      {/* 금액 유형 */}
+      <SelectControl
+        labelId="challengePriceTypeLabel"
+        id="challengePriceType"
+        name="challengePriceType"
+        label="금액 유형"
+        defaultValue={defaultPriceReq.challengePriceType}
+        menuList={priceTypeMenuList}
+        onChange={(e) => {
+          const value = e.target.value;
 
-            setIsRefund(value === 'REFUND');
+          setIsDeposit(value === 'REFUND');
 
-            if (value === 'CHARGE') {
-              // 이용료 선택 시 보증금 금액 0으로 초기화
-              setInput((prev) => ({
-                ...prev,
-                priceInfo: [
-                  {
-                    ...defaultPriceReq,
-                    ...prev.priceInfo?.[0],
-                    refund: 0,
-                    challengePriceType:
-                      value as ChallengePriceReq['challengePriceType'],
-                  },
-                ],
-              }));
-            } else {
-              setInput((prev) => ({
-                ...prev,
-                priceInfo: [
-                  {
-                    ...defaultPriceReq,
-                    ...prev.priceInfo?.[0],
-                    challengePriceType:
-                      value as ChallengePriceReq['challengePriceType'],
-                  },
-                ],
-              }));
-            }
-          }}
-        >
-          <MenuItem value="CHARGE">
-            {newProgramFeeTypeToText['CHARGE']}
-          </MenuItem>
-          <MenuItem value="REFUND">
-            {newProgramFeeTypeToText['REFUND']}
-          </MenuItem>
-        </Select>
-      </FormControl>
+          if (value === 'CHARGE') {
+            // 이용료 선택 시 보증금 금액 0으로 초기화
+            setInput((prev) => ({
+              ...prev,
+              priceInfo: [
+                {
+                  ...defaultPriceReq,
+                  ...prev.priceInfo?.[0],
+                  refund: 0,
+                  challengePriceType:
+                    value as ChallengePriceReq['challengePriceType'],
+                },
+              ],
+            }));
+          } else {
+            setInput((prev) => ({
+              ...prev,
+              priceInfo: [
+                {
+                  ...defaultPriceReq,
+                  ...prev.priceInfo?.[0],
+                  challengePriceType:
+                    value as ChallengePriceReq['challengePriceType'],
+                },
+              ],
+            }));
+          }
+        }}
+      />
+      {/* 이용료 금액 */}
       <Input
-        label="베이직 이용료 금액"
+        label="이용료 금액"
         name="basicPrice"
         size="small"
         placeholder="이용료 금액을 입력해주세요"
@@ -140,9 +159,10 @@ export default function ChallengePrice<
           }));
         }}
       />
-      {isRefund && (
+      {/* 보증금 금액 */}
+      {isDeposit && (
         <Input
-          label="베이직 보증금 금액"
+          label="보증금 금액"
           name="refund"
           size="small"
           placeholder="보증금 금액을 입력해주세요"
@@ -161,9 +181,9 @@ export default function ChallengePrice<
           }}
         />
       )}
-
+      {/* 할인 금액 */}
       <Input
-        label="베이직 할인 금액"
+        label="할인 금액"
         name="discount"
         size="small"
         placeholder="할인 금액을 입력해주세요"
@@ -186,5 +206,23 @@ export default function ChallengePrice<
         }}
       />
     </div>
+  );
+}
+
+function SelectControl({
+  menuList,
+  ...selectProps
+}: { menuList: Record<string, string> } & SelectProps) {
+  return (
+    <FormControl fullWidth size="small">
+      <InputLabel id={selectProps.labelId}>{selectProps.label}</InputLabel>
+      <Select {...selectProps}>
+        {Object.entries(menuList).map(([key, value]) => (
+          <MenuItem key={key} value={key}>
+            {value}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
   );
 }
