@@ -10,7 +10,9 @@ import { ProgramTypeEnum, UpdateChallengeReq } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import ChallengePreviewButton from '@components/admin/ChallengePreviewButton';
 import EditorApp from '@components/admin/lexical/EditorApp';
-import { Option } from '@components/admin/program/ChallengeOptionSection';
+import ChallengeOptionSection, {
+  Option,
+} from '@components/admin/program/ChallengeOptionSection';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
@@ -18,7 +20,7 @@ import Heading2 from '@components/admin/ui/heading/Heading2';
 import Heading3 from '@components/admin/ui/heading/Heading3';
 import { Button } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 import ChallengeBasic from '../../components/admin/program/ChallengeBasic';
@@ -128,6 +130,46 @@ const ChallengeEdit: React.FC = () => {
     snackbar('저장되었습니다.');
   }, [challengeIdString, client, content, input, patchChallenge, snackbar]);
 
+  // 옵션 설정
+  const handleChangeOption = useCallback(
+    (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, index: number) => {
+      const { type, name, value } = e.target;
+
+      setEditingOptions((prev) =>
+        prev.map((item, i) => {
+          if (i === index) {
+            return {
+              ...item,
+              [name]: type === 'number' ? Number(value) : value,
+            };
+          }
+          return item;
+        }),
+      );
+    },
+    [],
+  );
+
+  const handleAddOption = useCallback(() => {
+    setEditingOptions((prev) => {
+      return [
+        ...prev,
+        {
+          title: '',
+          optionCode: '',
+          optionDiscountPrice: 0,
+          optionPrice: 0,
+        },
+      ];
+    });
+  }, []);
+
+  const handleDeleteOption = useCallback((index: number) => {
+    setEditingOptions((prev) => {
+      return prev.filter((_, i) => i !== index);
+    });
+  }, []);
+
   if (!challenge || !content.initialized) {
     return <div>loading...</div>;
   }
@@ -168,7 +210,7 @@ const ChallengeEdit: React.FC = () => {
           <ChallengePrice
             defaultValue={challenge.priceInfo}
             setInput={setInput}
-            defaultPricePlan='베이직'
+            defaultPricePlan="베이직"
             options={editingOptions}
           />
           {/* 일정 */}
@@ -229,6 +271,15 @@ const ChallengeEdit: React.FC = () => {
             }}
           />
         </div>
+      </section>
+
+      <section>
+        <ChallengeOptionSection
+          options={editingOptions}
+          onChange={handleChangeOption}
+          onClickAdd={handleAddOption}
+          onClickDelete={handleDeleteOption}
+        />
       </section>
 
       <Heading2>프로그램 소개</Heading2>
