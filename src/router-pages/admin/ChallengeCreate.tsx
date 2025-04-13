@@ -19,13 +19,14 @@ import {
 import { ChallengeContent } from '@/types/interface';
 import ChallengePreviewButton from '@components/admin/ChallengePreviewButton';
 import EditorApp from '@components/admin/lexical/EditorApp';
+import ChallengeOptionSection from '@components/admin/program/ChallengeOptionSection';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
 import Heading2 from '@components/admin/ui/heading/Heading2';
 import Heading3 from '@components/admin/ui/heading/Heading3';
 import { Button, TextField } from '@mui/material';
-import { useCallback, useState } from 'react';
+import { ChangeEvent, useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import ChallengeFaqCategory from './program/ChallengeFaqCategory';
@@ -35,6 +36,13 @@ import ProgramSchedule from './program/ProgramSchedule';
  * 챌린지 생성 페이지
  * - 가격구분은 무조건 BASIC으로 고정
  */
+interface Option {
+  title: string;
+  optionPrice: number;
+  optionDiscountPrice: number;
+  optionCode: string;
+}
+
 const ChallengeCreate: React.FC = () => {
   const [content, setContent] = useState<ChallengeContent>({
     curriculum: [],
@@ -82,6 +90,7 @@ const ChallengeCreate: React.FC = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [editingOptions, setEditingOptions] = useState<Option[]>([]);
 
   const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -106,6 +115,46 @@ const ChallengeCreate: React.FC = () => {
     snackbar('챌린지가 생성되었습니다.');
     navigate('/admin/programs');
   }, [input, content, postChallenge, snackbar, navigate]);
+
+  // 옵션 설정
+  const handleChangeOption = useCallback(
+    (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, index: number) => {
+      const { type, name, value } = e.target;
+
+      setEditingOptions((prev) =>
+        prev.map((item, i) => {
+          if (i === index) {
+            return {
+              ...item,
+              [name]: type === 'number' ? Number(value) : value,
+            };
+          }
+          return item;
+        }),
+      );
+    },
+    [],
+  );
+
+  const handleAddOption = useCallback(() => {
+    setEditingOptions((prev) => {
+      return [
+        ...prev,
+        {
+          title: '',
+          optionCode: '',
+          optionDiscountPrice: 0,
+          optionPrice: 0,
+        },
+      ];
+    });
+  }, []);
+
+  const handleDeleteOption = useCallback((index: number) => {
+    setEditingOptions((prev) => {
+      return prev.filter((_, i) => i !== index);
+    });
+  }, []);
 
   const [importJsonString, setImportJsonString] = useState('');
   const [importProcessing, setImportProcessing] = useState(false);
@@ -227,6 +276,15 @@ const ChallengeCreate: React.FC = () => {
             }}
           />
         </div>
+      </section>
+
+      <section>
+        <ChallengeOptionSection
+          options={editingOptions}
+          onChange={handleChangeOption}
+          onClickAdd={handleAddOption}
+          onClickDelete={handleDeleteOption}
+        />
       </section>
 
       <Heading2>프로그램 소개</Heading2>
