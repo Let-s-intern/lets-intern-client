@@ -340,14 +340,14 @@ const Programs = () => {
       <Header>
         <Heading>프로그램 관리</Heading>
         <div className="flex items-center justify-center gap-2">
-          <Button
+          {/* <Button
             variant="outlined"
             color="primary"
             startIcon={<FaPlus size={12} />}
             onClick={() => navigate(`/admin/programs/create`)}
           >
             등록(old version)
-          </Button>
+          </Button> */}
           <Button
             variant="contained"
             color="primary"

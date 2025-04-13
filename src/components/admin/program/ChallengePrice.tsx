@@ -1,4 +1,11 @@
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import {
+  Checkbox,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectProps,
+} from '@mui/material';
 
 import {
   ChallengeIdSchema,
@@ -9,12 +16,15 @@ import {
 import { newProgramFeeTypeToText } from '@/utils/convert';
 import Input from '@components/ui/input/Input';
 import { useState } from 'react';
+import { Option } from './ChallengeOptionSection';
 
 interface IChallengePriceProps<
   T extends CreateChallengeReq | UpdateChallengeReq,
 > {
   defaultValue?: ChallengeIdSchema['priceInfo'];
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
+  defaultPricePlan: string;
+  options: Option[];
 }
 
 const initialPrice: ChallengePriceReq = {
@@ -32,9 +42,25 @@ const initialPrice: ChallengePriceReq = {
   refund: 0,
 };
 
+const pricePlanMenuList = {
+  베이직: '베이직',
+  '베이직+스탠다드': '베이직+스탠다드',
+  '베이직+스탠다드+프리미엄': '베이직+스탠다드+프리미엄',
+};
+
+const priceTypeMenuList = {
+  CHARGE: newProgramFeeTypeToText['CHARGE'],
+  REFUND: newProgramFeeTypeToText['REFUND'],
+};
+
 export default function ChallengePrice<
   T extends CreateChallengeReq | UpdateChallengeReq,
->({ defaultValue, setInput }: IChallengePriceProps<T>) {
+>({
+  defaultValue,
+  setInput,
+  defaultPricePlan,
+  options,
+}: IChallengePriceProps<T>) {
   const defaultPriceReq: ChallengePriceReq = {
     challengeParticipationType:
       defaultValue?.[0]?.challengeParticipationType ??
@@ -59,65 +85,84 @@ export default function ChallengePrice<
     refund: defaultValue?.[0]?.refund ?? initialPrice.refund,
   };
 
+  const generateOptionMenuList = () => {
+    const result: Record<string, string> = {};
+    options.forEach(
+      (item) =>
+        (result[item.optionCode] = `[${item.optionCode}] ${item.title}`),
+    );
+    return result;
+  };
+
   // 보증금 인풋 표시/숨김 용도
-  const [isRefund, setIsRefund] = useState(
+  const [isDeposit, setIsDeposit] = useState(
     defaultPriceReq.challengePriceType === 'REFUND',
   );
+  const [pricePlanValue, setPricePlanValue] = useState(defaultPricePlan);
+  const [standardOptions, setStandardOptions] = useState<string[]>([]); // TODO: 상위 컴포넌트로 이동
+  const [premiumOptions, setPremiumOptions] = useState<string[]>([]); // TODO: 상위 컴포넌트로 이동
 
   return (
     <div className="flex flex-col gap-3">
-      <FormControl fullWidth size="small">
-        <InputLabel id="challengePriceTypeLabel">금액유형</InputLabel>
-        <Select
-          labelId="challengePriceTypeLabel"
-          id="challengePriceType"
-          name="challengePriceType"
-          label="금액유형"
-          defaultValue={defaultPriceReq.challengePriceType}
-          onChange={(e) => {
-            const value = e.target.value;
+      {/* 가격 플랜 */}
+      <SelectControl
+        labelId="challengePricePlanLabel"
+        id="challengePricePlan"
+        name="challengePricePlan"
+        label="가격 플랜"
+        defaultValue="베이직"
+        value={pricePlanValue}
+        menuList={pricePlanMenuList}
+        onChange={(e) => {
+          setPricePlanValue(e.target.value as string);
+          // TODO: 스탠다드, 프리미엄 옵션 초기화
+        }}
+      />
+      {/* 금액 유형 */}
+      <SelectControl
+        labelId="challengePriceTypeLabel"
+        id="challengePriceType"
+        name="challengePriceType"
+        label="금액 유형"
+        defaultValue={defaultPriceReq.challengePriceType}
+        menuList={priceTypeMenuList}
+        onChange={(e) => {
+          const value = e.target.value;
 
-            setIsRefund(value === 'REFUND');
+          setIsDeposit(value === 'REFUND');
 
-            if (value === 'CHARGE') {
-              // 이용료 선택 시 보증금 금액 0으로 초기화
-              setInput((prev) => ({
-                ...prev,
-                priceInfo: [
-                  {
-                    ...defaultPriceReq,
-                    ...prev.priceInfo?.[0],
-                    refund: 0,
-                    challengePriceType:
-                      value as ChallengePriceReq['challengePriceType'],
-                  },
-                ],
-              }));
-            } else {
-              setInput((prev) => ({
-                ...prev,
-                priceInfo: [
-                  {
-                    ...defaultPriceReq,
-                    ...prev.priceInfo?.[0],
-                    challengePriceType:
-                      value as ChallengePriceReq['challengePriceType'],
-                  },
-                ],
-              }));
-            }
-          }}
-        >
-          <MenuItem value="CHARGE">
-            {newProgramFeeTypeToText['CHARGE']}
-          </MenuItem>
-          <MenuItem value="REFUND">
-            {newProgramFeeTypeToText['REFUND']}
-          </MenuItem>
-        </Select>
-      </FormControl>
+          if (value === 'CHARGE') {
+            // 이용료 선택 시 보증금 금액 0으로 초기화
+            setInput((prev) => ({
+              ...prev,
+              priceInfo: [
+                {
+                  ...defaultPriceReq,
+                  ...prev.priceInfo?.[0],
+                  refund: 0,
+                  challengePriceType:
+                    value as ChallengePriceReq['challengePriceType'],
+                },
+              ],
+            }));
+          } else {
+            setInput((prev) => ({
+              ...prev,
+              priceInfo: [
+                {
+                  ...defaultPriceReq,
+                  ...prev.priceInfo?.[0],
+                  challengePriceType:
+                    value as ChallengePriceReq['challengePriceType'],
+                },
+              ],
+            }));
+          }
+        }}
+      />
+      {/* 이용료 금액 */}
       <Input
-        label="베이직 이용료 금액"
+        label="이용료 금액"
         name="basicPrice"
         size="small"
         placeholder="이용료 금액을 입력해주세요"
@@ -140,9 +185,10 @@ export default function ChallengePrice<
           }));
         }}
       />
-      {isRefund && (
+      {/* 보증금 금액 */}
+      {isDeposit && (
         <Input
-          label="베이직 보증금 금액"
+          label="보증금 금액"
           name="refund"
           size="small"
           placeholder="보증금 금액을 입력해주세요"
@@ -161,9 +207,9 @@ export default function ChallengePrice<
           }}
         />
       )}
-
+      {/* 할인 금액 */}
       <Input
-        label="베이직 할인 금액"
+        label="할인 금액"
         name="discount"
         size="small"
         placeholder="할인 금액을 입력해주세요"
@@ -185,6 +231,88 @@ export default function ChallengePrice<
           }));
         }}
       />
+      {/* 스탠다드 옵션 */}
+      {pricePlanValue.includes('스탠다드') && (
+        <>
+          <SelectControl
+            labelId="standardOptionsLabel"
+            id="standardOptions"
+            name="standardOptions"
+            label="스탠다드 옵션"
+            multiple
+            value={standardOptions}
+            renderValue={() => standardOptions.join(', ')}
+            menuList={generateOptionMenuList()}
+            onChange={(e) => {
+              const value = e.target.value as string[];
+              setStandardOptions(value);
+            }}
+          />
+          <Input
+            label="스탠다드 플랜명"
+            name="standardTitle"
+            size="small"
+            placeholder="스탠다드 플랜명을 입력해주세요"
+          />
+        </>
+      )}
+      {/* 프리미엄 옵션 */}
+      {pricePlanValue.includes('프리미엄') && (
+        <>
+          <SelectControl
+            labelId="premiumOptionsLabel"
+            id="premiumOptions"
+            name="premiumOptions"
+            label="프리미엄 옵션"
+            multiple
+            value={premiumOptions}
+            renderValue={() => premiumOptions.join(', ')}
+            menuList={generateOptionMenuList()}
+            onChange={(e) => {
+              const value = e.target.value as string[];
+              setPremiumOptions(value);
+            }}
+          />
+          <Input
+            label="프리미엄 플랜명"
+            name="premiumTitle"
+            size="small"
+            placeholder="프리미엄 플랜명을 입력해주세요"
+          />
+        </>
+      )}
+      <p>
+        <b>최종금액</b>: 86,000원 (보증금 포함)
+      </p>
     </div>
+  );
+}
+
+function SelectControl({
+  menuList,
+  labelId,
+  label,
+  multiple,
+  value,
+  ...restProps
+}: { menuList: Record<string, string> } & SelectProps) {
+  return (
+    <FormControl fullWidth size="small">
+      <InputLabel id={labelId}>{label}</InputLabel>
+      <Select multiple={multiple} {...restProps} value={value}>
+        {Object.entries(menuList).map(([optValue, optCaption]) => (
+          <MenuItem key={optValue} value={optValue}>
+            {multiple && (
+              <Checkbox
+                checked={(value as Array<string>).includes(optValue)}
+                sx={{ padding: 0, margin: '1px 0', marginRight: '4px' }}
+                size="small"
+              />
+            )}
+            <span>{optCaption}</span>
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
   );
 }

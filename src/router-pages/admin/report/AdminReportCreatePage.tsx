@@ -394,7 +394,7 @@ const AdminReportCreatePage = () => {
           <hr />
 
           <section>
-            <header className="mb-2 flex items-center justify-between">
+            <div className="mb-2 flex items-center justify-between">
               <Heading2>옵션 설정</Heading2>
               <Button
                 variant="outlined"
@@ -409,7 +409,7 @@ const AdminReportCreatePage = () => {
               >
                 옵션 추가
               </Button>
-            </header>
+            </div>
             <div className="flex flex-col items-start gap-4">
               {editingOptions.map((option, index) => {
                 return (
