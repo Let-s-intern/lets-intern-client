@@ -33,10 +33,11 @@ import PaymentErrorNotification from '../PaymentErrorNotification';
 import GradientButton from '../program/program-detail/button/GradientButton';
 import { default as BaseButton } from '../ui/button/BaseButton';
 import {
-  ReportFormCheckboxControlLabel,
-  ReportFormRadioControlLabel,
-} from './ControlLabel';
-import ReportDropdown from './ReportDropdown';
+  OptionFormCheckboxControlLabel,
+  OptionFormRadioControlLabel,
+} from '../ui/ControlLabel';
+import DrawerCloseBtn from '../ui/DrawerCloseBtn';
+import OptionDropdown from '../ui/OptionDropdown';
 
 const { BASIC, PREMIUM } = reportPriceTypeEnum.enum;
 const { PERSONAL_STATEMENT } = reportTypeSchema.enum;
@@ -403,12 +404,7 @@ const ReportApplyBottomSheet = React.forwardRef<
           <div className="relative flex h-full flex-col justify-between overflow-y-scroll px-5">
             <div>
               {/* 상단 닫기 버튼 */}
-              <div className="sticky top-0 z-10 w-full bg-white py-2">
-                <div
-                  className="mx-auto h-[5px] w-16 cursor-pointer rounded-full bg-neutral-80"
-                  onClick={() => setIsDrawerOpen(false)}
-                />
-              </div>
+              <DrawerCloseBtn onClose={() => setIsDrawerOpen(false)} />
 
               {/* 본문 */}
               <div className="mb-5 mt-2 flex flex-col gap-8">
@@ -418,8 +414,8 @@ const ReportApplyBottomSheet = React.forwardRef<
                     {reportDisplayName} 진단 플랜 선택 (필수)
                     <RequiredStar />
                   </Heading2>
-                  <ReportDropdown
-                    title={`합격을 이끄는 ${reportDisplayName} 진단 플랜`}
+                  <OptionDropdown
+                    label={`합격을 이끄는 ${reportDisplayName} 진단 플랜`}
                     labelId="report-diagnosis-plan-group-label"
                   >
                     <RadioGroup
@@ -440,7 +436,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                       }}
                     >
                       {reportDiagnosisPlan.map((item, index) => (
-                        <ReportFormRadioControlLabel
+                        <OptionFormRadioControlLabel
                           key={item.label}
                           label={item.label}
                           value={item.value}
@@ -457,7 +453,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                         />
                       ))}
                     </RadioGroup>
-                  </ReportDropdown>
+                  </OptionDropdown>
                 </FormControl>
 
                 {/* 자기소개서 문항 추가 */}
@@ -546,8 +542,8 @@ const ReportApplyBottomSheet = React.forwardRef<
                   <FormControl fullWidth>
                     <Heading2 className="mb-4">현직자 피드백 (선택)</Heading2>
 
-                    <ReportDropdown
-                      title="현직자가 알려주는 합격의 디테일"
+                    <OptionDropdown
+                      label="현직자가 알려주는 합격의 디테일"
                       labelId="option-group-label"
                       initialOpenState={false}
                     >
@@ -563,7 +559,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                           );
 
                           return (
-                            <ReportFormCheckboxControlLabel
+                            <OptionFormCheckboxControlLabel
                               key={option.reportOptionId}
                               checked={checked}
                               onChange={(_, checked) => {
@@ -599,7 +595,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                           );
                         })}
                       </FormGroup>
-                    </ReportDropdown>
+                    </OptionDropdown>
                   </FormControl>
                 ) : null}
 

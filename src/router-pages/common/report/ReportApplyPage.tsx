@@ -18,7 +18,6 @@ import { ReportTypePathnameEnum } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { getReportThumbnail } from '@components/common/mypage/credit/CreditListItem';
-import { ReportFormRadioControlLabel } from '@components/common/report/ControlLabel';
 import DateTimePicker from '@components/common/report/DateTimePicker';
 import FilledInput from '@components/common/report/FilledInput';
 import Heading2 from '@components/common/report/Heading2';
@@ -28,6 +27,7 @@ import Tooltip from '@components/common/report/Tooltip';
 import BackHeader from '@components/common/ui/BackHeader';
 import BottomSheet from '@components/common/ui/BottomSheeet';
 import BaseButton from '@components/common/ui/button/BaseButton';
+import { OptionFormRadioControlLabel } from '@components/common/ui/ControlLabel';
 import HorizontalRule from '@components/ui/HorizontalRule';
 import RequiredStar from '@components/ui/RequiredStar';
 import { ConfigType, Dayjs } from 'dayjs';
@@ -294,11 +294,11 @@ const ProgramInfoSection = ({
             onChange={onChangeRadio}
           >
             <div className="flex flex-col gap-1">
-              <ReportFormRadioControlLabel
+              <OptionFormRadioControlLabel
                 label="지금 제출할래요."
                 value="true"
               />
-              <ReportFormRadioControlLabel
+              <OptionFormRadioControlLabel
                 label="결제 후 나중에 제출할래요."
                 value="false"
               />
@@ -343,7 +343,7 @@ export const DocumentSection = ({
         >
           {/* 파일 첨부 */}
           <div className="mb-4">
-            <ReportFormRadioControlLabel
+            <OptionFormRadioControlLabel
               label="파일 첨부"
               value="file"
               subText="(pdf, doc, docx 형식 지원, 50MB 이하)"
@@ -354,7 +354,7 @@ export const DocumentSection = ({
           </div>
           {/* URL */}
           <div>
-            <ReportFormRadioControlLabel label="URL" value="url" />
+            <OptionFormRadioControlLabel label="URL" value="url" />
             {value === 'url' && (
               <FilledInput
                 name="applyUrl"
@@ -412,7 +412,7 @@ export const PremiumSection = ({
             name="radio-buttons-group"
           >
             <div className="mb-4">
-              <ReportFormRadioControlLabel
+              <OptionFormRadioControlLabel
                 sx={{ flexShrink: 0 }}
                 label="파일 첨부"
                 value="file"
@@ -426,7 +426,7 @@ export const PremiumSection = ({
               )}
             </div>
             <div>
-              <ReportFormRadioControlLabel label="URL" value="url" />
+              <OptionFormRadioControlLabel label="URL" value="url" />
               {value === 'url' && (
                 <FilledInput
                   name="recruitmentUrl"
