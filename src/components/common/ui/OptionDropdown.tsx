@@ -1,19 +1,19 @@
 import { ReactNode, useState } from 'react';
 import { HiChevronDown, HiChevronUp } from 'react-icons/hi2';
 
-interface ReportDropdownProps {
-  title: string;
+interface Props {
+  label: string;
   children?: ReactNode;
   initialOpenState?: boolean;
   labelId?: string;
 }
 
-function ReportDropdown({
-  title,
+function OptionDropdown({
+  label,
   children,
   initialOpenState = true,
   labelId,
-}: ReportDropdownProps) {
+}: Props) {
   const [isOpen, setIsOpen] = useState(initialOpenState);
 
   return (
@@ -22,7 +22,7 @@ function ReportDropdown({
         className="flex cursor-pointer items-center justify-between bg-neutral-100 p-3 text-xsmall14 font-semibold text-static-0"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <label id={labelId}>{title}</label>
+        <label id={labelId}>{label}</label>
         {isOpen ? (
           <HiChevronUp className="h-auto w-5" color="#ACAFB6" />
         ) : (
@@ -35,4 +35,4 @@ function ReportDropdown({
   );
 }
 
-export default ReportDropdown;
+export default OptionDropdown;

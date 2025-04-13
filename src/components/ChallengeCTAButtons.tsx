@@ -10,6 +10,8 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { DesktopApplyCTA, MobileApplyCTA } from './common/ApplyCTA';
 import BottomSheet from './common/ui/BottomSheeet';
+import DrawerCloseBtn from './common/ui/DrawerCloseBtn';
+import ModalOverlay from './ui/ModalOverlay';
 
 const ChallengeCTAButtons = ({
   challenge,
@@ -105,16 +107,23 @@ const ChallengeCTAButtons = ({
     challengeId,
     isLoggedIn,
     router,
+    isOpen,
     setProgramApplicationForm,
   ]);
 
   if (isOpen)
     return (
-      <BottomSheet>
-        <label className="required-star text-xsmall14 font-semibold">
-          챌린지 플랜 선택 (필수)
-        </label>
-      </BottomSheet>
+      <>
+        <ModalOverlay onClose={() => setIsOpen(false)} />
+        <BottomSheet>
+          {/* 닫기 버튼 */}
+          <DrawerCloseBtn onClose={() => setIsOpen(false)} />
+
+          <label className="required-star text-xsmall14 font-semibold">
+            챌린지 플랜 선택 (필수)
+          </label>
+        </BottomSheet>
+      </>
     );
 
   return (

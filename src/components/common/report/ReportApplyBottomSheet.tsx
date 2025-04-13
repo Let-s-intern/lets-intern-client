@@ -33,11 +33,11 @@ import PaymentErrorNotification from '../PaymentErrorNotification';
 import GradientButton from '../program/program-detail/button/GradientButton';
 import { default as BaseButton } from '../ui/button/BaseButton';
 import DrawerCloseBtn from '../ui/DrawerCloseBtn';
+import OptionDropdown from '../ui/OptionDropdown';
 import {
   ReportFormCheckboxControlLabel,
   ReportFormRadioControlLabel,
 } from './ControlLabel';
-import ReportDropdown from './ReportDropdown';
 
 const { BASIC, PREMIUM } = reportPriceTypeEnum.enum;
 const { PERSONAL_STATEMENT } = reportTypeSchema.enum;
@@ -414,8 +414,8 @@ const ReportApplyBottomSheet = React.forwardRef<
                     {reportDisplayName} 진단 플랜 선택 (필수)
                     <RequiredStar />
                   </Heading2>
-                  <ReportDropdown
-                    title={`합격을 이끄는 ${reportDisplayName} 진단 플랜`}
+                  <OptionDropdown
+                    label={`합격을 이끄는 ${reportDisplayName} 진단 플랜`}
                     labelId="report-diagnosis-plan-group-label"
                   >
                     <RadioGroup
@@ -453,7 +453,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                         />
                       ))}
                     </RadioGroup>
-                  </ReportDropdown>
+                  </OptionDropdown>
                 </FormControl>
 
                 {/* 자기소개서 문항 추가 */}
@@ -542,8 +542,8 @@ const ReportApplyBottomSheet = React.forwardRef<
                   <FormControl fullWidth>
                     <Heading2 className="mb-4">현직자 피드백 (선택)</Heading2>
 
-                    <ReportDropdown
-                      title="현직자가 알려주는 합격의 디테일"
+                    <OptionDropdown
+                      label="현직자가 알려주는 합격의 디테일"
                       labelId="option-group-label"
                       initialOpenState={false}
                     >
@@ -595,7 +595,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                           );
                         })}
                       </FormGroup>
-                    </ReportDropdown>
+                    </OptionDropdown>
                   </FormControl>
                 ) : null}
 
