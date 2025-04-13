@@ -1,3 +1,4 @@
+import axiosV2 from '@/utils/axiosV2';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import {
@@ -489,4 +490,11 @@ export const useGetChallengeAttendances = ({
       return attendances.parse(res.data.data).attendanceList ?? [];
     },
   });
+};
+
+export const getClickCopy = async (fromId: number, toId: number) => {
+  const res = await axiosV2.get(
+    `/admin/challenge/copy-dashboard/${fromId}/${toId}`,
+  );
+  return res.data.data;
 };

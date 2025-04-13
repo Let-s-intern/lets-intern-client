@@ -1,4 +1,8 @@
-import { ChallengeList, useGetChallengeList } from '@/api/challenge';
+import {
+  ChallengeList,
+  getClickCopy,
+  useGetChallengeList,
+} from '@/api/challenge';
 import { useAdminCurrentChallenge } from '@/context/CurrentAdminChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
@@ -129,7 +133,14 @@ function ChallengeDashBoardModal({
   challengeList: ChallengeList;
   onClose: () => void;
 }) {
+  const { programId } = useParams();
+
   const [selectedId, setSelectedId] = useState<number | null>(null);
+
+  const handleClickCopy = async () => {
+    await getClickCopy(selectedId!, Number(programId));
+    window.location.reload();
+  };
 
   return (
     <BaseModal className="max-w-[800px]" isOpen={isOpen} onClose={onClose}>
@@ -152,7 +163,11 @@ function ChallengeDashBoardModal({
           ))}
         </ul>
         <div className="flex justify-end gap-3">
-          <Button variant="contained" disabled={!selectedId}>
+          <Button
+            variant="contained"
+            disabled={!selectedId || !programId}
+            onClick={handleClickCopy}
+          >
             대시보드 복제
           </Button>
           <Button variant="outlined" onClick={onClose}>
