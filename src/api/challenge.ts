@@ -255,6 +255,8 @@ export const useGetChallengeList = ({
   });
 };
 
+export type ChallengeList = z.infer<typeof challengeListSchema>;
+
 // 챌린지 목록 조회-홈 (노출상태, 정렬: 모집중(모집마감빠른순)-모집마감-모집예정순)
 export const useGetChallengeHome = ({
   typeList,
