@@ -138,6 +138,9 @@ function ChallengeDashBoardModal({
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
   const handleClickCopy = async () => {
+    const yes = confirm('복제하시겠습니까?');
+    if (!yes) return;
+
     await getClickCopy(selectedId!, Number(programId));
     window.location.reload();
   };
