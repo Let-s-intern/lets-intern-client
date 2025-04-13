@@ -1,10 +1,15 @@
+import {
+  ChallengeList,
+  getClickCopy,
+  useGetChallengeList,
+} from '@/api/challenge';
+import { useAdminCurrentChallenge } from '@/context/CurrentAdminChallengeProvider';
+import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
-import { useQuery } from '@tanstack/react-query';
+import BaseModal from '@components/ui/BaseModal';
+import { Button, Checkbox } from '@mui/material';
+import { useState } from 'react';
 import { NavLink, Outlet, useNavigate, useParams } from 'react-router-dom';
-import { z } from 'zod';
-import { useAdminCurrentChallenge } from '../../../../context/CurrentAdminChallengeProvider';
-import { challengeSchema } from '../../../../schema';
-import axios from '../../../../utils/axios';
 
 const getNavLinks = (programId?: string | number) => {
   return [
@@ -39,48 +44,64 @@ const getNavLinks = (programId?: string | number) => {
 const ChallengeAdminLayout = () => {
   const params = useParams();
   const navigate = useNavigate();
-  const { data } = useQuery({
-    queryKey: ['admin', 'challenge'],
-    queryFn: async () => {
-      const res = await axios.get(`/challenge?size=1000`);
-      return res.data.data as z.infer<typeof challengeSchema>;
+
+  const { data } = useGetChallengeList({
+    pageable: {
+      size: 1000,
+      page: 1,
     },
   });
-
   const { currentChallenge } = useAdminCurrentChallenge();
 
+  const isAfterStart = dayjs().isAfter(currentChallenge?.startDate, 'day');
   const navLinks = getNavLinks(params.programId);
 
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <div className="p-3">
+    <section className="p-3">
+      {/* 헤더 */}
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-bold">
           챌린지 운영: {currentChallenge?.title}
         </h1>
-        <select
-          className="border p-3"
-          onChange={(e) => {
-            if (e.target.value) {
-              navigate(`/admin/challenge/operation/${e.target.value}/home`);
-            }
-          }}
-        >
-          <option key="change" value="">
-            챌린지 변경
-          </option>
-          {data?.programList.map((program) => (
-            <option key={program.id} value={program.id}>
-              {program.title}
+
+        <div>
+          {/* 아직 시작하지 않은 챌린지만 대시보드 복제 가능 */}
+          <Button
+            disabled={isAfterStart}
+            variant="outlined"
+            onClick={() => setIsOpen(true)}
+          >
+            대시보드 복제
+          </Button>
+          <select
+            className="ml-3 border p-3"
+            onChange={(e) => {
+              if (e.target.value) {
+                navigate(`/admin/challenge/operation/${e.target.value}/home`);
+              }
+            }}
+          >
+            <option key="change" value="">
+              챌린지 변경
             </option>
-          ))}
-        </select>
+            {data?.programList.map((program) => (
+              <option key={program.id} value={program.id}>
+                {program.title}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
+
+      {/* 네비게이션 */}
       <nav id="sidebar" className="flex">
         {navLinks.map((navLink) => (
           <NavLink
             key={navLink.to}
             to={navLink.to}
-            className={({ isActive, isPending, isTransitioning }) =>
+            className={({ isActive }) =>
               twMerge('block px-4 py-2', isActive && 'text-blue-600')
             }
           >
@@ -88,9 +109,74 @@ const ChallengeAdminLayout = () => {
           </NavLink>
         ))}
       </nav>
+
       <Outlet />
-    </div>
+
+      {/* 대시보드를 복제할 챌린지 리스트 */}
+      {data && (
+        <ChallengeDashBoardModal
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+          challengeList={data}
+        />
+      )}
+    </section>
   );
 };
+
+function ChallengeDashBoardModal({
+  isOpen,
+  onClose,
+  challengeList,
+}: {
+  isOpen: boolean;
+  challengeList: ChallengeList;
+  onClose: () => void;
+}) {
+  const { programId } = useParams();
+
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+
+  const handleClickCopy = async () => {
+    await getClickCopy(selectedId!, Number(programId));
+    window.location.reload();
+  };
+
+  return (
+    <BaseModal className="max-w-[800px]" isOpen={isOpen} onClose={onClose}>
+      <section className="p-5">
+        <p className="mb-5 text-small18 font-bold">
+          대시보드를 복제할 챌린지를 선택해주세요
+        </p>
+        <ul className="flex h-[600px] flex-col gap-1 overflow-y-auto">
+          {challengeList?.programList.map((challenge) => (
+            <li
+              key={challenge.id}
+              className="w-fit cursor-pointer"
+              onClick={() => {
+                setSelectedId(challenge.id);
+              }}
+            >
+              <Checkbox checked={selectedId === challenge.id} />
+              <span>{`[${challenge.id}] ${challenge.title}`}</span>
+            </li>
+          ))}
+        </ul>
+        <div className="flex justify-end gap-3">
+          <Button
+            variant="contained"
+            disabled={!selectedId || !programId}
+            onClick={handleClickCopy}
+          >
+            대시보드 복제
+          </Button>
+          <Button variant="outlined" onClick={onClose}>
+            취소
+          </Button>
+        </div>
+      </section>
+    </BaseModal>
+  );
+}
 
 export default ChallengeAdminLayout;
