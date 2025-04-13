@@ -2,14 +2,12 @@ import { useProgramApplicationQuery } from '@/api/application';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import { ChallengeIdPrimitive } from '@/schema';
 import useProgramStore from '@/store/useProgramStore';
-import ModalOverlay from '@components/ui/ModalOverlay';
+import BaseBottomSheet from '@components/ui/BaseBottomSheet';
 import { RadioGroup } from '@mui/material';
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
-import BottomSheet from '../ui/BottomSheeet';
 import { OptionFormRadioControlLabel } from '../ui/ControlLabel';
-import DrawerCloseBtn from '../ui/DrawerCloseBtn';
 import OptionDropdown from '../ui/OptionDropdown';
 import BaseButton from '../ui/button/BaseButton';
 
@@ -18,10 +16,12 @@ const pricePlans = ['프리미엄', '스탠다드', '베이직'];
 function PricePlanBottomSheet({
   challenge,
   challengeId,
+  isOpen,
   onClose,
 }: {
   challenge: ChallengeIdPrimitive;
   challengeId: string;
+  isOpen: boolean;
   onClose: () => void;
 }) {
   const router = useRouter();
@@ -87,11 +87,11 @@ function PricePlanBottomSheet({
 
   return (
     <>
-      <ModalOverlay className="z-20" onClose={onClose} />
-      <BottomSheet className="z-20 mx-auto block max-w-[1000px] pt-0">
-        {/* 닫기 버튼 */}
-        <DrawerCloseBtn onClose={onClose} />
-
+      <BaseBottomSheet
+        isOpen={isOpen}
+        onClose={onClose}
+        className="mx-auto max-w-[1000px]"
+      >
         {/* 챌린지 플랜 */}
         <span className="required-star mb-4 mt-3 block text-xsmall14 font-semibold">
           챌린지 플랜 선택 (필수)
@@ -139,7 +139,7 @@ function PricePlanBottomSheet({
             신청하기
           </BaseButton>
         </section>
-      </BottomSheet>
+      </BaseBottomSheet>
     </>
   );
 }

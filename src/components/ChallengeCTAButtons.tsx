@@ -39,38 +39,42 @@ const ChallengeCTAButtons = ({
     }
   };
 
-  // 가격 플랜 선택 바텀 시트
-  if (isOpen) {
-    return (
+  return (
+    <>
+      {!isOpen && (
+        <>
+          <DesktopApplyCTA
+            program={{
+              ...challenge,
+              beginning: challenge.beginning
+                ? dayjs(challenge.beginning)
+                : null,
+              deadline: challenge.deadline ? dayjs(challenge.deadline) : null,
+            }}
+            onApplyClick={handleOpen}
+            isAlreadyApplied={isAlreadyApplied}
+          />
+          <MobileApplyCTA
+            program={{
+              ...challenge,
+              beginning: challenge.beginning
+                ? dayjs(challenge.beginning)
+                : null,
+              deadline: challenge.deadline ? dayjs(challenge.deadline) : null,
+            }}
+            onApplyClick={handleOpen}
+            isAlreadyApplied={isAlreadyApplied}
+          />
+        </>
+      )}
+      {/* 가격 플랜 선택 바텀 시트 */}
       <PricePlanBottomSheet
+        isOpen={isOpen}
         challenge={challenge}
         challengeId={challengeId}
         onClose={() => setIsOpen(false)}
       />
-    );
-  }
-
-  return (
-    <>
-      <DesktopApplyCTA
-        program={{
-          ...challenge,
-          beginning: challenge.beginning ? dayjs(challenge.beginning) : null,
-          deadline: challenge.deadline ? dayjs(challenge.deadline) : null,
-        }}
-        onApplyClick={handleOpen}
-        isAlreadyApplied={isAlreadyApplied}
-      />
-
-      <MobileApplyCTA
-        program={{
-          ...challenge,
-          beginning: challenge.beginning ? dayjs(challenge.beginning) : null,
-          deadline: challenge.deadline ? dayjs(challenge.deadline) : null,
-        }}
-        onApplyClick={handleOpen}
-        isAlreadyApplied={isAlreadyApplied}
-      />
+      ;
     </>
   );
 };
