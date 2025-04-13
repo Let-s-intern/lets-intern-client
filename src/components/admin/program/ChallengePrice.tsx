@@ -99,7 +99,8 @@ export default function ChallengePrice<
     defaultPriceReq.challengePriceType === 'REFUND',
   );
   const [pricePlanValue, setPricePlanValue] = useState(defaultPricePlan);
-  const [standardOptions, setStandardOptions] = useState<string[]>([]); // TODO: 상위로 이동
+  const [standardOptions, setStandardOptions] = useState<string[]>([]); // TODO: 상위 컴포넌트로 이동
+  const [premiumOptions, setPremiumOptions] = useState<string[]>([]); // TODO: 상위 컴포넌트로 이동
 
   return (
     <div className="flex flex-col gap-3">
@@ -112,6 +113,10 @@ export default function ChallengePrice<
         defaultValue="베이직"
         value={pricePlanValue}
         menuList={pricePlanMenuList}
+        onChange={(e) => {
+          setPricePlanValue(e.target.value as string);
+          // TODO: 스탠다드, 프리미엄 옵션 초기화
+        }}
       />
       {/* 금액 유형 */}
       <SelectControl
@@ -226,20 +231,59 @@ export default function ChallengePrice<
           }));
         }}
       />
-      <SelectControl
-        labelId="standardOptionsLabel"
-        id="standardOptions"
-        name="standardOptions"
-        label="스탠다드 옵션"
-        multiple
-        value={standardOptions}
-        renderValue={() => standardOptions.join(', ')}
-        menuList={generateOptionMenuList()}
-        onChange={(e) => {
-          const value = e.target.value as string[];
-          setStandardOptions(value);
-        }}
-      />
+      {/* 스탠다드 옵션 */}
+      {pricePlanValue.includes('스탠다드') && (
+        <>
+          <SelectControl
+            labelId="standardOptionsLabel"
+            id="standardOptions"
+            name="standardOptions"
+            label="스탠다드 옵션"
+            multiple
+            value={standardOptions}
+            renderValue={() => standardOptions.join(', ')}
+            menuList={generateOptionMenuList()}
+            onChange={(e) => {
+              const value = e.target.value as string[];
+              setStandardOptions(value);
+            }}
+          />
+          <Input
+            label="스탠다드 플랜명"
+            name="standardTitle"
+            size="small"
+            placeholder="스탠다드 플랜명을 입력해주세요"
+          />
+        </>
+      )}
+      {/* 프리미엄 옵션 */}
+      {pricePlanValue.includes('프리미엄') && (
+        <>
+          <SelectControl
+            labelId="premiumOptionsLabel"
+            id="premiumOptions"
+            name="premiumOptions"
+            label="프리미엄 옵션"
+            multiple
+            value={premiumOptions}
+            renderValue={() => premiumOptions.join(', ')}
+            menuList={generateOptionMenuList()}
+            onChange={(e) => {
+              const value = e.target.value as string[];
+              setPremiumOptions(value);
+            }}
+          />
+          <Input
+            label="프리미엄 플랜명"
+            name="premiumTitle"
+            size="small"
+            placeholder="프리미엄 플랜명을 입력해주세요"
+          />
+        </>
+      )}
+      <p>
+        <b>최종금액</b>: 86,000원 (보증금 포함)
+      </p>
     </div>
   );
 }
