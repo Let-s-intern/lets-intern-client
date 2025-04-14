@@ -36,12 +36,12 @@ const ReportFaqSection = ({ reportType, reportId }: ReportFaqSectionProps) => {
         <MainHeader>{MAIN_HEADER}</MainHeader>
       </div>
 
-      <main className="mx-auto mt-10 md:mt-20">
+      <section className="mx-auto mt-10 md:mt-20">
         <div className="mx-auto mb-10 flex max-w-[800px] flex-col gap-3 md:mb-16">
           {data?.faqList.map((faq) => <FaqDropdown key={faq.id} faq={faq} />)}
         </div>
         <FaqChat />
-      </main>
+      </section>
     </section>
   );
 };

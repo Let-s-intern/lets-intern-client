@@ -154,7 +154,7 @@ const BlogDetailPage = async ({
   }
 
   return (
-    <main className="mx-auto w-full max-w-[1100px] pb-12 pt-6 md:pb-[7.5rem]">
+    <div className="mx-auto w-full max-w-[1100px] pb-12 pt-6 md:pb-[7.5rem]">
       <div className="flex flex-col items-center md:flex-row md:items-start md:gap-20">
         {/* 본문 */}
         <section className="w-full px-5 md:px-0">
@@ -257,7 +257,7 @@ const BlogDetailPage = async ({
           ctaLink={blog.blogDetailInfo.ctaLink}
         />
       )} */}
-    </main>
+    </div>
   );
 };
 

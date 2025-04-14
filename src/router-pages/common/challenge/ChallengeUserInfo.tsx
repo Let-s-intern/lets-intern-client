@@ -152,7 +152,7 @@ const ChallengeUserInfo = () => {
   ]);
 
   return (
-    <main className="mx-auto flex max-w-3xl flex-col gap-6 pb-24 pt-12">
+    <section className="mx-auto flex max-w-3xl flex-col gap-6 pb-24 pt-12">
       <div className="flex flex-col gap-2">
         <h1 className="text-center text-xl font-semibold">
           챌린지 대시보드 추가정보 입력
@@ -256,7 +256,7 @@ const ChallengeUserInfo = () => {
           챌린지 대시보드 입장하기
         </button>
       </div>
-    </main>
+    </section>
   );
 };
 

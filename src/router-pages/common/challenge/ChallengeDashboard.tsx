@@ -101,10 +101,10 @@ const ChallengeDashboard = () => {
   const isChallengeSubmitDone = getIsChallengeSubmitDone(programEndDate);
 
   return (
-    <main className="mr-[-1rem] pl-6">
-      <header>
+    <section className="mr-[-1rem] pl-6">
+      <section>
         <h1 className="text-2xl font-semibold">{user?.name}님의 대시보드</h1>
-      </header>
+      </section>
       <div className="flex flex-col gap-4">
         <div className="mt-4 flex gap-4">
           {dailyMission ? (
@@ -154,7 +154,7 @@ const ChallengeDashboard = () => {
           {/* <CurriculumSection /> */}
         </div>
       </div>
-    </main>
+    </section>
   );
 };
 

@@ -10,7 +10,7 @@ const TopSection = () => {
   const { boxRef, ref0, ref1, ref2 } = useScrollFade();
 
   return (
-    <header className="px-auto relative h-[3000px] bg-gradient-to-b from-[#4D55F5] via-[#2D328F] via-80% to-[#101348] pb-24 sm:pb-[6.5rem] xl:pb-32">
+    <section className="px-auto relative h-[3000px] bg-gradient-to-b from-[#4D55F5] via-[#2D328F] via-80% to-[#101348] pb-24 sm:pb-[6.5rem] xl:pb-32">
       <div
         ref={boxRef}
         className="sticky top-48 flex w-full flex-col items-center"
@@ -57,7 +57,7 @@ const TopSection = () => {
           </div>
         </div>
       </div>
-    </header>
+    </section>
   );
 };
 

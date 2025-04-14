@@ -54,7 +54,7 @@ const MyChallengeDashboard = () => {
     : undefined;
 
   return (
-    <main className="px-6">
+    <section className="px-6">
       <header>
         <h1 className="text-2xl font-bold">나의 기록장</h1>
       </header>
@@ -69,7 +69,7 @@ const MyChallengeDashboard = () => {
       {typeof isChallengeSubmitDone === 'boolean' && (
         <OtherMissionSection todayTh={todayTh} isDone={isChallengeSubmitDone} />
       )}
-    </main>
+    </section>
   );
 };
 

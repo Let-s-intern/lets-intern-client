@@ -4,7 +4,7 @@ export default function Page() {
   return (
     <div className="flex flex-col items-center">
       {/* 블로그 배너 */}
-      <header className="mb-8 flex h-[154px] w-full items-center bg-blog-banner-sm bg-cover bg-no-repeat px-5 md:mb-11 md:h-[168px] md:bg-blog-banner-md md:px-0 lg:bg-blog-banner-lg">
+      <section className="mb-8 flex h-[154px] w-full items-center bg-blog-banner-sm bg-cover bg-no-repeat px-5 md:mb-11 md:h-[168px] md:bg-blog-banner-md md:px-0 lg:bg-blog-banner-lg">
         <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-1 md:gap-2">
           <h1 className="text-small20 font-bold text-neutral-100 md:text-medium24">
             렛츠커리어 블로그
@@ -15,12 +15,12 @@ export default function Page() {
             독자적인 커리어 교육 콘텐츠를 확인해보세요.
           </p>
         </div>
-      </header>
+      </section>
 
       {/* 블로그 콘텐츠 */}
-      <main className="mx-auto mb-12 w-full max-w-[1100px] px-5 md:mb-20 md:px-0">
+      <section className="mx-auto mb-12 w-full max-w-[1100px] px-5 md:mb-20 md:px-0">
         <BlogListContent />
-      </main>
+      </section>
     </div>
   );
 }

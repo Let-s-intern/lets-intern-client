@@ -62,7 +62,7 @@ function PromoSection({ reportType }: PromoSectionProps) {
         <MainHeader>{MAIN_HEADER}</MainHeader>
       </div>
 
-      <main className="relative flex max-w-[50rem] flex-col items-center gap-5 bg-white px-5 py-7 text-center text-neutral-0 md:mx-auto md:gap-11 md:py-10">
+      <div className="relative flex max-w-[50rem] flex-col items-center gap-5 bg-white px-5 py-7 text-center text-neutral-0 md:mx-auto md:gap-11 md:py-10">
         <div
           className="absolute left-0 top-0 h-[6px] w-full"
           style={borderStyle}
@@ -101,7 +101,7 @@ function PromoSection({ reportType }: PromoSectionProps) {
           <CardTitle>{contentList[1].title}</CardTitle>
           <CardContent>{contentList[1].content}</CardContent>
         </div>
-      </main>
+      </div>
     </section>
   );
 }
