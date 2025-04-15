@@ -1,3 +1,9 @@
+import {
+  useDeleteChallengeOption,
+  useGetChallengeOptions,
+  usePostChallengeOption,
+} from '@/api/challengeOption';
+import { ChallengeOption } from '@/api/challengeOptionSchema';
 import { fileType, uploadFile } from '@/api/file';
 import { usePostChallengeMutation } from '@/api/program';
 import ChallengeBasic from '@/components/admin/program/ChallengeBasic';
@@ -26,7 +32,7 @@ import Heading from '@components/admin/ui/heading/Heading';
 import Heading2 from '@components/admin/ui/heading/Heading2';
 import Heading3 from '@components/admin/ui/heading/Heading3';
 import { Button, TextField } from '@mui/material';
-import { ChangeEvent, useCallback, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import ChallengeFaqCategory from './program/ChallengeFaqCategory';
@@ -34,16 +40,14 @@ import ProgramSchedule from './program/ProgramSchedule';
 
 /**
  * 챌린지 생성 페이지
- * - 가격구분은 무조건 BASIC으로 고정
  */
-interface Option {
-  title: string;
-  optionPrice: number;
-  optionDiscountPrice: number;
-  optionCode: string;
-}
 
 const ChallengeCreate: React.FC = () => {
+  const navigate = useNavigate();
+
+  const { snackbar } = useAdminSnackbar();
+  const { mutateAsync: postChallenge } = usePostChallengeMutation();
+
   const [content, setContent] = useState<ChallengeContent>({
     curriculum: [],
     challengePoint: { list: [] },
@@ -53,10 +57,6 @@ const ChallengeCreate: React.FC = () => {
     faqCategory: [],
     programRecommend: { list: [] },
   });
-  const { snackbar } = useAdminSnackbar();
-  const navigate = useNavigate();
-
-  const { mutateAsync: postChallenge } = usePostChallengeMutation();
 
   const [input, setInput] = useState<Omit<CreateChallengeReq, 'desc'>>({
     beginning: dayjs().format('YYYY-MM-DDTHH:mm'),
@@ -90,8 +90,8 @@ const ChallengeCreate: React.FC = () => {
   });
 
   const [loading, setLoading] = useState(false);
-  // TODO: 디폴트 값 설정해야 함
-  const [editingOptions, setEditingOptions] = useState<Option[]>([]);
+  const [importJsonString, setImportJsonString] = useState('');
+  const [importProcessing, setImportProcessing] = useState(false);
 
   const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -117,7 +117,21 @@ const ChallengeCreate: React.FC = () => {
     navigate('/admin/programs');
   }, [input, content, postChallenge, snackbar, navigate]);
 
-  // 옵션 설정
+  /** 옵션 설정 */
+  const { mutateAsync: postChallengeOpt } = usePostChallengeOption();
+  const { mutateAsync: deleteChallengeOpt } = useDeleteChallengeOption();
+  const { data: challengeOptions } = useGetChallengeOptions();
+
+  const [editingOptions, setEditingOptions] = useState<ChallengeOption[]>(
+    challengeOptions?.challengeOptionList ?? [],
+  );
+
+  useEffect(() => {
+    // 새 옵션이 추가되면 editingOptions 상태에 저장
+    if (!challengeOptions) return;
+    setEditingOptions(challengeOptions.challengeOptionList);
+  }, [challengeOptions]);
+
   const handleChangeOption = useCallback(
     (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, index: number) => {
       const { type, name, value } = e.target;
@@ -137,28 +151,22 @@ const ChallengeCreate: React.FC = () => {
     [],
   );
 
-  const handleAddOption = useCallback(() => {
-    setEditingOptions((prev) => {
-      return [
-        ...prev,
-        {
-          title: '',
-          optionCode: '',
-          optionDiscountPrice: 0,
-          optionPrice: 0,
-        },
-      ];
+  const handleCreateOption = useCallback(async () => {
+    await postChallengeOpt({
+      title: '',
+      code: '',
+      price: 0,
+      discountPrice: 0,
     });
   }, []);
 
-  const handleDeleteOption = useCallback((index: number) => {
-    setEditingOptions((prev) => {
-      return prev.filter((_, i) => i !== index);
-    });
+  const handleDeleteOption = useCallback(async (optionId: number) => {
+    await deleteChallengeOpt(optionId);
   }, []);
 
-  const [importJsonString, setImportJsonString] = useState('');
-  const [importProcessing, setImportProcessing] = useState(false);
+  const handleSaveOption = useCallback(() => {
+    // 옵션 저장
+  }, []);
 
   if (importProcessing) {
     return <div>Importing...</div>;
@@ -251,7 +259,7 @@ const ChallengeCreate: React.FC = () => {
             ]}
             setInput={setInput}
             defaultPricePlan="베이직"
-            options={editingOptions}
+            options={challengeOptions?.challengeOptionList ?? []}
           />
           <ProgramSchedule
             defaultValue={{
@@ -281,12 +289,13 @@ const ChallengeCreate: React.FC = () => {
         </div>
       </section>
 
-      <section>
+      <section className="pb-8 pt-4">
         <ChallengeOptionSection
           options={editingOptions}
           onChange={handleChangeOption}
-          onClickAdd={handleAddOption}
+          onClickCreate={handleCreateOption}
           onClickDelete={handleDeleteOption}
+          onClickSave={handleSaveOption}
         />
       </section>
 

@@ -1,12 +1,4 @@
-import {
-  Checkbox,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectProps,
-} from '@mui/material';
-
+import { ChallengeOption } from '@/api/challengeOptionSchema';
 import {
   ChallengeIdSchema,
   ChallengePriceReq,
@@ -15,8 +7,15 @@ import {
 } from '@/schema';
 import { newProgramFeeTypeToText } from '@/utils/convert';
 import Input from '@components/ui/input/Input';
+import {
+  Checkbox,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectProps,
+} from '@mui/material';
 import { useState } from 'react';
-import { Option } from './ChallengeOptionSection';
 
 interface IChallengePriceProps<
   T extends CreateChallengeReq | UpdateChallengeReq,
@@ -24,7 +23,7 @@ interface IChallengePriceProps<
   defaultValue?: ChallengeIdSchema['priceInfo'];
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
   defaultPricePlan: string;
-  options: Option[];
+  options: ChallengeOption[];
 }
 
 const initialPrice: ChallengePriceReq = {
@@ -89,7 +88,8 @@ export default function ChallengePrice<
     const result: Record<string, string> = {};
     options.forEach(
       (item) =>
-        (result[item.optionCode] = `[${item.optionCode}] ${item.title}`),
+        (result[item.challengeOptionId] =
+          `[${item.challengeOptionId}] ${item.title}`),
     );
     return result;
   };

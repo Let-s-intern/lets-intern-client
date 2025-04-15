@@ -9,10 +9,13 @@ export const challengeOptionSchema = z.object({
   discountPrice: z.number().optional().nullable(),
 });
 
+export type ChallengeOption = z.infer<typeof challengeOptionSchema>;
+
 // GET 챌린지 옵션 전체 목록
 export const challengeOptionsSchema = z.object({
   challengeOptionList: z.array(challengeOptionSchema),
 });
+export type ChallengeOptions = z.infer<typeof challengeOptionsSchema>;
 
 // POST 챌린지 옵션 생성 Request
 export interface PostChallengeOptionReq {

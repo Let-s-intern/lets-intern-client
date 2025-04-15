@@ -1,3 +1,4 @@
+import { ChallengeOption } from '@/api/challengeOptionSchema';
 import { Button, TextField, TextFieldProps } from '@mui/material';
 import { ChangeEvent, memo } from 'react';
 import { FaTrashCan } from 'react-icons/fa6';
@@ -8,17 +9,11 @@ const inputLabelProps = {
   style: { fontSize: '14px' },
 };
 
-export interface Option {
-  title: string;
-  optionPrice: number;
-  optionDiscountPrice: number;
-  optionCode: string;
-}
-
 interface Props {
-  options: Option[];
-  onClickAdd: () => void;
-  onClickDelete: (index: number) => void;
+  options: ChallengeOption[];
+  onClickCreate: () => void;
+  onClickSave: () => void;
+  onClickDelete: (optionId: number) => void;
   onChange?: (
     event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
     index: number,
@@ -27,17 +22,23 @@ interface Props {
 
 function ChallengeOptionSection({
   options,
-  onClickAdd,
+  onClickCreate,
   onClickDelete,
+  onClickSave,
   onChange,
 }: Props) {
   return (
     <>
       <div className="mb-2 flex items-center justify-between">
         <Heading2>옵션 설정</Heading2>
-        <Button variant="outlined" onClick={onClickAdd}>
-          옵션 추가
-        </Button>
+        <div className="flex gap-4">
+          <Button variant="contained" onClick={onClickSave}>
+            수정 내용 저장
+          </Button>
+          <Button variant="outlined" onClick={onClickCreate}>
+            옵션 생성
+          </Button>
+        </div>
       </div>
 
       <div className="flex flex-col items-start gap-4">
@@ -57,12 +58,12 @@ function ChallengeOptionSection({
                 name="optionPrice"
                 label="옵션 가격"
                 placeholder="옵션 가격을 입력하세요"
-                value={item.optionPrice}
+                value={item.price}
                 onChange={(e) => onChange && onChange(e, index)}
               />
               <OptionTextField
                 type="number"
-                value={item.optionDiscountPrice}
+                value={item.discountPrice}
                 onChange={(e) => onChange && onChange(e, index)}
                 name="optionDiscountPrice"
                 label="옵션 할인 가격"
@@ -70,7 +71,7 @@ function ChallengeOptionSection({
               />
               <OptionTextField
                 name="optionCode"
-                value={item.optionCode}
+                value={item.code}
                 onChange={(e) => onChange && onChange(e, index)}
                 label="옵션 코드"
                 placeholder="옵션 코드를 입력하세요"
@@ -79,7 +80,7 @@ function ChallengeOptionSection({
               {/* 옵션 삭제 with trash icon */}
               <Button
                 variant="text"
-                onClick={() => onClickDelete(index)}
+                onClick={() => onClickDelete(item.challengeOptionId)}
                 className="min-w-0"
                 style={{ minWidth: 0, padding: 12 }}
                 color="error"

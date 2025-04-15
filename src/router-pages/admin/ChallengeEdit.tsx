@@ -150,7 +150,7 @@ const ChallengeEdit: React.FC = () => {
     [],
   );
 
-  const handleAddOption = useCallback(() => {
+  const handleCreateOption = useCallback(() => {
     setEditingOptions((prev) => {
       return [
         ...prev,
@@ -273,11 +273,11 @@ const ChallengeEdit: React.FC = () => {
         </div>
       </section>
 
-      <section>
+      <section className="pb-8 pt-4">
         <ChallengeOptionSection
           options={editingOptions}
           onChange={handleChangeOption}
-          onClickAdd={handleAddOption}
+          onClickCreate={handleCreateOption}
           onClickDelete={handleDeleteOption}
         />
       </section>
