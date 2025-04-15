@@ -18,6 +18,7 @@ import {
   reviewTotalSchema,
 } from '../schema';
 import axios from '../utils/axios';
+import { Pageable } from './../schema';
 import {
   challengeGoalSchema,
   challengeUserInfoSchema,
@@ -229,6 +230,7 @@ export const useGetActiveChallenge = (type: ChallengeType) => {
 };
 
 // 챌린지 목록 조회
+
 export const useGetChallengeList = ({
   typeList,
   statusList,
@@ -238,7 +240,7 @@ export const useGetChallengeList = ({
   typeList?: ProgramClassification[];
   statusList?: ProgramStatus[];
   type?: ChallengeType;
-  pageable?: { page: number; size: number };
+  pageable?: Pageable;
 }) => {
   return useQuery({
     queryKey: ['challenge', typeList, statusList, type, pageable],
@@ -248,7 +250,7 @@ export const useGetChallengeList = ({
           typeList,
           statusList,
           type,
-          pageable,
+          ...pageable,
         },
       });
       return challengeListSchema.parse(res.data.data);
@@ -268,7 +270,7 @@ export const useGetChallengeHome = ({
   typeList?: ProgramClassification[];
   statusList?: ProgramStatus[];
   type?: ChallengeType;
-  pageable?: { page: number; size: number };
+  pageable?: Pageable;
 }) => {
   return useQuery({
     queryKey: ['challenge', 'home', typeList, statusList, type, pageable],
@@ -278,7 +280,7 @@ export const useGetChallengeHome = ({
           typeList,
           statusList,
           type,
-          pageable,
+          ...pageable,
         },
       });
       return challengeListSchema.parse(res.data.data);
