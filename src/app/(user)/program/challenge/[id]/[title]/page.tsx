@@ -64,7 +64,6 @@ const Page = async ({
   return (
     <>
       <ChallengeView challenge={challenge} />
-
       <ChallengeCTAButtons challenge={challenge} challengeId={id} />
     </>
   );
