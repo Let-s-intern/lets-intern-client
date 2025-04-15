@@ -45,8 +45,9 @@ import ProgramSchedule from './program/ProgramSchedule';
 
 const ChallengeCreate: React.FC = () => {
   const navigate = useNavigate();
-
   const { snackbar } = useAdminSnackbar();
+
+  /** 챌린지 */
   const { mutateAsync: postChallenge } = usePostChallengeMutation();
 
   const [content, setContent] = useState<ChallengeContent>({
@@ -119,7 +120,6 @@ const ChallengeCreate: React.FC = () => {
   }, [input, content, postChallenge, snackbar, navigate]);
 
   /** 옵션 설정 */
-
   const { data: challengeOptions } = useGetChallengeOptions();
   const { mutateAsync: postChallengeOpt } = usePostChallengeOption();
   const { mutateAsync: deleteChallengeOpt } = useDeleteChallengeOption();

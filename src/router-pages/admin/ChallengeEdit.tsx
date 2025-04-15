@@ -1,18 +1,31 @@
+import {
+  useDeleteChallengeOption,
+  useGetChallengeOptions,
+  usePatchChallengeOption,
+  usePostChallengeOption,
+} from '@/api/challengeOption';
+import { ChallengeOption } from '@/api/challengeOptionSchema';
 import { fileType, uploadFile } from '@/api/file';
 import {
   useGetChallengeQuery,
   useGetChallengeQueryKey,
   usePatchChallengeMutation,
 } from '@/api/program';
+import ChallengeBasic from '@/components/admin/program/ChallengeBasic';
+import ChallengeCurriculumEditor from '@/components/admin/program/ChallengeCurriculum';
+import ChallengePointEditor from '@/components/admin/program/ChallengePoint';
+import ChallengePrice from '@/components/admin/program/ChallengePrice';
+import ProgramBestReview from '@/components/admin/program/ProgramBestReview';
+import ProgramBlogReviewEditor from '@/components/admin/program/ProgramBlogReviewEditor';
+import FaqSection from '@/components/FaqSection';
+import ProgramRecommendEditor from '@/components/ProgramRecommendEditor';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import { ProgramTypeEnum, UpdateChallengeReq } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import ChallengePreviewButton from '@components/admin/ChallengePreviewButton';
 import EditorApp from '@components/admin/lexical/EditorApp';
-import ChallengeOptionSection, {
-  Option,
-} from '@components/admin/program/ChallengeOptionSection';
+import ChallengeOptionSection from '@components/admin/program/ChallengeOptionSection';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
@@ -23,18 +36,25 @@ import { useQueryClient } from '@tanstack/react-query';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
-import ChallengeBasic from '../../components/admin/program/ChallengeBasic';
-import ChallengeCurriculumEditor from '../../components/admin/program/ChallengeCurriculum';
-import ChallengePointEditor from '../../components/admin/program/ChallengePoint';
-import ChallengePrice from '../../components/admin/program/ChallengePrice';
-import ProgramBestReview from '../../components/admin/program/ProgramBestReview';
-import ProgramBlogReviewEditor from '../../components/admin/program/ProgramBlogReviewEditor';
-import FaqSection from '../../components/FaqSection';
-import ProgramRecommendEditor from '../../components/ProgramRecommendEditor';
 import ChallengeFaqCategory from './program/ChallengeFaqCategory';
 import ProgramSchedule from './program/ProgramSchedule';
 
 const ChallengeEdit: React.FC = () => {
+  const navigate = useNavigate();
+  const client = useQueryClient();
+  const { snackbar } = useAdminSnackbar();
+
+  /** 챌린지 */
+  const { challengeId: challengeIdString } = useParams();
+  const { mutateAsync: patchChallenge } = usePatchChallengeMutation();
+  const { data: challenge } = useGetChallengeQuery({
+    challengeId: Number(challengeIdString),
+    enabled: Boolean(challengeIdString),
+    refetchOnWindowFocus: false,
+  });
+
+  const [input, setInput] = useState<Omit<UpdateChallengeReq, 'desc'>>({});
+  const [loading, setLoading] = useState(false);
   const [content, setContent] = useState<ChallengeContent>({
     initialized: false,
     curriculum: [],
@@ -46,25 +66,6 @@ const ChallengeEdit: React.FC = () => {
     challengeReview: [],
     faqCategory: [],
   });
-
-  const { mutateAsync: patchChallenge } = usePatchChallengeMutation();
-  const navigate = useNavigate();
-  const { challengeId: challengeIdString } = useParams();
-  const client = useQueryClient();
-  const { data: challenge } = useGetChallengeQuery({
-    challengeId: Number(challengeIdString),
-    enabled: Boolean(challengeIdString),
-    refetchOnWindowFocus: false,
-  });
-
-  useEffect(() => {
-    if (challenge && isDeprecatedProgram(challenge)) {
-      navigate(
-        `/admin/programs/${challengeIdString}/edit?programType=CHALLENGE`,
-        { replace: true },
-      );
-    }
-  }, [challenge, challengeIdString, navigate]);
 
   const receivedContent = useMemo<ChallengeContent | null>(() => {
     if (!challenge?.desc) {
@@ -78,24 +79,6 @@ const ChallengeEdit: React.FC = () => {
       return null;
     }
   }, [challenge?.desc]);
-
-  // receivedConent가 초기화되면 content에 적용
-  useEffect(() => {
-    if (!receivedContent) {
-      return;
-    }
-
-    setContent((prev) => ({
-      ...(prev.initialized ? prev : { ...receivedContent, initialized: true }),
-    }));
-  }, [receivedContent]);
-
-  const [input, setInput] = useState<Omit<UpdateChallengeReq, 'desc'>>({});
-  const [loading, setLoading] = useState(false);
-  // TODO: 디폴트 값 설정해야 함
-  const [editingOptions, setEditingOptions] = useState<Option[]>([]);
-
-  const { snackbar } = useAdminSnackbar();
 
   const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -130,11 +113,47 @@ const ChallengeEdit: React.FC = () => {
     snackbar('저장되었습니다.');
   }, [challengeIdString, client, content, input, patchChallenge, snackbar]);
 
-  // 옵션 설정
+  // receivedConent가 초기화되면 content에 적용
+  useEffect(() => {
+    if (!receivedContent) {
+      return;
+    }
+
+    setContent((prev) => ({
+      ...(prev.initialized ? prev : { ...receivedContent, initialized: true }),
+    }));
+  }, [receivedContent]);
+
+  useEffect(() => {
+    // 구 버전 프로그램인지 판단
+    if (challenge && isDeprecatedProgram(challenge)) {
+      navigate(
+        `/admin/programs/${challengeIdString}/edit?programType=CHALLENGE`,
+        { replace: true },
+      );
+    }
+  }, [challenge, challengeIdString, navigate]);
+
+  /** 옵션 설정 */
+
+  const { data: challengeOptions } = useGetChallengeOptions();
+  const { mutateAsync: postChallengeOpt } = usePostChallengeOption();
+  const { mutateAsync: deleteChallengeOpt } = useDeleteChallengeOption();
+  const { mutateAsync: patchChallengeOpt } = usePatchChallengeOption();
+
+  const [editingOptions, setEditingOptions] = useState<ChallengeOption[]>(
+    challengeOptions?.challengeOptionList ?? [],
+  );
+
+  useEffect(() => {
+    // 새 옵션이 추가되면 editingOptions 상태에 저장
+    if (!challengeOptions) return;
+    setEditingOptions(challengeOptions.challengeOptionList);
+  }, [challengeOptions]);
+
   const handleChangeOption = useCallback(
     (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, index: number) => {
       const { type, name, value } = e.target;
-
       setEditingOptions((prev) =>
         prev.map((item, i) => {
           if (i === index) {
@@ -150,25 +169,24 @@ const ChallengeEdit: React.FC = () => {
     [],
   );
 
-  const handleCreateOption = useCallback(() => {
-    setEditingOptions((prev) => {
-      return [
-        ...prev,
-        {
-          title: '',
-          optionCode: '',
-          optionDiscountPrice: 0,
-          optionPrice: 0,
-        },
-      ];
+  const handleCreateOption = useCallback(async () => {
+    await postChallengeOpt({
+      title: '',
+      code: '',
+      price: 0,
+      discountPrice: 0,
     });
   }, []);
 
-  const handleDeleteOption = useCallback((index: number) => {
-    setEditingOptions((prev) => {
-      return prev.filter((_, i) => i !== index);
-    });
+  const handleDeleteOption = useCallback(async (optionId: number) => {
+    await deleteChallengeOpt(optionId);
   }, []);
+
+  const handleSaveOption = useCallback(() => {
+    Promise.all(editingOptions.map((opt) => patchChallengeOpt(opt))).then(() =>
+      snackbar('✅ 옵션 저장 완료'),
+    );
+  }, [editingOptions]);
 
   if (!challenge || !content.initialized) {
     return <div>loading...</div>;
@@ -279,6 +297,7 @@ const ChallengeEdit: React.FC = () => {
           onChange={handleChangeOption}
           onClickCreate={handleCreateOption}
           onClickDelete={handleDeleteOption}
+          onClickSave={handleSaveOption}
         />
       </section>
 
