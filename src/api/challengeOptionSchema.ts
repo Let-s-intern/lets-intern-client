@@ -28,8 +28,8 @@ export interface PostChallengeOptionReq {
 // PATCH 챌린지 옵션 수정 Request
 export interface PatchChallengeOptionReq {
   challengeOptionId: number | string;
-  title?: string;
-  code?: string;
-  price?: number;
-  discountPrice?: number;
+  title?: string | null;
+  code?: string | null;
+  price?: number | null;
+  discountPrice?: number | null;
 }

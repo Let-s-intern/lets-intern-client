@@ -61,7 +61,7 @@ export const usePatchChallengeOption = () => {
   return useMutation({
     mutationFn: async (req: PatchChallengeOptionReq) => {
       const { challengeOptionId, ...body } = req;
-      const res = await axios.post(
+      const res = await axios.patch(
         `/admin/challenge-option/${challengeOptionId}`,
         body,
       );

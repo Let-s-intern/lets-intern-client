@@ -15,7 +15,7 @@ import {
   Select,
   SelectProps,
 } from '@mui/material';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 interface IChallengePriceProps<
   T extends CreateChallengeReq | UpdateChallengeReq,
@@ -84,7 +84,7 @@ export default function ChallengePrice<
     refund: defaultValue?.[0]?.refund ?? initialPrice.refund,
   };
 
-  const generateOptionMenuList = () => {
+  const optionMenuList = useMemo(() => {
     const result: Record<string, string> = {};
     options.forEach(
       (item) =>
@@ -92,7 +92,7 @@ export default function ChallengePrice<
           `[${item.challengeOptionId}] ${item.title}`),
     );
     return result;
-  };
+  }, [options]);
 
   // 보증금 인풋 표시/숨김 용도
   const [isDeposit, setIsDeposit] = useState(
@@ -242,7 +242,7 @@ export default function ChallengePrice<
             multiple
             value={standardOptions}
             renderValue={() => standardOptions.join(', ')}
-            menuList={generateOptionMenuList()}
+            menuList={optionMenuList}
             onChange={(e) => {
               const value = e.target.value as string[];
               setStandardOptions(value);
@@ -267,7 +267,7 @@ export default function ChallengePrice<
             multiple
             value={premiumOptions}
             renderValue={() => premiumOptions.join(', ')}
-            menuList={generateOptionMenuList()}
+            menuList={optionMenuList}
             onChange={(e) => {
               const value = e.target.value as string[];
               setPremiumOptions(value);

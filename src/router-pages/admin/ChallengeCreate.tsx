@@ -1,6 +1,7 @@
 import {
   useDeleteChallengeOption,
   useGetChallengeOptions,
+  usePatchChallengeOption,
   usePostChallengeOption,
 } from '@/api/challengeOption';
 import { ChallengeOption } from '@/api/challengeOptionSchema';
@@ -118,9 +119,11 @@ const ChallengeCreate: React.FC = () => {
   }, [input, content, postChallenge, snackbar, navigate]);
 
   /** 옵션 설정 */
+
+  const { data: challengeOptions } = useGetChallengeOptions();
   const { mutateAsync: postChallengeOpt } = usePostChallengeOption();
   const { mutateAsync: deleteChallengeOpt } = useDeleteChallengeOption();
-  const { data: challengeOptions } = useGetChallengeOptions();
+  const { mutateAsync: patchChallengeOpt } = usePatchChallengeOption();
 
   const [editingOptions, setEditingOptions] = useState<ChallengeOption[]>(
     challengeOptions?.challengeOptionList ?? [],
@@ -135,7 +138,6 @@ const ChallengeCreate: React.FC = () => {
   const handleChangeOption = useCallback(
     (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, index: number) => {
       const { type, name, value } = e.target;
-
       setEditingOptions((prev) =>
         prev.map((item, i) => {
           if (i === index) {
@@ -165,8 +167,10 @@ const ChallengeCreate: React.FC = () => {
   }, []);
 
   const handleSaveOption = useCallback(() => {
-    // 옵션 저장
-  }, []);
+    Promise.all(editingOptions.map((opt) => patchChallengeOpt(opt))).then(() =>
+      snackbar('✅ 옵션 저장 완료'),
+    );
+  }, [editingOptions]);
 
   if (importProcessing) {
     return <div>Importing...</div>;

@@ -55,7 +55,7 @@ function ChallengeOptionSection({
               />
               <OptionTextField
                 type="number"
-                name="optionPrice"
+                name="price"
                 label="옵션 가격"
                 placeholder="옵션 가격을 입력하세요"
                 value={item.price}
@@ -65,12 +65,12 @@ function ChallengeOptionSection({
                 type="number"
                 value={item.discountPrice}
                 onChange={(e) => onChange && onChange(e, index)}
-                name="optionDiscountPrice"
+                name="discountPrice"
                 label="옵션 할인 가격"
                 placeholder="할인 가격을 입력하세요"
               />
               <OptionTextField
-                name="optionCode"
+                name="code"
                 value={item.code}
                 onChange={(e) => onChange && onChange(e, index)}
                 label="옵션 코드"
