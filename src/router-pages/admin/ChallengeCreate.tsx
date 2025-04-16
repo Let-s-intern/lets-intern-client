@@ -1,3 +1,4 @@
+import { useGetChallengeOptions } from '@/api/challengeOption';
 import { fileType, uploadFile } from '@/api/file';
 import { usePostChallengeMutation } from '@/api/program';
 import ChallengeBasic from '@/components/admin/program/ChallengeBasic';
@@ -26,7 +27,7 @@ import Heading from '@components/admin/ui/heading/Heading';
 import Heading2 from '@components/admin/ui/heading/Heading2';
 import Heading3 from '@components/admin/ui/heading/Heading3';
 import { Button, TextField } from '@mui/material';
-import { ChangeEvent, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import ChallengeFaqCategory from './program/ChallengeFaqCategory';
@@ -34,16 +35,15 @@ import ProgramSchedule from './program/ProgramSchedule';
 
 /**
  * 챌린지 생성 페이지
- * - 가격구분은 무조건 BASIC으로 고정
  */
-interface Option {
-  title: string;
-  optionPrice: number;
-  optionDiscountPrice: number;
-  optionCode: string;
-}
 
 const ChallengeCreate: React.FC = () => {
+  const navigate = useNavigate();
+  const { snackbar } = useAdminSnackbar();
+
+  /** 챌린지 */
+  const { mutateAsync: postChallenge } = usePostChallengeMutation();
+
   const [content, setContent] = useState<ChallengeContent>({
     curriculum: [],
     challengePoint: { list: [] },
@@ -53,10 +53,6 @@ const ChallengeCreate: React.FC = () => {
     faqCategory: [],
     programRecommend: { list: [] },
   });
-  const { snackbar } = useAdminSnackbar();
-  const navigate = useNavigate();
-
-  const { mutateAsync: postChallenge } = usePostChallengeMutation();
 
   const [input, setInput] = useState<Omit<CreateChallengeReq, 'desc'>>({
     beginning: dayjs().format('YYYY-MM-DDTHH:mm'),
@@ -90,8 +86,8 @@ const ChallengeCreate: React.FC = () => {
   });
 
   const [loading, setLoading] = useState(false);
-  // TODO: 디폴트 값 설정해야 함
-  const [editingOptions, setEditingOptions] = useState<Option[]>([]);
+  const [importJsonString, setImportJsonString] = useState('');
+  const [importProcessing, setImportProcessing] = useState(false);
 
   const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -117,48 +113,8 @@ const ChallengeCreate: React.FC = () => {
     navigate('/admin/programs');
   }, [input, content, postChallenge, snackbar, navigate]);
 
-  // 옵션 설정
-  const handleChangeOption = useCallback(
-    (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, index: number) => {
-      const { type, name, value } = e.target;
-
-      setEditingOptions((prev) =>
-        prev.map((item, i) => {
-          if (i === index) {
-            return {
-              ...item,
-              [name]: type === 'number' ? Number(value) : value,
-            };
-          }
-          return item;
-        }),
-      );
-    },
-    [],
-  );
-
-  const handleAddOption = useCallback(() => {
-    setEditingOptions((prev) => {
-      return [
-        ...prev,
-        {
-          title: '',
-          optionCode: '',
-          optionDiscountPrice: 0,
-          optionPrice: 0,
-        },
-      ];
-    });
-  }, []);
-
-  const handleDeleteOption = useCallback((index: number) => {
-    setEditingOptions((prev) => {
-      return prev.filter((_, i) => i !== index);
-    });
-  }, []);
-
-  const [importJsonString, setImportJsonString] = useState('');
-  const [importProcessing, setImportProcessing] = useState(false);
+  /** 옵션 설정 */
+  const { data: challengeOptions } = useGetChallengeOptions();
 
   if (importProcessing) {
     return <div>Importing...</div>;
@@ -251,7 +207,7 @@ const ChallengeCreate: React.FC = () => {
             ]}
             setInput={setInput}
             defaultPricePlan="베이직"
-            options={editingOptions}
+            options={challengeOptions?.challengeOptionList ?? []}
           />
           <ProgramSchedule
             defaultValue={{
@@ -281,12 +237,9 @@ const ChallengeCreate: React.FC = () => {
         </div>
       </section>
 
-      <section>
+      <section className="pb-8 pt-4">
         <ChallengeOptionSection
-          options={editingOptions}
-          onChange={handleChangeOption}
-          onClickAdd={handleAddOption}
-          onClickDelete={handleDeleteOption}
+          options={challengeOptions?.challengeOptionList ?? []}
         />
       </section>
 

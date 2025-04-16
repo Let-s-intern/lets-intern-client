@@ -1,12 +1,4 @@
-import {
-  Checkbox,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectProps,
-} from '@mui/material';
-
+import { ChallengeOption } from '@/api/challengeOptionSchema';
 import {
   ChallengeIdSchema,
   ChallengePriceReq,
@@ -15,8 +7,15 @@ import {
 } from '@/schema';
 import { newProgramFeeTypeToText } from '@/utils/convert';
 import Input from '@components/ui/input/Input';
-import { useState } from 'react';
-import { Option } from './ChallengeOptionSection';
+import {
+  Checkbox,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectProps,
+} from '@mui/material';
+import { useMemo, useState } from 'react';
 
 interface IChallengePriceProps<
   T extends CreateChallengeReq | UpdateChallengeReq,
@@ -24,7 +23,7 @@ interface IChallengePriceProps<
   defaultValue?: ChallengeIdSchema['priceInfo'];
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
   defaultPricePlan: string;
-  options: Option[];
+  options: ChallengeOption[];
 }
 
 const initialPrice: ChallengePriceReq = {
@@ -85,14 +84,15 @@ export default function ChallengePrice<
     refund: defaultValue?.[0]?.refund ?? initialPrice.refund,
   };
 
-  const generateOptionMenuList = () => {
+  const optionMenuList = useMemo(() => {
     const result: Record<string, string> = {};
     options.forEach(
       (item) =>
-        (result[item.optionCode] = `[${item.optionCode}] ${item.title}`),
+        (result[item.challengeOptionId] =
+          `[${item.challengeOptionId}] ${item.title}`),
     );
     return result;
-  };
+  }, [options]);
 
   // 보증금 인풋 표시/숨김 용도
   const [isDeposit, setIsDeposit] = useState(
@@ -242,7 +242,7 @@ export default function ChallengePrice<
             multiple
             value={standardOptions}
             renderValue={() => standardOptions.join(', ')}
-            menuList={generateOptionMenuList()}
+            menuList={optionMenuList}
             onChange={(e) => {
               const value = e.target.value as string[];
               setStandardOptions(value);
@@ -267,7 +267,7 @@ export default function ChallengePrice<
             multiple
             value={premiumOptions}
             renderValue={() => premiumOptions.join(', ')}
-            menuList={generateOptionMenuList()}
+            menuList={optionMenuList}
             onChange={(e) => {
               const value = e.target.value as string[];
               setPremiumOptions(value);
