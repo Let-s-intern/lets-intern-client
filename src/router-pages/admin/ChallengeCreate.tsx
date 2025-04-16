@@ -1,10 +1,4 @@
-import {
-  useDeleteChallengeOption,
-  useGetChallengeOptions,
-  usePatchChallengeOption,
-  usePostChallengeOption,
-} from '@/api/challengeOption';
-import { ChallengeOption } from '@/api/challengeOptionSchema';
+import { useGetChallengeOptions } from '@/api/challengeOption';
 import { fileType, uploadFile } from '@/api/file';
 import { usePostChallengeMutation } from '@/api/program';
 import ChallengeBasic from '@/components/admin/program/ChallengeBasic';
@@ -33,7 +27,7 @@ import Heading from '@components/admin/ui/heading/Heading';
 import Heading2 from '@components/admin/ui/heading/Heading2';
 import Heading3 from '@components/admin/ui/heading/Heading3';
 import { Button, TextField } from '@mui/material';
-import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import ChallengeFaqCategory from './program/ChallengeFaqCategory';
@@ -121,56 +115,6 @@ const ChallengeCreate: React.FC = () => {
 
   /** 옵션 설정 */
   const { data: challengeOptions } = useGetChallengeOptions();
-  const { mutateAsync: postChallengeOpt } = usePostChallengeOption();
-  const { mutateAsync: deleteChallengeOpt } = useDeleteChallengeOption();
-  const { mutateAsync: patchChallengeOpt } = usePatchChallengeOption();
-
-  const [editingOptions, setEditingOptions] = useState<ChallengeOption[]>(
-    challengeOptions?.challengeOptionList ?? [],
-  );
-
-  useEffect(() => {
-    // 새 옵션이 추가되면 editingOptions 상태에 저장
-    if (!challengeOptions) return;
-    setEditingOptions(challengeOptions.challengeOptionList);
-  }, [challengeOptions]);
-
-  const handleChangeOption = useCallback(
-    (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, index: number) => {
-      const { type, name, value } = e.target;
-      setEditingOptions((prev) =>
-        prev.map((item, i) => {
-          if (i === index) {
-            return {
-              ...item,
-              [name]: type === 'number' ? Number(value) : value,
-            };
-          }
-          return item;
-        }),
-      );
-    },
-    [],
-  );
-
-  const handleCreateOption = useCallback(async () => {
-    await postChallengeOpt({
-      title: '',
-      code: '',
-      price: 0,
-      discountPrice: 0,
-    });
-  }, []);
-
-  const handleDeleteOption = useCallback(async (optionId: number) => {
-    await deleteChallengeOpt(optionId);
-  }, []);
-
-  const handleSaveOption = useCallback(() => {
-    Promise.all(editingOptions.map((opt) => patchChallengeOpt(opt))).then(() =>
-      snackbar('✅ 옵션 저장 완료'),
-    );
-  }, [editingOptions]);
 
   if (importProcessing) {
     return <div>Importing...</div>;
@@ -295,11 +239,7 @@ const ChallengeCreate: React.FC = () => {
 
       <section className="pb-8 pt-4">
         <ChallengeOptionSection
-          options={editingOptions}
-          onChange={handleChangeOption}
-          onClickCreate={handleCreateOption}
-          onClickDelete={handleDeleteOption}
-          onClickSave={handleSaveOption}
+          options={challengeOptions?.challengeOptionList ?? []}
         />
       </section>
 
