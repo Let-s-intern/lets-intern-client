@@ -1,6 +1,8 @@
 import { ChallengeOption } from '@/api/challengeOptionSchema';
 import {
   ChallengeIdSchema,
+  ChallengePricePlan,
+  ChallengePricePlanEnum,
   ChallengePriceReq,
   CreateChallengeReq,
   UpdateChallengeReq,
@@ -17,19 +19,30 @@ import {
 } from '@mui/material';
 import { useMemo, useState } from 'react';
 
+const { BASIC, PREMIUM } = ChallengePricePlanEnum.enum;
+
 interface IChallengePriceProps<
   T extends CreateChallengeReq | UpdateChallengeReq,
 > {
   defaultValue?: ChallengeIdSchema['priceInfo'];
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
-  defaultPricePlan: string;
   options: ChallengeOption[];
+  pricePlan: ChallengePricePlan;
+  standardTitle: string;
+  premiumTitle: string;
+  standardOptIds: number[];
+  premiumOptIds: number[];
+  onChangePricePlan?: (value: ChallengePricePlan) => void;
+  onChangeStandardOptIds: (value: number[]) => void;
+  onChangePremiumOptIds: (value: number[]) => void;
+  onChangeStandardTitle: (value: string) => void;
+  onChangePremiumTitle: (value: string) => void;
 }
 
 const initialPrice: ChallengePriceReq = {
   challengeParticipationType: 'LIVE',
   challengePriceType: 'CHARGE',
-  challengeUserType: 'BASIC',
+  challengePricePlanType: 'BASIC',
   charge: 10000,
   priceInfo: {
     discount: 4000,
@@ -39,12 +52,13 @@ const initialPrice: ChallengePriceReq = {
     accountType: 'HANA',
   },
   refund: 0,
+  challengeOptionIdList: [],
 };
 
 const pricePlanMenuList = {
-  베이직: '베이직',
-  '베이직+스탠다드': '베이직+스탠다드',
-  '베이직+스탠다드+프리미엄': '베이직+스탠다드+프리미엄',
+  BASIC: '베이직',
+  STANDARD: '베이직+스탠다드',
+  PREMIUM: '베이직+스탠다드+프리미엄',
 };
 
 const priceTypeMenuList = {
@@ -57,8 +71,17 @@ export default function ChallengePrice<
 >({
   defaultValue,
   setInput,
-  defaultPricePlan,
   options,
+  pricePlan,
+  standardTitle,
+  premiumTitle,
+  standardOptIds,
+  premiumOptIds,
+  onChangePricePlan,
+  onChangeStandardOptIds,
+  onChangePremiumOptIds,
+  onChangeStandardTitle,
+  onChangePremiumTitle,
 }: IChallengePriceProps<T>) {
   const defaultPriceReq: ChallengePriceReq = {
     challengeParticipationType:
@@ -66,8 +89,9 @@ export default function ChallengePrice<
       initialPrice.challengeParticipationType,
     challengePriceType:
       defaultValue?.[0]?.challengePriceType ?? initialPrice.challengePriceType,
-    challengeUserType:
-      defaultValue?.[0]?.challengeUserType ?? initialPrice.challengeUserType,
+    challengePricePlanType:
+      defaultValue?.[0]?.challengePricePlanType ??
+      initialPrice.challengePricePlanType,
     charge: defaultValue?.[0]?.price ?? initialPrice.charge,
     priceInfo: {
       discount: defaultValue?.[0]?.discount ?? initialPrice.priceInfo.discount,
@@ -82,8 +106,13 @@ export default function ChallengePrice<
         defaultValue?.[0]?.accountType ?? initialPrice.priceInfo.accountType,
     },
     refund: defaultValue?.[0]?.refund ?? initialPrice.refund,
+    challengeOptionIdList:
+      defaultValue?.[0]?.challengeOptionList.map(
+        (item) => item.challengeOptionId,
+      ) ?? initialPrice.challengeOptionIdList,
   };
 
+  // 챌린지 옵션 (key는 옵션 id)
   const optionMenuList = useMemo(() => {
     const result: Record<string, string> = {};
     options.forEach(
@@ -98,9 +127,8 @@ export default function ChallengePrice<
   const [isDeposit, setIsDeposit] = useState(
     defaultPriceReq.challengePriceType === 'REFUND',
   );
-  const [pricePlanValue, setPricePlanValue] = useState(defaultPricePlan);
-  const [standardOptions, setStandardOptions] = useState<string[]>([]); // TODO: 상위 컴포넌트로 이동
-  const [premiumOptions, setPremiumOptions] = useState<string[]>([]); // TODO: 상위 컴포넌트로 이동
+  // 스탠다드, 프리미엄 인풋 표시/숨김 용도
+  const [pricePlanValue, setPricePlanValue] = useState(pricePlan);
 
   return (
     <div className="flex flex-col gap-3">
@@ -110,12 +138,12 @@ export default function ChallengePrice<
         id="challengePricePlan"
         name="challengePricePlan"
         label="가격 플랜"
-        defaultValue="베이직"
         value={pricePlanValue}
         menuList={pricePlanMenuList}
         onChange={(e) => {
-          setPricePlanValue(e.target.value as string);
-          // TODO: 스탠다드, 프리미엄 옵션 초기화
+          setPricePlanValue(e.target.value as ChallengePricePlan);
+          if (onChangePricePlan)
+            onChangePricePlan(e.target.value as ChallengePricePlan);
         }}
       />
       {/* 금액 유형 */}
@@ -232,7 +260,7 @@ export default function ChallengePrice<
         }}
       />
       {/* 스탠다드 옵션 */}
-      {pricePlanValue.includes('스탠다드') && (
+      {pricePlanValue !== BASIC && (
         <>
           <SelectControl
             labelId="standardOptionsLabel"
@@ -240,12 +268,12 @@ export default function ChallengePrice<
             name="standardOptions"
             label="스탠다드 옵션"
             multiple
-            value={standardOptions}
-            renderValue={() => standardOptions.join(', ')}
+            value={standardOptIds.map((item) => String(item))}
+            renderValue={() => standardOptIds.join(', ')}
             menuList={optionMenuList}
             onChange={(e) => {
               const value = e.target.value as string[];
-              setStandardOptions(value);
+              onChangeStandardOptIds(value.map((item) => Number(item)));
             }}
           />
           <Input
@@ -253,11 +281,13 @@ export default function ChallengePrice<
             name="standardTitle"
             size="small"
             placeholder="스탠다드 플랜명을 입력해주세요"
+            value={standardTitle}
+            onChange={(e) => onChangeStandardTitle(e.target.value)}
           />
         </>
       )}
       {/* 프리미엄 옵션 */}
-      {pricePlanValue.includes('프리미엄') && (
+      {pricePlanValue === PREMIUM && (
         <>
           <SelectControl
             labelId="premiumOptionsLabel"
@@ -265,12 +295,12 @@ export default function ChallengePrice<
             name="premiumOptions"
             label="프리미엄 옵션"
             multiple
-            value={premiumOptions}
-            renderValue={() => premiumOptions.join(', ')}
+            value={premiumOptIds.map((item) => String(item))}
+            renderValue={() => premiumOptIds.join(', ')}
             menuList={optionMenuList}
             onChange={(e) => {
               const value = e.target.value as string[];
-              setPremiumOptions(value);
+              onChangePremiumOptIds(value.map((item) => Number(item)));
             }}
           />
           <Input
@@ -278,6 +308,8 @@ export default function ChallengePrice<
             name="premiumTitle"
             size="small"
             placeholder="프리미엄 플랜명을 입력해주세요"
+            value={premiumTitle}
+            onChange={(e) => onChangePremiumTitle(e.target.value)}
           />
         </>
       )}
@@ -295,7 +327,7 @@ function SelectControl({
   multiple,
   value,
   ...restProps
-}: { menuList: Record<string, string> } & SelectProps) {
+}: { menuList: Record<string, string> } & SelectProps<string[] | string>) {
   return (
     <FormControl fullWidth size="small">
       <InputLabel id={labelId}>{label}</InputLabel>
@@ -304,7 +336,7 @@ function SelectControl({
           <MenuItem key={optValue} value={optValue}>
             {multiple && (
               <Checkbox
-                checked={(value as Array<string>).includes(optValue)}
+                checked={value?.includes(optValue)}
                 sx={{ padding: 0, margin: '1px 0', marginRight: '4px' }}
                 size="small"
               />

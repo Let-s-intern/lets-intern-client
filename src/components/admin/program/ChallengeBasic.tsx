@@ -167,7 +167,7 @@ const ChallengeBasic = React.memo(
             ))}
           </Select>
         </FormControl>
-        {/* (임시) 가격 구분 삭제 */}
+
         {defaultValue?.priceInfo && defaultValue.priceInfo.length > 0 && (
           <FormControl size="small">
             <InputLabel>참여 형태</InputLabel>

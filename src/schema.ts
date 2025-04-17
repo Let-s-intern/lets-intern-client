@@ -1,5 +1,6 @@
 import dayjs from '@/lib/dayjs';
 import { z } from 'zod';
+import { challengeOptionSchema } from './api/challengeOptionSchema';
 
 export interface Pageable {
   page: number;
@@ -28,6 +29,10 @@ export const pageInfo = z.object({
 });
 
 export type PageInfo = z.infer<typeof pageInfo>;
+
+// 챌린지 가격 플랜
+export const ChallengePricePlanEnum = z.enum(['BASIC', 'STANDARD', 'PREMIUM']);
+export type ChallengePricePlan = z.infer<typeof ChallengePricePlanEnum>;
 
 /** GET /api/v1/challenge */
 export const challengeSchema = z
@@ -134,6 +139,7 @@ export const challengeUserType = z.union([
   z.literal('PREMIUM'),
 ]);
 
+// deprecated
 export type ChallengeUserType = z.infer<typeof challengeUserType>;
 
 const challengeParticipationType = z.union([
@@ -213,6 +219,23 @@ const missionStatusType = z.union([
   z.literal('REFUND_DONE'),
 ]);
 
+export const challengePriceInfoSchema = z.object({
+  title: z.string().optional().nullable(),
+  priceId: z.number(),
+  price: z.number().optional().nullable(),
+  refund: z.number().optional().nullable(),
+  discount: z.number().optional().nullable(),
+  accountNumber: z.string().optional().nullable(),
+  deadline: z.string().optional().nullable(),
+  accountType: accountType.optional().nullable(),
+  challengePriceType: challengePriceType.optional().nullable(),
+  challengePricePlanType: ChallengePricePlanEnum.optional().nullable(),
+  challengeParticipationType: challengeParticipationType.optional().nullable(),
+  challengeOptionList: z.array(challengeOptionSchema),
+});
+
+export type ChallengePriceInfo = z.infer<typeof challengePriceInfoSchema>;
+
 export const getChallengeIdPrimitiveSchema = z.object({
   title: z.string().optional(),
   shortDesc: z.string().optional(),
@@ -220,6 +243,7 @@ export const getChallengeIdPrimitiveSchema = z.object({
   criticalNotice: z.string().nullable().optional(),
   participationCount: z.number().optional(),
   thumbnail: z.string().optional(),
+  desktopThumbnail: z.string().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   beginning: z.string().optional(),
@@ -240,22 +264,7 @@ export const getChallengeIdPrimitiveSchema = z.object({
     )
     .nullable()
     .optional(),
-  priceInfo: z.array(
-    z.object({
-      priceId: z.number(),
-      price: z.number().optional().nullable(),
-      refund: z.number().optional().nullable(),
-      discount: z.number().optional().nullable(),
-      accountNumber: z.string().optional().nullable(),
-      deadline: z.string().optional().nullable(),
-      accountType: accountType.optional().nullable(),
-      challengePriceType: challengePriceType.optional().nullable(),
-      challengeUserType: challengeUserType.optional().nullable(),
-      challengeParticipationType: challengeParticipationType
-        .optional()
-        .nullable(),
-    }),
-  ),
+  priceInfo: z.array(challengePriceInfoSchema),
   faqInfo: z.array(faq),
 });
 
@@ -290,6 +299,7 @@ export type CreateChallengeReq = {
   criticalNotice: string;
   participationCount: number;
   thumbnail: string;
+  desktopThumbnail: string;
   startDate: string; // "2024-10-12T06:24:10.873"
   endDate: string; // "2024-10-12T06:24:10.873"
   beginning: string; // "2024-10-12T06:24:10.873"
@@ -323,6 +333,7 @@ export type UpdateChallengeReq = {
   criticalNotice?: string;
   participationCount?: number;
   thumbnail?: string;
+  desktopThumbnail?: string;
   startDate?: string; // "2024-10-12T08:03:17.016Z"
   endDate?: string; // "2024-10-12T08:03:17.016Z"
   beginning?: string; // "2024-10-12T08:03:17.016Z"
@@ -352,15 +363,17 @@ export type ChallengePriceReq = {
   priceInfo: {
     price: number;
     discount: number;
-    accountNumber?: string;
-    deadline?: string; // "2024-10-12T08:03:17.016Z"
-    accountType?: AccountType;
+    accountNumber?: string | null;
+    deadline?: string | null; // "2024-10-12T08:03:17.016Z"
+    accountType?: AccountType | null;
   };
+  title?: string | null;
   charge: number;
   refund: number;
   challengePriceType: ChallengePriceType;
-  challengeUserType: ChallengeUserType;
+  challengePricePlanType: ChallengePricePlan;
   challengeParticipationType: ChallengeParticipationType;
+  challengeOptionIdList?: number[] | null;
 };
 
 // DELETE /api/v1/challenge/{challengeId} 챌린지 삭제
