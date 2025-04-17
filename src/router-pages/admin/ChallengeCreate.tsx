@@ -69,11 +69,11 @@ const ChallengeCreate: React.FC = () => {
     priceInfo: [
       {
         priceInfo: {
-          price: 10000,
-          discount: 4000,
+          price: 10000, // 챌린지 이용료
+          discount: 4000, // 챌린지 할인 금액
         },
-        charge: 10000,
-        refund: 0,
+        charge: 10000, // 챌린지 이용료
+        refund: 0, // 챌린지 보증금
         challengePriceType: 'CHARGE',
         challengeUserType: 'BASIC',
         challengeParticipationType: 'LIVE',

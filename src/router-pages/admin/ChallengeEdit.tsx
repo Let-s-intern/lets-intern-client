@@ -13,9 +13,17 @@ import ProgramBestReview from '@/components/admin/program/ProgramBestReview';
 import ProgramBlogReviewEditor from '@/components/admin/program/ProgramBlogReviewEditor';
 import FaqSection from '@/components/FaqSection';
 import ProgramRecommendEditor from '@/components/ProgramRecommendEditor';
+import { YYYY_MMDD_THHmmss } from '@/data/dayjsFormat';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import dayjs from '@/lib/dayjs';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
-import { ProgramTypeEnum, UpdateChallengeReq } from '@/schema';
+import {
+  ChallengePricePlan,
+  ChallengePricePlanEnum,
+  ChallengePriceReq,
+  ProgramTypeEnum,
+  UpdateChallengeReq,
+} from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import ChallengePreviewButton from '@components/admin/ChallengePreviewButton';
 import EditorApp from '@components/admin/lexical/EditorApp';
@@ -27,18 +35,21 @@ import Heading2 from '@components/admin/ui/heading/Heading2';
 import Heading3 from '@components/admin/ui/heading/Heading3';
 import { Button } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 import ChallengeFaqCategory from './program/ChallengeFaqCategory';
 import ProgramSchedule from './program/ProgramSchedule';
 
+const { BASIC, STANDARD, PREMIUM } = ChallengePricePlanEnum.enum;
+
 const ChallengeEdit: React.FC = () => {
   const navigate = useNavigate();
   const client = useQueryClient();
   const { snackbar } = useAdminSnackbar();
+  const pricePlan = useRef<ChallengePricePlan>(BASIC);
 
-  /** 챌린지 */
+  /** 챌린지 관련 상태 */
   const { challengeId: challengeIdString } = useParams();
   const { mutateAsync: patchChallenge } = usePatchChallengeMutation();
   const { data: challenge } = useGetChallengeQuery({
@@ -74,6 +85,57 @@ const ChallengeEdit: React.FC = () => {
     }
   }, [challenge?.desc]);
 
+  /** 가격 플랜 상태 */
+  const standardPriceInfo = challenge?.priceInfo.find(
+    (item) => item.challengePricePlanType === STANDARD,
+  );
+  const premiumPriceInfo = challenge?.priceInfo.find(
+    (item) => item.challengePricePlanType === PREMIUM,
+  );
+
+  /** 옵션 관련 상태 */
+  const { data: challengeOptions } = useGetChallengeOptions();
+
+  const [standardOptIds, setStandardOptIds] = useState<number[]>([]);
+  const [premiumOptIds, setPremiumOptIds] = useState<number[]>(
+    premiumPriceInfo
+      ? premiumPriceInfo.challengeOptionList.map(
+          (item) => item.challengeOptionId,
+        )
+      : [],
+  );
+  const [pricePlanTitles, setPricePlanTitles] = useState({
+    standard: '',
+    premium: '',
+  });
+
+  /** 옵션 관련 함수*/
+  const handleChangePricePlanTitle = (
+    pricePlan: ChallengePricePlan,
+    value: string,
+  ) => {
+    setPricePlanTitles((prev) => ({
+      ...prev,
+      [pricePlan === 'PREMIUM' ? 'premium' : 'standard']: value,
+    }));
+  };
+
+  const handleChangePricePlan = useCallback((value: ChallengePricePlan) => {
+    pricePlan.current = value;
+    if (value === PREMIUM) return;
+
+    // 프리미엄 초기화
+    setPremiumOptIds([]);
+    setPricePlanTitles((prev) => ({ ...prev, premium: '' }));
+
+    if (value === STANDARD) return;
+
+    // 스탠다드 초기화
+    setStandardOptIds([]);
+    setPricePlanTitles((prev) => ({ ...prev, standard: '' }));
+  }, []);
+
+  /** 챌린지 관련 함수 */
   const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const url = await uploadFile({
@@ -89,10 +151,64 @@ const ChallengeEdit: React.FC = () => {
     }
 
     setLoading(true);
+
+    let basicPriceInfo: ChallengePriceReq = {
+      priceInfo: {
+        price: challenge?.priceInfo[0].price ?? 0,
+        discount: challenge?.priceInfo[0].discount ?? 0,
+        accountNumber: challenge?.priceInfo[0].accountNumber,
+        deadline: dayjs(challenge?.priceInfo[0].deadline).format(
+          YYYY_MMDD_THHmmss,
+        ),
+        accountType: challenge?.priceInfo[0].accountType,
+      },
+      title: '',
+      charge: challenge?.priceInfo[0].price ?? 0,
+      refund: challenge?.priceInfo[0].refund ?? 0,
+      challengePriceType:
+        challenge?.priceInfo[0].challengePriceType ?? 'CHARGE',
+      challengePricePlanType: BASIC,
+      challengeParticipationType:
+        challenge?.priceInfo[0].challengeParticipationType ?? 'LIVE',
+      challengeOptionIdList: [],
+    };
+
+    if (input.priceInfo) {
+      basicPriceInfo = {
+        ...basicPriceInfo,
+        ...input.priceInfo[0],
+        priceInfo: {
+          ...basicPriceInfo.priceInfo,
+          ...input.priceInfo[0].priceInfo,
+        },
+      };
+    }
+
+    const newPriceInfo = [basicPriceInfo];
+
+    if (pricePlan.current !== BASIC) {
+      newPriceInfo.push({
+        ...basicPriceInfo,
+        title: pricePlanTitles.standard,
+        challengePricePlanType: STANDARD,
+        challengeOptionIdList: standardOptIds,
+      });
+    }
+
+    if (pricePlan.current === PREMIUM) {
+      newPriceInfo.push({
+        ...basicPriceInfo,
+        title: pricePlanTitles.premium,
+        challengePricePlanType: PREMIUM,
+        challengeOptionIdList: premiumOptIds,
+      });
+    }
+
     const req: Parameters<typeof patchChallenge>[0] = {
       ...input,
       challengeId: Number(challengeIdString),
       desc: JSON.stringify(content),
+      priceInfo: newPriceInfo,
     };
 
     console.log('req', req);
@@ -105,7 +221,19 @@ const ChallengeEdit: React.FC = () => {
 
     setLoading(false);
     snackbar('저장되었습니다.');
-  }, [challengeIdString, client, content, input, patchChallenge, snackbar]);
+  }, [
+    challengeIdString,
+    client,
+    content,
+    input,
+    patchChallenge,
+    snackbar,
+    pricePlanTitles.premium,
+    pricePlanTitles.standard,
+    standardOptIds,
+    premiumOptIds,
+    challenge?.priceInfo,
+  ]);
 
   // receivedConent가 초기화되면 content에 적용
   useEffect(() => {
@@ -128,8 +256,35 @@ const ChallengeEdit: React.FC = () => {
     }
   }, [challenge, challengeIdString, navigate]);
 
-  /** 옵션 설정 */
-  const { data: challengeOptions } = useGetChallengeOptions();
+  useEffect(() => {
+    // 스탠다드 옵션 정보를 상태에 저장
+    if (!standardPriceInfo) return;
+    pricePlan.current = STANDARD;
+    setStandardOptIds(
+      standardPriceInfo.challengeOptionList.map(
+        (item) => item.challengeOptionId,
+      ),
+    );
+    setPricePlanTitles((prev) => ({
+      ...prev,
+      standard: standardPriceInfo.title ?? '',
+    }));
+  }, [standardPriceInfo]);
+
+  useEffect(() => {
+    // 프리미엄 옵션 정보를 상태에 저장
+    if (!premiumPriceInfo) return;
+    pricePlan.current = PREMIUM;
+    setPremiumOptIds(
+      premiumPriceInfo.challengeOptionList.map(
+        (item) => item.challengeOptionId,
+      ),
+    );
+    setPricePlanTitles((prev) => ({
+      ...prev,
+      premium: premiumPriceInfo.title ?? '',
+    }));
+  }, [premiumPriceInfo]);
 
   if (!challenge || !content.initialized) {
     return <div>loading...</div>;
@@ -171,8 +326,21 @@ const ChallengeEdit: React.FC = () => {
           <ChallengePrice
             defaultValue={challenge.priceInfo}
             setInput={setInput}
-            defaultPricePlan="베이직"
             options={challengeOptions?.challengeOptionList ?? []}
+            standardOptIds={standardOptIds}
+            premiumOptIds={premiumOptIds}
+            standardTitle={pricePlanTitles.standard}
+            premiumTitle={pricePlanTitles.premium}
+            pricePlan={pricePlan.current}
+            onChangePremiumTitle={(value) =>
+              handleChangePricePlanTitle(PREMIUM, value)
+            }
+            onChangeStandardTitle={(value) =>
+              handleChangePricePlanTitle(STANDARD, value)
+            }
+            onChangePremiumOptIds={(ids) => setPremiumOptIds(ids)}
+            onChangeStandardOptIds={(ids) => setStandardOptIds(ids)}
+            onChangePricePlan={handleChangePricePlan}
           />
           {/* 일정 */}
           <ProgramSchedule
@@ -213,8 +381,9 @@ const ChallengeEdit: React.FC = () => {
                           'LIVE',
                         challengePriceType:
                           challenge.priceInfo[0].challengePriceType ?? 'CHARGE',
-                        challengeUserType:
-                          challenge.priceInfo[0].challengeUserType ?? 'BASIC',
+                        challengePricePlanType:
+                          challenge.priceInfo[0].challengePricePlanType ??
+                          'BASIC',
                         charge: challenge.priceInfo[0].price ?? 0,
                         priceInfo: {
                           discount: challenge.priceInfo[0].discount ?? 0,
@@ -226,6 +395,7 @@ const ChallengeEdit: React.FC = () => {
                             challenge.priceInfo[0].accountType ?? 'HANA',
                         },
                         refund: challenge.priceInfo[0].refund ?? 0,
+                        title: challenge.priceInfo[0].title ?? '',
                       },
                     ],
               }));
