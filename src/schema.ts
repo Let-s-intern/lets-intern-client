@@ -243,6 +243,7 @@ export const getChallengeIdPrimitiveSchema = z.object({
   criticalNotice: z.string().nullable().optional(),
   participationCount: z.number().optional(),
   thumbnail: z.string().optional(),
+  desktopThumbnail: z.string().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   beginning: z.string().optional(),
@@ -298,6 +299,7 @@ export type CreateChallengeReq = {
   criticalNotice: string;
   participationCount: number;
   thumbnail: string;
+  desktopThumbnail: string;
   startDate: string; // "2024-10-12T06:24:10.873"
   endDate: string; // "2024-10-12T06:24:10.873"
   beginning: string; // "2024-10-12T06:24:10.873"
@@ -331,6 +333,7 @@ export type UpdateChallengeReq = {
   criticalNotice?: string;
   participationCount?: number;
   thumbnail?: string;
+  desktopThumbnail?: string;
   startDate?: string; // "2024-10-12T08:03:17.016Z"
   endDate?: string; // "2024-10-12T08:03:17.016Z"
   beginning?: string; // "2024-10-12T08:03:17.016Z"

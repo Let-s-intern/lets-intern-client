@@ -1,4 +1,3 @@
-import { useGetChallengeOptions } from '@/api/challengeOption';
 import { fileType, uploadFile } from '@/api/file';
 import { usePostChallengeMutation } from '@/api/program';
 import ChallengeBasic from '@/components/admin/program/ChallengeBasic';
@@ -10,9 +9,11 @@ import ProgramBlogReviewEditor from '@/components/admin/program/ProgramBlogRevie
 import FaqSection from '@/components/FaqSection';
 import ProgramRecommendEditor from '@/components/ProgramRecommendEditor';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import useChallengeOption from '@/hooks/useChallengeOption';
 import { challengeToCreateInput } from '@/hooks/useDuplicateProgram';
 import dayjs from '@/lib/dayjs';
 import {
+  ChallengePricePlanEnum,
   CreateChallengeReq,
   getChallengeIdSchema,
   ProgramTypeEnum,
@@ -33,6 +34,42 @@ import { useNavigate } from 'react-router-dom';
 import ChallengeFaqCategory from './program/ChallengeFaqCategory';
 import ProgramSchedule from './program/ProgramSchedule';
 
+const { BASIC, STANDARD, PREMIUM } = ChallengePricePlanEnum.enum;
+
+const initialInput: Omit<CreateChallengeReq, 'desc'> = {
+  beginning: dayjs().format('YYYY-MM-DDTHH:mm'),
+  challengeType: 'CAREER_START',
+  chatLink: '',
+  chatPassword: '',
+  criticalNotice: '',
+  deadline: dayjs().format('YYYY-MM-DDTHH:mm'),
+  endDate: dayjs().format('YYYY-MM-DDTHH:mm'),
+  faqInfo: [],
+  participationCount: 0,
+  programTypeInfo: [],
+  adminProgramTypeInfo: [],
+  priceInfo: [
+    {
+      priceInfo: {
+        price: 10000, // 챌린지 이용료
+        discount: 4000, // 챌린지 할인 금액
+      },
+      charge: 10000, // 챌린지 이용료
+      refund: 0, // 챌린지 보증금
+      challengePriceType: 'CHARGE',
+      challengePricePlanType: BASIC,
+      challengeParticipationType: 'LIVE',
+      challengeOptionIdList: [],
+      title: '',
+    },
+  ],
+  shortDesc: '',
+  startDate: dayjs().format('YYYY-MM-DDTHH:mm'),
+  thumbnail: '',
+  desktopThumbnail: '',
+  title: '',
+};
+
 /**
  * 챌린지 생성 페이지
  */
@@ -41,7 +78,7 @@ const ChallengeCreate: React.FC = () => {
   const navigate = useNavigate();
   const { snackbar } = useAdminSnackbar();
 
-  /** 챌린지 */
+  /** 챌린지  */
   const { mutateAsync: postChallenge } = usePostChallengeMutation();
 
   const [content, setContent] = useState<ChallengeContent>({
@@ -54,55 +91,72 @@ const ChallengeCreate: React.FC = () => {
     programRecommend: { list: [] },
   });
 
-  const [input, setInput] = useState<Omit<CreateChallengeReq, 'desc'>>({
-    beginning: dayjs().format('YYYY-MM-DDTHH:mm'),
-    challengeType: 'CAREER_START',
-    chatLink: '',
-    chatPassword: '',
-    criticalNotice: '',
-    deadline: dayjs().format('YYYY-MM-DDTHH:mm'),
-    endDate: dayjs().format('YYYY-MM-DDTHH:mm'),
-    faqInfo: [],
-    participationCount: 0,
-    programTypeInfo: [],
-    adminProgramTypeInfo: [],
-    priceInfo: [
-      {
-        priceInfo: {
-          price: 10000, // 챌린지 이용료
-          discount: 4000, // 챌린지 할인 금액
-        },
-        charge: 10000, // 챌린지 이용료
-        refund: 0, // 챌린지 보증금
-        challengePriceType: 'CHARGE',
-        challengeUserType: 'BASIC',
-        challengeParticipationType: 'LIVE',
-      },
-    ],
-    shortDesc: '',
-    startDate: dayjs().format('YYYY-MM-DDTHH:mm'),
-    thumbnail: '',
-    title: '',
-  });
-
+  const [input, setInput] = useState(initialInput);
   const [loading, setLoading] = useState(false);
   const [importJsonString, setImportJsonString] = useState('');
   const [importProcessing, setImportProcessing] = useState(false);
 
+  /**  옵션  */
+  const {
+    pricePlan,
+    data: challengeOptions,
+    standardOptIds,
+    premiumOptIds,
+    pricePlanTitles,
+    handleChangePricePlanTitle,
+    handleChangePricePlan,
+    setStandardOptIds,
+    setPremiumOptIds,
+  } = useChallengeOption();
+
+  /** 챌린지 관련 함수 */
   const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const url = await uploadFile({
       file: e.target.files[0],
       type: fileType.enum.CHALLENGE,
     });
-    setInput((prev) => ({ ...prev, [e.target.name]: url }));
+    setInput((prev) => ({
+      ...prev,
+      [e.target.name]: url,
+      desktopThumbnail: url,
+    }));
   };
 
   const onClickSave = useCallback(async () => {
     setLoading(true);
+
+    const basicPriceInfo = {
+      ...input.priceInfo[0],
+      priceInfo: {
+        ...input.priceInfo[0].priceInfo,
+      },
+    };
+
+    const newPriceInfo = [basicPriceInfo];
+
+    if (pricePlan.current !== BASIC) {
+      newPriceInfo.push({
+        ...basicPriceInfo,
+        title: pricePlanTitles.standard,
+        challengePricePlanType: STANDARD,
+        challengeOptionIdList: standardOptIds,
+      });
+    }
+
+    if (pricePlan.current === PREMIUM) {
+      newPriceInfo.push({
+        ...basicPriceInfo,
+        title: pricePlanTitles.premium,
+        challengePricePlanType: PREMIUM,
+        challengeOptionIdList: premiumOptIds,
+      });
+    }
+
     const req: CreateChallengeReq = {
       ...input,
       desc: JSON.stringify(content),
+      priceInfo: newPriceInfo,
     };
     console.log('req', req);
     const res = await postChallenge(req);
@@ -111,10 +165,18 @@ const ChallengeCreate: React.FC = () => {
     setLoading(false);
     snackbar('챌린지가 생성되었습니다.');
     navigate('/admin/programs');
-  }, [input, content, postChallenge, snackbar, navigate]);
-
-  /** 옵션 설정 */
-  const { data: challengeOptions } = useGetChallengeOptions();
+  }, [
+    input,
+    content,
+    postChallenge,
+    snackbar,
+    navigate,
+    premiumOptIds,
+    pricePlan,
+    pricePlanTitles.premium,
+    pricePlanTitles.standard,
+    standardOptIds,
+  ]);
 
   if (importProcessing) {
     return <div>Importing...</div>;
@@ -179,6 +241,7 @@ const ChallengeCreate: React.FC = () => {
                   ? dayjs(info.priceInfo.deadline)
                   : null,
                 priceId: 0,
+                challengeOptionList: [], // ChallengeBasic에서 필요 없음
               })),
             }}
             setInput={setInput}
@@ -199,15 +262,31 @@ const ChallengeCreate: React.FC = () => {
                 priceId: 0,
                 challengeParticipationType:
                   input.priceInfo[0].challengeParticipationType,
-                challengeUserType: input.priceInfo[0].challengeUserType,
+                challengePricePlanType:
+                  input.priceInfo[0].challengePricePlanType,
                 challengePriceType: input.priceInfo[0].challengePriceType,
                 price: input.priceInfo[0].priceInfo.price,
                 discount: input.priceInfo[0].priceInfo.discount,
+                title: '',
+                challengeOptionList: [],
               },
             ]}
             setInput={setInput}
-            defaultPricePlan="베이직"
             options={challengeOptions?.challengeOptionList ?? []}
+            standardOptIds={standardOptIds}
+            premiumOptIds={premiumOptIds}
+            standardTitle={pricePlanTitles.standard}
+            premiumTitle={pricePlanTitles.premium}
+            pricePlan={pricePlan.current}
+            onChangePremiumTitle={(value) =>
+              handleChangePricePlanTitle(PREMIUM, value)
+            }
+            onChangeStandardTitle={(value) =>
+              handleChangePricePlanTitle(STANDARD, value)
+            }
+            onChangePremiumOptIds={(ids) => setPremiumOptIds(ids)}
+            onChangeStandardOptIds={(ids) => setStandardOptIds(ids)}
+            onChangePricePlan={handleChangePricePlan}
           />
           <ProgramSchedule
             defaultValue={{

@@ -19,7 +19,7 @@ import {
 } from '@mui/material';
 import { useMemo, useState } from 'react';
 
-const { BASIC, STANDARD, PREMIUM } = ChallengePricePlanEnum.enum;
+const { BASIC, PREMIUM } = ChallengePricePlanEnum.enum;
 
 interface IChallengePriceProps<
   T extends CreateChallengeReq | UpdateChallengeReq,

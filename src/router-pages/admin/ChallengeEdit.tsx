@@ -1,4 +1,3 @@
-import { useGetChallengeOptions } from '@/api/challengeOption';
 import { fileType, uploadFile } from '@/api/file';
 import {
   useGetChallengeQuery,
@@ -15,10 +14,10 @@ import FaqSection from '@/components/FaqSection';
 import ProgramRecommendEditor from '@/components/ProgramRecommendEditor';
 import { YYYY_MMDD_THHmmss } from '@/data/dayjsFormat';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import useChallengeOption from '@/hooks/useChallengeOption';
 import dayjs from '@/lib/dayjs';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import {
-  ChallengePricePlan,
   ChallengePricePlanEnum,
   ChallengePriceReq,
   ProgramTypeEnum,
@@ -35,7 +34,7 @@ import Heading2 from '@components/admin/ui/heading/Heading2';
 import Heading3 from '@components/admin/ui/heading/Heading3';
 import { Button } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 import ChallengeFaqCategory from './program/ChallengeFaqCategory';
@@ -47,7 +46,6 @@ const ChallengeEdit: React.FC = () => {
   const navigate = useNavigate();
   const client = useQueryClient();
   const { snackbar } = useAdminSnackbar();
-  const pricePlan = useRef<ChallengePricePlan>(BASIC);
 
   /** 챌린지 관련 상태 */
   const { challengeId: challengeIdString } = useParams();
@@ -85,55 +83,21 @@ const ChallengeEdit: React.FC = () => {
     }
   }, [challenge?.desc]);
 
-  /** 가격 플랜 상태 */
-  const standardPriceInfo = challenge?.priceInfo.find(
-    (item) => item.challengePricePlanType === STANDARD,
-  );
-  const premiumPriceInfo = challenge?.priceInfo.find(
-    (item) => item.challengePricePlanType === PREMIUM,
-  );
-
-  /** 옵션 관련 상태 */
-  const { data: challengeOptions } = useGetChallengeOptions();
-
-  const [standardOptIds, setStandardOptIds] = useState<number[]>([]);
-  const [premiumOptIds, setPremiumOptIds] = useState<number[]>(
-    premiumPriceInfo
-      ? premiumPriceInfo.challengeOptionList.map(
-          (item) => item.challengeOptionId,
-        )
-      : [],
-  );
-  const [pricePlanTitles, setPricePlanTitles] = useState({
-    standard: '',
-    premium: '',
-  });
-
-  /** 옵션 관련 함수*/
-  const handleChangePricePlanTitle = (
-    pricePlan: ChallengePricePlan,
-    value: string,
-  ) => {
-    setPricePlanTitles((prev) => ({
-      ...prev,
-      [pricePlan === 'PREMIUM' ? 'premium' : 'standard']: value,
-    }));
-  };
-
-  const handleChangePricePlan = useCallback((value: ChallengePricePlan) => {
-    pricePlan.current = value;
-    if (value === PREMIUM) return;
-
-    // 프리미엄 초기화
-    setPremiumOptIds([]);
-    setPricePlanTitles((prev) => ({ ...prev, premium: '' }));
-
-    if (value === STANDARD) return;
-
-    // 스탠다드 초기화
-    setStandardOptIds([]);
-    setPricePlanTitles((prev) => ({ ...prev, standard: '' }));
-  }, []);
+  /** 챌린지 옵션  */
+  const {
+    pricePlan,
+    standardPriceInfo,
+    premiumPriceInfo,
+    data: challengeOptions,
+    standardOptIds,
+    premiumOptIds,
+    pricePlanTitles,
+    handleChangePricePlanTitle,
+    handleChangePricePlan,
+    setStandardOptIds,
+    setPremiumOptIds,
+    setPricePlanTitles,
+  } = useChallengeOption(challenge);
 
   /** 챌린지 관련 함수 */
   const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -142,7 +106,11 @@ const ChallengeEdit: React.FC = () => {
       file: e.target.files[0],
       type: fileType.enum.CHALLENGE,
     });
-    setInput((prev) => ({ ...prev, [e.target.name]: url }));
+    setInput((prev) => ({
+      ...prev,
+      [e.target.name]: url,
+      desktopThumbnail: url,
+    }));
   };
 
   const onClickSave = useCallback(async () => {
@@ -233,6 +201,7 @@ const ChallengeEdit: React.FC = () => {
     standardOptIds,
     premiumOptIds,
     challenge?.priceInfo,
+    pricePlan,
   ]);
 
   // receivedConent가 초기화되면 content에 적용
