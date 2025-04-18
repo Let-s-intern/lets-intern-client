@@ -32,6 +32,7 @@ interface IChallengePriceProps<
   premiumTitle: string;
   standardOptIds: number[];
   premiumOptIds: number[];
+  challengePrice: number;
   onChangePricePlan?: (value: ChallengePricePlan) => void;
   onChangeStandardOptIds: (value: number[]) => void;
   onChangePremiumOptIds: (value: number[]) => void;
@@ -77,6 +78,7 @@ export default function ChallengePrice<
   premiumTitle,
   standardOptIds,
   premiumOptIds,
+  challengePrice,
   onChangePricePlan,
   onChangeStandardOptIds,
   onChangePremiumOptIds,
@@ -122,6 +124,18 @@ export default function ChallengePrice<
     );
     return result;
   }, [options]);
+
+  // (챌린지 + 옵션) 최종 금액
+  const finalPrice = useMemo(() => {
+    const optPrice = standardOptIds
+      .concat(premiumOptIds)
+      .reduce((acc, currId) => {
+        const target = options.find((opt) => opt.challengeOptionId === currId);
+        if (!target) return acc;
+        return acc + (target.price ?? 0) - (target.discountPrice ?? 0);
+      }, 0);
+    return optPrice + challengePrice;
+  }, [options, premiumOptIds, standardOptIds, challengePrice]);
 
   // 보증금 인풋 표시/숨김 용도
   const [isDeposit, setIsDeposit] = useState(
@@ -314,7 +328,8 @@ export default function ChallengePrice<
         </>
       )}
       <p>
-        <b>최종금액</b>: 86,000원 (보증금 포함)
+        <b>최종금액</b>: {finalPrice.toLocaleString()}원{' '}
+        {isDeposit && '(보증금 포함)'}
       </p>
     </div>
   );
