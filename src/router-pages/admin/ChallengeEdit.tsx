@@ -13,6 +13,7 @@ import ProgramBlogReviewEditor from '@/components/admin/program/ProgramBlogRevie
 import FaqSection from '@/components/FaqSection';
 import ProgramRecommendEditor from '@/components/ProgramRecommendEditor';
 import { YYYY_MMDD_THHmmss } from '@/data/dayjsFormat';
+import useAdminChallenge from '@/hooks/useAdminChallenge';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import useChallengeOption from '@/hooks/useChallengeOption';
 import dayjs from '@/lib/dayjs';
@@ -70,6 +71,31 @@ const ChallengeEdit: React.FC = () => {
     faqCategory: [],
   });
 
+  const defaultBasicPriceInfo = useMemo(() => {
+    const basic: ChallengePriceReq = {
+      priceInfo: {
+        price: challenge?.priceInfo[0].price ?? 0,
+        discount: challenge?.priceInfo[0].discount ?? 0,
+        accountNumber: challenge?.priceInfo[0].accountNumber,
+        deadline: dayjs(challenge?.priceInfo[0].deadline).format(
+          YYYY_MMDD_THHmmss,
+        ),
+        accountType: challenge?.priceInfo[0].accountType,
+      },
+      title: '',
+      charge: challenge?.priceInfo[0].price ?? 0,
+      refund: challenge?.priceInfo[0].refund ?? 0,
+      challengePriceType:
+        challenge?.priceInfo[0].challengePriceType ?? 'CHARGE',
+      challengePricePlanType: BASIC,
+      challengeParticipationType:
+        challenge?.priceInfo[0].challengeParticipationType ?? 'LIVE',
+      challengeOptionIdList: [],
+    };
+
+    return basic;
+  }, [challenge?.priceInfo[0]]);
+
   const receivedContent = useMemo<ChallengeContent | null>(() => {
     if (!challenge?.desc) {
       return null;
@@ -82,6 +108,8 @@ const ChallengeEdit: React.FC = () => {
       return null;
     }
   }, [challenge?.desc]);
+
+  const { challengePrice } = useAdminChallenge(input);
 
   /** 챌린지 옵션  */
   const {
@@ -120,26 +148,7 @@ const ChallengeEdit: React.FC = () => {
 
     setLoading(true);
 
-    let basicPriceInfo: ChallengePriceReq = {
-      priceInfo: {
-        price: challenge?.priceInfo[0].price ?? 0,
-        discount: challenge?.priceInfo[0].discount ?? 0,
-        accountNumber: challenge?.priceInfo[0].accountNumber,
-        deadline: dayjs(challenge?.priceInfo[0].deadline).format(
-          YYYY_MMDD_THHmmss,
-        ),
-        accountType: challenge?.priceInfo[0].accountType,
-      },
-      title: '',
-      charge: challenge?.priceInfo[0].price ?? 0,
-      refund: challenge?.priceInfo[0].refund ?? 0,
-      challengePriceType:
-        challenge?.priceInfo[0].challengePriceType ?? 'CHARGE',
-      challengePricePlanType: BASIC,
-      challengeParticipationType:
-        challenge?.priceInfo[0].challengeParticipationType ?? 'LIVE',
-      challengeOptionIdList: [],
-    };
+    let basicPriceInfo = defaultBasicPriceInfo;
 
     if (input.priceInfo) {
       basicPriceInfo = {
@@ -200,8 +209,8 @@ const ChallengeEdit: React.FC = () => {
     pricePlanTitles.standard,
     standardOptIds,
     premiumOptIds,
-    challenge?.priceInfo,
     pricePlan,
+    defaultBasicPriceInfo,
   ]);
 
   // receivedConent가 초기화되면 content에 적용
@@ -238,7 +247,7 @@ const ChallengeEdit: React.FC = () => {
       ...prev,
       standard: standardPriceInfo.title ?? '',
     }));
-  }, [standardPriceInfo]);
+  }, [standardPriceInfo, setStandardOptIds, setPricePlanTitles]);
 
   useEffect(() => {
     // 프리미엄 옵션 정보를 상태에 저장
@@ -253,7 +262,15 @@ const ChallengeEdit: React.FC = () => {
       ...prev,
       premium: premiumPriceInfo.title ?? '',
     }));
-  }, [premiumPriceInfo]);
+  }, [premiumPriceInfo, setPremiumOptIds, setPricePlanTitles]);
+
+  useEffect(() => {
+    // 챌린지 금액 초기 값 설정
+    setInput((prev) => ({
+      ...prev,
+      priceInfo: [defaultBasicPriceInfo],
+    }));
+  }, [defaultBasicPriceInfo]);
 
   if (!challenge || !content.initialized) {
     return <div>loading...</div>;
@@ -293,6 +310,7 @@ const ChallengeEdit: React.FC = () => {
         <div className="grid w-full grid-cols-2 gap-3">
           {/* 가격 정보 */}
           <ChallengePrice
+            challengePrice={challengePrice}
             defaultValue={challenge.priceInfo}
             setInput={setInput}
             options={challengeOptions?.challengeOptionList ?? []}

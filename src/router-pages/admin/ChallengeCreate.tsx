@@ -8,6 +8,7 @@ import ProgramBestReview from '@/components/admin/program/ProgramBestReview';
 import ProgramBlogReviewEditor from '@/components/admin/program/ProgramBlogReviewEditor';
 import FaqSection from '@/components/FaqSection';
 import ProgramRecommendEditor from '@/components/ProgramRecommendEditor';
+import useAdminChallenge from '@/hooks/useAdminChallenge';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import useChallengeOption from '@/hooks/useChallengeOption';
 import { challengeToCreateInput } from '@/hooks/useDuplicateProgram';
@@ -95,6 +96,8 @@ const ChallengeCreate: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [importJsonString, setImportJsonString] = useState('');
   const [importProcessing, setImportProcessing] = useState(false);
+
+  const { challengePrice } = useAdminChallenge(input);
 
   /**  옵션  */
   const {
@@ -256,6 +259,7 @@ const ChallengeCreate: React.FC = () => {
         </div>
         <div className="grid w-full grid-cols-2 gap-3">
           <ChallengePrice
+            challengePrice={challengePrice}
             defaultValue={[
               {
                 deadline: dayjs.tz(input.deadline, 'Asia/Seoul'),
