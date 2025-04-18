@@ -94,7 +94,7 @@ const ChallengeEdit: React.FC = () => {
     };
 
     return basic;
-  }, [challenge?.priceInfo]);
+  }, [challenge?.priceInfo[0]]);
 
   const receivedContent = useMemo<ChallengeContent | null>(() => {
     if (!challenge?.desc) {
