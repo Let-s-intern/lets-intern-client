@@ -45,7 +45,7 @@ function PricePlanBottomSheet({
       ? STANDARD
       : BASIC;
 
-  const [pricePlan, setPricePlan] = useState<ChallengePricePlan | null>(null);
+  const [pricePlan, setPricePlan] = useState<ChallengePricePlan>(defaultValue);
 
   /** 플랜 별 모든 가격 정보: 이전 플랜 금액을 누적하여 계산한다.
    * 베이직: 기본 챌린지 금액
@@ -53,10 +53,15 @@ function PricePlanBottomSheet({
    * 프리미엄: 스탠다드에 프리미엄 옵션 금액을 더함
    */
   const totalPriceInfo = useMemo(() => {
+    const challengePriceInfo = challenge.priceInfo[0]; // [주의] 옵션 도입 전 챌린지는 challengePricePlanType이 null임
     // 베이직
-    const basicRegularPrice =
-      (basicPriceInfo?.price ?? 0) + (basicPriceInfo?.refund ?? 0); // 보증금 포함 정가 = 이용료 + 보증금
-    const basicDiscountPrice = basicPriceInfo?.discount ?? 0;
+
+    const basicRegularPrice = basicPriceInfo
+      ? (basicPriceInfo?.price ?? 0) + (basicPriceInfo?.refund ?? 0)
+      : (challengePriceInfo.price ?? 0) + (challengePriceInfo.refund ?? 0); // 정가 = 이용료 + 보증금
+    const basicDiscountPrice = basicPriceInfo
+      ? (basicPriceInfo?.discount ?? 0)
+      : (challengePriceInfo.discount ?? 0);
     // 스탠다드
     const standardRegularPrice = standardPriceInfo
       ? (basicRegularPrice ?? 0) +
@@ -96,15 +101,7 @@ function PricePlanBottomSheet({
       premiumRegularPrice,
       premiumDiscountPrice,
     };
-  }, [
-    basicPriceInfo?.price,
-    basicPriceInfo?.discount,
-    basicPriceInfo?.refund,
-    standardPriceInfo?.price,
-    standardPriceInfo?.discount,
-    premiumPriceInfo?.price,
-    premiumPriceInfo?.discount,
-  ]);
+  }, [challenge.priceInfo]);
 
   // 최종 정가 & 할인 금액
   const finalPriceInfo = useMemo(() => {
@@ -197,8 +194,6 @@ function PricePlanBottomSheet({
     setProgramApplicationForm,
     finalPriceInfo,
   ]);
-
-  console.log(application);
 
   return (
     <>
