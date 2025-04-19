@@ -28,14 +28,6 @@ export const programApplicationSchema = z.object({
   priceList: z.array(challengeApplicationPriceType).nullable().optional(),
   price: liveApplicationPriceType.nullable().optional(),
 });
-// .transform((data) => {
-//   return {
-//     ...data,
-//     startDate: data.startDate ? dayjs(data.startDate) : null,
-//     endDate: data.endDate ? dayjs(data.endDate) : null,
-//     deadline: data.deadline ? dayjs(data.deadline) : null,
-//   };
-// });
 
 export type ProgramApplicationFormInfo = z.infer<
   typeof programApplicationSchema
@@ -68,17 +60,6 @@ export const useProgramApplicationQuery = (
       const res = await axios.get(`/${programType}/${programId}/application`);
       return programApplicationSchema.parse(res.data.data);
     },
-  });
-};
-
-const useProgramTitleQuery = (programType: ProgramType, programId: number) => {
-  return useQuery({
-    queryKey: ['useProgramTitleQueryKey', programType, programId],
-    queryFn: async () => {
-      const res = await axios.get(`/${programType}/${programId}/title`);
-      return res.data.data;
-    },
-    retry: 0,
   });
 };
 

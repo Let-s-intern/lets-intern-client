@@ -243,7 +243,7 @@ export const getChallengeIdPrimitiveSchema = z.object({
   criticalNotice: z.string().nullable().optional(),
   participationCount: z.number().optional(),
   thumbnail: z.string().optional(),
-  desktopThumbnail: z.string().optional(),
+  desktopThumbnail: z.string().optional().nullable(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   beginning: z.string().optional(),
@@ -1511,7 +1511,7 @@ export const challengeApplicationPriceType = z.object({
   deadline: z.string().nullable().optional(),
   accountType: accountType.nullable().optional(),
   challengePriceType,
-  challengeUserType,
+  challengePricePlan: ChallengePricePlanEnum.optional(),
   challengeParticipationType,
 });
 
