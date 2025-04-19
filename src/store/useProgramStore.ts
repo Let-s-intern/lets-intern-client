@@ -4,11 +4,11 @@ import { persist } from 'zustand/middleware';
 interface ProgramApplicationFormStore {
   data: {
     priceId: number | null;
-    price: number | null;
-    discount: number | null;
+    price: number | null; // 정가 = 이용료 + 보증금
+    discount: number | null; // 할인 금액
     couponId: string | null;
     couponPrice: number | null;
-    totalPrice: number | null;
+    totalPrice: number | null; // 판매가 = 정가 - 할인 금액
     contactEmail: string | null;
     question: string | null;
     email: string | null;

@@ -1,6 +1,5 @@
 import { FormControl, FormGroup, RadioGroup } from '@mui/material';
 import React, {
-  memo,
   MouseEventHandler,
   ReactNode,
   useCallback,
@@ -38,6 +37,7 @@ import {
 } from '../ui/ControlLabel';
 import DrawerCloseBtn from '../ui/DrawerCloseBtn';
 import OptionDropdown from '../ui/OptionDropdown';
+import PriceView from '../ui/PriceView';
 
 const { BASIC, PREMIUM } = reportPriceTypeEnum.enum;
 const { PERSONAL_STATEMENT } = reportTypeSchema.enum;
@@ -65,8 +65,10 @@ interface ReportApplyBottomSheetProps {
 }
 
 /** 자기소개서 문항 추가 옵션
+ * @note 1)
  * 옵션 제목이 '+'로 시작하는 옵션은 '자기소개서 문항 추가' 옵션이다. (그 외 옵션은 현직자 피드백에 표시한다)
- * ADMIN에서 생성한 문항 추가 옵션 개수 = 사용자가 최대로 추가할 수 있는 문항 개수
+ * @note 2)
+ * {ADMIN에서 생성한 문항 추가 옵션 개수} = {사용자가 최대로 추가할 수 있는 문항 개수}
  */
 
 const ReportApplyBottomSheet = React.forwardRef<
@@ -445,7 +447,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                           )}
                           labelStyle={RADIO_CONTROL_LABEL_STYLE}
                           right={
-                            <ReportPriceView
+                            <PriceView
                               price={item.price}
                               discount={item.discount}
                             />
@@ -464,7 +466,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                         자기소개서 문항 추가 (선택)
                       </Heading2>
                       <div>
-                        <ReportPriceView
+                        <PriceView
                           price={(questionOptionInfos ?? [])[0].price}
                           discount={
                             (questionOptionInfos ?? [])[0].discountPrice
@@ -586,10 +588,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                               label={option.optionTitle}
                               labelStyle={RADIO_CONTROL_LABEL_STYLE}
                               right={
-                                <ReportPriceView
-                                  price={price}
-                                  discount={discount}
-                                />
+                                <PriceView price={price} discount={discount} />
                               }
                             />
                           );
@@ -617,7 +616,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                               })
                             }
                             rightElement={
-                              <ReportPriceView
+                              <PriceView
                                 price={selectedReportPlan.price}
                                 discount={selectedReportPlan.discount}
                               />
@@ -642,7 +641,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                               });
                             }}
                             rightElement={
-                              <ReportPriceView
+                              <PriceView
                                 price={selectedQuestionOptions.price}
                                 discount={selectedQuestionOptions.discount}
                               />
@@ -667,7 +666,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                                   })
                                 }
                                 rightElement={
-                                  <ReportPriceView
+                                  <PriceView
                                     price={info.price}
                                     discount={info.discountPrice}
                                   />
@@ -731,34 +730,6 @@ const Heading2 = ({
     {children}
   </h2>
 );
-
-const ReportPriceView = memo(function ReportPriceView(props: {
-  price?: number | null;
-  discount?: number | null;
-}) {
-  const price = props.price ?? 0;
-  const discount = props.discount ?? 0;
-  const percent = ((discount / price) * 100).toFixed(0);
-  const discountedPrice = price - discount;
-  const hasDiscount = discount > 0;
-
-  return (
-    <div className="flex shrink-0 flex-col items-end">
-      {hasDiscount && (
-        <span className="inline-flex gap-1 text-xxsmall12 font-medium leading-none">
-          <span className="text-system-error/90">{percent}%</span>
-          <span className="text-neutral-50 line-through">
-            {price.toLocaleString()}원
-          </span>
-        </span>
-      )}
-
-      <span className="text-xsmall14 font-bold text-neutral-10">
-        {discountedPrice.toLocaleString()}원
-      </span>
-    </div>
-  );
-});
 
 const SelectedItemBox = ({
   title,
