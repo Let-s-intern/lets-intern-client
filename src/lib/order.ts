@@ -32,7 +32,7 @@ export const getPayInfo = (
   if (item) {
     return {
       priceId: item.priceId ? item.priceId : -1,
-      price: item.price ? item.price + (item.refund ?? 0) : 0, // 결제금액에 보증금 포함해야 함
+      price: item.price ? item.price + (item.refund ?? 0) : 0, // 최종 결제 금액에 보증금 금액 포함해야 함
       discount: item.discount ? item.discount : 0,
       accountNumber: item.accountNumber ? item.accountNumber : '',
       deadline: item.deadline ? item.deadline : '',

@@ -1,6 +1,5 @@
 import { FormControl, FormGroup, RadioGroup } from '@mui/material';
 import React, {
-  memo,
   MouseEventHandler,
   ReactNode,
   useCallback,
@@ -33,10 +32,12 @@ import PaymentErrorNotification from '../PaymentErrorNotification';
 import GradientButton from '../program/program-detail/button/GradientButton';
 import { default as BaseButton } from '../ui/button/BaseButton';
 import {
-  ReportFormCheckboxControlLabel,
-  ReportFormRadioControlLabel,
-} from './ControlLabel';
-import ReportDropdown from './ReportDropdown';
+  OptionFormCheckboxControlLabel,
+  OptionFormRadioControlLabel,
+} from '../ui/ControlLabel';
+import DrawerCloseBtn from '../ui/DrawerCloseBtn';
+import OptionDropdown from '../ui/OptionDropdown';
+import PriceView from '../ui/PriceView';
 
 const { BASIC, PREMIUM } = reportPriceTypeEnum.enum;
 const { PERSONAL_STATEMENT } = reportTypeSchema.enum;
@@ -64,8 +65,10 @@ interface ReportApplyBottomSheetProps {
 }
 
 /** 자기소개서 문항 추가 옵션
+ * @note 1)
  * 옵션 제목이 '+'로 시작하는 옵션은 '자기소개서 문항 추가' 옵션이다. (그 외 옵션은 현직자 피드백에 표시한다)
- * ADMIN에서 생성한 문항 추가 옵션 개수 = 사용자가 최대로 추가할 수 있는 문항 개수
+ * @note 2)
+ * {ADMIN에서 생성한 문항 추가 옵션 개수} = {사용자가 최대로 추가할 수 있는 문항 개수}
  */
 
 const ReportApplyBottomSheet = React.forwardRef<
@@ -403,12 +406,7 @@ const ReportApplyBottomSheet = React.forwardRef<
           <div className="relative flex h-full flex-col justify-between overflow-y-scroll px-5">
             <div>
               {/* 상단 닫기 버튼 */}
-              <div className="sticky top-0 z-10 w-full bg-white py-2">
-                <div
-                  className="mx-auto h-[5px] w-16 cursor-pointer rounded-full bg-neutral-80"
-                  onClick={() => setIsDrawerOpen(false)}
-                />
-              </div>
+              <DrawerCloseBtn onClose={() => setIsDrawerOpen(false)} />
 
               {/* 본문 */}
               <div className="mb-5 mt-2 flex flex-col gap-8">
@@ -418,8 +416,8 @@ const ReportApplyBottomSheet = React.forwardRef<
                     {reportDisplayName} 진단 플랜 선택 (필수)
                     <RequiredStar />
                   </Heading2>
-                  <ReportDropdown
-                    title={`합격을 이끄는 ${reportDisplayName} 진단 플랜`}
+                  <OptionDropdown
+                    label={`합격을 이끄는 ${reportDisplayName} 진단 플랜`}
                     labelId="report-diagnosis-plan-group-label"
                   >
                     <RadioGroup
@@ -440,7 +438,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                       }}
                     >
                       {reportDiagnosisPlan.map((item, index) => (
-                        <ReportFormRadioControlLabel
+                        <OptionFormRadioControlLabel
                           key={item.label}
                           label={item.label}
                           value={item.value}
@@ -449,7 +447,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                           )}
                           labelStyle={RADIO_CONTROL_LABEL_STYLE}
                           right={
-                            <ReportPriceView
+                            <PriceView
                               price={item.price}
                               discount={item.discount}
                             />
@@ -457,7 +455,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                         />
                       ))}
                     </RadioGroup>
-                  </ReportDropdown>
+                  </OptionDropdown>
                 </FormControl>
 
                 {/* 자기소개서 문항 추가 */}
@@ -468,7 +466,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                         자기소개서 문항 추가 (선택)
                       </Heading2>
                       <div>
-                        <ReportPriceView
+                        <PriceView
                           price={(questionOptionInfos ?? [])[0].price}
                           discount={
                             (questionOptionInfos ?? [])[0].discountPrice
@@ -546,8 +544,8 @@ const ReportApplyBottomSheet = React.forwardRef<
                   <FormControl fullWidth>
                     <Heading2 className="mb-4">현직자 피드백 (선택)</Heading2>
 
-                    <ReportDropdown
-                      title="현직자가 알려주는 합격의 디테일"
+                    <OptionDropdown
+                      label="현직자가 알려주는 합격의 디테일"
                       labelId="option-group-label"
                       initialOpenState={false}
                     >
@@ -563,7 +561,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                           );
 
                           return (
-                            <ReportFormCheckboxControlLabel
+                            <OptionFormCheckboxControlLabel
                               key={option.reportOptionId}
                               checked={checked}
                               onChange={(_, checked) => {
@@ -590,16 +588,13 @@ const ReportApplyBottomSheet = React.forwardRef<
                               label={option.optionTitle}
                               labelStyle={RADIO_CONTROL_LABEL_STYLE}
                               right={
-                                <ReportPriceView
-                                  price={price}
-                                  discount={discount}
-                                />
+                                <PriceView price={price} discount={discount} />
                               }
                             />
                           );
                         })}
                       </FormGroup>
-                    </ReportDropdown>
+                    </OptionDropdown>
                   </FormControl>
                 ) : null}
 
@@ -621,7 +616,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                               })
                             }
                             rightElement={
-                              <ReportPriceView
+                              <PriceView
                                 price={selectedReportPlan.price}
                                 discount={selectedReportPlan.discount}
                               />
@@ -646,7 +641,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                               });
                             }}
                             rightElement={
-                              <ReportPriceView
+                              <PriceView
                                 price={selectedQuestionOptions.price}
                                 discount={selectedQuestionOptions.discount}
                               />
@@ -671,7 +666,7 @@ const ReportApplyBottomSheet = React.forwardRef<
                                   })
                                 }
                                 rightElement={
-                                  <ReportPriceView
+                                  <PriceView
                                     price={info.price}
                                     discount={info.discountPrice}
                                   />
@@ -735,34 +730,6 @@ const Heading2 = ({
     {children}
   </h2>
 );
-
-const ReportPriceView = memo(function ReportPriceView(props: {
-  price?: number | null;
-  discount?: number | null;
-}) {
-  const price = props.price ?? 0;
-  const discount = props.discount ?? 0;
-  const percent = ((discount / price) * 100).toFixed(0);
-  const discountedPrice = price - discount;
-  const hasDiscount = discount > 0;
-
-  return (
-    <div className="flex shrink-0 flex-col items-end">
-      {hasDiscount && (
-        <span className="inline-flex gap-1 text-xxsmall12 font-medium leading-none">
-          <span className="text-system-error/90">{percent}%</span>
-          <span className="text-neutral-50 line-through">
-            {price.toLocaleString()}원
-          </span>
-        </span>
-      )}
-
-      <span className="text-xsmall14 font-bold text-neutral-10">
-        {discountedPrice.toLocaleString()}원
-      </span>
-    </div>
-  );
-});
 
 const SelectedItemBox = ({
   title,
