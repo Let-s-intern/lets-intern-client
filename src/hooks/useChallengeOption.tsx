@@ -10,7 +10,6 @@ const { BASIC, STANDARD, PREMIUM } = ChallengePricePlanEnum.enum;
 
 export default function useChallengeOption(challenge?: ChallengeIdSchema) {
   /** 가격 플랜 */
-
   const pricePlan = useRef<ChallengePricePlan>(BASIC);
 
   const standardPriceInfo = challenge?.priceInfo.find(
