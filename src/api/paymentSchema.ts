@@ -189,8 +189,6 @@ export const paymentListType = z.object({
 
 export type PaymentType = z.infer<typeof paymentType>;
 
-// export type PaymentStatus = 'DONE' | 'CANCELED' | 'PARTIAL_CANCELED';
-
 export const convertPaymentStatus = (status: string) => {
   switch (status) {
     case 'REFUNDED':
@@ -223,8 +221,8 @@ export const paymentDetailType = z.object({
   priceInfo: z.object({
     id: z.number().nullable().optional(),
     price: z.number().nullable().optional(),
-    discount: z.number().nullable().optional(),
-    refund: z.number().nullable().optional(),
+    discount: z.number().nullable().optional(), // 할인 금액
+    refund: z.number().nullable().optional(), // 보증금
   }),
   paymentInfo: z.object({
     id: z.number().nullable().optional(),

@@ -1,7 +1,7 @@
+import { PaymentType } from '@/api/paymentSchema';
 import { ReportType } from '@/api/report';
 import { twMerge } from '@/lib/twMerge';
 import { Link } from 'react-router-dom';
-import { PaymentType } from '../../../../api/paymentSchema';
 import CardStatus from './CardStatus';
 
 export const getReportThumbnail = (reportType: ReportType | null) => {
