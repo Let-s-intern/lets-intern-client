@@ -43,6 +43,7 @@ const Footer = () => {
         console.log(error);
       });
   };
+
   return (
     <footer className="border-t-1 w-full border-neutral-80 bg-neutral-85 px-5 pb-16 pt-10 md:pb-12 lg:px-10 xl:px-52">
       <div className="flex flex-col gap-[3.25rem] lg:justify-between lg:gap-7">

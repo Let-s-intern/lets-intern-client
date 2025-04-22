@@ -36,6 +36,8 @@ const LiveEdit: React.FC = () => {
   const { liveId: liveIdString } = useParams();
   const navigate = useNavigate();
   const client = useQueryClient();
+  const { snackbar } = useAdminSnackbar();
+
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState<Omit<UpdateLiveReq, 'desc'>>({});
   const [content, setContent] = useState<LiveContent>({
@@ -46,8 +48,6 @@ const LiveEdit: React.FC = () => {
     curriculum: [],
     blogReview: { list: [] },
   });
-
-  const { snackbar } = useAdminSnackbar();
 
   const { data: live } = useGetLiveQuery({
     liveId: Number(liveIdString),
@@ -63,14 +63,6 @@ const LiveEdit: React.FC = () => {
     mentorCareer: live?.mentorCareer,
     mentorIntroduction: live?.mentorIntroduction,
   };
-
-  useEffect(() => {
-    if (live && isDeprecatedProgram(live)) {
-      navigate(`/admin/programs/${liveIdString}/edit?programType=LIVE`, {
-        replace: true,
-      });
-    }
-  }, [live, liveIdString, navigate]);
 
   const receivedContent = useMemo<LiveContent | null>(() => {
     if (!live?.desc) {
@@ -114,12 +106,18 @@ const LiveEdit: React.FC = () => {
     snackbar('저장되었습니다.');
   }, [input, liveIdString, content, patchLive, client, snackbar]);
 
-  // receivedContent가 초기화되면 content에 적용
   useEffect(() => {
-    if (!receivedContent) {
-      return;
+    // 구 버전인지 판단
+    if (live && isDeprecatedProgram(live)) {
+      navigate(`/admin/programs/${liveIdString}/edit?programType=LIVE`, {
+        replace: true,
+      });
     }
+  }, [live, liveIdString, navigate]);
 
+  useEffect(() => {
+    // receivedContent가 초기화되면 content에 적용
+    if (!receivedContent) return;
     setContent((prev) => ({
       ...(prev.initialized ? prev : { ...receivedContent, initialized: true }),
     }));
@@ -146,53 +144,75 @@ const LiveEdit: React.FC = () => {
         </div>
       </Header>
 
-      <Heading2>기본 정보</Heading2>
-      <section className="mb-6 mt-3">
-        <div className="mb-6 grid w-full grid-cols-2 gap-3">
+      <div className="mb-6 mt-3 grid w-full grid-cols-2 gap-3">
+        {/* 기본 정보 */}
+        <section>
+          <Heading2 className="mb-3">기본 정보</Heading2>
           <LiveBasic defaultValue={live} setInput={setInput} />
+        </section>
+        {/* 가격 정보 & 일정 */}
+        <section className="flex flex-col gap-3">
+          <Heading2>가격 정보 & 일정</Heading2>
+          <LivePrice defaultValue={live.priceInfo} setInput={setInput} />
+          <ProgramSchedule
+            defaultValue={live}
+            setInput={setInput}
+            onDeadlineChange={(value) => {
+              if (!value) {
+                return;
+              }
+
+              setInput((prev) => ({
+                ...prev,
+                priceInfo: {
+                  ...initialLivePrice,
+                  ...prev.priceInfo,
+                  priceInfo: {
+                    ...initialLivePrice.priceInfo,
+                    ...prev.priceInfo?.priceInfo,
+                    deadline: value.format('YYYY-MM-DDTHH:mm'),
+                  },
+                },
+              }));
+            }}
+          />
+          <FormControlLabel
+            control={<Checkbox defaultChecked={live.vod ?? true} />}
+            label="VOD 제공 여부"
+            labelPlacement="start"
+            onChange={(_, checked) =>
+              setInput((prev) => ({ ...prev, vod: checked }))
+            }
+          />
+        </section>
+      </div>
+
+      {/* 썸네일 */}
+      <section className="mb-6 max-w-[1120px]">
+        <Heading2 className="mb-3">썸네일</Heading2>
+        <div className="flex gap-3">
           <ImageUpload
-            label="라이브 썸네일 이미지 업로드"
+            label="모바일 썸네일 이미지 업로드"
             id="thumbnail"
             name="thumbnail"
             image={input.thumbnail ?? live.thumbnail ?? undefined}
             onChange={onChangeImage}
           />
+          <ImageUpload
+            label="데스크탑 썸네일 이미지 업로드"
+            id="desktopThumbnail"
+            name="desktopThumbnail"
+            image={input.desktopThumbnail ?? live.desktopThumbnail ?? undefined}
+            onChange={onChangeImage}
+          />
         </div>
-        <div className="grid w-full grid-cols-2 gap-3">
-          <div className="flex flex-col items-start gap-6">
-            <LivePrice defaultValue={live.priceInfo} setInput={setInput} />
-            <ProgramSchedule
-              defaultValue={live}
-              setInput={setInput}
-              onDeadlineChange={(value) => {
-                if (!value) {
-                  return;
-                }
+      </section>
 
-                setInput((prev) => ({
-                  ...prev,
-                  priceInfo: {
-                    ...initialLivePrice,
-                    ...prev.priceInfo,
-                    priceInfo: {
-                      ...initialLivePrice.priceInfo,
-                      ...prev.priceInfo?.priceInfo,
-                      deadline: value.format('YYYY-MM-DDTHH:mm'),
-                    },
-                  },
-                }));
-              }}
-            />
-            <FormControlLabel
-              control={<Checkbox defaultChecked={live.vod ?? true} />}
-              label="VOD 제공 여부"
-              labelPlacement="start"
-              onChange={(event, checked) =>
-                setInput((prev) => ({ ...prev, vod: checked }))
-              }
-            />
-          </div>
-          <div className="flex flex-col gap-3">
+      {/* 멘토 정보 */}
+      <section className="mb-6 max-w-[1120px]">
+        <Heading2>멘토 정보</Heading2>
+        <div className="mt-3 flex gap-3">
+          <div className="max-w-md">
             <ImageUpload
               label="멘토 사진"
               id="mentorImg"
@@ -200,11 +220,12 @@ const LiveEdit: React.FC = () => {
               image={input.mentorImg ?? live.mentorImg ?? undefined}
               onChange={onChangeImage}
             />
-            <LiveMentor defaultValue={mentorDefaultValue} setInput={setInput} />
           </div>
+          <LiveMentor defaultValue={mentorDefaultValue} setInput={setInput} />
         </div>
       </section>
 
+      {/* 프로그램 소개 */}
       <LiveInformation
         recommendFields={content.recommend || []}
         reasonFields={content.reason || [{ title: '', content: '' }]}

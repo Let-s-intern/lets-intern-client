@@ -137,7 +137,6 @@ const ChallengeEdit: React.FC = () => {
     setInput((prev) => ({
       ...prev,
       [e.target.name]: url,
-      desktopThumbnail: url,
     }));
   };
 
@@ -297,17 +296,30 @@ const ChallengeEdit: React.FC = () => {
 
       <Heading2>기본 정보</Heading2>
       <section className="mb-6 mt-3">
-        <div className="mb-6 grid w-full grid-cols-2 gap-3">
-          <ChallengeBasic defaultValue={challenge} setInput={setInput} />
+        <div className="mb-6 grid w-full grid-cols-3 gap-3">
+          <ChallengeBasic
+            className="row-start-1 row-end-3"
+            defaultValue={challenge}
+            setInput={setInput}
+          />
           <ImageUpload
-            label="챌린지 썸네일 이미지 업로드"
+            label="모바일 썸네일 이미지 업로드"
             id="thumbnail"
             name="thumbnail"
             image={input.thumbnail ?? challenge.thumbnail}
             onChange={onChangeImage}
           />
+          <ImageUpload
+            label="데스크탑 썸네일 이미지 업로드"
+            id="desktopThumbnail"
+            name="desktopThumbnail"
+            image={input.desktopThumbnail ?? challenge.desktopThumbnail}
+            onChange={onChangeImage}
+          />
         </div>
-        <div className="grid w-full grid-cols-2 gap-3">
+
+        <Heading2>가격 정보 & 일정</Heading2>
+        <div className="mt-5 grid w-full grid-cols-2 gap-3">
           {/* 가격 정보 */}
           <ChallengePrice
             challengePrice={challengePrice}
