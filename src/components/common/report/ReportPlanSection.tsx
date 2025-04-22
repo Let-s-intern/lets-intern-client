@@ -165,7 +165,7 @@ const ReportPlanSection = ({
         <MainHeader>{MAIN_HEADER}</MainHeader>
       </div>
 
-      <main className="mt-10 max-w-[840px] md:mx-auto md:mt-12 lg:px-0">
+      <section className="mt-10 max-w-[840px] md:mx-auto md:mt-12 lg:px-0">
         {/* 좌우 슬라이드 */}
         <div
           data-section="price-1"
@@ -348,7 +348,7 @@ const ReportPlanSection = ({
             </div>
           </>
         )}
-      </main>
+      </section>
     </section>
   );
 };

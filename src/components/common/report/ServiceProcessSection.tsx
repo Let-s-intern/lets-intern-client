@@ -70,7 +70,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
         </MainHeader>
       </div>
 
-      <main className="mx-auto mt-10 flex max-w-[690px] flex-col items-center gap-5 md:mt-11 md:gap-8">
+      <section className="mx-auto mt-10 flex max-w-[690px] flex-col items-center gap-5 md:mt-11 md:gap-8">
         {/* 1단계 */}
         <ProcessCard data-section="workflow-1" style={mainCardStyle}>
           <NumberedTitle
@@ -249,7 +249,7 @@ const ServiceProcessSection = ({ reportType }: ServiceProcessSectionProps) => {
             </ContentBox>
           </div>
         </ProcessCard>
-      </main>
+      </section>
     </section>
   );
 };

@@ -1,3 +1,5 @@
+'use client';
+
 import { twMerge } from '@/lib/twMerge';
 import { MdOutlineArrowBack } from 'react-icons/md';
 import { Link } from 'react-router-dom';
@@ -18,7 +20,7 @@ const BackHeader = ({
   onClick,
 }: BackHeaderProps) => {
   return (
-    <header className={twMerge('flex items-center gap-3 py-6', className)}>
+    <section className={twMerge('flex items-center gap-3 py-6', className)}>
       {!hideBack && (
         <Link to={to ?? '#'} onClick={onClick}>
           <MdOutlineArrowBack size={'1.5rem'} />
@@ -26,7 +28,7 @@ const BackHeader = ({
       )}
 
       <h1 className="text-small20 font-semibold">{children}</h1>
-    </header>
+    </section>
   );
 };
 

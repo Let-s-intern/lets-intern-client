@@ -182,9 +182,9 @@ const NavBar = () => {
   }, [location.pathname, setScrollDirection]);
 
   return (
-    <>
+    <header>
       {/* 상단 네비게이션 바 */}
-      <div
+      <section
         className={`lg:p-30 fixed top-0 z-30 h-[3.75rem] w-screen border-b border-neutral-80 bg-static-100 px-5 sm:px-20 md:h-[4.375rem] lg:h-[4.75rem] lg:px-28 ${scrollDirection === 'DOWN' ? '-translate-y-full' : 'translate-y-0'} transition-transform duration-300`}
       >
         <div className="flex h-full items-center justify-between">
@@ -270,7 +270,7 @@ const NavBar = () => {
             </button>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* 투명한 검정색 배경 */}
       <div
@@ -281,8 +281,9 @@ const NavBar = () => {
         }`}
         onClick={toggleMenu}
       />
+
       {/* 사이드 네비게이션 바 */}
-      <div
+      <aside
         className={twMerge(
           'fixed right-0 top-0 z-50 h-screen w-[18.25rem] flex-col bg-white shadow-md transition-all duration-300 sm:w-[22rem]',
           isOpen ? 'translate-x-0' : 'translate-x-full',
@@ -400,10 +401,11 @@ const NavBar = () => {
             </SideNavItem>
           </div>
         </div>
-      </div>
+      </aside>
+
       {/* 네비게이션 바 공간 차지 */}
       <div className="h-[3.75rem] md:h-[4.375rem] lg:h-[4.75rem]" />
-    </>
+    </header>
   );
 };
 

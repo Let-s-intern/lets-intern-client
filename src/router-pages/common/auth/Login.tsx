@@ -138,12 +138,12 @@ const Login = () => {
 
   return (
     <>
-      <main className="mx-auto min-h-screen px-4 sm:max-w-md">
-        <header>
+      <section className="mx-auto min-h-screen px-4 sm:max-w-md">
+        <section>
           <h1 className="mb-8 mt-12 text-center text-xl font-semibold">
             반갑습니다!
           </h1>
-        </header>
+        </section>
         <form className="flex flex-col gap-2" onSubmit={handleLogin}>
           <Input
             type="email"
@@ -173,7 +173,7 @@ const Login = () => {
             비밀번호 찾기
           </TextLink>
         </div>
-      </main>
+      </section>
       {isLoading && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-70">
           <LoadingContainer />

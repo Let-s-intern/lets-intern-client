@@ -355,6 +355,7 @@ input[type='number'] {
   transition-timing-function: linear;
 }
 
+/* speech-bubble */
 .speech-bubble {
   position: relative;
   border-radius: 0.4em;
@@ -374,8 +375,19 @@ input[type='number'] {
   margin-left: -5px;
 }
 
+.required-star::after {
+  content: '*';
+  color: #fc5555;
+}
+
 /* MUI Snackbar 메시지 스타일 */
 .MuiSnackbarContent-message {
   font-family: 'Pretendard Variable', '-apple-system', 'BlinkMacSystemFont',
     'system-ui', 'Roboto', 'sans-serif';
+}
+
+/* maw width */
+.mw-720 {
+  max-width: 720px;
+  margin: 0 auto;
 }

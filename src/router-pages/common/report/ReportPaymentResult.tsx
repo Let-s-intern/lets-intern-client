@@ -129,7 +129,7 @@ const ReportPaymentResult = () => {
     <div className="w-full px-5" data-program-text={title}>
       <div className="mx-auto max-w-5xl">
         <Heading1>결제 확인하기</Heading1>
-        <main className="flex min-h-52 w-full flex-col items-center justify-center">
+        <section className="flex min-h-52 w-full flex-col items-center justify-center">
           {!result ? (
             <span>결제 확인 중입니다..</span>
           ) : (
@@ -289,7 +289,7 @@ const ReportPaymentResult = () => {
               </div>
             </>
           )}
-        </main>
+        </section>
       </div>
     </div>
   );
