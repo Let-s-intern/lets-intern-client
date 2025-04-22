@@ -144,68 +144,82 @@ const LiveEdit: React.FC = () => {
         </div>
       </Header>
 
-      <Heading2>기본 정보</Heading2>
-      <section className="mb-6 mt-3">
-        <div className="mb-6 grid w-full grid-cols-2 gap-3">
-          {/* 기본 정보 */}
+      <div className="mb-6 mt-3 grid w-full grid-cols-2 gap-3">
+        {/* 기본 정보 */}
+        <section>
+          <Heading2 className="mb-3">기본 정보</Heading2>
           <LiveBasic defaultValue={live} setInput={setInput} />
-          {/* 라이브 썸네일 */}
+        </section>
+        {/* 가격 정보 & 일정 */}
+        <section className="flex flex-col gap-3">
+          <Heading2>가격 정보 & 일정</Heading2>
+          <LivePrice defaultValue={live.priceInfo} setInput={setInput} />
+          <ProgramSchedule
+            defaultValue={live}
+            setInput={setInput}
+            onDeadlineChange={(value) => {
+              if (!value) {
+                return;
+              }
+
+              setInput((prev) => ({
+                ...prev,
+                priceInfo: {
+                  ...initialLivePrice,
+                  ...prev.priceInfo,
+                  priceInfo: {
+                    ...initialLivePrice.priceInfo,
+                    ...prev.priceInfo?.priceInfo,
+                    deadline: value.format('YYYY-MM-DDTHH:mm'),
+                  },
+                },
+              }));
+            }}
+          />
+          <FormControlLabel
+            control={<Checkbox defaultChecked={live.vod ?? true} />}
+            label="VOD 제공 여부"
+            labelPlacement="start"
+            onChange={(_, checked) =>
+              setInput((prev) => ({ ...prev, vod: checked }))
+            }
+          />
+        </section>
+      </div>
+
+      {/* 썸네일 */}
+      <section className="mb-6 max-w-[1120px]">
+        <Heading2 className="mb-3">썸네일</Heading2>
+        <div className="flex gap-3">
           <ImageUpload
-            label="라이브 썸네일 이미지 업로드"
+            label="모바일 썸네일 이미지 업로드"
+            id="thumbnail"
+            name="thumbnail"
+            image={input.thumbnail ?? live.thumbnail ?? undefined}
+            onChange={onChangeImage}
+          />
+          <ImageUpload
+            label="데스크탑 썸네일 이미지 업로드"
             id="thumbnail"
             name="thumbnail"
             image={input.thumbnail ?? live.thumbnail ?? undefined}
             onChange={onChangeImage}
           />
         </div>
-        <div className="grid w-full grid-cols-2 gap-3">
-          <div className="flex flex-col items-start gap-6">
-            <Heading2>가격 정보 & 일정</Heading2>
-            {/* 가격 정보 */}
-            <LivePrice defaultValue={live.priceInfo} setInput={setInput} />
-            {/* 일정 */}
-            <ProgramSchedule
-              defaultValue={live}
-              setInput={setInput}
-              onDeadlineChange={(value) => {
-                if (!value) {
-                  return;
-                }
+      </section>
 
-                setInput((prev) => ({
-                  ...prev,
-                  priceInfo: {
-                    ...initialLivePrice,
-                    ...prev.priceInfo,
-                    priceInfo: {
-                      ...initialLivePrice.priceInfo,
-                      ...prev.priceInfo?.priceInfo,
-                      deadline: value.format('YYYY-MM-DDTHH:mm'),
-                    },
-                  },
-                }));
-              }}
-            />
-            <FormControlLabel
-              control={<Checkbox defaultChecked={live.vod ?? true} />}
-              label="VOD 제공 여부"
-              labelPlacement="start"
-              onChange={(event, checked) =>
-                setInput((prev) => ({ ...prev, vod: checked }))
-              }
-            />
-          </div>
-          {/* 멘토 정보 */}
-          <div className="flex flex-col gap-3">
-            <ImageUpload
-              label="멘토 사진"
-              id="mentorImg"
-              name="mentorImg"
-              image={input.mentorImg ?? live.mentorImg ?? undefined}
-              onChange={onChangeImage}
-            />
-            <LiveMentor defaultValue={mentorDefaultValue} setInput={setInput} />
-          </div>
+      {/* 멘토 정보 */}
+      <section className="mb-6 max-w-[1120px]">
+        <Heading2>멘토 정보</Heading2>
+        <div className="mt-3 flex gap-3">
+          <ImageUpload
+            label="멘토 사진"
+            id="mentorImg"
+            name="mentorImg"
+            image={input.mentorImg ?? live.mentorImg ?? undefined}
+            onChange={onChangeImage}
+          />
+          <LiveMentor defaultValue={mentorDefaultValue} setInput={setInput} />
         </div>
       </section>
 
