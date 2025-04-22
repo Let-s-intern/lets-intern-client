@@ -36,6 +36,8 @@ const LiveEdit: React.FC = () => {
   const { liveId: liveIdString } = useParams();
   const navigate = useNavigate();
   const client = useQueryClient();
+  const { snackbar } = useAdminSnackbar();
+
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState<Omit<UpdateLiveReq, 'desc'>>({});
   const [content, setContent] = useState<LiveContent>({
@@ -46,8 +48,6 @@ const LiveEdit: React.FC = () => {
     curriculum: [],
     blogReview: { list: [] },
   });
-
-  const { snackbar } = useAdminSnackbar();
 
   const { data: live } = useGetLiveQuery({
     liveId: Number(liveIdString),
@@ -63,14 +63,6 @@ const LiveEdit: React.FC = () => {
     mentorCareer: live?.mentorCareer,
     mentorIntroduction: live?.mentorIntroduction,
   };
-
-  useEffect(() => {
-    if (live && isDeprecatedProgram(live)) {
-      navigate(`/admin/programs/${liveIdString}/edit?programType=LIVE`, {
-        replace: true,
-      });
-    }
-  }, [live, liveIdString, navigate]);
 
   const receivedContent = useMemo<LiveContent | null>(() => {
     if (!live?.desc) {
@@ -114,12 +106,18 @@ const LiveEdit: React.FC = () => {
     snackbar('저장되었습니다.');
   }, [input, liveIdString, content, patchLive, client, snackbar]);
 
-  // receivedContent가 초기화되면 content에 적용
   useEffect(() => {
-    if (!receivedContent) {
-      return;
+    // 구 버전인지 판단
+    if (live && isDeprecatedProgram(live)) {
+      navigate(`/admin/programs/${liveIdString}/edit?programType=LIVE`, {
+        replace: true,
+      });
     }
+  }, [live, liveIdString, navigate]);
 
+  useEffect(() => {
+    // receivedContent가 초기화되면 content에 적용
+    if (!receivedContent) return;
     setContent((prev) => ({
       ...(prev.initialized ? prev : { ...receivedContent, initialized: true }),
     }));
@@ -149,7 +147,9 @@ const LiveEdit: React.FC = () => {
       <Heading2>기본 정보</Heading2>
       <section className="mb-6 mt-3">
         <div className="mb-6 grid w-full grid-cols-2 gap-3">
+          {/* 기본 정보 */}
           <LiveBasic defaultValue={live} setInput={setInput} />
+          {/* 라이브 썸네일 */}
           <ImageUpload
             label="라이브 썸네일 이미지 업로드"
             id="thumbnail"
@@ -160,7 +160,10 @@ const LiveEdit: React.FC = () => {
         </div>
         <div className="grid w-full grid-cols-2 gap-3">
           <div className="flex flex-col items-start gap-6">
+            <Heading2>가격 정보 & 일정</Heading2>
+            {/* 가격 정보 */}
             <LivePrice defaultValue={live.priceInfo} setInput={setInput} />
+            {/* 일정 */}
             <ProgramSchedule
               defaultValue={live}
               setInput={setInput}
@@ -192,6 +195,7 @@ const LiveEdit: React.FC = () => {
               }
             />
           </div>
+          {/* 멘토 정보 */}
           <div className="flex flex-col gap-3">
             <ImageUpload
               label="멘토 사진"
@@ -205,6 +209,7 @@ const LiveEdit: React.FC = () => {
         </div>
       </section>
 
+      {/* 프로그램 소개 */}
       <LiveInformation
         recommendFields={content.recommend || []}
         reasonFields={content.reason || [{ title: '', content: '' }]}

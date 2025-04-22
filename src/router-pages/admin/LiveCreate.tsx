@@ -27,6 +27,7 @@ import { useNavigate } from 'react-router-dom';
 import ProgramSchedule from './program/ProgramSchedule';
 const LiveCreate: React.FC = () => {
   const navigate = useNavigate();
+  const { snackbar } = useAdminSnackbar();
 
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState<LiveContent>({
@@ -84,8 +85,6 @@ const LiveCreate: React.FC = () => {
     });
     setInput((prev) => ({ ...prev, [e.target.name]: url }));
   };
-
-  const { snackbar } = useAdminSnackbar();
 
   const onClickSave = useCallback(async () => {
     setLoading(true);
@@ -150,6 +149,7 @@ const LiveCreate: React.FC = () => {
       <Heading2>기본 정보</Heading2>
       <section className="mb-6 mt-3">
         <div className="mb-6 grid w-full grid-cols-2 gap-3">
+          {/* 기본 정보 */}
           <LiveBasic
             defaultValue={{
               ...input,
@@ -162,6 +162,7 @@ const LiveCreate: React.FC = () => {
             }}
             setInput={setInput}
           />
+          {/* 라이브 썸네일 */}
           <ImageUpload
             label="라이브 썸네일 이미지 업로드"
             id="thumbnail"
@@ -172,6 +173,7 @@ const LiveCreate: React.FC = () => {
         </div>
         <div className="grid w-full grid-cols-2 gap-3">
           <div className="flex flex-col items-start gap-6">
+            <Heading2>가격 정보</Heading2>
             <LivePrice
               defaultValue={{
                 deadline: dayjs.tz(
@@ -234,6 +236,8 @@ const LiveCreate: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* 프로그램 소개 */}
       <LiveInformation
         recommendFields={content.recommend ?? []}
         reasonFields={content.reason ?? [{ title: '', content: '' }]}
