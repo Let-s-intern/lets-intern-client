@@ -1,3 +1,4 @@
+import axiosV2 from '@/utils/axiosV2';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import {
@@ -17,6 +18,7 @@ import {
   reviewTotalSchema,
 } from '../schema';
 import axios from '../utils/axios';
+import { Pageable } from './../schema';
 import {
   challengeGoalSchema,
   challengeUserInfoSchema,
@@ -228,6 +230,7 @@ export const useGetActiveChallenge = (type: ChallengeType) => {
 };
 
 // 챌린지 목록 조회
+
 export const useGetChallengeList = ({
   typeList,
   statusList,
@@ -237,7 +240,7 @@ export const useGetChallengeList = ({
   typeList?: ProgramClassification[];
   statusList?: ProgramStatus[];
   type?: ChallengeType;
-  pageable?: { page: number; size: number };
+  pageable?: Pageable;
 }) => {
   return useQuery({
     queryKey: ['challenge', typeList, statusList, type, pageable],
@@ -247,13 +250,15 @@ export const useGetChallengeList = ({
           typeList,
           statusList,
           type,
-          pageable,
+          ...pageable,
         },
       });
       return challengeListSchema.parse(res.data.data);
     },
   });
 };
+
+export type ChallengeList = z.infer<typeof challengeListSchema>;
 
 // 챌린지 목록 조회-홈 (노출상태, 정렬: 모집중(모집마감빠른순)-모집마감-모집예정순)
 export const useGetChallengeHome = ({
@@ -265,7 +270,7 @@ export const useGetChallengeHome = ({
   typeList?: ProgramClassification[];
   statusList?: ProgramStatus[];
   type?: ChallengeType;
-  pageable?: { page: number; size: number };
+  pageable?: Pageable;
 }) => {
   return useQuery({
     queryKey: ['challenge', 'home', typeList, statusList, type, pageable],
@@ -275,7 +280,7 @@ export const useGetChallengeHome = ({
           typeList,
           statusList,
           type,
-          pageable,
+          ...pageable,
         },
       });
       return challengeListSchema.parse(res.data.data);
@@ -487,4 +492,11 @@ export const useGetChallengeAttendances = ({
       return attendances.parse(res.data.data).attendanceList ?? [];
     },
   });
+};
+
+export const getClickCopy = async (fromId: number, toId: number) => {
+  const res = await axiosV2.get(
+    `/admin/challenge/copy-dashboard/${fromId}/${toId}`,
+  );
+  return res.data.data;
 };

@@ -16,6 +16,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 const ReviewSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [reviewPage, setReviewPage] = useState(1);
+
   const { data: reviewCount } = useGetReviewCount();
   const { data: blogData } = useBlogListQuery({
     pageable: { page: 1, size: 0 },
@@ -23,10 +25,20 @@ const ReviewSection = () => {
   });
 
   const { data: totalReview, isLoading: totalReviewIsLoading } =
-    useGetProgramReview({ size: 20 });
+    useGetProgramReview({ size: 40, page: reviewPage });
 
   const reviewsCount =
     (reviewCount?.count ?? 0) + (blogData?.pageInfo.totalElements ?? 0);
+
+  const reviewList = totalReview?.reviewList.filter(
+    (r) => r.reviewItemList && r.reviewItemList?.length > 0,
+  );
+
+  useEffect(() => {
+    // 총 세 번까지 리뷰 요청
+    if (!reviewList || reviewList?.length > 0 || reviewPage > 2) return;
+    setReviewPage(reviewPage + 1);
+  }, [reviewList]);
 
   useEffect(() => {
     if (totalReviewIsLoading) return;
@@ -51,7 +63,12 @@ const ReviewSection = () => {
     };
   }, [reviewsCount, totalReviewIsLoading]);
 
-  if (totalReviewIsLoading || !totalReview || totalReview.reviewList.length < 1)
+  if (
+    totalReviewIsLoading ||
+    !totalReview ||
+    totalReview.reviewList.length < 1 ||
+    (reviewList?.length ?? 0) < 5
+  )
     return null;
 
   return (
