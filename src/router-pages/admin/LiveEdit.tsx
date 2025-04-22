@@ -200,9 +200,9 @@ const LiveEdit: React.FC = () => {
           />
           <ImageUpload
             label="데스크탑 썸네일 이미지 업로드"
-            id="thumbnail"
-            name="thumbnail"
-            image={input.thumbnail ?? live.thumbnail ?? undefined}
+            id="desktopThumbnail"
+            name="desktopThumbnail"
+            image={input.desktopThumbnail ?? live.desktopThumbnail ?? undefined}
             onChange={onChangeImage}
           />
         </div>
@@ -212,13 +212,15 @@ const LiveEdit: React.FC = () => {
       <section className="mb-6 max-w-[1120px]">
         <Heading2>멘토 정보</Heading2>
         <div className="mt-3 flex gap-3">
-          <ImageUpload
-            label="멘토 사진"
-            id="mentorImg"
-            name="mentorImg"
-            image={input.mentorImg ?? live.mentorImg ?? undefined}
-            onChange={onChangeImage}
-          />
+          <div className="max-w-md">
+            <ImageUpload
+              label="멘토 사진"
+              id="mentorImg"
+              name="mentorImg"
+              image={input.mentorImg ?? live.mentorImg ?? undefined}
+              onChange={onChangeImage}
+            />
+          </div>
           <LiveMentor defaultValue={mentorDefaultValue} setInput={setInput} />
         </div>
       </section>

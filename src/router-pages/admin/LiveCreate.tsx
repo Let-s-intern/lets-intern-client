@@ -45,6 +45,7 @@ const LiveCreate: React.FC = () => {
     criticalNotice: '',
     participationCount: 0,
     thumbnail: '',
+    desktopThumbnail: '',
     mentorName: '',
     mentorImg: '',
     mentorCompany: '',
@@ -223,17 +224,17 @@ const LiveCreate: React.FC = () => {
         <Heading2 className="mb-3">썸네일</Heading2>
         <div className="flex gap-3">
           <ImageUpload
-            label="라이브 썸네일 이미지 업로드"
+            label="모바일 썸네일 이미지 업로드"
             id="thumbnail"
             name="thumbnail"
             image={input.thumbnail}
             onChange={onChangeImage}
           />
           <ImageUpload
-            label="라이브 썸네일 이미지 업로드"
-            id="thumbnail"
-            name="thumbnail"
-            image={input.thumbnail}
+            label="데스크탑 썸네일 이미지 업로드"
+            id="desktopThumbnail"
+            name="desktopThumbnail"
+            image={input.desktopThumbnail}
             onChange={onChangeImage}
           />
         </div>
@@ -243,13 +244,15 @@ const LiveCreate: React.FC = () => {
       <section className="mb-6 max-w-[1120px]">
         <Heading2>멘토 정보</Heading2>
         <div className="mt-3 flex gap-3">
-          <ImageUpload
-            label="멘토 사진"
-            id="mentorImg"
-            name="mentorImg"
-            image={input.mentorImg}
-            onChange={onChangeImage}
-          />
+          <div className="max-w-md">
+            <ImageUpload
+              label="멘토 사진"
+              id="mentorImg"
+              name="mentorImg"
+              image={input.mentorImg}
+              onChange={onChangeImage}
+            />
+          </div>
           <LiveMentor defaultValue={input} setInput={setInput} />
         </div>
       </section>

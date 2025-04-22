@@ -392,6 +392,7 @@ export const getLiveIdPrimitiveSchema = z.object({
   criticalNotice: z.string().optional().nullable(),
   participationCount: z.number().optional(),
   thumbnail: z.string().optional().nullable(),
+  desktopThumbnail: z.string().optional().nullable(),
   mentorName: z.string().optional().nullable(),
   mentorImg: z.string().optional().nullable(),
   mentorCompany: z.string().optional().nullable(),
@@ -458,6 +459,7 @@ export type CreateLiveReq = {
   criticalNotice: string;
   participationCount: number;
   thumbnail: string;
+  desktopThumbnail?: string;
   mentorName: string;
   mentorImg: string;
   mentorCompany: string;
@@ -506,6 +508,7 @@ export type UpdateLiveReq = {
   criticalNotice?: string;
   participationCount?: number;
   thumbnail?: string;
+  desktopThumbnail?: string;
   mentorName?: string;
   mentorImg?: string;
   mentorCompany?: string;
