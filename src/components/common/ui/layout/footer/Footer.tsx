@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
+import useActiveReports from '@/hooks/useActiveReports';
+import { useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import DocumentLink from './DocumentLink';
 import Icon from './Icon';
@@ -28,11 +29,15 @@ const BUSINESS_INFORMATION = {
 };
 
 const Footer = () => {
-  useEffect(() => {
-    if (!window.Kakao?.isInitialized()) {
-      window.Kakao?.init('fe2307dd60e05ff8cbb06d777a13e31c');
-    }
-  }, []);
+  const { hasActiveResume, hasActivePortfolio, hasActivePersonalStatement } =
+    useActiveReports();
+
+  const reportLInk = useMemo(() => {
+    if (hasActiveResume) return '/report/landing/resume';
+    if (hasActivePersonalStatement) return '/report/landing/personal-statement';
+    if (hasActivePortfolio) return '/report/landing/portfolio';
+    return null;
+  }, [hasActiveResume, hasActivePortfolio, hasActivePersonalStatement]);
 
   const onClickAddChannel = () => {
     window.Kakao.Channel.followChannel({
@@ -43,6 +48,13 @@ const Footer = () => {
         console.log(error);
       });
   };
+
+  useEffect(() => {
+    if (!window.Kakao?.isInitialized()) {
+      window.Kakao?.init('fe2307dd60e05ff8cbb06d777a13e31c');
+    }
+  }, []);
+
   return (
     <footer className="border-t-1 w-full border-neutral-80 bg-neutral-85 px-5 pb-16 pt-10 md:pb-12 lg:px-10 xl:px-52">
       <div className="flex flex-col gap-[3.25rem] lg:justify-between lg:gap-7">
@@ -54,7 +66,9 @@ const Footer = () => {
               <MenuLink to="/program">프로그램</MenuLink>
               <MenuLink to="/review">100% 솔직 후기</MenuLink>
               <MenuLink to="/blog/list">블로그</MenuLink>
-              <MenuLink to="/report/landing">서류 진단 서비스</MenuLink>
+              {reportLInk && (
+                <MenuLink to={reportLInk}>서류 진단 서비스</MenuLink>
+              )}
               {/* <MenuLink
                 to="https://letscareerinterview.imweb.me/"
                 target="_blank"

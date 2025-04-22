@@ -25,7 +25,7 @@ const ReviewSection = () => {
   });
 
   const { data: totalReview, isLoading: totalReviewIsLoading } =
-    useGetProgramReview({ size: 20, page: reviewPage });
+    useGetProgramReview({ size: 40, page: reviewPage });
 
   const reviewsCount =
     (reviewCount?.count ?? 0) + (blogData?.pageInfo.totalElements ?? 0);
@@ -67,7 +67,7 @@ const ReviewSection = () => {
     totalReviewIsLoading ||
     !totalReview ||
     totalReview.reviewList.length < 1 ||
-    reviewList?.length === 0
+    (reviewList?.length ?? 0) < 5
   )
     return null;
 
