@@ -122,7 +122,6 @@ const ChallengeCreate: React.FC = () => {
     setInput((prev) => ({
       ...prev,
       [e.target.name]: url,
-      desktopThumbnail: url,
     }));
   };
 
@@ -196,7 +195,7 @@ const ChallengeCreate: React.FC = () => {
             variant="outlined"
             value={importJsonString}
             onChange={(e) => setImportJsonString(e.target.value)}
-          ></TextField>
+          />
           <Button
             variant="outlined"
             onClick={() => {
@@ -224,7 +223,7 @@ const ChallengeCreate: React.FC = () => {
 
       <Heading2>기본 정보</Heading2>
       <section className="mb-6 mt-3">
-        <div className="mb-6 grid w-full grid-cols-2 gap-3">
+        <div className="mb-6 grid w-full grid-cols-3 gap-3">
           <ChallengeBasic
             defaultValue={{
               ...input,
@@ -244,16 +243,23 @@ const ChallengeCreate: React.FC = () => {
                   ? dayjs(info.priceInfo.deadline)
                   : null,
                 priceId: 0,
-                challengeOptionList: [], // ChallengeBasic에서 필요 없음
+                challengeOptionList: [], // (타입 맞추는 용도) ChallengeBasic에서 필요 없음
               })),
             }}
             setInput={setInput}
           />
           <ImageUpload
-            label="챌린지 썸네일 이미지 업로드"
+            label="모바일 썸네일 이미지 업로드"
             id="thumbnail"
             name="thumbnail"
             image={input.thumbnail}
+            onChange={onChangeImage}
+          />
+          <ImageUpload
+            label="데스크탑 썸네일 이미지 업로드"
+            id="desktopThumbnail"
+            name="desktopThumbnail"
+            image={input.desktopThumbnail}
             onChange={onChangeImage}
           />
         </div>
