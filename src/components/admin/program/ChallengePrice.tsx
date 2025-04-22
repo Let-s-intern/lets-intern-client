@@ -118,9 +118,7 @@ export default function ChallengePrice<
   const optionMenuList = useMemo(() => {
     const result: Record<string, string> = {};
     options.forEach(
-      (item) =>
-        (result[item.challengeOptionId] =
-          `[${item.challengeOptionId}] ${item.title}`),
+      (item) => (result[item.challengeOptionId] = item.title ?? ''),
     );
     return result;
   }, [options]);
@@ -283,7 +281,16 @@ export default function ChallengePrice<
             label="스탠다드 옵션"
             multiple
             value={standardOptIds.map((item) => String(item))}
-            renderValue={() => standardOptIds.join(', ')}
+            renderValue={() =>
+              // 스탠다드 옵션 제목 표시
+              standardOptIds
+                .map(
+                  (id) =>
+                    options.find((item) => item.challengeOptionId === id)
+                      ?.title,
+                )
+                .join(', ')
+            }
             menuList={optionMenuList}
             onChange={(e) => {
               const value = e.target.value as string[];
@@ -310,7 +317,16 @@ export default function ChallengePrice<
             label="프리미엄 옵션"
             multiple
             value={premiumOptIds.map((item) => String(item))}
-            renderValue={() => premiumOptIds.join(', ')}
+            renderValue={() =>
+              // 프리미엄 옵션 제목 표시
+              premiumOptIds
+                .map(
+                  (id) =>
+                    options.find((item) => item.challengeOptionId === id)
+                      ?.title,
+                )
+                .join(', ')
+            }
             menuList={optionMenuList}
             onChange={(e) => {
               const value = e.target.value as string[];

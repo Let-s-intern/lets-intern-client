@@ -1,11 +1,11 @@
+import { useUserQuery } from '@/api/user';
+import MoreButton from '@/components/common/mypage/ui/button/MoreButton';
+import PaymentInfoRow from '@/components/common/program/paymentSuccess/PaymentInfoRow';
+import Input from '@/components/common/ui/input/Input';
 import useCredit from '@/hooks/useCredit';
 import dayjs from '@/lib/dayjs';
 import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useUserQuery } from '../../../api/user';
-import MoreButton from '../../../components/common/mypage/ui/button/MoreButton';
-import PaymentInfoRow from '../../../components/common/program/paymentSuccess/PaymentInfoRow';
-import Input from '../../../components/common/ui/input/Input';
 import OrderProgramInfo from '../program/OrderProgramInfo';
 
 const convertDateFormat = (date: string) => {
@@ -43,6 +43,7 @@ const CreditDetail = () => {
       data-program-text={paymentDetail?.programInfo?.title}
     >
       <div className="flex items-center justify-start gap-x-2">
+        {/* 이전 버튼 */}
         <img
           src="/icons/Arrow_Left_MD.svg"
           alt="arrow-left"
@@ -53,22 +54,27 @@ const CreditDetail = () => {
         />
         <h1 className="text-lg font-medium text-neutral-0">결제상세</h1>
       </div>
-      <div className="flex w-full flex-col gap-y-10 py-8">
+
+      <section className="flex w-full flex-col gap-y-10 py-8">
         {!paymentDetail ? (
+          // 로딩 중
           paymentDetailIsLoading ? (
             <p className="text-neutral-0">결제내역을 불러오는 중입니다.</p>
-          ) : paymentDetailIsError ? (
+          ) : // 에러 발생
+          paymentDetailIsError ? (
             <p className="text-neutral-0">
               결제내역을 불러오는 중 오류가 발생했습니다.
             </p>
           ) : (
+            // 결제 내역 없음
             <p className="text-neutral-0">결제내역이 없습니다.</p>
           )
         ) : (
           <>
             <div className="flex w-full flex-col items-start justify-center gap-y-6">
+              {/* 환불 내역 */}
               {isRefunded && (
-                <div className="flex w-full gap-2 rounded-xxs bg-neutral-90 px-4 py-3">
+                <section className="flex w-full gap-2 rounded-xxs bg-neutral-90 px-4 py-3">
                   <div className="text-sm font-semibold text-primary-dark">
                     페이백 완료
                   </div>
@@ -83,10 +89,12 @@ const CreditDetail = () => {
                           : '',
                     )}
                   </div>
-                </div>
+                </section>
               )}
+
+              {/* 결제 취소 */}
               {!isRefunded && isCanceled && (
-                <div className="flex w-full gap-2 rounded-xxs bg-neutral-90 px-4 py-3">
+                <section className="flex w-full gap-2 rounded-xxs bg-neutral-90 px-4 py-3">
                   <div className="text-sm font-semibold text-system-error">
                     결제 취소
                   </div>
@@ -101,11 +109,14 @@ const CreditDetail = () => {
                           : '',
                     )}
                   </div>
-                </div>
+                </section>
               )}
+              {/* 주문 정보 */}
               <OrderProgramInfo {...paymentDetail.programInfo} />
             </div>
-            <div className="flex w-full flex-col items-start justify-center gap-y-6">
+
+            {/* 참여자 정보 */}
+            <section className="flex w-full flex-col items-start justify-center gap-y-6">
               <div className="font-semibold text-neutral-0">참여자 정보</div>
               {!userData ? (
                 userDataIsLoading ? (
@@ -160,8 +171,10 @@ const CreditDetail = () => {
                   </div>
                 </div>
               )}
-            </div>
-            <div className="flex w-full flex-col items-start justify-center gap-y-6">
+            </section>
+
+            {/* 환불/결제 정보 */}
+            <section className="flex w-full flex-col items-start justify-center gap-y-6">
               <div className="font-semibold text-neutral-0">
                 {isCanceled ? '환불 정보' : '결제 정보'}
               </div>
@@ -182,7 +195,7 @@ const CreditDetail = () => {
                 </div>
 
                 <div className="flex w-full flex-col px-3">
-                  {/* 결제 내역에서는 정가 표시 */}
+                  {/* [결제 내역] 정가 표시 */}
                   {!isCanceled && (
                     <ReportCreditSubRow
                       title="정가"
@@ -190,7 +203,7 @@ const CreditDetail = () => {
                     />
                   )}
 
-                  {/* 환불 내역에서는 결제금액 표시 */}
+                  {/* [환불 내역] 결제 금액 표시 */}
                   {isCanceled && (
                     <ReportCreditSubRow
                       title="결제금액"
@@ -213,7 +226,7 @@ const CreditDetail = () => {
                       content={`-${(couponDiscountAmount ?? 0).toLocaleString()}원`}
                     />
                   )}
-                  {/* 환불된 내역이면 환불 차감 금액 표시 */}
+                  {/* [환불된 내역] 환불 차감 금액 표시 */}
                   {isCanceled && (
                     <ReportCreditSubRow
                       title={isPayback ? '페이백 금액' : '환불 차감 금액'}
@@ -221,7 +234,7 @@ const CreditDetail = () => {
                     />
                   )}
 
-                  {/* 환불된 내역이면 환불 규정 표시 */}
+                  {/* [환불된 내역] 환불 규정 표시 */}
                   {isCanceled && (
                     <div className="py-2 text-xs font-medium text-primary-dark">
                       *환불 규정은{' '}
@@ -276,11 +289,12 @@ const CreditDetail = () => {
                           <button
                             className="flex items-center justify-center rounded-sm border border-neutral-60 bg-white px-2.5 py-1.5 text-sm font-medium"
                             onClick={() => {
-                              paymentDetail.tossInfo?.receipt &&
+                              if (paymentDetail.tossInfo?.receipt) {
                                 window.open(
-                                  paymentDetail.tossInfo.receipt.url || '',
+                                  paymentDetail.tossInfo.receipt.url ?? '',
                                   '_blank',
                                 );
+                              }
                             }}
                           >
                             영수증 보기
@@ -310,10 +324,10 @@ const CreditDetail = () => {
                   다른 프로그램 둘러보기
                 </MoreButton>
               )}
-            </div>
+            </section>
           </>
         )}
-      </div>
+      </section>
     </section>
   );
 };

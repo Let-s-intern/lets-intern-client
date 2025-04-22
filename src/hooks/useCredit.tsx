@@ -46,16 +46,17 @@ export default function useCredit(paymentId?: string | number) {
   const totalPayment = useMemo(() => {
     if (!data) return 0;
 
-    return data.tossInfo && data.tossInfo.totalAmount
-      ? data.tossInfo.totalAmount
+    const tossTotalAmount = data.tossInfo?.totalAmount; // 토스 결제 금액
+    const isFullAmountCoupon = data.paymentInfo?.couponDiscount === -1; // 전액 쿠폰인가?
+    const couponAmount = isFullAmountCoupon
+      ? (data.priceInfo.price ?? 0) - (data.priceInfo.discount ?? 0)
+      : (data.paymentInfo?.couponDiscount ?? 0);
+
+    return tossTotalAmount
+      ? tossTotalAmount
       : (data.priceInfo.price ?? 0) -
           (data.priceInfo.discount ?? 0) -
-          (data.paymentInfo?.couponDiscount === -1
-            ? (data.priceInfo.price ? data.priceInfo.price : 0) -
-              (data.priceInfo.discount ? data.priceInfo.discount : 0)
-            : data.paymentInfo?.couponDiscount
-              ? data.paymentInfo.couponDiscount
-              : 0);
+          couponAmount;
   }, [data]);
 
   // 총 환불금액
