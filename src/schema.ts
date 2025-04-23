@@ -741,33 +741,46 @@ export const attendances = z
   .object({
     attendanceList: z.array(
       z.object({
-        id: z.number(),
-        name: z.string().nullable(),
-        email: z.string().nullable(),
-        status: attendanceStatus.nullable(),
-        link: z.string().nullable(),
-        review: z.string().nullable().optional(),
-        reviewIsVisible: z.boolean().nullable().optional(),
-        result: attendanceResult.nullable(),
-        comments: z.string().nullable().optional(),
-        createDate: z.string().nullable(),
-        lastModifiedDate: z.string().nullable(),
+        attendance: z.object({
+          id: z.number(),
+          name: z.string().nullable().optional(),
+          email: z.string().nullable().optional(),
+          status: attendanceStatus.nullable().optional(),
+          link: z.string().nullable().optional(),
+          review: z.string().nullable().optional(),
+          reviewIsVisible: z.boolean().nullable().optional(),
+          result: attendanceResult.nullable(),
+          comments: z.string().nullable().optional(),
+          createDate: z.string().nullable(),
+          lastModifiedDate: z.string().nullable().optional(),
+        }),
+        optionCodes: z.array(z.string()),
       }),
     ),
   })
   .transform((data) => {
     return {
-      attendanceList: data.attendanceList.map((attendance) => ({
-        ...attendance,
-        createDate: attendance.createDate ? dayjs(attendance.createDate) : null,
-        lastModifiedDate: attendance.lastModifiedDate
-          ? dayjs(attendance.lastModifiedDate)
-          : null,
-      })),
+      ...data,
+      attendanceList: data.attendanceList.map(
+        ({ attendance, optionCodes }) => ({
+          optionCodes,
+          attendance: {
+            ...attendance,
+            createDate: attendance.createDate
+              ? dayjs(attendance.createDate)
+              : null,
+            lastModifiedDate: attendance.lastModifiedDate
+              ? dayjs(attendance.lastModifiedDate)
+              : null,
+          },
+        }),
+      ),
     };
   });
 
-export type Attendance = z.infer<typeof attendances>['attendanceList'][number];
+export type AttendanceItem = z.infer<
+  typeof attendances
+>['attendanceList'][number];
 
 /** GET /api/v1/challenge/{challengeId}/title */
 export const challengeTitleSchema = z.object({
@@ -865,9 +878,11 @@ export const getChallengeIdApplications = z
         accountNum: z.string().nullable().optional(),
       }),
     ),
+    optionCodes: z.array(z.string()),
   })
   .transform((data) => {
     return {
+      ...data,
       applicationList: data.applicationList.map((application) => ({
         ...application,
         createDate: dayjs(application.createDate),

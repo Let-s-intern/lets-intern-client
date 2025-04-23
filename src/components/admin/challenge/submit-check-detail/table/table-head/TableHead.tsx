@@ -1,20 +1,24 @@
 import clsx from 'clsx';
 
-import { Attendance } from '../../../../../../schema';
-import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
+import { AttendanceItem } from '@/schema';
+import { challengeSubmitDetailCellWidthList } from '@/utils/tableCellWidthList';
 import ResultFilter from '../../filter/ResultFilter';
 import StatusFilter from '../../filter/StatusFilter';
 import AllChoiceCheckbox from '../table-body/AllChoiceCheckbox';
 
 interface Props {
   className?: string;
-  attendances: Attendance[];
+  attendances: AttendanceItem[];
   isCheckedList: number[];
   setIsCheckedList: (isCheckedList: number[]) => void;
-  resultFilter: Attendance['result'];
-  setResultFilter: (resultFilter: Attendance['result']) => void;
-  statusFilter: Attendance['status'];
-  setStatusFilter: (statusFilter: Attendance['status']) => void;
+  resultFilter: AttendanceItem['attendance']['result'];
+  setResultFilter: (
+    resultFilter: AttendanceItem['attendance']['result'],
+  ) => void;
+  statusFilter: AttendanceItem['attendance']['status'];
+  setStatusFilter: (
+    statusFilter: AttendanceItem['attendance']['status'],
+  ) => void;
 }
 
 const TableHead = ({
