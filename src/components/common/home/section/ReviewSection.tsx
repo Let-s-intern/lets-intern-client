@@ -33,7 +33,7 @@ const ReviewSection = () => {
       page: 1,
       types: Object.keys(
         reviewTypeSchema.exclude([MISSION_REVIEW]).enum,
-      ) as ReviewType[], // MISSION_REVIEW(미션 리뷰)는 reviewItemList 없음음
+      ) as ReviewType[], // MISSION_REVIEW(미션 리뷰)는 reviewItemList 없음
     });
 
   const reviewsCount =
