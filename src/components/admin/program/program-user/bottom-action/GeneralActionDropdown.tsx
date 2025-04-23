@@ -1,9 +1,9 @@
+import { ChallengeApplication, LiveApplication } from '@/schema';
 import { useState } from 'react';
-import { ChallengeApplication, LiveApplication } from '../../../../../schema';
 import ActionButton from '../../../ui/button/ActionButton';
 
 interface Props {
-  applications: (ChallengeApplication | LiveApplication)[];
+  applications: (ChallengeApplication['application'] | LiveApplication)[];
   programTitle: string;
 }
 
@@ -62,7 +62,7 @@ const GeneralActionDropdown = ({ applications, programTitle }: Props) => {
               (application.programDiscount ?? 0) -
               (application.finalPrice ?? 0) -
               (application.couponDiscount ?? 0)
-            : application.finalPrice ?? 0;
+            : (application.finalPrice ?? 0);
 
       row.push(
         application.name,

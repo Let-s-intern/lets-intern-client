@@ -157,7 +157,7 @@ export const getAdminRoutes = () => {
         {/* /admin/challenge/operation/1/attendances */}
         <Route path="attendances" element={<ChallengeOperationAttendances />} />
 
-        {/* /admin/challenge/operation/1/participants */}
+        {/* /admin/challenge/operation/{challengeId}/participants */}
         <Route
           path="participants"
           element={<ChallengeOperationParticipants />}

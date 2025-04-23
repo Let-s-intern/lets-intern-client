@@ -1,6 +1,5 @@
+import { challengeSubmitDetailCellWidthList } from '@/utils/tableCellWidthList';
 import clsx from 'clsx';
-
-import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
 
 interface Props {
   attendance: any;

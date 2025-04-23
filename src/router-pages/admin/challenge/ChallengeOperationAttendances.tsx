@@ -1,17 +1,17 @@
 import { useGetChallengeAttendances } from '@/api/challenge';
-import React, { useMemo, useState } from 'react';
-import ChallengeSubmitDetail from '../../../components/admin/challenge/submit-check/table/table-body/ChallengeSubmitDetail';
-import LineTableBody from '../../../components/admin/challenge/ui/lineTable/LineTableBody';
+import ChallengeSubmitDetail from '@/components/admin/challenge/submit-check/table/table-body/ChallengeSubmitDetail';
+import LineTableBody from '@/components/admin/challenge/ui/lineTable/LineTableBody';
 import LineTableBodyRow, {
   ItemWithStatus,
-} from '../../../components/admin/challenge/ui/lineTable/LineTableBodyRow';
-import LineTableHead from '../../../components/admin/challenge/ui/lineTable/LineTableHead';
+} from '@/components/admin/challenge/ui/lineTable/LineTableBodyRow';
+import LineTableHead from '@/components/admin/challenge/ui/lineTable/LineTableHead';
 import {
   useAdminCurrentChallenge,
   useAdminMissionsOfCurrentChallenge,
-} from '../../../context/CurrentAdminChallengeProvider';
-import { Mission } from '../../../schema';
-import { missionStatusToText, TABLE_CONTENT } from '../../../utils/convert';
+} from '@/context/CurrentAdminChallengeProvider';
+import { Mission } from '@/schema';
+import { missionStatusToText, TABLE_CONTENT } from '@/utils/convert';
+import React, { useMemo, useState } from 'react';
 
 type Row = Mission &
   ItemWithStatus & {

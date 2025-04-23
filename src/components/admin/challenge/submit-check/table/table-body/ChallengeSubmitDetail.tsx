@@ -1,19 +1,16 @@
+import { AttendanceItem, Mission } from '@/schema';
+import axios from '@/utils/axios';
+import { newMissionStatusToText } from '@/utils/convert';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { Attendance, Mission } from '../../../../../../schema';
 import TableRow from '../../../submit-check-detail/table/table-body/TableRow';
 import TableHead from '../../../submit-check-detail/table/table-head/TableHead';
 import Button from '../../../ui/button/Button';
-import {
-  missionStatusToText,
-  newMissionStatusToText,
-} from '../../../../../../utils/convert';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from '../../../../../../utils/axios';
 
 interface Props {
   mission: Mission;
   setIsDetailShown: (isDetailShown: boolean) => void;
-  attendances: Attendance[];
+  attendances: AttendanceItem[];
   refetch: () => void;
 }
 
@@ -26,12 +23,12 @@ const ChallengeSubmitDetail = ({
   const queryClient = useQueryClient();
 
   const [isCheckedList, setIsCheckedList] = useState<Array<number>>([]);
-  const [resultFilter, setResultFilter] = useState<Attendance['result'] | null>(
-    null,
-  );
-  const [statusFilter, setStatusFilter] = useState<Attendance['status'] | null>(
-    null,
-  );
+  const [resultFilter, setResultFilter] = useState<
+    AttendanceItem['attendance']['result'] | null
+  >(null);
+  const [statusFilter, setStatusFilter] = useState<
+    AttendanceItem['attendance']['status'] | null
+  >(null);
 
   const editMissionStatus = useMutation({
     mutationFn: async (status: string) => {
@@ -56,11 +53,6 @@ const ChallengeSubmitDetail = ({
   return (
     <div className="rounded">
       <div className="flex justify-end bg-[#F1F1F1] px-6 py-3">
-        {/* <RefundChangeButton
-          isCheckedList={isCheckedList}
-          setIsCheckedList={setIsCheckedList}
-        /> */}
-        {/* <AccountDownloadButton mission={mission} /> */}
         <select
           name="missionStatusType"
           id="missionStatusType"
@@ -85,14 +77,14 @@ const ChallengeSubmitDetail = ({
             statusFilter={statusFilter}
             setStatusFilter={setStatusFilter}
           />
-          {attendances?.map((attendance, index) => (
+          {attendances?.map((item, index) => (
             <TableRow
-              key={attendance.id}
-              attendance={attendance}
+              key={item.attendance.id}
+              attendanceItem={item}
               missionDetail={mission}
               th={index + 1}
               bgColor={(index + 1) % 2 === 1 ? 'DARK' : 'LIGHT'}
-              isChecked={isCheckedList.includes(attendance.id)}
+              isChecked={isCheckedList.includes(item.attendance.id)}
               setIsCheckedList={setIsCheckedList}
               refetch={refetch}
             />

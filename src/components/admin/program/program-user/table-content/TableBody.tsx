@@ -1,18 +1,22 @@
-import { ChallengeApplication, LiveApplication } from '../../../../../schema';
+import {
+  ChallengeApplication,
+  LiveApplication,
+  ProgramTypeUpperCase,
+} from '@/schema';
 import TableRow from './TableRow';
 
 interface UserTableBodyProps {
-  applications: (ChallengeApplication | LiveApplication)[];
-  programType: string;
+  applications: (ChallengeApplication['application'] | LiveApplication)[];
+  programType: ProgramTypeUpperCase;
 }
 
 const UserTableBody = ({ applications, programType }: UserTableBodyProps) => {
   return (
     <tbody>
-      {applications.map((application, index) => (
+      {applications.map((item, index) => (
         <TableRow
           key={index}
-          application={application}
+          applicationItem={item}
           programType={programType}
         />
       ))}

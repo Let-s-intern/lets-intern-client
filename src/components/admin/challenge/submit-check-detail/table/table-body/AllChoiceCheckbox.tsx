@@ -1,12 +1,11 @@
+import { AttendanceItem } from '@/schema';
+import { challengeSubmitDetailCellWidthList } from '@/utils/tableCellWidthList';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
-import { Attendance } from '../../../../../../schema';
-
-import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
 
 interface Props {
   cellWidthListIndex: number;
-  attendanceList: Attendance[];
+  attendanceList: AttendanceItem[];
   isCheckedList: number[];
   setIsCheckedList: (isCheckedList: number[]) => void;
 }
@@ -19,7 +18,7 @@ const AllChoiceCheckbox = ({
 }: Props) => {
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
-  const allCheckedList = attendanceList.map((attendance) => attendance.id);
+  const allCheckedList = attendanceList.map(({ attendance }) => attendance.id);
 
   function isArrayEqual<T>(arr1: T[], arr2: T[]) {
     arr1 = arr1.sort();

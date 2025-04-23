@@ -1,15 +1,16 @@
+import { AttendanceItem } from '@/schema';
+import { attendanceStatusToText } from '@/utils/convert';
+import { challengeSubmitDetailCellWidthList } from '@/utils/tableCellWidthList';
 import clsx from 'clsx';
 import { useState } from 'react';
-
-import { challengeSubmitDetailCellWidthList } from '../../../../../utils/tableCellWidthList';
 import { IoMdArrowDropdown } from 'react-icons/io';
-import { attendanceStatusToText } from '../../../../../utils/convert';
-import { Attendance } from '../../../../../schema';
 
 interface Props {
   cellWidthListIndex: number;
-  statusFilter: Attendance['status'];
-  setStatusFilter: (statusFilter: Attendance['status']) => void;
+  statusFilter: AttendanceItem['attendance']['status'];
+  setStatusFilter: (
+    statusFilter: AttendanceItem['attendance']['status'],
+  ) => void;
 }
 
 const StatusFilter = ({
@@ -21,7 +22,9 @@ const StatusFilter = ({
 
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
-  const handleMenuClicked = (status: Attendance['status']) => {
+  const handleMenuClicked = (
+    status: AttendanceItem['attendance']['status'],
+  ) => {
     if (!status) {
       return;
     }
@@ -59,7 +62,11 @@ const StatusFilter = ({
             <li
               key={status}
               className="cursor-pointer py-2 duration-200 hover:bg-neutral-200"
-              onClick={() => handleMenuClicked(status as Attendance['status'])}
+              onClick={() =>
+                handleMenuClicked(
+                  status as AttendanceItem['attendance']['status'],
+                )
+              }
             >
               {attendanceStatusToText[status]}
             </li>

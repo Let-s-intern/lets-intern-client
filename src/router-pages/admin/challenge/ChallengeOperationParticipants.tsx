@@ -1,13 +1,13 @@
+import {
+  ChallengeApplication,
+  challengeApplicationsSchema,
+  grade,
+} from '@/schema';
+import axios from '@/utils/axios';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import { z } from 'zod';
-import { getChallengeIdApplications, grade } from '../../../schema';
-import axios from '../../../utils/axios';
-
-type Participant = z.infer<
-  typeof getChallengeIdApplications
->['applicationList'][number];
 
 const gradeToText: Record<z.infer<typeof grade>, string> = {
   FIRST: '1학년',
@@ -31,11 +31,12 @@ const downloadCSVFile = (text: string, type: 'EMAIL' | 'PHONE') => {
 const DownloadButtonGroup = ({
   participants,
 }: {
-  participants: Participant[];
+  participants: ChallengeApplication['application'][];
 }) => {
   const handleDownloadCSV = (type: 'EMAIL' | 'PHONE') => {
     const csv: any = [];
     csv.push(`이름,${type === 'EMAIL' ? '이메일' : '전화번호'}`);
+
     participants.forEach((application: any) => {
       const row = [];
       row.push(
@@ -69,7 +70,7 @@ const DownloadButtonGroup = ({
   );
 };
 
-const columns: GridColDef<Participant>[] = [
+const columns: GridColDef<ChallengeApplication['application']>[] = [
   { field: 'name', headerName: '이름', width: 100 },
   { field: 'email', headerName: '이메일', width: 200 },
   { field: 'phoneNum', headerName: '전화번호', width: 150 },
@@ -96,7 +97,8 @@ const columns: GridColDef<Participant>[] = [
 const ChallengeOperationParticipants = () => {
   const params = useParams();
   const challengeId = params.programId;
-  const { data: participantsRes } = useQuery({
+
+  const { data } = useQuery({
     enabled: Boolean(challengeId),
     queryKey: ['admin', 'challenge', challengeId, 'participants'],
     queryFn: async () => {
@@ -105,17 +107,18 @@ const ChallengeOperationParticipants = () => {
           isConfirmed: true,
         },
       });
-      return getChallengeIdApplications.parse(res.data.data);
+      return challengeApplicationsSchema.parse(res.data.data);
     },
   });
 
+  const applications =
+    data?.applicationList.map((item) => item.application) ?? [];
+
   return (
     <main className="pt-3">
-      <DownloadButtonGroup
-        participants={participantsRes?.applicationList || []}
-      />
+      <DownloadButtonGroup participants={applications} />
       <DataGrid
-        rows={participantsRes?.applicationList || []}
+        rows={applications}
         columns={columns}
         disableRowSelectionOnClick
         autoHeight
