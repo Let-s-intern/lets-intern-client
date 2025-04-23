@@ -27,6 +27,7 @@ import { useNavigate } from 'react-router-dom';
 import ProgramSchedule from './program/ProgramSchedule';
 const LiveCreate: React.FC = () => {
   const navigate = useNavigate();
+  const { snackbar } = useAdminSnackbar();
 
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState<LiveContent>({
@@ -44,6 +45,7 @@ const LiveCreate: React.FC = () => {
     criticalNotice: '',
     participationCount: 0,
     thumbnail: '',
+    desktopThumbnail: '',
     mentorName: '',
     mentorImg: '',
     mentorCompany: '',
@@ -84,8 +86,6 @@ const LiveCreate: React.FC = () => {
     });
     setInput((prev) => ({ ...prev, [e.target.name]: url }));
   };
-
-  const { snackbar } = useAdminSnackbar();
 
   const onClickSave = useCallback(async () => {
     setLoading(true);
@@ -147,9 +147,10 @@ const LiveCreate: React.FC = () => {
         </div>
       </Header>
 
-      <Heading2>기본 정보</Heading2>
-      <section className="mb-6 mt-3">
-        <div className="mb-6 grid w-full grid-cols-2 gap-3">
+      <div className="mb-6 mt-3 grid w-full grid-cols-2 gap-3">
+        {/* 기본 정보 */}
+        <section>
+          <Heading2 className="mb-3">기본 정보</Heading2>
           <LiveBasic
             defaultValue={{
               ...input,
@@ -162,67 +163,88 @@ const LiveCreate: React.FC = () => {
             }}
             setInput={setInput}
           />
+        </section>
+        {/* 가격 정보 & 일정 */}
+        <section className="flex flex-col gap-3">
+          <Heading2>가격 정보 & 일정</Heading2>
+          <LivePrice
+            defaultValue={{
+              deadline: dayjs.tz(
+                input.priceInfo.priceInfo.deadline,
+                'Asia/Seoul',
+              ),
+              discount: input.priceInfo.priceInfo.discount,
+              price: input.priceInfo.priceInfo.price,
+              accountNumber: input.priceInfo.priceInfo.accountNumber,
+              accountType: input.priceInfo.priceInfo.accountType,
+              priceId: 0,
+              livePriceType: input.priceInfo.livePriceType,
+            }}
+            setInput={setInput}
+          />
+          <ProgramSchedule
+            defaultValue={{
+              beginning: dayjs.tz(input.beginning, 'Asia/Seoul'),
+              deadline: dayjs.tz(input.deadline, 'Asia/Seoul'),
+              endDate: dayjs.tz(input.endDate, 'Asia/Seoul'),
+              startDate: dayjs.tz(input.startDate, 'Asia/Seoul'),
+            }}
+            onDeadlineChange={(value) => {
+              if (!value) {
+                return;
+              }
+
+              setInput((prev) => ({
+                ...prev,
+                priceInfo: {
+                  ...prev.priceInfo,
+                  priceInfo: {
+                    ...prev.priceInfo.priceInfo,
+                    deadline: value.format('YYYY-MM-DDTHH:mm'),
+                  },
+                },
+              }));
+            }}
+            setInput={setInput}
+          />
+          <FormControlLabel
+            defaultChecked={input.vod}
+            control={<Checkbox />}
+            label="VOD 제공 여부"
+            labelPlacement="start"
+            onChange={(event, checked) =>
+              setInput((prev) => ({ ...prev, vod: checked }))
+            }
+          />
+        </section>
+      </div>
+
+      {/* 썸네일 */}
+      <section className="mb-6 max-w-[1120px]">
+        <Heading2 className="mb-3">썸네일</Heading2>
+        <div className="flex gap-3">
           <ImageUpload
-            label="라이브 썸네일 이미지 업로드"
+            label="모바일 썸네일 이미지 업로드"
             id="thumbnail"
             name="thumbnail"
             image={input.thumbnail}
             onChange={onChangeImage}
           />
+          <ImageUpload
+            label="데스크탑 썸네일 이미지 업로드"
+            id="desktopThumbnail"
+            name="desktopThumbnail"
+            image={input.desktopThumbnail}
+            onChange={onChangeImage}
+          />
         </div>
-        <div className="grid w-full grid-cols-2 gap-3">
-          <div className="flex flex-col items-start gap-6">
-            <LivePrice
-              defaultValue={{
-                deadline: dayjs.tz(
-                  input.priceInfo.priceInfo.deadline,
-                  'Asia/Seoul',
-                ),
-                discount: input.priceInfo.priceInfo.discount,
-                price: input.priceInfo.priceInfo.price,
-                accountNumber: input.priceInfo.priceInfo.accountNumber,
-                accountType: input.priceInfo.priceInfo.accountType,
-                priceId: 0,
-                livePriceType: input.priceInfo.livePriceType,
-              }}
-              setInput={setInput}
-            />
-            <ProgramSchedule
-              defaultValue={{
-                beginning: dayjs.tz(input.beginning, 'Asia/Seoul'),
-                deadline: dayjs.tz(input.deadline, 'Asia/Seoul'),
-                endDate: dayjs.tz(input.endDate, 'Asia/Seoul'),
-                startDate: dayjs.tz(input.startDate, 'Asia/Seoul'),
-              }}
-              onDeadlineChange={(value) => {
-                if (!value) {
-                  return;
-                }
+      </section>
 
-                setInput((prev) => ({
-                  ...prev,
-                  priceInfo: {
-                    ...prev.priceInfo,
-                    priceInfo: {
-                      ...prev.priceInfo.priceInfo,
-                      deadline: value.format('YYYY-MM-DDTHH:mm'),
-                    },
-                  },
-                }));
-              }}
-              setInput={setInput}
-            />
-            <FormControlLabel
-              defaultChecked={input.vod}
-              control={<Checkbox />}
-              label="VOD 제공 여부"
-              labelPlacement="start"
-              onChange={(event, checked) =>
-                setInput((prev) => ({ ...prev, vod: checked }))
-              }
-            />
-          </div>
-          <div className="flex flex-col gap-3">
+      {/* 멘토 정보 */}
+      <section className="mb-6 max-w-[1120px]">
+        <Heading2>멘토 정보</Heading2>
+        <div className="mt-3 flex gap-3">
+          <div className="max-w-md">
             <ImageUpload
               label="멘토 사진"
               id="mentorImg"
@@ -230,10 +252,12 @@ const LiveCreate: React.FC = () => {
               image={input.mentorImg}
               onChange={onChangeImage}
             />
-            <LiveMentor defaultValue={input} setInput={setInput} />
           </div>
+          <LiveMentor defaultValue={input} setInput={setInput} />
         </div>
       </section>
+
+      {/* 프로그램 소개 */}
       <LiveInformation
         recommendFields={content.recommend ?? []}
         reasonFields={content.reason ?? [{ title: '', content: '' }]}

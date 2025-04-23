@@ -1,6 +1,8 @@
 import { usePatchChallengePayback } from '@/api/challenge';
 import { useAdminChallengeTitle } from '@/context/CurrentAdminChallengeProvider';
 import dayjs from '@/lib/dayjs';
+import { getChallengeIdApplicationsPayback, UpdatePaybackReq } from '@/schema';
+import axios from '@/utils/axios';
 import { Button, Modal, Snackbar, Switch } from '@mui/material';
 import {
   DataGrid,
@@ -13,11 +15,6 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { z } from 'zod';
-import {
-  getChallengeIdApplicationsPayback,
-  UpdatePaybackReq,
-} from '../../../schema';
-import axios from '../../../utils/axios';
 
 type Payback = z.infer<
   typeof getChallengeIdApplicationsPayback
@@ -94,7 +91,7 @@ function createColumns(ths: number[]): GridColDef<Row>[] {
           sortable: false,
           filterable: false,
           editable: false,
-          cellClassName: (params) => 'p-0',
+          cellClassName: () => 'p-0',
           width: 50,
         };
       }),

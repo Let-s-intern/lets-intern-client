@@ -1,18 +1,19 @@
+import { AttendanceItem } from '@/schema';
+import { challengeSubmitDetailCellWidthList } from '@/utils/tableCellWidthList';
 import clsx from 'clsx';
 import { useState } from 'react';
-
-import { challengeSubmitDetailCellWidthList } from '../../../../../utils/tableCellWidthList';
 import { IoMdArrowDropdown } from 'react-icons/io';
-import { Attendance } from '../../../../../schema';
 
 interface Props {
   cellWidthListIndex: number;
-  resultFilter: Attendance['result'];
-  setResultFilter: (resultFilter: Attendance['result']) => void;
+  resultFilter: AttendanceItem['attendance']['result'];
+  setResultFilter: (
+    resultFilter: AttendanceItem['attendance']['result'],
+  ) => void;
 }
 
 const attendanceResultToText: Record<
-  Exclude<Attendance['result'], null>,
+  Exclude<AttendanceItem['attendance']['result'], null>,
   string
 > = {
   WAITING: '확인중',
@@ -29,7 +30,9 @@ const ResultFilter = ({
 
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
-  const handleMenuClicked = (result: Attendance['result']) => {
+  const handleMenuClicked = (
+    result: AttendanceItem['attendance']['result'],
+  ) => {
     if (result) {
       setIsMenuOpen(!isMenuOpen);
       setResultFilter(result);
@@ -62,7 +65,7 @@ const ResultFilter = ({
           >
             전체
           </li>
-          {(["WAITING", "PASS", "WRONG"] as const).map((result) => (
+          {(['WAITING', 'PASS', 'WRONG'] as const).map((result) => (
             <li
               key={result}
               className="cursor-pointer py-2 duration-200 hover:bg-neutral-200"

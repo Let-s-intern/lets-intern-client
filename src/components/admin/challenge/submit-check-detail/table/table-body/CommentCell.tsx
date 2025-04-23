@@ -1,14 +1,13 @@
+import { useControlScroll } from '@/hooks/useControlScroll';
+import { AttendanceItem, UpdateAttendanceReq } from '@/schema';
+import axios from '@/utils/axios';
+import { challengeSubmitDetailCellWidthList } from '@/utils/tableCellWidthList';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 
-import { useControlScroll } from '@/hooks/useControlScroll';
-import { Attendance, UpdateAttendanceReq } from '@/schema';
-import axios from '@/utils/axios';
-import { challengeSubmitDetailCellWidthList } from '@/utils/tableCellWidthList';
-
 interface Props {
-  attendance: Attendance;
+  attendance: AttendanceItem['attendance'];
   cellWidthListIndex: number;
 }
 

@@ -1,60 +1,81 @@
-import { ChallengeApplication, LiveApplication } from '@/schema';
+import {
+  ChallengeApplication,
+  ChallengePricePlanEnum,
+  LiveApplication,
+  ProgramTypeEnum,
+  ProgramTypeUpperCase,
+} from '@/schema';
 import { gradeToText } from '@/utils/convert';
+import { useMemo } from 'react';
 import TD from '../../../ui/table/regacy/TD';
 
+const { CHALLENGE } = ProgramTypeEnum.enum;
+
 interface Props {
-  application: ChallengeApplication | LiveApplication;
-  programType: string;
+  applicationItem: ChallengeApplication['application'] | LiveApplication;
+  programType: ProgramTypeUpperCase;
 }
 
-const TableRow = ({ application, programType }: Props) => {
-  const createDate =
-    'createDate' in application
-      ? application.createDate
-      : application.created_date;
+const TableRow = ({ applicationItem, programType }: Props) => {
+  const challengeAppItem =
+    applicationItem as ChallengeApplication['application'];
+  const liveAppItem = applicationItem as LiveApplication;
 
-  const amount =
-    application.couponDiscount === -1
+  const createDate = useMemo(() => {
+    switch (programType) {
+      case CHALLENGE:
+        return challengeAppItem.createDate;
+      default:
+        return liveAppItem.created_date;
+    }
+  }, [applicationItem, programType]);
+
+  const amount = useMemo(() => {
+    return applicationItem.couponDiscount === -1
       ? 0
-      : application.isCanceled
+      : applicationItem.isCanceled
         ? // 보증금 금액 포함해야 함
-          (application.programPrice ?? 0) +
-          ((application as ChallengeApplication).refundPrice ?? 0) -
-          (application.programDiscount ?? 0) -
-          (application.finalPrice ?? 0) -
-          (application.couponDiscount ?? 0)
-        : (application.finalPrice ?? 0);
+          (applicationItem.programPrice ?? 0) +
+          (challengeAppItem.refundPrice ?? 0) -
+          (applicationItem.programDiscount ?? 0) -
+          (applicationItem.finalPrice ?? 0) -
+          (applicationItem.couponDiscount ?? 0)
+        : (applicationItem.finalPrice ?? 0);
+  }, [applicationItem]);
 
   return (
     <tr>
-      <TD>{application.orderId}</TD>
+      <TD>{applicationItem.orderId}</TD>
       <TD>
-        <span>{application.name}</span>
+        <span>{applicationItem.name}</span>
       </TD>
-      <TD>{application.email}</TD>
-      <TD>{application.phoneNum}</TD>
+      <TD>{applicationItem.email}</TD>
+      <TD>{applicationItem.phoneNum}</TD>
       {(programType === 'LIVE' || programType === 'VOD') && (
         <>
-          <TD>{application.university}</TD>
-          <TD>{application.grade ? gradeToText[application.grade] : ''}</TD>
-          <TD>{application.major}</TD>
-          <TD whiteSpace="wrap">
-            {'motivate' in application ? application.motivate : ''}
+          <TD>{applicationItem.university}</TD>
+          <TD>
+            {applicationItem.grade ? gradeToText[applicationItem.grade] : ''}
           </TD>
-          <TD whiteSpace="wrap">
-            {'question' in application ? application.question : ''}
-          </TD>
+          <TD>{applicationItem.major}</TD>
+          <TD whiteSpace="wrap">{liveAppItem.motivate ?? ''}</TD>
+          <TD whiteSpace="wrap">{liveAppItem.question ?? ''}</TD>
         </>
       )}
-      <TD>{application.couponName || '없음'}</TD>
+      <TD>{applicationItem.couponName ?? '없음'}</TD>
+      {programType === CHALLENGE && (
+        <TD>
+          {challengeAppItem.challengePricePlanType ??
+            ChallengePricePlanEnum.enum.BASIC}
+        </TD>
+      )}
       <TD>{amount.toLocaleString()}원</TD>
       <TD whiteSpace="wrap">
-        {application.isCanceled ? (
+        {applicationItem.isCanceled ? (
           <span className="font-bold">Y</span>
         ) : (
           <span className="text-gray-300">N</span>
         )}
-        {/* <Checkbox disabled checked={application.isCanceled ?? false} /> */}
       </TD>
       <TD>{createDate.format('YYYY-MM-DD HH:mm')}</TD>
     </tr>

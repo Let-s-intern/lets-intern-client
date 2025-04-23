@@ -1,9 +1,9 @@
-import { ChallengeApplication, LiveApplication } from '../../../../../schema';
+import { ChallengeApplication, LiveApplication } from '@/schema';
 import ChallengeActionDropdown from './ChallengeActionDropdown';
 import GeneralActionDropdown from './GeneralActionDropdown';
 
 interface Props {
-  applications: (ChallengeApplication | LiveApplication)[];
+  applications: (ChallengeApplication['application'] | LiveApplication)[];
   programType: string;
   programTitle: string;
 }
@@ -14,7 +14,7 @@ const BottomAction = ({ applications, programType, programTitle }: Props) => {
       {programType === 'CHALLENGE' && (
         // TODO: typing
         <ChallengeActionDropdown
-          applications={applications as ChallengeApplication[]}
+          applications={applications as ChallengeApplication['application'][]}
         />
       )}
       <GeneralActionDropdown
