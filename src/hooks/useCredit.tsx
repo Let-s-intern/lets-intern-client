@@ -1,7 +1,6 @@
+import { usePaymentDetailQuery } from '@/api/payment';
 import dayjs from '@/lib/dayjs';
 import { useMemo } from 'react';
-
-import { usePaymentDetailQuery } from '@/api/payment';
 
 /** 프로그램 결제 내역 로직 */
 export default function useCredit(paymentId?: string | number) {
@@ -129,13 +128,13 @@ export default function useCredit(paymentId?: string | number) {
   }, [data, refundPercent]);
 
   /** CreditDelete 페이지에서 사용
-   * expectedPartialRefundDeductionAmount: 부분 환불에서 차감될 금액 (렛츠커리어가 먹을 금액)
+   * expectedPartialRefundDeductionAmount 환불 차감 금액: 부분 환불에서 차감될 금액 (렛츠커리어가 먹을 금액)
    */
   const expectedPartialRefundDeductionAmount =
     totalPayment - expectedTotalRefund;
 
   /** CreditDetail 페이지에서 사용
-   * partialRefundDeductionAmount: 부분 환불에서 차감된 금액 (렛츠커리어가 먹은 금액)
+   * partialRefundDeductionAmount 환불 차감 금액: 부분 환불에서 차감된 금액 (렛츠커리어가 먹은 금액)
    */
   const partialRefundDeductionAmount =
     (data?.tossInfo?.totalAmount ?? 0) - totalRefund;
