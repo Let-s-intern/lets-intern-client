@@ -1378,36 +1378,43 @@ export const challengeApplicationsSchema = z
   .object({
     applicationList: z.array(
       z.object({
-        id: z.number(),
-        paymentId: z.number().nullable().optional(),
-        name: z.string().nullable().optional(),
-        email: z.string().nullable().optional(),
-        phoneNum: z.string().nullable().optional(),
-        university: z.string().nullable().optional(),
-        grade: grade.nullable().optional(),
-        major: z.string().nullable().optional(),
-        couponName: z.string().nullable().optional(),
-        couponDiscount: z.number().nullable().optional(),
-        isCanceled: z.boolean().nullable().optional(),
-        wishJob: z.string().nullable().optional(),
-        wishCompany: z.string().nullable().optional(),
-        inflowPath: z.string().nullable().optional(),
-        createDate: z.string().nullable().optional(),
-        accountType: accountType.nullable().optional(),
-        accountNum: z.string().nullable().optional(),
-        orderId: z.string().nullable().optional(),
-        finalPrice: z.number().nullable().optional(),
-        programDiscount: z.number().nullable().optional(),
-        programPrice: z.number().nullable().optional(),
-        refundPrice: z.number().nullable().optional(),
+        application: z.object({
+          id: z.number(),
+          paymentId: z.number().nullable().optional(),
+          name: z.string().nullable().optional(),
+          email: z.string().nullable().optional(),
+          phoneNum: z.string().nullable().optional(),
+          university: z.string().nullable().optional(),
+          grade: grade.nullable().optional(),
+          major: z.string().nullable().optional(),
+          couponName: z.string().nullable().optional(),
+          couponDiscount: z.number().nullable().optional(),
+          isCanceled: z.boolean().nullable().optional(),
+          wishJob: z.string().nullable().optional(),
+          wishCompany: z.string().nullable().optional(),
+          inflowPath: z.string().nullable().optional(),
+          createDate: z.string().nullable().optional(),
+          accountType: accountType.nullable().optional(),
+          accountNum: z.string().nullable().optional(),
+          orderId: z.string().nullable().optional(),
+          finalPrice: z.number().nullable().optional(),
+          programDiscount: z.number().nullable().optional(),
+          programPrice: z.number().nullable().optional(),
+          refundPrice: z.number().nullable().optional(),
+          challengePricePlanType: ChallengePricePlanEnum.nullable().optional(),
+        }),
+        optionCodes: z.array(z.string()),
       }),
     ),
   })
   .transform((data) => {
     return {
-      applicationList: data.applicationList.map((application) => ({
-        ...application,
-        createDate: dayjs(application.createDate),
+      applicationList: data.applicationList.map((item) => ({
+        ...item,
+        application: {
+          ...item.application,
+          createDate: dayjs(item.application.createDate),
+        },
       })),
     };
   });

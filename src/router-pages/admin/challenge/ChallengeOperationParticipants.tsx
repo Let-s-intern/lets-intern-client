@@ -96,6 +96,7 @@ const columns: GridColDef<Participant>[] = [
 const ChallengeOperationParticipants = () => {
   const params = useParams();
   const challengeId = params.programId;
+
   const { data: participantsRes } = useQuery({
     enabled: Boolean(challengeId),
     queryKey: ['admin', 'challenge', challengeId, 'participants'],

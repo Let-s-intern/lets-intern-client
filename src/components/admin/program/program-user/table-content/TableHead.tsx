@@ -1,3 +1,4 @@
+import { ProgramTypeEnum, ProgramTypeUpperCase } from '@/schema';
 import TH, { THProps } from '../../../ui/table/regacy/TH';
 
 export interface UserTableHeadProps {
@@ -9,7 +10,7 @@ export interface UserTableHeadProps {
     name: THProps['inOrder'];
     isFeeConfirmed: THProps['inBoolFilter'];
   }) => void;
-  programType: string;
+  programType: ProgramTypeUpperCase;
 }
 
 const TableHead = ({ filter, setFilter, programType }: UserTableHeadProps) => {
@@ -26,9 +27,7 @@ const TableHead = ({ filter, setFilter, programType }: UserTableHeadProps) => {
   return (
     <thead>
       <tr>
-        <TH>
-          주문번호
-        </TH>
+        <TH>주문번호</TH>
         <TH inOrder={filter.name} onClick={handleNameHeadClick}>
           이름
         </TH>
@@ -44,6 +43,7 @@ const TableHead = ({ filter, setFilter, programType }: UserTableHeadProps) => {
           </>
         )}
         <TH>쿠폰명</TH>
+        {programType === ProgramTypeEnum.enum.CHALLENGE && <TH>결제 상품</TH>}
         <TH>결제금액</TH>
         <TH>환불여부</TH>
         <TH>신청일자</TH>
