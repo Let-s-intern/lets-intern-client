@@ -2,6 +2,8 @@ import { BlogType, useBlogListQuery } from '@/api/blog';
 import {
   GetReview,
   QuestionType,
+  ReviewType,
+  reviewTypeSchema,
   useGetProgramReview,
   useGetReviewCount,
 } from '@/api/review';
@@ -13,10 +15,11 @@ import { useEffect, useRef, useState } from 'react';
 import { Autoplay } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
+const { MISSION_REVIEW } = reviewTypeSchema.enum;
+
 const ReviewSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
-  const [reviewPage, setReviewPage] = useState(1);
 
   const { data: reviewCount } = useGetReviewCount();
   const { data: blogData } = useBlogListQuery({
@@ -25,7 +28,13 @@ const ReviewSection = () => {
   });
 
   const { data: totalReview, isLoading: totalReviewIsLoading } =
-    useGetProgramReview({ size: 40, page: reviewPage });
+    useGetProgramReview({
+      size: 20,
+      page: 1,
+      types: Object.keys(
+        reviewTypeSchema.exclude([MISSION_REVIEW]).enum,
+      ) as ReviewType[], // MISSION_REVIEW(미션 리뷰)는 reviewItemList 없음음
+    });
 
   const reviewsCount =
     (reviewCount?.count ?? 0) + (blogData?.pageInfo.totalElements ?? 0);
@@ -33,12 +42,6 @@ const ReviewSection = () => {
   const reviewList = totalReview?.reviewList.filter(
     (r) => r.reviewItemList && r.reviewItemList?.length > 0,
   );
-
-  useEffect(() => {
-    // 총 세 번까지 리뷰 요청
-    if (!reviewList || reviewList?.length > 0 || reviewPage > 2) return;
-    setReviewPage(reviewPage + 1);
-  }, [reviewList]);
 
   useEffect(() => {
     if (totalReviewIsLoading) return;
