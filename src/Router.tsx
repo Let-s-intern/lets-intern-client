@@ -68,30 +68,6 @@ const Router = () => {
               {/* /program 프로그램 목록 */}
               <Route path="program" element={<Programs />} />
 
-              {/* 챌린지 상세 페이지 (Deprecated) */}
-              {/* <Route
-                path="program/old/challenge/:programId"
-                element={<ProgramDetailLegacy programType="challenge" />}
-              /> */}
-
-              {/* 챌린지 상세 페이지 */}
-              {/* <Route
-                path="program/challenge/:id/:title?"
-                element={<ChallengeDetailSSRPage />}
-              /> */}
-
-              {/* LIVE 클래스 상세 페이지 (Deprecated) */}
-              {/* <Route
-                path="program/old/live/:programId"
-                element={<ProgramDetailLegacy programType="live" />}
-              /> */}
-
-              {/* LIVE 클래스 상세 페이지 */}
-              {/* <Route
-                path="program/live/:id/:title?"
-                element={<LiveDetailSSRPage />}
-              /> */}
-
               {/* 프로그램 결제 페이지 */}
               <Route path="payment-input" element={<PaymentInputPage />} />
               <Route path="payment" element={<Payment />} />
@@ -99,16 +75,6 @@ const Router = () => {
               {/* 프로그램 결제 결과 페이지 */}
               <Route path="order/result" element={<PaymentResult />} />
               <Route path="order/fail" element={<PaymentFail />} />
-
-              {/* 블로그 */}
-              {/* /blog?category=:category */}
-              {/* <Route path="blog/list" element={<BlogListPage />} /> */}
-              {/* blog/hashtag?tag=:tag */}
-              {/* <Route path="blog/hashtag" element={<BlogHashtagListPage />} /> */}
-              {/* blog/:id */}
-              {/* <Route path="blog/:id" element={<BlogDetailPage />} /> */}
-              {/* Next의 app router로 이동 */}
-              {/* <Route path="blog/:id/:title?" element={<BlogDetailSSRPage />} /> */}
 
               {/* 마이페이지 */}
               <Route path="mypage" element={<MyPage />}>
@@ -162,11 +128,12 @@ const Router = () => {
                 />
                 <Route path="privacy" element={<Privacy />} />
               </Route>
-              {/* /login */}
+
+              {/* 로그인 */}
               <Route path="login" element={<Login />} />
-              {/* /signup */}
+              {/* 회원가입 */}
               <Route path="signup" element={<SignUp />} />
-              {/* /find-password */}
+              {/* 비밀번호 찾기 */}
               <Route path="find-password" element={<FindPassword />} />
 
               {/* 챌린지 대시보드 */}
@@ -184,7 +151,6 @@ const Router = () => {
               </Route>
 
               {/* 서류진단 */}
-
               <Route path="report/landing" element={<ReportPage />} />
               <Route
                 path="report/landing/resume"

@@ -851,45 +851,6 @@ export const grade = z.union([
 
 export type Grade = z.infer<typeof grade>;
 
-/** 참여자 */
-export const getChallengeIdApplications = z
-  .object({
-    applicationList: z.array(
-      z.object({
-        id: z.number(),
-        paymentId: z.number().nullable().optional(),
-        name: z.string().nullable().optional(),
-        email: z.string().nullable().optional(),
-        phoneNum: z.string().nullable().optional(),
-        university: z.string().nullable().optional(),
-        grade: grade.nullable().optional(),
-        major: z.string().nullable().optional(),
-        couponName: z.string().nullable().optional(),
-        /** @deprecated */
-        totalCost: z.number().nullable().optional(),
-        /** @deprecated */
-        isConfirmed: z.boolean().nullable().optional(),
-        isCanceled: z.boolean().nullable().optional(),
-        wishJob: z.string().nullable().optional(),
-        wishCompany: z.string().nullable().optional(),
-        inflowPath: z.string().nullable().optional(),
-        createDate: z.string(),
-        accountType: accountType.nullable().optional(),
-        accountNum: z.string().nullable().optional(),
-      }),
-    ),
-    optionCodes: z.array(z.string()),
-  })
-  .transform((data) => {
-    return {
-      ...data,
-      applicationList: data.applicationList.map((application) => ({
-        ...application,
-        createDate: dayjs(application.createDate),
-      })),
-    };
-  });
-
 export const getChallengeIdApplicationsPayback = z
   .object({
     missionApplications: z.array(
