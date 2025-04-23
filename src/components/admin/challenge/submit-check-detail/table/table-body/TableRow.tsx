@@ -94,10 +94,23 @@ const TableRow = ({
       >
         {attendanceItem.attendance.email}
       </div>
+
+      {/* 옵션 코드 */}
+      <div
+        className={clsx(
+          'my-auto overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
+          cellWidthList[4],
+        )}
+      >
+        {attendanceItem.optionCodes.length > 0
+          ? attendanceItem.optionCodes.join(', ')
+          : '-'}
+      </div>
+
       {/* 제출현황 */}
       <StatusDropdown
         attendance={attendanceItem.attendance}
-        cellWidthListIndex={4}
+        cellWidthListIndex={5}
         refetch={refetch}
       />
 
@@ -105,7 +118,7 @@ const TableRow = ({
       <div
         className={clsx(
           'my-auto overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
-          cellWidthList[5],
+          cellWidthList[6],
         )}
       >
         {attendanceItem.attendance.link && (
@@ -126,20 +139,20 @@ const TableRow = ({
         attendanceResult={attendanceResult}
         setAttendanceResult={setAttendanceResult}
         setIsRefunded={() => {}}
-        cellWidthListIndex={6}
+        cellWidthListIndex={7}
       />
       <CommentCell
         attendance={attendanceItem.attendance}
-        cellWidthListIndex={7}
+        cellWidthListIndex={8}
       />
       <ReviewCell
         review={attendanceItem.attendance.review ?? undefined}
-        cellWidthListIndex={8}
+        cellWidthListIndex={9}
       />
       <div
         className={clsx(
           'overflow-hidden text-ellipsis py-3 text-center text-sm',
-          cellWidthList[9],
+          cellWidthList[10],
         )}
       >
         <Switch
