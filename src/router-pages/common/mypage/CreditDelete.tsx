@@ -1,5 +1,3 @@
-'use client';
-
 import { useCancelApplicationMutation } from '@/api/application';
 import DescriptionBox from '@/components/common/program/paymentSuccess/DescriptionBox';
 import PaymentInfoRow from '@/components/common/program/paymentSuccess/PaymentInfoRow';

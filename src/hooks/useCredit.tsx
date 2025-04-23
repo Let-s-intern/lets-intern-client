@@ -108,8 +108,7 @@ export default function useCredit(paymentId?: string | number) {
       data?.paymentInfo.finalPrice === 0 ||
       !data?.tossInfo?.balanceAmount ||
       data.tossInfo.status !== 'DONE' ||
-      !data.priceInfo.price ||
-      !data.priceInfo.discount
+      !data.priceInfo.price
     ) {
       return 0;
     }
