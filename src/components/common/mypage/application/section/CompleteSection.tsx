@@ -1,5 +1,5 @@
+import { MypageApplication } from '@/api/application';
 import { useState } from 'react';
-import { MypageApplication } from '../../../../../api/application';
 import Button from '../../ui/button/Button';
 import ApplicationCard from '../../ui/card/root/ApplicationCard';
 
