@@ -1,8 +1,7 @@
-import { useMypageApplicationsQuery } from '../../../api/application';
-
-import ApplySection from '../../../components/common/mypage/application/section/ApplySection';
-import CompleteSection from '../../../components/common/mypage/application/section/CompleteSection';
-import ParticipateSection from '../../../components/common/mypage/application/section/ParticipateSection';
+import { useMypageApplicationsQuery } from '@/api/application';
+import ApplySection from '@/components/common/mypage/application/section/ApplySection';
+import CompleteSection from '@/components/common/mypage/application/section/CompleteSection';
+import ParticipateSection from '@/components/common/mypage/application/section/ParticipateSection';
 
 const Application = () => {
   const {

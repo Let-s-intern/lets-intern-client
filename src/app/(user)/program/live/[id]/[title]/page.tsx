@@ -60,7 +60,6 @@ const Page = async ({
   return (
     <>
       <LiveView live={live} />
-
       <LiveCTAButtons live={live} liveId={id} />
     </>
   );
