@@ -1,5 +1,5 @@
 import { ProgramApplicationFormInfo } from '@/api/application';
-import { AccountType } from '@/schema';
+import { AccountType, ChallengePricePlan } from '@/schema';
 import { generateRandomNumber, generateRandomString } from '@/utils/random';
 
 export const generateOrderId = () => {
@@ -17,6 +17,7 @@ export interface UserInfo {
 
 export const getPayInfo = (
   application: ProgramApplicationFormInfo,
+  pricePlan: ChallengePricePlan | undefined, // 챌린지만
 ): null | {
   priceId: number;
   price: number;
@@ -26,8 +27,12 @@ export const getPayInfo = (
   accountType?: AccountType | null;
   challengePriceType: string | undefined;
   livePriceType: string | undefined;
+  challengePricePlanType?: ChallengePricePlan;
 } => {
-  const item = application.priceList?.[0];
+  const item = application.priceList?.find(
+    (item) => item.challengePricePlanType === pricePlan,
+  );
+
   // 챌린지
   if (item) {
     return {
@@ -39,8 +44,10 @@ export const getPayInfo = (
       accountType: item.accountType ? item.accountType : null,
       challengePriceType: item.challengePriceType,
       livePriceType: undefined,
+      challengePricePlanType: item.challengePricePlanType, // 챌린지만 가격 플랜 있음
     };
   }
+
   // 라이브
   if (application.price) {
     return {

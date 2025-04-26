@@ -1,23 +1,22 @@
-import dayjs from '@/lib/dayjs';
-import { useMemo, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-
 import {
   PostApplicationInterface,
   PostApplicationResult,
-} from '../../../api/application';
-import { useProgramQuery } from '../../../api/program';
-import DescriptionBox from '../../../components/common/program/paymentSuccess/DescriptionBox';
-import PaymentInfoRow from '../../../components/common/program/paymentSuccess/PaymentInfoRow';
-import ProgramCard from '../../../components/common/program/ProgramCard';
+} from '@/api/application';
+import { useProgramQuery } from '@/api/program';
+import DescriptionBox from '@/components/common/program/paymentSuccess/DescriptionBox';
+import PaymentInfoRow from '@/components/common/program/paymentSuccess/PaymentInfoRow';
+import ProgramCard from '@/components/common/program/ProgramCard';
 import {
   getPaymentMethodLabel,
   paymentResultSearchParamsSchema,
-} from '../../../data/getPaymentSearchParams';
-import useRunOnce from '../../../hooks/useRunOnce';
-import useProgramStore from '../../../store/useProgramStore';
-import axios from '../../../utils/axios';
-import { searchParamsToObject } from '../../../utils/network';
+} from '@/data/getPaymentSearchParams';
+import useRunOnce from '@/hooks/useRunOnce';
+import dayjs from '@/lib/dayjs';
+import useProgramStore from '@/store/useProgramStore';
+import axios from '@/utils/axios';
+import { searchParamsToObject } from '@/utils/network';
+import { useMemo, useState } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
 const PaymentResult = () => {
   const { data: programApplicationData } = useProgramStore();

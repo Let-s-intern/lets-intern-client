@@ -131,10 +131,11 @@ function PricePlanBottomSheet({
     'challenge',
     Number(challengeId),
   );
+
   const { setProgramApplicationForm } = useProgramStore();
 
   const handleApply = useCallback(() => {
-    const payInfo = application ? getPayInfo(application) : null;
+    const payInfo = application ? getPayInfo(application, pricePlan) : null;
 
     if (!payInfo) {
       window.alert('정보를 불러오는 중입니다. 잠시만 기다려주세요.');
@@ -150,8 +151,10 @@ function PricePlanBottomSheet({
       question: '',
       initialized: true,
     };
-    const priceId =
-      application?.priceList?.[0]?.priceId ?? application?.price?.priceId ?? -1;
+
+    const priceId = application?.priceList?.find(
+      (item) => item.challengePricePlanType === pricePlan,
+    )?.priceId; // 가격 플랜에 맞는 priceId 넘기기
     const orderId = generateOrderId();
     const totalPrice = Math.max(
       finalPriceInfo.regularPrice - finalPriceInfo.discountPrice,
@@ -187,6 +190,7 @@ function PricePlanBottomSheet({
     router.push(`/payment-input`);
     // navigate(`/payment-input`);
   }, [
+    pricePlan,
     application,
     challenge,
     challengeId,
