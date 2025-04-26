@@ -1497,7 +1497,7 @@ export const challengeApplicationPriceType = z.object({
   deadline: z.string().nullable().optional(),
   accountType: accountType.nullable().optional(),
   challengePriceType,
-  challengePricePlan: ChallengePricePlanEnum.optional(),
+  challengePricePlanType: ChallengePricePlanEnum,
   challengeParticipationType,
 });
 

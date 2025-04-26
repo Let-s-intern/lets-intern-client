@@ -68,12 +68,23 @@ export default function useCredit(paymentId?: string | number) {
     );
   }, [data]);
 
-  // 결제상품 금액 = 이용료 + 보증금
+  // 상품 정가 = 이용료 + 보증금 + 옵션 정가 총액
   const productAmount = useMemo(() => {
     if (!data) return 0;
 
-    return (data.priceInfo.price ?? 0) + (data.priceInfo.refund ?? 0);
+    return (
+      (data.priceInfo.price ?? 0) +
+      (data.priceInfo.refund ?? 0) +
+      (data.priceInfo.option ?? 0)
+    );
   }, [data]);
+
+  /**
+   * 할인 금액
+   * @note 챌린지만 옵션 총 할인 금액 추가됨
+   */
+  const discountAmount =
+    (data?.priceInfo.discount ?? 0) + (data?.priceInfo.optionDiscount ?? 0);
 
   // 부분환불 비율
   const refundPercent = useMemo(() => {
@@ -115,11 +126,13 @@ export default function useCredit(paymentId?: string | number) {
       return 0;
     }
 
+    const couponPrice = data.paymentInfo.couponDiscount || 0;
+
     /** 환불 로직
      * 1. 전액 환불: 최종 결제 금액
      * 2. 부분 환불: (최종 결제 금액 + 쿠폰 금액) * (환불 퍼센트) - 쿠폰 금액
+     * @note 쿠폰 금액을 차감함
      */
-    const couponPrice = data.paymentInfo.couponDiscount || 0;
     const refundPrice = nearestTen(
       ((data.paymentInfo.finalPrice ?? 0) +
         (data.paymentInfo.couponDiscount ?? 0)) *
@@ -175,6 +188,7 @@ export default function useCredit(paymentId?: string | number) {
     partialRefundDeductionAmount,
     totalRefund,
     totalPayment,
+    discountAmount,
   };
 }
 

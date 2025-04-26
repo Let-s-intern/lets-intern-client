@@ -8,10 +8,9 @@ import {
   ProgramTypeEnum,
   reportTypeSchema,
 } from '../schema';
-import { UsePaymentDetailQueryKey, UsePaymentQueryKey } from './payment';
-
 import { ProgramType } from '../types/common';
 import axios from '../utils/axios';
+import { UsePaymentDetailQueryKey, UsePaymentQueryKey } from './payment';
 import { tossInfoType } from './paymentSchema';
 
 export const programApplicationSchema = z.object({
@@ -83,8 +82,6 @@ export const usePostApplicationMutation = ({
   successCallback?: () => void;
   errorCallback?: (error: Error) => void;
 } = {}) => {
-  // const client = useQueryClient();
-
   return useMutation({
     mutationFn: async ({
       programId,
@@ -102,11 +99,8 @@ export const usePostApplicationMutation = ({
         )
       ).data.data;
     },
-    onSuccess: (data) => {
+    onSuccess: (_) => {
       successCallback?.();
-      //이 mutation이 성공하면 재로딩되어야 하는 쿼리키 invalidate 처리 후 successCallback
-      // client.invalidateQueries(UseUserInfoQueryKey)
-      // .then(() => successCallback());
     },
     onError: (error) => {
       errorCallback?.(error);
