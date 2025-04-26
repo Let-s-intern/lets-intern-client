@@ -29,6 +29,7 @@ const CreditDetail = () => {
     partialRefundDeductionAmount,
     couponDiscountAmount,
     totalPayment,
+    discountAmount,
   } = useCredit(paymentId);
 
   const {
@@ -214,9 +215,7 @@ const CreditDetail = () => {
                   {!isCanceled && (
                     <ReportCreditSubRow
                       title="할인금액"
-                      content={`-${(
-                        paymentDetail.priceInfo.discount ?? 0
-                      ).toLocaleString()}원`}
+                      content={`-${discountAmount.toLocaleString()}원`}
                     />
                   )}
                   {/* 환불 내역에서는 숨김 */}

@@ -220,9 +220,11 @@ export const paymentDetailType = z.object({
   }),
   priceInfo: z.object({
     id: z.number().nullable().optional(),
-    price: z.number().nullable().optional(),
-    discount: z.number().nullable().optional(), // 할인 금액
+    price: z.number().nullable().optional(), // 챌린지 이용료
+    discount: z.number().nullable().optional(), // 챌린지 할인 금액
     refund: z.number().nullable().optional(), // 보증금
+    option: z.number().nullable().optional(), // 옵션 정가 총액
+    optionDiscount: z.number().nullable().optional(), // 옵션 총 할인 금액
   }),
   paymentInfo: z.object({
     id: z.number().nullable().optional(),
