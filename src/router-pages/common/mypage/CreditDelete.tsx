@@ -128,11 +128,12 @@ const CreditDelete = () => {
                           <button
                             className="flex items-center justify-center rounded-sm border border-neutral-60 bg-white px-2.5 py-1.5 text-sm font-medium"
                             onClick={() => {
-                              paymentDetail.tossInfo?.receipt &&
+                              if (paymentDetail.tossInfo?.receipt) {
                                 window.open(
                                   paymentDetail.tossInfo.receipt.url || '',
                                   '_blank',
                                 );
+                              }
                             }}
                           >
                             영수증 보기
