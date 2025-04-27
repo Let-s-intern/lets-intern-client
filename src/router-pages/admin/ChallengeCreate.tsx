@@ -151,7 +151,9 @@ const ChallengeCreate: React.FC = () => {
         ...basicPriceInfo,
         title: pricePlanTitles.premium,
         challengePricePlanType: PREMIUM,
-        challengeOptionIdList: premiumOptIds,
+        challengeOptionIdList: [
+          ...new Set(standardOptIds.concat(premiumOptIds)),
+        ],
       });
     }
 

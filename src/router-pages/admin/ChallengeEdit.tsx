@@ -176,7 +176,9 @@ const ChallengeEdit: React.FC = () => {
         ...basicPriceInfo,
         title: pricePlanTitles.premium,
         challengePricePlanType: PREMIUM,
-        challengeOptionIdList: premiumOptIds,
+        challengeOptionIdList: [
+          ...new Set(standardOptIds.concat(premiumOptIds)),
+        ],
       });
     }
 
@@ -232,36 +234,6 @@ const ChallengeEdit: React.FC = () => {
       );
     }
   }, [challenge, challengeIdString, navigate]);
-
-  useEffect(() => {
-    // 스탠다드 옵션 정보를 상태에 저장
-    if (!standardPriceInfo) return;
-    pricePlan.current = STANDARD;
-    setStandardOptIds(
-      standardPriceInfo.challengeOptionList.map(
-        (item) => item.challengeOptionId,
-      ),
-    );
-    setPricePlanTitles((prev) => ({
-      ...prev,
-      standard: standardPriceInfo.title ?? '',
-    }));
-  }, [standardPriceInfo, setStandardOptIds, setPricePlanTitles]);
-
-  useEffect(() => {
-    // 프리미엄 옵션 정보를 상태에 저장
-    if (!premiumPriceInfo) return;
-    pricePlan.current = PREMIUM;
-    setPremiumOptIds(
-      premiumPriceInfo.challengeOptionList.map(
-        (item) => item.challengeOptionId,
-      ),
-    );
-    setPricePlanTitles((prev) => ({
-      ...prev,
-      premium: premiumPriceInfo.title ?? '',
-    }));
-  }, [premiumPriceInfo, setPremiumOptIds, setPricePlanTitles]);
 
   useEffect(() => {
     // 챌린지 금액 초기 값 설정
