@@ -171,7 +171,7 @@ export const ReviewItem = ({ review }: { review: GetReview }) => {
         <span className="line-clamp-1">
           희망직무{' '}
           <span className="font-medium">{review.reviewInfo.wishJob}</span> ·
-          희망산업{' '}
+          희망기업{' '}
           <span className="font-medium">{review.reviewInfo.wishCompany}</span>
         </span>
       </div>

@@ -72,7 +72,7 @@ export const getReviewSchema = z.object({
     attendanceReview: z.string().nullable().optional(), // 미션 수행 후기
     name: z.string().nullable().optional(), // 이름
     wishJob: z.string().nullable().optional(), // 희망직무
-    wishCompany: z.string().nullable().optional(), // 희망산업
+    wishCompany: z.string().nullable().optional(), // 희망기업
   }),
   reviewItemList: z.array(reviewItemSchema).nullable().optional(),
 });
