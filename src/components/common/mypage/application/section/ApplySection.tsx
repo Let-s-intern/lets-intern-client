@@ -1,6 +1,6 @@
+import { MypageApplication } from '@/api/application';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { MypageApplication } from '../../../../../api/application';
 import MoreButton from '../../ui/button/MoreButton';
 import ApplicationCard from '../../ui/card/root/ApplicationCard';
 

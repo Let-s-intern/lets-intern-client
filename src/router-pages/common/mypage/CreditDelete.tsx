@@ -1,13 +1,12 @@
+import { useCancelApplicationMutation } from '@/api/application';
+import DescriptionBox from '@/components/common/program/paymentSuccess/DescriptionBox';
+import PaymentInfoRow from '@/components/common/program/paymentSuccess/PaymentInfoRow';
+import useCredit from '@/hooks/useCredit';
 import dayjs from '@/lib/dayjs';
+import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
 import { AxiosError } from 'axios';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-
-import useCredit from '@/hooks/useCredit';
-import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
-import { useCancelApplicationMutation } from '../../../api/application';
-import DescriptionBox from '../../../components/common/program/paymentSuccess/DescriptionBox';
-import PaymentInfoRow from '../../../components/common/program/paymentSuccess/PaymentInfoRow';
 import OrderProgramInfo from '../program/OrderProgramInfo';
 
 const convertDateFormat = (date: string) => {

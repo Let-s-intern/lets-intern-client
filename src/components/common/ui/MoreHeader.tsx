@@ -47,7 +47,12 @@ const MoreHeader = ({
           {children}
         </h2>
         {subtitle && (
-          <p className={clsx('', isBig ? 'text-small18' : 'text-xsmall14')}>
+          <p
+            className={clsx(
+              '',
+              isBig ? 'text-xsmall14 md:text-xsmall16' : 'text-xsmall14',
+            )}
+          >
             {subtitle}
           </p>
         )}
