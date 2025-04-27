@@ -55,8 +55,12 @@ const ProgramBlogReviewEditor: React.FC<{
     pageable: { page: 1, size: 1000 },
   });
 
+  const displayedBlogList = res.data?.blogInfos.filter(
+    (info) => info.blogThumbnailInfo.isDisplayed,
+  );
+
   const list = useMemo(() => {
-    const l = [...(res.data?.blogInfos ?? [])];
+    const l = [...(displayedBlogList ?? [])];
     l.sort((a, b) => {
       if (!a.blogThumbnailInfo.createDate) {
         return -1;
@@ -69,7 +73,7 @@ const ProgramBlogReviewEditor: React.FC<{
       return bCreateDate.diff(aCreateDate);
     });
     return l;
-  }, [res.data?.blogInfos]);
+  }, [displayedBlogList]);
 
   const onClose = () => setSelectModalOpen(false);
   const onOpen = () => setSelectModalOpen(true);
@@ -101,6 +105,7 @@ const ProgramBlogReviewEditor: React.FC<{
           ))}
         </div>
       </div>
+
       <Modal open={selectModalOpen} onClose={onClose}>
         <Box sx={modalStyle}>
           {/* 헤더 영역 - 고정 */}
@@ -112,6 +117,9 @@ const ProgramBlogReviewEditor: React.FC<{
               fontWeight="bold"
             >
               블로그 리뷰 선택 (노출 순서대로 체크하세요)
+              <span className="block text-xsmall14 font-normal text-neutral-40">
+                노출한 블로그만 표시됩니다.
+              </span>
             </Typography>
             <Button onClick={onClose} variant="outlined">
               닫기
@@ -130,7 +138,6 @@ const ProgramBlogReviewEditor: React.FC<{
                     <th className="whitespace-nowrap">작성일</th>
                     <th className="whitespace-nowrap">제목</th>
                     <th className="whitespace-nowrap">설명</th>
-                    <th className="whitespace-nowrap">노출 여부</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -206,17 +213,6 @@ const ProgramBlogReviewEditor: React.FC<{
                           <span className="block w-60">
                             {item.blogThumbnailInfo.description}
                           </span>
-                        </td>
-                        <td>
-                          <div className="flex items-center justify-center">
-                            <input
-                              type="checkbox"
-                              disabled
-                              checked={
-                                item.blogThumbnailInfo.isDisplayed ?? false
-                              }
-                            />
-                          </div>
                         </td>
                       </tr>
                     );
