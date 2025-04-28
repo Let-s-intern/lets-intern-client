@@ -68,9 +68,11 @@ const PaymentInputPage = () => {
     initialized: true,
   };
 
-  const challengeBasicPriceInfo = (
-    program?.priceInfo as ChallengePriceInfo[]
-  )?.find((info) => info.challengePricePlanType === 'BASIC');
+  const challengeBasicPriceInfo = Array.isArray(program?.priceInfo)
+    ? (program?.priceInfo as ChallengePriceInfo[])?.find(
+        (info) => info.challengePricePlanType === 'BASIC',
+      )
+    : null;
 
   /**
    * 최대 쿠폰 할인 금액
