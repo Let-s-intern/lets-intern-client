@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 /** 프로그램 결제 내역 로직 */
 export default function useCredit(paymentId?: string | number) {
   const { data, isLoading, isError } = usePaymentDetailQuery(String(paymentId));
+  console.log('paymentDetail >>', data);
 
   // 결제 취소 가능한 프로그램이면 true 아니면 false
   const isCancelable = useMemo(() => {
@@ -165,9 +166,23 @@ export default function useCredit(paymentId?: string | number) {
 
   // 쿠폰 할인 금액
   const couponDiscountAmount = useMemo(() => {
+    // 전액 쿠폰
     if (data?.paymentInfo.couponDiscount === -1) {
+      // 챌린지 쿠폰은 베이직에만 적용
+      if (data.programInfo.programType === 'CHALLENGE') {
+        const {
+          price: basicRegularPrice,
+          discount: basicDiscountAmount,
+          refund: deposit,
+        } = data.priceInfo;
+        return (
+          (basicRegularPrice ?? 0) + (deposit ?? 0) - (basicDiscountAmount ?? 0)
+        );
+      }
+      // 그 외
       return productAmount - (data.priceInfo.discount ?? 0);
     }
+
     return data?.paymentInfo.couponDiscount;
   }, [data, productAmount]);
 
