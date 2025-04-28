@@ -4,7 +4,7 @@ import {
   ChallengePricePlan,
   ChallengePricePlanEnum,
 } from '@/schema';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const { BASIC, STANDARD, PREMIUM } = ChallengePricePlanEnum.enum;
 
@@ -54,6 +54,34 @@ export default function useChallengeOption(challenge?: ChallengeIdSchema) {
     setStandardOptIds([]);
     setPricePlanTitles((prev) => ({ ...prev, standard: '' }));
   }, []);
+
+  useEffect(() => {
+    // 스탠다드 옵션 정보를 상태에 저장
+    if (!standardPriceInfo) return;
+    pricePlan.current = STANDARD;
+    const initialStandardOptIds = standardPriceInfo.challengeOptionList.map(
+      (item) => item.challengeOptionId,
+    );
+    setStandardOptIds(initialStandardOptIds);
+    setPricePlanTitles((prev) => ({
+      ...prev,
+      standard: standardPriceInfo.title ?? '',
+    }));
+
+    // 프리미엄 옵션 정보를 상태에 저장
+    if (!premiumPriceInfo) return;
+    pricePlan.current = PREMIUM;
+    const optIds = premiumPriceInfo.challengeOptionList.map(
+      (item) => item.challengeOptionId,
+    );
+    setPremiumOptIds(
+      optIds.filter((id) => !initialStandardOptIds.includes(id)),
+    );
+    setPricePlanTitles((prev) => ({
+      ...prev,
+      premium: premiumPriceInfo.title ?? '',
+    }));
+  }, [standardPriceInfo, premiumPriceInfo]);
 
   return {
     pricePlan,
