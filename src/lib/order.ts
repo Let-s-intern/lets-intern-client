@@ -17,7 +17,7 @@ export interface UserInfo {
 
 export const getPayInfo = (
   application: ProgramApplicationFormInfo,
-  pricePlan: ChallengePricePlan | undefined, // 챌린지만
+  pricePlan?: ChallengePricePlan, // 챌린지만
 ): null | {
   priceId: number;
   price: number;
