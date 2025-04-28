@@ -5,7 +5,6 @@ import { useMemo } from 'react';
 /** 프로그램 결제 내역 로직 */
 export default function useCredit(paymentId?: string | number) {
   const { data, isLoading, isError } = usePaymentDetailQuery(String(paymentId));
-  console.log('paymentDetail >>', data);
 
   // 결제 취소 가능한 프로그램이면 true 아니면 false
   const isCancelable = useMemo(() => {
@@ -136,13 +135,14 @@ export default function useCredit(paymentId?: string | number) {
         : (data.paymentInfo.couponDiscount ?? 0);
 
     /** 환불 로직
-     * - 환불: 베이직 판매가 * 환불 퍼센트 - 쿠폰 금액
+     * 1. 전액 환불: 최종 결제 금액
+     * 2. 부분 환불: 베이직 판매가 * 환불 퍼센트 - 쿠폰 금액
      * @note 쿠폰 금액을 차감하여 환불해줌
      */
-
-    const refundPrice = nearestTen(
-      challengeBasicSellingPrice * refundPercent - couponPrice,
-    );
+    const refundPrice =
+      refundPercent === 1
+        ? (data.paymentInfo.finalPrice ?? 0)
+        : nearestTen(challengeBasicSellingPrice * refundPercent - couponPrice);
 
     return Math.max(0, refundPrice);
   }, [data, refundPercent]);
