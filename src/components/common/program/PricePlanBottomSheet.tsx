@@ -54,14 +54,15 @@ function PricePlanBottomSheet({
    */
   const totalPriceInfo = useMemo(() => {
     const challengePriceInfo = challenge.priceInfo[0]; // [주의] 옵션 도입 전 챌린지는 challengePricePlanType이 null임
-    // 베이직
 
+    // 베이직
     const basicRegularPrice = basicPriceInfo
       ? (basicPriceInfo?.price ?? 0) + (basicPriceInfo?.refund ?? 0)
       : (challengePriceInfo.price ?? 0) + (challengePriceInfo.refund ?? 0); // 정가 = 이용료 + 보증금
     const basicDiscountPrice = basicPriceInfo
       ? (basicPriceInfo?.discount ?? 0)
       : (challengePriceInfo.discount ?? 0);
+
     // 스탠다드
     const standardRegularPrice = standardPriceInfo
       ? (basicRegularPrice ?? 0) +
@@ -77,16 +78,17 @@ function PricePlanBottomSheet({
           0,
         )
       : 0;
+
     // 프리미엄
     const premiumRegularPrice = premiumPriceInfo
-      ? (standardRegularPrice ?? 0) +
+      ? (basicRegularPrice ?? 0) +
         premiumPriceInfo.challengeOptionList.reduce(
           (acc, curr) => acc + (curr.price ?? 0),
           0,
         )
       : 0;
     const premiumDiscountPrice = premiumPriceInfo
-      ? (standardDiscountPrice ?? 0) +
+      ? (basicDiscountPrice ?? 0) +
         premiumPriceInfo.challengeOptionList.reduce(
           (acc, curr) => acc + (curr.discountPrice ?? 0),
           0,

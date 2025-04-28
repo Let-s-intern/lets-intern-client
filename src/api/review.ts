@@ -499,7 +499,7 @@ export const useUpdateAdminProgramReviewItem = ({
 };
 
 const reviewCountSchema = z.object({
-  count: z.number().int().positive(),
+  count: z.number().int().nonnegative(),
 });
 
 /**
