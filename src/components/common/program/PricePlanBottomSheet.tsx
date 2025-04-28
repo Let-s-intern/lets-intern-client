@@ -47,10 +47,10 @@ function PricePlanBottomSheet({
 
   const [pricePlan, setPricePlan] = useState<ChallengePricePlan>(defaultValue);
 
-  /** 플랜 별 모든 가격 정보: 이전 플랜 금액을 누적하여 계산한다.
+  /** 플랜 별 모든 가격 정보
    * 베이직: 기본 챌린지 금액
    * 스탠다드: 베이직에 스탠다드 옵션 금액을 더함
-   * 프리미엄: 스탠다드에 프리미엄 옵션 금액을 더함
+   * 프리미엄: 베이직에 프리미엄 옵션 금액을 더함
    */
   const totalPriceInfo = useMemo(() => {
     const challengePriceInfo = challenge.priceInfo[0]; // [주의] 옵션 도입 전 챌린지는 challengePricePlanType이 null임
@@ -105,7 +105,7 @@ function PricePlanBottomSheet({
     };
   }, [challenge.priceInfo]);
 
-  // 최종 정가 & 할인 금액
+  /* 최종 정가 & 할인 금액 */
   const finalPriceInfo = useMemo(() => {
     // 베이직 최종 금액
     if (pricePlan === BASIC) {
@@ -190,7 +190,6 @@ function PricePlanBottomSheet({
     });
 
     router.push(`/payment-input`);
-    // navigate(`/payment-input`);
   }, [
     pricePlan,
     application,

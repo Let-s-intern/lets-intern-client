@@ -6,6 +6,7 @@ import CreditCardIcon from '@/assets/icons/credit-card.svg?react';
 import PaybackImage from '@/assets/payback.png';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { UserInfo } from '@/lib/order';
+import { ChallengePriceInfo } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import useProgramStore, {
   checkInvalidate,
@@ -28,32 +29,28 @@ import { useNavigate } from 'react-router-dom';
 import OrderProgramInfo from './OrderProgramInfo';
 
 function calculateTotalPrice({
-  price = 0,
+  regularPrice = 0,
   discount = 0,
   couponPrice = 0,
 }: {
-  price?: number;
-  discount?: number;
+  regularPrice?: number; // 프로그램 정가
+  discount?: number; // 프로그램 할인금액
   couponPrice?: number;
 }) {
-  const totalDiscount = couponPrice === -1 ? price : discount + couponPrice;
-  if (price <= totalDiscount) return 0;
-  return price - totalDiscount;
+  const totalDiscount = discount + couponPrice;
+  return regularPrice <= totalDiscount ? 0 : regularPrice - totalDiscount;
 }
 
 const PaymentInputPage = () => {
   const navigate = useNavigate();
+
+  const [allowNavigation, setAllowNavigation] = useState(false);
+  const [nextPath, setNextPath] = useState('');
+
   const { data: programApplicationData } = useProgramStore();
   const { isLoggedIn } = useAuthStore();
   const { isLoading, months, banks } = useInstallmentPayment();
-
-  useEffect(() => {
-    if (checkInvalidate() || !isLoggedIn) {
-      alert('잘못된 접근입니다.');
-      navigate('/', { replace: true });
-      initProgramApplicationForm();
-    }
-  }, [isLoggedIn, navigate]);
+  const patchUserMutation = usePatchUser();
 
   const {
     query: { data: program, isLoading: programLoading },
@@ -71,6 +68,21 @@ const PaymentInputPage = () => {
     initialized: true,
   };
 
+  const challengeBasicPriceInfo = (
+    program?.priceInfo as ChallengePriceInfo[]
+  )?.find((info) => info.challengePricePlanType === 'BASIC');
+
+  /**
+   * 최대 쿠폰 할인 금액
+   * @note 챌린지에 쿠폰을 적용할 때 베이직에만 적용하기 위함
+   *  */
+  const maxCouponAmount =
+    programApplicationData.programType === 'challenge'
+      ? (challengeBasicPriceInfo?.price ?? 0) +
+        (challengeBasicPriceInfo?.refund ?? 0) -
+        (challengeBasicPriceInfo?.discount ?? 0)
+      : Infinity;
+
   const setUserInfo = useCallback((info: UserInfo) => {
     const { contactEmail, email, name, phoneNumber, question } = info;
     setProgramApplicationForm({
@@ -81,26 +93,6 @@ const PaymentInputPage = () => {
       question,
     });
   }, []);
-
-  const totalPrice = useMemo(() => {
-    const payInfo = {
-      price: programApplicationData.price ?? 0,
-      discount: programApplicationData.discount ?? 0,
-    };
-    const couponPrice = programApplicationData.couponPrice ?? 0;
-    const totalDiscount =
-      couponPrice === -1 ? payInfo.price : payInfo.discount + couponPrice;
-    if (payInfo.price <= totalDiscount) {
-      return 0;
-    }
-    return payInfo.price - totalDiscount;
-  }, [
-    programApplicationData.couponPrice,
-    programApplicationData.discount,
-    programApplicationData.price,
-  ]);
-
-  const patchUserMutation = usePatchUser();
 
   const setCoupon = useCallback<CouponSectionProps['setCoupon']>(
     (coupon) => {
@@ -115,7 +107,7 @@ const PaymentInputPage = () => {
           : coupon;
 
       const newTotalPrice = calculateTotalPrice({
-        price: programApplicationData.price ?? 0,
+        regularPrice: programApplicationData.price ?? 0, // 총 정가
         discount: programApplicationData.discount ?? 0,
         couponPrice: data.price,
       });
@@ -123,7 +115,7 @@ const PaymentInputPage = () => {
       setProgramApplicationForm({
         couponId: String(data.id),
         couponPrice: data.price,
-        totalPrice: newTotalPrice,
+        totalPrice: newTotalPrice, // 결제 금액
       });
     },
     [
@@ -134,41 +126,24 @@ const PaymentInputPage = () => {
     ],
   );
 
-  const [allowNavigation, setAllowNavigation] = useState(false);
-  const [nextPath, setNextPath] = useState('');
+  // 결제 금액
+  const totalPrice = useMemo(() => {
+    const regularPrice = programApplicationData.price ?? 0;
+    const discountAmount = programApplicationData.discount ?? 0;
+    const couponPrice = programApplicationData.couponPrice ?? 0;
+    const totalDiscount = discountAmount + couponPrice;
 
-  useEffect(() => {
-    // 페이지 이탈 시 실행될 함수
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (!allowNavigation) {
-        e.preventDefault();
-        e.returnValue = '';
+    return regularPrice <= totalDiscount ? 0 : regularPrice - totalDiscount;
+  }, [
+    programApplicationData.couponPrice,
+    programApplicationData.discount,
+    programApplicationData.price,
+  ]);
 
-        setCoupon({
-          id: null,
-          price: 0,
-        });
-
-        return '';
-      }
-    };
-
-    // 이벤트 리스너 등록
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      // 컴포넌트 언마운트 시 이벤트 리스너 제거
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [allowNavigation, setCoupon]);
-
-  // allowNavigation이 true로 변경되면 navigation 수행
-  useEffect(() => {
-    if (allowNavigation && nextPath) {
-      navigate(nextPath);
-      setAllowNavigation(false);
-    }
-  }, [allowNavigation, nextPath, navigate]);
+  /** 쿠폰 적용이 아니라 애초부터 무료인 경우 다르게 보여주기 **/
+  const buttonText = programApplicationData.isFree
+    ? '0원 결제하기'
+    : '결제하기';
 
   const handleSafeNavigation = useCallback((path: string) => {
     setNextPath(path);
@@ -201,10 +176,44 @@ const PaymentInputPage = () => {
     totalPrice,
   ]);
 
-  /** 쿠폰 적용이 아니라 애초부터 무료인 경우 다르게 보여주기 **/
-  const buttonText = programApplicationData.isFree
-    ? '0원 결제하기'
-    : '결제하기';
+  useEffect(() => {
+    // 페이지 이탈 시 실행될 함수
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (!allowNavigation) {
+        e.preventDefault();
+        e.returnValue = '';
+
+        setCoupon({
+          id: null,
+          price: 0,
+        });
+
+        return '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [allowNavigation, setCoupon]);
+
+  // allowNavigation이 true로 변경되면 navigation 수행
+  useEffect(() => {
+    if (allowNavigation && nextPath) {
+      navigate(nextPath);
+      setAllowNavigation(false);
+    }
+  }, [allowNavigation, nextPath, navigate]);
+
+  useEffect(() => {
+    if (checkInvalidate() || !isLoggedIn) {
+      alert('잘못된 접근입니다.');
+      navigate('/', { replace: true });
+      initProgramApplicationForm();
+    }
+  }, [isLoggedIn, navigate]);
 
   if (programLoading || !program) {
     return <LoadingContainer />;
@@ -269,6 +278,7 @@ const PaymentInputPage = () => {
             <CouponSection
               setCoupon={setCoupon}
               programType={programApplicationData.programType ?? 'live'}
+              maxAmount={maxCouponAmount}
             />
 
             <hr className="bg-neutral-85" />
