@@ -4,7 +4,7 @@ import { persist } from 'zustand/middleware';
 interface ProgramApplicationFormStore {
   data: {
     priceId: number | null;
-    price: number | null; // 정가 = 이용료 + 보증금
+    price: number | null; // 정가 = 이용료 + 보증금 + 모든 옵션 정가
     discount: number | null; // 할인 금액
     couponId: string | null;
     couponPrice: number | null;

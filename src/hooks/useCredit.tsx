@@ -124,19 +124,25 @@ export default function useCredit(paymentId?: string | number) {
       return 0;
     }
 
-    const couponPrice = data.paymentInfo.couponDiscount || 0;
+    const challengeBasicSellingPrice =
+      (data.priceInfo.price ?? 0) +
+      (data.priceInfo.refund ?? 0) -
+      (data.priceInfo.discount ?? 0);
+
+    const couponPrice =
+      data.paymentInfo.couponDiscount === -1
+        ? challengeBasicSellingPrice
+        : (data.paymentInfo.couponDiscount ?? 0);
 
     /** 환불 로직
      * 1. 전액 환불: 최종 결제 금액
-     * 2. 부분 환불: (최종 결제 금액 + 쿠폰 금액) * (환불 퍼센트) - 쿠폰 금액
-     * @note 쿠폰 금액을 차감함
+     * 2. 부분 환불: 베이직 판매가 * 환불 퍼센트 - 쿠폰 금액
+     * @note 쿠폰 금액을 차감하여 환불해줌
      */
-    const refundPrice = nearestTen(
-      ((data.paymentInfo.finalPrice ?? 0) +
-        (data.paymentInfo.couponDiscount ?? 0)) *
-        refundPercent -
-        couponPrice,
-    );
+    const refundPrice =
+      refundPercent === 1
+        ? (data.paymentInfo.finalPrice ?? 0)
+        : nearestTen(challengeBasicSellingPrice * refundPercent - couponPrice);
 
     return Math.max(0, refundPrice);
   }, [data, refundPercent]);
@@ -165,9 +171,23 @@ export default function useCredit(paymentId?: string | number) {
 
   // 쿠폰 할인 금액
   const couponDiscountAmount = useMemo(() => {
+    // 전액 쿠폰
     if (data?.paymentInfo.couponDiscount === -1) {
+      // 챌린지 쿠폰은 베이직에만 적용
+      if (data.programInfo.programType === 'CHALLENGE') {
+        const {
+          price: basicRegularPrice,
+          discount: basicDiscountAmount,
+          refund: deposit,
+        } = data.priceInfo;
+        return (
+          (basicRegularPrice ?? 0) + (deposit ?? 0) - (basicDiscountAmount ?? 0)
+        );
+      }
+      // 그 외
       return productAmount - (data.priceInfo.discount ?? 0);
     }
+
     return data?.paymentInfo.couponDiscount;
   }, [data, productAmount]);
 

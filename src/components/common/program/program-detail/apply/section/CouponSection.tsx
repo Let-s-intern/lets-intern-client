@@ -1,18 +1,22 @@
-import { useState } from 'react';
-
+import { ICouponForm } from '@/types/interface';
+import axios from '@/utils/axios';
 import { isAxiosError } from 'axios';
-import { ICouponForm } from '../../../../../../types/interface';
-import axios from '../../../../../../utils/axios';
+import { useState } from 'react';
 import Input from '../../../../ui/input/Input';
 
 export interface CouponSectionProps {
   setCoupon: (
     coupon: ((prevCoupon: ICouponForm) => ICouponForm) | ICouponForm,
   ) => void;
+  maxAmount?: number; // 최대로 적용할 수 있는 쿠폰 금액
   programType: string;
 }
 
-const CouponSection = ({ setCoupon, programType }: CouponSectionProps) => {
+const CouponSection = ({
+  setCoupon,
+  programType,
+  maxAmount = Infinity,
+}: CouponSectionProps) => {
   const [code, setCode] = useState('');
   const [validationMsg, setValidationMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -43,9 +47,10 @@ const CouponSection = ({ setCoupon, programType }: CouponSectionProps) => {
           programType: programType.toUpperCase(),
         },
       });
+      const { couponId, discount } = res.data.data;
       setCoupon({
-        id: res.data.data.couponId,
-        price: res.data.data.discount,
+        id: couponId,
+        price: discount === -1 ? maxAmount : Math.min(discount, maxAmount),
       });
       setValidationMsg('');
       setSuccessMsg('쿠폰이 등록되었습니다.');
