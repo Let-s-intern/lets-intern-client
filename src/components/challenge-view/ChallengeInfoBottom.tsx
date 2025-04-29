@@ -49,21 +49,17 @@ const ChallengeInfoBottom = ({
     banks,
   } = useInstallmentPayment();
 
-  const priceInfo = challenge.priceInfo[0];
+  const priceInfo = challenge.priceInfo.find(
+    (info) => info.challengePricePlanType === 'BASIC',
+  );
+  const totalPrice = (priceInfo?.price ?? 0) - (priceInfo?.discount ?? 0); // 할인 적용가 = 판매가 - 보증금
   const monthlyPrice =
     installmentMonths && priceInfo
-      ? Math.round(
-          ((priceInfo.price ?? 0) - (priceInfo.discount ?? 0)) /
-            installmentMonths,
-        )
+      ? Math.round(totalPrice / installmentMonths)
       : null;
-  const totalPrice = (priceInfo?.price || 0) - (priceInfo?.discount || 0);
   const showMonthlyPrice =
-    priceInfo && totalPrice + (priceInfo.refund || 0) >= 50000;
-  const regularPrice =
-    priceInfo.challengePriceType === 'CHARGE'
-      ? priceInfo.price
-      : (priceInfo.price ?? 0) + (priceInfo.refund ?? 0); // 정가
+    priceInfo && totalPrice + (priceInfo.refund ?? 0) >= 50000;
+  const regularPrice = (priceInfo?.price ?? 0) + (priceInfo?.refund ?? 0); // 정가
 
   const styles = useMemo(() => {
     switch (challenge.challengeType) {
@@ -278,7 +274,7 @@ const ChallengeInfoBottom = ({
               <div className="flex w-full items-center justify-between text-small20 font-medium text-neutral-0">
                 <p>할인 적용가</p>
                 <p className="text-small20 font-medium text-neutral-0">
-                  {totalPrice.toLocaleString()}원
+                  {totalPrice.toLocaleString()}원~
                 </p>
               </div>
               {showMonthlyPrice && (
