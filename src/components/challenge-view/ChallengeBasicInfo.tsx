@@ -22,7 +22,7 @@ import { getProgramPathname } from '@/utils/url';
 import { challengeColors } from '@components/ChallengeView';
 import BasicInfoRow from '@components/common/program/program-detail/basicInfo/BasicInfoRow';
 import { useRouter } from 'next/navigation';
-import { useMemo } from 'react';
+import { CSSProperties, useMemo } from 'react';
 import { LuCalendarDays } from 'react-icons/lu';
 import RadioButton from './RadioButton';
 
@@ -133,24 +133,23 @@ const ChallengeBasicInfo = ({
   const activeOnly =
     activeChallengeList === undefined || activeChallengeList.length <= 1;
 
-  const priceInfo = challenge.priceInfo[0];
-  const monthlyPrice =
-    installmentMonths && priceInfo
-      ? Math.round(
-          ((priceInfo.price ?? 0) - (priceInfo.discount ?? 0)) /
-            installmentMonths,
-        )
-      : null;
-  const totalPrice = (priceInfo?.price || 0) - (priceInfo?.discount || 0);
-  const showMonthlyPrice =
-    priceInfo && totalPrice + (priceInfo.refund || 0) >= 50000;
+  const basicPriceInfo = challenge.priceInfo.find(
+    (info) => info.challengePricePlanType === 'BASIC',
+  );
   const regularPrice =
-    priceInfo.challengePriceType === 'CHARGE'
-      ? priceInfo.price
-      : (priceInfo.price ?? 0) + (priceInfo.refund ?? 0); // 정가
+    (basicPriceInfo?.price ?? 0) + (basicPriceInfo?.refund ?? 0); // 정가
+  const totalPrice =
+    (basicPriceInfo?.price ?? 0) - (basicPriceInfo?.discount ?? 0); // 할인 적용가 = 판매가 - 보증금
+  const monthlyPrice =
+    installmentMonths && basicPriceInfo
+      ? Math.round(totalPrice / installmentMonths)
+      : null;
+  const showMonthlyPrice =
+    basicPriceInfo && totalPrice + (basicPriceInfo.refund ?? 0) >= 50000;
 
   const priceReason = (() => {
     switch (challenge.challengeType) {
+      // 자기소개서
       case PERSONAL_STATEMENT:
         return [
           `자기소개서 최다 빈출 문항 작성 가이드\n(무제한 업데이트)`,
@@ -159,8 +158,7 @@ const ChallengeBasicInfo = ({
           `렛츠커리어 공식 커뮤니티 참여`,
         ];
 
-      // 포트폴리오 추가 예정
-
+      // 그 외
       default:
         return [
           `단계별 취업 준비 교육 자료 및 템플릿\n(무제한 업데이트)`,
@@ -209,7 +207,7 @@ const ChallengeBasicInfo = ({
                 ))}
               </div>
             </div>
-            {priceInfo && (
+            {basicPriceInfo && (
               <div className="flex w-full flex-col gap-y-1 border-b border-neutral-80 pb-2 text-neutral-0">
                 <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
                   <span className="font-medium">정가</span>
@@ -217,24 +215,24 @@ const ChallengeBasicInfo = ({
                 </div>
 
                 {/* 할인 금액이 0이면 숨김 */}
-                {priceInfo.discount !== 0 && (
+                {basicPriceInfo.discount !== 0 && (
                   <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
                     <span className="font-bold" style={styles.basicInfoStyle}>
                       {getDiscountPercent(
                         regularPrice || 0,
-                        priceInfo.discount || 0,
+                        basicPriceInfo.discount || 0,
                       )}
                       % 할인
                     </span>
-                    <span>-{priceInfo.discount?.toLocaleString()}원</span>
+                    <span>-{basicPriceInfo.discount?.toLocaleString()}원</span>
                   </div>
                 )}
 
-                {priceInfo.challengePriceType === 'REFUND' && (
+                {basicPriceInfo.challengePriceType === 'REFUND' && (
                   <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
                     <span
                       style={
-                        priceInfo.discount === 0
+                        basicPriceInfo.discount === 0
                           ? styles.basicInfoStyle
                           : undefined
                       }
@@ -242,18 +240,18 @@ const ChallengeBasicInfo = ({
                     >
                       미션 모두 수행시, 환급
                     </span>
-                    <span>-{priceInfo.refund?.toLocaleString()}원</span>
+                    <span>-{basicPriceInfo.refund?.toLocaleString()}원</span>
                   </div>
                 )}
               </div>
             )}
           </div>
-          {priceInfo && (
+          {basicPriceInfo && (
             <div className="flex w-full flex-col gap-y-2">
               <div className="flex w-full items-center justify-between text-xsmall16 font-semibold text-neutral-0">
                 <p>할인 적용가</p>
                 <p className="text-small18 text-neutral-0">
-                  {totalPrice.toLocaleString()}원
+                  {totalPrice.toLocaleString()}원~
                 </p>
               </div>
               {showMonthlyPrice && (
@@ -292,7 +290,8 @@ const ChallengeBasicInfo = ({
                 className="speech-bubble relative ml-3 animate-bounce-x break-keep rounded-xxs px-2 py-1 text-xxsmall12 font-normal text-white"
                 style={{
                   backgroundColor: styles.basicInfoStyle.color,
-                  ['--after-border-color' as any]: styles.basicInfoStyle.color,
+                  ['--after-border-color' as keyof CSSProperties]:
+                    styles.basicInfoStyle.color,
                 }}
               >
                 참여 가능한 일자를 선택해주세요!
@@ -320,6 +319,8 @@ const ChallengeBasicInfo = ({
             </div>
           </div>
         )}
+
+        {/* 데스크탑 뷰 */}
         <div className="hidden w-full flex-col gap-y-3 rounded-ms bg-neutral-95 px-4 pb-5 pt-3 md:flex md:flex-1 md:p-5 md:pt-4">
           {activeOnly ? (
             <>
@@ -378,6 +379,8 @@ const ChallengeBasicInfo = ({
             }
           />
         </div>
+
+        {/* 모바일 뷰 */}
         <div className="flex w-full flex-col items-center justify-center gap-y-3 rounded-ms bg-neutral-95 px-4 pb-6 pt-5 md:hidden">
           <div className="flex w-full flex-col gap-y-4">
             <div className="flex w-full flex-col gap-y-2">
@@ -399,7 +402,7 @@ const ChallengeBasicInfo = ({
                 ))}
               </div>
             </div>
-            {priceInfo && (
+            {basicPriceInfo && (
               <div className="flex w-full flex-col gap-y-2 border-b border-neutral-80 pb-2 text-neutral-0">
                 <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
                   <span className="font-medium">정가</span>
@@ -409,29 +412,29 @@ const ChallengeBasicInfo = ({
                   <span className="font-bold" style={styles.basicInfoStyle}>
                     {getDiscountPercent(
                       regularPrice || 0,
-                      priceInfo.discount || 0,
+                      basicPriceInfo.discount || 0,
                     )}
                     % 할인
                   </span>
-                  <span>-{priceInfo.discount?.toLocaleString()}원</span>
+                  <span>-{basicPriceInfo.discount?.toLocaleString()}원</span>
                 </div>
-                {priceInfo.challengePriceType === 'REFUND' && (
+                {basicPriceInfo.challengePriceType === 'REFUND' && (
                   <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
                     <span className="font-bold text-black">
                       미션 모두 수행시, 환급
                     </span>
-                    <span>-{priceInfo.refund?.toLocaleString()}원</span>
+                    <span>-{basicPriceInfo.refund?.toLocaleString()}원</span>
                   </div>
                 )}
               </div>
             )}
           </div>
-          {priceInfo && (
+          {basicPriceInfo && (
             <div className="flex w-full flex-col gap-y-4">
               <div className="flex w-full items-center justify-between text-xsmall16 font-medium text-neutral-0">
                 <p>할인 적용가</p>
                 <p className="text-small18 font-medium text-neutral-0">
-                  {totalPrice.toLocaleString()}원
+                  {totalPrice.toLocaleString()}원~
                 </p>
               </div>
               {showMonthlyPrice && (
