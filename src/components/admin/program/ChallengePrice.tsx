@@ -132,8 +132,18 @@ export default function ChallengePrice<
     return result;
   }, [options]);
 
-  // (챌린지 + 옵션) 최종 금액
-  const finalPrice = useMemo(() => {
+  // 스탠다드 최종 금액
+  const standardFinalPrice = useMemo(() => {
+    const optPrice = standardOptIds.reduce((acc, currId) => {
+      const target = options.find((opt) => opt.challengeOptionId === currId);
+      if (!target) return acc;
+      return acc + (target.price ?? 0) - (target.discountPrice ?? 0);
+    }, 0);
+    return optPrice + challengePrice;
+  }, [challengePrice, standardOptIds, options]);
+
+  // 프리미엄 최종 금액
+  const premiumFinalPrice = useMemo(() => {
     const optPrice = standardOptIds
       .concat(premiumOptIds)
       .reduce((acc, currId) => {
@@ -173,7 +183,7 @@ export default function ChallengePrice<
   };
 
   return (
-    <div className="flex flex-col gap-3">
+    <section className="flex flex-col gap-3">
       {/* 가격 플랜 */}
       <SelectControl
         labelId="challengePricePlanLabel"
@@ -396,11 +406,23 @@ export default function ChallengePrice<
           />
         </>
       )}
-      <p>
-        <b>최종금액</b>: {finalPrice.toLocaleString()}원{' '}
-        {isDeposit && '(보증금 포함)'}
-      </p>
-    </div>
+
+      <div>
+        <p>
+          <b>베이직 금액</b>: {challengePrice.toLocaleString()}원
+        </p>
+        {pricePlan !== 'BASIC' && (
+          <p>
+            <b>스탠다드 금액</b>: {standardFinalPrice.toLocaleString()}원
+          </p>
+        )}
+        {pricePlan === 'PREMIUM' && (
+          <p>
+            <b>프리미엄 금액</b>: {premiumFinalPrice.toLocaleString()}원
+          </p>
+        )}
+      </div>
+    </section>
   );
 }
 
