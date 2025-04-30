@@ -9,8 +9,8 @@ import ProgramBlogReviewEditor from '@/components/admin/program/ProgramBlogRevie
 import FaqSection from '@/components/FaqSection';
 import ProgramRecommendEditor from '@/components/ProgramRecommendEditor';
 import useAdminChallenge from '@/hooks/useAdminChallenge';
+import useAdminChallengeOption from '@/hooks/useAdminChallengeOption';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import useChallengeOption from '@/hooks/useChallengeOption';
 import { challengeToCreateInput } from '@/hooks/useDuplicateProgram';
 import dayjs from '@/lib/dayjs';
 import {
@@ -110,7 +110,7 @@ const ChallengeCreate: React.FC = () => {
     handleChangePricePlan,
     setStandardOptIds,
     setPremiumOptIds,
-  } = useChallengeOption();
+  } = useAdminChallengeOption();
 
   /** 챌린지 관련 함수 */
   const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {

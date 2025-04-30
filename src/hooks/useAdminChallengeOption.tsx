@@ -8,7 +8,7 @@ import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 const { BASIC, STANDARD, PREMIUM } = ChallengePricePlanEnum.enum;
 
-export default function useChallengeOption(challenge?: ChallengeIdSchema) {
+export default function useAdminChallengeOption(challenge?: ChallengeIdSchema) {
   /** 가격 플랜 */
   const pricePlan = useRef<ChallengePricePlan>(BASIC);
 
