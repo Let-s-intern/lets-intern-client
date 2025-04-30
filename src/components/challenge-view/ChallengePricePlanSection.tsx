@@ -117,7 +117,8 @@ function ChallengePricePlanSection({ challengeType, priceInfoList }: Props) {
         취준 비용 부담은 낮추고, 퀄리티는 높이고
       </SectionSubHeader>
       <SectionMainHeader className="mb-12">
-        내게 가장 알맞은 구성을 선택할 수 있어요!
+        내게 가장 알맞은 구성을
+        <br className="md:hidden" /> 선택할 수 있어요!
       </SectionMainHeader>
       {/* 좌우 슬라이드 */}
       <div className="-mx-5 overflow-x-auto px-5 md:max-w-[1000px] lg:mx-auto lg:px-0">
