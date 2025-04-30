@@ -1,19 +1,16 @@
+import { useMissionsOfCurrentChallengeRefetch } from '@/context/CurrentAdminChallengeProvider';
+import { AttendanceItem } from '@/schema';
+import axios from '@/utils/axios';
+import { attendanceStatusToText } from '@/utils/convert';
+import { challengeSubmitDetailCellWidthList } from '@/utils/tableCellWidthList';
+import AlertModal from '@components/ui/alert/AlertModal';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { IoMdArrowDropdown } from 'react-icons/io';
-import {
-  useAdminCurrentChallenge,
-  useMissionsOfCurrentChallengeRefetch,
-} from '../../../../../../context/CurrentAdminChallengeProvider';
-import { Attendance } from '../../../../../../schema';
-import axios from '../../../../../../utils/axios';
-import { attendanceStatusToText } from '../../../../../../utils/convert';
-import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
-import AlertModal from '../../../../../ui/alert/AlertModal';
 
 interface Props {
-  attendance: Attendance;
+  attendance: AttendanceItem['attendance'];
   cellWidthListIndex: number;
   refetch: () => void;
 }
@@ -25,7 +22,6 @@ const StatusDropdown = ({ attendance, cellWidthListIndex, refetch }: Props) => {
   const [isModalShown, setIsModalShown] = useState(false);
   const [newStatus, setNewStatus] = useState('');
   const cellWidthList = challengeSubmitDetailCellWidthList;
-  const { currentChallenge } = useAdminCurrentChallenge();
   const missionRefetch = useMissionsOfCurrentChallengeRefetch();
 
   const editAttendanceStatus = useMutation({

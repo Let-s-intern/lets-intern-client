@@ -1,3 +1,4 @@
+import { twMerge } from '@/lib/twMerge';
 import {
   ChallengeIdSchema,
   ChallengeParticipationType,
@@ -41,12 +42,13 @@ interface ChallengeBasicProps<
     | 'chatLink'
     | 'chatPassword'
   >;
-
+  className?: string;
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
 }
 
 const ChallengeBasic = React.memo(
   <T extends CreateChallengeReq | UpdateChallengeReq>({
+    className,
     defaultValue,
     setInput,
   }: ChallengeBasicProps<T>) => {
@@ -55,7 +57,7 @@ const ChallengeBasic = React.memo(
     };
 
     return (
-      <div className="flex w-full flex-col gap-3">
+      <div className={twMerge('flex w-full flex-col gap-3', className)}>
         <FormControl size="small">
           <InputLabel id="programType">프로그램 분류</InputLabel>
           <Select
@@ -167,7 +169,7 @@ const ChallengeBasic = React.memo(
             ))}
           </Select>
         </FormControl>
-        {/* (임시) 가격 구분 삭제 */}
+
         {defaultValue?.priceInfo && defaultValue.priceInfo.length > 0 && (
           <FormControl size="small">
             <InputLabel>참여 형태</InputLabel>

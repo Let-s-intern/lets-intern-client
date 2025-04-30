@@ -35,13 +35,17 @@ export const challengeToCreateInput = (
       (price): CreateChallengeReqPriceInfo => ({
         challengeParticipationType: price.challengeParticipationType ?? 'LIVE',
         challengePriceType: price.challengePriceType ?? 'CHARGE',
-        challengeUserType: price.challengeUserType ?? 'BASIC',
+        challengePricePlanType: price.challengePricePlanType ?? 'BASIC',
         charge: price.price ?? 0,
         priceInfo: {
           price: price.price ?? 0,
           discount: price.discount ?? 0,
         },
         refund: price.refund ?? 0,
+        title: price.title,
+        challengeOptionIdList: price.challengeOptionList.map(
+          (item) => item.challengeOptionId,
+        ),
       }),
     ),
     programTypeInfo: challenge.classificationInfo.map((value) => ({
@@ -60,6 +64,7 @@ export const challengeToCreateInput = (
     startDate: challenge.startDate?.format('YYYY-MM-DDTHH:mm:ss') ?? '',
     deadline: challenge.deadline?.format('YYYY-MM-DDTHH:mm:ss') ?? '',
     thumbnail: challenge.thumbnail ?? '',
+    desktopThumbnail: challenge.thumbnail ?? '',
   };
 };
 

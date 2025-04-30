@@ -5,7 +5,7 @@ import {
   FormControlLabelProps,
   Radio,
 } from '@mui/material';
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, memo } from 'react';
 
 const RADIO_SX = {
   color: '#E7E7E7',
@@ -27,6 +27,7 @@ const DEFAULT_LABEL_SX = {
     fontWeight: 500,
     color: '#2A2D34',
     fontFamily: 'Pretendard Variable',
+    'white-space': 'pre-line',
   },
 };
 
@@ -38,39 +39,48 @@ interface ExtendedControlLabelProps
   labelStyle?: CSSProperties;
 }
 
-export const ReportFormRadioControlLabel: React.FC<
-  ExtendedControlLabelProps
-> = ({ subText, labelStyle, sx, right, wrapperClassName, ...restProps }) => {
-  const extendedSx = {
-    ...sx,
-    '.MuiFormControlLabel-label': {
-      ...DEFAULT_LABEL_SX['.MuiFormControlLabel-label'],
-      ...labelStyle,
-    },
-  };
+export const OptionFormRadioControlLabel: React.FC<ExtendedControlLabelProps> =
+  memo(function OptionFormRadioControlLabel({
+    subText,
+    labelStyle,
+    sx,
+    right,
+    wrapperClassName,
+    ...restProps
+  }) {
+    const extendedSx = {
+      ...sx,
+      '.MuiFormControlLabel-label': {
+        ...DEFAULT_LABEL_SX['.MuiFormControlLabel-label'],
+        ...labelStyle,
+      },
+    };
 
-  return (
-    <div
-      className={twMerge('flex items-center justify-between', wrapperClassName)}
-    >
-      <div className="flex items-center">
-        <FormControlLabel
-          sx={extendedSx}
-          control={<Radio size="small" sx={RADIO_SX} />}
-          {...restProps}
-        />
-        {subText && (
-          <span className="-ml-2 inline-block text-xsmall14 font-medium text-neutral-50">
-            {subText}
-          </span>
+    return (
+      <div
+        className={twMerge(
+          'flex items-center justify-between',
+          wrapperClassName,
         )}
+      >
+        <div className="flex items-center">
+          <FormControlLabel
+            sx={extendedSx}
+            control={<Radio size="small" sx={RADIO_SX} />}
+            {...restProps}
+          />
+          {subText && (
+            <span className="-ml-2 inline-block text-xsmall14 font-medium text-neutral-50">
+              {subText}
+            </span>
+          )}
+        </div>
+        {right ? right : <div>{/* empty */}</div>}
       </div>
-      {right ? right : <div>{/* empty */}</div>}
-    </div>
-  );
-};
+    );
+  });
 
-export const ReportFormCheckboxControlLabel: React.FC<
+export const OptionFormCheckboxControlLabel: React.FC<
   ExtendedControlLabelProps
 > = ({ subText, sx, right, labelStyle, wrapperClassName, ...restProps }) => {
   const extendedSx = {

@@ -25,6 +25,7 @@ import ChallengeIntroExpericeSummary from './challenge-view/ChallengeIntroExperi
 import ChallengeIntroPersonalStatement from './challenge-view/ChallengeIntroPersonalStatement';
 import ChallengeIntroPortfolio from './challenge-view/ChallengeIntroPortfolio';
 import ChallengePointView from './challenge-view/ChallengePointView';
+import ChallengePricePlanSection from './challenge-view/ChallengePricePlanSection';
 import LexicalContent from './common/blog/LexicalContent';
 import MoreReviewButton from './common/review/MoreReviewButton';
 import NextBackHeader from './common/ui/NextBackHeader';
@@ -304,6 +305,14 @@ const ChallengeView: React.FC<{
             />
             <ChallengeBrand challengeType={challenge.challengeType} />
           </div>
+
+          {/* 가격 플랜 */}
+          {challenge.priceInfo.length >= 2 && (
+            <ChallengePricePlanSection
+              challengeType={challenge.challengeType}
+              priceInfoList={challenge.priceInfo}
+            />
+          )}
 
           {/* 후기 섹션 */}
           {reviewExists && (

@@ -1,6 +1,5 @@
-import { z } from 'zod';
-
 import { ProgramTypeEnum, reportTypeSchema } from '@/schema';
+import { z } from 'zod';
 
 export const programInfoType = z.object({
   paymentId: z.number().nullable().optional(),
@@ -9,11 +8,12 @@ export const programInfoType = z.object({
   reportType: reportTypeSchema.nullable().optional(),
   title: z.string().nullable().optional(),
   thumbnail: z.string().nullable().optional(),
-  price: z.number().nullable().optional(),
-  paybackPrice: z.number().nullable().optional(),
+  price: z.number().nullable().optional(), // 챌린지 이용료
+  paybackPrice: z.number().nullable().optional(), // 챌린지 보증금
   isCanceled: z.boolean().nullable().optional(),
   isRefunded: z.boolean().nullable().optional(),
   createDate: z.string().nullable().optional(),
+  optionPrice: z.number().nullable().optional(), // 옵션 정가 총액
 });
 
 // CardInfo schema
@@ -189,8 +189,6 @@ export const paymentListType = z.object({
 
 export type PaymentType = z.infer<typeof paymentType>;
 
-// export type PaymentStatus = 'DONE' | 'CANCELED' | 'PARTIAL_CANCELED';
-
 export const convertPaymentStatus = (status: string) => {
   switch (status) {
     case 'REFUNDED':
@@ -222,9 +220,11 @@ export const paymentDetailType = z.object({
   }),
   priceInfo: z.object({
     id: z.number().nullable().optional(),
-    price: z.number().nullable().optional(),
-    discount: z.number().nullable().optional(),
-    refund: z.number().nullable().optional(),
+    price: z.number().nullable().optional(), // 챌린지 이용료
+    discount: z.number().nullable().optional(), // 챌린지 할인 금액
+    refund: z.number().nullable().optional(), // 보증금
+    option: z.number().nullable().optional(), // 옵션 정가 총액
+    optionDiscount: z.number().nullable().optional(), // 옵션 총 할인 금액
   }),
   paymentInfo: z.object({
     id: z.number().nullable().optional(),

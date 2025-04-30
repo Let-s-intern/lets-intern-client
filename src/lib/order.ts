@@ -1,5 +1,5 @@
 import { ProgramApplicationFormInfo } from '@/api/application';
-import { AccountType } from '@/schema';
+import { AccountType, ChallengePricePlan } from '@/schema';
 import { generateRandomNumber, generateRandomString } from '@/utils/random';
 
 export const generateOrderId = () => {
@@ -17,6 +17,7 @@ export interface UserInfo {
 
 export const getPayInfo = (
   application: ProgramApplicationFormInfo,
+  pricePlan?: ChallengePricePlan, // 챌린지만
 ): null | {
   priceId: number;
   price: number;
@@ -26,21 +27,27 @@ export const getPayInfo = (
   accountType?: AccountType | null;
   challengePriceType: string | undefined;
   livePriceType: string | undefined;
+  challengePricePlanType?: ChallengePricePlan;
 } => {
-  const item = application.priceList?.[0];
+  const item = application.priceList?.find(
+    (item) => item.challengePricePlanType === pricePlan,
+  );
+
   // 챌린지
   if (item) {
     return {
       priceId: item.priceId ? item.priceId : -1,
-      price: item.price ? item.price + (item.refund ?? 0) : 0, // 결제금액에 보증금 포함해야 함
+      price: item.price ? item.price + (item.refund ?? 0) : 0, // 최종 결제 금액에 보증금 금액 포함해야 함
       discount: item.discount ? item.discount : 0,
       accountNumber: item.accountNumber ? item.accountNumber : '',
       deadline: item.deadline ? item.deadline : '',
       accountType: item.accountType ? item.accountType : null,
       challengePriceType: item.challengePriceType,
       livePriceType: undefined,
+      challengePricePlanType: item.challengePricePlanType, // 챌린지만 가격 플랜 있음
     };
   }
+
   // 라이브
   if (application.price) {
     return {

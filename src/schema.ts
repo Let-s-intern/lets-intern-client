@@ -1,5 +1,6 @@
 import dayjs from '@/lib/dayjs';
 import { z } from 'zod';
+import { challengeOptionSchema } from './api/challengeOptionSchema';
 
 export interface Pageable {
   page: number;
@@ -28,6 +29,10 @@ export const pageInfo = z.object({
 });
 
 export type PageInfo = z.infer<typeof pageInfo>;
+
+// 챌린지 가격 플랜
+export const ChallengePricePlanEnum = z.enum(['BASIC', 'STANDARD', 'PREMIUM']);
+export type ChallengePricePlan = z.infer<typeof ChallengePricePlanEnum>;
 
 /** GET /api/v1/challenge */
 export const challengeSchema = z
@@ -134,6 +139,7 @@ export const challengeUserType = z.union([
   z.literal('PREMIUM'),
 ]);
 
+// deprecated
 export type ChallengeUserType = z.infer<typeof challengeUserType>;
 
 const challengeParticipationType = z.union([
@@ -213,6 +219,24 @@ const missionStatusType = z.union([
   z.literal('REFUND_DONE'),
 ]);
 
+export const challengePriceInfoSchema = z.object({
+  title: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  priceId: z.number(),
+  price: z.number().optional().nullable(),
+  refund: z.number().optional().nullable(),
+  discount: z.number().optional().nullable(),
+  accountNumber: z.string().optional().nullable(),
+  deadline: z.string().optional().nullable(),
+  accountType: accountType.optional().nullable(),
+  challengePriceType: challengePriceType.optional().nullable(),
+  challengePricePlanType: ChallengePricePlanEnum.optional().nullable(),
+  challengeParticipationType: challengeParticipationType.optional().nullable(),
+  challengeOptionList: z.array(challengeOptionSchema),
+});
+
+export type ChallengePriceInfo = z.infer<typeof challengePriceInfoSchema>;
+
 export const getChallengeIdPrimitiveSchema = z.object({
   title: z.string().optional(),
   shortDesc: z.string().optional(),
@@ -220,6 +244,7 @@ export const getChallengeIdPrimitiveSchema = z.object({
   criticalNotice: z.string().nullable().optional(),
   participationCount: z.number().optional(),
   thumbnail: z.string().optional(),
+  desktopThumbnail: z.string().optional().nullable(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   beginning: z.string().optional(),
@@ -240,22 +265,7 @@ export const getChallengeIdPrimitiveSchema = z.object({
     )
     .nullable()
     .optional(),
-  priceInfo: z.array(
-    z.object({
-      priceId: z.number(),
-      price: z.number().optional().nullable(),
-      refund: z.number().optional().nullable(),
-      discount: z.number().optional().nullable(),
-      accountNumber: z.string().optional().nullable(),
-      deadline: z.string().optional().nullable(),
-      accountType: accountType.optional().nullable(),
-      challengePriceType: challengePriceType.optional().nullable(),
-      challengeUserType: challengeUserType.optional().nullable(),
-      challengeParticipationType: challengeParticipationType
-        .optional()
-        .nullable(),
-    }),
-  ),
+  priceInfo: z.array(challengePriceInfoSchema),
   faqInfo: z.array(faq),
 });
 
@@ -290,6 +300,7 @@ export type CreateChallengeReq = {
   criticalNotice: string;
   participationCount: number;
   thumbnail: string;
+  desktopThumbnail: string;
   startDate: string; // "2024-10-12T06:24:10.873"
   endDate: string; // "2024-10-12T06:24:10.873"
   beginning: string; // "2024-10-12T06:24:10.873"
@@ -323,6 +334,7 @@ export type UpdateChallengeReq = {
   criticalNotice?: string;
   participationCount?: number;
   thumbnail?: string;
+  desktopThumbnail?: string;
   startDate?: string; // "2024-10-12T08:03:17.016Z"
   endDate?: string; // "2024-10-12T08:03:17.016Z"
   beginning?: string; // "2024-10-12T08:03:17.016Z"
@@ -352,15 +364,18 @@ export type ChallengePriceReq = {
   priceInfo: {
     price: number;
     discount: number;
-    accountNumber?: string;
-    deadline?: string; // "2024-10-12T08:03:17.016Z"
-    accountType?: AccountType;
+    accountNumber?: string | null;
+    accountType?: AccountType | null;
+    deadline?: string | null; // 사용 안 함
   };
+  title?: string | null;
+  description?: string | null;
   charge: number;
   refund: number;
   challengePriceType: ChallengePriceType;
-  challengeUserType: ChallengeUserType;
+  challengePricePlanType: ChallengePricePlan;
   challengeParticipationType: ChallengeParticipationType;
+  challengeOptionIdList?: number[] | null;
 };
 
 // DELETE /api/v1/challenge/{challengeId} 챌린지 삭제
@@ -379,6 +394,7 @@ export const getLiveIdPrimitiveSchema = z.object({
   criticalNotice: z.string().optional().nullable(),
   participationCount: z.number().optional(),
   thumbnail: z.string().optional().nullable(),
+  desktopThumbnail: z.string().optional().nullable(),
   mentorName: z.string().optional().nullable(),
   mentorImg: z.string().optional().nullable(),
   mentorCompany: z.string().optional().nullable(),
@@ -445,6 +461,7 @@ export type CreateLiveReq = {
   criticalNotice: string;
   participationCount: number;
   thumbnail: string;
+  desktopThumbnail?: string;
   mentorName: string;
   mentorImg: string;
   mentorCompany: string;
@@ -493,6 +510,7 @@ export type UpdateLiveReq = {
   criticalNotice?: string;
   participationCount?: number;
   thumbnail?: string;
+  desktopThumbnail?: string;
   mentorName?: string;
   mentorImg?: string;
   mentorCompany?: string;
@@ -725,33 +743,46 @@ export const attendances = z
   .object({
     attendanceList: z.array(
       z.object({
-        id: z.number(),
-        name: z.string().nullable(),
-        email: z.string().nullable(),
-        status: attendanceStatus.nullable(),
-        link: z.string().nullable(),
-        review: z.string().nullable().optional(),
-        reviewIsVisible: z.boolean().nullable().optional(),
-        result: attendanceResult.nullable(),
-        comments: z.string().nullable().optional(),
-        createDate: z.string().nullable(),
-        lastModifiedDate: z.string().nullable(),
+        attendance: z.object({
+          id: z.number(),
+          name: z.string().nullable().optional(),
+          email: z.string().nullable().optional(),
+          status: attendanceStatus.nullable().optional(),
+          link: z.string().nullable().optional(),
+          review: z.string().nullable().optional(),
+          reviewIsVisible: z.boolean().nullable().optional(),
+          result: attendanceResult.nullable(),
+          comments: z.string().nullable().optional(),
+          createDate: z.string().nullable(),
+          lastModifiedDate: z.string().nullable().optional(),
+        }),
+        optionCodes: z.array(z.string()),
       }),
     ),
   })
   .transform((data) => {
     return {
-      attendanceList: data.attendanceList.map((attendance) => ({
-        ...attendance,
-        createDate: attendance.createDate ? dayjs(attendance.createDate) : null,
-        lastModifiedDate: attendance.lastModifiedDate
-          ? dayjs(attendance.lastModifiedDate)
-          : null,
-      })),
+      ...data,
+      attendanceList: data.attendanceList.map(
+        ({ attendance, optionCodes }) => ({
+          optionCodes,
+          attendance: {
+            ...attendance,
+            createDate: attendance.createDate
+              ? dayjs(attendance.createDate)
+              : null,
+            lastModifiedDate: attendance.lastModifiedDate
+              ? dayjs(attendance.lastModifiedDate)
+              : null,
+          },
+        }),
+      ),
     };
   });
 
-export type Attendance = z.infer<typeof attendances>['attendanceList'][number];
+export type AttendanceItem = z.infer<
+  typeof attendances
+>['attendanceList'][number];
 
 /** GET /api/v1/challenge/{challengeId}/title */
 export const challengeTitleSchema = z.object({
@@ -821,43 +852,6 @@ export const grade = z.union([
 ]);
 
 export type Grade = z.infer<typeof grade>;
-
-/** 참여자 */
-export const getChallengeIdApplications = z
-  .object({
-    applicationList: z.array(
-      z.object({
-        id: z.number(),
-        paymentId: z.number().nullable().optional(),
-        name: z.string().nullable().optional(),
-        email: z.string().nullable().optional(),
-        phoneNum: z.string().nullable().optional(),
-        university: z.string().nullable().optional(),
-        grade: grade.nullable().optional(),
-        major: z.string().nullable().optional(),
-        couponName: z.string().nullable().optional(),
-        /** @deprecated */
-        totalCost: z.number().nullable().optional(),
-        /** @deprecated */
-        isConfirmed: z.boolean().nullable().optional(),
-        isCanceled: z.boolean().nullable().optional(),
-        wishJob: z.string().nullable().optional(),
-        wishCompany: z.string().nullable().optional(),
-        inflowPath: z.string().nullable().optional(),
-        createDate: z.string(),
-        accountType: accountType.nullable().optional(),
-        accountNum: z.string().nullable().optional(),
-      }),
-    ),
-  })
-  .transform((data) => {
-    return {
-      applicationList: data.applicationList.map((application) => ({
-        ...application,
-        createDate: dayjs(application.createDate),
-      })),
-    };
-  });
 
 export const getChallengeIdApplicationsPayback = z
   .object({
@@ -1347,36 +1341,43 @@ export const challengeApplicationsSchema = z
   .object({
     applicationList: z.array(
       z.object({
-        id: z.number(),
-        paymentId: z.number().nullable().optional(),
-        name: z.string().nullable().optional(),
-        email: z.string().nullable().optional(),
-        phoneNum: z.string().nullable().optional(),
-        university: z.string().nullable().optional(),
-        grade: grade.nullable().optional(),
-        major: z.string().nullable().optional(),
-        couponName: z.string().nullable().optional(),
-        couponDiscount: z.number().nullable().optional(),
-        isCanceled: z.boolean().nullable().optional(),
-        wishJob: z.string().nullable().optional(),
-        wishCompany: z.string().nullable().optional(),
-        inflowPath: z.string().nullable().optional(),
-        createDate: z.string().nullable().optional(),
-        accountType: accountType.nullable().optional(),
-        accountNum: z.string().nullable().optional(),
-        orderId: z.string().nullable().optional(),
-        finalPrice: z.number().nullable().optional(),
-        programDiscount: z.number().nullable().optional(),
-        programPrice: z.number().nullable().optional(),
-        refundPrice: z.number().nullable().optional(),
+        application: z.object({
+          id: z.number(),
+          paymentId: z.number().nullable().optional(),
+          name: z.string().nullable().optional(),
+          email: z.string().nullable().optional(),
+          phoneNum: z.string().nullable().optional(),
+          university: z.string().nullable().optional(),
+          grade: grade.nullable().optional(),
+          major: z.string().nullable().optional(),
+          couponName: z.string().nullable().optional(),
+          couponDiscount: z.number().nullable().optional(),
+          isCanceled: z.boolean().nullable().optional(),
+          wishJob: z.string().nullable().optional(),
+          wishCompany: z.string().nullable().optional(),
+          inflowPath: z.string().nullable().optional(),
+          createDate: z.string().nullable().optional(),
+          accountType: accountType.nullable().optional(),
+          accountNum: z.string().nullable().optional(),
+          orderId: z.string().nullable().optional(),
+          finalPrice: z.number().nullable().optional(),
+          programDiscount: z.number().nullable().optional(),
+          programPrice: z.number().nullable().optional(),
+          refundPrice: z.number().nullable().optional(),
+          challengePricePlanType: ChallengePricePlanEnum.nullable().optional(),
+        }),
+        optionCodes: z.array(z.string()),
       }),
     ),
   })
   .transform((data) => {
     return {
-      applicationList: data.applicationList.map((application) => ({
-        ...application,
-        createDate: dayjs(application.createDate),
+      applicationList: data.applicationList.map((item) => ({
+        ...item,
+        application: {
+          ...item.application,
+          createDate: dayjs(item.application.createDate),
+        },
       })),
     };
   });
@@ -1498,7 +1499,7 @@ export const challengeApplicationPriceType = z.object({
   deadline: z.string().nullable().optional(),
   accountType: accountType.nullable().optional(),
   challengePriceType,
-  challengeUserType,
+  challengePricePlanType: ChallengePricePlanEnum,
   challengeParticipationType,
 });
 

@@ -1,7 +1,7 @@
+import { PaymentType } from '@/api/paymentSchema';
 import { ReportType } from '@/api/report';
 import { twMerge } from '@/lib/twMerge';
 import { Link } from 'react-router-dom';
-import { PaymentType } from '../../../../api/paymentSchema';
 import CardStatus from './CardStatus';
 
 export const getReportThumbnail = (reportType: ReportType | null) => {
@@ -17,28 +17,36 @@ export const getReportThumbnail = (reportType: ReportType | null) => {
   }
 };
 
-const CreditListItem = ({ payment }: { payment: PaymentType }) => {
+const CreditListItem = ({
+  payment: { programInfo, tossInfo },
+}: {
+  payment: PaymentType;
+}) => {
+  // 정가
   const originPrice =
-    (payment.programInfo.price || 0) + (payment.programInfo.paybackPrice || 0);
+    (programInfo.price ?? 0) +
+    (programInfo.paybackPrice ?? 0) +
+    (programInfo.optionPrice ?? 0);
+
   return (
     <Link
       className="flex w-full flex-col items-start justify-center gap-y-2"
       to={
-        payment.programInfo.programType === 'REPORT'
-          ? `/mypage/credit/report/${payment.programInfo.paymentId}?applicationId=${payment.programInfo.applicationId}`
-          : `/mypage/credit/${payment.programInfo.paymentId}`
+        programInfo.programType === 'REPORT'
+          ? `/mypage/credit/report/${programInfo.paymentId}?applicationId=${programInfo.applicationId}`
+          : `/mypage/credit/${programInfo.paymentId}`
       }
-      data-program-text={payment.programInfo.title}
+      data-program-text={programInfo.title}
     >
       <CardStatus
         status={
-          payment.programInfo.isRefunded
+          programInfo.isRefunded
             ? 'REFUNDED'
-            : payment.tossInfo && payment.tossInfo.status
-              ? payment.tossInfo.status === 'DONE'
+            : tossInfo && tossInfo.status
+              ? tossInfo.status === 'DONE'
                 ? 'DONE'
                 : 'CANCELED'
-              : payment.programInfo.isCanceled
+              : programInfo.isCanceled
                 ? 'CANCELED'
                 : 'DONE'
         }
@@ -47,28 +55,31 @@ const CreditListItem = ({ payment }: { payment: PaymentType }) => {
         <img
           alt="thumbnail"
           src={
-            payment.programInfo.programType === 'REPORT'
-              ? getReportThumbnail(payment.programInfo.reportType || null)
-              : payment.programInfo.thumbnail || ''
+            programInfo.programType === 'REPORT'
+              ? getReportThumbnail(programInfo.reportType || null)
+              : programInfo.thumbnail || ''
           }
           className={twMerge(
             'h-[97px] w-[137px] rounded-sm object-cover',
-            ((payment.tossInfo && payment.tossInfo?.status !== 'DONE') ||
-              payment.programInfo.isCanceled) &&
+            ((tossInfo && tossInfo?.status !== 'DONE') ||
+              programInfo.isCanceled) &&
               'grayscale',
           )}
         />
         <div className="flex grow flex-col items-start justify-between gap-2 self-stretch">
           <div className="text-xs font-semibold text-neutral-0 md:text-sm">
-            {payment.programInfo.title}
+            {programInfo.title}
           </div>
           <div className="flex grow flex-col items-start justify-start">
-            <div className="text-xs font-medium text-neutral-40 line-through">
-              {originPrice.toLocaleString()}원
-            </div>
+            {/* 할인 없으면 정가 숨기기 */}
+            {originPrice !== tossInfo?.totalAmount && (
+              <div className="text-xs font-medium text-neutral-40 line-through">
+                {originPrice.toLocaleString()}원
+              </div>
+            )}
             <div className="text-sm font-semibold text-neutral-0 md:text-base">
-              {payment.tossInfo && payment.tossInfo.totalAmount
-                ? payment.tossInfo.totalAmount.toLocaleString()
+              {tossInfo && tossInfo.totalAmount
+                ? tossInfo.totalAmount.toLocaleString()
                 : 0}
               원
             </div>

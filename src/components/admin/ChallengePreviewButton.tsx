@@ -1,5 +1,9 @@
+/**
+ * @incomplete 중단된 작업
+ * @deprecated
+ */
+
 import { useGetFaq } from '@/api/faq';
-import dayjs from '@/lib/dayjs';
 import {
   ChallengeIdSchema,
   CreateChallengeReq,
@@ -22,83 +26,83 @@ const ChallengePreviewButton: React.FC<{
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const challenge = useMemo((): ChallengeIdSchema => {
-    // 편집 시
-    if (existing) {
-      return {
-        beginning: dayjs(input.beginning) ?? existing.beginning,
-        challengeType: input.challengeType ?? existing.challengeType,
-        classificationInfo: existing.classificationInfo, // TODO: 수정 필요
-        adminClassificationInfo: existing.adminClassificationInfo, // TODO: 수정 필요
-        deadline: input.deadline ? dayjs(input.deadline) : existing.deadline,
-        endDate: input.endDate ? dayjs(input.endDate) : existing.endDate,
-        faqInfo:
-          faq?.faqList.filter((faq) => inputFaqIdSet.has(faq.id)) ??
-          existing.faqInfo,
-        priceInfo:
-          input.priceInfo?.map((price, index) => ({
-            priceId: index,
-            accountType: price.priceInfo.accountType,
-            challengeParticipationType: price.challengeParticipationType,
-            challengePriceType: price.challengePriceType,
-            challengeUserType: price.challengeUserType,
-            refund: price.refund,
-            deadline: price.priceInfo.deadline
-              ? dayjs(price.priceInfo.deadline)
-              : null,
-            discount: price.priceInfo.discount,
-            price: price.priceInfo.price,
-          })) ?? existing.priceInfo,
-        startDate: input.startDate
-          ? dayjs(input.startDate)
-          : existing.startDate,
-        title: input.title ?? existing.title,
-        chatLink: input.chatLink ?? existing.chatLink,
-        chatPassword: input.chatPassword ?? existing.chatPassword,
-        criticalNotice: input.criticalNotice ?? existing.criticalNotice,
-        desc: JSON.stringify(content) ?? existing.desc,
-        participationCount:
-          input.participationCount ?? existing.participationCount,
-        shortDesc: input.shortDesc ?? existing.shortDesc,
-        thumbnail: input.thumbnail ?? existing.thumbnail,
-      };
-    }
+  // const challenge = useMemo((): ChallengeIdSchema => {
+  //   // 편집 시
+  //   if (existing) {
+  //     return {
+  //       beginning: dayjs(input.beginning) ?? existing.beginning,
+  //       challengeType: input.challengeType ?? existing.challengeType,
+  //       classificationInfo: existing.classificationInfo, // TODO: 수정 필요
+  //       adminClassificationInfo: existing.adminClassificationInfo, // TODO: 수정 필요
+  //       deadline: input.deadline ? dayjs(input.deadline) : existing.deadline,
+  //       endDate: input.endDate ? dayjs(input.endDate) : existing.endDate,
+  //       faqInfo:
+  //         faq?.faqList.filter((faq) => inputFaqIdSet.has(faq.id)) ??
+  //         existing.faqInfo,
+  //       priceInfo:
+  //         input.priceInfo?.map((price, index) => ({
+  //           priceId: index,
+  //           accountType: price.priceInfo.accountType,
+  //           challengeParticipationType: price.challengeParticipationType,
+  //           challengePriceType: price.challengePriceType,
+  //           challengePricePlanType: price.challengePricePlanType,
+  //           refund: price.refund,
+  //           deadline: price.priceInfo.deadline
+  //             ? dayjs(price.priceInfo.deadline)
+  //             : null,
+  //           discount: price.priceInfo.discount,
+  //           price: price.priceInfo.price,
+  //         })) ?? existing.priceInfo,
+  //       startDate: input.startDate
+  //         ? dayjs(input.startDate)
+  //         : existing.startDate,
+  //       title: input.title ?? existing.title,
+  //       chatLink: input.chatLink ?? existing.chatLink,
+  //       chatPassword: input.chatPassword ?? existing.chatPassword,
+  //       criticalNotice: input.criticalNotice ?? existing.criticalNotice,
+  //       desc: JSON.stringify(content) ?? existing.desc,
+  //       participationCount:
+  //         input.participationCount ?? existing.participationCount,
+  //       shortDesc: input.shortDesc ?? existing.shortDesc,
+  //       thumbnail: input.thumbnail ?? existing.thumbnail,
+  //     };
+  //   }
 
-    // 생성 시
+  //   // 생성 시
 
-    return {
-      beginning: dayjs(input.beginning),
-      challengeType: input.challengeType ?? 'CAREER_START', // TODO: 수정 필요
-      classificationInfo: [{ programClassification: 'CAREER_SEARCH' }], // TODO: 수정 필요
-      adminClassificationInfo: [{ programAdminClassification: 'B2C' }], // TODO: 수정 필요
-      deadline: input.deadline ? dayjs(input.deadline) : null,
-      endDate: input.endDate ? dayjs(input.endDate) : null,
-      faqInfo: faq?.faqList.filter((faq) => inputFaqIdSet.has(faq.id)) ?? [],
-      priceInfo:
-        input.priceInfo?.map((price, index) => ({
-          priceId: index,
-          accountType: price.priceInfo.accountType,
-          challengeParticipationType: price.challengeParticipationType,
-          challengePriceType: price.challengePriceType,
-          challengeUserType: price.challengeUserType,
-          refund: price.refund,
-          deadline: price.priceInfo.deadline
-            ? dayjs(price.priceInfo.deadline)
-            : null,
-          discount: price.priceInfo.discount,
-          price: price.priceInfo.price,
-        })) ?? [],
-      startDate: input.startDate ? dayjs(input.startDate) : null,
-      title: input.title,
-      chatLink: input.chatLink,
-      chatPassword: input.chatPassword,
-      criticalNotice: input.criticalNotice,
-      desc: JSON.stringify(content),
-      participationCount: input.participationCount,
-      shortDesc: input.shortDesc,
-      thumbnail: input.thumbnail,
-    };
-  }, [input, content, faq, inputFaqIdSet, existing]);
+  //   return {
+  //     beginning: dayjs(input.beginning),
+  //     challengeType: input.challengeType ?? 'CAREER_START', // TODO: 수정 필요
+  //     classificationInfo: [{ programClassification: 'CAREER_SEARCH' }], // TODO: 수정 필요
+  //     adminClassificationInfo: [{ programAdminClassification: 'B2C' }], // TODO: 수정 필요
+  //     deadline: input.deadline ? dayjs(input.deadline) : null,
+  //     endDate: input.endDate ? dayjs(input.endDate) : null,
+  //     faqInfo: faq?.faqList.filter((faq) => inputFaqIdSet.has(faq.id)) ?? [],
+  //     priceInfo:
+  //       input.priceInfo?.map((price, index) => ({
+  //         priceId: index,
+  //         accountType: price.priceInfo.accountType,
+  //         challengeParticipationType: price.challengeParticipationType,
+  //         challengePriceType: price.challengePriceType,
+  //         challengeUserType: price.challengeUserType,
+  //         refund: price.refund,
+  //         deadline: price.priceInfo.deadline
+  //           ? dayjs(price.priceInfo.deadline)
+  //           : null,
+  //         discount: price.priceInfo.discount,
+  //         price: price.priceInfo.price,
+  //       })) ?? [],
+  //     startDate: input.startDate ? dayjs(input.startDate) : null,
+  //     title: input.title,
+  //     chatLink: input.chatLink,
+  //     chatPassword: input.chatPassword,
+  //     criticalNotice: input.criticalNotice,
+  //     desc: JSON.stringify(content),
+  //     participationCount: input.participationCount,
+  //     shortDesc: input.shortDesc,
+  //     thumbnail: input.thumbnail,
+  //   };
+  // }, [input, content, faq, inputFaqIdSet, existing]);
 
   return (
     <>

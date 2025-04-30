@@ -8,10 +8,9 @@ import {
   ProgramTypeEnum,
   reportTypeSchema,
 } from '../schema';
-import { UsePaymentDetailQueryKey, UsePaymentQueryKey } from './payment';
-
 import { ProgramType } from '../types/common';
 import axios from '../utils/axios';
+import { UsePaymentDetailQueryKey, UsePaymentQueryKey } from './payment';
 import { tossInfoType } from './paymentSchema';
 
 export const programApplicationSchema = z.object({
@@ -28,14 +27,6 @@ export const programApplicationSchema = z.object({
   priceList: z.array(challengeApplicationPriceType).nullable().optional(),
   price: liveApplicationPriceType.nullable().optional(),
 });
-// .transform((data) => {
-//   return {
-//     ...data,
-//     startDate: data.startDate ? dayjs(data.startDate) : null,
-//     endDate: data.endDate ? dayjs(data.endDate) : null,
-//     deadline: data.deadline ? dayjs(data.deadline) : null,
-//   };
-// });
 
 export type ProgramApplicationFormInfo = z.infer<
   typeof programApplicationSchema
@@ -71,17 +62,6 @@ export const useProgramApplicationQuery = (
   });
 };
 
-const useProgramTitleQuery = (programType: ProgramType, programId: number) => {
-  return useQuery({
-    queryKey: ['useProgramTitleQueryKey', programType, programId],
-    queryFn: async () => {
-      const res = await axios.get(`/${programType}/${programId}/title`);
-      return res.data.data;
-    },
-    retry: 0,
-  });
-};
-
 export interface PostApplicationInterface {
   paymentInfo: {
     couponId: number | null;
@@ -102,8 +82,6 @@ export const usePostApplicationMutation = ({
   successCallback?: () => void;
   errorCallback?: (error: Error) => void;
 } = {}) => {
-  // const client = useQueryClient();
-
   return useMutation({
     mutationFn: async ({
       programId,
@@ -121,11 +99,8 @@ export const usePostApplicationMutation = ({
         )
       ).data.data;
     },
-    onSuccess: (data) => {
+    onSuccess: (_) => {
       successCallback?.();
-      //이 mutation이 성공하면 재로딩되어야 하는 쿼리키 invalidate 처리 후 successCallback
-      // client.invalidateQueries(UseUserInfoQueryKey)
-      // .then(() => successCallback());
     },
     onError: (error) => {
       errorCallback?.(error);

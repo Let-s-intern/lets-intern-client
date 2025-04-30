@@ -1,21 +1,19 @@
+import { useMissionsOfCurrentChallengeRefetch } from '@/context/CurrentAdminChallengeProvider';
+import { AttendanceItem } from '@/schema';
+import axios from '@/utils/axios';
+import { attendanceResultToText } from '@/utils/convert';
+import { challengeSubmitDetailCellWidthList } from '@/utils/tableCellWidthList';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { IoMdArrowDropdown } from 'react-icons/io';
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  useAdminCurrentChallenge,
-  useMissionsOfCurrentChallengeRefetch,
-} from '../../../../../../context/CurrentAdminChallengeProvider';
-import { Attendance } from '../../../../../../schema';
-import axios from '../../../../../../utils/axios';
-import { attendanceResultToText } from '../../../../../../utils/convert';
-import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
-
 interface Props {
-  attendance: Attendance;
-  attendanceResult: Attendance['result'];
-  setAttendanceResult: (attendanceResult: Attendance['result']) => void;
+  attendance: AttendanceItem['attendance'];
+  attendanceResult: AttendanceItem['attendance']['result'];
+  setAttendanceResult: (
+    attendanceResult: AttendanceItem['attendance']['result'],
+  ) => void;
   cellWidthListIndex: number;
   setIsRefunded: (isRefunded: boolean) => void;
 }
@@ -26,7 +24,9 @@ interface Props {
 //   WRONG: '반려',
 // };
 
-const getAttendanceResultText = (result: Attendance['result']) => {
+const getAttendanceResultText = (
+  result: AttendanceItem['attendance']['result'],
+) => {
   switch (result) {
     case 'WAITING':
       return '확인중';
@@ -47,14 +47,13 @@ const ResultDropdown = ({
   setIsRefunded,
 }: Props) => {
   const queryClient = useQueryClient();
-  const { currentChallenge } = useAdminCurrentChallenge();
   const [isMenuShown, setIsMenuShown] = useState(false);
   const missionRefetch = useMissionsOfCurrentChallengeRefetch();
 
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
   const editAttendanceStatus = useMutation({
-    mutationFn: async (result: Attendance['result']) => {
+    mutationFn: async (result: AttendanceItem['attendance']['result']) => {
       const res = await axios.patch(`/attendance/${attendance.id}`, {
         result,
         // isRefunded:
@@ -63,7 +62,7 @@ const ResultDropdown = ({
       const data = res.data;
       return data;
     },
-    onSuccess: async (_, result: Attendance['result']) => {
+    onSuccess: async (_, result: AttendanceItem['attendance']['result']) => {
       setIsMenuShown(false);
       setIsRefunded(
         result === 'PASS' && attendanceResult !== 'PASS' ? false : true,

@@ -1,7 +1,7 @@
+import { usePaymentQuery } from '@/api/payment';
+import { PaymentType } from '@/api/paymentSchema';
 import dayjs from '@/lib/dayjs';
 import { Link } from 'react-router-dom';
-import { usePaymentQuery } from '../../../../../api/payment';
-import { PaymentType } from '../../../../../api/paymentSchema';
 import CreditDateContainer from '../CreditDateContainer';
 import CreditListItem from '../CreditListItem';
 
@@ -59,7 +59,7 @@ const CreditList = () => {
         ) : (
           <div className="flex w-full items-center justify-center gap-3 py-5">
             {isLoading ? (
-              <p className="text-neutral-0">결제내역을 불러오는 중입니다.</p>
+              <p className="text-neutral-0">결제내역을 불러오는 중입니다..</p>
             ) : isError ? (
               <p className="text-neutral-0">
                 결제내역을 불러오는 중 오류가 발생했습니다.

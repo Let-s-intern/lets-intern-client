@@ -12,6 +12,7 @@ import { generateUUID } from '@/utils/random';
 import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
 import { CSSProperties, memo, ReactNode, useMemo } from 'react';
+import PriceSummary from '../ui/PriceSummary';
 import MainHeader from './MainHeader';
 import SectionHeader from './SectionHeader';
 import SubHeader from './SubHeader';
@@ -211,7 +212,7 @@ const ReportPlanSection = ({
                     })}
                   </div>
                 </PlanCard>
-                <PriceSection
+                <PriceSummary
                   wrapperClassName="mt-3"
                   originalPrice={premiumPriceInfo?.price ?? 0}
                   discountPrice={premiumPriceInfo?.discountPrice ?? 0}
@@ -235,7 +236,7 @@ const ReportPlanSection = ({
                     ))}
                   </div>
                 </PlanCard>
-                <PriceSection
+                <PriceSummary
                   wrapperClassName="mt-3"
                   originalPrice={basicPriceInfo?.price ?? 0}
                   discountPrice={basicPriceInfo?.discountPrice ?? 0}
@@ -291,7 +292,7 @@ const ReportPlanSection = ({
                       현직자 택 1인 옵션 추가 금액
                     </span>
                     {/* 첫 번째 옵션 가격 표시 */}
-                    <PriceSection
+                    <PriceSummary
                       originalPrice={optionInfos[0].price ?? 0}
                       discountPrice={optionInfos[0].discountPrice ?? 0}
                     />
@@ -339,7 +340,7 @@ const ReportPlanSection = ({
                       ))}
                     </div>
                   </div>
-                  <PriceSection
+                  <PriceSummary
                     originalPrice={feedbackInfo?.feedbackPrice ?? 0}
                     discountPrice={feedbackInfo?.feedbackDiscountPrice ?? 0}
                   />
@@ -472,41 +473,6 @@ const NumberedListItem = memo(function NumberedListItem({
       >
         {children}
       </div>
-    </div>
-  );
-});
-
-const PriceSection = memo(function PriceSection({
-  wrapperClassName,
-  originalPrice,
-  discountPrice,
-}: {
-  wrapperClassName?: string;
-  originalPrice: number;
-  discountPrice: number;
-}) {
-  const finalPrice = originalPrice - discountPrice;
-  const discountRate =
-    originalPrice === 0
-      ? 0
-      : ((discountPrice / originalPrice) * 100).toFixed(0);
-
-  return (
-    <div className={wrapperClassName}>
-      {/* 할인 금액이 0이면 표시 X */}
-      {discountPrice !== 0 && (
-        <div className="flex items-center gap-1">
-          <span className="text-small20 font-bold text-[#FC5555]">
-            {discountRate}%
-          </span>
-          <s className="text-small20 font-bold text-neutral-45">
-            {originalPrice.toLocaleString()}원
-          </s>
-        </div>
-      )}
-      <span className="text-xlarge28 font-bold">
-        {finalPrice.toLocaleString()}원
-      </span>
     </div>
   );
 });

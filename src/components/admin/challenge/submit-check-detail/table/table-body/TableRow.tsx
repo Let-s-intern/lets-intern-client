@@ -1,11 +1,11 @@
 import { usePatchChallengeAttendance } from '@/api/challenge';
 import { useAdminCurrentChallenge } from '@/context/CurrentAdminChallengeProvider';
+import { AttendanceItem, Mission } from '@/schema';
+import { challengeSubmitDetailCellWidthList } from '@/utils/tableCellWidthList';
 import { Switch } from '@mui/material';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Attendance, Mission } from '../../../../../../schema';
-import { challengeSubmitDetailCellWidthList } from '../../../../../../utils/tableCellWidthList';
 import ChoiceCheckbox from './ChoiceCheckbox';
 import CommentCell from './CommentCell';
 import ResultDropdown from './ResultDropdown';
@@ -13,7 +13,7 @@ import ReviewCell from './ReviewCell';
 import StatusDropdown from './StatusDropdown';
 
 interface Props {
-  attendance: Attendance;
+  attendanceItem: AttendanceItem;
   missionDetail?: Mission;
   th?: number;
   bgColor: 'DARK' | 'LIGHT';
@@ -23,16 +23,17 @@ interface Props {
 }
 
 const TableRow = ({
-  attendance,
+  attendanceItem,
   missionDetail,
-  th,
   bgColor,
   isChecked,
   setIsCheckedList,
   refetch,
 }: Props) => {
   const { currentChallenge } = useAdminCurrentChallenge();
-  const [attendanceResult, setAttendanceResult] = useState(attendance.result);
+  const [attendanceResult, setAttendanceResult] = useState(
+    attendanceItem.attendance.result,
+  );
 
   const { mutate: updateAttendance } = usePatchChallengeAttendance({
     errorCallback: (error) => {
@@ -44,10 +45,10 @@ const TableRow = ({
 
   const handleToggle = () => {
     updateAttendance({
-      attendanceId: attendance.id,
+      attendanceId: attendanceItem.attendance.id,
       challengeId: currentChallenge?.id,
       missionId: missionDetail?.id,
-      reviewIsVisible: !attendance.reviewIsVisible,
+      reviewIsVisible: !attendanceItem.attendance.reviewIsVisible,
     });
   };
 
@@ -59,7 +60,7 @@ const TableRow = ({
       })}
     >
       <ChoiceCheckbox
-        attendance={attendance}
+        attendance={attendanceItem.attendance}
         cellWidthListIndex={0}
         isChecked={isChecked}
         setIsCheckedList={setIsCheckedList}
@@ -71,7 +72,7 @@ const TableRow = ({
           cellWidthList[1],
         )}
       >
-        {attendance?.createDate?.format('YYYY-MM-DD HH:mm')}
+        {attendanceItem.attendance?.createDate?.format('YYYY-MM-DD HH:mm')}
       </div>
 
       {/* 이름 */}
@@ -81,7 +82,7 @@ const TableRow = ({
           cellWidthList[2],
         )}
       >
-        {attendance.name}
+        {attendanceItem.attendance.name}
       </div>
 
       {/* 메일 */}
@@ -91,12 +92,25 @@ const TableRow = ({
           cellWidthList[3],
         )}
       >
-        {attendance.email}
+        {attendanceItem.attendance.email}
       </div>
+
+      {/* 옵션 코드 */}
+      <div
+        className={clsx(
+          'my-auto overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
+          cellWidthList[4],
+        )}
+      >
+        {attendanceItem.optionCodes.length > 0
+          ? attendanceItem.optionCodes.join(', ')
+          : '-'}
+      </div>
+
       {/* 제출현황 */}
       <StatusDropdown
-        attendance={attendance}
-        cellWidthListIndex={4}
+        attendance={attendanceItem.attendance}
+        cellWidthListIndex={5}
         refetch={refetch}
       />
 
@@ -104,12 +118,12 @@ const TableRow = ({
       <div
         className={clsx(
           'my-auto overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
-          cellWidthList[5],
+          cellWidthList[6],
         )}
       >
-        {attendance.link && (
+        {attendanceItem.attendance.link && (
           <Link
-            to={attendance.link}
+            to={attendanceItem.attendance.link}
             target="_blank"
             rel="noopenner noreferrer"
             className="rounded-xxs border border-zinc-600 px-4 py-[2px] text-xs duration-200 hover:bg-neutral-700 hover:text-white"
@@ -121,25 +135,28 @@ const TableRow = ({
 
       {/* 확인여부 */}
       <ResultDropdown
-        attendance={attendance}
+        attendance={attendanceItem.attendance}
         attendanceResult={attendanceResult}
         setAttendanceResult={setAttendanceResult}
         setIsRefunded={() => {}}
-        cellWidthListIndex={6}
+        cellWidthListIndex={7}
       />
-      <CommentCell attendance={attendance} cellWidthListIndex={7} />
-      <ReviewCell
-        review={attendance.review ?? undefined}
+      <CommentCell
+        attendance={attendanceItem.attendance}
         cellWidthListIndex={8}
+      />
+      <ReviewCell
+        review={attendanceItem.attendance.review ?? undefined}
+        cellWidthListIndex={9}
       />
       <div
         className={clsx(
           'overflow-hidden text-ellipsis py-3 text-center text-sm',
-          cellWidthList[9],
+          cellWidthList[10],
         )}
       >
         <Switch
-          checked={attendance.reviewIsVisible ?? false}
+          checked={attendanceItem.attendance.reviewIsVisible ?? false}
           onChange={handleToggle}
         />
       </div>
