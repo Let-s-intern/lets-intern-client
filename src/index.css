@@ -385,3 +385,9 @@ input[type='number'] {
   content: '*';
   color: #fc5555;
 }
+
+.mw-1000 {
+  margin: 0 auto;
+  max-width: 1000px;
+  width: 100%;
+}

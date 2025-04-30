@@ -1,30 +1,14 @@
 import { twMerge } from '@/lib/twMerge';
-
-interface OutlinedTextareaProps {
-  className?: string;
-  name?: string;
-  placeholder?: string;
-  value?: string;
-  defaultValue?: string;
-  onChange?: React.ChangeEventHandler<HTMLTextAreaElement>;
-}
+import { TextareaHTMLAttributes } from 'react';
 
 function OutlinedTextarea({
   className,
-  name,
-  placeholder,
-  value,
-  defaultValue,
-  onChange,
-}: OutlinedTextareaProps) {
+  ...restProps
+}: TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return (
     <textarea
       className={twMerge('rounded-sm border p-2', className)}
-      name={name}
-      placeholder={placeholder}
-      value={value}
-      defaultValue={defaultValue}
-      onChange={onChange}
+      {...restProps}
     />
   );
 }

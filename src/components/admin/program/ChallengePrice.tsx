@@ -17,9 +17,15 @@ import {
   Select,
   SelectProps,
 } from '@mui/material';
-import { useMemo, useState } from 'react';
+import { ChangeEvent, useMemo, useState } from 'react';
+import OutlinedTextarea from '../OutlinedTextarea';
 
 const { BASIC, PREMIUM } = ChallengePricePlanEnum.enum;
+
+interface PricePlanInfo {
+  title: string;
+  description: string;
+}
 
 interface IChallengePriceProps<
   T extends CreateChallengeReq | UpdateChallengeReq,
@@ -28,16 +34,18 @@ interface IChallengePriceProps<
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
   options: ChallengeOption[];
   pricePlan: ChallengePricePlan;
-  standardTitle: string;
-  premiumTitle: string;
+  standardInfo: PricePlanInfo;
+  premiumInfo: PricePlanInfo;
   standardOptIds: number[];
   premiumOptIds: number[];
   challengePrice: number;
   onChangePricePlan?: (value: ChallengePricePlan) => void;
   onChangeStandardOptIds: (value: number[]) => void;
   onChangePremiumOptIds: (value: number[]) => void;
-  onChangeStandardTitle: (value: string) => void;
-  onChangePremiumTitle: (value: string) => void;
+  onChangePricePlanInfo: (
+    plan: ChallengePricePlan,
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
 }
 
 const initialPrice: ChallengePriceReq = {
@@ -74,16 +82,15 @@ export default function ChallengePrice<
   setInput,
   options,
   pricePlan,
-  standardTitle,
-  premiumTitle,
+  standardInfo,
+  premiumInfo,
   standardOptIds,
   premiumOptIds,
   challengePrice,
   onChangePricePlan,
   onChangeStandardOptIds,
   onChangePremiumOptIds,
-  onChangeStandardTitle,
-  onChangePremiumTitle,
+  onChangePricePlanInfo,
 }: IChallengePriceProps<T>) {
   const defaultPriceReq: ChallengePriceReq = {
     challengeParticipationType:
@@ -95,6 +102,8 @@ export default function ChallengePrice<
       defaultValue?.[0]?.challengePricePlanType ??
       initialPrice.challengePricePlanType,
     charge: defaultValue?.[0]?.price ?? initialPrice.charge,
+    description: defaultValue?.[0].description,
+    title: defaultValue?.[0].title,
     priceInfo: {
       discount: defaultValue?.[0]?.discount ?? initialPrice.priceInfo.discount,
       price: defaultValue?.[0]?.price ?? initialPrice.priceInfo.price,
@@ -123,8 +132,18 @@ export default function ChallengePrice<
     return result;
   }, [options]);
 
-  // (챌린지 + 옵션) 최종 금액
-  const finalPrice = useMemo(() => {
+  // 스탠다드 최종 금액
+  const standardFinalPrice = useMemo(() => {
+    const optPrice = standardOptIds.reduce((acc, currId) => {
+      const target = options.find((opt) => opt.challengeOptionId === currId);
+      if (!target) return acc;
+      return acc + (target.price ?? 0) - (target.discountPrice ?? 0);
+    }, 0);
+    return optPrice + challengePrice;
+  }, [challengePrice, standardOptIds, options]);
+
+  // 프리미엄 최종 금액
+  const premiumFinalPrice = useMemo(() => {
     const optPrice = standardOptIds
       .concat(premiumOptIds)
       .reduce((acc, currId) => {
@@ -142,8 +161,29 @@ export default function ChallengePrice<
   // 스탠다드, 프리미엄 인풋 표시/숨김 용도
   const [pricePlanValue, setPricePlanValue] = useState(pricePlan);
 
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value, type } = e.target;
+
+    setInput((prev) => ({
+      ...prev,
+      priceInfo: [
+        {
+          ...defaultPriceReq,
+          ...prev.priceInfo?.[0],
+          [name]: type === 'number' ? Number(value) : value,
+          priceInfo: {
+            ...defaultPriceReq.priceInfo,
+            ...prev.priceInfo?.[0].priceInfo,
+          },
+        },
+      ],
+    }));
+  };
+
   return (
-    <div className="flex flex-col gap-3">
+    <section className="flex flex-col gap-3">
       {/* 가격 플랜 */}
       <SelectControl
         labelId="challengePricePlanLabel"
@@ -154,8 +194,9 @@ export default function ChallengePrice<
         menuList={pricePlanMenuList}
         onChange={(e) => {
           setPricePlanValue(e.target.value as ChallengePricePlan);
-          if (onChangePricePlan)
+          if (onChangePricePlan) {
             onChangePricePlan(e.target.value as ChallengePricePlan);
+          }
         }}
       />
       {/* 금액 유형 */}
@@ -203,8 +244,9 @@ export default function ChallengePrice<
       {/* 이용료 금액 */}
       <Input
         label="이용료 금액"
-        name="basicPrice"
+        name="price"
         size="small"
+        type="number"
         placeholder="이용료 금액을 입력해주세요"
         defaultValue={String(defaultPriceReq.charge)}
         onChange={(e) => {
@@ -231,20 +273,10 @@ export default function ChallengePrice<
           label="보증금 금액"
           name="refund"
           size="small"
+          type="number"
           placeholder="보증금 금액을 입력해주세요"
           defaultValue={String(defaultPriceReq.refund)}
-          onChange={(e) => {
-            setInput((prev) => ({
-              ...prev,
-              priceInfo: [
-                {
-                  ...defaultPriceReq,
-                  ...prev.priceInfo?.[0],
-                  refund: Number(e.target.value),
-                },
-              ],
-            }));
-          }}
+          onChange={handleChange}
         />
       )}
       {/* 할인 금액 */}
@@ -252,6 +284,7 @@ export default function ChallengePrice<
         label="할인 금액"
         name="discount"
         size="small"
+        type="number"
         placeholder="할인 금액을 입력해주세요"
         defaultValue={String(defaultPriceReq.priceInfo.discount)}
         onChange={(e) => {
@@ -271,13 +304,30 @@ export default function ChallengePrice<
           }));
         }}
       />
+      {/* 베이직 플랜명 */}
+      <Input
+        label="베이직 플랜명"
+        name="title"
+        size="small"
+        placeholder="베이직 플랜명을 입력해주세요"
+        defaultValue={defaultPriceReq.title ?? ''}
+        onChange={handleChange}
+      />
+      {/* 베이직 플랜 설명 */}
+      <OutlinedTextarea
+        name="description"
+        defaultValue={defaultPriceReq.description ?? ''}
+        placeholder="베이직 플랜 설명을 입력해주세요"
+        onChange={handleChange}
+      />
+
       {/* 스탠다드 옵션 */}
       {pricePlanValue !== BASIC && (
         <>
           <SelectControl
             labelId="standardOptionsLabel"
-            id="standardOptions"
-            name="standardOptions"
+            id="challengeOptionIdList"
+            name="challengeOptionIdList"
             label="스탠다드 옵션"
             multiple
             value={standardOptIds.map((item) => String(item))}
@@ -299,21 +349,28 @@ export default function ChallengePrice<
           />
           <Input
             label="스탠다드 플랜명"
-            name="standardTitle"
+            name="title"
             size="small"
             placeholder="스탠다드 플랜명을 입력해주세요"
-            value={standardTitle}
-            onChange={(e) => onChangeStandardTitle(e.target.value)}
+            value={standardInfo.title}
+            onChange={(e) => onChangePricePlanInfo('STANDARD', e)}
+          />
+          <OutlinedTextarea
+            name="description"
+            value={standardInfo.description}
+            placeholder="스탠다드 플랜 설명을 입력해주세요"
+            onChange={(e) => onChangePricePlanInfo('STANDARD', e)}
           />
         </>
       )}
+
       {/* 프리미엄 옵션 */}
       {pricePlanValue === PREMIUM && (
         <>
           <SelectControl
             labelId="premiumOptionsLabel"
-            id="premiumOptions"
-            name="premiumOptions"
+            id="challengeOptionIdList"
+            name="challengeOptionIdList"
             label="프리미엄 옵션"
             multiple
             value={premiumOptIds.map((item) => String(item))}
@@ -335,19 +392,37 @@ export default function ChallengePrice<
           />
           <Input
             label="프리미엄 플랜명"
-            name="premiumTitle"
+            name="title"
             size="small"
             placeholder="프리미엄 플랜명을 입력해주세요"
-            value={premiumTitle}
-            onChange={(e) => onChangePremiumTitle(e.target.value)}
+            value={premiumInfo.title}
+            onChange={(e) => onChangePricePlanInfo('PREMIUM', e)}
+          />
+          <OutlinedTextarea
+            name="description"
+            value={premiumInfo.description}
+            placeholder="프리미엄 플랜 설명을 입력해주세요"
+            onChange={(e) => onChangePricePlanInfo('PREMIUM', e)}
           />
         </>
       )}
-      <p>
-        <b>최종금액</b>: {finalPrice.toLocaleString()}원{' '}
-        {isDeposit && '(보증금 포함)'}
-      </p>
-    </div>
+
+      <div>
+        <p>
+          <b>베이직 금액</b>: {challengePrice.toLocaleString()}원
+        </p>
+        {pricePlan !== 'BASIC' && (
+          <p>
+            <b>스탠다드 금액</b>: {standardFinalPrice.toLocaleString()}원
+          </p>
+        )}
+        {pricePlan === 'PREMIUM' && (
+          <p>
+            <b>프리미엄 금액</b>: {premiumFinalPrice.toLocaleString()}원
+          </p>
+        )}
+      </div>
+    </section>
   );
 }
 

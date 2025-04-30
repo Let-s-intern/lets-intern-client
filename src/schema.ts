@@ -221,6 +221,7 @@ const missionStatusType = z.union([
 
 export const challengePriceInfoSchema = z.object({
   title: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
   priceId: z.number(),
   price: z.number().optional().nullable(),
   refund: z.number().optional().nullable(),
@@ -364,10 +365,11 @@ export type ChallengePriceReq = {
     price: number;
     discount: number;
     accountNumber?: string | null;
-    deadline?: string | null; // "2024-10-12T08:03:17.016Z"
     accountType?: AccountType | null;
+    deadline?: string | null; // 사용 안 함
   };
   title?: string | null;
+  description?: string | null;
   charge: number;
   refund: number;
   challengePriceType: ChallengePriceType;

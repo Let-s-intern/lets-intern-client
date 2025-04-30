@@ -9,8 +9,8 @@ import ProgramBlogReviewEditor from '@/components/admin/program/ProgramBlogRevie
 import FaqSection from '@/components/FaqSection';
 import ProgramRecommendEditor from '@/components/ProgramRecommendEditor';
 import useAdminChallenge from '@/hooks/useAdminChallenge';
+import useAdminChallengeOption from '@/hooks/useAdminChallengeOption';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import useChallengeOption from '@/hooks/useChallengeOption';
 import { challengeToCreateInput } from '@/hooks/useDuplicateProgram';
 import dayjs from '@/lib/dayjs';
 import {
@@ -74,7 +74,6 @@ const initialInput: Omit<CreateChallengeReq, 'desc'> = {
 /**
  * 챌린지 생성 페이지
  */
-
 const ChallengeCreate: React.FC = () => {
   const navigate = useNavigate();
   const { snackbar } = useAdminSnackbar();
@@ -105,12 +104,13 @@ const ChallengeCreate: React.FC = () => {
     data: challengeOptions,
     standardOptIds,
     premiumOptIds,
-    pricePlanTitles,
-    handleChangePricePlanTitle,
+    standardInfo,
+    premiumInfo,
+    handleChangeInfo,
     handleChangePricePlan,
     setStandardOptIds,
     setPremiumOptIds,
-  } = useChallengeOption();
+  } = useAdminChallengeOption();
 
   /** 챌린지 관련 함수 */
   const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -140,7 +140,7 @@ const ChallengeCreate: React.FC = () => {
     if (pricePlan.current !== BASIC) {
       newPriceInfo.push({
         ...basicPriceInfo,
-        title: pricePlanTitles.standard,
+        ...standardInfo,
         challengePricePlanType: STANDARD,
         challengeOptionIdList: standardOptIds,
       });
@@ -149,7 +149,7 @@ const ChallengeCreate: React.FC = () => {
     if (pricePlan.current === PREMIUM) {
       newPriceInfo.push({
         ...basicPriceInfo,
-        title: pricePlanTitles.premium,
+        ...premiumInfo,
         challengePricePlanType: PREMIUM,
         challengeOptionIdList: [
           ...new Set(standardOptIds.concat(premiumOptIds)),
@@ -177,8 +177,8 @@ const ChallengeCreate: React.FC = () => {
     navigate,
     premiumOptIds,
     pricePlan,
-    pricePlanTitles.premium,
-    pricePlanTitles.standard,
+    premiumInfo,
+    standardInfo,
     standardOptIds,
   ]);
 
@@ -241,11 +241,10 @@ const ChallengeCreate: React.FC = () => {
               ),
               priceInfo: input.priceInfo.map((info) => ({
                 ...info,
-                deadline: info.priceInfo.deadline
-                  ? dayjs(info.priceInfo.deadline)
-                  : null,
+                // 타입 맞추는 용도
                 priceId: 0,
-                challengeOptionList: [], // (타입 맞추는 용도) ChallengeBasic에서 필요 없음
+                deadline: null,
+                challengeOptionList: [],
               })),
             }}
             setInput={setInput}
@@ -280,6 +279,7 @@ const ChallengeCreate: React.FC = () => {
                 price: input.priceInfo[0].priceInfo.price,
                 discount: input.priceInfo[0].priceInfo.discount,
                 title: '',
+                description: '',
                 challengeOptionList: [],
               },
             ]}
@@ -287,15 +287,10 @@ const ChallengeCreate: React.FC = () => {
             options={challengeOptions?.challengeOptionList ?? []}
             standardOptIds={standardOptIds}
             premiumOptIds={premiumOptIds}
-            standardTitle={pricePlanTitles.standard}
-            premiumTitle={pricePlanTitles.premium}
+            standardInfo={standardInfo}
+            premiumInfo={premiumInfo}
             pricePlan={pricePlan.current}
-            onChangePremiumTitle={(value) =>
-              handleChangePricePlanTitle(PREMIUM, value)
-            }
-            onChangeStandardTitle={(value) =>
-              handleChangePricePlanTitle(STANDARD, value)
-            }
+            onChangePricePlanInfo={handleChangeInfo}
             onChangePremiumOptIds={(ids) => setPremiumOptIds(ids)}
             onChangeStandardOptIds={(ids) => setStandardOptIds(ids)}
             onChangePricePlan={handleChangePricePlan}
@@ -309,9 +304,7 @@ const ChallengeCreate: React.FC = () => {
             }}
             setInput={setInput}
             onDeadlineChange={(value) => {
-              if (!value) {
-                return;
-              }
+              if (!value) return;
 
               setInput((prev) => ({
                 ...prev,

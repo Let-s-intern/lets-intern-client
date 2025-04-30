@@ -1,4 +1,5 @@
 import { useProgramApplicationQuery } from '@/api/application';
+import useChallengeOptionPriceInfo from '@/hooks/useChallengeOptionPriceInfo';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import {
   ChallengeIdPrimitive,
@@ -27,9 +28,6 @@ function PricePlanBottomSheet({
   isOpen: boolean;
   onClose: () => void;
 }) {
-  const basicPriceInfo = challenge.priceInfo.find(
-    (item) => item.challengePricePlanType === BASIC,
-  );
   const standardPriceInfo = challenge.priceInfo.find(
     (item) => item.challengePricePlanType === STANDARD,
   );
@@ -44,86 +42,45 @@ function PricePlanBottomSheet({
 
   const [pricePlan, setPricePlan] = useState<ChallengePricePlan>(defaultValue);
 
-  /** 플랜 별 모든 가격 정보
-   * 베이직: 기본 챌린지 금액
-   * 스탠다드: 베이직에 스탠다드 옵션 금액을 더함
-   * 프리미엄: 베이직에 프리미엄 옵션 금액을 더함
-   */
-  const totalPriceInfo = useMemo(() => {
-    const challengePriceInfo = challenge.priceInfo[0]; // [주의] 옵션 도입 전 챌린지는 challengePricePlanType이 null임
-
-    // 베이직
-    const basicRegularPrice = basicPriceInfo
-      ? (basicPriceInfo?.price ?? 0) + (basicPriceInfo?.refund ?? 0)
-      : (challengePriceInfo.price ?? 0) + (challengePriceInfo.refund ?? 0); // 정가 = 이용료 + 보증금
-    const basicDiscountPrice = basicPriceInfo
-      ? (basicPriceInfo?.discount ?? 0)
-      : (challengePriceInfo.discount ?? 0);
-
-    // 스탠다드
-    const standardRegularPrice = standardPriceInfo
-      ? (basicRegularPrice ?? 0) +
-        standardPriceInfo.challengeOptionList.reduce(
-          (acc, curr) => acc + (curr.price ?? 0),
-          0,
-        )
-      : 0;
-    const standardDiscountPrice = standardPriceInfo
-      ? (basicDiscountPrice ?? 0) +
-        standardPriceInfo.challengeOptionList.reduce(
-          (acc, curr) => acc + (curr.discountPrice ?? 0),
-          0,
-        )
-      : 0;
-
-    // 프리미엄
-    const premiumRegularPrice = premiumPriceInfo
-      ? (basicRegularPrice ?? 0) +
-        premiumPriceInfo.challengeOptionList.reduce(
-          (acc, curr) => acc + (curr.price ?? 0),
-          0,
-        )
-      : 0;
-    const premiumDiscountPrice = premiumPriceInfo
-      ? (basicDiscountPrice ?? 0) +
-        premiumPriceInfo.challengeOptionList.reduce(
-          (acc, curr) => acc + (curr.discountPrice ?? 0),
-          0,
-        )
-      : 0;
-
-    return {
-      basicRegularPrice,
-      basicDiscountPrice,
-      standardRegularPrice,
-      standardDiscountPrice,
-      premiumRegularPrice,
-      premiumDiscountPrice,
-    };
-  }, [challenge.priceInfo]);
+  const {
+    basicRegularPrice,
+    basicDiscountAmount,
+    standardRegularPrice,
+    standardDiscountAmount,
+    premiumRegularPrice,
+    premiumDiscountAmount,
+  } = useChallengeOptionPriceInfo(challenge.priceInfo);
 
   /* 최종 정가 & 할인 금액 */
   const finalPriceInfo = useMemo(() => {
     // 베이직 최종 금액
     if (pricePlan === BASIC) {
       return {
-        regularPrice: totalPriceInfo.basicRegularPrice, // 정가
-        discountPrice: totalPriceInfo.basicDiscountPrice,
+        regularPrice: basicRegularPrice, // 정가
+        discountPrice: basicDiscountAmount,
       };
     }
     // 스탠다드 최종 금액
     if (pricePlan === STANDARD) {
       return {
-        regularPrice: totalPriceInfo.standardRegularPrice, // 정가
-        discountPrice: totalPriceInfo.standardDiscountPrice,
+        regularPrice: standardRegularPrice, // 정가
+        discountPrice: standardDiscountAmount,
       };
     }
     // 프리미엄 최종 금액
     return {
-      regularPrice: totalPriceInfo.premiumRegularPrice, // 정가
-      discountPrice: totalPriceInfo.premiumDiscountPrice,
+      regularPrice: premiumRegularPrice, // 정가
+      discountPrice: premiumDiscountAmount,
     };
-  }, [pricePlan, totalPriceInfo]);
+  }, [
+    pricePlan,
+    basicRegularPrice,
+    basicDiscountAmount,
+    standardRegularPrice,
+    standardDiscountAmount,
+    premiumRegularPrice,
+    premiumDiscountAmount,
+  ]);
 
   // 챌린지 참여자 목록 조회
   const { data: application } = useProgramApplicationQuery(
@@ -224,8 +181,8 @@ function PricePlanBottomSheet({
                 wrapperClassName="py-3 pl-2 pr-3 border-b border-neutral-80"
                 right={
                   <PriceView
-                    price={totalPriceInfo.premiumRegularPrice}
-                    discount={totalPriceInfo.premiumDiscountPrice}
+                    price={premiumRegularPrice}
+                    discount={premiumDiscountAmount}
                   />
                 }
               />
@@ -238,8 +195,8 @@ function PricePlanBottomSheet({
                 wrapperClassName="py-3 pl-2 pr-3 border-b border-neutral-80"
                 right={
                   <PriceView
-                    price={totalPriceInfo.standardRegularPrice}
-                    discount={totalPriceInfo.standardDiscountPrice}
+                    price={standardRegularPrice}
+                    discount={standardDiscountAmount}
                   />
                 }
               />
@@ -251,8 +208,8 @@ function PricePlanBottomSheet({
               wrapperClassName="py-3 pl-2 pr-3"
               right={
                 <PriceView
-                  price={totalPriceInfo.basicRegularPrice}
-                  discount={totalPriceInfo.basicDiscountPrice}
+                  price={basicRegularPrice}
+                  discount={basicDiscountAmount}
                 />
               }
             />
