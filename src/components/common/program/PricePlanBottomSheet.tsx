@@ -17,6 +17,22 @@ import PriceView from '../ui/PriceView';
 
 const { STANDARD, PREMIUM, BASIC } = ChallengePricePlanEnum.enum;
 
+function PricePlanLabel({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) {
+  return (
+    <>
+      <b className="font-bold">{title}</b>
+      <br />
+      <span className="text-neutral-10">{description}</span>
+    </>
+  );
+}
+
 function PricePlanBottomSheet({
   challenge,
   challengeId,
@@ -28,6 +44,9 @@ function PricePlanBottomSheet({
   isOpen: boolean;
   onClose: () => void;
 }) {
+  const basicPriceInfo =
+    challenge.priceInfo.find((item) => item.challengePricePlanType === BASIC) ??
+    challenge.priceInfo[0];
   const standardPriceInfo = challenge.priceInfo.find(
     (item) => item.challengePricePlanType === STANDARD,
   );
@@ -176,7 +195,12 @@ function PricePlanBottomSheet({
             {premiumPriceInfo && (
               <OptionFormRadioControlLabel
                 key={PREMIUM}
-                label={premiumPriceInfo.title}
+                label={
+                  <PricePlanLabel
+                    title={premiumPriceInfo.title ?? ''}
+                    description={premiumPriceInfo.description ?? ''}
+                  />
+                }
                 value={PREMIUM}
                 wrapperClassName="py-3 pl-2 pr-3 border-b border-neutral-80"
                 right={
@@ -190,7 +214,12 @@ function PricePlanBottomSheet({
             {standardPriceInfo && (
               <OptionFormRadioControlLabel
                 key={STANDARD}
-                label={standardPriceInfo.title}
+                label={
+                  <PricePlanLabel
+                    title={standardPriceInfo.title ?? ''}
+                    description={standardPriceInfo.description ?? ''}
+                  />
+                }
                 value={STANDARD}
                 wrapperClassName="py-3 pl-2 pr-3 border-b border-neutral-80"
                 right={
@@ -203,7 +232,12 @@ function PricePlanBottomSheet({
             )}
             <OptionFormRadioControlLabel
               key={BASIC}
-              label="베이직 플랜"
+              label={
+                <PricePlanLabel
+                  title={basicPriceInfo.title ?? ''}
+                  description={basicPriceInfo.description ?? ''}
+                />
+              }
               value={BASIC}
               wrapperClassName="py-3 pl-2 pr-3"
               right={
