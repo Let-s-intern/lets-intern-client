@@ -13,8 +13,8 @@ import ProgramBlogReviewEditor from '@/components/admin/program/ProgramBlogRevie
 import FaqSection from '@/components/FaqSection';
 import ProgramRecommendEditor from '@/components/ProgramRecommendEditor';
 import useAdminChallenge from '@/hooks/useAdminChallenge';
+import useAdminChallengeOption from '@/hooks/useAdminChallengeOption';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import useChallengeOption from '@/hooks/useChallengeOption';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import {
   ChallengePricePlanEnum,
@@ -119,7 +119,7 @@ const ChallengeEdit: React.FC = () => {
     handleChangePricePlan,
     setStandardOptIds,
     setPremiumOptIds,
-  } = useChallengeOption(challenge);
+  } = useAdminChallengeOption(challenge);
 
   /** 챌린지 관련 함수 */
   const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
