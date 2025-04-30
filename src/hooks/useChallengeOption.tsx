@@ -4,7 +4,7 @@ import {
   ChallengePricePlan,
   ChallengePricePlanEnum,
 } from '@/schema';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 const { BASIC, STANDARD, PREMIUM } = ChallengePricePlanEnum.enum;
 
@@ -24,18 +24,32 @@ export default function useChallengeOption(challenge?: ChallengeIdSchema) {
 
   const [standardOptIds, setStandardOptIds] = useState<number[]>([]);
   const [premiumOptIds, setPremiumOptIds] = useState<number[]>([]);
-  const [pricePlanTitles, setPricePlanTitles] = useState({
-    standard: '',
-    premium: '',
+  const [standardInfo, setStandardInfo] = useState({
+    title: '',
+    description: '',
+  });
+  const [premiumInfo, setPremiumInfo] = useState({
+    title: '',
+    description: '',
   });
 
   /** 옵션 관련 함수*/
-  const handleChangePricePlanTitle = useCallback(
-    (pricePlan: ChallengePricePlan, value: string) => {
-      setPricePlanTitles((prev) => ({
-        ...prev,
-        [pricePlan === 'PREMIUM' ? 'premium' : 'standard']: value,
-      }));
+  const handleChangeInfo = useCallback(
+    (
+      pricePlan: ChallengePricePlan,
+      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    ) => {
+      if (pricePlan === 'PREMIUM') {
+        setPremiumInfo((prev) => ({
+          ...prev,
+          [e.target.name]: e.target.value,
+        }));
+      } else {
+        setStandardInfo((prev) => ({
+          ...prev,
+          [e.target.name]: e.target.value,
+        }));
+      }
     },
     [],
   );
@@ -46,13 +60,13 @@ export default function useChallengeOption(challenge?: ChallengeIdSchema) {
 
     // 프리미엄 초기화
     setPremiumOptIds([]);
-    setPricePlanTitles((prev) => ({ ...prev, premium: '' }));
+    setPremiumInfo({ title: '', description: '' });
 
     if (value === STANDARD) return;
 
     // 스탠다드 초기화
     setStandardOptIds([]);
-    setPricePlanTitles((prev) => ({ ...prev, standard: '' }));
+    setStandardInfo({ title: '', description: '' });
   }, []);
 
   useEffect(() => {
@@ -63,10 +77,10 @@ export default function useChallengeOption(challenge?: ChallengeIdSchema) {
       (item) => item.challengeOptionId,
     );
     setStandardOptIds(initialStandardOptIds);
-    setPricePlanTitles((prev) => ({
-      ...prev,
-      standard: standardPriceInfo.title ?? '',
-    }));
+    setStandardInfo({
+      title: standardPriceInfo.title ?? '',
+      description: standardPriceInfo.description ?? '',
+    });
 
     // 프리미엄 옵션 정보를 상태에 저장
     if (!premiumPriceInfo) return;
@@ -77,10 +91,10 @@ export default function useChallengeOption(challenge?: ChallengeIdSchema) {
     setPremiumOptIds(
       optIds.filter((id) => !initialStandardOptIds.includes(id)),
     );
-    setPricePlanTitles((prev) => ({
-      ...prev,
-      premium: premiumPriceInfo.title ?? '',
-    }));
+    setPremiumInfo({
+      title: premiumPriceInfo.title ?? '',
+      description: premiumPriceInfo.description ?? '',
+    });
   }, [standardPriceInfo, premiumPriceInfo]);
 
   return {
@@ -90,11 +104,13 @@ export default function useChallengeOption(challenge?: ChallengeIdSchema) {
     data,
     standardOptIds,
     premiumOptIds,
-    pricePlanTitles,
-    handleChangePricePlanTitle,
+    standardInfo,
+    premiumInfo,
+    handleChangeInfo,
     handleChangePricePlan,
     setStandardOptIds,
     setPremiumOptIds,
-    setPricePlanTitles,
+    setStandardInfo,
+    setPremiumInfo,
   };
 }

@@ -30,8 +30,6 @@ const LiveInformation = ({
     }));
   };
 
-  console.log(editorContent);
-
   const setReasonFields = (
     reasonFields: {
       title: string;
