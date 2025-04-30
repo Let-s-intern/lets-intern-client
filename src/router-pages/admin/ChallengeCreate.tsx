@@ -74,7 +74,6 @@ const initialInput: Omit<CreateChallengeReq, 'desc'> = {
 /**
  * 챌린지 생성 페이지
  */
-
 const ChallengeCreate: React.FC = () => {
   const navigate = useNavigate();
   const { snackbar } = useAdminSnackbar();
@@ -280,6 +279,7 @@ const ChallengeCreate: React.FC = () => {
                 price: input.priceInfo[0].priceInfo.price,
                 discount: input.priceInfo[0].priceInfo.discount,
                 title: '',
+                description: '',
                 challengeOptionList: [],
               },
             ]}

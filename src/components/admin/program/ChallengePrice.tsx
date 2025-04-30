@@ -95,6 +95,8 @@ export default function ChallengePrice<
       defaultValue?.[0]?.challengePricePlanType ??
       initialPrice.challengePricePlanType,
     charge: defaultValue?.[0]?.price ?? initialPrice.charge,
+    description: defaultValue?.[0].description,
+    title: defaultValue?.[0].title,
     priceInfo: {
       discount: defaultValue?.[0]?.discount ?? initialPrice.priceInfo.discount,
       price: defaultValue?.[0]?.price ?? initialPrice.priceInfo.price,
@@ -154,8 +156,9 @@ export default function ChallengePrice<
         menuList={pricePlanMenuList}
         onChange={(e) => {
           setPricePlanValue(e.target.value as ChallengePricePlan);
-          if (onChangePricePlan)
+          if (onChangePricePlan) {
             onChangePricePlan(e.target.value as ChallengePricePlan);
+          }
         }}
       />
       {/* 금액 유형 */}
@@ -271,6 +274,31 @@ export default function ChallengePrice<
           }));
         }}
       />
+      {/* 베이직 플랜명 */}
+      <Input
+        label="베이직 플랜명"
+        name="title"
+        size="small"
+        placeholder="베이직 플랜명을 입력해주세요"
+        defaultValue={defaultPriceReq.title ?? ''}
+        onChange={(e) =>
+          setInput((prev) => ({
+            ...prev,
+            priceInfo: [
+              {
+                ...defaultPriceReq,
+                ...prev.priceInfo?.[0],
+                title: e.target.value,
+                priceInfo: {
+                  ...defaultPriceReq.priceInfo,
+                  ...prev.priceInfo?.[0].priceInfo,
+                },
+              },
+            ],
+          }))
+        }
+      />
+
       {/* 스탠다드 옵션 */}
       {pricePlanValue !== BASIC && (
         <>

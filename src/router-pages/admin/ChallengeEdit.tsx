@@ -83,6 +83,7 @@ const ChallengeEdit: React.FC = () => {
         accountType: challenge?.priceInfo[0].accountType,
       },
       title: '',
+      description: '',
       charge: challenge?.priceInfo[0].price ?? 0,
       refund: challenge?.priceInfo[0].refund ?? 0,
       challengePriceType:
@@ -114,8 +115,6 @@ const ChallengeEdit: React.FC = () => {
   /** 챌린지 옵션  */
   const {
     pricePlan,
-    standardPriceInfo,
-    premiumPriceInfo,
     data: challengeOptions,
     standardOptIds,
     premiumOptIds,
@@ -124,7 +123,6 @@ const ChallengeEdit: React.FC = () => {
     handleChangePricePlan,
     setStandardOptIds,
     setPremiumOptIds,
-    setPricePlanTitles,
   } = useChallengeOption(challenge);
 
   /** 챌린지 관련 함수 */
