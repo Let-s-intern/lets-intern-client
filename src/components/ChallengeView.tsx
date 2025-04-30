@@ -307,10 +307,12 @@ const ChallengeView: React.FC<{
           </div>
 
           {/* 가격 플랜 */}
-          <ChallengePricePlanSection
-            challengeType={challenge.challengeType}
-            priceInfoList={challenge.priceInfo}
-          />
+          {challenge.priceInfo.length >= 2 && (
+            <ChallengePricePlanSection
+              challengeType={challenge.challengeType}
+              priceInfoList={challenge.priceInfo}
+            />
+          )}
 
           {/* 후기 섹션 */}
           {reviewExists && (
