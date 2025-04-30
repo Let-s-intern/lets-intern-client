@@ -155,7 +155,6 @@ export default function ChallengePrice<
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value, type } = e.target;
-    console.log(name, type, value);
 
     setInput((prev) => ({
       ...prev,
