@@ -1,7 +1,11 @@
 import { twMerge } from '@/lib/twMerge';
 import { CSSProperties, memo, ReactNode } from 'react';
 
-function SubHeader({
+/**
+ * @todo report 폴더 SectionHeader 삭제해야 함
+ */
+
+function SectionHeader({
   children,
   className,
   style,
@@ -13,7 +17,7 @@ function SubHeader({
   return (
     <span
       className={twMerge(
-        'block whitespace-pre-line text-center text-xsmall16 font-bold md:text-small20',
+        'block text-center text-xsmall14 font-semibold text-neutral-45 md:text-small18',
         className,
       )}
       style={style}
@@ -23,4 +27,4 @@ function SubHeader({
   );
 }
 
-export default memo(SubHeader);
+export default memo(SectionHeader);
