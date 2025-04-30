@@ -5,9 +5,11 @@ import {
   challengeTypeSchema,
 } from '@/schema';
 import { challengeColors } from '@components/ChallengeView';
-import SuperTitle from '@components/common/program/program-detail/SuperTitle';
-import Heading2 from '@components/common/ui/Heading2';
-import PriceView from '@components/common/ui/PriceView';
+
+import PriceSummary from '@components/common/ui/PriceSummary';
+import SectionHeader from '@components/ui/SectionHeader';
+import SectionMainHeader from '@components/ui/SectionMainHeader';
+import SectionSubHeader from '@components/ui/SectionSubHeader';
 import { CSSProperties, memo, useMemo } from 'react';
 
 const {
@@ -33,15 +35,18 @@ const PricePlanCard = memo(function PricePlanCard({
   paragraphStyle,
 }: CardProps) {
   return (
-    <div className="flex-1 rounded-sm bg-white px-5 py-7 text-left">
-      <h4 className="mb-6 text-small20 font-bold">{title}</h4>
+    <div className="w-72 rounded-sm bg-white px-5 py-7 text-left text-neutral-0 md:flex-1">
+      <h4 className="mb-6 text-xsmall16 font-bold md:text-small20">{title}</h4>
       <p
         style={paragraphStyle}
-        className="mb-[52px] min-h-28 whitespace-pre-line rounded-xxs bg-[#F1F4FF] px-3 py-5 text-small18 font-medium"
+        className="mb-[52px] min-h-28 whitespace-pre-line rounded-xxs bg-[#F1F4FF] px-3 py-5 text-xsmall14 font-medium md:text-small18"
       >
         {description}
       </p>
-      <PriceView price={originalPrice} discount={discountAmount} />
+      <PriceSummary
+        originalPrice={originalPrice}
+        discountPrice={discountAmount}
+      />
     </div>
   );
 });
@@ -58,37 +63,33 @@ function ChallengePricePlanSection({ challengeType, priceInfoList }: Props) {
         return {
           primaryColor: challengeColors._4D55F5,
           primaryLightColor: challengeColors.F3F4FF,
-          borderColor: challengeColors._4D55F5,
         };
       case PORTFOLIO:
         return {
           primaryColor: challengeColors._4A76FF,
           primaryLightColor: challengeColors.F0F4FF,
-          borderColor: challengeColors._4A76FF,
         };
       case PERSONAL_STATEMENT_LARGE_CORP:
         return {
           primaryColor: challengeColors._14BCFF,
           primaryLightColor: challengeColors.EEFAFF,
-          borderColor: challengeColors._14BCFF,
         };
       case EXPERIENCE_SUMMARY:
         return {
           primaryColor: challengeColors.F26646,
           primaryLightColor: challengeColors.FFF6F4,
-          borderColor: challengeColors.FFC6B9,
         };
       // 자소서
       default:
         return {
           primaryColor: challengeColors._14BCFF,
           primaryLightColor: challengeColors.EEFAFF,
-          borderColor: challengeColors._14BCFF,
         };
     }
   }, [challengeType]);
 
   const paragraphStyle = { backgroundColor: styles.primaryLightColor };
+  const subHeaderStyle = { color: styles.primaryColor };
 
   const basicePriceInfo = priceInfoList.find(
     (item) => item.challengePricePlanType === 'BASIC',
@@ -110,37 +111,39 @@ function ChallengePricePlanSection({ challengeType, priceInfoList }: Props) {
   } = useChallengeOptionPriceInfo(priceInfoList);
 
   return (
-    <section className="w-full bg-neutral-90 text-center">
-      <span className="text-xsmall16 font-bold text-neutral-45 md:text-small18">
-        가격 구성
-      </span>
-      <SuperTitle style={{ color: styles.primaryColor }}>
+    <section className="w-full bg-neutral-90 px-5 pb-[8.75rem] pt-[6.25rem] text-center lg:px-0">
+      <SectionHeader className="mb-6 md:mb-14">가격 구성</SectionHeader>
+      <SectionSubHeader className="mb-1 md:mb-3" style={subHeaderStyle}>
         취준 비용 부담은 낮추고, 퀄리티는 높이고
-      </SuperTitle>
-      <Heading2>내게 가장 알맞은 구성을 선택할 수 있어요!</Heading2>
-
-      <div className="mw-1000 flex items-center justify-center gap-3">
-        <PricePlanCard
-          paragraphStyle={paragraphStyle}
-          title={basicePriceInfo?.title ?? ''}
-          description={basicePriceInfo?.description ?? ''}
-          originalPrice={basicRegularPrice}
-          discountAmount={basicDiscountAmount}
-        />
-        <PricePlanCard
-          paragraphStyle={paragraphStyle}
-          title={standardPriceInfo?.title ?? ''}
-          description={standardPriceInfo?.description ?? ''}
-          originalPrice={standardRegularPrice}
-          discountAmount={standardDiscountAmount}
-        />
-        <PricePlanCard
-          paragraphStyle={paragraphStyle}
-          title={premiumPriceInfo?.title ?? ''}
-          description={premiumPriceInfo?.description ?? ''}
-          originalPrice={premiumRegularPrice}
-          discountAmount={premiumDiscountAmount}
-        />
+      </SectionSubHeader>
+      <SectionMainHeader className="mb-12">
+        내게 가장 알맞은 구성을 선택할 수 있어요!
+      </SectionMainHeader>
+      {/* 좌우 슬라이드 */}
+      <div className="-mx-5 overflow-x-auto px-5 md:max-w-[1000px] lg:mx-auto lg:px-0">
+        <div className="flex min-w-fit items-center gap-3">
+          <PricePlanCard
+            paragraphStyle={paragraphStyle}
+            title={basicePriceInfo?.title ?? ''}
+            description={basicePriceInfo?.description ?? ''}
+            originalPrice={basicRegularPrice}
+            discountAmount={basicDiscountAmount}
+          />
+          <PricePlanCard
+            paragraphStyle={paragraphStyle}
+            title={standardPriceInfo?.title ?? ''}
+            description={standardPriceInfo?.description ?? ''}
+            originalPrice={standardRegularPrice}
+            discountAmount={standardDiscountAmount}
+          />
+          <PricePlanCard
+            paragraphStyle={paragraphStyle}
+            title={premiumPriceInfo?.title ?? ''}
+            description={premiumPriceInfo?.description ?? ''}
+            originalPrice={premiumRegularPrice}
+            discountAmount={premiumDiscountAmount}
+          />
+        </div>
       </div>
     </section>
   );
