@@ -12,11 +12,9 @@ import ProgramBestReview from '@/components/admin/program/ProgramBestReview';
 import ProgramBlogReviewEditor from '@/components/admin/program/ProgramBlogReviewEditor';
 import FaqSection from '@/components/FaqSection';
 import ProgramRecommendEditor from '@/components/ProgramRecommendEditor';
-import { YYYY_MMDD_THHmmss } from '@/data/dayjsFormat';
 import useAdminChallenge from '@/hooks/useAdminChallenge';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import useChallengeOption from '@/hooks/useChallengeOption';
-import dayjs from '@/lib/dayjs';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import {
   ChallengePricePlanEnum,
@@ -77,13 +75,10 @@ const ChallengeEdit: React.FC = () => {
         price: challenge?.priceInfo[0].price ?? 0,
         discount: challenge?.priceInfo[0].discount ?? 0,
         accountNumber: challenge?.priceInfo[0].accountNumber,
-        deadline: dayjs(challenge?.priceInfo[0].deadline).format(
-          YYYY_MMDD_THHmmss,
-        ),
         accountType: challenge?.priceInfo[0].accountType,
       },
-      title: '',
-      description: '',
+      title: challenge?.priceInfo[0].title ?? '',
+      description: challenge?.priceInfo[0].description ?? '',
       charge: challenge?.priceInfo[0].price ?? 0,
       refund: challenge?.priceInfo[0].refund ?? 0,
       challengePriceType:
@@ -118,8 +113,9 @@ const ChallengeEdit: React.FC = () => {
     data: challengeOptions,
     standardOptIds,
     premiumOptIds,
-    pricePlanTitles,
-    handleChangePricePlanTitle,
+    standardInfo,
+    premiumInfo,
+    handleChangeInfo,
     handleChangePricePlan,
     setStandardOptIds,
     setPremiumOptIds,
@@ -163,7 +159,7 @@ const ChallengeEdit: React.FC = () => {
     if (pricePlan.current !== BASIC) {
       newPriceInfo.push({
         ...basicPriceInfo,
-        title: pricePlanTitles.standard,
+        ...standardInfo,
         challengePricePlanType: STANDARD,
         challengeOptionIdList: standardOptIds,
       });
@@ -172,7 +168,7 @@ const ChallengeEdit: React.FC = () => {
     if (pricePlan.current === PREMIUM) {
       newPriceInfo.push({
         ...basicPriceInfo,
-        title: pricePlanTitles.premium,
+        ...premiumInfo,
         challengePricePlanType: PREMIUM,
         challengeOptionIdList: [
           ...new Set(standardOptIds.concat(premiumOptIds)),
@@ -204,8 +200,8 @@ const ChallengeEdit: React.FC = () => {
     input,
     patchChallenge,
     snackbar,
-    pricePlanTitles.premium,
-    pricePlanTitles.standard,
+    premiumInfo,
+    standardInfo,
     standardOptIds,
     premiumOptIds,
     pricePlan,
@@ -298,15 +294,10 @@ const ChallengeEdit: React.FC = () => {
             options={challengeOptions?.challengeOptionList ?? []}
             standardOptIds={standardOptIds}
             premiumOptIds={premiumOptIds}
-            standardTitle={pricePlanTitles.standard}
-            premiumTitle={pricePlanTitles.premium}
+            standardInfo={standardInfo}
+            premiumInfo={premiumInfo}
             pricePlan={pricePlan.current}
-            onChangePremiumTitle={(value) =>
-              handleChangePricePlanTitle(PREMIUM, value)
-            }
-            onChangeStandardTitle={(value) =>
-              handleChangePricePlanTitle(STANDARD, value)
-            }
+            onChangePricePlanInfo={handleChangeInfo}
             onChangePremiumOptIds={(ids) => setPremiumOptIds(ids)}
             onChangeStandardOptIds={(ids) => setStandardOptIds(ids)}
             onChangePricePlan={handleChangePricePlan}

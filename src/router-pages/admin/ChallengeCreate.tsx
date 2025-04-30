@@ -104,8 +104,9 @@ const ChallengeCreate: React.FC = () => {
     data: challengeOptions,
     standardOptIds,
     premiumOptIds,
-    pricePlanTitles,
-    handleChangePricePlanTitle,
+    standardInfo,
+    premiumInfo,
+    handleChangeInfo,
     handleChangePricePlan,
     setStandardOptIds,
     setPremiumOptIds,
@@ -139,7 +140,7 @@ const ChallengeCreate: React.FC = () => {
     if (pricePlan.current !== BASIC) {
       newPriceInfo.push({
         ...basicPriceInfo,
-        title: pricePlanTitles.standard,
+        ...standardInfo,
         challengePricePlanType: STANDARD,
         challengeOptionIdList: standardOptIds,
       });
@@ -148,7 +149,7 @@ const ChallengeCreate: React.FC = () => {
     if (pricePlan.current === PREMIUM) {
       newPriceInfo.push({
         ...basicPriceInfo,
-        title: pricePlanTitles.premium,
+        ...premiumInfo,
         challengePricePlanType: PREMIUM,
         challengeOptionIdList: [
           ...new Set(standardOptIds.concat(premiumOptIds)),
@@ -176,8 +177,8 @@ const ChallengeCreate: React.FC = () => {
     navigate,
     premiumOptIds,
     pricePlan,
-    pricePlanTitles.premium,
-    pricePlanTitles.standard,
+    premiumInfo,
+    standardInfo,
     standardOptIds,
   ]);
 
@@ -240,11 +241,10 @@ const ChallengeCreate: React.FC = () => {
               ),
               priceInfo: input.priceInfo.map((info) => ({
                 ...info,
-                deadline: info.priceInfo.deadline
-                  ? dayjs(info.priceInfo.deadline)
-                  : null,
+                // 타입 맞추는 용도
                 priceId: 0,
-                challengeOptionList: [], // (타입 맞추는 용도) ChallengeBasic에서 필요 없음
+                deadline: null,
+                challengeOptionList: [],
               })),
             }}
             setInput={setInput}
@@ -287,15 +287,10 @@ const ChallengeCreate: React.FC = () => {
             options={challengeOptions?.challengeOptionList ?? []}
             standardOptIds={standardOptIds}
             premiumOptIds={premiumOptIds}
-            standardTitle={pricePlanTitles.standard}
-            premiumTitle={pricePlanTitles.premium}
+            standardInfo={standardInfo}
+            premiumInfo={premiumInfo}
             pricePlan={pricePlan.current}
-            onChangePremiumTitle={(value) =>
-              handleChangePricePlanTitle(PREMIUM, value)
-            }
-            onChangeStandardTitle={(value) =>
-              handleChangePricePlanTitle(STANDARD, value)
-            }
+            onChangePricePlanInfo={handleChangeInfo}
             onChangePremiumOptIds={(ids) => setPremiumOptIds(ids)}
             onChangeStandardOptIds={(ids) => setStandardOptIds(ids)}
             onChangePricePlan={handleChangePricePlan}
@@ -309,9 +304,7 @@ const ChallengeCreate: React.FC = () => {
             }}
             setInput={setInput}
             onDeadlineChange={(value) => {
-              if (!value) {
-                return;
-              }
+              if (!value) return;
 
               setInput((prev) => ({
                 ...prev,
