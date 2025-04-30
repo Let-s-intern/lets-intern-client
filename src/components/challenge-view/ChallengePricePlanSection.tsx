@@ -129,20 +129,24 @@ function ChallengePricePlanSection({ challengeType, priceInfoList }: Props) {
             originalPrice={basicRegularPrice}
             discountAmount={basicDiscountAmount}
           />
-          <PricePlanCard
-            paragraphStyle={paragraphStyle}
-            title={standardPriceInfo?.title ?? ''}
-            description={standardPriceInfo?.description ?? ''}
-            originalPrice={standardRegularPrice}
-            discountAmount={standardDiscountAmount}
-          />
-          <PricePlanCard
-            paragraphStyle={paragraphStyle}
-            title={premiumPriceInfo?.title ?? ''}
-            description={premiumPriceInfo?.description ?? ''}
-            originalPrice={premiumRegularPrice}
-            discountAmount={premiumDiscountAmount}
-          />
+          {standardPriceInfo && (
+            <PricePlanCard
+              paragraphStyle={paragraphStyle}
+              title={standardPriceInfo?.title ?? ''}
+              description={standardPriceInfo?.description ?? ''}
+              originalPrice={standardRegularPrice}
+              discountAmount={standardDiscountAmount}
+            />
+          )}
+          {premiumPriceInfo && (
+            <PricePlanCard
+              paragraphStyle={paragraphStyle}
+              title={premiumPriceInfo?.title ?? ''}
+              description={premiumPriceInfo?.description ?? ''}
+              originalPrice={premiumRegularPrice}
+              discountAmount={premiumDiscountAmount}
+            />
+          )}
         </div>
       </div>
     </section>
