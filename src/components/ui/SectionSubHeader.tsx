@@ -1,7 +1,11 @@
 import { twMerge } from '@/lib/twMerge';
 import { CSSProperties, memo, ReactNode } from 'react';
 
-function SubHeader({
+/**
+ * @todo report 폴더의 SubHeader 삭제해야 함
+ */
+
+function SectionSubHeader({
   children,
   className,
   style,
@@ -23,4 +27,4 @@ function SubHeader({
   );
 }
 
-export default memo(SubHeader);
+export default memo(SectionSubHeader);
