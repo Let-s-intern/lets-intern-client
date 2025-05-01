@@ -74,11 +74,21 @@ const NavBar = () => {
     setIsOpen(false);
   };
 
+  const initState = () => {
+    logout();
+    setIsAdmin(false);
+  };
+
   const { data: userData } = useQuery({
     queryKey: ['mainUser'],
     queryFn: async () => {
-      const res = await axios.get('/user');
-      return res.data.data;
+      try {
+        const res = await axios.get('/user');
+        return res.data.data;
+      } catch (err) {
+        initState();
+        alert('로그아웃 되었습니다. 다시 로그인 해주세요.');
+      }
     },
     enabled: isLoggedIn,
     retry: 1,
@@ -87,8 +97,13 @@ const NavBar = () => {
   const { data: isAdminData } = useQuery({
     queryKey: ['isAdmin'],
     queryFn: async () => {
-      const res = await axios.get('/user/isAdmin');
-      return res.data.data;
+      try {
+        const res = await axios.get('/user/isAdmin');
+        return res.data.data;
+      } catch (err) {
+        initState();
+        alert('로그아웃 되었습니다. 다시 로그인 해주세요.');
+      }
     },
     enabled: isLoggedIn,
     retry: 1,
@@ -318,6 +333,7 @@ const NavBar = () => {
                   className="text-primary"
                   onClick={() => {
                     logout();
+                    setIsAdmin(false);
                     navigate('/');
                     closeMenu();
                   }}
