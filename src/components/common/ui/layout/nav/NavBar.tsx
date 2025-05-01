@@ -85,9 +85,8 @@ const NavBar = () => {
       try {
         const res = await axios.get('/user');
         return res.data.data;
-      } catch (err) {
+      } catch (_) {
         initState();
-        alert('로그아웃 되었습니다. 다시 로그인 해주세요.');
       }
     },
     enabled: isLoggedIn,
@@ -100,9 +99,8 @@ const NavBar = () => {
       try {
         const res = await axios.get('/user/isAdmin');
         return res.data.data;
-      } catch (err) {
+      } catch (_) {
         initState();
-        alert('로그아웃 되었습니다. 다시 로그인 해주세요.');
       }
     },
     enabled: isLoggedIn,
