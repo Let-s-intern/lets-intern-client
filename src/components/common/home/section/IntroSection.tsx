@@ -37,11 +37,11 @@ const HOME_INTRO = {
     basic: [
       {
         title: (
-          <>
-            경험 정리
-            <br />
-            &이력서 준비
-          </>
+          <p>
+            경험정리 <br className="md:hidden" />& 이력서{' '}
+            <br className="hidden md:block" />
+            준비
+          </p>
         ),
         icon: <Intro1 width={44} height={44} />,
         href: `type=${EXPERIENCE_SUMMARY}`,
@@ -49,11 +49,11 @@ const HOME_INTRO = {
       },
       {
         title: (
-          <>
+          <p>
             자소서
             <br />
             준비하기
-          </>
+          </p>
         ),
         icon: <Intro2 width={44} height={44} />,
         href: `type=${PERSONAL_STATEMENT}`,
@@ -61,11 +61,11 @@ const HOME_INTRO = {
       },
       {
         title: (
-          <>
+          <p>
             대기업 자소서
             <br />
             준비하기
-          </>
+          </p>
         ),
         subTitle: '대기업',
         icon: <Intro8 width={44} height={44} />,
@@ -74,11 +74,11 @@ const HOME_INTRO = {
       },
       {
         title: (
-          <>
+          <p>
             포트폴리오
             <br />
             준비하기
-          </>
+          </p>
         ),
         icon: <Intro3 width={44} height={44} />,
         href: `type=${PORTFOLIO}`,
@@ -86,11 +86,11 @@ const HOME_INTRO = {
       },
       {
         title: (
-          <>
+          <p>
             이력서
             <br />
             피드백 받기
-          </>
+          </p>
         ),
         icon: <Intro5 width={44} height={44} />,
         href: convertReportTypeToLandingPath('RESUME'),
@@ -98,11 +98,11 @@ const HOME_INTRO = {
       },
       {
         title: (
-          <>
+          <p>
             자소서
             <br />
             피드백 받기
-          </>
+          </p>
         ),
         icon: <Intro6 width={44} height={44} />,
         href: convertReportTypeToLandingPath('PERSONAL_STATEMENT'),
@@ -187,7 +187,7 @@ const IntroSection = () => {
           {HOME_INTRO.title}
         </div>
         <div className="mx-auto flex w-full flex-col items-center gap-y-8 md:w-fit md:gap-y-11">
-          <div className="grid grid-cols-4 gap-x-4 gap-y-6 px-1 md:flex md:gap-10">
+          <div className="grid grid-cols-4 gap-x-5 gap-y-6 px-1 md:flex md:gap-10">
             {HOME_INTRO.items.basic.map((item, index) => {
               // 이력서 피드백 받기
               if (index === 4) {
@@ -273,7 +273,7 @@ const IntroItem = ({
 }) => {
   return (
     <Link
-      className="icon_menu flex min-w-fit flex-col items-center gap-y-4 text-center text-xxsmall12 font-medium text-neutral-20 md:text-xsmall14"
+      className="icon_menu flex min-w-[66px] flex-col items-center gap-y-4 text-center text-xxsmall12 font-medium text-neutral-20 md:min-w-[92px] md:text-xsmall14"
       href={href ?? '#'}
       target={href && href.startsWith('http') ? '_blank' : undefined}
       onClick={() => {
