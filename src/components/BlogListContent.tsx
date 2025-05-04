@@ -52,7 +52,7 @@ const Content = () => {
           onChange={() => {
             setPage(1); // 페이지 초기화
           }}
-          dropdownClassName="w-full"
+          dropdownClassName="max-w-fit right-0"
         />
       </section>
 
