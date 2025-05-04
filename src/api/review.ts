@@ -209,7 +209,7 @@ export const useGetProgramReview = ({
   types,
   challengeTypes,
   liveJob,
-  page = 0,
+  page = 1,
   size = 10,
 }: programReviewParam) => {
   return useQuery({
