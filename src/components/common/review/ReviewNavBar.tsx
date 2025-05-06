@@ -27,9 +27,7 @@ function ReviewNavBar() {
             </MobileNavItem>
             <MobileNavItem href="/review/blog">블로그 후기</MobileNavItem>
             <MobileNavItem href="/blog/list?type=PROGRAM_REVIEWS">
-              프로그램
-              <br />
-              참여자 인터뷰
+              프로그램 참여자 인터뷰
             </MobileNavItem>
           </ul>
           {isMissionOrProgramReviewPage && (
@@ -91,7 +89,7 @@ function MobileNavItem({
   return (
     <li
       className={clsx(
-        'flex flex-1 items-center justify-center pb-2 pt-3 text-center leading-4',
+        'flex flex-1 items-center justify-center whitespace-nowrap pb-2 pt-3 text-center leading-4',
         {
           'border-b-2 border-primary': active,
         },
