@@ -197,7 +197,7 @@ function PricePlanBottomSheet({
                 key={PREMIUM}
                 label={
                   <PricePlanLabel
-                    title={premiumPriceInfo.title ?? '프리미엄 플랜'}
+                    title={premiumPriceInfo.title || '프리미엄 플랜'}
                     description={premiumPriceInfo.description ?? ''}
                   />
                 }
@@ -216,7 +216,7 @@ function PricePlanBottomSheet({
                 key={STANDARD}
                 label={
                   <PricePlanLabel
-                    title={standardPriceInfo.title ?? '스탠다드 플랜'}
+                    title={standardPriceInfo.title || '스탠다드 플랜'}
                     description={standardPriceInfo.description ?? ''}
                   />
                 }
@@ -234,7 +234,7 @@ function PricePlanBottomSheet({
               key={BASIC}
               label={
                 <PricePlanLabel
-                  title={basicPriceInfo.title ?? '베이직 플랜'}
+                  title={basicPriceInfo.title || '베이직 플랜'}
                   description={basicPriceInfo.description ?? ''}
                 />
               }
