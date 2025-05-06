@@ -20,7 +20,7 @@ function ReviewNavBar() {
         <nav className="md:hidden">
           <ul className="flex items-stretch gap-6 border-b border-neutral-80 px-5 md:hidden">
             <MobileNavItem
-              href="/review/mission"
+              href="/review/program"
               subHref={['/review/mission', '/review/program']}
             >
               프로그램 후기
@@ -32,11 +32,11 @@ function ReviewNavBar() {
           </ul>
           {isMissionOrProgramReviewPage && (
             <ul className="my-2.5 flex h-[34px] items-stretch gap-1 px-5">
-              <MobileNavSubItem href="/review/mission">
-                미션 수행 후기
-              </MobileNavSubItem>
               <MobileNavSubItem href="/review/program">
                 참여 후기
+              </MobileNavSubItem>
+              <MobileNavSubItem href="/review/mission">
+                미션 수행 후기
               </MobileNavSubItem>
             </ul>
           )}
@@ -48,18 +48,18 @@ function ReviewNavBar() {
       <nav className="mr-8 hidden md:block">
         <ul className="review_menu sticky top-[106px] flex w-[11.5rem] flex-col items-stretch">
           <DesktopNavItem
-            href="/review/mission"
+            href="/review/program"
             subHref={['/review/mission', '/review/program']}
           >
             프로그램 후기
           </DesktopNavItem>
           {isMissionOrProgramReviewPage && (
             <>
-              <DesktopNavSubItem href="/review/mission">
-                미션 수행 후기
-              </DesktopNavSubItem>
               <DesktopNavSubItem href="/review/program">
                 참여 후기
+              </DesktopNavSubItem>
+              <DesktopNavSubItem href="/review/mission">
+                미션 수행 후기
               </DesktopNavSubItem>
             </>
           )}
