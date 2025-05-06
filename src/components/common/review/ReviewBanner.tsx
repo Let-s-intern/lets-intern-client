@@ -46,7 +46,7 @@ function ReviewBanner() {
   type HeadingKey = keyof typeof heading;
 
   return (
-    <header className="relative flex h-[152px] items-center bg-secondary px-5 md:h-[168px] md:justify-center">
+    <header className="relative flex h-[152px] items-center bg-[#152B65] px-5 md:h-[168px] md:justify-center">
       {/* 본문 */}
       <div className="z-10 flex w-full max-w-[1100px] flex-col gap-1 md:gap-2 md:px-3">
         {/* pathname에 따라 제목 불러오기 */}
@@ -72,7 +72,7 @@ function ReviewBanner() {
           priority
         />
         {/* 이미지 위에 올라가는 Gradient 배경 */}
-        <div className="absolute bottom-0 left-0 right-0 h-full w-full bg-gradient-to-t from-secondary/0 to-secondary md:left-auto md:top-0 md:bg-gradient-to-l" />
+        <div className="absolute bottom-0 left-0 right-0 h-full w-full bg-gradient-to-t from-[#152B6500] to-[#152B65] md:left-auto md:top-0 md:bg-gradient-to-l" />
       </div>
     </header>
   );
