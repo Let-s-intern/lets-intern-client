@@ -1,7 +1,3 @@
-import dayjs from '@/lib/dayjs';
-import { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-
 import { ApplicationResult } from '@/api/paymentSchema';
 import { convertReportPriceType, useGetReportDetailQuery } from '@/api/report';
 import DescriptionBox from '@/components/common/program/paymentSuccess/DescriptionBox';
@@ -16,11 +12,14 @@ import {
 import useReportPayment from '@/hooks/useReportPayment';
 import useReportProgramInfo from '@/hooks/useReportProgramInfo';
 import useRunOnce from '@/hooks/useRunOnce';
+import dayjs from '@/lib/dayjs';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import axios from '@/utils/axios';
 import { searchParamsToObject } from '@/utils/network';
 import ReportCreditRow from '@components/common/mypage/credit/ReportCreditRow';
 import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
 const ReportPaymentResult = () => {
   const navigate = useNavigate();
@@ -279,6 +278,7 @@ const ReportPaymentResult = () => {
                   )}
                   {!isSuccess && (
                     <Link
+                      reloadDocument
                       to={`/report/payment/${reportDetail?.reportType?.toLocaleLowerCase()}/${reportApplication.reportId}`}
                       className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
                     >

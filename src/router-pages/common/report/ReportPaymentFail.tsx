@@ -1,21 +1,17 @@
+import { convertReportPriceType, useGetReportDetailQuery } from '@/api/report';
+import Heading1 from '@/components/common/report/Heading1';
+import Heading2 from '@/components/common/report/Heading2';
+import Card from '@/components/common/report/ProgramCard';
+import { paymentFailSearchParamsSchema } from '@/data/getPaymentSearchParams';
+import useReportPayment from '@/hooks/useReportPayment';
+import useReportProgramInfo from '@/hooks/useReportProgramInfo';
+import useReportApplicationStore from '@/store/useReportApplicationStore';
+import { searchParamsToObject } from '@/utils/network';
+import ReportCreditRow from '@components/common/mypage/credit/ReportCreditRow';
+import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
 import { useMediaQuery } from '@mui/material';
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-
-import ReportCreditRow from '@components/common/mypage/credit/ReportCreditRow';
-import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
-import {
-  convertReportPriceType,
-  useGetReportDetailQuery,
-} from '../../../api/report';
-import Heading1 from '../../../components/common/report/Heading1';
-import Heading2 from '../../../components/common/report/Heading2';
-import Card from '../../../components/common/report/ProgramCard';
-import { paymentFailSearchParamsSchema } from '../../../data/getPaymentSearchParams';
-import useReportPayment from '../../../hooks/useReportPayment';
-import useReportProgramInfo from '../../../hooks/useReportProgramInfo';
-import useReportApplicationStore from '../../../store/useReportApplicationStore';
-import { searchParamsToObject } from '../../../utils/network';
 
 /** 처음부터 결제 실패 케이스일 시 이 페이지로 옵니다. 검증 단계에서의 실패는 PaymentResult에서 진행함. */
 const ReportPaymentFail = () => {
@@ -44,8 +40,9 @@ const ReportPaymentFail = () => {
   }, []);
 
   const paymentLink = useMemo(() => {
-    if (isUpTo1280)
+    if (isUpTo1280) {
       return `/report/payment/${reportDetail?.reportType?.toLocaleLowerCase()}/${reportApplication.reportId}`;
+    }
 
     return `/report/apply/${reportDetail?.reportType?.toLocaleLowerCase()}/${reportApplication.reportId}`;
   }, [reportDetail]);
@@ -141,6 +138,7 @@ const ReportPaymentFail = () => {
               )}
             </div>
             <Link
+              reloadDocument
               to={paymentLink}
               className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
             >

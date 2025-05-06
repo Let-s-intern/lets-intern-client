@@ -52,7 +52,7 @@ const ExpandableParagraph = ({
       <div className={twMerge('relative w-full', className)}>
         <p
           ref={pRef}
-          className="relative overflow-hidden"
+          className="relative overflow-hidden tracking-[-0.028px]"
           style={{ maxHeight: expanding ? undefined : maxHeight }}
         >
           {content}
