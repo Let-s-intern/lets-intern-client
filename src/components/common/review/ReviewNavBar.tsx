@@ -18,7 +18,7 @@ function ReviewNavBar() {
       {/* 모바일 네비 바 */}
       <div className="review_menu sticky top-[3.75rem] z-10 bg-white">
         <nav className="md:hidden">
-          <ul className="flex items-stretch border-b border-neutral-80 px-5 md:hidden">
+          <ul className="flex items-stretch gap-6 border-b border-neutral-80 px-5 md:hidden">
             <MobileNavItem
               href="/review/mission"
               subHref={['/review/mission', '/review/program']}
@@ -31,7 +31,7 @@ function ReviewNavBar() {
             </MobileNavItem>
           </ul>
           {isMissionOrProgramReviewPage && (
-            <ul className="my-3 flex h-[34px] items-stretch gap-1 px-5">
+            <ul className="my-2.5 flex h-[34px] items-stretch gap-1 px-5">
               <MobileNavSubItem href="/review/mission">
                 미션 수행 후기
               </MobileNavSubItem>
@@ -42,7 +42,7 @@ function ReviewNavBar() {
           )}
         </nav>
       </div>
-      <HorizontalRule className="h-3 w-full md:hidden" />
+      <HorizontalRule className="h-2 w-full md:hidden" />
 
       {/* 데스크탑 네비 바 */}
       <nav className="mr-8 hidden md:block">
@@ -89,7 +89,7 @@ function MobileNavItem({
   return (
     <li
       className={clsx(
-        'flex flex-1 items-center justify-center whitespace-nowrap pb-2 pt-3 text-center leading-4',
+        'flex items-center justify-center whitespace-nowrap pb-3.5 pt-3.5 text-center leading-4',
         {
           'border-b-2 border-primary': active,
         },
