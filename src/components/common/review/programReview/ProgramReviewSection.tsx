@@ -23,14 +23,24 @@ const ProgramReviewSection = () => {
     useGetProgramReview({ size: 1, types: ['REPORT_REVIEW'] });
 
   useEffect(() => {
-    if (missionReview && challengeReview && liveReview && reportReview) {
-      setReviewData([
-        missionReview.reviewList[0],
-        challengeReview.reviewList[0],
-        liveReview.reviewList[0],
-        reportReview.reviewList[0],
-      ]);
+    const reviews: GetReview[] = [];
+
+    if ((missionReview?.reviewList.length ?? 0) > 0) {
+      reviews.push(missionReview?.reviewList[0] as GetReview);
     }
+
+    if ((challengeReview?.reviewList.length ?? 0) > 0) {
+      reviews.push(challengeReview?.reviewList[0] as GetReview);
+    }
+
+    if ((liveReview?.reviewList.length ?? 0) > 0) {
+      reviews.push(liveReview?.reviewList[0] as GetReview);
+    }
+
+    if ((reportReview?.reviewList.length ?? 0) > 0) {
+      reviews.push(reportReview?.reviewList[0] as GetReview);
+    }
+    setReviewData(reviews);
   }, [missionReview, challengeReview, liveReview, reportReview]);
 
   const isLoading =
