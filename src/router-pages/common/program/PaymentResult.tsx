@@ -275,6 +275,7 @@ const PaymentResult = () => {
                   )}
                   {!isSuccess && (
                     <Link
+                      reloadDocument
                       to={returnLink}
                       className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
                     >
