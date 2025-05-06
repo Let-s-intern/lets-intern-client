@@ -55,10 +55,10 @@ function ReviewBanner() {
   type HeadingKey = keyof typeof heading;
 
   return (
-    <header className="relative bg-[#152B65] px-5 md:px-0">
-      <div className="relative mx-auto flex h-[152px] w-full max-w-[1100px] items-center md:h-[168px]">
+    <header className="relative flex bg-[#152B65] md:px-5">
+      <div className="relative mx-auto flex h-[228px] w-full max-w-[1100px] flex-col items-center md:h-[172px] md:flex-row md:px-3">
         {/* 본문 */}
-        <div className="z-10 flex w-full max-w-[1100px] flex-col gap-1 md:gap-2 md:px-3">
+        <div className="z-10 mt-10 flex w-full max-w-[1100px] flex-col gap-1 px-5 md:mt-0 md:gap-2 md:px-0">
           {/* pathname에 따라 제목 불러오기 */}
           <h1 className="flex items-center gap-2 text-small20 font-semibold text-white md:text-medium24">
             {pathname === '/review'
@@ -73,18 +73,29 @@ function ReviewBanner() {
         </div>
 
         {/* 이미지 */}
-        <div className="bg-light absolute bottom-0 right-0 h-[6.75rem] w-full md:top-0 md:h-full md:w-[27rem]">
+        <div className="bg-light relative mt-4 h-[6.75rem] w-full overflow-hidden md:absolute md:bottom-0 md:right-0 md:mt-0 md:h-full md:w-[28rem]">
+          {/* 모바일 전용 */}
           <Image
             unoptimized
-            className="object-cover"
+            fill
+            className="object-cover object-top md:hidden"
+            src="/images/review-banner-mobile.png"
+            alt="렛츠커리어 행사 사진"
+            sizes="100vw"
+            priority
+          />
+          {/* 데스크탑 전용 */}
+          <Image
+            unoptimized
+            fill
+            className="hidden object-cover md:block"
             src="/images/review-banner.png"
             alt="렛츠커리어 행사 사진"
-            fill
             sizes="(min-width: 768px) 36rem, 100vw"
             priority
           />
           {/* 이미지 위에 올라가는 Gradient 배경 */}
-          <div className="absolute bottom-0 left-0 right-0 h-full w-full bg-gradient-to-b from-[#152B6500] to-[#152B6550] md:left-auto md:top-0 md:bg-gradient-to-t" />
+          <div className="absolute bottom-0 left-0 right-0 h-full w-full bg-gradient-to-b from-[#152B6500] to-[#152B6575] md:left-auto md:top-0 md:bg-gradient-to-t" />
         </div>
       </div>
     </header>
