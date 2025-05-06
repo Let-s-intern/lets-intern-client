@@ -121,7 +121,7 @@ function MobileNavSubItem({
       className={clsx(
         'flex h-full items-center justify-center rounded-full px-2.5 py-1.5',
         {
-          'bg-primary-20': active,
+          'bg-primary-10': active,
         },
       )}
     >
