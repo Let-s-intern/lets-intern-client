@@ -23,7 +23,7 @@ function ReviewNavBar() {
               href="/review/program"
               subHref={['/review/mission', '/review/program']}
             >
-              프로그램 후기
+              프로그램 참여 후기
             </MobileNavItem>
             <MobileNavItem href="/review/blog">블로그 후기</MobileNavItem>
             <MobileNavItem href="/blog/list?type=PROGRAM_REVIEWS">
@@ -51,7 +51,7 @@ function ReviewNavBar() {
             href="/review/program"
             subHref={['/review/mission', '/review/program']}
           >
-            프로그램 후기
+            프로그램 참여 후기
           </DesktopNavItem>
           {isMissionOrProgramReviewPage && (
             <>
