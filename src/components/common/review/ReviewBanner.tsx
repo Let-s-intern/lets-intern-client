@@ -32,8 +32,8 @@ function ReviewBanner() {
     types: [BlogType.PROGRAM_REVIEWS],
   });
 
-  const reviewsCount =
-    (data?.count ?? 0) + (blogData?.pageInfo.totalElements ?? 0);
+  const reviewsCount = 99999;
+  // (data?.count ?? 0) + (blogData?.pageInfo.totalElements ?? 0);
 
   const heading = {
     all: (
