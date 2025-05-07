@@ -16,10 +16,10 @@ const description = {
   ),
   program: (
     <>
-      취업 노하우가 잔뜩 담긴 프로그램에
-      <br className="md:hidden" /> 참여한
-      <br className="hidden md:block" /> 참여자들의 100% 솔직 후기를 가감 없이
-      <br className="md:hidden" /> 그대로 보여드립니다.
+      취업 노하우가 잔뜩 담긴 렛츠커리어 프로그램,
+      <br className="md:hidden" />
+      <br className="hidden md:block" /> 수강생들이 직접 남긴 진짜 후기를 지금
+      확인하세요.
     </>
   ),
 };
