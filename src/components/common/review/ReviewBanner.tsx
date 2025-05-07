@@ -38,12 +38,11 @@ function ReviewBanner() {
   const heading = {
     all: (
       <>
-        렛츠커리어 100% 솔직 후기{' '}
-        {reviewsCount !== 0 && (
-          <span className="items-center rounded-[4px] bg-[#4C64A5] px-[6px] py-[4px] text-xsmall14 font-semibold md:text-small18">
-            총 {reviewsCount.toLocaleString()}개
-          </span>
-        )}
+        렛츠커리어 100% 솔직 후기 {/* {reviewsCount !== 0 && ( */}
+        <span className="items-center rounded-[4px] bg-[#4C64A5] px-[6px] py-[4px] text-xsmall14 font-semibold md:text-small18">
+          총 {reviewsCount.toLocaleString()}개
+        </span>
+        {/* )} */}
       </>
     ),
     program: '참여 후기',
