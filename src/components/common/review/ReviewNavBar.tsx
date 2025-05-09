@@ -18,50 +18,48 @@ function ReviewNavBar() {
       {/* 모바일 네비 바 */}
       <div className="review_menu sticky top-[3.75rem] z-10 bg-white">
         <nav className="md:hidden">
-          <ul className="flex items-stretch border-b border-neutral-80 px-5 md:hidden">
+          <ul className="flex items-stretch gap-6 border-b border-neutral-80 px-5 md:hidden">
             <MobileNavItem
-              href="/review/mission"
+              href="/review/program"
               subHref={['/review/mission', '/review/program']}
             >
-              프로그램 후기
+              프로그램 참여 후기
             </MobileNavItem>
             <MobileNavItem href="/review/blog">블로그 후기</MobileNavItem>
             <MobileNavItem href="/blog/list?type=PROGRAM_REVIEWS">
-              프로그램
-              <br />
-              참여자 인터뷰
+              프로그램 참여자 인터뷰
             </MobileNavItem>
           </ul>
           {isMissionOrProgramReviewPage && (
-            <ul className="my-3 flex h-[34px] items-stretch gap-1 px-5">
-              <MobileNavSubItem href="/review/mission">
-                미션 수행 후기
-              </MobileNavSubItem>
+            <ul className="my-2.5 flex h-[34px] items-stretch gap-1 px-5">
               <MobileNavSubItem href="/review/program">
                 참여 후기
+              </MobileNavSubItem>
+              <MobileNavSubItem href="/review/mission">
+                미션 수행 후기
               </MobileNavSubItem>
             </ul>
           )}
         </nav>
       </div>
-      <HorizontalRule className="h-3 w-full md:hidden" />
+      <HorizontalRule className="h-2 w-full md:hidden" />
 
       {/* 데스크탑 네비 바 */}
       <nav className="mr-8 hidden md:block">
         <ul className="review_menu sticky top-[106px] flex w-[11.5rem] flex-col items-stretch">
           <DesktopNavItem
-            href="/review/mission"
+            href="/review/program"
             subHref={['/review/mission', '/review/program']}
           >
-            프로그램 후기
+            프로그램 참여 후기
           </DesktopNavItem>
           {isMissionOrProgramReviewPage && (
             <>
-              <DesktopNavSubItem href="/review/mission">
-                미션 수행 후기
-              </DesktopNavSubItem>
               <DesktopNavSubItem href="/review/program">
                 참여 후기
+              </DesktopNavSubItem>
+              <DesktopNavSubItem href="/review/mission">
+                미션 수행 후기
               </DesktopNavSubItem>
             </>
           )}
@@ -91,7 +89,7 @@ function MobileNavItem({
   return (
     <li
       className={clsx(
-        'flex flex-1 items-center justify-center pb-2 pt-3 text-center leading-4',
+        'flex items-center justify-center whitespace-nowrap pb-3.5 pt-3.5 text-center leading-4',
         {
           'border-b-2 border-primary': active,
         },
@@ -121,7 +119,7 @@ function MobileNavSubItem({
       className={clsx(
         'flex h-full items-center justify-center rounded-full px-2.5 py-1.5',
         {
-          'bg-primary-20': active,
+          'bg-primary-10': active,
         },
       )}
     >

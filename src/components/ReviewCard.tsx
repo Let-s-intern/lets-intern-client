@@ -298,7 +298,7 @@ const ReviewItemBlock = (props: {
       ) : (
         <p
           className={twMerge(
-            'text-xsmall14 font-normal text-neutral-20',
+            'text-xsmall14 font-normal tracking-[-0.028px] text-neutral-20',
             props.lineClamp === 1
               ? 'line-clamp-1'
               : props.lineClamp === 2
