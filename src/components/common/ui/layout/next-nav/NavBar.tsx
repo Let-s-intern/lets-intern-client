@@ -77,11 +77,20 @@ const NavBar = () => {
     setIsOpen(false);
   };
 
+  const initState = () => {
+    logout();
+    setIsAdmin(false);
+  };
+
   const { data: userData } = useQuery({
     queryKey: ['mainUser'],
     queryFn: async () => {
-      const res = await axios.get('/user');
-      return res.data.data;
+      try {
+        const res = await axios.get('/user');
+        return res.data.data;
+      } catch (_) {
+        initState();
+      }
     },
     enabled: isLoggedIn,
     retry: 1,
@@ -90,8 +99,12 @@ const NavBar = () => {
   const { data: isAdminData } = useQuery({
     queryKey: ['isAdmin'],
     queryFn: async () => {
-      const res = await axios.get('/user/isAdmin');
-      return res.data.data;
+      try {
+        const res = await axios.get('/user/isAdmin');
+        return res.data.data;
+      } catch (_) {
+        initState();
+      }
     },
     enabled: isLoggedIn,
     retry: 1,
