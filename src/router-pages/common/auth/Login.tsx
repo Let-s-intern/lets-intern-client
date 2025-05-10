@@ -1,15 +1,13 @@
-import { useEffect, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-// import axios from 'axios';
-import { AxiosError } from 'axios';
-import axios from '../../../utils/axios';
-
+import SocialLogin from '@/components/common/auth/ui/SocialLogin';
+import Button from '@/components/common/ui/button/Button';
+import Input from '@/components/ui/input/Input';
+import useAuthStore from '@/store/useAuthStore';
+import axios from '@/utils/axios';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useMutation } from '@tanstack/react-query';
-import SocialLogin from '../../../components/common/auth/ui/SocialLogin';
-import Button from '../../../components/common/ui/button/Button';
-import Input from '../../../components/ui/input/Input';
-import useAuthStore from '../../../store/useAuthStore';
+import { AxiosError } from 'axios';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
 interface TextLinkProps {
   to: string;
@@ -32,7 +30,6 @@ const TextLink = ({ to, dark, className, children }: TextLinkProps) => {
 };
 
 /**
- *
  * Next.js 페이지로 가려면 강제 리다이렉트를 해야 하므로 window.location.href를 사용합니다.
  * TODO: 모든 페이지가 Next.js로 이동되면 window.location.href 대신 router.push 하거나 서버 단계에서 리다이렉트 하기
  */
@@ -108,16 +105,6 @@ const Login = () => {
       window.location.href = redirect;
       return;
     }
-    // } else if (searchParams.get('error')) {
-    //   const errorParam = JSON.parse(searchParams.get('error') || '');
-    //   const newSearchParams = new URLSearchParams(searchParams);
-    //   newSearchParams.delete('error');
-    //   setSearchParams(newSearchParams);
-    //   if (errorParam.status === 400 && errorParam.code === 'USER_400_4') {
-    //     setErrorMessage('이미 존재하는 이메일입니다.');
-    //   }
-    // }
-    // eslint-disable-next-line
   }, [searchParams, setSearchParams]);
 
   const handleLoginSuccess = (token: any) => {

@@ -1,5 +1,4 @@
 import { useSearchParams } from 'react-router-dom';
-
 import styles from './SocialLogin.module.scss';
 
 interface SocialLoginProps {
@@ -11,9 +10,12 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
   const redirect = searchParams.get('redirect') || '/';
 
   const getSocialLink = (socialType: 'KAKAO' | 'NAVER') => {
-    const redirectPath = `${window.location.origin}/${type === 'LOGIN' ? 'login' : 'signup'}${`?redirect=${redirect}`}`;
-    const basePath =
-      process.env.NEXT_PUBLIC_API_BASE_PATH || 'https://letscareer.store';
+    const redirectPath = `${window.location.origin}/${type === 'LOGIN' ? 'login' : 'signup'}?redirect=${redirect}`;
+    const basePath = process.env.NEXT_PUBLIC_API_BASE_PATH;
+    if (!basePath) {
+      alert('No base path.\n잠시 후 다시 로그인 해주세요.');
+      return;
+    }
     const path = `${basePath}/oauth2/authorize/${
       socialType === 'KAKAO' ? 'kakao' : 'naver'
     }?redirect_uri=${redirectPath}`;
@@ -34,7 +36,7 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
           >
             <div className="w-[20px]">
               <img
-                className="w-full h-full"
+                className="h-full w-full"
                 src="/icons/kakao-icon.svg"
                 alt="카카오톡 아이콘"
               />
@@ -45,9 +47,9 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
             href={getSocialLink('NAVER')}
             rel="noopener noreferrer"
           >
-            <div className="w-4 h-4">
+            <div className="h-4 w-4">
               <img
-                className="w-full h-full"
+                className="h-full w-full"
                 src="/icons/naver-icon.svg"
                 alt="네이버 아이콘"
               />
