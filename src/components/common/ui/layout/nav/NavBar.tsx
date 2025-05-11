@@ -1,5 +1,5 @@
 import { useGetActiveReports } from '@/api/report';
-import { useGetUserAdmin, User, useUserQuery } from '@/api/user';
+import { useGetUserAdmin, useUserQuery } from '@/api/user';
 import { hasActiveReport } from '@/hooks/useActiveReports';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import { twMerge } from '@/lib/twMerge';
@@ -8,30 +8,11 @@ import useScrollStore from '@/store/useScrollStore';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
+import GlobalNavItem from '../header/GlobalNavItem';
 import GlobalNavTopBar from '../header/GlobalNavTopBar';
+import { SubNavItemProps } from '../header/SubNavItem';
 import KakaoChannel from './KakaoChannel';
-import NavItem from './NavItem';
-import { NavSubItemProps } from './NavSubItem';
 import SideNavItem from './SideNavItem';
-
-const reportHoverItem: NavSubItemProps[] = [
-  {
-    text: '이력서 진단 받기',
-    to: 'report/landing/resume',
-  },
-  {
-    text: '자기소개서 진단 받기',
-    to: 'report/landing/personal-statement',
-  },
-  {
-    text: '포트폴리오 진단 받기',
-    to: 'report/landing/portfolio',
-  },
-  {
-    text: 'MY 진단서 보기',
-    to: 'report/management',
-  },
-];
 
 const scrollEventPage = [
   '/report/landing',
@@ -55,9 +36,7 @@ const NavBar = () => {
   const lastScrollY = useRef(0);
 
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [reportItems, setReportItems] = useState<NavSubItemProps[]>([]);
+  const [reportItems, setReportItems] = useState<SubNavItemProps[]>([]);
   const [activeLink, setActiveLink] = useState<ActiveLinks>('');
 
   const { isLoggedIn, logout } = useAuthStore();
@@ -71,37 +50,59 @@ const NavBar = () => {
     setIsOpen(false);
   };
 
-  const { data: userData } = useUserQuery({ enabled: isLoggedIn, retry: 1 });
-  const { data: isAdminData } = useGetUserAdmin({
+  const { data: user } = useUserQuery({ enabled: isLoggedIn, retry: 1 });
+  const { data: isAdmin } = useGetUserAdmin({
     enabled: isLoggedIn,
     retry: 1,
   });
 
   const { data, isLoading } = useGetActiveReports();
   useEffect(() => {
-    // 활성화된 레포트 있는지 확인
+    /* 활성화된 서류 진단만 서브 메뉴로 설정 */
+    const reportSubNavList: SubNavItemProps[] = [
+      {
+        children: '이력서 진단 받기',
+        href: '/report/landing/resume',
+        isNextRouter: true,
+      },
+      {
+        children: '자기소개서 진단 받기',
+        href: '/report/landing/personal-statement',
+        isNextRouter: true,
+      },
+      {
+        children: '포트폴리오 진단 받기',
+        href: '/report/landing/portfolio',
+        isNextRouter: true,
+      },
+      {
+        children: 'MY 진단서 보기',
+        href: '/report/management',
+        isNextRouter: true,
+        force: true,
+      },
+    ];
     if (data) {
-      const navItems: NavSubItemProps[] = [];
-
+      const navItems: SubNavItemProps[] = [];
       const resumeInfoList = data?.resumeInfoList;
       const personalStatementInfoList = data?.personalStatementInfoList;
       const portfolioInfoList = data?.portfolioInfoList;
 
       if (hasActiveReport(resumeInfoList)) {
-        navItems.push(reportHoverItem[0]);
+        navItems.push(reportSubNavList[0]);
       }
       if (hasActiveReport(personalStatementInfoList)) {
-        navItems.push(reportHoverItem[1]);
+        navItems.push(reportSubNavList[1]);
       }
       if (hasActiveReport(portfolioInfoList)) {
-        navItems.push(reportHoverItem[2]);
+        navItems.push(reportSubNavList[2]);
       }
 
-      navItems.push(reportHoverItem[3]);
+      navItems.push(reportSubNavList[3]);
 
       setReportItems(navItems);
     } else {
-      setReportItems([reportHoverItem[3]]);
+      setReportItems([reportSubNavList[3]]);
     }
   }, [data]);
 
@@ -126,16 +127,6 @@ const NavBar = () => {
       setActiveLink('HOME');
     }
   }, [location.pathname]);
-
-  useEffect(() => {
-    if (userData) {
-      setUser(userData);
-    }
-
-    if (isAdminData) {
-      setIsAdmin(isAdminData);
-    }
-  }, [userData, isAdminData]);
 
   useEffect(() => {
     /** 네비바 숨김/표시 로직 */
@@ -169,47 +160,74 @@ const NavBar = () => {
   return (
     <>
       {/* 상단 네비게이션 바 */}
-      <div
-        className={`lg:p-30 fixed top-0 z-30 h-[3.75rem] w-screen border-b border-neutral-80 bg-white px-5 sm:px-20 md:h-[4.375rem] lg:h-[4.75rem] lg:px-28 ${scrollDirection === 'DOWN' ? '-translate-y-full' : 'translate-y-0'} transition-transform duration-300`}
+      <header
+        className={`fixed top-0 z-30 w-screen border-b border-neutral-80 bg-white px-5 ${scrollDirection === 'DOWN' ? '-translate-y-full' : 'translate-y-0'} transition-transform duration-300`}
       >
         {/* 1단 */}
         <GlobalNavTopBar
+          isNextRouter={false}
           isActiveHome={activeLink === 'HOME'}
           username={user?.name ?? undefined}
           loginRedirect={encodeURIComponent(location.pathname)}
           toggleMenu={toggleMenu}
         />
         {/* 2단 */}
-        <div>
-          {/* 메뉴 아이템 */}
-          <NavItem to="/about" active={activeLink === 'ABOUT'}>
+        <nav className="mw-1140 hidden items-center gap-3 pb-[18px] pt-1 md:flex">
+          <div className="flex items-center gap-5">
+            <GlobalNavItem
+              className="text-xsmall16"
+              href="/program"
+              force
+              isNextRouter={false}
+              active={activeLink === 'PROGRAM'}
+            >
+              전체 프로그램
+            </GlobalNavItem>
+            <GlobalNavItem
+              className="text-xsmall16"
+              isNextRouter={false}
+              active={activeLink === 'REPORT'}
+              href={isLoading ? '#' : reportItems[0].href}
+              subNavList={reportItems}
+              subNavLoaded={!isLoading && !!data}
+            >
+              서류 피드백 REPORT
+            </GlobalNavItem>
+            {/* <NavItem to="/program" active={activeLink === 'PROGRAM'}>
+              커피챗
+            </NavItem> */}
+          </div>
+          <div className="h-[18px] w-[1px] bg-[#D9D9D9]" aria-hidden="true" />
+          <div className="flex items-center gap-5">
+            <GlobalNavItem
+              className="text-xsmall16"
+              href="/review"
+              isNextRouter={false}
+              active={activeLink === 'REVIEW'}
+            >
+              수강생 솔직 후기
+            </GlobalNavItem>
+            <GlobalNavItem
+              className="text-xsmall16"
+              href="/blog/list"
+              isNextRouter={false}
+              active={activeLink === 'BLOG'}
+            >
+              블로그
+            </GlobalNavItem>
+          </div>
+          <div className="h-[18px] w-[1px] bg-[#D9D9D9]" aria-hidden="true" />
+          <GlobalNavItem
+            className="text-xsmall16"
+            href="/about"
+            isNextRouter={false}
+            force
+            active={activeLink === 'ABOUT'}
+          >
             렛츠커리어 스토리
-          </NavItem>
-          <NavItem to="/program" active={activeLink === 'PROGRAM'}>
-            프로그램
-          </NavItem>
-          <NavItem to="/review" active={activeLink === 'REVIEW'} reloadDocument>
-            100% 솔직 후기
-          </NavItem>
-          <NavItem
-            to="/blog/list"
-            active={activeLink === 'BLOG'}
-            reloadDocument
-          >
-            블로그
-          </NavItem>
-          <NavItem
-            as="div"
-            to={reportHoverItem[0].to}
-            active={activeLink === 'REPORT'}
-            hoverItem={reportItems}
-            isItemLoaded={!isLoading && !!data}
-            reloadDocument
-          >
-            🔥 서류 진단받고 합격하기
-          </NavItem>
-        </div>
-      </div>
+          </GlobalNavItem>
+        </nav>
+      </header>
 
       {/* 투명한 검정색 배경 */}
       <div
@@ -296,23 +314,15 @@ const NavBar = () => {
             <SideNavItem to="/blog/list" onClick={closeMenu} reloadDocument>
               블로그
             </SideNavItem>
-            <SideNavItem
+            {/* <SideNavItem
               to="/report/landing"
               onClick={closeMenu}
               hoverItem={reportItems}
               reloadDocument
             >
               🔥 서류 진단받고 합격하기
-            </SideNavItem>
-            {/* <SideNavItem
-              to="#"
-              onClick={closeMenu}
-              hoverItem={interviewHoverItem}
-              target="_blank"
-              rel="noopenner noreferrer"
-            >
-              🔎 모의 면접하고 합격하기
             </SideNavItem> */}
+
             <hr className="h-1 bg-neutral-80" />
             {isAdmin && (
               <SideNavItem to="/admin" onClick={closeMenu}>
@@ -341,7 +351,7 @@ const NavBar = () => {
         </div>
       </div>
       {/* 네비게이션 바 공간 차지 */}
-      <div className="h-[3.75rem] md:h-[4.375rem] lg:h-[4.75rem]" />
+      <div className="h-[3.75rem] md:h-[111px]" />
     </>
   );
 };

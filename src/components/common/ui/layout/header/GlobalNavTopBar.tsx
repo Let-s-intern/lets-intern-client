@@ -5,6 +5,7 @@ import LogoLink from './LogoLink';
 import SignUpLink from './SignUpLink';
 
 interface Props {
+  isNextRouter: boolean;
   isActiveHome: boolean;
   username?: string;
   loginRedirect: string;
@@ -12,6 +13,7 @@ interface Props {
 }
 
 function GlobalNavTopBar({
+  isNextRouter,
   isActiveHome,
   username,
   loginRedirect,
@@ -23,13 +25,17 @@ function GlobalNavTopBar({
     <nav className="mw-1140 flex h-full items-center justify-between py-4">
       <div className="flex h-full items-center gap-4 sm:gap-9">
         {/* 로고 */}
-        <LogoLink isNextRouter />
+        <LogoLink isNextRouter={isNextRouter} />
         {/* 네비 메뉴 */}
-        <GlobalNavItem isNextRouter active={isActiveHome} href="/">
+        <GlobalNavItem
+          isNextRouter={isNextRouter}
+          active={isActiveHome}
+          href="/"
+        >
           홈
         </GlobalNavItem>
         <GlobalNavItem
-          isNextRouter
+          isNextRouter={isNextRouter}
           href="https://letscareer.oopy.io/1df5e77c-bee1-80b3-8199-e7d2cc9d64cd"
           target="_blank"
           rel="noopener noreferrer"
