@@ -7,13 +7,15 @@ import { useControlScroll } from '@/hooks/useControlScroll';
 import useScrollDirection from '@/hooks/useScrollDirection';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
-import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import GlobalNavItem from '../header/GlobalNavItem';
 import GlobalNavTopBar from '../header/GlobalNavTopBar';
+import LoginLink from '../header/LoginLink';
+import NavOverlay from '../header/NavOverlay';
+import SideNavItem from '../header/SideNavItem';
+import SignUpLink from '../header/SignUpLink';
 import KakaoChannel from '../nav/KakaoChannel';
-import SideNavItem from './SideNavItem';
 
 const NavBar = () => {
   const router = useRouter();
@@ -44,9 +46,9 @@ const NavBar = () => {
   useControlScroll(isOpen);
 
   return (
-    <>
+    <header>
       {/* 상단 네비게이션 바 */}
-      <header
+      <div
         className={`fixed top-0 z-30 w-screen border-b border-neutral-80 bg-white px-5 ${scrollDirection === 'DOWN' ? '-translate-y-full' : 'translate-y-0'} transition-transform duration-300`}
       >
         {/* 1단 */}
@@ -54,7 +56,7 @@ const NavBar = () => {
           isNextRouter
           isActiveHome={activeLink === 'HOME'}
           username={user?.name ?? undefined}
-          loginRedirect={pathname}
+          loginRedirect={encodeURIComponent(pathname)}
           toggleMenu={toggleMenu}
         />
         {/* 2단 */}
@@ -112,39 +114,33 @@ const NavBar = () => {
             렛츠커리어 스토리
           </GlobalNavItem>
         </nav>
-      </header>
+      </div>
 
       {/* 투명한 검정색 배경 */}
-      <div
-        className={`fixed inset-0 z-40 bg-black transition-opacity duration-300 ${
-          isOpen
-            ? 'opacity-50 ease-out'
-            : 'pointer-events-none opacity-0 ease-in'
-        }`}
-        onClick={toggleMenu}
-      />
+      <NavOverlay isOpen={isOpen} onClose={closeMenu} />
 
       {/* 사이드 네비게이션 바 */}
       <div
+        id="sideNavigation"
         className={twMerge(
           'fixed right-0 top-0 z-50 flex h-screen w-[18.25rem] flex-col bg-white shadow-md transition-all duration-300 sm:w-[22rem]',
           isOpen ? 'translate-x-0' : 'translate-x-full',
         )}
       >
         <div className="flex w-full items-center justify-between p-5">
-          <div className="h-7">
-            <img
-              className="h-full w-auto"
-              src="/logo/logo-gradient-text.svg"
-              alt="렛츠커리어 로고"
-            />
-          </div>
-          <i className="h-6 w-6 cursor-pointer" onClick={closeMenu}>
-            <img
-              className="h-auto w-full"
-              src="/icons/x-close.svg"
-              alt="닫기 아이콘"
-            />
+          <img
+            className="h-7 w-auto"
+            src="/logo/logo-gradient-text.svg"
+            alt="렛츠커리어"
+          />
+          <i
+            className="h-6 w-6 cursor-pointer"
+            aria-label="메뉴 닫기"
+            aria-controls="sideNavigation"
+            aria-expanded={isOpen}
+            onClick={closeMenu}
+          >
+            <img className="h-auto w-full" src="/icons/x-close.svg" alt="" />
           </i>
         </div>
         <hr />
@@ -169,89 +165,71 @@ const NavBar = () => {
                 </button>
               </span>
             ) : (
-              <div className="text-0.875 flex gap-6">
-                <Link
-                  className="text-primary"
-                  href={{
-                    pathname: '/login',
-                    query: { redirect: pathname },
-                  }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    window.location.href = `/login?redirect=${encodeURIComponent(pathname)}`;
-                    closeMenu();
-                  }}
-                >
-                  로그인
-                </Link>
-                <Link
-                  href="/signup"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    window.location.href = '/signup';
-                    closeMenu();
-                  }}
-                >
-                  회원가입
-                </Link>
+              <div className="flex gap-6 text-xsmall14">
+                <LoginLink className="p-0 font-normal" isNextRouter force />
+                <SignUpLink
+                  className="bg-transparent p-0 font-normal text-black"
+                  isNextRouter
+                  force
+                />
               </div>
             )}
           </div>
-          <div className="flex flex-1 flex-col gap-2">
-            <SideNavItem to="/mypage/application" onClick={closeMenu} force>
+          <nav className="flex flex-1 flex-col gap-2" onClick={closeMenu}>
+            <SideNavItem href="/mypage/application" isNextRouter force>
               마이페이지
             </SideNavItem>
-            <hr className="h-1 bg-neutral-80" />
-            <SideNavItem to="/about" onClick={closeMenu} force>
+            <hr className="h-1 bg-neutral-80" aria-hidden="true" />
+            <SideNavItem href="/about" isNextRouter force>
               렛츠커리어 스토리
             </SideNavItem>
-            <SideNavItem to="/program" onClick={closeMenu} force>
+            <SideNavItem href="/program" isNextRouter force>
               프로그램
             </SideNavItem>
-            <SideNavItem to="/review" onClick={closeMenu}>
-              100% 솔직 후기
+            <SideNavItem href="/review" isNextRouter>
+              수강생 솔직 후기
             </SideNavItem>
-            <SideNavItem to="/blog/list" onClick={closeMenu}>
+            <SideNavItem href="/blog/list" isNextRouter>
               블로그
             </SideNavItem>
-            {/* <SideNavItem
-              to="/report/landing"
-              onClick={closeMenu}
-              hoverItem={reportItems}
+            <SideNavItem
+              href="/report/landing"
+              isNextRouter
+              subNavList={reportNavList}
+              onClick={(e) => e.stopPropagation()}
             >
-              🔥 서류 진단받고 합격하기
-            </SideNavItem> */}
-
-            <hr className="h-1 bg-neutral-80" />
+              서류 피드백 REPORT
+            </SideNavItem>
+            <hr className="h-1 bg-neutral-80" aria-hidden="true" />
             {isAdmin && (
-              <SideNavItem to="/admin" onClick={closeMenu}>
+              <SideNavItem href="/admin" isNextRouter force>
                 관리자 페이지
               </SideNavItem>
             )}
             <SideNavItem
-              to="https://letscareer.oopy.io"
+              className="notice_gnb"
+              href="https://letscareer.oopy.io"
+              isNextRouter
               target="_blank"
               rel="noopener noreferrer"
-              onClick={closeMenu}
-              className="notice_gnb"
             >
               공지사항
             </SideNavItem>
             <SideNavItem
-              to="https://letscareer.oopy.io"
+              className="q&a_gnb"
+              href="https://letscareer.oopy.io"
+              isNextRouter
               target="_blank"
               rel="noopener noreferrer"
-              onClick={closeMenu}
-              className="q&a_gnb"
             >
               자주 묻는 질문
             </SideNavItem>
-          </div>
+          </nav>
         </div>
       </div>
       {/* 네비게이션 바 공간 차지 */}
-      <div className="h-[3.75rem] md:h-[111px]" />
-    </>
+      <div className="h-[3.75rem] md:h-[111px]" aria-hidden="true" />
+    </header>
   );
 };
 

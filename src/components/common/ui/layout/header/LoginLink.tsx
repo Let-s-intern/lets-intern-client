@@ -1,3 +1,4 @@
+import { twMerge } from '@/lib/twMerge';
 import Link from 'next/link';
 import { MouseEvent } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
@@ -6,13 +7,14 @@ interface Props {
   redirect?: string;
   isNextRouter: boolean;
   force: boolean;
+  className?: string;
 }
 
-function LoginLink({ redirect, isNextRouter, force }: Props) {
+function LoginLink({ redirect, isNextRouter, force, className }: Props) {
   const LinkComponent: any = isNextRouter ? Link : RouterLink;
   const linkProps = isNextRouter
     ? {
-        href: `/login?redirect=${redirect}`,
+        href: { pathname: '/login', query: { redirect } },
         onClick: (e: MouseEvent<HTMLAnchorElement, MouseEvent>) => {
           if (force) {
             e.preventDefault();
@@ -24,7 +26,10 @@ function LoginLink({ redirect, isNextRouter, force }: Props) {
 
   return (
     <LinkComponent
-      className="rounded-xxs bg-white px-3 py-1.5 text-xsmall14 font-medium text-primary"
+      className={twMerge(
+        'rounded-xxs bg-white px-3 py-1.5 text-xsmall14 font-medium text-primary',
+        className,
+      )}
       {...linkProps}
     >
       로그인

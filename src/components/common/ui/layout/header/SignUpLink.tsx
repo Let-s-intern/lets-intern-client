@@ -1,3 +1,4 @@
+import { twMerge } from '@/lib/twMerge';
 import Link from 'next/link';
 import { MouseEvent } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
@@ -5,9 +6,10 @@ import { Link as RouterLink } from 'react-router-dom';
 interface Props {
   isNextRouter: boolean;
   force: boolean;
+  className?: string;
 }
 
-function SignUpLink({ isNextRouter, force }: Props) {
+function SignUpLink({ isNextRouter, force, className }: Props) {
   const LinkComponent: any = isNextRouter ? Link : RouterLink;
   const linkProps = isNextRouter
     ? {
@@ -23,7 +25,10 @@ function SignUpLink({ isNextRouter, force }: Props) {
 
   return (
     <LinkComponent
-      className="rounded-xxs bg-primary px-3 py-1.5 text-xsmall14 font-medium text-white"
+      className={twMerge(
+        'rounded-xxs bg-primary px-3 py-1.5 text-xsmall14 font-medium text-white',
+        className,
+      )}
       {...linkProps}
     >
       회원가입

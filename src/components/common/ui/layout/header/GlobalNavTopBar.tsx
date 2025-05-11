@@ -73,13 +73,17 @@ function GlobalNavTopBar({
             <SignUpLink isNextRouter={isNextRouter} force={isNextRouter} />
           </div>
         )}
-        <button type="button" onClick={toggleMenu}>
+        <i
+          className="cursor-pointer"
+          aria-label="메뉴 열기"
+          onClick={toggleMenu}
+        >
           <img
             className="h-8 w-8"
             src="/icons/hamburger-md-black.svg"
             alt="네비게이션 아이콘"
           />
-        </button>
+        </i>
       </div>
     </nav>
   );

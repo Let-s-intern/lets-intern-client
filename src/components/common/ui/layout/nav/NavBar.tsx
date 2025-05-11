@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import GlobalNavItem from '../header/GlobalNavItem';
 import GlobalNavTopBar from '../header/GlobalNavTopBar';
+import NavOverlay from '../header/NavOverlay';
 import KakaoChannel from './KakaoChannel';
 import SideNavItem from './SideNavItem';
 
@@ -42,9 +43,9 @@ const NavBar = () => {
   useControlScroll(isOpen);
 
   return (
-    <>
+    <header>
       {/* 상단 네비게이션 바 */}
-      <header
+      <div
         className={`fixed top-0 z-30 w-screen border-b border-neutral-80 bg-white px-5 ${scrollDirection === 'DOWN' ? '-translate-y-full' : 'translate-y-0'} transition-transform duration-300`}
       >
         {/* 1단 */}
@@ -111,17 +112,11 @@ const NavBar = () => {
             렛츠커리어 스토리
           </GlobalNavItem>
         </nav>
-      </header>
+      </div>
 
       {/* 투명한 검정색 배경 */}
-      <div
-        className={`fixed inset-0 z-40 bg-black transition-opacity duration-300 ${
-          isOpen
-            ? 'opacity-50 ease-out'
-            : 'pointer-events-none opacity-0 ease-in'
-        }`}
-        onClick={toggleMenu}
-      />
+      <NavOverlay isOpen={isOpen} onClose={closeMenu} />
+
       {/* 사이드 네비게이션 바 */}
       <div
         className={twMerge(
@@ -236,7 +231,7 @@ const NavBar = () => {
       </div>
       {/* 네비게이션 바 공간 차지 */}
       <div className="h-[3.75rem] md:h-[111px]" />
-    </>
+    </header>
   );
 };
 
