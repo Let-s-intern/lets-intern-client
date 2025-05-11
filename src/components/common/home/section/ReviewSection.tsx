@@ -66,16 +66,7 @@ const ReviewSection = () => {
     };
   }, [reviewsCount, totalReviewIsLoading]);
 
-  // if (
-  //   totalReviewIsLoading ||
-  //   !totalReview ||
-  //   totalReview.reviewList.length < 1 ||
-  //   (reviewList?.length ?? 0) < 5
-  // ) {
-  //   return null;
-  // }
-
-  if (totalReviewIsLoading || !totalReview) {
+  if (totalReviewIsLoading || !totalReview || (reviewList?.length ?? 0) < 5) {
     return null;
   }
 
