@@ -10,7 +10,7 @@ import SubNavItem, { SubNavItemProps } from './SubNavItem';
 /**
  * @param {boolean} force
  *   true로 설정하면 window.location.href으로 라우팅
- *   Next.js App Router -> React Router로 이동할 때 사용합니다.
+ *   Next.js App Router <-> React Router로 이동할 때 사용합니다.
  */
 
 interface Props extends AnchorHTMLAttributes<HTMLAnchorElement> {
@@ -48,7 +48,7 @@ function GlobalNavItem({
           }
         },
       }
-    : { ...restProps, to: href, reloadDocument: true };
+    : { ...restProps, to: href, reloadDocument: force };
 
   const [hover, setHover] = useState(false);
 

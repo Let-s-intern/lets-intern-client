@@ -4,16 +4,19 @@ import { Link as RouterLink } from 'react-router-dom';
 
 interface Props {
   isNextRouter: boolean;
+  force: boolean;
 }
 
-function SignUpLink({ isNextRouter }: Props) {
+function SignUpLink({ isNextRouter, force }: Props) {
   const LinkComponent: any = isNextRouter ? Link : RouterLink;
   const linkProps = isNextRouter
     ? {
         href: '/signup',
         onClick: (e: MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-          e.preventDefault();
-          window.location.href = '/signup';
+          if (force) {
+            e.preventDefault();
+            window.location.href = '/signup';
+          }
         },
       }
     : { to: '/signup' };

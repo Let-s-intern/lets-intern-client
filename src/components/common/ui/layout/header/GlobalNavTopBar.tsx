@@ -65,8 +65,12 @@ function GlobalNavTopBar({
         ) : (
           <div className="hidden items-center gap-2 md:flex">
             {/* 로그인 */}
-            <LoginLink redirect={loginRedirect} />
-            <SignUpLink isNextRouter />
+            <LoginLink
+              redirect={loginRedirect}
+              isNextRouter={isNextRouter}
+              force={isNextRouter}
+            />
+            <SignUpLink isNextRouter={isNextRouter} force={isNextRouter} />
           </div>
         )}
         <button type="button" onClick={toggleMenu}>
