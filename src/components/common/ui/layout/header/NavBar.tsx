@@ -152,6 +152,15 @@ const NavBar = () => {
         >
           서류 피드백 REPORT
         </SideNavItem>
+        <SideNavItem
+          href="https://letscareer.oopy.io/1ea5e77c-bee1-8098-8e19-ec5038fb1cc8"
+          isNextRouter={false}
+          target="_blank"
+          isNew
+          rel="noopener noreferrer"
+        >
+          커피챗
+        </SideNavItem>
         <hr className="h-1 bg-neutral-80" aria-hidden="true" />
         {isAdmin && (
           <SideNavItem href="/admin" isNextRouter={false} force>

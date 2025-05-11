@@ -16,6 +16,7 @@ interface Props extends AnchorHTMLAttributes<HTMLAnchorElement> {
   isNextRouter: boolean;
   subNavList?: SubNavItemProps[];
   force?: boolean;
+  isNew?: boolean;
 }
 
 function SideNavItem({
@@ -25,13 +26,16 @@ function SideNavItem({
   isNextRouter,
   href = '#',
   subNavList,
+  isNew = false,
   onClick,
   ...restProps
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const linkClassName = twMerge(
-    'flex w-full cursor-pointer justify-between rounded-xs px-2.5 py-3 text-small18 font-bold text-neutral-30',
+    'flex w-full cursor-pointer rounded-xs px-2.5 py-3 text-small18 font-bold text-neutral-30',
+    isNew &&
+      "items-center gap-1.5 after:flex after:h-4 after:w-4 after:items-center after:justify-center after:rounded-full after:bg-system-error after:text-[10px] after:font-bold after:leading-none after:text-white after:content-['N']",
     isOpen && 'bg-primary-5',
     className,
   );
