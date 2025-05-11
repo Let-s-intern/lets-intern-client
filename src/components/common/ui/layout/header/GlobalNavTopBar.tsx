@@ -1,3 +1,4 @@
+import { useUserQuery } from '@/api/user';
 import useAuthStore from '@/store/useAuthStore';
 import GlobalNavItem from './GlobalNavItem';
 import LoginLink from './LoginLink';
@@ -7,7 +8,6 @@ import SignUpLink from './SignUpLink';
 interface Props {
   isNextRouter: boolean;
   isActiveHome: boolean;
-  username?: string;
   loginRedirect: string;
   toggleMenu: () => void;
 }
@@ -15,11 +15,12 @@ interface Props {
 function GlobalNavTopBar({
   isNextRouter,
   isActiveHome,
-  username,
   loginRedirect,
   toggleMenu,
 }: Props) {
   const { isLoggedIn } = useAuthStore();
+
+  const { data: user } = useUserQuery({ enabled: isLoggedIn, retry: 1 });
 
   return (
     <nav className="mw-1140 flex h-full items-center justify-between py-4">
@@ -55,7 +56,7 @@ function GlobalNavTopBar({
               window.location.href = '/mypage/application';
             }}
           >
-            <span className="text-1.125-medium block">{username} 님</span>
+            <span className="text-1.125-medium block">{user?.name} 님</span>
             <img
               src="/icons/user-user-circle-black.svg"
               alt="User icon"
