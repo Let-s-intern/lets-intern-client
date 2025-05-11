@@ -1,23 +1,25 @@
-'use client';
-
 import { useGetUserAdmin } from '@/api/user';
 import useActiveLink from '@/hooks/useActiveLink';
 import useActiveReportNav from '@/hooks/useActiveReportNav';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import useScrollDirection from '@/hooks/useScrollDirection';
 import useAuthStore from '@/store/useAuthStore';
-import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import GlobalNavItem from '../header/GlobalNavItem';
-import GlobalNavTopBar from '../header/GlobalNavTopBar';
-import NavOverlay from '../header/NavOverlay';
-import SideNavContainer from '../header/SideNavContainer';
-import SideNavItem from '../header/SideNavItem';
+import { useLocation } from 'react-router-dom';
+import GlobalNavItem from './GlobalNavItem';
+import GlobalNavTopBar from './GlobalNavTopBar';
+import NavOverlay from './NavOverlay';
+import SideNavContainer from './SideNavContainer';
+import SideNavItem from './SideNavItem';
 
-const NextNavBar = () => {
-  const pathname = usePathname() ?? '';
+const NavBar = () => {
+  const location = useLocation();
 
   const [isOpen, setIsOpen] = useState(false);
+
+  const activeLink = useActiveLink(location.pathname);
+  const reportNavList = useActiveReportNav();
+  const scrollDirection = useScrollDirection(location.pathname);
 
   const { isLoggedIn } = useAuthStore();
 
@@ -26,13 +28,10 @@ const NextNavBar = () => {
     retry: 1,
   });
 
-  const activeLink = useActiveLink(pathname);
-  const reportNavList = useActiveReportNav();
-  const scrollDirection = useScrollDirection(pathname);
-
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
+
   const closeMenu = () => {
     setIsOpen(false);
   };
@@ -48,9 +47,9 @@ const NextNavBar = () => {
       >
         {/* 1단 */}
         <GlobalNavTopBar
-          isNextRouter
+          isNextRouter={false}
           isActiveHome={activeLink === 'HOME'}
-          loginRedirect={encodeURIComponent(pathname)}
+          loginRedirect={encodeURIComponent(location.pathname)}
           toggleMenu={toggleMenu}
         />
         {/* 2단 */}
@@ -59,18 +58,18 @@ const NextNavBar = () => {
             <GlobalNavItem
               className="text-xsmall16"
               href="/program"
-              force
-              isNextRouter
+              isNextRouter={false}
               active={activeLink === 'PROGRAM'}
             >
               전체 프로그램
             </GlobalNavItem>
             <GlobalNavItem
               className="text-xsmall16"
-              isNextRouter
+              isNextRouter={false}
               active={activeLink === 'REPORT'}
               href={reportNavList.length === 0 ? '#' : reportNavList[0].href}
               subNavList={reportNavList}
+              force
             >
               서류 피드백 REPORT
             </GlobalNavItem>
@@ -83,16 +82,18 @@ const NextNavBar = () => {
             <GlobalNavItem
               className="text-xsmall16"
               href="/review"
-              isNextRouter
+              isNextRouter={false}
               active={activeLink === 'REVIEW'}
+              force
             >
               수강생 솔직 후기
             </GlobalNavItem>
             <GlobalNavItem
               className="text-xsmall16"
               href="/blog/list"
-              isNextRouter
+              isNextRouter={false}
               active={activeLink === 'BLOG'}
+              force
             >
               블로그
             </GlobalNavItem>
@@ -101,8 +102,7 @@ const NextNavBar = () => {
           <GlobalNavItem
             className="text-xsmall16"
             href="/about"
-            isNextRouter
-            force
+            isNextRouter={false}
             active={activeLink === 'ABOUT'}
           >
             렛츠커리어 스토리
@@ -110,30 +110,35 @@ const NextNavBar = () => {
         </nav>
       </div>
 
-      {/* 사이드 네비게이션 Overlay */}
+      {/* 투명한 검정색 배경 */}
       <NavOverlay isOpen={isOpen} onClose={closeMenu} />
 
       {/* 사이드 네비게이션 바 */}
-      <SideNavContainer isNextRouter isOpen={isOpen} onClose={closeMenu}>
-        <SideNavItem href="/mypage/application" isNextRouter force>
+      <SideNavContainer
+        isNextRouter={false}
+        isOpen={isOpen}
+        onClose={closeMenu}
+      >
+        <SideNavItem href="/mypage/application" isNextRouter={false}>
           마이페이지
         </SideNavItem>
         <hr className="h-1 bg-neutral-80" aria-hidden="true" />
-        <SideNavItem href="/about" isNextRouter force>
+        <SideNavItem href="/about" isNextRouter={false}>
           렛츠커리어 스토리
         </SideNavItem>
-        <SideNavItem href="/program" isNextRouter force>
+        <SideNavItem href="/program" isNextRouter={false}>
           프로그램
         </SideNavItem>
-        <SideNavItem href="/review" isNextRouter>
+        <SideNavItem href="/review" isNextRouter={false} force>
           수강생 솔직 후기
         </SideNavItem>
-        <SideNavItem href="/blog/list" isNextRouter>
+        <SideNavItem href="/blog/list" isNextRouter={false} force>
           블로그
         </SideNavItem>
         <SideNavItem
           href="/report/landing"
-          isNextRouter
+          isNextRouter={false}
+          force
           subNavList={reportNavList}
           onClick={(e) => e.stopPropagation()}
         >
@@ -141,14 +146,14 @@ const NextNavBar = () => {
         </SideNavItem>
         <hr className="h-1 bg-neutral-80" aria-hidden="true" />
         {isAdmin && (
-          <SideNavItem href="/admin" isNextRouter force>
+          <SideNavItem href="/admin" isNextRouter={false} force>
             관리자 페이지
           </SideNavItem>
         )}
         <SideNavItem
           className="notice_gnb"
           href="https://letscareer.oopy.io"
-          isNextRouter
+          isNextRouter={false}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -157,7 +162,7 @@ const NextNavBar = () => {
         <SideNavItem
           className="q&a_gnb"
           href="https://letscareer.oopy.io"
-          isNextRouter
+          isNextRouter={false}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -166,9 +171,9 @@ const NextNavBar = () => {
       </SideNavContainer>
 
       {/* 네비게이션 바 공간 차지 */}
-      <div className="h-[3.75rem] md:h-[111px]" aria-hidden="true" />
+      <div className="h-[3.75rem] md:h-[111px]" />
     </header>
   );
 };
 
-export default NextNavBar;
+export default NavBar;
