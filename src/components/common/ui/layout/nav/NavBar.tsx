@@ -1,46 +1,34 @@
-import { useGetActiveReports } from '@/api/report';
 import { useGetUserAdmin, useUserQuery } from '@/api/user';
-import { hasActiveReport } from '@/hooks/useActiveReports';
+import useActiveLink from '@/hooks/useActiveLink';
+import useActiveReportNav from '@/hooks/useActiveReportNav';
 import { useControlScroll } from '@/hooks/useControlScroll';
+import useScrollDirection from '@/hooks/useScrollDirection';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
-import useScrollStore from '@/store/useScrollStore';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-
 import GlobalNavItem from '../header/GlobalNavItem';
 import GlobalNavTopBar from '../header/GlobalNavTopBar';
-import { SubNavItemProps } from '../header/SubNavItem';
 import KakaoChannel from './KakaoChannel';
 import SideNavItem from './SideNavItem';
-
-const scrollEventPage = [
-  '/report/landing',
-  '/program/challenge',
-  '/program/live',
-];
-
-type ActiveLinks =
-  | 'HOME'
-  | 'ABOUT'
-  | 'PROGRAM'
-  | 'ADMIN'
-  | 'BLOG'
-  | 'REPORT'
-  | 'REVIEW'
-  | '';
 
 const NavBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const lastScrollY = useRef(0);
 
   const [isOpen, setIsOpen] = useState(false);
-  const [reportItems, setReportItems] = useState<SubNavItemProps[]>([]);
-  const [activeLink, setActiveLink] = useState<ActiveLinks>('');
+
+  const activeLink = useActiveLink(location.pathname);
+  const reportNavList = useActiveReportNav();
+  const scrollDirection = useScrollDirection(location.pathname);
 
   const { isLoggedIn, logout } = useAuthStore();
-  const { setScrollDirection, scrollDirection } = useScrollStore();
+
+  const { data: user } = useUserQuery({ enabled: isLoggedIn, retry: 1 });
+  const { data: isAdmin } = useGetUserAdmin({
+    enabled: isLoggedIn,
+    retry: 1,
+  });
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -50,112 +38,8 @@ const NavBar = () => {
     setIsOpen(false);
   };
 
-  const { data: user } = useUserQuery({ enabled: isLoggedIn, retry: 1 });
-  const { data: isAdmin } = useGetUserAdmin({
-    enabled: isLoggedIn,
-    retry: 1,
-  });
-
-  const { data, isLoading } = useGetActiveReports();
-  useEffect(() => {
-    /* 활성화된 서류 진단만 서브 메뉴로 설정 */
-    const reportSubNavList: SubNavItemProps[] = [
-      {
-        children: '이력서 진단 받기',
-        href: '/report/landing/resume',
-        isNextRouter: true,
-      },
-      {
-        children: '자기소개서 진단 받기',
-        href: '/report/landing/personal-statement',
-        isNextRouter: true,
-      },
-      {
-        children: '포트폴리오 진단 받기',
-        href: '/report/landing/portfolio',
-        isNextRouter: true,
-      },
-      {
-        children: 'MY 진단서 보기',
-        href: '/report/management',
-        isNextRouter: true,
-        force: true,
-      },
-    ];
-    if (data) {
-      const navItems: SubNavItemProps[] = [];
-      const resumeInfoList = data?.resumeInfoList;
-      const personalStatementInfoList = data?.personalStatementInfoList;
-      const portfolioInfoList = data?.portfolioInfoList;
-
-      if (hasActiveReport(resumeInfoList)) {
-        navItems.push(reportSubNavList[0]);
-      }
-      if (hasActiveReport(personalStatementInfoList)) {
-        navItems.push(reportSubNavList[1]);
-      }
-      if (hasActiveReport(portfolioInfoList)) {
-        navItems.push(reportSubNavList[2]);
-      }
-
-      navItems.push(reportSubNavList[3]);
-
-      setReportItems(navItems);
-    } else {
-      setReportItems([reportSubNavList[3]]);
-    }
-  }, [data]);
-
   // 사이드바 열리면 스크롤 제한
   useControlScroll(isOpen);
-
-  useEffect(() => {
-    // 네비 메뉴 활성화
-    if (location.pathname.startsWith('/about')) {
-      setActiveLink('ABOUT');
-    } else if (location.pathname.startsWith('/program')) {
-      setActiveLink('PROGRAM');
-    } else if (location.pathname.startsWith('/admin')) {
-      setActiveLink('ADMIN');
-    } else if (location.pathname.startsWith('/blog')) {
-      setActiveLink('BLOG');
-    } else if (location.pathname.startsWith('/report')) {
-      setActiveLink('REPORT');
-    } else if (location.pathname.startsWith('/review')) {
-      setActiveLink('REVIEW');
-    } else if (location.pathname === '/') {
-      setActiveLink('HOME');
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    /** 네비바 숨김/표시 로직 */
-    if (typeof window === 'undefined') return;
-
-    setScrollDirection('UP');
-
-    const handleScroll = () => {
-      // 현재 경로가 scrollEventPage 중 하나로 시작되지 않을 때는 스크롤 이벤트를 무시
-      if (!scrollEventPage.some((page) => location.pathname.startsWith(page)))
-        return;
-
-      const currentScrollY = window.scrollY;
-
-      if (currentScrollY > lastScrollY.current && currentScrollY > 500) {
-        setScrollDirection('DOWN');
-      } else if (currentScrollY < lastScrollY.current) {
-        setScrollDirection('UP');
-      }
-
-      lastScrollY.current = currentScrollY;
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [location.pathname, setScrollDirection]);
 
   return (
     <>
@@ -177,7 +61,6 @@ const NavBar = () => {
             <GlobalNavItem
               className="text-xsmall16"
               href="/program"
-              force
               isNextRouter={false}
               active={activeLink === 'PROGRAM'}
             >
@@ -187,9 +70,9 @@ const NavBar = () => {
               className="text-xsmall16"
               isNextRouter={false}
               active={activeLink === 'REPORT'}
-              href={isLoading ? '#' : reportItems[0].href}
-              subNavList={reportItems}
-              subNavLoaded={!isLoading && !!data}
+              href={reportNavList.length === 0 ? '#' : reportNavList[0].href}
+              subNavList={reportNavList}
+              force
             >
               서류 피드백 REPORT
             </GlobalNavItem>
@@ -204,6 +87,7 @@ const NavBar = () => {
               href="/review"
               isNextRouter={false}
               active={activeLink === 'REVIEW'}
+              force
             >
               수강생 솔직 후기
             </GlobalNavItem>
@@ -212,6 +96,7 @@ const NavBar = () => {
               href="/blog/list"
               isNextRouter={false}
               active={activeLink === 'BLOG'}
+              force
             >
               블로그
             </GlobalNavItem>
@@ -221,7 +106,6 @@ const NavBar = () => {
             className="text-xsmall16"
             href="/about"
             isNextRouter={false}
-            force
             active={activeLink === 'ABOUT'}
           >
             렛츠커리어 스토리

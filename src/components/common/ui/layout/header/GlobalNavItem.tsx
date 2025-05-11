@@ -17,7 +17,6 @@ interface Props extends AnchorHTMLAttributes<HTMLAnchorElement> {
   active?: boolean;
   isNextRouter: boolean;
   subNavList?: SubNavItemProps[];
-  subNavLoaded?: boolean;
   force?: boolean;
 }
 
@@ -29,7 +28,6 @@ function GlobalNavItem({
   isNextRouter,
   href = '#',
   subNavList,
-  subNavLoaded = true,
   ...restProps
 }: Props) {
   const linkClassName = twMerge(
@@ -68,20 +66,14 @@ function GlobalNavItem({
             <Polygon />
           </div>
           <div className="flex w-full flex-col rounded-xs bg-white py-1">
-            {subNavLoaded ? (
-              subNavList.map((item, index) => (
-                <Fragment key={item.href}>
-                  <SubNavItem {...item}>{item.children}</SubNavItem>
-                  {index < subNavList.length - 1 && (
-                    <hr className="border-t border-neutral-90" />
-                  )}
-                </Fragment>
-              ))
-            ) : (
-              <div className="mx-auto text-xsmall16 font-normal text-neutral-35">
-                로딩 중...
-              </div>
-            )}
+            {subNavList.map((item, index) => (
+              <Fragment key={item.href}>
+                <SubNavItem {...item}>{item.children}</SubNavItem>
+                {index < subNavList.length - 1 && (
+                  <hr className="border-t border-neutral-90" />
+                )}
+              </Fragment>
+            ))}
           </div>
         </div>
       )}
