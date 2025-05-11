@@ -51,16 +51,19 @@ function GlobalNavTopBar({
       <div className="flex items-center gap-4">
         {isLoggedIn ? (
           <div
-            className="hidden cursor-pointer gap-2 sm:flex"
+            className="hidden cursor-pointer gap-2 md:flex"
             onClick={() => {
               window.location.href = '/mypage/application';
             }}
           >
-            <span className="text-1.125-medium block">{user?.name} 님</span>
+            <span className="text-xsmall14 font-medium text-neutral-0">
+              {user?.name} 님
+            </span>
             <img
               src="/icons/user-user-circle-black.svg"
-              alt="User icon"
-              className="w-1.75"
+              alt=""
+              aria-hidden="true"
+              className="h-6 w-6"
             />
           </div>
         ) : (
