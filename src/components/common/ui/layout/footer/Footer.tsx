@@ -69,13 +69,13 @@ const Footer = () => {
               {reportLInk && (
                 <MenuLink to={reportLInk}>서류 진단 서비스</MenuLink>
               )}
-              {/* <MenuLink
-                to="https://letscareerinterview.imweb.me/"
+              <MenuLink
+                to="https://letscareer.oopy.io/1ea5e77c-bee1-8098-8e19-ec5038fb1cc8"
                 target="_blank"
                 rel="noopenner noreferrer"
               >
-                모의 면접 서비스
-              </MenuLink> */}
+                커피챗
+              </MenuLink>
             </div>
 
             {/* 기타 */}

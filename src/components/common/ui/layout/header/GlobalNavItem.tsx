@@ -18,6 +18,7 @@ interface Props extends AnchorHTMLAttributes<HTMLAnchorElement> {
   isNextRouter: boolean;
   subNavList?: SubNavItemProps[];
   force?: boolean;
+  isNew?: boolean;
 }
 
 function GlobalNavItem({
@@ -28,10 +29,14 @@ function GlobalNavItem({
   isNextRouter,
   href = '#',
   subNavList,
+  isNew = false,
   ...restProps
 }: Props) {
   const linkClassName = twMerge(
-    `hidden text-[15px] font-semibold md:inline ${active ? 'text-primary' : 'text-neutral-0'}`,
+    'hidden text-[15px] font-semibold md:inline',
+    active ? 'text-primary' : 'text-neutral-0',
+    isNew &&
+      "items-center gap-1 after:flex after:h-3 after:w-3 after:items-center after:justify-center after:rounded-full after:bg-system-error after:text-[0.5rem] after:font-bold after:leading-none after:text-white after:content-['N'] md:flex",
     className,
   );
   const LinkComponent: any = isNextRouter ? Link : RouterLink;
