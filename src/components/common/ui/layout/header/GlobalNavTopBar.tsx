@@ -51,7 +51,7 @@ function GlobalNavTopBar({
       <div className="flex items-center gap-4">
         {isLoggedIn ? (
           <div
-            className="hidden cursor-pointer gap-2 md:flex"
+            className="hidden cursor-pointer items-center gap-2 md:flex"
             onClick={() => {
               window.location.href = '/mypage/application';
             }}
@@ -83,7 +83,7 @@ function GlobalNavTopBar({
           onClick={toggleMenu}
         >
           <img
-            className="h-8 w-8"
+            className="h-6 w-6"
             src="/icons/hamburger-md-black.svg"
             alt="네비게이션 아이콘"
           />

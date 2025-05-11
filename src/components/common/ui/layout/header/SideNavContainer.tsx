@@ -2,7 +2,7 @@ import { useUserQuery } from '@/api/user';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
 import { ReactNode } from 'react';
-import KakaoChannel from '../nav/KakaoChannel';
+import KakaoChannel from './KakaoChannel';
 import LoginLink from './LoginLink';
 import SignUpLink from './SignUpLink';
 

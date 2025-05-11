@@ -14,7 +14,7 @@ import NavOverlay from '../header/NavOverlay';
 import SideNavContainer from '../header/SideNavContainer';
 import SideNavItem from '../header/SideNavItem';
 
-const NavBar = () => {
+const NextNavBar = () => {
   const pathname = usePathname() ?? '';
 
   const [isOpen, setIsOpen] = useState(false);
@@ -171,4 +171,4 @@ const NavBar = () => {
   );
 };
 
-export default NavBar;
+export default NextNavBar;
