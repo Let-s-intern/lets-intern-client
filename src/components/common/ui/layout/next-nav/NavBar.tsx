@@ -1,16 +1,17 @@
 'use client';
 
 import { useGetActiveReports } from '@/api/report';
+import { useGetUserAdmin, User, useUserQuery } from '@/api/user';
 import { hasActiveReport } from '@/hooks/useActiveReports';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
 import useScrollStore from '@/store/useScrollStore';
-import axios from '@/utils/axios';
-import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+
+import GlobalNavTopBar from '../header/GlobalNavTopBar';
 import KakaoChannel from '../nav/KakaoChannel';
 import NavItem from './NavItem';
 import { NavSubItemProps } from './NavSubItem';
@@ -36,17 +37,6 @@ const reportHoverItem: NavSubItemProps[] = [
   },
 ];
 
-const interviewHoverItem: NavSubItemProps[] = [
-  {
-    text: '대기업 모의 면접',
-    to: 'https://letscareerinterview.imweb.me',
-  },
-  {
-    text: '스타트업 모의면접',
-    to: 'https://letscareerinterview.imweb.me/Startupinterview',
-  },
-];
-
 const scrollEventPage = [
   '/report/landing',
   '/program/challenge',
@@ -59,7 +49,7 @@ const NavBar = () => {
   const lastScrollY = useRef(0);
 
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [reportItems, setReportItems] = useState<NavSubItemProps[]>([]);
   const [activeLink, setActiveLink] = useState<
@@ -77,22 +67,8 @@ const NavBar = () => {
     setIsOpen(false);
   };
 
-  const { data: userData } = useQuery({
-    queryKey: ['mainUser'],
-    queryFn: async () => {
-      const res = await axios.get('/user');
-      return res.data.data;
-    },
-    enabled: isLoggedIn,
-    retry: 1,
-  });
-
-  const { data: isAdminData } = useQuery({
-    queryKey: ['isAdmin'],
-    queryFn: async () => {
-      const res = await axios.get('/user/isAdmin');
-      return res.data.data;
-    },
+  const { data: userData } = useUserQuery({ enabled: isLoggedIn, retry: 1 });
+  const { data: isAdminData } = useGetUserAdmin({
     enabled: isLoggedIn,
     retry: 1,
   });
@@ -141,7 +117,7 @@ const NavBar = () => {
       setActiveLink('REPORT');
     } else if (pathname.startsWith('/review')) {
       setActiveLink('REVIEW');
-    } else if (pathname.startsWith('/')) {
+    } else if (location.pathname === '/') {
       setActiveLink('HOME');
     }
   }, [pathname]);
@@ -188,31 +164,21 @@ const NavBar = () => {
   return (
     <>
       {/* 상단 네비게이션 바 */}
-      <div
-        className={`lg:p-30 fixed top-0 z-30 h-[3.75rem] w-screen border-b border-neutral-80 bg-static-100 px-5 sm:px-20 md:h-[4.375rem] lg:h-[4.75rem] lg:px-28 ${scrollDirection === 'DOWN' ? '-translate-y-full' : 'translate-y-0'} transition-transform duration-300`}
+      <header
+        className={`fixed top-0 z-30 w-screen border-b border-neutral-80 bg-white px-5 ${scrollDirection === 'DOWN' ? '-translate-y-full' : 'translate-y-0'} transition-transform duration-300`}
       >
-        <div className="flex h-full items-center justify-between">
-          <div className="flex h-full items-center gap-4 sm:gap-9">
-            <Link href={'/'} className="h-[1.75rem] md:h-[2.2rem]">
-              <img
-                src="/logo/logo-gradient-text.svg"
-                alt="렛츠커리어 로고"
-                className="h-full w-auto"
-              />
-              <h1 className="sr-only">렛츠커리어</h1>
-            </Link>
-            {/* 메뉴 아이템 */}
-            <NavItem to="/about" active={activeLink === 'ABOUT'}>
-              렛츠커리어 스토리
-            </NavItem>
+        {/* 1단 */}
+        <GlobalNavTopBar
+          isActiveHome={activeLink === 'HOME'}
+          username={user?.name ?? undefined}
+          loginRedirect={pathname}
+          toggleMenu={toggleMenu}
+        />
+        {/* 2단 */}
+        <nav className="mw-1140 hidden items-center gap-3 pb-[18px] pt-1 md:flex">
+          <div className="flex items-center gap-5">
             <NavItem to="/program" active={activeLink === 'PROGRAM'}>
-              프로그램
-            </NavItem>
-            <NavItem to="/review" active={activeLink === 'REVIEW'}>
-              100% 솔직 후기
-            </NavItem>
-            <NavItem to="/blog/list" active={activeLink === 'BLOG'}>
-              블로그
+              전체 프로그램
             </NavItem>
             <NavItem
               as="div"
@@ -221,68 +187,27 @@ const NavBar = () => {
               hoverItem={reportItems}
               isItemLoaded={!isLoading && !!data}
             >
-              🔥 서류 진단받고 합격하기
+              서류 피드백 REPORT
             </NavItem>
-            {/* <NavItem
-              as="div"
-              hoverItem={interviewHoverItem}
-              target="_blank"
-              rel="noopenner noreferrer"
-            >
-              🔎 모의 면접하고 합격하기
-            </NavItem> */}
+            <NavItem to="/program" active={activeLink === 'PROGRAM'}>
+              커피챗
+            </NavItem>
           </div>
-          <div className="flex items-center gap-4">
-            {isLoggedIn ? (
-              <div
-                className="hidden cursor-pointer gap-2 sm:flex"
-                onClick={() => {
-                  window.location.href = '/mypage/application';
-                }}
-              >
-                <span className="text-1.125-medium block">{user?.name} 님</span>
-                <img
-                  src="/icons/user-user-circle-black.svg"
-                  alt="User icon"
-                  className="w-1.75"
-                />
-              </div>
-            ) : (
-              <div className="hidden items-center gap-2 sm:flex">
-                <Link
-                  href={{
-                    pathname: '/login',
-                    query: { redirect: pathname },
-                  }}
-                  className="text-0.75 rounded-xxs bg-primary px-3 py-1 text-static-100"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    window.location.href = `/login?redirect=${encodeURIComponent(pathname)}`;
-                  }}
-                >
-                  로그인
-                </Link>
-                <Link
-                  href="/signup"
-                  className="text-0.75 text-primary"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    window.location.href = '/signup';
-                  }}
-                >
-                  회원가입
-                </Link>
-              </div>
-            )}
-            <button type="button" onClick={toggleMenu}>
-              <img
-                src="/icons/hamburger-md-black.svg"
-                alt="네비게이션 아이콘"
-              />
-            </button>
+          <div className="h-[18px] w-[1px] bg-[#D9D9D9]" aria-hidden="true" />
+          <div className="flex items-center gap-5">
+            <NavItem to="/review" active={activeLink === 'REVIEW'}>
+              수강생 솔직 후기
+            </NavItem>
+            <NavItem to="/blog/list" active={activeLink === 'BLOG'}>
+              블로그
+            </NavItem>
           </div>
-        </div>
-      </div>
+          <div className="h-[18px] w-[1px] bg-[#D9D9D9]" aria-hidden="true" />
+          <NavItem to="/about" active={activeLink === 'ABOUT'}>
+            렛츠커리어 스토리
+          </NavItem>
+        </nav>
+      </header>
 
       {/* 투명한 검정색 배경 */}
       <div

@@ -1,13 +1,14 @@
 import { useGetActiveReports } from '@/api/report';
+import { useGetUserAdmin, User, useUserQuery } from '@/api/user';
 import { hasActiveReport } from '@/hooks/useActiveReports';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
 import useScrollStore from '@/store/useScrollStore';
-import axios from '@/utils/axios';
-import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+
+import GlobalNavTopBar from '../header/GlobalNavTopBar';
 import KakaoChannel from './KakaoChannel';
 import NavItem from './NavItem';
 import { NavSubItemProps } from './NavSubItem';
@@ -32,22 +33,21 @@ const reportHoverItem: NavSubItemProps[] = [
   },
 ];
 
-const interviewHoverItem: NavSubItemProps[] = [
-  {
-    text: '대기업 모의 면접',
-    to: 'https://letscareerinterview.imweb.me',
-  },
-  {
-    text: '스타트업 모의면접',
-    to: 'https://letscareerinterview.imweb.me/Startupinterview',
-  },
-];
-
 const scrollEventPage = [
   '/report/landing',
   '/program/challenge',
   '/program/live',
 ];
+
+type ActiveLinks =
+  | 'HOME'
+  | 'ABOUT'
+  | 'PROGRAM'
+  | 'ADMIN'
+  | 'BLOG'
+  | 'REPORT'
+  | 'REVIEW'
+  | '';
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -55,13 +55,10 @@ const NavBar = () => {
   const lastScrollY = useRef(0);
 
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [reportItems, setReportItems] = useState<NavSubItemProps[]>([]);
-  /** TODO: Next.js 스럽게 수정하기 */
-  const [activeLink, setActiveLink] = useState<
-    'HOME' | 'ABOUT' | 'PROGRAM' | 'ADMIN' | 'BLOG' | 'REPORT' | 'REVIEW' | ''
-  >('');
+  const [activeLink, setActiveLink] = useState<ActiveLinks>('');
 
   const { isLoggedIn, logout } = useAuthStore();
   const { setScrollDirection, scrollDirection } = useScrollStore();
@@ -74,29 +71,15 @@ const NavBar = () => {
     setIsOpen(false);
   };
 
-  const { data: userData } = useQuery({
-    queryKey: ['mainUser'],
-    queryFn: async () => {
-      const res = await axios.get('/user');
-      return res.data.data;
-    },
-    enabled: isLoggedIn,
-    retry: 1,
-  });
-
-  const { data: isAdminData } = useQuery({
-    queryKey: ['isAdmin'],
-    queryFn: async () => {
-      const res = await axios.get('/user/isAdmin');
-      return res.data.data;
-    },
+  const { data: userData } = useUserQuery({ enabled: isLoggedIn, retry: 1 });
+  const { data: isAdminData } = useGetUserAdmin({
     enabled: isLoggedIn,
     retry: 1,
   });
 
   const { data, isLoading } = useGetActiveReports();
-
   useEffect(() => {
+    // 활성화된 레포트 있는지 확인
     if (data) {
       const navItems: NavSubItemProps[] = [];
 
@@ -126,6 +109,7 @@ const NavBar = () => {
   useControlScroll(isOpen);
 
   useEffect(() => {
+    // 네비 메뉴 활성화
     if (location.pathname.startsWith('/about')) {
       setActiveLink('ABOUT');
     } else if (location.pathname.startsWith('/program')) {
@@ -138,7 +122,7 @@ const NavBar = () => {
       setActiveLink('REPORT');
     } else if (location.pathname.startsWith('/review')) {
       setActiveLink('REVIEW');
-    } else if (location.pathname.startsWith('/')) {
+    } else if (location.pathname === '/') {
       setActiveLink('HOME');
     }
   }, [location.pathname]);
@@ -154,6 +138,7 @@ const NavBar = () => {
   }, [userData, isAdminData]);
 
   useEffect(() => {
+    /** 네비바 숨김/표시 로직 */
     if (typeof window === 'undefined') return;
 
     setScrollDirection('UP');
@@ -185,90 +170,44 @@ const NavBar = () => {
     <>
       {/* 상단 네비게이션 바 */}
       <div
-        className={`lg:p-30 fixed top-0 z-30 h-[3.75rem] w-screen border-b border-neutral-80 bg-static-100 px-5 sm:px-20 md:h-[4.375rem] lg:h-[4.75rem] lg:px-28 ${scrollDirection === 'DOWN' ? '-translate-y-full' : 'translate-y-0'} transition-transform duration-300`}
+        className={`lg:p-30 fixed top-0 z-30 h-[3.75rem] w-screen border-b border-neutral-80 bg-white px-5 sm:px-20 md:h-[4.375rem] lg:h-[4.75rem] lg:px-28 ${scrollDirection === 'DOWN' ? '-translate-y-full' : 'translate-y-0'} transition-transform duration-300`}
       >
-        <div className="flex h-full items-center justify-between">
-          <div className="flex h-full items-center gap-4 sm:gap-9">
-            <Link to="/" className="h-[1.75rem] md:h-[2.2rem]">
-              <img
-                src="/logo/logo-gradient-text.svg"
-                alt="렛츠커리어 로고"
-                className="h-full w-auto"
-              />
-            </Link>
-            {/* 메뉴 아이템 */}
-            <NavItem to="/about" active={activeLink === 'ABOUT'}>
-              렛츠커리어 스토리
-            </NavItem>
-            <NavItem to="/program" active={activeLink === 'PROGRAM'}>
-              프로그램
-            </NavItem>
-            <NavItem
-              to="/review"
-              active={activeLink === 'REVIEW'}
-              reloadDocument
-            >
-              100% 솔직 후기
-            </NavItem>
-            <NavItem
-              to="/blog/list"
-              active={activeLink === 'BLOG'}
-              reloadDocument
-            >
-              블로그
-            </NavItem>
-            <NavItem
-              as="div"
-              to={reportHoverItem[0].to}
-              active={activeLink === 'REPORT'}
-              hoverItem={reportItems}
-              isItemLoaded={!isLoading && !!data}
-              reloadDocument
-            >
-              🔥 서류 진단받고 합격하기
-            </NavItem>
-            {/* <NavItem
-              as="div"
-              hoverItem={interviewHoverItem}
-              target="_blank"
-              rel="noopenner noreferrer"
-            >
-              🔎 모의 면접하고 합격하기
-            </NavItem> */}
-          </div>
-          <div className="flex items-center gap-4">
-            {isLoggedIn ? (
-              <div
-                className="hidden cursor-pointer gap-2 sm:flex"
-                onClick={() => navigate('/mypage/application')}
-              >
-                <span className="text-1.125-medium block">{user?.name} 님</span>
-                <img
-                  src="/icons/user-user-circle-black.svg"
-                  alt="User icon"
-                  className="w-1.75"
-                />
-              </div>
-            ) : (
-              <div className="hidden items-center gap-2 sm:flex">
-                <Link
-                  to={`/login?redirect=${encodeURIComponent(location.pathname)}`}
-                  className="text-0.75 rounded-xxs bg-primary px-3 py-1 text-static-100"
-                >
-                  로그인
-                </Link>
-                <Link to="/signup" className="text-0.75 text-primary">
-                  회원가입
-                </Link>
-              </div>
-            )}
-            <button type="button" onClick={toggleMenu}>
-              <img
-                src="/icons/hamburger-md-black.svg"
-                alt="네비게이션 아이콘"
-              />
-            </button>
-          </div>
+        {/* 1단 */}
+        <GlobalNavTopBar
+          isActiveHome={activeLink === 'HOME'}
+          username={user?.name ?? undefined}
+          loginRedirect={encodeURIComponent(location.pathname)}
+          toggleMenu={toggleMenu}
+        />
+        {/* 2단 */}
+        <div>
+          {/* 메뉴 아이템 */}
+          <NavItem to="/about" active={activeLink === 'ABOUT'}>
+            렛츠커리어 스토리
+          </NavItem>
+          <NavItem to="/program" active={activeLink === 'PROGRAM'}>
+            프로그램
+          </NavItem>
+          <NavItem to="/review" active={activeLink === 'REVIEW'} reloadDocument>
+            100% 솔직 후기
+          </NavItem>
+          <NavItem
+            to="/blog/list"
+            active={activeLink === 'BLOG'}
+            reloadDocument
+          >
+            블로그
+          </NavItem>
+          <NavItem
+            as="div"
+            to={reportHoverItem[0].to}
+            active={activeLink === 'REPORT'}
+            hoverItem={reportItems}
+            isItemLoaded={!isLoading && !!data}
+            reloadDocument
+          >
+            🔥 서류 진단받고 합격하기
+          </NavItem>
         </div>
       </div>
 

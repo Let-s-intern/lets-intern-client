@@ -1,7 +1,6 @@
 'use client';
 
 import Polygon from '@/assets/icons/polygon.svg?react';
-import clsx from 'clsx';
 import Link from 'next/link';
 import { useState } from 'react';
 import NavSubItem, { NavSubItemProps } from './NavSubItem';
@@ -31,18 +30,11 @@ const NavItem = ({
 }: NavItemProps) => {
   const [hover, setHover] = useState(false);
   const Wrapper = as || Link;
-  const style = {
-    'text-1.125-bold text-neutral-0': active || hover,
-    'text-1.125-medium text-neutral-60': !active && !hover,
-  };
 
   return (
     <Wrapper
       href={to || '#'}
-      className={clsx(
-        style,
-        'relative hidden h-full cursor-pointer items-center 3xl:flex',
-      )}
+      className={` ${active ? 'text-primary' : 'text-neutral-0'} relative hidden h-full cursor-pointer items-center text-xsmall16 font-semibold md:flex`}
       onClick={(e) => {
         if (force) {
           e.preventDefault();
@@ -53,8 +45,10 @@ const NavItem = ({
       rel={rel}
     >
       {children}
+
+      {/* 서브 메뉴 드롭다운 */}
       <div
-        className="absolute left-0 top-0 z-30 w-full pt-[2.75rem] md:pt-[3.375rem] lg:pt-[3.75rem]"
+        className="absolute -top-8 bottom-0 z-30 w-full pt-[2.75rem] md:pt-[3.375rem] lg:pt-[3.75rem]"
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
       >

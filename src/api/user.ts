@@ -8,6 +8,7 @@ import {
   userAdminType,
 } from '../schema';
 import axios from '../utils/axios';
+import { isAdminSchema } from './userSchema';
 
 export const UseUserAdminQueryKey = 'useUserListQueryKey';
 
@@ -141,17 +142,34 @@ const userSchema = z.object({
   authProvider: authProviderSchema.nullable(),
 });
 
+export type User = z.infer<typeof userSchema>;
+
 const useUserQueryKey = 'useUserQueryKey';
 
-export const useUserQuery = ({ enabled }: { enabled?: boolean } = {}) => {
+export const useUserQuery = ({
+  ...options
+}: { enabled?: boolean; retry?: boolean | number } = {}) => {
   return useQuery({
-    enabled,
+    ...options,
     queryKey: [useUserQueryKey],
     queryFn: async () => {
       const res = await axios.get(`/user`);
       return userSchema.parse(res.data.data);
     },
     refetchOnWindowFocus: false,
+  });
+};
+
+export const useGetUserAdmin = ({
+  ...options
+}: { enabled?: boolean; retry?: boolean | number } = {}) => {
+  return useQuery({
+    queryKey: ['useGetUserAdmin'],
+    queryFn: async () => {
+      const res = await axios.get('/user/isAdmin');
+      return isAdminSchema.parse(res.data.data);
+    },
+    ...options,
   });
 };
 
