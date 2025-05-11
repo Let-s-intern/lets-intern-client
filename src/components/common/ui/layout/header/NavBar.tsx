@@ -74,9 +74,16 @@ const NavBar = () => {
             >
               서류 피드백 REPORT
             </GlobalNavItem>
-            {/* <NavItem to="/program" active={activeLink === 'PROGRAM'}>
+            <GlobalNavItem
+              className="text-xsmall16"
+              isNew
+              href="https://letscareer.oopy.io/1ea5e77c-bee1-8098-8e19-ec5038fb1cc8"
+              isNextRouter={false}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               커피챗
-            </NavItem> */}
+            </GlobalNavItem>
           </div>
           <div className="h-[18px] w-[1px] bg-[#D9D9D9]" aria-hidden="true" />
           <div className="flex items-center gap-5">
