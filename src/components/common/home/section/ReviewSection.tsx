@@ -66,19 +66,15 @@ const ReviewSection = () => {
     };
   }, [reviewsCount, totalReviewIsLoading]);
 
-  if (
-    totalReviewIsLoading ||
-    !totalReview ||
-    totalReview.reviewList.length < 1 ||
-    (reviewList?.length ?? 0) < 5
-  )
+  if (totalReviewIsLoading || !totalReview || (reviewList?.length ?? 0) < 5) {
     return null;
+  }
 
   return (
     <>
       <section
         ref={sectionRef}
-        className="mt-16 flex w-full max-w-[1120px] flex-col gap-6 px-5 md:mt-36 md:flex-row xl:px-0"
+        className="mt-16 flex w-full max-w-[1120px] flex-col gap-6 px-5 md:mt-28 md:flex-row xl:px-0"
       >
         <div className="flex flex-col md:w-1/2">
           <div className="text-small20 font-bold text-neutral-0 md:mt-2 md:text-xlarge28">
@@ -105,7 +101,7 @@ const ReviewSection = () => {
             수강생들의 생생 후기 더 보기
           </Button>
         </div>
-        <div className="h-72 w-full items-center bg-primary-5 md:h-[520px] md:w-1/2">
+        <div className="h-72 w-full items-center rounded-sm bg-primary-5 md:h-[520px] md:w-1/2">
           <Swiper
             className="slide-per-auto-vertical slide-rolling h-full"
             modules={[Autoplay]}
