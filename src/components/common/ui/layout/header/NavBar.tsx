@@ -11,6 +11,7 @@ import GlobalNavTopBar from './GlobalNavTopBar';
 import NavOverlay from './NavOverlay';
 import SideNavContainer from './SideNavContainer';
 import SideNavItem from './SideNavItem';
+import Spacer from './Spacer';
 
 const NavBar = () => {
   const location = useLocation();
@@ -171,7 +172,7 @@ const NavBar = () => {
       </SideNavContainer>
 
       {/* 네비게이션 바 공간 차지 */}
-      <div className="h-[3.75rem] md:h-[111px]" />
+      <Spacer />
     </header>
   );
 };
