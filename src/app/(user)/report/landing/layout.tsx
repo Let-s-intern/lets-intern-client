@@ -77,7 +77,7 @@ export default function LandingLayout({
   let { hasActiveResume, hasActivePersonalStatement, hasActivePortfolio } =
     useActiveReports();
   hasActiveResume = true;
-  hasActivePersonalStatement = false;
+  hasActivePersonalStatement = true;
   hasActivePortfolio = true;
 
   const [headerHeight, setHeaderHeight] = useState(0);
