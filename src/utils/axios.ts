@@ -18,6 +18,14 @@ const axios = Axios.create({
   },
 });
 
+export const initAuth = () => {
+  useAuthStore.setState({
+    accessToken: undefined,
+    refreshToken: undefined,
+    isLoggedIn: false,
+  });
+};
+
 // Add a request interceptor
 axios.interceptors.request.use(
   function (config) {
@@ -48,11 +56,7 @@ axios.interceptors.response.use(
       const refreshToken = useAuthStore.getState().refreshToken;
 
       if (!refreshToken) {
-        useAuthStore.setState({
-          accessToken: undefined,
-          refreshToken: undefined,
-          isLoggedIn: false,
-        });
+        initAuth();
         return Promise.reject(error);
       }
 
@@ -69,22 +73,14 @@ axios.interceptors.response.use(
           return Promise.reject(error);
         }
       } catch (error) {
-        useAuthStore.setState({
-          accessToken: undefined,
-          refreshToken: undefined,
-          isLoggedIn: false,
-        });
+        initAuth();
         return Promise.reject(error);
       }
     } else {
       // 로그인 상태라면 무조건 성공해야 할 API(/api/v1/user) 가 알 수 없는 이유로 실패했을 때는 로그아웃 시킴
       const req = error.request as XMLHttpRequest | undefined;
       if (req && req.responseURL && req.responseURL.endsWith('/api/v1/user')) {
-        useAuthStore.setState({
-          accessToken: undefined,
-          refreshToken: undefined,
-          isLoggedIn: false,
-        });
+        initAuth();
       }
     }
 

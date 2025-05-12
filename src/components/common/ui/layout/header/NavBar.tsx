@@ -165,7 +165,7 @@ const NavBar = () => {
           커피챗
         </SideNavItem>
         <hr className="h-1 bg-neutral-80" aria-hidden="true" />
-        {isAdmin && (
+        {isLoggedIn && isAdmin && (
           <SideNavItem href="/admin" isNextRouter={false} force>
             관리자 페이지
           </SideNavItem>
