@@ -69,21 +69,17 @@ const Footer = () => {
                 프로그램
               </MenuLink>
               <MenuLink to="/review">100% 솔직 후기</MenuLink>
-              <MenuLink to="/blog/list" force>
-                블로그
-              </MenuLink>
+              <MenuLink to="/blog/list">블로그</MenuLink>
               {reportLInk && (
-                <MenuLink to={reportLInk} force>
-                  서류 진단 서비스
-                </MenuLink>
+                <MenuLink to={reportLInk}>서류 진단 서비스</MenuLink>
               )}
-              {/* <MenuLink
-                to="https://letscareerinterview.imweb.me/"
+              <MenuLink
+                to="https://letscareer.oopy.io/1ea5e77c-bee1-8098-8e19-ec5038fb1cc8"
                 target="_blank"
                 rel="noopenner noreferrer"
               >
-                모의 면접 서비스
-              </MenuLink> */}
+                커피챗
+              </MenuLink>
             </div>
 
             {/* 기타 */}
@@ -127,7 +123,11 @@ const Footer = () => {
           <div className="text-0.75-medium flex flex-col gap-5 text-neutral-45">
             {/* 로고 */}
             <Link href="/" className="w-[7.5rem]">
-              <img className="h-auto w-full" src="/logo/logo.svg" alt="Logo" />
+              <img
+                className="h-auto w-full"
+                src="/logo/logo.svg"
+                alt="렛츠커리어"
+              />
             </Link>
             {/* 사업자 정보 */}
             <div className="text-0.75-medium flex flex-col gap-2 text-neutral-45">

@@ -386,8 +386,8 @@ input[type='number'] {
   color: #fc5555;
 }
 
-.mw-1000 {
+.mw-1180 {
   margin: 0 auto;
-  max-width: 1000px;
-  width: 100%;
+  max-width: 1180px;
+  width: calc(100% - 40px);
 }
