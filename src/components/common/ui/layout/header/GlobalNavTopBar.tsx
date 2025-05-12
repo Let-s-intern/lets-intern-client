@@ -7,41 +7,36 @@ import SignUpLink from './SignUpLink';
 
 interface Props {
   isNextRouter: boolean;
-  isActiveHome: boolean;
   loginRedirect: string;
   toggleMenu: () => void;
 }
 
-function GlobalNavTopBar({
-  isNextRouter,
-  isActiveHome,
-  loginRedirect,
-  toggleMenu,
-}: Props) {
+function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
   const { isLoggedIn } = useAuthStore();
 
   const { data: user } = useUserQuery({ enabled: isLoggedIn, retry: 1 });
 
   return (
-    <nav className="mw-1140 flex h-full items-center justify-between py-4">
-      <div className="flex h-full items-center gap-4 sm:gap-9">
+    <nav className="mw-1180 flex h-full items-center justify-between py-4">
+      <div className="flex h-full items-center">
         {/* 로고 */}
-        <LogoLink isNextRouter={isNextRouter} />
+        <LogoLink className="mr-8" isNextRouter={isNextRouter} />
         {/* 네비 메뉴 */}
         <GlobalNavItem
+          className="mr-6 h-[38px] items-center border-b-[1.5px] border-neutral-0 md:flex"
           isNextRouter={isNextRouter}
-          active={isActiveHome}
           href="/"
         >
           홈
         </GlobalNavItem>
         <GlobalNavItem
+          className="items-center gap-1 md:flex"
           isNextRouter={isNextRouter}
           href="https://letscareer.oopy.io/1df5e77c-bee1-80b3-8199-e7d2cc9d64cd"
           target="_blank"
           rel="noopener noreferrer"
         >
-          커뮤니티{' '}
+          커뮤니티
           <span className="text-xxsmall12 font-normal">
             +현직자 멘토 참여중
           </span>
@@ -56,9 +51,7 @@ function GlobalNavTopBar({
               window.location.href = '/mypage/application';
             }}
           >
-            <span className="text-xsmall14 font-medium text-neutral-0">
-              {user?.name} 님
-            </span>
+            <span className="font-medium text-neutral-0">{user?.name} 님</span>
             <img
               src="/icons/user-user-circle-black.svg"
               alt=""
