@@ -1,8 +1,7 @@
+import { ILineBanner } from '@/types/Banner.interface';
+import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
-
-import { ILineBanner } from '../../../../../types/Banner.interface';
-import axios from '../../../../../utils/axios';
 
 const TopBanner = ({
   isShow,
@@ -44,7 +43,7 @@ const TopBanner = ({
 
   return isShow ? (
     <section
-      className="band_banner fixed top-[3.75rem] z-20 w-screen cursor-pointer bg-neutral-0 py-3 md:top-[4.375rem] md:px-5 lg:top-[4.75rem]"
+      className="band_banner fixed top-[56px] z-20 w-screen cursor-pointer bg-neutral-0 py-3 md:top-[117px] md:px-5"
       style={{
         backgroundColor: data?.colorCode,
         color: data?.textColorCode,
@@ -58,7 +57,7 @@ const TopBanner = ({
         </div>
         <img
           onClick={closeBanner}
-          className="absolute top-0 right-0 w-6 h-6"
+          className="absolute right-0 top-0 h-6 w-6"
           src="/icons/Close_MD.svg"
           alt="상단띠배너 닫기"
         />
