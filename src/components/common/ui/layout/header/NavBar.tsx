@@ -6,6 +6,7 @@ import useScrollDirection from '@/hooks/useScrollDirection';
 import useAuthStore from '@/store/useAuthStore';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import ExternalNavList from './ExternalNavList';
 import GlobalNavItem from './GlobalNavItem';
 import GlobalNavTopBar from './GlobalNavTopBar';
 import NavOverlay from './NavOverlay';
@@ -44,77 +45,79 @@ const NavBar = () => {
     <header>
       {/* 상단 네비게이션 바 */}
       <div
-        className={`fixed top-0 z-30 w-screen border-b border-neutral-80 bg-white px-5 ${scrollDirection === 'DOWN' ? '-translate-y-full' : 'translate-y-0'} transition-transform duration-300`}
+        className={`fixed top-0 z-30 w-screen border-b border-neutral-80 bg-white ${scrollDirection === 'DOWN' ? '-translate-y-full' : 'translate-y-0'} transition-transform duration-300`}
       >
         {/* 1단 */}
         <GlobalNavTopBar
           isNextRouter={false}
-          isActiveHome={activeLink === 'HOME'}
           loginRedirect={encodeURIComponent(location.pathname)}
           toggleMenu={toggleMenu}
         />
         {/* 2단 */}
-        <nav className="mw-1140 hidden items-center gap-3 pb-[18px] pt-1 md:flex">
-          <div className="flex items-center gap-5">
+        <nav className="mw-1180 hidden items-center justify-between pb-[18px] pt-1 md:flex">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6">
+              <GlobalNavItem
+                className="text-xsmall16"
+                href="/program"
+                isNextRouter={false}
+                active={activeLink === 'PROGRAM'}
+              >
+                전체 프로그램
+              </GlobalNavItem>
+              <GlobalNavItem
+                className="text-xsmall16"
+                isNextRouter={false}
+                active={activeLink === 'REPORT'}
+                href={reportNavList.length === 0 ? '#' : reportNavList[0].href}
+                subNavList={reportNavList}
+                force
+              >
+                서류 피드백 REPORT
+              </GlobalNavItem>
+              <GlobalNavItem
+                className="text-xsmall16"
+                isNew
+                href="https://letscareer.oopy.io/1ea5e77c-bee1-8098-8e19-ec5038fb1cc8"
+                isNextRouter={false}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                커피챗
+              </GlobalNavItem>
+            </div>
+            <div className="h-[18px] w-[1px] bg-[#D9D9D9]" aria-hidden="true" />
+            <div className="flex items-center gap-6">
+              <GlobalNavItem
+                className="text-xsmall16"
+                href="/review"
+                isNextRouter={false}
+                active={activeLink === 'REVIEW'}
+                force
+              >
+                수강생 솔직 후기
+              </GlobalNavItem>
+              <GlobalNavItem
+                className="text-xsmall16"
+                href="/blog/list"
+                isNextRouter={false}
+                active={activeLink === 'BLOG'}
+                force
+              >
+                블로그
+              </GlobalNavItem>
+            </div>
+            <div className="h-[18px] w-[1px] bg-[#D9D9D9]" aria-hidden="true" />
             <GlobalNavItem
               className="text-xsmall16"
-              href="/program"
+              href="/about"
               isNextRouter={false}
-              active={activeLink === 'PROGRAM'}
+              active={activeLink === 'ABOUT'}
             >
-              전체 프로그램
-            </GlobalNavItem>
-            <GlobalNavItem
-              className="text-xsmall16"
-              isNextRouter={false}
-              active={activeLink === 'REPORT'}
-              href={reportNavList.length === 0 ? '#' : reportNavList[0].href}
-              subNavList={reportNavList}
-              force
-            >
-              서류 피드백 REPORT
-            </GlobalNavItem>
-            <GlobalNavItem
-              className="text-xsmall16"
-              isNew
-              href="https://letscareer.oopy.io/1ea5e77c-bee1-8098-8e19-ec5038fb1cc8"
-              isNextRouter={false}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              커피챗
+              렛츠커리어 스토리
             </GlobalNavItem>
           </div>
-          <div className="h-[18px] w-[1px] bg-[#D9D9D9]" aria-hidden="true" />
-          <div className="flex items-center gap-5">
-            <GlobalNavItem
-              className="text-xsmall16"
-              href="/review"
-              isNextRouter={false}
-              active={activeLink === 'REVIEW'}
-              force
-            >
-              수강생 솔직 후기
-            </GlobalNavItem>
-            <GlobalNavItem
-              className="text-xsmall16"
-              href="/blog/list"
-              isNextRouter={false}
-              active={activeLink === 'BLOG'}
-              force
-            >
-              블로그
-            </GlobalNavItem>
-          </div>
-          <div className="h-[18px] w-[1px] bg-[#D9D9D9]" aria-hidden="true" />
-          <GlobalNavItem
-            className="text-xsmall16"
-            href="/about"
-            isNextRouter={false}
-            active={activeLink === 'ABOUT'}
-          >
-            렛츠커리어 스토리
-          </GlobalNavItem>
+          <ExternalNavList isNextRouter={false} />
         </nav>
       </div>
 
