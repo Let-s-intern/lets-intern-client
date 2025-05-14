@@ -28,7 +28,7 @@ const BUSINESS_INFORMATION = {
   copyright: 'Copyright ©2024 아이엔지. All rights reserved.',
 };
 
-const Footer = () => {
+const NextFooter = () => {
   const { hasActiveResume, hasActivePortfolio, hasActivePersonalStatement } =
     useActiveReports();
 
@@ -194,4 +194,4 @@ const Footer = () => {
   );
 };
 
-export default Footer;
+export default NextFooter;

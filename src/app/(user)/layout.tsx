@@ -1,7 +1,7 @@
 import Providers from '@/context/Providers';
 import ChannelTalkBtn from '@components/common/ui/layout/channel/ChannelTalkBtn';
 import NextNavBar from '@components/common/ui/layout/header/NextNavBar';
-import Footer from '@components/common/ui/layout/next-footer/Footer';
+import Footer from '@components/common/ui/layout/next-footer/NextFooter';
 import { Metadata } from 'next';
 import React from 'react';
 
