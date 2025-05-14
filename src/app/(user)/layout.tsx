@@ -1,7 +1,7 @@
 import Providers from '@/context/Providers';
 import ChannelTalkBtn from '@components/common/ui/layout/channel/ChannelTalkBtn';
+import NextFooter from '@components/common/ui/layout/footer/NextFooter';
 import NextNavBar from '@components/common/ui/layout/header/NextNavBar';
-import Footer from '@components/common/ui/layout/next-footer/Footer';
 import { Metadata } from 'next';
 import React from 'react';
 
@@ -41,7 +41,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <div>
         <NextNavBar />
         <div className="min-h-[31rem] w-full">{children}</div>
-        <Footer />
+        <NextFooter />
         <ChannelTalkBtn />
       </div>
     </Providers>
