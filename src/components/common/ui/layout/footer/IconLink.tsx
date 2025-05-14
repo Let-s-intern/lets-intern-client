@@ -1,24 +1,24 @@
 import MainLink from './MainLink';
 
 interface Props {
+  imgSrc: string;
   isNextRouter: boolean;
   className?: string;
   href: string;
-  children?: string;
 }
 
-const DocumentLink = ({ isNextRouter, href, children }: Props) => {
+function IconLink({ imgSrc, isNextRouter, className, href }: Props) {
   return (
     <MainLink
       isNextRouter={isNextRouter}
       href={href}
-      className="text-0.75-medium lg:text-0.875-medium"
-      rel="noopener noreferrer"
+      className={className}
       target="_blank"
+      rel="noopener noreferrer"
     >
-      {children}
+      <img className="h-5 w-auto" src={imgSrc} alt="" />
     </MainLink>
   );
-};
+}
 
-export default DocumentLink;
+export default IconLink;

@@ -1,29 +1,9 @@
 import useActiveReports from '@/hooks/useActiveReports';
 import { useEffect, useMemo } from 'react';
-import DocumentLink from './DocumentLink';
-import Icon from './Icon';
+import BottomLinkSection from './BottomLinkSection';
+import BusinessInfo from './BusinessInfo';
+import CustomerSupport from './CustomerSupport';
 import MainLink from './MainLink';
-
-const CUSTOEMR_CENTER = {
-  title: '고객센터',
-  content: [
-    '1:1 채팅 상담: 우측 하단 [문의하기] 클릭',
-    '- 평일 및 주말 09:00-21:00 상담 가능',
-    '전화 상담: 채팅 상담을 통해 신청 가능',
-    '이메일 상담: official@letscareer.co.kr',
-  ],
-};
-
-const BUSINESS_INFORMATION = {
-  title: '아이엔지 사업자 정보',
-  owner: '대표자: 송다예',
-  registrationNumber: '사업자 등록번호: 871-11-02629',
-  mailOrderSales: '통신판매업신고번호 제 2024-서울마포-2221호',
-  address: '주소: 서울특별시 광나루로 190 B동 611호',
-  email: '이메일: official@letscareer.co.kr',
-  call: '고객센터: 0507-0178-8541',
-  copyright: 'Copyright ©2024 아이엔지. All rights reserved.',
-};
 
 const Footer = () => {
   const { hasActiveResume, hasActivePortfolio, hasActivePersonalStatement } =
@@ -35,14 +15,6 @@ const Footer = () => {
     if (hasActivePortfolio) return '/report/landing/portfolio';
     return null;
   }, [hasActiveResume, hasActivePortfolio, hasActivePersonalStatement]);
-
-  const onClickAddChannel = () => {
-    window.Kakao.Channel.followChannel({
-      channelPublicId: '_tCeHG',
-    }).catch((error: any) => {
-      console.log(error);
-    });
-  };
 
   useEffect(() => {
     if (!window.Kakao?.isInitialized()) {
@@ -114,14 +86,7 @@ const Footer = () => {
                 자주 묻는 질문
               </MainLink>
               {/* 고객센터 */}
-              <div className="text-0.875 w-80">
-                <span className="text-neutral-0">{CUSTOEMR_CENTER.title}</span>
-                <p className="mt-2 flex flex-col text-neutral-0/65">
-                  {CUSTOEMR_CENTER.content.map((item) => (
-                    <span key={item}>{item}</span>
-                  ))}
-                </p>
-              </div>
+              <CustomerSupport />
             </div>
           </div>
 
@@ -136,55 +101,11 @@ const Footer = () => {
               <img className="h-auto w-full" src="/logo/logo.svg" alt="Logo" />
             </MainLink>
             {/* 사업자 정보 */}
-            <div className="text-0.75-medium flex flex-col gap-2 text-neutral-45">
-              <span>{BUSINESS_INFORMATION.title}</span>
-              <span>
-                {BUSINESS_INFORMATION.owner} |{' '}
-                {BUSINESS_INFORMATION.registrationNumber}
-              </span>
-              <span>{BUSINESS_INFORMATION.mailOrderSales} |</span>
-              <span>{BUSINESS_INFORMATION.address} |</span>
-              <span>{BUSINESS_INFORMATION.email} |</span>
-              <span>{BUSINESS_INFORMATION.call} |</span>
-              <span>{BUSINESS_INFORMATION.copyright}</span>
-            </div>
+            <BusinessInfo />
           </div>
         </div>
-
-        <div className="flex items-center justify-between lg:justify-start lg:gap-5">
-          <div className="flex items-center gap-4">
-            <Icon
-              src="/icons/instagram.svg"
-              alt="인스타그램 아이콘"
-              to="https://www.instagram.com/letscareer.official/"
-              className="instagram_cta"
-            />
-            <Icon
-              src="/icons/blog.png"
-              alt="네이버 블로그 아이콘"
-              to="https://blog.naver.com/PostList.naver?blogId=letsintern"
-              className="blog_cta"
-            />
-            <img
-              src="/icons/icon-kakao.svg"
-              width={20}
-              height={20}
-              alt="카카오톡 채널 아이콘"
-              onClick={onClickAddChannel}
-              className="cursor-pointer"
-            />
-          </div>
-          <div className="flex items-center gap-6 text-neutral-0/[.65]">
-            <DocumentLink to="https://letscareer.oopy.io/a121a038-f72f-42d7-bde7-47624ecc0943">
-              서비스 이용약관
-            </DocumentLink>
-            <DocumentLink to="https://letscareer.oopy.io/c3af485b-fced-49ab-9601-f2d7bf07657d">
-              개인정보처리방침
-            </DocumentLink>
-          </div>
-        </div>
+        <BottomLinkSection isNextRouter={false} />
       </div>
-
       <hr className="mb-10 mt-8" />
     </footer>
   );
