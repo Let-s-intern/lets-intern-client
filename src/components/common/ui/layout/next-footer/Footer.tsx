@@ -3,9 +3,9 @@
 import useActiveReports from '@/hooks/useActiveReports';
 import Link from 'next/link';
 import { useEffect, useMemo } from 'react';
+import MainLink from '../footer/MainLink';
 import DocumentLink from './DocumentLink';
 import Icon from './Icon';
-import MenuLink from './MenuLink';
 
 const CUSTOEMR_CENTER = {
   title: '고객센터',
@@ -62,52 +62,62 @@ const Footer = () => {
           <div className="flex flex-col gap-[3.25rem] lg:flex-row lg:items-start lg:gap-[6.25rem]">
             {/* 사이트맵 */}
             <div className="flex flex-col gap-3">
-              <MenuLink to="/about" force>
+              <MainLink isNextRouter href="/about" force>
                 렛츠커리어 스토리
-              </MenuLink>
-              <MenuLink to="/program" force>
+              </MainLink>
+              <MainLink isNextRouter href="/program" force>
                 프로그램
-              </MenuLink>
-              <MenuLink to="/review">100% 솔직 후기</MenuLink>
-              <MenuLink to="/blog/list">블로그</MenuLink>
+              </MainLink>
+              <MainLink isNextRouter href="/review">
+                100% 솔직 후기
+              </MainLink>
+              <MainLink isNextRouter href="/blog/list">
+                블로그
+              </MainLink>
               {reportLInk && (
-                <MenuLink to={reportLInk}>서류 진단 서비스</MenuLink>
+                <MainLink isNextRouter href={reportLInk}>
+                  서류 진단 서비스
+                </MainLink>
               )}
-              <MenuLink
-                to="https://letscareer.oopy.io/1ea5e77c-bee1-8098-8e19-ec5038fb1cc8"
+              <MainLink
+                isNextRouter
+                href="https://letscareer.oopy.io/1ea5e77c-bee1-8098-8e19-ec5038fb1cc8"
                 target="_blank"
                 rel="noopenner noreferrer"
               >
                 커피챗
-              </MenuLink>
+              </MainLink>
             </div>
 
             {/* 기타 */}
             <div className="flex flex-col gap-3">
-              <MenuLink
-                to="https://letscareer.oopy.io"
+              <MainLink
+                isNextRouter
+                href="https://letscareer.oopy.io"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="notice_cta"
               >
                 공지사항
-              </MenuLink>
-              <MenuLink
-                to="https://docs.google.com/forms/d/e/1FAIpQLSeHM_d3yd0cOiH2aSqhprtSFmidIYFziyIxf5-9j7rgZCobvA/viewform"
+              </MainLink>
+              <MainLink
+                isNextRouter
+                href="https://docs.google.com/forms/d/e/1FAIpQLSeHM_d3yd0cOiH2aSqhprtSFmidIYFziyIxf5-9j7rgZCobvA/viewform"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inquiry_cta"
               >
                 광고/제휴 문의
-              </MenuLink>
-              <MenuLink
-                to="https://letscareer.oopy.io"
+              </MainLink>
+              <MainLink
+                isNextRouter
+                href="https://letscareer.oopy.io"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="q&a_cta"
               >
                 자주 묻는 질문
-              </MenuLink>
+              </MainLink>
               {/* 고객센터 */}
               <div className="text-0.875 w-80">
                 <span className="text-neutral-0">{CUSTOEMR_CENTER.title}</span>

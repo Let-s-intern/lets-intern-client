@@ -1,11 +1,8 @@
-'use client';
-
 import useActiveReports from '@/hooks/useActiveReports';
 import { useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import DocumentLink from './DocumentLink';
 import Icon from './Icon';
-import MenuLink from './MenuLink';
+import MainLink from './MainLink';
 
 const CUSTOEMR_CENTER = {
   title: '고객센터',
@@ -42,11 +39,9 @@ const Footer = () => {
   const onClickAddChannel = () => {
     window.Kakao.Channel.followChannel({
       channelPublicId: '_tCeHG',
-    })
-      .then((response: any) => {})
-      .catch((error: any) => {
-        console.log(error);
-      });
+    }).catch((error: any) => {
+      console.log(error);
+    });
   };
 
   useEffect(() => {
@@ -62,48 +57,62 @@ const Footer = () => {
           <div className="flex flex-col gap-[3.25rem] lg:flex-row lg:items-start lg:gap-[6.25rem]">
             {/* 사이트맵 */}
             <div className="flex flex-col gap-3">
-              <MenuLink to="/about">렛츠커리어 스토리</MenuLink>
-              <MenuLink to="/program">프로그램</MenuLink>
-              <MenuLink to="/review">100% 솔직 후기</MenuLink>
-              <MenuLink to="/blog/list">블로그</MenuLink>
+              <MainLink isNextRouter={false} href="/about">
+                렛츠커리어 스토리
+              </MainLink>
+              <MainLink isNextRouter={false} href="/program">
+                프로그램
+              </MainLink>
+              <MainLink isNextRouter={false} href="/review" force>
+                100% 솔직 후기
+              </MainLink>
+              <MainLink isNextRouter={false} href="/blog/list" force>
+                블로그
+              </MainLink>
               {reportLInk && (
-                <MenuLink to={reportLInk}>서류 진단 서비스</MenuLink>
+                <MainLink isNextRouter={false} href={reportLInk} force>
+                  서류 진단 서비스
+                </MainLink>
               )}
-              <MenuLink
-                to="https://letscareer.oopy.io/1ea5e77c-bee1-8098-8e19-ec5038fb1cc8"
+              <MainLink
+                isNextRouter={false}
+                href="https://letscareer.oopy.io/1ea5e77c-bee1-8098-8e19-ec5038fb1cc8"
                 target="_blank"
                 rel="noopenner noreferrer"
               >
                 커피챗
-              </MenuLink>
+              </MainLink>
             </div>
 
             {/* 기타 */}
             <div className="flex flex-col gap-3">
-              <MenuLink
-                to="https://letscareer.oopy.io"
+              <MainLink
+                isNextRouter={false}
+                href="https://letscareer.oopy.io"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="notice_cta"
               >
                 공지사항
-              </MenuLink>
-              <MenuLink
-                to="https://docs.google.com/forms/d/e/1FAIpQLSeHM_d3yd0cOiH2aSqhprtSFmidIYFziyIxf5-9j7rgZCobvA/viewform"
+              </MainLink>
+              <MainLink
+                isNextRouter={false}
+                href="https://docs.google.com/forms/d/e/1FAIpQLSeHM_d3yd0cOiH2aSqhprtSFmidIYFziyIxf5-9j7rgZCobvA/viewform"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inquiry_cta"
               >
                 광고/제휴 문의
-              </MenuLink>
-              <MenuLink
-                to="https://letscareer.oopy.io"
+              </MainLink>
+              <MainLink
+                isNextRouter={false}
+                href="https://letscareer.oopy.io"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="q&a_cta"
               >
                 자주 묻는 질문
-              </MenuLink>
+              </MainLink>
               {/* 고객센터 */}
               <div className="text-0.875 w-80">
                 <span className="text-neutral-0">{CUSTOEMR_CENTER.title}</span>
@@ -118,9 +127,14 @@ const Footer = () => {
 
           <div className="text-0.75-medium flex flex-col gap-5 text-neutral-45">
             {/* 로고 */}
-            <Link to="/" className="w-[7.5rem]" reloadDocument>
+            <MainLink
+              isNextRouter={false}
+              href="/"
+              className="w-[7.5rem]"
+              force
+            >
               <img className="h-auto w-full" src="/logo/logo.svg" alt="Logo" />
-            </Link>
+            </MainLink>
             {/* 사업자 정보 */}
             <div className="text-0.75-medium flex flex-col gap-2 text-neutral-45">
               <span>{BUSINESS_INFORMATION.title}</span>
