@@ -3,14 +3,12 @@
 import useActiveReports from '@/hooks/useActiveReports';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
 
 interface ReportNavigationTabsProps {
   hasActiveResume: boolean;
   hasActivePersonalStatement: boolean;
   hasActivePortfolio: boolean;
   pathname: string;
-  headerHeight: number;
 }
 
 const ReportNavigationTabs = ({
@@ -18,7 +16,6 @@ const ReportNavigationTabs = ({
   hasActivePersonalStatement,
   hasActivePortfolio,
   pathname,
-  headerHeight,
 }: ReportNavigationTabsProps) => {
   const tabs = [
     {
@@ -45,8 +42,7 @@ const ReportNavigationTabs = ({
 
   return (
     <nav
-      style={{ top: headerHeight }}
-      className={`sticky z-20 flex justify-center bg-white transition-all duration-300`}
+      className={`sticky top-0 z-20 flex justify-center bg-white transition-all duration-300`}
     >
       <ul className="flex w-[1100px] gap-4 break-keep px-5">
         {activeTabs.map((tab) => (
@@ -80,23 +76,6 @@ export default function LandingLayout({
   hasActivePersonalStatement = true;
   hasActivePortfolio = true;
 
-  const [headerHeight, setHeaderHeight] = useState(0);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const calcHeaderHeight = () => {
-      const header = document.querySelector('header');
-      if (header) {
-        setHeaderHeight(header.getBoundingClientRect().height);
-      }
-    };
-
-    calcHeaderHeight(); // 동적으로 높이요소 계산
-    window.addEventListener('resize', calcHeaderHeight);
-    return () => window.removeEventListener('resize', calcHeaderHeight);
-  }, []);
-
   return (
     <div className="flex min-h-screen flex-col">
       {/* 상단 탭 네비게이션 */}
@@ -105,7 +84,6 @@ export default function LandingLayout({
         hasActivePersonalStatement={hasActivePersonalStatement}
         hasActivePortfolio={hasActivePortfolio}
         pathname={pathname}
-        headerHeight={headerHeight}
       />
 
       {/* 각 landing 페이지 컴포넌트 렌더링 */}
