@@ -2,10 +2,10 @@
 
 import useActiveReports from '@/hooks/useActiveReports';
 import { useEffect, useMemo } from 'react';
-import BottomLinkSection from '../footer/BottomLinkSection';
-import BusinessInfo from '../footer/BusinessInfo';
-import CustomerSupport from '../footer/CustomerSupport';
-import MainLink from '../footer/MainLink';
+import BottomLinkSection from './BottomLinkSection';
+import BusinessInfo from './BusinessInfo';
+import CustomerSupport from './CustomerSupport';
+import MainLink from './MainLink';
 
 const NextFooter = () => {
   const { hasActiveResume, hasActivePortfolio, hasActivePersonalStatement } =
