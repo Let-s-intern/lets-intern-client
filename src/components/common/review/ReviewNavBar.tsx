@@ -16,7 +16,7 @@ function ReviewNavBar() {
   return (
     <>
       {/* 모바일 네비 바 */}
-      <div className="review_menu sticky top-[3.75rem] z-10 bg-white">
+      <div className="review_menu sticky top-[3.6rem] z-10 bg-white">
         <nav className="md:hidden">
           <ul className="flex items-stretch gap-6 border-b border-neutral-80 px-5 md:hidden">
             <MobileNavItem
