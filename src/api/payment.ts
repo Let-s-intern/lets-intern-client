@@ -1,5 +1,5 @@
+import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
-import axios from '../utils/axios';
 import {
   CardPromotionSchema,
   paymentDetailType,
@@ -20,7 +20,9 @@ export const usePaymentQuery = () => {
 
 export const UsePaymentDetailQueryKey = 'usePaymentDetailQueryKey';
 
-export const usePaymentDetailQuery = (paymentId: string | undefined) => {
+export const usePaymentDetailQuery = (
+  paymentId: string | number | undefined | null,
+) => {
   return useQuery({
     queryKey: [UsePaymentDetailQueryKey, paymentId],
     queryFn: async () => {
