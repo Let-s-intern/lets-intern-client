@@ -1,3 +1,4 @@
+import { usePaymentDetailQuery } from '@/api/payment';
 import {
   ChallengeApplication,
   ChallengePricePlanEnum,
@@ -28,20 +29,40 @@ const TableRow = ({ applicationItem, programType }: Props) => {
       default:
         return liveAppItem.created_date;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [applicationItem, programType]);
 
+  const { data: paymentDetail } = usePaymentDetailQuery(
+    challengeAppItem.paymentId,
+  );
+
   const amount = useMemo(() => {
-    return applicationItem.couponDiscount === -1
-      ? 0
-      : applicationItem.isCanceled
-        ? // 보증금 금액 포함해야 함
-          (applicationItem.programPrice ?? 0) +
-          (challengeAppItem.refundPrice ?? 0) -
-          (applicationItem.programDiscount ?? 0) -
-          (applicationItem.finalPrice ?? 0) -
-          (applicationItem.couponDiscount ?? 0)
-        : (applicationItem.finalPrice ?? 0);
-  }, [applicationItem]);
+    const { couponDiscount, isCanceled, finalPrice } = applicationItem;
+
+    if (couponDiscount === -1) return 0;
+
+    if (isCanceled) {
+      const priceInfo = paymentDetail?.priceInfo;
+      const deposit = challengeAppItem.refundPrice ?? 0; // 보증금
+      const optionSellingPrice =
+        (priceInfo?.option ?? 0) - (priceInfo?.optionDiscount ?? 0);
+      const programSellingPrice =
+        (applicationItem.programPrice ?? 0) -
+        (applicationItem.programDiscount ?? 0);
+      const refundedAmount = applicationItem.finalPrice ?? 0; // 사용자에게 환불해준 금액
+      const refundDeductionAmount =
+        programSellingPrice +
+        optionSellingPrice +
+        deposit -
+        refundedAmount -
+        (couponDiscount ?? 0); // 환불 차감 금액
+
+      return refundDeductionAmount;
+    }
+
+    return finalPrice ?? 0;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [applicationItem, paymentDetail]);
 
   return (
     <tr>
@@ -62,6 +83,7 @@ const TableRow = ({ applicationItem, programType }: Props) => {
           <TD whiteSpace="wrap">{liveAppItem.question ?? ''}</TD>
         </>
       )}
+      {/* 결제 상품 */}
       <TD>{applicationItem.couponName ?? '없음'}</TD>
       {programType === CHALLENGE && (
         <TD>
@@ -69,6 +91,7 @@ const TableRow = ({ applicationItem, programType }: Props) => {
             ChallengePricePlanEnum.enum.BASIC}
         </TD>
       )}
+      {/* 결제금액 */}
       <TD>{amount.toLocaleString()}원</TD>
       <TD whiteSpace="wrap">
         {applicationItem.isCanceled ? (
