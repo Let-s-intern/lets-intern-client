@@ -110,6 +110,11 @@ const HOME_INTRO = {
   },
 };
 
+const menuClassNames: Record<number, string> = {
+  5: 'gap-x-4',
+  6: 'gap-x-6',
+};
+
 const IntroSection = () => {
   const { data: experienceSummaryData } = useGetChallengeHome({
     type: EXPERIENCE_SUMMARY,
@@ -150,74 +155,78 @@ const IntroSection = () => {
     }
   };
 
+  const menus = HOME_INTRO.items.basic.map((item, index) => {
+    // 이력서 피드백 받기
+    if (index === 4) {
+      if (hasActiveResume) {
+        return (
+          <IntroItem
+            key={index}
+            title={item.title}
+            subTitle={item.subTitle}
+            icon={item.icon}
+            href={
+              item.href.startsWith('type=')
+                ? getCurrentChallenge(item.href.split('=')[1])
+                : item.href
+            }
+            gaTitle={item.gaTitle}
+          />
+        );
+      }
+      return null;
+    }
+
+    // 자소서 피드백 받기
+    if (index === 5) {
+      if (hasActivePersonalStatement) {
+        return (
+          <IntroItem
+            key={index}
+            title={item.title}
+            subTitle={item.subTitle}
+            icon={item.icon}
+            href={
+              item.href.startsWith('type=')
+                ? getCurrentChallenge(item.href.split('=')[1])
+                : item.href
+            }
+            gaTitle={item.gaTitle}
+          />
+        );
+      }
+      return null;
+    }
+
+    return (
+      <IntroItem
+        key={index}
+        title={item.title}
+        subTitle={item.subTitle}
+        icon={item.icon}
+        href={
+          item.href.startsWith('type=')
+            ? getCurrentChallenge(item.href.split('=')[1])
+            : item.href
+        }
+        gaTitle={item.gaTitle}
+        badgeClassName={index === 7 ? 'bg-[#34BFFF]' : undefined}
+      />
+    );
+  });
+
   return (
     <>
-      <section className="flex w-full max-w-[1120px] flex-col gap-7 px-5 md:gap-12 xl:px-0">
+      <section className="flex w-full max-w-[1120px] flex-col gap-[17px] px-5 md:gap-12 xl:px-0">
         <div className="flex flex-col gap-1 text-center md:gap-2">
           {HOME_INTRO.description}
           {HOME_INTRO.title}
         </div>
-        <div className="mx-auto flex w-full flex-col items-center md:w-fit">
-          <div className="grid grid-cols-4 gap-x-5 gap-y-6 px-1 md:flex md:gap-10">
-            {HOME_INTRO.items.basic.map((item, index) => {
-              // 이력서 피드백 받기
-              if (index === 4) {
-                if (hasActiveResume) {
-                  return (
-                    <IntroItem
-                      key={index}
-                      title={item.title}
-                      subTitle={item.subTitle}
-                      icon={item.icon}
-                      href={
-                        item.href.startsWith('type=')
-                          ? getCurrentChallenge(item.href.split('=')[1])
-                          : item.href
-                      }
-                      gaTitle={item.gaTitle}
-                    />
-                  );
-                }
-                return null;
-              }
-
-              // 자소서 피드백 받기
-              if (index === 5) {
-                if (hasActivePersonalStatement) {
-                  return (
-                    <IntroItem
-                      key={index}
-                      title={item.title}
-                      subTitle={item.subTitle}
-                      icon={item.icon}
-                      href={
-                        item.href.startsWith('type=')
-                          ? getCurrentChallenge(item.href.split('=')[1])
-                          : item.href
-                      }
-                      gaTitle={item.gaTitle}
-                    />
-                  );
-                }
-                return null;
-              }
-
-              return (
-                <IntroItem
-                  key={index}
-                  title={item.title}
-                  subTitle={item.subTitle}
-                  icon={item.icon}
-                  href={
-                    item.href.startsWith('type=')
-                      ? getCurrentChallenge(item.href.split('=')[1])
-                      : item.href
-                  }
-                  gaTitle={item.gaTitle}
-                  badgeClassName={index === 7 ? 'bg-[#34BFFF]' : undefined}
-                />
-              );
-            })}
+        <div className="-mx-5 h-full w-screen overflow-x-auto pt-2.5 md:mx-auto md:w-fit md:overflow-x-visible md:px-0 md:pt-0">
+          <div
+            className={` ${menus.length === 5 ? 'min-w-fit px-5' : 'flex-wrap justify-center'} md:justify-center ${menuClassNames[menus.length] ?? 'gap-x-5'} ${menus.length === 6 ? 'grid grid-cols-3 px-10' : 'flex'} gap-y-5 md:mx-auto md:flex md:gap-10 md:px-0`}
+          >
+            {menus}
           </div>
         </div>
       </section>
@@ -234,6 +243,7 @@ const IntroItem = ({
   href,
   gaTitle,
   badgeClassName,
+  iconClassName,
 }: {
   title: ReactNode;
   subTitle?: ReactNode;
@@ -241,6 +251,7 @@ const IntroItem = ({
   icon: ReactNode;
   href?: string;
   badgeClassName?: string;
+  iconClassName?: string;
 }) => {
   return (
     <Link
@@ -255,12 +266,17 @@ const IntroItem = ({
       data-url={href}
       data-text={gaTitle}
     >
-      <div className="relative flex aspect-square w-15 items-center justify-center rounded-xxs bg-[#F7F7F7] md:w-16">
+      <div
+        className={twMerge(
+          'relative flex aspect-square w-15 items-center justify-center rounded-xxs bg-[#F7F7F7] md:w-16',
+          iconClassName,
+        )}
+      >
         {icon}
         {subTitle && (
           <span
             className={twMerge(
-              'absolute -right-[14px] top-0 -translate-y-1/2 rounded-full bg-primary px-2 py-[5px] text-[11px] font-medium leading-none text-white md:text-[13px]',
+              'absolute -right-[14px] top-0 -translate-y-1/2 rounded-full bg-primary px-1.5 py-1 text-xxsmall10 font-medium leading-none text-white md:text-[13px]',
               badgeClassName,
             )}
           >
