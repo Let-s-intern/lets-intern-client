@@ -22,13 +22,11 @@ const {
 const HOME_INTRO = {
   description: (
     <span className="text-xsmall16 font-semibold text-primary md:text-medium22">
-      취업 준비, 어디까지 완성되었나요?
+      서류 작성부터 피드백, 면접까지
     </span>
   ),
   title: (
     <h1 className="text-medium24 font-bold text-neutral-0 md:text-xxlarge32 md:font-semibold">
-      서류 작성부터 피드백, 면접까지
-      <br />
       지금 나에게 필요한
       <br className="md:hidden" /> 프로그램을 찾아보세요
     </h1>
@@ -108,33 +106,6 @@ const HOME_INTRO = {
         href: convertReportTypeToLandingPath('PERSONAL_STATEMENT'),
         gaTitle: '자기소개서 피드백 받기',
       },
-      // 면접 메뉴
-      // {
-      //   title: (
-      //     <>
-      //       멘토와 1:1
-      //       <br />
-      //       면접 준비하기
-      //     </>
-      //   ),
-      //   subTitle: '대기업',
-      //   icon: <Intro9 />,
-      //   href: 'https://letscareerinterview.imweb.me/',
-      //   gaTitle: '멘토와 1:1 면접 준비하기',
-      // },
-      // {
-      //   title: (
-      //     <>
-      //       멘토와 1:1
-      //       <br />
-      //       면접 준비하기
-      //     </>
-      //   ),
-      //   subTitle: '스타트업',
-      //   icon: <Intro4 width={44} height={44} />,
-      //   href: 'https://letscareerinterview.imweb.me/Startupinterview',
-      //   gaTitle: '멘토와 1:1 면접 준비하기',
-      // },
     ],
   },
 };
@@ -181,12 +152,12 @@ const IntroSection = () => {
 
   return (
     <>
-      <section className="flex w-full max-w-[1120px] flex-col gap-y-9 px-5 md:gap-y-12 xl:px-0">
-        <div className="flex flex-col gap-y-1 text-center md:gap-y-2">
+      <section className="flex w-full max-w-[1120px] flex-col gap-7 px-5 md:gap-12 xl:px-0">
+        <div className="flex flex-col gap-1 text-center md:gap-2">
           {HOME_INTRO.description}
           {HOME_INTRO.title}
         </div>
-        <div className="mx-auto flex w-full flex-col items-center gap-y-8 md:w-fit md:gap-y-11">
+        <div className="mx-auto flex w-full flex-col items-center md:w-fit">
           <div className="grid grid-cols-4 gap-x-5 gap-y-6 px-1 md:flex md:gap-10">
             {HOME_INTRO.items.basic.map((item, index) => {
               // 이력서 피드백 받기
@@ -273,7 +244,7 @@ const IntroItem = ({
 }) => {
   return (
     <Link
-      className="icon_menu flex min-w-[66px] flex-col items-center gap-y-4 text-center text-xxsmall12 font-medium text-neutral-20 md:min-w-[92px] md:text-xsmall14"
+      className="icon_menu flex min-w-[66px] flex-col items-center gap-3 text-center text-xxsmall12 font-medium text-neutral-20 md:min-w-[92px] md:text-xsmall14"
       href={href ?? '#'}
       target={href && href.startsWith('http') ? '_blank' : undefined}
       onClick={() => {
