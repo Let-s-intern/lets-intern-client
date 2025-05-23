@@ -27,9 +27,8 @@ const Home = () => {
     <>
       <TopBanner isShow={isShow} setIsShow={setIsShow} />
       {isShow && <div className="h-20 w-full md:h-14" />}
-      <div className="mb-20 flex w-full flex-col items-center justify-center pt-10 md:mb-44 md:pt-16">
+      <div className="mb-20 flex w-full flex-col items-center justify-center pt-9 md:mb-44 md:pt-16">
         <IntroSection />
-        {/* <RoadMapSection /> */}
         <MainBannerSection />
         <MainCurationSection />
         <ActiveProgramSection />
