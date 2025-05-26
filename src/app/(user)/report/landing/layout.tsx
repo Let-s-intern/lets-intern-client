@@ -44,7 +44,7 @@ const ReportNavigationTabs = ({
 
   return (
     <nav
-      className={`fixed z-20 flex w-screen justify-center bg-white ${scrollDirection === 'DOWN' ? '-translate-y-[302%]' : 'translate-y-0'} transition-transform duration-300`}
+      className={`fixed top-[58px] z-20 flex w-screen justify-center bg-white ${scrollDirection === 'DOWN' ? '-translate-y-[302%]' : 'translate-y-0'} transition-transform duration-300 md:top-[140px] lg:top-[7.25rem]`}
     >
       <ul className="mw-1180 mx-auto flex gap-4 break-keep">
         {activeTabs.map((tab) => (
