@@ -1366,7 +1366,8 @@ export const challengeApplicationsSchema = z
           refundPrice: z.number().nullable().optional(),
           challengePricePlanType: ChallengePricePlanEnum.nullable().optional(),
         }),
-        optionCodes: z.array(z.string()),
+        optionPriceSum: z.number().nullable().optional(),
+        optionDiscountPriceSum: z.number().nullable().optional(),
       }),
     ),
   })

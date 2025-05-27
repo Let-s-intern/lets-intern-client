@@ -213,7 +213,7 @@ const ProgramUsers = () => {
             programType={programType as ProgramTypeUpperCase}
           />
           <UserTableBody
-            applications={filteredApplications}
+            applications={filteredApplicationList}
             programType={programType as ProgramTypeUpperCase}
           />
         </Table>

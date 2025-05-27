@@ -6,7 +6,7 @@ import {
 import TableRow from './TableRow';
 
 interface UserTableBodyProps {
-  applications: (ChallengeApplication['application'] | LiveApplication)[];
+  applications: (ChallengeApplication | LiveApplication)[];
   programType: ProgramTypeUpperCase;
 }
 
