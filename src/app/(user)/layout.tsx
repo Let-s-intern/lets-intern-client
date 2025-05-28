@@ -1,4 +1,5 @@
 import Providers from '@/context/Providers';
+import BottomNavBar from '@components/common/ui/layout/BottomNavBar';
 import ChannelTalkBtn from '@components/common/ui/layout/channel/ChannelTalkBtn';
 import NextFooter from '@components/common/ui/layout/footer/NextFooter';
 import NextNavBar from '@components/common/ui/layout/header/NextNavBar';
@@ -43,6 +44,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <div className="min-h-[31rem] w-full">{children}</div>
         <NextFooter />
         <ChannelTalkBtn />
+        <BottomNavBar isNextRouter />
       </div>
     </Providers>
   );

@@ -51,7 +51,7 @@ const ChannelTalkBtn = () => {
           pathname.startsWith('/report/landing') ||
           (pathname.startsWith('/payment-input') && isUpTo991)
           ? 'bottom-32'
-          : 'bottom-14',
+          : 'bottom-20',
         isHidden && 'hidden',
       )}
       onClick={() => channelService.showMessenger()}
