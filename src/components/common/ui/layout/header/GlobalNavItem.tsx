@@ -2,16 +2,9 @@
 
 import Polygon from '@/assets/icons/polygon.svg?react';
 import { twMerge } from '@/lib/twMerge';
-import Link from 'next/link';
-import { AnchorHTMLAttributes, Fragment, MouseEvent, useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { AnchorHTMLAttributes, Fragment, useState } from 'react';
+import HybridLink from '../../HybridLink';
 import SubNavItem, { SubNavItemProps } from './SubNavItem';
-
-/**
- * @param {boolean} force
- *   true로 설정하면 window.location.href으로 라우팅
- *   Next.js App Router <-> React Router로 이동할 때 사용합니다.
- */
 
 interface Props extends AnchorHTMLAttributes<HTMLAnchorElement> {
   active?: boolean;
@@ -39,19 +32,6 @@ function GlobalNavItem({
       "items-center gap-1 after:flex after:h-3 after:w-3 after:items-center after:justify-center after:rounded-full after:bg-system-error after:text-[0.5rem] after:font-bold after:leading-none after:text-white after:content-['N'] md:flex",
     className,
   );
-  const LinkComponent: any = isNextRouter ? Link : RouterLink;
-  const linkProps = isNextRouter
-    ? {
-        ...restProps,
-        href,
-        onClick: (e: MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-          if (force) {
-            e.preventDefault();
-            window.location.href = href;
-          }
-        },
-      }
-    : { ...restProps, to: href, reloadDocument: force };
 
   const [hover, setHover] = useState(false);
 
@@ -60,9 +40,15 @@ function GlobalNavItem({
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
-      <LinkComponent className={linkClassName} {...linkProps}>
+      <HybridLink
+        isNextRouter={isNextRouter}
+        force={force}
+        className={linkClassName}
+        href={href}
+        {...restProps}
+      >
         {children}
-      </LinkComponent>
+      </HybridLink>
 
       {/* 서브 메뉴 */}
       {subNavList && hover && (
