@@ -53,6 +53,11 @@ interface Props {
 type Active = '블로그' | '후기' | '홈' | '프로그램' | '마이페이지';
 
 function BottomNavBar({ isNextRouter, pathname = '' }: Props) {
+  const hidden =
+    pathname.startsWith('/report') ||
+    pathname.startsWith('/program/') ||
+    pathname === '/about';
+
   const menuInfo: Menu[] = [
     {
       name: '블로그',
@@ -106,6 +111,8 @@ function BottomNavBar({ isNextRouter, pathname = '' }: Props) {
     else if (pathname.startsWith('/mypage')) setActive('마이페이지');
     else setActive(null);
   }, [pathname]);
+
+  if (hidden) return null;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-30 flex items-center border-t border-neutral-80 bg-white md:hidden">
