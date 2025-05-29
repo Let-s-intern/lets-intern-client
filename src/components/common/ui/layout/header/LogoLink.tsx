@@ -8,7 +8,7 @@ interface Props {
 }
 
 function LogoLink({ isNextRouter, className }: Props) {
-  const LinkComponent: any = isNextRouter ? Link : RouterLink;
+  const LinkComponent: React.ElementType = isNextRouter ? Link : RouterLink;
   const linkProps = isNextRouter ? { href: '/' } : { to: '/' };
 
   return (

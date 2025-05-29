@@ -11,7 +11,7 @@ interface Props {
 }
 
 function LoginLink({ redirect, isNextRouter, force, className }: Props) {
-  const LinkComponent: any = isNextRouter ? Link : RouterLink;
+  const LinkComponent: React.ElementType = isNextRouter ? Link : RouterLink;
   const linkProps = isNextRouter
     ? {
         href: { pathname: '/login', query: { redirect } },

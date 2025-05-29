@@ -39,7 +39,7 @@ function SideNavItem({
     isOpen && 'bg-primary-5',
     className,
   );
-  const LinkComponent: any = isNextRouter ? Link : RouterLink;
+  const LinkComponent: React.ElementType = isNextRouter ? Link : RouterLink;
   const linkProps = isNextRouter
     ? {
         ...restProps,

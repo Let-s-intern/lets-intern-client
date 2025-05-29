@@ -17,7 +17,7 @@ function MainLink({
   ...restProps
 }: Props) {
   const linkClassName = twMerge('w-fit text-xsmall14 font-medium', className);
-  const LinkComponent: any = isNextRouter ? Link : RouterLink;
+  const LinkComponent: React.ElementType = isNextRouter ? Link : RouterLink;
   const linkProps = isNextRouter
     ? {
         ...restProps,

@@ -39,7 +39,7 @@ function GlobalNavItem({
       "items-center gap-1 after:flex after:h-3 after:w-3 after:items-center after:justify-center after:rounded-full after:bg-system-error after:text-[0.5rem] after:font-bold after:leading-none after:text-white after:content-['N'] md:flex",
     className,
   );
-  const LinkComponent: any = isNextRouter ? Link : RouterLink;
+  const LinkComponent: React.ElementType = isNextRouter ? Link : RouterLink;
   const linkProps = isNextRouter
     ? {
         ...restProps,
