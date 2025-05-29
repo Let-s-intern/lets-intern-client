@@ -1,7 +1,5 @@
 import { twMerge } from '@/lib/twMerge';
-import Link from 'next/link';
-import { MouseEvent } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import HybridLink from '../../HybridLink';
 
 interface Props {
   redirect?: string;
@@ -11,29 +9,18 @@ interface Props {
 }
 
 function LoginLink({ redirect, isNextRouter, force, className }: Props) {
-  const LinkComponent: React.ElementType = isNextRouter ? Link : RouterLink;
-  const linkProps = isNextRouter
-    ? {
-        href: { pathname: '/login', query: { redirect } },
-        onClick: (e: MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-          if (force) {
-            e.preventDefault();
-            window.location.href = `/login?redirect=${redirect}`;
-          }
-        },
-      }
-    : { to: `/login?redirect=${redirect}` };
-
   return (
-    <LinkComponent
+    <HybridLink
       className={twMerge(
         'rounded-xxs bg-white px-3 py-1.5 text-xsmall14 font-medium text-primary',
         className,
       )}
-      {...linkProps}
+      isNextRouter={isNextRouter}
+      force={force}
+      href={`/login?redirect=${redirect}`}
     >
       로그인
-    </LinkComponent>
+    </HybridLink>
   );
 }
 

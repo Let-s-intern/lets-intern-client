@@ -1,7 +1,6 @@
 import { twMerge } from '@/lib/twMerge';
-import Link from 'next/link';
-import { AnchorHTMLAttributes, MouseEvent } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { AnchorHTMLAttributes } from 'react';
+import HybridLink from '../../HybridLink';
 
 interface Props extends AnchorHTMLAttributes<HTMLAnchorElement> {
   isNextRouter: boolean;
@@ -17,24 +16,17 @@ function MainLink({
   ...restProps
 }: Props) {
   const linkClassName = twMerge('w-fit text-xsmall14 font-medium', className);
-  const LinkComponent: React.ElementType = isNextRouter ? Link : RouterLink;
-  const linkProps = isNextRouter
-    ? {
-        ...restProps,
-        href,
-        onClick: (e: MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-          if (force) {
-            e.preventDefault();
-            window.location.href = href;
-          }
-        },
-      }
-    : { ...restProps, to: href, reloadDocument: force };
 
   return (
-    <LinkComponent className={linkClassName} {...linkProps}>
+    <HybridLink
+      className={linkClassName}
+      isNextRouter={isNextRouter}
+      force={force}
+      href={href}
+      {...restProps}
+    >
       {children}
-    </LinkComponent>
+    </HybridLink>
   );
 }
 

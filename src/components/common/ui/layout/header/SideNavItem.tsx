@@ -1,16 +1,9 @@
 'use client';
 
 import { twMerge } from '@/lib/twMerge';
-import Link from 'next/link';
-import { AnchorHTMLAttributes, MouseEvent, useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { AnchorHTMLAttributes, useState } from 'react';
+import HybridLink from '../../HybridLink';
 import SubNavItem, { SubNavItemProps } from './SubNavItem';
-
-/**
- * @param {boolean} force
- *   true로 설정하면 window.location.href으로 라우팅
- *   Next.js App Router <-> React Router로 이동할 때 사용합니다.
- */
 
 interface Props extends AnchorHTMLAttributes<HTMLAnchorElement> {
   isNextRouter: boolean;
@@ -39,32 +32,25 @@ function SideNavItem({
     isOpen && 'bg-primary-5',
     className,
   );
-  const LinkComponent: React.ElementType = isNextRouter ? Link : RouterLink;
-  const linkProps = isNextRouter
-    ? {
-        ...restProps,
-        href: subNavList ? '#' : href,
-        onClick: (e: MouseEvent<HTMLAnchorElement>) => {
-          if (onClick) onClick(e);
-          if (subNavList) {
-            e.stopPropagation();
-            setIsOpen(!isOpen);
-            return;
-          }
-          // 서브 메뉴 있을 땐 동작 X
-          if (force) {
-            e.preventDefault();
-            window.location.href = href;
-          }
-        },
-      }
-    : { ...restProps, to: href, reloadDocument: force, onClick };
 
   return (
     <div className="flex w-full flex-col px-5">
-      <LinkComponent className={linkClassName} {...linkProps}>
+      <HybridLink
+        className={linkClassName}
+        href={href}
+        isNextRouter={isNextRouter}
+        force={force}
+        onClick={(e) => {
+          if (onClick) onClick(e);
+          if (subNavList) {
+            e.preventDefault();
+            setIsOpen(!isOpen);
+          }
+        }}
+        {...restProps}
+      >
         {children}
-      </LinkComponent>
+      </HybridLink>
 
       {/* 서브 메뉴 */}
       {subNavList && (
