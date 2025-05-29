@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import BottomNavBar from './BottomNavBar';
+import BottomNavBarWithPathname from './BottomNavBarWithPathname';
 import ChannelTalkBtn from './channel/ChannelTalkBtn';
 import Footer from './footer/Footer';
 import NavBar from './header/NavBar';
@@ -13,7 +13,7 @@ const Layout = () => {
       </div>
       <Footer />
       <ChannelTalkBtn />
-      <BottomNavBar isNextRouter={false} />
+      <BottomNavBarWithPathname />
     </div>
   );
 };
