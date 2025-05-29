@@ -1,7 +1,49 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import HybridLink from '../HybridLink';
+
+type Menu = {
+  name: string;
+  img: string;
+  activeImg: string;
+  href: string;
+  force: boolean;
+};
+
+const MenuLink = memo(
+  function Menu({
+    menu,
+    isNextRouter,
+    active,
+  }: {
+    menu: Menu;
+    isNextRouter: boolean;
+    active: boolean;
+  }) {
+    return (
+      <HybridLink
+        key={menu.name}
+        className="flex flex-1 flex-col items-center pb-[7px] pt-[5px]"
+        isNextRouter={isNextRouter}
+        href={menu.href}
+        force={menu.force}
+      >
+        <img
+          className="h-6 w-auto"
+          src={`/mobile-nav/${active ? menu.activeImg : menu.img}`}
+          alt={menu.name}
+        />
+        <span className="text-xxsmall10 font-medium text-neutral-40">
+          {menu.name}
+        </span>
+      </HybridLink>
+    );
+  },
+  (oldProps, newProps) =>
+    oldProps.isNextRouter === newProps.isNextRouter &&
+    oldProps.active === newProps.active,
+);
 
 interface Props {
   isNextRouter: boolean;
@@ -11,7 +53,7 @@ interface Props {
 type Active = '블로그' | '후기' | '홈' | '프로그램' | '마이페이지';
 
 function BottomNavBar({ isNextRouter, pathname = '' }: Props) {
-  const menuInfo = [
+  const menuInfo: Menu[] = [
     {
       name: '블로그',
       img: 'blog.svg',
@@ -68,22 +110,12 @@ function BottomNavBar({ isNextRouter, pathname = '' }: Props) {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-30 flex items-center border-t border-neutral-80 bg-white md:hidden">
       {menuInfo.map((item) => (
-        <HybridLink
-          key={item.name}
-          className="flex flex-1 flex-col items-center pb-[7px] pt-[5px]"
+        <MenuLink
           isNextRouter={isNextRouter}
-          href={item.href}
-          force={item.force}
-        >
-          <img
-            className="h-6 w-auto"
-            src={`/mobile-nav/${active === item.name ? item.activeImg : item.img}`}
-            alt={item.name}
-          />
-          <span className="text-xxsmall10 font-medium text-neutral-40">
-            {item.name}
-          </span>
-        </HybridLink>
+          menu={item}
+          key={item.name}
+          active={item.name === active}
+        />
       ))}
     </nav>
   );

@@ -5,5 +5,4 @@ function BottomNavBarWithPathname() {
   const location = useLocation();
   return <BottomNavBar isNextRouter={false} pathname={location.pathname} />;
 }
-
 export default BottomNavBarWithPathname;
