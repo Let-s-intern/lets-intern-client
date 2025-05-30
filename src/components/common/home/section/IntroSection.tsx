@@ -217,7 +217,7 @@ const IntroSection = () => {
 
   return (
     <>
-      <section className="flex w-full max-w-[1120px] flex-col gap-[17px] px-5 md:gap-12 xl:px-0">
+      <section className="flex w-full max-w-[1120px] flex-col gap-[17px] overflow-x-hidden px-5 md:gap-12 xl:px-0">
         <div className="flex flex-col gap-1 text-center md:gap-2">
           {HOME_INTRO.description}
           {HOME_INTRO.title}
