@@ -24,7 +24,7 @@ const MenuLink = memo(
     return (
       <HybridLink
         key={menu.name}
-        className="flex flex-1 flex-col items-center pb-[7px] pt-[5px]"
+        className="flex flex-1 flex-col items-center pb-2.5 pt-1.5"
         isNextRouter={isNextRouter}
         href={menu.href}
         force={menu.force}
@@ -34,7 +34,7 @@ const MenuLink = memo(
           src={`/mobile-nav/${active ? menu.activeImg : menu.img}`}
           alt={menu.name}
         />
-        <span className="text-xxsmall10 font-medium text-neutral-40">
+        <span className="block h-4 text-[0.688rem] font-medium text-neutral-40">
           {menu.name}
         </span>
       </HybridLink>
