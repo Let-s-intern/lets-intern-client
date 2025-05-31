@@ -1,7 +1,5 @@
 import { twMerge } from '@/lib/twMerge';
-import Link from 'next/link';
-import { MouseEvent } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import HybridLink from '../../HybridLink';
 
 interface Props {
   isNextRouter: boolean;
@@ -10,29 +8,18 @@ interface Props {
 }
 
 function SignUpLink({ isNextRouter, force, className }: Props) {
-  const LinkComponent: any = isNextRouter ? Link : RouterLink;
-  const linkProps = isNextRouter
-    ? {
-        href: '/signup',
-        onClick: (e: MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-          if (force) {
-            e.preventDefault();
-            window.location.href = '/signup';
-          }
-        },
-      }
-    : { to: '/signup' };
-
   return (
-    <LinkComponent
+    <HybridLink
       className={twMerge(
         'rounded-xxs bg-primary px-3 py-1.5 text-xsmall14 font-medium text-white',
         className,
       )}
-      {...linkProps}
+      isNextRouter={isNextRouter}
+      force={force}
+      href="/signup"
     >
       회원가입
-    </LinkComponent>
+    </HybridLink>
   );
 }
 
