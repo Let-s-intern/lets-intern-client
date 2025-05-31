@@ -522,7 +522,10 @@ const ChallengeOperationRegisterMission = () => {
             missionTemplateId: row.missionTemplateId,
             score: row.score,
             startDate: row.startDate.tz().format('YYYY-MM-DDTHH:mm:ss'),
-            endDate: row.endDate.tz().format('YYYY-MM-DDTHH:mm:ss'),
+            endDate: row.endDate
+              .set('second', 59)
+              .tz()
+              .format('YYYY-MM-DDTHH:mm:ss'),
             th: row.th,
             title:
               row.missionTemplatesOptions.find(
@@ -558,7 +561,10 @@ const ChallengeOperationRegisterMission = () => {
             missionTemplateId: row.missionTemplateId,
             score: row.score,
             startDate: row.startDate.tz().format('YYYY-MM-DDTHH:mm:ss'),
-            endDate: row.endDate.tz().format('YYYY-MM-DDTHH:mm:ss'),
+            endDate: row.endDate
+              .set('second', 59)
+              .tz()
+              .format('YYYY-MM-DDTHH:mm:ss'),
             th: row.th,
             title:
               row.missionTemplatesOptions.find(
