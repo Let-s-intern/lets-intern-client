@@ -16,10 +16,12 @@ const MenuLink = memo(
     menu,
     isNextRouter,
     active,
+    onClick,
   }: {
     menu: Menu;
     isNextRouter: boolean;
     active: boolean;
+    onClick?: () => void;
   }) {
     return (
       <HybridLink
@@ -28,6 +30,7 @@ const MenuLink = memo(
         isNextRouter={isNextRouter}
         href={menu.href}
         force={menu.force}
+        onClick={onClick}
       >
         <img
           className="h-6 w-auto"
@@ -109,7 +112,6 @@ function BottomNavBar({ isNextRouter, pathname = '' }: Props) {
     else if (pathname.startsWith('/blog')) setActive('블로그');
     else if (pathname === '/review') setActive('후기');
     else if (pathname.startsWith('/mypage')) setActive('마이페이지');
-    else setActive(null);
   }, [pathname]);
 
   if (hidden) return null;
@@ -122,6 +124,7 @@ function BottomNavBar({ isNextRouter, pathname = '' }: Props) {
           menu={item}
           key={item.name}
           active={item.name === active}
+          onClick={() => setActive(item.name as Active)}
         />
       ))}
     </nav>
