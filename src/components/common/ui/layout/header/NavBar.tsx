@@ -123,7 +123,11 @@ const NavBar = () => {
               렛츠커리어 스토리
             </GlobalNavItem>
           </div>
-          <ExternalNavList isNextRouter={false} />
+          <ExternalNavList
+            isNextRouter={false}
+            isLoggedIn={isLoggedIn}
+            isAdmin={isAdmin}
+          />
         </nav>
       </div>
 

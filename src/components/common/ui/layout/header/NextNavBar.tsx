@@ -121,7 +121,11 @@ const NextNavBar = () => {
               렛츠커리어 스토리
             </GlobalNavItem>
           </div>
-          <ExternalNavList isNextRouter />
+          <ExternalNavList
+            isNextRouter
+            isLoggedIn={isLoggedIn}
+            isAdmin={isAdmin}
+          />
         </nav>
       </div>
 
