@@ -2,6 +2,7 @@ import { useGetUserAdmin } from '@/api/user';
 import useActiveLink from '@/hooks/useActiveLink';
 import useActiveReportNav from '@/hooks/useActiveReportNav';
 import { useControlScroll } from '@/hooks/useControlScroll';
+import useProgramCategoryNav from '@/hooks/useProgramCategoryNav';
 import useScrollDirection from '@/hooks/useScrollDirection';
 import useAuthStore from '@/store/useAuthStore';
 import { useState } from 'react';
@@ -38,6 +39,8 @@ const NavBar = () => {
     setIsOpen(false);
   };
 
+  const programCategoryLists = useProgramCategoryNav();
+
   // 사이드바 열리면 스크롤 제한
   useControlScroll(isOpen);
 
@@ -61,9 +64,12 @@ const NavBar = () => {
                 className="text-xsmall16"
                 href="/program"
                 isNextRouter={false}
+                subNavList={programCategoryLists}
                 active={activeLink === 'PROGRAM'}
+                force
+                showDropdownIcon
               >
-                전체 프로그램
+                프로그램 카테고리
               </GlobalNavItem>
               <GlobalNavItem
                 className="text-xsmall16"
@@ -117,7 +123,11 @@ const NavBar = () => {
               렛츠커리어 스토리
             </GlobalNavItem>
           </div>
-          <ExternalNavList isNextRouter={false} />
+          <ExternalNavList
+            isNextRouter={false}
+            isLoggedIn={isLoggedIn}
+            isAdmin={isAdmin}
+          />
         </nav>
       </div>
 
@@ -133,7 +143,7 @@ const NavBar = () => {
         <SideNavItem href="/mypage/application" isNextRouter={false}>
           마이페이지
         </SideNavItem>
-        <hr className="h-1 bg-neutral-80" aria-hidden="true" />
+        <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
         <SideNavItem href="/about" isNextRouter={false}>
           렛츠커리어 스토리
         </SideNavItem>
@@ -164,7 +174,7 @@ const NavBar = () => {
         >
           커피챗
         </SideNavItem>
-        <hr className="h-1 bg-neutral-80" aria-hidden="true" />
+        <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
         {isLoggedIn && isAdmin && (
           <SideNavItem href="/admin" isNextRouter={false} force>
             관리자 페이지

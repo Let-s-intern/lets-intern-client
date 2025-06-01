@@ -17,7 +17,7 @@ function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
   const { data: user } = useUserQuery({ enabled: isLoggedIn, retry: 1 });
 
   return (
-    <nav className="mw-1180 flex h-full items-center justify-between py-4">
+    <nav className="mw-1180 flex h-full items-center justify-between py-2.5">
       <div className="flex h-full items-center">
         {/* 로고 */}
         <LogoLink className="mr-8" isNextRouter={isNextRouter} />
@@ -30,20 +30,20 @@ function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
           홈
         </GlobalNavItem>
         <GlobalNavItem
-          className="items-center gap-1 md:flex"
+          className="items-center justify-center gap-1 md:flex"
           isNextRouter={isNextRouter}
           href="https://letscareer.oopy.io/1df5e77c-bee1-80b3-8199-e7d2cc9d64cd"
           target="_blank"
           rel="noopener noreferrer"
         >
           커뮤니티
-          <span className="text-xxsmall12 font-normal">
+          <span className="flex h-auto items-center text-xxsmall12 font-normal">
             +현직자 멘토 참여중
           </span>
         </GlobalNavItem>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center justify-center gap-4">
         {isLoggedIn ? (
           <div
             className="hidden cursor-pointer items-center gap-2 md:flex"
@@ -71,7 +71,7 @@ function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
           </div>
         )}
         <i
-          className="cursor-pointer"
+          className="cursor-pointer md:hidden"
           aria-label="메뉴 열기"
           onClick={toggleMenu}
         >

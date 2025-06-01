@@ -1,10 +1,15 @@
 'use client';
 
-import Polygon from '@/assets/icons/polygon.svg?react';
 import { twMerge } from '@/lib/twMerge';
+import { ChevronDown } from 'lucide-react';
 import { AnchorHTMLAttributes, Fragment, useState } from 'react';
 import HybridLink from '../../HybridLink';
 import SubNavItem, { SubNavItemProps } from './SubNavItem';
+/**
+ * @param {boolean} force
+ *   true로 설정하면 window.location.href으로 라우팅
+ *   Next.js App Router <-> React Router로 이동할 때 사용합니다.
+ */
 
 interface Props extends AnchorHTMLAttributes<HTMLAnchorElement> {
   active?: boolean;
@@ -12,6 +17,7 @@ interface Props extends AnchorHTMLAttributes<HTMLAnchorElement> {
   subNavList?: SubNavItemProps[];
   force?: boolean;
   isNew?: boolean;
+  showDropdownIcon?: boolean; // 새로 추가
 }
 
 function GlobalNavItem({
@@ -23,6 +29,7 @@ function GlobalNavItem({
   href = '#',
   subNavList,
   isNew = false,
+  showDropdownIcon,
   ...restProps
 }: Props) {
   const linkClassName = twMerge(
@@ -48,15 +55,24 @@ function GlobalNavItem({
         {...restProps}
       >
         {children}
+        <span className="flex items-center">
+          {children}
+          {showDropdownIcon && subNavList && (
+            <ChevronDown
+              size={24}
+              className="text-gray-20 transition-transform group-hover:text-neutral-0"
+            />
+          )}
+        </span>
       </HybridLink>
 
       {/* 서브 메뉴 */}
       {subNavList && hover && (
-        <div className="absolute z-10 flex flex-col items-center drop-shadow-05">
+        <div className="absolute z-10 flex flex-col items-center drop-shadow-xl">
           <div className="mx-auto h-auto w-[20px] text-white">
-            <Polygon />
+            {/* <Polygon /> */}
           </div>
-          <div className="flex w-full flex-col rounded-xs bg-white py-1">
+          <div className="my-3 flex w-full flex-col rounded-xs bg-white py-1">
             {subNavList.map((item, index) => (
               <Fragment key={item.href}>
                 <SubNavItem {...item}>{item.children}</SubNavItem>

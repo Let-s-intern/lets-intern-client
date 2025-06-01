@@ -13,7 +13,7 @@ function LogoLink({ isNextRouter, className }: Props) {
         <img
           src="/logo/horizontal-logo.svg"
           alt="렛츠커리어"
-          className="h-[25px] w-auto"
+          className="h-[24px] w-auto"
         />
         렛츠커리어
       </HybridLink>
