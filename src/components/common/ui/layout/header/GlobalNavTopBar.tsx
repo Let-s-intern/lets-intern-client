@@ -43,7 +43,7 @@ function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
         </GlobalNavItem>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center justify-center gap-4">
         {isLoggedIn ? (
           <div
             className="hidden cursor-pointer items-center gap-2 md:flex"
@@ -71,7 +71,7 @@ function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
           </div>
         )}
         <i
-          className="cursor-pointer"
+          className="cursor-pointer md:hidden"
           aria-label="메뉴 열기"
           onClick={toggleMenu}
         >
