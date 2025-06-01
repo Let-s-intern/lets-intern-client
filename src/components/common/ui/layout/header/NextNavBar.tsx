@@ -3,6 +3,7 @@
 import { useGetUserAdmin } from '@/api/user';
 import useActiveLink from '@/hooks/useActiveLink';
 import useActiveReportNav from '@/hooks/useActiveReportNav';
+import { useChallengePrograms } from '@/hooks/useChallengePrograms';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import useScrollDirection from '@/hooks/useScrollDirection';
 import useAuthStore from '@/store/useAuthStore';
@@ -39,6 +40,8 @@ const NextNavBar = () => {
     setIsOpen(false);
   };
 
+  const programCategoryLists = useChallengePrograms();
+
   // 사이드바 열리면 스크롤 제한
   useControlScroll(isOpen);
 
@@ -61,11 +64,12 @@ const NextNavBar = () => {
               <GlobalNavItem
                 className="text-xsmall16"
                 href="/program"
-                force
                 isNextRouter
+                subNavList={programCategoryLists}
                 active={activeLink === 'PROGRAM'}
+                force
               >
-                전체 프로그램
+                프로그램 카테고리
               </GlobalNavItem>
               <GlobalNavItem
                 className="text-xsmall16"
