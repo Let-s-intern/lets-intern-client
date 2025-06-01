@@ -41,7 +41,7 @@ function SubNavItem({
   return (
     <LinkComponent
       className={twMerge(
-        `w-full bg-white px-5 py-3 text-xsmall14 text-neutral-0 hover:bg-neutral-80 ${active ? 'font-semibold' : 'font-medium'}`,
+        `w-[172px] bg-white px-2.5 py-2.5 text-xsmall14 text-neutral-0 hover:bg-neutral-80 ${active ? 'font-semibold' : 'font-medium'}`,
         className,
       )}
       {...linkProps}
