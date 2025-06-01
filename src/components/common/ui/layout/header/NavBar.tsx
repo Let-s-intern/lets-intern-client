@@ -67,6 +67,7 @@ const NavBar = () => {
                 subNavList={programCategoryLists}
                 active={activeLink === 'PROGRAM'}
                 force
+                showDropdownIcon
               >
                 프로그램 카테고리
               </GlobalNavItem>
