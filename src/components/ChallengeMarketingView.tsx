@@ -1,11 +1,17 @@
 import { ChallengeIdPrimitive } from '@/schema';
+import React from 'react';
+import MarketingIntroSection from './common/challenge-marketing-view/MarketingIntroSection';
 
 interface Props {
   challenge: ChallengeIdPrimitive;
 }
 
-function ChallengeMarketingView({ challenge }: Props) {
-  return <div>ChallengeMarketingView</div>;
-}
+const ChallengeMarketingView: React.FC<Props> = ({ challenge }) => {
+  return (
+    <>
+      <MarketingIntroSection />
+    </>
+  );
+};
 
 export default ChallengeMarketingView;
