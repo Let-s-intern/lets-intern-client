@@ -12,12 +12,12 @@ function LogoLink({ isNextRouter, className }: Props) {
   const linkProps = isNextRouter ? { href: '/' } : { to: '/' };
 
   return (
-    <h1 className={twMerge('h-[25px] text-transparent', className)}>
+    <h1 className={twMerge('h-[24px] text-transparent', className)}>
       <LinkComponent {...linkProps}>
         <img
           src="/logo/horizontal-logo.svg"
           alt="렛츠커리어"
-          className="h-[25px] w-auto"
+          className="h-[24px] w-auto"
         />
         렛츠커리어
       </LinkComponent>

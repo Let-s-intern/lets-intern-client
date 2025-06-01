@@ -143,7 +143,7 @@ const NavBar = () => {
         <SideNavItem href="/mypage/application" isNextRouter={false}>
           마이페이지
         </SideNavItem>
-        <hr className="h-1 bg-neutral-80" aria-hidden="true" />
+        <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
         <SideNavItem href="/about" isNextRouter={false}>
           렛츠커리어 스토리
         </SideNavItem>
@@ -174,7 +174,7 @@ const NavBar = () => {
         >
           커피챗
         </SideNavItem>
-        <hr className="h-1 bg-neutral-80" aria-hidden="true" />
+        <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
         {isLoggedIn && isAdmin && (
           <SideNavItem href="/admin" isNextRouter={false} force>
             관리자 페이지

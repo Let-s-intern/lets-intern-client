@@ -131,13 +131,22 @@ const NextNavBar = () => {
 
       {/* 사이드 네비게이션 Overlay */}
       <NavOverlay isOpen={isOpen} onClose={closeMenu} />
-
       {/* 사이드 네비게이션 바 */}
       <SideNavContainer isNextRouter isOpen={isOpen} onClose={closeMenu}>
         <SideNavItem href="/mypage/application" isNextRouter force>
           마이페이지
         </SideNavItem>
-        <hr className="h-1 bg-neutral-80" aria-hidden="true" />
+        <SideNavItem
+          href="https://letscareer.oopy.io/1df5e77c-bee1-80b3-8199-e7d2cc9d64cd"
+          isNextRouter
+          force
+        >
+          커뮤니티
+          <span className="flex items-center text-xxsmall12 font-normal">
+            +현직자 멘토 참여중
+          </span>
+        </SideNavItem>
+        <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
         <SideNavItem href="/about" isNextRouter force>
           렛츠커리어 스토리
         </SideNavItem>
@@ -167,7 +176,7 @@ const NextNavBar = () => {
         >
           커피챗
         </SideNavItem>
-        <hr className="h-1 bg-neutral-80" aria-hidden="true" />
+        <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
         {isLoggedIn && isAdmin && (
           <SideNavItem href="/admin" isNextRouter force>
             관리자 페이지

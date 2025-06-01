@@ -22,16 +22,11 @@ function SideNavContainer({ children, isNextRouter, isOpen, onClose }: Props) {
     <div
       id="sideNavigation"
       className={twMerge(
-        'fixed right-0 top-0 z-50 flex h-screen w-[18.25rem] flex-col bg-white shadow-md transition-all duration-300 sm:w-[22rem]',
+        'fixed right-0 top-0 z-50 flex h-screen w-[80vw] flex-col bg-white shadow-md transition-all duration-300 sm:w-[22rem]',
         isOpen ? 'translate-x-0' : 'translate-x-full',
       )}
     >
-      <div className="flex w-full items-center justify-between p-5">
-        <img
-          className="h-7 w-auto"
-          src="/logo/logo-gradient-text.svg"
-          alt="렛츠커리어"
-        />
+      <div className="flex w-full flex-row-reverse items-center p-2.5">
         <i
           className="h-6 w-6 cursor-pointer"
           aria-label="메뉴 닫기"
@@ -44,7 +39,7 @@ function SideNavContainer({ children, isNextRouter, isOpen, onClose }: Props) {
       </div>
       <hr />
       <KakaoChannel />
-      <div className="flex h-full flex-col gap-5 overflow-y-auto pb-36 pt-10">
+      <div className="flex h-full flex-col gap-5 overflow-y-auto pb-36 pt-5">
         <div className="mx-5 flex justify-between">
           {isLoggedIn ? (
             <span className="flex w-full items-center justify-between gap-4 text-neutral-0 sm:p-0">
@@ -64,14 +59,14 @@ function SideNavContainer({ children, isNextRouter, isOpen, onClose }: Props) {
               </button>
             </span>
           ) : (
-            <div className="flex gap-6 text-xsmall14">
+            <div className="flex gap-6">
               <LoginLink
-                className="p-0 font-normal"
+                className="p-0 font-medium"
                 isNextRouter={isNextRouter}
                 force={isNextRouter}
               />
               <SignUpLink
-                className="bg-transparent p-0 font-normal text-black"
+                className="bg-transparent p-0 font-medium text-black"
                 isNextRouter={isNextRouter}
                 force={isNextRouter}
               />

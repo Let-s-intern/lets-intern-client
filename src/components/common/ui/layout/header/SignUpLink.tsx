@@ -26,7 +26,7 @@ function SignUpLink({ isNextRouter, force, className }: Props) {
   return (
     <LinkComponent
       className={twMerge(
-        'rounded-xxs bg-primary px-3 py-1.5 text-xsmall14 font-medium text-white',
+        'rounded-xxs bg-primary px-3 py-1.5 text-xsmall16 font-medium text-white',
         className,
       )}
       {...linkProps}

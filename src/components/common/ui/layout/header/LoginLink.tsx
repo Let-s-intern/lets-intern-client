@@ -27,7 +27,7 @@ function LoginLink({ redirect, isNextRouter, force, className }: Props) {
   return (
     <LinkComponent
       className={twMerge(
-        'rounded-xxs bg-white px-3 py-1.5 text-xsmall14 font-medium text-primary',
+        'rounded-xxs bg-white px-3 py-1.5 text-xsmall16 font-medium text-primary',
         className,
       )}
       {...linkProps}
