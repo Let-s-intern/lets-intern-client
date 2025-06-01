@@ -54,7 +54,6 @@ function GlobalNavItem({
         href={href}
         {...restProps}
       >
-        {children}
         <span className="flex items-center">
           {children}
           {showDropdownIcon && subNavList && (
