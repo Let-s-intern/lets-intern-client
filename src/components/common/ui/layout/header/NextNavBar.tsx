@@ -16,7 +16,6 @@ import NavOverlay from './NavOverlay';
 import SideNavContainer from './SideNavContainer';
 import SideNavItem from './SideNavItem';
 import Spacer from './Spacer';
-
 const NextNavBar = () => {
   const pathname = usePathname() ?? '';
 
@@ -68,6 +67,7 @@ const NextNavBar = () => {
                 subNavList={programCategoryLists}
                 active={activeLink === 'PROGRAM'}
                 force
+                showDropdownIcon
               >
                 프로그램 카테고리
               </GlobalNavItem>

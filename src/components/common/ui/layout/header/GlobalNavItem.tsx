@@ -1,11 +1,11 @@
 'use client';
 
 import { twMerge } from '@/lib/twMerge';
+import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { AnchorHTMLAttributes, Fragment, MouseEvent, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import SubNavItem, { SubNavItemProps } from './SubNavItem';
-
 /**
  * @param {boolean} force
  *   true로 설정하면 window.location.href으로 라우팅
@@ -18,6 +18,7 @@ interface Props extends AnchorHTMLAttributes<HTMLAnchorElement> {
   subNavList?: SubNavItemProps[];
   force?: boolean;
   isNew?: boolean;
+  showDropdownIcon?: boolean; // 새로 추가
 }
 
 function GlobalNavItem({
@@ -29,6 +30,7 @@ function GlobalNavItem({
   href = '#',
   subNavList,
   isNew = false,
+  showDropdownIcon,
   ...restProps
 }: Props) {
   const linkClassName = twMerge(
@@ -60,7 +62,15 @@ function GlobalNavItem({
       onMouseLeave={() => setHover(false)}
     >
       <LinkComponent className={linkClassName} {...linkProps}>
-        {children}
+        <span className="flex items-center">
+          {children}
+          {showDropdownIcon && subNavList && (
+            <ChevronDown
+              size={24}
+              className="text-gray-20 transition-transform group-hover:text-neutral-0"
+            />
+          )}
+        </span>
       </LinkComponent>
 
       {/* 서브 메뉴 */}
