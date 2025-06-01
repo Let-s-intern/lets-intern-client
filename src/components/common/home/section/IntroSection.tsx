@@ -236,7 +236,13 @@ const IntroSection = () => {
         </div>
         <div className="-mx-5 h-full w-screen overflow-x-auto pt-2.5 md:mx-auto md:w-fit md:overflow-x-visible md:px-0 md:pt-0">
           <div
-            className={`${menus.length === 5 ? 'min-w-fit px-5' : 'flex-wrap justify-center'} md:justify-center ${menuClassNames[menus.length] ?? 'gap-x-5'} ${menus.length === 6 ? 'grid grid-cols-3 px-10' : 'flex'} gap-y-5 md:mx-auto md:flex md:gap-10 md:px-0`}
+            className={twMerge(
+              'gap-x-5 gap-y-5 md:mx-auto md:flex md:justify-center md:gap-10 md:px-0',
+              menuCount === 5
+                ? 'min-w-fit gap-x-4 px-5'
+                : 'flex-wrap justify-center',
+              menuCount === 6 ? 'grid grid-cols-3 gap-x-6 px-10' : 'flex',
+            )}
           >
             {menus}
           </div>
