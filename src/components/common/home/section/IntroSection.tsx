@@ -155,6 +155,15 @@ const IntroSection = () => {
     }
   };
 
+  const menuCount = HOME_INTRO.items.basic.reduce((acc, _, index) => {
+    // 이력서 피드백 받기
+    if (index === 4) return hasActiveResume ? acc + 1 : acc;
+    // 자소서 피드백 받기
+    if (index === 5) return hasActivePersonalStatement ? acc + 1 : acc;
+
+    return acc + 1;
+  }, 0);
+
   const menus = HOME_INTRO.items.basic.map((item, index) => {
     // 이력서 피드백 받기
     if (index === 4) {
@@ -170,6 +179,7 @@ const IntroSection = () => {
                 ? getCurrentChallenge(item.href.split('=')[1])
                 : item.href
             }
+            iconClassName={menuCount ? 'w-14' : 'w-15'}
             gaTitle={item.gaTitle}
           />
         );
@@ -191,6 +201,7 @@ const IntroSection = () => {
                 ? getCurrentChallenge(item.href.split('=')[1])
                 : item.href
             }
+            iconClassName={menuCount ? 'w-14' : 'w-15'}
             gaTitle={item.gaTitle}
           />
         );
@@ -209,6 +220,7 @@ const IntroSection = () => {
             ? getCurrentChallenge(item.href.split('=')[1])
             : item.href
         }
+        iconClassName={menuCount ? 'w-14' : 'w-15'}
         gaTitle={item.gaTitle}
         badgeClassName={index === 7 ? 'bg-[#34BFFF]' : undefined}
       />
@@ -255,7 +267,7 @@ const IntroItem = ({
 }) => {
   return (
     <Link
-      className="icon_menu flex min-w-[66px] flex-col items-center gap-3 text-center text-xxsmall12 font-medium text-neutral-20 md:min-w-[92px] md:text-xsmall14"
+      className="icon_menu flex flex-col items-center gap-3 text-nowrap text-center text-xxsmall12 font-medium text-neutral-20 md:min-w-[92px] md:text-xsmall14"
       href={href ?? '#'}
       target={href && href.startsWith('http') ? '_blank' : undefined}
       onClick={() => {
@@ -268,7 +280,7 @@ const IntroItem = ({
     >
       <div
         className={twMerge(
-          'relative flex aspect-square w-15 items-center justify-center rounded-xxs bg-[#F7F7F7] md:w-16',
+          'relative flex aspect-square items-center justify-center rounded-xxs bg-[#F7F7F7] md:w-16',
           iconClassName,
         )}
       >
