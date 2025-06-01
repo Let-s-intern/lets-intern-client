@@ -110,150 +110,6 @@ const HOME_INTRO = {
   },
 };
 
-const menuClassNames: Record<number, string> = {
-  5: 'gap-x-4',
-  6: 'gap-x-6',
-};
-
-const IntroSection = () => {
-  const { data: experienceSummaryData } = useGetChallengeHome({
-    type: EXPERIENCE_SUMMARY,
-  });
-  const { data: personalStatementData } = useGetChallengeHome({
-    type: PERSONAL_STATEMENT,
-  });
-  const { data: personalStatementLargeCorpData } = useGetChallengeHome({
-    type: PERSONAL_STATEMENT_LARGE_CORP,
-  });
-  const { data: portfolioData } = useGetChallengeHome({ type: PORTFOLIO });
-
-  const { hasActiveResume, hasActivePersonalStatement } = useActiveReports();
-
-  const getCurrentChallenge = (type: string): string | undefined => {
-    switch (type) {
-      case EXPERIENCE_SUMMARY:
-        return experienceSummaryData &&
-          experienceSummaryData.programList.length > 0
-          ? `/program/challenge/${experienceSummaryData.programList[0].id}`
-          : undefined;
-      case PERSONAL_STATEMENT:
-        return personalStatementData &&
-          personalStatementData.programList.length > 0
-          ? `/program/challenge/${personalStatementData.programList[0].id}`
-          : undefined;
-      case PERSONAL_STATEMENT_LARGE_CORP:
-        return personalStatementLargeCorpData &&
-          personalStatementLargeCorpData.programList.length > 0
-          ? `/program/challenge/${personalStatementLargeCorpData.programList[0].id}`
-          : undefined;
-      case PORTFOLIO:
-        return portfolioData && portfolioData.programList.length > 0
-          ? `/program/challenge/${portfolioData.programList[0].id}`
-          : undefined;
-      default:
-        return undefined;
-    }
-  };
-
-  const menuCount = HOME_INTRO.items.basic.reduce((acc, _, index) => {
-    // 이력서 피드백 받기
-    if (index === 4) return hasActiveResume ? acc + 1 : acc;
-    // 자소서 피드백 받기
-    if (index === 5) return hasActivePersonalStatement ? acc + 1 : acc;
-
-    return acc + 1;
-  }, 0);
-
-  const menus = HOME_INTRO.items.basic.map((item, index) => {
-    // 이력서 피드백 받기
-    if (index === 4) {
-      if (hasActiveResume) {
-        return (
-          <IntroItem
-            key={index}
-            title={item.title}
-            subTitle={item.subTitle}
-            icon={item.icon}
-            href={
-              item.href.startsWith('type=')
-                ? getCurrentChallenge(item.href.split('=')[1])
-                : item.href
-            }
-            iconClassName={menuCount ? 'w-14' : 'w-15'}
-            gaTitle={item.gaTitle}
-          />
-        );
-      }
-      return null;
-    }
-
-    // 자소서 피드백 받기
-    if (index === 5) {
-      if (hasActivePersonalStatement) {
-        return (
-          <IntroItem
-            key={index}
-            title={item.title}
-            subTitle={item.subTitle}
-            icon={item.icon}
-            href={
-              item.href.startsWith('type=')
-                ? getCurrentChallenge(item.href.split('=')[1])
-                : item.href
-            }
-            iconClassName={menuCount ? 'w-14' : 'w-15'}
-            gaTitle={item.gaTitle}
-          />
-        );
-      }
-      return null;
-    }
-
-    return (
-      <IntroItem
-        key={index}
-        title={item.title}
-        subTitle={item.subTitle}
-        icon={item.icon}
-        href={
-          item.href.startsWith('type=')
-            ? getCurrentChallenge(item.href.split('=')[1])
-            : item.href
-        }
-        iconClassName={menuCount ? 'w-14' : 'w-15'}
-        gaTitle={item.gaTitle}
-        badgeClassName={index === 7 ? 'bg-[#34BFFF]' : undefined}
-      />
-    );
-  });
-
-  return (
-    <>
-      <section className="flex w-full max-w-[1120px] flex-col gap-[17px] overflow-x-hidden px-5 md:gap-12 xl:px-0">
-        <div className="flex flex-col gap-1 text-center md:gap-2">
-          {HOME_INTRO.description}
-          {HOME_INTRO.title}
-        </div>
-        <div className="-mx-5 h-full w-screen overflow-x-auto pt-2.5 md:mx-auto md:w-fit md:overflow-x-visible md:px-0 md:pt-0">
-          <div
-            className={twMerge(
-              'gap-x-5 gap-y-5 md:mx-auto md:flex md:justify-center md:gap-10 md:px-0',
-              menuCount === 5
-                ? 'min-w-fit gap-x-4 px-5'
-                : 'flex-wrap justify-center',
-              menuCount === 6 ? 'grid grid-cols-3 gap-x-6 px-10' : 'flex',
-            )}
-          >
-            {menus}
-          </div>
-        </div>
-      </section>
-    </>
-  );
-};
-
-export default IntroSection;
-
 const IntroItem = ({
   title,
   subTitle,
@@ -306,3 +162,105 @@ const IntroItem = ({
     </Link>
   );
 };
+
+const IntroSection = () => {
+  const { data: experienceSummaryData } = useGetChallengeHome({
+    type: EXPERIENCE_SUMMARY,
+  });
+  const { data: personalStatementData } = useGetChallengeHome({
+    type: PERSONAL_STATEMENT,
+  });
+  const { data: personalStatementLargeCorpData } = useGetChallengeHome({
+    type: PERSONAL_STATEMENT_LARGE_CORP,
+  });
+  const { data: portfolioData } = useGetChallengeHome({ type: PORTFOLIO });
+
+  const { hasActiveResume, hasActivePersonalStatement } = useActiveReports();
+
+  const getCurrentChallenge = (type: string): string | undefined => {
+    switch (type) {
+      case EXPERIENCE_SUMMARY:
+        return experienceSummaryData &&
+          experienceSummaryData.programList.length > 0
+          ? `/program/challenge/${experienceSummaryData.programList[0].id}`
+          : undefined;
+      case PERSONAL_STATEMENT:
+        return personalStatementData &&
+          personalStatementData.programList.length > 0
+          ? `/program/challenge/${personalStatementData.programList[0].id}`
+          : undefined;
+      case PERSONAL_STATEMENT_LARGE_CORP:
+        return personalStatementLargeCorpData &&
+          personalStatementLargeCorpData.programList.length > 0
+          ? `/program/challenge/${personalStatementLargeCorpData.programList[0].id}`
+          : undefined;
+      case PORTFOLIO:
+        return portfolioData && portfolioData.programList.length > 0
+          ? `/program/challenge/${portfolioData.programList[0].id}`
+          : undefined;
+      default:
+        return undefined;
+    }
+  };
+
+  const filteredItems = HOME_INTRO.items.basic.filter((item, index) => {
+    // 이력서 피드백 받기
+    if (index === 4 && !hasActiveResume) return false;
+    // 자소서 피드백 받기
+    if (index === 5 && !hasActivePersonalStatement) return false;
+    return true;
+  });
+
+  const menus = filteredItems.map((item, index) => {
+    const isInvalidProgram =
+      item.href.startsWith('type=') &&
+      !getCurrentChallenge(item.href.split('=')[1]);
+
+    if (isInvalidProgram) return null;
+
+    return (
+      <IntroItem
+        key={index}
+        title={item.title}
+        subTitle={item.subTitle}
+        icon={item.icon}
+        href={
+          item.href.startsWith('type=')
+            ? getCurrentChallenge(item.href.split('=')[1])
+            : item.href
+        }
+        iconClassName={filteredItems.length === 5 ? 'w-14' : 'w-15'}
+        gaTitle={item.gaTitle}
+        badgeClassName={index === 7 ? 'bg-[#34BFFF]' : undefined}
+      />
+    );
+  });
+
+  return (
+    <>
+      <section className="flex w-full max-w-[1120px] flex-col gap-[17px] overflow-x-hidden px-5 md:gap-12 xl:px-0">
+        <div className="flex flex-col gap-1 text-center md:gap-2">
+          {HOME_INTRO.description}
+          {HOME_INTRO.title}
+        </div>
+        <div className="-mx-5 h-full w-screen overflow-x-auto pt-2.5 md:mx-auto md:w-fit md:overflow-x-visible md:px-0 md:pt-0">
+          <div
+            className={twMerge(
+              'gap-x-5 gap-y-5 md:mx-auto md:flex md:justify-center md:gap-10 md:px-0',
+              filteredItems.length === 5
+                ? 'min-w-fit gap-x-4 px-5'
+                : 'flex-wrap justify-center',
+              filteredItems.length === 6
+                ? 'grid grid-cols-3 gap-x-6 px-10'
+                : 'flex',
+            )}
+          >
+            {menus}
+          </div>
+        </div>
+      </section>
+    </>
+  );
+};
+
+export default IntroSection;
