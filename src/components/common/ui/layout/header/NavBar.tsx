@@ -1,8 +1,8 @@
 import { useGetUserAdmin } from '@/api/user';
 import useActiveLink from '@/hooks/useActiveLink';
 import useActiveReportNav from '@/hooks/useActiveReportNav';
-import { useChallengePrograms } from '@/hooks/useChallengePrograms';
 import { useControlScroll } from '@/hooks/useControlScroll';
+import useProgramCategoryNav from '@/hooks/useProgramCategoryNav';
 import useScrollDirection from '@/hooks/useScrollDirection';
 import useAuthStore from '@/store/useAuthStore';
 import { useState } from 'react';
@@ -39,7 +39,7 @@ const NavBar = () => {
     setIsOpen(false);
   };
 
-  const programCategoryLists = useChallengePrograms();
+  const programCategoryLists = useProgramCategoryNav();
 
   // 사이드바 열리면 스크롤 제한
   useControlScroll(isOpen);

@@ -11,7 +11,7 @@ const {
   CAREER_START,
 } = challengeTypeSchema.enum;
 
-export const useChallengePrograms = () => {
+export default function useProgramCategoryNav() {
   const { data: experienceSummaryData } = useGetChallengeList({
     type: EXPERIENCE_SUMMARY,
   });
@@ -98,4 +98,4 @@ export const useChallengePrograms = () => {
   ];
 
   return programCategoryLists;
-};
+}
