@@ -48,7 +48,7 @@ const cards = [
 
 const Badge = ({ text }: { text: string }) => {
   return (
-    <div className="bg-[#4A76FF] px-2 py-1 text-xsmall16 font-bold text-white md:px-3 md:text-xlarge30">
+    <div className="bg-[#4A76FF] px-2 py-1 text-small18 font-bold text-white md:px-3 md:text-xlarge30">
       {text}
     </div>
   );
@@ -87,7 +87,7 @@ const Card = ({
           />
         </picture>
       </div>
-      <div className="mt-6 flex flex-col items-center justify-center gap-1.5 text-neutral-0 md:gap-2">
+      <div className="mt-0.5 flex flex-col items-center justify-center gap-1.5 text-neutral-0 md:mt-6 md:gap-2">
         <div className="text-small18 font-bold md:text-medium24">{title}</div>
         <div className="text-xsmall14 md:text-xsmall16">{description}</div>
       </div>
