@@ -1,10 +1,32 @@
+import { twMerge } from '@/lib/twMerge';
 import MainTitle from './MainTitle';
+
+const sparkleClassName = {
+  before:
+    "before:absolute before:-left-10 before:top-5 before:h-[50px] before:w-[65px] before:bg-[url('/images/sprinkle1.svg')] before:bg-cover before:bg-center before:bg-no-repeat before:md:-left-56 before:md:top-[140px] before:md:h-[82px] before:md:w-[108px]",
+  after:
+    "after:absolute after:-right-10 after:top-5 after:h-[50px] after:w-[65px] after:bg-[url('/images/sprinkle2.svg')] after:bg-cover after:bg-center after:bg-no-repeat  after:md:-right-56 after:md:top-[140px] after:md:h-[82px] after:md:w-[108px]",
+};
+
+const bubbleTailClassName =
+  "before:absolute before:inset-x-auto before:-top-0.5 before:h-[31px] before:w-[64px] before:bg-[url('/images/marketing/bubble-tail.svg')] before:bg-cover before:bg-top before:bg-no-repeat before:md:h-[54px] before:md:w-[114px]";
 
 function MarketingBenefitsSection() {
   return (
-    <section className="relative flex flex-col items-center gap-6 overflow-x-hidden bg-[#4A76FF] px-5 pb-[50px] pt-[51px] before:absolute before:inset-x-auto before:-top-0.5 before:h-[31px] before:w-[64px] before:bg-[url('/images/marketing/bubble-tail.svg')] before:bg-cover before:bg-top before:bg-no-repeat md:gap-12 md:px-0 md:pb-[84px] md:pt-[78px] before:md:h-[54px] before:md:w-[114px]">
+    <section
+      className={twMerge(
+        'relative flex flex-col items-center gap-6 overflow-x-hidden bg-[#4A76FF] px-5 pb-[50px] pt-[51px] md:gap-12 md:px-0 md:pb-[84px] md:pt-[78px]',
+        bubbleTailClassName,
+      )}
+    >
       <div className="flex flex-col items-center gap-1 text-center md:gap-1.5">
-        <MainTitle className="relative flex text-white before:absolute before:-left-10 before:top-5 before:h-[50px] before:w-[65px] before:bg-[url('/images/sprinkle1.svg')] before:bg-cover before:bg-center before:bg-no-repeat after:absolute after:-right-10 after:top-5 after:h-[50px] after:w-[65px] after:bg-[url('/images/sprinkle2.svg')] after:bg-cover after:bg-center after:bg-no-repeat before:md:-left-56 before:md:top-[140px] before:md:h-[82px] before:md:w-[108px] after:md:-right-56 after:md:top-[140px] after:md:h-[82px] after:md:w-[108px]">
+        <MainTitle
+          className={twMerge(
+            'relative flex text-white',
+            sparkleClassName.before,
+            sparkleClassName.after,
+          )}
+        >
           🎁 마케팅 챌린지 참여자를 <br className="md:hidden" />
           위한 특별 혜택
         </MainTitle>
