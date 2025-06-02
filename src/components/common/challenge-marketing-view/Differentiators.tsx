@@ -94,7 +94,10 @@ export const ProfessionalsList = () => {
           key={index}
           className="w-[104px] overflow-hidden rounded-xxs md:w-[280px] md:rounded-sm"
         >
-          <div className="relative h-[59px] overflow-hidden bg-neutral-90 md:h-40">
+          <div
+            className="relative h-[59px] overflow-hidden bg-neutral-90 md:h-40"
+            role="presentation"
+          >
             <img
               src={`/images/marketing/${item.logo}`}
               className="absolute left-1 top-1 h-10 w-10 md:left-3 md:top-3 md:h-[66px] md:w-[66px]"
@@ -108,7 +111,7 @@ export const ProfessionalsList = () => {
           </div>
           <div className="flex flex-col items-center justify-center bg-white px-2 py-3 md:p-5">
             <div className="mb-0.5 rounded-[2px] bg-black px-1 py-0.5 text-center text-[0.5rem] font-medium text-white md:mb-2 md:rounded-xxs md:px-1.5 md:py-[3px] md:text-xsmall14">
-              {dayjs().get('month')}월 {index + 1}주차
+              {dayjs().get('month') + 1}월 {index + 1}주차
             </div>
             <div className="text-base font-bold text-neutral-0 md:mb-1 md:text-medium24">
               {item.company}
