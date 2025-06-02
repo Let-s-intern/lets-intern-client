@@ -1,8 +1,8 @@
 import { ChallengeIdPrimitive } from '@/schema';
+import MarketingBenefitsSection from '@components/common/challenge-marketing-view/MarketingBenefitsSection';
 import MarketingDifferentiatorsSection from '@components/common/challenge-marketing-view/MarketingDifferentiatorsSection';
 import MarketingFeaturesSection from '@components/common/challenge-marketing-view/MarketingFeaturesSection';
 import MarketingIntroSection from '@components/common/challenge-marketing-view/MarketingIntroSection';
-import React from 'react';
 
 // 사용할 일 없을 것 같지만.. (임시입니다)
 export const marketingColors = {
@@ -30,13 +30,14 @@ interface Props {
   challenge: ChallengeIdPrimitive;
 }
 
-const ChallengeMarketingView: React.FC<Props> = ({ challenge }) => {
+const ChallengeMarketingView = ({ challenge }: Props) => {
   return (
-    <>
+    <div className="w-full">
       <MarketingIntroSection />
       <MarketingFeaturesSection />
       <MarketingDifferentiatorsSection />
-    </>
+      <MarketingBenefitsSection />
+    </div>
   );
 };
 
