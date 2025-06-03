@@ -54,7 +54,7 @@ const curriculums = [
               }
             />
             <Highlight
-              className="bg-[#E9F4FF]"
+              className="bg-[#E9F4FF] md:mt-0"
               companyImg="cashnote.png"
               role="캐시노트 그로스 마케터"
               date="| 6/28 저녁 8시 (온라인)"
@@ -72,8 +72,8 @@ const curriculums = [
     ],
   },
   {
-    date: '6/21-28',
-    title: '+ 네이버웹툰 / 캐시노트 현직자 강연',
+    date: '6/29-7/5',
+    title: '+ 클래스101 현직자 강연',
     detail: [
       {
         date: '6/28-6/30',
@@ -230,7 +230,7 @@ const curriculums = [
 
 function Description({ children }: { children: ReactNode }) {
   return (
-    <p className="whitespace-pre-line text-xxsmall12 text-neutral-0">
+    <p className="whitespace-pre-line text-xxsmall12 text-neutral-0 md:text-xsmall16">
       {children}
     </p>
   );
@@ -252,7 +252,7 @@ function Highlight({
   return (
     <div
       className={twMerge(
-        'flex w-full flex-col gap-2.5 rounded-xs bg-neutral-90 px-3 py-2.5 text-neutral-0',
+        'flex w-full flex-col gap-2.5 rounded-xs bg-neutral-90 px-3 py-2.5 text-neutral-0 md:mt-2',
         className,
       )}
     >
@@ -261,15 +261,19 @@ function Highlight({
           <img
             src={`/images/marketing/${companyImg}`}
             alt=""
-            className="h-5 w-5"
+            className="h-5 w-5 md:h-7 md:w-7"
           />
-          <div className="flex items-center gap-1 text-nowrap text-xxsmall12">
-            <span className="font-medium">{role}</span>
+          <div className="flex items-center gap-1 text-nowrap text-xxsmall12 md:gap-1.5">
+            <span className="text-xsmall16 font-medium md:text-small18">
+              {role}
+            </span>
             <span>{date}</span>
           </div>
         </div>
       )}
-      <p className="font-semibold">{description}</p>
+      <p className="text-xsmall16 font-semibold md:text-small18">
+        {description}
+      </p>
     </div>
   );
 }
@@ -277,7 +281,7 @@ function Highlight({
 const CurriculumContent = ({
   curriculum,
 }: {
-  curriculum: Pick<(typeof curriculums)[0], 'detail'>;
+  curriculum: (typeof curriculums)[0];
 }) => {
   const isLastItem = (index: number) => index === curriculum.detail.length - 1;
 
@@ -285,13 +289,13 @@ const CurriculumContent = ({
     <ul>
       {curriculum.detail.map((item, index) => (
         <li key={item.date} className="flex flex-col gap-1">
-          <div className="flex items-center gap-2 text-xsmall14 font-semibold text-neutral-0">
+          <div className="flex items-center gap-2 text-xsmall14 font-semibold text-neutral-0 md:text-small18">
             <span>{item.date}</span>
             <h4>{item.title}</h4>
           </div>
           {item.content}
           {!isLastItem(index) && (
-            <hr className="my-2 border-t border-neutral-80" />
+            <hr className="my-2 border-t border-neutral-80 md:my-[14px]" />
           )}
         </li>
       ))}
@@ -349,25 +353,41 @@ const sidebarList = curriculums.map((item) => ({
   title: item.title,
 }));
 
-const contentList = curriculums.map((item) => item.detail);
-
 const SidebarButton = ({
   index,
   date,
   title,
+  active,
+  onClick,
 }: {
   index: number;
   date: string;
   title: string;
   active: boolean;
+  onClick?: () => void;
 }) => {
   return (
-    <button type="button">
-      <div>
+    <button
+      type="button"
+      className={twMerge(
+        'flex flex-col items-start gap-1 rounded-xs px-[30px] py-5',
+        active
+          ? 'bg-[#F0F4FF] text-[#4A76FF]'
+          : 'bg-transparent text-neutral-35',
+      )}
+      onClick={onClick}
+    >
+      <div className="flex items-center gap-2.5 text-small20 font-semibold">
         <span>WEEK {index + 1}</span>
         <span>{date}</span>
       </div>
-      <h3>{title}</h3>
+      <h3
+        className={
+          active ? 'text-xsmall16 font-semibold' : 'text-small18 font-normal'
+        }
+      >
+        {title}
+      </h3>
     </button>
   );
 };
@@ -375,31 +395,27 @@ const SidebarButton = ({
 const ContentWithSidebar = () => {
   const [active, setActive] = useState(0);
 
-  const activeContent = contentList[active];
+  const activeContent = curriculums[active];
 
   return (
-    <div className="hidden w-full flex-col md:flex">
+    <div className="hidden w-full max-w-[898px] items-stretch overflow-hidden rounded-sm bg-white md:flex">
       {/* Sidebar */}
-      <div>
+      <div className="flex min-w-fit max-w-[398px] flex-1 shrink-0 flex-col border-r border-neutral-80 px-8 py-[30px]">
         {sidebarList.map((item, index) => (
           <SidebarButton
-            key={item.date}
+            key={`sidebar-button-${item.date}`}
             index={index}
             date={item.date}
             title={item.title}
             active={index === active}
+            onClick={() => setActive(index)}
           />
         ))}
       </div>
       {/* Content */}
-      <ul>
-        {activeContent.map((item) => (
-          <li key={item.date}>
-            <h4>{item.title}</h4>
-            {item.content}
-          </li>
-        ))}
-      </ul>
+      <div className="w-full min-w-fit flex-1 shrink-0 px-8 pb-11 pt-10">
+        <CurriculumContent curriculum={activeContent} />
+      </div>
     </div>
   );
 };
@@ -408,16 +424,20 @@ function Curriculums() {
   const isMobile = useMediaQuery('(max-width:768px)');
 
   if (isMobile) {
-    return curriculums.map((item, index) => (
-      <Dropdown
-        key={item.date}
-        title={item.date}
-        index={index}
-        contentClassName={item.contentClassName}
-      >
-        <CurriculumContent curriculum={item} />
-      </Dropdown>
-    ));
+    return (
+      <div className="flex w-full flex-col items-stretch gap-3">
+        {curriculums.map((item, index) => (
+          <Dropdown
+            key={`dropdown-${item.date}`}
+            title={item.date}
+            index={index}
+            contentClassName={item.contentClassName}
+          >
+            <CurriculumContent curriculum={item} />
+          </Dropdown>
+        ))}
+      </div>
+    );
   }
 
   return <ContentWithSidebar />;
