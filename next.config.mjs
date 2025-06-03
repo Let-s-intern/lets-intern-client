@@ -38,7 +38,12 @@ const nextConfig = {
         hostname: 'letsintern-bucket.s3.ap-northeast-2.amazonaws.com',
         port: '',
         pathname: '/**',
-        search: '',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.builder.io',
+        port: '',
+        pathname: '/api/v1/image/assets/**',
       },
     ],
     // unoptimized: true,
