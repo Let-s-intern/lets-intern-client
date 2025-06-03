@@ -1,9 +1,10 @@
 import { ChallengeIdPrimitive } from '@/schema';
+import MarketingDifferentiatorsSection from '@components/common/challenge-marketing-view/MarketingDifferentiatorsSection';
+import ChallengeBasicInfoSection from './common/challenge-marketing-view/ChallengeBasicInfoSection';
 import MarketingBenefitsSection from './common/challenge-marketing-view/MarketingBenefitsSection';
 import MarketingCurriculumSection from './common/challenge-marketing-view/MarketingCurriculumSection';
-import MarketingDifferentiatorsSection from '@components/common/challenge-marketing-view/MarketingDifferentiatorsSection';
-import MarketingFeaturesSection from '@components/common/challenge-marketing-view/MarketingFeaturesSection';
-import MarketingIntroSection from '@components/common/challenge-marketing-view/MarketingIntroSection';
+import MarketingFeaturesSection from './common/challenge-marketing-view/MarketingFeaturesSection';
+import MarketingIntroSection from './common/challenge-marketing-view/MarketingIntroSection';
 
 // 사용할 일 없을 것 같지만.. (임시입니다)
 export const marketingColors = {
@@ -34,6 +35,7 @@ interface Props {
 const ChallengeMarketingView = ({ challenge }: Props) => {
   return (
     <div className="w-full">
+      <ChallengeBasicInfoSection challenge={challenge} />
       <MarketingIntroSection />
       <MarketingFeaturesSection />
       <MarketingDifferentiatorsSection />
