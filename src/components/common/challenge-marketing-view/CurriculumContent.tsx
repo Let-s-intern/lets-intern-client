@@ -5,7 +5,6 @@ export const curriculums = [
   {
     date: '6/21-28',
     title: '+ 네이버웹툰 / 캐시노트 현직자 강연',
-    contentClassName: 'max-h-[504px]',
     detail: [
       {
         date: '6/21-23',
@@ -260,9 +259,7 @@ function Highlight({
             className="h-5 w-5 md:h-7 md:w-7"
           />
           <div className="flex items-center gap-1 text-nowrap text-xxsmall12 md:gap-1.5">
-            <span className="text-xsmall16 font-medium md:text-small18">
-              {role}
-            </span>
+            <span className="font-medium md:text-small18">{role}</span>
             <span>{date}</span>
           </div>
         </div>

@@ -10,14 +10,15 @@ const Dropdown = ({
   index,
   title,
   children,
-  contentClassName,
 }: {
   index: number;
   title: string;
   children: ReactNode;
   contentClassName?: string;
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(
+    index === 0 || index === 1 ? true : false,
+  );
 
   return (
     <div className="flex w-full flex-col overflow-hidden rounded-xs bg-white md:hidden">
@@ -39,9 +40,7 @@ const Dropdown = ({
         <div
           className={twMerge(
             'border-neutral-80transition-all h-full duration-200 ease-out',
-            isOpen
-              ? `border-t p-4 pt-5 opacity-100 ${contentClassName}`
-              : 'max-h-0 opacity-0',
+            isOpen && 'border-t p-4 pt-5',
           )}
         >
           {children}
@@ -134,7 +133,6 @@ function Curriculums() {
             key={`dropdown-${item.date}`}
             title={item.date}
             index={index}
-            contentClassName={item.contentClassName}
           >
             <CurriculumContent curriculum={item} />
           </Dropdown>
