@@ -112,7 +112,7 @@ const ChallengeBasicInfoSection: React.FC<Props> = ({ challenge }) => {
             </div>
 
             {/* 가격 정보 */}
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-1.5">
               <div className="text-xsmall16 text-neutral-20">
                 <div className="flex h-[26px] w-full items-center justify-between px-3 text-neutral-40">
                   <span>정가</span>
@@ -131,33 +131,18 @@ const ChallengeBasicInfoSection: React.FC<Props> = ({ challenge }) => {
               </div>
 
               {/* 최종 결제 금액 */}
-              <div className="mt-1.5 flex w-full flex-col justify-center px-2.5 max-md:max-w-full">
-                <div className="flex w-full items-start justify-between gap-10 text-base font-medium tracking-normal text-zinc-700">
+              <div className="flex flex-col items-stretch gap-0.5 px-2.5">
+                <div className="flex items-center justify-between font-medium text-neutral-20">
                   <div className="text-zinc-700">최종 결제 금액</div>
                   <div className="text-zinc-700">80,000원</div>
                 </div>
-                <div className="flex flex-col items-end self-end leading-none">
-                  <div className="text-2xl font-bold tracking-tight text-blue-500">
+                <div className="flex flex-col items-end gap-0.5">
+                  <strong className="text-medium24 font-bold text-[#4A76FF]">
                     월 13,400원
-                  </div>
-                  <div className="flex items-start gap-1 text-xs tracking-tight text-neutral-600">
-                    <div className="flex items-center gap-0.5 whitespace-nowrap">
-                      <div className="my-auto self-stretch text-neutral-600">
-                        *
-                      </div>
-                      <div className="my-auto self-stretch text-neutral-600">
-                        우리은행
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-0.5">
-                      <div className="my-auto self-stretch text-neutral-600">
-                        6개월
-                      </div>
-                      <div className="my-auto self-stretch text-neutral-600">
-                        무이자 할부 시
-                      </div>
-                    </div>
-                  </div>
+                  </strong>
+                  <span className="text-xxsmall12 text-neutral-30">
+                    * 우리은행 6개월 무이자 할부 시
+                  </span>
                 </div>
               </div>
             </div>
