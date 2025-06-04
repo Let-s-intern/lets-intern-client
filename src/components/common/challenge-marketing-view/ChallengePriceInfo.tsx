@@ -1,13 +1,21 @@
+'use client';
+
 import { twMerge } from '@/lib/twMerge';
-import { ChallengePriceInfo } from '@/schema';
-import { ReactNode } from 'react';
+import { ChallengePriceInfo, ChallengePricePlan } from '@/schema';
+import { ReactNode, useState } from 'react';
+
+type Plans = {
+  [key in ChallengePricePlan]?: string;
+};
 
 const PlanButton = ({
   children,
   active,
+  onClick,
 }: {
   children?: string;
   active: boolean;
+  onClick?: () => void;
 }) => {
   return (
     <button
@@ -18,6 +26,7 @@ const PlanButton = ({
           ? 'bg-white font-medium text-neutral-0 shadow-[0px_0px_6px_rgba(0,0,0,0.08)]'
           : 'bg-transparent font-normal text-neutral-50',
       )}
+      onClick={onClick}
     >
       <div className={active ? 'h-5' : 'h-6'}>{children}</div>
     </button>
@@ -30,6 +39,8 @@ interface Props {
 }
 
 function ChallengePriceInfoWithContent({ content, priceInfoList }: Props) {
+  const [active, setActive] = useState<ChallengePricePlan>('BASIC');
+
   const basicPriceInfo = priceInfoList.find(
     (item) => item.challengePricePlanType === 'BASIC',
   );
@@ -41,10 +52,12 @@ function ChallengePriceInfoWithContent({ content, priceInfoList }: Props) {
   );
 
   const getPlans = () => {
-    const plans = [basicPriceInfo?.title];
+    const plans: Plans = {
+      BASIC: basicPriceInfo?.title ?? '베이직',
+    };
 
-    if (standardPriceInfo) plans.push('프리미엄');
-    if (premiumPriceInfo) plans.push('올인원');
+    if (standardPriceInfo) plans['STANDARD'] = '프리미엄';
+    if (premiumPriceInfo) plans['PREMIUM'] = '올인원원';
 
     return plans;
   };
@@ -53,9 +66,13 @@ function ChallengePriceInfoWithContent({ content, priceInfoList }: Props) {
     <div className="flex flex-col items-stretch gap-2">
       <div className="rounded-xs bg-neutral-95">
         <div className="flex items-center px-3 py-2">
-          {getPlans().map((item, index) => (
-            <PlanButton key={`plan-btn-${index}`} active={false}>
-              {item ?? '베이직'}
+          {Object.entries(getPlans()).map(([key, value]) => (
+            <PlanButton
+              key={`plan-btn-${key}`}
+              active={key === active}
+              onClick={() => setActive(key as ChallengePricePlan)}
+            >
+              {value ?? '베이직'}
             </PlanButton>
           ))}
         </div>
