@@ -140,6 +140,8 @@ function ChallengePriceInfoWithContent({ content, priceInfoList }: Props) {
     premiumDiscountAmount,
   ]);
 
+  const discountPercentage = Math.round((discountAmount / regularPrice) * 100);
+
   const finalPrice = sellingPrice - deposit; // 최종 금액 (환급 금액 미포함)
 
   const plans = useMemo(() => {
@@ -189,7 +191,9 @@ function ChallengePriceInfoWithContent({ content, priceInfoList }: Props) {
           {/* 할인 금액 */}
           {discountAmount !== 0 && (
             <div className="flex w-full items-center justify-between px-3 font-medium">
-              <span className="font-semibold text-system-error">10% 할인</span>
+              <span className="font-semibold text-system-error">
+                {discountPercentage}% 할인
+              </span>
               <span>-{discountAmount.toLocaleString()}원</span>
             </div>
           )}
