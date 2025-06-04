@@ -1,8 +1,12 @@
+import Announcement from '@/assets/icons/announcement.svg?react';
 import ChevronDown from '@/assets/icons/chevron-down.svg?react';
+import ClockIcon from '@/assets/icons/clock.svg?react';
+import Pin from '@/assets/icons/pin.svg?react';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeIdPrimitive, challengeTypeSchema } from '@/schema';
 import Image from 'next/image';
-import React from 'react';
+import React, { ReactNode } from 'react';
+import { LuCalendarDays } from 'react-icons/lu';
 
 const { PERSONAL_STATEMENT } = challengeTypeSchema.enum;
 
@@ -25,6 +29,66 @@ const PlanButton = ({
     >
       <div className={active ? 'h-5' : 'h-6'}>{children}</div>
     </button>
+  );
+};
+
+const IconTitle = ({
+  icon,
+  children,
+}: {
+  icon: ReactNode;
+  children?: ReactNode;
+}) => {
+  return (
+    <div className="flex items-center gap-2 font-semibold text-neutral-0">
+      {icon}
+      {children}
+    </div>
+  );
+};
+
+const ScheduleBox = ({
+  children,
+  className,
+}: {
+  children?: ReactNode;
+  className?: string;
+}) => {
+  return (
+    <div
+      className={twMerge(
+        'flex flex-1 flex-col gap-3 rounded-xs bg-neutral-95 p-4 pb-5',
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+};
+
+const ScheduleWrapper = ({
+  children,
+  className,
+}: {
+  children?: ReactNode;
+  className?: string;
+}) => {
+  return (
+    <div className={twMerge('flex flex-col gap-1', className)}>{children}</div>
+  );
+};
+
+const ScheduleDescription = ({
+  children,
+  className,
+}: {
+  children?: ReactNode;
+  className?: string;
+}) => {
+  return (
+    <p className={twMerge('text-xsmall14 md:text-xsmall16', className)}>
+      {children}
+    </p>
   );
 };
 
@@ -150,114 +214,50 @@ const ChallengeBasicInfoSection: React.FC<Props> = ({ challenge }) => {
         </div>
       </div>
 
-      <div className="mt-5 w-full max-md:max-w-full">
-        <div className="flex w-full flex-wrap gap-3 max-md:max-w-full">
-          <div className="min-w-60 flex-1 shrink basis-0 rounded-md bg-stone-50 px-5 pb-5 pt-4 text-base tracking-normal text-zinc-800 max-md:max-w-full">
-            <div className="flex w-full flex-col max-md:max-w-full">
-              <div className="flex items-center gap-2 self-start font-semibold">
-                <img
-                  src="/icons/calendar.svg"
-                  className="my-auto aspect-square w-5 shrink-0 self-stretch object-contain"
-                  alt="달력"
-                />
-                <div className="my-auto self-stretch text-zinc-800">
-                  시작 일자
-                </div>
-              </div>
-              <div className="mt-2 leading-loose text-zinc-800">
-                {challenge.startDate
-                  ? new Date(challenge.startDate).toLocaleDateString('ko-KR', {
-                      year: 'numeric',
-                      month: '2-digit',
-                      day: '2-digit',
-                    })
-                  : '2025년 01월 04일'}
-              </div>
-            </div>
-            <div className="mt-3 flex w-full flex-col max-md:max-w-full">
-              <div className="flex items-center gap-2 self-start font-semibold">
-                <img
-                  src="/icons/clock.svg"
-                  className="my-auto aspect-square w-5 shrink-0 self-stretch object-contain"
-                  alt="시계"
-                />
-                <div className="my-auto self-stretch text-zinc-800">
-                  진행 기간
-                </div>
-              </div>
-              <div className="mt-2 leading-loose text-zinc-800">
-                {challenge.startDate && challenge.endDate
-                  ? `${new Date(challenge.startDate).toLocaleDateString(
-                      'ko-KR',
-                      {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit',
-                      },
-                    )} - ${new Date(challenge.endDate).toLocaleDateString(
-                      'ko-KR',
-                      {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit',
-                      },
-                    )}`
-                  : '2024년 01월 04일 (금) 23시 59분 - 01월 17일 (수) 23시 59분'}
-              </div>
-            </div>
-          </div>
-          <div className="min-w-60 flex-1 shrink basis-0 rounded-md bg-stone-50 px-5 pb-5 pt-4 max-md:max-w-full">
-            <div className="flex w-full flex-col text-base tracking-normal text-zinc-800 max-md:max-w-full">
-              <div className="flex items-center gap-2 self-start font-semibold">
-                <img
-                  src="/icons/Bell.svg"
-                  className="my-auto aspect-square w-5 shrink-0 self-stretch object-contain"
-                  alt="벨"
-                />
-                <div className="my-auto self-stretch text-zinc-800">
-                  모집 마감
-                </div>
-              </div>
-              <div className="mt-2 leading-loose text-zinc-800">
-                {challenge.deadline
-                  ? new Date(challenge.deadline).toLocaleDateString('ko-KR', {
-                      year: 'numeric',
-                      month: '2-digit',
-                      day: '2-digit',
-                      weekday: 'short',
-                    }) + ' 23시 59분'
-                  : '2024년 10월 15일(화) 23시 59분'}
-              </div>
-            </div>
-            <div className="mt-3 flex w-full flex-col max-md:max-w-full">
-              <div className="flex items-center gap-2 self-start">
-                <img
-                  src="/icons/calendar.svg"
-                  className="my-auto aspect-square w-5 shrink-0 self-stretch object-contain"
-                  alt="달력"
-                />
-                <div className="my-auto flex items-center gap-2 self-stretch">
-                  <div className="my-auto self-stretch text-base font-semibold tracking-normal text-zinc-800">
-                    OT 일자
-                  </div>
-                  <div className="my-auto self-stretch text-sm leading-loose tracking-tight text-neutral-600">
-                    온라인 진행
-                  </div>
-                </div>
-              </div>
-              <div className="mt-2 text-base leading-loose tracking-normal text-zinc-800">
-                {challenge.startDate
-                  ? new Date(challenge.startDate).toLocaleDateString('ko-KR', {
-                      year: 'numeric',
-                      month: '2-digit',
-                      day: '2-digit',
-                      weekday: 'short',
-                    }) + ' 23시 59분'
-                  : '2024년 10월 15일(화) 23시 59분'}
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* 일정 정보 */}
+      <div className="mt-6 flex flex-col md:mt-5 md:flex-row md:gap-3">
+        <ScheduleBox className="rounded-b-none pb-0 md:rounded-xs md:pb-5">
+          <ScheduleWrapper className="hidden md:block">
+            <IconTitle icon={<Pin color="#4A76FF" width={20} height={20} />}>
+              시작 일자
+            </IconTitle>
+            <ScheduleDescription>2025년 01월 04일</ScheduleDescription>
+          </ScheduleWrapper>
+          <ScheduleWrapper>
+            <IconTitle
+              icon={<Announcement color="#4A76FF" width={20} height={20} />}
+            >
+              진행 기간
+            </IconTitle>
+            <ScheduleDescription>
+              2024년 01월 04일 (금) 23시 59분 - 01월 17일 (수) 23시 59분
+            </ScheduleDescription>
+          </ScheduleWrapper>
+        </ScheduleBox>
+        <ScheduleBox className="rounded-t-none md:rounded-xs">
+          <ScheduleWrapper>
+            <IconTitle
+              icon={<ClockIcon color="#4A76FF" width={20} height={20} />}
+            >
+              모집 마감
+            </IconTitle>
+            <ScheduleDescription>
+              2024년 10월 15일(화) 23시 59분
+            </ScheduleDescription>
+          </ScheduleWrapper>
+          <ScheduleWrapper>
+            <IconTitle
+              icon={<LuCalendarDays color="#4A76FF" className="h-5 w-5" />}
+            >
+              <span className='inline-block after:ml-2 after:w-16 after:text-xsmall14 after:font-normal after:text-neutral-30 after:content-["온라인_진행"]'>
+                OT 일자
+              </span>
+            </IconTitle>
+            <ScheduleDescription>
+              2024년 10월 15일(화) 23시 59분
+            </ScheduleDescription>
+          </ScheduleWrapper>
+        </ScheduleBox>
       </div>
     </div>
   );
