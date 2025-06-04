@@ -379,6 +379,8 @@ const columns: GridColDef<Row>[] = [
   },
 ];
 
+const END_OF_SECONDS = 59; // 마감일 59초로 설정
+
 declare module '@mui/x-data-grid' {
   export interface ToolbarPropsOverrides {
     onRegisterButtonClick?: () => void;
@@ -523,7 +525,7 @@ const ChallengeOperationRegisterMission = () => {
             score: row.score,
             startDate: row.startDate.tz().format('YYYY-MM-DDTHH:mm:ss'),
             endDate: row.endDate
-              .set('second', 59)
+              .set('second', END_OF_SECONDS)
               .tz()
               .format('YYYY-MM-DDTHH:mm:ss'),
             th: row.th,
@@ -562,7 +564,7 @@ const ChallengeOperationRegisterMission = () => {
             score: row.score,
             startDate: row.startDate.tz().format('YYYY-MM-DDTHH:mm:ss'),
             endDate: row.endDate
-              .set('second', 59)
+              .set('second', END_OF_SECONDS)
               .tz()
               .format('YYYY-MM-DDTHH:mm:ss'),
             th: row.th,
