@@ -72,7 +72,7 @@ export const curriculums = [
     detail: [
       {
         date: '6/28-6/30',
-        title: '3회차 경험 분석3회차 경험 분석',
+        title: '3회차 경험 분석',
         content: (
           <Description>
             합격의 Key가 될 수 있는 경험을 분석하고{' '}

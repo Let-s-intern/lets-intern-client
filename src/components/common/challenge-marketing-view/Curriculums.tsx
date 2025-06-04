@@ -14,7 +14,6 @@ const Dropdown = ({
   index: number;
   title: string;
   children: ReactNode;
-  contentClassName?: string;
 }) => {
   const [isOpen, setIsOpen] = useState(
     index === 0 || index === 1 ? true : false,
@@ -39,7 +38,7 @@ const Dropdown = ({
       {isOpen && (
         <div
           className={twMerge(
-            'border-neutral-80transition-all h-full duration-200 ease-out',
+            'h-full border-neutral-80',
             isOpen && 'border-t p-4 pt-5',
           )}
         >
