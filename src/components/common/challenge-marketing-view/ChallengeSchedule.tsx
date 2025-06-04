@@ -99,7 +99,8 @@ function ChallengeSchedule({ challenge }: Props) {
             진행 기간
           </IconTitle>
           <ScheduleDescription>
-            {startDate.format(LOCALIZED_YYYY_MDdd_HHmm)} -{' '}
+            {startDate.format(LOCALIZED_YYYY_MDdd_HHmm)} -
+            <br className="md:hidden" />{' '}
             {endDate.format(LOCALIZED_YYYY_MDdd_HHmm)}
           </ScheduleDescription>
         </ScheduleWrapper>

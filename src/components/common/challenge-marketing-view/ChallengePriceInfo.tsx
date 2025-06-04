@@ -21,14 +21,14 @@ const PlanButton = ({
     <button
       type="button"
       className={twMerge(
-        'flex-1 overflow-clip rounded-xxs px-2.5 py-1 text-center',
+        'flex flex-1 items-center justify-center text-nowrap rounded-xxs px-2.5',
         active
-          ? 'bg-white font-medium text-neutral-0 shadow-[0px_0px_6px_rgba(0,0,0,0.08)]'
-          : 'bg-transparent font-normal text-neutral-50',
+          ? 'max-h-7 bg-white py-1 font-medium text-neutral-0 shadow-[0px_0px_6px_rgba(0,0,0,0.08)]'
+          : 'max-h-8 bg-transparent py-[5px] font-normal text-neutral-50',
       )}
       onClick={onClick}
     >
-      <div className={active ? 'h-5' : 'h-6'}>{children}</div>
+      {children}
     </button>
   );
 };
@@ -99,8 +99,8 @@ function ChallengePriceInfoWithContent({ content, priceInfoList }: Props) {
         {/* 최종 결제 금액 */}
         <div className="flex flex-col items-stretch gap-0.5 px-2.5">
           <div className="flex items-center justify-between font-medium text-neutral-20">
-            <div className="text-zinc-700">최종 결제 금액</div>
-            <div className="text-zinc-700">80,000원</div>
+            <div>최종 결제 금액</div>
+            <div>80,000원</div>
           </div>
           <div className="flex flex-col items-end gap-0.5">
             <strong className="text-medium24 font-bold text-[#4A76FF]">
