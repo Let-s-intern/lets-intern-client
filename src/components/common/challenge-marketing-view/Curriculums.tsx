@@ -14,7 +14,6 @@ const Dropdown = ({
   index: number;
   title: string;
   children: ReactNode;
-  contentClassName?: string;
 }) => {
   const [isOpen, setIsOpen] = useState(
     index === 0 || index === 1 ? true : false,

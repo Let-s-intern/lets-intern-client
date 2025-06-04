@@ -57,7 +57,7 @@ function ChallengePriceInfoWithContent({ content, priceInfoList }: Props) {
     };
 
     if (standardPriceInfo) plans['STANDARD'] = '프리미엄';
-    if (premiumPriceInfo) plans['PREMIUM'] = '올인원원';
+    if (premiumPriceInfo) plans['PREMIUM'] = '올인원';
 
     return plans;
   };
