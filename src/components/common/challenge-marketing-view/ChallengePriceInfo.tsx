@@ -33,13 +33,27 @@ function ChallengePriceInfoWithContent({ content, priceInfoList }: Props) {
   const basicPriceInfo = priceInfoList.find(
     (item) => item.challengePricePlanType === 'BASIC',
   );
-  const plans = [basicPriceInfo?.title, '프리미엄', '올인원'];
+  const standardPriceInfo = priceInfoList.find(
+    (item) => item.challengePricePlanType === 'STANDARD',
+  );
+  const premiumPriceInfo = priceInfoList.find(
+    (item) => item.challengePricePlanType === 'PREMIUM',
+  );
+
+  const getPlans = () => {
+    const plans = [basicPriceInfo?.title];
+
+    if (standardPriceInfo) plans.push('프리미엄');
+    if (premiumPriceInfo) plans.push('올인원');
+
+    return plans;
+  };
 
   return (
     <div className="flex flex-col items-stretch gap-2">
       <div className="rounded-xs bg-neutral-95">
         <div className="flex items-center px-3 py-2">
-          {plans.map((item, index) => (
+          {getPlans().map((item, index) => (
             <PlanButton key={`plan-btn-${index}`} active={false}>
               {item ?? '베이직'}
             </PlanButton>
