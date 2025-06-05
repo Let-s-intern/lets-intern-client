@@ -1,14 +1,9 @@
 import Announcement from '@/assets/icons/announcement.svg?react';
 import ClockIcon from '@/assets/icons/clock.svg?react';
 import Pin from '@/assets/icons/pin.svg?react';
-import {
-  LOCALIZED_YYYY_MDdd_HH,
-  LOCALIZED_YYYY_MDdd_HHmm,
-  LOCALIZED_YYYY_MMDD,
-} from '@/data/dayjsFormat';
-import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeIdPrimitive } from '@/schema';
+import getChallengeSchedule from '@/utils/getChallengeSchedule';
 import { ReactNode } from 'react';
 import { LuCalendarDays } from 'react-icons/lu';
 
@@ -77,9 +72,15 @@ interface Props {
 }
 
 function ChallengeSchedule({ challenge }: Props) {
-  const startDate = dayjs(challenge.startDate);
-  const endDate = dayjs(challenge.endDate);
-  const deadline = dayjs(challenge.deadline);
+  const {
+    startDate,
+    deadline,
+    startDateWithTime,
+    endDateWithTime,
+    isStartTimeOnTheHour,
+    startDateWithHour,
+    orientationEndTime,
+  } = getChallengeSchedule(challenge);
 
   return (
     <>
@@ -88,9 +89,7 @@ function ChallengeSchedule({ challenge }: Props) {
           <IconTitle icon={<Pin color="#4A76FF" width={20} height={20} />}>
             시작 일자
           </IconTitle>
-          <ScheduleDescription>
-            {startDate.format(LOCALIZED_YYYY_MMDD)}
-          </ScheduleDescription>
+          <ScheduleDescription>{startDate}</ScheduleDescription>
         </ScheduleWrapper>
         <ScheduleWrapper>
           <IconTitle
@@ -99,9 +98,8 @@ function ChallengeSchedule({ challenge }: Props) {
             진행 기간
           </IconTitle>
           <ScheduleDescription>
-            {startDate.format(LOCALIZED_YYYY_MDdd_HHmm)} -
-            <br className="md:hidden" />{' '}
-            {endDate.format(LOCALIZED_YYYY_MDdd_HHmm)}
+            {startDateWithTime} -
+            <br className="md:hidden" /> {endDateWithTime}
           </ScheduleDescription>
         </ScheduleWrapper>
       </ScheduleBox>
@@ -112,9 +110,7 @@ function ChallengeSchedule({ challenge }: Props) {
           >
             모집 마감
           </IconTitle>
-          <ScheduleDescription>
-            {deadline.format(LOCALIZED_YYYY_MDdd_HHmm)}
-          </ScheduleDescription>
+          <ScheduleDescription>{deadline}</ScheduleDescription>
         </ScheduleWrapper>
         <ScheduleWrapper>
           <IconTitle
@@ -125,10 +121,10 @@ function ChallengeSchedule({ challenge }: Props) {
             </span>
           </IconTitle>
           <ScheduleDescription>
-            {startDate?.get('minute') === 0
-              ? startDate?.format(LOCALIZED_YYYY_MDdd_HH)
-              : startDate?.format(LOCALIZED_YYYY_MDdd_HHmm)}{' '}
-            ~ {startDate?.add(40, 'minute').format('HH시 mm분')}
+            {isStartTimeOnTheHour
+              ? startDateWithHour
+              : `${startDateWithTime}
+          ~ ${orientationEndTime}`}
           </ScheduleDescription>
         </ScheduleWrapper>
       </ScheduleBox>
