@@ -47,11 +47,11 @@ export default function ChallengeTabNavigation() {
 
   const { scrollDirection } = useScrollStore();
 
-  const handleClick = (tadId: string) => {
-    const target = document.getElementById(tadId);
+  const handleClick = (tabId: string) => {
+    const target = document.getElementById(tabId);
     if (target) {
       target.scrollIntoView({ behavior: 'smooth' });
-      setActive(tadId);
+      setActive(tabId);
     }
   };
 

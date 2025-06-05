@@ -13,7 +13,7 @@ const IntroBubble = ({
   return (
     <div
       className={twMerge(
-        'w-full scroll-mt-[60px] rounded-sm bg-[#E9EEFF] px-2 py-2.5 text-center text-xsmall14 font-medium md:w-[492px] md:py-[18px] md:text-small20',
+        'w-full rounded-sm bg-[#E9EEFF] px-2 py-2.5 text-center text-xsmall14 font-medium md:w-[492px] md:py-[18px] md:text-small20',
         className,
       )}
     >
@@ -26,7 +26,7 @@ function MarketingIntroSection() {
   return (
     <section
       id="intro"
-      className="md:pt-25 flex flex-col items-center px-5 pb-10 pt-[60px] md:pb-20"
+      className="md:pt-25 flex scroll-mt-[60px] flex-col items-center px-5 pb-10 pt-[60px] md:pb-20"
     >
       {/* Header */}
       <div>
