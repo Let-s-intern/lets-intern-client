@@ -1,9 +1,9 @@
 import Announcement from '@/assets/icons/announcement.svg?react';
 import ClockIcon from '@/assets/icons/clock.svg?react';
 import Pin from '@/assets/icons/pin.svg?react';
-import useChallengeSchedule from '@/hooks/useChallengeSchedule';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeIdPrimitive } from '@/schema';
+import getChallengeSchedule from '@/utils/getChallengeSchedule';
 import { ReactNode } from 'react';
 import { LuCalendarDays } from 'react-icons/lu';
 
@@ -72,8 +72,15 @@ interface Props {
 }
 
 function ChallengeSchedule({ challenge }: Props) {
-  const { startDate, deadline, duration, orientationDate } =
-    useChallengeSchedule(challenge);
+  const {
+    startDate,
+    deadline,
+    startDateWithTime,
+    endDateWithTime,
+    isStartTimeOnTheHour,
+    startDateWithHour,
+    orientationEndTime,
+  } = getChallengeSchedule(challenge);
 
   return (
     <>
@@ -90,7 +97,10 @@ function ChallengeSchedule({ challenge }: Props) {
           >
             진행 기간
           </IconTitle>
-          <ScheduleDescription>{duration}</ScheduleDescription>
+          <ScheduleDescription>
+            {startDateWithTime} -
+            <br className="md:hidden" /> {endDateWithTime}
+          </ScheduleDescription>
         </ScheduleWrapper>
       </ScheduleBox>
       <ScheduleBox className="rounded-t-none md:rounded-xs">
@@ -110,7 +120,12 @@ function ChallengeSchedule({ challenge }: Props) {
               OT 일자
             </span>
           </IconTitle>
-          <ScheduleDescription>{orientationDate}</ScheduleDescription>
+          <ScheduleDescription>
+            {isStartTimeOnTheHour
+              ? startDateWithHour
+              : `${startDateWithTime}
+          ~ ${orientationEndTime}`}
+          </ScheduleDescription>
         </ScheduleWrapper>
       </ScheduleBox>
     </>

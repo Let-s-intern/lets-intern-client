@@ -1,105 +1,198 @@
-'use client';
-import useChallengeSchedule from '@/hooks/useChallengeSchedule';
+import useChallengeOptionPriceInfo from '@/hooks/useChallengeOptionPriceInfo';
+import { twMerge } from '@/lib/twMerge';
 import { ChallengeIdPrimitive } from '@/schema';
+import getChallengeSchedule from '@/utils/getChallengeSchedule';
+import { Fragment, ReactNode, useMemo } from 'react';
+import MainTitle from './MainTitle';
 
-interface PriceOption {
-  name: string;
-  originalPrice: string;
-  discountedPrice: string;
-  discountPercentage: string;
+interface PriceInfo {
+  title: string;
+  originalPrice: number;
+  discountAmount: number;
 }
+
+const Box = ({
+  children,
+  className,
+}: {
+  children?: ReactNode;
+  className?: string;
+}) => {
+  return (
+    <div
+      className={twMerge(
+        'flex flex-col items-stretch gap-5 rounded-sm bg-neutral-95 px-4 py-5 md:flex-1',
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+};
+
+const Label = ({ children }: { children?: ReactNode }) => {
+  return (
+    <span className="text-xsmall14 font-semibold text-[#4A76FF] md:text-xsmall16">
+      {children}
+    </span>
+  );
+};
+
+const InfoWrapper = ({
+  label,
+  children,
+}: {
+  label: string;
+  children?: ReactNode;
+}) => {
+  return (
+    <div className="flex flex-col gap-2">
+      <Label>{label}</Label>
+      <p className="whitespace-pre-line text-xsmall14 font-medium text-neutral-0 md:text-xsmall16">
+        {children}
+      </p>
+    </div>
+  );
+};
+
+const PriceView = ({
+  originalPrice,
+  discountAmount = 0,
+}: {
+  originalPrice: number;
+  discountAmount?: number;
+}) => {
+  const percent = ((discountAmount / originalPrice) * 100).toFixed(0);
+  const sellingPrice = originalPrice - discountAmount;
+  const hasDiscount = discountAmount > 0;
+
+  return (
+    <div className="flex shrink-0 flex-col items-end">
+      {hasDiscount && (
+        <span className="inline-flex gap-1 text-xsmall14">
+          <span className="font-semibold text-system-error/90">{percent}%</span>
+          <span className="font-medium text-neutral-40 line-through">
+            {originalPrice.toLocaleString()}원
+          </span>
+        </span>
+      )}
+
+      <span className="text-small20 font-bold text-neutral-0">
+        {sellingPrice.toLocaleString()}원
+      </span>
+    </div>
+  );
+};
+
+const PriceListItem = ({ priceInfo }: { priceInfo: PriceInfo }) => {
+  return (
+    <div className="flex items-center justify-between">
+      <span className="text-xsmall14 font-medium text-neutral-0 md:text-xsmall16">
+        {priceInfo.title}
+      </span>
+      <PriceView
+        originalPrice={priceInfo.originalPrice}
+        discountAmount={priceInfo.discountAmount}
+      />
+    </div>
+  );
+};
 
 interface Props {
   challenge: ChallengeIdPrimitive;
 }
 
 export default function ChallengeRecruitmentInfoSection({ challenge }: Props) {
-  const { startDate, deadline, duration, orientationDate } =
-    useChallengeSchedule(challenge);
+  const {
+    startDate,
+    deadline,
+    startDateWithTime,
+    endDateWithTime,
+    isStartTimeOnTheHour,
+    startDateWithHour,
+    orientationEndTime,
+  } = getChallengeSchedule(challenge);
+
+  const basicPriceInfo = challenge.priceInfo.find(
+    (item) => item.challengePricePlanType === 'BASIC',
+  );
+
+  const {
+    basicRegularPrice,
+    basicDiscountAmount,
+    standardRegularPrice,
+    standardDiscountAmount,
+    premiumRegularPrice,
+    premiumDiscountAmount,
+  } = useChallengeOptionPriceInfo(challenge.priceInfo);
+
+  const priceList: PriceInfo[] = useMemo(() => {
+    const result = [];
+
+    if (premiumRegularPrice !== 0) {
+      result.push({
+        title: '올인원',
+        originalPrice: premiumRegularPrice,
+        discountAmount: premiumDiscountAmount,
+      });
+    }
+
+    if (standardRegularPrice !== 0) {
+      result.push({
+        title: '프리미엄',
+        originalPrice: standardRegularPrice,
+        discountAmount: standardDiscountAmount,
+      });
+    }
+
+    result.push({
+      title: basicPriceInfo?.title ?? '베이직',
+      originalPrice: basicRegularPrice,
+      discountAmount: basicDiscountAmount,
+    });
+
+    return result;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [challenge.priceInfo]);
 
   return (
-    <div className="relative flex flex-col items-center gap-16 self-stretch px-5 py-10 max-sm:gap-10 max-sm:px-4 max-sm:py-5">
-      <div className="relative gap-1 self-stretch text-center text-3xl font-bold leading-10 tracking-tight text-zinc-800 max-md:text-2xl max-md:leading-9 max-sm:text-2xl max-sm:leading-8">
-        모집개요
+    <section className="flex flex-col items-center px-5 pb-[60px] md:px-0 md:pb-[120px]">
+      <MainTitle className="mb-8 md:mb-[60px]">모집개요</MainTitle>
+
+      <div className="flex w-full max-w-[1000px] items-stretch max-md:flex-col md:flex-row md:gap-3">
+        <Box className="rounded-b-none pb-0 md:rounded-sm md:pb-5">
+          <InfoWrapper label="시작 일자">{startDate}</InfoWrapper>
+          <InfoWrapper label="진행 기간">
+            {startDateWithTime} -
+            <br /> {endDateWithTime}
+          </InfoWrapper>
+        </Box>
+        <Box className="mb-5 rounded-t-none md:mb-0 md:rounded-sm">
+          <InfoWrapper label="모집 마감">{deadline}</InfoWrapper>
+          <InfoWrapper label="OT 일자 (온라인 진행)">
+            {isStartTimeOnTheHour
+              ? startDateWithHour
+              : `${startDateWithTime}
+          ~ ${orientationEndTime}`}
+          </InfoWrapper>
+          <InfoWrapper label="진행방식">100% 온라인</InfoWrapper>
+        </Box>
+        <Box>
+          <Label>가격</Label>
+          <div className="flex flex-col items-stretch">
+            {priceList.map((item, index) => {
+              return (
+                <Fragment key={item.title}>
+                  <PriceListItem priceInfo={item} />
+                  {index < priceList.length - 1 && (
+                    <hr className="my-2 border-t border-neutral-80" />
+                  )}
+                </Fragment>
+              );
+            })}
+          </div>
+        </Box>
       </div>
-      <div className="relative flex w-full max-w-[1000px] items-start gap-3 max-md:flex-col max-md:gap-4">
-        <div className="relative flex flex-[1_0_0] flex-col items-start gap-6 self-stretch rounded-lg bg-stone-50 px-4 py-7">
-          <div className="relative flex flex-col items-start gap-2 self-stretch">
-            <div className="relative text-base font-semibold leading-6 tracking-normal text-blue-500 max-sm:text-sm max-sm:leading-5">
-              시작 일자
-            </div>
-            <div className="relative self-stretch text-base font-medium leading-6 tracking-normal text-zinc-800 max-sm:text-sm max-sm:leading-5">
-              {startDate}
-            </div>
-          </div>
-          <div className="relative flex flex-col items-start gap-2 self-stretch">
-            <div className="relative text-base font-semibold leading-6 tracking-normal text-blue-500 max-sm:text-sm max-sm:leading-5">
-              진행 기간
-            </div>
-            <div className="relative self-stretch text-base font-medium leading-6 tracking-normal text-zinc-800 max-sm:text-sm max-sm:leading-5">
-              {duration}
-            </div>
-          </div>
-        </div>
-        <div className="relative flex flex-[1_0_0] flex-col items-start gap-6 self-stretch rounded-lg bg-stone-50 px-4 py-7">
-          <div className="relative flex flex-col items-start gap-2 self-stretch">
-            <div className="relative gap-1.5 text-base font-semibold leading-6 tracking-normal text-blue-500 max-sm:text-sm max-sm:leading-5">
-              모집 마감
-            </div>
-            <div className="relative text-base font-medium leading-6 tracking-normal text-zinc-800 max-sm:text-sm max-sm:leading-5">
-              {deadline}
-            </div>
-          </div>
-          <div className="relative flex flex-col items-start gap-2 self-stretch">
-            <div className="relative gap-1.5 text-base font-semibold leading-6 tracking-normal text-blue-500 max-sm:text-sm max-sm:leading-5">
-              OT 일자 (온라인 진행)
-            </div>
-            <div className="relative text-base font-medium leading-6 tracking-normal text-zinc-800 max-sm:text-sm max-sm:leading-5">
-              {orientationDate}
-            </div>
-          </div>
-          <div className="relative flex flex-col items-start gap-2 self-stretch">
-            <div className="relative gap-1.5 text-base font-semibold leading-6 tracking-normal text-blue-500 max-sm:text-sm max-sm:leading-5">
-              진행방식
-            </div>
-            <div className="relative text-base font-medium leading-6 tracking-normal text-zinc-800 max-sm:text-sm max-sm:leading-5">
-              온라인
-            </div>
-          </div>
-        </div>
-        <div className="relative flex flex-[1_0_0] flex-col items-start gap-2 self-stretch rounded-lg bg-stone-50 px-4 py-7">
-          <div className="relative text-base font-semibold leading-6 tracking-normal text-blue-500 max-sm:text-sm max-sm:leading-5">
-            가격
-          </div>
-          <div className="relative flex flex-col items-start gap-2 self-stretch">
-            {/* {priceOptions.map((option, index) => (
-              <React.Fragment key={index}>
-                <div className="relative flex items-center justify-between self-stretch">
-                  <div className="relative flex-[1_0_0] text-base font-medium leading-6 tracking-normal text-zinc-800 max-sm:text-sm max-sm:leading-5">
-                    {option.name}
-                  </div>
-                  <div className="relative flex flex-col items-end justify-center">
-                    <div className="relative flex items-center justify-center gap-1">
-                      <div className="relative text-sm font-semibold leading-5 tracking-tight text-rose-500 max-sm:text-xs max-sm:leading-4">
-                        {option.discountPercentage}
-                      </div>
-                      <div className="relative left-0 top-0 h-5 w-[58px] text-sm font-medium leading-5 tracking-tight text-zinc-500 line-through max-sm:text-xs max-sm:leading-4">
-                        {option.originalPrice}
-                      </div>
-                    </div>
-                    <div className="relative text-xl font-bold leading-7 tracking-tight text-zinc-800 max-sm:text-lg max-sm:leading-6">
-                      {option.discountedPrice}
-                    </div>
-                  </div>
-                </div>
-                {index < priceOptions.length - 1 && (
-                  <div className="relative h-px self-stretch bg-neutral-200" />
-                )}
-              </React.Fragment>
-            ))} */}
-          </div>
-        </div>
-      </div>
-    </div>
+    </section>
   );
 }
