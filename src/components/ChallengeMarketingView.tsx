@@ -1,8 +1,9 @@
 import { ChallengeIdPrimitive } from '@/schema';
+import ChallengeBasicInfoSection from '@components/common/challenge-marketing-view/ChallengeBasicInfoSection';
 import ChallengeRecruitmentInfoSection from '@components/common/challenge-marketing-view/ChallengeRecruitmentInfoSection';
+import ChallengeTabNavigation from '@components/common/challenge-marketing-view/ChallengeTabNavigation';
 import MarketingCurriculumSection from '@components/common/challenge-marketing-view/MarketingCurriculumSection';
 import MarketingDifferentiatorsSection from '@components/common/challenge-marketing-view/MarketingDifferentiatorsSection';
-import ChallengeBasicInfoSection from './common/challenge-marketing-view/ChallengeBasicInfoSection';
 import MarketingBenefitsSection from './common/challenge-marketing-view/MarketingBenefitsSection';
 import MarketingFeaturesSection from './common/challenge-marketing-view/MarketingFeaturesSection';
 import MarketingIntroSection from './common/challenge-marketing-view/MarketingIntroSection';
@@ -37,6 +38,7 @@ const ChallengeMarketingView = ({ challenge }: Props) => {
   return (
     <div className="w-full">
       <ChallengeBasicInfoSection challenge={challenge} />
+      <ChallengeTabNavigation />
       <MarketingIntroSection />
       <MarketingFeaturesSection />
       <MarketingDifferentiatorsSection />
