@@ -17,7 +17,7 @@ interface ChallengeOptionPriceInfo {
  * @returns ChallengeOptionPriceInfo
  */
 
-export default function useChallengeOptionPriceInfo(
+export default function getChallengeOptionPriceInfo(
   priceInfoList: ChallengePriceInfo[],
 ): ChallengeOptionPriceInfo {
   const basicPriceInfo =
