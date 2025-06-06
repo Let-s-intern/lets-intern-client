@@ -1,6 +1,6 @@
-import useChallengeOptionPriceInfo from '@/hooks/useChallengeOptionPriceInfo';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeIdPrimitive } from '@/schema';
+import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import getChallengeSchedule from '@/utils/getChallengeSchedule';
 import { Fragment, ReactNode, useMemo } from 'react';
 import MainTitle from './MainTitle';
@@ -124,7 +124,7 @@ export default function ChallengeRecruitmentInfoSection({ challenge }: Props) {
     standardDiscountAmount,
     premiumRegularPrice,
     premiumDiscountAmount,
-  } = useChallengeOptionPriceInfo(challenge.priceInfo);
+  } = getChallengeOptionPriceInfo(challenge.priceInfo);
 
   const priceList: PriceInfo[] = useMemo(() => {
     const result = [];

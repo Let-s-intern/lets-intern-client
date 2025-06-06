@@ -1,9 +1,9 @@
 'use client';
 
-import useChallengeOptionPriceInfo from '@/hooks/useChallengeOptionPriceInfo';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengePriceInfo, ChallengePricePlan } from '@/schema';
+import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { ReactNode, useMemo, useState } from 'react';
 
 type Plans = {
@@ -106,7 +106,7 @@ function ChallengePriceInfoWithContent({ content, priceInfoList }: Props) {
     standardDiscountAmount,
     premiumRegularPrice,
     premiumDiscountAmount,
-  } = useChallengeOptionPriceInfo(priceInfoList);
+  } = getChallengeOptionPriceInfo(priceInfoList);
 
   const { regularPrice, discountAmount, sellingPrice } = useMemo(() => {
     switch (active) {
