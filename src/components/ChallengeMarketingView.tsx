@@ -6,10 +6,9 @@ import MarketingCurriculumSection from '@components/common/challenge-marketing-v
 import MarketingDifferentiatorsSection from '@components/common/challenge-marketing-view/MarketingDifferentiatorsSection';
 import MarketingPricingSection from '@components/common/challenge-marketing-view/MarketingPricingSection';
 import MarketingBenefitsSection from './common/challenge-marketing-view/MarketingBenefitsSection';
-import MarketingChallengeCalendar from './common/challenge-marketing-view/MarketingChallengeCalendar';
-import MarketingCurriculumSection from './common/challenge-marketing-view/MarketingCurriculumSection';
 import MarketingFeaturesSection from './common/challenge-marketing-view/MarketingFeaturesSection';
 import MarketingIntroSection from './common/challenge-marketing-view/MarketingIntroSection';
+
 // 사용할 일 없을 것 같지만.. (임시입니다)
 export const marketingColors = {
   _4A76FF: '#4A76FF',
@@ -46,7 +45,6 @@ const ChallengeMarketingView = ({ challenge }: Props) => {
       <MarketingDifferentiatorsSection />
       <MarketingBenefitsSection />
       <MarketingCurriculumSection />
-      <MarketingChallengeCalendar />
       <MarketingPricingSection priceInfoList={challenge.priceInfo} />
       <ChallengeRecruitmentInfoSection challenge={challenge} />
     </div>
