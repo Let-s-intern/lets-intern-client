@@ -1,5 +1,4 @@
 import { useProgramApplicationQuery } from '@/api/application';
-import useChallengeOptionPriceInfo from '@/hooks/useChallengeOptionPriceInfo';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import {
   ChallengeIdPrimitive,
@@ -7,6 +6,7 @@ import {
   ChallengePricePlanEnum,
 } from '@/schema';
 import useProgramStore from '@/store/useProgramStore';
+import useChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import BaseBottomSheet from '@components/ui/BaseBottomSheet';
 import { RadioGroup } from '@mui/material';
 import { useCallback, useMemo, useState } from 'react';

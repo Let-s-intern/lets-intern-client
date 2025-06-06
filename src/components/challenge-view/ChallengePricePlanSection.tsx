@@ -1,9 +1,9 @@
-import useChallengeOptionPriceInfo from '@/hooks/useChallengeOptionPriceInfo';
 import {
   ChallengePriceInfo,
   ChallengeType,
   challengeTypeSchema,
 } from '@/schema';
+import useChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { challengeColors } from '@components/ChallengeView';
 
 import PriceSummary from '@components/common/ui/PriceSummary';

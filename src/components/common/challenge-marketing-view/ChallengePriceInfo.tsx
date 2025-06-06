@@ -1,9 +1,9 @@
 'use client';
 
-import useChallengeOptionPriceInfo from '@/hooks/useChallengeOptionPriceInfo';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengePriceInfo, ChallengePricePlan } from '@/schema';
+import useChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { ReactNode, useMemo, useState } from 'react';
 
 type Plans = {

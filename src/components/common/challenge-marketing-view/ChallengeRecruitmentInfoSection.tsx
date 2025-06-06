@@ -1,6 +1,6 @@
-import useChallengeOptionPriceInfo from '@/hooks/useChallengeOptionPriceInfo';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeIdPrimitive } from '@/schema';
+import useChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import getChallengeSchedule from '@/utils/getChallengeSchedule';
 import { Fragment, ReactNode, useMemo } from 'react';
 import MainTitle from './MainTitle';
