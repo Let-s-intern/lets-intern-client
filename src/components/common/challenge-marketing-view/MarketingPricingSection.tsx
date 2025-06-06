@@ -103,17 +103,20 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
       </div>
 
       <div className="flex w-full max-w-[1000px] flex-col items-stretch gap-3 px-3 max-md:max-w-full md:flex-row md:px-0">
-        {pricingList.map((item) => (
-          <PriceBox
-            key={item.title}
-            title={item.title}
-            label={item.label}
-            originalPrice={item.originalPrice}
-            discountAmount={item.discountAmount}
-          >
-            {item.description}
-          </PriceBox>
-        ))}
+        {pricingList.map((item) =>
+          // 해당 플랜이 없으면 null 반환
+          item.originalPrice === 0 ? null : (
+            <PriceBox
+              key={item.title}
+              title={item.title}
+              label={item.label}
+              originalPrice={item.originalPrice}
+              discountAmount={item.discountAmount}
+            >
+              {item.description}
+            </PriceBox>
+          ),
+        )}
       </div>
     </div>
   );
