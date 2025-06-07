@@ -126,7 +126,7 @@ function Curriculums() {
 
   if (isMobile) {
     return (
-      <div className="flex w-full flex-col items-stretch gap-3">
+      <div className="flex w-full flex-col items-stretch gap-3 md:hidden">
         {curriculums.map((item, index) => (
           <Dropdown
             key={`dropdown-${item.date}`}

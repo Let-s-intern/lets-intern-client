@@ -55,7 +55,10 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
       title: '기본',
       label: '대학생 추천',
       description: (
-        <>이력서, 자기소개서, 포트폴리오 완성 현직자 LIVE 클래스 8종</>
+        <>
+          이력서, 자기소개서, 포트폴리오 완성
+          <br className="hidden md:block" /> 현직자 LIVE 클래스 8종
+        </>
       ),
       originalPrice: basicRegularPrice,
       discountAmount: basicDiscountAmount,
@@ -65,7 +68,8 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
       label: '취준 0~6개월 추천',
       description: (
         <>
-          이력서, 자기소개서, 포트폴리오 완성 현직자 LIVE 클래스 8종
+          이력서, 자기소개서, 포트폴리오 완성
+          <br className="hidden md:block" /> 현직자 LIVE 클래스 8종
           <br />
           <strong className="font-bold">서류 1종 피드백</strong>
         </>
@@ -78,7 +82,8 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
       label: '취준 6개월~2년 추천',
       description: (
         <>
-          이력서, 자기소개서, 포트폴리오 완성 현직자 LIVE 클래스 8종 <br />
+          이력서, 자기소개서, 포트폴리오 완성
+          <br className="hidden md:block" /> 현직자 LIVE 클래스 8종 <br />
           <strong className="font-bold">
             서류 1종 피드백 + 경험정리 피드백
           </strong>
@@ -90,7 +95,10 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
   ];
 
   return (
-    <div className="flex flex-col items-center bg-neutral-90 px-5 py-[70px] md:px-0 md:pb-[140px] md:pt-[100px]">
+    <section
+      id="pricing"
+      className="flex flex-col items-center bg-neutral-90 px-5 py-[70px] md:px-0 md:pb-[140px] md:pt-[100px]"
+    >
       <SectionHeader className="mb-6 md:mb-[60px]">가격 구성</SectionHeader>
       <div className="mb-[30px] flex flex-col items-center gap-2 md:mb-[50px] md:gap-3">
         <SectionSubHeader className="text-[#4A76FF]">
@@ -118,7 +126,7 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
           ),
         )}
       </div>
-    </div>
+    </section>
   );
 };
 
