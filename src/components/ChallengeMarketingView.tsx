@@ -9,6 +9,7 @@ import MarketingSummarySection from '@components/common/challenge-marketing-view
 import MarketingApplicationStrategySection from './common/challenge-marketing-view/MarketingApplicationStrategySection';
 import MarketingBenefitsSection from './common/challenge-marketing-view/MarketingBenefitsSection';
 import MarketingChallengeCalendar from './common/challenge-marketing-view/MarketingChallengeCalendar';
+import MarketingFAQSection from './common/challenge-marketing-view/MarketingFAQSection';
 import MarketingFeaturesSection from './common/challenge-marketing-view/MarketingFeaturesSection';
 import MarketingIntroSection from './common/challenge-marketing-view/MarketingIntroSection';
 import MarketingReviewsSection from './common/challenge-marketing-view/MarketingReviewsSection';
@@ -53,6 +54,7 @@ const ChallengeMarketingView = ({ challenge }: Props) => {
       <MarketingApplicationStrategySection />
       <MarketingPricingSection priceInfoList={challenge.priceInfo} />
       <MarketingReviewsSection />
+      <MarketingFAQSection faqInfo={challenge.faqInfo} />
       <ChallengeRecruitmentInfoSection challenge={challenge} />
     </div>
   );
