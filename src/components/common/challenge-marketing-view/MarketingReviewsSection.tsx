@@ -1,20 +1,37 @@
+'use client';
+
+import { ChallengeIdPrimitive } from '@/schema';
 import Image from 'next/image';
 import React from 'react';
 import MainTitle from './MainTitle';
 import TestimonialCarousel from './TestimonialCarousel';
 
-const MarketingReviewsSection: React.FC = () => {
+interface Props {
+  challenge: ChallengeIdPrimitive;
+}
+
+const MarketingReviewsSection: React.FC<Props> = ({ challenge }) => {
+  const descParsed = (() => {
+    try {
+      return JSON.parse(challenge.desc || '{}');
+    } catch {
+      return {};
+    }
+  })();
+
+  const reviews = descParsed.challengeReview || [];
+
   return (
     <section className="flex flex-col items-center bg-[#F0F4FF] px-5 py-[70px] md:px-0 md:py-[120px]">
       <div className="mb-3 text-small20 font-bold text-[#4A76FF]">
         찐 후기 모음.zip
       </div>
       <MainTitle className="mb-10 text-center">
-        {`{마케팅 직무 특화 챌린지}`} <br />
+        {challenge.title} <br />
         참여자들의 따끈따끈한 후기
       </MainTitle>
       <div className="w-full">
-        <TestimonialCarousel />
+        <TestimonialCarousel reviews={reviews} />
       </div>
 
       <div className="relative mt-16 flex flex-col items-center">
