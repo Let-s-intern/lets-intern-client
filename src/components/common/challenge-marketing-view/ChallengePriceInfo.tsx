@@ -1,9 +1,9 @@
 'use client';
 
-import useChallengeOptionPriceInfo from '@/hooks/useChallengeOptionPriceInfo';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengePriceInfo, ChallengePricePlan } from '@/schema';
+import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { ReactNode, useMemo, useState } from 'react';
 
 type Plans = {
@@ -53,7 +53,13 @@ const FinalPriceInfo = ({
     : null; // 할부 금액
   const showMonthlyPrice = monthlyAmount && sellingPrice >= 50000; // 5만원 이상일 때 할부 가능
 
-  if (isLoading) return <span className="text-neutral-40">로딩 중..</span>;
+  if (isLoading) {
+    return (
+      <span className="inline-block px-2.5 text-right text-neutral-40">
+        로딩 중..
+      </span>
+    );
+  }
 
   return (
     <div className="flex flex-col items-stretch gap-0.5 px-2.5">
@@ -106,7 +112,7 @@ function ChallengePriceInfoWithContent({ content, priceInfoList }: Props) {
     standardDiscountAmount,
     premiumRegularPrice,
     premiumDiscountAmount,
-  } = useChallengeOptionPriceInfo(priceInfoList);
+  } = getChallengeOptionPriceInfo(priceInfoList);
 
   const { regularPrice, discountAmount, sellingPrice } = useMemo(() => {
     switch (active) {
@@ -141,7 +147,6 @@ function ChallengePriceInfoWithContent({ content, priceInfoList }: Props) {
   ]);
 
   const discountPercentage = Math.round((discountAmount / regularPrice) * 100);
-
   const finalPrice = sellingPrice - deposit; // 최종 금액 (환급 금액 미포함)
 
   const plans = useMemo(() => {

@@ -24,7 +24,10 @@ const IntroBubble = ({
 
 function MarketingIntroSection() {
   return (
-    <div className="md:pt-25 flex flex-col items-center px-5 pb-10 pt-[60px] md:pb-20">
+    <section
+      id="intro"
+      className="md:pt-25 flex scroll-mt-[60px] flex-col items-center px-5 pb-10 pt-[60px] md:pb-20"
+    >
       {/* Header */}
       <div>
         <SectionHeader className="mb-6 md:mb-[42px]">챌린지 소개</SectionHeader>
@@ -75,7 +78,7 @@ function MarketingIntroSection() {
         </div>
         <div className="h-[70px] w-[72px] bg-[url('/images/user-with-laptop.svg')] bg-cover bg-center bg-no-repeat md:h-[136px] md:w-[146px]" />
       </div>
-    </div>
+    </section>
   );
 }
 

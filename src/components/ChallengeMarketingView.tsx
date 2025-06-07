@@ -1,9 +1,13 @@
 import { ChallengeIdPrimitive } from '@/schema';
+import ChallengeBasicInfoSection from '@components/common/challenge-marketing-view/ChallengeBasicInfoSection';
+import ChallengeRecruitmentInfoSection from '@components/common/challenge-marketing-view/ChallengeRecruitmentInfoSection';
+import ChallengeTabNavigation from '@components/common/challenge-marketing-view/ChallengeTabNavigation';
+import MarketingCurriculumSection from '@components/common/challenge-marketing-view/MarketingCurriculumSection';
 import MarketingDifferentiatorsSection from '@components/common/challenge-marketing-view/MarketingDifferentiatorsSection';
-import ChallengeBasicInfoSection from './common/challenge-marketing-view/ChallengeBasicInfoSection';
+import MarketingPricingSection from '@components/common/challenge-marketing-view/MarketingPricingSection';
+import MarketingSummarySection from '@components/common/challenge-marketing-view/MarketingSummarySection';
 import MarketingBenefitsSection from './common/challenge-marketing-view/MarketingBenefitsSection';
 import MarketingChallengeCalendar from './common/challenge-marketing-view/MarketingChallengeCalendar';
-import MarketingCurriculumSection from './common/challenge-marketing-view/MarketingCurriculumSection';
 import MarketingFeaturesSection from './common/challenge-marketing-view/MarketingFeaturesSection';
 import MarketingIntroSection from './common/challenge-marketing-view/MarketingIntroSection';
 // 사용할 일 없을 것 같지만.. (임시입니다)
@@ -36,12 +40,16 @@ const ChallengeMarketingView = ({ challenge }: Props) => {
   return (
     <div className="w-full">
       <ChallengeBasicInfoSection challenge={challenge} />
+      <ChallengeTabNavigation />
       <MarketingIntroSection />
       <MarketingFeaturesSection />
       <MarketingDifferentiatorsSection />
       <MarketingBenefitsSection />
       <MarketingCurriculumSection />
       <MarketingChallengeCalendar />
+      <MarketingSummarySection />
+      <MarketingPricingSection priceInfoList={challenge.priceInfo} />
+      <ChallengeRecruitmentInfoSection challenge={challenge} />
     </div>
   );
 };
