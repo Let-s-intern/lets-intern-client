@@ -11,6 +11,7 @@ import MarketingBenefitsSection from './common/challenge-marketing-view/Marketin
 import MarketingChallengeCalendar from './common/challenge-marketing-view/MarketingChallengeCalendar';
 import MarketingFeaturesSection from './common/challenge-marketing-view/MarketingFeaturesSection';
 import MarketingIntroSection from './common/challenge-marketing-view/MarketingIntroSection';
+import MarketingReviewsSection from './common/challenge-marketing-view/MarketingReviewsSection';
 // 사용할 일 없을 것 같지만.. (임시입니다)
 export const marketingColors = {
   _4A76FF: '#4A76FF',
@@ -51,6 +52,7 @@ const ChallengeMarketingView = ({ challenge }: Props) => {
       <MarketingSummarySection />
       <MarketingApplicationStrategySection />
       <MarketingPricingSection priceInfoList={challenge.priceInfo} />
+      <MarketingReviewsSection />
       <ChallengeRecruitmentInfoSection challenge={challenge} />
     </div>
   );
