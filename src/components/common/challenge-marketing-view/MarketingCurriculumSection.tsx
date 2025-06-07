@@ -8,7 +8,7 @@ const MarketingCurriculumSection: React.FC = () => {
   return (
     <section
       id="curriculum"
-      className="flex scroll-mt-[60px] flex-col items-center bg-[#F0F4FF] px-5 pb-32 pt-16 md:px-0 md:pb-24"
+      className="flex scroll-mt-[56px] flex-col items-center bg-[#F0F4FF] px-5 pb-32 pt-16 md:scroll-mt-[60px] md:px-0 md:pb-24"
     >
       <SectionHeader className="mb-6 md:mb-[42px]">커리큘럼</SectionHeader>
 

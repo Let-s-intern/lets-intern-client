@@ -97,7 +97,7 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
   return (
     <section
       id="pricing"
-      className="flex flex-col items-center bg-neutral-90 px-5 py-[70px] md:px-0 md:pb-[140px] md:pt-[100px]"
+      className="flex scroll-mt-[56px] flex-col items-center bg-neutral-90 px-5 py-[70px] md:scroll-mt-[60px] md:px-0 md:pb-[140px] md:pt-[100px]"
     >
       <SectionHeader className="mb-6 md:mb-[60px]">가격 구성</SectionHeader>
       <div className="mb-[30px] flex flex-col items-center gap-2 md:mb-[50px] md:gap-3">
