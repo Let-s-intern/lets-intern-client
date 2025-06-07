@@ -6,6 +6,7 @@ import {
   getProgramPathname,
 } from '@/utils/url';
 import ChallengeCTAButtons from '@components/ChallengeCTAButtons';
+import ChallengeMarketingView from '@components/ChallengeMarketingView';
 import ChallengeView from '@components/ChallengeView';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
@@ -63,7 +64,12 @@ const Page = async ({
 
   return (
     <>
-      <ChallengeView challenge={challenge} />
+      {/* 운영은 id 75부터 분기인데 개발할 때는 임시로 다른 아이디 사용합니다 */}
+      {parseInt(id) > 11 && challenge.challengeType === 'MARKETING' ? (
+        <ChallengeMarketingView challenge={challenge} />
+      ) : (
+        <ChallengeView challenge={challenge} />
+      )}
       <ChallengeCTAButtons challenge={challenge} challengeId={id} />
     </>
   );

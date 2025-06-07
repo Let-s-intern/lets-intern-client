@@ -391,3 +391,8 @@ input[type='number'] {
   max-width: 1180px;
   width: calc(100% - 40px);
 }
+
+.gradient-text {
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

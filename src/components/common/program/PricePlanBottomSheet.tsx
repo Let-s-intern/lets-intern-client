@@ -1,5 +1,4 @@
 import { useProgramApplicationQuery } from '@/api/application';
-import useChallengeOptionPriceInfo from '@/hooks/useChallengeOptionPriceInfo';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import {
   ChallengeIdPrimitive,
@@ -7,6 +6,7 @@ import {
   ChallengePricePlanEnum,
 } from '@/schema';
 import useProgramStore from '@/store/useProgramStore';
+import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import BaseBottomSheet from '@components/ui/BaseBottomSheet';
 import { RadioGroup } from '@mui/material';
 import { useCallback, useMemo, useState } from 'react';
@@ -68,7 +68,7 @@ function PricePlanBottomSheet({
     standardDiscountAmount,
     premiumRegularPrice,
     premiumDiscountAmount,
-  } = useChallengeOptionPriceInfo(challenge.priceInfo);
+  } = getChallengeOptionPriceInfo(challenge.priceInfo);
 
   /* 최종 정가 & 할인 금액 */
   const finalPriceInfo = useMemo(() => {
