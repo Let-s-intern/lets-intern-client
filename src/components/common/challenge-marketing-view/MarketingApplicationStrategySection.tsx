@@ -6,8 +6,7 @@ const strategyCards = [
     step: 'STEP 1 | 경험 분석 & 컨셉 잡기',
     title: (
       <>
-        마케팅 직무 탐색부터 합격을 위한
-        <br className="md:hidden" />
+        마케팅 직무 탐색부터 합격을 위한 <br className="md:hidden" />
         경험 소재 파악하기
       </>
     ),
@@ -24,8 +23,7 @@ const strategyCards = [
     step: 'STEP 2 | 경험 분석 & 컨셉 잡기',
     title: (
       <>
-        기업이 원하는 마케터가 되기 위한
-        <br className="md:hidden" />
+        기업이 원하는 마케터가 되기 위한 <br className="md:hidden" />
         나만의 컨셉 브랜딩하기
       </>
     ),
@@ -42,8 +40,7 @@ const strategyCards = [
     step: 'STEP 3 | 이력서 & 자기소개서 완성',
     title: (
       <>
-        핵심 역량이 돋보이는
-        <br className="md:hidden" />
+        핵심 역량이 돋보이는 <br className="md:hidden" />
         K-STAR-K 구조의 서류 작성하기
       </>
     ),
@@ -90,8 +87,7 @@ const strategyCards = [
     title: (
       <>
         현직자의 시선에서 서류를 점검받고
-        <br className="md:hidden" />
-        서류 완성하기
+        <br className="md:hidden" /> 서류 완성하기
       </>
     ),
     subTitle: <>제가 만든 서류, 현직자가 보기에 매력적인가요?</>,
@@ -132,7 +128,7 @@ const StrategyCard = ({
           />
         </div>
         <div className="flex w-full flex-col items-start justify-center md:w-auto">
-          <div className="md:text-small16 mb-1 rounded-xxs bg-[#4A76FF] px-3 py-1 text-xsmall14 font-semibold text-static-100 md:mb-2">
+          <div className="mb-3 rounded-xxs bg-[#4A76FF] px-3 py-1 text-xsmall14 font-semibold text-static-100 md:mb-1 md:mb-2 md:text-xsmall16">
             {step}
           </div>
           <h3 className="mb-2 whitespace-pre-line text-left text-small18 font-bold md:mb-3 md:text-medium22">
