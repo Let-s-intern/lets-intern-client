@@ -229,7 +229,7 @@ export const curriculums = [
         content: (
           <Highlight
             description={
-              <div className="flex flex-col gap-2.5 md:flex-row md:items-center md:gap-2">
+              <div className="flex flex-col gap-2.5 md:gap-2">
                 <img
                   className="h-auto w-[68px] md:w-[84px]"
                   src="/images/marketing/lets-career.svg"
