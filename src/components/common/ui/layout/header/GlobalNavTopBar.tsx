@@ -17,7 +17,7 @@ function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
   const { data: user } = useUserQuery({ enabled: isLoggedIn, retry: 1 });
 
   return (
-    <nav className="mw-1180 flex h-full items-center justify-between py-4">
+    <nav className="mw-1180 flex h-11 items-center justify-between md:h-full md:py-4">
       <div className="flex h-full items-center">
         {/* 로고 */}
         <LogoLink className="mr-8" isNextRouter={isNextRouter} />
