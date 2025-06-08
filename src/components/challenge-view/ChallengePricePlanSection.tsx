@@ -1,9 +1,9 @@
-import useChallengeOptionPriceInfo from '@/hooks/useChallengeOptionPriceInfo';
 import {
   ChallengePriceInfo,
   ChallengeType,
   challengeTypeSchema,
 } from '@/schema';
+import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { challengeColors } from '@components/ChallengeView';
 
 import PriceSummary from '@components/common/ui/PriceSummary';
@@ -108,7 +108,7 @@ function ChallengePricePlanSection({ challengeType, priceInfoList }: Props) {
     standardDiscountAmount,
     premiumRegularPrice,
     premiumDiscountAmount,
-  } = useChallengeOptionPriceInfo(priceInfoList);
+  } = getChallengeOptionPriceInfo(priceInfoList);
 
   return (
     <section className="w-full bg-neutral-90 px-5 pb-[8.75rem] pt-[6.25rem] text-center lg:px-0">
