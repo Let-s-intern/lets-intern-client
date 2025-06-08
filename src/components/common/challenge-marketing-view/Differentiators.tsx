@@ -90,7 +90,7 @@ const professionals = [
     profile: 'profile5.png',
     week: '7월 3주차',
     company: '대학내일',
-    role: 'AE',
+    role: 'AE마케터',
   },
 ];
 
