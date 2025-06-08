@@ -37,12 +37,12 @@ const MarketingReviewsSection: React.FC<Props> = ({ challenge }) => {
       </div>
 
       <div className="relative mt-16 flex flex-col items-center">
-        <div className="absolute -top-6 rounded-xs bg-[#24C1F0] px-2.5 py-1.5 text-[12px] font-medium text-white md:-top-7 md:text-[14px]">
+        <div className="absolute -top-6 z-10 rounded-xs bg-[#24C1F0] px-2.5 py-1.5 text-[12px] font-medium text-white md:-top-7 md:text-[14px]">
           자세한 수강생들의 후기가 궁금하다면?
         </div>
         <button
           type="button"
-          className="relative flex w-[320px] items-center justify-center gap-2 rounded-sm bg-[#0C1737] px-5 py-4 text-center text-xsmall16 font-semibold text-white md:w-auto md:text-medium22"
+          className="z-1 relative flex w-[320px] items-center justify-center gap-2 rounded-sm bg-[#0C1737] px-5 py-4 text-center text-xsmall16 font-semibold text-white md:w-auto md:text-medium22"
         >
           더 다양한 후기 보러가기
           <div className="relative h-5 w-5 md:h-6 md:w-6">
