@@ -11,10 +11,10 @@ const ChallengeScheduleSection = ({ challenge }: Props) => {
         한눈에 보는 {challenge.title ?? ''} 일정
       </h2>
 
-      <div className="flex w-full max-w-[925px] flex-col-reverse gap-4 md:flex-row md:gap-3">
+      <div className="flex w-full flex-col-reverse items-center gap-4 md:max-h-[506px] md:w-fit md:flex-row md:gap-3">
         {/* 왼쪽 박스 */}
-        <div className="relative h-full min-w-[292px] flex-1 rounded-sm bg-white p-3 text-[#0C1737] shadow-lg md:p-5">
-          <ul className="flex flex-col gap-3 text-xsmall14">
+        <div className="relative w-full text-[#0C1737] shadow-lg">
+          <ul className="mb-1.5 flex min-w-[292px] flex-col gap-3 rounded-sm bg-white p-3 text-xsmall14 md:mb-2 md:p-5">
             <li className="flex flex-col gap-1">
               <div className="flex items-center gap-2 text-[16px]">
                 <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#3B82F6] text-[12px] font-semibold text-white md:h-5 md:w-5 md:text-[14px]">
@@ -37,7 +37,7 @@ const ChallengeScheduleSection = ({ challenge }: Props) => {
             </li>
             <li className="flex flex-col gap-1">
               <div className="flex items-center gap-2 text-[16px]">
-                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#34D399] text-[12px] font-semibold text-white md:h-5 md:w-5 md:text-[14px]">
+                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#65C065] text-[12px] font-semibold text-white md:h-5 md:w-5 md:text-[14px]">
                   3
                 </span>
                 <span className="font-bold">현직자 Live Q&A 5회</span>
@@ -47,9 +47,11 @@ const ChallengeScheduleSection = ({ challenge }: Props) => {
                 <strong>매주 토요일 저녁 8시</strong>에 진행합니다.
               </span>
             </li>
+          </ul>
+          <ul className="flex min-w-[292px] flex-col gap-3 rounded-sm bg-white p-3 text-xsmall14 md:p-5">
             <li className="flex flex-col gap-1">
               <div className="text-[16px]">
-                <span className="font-bold">4. </span>
+                <span className="font-bold">+ </span>
                 <span className="rounded box-border inline-block rounded-[3px] bg-[#4A76FF] px-3 py-1.5 text-[14px] font-semibold text-white md:text-[16px]">
                   렛츠커리어 24hr 커뮤니티
                 </span>
@@ -65,7 +67,7 @@ const ChallengeScheduleSection = ({ challenge }: Props) => {
             </li>
             <li className="flex flex-col gap-1">
               <span className="text-[16px] font-bold">
-                5. 1:1 피드백을 신청하신 경우
+                + 1:1 피드백을 신청하신 경우
               </span>
               경험 피드백은 2회차 미션 제출 후 진행합니다.
               <br />
@@ -75,13 +77,13 @@ const ChallengeScheduleSection = ({ challenge }: Props) => {
         </div>
 
         {/* 오른쪽 달력 이미지 */}
-        <div className="relative aspect-[4/3] w-full">
+        <div className="relative aspect-[4/3] w-full md:h-[506px]">
           <Image
             src="/images/marketing/calendar-june.png"
             alt="마케팅 챌린지 달력"
             fill
             unoptimized
-            className="rounded-xxs object-contain shadow-lg md:rounded-sm"
+            className="absolute rounded-xxs object-contain shadow-lg md:rounded-sm"
           />
         </div>
       </div>

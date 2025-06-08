@@ -30,6 +30,12 @@ const MarketingFAQSection = ({ faqInfo }: Props) => {
     return categories;
   }, [faqInfo]);
 
+  useEffect(() => {
+    if (faqCategoryOrder.length > 0 && selectedCategory === '') {
+      setSelectedCategory(faqCategoryOrder[0]);
+    }
+  }, [faqCategoryOrder, selectedCategory]);
+
   const sortedFaqs = useMemo(() => {
     const categoryMap = new Map(faqCategoryOrder.map((cat, i) => [cat, i]));
 
@@ -42,7 +48,7 @@ const MarketingFAQSection = ({ faqInfo }: Props) => {
   }, [faqInfo, faqCategoryOrder]);
 
   const filteredFaqs = useMemo(() => {
-    if (isMobile || selectedCategory === '') return sortedFaqs;
+    if (selectedCategory === '') return sortedFaqs;
     return sortedFaqs.filter((faq) => faq.category === selectedCategory);
   }, [sortedFaqs, selectedCategory, isMobile]);
 
@@ -55,7 +61,7 @@ const MarketingFAQSection = ({ faqInfo }: Props) => {
       <span className="mb-12 hidden items-center justify-center text-small20 font-semibold text-neutral-45 md:flex">
         FAQ
       </span>
-      <div className="mx-auto w-full max-w-[900px]">
+      <div className="mx-auto w-full max-w-[900px] justify-items-center">
         <h3 className="mb-3 text-center text-xsmall16 font-semibold text-[#4A76FF] md:text-small20">
           자주 묻는 질문
         </h3>
@@ -63,27 +69,24 @@ const MarketingFAQSection = ({ faqInfo }: Props) => {
           궁금한 점이 있으신가요?
         </h2>
 
-        {/* 카테고리 버튼 (모바일은 숨김) */}
-        {!isMobile && (
-          <div className="mb-8 flex flex-wrap justify-center gap-2">
-            {faqCategoryOrder.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat ?? '')}
-                className={`w-[145px] rounded-xxl border px-5 py-3 text-small20 font-semibold ${
-                  selectedCategory === cat
-                    ? 'border-[#4A76FF] bg-[#F0F4FF] text-[#4A76FF]'
-                    : 'border-neutral-300 text-neutral-45'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        )}
+        <div className="mb-8 grid w-[320px] grid-cols-4 justify-items-center gap-2 md:w-[652px] md:grid-cols-4">
+          {faqCategoryOrder.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat ?? '')}
+              className={`h-[32px] w-[72.5px] rounded-xxl border py-2 text-xxsmall12 font-semibold md:h-auto md:w-[145px] md:px-5 md:py-3 md:text-small20 ${
+                selectedCategory === cat
+                  ? 'border-[#4A76FF] bg-[#F0F4FF] text-[#4A76FF]'
+                  : 'border-neutral-300 text-neutral-45'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
 
         {/* FAQ 목록 */}
-        <ul className="justify-items-center space-y-4">
+        <ul className="w-full justify-items-center space-y-4">
           {filteredFaqs.map((item, idx) => (
             <li
               key={idx}

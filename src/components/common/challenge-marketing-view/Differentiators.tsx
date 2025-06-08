@@ -12,10 +12,13 @@ export const MarketingTool = () => {
               srcSet="/images/marketing-point1-mobile.png"
               media="(orientation: portrait)"
             />
-            <img
-              className="h-full w-full object-cover"
-              srcSet="/images/marketing-point1-desktop.svg"
+            <Image
+              src="/images/marketing-point1-desktop.svg"
               alt="필요한 마케팅 역량(피그마, Google Analytics, Meta)을 보여주는 이미지"
+              unoptimized
+              width={270}
+              height={158}
+              className="object-cover"
             />
           </picture>
         </div>
@@ -87,7 +90,7 @@ const professionals = [
     profile: 'profile5.png',
     week: '7월 3주차',
     company: '대학내일',
-    role: 'AE',
+    role: 'AE마케터',
   },
 ];
 
