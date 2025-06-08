@@ -20,9 +20,13 @@ const MarketingReviewsSection: React.FC<Props> = ({ challenge }) => {
   })();
 
   const reviews = descParsed.challengeReview || [];
+  console.log(reviews);
 
   return (
-    <section className="flex flex-col items-center bg-[#F0F4FF] px-5 py-[70px] md:px-0 md:py-[120px]">
+    <section
+      id="reviews"
+      className="flex flex-col items-center bg-[#F0F4FF] px-5 py-[70px] md:px-0 md:py-[120px]"
+    >
       <div className="mb-3 text-small20 font-bold text-[#4A76FF]">
         찐 후기 모음.zip
       </div>

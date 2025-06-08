@@ -82,10 +82,7 @@ const Differentiator = ({
 
 const MarketingDifferentiatorsSection: React.FC = () => {
   return (
-    <section
-      id="differentiators"
-      className="flex w-full scroll-mt-[56px] flex-col items-center gap-14 bg-gradient-to-b from-black to-[#132356] px-5 pb-[70px] md:scroll-mt-[60px] md:gap-[68px] md:px-0 md:pb-[140px]"
-    >
+    <section className="flex w-full scroll-mt-[56px] flex-col items-center gap-14 bg-gradient-to-b from-black to-[#132356] px-5 pb-[70px] md:scroll-mt-[60px] md:gap-[68px] md:px-0 md:pb-[140px]">
       {differentiators.map((item, index) => (
         <article key={index} className="w-full max-w-[1440px]">
           <Differentiator index={index + 1} {...item} />
