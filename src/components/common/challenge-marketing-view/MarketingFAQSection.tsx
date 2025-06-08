@@ -9,11 +9,11 @@ interface Props {
 }
 
 const MarketingFAQSection = ({ faqInfo }: Props) => {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [isMobile, setIsMobile] = useState<boolean>(
     typeof window !== 'undefined' ? window.innerWidth <= 768 : false,
   );
+  const [openIndexes, setOpenIndexes] = useState<number[]>([]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -53,7 +53,12 @@ const MarketingFAQSection = ({ faqInfo }: Props) => {
   }, [sortedFaqs, selectedCategory, isMobile]);
 
   const toggle = (idx: number) => {
-    setOpenIndex((prev) => (prev === idx ? null : idx));
+    setOpenIndexes(
+      (prev) =>
+        prev.includes(idx)
+          ? prev.filter((i) => i !== idx) // 닫기
+          : [...prev, idx], // 열기
+    );
   };
 
   return (
@@ -61,7 +66,7 @@ const MarketingFAQSection = ({ faqInfo }: Props) => {
       <span className="mb-12 hidden items-center justify-center text-small20 font-semibold text-neutral-45 md:flex">
         FAQ
       </span>
-      <div className="mx-auto w-full max-w-[900px] justify-items-center">
+      <div className="mx-auto flex w-full max-w-[900px] flex-col items-center">
         <h3 className="mb-3 text-center text-xsmall16 font-semibold text-[#4A76FF] md:text-small20">
           자주 묻는 질문
         </h3>
@@ -69,11 +74,14 @@ const MarketingFAQSection = ({ faqInfo }: Props) => {
           궁금한 점이 있으신가요?
         </h2>
 
-        <div className="mb-8 grid w-[320px] grid-cols-4 justify-items-center gap-2 md:w-[652px] md:grid-cols-4">
+        <div className="mb-8 flex grid w-[320px] grid-cols-4 items-center gap-2 md:w-[652px] md:grid-cols-4">
           {faqCategoryOrder.map((cat) => (
             <button
               key={cat}
-              onClick={() => setSelectedCategory(cat ?? '')}
+              onClick={() => {
+                setSelectedCategory(cat ?? '');
+                setOpenIndexes([]);
+              }}
               className={`h-[32px] w-[72.5px] rounded-xxl border py-2 text-xxsmall12 font-semibold md:h-auto md:w-[145px] md:px-5 md:py-3 md:text-small20 ${
                 selectedCategory === cat
                   ? 'border-[#4A76FF] bg-[#F0F4FF] text-[#4A76FF]'
@@ -86,7 +94,7 @@ const MarketingFAQSection = ({ faqInfo }: Props) => {
         </div>
 
         {/* FAQ 목록 */}
-        <ul className="w-full justify-items-center space-y-4">
+        <ul className="flex w-full flex-col items-center space-y-4">
           {filteredFaqs.map((item, idx) => (
             <li
               key={idx}
@@ -99,14 +107,14 @@ const MarketingFAQSection = ({ faqInfo }: Props) => {
                 {item.question}
                 <ChevronDown
                   className={`ml-2 h-5 w-5 transition-transform ${
-                    openIndex === idx
+                    openIndexes.includes(idx)
                       ? 'rotate-180 text-[#4A76FF]'
                       : 'text-neutral-400'
                   }`}
                 />
               </button>
 
-              {openIndex === idx && (
+              {openIndexes.includes(idx) && (
                 <div className="bg-white px-4 pb-4 pt-2 text-xsmall14 leading-relaxed text-neutral-35 md:text-small18">
                   {item.answer}
                 </div>
