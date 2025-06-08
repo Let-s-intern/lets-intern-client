@@ -1,4 +1,3 @@
-import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 
 /* 차별점 1 */
@@ -57,30 +56,35 @@ const professionals = [
   {
     logo: 'naver-webtoon.png',
     profile: 'profile1.png',
+    week: '6월 3주차',
     company: '네이버웹툰',
     role: '퍼포먼스 마케터',
   },
   {
+    logo: 'cashnote.png',
+    profile: 'profile4.png',
+    week: '7월 2주차',
+    company: '캐시노트',
+    role: '그로스 마케터',
+  },
+  {
     logo: 'class101.png',
     profile: 'profile2.png',
+    week: '6월 4주차',
     company: '클래스 101',
     role: '콘텐츠 마케터',
   },
   {
     logo: 'yanolja.png',
     profile: 'profile3.png',
+    week: '7월 1주차',
     company: '야놀자',
     role: 'CRM 마케터',
   },
   {
-    logo: 'cashnote.png',
-    profile: 'profile4.png',
-    company: '캐시노트',
-    role: '그로스 마케터',
-  },
-  {
     logo: 'corpuniv.png',
     profile: 'profile5.png',
+    week: '7월 3주차',
     company: '대학내일',
     role: 'AE',
   },
@@ -111,7 +115,7 @@ export const ProfessionalsList = () => {
           </div>
           <div className="flex flex-col items-center justify-center bg-white px-2 py-3 md:p-5">
             <div className="mb-0.5 rounded-[2px] bg-black px-1 py-0.5 text-center text-[0.5rem] font-medium text-white md:mb-2 md:rounded-xxs md:px-1.5 md:py-[3px] md:text-xsmall14">
-              {dayjs().get('month') + 1}월 {index + 1}주차
+              {item.week}
             </div>
             <div className="text-base font-bold text-neutral-0 md:mb-1 md:text-medium24">
               {item.company}

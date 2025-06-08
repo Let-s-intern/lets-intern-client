@@ -114,7 +114,7 @@ const ContentWithSidebar = () => {
         ))}
       </div>
       {/* Content */}
-      <div className="w-full min-w-fit flex-1 shrink-0 px-8 pb-11 pt-10">
+      <div className="h-[634px] w-full min-w-fit flex-1 shrink-0 px-8 pb-11 pt-10">
         <CurriculumContent curriculum={activeContent} />
       </div>
     </div>

@@ -6,10 +6,13 @@ import MarketingCurriculumSection from '@components/common/challenge-marketing-v
 import MarketingDifferentiatorsSection from '@components/common/challenge-marketing-view/MarketingDifferentiatorsSection';
 import MarketingPricingSection from '@components/common/challenge-marketing-view/MarketingPricingSection';
 import MarketingSummarySection from '@components/common/challenge-marketing-view/MarketingSummarySection';
+import MarketingApplicationStrategySection from './common/challenge-marketing-view/MarketingApplicationStrategySection';
 import MarketingBenefitsSection from './common/challenge-marketing-view/MarketingBenefitsSection';
 import MarketingChallengeCalendar from './common/challenge-marketing-view/MarketingChallengeCalendar';
+import MarketingFAQSection from './common/challenge-marketing-view/MarketingFAQSection';
 import MarketingFeaturesSection from './common/challenge-marketing-view/MarketingFeaturesSection';
 import MarketingIntroSection from './common/challenge-marketing-view/MarketingIntroSection';
+import MarketingReviewsSection from './common/challenge-marketing-view/MarketingReviewsSection';
 // 사용할 일 없을 것 같지만.. (임시입니다)
 export const marketingColors = {
   _4A76FF: '#4A76FF',
@@ -46,9 +49,12 @@ const ChallengeMarketingView = ({ challenge }: Props) => {
       <MarketingDifferentiatorsSection />
       <MarketingBenefitsSection />
       <MarketingCurriculumSection />
-      <MarketingChallengeCalendar />
+      <MarketingChallengeCalendar challenge={challenge} />
       <MarketingSummarySection />
+      <MarketingApplicationStrategySection />
       <MarketingPricingSection priceInfoList={challenge.priceInfo} />
+      <MarketingReviewsSection challenge={challenge} />
+      <MarketingFAQSection faqInfo={challenge.faqInfo} />
       <ChallengeRecruitmentInfoSection challenge={challenge} />
     </div>
   );

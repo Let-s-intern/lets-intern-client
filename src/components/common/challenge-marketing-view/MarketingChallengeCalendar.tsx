@@ -1,12 +1,14 @@
+import { ChallengeIdPrimitive } from '@/schema';
 import Image from 'next/image';
 
-const ChallengeScheduleSection = () => {
+interface Props {
+  challenge: ChallengeIdPrimitive;
+}
+const ChallengeScheduleSection = ({ challenge }: Props) => {
   return (
     <section className="flex w-full flex-col items-center bg-[#0C1737] px-5 pb-20 pt-[60px] text-white md:px-0 md:pb-[140px] md:pt-[100px]">
       <h2 className="mb-10 text-center text-[22px] font-bold md:text-xlarge28">
-        한눈에 보는
-        {' {마케팅 서류 4주 완성 챌린지}'}
-        일정
+        한눈에 보는 {challenge.title ?? ''} 일정
       </h2>
 
       <div className="flex w-full max-w-[1000px] flex-col-reverse gap-6 md:flex-row md:gap-6">

@@ -11,8 +11,8 @@ interface TabItem {
 
 const tabs: TabItem[] = [
   { id: 'intro', label: '챌린지 소개' },
-  { id: 'differentiators', label: '차별점' },
   { id: 'curriculum', label: '커리큘럼' },
+  { id: 'differentiators', label: '차별점' },
   { id: 'pricing', label: '가격 구성' },
   { id: 'reviews', label: '후기' },
 ];
