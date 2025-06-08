@@ -59,8 +59,8 @@ function BottomNavBar({ isNextRouter, pathname = '' }: Props) {
   const hidden =
     pathname.startsWith('/report') ||
     pathname.startsWith('/program/') ||
-    pathname === '/about';
-
+    pathname === '/about' ||
+    pathname.startsWith('/payment');
   const menuInfo: Menu[] = [
     {
       name: '블로그',
