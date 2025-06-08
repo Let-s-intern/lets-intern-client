@@ -25,7 +25,7 @@ const PriceBox = ({
         {label}
       </div>
       <span className="text-small20 font-bold">{title}</span>
-      <p className="text-small18 font-medium text-neutral-0 md:mb-7 md:h-[78px]">
+      <p className="whitespace-pre-line text-small18 font-medium text-neutral-0 md:mb-7 md:h-[78px]">
         {children}
       </p>
       <PriceSummary
@@ -41,6 +41,16 @@ interface Props {
 }
 
 const MarketingPricingSection = ({ priceInfoList }: Props) => {
+  const basicPriceInfo = priceInfoList.find(
+    (item) => item.challengePricePlanType === 'BASIC',
+  );
+  const standardPriceInfo = priceInfoList.find(
+    (item) => item.challengePricePlanType === 'STANDARD',
+  );
+  const premiumPriceInfo = priceInfoList.find(
+    (item) => item.challengePricePlanType === 'PREMIUM',
+  );
+
   const {
     basicRegularPrice,
     basicDiscountAmount,
@@ -52,43 +62,23 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
 
   const pricingList = [
     {
-      title: '기본',
+      title: basicPriceInfo?.title || '기본',
       label: '대학생 추천',
-      description: (
-        <>
-          이력서, 자기소개서, 포트폴리오 완성
-          <br className="hidden md:block" /> 현직자 LIVE 클래스 8종
-        </>
-      ),
+      description: basicPriceInfo?.description ?? '',
       originalPrice: basicRegularPrice,
       discountAmount: basicDiscountAmount,
     },
     {
-      title: '프리미엄',
+      title: standardPriceInfo?.title || '스탠다드',
       label: '취준 0~6개월 추천',
-      description: (
-        <>
-          이력서, 자기소개서, 포트폴리오 완성
-          <br className="hidden md:block" /> 현직자 LIVE 클래스 8종
-          <br />
-          <strong className="font-bold">서류 1종 피드백</strong>
-        </>
-      ),
+      description: standardPriceInfo?.description ?? '',
       originalPrice: standardRegularPrice,
       discountAmount: standardDiscountAmount,
     },
     {
-      title: 'All In One',
+      title: premiumPriceInfo?.title || '프리미엄',
       label: '취준 6개월~2년 추천',
-      description: (
-        <>
-          이력서, 자기소개서, 포트폴리오 완성
-          <br className="hidden md:block" /> 현직자 LIVE 클래스 8종 <br />
-          <strong className="font-bold">
-            서류 1종 피드백 + 경험정리 피드백
-          </strong>
-        </>
-      ),
+      description: premiumPriceInfo?.description ?? '',
       originalPrice: premiumRegularPrice,
       discountAmount: premiumDiscountAmount,
     },
