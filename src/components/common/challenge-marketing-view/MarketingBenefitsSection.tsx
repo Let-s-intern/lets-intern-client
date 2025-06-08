@@ -53,7 +53,7 @@ function MarketingBenefitsSection() {
           </h3>
           <div className="flex items-center gap-2 md:gap-[14px]">
             <Image
-              src="/images/superintern.svg"
+              src="/images/superintern.png"
               alt="슈퍼인턴"
               unoptimized
               width={100}
