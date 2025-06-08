@@ -1,5 +1,3 @@
-'use client';
-
 import { ChallengeIdPrimitive } from '@/schema';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -25,7 +23,7 @@ const MarketingReviewsSection: React.FC<Props> = ({ challenge }) => {
   return (
     <section
       id="reviews"
-      className="flex scroll-mt-[56px] flex-col items-center bg-[#F0F4FF] px-5 py-[70px] md:scroll-mt-[60px] md:px-0 md:py-[120px]"
+      className="flex scroll-mt-[56px] flex-col items-center bg-[#F0F4FF] py-[70px] md:scroll-mt-[60px] md:py-[120px]"
     >
       <div className="mb-3 text-small20 font-bold text-[#4A76FF]">
         찐 후기 모음.zip
@@ -34,7 +32,7 @@ const MarketingReviewsSection: React.FC<Props> = ({ challenge }) => {
         {challenge.title} <br />
         참여자들의 따끈따끈한 후기
       </MainTitle>
-      <div className="w-full">
+      <div className="w-auto justify-items-center md:w-full">
         <TestimonialCarousel reviews={reviews} />
       </div>
 

@@ -4,7 +4,7 @@ import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengePriceInfo, ChallengePricePlan } from '@/schema';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
-import { ReactNode, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 type Plans = {
   [key in ChallengePricePlan]?: string;
@@ -23,7 +23,7 @@ const PlanButton = ({
     <button
       type="button"
       className={twMerge(
-        'flex h-7 flex-1 items-center justify-center text-nowrap rounded-xxs px-2.5 py-1 text-xsmall14 md:h-8 md:text-xsmall16',
+        'flex h-7 flex-1 items-center truncate text-nowrap rounded-xxs px-2.5 py-1 text-center text-xsmall14 md:h-8 md:text-xsmall16',
         active
           ? 'bg-white font-medium text-neutral-0 shadow-[0px_0px_6px_rgba(0,0,0,0.08)]'
           : 'bg-transparent font-normal text-neutral-50',
@@ -92,11 +92,10 @@ const FinalPriceInfo = ({
 };
 
 interface Props {
-  content?: ReactNode;
   priceInfoList: ChallengePriceInfo[];
 }
 
-function ChallengePriceInfoWithContent({ content, priceInfoList }: Props) {
+function ChallengePriceInfoContent({ priceInfoList }: Props) {
   const [active, setActive] = useState<ChallengePricePlan>('BASIC');
 
   const basicPriceInfo = priceInfoList.find(
@@ -104,6 +103,9 @@ function ChallengePriceInfoWithContent({ content, priceInfoList }: Props) {
   );
 
   const deposit = basicPriceInfo?.refund ?? 0; // 환급 (보증금)
+  const activeDescription =
+    priceInfoList.find((item) => item.challengePricePlanType === active)
+      ?.description ?? '';
 
   const {
     basicRegularPrice,
@@ -158,11 +160,15 @@ function ChallengePriceInfoWithContent({ content, priceInfoList }: Props) {
     );
 
     const plans: Plans = {
-      BASIC: basicPriceInfo?.title ?? '베이직',
+      BASIC: basicPriceInfo?.title || '베이직',
     };
 
-    if (standardPriceInfo) plans['STANDARD'] = '프리미엄';
-    if (premiumPriceInfo) plans['PREMIUM'] = '올인원';
+    if (standardPriceInfo) {
+      plans['STANDARD'] = standardPriceInfo.title || '스탠다드';
+    }
+    if (premiumPriceInfo) {
+      plans['PREMIUM'] = premiumPriceInfo.title || '프리미엄';
+    }
 
     return plans;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -183,7 +189,9 @@ function ChallengePriceInfoWithContent({ content, priceInfoList }: Props) {
           ))}
         </div>
 
-        <div className="px-3 pb-5 pt-2.5">{content}</div>
+        <p className="whitespace-pre-line px-3 pb-5 pt-2.5 md:min-h-[174px]">
+          {activeDescription}
+        </p>
       </div>
 
       <div className="flex flex-col gap-1.5">
@@ -218,4 +226,4 @@ function ChallengePriceInfoWithContent({ content, priceInfoList }: Props) {
   );
 }
 
-export default ChallengePriceInfoWithContent;
+export default ChallengePriceInfoContent;

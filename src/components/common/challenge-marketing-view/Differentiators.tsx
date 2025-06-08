@@ -1,4 +1,5 @@
 import { twMerge } from '@/lib/twMerge';
+import Image from 'next/image';
 
 /* 차별점 1 */
 export const MarketingTool = () => {
@@ -63,21 +64,21 @@ const professionals = [
   {
     logo: 'cashnote.png',
     profile: 'profile4.png',
-    week: '7월 2주차',
+    week: '6월 4주차',
     company: '캐시노트',
     role: '그로스 마케터',
   },
   {
     logo: 'class101.png',
     profile: 'profile2.png',
-    week: '6월 4주차',
+    week: '7월 1주차',
     company: '클래스 101',
     role: '콘텐츠 마케터',
   },
   {
     logo: 'yanolja.png',
     profile: 'profile3.png',
-    week: '7월 1주차',
+    week: '7월 2주차',
     company: '야놀자',
     role: 'CRM 마케터',
   },
@@ -166,10 +167,14 @@ export const PortfolioChange = () => {
             >
               {item.label}
             </div>
-            <img
-              className="h-auto w-full object-cover"
+            <Image
               src={`/images/marketing/${item.image}`}
               alt={item.description}
+              unoptimized
+              width={300}
+              height={200}
+              className="h-auto w-full object-cover"
+              sizes="100vw"
             />
           </div>
           <p

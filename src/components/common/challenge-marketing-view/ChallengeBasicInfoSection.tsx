@@ -1,8 +1,7 @@
 import { ChallengeIdPrimitive } from '@/schema';
 import Image from 'next/image';
 import React from 'react';
-import BenefitList from './BenefitList';
-import ChallengePriceInfoWithContent from './ChallengePriceInfo';
+import ChallengePriceInfoContent from './ChallengePriceInfoContent';
 import ChallengeSchedule from './ChallengeSchedule';
 
 interface Props {
@@ -30,10 +29,7 @@ const ChallengeBasicInfoSection: React.FC<Props> = ({ challenge }) => {
             {challenge.title}
           </h1>
 
-          <ChallengePriceInfoWithContent
-            priceInfoList={challenge.priceInfo}
-            content={<BenefitList challengeType={challenge.challengeType} />}
-          />
+          <ChallengePriceInfoContent priceInfoList={challenge.priceInfo} />
         </div>
       </div>
 

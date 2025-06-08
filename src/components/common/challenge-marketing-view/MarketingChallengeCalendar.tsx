@@ -11,9 +11,9 @@ const ChallengeScheduleSection = ({ challenge }: Props) => {
         한눈에 보는 {challenge.title ?? ''} 일정
       </h2>
 
-      <div className="flex w-full max-w-[1000px] flex-col-reverse gap-6 md:flex-row md:gap-6">
+      <div className="flex w-full max-w-[925px] flex-col-reverse gap-4 md:flex-row md:gap-3">
         {/* 왼쪽 박스 */}
-        <div className="relative min-w-[278px] flex-1 rounded-sm bg-white p-3 text-[#0C1737] shadow-lg md:p-5">
+        <div className="relative h-full min-w-[292px] flex-1 rounded-sm bg-white p-3 text-[#0C1737] shadow-lg md:p-5">
           <ul className="flex flex-col gap-3 text-xsmall14">
             <li className="flex flex-col gap-1">
               <div className="flex items-center gap-2 text-[16px]">
@@ -75,13 +75,13 @@ const ChallengeScheduleSection = ({ challenge }: Props) => {
         </div>
 
         {/* 오른쪽 달력 이미지 */}
-        <div className="relative aspect-[680/500] w-full">
+        <div className="relative aspect-[4/3] w-full">
           <Image
-            src="/images/marketing/calendar-june.svg"
+            src="/images/marketing/calendar-june.png"
             alt="마케팅 챌린지 달력"
             fill
-            className="rounded-sm object-contain shadow-lg md:rounded-xl"
-            sizes="(max-width: 768px) 100vw, 50vw"
+            unoptimized
+            className="rounded-xxs object-contain shadow-lg md:rounded-sm"
           />
         </div>
       </div>

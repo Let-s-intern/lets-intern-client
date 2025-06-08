@@ -6,8 +6,7 @@ const strategyCards = [
     step: 'STEP 1 | 경험 분석 & 컨셉 잡기',
     title: (
       <>
-        마케팅 직무 탐색부터 합격을 위한
-        <br className="md:hidden" />
+        마케팅 직무 탐색부터 합격을 위한 <br className="md:hidden" />
         경험 소재 파악하기
       </>
     ),
@@ -17,15 +16,14 @@ const strategyCards = [
       '채용공고와 매칭되는 나의 경험 찾기',
       '경험을 역량으로 연결하는 구조화 연습하기',
     ],
-    image: '/images/marketing/strategy-step1.svg',
+    image: '/images/marketing/strategy-step1.png',
     alt: '채용 공고 분석 이미지',
   },
   {
     step: 'STEP 2 | 경험 분석 & 컨셉 잡기',
     title: (
       <>
-        기업이 원하는 마케터가 되기 위한
-        <br className="md:hidden" />
+        기업이 원하는 마케터가 되기 위한 <br className="md:hidden" />
         나만의 컨셉 브랜딩하기
       </>
     ),
@@ -35,15 +33,14 @@ const strategyCards = [
       '혼한 마케터 취준생이 아닌, 고객을 설득하는 마케터의 컨셉 잡기',
       '채용 공고에서 요구하는 역량을 컨셉으로 풀어내기',
     ],
-    image: '/images/marketing/strategy-step2.svg',
+    image: '/images/marketing/strategy-step2.png',
     alt: '경험 STAR 정리 이미지',
   },
   {
     step: 'STEP 3 | 이력서 & 자기소개서 완성',
     title: (
       <>
-        핵심 역량이 돋보이는
-        <br className="md:hidden" />
+        핵심 역량이 돋보이는 <br className="md:hidden" />
         K-STAR-K 구조의 서류 작성하기
       </>
     ),
@@ -59,7 +56,7 @@ const strategyCards = [
       '경험을 성과로 표현하는 방법',
       '문제-해결 관점에서 드러내는 나만의 역량',
     ],
-    image: '/images/marketing/strategy-step3.svg',
+    image: '/images/marketing/strategy-step3.png',
     alt: '이력서 예시 이미지',
   },
   {
@@ -82,7 +79,7 @@ const strategyCards = [
       '내 포트폴리오의 문제 파악하기',
       '디자인보다 중요한 구조화 역량 쌓기',
     ],
-    image: '/images/marketing/strategy-step4.svg',
+    image: '/images/marketing/strategy-step4.png',
     alt: '포트폴리오 Before-After 예시 이미지',
   },
   {
@@ -90,8 +87,7 @@ const strategyCards = [
     title: (
       <>
         현직자의 시선에서 서류를 점검받고
-        <br className="md:hidden" />
-        서류 완성하기
+        <br className="md:hidden" /> 서류 완성하기
       </>
     ),
     subTitle: <>제가 만든 서류, 현직자가 보기에 매력적인가요?</>,
@@ -126,12 +122,13 @@ const StrategyCard = ({
             src={image}
             alt={alt}
             width={386}
+            unoptimized
             height={267}
             className="mb:mb-0 mb-3 w-full rounded-sm border border-[#eee] object-cover"
           />
         </div>
         <div className="flex w-full flex-col items-start justify-center md:w-auto">
-          <div className="md:text-small16 mb-1 rounded-xxs bg-[#4A76FF] px-3 py-1 text-xsmall14 font-semibold text-static-100 md:mb-2">
+          <div className="mb-3 rounded-xxs bg-[#4A76FF] px-3 py-1 text-xsmall14 font-semibold text-static-100 md:mb-1 md:mb-2 md:text-xsmall16">
             {step}
           </div>
           <h3 className="mb-2 whitespace-pre-line text-left text-small18 font-bold md:mb-3 md:text-medium22">

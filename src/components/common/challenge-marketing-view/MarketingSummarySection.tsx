@@ -53,7 +53,7 @@ const SummaryItem = ({
         <div className="whitespace-pre-line text-xsmall16 font-bold text-neutral-10 md:text-small20">
           {title}
         </div>
-        <div className="md:text-small16 whitespace-pre-line text-xsmall16 text-neutral-40">
+        <div className="whitespace-pre-line text-xsmall14 text-neutral-30 md:text-small18">
           {description}
         </div>
       </div>

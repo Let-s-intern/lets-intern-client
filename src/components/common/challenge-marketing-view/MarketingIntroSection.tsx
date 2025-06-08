@@ -26,7 +26,7 @@ function MarketingIntroSection() {
   return (
     <section
       id="intro"
-      className="md:pt-25 flex scroll-mt-[56px] flex-col items-center px-5 pb-10 pt-[60px] md:scroll-mt-[60px] md:pb-20"
+      className="flex scroll-mt-[56px] flex-col items-center px-5 pb-10 pt-[60px] md:scroll-mt-[60px] md:pb-20 md:pt-[100px]"
     >
       {/* Header */}
       <div>

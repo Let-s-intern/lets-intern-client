@@ -1,5 +1,6 @@
 'use client';
 
+import { useMediaQuery } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
 import 'swiper/css';
@@ -58,44 +59,52 @@ const TestimonialCard = ({
           {title}
         </p>
         <p
-          className="text-[14px] leading-relaxed"
+          className="text-xsmall14 font-medium leading-relaxed md:text-xsmall16"
           dangerouslySetInnerHTML={{ __html: highlightedContent }}
         />
       </div>
-      <div className="mt-4 text-[12px] text-neutral-50">{meta}</div>
+      <div className="mt-4 font-normal text-neutral-50 md:text-xsmall14">
+        {meta}
+      </div>
     </div>
   );
 };
 
 const TestimonialCarousel: React.FC<Props> = ({ reviews }) => {
+  const isMobile = useMediaQuery('(max-width:768px)');
+
   return (
-    <Swiper
-      spaceBetween={12}
-      slidesPerView={'auto'}
-      centeredSlides={true}
-      scrollbar={true}
-      mousewheel={true}
-      freeMode={true}
-      modules={[FreeMode, Scrollbar, Mousewheel]}
-      className="w-full"
-    >
-      {reviews.map((item, idx) => {
-        const highlights = item.content.includes(HIGHLIGHT_KEYWORD)
-          ? [HIGHLIGHT_KEYWORD]
-          : [];
-        const meta = `${maskingName(item.name)} / ${item.passedState}`;
-        return (
-          <SwiperSlide key={idx} className="mx-auto !w-[300px] md:!w-[371px]">
-            <TestimonialCard
-              title={item.title}
-              content={item.content}
-              highlights={highlights}
-              meta={meta}
-            />
-          </SwiperSlide>
-        );
-      })}
-    </Swiper>
+    <div className="max-w-[1000px] px-5 md:px-[60px]">
+      <Swiper
+        spaceBetween={12}
+        slidesPerView="auto"
+        centeredSlides={isMobile ? true : false}
+        freeMode={false}
+        initialSlide={0}
+        mousewheel={true}
+        scrollbar={true}
+        modules={[FreeMode, Scrollbar, Mousewheel]}
+        className="w-full"
+      >
+        {reviews.map((item, idx) => {
+          const highlights = item.content.includes(HIGHLIGHT_KEYWORD)
+            ? [HIGHLIGHT_KEYWORD]
+            : [];
+          const meta = `${maskingName(item.name)} / ${item.passedState}`;
+
+          return (
+            <SwiperSlide key={idx} className="!w-[300px] md:!w-[371px]">
+              <TestimonialCard
+                title={item.title}
+                content={item.content}
+                highlights={highlights}
+                meta={meta}
+              />
+            </SwiperSlide>
+          );
+        })}
+      </Swiper>
+    </div>
   );
 };
 
