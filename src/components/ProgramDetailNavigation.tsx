@@ -130,10 +130,12 @@ const ProgramDetailNavigation = ({
   return (
     <nav
       className={twMerge(
-        'sticky top-[3.65rem] z-20 flex w-full justify-center gap-x-1 border-b-2 border-neutral-80 bg-white px-6 transition-all duration-300 md:top-[4.275rem] md:gap-x-[100px] lg:top-[4.65rem]',
+        'sticky z-20 flex w-full justify-center gap-x-1 border-b-2 border-neutral-80 bg-white px-6 transition-all md:gap-x-[100px]',
         programType === 'challenge' && 'challenge_navigation',
         programType === 'live' && 'live_navigation',
-        scrollDirection === 'DOWN' && 'top-0 md:top-0 lg:top-0',
+        scrollDirection === 'DOWN'
+          ? 'top-0 duration-200 md:top-0'
+          : 'top-[44px] duration-300 md:top-[117px]',
         className,
       )}
     >
