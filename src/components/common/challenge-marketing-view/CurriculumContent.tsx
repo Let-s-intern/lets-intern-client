@@ -28,7 +28,20 @@ export const curriculums = [
       {
         date: '6/25',
         title: '역량 더하기 | 렛츠커리어 LIVE 클래스',
-        content: <Highlight description="마케터 필수 Figma 사용 방법 A to Z" />,
+        content: (
+          <Highlight
+            description={
+              <div className="flex items-center gap-1.5">
+                <img
+                  className="h-5 w-5 md:h-8 md:w-7"
+                  src="/images/marketing/figma.svg"
+                  alt=""
+                />
+                마케터 필수 Figma 사용 방법 A to Z
+              </div>
+            }
+          />
+        ),
       },
       {
         date: '6/21, 6/28',
@@ -95,7 +108,18 @@ export const curriculums = [
         date: '7/2',
         title: '역량 더하기 | 렛츠커리어 LIVE 클래스',
         content: (
-          <Highlight description="데이터 역량 쌓는 방법. Google Analytics 실습" />
+          <Highlight
+            description={
+              <div className="flex flex-col gap-2.5 md:flex-row md:items-center md:gap-1.5">
+                <img
+                  className="h-auto w-[66px]"
+                  src="/images/marketing/google-analytics.svg"
+                  alt=""
+                />
+                데이터 역량 쌓는 방법. Google Analytics 실습
+              </div>
+            }
+          />
         ),
       },
       {
@@ -143,7 +167,18 @@ export const curriculums = [
         date: '7/9',
         title: '역량 더하기 | 렛츠커리어 LIVE 클래스',
         content: (
-          <Highlight description="데이터 역량 쌓는 방법. 인스타그램 계정, 메타 광고 운영" />
+          <Highlight
+            description={
+              <div className="flex flex-col gap-1.5">
+                <img
+                  className="h-auto w-[68px] md:w-[84px]"
+                  src="/images/marketing/meta.svg"
+                  alt=""
+                />
+                데이터 역량 쌓는 방법. 인스타그램 계정, 메타 광고 운영
+              </div>
+            }
+          />
         ),
       },
       {
@@ -194,10 +229,15 @@ export const curriculums = [
         content: (
           <Highlight
             description={
-              <>
+              <div className="flex flex-col gap-2.5 md:flex-row md:items-center md:gap-2">
+                <img
+                  className="h-auto w-[68px] md:w-[84px]"
+                  src="/images/marketing/lets-career.svg"
+                  alt=""
+                />
                 렛츠커리어 CMO가 알려주는 <br />
                 2025 마케팅 합격 포트폴리오 트렌드
-              </>
+              </div>
             }
           />
         ),
