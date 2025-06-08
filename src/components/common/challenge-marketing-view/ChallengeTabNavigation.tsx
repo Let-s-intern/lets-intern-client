@@ -56,11 +56,15 @@ export default function ChallengeTabNavigation() {
   };
 
   useEffect(() => {
+    const observerOptions = {
+      threshold: 0.25,
+    };
+
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) setActive(entry.target.id);
       });
-    });
+    }, observerOptions);
 
     tabs.forEach((item) => {
       const target = document.getElementById(item.id);
@@ -78,8 +82,10 @@ export default function ChallengeTabNavigation() {
   return (
     <nav
       className={twMerge(
-        'sticky -top-0.5 z-10 flex w-full items-center justify-center border-b-2 border-neutral-80 bg-white px-4 text-xsmall14 font-semibold transition-all duration-300 md:top-0 md:gap-20 md:px-0 md:text-xsmall16',
-        scrollDirection === 'UP' && 'top-[44px] md:top-[117px]',
+        'sticky z-10 flex w-full items-center justify-center border-b-2 border-neutral-80 bg-white px-4 text-xsmall14 font-semibold transition-all md:gap-20 md:px-0 md:text-xsmall16',
+        scrollDirection === 'UP'
+          ? 'top-[44px] duration-300 md:top-[117px]'
+          : '-top-0.5 duration-200 md:top-0',
       )}
     >
       {tabs.map((tab) => (

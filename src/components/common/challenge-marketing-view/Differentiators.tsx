@@ -159,7 +159,7 @@ export const PortfolioChange = () => {
       {changes.map((item) => (
         <div
           key={item.label}
-          className="flex flex-col items-center gap-1.5 md:gap-5"
+          className="flex flex-1 flex-col items-center gap-1.5 md:gap-5"
         >
           <div className="w-full overflow-hidden rounded-xs md:rounded-sm">
             <div
@@ -170,15 +170,16 @@ export const PortfolioChange = () => {
             >
               {item.label}
             </div>
-            <Image
-              src={`/images/marketing/${item.image}`}
-              alt={item.description}
-              unoptimized
-              width={300}
-              height={200}
-              className="h-auto w-full object-cover"
-              sizes="100vw"
-            />
+            <div className="relative aspect-video w-full object-cover md:h-[278px]">
+              <Image
+                src={`/images/marketing/${item.image}`}
+                alt={item.description}
+                unoptimized
+                fill
+                className="absolute object-cover"
+                sizes="100vw"
+              />
+            </div>
           </div>
           <p
             className={twMerge(

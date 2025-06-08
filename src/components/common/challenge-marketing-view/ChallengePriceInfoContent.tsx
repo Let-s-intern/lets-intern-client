@@ -23,7 +23,7 @@ const PlanButton = ({
     <button
       type="button"
       className={twMerge(
-        'flex h-7 flex-1 items-center justify-center text-nowrap rounded-xxs px-2.5 py-1 text-xsmall14 md:h-8 md:text-xsmall16',
+        'flex h-7 flex-1 items-center justify-center truncate text-nowrap rounded-xxs px-2.5 py-1 text-xsmall14 md:h-8 md:text-xsmall16',
         active
           ? 'bg-white font-medium text-neutral-0 shadow-[0px_0px_6px_rgba(0,0,0,0.08)]'
           : 'bg-transparent font-normal text-neutral-50',
@@ -95,7 +95,7 @@ interface Props {
   priceInfoList: ChallengePriceInfo[];
 }
 
-function ChallengePriceInfoWithContent({ priceInfoList }: Props) {
+function ChallengePriceInfoContent({ priceInfoList }: Props) {
   const [active, setActive] = useState<ChallengePricePlan>('BASIC');
 
   const basicPriceInfo = priceInfoList.find(
@@ -226,4 +226,4 @@ function ChallengePriceInfoWithContent({ priceInfoList }: Props) {
   );
 }
 
-export default ChallengePriceInfoWithContent;
+export default ChallengePriceInfoContent;
