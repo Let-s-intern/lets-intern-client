@@ -35,7 +35,7 @@ export const curriculums = [
                 <img
                   className="h-5 w-5 md:h-8 md:w-7"
                   src="/images/marketing/figma.svg"
-                  alt=""
+                  alt="Figma"
                 />
                 마케터 필수 Figma 사용 방법 A to Z
               </div>
@@ -114,7 +114,7 @@ export const curriculums = [
                 <img
                   className="h-auto w-[66px]"
                   src="/images/marketing/google-analytics.svg"
-                  alt=""
+                  alt="Google Analytics"
                 />
                 데이터 역량 쌓는 방법. Google Analytics 실습
               </div>
@@ -173,7 +173,7 @@ export const curriculums = [
                 <img
                   className="h-auto w-[68px] md:w-[84px]"
                   src="/images/marketing/meta.svg"
-                  alt=""
+                  alt="메타 로고"
                 />
                 데이터 역량 쌓는 방법. 인스타그램 계정, 메타 광고 운영
               </div>
@@ -233,7 +233,7 @@ export const curriculums = [
                 <img
                   className="h-auto w-[68px] md:w-[84px]"
                   src="/images/marketing/lets-career.svg"
-                  alt=""
+                  alt="렛츠커리어 로고"
                 />
                 렛츠커리어 CMO가 알려주는 <br />
                 2025 마케팅 합격 포트폴리오 트렌드
