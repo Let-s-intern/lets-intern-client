@@ -82,7 +82,7 @@ export default function ChallengeTabNavigation() {
   return (
     <nav
       className={twMerge(
-        'sticky z-10 flex w-full items-center justify-center border-b-2 border-neutral-80 bg-white px-4 text-xsmall14 font-semibold transition-all md:gap-20 md:px-0 md:text-xsmall16',
+        'sticky z-20 flex w-full items-center justify-center border-b-2 border-neutral-80 bg-white px-4 text-xsmall14 font-semibold transition-all md:gap-20 md:px-0 md:text-xsmall16',
         scrollDirection === 'UP'
           ? 'top-[44px] duration-300 md:top-[117px]'
           : '-top-0.5 duration-200 md:top-0',
