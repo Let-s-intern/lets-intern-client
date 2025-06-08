@@ -56,11 +56,15 @@ export default function ChallengeTabNavigation() {
   };
 
   useEffect(() => {
+    const observerOptions = {
+      threshold: 0.25,
+    };
+
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) setActive(entry.target.id);
       });
-    });
+    }, observerOptions);
 
     tabs.forEach((item) => {
       const target = document.getElementById(item.id);
