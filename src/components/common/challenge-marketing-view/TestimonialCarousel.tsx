@@ -1,5 +1,6 @@
 'use client';
 
+import { useMediaQuery } from '@mui/material';
 import Image from 'next/image';
 import React from 'react';
 import 'swiper/css';
@@ -70,14 +71,17 @@ const TestimonialCard = ({
 };
 
 const TestimonialCarousel: React.FC<Props> = ({ reviews }) => {
+  const isMobile = useMediaQuery('(max-width:768px)');
+
   return (
     <Swiper
       spaceBetween={12}
       slidesPerView={'auto'}
-      centeredSlides={true}
       scrollbar={true}
       mousewheel={true}
       freeMode={true}
+      slidesOffsetBefore={isMobile ? 20 : 0}
+      slidesOffsetAfter={isMobile ? 20 : 0}
       modules={[FreeMode, Scrollbar, Mousewheel]}
       className="w-full"
     >
@@ -86,6 +90,7 @@ const TestimonialCarousel: React.FC<Props> = ({ reviews }) => {
           ? [HIGHLIGHT_KEYWORD]
           : [];
         const meta = `${maskingName(item.name)} / ${item.passedState}`;
+
         return (
           <SwiperSlide key={idx} className="mx-auto !w-[300px] md:!w-[371px]">
             <TestimonialCard
