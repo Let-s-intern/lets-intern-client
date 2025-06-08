@@ -45,7 +45,7 @@ function MarketingBenefitsSection() {
             aria-hidden="true"
           />
           <h3 className="mb-2 mt-1 text-center text-small18 font-bold text-[#4A76FF] md:mb-3 md:mt-2 md:text-medium24">
-            슈퍼인턴과 함께 30개 사 이상의
+            슈퍼인턴과 함께 30개사 이상의
             <br className="md:hidden" />
             마케터 직무 채용 연계
           </h3>
