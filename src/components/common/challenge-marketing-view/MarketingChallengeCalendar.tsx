@@ -37,7 +37,7 @@ const ChallengeScheduleSection = ({ challenge }: Props) => {
             </li>
             <li className="flex flex-col gap-1">
               <div className="flex items-center gap-2 text-[16px]">
-                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#34D399] text-[12px] font-semibold text-white md:h-5 md:w-5 md:text-[14px]">
+                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#65C065] text-[12px] font-semibold text-white md:h-5 md:w-5 md:text-[14px]">
                   3
                 </span>
                 <span className="font-bold">현직자 Live Q&A 5회</span>
