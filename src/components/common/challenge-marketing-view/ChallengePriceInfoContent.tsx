@@ -189,9 +189,12 @@ function ChallengePriceInfoContent({ priceInfoList }: Props) {
           ))}
         </div>
 
-        <p className="whitespace-pre-line px-3 pb-5 pt-2.5 md:min-h-[174px]">
-          {activeDescription}
-        </p>
+        <div className="whitespace-pre-line px-3 pb-5 pt-2.5 md:min-h-[174px]">
+          <span className="text-xsmall14 font-semibold text-[#4A76FF]">
+            이번 챌린지로 모든걸 얻어갈 수 있어요!
+          </span>
+          <p className="mt-1.5 whitespace-pre-line">{activeDescription}</p>
+        </div>
       </div>
 
       <div className="flex flex-col gap-1.5">
