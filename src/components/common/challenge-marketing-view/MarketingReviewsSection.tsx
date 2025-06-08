@@ -2,6 +2,7 @@
 
 import { ChallengeIdPrimitive } from '@/schema';
 import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react';
 import MainTitle from './MainTitle';
 import TestimonialCarousel from './TestimonialCarousel';
@@ -20,7 +21,6 @@ const MarketingReviewsSection: React.FC<Props> = ({ challenge }) => {
   })();
 
   const reviews = descParsed.challengeReview || [];
-  console.log(reviews);
 
   return (
     <section
@@ -42,7 +42,10 @@ const MarketingReviewsSection: React.FC<Props> = ({ challenge }) => {
         <div className="absolute -top-6 rounded-xs bg-[#24C1F0] px-2.5 py-1.5 text-[12px] font-medium text-white md:-top-7 md:text-[14px]">
           자세한 수강생들의 후기가 궁금하다면?
         </div>
-        <button className="flex w-[320px] items-center justify-center gap-2 rounded-sm bg-[#0C1737] px-5 py-4 text-center text-xsmall16 font-semibold text-white md:w-auto md:text-medium22">
+        <button
+          type="button"
+          className="relative flex w-[320px] items-center justify-center gap-2 rounded-sm bg-[#0C1737] px-5 py-4 text-center text-xsmall16 font-semibold text-white md:w-auto md:text-medium22"
+        >
           더 다양한 후기 보러가기
           <div className="relative h-5 w-5 md:h-6 md:w-6">
             <Image
@@ -52,6 +55,13 @@ const MarketingReviewsSection: React.FC<Props> = ({ challenge }) => {
               className="object-contain"
             />
           </div>
+          <Link
+            className="absolute inset-0"
+            href={{
+              pathname: '/review/program',
+              query: { program: 'challenge_review', challenge: 'marketing' },
+            }}
+          />
         </button>
       </div>
     </section>
