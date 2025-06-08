@@ -1,4 +1,5 @@
 import { twMerge } from '@/lib/twMerge';
+import Image from 'next/image';
 import MainTitle from './MainTitle';
 
 const sparkleClassName = {
@@ -38,11 +39,13 @@ function MarketingBenefitsSection() {
       </div>
       <div className="flex w-full flex-col items-center gap-3 rounded-xs bg-white p-3 pb-5 md:w-[800px] md:gap-4 md:rounded-sm md:px-6 md:pb-7 md:pt-5">
         <div className="flex w-full flex-col items-center">
-          <img
-            className="h-7 w-7 md:h-[34px] md:w-[34px]"
+          <Image
             src="/icons/check-star.svg"
             alt=""
-            aria-hidden="true"
+            width={34}
+            height={34}
+            unoptimized
+            className="h-7 w-7 object-contain md:h-[34px] md:w-[34px]"
           />
           <h3 className="mb-2 mt-1 text-center text-small18 font-bold text-[#4A76FF] md:mb-3 md:mt-2 md:text-medium24">
             슈퍼인턴과 함께 30개사 이상의
@@ -50,10 +53,13 @@ function MarketingBenefitsSection() {
             마케터 직무 채용 연계
           </h3>
           <div className="flex items-center gap-2 md:gap-[14px]">
-            <img
-              className="h-6 w-auto md:h-10"
+            <Image
               src="/images/superintern.svg"
               alt="슈퍼인턴"
+              unoptimized
+              width={100}
+              height={40}
+              className="h-6 w-auto md:h-10"
             />
             <span
               className="text-xsmall14 font-medium text-neutral-40 md:text-medium24"
@@ -61,10 +67,13 @@ function MarketingBenefitsSection() {
             >
               X
             </span>
-            <img
-              className="h-5 w-auto md:h-8"
+            <Image
               src="/logo/horizontal-logo.svg"
               alt="렛츠커리어"
+              unoptimized
+              width={100}
+              height={40}
+              className="h-5 w-auto md:h-8"
             />
           </div>
         </div>

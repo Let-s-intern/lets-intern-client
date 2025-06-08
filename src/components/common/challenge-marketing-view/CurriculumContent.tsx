@@ -1,4 +1,5 @@
 import { twMerge } from '@/lib/twMerge';
+import Image from 'next/image';
 import { ReactNode } from 'react';
 
 export const curriculums = [
@@ -253,9 +254,12 @@ function Highlight({
     >
       {role && (
         <div className="flex items-center gap-1.5">
-          <img
+          <Image
             src={`/images/marketing/${companyImg}`}
             alt=""
+            unoptimized
+            width={28}
+            height={28}
             className="h-5 w-5 md:h-7 md:w-7"
           />
           <div className="flex items-center gap-1 text-nowrap text-xxsmall12 md:gap-1.5">

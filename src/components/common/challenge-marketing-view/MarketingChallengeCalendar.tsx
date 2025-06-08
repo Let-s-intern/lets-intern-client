@@ -77,9 +77,10 @@ const ChallengeScheduleSection = ({ challenge }: Props) => {
         {/* 오른쪽 달력 이미지 */}
         <div className="relative aspect-[680/500] w-full">
           <Image
-            src="/images/marketing/calendar-june.svg"
+            src="/images/marketing/calendar-june.png"
             alt="마케팅 챌린지 달력"
             fill
+            unoptimized
             className="rounded-sm object-contain shadow-lg md:rounded-xl"
             sizes="(max-width: 768px) 100vw, 50vw"
           />
