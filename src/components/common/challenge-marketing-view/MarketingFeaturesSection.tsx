@@ -71,7 +71,7 @@ const Card = ({
 }) => {
   return (
     <div className="relative flex w-full min-w-60 flex-1 flex-col items-center justify-center gap-3 rounded-xs bg-white p-4 md:rounded-sm md:px-6 md:py-11">
-      <div className="absolute -top-2.5 left-5 -rotate-12 rounded-xxs bg-[#2CB2FF] px-3 py-1.5 text-xsmall16 font-semibold text-white md:px-4 md:py-2 md:text-small18">
+      <div className="absolute -top-2.5 left-5 -rotate-12 rounded-xxs bg-[#2CB2FF] px-3 py-1.5 text-xsmall16 font-semibold text-white md:-top-7 md:px-4 md:py-2 md:text-small18">
         Point {index}
       </div>
       <div className="h-fit w-full rounded-[4.5px] border border-neutral-80 bg-neutral-90">
@@ -81,7 +81,7 @@ const Card = ({
             media="(orientation: portrait)"
           />
           <img
-            className="h-full w-full object-cover"
+            className="object-cover"
             src={`/images/${desktopImg}`}
             alt={alt}
           />
@@ -137,7 +137,7 @@ const MarketingFeaturesSection: React.FC = () => {
       </div>
 
       {/* 카드 섹션 */}
-      <div className="mt-8 flex w-full max-w-[1000px] flex-col gap-7 px-5 md:mt-8 md:flex-row md:gap-3 md:px-0">
+      <div className="mt-8 flex w-full max-w-[1000px] flex-col gap-7 px-5 md:mt-16 md:flex-row md:gap-3 md:px-0">
         {cards.map((item, index) => (
           <Card key={index} index={index + 1} {...item} />
         ))}
