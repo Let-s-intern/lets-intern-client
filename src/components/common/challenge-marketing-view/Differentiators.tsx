@@ -1,4 +1,5 @@
 import { twMerge } from '@/lib/twMerge';
+import Image from 'next/image';
 
 /* 차별점 1 */
 export const MarketingTool = () => {
@@ -166,10 +167,14 @@ export const PortfolioChange = () => {
             >
               {item.label}
             </div>
-            <img
-              className="h-auto w-full object-cover"
+            <Image
               src={`/images/marketing/${item.image}`}
               alt={item.description}
+              unoptimized
+              width={300}
+              height={200}
+              className="h-auto w-full object-cover"
+              sizes="100vw"
             />
           </div>
           <p

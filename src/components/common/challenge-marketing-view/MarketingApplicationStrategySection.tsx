@@ -17,7 +17,7 @@ const strategyCards = [
       '채용공고와 매칭되는 나의 경험 찾기',
       '경험을 역량으로 연결하는 구조화 연습하기',
     ],
-    image: '/images/marketing/strategy-step1.svg',
+    image: '/images/marketing/strategy-step1.png',
     alt: '채용 공고 분석 이미지',
   },
   {
@@ -35,7 +35,7 @@ const strategyCards = [
       '혼한 마케터 취준생이 아닌, 고객을 설득하는 마케터의 컨셉 잡기',
       '채용 공고에서 요구하는 역량을 컨셉으로 풀어내기',
     ],
-    image: '/images/marketing/strategy-step2.svg',
+    image: '/images/marketing/strategy-step2.png',
     alt: '경험 STAR 정리 이미지',
   },
   {
@@ -59,7 +59,7 @@ const strategyCards = [
       '경험을 성과로 표현하는 방법',
       '문제-해결 관점에서 드러내는 나만의 역량',
     ],
-    image: '/images/marketing/strategy-step3.svg',
+    image: '/images/marketing/strategy-step3.png',
     alt: '이력서 예시 이미지',
   },
   {
@@ -82,7 +82,7 @@ const strategyCards = [
       '내 포트폴리오의 문제 파악하기',
       '디자인보다 중요한 구조화 역량 쌓기',
     ],
-    image: '/images/marketing/strategy-step4.svg',
+    image: '/images/marketing/strategy-step4.png',
     alt: '포트폴리오 Before-After 예시 이미지',
   },
   {
@@ -126,6 +126,7 @@ const StrategyCard = ({
             src={image}
             alt={alt}
             width={386}
+            unoptimized
             height={267}
             className="mb:mb-0 mb-3 w-full rounded-sm border border-[#eee] object-cover"
           />
