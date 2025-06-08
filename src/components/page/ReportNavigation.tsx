@@ -92,9 +92,11 @@ const ReportNavigation = ({
   return (
     <nav
       className={twMerge(
-        'report_navigation sticky top-[5.85rem] z-20 flex w-full transform justify-center gap-x-1 px-6 transition-all duration-300 md:top-[10.1rem] md:gap-x-[100px] lg:top-[10.1rem]',
+        'report_navigation sticky z-20 flex w-full transform justify-center gap-x-1 px-6 transition-all md:gap-x-[100px]',
         isDark ? 'bg-black/90' : 'border-b-2 border-neutral-80 bg-white',
-        scrollDirection === 'DOWN' && 'top-0 md:top-0 lg:top-0',
+        scrollDirection === 'DOWN'
+          ? 'top-0 duration-200 md:top-0'
+          : 'top-[44px] duration-300 md:top-[117px]',
         className,
       )}
     >
