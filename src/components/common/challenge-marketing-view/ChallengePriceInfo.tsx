@@ -25,8 +25,8 @@ const PlanButton = ({
       className={twMerge(
         'flex h-7 flex-1 items-center justify-center text-nowrap rounded-xxs px-2.5 py-1 text-xsmall14 md:h-8 md:text-xsmall16',
         active
-          ? 'max-h-7 bg-white font-medium text-neutral-0 shadow-[0px_0px_6px_rgba(0,0,0,0.08)]'
-          : 'max-h-8 bg-transparent font-normal text-neutral-50',
+          ? 'bg-white font-medium text-neutral-0 shadow-[0px_0px_6px_rgba(0,0,0,0.08)]'
+          : 'bg-transparent font-normal text-neutral-50',
       )}
       onClick={onClick}
     >
