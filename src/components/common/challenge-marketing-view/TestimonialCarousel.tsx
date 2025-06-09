@@ -58,10 +58,9 @@ const TestimonialCard = ({
         <p className="mb-2 line-clamp-2 break-keep text-xsmall16 font-bold md:text-small20">
           {title}
         </p>
-        <p
-          className="text-xsmall14 font-medium leading-relaxed md:text-xsmall16"
-          dangerouslySetInnerHTML={{ __html: highlightedContent }}
-        />
+        <p className="whitespace-pre-line text-xsmall14 font-medium leading-relaxed md:text-xsmall16">
+          {content}
+        </p>
       </div>
       <div className="mt-4 font-normal text-neutral-50 md:text-xsmall14">
         {meta}
