@@ -64,7 +64,7 @@ const Page = async ({
 
   return (
     <>
-      {parseInt(id) > 75 && challenge.challengeType === 'MARKETING' ? (
+      {parseInt(id) > 11 && challenge.challengeType === 'MARKETING' ? (
         <ChallengeMarketingView challenge={challenge} />
       ) : (
         <ChallengeView challenge={challenge} />
