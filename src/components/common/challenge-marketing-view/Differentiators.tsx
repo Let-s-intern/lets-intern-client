@@ -58,13 +58,6 @@ export const MarketingTool = () => {
 /** 차별점 2 */
 const professionals = [
   {
-    logo: 'naver-webtoon.png',
-    profile: 'profile1.png',
-    week: '6월 3주차',
-    company: '네이버웹툰',
-    role: '퍼포먼스 마케터',
-  },
-  {
     logo: 'cashnote.png',
     profile: 'profile4.png',
     week: '6월 4주차',
@@ -96,7 +89,7 @@ const professionals = [
 
 export const ProfessionalsList = () => {
   return (
-    <div className="mt-6 flex max-w-[1000px] flex-wrap justify-center gap-1 md:mt-[50px] md:gap-3">
+    <div className="mt-6 grid max-w-[1000px] grid-cols-2 gap-1 md:mt-[50px] md:gap-3">
       {professionals.map((item, index) => (
         <div
           key={index}

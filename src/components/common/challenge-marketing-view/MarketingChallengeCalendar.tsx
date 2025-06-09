@@ -78,13 +78,19 @@ const ChallengeScheduleSection = ({ challenge }: Props) => {
 
         {/* 오른쪽 달력 이미지 */}
         <div className="relative aspect-[4/3] w-full md:h-[506px]">
-          <Image
-            src="/images/marketing/calendar-june.png"
-            alt="마케팅 챌린지 달력"
-            fill
-            unoptimized
-            className="absolute rounded-xxs object-contain shadow-lg md:rounded-sm"
-          />
+          <picture>
+            <source
+              srcSet="/images/marketing/calendar-june-mobile.png"
+              media="(orientation: portrait)"
+            />
+            <Image
+              src="/images/marketing/calendar-june.png"
+              alt="마케팅 챌린지 달력"
+              fill
+              unoptimized
+              className="absolute rounded-xxs object-cover shadow-lg md:rounded-sm"
+            />
+          </picture>
         </div>
       </div>
     </section>
