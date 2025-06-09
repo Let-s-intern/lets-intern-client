@@ -29,7 +29,7 @@ const cards = [
     ),
     mobileImg: 'marketing-point2-mobile.png',
     desktopImg: 'marketing-point2-desktop.png',
-    alt: '현직자 회사 로고(네이버 웹툰, 대학내일, 야놀자, 클래스101 등) 이미지',
+    alt: '현직자 회사 로고(대학내일, 야놀자, 클래스101 등) 이미지',
   },
   {
     title: '챌린지를 통한 서류 완성',
