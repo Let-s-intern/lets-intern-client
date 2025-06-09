@@ -6,6 +6,7 @@ import {
   getProgramPathname,
 } from '@/utils/url';
 import ChallengeCTAButtons from '@components/ChallengeCTAButtons';
+import ChallengeMarketingView from '@components/ChallengeMarketingView';
 import ChallengeView from '@components/ChallengeView';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
@@ -63,7 +64,11 @@ const Page = async ({
 
   return (
     <>
-      <ChallengeView challenge={challenge} />
+      {parseInt(id) > 11 && challenge.challengeType === 'MARKETING' ? (
+        <ChallengeMarketingView challenge={challenge} />
+      ) : (
+        <ChallengeView challenge={challenge} />
+      )}
       <ChallengeCTAButtons challenge={challenge} challengeId={id} />
     </>
   );

@@ -1,6 +1,5 @@
 import { twMerge } from '@/lib/twMerge';
-import Link from 'next/link';
-import { Link as RouterLink } from 'react-router-dom';
+import HybridLink from '../../HybridLink';
 
 interface Props {
   isNextRouter: boolean;
@@ -8,19 +7,16 @@ interface Props {
 }
 
 function LogoLink({ isNextRouter, className }: Props) {
-  const LinkComponent: any = isNextRouter ? Link : RouterLink;
-  const linkProps = isNextRouter ? { href: '/' } : { to: '/' };
-
   return (
     <h1 className={twMerge('h-[25px] text-transparent', className)}>
-      <LinkComponent {...linkProps}>
+      <HybridLink isNextRouter={isNextRouter} href="/">
         <img
           src="/logo/horizontal-logo.svg"
           alt="렛츠커리어"
           className="h-[25px] w-auto"
         />
         렛츠커리어
-      </LinkComponent>
+      </HybridLink>
     </h1>
   );
 }

@@ -74,7 +74,6 @@ const ChallengeCTAButtons = ({
         challengeId={challengeId}
         onClose={() => setIsOpen(false)}
       />
-      ;
     </>
   );
 };

@@ -73,6 +73,9 @@
     "lint": "eslint ."
   },
   "devDependencies": {
+    "@builder.io/dev-tools": "^1.6.72",
+    "@builder.io/react": "^8.2.2",
+    "@builder.io/sdk": "^6.0.9",
     "@eslint/js": "^9.6.0",
     "@types/katex": "^0.16.7",
     "@types/lodash-es": "^4.17.12",

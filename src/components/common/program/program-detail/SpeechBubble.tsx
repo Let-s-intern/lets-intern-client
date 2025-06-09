@@ -1,7 +1,6 @@
+import { twMerge } from '@/lib/twMerge';
 import { ReactNode } from 'react';
 import { IoTriangleSharp } from 'react-icons/io5';
-
-import { twMerge } from '@/lib/twMerge';
 
 function SpeechBubble({
   className,

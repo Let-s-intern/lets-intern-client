@@ -18,16 +18,6 @@ const NextFooter = () => {
     return null;
   }, [hasActiveResume, hasActivePortfolio, hasActivePersonalStatement]);
 
-  const onClickAddChannel = () => {
-    window.Kakao.Channel.followChannel({
-      channelPublicId: '_tCeHG',
-    })
-      .then((response: any) => {})
-      .catch((error: any) => {
-        console.log(error);
-      });
-  };
-
   useEffect(() => {
     if (!window.Kakao?.isInitialized()) {
       window.Kakao?.init('fe2307dd60e05ff8cbb06d777a13e31c');
