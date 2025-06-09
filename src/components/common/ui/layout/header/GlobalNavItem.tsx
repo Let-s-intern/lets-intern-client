@@ -1,7 +1,7 @@
 'use client';
 
+import Down from '@/assets/icons/down.svg?react';
 import { twMerge } from '@/lib/twMerge';
-import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { AnchorHTMLAttributes, Fragment, MouseEvent, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
@@ -65,9 +65,9 @@ function GlobalNavItem({
         <span className="flex items-center">
           {children}
           {showDropdownIcon && subNavList && (
-            <ChevronDown
-              size={24}
-              className="text-gray-20 transition-transform group-hover:text-neutral-0"
+            <Down
+              width={24}
+              className="text-neutral-20 transition-transform group-hover:text-neutral-0"
             />
           )}
         </span>
