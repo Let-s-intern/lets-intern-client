@@ -75,7 +75,7 @@ function GlobalNavItem({
 
       {/* 서브 메뉴 */}
       {subNavList && hover && (
-        <div className="absolute z-10 flex flex-col items-center drop-shadow-xl">
+        <div className="absolute top-[75px] z-10 flex flex-col items-center drop-shadow-xl">
           <div className="mx-auto h-auto w-[20px] text-white">
             {/* <Polygon /> */}
           </div>
