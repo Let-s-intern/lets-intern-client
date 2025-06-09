@@ -75,7 +75,7 @@ const MarketingFAQSection = ({ faqInfo }: Props) => {
           궁금한 점이 있으신가요?
         </h2>
 
-        <div className="mb-8 flex grid w-[320px] grid-cols-4 items-center gap-2 md:w-[652px] md:grid-cols-4">
+        <div className="mb-[30px] flex grid w-[320px] grid-cols-4 items-center gap-2 md:mb-[80px] md:w-[652px] md:grid-cols-4">
           {faqCategoryOrder.map((cat) => (
             <button
               key={cat}
@@ -125,7 +125,7 @@ const MarketingFAQSection = ({ faqInfo }: Props) => {
         </ul>
       </div>
 
-      <div className="mt-8 flex w-full flex-col items-center justify-between rounded-md bg-[#F9F9F8] px-[30px] py-4 md:w-[800px] md:flex-row">
+      <div className="mt-10 flex w-full flex-col items-center justify-between rounded-md bg-[#F9F9F8] px-[30px] py-4 md:mt-[100px] md:w-[800px] md:flex-row">
         <p className="mb-3 text-xsmall14 font-semibold text-neutral-35 md:mb-0 md:text-small20">
           아직 궁금증이 풀리지 않았다면?
         </p>
