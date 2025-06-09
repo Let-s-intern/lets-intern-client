@@ -1,5 +1,6 @@
 'use client';
 
+import channelService from '@/ChannelService';
 import { ChallengeIdPrimitive } from '@/schema';
 import { ChevronDown } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
@@ -122,6 +123,18 @@ const MarketingFAQSection = ({ faqInfo }: Props) => {
             </li>
           ))}
         </ul>
+      </div>
+
+      <div className="mt-8 flex w-full flex-col items-center justify-between rounded-md bg-[#F9F9F8] px-[30px] py-4 md:w-[800px] md:flex-row">
+        <p className="mb-3 text-xsmall14 font-semibold text-neutral-35 md:mb-0 md:text-small20">
+          아직 궁금증이 풀리지 않았다면?
+        </p>
+        <button
+          className="rounded-sm border border-neutral-300 bg-white px-5 py-2 text-xsmall14 font-medium text-neutral-20 md:px-6 md:py-3 md:text-small18"
+          onClick={() => channelService.showMessenger()}
+        >
+          1:1 채팅 문의하기
+        </button>
       </div>
     </section>
   );
