@@ -44,38 +44,22 @@ export const curriculums = [
         ),
       },
       {
-        date: '6/21, 6/28',
+        date: '6/28',
         title: '현직자에게 듣는 합격하는 서류의 A-Z',
         content: (
-          <div className="flex w-full flex-col items-stretch gap-2">
-            <Highlight
-              className="bg-[#E9F6EF]"
-              companyImg="naver-webtoon.png"
-              role="네이버웹툰 퍼포먼스 마케터"
-              date="| 6/21 저녁 8시 (온라인)"
-              description={
-                <>
-                  대기업과 스타트업 모두 경험한{' '}
-                  <br className="hidden md:block" />
-                  합격하는 <br className="md:hidden" />
-                  마케터의 포트폴리오를 안내합니다.
-                </>
-              }
-            />
-            <Highlight
-              className="bg-[#E9F4FF] md:mt-0"
-              companyImg="cashnote.png"
-              role="캐시노트 그로스 마케터"
-              date="| 6/28 저녁 8시 (온라인)"
-              description={
-                <>
-                  현직 마케터가 들려주는 그로스 마케팅의 A-Z,
-                  <br className="hidden md:block" /> 합격하는 서류의 공통점을
-                  소개합니다.
-                </>
-              }
-            />
-          </div>
+          <Highlight
+            className="bg-[#E9F4FF] md:mt-0"
+            companyImg="cashnote.png"
+            role="캐시노트 그로스 마케터"
+            date="| 6/28 저녁 8시 (온라인)"
+            description={
+              <>
+                현직 마케터가 들려주는 그로스 마케팅의 A-Z,
+                <br className="hidden md:block" /> 합격하는 서류의 공통점을
+                소개합니다.
+              </>
+            }
+          />
         ),
       },
     ],
@@ -229,7 +213,7 @@ export const curriculums = [
         content: (
           <Highlight
             description={
-              <div className="flex flex-col gap-2.5 md:flex-row md:items-center md:gap-2">
+              <div className="flex flex-col gap-2.5 md:gap-2">
                 <img
                   className="h-auto w-[68px] md:w-[84px]"
                   src="/images/marketing/lets-career.svg"

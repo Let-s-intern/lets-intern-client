@@ -116,6 +116,12 @@ export default function ChallengeRecruitmentInfoSection({ challenge }: Props) {
   const basicPriceInfo = challenge.priceInfo.find(
     (item) => item.challengePricePlanType === 'BASIC',
   );
+  const standardPriceInfo = challenge.priceInfo.find(
+    (item) => item.challengePricePlanType === 'STANDARD',
+  );
+  const premiumPriceInfo = challenge.priceInfo.find(
+    (item) => item.challengePricePlanType === 'PREMIUM',
+  );
 
   const {
     basicRegularPrice,
@@ -131,7 +137,7 @@ export default function ChallengeRecruitmentInfoSection({ challenge }: Props) {
 
     if (premiumRegularPrice !== 0) {
       result.push({
-        title: '올인원',
+        title: premiumPriceInfo?.title || '프리미엄',
         originalPrice: premiumRegularPrice,
         discountAmount: premiumDiscountAmount,
       });
@@ -139,14 +145,14 @@ export default function ChallengeRecruitmentInfoSection({ challenge }: Props) {
 
     if (standardRegularPrice !== 0) {
       result.push({
-        title: '프리미엄',
+        title: standardPriceInfo?.title || '스탠다드',
         originalPrice: standardRegularPrice,
         discountAmount: standardDiscountAmount,
       });
     }
 
     result.push({
-      title: basicPriceInfo?.title ?? '베이직',
+      title: basicPriceInfo?.title || '베이직',
       originalPrice: basicRegularPrice,
       discountAmount: basicDiscountAmount,
     });

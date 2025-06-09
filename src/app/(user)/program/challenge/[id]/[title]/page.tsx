@@ -64,7 +64,6 @@ const Page = async ({
 
   return (
     <>
-      {/* 운영은 id 75부터 분기인데 개발할 때는 임시로 다른 아이디 사용합니다 */}
       {parseInt(id) > 11 && challenge.challengeType === 'MARKETING' ? (
         <ChallengeMarketingView challenge={challenge} />
       ) : (

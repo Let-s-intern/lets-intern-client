@@ -25,13 +25,15 @@ const PriceBox = ({
         {label}
       </div>
       <span className="text-small20 font-bold">{title}</span>
-      <p className="whitespace-pre-line text-small18 font-medium text-neutral-0 md:mb-7 md:h-[78px]">
-        {children}
-      </p>
-      <PriceSummary
-        originalPrice={originalPrice}
-        discountPrice={discountAmount}
-      />
+      <div className="flex h-full flex-col gap-6 md:justify-between">
+        <p className="whitespace-pre-line text-small18 font-medium text-neutral-0 md:mb-7 md:min-h-[78px]">
+          {children}
+        </p>
+        <PriceSummary
+          originalPrice={originalPrice}
+          discountPrice={discountAmount}
+        />
+      </div>
     </div>
   );
 };
