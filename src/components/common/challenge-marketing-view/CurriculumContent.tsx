@@ -5,7 +5,7 @@ import { ReactNode } from 'react';
 export const curriculums = [
   {
     date: '6/21-28',
-    title: '+ 네이버웹툰 / 캐시노트 현직자 강연',
+    title: '+ 캐시노트 현직자 강연',
     detail: [
       {
         date: '6/21-23',
