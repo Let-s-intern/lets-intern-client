@@ -1,7 +1,7 @@
 'use client';
 
+import Down from '@/assets/icons/down.svg?react';
 import { twMerge } from '@/lib/twMerge';
-import { ChevronDown } from 'lucide-react';
 import { AnchorHTMLAttributes, Fragment, useState } from 'react';
 import HybridLink from '../../HybridLink';
 import SubNavItem, { SubNavItemProps } from './SubNavItem';
@@ -17,7 +17,8 @@ interface Props extends AnchorHTMLAttributes<HTMLAnchorElement> {
   subNavList?: SubNavItemProps[];
   force?: boolean;
   isNew?: boolean;
-  showDropdownIcon?: boolean; // 새로 추가
+  showDropdownIcon?: boolean;
+  align?: 'left' | 'right';
 }
 
 function GlobalNavItem({
@@ -30,6 +31,7 @@ function GlobalNavItem({
   subNavList,
   isNew = false,
   showDropdownIcon,
+  align = 'left',
   ...restProps
 }: Props) {
   const linkClassName = twMerge(
@@ -42,10 +44,20 @@ function GlobalNavItem({
 
   const [hover, setHover] = useState(false);
 
+  const getAlignmentClass = () => {
+    switch (align) {
+      case 'right':
+        return 'right-0';
+      default:
+        return 'left-0';
+    }
+  };
+
   return (
     <div
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
+      className="relative"
     >
       <HybridLink
         isNextRouter={isNextRouter}
@@ -57,9 +69,9 @@ function GlobalNavItem({
         <span className="flex items-center">
           {children}
           {showDropdownIcon && subNavList && (
-            <ChevronDown
-              size={24}
-              className="text-gray-20 transition-transform group-hover:text-neutral-0"
+            <Down
+              width={24}
+              className="text-neutral-20 transition-transform group-hover:text-neutral-0"
             />
           )}
         </span>
@@ -67,7 +79,9 @@ function GlobalNavItem({
 
       {/* 서브 메뉴 */}
       {subNavList && hover && (
-        <div className="absolute z-10 flex flex-col items-center drop-shadow-xl">
+        <div
+          className={`absolute ${getAlignmentClass()} top-4 z-10 flex flex-col items-center drop-shadow-xl`}
+        >
           <div className="mx-auto h-auto w-[20px] text-white">
             {/* <Polygon /> */}
           </div>
