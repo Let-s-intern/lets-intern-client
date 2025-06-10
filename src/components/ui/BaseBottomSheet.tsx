@@ -35,14 +35,14 @@ const BaseBottomSheet = ({
         <ModalOverlay onClose={onClose} />
         <div
           className={twMerge(
-            'relative w-full pt-3 px-5 pb-6 rounded-t-lg bg-white',
+            'relative max-h-[90vh] w-full overflow-y-auto rounded-t-lg bg-white px-5 pb-6',
             className,
           )}
         >
           {/* 닫기 버튼 */}
-          <div className="w-full pb-5 bg-white">
+          <div className="sticky top-0 z-10 w-full bg-white pb-5 pt-3">
             <div
-              className="w-[4.375rem] mx-auto h-1.5 bg-neutral-80 rounded-xxs"
+              className="mx-auto h-1.5 w-[4.375rem] rounded-xxs bg-neutral-80"
               onClick={onClose}
             />
           </div>
