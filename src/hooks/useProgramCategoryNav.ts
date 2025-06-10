@@ -23,7 +23,6 @@ export default function useProgramCategoryNav() {
   });
   const { data: portfolioData } = useGetChallengeList({ type: PORTFOLIO });
   const { data: marketingData } = useGetChallengeList({ type: MARKETING });
-  const { data } = useGetChallengeList({ type: CAREER_START });
   const { data: activePersonalStatement } =
     useGetActiveChallenge(PERSONAL_STATEMENT);
   const { data: activePersonalStatementLargeCorp } = useGetActiveChallenge(
@@ -33,7 +32,6 @@ export default function useProgramCategoryNav() {
   const { data: activePortfolio } = useGetActiveChallenge(PORTFOLIO);
   const { data: activeExperienceSummary } =
     useGetActiveChallenge(EXPERIENCE_SUMMARY);
-  const { data: activeCareerStart } = useGetActiveChallenge(CAREER_START);
 
   const getProgramHref = (
     activeData?: any,
@@ -53,29 +51,30 @@ export default function useProgramCategoryNav() {
       isNextRouter: true,
     },
     {
-      children: '취준 기필코 시작',
-      href: getProgramHref(activeCareerStart, data),
-      isNextRouter: true,
-    },
-    {
-      children: '마케팅 서류 완성',
-      href: getProgramHref(activeMarketing, marketingData),
-      isNextRouter: true,
-      force: true,
-    },
-    {
-      children: '경험정리',
+      children: '경험정리 챌린지',
       href: getProgramHref(activeExperienceSummary, experienceSummaryData),
       isNextRouter: true,
     },
     {
-      children: '자기소개서 완성',
+      children: '자기소개서 완성 챌린지',
       href: getProgramHref(activePersonalStatement, personalStatementData),
       isNextRouter: true,
       force: true,
     },
     {
-      children: '대기업 공채 자소서',
+      children: '포트폴리오 완성 챌린지',
+      href: getProgramHref(activePortfolio, portfolioData),
+      isNextRouter: true,
+      force: true,
+    },
+    {
+      children: '마케팅 서류 완성 챌린지',
+      href: getProgramHref(activeMarketing, marketingData),
+      isNextRouter: true,
+      force: true,
+    },
+    {
+      children: '대기업 완성 챌린지',
       href: getProgramHref(
         activePersonalStatementLargeCorp,
         personalStatementLargeCorpData,
@@ -84,16 +83,16 @@ export default function useProgramCategoryNav() {
       force: true,
     },
     {
-      children: '포트폴리오 완성',
-      href: getProgramHref(activePortfolio, portfolioData),
+      children: '현직자 LIVE 클래스',
+      href: 'https://www.letscareer.co.kr/program?type=LIVE',
       isNextRouter: true,
       force: true,
     },
+
     {
-      children: '이력서 완성',
-      href: '/report/landing/resume',
+      children: '취준위키 VOD',
+      href: 'https://www.letscareer.co.kr/program?type=VOD',
       isNextRouter: true,
-      force: true,
     },
   ];
 
