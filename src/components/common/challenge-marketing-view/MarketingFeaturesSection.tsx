@@ -124,7 +124,7 @@ const MarketingFeaturesSection: React.FC = () => {
       </div>
 
       <div className="flex flex-col items-center gap-1.5">
-        <div className="flex w-52 flex-wrap items-center justify-center gap-1.5 md:w-full">
+        <div className="flex items-center justify-center gap-1.5">
           {badges.map((text) => (
             <Badge key={text} text={text} />
           ))}
