@@ -74,21 +74,23 @@ function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
       <div className="flex items-center justify-center gap-4">
         {isLoggedIn ? (
           <GlobalNavItem
-            className="hidden cursor-pointer items-center gap-2 md:flex"
+            className="hidden cursor-pointer items-center md:flex"
             isNextRouter={isNextRouter}
             subNavList={userSubNavList}
             showDropdownIcon={false}
             align="right"
           >
-            <span className="text-xsmall16 font-medium text-neutral-0">
-              {user?.name} 님
-            </span>
-            <img
-              src="/icons/user-user-circle-black.svg"
-              alt=""
-              aria-hidden="true"
-              className="h-6 w-6"
-            />
+            <div className="flex items-center gap-2">
+              <span className="text-xsmall16 font-medium text-neutral-0">
+                {user?.name} 님
+              </span>
+              <img
+                src="/icons/user-user-circle-black.svg"
+                alt=""
+                aria-hidden="true"
+                className="h-6 w-6"
+              />
+            </div>
           </GlobalNavItem>
         ) : (
           <div className="hidden items-center gap-2 md:flex">
