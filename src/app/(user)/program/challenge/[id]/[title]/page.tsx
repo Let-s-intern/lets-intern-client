@@ -62,6 +62,7 @@ const Page = async ({
     redirect(`/program/old/challenge/${id}`);
   }
 
+  // todo: 개발 환경에 따라 id 나누기
   return (
     <>
       {parseInt(id) > 75 && challenge.challengeType === 'MARKETING' ? (
