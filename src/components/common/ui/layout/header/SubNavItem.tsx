@@ -1,6 +1,6 @@
 import { twMerge } from '@/lib/twMerge';
 import Link from 'next/link';
-import { AnchorHTMLAttributes, MouseEvent } from 'react';
+import { AnchorHTMLAttributes, MouseEvent as ReactMouseEvent } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
 /**
@@ -13,6 +13,7 @@ export interface SubNavItemProps
   extends AnchorHTMLAttributes<HTMLAnchorElement> {
   isNextRouter: boolean;
   force?: boolean;
+  onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 }
 
 function SubNavItem({
@@ -21,6 +22,7 @@ function SubNavItem({
   force = false,
   isNextRouter,
   href = '#',
+  onClick,
   ...restProps
 }: SubNavItemProps) {
   const LinkComponent: any = isNextRouter ? Link : RouterLink;
@@ -28,20 +30,23 @@ function SubNavItem({
     ? {
         ...restProps,
         href,
-        onClick: (e: MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+        onClick: (e: ReactMouseEvent<HTMLAnchorElement, MouseEvent>) => {
           if (force) {
             e.preventDefault();
             window.location.href = href;
           }
+          if (onClick) {
+            onClick(e);
+          }
         },
       }
-    : { ...restProps, to: href, reloadDocument: true };
+    : { ...restProps, to: href, reloadDocument: true, onClick };
   const active = window.location.pathname.startsWith(href);
 
   return (
     <LinkComponent
       className={twMerge(
-        `w-[172px] bg-white px-2.5 py-2.5 text-xsmall14 text-neutral-0 hover:bg-neutral-80 ${active ? 'font-semibold' : 'font-medium'}`,
+        `h-[40px] min-w-[120px] max-w-[172px] whitespace-nowrap bg-white px-2.5 py-2.5 text-xsmall14 text-neutral-0 hover:bg-neutral-80 ${active ? 'font-semibold' : 'font-medium'}`,
         className,
       )}
       {...linkProps}
