@@ -18,7 +18,8 @@ interface Props extends AnchorHTMLAttributes<HTMLAnchorElement> {
   subNavList?: SubNavItemProps[];
   force?: boolean;
   isNew?: boolean;
-  showDropdownIcon?: boolean; // 새로 추가
+  showDropdownIcon?: boolean;
+  align?: 'left' | 'right';
 }
 
 function GlobalNavItem({
@@ -31,6 +32,7 @@ function GlobalNavItem({
   subNavList,
   isNew = false,
   showDropdownIcon,
+  align = 'left',
   ...restProps
 }: Props) {
   const linkClassName = twMerge(
@@ -56,10 +58,20 @@ function GlobalNavItem({
 
   const [hover, setHover] = useState(false);
 
+  const getAlignmentClass = () => {
+    switch (align) {
+      case 'right':
+        return 'right-0';
+      default:
+        return 'left-0';
+    }
+  };
+
   return (
     <div
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
+      className="relative"
     >
       <LinkComponent className={linkClassName} {...linkProps}>
         <span className="flex items-center">
@@ -75,7 +87,9 @@ function GlobalNavItem({
 
       {/* 서브 메뉴 */}
       {subNavList && hover && (
-        <div className="absolute top-[75px] z-10 flex flex-col items-center drop-shadow-xl">
+        <div
+          className={`absolute ${getAlignmentClass()} top-4 z-10 flex flex-col items-center drop-shadow-xl`}
+        >
           <div className="mx-auto h-auto w-[20px] text-white">
             {/* <Polygon /> */}
           </div>
