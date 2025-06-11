@@ -39,7 +39,7 @@ const NextNavBar = () => {
     setIsOpen(false);
   };
 
-  const programCategoryLists = useProgramCategoryNav();
+  const programCategoryLists = useProgramCategoryNav(true);
 
   // 사이드바 열리면 스크롤 제한
   useControlScroll(isOpen);
@@ -140,6 +140,8 @@ const NextNavBar = () => {
           href="https://letscareer.oopy.io/1df5e77c-bee1-80b3-8199-e7d2cc9d64cd"
           isNextRouter
           force
+          target="_blank"
+          rel="noopener noreferrer"
         >
           커뮤니티
           <span className="flex items-center text-xxsmall12 font-normal">
@@ -147,24 +149,11 @@ const NextNavBar = () => {
           </span>
         </SideNavItem>
         <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
-        <SideNavItem href="/about" isNextRouter force>
-          렛츠커리어 스토리
+        <SideNavItem href="/program" isNextRouter>
+          전체 프로그램
         </SideNavItem>
-        <SideNavItem href="/program" isNextRouter force>
-          프로그램
-        </SideNavItem>
-        <SideNavItem href="/review" isNextRouter>
-          수강생 솔직 후기
-        </SideNavItem>
-        <SideNavItem href="/blog/list" isNextRouter>
-          블로그
-        </SideNavItem>
-        <SideNavItem
-          href="/report/landing"
-          isNextRouter
-          subNavList={reportNavList}
-          onClick={(e) => e.stopPropagation()}
-        >
+
+        <SideNavItem href="/review" subNavList={reportNavList} isNextRouter>
           서류 피드백 REPORT
         </SideNavItem>
         <SideNavItem
@@ -177,11 +166,21 @@ const NextNavBar = () => {
           커피챗
         </SideNavItem>
         <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
+        <SideNavItem className="notice_gnb" href="/review" isNextRouter>
+          수강생 솔직 후기
+        </SideNavItem>
+        <SideNavItem className="notice_gnb" href="/blog/list" isNextRouter>
+          블로그
+        </SideNavItem>
+        <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
         {isLoggedIn && isAdmin && (
           <SideNavItem href="/admin" isNextRouter force>
             관리자 페이지
           </SideNavItem>
         )}
+        <SideNavItem className="notice_gnb" href="/about" isNextRouter>
+          렛츠커리어 스토리
+        </SideNavItem>
         <SideNavItem
           className="notice_gnb"
           href="https://letscareer.oopy.io"

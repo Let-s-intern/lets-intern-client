@@ -35,31 +35,39 @@ function SideNavItem({
   const linkClassName = twMerge(
     'text-small16 flex max-h-[40px] w-full cursor-pointer rounded-xs py-2 font-semibold text-neutral-30',
     isNew &&
-      "items-center gap-1.5 after:flex after:h-4 after:w-4 after:items-center after:justify-center after:rounded-full after:bg-system-error after:text-[10px] after:font-bold after:leading-none after:text-white after:content-['N']",
+      "items-center gap-1.5 after:flex after:h-4 after:w-4 after:items-center after:justify-center after:rounded-full after:bg-system-error after:text-[8px] after:font-bold after:leading-none after:text-white after:content-['N']",
     subNavList && 'justify-between',
     className,
   );
   const LinkComponent: any = isNextRouter ? Link : RouterLink;
+
+  // react-router와 next에서 동작하게 onClick 포함한 handleClick 정의
+  const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
+    onClick?.(e); // 외부 onClick 먼저 실행
+    if (subNavList) {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsOpen((prev) => !prev); // 내부 토글 처리
+      return;
+    }
+    if (force && isNextRouter) {
+      e.preventDefault();
+      window.location.href = href;
+    }
+  };
+
   const linkProps = isNextRouter
     ? {
         ...restProps,
         href: subNavList ? '#' : href,
-        onClick: (e: MouseEvent<HTMLAnchorElement>) => {
-          if (onClick) onClick(e);
-          if (subNavList) {
-            e.stopPropagation();
-            setIsOpen(!isOpen);
-            return;
-          }
-          // 서브 메뉴 있을 땐 동작 X
-          if (force) {
-            e.preventDefault();
-            window.location.href = href;
-          }
-        },
+        onClick: handleClick,
       }
-    : { ...restProps, to: href, reloadDocument: force, onClick };
-
+    : {
+        ...restProps,
+        to: subNavList ? '#' : href,
+        reloadDocument: force,
+        onClick: handleClick,
+      };
   return (
     <div className="flex w-full flex-col px-5">
       <LinkComponent className={linkClassName} {...linkProps}>

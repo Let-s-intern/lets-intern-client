@@ -74,6 +74,7 @@ export default function LandingLayout({
   const pathname = usePathname();
   let { hasActiveResume, hasActivePersonalStatement, hasActivePortfolio } =
     useActiveReports();
+  // TODO: 메인 배포 전에 삭제 해야함. 테스트용
   hasActiveResume = true;
   hasActivePersonalStatement = true;
   hasActivePortfolio = true;

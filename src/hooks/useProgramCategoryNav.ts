@@ -8,10 +8,9 @@ const {
   PERSONAL_STATEMENT_LARGE_CORP,
   PORTFOLIO,
   MARKETING,
-  CAREER_START,
 } = challengeTypeSchema.enum;
 
-export default function useProgramCategoryNav() {
+export default function useProgramCategoryNav(isNextRouter: boolean) {
   const { data: experienceSummaryData } = useGetChallengeList({
     type: EXPERIENCE_SUMMARY,
   });
@@ -48,29 +47,29 @@ export default function useProgramCategoryNav() {
     {
       children: '전체 프로그램',
       href: `/program`,
-      isNextRouter: true,
+      isNextRouter,
     },
     {
       children: '경험정리 챌린지',
       href: getProgramHref(activeExperienceSummary, experienceSummaryData),
-      isNextRouter: true,
+      isNextRouter,
     },
     {
       children: '자기소개서 완성 챌린지',
       href: getProgramHref(activePersonalStatement, personalStatementData),
-      isNextRouter: true,
+      isNextRouter,
       force: true,
     },
     {
       children: '포트폴리오 완성 챌린지',
       href: getProgramHref(activePortfolio, portfolioData),
-      isNextRouter: true,
+      isNextRouter,
       force: true,
     },
     {
       children: '마케팅 서류 완성 챌린지',
       href: getProgramHref(activeMarketing, marketingData),
-      isNextRouter: true,
+      isNextRouter,
       force: true,
     },
     {
@@ -79,20 +78,20 @@ export default function useProgramCategoryNav() {
         activePersonalStatementLargeCorp,
         personalStatementLargeCorpData,
       ),
-      isNextRouter: true,
+      isNextRouter,
       force: true,
     },
     {
       children: '현직자 LIVE 클래스',
       href: 'https://www.letscareer.co.kr/program?type=LIVE',
-      isNextRouter: true,
+      isNextRouter,
       force: true,
     },
 
     {
       children: '취준위키 VOD',
       href: 'https://www.letscareer.co.kr/program?type=VOD',
-      isNextRouter: true,
+      isNextRouter,
     },
   ];
 
