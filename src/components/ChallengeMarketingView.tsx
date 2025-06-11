@@ -39,9 +39,18 @@ interface Props {
   challenge: ChallengeIdPrimitive;
 }
 
+console.log(process.env.NODE_ENV);
+
 const ChallengeMarketingView = ({ challenge }: Props) => {
   return (
     <div className="w-full">
+      <iframe
+        src="https://yyeonkim.notion.site/ebd/181bcd7a15ad80ec96e0df8333660138?v=9ac29f377890459db317d5e556dbccce"
+        width="100%"
+        height="600"
+        frameBorder="0"
+        allowFullScreen
+      />
       <ChallengeBasicInfoSection challenge={challenge} />
       <ChallengeTabNavigation />
       <MarketingIntroSection />
