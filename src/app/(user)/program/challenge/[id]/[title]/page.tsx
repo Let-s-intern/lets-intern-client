@@ -62,10 +62,12 @@ const Page = async ({
     redirect(`/program/old/challenge/${id}`);
   }
 
-  // todo: 개발 환경에 따라 id 나누기
+  const MARKETING_ID_THRESHOLD =
+    process.env.NODE_ENV === 'development' ? 11 : 75;
   return (
     <>
-      {parseInt(id) > 75 && challenge.challengeType === 'MARKETING' ? (
+      {parseInt(id) > MARKETING_ID_THRESHOLD &&
+      challenge.challengeType === 'MARKETING' ? (
         <ChallengeMarketingView challenge={challenge} />
       ) : (
         <ChallengeView challenge={challenge} />
