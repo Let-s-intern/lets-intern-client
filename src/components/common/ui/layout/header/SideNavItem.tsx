@@ -45,6 +45,7 @@ function SideNavItem({
           if (onClick) onClick(e);
           if (subNavList) {
             e.preventDefault();
+            e.stopPropagation();
             setIsOpen(!isOpen);
           }
         }}
