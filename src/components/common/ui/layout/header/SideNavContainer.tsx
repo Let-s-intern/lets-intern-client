@@ -39,10 +39,10 @@ function SideNavContainer({ children, isNextRouter, isOpen, onClose }: Props) {
       </div>
       <hr />
       <KakaoChannel />
-      <div className="flex h-full flex-col gap-5 overflow-y-auto pb-36 pt-5">
+      <div className="flex h-full flex-col gap-4 overflow-y-auto pb-36 pt-4 scrollbar-hide">
         <div className="mx-5 flex justify-between">
           {isLoggedIn ? (
-            <span className="flex w-full items-center justify-between gap-4 text-neutral-0 sm:p-0">
+            <span className="flex w-full items-center justify-between gap-4 text-xsmall16 font-medium text-neutral-0 sm:p-0">
               <span>
                 환영합니다, <span className="text-primary">{user?.name}</span>님
               </span>
