@@ -173,7 +173,7 @@ const ChallengePointView = ({
           '/icons/bg-logo-personal-statement.svg',
         ];
       default:
-        return ['', ''];
+        return [null, null];
     }
   }, [challengeType]);
 
@@ -389,11 +389,13 @@ const ChallengePointView = ({
             <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
             <HoleIcon className="hidden h-auto w-4 md:block md:w-5" />
           </div>
-          <img
-            className="absolute -right-14 top-8 h-auto w-[362px] md:-top-12 md:w-[838px] lg:right-48"
-            src={recommendLogoSrc}
-            alt=""
-          />
+          {recommendLogoSrc && (
+            <img
+              className="absolute -right-14 top-8 h-auto w-[362px] md:-top-12 md:w-[838px] lg:right-48"
+              src={recommendLogoSrc}
+              alt=""
+            />
+          )}
 
           {/* 본문 */}
           <div className="relative z-10 px-5 py-16 md:py-32 lg:px-0">
@@ -480,11 +482,13 @@ const ChallengePointView = ({
               </Box>
               <Box className="relative overflow-hidden md:flex-1">
                 <BoxItem title={reward.title}>{reward.content}</BoxItem>
-                <img
-                  className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
-                  src={paypackImgSrc}
-                  alt={`페이백 ${deposit / 10000}만원`}
-                />
+                {paypackImgSrc && (
+                  <img
+                    className="absolute bottom-0 right-0 h-auto w-44 md:w-48"
+                    src={paypackImgSrc}
+                    alt={`페이백 ${deposit / 10000}만원`}
+                  />
+                )}
               </Box>
             </div>
           </div>
