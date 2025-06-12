@@ -87,7 +87,7 @@ const columns: GridColDef<Row>[] = [
   },
 ];
 
-function ChallengeOperationFeedbackPage() {
+const useFeedbackMissionRows = () => {
   const { programId } = useParams();
 
   const [rows, setRows] = useState<Row[]>([]);
@@ -100,6 +100,12 @@ function ChallengeOperationFeedbackPage() {
       })),
     );
   }, [programId]);
+
+  return rows;
+};
+
+function ChallengeOperationFeedbackPage() {
+  const rows = useFeedbackMissionRows();
 
   return (
     <DataGrid
