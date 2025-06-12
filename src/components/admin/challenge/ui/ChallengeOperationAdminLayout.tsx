@@ -38,6 +38,11 @@ const getNavLinks = (programId?: string | number) => {
       to: `/admin/challenge/operation/${programId}/payback`,
       text: '페이백',
     },
+    {
+      id: 'feedback',
+      to: `/admin/challenge/operation/${programId}/feedback`,
+      text: '피드백',
+    },
   ];
 };
 
