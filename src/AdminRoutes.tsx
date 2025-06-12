@@ -23,6 +23,7 @@ import BlogRatingListPage from './router-pages/admin/blog/BlogRatingListPage';
 import ChallengeContents from './router-pages/admin/challenge/ChallengeContents';
 import ChallengeMissionManagement from './router-pages/admin/challenge/ChallengeMissionManagement';
 import ChallengeOperationAttendances from './router-pages/admin/challenge/ChallengeOperationAttendances';
+import ChallengeOperationFeedbackPage from './router-pages/admin/challenge/ChallengeOperationFeedbackPage';
 import ChallengeOperationHome from './router-pages/admin/challenge/ChallengeOperationHome';
 import ChallengeOperationOnboarding from './router-pages/admin/challenge/ChallengeOperationOnboarding';
 import ChallengeOperationParticipants from './router-pages/admin/challenge/ChallengeOperationParticipants';
@@ -165,6 +166,9 @@ export const getAdminRoutes = () => {
 
         {/* /admin/challenge/operation/1/payback */}
         <Route path="payback" element={<ChallengeOperationPayback />} />
+
+        {/* 챌린지 운영 > 피드백 /admin/challenge/operation/{challengeId}/feedback */}
+        <Route path="feedback" element={<ChallengeOperationFeedbackPage />} />
       </Route>
       {/* /admin/challenge/contents */}
       <Route path="/admin/challenge/contents" element={<ChallengeContents />} />
