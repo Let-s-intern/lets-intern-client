@@ -29,6 +29,7 @@ import ChallengeOperationOnboarding from './router-pages/admin/challenge/Challen
 import ChallengeOperationParticipants from './router-pages/admin/challenge/ChallengeOperationParticipants';
 import ChallengeOperationPayback from './router-pages/admin/challenge/ChallengeOperationPayback';
 import ChallengeOperationRegisterMission from './router-pages/admin/challenge/ChallengeOperationRegisterMission';
+import FeedbackParticipantPage from './router-pages/admin/challenge/FeedbackParticipantPage';
 import ChallengeCreate from './router-pages/admin/ChallengeCreate';
 import ChallengeEdit from './router-pages/admin/ChallengeEdit';
 import CouponCreate from './router-pages/admin/coupon/CouponCreate';
@@ -167,8 +168,14 @@ export const getAdminRoutes = () => {
         {/* /admin/challenge/operation/1/payback */}
         <Route path="payback" element={<ChallengeOperationPayback />} />
 
-        {/* 챌린지 운영 > 피드백 /admin/challenge/operation/{challengeId}/feedback */}
+        {/* 챌린지 운영 > 피드백 페이지 /admin/challenge/operation/{challengeId}/feedback */}
         <Route path="feedback" element={<ChallengeOperationFeedbackPage />} />
+
+        {/* 챌린지 운영 > 피드백 > 참여자 페이지 /admin/challenge/operation/{challengeId}/feedback/mission/{missionId}/participants */}
+        <Route
+          path="feedback/mission/:missionId/participants"
+          element={<FeedbackParticipantPage />}
+        />
       </Route>
       {/* /admin/challenge/contents */}
       <Route path="/admin/challenge/contents" element={<ChallengeContents />} />

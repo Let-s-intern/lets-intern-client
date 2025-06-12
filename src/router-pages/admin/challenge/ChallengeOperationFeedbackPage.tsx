@@ -1,7 +1,8 @@
 import { LOCALIZED_YYYY_MD_Hm } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 
 interface Row {
   id: number | string;
@@ -10,9 +11,10 @@ interface Row {
   startDate: string;
   endDate: string;
   challengeOptionCode: string;
+  url: string;
 }
 
-const rows: Row[] = [
+const data = [
   {
     id: 1,
     title: '첫 번째 미션',
@@ -39,52 +41,65 @@ const rows: Row[] = [
   },
 ];
 
+const columns: GridColDef<Row>[] = [
+  {
+    field: 'title',
+    headerName: '미션 명',
+    width: 200,
+  },
+  {
+    field: 'th',
+    headerName: '미션 회차',
+    type: 'number',
+    width: 100,
+  },
+  {
+    field: 'startDate',
+    headerName: '공개일',
+    width: 200,
+    sortable: false,
+    renderCell: (params: GridRenderCellParams<Row, string>) =>
+      dayjs(params.value).format(LOCALIZED_YYYY_MD_Hm),
+  },
+  {
+    field: 'endDate',
+    headerName: '마감일',
+    sortable: false,
+    width: 200,
+    renderCell: (params: GridRenderCellParams<Row, string>) =>
+      dayjs(params.value).format(LOCALIZED_YYYY_MD_Hm),
+  },
+  {
+    field: 'challengeOptionCode',
+    headerName: '피드백 옵션',
+    sortable: false,
+    width: 200,
+  },
+  {
+    field: 'url',
+    headerName: '피드백 페이지',
+    width: 120,
+    renderCell: (params: GridRenderCellParams<Row, string>) => (
+      <Link to={params.value || '#'} className="text-primary underline">
+        바로가기
+      </Link>
+    ),
+  },
+];
+
 function ChallengeOperationFeedbackPage() {
-  const columns: GridColDef<Row>[] = [
-    {
-      field: 'title',
-      headerName: '미션 명',
-      width: 200,
-    },
-    {
-      field: 'th',
-      headerName: '미션 회차',
-      type: 'number',
-      width: 100,
-    },
-    {
-      field: 'startDate',
-      headerName: '공개일',
-      width: 200,
-      sortable: false,
-      renderCell: (params: GridRenderCellParams<Row, string>) =>
-        dayjs(params.value).format(LOCALIZED_YYYY_MD_Hm),
-    },
-    {
-      field: 'endDate',
-      headerName: '마감일',
-      sortable: false,
-      width: 200,
-      renderCell: (params: GridRenderCellParams<Row, string>) =>
-        dayjs(params.value).format(LOCALIZED_YYYY_MD_Hm),
-    },
-    {
-      field: 'challengeOptionCode',
-      headerName: '피드백 옵션',
-      sortable: false,
-      width: 200,
-    },
-    {
-      field: 'url',
-      headerName: '피드백 페이지',
-      width: 120,
-      renderCell: (params: GridRenderCellParams<Row, string>) => (
-        <Link to={params.value || '#'} className="text-primary underline">
-          바로가기
-        </Link>
-      ),
-    },
-  ];
+  const { programId } = useParams();
+
+  const [rows, setRows] = useState<Row[]>([]);
+
+  useEffect(() => {
+    setRows(
+      data.map((item) => ({
+        ...item,
+        url: `/admin/challenge/operation/${programId}/feedback/mission/${item.id}/participants`,
+      })),
+    );
+  }, [programId]);
 
   return (
     <DataGrid
