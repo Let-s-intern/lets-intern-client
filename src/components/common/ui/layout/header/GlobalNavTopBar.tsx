@@ -36,7 +36,6 @@ function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
       : []),
     {
       children: '로그아웃',
-      href: '',
       onClick: () => {
         logout();
         window.location.href = '/';
