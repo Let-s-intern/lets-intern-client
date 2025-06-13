@@ -88,7 +88,9 @@ function GlobalNavItem({
           <div className="my-3 flex w-full flex-col rounded-xs bg-white py-1">
             {subNavList.map((item, index) => (
               <Fragment key={item.href}>
-                <SubNavItem {...item}>{item.children}</SubNavItem>
+                <SubNavItem {...item} align={align}>
+                  {item.children}
+                </SubNavItem>
                 {index < subNavList.length - 1 && (
                   <hr className="border-t border-neutral-90" />
                 )}
