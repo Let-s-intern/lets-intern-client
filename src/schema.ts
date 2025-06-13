@@ -213,11 +213,13 @@ export const reviewTotalSchema = z.object({
 
 export type ReviewType = z.infer<typeof reviewSchema>;
 
-const missionStatusType = z.union([
-  z.literal('WAITING'),
-  z.literal('CHECK_DONE'),
-  z.literal('REFUND_DONE'),
+export const MissionStatusEnum = z.enum([
+  'WAITING',
+  'CHECK_DONE',
+  'REFUND_DONE',
 ]);
+
+export type MissionStatus = z.infer<typeof MissionStatusEnum>;
 
 export const challengePriceInfoSchema = z.object({
   title: z.string().optional().nullable(),
@@ -674,7 +676,7 @@ export const missionAdmin = z
         id: z.number(),
         th: z.number(),
         missionType: z.string(),
-        missionStatusType,
+        missionStatusType: MissionStatusEnum,
         attendanceCount: z.number(),
         lateAttendanceCount: z.number(),
         wrongAttendanceCount: z.number().optional().nullable(),
@@ -1125,7 +1127,7 @@ export const challengeSchedule = z
           th: z.number().nullable(),
           startDate: z.string().nullable(),
           endDate: z.string().nullable(),
-          status: missionStatusType.nullable(),
+          status: MissionStatusEnum.nullable(),
         }),
         attendanceInfo: z.object({
           submitted: z.boolean().nullable(),
@@ -1188,7 +1190,7 @@ export const userChallengeMissionDetail = z
           link: z.string().nullable(),
         }),
       ),
-      status: missionStatusType,
+      status: MissionStatusEnum,
       missionTag: z.string(),
       description: z.string(),
       guide: z.string(),
@@ -1280,7 +1282,7 @@ export const myDailyMission = z
             link: z.string().nullable(),
           }),
         ),
-        status: missionStatusType,
+        status: MissionStatusEnum,
         missionTag: z.string().nullable(),
         description: z.string().nullable(),
         guide: z.string().nullable(),
