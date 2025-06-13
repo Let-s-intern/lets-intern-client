@@ -219,6 +219,8 @@ export const MissionStatusEnum = z.enum([
   'REFUND_DONE',
 ]);
 
+export type MissionStatus = z.infer<typeof MissionStatusEnum>;
+
 export const challengePriceInfoSchema = z.object({
   title: z.string().optional().nullable(),
   description: z.string().optional().nullable(),

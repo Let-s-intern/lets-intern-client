@@ -96,7 +96,7 @@ const useFeedbackMissionRows = () => {
     setRows(
       data.map((item) => ({
         ...item,
-        url: `/admin/challenge/operation/${programId}/feedback/mission/${item.id}/participants`,
+        url: `/admin/challenge/operation/${programId}/feedback/mission/${item.id}/participants?th=${item.th}&title=${encodeURIComponent(item.title)}`,
       })),
     );
   }, [programId]);
