@@ -27,7 +27,7 @@ function SideNavItem({
   const [isOpen, setIsOpen] = useState(false);
 
   const linkClassName = twMerge(
-    'text-small16 flex max-h-[40px] w-full cursor-pointer rounded-xs py-2 font-semibold text-neutral-30',
+    'text-small16 flex max-h-[40px] w-full cursor-pointer gap-0.5 rounded-xs py-2 font-semibold text-neutral-30',
     isNew &&
       "items-center gap-1.5 after:flex after:h-4 after:w-4 after:items-center after:justify-center after:rounded-full after:bg-system-error after:text-[8px] after:font-bold after:leading-none after:text-white after:content-['N']",
     subNavList && 'justify-between',
