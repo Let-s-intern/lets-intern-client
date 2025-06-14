@@ -38,8 +38,8 @@ function SideNavContainer({ children, isNextRouter, isOpen, onClose }: Props) {
         </i>
       </div>
       <hr />
-      <KakaoChannel />
-      <div className="flex h-full flex-col gap-4 overflow-y-auto pb-36 pt-4 scrollbar-hide">
+      <div className="flex h-full flex-col gap-4 overflow-y-auto pb-36 scrollbar-hide">
+        <KakaoChannel />
         <div className="mx-5 flex justify-between">
           {isLoggedIn ? (
             <span className="flex w-full items-center justify-between gap-4 text-xsmall16 font-medium text-neutral-0 sm:p-0">
