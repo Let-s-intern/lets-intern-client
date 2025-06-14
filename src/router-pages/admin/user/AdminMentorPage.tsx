@@ -51,11 +51,20 @@ const useMentorColumns = () => {
           _: React.ChangeEvent<HTMLInputElement>,
           checked: boolean,
         ) => {
-          await patchUser.mutateAsync({ id: params.row.id, isMentor: checked });
-          client.invalidateQueries({
-            queryKey: [UseUserAdminQueryKey],
-          });
-          snackbar('멘토 설정이 완료되었습니다');
+          try {
+            await patchUser.mutateAsync({
+              id: params.row.id,
+              isMentor: checked,
+            });
+            client.invalidateQueries({
+              queryKey: [UseUserAdminQueryKey],
+            });
+            snackbar('멘토 설정이 완료되었습니다');
+          } catch (err) {
+            // eslint-disable-next-line no-console
+            console.error(err);
+            snackbar(`문제가 발생했습니다: ${err}`);
+          }
         };
         return (
           <Checkbox checked={params.value ?? false} onChange={handleChange} />
@@ -80,6 +89,8 @@ const useMentorRows = () => {
   return rows;
 };
 
+const PAGE_SIZE = 10;
+
 export default function AdminMentorPage() {
   const columns = useMentorColumns();
   const rows = useMentorRows();
@@ -94,11 +105,11 @@ export default function AdminMentorPage() {
         initialState={{
           pagination: {
             paginationModel: {
-              pageSize: 10,
+              pageSize: PAGE_SIZE,
             },
           },
         }}
-        pageSizeOptions={[10]}
+        pageSizeOptions={[PAGE_SIZE]}
       />
     </section>
   );
