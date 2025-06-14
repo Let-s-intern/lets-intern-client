@@ -1,10 +1,17 @@
 /** 멘토 관리 페이지 */
 
-import { useUserAdminQuery } from '@/api/user';
+'use client';
+
+import {
+  usePatchUserAdminMutation,
+  useUserAdminQuery,
+  UseUserAdminQueryKey,
+} from '@/api/user';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import Heading from '@components/admin/ui/heading/Heading';
 import { Checkbox } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { useRef } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface Row {
   id: number;
@@ -14,39 +21,55 @@ interface Row {
   isMentor: boolean;
 }
 
-const columns: GridColDef<Row>[] = [
-  {
-    field: 'name',
-    headerName: '이름',
-    width: 100,
-  },
-  {
-    field: 'email',
-    headerName: '이메일',
-    width: 200,
-  },
-  {
-    field: 'phoneNum',
-    headerName: '전화번호',
-    width: 160,
-  },
-  {
-    field: 'isMentor',
-    headerName: '멘토 여부',
-    width: 100,
-    renderCell: (params: GridRenderCellParams<Row, boolean>) => (
-      <Checkbox
-        checked={params.value ?? false}
-        onChange={() => console.log('멘토 설정')}
-      />
-    ),
-  },
-];
+const useMentorColumns = () => {
+  const client = useQueryClient();
+  const patchUser = usePatchUserAdminMutation();
+  const { snackbar } = useAdminSnackbar();
 
-export default function AdminMentorPage() {
-  const pageRef = useRef({ page: 1, size: 10000 });
+  const columns: GridColDef<Row>[] = [
+    {
+      field: 'name',
+      headerName: '이름',
+      width: 100,
+    },
+    {
+      field: 'email',
+      headerName: '이메일',
+      width: 200,
+    },
+    {
+      field: 'phoneNum',
+      headerName: '전화번호',
+      width: 160,
+    },
+    {
+      field: 'isMentor',
+      headerName: '멘토 여부',
+      width: 100,
+      renderCell: (params: GridRenderCellParams<Row, boolean>) => {
+        const handleChange = async (
+          _: React.ChangeEvent<HTMLInputElement>,
+          checked: boolean,
+        ) => {
+          await patchUser.mutateAsync({ id: params.row.id, isMentor: checked });
+          client.invalidateQueries({
+            queryKey: [UseUserAdminQueryKey],
+          });
+          snackbar('멘토 설정이 완료되었습니다');
+        };
+        return (
+          <Checkbox checked={params.value ?? false} onChange={handleChange} />
+        );
+      },
+    },
+  ];
 
-  const { data } = useUserAdminQuery({ pageable: pageRef.current });
+  return columns;
+};
+
+const useMentorRows = () => {
+  const pageable = { page: 1, size: 10000 };
+  const { data } = useUserAdminQuery({ pageable });
   const rows = data?.userAdminList.map(({ userInfo }) => ({
     id: userInfo.id,
     name: userInfo.name,
@@ -54,6 +77,12 @@ export default function AdminMentorPage() {
     phoneNum: userInfo.phoneNum,
     isMentor: userInfo.isMentor ?? false,
   }));
+  return rows;
+};
+
+export default function AdminMentorPage() {
+  const columns = useMentorColumns();
+  const rows = useMentorRows();
 
   return (
     <section className="p-5">
@@ -69,6 +98,7 @@ export default function AdminMentorPage() {
             },
           },
         }}
+        pageSizeOptions={[10]}
       />
     </section>
   );

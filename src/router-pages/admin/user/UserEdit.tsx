@@ -101,11 +101,11 @@ const UserEdit = () => {
       alert('이름을 입력해주세요.');
       return;
     }
-    if (!isValidEmail(userForm.email)) {
+    if (!isValidEmail(userForm.email ?? '')) {
       alert('이메일 형식이 올바르지 않습니다.');
       return;
     }
-    if (!isValidPhoneNumber(userForm.phoneNum)) {
+    if (!isValidPhoneNumber(userForm.phoneNum ?? '')) {
       alert('휴대폰 번호 형식이 올바르지 않습니다.');
       return;
     }
@@ -172,7 +172,7 @@ const UserEdit = () => {
             />
             <div className="z-10 flex w-full flex-col gap-y-2">
               <GradeDropdown
-                value={userForm.grade === null ? '' : userForm.grade}
+                value={!userForm.grade ? '' : userForm.grade}
                 setValue={handleGradeChange}
                 type="MYPAGE"
               />
