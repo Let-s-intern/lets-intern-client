@@ -179,9 +179,9 @@ export const getAdminRoutes = () => {
           element={<FeedbackParticipantPage />}
         />
 
-        {/* 챌린지 운영 > 피드백 > 참여자 페이지 > 피드백 페이지 /admin/challenge/operation/{challengeId}/mission/{missionId}/participant/{userId}/feedback */}
+        {/* 챌린지 운영 > 피드백 > 참여자 페이지 > 피드백 페이지 /admin/challenge/operation/{challengeId}/mission/{missionId}/participant/:userId/feedback */}
         <Route
-          path="feedback/mission/:missionId/participants"
+          path="mission/:missionId/participant/:userId/feedback"
           element={<ChallengeFeedbackPage />}
         />
       </Route>

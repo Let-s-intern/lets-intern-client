@@ -4,7 +4,7 @@
 
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 
 // *미션 제출 현황 = 정상 제출, 확인여부 = 확인 완료인 참여자 미션만 노출
 const data = [
@@ -137,7 +137,9 @@ const columns: GridColDef<Row>[] = [
 ];
 
 export default function FeedbackParticipantPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { missionId, programId } = useParams();
+  const [searchParams] = useSearchParams();
+
   const [rows, setRows] = useState<Row[]>([]);
 
   const missionTitle = searchParams.get('title') ?? '';
@@ -146,17 +148,17 @@ export default function FeedbackParticipantPage() {
   useEffect(() => {
     setRows(
       data.map((item) => {
-        const { status, result, challengePricePlanType, ...rest } = item;
+        const { status, result, challengePricePlanType, ...rest } = item; // eslint-disable-line @typescript-eslint/no-unused-vars
         return {
           ...rest,
           missionTitle,
           missionRound,
-          feedbackPageLink: `link`,
+          feedbackPageLink: `/admin/challenge/operation/${programId}/mission/${missionId}/participant/${item.id}/feedback`,
           missionStatus: '진행전',
         };
       }),
     );
-  }, [missionTitle, missionRound]);
+  }, [missionTitle, missionRound, programId, missionId]);
 
   return (
     <DataGrid
