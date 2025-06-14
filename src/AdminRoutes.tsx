@@ -59,6 +59,7 @@ import AdminChallengeReviewListPage from './router-pages/admin/review/AdminChall
 import AdminLiveReviewListPage from './router-pages/admin/review/AdminLiveReviewListPage';
 import AdminMissionReviewListPage from './router-pages/admin/review/AdminMissionReviewListPage';
 import AdminReportReviewListPage from './router-pages/admin/review/AdminReportReviewListPage';
+import AdminMentorPage from './router-pages/admin/user/AdminMentorPage';
 import AdminUsersPage from './router-pages/admin/user/AdminUsersPage';
 import UserDetail from './router-pages/admin/user/UserDetail';
 import UserEdit from './router-pages/admin/user/UserEdit';
@@ -90,6 +91,10 @@ export const getAdminRoutes = () => {
           <Route path="edit" element={<UserEdit />} />
         </Route>
       </Route>
+
+      {/* 멘토 관리 /admin/mentors */}
+      <Route path="mentors" element={<AdminMentorPage />} />
+
       {/* /admin/coupons */}
       <Route path="coupons">
         {/* /admin/coupons */}

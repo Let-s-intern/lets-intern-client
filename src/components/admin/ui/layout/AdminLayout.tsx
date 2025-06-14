@@ -49,6 +49,10 @@ const navData = [
         name: '쿠폰 관리',
         url: '/admin/coupons',
       },
+      {
+        name: '멘토 관리',
+        url: '/admin/mentors',
+      },
     ],
   },
   {
