@@ -2,9 +2,11 @@ import GlobalNavItem from './GlobalNavItem';
 
 interface Props {
   isNextRouter: boolean;
+  isLoggedIn: boolean;
+  isAdmin: boolean | undefined;
 }
 
-function ExternalNavList({ isNextRouter }: Props) {
+function ExternalNavList({ isNextRouter, isLoggedIn, isAdmin }: Props) {
   return (
     <div className="flex items-center gap-1">
       <GlobalNavItem
@@ -28,6 +30,16 @@ function ExternalNavList({ isNextRouter }: Props) {
       >
         자주 묻는 질문
       </GlobalNavItem>
+      {isLoggedIn && isAdmin && (
+        <GlobalNavItem
+          className="q&a_gnb ml-4 text-xsmall16 font-normal text-neutral-30"
+          href="/admin"
+          isNextRouter={isNextRouter}
+          force
+        >
+          관리자 페이지
+        </GlobalNavItem>
+      )}
     </div>
   );
 }
