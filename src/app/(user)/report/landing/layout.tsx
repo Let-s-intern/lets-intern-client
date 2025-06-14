@@ -72,12 +72,8 @@ export default function LandingLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  let { hasActiveResume, hasActivePersonalStatement, hasActivePortfolio } =
+  const { hasActiveResume, hasActivePersonalStatement, hasActivePortfolio } =
     useActiveReports();
-  // TODO: 메인 배포 전에 삭제 해야함. 테스트용
-  hasActiveResume = true;
-  hasActivePersonalStatement = true;
-  hasActivePortfolio = true;
 
   return (
     <div className="flex min-h-screen flex-col">
