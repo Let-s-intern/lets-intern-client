@@ -1,4 +1,5 @@
 import EditorApp from '@components/admin/lexical/EditorApp';
+import Heading2 from '@components/admin/ui/heading/Heading2';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -37,7 +38,7 @@ export default function ChallengeFeedbackPage() {
 
   return (
     <div className="mt-5 px-5">
-      <h2 className="mb-1 text-medium24 font-bold">{name} 피드백</h2>
+      <Heading2 className="mb-2">{name} 피드백</Heading2>
       <ul className="list-inside list-disc">
         {list.map((item, index) => (
           <li key={index}>{item}</li>
