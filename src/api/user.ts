@@ -1,3 +1,4 @@
+import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import {
@@ -6,7 +7,6 @@ import {
   grade,
   userAdminDetailType,
 } from '../schema';
-import axios from '../utils/axios';
 import { isAdminSchema, userAdminType } from './userSchema';
 
 export const UseUserAdminQueryKey = 'useUserListQueryKey';
@@ -24,7 +24,7 @@ export const useUserAdminQuery = ({
     page: number;
     size: number;
   };
-}) => {
+} = {}) => {
   return useQuery({
     queryKey: [UseUserAdminQueryKey, email, name, phoneNum, pageable],
     queryFn: async () => {

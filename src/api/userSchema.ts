@@ -18,6 +18,7 @@ export const userAdminType = z.object({
         accountType: accountType.nullable(),
         accountNum: z.string().nullable(),
         marketingAgree: z.boolean().nullable(),
+        isMentor: z.boolean().nullable().optional(),
       }),
       applicationInfos: z.array(
         z.object({
