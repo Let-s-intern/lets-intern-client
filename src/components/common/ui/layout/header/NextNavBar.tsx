@@ -96,6 +96,7 @@ const NextNavBar = () => {
               <GlobalNavItem
                 className="text-xsmall16"
                 href="/review"
+                force
                 isNextRouter
                 active={activeLink === 'REVIEW'}
               >
@@ -104,6 +105,7 @@ const NextNavBar = () => {
               <GlobalNavItem
                 className="text-xsmall16"
                 href="/blog/list"
+                force
                 isNextRouter
                 active={activeLink === 'BLOG'}
               >
@@ -166,10 +168,15 @@ const NextNavBar = () => {
           커피챗
         </SideNavItem>
         <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
-        <SideNavItem className="notice_gnb" href="/review" isNextRouter>
+        <SideNavItem className="notice_gnb" href="/review" force isNextRouter>
           수강생 솔직 후기
         </SideNavItem>
-        <SideNavItem className="notice_gnb" href="/blog/list" isNextRouter>
+        <SideNavItem
+          className="notice_gnb"
+          href="/blog/list"
+          force
+          isNextRouter
+        >
           블로그
         </SideNavItem>
         <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
@@ -178,7 +185,7 @@ const NextNavBar = () => {
             관리자 페이지
           </SideNavItem>
         )}
-        <SideNavItem className="notice_gnb" href="/about" isNextRouter>
+        <SideNavItem className="notice_gnb" href="/about" force isNextRouter>
           렛츠커리어 스토리
         </SideNavItem>
         <SideNavItem
