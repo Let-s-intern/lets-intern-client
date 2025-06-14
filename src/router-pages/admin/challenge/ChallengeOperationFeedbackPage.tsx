@@ -80,7 +80,14 @@ const columns: GridColDef<Row>[] = [
     headerName: '피드백 페이지',
     width: 120,
     renderCell: (params: GridRenderCellParams<Row, string>) => (
-      <Link to={params.value || '#'} className="text-primary underline">
+      <Link
+        to={params.value || '#'}
+        className="text-primary underline"
+        onClick={() => {
+          // 선택한 행 정보 저장
+          localStorage.setItem('mission', JSON.stringify(params.row));
+        }}
+      >
         바로가기
       </Link>
     ),
@@ -96,7 +103,7 @@ const useFeedbackMissionRows = () => {
     setRows(
       data.map((item) => ({
         ...item,
-        url: `/admin/challenge/operation/${programId}/feedback/mission/${item.id}/participants?th=${item.th}&title=${encodeURIComponent(item.title)}`,
+        url: `/admin/challenge/operation/${programId}/feedback/mission/${item.id}/participants`,
       })),
     );
   }, [programId]);
@@ -107,6 +114,9 @@ const useFeedbackMissionRows = () => {
 function ChallengeOperationFeedbackPage() {
   const rows = useFeedbackMissionRows();
 
+  useEffect(() => {
+    localStorage.removeItem('mission');
+  }, []);
   return (
     <DataGrid
       rows={rows}

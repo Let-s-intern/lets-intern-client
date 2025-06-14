@@ -4,7 +4,7 @@
 
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 // *미션 제출 현황 = 정상 제출, 확인여부 = 확인 완료인 참여자 미션만 노출
 const data = [
@@ -120,7 +120,13 @@ const columns: GridColDef<Row>[] = [
     headerName: '피드백 페이지',
     width: 120,
     renderCell: (params: GridRenderCellParams<Row, string>) => (
-      <Link to={params.value || '#'} className="text-primary underline">
+      <Link
+        to={params.value || '#'}
+        className="text-primary underline"
+        onClick={() => {
+          localStorage.setItem('attendance', JSON.stringify(params.row)); // 선택한 행 정보 저장
+        }}
+      >
         바로가기
       </Link>
     ),
@@ -136,27 +142,39 @@ const columns: GridColDef<Row>[] = [
   },
 ];
 
-export default function FeedbackParticipantPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
+const useFeedbackParticipantRows = () => {
+  const { missionId, programId } = useParams();
+
   const [rows, setRows] = useState<Row[]>([]);
 
-  const missionTitle = searchParams.get('title') ?? '';
-  const missionRound = searchParams.get('th') ?? 0;
+  const selectedMission = JSON.parse(localStorage.getItem('mission')!);
+  const missionTitle = selectedMission.title;
+  const missionRound = selectedMission.th;
 
   useEffect(() => {
     setRows(
       data.map((item) => {
-        const { status, result, challengePricePlanType, ...rest } = item;
+        const { status, result, challengePricePlanType, ...rest } = item; // eslint-disable-line @typescript-eslint/no-unused-vars
         return {
           ...rest,
           missionTitle,
           missionRound,
-          feedbackPageLink: `link`,
+          feedbackPageLink: `/admin/challenge/operation/${programId}/mission/${missionId}/participant/${item.id}/feedback`,
           missionStatus: '진행전',
         };
       }),
     );
-  }, [missionTitle, missionRound]);
+  }, [missionTitle, missionRound, programId, missionId]);
+
+  return rows;
+};
+
+export default function FeedbackParticipantPage() {
+  const rows = useFeedbackParticipantRows();
+
+  useEffect(() => {
+    localStorage.removeItem('attendance');
+  }, []);
 
   return (
     <DataGrid
