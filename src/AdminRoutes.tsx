@@ -1,5 +1,4 @@
 import { Route } from 'react-router-dom';
-
 import ChallengeOperationAdminLayout from './components/admin/challenge/ui/ChallengeOperationAdminLayout';
 import AdminLayout from './components/admin/ui/layout/AdminLayout';
 import { CurrentAdminChallengeProvider } from './context/CurrentAdminChallengeProvider';
@@ -21,6 +20,7 @@ import BlogEditPage from './router-pages/admin/blog/BlogEditPage';
 import BlogPostListPage from './router-pages/admin/blog/BlogPostListPage';
 import BlogRatingListPage from './router-pages/admin/blog/BlogRatingListPage';
 import ChallengeContents from './router-pages/admin/challenge/ChallengeContents';
+import ChallengeFeedbackPage from './router-pages/admin/challenge/ChallengeFeedbackPage';
 import ChallengeMissionManagement from './router-pages/admin/challenge/ChallengeMissionManagement';
 import ChallengeOperationAttendances from './router-pages/admin/challenge/ChallengeOperationAttendances';
 import ChallengeOperationFeedbackPage from './router-pages/admin/challenge/ChallengeOperationFeedbackPage';
@@ -133,11 +133,13 @@ export const getAdminRoutes = () => {
           <Route path=":bannerId/edit" element={<ProgramBannerEdit />} />
         </Route>
       </Route>
+
       {/* /admin/challenge/operation */}
       <Route
         path="challenge/operation"
         element={<ChallengeOperationOnboarding />}
       />
+
       {/* /admin/challenge/operation/1 */}
       <Route
         path="challenge/operation/:programId"
@@ -176,7 +178,14 @@ export const getAdminRoutes = () => {
           path="feedback/mission/:missionId/participants"
           element={<FeedbackParticipantPage />}
         />
+
+        {/* 챌린지 운영 > 피드백 > 참여자 페이지 > 피드백 페이지 /admin/challenge/operation/{challengeId}/mission/{missionId}/participant/{userId}/feedback */}
+        <Route
+          path="feedback/mission/:missionId/participants"
+          element={<ChallengeFeedbackPage />}
+        />
       </Route>
+
       {/* /admin/challenge/contents */}
       <Route path="/admin/challenge/contents" element={<ChallengeContents />} />
       {/* /admin/challenge/missions */}
