@@ -1,15 +1,14 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-
 import {
   PatchUserType,
   usePatchUserAdminMutation,
   useUserDetailAdminQuery,
-} from '../../../api/user';
-import ActionButton from '../../../components/admin/ui/button/ActionButton';
-import GradeDropdown from '../../../components/common/mypage/privacy/form-control/GradeDropdown';
-import Input from '../../../components/ui/input/Input';
-import { isValidEmail, isValidPhoneNumber } from '../../../utils/valid';
+} from '@/api/user';
+import ActionButton from '@/components/admin/ui/button/ActionButton';
+import GradeDropdown from '@/components/common/mypage/privacy/form-control/GradeDropdown';
+import Input from '@/components/ui/input/Input';
+import { isValidEmail, isValidPhoneNumber } from '@/utils/valid';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const UserEdit = () => {
   const params = useParams();

@@ -5,10 +5,9 @@ import {
   authProviderSchema,
   grade,
   userAdminDetailType,
-  userAdminType,
 } from '../schema';
 import axios from '../utils/axios';
-import { isAdminSchema } from './userSchema';
+import { isAdminSchema, userAdminType } from './userSchema';
 
 export const UseUserAdminQueryKey = 'useUserListQueryKey';
 
