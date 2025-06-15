@@ -32,7 +32,7 @@ const MarketingReviewsSection: React.FC<Props> = ({ challenge }) => {
         {challenge.title} <br />
         참여자들의 따끈따끈한 후기
       </MainTitle>
-      <div className="w-full justify-items-center overflow-x-hidden md:w-full">
+      <div className="flex w-full items-center justify-center overflow-x-hidden">
         <TestimonialCarousel reviews={reviews} />
       </div>
 
