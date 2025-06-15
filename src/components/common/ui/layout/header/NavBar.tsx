@@ -4,7 +4,9 @@ import useActiveReportNav from '@/hooks/useActiveReportNav';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import useProgramCategoryNav from '@/hooks/useProgramCategoryNav';
 import useScrollDirection from '@/hooks/useScrollDirection';
+import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
+import { useMediaQuery } from '@mui/material';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import ExternalNavList from './ExternalNavList';
@@ -23,6 +25,7 @@ const NavBar = () => {
   const activeLink = useActiveLink(location.pathname);
   const reportNavList = useActiveReportNav();
   const scrollDirection = useScrollDirection(location.pathname);
+  const isMobile = useMediaQuery('(max-width:768px)');
 
   const { isLoggedIn } = useAuthStore();
 
@@ -48,7 +51,10 @@ const NavBar = () => {
     <header>
       {/* 상단 네비게이션 바 */}
       <div
-        className={`fixed top-0 z-30 w-screen border-b border-neutral-80 bg-white ${scrollDirection === 'DOWN' ? '-translate-y-full' : 'translate-y-0'} transition-transform duration-300`}
+        className={twMerge(
+          'fixed top-0 z-30 w-screen border-b border-neutral-80 bg-white transition-transform duration-300',
+          scrollDirection === 'DOWN' ? '-translate-y-full' : 'translate-y-0',
+        )}
       >
         {/* 1단 */}
         <GlobalNavTopBar
@@ -57,22 +63,24 @@ const NavBar = () => {
           toggleMenu={toggleMenu}
         />
         {/* 2단 */}
-        <nav className="mw-1180 hidden items-center justify-between pb-[18px] pt-1 md:flex">
+        <nav className="mw-1180 items-center justify-between pb-[14px] pt-1.5 md:flex md:pb-[18px] md:pt-1">
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4 md:gap-6">
               <GlobalNavItem
-                className="text-xsmall16"
+                className="text-xsmall14 md:text-xsmall16"
                 href="/program"
                 isNextRouter={false}
-                subNavList={programCategoryLists}
                 active={activeLink === 'PROGRAM'}
-                force
-                showDropdownIcon
+                // 모바일은 드롭다운 X
+                {...(!isMobile && {
+                  subNavList: programCategoryLists,
+                  showDropdownIcon: true,
+                })}
               >
-                프로그램 카테고리
+                프로그램 <span className="hidden md:inline">카테고리</span>
               </GlobalNavItem>
               <GlobalNavItem
-                className="text-xsmall16"
+                className="text-xsmall14 md:text-xsmall16"
                 isNextRouter={false}
                 active={activeLink === 'REPORT'}
                 href={reportNavList.length === 0 ? '#' : reportNavList[0].href}
@@ -82,7 +90,7 @@ const NavBar = () => {
                 서류 피드백 REPORT
               </GlobalNavItem>
               <GlobalNavItem
-                className="text-xsmall16"
+                className="text-xsmall14 md:text-xsmall16"
                 isNew
                 href="https://letscareer.oopy.io/1ea5e77c-bee1-8098-8e19-ec5038fb1cc8"
                 isNextRouter={false}
@@ -92,8 +100,11 @@ const NavBar = () => {
                 커피챗
               </GlobalNavItem>
             </div>
-            <div className="h-[18px] w-[1px] bg-[#D9D9D9]" aria-hidden="true" />
-            <div className="flex items-center gap-6">
+            <div
+              className="hidden h-[18px] w-[1px] bg-[#D9D9D9] md:block"
+              aria-hidden="true"
+            />
+            <div className="hidden items-center gap-6 md:flex">
               <GlobalNavItem
                 className="text-xsmall16"
                 href="/review"
@@ -113,9 +124,12 @@ const NavBar = () => {
                 블로그
               </GlobalNavItem>
             </div>
-            <div className="h-[18px] w-[1px] bg-[#D9D9D9]" aria-hidden="true" />
+            <div
+              className="hidden h-[18px] w-[1px] bg-[#D9D9D9] md:block"
+              aria-hidden="true"
+            />
             <GlobalNavItem
-              className="text-xsmall16"
+              className="hidden text-xsmall16 md:inline"
               href="/about"
               isNextRouter={false}
               active={activeLink === 'ABOUT'}
@@ -123,6 +137,7 @@ const NavBar = () => {
               렛츠커리어 스토리
             </GlobalNavItem>
           </div>
+
           <ExternalNavList
             isNextRouter={false}
             isLoggedIn={isLoggedIn}
