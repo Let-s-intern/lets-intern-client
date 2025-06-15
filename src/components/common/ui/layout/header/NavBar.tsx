@@ -13,6 +13,10 @@ import ExternalNavList from './ExternalNavList';
 import GlobalNavItem from './GlobalNavItem';
 import GlobalNavTopBar from './GlobalNavTopBar';
 import NavOverlay from './NavOverlay';
+import {
+  getBottomNavBarClassNameByPath,
+  hideMobileBottomNavBar,
+} from './NextNavBar';
 import SideNavContainer from './SideNavContainer';
 import SideNavItem from './SideNavItem';
 import Spacer from './Spacer';
@@ -63,7 +67,12 @@ const NavBar = () => {
           toggleMenu={toggleMenu}
         />
         {/* 2단 */}
-        <nav className="mw-1180 items-center justify-between pb-[14px] pt-1.5 md:flex md:pb-[18px] md:pt-1">
+        <nav
+          className={twMerge(
+            'mw-1180 items-center justify-between pb-[14px] pt-1.5 text-xsmall14 md:flex md:pb-[18px] md:pt-1 md:text-xsmall16',
+            getBottomNavBarClassNameByPath(location.pathname),
+          )}
+        >
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-4 md:gap-6">
               <GlobalNavItem
@@ -232,7 +241,9 @@ const NavBar = () => {
       </SideNavContainer>
 
       {/* 네비게이션 바 공간 차지 */}
-      <Spacer />
+      <Spacer
+        hideMobileBottomNavBar={hideMobileBottomNavBar(location.pathname)}
+      />
     </header>
   );
 };

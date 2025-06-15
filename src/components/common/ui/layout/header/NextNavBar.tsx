@@ -19,7 +19,21 @@ import SideNavContainer from './SideNavContainer';
 import SideNavItem from './SideNavItem';
 import Spacer from './Spacer';
 
-export const NAVBAR_HEIGHT_OFFSET = 'top-[85px] md:top-[117px]';
+export const NAVBAR_HEIGHT_OFFSET = 'top-[84px] md:top-[117px]';
+export const TOP_NAVBAR_HEIGHT_OFFSET = 'top-[43px] md:top-[117px]';
+
+export const hideMobileBottomNavBar = (pathname: string) =>
+  pathname.startsWith('/program/') ||
+  pathname === '/about' ||
+  pathname.startsWith('/review') ||
+  pathname.startsWith('/blog') ||
+  pathname.startsWith('/mypage') ||
+  pathname === '/login' ||
+  pathname === '/signup';
+
+export const getBottomNavBarClassNameByPath = (pathname: string) => {
+  return hideMobileBottomNavBar(pathname) && 'hidden md:flex';
+};
 
 const NextNavBar = () => {
   const pathname = usePathname() ?? '';
@@ -66,7 +80,12 @@ const NextNavBar = () => {
           toggleMenu={toggleMenu}
         />
         {/* 2단 */}
-        <nav className="mw-1180 items-center justify-between pb-[14px] pt-1.5 text-xsmall14 md:flex md:pb-[18px] md:pt-1 md:text-xsmall16">
+        <nav
+          className={twMerge(
+            'mw-1180 items-center justify-between pb-[14px] pt-1.5 text-xsmall14 md:flex md:pb-[18px] md:pt-1 md:text-xsmall16',
+            getBottomNavBarClassNameByPath(pathname),
+          )}
+        >
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-4 md:gap-6">
               <GlobalNavItem
@@ -232,7 +251,7 @@ const NextNavBar = () => {
       </SideNavContainer>
 
       {/* 네비게이션 바 공간 차지 */}
-      <Spacer />
+      <Spacer hideMobileBottomNavBar={hideMobileBottomNavBar(pathname)} />
     </header>
   );
 };
