@@ -322,7 +322,10 @@ const ChallengeCreate: React.FC = () => {
               }}
             />
             {/* 멘토 등록 */}
-            <ChallengeMentorRegistrationSection />
+            <ChallengeMentorRegistrationSection
+              // todo: useCallback 사용하여 change handler 작성
+              onChange={(value) => console.log('멘토 등록')}
+            />
           </div>
         </div>
       </section>

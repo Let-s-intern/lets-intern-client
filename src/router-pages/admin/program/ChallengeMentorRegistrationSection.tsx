@@ -1,4 +1,7 @@
-import { useAdminUserMentorListQuery } from '@/api/mentor';
+import {
+  useAdminChallengeMentorListQuery,
+  useAdminUserMentorListQuery,
+} from '@/api/mentor';
 import SelectFormControl from '@components/admin/program/SelectFormControl';
 import Heading2 from '@components/admin/ui/heading/Heading2';
 import {
@@ -24,12 +27,26 @@ const SelectedMentorNames = ({ selected }: { selected: number[] }) => {
   );
 };
 
-function ChallengeMentorRegistrationSection() {
-  const { data } = useAdminUserMentorListQuery();
-  const [selectedMentorIds, setSelectedMentorIds] = useState<number[]>([]);
+interface Props {
+  challengeId?: number;
+  onChange: (value: number[]) => void;
+}
+
+function ChallengeMentorRegistrationSection({ challengeId, onChange }: Props) {
+  const { data: userData } = useAdminUserMentorListQuery();
+  const { data: challengeData } = useAdminChallengeMentorListQuery(challengeId);
+
+  const defaultMentorIds = challengeId
+    ? challengeData?.mentorList.map((item) => item.id)
+    : [];
+  const [selectedMentorIds, setSelectedMentorIds] = useState<number[]>(
+    defaultMentorIds!,
+  );
 
   const handleChange = (e: SelectChangeEvent<number[]>) => {
-    setSelectedMentorIds(e.target.value as number[]);
+    const ids = e.target.value as number[];
+    setSelectedMentorIds(ids);
+    onChange(ids);
   };
 
   return (
@@ -42,7 +59,7 @@ function ChallengeMentorRegistrationSection() {
         renderValue={(selected) => <SelectedMentorNames selected={selected} />}
         onChange={handleChange}
       >
-        {data?.mentorList.map((item) => (
+        {userData?.mentorList.map((item) => (
           <MenuItem key={item.id} value={item.id}>
             <Checkbox
               checked={selectedMentorIds.some((id) => id === item.id)}

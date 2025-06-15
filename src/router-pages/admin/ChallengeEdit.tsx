@@ -209,8 +209,8 @@ const ChallengeEdit: React.FC = () => {
     defaultBasicPriceInfo,
   ]);
 
-  // receivedConent가 초기화되면 content에 적용
   useEffect(() => {
+    // receivedConent가 초기화되면 content에 적용
     if (!receivedContent) {
       return;
     }
@@ -365,7 +365,11 @@ const ChallengeEdit: React.FC = () => {
               }}
             />
             {/* 멘토 등록 */}
-            <ChallengeMentorRegistrationSection />
+            <ChallengeMentorRegistrationSection
+              challengeId={Number(challengeIdString)}
+              // todo: useCallback 사용하여 change handler 작성
+              onChange={(value) => console.log('멘토 등록')}
+            />
           </div>
         </div>
       </section>
