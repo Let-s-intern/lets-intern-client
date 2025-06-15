@@ -6,9 +6,16 @@ interface Props {
   isNextRouter: boolean;
   force: boolean;
   className?: string;
+  onClick?: () => void;
 }
 
-function LoginLink({ redirect, isNextRouter, force, className }: Props) {
+function LoginLink({
+  redirect,
+  isNextRouter,
+  force,
+  className,
+  onClick,
+}: Props) {
   return (
     <HybridLink
       className={twMerge(
@@ -18,6 +25,9 @@ function LoginLink({ redirect, isNextRouter, force, className }: Props) {
       isNextRouter={isNextRouter}
       force={force}
       href={`/login?redirect=${redirect}`}
+      onClick={() => {
+        if (onClick) onClick();
+      }}
     >
       로그인
     </HybridLink>
