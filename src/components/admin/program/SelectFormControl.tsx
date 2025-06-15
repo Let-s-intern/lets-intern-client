@@ -9,6 +9,7 @@ import { ReactNode } from 'react';
 
 interface Props<T> {
   defaultValue?: T;
+  value?: T;
   onChange?: (e: SelectChangeEvent<T>) => void;
   renderValue: (selectedList: T) => JSX.Element;
   children: ReactNode;
@@ -23,6 +24,7 @@ interface Props<T> {
 
 function SelectFormControl<T>({
   defaultValue,
+  value,
   onChange,
   renderValue,
   children,
@@ -39,6 +41,7 @@ function SelectFormControl<T>({
         name={labelId}
         multiple
         defaultValue={defaultValue}
+        value={value}
         onChange={onChange}
         input={<OutlinedInput label={label} />}
         renderValue={renderValue}
