@@ -1,3 +1,4 @@
+import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import {
@@ -5,10 +6,8 @@ import {
   authProviderSchema,
   grade,
   userAdminDetailType,
-  userAdminType,
 } from '../schema';
-import axios from '../utils/axios';
-import { isAdminSchema } from './userSchema';
+import { isAdminSchema, userAdminType } from './userSchema';
 
 export const UseUserAdminQueryKey = 'useUserListQueryKey';
 
@@ -25,7 +24,7 @@ export const useUserAdminQuery = ({
     page: number;
     size: number;
   };
-}) => {
+} = {}) => {
   return useQuery({
     queryKey: [UseUserAdminQueryKey, email, name, phoneNum, pageable],
     queryFn: async () => {
@@ -85,16 +84,18 @@ export const useUserDetailAdminQuery = ({
 };
 
 export type PatchUserType = {
-  name: string;
-  email: string;
-  contactEmail: string | null;
-  phoneNum: string;
-  university: string | null;
-  inflowPath: string | null;
-  grade: string | null;
-  major: string | null;
-  wishJob: string | null;
-  wishCompany: string | null;
+  id?: string | number;
+  name?: string;
+  email?: string;
+  contactEmail?: string | null;
+  phoneNum?: string;
+  university?: string | null;
+  inflowPath?: string | null;
+  grade?: string | null;
+  major?: string | null;
+  wishJob?: string | null;
+  wishCompany?: string | null;
+  isMentor?: boolean;
 };
 
 export const usePatchUserAdminMutation = ({
@@ -102,15 +103,16 @@ export const usePatchUserAdminMutation = ({
   successCallback,
   errorCallback,
 }: {
-  userId: number;
+  userId?: number | string;
   successCallback?: () => void;
   errorCallback?: (error: Error) => void;
-}) => {
+} = {}) => {
   const client = useQueryClient();
 
   return useMutation({
     mutationFn: async (userForm: PatchUserType) => {
-      await axios.patch(`/user/${userId}`, userForm);
+      const { id, ...rest } = userForm;
+      await axios.patch(`/user/${userId ?? id}`, rest);
     },
     onSuccess: () => {
       client.invalidateQueries({

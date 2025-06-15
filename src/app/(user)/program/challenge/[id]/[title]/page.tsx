@@ -62,9 +62,12 @@ const Page = async ({
     redirect(`/program/old/challenge/${id}`);
   }
 
+  const MARKETING_ID_THRESHOLD =
+    process.env.NODE_ENV === 'development' ? 11 : 75;
   return (
     <>
-      {parseInt(id) > 11 && challenge.challengeType === 'MARKETING' ? (
+      {parseInt(id) > MARKETING_ID_THRESHOLD &&
+      challenge.challengeType === 'MARKETING' ? (
         <ChallengeMarketingView challenge={challenge} />
       ) : (
         <ChallengeView challenge={challenge} />

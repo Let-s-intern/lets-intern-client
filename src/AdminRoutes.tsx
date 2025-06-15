@@ -1,5 +1,4 @@
 import { Route } from 'react-router-dom';
-
 import ChallengeOperationAdminLayout from './components/admin/challenge/ui/ChallengeOperationAdminLayout';
 import AdminLayout from './components/admin/ui/layout/AdminLayout';
 import { CurrentAdminChallengeProvider } from './context/CurrentAdminChallengeProvider';
@@ -21,13 +20,16 @@ import BlogEditPage from './router-pages/admin/blog/BlogEditPage';
 import BlogPostListPage from './router-pages/admin/blog/BlogPostListPage';
 import BlogRatingListPage from './router-pages/admin/blog/BlogRatingListPage';
 import ChallengeContents from './router-pages/admin/challenge/ChallengeContents';
+import ChallengeFeedbackPage from './router-pages/admin/challenge/ChallengeFeedbackPage';
 import ChallengeMissionManagement from './router-pages/admin/challenge/ChallengeMissionManagement';
 import ChallengeOperationAttendances from './router-pages/admin/challenge/ChallengeOperationAttendances';
+import ChallengeOperationFeedbackPage from './router-pages/admin/challenge/ChallengeOperationFeedbackPage';
 import ChallengeOperationHome from './router-pages/admin/challenge/ChallengeOperationHome';
 import ChallengeOperationOnboarding from './router-pages/admin/challenge/ChallengeOperationOnboarding';
 import ChallengeOperationParticipants from './router-pages/admin/challenge/ChallengeOperationParticipants';
 import ChallengeOperationPayback from './router-pages/admin/challenge/ChallengeOperationPayback';
 import ChallengeOperationRegisterMission from './router-pages/admin/challenge/ChallengeOperationRegisterMission';
+import FeedbackParticipantPage from './router-pages/admin/challenge/FeedbackParticipantPage';
 import ChallengeCreate from './router-pages/admin/ChallengeCreate';
 import ChallengeEdit from './router-pages/admin/ChallengeEdit';
 import CouponCreate from './router-pages/admin/coupon/CouponCreate';
@@ -57,6 +59,7 @@ import AdminChallengeReviewListPage from './router-pages/admin/review/AdminChall
 import AdminLiveReviewListPage from './router-pages/admin/review/AdminLiveReviewListPage';
 import AdminMissionReviewListPage from './router-pages/admin/review/AdminMissionReviewListPage';
 import AdminReportReviewListPage from './router-pages/admin/review/AdminReportReviewListPage';
+import AdminMentorPage from './router-pages/admin/user/AdminMentorPage';
 import AdminUsersPage from './router-pages/admin/user/AdminUsersPage';
 import UserDetail from './router-pages/admin/user/UserDetail';
 import UserEdit from './router-pages/admin/user/UserEdit';
@@ -88,6 +91,10 @@ export const getAdminRoutes = () => {
           <Route path="edit" element={<UserEdit />} />
         </Route>
       </Route>
+
+      {/* 멘토 관리 /admin/mentors */}
+      <Route path="mentors" element={<AdminMentorPage />} />
+
       {/* /admin/coupons */}
       <Route path="coupons">
         {/* /admin/coupons */}
@@ -131,11 +138,13 @@ export const getAdminRoutes = () => {
           <Route path=":bannerId/edit" element={<ProgramBannerEdit />} />
         </Route>
       </Route>
+
       {/* /admin/challenge/operation */}
       <Route
         path="challenge/operation"
         element={<ChallengeOperationOnboarding />}
       />
+
       {/* /admin/challenge/operation/1 */}
       <Route
         path="challenge/operation/:programId"
@@ -165,7 +174,23 @@ export const getAdminRoutes = () => {
 
         {/* /admin/challenge/operation/1/payback */}
         <Route path="payback" element={<ChallengeOperationPayback />} />
+
+        {/* 챌린지 운영 > 피드백 페이지 /admin/challenge/operation/{challengeId}/feedback */}
+        <Route path="feedback" element={<ChallengeOperationFeedbackPage />} />
+
+        {/* 챌린지 운영 > 피드백 > 참여자 페이지 /admin/challenge/operation/{challengeId}/feedback/mission/{missionId}/participants */}
+        <Route
+          path="feedback/mission/:missionId/participants"
+          element={<FeedbackParticipantPage />}
+        />
+
+        {/* 챌린지 운영 > 피드백 > 참여자 페이지 > 피드백 페이지 /admin/challenge/operation/{challengeId}/mission/{missionId}/participant/:userId/feedback */}
+        <Route
+          path="mission/:missionId/participant/:userId/feedback"
+          element={<ChallengeFeedbackPage />}
+        />
       </Route>
+
       {/* /admin/challenge/contents */}
       <Route path="/admin/challenge/contents" element={<ChallengeContents />} />
       {/* /admin/challenge/missions */}
