@@ -19,8 +19,7 @@ import SideNavContainer from './SideNavContainer';
 import SideNavItem from './SideNavItem';
 import Spacer from './Spacer';
 
-export const MOBILE_NAVBAR_HEIGHT_OFFSET = 'top-[85px]';
-export const DESKTOP_NAVBAR_HEIGHT_OFFSET = 'top-[117px]';
+export const NAVBAR_HEIGHT_OFFSET = 'top-[85px] md:top-[117px]';
 
 const NextNavBar = () => {
   const pathname = usePathname() ?? '';
