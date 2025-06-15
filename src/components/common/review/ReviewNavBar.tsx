@@ -7,7 +7,7 @@ import { ReactNode } from 'react';
 
 import { twMerge } from '@/lib/twMerge';
 import HorizontalRule from '@components/ui/HorizontalRule';
-import { TOP_NAVBAR_HEIGHT_OFFSET } from '../ui/layout/header/NextNavBar';
+import { SINGLE_ROW_NAVBAR_HEIGHT_OFFSET } from '../ui/layout/header/NextNavBar';
 
 function ReviewNavBar() {
   const pathname = usePathname();
@@ -21,7 +21,7 @@ function ReviewNavBar() {
       <div
         className={twMerge(
           'review_menu sticky z-10 bg-white',
-          TOP_NAVBAR_HEIGHT_OFFSET,
+          SINGLE_ROW_NAVBAR_HEIGHT_OFFSET,
         )}
       >
         <nav className="md:hidden">

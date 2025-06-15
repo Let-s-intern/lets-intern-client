@@ -1,7 +1,7 @@
 import { twMerge } from '@/lib/twMerge';
 import { ILineBanner } from '@/types/Banner.interface';
 import axios from '@/utils/axios';
-import { NAVBAR_HEIGHT_OFFSET } from '@components/common/ui/layout/header/NextNavBar';
+import { FULL_NAVBAR_HEIGHT_OFFSET } from '@components/common/ui/layout/header/NextNavBar';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
@@ -47,7 +47,7 @@ const TopBanner = ({
     <section
       className={twMerge(
         'band_banner fixed z-20 w-screen cursor-pointer bg-neutral-0 py-3 md:px-5',
-        NAVBAR_HEIGHT_OFFSET,
+        FULL_NAVBAR_HEIGHT_OFFSET,
       )}
       style={{
         backgroundColor: data?.colorCode,
