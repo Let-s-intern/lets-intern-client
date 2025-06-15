@@ -47,6 +47,8 @@ export async function generateMetadata({
   };
 }
 
+const MARKETING_ID_THRESHOLD = process.env.NODE_ENV === 'development' ? 11 : 75;
+
 const Page = async ({
   params,
 }: {
@@ -62,8 +64,6 @@ const Page = async ({
     redirect(`/program/old/challenge/${id}`);
   }
 
-  const MARKETING_ID_THRESHOLD =
-    process.env.NODE_ENV === 'development' ? 11 : 75;
   return (
     <>
       {parseInt(id) > MARKETING_ID_THRESHOLD &&

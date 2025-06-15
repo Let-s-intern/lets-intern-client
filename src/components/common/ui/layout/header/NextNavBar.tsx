@@ -6,7 +6,9 @@ import useActiveReportNav from '@/hooks/useActiveReportNav';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import useProgramCategoryNav from '@/hooks/useProgramCategoryNav';
 import useScrollDirection from '@/hooks/useScrollDirection';
+import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
+import { useMediaQuery } from '@mui/material';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import ExternalNavList from './ExternalNavList';
@@ -16,6 +18,23 @@ import NavOverlay from './NavOverlay';
 import SideNavContainer from './SideNavContainer';
 import SideNavItem from './SideNavItem';
 import Spacer from './Spacer';
+
+export const FULL_NAVBAR_HEIGHT_OFFSET = 'top-[84px] md:top-[117px]';
+export const SINGLE_ROW_NAVBAR_HEIGHT_OFFSET = 'top-[43px] md:top-[117px]';
+
+export const hideMobileBottomNavBar = (pathname: string) =>
+  pathname.startsWith('/program/') ||
+  pathname === '/about' ||
+  pathname.startsWith('/review') ||
+  pathname.startsWith('/blog') ||
+  pathname.startsWith('/mypage') ||
+  pathname === '/login' ||
+  pathname === '/signup';
+
+export const getBottomNavBarClassNameByPath = (pathname: string) => {
+  return hideMobileBottomNavBar(pathname) && 'hidden md:flex';
+};
+
 const NextNavBar = () => {
   const pathname = usePathname() ?? '';
 
@@ -31,6 +50,7 @@ const NextNavBar = () => {
   const activeLink = useActiveLink(pathname);
   const reportNavList = useActiveReportNav();
   const scrollDirection = useScrollDirection(pathname);
+  const isMobile = useMediaQuery('(max-width:768px)');
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -48,7 +68,10 @@ const NextNavBar = () => {
     <header>
       {/* 상단 네비게이션 바 */}
       <div
-        className={`fixed top-0 z-30 w-screen border-b border-neutral-80 bg-white ${scrollDirection === 'DOWN' ? '-translate-y-full' : 'translate-y-0'} transition-transform duration-300`}
+        className={twMerge(
+          'fixed top-0 z-30 w-screen border-b border-neutral-80 bg-white transition-transform duration-300',
+          scrollDirection === 'DOWN' ? '-translate-y-full' : 'translate-y-0',
+        )}
       >
         {/* 1단 */}
         <GlobalNavTopBar
@@ -57,31 +80,43 @@ const NextNavBar = () => {
           toggleMenu={toggleMenu}
         />
         {/* 2단 */}
-        <nav className="mw-1180 hidden items-center justify-between pb-[18px] pt-1 md:flex">
+        <nav
+          className={twMerge(
+            'mw-1180 items-center justify-between pb-[14px] pt-1.5 text-xsmall14 md:flex md:pb-[18px] md:pt-1 md:text-xsmall16',
+            getBottomNavBarClassNameByPath(pathname),
+          )}
+        >
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4 md:gap-6">
               <GlobalNavItem
-                className="text-xsmall16"
+                className="text-xsmall14 md:text-xsmall16"
                 href="/program"
                 isNextRouter
-                subNavList={programCategoryLists}
                 active={activeLink === 'PROGRAM'}
                 force
-                showDropdownIcon
+                // 모바일은 드롭다운 X
+                {...(!isMobile && {
+                  subNavList: programCategoryLists,
+                  showDropdownIcon: true,
+                })}
               >
-                프로그램 카테고리
+                프로그램 &nbsp;
+                <span className="hidden md:inline">카테고리</span>
               </GlobalNavItem>
               <GlobalNavItem
-                className="text-xsmall16"
+                className="text-xsmall14 md:text-xsmall16"
                 isNextRouter
                 active={activeLink === 'REPORT'}
                 href={reportNavList.length === 0 ? '#' : reportNavList[0].href}
-                subNavList={reportNavList}
+                // 모바일은 드롭다운 X
+                {...(!isMobile && {
+                  subNavList: reportNavList,
+                })}
               >
                 서류 피드백 REPORT
               </GlobalNavItem>
               <GlobalNavItem
-                className="text-xsmall16"
+                className="text-xsmall14 md:text-xsmall16"
                 isNew
                 href="https://letscareer.oopy.io/1ea5e77c-bee1-8098-8e19-ec5038fb1cc8"
                 isNextRouter
@@ -91,8 +126,11 @@ const NextNavBar = () => {
                 커피챗
               </GlobalNavItem>
             </div>
-            <div className="h-[18px] w-[1px] bg-[#D9D9D9]" aria-hidden="true" />
-            <div className="flex items-center gap-6">
+            <div
+              className="hidden h-[18px] w-[1px] bg-[#D9D9D9] md:block"
+              aria-hidden="true"
+            />
+            <div className="hidden items-center gap-6 md:flex">
               <GlobalNavItem
                 className="text-xsmall16"
                 href="/review"
@@ -112,9 +150,12 @@ const NextNavBar = () => {
                 블로그
               </GlobalNavItem>
             </div>
-            <div className="h-[18px] w-[1px] bg-[#D9D9D9]" aria-hidden="true" />
+            <div
+              className="hidden h-[18px] w-[1px] bg-[#D9D9D9] md:block"
+              aria-hidden="true"
+            />
             <GlobalNavItem
-              className="text-xsmall16"
+              className="hidden text-xsmall16 md:inline"
               href="/about"
               isNextRouter
               force
@@ -123,6 +164,7 @@ const NextNavBar = () => {
               렛츠커리어 스토리
             </GlobalNavItem>
           </div>
+
           <ExternalNavList
             isNextRouter
             isLoggedIn={isLoggedIn}
@@ -209,7 +251,7 @@ const NextNavBar = () => {
       </SideNavContainer>
 
       {/* 네비게이션 바 공간 차지 */}
-      <Spacer />
+      <Spacer hideMobileBottomNavBar={hideMobileBottomNavBar(pathname)} />
     </header>
   );
 };

@@ -5,9 +5,10 @@ interface Props {
   isNextRouter: boolean;
   force: boolean;
   className?: string;
+  onClick?: () => void;
 }
 
-function SignUpLink({ isNextRouter, force, className }: Props) {
+function SignUpLink({ isNextRouter, force, className, onClick }: Props) {
   return (
     <HybridLink
       className={twMerge(
@@ -17,6 +18,9 @@ function SignUpLink({ isNextRouter, force, className }: Props) {
       isNextRouter={isNextRouter}
       force={force}
       href="/signup"
+      onClick={() => {
+        if (onClick) onClick();
+      }}
     >
       회원가입
     </HybridLink>

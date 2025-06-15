@@ -8,12 +8,12 @@ interface Props {
 
 function LogoLink({ isNextRouter, className }: Props) {
   return (
-    <h1 className={twMerge('h-[25px] text-transparent', className)}>
+    <h1 className={twMerge('h-5 text-transparent md:h-[24px]', className)}>
       <HybridLink isNextRouter={isNextRouter} href="/">
         <img
           src="/logo/horizontal-logo.svg"
           alt="렛츠커리어"
-          className="h-[24px] w-auto"
+          className="h-5 w-auto md:h-[24px]"
         />
         렛츠커리어
       </HybridLink>
