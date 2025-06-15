@@ -18,6 +18,10 @@ import NavOverlay from './NavOverlay';
 import SideNavContainer from './SideNavContainer';
 import SideNavItem from './SideNavItem';
 import Spacer from './Spacer';
+
+export const MOBILE_NAVBAR_HEIGHT_OFFSET = 'top-[85px]';
+export const DESKTOP_NAVBAR_HEIGHT_OFFSET = 'top-[117px]';
+
 const NextNavBar = () => {
   const pathname = usePathname() ?? '';
 
@@ -78,14 +82,18 @@ const NextNavBar = () => {
                   showDropdownIcon: true,
                 })}
               >
-                프로그램 <span className="hidden md:inline">카테고리</span>
+                프로그램 &nbsp;
+                <span className="hidden md:inline">카테고리</span>
               </GlobalNavItem>
               <GlobalNavItem
                 className="text-xsmall14 md:text-xsmall16"
                 isNextRouter
                 active={activeLink === 'REPORT'}
                 href={reportNavList.length === 0 ? '#' : reportNavList[0].href}
-                subNavList={reportNavList}
+                // 모바일은 드롭다운 X
+                {...(!isMobile && {
+                  subNavList: reportNavList,
+                })}
               >
                 서류 피드백 REPORT
               </GlobalNavItem>

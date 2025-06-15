@@ -77,14 +77,18 @@ const NavBar = () => {
                   showDropdownIcon: true,
                 })}
               >
-                프로그램 <span className="hidden md:inline">카테고리</span>
+                프로그램 &nbsp;
+                <span className="hidden md:inline">카테고리</span>
               </GlobalNavItem>
               <GlobalNavItem
                 className="text-xsmall14 md:text-xsmall16"
                 isNextRouter={false}
                 active={activeLink === 'REPORT'}
                 href={reportNavList.length === 0 ? '#' : reportNavList[0].href}
-                subNavList={reportNavList}
+                // 모바일은 드롭다운 X
+                {...(!isMobile && {
+                  subNavList: reportNavList,
+                })}
                 force
               >
                 서류 피드백 REPORT
