@@ -5,7 +5,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ReactNode } from 'react';
 
+import { twMerge } from '@/lib/twMerge';
 import HorizontalRule from '@components/ui/HorizontalRule';
+import { TOP_NAVBAR_HEIGHT_OFFSET } from '../ui/layout/header/NextNavBar';
 
 function ReviewNavBar() {
   const pathname = usePathname();
@@ -16,7 +18,12 @@ function ReviewNavBar() {
   return (
     <>
       {/* 모바일 네비 바 */}
-      <div className="review_menu sticky top-[2.8rem] z-10 bg-white">
+      <div
+        className={twMerge(
+          'review_menu sticky z-10 bg-white',
+          TOP_NAVBAR_HEIGHT_OFFSET,
+        )}
+      >
         <nav className="md:hidden">
           <ul className="flex items-stretch gap-6 border-b border-neutral-80 px-5 md:hidden">
             <MobileNavItem
