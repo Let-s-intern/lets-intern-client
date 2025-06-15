@@ -4,7 +4,7 @@ import useScrollStore from '@/store/useScrollStore';
 import { ProgramType } from '@/types/common';
 import { useEffect, useMemo, useState } from 'react';
 import { challengeColors } from './ChallengeView';
-import { TOP_NAVBAR_HEIGHT_OFFSET } from './common/ui/layout/header/NextNavBar';
+import { SINGLE_ROW_NAVBAR_HEIGHT_OFFSET } from './common/ui/layout/header/NextNavBar';
 
 const { CAREER_START, PORTFOLIO, EXPERIENCE_SUMMARY, ETC } =
   challengeTypeSchema.enum;
@@ -136,7 +136,7 @@ const ProgramDetailNavigation = ({
         programType === 'live' && 'live_navigation',
         scrollDirection === 'DOWN'
           ? '-top-0.5 duration-200 md:top-0'
-          : `duration-300 ${TOP_NAVBAR_HEIGHT_OFFSET}`,
+          : `duration-300 ${SINGLE_ROW_NAVBAR_HEIGHT_OFFSET}`,
         className,
       )}
     >

@@ -3,7 +3,7 @@
 import useActiveReports from '@/hooks/useActiveReports';
 import useScrollDirection from '@/hooks/useScrollDirection';
 import { twMerge } from '@/lib/twMerge';
-import { NAVBAR_HEIGHT_OFFSET } from '@components/common/ui/layout/header/NextNavBar';
+import { FULL_NAVBAR_HEIGHT_OFFSET } from '@components/common/ui/layout/header/NextNavBar';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -49,7 +49,7 @@ const ReportNavigationTabs = ({
       className={twMerge(
         `fixed z-20 flex w-screen justify-center bg-white transition-transform duration-300`,
         scrollDirection === 'DOWN' ? '-translate-y-[302%]' : 'translate-y-0',
-        NAVBAR_HEIGHT_OFFSET,
+        FULL_NAVBAR_HEIGHT_OFFSET,
       )}
     >
       <ul className="mw-1180 mx-auto flex gap-4 break-keep">
