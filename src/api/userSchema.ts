@@ -32,3 +32,34 @@ export const userAdminType = z.object({
 });
 
 export type UserAdmin = z.infer<typeof userAdminType>['userAdminList'];
+
+export const mentorApplicationInfoSchema = z.object({
+  programId: z.number(),
+  programTitle: z.string(),
+});
+
+export const mentorUserInfoSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  email: z.string(),
+  contactEmail: z.string(),
+  phoneNum: z.string(),
+  createdDate: z.string(),
+  accountType: z.string(),
+  accountNum: z.string(),
+  marketingAgree: z.boolean(),
+  role: z.string(),
+  isMentor: z.boolean(),
+});
+export const mentorListItemSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+});
+export const mentorUserSchema = z.object({
+  userInfo: mentorUserInfoSchema,
+  applicationInfos: z.array(mentorApplicationInfoSchema),
+});
+
+export const mentorListSchema = z.object({
+  mentorList: z.array(mentorListItemSchema),
+});
