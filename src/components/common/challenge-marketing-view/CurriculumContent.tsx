@@ -172,12 +172,12 @@ export const curriculums = [
           <Highlight
             className="bg-[#FFF0F4]"
             companyImg="yanolja.png"
-            role="야놀자 CRM 마케터"
+            role="야놀자 그로스 마케터"
             date="| 7/12 저녁 8시 (온라인)"
             description={
               <>
                 IT 스타트업 현직 마케터와 함께 <br />
-                CRM 마케터에게 가장 필수적인 경험과 역량을 살펴봅니다.
+                그로스 마케터에게 가장 필수적인 경험과 역량을 살펴봅니다.
               </>
             }
           />

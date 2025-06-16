@@ -2,7 +2,7 @@ import SectionSubHeader from '@components/ui/SectionSubHeader';
 import React, { ReactNode } from 'react';
 import MainTitle from './MainTitle';
 
-const badges = ['콘텐츠', 'CRM', '그로스', 'AE'];
+const badges = ['콘텐츠', 'CRM', '그로스', 'AE', '퍼포먼스'];
 
 const cards = [
   {
