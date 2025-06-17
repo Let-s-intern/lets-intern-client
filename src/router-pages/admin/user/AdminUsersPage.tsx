@@ -1,14 +1,13 @@
+import { useDeleteUserMutation, useUserAdminQuery } from '@/api/user';
+import Header from '@/components/admin/ui/header/Header';
+import Heading from '@/components/admin/ui/heading/Heading';
+import AdminPagination from '@/components/admin/ui/pagination/AdminPagination';
+import Table from '@/components/admin/ui/table/regacy/Table';
+import AdminUserFilter from '@/components/admin/user/users/filter/AdminUserFilter';
+import TableBody from '@/components/admin/user/users/table-content/TableBody';
+import TableHead from '@/components/admin/user/users/table-content/TableHead';
+import AlertModal from '@/components/ui/alert/AlertModal';
 import { useState } from 'react';
-
-import { useDeleteUserMutation, useUserAdminQuery } from '../../../api/user';
-import Header from '../../../components/admin/ui/header/Header';
-import Heading from '../../../components/admin/ui/heading/Heading';
-import AdminPagination from '../../../components/admin/ui/pagination/AdminPagination';
-import Table from '../../../components/admin/ui/table/regacy/Table';
-import AdminUserFilter from '../../../components/admin/user/users/filter/AdminUserFilter';
-import TableBody from '../../../components/admin/user/users/table-content/TableBody';
-import TableHead from '../../../components/admin/user/users/table-content/TableHead';
-import AlertModal from '../../../components/ui/alert/AlertModal';
 
 const AdminUsersPage = () => {
   const [pageNum, setPageNum] = useState<number>(1);

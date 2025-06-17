@@ -8,7 +8,7 @@ interface Props {
 
 function ExternalNavList({ isNextRouter, isLoggedIn, isAdmin }: Props) {
   return (
-    <div className="flex items-center gap-1">
+    <div className="hidden items-center gap-1 md:flex">
       <GlobalNavItem
         className="notice_gnb text-xsmall16 font-normal text-neutral-30"
         href="https://letscareer.oopy.io"
@@ -32,7 +32,7 @@ function ExternalNavList({ isNextRouter, isLoggedIn, isAdmin }: Props) {
       </GlobalNavItem>
       {isLoggedIn && isAdmin && (
         <GlobalNavItem
-          className="q&a_gnb ml-4 text-xsmall16 font-normal text-neutral-30"
+          className="ml-4 inline-block text-xsmall16 font-normal text-neutral-30"
           href="/admin"
           isNextRouter={isNextRouter}
           force

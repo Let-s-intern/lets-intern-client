@@ -1,7 +1,6 @@
+import { UserAdmin } from '@/api/userSchema';
 import dayjs from '@/lib/dayjs';
-
 import { useState } from 'react';
-import { UserAdmin } from '../../../../../schema';
 import ActionButton from '../../../ui/button/ActionButton';
 import TD from '../../../ui/table/regacy/TD';
 

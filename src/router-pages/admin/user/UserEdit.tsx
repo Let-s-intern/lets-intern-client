@@ -1,15 +1,14 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-
 import {
   PatchUserType,
   usePatchUserAdminMutation,
   useUserDetailAdminQuery,
-} from '../../../api/user';
-import ActionButton from '../../../components/admin/ui/button/ActionButton';
-import GradeDropdown from '../../../components/common/mypage/privacy/form-control/GradeDropdown';
-import Input from '../../../components/ui/input/Input';
-import { isValidEmail, isValidPhoneNumber } from '../../../utils/valid';
+} from '@/api/user';
+import ActionButton from '@/components/admin/ui/button/ActionButton';
+import GradeDropdown from '@/components/common/mypage/privacy/form-control/GradeDropdown';
+import Input from '@/components/ui/input/Input';
+import { isValidEmail, isValidPhoneNumber } from '@/utils/valid';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const UserEdit = () => {
   const params = useParams();
@@ -102,11 +101,11 @@ const UserEdit = () => {
       alert('이름을 입력해주세요.');
       return;
     }
-    if (!isValidEmail(userForm.email)) {
+    if (!isValidEmail(userForm.email ?? '')) {
       alert('이메일 형식이 올바르지 않습니다.');
       return;
     }
-    if (!isValidPhoneNumber(userForm.phoneNum)) {
+    if (!isValidPhoneNumber(userForm.phoneNum ?? '')) {
       alert('휴대폰 번호 형식이 올바르지 않습니다.');
       return;
     }
@@ -173,7 +172,7 @@ const UserEdit = () => {
             />
             <div className="z-10 flex w-full flex-col gap-y-2">
               <GradeDropdown
-                value={userForm.grade === null ? '' : userForm.grade}
+                value={!userForm.grade ? '' : userForm.grade}
                 setValue={handleGradeChange}
                 type="MYPAGE"
               />

@@ -35,10 +35,10 @@ function GlobalNavItem({
   ...restProps
 }: Props) {
   const linkClassName = twMerge(
-    'hidden text-small18 font-semibold md:inline-block',
+    'text-small18 font-semibold',
     active ? 'text-primary' : 'text-neutral-0',
     isNew &&
-      "items-center gap-1 after:flex after:h-3 after:w-3 after:items-center after:justify-center after:rounded-full after:bg-system-error after:text-[8px] after:font-bold after:leading-none after:text-white after:content-['N'] md:flex",
+      "flex items-center gap-1 after:flex after:h-3 after:w-3 after:items-center after:justify-center after:rounded-full after:bg-system-error after:text-[8px] after:font-bold after:leading-none after:text-white after:content-['N']",
     className,
   );
 
