@@ -61,7 +61,7 @@ const Feedback = () => {
                 </div>
               </div>
               <LinkButton
-                to={`/challenge/${challenge.challengeId}`}
+                to={`/admin/challenge/operation/${challenge.challengeId}/home`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
