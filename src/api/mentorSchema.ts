@@ -22,3 +22,8 @@ export const adminUserMentorList = z.object({
 });
 
 export type AdminUserMentorList = z.infer<typeof adminUserMentorList>;
+
+export interface PostAdminChallengeMentorReq {
+  challengeId: number;
+  mentorIdList: number[];
+}

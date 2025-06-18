@@ -1,4 +1,10 @@
+/* eslint-disable no-console */
+
 import { fileType, uploadFile } from '@/api/file';
+import {
+  useAdminChallengeMentorListQuery,
+  usePostAdminChallengeMentor,
+} from '@/api/mentor';
 import {
   useGetChallengeQuery,
   useGetChallengeQueryKey,
@@ -33,7 +39,7 @@ import Heading2 from '@components/admin/ui/heading/Heading2';
 import Heading3 from '@components/admin/ui/heading/Heading3';
 import { Button } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 import ChallengeFaqCategory from './program/ChallengeFaqCategory';
@@ -55,6 +61,14 @@ const ChallengeEdit: React.FC = () => {
     enabled: Boolean(challengeIdString),
     refetchOnWindowFocus: false,
   });
+  const { data: challengeMentorData } =
+    useAdminChallengeMentorListQuery(challengeIdString);
+  const postMentorMutation = usePostAdminChallengeMentor();
+
+  // 멘토 리스트
+  const mentorRef = useRef(
+    challengeMentorData?.mentorList.map((item) => item.userId),
+  );
 
   const [input, setInput] = useState<Omit<UpdateChallengeReq, 'desc'>>({});
   const [loading, setLoading] = useState(false);
@@ -185,8 +199,13 @@ const ChallengeEdit: React.FC = () => {
     };
 
     console.log('req', req);
-
-    const res = await patchChallenge(req);
+    const [res] = await Promise.all([
+      patchChallenge(req),
+      postMentorMutation.mutateAsync({
+        mentorIdList: mentorRef.current ?? [],
+        challengeId: parseInt(challengeIdString),
+      }),
+    ]);
     client.invalidateQueries({
       queryKey: [useGetChallengeQueryKey, Number(challengeIdString)],
     });
@@ -207,6 +226,7 @@ const ChallengeEdit: React.FC = () => {
     premiumOptIds,
     pricePlan,
     defaultBasicPriceInfo,
+    postMentorMutation,
   ]);
 
   useEffect(() => {
@@ -366,9 +386,7 @@ const ChallengeEdit: React.FC = () => {
             />
             {/* 멘토 등록 */}
             <ChallengeMentorRegistrationSection
-              challengeId={Number(challengeIdString)}
-              // todo: useCallback 사용하여 change handler 작성
-              onChange={(value) => console.log('멘토 등록')}
+              onChange={(value) => (mentorRef.current = value)}
             />
           </div>
         </div>

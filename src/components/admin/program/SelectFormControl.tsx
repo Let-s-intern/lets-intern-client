@@ -4,6 +4,7 @@ import {
   OutlinedInput,
   Select,
   SelectChangeEvent,
+  SelectProps,
 } from '@mui/material';
 import { ReactNode } from 'react';
 
@@ -23,14 +24,11 @@ interface Props<T> {
  */
 
 function SelectFormControl<T>({
-  defaultValue,
-  value,
-  onChange,
-  renderValue,
   children,
   label,
   labelId,
-}: Props<T>) {
+  ...restSelectProps
+}: Props<T> & SelectProps<T>) {
   return (
     <FormControl size="small">
       <InputLabel id={labelId}>{label}</InputLabel>
@@ -40,11 +38,8 @@ function SelectFormControl<T>({
         id={labelId}
         name={labelId}
         multiple
-        defaultValue={defaultValue}
-        value={value}
-        onChange={onChange}
         input={<OutlinedInput label={label} />}
-        renderValue={renderValue}
+        {...restSelectProps}
       >
         {children}
       </Select>

@@ -10,7 +10,8 @@ import {
   MenuItem,
   SelectChangeEvent,
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 const SelectedMentorNames = ({ selected }: { selected: number[] }) => {
   const { data } = useAdminUserMentorListQuery();
@@ -27,21 +28,33 @@ const SelectedMentorNames = ({ selected }: { selected: number[] }) => {
   );
 };
 
+const useMentorSelect = () => {
+  const { challengeId } = useParams();
+  const { data: challengeData } = useAdminChallengeMentorListQuery(challengeId);
+
+  const [selectedMentorIds, setSelectedMentorIds] = useState<number[]>([]);
+
+  useEffect(() => {
+    const defaultMentorIds =
+      challengeData?.mentorList.map((item) => item.userId) ?? [];
+    setSelectedMentorIds(defaultMentorIds);
+    return () => setSelectedMentorIds([]);
+  }, [challengeData]);
+
+  return {
+    selectedMentorIds,
+    setSelectedMentorIds,
+  };
+};
+
 interface Props {
-  challengeId?: number;
   onChange: (value: number[]) => void;
 }
 
-function ChallengeMentorRegistrationSection({ challengeId, onChange }: Props) {
+function ChallengeMentorRegistrationSection({ onChange }: Props) {
+  const { challengeId } = useParams();
   const { data: userData } = useAdminUserMentorListQuery();
-  const { data: challengeData } = useAdminChallengeMentorListQuery(challengeId);
-
-  const defaultMentorIds = challengeData
-    ? challengeData?.mentorList.map((item) => item.challengeMentorId)
-    : [];
-  const [selectedMentorIds, setSelectedMentorIds] = useState<number[]>(
-    defaultMentorIds!,
-  );
+  const { selectedMentorIds, setSelectedMentorIds } = useMentorSelect();
 
   const handleChange = (e: SelectChangeEvent<number[]>) => {
     const ids = e.target.value as number[];
@@ -52,12 +65,18 @@ function ChallengeMentorRegistrationSection({ challengeId, onChange }: Props) {
   return (
     <section className="flex flex-col gap-2">
       <Heading2>멘토 등록</Heading2>
+      {!challengeId && (
+        <span className="text-xxsmall12 text-system-error">
+          *챌린지 생성 후 멘토 등록이 가능합니다.
+        </span>
+      )}
       <SelectFormControl<number[]>
         labelId="multiple-mentor-checkbox-label"
         label="멘토 목록"
         value={selectedMentorIds}
         renderValue={(selected) => <SelectedMentorNames selected={selected} />}
         onChange={handleChange}
+        disabled={!challengeId}
       >
         {userData?.mentorList.map((item) => (
           <MenuItem key={item.id} value={item.id}>
