@@ -10,7 +10,7 @@ import {
   MenuItem,
   SelectChangeEvent,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 const SelectedMentorNames = ({ selected }: { selected: number[] }) => {
@@ -32,14 +32,11 @@ const useMentorSelect = () => {
   const { challengeId } = useParams();
   const { data: challengeData } = useAdminChallengeMentorListQuery(challengeId);
 
-  const [selectedMentorIds, setSelectedMentorIds] = useState<number[]>([]);
+  const defaultMentorIds =
+    challengeData?.mentorList.map((item) => item.userId) ?? [];
 
-  useEffect(() => {
-    const defaultMentorIds =
-      challengeData?.mentorList.map((item) => item.userId) ?? [];
-    setSelectedMentorIds(defaultMentorIds);
-    return () => setSelectedMentorIds([]);
-  }, [challengeData]);
+  const [selectedMentorIds, setSelectedMentorIds] =
+    useState<number[]>(defaultMentorIds);
 
   return {
     selectedMentorIds,
@@ -48,7 +45,7 @@ const useMentorSelect = () => {
 };
 
 interface Props {
-  onChange: (value: number[]) => void;
+  onChange?: (value: number[]) => void;
 }
 
 function ChallengeMentorRegistrationSection({ onChange }: Props) {
@@ -59,7 +56,7 @@ function ChallengeMentorRegistrationSection({ onChange }: Props) {
   const handleChange = (e: SelectChangeEvent<number[]>) => {
     const ids = e.target.value as number[];
     setSelectedMentorIds(ids);
-    onChange(ids);
+    if (onChange) onChange(ids);
   };
 
   return (

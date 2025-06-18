@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 
 import { fileType, uploadFile } from '@/api/file';
-import { usePostAdminChallengeMentor } from '@/api/mentor';
 import { usePostChallengeMutation } from '@/api/program';
 import ChallengeBasic from '@/components/admin/program/ChallengeBasic';
 import ChallengeCurriculum from '@/components/admin/program/ChallengeCurriculum';
@@ -32,7 +31,7 @@ import Heading from '@components/admin/ui/heading/Heading';
 import Heading2 from '@components/admin/ui/heading/Heading2';
 import Heading3 from '@components/admin/ui/heading/Heading3';
 import { Button, TextField } from '@mui/material';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import ChallengeFaqCategory from './program/ChallengeFaqCategory';
@@ -79,13 +78,11 @@ const initialInput: Omit<CreateChallengeReq, 'desc'> = {
  * 챌린지 생성 페이지
  */
 const ChallengeCreate: React.FC = () => {
-  const mentorRef = useRef<number[]>([]); // 멘토 리스트
   const navigate = useNavigate();
   const { snackbar } = useAdminSnackbar();
 
   /** 챌린지  */
   const { mutateAsync: postChallenge } = usePostChallengeMutation();
-  const postMentorMutation = usePostAdminChallengeMentor();
 
   const [content, setContent] = useState<ChallengeContent>({
     curriculum: [],
@@ -327,9 +324,7 @@ const ChallengeCreate: React.FC = () => {
               }}
             />
             {/* 멘토 등록 */}
-            <ChallengeMentorRegistrationSection
-              onChange={(value) => (mentorRef.current = value)}
-            />
+            <ChallengeMentorRegistrationSection />
           </div>
         </div>
       </section>
