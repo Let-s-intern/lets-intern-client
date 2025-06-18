@@ -1719,3 +1719,5 @@ export const vodListResponseSchema = z.object({
   programList: z.array(vodListItemSchema),
   pageInfo,
 });
+
+export const UserRoleEnum = z.enum(['ADMIN', 'USER']);
