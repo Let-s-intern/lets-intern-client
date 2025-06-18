@@ -67,7 +67,7 @@ const ChallengeEdit: React.FC = () => {
 
   // 멘토 리스트
   const mentorRef = useRef(
-    challengeMentorData?.mentorList.map((item) => item.userId),
+    challengeMentorData?.mentorList.map((item) => item.userId) ?? [],
   );
 
   const [input, setInput] = useState<Omit<UpdateChallengeReq, 'desc'>>({});
