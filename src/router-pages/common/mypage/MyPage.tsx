@@ -9,12 +9,13 @@ const MyPage = () => {
   const { isLoggedIn } = useAuthStore();
   const location = useLocation();
   const navigate = useNavigate();
-
+  const isMentor = true; //디버깅용
   const isReviewCreatePage = location.pathname.startsWith('/mypage/review/new');
   const isReviewPage =
     location.pathname.startsWith('/mypage/review/challenge') ||
     location.pathname.startsWith('/mypage/review/live') ||
-    location.pathname.startsWith('/mypage/review/report');
+    location.pathname.startsWith('/mypage/review/report') ||
+    location.pathname.startsWith('/mypage/review/challenge');
 
   useEffect(() => {
     // login 페이지로 넘어간 이후 이 useEffect가 한번 더 실행되는 케이스가 있어서 방어로직 추가
@@ -92,6 +93,21 @@ const MyPage = () => {
                 />
                 개인정보
               </NavItem>
+              {isMentor && (
+                <NavItem
+                  to="/mypage/feedback"
+                  active={location.pathname === '/mypage/feedback'}
+                >
+                  <img
+                    src={`/icons/user-challenge-feedback${
+                      location.pathname === '/mypage/feedback' ? '-black' : ''
+                    }.svg`}
+                    alt="user"
+                    className="hidden h-[1.625rem] w-[1.625rem] md:block"
+                  />
+                  챌린지 피드백
+                </NavItem>
+              )}
             </div>
           </div>
         </nav>

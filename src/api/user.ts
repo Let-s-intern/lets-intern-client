@@ -7,9 +7,22 @@ import {
   grade,
   userAdminDetailType,
 } from '../schema';
-import { isAdminSchema, userAdminType } from './userSchema';
 
+import axiosV2 from '@/utils/axiosV2';
+import { isAdminSchema, mentorListSchema, userAdminType } from './userSchema';
+
+export const UseMentorListQueryKey = 'useMentorListQueryKey';
 export const UseUserAdminQueryKey = 'useUserListQueryKey';
+
+export const useMentorListQuery = () => {
+  return useQuery({
+    queryKey: [UseMentorListQueryKey],
+    queryFn: async () => {
+      const res = await axiosV2.get('/admin/user/mentor');
+      return mentorListSchema.parse(res.data.data);
+    },
+  });
+};
 
 export const useUserAdminQuery = ({
   email,
@@ -28,7 +41,7 @@ export const useUserAdminQuery = ({
   return useQuery({
     queryKey: [UseUserAdminQueryKey, email, name, phoneNum, pageable],
     queryFn: async () => {
-      const res = await axios.get('/user/admin', {
+      const res = await axios.get('/v2/admin/user/mentor', {
         params: {
           email,
           name,

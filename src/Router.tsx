@@ -18,6 +18,7 @@ import Application from './router-pages/common/mypage/Application';
 import Credit from './router-pages/common/mypage/Credit';
 import CreditDelete from './router-pages/common/mypage/CreditDelete';
 import CreditDetail from './router-pages/common/mypage/CreditDetail';
+import Feedback from './router-pages/common/mypage/Feedback';
 import MyPage from './router-pages/common/mypage/MyPage';
 import Privacy from './router-pages/common/mypage/Privacy';
 import ReportCreditDelete from './router-pages/common/mypage/ReportCreditDelete';
@@ -126,7 +127,10 @@ const Router = () => {
                   path="credit/report/:paymentId/delete"
                   element={<ReportCreditDelete />}
                 />
+                {/* /mypage/privacy */}
                 <Route path="privacy" element={<Privacy />} />
+                {/* /mypage/feedback */}
+                <Route path="feedback" element={<Feedback />} />
               </Route>
 
               {/* 로그인 */}
