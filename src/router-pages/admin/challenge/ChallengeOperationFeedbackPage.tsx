@@ -117,6 +117,7 @@ function ChallengeOperationFeedbackPage() {
   useEffect(() => {
     localStorage.removeItem('mission');
   }, []);
+
   return (
     <DataGrid
       rows={rows}
