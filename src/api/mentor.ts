@@ -1,7 +1,10 @@
 import { IPageable } from '@/types/interface';
 import axiosV2 from '@/utils/axiosV2';
 import { useQuery } from '@tanstack/react-query';
-import { adminUserMentorList } from './mentorSchema';
+import {
+  adminChallengeMentorListSchema,
+  adminUserMentorList,
+} from './mentorSchema';
 
 /** GET 챌린지 멘토 목록 조회 /api/v2/admin/challenge/{challengeId}/mentor */
 export const useAdminChallengeMentorListQuery = (
@@ -11,7 +14,7 @@ export const useAdminChallengeMentorListQuery = (
     queryKey: ['useAdminChallengeMentorsQuery'],
     queryFn: async () => {
       const res = await axiosV2.get(`/admin/challenge/${challengeId}/mentor`);
-      return adminUserMentorList.parse(res.data.data);
+      return adminChallengeMentorListSchema.parse(res.data.data);
     },
     enabled: !!challengeId,
     refetchOnWindowFocus: false,

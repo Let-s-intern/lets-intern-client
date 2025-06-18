@@ -36,8 +36,8 @@ function ChallengeMentorRegistrationSection({ challengeId, onChange }: Props) {
   const { data: userData } = useAdminUserMentorListQuery();
   const { data: challengeData } = useAdminChallengeMentorListQuery(challengeId);
 
-  const defaultMentorIds = challengeId
-    ? challengeData?.mentorList.map((item) => item.id)
+  const defaultMentorIds = challengeData
+    ? challengeData?.mentorList.map((item) => item.challengeMentorId)
     : [];
   const [selectedMentorIds, setSelectedMentorIds] = useState<number[]>(
     defaultMentorIds!,
