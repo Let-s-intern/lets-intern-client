@@ -9,7 +9,12 @@ import {
 } from '../schema';
 
 import axiosV2 from '@/utils/axiosV2';
-import { isAdminSchema, mentorListSchema, userAdminType } from './userSchema';
+import {
+  challengeMentorVoSchema,
+  isAdminSchema,
+  mentorListSchema,
+  userAdminType,
+} from './userSchema';
 
 export const UseMentorListQueryKey = 'useMentorListQueryKey';
 export const UseUserAdminQueryKey = 'useUserListQueryKey';
@@ -218,5 +223,28 @@ export const usePatchUser = (
     onError: (error: Error) => {
       return errorCallback && errorCallback(error);
     },
+  });
+};
+
+const mentorChallengeListSchema = z.object({
+  myChallengeMentorVoList: z.array(challengeMentorVoSchema),
+});
+
+export type MentorChallengeList = z.infer<typeof mentorChallengeListSchema>;
+export type ChallengeMentorVo = z.infer<typeof challengeMentorVoSchema>;
+
+const UseMentorChallengeListQueryKey = 'useMentorChallengeListQueryKey';
+
+export const useMentorChallengeListQuery = ({
+  ...options
+}: { enabled?: boolean; retry?: boolean | number } = {}) => {
+  return useQuery({
+    ...options,
+    queryKey: [UseMentorChallengeListQueryKey],
+    queryFn: async () => {
+      const res = await axios.get('/admin/challenge-mentor');
+      return mentorChallengeListSchema.parse(res.data.data);
+    },
+    refetchOnWindowFocus: false,
   });
 };
