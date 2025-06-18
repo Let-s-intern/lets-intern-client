@@ -8,18 +8,20 @@ import {
 } from '@mui/material';
 import { ReactNode } from 'react';
 
+const FORM_CONTROL_SX = { width: '100%' };
+
 interface Props<T> {
   defaultValue?: T;
   value?: T;
   onChange?: (e: SelectChangeEvent<T>) => void;
   renderValue: (selectedList: T) => JSX.Element;
   children: ReactNode;
-  label: string;
-  labelId: string;
+  label?: string;
+  labelId?: string;
 }
 
 /**
- * 프로그램 분류, B2 타입 등 중복 선택이 가능한 드롭다운 컴포넌트
+ * 프로그램 분류, B2 타입 등 중복/단일 선택이 가능한 드롭다운 컴포넌트
  * @param children: Select 선택 목록
  */
 
@@ -30,14 +32,13 @@ function SelectFormControl<T>({
   ...restSelectProps
 }: Props<T> & SelectProps<T>) {
   return (
-    <FormControl size="small">
+    <FormControl sx={FORM_CONTROL_SX} size="small">
       <InputLabel id={labelId}>{label}</InputLabel>
       <Select
         labelId={labelId}
         label={label}
         id={labelId}
         name={labelId}
-        multiple
         input={<OutlinedInput label={label} />}
         {...restSelectProps}
       >
