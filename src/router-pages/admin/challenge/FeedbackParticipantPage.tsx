@@ -93,7 +93,7 @@ const columns: GridColDef<Row>[] = [
     ),
   },
   {
-    field: 'missionStatus',
+    field: 'feedbackStatus',
     headerName: '진행 상태',
     width: 120,
     renderCell: (params: GridRenderCellParams<Row, string>) => (
