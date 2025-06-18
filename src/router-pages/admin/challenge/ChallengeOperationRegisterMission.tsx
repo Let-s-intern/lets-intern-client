@@ -1,4 +1,5 @@
 import { useGetChallengeOptions } from '@/api/challengeOption';
+import { usePatchMission } from '@/api/mission';
 import {
   useAdminCurrentChallenge,
   useAdminMissionsOfCurrentChallenge,
@@ -29,6 +30,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  SelectChangeEvent,
 } from '@mui/material';
 import {
   DataGrid,
@@ -64,6 +66,7 @@ const END_OF_SECONDS = 59; // 마감일 59초로 설정
 
 const useMissionColumns = () => {
   const { data } = useGetChallengeOptions();
+  const patchMission = usePatchMission();
 
   const columns: GridColDef<Row>[] = [
     {
@@ -315,16 +318,24 @@ const useMissionColumns = () => {
       headerName: '피드백 미션 여부',
       width: 160,
       renderCell(params) {
+        const option = data?.challengeOptionList.find(
+          (item) => item.challengeOptionId === params.value,
+        );
         return (
-          <SelectFormControl<string>
-            value={params.value}
-            renderValue={() => params.value || '-'}
+          <SelectFormControl<number>
+            value={params.value || ''}
+            renderValue={() => <>{option?.title || '-'}</>}
             disabled={params.row.id === -1}
-            autoWidth
-            labelId="option-code-label"
-            label="옵션 코드"
+            labelId="option-label"
+            label="옵션"
+            onChange={async (e: SelectChangeEvent<number>) => {
+              await patchMission.mutateAsync({
+                missionId: params.row.id,
+                challengeOptionId: Number(e.target.value),
+              });
+            }}
           >
-            {data?.challengeOptionList.map((item) => (
+            {(data?.challengeOptionList ?? []).map((item) => (
               <MenuItem
                 key={`option-${item.challengeOptionId}`}
                 value={item.challengeOptionId}
