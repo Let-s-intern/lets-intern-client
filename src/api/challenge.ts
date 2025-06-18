@@ -21,6 +21,7 @@ import axios from '../utils/axios';
 import { Pageable } from './../schema';
 import {
   challengeGoalSchema,
+  challengeMissionFeedbackAttendanceListSchema,
   challengeMissionFeedbackListSchema,
   challengeUserInfoSchema,
   challengeValidUserSchema,
@@ -513,5 +514,29 @@ export const useChallengeMissionFeedbackQuery = (challengeId?: number) => {
       return challengeMissionFeedbackListSchema.parse(res.data.data);
     },
     enabled: !!challengeId,
+  });
+};
+
+/** 챌린지 피드백 미션별 제출자 조회 /api/v2/admin/challenge/{challengeId}/mission/{missionId}/feedback/attendances */
+export const useChallengeMissionFeedbackAttendanceQuery = ({
+  challengeId,
+  missionId,
+}: {
+  challengeId?: number | string;
+  missionId?: number | string;
+}) => {
+  return useQuery({
+    queryKey: [
+      'useChallengeMissionFeedbackAttendanceQuery',
+      challengeId,
+      missionId,
+    ],
+    queryFn: async () => {
+      const res = await axiosV2.get(
+        `/admin/challenge/${challengeId}/mission/${missionId}/feedback/attendances`,
+      );
+      return challengeMissionFeedbackAttendanceListSchema.parse(res.data.data);
+    },
+    enabled: !!challengeId || !!missionId,
   });
 };
