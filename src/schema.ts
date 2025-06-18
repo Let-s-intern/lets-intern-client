@@ -668,7 +668,7 @@ export type UpdateVodReq = {
 
 // /**  DELETE /api/v1/vod/{vodId} vod 삭제 */
 
-/** GET /api/v1/mission/{id}/admin */
+/** [어드민] 챌린지 1개의 미션 전체 목록 GET /api/v1/mission/{id}/admin */
 export const missionAdmin = z
   .object({
     missionList: z.array(
@@ -686,6 +686,8 @@ export const missionAdmin = z
         missionTemplateId: z.number().nullable(),
         startDate: z.string(),
         endDate: z.string(),
+        challengeOptionId: z.number().nullable(),
+        challengeOptionCode: z.string().nullable(),
         essentialContentsList: z
           .array(
             z

@@ -93,7 +93,7 @@ const columns: GridColDef<Row>[] = [
     ),
   },
   {
-    field: 'missionStatus',
+    field: 'feedbackStatus',
     headerName: '진행 상태',
     width: 120,
     renderCell: (params: GridRenderCellParams<Row, string>) => (
@@ -113,7 +113,7 @@ const useFeedbackParticipantRows = () => {
 
   const [rows, setRows] = useState<Row[]>([]);
 
-  const selectedMission = JSON.parse(localStorage.getItem('mission')!);
+  const selectedMission = JSON.parse(localStorage.getItem('mission') ?? '{}');
   const missionTitle = selectedMission.title;
   const missionRound = selectedMission.th;
 

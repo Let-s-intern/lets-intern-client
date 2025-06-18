@@ -113,6 +113,7 @@ const ChallengeBasic = React.memo(
         <SelectFormControl
           labelId="adminProgramTypeInfo"
           label="B2 타입"
+          multiple
           defaultValue={
             defaultValue?.adminClassificationInfo
               ? defaultValue.adminClassificationInfo.map(

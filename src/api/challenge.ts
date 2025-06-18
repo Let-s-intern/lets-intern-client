@@ -537,6 +537,6 @@ export const useChallengeMissionFeedbackAttendanceQuery = ({
       );
       return challengeMissionFeedbackAttendanceListSchema.parse(res.data.data);
     },
-    enabled: !!challengeId || !!missionId,
+    enabled: !!challengeId && !!missionId,
   });
 };

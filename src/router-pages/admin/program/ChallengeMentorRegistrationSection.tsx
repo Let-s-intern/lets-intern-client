@@ -70,6 +70,7 @@ function ChallengeMentorRegistrationSection({ onChange }: Props) {
       <SelectFormControl<number[]>
         labelId="multiple-mentor-checkbox-label"
         label="멘토 목록"
+        multiple
         value={selectedMentorIds}
         renderValue={(selected) => <SelectedMentorNames selected={selected} />}
         onChange={handleChange}
