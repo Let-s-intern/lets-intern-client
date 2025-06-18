@@ -1,3 +1,4 @@
+import { useChallengeMissionFeedbackQuery } from '@/api/challenge';
 import { LOCALIZED_YYYY_MD_Hm } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
@@ -97,16 +98,20 @@ const columns: GridColDef<Row>[] = [
 const useFeedbackMissionRows = () => {
   const { programId } = useParams();
 
+  const { data } = useChallengeMissionFeedbackQuery(Number(programId));
+
   const [rows, setRows] = useState<Row[]>([]);
 
   useEffect(() => {
+    if (!data) return;
+
     setRows(
-      data.map((item) => ({
+      data.missionList.map((item) => ({
         ...item,
         url: `/admin/challenge/operation/${programId}/feedback/mission/${item.id}/participants`,
       })),
     );
-  }, [programId]);
+  }, [data, programId]);
 
   return rows;
 };
