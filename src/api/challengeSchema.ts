@@ -16,11 +16,11 @@ export const challengeMissionFeedbackListSchema = z.object({
   missionList: z.array(
     z.object({
       id: z.number(),
-      title: z.string().default(''),
+      title: z.string().optional().nullable(),
       th: z.number(),
-      startDate: z.string(),
-      endDate: z.string(),
-      challengeOptionCode: z.string().default(''),
+      startDate: z.string().datetime({ local: true }),
+      endDate: z.string().datetime({ local: true }),
+      challengeOptionCode: z.string().optional().nullable(),
     }),
   ),
 });

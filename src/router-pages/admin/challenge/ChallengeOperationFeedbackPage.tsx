@@ -108,6 +108,8 @@ const useFeedbackMissionRows = () => {
     setRows(
       data.missionList.map((item) => ({
         ...item,
+        title: item.title ?? '',
+        challengeOptionCode: item.challengeOptionCode ?? '',
         url: `/admin/challenge/operation/${programId}/feedback/mission/${item.id}/participants`,
       })),
     );
