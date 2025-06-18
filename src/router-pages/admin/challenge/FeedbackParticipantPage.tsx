@@ -2,62 +2,23 @@
  * @todo API 연결: /api/v2/admin/challenge/{challengeId}/mission/{missionId}/feedback/attendances
  */
 
+import { useChallengeMissionFeedbackAttendanceQuery } from '@/api/challenge';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
-// *미션 제출 현황 = 정상 제출, 확인여부 = 확인 완료인 참여자 미션만 노출
-const data = [
-  {
-    id: 1,
-    mentorName: '김멘토',
-    name: '홍길동',
-    major: '컴퓨터공학과',
-    wishJob: '프론트엔드 개발자',
-    wishCompany: '카카오',
-    link: 'https://github.com/honggildong',
-    status: 'PRESENT',
-    result: 'WAITING',
-    challengePricePlanType: 'BASIC',
-  },
-  {
-    id: 2,
-    mentorName: '이멘토',
-    name: '김철수',
-    major: '소프트웨어학과',
-    wishJob: '백엔드 개발자',
-    wishCompany: '네이버',
-    link: 'https://github.com/cheolsu',
-    status: 'PRESENT',
-    result: 'PASS',
-    challengePricePlanType: 'PREMIUM',
-  },
-  {
-    id: 3,
-    mentorName: '박멘토',
-    name: '이영희',
-    major: '정보통신공학과',
-    wishJob: '풀스택 개발자',
-    wishCompany: '라인',
-    link: 'https://github.com/younghee',
-    status: 'PRESENT',
-    result: 'FAIL',
-    challengePricePlanType: 'BASIC',
-  },
-];
-
 interface Row {
   id: number | string;
-  mentorName: string;
+  mentorName: string | null;
   missionTitle: string;
   missionRound: number | string;
   name: string;
-  major: string;
-  wishJob: string;
-  wishCompany: string;
-  link: string;
+  major?: string | null;
+  wishJob?: string | null;
+  wishCompany?: string | null;
+  link?: string | null;
   feedbackPageLink: string;
-  missionStatus: string;
+  feedbackStatus: string;
 }
 
 const columns: GridColDef<Row>[] = [
@@ -145,26 +106,31 @@ const columns: GridColDef<Row>[] = [
 const useFeedbackParticipantRows = () => {
   const { missionId, programId } = useParams();
 
+  const { data } = useChallengeMissionFeedbackAttendanceQuery({
+    challengeId: programId,
+    missionId,
+  });
+
   const [rows, setRows] = useState<Row[]>([]);
 
   const selectedMission = JSON.parse(localStorage.getItem('mission')!);
   const missionTitle = selectedMission.title;
   const missionRound = selectedMission.th;
 
+  // todo: *미션 제출 현황 = 정상 제출, 확인여부 = 확인 완료인 참여자 미션만 노출
   useEffect(() => {
     setRows(
-      data.map((item) => {
+      (data?.attendanceList ?? []).map((item) => {
         const { status, result, challengePricePlanType, ...rest } = item; // eslint-disable-line @typescript-eslint/no-unused-vars
         return {
           ...rest,
           missionTitle,
           missionRound,
           feedbackPageLink: `/admin/challenge/operation/${programId}/mission/${missionId}/participant/${item.id}/feedback`,
-          missionStatus: '진행전',
         };
       }),
     );
-  }, [missionTitle, missionRound, programId, missionId]);
+  }, [data, missionTitle, missionRound, programId, missionId]);
 
   return rows;
 };
