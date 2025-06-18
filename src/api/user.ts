@@ -12,6 +12,7 @@ import axiosV2 from '@/utils/axiosV2';
 import {
   challengeMentorVoSchema,
   isAdminSchema,
+  isMentorSchema,
   mentorListSchema,
   userAdminType,
 } from './userSchema';
@@ -244,6 +245,24 @@ export const useMentorChallengeListQuery = ({
     queryFn: async () => {
       const res = await axios.get('/admin/challenge-mentor');
       return mentorChallengeListSchema.parse(res.data.data);
+    },
+    refetchOnWindowFocus: false,
+  });
+};
+
+export type IsMentor = z.infer<typeof isMentorSchema>;
+
+const UseIsMentorQueryKey = 'useIsMentorQueryKey';
+
+export const useIsMentorQuery = ({
+  ...options
+}: { enabled?: boolean; retry?: boolean | number } = {}) => {
+  return useQuery({
+    ...options,
+    queryKey: [UseIsMentorQueryKey],
+    queryFn: async () => {
+      const res = await axiosV2.get('/user/is-mentor');
+      return isMentorSchema.parse(res.data.data);
     },
     refetchOnWindowFocus: false,
   });
