@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 import { fileType, uploadFile } from '@/api/file';
 import { usePostChallengeMutation } from '@/api/program';
 import ChallengeBasic from '@/components/admin/program/ChallengeBasic';
@@ -33,6 +35,7 @@ import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import ChallengeFaqCategory from './program/ChallengeFaqCategory';
+import ChallengeMentorRegistrationSection from './program/ChallengeMentorRegistrationSection';
 import ProgramSchedule from './program/ProgramSchedule';
 
 const { BASIC, STANDARD, PREMIUM } = ChallengePricePlanEnum.enum;
@@ -295,29 +298,34 @@ const ChallengeCreate: React.FC = () => {
             onChangeStandardOptIds={(ids) => setStandardOptIds(ids)}
             onChangePricePlan={handleChangePricePlan}
           />
-          <ProgramSchedule
-            defaultValue={{
-              beginning: dayjs.tz(input.beginning, 'Asia/Seoul'),
-              deadline: dayjs.tz(input.deadline, 'Asia/Seoul'),
-              endDate: dayjs.tz(input.endDate, 'Asia/Seoul'),
-              startDate: dayjs.tz(input.startDate, 'Asia/Seoul'),
-            }}
-            setInput={setInput}
-            onDeadlineChange={(value) => {
-              if (!value) return;
+          <div className="flex flex-col gap-4">
+            {/* 챌린지 일정 */}
+            <ProgramSchedule
+              defaultValue={{
+                beginning: dayjs.tz(input.beginning, 'Asia/Seoul'),
+                deadline: dayjs.tz(input.deadline, 'Asia/Seoul'),
+                endDate: dayjs.tz(input.endDate, 'Asia/Seoul'),
+                startDate: dayjs.tz(input.startDate, 'Asia/Seoul'),
+              }}
+              setInput={setInput}
+              onDeadlineChange={(value) => {
+                if (!value) return;
 
-              setInput((prev) => ({
-                ...prev,
-                priceInfo: prev.priceInfo.map((priceInfo) => ({
-                  ...priceInfo,
-                  priceInfo: {
-                    ...priceInfo.priceInfo,
-                    deadline: value.format('YYYY-MM-DDTHH:mm'),
-                  },
-                })),
-              }));
-            }}
-          />
+                setInput((prev) => ({
+                  ...prev,
+                  priceInfo: prev.priceInfo.map((priceInfo) => ({
+                    ...priceInfo,
+                    priceInfo: {
+                      ...priceInfo.priceInfo,
+                      deadline: value.format('YYYY-MM-DDTHH:mm'),
+                    },
+                  })),
+                }));
+              }}
+            />
+            {/* 멘토 등록 */}
+            <ChallengeMentorRegistrationSection />
+          </div>
         </div>
       </section>
 

@@ -668,7 +668,7 @@ export type UpdateVodReq = {
 
 // /**  DELETE /api/v1/vod/{vodId} vod 삭제 */
 
-/** GET /api/v1/mission/{id}/admin */
+/** [어드민] 챌린지 1개의 미션 전체 목록 GET /api/v1/mission/{id}/admin */
 export const missionAdmin = z
   .object({
     missionList: z.array(
@@ -686,6 +686,8 @@ export const missionAdmin = z
         missionTemplateId: z.number().nullable(),
         startDate: z.string(),
         endDate: z.string(),
+        challengeOptionId: z.number().nullable(),
+        challengeOptionCode: z.string().nullable(),
         essentialContentsList: z
           .array(
             z
@@ -723,14 +725,13 @@ export const missionAdmin = z
 
 export type Mission = z.infer<typeof missionAdmin>['missionList'][number];
 
-const attendanceStatus = z.union([
-  z.literal('PRESENT'),
-  z.literal('UPDATED'),
-  z.literal('LATE'),
-  z.literal('ABSENT'),
+export const AttendanceStatusEnum = z.enum([
+  'PRESENT',
+  'UPDATED',
+  'LATE',
+  'ABSENT',
 ]);
-
-export type AttendanceStatus = z.infer<typeof attendanceStatus>;
+export type AttendanceStatus = z.infer<typeof AttendanceStatusEnum>;
 
 const attendanceResult = z.union([
   z.literal('WAITING'),
@@ -749,7 +750,7 @@ export const attendances = z
           id: z.number(),
           name: z.string().nullable().optional(),
           email: z.string().nullable().optional(),
-          status: attendanceStatus.nullable().optional(),
+          status: AttendanceStatusEnum.nullable().optional(),
           link: z.string().nullable().optional(),
           review: z.string().nullable().optional(),
           reviewIsVisible: z.boolean().nullable().optional(),
@@ -1135,7 +1136,7 @@ export const challengeSchedule = z
           link: z.string().nullable(),
           review: z.string().nullable().optional(),
           comments: z.string().nullable(),
-          status: attendanceStatus.nullable(),
+          status: AttendanceStatusEnum.nullable(),
           result: attendanceResult.nullable(),
         }),
       }),
@@ -1296,7 +1297,7 @@ export const myDailyMission = z
         link: z.string().nullable(),
         review: z.string().nullable().optional(),
         comments: z.string().nullable(),
-        status: attendanceStatus.nullable(),
+        status: AttendanceStatusEnum.nullable(),
         result: attendanceResult.nullable(),
       })
       .nullable(),
@@ -1326,7 +1327,7 @@ export const myChallengeMissionsByType = z.object({
     z.object({
       attendanceLink: z.string().nullable().optional(),
       attendanceResult: attendanceResult.nullable().optional(),
-      attendanceStatus: attendanceStatus.nullable().optional(),
+      attendanceStatus: AttendanceStatusEnum.nullable().optional(),
       id: z.number(),
       th: z.number().nullable(),
       title: z.string().nullable(),
@@ -1719,3 +1720,5 @@ export const vodListResponseSchema = z.object({
   programList: z.array(vodListItemSchema),
   pageInfo,
 });
+
+export const UserRoleEnum = z.enum(['ADMIN', 'USER']);
