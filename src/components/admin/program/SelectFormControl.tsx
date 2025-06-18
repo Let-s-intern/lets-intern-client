@@ -16,8 +16,8 @@ interface Props<T> {
   onChange?: (e: SelectChangeEvent<T>) => void;
   renderValue: (selectedList: T) => JSX.Element;
   children: ReactNode;
-  label?: string;
-  labelId?: string;
+  label: string;
+  labelId: string;
 }
 
 /**
