@@ -686,6 +686,7 @@ export const missionAdmin = z
         missionTemplateId: z.number().nullable(),
         startDate: z.string(),
         endDate: z.string(),
+        challengeOptionId: z.number().nullable(),
         challengeOptionCode: z.string().nullable(),
         essentialContentsList: z
           .array(

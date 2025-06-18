@@ -55,6 +55,7 @@ type Row = Mission & {
   additionalContentsOptions: Content[]; // List from API
   essentialContentsOptions: Content[]; // List from API
   missionTemplatesOptions: MissionTemplateResItem[];
+  challengeOptionId: number | null;
   challengeOptionCode: string | null;
   onAction(params: {
     action: 'create' | 'cancel' | 'edit' | 'delete';
@@ -321,10 +322,11 @@ const useMissionColumns = () => {
         const option = data?.challengeOptionList.find(
           (item) => item.challengeOptionId === params.value,
         );
+
         return (
           <SelectFormControl<number>
             value={params.value || ''}
-            renderValue={() => <>{option?.title || '-'}</>}
+            renderValue={() => <>{option?.code || '-'}</>}
             disabled={params.row.id === -1}
             labelId="option-label"
             label="옵션"
@@ -727,7 +729,8 @@ const ChallengeOperationRegisterMission = () => {
                 additionalContentsList: [],
                 essentialContentsList: [],
                 missionType: '',
-                challengeOptionCode: null,
+                challengeOptionCode: '',
+                challengeOptionId: -1,
               });
             },
           },
