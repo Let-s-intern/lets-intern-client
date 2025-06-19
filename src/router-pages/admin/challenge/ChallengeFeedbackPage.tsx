@@ -1,19 +1,25 @@
 /** 참여자별 피드백 페이지 (피드백 작성 페이지) */
 
 import { usePatchAttendance } from '@/api/attendance';
+import { useFeedbackAttendenceQuery } from '@/api/challenge';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import EditorApp from '@components/admin/lexical/EditorApp';
 import Heading2 from '@components/admin/ui/heading/Heading2';
 import { Button } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 export default function ChallengeFeedbackPage() {
   const navigate = useNavigate();
-  const { programId, missionId, userId } = useParams();
+  const { programId, missionId, userId, ...rest } = useParams();
 
   const { snackbar } = useAdminSnackbar();
   const patchAttendance = usePatchAttendance();
+  const { data } = useFeedbackAttendenceQuery({
+    challengeId: programId,
+    missionId,
+    attendanceId: userId,
+  });
 
   const {
     missionTitle,
@@ -41,7 +47,7 @@ export default function ChallengeFeedbackPage() {
     </Link>,
   ];
 
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState<string>();
 
   const handleChangeEditor = (jsonString: string) => {
     setContent(jsonString);
@@ -56,6 +62,10 @@ export default function ChallengeFeedbackPage() {
     snackbar('저장되었습니다.');
   };
 
+  useEffect(() => {
+    setContent(data?.attendanceDetailVo.feedback || undefined);
+  }, [data]);
+
   return (
     <div className="mt-5 px-5">
       <Heading2 className="mb-2">{name} 피드백</Heading2>
@@ -64,7 +74,10 @@ export default function ChallengeFeedbackPage() {
           <li key={index}>{item}</li>
         ))}
       </ul>
-      <EditorApp onChange={handleChangeEditor} />
+      <EditorApp
+        initialEditorStateJsonString={content}
+        onChange={handleChangeEditor}
+      />
       <div className="flex items-center justify-end gap-4">
         <Button
           variant="outlined"

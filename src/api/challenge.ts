@@ -587,9 +587,9 @@ export const useFeedbackAttendenceQuery = ({
   missionId,
   attendanceId,
 }: {
-  challengeId: string | number;
-  missionId: string | number;
-  attendanceId: string | number;
+  challengeId?: string | number;
+  missionId?: string | number;
+  attendanceId?: string | number;
 }) => {
   return useQuery({
     queryKey: [

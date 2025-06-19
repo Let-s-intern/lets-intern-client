@@ -11,6 +11,6 @@ export type PatchAttendanceReq = {
   review?: string;
   reviewIsVisible?: boolean;
   mentorUserId?: number;
-  feedback?: string;
+  feedback?: string | null;
   feedbackStatus?: FeedbackStatus;
 };
