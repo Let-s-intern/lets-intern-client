@@ -24,8 +24,10 @@ import {
   challengeGoalSchema,
   challengeMissionFeedbackAttendanceListSchema,
   challengeMissionFeedbackListSchema,
+  challengeMissionFeedbackSchema,
   challengeUserInfoSchema,
   challengeValidUserSchema,
+  feedbackAttendanceSchema,
 } from './challengeSchema';
 import { getAdminProgramReviewQueryKey } from './review';
 
@@ -505,7 +507,7 @@ export const getClickCopy = async (fromId: number, toId: number) => {
 };
 
 /** 챌린지 피드백 미션 전체 목록 /api/v2/admin/challenge/{challengeId}/mission/feedback */
-export const useChallengeMissionFeedbackQuery = (challengeId?: number) => {
+export const useChallengeMissionFeedbackListQuery = (challengeId?: number) => {
   return useQuery({
     queryKey: ['useChallengeMissionFeedbackQuery', challengeId],
     queryFn: async () => {
@@ -556,5 +558,52 @@ export const useChallengeMissionListQuery = (challengeId?: string | number) => {
       return missionAdmin.parse(res.data.data);
     },
     enabled: !!challengeId,
+  });
+};
+
+/** 챌린지 나의 기록장 미션 피드백 조회 /api/v1/challenge/{challengeId}/missions/{missionId}/feedback */
+export const useChallengeMissionFeedbackQuery = ({
+  challengeId,
+  missionId,
+}: {
+  challengeId: string | number;
+  missionId: string | number;
+}) => {
+  return useQuery({
+    queryKey: ['useChallengeMissionFeedback', challengeId, missionId],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/challenge/${challengeId}/missions/${missionId}/feedback`,
+      );
+      return challengeMissionFeedbackSchema.parse(res.data.data);
+    },
+    enabled: !!challengeId && !!missionId,
+  });
+};
+
+/** [멘토용] 챌린지 피드백 미션별 제출자 상세 조회 /api/v1/challenge/{challengeId}/mission/{missionId}/feedback/attendances/{attendanceId} */
+export const useFeedbackAttendenceQuery = ({
+  challengeId,
+  missionId,
+  attendanceId,
+}: {
+  challengeId: string | number;
+  missionId: string | number;
+  attendanceId: string | number;
+}) => {
+  return useQuery({
+    queryKey: [
+      'useFeedbackAttendenceQuery',
+      challengeId,
+      missionId,
+      attendanceId,
+    ],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/challenge/${challengeId}/mission/${missionId}/feedback/attendances/${attendanceId}`,
+      );
+      return feedbackAttendanceSchema.parse(res.data.data);
+    },
+    enabled: !!challengeId && !!missionId && !!attendanceId,
   });
 };

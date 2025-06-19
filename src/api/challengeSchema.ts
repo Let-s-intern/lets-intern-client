@@ -67,3 +67,24 @@ export const challengeMissionFeedbackAttendanceListSchema = z.object({
     }),
   ),
 });
+
+/** 챌린지 나의 기록장 미션 피드백 */
+export const challengeMissionFeedbackSchema = z.object({
+  missionInfo: z.object({
+    id: z.number(),
+    th: z.number().nullish(),
+    title: z.string().nullish(),
+  }),
+  attendanceInfo: z.object({
+    link: z.string(),
+    feedbackStatus: FeedbackStatusEnum.nullable().default('WAITING'),
+    feedback: z.string().nullish(),
+    mentorName: z.string().nullish(),
+  }),
+});
+
+export const feedbackAttendanceSchema = z.object({
+  attendanceDetailVo: z.object({
+    feedback: z.string().nullish(),
+  }),
+});
