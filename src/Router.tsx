@@ -10,6 +10,7 @@ import Login from './router-pages/common/auth/Login';
 import SignUp from './router-pages/common/auth/SignUp';
 import ChallengeDashboard from './router-pages/common/challenge/ChallengeDashboard';
 import ChallengeUserInfo from './router-pages/common/challenge/ChallengeUserInfo';
+import MissionFeedback from './router-pages/common/challenge/MissionFeedback';
 import MyChallengeDashboard from './router-pages/common/challenge/MyChallengeDashboard';
 import Home from './router-pages/common/home/Home';
 import MentorNotificationAfter from './router-pages/common/mentor/MentorNotificationAfter';
@@ -152,6 +153,11 @@ const Router = () => {
                 <Route path="user/info" element={<ChallengeUserInfo />} />
                 <Route path="" element={<ChallengeDashboard />} />
                 <Route path="me" element={<MyChallengeDashboard />} />
+                {/* 미션 피드백 페이지 */}
+                <Route
+                  path=":challengeId/missions/:missionId/feedback"
+                  element={<MissionFeedback />}
+                />
               </Route>
 
               {/* 서류진단 */}
