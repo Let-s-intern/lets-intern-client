@@ -20,6 +20,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
+const NO_MENTOR_ID = 0;
+
 interface Row {
   id: number | string;
   mentorName: string | null;
@@ -82,7 +84,7 @@ const MentorRenderCell = (params: GridRenderCellParams<Row, number>) => {
         return target?.name || '없음';
       }}
     >
-      <MenuItem value={0}>없음</MenuItem>
+      <MenuItem value={NO_MENTOR_ID}>없음</MenuItem>
       {(data?.mentorList ?? []).map((item) => (
         <MenuItem
           key={`mentor-${item.challengeMentorId}`}
