@@ -4,6 +4,9 @@
 
 import { useChallengeMissionFeedbackAttendanceQuery } from '@/api/challenge';
 import { FeedbackStatusEnum } from '@/api/challengeSchema';
+import { useAdminChallengeMentorListQuery } from '@/api/mentor';
+import SelectFormControl from '@components/admin/program/SelectFormControl';
+import { MenuItem } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
@@ -22,15 +25,39 @@ interface Row {
   feedbackStatus: string;
 }
 
+const MentorRenderCell = (params: GridRenderCellParams<Row, string>) => {
+  const { programId } = useParams();
+  const { data } = useAdminChallengeMentorListQuery(programId);
+
+  return (
+    <SelectFormControl<number>
+      label="멘토"
+      labelId="mentor-label"
+      value={params.value || -1}
+      renderValue={(selected) => {
+        const target = data?.mentorList.find(
+          (item) => item.userId === selected,
+        );
+        return target?.name || '없음';
+      }}
+    >
+      {(data?.mentorList ?? []).map((item) => (
+        <MenuItem
+          key={`mentor-${item.challengeMentorId}`}
+          value={item.userId}
+        >{`[${item.userId}] ${item.name}`}</MenuItem>
+      ))}
+    </SelectFormControl>
+  );
+};
+
 const columns: GridColDef<Row>[] = [
   {
     field: 'mentorName',
     headerName: '담당 멘토',
-    width: 80,
-    renderCell: (params: GridRenderCellParams<Row, string>) => (
-      // 드롭다운
-      <div>{params.value}</div>
-    ),
+    type: 'number',
+    width: 120,
+    renderCell: MentorRenderCell,
   },
   {
     field: 'missionTitle',
