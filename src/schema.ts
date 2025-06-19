@@ -734,6 +734,12 @@ export const AttendanceStatusEnum = z.enum([
 export type AttendanceStatus = z.infer<typeof AttendanceStatusEnum>;
 
 export const AttendanceResultEnum = z.enum(['WAITING', 'PASS', 'WRONG']);
+export const AttendanceFeedbackStatusEnum = z.enum([
+  'WAITING',
+  'IN_PROGRESS',
+  'COMPLETED',
+  'CONFIRMED',
+]);
 
 export type AttendanceResult = z.infer<typeof AttendanceResultEnum>;
 
@@ -1207,6 +1213,63 @@ export const userChallengeMissionDetail = z
 export type UserChallengeMissionDetail = z.infer<
   typeof userChallengeMissionDetail
 >['missionInfo'];
+
+// GET /api/v1/challenge/{challengeId}/missions/{missionId} 미션 상세 + attendanceInfo
+export const userChallengeMissionWithAttendance = z
+  .object({
+    missionInfo: z.object({
+      id: z.number(),
+      th: z.number().nullable(),
+      title: z.string().nullable(),
+      startDate: z.string().nullable(),
+      endDate: z.string().nullable(),
+      essentialContentsList: z.array(
+        z.object({
+          id: z.number(),
+          title: z.string().nullable(),
+          link: z.string().nullable(),
+        }),
+      ),
+      additionalContentsList: z.array(
+        z.object({
+          id: z.number(),
+          title: z.string().nullable(),
+          link: z.string().nullable(),
+        }),
+      ),
+      status: MissionStatusEnum,
+      missionTag: z.string(),
+      description: z.string(),
+      guide: z.string(),
+      templateLink: z.string(),
+    }),
+    attendanceInfo: z
+      .object({
+        submitted: z.boolean(),
+        id: z.number().nullable(),
+        link: z.string().nullable(),
+        review: z.string().nullable().optional(),
+        comments: z.string().nullable(),
+        status: AttendanceStatusEnum.nullable(),
+        result: AttendanceResultEnum.nullable(),
+        feedbackStatus: AttendanceFeedbackStatusEnum.nullable(),
+      })
+      .nullable(),
+  })
+  .transform((data) => {
+    return {
+      missionInfo: {
+        ...data.missionInfo,
+        startDate: dayjs(data.missionInfo.startDate),
+        endDate: dayjs(data.missionInfo.endDate),
+      },
+      attendanceInfo: data.attendanceInfo,
+    };
+  });
+
+export type UserChallengeMissionWithAttendance = z.infer<
+  typeof userChallengeMissionWithAttendance
+>;
 
 /** GET /api/v1/challenge/{id}/daily-mission */
 export const dailyMissionSchema = z
