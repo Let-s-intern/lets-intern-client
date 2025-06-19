@@ -1,4 +1,7 @@
-import { useGetChallengeOptions } from '@/api/challengeOption';
+import {
+  useGetChallengeOptions,
+  usePatchChallengeOption,
+} from '@/api/challengeOption';
 import { usePatchMission } from '@/api/mission';
 import {
   useAdminCurrentChallenge,
@@ -68,6 +71,7 @@ const END_OF_SECONDS = 59; // 마감일 59초로 설정
 const useMissionColumns = () => {
   const { data } = useGetChallengeOptions();
   const patchMission = usePatchMission();
+  const patchOption = usePatchChallengeOption();
 
   const columns: GridColDef<Row>[] = [
     {
@@ -314,6 +318,8 @@ const useMissionColumns = () => {
         );
       },
     },
+
+    // 피드백 미션 여부
     {
       field: 'challengeOptionId',
       headerName: '피드백 미션 여부',
@@ -327,14 +333,23 @@ const useMissionColumns = () => {
           <SelectFormControl<number>
             value={params.value || ''}
             renderValue={() => <>{option?.code || '-'}</>}
+            // 미션 새로 등록 중일 때 '피드백 미션 여부' 수정할 수 없음
             disabled={params.row.id === -1}
             labelId="option-label"
             label="옵션"
             onChange={async (e: SelectChangeEvent<number>) => {
-              await patchMission.mutateAsync({
-                missionId: params.row.id,
-                challengeOptionId: Number(e.target.value),
-              });
+              const challengeOptionId = Number(e.target.value);
+
+              await Promise.all([
+                patchMission.mutateAsync({
+                  missionId: params.row.id,
+                  challengeOptionId,
+                }),
+                patchOption.mutateAsync({
+                  challengeOptionId,
+                  isFeedback: true,
+                }),
+              ]);
             }}
           >
             {(data?.challengeOptionList ?? []).map((item) => (
