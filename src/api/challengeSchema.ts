@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import {
+  AttendanceResultEnum,
   AttendanceStatusEnum,
   ChallengePricePlanEnum,
-  MissionStatusEnum,
 } from './../schema';
 
 export const challengeGoalSchema = z.object({
@@ -53,10 +53,10 @@ export const challengeMissionFeedbackAttendanceListSchema = z.object({
       wishJob: z.string().optional().nullable(),
       wishCompany: z.string().optional().nullable(),
       link: z.string().optional().nullable(),
-      status: AttendanceStatusEnum,
-      result: MissionStatusEnum,
-      challengePricePlanType: ChallengePricePlanEnum,
-      feedbackStatus: FeedbackStatusEnum.default('IN_PROGRESS'),
+      status: AttendanceStatusEnum.default('ABSENT'), // 제출현황: 미제출
+      result: AttendanceResultEnum.default('WAITING'), // 확인여부: 확인중
+      challengePricePlanType: ChallengePricePlanEnum.default('BASIC'),
+      feedbackStatus: FeedbackStatusEnum.nullable().default('WAITING'), // 피드백 진행 상태: 진행전
     }),
   ),
 });

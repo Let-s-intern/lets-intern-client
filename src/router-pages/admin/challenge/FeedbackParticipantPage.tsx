@@ -3,6 +3,7 @@
  */
 
 import { useChallengeMissionFeedbackAttendanceQuery } from '@/api/challenge';
+import { FeedbackStatusEnum } from '@/api/challengeSchema';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
@@ -126,6 +127,8 @@ const useFeedbackParticipantRows = () => {
           ...rest,
           missionTitle,
           missionRound,
+          feedbackStatus:
+            item.feedbackStatus ?? FeedbackStatusEnum.enum.WAITING,
           feedbackPageLink: `/admin/challenge/operation/${programId}/mission/${missionId}/participant/${item.id}/feedback`,
         };
       }),
