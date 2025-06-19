@@ -1,9 +1,26 @@
+/** 참여자별 피드백 페이지 (피드백 작성 페이지) */
+
+import { usePatchAttendance } from '@/api/attendance';
+import { useFeedbackAttendenceQuery } from '@/api/challenge';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import EditorApp from '@components/admin/lexical/EditorApp';
 import Heading2 from '@components/admin/ui/heading/Heading2';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Button } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 export default function ChallengeFeedbackPage() {
+  const navigate = useNavigate();
+  const { programId, missionId, userId, ...rest } = useParams();
+
+  const { snackbar } = useAdminSnackbar();
+  const patchAttendance = usePatchAttendance();
+  const { data } = useFeedbackAttendenceQuery({
+    challengeId: programId,
+    missionId,
+    attendanceId: userId,
+  });
+
   const {
     missionTitle,
     missionRound,
@@ -30,11 +47,24 @@ export default function ChallengeFeedbackPage() {
     </Link>,
   ];
 
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState<string>();
 
-  const onChangeEditor = (jsonString: string) => {
+  const handleChangeEditor = (jsonString: string) => {
     setContent(jsonString);
   };
+
+  const handleSave = async () => {
+    if (!userId) return;
+    await patchAttendance.mutateAsync({
+      attendanceId: userId,
+      feedback: content,
+    });
+    snackbar('저장되었습니다.');
+  };
+
+  useEffect(() => {
+    setContent(data?.attendanceDetailVo.feedback || undefined);
+  }, [data]);
 
   return (
     <div className="mt-5 px-5">
@@ -44,7 +74,25 @@ export default function ChallengeFeedbackPage() {
           <li key={index}>{item}</li>
         ))}
       </ul>
-      <EditorApp onChange={onChangeEditor} />
+      <EditorApp
+        initialEditorStateJsonString={content}
+        onChange={handleChangeEditor}
+      />
+      <div className="flex items-center justify-end gap-4">
+        <Button
+          variant="outlined"
+          onClick={() =>
+            navigate(
+              `/admin/challenge/operation/${programId}/feedback/mission/${missionId}/participants`,
+            )
+          }
+        >
+          리스트로 돌아가기
+        </Button>
+        <Button variant="contained" onClick={handleSave}>
+          저장
+        </Button>
+      </div>
     </div>
   );
 }
