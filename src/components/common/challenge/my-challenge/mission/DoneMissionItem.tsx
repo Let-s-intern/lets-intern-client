@@ -1,14 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
+import { useChallengeMissionAttendanceInfoQuery } from '../../../../../api/challenge';
 import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
-import {
-  MyChallengeMissionByType,
-  userChallengeMissionDetail,
-} from '../../../../../schema';
-import axios from '../../../../../utils/axios';
+import { MyChallengeMissionByType } from '../../../../../schema';
 import { missionSubmitToBadge } from '../../../../../utils/convert';
 import DoneMissionDetailMenu from './DoneMissionDetailMenu';
 
@@ -23,25 +19,16 @@ const DoneMissionItem = ({ mission }: Props) => {
   const [isDetailShown, setIsDetailShown] = useState(false);
 
   const {
-    data: missionDetail,
+    data: missionDetailData,
     isLoading: isDetailLoading,
     error: detailError,
-  } = useQuery({
-    enabled: Boolean(currentChallenge?.id) && isDetailShown,
-    queryKey: [
-      'challenge',
-      currentChallenge?.id,
-      'mission',
-      mission.id,
-      'detail',
-    ],
-    queryFn: async () => {
-      const res = await axios.get(
-        `challenge/${currentChallenge?.id}/missions/${mission.id}`,
-      );
-      return userChallengeMissionDetail.parse(res.data.data).missionInfo;
-    },
+  } = useChallengeMissionAttendanceInfoQuery({
+    challengeId: currentChallenge?.id ?? '',
+    missionId: mission.id,
   });
+
+  const missionDetail = missionDetailData?.missionInfo;
+  const attendanceInfo = missionDetailData?.attendanceInfo;
 
   const currentSchedule = schedules.find((schedule) => {
     return schedule.missionInfo.id === mission.id;
@@ -111,6 +98,10 @@ const DoneMissionItem = ({ mission }: Props) => {
                 missionDetail={missionDetail}
                 schedule={currentSchedule}
                 missionByType={mission}
+                challengeId={currentChallenge?.id}
+                isFeedbackCompleted={
+                  attendanceInfo?.feedbackStatus === 'COMPLETED'
+                }
               />
             ))}
     </li>
