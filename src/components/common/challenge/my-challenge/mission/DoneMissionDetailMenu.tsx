@@ -11,17 +11,22 @@ interface Props {
   missionDetail: UserChallengeMissionDetail;
   missionByType: MyChallengeMissionByType;
   schedule: Schedule;
+  challengeId?: string | number;
+  isFeedbackOptionPurchased?: boolean;
+  isFeedbackCompleted?: boolean;
 }
 
 const DoneMissionDetailMenu = ({
   missionDetail,
   missionByType,
   schedule,
+  challengeId,
+  isFeedbackCompleted = false,
 }: Props) => {
   const additionalContentsLink =
     missionDetail.additionalContentsList?.[0]?.link;
   const essentialContentsLink = missionDetail.essentialContentsList?.[0]?.link;
-
+  console.log(isFeedbackCompleted);
   return (
     <>
       <hr className="my-4 border-[#DEDEDE]" />
@@ -64,10 +69,23 @@ const DoneMissionDetailMenu = ({
         )}
         <div className="mt-10 flex w-full flex-col gap-y-2.5">
           <h4 className="text-xsmall16 font-bold">미션 소감</h4>
-          <p className="rounded-md p-3 h-20 bg-neutral-95 overflow-auto text-xsmall14">
+          <p className="h-20 overflow-auto rounded-md bg-neutral-95 p-3 text-xsmall14">
             {schedule.attendanceInfo.review ?? '-'}
           </p>
         </div>
+        {!isFeedbackCompleted && (
+          <div className="mt-4">
+            <h4 className="flex-shrink-0 text-lg font-semibold">미션 피드백</h4>
+            <div className="mt-2">
+              <Link
+                to={`/challenge/${challengeId}/missions/${missionDetail.id}/feedback`}
+                className="text-blue-600 hover:underline"
+              >
+                미션 피드백 페이지로 이동
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
