@@ -13,6 +13,7 @@ import {
   faqSchema,
   getChallengeIdPrimitiveSchema,
   getChallengeIdSchema,
+  missionAdmin,
   ProgramClassification,
   ProgramStatus,
   reviewTotalSchema,
@@ -538,5 +539,19 @@ export const useChallengeMissionFeedbackAttendanceQuery = ({
       return challengeMissionFeedbackAttendanceListSchema.parse(res.data.data);
     },
     enabled: !!challengeId && !!missionId,
+  });
+};
+
+/** 챌린지 미션 전체 목록 /api/v2/admin/challenge/{challengeId}/mission */
+export const ChallengeMissionListQueryKey = 'useChallengeMissionListQuery';
+
+export const useChallengeMissionListQuery = (challengeId?: string | number) => {
+  return useQuery({
+    queryKey: [ChallengeMissionListQueryKey, challengeId],
+    queryFn: async () => {
+      const res = await axiosV2.get(`/admin/challenge/${challengeId}/mission`);
+      return missionAdmin.parse(res.data.data);
+    },
+    enabled: !!challengeId,
   });
 };

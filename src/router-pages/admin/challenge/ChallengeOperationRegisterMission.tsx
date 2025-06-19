@@ -72,6 +72,7 @@ const useMissionColumns = () => {
   const { data } = useGetChallengeOptions();
   const patchMission = usePatchMission();
   const patchOption = usePatchChallengeOption();
+  const refetchMissions = useMissionsOfCurrentChallengeRefetch();
 
   const columns: GridColDef<Row>[] = [
     {
@@ -350,6 +351,8 @@ const useMissionColumns = () => {
                   isFeedback: true,
                 }),
               ]);
+
+              refetchMissions();
             }}
           >
             {(data?.challengeOptionList ?? []).map((item) => (
@@ -685,7 +688,7 @@ const ChallengeOperationRegisterMission = () => {
   );
 
   const rows = useMemo((): Row[] => {
-    const result: Row[] = (missions || []).map((m) => ({
+    const result: Row[] = (missions ?? []).map((m) => ({
       ...m,
       mode: 'normal',
       additionalContentsOptions: additionalContents,
