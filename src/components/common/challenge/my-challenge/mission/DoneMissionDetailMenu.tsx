@@ -77,12 +77,10 @@ const DoneMissionDetailMenu = ({
           <div className="mt-4">
             <h4 className="flex-shrink-0 text-lg font-semibold">미션 피드백</h4>
             <div className="mt-2">
-              <Link
-                to={`/challenge/${challengeId}/missions/${missionDetail.id}/feedback`}
-                className="text-blue-600 hover:underline"
-              >
-                미션 피드백 페이지로 이동
-              </Link>
+              <ParsedCommentBox
+                className="rounded-md bg-[#F2F2F2] px-8 py-6 text-sm"
+                comment={`(미션 피드백 페이지로 이동)[/challenge/${challengeId}/missions/${missionDetail.id}/feedback]`}
+              />
             </div>
           </div>
         )}
