@@ -2,7 +2,11 @@
  * @todo API 연결: /api/v2/admin/challenge/{challengeId}/mission/{missionId}/feedback/attendances
  */
 
-import { useChallengeMissionFeedbackAttendanceQuery } from '@/api/challenge';
+import { usePatchAttendance } from '@/api/attendance';
+import {
+  ChallengeMissionFeedbackAttendanceQueryKey,
+  useChallengeMissionFeedbackAttendanceQuery,
+} from '@/api/challenge';
 import {
   FeedbackStatus,
   FeedbackStatusEnum,
@@ -10,8 +14,9 @@ import {
 } from '@/api/challengeSchema';
 import { useAdminChallengeMentorListQuery } from '@/api/mentor';
 import SelectFormControl from '@components/admin/program/SelectFormControl';
-import { MenuItem } from '@mui/material';
+import { MenuItem, SelectChangeEvent } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
@@ -43,6 +48,7 @@ const MentorRenderCell = (params: GridRenderCellParams<Row, number>) => {
         return target?.name || '없음';
       }}
     >
+      <MenuItem value={0}>없음</MenuItem>
       {(data?.mentorList ?? []).map((item) => (
         <MenuItem
           key={`mentor-${item.challengeMentorId}`}
@@ -56,11 +62,33 @@ const MentorRenderCell = (params: GridRenderCellParams<Row, number>) => {
 const FeedbackStatusRenderCell = (
   params: GridRenderCellParams<Row, FeedbackStatus>,
 ) => {
+  const client = useQueryClient();
+  const { missionId, programId } = useParams();
+
+  const patchAttendance = usePatchAttendance();
+
+  const handleChange = async (e: SelectChangeEvent<FeedbackStatus>) => {
+    const attendanceId = params.row.id;
+    await patchAttendance.mutateAsync({
+      attendanceId,
+      feedbackStatus: e.target.value as FeedbackStatus,
+    });
+    client.invalidateQueries({
+      queryKey: [
+        ChallengeMissionFeedbackAttendanceQueryKey,
+        programId,
+        missionId,
+      ],
+    });
+  };
+
   return (
     <SelectFormControl<FeedbackStatus>
       value={params.value || FeedbackStatusEnum.enum.WAITING}
       renderValue={(selected) => FeedbackStatusMapping[selected]}
+      onChange={handleChange}
     >
+      {/* todo: 멘토/관리자에 따라 수정 권한 제어 */}
       {FeedbackStatusEnum.options.map((item) => (
         <MenuItem key={item} value={item}>
           {FeedbackStatusMapping[item]}{' '}
@@ -161,7 +189,6 @@ const useFeedbackParticipantRows = () => {
   const missionTitle = selectedMission.title;
   const missionRound = selectedMission.th;
 
-  // todo: *미션 제출 현황 = 정상 제출, 확인여부 = 확인 완료인 참여자 미션만 노출
   useEffect(() => {
     setRows(
       (data?.attendanceList ?? []).map((item) => {
