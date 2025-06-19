@@ -11,14 +11,16 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 const { missionTitle, missionRound, major, wishCompany, wishJob, link, name } =
-  JSON.parse(localStorage.getItem('attendance')!);
+  JSON.parse(localStorage.getItem('attendance') || '{}');
 
 const AttendanceInfoList = () => {
-  const { challengeOptionCode } = JSON.parse(localStorage.getItem('mission')!);
+  const { challengeOptionCode, challengeOptionTitle } = JSON.parse(
+    localStorage.getItem('mission') || '{}',
+  );
 
   const list = [
     `${missionTitle} / ${missionRound}회차`,
-    `피드백 유형: ${challengeOptionCode}`,
+    `피드백 유형: [${challengeOptionCode}] ${challengeOptionTitle}`,
     `참여자 정보: ${major} / ${wishCompany} / ${wishJob}`,
     <Link
       key={link}
