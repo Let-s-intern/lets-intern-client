@@ -33,4 +33,5 @@ export interface PatchChallengeOptionReq {
   code?: string | null;
   price?: number | null;
   discountPrice?: number | null;
+  isFeedback?: boolean;
 }

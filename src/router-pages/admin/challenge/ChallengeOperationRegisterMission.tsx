@@ -1,4 +1,7 @@
-import { useGetChallengeOptions } from '@/api/challengeOption';
+import {
+  useGetChallengeOptions,
+  usePatchChallengeOption,
+} from '@/api/challengeOption';
 import { usePatchMission } from '@/api/mission';
 import {
   useAdminCurrentChallenge,
@@ -37,8 +40,10 @@ import {
   GridColDef,
   GridEditCellValueParams,
   GridEventListener,
+  GridRenderCellParams,
   GridRowEditStopReasons,
   GridToolbarContainer,
+  GridTreeNodeWithRender,
   useGridApiRef,
 } from '@mui/x-data-grid';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -65,10 +70,60 @@ type Row = Mission & {
 
 const END_OF_SECONDS = 59; // 마감일 59초로 설정
 
-const useMissionColumns = () => {
+/** 피드백 미션 여부 renderCell */
+const ChallengeOptionRenderCell = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  params: GridRenderCellParams<Row, any, any, GridTreeNodeWithRender>,
+) => {
   const { data } = useGetChallengeOptions();
   const patchMission = usePatchMission();
+  const patchOption = usePatchChallengeOption();
+  const refetchMissions = useMissionsOfCurrentChallengeRefetch();
 
+  const option = data?.challengeOptionList.find(
+    (item) => item.challengeOptionId === params.value,
+  );
+
+  const handleChange = async (e: SelectChangeEvent<number>) => {
+    const challengeOptionId = Number(e.target.value);
+
+    await Promise.all([
+      patchMission.mutateAsync({
+        missionId: params.row.id,
+        challengeOptionId,
+      }),
+      patchOption.mutateAsync({
+        challengeOptionId,
+        isFeedback: true,
+      }),
+    ]);
+
+    refetchMissions();
+  };
+
+  return (
+    <SelectFormControl<number>
+      value={params.value || ''}
+      renderValue={() => <>{option?.code || '-'}</>}
+      // 미션 새로 등록 중일 때 '피드백 미션 여부' 수정할 수 없음
+      disabled={params.row.id === -1}
+      labelId="option-label"
+      label="옵션"
+      onChange={handleChange}
+    >
+      {(data?.challengeOptionList ?? []).map((item) => (
+        <MenuItem
+          key={`option-${item.challengeOptionId}`}
+          value={item.challengeOptionId}
+        >
+          {item.code}
+        </MenuItem>
+      ))}
+    </SelectFormControl>
+  );
+};
+
+const useMissionColumns = () => {
   const columns: GridColDef<Row>[] = [
     {
       field: 'id',
@@ -314,41 +369,15 @@ const useMissionColumns = () => {
         );
       },
     },
+
+    // 피드백 미션 여부
     {
       field: 'challengeOptionId',
       headerName: '피드백 미션 여부',
       width: 160,
-      renderCell(params) {
-        const option = data?.challengeOptionList.find(
-          (item) => item.challengeOptionId === params.value,
-        );
-
-        return (
-          <SelectFormControl<number>
-            value={params.value || ''}
-            renderValue={() => <>{option?.code || '-'}</>}
-            disabled={params.row.id === -1}
-            labelId="option-label"
-            label="옵션"
-            onChange={async (e: SelectChangeEvent<number>) => {
-              await patchMission.mutateAsync({
-                missionId: params.row.id,
-                challengeOptionId: Number(e.target.value),
-              });
-            }}
-          >
-            {(data?.challengeOptionList ?? []).map((item) => (
-              <MenuItem
-                key={`option-${item.challengeOptionId}`}
-                value={item.challengeOptionId}
-              >
-                {item.code}
-              </MenuItem>
-            ))}
-          </SelectFormControl>
-        );
-      },
+      renderCell: ChallengeOptionRenderCell,
     },
+
     {
       field: 'actions',
       editable: true,
@@ -670,7 +699,7 @@ const ChallengeOperationRegisterMission = () => {
   );
 
   const rows = useMemo((): Row[] => {
-    const result: Row[] = (missions || []).map((m) => ({
+    const result: Row[] = (missions ?? []).map((m) => ({
       ...m,
       mode: 'normal',
       additionalContentsOptions: additionalContents,

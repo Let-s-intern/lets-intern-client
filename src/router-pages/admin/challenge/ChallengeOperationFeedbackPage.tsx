@@ -15,33 +15,6 @@ interface Row {
   url: string;
 }
 
-const data = [
-  {
-    id: 1,
-    title: '첫 번째 미션',
-    th: 1,
-    startDate: '2024-03-01T00:00:00',
-    endDate: '2024-03-07T23:59:59',
-    challengeOptionCode: 'FEEDBACK_A',
-  },
-  {
-    id: 2,
-    title: '두 번째 미션',
-    th: 2,
-    startDate: '2024-03-08T00:00:00',
-    endDate: '2024-03-14T23:59:59',
-    challengeOptionCode: 'FEEDBACK_B',
-  },
-  {
-    id: 3,
-    title: '세 번째 미션',
-    th: 3,
-    startDate: '2024-03-15T00:00:00',
-    endDate: '2024-03-21T23:59:59',
-    challengeOptionCode: 'FEEDBACK_C',
-  },
-];
-
 const columns: GridColDef<Row>[] = [
   {
     field: 'title',
