@@ -12,6 +12,8 @@ interface Props {
   missionByType: MyChallengeMissionByType;
   schedule: Schedule;
   challengeId?: string | number;
+  applicationId?: string | number;
+  programId?: string | number;
   isFeedbackOptionPurchased?: boolean;
   isFeedbackCompleted?: boolean;
 }
@@ -21,12 +23,13 @@ const DoneMissionDetailMenu = ({
   missionByType,
   schedule,
   challengeId,
+  applicationId,
+  programId,
   isFeedbackCompleted = false,
 }: Props) => {
   const additionalContentsLink =
     missionDetail.additionalContentsList?.[0]?.link;
   const essentialContentsLink = missionDetail.essentialContentsList?.[0]?.link;
-  console.log(isFeedbackCompleted);
   return (
     <>
       <hr className="my-4 border-[#DEDEDE]" />
@@ -79,7 +82,7 @@ const DoneMissionDetailMenu = ({
             <div className="mt-2">
               <ParsedCommentBox
                 className="rounded-md bg-[#F2F2F2] px-8 py-6 text-sm"
-                comment={`(미션 피드백 페이지로 이동)[/challenge/${challengeId}/missions/${missionDetail.id}/feedback]`}
+                comment={`(미션 피드백 페이지로 이동)[/challenge/${applicationId}/${programId}/${challengeId}/missions/${missionDetail.id}/feedback]`}
               />
             </div>
           </div>

@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 import { useChallengeMissionAttendanceInfoQuery } from '../../../../../api/challenge';
 import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
@@ -14,6 +14,10 @@ interface Props {
 
 const DoneMissionItem = ({ mission }: Props) => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { applicationId, programId } = useParams<{
+    applicationId: string;
+    programId: string;
+  }>();
   const { currentChallenge, schedules } = useCurrentChallenge();
   const itemRef = useRef<HTMLLIElement>(null);
   const [isDetailShown, setIsDetailShown] = useState(false);
@@ -99,6 +103,8 @@ const DoneMissionItem = ({ mission }: Props) => {
                 schedule={currentSchedule}
                 missionByType={mission}
                 challengeId={currentChallenge?.id}
+                applicationId={applicationId}
+                programId={programId}
                 isFeedbackCompleted={
                   attendanceInfo?.feedbackStatus === 'COMPLETED'
                 }
