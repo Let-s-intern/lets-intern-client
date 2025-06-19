@@ -1,7 +1,7 @@
 /** 참여자별 피드백 페이지 (피드백 작성 페이지) */
 
 import { usePatchAttendance } from '@/api/attendance';
-import { useFeedbackAttendenceQuery } from '@/api/challenge';
+import { useFeedbackAttendanceQuery } from '@/api/challenge';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import EditorApp from '@components/admin/lexical/EditorApp';
 import Heading2 from '@components/admin/ui/heading/Heading2';
@@ -15,7 +15,7 @@ export default function ChallengeFeedbackPage() {
 
   const { snackbar } = useAdminSnackbar();
   const patchAttendance = usePatchAttendance();
-  const { data } = useFeedbackAttendenceQuery({
+  const { data } = useFeedbackAttendanceQuery({
     challengeId: programId,
     missionId,
     attendanceId: userId,
