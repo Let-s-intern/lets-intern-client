@@ -47,7 +47,7 @@ export const useUserAdminQuery = ({
   return useQuery({
     queryKey: [UseUserAdminQueryKey, email, name, phoneNum, pageable],
     queryFn: async () => {
-      const res = await axios.get('/v2/admin/user/mentor', {
+      const res = await axios.get('/user/admin', {
         params: {
           email,
           name,
