@@ -56,7 +56,8 @@ export default function ChallengeFeedbackPage() {
 
   const [content, setContent] = useState<string>();
 
-  useBeforeUnloadWarning(content !== data?.attendanceDetailVo.feedback);
+  const hasUnsavedChanges = content !== data?.attendanceDetailVo.feedback;
+  useBeforeUnloadWarning(hasUnsavedChanges);
 
   const handleChangeEditor = (jsonString: string) => {
     setContent(jsonString);
@@ -72,7 +73,7 @@ export default function ChallengeFeedbackPage() {
   };
 
   const handleBackToListWithConfirm = () => {
-    if (content !== data?.attendanceDetailVo.feedback) {
+    if (hasUnsavedChanges) {
       const isConfirm = confirm(
         '작성된 내용이 삭제될 수 있습니다.\n그래도 돌아가시겠습니까?',
       );
