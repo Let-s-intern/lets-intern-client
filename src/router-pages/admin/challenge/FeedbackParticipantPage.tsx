@@ -34,13 +34,47 @@ interface Row {
   feedbackStatus: string;
 }
 
+const useAttendanceHandler = () => {
+  const client = useQueryClient();
+  const { programId, missionId } = useParams();
+
+  const patchAttendance = usePatchAttendance();
+
+  const invalidateAttendance = () => {
+    client.invalidateQueries({
+      queryKey: [
+        ChallengeMissionFeedbackAttendanceQueryKey,
+        programId,
+        missionId,
+      ],
+    });
+  };
+
+  return {
+    patchAttendance,
+    invalidateAttendance,
+  };
+};
+
 const MentorRenderCell = (params: GridRenderCellParams<Row, number>) => {
   const { programId } = useParams();
+
+  const { patchAttendance, invalidateAttendance } = useAttendanceHandler();
   const { data } = useAdminChallengeMentorListQuery(programId);
+
+  const handleChange = async (e: SelectChangeEvent<number>) => {
+    const attendanceId = params.row.id;
+    await patchAttendance.mutateAsync({
+      attendanceId,
+      mentorUserId: e.target.value as number,
+    });
+    invalidateAttendance();
+  };
 
   return (
     <SelectFormControl<number>
       value={params.value}
+      onChange={handleChange}
       renderValue={(selected) => {
         const target = data?.mentorList.find(
           (item) => item.userId === selected,
@@ -62,10 +96,7 @@ const MentorRenderCell = (params: GridRenderCellParams<Row, number>) => {
 const FeedbackStatusRenderCell = (
   params: GridRenderCellParams<Row, FeedbackStatus>,
 ) => {
-  const client = useQueryClient();
-  const { missionId, programId } = useParams();
-
-  const patchAttendance = usePatchAttendance();
+  const { patchAttendance, invalidateAttendance } = useAttendanceHandler();
 
   const handleChange = async (e: SelectChangeEvent<FeedbackStatus>) => {
     const attendanceId = params.row.id;
@@ -73,13 +104,7 @@ const FeedbackStatusRenderCell = (
       attendanceId,
       feedbackStatus: e.target.value as FeedbackStatus,
     });
-    client.invalidateQueries({
-      queryKey: [
-        ChallengeMissionFeedbackAttendanceQueryKey,
-        programId,
-        missionId,
-      ],
-    });
+    invalidateAttendance();
   };
 
   return (
