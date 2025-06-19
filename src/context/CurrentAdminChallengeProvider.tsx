@@ -1,3 +1,4 @@
+import axiosV2 from '@/utils/axiosV2';
 import { useQuery } from '@tanstack/react-query';
 import { createContext, useContext } from 'react';
 import { useParams } from 'react-router-dom';
@@ -42,12 +43,12 @@ export const CurrentAdminChallengeProvider = ({
   const { data: missionsOfCurrentChallenge, refetch } = useQuery({
     queryKey: ['admin', 'challenge', params.programId, 'missions'],
     queryFn: async () => {
-      if (!params.programId) {
-        return null;
-      }
-      const res = await axios.get(`/mission/${params.programId}/admin`);
+      const res = await axiosV2.get(
+        `/admin/challenge/${params.programId}/mission`,
+      );
       return missionAdmin.parse(res.data.data);
     },
+    enabled: !!params.programId,
   });
 
   return (
