@@ -9,7 +9,7 @@ export const usePatchAttendance = () => {
   return useMutation({
     mutationFn: async (req: PatchAttendanceReq) => {
       const { attendanceId, ...body } = req;
-      return axios.post(`/attendance/${attendanceId}`, body);
+      return axios.patch(`/attendance/${attendanceId}`, body);
     },
     onError: (error) => console.error('usePatchAttendance >>', error),
   });
