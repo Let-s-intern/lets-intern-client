@@ -17,6 +17,7 @@ import {
   ProgramClassification,
   ProgramStatus,
   reviewTotalSchema,
+  userChallengeMissionWithAttendance,
 } from '../schema';
 import axios from '../utils/axios';
 import { Pageable } from './../schema';
@@ -558,6 +559,26 @@ export const useChallengeMissionListQuery = (challengeId?: string | number) => {
       return missionAdmin.parse(res.data.data);
     },
     enabled: !!challengeId,
+  });
+};
+
+/** 챌린지 미션 attendanceInfo 조회 /api/v1/challenge/{challengeId}/missions/{missionId} */
+export const useChallengeMissionAttendanceInfoQuery = ({
+  challengeId,
+  missionId,
+}: {
+  challengeId: string | number;
+  missionId: string | number;
+}) => {
+  return useQuery({
+    queryKey: ['useChallengeMissionAttendanceInfo', challengeId, missionId],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/challenge/${challengeId}/missions/${missionId}`,
+      );
+      return userChallengeMissionWithAttendance.parse(res.data.data);
+    },
+    enabled: !!challengeId && !!missionId,
   });
 };
 
