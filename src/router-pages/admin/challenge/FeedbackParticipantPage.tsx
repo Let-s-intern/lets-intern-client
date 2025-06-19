@@ -3,7 +3,11 @@
  */
 
 import { useChallengeMissionFeedbackAttendanceQuery } from '@/api/challenge';
-import { FeedbackStatusEnum } from '@/api/challengeSchema';
+import {
+  FeedbackStatus,
+  FeedbackStatusEnum,
+  FeedbackStatusMapping,
+} from '@/api/challengeSchema';
 import { useAdminChallengeMentorListQuery } from '@/api/mentor';
 import SelectFormControl from '@components/admin/program/SelectFormControl';
 import { MenuItem } from '@mui/material';
@@ -25,15 +29,13 @@ interface Row {
   feedbackStatus: string;
 }
 
-const MentorRenderCell = (params: GridRenderCellParams<Row, string>) => {
+const MentorRenderCell = (params: GridRenderCellParams<Row, number>) => {
   const { programId } = useParams();
   const { data } = useAdminChallengeMentorListQuery(programId);
 
   return (
     <SelectFormControl<number>
-      label="멘토"
-      labelId="mentor-label"
-      value={params.value || -1}
+      value={params.value}
       renderValue={(selected) => {
         const target = data?.mentorList.find(
           (item) => item.userId === selected,
@@ -46,6 +48,23 @@ const MentorRenderCell = (params: GridRenderCellParams<Row, string>) => {
           key={`mentor-${item.challengeMentorId}`}
           value={item.userId}
         >{`[${item.userId}] ${item.name}`}</MenuItem>
+      ))}
+    </SelectFormControl>
+  );
+};
+
+const FeedbackStatusRenderCell = (
+  params: GridRenderCellParams<Row, FeedbackStatus>,
+) => {
+  return (
+    <SelectFormControl<FeedbackStatus>
+      value={params.value || FeedbackStatusEnum.enum.WAITING}
+      renderValue={(selected) => FeedbackStatusMapping[selected]}
+    >
+      {FeedbackStatusEnum.options.map((item) => (
+        <MenuItem key={item} value={item}>
+          {FeedbackStatusMapping[item]}{' '}
+        </MenuItem>
       ))}
     </SelectFormControl>
   );
@@ -124,10 +143,7 @@ const columns: GridColDef<Row>[] = [
     field: 'feedbackStatus',
     headerName: '진행 상태',
     width: 120,
-    renderCell: (params: GridRenderCellParams<Row, string>) => (
-      // 드롭다운
-      <div>{params.value}</div>
-    ),
+    renderCell: FeedbackStatusRenderCell,
   },
 ];
 

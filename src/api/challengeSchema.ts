@@ -35,13 +35,20 @@ export type ChallengeMissionFeedbackList = z.infer<
 >;
 
 export const FeedbackStatusEnum = z.enum([
-  'WAITING',
-  'IN_PROGRESS',
-  'COMPLETED',
-  'CONFIRMED',
+  'WAITING', // 진행전
+  'IN_PROGRESS', // 진행중
+  'COMPLETED', // 진행완료
+  'CONFIRMED', // 확인완료
 ]);
 
 export type FeedbackStatus = z.infer<typeof FeedbackStatusEnum>;
+
+export const FeedbackStatusMapping: Record<FeedbackStatus, string> = {
+  WAITING: '진행전',
+  IN_PROGRESS: '진행중',
+  COMPLETED: '진행완료',
+  CONFIRMED: '확인완료',
+};
 
 export const challengeMissionFeedbackAttendanceListSchema = z.object({
   attendanceList: z.array(
