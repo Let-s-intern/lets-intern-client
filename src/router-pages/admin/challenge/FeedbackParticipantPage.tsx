@@ -2,10 +2,25 @@
  * @todo API 연결: /api/v2/admin/challenge/{challengeId}/mission/{missionId}/feedback/attendances
  */
 
-import { useChallengeMissionFeedbackAttendanceQuery } from '@/api/challenge';
+import { usePatchAttendance } from '@/api/attendance';
+import {
+  ChallengeMissionFeedbackAttendanceQueryKey,
+  useChallengeMissionFeedbackAttendanceQuery,
+} from '@/api/challenge';
+import {
+  FeedbackStatus,
+  FeedbackStatusEnum,
+  FeedbackStatusMapping,
+} from '@/api/challengeSchema';
+import { useAdminChallengeMentorListQuery } from '@/api/mentor';
+import SelectFormControl from '@components/admin/program/SelectFormControl';
+import { MenuItem, SelectChangeEvent } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+
+const NO_MENTOR_ID = 0;
 
 interface Row {
   id: number | string;
@@ -21,15 +36,102 @@ interface Row {
   feedbackStatus: string;
 }
 
+const useAttendanceHandler = () => {
+  const client = useQueryClient();
+  const { programId, missionId } = useParams();
+
+  const patchAttendance = usePatchAttendance();
+
+  const invalidateAttendance = () => {
+    client.invalidateQueries({
+      queryKey: [
+        ChallengeMissionFeedbackAttendanceQueryKey,
+        programId,
+        missionId,
+      ],
+    });
+  };
+
+  return {
+    patchAttendance,
+    invalidateAttendance,
+  };
+};
+
+const MentorRenderCell = (params: GridRenderCellParams<Row, number>) => {
+  const { programId } = useParams();
+
+  const { patchAttendance, invalidateAttendance } = useAttendanceHandler();
+  const { data } = useAdminChallengeMentorListQuery(programId);
+
+  const handleChange = async (e: SelectChangeEvent<number>) => {
+    const attendanceId = params.row.id;
+    await patchAttendance.mutateAsync({
+      attendanceId,
+      mentorUserId: e.target.value as number,
+    });
+    invalidateAttendance();
+  };
+
+  return (
+    <SelectFormControl<number>
+      value={params.value}
+      onChange={handleChange}
+      renderValue={(selected) => {
+        const target = data?.mentorList.find(
+          (item) => item.userId === selected,
+        );
+        return target?.name || '없음';
+      }}
+    >
+      <MenuItem value={NO_MENTOR_ID}>없음</MenuItem>
+      {(data?.mentorList ?? []).map((item) => (
+        <MenuItem
+          key={`mentor-${item.challengeMentorId}`}
+          value={item.userId}
+        >{`[${item.userId}] ${item.name}`}</MenuItem>
+      ))}
+    </SelectFormControl>
+  );
+};
+
+const FeedbackStatusRenderCell = (
+  params: GridRenderCellParams<Row, FeedbackStatus>,
+) => {
+  const { patchAttendance, invalidateAttendance } = useAttendanceHandler();
+
+  const handleChange = async (e: SelectChangeEvent<FeedbackStatus>) => {
+    const attendanceId = params.row.id;
+    await patchAttendance.mutateAsync({
+      attendanceId,
+      feedbackStatus: e.target.value as FeedbackStatus,
+    });
+    invalidateAttendance();
+  };
+
+  return (
+    <SelectFormControl<FeedbackStatus>
+      value={params.value || FeedbackStatusEnum.enum.WAITING}
+      renderValue={(selected) => FeedbackStatusMapping[selected]}
+      onChange={handleChange}
+    >
+      {/* todo: 멘토/관리자에 따라 수정 권한 제어 */}
+      {FeedbackStatusEnum.options.map((item) => (
+        <MenuItem key={item} value={item}>
+          {FeedbackStatusMapping[item]}{' '}
+        </MenuItem>
+      ))}
+    </SelectFormControl>
+  );
+};
+
 const columns: GridColDef<Row>[] = [
   {
     field: 'mentorName',
     headerName: '담당 멘토',
-    width: 80,
-    renderCell: (params: GridRenderCellParams<Row, string>) => (
-      // 드롭다운
-      <div>{params.value}</div>
-    ),
+    type: 'number',
+    width: 120,
+    renderCell: MentorRenderCell,
   },
   {
     field: 'missionTitle',
@@ -96,10 +198,7 @@ const columns: GridColDef<Row>[] = [
     field: 'feedbackStatus',
     headerName: '진행 상태',
     width: 120,
-    renderCell: (params: GridRenderCellParams<Row, string>) => (
-      // 드롭다운
-      <div>{params.value}</div>
-    ),
+    renderCell: FeedbackStatusRenderCell,
   },
 ];
 
@@ -117,7 +216,6 @@ const useFeedbackParticipantRows = () => {
   const missionTitle = selectedMission.title;
   const missionRound = selectedMission.th;
 
-  // todo: *미션 제출 현황 = 정상 제출, 확인여부 = 확인 완료인 참여자 미션만 노출
   useEffect(() => {
     setRows(
       (data?.attendanceList ?? []).map((item) => {
@@ -126,6 +224,8 @@ const useFeedbackParticipantRows = () => {
           ...rest,
           missionTitle,
           missionRound,
+          feedbackStatus:
+            item.feedbackStatus ?? FeedbackStatusEnum.enum.WAITING,
           feedbackPageLink: `/admin/challenge/operation/${programId}/mission/${missionId}/participant/${item.id}/feedback`,
         };
       }),

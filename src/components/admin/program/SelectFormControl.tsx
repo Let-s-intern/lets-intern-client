@@ -14,10 +14,9 @@ interface Props<T> {
   defaultValue?: T;
   value?: T;
   onChange?: (e: SelectChangeEvent<T>) => void;
-  renderValue: (selectedList: T) => JSX.Element;
   children: ReactNode;
-  label: string;
-  labelId: string;
+  label?: string;
+  labelId?: string;
 }
 
 /**
@@ -33,7 +32,7 @@ function SelectFormControl<T>({
 }: Props<T> & SelectProps<T>) {
   return (
     <FormControl sx={FORM_CONTROL_SX} size="small">
-      <InputLabel id={labelId}>{label}</InputLabel>
+      {label && <InputLabel id={labelId}>{label}</InputLabel>}
       <Select
         labelId={labelId}
         label={label}

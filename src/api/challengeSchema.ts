@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import {
+  AttendanceResultEnum,
   AttendanceStatusEnum,
   ChallengePricePlanEnum,
-  MissionStatusEnum,
 } from './../schema';
 
 export const challengeGoalSchema = z.object({
@@ -35,13 +35,20 @@ export type ChallengeMissionFeedbackList = z.infer<
 >;
 
 export const FeedbackStatusEnum = z.enum([
-  'WAITING',
-  'IN_PROGRESS',
-  'COMPLETED',
-  'CONFIRMED',
+  'WAITING', // 진행전
+  'IN_PROGRESS', // 진행중
+  'COMPLETED', // 진행완료
+  'CONFIRMED', // 확인완료
 ]);
 
 export type FeedbackStatus = z.infer<typeof FeedbackStatusEnum>;
+
+export const FeedbackStatusMapping: Record<FeedbackStatus, string> = {
+  WAITING: '진행전',
+  IN_PROGRESS: '진행중',
+  COMPLETED: '진행완료',
+  CONFIRMED: '확인완료',
+};
 
 export const challengeMissionFeedbackAttendanceListSchema = z.object({
   attendanceList: z.array(
@@ -53,10 +60,10 @@ export const challengeMissionFeedbackAttendanceListSchema = z.object({
       wishJob: z.string().optional().nullable(),
       wishCompany: z.string().optional().nullable(),
       link: z.string().optional().nullable(),
-      status: AttendanceStatusEnum,
-      result: MissionStatusEnum,
-      challengePricePlanType: ChallengePricePlanEnum,
-      feedbackStatus: FeedbackStatusEnum.default('IN_PROGRESS'),
+      status: AttendanceStatusEnum.default('ABSENT'), // 제출현황: 미제출
+      result: AttendanceResultEnum.default('WAITING'), // 확인여부: 확인중
+      challengePricePlanType: ChallengePricePlanEnum.default('BASIC'),
+      feedbackStatus: FeedbackStatusEnum.nullable().default('WAITING'), // 피드백 진행 상태: 진행전
     }),
   ),
 });

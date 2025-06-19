@@ -733,13 +733,9 @@ export const AttendanceStatusEnum = z.enum([
 ]);
 export type AttendanceStatus = z.infer<typeof AttendanceStatusEnum>;
 
-const attendanceResult = z.union([
-  z.literal('WAITING'),
-  z.literal('PASS'),
-  z.literal('WRONG'),
-]);
+export const AttendanceResultEnum = z.enum(['WAITING', 'PASS', 'WRONG']);
 
-export type AttendanceResult = z.infer<typeof attendanceResult>;
+export type AttendanceResult = z.infer<typeof AttendanceResultEnum>;
 
 /** GET /api/v1/challenge/{challengeId}/mission/{missionId}/attendances */
 export const attendances = z
@@ -754,7 +750,7 @@ export const attendances = z
           link: z.string().nullable().optional(),
           review: z.string().nullable().optional(),
           reviewIsVisible: z.boolean().nullable().optional(),
-          result: attendanceResult.nullable(),
+          result: AttendanceResultEnum.nullable(),
           comments: z.string().nullable().optional(),
           createDate: z.string().nullable(),
           lastModifiedDate: z.string().nullable().optional(),
@@ -1137,7 +1133,7 @@ export const challengeSchedule = z
           review: z.string().nullable().optional(),
           comments: z.string().nullable(),
           status: AttendanceStatusEnum.nullable(),
-          result: attendanceResult.nullable(),
+          result: AttendanceResultEnum.nullable(),
         }),
       }),
     ),
@@ -1298,7 +1294,7 @@ export const myDailyMission = z
         review: z.string().nullable().optional(),
         comments: z.string().nullable(),
         status: AttendanceStatusEnum.nullable(),
-        result: attendanceResult.nullable(),
+        result: AttendanceResultEnum.nullable(),
       })
       .nullable(),
   })
@@ -1326,7 +1322,7 @@ export const myChallengeMissionsByType = z.object({
   missionList: z.array(
     z.object({
       attendanceLink: z.string().nullable().optional(),
-      attendanceResult: attendanceResult.nullable().optional(),
+      attendanceResult: AttendanceResultEnum.nullable().optional(),
       attendanceStatus: AttendanceStatusEnum.nullable().optional(),
       id: z.number(),
       th: z.number().nullable(),

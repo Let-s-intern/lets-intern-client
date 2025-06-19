@@ -70,7 +70,7 @@ type Row = Mission & {
 
 const END_OF_SECONDS = 59; // 마감일 59초로 설정
 
-/** 피드백 미션 여부 renderCell */
+/** 피드백 미션 여부  */
 const ChallengeOptionRenderCell = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   params: GridRenderCellParams<Row, any, any, GridTreeNodeWithRender>,
