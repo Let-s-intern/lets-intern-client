@@ -1,4 +1,5 @@
 import axios from '@/utils/axios';
+import axiosV2 from '@/utils/axiosV2';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import {
@@ -7,8 +8,6 @@ import {
   grade,
   userAdminDetailType,
 } from '../schema';
-
-import axiosV2 from '@/utils/axiosV2';
 import {
   challengeMentorVoSchema,
   isAdminSchema,
@@ -265,5 +264,16 @@ export const useIsMentorQuery = ({
       return isMentorSchema.parse(res.data.data);
     },
     refetchOnWindowFocus: false,
+  });
+};
+
+/** 유저 관리자 여부 /api/v1/user/isAdmin */
+export const useIsAdminQuery = () => {
+  return useQuery({
+    queryKey: ['useIsAdminQuery'],
+    queryFn: async () => {
+      const res = await axios.get('/user/isAdmin');
+      return isAdminSchema.parse(res.data.data);
+    },
   });
 };
