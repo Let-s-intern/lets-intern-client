@@ -14,10 +14,10 @@ import {
 } from '@/api/challengeSchema';
 import { useAdminChallengeMentorListQuery } from '@/api/mentor';
 import { useIsAdminQuery } from '@/api/user';
+import useInvalidateQueries from '@/hooks/useInvalidateQueries';
 import SelectFormControl from '@components/admin/program/SelectFormControl';
 import { MenuItem, SelectChangeEvent } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
@@ -40,20 +40,14 @@ interface Row {
 const FeedbackStatusEnumForMentor = FeedbackStatusEnum.exclude(['CONFIRMED']);
 
 const useAttendanceHandler = () => {
-  const client = useQueryClient();
   const { programId, missionId } = useParams();
 
   const { mutateAsync: patchAttendance } = usePatchAttendance();
-
-  const invalidateAttendance = () => {
-    client.invalidateQueries({
-      queryKey: [
-        ChallengeMissionFeedbackAttendanceQueryKey,
-        programId,
-        missionId,
-      ],
-    });
-  };
+  const invalidateAttendance = useInvalidateQueries([
+    ChallengeMissionFeedbackAttendanceQueryKey,
+    programId,
+    missionId,
+  ]);
 
   return {
     patchAttendance,
@@ -65,6 +59,7 @@ const MentorRenderCell = (params: GridRenderCellParams<Row, number>) => {
   const { programId } = useParams();
 
   const { patchAttendance, invalidateAttendance } = useAttendanceHandler();
+
   const { data } = useAdminChallengeMentorListQuery(programId);
 
   const handleChange = async (e: SelectChangeEvent<number>) => {
@@ -73,7 +68,7 @@ const MentorRenderCell = (params: GridRenderCellParams<Row, number>) => {
       attendanceId,
       mentorUserId: e.target.value as number,
     });
-    invalidateAttendance();
+    await invalidateAttendance();
   };
 
   return (
@@ -106,11 +101,12 @@ const FeedbackStatusRenderCell = (
 
   const handleChange = async (e: SelectChangeEvent<FeedbackStatus>) => {
     const attendanceId = params.row.id;
+
     await patchAttendance({
       attendanceId,
       feedbackStatus: e.target.value as FeedbackStatus,
     });
-    invalidateAttendance();
+    await invalidateAttendance();
   };
 
   return (
