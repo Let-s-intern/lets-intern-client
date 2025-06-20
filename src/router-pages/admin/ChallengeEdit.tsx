@@ -109,8 +109,6 @@ const ChallengeEdit: React.FC = () => {
 
   const deleteDifferMentors = useDeleteDifferMentors();
 
-  console.log('mentorRef >>', mentorRef.current);
-
   const [input, setInput] = useState<Omit<UpdateChallengeReq, 'desc'>>({});
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState<ChallengeContent>({
