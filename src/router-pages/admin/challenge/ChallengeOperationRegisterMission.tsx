@@ -92,10 +92,12 @@ const ChallengeOptionRenderCell = (
         missionId: params.row.id,
         challengeOptionId,
       }),
-      patchOption.mutateAsync({
-        challengeOptionId,
-        isFeedback: true,
-      }),
+      challengeOptionId === 0
+        ? null
+        : patchOption.mutateAsync({
+            challengeOptionId,
+            isFeedback: true,
+          }),
     ]);
 
     refetchMissions();
@@ -103,14 +105,13 @@ const ChallengeOptionRenderCell = (
 
   return (
     <SelectFormControl<number>
-      value={params.value || ''}
-      renderValue={() => <>{option?.code || '-'}</>}
+      value={params.value ?? 0}
+      renderValue={() => <>{option?.code ?? '없음'}</>}
       // 미션 새로 등록 중일 때 '피드백 미션 여부' 수정할 수 없음
       disabled={params.row.id === -1}
-      labelId="option-label"
-      label="옵션"
       onChange={handleChange}
     >
+      <MenuItem value={0}>없음</MenuItem>
       {(data?.challengeOptionList ?? []).map((item) => (
         <MenuItem
           key={`option-${item.challengeOptionId}`}
