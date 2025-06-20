@@ -126,6 +126,46 @@ const navData = [
   },
 ];
 
+const AdminSidebar = () => {
+  const { data: isAdmin, isLoading } = useIsAdminQuery();
+
+  if (isLoading || !isAdmin) return null;
+
+  return (
+    <aside>
+      <nav className="sticky left-0 top-0 z-50 flex h-screen w-48 flex-col gap-4 overflow-y-auto bg-[#353535] py-20 pt-4 text-white shadow-xl">
+        {navData.map((navSection, index) => (
+          <div key={index}>
+            <div className="flex items-center justify-between border-b border-b-neutral-600 pb-3 pl-4 pr-8">
+              <h3 className="text-xsmall16 font-medium">{navSection.title}</h3>
+              <i className="text-xl text-neutral-600">
+                <IoIosArrowDown />
+              </i>
+            </div>
+            <ul>
+              {navSection.itemList.map((navItem, index) => (
+                <li key={index}>
+                  <Link
+                    to={navItem.url}
+                    className="flex items-center gap-1 py-2 pl-6 text-xsmall14 hover:bg-[#2A2A2A]"
+                  >
+                    {navItem.name}
+                    {'isExit' in navItem && (
+                      <i>
+                        <ImExit className="translate-y-[1px]" />
+                      </i>
+                    )}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </nav>
+    </aside>
+  );
+};
+
 const AdminLayout = () => {
   const navigate = useNavigate();
 
@@ -146,41 +186,7 @@ const AdminLayout = () => {
 
   return (
     <div className="flex">
-      {isAdmin && (
-        <aside>
-          <nav className="sticky left-0 top-0 z-50 flex h-screen w-48 flex-col gap-4 overflow-y-auto bg-[#353535] py-20 pt-4 text-white shadow-xl">
-            {navData.map((navSection, index) => (
-              <div key={index}>
-                <div className="flex items-center justify-between border-b border-b-neutral-600 pb-3 pl-4 pr-8">
-                  <h3 className="text-xsmall16 font-medium">
-                    {navSection.title}
-                  </h3>
-                  <i className="text-xl text-neutral-600">
-                    <IoIosArrowDown />
-                  </i>
-                </div>
-                <ul>
-                  {navSection.itemList.map((navItem, index) => (
-                    <li key={index}>
-                      <Link
-                        to={navItem.url}
-                        className="flex items-center gap-1 py-2 pl-6 text-xsmall14 hover:bg-[#2A2A2A]"
-                      >
-                        {navItem.name}
-                        {'isExit' in navItem && (
-                          <i>
-                            <ImExit className="translate-y-[1px]" />
-                          </i>
-                        )}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </nav>
-        </aside>
-      )}
+      <AdminSidebar />
       <section className="relative min-h-screen min-w-[800px] flex-1">
         <AdminSnackbarProvider>
           <Outlet />
