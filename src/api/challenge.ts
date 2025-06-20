@@ -582,6 +582,8 @@ export const useChallengeMissionFeedbackQuery = ({
 };
 
 /** [멘토용] 챌린지 피드백 미션별 제출자 상세 조회 /api/v1/challenge/{challengeId}/mission/{missionId}/feedback/attendances/{attendanceId} */
+export const FeedbackAttendanceQueryKey = 'useFeedbackAttendanceQuery';
+
 export const useFeedbackAttendanceQuery = ({
   challengeId,
   missionId,
@@ -593,7 +595,7 @@ export const useFeedbackAttendanceQuery = ({
 }) => {
   return useQuery({
     queryKey: [
-      'useFeedbackAttendanceQuery',
+      FeedbackAttendanceQueryKey,
       challengeId,
       missionId,
       attendanceId,

@@ -1,19 +1,23 @@
 /** 참여자별 피드백 페이지 (피드백 작성 페이지) */
 
 import { usePatchAttendance } from '@/api/attendance';
-import { useFeedbackAttendanceQuery } from '@/api/challenge';
+import {
+  FeedbackAttendanceQueryKey,
+  useFeedbackAttendanceQuery,
+} from '@/api/challenge';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import useBeforeUnloadWarning from '@/hooks/useBeforeUnloadWarning';
+import useInvalidateQueries from '@/hooks/useInvalidateQueries';
 import EditorApp from '@components/admin/lexical/EditorApp';
 import Heading2 from '@components/admin/ui/heading/Heading2';
 import { Button } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 const { missionTitle, missionRound, major, wishCompany, wishJob, link, name } =
   JSON.parse(localStorage.getItem('attendance') || '{}');
 
-const AttendanceInfoList = () => {
+const AttendanceInfoList = memo(function AttendanceInfoList() {
   const { challengeOptionCode, challengeOptionTitle } = JSON.parse(
     localStorage.getItem('mission') || '{}',
   );
@@ -40,21 +44,28 @@ const AttendanceInfoList = () => {
       ))}
     </ul>
   );
-};
+});
 
 export default function ChallengeFeedbackPage() {
   const navigate = useNavigate();
   const { programId, missionId, userId } = useParams();
 
   const { snackbar } = useAdminSnackbar();
-  const patchAttendance = usePatchAttendance();
+  const { mutateAsync: patchAttendance } = usePatchAttendance();
   const { data } = useFeedbackAttendanceQuery({
     challengeId: programId,
     missionId,
     attendanceId: userId,
   });
 
-  const [content, setContent] = useState<string>();
+  const invalidateFeedbackQueries = useInvalidateQueries([
+    FeedbackAttendanceQueryKey,
+    programId,
+    missionId,
+    userId,
+  ]);
+
+  const [content, setContent] = useState<string | null>();
 
   const hasUnsavedChanges = content !== data?.attendanceDetailVo.feedback;
   useBeforeUnloadWarning(hasUnsavedChanges);
@@ -65,10 +76,11 @@ export default function ChallengeFeedbackPage() {
 
   const handleSave = async () => {
     if (!userId) return;
-    await patchAttendance.mutateAsync({
+    await patchAttendance({
       attendanceId: userId,
       feedback: content,
     });
+    await invalidateFeedbackQueries();
     snackbar('저장되었습니다.');
   };
 
@@ -85,7 +97,7 @@ export default function ChallengeFeedbackPage() {
   };
 
   useEffect(() => {
-    setContent(data?.attendanceDetailVo.feedback || undefined);
+    setContent(data?.attendanceDetailVo.feedback);
   }, [data]);
 
   return (
@@ -93,7 +105,7 @@ export default function ChallengeFeedbackPage() {
       <Heading2 className="mb-2">{name} 피드백</Heading2>
       <AttendanceInfoList />
       <EditorApp
-        initialEditorStateJsonString={content}
+        initialEditorStateJsonString={content ?? undefined}
         onChange={handleChangeEditor}
       />
       <div className="flex items-center justify-end gap-4">
