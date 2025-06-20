@@ -103,9 +103,7 @@ const ChallengeEdit: React.FC = () => {
   const postMentorMutation = usePostAdminChallengeMentor();
 
   // 멘토 리스트
-  const defaultMentorIds =
-    challengeMentorData?.mentorList.map((item) => item.userId) ?? [];
-  const mentorRef = useRef(defaultMentorIds);
+  const mentorRef = useRef<number[]>([]);
 
   const deleteDifferMentors = useDeleteDifferMentors();
 
@@ -242,7 +240,7 @@ const ChallengeEdit: React.FC = () => {
     const [res] = await Promise.all([
       patchChallenge(req),
       postMentorMutation.mutateAsync({
-        mentorIdList: mentorRef.current ?? [],
+        mentorIdList: mentorRef.current,
         challengeId: parseInt(challengeIdString),
       }),
       ...deleteDifferMentors(
@@ -269,7 +267,7 @@ const ChallengeEdit: React.FC = () => {
     premiumOptIds,
     pricePlan,
     defaultBasicPriceInfo,
-    challengeMentorData?.mentorList,
+    challengeMentorData,
   ]);
 
   useEffect(() => {
