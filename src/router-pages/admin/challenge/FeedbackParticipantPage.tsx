@@ -24,7 +24,7 @@ const NO_MENTOR_ID = 0;
 
 interface Row {
   id: number | string;
-  mentorName: string | null;
+  mentorId: number | null;
   missionTitle: string;
   missionRound: number | string;
   name: string;
@@ -40,7 +40,7 @@ const useAttendanceHandler = () => {
   const client = useQueryClient();
   const { programId, missionId } = useParams();
 
-  const patchAttendance = usePatchAttendance();
+  const { mutateAsync: patchAttendance } = usePatchAttendance();
 
   const invalidateAttendance = () => {
     client.invalidateQueries({
@@ -66,7 +66,7 @@ const MentorRenderCell = (params: GridRenderCellParams<Row, number>) => {
 
   const handleChange = async (e: SelectChangeEvent<number>) => {
     const attendanceId = params.row.id;
-    await patchAttendance.mutateAsync({
+    await patchAttendance({
       attendanceId,
       mentorUserId: e.target.value as number,
     });
@@ -102,7 +102,7 @@ const FeedbackStatusRenderCell = (
 
   const handleChange = async (e: SelectChangeEvent<FeedbackStatus>) => {
     const attendanceId = params.row.id;
-    await patchAttendance.mutateAsync({
+    await patchAttendance({
       attendanceId,
       feedbackStatus: e.target.value as FeedbackStatus,
     });
@@ -127,7 +127,7 @@ const FeedbackStatusRenderCell = (
 
 const columns: GridColDef<Row>[] = [
   {
-    field: 'mentorName',
+    field: 'mentorId',
     headerName: '담당 멘토',
     type: 'number',
     width: 120,
@@ -219,7 +219,9 @@ const useFeedbackParticipantRows = () => {
   useEffect(() => {
     setRows(
       (data?.attendanceList ?? []).map((item) => {
-        const { status, result, challengePricePlanType, ...rest } = item; // eslint-disable-line @typescript-eslint/no-unused-vars
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { status, result, challengePricePlanType, mentorName, ...rest } =
+          item;
         return {
           ...rest,
           missionTitle,
