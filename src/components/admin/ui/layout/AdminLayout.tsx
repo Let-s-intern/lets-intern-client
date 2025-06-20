@@ -129,8 +129,11 @@ const navData = [
 const AdminLayout = () => {
   const navigate = useNavigate();
 
-  const { data: isAdmin, isLoading } = useIsAdminQuery();
+  const { data: isAdmin, isLoading: isAdminLoading } = useIsAdminQuery();
   const { data: isMentor, isLoading: isMentorLoading } = useIsMentorQuery();
+
+  const isLoading = isAdminLoading || isMentorLoading;
+  const isUser = !isAdmin && !isMentor;
 
   useEffect(() => {
     if (isLoading || isMentorLoading) return;
@@ -138,8 +141,8 @@ const AdminLayout = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin, isMentor, isLoading, isMentorLoading]);
 
-  if (isLoading || isMentorLoading) return null;
-  if (!isAdmin && !isMentor) return null;
+  if (isLoading) return null;
+  if (isUser) return null;
 
   return (
     <div className="flex">
