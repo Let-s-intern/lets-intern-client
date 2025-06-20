@@ -50,7 +50,7 @@ export const usePostAdminChallengeMentor = () => {
     },
     onError: (error) => {
       console.error(error);
-      alert('usePostAdminChallengeMentor >> ' + error);
+      alert('문제가 발생했습니다: ' + error);
     },
   });
 };
@@ -63,7 +63,7 @@ export const useDeleteChallengeMentor = () => {
     },
     onError: (error) => {
       console.error(error);
-      alert('useDeleteChallengeMentor >> ' + error);
+      alert('문제가 발생했습니다: ' + error);
     },
   });
 };
