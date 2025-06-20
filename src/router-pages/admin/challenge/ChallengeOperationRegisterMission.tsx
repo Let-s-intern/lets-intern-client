@@ -69,6 +69,7 @@ type Row = Mission & {
 };
 
 const END_OF_SECONDS = 59; // 마감일 59초로 설정
+const NO_OPTION_ID = 0;
 
 /** 피드백 미션 여부  */
 const ChallengeOptionRenderCell = (
@@ -92,7 +93,7 @@ const ChallengeOptionRenderCell = (
         missionId: params.row.id,
         challengeOptionId,
       }),
-      challengeOptionId === 0
+      challengeOptionId === NO_OPTION_ID
         ? null
         : patchOption.mutateAsync({
             challengeOptionId,
@@ -105,13 +106,13 @@ const ChallengeOptionRenderCell = (
 
   return (
     <SelectFormControl<number>
-      value={params.value ?? 0}
+      value={params.value ?? NO_OPTION_ID}
       renderValue={() => <>{option?.code ?? '없음'}</>}
       // 미션 새로 등록 중일 때 '피드백 미션 여부' 수정할 수 없음
       disabled={params.row.id === -1}
       onChange={handleChange}
     >
-      <MenuItem value={0}>없음</MenuItem>
+      <MenuItem value={NO_OPTION_ID}>없음</MenuItem>
       {(data?.challengeOptionList ?? []).map((item) => (
         <MenuItem
           key={`option-${item.challengeOptionId}`}
