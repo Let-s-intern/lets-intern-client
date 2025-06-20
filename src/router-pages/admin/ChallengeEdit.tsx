@@ -3,8 +3,10 @@
 import { fileType, uploadFile } from '@/api/file';
 import {
   useAdminChallengeMentorListQuery,
+  useDeleteChallengeMentor,
   usePostAdminChallengeMentor,
 } from '@/api/mentor';
+import { ChallengeMentorList } from '@/api/mentorSchema';
 import {
   useGetChallengeQuery,
   useGetChallengeQueryKey,
@@ -48,6 +50,41 @@ import ProgramSchedule from './program/ProgramSchedule';
 
 const { BASIC, STANDARD, PREMIUM } = ChallengePricePlanEnum.enum;
 
+/** 선택 해제된 멘토와 챌린지 연결 삭제 */
+const useDeleteDifferMentors = () => {
+  const deleteMentorMutation = useDeleteChallengeMentor();
+
+  const getDifferMentorIds = (
+    prevMentors: ChallengeMentorList['mentorList'],
+    updatedMentorUserIds: number[],
+  ) => {
+    const result: number[] = [];
+    prevMentors.forEach((item) => {
+      if (!updatedMentorUserIds.includes(item.userId)) {
+        result.push(item.challengeMentorId);
+      }
+    });
+    return result;
+  };
+
+  const deleteDifferMentors = useCallback(
+    (
+      prevMentors: ChallengeMentorList['mentorList'],
+      updatedMentorUserIds: number[],
+    ) => {
+      const differMentors = getDifferMentorIds(
+        prevMentors,
+        updatedMentorUserIds,
+      );
+      return differMentors.map((id) => deleteMentorMutation.mutateAsync(id));
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  return deleteDifferMentors;
+};
+
 const ChallengeEdit: React.FC = () => {
   const navigate = useNavigate();
   const client = useQueryClient();
@@ -66,9 +103,9 @@ const ChallengeEdit: React.FC = () => {
   const postMentorMutation = usePostAdminChallengeMentor();
 
   // 멘토 리스트
-  const mentorRef = useRef(
-    challengeMentorData?.mentorList.map((item) => item.userId) ?? [],
-  );
+  const mentorRef = useRef<number[]>([]);
+
+  const deleteDifferMentors = useDeleteDifferMentors();
 
   const [input, setInput] = useState<Omit<UpdateChallengeReq, 'desc'>>({});
   const [loading, setLoading] = useState(false);
@@ -105,6 +142,7 @@ const ChallengeEdit: React.FC = () => {
     };
 
     return basic;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [challenge?.priceInfo[0]]);
 
   const receivedContent = useMemo<ChallengeContent | null>(() => {
@@ -202,9 +240,13 @@ const ChallengeEdit: React.FC = () => {
     const [res] = await Promise.all([
       patchChallenge(req),
       postMentorMutation.mutateAsync({
-        mentorIdList: mentorRef.current ?? [],
+        mentorIdList: mentorRef.current,
         challengeId: parseInt(challengeIdString),
       }),
+      ...deleteDifferMentors(
+        challengeMentorData?.mentorList ?? [],
+        mentorRef.current,
+      ),
     ]);
     client.invalidateQueries({
       queryKey: [useGetChallengeQueryKey, Number(challengeIdString)],
@@ -213,27 +255,24 @@ const ChallengeEdit: React.FC = () => {
 
     setLoading(false);
     snackbar('저장되었습니다.');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     challengeIdString,
     client,
     content,
     input,
-    patchChallenge,
-    snackbar,
     premiumInfo,
     standardInfo,
     standardOptIds,
     premiumOptIds,
     pricePlan,
     defaultBasicPriceInfo,
-    postMentorMutation,
+    challengeMentorData,
   ]);
 
   useEffect(() => {
     // receivedConent가 초기화되면 content에 적용
-    if (!receivedContent) {
-      return;
-    }
+    if (!receivedContent) return;
 
     setContent((prev) => ({
       ...(prev.initialized ? prev : { ...receivedContent, initialized: true }),
@@ -257,6 +296,12 @@ const ChallengeEdit: React.FC = () => {
       priceInfo: [defaultBasicPriceInfo],
     }));
   }, [defaultBasicPriceInfo]);
+
+  useEffect(() => {
+    // 멘토 초기값 설정
+    mentorRef.current =
+      challengeMentorData?.mentorList.map((item) => item.userId) ?? [];
+  }, [challengeMentorData]);
 
   if (!challenge || !content.initialized) {
     return <div>loading...</div>;
