@@ -3,9 +3,8 @@ import { ImExit } from 'react-icons/im';
 import { IoIosArrowDown } from 'react-icons/io';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 
+import { useIsAdminQuery, useIsMentorQuery } from '@/api/user';
 import { AdminSnackbarProvider } from '@/hooks/useAdminSnackbar';
-import { useQuery } from '@tanstack/react-query';
-import axios from '../../../../utils/axios';
 
 const navData = [
   {
@@ -130,63 +129,55 @@ const navData = [
 const AdminLayout = () => {
   const navigate = useNavigate();
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['user', 'isAdmin'],
-    queryFn: async ({ queryKey }) => {
-      const res = await axios.get(`/${queryKey[0]}/${queryKey[1]}`);
-      return res.data;
-    },
-  });
-
-  const isAdmin = data?.data || false;
+  const { data: isAdmin, isLoading } = useIsAdminQuery();
+  const { data: isMentor, isLoading: isMentorLoading } = useIsMentorQuery();
 
   useEffect(() => {
-    if (isLoading) {
-      return;
-    }
+    if (isLoading || isMentorLoading) return;
+    if (!isAdmin && !isMentor) navigate('/');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAdmin, isMentor, isLoading, isMentorLoading]);
 
-    if (!isAdmin) {
-      navigate('/');
-    }
-  }, [data, isAdmin, isLoading, navigate]);
-
-  if (!isAdmin) return null;
+  if (isLoading || isMentorLoading) return null;
+  if (!isAdmin && !isMentor) return null;
 
   return (
     <div className="flex">
-      <aside>
-        <nav className="sticky left-0 top-0 z-50 flex h-screen w-48 flex-col gap-4 overflow-y-auto bg-[#353535] py-20 pt-4 text-white shadow-xl">
-          {navData.map((navSection, index) => (
-            <div key={index}>
-              <div className="flex items-center justify-between border-b border-b-neutral-600 pb-3 pl-4 pr-8">
-                <h3 className="text-xsmall16 font-medium">
-                  {navSection.title}
-                </h3>
-                <i className="text-xl text-neutral-600">
-                  <IoIosArrowDown />
-                </i>
+      {isAdmin && (
+        <aside>
+          <nav className="sticky left-0 top-0 z-50 flex h-screen w-48 flex-col gap-4 overflow-y-auto bg-[#353535] py-20 pt-4 text-white shadow-xl">
+            {navData.map((navSection, index) => (
+              <div key={index}>
+                <div className="flex items-center justify-between border-b border-b-neutral-600 pb-3 pl-4 pr-8">
+                  <h3 className="text-xsmall16 font-medium">
+                    {navSection.title}
+                  </h3>
+                  <i className="text-xl text-neutral-600">
+                    <IoIosArrowDown />
+                  </i>
+                </div>
+                <ul>
+                  {navSection.itemList.map((navItem, index) => (
+                    <li key={index}>
+                      <Link
+                        to={navItem.url}
+                        className="flex items-center gap-1 py-2 pl-6 text-xsmall14 hover:bg-[#2A2A2A]"
+                      >
+                        {navItem.name}
+                        {'isExit' in navItem && (
+                          <i>
+                            <ImExit className="translate-y-[1px]" />
+                          </i>
+                        )}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <ul>
-                {navSection.itemList.map((navItem, index) => (
-                  <li key={index}>
-                    <Link
-                      to={navItem.url}
-                      className="flex items-center gap-1 py-2 pl-6 text-xsmall14 hover:bg-[#2A2A2A]"
-                    >
-                      {navItem.name}
-                      {'isExit' in navItem && (
-                        <i>
-                          <ImExit className="translate-y-[1px]" />
-                        </i>
-                      )}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </nav>
-      </aside>
+            ))}
+          </nav>
+        </aside>
+      )}
       <section className="relative min-h-screen min-w-[800px] flex-1">
         <AdminSnackbarProvider>
           <Outlet />

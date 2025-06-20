@@ -14,6 +14,7 @@ export const challengeMentorVoSchema = z.object({
   startDate: z.string(),
   endDate: z.string(),
 });
+
 /** GET /api/v2/user/is-mentor */
 export const isMentorSchema = z.boolean();
 
@@ -64,10 +65,12 @@ export const mentorUserInfoSchema = z.object({
   role: z.string(),
   isMentor: z.boolean(),
 });
+
 export const mentorListItemSchema = z.object({
   id: z.number(),
   name: z.string(),
 });
+
 export const mentorUserSchema = z.object({
   userInfo: mentorUserInfoSchema,
   applicationInfos: z.array(mentorApplicationInfoSchema),
