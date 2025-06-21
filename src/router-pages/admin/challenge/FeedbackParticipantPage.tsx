@@ -24,7 +24,7 @@ import { Link, useParams } from 'react-router-dom';
 
 const NO_MENTOR_ID = 0;
 
-interface Row {
+export interface AttendanceRow {
   id: number | string;
   mentorId: number | null;
   missionTitle: string;
@@ -56,7 +56,9 @@ const useAttendanceHandler = () => {
   };
 };
 
-const MentorRenderCell = (params: GridRenderCellParams<Row, number>) => {
+const MentorRenderCell = (
+  params: GridRenderCellParams<AttendanceRow, number>,
+) => {
   const { programId } = useParams();
 
   const { patchAttendance, invalidateAttendance } = useAttendanceHandler();
@@ -95,7 +97,7 @@ const MentorRenderCell = (params: GridRenderCellParams<Row, number>) => {
 };
 
 const FeedbackStatusRenderCell = (
-  params: GridRenderCellParams<Row, FeedbackStatus>,
+  params: GridRenderCellParams<AttendanceRow, FeedbackStatus>,
 ) => {
   const { data: isAdmin } = useIsAdminQuery();
   const { patchAttendance, invalidateAttendance } = useAttendanceHandler();
@@ -128,7 +130,7 @@ const FeedbackStatusRenderCell = (
   );
 };
 
-const columns: GridColDef<Row>[] = [
+const columns: GridColDef<AttendanceRow>[] = [
   {
     field: 'mentorId',
     headerName: '담당 멘토',
@@ -170,7 +172,7 @@ const columns: GridColDef<Row>[] = [
     field: 'link',
     headerName: '미션 제출 링크',
     width: 120,
-    renderCell: (params: GridRenderCellParams<Row, string>) => (
+    renderCell: (params: GridRenderCellParams<AttendanceRow, string>) => (
       <Link
         to={params.value || '#'}
         target="_blank"
@@ -185,7 +187,7 @@ const columns: GridColDef<Row>[] = [
     field: 'feedbackPageLink',
     headerName: '피드백 페이지',
     width: 120,
-    renderCell: (params: GridRenderCellParams<Row, string>) => (
+    renderCell: (params: GridRenderCellParams<AttendanceRow, string>) => (
       <Link
         to={params.value || '#'}
         className="text-primary underline"
@@ -222,7 +224,7 @@ const useFeedbackParticipantRows = () => {
     enabled: !!programId && !!missionId && !isAdmin,
   });
 
-  const [rows, setRows] = useState<Row[]>([]);
+  const [rows, setRows] = useState<AttendanceRow[]>([]);
 
   const selectedMission = JSON.parse(localStorage.getItem('mission') || '{}');
   const missionTitle = selectedMission.title;
