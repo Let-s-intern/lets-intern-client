@@ -102,7 +102,6 @@ const DoneMissionItem = ({ mission }: Props) => {
                 missionDetail={missionDetail}
                 schedule={currentSchedule}
                 missionByType={mission}
-                challengeId={currentChallenge?.id}
                 applicationId={applicationId}
                 programId={programId}
                 isFeedbackCompleted={
