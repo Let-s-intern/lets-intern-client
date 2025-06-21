@@ -111,6 +111,7 @@ export default function VodEditor<T extends CreateVodReq | UpdateVodReq>({
       <SelectFormControl
         labelId="adminProgramTypeInfo"
         label="B2 타입"
+        multiple
         defaultValue={
           defaultValue?.adminProgramTypeInfo
             ? defaultValue.adminProgramTypeInfo.map(

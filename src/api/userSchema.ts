@@ -4,6 +4,20 @@ import { z } from 'zod';
 // GET 유저 관리자 여부
 export const isAdminSchema = z.boolean();
 
+/** GET /api/v1/admin/challenge-mentor */
+export const challengeMentorVoSchema = z.object({
+  challengeId: z.number(),
+  programStatusType: z.string(),
+  title: z.string(),
+  shortDesc: z.string(),
+  thumbnail: z.string(),
+  startDate: z.string(),
+  endDate: z.string(),
+});
+
+/** GET /api/v2/user/is-mentor */
+export const isMentorSchema = z.boolean();
+
 /** GET /api/v1/user/admin */
 export const userAdminType = z.object({
   userAdminList: z.array(
@@ -51,10 +65,12 @@ export const mentorUserInfoSchema = z.object({
   role: z.string(),
   isMentor: z.boolean(),
 });
+
 export const mentorListItemSchema = z.object({
   id: z.number(),
   name: z.string(),
 });
+
 export const mentorUserSchema = z.object({
   userInfo: mentorUserInfoSchema,
   applicationInfos: z.array(mentorApplicationInfoSchema),

@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
+import { useIsMentorQuery } from '@/api/user';
 import NavItem from '@/components/common/mypage/ui/nav/NavItem';
 import useAuthStore from '@/store/useAuthStore';
 
@@ -9,7 +10,7 @@ const MyPage = () => {
   const { isLoggedIn } = useAuthStore();
   const location = useLocation();
   const navigate = useNavigate();
-  const isMentor = true; //디버깅용
+  const { data: isMentor } = useIsMentorQuery();
   const isReviewCreatePage = location.pathname.startsWith('/mypage/review/new');
   const isReviewPage =
     location.pathname.startsWith('/mypage/review/challenge') ||

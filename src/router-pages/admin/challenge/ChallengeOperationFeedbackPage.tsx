@@ -1,3 +1,4 @@
+import { useChallengeMissionFeedbackListQuery } from '@/api/challenge';
 import { LOCALIZED_YYYY_MD_Hm } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
@@ -6,40 +7,14 @@ import { Link, useParams } from 'react-router-dom';
 
 interface Row {
   id: number | string;
-  title: string;
+  title?: string | null;
   th: number; // 미션 회차
   startDate: string;
   endDate: string;
-  challengeOptionCode: string;
+  challengeOptionCode?: string | null;
+  challengeOptionTitle?: string | null;
   url: string;
 }
-
-const data = [
-  {
-    id: 1,
-    title: '첫 번째 미션',
-    th: 1,
-    startDate: '2024-03-01T00:00:00',
-    endDate: '2024-03-07T23:59:59',
-    challengeOptionCode: 'FEEDBACK_A',
-  },
-  {
-    id: 2,
-    title: '두 번째 미션',
-    th: 2,
-    startDate: '2024-03-08T00:00:00',
-    endDate: '2024-03-14T23:59:59',
-    challengeOptionCode: 'FEEDBACK_B',
-  },
-  {
-    id: 3,
-    title: '세 번째 미션',
-    th: 3,
-    startDate: '2024-03-15T00:00:00',
-    endDate: '2024-03-21T23:59:59',
-    challengeOptionCode: 'FEEDBACK_C',
-  },
-];
 
 const columns: GridColDef<Row>[] = [
   {
@@ -97,16 +72,20 @@ const columns: GridColDef<Row>[] = [
 const useFeedbackMissionRows = () => {
   const { programId } = useParams();
 
+  const { data } = useChallengeMissionFeedbackListQuery(Number(programId));
+
   const [rows, setRows] = useState<Row[]>([]);
 
   useEffect(() => {
+    if (!data) return;
+
     setRows(
-      data.map((item) => ({
+      data.missionList.map((item) => ({
         ...item,
         url: `/admin/challenge/operation/${programId}/feedback/mission/${item.id}/participants`,
       })),
     );
-  }, [programId]);
+  }, [data, programId]);
 
   return rows;
 };
@@ -117,6 +96,7 @@ function ChallengeOperationFeedbackPage() {
   useEffect(() => {
     localStorage.removeItem('mission');
   }, []);
+
   return (
     <DataGrid
       rows={rows}

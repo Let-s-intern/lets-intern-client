@@ -668,7 +668,7 @@ export type UpdateVodReq = {
 
 // /**  DELETE /api/v1/vod/{vodId} vod 삭제 */
 
-/** GET /api/v1/mission/{id}/admin */
+/** [어드민] 챌린지 1개의 미션 전체 목록 GET /api/v1/mission/{id}/admin */
 export const missionAdmin = z
   .object({
     missionList: z.array(
@@ -686,6 +686,8 @@ export const missionAdmin = z
         missionTemplateId: z.number().nullable(),
         startDate: z.string(),
         endDate: z.string(),
+        challengeOptionId: z.number().nullable(),
+        challengeOptionCode: z.string().nullable(),
         essentialContentsList: z
           .array(
             z
@@ -723,22 +725,23 @@ export const missionAdmin = z
 
 export type Mission = z.infer<typeof missionAdmin>['missionList'][number];
 
-const attendanceStatus = z.union([
-  z.literal('PRESENT'),
-  z.literal('UPDATED'),
-  z.literal('LATE'),
-  z.literal('ABSENT'),
+export const AttendanceStatusEnum = z.enum([
+  'PRESENT',
+  'UPDATED',
+  'LATE',
+  'ABSENT',
+]);
+export type AttendanceStatus = z.infer<typeof AttendanceStatusEnum>;
+
+export const AttendanceResultEnum = z.enum(['WAITING', 'PASS', 'WRONG']);
+export const AttendanceFeedbackStatusEnum = z.enum([
+  'WAITING',
+  'IN_PROGRESS',
+  'COMPLETED',
+  'CONFIRMED',
 ]);
 
-export type AttendanceStatus = z.infer<typeof attendanceStatus>;
-
-const attendanceResult = z.union([
-  z.literal('WAITING'),
-  z.literal('PASS'),
-  z.literal('WRONG'),
-]);
-
-export type AttendanceResult = z.infer<typeof attendanceResult>;
+export type AttendanceResult = z.infer<typeof AttendanceResultEnum>;
 
 /** GET /api/v1/challenge/{challengeId}/mission/{missionId}/attendances */
 export const attendances = z
@@ -749,11 +752,11 @@ export const attendances = z
           id: z.number(),
           name: z.string().nullable().optional(),
           email: z.string().nullable().optional(),
-          status: attendanceStatus.nullable().optional(),
+          status: AttendanceStatusEnum.nullable().optional(),
           link: z.string().nullable().optional(),
           review: z.string().nullable().optional(),
           reviewIsVisible: z.boolean().nullable().optional(),
-          result: attendanceResult.nullable(),
+          result: AttendanceResultEnum.nullable(),
           comments: z.string().nullable().optional(),
           createDate: z.string().nullable(),
           lastModifiedDate: z.string().nullable().optional(),
@@ -1135,8 +1138,8 @@ export const challengeSchedule = z
           link: z.string().nullable(),
           review: z.string().nullable().optional(),
           comments: z.string().nullable(),
-          status: attendanceStatus.nullable(),
-          result: attendanceResult.nullable(),
+          status: AttendanceStatusEnum.nullable(),
+          result: AttendanceResultEnum.nullable(),
         }),
       }),
     ),
@@ -1210,6 +1213,63 @@ export const userChallengeMissionDetail = z
 export type UserChallengeMissionDetail = z.infer<
   typeof userChallengeMissionDetail
 >['missionInfo'];
+
+// GET /api/v1/challenge/{challengeId}/missions/{missionId} 미션 상세 + attendanceInfo
+export const userChallengeMissionWithAttendance = z
+  .object({
+    missionInfo: z.object({
+      id: z.number(),
+      th: z.number().nullable(),
+      title: z.string().nullable(),
+      startDate: z.string().nullable(),
+      endDate: z.string().nullable(),
+      essentialContentsList: z.array(
+        z.object({
+          id: z.number(),
+          title: z.string().nullable(),
+          link: z.string().nullable(),
+        }),
+      ),
+      additionalContentsList: z.array(
+        z.object({
+          id: z.number(),
+          title: z.string().nullable(),
+          link: z.string().nullable(),
+        }),
+      ),
+      status: MissionStatusEnum,
+      missionTag: z.string(),
+      description: z.string(),
+      guide: z.string(),
+      templateLink: z.string(),
+    }),
+    attendanceInfo: z
+      .object({
+        submitted: z.boolean(),
+        id: z.number().nullable(),
+        link: z.string().nullable(),
+        review: z.string().nullable().optional(),
+        comments: z.string().nullable(),
+        status: AttendanceStatusEnum.nullable(),
+        result: AttendanceResultEnum.nullable(),
+        feedbackStatus: AttendanceFeedbackStatusEnum.nullable(),
+      })
+      .nullable(),
+  })
+  .transform((data) => {
+    return {
+      missionInfo: {
+        ...data.missionInfo,
+        startDate: dayjs(data.missionInfo.startDate),
+        endDate: dayjs(data.missionInfo.endDate),
+      },
+      attendanceInfo: data.attendanceInfo,
+    };
+  });
+
+export type UserChallengeMissionWithAttendance = z.infer<
+  typeof userChallengeMissionWithAttendance
+>;
 
 /** GET /api/v1/challenge/{id}/daily-mission */
 export const dailyMissionSchema = z
@@ -1296,8 +1356,8 @@ export const myDailyMission = z
         link: z.string().nullable(),
         review: z.string().nullable().optional(),
         comments: z.string().nullable(),
-        status: attendanceStatus.nullable(),
-        result: attendanceResult.nullable(),
+        status: AttendanceStatusEnum.nullable(),
+        result: AttendanceResultEnum.nullable(),
       })
       .nullable(),
   })
@@ -1325,8 +1385,8 @@ export const myChallengeMissionsByType = z.object({
   missionList: z.array(
     z.object({
       attendanceLink: z.string().nullable().optional(),
-      attendanceResult: attendanceResult.nullable().optional(),
-      attendanceStatus: attendanceStatus.nullable().optional(),
+      attendanceResult: AttendanceResultEnum.nullable().optional(),
+      attendanceStatus: AttendanceStatusEnum.nullable().optional(),
       id: z.number(),
       th: z.number().nullable(),
       title: z.string().nullable(),
@@ -1719,3 +1779,5 @@ export const vodListResponseSchema = z.object({
   programList: z.array(vodListItemSchema),
   pageInfo,
 });
+
+export const UserRoleEnum = z.enum(['ADMIN', 'USER']);

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { twMerge } from '@/lib/twMerge';
 
 /** 링크는 Link element로 변경 */
-export const parseLink = (text: string) => {
+export const parseLink = (text: string, openInNewTab = true) => {
   const regex = /\((.*?)\)\[(.*?)\]/g;
   let startIndex = 0;
   const result = [];
@@ -15,8 +15,7 @@ export const parseLink = (text: string) => {
         key={offset}
         to={url}
         className="text-primary underline"
-        target="_blank"
-        rel="noopener noreferrer"
+        {...(openInNewTab && { target: '_blank', rel: 'noopener noreferrer' })}
       >
         {caption}
       </Link>
@@ -34,12 +33,13 @@ export const parseLink = (text: string) => {
 interface Props {
   comment?: string;
   className?: string;
+  openInNewTab?: boolean;
 }
 
-function ParsedCommentBox({ comment, className }: Props) {
+function ParsedCommentBox({ comment, className, openInNewTab = true }: Props) {
   return (
     <div className={twMerge('whitespace-pre-line', className)}>
-      {parseLink(comment ?? '')}
+      {parseLink(comment ?? '', openInNewTab)}
     </div>
   );
 }

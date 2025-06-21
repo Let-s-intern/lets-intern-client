@@ -13,16 +13,22 @@ import {
   faqSchema,
   getChallengeIdPrimitiveSchema,
   getChallengeIdSchema,
+  missionAdmin,
   ProgramClassification,
   ProgramStatus,
   reviewTotalSchema,
+  userChallengeMissionWithAttendance,
 } from '../schema';
 import axios from '../utils/axios';
 import { Pageable } from './../schema';
 import {
   challengeGoalSchema,
+  challengeMissionFeedbackAttendanceListSchema,
+  challengeMissionFeedbackListSchema,
+  challengeMissionFeedbackSchema,
   challengeUserInfoSchema,
   challengeValidUserSchema,
+  feedbackAttendanceSchema,
 } from './challengeSchema';
 import { getAdminProgramReviewQueryKey } from './review';
 
@@ -499,4 +505,155 @@ export const getClickCopy = async (fromId: number, toId: number) => {
     `/admin/challenge/copy-dashboard/${fromId}/${toId}`,
   );
   return res.data.data;
+};
+
+/** 챌린지 피드백 미션 전체 목록 /api/v2/admin/challenge/{challengeId}/mission/feedback */
+export const useChallengeMissionFeedbackListQuery = (challengeId?: number) => {
+  return useQuery({
+    queryKey: ['useChallengeMissionFeedbackQuery', challengeId],
+    queryFn: async () => {
+      const res = await axiosV2.get(
+        `/admin/challenge/${challengeId}/mission/feedback`,
+      );
+      return challengeMissionFeedbackListSchema.parse(res.data.data);
+    },
+    enabled: !!challengeId,
+  });
+};
+
+/** [어드민용] 챌린지 피드백 미션별 제출자 조회 /api/v2/admin/challenge/{challengeId}/mission/{missionId}/feedback/attendances */
+export const ChallengeMissionFeedbackAttendanceQueryKey =
+  'useChallengeMissionFeedbackAttendanceQuery';
+
+export const useChallengeMissionFeedbackAttendanceQuery = ({
+  challengeId,
+  missionId,
+  enabled,
+}: {
+  challengeId?: number | string;
+  missionId?: number | string;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    queryKey: [
+      ChallengeMissionFeedbackAttendanceQueryKey,
+      challengeId,
+      missionId,
+    ],
+    queryFn: async () => {
+      const res = await axiosV2.get(
+        `/admin/challenge/${challengeId}/mission/${missionId}/feedback/attendances`,
+      );
+      return challengeMissionFeedbackAttendanceListSchema.parse(res.data.data);
+    },
+    enabled,
+  });
+};
+
+/** [멘토용] 챌린지 피드백 미션별 제출자 조회 /api/v1/admin/challenge/{challengeId}/mission/{missionId}/feedback/attendances */
+export const MentorMissionFeedbackAttendanceQueryKey =
+  'useMentorMissionFeedbackAttendanceQuery';
+
+export const useMentorMissionFeedbackAttendanceQuery = ({
+  challengeId,
+  missionId,
+  enabled,
+}: {
+  challengeId?: number | string;
+  missionId?: number | string;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    queryKey: [MentorMissionFeedbackAttendanceQueryKey, challengeId, missionId],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/admin/challenge/${challengeId}/mission/${missionId}/feedback/attendances`,
+      );
+      return challengeMissionFeedbackAttendanceListSchema.parse(res.data.data);
+    },
+    enabled,
+  });
+};
+
+/** 챌린지 미션 전체 목록 /api/v2/admin/challenge/{challengeId}/mission */
+export const ChallengeMissionListQueryKey = 'useChallengeMissionListQuery';
+
+export const useChallengeMissionListQuery = (challengeId?: string | number) => {
+  return useQuery({
+    queryKey: [ChallengeMissionListQueryKey, challengeId],
+    queryFn: async () => {
+      const res = await axiosV2.get(`/admin/challenge/${challengeId}/mission`);
+      return missionAdmin.parse(res.data.data);
+    },
+    enabled: !!challengeId,
+  });
+};
+
+/** 챌린지 미션 attendanceInfo 조회 /api/v1/challenge/{challengeId}/missions/{missionId} */
+export const useChallengeMissionAttendanceInfoQuery = ({
+  challengeId,
+  missionId,
+}: {
+  challengeId: string | number;
+  missionId: string | number;
+}) => {
+  return useQuery({
+    queryKey: ['useChallengeMissionAttendanceInfo', challengeId, missionId],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/challenge/${challengeId}/missions/${missionId}`,
+      );
+      return userChallengeMissionWithAttendance.parse(res.data.data);
+    },
+    enabled: !!challengeId && !!missionId,
+  });
+};
+
+/** 챌린지 나의 기록장 미션 피드백 조회 /api/v1/challenge/{challengeId}/missions/{missionId}/feedback */
+export const useChallengeMissionFeedbackQuery = ({
+  challengeId,
+  missionId,
+}: {
+  challengeId: string | number;
+  missionId: string | number;
+}) => {
+  return useQuery({
+    queryKey: ['useChallengeMissionFeedback', challengeId, missionId],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/challenge/${challengeId}/missions/${missionId}/feedback`,
+      );
+      return challengeMissionFeedbackSchema.parse(res.data.data);
+    },
+    enabled: !!challengeId && !!missionId,
+  });
+};
+
+/** [멘토용] 챌린지 피드백 미션별 제출자 상세 조회 /api/v1/challenge/{challengeId}/mission/{missionId}/feedback/attendances/{attendanceId} */
+export const FeedbackAttendanceQueryKey = 'useFeedbackAttendanceQuery';
+
+export const useFeedbackAttendanceQuery = ({
+  challengeId,
+  missionId,
+  attendanceId,
+}: {
+  challengeId?: string | number;
+  missionId?: string | number;
+  attendanceId?: string | number;
+}) => {
+  return useQuery({
+    queryKey: [
+      FeedbackAttendanceQueryKey,
+      challengeId,
+      missionId,
+      attendanceId,
+    ],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/challenge/${challengeId}/mission/${missionId}/feedback/attendances/${attendanceId}`,
+      );
+      return feedbackAttendanceSchema.parse(res.data.data);
+    },
+    enabled: !!challengeId && !!missionId && !!attendanceId,
+  });
 };

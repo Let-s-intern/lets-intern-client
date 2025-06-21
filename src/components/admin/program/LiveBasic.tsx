@@ -107,6 +107,7 @@ export default function LiveBasic<T extends CreateLiveReq | UpdateLiveReq>({
       <SelectFormControl
         labelId="adminProgramTypeInfo"
         label="B2 타입"
+        multiple
         defaultValue={
           defaultValue?.adminClassificationInfo
             ? defaultValue.adminClassificationInfo.map(

@@ -1,4 +1,12 @@
+/* eslint-disable no-console */
+
 import { fileType, uploadFile } from '@/api/file';
+import {
+  useAdminChallengeMentorListQuery,
+  useDeleteChallengeMentor,
+  usePostAdminChallengeMentor,
+} from '@/api/mentor';
+import { ChallengeMentorList } from '@/api/mentorSchema';
 import {
   useGetChallengeQuery,
   useGetChallengeQueryKey,
@@ -33,13 +41,49 @@ import Heading2 from '@components/admin/ui/heading/Heading2';
 import Heading3 from '@components/admin/ui/heading/Heading3';
 import { Button } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 import ChallengeFaqCategory from './program/ChallengeFaqCategory';
+import ChallengeMentorRegistrationSection from './program/ChallengeMentorRegistrationSection';
 import ProgramSchedule from './program/ProgramSchedule';
 
 const { BASIC, STANDARD, PREMIUM } = ChallengePricePlanEnum.enum;
+
+/** 선택 해제된 멘토와 챌린지 연결 삭제 */
+const useDeleteDifferMentors = () => {
+  const deleteMentorMutation = useDeleteChallengeMentor();
+
+  const getDifferMentorIds = (
+    prevMentors: ChallengeMentorList['mentorList'],
+    updatedMentorUserIds: number[],
+  ) => {
+    const result: number[] = [];
+    prevMentors.forEach((item) => {
+      if (!updatedMentorUserIds.includes(item.userId)) {
+        result.push(item.challengeMentorId);
+      }
+    });
+    return result;
+  };
+
+  const deleteDifferMentors = useCallback(
+    (
+      prevMentors: ChallengeMentorList['mentorList'],
+      updatedMentorUserIds: number[],
+    ) => {
+      const differMentors = getDifferMentorIds(
+        prevMentors,
+        updatedMentorUserIds,
+      );
+      return differMentors.map((id) => deleteMentorMutation.mutateAsync(id));
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  return deleteDifferMentors;
+};
 
 const ChallengeEdit: React.FC = () => {
   const navigate = useNavigate();
@@ -54,6 +98,14 @@ const ChallengeEdit: React.FC = () => {
     enabled: Boolean(challengeIdString),
     refetchOnWindowFocus: false,
   });
+  const { data: challengeMentorData } =
+    useAdminChallengeMentorListQuery(challengeIdString);
+  const postMentorMutation = usePostAdminChallengeMentor();
+
+  // 멘토 리스트
+  const mentorRef = useRef<number[]>([]);
+
+  const deleteDifferMentors = useDeleteDifferMentors();
 
   const [input, setInput] = useState<Omit<UpdateChallengeReq, 'desc'>>({});
   const [loading, setLoading] = useState(false);
@@ -90,6 +142,7 @@ const ChallengeEdit: React.FC = () => {
     };
 
     return basic;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [challenge?.priceInfo[0]]);
 
   const receivedContent = useMemo<ChallengeContent | null>(() => {
@@ -184,8 +237,17 @@ const ChallengeEdit: React.FC = () => {
     };
 
     console.log('req', req);
-
-    const res = await patchChallenge(req);
+    const [res] = await Promise.all([
+      patchChallenge(req),
+      postMentorMutation.mutateAsync({
+        mentorIdList: mentorRef.current,
+        challengeId: parseInt(challengeIdString),
+      }),
+      ...deleteDifferMentors(
+        challengeMentorData?.mentorList ?? [],
+        mentorRef.current,
+      ),
+    ]);
     client.invalidateQueries({
       queryKey: [useGetChallengeQueryKey, Number(challengeIdString)],
     });
@@ -193,26 +255,24 @@ const ChallengeEdit: React.FC = () => {
 
     setLoading(false);
     snackbar('저장되었습니다.');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     challengeIdString,
     client,
     content,
     input,
-    patchChallenge,
-    snackbar,
     premiumInfo,
     standardInfo,
     standardOptIds,
     premiumOptIds,
     pricePlan,
     defaultBasicPriceInfo,
+    challengeMentorData,
   ]);
 
-  // receivedConent가 초기화되면 content에 적용
   useEffect(() => {
-    if (!receivedContent) {
-      return;
-    }
+    // receivedConent가 초기화되면 content에 적용
+    if (!receivedContent) return;
 
     setContent((prev) => ({
       ...(prev.initialized ? prev : { ...receivedContent, initialized: true }),
@@ -236,6 +296,12 @@ const ChallengeEdit: React.FC = () => {
       priceInfo: [defaultBasicPriceInfo],
     }));
   }, [defaultBasicPriceInfo]);
+
+  useEffect(() => {
+    // 멘토 초기값 설정
+    mentorRef.current =
+      challengeMentorData?.mentorList.map((item) => item.userId) ?? [];
+  }, [challengeMentorData]);
 
   if (!challenge || !content.initialized) {
     return <div>loading...</div>;
@@ -302,65 +368,72 @@ const ChallengeEdit: React.FC = () => {
             onChangeStandardOptIds={(ids) => setStandardOptIds(ids)}
             onChangePricePlan={handleChangePricePlan}
           />
-          {/* 일정 */}
-          <ProgramSchedule
-            defaultValue={challenge}
-            setInput={setInput}
-            onDeadlineChange={(value) => {
-              if (!value) {
-                return;
-              }
+          <div className="flex flex-col gap-4">
+            {/* 일정 */}
+            <ProgramSchedule
+              defaultValue={challenge}
+              setInput={setInput}
+              onDeadlineChange={(value) => {
+                if (!value) {
+                  return;
+                }
 
-              // TODO: 코드 정리
-              setInput((prev) => ({
-                ...prev,
-                priceInfo: prev.priceInfo
-                  ? prev.priceInfo.map((priceInfo, index) => ({
-                      ...challenge.priceInfo[index],
-                      ...priceInfo,
-                      priceInfo: {
-                        discount:
-                          challenge.priceInfo[index]?.discount ??
-                          priceInfo.priceInfo.discount,
-                        price:
-                          challenge.priceInfo[index]?.price ??
-                          priceInfo.priceInfo.price,
-                        accountNumber:
-                          challenge.priceInfo[index]?.accountNumber ??
-                          priceInfo.priceInfo.accountNumber,
-                        accountType:
-                          challenge.priceInfo[index]?.accountType ??
-                          priceInfo.priceInfo.accountType,
-                        deadline: value.format('YYYY-MM-DDTHH:mm'),
-                      },
-                    }))
-                  : [
-                      {
-                        challengeParticipationType:
-                          challenge.priceInfo[0].challengeParticipationType ??
-                          'LIVE',
-                        challengePriceType:
-                          challenge.priceInfo[0].challengePriceType ?? 'CHARGE',
-                        challengePricePlanType:
-                          challenge.priceInfo[0].challengePricePlanType ??
-                          'BASIC',
-                        charge: challenge.priceInfo[0].price ?? 0,
+                // TODO: 코드 정리
+                setInput((prev) => ({
+                  ...prev,
+                  priceInfo: prev.priceInfo
+                    ? prev.priceInfo.map((priceInfo, index) => ({
+                        ...challenge.priceInfo[index],
+                        ...priceInfo,
                         priceInfo: {
-                          discount: challenge.priceInfo[0].discount ?? 0,
-                          price: challenge.priceInfo[0].price ?? 0,
-                          deadline: value.format('YYYY-MM-DDTHH:mm'),
+                          discount:
+                            challenge.priceInfo[index]?.discount ??
+                            priceInfo.priceInfo.discount,
+                          price:
+                            challenge.priceInfo[index]?.price ??
+                            priceInfo.priceInfo.price,
                           accountNumber:
-                            challenge.priceInfo[0].accountNumber ?? '',
+                            challenge.priceInfo[index]?.accountNumber ??
+                            priceInfo.priceInfo.accountNumber,
                           accountType:
-                            challenge.priceInfo[0].accountType ?? 'HANA',
+                            challenge.priceInfo[index]?.accountType ??
+                            priceInfo.priceInfo.accountType,
+                          deadline: value.format('YYYY-MM-DDTHH:mm'),
                         },
-                        refund: challenge.priceInfo[0].refund ?? 0,
-                        title: challenge.priceInfo[0].title ?? '',
-                      },
-                    ],
-              }));
-            }}
-          />
+                      }))
+                    : [
+                        {
+                          challengeParticipationType:
+                            challenge.priceInfo[0].challengeParticipationType ??
+                            'LIVE',
+                          challengePriceType:
+                            challenge.priceInfo[0].challengePriceType ??
+                            'CHARGE',
+                          challengePricePlanType:
+                            challenge.priceInfo[0].challengePricePlanType ??
+                            'BASIC',
+                          charge: challenge.priceInfo[0].price ?? 0,
+                          priceInfo: {
+                            discount: challenge.priceInfo[0].discount ?? 0,
+                            price: challenge.priceInfo[0].price ?? 0,
+                            deadline: value.format('YYYY-MM-DDTHH:mm'),
+                            accountNumber:
+                              challenge.priceInfo[0].accountNumber ?? '',
+                            accountType:
+                              challenge.priceInfo[0].accountType ?? 'HANA',
+                          },
+                          refund: challenge.priceInfo[0].refund ?? 0,
+                          title: challenge.priceInfo[0].title ?? '',
+                        },
+                      ],
+                }));
+              }}
+            />
+            {/* 멘토 등록 */}
+            <ChallengeMentorRegistrationSection
+              onChange={(value) => (mentorRef.current = value)}
+            />
+          </div>
         </div>
       </section>
 

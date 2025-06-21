@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -8,7 +10,7 @@ import {
 
 const challengeOptionsQueryKey = 'challengeOptionsQueryKey';
 
-// GET 챌린지 옵션 전체 목록 조회
+// GET 챌린지 옵션 전체 목록 조회 /api/v1/admin/challenge-option
 export const useGetChallengeOptions = () => {
   return useQuery({
     queryKey: [challengeOptionsQueryKey],
