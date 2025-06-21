@@ -155,7 +155,7 @@ const Router = () => {
                 <Route path="me" element={<MyChallengeDashboard />} />
                 {/* 미션 피드백 페이지 */}
                 <Route
-                  path="missions/:missionId/feedback"
+                  path="challenge/:challengeId/missions/:missionId/feedback"
                   element={<MissionFeedback />}
                 />
               </Route>
