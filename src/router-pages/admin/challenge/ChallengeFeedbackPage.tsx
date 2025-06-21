@@ -5,30 +5,43 @@ import {
   FeedbackAttendanceQueryKey,
   useFeedbackAttendanceQuery,
 } from '@/api/challenge';
+import { ChallengeMissionFeedbackList } from '@/api/challengeSchema';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import useBeforeUnloadWarning from '@/hooks/useBeforeUnloadWarning';
 import useInvalidateQueries from '@/hooks/useInvalidateQueries';
 import EditorApp from '@components/admin/lexical/EditorApp';
 import Heading2 from '@components/admin/ui/heading/Heading2';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { Button } from '@mui/material';
 import { memo, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { AttendanceRow } from './FeedbackParticipantPage';
 
-const { missionTitle, missionRound, major, wishCompany, wishJob, link, name } =
-  JSON.parse(localStorage.getItem('attendance') || '{}');
+const useLocalStorageState = () => {
+  const [mission, setMission] =
+    useState<ChallengeMissionFeedbackList['missionList'][0]>();
+  const [attendance, setAttendance] = useState<AttendanceRow>();
 
-const { challengeOptionCode, challengeOptionTitle } = JSON.parse(
-  localStorage.getItem('mission') || '{}',
-);
+  useEffect(() => {
+    const attendance = JSON.parse(localStorage.getItem('attendance') || '{}');
+    setAttendance(attendance);
+    const mission = JSON.parse(localStorage.getItem('mission') || '{}');
+    setMission(mission);
+  }, []);
+
+  return { mission, attendance };
+};
 
 const AttendanceInfoList = memo(function AttendanceInfoList() {
+  const { mission, attendance } = useLocalStorageState();
+
   const list = [
-    `${missionTitle} / ${missionRound}회차`,
-    `피드백 유형: [${challengeOptionCode}] ${challengeOptionTitle}`,
-    `참여자 정보: ${major} / ${wishCompany} / ${wishJob}`,
+    `${attendance?.missionTitle} / ${attendance?.missionRound}회차`,
+    `피드백 유형: [${mission?.challengeOptionCode}] ${mission?.challengeOptionTitle}`,
+    `참여자 정보: ${attendance?.major} / ${attendance?.wishCompany} / ${attendance?.wishJob}`,
     <Link
-      key={link}
-      to={link}
+      key={attendance?.link}
+      to={attendance?.link || '#'}
       className="text-primary underline"
       target="_blank"
       rel="noopener noreferrer"
@@ -65,7 +78,8 @@ export default function ChallengeFeedbackPage() {
     userId,
   ]);
 
-  const [content, setContent] = useState<string | null>();
+  const [content, setContent] = useState<string>();
+  const { attendance } = useLocalStorageState();
 
   const hasUnsavedChanges = content !== data?.attendanceDetailVo.feedback;
   useBeforeUnloadWarning(hasUnsavedChanges);
@@ -97,15 +111,17 @@ export default function ChallengeFeedbackPage() {
   };
 
   useEffect(() => {
-    setContent(data?.attendanceDetailVo.feedback);
-  }, [data]);
+    setContent(data?.attendanceDetailVo.feedback ?? undefined);
+  }, [data?.attendanceDetailVo.feedback]);
+
+  if (!content) return <LoadingContainer className="mt-[30%]" />;
 
   return (
     <div className="mt-5 px-5">
-      <Heading2 className="mb-2">{name} 피드백</Heading2>
+      <Heading2 className="mb-2">{attendance?.name} 피드백</Heading2>
       <AttendanceInfoList />
       <EditorApp
-        initialEditorStateJsonString={content ?? undefined}
+        initialEditorStateJsonString={content}
         onChange={handleChangeEditor}
       />
       <div className="flex items-center justify-end gap-4">
