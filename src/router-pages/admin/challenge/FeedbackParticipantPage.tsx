@@ -6,6 +6,7 @@ import { usePatchAttendance } from '@/api/attendance';
 import {
   ChallengeMissionFeedbackAttendanceQueryKey,
   useChallengeMissionFeedbackAttendanceQuery,
+  useMentorMissionFeedbackAttendanceQuery,
 } from '@/api/challenge';
 import {
   FeedbackStatus,
@@ -207,9 +208,18 @@ const columns: GridColDef<Row>[] = [
 const useFeedbackParticipantRows = () => {
   const { missionId, programId } = useParams();
 
+  const { data: isAdmin } = useIsAdminQuery();
+
   const { data } = useChallengeMissionFeedbackAttendanceQuery({
     challengeId: programId,
     missionId,
+    enabled: !!programId && !!missionId && isAdmin,
+  });
+
+  const { data: dataForMentor } = useMentorMissionFeedbackAttendanceQuery({
+    challengeId: programId,
+    missionId,
+    enabled: !!programId && !!missionId && !isAdmin,
   });
 
   const [rows, setRows] = useState<Row[]>([]);
@@ -220,7 +230,7 @@ const useFeedbackParticipantRows = () => {
 
   useEffect(() => {
     setRows(
-      (data?.attendanceList ?? []).map((item) => {
+      ((isAdmin ? data : dataForMentor)?.attendanceList ?? []).map((item) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { status, result, challengePricePlanType, mentorName, ...rest } =
           item;
