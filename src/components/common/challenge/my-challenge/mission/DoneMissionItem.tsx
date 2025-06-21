@@ -104,6 +104,7 @@ const DoneMissionItem = ({ mission }: Props) => {
                 missionByType={mission}
                 applicationId={applicationId}
                 programId={programId}
+                challengeId={currentChallenge?.id}
                 isFeedbackCompleted={
                   attendanceInfo?.feedbackStatus === 'COMPLETED'
                 }
