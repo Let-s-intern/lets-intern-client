@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 
 import { IPageable } from '@/types/interface';
+import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
@@ -46,6 +47,19 @@ export const usePostAdminChallengeMentor = () => {
     mutationFn: async (data: PostAdminChallengeMentorReq) => {
       const { challengeId, ...body } = data;
       await axiosV2.post(`/admin/challenge/${challengeId}/mentor`, body);
+    },
+    onError: (error) => {
+      console.error(error);
+      alert('문제가 발생했습니다: ' + error);
+    },
+  });
+};
+
+/** DELETE 챌린지 멘토 삭제 /api/v1/admin/challenge-mentor/{challengeMentorId} */
+export const useDeleteChallengeMentor = () => {
+  return useMutation({
+    mutationFn: async (challengeMentorId: string | number) => {
+      return axios.delete(`/admin/challenge-mentor/${challengeMentorId}`);
     },
     onError: (error) => {
       console.error(error);

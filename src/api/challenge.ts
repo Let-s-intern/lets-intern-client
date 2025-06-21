@@ -521,16 +521,18 @@ export const useChallengeMissionFeedbackListQuery = (challengeId?: number) => {
   });
 };
 
-/** 챌린지 피드백 미션별 제출자 조회 /api/v2/admin/challenge/{challengeId}/mission/{missionId}/feedback/attendances */
+/** [어드민용] 챌린지 피드백 미션별 제출자 조회 /api/v2/admin/challenge/{challengeId}/mission/{missionId}/feedback/attendances */
 export const ChallengeMissionFeedbackAttendanceQueryKey =
   'useChallengeMissionFeedbackAttendanceQuery';
 
 export const useChallengeMissionFeedbackAttendanceQuery = ({
   challengeId,
   missionId,
+  enabled,
 }: {
   challengeId?: number | string;
   missionId?: number | string;
+  enabled?: boolean;
 }) => {
   return useQuery({
     queryKey: [
@@ -544,7 +546,32 @@ export const useChallengeMissionFeedbackAttendanceQuery = ({
       );
       return challengeMissionFeedbackAttendanceListSchema.parse(res.data.data);
     },
-    enabled: !!challengeId && !!missionId,
+    enabled,
+  });
+};
+
+/** [멘토용] 챌린지 피드백 미션별 제출자 조회 /api/v1/admin/challenge/{challengeId}/mission/{missionId}/feedback/attendances */
+export const MentorMissionFeedbackAttendanceQueryKey =
+  'useMentorMissionFeedbackAttendanceQuery';
+
+export const useMentorMissionFeedbackAttendanceQuery = ({
+  challengeId,
+  missionId,
+  enabled,
+}: {
+  challengeId?: number | string;
+  missionId?: number | string;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    queryKey: [MentorMissionFeedbackAttendanceQueryKey, challengeId, missionId],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/admin/challenge/${challengeId}/mission/${missionId}/feedback/attendances`,
+      );
+      return challengeMissionFeedbackAttendanceListSchema.parse(res.data.data);
+    },
+    enabled,
   });
 };
 
@@ -603,6 +630,8 @@ export const useChallengeMissionFeedbackQuery = ({
 };
 
 /** [멘토용] 챌린지 피드백 미션별 제출자 상세 조회 /api/v1/challenge/{challengeId}/mission/{missionId}/feedback/attendances/{attendanceId} */
+export const FeedbackAttendanceQueryKey = 'useFeedbackAttendanceQuery';
+
 export const useFeedbackAttendanceQuery = ({
   challengeId,
   missionId,
@@ -614,7 +643,7 @@ export const useFeedbackAttendanceQuery = ({
 }) => {
   return useQuery({
     queryKey: [
-      'useFeedbackAttendanceQuery',
+      FeedbackAttendanceQueryKey,
       challengeId,
       missionId,
       attendanceId,

@@ -11,6 +11,10 @@ export const adminChallengeMentorListSchema = z.object({
   ),
 });
 
+export type ChallengeMentorList = z.infer<
+  typeof adminChallengeMentorListSchema
+>;
+
 /** 멘토 전체 목록 */
 export const adminUserMentorList = z.object({
   mentorList: z.array(

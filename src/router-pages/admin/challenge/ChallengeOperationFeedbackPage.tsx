@@ -7,11 +7,12 @@ import { Link, useParams } from 'react-router-dom';
 
 interface Row {
   id: number | string;
-  title: string;
+  title?: string | null;
   th: number; // 미션 회차
   startDate: string;
   endDate: string;
-  challengeOptionCode: string;
+  challengeOptionCode?: string | null;
+  challengeOptionTitle?: string | null;
   url: string;
 }
 
@@ -81,8 +82,6 @@ const useFeedbackMissionRows = () => {
     setRows(
       data.missionList.map((item) => ({
         ...item,
-        title: item.title ?? '',
-        challengeOptionCode: item.challengeOptionCode ?? '',
         url: `/admin/challenge/operation/${programId}/feedback/mission/${item.id}/participants`,
       })),
     );

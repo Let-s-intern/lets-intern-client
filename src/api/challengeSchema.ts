@@ -21,11 +21,12 @@ export const challengeMissionFeedbackListSchema = z.object({
   missionList: z.array(
     z.object({
       id: z.number(),
-      title: z.string().optional().nullable(),
+      title: z.string().nullish(),
       th: z.number(),
       startDate: z.string().datetime({ local: true }),
       endDate: z.string().datetime({ local: true }),
-      challengeOptionCode: z.string().optional().nullable(),
+      challengeOptionCode: z.string().nullish(),
+      challengeOptionTitle: z.string().nullish(),
     }),
   ),
 });
@@ -54,6 +55,7 @@ export const challengeMissionFeedbackAttendanceListSchema = z.object({
   attendanceList: z.array(
     z.object({
       id: z.number(),
+      mentorId: z.number().nullable(),
       mentorName: z.string().nullable(),
       name: z.string(),
       major: z.string().optional().nullable(),

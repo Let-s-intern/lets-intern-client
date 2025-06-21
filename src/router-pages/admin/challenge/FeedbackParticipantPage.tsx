@@ -6,6 +6,7 @@ import { usePatchAttendance } from '@/api/attendance';
 import {
   ChallengeMissionFeedbackAttendanceQueryKey,
   useChallengeMissionFeedbackAttendanceQuery,
+  useMentorMissionFeedbackAttendanceQuery,
 } from '@/api/challenge';
 import {
   FeedbackStatus,
@@ -13,10 +14,11 @@ import {
   FeedbackStatusMapping,
 } from '@/api/challengeSchema';
 import { useAdminChallengeMentorListQuery } from '@/api/mentor';
+import { useIsAdminQuery } from '@/api/user';
+import useInvalidateQueries from '@/hooks/useInvalidateQueries';
 import SelectFormControl from '@components/admin/program/SelectFormControl';
 import { MenuItem, SelectChangeEvent } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
@@ -24,7 +26,7 @@ const NO_MENTOR_ID = 0;
 
 interface Row {
   id: number | string;
-  mentorName: string | null;
+  mentorId: number | null;
   missionTitle: string;
   missionRound: number | string;
   name: string;
@@ -36,21 +38,17 @@ interface Row {
   feedbackStatus: string;
 }
 
+const FeedbackStatusEnumForMentor = FeedbackStatusEnum.exclude(['CONFIRMED']);
+
 const useAttendanceHandler = () => {
-  const client = useQueryClient();
   const { programId, missionId } = useParams();
 
-  const patchAttendance = usePatchAttendance();
-
-  const invalidateAttendance = () => {
-    client.invalidateQueries({
-      queryKey: [
-        ChallengeMissionFeedbackAttendanceQueryKey,
-        programId,
-        missionId,
-      ],
-    });
-  };
+  const { mutateAsync: patchAttendance } = usePatchAttendance();
+  const invalidateAttendance = useInvalidateQueries([
+    ChallengeMissionFeedbackAttendanceQueryKey,
+    programId,
+    missionId,
+  ]);
 
   return {
     patchAttendance,
@@ -62,15 +60,16 @@ const MentorRenderCell = (params: GridRenderCellParams<Row, number>) => {
   const { programId } = useParams();
 
   const { patchAttendance, invalidateAttendance } = useAttendanceHandler();
+
   const { data } = useAdminChallengeMentorListQuery(programId);
 
   const handleChange = async (e: SelectChangeEvent<number>) => {
     const attendanceId = params.row.id;
-    await patchAttendance.mutateAsync({
+    await patchAttendance({
       attendanceId,
       mentorUserId: e.target.value as number,
     });
-    invalidateAttendance();
+    await invalidateAttendance();
   };
 
   return (
@@ -98,15 +97,17 @@ const MentorRenderCell = (params: GridRenderCellParams<Row, number>) => {
 const FeedbackStatusRenderCell = (
   params: GridRenderCellParams<Row, FeedbackStatus>,
 ) => {
+  const { data: isAdmin } = useIsAdminQuery();
   const { patchAttendance, invalidateAttendance } = useAttendanceHandler();
 
   const handleChange = async (e: SelectChangeEvent<FeedbackStatus>) => {
     const attendanceId = params.row.id;
-    await patchAttendance.mutateAsync({
+
+    await patchAttendance({
       attendanceId,
       feedbackStatus: e.target.value as FeedbackStatus,
     });
-    invalidateAttendance();
+    await invalidateAttendance();
   };
 
   return (
@@ -116,18 +117,20 @@ const FeedbackStatusRenderCell = (
       onChange={handleChange}
     >
       {/* todo: 멘토/관리자에 따라 수정 권한 제어 */}
-      {FeedbackStatusEnum.options.map((item) => (
-        <MenuItem key={item} value={item}>
-          {FeedbackStatusMapping[item]}{' '}
-        </MenuItem>
-      ))}
+      {(isAdmin ? FeedbackStatusEnum : FeedbackStatusEnumForMentor).options.map(
+        (item) => (
+          <MenuItem key={item} value={item}>
+            {FeedbackStatusMapping[item]}{' '}
+          </MenuItem>
+        ),
+      )}
     </SelectFormControl>
   );
 };
 
 const columns: GridColDef<Row>[] = [
   {
-    field: 'mentorName',
+    field: 'mentorId',
     headerName: '담당 멘토',
     type: 'number',
     width: 120,
@@ -205,21 +208,32 @@ const columns: GridColDef<Row>[] = [
 const useFeedbackParticipantRows = () => {
   const { missionId, programId } = useParams();
 
+  const { data: isAdmin } = useIsAdminQuery();
+
   const { data } = useChallengeMissionFeedbackAttendanceQuery({
     challengeId: programId,
     missionId,
+    enabled: !!programId && !!missionId && isAdmin,
+  });
+
+  const { data: dataForMentor } = useMentorMissionFeedbackAttendanceQuery({
+    challengeId: programId,
+    missionId,
+    enabled: !!programId && !!missionId && !isAdmin,
   });
 
   const [rows, setRows] = useState<Row[]>([]);
 
-  const selectedMission = JSON.parse(localStorage.getItem('mission') ?? '{}');
+  const selectedMission = JSON.parse(localStorage.getItem('mission') || '{}');
   const missionTitle = selectedMission.title;
   const missionRound = selectedMission.th;
 
   useEffect(() => {
     setRows(
-      (data?.attendanceList ?? []).map((item) => {
-        const { status, result, challengePricePlanType, ...rest } = item; // eslint-disable-line @typescript-eslint/no-unused-vars
+      ((isAdmin ? data : dataForMentor)?.attendanceList ?? []).map((item) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { status, result, challengePricePlanType, mentorName, ...rest } =
+          item;
         return {
           ...rest,
           missionTitle,

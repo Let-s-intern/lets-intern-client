@@ -69,16 +69,49 @@ type Row = Mission & {
 };
 
 const END_OF_SECONDS = 59; // 마감일 59초로 설정
+const NO_OPTION_ID = 0;
 
-/** 피드백 미션 여부  */
+const useUpdateMissionOption = () => {
+  const patchMission = usePatchMission();
+  const patchOption = usePatchChallengeOption();
+  const refetchMissions = useMissionsOfCurrentChallengeRefetch();
+
+  const updateMissionOption = useCallback(
+    async ({
+      missionId,
+      challengeOptionId,
+    }: {
+      missionId: number;
+      challengeOptionId: number;
+    }) => {
+      await Promise.all([
+        patchMission.mutateAsync({
+          missionId,
+          challengeOptionId,
+        }),
+        challengeOptionId === NO_OPTION_ID
+          ? null
+          : patchOption.mutateAsync({
+              challengeOptionId,
+              isFeedback: true,
+            }),
+      ]);
+
+      refetchMissions();
+    },
+    [patchMission, patchOption, refetchMissions],
+  );
+
+  return { updateMissionOption };
+};
+
+/** 피드백 미션 여부 renderCell  */
 const ChallengeOptionRenderCell = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   params: GridRenderCellParams<Row, any, any, GridTreeNodeWithRender>,
 ) => {
   const { data } = useGetChallengeOptions();
-  const patchMission = usePatchMission();
-  const patchOption = usePatchChallengeOption();
-  const refetchMissions = useMissionsOfCurrentChallengeRefetch();
+  const { updateMissionOption } = useUpdateMissionOption();
 
   const option = data?.challengeOptionList.find(
     (item) => item.challengeOptionId === params.value,
@@ -86,31 +119,21 @@ const ChallengeOptionRenderCell = (
 
   const handleChange = async (e: SelectChangeEvent<number>) => {
     const challengeOptionId = Number(e.target.value);
-
-    await Promise.all([
-      patchMission.mutateAsync({
-        missionId: params.row.id,
-        challengeOptionId,
-      }),
-      patchOption.mutateAsync({
-        challengeOptionId,
-        isFeedback: true,
-      }),
-    ]);
-
-    refetchMissions();
+    await updateMissionOption({
+      missionId: params.row.id,
+      challengeOptionId,
+    });
   };
 
   return (
     <SelectFormControl<number>
-      value={params.value || ''}
-      renderValue={() => <>{option?.code || '-'}</>}
+      value={params.value ?? NO_OPTION_ID}
+      renderValue={() => <>{option?.code ?? '없음'}</>}
       // 미션 새로 등록 중일 때 '피드백 미션 여부' 수정할 수 없음
       disabled={params.row.id === -1}
-      labelId="option-label"
-      label="옵션"
       onChange={handleChange}
     >
+      <MenuItem value={NO_OPTION_ID}>없음</MenuItem>
       {(data?.challengeOptionList ?? []).map((item) => (
         <MenuItem
           key={`option-${item.challengeOptionId}`}
