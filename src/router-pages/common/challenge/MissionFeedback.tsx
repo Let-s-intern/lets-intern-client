@@ -1,10 +1,10 @@
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import {
   useChallengeMissionAttendanceInfoQuery,
   useChallengeMissionFeedbackQuery,
-} from '../../../api/challenge';
+} from '@/api/challenge';
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 
 export default function MissionFeedback() {
   const navigate = useNavigate();
@@ -14,8 +14,8 @@ export default function MissionFeedback() {
     missionId: string;
   }>();
   const { currentChallenge } = useCurrentChallenge();
-  // challengeId는 programId와 동일하다고 가정 (또는 별도 API로 조회)
   const challengeId = currentChallenge?.id;
+
   // 미션 정보 (제목, 회차 등)
   const { data: missionData } = useChallengeMissionAttendanceInfoQuery({
     challengeId: challengeId ?? '',
