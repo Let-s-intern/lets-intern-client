@@ -76,11 +76,15 @@ const columns: GridColDef<Row>[] = [
 const useFeedbackMissionRows = () => {
   const { programId } = useParams();
 
-  const { data: dataForAdmin, isLoading: isAdminLoading } =
-    useChallengeMissionFeedbackListQuery(Number(programId));
-  const { data: dataForMentor, isLoading: isMentorLoading } =
-    useMentorMissionFeedbackListQuery(Number(programId));
   const { data: isAdmin } = useIsAdminQuery();
+  const { data: dataForAdmin, isLoading: isAdminLoading } =
+    useChallengeMissionFeedbackListQuery(Number(programId), {
+      enabled: !!programId && isAdmin,
+    });
+  const { data: dataForMentor, isLoading: isMentorLoading } =
+    useMentorMissionFeedbackListQuery(Number(programId), {
+      enabled: !!programId && !isAdmin,
+    });
 
   const isLoading = isAdminLoading || isMentorLoading;
 

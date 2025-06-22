@@ -208,9 +208,9 @@ const columns: GridColDef<AttendanceRow>[] = [
 const useFeedbackParticipantRows = () => {
   const { missionId, programId } = useParams();
 
-  const { data: isAdmin } = useIsAdminQuery();
+  const { data: isAdmin, isLoading } = useIsAdminQuery();
 
-  const { data } = useChallengeMissionFeedbackAttendanceQuery({
+  const { data: dataForAdmin } = useChallengeMissionFeedbackAttendanceQuery({
     challengeId: programId,
     missionId,
     enabled: !!programId && !!missionId && isAdmin,
@@ -229,23 +229,33 @@ const useFeedbackParticipantRows = () => {
   const missionRound = selectedMission.th;
 
   useEffect(() => {
+    if (isLoading) return;
+
     setRows(
-      ((isAdmin ? data : dataForMentor)?.attendanceList ?? []).map((item) => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { status, result, challengePricePlanType, mentorName, ...rest } =
-          item;
-        return {
-          ...rest,
-          missionTitle,
-          missionRound,
-          feedbackStatus:
-            item.feedbackStatus ?? FeedbackStatusEnum.enum.WAITING,
-          feedbackPageLink: `/admin/challenge/operation/${programId}/mission/${missionId}/participant/${item.id}/feedback`,
-        };
-      }),
+      ((isAdmin ? dataForAdmin : dataForMentor)?.attendanceList ?? []).map(
+        (item) => {
+          const {
+            status,
+            result,
+            challengePricePlanType,
+            mentorName,
+            ...rest
+          } = item;
+
+          return {
+            ...rest,
+            missionTitle,
+            missionRound,
+            feedbackStatus:
+              item.feedbackStatus ?? FeedbackStatusEnum.enum.WAITING,
+            feedbackPageLink: `/admin/challenge/operation/${programId}/mission/${missionId}/participant/${item.id}/feedback`,
+          };
+        },
+      ),
     );
   }, [
-    data,
+    isLoading,
+    dataForAdmin,
     dataForMentor,
     isAdmin,
     missionTitle,
