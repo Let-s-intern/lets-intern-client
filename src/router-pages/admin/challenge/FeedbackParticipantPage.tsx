@@ -1,6 +1,4 @@
-/** 챌린지 운영 > 피드백 > 미션별 참여자 페이지
- * @todo API 연결: /api/v2/admin/challenge/{challengeId}/mission/{missionId}/feedback/attendances
- */
+/** 챌린지 운영 > 피드백 > 미션별 참여자 페이지 */
 
 import { usePatchAttendance } from '@/api/attendance';
 import {
@@ -246,7 +244,15 @@ const useFeedbackParticipantRows = () => {
         };
       }),
     );
-  }, [data, missionTitle, missionRound, programId, missionId]);
+  }, [
+    data,
+    dataForMentor,
+    isAdmin,
+    missionTitle,
+    missionRound,
+    programId,
+    missionId,
+  ]);
 
   return rows;
 };

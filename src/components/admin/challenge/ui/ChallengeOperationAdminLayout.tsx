@@ -5,9 +5,11 @@ import {
 } from '@/api/challenge';
 import { useIsAdminQuery } from '@/api/user';
 import { useAdminCurrentChallenge } from '@/context/CurrentAdminChallengeProvider';
+import useMentorAccessControl from '@/hooks/useMentorAccessControl';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import Heading from '@components/admin/ui/heading/Heading';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import BaseModal from '@components/ui/BaseModal';
 import { Button, Checkbox } from '@mui/material';
 import { useState } from 'react';
@@ -183,7 +185,11 @@ const ChallengeAdminLayout = () => {
   const { currentChallenge } = useAdminCurrentChallenge();
   const { data: isAdmin } = useIsAdminQuery();
 
+  const isLoading = useMentorAccessControl();
+
   const [isOpen, setIsOpen] = useState(false);
+
+  if (isLoading) return <LoadingContainer className="mt-[20%]" />;
 
   return (
     <section className="p-5">
