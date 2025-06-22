@@ -1,11 +1,10 @@
-import { useNavigate, useParams } from 'react-router-dom';
-
 import {
   useChallengeMissionAttendanceInfoQuery,
   useChallengeMissionFeedbackQuery,
 } from '@/api/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import LexicalContent from '@components/common/blog/LexicalContent';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export default function MissionFeedback() {
   const navigate = useNavigate();
@@ -95,12 +94,15 @@ export default function MissionFeedback() {
                 <div className="mb-2 text-lg font-medium text-gray-600">
                   피드백 내용
                 </div>
-                <LexicalContent
-                  node={
-                    JSON.parse(feedbackData?.attendanceInfo.feedback as string)
-                      .root
-                  }
-                />
+                {feedbackData?.attendanceInfo.feedback && (
+                  <LexicalContent
+                    node={
+                      JSON.parse(
+                        feedbackData?.attendanceInfo.feedback as string,
+                      ).root
+                    }
+                  />
+                )}
               </div>
             </div>
           </div>
