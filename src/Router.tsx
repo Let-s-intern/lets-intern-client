@@ -10,6 +10,7 @@ import Login from './router-pages/common/auth/Login';
 import SignUp from './router-pages/common/auth/SignUp';
 import ChallengeDashboard from './router-pages/common/challenge/ChallengeDashboard';
 import ChallengeUserInfo from './router-pages/common/challenge/ChallengeUserInfo';
+import MissionFeedback from './router-pages/common/challenge/MissionFeedback';
 import MyChallengeDashboard from './router-pages/common/challenge/MyChallengeDashboard';
 import Home from './router-pages/common/home/Home';
 import MentorNotificationAfter from './router-pages/common/mentor/MentorNotificationAfter';
@@ -18,6 +19,7 @@ import Application from './router-pages/common/mypage/Application';
 import Credit from './router-pages/common/mypage/Credit';
 import CreditDelete from './router-pages/common/mypage/CreditDelete';
 import CreditDetail from './router-pages/common/mypage/CreditDetail';
+import Feedback from './router-pages/common/mypage/Feedback';
 import MyPage from './router-pages/common/mypage/MyPage';
 import Privacy from './router-pages/common/mypage/Privacy';
 import ReportCreditDelete from './router-pages/common/mypage/ReportCreditDelete';
@@ -126,7 +128,10 @@ const Router = () => {
                   path="credit/report/:paymentId/delete"
                   element={<ReportCreditDelete />}
                 />
+                {/* /mypage/privacy */}
                 <Route path="privacy" element={<Privacy />} />
+                {/* /mypage/feedback */}
+                <Route path="feedback" element={<Feedback />} />
               </Route>
 
               {/* 로그인 */}
@@ -148,6 +153,11 @@ const Router = () => {
                 <Route path="user/info" element={<ChallengeUserInfo />} />
                 <Route path="" element={<ChallengeDashboard />} />
                 <Route path="me" element={<MyChallengeDashboard />} />
+                {/* 미션 피드백 페이지 */}
+                <Route
+                  path="challenge/:challengeId/missions/:missionId/feedback"
+                  element={<MissionFeedback />}
+                />
               </Route>
 
               {/* 서류진단 */}

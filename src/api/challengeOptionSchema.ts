@@ -7,6 +7,7 @@ export const challengeOptionSchema = z.object({
   code: z.string().optional().nullable(),
   price: z.number().optional().nullable(),
   discountPrice: z.number().optional().nullable(),
+  isFeedback: z.boolean().default(false),
 });
 
 export type ChallengeOption = z.infer<typeof challengeOptionSchema>;
@@ -32,4 +33,5 @@ export interface PatchChallengeOptionReq {
   code?: string | null;
   price?: number | null;
   discountPrice?: number | null;
+  isFeedback?: boolean;
 }

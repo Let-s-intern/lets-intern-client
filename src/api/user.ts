@@ -1,3 +1,5 @@
+import axios from '@/utils/axios';
+import axiosV2 from '@/utils/axiosV2';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import {
@@ -5,12 +7,27 @@ import {
   authProviderSchema,
   grade,
   userAdminDetailType,
-  userAdminType,
 } from '../schema';
-import axios from '../utils/axios';
-import { isAdminSchema } from './userSchema';
+import {
+  challengeMentorVoSchema,
+  isAdminSchema,
+  isMentorSchema,
+  mentorListSchema,
+  userAdminType,
+} from './userSchema';
 
+export const UseMentorListQueryKey = 'useMentorListQueryKey';
 export const UseUserAdminQueryKey = 'useUserListQueryKey';
+
+export const useMentorListQuery = () => {
+  return useQuery({
+    queryKey: [UseMentorListQueryKey],
+    queryFn: async () => {
+      const res = await axiosV2.get('/admin/user/mentor');
+      return mentorListSchema.parse(res.data.data);
+    },
+  });
+};
 
 export const useUserAdminQuery = ({
   email,
@@ -25,7 +42,7 @@ export const useUserAdminQuery = ({
     page: number;
     size: number;
   };
-}) => {
+} = {}) => {
   return useQuery({
     queryKey: [UseUserAdminQueryKey, email, name, phoneNum, pageable],
     queryFn: async () => {
@@ -85,16 +102,18 @@ export const useUserDetailAdminQuery = ({
 };
 
 export type PatchUserType = {
-  name: string;
-  email: string;
-  contactEmail: string | null;
-  phoneNum: string;
-  university: string | null;
-  inflowPath: string | null;
-  grade: string | null;
-  major: string | null;
-  wishJob: string | null;
-  wishCompany: string | null;
+  id?: string | number;
+  name?: string;
+  email?: string;
+  contactEmail?: string | null;
+  phoneNum?: string;
+  university?: string | null;
+  inflowPath?: string | null;
+  grade?: string | null;
+  major?: string | null;
+  wishJob?: string | null;
+  wishCompany?: string | null;
+  isMentor?: boolean;
 };
 
 export const usePatchUserAdminMutation = ({
@@ -102,15 +121,16 @@ export const usePatchUserAdminMutation = ({
   successCallback,
   errorCallback,
 }: {
-  userId: number;
+  userId?: number | string;
   successCallback?: () => void;
   errorCallback?: (error: Error) => void;
-}) => {
+} = {}) => {
   const client = useQueryClient();
 
   return useMutation({
     mutationFn: async (userForm: PatchUserType) => {
-      await axios.patch(`/user/${userId}`, userForm);
+      const { id, ...rest } = userForm;
+      await axios.patch(`/user/${userId ?? id}`, rest);
     },
     onSuccess: () => {
       client.invalidateQueries({
@@ -202,6 +222,58 @@ export const usePatchUser = (
     },
     onError: (error: Error) => {
       return errorCallback && errorCallback(error);
+    },
+  });
+};
+
+const mentorChallengeListSchema = z.object({
+  myChallengeMentorVoList: z.array(challengeMentorVoSchema),
+});
+
+export type MentorChallengeList = z.infer<typeof mentorChallengeListSchema>;
+export type ChallengeMentorVo = z.infer<typeof challengeMentorVoSchema>;
+
+const UseMentorChallengeListQueryKey = 'useMentorChallengeListQueryKey';
+
+export const useMentorChallengeListQuery = ({
+  ...options
+}: { enabled?: boolean; retry?: boolean | number } = {}) => {
+  return useQuery({
+    ...options,
+    queryKey: [UseMentorChallengeListQueryKey],
+    queryFn: async () => {
+      const res = await axios.get('/challenge-mentor');
+      return mentorChallengeListSchema.parse(res.data.data);
+    },
+    refetchOnWindowFocus: false,
+  });
+};
+
+export type IsMentor = z.infer<typeof isMentorSchema>;
+
+const UseIsMentorQueryKey = 'useIsMentorQueryKey';
+
+export const useIsMentorQuery = ({
+  ...options
+}: { enabled?: boolean; retry?: boolean | number } = {}) => {
+  return useQuery({
+    ...options,
+    queryKey: [UseIsMentorQueryKey],
+    queryFn: async () => {
+      const res = await axiosV2.get('/user/is-mentor');
+      return isMentorSchema.parse(res.data.data);
+    },
+    refetchOnWindowFocus: false,
+  });
+};
+
+/** 유저 관리자 여부 /api/v1/user/isAdmin */
+export const useIsAdminQuery = () => {
+  return useQuery({
+    queryKey: ['useIsAdminQuery'],
+    queryFn: async () => {
+      const res = await axios.get('/user/isAdmin');
+      return isAdminSchema.parse(res.data.data);
     },
   });
 };

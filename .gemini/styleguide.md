@@ -5,7 +5,7 @@
 
 # Frontend Design Guideline
 
-> **Gemini 리뷰 언어 설정:** 이 스타일 가이드를 기준으로 Gemini가 코드 리뷰를 할 때 한국어(Korean)로 피드백을 작성해 주세요.
+> **Gemini review language:** All code review feedback must be provided in korean.
 
 This document summarizes key frontend design principles and rules, showcasing
 recommended patterns. Follow these guidelines when writing frontend code.

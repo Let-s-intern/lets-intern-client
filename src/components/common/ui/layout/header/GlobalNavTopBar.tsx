@@ -53,14 +53,14 @@ function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
         <LogoLink className="mr-8" isNextRouter={isNextRouter} />
         {/* 네비 메뉴 */}
         <GlobalNavItem
-          className="mr-6 h-[38px] items-center border-b-[1.5px] border-neutral-0 md:flex"
+          className="mr-6 hidden h-[38px] items-center border-b-[1.5px] border-neutral-0 md:flex"
           isNextRouter={isNextRouter}
           href="/"
         >
           홈
         </GlobalNavItem>
         <GlobalNavItem
-          className="items-center justify-center gap-1 md:flex"
+          className="hidden items-center justify-center gap-1 md:flex"
           isNextRouter={isNextRouter}
           href="https://letscareer.oopy.io/1df5e77c-bee1-80b3-8199-e7d2cc9d64cd"
           target="_blank"
