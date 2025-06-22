@@ -103,11 +103,7 @@ const useMentorRows = ({ page, size }: { page: number; size: number }) => {
   return { rows, isLoading, pageInfo: data?.pageInfo };
 };
 
-const MentorFilter = ({
-  onChange,
-}: {
-  onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-}) => {
+const MentorFilter = () => {
   const defaultRef = useRef({
     email: '',
     name: '',
@@ -120,7 +116,6 @@ const MentorFilter = ({
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setInputs((prev) => ({ ...prev, [e.target.id]: e.target.value }));
-    if (onChange) onChange(e);
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
