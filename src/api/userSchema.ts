@@ -4,7 +4,7 @@ import { z } from 'zod';
 // GET 유저 관리자 여부
 export const isAdminSchema = z.boolean();
 
-/** GET /api/v1/admin/challenge-mentor */
+/** GET /api/v1/challenge-mentor */
 export const challengeMentorVoSchema = z.object({
   challengeId: z.number(),
   programStatusType: z.string(),

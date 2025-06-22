@@ -242,7 +242,7 @@ export const useMentorChallengeListQuery = ({
     ...options,
     queryKey: [UseMentorChallengeListQueryKey],
     queryFn: async () => {
-      const res = await axios.get('/admin/challenge-mentor');
+      const res = await axios.get('/challenge-mentor');
       return mentorChallengeListSchema.parse(res.data.data);
     },
     refetchOnWindowFocus: false,
