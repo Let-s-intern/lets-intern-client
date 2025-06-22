@@ -1,10 +1,16 @@
 import { useMentorChallengeListQuery, useUserQuery } from '@/api/user';
 import FeedbackCard from '@/components/common/mypage/ui/card/FeedbackCard';
+import MobileCarousel from '@/components/common/ui/carousel/MobileCarousel';
 import useAuthStore from '@/store/useAuthStore';
-import 'swiper/css';
-import 'swiper/css/free-mode';
-import { FreeMode } from 'swiper/modules';
-import { Swiper, SwiperSlide } from 'swiper/react';
+
+interface Challenge {
+  challengeId: number;
+  title: string;
+  shortDesc: string;
+  thumbnail?: string;
+  startDate: string;
+  endDate: string;
+}
 
 const Feedback = () => {
   const { isLoggedIn } = useAuthStore();
@@ -22,34 +28,14 @@ const Feedback = () => {
       {isLoading ? (
         <div className="text-neutral-500">로딩 중...</div>
       ) : challengeList.length > 0 ? (
-        <>
-          {/* 모바일 스와이퍼 뷰 */}
-          <div className="w-[90vw] overflow-hidden md:hidden">
-            <Swiper
-              modules={[FreeMode]}
-              slidesPerView="auto"
-              spaceBetween={16}
-              freeMode={true}
-              grabCursor={true}
-              touchRatio={1}
-              threshold={10}
-              className="!overflow-visible pb-2"
-            >
-              {challengeList.map((challenge) => (
-                <SwiperSlide key={challenge.challengeId} className="!w-[280px]">
-                  <FeedbackCard challenge={challenge} />
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </div>
-
-          {/* 데스크톱 세로 나열 뷰 */}
-          <div className="hidden md:flex md:flex-col md:gap-4">
-            {challengeList.map((challenge) => (
-              <FeedbackCard key={challenge.challengeId} challenge={challenge} />
-            ))}
-          </div>
-        </>
+        <MobileCarousel<Challenge>
+          items={challengeList}
+          renderItem={(challenge) => <FeedbackCard challenge={challenge} />}
+          itemWidth="169px"
+          spaceBetween={16}
+          containerWidth="93vw"
+          getItemKey={(challenge) => challenge.challengeId}
+        />
       ) : (
         <div className="text-neutral-500">참여 중인 챌린지가 없습니다.</div>
       )}
