@@ -116,13 +116,16 @@ const FeedbackStatusRenderCell = (
     await invalidateAttendance();
   };
 
+  if (!isAdmin && params.value === FeedbackStatusEnum.enum.CONFIRMED) {
+    return <span> {FeedbackStatusMapping[params.value]}</span>;
+  }
+
   return (
     <SelectFormControl<FeedbackStatus>
       value={params.value || FeedbackStatusEnum.enum.WAITING}
       renderValue={(selected) => FeedbackStatusMapping[selected]}
       onChange={handleChange}
     >
-      {/* todo: 멘토/관리자에 따라 수정 권한 제어 */}
       {(isAdmin ? FeedbackStatusEnum : FeedbackStatusEnumForMentor).options.map(
         (item) => (
           <MenuItem key={item} value={item}>
