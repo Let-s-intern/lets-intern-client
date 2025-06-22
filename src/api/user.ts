@@ -17,7 +17,6 @@ import {
 } from './userSchema';
 
 export const UseMentorListQueryKey = 'useMentorListQueryKey';
-export const UseUserAdminQueryKey = 'useUserListQueryKey';
 
 export const useMentorListQuery = () => {
   return useQuery({
@@ -28,6 +27,8 @@ export const useMentorListQuery = () => {
     },
   });
 };
+
+export const UseUserAdminQueryKey = 'useUserListQueryKey';
 
 export const useUserAdminQuery = ({
   email,

@@ -12,6 +12,7 @@ import Heading from '@components/admin/ui/heading/Heading';
 import { Checkbox } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 
 interface Row {
   id: number;
@@ -76,9 +77,13 @@ const useMentorColumns = () => {
   return columns;
 };
 
-const useMentorRows = () => {
-  const pageable = { page: 1, size: 10000 };
-  const { data } = useUserAdminQuery({ pageable });
+const useMentorRows = ({ page, size }: { page: number; size: number }) => {
+  const pageable = {
+    page: page + 1,
+    size,
+  };
+
+  const { data, isLoading } = useUserAdminQuery({ pageable });
   const rows = data?.userAdminList.map(({ userInfo }) => ({
     id: userInfo.id,
     name: userInfo.name,
@@ -86,14 +91,25 @@ const useMentorRows = () => {
     phoneNum: userInfo.phoneNum,
     isMentor: userInfo.isMentor ?? false,
   }));
-  return rows;
+
+  return { rows, isLoading, pageInfo: data?.pageInfo };
 };
 
 const PAGE_SIZE = 10;
 
 export default function AdminMentorPage() {
+  const [paginationModel, setPaginationModel] = useState({
+    pageSize: 10,
+    page: 0,
+  });
+  const pageable = {
+    page: paginationModel.page,
+    size: paginationModel.pageSize,
+  };
+
   const columns = useMentorColumns();
-  const rows = useMentorRows();
+  const { rows, isLoading, pageInfo } = useMentorRows(pageable);
+  const rowCount = pageInfo?.totalElements;
 
   return (
     <section className="p-5">
@@ -102,13 +118,11 @@ export default function AdminMentorPage() {
         rows={rows}
         columns={columns}
         disableRowSelectionOnClick
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: PAGE_SIZE,
-            },
-          },
-        }}
+        rowCount={rowCount}
+        paginationMode="server"
+        loading={isLoading}
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
         pageSizeOptions={[PAGE_SIZE]}
       />
     </section>
