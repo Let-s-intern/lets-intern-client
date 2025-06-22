@@ -205,10 +205,10 @@ const columns: GridColDef<AttendanceRow>[] = [
   },
 ];
 
-const useFeedbackParticipantRows = () => {
+const useRoleBasedAttendanceData = () => {
   const { missionId, programId } = useParams();
 
-  const { data: isAdmin, isLoading } = useIsAdminQuery();
+  const { data: isAdmin, isLoading: isAdminLoading } = useIsAdminQuery();
 
   const { data: dataForAdmin } = useChallengeMissionFeedbackAttendanceQuery({
     challengeId: programId,
@@ -222,6 +222,17 @@ const useFeedbackParticipantRows = () => {
     enabled: !!programId && !!missionId && !isAdmin,
   });
 
+  return {
+    isLoading: isAdminLoading,
+    data: isAdmin ? dataForAdmin : dataForMentor,
+  };
+};
+
+const useFeedbackParticipantRows = () => {
+  const { missionId, programId } = useParams();
+
+  const { data, isLoading } = useRoleBasedAttendanceData();
+
   const [rows, setRows] = useState<AttendanceRow[]>([]);
 
   const selectedMission = JSON.parse(localStorage.getItem('mission') || '{}');
@@ -232,37 +243,22 @@ const useFeedbackParticipantRows = () => {
     if (isLoading) return;
 
     setRows(
-      ((isAdmin ? dataForAdmin : dataForMentor)?.attendanceList ?? []).map(
-        (item) => {
-          const {
-            status,
-            result,
-            challengePricePlanType,
-            mentorName,
-            ...rest
-          } = item;
+      (data?.attendanceList ?? []).map((item) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { status, result, challengePricePlanType, mentorName, ...rest } =
+          item;
 
-          return {
-            ...rest,
-            missionTitle,
-            missionRound,
-            feedbackStatus:
-              item.feedbackStatus ?? FeedbackStatusEnum.enum.WAITING,
-            feedbackPageLink: `/admin/challenge/operation/${programId}/mission/${missionId}/participant/${item.id}/feedback`,
-          };
-        },
-      ),
+        return {
+          ...rest,
+          missionTitle,
+          missionRound,
+          feedbackStatus:
+            item.feedbackStatus ?? FeedbackStatusEnum.enum.WAITING,
+          feedbackPageLink: `/admin/challenge/operation/${programId}/mission/${missionId}/participant/${item.id}/feedback`,
+        };
+      }),
     );
-  }, [
-    isLoading,
-    dataForAdmin,
-    dataForMentor,
-    isAdmin,
-    missionTitle,
-    missionRound,
-    programId,
-    missionId,
-  ]);
+  }, [isLoading, data, missionTitle, missionRound, programId, missionId]);
 
   return rows;
 };
