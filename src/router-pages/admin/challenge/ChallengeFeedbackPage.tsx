@@ -37,7 +37,7 @@ const AttendanceInfoList = memo(function AttendanceInfoList() {
 
   const list = [
     `${attendance?.missionTitle} / ${attendance?.missionRound}회차`,
-    `피드백 유형: [${mission?.challengeOptionCode}] ${mission?.challengeOptionTitle}`,
+    `피드백 유형: ${mission?.challengeOptionTitle}`,
     `참여자 정보: ${attendance?.major} / ${attendance?.wishCompany} / ${attendance?.wishJob}`,
     <Link
       key={attendance?.link}
