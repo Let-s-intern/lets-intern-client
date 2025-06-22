@@ -65,7 +65,7 @@ export default function ChallengeFeedbackPage() {
 
   const { snackbar } = useAdminSnackbar();
   const { mutateAsync: patchAttendance } = usePatchAttendance();
-  const { data } = useFeedbackAttendanceQuery({
+  const { data, isLoading } = useFeedbackAttendanceQuery({
     challengeId: programId,
     missionId,
     attendanceId: userId,
@@ -114,7 +114,7 @@ export default function ChallengeFeedbackPage() {
     setContent(data?.attendanceDetailVo.feedback ?? undefined);
   }, [data?.attendanceDetailVo.feedback]);
 
-  if (!content) return <LoadingContainer className="mt-[30%]" />;
+  if (isLoading) return <LoadingContainer className="mt-[30%]" />;
 
   return (
     <div className="mt-5 px-5">
