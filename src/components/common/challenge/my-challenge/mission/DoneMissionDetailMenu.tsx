@@ -15,7 +15,7 @@ interface Props {
   programId?: string | number;
   challengeId?: string | number;
   isFeedbackOptionPurchased?: boolean;
-  isFeedbackCompleted?: boolean;
+  isFeedbackConfirmed?: boolean;
 }
 
 const DoneMissionDetailMenu = ({
@@ -25,11 +25,12 @@ const DoneMissionDetailMenu = ({
   applicationId,
   programId,
   challengeId,
-  isFeedbackCompleted = false,
+  isFeedbackConfirmed = false,
 }: Props) => {
   const additionalContentsLink =
     missionDetail.additionalContentsList?.[0]?.link;
   const essentialContentsLink = missionDetail.essentialContentsList?.[0]?.link;
+
   return (
     <>
       <hr className="my-4 border-[#DEDEDE]" />
@@ -76,7 +77,7 @@ const DoneMissionDetailMenu = ({
             {schedule.attendanceInfo.review ?? '-'}
           </p>
         </div>
-        {!isFeedbackCompleted && (
+        {isFeedbackConfirmed && (
           <div className="mt-4">
             <h4 className="flex-shrink-0 text-lg font-semibold">미션 피드백</h4>
             <div className="mt-2">
