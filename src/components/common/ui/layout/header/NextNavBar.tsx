@@ -4,6 +4,7 @@ import { useGetUserAdmin } from '@/api/user';
 import useActiveLink from '@/hooks/useActiveLink';
 import useActiveReportNav from '@/hooks/useActiveReportNav';
 import { useControlScroll } from '@/hooks/useControlScroll';
+import useProgramCategoryNav from '@/hooks/useProgramCategoryNav';
 import useScrollDirection from '@/hooks/useScrollDirection';
 import useAuthStore from '@/store/useAuthStore';
 import { usePathname } from 'next/navigation';
@@ -15,7 +16,6 @@ import NavOverlay from './NavOverlay';
 import SideNavContainer from './SideNavContainer';
 import SideNavItem from './SideNavItem';
 import Spacer from './Spacer';
-
 const NextNavBar = () => {
   const pathname = usePathname() ?? '';
 
@@ -39,6 +39,8 @@ const NextNavBar = () => {
     setIsOpen(false);
   };
 
+  const programCategoryLists = useProgramCategoryNav(true);
+
   // 사이드바 열리면 스크롤 제한
   useControlScroll(isOpen);
 
@@ -61,11 +63,13 @@ const NextNavBar = () => {
               <GlobalNavItem
                 className="text-xsmall16"
                 href="/program"
-                force
                 isNextRouter
+                subNavList={programCategoryLists}
                 active={activeLink === 'PROGRAM'}
+                force
+                showDropdownIcon
               >
-                전체 프로그램
+                프로그램 카테고리
               </GlobalNavItem>
               <GlobalNavItem
                 className="text-xsmall16"
@@ -92,6 +96,7 @@ const NextNavBar = () => {
               <GlobalNavItem
                 className="text-xsmall16"
                 href="/review"
+                force
                 isNextRouter
                 active={activeLink === 'REVIEW'}
               >
@@ -100,6 +105,7 @@ const NextNavBar = () => {
               <GlobalNavItem
                 className="text-xsmall16"
                 href="/blog/list"
+                force
                 isNextRouter
                 active={activeLink === 'BLOG'}
               >
@@ -117,37 +123,39 @@ const NextNavBar = () => {
               렛츠커리어 스토리
             </GlobalNavItem>
           </div>
-          <ExternalNavList isNextRouter />
+          <ExternalNavList
+            isNextRouter
+            isLoggedIn={isLoggedIn}
+            isAdmin={isAdmin}
+          />
         </nav>
       </div>
 
       {/* 사이드 네비게이션 Overlay */}
       <NavOverlay isOpen={isOpen} onClose={closeMenu} />
-
       {/* 사이드 네비게이션 바 */}
       <SideNavContainer isNextRouter isOpen={isOpen} onClose={closeMenu}>
         <SideNavItem href="/mypage/application" isNextRouter force>
           마이페이지
         </SideNavItem>
-        <hr className="h-1 bg-neutral-80" aria-hidden="true" />
-        <SideNavItem href="/about" isNextRouter force>
-          렛츠커리어 스토리
-        </SideNavItem>
-        <SideNavItem href="/program" isNextRouter force>
-          프로그램
-        </SideNavItem>
-        <SideNavItem href="/review" isNextRouter>
-          수강생 솔직 후기
-        </SideNavItem>
-        <SideNavItem href="/blog/list" isNextRouter>
-          블로그
-        </SideNavItem>
         <SideNavItem
-          href="/report/landing"
+          href="https://letscareer.oopy.io/1df5e77c-bee1-80b3-8199-e7d2cc9d64cd"
           isNextRouter
-          subNavList={reportNavList}
-          onClick={(e) => e.stopPropagation()}
+          force
+          target="_blank"
+          rel="noopener noreferrer"
         >
+          커뮤니티
+          <span className="flex items-center text-xxsmall12 font-normal">
+            +현직자 멘토 참여중
+          </span>
+        </SideNavItem>
+        <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
+        <SideNavItem href="/program" isNextRouter>
+          전체 프로그램
+        </SideNavItem>
+
+        <SideNavItem href="/review" subNavList={reportNavList} isNextRouter>
           서류 피드백 REPORT
         </SideNavItem>
         <SideNavItem
@@ -159,12 +167,27 @@ const NextNavBar = () => {
         >
           커피챗
         </SideNavItem>
-        <hr className="h-1 bg-neutral-80" aria-hidden="true" />
+        <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
+        <SideNavItem className="notice_gnb" href="/review" force isNextRouter>
+          수강생 솔직 후기
+        </SideNavItem>
+        <SideNavItem
+          className="notice_gnb"
+          href="/blog/list"
+          force
+          isNextRouter
+        >
+          블로그
+        </SideNavItem>
+        <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
         {isLoggedIn && isAdmin && (
           <SideNavItem href="/admin" isNextRouter force>
             관리자 페이지
           </SideNavItem>
         )}
+        <SideNavItem className="notice_gnb" href="/about" force isNextRouter>
+          렛츠커리어 스토리
+        </SideNavItem>
         <SideNavItem
           className="notice_gnb"
           href="https://letscareer.oopy.io"

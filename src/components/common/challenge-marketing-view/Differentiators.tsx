@@ -76,7 +76,7 @@ const professionals = [
     profile: 'profile3.png',
     week: '7월 2주차',
     company: '야놀자',
-    role: 'CRM 마케터',
+    role: '그로스 마케터',
   },
   {
     logo: 'corpuniv.png',
