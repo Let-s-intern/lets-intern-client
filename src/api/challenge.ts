@@ -531,7 +531,7 @@ export const useChallengeMissionFeedbackListQuery = (
     queryKey: ['useChallengeMissionFeedbackQuery', challengeId],
     queryFn: async () => {
       const res = await axiosV2.get(
-        `/adin/challenge/${challengeId}/mission/feedback`,
+        `/admin/challenge/${challengeId}/mission/feedback`,
       );
       return challengeMissionFeedbackListSchema.parse(res.data.data);
     },
@@ -585,7 +585,7 @@ export const useMentorMissionFeedbackAttendanceQuery = ({
     queryKey: [MentorMissionFeedbackAttendanceQueryKey, challengeId, missionId],
     queryFn: async () => {
       const res = await axios.get(
-        `/admin/challenge/${challengeId}/mission/${missionId}/feedback/attendances`,
+        `/challenge/${challengeId}/mission/${missionId}/feedback/attendances`,
       );
       return challengeMissionFeedbackAttendanceListSchema.parse(res.data.data);
     },
