@@ -5,12 +5,16 @@ import {
   FeedbackAttendanceQueryKey,
   useFeedbackAttendanceQuery,
 } from '@/api/challenge';
-import { ChallengeMissionFeedbackList } from '@/api/challengeSchema';
+import {
+  ChallengeMissionFeedbackList,
+  FeedbackStatusEnum,
+} from '@/api/challengeSchema';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import useBeforeUnloadWarning from '@/hooks/useBeforeUnloadWarning';
 import useInvalidateQueries from '@/hooks/useInvalidateQueries';
 import EditorApp from '@components/admin/lexical/EditorApp';
 import Heading2 from '@components/admin/ui/heading/Heading2';
+import LexicalContent from '@components/common/blog/LexicalContent';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { Button } from '@mui/material';
 import { memo, useEffect, useState } from 'react';
@@ -87,6 +91,58 @@ const useAttendanceFeedback = () => {
   };
 };
 
+const { COMPLETED, CONFIRMED } = FeedbackStatusEnum.enum;
+
+const useIsCompleted = () => {
+  const [isCompleted, setIsCompleted] = useState<boolean>();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const attendance: AttendanceRow = JSON.parse(
+      localStorage.getItem('attendance') ?? '{}',
+    );
+
+    if (
+      attendance.feedbackStatus === COMPLETED ||
+      attendance.feedbackStatus === CONFIRMED
+    ) {
+      setIsCompleted(true);
+    } else {
+      setIsCompleted(false);
+    }
+    setIsLoading(false);
+  }, []);
+
+  return { isCompleted, isLoading };
+};
+
+const FeedbackEditorApp = ({
+  initialEditorStateJsonString,
+  onChange,
+}: {
+  initialEditorStateJsonString?: string;
+  onChange?: (jsonString: string) => void;
+}) => {
+  const { isCompleted, isLoading } = useIsCompleted();
+
+  if (isLoading) return null;
+
+  if (isCompleted && initialEditorStateJsonString) {
+    return (
+      <div className="my-4 bg-neutral-90 p-5">
+        <LexicalContent node={JSON.parse(initialEditorStateJsonString).root} />
+      </div>
+    );
+  }
+
+  return (
+    <EditorApp
+      initialEditorStateJsonString={initialEditorStateJsonString}
+      onChange={onChange}
+    />
+  );
+};
+
 export default function ChallengeFeedbackPage() {
   const navigate = useNavigate();
   const { programId, missionId, userId } = useParams();
@@ -96,6 +152,7 @@ export default function ChallengeFeedbackPage() {
 
   const { content, setContent, isLoading, hasUnsavedChanges, defaultContent } =
     useAttendanceFeedback();
+  const { isCompleted } = useIsCompleted();
 
   const invalidateFeedbackQueries = useInvalidateQueries([
     FeedbackAttendanceQueryKey,
@@ -141,16 +198,20 @@ export default function ChallengeFeedbackPage() {
       <Heading2 className="mb-2">{attendance?.name} 피드백</Heading2>
       <AttendanceInfoList />
       {!isLoading && (
-        <EditorApp
+        <FeedbackEditorApp
           initialEditorStateJsonString={content ?? defaultContent ?? undefined}
           onChange={handleChangeEditor}
         />
       )}
       <div className="flex items-center justify-end gap-4">
-        <Button variant="outlined" onClick={handleBackToListWithConfirm}>
+        <Button
+          variant="outlined"
+          disabled={isCompleted}
+          onClick={handleBackToListWithConfirm}
+        >
           리스트로 돌아가기
         </Button>
-        <Button variant="contained" onClick={handleSave}>
+        <Button variant="contained" disabled={isCompleted} onClick={handleSave}>
           저장
         </Button>
       </div>
