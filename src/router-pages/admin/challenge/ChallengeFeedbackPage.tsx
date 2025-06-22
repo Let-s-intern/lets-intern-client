@@ -59,17 +59,43 @@ const AttendanceInfoList = memo(function AttendanceInfoList() {
   );
 });
 
+const useAttendanceFeedback = () => {
+  const { programId, missionId, userId } = useParams();
+
+  const { data, isLoading } = useFeedbackAttendanceQuery({
+    challengeId: programId,
+    missionId,
+    attendanceId: userId,
+  });
+
+  const [content, setContent] = useState<string>();
+
+  const hasUnsavedChanges = content !== data?.attendanceDetailVo.feedback;
+  const defaultContent = data?.attendanceDetailVo.feedback;
+
+  useEffect(() => {
+    if (isLoading || !data) return;
+    setContent(data.attendanceDetailVo.feedback ?? undefined);
+  }, [isLoading, data]);
+
+  return {
+    defaultContent,
+    content,
+    setContent,
+    isLoading: isLoading || !data,
+    hasUnsavedChanges,
+  };
+};
+
 export default function ChallengeFeedbackPage() {
   const navigate = useNavigate();
   const { programId, missionId, userId } = useParams();
 
   const { snackbar } = useAdminSnackbar();
   const { mutateAsync: patchAttendance } = usePatchAttendance();
-  const { data, isLoading } = useFeedbackAttendanceQuery({
-    challengeId: programId,
-    missionId,
-    attendanceId: userId,
-  });
+
+  const { content, setContent, isLoading, hasUnsavedChanges, defaultContent } =
+    useAttendanceFeedback();
 
   const invalidateFeedbackQueries = useInvalidateQueries([
     FeedbackAttendanceQueryKey,
@@ -78,10 +104,8 @@ export default function ChallengeFeedbackPage() {
     userId,
   ]);
 
-  const [content, setContent] = useState<string>();
   const { attendance } = useLocalStorageState();
 
-  const hasUnsavedChanges = content !== data?.attendanceDetailVo.feedback;
   useBeforeUnloadWarning(hasUnsavedChanges);
 
   const handleChangeEditor = (jsonString: string) => {
@@ -110,22 +134,15 @@ export default function ChallengeFeedbackPage() {
     );
   };
 
-  useEffect(() => {
-    if (isLoading || !data) return;
-    setContent(data.attendanceDetailVo.feedback ?? undefined);
-  }, [isLoading, data]);
-
   if (isLoading) return <LoadingContainer className="mt-[20%]" />;
 
   return (
     <div className="mt-5 px-5">
       <Heading2 className="mb-2">{attendance?.name} 피드백</Heading2>
       <AttendanceInfoList />
-      {!isLoading && data && (
+      {!isLoading && (
         <EditorApp
-          initialEditorStateJsonString={
-            content ?? data.attendanceDetailVo.feedback ?? undefined
-          }
+          initialEditorStateJsonString={content ?? defaultContent ?? undefined}
           onChange={handleChangeEditor}
         />
       )}
