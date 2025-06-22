@@ -38,8 +38,8 @@ const MyPage = () => {
             { hidden: isReviewCreatePage || isReviewPage },
           )}
         >
-          <div className="flex w-full items-center justify-center py-8 md:w-[12.5rem] md:p-0">
-            <div className="flex w-full flex-row items-center gap-x-2 gap-y-[0.0625rem] md:flex-col md:p-2">
+          <div className="flex w-full items-center justify-center pb-8 md:w-[12.5rem] md:p-0 md:py-8">
+            <div className="flex w-full flex-row items-center justify-between gap-x-2 gap-y-[0.0625rem] md:flex-col md:p-2">
               <NavItem
                 to="/mypage/application"
                 active={location.pathname === '/mypage/application'}
