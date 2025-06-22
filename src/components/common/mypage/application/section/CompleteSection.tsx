@@ -1,5 +1,6 @@
 import { MypageApplication } from '@/api/application';
 import { useState } from 'react';
+import MobileCarousel from '../../../ui/carousel/MobileCarousel';
 import Button from '../../ui/button/Button';
 import ApplicationCard from '../../ui/card/root/ApplicationCard';
 
@@ -22,26 +23,32 @@ const CompleteSection = ({ applicationList }: CompleteSectionProps) => {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-4 md:flex md:flex-col">
-          {viewList.map((application) => (
-            <ApplicationCard
-              key={application.id}
-              grayscale
-              application={application}
-              showChallengeButton
-            />
-          ))}
-        </div>
-      )}
-      {applicationList.length > 3 && !showMore && (
-        <Button
-          className="md:flex"
-          onClick={() => {
-            setShowMore(true);
-          }}
-        >
-          더보기
-        </Button>
+        <>
+          <MobileCarousel<MypageApplication>
+            items={viewList}
+            renderItem={(application) => (
+              <ApplicationCard
+                grayscale
+                application={application}
+                showChallengeButton
+              />
+            )}
+            itemWidth="169px"
+            spaceBetween={16}
+            containerWidth="100%"
+            getItemKey={(application) => application.id || 0}
+          />
+          {applicationList.length > 3 && !showMore && (
+            <Button
+              className="md:flex"
+              onClick={() => {
+                setShowMore(true);
+              }}
+            >
+              더보기
+            </Button>
+          )}
+        </>
       )}
     </section>
   );
