@@ -137,6 +137,13 @@ export default function ChallengeFeedbackPage() {
           저장
         </Button>
       </div>
+      <p className="mt-2 text-right text-xsmall14">
+        저장 버튼 클릭 후, 피드백 리스트 페이지에서
+        <br />
+        [진행 상태]를{' '}
+        <b className="font-semibold text-system-error">진행완료</b>로 변경해야
+        최종 제출됩니다.
+      </p>
     </div>
   );
 }
