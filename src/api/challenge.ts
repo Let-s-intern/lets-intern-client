@@ -507,14 +507,12 @@ export const getClickCopy = async (fromId: number, toId: number) => {
   return res.data.data;
 };
 
-/** 챌린지 피드백 미션 전체 목록 /api/v2/admin/challenge/{challengeId}/mission/feedback */
+/** 챌린지 피드백 미션 전체 목록 /api/v1/challenge/{challengeId}/mission/feedback */
 export const useChallengeMissionFeedbackListQuery = (challengeId?: number) => {
   return useQuery({
     queryKey: ['useChallengeMissionFeedbackQuery', challengeId],
     queryFn: async () => {
-      const res = await axios.get(
-        `/admin/challenge/${challengeId}/mission/feedback`,
-      );
+      const res = await axios.get(`/challenge/${challengeId}/mission/feedback`);
       return challengeMissionFeedbackListSchema.parse(res.data.data);
     },
     enabled: !!challengeId,
