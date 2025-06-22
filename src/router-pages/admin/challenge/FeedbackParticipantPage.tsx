@@ -274,10 +274,6 @@ const useFeedbackParticipantRows = () => {
 export default function FeedbackParticipantPage() {
   const rows = useFeedbackParticipantRows();
 
-  useEffect(() => {
-    localStorage.removeItem('attendance');
-  }, []);
-
   return (
     <DataGrid
       rows={rows}

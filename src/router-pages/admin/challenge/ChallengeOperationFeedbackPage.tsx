@@ -107,10 +107,6 @@ const useFeedbackMissionRows = () => {
 function ChallengeOperationFeedbackPage() {
   const rows = useFeedbackMissionRows();
 
-  useEffect(() => {
-    localStorage.removeItem('mission');
-  }, []);
-
   return (
     <DataGrid
       rows={rows}
