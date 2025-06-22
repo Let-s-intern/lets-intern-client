@@ -41,18 +41,19 @@ const ApplicationCard = ({
 
   return (
     <div
-      className="flex h-[282px] w-full flex-col items-start gap-4 overflow-hidden rounded-xs md:flex-row md:border md:border-neutral-85 md:p-2.5"
+      className="flex h-[282px] w-full flex-col items-start gap-4 overflow-hidden rounded-xs md:h-full md:flex-row md:border md:border-neutral-85 md:p-2.5"
       data-program-text={application.programTitle}
     >
       <div
-        className={clsx(
-          'flex w-full flex-1 flex-col gap-2 md:flex-row md:gap-4',
-          {
-            grayscale,
-          },
-        )}
+        className={clsx('flex w-full flex-col gap-2 md:flex-row md:gap-4', {
+          grayscale,
+        })}
       >
-        <Link to={window.location.origin + programLink} reloadDocument>
+        <Link
+          to={window.location.origin + programLink}
+          reloadDocument
+          className="flex-shrink-0 md:w-[11rem]"
+        >
           <img
             src={thumbnail}
             alt="프로그램 썸네일"
@@ -70,7 +71,7 @@ const ApplicationCard = ({
                 {application.programTitle}
               </Link>
             </h2>
-            <p className="line-clamp-2 h-10 text-sm text-neutral-30">
+            <p className="line-clamp-2 h-10 text-sm text-neutral-30 md:line-clamp-none md:h-auto">
               {application.programShortDesc}
             </p>
           </div>
@@ -93,6 +94,7 @@ const ApplicationCard = ({
             to={`/challenge/${application.id}/${application.programId}`}
             target="_blank"
             rel="noopener noreferrer"
+            className="whitespace-nowrap"
           >
             챌린지 대시보드
           </LinkButton>
@@ -106,7 +108,7 @@ const ApplicationCard = ({
               ? `?reviewId=${application.reviewId}`
               : `?application=${application.id}`
           }`}
-          className={clsx(reviewType === 'CREATE' && 'review_button')}
+          className={`${clsx(reviewType === 'CREATE' && 'review_button')} whitespace-nowrap`}
         >
           {reviewType === 'CREATE' ? '후기 작성하기' : '후기 확인하기'}
         </LinkButton>
