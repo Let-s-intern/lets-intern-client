@@ -1,11 +1,10 @@
+import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { MyChallengeMissionByType } from '@/schema';
+import { missionSubmitToBadge } from '@/utils/convert';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-
-import { useChallengeMissionAttendanceInfoQuery } from '../../../../../api/challenge';
-import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
-import { MyChallengeMissionByType } from '../../../../../schema';
-import { missionSubmitToBadge } from '../../../../../utils/convert';
 import DoneMissionDetailMenu from './DoneMissionDetailMenu';
 
 interface Props {
@@ -105,8 +104,8 @@ const DoneMissionItem = ({ mission }: Props) => {
                 applicationId={applicationId}
                 programId={programId}
                 challengeId={currentChallenge?.id}
-                isFeedbackCompleted={
-                  attendanceInfo?.feedbackStatus === 'COMPLETED'
+                isFeedbackConfirmed={
+                  attendanceInfo?.feedbackStatus === 'CONFIRMED'
                 }
               />
             ))}
