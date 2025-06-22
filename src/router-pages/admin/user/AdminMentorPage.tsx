@@ -193,6 +193,10 @@ export default function AdminMentorPage() {
     <section className="p-5">
       <Heading className="mb-4">멘토 관리</Heading>
       <MentorFilter />
+      <span className="text-xsmall14 text-system-error">
+        그리드에 내장된 필터, 정렬이 정상 동작하지 않습니다. 위의 검색 기능을
+        사용하세요.
+      </span>
       <DataGrid
         rows={rows}
         columns={columns}
