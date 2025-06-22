@@ -5,6 +5,7 @@ import {
   useChallengeMissionFeedbackQuery,
 } from '@/api/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import LexicalContent from '@components/common/blog/LexicalContent';
 
 export default function MissionFeedback() {
   const navigate = useNavigate();
@@ -56,7 +57,7 @@ export default function MissionFeedback() {
         {/* 미션 정보 섹션 */}
         <div className="mb-4 space-y-3">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-700">멘토명</span>
+            <span className="text-sm font-medium text-gray-700">멘토명:</span>
           </div>
           <div className="text-sm text-gray-900">
             {feedbackData?.attendanceInfo.mentorName || '-'}
@@ -64,7 +65,7 @@ export default function MissionFeedback() {
 
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium text-gray-700">
-              미션 제출 링크
+              미션 제출 링크:
             </span>
           </div>
           <div className="text-sm">
@@ -90,13 +91,16 @@ export default function MissionFeedback() {
             style={{ minHeight: '60vh' }}
           >
             <div className="flex h-full items-center justify-center">
-              <div className="text-center">
+              <div>
                 <div className="mb-2 text-lg font-medium text-gray-600">
                   피드백 내용
                 </div>
-                <div className="whitespace-pre-wrap text-sm text-gray-500">
-                  {feedbackData?.attendanceInfo.feedback || ''}
-                </div>
+                <LexicalContent
+                  node={
+                    JSON.parse(feedbackData?.attendanceInfo.feedback as string)
+                      .root
+                  }
+                />
               </div>
             </div>
           </div>
