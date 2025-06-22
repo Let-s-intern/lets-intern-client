@@ -1,9 +1,10 @@
 import clsx from 'clsx';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { useIsMentorQuery } from '@/api/user';
 import NavItem from '@/components/common/mypage/ui/nav/NavItem';
+import MobileCarousel from '@/components/common/ui/carousel/MobileCarousel';
 import useAuthStore from '@/store/useAuthStore';
 
 const MyPage = () => {
@@ -17,6 +18,46 @@ const MyPage = () => {
     location.pathname.startsWith('/mypage/review/live') ||
     location.pathname.startsWith('/mypage/review/report') ||
     location.pathname.startsWith('/mypage/review/challenge');
+
+  const navItems = useMemo(() => {
+    const baseItems = [
+      {
+        to: '/mypage/application',
+        active: location.pathname === '/mypage/application',
+        icon: 'edit-list-unordered',
+        label: '신청현황',
+      },
+      {
+        to: '/mypage/review',
+        active: location.pathname === '/mypage/review',
+        icon: 'commu-chat-remove',
+        label: '후기작성',
+      },
+      {
+        to: '/mypage/credit',
+        active: location.pathname.startsWith('/mypage/credit'),
+        icon: 'credit-list',
+        label: '결제내역',
+      },
+      {
+        to: '/mypage/privacy',
+        active: location.pathname === '/mypage/privacy',
+        icon: 'user-user-circle',
+        label: '개인정보',
+      },
+    ];
+
+    if (isMentor) {
+      baseItems.push({
+        to: '/mypage/feedback',
+        active: location.pathname === '/mypage/feedback',
+        icon: 'user-challenge-feedback',
+        label: '챌린지 피드백',
+      });
+    }
+
+    return baseItems;
+  }, [location.pathname, isMentor]);
 
   useEffect(() => {
     // login 페이지로 넘어간 이후 이 useEffect가 한번 더 실행되는 케이스가 있어서 방어로직 추가
@@ -38,78 +79,25 @@ const MyPage = () => {
             { hidden: isReviewCreatePage || isReviewPage },
           )}
         >
-          <div className="flex w-full items-center justify-center py-8 md:w-[12.5rem] md:p-0">
-            <div className="flex w-full flex-row items-center gap-x-2 gap-y-[0.0625rem] md:flex-col md:p-2">
-              <NavItem
-                to="/mypage/application"
-                active={location.pathname === '/mypage/application'}
-              >
-                <img
-                  src={`/icons/edit-list-unordered${
-                    location.pathname === '/mypage/application' ? '-black' : ''
-                  }.svg`}
-                  alt="user"
-                  className="hidden h-[1.625rem] w-[1.625rem] md:block"
-                />
-                신청현황
-              </NavItem>
-              <NavItem
-                to="/mypage/review"
-                active={location.pathname === '/mypage/review'}
-              >
-                <img
-                  src={`/icons/commu-chat-remove${
-                    location.pathname === '/mypage/review' ? '-black' : ''
-                  }.svg`}
-                  alt="list"
-                  className="hidden h-[1.625rem] w-[1.625rem] md:block"
-                />
-                후기작성
-              </NavItem>
-              <NavItem
-                to="/mypage/credit"
-                active={location.pathname.startsWith('/mypage/credit')}
-              >
-                <img
-                  src={`/icons/credit-list${
-                    location.pathname.startsWith('/mypage/credit')
-                      ? '-black'
-                      : ''
-                  }.svg`}
-                  alt="list"
-                  className="hidden h-[1.625rem] w-[1.625rem] md:block"
-                />
-                결제내역
-              </NavItem>
-              <NavItem
-                to="/mypage/privacy"
-                active={location.pathname === '/mypage/privacy'}
-              >
-                <img
-                  src={`/icons/user-user-circle${
-                    location.pathname === '/mypage/privacy' ? '-black' : ''
-                  }.svg`}
-                  alt="user"
-                  className="hidden h-[1.625rem] w-[1.625rem] md:block"
-                />
-                개인정보
-              </NavItem>
-              {isMentor && (
-                <NavItem
-                  to="/mypage/feedback"
-                  active={location.pathname === '/mypage/feedback'}
-                >
+          <div className="flex w-full items-center justify-center pb-8 md:w-[12.5rem] md:p-0 md:py-8">
+            <MobileCarousel
+              items={navItems}
+              renderItem={(item) => (
+                <NavItem to={item.to} active={item.active}>
                   <img
-                    src={`/icons/user-challenge-feedback${
-                      location.pathname === '/mypage/feedback' ? '-black' : ''
-                    }.svg`}
-                    alt="user"
+                    src={`/icons/${item.icon}${item.active ? '-black' : ''}.svg`}
+                    alt={item.label}
                     className="hidden h-[1.625rem] w-[1.625rem] md:block"
                   />
-                  챌린지 피드백
+                  {item.label}
                 </NavItem>
               )}
-            </div>
+              itemWidth="auto"
+              spaceBetween={8}
+              containerWidth="100%"
+              getItemKey={(item) => item.to}
+              className="md:w-full md:flex-col md:p-2"
+            />
           </div>
         </nav>
         <div className="flex w-full grow flex-col items-start justify-center pb-8 md:w-auto">
