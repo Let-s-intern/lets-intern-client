@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { MypageApplication } from '../../../../../api/application';
+import MobileCarousel from '../../../ui/carousel/MobileCarousel';
 import MoreButton from '../../ui/button/MoreButton';
 import ApplicationCard from '../../ui/card/root/ApplicationCard';
 
@@ -22,25 +23,28 @@ const ParticipateSection = ({ applicationList }: ParticipateSectionProps) => {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-4 md:flex md:flex-col">
-          {list.map((application) => (
-            <ApplicationCard
-              key={application.id}
-              application={application}
-              showChallengeButton
-            />
-          ))}
-        </div>
-      )}
-      {applicationList.length > 3 && !showMore && (
-        <MoreButton
-          className="md:flex"
-          onClick={() => {
-            setShowMore(true);
-          }}
-        >
-          더보기
-        </MoreButton>
+        <>
+          <MobileCarousel<MypageApplication>
+            items={list}
+            renderItem={(application) => (
+              <ApplicationCard application={application} showChallengeButton />
+            )}
+            itemWidth="169px"
+            spaceBetween={16}
+            containerWidth="100%"
+            getItemKey={(application) => application.id || 0}
+          />
+          {applicationList.length > 3 && !showMore && (
+            <MoreButton
+              className="md:flex"
+              onClick={() => {
+                setShowMore(true);
+              }}
+            >
+              더보기
+            </MoreButton>
+          )}
+        </>
       )}
     </section>
   );

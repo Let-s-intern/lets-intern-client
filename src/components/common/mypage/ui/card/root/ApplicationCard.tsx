@@ -41,7 +41,7 @@ const ApplicationCard = ({
 
   return (
     <div
-      className="flex w-full flex-col items-start gap-4 overflow-hidden rounded-xs md:flex-row md:border md:border-neutral-85 md:p-2.5"
+      className="flex h-[282px] w-full flex-col items-start gap-4 overflow-hidden rounded-xs md:flex-row md:border md:border-neutral-85 md:p-2.5"
       data-program-text={application.programTitle}
     >
       <div
@@ -59,7 +59,7 @@ const ApplicationCard = ({
             className="h-[7.5rem] w-full bg-primary-light object-cover md:h-[9rem] md:w-[11rem] md:rounded-xs"
           />
         </Link>
-        <div className="flex flex-1 flex-col justify-between gap-2 py-2">
+        <div className="flex flex-col justify-between gap-2 py-2">
           <div className="flex w-full flex-col gap-y-0.5">
             <h2 className="font-semibold">
               <Link
@@ -70,7 +70,7 @@ const ApplicationCard = ({
                 {application.programTitle}
               </Link>
             </h2>
-            <p className="text-sm text-neutral-30">
+            <p className="line-clamp-2 h-10 text-sm text-neutral-30">
               {application.programShortDesc}
             </p>
           </div>
