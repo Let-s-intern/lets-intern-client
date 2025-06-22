@@ -1,4 +1,8 @@
-import { useChallengeMissionFeedbackListQuery } from '@/api/challenge';
+import {
+  useChallengeMissionFeedbackListQuery,
+  useMentorMissionFeedbackListQuery,
+} from '@/api/challenge';
+import { useIsAdminQuery } from '@/api/user';
 import { LOCALIZED_YYYY_MD_Hm } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
@@ -72,20 +76,26 @@ const columns: GridColDef<Row>[] = [
 const useFeedbackMissionRows = () => {
   const { programId } = useParams();
 
-  const { data } = useChallengeMissionFeedbackListQuery(Number(programId));
+  const { data: dataForAdmin, isLoading: isAdminLoading } =
+    useChallengeMissionFeedbackListQuery(Number(programId));
+  const { data: dataForMentor, isLoading: isMentorLoading } =
+    useMentorMissionFeedbackListQuery(Number(programId));
+  const { data: isAdmin } = useIsAdminQuery();
+
+  const isLoading = isAdminLoading || isMentorLoading;
 
   const [rows, setRows] = useState<Row[]>([]);
 
   useEffect(() => {
-    if (!data) return;
+    if (isLoading || !dataForAdmin || !dataForMentor) return;
 
     setRows(
-      data.missionList.map((item) => ({
+      (isAdmin ? dataForAdmin : dataForMentor).missionList.map((item) => ({
         ...item,
         url: `/admin/challenge/operation/${programId}/feedback/mission/${item.id}/participants`,
       })),
     );
-  }, [data, programId]);
+  }, [dataForAdmin, isAdmin, isLoading, dataForMentor, programId]);
 
   return rows;
 };
