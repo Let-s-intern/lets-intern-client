@@ -507,15 +507,35 @@ export const getClickCopy = async (fromId: number, toId: number) => {
   return res.data.data;
 };
 
-/** 챌린지 피드백 미션 전체 목록 /api/v1/challenge/{challengeId}/mission/feedback */
-export const useChallengeMissionFeedbackListQuery = (challengeId?: number) => {
+/** [멘토용] 챌린지 피드백 미션 전체 목록 /api/v1/challenge/{challengeId}/mission/feedback */
+export const useMentorMissionFeedbackListQuery = (
+  challengeId?: number,
+  { enabled }: { enabled?: boolean } = {},
+) => {
   return useQuery({
     queryKey: ['useChallengeMissionFeedbackQuery', challengeId],
     queryFn: async () => {
       const res = await axios.get(`/challenge/${challengeId}/mission/feedback`);
       return challengeMissionFeedbackListSchema.parse(res.data.data);
     },
-    enabled: !!challengeId,
+    enabled,
+  });
+};
+
+/** [어드민용] 챌린지 피드백 미션 전체 목록 /api/v1/challenge/{challengeId}/mission/feedback */
+export const useChallengeMissionFeedbackListQuery = (
+  challengeId?: number,
+  { enabled }: { enabled?: boolean } = {},
+) => {
+  return useQuery({
+    queryKey: ['useChallengeMissionFeedbackQuery', challengeId],
+    queryFn: async () => {
+      const res = await axiosV2.get(
+        `/adin/challenge/${challengeId}/mission/feedback`,
+      );
+      return challengeMissionFeedbackListSchema.parse(res.data.data);
+    },
+    enabled,
   });
 };
 
