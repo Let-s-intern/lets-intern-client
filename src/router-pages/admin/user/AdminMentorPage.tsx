@@ -9,9 +9,11 @@ import {
 } from '@/api/user';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import Heading from '@components/admin/ui/heading/Heading';
-import { Checkbox } from '@mui/material';
+import { Button, Checkbox, TextField } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useQueryClient } from '@tanstack/react-query';
+import { ChangeEvent, FormEvent, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 interface Row {
   id: number;
@@ -76,9 +78,20 @@ const useMentorColumns = () => {
   return columns;
 };
 
-const useMentorRows = () => {
-  const pageable = { page: 1, size: 10000 };
-  const { data } = useUserAdminQuery({ pageable });
+const useMentorRows = ({ page, size }: { page: number; size: number }) => {
+  const pageable = {
+    page: page + 1,
+    size,
+  };
+
+  const [searchParams] = useSearchParams();
+  const filters = {
+    email: searchParams.get('email'),
+    name: searchParams.get('name'),
+    phoneNum: searchParams.get('phoneNum'),
+  };
+
+  const { data, isLoading } = useUserAdminQuery({ pageable, ...filters });
   const rows = data?.userAdminList.map(({ userInfo }) => ({
     id: userInfo.id,
     name: userInfo.name,
@@ -86,30 +99,112 @@ const useMentorRows = () => {
     phoneNum: userInfo.phoneNum,
     isMentor: userInfo.isMentor ?? false,
   }));
-  return rows;
+
+  return { rows, isLoading, pageInfo: data?.pageInfo };
 };
 
-const PAGE_SIZE = 10;
+const MentorFilter = () => {
+  const defaultRef = useRef({
+    email: '',
+    name: '',
+    phoneNum: '',
+  });
+  const [_, setSearchParams] = useSearchParams();
+  const [inputs, setInputs] = useState(defaultRef.current);
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setInputs((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+  };
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const newSearchParams = Object.fromEntries(
+      Object.entries(inputs).filter(([, value]) => value),
+    );
+    setSearchParams(newSearchParams);
+  };
+
+  const resetFilter = () => {
+    setInputs(defaultRef.current);
+    setSearchParams({});
+  };
+
+  return (
+    <form
+      className="mb-4 flex items-center justify-between bg-neutral-90 p-4"
+      onSubmit={handleSubmit}
+    >
+      <div className="flex items-center gap-2">
+        <TextField
+          id="name"
+          label="이름"
+          variant="outlined"
+          value={inputs.name}
+          onChange={handleChange}
+        />
+        <TextField
+          id="email"
+          label="이메일"
+          variant="outlined"
+          value={inputs.email}
+          onChange={handleChange}
+        />
+        <TextField
+          id="phoneNum"
+          label="휴대폰 번호"
+          variant="outlined"
+          value={inputs.phoneNum}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="flex items-center gap-2">
+        <Button type="submit" variant="contained">
+          검색
+        </Button>
+        <Button type="button" variant="outlined" onClick={resetFilter}>
+          전체보기
+        </Button>
+      </div>
+    </form>
+  );
+};
 
 export default function AdminMentorPage() {
+  const pageSizeRef = useRef(10);
+
+  const [paginationModel, setPaginationModel] = useState({
+    pageSize: 10,
+    page: 0,
+  });
+  const pageable = {
+    page: paginationModel.page,
+    size: paginationModel.pageSize,
+  };
+
   const columns = useMentorColumns();
-  const rows = useMentorRows();
+  const { rows, isLoading, pageInfo } = useMentorRows(pageable);
+  const rowCount = pageInfo?.totalElements;
 
   return (
     <section className="p-5">
       <Heading className="mb-4">멘토 관리</Heading>
+      <MentorFilter />
+      <span className="text-xsmall14 text-system-error">
+        그리드에 내장된 필터, 정렬이 정상 동작하지 않습니다. 위의 검색 기능을
+        사용하세요.
+      </span>
       <DataGrid
         rows={rows}
         columns={columns}
         disableRowSelectionOnClick
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: PAGE_SIZE,
-            },
-          },
-        }}
-        pageSizeOptions={[PAGE_SIZE]}
+        rowCount={rowCount}
+        paginationMode="server"
+        loading={isLoading}
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
+        pageSizeOptions={[pageSizeRef.current]}
       />
     </section>
   );
