@@ -3,6 +3,7 @@
 import { usePatchAttendance } from '@/api/attendance';
 import {
   ChallengeMissionFeedbackAttendanceQueryKey,
+  MentorMissionFeedbackAttendanceQueryKey,
   useChallengeMissionFeedbackAttendanceQuery,
   useMentorMissionFeedbackAttendanceQuery,
 } from '@/api/challenge';
@@ -25,6 +26,7 @@ const NO_MENTOR_ID = 0;
 export interface AttendanceRow {
   id: number | string;
   mentorId: number | null;
+  mentorName: string | null;
   missionTitle: string;
   missionRound: number | string;
   name: string;
@@ -40,13 +42,14 @@ const FeedbackStatusEnumForMentor = FeedbackStatusEnum.exclude(['CONFIRMED']);
 
 const useAttendanceHandler = () => {
   const { programId, missionId } = useParams();
+  const { data: isAdmin } = useIsAdminQuery();
+
+  const queryKey = isAdmin
+    ? [ChallengeMissionFeedbackAttendanceQueryKey, programId, missionId]
+    : [MentorMissionFeedbackAttendanceQueryKey, programId, missionId];
 
   const { mutateAsync: patchAttendance } = usePatchAttendance();
-  const invalidateAttendance = useInvalidateQueries([
-    ChallengeMissionFeedbackAttendanceQueryKey,
-    programId,
-    missionId,
-  ]);
+  const invalidateAttendance = useInvalidateQueries(queryKey);
 
   return {
     patchAttendance,
@@ -61,6 +64,7 @@ const MentorRenderCell = (
 
   const { patchAttendance, invalidateAttendance } = useAttendanceHandler();
 
+  const { data: isAdmin } = useIsAdminQuery();
   const { data } = useAdminChallengeMentorListQuery(programId);
 
   const handleChange = async (e: SelectChangeEvent<number>) => {
@@ -71,6 +75,8 @@ const MentorRenderCell = (
     });
     await invalidateAttendance();
   };
+
+  if (!isAdmin) return <span>{params.row.mentorName}</span>;
 
   return (
     <SelectFormControl<number>
@@ -110,13 +116,16 @@ const FeedbackStatusRenderCell = (
     await invalidateAttendance();
   };
 
+  if (!isAdmin && params.value === FeedbackStatusEnum.enum.CONFIRMED) {
+    return <span> {FeedbackStatusMapping[params.value]}</span>;
+  }
+
   return (
     <SelectFormControl<FeedbackStatus>
       value={params.value || FeedbackStatusEnum.enum.WAITING}
       renderValue={(selected) => FeedbackStatusMapping[selected]}
       onChange={handleChange}
     >
-      {/* todo: 멘토/관리자에 따라 수정 권한 제어 */}
       {(isAdmin ? FeedbackStatusEnum : FeedbackStatusEnumForMentor).options.map(
         (item) => (
           <MenuItem key={item} value={item}>
@@ -205,10 +214,10 @@ const columns: GridColDef<AttendanceRow>[] = [
   },
 ];
 
-const useFeedbackParticipantRows = () => {
+const useRoleBasedAttendanceData = () => {
   const { missionId, programId } = useParams();
 
-  const { data: isAdmin, isLoading } = useIsAdminQuery();
+  const { data: isAdmin, isLoading: isAdminLoading } = useIsAdminQuery();
 
   const { data: dataForAdmin } = useChallengeMissionFeedbackAttendanceQuery({
     challengeId: programId,
@@ -222,6 +231,17 @@ const useFeedbackParticipantRows = () => {
     enabled: !!programId && !!missionId && !isAdmin,
   });
 
+  return {
+    isLoading: isAdminLoading,
+    data: isAdmin ? dataForAdmin : dataForMentor,
+  };
+};
+
+const useFeedbackParticipantRows = () => {
+  const { missionId, programId } = useParams();
+
+  const { data, isLoading } = useRoleBasedAttendanceData();
+
   const [rows, setRows] = useState<AttendanceRow[]>([]);
 
   const selectedMission = JSON.parse(localStorage.getItem('mission') || '{}');
@@ -232,37 +252,21 @@ const useFeedbackParticipantRows = () => {
     if (isLoading) return;
 
     setRows(
-      ((isAdmin ? dataForAdmin : dataForMentor)?.attendanceList ?? []).map(
-        (item) => {
-          const {
-            status,
-            result,
-            challengePricePlanType,
-            mentorName,
-            ...rest
-          } = item;
+      (data?.attendanceList ?? []).map((item) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { status, result, challengePricePlanType, ...rest } = item;
 
-          return {
-            ...rest,
-            missionTitle,
-            missionRound,
-            feedbackStatus:
-              item.feedbackStatus ?? FeedbackStatusEnum.enum.WAITING,
-            feedbackPageLink: `/admin/challenge/operation/${programId}/mission/${missionId}/participant/${item.id}/feedback`,
-          };
-        },
-      ),
+        return {
+          ...rest,
+          missionTitle,
+          missionRound,
+          feedbackStatus:
+            item.feedbackStatus ?? FeedbackStatusEnum.enum.WAITING,
+          feedbackPageLink: `/admin/challenge/operation/${programId}/mission/${missionId}/participant/${item.id}/feedback`,
+        };
+      }),
     );
-  }, [
-    isLoading,
-    dataForAdmin,
-    dataForMentor,
-    isAdmin,
-    missionTitle,
-    missionRound,
-    programId,
-    missionId,
-  ]);
+  }, [isLoading, data, missionTitle, missionRound, programId, missionId]);
 
   return rows;
 };

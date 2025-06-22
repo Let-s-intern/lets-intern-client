@@ -49,7 +49,7 @@ const columns: GridColDef<Row>[] = [
       dayjs(params.value).format(LOCALIZED_YYYY_MD_Hm),
   },
   {
-    field: 'challengeOptionCode',
+    field: 'challengeOptionTitle',
     headerName: '피드백 옵션',
     sortable: false,
     width: 200,

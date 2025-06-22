@@ -522,7 +522,7 @@ export const useMentorMissionFeedbackListQuery = (
   });
 };
 
-/** [어드민용] 챌린지 피드백 미션 전체 목록 /api/v1/challenge/{challengeId}/mission/feedback */
+/** [어드민용] 챌린지 피드백 미션 전체 목록 /api/v2/admin/challenge/{challengeId}/mission/feedback */
 export const useChallengeMissionFeedbackListQuery = (
   challengeId?: number,
   { enabled }: { enabled?: boolean } = {},
@@ -568,7 +568,7 @@ export const useChallengeMissionFeedbackAttendanceQuery = ({
   });
 };
 
-/** [멘토용] 챌린지 피드백 미션별 제출자 조회 /api/v1/admin/challenge/{challengeId}/mission/{missionId}/feedback/attendances */
+/** [멘토용] 챌린지 피드백 미션별 제출자 조회 /api/v1/challenge/{challengeId}/mission/{missionId}/feedback/attendances */
 export const MentorMissionFeedbackAttendanceQueryKey =
   'useMentorMissionFeedbackAttendanceQuery';
 
