@@ -26,6 +26,7 @@ const NO_MENTOR_ID = 0;
 export interface AttendanceRow {
   id: number | string;
   mentorId: number | null;
+  mentorName: string | null;
   missionTitle: string;
   missionRound: number | string;
   name: string;
@@ -63,6 +64,7 @@ const MentorRenderCell = (
 
   const { patchAttendance, invalidateAttendance } = useAttendanceHandler();
 
+  const { data: isAdmin } = useIsAdminQuery();
   const { data } = useAdminChallengeMentorListQuery(programId);
 
   const handleChange = async (e: SelectChangeEvent<number>) => {
@@ -73,6 +75,8 @@ const MentorRenderCell = (
     });
     await invalidateAttendance();
   };
+
+  if (!isAdmin) return <span>{params.row.mentorName}</span>;
 
   return (
     <SelectFormControl<number>
@@ -247,8 +251,7 @@ const useFeedbackParticipantRows = () => {
     setRows(
       (data?.attendanceList ?? []).map((item) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { status, result, challengePricePlanType, mentorName, ...rest } =
-          item;
+        const { status, result, challengePricePlanType, ...rest } = item;
 
         return {
           ...rest,
