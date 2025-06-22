@@ -512,7 +512,7 @@ export const useChallengeMissionFeedbackListQuery = (challengeId?: number) => {
   return useQuery({
     queryKey: ['useChallengeMissionFeedbackQuery', challengeId],
     queryFn: async () => {
-      const res = await axiosV2.get(
+      const res = await axios.get(
         `/admin/challenge/${challengeId}/mission/feedback`,
       );
       return challengeMissionFeedbackListSchema.parse(res.data.data);
