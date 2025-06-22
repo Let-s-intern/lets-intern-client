@@ -125,12 +125,15 @@ const MentorFilter = ({
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSearchParams(inputs);
+    const newSearchParams = Object.fromEntries(
+      Object.entries(inputs).filter(([, value]) => value),
+    );
+    setSearchParams(newSearchParams);
   };
 
   const resetFilter = () => {
     setInputs(defaultRef.current);
-    setSearchParams(defaultRef.current);
+    setSearchParams({});
   };
 
   return (
