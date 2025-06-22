@@ -36,9 +36,9 @@ export const useUserAdminQuery = ({
   phoneNum,
   pageable,
 }: {
-  email?: string;
-  name?: string;
-  phoneNum?: string;
+  email?: string | null;
+  name?: string | null;
+  phoneNum?: string | null;
   pageable?: {
     page: number;
     size: number;
