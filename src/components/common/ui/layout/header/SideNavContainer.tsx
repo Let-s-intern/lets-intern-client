@@ -64,11 +64,13 @@ function SideNavContainer({ children, isNextRouter, isOpen, onClose }: Props) {
                 className="p-0 font-medium"
                 isNextRouter={isNextRouter}
                 force={isNextRouter}
+                onClick={() => onClose()}
               />
               <SignUpLink
                 className="bg-transparent p-0 font-medium text-black"
                 isNextRouter={isNextRouter}
                 force={isNextRouter}
+                onClick={() => onClose()}
               />
             </div>
           )}

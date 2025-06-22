@@ -25,7 +25,7 @@ const ApplySection = ({ applicationList, refetch }: ApplySectionProps) => {
           </p>
           <Link
             to="/program"
-            className="other_program rounded-sm border-2 border-primary-xlight bg-white px-5 py-2 font-medium text-neutral-35"
+            className="other_program flex w-full items-center justify-center rounded-sm border-2 border-primary-xlight bg-white px-5 py-2 font-medium text-neutral-35 md:w-auto"
             reloadDocument
           >
             다른 프로그램 둘러보기
