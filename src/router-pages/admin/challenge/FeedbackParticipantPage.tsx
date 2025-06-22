@@ -3,6 +3,7 @@
 import { usePatchAttendance } from '@/api/attendance';
 import {
   ChallengeMissionFeedbackAttendanceQueryKey,
+  MentorMissionFeedbackAttendanceQueryKey,
   useChallengeMissionFeedbackAttendanceQuery,
   useMentorMissionFeedbackAttendanceQuery,
 } from '@/api/challenge';
@@ -40,13 +41,14 @@ const FeedbackStatusEnumForMentor = FeedbackStatusEnum.exclude(['CONFIRMED']);
 
 const useAttendanceHandler = () => {
   const { programId, missionId } = useParams();
+  const { data: isAdmin } = useIsAdminQuery();
+
+  const queryKey = isAdmin
+    ? [ChallengeMissionFeedbackAttendanceQueryKey, programId, missionId]
+    : [MentorMissionFeedbackAttendanceQueryKey, programId, missionId];
 
   const { mutateAsync: patchAttendance } = usePatchAttendance();
-  const invalidateAttendance = useInvalidateQueries([
-    ChallengeMissionFeedbackAttendanceQueryKey,
-    programId,
-    missionId,
-  ]);
+  const invalidateAttendance = useInvalidateQueries(queryKey);
 
   return {
     patchAttendance,
