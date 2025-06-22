@@ -111,19 +111,24 @@ export default function ChallengeFeedbackPage() {
   };
 
   useEffect(() => {
-    setContent(data?.attendanceDetailVo.feedback ?? undefined);
-  }, [data?.attendanceDetailVo.feedback]);
+    if (isLoading || !data) return;
+    setContent(data.attendanceDetailVo.feedback ?? undefined);
+  }, [isLoading, data]);
 
-  if (isLoading) return <LoadingContainer className="mt-[30%]" />;
+  if (isLoading) return <LoadingContainer className="mt-[20%]" />;
 
   return (
     <div className="mt-5 px-5">
       <Heading2 className="mb-2">{attendance?.name} 피드백</Heading2>
       <AttendanceInfoList />
-      <EditorApp
-        initialEditorStateJsonString={content}
-        onChange={handleChangeEditor}
-      />
+      {!isLoading && data && (
+        <EditorApp
+          initialEditorStateJsonString={
+            content ?? data.attendanceDetailVo.feedback ?? undefined
+          }
+          onChange={handleChangeEditor}
+        />
+      )}
       <div className="flex items-center justify-end gap-4">
         <Button variant="outlined" onClick={handleBackToListWithConfirm}>
           리스트로 돌아가기
