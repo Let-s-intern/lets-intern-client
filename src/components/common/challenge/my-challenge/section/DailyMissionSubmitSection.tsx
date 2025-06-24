@@ -5,7 +5,6 @@ import {
 } from '@/api/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { MyDailyMission, Schedule } from '@/schema';
-import debounce from '@/utils/debounce';
 import BaseModal from '@components/ui/BaseModal';
 import ModalButton from '@components/ui/ModalButton';
 import clsx from 'clsx';
@@ -153,7 +152,7 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
 
   return (
     <>
-      <form onSubmit={debounce(handleMissionLinkSubmit)}>
+      <form onSubmit={handleMissionLinkSubmit}>
         <h3 className="mb-6 text-xsmall16 font-semibold">미션 제출하기</h3>
         <label
           htmlFor="link"
