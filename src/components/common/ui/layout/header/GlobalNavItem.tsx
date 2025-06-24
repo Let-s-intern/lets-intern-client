@@ -1,6 +1,7 @@
 'use client';
 
 import Down from '@/assets/icons/down.svg?react';
+import useMounted from '@/hooks/useMounted';
 import { twMerge } from '@/lib/twMerge';
 import { AnchorHTMLAttributes, Fragment, useState } from 'react';
 import HybridLink from '../../HybridLink';
@@ -30,7 +31,7 @@ function GlobalNavItem({
   href = '#',
   subNavList,
   isNew = false,
-  showDropdownIcon,
+  showDropdownIcon = false,
   align = 'left',
   ...restProps
 }: Props) {
@@ -43,6 +44,8 @@ function GlobalNavItem({
   );
 
   const [hover, setHover] = useState(false);
+
+  const isMounted = useMounted();
 
   const getAlignmentClass = () => {
     switch (align) {
@@ -68,7 +71,7 @@ function GlobalNavItem({
       >
         <span className="flex items-center">
           {children}
-          {showDropdownIcon && subNavList && (
+          {isMounted && showDropdownIcon && subNavList && (
             <Down
               width={24}
               className="text-neutral-20 transition-transform group-hover:text-neutral-0"
