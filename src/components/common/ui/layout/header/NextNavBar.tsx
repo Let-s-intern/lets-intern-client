@@ -51,7 +51,6 @@ const NextNavBar = () => {
   const reportNavList = useActiveReportNav();
   const scrollDirection = useScrollDirection(pathname);
   const isMobile = useMediaQuery('(max-width:768px)');
-  console.log(isMobile);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
