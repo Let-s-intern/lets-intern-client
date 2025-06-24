@@ -51,6 +51,7 @@ const NextNavBar = () => {
   const reportNavList = useActiveReportNav();
   const scrollDirection = useScrollDirection(pathname);
   const isMobile = useMediaQuery('(max-width:768px)');
+  console.log(isMobile);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -97,8 +98,8 @@ const NextNavBar = () => {
                 // 모바일은 드롭다운 X
                 {...(!isMobile && {
                   subNavList: programCategoryLists,
-                  showDropdownIcon: true,
                 })}
+                showDropdownIcon={!isMobile}
               >
                 프로그램 &nbsp;
                 <span className="hidden md:inline">카테고리</span>
