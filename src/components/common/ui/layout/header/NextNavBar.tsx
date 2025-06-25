@@ -100,8 +100,8 @@ const NextNavBar = () => {
                 })}
                 showDropdownIcon={!isMobile}
               >
-                프로그램 &nbsp;
-                <span className="hidden md:inline">카테고리</span>
+                프로그램
+                <span className="hidden md:inline">&nbsp;카테고리</span>
               </GlobalNavItem>
               <GlobalNavItem
                 className="text-xsmall14 md:text-xsmall16"
