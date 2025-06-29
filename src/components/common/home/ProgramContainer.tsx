@@ -1,3 +1,4 @@
+import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
 import { useMediaQuery } from '@mui/material';
 import { Fragment, ReactNode } from 'react';
 import { Grid } from 'swiper/modules';
@@ -25,7 +26,7 @@ interface ProgramContainerProps {
 }
 
 const ProgramContainer = (props: ProgramContainerProps) => {
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isMobile = useMediaQuery(MOBILE_MEDIA_QUERY);
 
   if (!props.navigation && props.programs.length < 1) return null;
 

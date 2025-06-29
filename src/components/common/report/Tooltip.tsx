@@ -2,6 +2,7 @@ import { useMediaQuery } from '@mui/material';
 import { memo, useState } from 'react';
 
 import { twMerge } from '@/lib/twMerge';
+import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
 
 interface TooltipProps {
   alt?: string;
@@ -11,7 +12,7 @@ interface TooltipProps {
 
 /** TODO: **공통화** */
 const Tooltip = ({ alt = '툴팁', children, className }: TooltipProps) => {
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isMobile = useMediaQuery(MOBILE_MEDIA_QUERY);
 
   const [isShow, setIsShow] = useState(false);
 
