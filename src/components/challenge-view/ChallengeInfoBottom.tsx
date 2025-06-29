@@ -8,6 +8,7 @@ import {
 } from '@/data/dayjsFormat';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { ChallengeIdSchema, challengeTypeSchema } from '@/schema';
+import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
 import {
   formatFullDateTime,
   formatFullDateTimeWithOutYear,
@@ -42,7 +43,7 @@ const ChallengeInfoBottom = ({
 }: {
   challenge: ChallengeIdSchema;
 }) => {
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isMobile = useMediaQuery(MOBILE_MEDIA_QUERY);
   const {
     isLoading,
     months: installmentMonths,

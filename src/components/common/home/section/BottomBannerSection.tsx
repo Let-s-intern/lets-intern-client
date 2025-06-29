@@ -1,4 +1,5 @@
 import { useGetBannerListForUser } from '@/api/banner';
+import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useMediaQuery } from '@mui/material';
 import { MouseEvent } from 'react';
@@ -6,7 +7,7 @@ import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 const BottomBannerSection = () => {
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isMobile = useMediaQuery(MOBILE_MEDIA_QUERY);
 
   const { data, isLoading } = useGetBannerListForUser({ type: 'MAIN_BOTTOM' });
 

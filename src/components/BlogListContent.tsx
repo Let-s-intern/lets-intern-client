@@ -11,6 +11,7 @@ import LockKeyHoleIcon from '@/assets/icons/lock-keyhole.svg';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
+import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
 import { blogCategory } from '@/utils/convert';
 import { useMediaQuery } from '@mui/material';
 import Link from 'next/link';
@@ -85,7 +86,7 @@ function BlogList({
   onChangePage?: (page: number) => void;
 }) {
   const router = useRouter();
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isMobile = useMediaQuery(MOBILE_MEDIA_QUERY);
 
   const { data: blogBannerData } = useGetBlogBannerList({
     page,

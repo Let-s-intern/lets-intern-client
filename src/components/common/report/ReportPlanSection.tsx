@@ -8,6 +8,7 @@ import { twMerge } from '@/lib/twMerge';
 import { REPORT_PLAN_ID } from '@/router-pages/common/report/ReportNavigation';
 import { personalStatementColors } from '@/router-pages/common/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/router-pages/common/report/ReportResumePage';
+import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
 import { generateUUID } from '@/utils/random';
 import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
@@ -149,7 +150,7 @@ const ReportPlanSection = ({
     }
   }, [reportType]);
 
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isMobile = useMediaQuery(MOBILE_MEDIA_QUERY);
 
   return (
     <section

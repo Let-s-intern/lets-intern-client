@@ -1,6 +1,7 @@
 import Roadmap1 from '@/assets/graphic/home/roadmap/1.svg?react';
 import Roadmap2 from '@/assets/graphic/home/roadmap/2.svg?react';
 import Roadmap3 from '@/assets/graphic/home/roadmap/3.svg?react';
+import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
 import MoreHeader from '@components/common/ui/MoreHeader';
 import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
@@ -45,7 +46,7 @@ const ROADMAP_ITEMS: {
 ];
 
 const RoadMapSection = () => {
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isMobile = useMediaQuery(MOBILE_MEDIA_QUERY);
 
   return (
     <>
