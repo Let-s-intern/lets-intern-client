@@ -1,9 +1,8 @@
 'use client';
 
+import useProgramScrollDirectionStyle from '@/hooks/useProgramScrollDirectionStyle';
 import { twMerge } from '@/lib/twMerge';
-import useScrollStore from '@/store/useScrollStore';
 import { ReactNode, useEffect, useState } from 'react';
-import { SINGLE_ROW_NAVBAR_HEIGHT_OFFSET } from '../ui/layout/header/NextNavBar';
 
 interface TabItem {
   id: string;
@@ -46,7 +45,7 @@ const Tab = ({
 export default function ChallengeTabNavigation() {
   const [active, setActive] = useState('intro');
 
-  const { scrollDirection } = useScrollStore();
+  const scrollStyleClassName = useProgramScrollDirectionStyle();
 
   const handleClick = (tabId: string) => {
     const target = document.getElementById(tabId);
@@ -84,9 +83,7 @@ export default function ChallengeTabNavigation() {
     <nav
       className={twMerge(
         'sticky z-20 flex w-full items-center justify-center border-b-2 border-neutral-80 bg-white px-4 text-xsmall14 font-semibold transition-all md:gap-20 md:px-0 md:text-xsmall16',
-        scrollDirection === 'UP'
-          ? `duration-300 ${SINGLE_ROW_NAVBAR_HEIGHT_OFFSET}`
-          : '-top-0.5 duration-200 md:top-0',
+        scrollStyleClassName,
       )}
     >
       {tabs.map((tab) => (
