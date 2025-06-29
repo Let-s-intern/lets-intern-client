@@ -27,7 +27,6 @@ const TopBanner = ({
   });
 
   const scrollDirection = useScrollDirection();
-  console.log(scrollDirection);
 
   useEffect(() => {
     if (data) {

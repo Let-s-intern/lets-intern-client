@@ -1,8 +1,8 @@
 'use client';
 
+import useScrollDirection from '@/hooks/useScrollDirection';
 import useSectionObserver from '@/hooks/useSectionObserver';
 import { twMerge } from '@/lib/twMerge';
-import useScrollStore from '@/store/useScrollStore';
 import { NavItem } from '@components/ProgramDetailNavigation';
 import { useEffect, useState } from 'react';
 
@@ -33,7 +33,8 @@ const ReportNavigation = ({
   color,
   isReady,
 }: ReportNavigationProps) => {
-  const { scrollDirection } = useScrollStore();
+  const scrollDirection = useScrollDirection();
+
   const [activeSection, setActiveSection] = useState<string>(
     reportNavigateItems[0].to,
   );
