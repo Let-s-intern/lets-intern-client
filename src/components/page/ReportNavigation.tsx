@@ -1,5 +1,6 @@
 'use client';
 
+import useActiveReports from '@/hooks/useActiveReports';
 import useScrollDirection from '@/hooks/useScrollDirection';
 import useSectionObserver from '@/hooks/useSectionObserver';
 import { twMerge } from '@/lib/twMerge';
@@ -33,7 +34,20 @@ const ReportNavigation = ({
   color,
   isReady,
 }: ReportNavigationProps) => {
+  const hasReports = useActiveReports();
+  const showNavBar =
+    Object.values(hasReports).filter((item) => item === true).length > 1;
+
   const scrollDirection = useScrollDirection();
+
+  const topPosition = showNavBar
+    ? 'top-[134px]  md:top-[175px]'
+    : 'top-[84px]  md:top-[117px]';
+
+  const scrollStyleClassName =
+    scrollDirection === 'DOWN'
+      ? '-top-0.5 duration-200 md:top-0 lg:top-0'
+      : ` duration-300 ${topPosition}`;
 
   const [activeSection, setActiveSection] = useState<string>(
     reportNavigateItems[0].to,
@@ -93,11 +107,9 @@ const ReportNavigation = ({
   return (
     <nav
       className={twMerge(
-        'report_navigation sticky top-[134px] z-20 flex w-full transform justify-center gap-x-1 px-6 transition-all duration-300 md:top-[175px] md:gap-x-[100px]',
+        'report_navigation sticky z-20 flex w-full transform justify-center gap-x-1 px-6 transition-all duration-300 md:gap-x-[100px]',
         isDark ? 'bg-black/90' : 'border-b-2 border-neutral-80 bg-white',
-        scrollDirection === 'DOWN'
-          ? '-top-0.5 duration-200 md:top-0 lg:top-0'
-          : 'duration-300',
+        scrollStyleClassName,
         className,
       )}
     >
