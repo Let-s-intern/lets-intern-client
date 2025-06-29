@@ -1,5 +1,4 @@
-import useScrollStore from '@/store/useScrollStore';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const scrollEventPage = [
   '/report/landing',
@@ -7,17 +6,22 @@ const scrollEventPage = [
   '/program/live',
 ];
 
-export default function useScrollDirection(pathname: string) {
+export default function useScrollDirection(pathname?: string) {
   const lastScrollY = useRef(0);
 
-  const { setScrollDirection, scrollDirection } = useScrollStore();
+  const [scrollDirection, setScrollDirection] = useState<string>();
+
+  // const { setScrollDirection, scrollDirection } = useScrollStore();
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
     const handleScroll = () => {
       // 현재 경로가 scrollEventPage 중 하나로 시작되지 않을 때는 스크롤 이벤트를 무시
-      if (!scrollEventPage.some((page) => location.pathname.startsWith(page))) {
+      if (
+        pathname &&
+        !scrollEventPage.some((page) => pathname.startsWith(page))
+      ) {
         return;
       }
 
