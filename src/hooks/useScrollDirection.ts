@@ -9,7 +9,7 @@ const scrollEventPage = [
 export default function useScrollDirection(pathname?: string) {
   const lastScrollY = useRef(0);
 
-  const [scrollDirection, setScrollDirection] = useState<string>();
+  const [scrollDirection, setScrollDirection] = useState<string>('UP');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,7 +38,6 @@ export default function useScrollDirection(pathname?: string) {
       lastScrollY.current = currentScrollY;
     };
 
-    setScrollDirection('UP');
     window.addEventListener('scroll', handleScroll);
 
     return () => {
