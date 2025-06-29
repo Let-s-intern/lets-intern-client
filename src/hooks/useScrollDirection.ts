@@ -9,11 +9,9 @@ const scrollEventPage = [
 export default function useScrollDirection(pathname?: string) {
   const lastScrollY = useRef(0);
 
-  const [scrollDirection, setScrollDirection] = useState<string>();
+  const [scrollDirection, setScrollDirection] = useState<string>('UP');
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-
     const handleScroll = () => {
       // todo:
       // useScrollDirection 훅은 순수하게 스크롤 방향만 제공하고,
@@ -40,7 +38,6 @@ export default function useScrollDirection(pathname?: string) {
       lastScrollY.current = currentScrollY;
     };
 
-    setScrollDirection('UP');
     window.addEventListener('scroll', handleScroll);
 
     return () => {

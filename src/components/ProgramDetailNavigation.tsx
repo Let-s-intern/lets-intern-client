@@ -1,10 +1,11 @@
+'use client';
+
+import useProgramScrollDirectionStyle from '@/hooks/useProgramScrollDirectionStyle';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
-import useScrollStore from '@/store/useScrollStore';
 import { ProgramType } from '@/types/common';
 import { useEffect, useMemo, useState } from 'react';
 import { challengeColors } from './ChallengeView';
-import { SINGLE_ROW_NAVBAR_HEIGHT_OFFSET } from './common/ui/layout/header/NextNavBar';
 
 const { CAREER_START, PORTFOLIO, EXPERIENCE_SUMMARY, ETC } =
   challengeTypeSchema.enum;
@@ -57,14 +58,14 @@ const ProgramDetailNavigation = ({
   isReady,
   challengeType,
 }: ProgramDetailNavigationProps) => {
-  const { scrollDirection } = useScrollStore();
-
   const isLive = programType === 'live';
   const navItems = isLive ? liveNavigateItems : challengeNavigateItems;
 
   const [activeSection, setActiveSection] = useState<string>(
     isLive ? liveNavigateItems[0].to : challengeNavigateItems[0].to,
   );
+
+  const scrollStyleClassName = useProgramScrollDirectionStyle();
 
   const primaryColor = useMemo(() => {
     switch (challengeType) {
@@ -134,9 +135,7 @@ const ProgramDetailNavigation = ({
         'sticky z-20 flex w-full justify-center gap-x-1 border-b-2 border-neutral-80 bg-white px-6 transition-all md:gap-x-[100px]',
         programType === 'challenge' && 'challenge_navigation',
         programType === 'live' && 'live_navigation',
-        scrollDirection === 'DOWN'
-          ? '-top-0.5 duration-200 md:top-0'
-          : `duration-300 ${SINGLE_ROW_NAVBAR_HEIGHT_OFFSET}`,
+        scrollStyleClassName,
         className,
       )}
     >
