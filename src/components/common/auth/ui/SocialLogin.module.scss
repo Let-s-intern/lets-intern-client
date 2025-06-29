@@ -1,6 +1,6 @@
 .login {
   .gray-text {
-    margin: 2rem 0;
+    margin: 1.5rem 0;
     display: block;
     text-align: center;
     font-size: 0.875rem;
@@ -23,5 +23,33 @@
       display: flex;
       gap: 1rem;
     }
+  }
+}
+
+.recentBadge {
+  position: absolute;
+  top: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #232323;
+  color: #fff;
+  font-size: 14px;
+  padding: 4px 12px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px 6px 0 6px;
+    border-style: solid;
+    border-color: #232323 transparent transparent transparent;
+    display: block;
+    width: 0;
   }
 }
