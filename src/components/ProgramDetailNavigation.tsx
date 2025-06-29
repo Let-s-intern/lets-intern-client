@@ -132,9 +132,9 @@ const ProgramDetailNavigation = ({
   return (
     <nav
       className={twMerge(
+        'sticky z-20 flex w-full justify-center gap-x-1 border-b-2 border-neutral-80 bg-white px-6 transition-all md:gap-x-[100px]',
         programType === 'challenge' && 'challenge_navigation',
         programType === 'live' && 'live_navigation',
-        'sticky z-20 flex w-full justify-center gap-x-1 border-b-2 border-neutral-80 bg-white px-6 transition-all md:gap-x-[100px]',
         scrollStyleClassName,
         className,
       )}
