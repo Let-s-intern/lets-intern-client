@@ -11,8 +11,6 @@ export default function useScrollDirection(pathname?: string) {
 
   const [scrollDirection, setScrollDirection] = useState<string>();
 
-  // const { setScrollDirection, scrollDirection } = useScrollStore();
-
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
