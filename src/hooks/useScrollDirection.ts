@@ -12,8 +12,6 @@ export default function useScrollDirection(pathname?: string) {
   const [scrollDirection, setScrollDirection] = useState<string>();
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-
     const handleScroll = () => {
       // todo:
       // useScrollDirection 훅은 순수하게 스크롤 방향만 제공하고,
