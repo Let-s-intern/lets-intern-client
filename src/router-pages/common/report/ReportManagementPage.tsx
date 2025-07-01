@@ -241,6 +241,14 @@ const ReportManagementPage = () => {
     );
   };
 
+  const onClickAddReport = () => {
+    if (data?.myReportInfos.length === 0) {
+      window.alert('피드백 리포트 준비중입니다.');
+      return;
+    }
+    navigate(reportLink());
+  };
+
   useEffect(() => {
     if (status === 'success' && data.myReportInfos.length === 0) {
       if (alerted.current) {
@@ -533,12 +541,12 @@ const ReportManagementPage = () => {
         })}
       </div>
       <div className="my-3">
-        <Link
-          to={reportLink()}
+        <button
+          onClick={onClickAddReport}
           className="add_button_click flex h-12 w-full items-center justify-center rounded-md border-2 border-primary bg-neutral-100 font-medium text-primary-dark transition hover:border-primary-light hover:bg-white"
         >
           추가 신청하기
-        </Link>
+        </button>
       </div>
     </div>
   );
