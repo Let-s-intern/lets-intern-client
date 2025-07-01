@@ -251,7 +251,10 @@ const NextNavBar = () => {
       </SideNavContainer>
 
       {/* 네비게이션 바 공간 차지 */}
-      <Spacer hideMobileBottomNavBar={hideMobileBottomNavBar(pathname)} />
+      <Spacer
+        hideMobileBottomNavBar={hideMobileBottomNavBar(pathname)}
+        backgroundColor="bg-black"
+      />
     </header>
   );
 };
