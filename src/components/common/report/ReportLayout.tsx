@@ -1,9 +1,8 @@
+import useAuthStore from '@/store/useAuthStore';
+import axios from '@/utils/axios';
+import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
-
-import { useQuery } from '@tanstack/react-query';
-import useAuthStore from '../../../store/useAuthStore';
-import axios from '../../../utils/axios';
 import NavBar from '../challenge/ui/layout/NavBar';
 
 const ReportLayout = () => {
@@ -31,7 +30,6 @@ const ReportLayout = () => {
       },
     });
 
-  const isValidUserAccess = isValidUserAccessData?.data?.isAccessible;
   const isValidUserInfo = isValidUserInfoData?.data?.pass;
 
   const isLoading = isValidUserInfoLoading || isValidUserAccessLoading;
@@ -48,11 +46,6 @@ const ReportLayout = () => {
     if (isLoading) {
       return;
     }
-
-    // if (!isValidUserAccess) {
-    //   navigate('/program');
-    //   return;
-    // }
 
     if (!isValidUserInfo) {
       navigate(`/challenge/${params.programId}/user/info`);

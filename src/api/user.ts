@@ -17,7 +17,6 @@ import {
 } from './userSchema';
 
 export const UseMentorListQueryKey = 'useMentorListQueryKey';
-export const UseUserAdminQueryKey = 'useUserListQueryKey';
 
 export const useMentorListQuery = () => {
   return useQuery({
@@ -29,15 +28,17 @@ export const useMentorListQuery = () => {
   });
 };
 
+export const UseUserAdminQueryKey = 'useUserListQueryKey';
+
 export const useUserAdminQuery = ({
   email,
   name,
   phoneNum,
   pageable,
 }: {
-  email?: string;
-  name?: string;
-  phoneNum?: string;
+  email?: string | null;
+  name?: string | null;
+  phoneNum?: string | null;
   pageable?: {
     page: number;
     size: number;
@@ -242,7 +243,7 @@ export const useMentorChallengeListQuery = ({
     ...options,
     queryKey: [UseMentorChallengeListQueryKey],
     queryFn: async () => {
-      const res = await axios.get('/admin/challenge-mentor');
+      const res = await axios.get('/challenge-mentor');
       return mentorChallengeListSchema.parse(res.data.data);
     },
     refetchOnWindowFocus: false,

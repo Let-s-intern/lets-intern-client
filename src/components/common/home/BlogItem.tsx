@@ -23,7 +23,7 @@ const BlogItem = (props: BlogItemProps) => {
         <img
           src={props.thumbnail}
           alt="thumbnail"
-          className="aspect-[1.3/1] w-full rounded-sm object-cover"
+          className="aspect-[1.3/1] w-full rounded-sm border-[0.7px] border-neutral-75 object-cover"
         />
         <span className="mt-3 text-xsmall14 font-semibold text-primary">
           {props.category}

@@ -1,3 +1,4 @@
+import useScrollDirection from '@/hooks/useScrollDirection';
 import { twMerge } from '@/lib/twMerge';
 import { ILineBanner } from '@/types/Banner.interface';
 import axios from '@/utils/axios';
@@ -25,6 +26,8 @@ const TopBanner = ({
     },
   });
 
+  const scrollDirection = useScrollDirection();
+
   useEffect(() => {
     if (data) {
       setIsShow(true);
@@ -43,29 +46,34 @@ const TopBanner = ({
     setIsShow(false);
   };
 
+  const bannerStyle = {
+    backgroundColor: data?.colorCode,
+    color: data?.textColorCode,
+  };
+
   return isShow ? (
     <section
       className={twMerge(
-        'band_banner fixed z-20 w-screen cursor-pointer bg-neutral-0 py-3 md:px-5',
+        'band_banner fixed z-20 w-screen cursor-pointer bg-neutral-0 py-3 duration-300 md:px-5',
         FULL_NAVBAR_HEIGHT_OFFSET,
+        scrollDirection === 'DOWN' ? '-translate-y-full' : 'translate-y-0',
       )}
-      style={{
-        backgroundColor: data?.colorCode,
-        color: data?.textColorCode,
-      }}
+      style={bannerStyle}
       onClick={clickBanner}
     >
-      <div className="relative">
-        <div className="flex flex-col items-center justify-center gap-1 text-center md:flex-row">
-          <span className="text-1-semibold">{data?.title}</span>
-          <span className="text-0.875-medium">{data?.contents}</span>
+      <div className="flex items-center justify-between px-2">
+        <div aria-hidden="true" className="h-6 w-6" />
+        <div className="flex flex-col items-center justify-center gap-1 text-center text-[13px] font-medium leading-[140%] md:flex-row md:text-small18">
+          <span>{data?.title}</span>
+          <span>{data?.contents}</span>
         </div>
-        <img
-          onClick={closeBanner}
-          className="absolute right-0 top-0 h-6 w-6"
-          src="/icons/Close_MD.svg"
-          alt="상단띠배너 닫기"
-        />
+        <button type="button" onClick={closeBanner}>
+          <img
+            className="h-6 w-6"
+            src="/icons/Close_MD.svg"
+            alt="상단띠배너 닫기"
+          />
+        </button>
       </div>
     </section>
   ) : (

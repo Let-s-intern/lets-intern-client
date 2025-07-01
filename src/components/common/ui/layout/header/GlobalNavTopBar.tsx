@@ -23,14 +23,16 @@ function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
     {
       children: '마이페이지',
       href: '/mypage/application',
-      isNextRouter: true,
+      isNextRouter,
+      force: isNextRouter,
     },
     ...(isAdmin
       ? [
           {
             children: '관리자페이지',
             href: '/admin',
-            isNextRouter: true,
+            isNextRouter,
+            force: isNextRouter,
           },
         ]
       : []),
@@ -40,7 +42,8 @@ function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
         logout();
         window.location.href = '/';
       },
-      isNextRouter: true,
+      isNextRouter,
+      force: isNextRouter,
     },
   ];
   return (

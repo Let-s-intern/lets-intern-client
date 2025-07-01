@@ -20,7 +20,7 @@ const LinkButton = ({
     <Link
       to={to}
       className={clsx(
-        'flex w-full items-center justify-center gap-1 rounded-sm border-2 border-primary-xlight bg-neutral-100 px-5 py-2 font-semibold text-neutral-35 md:w-auto',
+        'flex w-full items-center justify-center gap-1 rounded-sm border-2 border-primary-xlight bg-neutral-100 px-5 py-1 text-xsmall14 font-semibold text-neutral-35 md:w-auto md:py-2 md:text-xsmall16',
         className,
       )}
       target={target}
