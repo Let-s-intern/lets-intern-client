@@ -31,6 +31,8 @@ const TopBanner = ({
   useEffect(() => {
     if (data) {
       setIsShow(true);
+    } else {
+      setIsShow(false);
     }
   }, [data, setIsShow]);
 
