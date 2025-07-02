@@ -19,8 +19,8 @@ import SideNavContainer from './SideNavContainer';
 import SideNavItem from './SideNavItem';
 import Spacer from './Spacer';
 
-export const FULL_NAVBAR_HEIGHT_OFFSET = 'top-[84px] md:top-[117px]';
-export const SINGLE_ROW_NAVBAR_HEIGHT_OFFSET = 'top-[43px] md:top-[117px]';
+export const FULL_NAVBAR_HEIGHT_OFFSET = 'top-[84px] md:top-[116px]';
+export const SINGLE_ROW_NAVBAR_HEIGHT_OFFSET = 'top-[43px] md:top-[116px]';
 
 export const hideMobileBottomNavBar = (pathname: string) =>
   pathname.startsWith('/program/') ||
