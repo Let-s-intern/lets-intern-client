@@ -5,6 +5,7 @@ import LoginLink from './LoginLink';
 import LogoLink from './LogoLink';
 import SignUpLink from './SignUpLink';
 import { SubNavItemProps } from './SubNavItem';
+import SuperInternPromotion from './SuperInternPromotion';
 
 interface Props {
   isNextRouter: boolean;
@@ -74,6 +75,8 @@ function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
       </div>
 
       <div className="flex items-center justify-center gap-4">
+        {/* 슈퍼인턴 프로모션 영역 */}
+        <SuperInternPromotion />
         {isLoggedIn ? (
           <GlobalNavItem
             className="hidden cursor-pointer items-center md:flex"
