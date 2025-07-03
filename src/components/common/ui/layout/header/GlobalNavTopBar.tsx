@@ -74,7 +74,7 @@ function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
         </GlobalNavItem>
       </div>
 
-      <div className="flex items-center justify-center gap-4">
+      <div className="flex items-center justify-center gap-1">
         {/* 슈퍼인턴 프로모션 영역 */}
         <SuperInternPromotion />
         {isLoggedIn ? (

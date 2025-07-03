@@ -115,8 +115,8 @@ const HOME_INTRO = {
             면접 제안 받기
           </p>
         ),
-        icon: <Intro10 width={44} height={44} />,
-        href: 'https://recruit.superpasshr.com/',
+        icon: <Intro10 width={40} height={40} />,
+        href: 'https://recruit.superpasshr.com/?utm_source=letscareer&utm_medium=letscareer_homepage&utm_campaign=letscareer_homepage',
         gaTitle: '기업에게 면접 제안 받기',
       },
     ],
