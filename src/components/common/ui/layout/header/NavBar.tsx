@@ -184,7 +184,7 @@ const NavBar = () => {
           </span>
         </SideNavItem>
         <SideNavItem
-          href="https://recruit.superpasshr.com/"
+          href="https://recruit.superpasshr.com/?utm_source=letscareer&utm_medium=letscareer_homepage&utm_campaign=letscareer_homepage"
           isNextRouter
           force
           target="_blank"
