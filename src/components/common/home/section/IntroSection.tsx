@@ -150,6 +150,9 @@ const IntroItem = ({
           alert('준비중입니다.');
           return;
         }
+        if (href.startsWith('http')) {
+          return;
+        }
         e.preventDefault();
         window.location.href = href;
       }}
