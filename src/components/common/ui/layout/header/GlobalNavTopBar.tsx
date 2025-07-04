@@ -86,7 +86,7 @@ function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
             align="right"
           >
             <div className="flex items-center gap-2">
-              <span className="text-xsmall16 font-medium text-neutral-0">
+              <span className="pl-2 text-xsmall16 font-medium text-neutral-0">
                 {user?.name} 님
               </span>
               <img
