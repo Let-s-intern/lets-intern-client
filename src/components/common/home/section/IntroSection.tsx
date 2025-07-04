@@ -145,10 +145,16 @@ const IntroItem = ({
       className="icon_menu flex flex-col items-center gap-3 text-nowrap text-center text-xxsmall12 font-medium text-neutral-20 md:min-w-[92px] md:text-xsmall14"
       href={href ?? '#'}
       target={href && href.startsWith('http') ? '_blank' : undefined}
-      onClick={() => {
+      onClick={(e) => {
         if (!href || href === '#') {
           alert('준비중입니다.');
+          return;
         }
+        if (href.startsWith('http')) {
+          return;
+        }
+        e.preventDefault();
+        window.location.href = href;
       }}
       data-url={href}
       data-text={gaTitle}
