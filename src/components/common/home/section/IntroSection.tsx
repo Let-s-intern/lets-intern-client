@@ -1,3 +1,5 @@
+'use client';
+
 import { useGetChallengeHome } from '@/api/challenge';
 import { convertReportTypeToLandingPath } from '@/api/report';
 import Intro1 from '@/assets/graphic/home/intro/1.svg?react';
