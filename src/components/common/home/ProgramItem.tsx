@@ -34,7 +34,7 @@ const ProgramItem = ({ ...props }: ProgramItemProps) => {
           </span>
         )}
         <img
-          src={props.thumbnail}
+          src={props.thumbnail || undefined}
           alt="thumbnail"
           className="aspect-[1.3/1] w-full rounded-sm border-[0.7px] border-neutral-75 object-cover"
         />

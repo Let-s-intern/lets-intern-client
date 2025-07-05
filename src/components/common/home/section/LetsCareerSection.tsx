@@ -1,3 +1,5 @@
+'use client';
+
 import { useGetUserProgramQuery, useGetVodListQuery } from '@/api/program';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useEffect, useMemo, useState } from 'react';
