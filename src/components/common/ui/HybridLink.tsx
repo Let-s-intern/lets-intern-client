@@ -19,6 +19,8 @@ function HybridLink({
   href = '#',
   children,
   onClick,
+  target,
+  rel,
   ...restProps
 }: Props) {
   const LinkComponent: React.ElementType = isNextRouter ? Link : RouterLink;
@@ -26,15 +28,44 @@ function HybridLink({
     ? {
         ...restProps,
         href,
+        target,
+        rel,
         onClick: (e: MouseEvent<HTMLAnchorElement>) => {
           if (onClick) onClick(e);
           if (force) {
             e.preventDefault();
-            window.location.href = href;
+            // target="_blank"일 때는 새 창에서 열기
+            if (target === '_blank') {
+              window.open(
+                href,
+                '_blank',
+                rel ? 'noopener,noreferrer' : undefined,
+              );
+            } else {
+              window.location.href = href;
+            }
           }
         },
       }
-    : { ...restProps, to: href, reloadDocument: force, onClick };
+    : {
+        ...restProps,
+        to: href,
+        reloadDocument: force,
+        onClick: (e: MouseEvent<HTMLAnchorElement>) => {
+          if (onClick) onClick(e);
+          // React Router에서도 target="_blank" 처리
+          if (force && target === '_blank') {
+            e.preventDefault();
+            window.open(
+              href,
+              '_blank',
+              rel ? 'noopener,noreferrer' : undefined,
+            );
+          }
+        },
+        target,
+        rel,
+      };
 
   return <LinkComponent {...linkProps}>{children}</LinkComponent>;
 }

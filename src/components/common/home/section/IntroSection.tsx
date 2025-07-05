@@ -3,6 +3,7 @@
 import { useGetChallengeHome } from '@/api/challenge';
 import { convertReportTypeToLandingPath } from '@/api/report';
 import Intro1 from '@/assets/graphic/home/intro/1.svg?react';
+import Intro10 from '@/assets/graphic/home/intro/10.svg?react';
 import Intro2 from '@/assets/graphic/home/intro/2.svg?react';
 import Intro3 from '@/assets/graphic/home/intro/3.svg?react';
 import Intro5 from '@/assets/graphic/home/intro/5.svg?react';
@@ -108,6 +109,18 @@ const HOME_INTRO = {
         href: convertReportTypeToLandingPath('PERSONAL_STATEMENT'),
         gaTitle: '자기소개서 피드백 받기',
       },
+      {
+        title: (
+          <p>
+            기업에게
+            <br />
+            면접 제안 받기
+          </p>
+        ),
+        icon: <Intro10 width={40} height={40} />,
+        href: 'https://recruit.superpasshr.com/?utm_source=letscareer&utm_medium=letscareer_homepage&utm_campaign=letscareer_homepage',
+        gaTitle: '기업에게 면접 제안 받기',
+      },
     ],
   },
 };
@@ -134,10 +147,16 @@ const IntroItem = ({
       className="icon_menu flex flex-col items-center gap-3 text-nowrap text-center text-xxsmall12 font-medium text-neutral-20 md:min-w-[92px] md:text-xsmall14"
       href={href ?? '#'}
       target={href && href.startsWith('http') ? '_blank' : undefined}
-      onClick={() => {
+      onClick={(e) => {
         if (!href || href === '#') {
           alert('준비중입니다.');
+          return;
         }
+        if (href.startsWith('http')) {
+          return;
+        }
+        e.preventDefault();
+        window.location.href = href;
       }}
       data-url={href}
       data-text={gaTitle}
@@ -249,10 +268,10 @@ const IntroSection = () => {
           <div
             className={twMerge(
               'gap-x-5 gap-y-5 md:mx-auto md:flex md:justify-center md:gap-10 md:px-0',
-              filteredItems.length === 5
+              filteredItems.length === 6
                 ? 'min-w-fit gap-x-4 px-5'
                 : 'flex-wrap justify-center',
-              filteredItems.length === 6
+              filteredItems.length === 7
                 ? 'grid grid-cols-3 gap-x-6 px-10'
                 : 'flex',
             )}
