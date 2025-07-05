@@ -33,13 +33,11 @@ const ProgramItem = ({ ...props }: ProgramItemProps) => {
             마감임박🔥
           </span>
         )}
-        {props.thumbnail && (
-          <img
-            src={props.thumbnail}
-            alt="thumbnail"
-            className="aspect-[1.3/1] w-full rounded-sm border-[0.7px] border-neutral-75 object-cover"
-          />
-        )}
+        <img
+          src={props.thumbnail || undefined}
+          alt="thumbnail"
+          className="aspect-[1.3/1] w-full rounded-sm border-[0.7px] border-neutral-75 object-cover"
+        />
         {props.category && (
           <span className="-mb-1 mt-3 text-xsmall14 font-semibold text-primary">
             {props.category}
