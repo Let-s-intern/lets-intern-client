@@ -1,3 +1,5 @@
+'use client';
+
 import { IBanner } from '@/types/Banner.interface';
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
@@ -62,12 +64,14 @@ const Popup = () => {
   return showPopup && data ? (
     <div className="fixed bottom-0 top-0 z-50 flex h-full w-screen items-center justify-center bg-neutral-0/60 p-5">
       <div className="relative h-fit max-w-[450px] overflow-hidden rounded-md bg-static-100 shadow-05">
-        <img
-          className="popup_banner h-auto w-full cursor-pointer"
-          src={data?.imgUrl}
-          onClick={clickPopup}
-          alt="홈 화면 팝업 이미지"
-        />
+        {data?.imgUrl && (
+          <img
+            className="popup_banner h-auto w-full cursor-pointer"
+            src={data?.imgUrl}
+            onClick={clickPopup}
+            alt="홈 화면 팝업 이미지"
+          />
+        )}
         <div className="flex">
           <button
             className="w-1/2 py-5 text-center text-xxsmall12 font-semibold"
