@@ -3,7 +3,6 @@
 import { useProgramQuery } from '@/api/program';
 import { usePatchUser } from '@/api/user';
 import CreditCardIcon from '@/assets/icons/credit-card.svg?react';
-import PaybackImage from '@/assets/payback.png';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { UserInfo } from '@/lib/order';
 import { ChallengePriceInfo } from '@/schema';
@@ -318,7 +317,7 @@ const PaymentInputPage = () => {
           {!isLoading &&
             programApplicationData.programType === 'challenge' &&
             programApplicationData.deposit > 0 && (
-              <div className="relative rounded-sm bg-[#E8F9F2] px-4 py-6 text-xsmall14 md:px-5">
+              <div className="relative overflow-hidden rounded-sm bg-[#E8F9F2] px-4 py-6 text-xsmall14 md:px-5">
                 <p className="font-medium">
                   모든 미션을 성공하면
                   <br className="md:hidden" />{' '}
@@ -327,13 +326,12 @@ const PaymentInputPage = () => {
                   </span>{' '}
                   해드려요!
                 </p>
-                {programApplicationData.deposit === 30000 && (
-                  <img
-                    className="absolute bottom-0 right-0 h-full w-auto"
-                    src={PaybackImage.src}
-                    alt="3만원 페이백"
-                  />
-                )}
+                <img
+                  className="absolute -right-2 -top-0.5 h-auto w-[130px] md:right-5 md:w-[102px]"
+                  src="/images/payback.svg"
+                  alt=""
+                  aria-hidden="true"
+                />
               </div>
             )}
         </div>
