@@ -1,3 +1,5 @@
+'use client';
+
 import { CurationType, useGetUserCuration } from '@/api/curation';
 import { convertReportTypeToLandingPath, ReportType } from '@/api/report';
 import { MMDD, YY_MM_DD } from '@/data/dayjsFormat';

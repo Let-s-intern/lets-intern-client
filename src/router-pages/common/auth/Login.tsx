@@ -53,6 +53,8 @@ const Login = () => {
       return res.data;
     },
     onSuccess: (data) => {
+      // 일반 이메일 로그인 성공 시 소셜 로그인 최근 로그인 기록 초기화
+      localStorage.removeItem('lastSocialLogin');
       login(data.data.accessToken, data.data.refreshToken);
       if (!redirect) {
         return;
@@ -110,10 +112,8 @@ const Login = () => {
   const handleLoginSuccess = (token: any) => {
     if (document.referrer.includes('/oauth2/authorize/kakao')) {
       localStorage.setItem('lastSocialLogin', 'KAKAO');
-      console.log('카카오 로그인 성공, localStorage 저장됨');
     } else if (document.referrer.includes('/oauth2/authorize/naver')) {
       localStorage.setItem('lastSocialLogin', 'NAVER');
-      console.log('네이버 로그인 성공, localStorage 저장됨');
     }
 
     if (token.isNew) {
@@ -162,7 +162,7 @@ const Login = () => {
           </Button>
         </form>
         <SocialLogin type="LOGIN" />
-        <div className="mt-8 flex justify-center gap-8">
+        <div className="mt-9 flex justify-center gap-8">
           <TextLink to={`/signup?redirect=${redirect}`}>회원가입</TextLink>
           <TextLink to="/find-password" dark>
             비밀번호 찾기

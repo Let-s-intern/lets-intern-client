@@ -1,3 +1,5 @@
+'use client';
+
 import { useGetUserCuration } from '@/api/curation';
 import ProgramContainer from '../ProgramContainer';
 import {

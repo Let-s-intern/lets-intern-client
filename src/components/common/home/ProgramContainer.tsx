@@ -1,3 +1,5 @@
+'use client';
+
 import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
 import { useMediaQuery } from '@mui/material';
 import { Fragment, ReactNode } from 'react';

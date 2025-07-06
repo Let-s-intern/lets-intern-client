@@ -1,3 +1,5 @@
+'use client';
+
 import { useBlogListQuery } from '@/api/blog';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
