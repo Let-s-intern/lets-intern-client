@@ -164,7 +164,7 @@ const Login = () => {
           </Button>
         </form>
         <SocialLogin type="LOGIN" />
-        <div className="mt-8 flex justify-center gap-8">
+        <div className="mt-9 flex justify-center gap-8">
           <TextLink to={`/signup?redirect=${redirect}`}>회원가입</TextLink>
           <TextLink to="/find-password" dark>
             비밀번호 찾기
