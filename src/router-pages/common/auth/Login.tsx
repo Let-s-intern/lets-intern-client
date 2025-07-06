@@ -53,6 +53,8 @@ const Login = () => {
       return res.data;
     },
     onSuccess: (data) => {
+      // 일반 이메일 로그인 성공 시 소셜 로그인 최근 로그인 기록 초기화
+      localStorage.removeItem('lastSocialLogin');
       login(data.data.accessToken, data.data.refreshToken);
       if (!redirect) {
         return;
