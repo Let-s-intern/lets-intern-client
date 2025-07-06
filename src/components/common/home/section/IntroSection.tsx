@@ -257,6 +257,11 @@ const IntroSection = () => {
     );
   });
 
+  /**
+   * '여기 스타일이 왜 그런가요?'는
+   * 디자인 참고: https://www.figma.com/design/cSbg7vHidcSZ53ii46CYbJ/-%EB%A0%9B%EC%B8%A0%EC%BB%A4%EB%A6%AC%EC%96%B4--%EC%9B%B9%EC%82%AC%EC%9D%B4%ED%8A%B8?node-id=17924-87310&t=9WNiucwASYwJNmWj-4
+   */
+
   return (
     <>
       <section className="flex w-full max-w-[1120px] flex-col gap-[17px] overflow-x-hidden px-5 md:gap-12 xl:px-0">
@@ -268,10 +273,10 @@ const IntroSection = () => {
           <div
             className={twMerge(
               'gap-x-5 gap-y-5 md:mx-auto md:flex md:justify-center md:gap-10 md:px-0',
-              filteredItems.length === 6
+              filteredItems.length === 5
                 ? 'min-w-fit gap-x-4 px-5'
                 : 'flex-wrap justify-center',
-              filteredItems.length === 7
+              filteredItems.length === 6
                 ? 'grid grid-cols-3 gap-x-6 px-10'
                 : 'flex',
             )}
