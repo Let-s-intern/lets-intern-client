@@ -112,10 +112,8 @@ const Login = () => {
   const handleLoginSuccess = (token: any) => {
     if (document.referrer.includes('/oauth2/authorize/kakao')) {
       localStorage.setItem('lastSocialLogin', 'KAKAO');
-      console.log('카카오 로그인 성공, localStorage 저장됨');
     } else if (document.referrer.includes('/oauth2/authorize/naver')) {
       localStorage.setItem('lastSocialLogin', 'NAVER');
-      console.log('네이버 로그인 성공, localStorage 저장됨');
     }
 
     if (token.isNew) {
