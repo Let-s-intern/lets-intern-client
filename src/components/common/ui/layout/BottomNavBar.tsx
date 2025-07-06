@@ -1,5 +1,3 @@
-'use client';
-
 import { memo, useEffect, useState } from 'react';
 import HybridLink from '../HybridLink';
 
@@ -56,11 +54,13 @@ interface Props {
 type Active = '블로그' | '후기' | '홈' | '프로그램' | '마이페이지';
 
 function BottomNavBar({ isNextRouter, pathname = '' }: Props) {
+  // 모바일 네비게이션 바 숨김 조건
   const hidden =
     pathname.startsWith('/report') ||
     pathname.startsWith('/program/') ||
     pathname === '/about' ||
     pathname.startsWith('/payment');
+
   const menuInfo: Menu[] = [
     {
       name: '블로그',
@@ -110,7 +110,7 @@ function BottomNavBar({ isNextRouter, pathname = '' }: Props) {
     if (pathname === '/') setActive('홈');
     else if (pathname === '/program') setActive('프로그램');
     else if (pathname.startsWith('/blog')) setActive('블로그');
-    else if (pathname === '/review') setActive('후기');
+    else if (pathname.startsWith('/review')) setActive('후기');
     else if (pathname.startsWith('/mypage')) setActive('마이페이지');
   }, [pathname]);
 
