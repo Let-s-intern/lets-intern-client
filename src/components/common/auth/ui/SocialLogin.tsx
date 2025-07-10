@@ -38,7 +38,7 @@ const SocialLoginButton = ({
   return (
     <div className="relative">
       {isRecent && (
-        <div className="absolute -top-8 left-1/2 z-10 -translate-x-1/2 transform whitespace-nowrap rounded-xs bg-neutral-0 px-2 py-1 text-sm text-neutral-100 shadow-lg">
+        <div className="absolute -top-8 left-1/2 z-10 -translate-x-1/2 transform whitespace-nowrap rounded-xxs bg-neutral-0 px-2 py-1 text-sm text-neutral-100 shadow-lg">
           최근 로그인
           <div className="absolute left-1/2 top-full -translate-x-1/2 transform border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-neutral-0"></div>
         </div>
