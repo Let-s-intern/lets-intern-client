@@ -32,7 +32,7 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
     }
     const path = `${basePath}/oauth2/authorize/${
       socialType === 'KAKAO' ? 'kakao' : 'naver'
-    }?redirect_uri=${redirectPath}`;
+    }?redirect_uri=${redirectPath}&state=${socialType}`;
 
     return path;
   };
