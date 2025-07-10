@@ -111,10 +111,8 @@ const Login = () => {
 
   const handleLoginSuccess = (token: any) => {
     const socialLoginType = searchParams.get('state');
-    if (socialLoginType === 'KAKAO') {
-      localStorage.setItem('lastSocialLogin', 'KAKAO');
-    } else if (socialLoginType === 'NAVER') {
-      localStorage.setItem('lastSocialLogin', 'NAVER');
+    if (socialLoginType === 'KAKAO' || socialLoginType === 'NAVER') {
+      localStorage.setItem('lastSocialLogin', socialLoginType);
     }
 
     if (token.isNew) {
