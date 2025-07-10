@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import styles from './SocialLogin.module.scss';
 
 interface SocialLoginProps {
   type: 'LOGIN' | 'SIGN_UP';
@@ -38,14 +37,18 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
   };
 
   return (
-    <div className={styles.login}>
-      <span className={styles['gray-text']}>또는 간편 로그인</span>
-      <div className={styles.content}>
-        {/* <h2>SNS 계정으로 {type === 'LOGIN' ? '로그인' : '회원가입'}하기</h2> */}
-        <div className={styles.buttons}>
-          <div style={{ position: 'relative' }}>
+    <div>
+      <span className="my-6 block text-center text-sm text-gray-500">
+        또는 간편 로그인
+      </span>
+      <div className="flex flex-col items-center">
+        <div className="mt-4 flex gap-4">
+          <div className="relative">
             {lastSocialLogin === 'KAKAO' && (
-              <div className={styles.recentBadge}>최근 로그인</div>
+              <div className="rounded absolute -top-8 left-1/2 z-10 -translate-x-1/2 transform whitespace-nowrap rounded-xs bg-neutral-0 px-2 py-1 text-sm text-neutral-100 shadow-lg">
+                최근 로그인
+                <div className="absolute left-1/2 top-full -translate-x-1/2 transform border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-[#27272D]"></div>
+              </div>
             )}
             <a
               className="flex h-[43px] w-[43px] items-center justify-center rounded-full bg-[#FEE500]"
@@ -61,9 +64,12 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
               </div>
             </a>
           </div>
-          <div style={{ position: 'relative' }}>
+          <div className="relative">
             {lastSocialLogin === 'NAVER' && (
-              <div className={styles.recentBadge}>최근 로그인</div>
+              <div className="rounded absolute -top-8 left-1/2 z-10 -translate-x-1/2 transform whitespace-nowrap bg-[#27272D] px-2 py-1 text-sm text-white shadow-lg">
+                최근 로그인
+                <div className="absolute left-1/2 top-full -translate-x-1/2 transform border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-[#27272D]"></div>
+              </div>
             )}
             <a
               className="flex h-[43px] w-[43px] items-center justify-center rounded-full bg-[#2db400]"
