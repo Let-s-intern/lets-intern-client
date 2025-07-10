@@ -110,9 +110,10 @@ const Login = () => {
   }, [searchParams, setSearchParams]);
 
   const handleLoginSuccess = (token: any) => {
-    if (document.referrer.includes('/oauth2/authorize/kakao')) {
+    const socialLoginType = searchParams.get('state');
+    if (socialLoginType === 'KAKAO') {
       localStorage.setItem('lastSocialLogin', 'KAKAO');
-    } else if (document.referrer.includes('/oauth2/authorize/naver')) {
+    } else if (socialLoginType === 'NAVER') {
       localStorage.setItem('lastSocialLogin', 'NAVER');
     }
 
