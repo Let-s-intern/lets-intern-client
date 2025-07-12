@@ -1,3 +1,5 @@
+'use client';
+
 import { useGetBannerListForUser } from '@/api/banner';
 import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';

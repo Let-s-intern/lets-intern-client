@@ -19,6 +19,7 @@ import {
   MyReportInfoType,
   useGetMyReports,
 } from '@/api/report';
+import useActiveReports from '@/hooks/useActiveReports';
 import { download } from '@/lib/download';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
@@ -169,6 +170,8 @@ const ReportManagementPage = () => {
   const { isLoggedIn } = useAuthStore();
   const { initReportApplication, setReportApplication } =
     useReportApplicationStore();
+  const { hasActiveResume, hasActivePortfolio, hasActivePersonalStatement } =
+    useActiveReports();
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -188,16 +191,24 @@ const ReportManagementPage = () => {
     'all') as ReportFilter['type'];
 
   const reportLink = () => {
-    switch (filterType) {
-      case 'resume':
-        return '/report/landing/resume';
-      case 'personal_statement':
-        return '/report/landing/personal-statement';
-      case 'portfolio':
-        return '/report/landing/portfolio';
-      default:
-        return '/report/landing/resume';
+    const activeReports = [];
+    if (hasActiveResume) activeReports.push('/report/landing/resume');
+    if (hasActivePersonalStatement)
+      activeReports.push('/report/landing/personal-statement');
+    if (hasActivePortfolio) activeReports.push('/report/landing/portfolio');
+
+    // Case1: 노출된 서류 피드백 리포트 상세페이지가 2개 이상인 경우 -> 이력서 피드백 리포트 상세페이지로 이동
+    if (activeReports.length >= 2) {
+      return '/report/landing/resume';
     }
+
+    // Case2: 노출된 서류 피드백 리포트 상세페이지가 1개인 경우 -> 노출된 서류 피드백 리포트 상세페이지로 이동
+    if (activeReports.length === 1) {
+      return activeReports[0];
+    }
+
+    // Case3: 노출된 서류 피드백 리포트 상세페이지가 없는 경우 -> 기본값 (하지만 이 경우는 알림이 표시됨)
+    return '/report/landing/resume';
   };
 
   const { data, status } = useGetMyReports();
@@ -239,6 +250,22 @@ const ReportManagementPage = () => {
     navigate(
       `/report/${convertReportTypeToPathname(reportType)}/application/${applicationId}`,
     );
+  };
+
+  const onClickAddReport = () => {
+    const activeReportsCount = [
+      hasActiveResume,
+      hasActivePersonalStatement,
+      hasActivePortfolio,
+    ].filter(Boolean).length;
+
+    // Case3: 노출된 서류 피드백 리포트 상세페이지가 없는 경우
+    if (activeReportsCount === 0) {
+      window.alert('피드백 리포트 준비중입니다.');
+      return;
+    }
+
+    navigate(reportLink());
   };
 
   useEffect(() => {
@@ -533,12 +560,12 @@ const ReportManagementPage = () => {
         })}
       </div>
       <div className="my-3">
-        <Link
-          to={reportLink()}
+        <button
+          onClick={onClickAddReport}
           className="add_button_click flex h-12 w-full items-center justify-center rounded-md border-2 border-primary bg-neutral-100 font-medium text-primary-dark transition hover:border-primary-light hover:bg-white"
         >
           추가 신청하기
-        </Link>
+        </button>
       </div>
     </div>
   );

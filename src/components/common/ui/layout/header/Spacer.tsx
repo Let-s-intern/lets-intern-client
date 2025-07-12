@@ -6,10 +6,10 @@ interface Props {
 }
 
 function Spacer({ hideMobileBottomNavBar, backgroundColor = '' }: Props) {
-  const mobileSpace = hideMobileBottomNavBar ? 'h-[44px]' : 'h-[85px]';
+  const mobileSpace = hideMobileBottomNavBar ? 'h-[44px]' : 'h-[84px]';
   return (
     <div
-      className={twMerge(mobileSpace, 'md:h-[117px]', backgroundColor)}
+      className={twMerge(mobileSpace, 'md:h-[116px]', backgroundColor)}
       aria-hidden="true"
     />
   );

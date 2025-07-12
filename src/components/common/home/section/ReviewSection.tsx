@@ -1,3 +1,5 @@
+'use client';
+
 import { BlogType, useBlogListQuery } from '@/api/blog';
 import {
   GetReview,

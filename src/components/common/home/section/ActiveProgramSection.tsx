@@ -1,3 +1,5 @@
+'use client';
+
 import { useGetUserProgramQuery } from '@/api/program';
 import dayjs from '@/lib/dayjs';
 import { useMemo } from 'react';

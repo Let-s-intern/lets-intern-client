@@ -1,6 +1,9 @@
+'use client';
+
 import { useGetChallengeHome } from '@/api/challenge';
 import { convertReportTypeToLandingPath } from '@/api/report';
 import Intro1 from '@/assets/graphic/home/intro/1.svg?react';
+import Intro10 from '@/assets/graphic/home/intro/10.svg?react';
 import Intro2 from '@/assets/graphic/home/intro/2.svg?react';
 import Intro3 from '@/assets/graphic/home/intro/3.svg?react';
 import Intro5 from '@/assets/graphic/home/intro/5.svg?react';
@@ -106,6 +109,18 @@ const HOME_INTRO = {
         href: convertReportTypeToLandingPath('PERSONAL_STATEMENT'),
         gaTitle: '자기소개서 피드백 받기',
       },
+      {
+        title: (
+          <p>
+            기업에게
+            <br />
+            면접 제안 받기
+          </p>
+        ),
+        icon: <Intro10 width={40} height={40} />,
+        href: 'https://recruit.superpasshr.com/?utm_source=letscareer&utm_medium=letscareer_homepage&utm_campaign=letscareer_homepage',
+        gaTitle: '기업에게 면접 제안 받기',
+      },
     ],
   },
 };
@@ -135,6 +150,9 @@ const IntroItem = ({
       onClick={(e) => {
         if (!href || href === '#') {
           alert('준비중입니다.');
+          return;
+        }
+        if (href.startsWith('http')) {
           return;
         }
         e.preventDefault();
@@ -238,6 +256,11 @@ const IntroSection = () => {
       />
     );
   });
+
+  /**
+   * '여기 스타일이 왜 그런가요?'는
+   * 디자인 참고: https://www.figma.com/design/cSbg7vHidcSZ53ii46CYbJ/-%EB%A0%9B%EC%B8%A0%EC%BB%A4%EB%A6%AC%EC%96%B4--%EC%9B%B9%EC%82%AC%EC%9D%B4%ED%8A%B8?node-id=17924-87310&t=9WNiucwASYwJNmWj-4
+   */
 
   return (
     <>

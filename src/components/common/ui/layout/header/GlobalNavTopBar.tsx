@@ -5,6 +5,7 @@ import LoginLink from './LoginLink';
 import LogoLink from './LogoLink';
 import SignUpLink from './SignUpLink';
 import { SubNavItemProps } from './SubNavItem';
+import SuperInternPromotion from './SuperInternPromotion';
 
 interface Props {
   isNextRouter: boolean;
@@ -73,7 +74,9 @@ function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
         </GlobalNavItem>
       </div>
 
-      <div className="flex items-center justify-center gap-4">
+      <div className="flex items-center justify-center gap-1">
+        {/* 슈퍼인턴 프로모션 영역 */}
+        <SuperInternPromotion />
         {isLoggedIn ? (
           <GlobalNavItem
             className="hidden cursor-pointer items-center md:flex"
@@ -83,7 +86,7 @@ function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
             align="right"
           >
             <div className="flex items-center gap-2">
-              <span className="text-xsmall16 font-medium text-neutral-0">
+              <span className="pl-2 text-xsmall16 font-medium text-neutral-0">
                 {user?.name} 님
               </span>
               <img
