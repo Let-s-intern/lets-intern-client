@@ -1,16 +1,15 @@
 import dayjs from '@/lib/dayjs';
-import clsx from 'clsx';
-import { memo, useEffect, useState } from 'react';
-
-import { ProgramInfo } from '../../../../../schema';
-import { ProgramClassificationKey } from '../../../../../types/interface';
-import axios from '../../../../../utils/axios';
+import { ProgramInfo } from '@/schema';
+import { ProgramClassificationKey } from '@/types/interface';
+import axios from '@/utils/axios';
 import {
   PROGRAM_CLASSIFICATION,
   PROGRAM_STATUS,
   PROGRAM_STATUS_KEY,
   PROGRAM_TYPE,
-} from '../../../../../utils/programConst';
+} from '@/utils/programConst';
+import clsx from 'clsx';
+import { memo, useEffect, useState } from 'react';
 import ProgramClassificationTag from './ProgramClassificationTag';
 import ProgramStatusTag from './ProgramStatusTag';
 
@@ -25,25 +24,25 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
     }`,
   );
 
-  const getVodLink = async () => {
-    if (program.programInfo.programType !== PROGRAM_TYPE.VOD) return;
-    // VOD 상세 조회
-    try {
-      const res = await axios.get(`/vod/${program.programInfo.id}`);
-      if (res.status === 200) {
-        setLink(res.data.data.vodInfo.link);
-        return res.data.data;
-      }
-      throw new Error(`${res.status} ${res.statusText}`);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
-    }
-  };
-
   useEffect(() => {
+    const getVodLink = async () => {
+      if (program.programInfo.programType !== PROGRAM_TYPE.VOD) return;
+      // VOD 상세 조회
+      try {
+        const res = await axios.get(`/vod/${program.programInfo.id}`);
+        if (res.status === 200) {
+          setLink(res.data.data.vodInfo.link);
+          return res.data.data;
+        }
+        throw new Error(`${res.status} ${res.statusText}`);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(error);
+      }
+    };
+
     (async () => await getVodLink())();
-  }, []);
+  }, [program.programInfo.programType, program.programInfo.id]);
 
   return (
     <div
@@ -52,7 +51,6 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
           window.open(link);
         } else {
           window.location.href = link;
-          // navigate(link);
         }
       }}
       className="program_card flex w-full cursor-pointer flex-col overflow-hidden rounded-xs md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5"
