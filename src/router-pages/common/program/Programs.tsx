@@ -42,6 +42,35 @@ const initialPageInfo = {
 const ERROR_MESSAGE =
   "프로그램 조회 중 오류가 발생했습니다.\n새로고침 후에도 문제가 지속되면 아래 '채팅문의'를 통해 문의해주세요.";
 
+const ProgramHelmet = () => {
+  return (
+    <Helmet>
+      <meta name="robots" content="index,follow" />
+      <title>프로그램 목록 | 렛츠커리어</title>
+      <link rel="canonical" href={`${window.location.origin}/program`} />
+      <meta
+        name="description"
+        content="렛츠커리어의 프로그램 목록 페이지입니다."
+      />
+      <meta property="og:title" content="프로그램 목록 | 렛츠커리어" />
+      <meta property="og:url" content={`${window.location.origin}/program`} />
+      <meta property="og:site_name" content="렛츠커리어" />
+      <meta property="og:locale" content="ko-KR" />
+      <meta
+        property="og:description"
+        content="렛츠커리어의 프로그램 목록 페이지입니다."
+      />
+      <meta name="twitter:title" content="프로그램 목록 | 렛츠커리어" />
+      <meta name="twitter:url" content={`${window.location.origin}/program`} />
+      <meta
+        name="twitter:description"
+        content="렛츠커리어의 프로그램 목록 페이지입니다."
+      />
+      <meta name="twitter:card" content="summary" />
+    </Helmet>
+  );
+};
+
 const Programs = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -256,34 +285,8 @@ const Programs = () => {
 
   return (
     <div className={clsx('flex', { 'overflow-hidden': isOpen })}>
-      <Helmet>
-        <meta name="robots" content="index,follow" />
-        <title>프로그램 목록 | 렛츠커리어</title>
-        <link rel="canonical" href={`${window.location.origin}/program`} />
-        <meta
-          name="description"
-          content="렛츠커리어의 프로그램 목록 페이지입니다."
-        />
-        <meta property="og:title" content="프로그램 목록 | 렛츠커리어" />
-        <meta property="og:url" content={`${window.location.origin}/program`} />
-        <meta property="og:site_name" content="렛츠커리어" />
-        <meta property="og:locale" content="ko-KR" />
-        <meta
-          property="og:description"
-          content="렛츠커리어의 프로그램 목록 페이지입니다."
-        />
-        <meta name="twitter:title" content="프로그램 목록 | 렛츠커리어" />
-        <meta
-          name="twitter:url"
-          content={`${window.location.origin}/program`}
-        />
-        <meta
-          name="twitter:description"
-          content="렛츠커리어의 프로그램 목록 페이지입니다."
-        />
-        <meta name="twitter:card" content="summary" />
-      </Helmet>
-      {/* 필터링 사이드바 */}
+      <ProgramHelmet />
+
       <FilterSideBar
         setIsOpen={setIsOpen}
         isOpen={isOpen}
@@ -292,6 +295,7 @@ const Programs = () => {
         filterClassification={filterClassification}
         filterStatus={filterStatus}
       />
+
       <main
         className={clsx(
           'flex w-full flex-col items-center gap-4 px-5 py-8 md:gap-16 md:px-10 lg:px-[10%]',
