@@ -24,26 +24,25 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
     }`,
   );
 
-  const getVodLink = async () => {
-    if (program.programInfo.programType !== PROGRAM_TYPE.VOD) return;
-    // VOD 상세 조회
-    try {
-      const res = await axios.get(`/vod/${program.programInfo.id}`);
-      if (res.status === 200) {
-        setLink(res.data.data.vodInfo.link);
-        return res.data.data;
-      }
-      throw new Error(`${res.status} ${res.statusText}`);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
-    }
-  };
-
   useEffect(() => {
+    const getVodLink = async () => {
+      if (program.programInfo.programType !== PROGRAM_TYPE.VOD) return;
+      // VOD 상세 조회
+      try {
+        const res = await axios.get(`/vod/${program.programInfo.id}`);
+        if (res.status === 200) {
+          setLink(res.data.data.vodInfo.link);
+          return res.data.data;
+        }
+        throw new Error(`${res.status} ${res.statusText}`);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(error);
+      }
+    };
+
     (async () => await getVodLink())();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [program.programInfo.programType, program.programInfo.id]);
 
   return (
     <div
