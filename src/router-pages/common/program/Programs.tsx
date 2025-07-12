@@ -263,8 +263,9 @@ const ProgramContent = ({
   }, [isLoading, isFetching, setLoading, setPageInfo, programData?.pageInfo]);
 
   useEffect(() => {
+    const LOADING_DELAY_MS = 300;
     if (loading) {
-      const timer = setTimeout(() => setLoading(false), 300);
+      const timer = setTimeout(() => setLoading(false), LOADING_DELAY_MS);
       return () => clearTimeout(timer);
     }
   }, [loading]);
