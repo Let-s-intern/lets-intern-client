@@ -28,7 +28,6 @@ import ChallengePointView from './challenge-view/ChallengePointView';
 import ChallengePricePlanSection from './challenge-view/ChallengePricePlanSection';
 import LexicalContent from './common/blog/LexicalContent';
 import MoreReviewButton from './common/review/MoreReviewButton';
-import NextBackHeader from './common/ui/NextBackHeader';
 import ProgramBestReviewSection from './ProgramBestReviewSection';
 import ProgramDetailBlogReviewSection from './ProgramDetailBlogReviewSection';
 import ProgramDetailNavigation, {
@@ -206,10 +205,7 @@ const ChallengeView: React.FC<{
   return (
     <div className="flex w-full flex-col">
       <div className="flex w-full flex-col items-center">
-        <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
-          <NextBackHeader hideBack to="/program">
-            {challenge.title ?? ''}
-          </NextBackHeader>
+        <div className="flex w-full max-w-[1000px] flex-col px-5 pb-10 pt-6 md:gap-y-5 md:px-10 md:py-[60px] lg:px-0">
           <ChallengeBasicInfo
             challengeId={id}
             challenge={challengeTransformed}
