@@ -2,7 +2,11 @@
 
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { twMerge } from '@/lib/twMerge';
-import { ChallengePriceInfo, ChallengePricePlan } from '@/schema';
+import {
+  ChallengeIdSchema,
+  ChallengePriceInfo,
+  ChallengePricePlan,
+} from '@/schema';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { useMemo, useState } from 'react';
 
@@ -92,7 +96,7 @@ const FinalPriceInfo = ({
 };
 
 interface Props {
-  priceInfoList: ChallengePriceInfo[];
+  priceInfoList: ChallengePriceInfo[] | ChallengeIdSchema['priceInfo'];
 }
 
 function ChallengePriceInfoContent({ priceInfoList }: Props) {

@@ -1,4 +1,4 @@
-import { ChallengePriceInfo } from '@/schema';
+import { ChallengeIdSchema, ChallengePriceInfo } from '@/schema';
 
 interface ChallengeOptionPriceInfo {
   basicRegularPrice: number; // 베이직 플랜 정가 = 이용료 + 보증금
@@ -18,7 +18,7 @@ interface ChallengeOptionPriceInfo {
  */
 
 export default function getChallengeOptionPriceInfo(
-  priceInfoList: ChallengePriceInfo[],
+  priceInfoList: ChallengePriceInfo[] | ChallengeIdSchema['priceInfo'],
 ): ChallengeOptionPriceInfo {
   const basicPriceInfo =
     priceInfoList.find((info) => info.challengePricePlanType === 'BASIC') ??
