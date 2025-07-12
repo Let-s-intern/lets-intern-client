@@ -253,6 +253,7 @@ const ProgramContent = ({
       setPageable((prev) => ({ ...prev, page }));
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 
@@ -268,14 +269,16 @@ const ProgramContent = ({
     }
   }, [loading]);
 
-  return isError ? (
-    <p className="whitespace-pre-line text-center">{ERROR_MESSAGE}</p>
-  ) : loading || isLoading || isFetching ? (
-    <LoadingContainer text="프로그램 조회 중" />
-  ) : (
-    isSuccess &&
-    programData &&
-    (programData.programList.length < 1 ? (
+  if (isError) {
+    return <p className="whitespace-pre-line text-center">{ERROR_MESSAGE}</p>;
+  }
+
+  if (loading || isLoading || isFetching) {
+    return <LoadingContainer text="프로그램 조회 중" />;
+  }
+
+  if (isSuccess && programData && programData.programList.length < 1) {
+    return (
       <>
         <p className="text-1 py-2 text-center text-neutral-0/40">
           혹시, 찾으시는 프로그램이 없으신가요?
@@ -289,23 +292,25 @@ const ProgramContent = ({
           <EmptyCardList />
         </section>
       </>
-    ) : (
-      <>
-        <section className="min-h-2/4 mb-4 grid grid-cols-2 gap-x-4 gap-y-5 md:mb-0 md:grid-cols-3 md:gap-4 xl:grid-cols-4">
-          {programData.programList.map((program) => (
-            <ProgramCard
-              key={program.programInfo.programType + program.programInfo.id}
-              program={program}
-            />
-          ))}
-        </section>
-        <MuiPagination
-          page={pageable.page}
-          pageInfo={pageInfo}
-          onChange={handlePageChange}
-        />
-      </>
-    ))
+    );
+  }
+
+  return (
+    <>
+      <section className="min-h-2/4 mb-4 grid grid-cols-2 gap-x-4 gap-y-5 md:mb-0 md:grid-cols-3 md:gap-4 xl:grid-cols-4">
+        {programData?.programList.map((program) => (
+          <ProgramCard
+            key={program.programInfo.programType + program.programInfo.id}
+            program={program}
+          />
+        ))}
+      </section>
+      <MuiPagination
+        page={pageable.page}
+        pageInfo={pageInfo}
+        onChange={handlePageChange}
+      />
+    </>
   );
 };
 
