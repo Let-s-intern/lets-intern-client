@@ -20,6 +20,7 @@ import {
 } from '@/utils/formatDateString';
 import { getProgramPathname } from '@/utils/url';
 import { challengeColors } from '@components/ChallengeView';
+import ChallengePriceInfoContent from '@components/common/challenge-marketing-view/ChallengePriceInfoContent';
 import BasicInfoRow from '@components/common/program/program-detail/basicInfo/BasicInfoRow';
 import { useRouter } from 'next/navigation';
 import { CSSProperties, useMemo } from 'react';
@@ -188,91 +189,13 @@ const ChallengeBasicInfo = ({
             className="aspect-[4/3] h-auto w-full max-w-[546px] object-contain"
           />
         </div>
-        <div className="hidden w-[354px] shrink-0 flex-col items-center justify-center gap-y-3 rounded-ms bg-neutral-95 p-5 pb-6 md:flex">
-          <div className="flex w-full flex-1 flex-col justify-between gap-y-4">
-            <div className="flex w-full flex-col gap-y-2">
-              <p className="text-small20 font-bold">{challenge.title}</p>
-              <div className="flex w-full flex-col gap-y-0.5 text-xsmall14 font-medium text-neutral-0">
-                {priceReason.map((reason, index) => (
-                  <div key={index} className="flex w-full gap-x-0.5">
-                    <ChevronDown
-                      className="-mt-0.5 shrink-0 text-neutral-0"
-                      width={24}
-                      height={24}
-                    />
-                    <p className="grow whitespace-pre text-wrap break-keep">
-                      {reason}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-            {basicPriceInfo && (
-              <div className="flex w-full flex-col gap-y-1 border-b border-neutral-80 pb-2 text-neutral-0">
-                <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
-                  <span className="font-medium">정가</span>
-                  <span>{regularPrice?.toLocaleString()}원</span>
-                </div>
+        {/* 챌린지 정보 */}
+        <div className="w-full md:max-w-[424px]">
+          <h1 className="mb-2 py-1 text-medium22 font-bold text-neutral-0 md:text-medium24">
+            {challenge.title}
+          </h1>
 
-                {/* 할인 금액이 0이면 숨김 */}
-                {basicPriceInfo.discount !== 0 && (
-                  <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
-                    <span className="font-bold" style={styles.basicInfoStyle}>
-                      {getDiscountPercent(
-                        regularPrice || 0,
-                        basicPriceInfo.discount || 0,
-                      )}
-                      % 할인
-                    </span>
-                    <span>-{basicPriceInfo.discount?.toLocaleString()}원</span>
-                  </div>
-                )}
-
-                {basicPriceInfo.challengePriceType === 'REFUND' && (
-                  <div className="flex w-full items-center justify-between gap-x-4 text-xsmall16">
-                    <span
-                      style={
-                        basicPriceInfo.discount === 0
-                          ? styles.basicInfoStyle
-                          : undefined
-                      }
-                      className="font-bold text-black"
-                    >
-                      미션 모두 수행시, 환급
-                    </span>
-                    <span>-{basicPriceInfo.refund?.toLocaleString()}원</span>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-          {basicPriceInfo && (
-            <div className="flex w-full flex-col gap-y-2">
-              <div className="flex w-full items-center justify-between text-xsmall16 font-semibold text-neutral-0">
-                <p>할인 적용가</p>
-                <p className="text-small18 text-neutral-0">
-                  {totalPrice.toLocaleString()}원~
-                </p>
-              </div>
-              {showMonthlyPrice && (
-                <div className="flex w-full flex-col items-end">
-                  <div style={styles.basicInfoStyle}>
-                    <span className="mr-1 text-medium22 font-semibold">월</span>
-                    <span className="text-xlarge28 font-bold">
-                      {monthlyPrice
-                        ? `${monthlyPrice.toLocaleString()}원`
-                        : '계산 중'}
-                    </span>
-                  </div>
-                  <p className="text-xsmall14 text-neutral-30">
-                    {isLoading
-                      ? '무이자 할부 시'
-                      : `${banks.join(', ')} ${installmentMonths}개월 무이자 할부 시`}
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
+          <ChallengePriceInfoContent priceInfoList={challenge.priceInfo} />
         </div>
       </div>
       <div
