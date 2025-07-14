@@ -1,3 +1,65 @@
+---
+alwaysApply: true
+---
+
+# Commit Message Convention
+
+> Source: https://medium.com/@hunterzhang86/essential-guide-to-cursor-one-click-generation-of-professional-git-commit-messages-688e7325e4b1
+
+Follow the template below to write commit messages in Korean.
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+- The header is mandatory; body and footer are optional.
+- No line should exceed 72 characters (max 100 characters).
+- Type Enum: feat, fix, docs, style, refactor, test, chore
+- The body provides a detailed description; the footer is for references, issues, etc.
+
+## Example
+
+```
+fix(program): 프로그램 필터 리듀서 및 목록 페이지 구조 개선
+
+프로그램 필터 관련 리듀서의 불변성 및 일관성을 강화하였고,
+프로그램 목록 페이지의 UI 컴포넌트 구조를 개선하였습니다.
+
+- 필터 리듀서별 초기값 및 액션 처리 로직 정리
+- 프로그램 목록, 필터, 페이지네이션 등 역할별 함수 분리
+- URL 파라미터와 필터 상태 동기화 로직 개선
+```
+
+---
+
+# Example git commands to commit directly
+
+You can use the following git commands to commit changes directly:
+
+```
+git add <changed_file_path>
+git commit -m "<commit message>"
+```
+
+Example:
+
+```
+git add src/reducers/filterReducer.ts src/router-pages/common/program/Programs.tsx
+
+git commit -m "fix(program): 프로그램 필터 리듀서 및 목록 페이지 구조 개선\n\n프로그램 필터 관련 리듀서의 불변성 및 일관성을 강화하였고,\n프로그램 목록 페이지의 UI 컴포넌트 구조를 개선하였습니다.\n\n- 필터 리듀서별 초기값 및 액션 처리 로직 정리\n- 프로그램 목록, 필터, 페이지네이션 등 역할별 함수 분리\n- URL 파라미터와 필터 상태 동기화 로직 개선\n"
+```
+
+- You can add multiple files at once.
+- Use `\n` for line breaks in the commit message.
+- The commit message must follow the above convention.
+
+- Use `\n` for line breaks in the commit message.
+- The commit message must follow the above convention.
+
 # Commit Message Convention
 
 > Source: https://medium.com/@hunterzhang86/essential-guide-to-cursor-one-click-generation-of-professional-git-commit-messages-688e7325e4b1
