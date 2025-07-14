@@ -8,6 +8,7 @@ import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { twMerge } from 'tailwind-merge';
 
 interface TextLinkProps {
   to: string;
@@ -20,9 +21,11 @@ const TextLink = ({ to, dark, className, children }: TextLinkProps) => {
   return (
     <Link
       to={to}
-      className={`text-sm underline${
-        dark ? 'text-neutral-grey' : 'text-primary'
-      }${className ? ` ${className}` : ''}`}
+      className={twMerge(
+        'text-sm underline',
+        dark ? 'text-neutral-grey' : 'text-primary',
+        className,
+      )}
     >
       {children}
     </Link>
@@ -56,10 +59,6 @@ const Login = () => {
       // 일반 이메일 로그인 성공 시 소셜 로그인 최근 로그인 기록 초기화
       localStorage.removeItem('lastSocialLogin');
       login(data.data.accessToken, data.data.refreshToken);
-      if (!redirect) {
-        return;
-      }
-
       window.location.href = redirect;
     },
     onError: (error) => {
@@ -73,6 +72,12 @@ const Login = () => {
     },
   });
 
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (buttonDisabled) return;
+    fetchLogin.mutate();
+  };
+
   // 비밀번호, 이메일 입력 시 버튼 활성화
   useEffect(() => {
     if (!email || !password) {
@@ -83,6 +88,18 @@ const Login = () => {
   }, [email, password]);
 
   useEffect(() => {
+    const handleLoginSuccess = (token: any) => {
+      if (token.isNew) {
+        navigate(
+          `/signup?result=${JSON.stringify(token)}&redirect=${redirect}`,
+        );
+      } else {
+        login(token.accessToken, token.refreshToken);
+        window.location.href = redirect;
+      }
+      setIsLoading(false);
+    };
+
     if (searchParams.get('error')) {
       setErrorMessage('이미 가입된 휴대폰 번호입니다.');
       return;
@@ -107,28 +124,7 @@ const Login = () => {
       window.location.href = redirect;
       return;
     }
-  }, [searchParams, setSearchParams]);
-
-  const handleLoginSuccess = (token: any) => {
-    const socialLoginType = searchParams.get('state');
-    if (socialLoginType === 'KAKAO' || socialLoginType === 'NAVER') {
-      localStorage.setItem('lastSocialLogin', socialLoginType);
-    }
-
-    if (token.isNew) {
-      navigate(`/signup?result=${JSON.stringify(token)}&redirect=${redirect}`);
-    } else {
-      login(token.accessToken, token.refreshToken);
-      window.location.href = redirect;
-    }
-    setIsLoading(false);
-  };
-
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (buttonDisabled) return;
-    fetchLogin.mutate();
-  };
+  }, [searchParams, setSearchParams, isLoggedIn, redirect, login, navigate]);
 
   return (
     <>

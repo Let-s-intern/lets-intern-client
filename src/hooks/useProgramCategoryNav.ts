@@ -48,29 +48,31 @@ export default function useProgramCategoryNav(isNextRouter: boolean) {
       children: '전체 프로그램',
       href: `/program`,
       isNextRouter,
+      force: isNextRouter,
     },
     {
       children: '경험정리 챌린지',
       href: getProgramHref(activeExperienceSummary, experienceSummaryData),
       isNextRouter,
+      force: !isNextRouter,
     },
     {
       children: '자기소개서 완성 챌린지',
       href: getProgramHref(activePersonalStatement, personalStatementData),
       isNextRouter,
-      force: true,
+      force: !isNextRouter,
     },
     {
       children: '포트폴리오 완성 챌린지',
       href: getProgramHref(activePortfolio, portfolioData),
       isNextRouter,
-      force: true,
+      force: !isNextRouter,
     },
     {
       children: '마케팅 서류 완성 챌린지',
       href: getProgramHref(activeMarketing, marketingData),
       isNextRouter,
-      force: true,
+      force: !isNextRouter,
     },
     {
       children: '대기업 완성 챌린지',
@@ -79,19 +81,20 @@ export default function useProgramCategoryNav(isNextRouter: boolean) {
         personalStatementLargeCorpData,
       ),
       isNextRouter,
-      force: true,
+      force: !isNextRouter,
     },
     {
       children: '현직자 LIVE 클래스',
       href: 'https://www.letscareer.co.kr/program?type=LIVE',
       isNextRouter,
-      force: true,
+      force: isNextRouter,
     },
 
     {
       children: '취준위키 VOD',
       href: 'https://www.letscareer.co.kr/program?type=VOD',
       isNextRouter,
+      force: isNextRouter,
     },
   ];
 
