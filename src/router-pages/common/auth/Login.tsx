@@ -10,6 +10,12 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 
+interface Token {
+  accessToken: string;
+  refreshToken: string;
+  isNew: boolean;
+}
+
 interface TextLinkProps {
   to: string;
   className?: string;
@@ -86,7 +92,7 @@ const Login = () => {
   }, [email, password]);
 
   useEffect(() => {
-    const handleLoginSuccess = (token: any) => {
+    const handleLoginSuccess = (token: Token) => {
       if (token.isNew) {
         navigate(
           `/signup?result=${JSON.stringify(token)}&redirect=${redirect}`,
@@ -105,7 +111,9 @@ const Login = () => {
 
     if (searchParams.get('result')) {
       setIsLoading(true);
-      const parsedToken = JSON.parse(searchParams.get('result') || '');
+      const parsedToken = searchParams.get('result')
+        ? JSON.parse(searchParams.get('result') || '{}')
+        : null;
       const newSearchParams = new URLSearchParams(searchParams);
       newSearchParams.delete('result');
       newSearchParams.set('isLoading', 'true');
