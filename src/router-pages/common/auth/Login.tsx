@@ -8,6 +8,13 @@ import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { twMerge } from 'tailwind-merge';
+
+interface Token {
+  accessToken: string;
+  refreshToken: string;
+  isNew: boolean;
+}
 
 interface TextLinkProps {
   to: string;
@@ -20,9 +27,11 @@ const TextLink = ({ to, dark, className, children }: TextLinkProps) => {
   return (
     <Link
       to={to}
-      className={`text-sm underline${
-        dark ? 'text-neutral-grey' : 'text-primary'
-      }${className ? ` ${className}` : ''}`}
+      className={twMerge(
+        'text-sm underline',
+        dark ? 'text-neutral-grey' : 'text-primary',
+        className,
+      )}
     >
       {children}
     </Link>
@@ -54,10 +63,6 @@ const Login = () => {
     },
     onSuccess: (data) => {
       login(data.data.accessToken, data.data.refreshToken);
-      if (!redirect) {
-        return;
-      }
-
       window.location.href = redirect;
     },
     onError: (error) => {
@@ -71,6 +76,12 @@ const Login = () => {
     },
   });
 
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (buttonDisabled) return;
+    fetchLogin.mutate();
+  };
+
   // 비밀번호, 이메일 입력 시 버튼 활성화
   useEffect(() => {
     if (!email || !password) {
@@ -81,6 +92,18 @@ const Login = () => {
   }, [email, password]);
 
   useEffect(() => {
+    const handleLoginSuccess = (token: Token) => {
+      if (token.isNew) {
+        navigate(
+          `/signup?result=${JSON.stringify(token)}&redirect=${redirect}`,
+        );
+      } else {
+        login(token.accessToken, token.refreshToken);
+        window.location.href = redirect;
+      }
+      setIsLoading(false);
+    };
+
     if (searchParams.get('error')) {
       setErrorMessage('이미 가입된 휴대폰 번호입니다.');
       return;
@@ -88,7 +111,9 @@ const Login = () => {
 
     if (searchParams.get('result')) {
       setIsLoading(true);
-      const parsedToken = JSON.parse(searchParams.get('result') || '');
+      const parsedToken = searchParams.get('result')
+        ? JSON.parse(searchParams.get('result') || '{}')
+        : null;
       const newSearchParams = new URLSearchParams(searchParams);
       newSearchParams.delete('result');
       newSearchParams.set('isLoading', 'true');
@@ -105,23 +130,7 @@ const Login = () => {
       window.location.href = redirect;
       return;
     }
-  }, [searchParams, setSearchParams]);
-
-  const handleLoginSuccess = (token: any) => {
-    if (token.isNew) {
-      navigate(`/signup?result=${JSON.stringify(token)}&redirect=${redirect}`);
-    } else {
-      login(token.accessToken, token.refreshToken);
-      window.location.href = redirect;
-    }
-    setIsLoading(false);
-  };
-
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (buttonDisabled) return;
-    fetchLogin.mutate();
-  };
+  }, [searchParams, setSearchParams, isLoggedIn, redirect, login, navigate]);
 
   return (
     <>
