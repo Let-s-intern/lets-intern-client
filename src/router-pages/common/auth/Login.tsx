@@ -57,10 +57,6 @@ const Login = () => {
     },
     onSuccess: (data) => {
       login(data.data.accessToken, data.data.refreshToken);
-      if (!redirect) {
-        return;
-      }
-
       window.location.href = redirect;
     },
     onError: (error) => {
@@ -83,7 +79,25 @@ const Login = () => {
     }
   }, [email, password]);
 
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (buttonDisabled) return;
+    fetchLogin.mutate();
+  };
+
   useEffect(() => {
+    const handleLoginSuccess = (token: any) => {
+      if (token.isNew) {
+        navigate(
+          `/signup?result=${JSON.stringify(token)}&redirect=${redirect}`,
+        );
+      } else {
+        login(token.accessToken, token.refreshToken);
+        window.location.href = redirect;
+      }
+      setIsLoading(false);
+    };
+
     if (searchParams.get('error')) {
       setErrorMessage('이미 가입된 휴대폰 번호입니다.');
       return;
@@ -108,23 +122,7 @@ const Login = () => {
       window.location.href = redirect;
       return;
     }
-  }, [searchParams, setSearchParams]);
-
-  const handleLoginSuccess = (token: any) => {
-    if (token.isNew) {
-      navigate(`/signup?result=${JSON.stringify(token)}&redirect=${redirect}`);
-    } else {
-      login(token.accessToken, token.refreshToken);
-      window.location.href = redirect;
-    }
-    setIsLoading(false);
-  };
-
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (buttonDisabled) return;
-    fetchLogin.mutate();
-  };
+  }, [searchParams, setSearchParams, isLoggedIn, redirect, login, navigate]);
 
   return (
     <>
