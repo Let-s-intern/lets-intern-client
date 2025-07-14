@@ -70,6 +70,12 @@ const Login = () => {
     },
   });
 
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (buttonDisabled) return;
+    fetchLogin.mutate();
+  };
+
   // 비밀번호, 이메일 입력 시 버튼 활성화
   useEffect(() => {
     if (!email || !password) {
@@ -78,12 +84,6 @@ const Login = () => {
       setButtonDisabled(false);
     }
   }, [email, password]);
-
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (buttonDisabled) return;
-    fetchLogin.mutate();
-  };
 
   useEffect(() => {
     const handleLoginSuccess = (token: any) => {
