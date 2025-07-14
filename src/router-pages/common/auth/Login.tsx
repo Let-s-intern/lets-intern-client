@@ -8,6 +8,7 @@ import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { twMerge } from 'tailwind-merge';
 
 interface TextLinkProps {
   to: string;
@@ -20,9 +21,11 @@ const TextLink = ({ to, dark, className, children }: TextLinkProps) => {
   return (
     <Link
       to={to}
-      className={`text-sm underline${
-        dark ? 'text-neutral-grey' : 'text-primary'
-      }${className ? ` ${className}` : ''}`}
+      className={twMerge(
+        'text-sm underline',
+        dark ? 'text-neutral-grey' : 'text-primary',
+        className,
+      )}
     >
       {children}
     </Link>
