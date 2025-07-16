@@ -203,21 +203,21 @@ const IntroSection = () => {
       case EXPERIENCE_SUMMARY:
         return experienceSummaryData &&
           experienceSummaryData.programList.length > 0
-          ? `/program/challenge/${experienceSummaryData.programList[0].id}`
+          ? `/program/challenge/${experienceSummaryData.programList[0].id}/${encodeURIComponent(experienceSummaryData.programList[0].title ?? '')}`
           : undefined;
       case PERSONAL_STATEMENT:
         return personalStatementData &&
           personalStatementData.programList.length > 0
-          ? `/program/challenge/${personalStatementData.programList[0].id}`
+          ? `/program/challenge/${personalStatementData.programList[0].id}/${encodeURIComponent(personalStatementData.programList[0].title ?? '')}`
           : undefined;
       case PERSONAL_STATEMENT_LARGE_CORP:
         return personalStatementLargeCorpData &&
           personalStatementLargeCorpData.programList.length > 0
-          ? `/program/challenge/${personalStatementLargeCorpData.programList[0].id}`
+          ? `/program/challenge/${personalStatementLargeCorpData.programList[0].id}/${encodeURIComponent(personalStatementLargeCorpData.programList[0].title ?? '')}`
           : undefined;
       case PORTFOLIO:
         return portfolioData && portfolioData.programList.length > 0
-          ? `/program/challenge/${portfolioData.programList[0].id}`
+          ? `/program/challenge/${portfolioData.programList[0].id}/${encodeURIComponent(portfolioData.programList[0].title ?? '')}`
           : undefined;
       default:
         return undefined;
@@ -233,9 +233,10 @@ const IntroSection = () => {
   });
 
   const menus = filteredItems.map((item, index) => {
+    const challengePathname = getCurrentChallenge(item.href.split('=')[1]);
     const isInvalidProgram =
-      item.href.startsWith('type=') &&
-      !getCurrentChallenge(item.href.split('=')[1]);
+      item.href.startsWith('type=') && !challengePathname;
+    const href = item.href.startsWith('type=') ? challengePathname : item.href;
 
     if (isInvalidProgram) return null;
 
@@ -245,11 +246,7 @@ const IntroSection = () => {
         title={item.title}
         subTitle={item.subTitle}
         icon={item.icon}
-        href={
-          item.href.startsWith('type=')
-            ? getCurrentChallenge(item.href.split('=')[1])
-            : item.href
-        }
+        href={href}
         iconClassName={filteredItems.length === 5 ? 'w-14' : 'w-15'}
         gaTitle={item.gaTitle}
         badgeClassName={index === 7 ? 'bg-[#34BFFF]' : undefined}
