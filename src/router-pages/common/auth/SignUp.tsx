@@ -1,28 +1,28 @@
+import MarketingModal from '@/components/common/auth/modal/MarketingModal';
+import PrivacyPolicyModal from '@/components/common/auth/modal/PrivacyPolicyModal';
+import CheckBox from '@/components/common/auth/ui/CheckBox';
+import InfoContainer from '@/components/common/auth/ui/InfoContainer';
+import PrivacyLink from '@/components/common/auth/ui/PrivacyLink';
+import SocialLogin from '@/components/common/auth/ui/SocialLogin';
+import Button from '@/components/common/ui/button/Button';
+import Input from '@/components/ui/input/Input';
+import useAuthStore from '@/store/useAuthStore';
+import { ErrorResonse } from '@/types/interface';
+import axios from '@/utils/axios';
+import {
+  isValidEmail,
+  isValidPassword,
+  isValidPhoneNumber,
+} from '@/utils/valid';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { FormEvent, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import MarketingModal from '../../../components/common/auth/modal/MarketingModal';
-import PrivacyPolicyModal from '../../../components/common/auth/modal/PrivacyPolicyModal';
-import CheckBox from '../../../components/common/auth/ui/CheckBox';
-import InfoContainer from '../../../components/common/auth/ui/InfoContainer';
-import PrivacyLink from '../../../components/common/auth/ui/PrivacyLink';
-import SocialLogin from '../../../components/common/auth/ui/SocialLogin';
-import Button from '../../../components/common/ui/button/Button';
-import Input from '../../../components/ui/input/Input';
-import useAuthStore from '../../../store/useAuthStore';
-import { ErrorResonse } from '../../../types/interface';
-import axios from '../../../utils/axios';
-import {
-  isValidEmail,
-  isValidPassword,
-  isValidPhoneNumber,
-} from '../../../utils/valid';
-
 const SignUp = () => {
-  const { isLoggedIn, login } = useAuthStore();
   const navigate = useNavigate();
+
+  const { isLoggedIn, login } = useAuthStore();
   const [searchParams] = useSearchParams();
   const [isSocial, setIsSocial] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(null);
@@ -32,22 +32,22 @@ const SignUp = () => {
   const [accessTokenForSocialSignup, setAccessTokenForSocialSignup] =
     useState('');
 
-  const resultToToken = (result: string): string | undefined => {
-    if (result === '') {
-      return undefined;
-    }
-    const token = JSON.parse(result);
-    if (!token.isNew) {
-      login(token.accessToken, token.refreshToken);
-      navigate(searchParams.get('redirect') || '/');
-      return;
-    }
-    setIsSocial(true);
-
-    return token.accessToken;
-  };
-
   useEffect(() => {
+    const resultToToken = (result: string): string | undefined => {
+      if (result === '') {
+        return undefined;
+      }
+      const token = JSON.parse(result);
+      if (!token.isNew) {
+        login(token.accessToken, token.refreshToken);
+        navigate(searchParams.get('redirect') || '/');
+        return;
+      }
+      setIsSocial(true);
+
+      return token.accessToken;
+    };
+
     const error = searchParams.get('error');
     const result = searchParams.get('result');
     if (error !== null) {
@@ -61,7 +61,7 @@ const SignUp = () => {
         setAccessTokenForSocialSignup(accessTokenForSocialSignup);
       }
     }
-  }, [searchParams]);
+  }, [searchParams, login, navigate]);
 
   const [isSignupSuccess, setIsSignupSuccess] = useState<boolean>(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
