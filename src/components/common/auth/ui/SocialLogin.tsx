@@ -38,7 +38,6 @@ const SocialLoginButton = ({
   const handleClick = () => {
     // 소셜 로그인 버튼 클릭 시 localStorage에 저장
     localStorage.setItem('lastSocialLogin', socialType);
-    alert(socialType);
   };
 
   return (
