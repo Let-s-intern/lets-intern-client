@@ -1,6 +1,10 @@
 import { useGetActiveChallenge, useGetChallengeList } from '@/api/challenge';
 import { SubNavItemProps } from '@/components/common/ui/layout/header/SubNavItem';
-import { challengeTypeSchema } from '@/schema';
+import {
+  ActiveChallengeResponse,
+  ChallengeList,
+  challengeTypeSchema,
+} from '@/schema';
 
 const {
   EXPERIENCE_SUMMARY,
@@ -33,13 +37,17 @@ export default function useProgramCategoryNav(isNextRouter: boolean) {
     useGetActiveChallenge(EXPERIENCE_SUMMARY);
 
   const getProgramHref = (
-    activeData?: any,
-    listData?: any,
+    activeData?: ActiveChallengeResponse,
+    listData?: ChallengeList,
   ): string | undefined => {
     const activeId = activeData?.challengeList?.[0]?.id;
+    const activeTitle = activeData?.challengeList?.[0]?.title ?? '';
     const listId = listData?.programList?.[0]?.id;
-    if (activeId !== undefined) return `/program/challenge/${activeId}`;
-    if (listId !== undefined) return `/program/challenge/${listId}`;
+    const listTitle = listData?.programList?.[0]?.title ?? '';
+    if (activeId !== undefined)
+      return `/program/challenge/${activeId}/${encodeURIComponent(activeTitle)}`;
+    if (listId !== undefined)
+      return `/program/challenge/${listId}/${encodeURIComponent(listTitle)}`;
     return undefined;
   };
 
@@ -85,14 +93,14 @@ export default function useProgramCategoryNav(isNextRouter: boolean) {
     },
     {
       children: '현직자 LIVE 클래스',
-      href: 'https://www.letscareer.co.kr/program?type=LIVE',
+      href: '/program?type=LIVE',
       isNextRouter,
       force: isNextRouter,
     },
 
     {
       children: '취준위키 VOD',
-      href: 'https://www.letscareer.co.kr/program?type=VOD',
+      href: '/program?type=VOD',
       isNextRouter,
       force: isNextRouter,
     },

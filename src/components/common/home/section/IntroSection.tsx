@@ -203,21 +203,21 @@ const IntroSection = () => {
       case EXPERIENCE_SUMMARY:
         return experienceSummaryData &&
           experienceSummaryData.programList.length > 0
-          ? `/program/challenge/${experienceSummaryData.programList[0].id}`
+          ? `/program/challenge/${experienceSummaryData.programList[0].id}/${encodeURIComponent(experienceSummaryData.programList[0].title ?? '')}`
           : undefined;
       case PERSONAL_STATEMENT:
         return personalStatementData &&
           personalStatementData.programList.length > 0
-          ? `/program/challenge/${personalStatementData.programList[0].id}`
+          ? `/program/challenge/${personalStatementData.programList[0].id}/${encodeURIComponent(personalStatementData.programList[0].title ?? '')}`
           : undefined;
       case PERSONAL_STATEMENT_LARGE_CORP:
         return personalStatementLargeCorpData &&
           personalStatementLargeCorpData.programList.length > 0
-          ? `/program/challenge/${personalStatementLargeCorpData.programList[0].id}`
+          ? `/program/challenge/${personalStatementLargeCorpData.programList[0].id}/${encodeURIComponent(personalStatementLargeCorpData.programList[0].title ?? '')}`
           : undefined;
       case PORTFOLIO:
         return portfolioData && portfolioData.programList.length > 0
-          ? `/program/challenge/${portfolioData.programList[0].id}`
+          ? `/program/challenge/${portfolioData.programList[0].id}/${encodeURIComponent(portfolioData.programList[0].title ?? '')}`
           : undefined;
       default:
         return undefined;
