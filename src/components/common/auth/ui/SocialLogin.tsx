@@ -35,6 +35,12 @@ const SocialLoginButton = ({
 
   const config = socialConfig[socialType];
 
+  const handleClick = () => {
+    // 소셜 로그인 버튼 클릭 시 localStorage에 저장
+    localStorage.setItem('lastSocialLogin', socialType);
+    alert(socialType);
+  };
+
   return (
     <div className="relative">
       {isRecent && (
@@ -46,6 +52,7 @@ const SocialLoginButton = ({
       <a
         className={`flex h-[43px] w-[43px] items-center justify-center rounded-full ${config.bgColor}`}
         href={getLink(socialType)}
+        onClick={handleClick}
         rel="noopener noreferrer"
       >
         <div className={config.iconSize}>

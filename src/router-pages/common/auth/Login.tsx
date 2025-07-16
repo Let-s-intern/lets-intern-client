@@ -110,11 +110,6 @@ const Login = () => {
   }, [searchParams, setSearchParams]);
 
   const handleLoginSuccess = (token: any) => {
-    const socialLoginType = searchParams.get('state');
-    if (socialLoginType === 'KAKAO' || socialLoginType === 'NAVER') {
-      localStorage.setItem('lastSocialLogin', socialLoginType);
-    }
-
     if (token.isNew) {
       navigate(`/signup?result=${JSON.stringify(token)}&redirect=${redirect}`);
     } else {
