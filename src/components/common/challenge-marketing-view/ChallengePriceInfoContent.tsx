@@ -179,6 +179,10 @@ function ChallengePriceInfoContent({ priceInfoList }: Props) {
 
   const hasMultiplePlans = Object.entries(plans).length > 1;
 
+  console.log('plans:', plans);
+  console.log('entries:', Object.entries(plans));
+  console.log('hasMultiplePlans:', hasMultiplePlans);
+
   return (
     <div className="flex flex-col items-stretch gap-2">
       <div className="rounded-xs bg-neutral-95">
