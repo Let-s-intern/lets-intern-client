@@ -175,23 +175,26 @@ function ChallengePriceInfoContent({ priceInfoList }: Props) {
     }
 
     return plans;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [priceInfoList]);
+  }, [priceInfoList, basicPriceInfo?.title]);
+
+  const hasPlans = Object.entries(plans).length > 0;
 
   return (
     <div className="flex flex-col items-stretch gap-2">
       <div className="rounded-xs bg-neutral-95">
-        <div className="flex items-center px-3 py-2">
-          {Object.entries(plans).map(([key, value]) => (
-            <PlanButton
-              key={`plan-btn-${key}`}
-              active={key === active}
-              onClick={() => setActive(key as ChallengePricePlan)}
-            >
-              {value ?? '베이직'}
-            </PlanButton>
-          ))}
-        </div>
+        {hasPlans && (
+          <div className="flex items-center px-3 py-2">
+            {Object.entries(plans).map(([key, value]) => (
+              <PlanButton
+                key={`plan-btn-${key}`}
+                active={key === active}
+                onClick={() => setActive(key as ChallengePricePlan)}
+              >
+                {value ?? '베이직'}
+              </PlanButton>
+            ))}
+          </div>
+        )}
 
         <div className="min-h-[174px] whitespace-pre-line px-3 pb-5 pt-2.5">
           <span className="text-xsmall14 font-semibold text-[#4A76FF]">
