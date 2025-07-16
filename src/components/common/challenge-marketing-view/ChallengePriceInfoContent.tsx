@@ -177,12 +177,12 @@ function ChallengePriceInfoContent({ priceInfoList }: Props) {
     return plans;
   }, [priceInfoList, basicPriceInfo?.title]);
 
-  const hasPlans = Object.entries(plans).length > 0;
+  const hasMultiplePlans = Object.entries(plans).length > 1;
 
   return (
     <div className="flex flex-col items-stretch gap-2">
       <div className="rounded-xs bg-neutral-95">
-        {hasPlans && (
+        {hasMultiplePlans && (
           <div className="flex items-center px-3 py-2">
             {Object.entries(plans).map(([key, value]) => (
               <PlanButton
