@@ -271,7 +271,9 @@ const NextNavBar = () => {
       {/* 네비게이션 바 공간 차지 */}
       <Spacer
         hideMobileBottomNavBar={hideMobileBottomNavBar(pathname)}
-        backgroundColor="bg-black"
+        backgroundColor={
+          pathname.startsWith('/report') ? 'bg-black' : 'bg-white'
+        }
       />
     </header>
   );

@@ -1,6 +1,6 @@
 import { IFilter } from '../types/interface';
 
-interface FilterCheckedAction {
+export interface FilterCheckedAction {
   type: string;
   value?: string;
 }
