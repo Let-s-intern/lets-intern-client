@@ -233,9 +233,10 @@ const IntroSection = () => {
   });
 
   const menus = filteredItems.map((item, index) => {
+    const challengePathname = getCurrentChallenge(item.href.split('=')[1]);
     const isInvalidProgram =
-      item.href.startsWith('type=') &&
-      !getCurrentChallenge(item.href.split('=')[1]);
+      item.href.startsWith('type=') && !challengePathname;
+    const href = item.href.startsWith('type=') ? challengePathname : item.href;
 
     if (isInvalidProgram) return null;
 
@@ -245,11 +246,7 @@ const IntroSection = () => {
         title={item.title}
         subTitle={item.subTitle}
         icon={item.icon}
-        href={
-          item.href.startsWith('type=')
-            ? getCurrentChallenge(item.href.split('=')[1])
-            : item.href
-        }
+        href={href}
         iconClassName={filteredItems.length === 5 ? 'w-14' : 'w-15'}
         gaTitle={item.gaTitle}
         badgeClassName={index === 7 ? 'bg-[#34BFFF]' : undefined}
