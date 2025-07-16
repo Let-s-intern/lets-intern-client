@@ -60,6 +60,10 @@ const NextNavBar = () => {
   };
 
   const programCategoryLists = useProgramCategoryNav(true);
+  // href가 있는 프로그램만 필터링
+  const programCategoryWithHref = programCategoryLists.filter(
+    (item) => !!item.href,
+  );
 
   // 사이드바 열리면 스크롤 제한
   useControlScroll(isOpen);
@@ -96,9 +100,9 @@ const NextNavBar = () => {
                 force
                 // 모바일은 드롭다운 X
                 {...(!isMobile && {
-                  subNavList: programCategoryLists,
+                  subNavList: programCategoryWithHref,
+                  showDropdownIcon: true,
                 })}
-                showDropdownIcon={!isMobile}
               >
                 프로그램
                 <span className="hidden md:inline">&nbsp;카테고리</span>

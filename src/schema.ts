@@ -95,6 +95,8 @@ export const activeChallengeResponse = z.object({
   challengeList: z.array(activeChallengeSchema),
 });
 
+export type ActiveChallengeResponse = z.infer<typeof activeChallengeResponse>;
+
 export const ProgramClassificationEnum = z.enum([
   'CAREER_SEARCH',
   'DOCUMENT_PREPARATION',
@@ -126,6 +128,8 @@ export const challengeListSchema = z.object({
   programList: z.array(challengeListItemSchema),
   pageInfo,
 });
+
+export type ChallengeList = z.infer<typeof challengeListSchema>;
 
 export const challengePriceType = z.union([
   z.literal('CHARGE'),
