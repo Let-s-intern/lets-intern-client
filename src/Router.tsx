@@ -10,8 +10,12 @@ import Login from './router-pages/common/auth/Login';
 import SignUp from './router-pages/common/auth/SignUp';
 import ChallengeDashboard from './router-pages/common/challenge/ChallengeDashboard';
 import ChallengeUserInfo from './router-pages/common/challenge/ChallengeUserInfo';
+import ExperienceSummaryLatest from './router-pages/common/challenge/ExperienceSummaryLatest';
+import MarketingLatest from './router-pages/common/challenge/MarketingLatest';
 import MissionFeedback from './router-pages/common/challenge/MissionFeedback';
 import MyChallengeDashboard from './router-pages/common/challenge/MyChallengeDashboard';
+import PersonalStatementLatest from './router-pages/common/challenge/PersonalStatementLatest';
+import PortfolioLatest from './router-pages/common/challenge/PortfolioLatest';
 import Home from './router-pages/common/home/Home';
 import MentorNotificationAfter from './router-pages/common/mentor/MentorNotificationAfter';
 import MentorNotificationBefore from './router-pages/common/mentor/MentorNotificationBefore';
@@ -77,6 +81,24 @@ const Router = () => {
               {/* 프로그램 결제 결과 페이지 */}
               <Route path="order/result" element={<PaymentResult />} />
               <Route path="order/fail" element={<PaymentFail />} />
+
+              {/* 챌린지별 latest 리다이렉트 라우트 */}
+              <Route
+                path="challenge/experience-summary/latest"
+                element={<ExperienceSummaryLatest />}
+              />
+              <Route
+                path="challenge/personal-statement/latest"
+                element={<PersonalStatementLatest />}
+              />
+              <Route
+                path="challenge/portfolio/latest"
+                element={<PortfolioLatest />}
+              />
+              <Route
+                path="challenge/marketing/latest"
+                element={<MarketingLatest />}
+              />
 
               {/* 마이페이지 */}
               <Route path="mypage" element={<MyPage />}>
