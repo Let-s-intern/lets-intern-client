@@ -8,6 +8,7 @@ import { ProgramItemProps } from '../ProgramItem';
 import { getBadgeText, getDuration } from './MainCurationSection';
 
 const NAV_ITEMS = ['전체', 'LIVE 클래스', '취업 가이드북', 'VOD'];
+const MAX_PROGRAMS_PER_CATEGORY = 5;
 
 const LetsCareerSection = () => {
   const [active, setActive] = useState<string>('전체');
@@ -75,7 +76,7 @@ const LetsCareerSection = () => {
             text: '즉시 수강 가능',
           },
         }))
-        .slice(0, 5) ?? [],
+        .slice(0, MAX_PROGRAMS_PER_CATEGORY) ?? [],
     [vodData],
   );
 
@@ -92,7 +93,7 @@ const LetsCareerSection = () => {
             text: '평생 소장 가능',
           },
         }))
-        .slice(0, 5) ?? [],
+        .slice(0, MAX_PROGRAMS_PER_CATEGORY) ?? [],
     [vodData],
   );
 
