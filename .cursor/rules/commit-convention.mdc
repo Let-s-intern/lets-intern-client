@@ -1,3 +1,7 @@
+---
+alwaysApply: true
+---
+
 # Commit Message Convention
 
 > Source: https://medium.com/@hunterzhang86/essential-guide-to-cursor-one-click-generation-of-professional-git-commit-messages-688e7325e4b1
@@ -54,6 +58,3 @@ git commit -m "fix: 프로그램 필터 리듀서 및 목록 페이지 구조 �
 - Use `\n` for line breaks in the commit message.
 - The commit message must follow the above convention.
 - **Commit messages must be written in Korean.**
-
-- Use `\n` for line breaks in the commit message.
-- The commit message must follow the above convention.
