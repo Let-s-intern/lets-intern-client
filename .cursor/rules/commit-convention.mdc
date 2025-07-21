@@ -1,3 +1,7 @@
+---
+alwaysApply: true
+---
+
 # Commit Message Convention
 
 > Source: https://medium.com/@hunterzhang86/essential-guide-to-cursor-one-click-generation-of-professional-git-commit-messages-688e7325e4b1
@@ -45,7 +49,7 @@ git commit -m "<commit message>"
 Example:
 
 ```
-git add src/reducers/filterReducer.ts src/router-pages/common/program/Programs.tsx
+git add Programs.tsx
 
 git commit -m "fix: 프로그램 필터 리듀서 및 목록 페이지 구조 개선\n\n프로그램 필터 관련 리듀서의 불변성 및 일관성을 강화하였고,\n프로그램 목록 페이지의 UI 컴포넌트 구조를 개선하였습니다.\n\n- 필터 리듀서별 초기값 및 액션 처리 로직 정리\n- 프로그램 목록, 필터, 페이지네이션 등 역할별 함수 분리\n- URL 파라미터와 필터 상태 동기화 로직 개선\n"
 ```
@@ -54,6 +58,3 @@ git commit -m "fix: 프로그램 필터 리듀서 및 목록 페이지 구조 �
 - Use `\n` for line breaks in the commit message.
 - The commit message must follow the above convention.
 - **Commit messages must be written in Korean.**
-
-- Use `\n` for line breaks in the commit message.
-- The commit message must follow the above convention.

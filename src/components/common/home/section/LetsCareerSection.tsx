@@ -26,7 +26,7 @@ const LetsCareerSection = () => {
 
   const { data: vodData, isLoading: vodIsLoading } = useGetVodListQuery({
     pageable: {
-      size: 5,
+      size: 20,
       page: 1,
     },
   });
@@ -74,7 +74,8 @@ const LetsCareerSection = () => {
           badge: {
             text: '즉시 수강 가능',
           },
-        })) ?? [],
+        }))
+        .slice(0, 5) ?? [],
     [vodData],
   );
 
@@ -90,7 +91,8 @@ const LetsCareerSection = () => {
           badge: {
             text: '평생 소장 가능',
           },
-        })) ?? [],
+        }))
+        .slice(0, 5) ?? [],
     [vodData],
   );
 
