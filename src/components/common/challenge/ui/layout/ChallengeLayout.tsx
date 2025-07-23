@@ -1,6 +1,3 @@
-import { useEffect } from 'react';
-import { Outlet, useNavigate, useParams } from 'react-router-dom';
-
 import {
   useGetChallengeGoal,
   useGetChallengeValideUser,
@@ -8,8 +5,10 @@ import {
 } from '@/api/challenge';
 import { useGetChallengeQuery } from '@/api/program';
 import dayjs from '@/lib/dayjs';
+import useAuthStore from '@/store/useAuthStore';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import useAuthStore from '../../../../../store/useAuthStore';
+import { useEffect } from 'react';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import NavBar from './NavBar';
 
 export const GOAL_DATE = dayjs('2025-01-19');
