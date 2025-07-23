@@ -25,6 +25,7 @@ const cellWidthList = [
   'w-[15%]',
   'w-[16%]',
   'w-[17%]',
+  'w-[8%]',
 ];
 
 const colNames = [
@@ -35,6 +36,7 @@ const colNames = [
   '내용',
   '가이드',
   '템플릿 링크',
+  'VOD 링크',
 ];
 
 type Row = MissionTemplateResItem & ItemWithStatus;
@@ -115,6 +117,7 @@ const ChallengeMissionManagement = () => {
               createDate: dayjs(), // 임시 생성일자
               rowStatus: TABLE_STATUS.INSERT,
               missionTag: '',
+              vodLink: '',
             });
           }}
         >
@@ -134,11 +137,13 @@ const ChallengeMissionManagement = () => {
                 'description',
                 'guide',
                 'templateLink',
+                'vodLink',
               ]}
               placeholders={colNames}
-              canEdits={[false, false, true, true, true, true, true]}
+              canEdits={[false, false, true, true, true, true, true, true]}
               contents={[
                 { type: TABLE_CONTENT.DATE },
+                { type: TABLE_CONTENT.INPUT },
                 { type: TABLE_CONTENT.INPUT },
                 { type: TABLE_CONTENT.INPUT },
                 { type: TABLE_CONTENT.INPUT },
@@ -161,8 +166,9 @@ const ChallengeMissionManagement = () => {
                     description: item.description,
                     guide: item.guide,
                     missionTag: item.missionTag,
-                    templateLink: item.templateLink,
+                    templateLink: item.templateLink ?? undefined,
                     title: item.title,
+                    vodLink: item.vodLink ?? undefined,
                   });
                   refetch();
                   setInsertingMissionTemplate(null);
@@ -172,8 +178,9 @@ const ChallengeMissionManagement = () => {
                     description: item.description,
                     guide: item.guide,
                     missionTag: item.missionTag,
-                    templateLink: item.templateLink,
+                    templateLink: item.templateLink ?? undefined,
                     title: item.title,
+                    vodLink: item.vodLink ?? undefined,
                   });
                   refetch();
                 }
