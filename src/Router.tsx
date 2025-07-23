@@ -10,6 +10,8 @@ import Login from './router-pages/common/auth/Login';
 import SignUp from './router-pages/common/auth/SignUp';
 import ChallengeDashboard from './router-pages/common/challenge/ChallengeDashboard';
 import ChallengeUserInfo from './router-pages/common/challenge/ChallengeUserInfo';
+import DashboardMyMissionPage from './router-pages/common/challenge/DashboardMyMissionPage';
+import DashboardPage from './router-pages/common/challenge/DashboardPage';
 import MissionFeedback from './router-pages/common/challenge/MissionFeedback';
 import MyChallengeDashboard from './router-pages/common/challenge/MyChallengeDashboard';
 import Home from './router-pages/common/home/Home';
@@ -150,8 +152,8 @@ const Router = () => {
                   </CurrentChallengeProvider>
                 }
               >
-                <Route path="" element={<ChallengeDashboard />} />
-                <Route path="missions" element={<MyChallengeDashboard />} />
+                <Route path="" element={<DashboardPage />} />
+                <Route path="missions" element={<DashboardMyMissionPage />} />
               </Route>
 
               {/* OLD 챌린지 대시보드 */}
