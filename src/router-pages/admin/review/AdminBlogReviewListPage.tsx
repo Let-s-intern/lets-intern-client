@@ -22,10 +22,25 @@ import {
   GridRowModes,
   GridRowModesModel,
   GridRowParams,
+  GridToolbarContainer,
+  GridToolbarExport,
 } from '@mui/x-data-grid';
 import { Check, Pencil, Trash, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import AdminReviewHeader from './AdminReviewHeader';
+
+const csvOptions = {
+  fileName: `blog-review-${Date.now().toString()}`,
+  utf8WithBom: true,
+};
+
+function CustomToolbar() {
+  return (
+    <GridToolbarContainer>
+      <GridToolbarExport csvOptions={csvOptions} />
+    </GridToolbarContainer>
+  );
+}
 
 type Row = AdminBlogReview & {
   id: number | string;
@@ -316,9 +331,11 @@ export default function AdminBlogReviewListPage() {
             <li>디스콰이엇 Disquiet</li>
           </ul>
         </div>
-        <Button className="h-fit" variant="outlined" onClick={handleAddRow}>
-          등록
-        </Button>
+        <div>
+          <Button className="h-fit" variant="outlined" onClick={handleAddRow}>
+            등록
+          </Button>
+        </div>
       </div>
       <DataGrid
         editMode="row"
@@ -331,6 +348,7 @@ export default function AdminBlogReviewListPage() {
         onProcessRowUpdateError={(error) => console.error(error)}
         disableRowSelectionOnClick
         hideFooter
+        slots={{ toolbar: CustomToolbar }}
       />
     </div>
   );
