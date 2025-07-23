@@ -75,10 +75,8 @@ const DashboardPage = () => {
   });
 
   const programEndDate = programData?.data?.endDate;
-
   const totalScore = scoreGroup?.totalScore || 0;
   const currentScore = scoreGroup?.currentScore || 0;
-
   const isChallengeDone = getIsChallengeDone(programEndDate);
   const isChallengeSubmitDone = getIsChallengeSubmitDone(programEndDate);
 

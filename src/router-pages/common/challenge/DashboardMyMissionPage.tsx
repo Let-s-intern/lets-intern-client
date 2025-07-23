@@ -20,8 +20,6 @@ const DashboardMyMissionPage = () => {
 
   const { schedules, myDailyMission } = useCurrentChallenge();
 
-  const todayTh = myDailyMission?.dailyMission?.th ?? schedules.length + 1;
-
   const { data: programData } = useQuery({
     queryKey: ['challenge', params.programId, 'application'],
     queryFn: async ({ queryKey }) => {
@@ -32,8 +30,8 @@ const DashboardMyMissionPage = () => {
     },
   });
 
+  const todayTh = myDailyMission?.dailyMission?.th ?? schedules.length + 1;
   const programEndDate = programData?.data?.endDate;
-
   const isChallengeDone = getIsChallengeDone(programEndDate);
   const isChallengeSubmitDone = programEndDate
     ? getIsChallengeSubmitDone(programEndDate)
