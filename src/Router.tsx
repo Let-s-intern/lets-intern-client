@@ -10,6 +10,8 @@ import Login from './router-pages/common/auth/Login';
 import SignUp from './router-pages/common/auth/SignUp';
 import ChallengeDashboard from './router-pages/common/challenge/ChallengeDashboard';
 import ChallengeUserInfo from './router-pages/common/challenge/ChallengeUserInfo';
+import DashboardMyMissionPage from './router-pages/common/challenge/DashboardMyMissionPage';
+import DashboardPage from './router-pages/common/challenge/DashboardPage';
 import MissionFeedback from './router-pages/common/challenge/MissionFeedback';
 import MyChallengeDashboard from './router-pages/common/challenge/MyChallengeDashboard';
 import Home from './router-pages/common/home/Home';
@@ -141,7 +143,20 @@ const Router = () => {
               {/* 비밀번호 찾기 */}
               <Route path="find-password" element={<FindPassword />} />
 
-              {/* 챌린지 대시보드 */}
+              {/* NEW 챌린지 대시보드 */}
+              <Route
+                path="challenge/:programId/dashboard/:applicationId"
+                element={
+                  <CurrentChallengeProvider>
+                    <ChallengeLayout />
+                  </CurrentChallengeProvider>
+                }
+              >
+                <Route path="" element={<DashboardPage />} />
+                <Route path="missions" element={<DashboardMyMissionPage />} />
+              </Route>
+
+              {/* OLD 챌린지 대시보드 */}
               <Route
                 path="challenge/:applicationId/:programId"
                 element={
@@ -150,9 +165,10 @@ const Router = () => {
                   </CurrentChallengeProvider>
                 }
               >
-                <Route path="user/info" element={<ChallengeUserInfo />} />
                 <Route path="" element={<ChallengeDashboard />} />
+                <Route path="user/info" element={<ChallengeUserInfo />} />
                 <Route path="me" element={<MyChallengeDashboard />} />
+
                 {/* 미션 피드백 페이지 */}
                 <Route
                   path="challenge/:challengeId/missions/:missionId/feedback"

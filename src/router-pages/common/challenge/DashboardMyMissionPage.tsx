@@ -15,12 +15,10 @@ const getIsChallengeSubmitDone = (endDate: string) => {
   return dayjs(new Date()).isAfter(dayjs(endDate).add(2, 'day'));
 };
 
-const MyChallengeDashboard = () => {
+const DashboardMyMissionPage = () => {
   const params = useParams<{ programId: string }>();
 
   const { schedules, myDailyMission } = useCurrentChallenge();
-
-  const todayTh = myDailyMission?.dailyMission?.th ?? schedules.length + 1;
 
   const { data: programData } = useQuery({
     queryKey: ['challenge', params.programId, 'application'],
@@ -32,8 +30,8 @@ const MyChallengeDashboard = () => {
     },
   });
 
+  const todayTh = myDailyMission?.dailyMission?.th ?? schedules.length + 1;
   const programEndDate = programData?.data?.endDate;
-
   const isChallengeDone = getIsChallengeDone(programEndDate);
   const isChallengeSubmitDone = programEndDate
     ? getIsChallengeSubmitDone(programEndDate)
@@ -59,4 +57,4 @@ const MyChallengeDashboard = () => {
   );
 };
 
-export default MyChallengeDashboard;
+export default DashboardMyMissionPage;
