@@ -42,6 +42,20 @@ function CustomToolbar() {
   );
 }
 
+const createRow = () => ({
+  id: generateUUID(),
+  blogReviewId: 0, // 의미 없는 값
+  postDate: new Date(),
+  programType: ProgramTypeEnum.enum.CHALLENGE,
+  programTitle: undefined,
+  name: undefined,
+  title: undefined,
+  url: undefined,
+  thumbnail: undefined,
+  isVisible: false,
+  isNew: true,
+});
+
 type Row = AdminBlogReview & {
   id: number | string;
   isNew: boolean;
@@ -196,20 +210,6 @@ export default function AdminBlogReviewListPage() {
       [newReview.id]: { mode: GridRowModes.Edit },
     }));
   };
-
-  const createRow = () => ({
-    id: generateUUID(),
-    blogReviewId: 0, // 의미 없는 값
-    postDate: new Date(),
-    programType: ProgramTypeEnum.enum.CHALLENGE,
-    programTitle: undefined,
-    name: undefined,
-    title: undefined,
-    url: undefined,
-    thumbnail: undefined,
-    isVisible: false,
-    isNew: true,
-  });
 
   const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
     setRowModesModel(newRowModesModel);
