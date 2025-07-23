@@ -22,9 +22,9 @@ const getIsChallengeSubmitDone = (endDate: string) => {
 };
 
 const DashboardPage = () => {
-  const { currentChallenge, schedules, dailyMission } = useCurrentChallenge();
-
   const params = useParams();
+
+  const { currentChallenge, schedules, dailyMission } = useCurrentChallenge();
 
   const todayTh =
     dailyMission?.th ||

@@ -91,7 +91,7 @@ const ApplicationCard = ({
         showChallengeButton &&
         application.programStartDate?.isBefore(dayjs()) && (
           <LinkButton
-            to={`/challenge/${application.id}/${application.programId}`}
+            to={`/challenge/${application.programId}/dashboard/${application.id}`}
             target="_blank"
             rel="noopener noreferrer"
             className="whitespace-nowrap"
