@@ -29,12 +29,12 @@ import { Check, Pencil, Trash, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import AdminReviewHeader from './AdminReviewHeader';
 
-const csvOptions = {
-  fileName: `blog-review-${Date.now().toString()}`,
-  utf8WithBom: true,
-};
-
 function CustomToolbar() {
+  const csvOptions = {
+    fileName: `blog-review-${Date.now().toString()}`,
+    utf8WithBom: true,
+  };
+
   return (
     <GridToolbarContainer>
       <GridToolbarExport csvOptions={csvOptions} />
