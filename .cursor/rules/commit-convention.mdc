@@ -1,6 +1,8 @@
-# Commit Message Convention
+---
+alwaysApply: true
+---
 
-> Source: https://medium.com/@hunterzhang86/essential-guide-to-cursor-one-click-generation-of-professional-git-commit-messages-688e7325e4b1
+# Commit Message Convention
 
 Follow the template below to write commit messages.
 
