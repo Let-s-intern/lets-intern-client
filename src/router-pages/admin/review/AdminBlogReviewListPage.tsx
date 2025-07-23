@@ -70,6 +70,24 @@ export default function AdminBlogReviewListPage() {
       sortable: false,
     },
     {
+      field: 'phoneNum',
+      headerName: '연락처',
+      width: 200,
+      sortable: false,
+    },
+    {
+      field: 'bankName',
+      headerName: '은행명',
+      width: 110,
+      sortable: false,
+    },
+    {
+      field: 'accountNum',
+      headerName: '계좌번호',
+      width: 200,
+      sortable: false,
+    },
+    {
       field: 'title',
       headerName: '제목',
       sortable: false,
