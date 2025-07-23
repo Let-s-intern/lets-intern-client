@@ -141,7 +141,20 @@ const Router = () => {
               {/* 비밀번호 찾기 */}
               <Route path="find-password" element={<FindPassword />} />
 
-              {/* 챌린지 대시보드 */}
+              {/* NEW 챌린지 대시보드 */}
+              <Route
+                path="challenge/:programId/dashboard/:applicationId"
+                element={
+                  <CurrentChallengeProvider>
+                    <ChallengeLayout />
+                  </CurrentChallengeProvider>
+                }
+              >
+                <Route path="" element={<ChallengeDashboard />} />
+                <Route path="missions" element={<MyChallengeDashboard />} />
+              </Route>
+
+              {/* OLD 챌린지 대시보드 */}
               <Route
                 path="challenge/:applicationId/:programId"
                 element={
@@ -150,9 +163,10 @@ const Router = () => {
                   </CurrentChallengeProvider>
                 }
               >
-                <Route path="user/info" element={<ChallengeUserInfo />} />
                 <Route path="" element={<ChallengeDashboard />} />
+                <Route path="user/info" element={<ChallengeUserInfo />} />
                 <Route path="me" element={<MyChallengeDashboard />} />
+
                 {/* 미션 피드백 페이지 */}
                 <Route
                   path="challenge/:challengeId/missions/:missionId/feedback"
