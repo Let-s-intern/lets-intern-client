@@ -22,10 +22,39 @@ import {
   GridRowModes,
   GridRowModesModel,
   GridRowParams,
+  GridToolbarContainer,
+  GridToolbarExport,
 } from '@mui/x-data-grid';
 import { Check, Pencil, Trash, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import AdminReviewHeader from './AdminReviewHeader';
+
+function CustomToolbar() {
+  const csvOptions = {
+    fileName: `blog-review-${Date.now().toString()}`,
+    utf8WithBom: true,
+  };
+
+  return (
+    <GridToolbarContainer>
+      <GridToolbarExport csvOptions={csvOptions} />
+    </GridToolbarContainer>
+  );
+}
+
+const createRow = () => ({
+  id: generateUUID(),
+  blogReviewId: 0, // 의미 없는 값
+  postDate: new Date(),
+  programType: ProgramTypeEnum.enum.CHALLENGE,
+  programTitle: undefined,
+  name: undefined,
+  title: undefined,
+  url: undefined,
+  thumbnail: undefined,
+  isVisible: false,
+  isNew: true,
+});
 
 type Row = AdminBlogReview & {
   id: number | string;
@@ -73,19 +102,16 @@ export default function AdminBlogReviewListPage() {
       field: 'phoneNum',
       headerName: '연락처',
       width: 200,
-      sortable: false,
     },
     {
       field: 'bankName',
       headerName: '은행명',
       width: 110,
-      sortable: false,
     },
     {
       field: 'accountNum',
       headerName: '계좌번호',
       width: 200,
-      sortable: false,
     },
     {
       field: 'title',
@@ -181,20 +207,6 @@ export default function AdminBlogReviewListPage() {
       [newReview.id]: { mode: GridRowModes.Edit },
     }));
   };
-
-  const createRow = () => ({
-    id: generateUUID(),
-    blogReviewId: 0, // 의미 없는 값
-    postDate: new Date(),
-    programType: ProgramTypeEnum.enum.CHALLENGE,
-    programTitle: undefined,
-    name: undefined,
-    title: undefined,
-    url: undefined,
-    thumbnail: undefined,
-    isVisible: false,
-    isNew: true,
-  });
 
   const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
     setRowModesModel(newRowModesModel);
@@ -316,9 +328,11 @@ export default function AdminBlogReviewListPage() {
             <li>디스콰이엇 Disquiet</li>
           </ul>
         </div>
-        <Button className="h-fit" variant="outlined" onClick={handleAddRow}>
-          등록
-        </Button>
+        <div>
+          <Button className="h-fit" variant="outlined" onClick={handleAddRow}>
+            등록
+          </Button>
+        </div>
       </div>
       <DataGrid
         editMode="row"
@@ -331,6 +345,7 @@ export default function AdminBlogReviewListPage() {
         onProcessRowUpdateError={(error) => console.error(error)}
         disableRowSelectionOnClick
         hideFooter
+        slots={{ toolbar: CustomToolbar }}
       />
     </div>
   );
