@@ -4,10 +4,11 @@ import {
   useGetUserChallengeInfo,
 } from '@/api/challenge';
 import { useGetChallengeQuery } from '@/api/program';
+import useLegacyDashboardRedirect from '@/hooks/useLegacyDashboardRedirect';
 import dayjs from '@/lib/dayjs';
 import useAuthStore from '@/store/useAuthStore';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import DashboardNavBar from './DashboardNavBar';
 
@@ -20,7 +21,7 @@ const DashboardLayout = () => {
   const programId = params.programId;
   const applicationId = params.applicationId;
 
-  const [isLoadingDashboard, setIsLoadingDashboard] = useState(true);
+  const isLoadingDashboard = useLegacyDashboardRedirect(true);
 
   const { isLoggedIn } = useAuthStore();
 
@@ -81,19 +82,6 @@ const DashboardLayout = () => {
     hasChallengeGoal,
     isStartAfterGoal,
   ]);
-
-  useEffect(() => {
-    /*  챌린지 대시보드 분기 처리 */
-    const LEGACY_DASHBOARD_CUTOFF_PROGRAM_ID =
-      process.env.NODE_ENV === 'development' ? 17 : 100;
-    const programId = params.programId;
-
-    if (Number(programId) < LEGACY_DASHBOARD_CUTOFF_PROGRAM_ID) {
-      const applicationId = params.applicationId;
-      navigate(`/challenge/${applicationId}/${programId}`);
-    }
-    setIsLoadingDashboard(false);
-  }, [navigate, params]);
 
   if (isLoadingDashboard || isLoadingData) {
     return <LoadingContainer className="mt-[10%]" />;
