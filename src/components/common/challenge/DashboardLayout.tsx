@@ -10,18 +10,18 @@ import useAuthStore from '@/store/useAuthStore';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useEffect } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
-import NavBar from './NavBar';
+import DashboardNavBar from './DashboardNavBar';
 
 export const GOAL_DATE = dayjs('2025-01-19');
 
-const ChallengeLayout = () => {
+const DashboardLayout = () => {
   const navigate = useNavigate();
 
   const params = useParams();
   const programId = params.programId;
   const applicationId = params.applicationId;
 
-  const isLoadingDashboard = useLegacyDashboardRedirect(false);
+  const isLoadingDashboard = useLegacyDashboardRedirect(true);
 
   const { isLoggedIn } = useAuthStore();
 
@@ -105,7 +105,7 @@ const ChallengeLayout = () => {
       </div>
       <div className="hidden px-6 py-6 lg:block">
         <div className="mx-auto flex w-[1024px]">
-          <NavBar />
+          <DashboardNavBar />
           <div className="min-w-0 flex-1">
             <Outlet />
           </div>
@@ -115,4 +115,4 @@ const ChallengeLayout = () => {
   );
 };
 
-export default ChallengeLayout;
+export default DashboardLayout;
