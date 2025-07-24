@@ -5,11 +5,9 @@ const DashboardNavBar = () => {
   const params = useParams();
   const location = useLocation();
   const applicationId = params.applicationId;
-  const activeStatus = /^\/challenge\/(\d+)\/others/.test(location.pathname)
-    ? 'OTHERS_DASHBOARD'
-    : /^\/challenge\/(\d+)\/me/.test(location.pathname)
-      ? 'MY_DASHBOARD'
-      : /^\/challenge\/(\d+)$/.test(location.pathname) && 'DASHBOARD';
+  const activeStatus = location.pathname.endsWith('missions')
+    ? 'MY_DASHBOARD'
+    : 'DASHBOARD';
 
   return (
     <>
