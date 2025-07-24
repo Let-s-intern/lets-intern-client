@@ -16,21 +16,24 @@ export default function useLegacyDashboardRedirect(isNew: boolean) {
 
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const LEGACY_DASHBOARD_CUTOFF_PROGRAM_ID =
-      process.env.NODE_ENV === 'development' ? 17 : 101;
-    const programId = Number(params.programId);
-    const applicationId = params.applicationId;
-    const condition = isNew
-      ? programId < LEGACY_DASHBOARD_CUTOFF_PROGRAM_ID
-      : programId >= LEGACY_DASHBOARD_CUTOFF_PROGRAM_ID;
-    const redirectUrl = isNew
-      ? `/challenge/${applicationId}/${programId}`
-      : `/challenge/${programId}/dashboard/${applicationId}`;
+  const LEGACY_DASHBOARD_CUTOFF_PROGRAM_ID =
+    process.env.NODE_ENV === 'development' ? 17 : 101;
+  const programId = Number(params.programId);
+  const applicationId = params.applicationId;
+  const condition = isNew
+    ? programId < LEGACY_DASHBOARD_CUTOFF_PROGRAM_ID
+    : programId >= LEGACY_DASHBOARD_CUTOFF_PROGRAM_ID;
+  const redirectUrl = isNew
+    ? `/challenge/${applicationId}/${programId}`
+    : `/challenge/${programId}/dashboard/${applicationId}`;
 
-    if (condition) navigate(redirectUrl);
+  useEffect(() => {
+    if (condition) {
+      navigate(redirectUrl);
+      return;
+    }
     setIsLoading(false);
-  }, [navigate, params, isNew]);
+  }, [navigate, condition, redirectUrl]);
 
   return isLoading;
 }
