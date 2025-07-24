@@ -1,3 +1,4 @@
+import DashboardLayout from '@components/common/challenge/DashboardLayout';
 import ScrollToTop from '@components/ui/scroll-to-top/ScrollToTop';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { getAdminRoutes } from './AdminRoutes';
@@ -148,7 +149,7 @@ const Router = () => {
                 path="challenge/:programId/dashboard/:applicationId"
                 element={
                   <CurrentChallengeProvider>
-                    <ChallengeLayout />
+                    <DashboardLayout />
                   </CurrentChallengeProvider>
                 }
               >
