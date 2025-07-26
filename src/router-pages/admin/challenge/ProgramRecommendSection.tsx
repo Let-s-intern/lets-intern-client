@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import { useChallengeQuery, usePatchChallengeMutation } from '@/api/program';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { ChallengeContent } from '@/types/interface';
 import ProgramRecommendEditor from '@components/ProgramRecommendEditor';
 import { Button } from '@mui/material';
@@ -9,6 +10,8 @@ import { useParams } from 'react-router-dom';
 function ProgramRecommendSection() {
   const params = useParams();
   const programId = Number(params.programId);
+
+  const { snackbar } = useAdminSnackbar();
 
   const { data: challenge, isLoading } = useChallengeQuery(programId);
   const { mutateAsync: patchChallenge } = usePatchChallengeMutation();
@@ -36,7 +39,13 @@ function ProgramRecommendSection() {
       challengeId: programId,
       desc: JSON.stringify(newDescJson),
     };
-    await patchChallenge(request);
+
+    try {
+      await patchChallenge(request);
+      snackbar('저장되었습니다');
+    } catch (error) {
+      console.error('저장 실패:', error);
+    }
   };
 
   useEffect(() => {
