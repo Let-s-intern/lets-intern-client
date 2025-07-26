@@ -1,8 +1,6 @@
-import { useChallengeQuery } from '@/api/program';
-import { ChallengeContent } from '@/types/interface';
+import { ProgramRecommend } from '@/types/interface';
 import { ChevronRight } from 'lucide-react';
-import { useMemo } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import 'swiper/css';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
@@ -10,24 +8,11 @@ const TEXT_SHADOW_STYLE = {
   textShadow: '0 0 8.4px rgba(33, 33, 37, 0.40)',
 };
 
-function RecommendedProgramSwiper() {
-  const params = useParams();
-  const { data: challenge, isLoading } = useChallengeQuery(params.programId);
+interface Props {
+  programs: ProgramRecommend['list'];
+}
 
-  const descJson = useMemo<ChallengeContent | null>(() => {
-    if (!challenge?.desc) return null;
-    try {
-      return JSON.parse(challenge.desc);
-    } catch (e) {
-      console.error(e);
-      return null;
-    }
-  }, [challenge?.desc]);
-
-  const programs = descJson?.operationRecommendProgram?.list ?? [];
-
-  if (isLoading || programs.length === 0) return null;
-
+function RecommendedProgramSwiper({ programs }: Props) {
   return (
     <div className="mx-auto w-full max-w-[1120px]">
       <Swiper
@@ -51,7 +36,7 @@ function RecommendedProgramSwiper() {
               <div className="flex flex-col gap-2">
                 <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-neutral-100">
                   <img
-                    src={info.thumbnail || '/images/default-thumbnail.png'}
+                    src={info.thumbnail || undefined}
                     className="h-full w-full object-cover"
                     alt={info.title || '추천 프로그램 썸네일'}
                   />
@@ -60,7 +45,7 @@ function RecommendedProgramSwiper() {
                       className="block w-fit text-xsmall14 font-semibold text-white"
                       style={TEXT_SHADOW_STYLE}
                     >
-                      {info.title}
+                      {item.recommendTitle}
                     </span>
                   </div>
                 </div>

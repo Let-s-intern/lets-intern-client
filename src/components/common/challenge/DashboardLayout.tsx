@@ -8,10 +8,14 @@ import useLegacyDashboardRedirect from '@/hooks/useLegacyDashboardRedirect';
 import dayjs from '@/lib/dayjs';
 import useAuthStore from '@/store/useAuthStore';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import { useEffect } from 'react';
+import { lazy, useEffect } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import DashboardNavBar from './DashboardNavBar';
-import RecommendedProgramSwiper from './RecommendedProgramSwiper';
+import RecommendedProgramSection from './RecommendedProgramSection';
+
+const RecommendedProgramSwiper = lazy(
+  () => import('./RecommendedProgramSwiper'),
+);
 
 export const GOAL_DATE = dayjs('2025-01-19');
 
@@ -98,13 +102,7 @@ const DashboardLayout = () => {
       </div>
 
       {/* 프로그램 추천 */}
-      <section className="mb-10 bg-primary-5 pb-12 pt-10 md:mb-16">
-        <h2 className="mx-auto mb-5 max-w-[1120px] px-5 text-xsmall16 font-semibold md:px-0 md:text-small18">
-          함께 들으면 더 좋아요. <br className="md:hidden" />
-          참가자들이 선택한 프로그램만 모았어요.
-        </h2>
-        <RecommendedProgramSwiper />
-      </section>
+      <RecommendedProgramSection />
     </div>
   );
 };
