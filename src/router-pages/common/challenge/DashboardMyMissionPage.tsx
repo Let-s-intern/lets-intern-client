@@ -52,11 +52,9 @@ const DashboardMyMissionPage = () => {
         todayTh={todayTh}
         isDone={isChallengeDone}
       />
-      {todayTh === 0 && (
-        <div className="mt-8">
-          <MissionGuideSection />
-        </div>
-      )}
+      <div className="mt-8">
+        <MissionGuideSection todayTh={todayTh} />
+      </div>
       {myDailyMission?.attendanceInfo && myDailyMission.dailyMission && (
         <DailyMissionSection myDailyMission={myDailyMission} />
       )}
