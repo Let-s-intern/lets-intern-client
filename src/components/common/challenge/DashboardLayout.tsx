@@ -89,7 +89,7 @@ const DashboardLayout = () => {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-6rem)]">
-      <div className="mx-auto flex w-[1024px]">
+      <div className="mx-auto mt-16 flex w-[1024px] gap-12">
         <DashboardNavBar />
         <div className="min-w-0 flex-1">
           <Outlet />

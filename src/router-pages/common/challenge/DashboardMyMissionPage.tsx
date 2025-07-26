@@ -41,7 +41,7 @@ const DashboardMyMissionPage = () => {
     : undefined;
   todayTh = 0;
   return (
-    <main className="px-6">
+    <main>
       <header>
         <h1 className="text-2xl font-bold">나의 미션</h1>
       </header>
