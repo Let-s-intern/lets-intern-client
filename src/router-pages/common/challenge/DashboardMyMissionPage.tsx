@@ -6,6 +6,7 @@ import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import axios from '@/utils/axios';
 import MissionStatusMessage from '@components/common/challenge/my-challenge/MissionStatusMessage';
+import MissionSubmitSection from '@components/common/challenge/my-challenge/MissionSubmitSection';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 
@@ -54,6 +55,9 @@ const DashboardMyMissionPage = () => {
       />
       <div className="mt-8">
         <MissionGuideSection todayTh={todayTh} />
+      </div>
+      <div className="mt-6">
+        <MissionSubmitSection />
       </div>
       {myDailyMission?.attendanceInfo && myDailyMission.dailyMission && (
         <DailyMissionSection myDailyMission={myDailyMission} />
