@@ -8,9 +8,14 @@ import useLegacyDashboardRedirect from '@/hooks/useLegacyDashboardRedirect';
 import dayjs from '@/lib/dayjs';
 import useAuthStore from '@/store/useAuthStore';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import { useEffect } from 'react';
+import { lazy, useEffect } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import DashboardNavBar from './DashboardNavBar';
+import RecommendedProgramSection from './RecommendedProgramSection';
+
+const RecommendedProgramSwiper = lazy(
+  () => import('./RecommendedProgramSwiper'),
+);
 
 export const GOAL_DATE = dayjs('2025-01-19');
 
@@ -95,6 +100,9 @@ const DashboardLayout = () => {
           <Outlet />
         </div>
       </div>
+
+      {/* 프로그램 추천 */}
+      <RecommendedProgramSection />
     </div>
   );
 };
