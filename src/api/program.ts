@@ -7,6 +7,7 @@ import {
   CreateLiveReq,
   CreateVodReq,
   faqSchema,
+  getChallengeIdPrimitiveSchema,
   getChallengeIdSchema,
   getLiveIdPrimitiveSchema,
   getLiveIdSchema,
@@ -187,6 +188,18 @@ export const useGetChallengeQuery = ({
 export const getChallenge = async (challengeId: number) => {
   const res = await axios.get(`/challenge/${challengeId}`);
   return getChallengeIdSchema.parse(res.data.data);
+};
+
+/** 챌린지 상세 조회 */
+export const useChallengeQuery = (challengeId?: string | number) => {
+  return useQuery({
+    queryKey: ['useChallengeQuery', challengeId],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${challengeId}`);
+      return getChallengeIdPrimitiveSchema.parse(res.data.data);
+    },
+    enabled: !!challengeId,
+  });
 };
 
 export const usePostChallengeMutation = ({

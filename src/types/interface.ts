@@ -72,6 +72,8 @@ export type ChallengeContent = {
   faqCategory: string[];
   /** 프로그램 추천 리스트 */
   programRecommend?: ProgramRecommend;
+  /** 챌린지 운영: 추천 프로그램 */
+  operationRecommendProgram?: ProgramRecommend;
 };
 
 export type LiveContent = {
