@@ -191,9 +191,9 @@ export const getChallenge = async (challengeId: number) => {
 };
 
 /** 챌린지 상세 조회 */
-export const useChallelngeQuery = (challengeId?: string | number) => {
+export const useChallengeQuery = (challengeId?: string | number) => {
   return useQuery({
-    queryKey: ['useChallelngeQuery', challengeId],
+    queryKey: ['useChallengeQuery', challengeId],
     queryFn: async () => {
       const res = await axios.get(`/challenge/${challengeId}`);
       return getChallengeIdPrimitiveSchema.parse(res.data.data);

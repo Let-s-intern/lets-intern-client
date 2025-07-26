@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { useChallelngeQuery, usePatchChallengeMutation } from '@/api/program';
+import { useChallengeQuery, usePatchChallengeMutation } from '@/api/program';
 import { ChallengeContent } from '@/types/interface';
 import ProgramRecommendEditor from '@components/ProgramRecommendEditor';
 import { Button } from '@mui/material';
@@ -10,7 +10,7 @@ function ProgramRecommendSection() {
   const params = useParams();
   const programId = Number(params.programId);
 
-  const { data: challenge, isLoading } = useChallelngeQuery(programId);
+  const { data: challenge, isLoading } = useChallengeQuery(programId);
   const { mutateAsync: patchChallenge } = usePatchChallengeMutation();
 
   const descJson = useMemo<ChallengeContent | null>(() => {
