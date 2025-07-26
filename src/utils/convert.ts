@@ -354,6 +354,60 @@ export const missionSubmitToBadge = ({
   };
 };
 
+export const unsubmitted = {
+  text: '미제출',
+  style: 'text-system-error',
+};
+
+export const challengeMissionSubmitToBadge = ({
+  status,
+  result,
+}: {
+  status?: AttendanceStatus | null;
+  result?: AttendanceResult | null;
+}) => {
+  if (result === 'WAITING') {
+    return {
+      text: '확인중',
+      style: 'text-primary-90',
+    };
+  }
+
+  if (status === 'UPDATED' && result === 'WRONG') {
+    return unsubmitted;
+  }
+
+  if (status === 'UPDATED' && result === 'PASS') {
+    return {
+      text: '지각 제출',
+      style: 'text-neutral-30',
+    };
+  }
+
+  if (result === 'WRONG') {
+    return {
+      text: '제출 반려',
+      style: 'text-neutral-30',
+    };
+  }
+
+  if (status === 'ABSENT') {
+    return unsubmitted;
+  }
+
+  if (status === 'LATE') {
+    return {
+      text: '지각 제출',
+      style: 'text-[#9B9B9B]',
+    };
+  }
+
+  return {
+    text: '제출 성공',
+    style: 'text-primary-90',
+  };
+};
+
 // 테이블 컴포넌트에 사용 (SAVE: 1번 이상 저장한 행, INSERT: 새로 추가한 행)
 export const TABLE_STATUS = {
   SAVE: 0,
