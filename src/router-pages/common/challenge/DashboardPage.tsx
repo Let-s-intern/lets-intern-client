@@ -84,7 +84,7 @@ const DashboardPage = () => {
   const isChallengeSubmitDone = getIsChallengeSubmitDone(programEndDate);
 
   return (
-    <main className="mr-[-1rem] pl-6">
+    <main>
       <header>
         <h1 className="text-[22px] font-semibold">{user?.name}님의 대시보드</h1>
       </header>
