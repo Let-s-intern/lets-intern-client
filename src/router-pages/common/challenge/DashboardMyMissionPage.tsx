@@ -1,3 +1,4 @@
+import ChallengeStatusMessage from '@/components/common/challenge/my-challenge/ChallengeStatusMessage';
 import DailyMissionSection from '@/components/common/challenge/my-challenge/section/DailyMissionSection';
 import MissionCalendarSection from '@/components/common/challenge/my-challenge/section/MissionCalendarSection';
 import OtherMissionSection from '@/components/common/challenge/my-challenge/section/OtherMissionSection';
@@ -40,8 +41,11 @@ const DashboardMyMissionPage = () => {
   return (
     <main className="px-6">
       <header>
-        <h1 className="text-2xl font-bold">나의 기록장</h1>
+        <h1 className="text-2xl font-bold">나의 미션</h1>
       </header>
+      <div className="mb-4 mt-6">
+        <ChallengeStatusMessage todayTh={todayTh} />
+      </div>
       <MissionCalendarSection
         schedules={schedules}
         todayTh={todayTh}
