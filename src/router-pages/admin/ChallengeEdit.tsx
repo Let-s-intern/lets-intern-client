@@ -142,8 +142,7 @@ const ChallengeEdit: React.FC = () => {
     };
 
     return basic;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [challenge?.priceInfo[0]]);
+  }, [challenge?.priceInfo]);
 
   const receivedContent = useMemo<ChallengeContent | null>(() => {
     if (!challenge?.desc) {
@@ -255,8 +254,11 @@ const ChallengeEdit: React.FC = () => {
 
     setLoading(false);
     snackbar('저장되었습니다.');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    snackbar,
+    deleteDifferMentors,
+    postMentorMutation,
+    patchChallenge,
     challengeIdString,
     client,
     content,
