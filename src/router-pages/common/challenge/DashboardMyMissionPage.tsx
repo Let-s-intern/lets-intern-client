@@ -38,7 +38,7 @@ const DashboardMyMissionPage = () => {
     : undefined;
 
   return (
-    <main className="px-6">
+    <main>
       <header>
         <h1 className="text-2xl font-bold">나의 기록장</h1>
       </header>
