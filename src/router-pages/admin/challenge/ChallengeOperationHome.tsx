@@ -2,9 +2,11 @@ import MissionResultItem from '@/components/admin/challenge/home/item/MissionRes
 import GuideSection from '@/components/admin/challenge/home/section/GuideSection';
 import NoticeSection from '@/components/admin/challenge/home/section/NoticeSection';
 import { useAdminMissionsOfCurrentChallenge } from '@/context/CurrentAdminChallengeProvider';
+import ProgramRecommendSection from './ProgramRecommendSection';
 
 const ChallengeOperationHome = () => {
   const missions = useAdminMissionsOfCurrentChallenge();
+
   return (
     <main>
       <section className="rounded mt-10 border px-3 py-2">
@@ -16,10 +18,13 @@ const ChallengeOperationHome = () => {
         </div>
       </section>
 
-      <div className="mt-12 flex">
+      <div className="my-12 flex">
         <NoticeSection className="flex-1" />
         <GuideSection className="flex-1" />
       </div>
+
+      {/* 프로그램 추천 */}
+      <ProgramRecommendSection />
     </main>
   );
 };
