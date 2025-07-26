@@ -112,7 +112,7 @@ const ChallengeOperationParticipants = () => {
   });
 
   const applications =
-    data?.applicationList.map((item) => item.application) ?? [];
+    data?.applicationList?.map((item) => item.application) ?? [];
 
   return (
     <main className="pt-3">
