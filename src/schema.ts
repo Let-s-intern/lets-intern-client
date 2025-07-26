@@ -955,7 +955,7 @@ export const missionTemplateAdmin = z
         title: z.string(),
         description: z.string(),
         guide: z.string(),
-        templateLink: z.string(),
+        templateLink: z.string().nullish(),
       }),
     ),
   })
