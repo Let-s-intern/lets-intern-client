@@ -1,10 +1,11 @@
-import ChallengeStatusMessage from '@/components/common/challenge/my-challenge/ChallengeStatusMessage';
+import MissionGuideSection from '@/components/common/challenge/my-challenge/MissionGuideSection';
 import DailyMissionSection from '@/components/common/challenge/my-challenge/section/DailyMissionSection';
 import MissionCalendarSection from '@/components/common/challenge/my-challenge/section/MissionCalendarSection';
 import OtherMissionSection from '@/components/common/challenge/my-challenge/section/OtherMissionSection';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import axios from '@/utils/axios';
+import MissionStatusMessage from '@components/common/challenge/my-challenge/MissionStatusMessage';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 
@@ -31,26 +32,31 @@ const DashboardMyMissionPage = () => {
     },
   });
 
-  const todayTh = myDailyMission?.dailyMission?.th ?? schedules.length + 1;
+  let todayTh = myDailyMission?.dailyMission?.th ?? schedules.length + 1;
   const programEndDate = programData?.data?.endDate;
   const isChallengeDone = getIsChallengeDone(programEndDate);
   const isChallengeSubmitDone = programEndDate
     ? getIsChallengeSubmitDone(programEndDate)
     : undefined;
-
+  todayTh = 0;
   return (
     <main className="px-6">
       <header>
         <h1 className="text-2xl font-bold">나의 미션</h1>
       </header>
       <div className="mb-4 mt-6">
-        <ChallengeStatusMessage todayTh={todayTh} />
+        <MissionStatusMessage todayTh={todayTh} />
       </div>
       <MissionCalendarSection
         schedules={schedules}
         todayTh={todayTh}
         isDone={isChallengeDone}
       />
+      {todayTh === 0 && (
+        <div className="mt-8">
+          <MissionGuideSection />
+        </div>
+      )}
       {myDailyMission?.attendanceInfo && myDailyMission.dailyMission && (
         <DailyMissionSection myDailyMission={myDailyMission} />
       )}
