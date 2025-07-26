@@ -10,7 +10,7 @@ function ProgramRecommendSection() {
   const params = useParams();
   const programId = Number(params.programId);
 
-  const { data: challenge } = useChallelngeQuery(programId);
+  const { data: challenge, isLoading } = useChallelngeQuery(programId);
   const { mutateAsync: patchChallenge } = usePatchChallengeMutation();
 
   const descJson = useMemo<ChallengeContent | null>(() => {
@@ -41,8 +41,12 @@ function ProgramRecommendSection() {
 
   useEffect(() => {
     /** init data */
+    if (isLoading) return;
+
     setProgramRecommend(descJson?.operationRecommendProgram ?? { list: [] });
-  }, [descJson?.operationRecommendProgram]);
+  }, [descJson?.operationRecommendProgram, isLoading]);
+
+  if (isLoading) return null;
 
   return (
     <div className="flex flex-col">
