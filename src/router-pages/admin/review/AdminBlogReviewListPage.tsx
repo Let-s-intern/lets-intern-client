@@ -6,6 +6,10 @@ import {
   usePostAdminBlogReview,
 } from '@/api/review';
 import { YYYY_MMDD_THHmmss } from '@/data/dayjsFormat';
+import {
+  getPaymentMethodLabel,
+  PaymentMethodKey,
+} from '@/data/getPaymentSearchParams';
 import dayjs from '@/lib/dayjs';
 import { ProgramTypeEnum } from '@/schema';
 import { generateUUID } from '@/utils/random';
@@ -104,9 +108,12 @@ export default function AdminBlogReviewListPage() {
       width: 200,
     },
     {
-      field: 'bankName',
+      field: 'accountType',
       headerName: '은행명',
       width: 110,
+      renderCell(params: GridRenderCellParams<Row, PaymentMethodKey>) {
+        return params.value ? getPaymentMethodLabel(params.value) : '-';
+      },
     },
     {
       field: 'accountNum',
