@@ -11,18 +11,8 @@ const MissionGuideRegularSection = ({
   className,
   todayTh,
 }: MissionGuideRegularSectionProps) => {
-  const missions = [
-    '대시보드 사용법 및 미션 인증 방식꼭 확인!',
-    '마케팅 관심 직무 1개 이상 선정하기',
-    '각각 인터뷰 3개 이상 정리하기',
-    '각각 채용공고 5개 이상 정리',
-  ];
-
-  const additionalContent =
-    '추가 콘텐츠에서 160+명의 취업 성공 노하우를 확인해보세요 🎁';
-
   return (
-    <div className={clsx('flex flex-col', className)}>
+    <div className={clsx('flex flex-col gap-3', className)}>
       {/* 제목 및 마감일 섹션 */}
       <MissionHeaderSection
         todayTh={todayTh}

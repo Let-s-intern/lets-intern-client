@@ -12,7 +12,7 @@ const MissionGuideZeroSection = ({
   todayTh,
 }: MissionGuideZeroSectionProps) => {
   return (
-    <div className={clsx('flex flex-col', className)}>
+    <div className={clsx('flex flex-col gap-3', className)}>
       {/* 제목 및 마감일 섹션 */}
       <MissionHeaderSection
         todayTh={todayTh}
