@@ -17,7 +17,6 @@ const BankSelectDropdown = ({
   const [isOpen, setIsOpen] = useState(false);
 
   const banks = [
-    '렛츠 은행',
     '신한은행',
     'KB국민은행',
     '우리은행',
@@ -90,43 +89,45 @@ const BankSelectDropdown = ({
       {/* 드롭다운 목록 */}
       {isOpen && !disabled && (
         <div className="absolute top-full z-10 mt-1 w-[184px] rounded-xxs border border-neutral-80 bg-white shadow-lg">
-          {banks.map((bank, index) => (
-            <div key={bank}>
-              <div
-                className={clsx(
-                  'flex cursor-pointer items-center justify-between px-3 py-2.5',
-                  'text-xsmall16 text-neutral-0 transition-colors',
-                  'hover:bg-neutral-95',
-                  selectedBank === bank && 'bg-primary-5 text-primary',
-                )}
-                onClick={() => handleBankSelect(bank)}
-              >
-                <span>{bank}</span>
-                {selectedBank === bank && (
-                  <div className="h-4 w-4">
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 16 16"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M13.3333 4L6 11.3333L2.66667 8"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </div>
+          <div className="max-h-[204px] overflow-y-auto scrollbar-hide">
+            {banks.map((bank, index) => (
+              <div key={bank}>
+                <div
+                  className={clsx(
+                    'flex cursor-pointer items-center justify-between px-3 py-2.5',
+                    'text-xsmall16 text-neutral-0 transition-colors',
+                    'hover:bg-neutral-95',
+                    selectedBank === bank && 'bg-primary-5 text-primary',
+                  )}
+                  onClick={() => handleBankSelect(bank)}
+                >
+                  <span>{bank}</span>
+                  {selectedBank === bank && (
+                    <div className="h-4 w-4">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M13.3333 4L6 11.3333L2.66667 8"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+                {index < banks.length - 1 && (
+                  <div className="h-px bg-neutral-80" />
                 )}
               </div>
-              {index < banks.length - 1 && (
-                <div className="h-px bg-neutral-80" />
-              )}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
     </div>
