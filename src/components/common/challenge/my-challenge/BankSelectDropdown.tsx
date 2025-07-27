@@ -88,7 +88,7 @@ const BankSelectDropdown = ({
 
       {/* 드롭다운 목록 */}
       {isOpen && !disabled && (
-        <div className="absolute top-full z-10 mt-1 w-[184px] rounded-xxs border border-neutral-80 bg-white shadow-lg">
+        <div className="absolute top-full z-10 mt-2 w-[184px] rounded-xxs border border-neutral-80 bg-white shadow-lg">
           <div className="max-h-[204px] overflow-y-auto scrollbar-hide">
             {banks.map((bank, index) => (
               <div key={bank}>
