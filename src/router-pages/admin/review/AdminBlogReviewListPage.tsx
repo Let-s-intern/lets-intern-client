@@ -112,7 +112,7 @@ export default function AdminBlogReviewListPage() {
       headerName: '은행명',
       width: 110,
       renderCell(params: GridRenderCellParams<Row, PaymentMethodKey>) {
-        return getPaymentMethodLabel(params.value);
+        return params.value ? getPaymentMethodLabel(params.value) : '-';
       },
     },
     {
