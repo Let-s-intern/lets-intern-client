@@ -1,11 +1,12 @@
 import { clsx } from 'clsx';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 interface LinkInputSectionProps {
   className?: string;
   disabled?: boolean;
   onLinkChange?: (link: string) => void;
   onLinkVerified?: (isVerified: boolean) => void;
+  text?: string;
 }
 
 const LinkInputSection = ({
@@ -13,21 +14,13 @@ const LinkInputSection = ({
   disabled = false,
   onLinkChange,
   onLinkVerified,
+  text,
 }: LinkInputSectionProps) => {
   const [linkValue, setLinkValue] = useState('');
   const [linkError, setLinkError] = useState('');
   const [linkSuccess, setLinkSuccess] = useState('');
-  const [isVisible, setIsVisible] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
-
-  useEffect(() => {
-    // 컴포넌트 마운트 후 애니메이션 시작
-    const timer = setTimeout(() => {
-      setIsVisible(true);
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, []);
+  const [verifiedLink, setVerifiedLink] = useState(''); // 확인된 링크 저장
 
   const handleLinkChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
@@ -35,12 +28,13 @@ const LinkInputSection = ({
     onLinkChange?.(value);
 
     // 링크가 변경되면 확인 상태 초기화
-    setIsVerified(false);
-    onLinkVerified?.(false);
-
-    // 에러/성공 메시지 초기화
-    setLinkError('');
-    setLinkSuccess('');
+    if (value !== verifiedLink) {
+      setIsVerified(false);
+      onLinkVerified?.(false);
+      setVerifiedLink('');
+      setLinkError('');
+      setLinkSuccess('');
+    }
   };
 
   const isValidUrl = (url: string) => {
@@ -53,6 +47,12 @@ const LinkInputSection = ({
   };
 
   const handleLinkCheck = () => {
+    // 이미 확인된 링크를 다시 클릭한 경우
+    if (isVerified && linkValue === verifiedLink) {
+      window.open(linkValue, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
     if (!linkValue) {
       setLinkError('링크를 입력해주세요.');
       setIsVerified(false);
@@ -74,17 +74,19 @@ const LinkInputSection = ({
     );
     setLinkError('');
     setIsVerified(true);
+    setVerifiedLink(linkValue); // 확인된 링크 저장
     onLinkVerified?.(true);
   };
 
+  const getButtonText = () => {
+    if (isVerified && linkValue === verifiedLink) {
+      return '링크 열기';
+    }
+    return '링크 확인';
+  };
+
   return (
-    <section
-      className={clsx(
-        'transition-all duration-700 ease-out',
-        isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0',
-        className,
-      )}
-    >
+    <section className={clsx(className)}>
       <div className="mb-1.5 transition-all delay-100 duration-500 ease-out">
         <div className="mb-1.5 flex items-center gap-2">
           <span className="text-xsmall16 font-semibold text-neutral-0">
@@ -92,8 +94,9 @@ const LinkInputSection = ({
           </span>
         </div>
         <div className="rounded bg-neutral-95 px-3 py-3 text-xsmall14 text-neutral-10">
-          미션 링크는 <span className="font-bold">.notion.site</span> 형식의
-          퍼블릭 링크만 입력 가능합니다. <br />
+          {text ||
+            '미션 링크는 .notion.site 형식의 퍼블릭 링크만 입력 가능합니다.'}
+          <br />
           제출 후, 미션과 소감을 카카오톡으로 공유해야 제출이 인정됩니다.
         </div>
       </div>
@@ -115,14 +118,16 @@ const LinkInputSection = ({
           className={clsx(
             'h-[44px] rounded-xxs px-4 text-xsmall16 font-medium transition-colors',
             'disabled:cursor-not-allowed',
-            linkValue && !linkError
-              ? 'bg-primary text-white hover:bg-primary-90'
-              : 'bg-neutral-80 text-neutral-50',
+            isVerified && linkValue === verifiedLink
+              ? 'bg-green-500 text-white hover:bg-green-600'
+              : linkValue && !linkError
+                ? 'bg-primary text-white hover:bg-primary-90'
+                : 'bg-neutral-80 text-neutral-50',
           )}
           onClick={handleLinkCheck}
           disabled={disabled || !linkValue || !!linkError}
         >
-          링크 확인
+          {getButtonText()}
         </button>
       </div>
       <div className="transition-all delay-300 duration-300 ease-out">
