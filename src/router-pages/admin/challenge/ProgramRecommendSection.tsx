@@ -1,12 +1,17 @@
 /* eslint-disable no-console */
 import { useChallengeQuery, usePatchChallengeMutation } from '@/api/program';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import { ChallengeContent } from '@/types/interface';
+import { ChallengeContent, OperationRecommendProgram } from '@/types/interface';
 import MoreButtonSection from '@components/admin/ui/MoreButtonSection';
 import ProgramRecommendEditor from '@components/ProgramRecommendEditor';
 import { Button } from '@mui/material';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
+
+const defaultMoreButton: OperationRecommendProgram['moreButton'] = {
+  visible: false,
+  url: '',
+};
 
 function ProgramRecommendSection() {
   const params = useParams();
@@ -27,16 +32,14 @@ function ProgramRecommendSection() {
     }
   }, [challenge?.desc]);
 
-  const moreRef = useRef(
-    descJson?.operationRecommendProgram?.moreButton ?? {
-      visible: false,
-      url: '',
-    },
+  const defaultPrograms = useMemo(
+    () => descJson?.operationRecommendProgram ?? { list: [] },
+    [descJson?.operationRecommendProgram],
   );
 
-  const [programRecommend, setProgramRecommend] = useState(
-    descJson?.operationRecommendProgram ?? { list: [] },
-  );
+  const moreRef = useRef(defaultMoreButton);
+
+  const [programRecommend, setProgramRecommend] = useState(defaultPrograms);
 
   const handleSave = async () => {
     const newDescJson = {
@@ -63,8 +66,14 @@ function ProgramRecommendSection() {
     /** init data */
     if (isLoading) return;
 
-    setProgramRecommend(descJson?.operationRecommendProgram ?? { list: [] });
-  }, [descJson?.operationRecommendProgram, isLoading]);
+    setProgramRecommend(defaultPrograms);
+    moreRef.current =
+      descJson?.operationRecommendProgram?.moreButton ?? defaultMoreButton;
+  }, [
+    defaultPrograms,
+    isLoading,
+    descJson?.operationRecommendProgram?.moreButton,
+  ]);
 
   if (isLoading) return null;
 
@@ -78,8 +87,12 @@ function ProgramRecommendSection() {
         <MoreButtonSection
           defaultChecked={programRecommend.moreButton?.visible}
           defaultUrl={programRecommend.moreButton?.url}
-          onChangeCheckbox={(value) => (moreRef.current.visible = value)}
-          onChangeUrl={(url) => (moreRef.current.url = url)}
+          onChangeCheckbox={(value) => {
+            if (moreRef.current) moreRef.current.visible = value;
+          }}
+          onChangeUrl={(url) => {
+            if (moreRef.current) moreRef.current.url = url;
+          }}
         />
       </div>
       <Button variant="contained" onClick={handleSave}>
