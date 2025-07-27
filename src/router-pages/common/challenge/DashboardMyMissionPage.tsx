@@ -59,7 +59,11 @@ const DashboardMyMissionPage = () => {
       <div className="mt-6">
         <MissionSubmitSection />
       </div>
-      {myDailyMission?.attendanceInfo && myDailyMission.dailyMission && (
+      {/* 멘토 피드백 여부에 따라 값 받고 노출 */}
+      <div className="mt-11">
+        <MissionMentorCommentSection />
+      </div>
+      {/* {myDailyMission?.attendanceInfo && myDailyMission.dailyMission && (
         <DailyMissionSection myDailyMission={myDailyMission} />
       )}
       {typeof isChallengeSubmitDone === 'boolean' && (
