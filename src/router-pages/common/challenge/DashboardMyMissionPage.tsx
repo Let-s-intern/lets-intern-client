@@ -38,7 +38,7 @@ const DashboardMyMissionPage = () => {
   const isChallengeSubmitDone = programEndDate
     ? getIsChallengeSubmitDone(programEndDate)
     : undefined;
-  todayTh = 0;
+  todayTh = 1;
   return (
     <main>
       <header>
@@ -56,7 +56,7 @@ const DashboardMyMissionPage = () => {
         <MissionGuideSection todayTh={todayTh} />
       </div>
       <div className="mt-6">
-        <MissionSubmitSection />
+        <MissionSubmitSection todayTh={todayTh} />
       </div>
       {/* 멘토 피드백 여부에 따라 값 받고 노출 */}
       <div className="mt-11">
