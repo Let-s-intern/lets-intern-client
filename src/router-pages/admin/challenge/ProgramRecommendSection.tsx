@@ -2,9 +2,10 @@
 import { useChallengeQuery, usePatchChallengeMutation } from '@/api/program';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { ChallengeContent } from '@/types/interface';
+import MoreButtonSection from '@components/admin/ui/MoreButtonSection';
 import ProgramRecommendEditor from '@components/ProgramRecommendEditor';
 import { Button } from '@mui/material';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 function ProgramRecommendSection() {
@@ -26,6 +27,13 @@ function ProgramRecommendSection() {
     }
   }, [challenge?.desc]);
 
+  const moreRef = useRef(
+    descJson?.operationRecommendProgram?.moreButton ?? {
+      visible: false,
+      url: '',
+    },
+  );
+
   const [programRecommend, setProgramRecommend] = useState(
     descJson?.operationRecommendProgram ?? { list: [] },
   );
@@ -33,7 +41,10 @@ function ProgramRecommendSection() {
   const handleSave = async () => {
     const newDescJson = {
       ...descJson,
-      operationRecommendProgram: programRecommend,
+      operationRecommendProgram: {
+        ...programRecommend,
+        moreButton: moreRef.current,
+      },
     };
     const request = {
       challengeId: programId,
@@ -59,15 +70,21 @@ function ProgramRecommendSection() {
 
   return (
     <div className="flex flex-col">
-      <ProgramRecommendEditor
-        programRecommend={programRecommend}
-        setProgramRecommend={setProgramRecommend}
-      />
-      <div className="mt-4 text-right">
-        <Button variant="contained" onClick={handleSave}>
-          저장
-        </Button>
+      <div className="mb-4 grid grid-cols-2 gap-4">
+        <ProgramRecommendEditor
+          programRecommend={programRecommend}
+          setProgramRecommend={setProgramRecommend}
+        />
+        <MoreButtonSection
+          defaultChecked={programRecommend.moreButton?.visible}
+          defaultUrl={programRecommend.moreButton?.url}
+          onChangeCheckbox={(value) => (moreRef.current.visible = value)}
+          onChangeUrl={(url) => (moreRef.current.url = url)}
+        />
       </div>
+      <Button variant="contained" onClick={handleSave}>
+        저장
+      </Button>
     </div>
   );
 }

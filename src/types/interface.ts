@@ -47,11 +47,18 @@ export type ContentReviewType = {
   content: string;
 };
 
-export type ProgramRecommend = {
+export interface ProgramRecommend {
   list: (ProgramAdminListItem & {
     recommendTitle?: string;
     recommendCTA?: string;
   })[];
+}
+
+export type OperationRecommendProgram = ProgramRecommend & {
+  moreButton?: {
+    visible: boolean;
+    url?: string;
+  };
 };
 
 /** 챌린지 또는 LIVE 클래스의 JSON 버전 (desc에 통쨰로 JSON 형태로 들어감) */
@@ -73,7 +80,7 @@ export type ChallengeContent = {
   /** 프로그램 추천 리스트 */
   programRecommend?: ProgramRecommend;
   /** 챌린지 운영: 추천 프로그램 */
-  operationRecommendProgram?: ProgramRecommend;
+  operationRecommendProgram?: OperationRecommendProgram;
 };
 
 export type LiveContent = {
