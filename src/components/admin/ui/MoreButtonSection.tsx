@@ -1,10 +1,9 @@
 import Input from '@components/ui/input/Input';
 import { Checkbox, FormControlLabel } from '@mui/material';
-import { useEffect, useState } from 'react';
 
 interface MoreButtonSectionProps {
-  defaultChecked?: boolean;
-  defaultUrl?: string;
+  checked?: boolean;
+  url?: string;
   onChangeUrl?: (url: string) => void;
   onChangeCheckbox?: (value: boolean) => void;
 }
@@ -12,33 +11,22 @@ interface MoreButtonSectionProps {
 function MoreButtonSection({
   onChangeUrl,
   onChangeCheckbox,
-  defaultChecked = false,
-  defaultUrl,
+  checked = false,
+  url = '',
 }: MoreButtonSectionProps) {
-  const [showMoreButton, setShowMoreButton] = useState(defaultChecked);
-  const [url, setUrl] = useState(defaultUrl);
-
-  const handleChangeCheckbox = () => {
-    setShowMoreButton(!showMoreButton);
-    onChangeCheckbox?.(!showMoreButton);
+  const handleChangeCheckbox = (_: React.SyntheticEvent, value: boolean) => {
+    console.log(value);
+    onChangeCheckbox?.(value);
   };
 
   const handleChangeUrl = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setUrl(value);
-    onChangeUrl?.(value);
+    onChangeUrl?.(e.target.value);
   };
-
-  useEffect(() => {
-    // init value
-    setShowMoreButton(defaultChecked);
-    setUrl(defaultUrl);
-  }, [defaultChecked, defaultUrl]);
 
   return (
     <div>
       <FormControlLabel
-        control={<Checkbox checked={showMoreButton} />}
+        control={<Checkbox checked={checked} />}
         label="더보기 버튼 노출 여부"
         onChange={handleChangeCheckbox}
       />
@@ -48,7 +36,7 @@ function MoreButtonSection({
         name="url"
         placeholder="더보기 버튼 URL을 입력하세요"
         size="small"
-        disabled={!showMoreButton}
+        disabled={!checked}
         value={url}
         onChange={handleChangeUrl}
       />

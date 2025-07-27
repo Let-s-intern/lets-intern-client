@@ -54,12 +54,10 @@ export interface ProgramRecommend {
   })[];
 }
 
-export type OperationRecommendProgram = ProgramRecommend & {
-  moreButton?: {
-    visible: boolean;
-    url?: string;
-  };
-};
+export interface OperationRecommendMoreButton {
+  visible: boolean;
+  url?: string;
+}
 
 /** 챌린지 또는 LIVE 클래스의 JSON 버전 (desc에 통쨰로 JSON 형태로 들어감) */
 export type ChallengeContent = {
@@ -80,7 +78,9 @@ export type ChallengeContent = {
   /** 프로그램 추천 리스트 */
   programRecommend?: ProgramRecommend;
   /** 챌린지 운영: 추천 프로그램 */
-  operationRecommendProgram?: OperationRecommendProgram;
+  operationRecommendProgram?: ProgramRecommend;
+  /** 챌린지 운영: 더보기 버튼 정보 */
+  operationRecommendMoreButton?: OperationRecommendMoreButton;
 };
 
 export type LiveContent = {

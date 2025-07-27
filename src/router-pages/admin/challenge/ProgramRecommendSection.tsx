@@ -1,17 +1,23 @@
 /* eslint-disable no-console */
 import { useChallengeQuery, usePatchChallengeMutation } from '@/api/program';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import { ChallengeContent, OperationRecommendProgram } from '@/types/interface';
+import {
+  ChallengeContent,
+  OperationRecommendMoreButton,
+  OperationRecommendProgram,
+} from '@/types/interface';
 import MoreButtonSection from '@components/admin/ui/MoreButtonSection';
 import ProgramRecommendEditor from '@components/ProgramRecommendEditor';
 import { Button } from '@mui/material';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-const defaultMoreButton: OperationRecommendProgram['moreButton'] = {
+const defaultMoreButton: OperationRecommendMoreButton = {
   visible: false,
   url: '',
 };
+
+const defaultPrograms: OperationRecommendProgram = { list: [] };
 
 function ProgramRecommendSection() {
   const params = useParams();
@@ -32,22 +38,14 @@ function ProgramRecommendSection() {
     }
   }, [challenge?.desc]);
 
-  const defaultPrograms = useMemo(
-    () => descJson?.operationRecommendProgram ?? { list: [] },
-    [descJson?.operationRecommendProgram],
-  );
-
-  const moreRef = useRef(defaultMoreButton);
-
   const [programRecommend, setProgramRecommend] = useState(defaultPrograms);
+  const [moreButton, setMoreButton] = useState(defaultMoreButton);
 
   const handleSave = async () => {
     const newDescJson = {
       ...descJson,
-      operationRecommendProgram: {
-        ...programRecommend,
-        moreButton: moreRef.current,
-      },
+      operationRecommendProgram: programRecommend,
+      operationRecommendMoreButton: moreButton,
     };
     const request = {
       challengeId: programId,
@@ -66,14 +64,11 @@ function ProgramRecommendSection() {
     /** init data */
     if (isLoading) return;
 
-    setProgramRecommend(defaultPrograms);
-    moreRef.current =
-      descJson?.operationRecommendProgram?.moreButton ?? defaultMoreButton;
-  }, [
-    defaultPrograms,
-    isLoading,
-    descJson?.operationRecommendProgram?.moreButton,
-  ]);
+    setProgramRecommend(descJson?.operationRecommendProgram ?? defaultPrograms);
+    setMoreButton(descJson?.operationRecommendMoreButton ?? defaultMoreButton);
+  }, [isLoading, descJson]);
+
+  console.log(moreButton);
 
   if (isLoading) return null;
 
@@ -85,13 +80,13 @@ function ProgramRecommendSection() {
           setProgramRecommend={setProgramRecommend}
         />
         <MoreButtonSection
-          defaultChecked={programRecommend.moreButton?.visible}
-          defaultUrl={programRecommend.moreButton?.url}
+          checked={moreButton?.visible}
+          url={moreButton?.url}
           onChangeCheckbox={(value) => {
-            if (moreRef.current) moreRef.current.visible = value;
+            setMoreButton((prev) => ({ ...prev, visible: value }));
           }}
           onChangeUrl={(url) => {
-            if (moreRef.current) moreRef.current.url = url;
+            setMoreButton((prev) => ({ ...prev, url }));
           }}
         />
       </div>
