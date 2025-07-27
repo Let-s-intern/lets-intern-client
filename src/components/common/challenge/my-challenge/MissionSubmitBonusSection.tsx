@@ -15,7 +15,6 @@ const MissionSubmitBonusSection = ({
   className,
   todayTh,
 }: MissionSubmitBonusSectionProps) => {
-  const [textareaValue, setTextareaValue] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [selectedBank, setSelectedBank] = useState<string>('');
@@ -27,7 +26,10 @@ const MissionSubmitBonusSection = ({
   const handleAccountNumberChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
-    setAccountNumber(e.target.value);
+    const value = e.target.value;
+    // 숫자만 허용
+    const numericValue = value.replace(/[^0-9]/g, '');
+    setAccountNumber(numericValue);
   };
 
   const handleLinkChange = (link: string) => {
@@ -51,9 +53,12 @@ const MissionSubmitBonusSection = ({
     setSelectedBank(bank);
   };
 
-  // 제출 버튼 활성화 조건: 링크 확인 완료 + 미션 소감 입력 + 개인정보 동의
+  // 제출 버튼 활성화 조건: 링크 확인 완료 + 은행 선택 + 계좌번호 입력 + 개인정보 동의
   const canSubmit =
-    isLinkVerified && textareaValue.trim().length > 0 && isAgreed;
+    isAgreed &&
+    isLinkVerified &&
+    selectedBank.trim().length > 0 &&
+    accountNumber.trim().length > 0;
 
   return (
     <section className={clsx('', className)}>
