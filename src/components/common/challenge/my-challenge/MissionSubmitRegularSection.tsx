@@ -34,31 +34,56 @@ const MissionSubmitRegularSection = ({
       <h2 className="mb-6 text-small18 font-bold text-neutral-0">
         미션 제출하기
       </h2>
-      <div className="mb-1.5">
-        <div className="mb-1.5 flex items-center gap-2">
-          <span className="text-xsmall16 font-semibold text-neutral-0">
-            챌린지 참여 목표
-          </span>
+      {/* 링크 */}
+      <section>
+        <div className="mb-1.5">
+          <div className="mb-1.5 flex items-center gap-2">
+            <span className="text-xsmall16 font-semibold text-neutral-0">
+              링크
+            </span>
+          </div>
+          <div className="rounded bg-neutral-95 px-3 py-3 text-xsmall14 text-neutral-10">
+            미션 링크는 <span className="font-bold">.notion.site</span> 형식의
+            퍼블릭 링크만 입력 가능합니다. <br />
+            제출 후, 미션과 소감을 카카오톡으로 공유해야 제출이 인정됩니다.
+          </div>
         </div>
-        <div className="rounded bg-neutral-95 px-3 py-3 text-xsmall14 text-neutral-10">
-          미션 제출 후, 작성한 챌린지 목표를 카카오톡 오픈채팅방에 공유해주세요.
+        <textarea
+          className={clsx(
+            'w-full resize-none rounded-xxs border border-neutral-80 bg-white',
+            'px-3 py-2 text-xsmall16 text-neutral-0 placeholder:text-neutral-50',
+            'h-[44px] outline-none focus:border-primary',
+            'disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-50',
+          )}
+          placeholder={'링크를 입력해주세요.'}
+          value={textareaValue}
+          onChange={handleTextareaChange}
+          disabled={isSubmitted}
+        />
+      </section>
+      {/* 미션 소감 */}
+      <section>
+        <div className="mb-1.5">
+          <div className="mb-1.5 flex items-center gap-2">
+            <span className="text-xsmall16 font-semibold text-neutral-0">
+              미션 소감
+            </span>
+          </div>
         </div>
-      </div>
-      <textarea
-        className={clsx(
-          'w-full resize-none rounded-xxs border border-neutral-80 bg-white',
-          'p-3 text-base text-neutral-0 placeholder:text-neutral-50',
-          'min-h-[120px] outline-none focus:border-primary',
-          'disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-50',
-        )}
-        placeholder={
-          '챌린지를 신청한 목적과 계기,\n또는 챌린지 참여를 통해 이루고 싶은 목표를 자유롭게 작성해주세요.'
-        }
-        value={textareaValue}
-        onChange={handleTextareaChange}
-        disabled={isSubmitted}
-      />
-
+        <textarea
+          className={clsx(
+            'w-full resize-none rounded-xxs border border-neutral-80 bg-white',
+            'px-3 py-2 text-xsmall16 text-neutral-0 placeholder:text-neutral-50',
+            'min-h-[144px] outline-none focus:border-primary',
+            'disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-50',
+          )}
+          placeholder={`오늘의 미션은 어떠셨나요?
+새롭게 배운 점, 어려운 부분, 궁금증 등 떠오르는 생각을 남겨 주세요.`}
+          value={textareaValue}
+          onChange={handleTextareaChange}
+          disabled={isSubmitted}
+        />
+      </section>
       <MissionSubmitButton
         isSubmitted={isSubmitted}
         hasContent={textareaValue.trim().length > 0}

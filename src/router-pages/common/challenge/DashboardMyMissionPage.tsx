@@ -38,7 +38,7 @@ const DashboardMyMissionPage = () => {
   const isChallengeSubmitDone = programEndDate
     ? getIsChallengeSubmitDone(programEndDate)
     : undefined;
-  todayTh = 1;
+  todayTh = 100;
   return (
     <main>
       <header>
