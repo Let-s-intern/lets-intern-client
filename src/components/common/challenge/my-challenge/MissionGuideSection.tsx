@@ -12,11 +12,15 @@ const MissionGuideSection = ({
   return (
     <div className={clsx('flex flex-col', className)}>
       {/* 제목 및 마감일 섹션 */}
-      <section className="mb-3 flex flex-row items-center gap-2">
-        <h2 className="text-xl font-bold text-neutral-0">{todayTh}회차 미션</h2>
-        <div className="h-[18px] w-px bg-neutral-60" />
-        <h2 className="text-xl font-bold text-neutral-0">OT 시청</h2>
-        <p className="text-xsmall16 text-primary-90">
+      <section className="mb-3 flex flex-row gap-2">
+        <div className="flex flex-row items-center gap-2">
+          <h2 className="text-xl font-bold text-neutral-0">
+            {todayTh}회차 미션
+          </h2>
+          <div className="h-[18px] w-px bg-neutral-60" />
+          <h2 className="text-xl font-bold text-neutral-0">OT 시청</h2>
+        </div>
+        <p className="flex flex-row items-end text-xsmall16 font-semibold text-primary-90">
           마감기한 04.04 11:59까지
         </p>
       </section>

@@ -27,7 +27,7 @@ const MissionSubmitButton = ({
   })();
 
   return (
-    <div className={clsx('mt-4', className)}>
+    <div className={clsx('mt-10', className)}>
       <button
         className={clsx(
           'w-full cursor-pointer rounded-xs px-4 py-3 text-xsmall16 transition-colors',
