@@ -2,6 +2,7 @@ import { clsx } from 'clsx';
 import { useState } from 'react';
 import AgreementCheckbox from './AgreementCheckbox';
 import BankSelectDropdown from './BankSelectDropdown';
+import LinkInputSection from './LinkInputSection';
 import MissionSubmitButton from './MissionSubmitButton';
 import MissionToast from './MissionToast';
 
@@ -20,15 +21,21 @@ const MissionSubmitBonusSection = ({
   const [selectedBank, setSelectedBank] = useState<string>('');
   const [accountNumber, setAccountNumber] = useState('');
   const [isAgreed, setIsAgreed] = useState(false);
-
-  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setTextareaValue(e.target.value);
-  };
+  const [linkValue, setLinkValue] = useState('');
+  const [isLinkVerified, setIsLinkVerified] = useState(false);
 
   const handleAccountNumberChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
     setAccountNumber(e.target.value);
+  };
+
+  const handleLinkChange = (link: string) => {
+    setLinkValue(link);
+  };
+
+  const handleLinkVerified = (isVerified: boolean) => {
+    setIsLinkVerified(isVerified);
   };
 
   const handleSubmit = () => {
@@ -44,35 +51,25 @@ const MissionSubmitBonusSection = ({
     setSelectedBank(bank);
   };
 
+  // 제출 버튼 활성화 조건: 링크 확인 완료 + 미션 소감 입력 + 개인정보 동의
+  const canSubmit =
+    isLinkVerified && textareaValue.trim().length > 0 && isAgreed;
+
   return (
     <section className={clsx('', className)}>
       <h2 className="mb-6 text-small18 font-bold text-neutral-0">
         미션 제출하기
       </h2>
-      <div className="mb-1.5">
-        <div className="mb-1.5 flex items-center gap-2">
-          <span className="text-xsmall16 font-semibold text-neutral-0">
-            챌린지 참여 목표
-          </span>
-        </div>
-        <div className="rounded bg-neutral-95 px-3 py-3 text-xsmall14 text-neutral-10">
-          미션 제출 후, 작성한 챌린지 목표를 카카오톡 오픈채팅방에 공유해주세요.
-        </div>
+
+      {/* 블로그 링크 섹션 */}
+      <div className="mt-7">
+        <LinkInputSection
+          disabled={isSubmitted}
+          onLinkChange={handleLinkChange}
+          onLinkVerified={handleLinkVerified}
+          text={`링크가 잘 열리는지 확인해주세요.`}
+        />
       </div>
-      <textarea
-        className={clsx(
-          'w-full resize-none rounded-xxs border border-neutral-80 bg-white',
-          'p-3 text-base text-neutral-0 placeholder:text-neutral-50',
-          'min-h-[120px] outline-none focus:border-primary',
-          'disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-50',
-        )}
-        placeholder={
-          '챌린지를 신청한 목적과 계기,\n또는 챌린지 참여를 통해 이루고 싶은 목표를 자유롭게 작성해주세요.'
-        }
-        value={textareaValue}
-        onChange={handleTextareaChange}
-        disabled={isSubmitted}
-      />
 
       {/* 리워드 받을 계좌번호 */}
       <div className="mt-4 flex flex-col gap-1">
@@ -123,7 +120,7 @@ const MissionSubmitBonusSection = ({
 
       <MissionSubmitButton
         isSubmitted={isSubmitted}
-        hasContent={textareaValue.trim().length > 0}
+        hasContent={canSubmit}
         onButtonClick={handleSubmit}
       />
 
