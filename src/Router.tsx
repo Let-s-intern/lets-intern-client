@@ -11,6 +11,7 @@ import Login from './router-pages/common/auth/Login';
 import SignUp from './router-pages/common/auth/SignUp';
 import ChallengeDashboard from './router-pages/common/challenge/ChallengeDashboard';
 import ChallengeUserInfo from './router-pages/common/challenge/ChallengeUserInfo';
+import DashboardGuidePage from './router-pages/common/challenge/DashboardGuidePage';
 import DashboardMyMissionPage from './router-pages/common/challenge/DashboardMyMissionPage';
 import DashboardPage from './router-pages/common/challenge/DashboardPage';
 import MissionFeedback from './router-pages/common/challenge/MissionFeedback';
@@ -155,6 +156,7 @@ const Router = () => {
               >
                 <Route path="" element={<DashboardPage />} />
                 <Route path="missions" element={<DashboardMyMissionPage />} />
+                <Route path="guide" element={<DashboardGuidePage />} />
               </Route>
 
               {/* OLD 챌린지 대시보드 */}
