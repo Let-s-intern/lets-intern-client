@@ -12,11 +12,10 @@ const NoticeBoardSection = ({ notices }: INoticeSectionProps) => {
   const [currentPageNum, setCurrentPageNum] = useState(1);
 
   const currentNoticeList = notices.slice(
-    (currentPageNum - 1) * 3,
-    currentPageNum * 3,
+    (currentPageNum - 1) * 4,
+    currentPageNum * 4,
   );
-  const totalPageCount =
-    notices.length / 3 + (notices.length % 3 !== 0 ? 1 : 0);
+  const totalPageCount = Math.ceil(notices.length / 4);
 
   return (
     <section className="flex w-full flex-col gap-4">
@@ -33,7 +32,7 @@ const NoticeBoardSection = ({ notices }: INoticeSectionProps) => {
             <span className="mt-2 text-sm">공지사항이 없습니다.</span>
           </div>
         ) : (
-          <ul className="flex flex-1 flex-col gap-1">
+          <ul className="flex flex-1 flex-col gap-1.5">
             {currentNoticeList.map((notice) => (
               <Link
                 key={notice.id}
@@ -59,9 +58,12 @@ const NoticeBoardSection = ({ notices }: INoticeSectionProps) => {
               ))}
           </ul>
         )}
-        <div className="mt-2 flex justify-center gap-2">
-          {Array.from({ length: totalPageCount }, (_, index) => index + 1).map(
-            (pageNum) => (
+        {totalPageCount > 1 ? (
+          <div className="flex justify-center gap-2">
+            {Array.from(
+              { length: totalPageCount },
+              (_, index) => index + 1,
+            ).map((pageNum) => (
               <div
                 key={pageNum}
                 className={clsx('h-2 w-2 cursor-pointer rounded-full', {
@@ -70,9 +72,11 @@ const NoticeBoardSection = ({ notices }: INoticeSectionProps) => {
                 })}
                 onClick={() => setCurrentPageNum(pageNum)}
               />
-            ),
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-2 flex justify-center gap-2" />
+        )}
       </div>
     </section>
   );

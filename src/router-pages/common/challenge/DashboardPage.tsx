@@ -24,9 +24,7 @@ const getIsChallengeSubmitDone = (endDate: string) => {
 
 const DashboardPage = () => {
   const { currentChallenge, schedules, dailyMission } = useCurrentChallenge();
-
   const params = useParams();
-
   const todayTh =
     dailyMission?.th ||
     schedules.reduce((th, schedule) => {
@@ -89,18 +87,19 @@ const DashboardPage = () => {
         <h1 className="text-[22px] font-semibold">{user?.name}님의 대시보드</h1>
       </header>
       <div className="flex flex-col gap-3">
-        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+        <div className="mt-6 flex flex-col gap-3 md:flex-row">
           {/* 챌린지 미션 상세 */}
           {dailyMission ? (
             <DailyMissionSection
               dailyMission={dailyMission}
-              isDone={isChallengeSubmitDone}
+              todayTh={todayTh}
+              schedules={schedules}
             />
           ) : (
             isChallengeDone && <EndDailyMissionSection />
           )}
           {/* 공지사항, 미션점수 */}
-          <div className="flex w-[22rem] flex-col gap-3">
+          <div className="flex flex-col gap-3 md:w-[22rem]">
             <NoticeSection notices={notices} />
             <div className="flex gap-3">
               <ScoreSection

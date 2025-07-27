@@ -58,7 +58,7 @@ const MissionScoreSection = ({
       </div>
       {currentScore < 80 || !isProgramDone ? (
         <button
-          className={`flex cursor-not-allowed items-center justify-center rounded-sm border-2 border-neutral-80 bg-neutral-100 px-4 py-1.5 text-xsmall14 font-medium text-neutral-35 outline-none`}
+          className={`flex cursor-not-allowed items-center justify-center rounded-xs border border-neutral-80 py-2.5 text-xsmall16 font-medium text-neutral-50 outline-none`}
           onMouseEnter={() => {
             setIsHoverButton(true);
           }}
@@ -71,7 +71,7 @@ const MissionScoreSection = ({
       ) : (
         <button
           onClick={() => reactToPrintFn()}
-          className={`flex items-center justify-center rounded-sm border-2 border-primary bg-neutral-100 px-4 py-1.5 text-xsmall14 font-medium text-primary-dark outline-none`}
+          className={`flex items-center justify-center rounded-xs border border-neutral-80 py-2.5 text-xsmall16 font-medium text-neutral-0 outline-none`}
         >
           수료증 발급
         </button>

@@ -11,12 +11,12 @@ const DashboardNavBar = () => {
 
   return (
     <>
-      <nav className="fixed">
-        <ul className="flex w-40 flex-col gap-1">
+      <nav className="fixed hidden md:block">
+        <ul className="flex w-[220px] flex-col gap-1">
           <li>
             <Link
               to={`/challenge/${params.programId}/dashboard/${applicationId}`}
-              className={clsx('block px-3 py-2', {
+              className={clsx('block px-3 py-2 text-sm md:text-xsmall16', {
                 'rounded bg-[#E6E4FD] font-semibold text-primary':
                   activeStatus === 'DASHBOARD',
                 'text-[#4A495C]': activeStatus === 'DASHBOARD',
@@ -28,7 +28,7 @@ const DashboardNavBar = () => {
           <li>
             <Link
               to={`/challenge/${params.programId}/dashboard/${applicationId}/missions`}
-              className={clsx('block px-3 py-2', {
+              className={clsx('block px-3 py-2 text-sm md:text-xsmall16', {
                 'rounded bg-[#E6E4FD] font-medium text-primary':
                   activeStatus === 'MY_DASHBOARD',
                 'text-[#4A495C]': activeStatus === 'MY_DASHBOARD',
@@ -39,7 +39,7 @@ const DashboardNavBar = () => {
           </li>
         </ul>
       </nav>
-      <div className="w-[10rem]" />
+      <div className="md:w-[220px]" />
     </>
   );
 };
