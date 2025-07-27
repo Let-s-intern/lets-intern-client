@@ -12,7 +12,7 @@ const MissionGuideSection = ({
   className,
   todayTh,
 }: MissionGuideSectionProps) => {
-  todayTh = 1;
+  todayTh = 100;
   const renderSection = () => {
     if (todayTh === 0) {
       return <MissionGuideZeroSection todayTh={todayTh} />;

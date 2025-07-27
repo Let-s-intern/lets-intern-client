@@ -1,4 +1,6 @@
 import { clsx } from 'clsx';
+import MissionFileLink from './MissionFileLink';
+import MissionHeaderSection from './MissionHeaderSection';
 
 interface MissionGuideZeroSectionProps {
   className?: string;
@@ -12,18 +14,11 @@ const MissionGuideZeroSection = ({
   return (
     <div className={clsx('flex flex-col', className)}>
       {/* 제목 및 마감일 섹션 */}
-      <section className="mb-3 flex flex-row gap-2">
-        <div className="flex flex-row items-center gap-2">
-          <h2 className="text-xl font-bold text-neutral-0">
-            {todayTh}회차 미션
-          </h2>
-          <div className="h-[18px] w-px bg-neutral-60" />
-          <h2 className="text-xl font-bold text-neutral-0">OT 시청</h2>
-        </div>
-        <p className="flex flex-row items-end text-xsmall16 font-semibold text-primary-90">
-          마감기한 04.04 11:59까지
-        </p>
-      </section>
+      <MissionHeaderSection
+        todayTh={todayTh}
+        missionType="OT 시청"
+        deadline="04.04 11:59"
+      />
       {/* 미션 가이드 섹션 */}
       <section className="flex flex-col gap-5 rounded-xs border border-neutral-80 px-4 py-4">
         {/* 환영 섹션 */}
@@ -65,49 +60,24 @@ const MissionGuideZeroSection = ({
           {/* 필수 콘텐츠 + 추가 콘텐츠 섹션 */}
           <div className="flex flex-col gap-2">
             {/* 필수 콘텐츠 */}
-            <div className="flex flex-row items-center gap-3">
-              <h4 className="text-xsmall16 font-medium text-neutral-0">
-                필수 콘텐츠
-              </h4>
-              <div className="flex cursor-pointer items-center gap-1">
-                <img
-                  src="/icons/file-notext.svg"
-                  alt="file icon"
-                  className="h-5 w-5"
-                />
-                <span className="text-xsmall16 text-primary">
-                  마케팅 서류 완성 챌린지 OT자료
-                </span>
-              </div>
-            </div>
+            <MissionFileLink
+              title="필수 콘텐츠"
+              fileName="마케팅 서류 완성 챌린지 OT자료"
+              disabled={false}
+            />
 
             {/* 추가 콘텐츠 */}
-            <div className="flex flex-row gap-3">
-              <h4 className="text-xsmall16 font-medium text-neutral-0">
-                추가 콘텐츠
-              </h4>
-              <div className="flex flex-col gap-2">
-                <div className="flex cursor-pointer items-center gap-1">
-                  <img
-                    src="/icons/file-notext.svg"
-                    alt="file icon"
-                    className="h-5 w-5"
-                  />
-                  <span className="text-xsmall16 text-primary">
-                    대시보드 이용방법
-                  </span>
-                </div>
-                <div className="flex cursor-pointer items-center gap-1">
-                  <img
-                    src="/icons/file-notext.svg"
-                    alt="file icon"
-                    className="h-5 w-5"
-                  />
-                  <span className="text-xsmall16 text-primary">
-                    미션수행 및 인증법
-                  </span>
-                </div>
-              </div>
+            <div className="flex flex-col gap-2">
+              <MissionFileLink
+                title="추가 콘텐츠"
+                fileName="대시보드 이용방법"
+                disabled={false}
+              />
+              <MissionFileLink
+                title=""
+                fileName="미션수행 및 인증법"
+                disabled={false}
+              />
             </div>
           </div>
         </section>
