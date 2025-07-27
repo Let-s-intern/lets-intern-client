@@ -1,3 +1,4 @@
+import { useSubmitMissionBlogBonus } from '@/api/mission';
 import { clsx } from 'clsx';
 import { useState } from 'react';
 import AgreementCheckbox from './AgreementCheckbox';
@@ -23,6 +24,9 @@ const MissionSubmitBonusSection = ({
   const [linkValue, setLinkValue] = useState('');
   const [isLinkVerified, setIsLinkVerified] = useState(false);
 
+  // 블로그 보너스 제출 mutation
+  const submitBlogBonus = useSubmitMissionBlogBonus();
+
   const handleAccountNumberChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
@@ -40,12 +44,22 @@ const MissionSubmitBonusSection = ({
     setIsLinkVerified(isVerified);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (isSubmitted) {
       setIsSubmitted(false);
     } else {
-      setIsSubmitted(true);
-      setShowToast(true);
+      try {
+        await submitBlogBonus.mutateAsync({
+          missionId: 1,
+          url: linkValue,
+          accountType: selectedBank,
+          accountNum: accountNumber,
+        });
+        setIsSubmitted(true);
+        setShowToast(true);
+      } catch (error) {
+        console.error('제출 실패:', error);
+      }
     }
   };
 
