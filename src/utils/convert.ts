@@ -357,6 +357,7 @@ export const missionSubmitToBadge = ({
 export const unsubmitted = {
   text: '미제출',
   style: 'text-system-error',
+  icon: '/icons/check-gray-outline.svg',
 };
 
 export const challengeMissionSubmitToBadge = ({
@@ -370,6 +371,15 @@ export const challengeMissionSubmitToBadge = ({
     return {
       text: '확인중',
       style: 'text-primary-90',
+      icon: '/icons/icon-today.svg',
+    };
+  }
+
+  if (status === null) {
+    return {
+      text: '진행중',
+      style: 'text-primary-90',
+      icon: '/icons/icon-today.svg',
     };
   }
 
@@ -381,6 +391,7 @@ export const challengeMissionSubmitToBadge = ({
     return {
       text: '지각 제출',
       style: 'text-neutral-30',
+      icon: '/icons/mission-late.svg',
     };
   }
 
@@ -388,6 +399,7 @@ export const challengeMissionSubmitToBadge = ({
     return {
       text: '제출 반려',
       style: 'text-neutral-30',
+      icon: '/icons/check-gray-outline.svg',
     };
   }
 
@@ -398,13 +410,15 @@ export const challengeMissionSubmitToBadge = ({
   if (status === 'LATE') {
     return {
       text: '지각 제출',
-      style: 'text-[#9B9B9B]',
+      style: 'text-neutral-30',
+      icon: '/icons/mission-late.svg',
     };
   }
 
   return {
     text: '제출 성공',
     style: 'text-primary-90',
+    icon: '/icons/mission-pass.svg',
   };
 };
 
