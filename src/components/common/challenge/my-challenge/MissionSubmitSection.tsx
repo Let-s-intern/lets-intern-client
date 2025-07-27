@@ -1,22 +1,33 @@
 import { clsx } from 'clsx';
 import { useState } from 'react';
 import MissionSubmitButton from './MissionSubmitButton';
+import MissionToast from './MissionToast';
 
 const MissionSubmitSection = () => {
   const [textareaValue, setTextareaValue] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTextareaValue(e.target.value);
   };
 
+  const handleSubmit = () => {
+    if (isSubmitted) {
+      setIsSubmitted(false);
+    } else {
+      setIsSubmitted(true);
+      setShowToast(true); // 토스트 표시
+    }
+  };
+
   return (
     <section>
-      <h2 className="mb-4 text-small18 font-bold text-neutral-0">
+      <h2 className="mb-6 text-small18 font-bold text-neutral-0">
         미션 제출하기
       </h2>
-      <div className="mb-4">
-        <div className="mb-2 flex items-center gap-2">
+      <div className="mb-1.5">
+        <div className="mb-1.5 flex items-center gap-2">
           <span className="text-xsmall16 font-semibold text-neutral-0">
             챌린지 참여 목표
           </span>
@@ -27,7 +38,7 @@ const MissionSubmitSection = () => {
       </div>
       <textarea
         className={clsx(
-          'mt-2 w-full resize-none rounded-xxs border border-neutral-80 bg-white',
+          'w-full resize-none rounded-xxs border border-neutral-80 bg-white',
           'p-4 text-base text-neutral-0 placeholder:text-neutral-50',
           'min-h-[120px] outline-none focus:border-primary',
         )}
@@ -42,14 +53,10 @@ const MissionSubmitSection = () => {
       <MissionSubmitButton
         isSubmitted={isSubmitted}
         hasContent={textareaValue.trim().length > 0}
-        onButtonClick={() => {
-          if (isSubmitted) {
-            setIsSubmitted(false);
-          } else {
-            setIsSubmitted(true);
-          }
-        }}
+        onButtonClick={handleSubmit}
       />
+
+      <MissionToast isVisible={showToast} onClose={() => setShowToast(false)} />
     </section>
   );
 };
