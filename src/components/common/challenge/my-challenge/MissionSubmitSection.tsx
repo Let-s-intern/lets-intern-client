@@ -32,15 +32,16 @@ const MissionSubmitSection = () => {
             챌린지 참여 목표
           </span>
         </div>
-        <div className="rounded bg-neutral-95 px-4 py-3 text-xsmall14 text-neutral-10">
+        <div className="rounded bg-neutral-95 px-3 py-3 text-xsmall14 text-neutral-10">
           미션 제출 후, 작성한 챌린지 목표를 카카오톡 오픈채팅방에 공유해주세요.
         </div>
       </div>
       <textarea
         className={clsx(
           'w-full resize-none rounded-xxs border border-neutral-80 bg-white',
-          'p-4 text-base text-neutral-0 placeholder:text-neutral-50',
+          'p-3 text-base text-neutral-0 placeholder:text-neutral-50',
           'min-h-[120px] outline-none focus:border-primary',
+          'disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-50',
         )}
         placeholder={
           '챌린지를 신청한 목적과 계기,\n또는 챌린지 참여를 통해 이루고 싶은 목표를 자유롭게 작성해주세요.'
