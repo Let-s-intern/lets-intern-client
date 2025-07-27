@@ -1,7 +1,6 @@
 import MissionGuideSection from '@/components/common/challenge/my-challenge/MissionGuideSection';
-import DailyMissionSection from '@/components/common/challenge/my-challenge/section/DailyMissionSection';
+import MissionMentorCommentSection from '@/components/common/challenge/my-challenge/MissionMentorCommentSection';
 import MissionCalendarSection from '@/components/common/challenge/my-challenge/section/MissionCalendarSection';
-import OtherMissionSection from '@/components/common/challenge/my-challenge/section/OtherMissionSection';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import axios from '@/utils/axios';
@@ -68,7 +67,7 @@ const DashboardMyMissionPage = () => {
       )}
       {typeof isChallengeSubmitDone === 'boolean' && (
         <OtherMissionSection todayTh={todayTh} isDone={isChallengeSubmitDone} />
-      )}
+      )} */}
     </main>
   );
 };
