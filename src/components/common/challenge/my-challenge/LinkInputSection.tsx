@@ -93,11 +93,9 @@ const LinkInputSection = ({
             링크
           </span>
         </div>
-        <div className="rounded bg-neutral-95 px-3 py-3 text-xsmall14 text-neutral-10">
+        <div className="rounded whitespace-pre-line bg-neutral-95 px-3 py-3 text-xsmall14 text-neutral-10">
           {text ||
-            '미션 링크는 .notion.site 형식의 퍼블릭 링크만 입력 가능합니다.'}
-          <br />
-          제출 후, 미션과 소감을 카카오톡으로 공유해야 제출이 인정됩니다.
+            '미션 링크는 .notion.site 형식의 퍼블릭 링크만 입력 가능합니다.\n제출 후, 미션과 소감을 카카오톡으로 공유해야 제출이 인정됩니다.'}
         </div>
       </div>
       <div className="flex gap-2 transition-all delay-200 duration-500 ease-out">
