@@ -1,5 +1,4 @@
 import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
-import BonusMissionPopup from '@/components/common/challenge/my-challenge/BonusMissionPopup';
 import MissionGuideSection from '@/components/common/challenge/my-challenge/MissionGuideSection';
 import MissionMentorCommentSection from '@/components/common/challenge/my-challenge/MissionMentorCommentSection';
 import MissionStatusMessage from '@/components/common/challenge/my-challenge/MissionStatusMessage';
@@ -8,6 +7,7 @@ import MissionCalendarSection from '@/components/common/challenge/my-challenge/s
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import axios from '@/utils/axios';
+import BonusMissionPopup from '@components/common/challenge/my-challenge/BonusMissionPopup';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -74,23 +74,27 @@ const DashboardMyMissionPage = () => {
         todayTh={todayTh}
         isDone={isChallengeDone}
       />
-      <div className="mt-8">
-        <MissionGuideSection todayTh={todayTh} />
-      </div>
-      <div className="mt-6">
-        <MissionSubmitSection todayTh={todayTh} />
-      </div>
-      {/* 멘토 피드백 여부에 따라 값 받고 노출 */}
-      <div className="mt-11">
-        <MissionMentorCommentSection />
-      </div>
+      <div>
+        {/* 보너스 미션 팝업 */}
 
-      {/* 보너스 미션 팝업 */}
-      <BonusMissionPopup
-        isVisible={showPopup}
-        onClose={closePopup}
-        onPopupClick={handlePopupClick}
-      />
+        <div className="mt-8">
+          <MissionGuideSection todayTh={todayTh} />
+        </div>
+        <div className="relative">
+          <BonusMissionPopup
+            isVisible={showPopup}
+            onClose={closePopup}
+            onPopupClick={handlePopupClick}
+          />
+        </div>
+        <div className="mt-6">
+          <MissionSubmitSection todayTh={todayTh} />
+        </div>
+        {/* 멘토 피드백 여부에 따라 값 받고 노출 */}
+        <div className="mt-11">
+          <MissionMentorCommentSection />
+        </div>
+      </div>
 
       {/* 여기에 팝업 이미지 컴포넌트 만들어줘 */}
       {/* {myDailyMission?.attendanceInfo && myDailyMission.dailyMission && (

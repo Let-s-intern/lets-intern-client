@@ -30,7 +30,7 @@ const BonusMissionPopup = ({
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-200 ${
+      className={`absolute inset-0 top-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-200 ${
         isClosing ? 'opacity-0' : 'opacity-100'
       }`}
       onClick={handleClose}
@@ -47,12 +47,8 @@ const BonusMissionPopup = ({
           <div className="flex h-96 w-80 items-center justify-center rounded-lg border-2 border-yellow-300 bg-gradient-to-br from-yellow-100 to-yellow-200">
             <div className="text-center">
               <div className="mb-4 text-2xl font-bold text-yellow-800">
-                🎁 보너스 미션
+                🎁 보너스 미션 안내 이미지
               </div>
-              <div className="mb-2 text-sm text-yellow-700">
-                블로그 후기 이벤트
-              </div>
-              <div className="text-xs text-yellow-600">클릭하여 참여하기</div>
             </div>
           </div>
 
