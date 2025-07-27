@@ -1,3 +1,4 @@
+import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
 import MissionGuideSection from '@/components/common/challenge/my-challenge/MissionGuideSection';
 import MissionMentorCommentSection from '@/components/common/challenge/my-challenge/MissionMentorCommentSection';
 import MissionStatusMessage from '@/components/common/challenge/my-challenge/MissionStatusMessage';
@@ -18,7 +19,7 @@ const getIsChallengeSubmitDone = (endDate: string) => {
 };
 
 const DashboardMyMissionPage = () => {
-  const params = useParams<{ programId: string }>();
+  const params = useParams<{ programId: string; applicationId: string }>();
 
   const { schedules, myDailyMission } = useCurrentChallenge();
 
@@ -38,7 +39,13 @@ const DashboardMyMissionPage = () => {
   const isChallengeSubmitDone = programEndDate
     ? getIsChallengeSubmitDone(programEndDate)
     : undefined;
-  todayTh = 100;
+
+  const response = useChallengeMissionAttendanceInfoQuery({
+    challengeId: Number(params.programId),
+    missionId: 11,
+  });
+  todayTh = 1;
+  console.log(JSON.stringify(response.data, null, 2));
   return (
     <main>
       <header>
