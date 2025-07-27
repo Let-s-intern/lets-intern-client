@@ -31,7 +31,6 @@ const MissionStatusMessage = ({
 
     if (todayTh === 100) {
       return [
-        { text: '' },
         { text: '보너스 미션', className: 'font-bold text-primary' },
         { text: ' 완료하고 리워드 챙겨가세요!' },
       ];

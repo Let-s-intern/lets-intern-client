@@ -1,11 +1,11 @@
 import MissionGuideSection from '@/components/common/challenge/my-challenge/MissionGuideSection';
 import MissionMentorCommentSection from '@/components/common/challenge/my-challenge/MissionMentorCommentSection';
+import MissionStatusMessage from '@/components/common/challenge/my-challenge/MissionStatusMessage';
+import MissionSubmitSection from '@/components/common/challenge/my-challenge/MissionSubmitSection';
 import MissionCalendarSection from '@/components/common/challenge/my-challenge/section/MissionCalendarSection';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import axios from '@/utils/axios';
-import MissionStatusMessage from '@components/common/challenge/my-challenge/MissionStatusMessage';
-import MissionSubmitSection from '@components/common/challenge/my-challenge/MissionSubmitSection';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 
