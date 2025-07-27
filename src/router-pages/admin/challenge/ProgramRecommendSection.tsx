@@ -4,7 +4,7 @@ import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import {
   ChallengeContent,
   OperationRecommendMoreButton,
-  OperationRecommendProgram,
+  ProgramRecommend,
 } from '@/types/interface';
 import MoreButtonSection from '@components/admin/ui/MoreButtonSection';
 import ProgramRecommendEditor from '@components/ProgramRecommendEditor';
@@ -17,7 +17,7 @@ const defaultMoreButton: OperationRecommendMoreButton = {
   url: '',
 };
 
-const defaultPrograms: OperationRecommendProgram = { list: [] };
+const defaultPrograms: ProgramRecommend = { list: [] };
 
 function ProgramRecommendSection() {
   const params = useParams();
