@@ -99,7 +99,7 @@ const ProgramRecommendEditor = ({
   };
 
   return (
-    <>
+    <div>
       <Heading2 className="mb-2">프로그램 추천</Heading2>
       <div className="mb-4">
         <Button variant="outlined" onClick={onOpen}>
@@ -232,12 +232,14 @@ const ProgramRecommendEditor = ({
                                             ele.programClassification,
                                         })),
                                       adminClassificationList:
-                                      item.adminClassificationList ? item.adminClassificationList.map(
-                                          (ele) => ({
-                                            programAdminClassification:
-                                              ele.programAdminClassification,
-                                          }),
-                                        ) : [],
+                                        item.adminClassificationList
+                                          ? item.adminClassificationList.map(
+                                              (ele) => ({
+                                                programAdminClassification:
+                                                  ele.programAdminClassification,
+                                              }),
+                                            )
+                                          : [],
                                     },
                                   ],
                                 });
@@ -306,7 +308,7 @@ const ProgramRecommendEditor = ({
           </Box>
         </Box>
       </Modal>
-    </>
+    </div>
   );
 };
 
