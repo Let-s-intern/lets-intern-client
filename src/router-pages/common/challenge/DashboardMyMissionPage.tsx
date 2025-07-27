@@ -1,4 +1,5 @@
 import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
+import BonusMissionPopup from '@/components/common/challenge/my-challenge/BonusMissionPopup';
 import MissionGuideSection from '@/components/common/challenge/my-challenge/MissionGuideSection';
 import MissionMentorCommentSection from '@/components/common/challenge/my-challenge/MissionMentorCommentSection';
 import MissionStatusMessage from '@/components/common/challenge/my-challenge/MissionStatusMessage';
@@ -8,6 +9,7 @@ import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 const getIsChallengeDone = (endDate: string) => {
@@ -33,7 +35,10 @@ const DashboardMyMissionPage = () => {
     },
   });
 
-  let todayTh = myDailyMission?.dailyMission?.th ?? schedules.length + 1;
+  const initialTodayTh =
+    myDailyMission?.dailyMission?.th ?? schedules.length + 1;
+  const [todayTh, setTodayTh] = useState(initialTodayTh);
+
   const programEndDate = programData?.data?.endDate;
   const isChallengeDone = getIsChallengeDone(programEndDate);
   const isChallengeSubmitDone = programEndDate
@@ -44,8 +49,18 @@ const DashboardMyMissionPage = () => {
     challengeId: Number(params.programId),
     missionId: 11,
   });
-  todayTh = 1;
   console.log(JSON.stringify(response.data, null, 2));
+
+  // 팝업 표시 조건 관리
+  const [showPopup, setShowPopup] = useState(true);
+  const closePopup = () => setShowPopup(false);
+
+  // 팝업 클릭 시 todayTh를 100으로 변경하는 함수
+  const handlePopupClick = () => {
+    setTodayTh(100);
+    console.log('팝업 클릭됨! todayTh가 100으로 변경되었습니다.');
+  };
+
   return (
     <main>
       <header>
@@ -69,6 +84,15 @@ const DashboardMyMissionPage = () => {
       <div className="mt-11">
         <MissionMentorCommentSection />
       </div>
+
+      {/* 보너스 미션 팝업 */}
+      <BonusMissionPopup
+        isVisible={showPopup}
+        onClose={closePopup}
+        onPopupClick={handlePopupClick}
+      />
+
+      {/* 여기에 팝업 이미지 컴포넌트 만들어줘 */}
       {/* {myDailyMission?.attendanceInfo && myDailyMission.dailyMission && (
         <DailyMissionSection myDailyMission={myDailyMission} />
       )}
