@@ -256,14 +256,17 @@ export const useGetProgramReviewDetail = (
 export const adminBlogReviewSchema = z
   .object({
     blogReviewId: z.number(),
-    postDate: z.string().optional().nullable(),
-    programType: ProgramTypeEnum.optional().nullable(),
-    programTitle: z.string().optional().nullable(),
-    name: z.string().optional().nullable(),
-    title: z.string().optional().nullable(),
-    url: z.string().optional().nullable(),
-    thumbnail: z.string().optional().nullable(),
-    isVisible: z.boolean().optional().nullable(),
+    postDate: z.string().nullish(),
+    programType: ProgramTypeEnum.nullish(),
+    programTitle: z.string().nullish(),
+    name: z.string().nullish(),
+    title: z.string().nullish(),
+    url: z.string().nullish(),
+    thumbnail: z.string().nullish(),
+    isVisible: z.boolean().nullish(),
+    phoneNum: z.string().nullish(),
+    accountType: z.string().nullish(),
+    accountNum: z.string().nullish(),
   })
   .transform((data) => ({ ...data, postDate: new Date(data.postDate ?? '') }));
 

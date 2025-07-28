@@ -50,15 +50,15 @@ function RecommendedProgramSwiper({ programs }: Props) {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <Link
-                    to={`/program/${info.id}`}
-                    className="font-medium text-neutral-0"
-                  >
+                <Link
+                  to={`/program/${info.id}`}
+                  className="flex items-center justify-between"
+                >
+                  <span className="font-medium text-neutral-0">
                     {item.recommendCTA || '자세히 보기'}
-                  </Link>
+                  </span>
                   <ChevronRight size={20} color="#CFCFCF" />
-                </div>
+                </Link>
               </div>
             </SwiperSlide>
           );
