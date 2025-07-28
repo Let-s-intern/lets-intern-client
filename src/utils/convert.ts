@@ -3,6 +3,7 @@ import { QuestionType } from '@/api/review';
 import {
   AttendanceResult,
   AttendanceStatus,
+  ChallengePricePlan,
   ChallengeType,
   ChallengeUserType,
   LiveProgressType,
@@ -96,6 +97,12 @@ export const programPriceTypeToText: Record<ChallengeUserType | 'ALL', string> =
     BASIC: '베이직',
     PREMIUM: '프리미엄',
   };
+
+export const challengePricePlanToText: Record<ChallengePricePlan, string> = {
+  BASIC: '베이직',
+  STANDARD: '스탠다드',
+  PREMIUM: '프리미엄',
+};
 
 export const programPriceTypes: (ChallengeUserType | 'ALL')[] = [
   'ALL',
