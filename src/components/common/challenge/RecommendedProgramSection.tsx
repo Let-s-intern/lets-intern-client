@@ -23,8 +23,9 @@ const MoreButton = ({ info }: { info?: OperationRecommendMoreButton }) => {
 
 function RecommendedProgramSection() {
   const location = useLocation();
-  const isDashboardPage =
-    location.pathname.match(/^\/challenge\/\d+\/dashboard\/\d+$/) !== null;
+  const isDashboardPage = /^\/challenge\/\d+\/dashboard\/\d+$/.test(
+    location.pathname,
+  );
 
   const params = useParams();
   const { data: challenge, isLoading } = useChallengeQuery(params.programId);
