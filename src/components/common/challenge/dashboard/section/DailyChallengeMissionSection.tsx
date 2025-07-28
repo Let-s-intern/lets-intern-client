@@ -29,15 +29,15 @@ const DailyChallengeMissionSection = ({
         submitted ? 'border-neutral-80' : 'border-primary-80',
       )}
     >
-      <div className="flex items-center gap-2 border-b p-4">
-        <h2 className="font-semibold text-[#4A495C]">
+      <div className="flex flex-col border-b px-4 py-3 md:flex-row md:items-center md:gap-2 md:py-4">
+        <h2 className="font-semibold text-neutral-10">
           {dailyMission?.th}회차 | {dailyMission?.title}
         </h2>
         <span className="text-sm text-primary">
           마감기한 {dailyMission?.endDate?.format('MM.DD HH:mm')}까지
         </span>
       </div>
-      <p className="line-clamp-6 flex-1 whitespace-pre-line p-4">
+      <p className="mb-4 flex-1 whitespace-pre-line p-4 text-xsmall14 md:mb-0 md:text-xsmall16">
         {dailyMission?.description}
       </p>
       {submitted ? (

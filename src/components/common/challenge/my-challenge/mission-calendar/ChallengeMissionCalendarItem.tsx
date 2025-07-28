@@ -28,7 +28,7 @@ const MissionCalendarItem = ({
       <MissionTopStatusBar mission={schedule.missionInfo} todayTh={todayTh} />
       <div
         className={clsx(
-          'mt-2 rounded-xxs border px-2 py-2.5',
+          'rounded-xxs border px-2 py-2.5 md:mt-2',
           !isLast && 'mr-2',
           mission.th === todayTh ? 'border-neutral-70' : 'border-neutral-80',
         )}

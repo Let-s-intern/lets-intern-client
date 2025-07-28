@@ -122,7 +122,7 @@ const DashboardPage = () => {
         </div>
         {/* 일정 및 제출 현황 */}
         <div className="flex gap-3">
-          <section className="flex-1 rounded-xs border border-neutral-80 p-4">
+          <section className="w-full flex-1 rounded-xs border border-neutral-80 p-4">
             <div className="flex items-center gap-2">
               <h2 className="font-semibold text-neutral-10">
                 일정 및 미션 제출 현황

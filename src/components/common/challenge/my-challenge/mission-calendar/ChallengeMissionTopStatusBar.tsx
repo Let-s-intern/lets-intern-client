@@ -10,15 +10,15 @@ const MissionTopStatusBar = ({ mission, todayTh }: Props) => {
     <div className="relative flex items-center">
       {mission.th === todayTh ? (
         <>
-          <div className="h-[4px] w-full flex-1 bg-primary" />
-          <div className="absolute left-1/2 h-[8px] w-[8px] -translate-x-1/2 rounded-full bg-primary" />
-          <div className="h-[4px] w-full flex-1 bg-gray-200" />
+          <div className="w-full flex-1 bg-primary md:h-1" />
+          <div className="absolute left-1/2 -translate-x-1/2 rounded-full bg-primary md:h-[8px] md:w-[8px]" />
+          <div className="w-full flex-1 bg-gray-200 md:h-1" />
         </>
       ) : (mission.th ?? 0) > todayTh ? (
-        <div className="h-[4px] w-full flex-1 bg-gray-200" />
+        <div className="w-full flex-1 bg-gray-200 md:h-1" />
       ) : (
         (mission.th ?? 0) < todayTh && (
-          <div className="h-[4px] w-full flex-1 bg-primary" />
+          <div className="w-full flex-1 bg-primary md:h-1" />
         )
       )}
     </div>

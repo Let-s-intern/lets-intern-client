@@ -32,7 +32,9 @@ const MissionTodayIcon = ({ mission, className, attendance }: Props) => {
           className={clsx(
             'text-[13px] leading-4',
             style,
-            attendance.status === 'PRESENT' || attendance.result === 'WAITING'
+            attendance.status === 'PRESENT' ||
+              attendance.result === 'WAITING' ||
+              attendance.result == null
               ? 'text-[14px]'
               : '',
           )}
