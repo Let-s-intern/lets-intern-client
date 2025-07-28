@@ -40,7 +40,7 @@ const ChallengeGuideSection = ({ guides }: GuideSection) => {
                 to={guide.link ?? ''}
                 className="overflow-hidden text-ellipsis whitespace-nowrap text-sm text-[#333333] hover:underline"
                 target="_blank"
-                rel="noopenner noreferrer"
+                rel="noopener noreferrer"
               >
                 {guide.title}
               </Link>
@@ -65,7 +65,7 @@ const ChallengeGuideSection = ({ guides }: GuideSection) => {
               { length: totalPageCount },
               (_, index) => index + 1,
             ).map((pageNum) => (
-              <div
+              <button
                 key={pageNum}
                 className={clsx('h-2 w-2 cursor-pointer rounded-full', {
                   'bg-[#B0B0B0]': pageNum === currentPageNum,

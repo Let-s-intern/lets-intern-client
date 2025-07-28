@@ -38,6 +38,8 @@ const MissionScoreSection = ({
     },
   });
 
+  const CERTIFICATE_MIN_SCORE = 80;
+
   return (
     <section className="relative flex flex-1 flex-col gap-y-4 rounded-xs border border-[#E4E4E7] p-4">
       <div className="flex flex-1 flex-col gap-3">
@@ -56,7 +58,7 @@ const MissionScoreSection = ({
           </div>
         </div>
       </div>
-      {currentScore < 80 || !isProgramDone ? (
+      {currentScore < CERTIFICATE_MIN_SCORE || !isProgramDone ? (
         <button
           className={`flex cursor-not-allowed items-center justify-center rounded-xs border border-neutral-80 py-2.5 text-xsmall16 font-medium text-neutral-50 outline-none`}
           onMouseEnter={() => {
