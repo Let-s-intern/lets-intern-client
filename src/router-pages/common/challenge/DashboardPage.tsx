@@ -82,7 +82,7 @@ const DashboardPage = () => {
   const isChallengeSubmitDone = getIsChallengeSubmitDone(programEndDate);
 
   return (
-    <main>
+    <main className="mx-auto">
       <header>
         <h1 className="text-[22px] font-semibold">{user?.name}님의 대시보드</h1>
       </header>
