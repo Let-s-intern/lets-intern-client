@@ -25,6 +25,7 @@ const cellWidthList = [
   'w-[15%]',
   'w-[16%]',
   'w-[17%]',
+  'w-[8%]',
 ];
 
 const colNames = [
@@ -35,6 +36,7 @@ const colNames = [
   '내용',
   '가이드',
   '템플릿 링크',
+  'VOD 링크',
 ];
 
 type Row = MissionTemplateResItem & ItemWithStatus;
@@ -103,7 +105,12 @@ const ChallengeMissionManagement = () => {
   return (
     <div className="px-12 pt-6">
       <div className="flex items-center justify-between px-3">
-        <Heading>미션 관리</Heading>
+        <div className="mb-2 flex items-center gap-4">
+          <Heading>미션 관리</Heading>
+          <div className="rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-gray-600">
+            💡 보너스 미션은 ID 100으로 고정된 값을 사용합니다
+          </div>
+        </div>
         <Button
           onClick={() => {
             setInsertingMissionTemplate({
@@ -115,6 +122,7 @@ const ChallengeMissionManagement = () => {
               createDate: dayjs(), // 임시 생성일자
               rowStatus: TABLE_STATUS.INSERT,
               missionTag: '',
+              vodLink: '',
             });
           }}
         >
@@ -134,11 +142,13 @@ const ChallengeMissionManagement = () => {
                 'description',
                 'guide',
                 'templateLink',
+                'vodLink',
               ]}
               placeholders={colNames}
-              canEdits={[false, false, true, true, true, true, true]}
+              canEdits={[false, false, true, true, true, true, true, true]}
               contents={[
                 { type: TABLE_CONTENT.DATE },
+                { type: TABLE_CONTENT.INPUT },
                 { type: TABLE_CONTENT.INPUT },
                 { type: TABLE_CONTENT.INPUT },
                 { type: TABLE_CONTENT.INPUT },
@@ -161,8 +171,9 @@ const ChallengeMissionManagement = () => {
                     description: item.description,
                     guide: item.guide,
                     missionTag: item.missionTag,
-                    templateLink: item.templateLink,
+                    templateLink: item.templateLink ?? undefined,
                     title: item.title,
+                    vodLink: item.vodLink ?? undefined,
                   });
                   refetch();
                   setInsertingMissionTemplate(null);
@@ -172,8 +183,9 @@ const ChallengeMissionManagement = () => {
                     description: item.description,
                     guide: item.guide,
                     missionTag: item.missionTag,
-                    templateLink: item.templateLink,
+                    templateLink: item.templateLink ?? undefined,
                     title: item.title,
+                    vodLink: item.vodLink ?? undefined,
                   });
                   refetch();
                 }
