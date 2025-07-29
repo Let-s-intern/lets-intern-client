@@ -105,7 +105,12 @@ const ChallengeMissionManagement = () => {
   return (
     <div className="px-12 pt-6">
       <div className="flex items-center justify-between px-3">
-        <Heading>미션 관리</Heading>
+        <div className="mb-2 flex items-center gap-4">
+          <Heading>미션 관리</Heading>
+          <div className="rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-gray-600">
+            💡 보너스 미션은 ID 100으로 고정된 값을 사용합니다
+          </div>
+        </div>
         <Button
           onClick={() => {
             setInsertingMissionTemplate({
