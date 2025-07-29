@@ -96,7 +96,6 @@ const DashboardMyMissionPage = () => {
         </div>
       </div>
 
-      {/* 여기에 팝업 이미지 컴포넌트 만들어줘 */}
       {/* {myDailyMission?.attendanceInfo && myDailyMission.dailyMission && (
         <DailyMissionSection myDailyMission={myDailyMission} />
       )}
