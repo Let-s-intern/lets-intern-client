@@ -35,8 +35,8 @@ const DashboardMyMissionPage = () => {
     },
   });
 
-  const initialTodayTh =
-    myDailyMission?.dailyMission?.th ?? schedules.length + 1;
+  const initialTodayTh = 0;
+  // myDailyMission?.dailyMission?.th ?? schedules.length + 1;
   const [todayTh, setTodayTh] = useState(initialTodayTh);
 
   const programEndDate = programData?.data?.endDate;
@@ -47,8 +47,9 @@ const DashboardMyMissionPage = () => {
 
   const response = useChallengeMissionAttendanceInfoQuery({
     challengeId: Number(params.programId),
-    missionId: 11,
+    missionId: myDailyMission?.dailyMission?.id ?? 0,
   });
+
   console.log(JSON.stringify(response.data, null, 2));
 
   // 팝업 표시 조건 관리
@@ -58,7 +59,6 @@ const DashboardMyMissionPage = () => {
   // 팝업 클릭 시 todayTh를 100으로 변경하는 함수
   const handlePopupClick = () => {
     setTodayTh(100);
-    console.log('팝업 클릭됨! todayTh가 100으로 변경되었습니다.');
   };
 
   return (
