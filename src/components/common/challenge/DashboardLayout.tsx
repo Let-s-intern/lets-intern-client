@@ -68,8 +68,12 @@ const DashboardLayout = () => {
       return;
     }
 
+    // if (!isValidUserInfo || (isStartAfterGoal && !hasChallengeGoal)) {
+    //   navigate(`/challenge/${applicationId}/${programId}/user/info`);
+    //   return;
+    // }
     if (!isValidUserInfo || (isStartAfterGoal && !hasChallengeGoal)) {
-      navigate(`/challenge/${applicationId}/${programId}/user/info`);
+      navigate(`/challenge/${programId}/dashboard/${applicationId}`);
       return;
     }
   }, [
