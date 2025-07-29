@@ -13,7 +13,11 @@ const BonusMissionPopup = ({
 }: BonusMissionPopupProps) => {
   const [isClosing, setIsClosing] = useState(false);
 
-  const handleClose = () => {
+  const handleClose = (e?: React.MouseEvent) => {
+    // 이벤트 버블링 방지
+    if (e) {
+      e.stopPropagation();
+    }
     setIsClosing(true);
     setTimeout(() => {
       onClose();
@@ -54,7 +58,7 @@ const BonusMissionPopup = ({
 
           {/* 닫기 버튼 */}
           <button
-            onClick={handleClose}
+            onClick={(e) => handleClose(e)}
             className="absolute -right-3 -top-3 flex h-8 w-8 items-center justify-center rounded-full bg-green-500 text-white shadow-lg transition-colors duration-200 hover:bg-green-600"
           >
             <span className="text-lg font-bold">×</span>
