@@ -1,5 +1,7 @@
+import { useSubmitChallengeGoal } from '@/api/challenge';
 import { clsx } from 'clsx';
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import MissionSubmitButton from './MissionSubmitButton';
 import MissionToast from './MissionToast';
 
@@ -12,20 +14,32 @@ const MissionSubmitZeroSection = ({
   className,
   todayTh,
 }: MissionSubmitZeroSectionProps) => {
+  const params = useParams<{ programId: string }>();
   const [textareaValue, setTextareaValue] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showToast, setShowToast] = useState(false);
+
+  // 챌린지 목표 제출 mutation
+  const submitChallengeGoal = useSubmitChallengeGoal();
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTextareaValue(e.target.value);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (isSubmitted) {
       setIsSubmitted(false);
     } else {
-      setIsSubmitted(true);
-      setShowToast(true);
+      try {
+        console.log(params.programId);
+        await submitChallengeGoal.mutateAsync({
+          challengeId: Number(params.programId),
+        });
+        setIsSubmitted(true);
+        setShowToast(true);
+      } catch (error) {
+        console.error('제출 실패:', error);
+      }
     }
   };
 
