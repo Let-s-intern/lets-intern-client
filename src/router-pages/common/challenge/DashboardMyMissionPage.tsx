@@ -82,7 +82,7 @@ const DashboardMyMissionPage = () => {
         </div>
         <div className="relative">
           <BonusMissionPopup
-            isVisible={showPopup}
+            isVisible={showPopup && (todayTh === 4 || todayTh === 6)}
             onClose={closePopup}
             onPopupClick={handlePopupClick}
           />
