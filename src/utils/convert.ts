@@ -3,6 +3,7 @@ import { QuestionType } from '@/api/review';
 import {
   AttendanceResult,
   AttendanceStatus,
+  ChallengePricePlan,
   ChallengeType,
   ChallengeUserType,
   LiveProgressType,
@@ -96,6 +97,12 @@ export const programPriceTypeToText: Record<ChallengeUserType | 'ALL', string> =
     BASIC: '베이직',
     PREMIUM: '프리미엄',
   };
+
+export const challengePricePlanToText: Record<ChallengePricePlan, string> = {
+  BASIC: '베이직',
+  STANDARD: '스탠다드',
+  PREMIUM: '프리미엄',
+};
 
 export const programPriceTypes: (ChallengeUserType | 'ALL')[] = [
   'ALL',
@@ -351,6 +358,74 @@ export const missionSubmitToBadge = ({
   return {
     text: '확인완료',
     style: 'text-primary bg-[#E7E6FD]',
+  };
+};
+
+export const unsubmitted = {
+  text: '미제출',
+  style: 'text-system-error',
+  icon: '/icons/check-gray-outline.svg',
+};
+
+export const challengeMissionSubmitToBadge = ({
+  status,
+  result,
+}: {
+  status?: AttendanceStatus | null;
+  result?: AttendanceResult | null;
+}) => {
+  if (result === 'WAITING') {
+    return {
+      text: '확인중',
+      style: 'text-primary-90',
+      icon: '/icons/icon-today.svg',
+    };
+  }
+
+  if (status === null) {
+    return {
+      text: '진행중',
+      style: 'text-primary-90',
+      icon: '/icons/icon-today.svg',
+    };
+  }
+
+  if (status === 'UPDATED' && result === 'WRONG') {
+    return unsubmitted;
+  }
+
+  if (status === 'UPDATED' && result === 'PASS') {
+    return {
+      text: '지각 제출',
+      style: 'text-neutral-30',
+      icon: '/icons/mission-late.svg',
+    };
+  }
+
+  if (result === 'WRONG') {
+    return {
+      text: '제출 반려',
+      style: 'text-neutral-30',
+      icon: '/icons/check-gray-outline.svg',
+    };
+  }
+
+  if (status === 'ABSENT') {
+    return unsubmitted;
+  }
+
+  if (status === 'LATE') {
+    return {
+      text: '지각 제출',
+      style: 'text-neutral-30',
+      icon: '/icons/mission-late.svg',
+    };
+  }
+
+  return {
+    text: '제출 성공',
+    style: 'text-primary-90',
+    icon: '/icons/mission-pass.svg',
   };
 };
 

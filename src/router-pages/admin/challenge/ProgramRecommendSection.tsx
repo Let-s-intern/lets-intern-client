@@ -1,11 +1,23 @@
 /* eslint-disable no-console */
 import { useChallengeQuery, usePatchChallengeMutation } from '@/api/program';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import { ChallengeContent } from '@/types/interface';
+import {
+  ChallengeContent,
+  OperationRecommendMoreButton,
+  ProgramRecommend,
+} from '@/types/interface';
+import MoreButtonSection from '@components/admin/ui/MoreButtonSection';
 import ProgramRecommendEditor from '@components/ProgramRecommendEditor';
 import { Button } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
+
+const defaultMoreButton: OperationRecommendMoreButton = {
+  visible: false,
+  url: '',
+};
+
+const defaultPrograms: ProgramRecommend = { list: [] };
 
 function ProgramRecommendSection() {
   const params = useParams();
@@ -26,14 +38,14 @@ function ProgramRecommendSection() {
     }
   }, [challenge?.desc]);
 
-  const [programRecommend, setProgramRecommend] = useState(
-    descJson?.operationRecommendProgram ?? { list: [] },
-  );
+  const [programRecommend, setProgramRecommend] = useState(defaultPrograms);
+  const [moreButton, setMoreButton] = useState(defaultMoreButton);
 
   const handleSave = async () => {
     const newDescJson = {
       ...descJson,
       operationRecommendProgram: programRecommend,
+      operationRecommendMoreButton: moreButton,
     };
     const request = {
       challengeId: programId,
@@ -52,22 +64,35 @@ function ProgramRecommendSection() {
     /** init data */
     if (isLoading) return;
 
-    setProgramRecommend(descJson?.operationRecommendProgram ?? { list: [] });
-  }, [descJson?.operationRecommendProgram, isLoading]);
+    setProgramRecommend(descJson?.operationRecommendProgram ?? defaultPrograms);
+    setMoreButton(descJson?.operationRecommendMoreButton ?? defaultMoreButton);
+  }, [isLoading, descJson]);
+
+  console.log(moreButton);
 
   if (isLoading) return null;
 
   return (
     <div className="flex flex-col">
-      <ProgramRecommendEditor
-        programRecommend={programRecommend}
-        setProgramRecommend={setProgramRecommend}
-      />
-      <div className="mt-4 text-right">
-        <Button variant="contained" onClick={handleSave}>
-          저장
-        </Button>
+      <div className="mb-4 grid grid-cols-2 gap-4">
+        <ProgramRecommendEditor
+          programRecommend={programRecommend}
+          setProgramRecommend={setProgramRecommend}
+        />
+        <MoreButtonSection
+          checked={moreButton?.visible}
+          url={moreButton?.url}
+          onChangeCheckbox={(value) => {
+            setMoreButton((prev) => ({ ...prev, visible: value }));
+          }}
+          onChangeUrl={(url) => {
+            setMoreButton((prev) => ({ ...prev, url }));
+          }}
+        />
       </div>
+      <Button variant="contained" onClick={handleSave}>
+        저장
+      </Button>
     </div>
   );
 }

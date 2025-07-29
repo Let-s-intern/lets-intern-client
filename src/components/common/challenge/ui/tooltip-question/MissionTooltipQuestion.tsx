@@ -30,7 +30,7 @@ const MissionTooltipQuestion = () => {
         className="cursor-pointer"
         onClick={() => setIsTooltipOpen(!isTooltipOpen)}
       >
-        <img src="/icons/tooltip-question.svg" alt="tooltip question" />
+        <img src="/icons/info-circle.svg" alt="tooltip question" />
       </i>
       {isTooltipOpen && (
         <div className="absolute -right-4 -top-3 z-30 translate-x-full drop-shadow-xl">

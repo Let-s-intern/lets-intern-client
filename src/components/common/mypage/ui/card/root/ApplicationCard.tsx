@@ -1,5 +1,7 @@
 import { MypageApplication } from '@/api/application';
 import dayjs from '@/lib/dayjs';
+import { ChallengePricePlan, ChallengePricePlanEnum } from '@/schema';
+import { challengePricePlanToText } from '@/utils/convert';
 import { getReportThumbnail } from '@components/common/mypage/credit/CreditListItem';
 import clsx from 'clsx';
 import { useState } from 'react';
@@ -39,6 +41,13 @@ const ApplicationCard = ({
       ? '/report/management'
       : `/program/${application.programType?.toLowerCase()}/${application.programId}`;
 
+  const challengePricePlan =
+    challengePricePlanToText[
+      (application.pricePlanType as ChallengePricePlan) ||
+        ChallengePricePlanEnum.enum.BASIC
+    ];
+  const joinedChallengeOptions = application.challengeOptionList?.join(', ');
+
   return (
     <div
       className="flex h-[282px] w-full flex-col items-start gap-4 overflow-hidden rounded-xs md:h-full md:flex-row md:border md:border-neutral-85 md:p-2.5"
@@ -75,15 +84,26 @@ const ApplicationCard = ({
               {application.programShortDesc}
             </p>
           </div>
-          <div className="flex items-center gap-1.5 md:justify-start">
-            <span className="text-xs text-neutral-0">
-              {application.programType === 'REPORT' ? '신청일자' : '진행기간'}
-            </span>
-            <span className="text-xs font-medium text-primary-dark">
-              {application.programType === 'REPORT'
-                ? application.createDate?.format('YY.MM.DD')
-                : `${application.programStartDate?.format('YY.MM.DD')} ~ ${application.programEndDate?.format('YY.MM.DD')}`}
-            </span>
+          <div className="text-xxsmall12">
+            <div className="flex items-center gap-1.5 md:justify-start">
+              <span className="text-neutral-0">
+                {application.programType === 'REPORT' ? '신청일자' : '진행기간'}
+              </span>
+              <span className="font-medium text-primary-dark">
+                {application.programType === 'REPORT'
+                  ? application.createDate?.format('YY.MM.DD')
+                  : `${application.programStartDate?.format('YY.MM.DD')} ~ ${application.programEndDate?.format('YY.MM.DD')}`}
+              </span>
+            </div>
+            {joinedChallengeOptions && (
+              <div className="flex gap-1.5 md:justify-start">
+                <span className="shrink-0 text-neutral-0">신청플랜</span>
+                {/* <span className="font-medium text-primary-dark">{`${challengePricePlan} (${joinedChallengeOptions})`}</span> */}
+                <span className="font-medium text-primary-dark">
+                  {challengePricePlan}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>
