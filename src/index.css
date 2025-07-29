@@ -396,3 +396,7 @@ input[type='number'] {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+.challenge-calender-swiper .swiper-wrapper {
+  margin-top: 12px;
+}
