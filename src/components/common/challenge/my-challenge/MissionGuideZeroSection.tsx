@@ -23,6 +23,27 @@ const MissionGuideZeroSection = ({
     return date.format('MM.DD HH:mm');
   };
 
+  // YouTube 링크를 임베드 링크로 변환
+  const convertToEmbedUrl = (url: string) => {
+    if (!url) return null;
+
+    // YouTube 링크 패턴들
+    const patterns = [
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]+)/,
+      /youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/,
+      /youtu\.be\/([a-zA-Z0-9_-]+)/,
+    ];
+
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match) {
+        return `https://www.youtube.com/embed/${match[1]}`;
+      }
+    }
+
+    return null;
+  };
+
   return (
     <div className={clsx('flex flex-col gap-3', className)}>
       {/* 제목 및 마감일 섹션 */}
@@ -96,13 +117,17 @@ const MissionGuideZeroSection = ({
         {/* OT 영상 섹션 */}
         <section className="flex flex-col gap-3">
           <h3 className="text-lg font-semibold text-neutral-0">OT 영상</h3>
-          {missionData?.missionInfo?.vodLink ? (
+          {missionData?.missionInfo?.vodLink &&
+          convertToEmbedUrl(missionData.missionInfo.vodLink) ? (
             <div className="relative flex aspect-video items-center justify-center rounded-sm bg-neutral-95">
               <iframe
-                src={missionData.missionInfo.vodLink}
+                src={convertToEmbedUrl(missionData.missionInfo.vodLink)!}
                 className="h-full w-full rounded-sm"
                 allowFullScreen
                 title="OT 영상"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
               />
             </div>
           ) : (
