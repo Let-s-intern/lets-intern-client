@@ -6,15 +6,19 @@ import MissionGuideZeroSection from './MissionGuideZeroSection';
 interface MissionGuideSectionProps {
   className?: string;
   todayTh: number;
+  missionData?: any; // API 응답 데이터
 }
 
 const MissionGuideSection = ({
   className,
   todayTh,
+  missionData,
 }: MissionGuideSectionProps) => {
   const renderSection = () => {
     if (todayTh === 0) {
-      return <MissionGuideZeroSection todayTh={todayTh} />;
+      return (
+        <MissionGuideZeroSection todayTh={todayTh} missionData={missionData} />
+      );
     }
 
     if (todayTh === 100) {

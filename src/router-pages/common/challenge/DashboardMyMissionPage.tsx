@@ -101,7 +101,7 @@ const DashboardMyMissionPage = () => {
         {/* 보너스 미션 팝업 */}
 
         <div className="mt-8">
-          <MissionGuideSection todayTh={todayTh} />
+          <MissionGuideSection todayTh={todayTh} missionData={response.data} />
         </div>
         <div className="relative">
           <BonusMissionPopup
