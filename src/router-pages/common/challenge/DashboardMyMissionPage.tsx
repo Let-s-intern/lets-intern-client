@@ -46,6 +46,12 @@ const DashboardMyMissionPage = () => {
     return initialValue;
   });
 
+  // 선택된 미션 ID를 관리
+  const [selectedMissionId, setSelectedMissionId] = useState<number>(() => {
+    // 기본값으로 0회차 미션 ID 설정 (schedules[0]의 missionInfo.id)
+    return schedules[0]?.missionInfo?.id || 0;
+  });
+
   // 데이터가 로드된 후 todayTh 업데이트
   useEffect(() => {
     if (myDailyMission || schedules.length > 0) {
@@ -68,12 +74,9 @@ const DashboardMyMissionPage = () => {
 
   const response = useChallengeMissionAttendanceInfoQuery({
     challengeId: Number(params.programId),
-    missionId: myDailyMission?.dailyMission?.id ?? 0,
-    enabled:
-      !!myDailyMission?.dailyMission?.id && myDailyMission.dailyMission.id > 0,
+    missionId: selectedMissionId,
+    enabled: !!selectedMissionId && selectedMissionId > 0,
   });
-
-  console.log(JSON.stringify(response.data, null, 2));
 
   // 팝업 표시 조건 관리
   const [showPopup, setShowPopup] = useState(true);
@@ -96,6 +99,8 @@ const DashboardMyMissionPage = () => {
         schedules={schedules}
         todayTh={todayTh}
         isDone={isChallengeDone}
+        onMissionClick={(missionId: number) => setSelectedMissionId(missionId)}
+        selectedMissionId={selectedMissionId}
       />
       <div>
         {/* 보너스 미션 팝업 */}

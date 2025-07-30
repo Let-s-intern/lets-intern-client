@@ -6,9 +6,17 @@ interface Props {
   schedules: Schedule[];
   todayTh: number;
   isDone: boolean;
+  onMissionClick?: (missionId: number) => void;
+  selectedMissionId?: number;
 }
 
-const MissionCalendarSection = ({ schedules, todayTh, isDone }: Props) => {
+const MissionCalendarSection = ({
+  schedules,
+  todayTh,
+  isDone,
+  onMissionClick,
+  selectedMissionId,
+}: Props) => {
   return (
     <section>
       <div className="flex items-center gap-2">
@@ -32,6 +40,8 @@ const MissionCalendarSection = ({ schedules, todayTh, isDone }: Props) => {
         schedules={schedules}
         todayTh={todayTh}
         isDone={isDone}
+        onMissionClick={onMissionClick}
+        selectedMissionId={selectedMissionId}
       />
     </section>
   );
