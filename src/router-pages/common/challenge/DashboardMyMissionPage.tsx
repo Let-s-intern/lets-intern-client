@@ -9,7 +9,7 @@ import dayjs from '@/lib/dayjs';
 import axios from '@/utils/axios';
 import BonusMissionPopup from '@components/common/challenge/my-challenge/BonusMissionPopup';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 const getIsChallengeDone = (endDate: string) => {
@@ -35,9 +35,30 @@ const DashboardMyMissionPage = () => {
     },
   });
 
-  const initialTodayTh = 0;
-  // myDailyMission?.dailyMission?.th ?? schedules.length + 1;
-  const [todayTh, setTodayTh] = useState(initialTodayTh);
+  // todayTh를 useState로 관리
+  const [todayTh, setTodayTh] = useState(() => {
+    const initialValue =
+      myDailyMission?.dailyMission?.th ||
+      schedules.reduce((th, schedule) => {
+        return Math.max(th, schedule.missionInfo.th || 0);
+      }, 0) + 1;
+
+    return initialValue;
+  });
+
+  // 데이터가 로드된 후 todayTh 업데이트
+  useEffect(() => {
+    if (myDailyMission || schedules.length > 0) {
+      const newTodayTh =
+        myDailyMission?.dailyMission?.th ||
+        schedules.reduce((th, schedule) => {
+          return Math.max(th, schedule.missionInfo.th || 0);
+        }, 0) + 1;
+
+      setTodayTh(newTodayTh);
+      setTodayTh(0);
+    }
+  }, [myDailyMission, schedules]);
 
   const programEndDate = programData?.data?.endDate;
   const isChallengeDone = getIsChallengeDone(programEndDate);
@@ -48,6 +69,8 @@ const DashboardMyMissionPage = () => {
   const response = useChallengeMissionAttendanceInfoQuery({
     challengeId: Number(params.programId),
     missionId: myDailyMission?.dailyMission?.id ?? 0,
+    enabled:
+      !!myDailyMission?.dailyMission?.id && myDailyMission.dailyMission.id > 0,
   });
 
   console.log(JSON.stringify(response.data, null, 2));
