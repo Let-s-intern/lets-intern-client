@@ -88,9 +88,10 @@ const DashboardMyMissionPage = () => {
   const [showPopup, setShowPopup] = useState(true);
   const closePopup = () => setShowPopup(false);
 
-  // 팝업 클릭 시 todayTh를 100으로 변경하는 함수
+  // 팝업 클릭 시 selectedMissionId와 selectedMissionTh를 100으로 변경하는 함수
   const handlePopupClick = () => {
-    setTodayTh(100);
+    setSelectedMissionId(100);
+    setSelectedMissionTh(100);
   };
 
   return (
@@ -127,7 +128,9 @@ const DashboardMyMissionPage = () => {
         </div>
         <div className="relative">
           <BonusMissionPopup
-            isVisible={showPopup && (todayTh === 4 || todayTh === 6)}
+            isVisible={
+              showPopup && (selectedMissionTh === 4 || selectedMissionTh === 6)
+            }
             onClose={closePopup}
             onPopupClick={handlePopupClick}
           />
