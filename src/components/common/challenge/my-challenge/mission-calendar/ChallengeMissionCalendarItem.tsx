@@ -28,7 +28,7 @@ const MissionCalendarItem = ({
       <MissionTopStatusBar mission={schedule.missionInfo} todayTh={todayTh} />
       <div
         className={clsx(
-          'rounded-xxs border px-2 py-2.5 md:mt-2',
+          'aspect-[75/104] h-[104px] rounded-xxs border px-2 py-2.5 md:mt-2',
           !isLast && 'mr-2',
           mission.th === todayTh ? 'border-neutral-70' : 'border-neutral-80',
         )}
@@ -54,8 +54,8 @@ const MissionCalendarItem = ({
               (attendance.result === 'WAITING' || attendance.result == null),
           })}
         >
-          {mission.startDate?.format('MM/DD(ddd)')}
-          <br />~{mission.endDate?.format('MM/DD(ddd)')}
+          {mission.startDate?.format('MM.DD(ddd)')}
+          <br />~{mission.endDate?.format('MM.DD(ddd)')}
         </span>
       </div>
     </div>

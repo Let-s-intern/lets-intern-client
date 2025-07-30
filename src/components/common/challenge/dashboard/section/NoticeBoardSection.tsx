@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { useState } from 'react';
 import { GrNext } from 'react-icons/gr';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { ChallengeNotice } from '../../../../../schema';
 
 interface INoticeSectionProps {
@@ -10,6 +10,8 @@ interface INoticeSectionProps {
 // 새로운 버전
 const NoticeBoardSection = ({ notices }: INoticeSectionProps) => {
   const [currentPageNum, setCurrentPageNum] = useState(1);
+  const params = useParams();
+  const applicationId = params.applicationId;
 
   const currentNoticeList = notices.slice(
     (currentPageNum - 1) * 4,
@@ -22,10 +24,11 @@ const NoticeBoardSection = ({ notices }: INoticeSectionProps) => {
       <div className="flex flex-1 flex-col gap-3 rounded-xs border border-[#E4E4E7] p-4">
         <div className="flex justify-between">
           <h2 className="font-semibold text-neutral-10">공지사항</h2>
-          <button>
-            {/* 공지사항 연결 필요 */}
+          <Link
+            to={`/challenge/${params.programId}/dashboard/${applicationId}/guide`}
+          >
             <GrNext className="text-sm text-neutral-45" />
-          </button>
+          </Link>
         </div>
         {currentNoticeList.length === 0 ? (
           <div className="flex h-[5.75rem] justify-center">

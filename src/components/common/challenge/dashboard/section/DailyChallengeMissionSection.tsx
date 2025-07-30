@@ -25,19 +25,24 @@ const DailyChallengeMissionSection = ({
   return (
     <section
       className={clsx(
-        'flex flex-1 flex-col rounded-xs border',
+        'flex aspect-[122/90] flex-1 flex-col rounded-xs border',
         submitted ? 'border-neutral-80' : 'border-primary-80',
       )}
     >
-      <div className="flex flex-col border-b px-4 py-3 md:flex-row md:items-center md:gap-2 md:py-4">
-        <h2 className="font-semibold text-neutral-10">
-          {dailyMission?.th}회차 | {dailyMission?.title}
+      <div className="flex flex-col border-b px-4 py-3 md:flex-row md:items-center md:py-4">
+        <h2 className="contents">
+          <span className="relative inline-block font-semibold text-neutral-10 after:mx-[6px] after:h-[18px] after:border-r after:border-neutral-60 after:content-['']">
+            {dailyMission?.th}회차
+          </span>
+          <span className="mr-2 font-semibold text-neutral-10">
+            {dailyMission?.title}
+          </span>
         </h2>
-        <span className="text-sm text-primary">
+        <span className="text-xsmall14 text-primary">
           마감기한 {dailyMission?.endDate?.format('MM.DD HH:mm')}까지
         </span>
       </div>
-      <p className="mb-4 flex-1 whitespace-pre-line p-4 text-xsmall14 md:mb-0 md:text-xsmall16">
+      <p className="mb-4 flex-1 whitespace-pre-line p-4 text-xsmall14 text-neutral-0 md:mb-0 md:text-xsmall16">
         {dailyMission?.description}
       </p>
       {submitted ? (
