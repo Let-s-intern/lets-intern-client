@@ -84,9 +84,11 @@ const DashboardPage = () => {
   return (
     <main className="mx-auto">
       <header>
-        <h1 className="text-[22px] font-semibold">{user?.name}님의 대시보드</h1>
+        <h1 className="text-[22px] font-semibold text-neutral-0">
+          {user?.name}님의 대시보드
+        </h1>
       </header>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-5">
         <div className="mt-6 flex flex-col gap-3 md:flex-row">
           {/* 챌린지 미션 상세 */}
           {dailyMission ? (
