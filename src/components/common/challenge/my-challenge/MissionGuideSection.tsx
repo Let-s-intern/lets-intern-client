@@ -17,7 +17,7 @@ const MissionGuideSection = ({
   selectedMissionTh,
 }: MissionGuideSectionProps) => {
   const renderSection = () => {
-    if (todayTh === 0) {
+    if (selectedMissionTh === 0) {
       return (
         <MissionGuideZeroSection
           todayTh={todayTh}
@@ -27,12 +27,24 @@ const MissionGuideSection = ({
       );
     }
 
-    if (todayTh === 100) {
-      return <MissionGuideBonusSection todayTh={todayTh} />;
+    if (selectedMissionTh === 100) {
+      return (
+        <MissionGuideBonusSection
+          todayTh={todayTh}
+          missionData={missionData}
+          selectedMissionTh={selectedMissionTh}
+        />
+      );
     }
 
     // 기본값
-    return <MissionGuideRegularSection todayTh={todayTh} />;
+    return (
+      <MissionGuideRegularSection
+        todayTh={todayTh}
+        missionData={missionData}
+        selectedMissionTh={selectedMissionTh}
+      />
+    );
   };
 
   return (
