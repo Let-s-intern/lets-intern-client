@@ -54,8 +54,8 @@ const MissionCalendarItem = ({
               (attendance.result === 'WAITING' || attendance.result == null),
           })}
         >
-          {mission.startDate?.format('MM/DD(ddd)')}
-          <br />~{mission.endDate?.format('MM/DD(ddd)')}
+          {mission.startDate?.format('MM.DD(ddd)')}
+          <br />~{mission.endDate?.format('MM.DD(ddd)')}
         </span>
       </div>
     </div>
