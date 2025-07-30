@@ -7,17 +7,23 @@ interface MissionGuideSectionProps {
   className?: string;
   todayTh: number;
   missionData?: any; // API 응답 데이터
+  selectedMissionTh?: number; // 선택된 미션의 회차
 }
 
 const MissionGuideSection = ({
   className,
   todayTh,
   missionData,
+  selectedMissionTh,
 }: MissionGuideSectionProps) => {
   const renderSection = () => {
     if (todayTh === 0) {
       return (
-        <MissionGuideZeroSection todayTh={todayTh} missionData={missionData} />
+        <MissionGuideZeroSection
+          todayTh={todayTh}
+          missionData={missionData}
+          selectedMissionTh={selectedMissionTh}
+        />
       );
     }
 

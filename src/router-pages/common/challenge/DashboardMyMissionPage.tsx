@@ -52,6 +52,12 @@ const DashboardMyMissionPage = () => {
     return schedules[0]?.missionInfo?.id || 0;
   });
 
+  // 선택된 미션의 회차를 관리
+  const [selectedMissionTh, setSelectedMissionTh] = useState<number>(() => {
+    // 기본값으로 0회차 설정
+    return schedules[0]?.missionInfo?.th || 0;
+  });
+
   // 데이터가 로드된 후 todayTh 업데이트
   useEffect(() => {
     if (myDailyMission || schedules.length > 0) {
@@ -99,14 +105,25 @@ const DashboardMyMissionPage = () => {
         schedules={schedules}
         todayTh={todayTh}
         isDone={isChallengeDone}
-        onMissionClick={(missionId: number) => setSelectedMissionId(missionId)}
+        onMissionClick={(missionId: number) => {
+          setSelectedMissionId(missionId);
+          // 선택된 미션의 회차 찾기
+          const selectedSchedule = schedules.find(
+            (schedule) => schedule.missionInfo.id === missionId,
+          );
+          setSelectedMissionTh(selectedSchedule?.missionInfo?.th || 0);
+        }}
         selectedMissionId={selectedMissionId}
       />
       <div>
         {/* 보너스 미션 팝업 */}
 
         <div className="mt-8">
-          <MissionGuideSection todayTh={todayTh} missionData={response.data} />
+          <MissionGuideSection
+            todayTh={todayTh}
+            missionData={response.data}
+            selectedMissionTh={selectedMissionTh}
+          />
         </div>
         <div className="relative">
           <BonusMissionPopup
@@ -116,7 +133,10 @@ const DashboardMyMissionPage = () => {
           />
         </div>
         <div className="mt-6">
-          <MissionSubmitSection todayTh={todayTh} />
+          <MissionSubmitSection
+            todayTh={selectedMissionTh}
+            missionId={selectedMissionTh === 0 ? selectedMissionId : undefined}
+          />
         </div>
         {/* 멘토 피드백 여부에 따라 값 받고 노출 */}
         <div className="mt-11">

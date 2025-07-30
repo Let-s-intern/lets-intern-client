@@ -7,12 +7,14 @@ interface MissionGuideZeroSectionProps {
   className?: string;
   todayTh: number;
   missionData?: any; // API 응답 데이터
+  selectedMissionTh?: number; // 선택된 미션의 회차
 }
 
 const MissionGuideZeroSection = ({
   className,
   todayTh,
   missionData,
+  selectedMissionTh,
 }: MissionGuideZeroSectionProps) => {
   // endDate를 월일 시간 형식으로 변환
   const formatDeadline = (endDate: string) => {
@@ -25,7 +27,7 @@ const MissionGuideZeroSection = ({
     <div className={clsx('flex flex-col gap-3', className)}>
       {/* 제목 및 마감일 섹션 */}
       <MissionHeaderSection
-        todayTh={todayTh}
+        todayTh={selectedMissionTh || todayTh}
         missionType={missionData?.missionInfo?.title || 'OT 시청'}
         deadline={formatDeadline(missionData?.missionInfo?.endDate)}
       />
