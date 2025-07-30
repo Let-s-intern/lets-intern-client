@@ -8,10 +8,18 @@ interface Props {
   schedules: Schedule[];
   todayTh: number;
   isDone: boolean;
+  onMissionClick?: (missionId: number) => void;
+  selectedMissionId?: number;
 }
 
 // 새로운 버전
-const MissionCalendar = ({ schedules, todayTh, isDone }: Props) => {
+const MissionCalendar = ({
+  schedules,
+  todayTh,
+  isDone,
+  onMissionClick,
+  selectedMissionId,
+}: Props) => {
   return (
     <Swiper
       slidesPerView="auto"
@@ -32,6 +40,8 @@ const MissionCalendar = ({ schedules, todayTh, isDone }: Props) => {
             className="w-full"
             isDone={isDone}
             isLast={index === schedules.length - 1}
+            onMissionClick={onMissionClick}
+            selectedMissionId={selectedMissionId}
           />
         </SwiperSlide>
       ))}

@@ -11,6 +11,8 @@ interface Props {
   className?: string;
   isDone: boolean;
   isLast: boolean;
+  onMissionClick?: (missionId: number) => void;
+  selectedMissionId?: number;
 }
 
 // 새로운 버전
@@ -20,9 +22,19 @@ const MissionCalendarItem = ({
   className,
   isDone,
   isLast,
+  onMissionClick,
+  selectedMissionId,
 }: Props) => {
   const mission = schedule.missionInfo;
   const attendance = schedule.attendanceInfo;
+  const isSelected = selectedMissionId === mission.id;
+
+  const handleClick = () => {
+    if (onMissionClick && mission.id) {
+      onMissionClick(mission.id);
+    }
+  };
+
   return (
     <div className={className}>
       <MissionTopStatusBar mission={schedule.missionInfo} todayTh={todayTh} />
@@ -31,7 +43,10 @@ const MissionCalendarItem = ({
           'aspect-[75/104] h-[104px] rounded-xxs border px-2 py-2.5 md:mt-2',
           !isLast && 'mr-2',
           mission.th === todayTh ? 'border-neutral-70' : 'border-neutral-80',
+          onMissionClick && 'cursor-pointer hover:border-primary',
+          isSelected && 'border-primary bg-primary/5',
         )}
+        onClick={handleClick}
       >
         {mission.th === todayTh ? (
           <MissionTodayIcon
