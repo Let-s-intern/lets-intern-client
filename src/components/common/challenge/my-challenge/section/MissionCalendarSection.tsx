@@ -10,7 +10,7 @@ interface Props {
 
 const MissionCalendarSection = ({ schedules, todayTh, isDone }: Props) => {
   return (
-    <section className="mt-4 rounded-xl border border-[#E4E4E7] px-10 pb-10 pt-6">
+    <section>
       <div className="flex items-center gap-2">
         <h2 className="text-lg font-semibold">
           {isDone ? (
