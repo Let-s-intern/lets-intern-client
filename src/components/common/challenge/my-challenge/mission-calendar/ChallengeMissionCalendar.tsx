@@ -1,5 +1,4 @@
-import 'swiper/css';
-import { Swiper, SwiperSlide } from 'swiper/react';
+import { twMerge } from '@/lib/twMerge';
 import { Schedule } from '../../../../../schema';
 import MissionCalendarItem from './ChallengeMissionCalendarItem';
 
@@ -11,32 +10,20 @@ interface Props {
 }
 
 // 새로운 버전
-const MissionCalendar = ({ schedules, todayTh, isDone }: Props) => {
+const MissionCalendar = ({ className, schedules, todayTh, isDone }: Props) => {
   return (
-    <Swiper
-      className="challenge-calender-swiper"
-      slidesPerView="auto"
-      breakpoints={{
-        768: {
-          slidesPerView: 10,
-          slidesOffsetBefore: 0,
-          slidesOffsetAfter: 0,
-        },
-      }}
-    >
+    <div className={twMerge('flex', className)}>
       {schedules.map((schedule, index) => (
-        <SwiperSlide key={index} className="!w-[82px]">
-          <MissionCalendarItem
-            key={index}
-            schedule={schedule}
-            todayTh={todayTh}
-            className="w-full"
-            isDone={isDone}
-            isLast={index === schedules.length - 1}
-          />
-        </SwiperSlide>
+        <MissionCalendarItem
+          key={index}
+          schedule={schedule}
+          todayTh={todayTh}
+          className="flex-1"
+          isDone={isDone}
+          isLast={index === schedules.length - 1}
+        />
       ))}
-    </Swiper>
+    </div>
   );
 };
 
