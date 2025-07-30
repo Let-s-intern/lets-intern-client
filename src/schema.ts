@@ -1246,18 +1246,18 @@ export const userChallengeMissionWithAttendance = z
       description: z.string(),
       guide: z.string(),
       templateLink: z.string(),
-      vodLink: z.string(),
+      vodLink: z.string().nullable(),
     }),
     attendanceInfo: z
       .object({
         submitted: z.boolean(),
         id: z.number().nullable(),
         link: z.string().nullable(),
-        review: z.string().nullable().optional(),
         comments: z.string().nullable(),
         status: AttendanceStatusEnum.nullable(),
         result: AttendanceResultEnum.nullable(),
         feedbackStatus: AttendanceFeedbackStatusEnum.nullable(),
+        review: z.string().nullable(),
       })
       .nullable(),
   })
