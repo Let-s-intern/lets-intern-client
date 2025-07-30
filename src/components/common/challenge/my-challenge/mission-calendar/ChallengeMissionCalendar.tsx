@@ -14,7 +14,6 @@ interface Props {
 const MissionCalendar = ({ schedules, todayTh, isDone }: Props) => {
   return (
     <Swiper
-      className="challenge-calender-swiper"
       slidesPerView="auto"
       breakpoints={{
         768: {
@@ -25,7 +24,7 @@ const MissionCalendar = ({ schedules, todayTh, isDone }: Props) => {
       }}
     >
       {schedules.map((schedule, index) => (
-        <SwiperSlide key={index} className="!w-[82px]">
+        <SwiperSlide key={index} className="mt-3 !w-[82px]">
           <MissionCalendarItem
             key={index}
             schedule={schedule}
