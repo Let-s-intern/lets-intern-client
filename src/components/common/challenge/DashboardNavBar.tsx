@@ -13,7 +13,7 @@ const DashboardNavBar = () => {
 
   return (
     <>
-      <nav className="w-[196px]">
+      <nav className="w-[220px]">
         <ul className="sticky top-[180px] flex flex-col gap-1">
           <li>
             <Link
