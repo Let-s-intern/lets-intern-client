@@ -12,6 +12,7 @@ import { challengeGuides, challengeNotices, challengeScore } from '@/schema';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 
+import { useMissionStore } from '@/store/useMissionStore';
 import axios from '@/utils/axios';
 
 const getIsChallengeDone = (endDate: string) => {
@@ -138,6 +139,15 @@ const DashboardPage = () => {
                 schedules={schedules}
                 todayTh={todayTh}
                 isDone={isChallengeSubmitDone}
+                onMissionClick={(missionId: number) => {
+                  const selectedSchedule = schedules.find(
+                    (schedule) => schedule.missionInfo.id === missionId,
+                  );
+                  const missionTh = selectedSchedule?.missionInfo?.th || 0;
+                  useMissionStore
+                    .getState()
+                    .setSelectedMission(missionId, missionTh);
+                }}
               />
             )}
           </section>

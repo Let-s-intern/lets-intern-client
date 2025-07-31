@@ -6,6 +6,7 @@ import MissionSubmitSection from '@/components/common/challenge/my-challenge/Mis
 import MissionCalendarSection from '@/components/common/challenge/my-challenge/section/MissionCalendarSection';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
+import { useMissionStore } from '@/store/useMissionStore';
 import axios from '@/utils/axios';
 import BonusMissionPopup from '@components/common/challenge/my-challenge/BonusMissionPopup';
 import { useQuery } from '@tanstack/react-query';
@@ -47,16 +48,19 @@ const DashboardMyMissionPage = () => {
   });
 
   // 선택된 미션 ID를 관리
-  const [selectedMissionId, setSelectedMissionId] = useState<number>(() => {
-    // 기본값으로 0회차 미션 ID 설정 (schedules[0]의 missionInfo.id)
-    return schedules[0]?.missionInfo?.id || 0;
-  });
+  // const [selectedMissionId, setSelectedMissionId] = useState<number>(() => {
+  //   // 기본값으로 0회차 미션 ID 설정 (schedules[0]의 missionInfo.id)
+  //   return schedules[0]?.missionInfo?.id || 0;
+  // });
 
   // 선택된 미션의 회차를 관리
-  const [selectedMissionTh, setSelectedMissionTh] = useState<number>(() => {
-    // 기본값으로 0회차 설정
-    return schedules[0]?.missionInfo?.th || 0;
-  });
+  // const [selectedMissionTh, setSelectedMissionTh] = useState<number>(() => {
+  //   // 기본값으로 0회차 설정
+  //   return schedules[0]?.missionInfo?.th || 0;
+  // });
+
+  const { selectedMissionId, selectedMissionTh, setSelectedMission } =
+    useMissionStore();
 
   // 데이터가 로드된 후 todayTh 업데이트
   useEffect(() => {
@@ -89,9 +93,12 @@ const DashboardMyMissionPage = () => {
   const closePopup = () => setShowPopup(false);
 
   // 팝업 클릭 시 selectedMissionId와 selectedMissionTh를 100으로 변경하는 함수
+  // const handlePopupClick = () => {
+  //   setSelectedMissionId(100);
+  //   setSelectedMissionTh(100);
+  // };
   const handlePopupClick = () => {
-    setSelectedMissionId(100);
-    setSelectedMissionTh(100);
+    setSelectedMission(100, 100);
   };
 
   return (
@@ -106,13 +113,20 @@ const DashboardMyMissionPage = () => {
         schedules={schedules}
         todayTh={todayTh}
         isDone={isChallengeDone}
+        // onMissionClick={(missionId: number) => {
+        //   setSelectedMissionId(missionId);
+        //   // 선택된 미션의 회차 찾기
+        //   const selectedSchedule = schedules.find(
+        //     (schedule) => schedule.missionInfo.id === missionId,
+        //   );
+        //   setSelectedMissionTh(selectedSchedule?.missionInfo?.th || 0);
+        // }}
         onMissionClick={(missionId: number) => {
-          setSelectedMissionId(missionId);
-          // 선택된 미션의 회차 찾기
           const selectedSchedule = schedules.find(
             (schedule) => schedule.missionInfo.id === missionId,
           );
-          setSelectedMissionTh(selectedSchedule?.missionInfo?.th || 0);
+          const missionTh = selectedSchedule?.missionInfo?.th || 0;
+          setSelectedMission(missionId, missionTh);
         }}
         selectedMissionId={selectedMissionId}
       />
