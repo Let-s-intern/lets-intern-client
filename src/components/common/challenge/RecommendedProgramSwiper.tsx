@@ -33,13 +33,13 @@ function RecommendedProgramSwiper({ programs }: Props) {
       >
         {programs.map((item) => {
           const info = item.programInfo;
-          const url = `/program/${info.programType.toLocaleLowerCase()}/${info.id}`;
+          const url = `/program/${info.programType.toLocaleLowerCase()}/${info.id}/${encodeURIComponent(info.title ?? '')}`;
 
           return (
             <SwiperSlide
               key={info.id}
               className="!w-[214px] cursor-pointer"
-              onClick={() => navigate(url)}
+              onClick={() => (window.location.href = url)}
             >
               <div className="flex flex-col gap-2">
                 <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-neutral-100">
@@ -58,7 +58,11 @@ function RecommendedProgramSwiper({ programs }: Props) {
                   </div>
                 </div>
 
-                <Link to={url} className="flex items-center justify-between">
+                <Link
+                  to={url}
+                  className="flex items-center justify-between"
+                  reloadDocument
+                >
                   <span className="font-medium text-neutral-0">
                     {item.recommendCTA || '자세히 보기'}
                   </span>
