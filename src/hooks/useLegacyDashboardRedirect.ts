@@ -16,8 +16,9 @@ export default function useLegacyDashboardRedirect(isNew: boolean) {
 
   const [isLoading, setIsLoading] = useState(true);
 
-  const LEGACY_DASHBOARD_CUTOFF_PROGRAM_ID =
-    process.env.NODE_ENV === 'development' ? 17 : 101;
+  // const LEGACY_DASHBOARD_CUTOFF_PROGRAM_ID =
+  //   process.env.NODE_ENV === 'development' ? 17 : 101;
+  const LEGACY_DASHBOARD_CUTOFF_PROGRAM_ID = 17;
   const programId = Number(params.programId);
   const applicationId = params.applicationId;
   const condition = isNew
