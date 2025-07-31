@@ -1,6 +1,7 @@
-import { useSubmitZeroMission } from '@/api/attendance';
+import { useSubmitChallengeGoal } from '@/api/challenge';
 import { clsx } from 'clsx';
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import MissionSubmitButton from './MissionSubmitButton';
 import MissionToast from './MissionToast';
 
@@ -15,11 +16,13 @@ const MissionSubmitZeroSection = ({
   todayTh,
   missionId,
 }: MissionSubmitZeroSectionProps) => {
+  const params = useParams<{ programId: string }>();
   const [textareaValue, setTextareaValue] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
-  const submitZeroMission = useSubmitZeroMission();
+  // 챌린지 목표 제출 mutation
+  const submitChallengeGoal = useSubmitChallengeGoal();
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTextareaValue(e.target.value);
@@ -30,15 +33,14 @@ const MissionSubmitZeroSection = ({
       setIsSubmitted(false);
     } else {
       try {
-        // 0회차 미션 ID가 있으면 API 호출
-        if (missionId) {
-          await submitZeroMission.mutateAsync(missionId);
-        }
+        console.log(params.programId);
+        await submitChallengeGoal.mutateAsync({
+          challengeId: Number(params.programId),
+        });
         setIsSubmitted(true);
         setShowToast(true);
       } catch (error) {
-        console.error('0회차 미션 제출 실패:', error);
-        // 에러 처리 로직 추가 가능
+        console.error('제출 실패:', error);
       }
     }
   };
