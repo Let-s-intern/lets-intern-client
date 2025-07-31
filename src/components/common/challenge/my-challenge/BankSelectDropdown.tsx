@@ -16,6 +16,19 @@ const BankSelectDropdown = ({
 }: BankSelectDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
+  // 은행명과 API 코드 매핑
+  const bankMapping = {
+    KB국민은행: 'KB',
+    하나은행: 'HANA',
+    우리은행: 'WOORI',
+    신한은행: 'SHINHAN',
+    NH농협은행: 'NH',
+    수협은행: 'SH',
+    IBK기업은행: 'IBK',
+    새마을금고: 'MG',
+    카카오뱅크: 'KAKAO',
+    토스뱅크: 'TOSS',
+  };
   const banks = [
     '신한은행',
     'KB국민은행',
@@ -28,6 +41,19 @@ const BankSelectDropdown = ({
     '카카오뱅크',
   ];
 
+  // API 코드를 은행명으로 변환하는 함수
+  const getBankNameFromCode = (code: string): string => {
+    const bankEntry = Object.entries(bankMapping).find(
+      ([_, bankCode]) => bankCode === code,
+    );
+    return bankEntry ? bankEntry[0] : '';
+  };
+
+  // 현재 선택된 은행의 표시명 (API 코드가 있으면 은행명으로 변환)
+  const displayBankName = selectedBank
+    ? getBankNameFromCode(selectedBank) || selectedBank
+    : '';
+
   const handleToggle = () => {
     if (!disabled) {
       setIsOpen(!isOpen);
@@ -35,11 +61,13 @@ const BankSelectDropdown = ({
   };
 
   const handleBankSelect = (bank: string) => {
-    onBankSelect?.(bank);
+    // 은행명을 API 코드로 변환하여 전달
+    const bankCode = bankMapping[bank as keyof typeof bankMapping];
+    onBankSelect?.(bankCode);
     setIsOpen(false);
   };
 
-  const displayText = selectedBank || '은행 선택';
+  const displayText = displayBankName || '은행 선택';
 
   return (
     <div className={clsx('relative', className)}>
@@ -57,7 +85,7 @@ const BankSelectDropdown = ({
         <span
           className={clsx(
             'text-xsmall16',
-            selectedBank ? 'text-neutral-0' : 'text-neutral-50',
+            displayBankName ? 'text-neutral-0' : 'text-neutral-50',
           )}
         >
           {displayText}
@@ -97,12 +125,12 @@ const BankSelectDropdown = ({
                     'flex cursor-pointer items-center justify-between px-3 py-2.5',
                     'text-xsmall16 text-neutral-0 transition-colors',
                     'hover:bg-neutral-95',
-                    selectedBank === bank && 'bg-primary-5 text-primary',
+                    displayBankName === bank && 'bg-primary-5 text-primary',
                   )}
                   onClick={() => handleBankSelect(bank)}
                 >
                   <span>{bank}</span>
-                  {selectedBank === bank && (
+                  {displayBankName === bank && (
                     <div className="h-4 w-4">
                       <svg
                         width="16"
