@@ -17,6 +17,8 @@ const MissionTodayIcon = ({ mission, className, attendance }: Props) => {
     status: attendance.status,
     result: attendance.result,
   });
+  const isWaiting = attendance.result === 'WAITING';
+  const isBonus = mission.th === 100;
 
   return (
     <Link
@@ -39,9 +41,14 @@ const MissionTodayIcon = ({ mission, className, attendance }: Props) => {
               : '',
           )}
         >
-          {attendance.result === 'WAITING' ? (
+          {isWaiting ? (
             <>
               제출
+              <br />
+            </>
+          ) : isBonus ? (
+            <>
+              보너스
               <br />
             </>
           ) : (
