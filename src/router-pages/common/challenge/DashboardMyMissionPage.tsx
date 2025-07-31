@@ -62,6 +62,16 @@ const DashboardMyMissionPage = () => {
   const { selectedMissionId, selectedMissionTh, setSelectedMission } =
     useMissionStore();
 
+  useEffect(() => {
+    // 상태가 초기화되지 않았고, 스케줄 데이터가 있을 때 첫 번째 미션으로 초기화
+    if (selectedMissionId === 0 && schedules.length > 0) {
+      const firstMission = schedules[0]?.missionInfo;
+      if (firstMission) {
+        setSelectedMission(firstMission.id, firstMission.th || 0);
+      }
+    }
+  }, [schedules, selectedMissionId, setSelectedMission]);
+
   // 데이터가 로드된 후 todayTh 업데이트
   useEffect(() => {
     if (myDailyMission || schedules.length > 0) {

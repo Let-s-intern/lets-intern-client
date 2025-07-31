@@ -82,6 +82,10 @@ const DashboardPage = () => {
   const isChallengeDone = getIsChallengeDone(programEndDate);
   const isChallengeSubmitDone = getIsChallengeSubmitDone(programEndDate);
 
+  const setSelectedMission = useMissionStore(
+    (state) => state.setSelectedMission,
+  );
+
   return (
     <main className="mx-auto">
       <header>
@@ -144,9 +148,7 @@ const DashboardPage = () => {
                     (schedule) => schedule.missionInfo.id === missionId,
                   );
                   const missionTh = selectedSchedule?.missionInfo?.th || 0;
-                  useMissionStore
-                    .getState()
-                    .setSelectedMission(missionId, missionTh);
+                  setSelectedMission(missionId, missionTh);
                 }}
               />
             )}
