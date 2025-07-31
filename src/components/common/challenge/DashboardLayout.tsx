@@ -67,7 +67,7 @@ const DashboardLayout = () => {
       navigate('/');
       return;
     }
-    if (!isValidUserInfo || (!isStartAfterGoal && hasChallengeGoal)) {
+    if (!isValidUserInfo || (isStartAfterGoal && !hasChallengeGoal)) {
       navigate(`/challenge/${applicationId}/${programId}/user/info`);
       return;
     }
