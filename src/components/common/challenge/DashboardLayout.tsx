@@ -67,7 +67,6 @@ const DashboardLayout = () => {
       navigate('/');
       return;
     }
-
     if (!isValidUserInfo || (isStartAfterGoal && !hasChallengeGoal)) {
       navigate(`/challenge/${applicationId}/${programId}/user/info`);
       return;
@@ -90,7 +89,7 @@ const DashboardLayout = () => {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-6rem)]">
-      <div className="mx-auto mt-8 flex px-5 md:mt-16 md:w-[1120px] md:gap-12 md:px-0">
+      <div className="mx-auto mt-8 flex px-5 pb-16 md:mt-16 md:w-[1120px] md:gap-12 md:px-0">
         <DashboardNavBar />
         <div className="min-w-0 flex-1">
           <Outlet />

@@ -8,11 +8,13 @@ import MissionToast from './MissionToast';
 interface MissionSubmitZeroSectionProps {
   className?: string;
   todayTh: number;
+  missionId?: number; // 0회차 미션 ID
 }
 
 const MissionSubmitZeroSection = ({
   className,
   todayTh,
+  missionId,
 }: MissionSubmitZeroSectionProps) => {
   const params = useParams<{ programId: string }>();
   const [textareaValue, setTextareaValue] = useState('');

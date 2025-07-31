@@ -1,6 +1,6 @@
 import { ProgramRecommend } from '@/types/interface';
 import { ChevronRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import 'swiper/css';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
@@ -13,6 +13,8 @@ interface Props {
 }
 
 function RecommendedProgramSwiper({ programs }: Props) {
+  const navigate = useNavigate();
+
   return (
     <div className="mx-auto w-full max-w-[1120px]">
       <Swiper
@@ -31,8 +33,14 @@ function RecommendedProgramSwiper({ programs }: Props) {
       >
         {programs.map((item) => {
           const info = item.programInfo;
+          const url = `/program/${info.programType.toLocaleLowerCase()}/${info.id}`;
+
           return (
-            <SwiperSlide key={info.id} className="!w-[214px]">
+            <SwiperSlide
+              key={info.id}
+              className="!w-[214px] cursor-pointer"
+              onClick={() => navigate(url)}
+            >
               <div className="flex flex-col gap-2">
                 <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-neutral-100">
                   <img
@@ -50,10 +58,7 @@ function RecommendedProgramSwiper({ programs }: Props) {
                   </div>
                 </div>
 
-                <Link
-                  to={`/program/${info.id}`}
-                  className="flex items-center justify-between"
-                >
+                <Link to={url} className="flex items-center justify-between">
                   <span className="font-medium text-neutral-0">
                     {item.recommendCTA || '자세히 보기'}
                   </span>

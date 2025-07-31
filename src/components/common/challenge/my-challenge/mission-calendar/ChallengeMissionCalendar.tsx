@@ -1,4 +1,5 @@
-import { twMerge } from '@/lib/twMerge';
+import 'swiper/css';
+import { Swiper, SwiperSlide } from 'swiper/react';
 import { Schedule } from '../../../../../schema';
 import MissionCalendarItem from './ChallengeMissionCalendarItem';
 
@@ -7,23 +8,44 @@ interface Props {
   schedules: Schedule[];
   todayTh: number;
   isDone: boolean;
+  onMissionClick?: (missionId: number) => void;
+  selectedMissionId?: number;
 }
 
 // 새로운 버전
-const MissionCalendar = ({ className, schedules, todayTh, isDone }: Props) => {
+const MissionCalendar = ({
+  schedules,
+  todayTh,
+  isDone,
+  onMissionClick,
+  selectedMissionId,
+}: Props) => {
   return (
-    <div className={twMerge('flex', className)}>
+    <Swiper
+      slidesPerView="auto"
+      breakpoints={{
+        768: {
+          slidesPerView: 10,
+          slidesOffsetBefore: 0,
+          slidesOffsetAfter: 0,
+        },
+      }}
+    >
       {schedules.map((schedule, index) => (
-        <MissionCalendarItem
-          key={index}
-          schedule={schedule}
-          todayTh={todayTh}
-          className="flex-1"
-          isDone={isDone}
-          isLast={index === schedules.length - 1}
-        />
+        <SwiperSlide key={index} className="mt-3 !w-[82px]">
+          <MissionCalendarItem
+            key={index}
+            schedule={schedule}
+            todayTh={todayTh}
+            className="w-full"
+            isDone={isDone}
+            isLast={index === schedules.length - 1}
+            onMissionClick={onMissionClick}
+            selectedMissionId={selectedMissionId}
+          />
+        </SwiperSlide>
       ))}
-    </div>
+    </Swiper>
   );
 };
 

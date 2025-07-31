@@ -1,6 +1,3 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-
 import {
   useGetChallengeGoal,
   useGetChallengeTitle,
@@ -9,10 +6,12 @@ import {
 } from '@/api/challenge';
 import { useGetChallengeQuery } from '@/api/program';
 import { usePatchUser, useUserQuery } from '@/api/user';
-import { GOAL_DATE } from '@components/common/challenge/ui/layout/ChallengeLayout';
-import TextArea from '@components/common/ui/input/TextArea';
-import GradeDropdown from '../../../components/common/mypage/privacy/form-control/GradeDropdown';
-import Input from '../../../components/common/ui/input/Input';
+import { GOAL_DATE } from '@/components/common/challenge/ui/layout/ChallengeLayout';
+import GradeDropdown from '@/components/common/mypage/privacy/form-control/GradeDropdown';
+import Input from '@/components/common/ui/input/Input';
+import TextArea from '@/components/common/ui/input/TextArea';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const ChallengeUserInfo = () => {
   const params = useParams();
@@ -129,9 +128,7 @@ const ChallengeUserInfo = () => {
   }, [value]);
 
   useEffect(() => {
-    if (isLoading) {
-      return;
-    }
+    if (isLoading) return;
     if (isStartAfterGoal) {
       if (isValidUserInfo && hasChallengeGoal) {
         navigate(`/challenge/${params.applicationId}/${programId}`);
@@ -142,9 +139,9 @@ const ChallengeUserInfo = () => {
       return;
     }
   }, [
+    navigate,
     isValidUserInfo,
     isLoading,
-    navigate,
     hasChallengeGoal,
     isStartAfterGoal,
     params.applicationId,

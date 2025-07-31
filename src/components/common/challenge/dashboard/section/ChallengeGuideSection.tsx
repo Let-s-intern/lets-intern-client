@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { useState } from 'react';
 import { GrNext } from 'react-icons/gr';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { ChallengeGuide } from '../../../../../schema';
 
 interface GuideSection {
@@ -17,16 +17,19 @@ const ChallengeGuideSection = ({ guides }: GuideSection) => {
     currentPageNum * 3,
   );
   const totalPageCount = Math.ceil(guides.length / 3);
+  const params = useParams();
+  const applicationId = params.applicationId;
 
   return (
-    <section className="relative flex-1 flex-col rounded-xs border border-[#E4E4E7] p-4">
+    <section className="relative w-[calc((100%-12px)/2)] flex-1 flex-col rounded-xs border border-[#E4E4E7] p-4">
       <div className="flex flex-col gap-3">
         <div className="flex justify-between">
           <h2 className="font-semibold text-neutral-10">챌린지 가이드</h2>
-          <button>
-            {/* 가이드 연결 필요 */}
+          <Link
+            to={`/challenge/${params.programId}/dashboard/${applicationId}/guide`}
+          >
             <GrNext className="text-sm text-neutral-45" />
-          </button>
+          </Link>
         </div>
         {currentGuideList.length === 0 ? (
           <div className="flex h-[5.75rem] justify-center">

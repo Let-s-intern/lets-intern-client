@@ -1,36 +1,45 @@
+import dayjs from '@/lib/dayjs';
 import { clsx } from 'clsx';
 import MissionHeaderSection from './MissionHeaderSection';
 
 interface MissionGuideBonusSectionProps {
   className?: string;
   todayTh: number;
+  missionData?: any; // API 응답 데이터
+  selectedMissionTh?: number; // 선택된 미션의 회차
 }
 
 const MissionGuideBonusSection = ({
   className,
   todayTh,
+  missionData,
+  selectedMissionTh,
 }: MissionGuideBonusSectionProps) => {
+  // endDate를 월일 시간 형식으로 변환
+  const formatDeadline = (endDate: string) => {
+    if (!endDate) return '04.04 11:59';
+    const date = dayjs(endDate);
+    return date.format('MM.DD HH:mm');
+  };
+
   return (
     <div className={clsx('flex flex-col gap-3', className)}>
       {/* 제목 및 마감일 섹션 */}
       <MissionHeaderSection
-        todayTh={todayTh}
-        missionType="블로그 후기 작성하고 리워드 받기!"
-        deadline="04.04 11:59"
+        todayTh={selectedMissionTh || todayTh}
+        missionType={
+          missionData?.missionInfo?.title || '블로그 후기 작성하고 리워드 받기!'
+        }
+        deadline={formatDeadline(missionData?.missionInfo?.endDate)}
       />
 
       {/* 미션 가이드 섹션 */}
       <section className="flex flex-col gap-5 rounded-xs border border-neutral-80 px-4 py-4">
         {/* 인트로 섹션 */}
         <section className="flex flex-col gap-4">
-          <p className="text-xsmall16 text-neutral-0">
-            여러분의 챌린지 여정을 끝까지 함께해주셔서 감사합니다. <br />
-            렛츠커리어는 여러분의 진심 어린 피드백을 기다리고 있어요! <br />
-            솔직한 후기를 남겨주시면{' '}
-            <span className="font-semibold">
-              💰1건당 1만원 리워드를 100%
-            </span>{' '}
-            지급해드립니다.
+          <p className="whitespace-pre-wrap text-xsmall16 text-neutral-0">
+            {missionData?.missionInfo?.description ||
+              `여러분의 챌린지 여정을 끝까지 함께해주셔서 감사합니다. \n렛츠커리어는 여러분의 진심 어린 피드백을 기다리고 있어요! \n솔직한 후기를 남겨주시면 💰1건당 1만원 리워드를 100% 지급해드립니다.`}
           </p>
         </section>
 
@@ -41,11 +50,9 @@ const MissionGuideBonusSection = ({
           </h3>
           <div className="flex flex-col gap-2 rounded-xxs bg-neutral-95 p-3">
             <div className="flex items-start gap-2">
-              <span className="text-xsmall16 font-medium text-neutral-0">
-                1. 챌린지를 진행하며 느낀 점, 배운 점, 인상 깊었던 과정을 후기
-                형태로 작성해주세요. <br /> 2. 작성한 후기의 링크를 하단의 링크
-                입력란에 붙여넣고, [제출하기] 버튼을 눌러주세요! <br />
-                3. 매니저가 확인 후 리워드를 지급해드려요!
+              <span className="whitespace-pre-wrap text-xsmall16 font-medium text-neutral-0">
+                {missionData?.missionInfo?.guide ||
+                  `1. 챌린지를 진행하며 느낀 점, 배운 점, 인상 깊었던 과정을 후기 형태로 작성해주세요. \n2. 작성한 후기의 링크를 하단의 링크 입력란에 붙여넣고, [제출하기] 버튼을 눌러주세요! \n3. 매니저가 확인 후 리워드를 지급해드려요!`}
               </span>
             </div>
           </div>
