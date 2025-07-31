@@ -1,5 +1,6 @@
 import { useMissionStore } from '@/store/useMissionStore';
 import clsx from 'clsx';
+import dayjs from 'dayjs';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
 import { DailyMission, Schedule } from '../../../../../schema';
@@ -31,6 +32,7 @@ const DailyChallengeMissionSection = ({
       );
     }
   };
+  const isBeforeStart = dayjs().isBefore(currentChallenge?.startDate);
 
   const submitted =
     typeof todayTh === 'number' &&
@@ -59,12 +61,14 @@ const DailyChallengeMissionSection = ({
       <p className="mb-4 flex-1 whitespace-pre-line p-4 text-xsmall14 text-neutral-0 md:mb-0 md:text-xsmall16">
         {dailyMission?.description}
       </p>
-      <button
-        onClick={handleClick}
-        className="mx-4 mb-4 rounded-xs bg-primary px-4 py-3 text-center text-white"
-      >
-        {submitted ? '제출 수정하기' : '미션 수행하기'}
-      </button>
+      {!isBeforeStart && (
+        <button
+          onClick={handleClick}
+          className="mx-4 mb-4 rounded-xs bg-primary px-4 py-3 text-center text-white"
+        >
+          {submitted ? '제출 수정하기' : '미션 수행하기'}
+        </button>
+      )}
     </section>
   );
 };
