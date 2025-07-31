@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import dayjs from 'dayjs';
 import { useState } from 'react';
 import { GrNext } from 'react-icons/gr';
 import { Link, useParams } from 'react-router-dom';
@@ -19,6 +20,13 @@ const ChallengeGuideSection = ({ guides }: GuideSection) => {
   const totalPageCount = Math.ceil(guides.length / 3);
   const params = useParams();
   const applicationId = params.applicationId;
+
+  const NEW_BADGE_DURATION_DAYS = 3;
+
+  const isNewGuide = (createDate: dayjs.Dayjs | Date | string | null) => {
+    if (!createDate) return false;
+    return dayjs().diff(dayjs(createDate), 'day') < NEW_BADGE_DURATION_DAYS;
+  };
 
   return (
     <section className="relative w-[calc((100%-12px)/2)] flex-1 flex-col rounded-xs border border-[#E4E4E7] p-4">
@@ -41,11 +49,18 @@ const ChallengeGuideSection = ({ guides }: GuideSection) => {
               <Link
                 key={guide.id}
                 to={guide.link ?? ''}
-                className="overflow-hidden text-ellipsis whitespace-nowrap text-sm text-[#333333] hover:underline"
+                className="flex items-center gap-2 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-[#333333] hover:underline"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {guide.title}
+                <span className="truncate">{guide.title}</span>
+                {isNewGuide(guide.createDate) && (
+                  <img
+                    src="/icons/badge_new.svg"
+                    alt="new"
+                    className="h-4 w-4"
+                  />
+                )}
               </Link>
             ))}
             {currentGuideList.length < 3 &&
