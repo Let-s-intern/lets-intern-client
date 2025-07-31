@@ -15,15 +15,19 @@ export const usePatchAttendance = () => {
   });
 };
 
-/** 0회차 미션 제출 /api/v1/attendance/{missionId} */
-export const useSubmitZeroMission = () => {
+/** n회차 미션 제출 /api/v1/attendance/{missionId} */
+export const useSubmitMission = () => {
   return useMutation({
-    mutationFn: async (missionId: number) => {
-      const requestBody = {
-        link: 'https://example.com', // 임시 링크
-        review: '0회차 미션 제출 완료', // 임시 리뷰
-      };
-      return axios.post(`/attendance/${missionId}`, requestBody);
+    mutationFn: async ({
+      missionId,
+      link,
+      review,
+    }: {
+      missionId: number;
+      link: string;
+      review: string;
+    }) => {
+      return axios.post(`/attendance/${missionId}`, { link, review });
     },
     onError: (error) => console.error('useSubmitZeroMission >>', error),
   });
