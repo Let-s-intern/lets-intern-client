@@ -21,7 +21,7 @@ const ChallengeGuideSection = ({ guides }: GuideSection) => {
   const applicationId = params.applicationId;
 
   return (
-    <section className="elative w-[calc((100%-12px)/2)] flex-1 flex-col rounded-xs border border-[#E4E4E7] p-4">
+    <section className="relative w-[calc((100%-12px)/2)] flex-1 flex-col rounded-xs border border-[#E4E4E7] p-4">
       <div className="flex flex-col gap-3">
         <div className="flex justify-between">
           <h2 className="font-semibold text-neutral-10">챌린지 가이드</h2>

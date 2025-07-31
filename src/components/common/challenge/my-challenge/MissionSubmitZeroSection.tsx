@@ -1,3 +1,4 @@
+import { useSubmitZeroMission } from '@/api/attendance';
 import { clsx } from 'clsx';
 import { useState } from 'react';
 import MissionSubmitButton from './MissionSubmitButton';
@@ -6,26 +7,39 @@ import MissionToast from './MissionToast';
 interface MissionSubmitZeroSectionProps {
   className?: string;
   todayTh: number;
+  missionId?: number; // 0회차 미션 ID
 }
 
 const MissionSubmitZeroSection = ({
   className,
   todayTh,
+  missionId,
 }: MissionSubmitZeroSectionProps) => {
   const [textareaValue, setTextareaValue] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
+  const submitZeroMission = useSubmitZeroMission();
+
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTextareaValue(e.target.value);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (isSubmitted) {
       setIsSubmitted(false);
     } else {
-      setIsSubmitted(true);
-      setShowToast(true);
+      try {
+        // 0회차 미션 ID가 있으면 API 호출
+        if (missionId) {
+          await submitZeroMission.mutateAsync(missionId);
+        }
+        setIsSubmitted(true);
+        setShowToast(true);
+      } catch (error) {
+        console.error('0회차 미션 제출 실패:', error);
+        // 에러 처리 로직 추가 가능
+      }
     }
   };
 

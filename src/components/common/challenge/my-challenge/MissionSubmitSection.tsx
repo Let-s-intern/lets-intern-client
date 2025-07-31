@@ -6,15 +6,19 @@ import MissionSubmitZeroSection from './MissionSubmitZeroSection';
 interface MissionSubmitSectionProps {
   className?: string;
   todayTh: number;
+  missionId?: number; // 0회차 미션 ID
 }
 
 const MissionSubmitSection = ({
   className,
   todayTh,
+  missionId,
 }: MissionSubmitSectionProps) => {
   const renderSection = () => {
     if (todayTh === 0) {
-      return <MissionSubmitZeroSection todayTh={todayTh} />;
+      return (
+        <MissionSubmitZeroSection todayTh={todayTh} missionId={missionId} />
+      );
     }
 
     if (todayTh === 100) {
