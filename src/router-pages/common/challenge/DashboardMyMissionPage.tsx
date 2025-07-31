@@ -141,6 +141,11 @@ const DashboardMyMissionPage = () => {
           <MissionSubmitSection
             todayTh={selectedMissionTh}
             missionId={selectedMissionTh === 0 ? selectedMissionId : undefined}
+            selectedMissionTh={selectedMissionTh}
+            todayId={
+              schedules.find((schedule) => schedule.missionInfo.th === todayTh)
+                ?.missionInfo.id
+            }
           />
         </div>
         {/* 멘토 피드백 여부에 따라 값 받고 노출 */}

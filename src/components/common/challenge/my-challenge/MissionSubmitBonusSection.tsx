@@ -10,11 +10,15 @@ import MissionToast from './MissionToast';
 interface MissionSubmitBonusSectionProps {
   className?: string;
   todayTh: number;
+  missionId?: number;
+  todayId?: number; // 선택된 미션의 ID
 }
 
 const MissionSubmitBonusSection = ({
   className,
   todayTh,
+  missionId,
+  todayId,
 }: MissionSubmitBonusSectionProps) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -49,12 +53,20 @@ const MissionSubmitBonusSection = ({
       setIsSubmitted(false);
     } else {
       try {
-        await submitBlogBonus.mutateAsync({
-          missionId: 1,
+        if (!todayId) {
+          console.error('미션 ID가 없습니다.');
+          return;
+        }
+
+        const response = await submitBlogBonus.mutateAsync({
+          missionId: todayId,
           url: linkValue,
           accountType: selectedBank,
           accountNum: accountNumber,
         });
+
+        console.log('보너스 미션 제출 응답:', response);
+
         setIsSubmitted(true);
         setShowToast(true);
       } catch (error) {
