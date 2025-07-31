@@ -607,13 +607,25 @@ export const useChallengeMissionListQuery = (challengeId?: string | number) => {
   });
 };
 
+/** 챌린지 목표 제출 /api/v1/challenge/{challengeId}/goal */
+export const useSubmitChallengeGoal = () => {
+  return useMutation({
+    mutationFn: async ({ challengeId }: { challengeId: string | number }) => {
+      const res = await axios.patch(`/challenge/${challengeId}/goal`);
+      return res.data;
+    },
+  });
+};
+
 /** 챌린지 미션 attendanceInfo 조회 /api/v1/challenge/{challengeId}/missions/{missionId} */
 export const useChallengeMissionAttendanceInfoQuery = ({
   challengeId,
   missionId,
+  enabled,
 }: {
   challengeId: string | number;
   missionId: string | number;
+  enabled?: boolean;
 }) => {
   return useQuery({
     queryKey: ['useChallengeMissionAttendanceInfo', challengeId, missionId],
@@ -623,7 +635,7 @@ export const useChallengeMissionAttendanceInfoQuery = ({
       );
       return userChallengeMissionWithAttendance.parse(res.data.data);
     },
-    enabled: !!challengeId && !!missionId,
+    enabled: enabled ?? (!!challengeId && !!missionId && Number(missionId) > 0),
   });
 };
 
@@ -644,6 +656,31 @@ export const useChallengeMissionFeedbackQuery = ({
       return challengeMissionFeedbackSchema.parse(res.data.data);
     },
     enabled: !!challengeId && !!missionId,
+  });
+};
+
+/** 보너스 미션 블로그 후기 제출 /api/v2/review/blog/bonus */
+export const useSubmitBlogBonus = () => {
+  return useMutation({
+    mutationFn: async ({
+      missionId,
+      url,
+      accountType,
+      accountNum,
+    }: {
+      missionId: number;
+      url: string;
+      accountType: string;
+      accountNum: string;
+    }) => {
+      const res = await axiosV2.post('/review/blog/bonus', {
+        missionId,
+        url,
+        accountType,
+        accountNum,
+      });
+      return res.data;
+    },
   });
 };
 

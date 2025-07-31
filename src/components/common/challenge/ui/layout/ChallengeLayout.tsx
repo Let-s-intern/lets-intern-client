@@ -1,25 +1,29 @@
-import { useEffect } from 'react';
-import { Outlet, useNavigate, useParams } from 'react-router-dom';
-
 import {
   useGetChallengeGoal,
   useGetChallengeValideUser,
   useGetUserChallengeInfo,
 } from '@/api/challenge';
 import { useGetChallengeQuery } from '@/api/program';
+import useLegacyDashboardRedirect from '@/hooks/useLegacyDashboardRedirect';
 import dayjs from '@/lib/dayjs';
+import useAuthStore from '@/store/useAuthStore';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import useAuthStore from '../../../../../store/useAuthStore';
+import { useEffect } from 'react';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import NavBar from './NavBar';
 
 export const GOAL_DATE = dayjs('2025-01-19');
 
 const ChallengeLayout = () => {
   const navigate = useNavigate();
+
   const params = useParams();
-  const { isLoggedIn } = useAuthStore();
   const programId = params.programId;
   const applicationId = params.applicationId;
+
+  const isLoadingDashboard = useLegacyDashboardRedirect(false);
+
+  const { isLoggedIn } = useAuthStore();
 
   const { data: challenge, isLoading: challengeIsLoading } =
     useGetChallengeQuery({
@@ -38,7 +42,7 @@ const ChallengeLayout = () => {
 
   const isValidUserInfo = isValidUserInfoData?.pass;
   const hasChallengeGoal = challengeGoal?.goal;
-  const isLoading =
+  const isLoadingData =
     isValidUserInfoLoading ||
     isValidUserAccessLoading ||
     challengeGoalLoading ||
@@ -55,7 +59,7 @@ const ChallengeLayout = () => {
       return;
     }
 
-    if (isLoading) return;
+    if (isLoadingData) return;
 
     if (!accessibleData) {
       alert('접근 권한이 없습니다.');
@@ -68,7 +72,7 @@ const ChallengeLayout = () => {
       return;
     }
   }, [
-    isLoading,
+    isLoadingData,
     isLoggedIn,
     isValidUserInfo,
     navigate,
@@ -79,8 +83,8 @@ const ChallengeLayout = () => {
     isStartAfterGoal,
   ]);
 
-  if (isLoading) {
-    return <LoadingContainer />;
+  if (isLoadingDashboard || isLoadingData) {
+    return <LoadingContainer className="mt-[10%]" />;
   }
 
   return (
