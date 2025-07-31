@@ -1,4 +1,6 @@
+import { useMissionStore } from '@/store/useMissionStore';
 import clsx from 'clsx';
+import { useLocation } from 'react-router-dom';
 import { Schedule } from '../../../../../schema';
 import MissionIcon from './ChallengeMissionIcon';
 import MissionNotStartedIcon from './ChallengeMissionNotStartedIcon';
@@ -23,17 +25,15 @@ const MissionCalendarItem = ({
   isDone,
   isLast,
   onMissionClick,
-  selectedMissionId,
 }: Props) => {
   const mission = schedule.missionInfo;
   const attendance = schedule.attendanceInfo;
+
+  const { selectedMissionId, setSelectedMission } = useMissionStore();
   const isSelected = selectedMissionId === mission.id;
 
-  const handleClick = () => {
-    if (onMissionClick && mission.id) {
-      onMissionClick(mission.id);
-    }
-  };
+  const location = useLocation();
+  const isMissionPage = location.pathname.includes('/mission');
 
   return (
     <div className={className}>
@@ -44,9 +44,9 @@ const MissionCalendarItem = ({
           !isLast && 'mr-2',
           mission.th === todayTh ? 'border-neutral-70' : 'border-neutral-80',
           onMissionClick && 'cursor-pointer hover:border-primary',
-          isSelected && 'border-primary bg-primary/5',
+          isSelected && isMissionPage && 'border-primary bg-primary/5',
         )}
-        onClick={handleClick}
+        onClick={() => setSelectedMission(mission.id, mission.th || 0)}
       >
         {mission.th === todayTh ? (
           <MissionTodayIcon
