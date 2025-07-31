@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import dayjs from 'dayjs';
 import { useState } from 'react';
 import { GrNext } from 'react-icons/gr';
 import { Link, useParams } from 'react-router-dom';
@@ -19,11 +20,25 @@ const NoticeBoardSection = ({ notices }: INoticeSectionProps) => {
   );
   const totalPageCount = Math.ceil(notices.length / 4);
 
+  // 새 공지 확인
+  const isNewNotice = (createDate: dayjs.Dayjs | Date | string) => {
+    return dayjs().diff(dayjs(createDate), 'day') < 3;
+  };
+
+  const hasNewNotice = notices.some((notice) => isNewNotice(notice.createDate));
+
   return (
     <section className="flex w-full flex-col gap-4">
       <div className="flex flex-1 flex-col gap-3 rounded-xs border border-[#E4E4E7] p-4">
-        <div className="flex justify-between">
-          <h2 className="font-semibold text-neutral-10">공지사항</h2>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <h2 className="font-semibold text-neutral-10">공지사항</h2>
+            {hasNewNotice && (
+              <span className="relative rounded-xxs bg-primary-90 px-2 py-[5px] text-[12px] text-static-100 before:absolute before:right-full before:top-1/2 before:-translate-y-1/2 before:border-y-[6px] before:border-r-[8px] before:border-y-transparent before:border-r-primary-90">
+                새로운 공지를 확인해주세요!
+              </span>
+            )}
+          </div>
           <Link
             to={`/challenge/${params.programId}/dashboard/${applicationId}/guide`}
           >
@@ -42,9 +57,16 @@ const NoticeBoardSection = ({ notices }: INoticeSectionProps) => {
                 to={notice.link ?? ''}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="overflow-hidden text-ellipsis whitespace-nowrap text-sm text-[#333333] hover:underline"
+                className="flex items-center gap-2 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-[#333333] hover:underline"
               >
-                {notice.title}
+                <span className="truncate">{notice.title}</span>
+                {isNewNotice(notice.createDate) && (
+                  <img
+                    src="/icons/badge_new.svg"
+                    alt="new"
+                    className="h-4 w-4"
+                  />
+                )}
               </Link>
             ))}
             {currentNoticeList.length < 4 &&
