@@ -164,7 +164,7 @@ const DashboardMyMissionPage = () => {
         <div className="mt-6">
           <MissionSubmitSection
             todayTh={selectedMissionTh}
-            missionId={selectedMissionTh === 0 ? selectedMissionId : undefined}
+            missionId={selectedMissionId}
             selectedMissionTh={selectedMissionTh}
             todayId={
               schedules.find((schedule) => schedule.missionInfo.th === todayTh)

@@ -1,5 +1,6 @@
 import { clsx } from 'clsx';
 import { useState } from 'react';
+import { useSubmitMission } from '../../../../api/attendance';
 import LinkInputSection from './LinkInputSection';
 import MissionSubmitButton from './MissionSubmitButton';
 import MissionToast from './MissionToast';
@@ -7,17 +8,21 @@ import MissionToast from './MissionToast';
 interface MissionSubmitRegularSectionProps {
   className?: string;
   todayTh: number;
+  missionId?: number;
 }
 
 const MissionSubmitRegularSection = ({
   className,
   todayTh,
+  missionId,
 }: MissionSubmitRegularSectionProps) => {
   const [textareaValue, setTextareaValue] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [linkValue, setLinkValue] = useState('');
   const [isLinkVerified, setIsLinkVerified] = useState(false);
+
+  const submitMission = useSubmitMission();
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTextareaValue(e.target.value);
@@ -31,12 +36,29 @@ const MissionSubmitRegularSection = ({
     setIsLinkVerified(isVerified);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    console.log('handleSubmit', isSubmitted);
     if (isSubmitted) {
       setIsSubmitted(false);
     } else {
-      setIsSubmitted(true);
-      setShowToast(true);
+      // missionId가 없으면 제출 불가
+      if (!missionId || missionId === 0) {
+        console.error('missionId가 없습니다.');
+        return;
+      }
+
+      try {
+        await submitMission.mutateAsync({
+          missionId,
+          link: linkValue,
+          review: textareaValue,
+        });
+        setIsSubmitted(true);
+        setShowToast(true);
+      } catch (error) {
+        console.error('미션 제출 실패:', error);
+        // 에러 처리 로직 추가 가능
+      }
     }
   };
 

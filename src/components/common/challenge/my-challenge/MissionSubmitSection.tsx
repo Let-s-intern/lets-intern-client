@@ -36,7 +36,9 @@ const MissionSubmitSection = ({
     }
 
     // 기본값
-    return <MissionSubmitRegularSection todayTh={todayTh} />;
+    return (
+      <MissionSubmitRegularSection todayTh={todayTh} missionId={missionId} />
+    );
   };
 
   return <div className={clsx('', className)}>{renderSection()}</div>;
