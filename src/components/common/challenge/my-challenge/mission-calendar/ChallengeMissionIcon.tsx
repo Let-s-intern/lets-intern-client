@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import { Link, useParams } from 'react-router-dom';
 import { Schedule } from '../../../../../schema';
 
 import { challengeMissionSubmitToBadge } from '../../../../../utils/convert';
@@ -10,7 +9,6 @@ interface Props {
 }
 // 새로운 버전
 const MissionIcon = ({ className, schedule }: Props) => {
-  const params = useParams();
   const mission = schedule.missionInfo;
   const attendance = schedule.attendanceInfo;
 
@@ -23,11 +21,7 @@ const MissionIcon = ({ className, schedule }: Props) => {
 
   return (
     <>
-      <Link
-        to={`/challenge/${params.programId}/dashboard/${params.applicationId}/missions`}
-        replace
-        className={clsx('relative aspect-square cursor-pointer', className)}
-      >
+      <div className={clsx('flex flex-col', className)}>
         <i className="block h-3.5 w-3.5">
           <img
             src={icon}
@@ -64,7 +58,7 @@ const MissionIcon = ({ className, schedule }: Props) => {
             {text}
           </span>
         </div>
-      </Link>
+      </div>
     </>
   );
 };

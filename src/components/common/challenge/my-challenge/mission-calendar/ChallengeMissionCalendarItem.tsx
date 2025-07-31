@@ -1,6 +1,6 @@
 import { useMissionStore } from '@/store/useMissionStore';
 import clsx from 'clsx';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { Schedule } from '../../../../../schema';
 import MissionIcon from './ChallengeMissionIcon';
 import MissionNotStartedIcon from './ChallengeMissionNotStartedIcon';
@@ -35,12 +35,16 @@ const MissionCalendarItem = ({
   const location = useLocation();
   const isMissionPage = location.pathname.includes('/mission');
 
+  const { programId, applicationId } = useParams();
+
   return (
     <div className={className}>
       <MissionTopStatusBar mission={schedule.missionInfo} todayTh={todayTh} />
-      <div
+      <Link
+        to={`/challenge/${programId}/dashboard/${applicationId}/missions`}
+        replace
         className={clsx(
-          'aspect-[75/104] h-[104px] rounded-xxs border px-2 py-2.5 md:mt-2',
+          'block aspect-[75/104] h-[104px] rounded-xxs border px-2 py-2.5 md:mt-2',
           !isLast && 'mr-2',
           mission.th === todayTh ? 'border-neutral-70' : 'border-neutral-80',
           onMissionClick && 'cursor-pointer hover:border-primary',
@@ -57,9 +61,7 @@ const MissionCalendarItem = ({
         ) : (mission.th ?? 0) > todayTh ? (
           <MissionNotStartedIcon schedule={schedule} />
         ) : (
-          (mission.th ?? 0) < todayTh && (
-            <MissionIcon className="mt-3" schedule={schedule} />
-          )
+          (mission.th ?? 0) < todayTh && <MissionIcon schedule={schedule} />
         )}
         {/* 일정 */}
         <span
@@ -72,7 +74,7 @@ const MissionCalendarItem = ({
           {mission.startDate?.format('MM.DD(ddd)')}
           <br />~{mission.endDate?.format('MM.DD(ddd)')}
         </span>
-      </div>
+      </Link>
     </div>
   );
 };
