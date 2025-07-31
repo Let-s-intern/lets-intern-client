@@ -955,7 +955,8 @@ export const missionTemplateAdmin = z
         title: z.string(),
         description: z.string(),
         guide: z.string(),
-        templateLink: z.string(),
+        templateLink: z.string().nullable(),
+        vodLink: z.string().nullable().optional(),
       }),
     ),
   })
@@ -980,7 +981,8 @@ export type CreateMissionTemplateReq = {
   title: string;
   description: string;
   guide: string;
-  templateLink: string;
+  templateLink?: string;
+  vodLink?: string;
 };
 
 // PATCH /api/v1/mission-template/{id}
@@ -990,6 +992,7 @@ export type UpdateMissionTemplateReq = {
   description?: string;
   guide?: string;
   templateLink?: string;
+  vodLink?: string;
 };
 
 // POST /api/v1/contents
@@ -1246,17 +1249,18 @@ export const userChallengeMissionWithAttendance = z
       description: z.string(),
       guide: z.string(),
       templateLink: z.string(),
+      vodLink: z.string().nullable(),
     }),
     attendanceInfo: z
       .object({
         submitted: z.boolean(),
         id: z.number().nullable(),
         link: z.string().nullable(),
-        review: z.string().nullable().optional(),
         comments: z.string().nullable(),
         status: AttendanceStatusEnum.nullable(),
         result: AttendanceResultEnum.nullable(),
         feedbackStatus: AttendanceFeedbackStatusEnum.nullable(),
+        review: z.string().nullable(),
       })
       .nullable(),
   })

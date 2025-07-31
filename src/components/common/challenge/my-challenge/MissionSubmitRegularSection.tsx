@@ -54,6 +54,7 @@ const MissionSubmitRegularSection = ({
         disabled={isSubmitted}
         onLinkChange={handleLinkChange}
         onLinkVerified={handleLinkVerified}
+        todayTh={todayTh}
         text={`미션 링크는 .notion.site 형식의 퍼블릭 링크만 입력 가능합니다.
           제출 후, 미션과 소감을 카카오톡으로 공유해야 제출이 인정됩니다.`}
       />

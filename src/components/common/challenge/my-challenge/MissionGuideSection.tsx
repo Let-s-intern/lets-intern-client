@@ -6,23 +6,45 @@ import MissionGuideZeroSection from './MissionGuideZeroSection';
 interface MissionGuideSectionProps {
   className?: string;
   todayTh: number;
+  missionData?: any; // API 응답 데이터
+  selectedMissionTh?: number; // 선택된 미션의 회차
 }
 
 const MissionGuideSection = ({
   className,
   todayTh,
+  missionData,
+  selectedMissionTh,
 }: MissionGuideSectionProps) => {
   const renderSection = () => {
-    if (todayTh === 0) {
-      return <MissionGuideZeroSection todayTh={todayTh} />;
+    if (selectedMissionTh === 0) {
+      return (
+        <MissionGuideZeroSection
+          todayTh={todayTh}
+          missionData={missionData}
+          selectedMissionTh={selectedMissionTh}
+        />
+      );
     }
 
-    if (todayTh === 100) {
-      return <MissionGuideBonusSection todayTh={todayTh} />;
+    if (selectedMissionTh === 100) {
+      return (
+        <MissionGuideBonusSection
+          todayTh={todayTh}
+          missionData={missionData}
+          selectedMissionTh={selectedMissionTh}
+        />
+      );
     }
 
     // 기본값
-    return <MissionGuideRegularSection todayTh={todayTh} />;
+    return (
+      <MissionGuideRegularSection
+        todayTh={todayTh}
+        missionData={missionData}
+        selectedMissionTh={selectedMissionTh}
+      />
+    );
   };
 
   return (

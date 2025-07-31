@@ -13,8 +13,8 @@ const DashboardNavBar = () => {
 
   return (
     <>
-      <nav className="fixed w-56">
-        <ul className="flex flex-col gap-1">
+      <nav className="w-[196px]">
+        <ul className="sticky top-[180px] flex flex-col gap-1">
           <li>
             <Link
               to={`/challenge/${params.programId}/dashboard/${applicationId}`}
@@ -53,7 +53,6 @@ const DashboardNavBar = () => {
           </li>
         </ul>
       </nav>
-      <div className="w-56" />
     </>
   );
 };

@@ -1,16 +1,24 @@
 import { Schedule } from '../../../../../schema';
 import MissionTooltipQuestion from '../../ui/tooltip-question/MissionTooltipQuestion';
-import MissionCalendar from '../mission-calendar/MissionCalendar';
+import MissionCalendar from '../mission-calendar/ChallengeMissionCalendar';
 
 interface Props {
   schedules: Schedule[];
   todayTh: number;
   isDone: boolean;
+  onMissionClick?: (missionId: number) => void;
+  selectedMissionId?: number;
 }
 
-const MissionCalendarSection = ({ schedules, todayTh, isDone }: Props) => {
+const MissionCalendarSection = ({
+  schedules,
+  todayTh,
+  isDone,
+  onMissionClick,
+  selectedMissionId,
+}: Props) => {
   return (
-    <section className="mt-4 rounded-xl border border-[#E4E4E7] px-10 pb-10 pt-6">
+    <section>
       <div className="flex items-center gap-2">
         <h2 className="text-lg font-semibold">
           {isDone ? (
@@ -32,6 +40,8 @@ const MissionCalendarSection = ({ schedules, todayTh, isDone }: Props) => {
         schedules={schedules}
         todayTh={todayTh}
         isDone={isDone}
+        onMissionClick={onMissionClick}
+        selectedMissionId={selectedMissionId}
       />
     </section>
   );
