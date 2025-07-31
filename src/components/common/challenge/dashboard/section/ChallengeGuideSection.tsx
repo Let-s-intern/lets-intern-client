@@ -21,9 +21,11 @@ const ChallengeGuideSection = ({ guides }: GuideSection) => {
   const params = useParams();
   const applicationId = params.applicationId;
 
+  const NEW_BADGE_DURATION_DAYS = 3;
+
   const isNewGuide = (createDate: dayjs.Dayjs | Date | string | null) => {
     if (!createDate) return false;
-    return dayjs().diff(dayjs(createDate), 'day') < 3;
+    return dayjs().diff(dayjs(createDate), 'day') < NEW_BADGE_DURATION_DAYS;
   };
 
   return (

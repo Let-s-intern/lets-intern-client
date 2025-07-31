@@ -21,8 +21,11 @@ const NoticeBoardSection = ({ notices }: INoticeSectionProps) => {
   const totalPageCount = Math.ceil(notices.length / 4);
 
   // 새 공지 확인
-  const isNewNotice = (createDate: dayjs.Dayjs | Date | string) => {
-    return dayjs().diff(dayjs(createDate), 'day') < 3;
+  const NEW_BADGE_DURATION_DAYS = 3;
+
+  const isNewNotice = (createDate: dayjs.Dayjs | Date | string | null) => {
+    if (!createDate) return false;
+    return dayjs().diff(dayjs(createDate), 'day') < NEW_BADGE_DURATION_DAYS;
   };
 
   const hasNewNotice = notices.some((notice) => isNewNotice(notice.createDate));
