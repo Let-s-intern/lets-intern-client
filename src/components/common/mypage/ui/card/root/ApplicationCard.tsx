@@ -43,14 +43,13 @@ const ApplicationCard = ({
 
   const challengePricePlan =
     challengePricePlanToText[
-      (application.pricePlanType as ChallengePricePlan) ||
+      (application.pricePlanType as ChallengePricePlan) ??
         ChallengePricePlanEnum.enum.BASIC
     ];
-  const joinedChallengeOptions = application.challengeOptionList?.join(', ');
 
   return (
     <div
-      className="flex h-[282px] w-full flex-col items-start gap-4 overflow-hidden rounded-xs md:h-full md:flex-row md:border md:border-neutral-85 md:p-2.5"
+      className="flex min-h-[282px] w-full flex-col items-start gap-4 overflow-hidden rounded-xs md:h-full md:min-h-0 md:flex-row md:border md:border-neutral-85 md:p-2.5"
       data-program-text={application.programTitle}
     >
       <div
@@ -64,20 +63,20 @@ const ApplicationCard = ({
           className="flex-shrink-0 md:w-[11rem]"
         >
           <img
-            src={thumbnail}
+            src={thumbnail ?? null}
             alt="프로그램 썸네일"
             className="h-[7.5rem] w-full bg-primary-light object-cover md:h-[9rem] md:w-[11rem] md:rounded-xs"
           />
         </Link>
         <div className="flex flex-col justify-between gap-2 py-2">
           <div className="flex w-full flex-col gap-y-0.5">
-            <h2 className="font-semibold">
+            <h2 className="max-h-12 overflow-clip font-semibold">
               <Link
                 to={window.location.origin + programLink}
                 reloadDocument
                 className="hover:underline"
               >
-                {application.programTitle}
+                {application.programTitle + ' ' + application.programTitle}
               </Link>
             </h2>
             <p className="line-clamp-2 h-10 text-sm text-neutral-30 md:line-clamp-none md:h-auto">
@@ -95,7 +94,7 @@ const ApplicationCard = ({
                   : `${application.programStartDate?.format('YY.MM.DD')} ~ ${application.programEndDate?.format('YY.MM.DD')}`}
               </span>
             </div>
-            {joinedChallengeOptions && (
+            {application.programType === 'CHALLENGE' && (
               <div className="flex gap-1.5 md:justify-start">
                 <span className="shrink-0 text-neutral-0">신청플랜</span>
                 <span className="font-medium text-primary-dark">
