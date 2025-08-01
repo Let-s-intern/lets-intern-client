@@ -1,6 +1,6 @@
 import { clsx } from 'clsx';
-import { useState } from 'react';
-import { useSubmitMission } from '../../../../api/attendance';
+import { useEffect, useState } from 'react';
+import { usePatchMission, useSubmitMission } from '../../../../api/attendance';
 import LinkInputSection from './LinkInputSection';
 import MissionSubmitButton from './MissionSubmitButton';
 import MissionToast from './MissionToast';
@@ -9,20 +9,60 @@ interface MissionSubmitRegularSectionProps {
   className?: string;
   todayTh: number;
   missionId?: number;
+  attendanceInfo?: {
+    link: string | null;
+    status: 'PRESENT' | 'UPDATED' | 'LATE' | 'ABSENT' | null;
+    id: number | null;
+    submitted: boolean | null;
+    comments: string | null;
+    result: 'WAITING' | 'PASS' | 'WRONG' | null;
+    review?: string | null;
+  } | null;
 }
 
 const MissionSubmitRegularSection = ({
   className,
   todayTh,
   missionId,
+  attendanceInfo,
 }: MissionSubmitRegularSectionProps) => {
-  const [textareaValue, setTextareaValue] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [textareaValue, setTextareaValue] = useState(
+    attendanceInfo?.review || '',
+  );
+  const [isSubmitted, setIsSubmitted] = useState(
+    attendanceInfo?.submitted === true,
+  );
   const [showToast, setShowToast] = useState(false);
-  const [linkValue, setLinkValue] = useState('');
-  const [isLinkVerified, setIsLinkVerified] = useState(false);
+  const [linkValue, setLinkValue] = useState(attendanceInfo?.link || '');
+  const [isLinkVerified, setIsLinkVerified] = useState(!!attendanceInfo?.link);
+  const [isEditing, setIsEditing] = useState(false);
+
+  // 원본 데이터 저장 (취소 시 복구용)
+  const [originalTextareaValue, setOriginalTextareaValue] = useState(
+    attendanceInfo?.review || '',
+  );
+  const [originalLinkValue, setOriginalLinkValue] = useState(
+    attendanceInfo?.link || '',
+  );
 
   const submitMission = useSubmitMission();
+  const patchMission = usePatchMission();
+
+  // attendanceInfo가 변경될 때마다 상태 업데이트
+  useEffect(() => {
+    const reviewValue = attendanceInfo?.review || '';
+    const linkValue = attendanceInfo?.link || '';
+
+    setTextareaValue(reviewValue);
+    setIsSubmitted(attendanceInfo?.submitted === true);
+    setLinkValue(linkValue);
+    setIsLinkVerified(!!linkValue);
+    setIsEditing(false); // 새 미션 선택 시 수정 모드 해제
+
+    // 원본 데이터도 업데이트
+    setOriginalTextareaValue(reviewValue);
+    setOriginalLinkValue(linkValue);
+  }, [attendanceInfo]);
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTextareaValue(e.target.value);
@@ -37,13 +77,12 @@ const MissionSubmitRegularSection = ({
   };
 
   const handleSubmit = async () => {
-    console.log('handleSubmit', isSubmitted);
     if (isSubmitted) {
-      setIsSubmitted(false);
+      // 이미 제출된 미션 → 수정 모드로 전환
+      setIsEditing(true);
     } else {
-      // missionId가 없으면 제출 불가
+      // 새 미션 제출
       if (!missionId || missionId === 0) {
-        console.error('missionId가 없습니다.');
         return;
       }
 
@@ -55,10 +94,41 @@ const MissionSubmitRegularSection = ({
         });
         setIsSubmitted(true);
         setShowToast(true);
-      } catch (error) {
-        console.error('미션 제출 실패:', error);
+        // 원본 데이터 업데이트
+        setOriginalTextareaValue(textareaValue);
+        setOriginalLinkValue(linkValue);
+      } catch {
         // 에러 처리 로직 추가 가능
       }
+    }
+  };
+
+  const handleCancelEdit = () => {
+    // 원본 데이터로 복구
+    setTextareaValue(originalTextareaValue);
+    setLinkValue(originalLinkValue);
+    setIsLinkVerified(!!originalLinkValue);
+    setIsEditing(false);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!missionId || missionId === 0) {
+      return;
+    }
+
+    try {
+      await patchMission.mutateAsync({
+        missionId,
+        link: linkValue,
+        review: textareaValue,
+      });
+      setIsEditing(false);
+      setShowToast(true);
+      // 원본 데이터 업데이트
+      setOriginalTextareaValue(textareaValue);
+      setOriginalLinkValue(linkValue);
+    } catch {
+      // 에러 처리 로직 추가 가능
     }
   };
 
@@ -73,10 +143,11 @@ const MissionSubmitRegularSection = ({
 
       {/* 링크 섹션 */}
       <LinkInputSection
-        disabled={isSubmitted}
+        disabled={isSubmitted && !isEditing}
         onLinkChange={handleLinkChange}
         onLinkVerified={handleLinkVerified}
         todayTh={todayTh}
+        initialLink={linkValue}
         text={`미션 링크는 .notion.site 형식의 퍼블릭 링크만 입력 가능합니다.
           제출 후, 미션과 소감을 카카오톡으로 공유해야 제출이 인정됩니다.`}
       />
@@ -101,7 +172,7 @@ const MissionSubmitRegularSection = ({
 새롭게 배운 점, 어려운 부분, 궁금증 등 떠오르는 생각을 남겨 주세요.`}
           value={textareaValue}
           onChange={handleTextareaChange}
-          disabled={isSubmitted}
+          disabled={isSubmitted && !isEditing}
         />
       </section>
 
@@ -109,6 +180,9 @@ const MissionSubmitRegularSection = ({
         isSubmitted={isSubmitted}
         hasContent={canSubmit}
         onButtonClick={handleSubmit}
+        isEditing={isEditing}
+        onCancelEdit={handleCancelEdit}
+        onSaveEdit={handleSaveEdit}
       />
 
       <MissionToast isVisible={showToast} onClose={() => setShowToast(false)} />

@@ -164,6 +164,11 @@ const DashboardMyMissionPage = () => {
             todayTh={selectedMissionTh}
             missionId={selectedMissionId}
             selectedMissionTh={selectedMissionTh}
+            attendanceInfo={
+              schedules.find(
+                (schedule) => schedule.missionInfo.id === selectedMissionId,
+              )?.attendanceInfo
+            }
             todayId={
               schedules.find((schedule) => schedule.missionInfo.th === todayTh)
                 ?.missionInfo.id
