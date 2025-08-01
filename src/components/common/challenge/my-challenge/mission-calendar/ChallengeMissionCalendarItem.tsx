@@ -1,6 +1,7 @@
 import { useMissionStore } from '@/store/useMissionStore';
 import clsx from 'clsx';
-import { useLocation } from 'react-router-dom';
+import { useCallback } from 'react';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { Schedule } from '../../../../../schema';
 import MissionIcon from './ChallengeMissionIcon';
 import MissionNotStartedIcon from './ChallengeMissionNotStartedIcon';
@@ -13,7 +14,6 @@ interface Props {
   className?: string;
   isDone: boolean;
   isLast: boolean;
-  onMissionClick?: (missionId: number) => void;
   selectedMissionId?: number;
 }
 
@@ -24,7 +24,6 @@ const MissionCalendarItem = ({
   className,
   isDone,
   isLast,
-  onMissionClick,
 }: Props) => {
   const mission = schedule.missionInfo;
   const attendance = schedule.attendanceInfo;
@@ -35,17 +34,26 @@ const MissionCalendarItem = ({
   const location = useLocation();
   const isMissionPage = location.pathname.includes('/mission');
 
+  const { programId, applicationId } = useParams();
+
+  const handleClick = useCallback(() => {
+    setSelectedMission(mission.id, mission.th ?? 0);
+  }, [setSelectedMission, mission.id, mission.th]);
+
   return (
     <div className={className}>
       <MissionTopStatusBar mission={schedule.missionInfo} todayTh={todayTh} />
-      <div
+      <Link
+        to={`/challenge/${programId}/dashboard/${applicationId}/missions`}
+        replace
+        onClick={handleClick}
         className={clsx(
-          'aspect-[75/104] h-[104px] rounded-xxs border border-neutral-80 px-2 py-2.5 md:mt-2',
+          'block aspect-[75/104] h-[104px] rounded-xxs border px-2 py-2.5 md:mt-2',
           !isLast && 'mr-2',
-          onMissionClick && 'cursor-pointer hover:border-primary',
+          mission.th === todayTh ? 'border-neutral-70' : 'border-neutral-80',
+          'cursor-pointer hover:border-primary',
           isSelected && isMissionPage && 'border-primary bg-primary/5',
         )}
-        onClick={() => setSelectedMission(mission.id, mission.th || 0)}
       >
         {mission.th === todayTh ? (
           <MissionTodayIcon
@@ -69,7 +77,7 @@ const MissionCalendarItem = ({
           {mission.startDate?.format('MM.DD(ddd)')}
           <br />~{mission.endDate?.format('MM.DD(ddd)')}
         </span>
-      </div>
+      </Link>
     </div>
   );
 };
