@@ -1,5 +1,6 @@
 import { useMissionStore } from '@/store/useMissionStore';
 import clsx from 'clsx';
+import { useCallback } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { Schedule } from '../../../../../schema';
 import MissionIcon from './ChallengeMissionIcon';
@@ -35,9 +36,9 @@ const MissionCalendarItem = ({
 
   const { programId, applicationId } = useParams();
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     setSelectedMission(mission.id, mission.th ?? 0);
-  };
+  }, [setSelectedMission, mission.id, mission.th]);
 
   return (
     <div className={className}>
