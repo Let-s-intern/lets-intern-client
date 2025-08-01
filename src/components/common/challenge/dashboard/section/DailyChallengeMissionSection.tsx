@@ -1,5 +1,7 @@
+import { useMissionStore } from '@/store/useMissionStore';
 import clsx from 'clsx';
-import { Link, useParams } from 'react-router-dom';
+import dayjs from 'dayjs';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
 import { DailyMission, Schedule } from '../../../../../schema';
 
@@ -18,6 +20,20 @@ const DailyChallengeMissionSection = ({
   const applicationId = useParams().applicationId;
   const { currentChallenge } = useCurrentChallenge();
 
+  const navigate = useNavigate();
+  const { setSelectedMission } = useMissionStore();
+
+  const handleClick = () => {
+    if (dailyMission?.id != null && dailyMission?.th != null) {
+      setSelectedMission(dailyMission.id, dailyMission.th);
+      navigate(
+        `/challenge/${currentChallenge?.id}/dashboard/${applicationId}/missions`,
+        { replace: true },
+      );
+    }
+  };
+  const isBeforeStart = dayjs().isBefore(currentChallenge?.startDate);
+
   const submitted =
     typeof todayTh === 'number' &&
     schedules[todayTh - 1]?.attendanceInfo?.submitted;
@@ -25,7 +41,7 @@ const DailyChallengeMissionSection = ({
   return (
     <section
       className={clsx(
-        'flex aspect-[122/90] flex-1 flex-col rounded-xs border',
+        'flex min-h-[240px] flex-1 flex-col rounded-xs border md:min-h-[180px] lg:aspect-[122/90]',
         submitted ? 'border-neutral-80' : 'border-primary-80',
       )}
     >
@@ -45,20 +61,13 @@ const DailyChallengeMissionSection = ({
       <p className="mb-4 flex-1 whitespace-pre-line p-4 text-xsmall14 text-neutral-0 md:mb-0 md:text-xsmall16">
         {dailyMission?.description}
       </p>
-      {submitted ? (
-        <Link
-          to={`/challenge/${applicationId}/${currentChallenge?.id}/me?scroll_to=daily-mission`}
+      {!isBeforeStart && (
+        <button
+          onClick={handleClick}
           className="mx-4 mb-4 rounded-xs bg-primary px-4 py-3 text-center text-white"
         >
-          제출 수정하기
-        </Link>
-      ) : (
-        <Link
-          to={`/challenge/${applicationId}/${currentChallenge?.id}/me?scroll_to=daily-mission`}
-          className="mx-4 mb-4 rounded-xs bg-primary px-4 py-3 text-center text-white"
-        >
-          미션 수행하기
-        </Link>
+          {submitted ? '제출 수정하기' : '미션 수행하기'}
+        </button>
       )}
     </section>
   );
