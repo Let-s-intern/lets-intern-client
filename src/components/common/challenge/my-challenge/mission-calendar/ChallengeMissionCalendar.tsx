@@ -40,7 +40,6 @@ const MissionCalendar = ({
             className="w-full"
             isDone={isDone}
             isLast={index === schedules.length - 1}
-            onMissionClick={onMissionClick}
             selectedMissionId={selectedMissionId}
           />
         </SwiperSlide>
