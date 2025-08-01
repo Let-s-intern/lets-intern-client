@@ -98,11 +98,9 @@ const MissionSubmitBonusSection = ({
       {/* 블로그 링크 섹션 */}
       <div className="mt-7">
         <LinkInputSection
-          disabled={false}
+          disabled={isSubmitted}
           onLinkChange={handleLinkChange}
           onLinkVerified={handleLinkVerified}
-          isSubmitted={isSubmitted}
-          isEditing={false}
           text={`링크가 잘 열리는지 확인해주세요.`}
         />
       </div>
