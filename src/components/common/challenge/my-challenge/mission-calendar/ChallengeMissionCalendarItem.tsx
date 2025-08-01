@@ -1,6 +1,6 @@
 import { useMissionStore } from '@/store/useMissionStore';
 import clsx from 'clsx';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Schedule } from '../../../../../schema';
 import MissionIcon from './ChallengeMissionIcon';
 import MissionNotStartedIcon from './ChallengeMissionNotStartedIcon';
@@ -35,14 +35,10 @@ const MissionCalendarItem = ({
   const location = useLocation();
   const isMissionPage = location.pathname.includes('/mission');
 
-  const { programId, applicationId } = useParams();
-
   return (
     <div className={className}>
       <MissionTopStatusBar mission={schedule.missionInfo} todayTh={todayTh} />
-      <Link
-        to={`/challenge/${programId}/dashboard/${applicationId}/missions`}
-        replace
+      <div
         className={clsx(
           'aspect-[75/104] h-[104px] rounded-xxs border border-neutral-80 px-2 py-2.5 md:mt-2',
           !isLast && 'mr-2',
@@ -73,7 +69,7 @@ const MissionCalendarItem = ({
           {mission.startDate?.format('MM.DD(ddd)')}
           <br />~{mission.endDate?.format('MM.DD(ddd)')}
         </span>
-      </Link>
+      </div>
     </div>
   );
 };
