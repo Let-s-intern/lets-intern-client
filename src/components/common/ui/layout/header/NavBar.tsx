@@ -8,7 +8,7 @@ import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
 import { useMediaQuery } from '@mui/material';
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useMatch } from 'react-router-dom';
 import ExternalNavList from './ExternalNavList';
 import GlobalNavItem from './GlobalNavItem';
 import GlobalNavTopBar from './GlobalNavTopBar';
@@ -54,6 +54,9 @@ const NavBar = () => {
 
   // 사이드바 열리면 스크롤 제한
   useControlScroll(isOpen);
+  const dashboardMatch = useMatch(
+    '/challenge/:programId/dashboard/:applicationId/*',
+  );
 
   return (
     <header>
@@ -78,45 +81,84 @@ const NavBar = () => {
           )}
         >
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-4 md:gap-6">
-              <GlobalNavItem
-                className="text-xsmall14 md:text-xsmall16"
-                href="/program"
-                isNextRouter={false}
-                active={activeLink === 'PROGRAM'}
-                // 모바일은 드롭다운 X
-                {...(!isMobile && {
-                  subNavList: programCategoryWithHref,
-                  showDropdownIcon: true,
-                })}
-              >
-                프로그램
-                <span className="hidden md:inline">&nbsp;카테고리</span>
-              </GlobalNavItem>
-              <GlobalNavItem
-                className="text-xsmall14 md:text-xsmall16"
-                isNextRouter={false}
-                active={activeLink === 'REPORT'}
-                href={reportNavList.length === 0 ? '#' : reportNavList[0].href}
-                // 모바일은 드롭다운 X
-                {...(!isMobile && {
-                  subNavList: reportNavList,
-                })}
-                force
-              >
-                서류 피드백 REPORT
-              </GlobalNavItem>
-              <GlobalNavItem
-                className="text-xsmall14 md:text-xsmall16"
-                isNew
-                href="https://letscareer.oopy.io/1ea5e77c-bee1-8098-8e19-ec5038fb1cc8"
-                isNextRouter={false}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                커피챗
-              </GlobalNavItem>
-            </div>
+            {/* 모바일 메뉴 영역 */}
+            {isMobile && dashboardMatch ? (
+              <div className="flex items-center gap-4 md:hidden md:gap-6">
+                <GlobalNavItem
+                  className="text-xsmall14 md:text-xsmall16"
+                  href={
+                    location.pathname.split('/missions')[0].split('/guide')[0]
+                  }
+                  isNextRouter={false}
+                  active={
+                    location.pathname.endsWith('missions') === false &&
+                    location.pathname.endsWith('guide') === false
+                  }
+                >
+                  대시보드
+                </GlobalNavItem>
+                <GlobalNavItem
+                  className="text-xsmall14 md:text-xsmall16"
+                  href={`${location.pathname.split('/dashboard')[0]}/dashboard/${location.pathname.split('/dashboard/')[1]?.split('/')[0]}/missions`}
+                  isNextRouter={false}
+                  active={location.pathname.endsWith('missions')}
+                >
+                  나의 미션
+                </GlobalNavItem>
+                <GlobalNavItem
+                  className="text-xsmall14 md:text-xsmall16"
+                  href={`${location.pathname.split('/dashboard')[0]}/dashboard/${location.pathname.split('/dashboard/')[1]?.split('/')[0]}/guide`}
+                  isNextRouter={false}
+                  active={location.pathname.endsWith('guide')}
+                >
+                  공지사항 / 챌린지 가이드
+                </GlobalNavItem>
+              </div>
+            ) : (
+              // 기본 메뉴
+              <div className="flex items-center gap-4 md:gap-6">
+                <GlobalNavItem
+                  className="text-xsmall14 md:text-xsmall16"
+                  href="/program"
+                  isNextRouter={false}
+                  active={activeLink === 'PROGRAM'}
+                  // 모바일은 드롭다운 X
+                  {...(!isMobile && {
+                    subNavList: programCategoryWithHref,
+                    showDropdownIcon: true,
+                  })}
+                >
+                  프로그램
+                  <span className="hidden md:inline">&nbsp;카테고리</span>
+                </GlobalNavItem>
+                <GlobalNavItem
+                  className="text-xsmall14 md:text-xsmall16"
+                  isNextRouter={false}
+                  active={activeLink === 'REPORT'}
+                  href={
+                    reportNavList.length === 0 ? '#' : reportNavList[0].href
+                  }
+                  // 모바일은 드롭다운 X
+                  {...(!isMobile && {
+                    subNavList: reportNavList,
+                  })}
+                  force
+                >
+                  서류 피드백 REPORT
+                </GlobalNavItem>
+                <GlobalNavItem
+                  className="text-xsmall14 md:text-xsmall16"
+                  isNew
+                  href="https://letscareer.oopy.io/1ea5e77c-bee1-8098-8e19-ec5038fb1cc8"
+                  isNextRouter={false}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  커피챗
+                </GlobalNavItem>
+              </div>
+            )}
+
             <div
               className="hidden h-[18px] w-[1px] bg-[#D9D9D9] md:block"
               aria-hidden="true"
