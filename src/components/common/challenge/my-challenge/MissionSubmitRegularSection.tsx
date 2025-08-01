@@ -1,6 +1,9 @@
 import { clsx } from 'clsx';
 import { useEffect, useState } from 'react';
-import { usePatchMission, useSubmitMission } from '../../../../api/attendance';
+import {
+  usePatchAttendance,
+  useSubmitMission,
+} from '../../../../api/attendance';
 import LinkInputSection from './LinkInputSection';
 import MissionSubmitButton from './MissionSubmitButton';
 import MissionToast from './MissionToast';
@@ -49,7 +52,7 @@ const MissionSubmitRegularSection = ({
   );
 
   const submitMission = useSubmitMission();
-  const patchMission = usePatchMission();
+  const patchAttendance = usePatchAttendance();
 
   // attendanceInfo가 변경될 때마다 상태 업데이트 (다른 미션인 경우에만)
   useEffect(() => {
@@ -119,13 +122,13 @@ const MissionSubmitRegularSection = ({
   };
 
   const handleSaveEdit = async () => {
-    if (!missionId || missionId === 0) {
+    if (!attendanceInfo?.id) {
       return;
     }
 
     try {
-      await patchMission.mutateAsync({
-        missionId,
+      await patchAttendance.mutateAsync({
+        attendanceId: attendanceInfo.id,
         link: linkValue,
         review: textareaValue,
       });
