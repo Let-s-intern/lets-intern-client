@@ -87,7 +87,7 @@ const DashboardPage = () => {
   );
 
   return (
-    <main className="mx-auto mt-8 px-5 md:mt-0 md:px-0">
+    <main className="mx-auto">
       <header>
         <h1 className="text-[22px] font-semibold text-neutral-0">
           {user?.name}님의 대시보드
