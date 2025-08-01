@@ -152,11 +152,7 @@ const DashboardMyMissionPage = () => {
         </div>
         <div className="relative">
           <BonusMissionPopup
-            isVisible={
-              showPopup &&
-              (selectedMissionTh === 4 || selectedMissionTh === 6) &&
-              response.data?.attendanceInfo?.submitted === true
-            }
+            isVisible={true}
             onClose={closePopup}
             onPopupClick={handlePopupClick}
           />
