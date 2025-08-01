@@ -19,7 +19,9 @@ const MissionFileLink = ({
     <button
       className={clsx('flex cursor-pointer items-center gap-3', className)}
     >
-      <h4 className="text-xsmall16 font-medium text-neutral-0">{title}</h4>
+      <h4 className="w-[74px] text-xsmall16 font-medium text-neutral-0">
+        {title}
+      </h4>
       <div
         className="flex items-center gap-1"
         onClick={disabled ? undefined : onClick}

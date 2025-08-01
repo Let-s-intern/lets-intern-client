@@ -44,9 +44,8 @@ const MissionCalendarItem = ({
         to={`/challenge/${programId}/dashboard/${applicationId}/missions`}
         replace
         className={clsx(
-          'block aspect-[75/104] h-[104px] rounded-xxs border px-2 py-2.5 md:mt-2',
+          'aspect-[75/104] h-[104px] rounded-xxs border border-neutral-80 px-2 py-2.5 md:mt-2',
           !isLast && 'mr-2',
-          mission.th === todayTh ? 'border-neutral-70' : 'border-neutral-80',
           onMissionClick && 'cursor-pointer hover:border-primary',
           isSelected && isMissionPage && 'border-primary bg-primary/5',
         )}
