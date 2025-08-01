@@ -35,9 +35,8 @@ const MissionSubmitBonusSection = ({
     e: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
     const value = e.target.value;
-    // 숫자만 허용
-    const numericValue = value.replace(/[^0-9]/g, '');
-    setAccountNumber(numericValue);
+    // 입력 중에는 모든 문자 허용 (사용자 경험 개선)
+    setAccountNumber(value);
   };
 
   const handleLinkChange = (link: string) => {
@@ -58,11 +57,14 @@ const MissionSubmitBonusSection = ({
           return;
         }
 
+        // 제출 시에만 숫자만 추출
+        const cleanAccountNumber = accountNumber.replace(/[^0-9]/g, '');
+
         const response = await submitBlogBonus.mutateAsync({
           missionId: todayId,
           url: linkValue,
           accountType: selectedBank,
-          accountNum: accountNumber,
+          accountNum: cleanAccountNumber,
         });
 
         console.log('보너스 미션 제출 응답:', response);
@@ -80,11 +82,12 @@ const MissionSubmitBonusSection = ({
   };
 
   // 제출 버튼 활성화 조건: 링크 확인 완료 + 은행 선택 + 계좌번호 입력 + 개인정보 동의
+  const cleanAccountNumber = accountNumber.replace(/[^0-9]/g, '');
   const canSubmit =
     isAgreed &&
     isLinkVerified &&
     selectedBank.trim().length > 0 &&
-    accountNumber.trim().length > 0;
+    cleanAccountNumber.length > 0;
 
   return (
     <section className={clsx('', className)}>
