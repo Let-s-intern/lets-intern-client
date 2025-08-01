@@ -7,6 +7,8 @@ interface Props {
 }
 //새로운 버전
 const MissionNotStartedIcon = ({ className, schedule }: Props) => {
+  const isBonus = schedule.missionInfo.th === 100;
+
   return (
     <div className={clsx('flex cursor-pointer flex-col', className)}>
       <i className="block h-3.5 w-3.5">
@@ -17,9 +19,19 @@ const MissionNotStartedIcon = ({ className, schedule }: Props) => {
         />
       </i>
       <span className="mt-1 block text-[13px] font-semibold leading-4 text-neutral-30">
-        {schedule.missionInfo.th}회차
-        <br />
-        미션
+        {isBonus ? (
+          <>
+            보너스
+            <br />
+            미션
+          </>
+        ) : (
+          <>
+            {schedule.missionInfo.th}회차
+            <br />
+            미션
+          </>
+        )}
       </span>
     </div>
   );

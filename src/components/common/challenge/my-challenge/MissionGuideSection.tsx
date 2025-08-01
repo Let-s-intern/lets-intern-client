@@ -1,3 +1,4 @@
+import { UserChallengeMissionWithAttendance } from '@/schema';
 import { clsx } from 'clsx';
 import MissionGuideBonusSection from './MissionGuideBonusSection';
 import MissionGuideRegularSection from './MissionGuideRegularSection';
@@ -6,7 +7,7 @@ import MissionGuideZeroSection from './MissionGuideZeroSection';
 interface MissionGuideSectionProps {
   className?: string;
   todayTh: number;
-  missionData?: any; // API 응답 데이터
+  missionData?: UserChallengeMissionWithAttendance; // API 응답 데이터
   selectedMissionTh?: number; // 선택된 미션의 회차
 }
 

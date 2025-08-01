@@ -107,7 +107,7 @@ const MissionSubmitBonusSection = ({
         <span className="text-xsmall16 font-semibold text-neutral-0">
           리워드 받을 계좌번호
         </span>
-        <div className="flex flex-row gap-1">
+        <div className="flex flex-col gap-1 md:flex-row">
           <BankSelectDropdown
             selectedBank={selectedBank}
             onBankSelect={handleBankSelect}

@@ -31,7 +31,7 @@ const ChallengeGuideSection = ({ guides }: GuideSection) => {
   return (
     <section className="relative w-[calc((100%-12px)/2)] flex-1 flex-col rounded-xs border border-[#E4E4E7] p-4">
       <div className="flex flex-col gap-3">
-        <div className="flex justify-between">
+        <div className="flex items-center justify-between">
           <h2 className="font-semibold text-neutral-10">챌린지 가이드</h2>
           <Link
             to={`/challenge/${params.programId}/dashboard/${applicationId}/guide`}
@@ -58,7 +58,7 @@ const ChallengeGuideSection = ({ guides }: GuideSection) => {
                   <img
                     src="/icons/badge_new.svg"
                     alt="new"
-                    className="h-4 w-4"
+                    className="h-3 w-3"
                   />
                 )}
               </Link>
