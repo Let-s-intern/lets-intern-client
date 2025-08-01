@@ -41,7 +41,7 @@ const DailyChallengeMissionSection = ({
   return (
     <section
       className={clsx(
-        'flex aspect-[122/90] flex-1 flex-col rounded-xs border',
+        'flex min-h-[240px] flex-1 flex-col rounded-xs border md:min-h-[180px] lg:aspect-[122/90]',
         submitted ? 'border-neutral-80' : 'border-primary-80',
       )}
     >
