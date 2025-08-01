@@ -1,7 +1,7 @@
 import { clsx } from 'clsx';
 
 interface MissionFileLinkProps {
-  title: string;
+  title?: string;
   fileName: string;
   disabled?: boolean;
   className?: string;
@@ -17,11 +17,16 @@ const MissionFileLink = ({
 }: MissionFileLinkProps) => {
   return (
     <button
-      className={clsx('flex cursor-pointer items-center gap-3', className)}
+      className={clsx(
+        'flex cursor-pointer flex-col gap-0.5 md:flex-row md:items-center md:gap-3',
+        className,
+      )}
     >
-      <h4 className="w-[74px] text-xsmall16 font-medium text-neutral-0">
-        {title}
-      </h4>
+      {title && (
+        <h4 className="w-[74px] text-xsmall16 font-medium text-neutral-0">
+          {title}
+        </h4>
+      )}
       <div
         className="flex items-center gap-1"
         onClick={disabled ? undefined : onClick}

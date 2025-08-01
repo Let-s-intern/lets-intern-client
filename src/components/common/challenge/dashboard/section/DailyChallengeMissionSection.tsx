@@ -24,14 +24,21 @@ const DailyChallengeMissionSection = ({
   const { setSelectedMission } = useMissionStore();
 
   const handleClick = () => {
-    if (dailyMission?.id != null && dailyMission?.th != null) {
-      setSelectedMission(dailyMission.id, dailyMission.th);
+    const id = dailyMission?.id;
+    const th = dailyMission?.th;
+
+    const isValidId = typeof id === 'number';
+    const isValidTh = typeof th === 'number';
+
+    if (isValidId && isValidTh) {
+      setSelectedMission(id, th);
       navigate(
         `/challenge/${currentChallenge?.id}/dashboard/${applicationId}/missions`,
         { replace: true },
       );
     }
   };
+
   const isBeforeStart = dayjs().isBefore(currentChallenge?.startDate);
 
   const submitted =
@@ -41,7 +48,7 @@ const DailyChallengeMissionSection = ({
   return (
     <section
       className={clsx(
-        'flex aspect-[122/90] flex-1 flex-col rounded-xs border',
+        'flex min-h-[240px] flex-1 flex-col rounded-xs border md:min-h-[180px] lg:aspect-[122/90]',
         submitted ? 'border-neutral-80' : 'border-primary-80',
       )}
     >

@@ -13,40 +13,47 @@ const DashboardNavBar = () => {
 
   return (
     <>
-      <nav className="w-[220px]">
-        <ul className="sticky top-[180px] flex flex-col gap-1">
-          <li>
+      {/* 모바일: 상단 수평 탭, 데스크톱: 사이드 네비게이션 */}
+      <nav className="w-full md:w-[220px]">
+        <ul className="flex h-[40px] flex-row gap-4 overflow-x-auto border-b bg-white px-5 py-2 scrollbar-hide md:sticky md:top-[180px] md:flex-col md:gap-0 md:overflow-x-visible md:border-b-0 md:bg-transparent md:px-0 md:py-0">
+          <li className="flex-shrink-0 md:flex-shrink">
             <Link
               to={`/challenge/${params.programId}/dashboard/${applicationId}`}
-              className={clsx('block px-3 py-2', {
-                'rounded-xxs bg-primary-5 font-semibold text-primary':
-                  activeStatus === 'DASHBOARD',
-                'text-[#4A495C]': activeStatus === 'DASHBOARD',
-              })}
+              className={clsx(
+                'flex flex-row items-center whitespace-nowrap rounded-xxs text-xsmall14 font-semibold transition-colors md:h-[44px] md:px-3 md:text-xsmall16',
+                {
+                  'text-primary md:bg-primary-5': activeStatus === 'DASHBOARD',
+                  'text-[#4A495C]': activeStatus !== 'DASHBOARD',
+                },
+              )}
             >
               대시보드
             </Link>
           </li>
-          <li>
+          <li className="flex-shrink-0 md:flex-shrink">
             <Link
               to={`/challenge/${params.programId}/dashboard/${applicationId}/missions`}
-              className={clsx('block px-3 py-2', {
-                'rounded-xxs bg-primary-5 font-semibold text-primary':
-                  activeStatus === 'MY_MISSION',
-                'text-[#4A495C]': activeStatus === 'MY_MISSION',
-              })}
+              className={clsx(
+                'flex flex-row items-center whitespace-nowrap rounded-xxs text-xsmall14 font-semibold transition-colors md:h-[44px] md:px-3 md:text-xsmall16',
+                {
+                  'text-primary md:bg-primary-5': activeStatus === 'MY_MISSION',
+                  'text-[#4A495C]': activeStatus !== 'MY_MISSION',
+                },
+              )}
             >
               나의 미션
             </Link>
           </li>
-          <li>
+          <li className="flex-shrink-0 md:flex-shrink">
             <Link
               to={`/challenge/${params.programId}/dashboard/${applicationId}/guide`}
-              className={clsx('block px-3 py-2', {
-                'rounded-xxs bg-primary-5 font-semibold text-primary':
-                  activeStatus === 'GUIDE',
-                'text-[#4A495C]': activeStatus === 'GUIDE',
-              })}
+              className={clsx(
+                'flex flex-row items-center whitespace-nowrap rounded-xxs text-xsmall14 font-semibold transition-colors md:h-[44px] md:px-3 md:text-xsmall16',
+                {
+                  'text-primary md:bg-primary-5': activeStatus === 'GUIDE',
+                  'text-[#4A495C]': activeStatus !== 'GUIDE',
+                },
+              )}
             >
               공지사항 / 챌린지 가이드
             </Link>

@@ -93,7 +93,7 @@ const MissionSubmitRegularSection = ({
         <textarea
           className={clsx(
             'w-full resize-none rounded-xxs border border-neutral-80 bg-white',
-            'px-3 py-2 text-xsmall16 text-neutral-0 placeholder:text-neutral-50',
+            'px-3 py-2 text-xsmall14 text-neutral-0 placeholder:text-neutral-50 md:text-xsmall16',
             'min-h-[144px] outline-none focus:border-primary',
             'disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-50',
           )}
