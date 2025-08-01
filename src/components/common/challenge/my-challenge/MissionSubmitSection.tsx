@@ -9,14 +9,24 @@ interface MissionSubmitSectionProps {
   missionId?: number; // 0회차 미션 ID
   selectedMissionTh?: number;
   todayId?: number; // 선택된 미션의 ID
+  attendanceInfo?: {
+    link: string | null;
+    status: 'PRESENT' | 'UPDATED' | 'LATE' | 'ABSENT' | null;
+    id: number | null;
+    submitted: boolean | null;
+    comments: string | null;
+    result: 'WAITING' | 'PASS' | 'WRONG' | null;
+    review?: string | null;
+  } | null;
 }
 
 const MissionSubmitSection = ({
   className,
   todayTh,
   missionId,
-  selectedMissionTh,
+  selectedMissionTh, // eslint-disable-line @typescript-eslint/no-unused-vars
   todayId,
+  attendanceInfo,
 }: MissionSubmitSectionProps) => {
   const renderSection = () => {
     if (todayTh === 0) {
@@ -36,7 +46,13 @@ const MissionSubmitSection = ({
     }
 
     // 기본값
-    return <MissionSubmitRegularSection todayTh={todayTh} />;
+    return (
+      <MissionSubmitRegularSection
+        todayTh={todayTh}
+        missionId={missionId}
+        attendanceInfo={attendanceInfo}
+      />
+    );
   };
 
   return <div className={clsx('', className)}>{renderSection()}</div>;
