@@ -1,5 +1,4 @@
 import {
-  useGetChallengeGoal,
   useGetChallengeValideUser,
   useGetUserChallengeInfo,
 } from '@/api/challenge';
@@ -38,16 +37,9 @@ const DashboardLayout = () => {
   const { data: isValidUserInfoData, isLoading: isValidUserInfoLoading } =
     useGetUserChallengeInfo();
 
-  const { data: challengeGoal, isLoading: challengeGoalLoading } =
-    useGetChallengeGoal(programId);
-
   const isValidUserInfo = isValidUserInfoData?.pass;
-  const hasChallengeGoal = challengeGoal?.goal;
   const isLoadingData =
-    isValidUserInfoLoading ||
-    isValidUserAccessLoading ||
-    challengeGoalLoading ||
-    challengeIsLoading;
+    isValidUserInfoLoading || isValidUserAccessLoading || challengeIsLoading;
   const isStartAfterGoal =
     challenge?.startDate && GOAL_DATE.isBefore(challenge.startDate);
 
@@ -67,8 +59,8 @@ const DashboardLayout = () => {
       navigate('/');
       return;
     }
-    if (!isValidUserInfo || (isStartAfterGoal && !hasChallengeGoal)) {
-      navigate(`/challenge/${applicationId}/${programId}/user/info`);
+    if (!isValidUserInfo) {
+      navigate(`/challenge/${programId}/dashboard/${applicationId}/user-info`);
       return;
     }
   }, [
@@ -79,18 +71,17 @@ const DashboardLayout = () => {
     programId,
     applicationId,
     accessibleData,
-    hasChallengeGoal,
     isStartAfterGoal,
   ]);
 
-  if (isLoadingDashboard || isLoadingData) {
+  if (isLoadingData || isLoadingDashboard) {
     return <LoadingContainer className="mt-[10%]" />;
   }
 
   return (
     <div className="min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-6rem)]">
       <div className="mx-auto flex flex-col pb-16 md:mt-16 md:w-[1120px] md:flex-row md:gap-12 md:px-0 md:px-5">
-        <DashboardNavBar />
+        {isValidUserInfo && <DashboardNavBar />}
         <div className="min-w-0 flex-1 px-5 py-8">
           <Outlet />
         </div>

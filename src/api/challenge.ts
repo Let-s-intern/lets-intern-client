@@ -610,8 +610,14 @@ export const useChallengeMissionListQuery = (challengeId?: string | number) => {
 /** 챌린지 목표 제출 /api/v1/challenge/{challengeId}/goal */
 export const useSubmitChallengeGoal = () => {
   return useMutation({
-    mutationFn: async ({ challengeId }: { challengeId: string | number }) => {
-      const res = await axios.patch(`/challenge/${challengeId}/goal`);
+    mutationFn: async ({
+      challengeId,
+      goal,
+    }: {
+      challengeId: string | number;
+      goal: string;
+    }) => {
+      const res = await axios.patch(`/challenge/${challengeId}/goal`, { goal });
       return res.data;
     },
   });
