@@ -5,6 +5,9 @@ interface MissionSubmitButtonProps {
   hasContent?: boolean;
   onButtonClick?: () => void;
   className?: string;
+  isEditing?: boolean;
+  onCancelEdit?: () => void;
+  onSaveEdit?: () => void;
 }
 
 const MissionSubmitButton = ({
@@ -12,10 +15,44 @@ const MissionSubmitButton = ({
   hasContent = false,
   onButtonClick,
   className,
+  isEditing = false,
+  onCancelEdit,
+  onSaveEdit,
 }: MissionSubmitButtonProps) => {
-  const buttonText = isSubmitted ? '수정하기' : '제출하기';
+  // 수정 모드일 때 두 개의 버튼 표시
+  if (isEditing) {
+    return (
+      <div className={clsx('mt-10 flex gap-3', className)}>
+        {/* 취소하기 버튼 */}
+        <button
+          className={clsx(
+            'flex-1 cursor-pointer rounded-xs border border-neutral-70 bg-white p-4 text-xsmall16 font-medium text-neutral-40 transition-colors',
+            'hover:bg-neutral-95',
+          )}
+          onClick={onCancelEdit}
+        >
+          취소하기
+        </button>
+        {/* 저장하기 버튼 */}
+        <button
+          className={clsx(
+            'flex-1 cursor-pointer rounded-xs p-4 text-xsmall16 font-medium transition-colors',
+            hasContent
+              ? 'bg-primary text-white hover:opacity-90'
+              : 'cursor-not-allowed bg-neutral-70 text-neutral-100',
+            'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+          )}
+          onClick={onSaveEdit}
+          disabled={!hasContent}
+        >
+          저장하기
+        </button>
+      </div>
+    );
+  }
 
-  // 버튼 색상 로직 수정
+  // 기본 모드: 단일 버튼
+  const buttonText = isSubmitted ? '수정하기' : '제출하기';
   const buttonColor =
     isSubmitted || hasContent
       ? 'bg-primary text-white'
@@ -27,7 +64,7 @@ const MissionSubmitButton = ({
         className={clsx(
           'w-full cursor-pointer rounded-xs p-4 text-xsmall16 font-medium transition-colors',
           buttonColor,
-          'hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+          'hover:opacity-90',
         )}
         onClick={onButtonClick}
         disabled={!hasContent && !isSubmitted}
