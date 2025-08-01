@@ -17,7 +17,10 @@ const MissionFileLink = ({
 }: MissionFileLinkProps) => {
   return (
     <button
-      className={clsx('flex cursor-pointer items-center gap-3', className)}
+      className={clsx(
+        'flex cursor-pointer flex-col gap-0.5 md:flex-row md:items-center md:gap-3',
+        className,
+      )}
     >
       <h4 className="w-[74px] text-xsmall16 font-medium text-neutral-0">
         {title}

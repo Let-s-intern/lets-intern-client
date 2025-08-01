@@ -74,7 +74,7 @@ const BankSelectDropdown = ({
       {/* 드롭다운 입력 필드 */}
       <div
         className={clsx(
-          'flex h-[44px] w-[184px] cursor-pointer items-center justify-between',
+          'flex h-[44px] w-full cursor-pointer items-center justify-between md:h-[44px] md:w-[184px]',
           'rounded-xxs border border-neutral-80 bg-white px-3 py-2.5',
           'transition-colors hover:border-neutral-60',
           'focus-within:border-primary focus-within:outline-none',

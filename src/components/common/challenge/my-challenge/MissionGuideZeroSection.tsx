@@ -56,7 +56,7 @@ const MissionGuideZeroSection = ({
       <section className="flex flex-col gap-5 rounded-xs border border-neutral-80 px-4 py-4">
         {/* 환영 섹션 */}
         <section className="flex flex-col gap-4">
-          <p className="whitespace-pre-wrap text-xsmall16 text-neutral-0">
+          <p className="whitespace-pre-wrap text-xsmall14 text-neutral-0 md:text-xsmall16">
             {missionData?.missionInfo?.description ||
               `환영합니다! \n챌린지가 시작하기 전에, \n전체적인 챌린지 흐름과 일정, 미션 제출 방법 등을 미리 알아보는 시간이에요. \n\n이번 0회차에서는 아래 3가지를 먼저 확인해주세요!`}
           </p>
@@ -68,7 +68,7 @@ const MissionGuideZeroSection = ({
           <h3 className="text-xsmall16 font-semibold text-neutral-10">
             미션 가이드
           </h3>
-          <p className="whitespace-pre-wrap text-xsmall16 text-neutral-10">
+          <p className="whitespace-pre-wrap text-xsmall14 text-neutral-10 md:text-xsmall16">
             {missionData?.missionInfo?.guide ||
               `이번 가이드는 앞으로의 챌린지를 어렵게 않게 이야기하기 위한 작은 준비 운동 같은 거예요. \n콘텐츠를 따라 직무 인터뷰를 정독하며 여러분이 이해한 방식대로 정리합시다 😀`}
           </p>
