@@ -79,33 +79,17 @@ const MissionGuideZeroSection = ({
         <section className="flex flex-col gap-4 rounded-xxs bg-neutral-95 p-3 pb-5">
           <div className="flex flex-col">
             <h3 className="text-xsmall16 font-semibold text-neutral-0">
-              미션 자료 모음
+              OT 자료
             </h3>
-            <p className="text-xsmall16 text-neutral-10">
-              자료를 확인하고 미션을 진행해 주세요.
-            </p>
           </div>
           {/* 필수 콘텐츠 + 추가 콘텐츠 섹션 */}
           <div className="flex flex-col gap-2">
-            {/* 필수 콘텐츠 */}
-            {missionData?.missionInfo?.essentialContentsList?.map(
-              (content, index) => (
-                <MissionFileLink
-                  key={content.id || index}
-                  title="필수 콘텐츠"
-                  fileName={content.title || ''}
-                  disabled={false}
-                />
-              ),
-            )}
-
             {/* 추가 콘텐츠 */}
             <div className="flex flex-col gap-2">
               {missionData?.missionInfo?.additionalContentsList?.map(
                 (content, index) => (
                   <MissionFileLink
                     key={content.id || index}
-                    title={index === 0 ? '추가 콘텐츠' : ''}
                     fileName={content.title || ''}
                     disabled={false}
                   />
