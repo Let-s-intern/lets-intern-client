@@ -92,7 +92,7 @@ const DashboardMyMissionPage = () => {
     ? getIsChallengeSubmitDone(programEndDate)
     : undefined;
 
-  const response = useChallengeMissionAttendanceInfoQuery({
+  const { data: missionData } = useChallengeMissionAttendanceInfoQuery({
     challengeId: Number(params.programId),
     missionId: selectedMissionId,
     enabled: !!selectedMissionId && selectedMissionId > 0,
@@ -146,7 +146,7 @@ const DashboardMyMissionPage = () => {
         <div className="mt-8">
           <MissionGuideSection
             todayTh={todayTh}
-            missionData={response.data}
+            missionData={missionData}
             selectedMissionTh={selectedMissionTh}
           />
         </div>
