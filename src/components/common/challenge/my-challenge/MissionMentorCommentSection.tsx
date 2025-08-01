@@ -10,7 +10,7 @@ const MissionMentorCommentSection = () => {
           </span>
         </div>
         <div className="rounded-xxs border border-neutral-80 bg-white p-3">
-          <p className="min-h-[120px] text-xsmall16 leading-relaxed text-neutral-0">
+          <p className="min-h-[120px] text-xsmall14 leading-relaxed text-neutral-0 md:text-xsmall16">
             너무 너무 너무 잘했네요.너무 너무 너무 잘했네요.너무 너무 너무
             잘했네요.너무 너무 너무 잘했네요.너무 너무 너무 잘했네요.너무 너무
             너무 잘했네요.너무 너무 너무 잘했네요.너무 너무 너무 잘했네요.너무
@@ -32,7 +32,7 @@ const MissionMentorCommentSection = () => {
           </span>
         </div>
         <div className="rounded-xxs border border-neutral-80 bg-white p-3">
-          <p className="min-h-[120px] text-xsmall16 leading-relaxed text-neutral-0">
+          <p className="min-h-[120px] text-xsmall14 leading-relaxed text-neutral-0 md:text-xsmall16">
             너무 너무 너무 잘했네요.
           </p>
         </div>
