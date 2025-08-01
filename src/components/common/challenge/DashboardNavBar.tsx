@@ -44,7 +44,7 @@ const DashboardNavBar = () => {
               나의 미션
             </Link>
           </li>
-          <li className="flex-shrink-0 md:flex-shrink">
+          {/* <li className="flex-shrink-0 md:flex-shrink">
             <Link
               to={`/challenge/${params.programId}/dashboard/${applicationId}/guide`}
               className={clsx(
@@ -57,7 +57,7 @@ const DashboardNavBar = () => {
             >
               공지사항 / 챌린지 가이드
             </Link>
-          </li>
+          </li> */}
         </ul>
       </nav>
     </>
