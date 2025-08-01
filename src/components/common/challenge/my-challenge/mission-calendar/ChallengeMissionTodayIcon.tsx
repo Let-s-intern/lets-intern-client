@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import { Link, useParams } from 'react-router-dom';
 
 import { Schedule, ScheduleMission } from '../../../../../schema';
 import { challengeMissionSubmitToBadge } from '../../../../../utils/convert';
@@ -12,18 +11,15 @@ interface Props {
 }
 // 새로운 버전
 const MissionTodayIcon = ({ mission, className, attendance }: Props) => {
-  const params = useParams();
   const { text, style, icon } = challengeMissionSubmitToBadge({
     status: attendance.status,
     result: attendance.result,
   });
+  const isWaiting = attendance.result === 'WAITING';
+  const isBonus = mission.th === 100;
 
   return (
-    <Link
-      to={`/challenge/${params.programId}/dashboard/${params.applicationId}/missions`}
-      replace
-      className={clsx('flex cursor-pointer flex-col', className)}
-    >
+    <div className={clsx('flex flex-col', className)}>
       <i className="block h-3.5 w-3.5">
         <img src={icon} alt="mission status icon" className="w-full" />
       </i>
@@ -39,9 +35,14 @@ const MissionTodayIcon = ({ mission, className, attendance }: Props) => {
               : '',
           )}
         >
-          {attendance.result === 'WAITING' ? (
+          {isWaiting ? (
             <>
               제출
+              <br />
+            </>
+          ) : isBonus ? (
+            <>
+              보너스
               <br />
             </>
           ) : (
@@ -53,7 +54,7 @@ const MissionTodayIcon = ({ mission, className, attendance }: Props) => {
           {text}
         </span>
       </div>
-    </Link>
+    </div>
   );
 };
 

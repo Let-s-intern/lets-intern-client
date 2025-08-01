@@ -390,7 +390,7 @@ export const challengeMissionSubmitToBadge = ({
     };
   }
 
-  if (status === 'UPDATED' && result === 'WRONG') {
+  if ((status === 'UPDATED' || status === 'ABSENT') && result === 'WRONG') {
     return unsubmitted;
   }
 
