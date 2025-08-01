@@ -1,12 +1,13 @@
-import dayjs from '@/lib/dayjs';
+import { UserChallengeMissionWithAttendance } from '@/schema';
 import { clsx } from 'clsx';
+import { Dayjs } from 'dayjs';
 import MissionFileLink from './MissionFileLink';
 import MissionHeaderSection from './MissionHeaderSection';
 
 interface MissionGuideZeroSectionProps {
   className?: string;
   todayTh: number;
-  missionData?: any; // API 응답 데이터
+  missionData?: UserChallengeMissionWithAttendance; // API 응답 데이터
   selectedMissionTh?: number; // 선택된 미션의 회차
 }
 
@@ -17,10 +18,10 @@ const MissionGuideZeroSection = ({
   selectedMissionTh,
 }: MissionGuideZeroSectionProps) => {
   // endDate를 월일 시간 형식으로 변환
-  const formatDeadline = (endDate: string) => {
+  const formatDeadline = (endDate?: Dayjs) => {
     if (!endDate) return '04.04 11:59';
-    const date = dayjs(endDate);
-    return date.format('MM.DD HH:mm');
+
+    return endDate.format('MM.DD HH:mm');
   };
 
   // YouTube 링크를 임베드 링크로 변환
@@ -78,34 +79,18 @@ const MissionGuideZeroSection = ({
         <section className="flex flex-col gap-4 rounded-xxs bg-neutral-95 p-3 pb-5">
           <div className="flex flex-col">
             <h3 className="text-xsmall16 font-semibold text-neutral-0">
-              미션 자료 모음
+              OT 자료
             </h3>
-            <p className="text-xsmall16 text-neutral-10">
-              자료를 확인하고 미션을 진행해 주세요.
-            </p>
           </div>
           {/* 필수 콘텐츠 + 추가 콘텐츠 섹션 */}
           <div className="flex flex-col gap-2">
-            {/* 필수 콘텐츠 */}
-            {missionData?.missionInfo?.essentialContentsList?.map(
-              (content: any, index: number) => (
-                <MissionFileLink
-                  key={content.id || index}
-                  title="필수 콘텐츠"
-                  fileName={content.title}
-                  disabled={false}
-                />
-              ),
-            )}
-
             {/* 추가 콘텐츠 */}
             <div className="flex flex-col gap-2">
               {missionData?.missionInfo?.additionalContentsList?.map(
-                (content: any, index: number) => (
+                (content, index) => (
                   <MissionFileLink
                     key={content.id || index}
-                    title={index === 0 ? '추가 콘텐츠' : ''}
-                    fileName={content.title}
+                    fileName={content.title || ''}
                     disabled={false}
                   />
                 ),

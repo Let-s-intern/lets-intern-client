@@ -1,7 +1,7 @@
 import { clsx } from 'clsx';
 
 interface MissionFileLinkProps {
-  title: string;
+  title?: string;
   fileName: string;
   disabled?: boolean;
   className?: string;
@@ -22,9 +22,11 @@ const MissionFileLink = ({
         className,
       )}
     >
-      <h4 className="w-[74px] text-xsmall16 font-medium text-neutral-0">
-        {title}
-      </h4>
+      {title && (
+        <h4 className="w-[74px] text-xsmall16 font-medium text-neutral-0">
+          {title}
+        </h4>
+      )}
       <div
         className="flex items-center gap-1"
         onClick={disabled ? undefined : onClick}
