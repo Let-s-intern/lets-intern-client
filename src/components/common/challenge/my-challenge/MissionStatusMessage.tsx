@@ -17,10 +17,6 @@ const MissionStatusMessage = ({
   className,
 }: MissionStatusMessageProps) => {
   const getMessageParts = (): MessagePart[] => {
-    if (todayTh === 0) {
-      return [{ text: '챌린지가 시작됐어요! 끝까지 완주해 봅시다!' }];
-    }
-
     if (todayTh >= 1 && todayTh <= 8) {
       return [
         { text: '오늘은 ', className: 'font-bold text-neutral-0' },
@@ -35,7 +31,13 @@ const MissionStatusMessage = ({
         { text: ' 완료하고 리워드 챙겨가세요!' },
       ];
     }
-
+    if (todayTh === 101) {
+      return [
+        { text: '오늘은 ', className: 'font-bold text-neutral-0' },
+        { text: `0회차` },
+        { text: ' 미션날입니다!', className: 'font-bold text-neutral-0' },
+      ];
+    }
     // 기본값
     return [{ text: '챌린지가 시작됐어요! 함께 끝까지 완주해봐요!' }];
   };
