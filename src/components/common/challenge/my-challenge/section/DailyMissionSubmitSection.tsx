@@ -1,3 +1,6 @@
+/**
+ * @deprecated
+ */
 import {
   useGetChallengeReviewStatus,
   usePatchChallengeAttendance,

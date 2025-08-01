@@ -13,10 +13,9 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-const getIsChallengeDone = (endDate: string) => {
-  return dayjs(new Date()).isAfter(dayjs(endDate));
+const getIsChallengeSubmitDone = (endDate: string) => {
+  return dayjs(new Date()).isAfter(dayjs(endDate).add(2, 'day'));
 };
-
 const DashboardMyMissionPage = () => {
   const params = useParams<{ programId: string; applicationId: string }>();
 
@@ -39,7 +38,6 @@ const DashboardMyMissionPage = () => {
       schedules.reduce((th, schedule) => {
         return Math.max(th, schedule.missionInfo.th || 0);
       }, 0) + 1;
-
     return initialValue;
   });
 
@@ -78,12 +76,11 @@ const DashboardMyMissionPage = () => {
         }, 0) + 1;
 
       setTodayTh(newTodayTh);
-      setTodayTh(0);
     }
   }, [myDailyMission, schedules]);
 
   const programEndDate = programData?.data?.endDate;
-  const isChallengeDone = getIsChallengeDone(programEndDate);
+  const isChallengeDone = getIsChallengeSubmitDone(programEndDate);
 
   const { data: missionData } = useChallengeMissionAttendanceInfoQuery({
     challengeId: Number(params.programId),
@@ -103,7 +100,6 @@ const DashboardMyMissionPage = () => {
   const handlePopupClick = () => {
     setSelectedMission(100, 100);
   };
-
   return (
     <main>
       <header>
@@ -116,14 +112,6 @@ const DashboardMyMissionPage = () => {
         schedules={schedules}
         todayTh={todayTh}
         isDone={isChallengeDone}
-        // onMissionClick={(missionId: number) => {
-        //   setSelectedMissionId(missionId);
-        //   // 선택된 미션의 회차 찾기
-        //   const selectedSchedule = schedules.find(
-        //     (schedule) => schedule.missionInfo.id === missionId,
-        //   );
-        //   setSelectedMissionTh(selectedSchedule?.missionInfo?.th || 0);
-        // }}
         onMissionClick={(missionId: number) => {
           const selectedSchedule = schedules.find(
             (schedule) => schedule.missionInfo.id === missionId,

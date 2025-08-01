@@ -20,6 +20,9 @@ const MissionHeaderSection = ({
     if (todayTh === 100) {
       return '보너스 미션';
     }
+    if (todayTh === 101) {
+      return '0회차 미션';
+    }
     return `${todayTh}회차 미션`;
   };
 

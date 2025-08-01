@@ -43,7 +43,7 @@ const DailyChallengeMissionSection = ({
 
   const submitted =
     typeof todayTh === 'number' &&
-    schedules[todayTh - 1]?.attendanceInfo?.submitted;
+    schedules[todayTh]?.attendanceInfo?.submitted;
 
   return (
     <section

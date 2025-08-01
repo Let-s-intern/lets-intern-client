@@ -98,7 +98,6 @@ const ApplicationCard = ({
             {joinedChallengeOptions && (
               <div className="flex gap-1.5 md:justify-start">
                 <span className="shrink-0 text-neutral-0">신청플랜</span>
-                {/* <span className="font-medium text-primary-dark">{`${challengePricePlan} (${joinedChallengeOptions})`}</span> */}
                 <span className="font-medium text-primary-dark">
                   {challengePricePlan}
                 </span>

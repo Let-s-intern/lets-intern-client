@@ -9,6 +9,8 @@ interface LinkInputSectionProps {
   text?: string;
   todayTh?: number;
   initialLink?: string;
+  isSubmitted?: boolean;
+  isEditing?: boolean;
 }
 
 const LinkInputSection = ({
@@ -19,6 +21,8 @@ const LinkInputSection = ({
   text,
   todayTh,
   initialLink = '',
+  isSubmitted = false,
+  isEditing = false,
 }: LinkInputSectionProps) => {
   const [linkValue, setLinkValue] = useState(initialLink);
   const [linkError, setLinkError] = useState('');
@@ -26,32 +30,49 @@ const LinkInputSection = ({
   const [isVerified, setIsVerified] = useState(!!initialLink);
   const [verifiedLink, setVerifiedLink] = useState(initialLink); // 확인된 링크 저장
 
-  // initialLink가 변경될 때마다 상태 업데이트
+  // initialLink나 상태가 변경될 때마다 상태 업데이트
   useEffect(() => {
     setLinkValue(initialLink);
     const hasLink = !!initialLink;
-    setIsVerified(hasLink);
-    setVerifiedLink(initialLink);
-    // 기존 에러/성공 메시지 초기화
-    setLinkError('');
-    setLinkSuccess('');
-    // 부모 컴포넌트에 상태 알림
-    onLinkVerified?.(hasLink);
-    onLinkChange?.(initialLink);
-  }, [initialLink, onLinkVerified, onLinkChange]);
+
+    // 이미 제출된 상태라면 링크가 확인된 상태로 설정
+    if (isSubmitted && hasLink) {
+      setIsVerified(true);
+      setVerifiedLink(initialLink);
+      setLinkError('');
+      setLinkSuccess('');
+      onLinkVerified?.(true);
+    } else if (hasLink) {
+      // 새로운 링크가 있지만 아직 확인되지 않은 상태
+      setIsVerified(false);
+      setVerifiedLink('');
+      setLinkError('');
+      setLinkSuccess('');
+      onLinkVerified?.(false);
+    } else {
+      // 링크가 없는 상태
+      setIsVerified(false);
+      setVerifiedLink('');
+      setLinkError('');
+      setLinkSuccess('');
+      onLinkVerified?.(false);
+    }
+  }, [initialLink, isSubmitted, isEditing]); // isSubmitted, isEditing 추가
 
   const handleLinkChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
     setLinkValue(value);
     onLinkChange?.(value);
 
-    // 링크가 변경되면 확인 상태 초기화
-    if (value !== verifiedLink) {
-      setIsVerified(false);
-      onLinkVerified?.(false);
-      setVerifiedLink('');
-      setLinkError('');
-      setLinkSuccess('');
+    // 수정 중이거나 새로 입력하는 경우에만 확인 상태 초기화
+    if (!isSubmitted || isEditing) {
+      if (value !== verifiedLink) {
+        setIsVerified(false);
+        onLinkVerified?.(false);
+        setVerifiedLink('');
+        setLinkError('');
+        setLinkSuccess('');
+      }
     }
   };
 
@@ -143,7 +164,7 @@ const LinkInputSection = ({
           placeholder={'링크를 입력해주세요.'}
           value={linkValue}
           onChange={handleLinkChange}
-          disabled={disabled}
+          disabled={disabled || (isSubmitted && !isEditing)}
         />
         <button
           className={clsx(

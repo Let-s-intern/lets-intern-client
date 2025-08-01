@@ -1,6 +1,9 @@
 import { clsx } from 'clsx';
 import { useEffect, useState } from 'react';
-import { usePatchMission, useSubmitMission } from '../../../../api/attendance';
+import {
+  usePatchAttendance,
+  useSubmitMission,
+} from '../../../../api/attendance';
 import LinkInputSection from './LinkInputSection';
 import MissionSubmitButton from './MissionSubmitButton';
 import MissionToast from './MissionToast';
@@ -36,6 +39,9 @@ const MissionSubmitRegularSection = ({
   const [linkValue, setLinkValue] = useState(attendanceInfo?.link || '');
   const [isLinkVerified, setIsLinkVerified] = useState(!!attendanceInfo?.link);
   const [isEditing, setIsEditing] = useState(false);
+  const [currentAttendanceId, setCurrentAttendanceId] = useState(
+    attendanceInfo?.id,
+  );
 
   // 원본 데이터 저장 (취소 시 복구용)
   const [originalTextareaValue, setOriginalTextareaValue] = useState(
@@ -46,23 +52,27 @@ const MissionSubmitRegularSection = ({
   );
 
   const submitMission = useSubmitMission();
-  const patchMission = usePatchMission();
+  const patchAttendance = usePatchAttendance();
 
-  // attendanceInfo가 변경될 때마다 상태 업데이트
+  // attendanceInfo가 변경될 때마다 상태 업데이트 (다른 미션인 경우에만)
   useEffect(() => {
-    const reviewValue = attendanceInfo?.review || '';
-    const linkValue = attendanceInfo?.link || '';
+    // 실제로 다른 미션인지 확인
+    if (attendanceInfo?.id !== currentAttendanceId) {
+      const reviewValue = attendanceInfo?.review || '';
+      const linkValue = attendanceInfo?.link || '';
 
-    setTextareaValue(reviewValue);
-    setIsSubmitted(attendanceInfo?.submitted === true);
-    setLinkValue(linkValue);
-    setIsLinkVerified(!!linkValue);
-    setIsEditing(false); // 새 미션 선택 시 수정 모드 해제
+      setTextareaValue(reviewValue);
+      setIsSubmitted(attendanceInfo?.submitted === true);
+      setLinkValue(linkValue);
+      setIsLinkVerified(!!linkValue);
+      setIsEditing(false); // 새 미션 선택 시 수정 모드 해제
 
-    // 원본 데이터도 업데이트
-    setOriginalTextareaValue(reviewValue);
-    setOriginalLinkValue(linkValue);
-  }, [attendanceInfo]);
+      // 원본 데이터도 업데이트
+      setOriginalTextareaValue(reviewValue);
+      setOriginalLinkValue(linkValue);
+      setCurrentAttendanceId(attendanceInfo?.id);
+    }
+  }, [attendanceInfo, missionId, currentAttendanceId]);
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTextareaValue(e.target.value);
@@ -112,13 +122,13 @@ const MissionSubmitRegularSection = ({
   };
 
   const handleSaveEdit = async () => {
-    if (!missionId || missionId === 0) {
+    if (!attendanceInfo?.id) {
       return;
     }
 
     try {
-      await patchMission.mutateAsync({
-        missionId,
+      await patchAttendance.mutateAsync({
+        attendanceId: attendanceInfo.id,
         link: linkValue,
         review: textareaValue,
       });

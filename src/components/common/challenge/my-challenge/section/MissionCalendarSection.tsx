@@ -1,7 +1,5 @@
+import MissionCalendar from '@/components/common/challenge/my-challenge/mission-calendar/ChallengeMissionCalendar';
 import { Schedule } from '../../../../../schema';
-import MissionTooltipQuestion from '../../ui/tooltip-question/MissionTooltipQuestion';
-import MissionCalendar from '../mission-calendar/ChallengeMissionCalendar';
-
 interface Props {
   schedules: Schedule[];
   todayTh: number;
@@ -19,29 +17,13 @@ const MissionCalendarSection = ({
 }: Props) => {
   return (
     <section>
-      <div className="flex items-center gap-2">
-        <h2 className="text-lg font-semibold">
-          {isDone ? (
-            <>챌린지가 종료되었습니다.</>
-          ) : (
-            <>
-              오늘은&nbsp;
-              <strong className="font-semibold text-primary">
-                {todayTh}회차
-              </strong>{' '}
-              미션 날이에요
-            </>
-          )}
-        </h2>
-        <MissionTooltipQuestion />
-      </div>
+      <div className="flex items-center gap-2"></div>
       <MissionCalendar
-        className="mt-4"
+        className="mt-3"
         schedules={schedules}
         todayTh={todayTh}
         isDone={isDone}
         onMissionClick={onMissionClick}
-        selectedMissionId={selectedMissionId}
       />
     </section>
   );
