@@ -105,12 +105,12 @@ const LinkInputSection = ({
   return (
     <section className={clsx(className)}>
       <div className="mb-1.5 transition-all delay-100 duration-500 ease-out">
-        <div className="mb-1.5 flex items-center gap-2">
-          <span className="text-xsmall16 font-semibold text-neutral-0">
+        <div className="mb-1 flex items-center gap-2 md:mb-1.5">
+          <span className="text-xsmall14 font-semibold text-neutral-0 md:text-xsmall16">
             링크
           </span>
         </div>
-        <div className="rounded whitespace-pre-line bg-neutral-95 px-3 py-3 text-xsmall14 text-neutral-10">
+        <div className="rounded mb-3 whitespace-pre-line bg-neutral-95 px-3 py-3 text-xsmall14 text-neutral-10 md:mb-0">
           {text ||
             '미션 링크는 .notion.site 형식의 퍼블릭 링크만 입력 가능합니다.\n제출 후, 미션과 소감을 카카오톡으로 공유해야 제출이 인정됩니다.'}
         </div>
@@ -118,8 +118,8 @@ const LinkInputSection = ({
       <div className="flex gap-2 transition-all delay-200 duration-500 ease-out">
         <textarea
           className={clsx(
-            'flex-1 resize-none rounded-xxs border bg-white',
-            'px-3 py-2 text-xsmall16 text-neutral-0 placeholder:text-neutral-50',
+            'flex-1 resize-none items-center rounded-xxs border bg-white',
+            'px-3 py-2 text-xsmall14 text-neutral-0 placeholder:text-neutral-50 md:text-xsmall16',
             'h-[44px] outline-none focus:border-primary',
             'disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-50',
             linkError ? 'border-red-500' : 'border-neutral-80',
