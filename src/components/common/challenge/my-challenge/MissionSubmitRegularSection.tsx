@@ -36,6 +36,9 @@ const MissionSubmitRegularSection = ({
   const [linkValue, setLinkValue] = useState(attendanceInfo?.link || '');
   const [isLinkVerified, setIsLinkVerified] = useState(!!attendanceInfo?.link);
   const [isEditing, setIsEditing] = useState(false);
+  const [currentAttendanceId, setCurrentAttendanceId] = useState(
+    attendanceInfo?.id,
+  );
 
   // 원본 데이터 저장 (취소 시 복구용)
   const [originalTextareaValue, setOriginalTextareaValue] = useState(
@@ -48,21 +51,25 @@ const MissionSubmitRegularSection = ({
   const submitMission = useSubmitMission();
   const patchMission = usePatchMission();
 
-  // attendanceInfo가 변경될 때마다 상태 업데이트
+  // attendanceInfo가 변경될 때마다 상태 업데이트 (다른 미션인 경우에만)
   useEffect(() => {
-    const reviewValue = attendanceInfo?.review || '';
-    const linkValue = attendanceInfo?.link || '';
+    // 실제로 다른 미션인지 확인
+    if (attendanceInfo?.id !== currentAttendanceId) {
+      const reviewValue = attendanceInfo?.review || '';
+      const linkValue = attendanceInfo?.link || '';
 
-    setTextareaValue(reviewValue);
-    setIsSubmitted(attendanceInfo?.submitted === true);
-    setLinkValue(linkValue);
-    setIsLinkVerified(!!linkValue);
-    setIsEditing(false); // 새 미션 선택 시 수정 모드 해제
+      setTextareaValue(reviewValue);
+      setIsSubmitted(attendanceInfo?.submitted === true);
+      setLinkValue(linkValue);
+      setIsLinkVerified(!!linkValue);
+      setIsEditing(false); // 새 미션 선택 시 수정 모드 해제
 
-    // 원본 데이터도 업데이트
-    setOriginalTextareaValue(reviewValue);
-    setOriginalLinkValue(linkValue);
-  }, [attendanceInfo]);
+      // 원본 데이터도 업데이트
+      setOriginalTextareaValue(reviewValue);
+      setOriginalLinkValue(linkValue);
+      setCurrentAttendanceId(attendanceInfo?.id);
+    }
+  }, [attendanceInfo, missionId, currentAttendanceId]);
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTextareaValue(e.target.value);
@@ -143,11 +150,13 @@ const MissionSubmitRegularSection = ({
 
       {/* 링크 섹션 */}
       <LinkInputSection
-        disabled={isSubmitted && !isEditing}
+        disabled={false}
         onLinkChange={handleLinkChange}
         onLinkVerified={handleLinkVerified}
         todayTh={todayTh}
         initialLink={linkValue}
+        isSubmitted={isSubmitted}
+        isEditing={isEditing}
         text={`미션 링크는 .notion.site 형식의 퍼블릭 링크만 입력 가능합니다.
           제출 후, 미션과 소감을 카카오톡으로 공유해야 제출이 인정됩니다.`}
       />
