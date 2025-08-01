@@ -63,7 +63,7 @@ const MissionSubmitZeroSection = ({
       <textarea
         className={clsx(
           'w-full resize-none rounded-xxs border border-neutral-80 bg-white',
-          'p-3 text-base text-neutral-0 placeholder:text-neutral-50',
+          'p-3 text-xsmall14 text-neutral-0 placeholder:text-neutral-50 md:text-base',
           'min-h-[120px] outline-none focus:border-primary',
           'disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-50',
         )}
