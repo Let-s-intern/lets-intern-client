@@ -91,7 +91,7 @@ const DashboardLayout = () => {
     <div className="min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-6rem)]">
       <div className="mx-auto flex flex-col pb-16 md:mt-16 md:w-[1120px] md:flex-row md:gap-12">
         <DashboardNavBar />
-        <div className="min-w-0 flex-1">
+        <div className="mt-8 min-w-0 flex-1 px-5 md:mt-0 md:px-0">
           <Outlet />
         </div>
       </div>
