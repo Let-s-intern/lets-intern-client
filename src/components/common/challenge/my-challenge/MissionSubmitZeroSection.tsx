@@ -1,4 +1,4 @@
-import { useSubmitChallengeGoal } from '@/api/challenge';
+import { useGetChallengeGoal, useSubmitChallengeGoal } from '@/api/challenge';
 import { clsx } from 'clsx';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -17,25 +17,28 @@ const MissionSubmitZeroSection = ({
   missionId,
 }: MissionSubmitZeroSectionProps) => {
   const params = useParams<{ programId: string }>();
-  const [textareaValue, setTextareaValue] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [showToast, setShowToast] = useState(false);
+  const programId = params.programId;
 
+  const { data: goalData } = useGetChallengeGoal(programId);
   // 챌린지 목표 제출 mutation
   const submitChallengeGoal = useSubmitChallengeGoal();
+
+  const [textareaValue, setTextareaValue] = useState(goalData?.goal || '');
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTextareaValue(e.target.value);
   };
 
   const handleSubmit = async () => {
-    if (isSubmitted) {
+    if (isSubmitted || !programId) {
       setIsSubmitted(false);
     } else {
       try {
-        console.log(params.programId);
         await submitChallengeGoal.mutateAsync({
-          challengeId: Number(params.programId),
+          challengeId: programId,
+          goal: textareaValue,
         });
         setIsSubmitted(true);
         setShowToast(true);
