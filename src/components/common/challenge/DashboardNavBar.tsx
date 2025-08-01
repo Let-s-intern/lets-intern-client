@@ -13,7 +13,7 @@ const DashboardNavBar = () => {
 
   return (
     <>
-      <nav className="w-[220px]">
+      <nav className="hidden w-[220px] md:block">
         <ul className="sticky top-[180px] flex flex-col gap-1">
           <li>
             <Link
