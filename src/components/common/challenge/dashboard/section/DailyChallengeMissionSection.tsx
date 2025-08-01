@@ -55,7 +55,9 @@ const DailyChallengeMissionSection = ({
       <div className="flex flex-col border-b px-4 py-3 md:flex-row md:items-center md:py-4">
         <h2 className="flex flex-row">
           <span className="relative inline-block font-semibold text-neutral-10 after:mx-[6px] after:h-[18px] after:border-r after:border-neutral-60 after:content-['']">
-            {dailyMission?.th}회차
+            {dailyMission?.th === 100
+              ? '보너스 회차'
+              : `${dailyMission?.th}회차`}
           </span>
           <span className="mr-2 font-semibold text-neutral-10">
             {dailyMission?.title}
