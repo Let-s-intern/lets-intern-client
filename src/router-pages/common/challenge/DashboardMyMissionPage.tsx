@@ -17,10 +17,6 @@ const getIsChallengeDone = (endDate: string) => {
   return dayjs(new Date()).isAfter(dayjs(endDate));
 };
 
-const getIsChallengeSubmitDone = (endDate: string) => {
-  return dayjs(new Date()).isAfter(dayjs(endDate).add(2, 'day'));
-};
-
 const DashboardMyMissionPage = () => {
   const params = useParams<{ programId: string; applicationId: string }>();
 
@@ -88,9 +84,6 @@ const DashboardMyMissionPage = () => {
 
   const programEndDate = programData?.data?.endDate;
   const isChallengeDone = getIsChallengeDone(programEndDate);
-  const isChallengeSubmitDone = programEndDate
-    ? getIsChallengeSubmitDone(programEndDate)
-    : undefined;
 
   const { data: missionData } = useChallengeMissionAttendanceInfoQuery({
     challengeId: Number(params.programId),
@@ -162,8 +155,13 @@ const DashboardMyMissionPage = () => {
         <div className="mt-6">
           <MissionSubmitSection
             todayTh={selectedMissionTh}
-            missionId={selectedMissionTh === 0 ? selectedMissionId : undefined}
+            missionId={selectedMissionId}
             selectedMissionTh={selectedMissionTh}
+            attendanceInfo={
+              schedules.find(
+                (schedule) => schedule.missionInfo.id === selectedMissionId,
+              )?.attendanceInfo
+            }
             todayId={
               schedules.find((schedule) => schedule.missionInfo.th === todayTh)
                 ?.missionInfo.id

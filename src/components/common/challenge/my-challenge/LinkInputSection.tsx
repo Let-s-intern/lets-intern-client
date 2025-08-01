@@ -1,5 +1,5 @@
 import { clsx } from 'clsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface LinkInputSectionProps {
   className?: string;
@@ -8,6 +8,7 @@ interface LinkInputSectionProps {
   onLinkVerified?: (isVerified: boolean) => void;
   text?: string;
   todayTh?: number;
+  initialLink?: string;
 }
 
 const LinkInputSection = ({
@@ -17,12 +18,27 @@ const LinkInputSection = ({
   onLinkVerified,
   text,
   todayTh,
+  initialLink = '',
 }: LinkInputSectionProps) => {
-  const [linkValue, setLinkValue] = useState('');
+  const [linkValue, setLinkValue] = useState(initialLink);
   const [linkError, setLinkError] = useState('');
   const [linkSuccess, setLinkSuccess] = useState('');
-  const [isVerified, setIsVerified] = useState(false);
-  const [verifiedLink, setVerifiedLink] = useState(''); // 확인된 링크 저장
+  const [isVerified, setIsVerified] = useState(!!initialLink);
+  const [verifiedLink, setVerifiedLink] = useState(initialLink); // 확인된 링크 저장
+
+  // initialLink가 변경될 때마다 상태 업데이트
+  useEffect(() => {
+    setLinkValue(initialLink);
+    const hasLink = !!initialLink;
+    setIsVerified(hasLink);
+    setVerifiedLink(initialLink);
+    // 기존 에러/성공 메시지 초기화
+    setLinkError('');
+    setLinkSuccess('');
+    // 부모 컴포넌트에 상태 알림
+    onLinkVerified?.(hasLink);
+    onLinkChange?.(initialLink);
+  }, [initialLink, onLinkVerified, onLinkChange]);
 
   const handleLinkChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
