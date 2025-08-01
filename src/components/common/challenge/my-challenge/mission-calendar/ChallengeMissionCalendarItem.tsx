@@ -56,9 +56,7 @@ const MissionCalendarItem = ({
         ) : (mission.th ?? 0) > todayTh ? (
           <MissionNotStartedIcon schedule={schedule} />
         ) : (
-          (mission.th ?? 0) < todayTh && (
-            <MissionIcon className="mt-3" schedule={schedule} />
-          )
+          (mission.th ?? 0) < todayTh && <MissionIcon schedule={schedule} />
         )}
         {/* 일정 */}
         <span
