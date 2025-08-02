@@ -35,8 +35,9 @@ const MissionSubmitBonusSection = ({
     e: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
     const value = e.target.value;
-    // 입력 중에는 모든 문자 허용 (사용자 경험 개선)
-    setAccountNumber(value);
+    // 숫자만 입력 허용
+    const numericValue = value.replace(/[^0-9]/g, '');
+    setAccountNumber(numericValue);
   };
 
   const handleLinkChange = (link: string) => {
