@@ -68,8 +68,6 @@ function ProgramRecommendSection() {
     setMoreButton(descJson?.operationRecommendMoreButton ?? defaultMoreButton);
   }, [isLoading, descJson]);
 
-  console.log(moreButton);
-
   if (isLoading) return null;
 
   return (

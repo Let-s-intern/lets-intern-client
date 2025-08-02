@@ -105,6 +105,9 @@ const Input = ({
     return textField;
   }
 
+  const currentLength =
+    (value?.length ?? 0) >= maxLength ? maxLength : value?.length || 0;
+
   return (
     <div>
       {textField}
@@ -115,7 +118,7 @@ const Input = ({
             'text-neutral-gray': !focused,
           })}
         >
-          {value?.length || 0} / {maxLength}
+          {currentLength} / {maxLength}
         </span>
       </div>
     </div>
