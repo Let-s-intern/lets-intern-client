@@ -8,7 +8,6 @@ import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import { useMissionStore } from '@/store/useMissionStore';
 import axios from '@/utils/axios';
-import BonusMissionPopup from '@components/common/challenge/my-challenge/BonusMissionPopup';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -16,6 +15,7 @@ import { useParams } from 'react-router-dom';
 const getIsChallengeSubmitDone = (endDate: string) => {
   return dayjs(new Date()).isAfter(dayjs(endDate).add(2, 'day'));
 };
+
 const DashboardMyMissionPage = () => {
   const params = useParams<{ programId: string; applicationId: string }>();
 
@@ -82,11 +82,13 @@ const DashboardMyMissionPage = () => {
   const programEndDate = programData?.data?.endDate;
   const isChallengeDone = getIsChallengeSubmitDone(programEndDate);
 
-  const { data: missionData } = useChallengeMissionAttendanceInfoQuery({
-    challengeId: Number(params.programId),
-    missionId: selectedMissionId,
-    enabled: !!selectedMissionId && selectedMissionId > 0,
-  });
+  const { data: missionData, isError } = useChallengeMissionAttendanceInfoQuery(
+    {
+      challengeId: Number(params.programId),
+      missionId: selectedMissionId,
+      enabled: !!selectedMissionId && selectedMissionId > 0,
+    },
+  );
 
   // 팝업 표시 조건 관리
   const [showPopup, setShowPopup] = useState(true);
@@ -100,6 +102,16 @@ const DashboardMyMissionPage = () => {
   const handlePopupClick = () => {
     setSelectedMission(100, 100);
   };
+
+  useEffect(() => {
+    /** 0회차 미션 미제출 처리 */
+    if (!isError) return;
+
+    alert('0회차 미션을 먼저 제출해주세요.');
+    const zeroThMissionInfo = schedules[0]?.missionInfo;
+    setSelectedMission(zeroThMissionInfo.id, 0);
+  }, [isError, schedules, setSelectedMission]);
+
   return (
     <main>
       <header>
@@ -122,8 +134,6 @@ const DashboardMyMissionPage = () => {
         selectedMissionId={selectedMissionId}
       />
       <div>
-        {/* 보너스 미션 팝업 */}
-
         <div className="mt-8">
           <MissionGuideSection
             todayTh={todayTh}
@@ -131,7 +141,8 @@ const DashboardMyMissionPage = () => {
             selectedMissionTh={selectedMissionTh}
           />
         </div>
-        <div className="relative">
+        {/* 보너스 미션 팝업 (다음 배포) */}
+        {/* <div className="relative">
           <BonusMissionPopup
             isVisible={
               selectedMissionTh == 4 || selectedMissionTh == 6 || showPopup
@@ -139,7 +150,7 @@ const DashboardMyMissionPage = () => {
             onClose={closePopup}
             onPopupClick={handlePopupClick}
           />
-        </div>
+        </div> */}
         <div className="mt-6">
           <MissionSubmitSection
             todayTh={selectedMissionTh}
@@ -158,16 +169,9 @@ const DashboardMyMissionPage = () => {
         </div>
         {/* 멘토 피드백 여부에 따라 값 받고 노출 */}
         <div className="mt-11">
-          <MissionMentorCommentSection />
+          <MissionMentorCommentSection missionId={selectedMissionId} />
         </div>
       </div>
-
-      {/* {myDailyMission?.attendanceInfo && myDailyMission.dailyMission && (
-        <DailyMissionSection myDailyMission={myDailyMission} />
-      )}
-      {typeof isChallengeSubmitDone === 'boolean' && (
-        <OtherMissionSection todayTh={todayTh} isDone={isChallengeSubmitDone} />
-      )} */}
     </main>
   );
 };

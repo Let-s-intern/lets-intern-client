@@ -1,5 +1,5 @@
 import MissionCalendar from '@/components/common/challenge/my-challenge/mission-calendar/ChallengeMissionCalendar';
-import { Schedule } from '../../../../../schema';
+import { Schedule } from '@/schema';
 interface Props {
   schedules: Schedule[];
   todayTh: number;

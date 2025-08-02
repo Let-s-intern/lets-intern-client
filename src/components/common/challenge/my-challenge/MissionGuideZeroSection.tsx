@@ -44,7 +44,7 @@ const MissionGuideZeroSection = ({
 
     return null;
   };
-
+  console.log(missionData?.missionInfo?.additionalContentsList);
   return (
     <div className={clsx('flex flex-col gap-3', className)}>
       {/* 제목 및 마감일 섹션 */}
@@ -92,6 +92,11 @@ const MissionGuideZeroSection = ({
                     key={content.id || index}
                     fileName={content.title || ''}
                     disabled={false}
+                    onClick={() => {
+                      if (content?.link) {
+                        window.open(content?.link, '_blank');
+                      }
+                    }}
                   />
                 ),
               )}
