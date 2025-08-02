@@ -79,16 +79,10 @@ const DailyChallengeMissionSection = ({
           마감기한 {dailyMission?.endDate?.format('MM.DD HH:mm')}까지
         </span>
       </div>
-      <div className="flex-1 overflow-hidden">
-        <div className="h-full p-4">
-          <p className="mb-4 line-clamp-[9] whitespace-pre-line text-xsmall14 text-neutral-0 md:mb-0 md:text-xsmall16">
-            {isBonusMission ? (
-              <BonusMissionContent />
-            ) : (
-              dailyMission?.description
-            )}
-          </p>
-        </div>
+      <div className="flex-1 overflow-hidden p-4">
+        <p className="mb-4 line-clamp-[9] whitespace-pre-line text-xsmall14 text-neutral-0 md:mb-0 md:text-xsmall16">
+          {isBonusMission ? <BonusMissionContent /> : dailyMission?.description}
+        </p>
       </div>
       {!isBeforeStart && (
         <button
