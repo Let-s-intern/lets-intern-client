@@ -1,7 +1,7 @@
 import { useSubmitMission } from '@/api/attendance';
 import { useGetChallengeGoal, useSubmitChallengeGoal } from '@/api/challenge';
 import { clsx } from 'clsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import MissionSubmitButton from './MissionSubmitButton';
 import MissionToast from './MissionToast';
@@ -20,12 +20,12 @@ const MissionSubmitZeroSection = ({
   const params = useParams<{ programId: string }>();
   const programId = params.programId;
 
-  const { data: goalData } = useGetChallengeGoal(programId);
+  const { data: goalData, isLoading } = useGetChallengeGoal(programId);
   // 챌린지 목표 제출 mutation
   const submitChallengeGoal = useSubmitChallengeGoal();
   const submitAttendance = useSubmitMission();
 
-  const [textareaValue, setTextareaValue] = useState(goalData?.goal || '');
+  const [textareaValue, setTextareaValue] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
@@ -43,6 +43,7 @@ const MissionSubmitZeroSection = ({
             challengeId: programId,
             goal: textareaValue,
           }),
+          // 단순 출석 체크용
           submitAttendance.mutateAsync({
             missionId,
             link: 'https://example.com',
@@ -56,6 +57,12 @@ const MissionSubmitZeroSection = ({
       }
     }
   };
+
+  useEffect(() => {
+    /** 상태 초기화 */
+    if (isLoading) return;
+    setTextareaValue(goalData?.goal || '');
+  }, [goalData, isLoading]);
 
   return (
     <section className={clsx('', className)}>
