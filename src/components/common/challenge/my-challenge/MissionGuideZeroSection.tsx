@@ -44,7 +44,7 @@ const MissionGuideZeroSection = ({
 
     return null;
   };
-  console.log(missionData?.missionInfo?.additionalContentsList);
+
   return (
     <div className={clsx('flex flex-col gap-3', className)}>
       {/* 제목 및 마감일 섹션 */}
