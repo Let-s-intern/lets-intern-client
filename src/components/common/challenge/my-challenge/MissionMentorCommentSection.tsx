@@ -18,8 +18,9 @@ const MissionMentorCommentSection = ({ missionId }: Props) => {
 
   const { schedules } = useCurrentChallenge();
   const { selectedMissionTh } = useMissionStore();
-
-  const comment = schedules[selectedMissionTh].attendanceInfo.comments;
+  const scheduleIndex =
+    selectedMissionTh === 100 ? schedules.length - 1 : selectedMissionTh;
+  const comment = schedules[scheduleIndex]?.attendanceInfo.comments;
   const mentorFeedback = feedbackData?.attendanceInfo?.feedback;
   const isNoFeedbackOrComment = !comment && !mentorFeedback;
 
