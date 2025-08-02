@@ -18,6 +18,8 @@ const BankSelectDropdown = ({
 
   // 은행명과 API 코드 매핑
   const bankMapping = {
+    카카오뱅크: 'KAKAO',
+    토스뱅크: 'TOSS',
     KB국민은행: 'KB',
     하나은행: 'HANA',
     우리은행: 'WOORI',
@@ -25,22 +27,20 @@ const BankSelectDropdown = ({
     NH농협은행: 'NH',
     수협은행: 'SH',
     IBK기업은행: 'IBK',
-    새마을금고: 'MG',
-    카카오뱅크: 'KAKAO',
-    토스뱅크: 'TOSS',
+    케이뱅크: 'KBANK',
   };
 
   const banks = [
+    '카카오뱅크',
+    '토스뱅크',
     '신한은행',
     'KB국민은행',
     '우리은행',
     '하나은행',
-    'NH농협은행',
     'IBK기업은행',
+    'NH농협은행',
+    '케이뱅크',
     '수협은행',
-    '새마을금고',
-    '카카오뱅크',
-    '토스뱅크',
   ];
 
   // API 코드를 은행명으로 변환하는 함수
