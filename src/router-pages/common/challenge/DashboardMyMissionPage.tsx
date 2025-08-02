@@ -169,7 +169,7 @@ const DashboardMyMissionPage = () => {
         </div>
         {/* 멘토 피드백 여부에 따라 값 받고 노출 */}
         <div className="mt-11">
-          <MissionMentorCommentSection />
+          <MissionMentorCommentSection missionId={selectedMissionId} />
         </div>
       </div>
     </main>

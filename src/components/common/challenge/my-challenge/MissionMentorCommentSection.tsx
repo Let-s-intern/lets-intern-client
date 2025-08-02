@@ -1,8 +1,25 @@
-const MissionMentorCommentSection = () => {
+import { useChallengeMissionFeedbackQuery } from '@/api/challenge';
+import { useParams } from 'react-router-dom';
+
+interface Props {
+  missionId: string | number;
+}
+
+const MissionMentorCommentSection = ({ missionId }: Props) => {
+  const params = useParams();
+
+  // 피드백 데이터
+  const { data: feedbackData } = useChallengeMissionFeedbackQuery({
+    challengeId: params.programId,
+    missionId,
+  });
+
+  const mentorFeedback = feedbackData?.attendanceInfo?.feedback;
+
   return (
     <section>
       <div className="mb-11 h-px bg-neutral-80" />
-      {/* 코멘트 섹션 */}
+      {/* 코멘트 섹션: 관리자가 남기는 코멘트 */}
       <div className="mb-6">
         <div className="mb-2 rounded-xs bg-primary-5 p-3">
           <span className="text-xsmall16 font-semibold text-primary">
@@ -24,19 +41,21 @@ const MissionMentorCommentSection = () => {
         </div>
       </div>
 
-      {/* 멘토 피드백 섹션 */}
-      <div>
-        <div className="mb-2 rounded-xs bg-primary-5 p-3">
-          <span className="text-xsmall16 font-semibold text-primary">
-            멘토 피드백
-          </span>
+      {/* 멘토 피드백 섹션: 멘토가 남기는 피드백 */}
+      {mentorFeedback && (
+        <div>
+          <div className="mb-2 rounded-xs bg-primary-5 p-3">
+            <span className="text-xsmall16 font-semibold text-primary">
+              멘토 피드백
+            </span>
+          </div>
+          <div className="rounded-xxs border border-neutral-80 bg-white p-3">
+            <p className="min-h-[120px] text-xsmall14 leading-relaxed text-neutral-0 md:text-xsmall16">
+              {mentorFeedback}
+            </p>
+          </div>
         </div>
-        <div className="rounded-xxs border border-neutral-80 bg-white p-3">
-          <p className="min-h-[120px] text-xsmall14 leading-relaxed text-neutral-0 md:text-xsmall16">
-            너무 너무 너무 잘했네요.
-          </p>
-        </div>
-      </div>
+      )}
     </section>
   );
 };
