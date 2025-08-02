@@ -30,7 +30,7 @@ const MissionSubmitBonusSection = ({
   const submitBlogBonus = useSubmitMissionBlogBonus();
 
   const handleAccountNumberChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const value = e.target.value;
     // 숫자만 입력 허용
@@ -115,7 +115,8 @@ const MissionSubmitBonusSection = ({
             onBankSelect={handleBankSelect}
             disabled={isSubmitted}
           />
-          <textarea
+          <input
+            type="number"
             className={clsx(
               'w-full resize-none rounded-xxs border border-neutral-80 bg-white',
               'px-3 py-2 text-base text-neutral-0 placeholder:text-neutral-50',
