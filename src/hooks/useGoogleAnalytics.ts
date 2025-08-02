@@ -29,7 +29,7 @@ interface TrackEventOptions {
  * };
  * ```
  */
-export const useGoogleAnalytics = () => {
+export default function useGoogleAnalytics() {
   /**
    * Google Analytics 이벤트를 추적합니다.
    *
@@ -50,4 +50,4 @@ export const useGoogleAnalytics = () => {
   }, []);
 
   return trackEvent;
-};
+}
