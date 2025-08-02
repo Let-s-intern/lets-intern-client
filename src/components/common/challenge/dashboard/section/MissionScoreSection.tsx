@@ -41,7 +41,7 @@ const MissionScoreSection = ({
   const CERTIFICATE_MIN_SCORE = 80;
 
   return (
-    <section className="relative flex flex-1 flex-col gap-y-4 rounded-xs border border-[#E4E4E7] p-4">
+    <section className="relative flex flex-1 flex-col gap-y-4 rounded-xs border border-[#E4E4E7] p-4 md:h-40">
       <div className="flex flex-1 flex-col gap-3">
         <div className="flex items-center gap-2">
           <h2 className="font-semibold text-neutral-10">미션 점수 현황</h2>
