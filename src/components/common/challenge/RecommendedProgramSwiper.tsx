@@ -80,15 +80,11 @@ function RecommendedProgramSwiper({ programs }: Props) {
                   </div>
                 </div>
 
-                <Link
-                  to={url}
-                  className="flex items-center justify-between"
-                  reloadDocument
-                >
+                <Link to={url} className="flex justify-between" reloadDocument>
                   <span className="font-medium text-neutral-0">
                     {item.recommendCTA || '자세히 보기'}
                   </span>
-                  <ChevronRight size={20} color="#CFCFCF" />
+                  <ChevronRight className="mt-0.5" size={20} color="#CFCFCF" />
                 </Link>
               </div>
             </SwiperSlide>
