@@ -1,7 +1,8 @@
+import { useGetChallengeTitle } from '@/api/challenge';
 import useGoogleAnalytics from '@/hooks/useGoogleAnalytics';
 import { ProgramRecommend } from '@/types/interface';
 import { ChevronRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import 'swiper/css';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
@@ -14,17 +15,23 @@ interface Props {
 }
 
 function RecommendedProgramSwiper({ programs }: Props) {
+  const params = useParams();
+  const programId = params.programId;
+
   const trackEvent = useGoogleAnalytics();
+
+  const { data: challengeTitleData } = useGetChallengeTitle(programId);
 
   const handleClickSlide = (
     clickProgramUrl: string,
-    currentChallengeTitle: string | null,
+    clickProgramName: string | null,
   ) => {
     trackEvent({
       eventName: 'dashboard_programrec',
       eventData: {
         click_program_url: clickProgramUrl,
-        current_dashboard_challenge_name: currentChallengeTitle,
+        click_program_name: clickProgramName,
+        current_dashboard_challenge_name: challengeTitleData?.title,
       },
     });
     window.location.href = clickProgramUrl;
