@@ -32,10 +32,7 @@ const MissionSubmitBonusSection = ({
   const handleAccountNumberChange = (
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    const value = e.target.value;
-    // 숫자만 입력 허용
-    const numericValue = value.replace(/[^0-9]/g, '');
-    setAccountNumber(numericValue);
+    setAccountNumber(e.target.value);
   };
 
   const handleLinkChange = (link: string) => {
@@ -59,14 +56,12 @@ const MissionSubmitBonusSection = ({
         // 제출 시에만 숫자만 추출
         const cleanAccountNumber = accountNumber.replace(/[^0-9]/g, '');
 
-        const response = await submitBlogBonus.mutateAsync({
+        await submitBlogBonus.mutateAsync({
           missionId: todayId,
           url: linkValue,
           accountType: selectedBank,
           accountNum: cleanAccountNumber,
         });
-
-        console.log('보너스 미션 제출 응답:', response);
 
         setIsSubmitted(true);
         setShowToast(true);
