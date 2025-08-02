@@ -79,21 +79,20 @@ const DailyChallengeMissionSection = ({
           마감기한 {dailyMission?.endDate?.format('MM.DD HH:mm')}까지
         </span>
       </div>
-      <div className="flex flex-col justify-between md:h-[304px]">
-        <p className="mb-4 flex-1 whitespace-pre-line p-4 text-xsmall14 text-neutral-0 md:mb-0 md:max-h-[240px] md:overflow-hidden md:text-ellipsis md:whitespace-pre md:text-xsmall16">
+      <div className="flex-1 overflow-hidden p-4">
+        <p className="mb-4 line-clamp-[9] whitespace-pre-line text-xsmall14 text-neutral-0 md:mb-0 md:text-xsmall16">
           {isBonusMission ? <BonusMissionContent /> : dailyMission?.description}
         </p>
-        {!isBeforeStart && (
-          <button
-            onClick={handleClick}
-            className="mx-4 mb-4 rounded-xs bg-primary px-4 py-3 text-center text-white"
-          >
-            {submitted ? '제출 수정하기' : '미션 수행하기'}
-          </button>
-        )}
       </div>
+      {!isBeforeStart && (
+        <button
+          onClick={handleClick}
+          className="mx-4 mb-4 rounded-xs bg-primary px-4 py-3 text-center text-white"
+        >
+          {submitted ? '제출 수정하기' : '미션 수행하기'}
+        </button>
+      )}
     </section>
   );
 };
-
 export default DailyChallengeMissionSection;
