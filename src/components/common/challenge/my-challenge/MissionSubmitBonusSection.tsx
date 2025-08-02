@@ -1,6 +1,7 @@
 import { useSubmitMissionBlogBonus } from '@/api/mission';
+import { Schedule } from '@/schema';
 import { clsx } from 'clsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AgreementCheckbox from './AgreementCheckbox';
 import BankSelectDropdown from './BankSelectDropdown';
 import LinkInputSection from './LinkInputSection';
@@ -12,13 +13,13 @@ interface MissionSubmitBonusSectionProps {
   todayTh: number;
   missionId?: number;
   todayId?: number; // 선택된 미션의 ID
+  attendanceInfo?: Schedule['attendanceInfo'] | null;
 }
 
 const MissionSubmitBonusSection = ({
   className,
-  todayTh,
-  missionId,
   todayId,
+  attendanceInfo,
 }: MissionSubmitBonusSectionProps) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -32,11 +33,9 @@ const MissionSubmitBonusSection = ({
   const submitBlogBonus = useSubmitMissionBlogBonus();
 
   const handleAccountNumberChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    const value = e.target.value;
-    // 입력 중에는 모든 문자 허용 (사용자 경험 개선)
-    setAccountNumber(value);
+    setAccountNumber(e.target.value);
   };
 
   const handleLinkChange = (link: string) => {
@@ -60,14 +59,12 @@ const MissionSubmitBonusSection = ({
         // 제출 시에만 숫자만 추출
         const cleanAccountNumber = accountNumber.replace(/[^0-9]/g, '');
 
-        const response = await submitBlogBonus.mutateAsync({
+        await submitBlogBonus.mutateAsync({
           missionId: todayId,
           url: linkValue,
           accountType: selectedBank,
           accountNum: cleanAccountNumber,
         });
-
-        console.log('보너스 미션 제출 응답:', response);
 
         setIsSubmitted(true);
         setShowToast(true);
@@ -89,6 +86,13 @@ const MissionSubmitBonusSection = ({
     selectedBank.trim().length > 0 &&
     cleanAccountNumber.length > 0;
 
+  useEffect(() => {
+    /** 상태 초기화 */
+    if (!attendanceInfo) return;
+    setIsSubmitted(attendanceInfo.submitted ?? false);
+    setLinkValue(attendanceInfo.link ?? '');
+  }, [attendanceInfo]);
+
   return (
     <section className={clsx('', className)}>
       <h2 className="mb-6 text-small18 font-bold text-neutral-0">
@@ -98,10 +102,11 @@ const MissionSubmitBonusSection = ({
       {/* 블로그 링크 섹션 */}
       <div className="mt-7">
         <LinkInputSection
+          initialLink={linkValue}
           disabled={isSubmitted}
           onLinkChange={handleLinkChange}
           onLinkVerified={handleLinkVerified}
-          text={`링크가 잘 열리는지 확인해주세요.`}
+          text="링크가 잘 열리는지 확인해주세요."
         />
       </div>
 
@@ -116,7 +121,8 @@ const MissionSubmitBonusSection = ({
             onBankSelect={handleBankSelect}
             disabled={isSubmitted}
           />
-          <textarea
+          <input
+            type="number"
             className={clsx(
               'w-full resize-none rounded-xxs border border-neutral-80 bg-white',
               'px-3 py-2 text-base text-neutral-0 placeholder:text-neutral-50',
@@ -152,11 +158,17 @@ const MissionSubmitBonusSection = ({
         </div>
       </div>
 
-      <MissionSubmitButton
-        isSubmitted={isSubmitted}
-        hasContent={canSubmit}
-        onButtonClick={handleSubmit}
-      />
+      {isSubmitted ? (
+        <p className="mt-8 text-center text-small20 font-medium text-neutral-0">
+          이미 보너스 미션에 참여했습니다.
+        </p>
+      ) : (
+        <MissionSubmitButton
+          isSubmitted={isSubmitted}
+          hasContent={canSubmit}
+          onButtonClick={handleSubmit}
+        />
+      )}
 
       <MissionToast isVisible={showToast} onClose={() => setShowToast(false)} />
     </section>

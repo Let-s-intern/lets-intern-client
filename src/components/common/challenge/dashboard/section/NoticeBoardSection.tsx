@@ -1,9 +1,9 @@
+import { ChallengeNotice } from '@/schema';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { GrNext } from 'react-icons/gr';
 import { Link, useParams } from 'react-router-dom';
-import { ChallengeNotice } from '../../../../../schema';
 
 interface INoticeSectionProps {
   notices: ChallengeNotice[];
@@ -31,7 +31,7 @@ const NoticeBoardSection = ({ notices }: INoticeSectionProps) => {
   const hasNewNotice = notices.some((notice) => isNewNotice(notice.createDate));
 
   return (
-    <section className="flex w-full flex-col gap-4">
+    <section className="flex w-full flex-col gap-4 md:h-[188px]">
       <div className="flex flex-1 flex-col gap-3 rounded-xs border border-[#E4E4E7] p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">

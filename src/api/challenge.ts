@@ -650,7 +650,7 @@ export const useChallengeMissionFeedbackQuery = ({
   challengeId,
   missionId,
 }: {
-  challengeId: string | number;
+  challengeId?: string | number;
   missionId: string | number;
 }) => {
   return useQuery({

@@ -76,7 +76,7 @@ const ApplicationCard = ({
                 reloadDocument
                 className="hover:underline"
               >
-                {application.programTitle + ' ' + application.programTitle}
+                {application.programTitle}
               </Link>
             </h2>
             <p className="line-clamp-2 h-10 text-sm text-neutral-30 md:line-clamp-none md:h-auto">

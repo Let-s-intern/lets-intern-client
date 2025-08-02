@@ -1,3 +1,4 @@
+import { Schedule } from '@/schema';
 import { clsx } from 'clsx';
 import MissionSubmitBonusSection from './MissionSubmitBonusSection';
 import MissionSubmitRegularSection from './MissionSubmitRegularSection';
@@ -9,15 +10,7 @@ interface MissionSubmitSectionProps {
   missionId?: number; // 0회차 미션 ID
   selectedMissionTh?: number;
   todayId?: number; // 선택된 미션의 ID
-  attendanceInfo?: {
-    link: string | null;
-    status: 'PRESENT' | 'UPDATED' | 'LATE' | 'ABSENT' | null;
-    id: number | null;
-    submitted: boolean | null;
-    comments: string | null;
-    result: 'WAITING' | 'PASS' | 'WRONG' | null;
-    review?: string | null;
-  } | null;
+  attendanceInfo?: Schedule['attendanceInfo'] | null;
 }
 
 const MissionSubmitSection = ({
@@ -29,18 +22,21 @@ const MissionSubmitSection = ({
   attendanceInfo,
 }: MissionSubmitSectionProps) => {
   const renderSection = () => {
+    // OT 미션
     if (todayTh === 0) {
       return (
         <MissionSubmitZeroSection todayTh={todayTh} missionId={missionId} />
       );
     }
 
+    // 보너스 미션
     if (todayTh === 100) {
       return (
         <MissionSubmitBonusSection
           todayTh={todayTh}
           missionId={missionId}
           todayId={todayId}
+          attendanceInfo={attendanceInfo}
         />
       );
     }

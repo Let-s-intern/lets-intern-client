@@ -8,11 +8,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 export default function MissionFeedback() {
   const navigate = useNavigate();
+
   const { applicationId, programId, missionId } = useParams<{
     applicationId: string;
     programId: string;
     missionId: string;
   }>();
+
   const { currentChallenge } = useCurrentChallenge();
   const challengeId = currentChallenge?.id;
 
@@ -31,8 +33,10 @@ export default function MissionFeedback() {
   const handleGoBack = () => {
     navigate(`/challenge/${applicationId}/${programId}/me`);
   };
+
   const missionInfo = missionData?.missionInfo;
   const attendanceInfo = missionData?.attendanceInfo;
+
   return (
     <div className="min-h-screen bg-white">
       {/* 헤더 */}
@@ -59,7 +63,7 @@ export default function MissionFeedback() {
             <span className="text-sm font-medium text-gray-700">멘토명:</span>
           </div>
           <div className="text-sm text-gray-900">
-            {feedbackData?.attendanceInfo.mentorName || '-'}
+            {feedbackData?.attendanceInfo?.mentorName || '-'}
           </div>
 
           <div className="flex items-center gap-2">
@@ -94,11 +98,11 @@ export default function MissionFeedback() {
                 <div className="mb-2 text-lg font-medium text-gray-600">
                   피드백 내용
                 </div>
-                {feedbackData?.attendanceInfo.feedback && (
+                {feedbackData?.attendanceInfo?.feedback && (
                   <LexicalContent
                     node={
                       JSON.parse(
-                        feedbackData?.attendanceInfo.feedback as string,
+                        feedbackData?.attendanceInfo?.feedback as string,
                       ).root
                     }
                   />

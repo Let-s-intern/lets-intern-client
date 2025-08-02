@@ -1,9 +1,20 @@
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { DailyMission, Schedule } from '@/schema';
 import { useMissionStore } from '@/store/useMissionStore';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
-import { DailyMission, Schedule } from '../../../../../schema';
+
+const BonusMissionContent = () => {
+  return (
+    <>
+      <b>안녕하세요, 커리어의 첫걸음을 함께하는 렛츠커리어입니다!</b>
+      <br />
+      렛츠커리어의 챌린지 프로그램을 믿고 따라와주셔서 감사드리며, 1만원을 100%
+      지급해드리는 후기 이벤트를 안내드립니다!
+    </>
+  );
+};
 
 // 새로운 버전
 interface Props {
@@ -40,6 +51,7 @@ const DailyChallengeMissionSection = ({
   };
 
   const isBeforeStart = dayjs().isBefore(currentChallenge?.startDate);
+  const isBonusMission = dailyMission?.th === 100;
 
   const submitted =
     typeof todayTh === 'number' &&
@@ -48,7 +60,7 @@ const DailyChallengeMissionSection = ({
   return (
     <section
       className={clsx(
-        'flex min-h-[240px] flex-1 flex-col rounded-xs border md:min-h-[180px] lg:aspect-[122/90]',
+        'flex min-h-[240px] shrink-0 flex-col rounded-xs border md:h-[360px] md:min-h-[180px] md:w-[488px]',
         submitted ? 'border-neutral-80' : 'border-primary-80',
       )}
     >
@@ -60,29 +72,26 @@ const DailyChallengeMissionSection = ({
               : `${dailyMission?.th}회차`}
           </span>
           <span className="mr-2 font-semibold text-neutral-10">
-            {dailyMission?.title}
+            {isBonusMission ? '후기' : dailyMission?.title}
           </span>
         </h2>
         <span className="text-xsmall14 text-primary">
           마감기한 {dailyMission?.endDate?.format('MM.DD HH:mm')}까지
         </span>
       </div>
-      <div className="flex-1 overflow-hidden">
-        <div className="h-full p-4">
-          <p className="description-box mb-4 line-clamp-[9] whitespace-pre-line text-xsmall14 text-neutral-0 md:mb-0 md:text-xsmall16">
-            {dailyMission?.description}
-          </p>
-        </div>
+      <div className="flex flex-col justify-between md:h-[304px]">
+        <p className="mb-4 flex-1 whitespace-pre-line p-4 text-xsmall14 text-neutral-0 md:mb-0 md:max-h-[240px] md:overflow-hidden md:text-ellipsis md:whitespace-pre md:text-xsmall16">
+          {isBonusMission ? <BonusMissionContent /> : dailyMission?.description}
+        </p>
+        {!isBeforeStart && (
+          <button
+            onClick={handleClick}
+            className="mx-4 mb-4 rounded-xs bg-primary px-4 py-3 text-center text-white"
+          >
+            {submitted ? '제출 수정하기' : '미션 수행하기'}
+          </button>
+        )}
       </div>
-
-      {!isBeforeStart && (
-        <button
-          onClick={handleClick}
-          className="mx-4 mb-4 rounded-xs bg-primary px-4 py-3 text-center text-white"
-        >
-          {submitted ? '제출 수정하기' : '미션 수행하기'}
-        </button>
-      )}
     </section>
   );
 };

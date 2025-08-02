@@ -2,7 +2,6 @@ import {
   useGetChallengeValideUser,
   useGetUserChallengeInfo,
 } from '@/api/challenge';
-import { useGetChallengeQuery } from '@/api/program';
 import useLegacyDashboardRedirect from '@/hooks/useLegacyDashboardRedirect';
 import dayjs from '@/lib/dayjs';
 import useAuthStore from '@/store/useAuthStore';
@@ -25,12 +24,6 @@ const DashboardLayout = () => {
 
   const { isLoggedIn } = useAuthStore();
 
-  const { data: challenge, isLoading: challengeIsLoading } =
-    useGetChallengeQuery({
-      challengeId: Number(programId),
-      enabled: !!programId && !isNaN(Number(programId)),
-    });
-
   const { data: accessibleData, isLoading: isValidUserAccessLoading } =
     useGetChallengeValideUser(programId);
 
@@ -38,10 +31,7 @@ const DashboardLayout = () => {
     useGetUserChallengeInfo();
 
   const isValidUserInfo = isValidUserInfoData?.pass;
-  const isLoadingData =
-    isValidUserInfoLoading || isValidUserAccessLoading || challengeIsLoading;
-  const isStartAfterGoal =
-    challenge?.startDate && GOAL_DATE.isBefore(challenge.startDate);
+  const isLoadingData = isValidUserInfoLoading || isValidUserAccessLoading;
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -71,7 +61,6 @@ const DashboardLayout = () => {
     programId,
     applicationId,
     accessibleData,
-    isStartAfterGoal,
   ]);
 
   if (isLoadingData || isLoadingDashboard) {

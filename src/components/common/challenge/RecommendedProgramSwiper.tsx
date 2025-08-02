@@ -1,6 +1,7 @@
+import useGoogleAnalytics from '@/hooks/useGoogleAnalytics';
 import { ProgramRecommend } from '@/types/interface';
 import { ChevronRight } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import 'swiper/css';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
@@ -13,7 +14,21 @@ interface Props {
 }
 
 function RecommendedProgramSwiper({ programs }: Props) {
-  const navigate = useNavigate();
+  const trackEvent = useGoogleAnalytics();
+
+  const handleClickSlide = (
+    clickProgramUrl: string,
+    currentChallengeTitle: string | null,
+  ) => {
+    trackEvent({
+      eventName: 'dashboard_programrec',
+      eventData: {
+        click_program_url: clickProgramUrl,
+        current_dashboard_challenge_name: currentChallengeTitle,
+      },
+    });
+    window.location.href = clickProgramUrl;
+  };
 
   return (
     <div className="mx-auto w-full max-w-[1120px]">
@@ -38,8 +53,8 @@ function RecommendedProgramSwiper({ programs }: Props) {
           return (
             <SwiperSlide
               key={info.id}
-              className="!w-[214px] cursor-pointer"
-              onClick={() => (window.location.href = url)}
+              className="dashboard_programrec !w-[214px] cursor-pointer"
+              onClick={() => handleClickSlide(url, info.title ?? null)}
             >
               <div className="flex flex-col gap-2">
                 <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-neutral-100">
