@@ -1,9 +1,11 @@
-import { z } from 'zod';
+import dayjs from '@/lib/dayjs';
 import {
   AttendanceResultEnum,
   AttendanceStatusEnum,
   ChallengePricePlanEnum,
-} from './../schema';
+  MissionStatusEnum,
+} from '@/schema';
+import { z } from 'zod';
 
 export const challengeGoalSchema = z.object({
   goal: z.string().nullable(),
@@ -92,3 +94,61 @@ export const feedbackAttendanceSchema = z.object({
     feedback: z.string().nullish(),
   }),
 });
+
+// GET /api/v1/challenge/{challengeId}/missions/{missionId} 나의 기록장 미션 상세
+export const userChallengeMissionDetail = z
+  .object({
+    missionInfo: z.object({
+      id: z.number(),
+      th: z.number().nullable(),
+      title: z.string().nullable(),
+      startDate: z.string().nullable(),
+      endDate: z.string().nullable(),
+      essentialContentsList: z.array(
+        z.object({
+          id: z.number(),
+          title: z.string().nullable(),
+          link: z.string().nullable(),
+        }),
+      ),
+      additionalContentsList: z.array(
+        z.object({
+          id: z.number(),
+          title: z.string().nullable(),
+          link: z.string().nullable(),
+        }),
+      ),
+      status: MissionStatusEnum,
+      missionTag: z.string(),
+      description: z.string(),
+      guide: z.string(),
+      templateLink: z.string(),
+    }),
+    attendanceInfo: z
+      .object({
+        submitted: z.boolean().default(false),
+        id: z.number(),
+        link: z.string().nullish(),
+        comments: z.string().nullish(),
+        status: z.string().nullish(),
+        result: z.string().nullish(),
+        feedbackStatus: FeedbackStatusEnum,
+        review: z.string().nullish(),
+        accountType: z.string().nullish(),
+        accountNum: z.string().nullish(),
+      })
+      .nullish(),
+  })
+  .transform((data) => {
+    return {
+      missionInfo: {
+        ...data.missionInfo,
+        startDate: dayjs(data.missionInfo.startDate),
+        endDate: dayjs(data.missionInfo.endDate),
+      },
+    };
+  });
+
+export type UserChallengeMissionDetail = z.infer<
+  typeof userChallengeMissionDetail
+>['missionInfo'];

@@ -1,10 +1,9 @@
+import { userChallengeMissionDetail } from '@/api/challengeSchema';
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { MyChallengeMissionByType } from '@/schema';
+import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
-import {
-  MyChallengeMissionByType, userChallengeMissionDetail
-} from '../../../../../schema';
-import axios from '../../../../../utils/axios';
 import YetMissionDetailMenu from './YetMissionDetailMenu';
 
 interface Props {
@@ -16,27 +15,10 @@ const YetMissionItem = ({ mission }: Props) => {
   // const mission = schedule.missionInfo;
   const { currentChallenge } = useCurrentChallenge();
 
-  // const {
-  //   data: missionDetail,
-  //   isLoading: isDetailLoading,
-  //   error: detailError,
-  // } = useQuery({
-  //   queryKey: ['mission', mission.id, 'detail', { status: mission.status }],
-  //   queryFn: async () => {
-  //     const res = await axios.get(`/mission/${mission.id}/detail`, {
-  //       params: { status: mission.status },
-  //     });
-  //     const data = res.data;
-  //     return data;
-  //   },
-  //   enabled: isDetailShown,
-  // });
-
   const {
     data: missionDetail,
     isLoading: isDetailLoading,
     error: detailError,
-    refetch,
   } = useQuery({
     enabled: Boolean(currentChallenge?.id) && isDetailShown,
     queryKey: [

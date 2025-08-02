@@ -1,4 +1,4 @@
-import { UserChallengeMissionDetail } from '@/schema';
+import { UserChallengeMissionDetail } from '@/api/challengeSchema';
 import { useState } from 'react';
 import { IoIosLink } from 'react-icons/io';
 import { Link } from 'react-router-dom';
