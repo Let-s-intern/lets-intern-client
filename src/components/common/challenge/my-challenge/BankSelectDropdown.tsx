@@ -17,35 +17,24 @@ const BankSelectDropdown = ({
   const [isOpen, setIsOpen] = useState(false);
 
   // 은행명과 API 코드 매핑
-  const bankMapping = {
+  const banks = {
     KB국민은행: 'KB',
     하나은행: 'HANA',
     우리은행: 'WOORI',
     신한은행: 'SHINHAN',
     NH농협은행: 'NH',
-    수협은행: 'SH',
     IBK기업은행: 'IBK',
-    새마을금고: 'MG',
     카카오뱅크: 'KAKAO',
     토스뱅크: 'TOSS',
+    케이뱅크: 'KBANK',
+    SC제일은행: 'SC',
   };
 
-  const banks = [
-    '신한은행',
-    'KB국민은행',
-    '우리은행',
-    '하나은행',
-    'NH농협은행',
-    'IBK기업은행',
-    '수협은행',
-    '새마을금고',
-    '카카오뱅크',
-    '토스뱅크',
-  ];
+  const bankNames = Object.keys(banks);
 
   // API 코드를 은행명으로 변환하는 함수
   const getBankNameFromCode = (code: string): string => {
-    const bankEntry = Object.entries(bankMapping).find(
+    const bankEntry = Object.entries(banks).find(
       ([_, bankCode]) => bankCode === code,
     );
     return bankEntry ? bankEntry[0] : '';
@@ -64,7 +53,7 @@ const BankSelectDropdown = ({
 
   const handleBankSelect = (bank: string) => {
     // 은행명을 API 코드로 변환하여 전달
-    const bankCode = bankMapping[bank as keyof typeof bankMapping];
+    const bankCode = banks[bank as keyof typeof banks];
     onBankSelect?.(bankCode);
     setIsOpen(false);
   };
@@ -120,7 +109,7 @@ const BankSelectDropdown = ({
       {isOpen && !disabled && (
         <div className="absolute top-full z-10 mt-2 w-[184px] rounded-xxs border border-neutral-80 bg-white shadow-lg">
           <div className="max-h-[204px] overflow-y-auto scrollbar-hide">
-            {banks.map((bank, index) => (
+            {bankNames.map((bank, index) => (
               <div key={bank}>
                 <div
                   className={clsx(
@@ -152,7 +141,7 @@ const BankSelectDropdown = ({
                     </div>
                   )}
                 </div>
-                {index < banks.length - 1 && (
+                {index < bankNames.length - 1 && (
                   <div className="h-px bg-neutral-80" />
                 )}
               </div>

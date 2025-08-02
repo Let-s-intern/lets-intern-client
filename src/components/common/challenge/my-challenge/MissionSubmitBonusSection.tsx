@@ -16,8 +16,6 @@ interface MissionSubmitBonusSectionProps {
 
 const MissionSubmitBonusSection = ({
   className,
-  todayTh,
-  missionId,
   todayId,
 }: MissionSubmitBonusSectionProps) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
