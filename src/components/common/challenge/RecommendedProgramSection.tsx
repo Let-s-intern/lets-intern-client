@@ -82,7 +82,7 @@ function RecommendedProgramSection() {
         current_dashboard_challenge_name: currentChallengeTitle,
       },
     });
-    window.location.href = clickUrl;
+    setTimeout(() => (window.location.href = clickUrl), 300);
   };
 
   if (!isDashboardPage || isLoading || programs.length === 0) return null;
