@@ -91,6 +91,8 @@ const MissionSubmitBonusSection = ({
     if (!attendanceInfo) return;
     setIsSubmitted(attendanceInfo.submitted ?? false);
     setLinkValue(attendanceInfo.link ?? '');
+    setSelectedBank(attendanceInfo.accountType ?? '');
+    setAccountNumber(attendanceInfo.accountNum ?? '');
   }, [attendanceInfo]);
 
   return (
