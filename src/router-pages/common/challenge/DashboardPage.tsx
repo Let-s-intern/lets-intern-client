@@ -9,11 +9,10 @@ import MissionTooltipQuestion from '@/components/common/challenge/ui/tooltip-que
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import { challengeGuides, challengeNotices, challengeScore } from '@/schema';
-import { useQuery } from '@tanstack/react-query';
-import { useParams } from 'react-router-dom';
-
 import { useMissionStore } from '@/store/useMissionStore';
 import axios from '@/utils/axios';
+import { useQuery } from '@tanstack/react-query';
+import { useParams } from 'react-router-dom';
 
 const getIsChallengeDone = (endDate: string) => {
   return dayjs(new Date()).isAfter(dayjs(endDate));
@@ -94,7 +93,7 @@ const DashboardPage = () => {
         </h1>
       </header>
       <div className="flex flex-col gap-5">
-        <div className="mt-6 flex flex-col gap-3 md:flex-row">
+        <div className="mt-6 flex flex-col gap-3 overflow-hidden md:max-h-[360px] md:flex-row">
           {/* 챌린지 미션 상세 */}
           {dailyMission ? (
             <DailyMissionSection
@@ -105,8 +104,9 @@ const DashboardPage = () => {
           ) : (
             isChallengeDone && <EndDailyMissionSection />
           )}
+
           {/* 공지사항, 미션점수 */}
-          <div className="flex flex-col gap-3 md:w-[22rem]">
+          <div className="flex w-full flex-col gap-3">
             <NoticeSection notices={notices} />
             <div className="flex gap-3">
               <ScoreSection
@@ -127,6 +127,7 @@ const DashboardPage = () => {
             </div>
           </div>
         </div>
+
         {/* 일정 및 제출 현황 */}
         <div className="flex gap-3">
           <section className="w-full flex-1 rounded-xs border border-neutral-80 p-4">
@@ -153,7 +154,6 @@ const DashboardPage = () => {
               />
             )}
           </section>
-          {/* <CurriculumSection /> */}
         </div>
       </div>
     </main>

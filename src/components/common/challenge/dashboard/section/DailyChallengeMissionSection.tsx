@@ -60,7 +60,7 @@ const DailyChallengeMissionSection = ({
   return (
     <section
       className={clsx(
-        'flex min-h-[240px] flex-1 flex-col rounded-xs border md:min-h-[180px] lg:aspect-[122/90]',
+        'flex min-h-[240px] shrink-0 flex-col rounded-xs border md:h-[360px] md:min-h-[180px] md:w-[488px]',
         submitted ? 'border-neutral-80' : 'border-primary-80',
       )}
     >
@@ -77,17 +77,19 @@ const DailyChallengeMissionSection = ({
           마감기한 {dailyMission?.endDate?.format('MM.DD HH:mm')}까지
         </span>
       </div>
-      <p className="mb-4 flex-1 whitespace-pre-line p-4 text-xsmall14 text-neutral-0 md:mb-0 md:text-xsmall16">
-        {isBonusMission ? <BonusMissionContent /> : dailyMission?.description}
-      </p>
-      {!isBeforeStart && (
-        <button
-          onClick={handleClick}
-          className="mx-4 mb-4 rounded-xs bg-primary px-4 py-3 text-center text-white"
-        >
-          {submitted ? '제출 수정하기' : '미션 수행하기'}
-        </button>
-      )}
+      <div className="flex flex-col justify-between md:h-[304px]">
+        <p className="mb-4 flex-1 whitespace-pre-line p-4 text-xsmall14 text-neutral-0 md:mb-0 md:max-h-[240px] md:overflow-hidden md:text-ellipsis md:whitespace-pre md:text-xsmall16">
+          {isBonusMission ? <BonusMissionContent /> : dailyMission?.description}
+        </p>
+        {!isBeforeStart && (
+          <button
+            onClick={handleClick}
+            className="mx-4 mb-4 rounded-xs bg-primary px-4 py-3 text-center text-white"
+          >
+            {submitted ? '제출 수정하기' : '미션 수행하기'}
+          </button>
+        )}
+      </div>
     </section>
   );
 };
