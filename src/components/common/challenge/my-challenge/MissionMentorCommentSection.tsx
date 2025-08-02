@@ -1,4 +1,6 @@
 import { useChallengeMissionFeedbackQuery } from '@/api/challenge';
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { useMissionStore } from '@/store/useMissionStore';
 import { useParams } from 'react-router-dom';
 
 interface Props {
@@ -14,32 +16,33 @@ const MissionMentorCommentSection = ({ missionId }: Props) => {
     missionId,
   });
 
+  const { schedules } = useCurrentChallenge();
+  const { selectedMissionTh } = useMissionStore();
+
+  const comment = schedules[selectedMissionTh].attendanceInfo.comments;
   const mentorFeedback = feedbackData?.attendanceInfo?.feedback;
+  const isNoFeedbackOrComment = !comment && !mentorFeedback;
+
+  if (isNoFeedbackOrComment) return null;
 
   return (
     <section>
       <div className="mb-11 h-px bg-neutral-80" />
       {/* 코멘트 섹션: 관리자가 남기는 코멘트 */}
-      <div className="mb-6">
-        <div className="mb-2 rounded-xs bg-primary-5 p-3">
-          <span className="text-xsmall16 font-semibold text-primary">
-            코멘트
-          </span>
+      {comment && (
+        <div className="mb-6">
+          <div className="mb-2 rounded-xs bg-primary-5 p-3">
+            <span className="text-xsmall16 font-semibold text-primary">
+              코멘트
+            </span>
+          </div>
+          <div className="rounded-xxs border border-neutral-80 bg-white p-3">
+            <p className="min-h-[120px] text-xsmall14 leading-relaxed text-neutral-0 md:text-xsmall16">
+              {comment}
+            </p>
+          </div>
         </div>
-        <div className="rounded-xxs border border-neutral-80 bg-white p-3">
-          <p className="min-h-[120px] text-xsmall14 leading-relaxed text-neutral-0 md:text-xsmall16">
-            너무 너무 너무 잘했네요.너무 너무 너무 잘했네요.너무 너무 너무
-            잘했네요.너무 너무 너무 잘했네요.너무 너무 너무 잘했네요.너무 너무
-            너무 잘했네요.너무 너무 너무 잘했네요.너무 너무 너무 잘했네요.너무
-            너무 너무 잘했네요.너무 너무 너무 잘했네요.너무 너무 너무
-            잘했네요.너무 너무 너무 잘했네요.너무 너무 너무 잘했네요.너무 너무
-            너무 잘했네요.너무 너무 너무 잘했네요.너무 너무 너무 잘했네요.너무
-            너무 너무 잘했네요.너무 너무 너무 잘했네요.너무 너무 너무
-            잘했네요.너무 너무 너무 잘했네요.너무 너무 너무 잘했네요.너무 너무
-            너무 잘했네요.
-          </p>
-        </div>
-      </div>
+      )}
 
       {/* 멘토 피드백 섹션: 멘토가 남기는 피드백 */}
       {mentorFeedback && (
