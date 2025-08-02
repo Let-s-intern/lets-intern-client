@@ -1,6 +1,7 @@
 import { useSubmitMissionBlogBonus } from '@/api/mission';
+import { Schedule } from '@/schema';
 import { clsx } from 'clsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AgreementCheckbox from './AgreementCheckbox';
 import BankSelectDropdown from './BankSelectDropdown';
 import LinkInputSection from './LinkInputSection';
@@ -12,11 +13,13 @@ interface MissionSubmitBonusSectionProps {
   todayTh: number;
   missionId?: number;
   todayId?: number; // 선택된 미션의 ID
+  attendanceInfo?: Schedule['attendanceInfo'] | null;
 }
 
 const MissionSubmitBonusSection = ({
   className,
   todayId,
+  attendanceInfo,
 }: MissionSubmitBonusSectionProps) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -83,6 +86,13 @@ const MissionSubmitBonusSection = ({
     selectedBank.trim().length > 0 &&
     cleanAccountNumber.length > 0;
 
+  useEffect(() => {
+    /** 상태 초기화 */
+    if (!attendanceInfo) return;
+    setIsSubmitted(attendanceInfo.submitted ?? false);
+    setLinkValue(attendanceInfo.link ?? '');
+  }, [attendanceInfo]);
+
   return (
     <section className={clsx('', className)}>
       <h2 className="mb-6 text-small18 font-bold text-neutral-0">
@@ -92,10 +102,11 @@ const MissionSubmitBonusSection = ({
       {/* 블로그 링크 섹션 */}
       <div className="mt-7">
         <LinkInputSection
+          initialLink={linkValue}
           disabled={isSubmitted}
           onLinkChange={handleLinkChange}
           onLinkVerified={handleLinkVerified}
-          text={`링크가 잘 열리는지 확인해주세요.`}
+          text="링크가 잘 열리는지 확인해주세요."
         />
       </div>
 
@@ -147,11 +158,17 @@ const MissionSubmitBonusSection = ({
         </div>
       </div>
 
-      <MissionSubmitButton
-        isSubmitted={isSubmitted}
-        hasContent={canSubmit}
-        onButtonClick={handleSubmit}
-      />
+      {isSubmitted ? (
+        <p className="mt-8 text-center text-small20 font-medium text-neutral-0">
+          이미 보너스 미션에 참여했습니다.
+        </p>
+      ) : (
+        <MissionSubmitButton
+          isSubmitted={isSubmitted}
+          hasContent={canSubmit}
+          onButtonClick={handleSubmit}
+        />
+      )}
 
       <MissionToast isVisible={showToast} onClose={() => setShowToast(false)} />
     </section>

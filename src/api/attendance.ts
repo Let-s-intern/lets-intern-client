@@ -15,7 +15,7 @@ export const usePatchAttendance = () => {
   });
 };
 
-/** n회차 미션 제출 /api/v1/attendance/{missionId} */
+/** 출석 생성 /api/v1/attendance/{missionId} */
 export const useSubmitMission = () => {
   return useMutation({
     mutationFn: async ({
