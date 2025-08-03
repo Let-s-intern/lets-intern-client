@@ -83,8 +83,8 @@ const MissionCalendarItem = ({
         <span
           className={clsx('mt-1.5 block w-full text-left text-[10px]', {
             'text-primary':
-              mission.th === todayTh &&
-              (attendance.result === 'WAITING' || attendance.result == null),
+              (mission.th === todayTh && attendance.result == null) ||
+              attendance.result === 'WAITING',
           })}
         >
           {mission.startDate?.format('MM.DD(ddd)')}
