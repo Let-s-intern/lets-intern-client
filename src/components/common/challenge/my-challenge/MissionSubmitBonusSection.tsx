@@ -1,12 +1,32 @@
 import { useSubmitMissionBlogBonus } from '@/api/mission';
+import { twMerge } from '@/lib/twMerge';
 import { Schedule } from '@/schema';
 import { clsx } from 'clsx';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import AgreementCheckbox from './AgreementCheckbox';
 import BankSelectDropdown from './BankSelectDropdown';
 import LinkInputSection from './LinkInputSection';
 import MissionSubmitButton from './MissionSubmitButton';
 import MissionToast from './MissionToast';
+
+const DescriptionBox = ({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) => {
+  return (
+    <p
+      className={twMerge(
+        'rounded-xxs bg-neutral-95 p-3 text-xsmall14 text-neutral-10',
+        className,
+      )}
+    >
+      {children}
+    </p>
+  );
+};
 
 interface MissionSubmitBonusSectionProps {
   className?: string;
@@ -113,11 +133,15 @@ const MissionSubmitBonusSection = ({
       </div>
 
       {/* 리워드 받을 계좌번호 */}
-      <div className="mt-4 flex flex-col gap-1">
+      <div className="mt-4 flex flex-col">
         <span className="text-xsmall16 font-semibold text-neutral-0">
           리워드 받을 계좌번호
         </span>
-        <div className="flex flex-col gap-1 md:flex-row">
+        <DescriptionBox className="mt-1">
+          리워드 받을 은행과 계좌번호를 입력해주세요. 본인 명의가 아닌 계좌로는
+          리워드가 입금되지 않습니다.
+        </DescriptionBox>
+        <div className="mt-3 flex flex-col gap-1 md:flex-row">
           <BankSelectDropdown
             selectedBank={selectedBank}
             onBankSelect={handleBankSelect}
@@ -144,16 +168,16 @@ const MissionSubmitBonusSection = ({
         <span className="text-xsmall16 font-semibold text-neutral-0">
           개인정보 활용 동의
         </span>
-        <div className="rounded bg-neutral-95 px-3 py-3 text-xsmall14 text-neutral-10">
+        <DescriptionBox>
           [개인정보 보호법] 제15조 및 제17조에 따라 아래의 내용으로 개인정보를
           수집, 이용 및 제공하는데 동의합니다.
           <br /> □ 개인정보의 수집 및 이용에 관한 사항 <br />
           ✓ 수집하는 개인정보 항목 : 성명, 전화번호, 계좌번호 <br />
           ✓ 개인정보의 이용 목적 : 렛츠커리어 프로그램 후기 리워드 지급 <br />
-        </div>
+        </DescriptionBox>
         <div className="mt-2">
           <AgreementCheckbox
-            checked={isAgreed}
+            checked={isAgreed || isSubmitted}
             onCheckedChange={setIsAgreed}
             disabled={isSubmitted}
           />
