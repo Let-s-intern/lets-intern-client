@@ -46,7 +46,7 @@ const MissionGuideRegularSection = ({
         <section className="flex flex-col gap-3">
           <div className="flex flex-col gap-2">
             <div className="flex items-start gap-2">
-              <span className="whitespace-pre-wrap text-xsmall16 font-medium text-neutral-0">
+              <span className="whitespace-pre-wrap text-xsmall14 font-medium text-neutral-0 md:text-xsmall16">
                 {missionData?.missionInfo?.description ||
                   `1. 대시보드 사용법 및 미션 인증 방식꼭 확인! \n2.마케팅 관심 직무 1개 이상 선정하기 \n3. 각각 인터뷰 3개 이상 정리하기 \n4. 각각 채용공고 5개 이상 정리 \n📸 [링크] 제출하기 & [인증샷]과 [소감] 업로드하기 \n\n추가 콘텐츠에서 160+명의 취업 성공 노하우를 확인해보세요 🎁`}
               </span>
@@ -60,7 +60,7 @@ const MissionGuideRegularSection = ({
           <h3 className="text-xsmall16 font-semibold text-neutral-10">
             미션 가이드
           </h3>
-          <p className="whitespace-pre-wrap text-xsmall16 font-medium text-neutral-10">
+          <p className="whitespace-pre-wrap text-xsmall14 font-medium text-neutral-10 md:text-xsmall16">
             {missionData?.missionInfo?.guide ||
               `내가 막연히 꿈꾸던 마케팅, 정말 잘 알고 있었나 점검해봐요. \n콘텐츠를 따라 직무 인터뷰를 정독하며 여러분이 이해한 방식대로 정리합시다 😊`}
           </p>
@@ -73,7 +73,7 @@ const MissionGuideRegularSection = ({
               <h3 className="text-xsmall16 font-semibold text-neutral-0">
                 미션 자료 모음
               </h3>
-              <p className="text-xsmall16 text-neutral-10">
+              <p className="text-xsmall14 text-neutral-10 md:text-xsmall16">
                 자료를 확인하고 미션을 진행해 주세요.
               </p>
             </div>
