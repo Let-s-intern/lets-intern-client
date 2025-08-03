@@ -174,10 +174,10 @@ export const challengePriceSchema = z.object({
   discount: z.number().nullish().default(0),
   accountNumber: z.string().nullish(),
   deadline: z.string().nullish(),
-  accountType,
-  challengePriceType,
-  challengePricePlanType: ChallengePricePlanEnum,
-  challengeParticipationType,
+  accountType: accountType.nullish(),
+  challengePriceType: challengePriceType.nullish(),
+  challengePricePlanType: ChallengePricePlanEnum.nullish(),
+  challengeParticipationType: challengeParticipationType.nullish(),
   challengeOptionList: z.array(challengeOptionSchema),
 });
 
