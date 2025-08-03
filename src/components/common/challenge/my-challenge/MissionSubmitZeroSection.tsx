@@ -24,7 +24,6 @@ const MissionSubmitZeroSection = ({
   // 챌린지 목표 제출 mutation
   const submitChallengeGoal = useSubmitChallengeGoal();
   const submitAttendance = useSubmitMission();
-
   const [textareaValue, setTextareaValue] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -62,6 +61,10 @@ const MissionSubmitZeroSection = ({
     /** 상태 초기화 */
     if (isLoading) return;
     setTextareaValue(goalData?.goal || '');
+    // goalData가 있으면 이미 제출된 상태로 설정
+    if (goalData?.goal) {
+      setIsSubmitted(true);
+    }
   }, [goalData, isLoading]);
 
   return (
@@ -98,6 +101,7 @@ const MissionSubmitZeroSection = ({
         isSubmitted={isSubmitted}
         hasContent={textareaValue.trim().length > 0}
         onButtonClick={handleSubmit}
+        disabled={!!goalData?.goal}
       />
 
       <MissionToast isVisible={showToast} onClose={() => setShowToast(false)} />
