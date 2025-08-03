@@ -57,9 +57,9 @@ const MissionMentorCommentSection = ({ missionId }: Props) => {
             </span>
           </div>
           <div className="rounded-xxs border border-neutral-80 bg-white p-3">
-            <p className="min-h-[120px] text-xsmall14 leading-relaxed text-neutral-0 md:text-xsmall16">
+            <div className="min-h-[120px] text-xsmall14 leading-relaxed text-neutral-0 md:text-xsmall16">
               <LexicalContent node={mentorFeedback.root} />
-            </p>
+            </div>
           </div>
         </div>
       )}

@@ -8,6 +8,7 @@ import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import { useMissionStore } from '@/store/useMissionStore';
 import axios from '@/utils/axios';
+import DashboardCreateReviewModal from '@components/common/challenge/dashboard/modal/DashboardCreateReviewModal';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -19,6 +20,8 @@ const getIsChallengeSubmitDone = (endDate: string) => {
 const DashboardMyMissionPage = () => {
   const params = useParams<{ programId: string; applicationId: string }>();
   const queryClient = useQueryClient();
+
+  const [modalOpen, setModalOpen] = useState(false);
 
   const { schedules, myDailyMission } = useCurrentChallenge();
 
@@ -181,7 +184,6 @@ const DashboardMyMissionPage = () => {
                 ?.missionInfo.id
             }
             onRefreshMissionData={() => {
-              console.log('refetch');
               // schedules 데이터도 갱신 (attendanceInfo가 포함되어 있음)
               queryClient.invalidateQueries({
                 queryKey: ['challenge', params.programId, 'schedule'],
@@ -189,6 +191,7 @@ const DashboardMyMissionPage = () => {
               // 현재 미션 데이터도 갱신
               refetch();
             }}
+            onSubmitLastMission={() => setModalOpen(true)}
           />
         </div>
         {/* 멘토 피드백 여부에 따라 값 받고 노출 */}
@@ -196,6 +199,14 @@ const DashboardMyMissionPage = () => {
           <MissionMentorCommentSection missionId={selectedMissionId} />
         </div>
       </div>
+
+      {modalOpen && (
+        <DashboardCreateReviewModal
+          programId={params.programId ?? ''}
+          applicationId={params.applicationId ?? ''}
+          onClose={() => setModalOpen(false)}
+        />
+      )}
     </main>
   );
 };
