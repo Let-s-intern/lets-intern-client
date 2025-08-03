@@ -22,7 +22,7 @@ const MissionGuideRegularSection = ({
     const date = dayjs(endDate);
     return date.format('MM.DD HH:mm');
   };
-  console.log(missionData);
+
   // 현재 시간이 startDate 이상인지 확인하는 함수
   const isMissionStarted = () => {
     if (!missionData?.missionInfo?.startDate) return false;
