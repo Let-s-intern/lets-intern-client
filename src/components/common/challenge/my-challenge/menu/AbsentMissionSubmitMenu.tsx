@@ -6,8 +6,9 @@ import {
   usePatchChallengeAttendance,
   usePostChallengeAttendance,
 } from '@/api/challenge';
+import { UserChallengeMissionDetail } from '@/api/challengeSchema';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
-import { Schedule, UserChallengeMissionDetail } from '@/schema';
+import { Schedule } from '@/schema';
 import ParsedCommentBox from '../ParsedCommentBox';
 
 interface Props {

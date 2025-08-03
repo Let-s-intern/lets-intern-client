@@ -21,6 +21,7 @@ interface MissionSubmitRegularSectionProps {
     result: 'WAITING' | 'PASS' | 'WRONG' | null;
     review?: string | null;
   } | null;
+  onRefreshMissionData?: () => void; // 미션 데이터 새로고침 callback
 }
 
 const MissionSubmitRegularSection = ({
@@ -28,6 +29,7 @@ const MissionSubmitRegularSection = ({
   todayTh,
   missionId,
   attendanceInfo,
+  onRefreshMissionData,
 }: MissionSubmitRegularSectionProps) => {
   const [textareaValue, setTextareaValue] = useState(
     attendanceInfo?.review || '',
@@ -107,6 +109,8 @@ const MissionSubmitRegularSection = ({
         // 원본 데이터 업데이트
         setOriginalTextareaValue(textareaValue);
         setOriginalLinkValue(linkValue);
+        // 미션 데이터 새로고침
+        onRefreshMissionData?.();
       } catch {
         // 에러 처리 로직 추가 가능
       }
@@ -137,6 +141,8 @@ const MissionSubmitRegularSection = ({
       // 원본 데이터 업데이트
       setOriginalTextareaValue(textareaValue);
       setOriginalLinkValue(linkValue);
+      // 미션 데이터 새로고침
+      onRefreshMissionData?.();
     } catch {
       // 에러 처리 로직 추가 가능
     }

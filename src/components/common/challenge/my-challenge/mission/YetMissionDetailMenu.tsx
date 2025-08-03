@@ -1,4 +1,4 @@
-import { UserChallengeMissionDetail } from "../../../../../schema";
+import { UserChallengeMissionDetail } from '@/api/challengeSchema';
 
 interface Props {
   missionDetail: UserChallengeMissionDetail;
