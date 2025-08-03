@@ -8,6 +8,7 @@ interface MissionSubmitButtonProps {
   isEditing?: boolean;
   onCancelEdit?: () => void;
   onSaveEdit?: () => void;
+  disabled?: boolean;
 }
 
 const MissionSubmitButton = ({
@@ -18,6 +19,7 @@ const MissionSubmitButton = ({
   isEditing = false,
   onCancelEdit,
   onSaveEdit,
+  disabled = false,
 }: MissionSubmitButtonProps) => {
   // 수정 모드일 때 두 개의 버튼 표시
   if (isEditing) {
@@ -37,13 +39,13 @@ const MissionSubmitButton = ({
         <button
           className={clsx(
             'flex-1 cursor-pointer rounded-xs p-4 text-xsmall16 font-medium transition-colors',
-            hasContent
+            hasContent && !disabled
               ? 'bg-primary text-white hover:opacity-90'
               : 'cursor-not-allowed bg-neutral-70 text-neutral-100',
             'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
           )}
           onClick={onSaveEdit}
-          disabled={!hasContent}
+          disabled={!hasContent || disabled}
         >
           저장하기
         </button>
@@ -54,7 +56,7 @@ const MissionSubmitButton = ({
   // 기본 모드: 단일 버튼
   const buttonText = isSubmitted ? '수정하기' : '제출하기';
   const buttonColor =
-    isSubmitted || hasContent
+    (isSubmitted || hasContent) && !disabled
       ? 'bg-primary text-white'
       : 'bg-neutral-70 text-neutral-100';
 
@@ -67,7 +69,7 @@ const MissionSubmitButton = ({
           'hover:opacity-90',
         )}
         onClick={onButtonClick}
-        disabled={!hasContent && !isSubmitted}
+        disabled={(!hasContent && !isSubmitted) || disabled}
       >
         {buttonText}
       </button>
