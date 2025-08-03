@@ -1,7 +1,7 @@
 import { useGetChallengeReviewStatus } from '@/api/challenge';
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
 import DashboardCreateReviewModal from '../modal/DashboardCreateReviewModal';
 import DashboardReviewModal from '../modal/DashboardReviewModal';
 

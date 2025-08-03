@@ -1,7 +1,6 @@
 import { useUserQuery } from '@/api/user';
 import GuideSection from '@/components/common/challenge/dashboard/section/ChallengeGuideSection';
 import DailyMissionSection from '@/components/common/challenge/dashboard/section/DailyChallengeMissionSection';
-import EndDailyMissionSection from '@/components/common/challenge/dashboard/section/EndDailyMissionSection';
 import ScoreSection from '@/components/common/challenge/dashboard/section/MissionScoreSection';
 import NoticeSection from '@/components/common/challenge/dashboard/section/NoticeBoardSection';
 import MissionCalendar from '@/components/common/challenge/my-challenge/mission-calendar/ChallengeMissionCalendar';
@@ -11,8 +10,44 @@ import dayjs from '@/lib/dayjs';
 import { challengeGuides, challengeNotices, challengeScore } from '@/schema';
 import { useMissionStore } from '@/store/useMissionStore';
 import axios from '@/utils/axios';
+import MissionEndSection from '@components/common/challenge/MissionEndSection';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
+
+const MissionDetailSection = ({ todayTh }: { todayTh: number }) => {
+  const params = useParams();
+
+  const { schedules, dailyMission, isLoading } = useCurrentChallenge();
+
+  const { data: programData } = useQuery({
+    queryKey: ['challenge', params.programId, 'application'],
+    queryFn: async ({ queryKey }) => {
+      const res = await axios.get(
+        `/${queryKey[0]}/${queryKey[1]}/${queryKey[2]}`,
+      );
+      return res.data;
+    },
+  });
+
+  if (isLoading) return null;
+
+  const programEndDate = programData?.data?.endDate;
+  const isChallengeDone = getIsChallengeDone(programEndDate);
+  const isLastMissionSubmitted =
+    schedules[schedules.length - 1].attendanceInfo.submitted;
+
+  if (isLastMissionSubmitted || isChallengeDone || !dailyMission) {
+    return <MissionEndSection />;
+  }
+
+  return (
+    <DailyMissionSection
+      dailyMission={dailyMission}
+      todayTh={todayTh}
+      schedules={schedules}
+    />
+  );
+};
 
 const getIsChallengeDone = (endDate: string) => {
   return dayjs(new Date()).isAfter(dayjs(endDate));
@@ -25,6 +60,7 @@ const getIsChallengeSubmitDone = (endDate: string) => {
 const DashboardPage = () => {
   const { currentChallenge, schedules, dailyMission } = useCurrentChallenge();
   const params = useParams();
+
   const todayTh =
     dailyMission?.th ||
     schedules.reduce((th, schedule) => {
@@ -77,8 +113,6 @@ const DashboardPage = () => {
 
   const totalScore = scoreGroup?.totalScore || 0;
   const currentScore = scoreGroup?.currentScore || 0;
-
-  const isChallengeDone = getIsChallengeDone(programEndDate);
   const isChallengeSubmitDone = getIsChallengeSubmitDone(programEndDate);
 
   const setSelectedMission = useMissionStore(
@@ -95,15 +129,7 @@ const DashboardPage = () => {
       <div className="flex flex-col gap-5">
         <div className="mt-6 flex flex-col gap-3 overflow-hidden md:max-h-[360px] md:flex-row">
           {/* 챌린지 미션 상세 */}
-          {dailyMission ? (
-            <DailyMissionSection
-              dailyMission={dailyMission}
-              todayTh={todayTh}
-              schedules={schedules}
-            />
-          ) : (
-            isChallengeDone && <EndDailyMissionSection />
-          )}
+          <MissionDetailSection todayTh={todayTh} />
 
           {/* 공지사항, 미션점수 */}
           <div className="flex w-full flex-col gap-3">
