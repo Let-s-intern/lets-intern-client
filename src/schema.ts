@@ -146,7 +146,7 @@ export const challengeUserType = z.union([
 // deprecated
 export type ChallengeUserType = z.infer<typeof challengeUserType>;
 
-const challengeParticipationType = z.union([
+export const challengeParticipationType = z.union([
   z.literal('LIVE'),
   z.literal('FREE'),
 ]);

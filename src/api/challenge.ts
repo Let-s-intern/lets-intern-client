@@ -22,6 +22,7 @@ import {
 import axios from '../utils/axios';
 import { Pageable } from './../schema';
 import {
+  challengeApplicationSchema,
   challengeGoalSchema,
   challengeMissionFeedbackAttendanceListSchema,
   challengeMissionFeedbackListSchema,
@@ -717,5 +718,17 @@ export const useFeedbackAttendanceQuery = ({
       return feedbackAttendanceSchema.parse(res.data.data);
     },
     enabled: !!challengeId && !!missionId && !!attendanceId,
+  });
+};
+
+// 챌린지 신청폼 조회 /api/v1/challenge/{challengeId}/application
+export const useChallengeApplicationQuery = (programId?: string | number) => {
+  return useQuery({
+    queryKey: ['challenge', programId, 'application'],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${programId}/application`);
+      return challengeApplicationSchema.parse(res.data.data);
+    },
+    enabled: !!programId,
   });
 };

@@ -1,9 +1,13 @@
 import dayjs from '@/lib/dayjs';
 import {
+  accountType,
   AttendanceResultEnum,
   AttendanceStatusEnum,
+  challengeParticipationType,
   ChallengePricePlanEnum,
+  challengePriceType,
   MissionStatusEnum,
+  ProgramStatusEnum,
 } from '@/schema';
 import { z } from 'zod';
 
@@ -152,3 +156,43 @@ export const userChallengeMissionDetail = z
 export type UserChallengeMissionDetail = z.infer<
   typeof userChallengeMissionDetail
 >['missionInfo'];
+
+/** 챌린지 신청폼 조회 /api/v1/challenge/{challengeId}/application */
+export const challengeOptionSchema = z.object({
+  challengeOptionId: z.number(),
+  title: z.string().nullish(),
+  price: z.number().nullish(),
+  discountPrice: z.number().nullish(),
+});
+
+export const challengePriceSchema = z.object({
+  priceId: z.number(),
+  title: z.string().nullish(),
+  description: z.string().nullish(),
+  price: z.number().nullish().default(0),
+  refund: z.number().nullish().default(0),
+  discount: z.number().nullish().default(0),
+  accountNumber: z.string().nullish(),
+  deadline: z.string().nullish(),
+  accountType,
+  challengePriceType,
+  challengePricePlanType: ChallengePricePlanEnum,
+  challengeParticipationType,
+  challengeOptionList: z.array(challengeOptionSchema),
+});
+
+export const challengeApplicationSchema = z.object({
+  applied: z.boolean().default(false),
+  name: z.string().nullish(),
+  email: z.string().nullish(),
+  contactEmail: z.string().nullish(),
+  phoneNumber: z.string().nullish(),
+  criticalNotice: z.string().nullish(),
+  startDate: z.string().nullish(),
+  endDate: z.string().nullish(),
+  deadline: z.string().nullish(),
+  statusType: ProgramStatusEnum,
+  priceList: z.array(challengePriceSchema),
+});
+
+export type ChallengeApplication = z.infer<typeof challengeApplicationSchema>;
