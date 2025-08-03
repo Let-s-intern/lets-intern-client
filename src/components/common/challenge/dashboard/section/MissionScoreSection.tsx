@@ -78,7 +78,7 @@ const MissionScoreSection = ({
           수료증 발급
         </button>
       )}
-      {isHoverButton && (
+      {/* {isHoverButton && (
         <div className="absolute bottom-[15px] left-1/2 w-[240px] -translate-x-1/2 translate-y-full transform px-[13.5px] pb-4 pt-[29px] text-xsmall14 text-[#333]">
           <div className="absolute bottom-0 left-0 z-0 h-[calc(100%-14px)] w-full shadow-[0_0_24px_rgba(204,204,206,0.27)]" />
           <img
@@ -91,7 +91,7 @@ const MissionScoreSection = ({
             획득한 경우에 수료증을 발급받을 수 있어요!
           </p>
         </div>
-      )}
+      )} */}
       {/* A4 크기 */}
       <div className="fixed left-0 top-0 z-50 hidden h-screen w-screen items-center justify-center overflow-hidden bg-white">
         <CertificatePaper
