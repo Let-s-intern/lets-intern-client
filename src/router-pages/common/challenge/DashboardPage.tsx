@@ -25,11 +25,12 @@ const getIsChallengeSubmitDone = (endDate: string) => {
 const DashboardPage = () => {
   const { currentChallenge, schedules, dailyMission } = useCurrentChallenge();
   const params = useParams();
+
   const todayTh =
     dailyMission?.th ||
     schedules.reduce((th, schedule) => {
       return Math.max(th, schedule.missionInfo.th || 0);
-    }, 0) + 1;
+    }, 0);
 
   const { data: notices = [] } = useQuery({
     enabled: Boolean(currentChallenge?.id),

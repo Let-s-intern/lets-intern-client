@@ -1,12 +1,15 @@
 import { useMissionStore } from '@/store/useMissionStore';
 import clsx from 'clsx';
+import dayjs from 'dayjs';
+import isBetween from 'dayjs/plugin/isBetween';
 import { useCallback } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { Schedule } from '../../../../../schema';
 import MissionIcon from './ChallengeMissionIcon';
 import MissionNotStartedIcon from './ChallengeMissionNotStartedIcon';
 import MissionTodayIcon from './ChallengeMissionTodayIcon';
-import MissionTopStatusBar from './ChallengeMissionTopStatusBar';
+
+dayjs.extend(isBetween);
 
 interface Props {
   schedule: Schedule;
@@ -40,31 +43,41 @@ const MissionCalendarItem = ({
     setSelectedMission(mission.id, mission.th ?? 0);
   }, [setSelectedMission, mission.id, mission.th]);
 
+  const today = dayjs();
+
   return (
     <div className={className}>
-      <MissionTopStatusBar mission={schedule.missionInfo} todayTh={todayTh} />
       <Link
         to={`/challenge/${programId}/dashboard/${applicationId}/missions`}
         replace
         onClick={handleClick}
         className={clsx(
-          'block aspect-[75/104] h-[104px] rounded-xxs border px-2 py-2.5 md:mt-2',
+          'block aspect-[75/104] h-[104px] rounded-xxs border border-neutral-80 px-2 py-2.5',
           !isLast && 'mr-2',
-          mission.th === todayTh ? 'border-neutral-70' : 'border-neutral-80',
-          'hover:border-primary-50 cursor-pointer',
+          today.isBetween(mission.startDate, mission.endDate, 'day', '[]') &&
+            !isMissionPage
+            ? 'border-primary-50 bg-primary-5'
+            : 'border-neutral-80',
+          'cursor-pointer hover:bg-primary-5',
           isSelected && isMissionPage && 'border-primary-50 bg-primary/5',
         )}
       >
-        {mission.th === todayTh ? (
-          <MissionTodayIcon
-            mission={mission}
-            attendance={attendance}
-            isDone={isDone}
-          />
-        ) : (mission.th ?? 0) > todayTh ? (
-          <MissionNotStartedIcon schedule={schedule} />
+        {mission.startDate && mission.endDate ? (
+          today.isBetween(mission.startDate, mission.endDate, 'day', '[]') &&
+          mission.th === todayTh ? (
+            <MissionTodayIcon
+              mission={mission}
+              attendance={attendance}
+              isDone={isDone}
+            />
+          ) : (mission.th ?? 0) < todayTh &&
+            today.isAfter(mission.endDate, 'day') ? (
+            <MissionIcon schedule={schedule} />
+          ) : (
+            <MissionNotStartedIcon schedule={schedule} />
+          )
         ) : (
-          (mission.th ?? 0) < todayTh && <MissionIcon schedule={schedule} />
+          <MissionNotStartedIcon schedule={schedule} />
         )}
         {/* 일정 */}
         <span
