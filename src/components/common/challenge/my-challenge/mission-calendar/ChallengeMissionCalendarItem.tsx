@@ -1,8 +1,8 @@
+import { Schedule } from '@/schema';
 import { useMissionStore } from '@/store/useMissionStore';
 import clsx from 'clsx';
 import { useCallback } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { Schedule } from '../../../../../schema';
 import MissionIcon from './ChallengeMissionIcon';
 import MissionNotStartedIcon from './ChallengeMissionNotStartedIcon';
 import MissionTodayIcon from './ChallengeMissionTodayIcon';
@@ -66,9 +66,10 @@ const MissionCalendarItem = ({
         ) : (
           (mission.th ?? 0) < todayTh && <MissionIcon schedule={schedule} />
         )}
+
         {/* 일정 */}
         <span
-          className={clsx('mt-1.5 block w-full text-left text-[10px]', {
+          className={clsx('mt-1.5 block w-full text-left text-xxsmall10', {
             'text-primary':
               mission.th === todayTh &&
               (attendance.result === 'WAITING' || attendance.result == null),

@@ -1,7 +1,6 @@
+import { Schedule } from '@/schema';
+import { challengeMissionSubmitToBadge } from '@/utils/convert';
 import clsx from 'clsx';
-import { Schedule } from '../../../../../schema';
-
-import { challengeMissionSubmitToBadge } from '../../../../../utils/convert';
 
 interface Props {
   className?: string;

@@ -1,6 +1,6 @@
+import { Schedule } from '@/schema';
 import 'swiper/css';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Schedule } from '../../../../../schema';
 import MissionCalendarItem from './ChallengeMissionCalendarItem';
 
 interface Props {
@@ -17,7 +17,6 @@ const MissionCalendar = ({
   schedules,
   todayTh,
   isDone,
-  onMissionClick,
   selectedMissionId,
 }: Props) => {
   return (
