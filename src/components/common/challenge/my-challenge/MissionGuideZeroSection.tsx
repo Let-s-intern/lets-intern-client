@@ -49,7 +49,7 @@ const MissionGuideZeroSection = ({
     <div className={clsx('flex flex-col gap-3', className)}>
       {/* 제목 및 마감일 섹션 */}
       <MissionHeaderSection
-        todayTh={selectedMissionTh || todayTh}
+        selectedMissionTh={selectedMissionTh || 0}
         missionType={missionData?.missionInfo?.title || 'OT 시청'}
         deadline={formatDeadline(missionData?.missionInfo?.endDate)}
       />

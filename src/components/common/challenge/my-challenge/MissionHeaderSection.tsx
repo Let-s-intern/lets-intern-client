@@ -3,27 +3,27 @@ import dayjs from '../../../../lib/dayjs';
 
 interface MissionHeaderSectionProps {
   className?: string;
-  todayTh: number;
   missionType: string;
   deadline: string;
+  selectedMissionTh: number;
   isSubmitted?: boolean;
 }
 
 const MissionHeaderSection = ({
   className,
-  todayTh,
+  selectedMissionTh,
   missionType,
   deadline,
   isSubmitted,
 }: MissionHeaderSectionProps) => {
   const getMissionTitle = () => {
-    if (todayTh === 100) {
+    if (selectedMissionTh === 100) {
       return '보너스 미션';
     }
-    if (todayTh === 101) {
+    if (selectedMissionTh === 101) {
       return '0회차 미션';
     }
-    return `${todayTh}회차 미션`;
+    return `${selectedMissionTh}회차 미션`;
   };
 
   const isDeadlinePassed = () => {
@@ -55,7 +55,8 @@ const MissionHeaderSection = ({
     }
   };
 
-  const shouldShowError = todayTh >= 1 && todayTh <= 8 && isSubmitted === false;
+  const shouldShowError =
+    selectedMissionTh >= 1 && selectedMissionTh <= 8 && isSubmitted === false;
 
   return (
     <section className={clsx('flex flex-col gap-1', className)}>
