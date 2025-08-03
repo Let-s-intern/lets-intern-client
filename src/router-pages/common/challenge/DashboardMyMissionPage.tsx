@@ -181,7 +181,6 @@ const DashboardMyMissionPage = () => {
                 ?.missionInfo.id
             }
             onRefreshMissionData={() => {
-              console.log('refetch');
               // schedules 데이터도 갱신 (attendanceInfo가 포함되어 있음)
               queryClient.invalidateQueries({
                 queryKey: ['challenge', params.programId, 'schedule'],
