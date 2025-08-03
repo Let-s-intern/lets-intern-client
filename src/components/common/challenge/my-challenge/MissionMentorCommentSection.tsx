@@ -1,6 +1,7 @@
 import { useChallengeMissionFeedbackQuery } from '@/api/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { useMissionStore } from '@/store/useMissionStore';
+import LexicalContent from '@components/common/blog/LexicalContent';
 import { useParams } from 'react-router-dom';
 
 interface Props {
@@ -21,7 +22,9 @@ const MissionMentorCommentSection = ({ missionId }: Props) => {
   const scheduleIndex =
     selectedMissionTh === 100 ? schedules.length - 1 : selectedMissionTh;
   const comment = schedules[scheduleIndex]?.attendanceInfo.comments;
-  const mentorFeedback = feedbackData?.attendanceInfo?.feedback;
+  const mentorFeedback = JSON.parse(
+    feedbackData?.attendanceInfo?.feedback ?? '{}',
+  );
   const isNoFeedbackOrComment = !comment && !mentorFeedback;
 
   if (isNoFeedbackOrComment) return null;
@@ -46,7 +49,7 @@ const MissionMentorCommentSection = ({ missionId }: Props) => {
       )}
 
       {/* 멘토 피드백 섹션: 멘토가 남기는 피드백 */}
-      {mentorFeedback && (
+      {mentorFeedback?.root && (
         <div>
           <div className="mb-2 rounded-xs bg-primary-5 p-3">
             <span className="text-xsmall16 font-semibold text-primary">
@@ -55,7 +58,7 @@ const MissionMentorCommentSection = ({ missionId }: Props) => {
           </div>
           <div className="rounded-xxs border border-neutral-80 bg-white p-3">
             <p className="min-h-[120px] text-xsmall14 leading-relaxed text-neutral-0 md:text-xsmall16">
-              {mentorFeedback}
+              <LexicalContent node={mentorFeedback.root} />
             </p>
           </div>
         </div>
