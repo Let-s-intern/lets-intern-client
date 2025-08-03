@@ -156,6 +156,7 @@ const DashboardMyMissionPage = () => {
             todayTh={selectedMissionTh}
             missionId={selectedMissionId}
             selectedMissionTh={selectedMissionTh}
+            startDate={missionData?.missionInfo?.startDate?.toString()}
             attendanceInfo={
               schedules.find(
                 (schedule) => schedule.missionInfo.id === selectedMissionId,
