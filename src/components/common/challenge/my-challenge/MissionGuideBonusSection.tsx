@@ -49,7 +49,7 @@ const MissionGuideBonusSection = ({
     <div className={clsx('flex flex-col gap-3', className)}>
       {/* 제목 및 마감일 섹션 */}
       <MissionHeaderSection
-        todayTh={selectedMissionTh || todayTh}
+        selectedMissionTh={selectedMissionTh || todayTh}
         missionType="블로그 후기 작성하고 리워드 받기!"
         deadline={formatDeadline(missionData?.missionInfo?.endDate)}
       />

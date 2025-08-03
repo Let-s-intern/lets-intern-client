@@ -26,7 +26,7 @@ const MissionGuideRegularSection = ({
     <div className={clsx('flex flex-col gap-3', className)}>
       {/* 제목 및 마감일 섹션 */}
       <MissionHeaderSection
-        todayTh={selectedMissionTh || todayTh}
+        selectedMissionTh={selectedMissionTh || todayTh}
         missionType={missionData?.missionInfo?.title || '직무 탐색'}
         deadline={formatDeadline(missionData?.missionInfo?.endDate)}
       />
