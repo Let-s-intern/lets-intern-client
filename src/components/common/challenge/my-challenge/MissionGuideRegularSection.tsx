@@ -22,7 +22,7 @@ const MissionGuideRegularSection = ({
     const date = dayjs(endDate);
     return date.format('MM.DD HH:mm');
   };
-
+  console.log(missionData);
   // 현재 시간이 startDate 이상인지 확인하는 함수
   const isMissionStarted = () => {
     if (!missionData?.missionInfo?.startDate) return false;
@@ -88,6 +88,9 @@ const MissionGuideRegularSection = ({
                     title="필수 콘텐츠"
                     fileName={content.title}
                     disabled={false}
+                    onClick={() => {
+                      window.open(content.link, '_blank');
+                    }}
                   />
                 ),
               )}
@@ -101,6 +104,9 @@ const MissionGuideRegularSection = ({
                       title={index === 0 ? '추가 콘텐츠' : ''}
                       fileName={content.title}
                       disabled={false}
+                      onClick={() => {
+                        window.open(content.link, '_blank');
+                      }}
                     />
                   ),
                 )}
