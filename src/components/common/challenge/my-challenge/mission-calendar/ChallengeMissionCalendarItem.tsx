@@ -1,15 +1,12 @@
 import { useMissionStore } from '@/store/useMissionStore';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
-import isBetween from 'dayjs/plugin/isBetween';
 import { useCallback } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { Schedule } from '../../../../../schema';
 import MissionIcon from './ChallengeMissionIcon';
 import MissionNotStartedIcon from './ChallengeMissionNotStartedIcon';
 import MissionTodayIcon from './ChallengeMissionTodayIcon';
-
-dayjs.extend(isBetween);
 
 interface Props {
   schedule: Schedule;
@@ -44,6 +41,9 @@ const MissionCalendarItem = ({
   }, [setSelectedMission, mission.id, mission.th]);
 
   const today = dayjs();
+  const isTextPrimary =
+    (mission.th === todayTh && attendance.result == null) ||
+    attendance.result === 'WAITING';
 
   return (
     <div className={className}>
@@ -82,9 +82,7 @@ const MissionCalendarItem = ({
         {/* 일정 */}
         <span
           className={clsx('mt-1.5 block w-full text-left text-[10px]', {
-            'text-primary':
-              (mission.th === todayTh && attendance.result == null) ||
-              attendance.result === 'WAITING',
+            'text-primary': isTextPrimary,
           })}
         >
           {mission.startDate?.format('MM.DD(ddd)')}
