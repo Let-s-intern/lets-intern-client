@@ -51,8 +51,8 @@ const MissionCalendarItem = ({
           'block aspect-[75/104] h-[104px] rounded-xxs border px-2 py-2.5 md:mt-2',
           !isLast && 'mr-2',
           mission.th === todayTh ? 'border-neutral-70' : 'border-neutral-80',
-          'cursor-pointer hover:border-[#A6AAFA]',
-          isSelected && isMissionPage && 'border-[#A6AAFA] bg-primary/5',
+          'hover:border-primary-50 cursor-pointer',
+          isSelected && isMissionPage && 'border-primary-50 bg-primary/5',
         )}
       >
         {mission.th === todayTh ? (
