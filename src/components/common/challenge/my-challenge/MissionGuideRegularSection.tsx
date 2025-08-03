@@ -1,5 +1,6 @@
 import dayjs from '@/lib/dayjs';
 import { clsx } from 'clsx';
+import MissionFileLink from './MissionFileLink';
 import MissionHeaderSection from './MissionHeaderSection';
 
 interface MissionGuideRegularSectionProps {
@@ -20,6 +21,14 @@ const MissionGuideRegularSection = ({
     if (!endDate) return '04.04 11:59';
     const date = dayjs(endDate);
     return date.format('MM.DD HH:mm');
+  };
+
+  // 현재 시간이 startDate 이상인지 확인하는 함수
+  const isMissionStarted = () => {
+    if (!missionData?.missionInfo?.startDate) return false;
+    const startDate = dayjs(missionData.missionInfo.startDate);
+    const now = dayjs();
+    return now.isSameOrAfter(startDate);
   };
 
   return (
@@ -45,10 +54,8 @@ const MissionGuideRegularSection = ({
           </div>
         </section>
 
-        {/* 분리선 섹션 */}
-        {/* <div className="h-px bg-neutral-80" /> */}
+        <div className="h-px bg-neutral-80" />
 
-        {/* 미션 가이드 섹션
         <section className="flex flex-col gap-3">
           <h3 className="text-xsmall16 font-semibold text-neutral-10">
             미션 가이드
@@ -58,51 +65,49 @@ const MissionGuideRegularSection = ({
               `내가 막연히 꿈꾸던 마케팅, 정말 잘 알고 있었나 점검해봐요. \n콘텐츠를 따라 직무 인터뷰를 정독하며 여러분이 이해한 방식대로 정리합시다 😊`}
           </p>
         </section>
-*/}
-        {/* 미션 자료 모음 섹션 */}
-        {/* <section className="flex flex-col gap-4 rounded-xxs bg-neutral-95 p-3 pb-5">
-          <div className="flex flex-col">
-            <h3 className="text-xsmall16 font-semibold text-neutral-0">
-              미션 자료 모음
-            </h3>
-            <p className="text-xsmall16 text-neutral-10">
-              자료를 확인하고 미션을 진행해 주세요.
-            </p>
-          </div>
 
-          {/* 자료 링크들 */}
-        {/*
-          <div className="flex flex-col gap-2">
-            {/* 필수 콘텐츠 */}
-        {/*
-            {missionData?.missionInfo?.essentialContentsList?.map(
-              (content: any, index: number) => (
-                <MissionFileLink
-                  key={content.id || index}
-                  title="필수 콘텐츠"
-                  fileName={content.title}
-                  disabled={false}
-                />
-              ),
-            )}
+        {/* 미션 자료 모음 섹션 - startDate 이후에만 노출 */}
+        {isMissionStarted() && (
+          <section className="flex flex-col gap-4 rounded-xxs bg-neutral-95 p-3 pb-5">
+            <div className="flex flex-col">
+              <h3 className="text-xsmall16 font-semibold text-neutral-0">
+                미션 자료 모음
+              </h3>
+              <p className="text-xsmall16 text-neutral-10">
+                자료를 확인하고 미션을 진행해 주세요.
+              </p>
+            </div>
 
-            {/* 추가 콘텐츠 */}
-        {/*
+            {/* 자료 링크들 */}
             <div className="flex flex-col gap-2">
-              {missionData?.missionInfo?.additionalContentsList?.map(
+              {/* 필수 콘텐츠 */}
+              {missionData?.missionInfo?.essentialContentsList?.map(
                 (content: any, index: number) => (
                   <MissionFileLink
                     key={content.id || index}
-                    title={index === 0 ? '추가 콘텐츠' : ''}
+                    title="필수 콘텐츠"
                     fileName={content.title}
                     disabled={false}
                   />
                 ),
               )}
+
+              {/* 추가 콘텐츠 */}
+              <div className="flex flex-col gap-2">
+                {missionData?.missionInfo?.additionalContentsList?.map(
+                  (content: any, index: number) => (
+                    <MissionFileLink
+                      key={content.id || index}
+                      title={index === 0 ? '추가 콘텐츠' : ''}
+                      fileName={content.title}
+                      disabled={false}
+                    />
+                  ),
+                )}
+              </div>
             </div>
-          </div>
-        </section>
-        */}
+          </section>
+        )}
       </section>
     </div>
   );
