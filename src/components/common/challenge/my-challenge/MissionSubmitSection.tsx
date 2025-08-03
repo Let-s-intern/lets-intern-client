@@ -13,6 +13,7 @@ interface MissionSubmitSectionProps {
   todayId?: number; // 선택된 미션의 ID
   attendanceInfo?: Schedule['attendanceInfo'] | null;
   startDate?: string;
+  onRefreshMissionData?: () => void; // 미션 데이터 새로고침 callback
 }
 
 const MissionSubmitSection = ({
@@ -23,6 +24,7 @@ const MissionSubmitSection = ({
   todayId,
   startDate,
   attendanceInfo,
+  onRefreshMissionData,
 }: MissionSubmitSectionProps) => {
   // 현재 시간이 startDate 이상인지 확인하는 함수
   const isMissionStarted = () => {
@@ -59,6 +61,7 @@ const MissionSubmitSection = ({
           todayTh={todayTh}
           missionId={missionId}
           attendanceInfo={attendanceInfo}
+          onRefreshMissionData={onRefreshMissionData}
         />
       );
     }

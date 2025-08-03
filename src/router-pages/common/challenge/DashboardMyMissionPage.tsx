@@ -8,7 +8,7 @@ import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import { useMissionStore } from '@/store/useMissionStore';
 import axios from '@/utils/axios';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -18,6 +18,7 @@ const getIsChallengeSubmitDone = (endDate: string) => {
 
 const DashboardMyMissionPage = () => {
   const params = useParams<{ programId: string; applicationId: string }>();
+  const queryClient = useQueryClient();
 
   const { schedules, myDailyMission } = useCurrentChallenge();
 
@@ -82,13 +83,25 @@ const DashboardMyMissionPage = () => {
   const programEndDate = programData?.data?.endDate;
   const isChallengeDone = getIsChallengeSubmitDone(programEndDate);
 
-  const { data: missionData, isError } = useChallengeMissionAttendanceInfoQuery(
-    {
-      challengeId: Number(params.programId),
-      missionId: selectedMissionId,
-      enabled: !!selectedMissionId && selectedMissionId > 0,
-    },
-  );
+  const {
+    data: missionData,
+    isError,
+    refetch,
+  } = useChallengeMissionAttendanceInfoQuery({
+    challengeId: Number(params.programId),
+    missionId: selectedMissionId,
+    enabled: !!selectedMissionId && selectedMissionId > 0,
+  });
+
+  // missionData가 변경될 때마다 강제로 리렌더링을 위한 상태
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  // missionData 변경 감지
+  useEffect(() => {
+    if (missionData) {
+      setRefreshKey((prev) => prev + 1);
+    }
+  }, [missionData]);
 
   // 팝업 표시 조건 관리
   const [showPopup, setShowPopup] = useState(true);
@@ -99,9 +112,9 @@ const DashboardMyMissionPage = () => {
   //   setSelectedMissionId(100);
   //   setSelectedMissionTh(100);
   // };
-  const handlePopupClick = () => {
-    setSelectedMission(100, 100);
-  };
+  // const handlePopupClick = () => {
+  //   setSelectedMission(100, 100);
+  // };
 
   useEffect(() => {
     /** 0회차 미션 미제출 처리 */
@@ -153,6 +166,7 @@ const DashboardMyMissionPage = () => {
         </div> */}
         <div className="mt-6">
           <MissionSubmitSection
+            key={refreshKey} // 강제 리렌더링을 위한 key
             todayTh={selectedMissionTh}
             missionId={selectedMissionId}
             selectedMissionTh={selectedMissionTh}
@@ -166,6 +180,15 @@ const DashboardMyMissionPage = () => {
               schedules.find((schedule) => schedule.missionInfo.th === todayTh)
                 ?.missionInfo.id
             }
+            onRefreshMissionData={() => {
+              console.log('refetch');
+              // schedules 데이터도 갱신 (attendanceInfo가 포함되어 있음)
+              queryClient.invalidateQueries({
+                queryKey: ['challenge', params.programId, 'schedule'],
+              });
+              // 현재 미션 데이터도 갱신
+              refetch();
+            }}
           />
         </div>
         {/* 멘토 피드백 여부에 따라 값 받고 노출 */}
