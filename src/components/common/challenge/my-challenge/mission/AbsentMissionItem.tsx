@@ -1,14 +1,11 @@
+import { userChallengeMissionDetail } from '@/api/challengeSchema';
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { MyChallengeMissionByType } from '@/schema';
+import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
-
 import { useSearchParams } from 'react-router-dom';
-import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
-import {
-  MyChallengeMissionByType,
-  userChallengeMissionDetail,
-} from '../../../../../schema';
-import axios from '../../../../../utils/axios';
 import AbsentMissionDetailMenu from './AbsentMissionDetailMenu';
 
 interface Props {

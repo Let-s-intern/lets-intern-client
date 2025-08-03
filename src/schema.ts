@@ -146,7 +146,7 @@ export const challengeUserType = z.union([
 // deprecated
 export type ChallengeUserType = z.infer<typeof challengeUserType>;
 
-const challengeParticipationType = z.union([
+export const challengeParticipationType = z.union([
   z.literal('LIVE'),
   z.literal('FREE'),
 ]);
@@ -1147,6 +1147,8 @@ export const challengeSchedule = z
           comments: z.string().nullable(),
           status: AttendanceStatusEnum.nullable(),
           result: AttendanceResultEnum.nullable(),
+          accountType: z.string().nullish(),
+          accountNum: z.string().nullish(),
         }),
       }),
     ),
@@ -1176,50 +1178,6 @@ export type Schedule = z.infer<
 >['scheduleList'][number];
 
 export type ScheduleMission = Schedule['missionInfo'];
-
-// GET /api/v1/challenge/{challengeId}/missions/{missionId} 나의 기록장 미션 상세
-export const userChallengeMissionDetail = z
-  .object({
-    missionInfo: z.object({
-      id: z.number(),
-      th: z.number().nullable(),
-      title: z.string().nullable(),
-      startDate: z.string().nullable(),
-      endDate: z.string().nullable(),
-      essentialContentsList: z.array(
-        z.object({
-          id: z.number(),
-          title: z.string().nullable(),
-          link: z.string().nullable(),
-        }),
-      ),
-      additionalContentsList: z.array(
-        z.object({
-          id: z.number(),
-          title: z.string().nullable(),
-          link: z.string().nullable(),
-        }),
-      ),
-      status: MissionStatusEnum,
-      missionTag: z.string(),
-      description: z.string(),
-      guide: z.string(),
-      templateLink: z.string(),
-    }),
-  })
-  .transform((data) => {
-    return {
-      missionInfo: {
-        ...data.missionInfo,
-        startDate: dayjs(data.missionInfo.startDate),
-        endDate: dayjs(data.missionInfo.endDate),
-      },
-    };
-  });
-
-export type UserChallengeMissionDetail = z.infer<
-  typeof userChallengeMissionDetail
->['missionInfo'];
 
 // GET /api/v1/challenge/{challengeId}/missions/{missionId} 미션 상세 + attendanceInfo
 export const userChallengeMissionWithAttendance = z
@@ -1366,6 +1324,8 @@ export const myDailyMission = z
         comments: z.string().nullable(),
         status: AttendanceStatusEnum.nullable(),
         result: AttendanceResultEnum.nullable(),
+        accountType: z.string().nullish(),
+        accountNum: z.string().nullish(),
       })
       .nullable(),
   })

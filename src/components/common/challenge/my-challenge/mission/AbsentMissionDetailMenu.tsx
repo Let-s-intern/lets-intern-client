@@ -1,4 +1,5 @@
-import { Schedule, UserChallengeMissionDetail } from '@/schema';
+import { UserChallengeMissionDetail } from '@/api/challengeSchema';
+import { Schedule } from '@/schema';
 import AbsentContentsInfoMenu from '../menu/AbsentContentsInfoMenu';
 import AbsentMissionSubmitMenu from '../menu/AbsentMissionSubmitMenu';
 

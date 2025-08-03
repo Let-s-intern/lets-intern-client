@@ -15,7 +15,6 @@ function MoreButtonSection({
   url = '',
 }: MoreButtonSectionProps) {
   const handleChangeCheckbox = (_: React.SyntheticEvent, value: boolean) => {
-    console.log(value);
     onChangeCheckbox?.(value);
   };
 
@@ -38,6 +37,7 @@ function MoreButtonSection({
         size="small"
         disabled={!checked}
         value={url}
+        maxLength={17}
         onChange={handleChangeUrl}
       />
     </div>

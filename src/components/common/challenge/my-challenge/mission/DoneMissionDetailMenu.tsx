@@ -1,10 +1,7 @@
 import { Link } from 'react-router-dom';
 
-import {
-  MyChallengeMissionByType,
-  Schedule,
-  UserChallengeMissionDetail,
-} from '@/schema';
+import { UserChallengeMissionDetail } from '@/api/challengeSchema';
+import { MyChallengeMissionByType, Schedule } from '@/schema';
 import MenuContentsDropdown from '../dropdown/MenuContentsDropdown';
 import ParsedCommentBox from '../ParsedCommentBox';
 interface Props {

@@ -18,12 +18,6 @@ interface Props {
   setIsRefunded: (isRefunded: boolean) => void;
 }
 
-// export const attendanceResultToText: any = {
-//   WAITING: '확인중',
-//   PASS: '확인 완료',
-//   WRONG: '반려',
-// };
-
 const getAttendanceResultText = (
   result: AttendanceItem['attendance']['result'],
 ) => {
@@ -56,8 +50,6 @@ const ResultDropdown = ({
     mutationFn: async (result: AttendanceItem['attendance']['result']) => {
       const res = await axios.patch(`/attendance/${attendance.id}`, {
         result,
-        // isRefunded:
-        //   result === 'PASS' && attendanceResult !== 'PASS' ? false : true,
       });
       const data = res.data;
       return data;
