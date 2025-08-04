@@ -1,6 +1,6 @@
 /** 참여자별 피드백 페이지 (피드백 작성 페이지) */
 
-import { usePatchAttendance } from '@/api/attendance';
+import { usePatchAttendanceMentor } from '@/api/attendance';
 import {
   FeedbackAttendanceQueryKey,
   useFeedbackAttendanceQuery,
@@ -148,7 +148,7 @@ export default function ChallengeFeedbackPage() {
   const { programId, missionId, userId } = useParams();
 
   const { snackbar } = useAdminSnackbar();
-  const { mutateAsync: patchAttendance } = usePatchAttendance();
+  const { mutateAsync: patchAttendanceMentor } = usePatchAttendanceMentor();
 
   const { content, setContent, isLoading, hasUnsavedChanges, defaultContent } =
     useAttendanceFeedback();
@@ -171,11 +171,10 @@ export default function ChallengeFeedbackPage() {
 
   const handleSave = async () => {
     if (!userId) return;
-    // TODO: '멘토용 피드백 작성'으로 수정해야 함
-    // await patchAttendance({
-    //   attendanceId: userId,
-    //   feedback: content,
-    // });
+    await patchAttendanceMentor({
+      attendanceId: userId,
+      feedback: content,
+    });
     await invalidateFeedbackQueries();
     snackbar('저장되었습니다.');
   };
