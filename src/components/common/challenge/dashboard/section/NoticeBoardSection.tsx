@@ -2,7 +2,6 @@ import { ChallengeNotice } from '@/schema';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { useState } from 'react';
-import { GrNext } from 'react-icons/gr';
 import { Link, useParams } from 'react-router-dom';
 
 interface INoticeSectionProps {
@@ -42,11 +41,11 @@ const NoticeBoardSection = ({ notices }: INoticeSectionProps) => {
               </span>
             )}
           </div>
-          <Link
+          {/* <Link
             to={`/challenge/${params.programId}/dashboard/${applicationId}/guide`}
           >
             <GrNext className="text-sm text-neutral-45" />
-          </Link>
+          </Link> */}
         </div>
         {currentNoticeList.length === 0 ? (
           <div className="flex h-[5.75rem] justify-center">
