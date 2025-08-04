@@ -1,6 +1,6 @@
 import { useMissionsOfCurrentChallengeRefetch } from '@/context/CurrentAdminChallengeProvider';
 import { AttendanceItem } from '@/schema';
-import axios from '@/utils/axios';
+import axiosV2 from '@/utils/axiosV2';
 import { attendanceResultToText } from '@/utils/convert';
 import { challengeSubmitDetailCellWidthList } from '@/utils/tableCellWidthList';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -17,12 +17,6 @@ interface Props {
   cellWidthListIndex: number;
   setIsRefunded: (isRefunded: boolean) => void;
 }
-
-// export const attendanceResultToText: any = {
-//   WAITING: '확인중',
-//   PASS: '확인 완료',
-//   WRONG: '반려',
-// };
 
 const getAttendanceResultText = (
   result: AttendanceItem['attendance']['result'],
@@ -52,12 +46,11 @@ const ResultDropdown = ({
 
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
+  // 어드민용으로 수정
   const editAttendanceStatus = useMutation({
     mutationFn: async (result: AttendanceItem['attendance']['result']) => {
-      const res = await axios.patch(`/attendance/${attendance.id}`, {
+      const res = await axiosV2.patch(`/admin/attendance/${attendance.id}`, {
         result,
-        // isRefunded:
-        //   result === 'PASS' && attendanceResult !== 'PASS' ? false : true,
       });
       const data = res.data;
       return data;

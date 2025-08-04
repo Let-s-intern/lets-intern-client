@@ -1,8 +1,7 @@
+import { usePatchAdminAttendance } from '@/api/attendance';
 import { useControlScroll } from '@/hooks/useControlScroll';
-import { AttendanceItem, UpdateAttendanceReq } from '@/schema';
-import axios from '@/utils/axios';
+import { AttendanceItem } from '@/schema';
 import { challengeSubmitDetailCellWidthList } from '@/utils/tableCellWidthList';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 
@@ -14,7 +13,6 @@ interface Props {
 const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
   const cursorPositionRef = useRef<number>();
   const selectionRef = useRef<string>();
-  const queryClient = useQueryClient();
 
   const [modalShown, setModalShown] = useState(false);
   const [editingComment, setEditingComment] = useState(
@@ -25,21 +23,15 @@ const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
 
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
-  const editComment = useMutation({
-    mutationFn: async (req: UpdateAttendanceReq) => {
-      return axios.patch(`/attendance/${attendance.id}`, req);
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries();
-      setModalShown(false);
-    },
-  });
+  const patchAdminAttendance = usePatchAdminAttendance();
 
-  const handleCommentEdit = (e: React.FormEvent) => {
+  const handleCommentEdit = async (e: React.FormEvent) => {
     e.preventDefault();
-    editComment.mutate({
+    await patchAdminAttendance.mutateAsync({
+      attendanceId: attendance.id,
       comments: editingComment,
     });
+    setModalShown(false);
   };
 
   /** 링크 삽입 후 커서가 맨 마지막으로 이동하는 것을 방지 */
