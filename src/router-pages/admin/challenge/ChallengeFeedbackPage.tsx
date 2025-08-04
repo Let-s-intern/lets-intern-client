@@ -171,10 +171,11 @@ export default function ChallengeFeedbackPage() {
 
   const handleSave = async () => {
     if (!userId) return;
-    await patchAttendance({
-      attendanceId: userId,
-      feedback: content,
-    });
+    // TODO: '멘토용 피드백 작성'으로 수정해야 함
+    // await patchAttendance({
+    //   attendanceId: userId,
+    //   feedback: content,
+    // });
     await invalidateFeedbackQueries();
     snackbar('저장되었습니다.');
   };

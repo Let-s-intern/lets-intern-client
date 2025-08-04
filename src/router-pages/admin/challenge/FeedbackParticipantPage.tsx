@@ -69,10 +69,13 @@ const MentorRenderCell = (
 
   const handleChange = async (e: SelectChangeEvent<number>) => {
     const attendanceId = params.row.id;
-    await patchAttendance({
-      attendanceId,
-      mentorUserId: e.target.value as number,
-    });
+    //     TODO 수정:
+    //     어드민용 출석 수정
+    // PATCH /api/v2/admin/attendance/{attendanceId}
+    // await patchAttendance({
+    //   attendanceId,
+    //   mentorUserId: e.target.value as number,
+    // });
     await invalidateAttendance();
   };
 
@@ -109,10 +112,11 @@ const FeedbackStatusRenderCell = (
   const handleChange = async (e: SelectChangeEvent<FeedbackStatus>) => {
     const attendanceId = params.row.id;
 
-    await patchAttendance({
-      attendanceId,
-      feedbackStatus: e.target.value as FeedbackStatus,
-    });
+    // TODO: 어드민용으로 수정
+    // await patchAttendance({
+    //   attendanceId,
+    //   feedbackStatus: e.target.value as FeedbackStatus,
+    // });
     await invalidateAttendance();
   };
 
