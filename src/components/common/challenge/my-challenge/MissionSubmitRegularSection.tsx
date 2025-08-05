@@ -1,6 +1,4 @@
-import { usePatchAttendance, useSubmitMission } from '@/api/attendance';
-import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
-import { useMissionStore } from '@/store/useMissionStore';
+import { usePatchAttendance } from '@/api/attendance';
 import { clsx } from 'clsx';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -36,12 +34,6 @@ const MissionSubmitRegularSection = ({
 }: MissionSubmitRegularSectionProps) => {
   const params = useParams();
 
-  const { selectedMissionId } = useMissionStore();
-  const { schedules } = useCurrentChallenge();
-
-  const isLastMissionSubmit =
-    schedules[schedules.length - 1].missionInfo.id === selectedMissionId;
-
   const [textareaValue, setTextareaValue] = useState(
     attendanceInfo?.review || '',
   );
@@ -65,7 +57,7 @@ const MissionSubmitRegularSection = ({
     attendanceInfo?.link || '',
   );
 
-  const submitMission = useSubmitMission();
+  // const submitMission = useSubmitMission();
   const patchAttendance = usePatchAttendance();
 
   // attendanceInfo가 변경될 때마다 상태 업데이트 (다른 미션인 경우에만)
@@ -111,11 +103,11 @@ const MissionSubmitRegularSection = ({
     if (!missionId || missionId === 0) return;
 
     try {
-      await submitMission.mutateAsync({
-        missionId,
-        link: linkValue,
-        review: textareaValue,
-      });
+      // await submitMission.mutateAsync({
+      //   missionId,
+      //   link: linkValue,
+      //   review: textareaValue,
+      // });
       setIsSubmitted(true);
       setShowToast(true);
       // 원본 데이터 업데이트

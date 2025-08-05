@@ -1,4 +1,3 @@
-import { useSubmitMission } from '@/api/attendance';
 import { useGetChallengeGoal, useSubmitChallengeGoal } from '@/api/challenge';
 import { clsx } from 'clsx';
 import { useEffect, useState } from 'react';
@@ -23,7 +22,7 @@ const MissionSubmitZeroSection = ({
   const { data: goalData, isLoading } = useGetChallengeGoal(programId);
   // 챌린지 목표 제출 mutation
   const submitChallengeGoal = useSubmitChallengeGoal();
-  const submitAttendance = useSubmitMission();
+
   const [textareaValue, setTextareaValue] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -43,11 +42,11 @@ const MissionSubmitZeroSection = ({
             goal: textareaValue,
           }),
           // 단순 출석 체크용
-          submitAttendance.mutateAsync({
-            missionId,
-            link: 'https://example.com',
-            review: textareaValue,
-          }),
+          // submitAttendance.mutateAsync({
+          //   missionId,
+          //   link: 'https://example.com',
+          //   review: textareaValue,
+          // }),
         ]);
         setIsSubmitted(true);
         setShowToast(true);
