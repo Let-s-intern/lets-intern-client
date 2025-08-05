@@ -474,7 +474,7 @@ export const useGetChallengeReviewStatus = (
   });
 };
 
-const getChallengeAttendancesQueryKey = (
+export const getChallengeAttendancesQueryKey = (
   challengeId: number | undefined,
   missionId: number | undefined,
 ) => {
