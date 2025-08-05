@@ -1,6 +1,6 @@
 /** 참여자별 피드백 페이지 (피드백 작성 페이지) */
 
-import { usePatchAttendance } from '@/api/attendance';
+import { usePatchAttendanceMentor } from '@/api/attendance';
 import {
   FeedbackAttendanceQueryKey,
   useFeedbackAttendanceQuery,
@@ -148,7 +148,7 @@ export default function ChallengeFeedbackPage() {
   const { programId, missionId, userId } = useParams();
 
   const { snackbar } = useAdminSnackbar();
-  const { mutateAsync: patchAttendance } = usePatchAttendance();
+  const { mutateAsync: patchAttendanceMentor } = usePatchAttendanceMentor();
 
   const { content, setContent, isLoading, hasUnsavedChanges, defaultContent } =
     useAttendanceFeedback();
@@ -171,7 +171,7 @@ export default function ChallengeFeedbackPage() {
 
   const handleSave = async () => {
     if (!userId) return;
-    await patchAttendance({
+    await patchAttendanceMentor({
       attendanceId: userId,
       feedback: content,
     });

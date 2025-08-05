@@ -1,6 +1,6 @@
 import { useMissionsOfCurrentChallengeRefetch } from '@/context/CurrentAdminChallengeProvider';
 import { AttendanceItem } from '@/schema';
-import axios from '@/utils/axios';
+import axiosV2 from '@/utils/axiosV2';
 import { attendanceResultToText } from '@/utils/convert';
 import { challengeSubmitDetailCellWidthList } from '@/utils/tableCellWidthList';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -48,7 +48,7 @@ const ResultDropdown = ({
 
   const editAttendanceStatus = useMutation({
     mutationFn: async (result: AttendanceItem['attendance']['result']) => {
-      const res = await axios.patch(`/attendance/${attendance.id}`, {
+      const res = await axiosV2.patch(`/admin/attendance/${attendance.id}`, {
         result,
       });
       const data = res.data;
