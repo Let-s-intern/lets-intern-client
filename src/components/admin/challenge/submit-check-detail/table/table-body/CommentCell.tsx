@@ -2,6 +2,7 @@ import { usePatchAdminAttendance } from '@/api/attendance';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import { AttendanceItem } from '@/schema';
 import { challengeSubmitDetailCellWidthList } from '@/utils/tableCellWidthList';
+import { useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 
@@ -11,6 +12,8 @@ interface Props {
 }
 
 const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
+  const queryClient = useQueryClient();
+
   const cursorPositionRef = useRef<number>();
   const selectionRef = useRef<string>();
 
@@ -31,6 +34,7 @@ const CommentCell = ({ attendance, cellWidthListIndex }: Props) => {
       attendanceId: attendance.id,
       comments: editingComment,
     });
+    await queryClient.invalidateQueries();
     setModalShown(false);
   };
 

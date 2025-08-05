@@ -2,7 +2,7 @@
 
 import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import {
   PatchAdminAttendanceReq,
   PatchAttendanceMentorReq,
@@ -33,16 +33,11 @@ export const usePatchAttendanceMentor = () => {
 
 /** [어드민] 출석 업데이트 /api/v2/admin/attendance/{attendanceId} */
 export const usePatchAdminAttendance = () => {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async (req: PatchAdminAttendanceReq) => {
       const { attendanceId, ...body } = req;
       return axiosV2.patch(`/admin/attendance/${attendanceId}`, body);
     },
     onError: (error) => console.error('usePatchAdminAttendance >>', error),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries();
-    },
   });
 };
