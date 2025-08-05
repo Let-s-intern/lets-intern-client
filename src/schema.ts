@@ -803,7 +803,7 @@ export const liveTitleSchema = z.object({
   title: z.string().optional().nullable(),
 });
 
-/** PATCH /api/v1/attendance/{id} */
+/** [유저용] 출석 업데이트 PATCH /api/v1/attendance/{attendanceId} */
 export type UpdateAttendanceReq = {
   link?: string;
   status?: AttendanceStatus;

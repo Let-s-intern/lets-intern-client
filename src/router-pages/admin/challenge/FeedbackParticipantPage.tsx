@@ -1,6 +1,9 @@
 /** 챌린지 운영 > 피드백 > 미션별 참여자 페이지 */
 
-import { usePatchAttendance } from '@/api/attendance';
+import {
+  usePatchAdminAttendance,
+  usePatchAttendanceMentor,
+} from '@/api/attendance';
 import {
   ChallengeMissionFeedbackAttendanceQueryKey,
   MentorMissionFeedbackAttendanceQueryKey,
@@ -48,11 +51,12 @@ const useAttendanceHandler = () => {
     ? [ChallengeMissionFeedbackAttendanceQueryKey, programId, missionId]
     : [MentorMissionFeedbackAttendanceQueryKey, programId, missionId];
 
-  const { mutateAsync: patchAttendance } = usePatchAttendance();
+  const { mutateAsync: patchAdminAttendance } = usePatchAdminAttendance();
+  const { mutateAsync: patchAttendanceMentor } = usePatchAttendanceMentor();
   const invalidateAttendance = useInvalidateQueries(queryKey);
 
   return {
-    patchAttendance,
+    patchAttendance: isAdmin ? patchAdminAttendance : patchAttendanceMentor,
     invalidateAttendance,
   };
 };

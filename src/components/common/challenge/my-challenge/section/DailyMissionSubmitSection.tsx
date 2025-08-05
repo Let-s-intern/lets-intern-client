@@ -1,6 +1,6 @@
+import { usePatchAttendance } from '@/api/attendance';
 import {
   useGetChallengeReviewStatus,
-  usePatchChallengeAttendance,
   usePostChallengeAttendance,
 } from '@/api/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
@@ -52,12 +52,7 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
   );
 
   const { mutateAsync: tryPostAttendance } = usePostChallengeAttendance({});
-
-  const { mutateAsync: tryPatchAttendance } = usePatchChallengeAttendance({
-    successCallback: () => {
-      alert('미션 수정이 완료되었습니다.');
-    },
-  });
+  const patchAttendance = usePatchAttendance();
 
   useEffect(() => {
     const handleBeforeunload = (e: BeforeUnloadEvent) => {
@@ -119,11 +114,12 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
 
     try {
       if (attended && attendanceId !== undefined && attendanceId !== null) {
-        await tryPatchAttendance({
+        await patchAttendance.mutateAsync({
           attendanceId,
           link: value,
           review,
         });
+        alert('미션 수정이 완료되었습니다.');
       } else {
         await tryPostAttendance({
           missionId: myDailyMission.dailyMission.id,

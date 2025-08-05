@@ -1,11 +1,6 @@
-import axiosV2 from '@/utils/axiosV2';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { z } from 'zod';
 import {
   activeChallengeResponse,
-  AttendanceResult,
   attendances,
-  AttendanceStatus,
   ChallengeIdPrimitive,
   challengeListSchema,
   challengeTitleSchema,
@@ -14,13 +9,16 @@ import {
   getChallengeIdPrimitiveSchema,
   getChallengeIdSchema,
   missionAdmin,
+  Pageable,
   ProgramClassification,
   ProgramStatus,
   reviewTotalSchema,
   userChallengeMissionWithAttendance,
-} from '../schema';
-import axios from '../utils/axios';
-import { Pageable } from './../schema';
+} from '@/schema';
+import axios from '@/utils/axios';
+import axiosV2 from '@/utils/axiosV2';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { z } from 'zod';
 import {
   challengeGoalSchema,
   challengeMissionFeedbackAttendanceListSchema,
@@ -30,7 +28,6 @@ import {
   challengeValidUserSchema,
   feedbackAttendanceSchema,
 } from './challengeSchema';
-import { getAdminProgramReviewQueryKey } from './review';
 
 const useChallengeQueryKey = 'useChallengeQueryKey';
 
@@ -389,67 +386,6 @@ export const usePostChallengeAttendance = ({
   });
 };
 
-export const usePatchChallengeAttendance = ({
-  successCallback,
-  errorCallback,
-}: {
-  successCallback?: () => void;
-  errorCallback?: (error: Error) => void;
-}) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({
-      challengeId,
-      attendanceId,
-      missionId,
-      link,
-      status,
-      result,
-      comments,
-      review,
-      reviewIsVisible,
-    }: {
-      challengeId?: number;
-      attendanceId: number;
-      missionId?: number;
-      link?: string;
-      status?: AttendanceStatus | null;
-      result?: AttendanceResult | null;
-      comments?: string;
-      review?: string;
-      reviewIsVisible?: boolean;
-    }) => {
-      const res = await axios.patch(`/attendance/${attendanceId}`, {
-        link,
-        status,
-        result,
-        comments,
-        review,
-        reviewIsVisible,
-      });
-      return { data: res.data, challengeId, missionId };
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({
-        queryKey: ['challenge'],
-      });
-      queryClient.invalidateQueries({
-        queryKey: getAdminProgramReviewQueryKey('MISSION_REVIEW'),
-      });
-      queryClient.invalidateQueries({
-        queryKey: getChallengeAttendancesQueryKey(
-          data.challengeId,
-          data.missionId,
-        ),
-      });
-      return successCallback && successCallback();
-    },
-    onError: (e) => {
-      return errorCallback && errorCallback(e);
-    },
-  });
-};
-
 const reviewStatusSchema = z.object({
   reviewId: z.number().nullable(),
 });
@@ -474,7 +410,7 @@ export const useGetChallengeReviewStatus = (
   });
 };
 
-const getChallengeAttendancesQueryKey = (
+export const getChallengeAttendancesQueryKey = (
   challengeId: number | undefined,
   missionId: number | undefined,
 ) => {

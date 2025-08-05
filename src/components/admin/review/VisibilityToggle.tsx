@@ -1,4 +1,4 @@
-import { usePatchChallengeAttendance } from '@/api/challenge';
+import { usePatchAdminAttendance } from '@/api/attendance';
 import { ReviewType, useUpdateAdminProgramReview } from '@/api/review';
 import { Row } from '@/router-pages/admin/review/AdminChallengeReviewListPage';
 import { Switch } from '@mui/material';
@@ -10,13 +10,9 @@ const VisibilityToggle = ({ type, row }: { type: ReviewType; row: Row }) => {
     },
   });
 
-  const { mutate: updateAttendance } = usePatchChallengeAttendance({
-    errorCallback: (error) => {
-      alert(error);
-    },
-  });
+  const patchAdminAttendance = usePatchAdminAttendance();
 
-  const handleToggle = () => {
+  const handleToggle = async () => {
     if (type !== 'MISSION_REVIEW') {
       updateReview({
         type,
@@ -24,7 +20,7 @@ const VisibilityToggle = ({ type, row }: { type: ReviewType; row: Row }) => {
         isVisible: !row.reviewInfo.isVisible,
       });
     } else {
-      updateAttendance({
+      await patchAdminAttendance.mutateAsync({
         attendanceId: row.reviewInfo.attendanceId ?? 0,
         reviewIsVisible: !row.reviewInfo.reviewIsVisible,
       });
