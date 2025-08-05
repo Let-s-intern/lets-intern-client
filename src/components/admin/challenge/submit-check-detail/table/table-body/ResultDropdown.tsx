@@ -46,7 +46,6 @@ const ResultDropdown = ({
 
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
-  // 어드민용으로 수정
   const editAttendanceStatus = useMutation({
     mutationFn: async (result: AttendanceItem['attendance']['result']) => {
       const res = await axiosV2.patch(`/admin/attendance/${attendance.id}`, {

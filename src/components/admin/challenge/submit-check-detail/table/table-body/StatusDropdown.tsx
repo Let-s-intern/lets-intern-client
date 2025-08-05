@@ -24,7 +24,6 @@ const StatusDropdown = ({ attendance, cellWidthListIndex, refetch }: Props) => {
   const cellWidthList = challengeSubmitDetailCellWidthList;
   const missionRefetch = useMissionsOfCurrentChallengeRefetch();
 
-  // 어드민용으로 수정
   const editAttendanceStatus = useMutation({
     mutationFn: async (status: string) => {
       const res = await axiosV2.patch(`/admin/attendance/${attendance.id}`, {

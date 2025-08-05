@@ -9,18 +9,6 @@ export type PatchAttendanceReq = {
   accountType?: string;
   accountNum?: string;
 };
-// export type PatchAttendanceReq = {
-//   attendanceId: number | string;
-//   link?: string;
-//   status?: AttendanceStatus;
-//   result?: AttendanceResult;
-//   comments?: string;
-//   review?: string;
-//   reviewIsVisible?: boolean;
-//   mentorUserId?: number;
-//   feedback?: string | null;
-//   feedbackStatus?: FeedbackStatus;
-// };
 
 /** [멘토용] 출석 업데이트 /api/v1/attendance/{attendanceId}/mentor */
 export type PatchAttendanceMentorReq = {
