@@ -44,7 +44,7 @@ export default function PersonalStatementLatest() {
 
     // 챌린지가 없는 경우 프로그램 페이지로 이동
     navigate('/program', { replace: true });
-  }, [activeData, listData, navigate]);
+  }, [activeData, listData, navigate, activeLoading, listLoading]);
 
   // 로딩 상태 표시
   return (
