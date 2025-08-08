@@ -14,12 +14,14 @@ const { PERSONAL_STATEMENT } = challengeTypeSchema.enum;
  */
 export default function PersonalStatementLatest() {
   const navigate = useNavigate();
-  const { data: activeData } = useGetActiveChallenge(PERSONAL_STATEMENT);
-  const { data: listData } = useGetChallengeList({
+  const { data: activeData, isLoading: activeLoading } =
+    useGetActiveChallenge(PERSONAL_STATEMENT);
+  const { data: listData, isLoading: listLoading } = useGetChallengeList({
     type: PERSONAL_STATEMENT,
   });
 
   useEffect(() => {
+    if (activeLoading || listLoading) return;
     // 활성화된 챌린지가 있는 경우
     const activeChallenge = activeData?.challengeList?.[0];
     if (activeChallenge?.id) {
