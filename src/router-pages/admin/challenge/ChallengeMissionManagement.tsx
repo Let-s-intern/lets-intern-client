@@ -117,7 +117,6 @@ const ChallengeMissionManagement = () => {
               createDate: dayjs(), // 임시 생성일자
               rowStatus: TABLE_STATUS.INSERT,
               missionTag: '',
-              vodLink: '',
             });
           }}
         >
