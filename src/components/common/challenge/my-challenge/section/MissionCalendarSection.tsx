@@ -1,4 +1,4 @@
-import { Schedule } from '../../../../../schema';
+import { Schedule } from '@/schema';
 import MissionTooltipQuestion from '../../ui/tooltip-question/MissionTooltipQuestion';
 import MissionCalendar from '../mission-calendar/MissionCalendar';
 

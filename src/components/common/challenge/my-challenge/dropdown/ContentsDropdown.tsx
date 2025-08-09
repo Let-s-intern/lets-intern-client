@@ -13,13 +13,15 @@ const ContentsDropdown = ({ missionDetail }: Props) => {
     missionDetail.additionalContentsList?.[0]?.link;
   const essentialContentsLink = missionDetail.essentialContentsList?.[0]?.link;
 
+  const isOtMission = missionDetail.th === 0;
+
   return (
     <div className="relative flex-1">
       <div
         className="cursor-pointer rounded-sm bg-primary-20 p-3 text-center text-xsmall16 font-medium text-primary"
         onClick={() => setIsMenuShown(!isMenuShown)}
       >
-        학습 콘텐츠
+        {isOtMission ? 'OT 자료' : '학습 콘텐츠'}
       </div>
       {isMenuShown && (essentialContentsLink || additionalContentsLink) && (
         <ul className="rounded absolute bottom-[-0.25rem] w-full translate-y-[100%] border border-[#DCDCDC] bg-white text-sm">

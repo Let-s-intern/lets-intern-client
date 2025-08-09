@@ -1,14 +1,10 @@
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { MyChallengeMissionByType, userChallengeMissionDetail } from '@/schema';
+import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
-
 import { useSearchParams } from 'react-router-dom';
-import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
-import {
-  MyChallengeMissionByType,
-  userChallengeMissionDetail,
-} from '../../../../../schema';
-import axios from '../../../../../utils/axios';
 import AbsentMissionDetailMenu from './AbsentMissionDetailMenu';
 
 interface Props {
@@ -69,7 +65,7 @@ const AbsentMissionItem = ({ mission, isDone, setOpenReviewModal }: Props) => {
   return (
     <li
       key={mission.id}
-      className="scroll-mt-[calc(6rem+1rem)] rounded-xl bg-white p-6"
+      className="scroll-mt-[7rem] rounded-xl bg-white p-6"
       ref={itemRef}
     >
       <div className="flex gap-6 px-3">
