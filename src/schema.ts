@@ -956,6 +956,7 @@ export const missionTemplateAdmin = z
         description: z.string(),
         guide: z.string(),
         templateLink: z.string().nullish(),
+        vodLink: z.string().nullish(),
       }),
     ),
   })
@@ -981,6 +982,7 @@ export type CreateMissionTemplateReq = {
   description: string;
   guide: string;
   templateLink: string;
+  vodLink?: string | null;
 };
 
 // PATCH /api/v1/mission-template/{id}
@@ -990,6 +992,7 @@ export type UpdateMissionTemplateReq = {
   description?: string;
   guide?: string;
   templateLink?: string;
+  vodLink?: string | null;
 };
 
 // POST /api/v1/contents

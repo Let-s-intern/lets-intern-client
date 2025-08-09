@@ -1,8 +1,8 @@
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
+import { TABLE_CONTENT, TABLE_STATUS } from '@/utils/convert';
 import React, { useState } from 'react';
 import { CiTrash } from 'react-icons/ci';
-import { TABLE_CONTENT, TABLE_STATUS } from '../../../../../utils/convert';
 import AlertModal from '../../../../ui/alert/AlertModal';
 import DropdownCell from './DropdownCell';
 import LineTableBodyCell from './LineTableBodyCell';
@@ -213,7 +213,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
       {editable ? (
         <LineTableBodyCell className="flex-1">
           {isEditMode ? (
-            <div className="flex gap-2">
+            <div className="flex min-w-[100px] gap-2">
               <button
                 type="button"
                 onClick={() => {
@@ -239,7 +239,7 @@ const LineTableBodyRow = <T extends ItemWithStatus>({
             </div>
           ) : (
             <div
-              className="flex items-center gap-3"
+              className="flex min-w-[100px] items-center gap-3"
               onClick={(e) => e.stopPropagation}
             >
               {/* 수정 버튼 */}
