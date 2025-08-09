@@ -50,7 +50,7 @@ const Footer = () => {
                 isNextRouter={false}
                 href="https://letscareer.oopy.io/1ea5e77c-bee1-8098-8e19-ec5038fb1cc8"
                 target="_blank"
-                rel="noopenner noreferrer"
+                rel="noopener noreferrer"
               >
                 커피챗
               </MainLink>

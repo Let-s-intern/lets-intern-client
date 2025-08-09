@@ -17,7 +17,7 @@ const GuideSection = ({ guides }: GuideSection) => {
               to={guide.link ?? ''}
               className="flex h-full items-center justify-center rounded-xl border border-[#E4E4E7] font-medium duration-150 hover:bg-neutral-90"
               target="_blank"
-              rel="noopenner noreferrer"
+              rel="noopener noreferrer"
             >
               {guide.title}
             </Link>

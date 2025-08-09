@@ -59,7 +59,7 @@ const DailyMissionLinkInputSection = ({
               Object.assign(document.createElement('a'), {
                 target: '_blank',
                 href: value,
-                rel: 'noopenner noreferrer',
+                rel: 'noopener noreferrer',
               }).click();
               setIsLinkChecked(true);
             }

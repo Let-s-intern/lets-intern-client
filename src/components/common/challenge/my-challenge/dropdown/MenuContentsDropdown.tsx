@@ -29,7 +29,7 @@ const MenuContentsDropdown = ({ missionDetail }: Props) => {
                 to={essentialContentsLink}
                 className="flex items-center justify-between px-5 py-3 text-center text-primary duration-200 hover:bg-gray-100"
                 target="_blank"
-                rel="noopenner noreferrer"
+                rel="noopener noreferrer"
               >
                 <span>필수 콘텐츠</span>
                 <i>
@@ -45,7 +45,7 @@ const MenuContentsDropdown = ({ missionDetail }: Props) => {
                   to={item.link}
                   className="flex w-full items-center justify-between px-4 py-3 text-primary hover:bg-gray-200"
                   target="_blank"
-                  rel="noopenner noreferrer"
+                  rel="noopener noreferrer"
                 >
                   <span>{item.title}</span>
                   <i>
