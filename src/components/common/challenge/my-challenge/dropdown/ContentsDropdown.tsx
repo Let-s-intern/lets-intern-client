@@ -16,7 +16,7 @@ const ContentsDropdown = ({ missionDetail }: Props) => {
   const isOtMission = missionDetail.th === 0;
 
   return (
-    <div className="relative flex-1">
+    <div className="relative z-10 flex-1">
       <div
         className="cursor-pointer rounded-sm bg-primary-20 p-3 text-center text-xsmall16 font-medium text-primary"
         onClick={() => setIsMenuShown(!isMenuShown)}
