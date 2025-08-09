@@ -307,7 +307,7 @@ export const useGetChallengeGoal = (challengeId: string | undefined) => {
   });
 };
 
-export const usePostChallengeGoal = () => {
+export const usePatchChallengeGoal = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({

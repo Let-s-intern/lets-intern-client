@@ -11,6 +11,7 @@ import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import DailyMissionLinkInputSection from '../../DailyMissionLinkInputSection';
 import DailyMissionReviewSection from '../../DailyMissionReviewSection';
+import OtMissionInputSection from '../../OtMissionInputSection';
 import LastMissionSubmitModal from './LastMissionSubmitModal';
 
 interface Props {
@@ -32,11 +33,11 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
 
   const isLastMission =
     lastMission?.missionInfo.th === myDailyMission.dailyMission?.th;
-
   const attendanceLink = myDailyMission.attendanceInfo?.link;
   const attendanceReview = myDailyMission.attendanceInfo?.review;
   const attended = myDailyMission.attendanceInfo?.submitted;
   const attendanceId = myDailyMission.attendanceInfo?.id;
+  const isOtMission = myDailyMission.dailyMission?.th === 0;
 
   const [value, setValue] = useState(attendanceLink ?? '');
   const [review, setReview] = useState(attendanceReview ?? '');
@@ -55,20 +56,6 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
 
   const { mutateAsync: tryPostAttendance } = usePostChallengeAttendance({});
   const patchAttendance = usePatchAttendance();
-
-  useEffect(() => {
-    const handleBeforeunload = (e: BeforeUnloadEvent) => {
-      if (!isEditing || value === myDailyMission.attendanceInfo?.link) {
-        return;
-      }
-      e.preventDefault();
-    };
-    window.addEventListener('beforeunload', handleBeforeunload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeunload);
-    };
-  }, [isEditing, myDailyMission.attendanceInfo?.link, value]);
 
   const onConfirm = () => {
     setValue(attendanceLink ?? '');
@@ -148,30 +135,49 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
     } else setIsEditing(false);
   };
 
+  useEffect(() => {
+    const handleBeforeunload = (e: BeforeUnloadEvent) => {
+      if (!isEditing || value === myDailyMission.attendanceInfo?.link) {
+        return;
+      }
+      e.preventDefault();
+    };
+    window.addEventListener('beforeunload', handleBeforeunload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeunload);
+    };
+  }, [isEditing, myDailyMission.attendanceInfo?.link, value]);
+
   return (
     <>
       <form onSubmit={handleMissionLinkSubmit}>
         <h3 className="mb-6 text-xsmall16 font-semibold">미션 제출하기</h3>
-        <DailyMissionLinkInputSection
-          value={value}
-          isEditing={isEditing}
-          isValidLinkValue={isValidLinkValue}
-          isLinkChecked={isLinkChecked}
-          isStartedHttp={isStartedHttp}
-          handleMissionLinkChanged={handleMissionLinkChanged}
-          setIsLinkChecked={setIsLinkChecked}
-        />
-        <DailyMissionReviewSection
-          value={value}
-          isEditing={isEditing}
-          isLinkChecked={isLinkChecked}
-          review={review}
-          attendanceLink={attendanceLink ?? undefined}
-          handleMissionReviewChanged={handleMissionReviewChanged}
-          cancelMisiionLinkChange={cancelMisiionLinkChange}
-          setIsEditing={setIsEditing}
-          setIsLinkChecked={setIsLinkChecked}
-        />
+        {!isOtMission && (
+          <>
+            <DailyMissionLinkInputSection
+              value={value}
+              isEditing={isEditing}
+              isValidLinkValue={isValidLinkValue}
+              isLinkChecked={isLinkChecked}
+              isStartedHttp={isStartedHttp}
+              handleMissionLinkChanged={handleMissionLinkChanged}
+              setIsLinkChecked={setIsLinkChecked}
+            />
+            <DailyMissionReviewSection
+              value={value}
+              isEditing={isEditing}
+              isLinkChecked={isLinkChecked}
+              review={review}
+              attendanceLink={attendanceLink ?? undefined}
+              handleMissionReviewChanged={handleMissionReviewChanged}
+              cancelMisiionLinkChange={cancelMisiionLinkChange}
+              setIsEditing={setIsEditing}
+              setIsLinkChecked={setIsLinkChecked}
+            />
+          </>
+        )}
+        {isOtMission && <OtMissionInputSection />}
         {isAlertShown && (
           <BaseModal
             isOpen={isAlertShown}
