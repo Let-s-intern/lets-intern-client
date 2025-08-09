@@ -5,6 +5,7 @@ import {
   Schedule,
   UserChallengeMissionDetail,
 } from '@/schema';
+import OtVideo from '../../OtVideo';
 import MenuContentsDropdown from '../dropdown/MenuContentsDropdown';
 import ParsedCommentBox from '../ParsedCommentBox';
 interface Props {
@@ -30,6 +31,7 @@ const DoneMissionDetailMenu = ({
   const additionalContentsLink =
     missionDetail.additionalContentsList?.[0]?.link;
   const essentialContentsLink = missionDetail.essentialContentsList?.[0]?.link;
+  const isOtMission = missionDetail.th === 0;
 
   return (
     <>
@@ -48,6 +50,10 @@ const DoneMissionDetailMenu = ({
           <div className="mt-4 flex flex-col gap-2">
             <MenuContentsDropdown missionDetail={missionDetail} />
           </div>
+        )}
+        {/* OT 영상 */}
+        {isOtMission && missionDetail.vodLink && (
+          <OtVideo vodLink={missionDetail.vodLink} />
         )}
       </div>
       <hr className="my-4 border-[#DEDEDE]" />

@@ -1388,7 +1388,7 @@ export const myDailyMission = z
 
 export type MyDailyMission = z.infer<typeof myDailyMission>;
 
-// GET /api/v1/challenge/{id}/missions?type=GENERAL
+// GET /api/v1/challenge/{challengeId}/missions?type=GENERAL
 export const myChallengeMissionsByType = z.object({
   missionList: z.array(
     z.object({

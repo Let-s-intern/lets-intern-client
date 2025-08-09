@@ -11,6 +11,7 @@ const MenuContentsDropdown = ({ missionDetail }: Props) => {
   const [isMenuShown, setIsMenuShown] = useState(false);
 
   const essentialContentsLink = missionDetail.essentialContentsList?.[0]?.link;
+  const isOtMission = missionDetail.th === 0;
 
   return (
     <div className="relative">
@@ -18,7 +19,7 @@ const MenuContentsDropdown = ({ missionDetail }: Props) => {
         className="rounded w-full border border-[#BCBCBC] px-4 py-2 font-medium"
         onClick={() => setIsMenuShown(!isMenuShown)}
       >
-        학습 콘텐츠 확인하기
+        {isOtMission ? 'OT 자료' : '학습 콘텐츠 확인하기'}
       </button>
       {isMenuShown && (
         <ul className="rounded absolute -bottom-1 w-full translate-y-full border border-[#BCBCBC] bg-white">
