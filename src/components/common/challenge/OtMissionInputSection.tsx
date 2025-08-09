@@ -1,13 +1,22 @@
-import { useGetChallengeGoal, usePatchChallengeGoal } from '@/api/challenge';
+import {
+  useGetChallengeGoal,
+  usePatchChallengeGoal,
+  usePostChallengeAttendance,
+} from '@/api/challenge';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-const OtMissionInputSection = () => {
+interface Props {
+  missionId: number;
+}
+
+const OtMissionInputSection = ({ missionId }: Props) => {
   const params = useParams();
 
   const { data: goalData, isLoading } = useGetChallengeGoal(params.programId);
   const patchGoal = usePatchChallengeGoal();
+  const postAttendance = usePostChallengeAttendance();
 
   const [goal, setGoal] = useState('');
 
@@ -19,7 +28,10 @@ const OtMissionInputSection = () => {
       return;
     }
 
-    await patchGoal.mutateAsync({ challengeId: params.programId, goal });
+    await Promise.all([
+      patchGoal.mutateAsync({ challengeId: params.programId, goal }),
+      postAttendance.mutateAsync({ missionId }),
+    ]);
   };
 
   useEffect(() => {

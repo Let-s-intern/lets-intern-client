@@ -177,7 +177,9 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
             />
           </>
         )}
-        {isOtMission && <OtMissionInputSection />}
+        {isOtMission && myDailyMission.dailyMission?.id && (
+          <OtMissionInputSection missionId={myDailyMission.dailyMission?.id} />
+        )}
         {isAlertShown && (
           <BaseModal
             isOpen={isAlertShown}

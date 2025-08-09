@@ -357,7 +357,7 @@ export const usePostChallengeAttendance = ({
 }: {
   successCallback?: () => void;
   errorCallback?: () => void;
-}) => {
+} = {}) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
@@ -366,8 +366,8 @@ export const usePostChallengeAttendance = ({
       review,
     }: {
       missionId: number;
-      link: string;
-      review: string;
+      link?: string;
+      review?: string;
     }) => {
       const res = await axios.post(`/attendance/${missionId}`, {
         link,
