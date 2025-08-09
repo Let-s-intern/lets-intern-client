@@ -39,18 +39,6 @@ const NavBar = () => {
               나의 기록장
             </Link>
           </li>
-          {/* <li>
-            <Link
-              to={`/challenge/${params.programId}/others`}
-              className={clsx('block px-3 py-2', {
-                'rounded bg-[#E6E4FD] font-medium text-primary':
-                  activeStatus === 'OTHERS_DASHBOARD',
-                'text-[#4A495C]': activeStatus === 'OTHERS_DASHBOARD',
-              })}
-            >
-              모두의 기록장
-            </Link>
-          </li> */}
         </ul>
       </nav>
       <div className="w-[10rem]"></div>

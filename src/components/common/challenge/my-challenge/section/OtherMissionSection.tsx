@@ -1,7 +1,7 @@
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
 import AbsentMissionItem from '../mission/AbsentMissionItem';
 import DoneMissionItem from '../mission/DoneMissionItem';
 import YetMissionItem from '../mission/YetMissionItem';

@@ -1,15 +1,13 @@
-import { useEffect } from 'react';
-import { Outlet, useNavigate, useParams } from 'react-router-dom';
-
 import {
-  useGetChallengeGoal,
   useGetChallengeValideUser,
   useGetUserChallengeInfo,
 } from '@/api/challenge';
 import { useGetChallengeQuery } from '@/api/program';
 import dayjs from '@/lib/dayjs';
+import useAuthStore from '@/store/useAuthStore';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import useAuthStore from '../../../../../store/useAuthStore';
+import { useEffect } from 'react';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import NavBar from './NavBar';
 
 export const GOAL_DATE = dayjs('2025-01-19');
@@ -18,6 +16,7 @@ const ChallengeLayout = () => {
   const navigate = useNavigate();
   const params = useParams();
   const { isLoggedIn } = useAuthStore();
+
   const programId = params.programId;
   const applicationId = params.applicationId;
 
@@ -33,16 +32,9 @@ const ChallengeLayout = () => {
   const { data: isValidUserInfoData, isLoading: isValidUserInfoLoading } =
     useGetUserChallengeInfo();
 
-  const { data: challengeGoal, isLoading: challengeGoalLoading } =
-    useGetChallengeGoal(programId);
-
   const isValidUserInfo = isValidUserInfoData?.pass;
-  const hasChallengeGoal = challengeGoal?.goal;
   const isLoading =
-    isValidUserInfoLoading ||
-    isValidUserAccessLoading ||
-    challengeGoalLoading ||
-    challengeIsLoading;
+    isValidUserInfoLoading || isValidUserAccessLoading || challengeIsLoading;
   const isStartAfterGoal =
     challenge?.startDate && GOAL_DATE.isBefore(challenge.startDate);
 
@@ -63,7 +55,7 @@ const ChallengeLayout = () => {
       return;
     }
 
-    if (!isValidUserInfo || (isStartAfterGoal && !hasChallengeGoal)) {
+    if (isStartAfterGoal && !isValidUserInfo) {
       navigate(`/challenge/${applicationId}/${programId}/user/info`);
       return;
     }
@@ -75,7 +67,6 @@ const ChallengeLayout = () => {
     programId,
     applicationId,
     accessibleData,
-    hasChallengeGoal,
     isStartAfterGoal,
   ]);
 

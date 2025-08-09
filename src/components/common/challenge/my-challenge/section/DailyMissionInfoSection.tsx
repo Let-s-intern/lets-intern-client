@@ -1,5 +1,6 @@
 import { UserChallengeMissionDetail } from '@/schema';
 import { Link } from 'react-router-dom';
+import OtVideo from '../../OtVideo';
 import ContentsDropdown from '../dropdown/ContentsDropdown';
 
 interface Props {
@@ -7,6 +8,8 @@ interface Props {
 }
 
 const DailyMissionInfoSection = ({ missionDetail }: Props) => {
+  const isOtMission = missionDetail.th === 0;
+
   return (
     <>
       <div className="flex items-end gap-2">
@@ -27,16 +30,21 @@ const DailyMissionInfoSection = ({ missionDetail }: Props) => {
         </p>
       </div>
       <div className="mt-8 flex gap-4">
-        <Link
-          to={missionDetail.templateLink}
-          className="flex-1 rounded-sm border border-primary-20 bg-white p-3 text-center text-xsmall16 font-medium"
-          target="_blank"
-          rel="noopenner noreferrer"
-        >
-          미션 템플릿
-        </Link>
+        {!isOtMission && (
+          <Link
+            to={missionDetail.templateLink}
+            className="flex-1 rounded-sm border border-primary-20 bg-white p-3 text-center text-xsmall16 font-medium"
+            target="_blank"
+            rel="noopenner noreferrer"
+          >
+            미션 템플릿
+          </Link>
+        )}
         <ContentsDropdown missionDetail={missionDetail} />
       </div>
+      {isOtMission && missionDetail.vodLink && (
+        <OtVideo vodLink={missionDetail.vodLink} />
+      )}
     </>
   );
 };

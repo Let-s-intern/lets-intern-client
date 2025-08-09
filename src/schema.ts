@@ -1205,6 +1205,7 @@ export const userChallengeMissionDetail = z
       description: z.string(),
       guide: z.string(),
       templateLink: z.string(),
+      vodLink: z.string().nullish(),
     }),
   })
   .transform((data) => {
@@ -1387,7 +1388,7 @@ export const myDailyMission = z
 
 export type MyDailyMission = z.infer<typeof myDailyMission>;
 
-// GET /api/v1/challenge/{id}/missions?type=GENERAL
+// GET /api/v1/challenge/{challengeId}/missions?type=GENERAL
 export const myChallengeMissionsByType = z.object({
   missionList: z.array(
     z.object({
