@@ -3,9 +3,7 @@ import clsx from 'clsx';
 interface Props {
   value: string;
   isEditing: boolean;
-  isValidLinkValue: boolean;
   isLinkChecked: boolean;
-  isStartedHttp: boolean;
   review: string;
   attendanceLink?: string;
   handleMissionReviewChanged: (
@@ -19,9 +17,7 @@ interface Props {
 const DailyMissionReviewSection = ({
   value,
   isEditing,
-  isValidLinkValue,
   isLinkChecked,
-  isStartedHttp,
   review,
   attendanceLink,
   handleMissionReviewChanged,
@@ -31,23 +27,6 @@ const DailyMissionReviewSection = ({
 }: Props) => {
   return (
     <>
-      {value &&
-        isEditing &&
-        (isLinkChecked ? (
-          <div className="text-0.75-medium mt-1 text-primary">
-            링크 확인을 완료하셨습니다. 링크가 올바르다면 미션 소감 작성 후 제출
-            버튼을 눌러주세요.
-          </div>
-        ) : !isValidLinkValue ? (
-          <div className="text-0.75-medium mt-1 text-red-500">
-            URL 형식이 올바르지 않습니다.
-            {!isStartedHttp && <> (https:// 또는 http://로 시작해야 합니다.)</>}
-          </div>
-        ) : (
-          <div className="text-0.75-medium mt-1 text-primary">
-            URL을 올바르게 입력하셨습니다. 링크 확인을 진행해주세요.
-          </div>
-        ))}
       <div className="mt-6 flex w-full flex-col gap-y-5">
         <h3 className="text-xsmall16 font-semibold text-neutral-0">
           미션 소감

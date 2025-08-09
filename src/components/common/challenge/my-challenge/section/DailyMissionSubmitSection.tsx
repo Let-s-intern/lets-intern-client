@@ -156,15 +156,15 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
           value={value}
           isEditing={isEditing}
           isValidLinkValue={isValidLinkValue}
+          isLinkChecked={isLinkChecked}
+          isStartedHttp={isStartedHttp}
           handleMissionLinkChanged={handleMissionLinkChanged}
           setIsLinkChecked={setIsLinkChecked}
         />
         <DailyMissionReviewSection
           value={value}
           isEditing={isEditing}
-          isValidLinkValue={isValidLinkValue}
           isLinkChecked={isLinkChecked}
-          isStartedHttp={isStartedHttp}
           review={review}
           attendanceLink={attendanceLink ?? undefined}
           handleMissionReviewChanged={handleMissionReviewChanged}

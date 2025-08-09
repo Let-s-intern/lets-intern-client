@@ -4,6 +4,8 @@ interface Props {
   value: string;
   isEditing: boolean;
   isValidLinkValue: boolean;
+  isLinkChecked: boolean;
+  isStartedHttp: boolean;
   handleMissionLinkChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
   setIsLinkChecked: (checked: boolean) => void;
 }
@@ -12,6 +14,8 @@ const DailyMissionLinkInputSection = ({
   value,
   isEditing,
   isValidLinkValue,
+  isLinkChecked,
+  isStartedHttp,
   handleMissionLinkChanged,
   setIsLinkChecked,
 }: Props) => {
@@ -65,6 +69,23 @@ const DailyMissionLinkInputSection = ({
           링크 확인
         </button>
       </div>
+      {value &&
+        isEditing &&
+        (isLinkChecked ? (
+          <div className="text-0.75-medium mt-1 text-primary">
+            링크 확인을 완료하셨습니다. 링크가 올바르다면 미션 소감 작성 후 제출
+            버튼을 눌러주세요.
+          </div>
+        ) : !isValidLinkValue ? (
+          <div className="text-0.75-medium mt-1 text-red-500">
+            URL 형식이 올바르지 않습니다.
+            {!isStartedHttp && <> (https:// 또는 http://로 시작해야 합니다.)</>}
+          </div>
+        ) : (
+          <div className="text-0.75-medium mt-1 text-primary">
+            URL을 올바르게 입력하셨습니다. 링크 확인을 진행해주세요.
+          </div>
+        ))}
     </>
   );
 };
