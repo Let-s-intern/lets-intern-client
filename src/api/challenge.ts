@@ -620,7 +620,7 @@ export const useChallengeMyDailyMission = (
 ) => {
   return useQuery({
     enabled: !!programId && options?.enabled,
-    queryKey: ['useChallengeDailyMission'],
+    queryKey: ['useChallengeDailyMission', programId],
     queryFn: async () => {
       const res = await axios.get(`/challenge/${programId}/my/daily-mission`);
       return myDailyMissionSchema.parse(res.data.data);

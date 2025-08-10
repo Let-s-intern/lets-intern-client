@@ -35,7 +35,7 @@ const DailyMissionInfoSection = ({ missionDetail }: Props) => {
             to={missionDetail.templateLink}
             className="flex-1 rounded-sm border border-primary-20 bg-white p-3 text-center text-xsmall16 font-medium"
             target="_blank"
-            rel="noopenner noreferrer"
+            rel="noopener noreferrer"
           >
             미션 템플릿
           </Link>

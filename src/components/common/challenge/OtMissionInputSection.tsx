@@ -55,7 +55,7 @@ const OtMissionInputSection = ({ missionId }: Props) => {
           )}
           placeholder="챌린지를 신청한 목적과 계기, 또는 챌린지 참여를 통해 이루고 싶은 목표를 자유롭게 작성해주세요."
           disabled={submitted}
-          defaultValue={goalData?.goal ?? undefined}
+          value={goal}
           onChange={(e) => setGoal(e.target.value)}
         />
       </div>

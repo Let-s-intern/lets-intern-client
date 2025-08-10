@@ -143,7 +143,7 @@ const TableRow = ({
           <Link
             to={attendanceItem.attendance.link}
             target="_blank"
-            rel="noopenner noreferrer"
+            rel="noopener noreferrer"
             className="rounded-xxs border border-zinc-600 px-4 py-[2px] text-xs duration-200 hover:bg-neutral-700 hover:text-white"
           >
             확인

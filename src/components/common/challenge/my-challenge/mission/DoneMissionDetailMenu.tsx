@@ -63,7 +63,7 @@ const DoneMissionDetailMenu = ({
           <Link
             to={missionByType.attendanceLink ?? ''}
             target="_blank"
-            rel="noopenner noreferrer"
+            rel="noopener noreferrer"
             className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-gray-500 hover:underline"
           >
             {missionByType.attendanceLink}
