@@ -6,8 +6,10 @@ import {
   usePostAdminBlogReview,
 } from '@/api/review';
 import { YYYY_MMDD_THHmmss } from '@/data/dayjsFormat';
+import { PaymentMethodKey } from '@/data/getPaymentSearchParams';
 import dayjs from '@/lib/dayjs';
 import { ProgramTypeEnum } from '@/schema';
+import { bankTypeToText } from '@/utils/convert';
 import { generateUUID } from '@/utils/random';
 import { Button, Checkbox } from '@mui/material';
 import {
@@ -68,6 +70,24 @@ export default function AdminBlogReviewListPage() {
       width: 110,
       editable: true,
       sortable: false,
+    },
+    {
+      field: 'phoneNum',
+      headerName: '연락처',
+      width: 200,
+    },
+    {
+      field: 'accountType',
+      headerName: '은행명',
+      width: 110,
+      renderCell(params: GridRenderCellParams<Row, PaymentMethodKey>) {
+        return params.value ? bankTypeToText[params.value] : '-';
+      },
+    },
+    {
+      field: 'accountNum',
+      headerName: '계좌번호',
+      width: 200,
     },
     {
       field: 'title',
@@ -264,6 +284,7 @@ export default function AdminBlogReviewListPage() {
 
     setRows(initialRows);
   }, [data, setRows]);
+  console.log(data);
 
   return (
     <div className="p-5">
