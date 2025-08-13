@@ -24,10 +24,25 @@ import {
   GridRowModes,
   GridRowModesModel,
   GridRowParams,
+  GridToolbarContainer,
+  GridToolbarExport,
 } from '@mui/x-data-grid';
 import { Check, Pencil, Trash, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import AdminReviewHeader from './AdminReviewHeader';
+
+function CustomToolbar() {
+  const csvOptions = {
+    fileName: `blog-review-${Date.now().toString()}`,
+    utf8WithBom: true,
+  };
+
+  return (
+    <GridToolbarContainer>
+      <GridToolbarExport csvOptions={csvOptions} />
+    </GridToolbarContainer>
+  );
+}
 
 type Row = AdminBlogReview & {
   id: number | string;
@@ -284,7 +299,6 @@ export default function AdminBlogReviewListPage() {
 
     setRows(initialRows);
   }, [data, setRows]);
-  console.log(data);
 
   return (
     <div className="p-5">
@@ -334,6 +348,7 @@ export default function AdminBlogReviewListPage() {
         onProcessRowUpdateError={(error) => console.error(error)}
         disableRowSelectionOnClick
         hideFooter
+        slots={{ toolbar: CustomToolbar }}
       />
     </div>
   );
