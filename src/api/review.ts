@@ -264,6 +264,9 @@ export const adminBlogReviewSchema = z
     url: z.string().optional().nullable(),
     thumbnail: z.string().optional().nullable(),
     isVisible: z.boolean().optional().nullable(),
+    phoneNum: z.string().nullish(),
+    accountType: z.string().nullish(),
+    accountNum: z.string().nullish(),
   })
   .transform((data) => ({ ...data, postDate: new Date(data.postDate ?? '') }));
 
