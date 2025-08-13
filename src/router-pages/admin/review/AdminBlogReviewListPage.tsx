@@ -299,7 +299,6 @@ export default function AdminBlogReviewListPage() {
 
     setRows(initialRows);
   }, [data, setRows]);
-  console.log(data);
 
   return (
     <div className="p-5">
