@@ -89,32 +89,37 @@ const ChallengeDashboard = () => {
       </header>
       <div className="flex flex-col gap-4">
         <div className="mt-4 flex gap-4">
+          {/* 챌린지 미션 상세 */}
           {dailyMission ? (
             <DailyMissionSection dailyMission={dailyMission} />
           ) : (
             isChallengeDone && <EndDailyMissionSection />
           )}
+
+          {/* 공지사항, 미션점수 */}
           <div className="flex w-[12rem] flex-col gap-4">
-            <ScoreSection
-              programName={currentChallenge?.title || ''}
-              isProgramDone={dayjs(new Date()).isAfter(
-                currentChallenge?.endDate,
-              )}
-              desc={currentChallenge?.shortDesc || ''}
-              startDate={
-                currentChallenge?.startDate?.format('YYYY.MM.DD') || ''
-              }
-              endDate={currentChallenge?.endDate?.format('YYYY.MM.DD') || ''}
-              userName={user?.name || ''}
-              totalScore={totalScore}
-              currentScore={currentScore}
-            />
             <NoticeSection notices={notices} />
+            <div className="flex gap-3">
+              <ScoreSection
+                programName={currentChallenge?.title || ''}
+                isProgramDone={dayjs(new Date()).isAfter(
+                  currentChallenge?.endDate,
+                )}
+                desc={currentChallenge?.shortDesc || ''}
+                startDate={
+                  currentChallenge?.startDate?.format('YYYY.MM.DD') || ''
+                }
+                endDate={currentChallenge?.endDate?.format('YYYY.MM.DD') || ''}
+                userName={user?.name || ''}
+                totalScore={totalScore}
+                currentScore={currentScore}
+              />
+              <GuideSection guides={guides} />
+            </div>
           </div>
-          {/* <div className="flex h-full w-full max-w-[12rem] flex-col gap-4"> */}
-          <GuideSection guides={guides} />
-          {/* </div> */}
         </div>
+
+        {/* 일정 및 제출 현황 */}
         <div className="flex gap-4">
           <section className="flex-1 rounded-xl border border-neutral-80 px-10 py-8">
             <div className="flex items-center gap-2">
@@ -133,7 +138,6 @@ const ChallengeDashboard = () => {
               />
             )}
           </section>
-          {/* <CurriculumSection /> */}
         </div>
       </div>
     </main>
