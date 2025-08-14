@@ -16,7 +16,9 @@ const MissionNotStartedIcon = ({ className, schedule }: Props) => {
     >
       <div className="mb-[10%] flex h-[30%] min-h-[2.5rem] w-[30%] min-w-[2.5rem] rounded-full bg-[#D0CFCF]" />
       <span className="block text-sm font-semibold text-[#D0CFCF]">
-        {schedule.missionInfo.th}회차
+        {schedule.missionInfo.th === 100
+          ? '보너스'
+          : `${schedule.missionInfo.th}회차`}
       </span>
     </div>
   );
