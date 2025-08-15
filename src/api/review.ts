@@ -13,6 +13,7 @@ import { z } from 'zod';
 
 import { mypageApplicationsSchema } from './application';
 import { getChallengeReviewStatusQueryKey } from './challenge';
+import { blogBonusSchema, PostBlogBonusRequest } from './reviewSchema';
 
 export const getAllApplicationsForReviewQueryKey = ['applications', 'review'];
 
@@ -514,6 +515,20 @@ export const useGetReviewCount = () => {
     queryFn: async () => {
       const res = await axiosV2.get(`/review/count`);
       return reviewCountSchema.parse(res.data.data);
+    },
+  });
+};
+
+/** POST 블로그 보너스 미션 후기 제출 /api/v2/review/blog/bonus */
+export const usePostBlogBonus = () => {
+  return useMutation({
+    mutationFn: async (reqBody: PostBlogBonusRequest) => {
+      const res = await axiosV2.post(`/review/blog/bonus`, reqBody);
+      return blogBonusSchema.parse(res.data.data);
+    },
+    onError(error) {
+      console.error(error);
+      alert('블로그 보너스 제출에 실패했습니다: ' + error);
     },
   });
 };
