@@ -37,7 +37,9 @@ const MissionDetailSection = ({ todayTh }: { todayTh: number }) => {
   if (isLastMissionSubmitted || isChallengeDone || !dailyMission) {
     return <MissionEndSection />;
   }
-  return <DailyMissionSection dailyMission={dailyMission} />;
+  return (
+    <DailyMissionSection dailyMission={dailyMission} schedules={schedules} />
+  );
 };
 
 const getIsChallengeDone = (endDate: string) => {
@@ -113,15 +115,15 @@ const ChallengeDashboard = () => {
       <header>
         <h1 className="text-2xl font-semibold">{user?.name}님의 대시보드</h1>
       </header>
-      <div className="flex flex-col gap-4">
-        <div className="mt-4 flex gap-4">
+      <div className="flex flex-col gap-5">
+        <div className="mt-4 flex gap-3">
           {/* 챌린지 미션 상세 */}
           <MissionDetailSection todayTh={todayTh} />
 
           {/* 공지사항, 미션점수 */}
-          <div className="flex w-[22rem] flex-col gap-4">
+          <div className="flex w-[22rem] flex-col gap-2.5">
             <NoticeSection notices={notices} />
-            <div className="flex gap-3">
+            <div className="flex gap-2.5">
               <ScoreSection
                 programName={currentChallenge?.title || ''}
                 isProgramDone={dayjs(new Date()).isAfter(

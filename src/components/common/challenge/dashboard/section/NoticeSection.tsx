@@ -39,7 +39,7 @@ const NoticeSection = ({ notices }: INoticeSectionProps) => {
         </div>
         {currentNoticeList.length === 0 ? (
           <div className="flex h-[5.75rem] justify-center">
-            <span className="mt-2 text-sm">공지사항이 없습니다.</span>
+            <span className="text-sm">공지사항이 없습니다.</span>
           </div>
         ) : (
           <ul className="flex flex-1 flex-col gap-1.5">
@@ -76,14 +76,14 @@ const NoticeSection = ({ notices }: INoticeSectionProps) => {
           </ul>
         )}
         {totalPageCount > 1 ? (
-          <div className="mt-2 flex justify-center gap-2">
+          <div className="flex justify-center gap-2">
             {Array.from(
               { length: totalPageCount },
               (_, index) => index + 1,
             ).map((pageNum) => (
               <div
                 key={pageNum}
-                className={clsx('h-2 w-2 cursor-pointer rounded-full', {
+                className={clsx('h-1.5 w-1.5 cursor-pointer rounded-full', {
                   'bg-[#B0B0B0]': pageNum === currentPageNum,
                   'bg-[#D1D1D1]': pageNum !== currentPageNum,
                 })}
@@ -92,7 +92,7 @@ const NoticeSection = ({ notices }: INoticeSectionProps) => {
             ))}
           </div>
         ) : (
-          <div className="mt-2 flex justify-center gap-2" />
+          <div className="flex justify-center gap-2" />
         )}
       </div>
     </section>

@@ -32,7 +32,7 @@ const GuideSection = ({ guides }: GuideSection) => {
         </div>
         {currentGuideList.length === 0 ? (
           <div className="flex h-[5.75rem] justify-center">
-            <span className="mt-2 text-sm">챌린지 가이드가 없습니다.</span>
+            <span className="text-sm">챌린지 가이드가 없습니다.</span>
           </div>
         ) : (
           <ul className="flex flex-1 flex-col gap-1.5">

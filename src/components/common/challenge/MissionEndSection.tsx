@@ -7,7 +7,7 @@ const MissionEndSection = () => {
 
   return (
     <>
-      <section className="flex min-h-[240px] shrink-0 flex-col rounded-xs border border-neutral-80 md:h-[360px] md:min-h-[180px] md:w-[488px]">
+      <section className="flex min-h-[240px] shrink-0 flex-col rounded-xs border border-primary-80 md:h-[360px] md:min-h-[180px] md:w-[488px]">
         <div className="flex flex-col border-b px-4 py-3 md:flex-row md:items-center md:py-4">
           <h2 className="font-semibold text-neutral-10">
             🎉 모든 미션이 완료되었습니다 🎉
