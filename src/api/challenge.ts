@@ -546,9 +546,11 @@ export const useChallengeMissionListQuery = (challengeId?: string | number) => {
 export const useChallengeMissionAttendanceInfoQuery = ({
   challengeId,
   missionId,
+  enabled = true,
 }: {
-  challengeId: string | number;
-  missionId: string | number;
+  challengeId?: string | number;
+  missionId?: string | number;
+  enabled?: boolean;
 }) => {
   return useQuery({
     queryKey: ['useChallengeMissionAttendanceInfo', challengeId, missionId],
@@ -558,7 +560,7 @@ export const useChallengeMissionAttendanceInfoQuery = ({
       );
       return userChallengeMissionWithAttendance.parse(res.data.data);
     },
-    enabled: !!challengeId && !!missionId,
+    enabled: !!challengeId && !!missionId && enabled,
   });
 };
 

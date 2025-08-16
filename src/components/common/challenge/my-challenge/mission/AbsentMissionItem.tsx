@@ -2,8 +2,9 @@ import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { MyChallengeMissionByType, userChallengeMissionDetail } from '@/schema';
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import clsx from 'clsx';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import AbsentMissionDetailMenu from './AbsentMissionDetailMenu';
 
@@ -45,6 +46,23 @@ const AbsentMissionItem = ({ mission, isDone, setOpenReviewModal }: Props) => {
     },
   });
 
+  const toggle = () => {
+    if (!isDetailShown && !isValid()) return;
+    setIsDetailShown(!isDetailShown);
+  };
+
+  const isValid = useCallback(() => {
+    if (isAxiosError(detailError)) {
+      const errorCode = detailError?.response?.data.status;
+      if (errorCode === 400) {
+        alert('0회차 미션을 먼저 완료해주세요.');
+        setIsDetailShown(false);
+      }
+      return false;
+    }
+    return true;
+  }, [detailError]);
+
   useEffect(() => {
     if (isDone) {
       setSearchParams({}, { replace: true });
@@ -77,7 +95,7 @@ const AbsentMissionItem = ({ mission, isDone, setOpenReviewModal }: Props) => {
             </h4>
             <span
               className={clsx(
-                'rounded-md px-2 py-[0.125rem] text-xs',
+                'rounded-md px-2 py-0.5 text-xs',
                 'bg-[#E3E3E3] text-[#9B9B9B]',
               )}
             >
@@ -87,7 +105,7 @@ const AbsentMissionItem = ({ mission, isDone, setOpenReviewModal }: Props) => {
                 : '결석'}
             </span>
           </div>
-          <button onClick={() => setIsDetailShown(!isDetailShown)}>
+          <button onClick={toggle}>
             {!isDetailShown || isDetailLoading ? '미션보기' : '닫기'}
           </button>
         </div>

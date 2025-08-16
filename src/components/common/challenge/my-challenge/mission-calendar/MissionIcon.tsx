@@ -1,9 +1,15 @@
-import clsx from 'clsx';
-import { Link, useParams } from 'react-router-dom';
-import { Schedule } from '../../../../../schema';
-
+import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
+import { Schedule } from '@/schema';
 import { BONUS_MISSION_TH } from '@/utils/constants';
-import { missionSubmitToBadge } from '../../../../../utils/convert';
+import { missionSubmitToBadge } from '@/utils/convert';
+import { isAxiosError } from 'axios';
+import clsx from 'clsx';
+import { MouseEventHandler, useCallback } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+
+const linkStyle = {
+  clipPath: 'polygon(30% 0, 100% 0, 100% 100%, 0 100%, 0 30%)',
+};
 
 interface Props {
   className?: string;
@@ -13,21 +19,45 @@ interface Props {
 
 const MissionIcon = ({ className, schedule, isDone }: Props) => {
   const params = useParams();
+  const navigate = useNavigate();
+
   const mission = schedule.missionInfo;
   const attendance = schedule.attendanceInfo;
+
+  const { isLoading, error } = useChallengeMissionAttendanceInfoQuery({
+    challengeId: params.programId,
+    missionId: mission.id,
+  });
 
   const isAttended =
     (attendance.result === 'WAITING' || attendance.result === 'PASS') &&
     attendance.status !== 'ABSENT';
 
+  const isValid = useCallback(() => {
+    if (isAxiosError(error)) {
+      const errorCode = error?.response?.data.status;
+      if (errorCode === 400) {
+        alert('0회차 미션을 먼저 완료해주세요.');
+      }
+      return false;
+    }
+    return true;
+  }, [error]);
+
+  const handleClick: MouseEventHandler<HTMLAnchorElement> = (e) => {
+    e.preventDefault();
+    if (isLoading || isDone) return;
+    if (isValid()) {
+      navigate(
+        `/challenge/${params.applicationId}/${params.programId}/me?scroll_to_mission=${mission.id}`,
+      );
+    }
+  };
+
   return (
     <>
       <Link
-        to={
-          !isDone
-            ? `/challenge/${params.applicationId}/${params.programId}/me?scroll_to_mission=${mission.id}`
-            : '#'
-        }
+        to="#"
         replace
         className={clsx(
           'relative flex aspect-square cursor-pointer flex-col items-center justify-center rounded-md text-white',
@@ -40,9 +70,8 @@ const MissionIcon = ({ className, schedule, isDone }: Props) => {
           },
           className,
         )}
-        style={{
-          clipPath: 'polygon(30% 0, 100% 0, 100% 100%, 0 100%, 0 30%)',
-        }}
+        onClick={handleClick}
+        style={linkStyle}
       >
         <div
           className={clsx(
