@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import { FaCheck } from 'react-icons/fa6';
 import { Link, useParams } from 'react-router-dom';
 
+import { BONUS_MISSION_TH } from '@/utils/constants';
 import { Schedule, ScheduleMission } from '../../../../../schema';
 import { missionSubmitToBadge } from '../../../../../utils/convert';
 
@@ -37,45 +38,25 @@ const MissionTodayIcon = ({
           className,
         )}
       >
-        {
-          attendance.status === 'ABSENT' ||
-          attendance.result === 'WRONG' ||
-          attendance.result === null ? (
-            <div className="mb-[10%] flex h-[30%] w-[50%] min-w-[2.5rem] items-center justify-center">
-              <img
-                src="/icons/general-mission.svg"
-                alt="general mission icon"
-                className="w-full"
-              />
-            </div>
-          ) : (
-            <div className="mb-[10%] flex h-[30%] w-[50%] min-w-[2.5rem] items-center justify-center rounded-full bg-primary">
-              <i className="text-2xl text-white">
-                <FaCheck />
-              </i>
-            </div>
-          )
-          // ) : mission. === 'ADDITIONAL' ? (
-          //   <div className="mb-[0.175rem] flex w-[2.5rem] items-center justify-center">
-          //     <i>
-          //       <img
-          //         src="/icons/additional-contents.svg"
-          //         alt="additional contents icon"
-          //       />
-          //     </i>
-          //   </div>
-          // ) : mission.missionType === 'REFUND' ? (
-          //   <div className="mb-[0.175rem] flex w-[2.5rem] items-center justify-center">
-          //     <i>
-          //       <img src="/icons/refund.svg" alt="refund icon" />
-          //     </i>
-          //   </div>
-          // ) : (
-
-          // mission.missionType === 'GENERAL' &&
-        }
+        {attendance.status === 'ABSENT' ||
+        attendance.result === 'WRONG' ||
+        attendance.result === null ? (
+          <div className="mb-[10%] flex h-[30%] w-[50%] min-w-[2.5rem] items-center justify-center">
+            <img
+              src="/icons/general-mission.svg"
+              alt="general mission icon"
+              className="w-full"
+            />
+          </div>
+        ) : (
+          <div className="mb-[10%] flex h-[30%] w-[50%] min-w-[2.5rem] items-center justify-center rounded-full bg-primary">
+            <i className="text-2xl text-white">
+              <FaCheck />
+            </i>
+          </div>
+        )}
         <span className="text-sm font-semibold text-primary">
-          {mission.th}회차
+          {mission.th === BONUS_MISSION_TH ? '보너스' : `${mission.th}회차`}
         </span>
       </Link>
       <div className="mt-2 flex items-center justify-center">

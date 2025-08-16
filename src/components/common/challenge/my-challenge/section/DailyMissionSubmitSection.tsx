@@ -5,12 +5,13 @@ import {
 } from '@/api/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { MyDailyMission, Schedule } from '@/schema';
-import BaseModal from '@components/ui/BaseModal';
-import ModalButton from '@components/ui/ModalButton';
-import clsx from 'clsx';
+import { BONUS_MISSION_TH } from '@/utils/constants';
 import { useEffect, useState } from 'react';
+import BonusMissionInputSection from '../../BonusMissionInputSection';
 import DailyMissionLinkInputSection from '../../DailyMissionLinkInputSection';
 import DailyMissionReviewSection from '../../DailyMissionReviewSection';
+import DailyMissionSubmitButton from '../../DailyMissionSubmitButton';
+import LinkChangeConfirmationModal from '../../LinkChangeConfirmationModal';
 import OtMissionInputSection from '../../OtMissionInputSection';
 import LastMissionSubmitModal from './LastMissionSubmitModal';
 
@@ -38,6 +39,7 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
   const attended = myDailyMission.attendanceInfo?.submitted;
   const attendanceId = myDailyMission.attendanceInfo?.id;
   const isOtMission = myDailyMission.dailyMission?.th === 0;
+  const isBonusMission = myDailyMission.dailyMission?.th === BONUS_MISSION_TH;
 
   const [value, setValue] = useState(attendanceLink ?? '');
   const [review, setReview] = useState(attendanceReview ?? '');
@@ -137,9 +139,12 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
 
   useEffect(() => {
     const handleBeforeunload = (e: BeforeUnloadEvent) => {
-      if (!isEditing || value === myDailyMission.attendanceInfo?.link) {
-        return;
-      }
+      const disabled =
+        !isEditing ||
+        value === myDailyMission.attendanceInfo?.link ||
+        lastMissionModal; // 모달이 열렸을 때는 생략
+
+      if (disabled) return;
       e.preventDefault();
     };
     window.addEventListener('beforeunload', handleBeforeunload);
@@ -147,13 +152,14 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
     return () => {
       window.removeEventListener('beforeunload', handleBeforeunload);
     };
-  }, [isEditing, myDailyMission.attendanceInfo?.link, value]);
+  }, [isEditing, myDailyMission.attendanceInfo?.link, value, lastMissionModal]);
 
   return (
     <>
       <form onSubmit={handleMissionLinkSubmit}>
         <h3 className="mb-6 text-xsmall16 font-semibold">미션 제출하기</h3>
-        {!isOtMission && (
+        {/* 기본 미션 */}
+        {!isOtMission && !isBonusMission && (
           <>
             <DailyMissionLinkInputSection
               value={value}
@@ -165,58 +171,59 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
               setIsLinkChecked={setIsLinkChecked}
             />
             <DailyMissionReviewSection
+              isEditing={isEditing}
+              review={review}
+              handleMissionReviewChanged={handleMissionReviewChanged}
+            />
+            <DailyMissionSubmitButton
               value={value}
               isEditing={isEditing}
               isLinkChecked={isLinkChecked}
               review={review}
               attendanceLink={attendanceLink ?? undefined}
-              handleMissionReviewChanged={handleMissionReviewChanged}
               cancelMisiionLinkChange={cancelMisiionLinkChange}
               setIsEditing={setIsEditing}
               setIsLinkChecked={setIsLinkChecked}
             />
           </>
         )}
+
+        {/* OT 미션 */}
         {isOtMission && myDailyMission.dailyMission?.id && (
           <OtMissionInputSection missionId={myDailyMission.dailyMission?.id} />
         )}
-        {isAlertShown && (
-          <BaseModal
-            isOpen={isAlertShown}
-            onClose={() => setIsAlertShown(false)}
-            className="max-w-[20rem] md:max-w-[28rem]"
-          >
-            <div className="border-b border-neutral-80 px-6 py-5">
-              <span className="mb-3 block text-xsmall16 font-semibold">
-                지금 취소하시면 수정사항이 삭제됩니다.
-              </span>
-              <p className="text-xsmall14">링크 변경을 취소하시겠어요?</p>
-            </div>
-            <div className="flex items-center text-xsmall14">
-              <ModalButton
-                className="border-r border-neutral-80 font-medium"
-                onClick={() => setIsAlertShown(false)}
-              >
-                수정 계속하기
-              </ModalButton>
-              <ModalButton
-                className={clsx('font-semibold text-primary')}
-                onClick={() => {
-                  onConfirm();
-                  setIsAlertShown(false);
-                }}
-              >
-                링크 변경 취소
-              </ModalButton>
-            </div>
-          </BaseModal>
+
+        {/* 보너스 미션 */}
+        {isBonusMission && (
+          <BonusMissionInputSection
+            myDailyMission={myDailyMission}
+            onCancelEdit={cancelMisiionLinkChange}
+            onSubmit={() => {
+              if (!attended) setLastMissionModal(true);
+            }}
+          />
         )}
       </form>
+
+      <LinkChangeConfirmationModal
+        isOpen={isAlertShown}
+        onClose={() => setIsAlertShown(false)}
+        onClickCancel={() => setIsAlertShown(false)}
+        onClickConfirm={() => {
+          onConfirm();
+          setIsAlertShown(false);
+        }}
+      />
+
+      {/* 챌린지 리뷰 */}
       {lastMissionModal &&
         (reviewCompleted?.reviewId === null ||
           reviewCompleted?.reviewId === undefined) && (
           <LastMissionSubmitModal
-            onClose={() => setLastMissionModal(false)}
+            onClose={() => {
+              setLastMissionModal(false);
+              window.location.reload();
+            }}
             challengeId={currentChallenge?.id}
           />
         )}
