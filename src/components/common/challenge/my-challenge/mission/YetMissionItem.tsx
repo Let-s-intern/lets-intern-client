@@ -1,6 +1,7 @@
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { MyChallengeMissionByType, userChallengeMissionDetail } from '@/schema';
 import axios from '@/utils/axios';
+import { BONUS_MISSION_TH } from '@/utils/constants';
 import { useQuery } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { useState } from 'react';
@@ -13,6 +14,9 @@ interface Props {
 const YetMissionItem = ({ mission }: Props) => {
   const [isDetailShown, setIsDetailShown] = useState(false);
   const { currentChallenge } = useCurrentChallenge();
+
+  const th =
+    mission?.th === BONUS_MISSION_TH ? '보너스' : `  ${mission?.th}회차`;
 
   const {
     data: missionDetail,
@@ -51,7 +55,7 @@ const YetMissionItem = ({ mission }: Props) => {
     <li key={mission.id} className="rounded-xl bg-white p-6">
       <div className="flex items-center justify-between px-3">
         <h4 className="text-lg font-semibold">
-          {mission?.th}회차. {mission?.title}
+          {th}. {mission?.title}
         </h4>
         <button onClick={toggle}>
           {!isDetailShown || isDetailLoading ? '미션보기' : '닫기'}

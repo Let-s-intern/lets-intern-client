@@ -1,6 +1,7 @@
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { MyChallengeMissionByType, userChallengeMissionDetail } from '@/schema';
 import axios from '@/utils/axios';
+import { BONUS_MISSION_TH } from '@/utils/constants';
 import { useQuery } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import clsx from 'clsx';
@@ -17,6 +18,9 @@ interface Props {
 const AbsentMissionItem = ({ mission, isDone, setOpenReviewModal }: Props) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { currentChallenge, schedules } = useCurrentChallenge();
+
+  const th =
+    mission?.th === BONUS_MISSION_TH ? '보너스' : `  ${mission?.th}회차`;
   const currentSchedule = schedules.find((schedule) => {
     return schedule.missionInfo.id === mission.id;
   });
@@ -30,7 +34,7 @@ const AbsentMissionItem = ({ mission, isDone, setOpenReviewModal }: Props) => {
     isLoading: isDetailLoading,
     error: detailError,
   } = useQuery({
-    enabled: Boolean(currentChallenge?.id) && isDetailShown,
+    enabled: Boolean(currentChallenge?.id),
     queryKey: [
       'challenge',
       currentChallenge?.id,
@@ -91,7 +95,7 @@ const AbsentMissionItem = ({ mission, isDone, setOpenReviewModal }: Props) => {
         <div className="flex flex-1 items-center justify-between">
           <div className="flex items-center gap-3">
             <h4 className="text-lg font-semibold">
-              {mission.th}회차. {mission.title}
+              {th}. {mission.title}
             </h4>
             <span
               className={clsx(

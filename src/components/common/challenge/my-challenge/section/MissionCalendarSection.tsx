@@ -1,4 +1,5 @@
 import { Schedule } from '@/schema';
+import { BONUS_MISSION_TH } from '@/utils/constants';
 import MissionTooltipQuestion from '../../ui/tooltip-question/MissionTooltipQuestion';
 import MissionCalendar from '../mission-calendar/MissionCalendar';
 
@@ -20,7 +21,10 @@ const MissionStatusTitle = ({
   return (
     <>
       오늘은&nbsp;
-      <b className="font-semibold text-primary">{todayTh}회차</b> 미션 날이에요
+      <b className="font-semibold text-primary">
+        {todayTh === BONUS_MISSION_TH ? '보너스' : `${todayTh}회차`}
+      </b>{' '}
+      미션 날이에요
     </>
   );
 };
