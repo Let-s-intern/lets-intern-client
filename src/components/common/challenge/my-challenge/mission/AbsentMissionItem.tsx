@@ -5,7 +5,7 @@ import { BONUS_MISSION_TH } from '@/utils/constants';
 import { useQuery } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import clsx from 'clsx';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import AbsentMissionDetailMenu from './AbsentMissionDetailMenu';
 
@@ -55,7 +55,7 @@ const AbsentMissionItem = ({ mission, isDone, setOpenReviewModal }: Props) => {
     setIsDetailShown(!isDetailShown);
   };
 
-  const isValid = useCallback(() => {
+  const isValid = () => {
     if (isAxiosError(detailError)) {
       const errorCode = detailError?.response?.data.status;
       if (errorCode === 400) {
@@ -65,7 +65,7 @@ const AbsentMissionItem = ({ mission, isDone, setOpenReviewModal }: Props) => {
       return false;
     }
     return true;
-  }, [detailError]);
+  };
 
   useEffect(() => {
     if (isDone) {

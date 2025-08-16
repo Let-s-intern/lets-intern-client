@@ -24,7 +24,7 @@ const YetMissionItem = ({ mission }: Props) => {
     isLoading: isDetailLoading,
     error: detailError,
   } = useQuery({
-    enabled: Boolean(currentChallenge?.id) && isDetailShown,
+    enabled: Boolean(currentChallenge?.id),
     queryKey: [
       'challenge',
       currentChallenge?.id,
@@ -41,15 +41,20 @@ const YetMissionItem = ({ mission }: Props) => {
   });
 
   const toggle = () => {
-    if (!isDetailShown && isAxiosError(detailError)) {
+    if (!isDetailShown && !isValid()) return;
+    setIsDetailShown(!isDetailShown);
+  };
+
+  const isValid = () => {
+    if (isAxiosError(detailError)) {
       const errorCode = detailError?.response?.data.status;
       if (errorCode === 400) {
         alert('0회차 미션을 먼저 완료해주세요.');
         setIsDetailShown(false);
       }
-      return;
+      return false;
     }
-    setIsDetailShown(!isDetailShown);
+    return true;
   };
 
   return (
