@@ -1,5 +1,5 @@
+import { Schedule } from '@/schema';
 import clsx from 'clsx';
-import { Schedule } from '../../../../../schema';
 import MissionIcon from './MissionIcon';
 import MissionNotStartedIcon from './MissionNotStartedIcon';
 import MissionTodayIcon from './MissionTodayIcon';

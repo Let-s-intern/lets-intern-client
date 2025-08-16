@@ -1,5 +1,5 @@
 import { twMerge } from '@/lib/twMerge';
-import { Schedule } from '../../../../../schema';
+import { Schedule } from '@/schema';
 import MissionCalendarItem from './MissionCalendarItem';
 
 interface Props {
@@ -11,7 +11,6 @@ interface Props {
 
 const MissionCalendar = ({ className, schedules, todayTh, isDone }: Props) => {
   return (
-    // <div className={clsx('grid grid-cols-7 gap-y-6', className)}>
     <div className={twMerge('flex', className)}>
       {schedules.map((schedule, index) => (
         <MissionCalendarItem

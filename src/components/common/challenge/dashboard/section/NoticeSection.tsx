@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChallengeGuide, ChallengeNotice } from '../../../../../schema';
+import { ChallengeNotice } from '../../../../../schema';
 
 interface INoticeSectionProps {
   notices: ChallengeNotice[];
@@ -32,7 +32,7 @@ const NoticeSection = ({ notices }: INoticeSectionProps) => {
                 key={notice.id}
                 to={notice.link ?? ''}
                 target="_blank"
-                rel="noopenner noreferrer"
+                rel="noopener noreferrer"
                 className="overflow-hidden text-ellipsis whitespace-nowrap text-sm text-[#333333] hover:underline"
               >
                 {notice.title}
@@ -57,7 +57,7 @@ const NoticeSection = ({ notices }: INoticeSectionProps) => {
             (pageNum) => (
               <div
                 key={pageNum}
-                className={clsx('h-2 w-2 cursor-pointer rounded-full ', {
+                className={clsx('h-2 w-2 cursor-pointer rounded-full', {
                   'bg-[#B0B0B0]': pageNum === currentPageNum,
                   'bg-[#D1D1D1]': pageNum !== currentPageNum,
                 })}

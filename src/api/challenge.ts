@@ -1,11 +1,6 @@
-import axiosV2 from '@/utils/axiosV2';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { z } from 'zod';
 import {
   activeChallengeResponse,
-  AttendanceResult,
   attendances,
-  AttendanceStatus,
   ChallengeIdPrimitive,
   challengeListSchema,
   challengeTitleSchema,
@@ -14,13 +9,17 @@ import {
   getChallengeIdPrimitiveSchema,
   getChallengeIdSchema,
   missionAdmin,
+  myDailyMission as myDailyMissionSchema,
+  Pageable,
   ProgramClassification,
   ProgramStatus,
   reviewTotalSchema,
   userChallengeMissionWithAttendance,
-} from '../schema';
-import axios from '../utils/axios';
-import { Pageable } from './../schema';
+} from '@/schema';
+import axios from '@/utils/axios';
+import axiosV2 from '@/utils/axiosV2';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { z } from 'zod';
 import {
   challengeGoalSchema,
   challengeMissionFeedbackAttendanceListSchema,
@@ -30,7 +29,6 @@ import {
   challengeValidUserSchema,
   feedbackAttendanceSchema,
 } from './challengeSchema';
-import { getAdminProgramReviewQueryKey } from './review';
 
 const useChallengeQueryKey = 'useChallengeQueryKey';
 
@@ -309,7 +307,7 @@ export const useGetChallengeGoal = (challengeId: string | undefined) => {
   });
 };
 
-export const usePostChallengeGoal = () => {
+export const usePatchChallengeGoal = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
@@ -359,7 +357,7 @@ export const usePostChallengeAttendance = ({
 }: {
   successCallback?: () => void;
   errorCallback?: () => void;
-}) => {
+} = {}) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
@@ -368,8 +366,8 @@ export const usePostChallengeAttendance = ({
       review,
     }: {
       missionId: number;
-      link: string;
-      review: string;
+      link?: string;
+      review?: string;
     }) => {
       const res = await axios.post(`/attendance/${missionId}`, {
         link,
@@ -385,67 +383,6 @@ export const usePostChallengeAttendance = ({
     },
     onError: () => {
       return errorCallback && errorCallback();
-    },
-  });
-};
-
-export const usePatchChallengeAttendance = ({
-  successCallback,
-  errorCallback,
-}: {
-  successCallback?: () => void;
-  errorCallback?: (error: Error) => void;
-}) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({
-      challengeId,
-      attendanceId,
-      missionId,
-      link,
-      status,
-      result,
-      comments,
-      review,
-      reviewIsVisible,
-    }: {
-      challengeId?: number;
-      attendanceId: number;
-      missionId?: number;
-      link?: string;
-      status?: AttendanceStatus | null;
-      result?: AttendanceResult | null;
-      comments?: string;
-      review?: string;
-      reviewIsVisible?: boolean;
-    }) => {
-      const res = await axios.patch(`/attendance/${attendanceId}`, {
-        link,
-        status,
-        result,
-        comments,
-        review,
-        reviewIsVisible,
-      });
-      return { data: res.data, challengeId, missionId };
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({
-        queryKey: ['challenge'],
-      });
-      queryClient.invalidateQueries({
-        queryKey: getAdminProgramReviewQueryKey('MISSION_REVIEW'),
-      });
-      queryClient.invalidateQueries({
-        queryKey: getChallengeAttendancesQueryKey(
-          data.challengeId,
-          data.missionId,
-        ),
-      });
-      return successCallback && successCallback();
-    },
-    onError: (e) => {
-      return errorCallback && errorCallback(e);
     },
   });
 };
@@ -474,7 +411,7 @@ export const useGetChallengeReviewStatus = (
   });
 };
 
-const getChallengeAttendancesQueryKey = (
+export const getChallengeAttendancesQueryKey = (
   challengeId: number | undefined,
   missionId: number | undefined,
 ) => {
@@ -594,11 +531,9 @@ export const useMentorMissionFeedbackAttendanceQuery = ({
 };
 
 /** 챌린지 미션 전체 목록 /api/v2/admin/challenge/{challengeId}/mission */
-export const ChallengeMissionListQueryKey = 'useChallengeMissionListQuery';
-
 export const useChallengeMissionListQuery = (challengeId?: string | number) => {
   return useQuery({
-    queryKey: [ChallengeMissionListQueryKey, challengeId],
+    queryKey: ['useChallengeMissionListQuery', challengeId],
     queryFn: async () => {
       const res = await axiosV2.get(`/admin/challenge/${challengeId}/mission`);
       return missionAdmin.parse(res.data.data);
@@ -673,5 +608,20 @@ export const useFeedbackAttendanceQuery = ({
       return feedbackAttendanceSchema.parse(res.data.data);
     },
     enabled: !!challengeId && !!missionId && !!attendanceId,
+  });
+};
+
+/** GET 챌린지 나의 기록장 데일리 미션 /api/v1/challenge/{challengeId}/my/daily-mission */
+export const useChallengeMyDailyMission = (
+  programId?: string | number,
+  options?: { enabled?: boolean },
+) => {
+  return useQuery({
+    enabled: !!programId && options?.enabled,
+    queryKey: ['useChallengeDailyMission', programId],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${programId}/my/daily-mission`);
+      return myDailyMissionSchema.parse(res.data.data);
+    },
   });
 };

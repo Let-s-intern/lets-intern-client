@@ -1,35 +1,17 @@
+import { useUserQuery } from '@/api/user';
+import DailyMissionSection from '@/components/common/challenge/dashboard/section/DailyMissionSection';
+import EndDailyMissionSection from '@/components/common/challenge/dashboard/section/EndDailyMissionSection';
+import GuideSection from '@/components/common/challenge/dashboard/section/GuideSection';
+import NoticeSection from '@/components/common/challenge/dashboard/section/NoticeSection';
+import ScoreSection from '@/components/common/challenge/dashboard/section/ScoreSection';
+import MissionCalendar from '@/components/common/challenge/my-challenge/mission-calendar/MissionCalendar';
+import MissionTooltipQuestion from '@/components/common/challenge/ui/tooltip-question/MissionTooltipQuestion';
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
+import { challengeGuides, challengeNotices, challengeScore } from '@/schema';
+import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
-// import MissionCalendar from '../../../components/common/challenge/dashboard/mission-calendar/MissionCalendar';
 import { useParams } from 'react-router-dom';
-import { useUserQuery } from '../../../api/user';
-import DailyMissionSection from '../../../components/common/challenge/dashboard/section/DailyMissionSection';
-import EndDailyMissionSection from '../../../components/common/challenge/dashboard/section/EndDailyMissionSection';
-import GuideSection from '../../../components/common/challenge/dashboard/section/GuideSection';
-import NoticeSection from '../../../components/common/challenge/dashboard/section/NoticeSection';
-import ScoreSection from '../../../components/common/challenge/dashboard/section/ScoreSection';
-import MissionCalendar from '../../../components/common/challenge/my-challenge/mission-calendar/MissionCalendar';
-import MissionTooltipQuestion from '../../../components/common/challenge/ui/tooltip-question/MissionTooltipQuestion';
-import { useCurrentChallenge } from '../../../context/CurrentChallengeProvider';
-import {
-  challengeGuides,
-  challengeNotices,
-  challengeScore,
-  Schedule,
-} from '../../../schema';
-import axios from '../../../utils/axios';
-
-const getScoreFromSchedule = (schedule: Schedule) => {
-  switch (schedule.attendanceInfo.status) {
-    case 'ABSENT':
-      return 0;
-    case 'LATE':
-    case 'PRESENT':
-    case 'UPDATED':
-      return 0;
-  }
-  return 0;
-};
 
 const getIsChallengeDone = (endDate: string) => {
   return dayjs(new Date()).isAfter(dayjs(endDate));
@@ -129,7 +111,6 @@ const ChallengeDashboard = () => {
             />
             <NoticeSection notices={notices} />
           </div>
-          {/* <div className="flex h-full w-full max-w-[12rem] flex-col gap-4"> */}
           <GuideSection guides={guides} />
           {/* </div> */}
         </div>
@@ -151,7 +132,6 @@ const ChallengeDashboard = () => {
               />
             )}
           </section>
-          {/* <CurriculumSection /> */}
         </div>
       </div>
     </main>

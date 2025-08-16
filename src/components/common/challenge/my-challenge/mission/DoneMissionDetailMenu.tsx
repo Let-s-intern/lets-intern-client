@@ -5,6 +5,7 @@ import {
   Schedule,
   UserChallengeMissionDetail,
 } from '@/schema';
+import OtVideo from '../../OtVideo';
 import MenuContentsDropdown from '../dropdown/MenuContentsDropdown';
 import ParsedCommentBox from '../ParsedCommentBox';
 interface Props {
@@ -30,6 +31,7 @@ const DoneMissionDetailMenu = ({
   const additionalContentsLink =
     missionDetail.additionalContentsList?.[0]?.link;
   const essentialContentsLink = missionDetail.essentialContentsList?.[0]?.link;
+  const isOtMission = missionDetail.th === 0;
 
   return (
     <>
@@ -49,6 +51,10 @@ const DoneMissionDetailMenu = ({
             <MenuContentsDropdown missionDetail={missionDetail} />
           </div>
         )}
+        {/* OT 영상 */}
+        {isOtMission && missionDetail.vodLink && (
+          <OtVideo vodLink={missionDetail.vodLink} />
+        )}
       </div>
       <hr className="my-4 border-[#DEDEDE]" />
       <div className="px-3">
@@ -57,7 +63,7 @@ const DoneMissionDetailMenu = ({
           <Link
             to={missionByType.attendanceLink ?? ''}
             target="_blank"
-            rel="noopenner noreferrer"
+            rel="noopener noreferrer"
             className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-gray-500 hover:underline"
           >
             {missionByType.attendanceLink}

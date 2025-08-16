@@ -803,7 +803,7 @@ export const liveTitleSchema = z.object({
   title: z.string().optional().nullable(),
 });
 
-/** PATCH /api/v1/attendance/{id} */
+/** [유저용] 출석 업데이트 PATCH /api/v1/attendance/{attendanceId} */
 export type UpdateAttendanceReq = {
   link?: string;
   status?: AttendanceStatus;
@@ -956,6 +956,7 @@ export const missionTemplateAdmin = z
         description: z.string(),
         guide: z.string(),
         templateLink: z.string().nullish(),
+        vodLink: z.string().nullish(),
       }),
     ),
   })
@@ -981,6 +982,7 @@ export type CreateMissionTemplateReq = {
   description: string;
   guide: string;
   templateLink: string;
+  vodLink?: string | null;
 };
 
 // PATCH /api/v1/mission-template/{id}
@@ -990,6 +992,7 @@ export type UpdateMissionTemplateReq = {
   description?: string;
   guide?: string;
   templateLink?: string;
+  vodLink?: string | null;
 };
 
 // POST /api/v1/contents
@@ -1201,7 +1204,8 @@ export const userChallengeMissionDetail = z
       missionTag: z.string(),
       description: z.string(),
       guide: z.string(),
-      templateLink: z.string(),
+      templateLink: z.string().nullish(),
+      vodLink: z.string().nullish(),
     }),
   })
   .transform((data) => {
@@ -1257,6 +1261,8 @@ export const userChallengeMissionWithAttendance = z
         status: AttendanceStatusEnum.nullable(),
         result: AttendanceResultEnum.nullable(),
         feedbackStatus: AttendanceFeedbackStatusEnum.nullable(),
+        accountType: z.string().nullish(),
+        accountNum: z.string().nullish(),
       })
       .nullable(),
   })
@@ -1362,6 +1368,8 @@ export const myDailyMission = z
         comments: z.string().nullable(),
         status: AttendanceStatusEnum.nullable(),
         result: AttendanceResultEnum.nullable(),
+        accountType: z.string().nullish(),
+        accountNum: z.string().nullish(),
       })
       .nullable(),
   })
@@ -1384,7 +1392,7 @@ export const myDailyMission = z
 
 export type MyDailyMission = z.infer<typeof myDailyMission>;
 
-// GET /api/v1/challenge/{id}/missions?type=GENERAL
+// GET /api/v1/challenge/{challengeId}/missions?type=GENERAL
 export const myChallengeMissionsByType = z.object({
   missionList: z.array(
     z.object({
