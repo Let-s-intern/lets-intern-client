@@ -34,13 +34,13 @@ const BonusMissionInputSection = ({
   const [privacyConsent, setPrivacyConsent] = useState(submitted);
   const [isOpenModal, setIsOpenModal] = useState(false);
 
-  const submitDisabled =
-    !isEditing ||
-    !url ||
-    !accountNum ||
-    !accountType ||
-    !isLinkChecked ||
-    !privacyConsent;
+  const isSubmittable =
+    isEditing &&
+    url &&
+    accountNum &&
+    accountType &&
+    isLinkChecked &&
+    privacyConsent;
 
   const postBlogBonus = usePostBlogBonus();
   const patchAttendance = usePatchAttendance();
@@ -253,7 +253,7 @@ const BonusMissionInputSection = ({
         <button
           type="button"
           className="h-12 flex-1 rounded-md bg-primary px-6 py-3 text-center text-small18 font-medium text-white disabled:bg-neutral-70 disabled:text-white"
-          disabled={submitDisabled}
+          disabled={!isSubmittable}
           onClick={handleSubmit}
         >
           {isEditing ? '미션 제출' : '제출 완료'}
