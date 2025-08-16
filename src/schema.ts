@@ -1147,6 +1147,9 @@ export const challengeSchedule = z
           comments: z.string().nullable(),
           status: AttendanceStatusEnum.nullable(),
           result: AttendanceResultEnum.nullable(),
+          feedbackStatus: AttendanceFeedbackStatusEnum.nullable(),
+          accountType: z.string().nullish(),
+          accountNum: z.string().nullish(),
         }),
       }),
     ),
@@ -1250,6 +1253,7 @@ export const userChallengeMissionWithAttendance = z
       description: z.string(),
       guide: z.string(),
       templateLink: z.string(),
+      vodLink: z.string(),
     }),
     attendanceInfo: z
       .object({
