@@ -7,6 +7,7 @@ import { isAxiosError } from 'axios';
 import { useState } from 'react';
 import YetMissionDetailMenu from './YetMissionDetailMenu';
 
+/** 아직 시작하지 않은 미션 */
 interface Props {
   mission: MyChallengeMissionByType;
 }
