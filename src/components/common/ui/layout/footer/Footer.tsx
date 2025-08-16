@@ -50,7 +50,7 @@ const Footer = () => {
                 isNextRouter={false}
                 href="https://letscareer.liveklass.com/?utm_source=letscareer&utm_medium=website&utm_campaign=GNB"
                 target="_blank"
-                rel="noopenner noreferrer"
+                rel="noopener noreferrer"
               >
                 취준위키 VOD
               </MainLink>
