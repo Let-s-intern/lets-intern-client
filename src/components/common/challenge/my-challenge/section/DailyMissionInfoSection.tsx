@@ -1,4 +1,5 @@
 import { UserChallengeMissionDetail } from '@/schema';
+import { BONUS_MISSION_TH } from '@/utils/constants';
 import { Link } from 'react-router-dom';
 import OtVideo from '../../OtVideo';
 import ContentsDropdown from '../dropdown/ContentsDropdown';
@@ -29,7 +30,7 @@ const MissionInfo = ({
         {/* OT 자료 */}
         {!isOtMission && (
           <Link
-            to={missionDetail.templateLink}
+            to={missionDetail.templateLink || '#'}
             className="flex-1 rounded-sm border border-primary-20 bg-white p-3 text-center text-xsmall16 font-medium"
             target="_blank"
             rel="noopener noreferrer"
@@ -127,11 +128,11 @@ const BonusMissionInfo = () => {
 
 const DailyMissionInfoSection = ({ missionDetail }: Props) => {
   const missionTitle =
-    missionDetail.th === 100
+    missionDetail.th === BONUS_MISSION_TH
       ? '보너스 미션. 블로그 후기 작성하기 리워드 받기!'
       : `${missionDetail.th}회차. ${missionDetail.title}`;
 
-  const isBonusMission = missionDetail.th === 100;
+  const isBonusMission = missionDetail.th === BONUS_MISSION_TH;
 
   return (
     <>

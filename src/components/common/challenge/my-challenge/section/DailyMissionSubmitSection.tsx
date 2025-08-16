@@ -5,6 +5,7 @@ import {
 } from '@/api/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { MyDailyMission, Schedule } from '@/schema';
+import { BONUS_MISSION_TH } from '@/utils/constants';
 import { useEffect, useState } from 'react';
 import BonusMissionInputSection from '../../BonusMissionInputSection';
 import DailyMissionLinkInputSection from '../../DailyMissionLinkInputSection';
@@ -38,7 +39,7 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
   const attended = myDailyMission.attendanceInfo?.submitted;
   const attendanceId = myDailyMission.attendanceInfo?.id;
   const isOtMission = myDailyMission.dailyMission?.th === 0;
-  const isBonusMission = myDailyMission.dailyMission?.th === 100;
+  const isBonusMission = myDailyMission.dailyMission?.th === BONUS_MISSION_TH;
 
   const [value, setValue] = useState(attendanceLink ?? '');
   const [review, setReview] = useState(attendanceReview ?? '');

@@ -1,5 +1,6 @@
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { DailyMission } from '@/schema';
+import { BONUS_MISSION_TH } from '@/utils/constants';
 import { Link, useParams } from 'react-router-dom';
 
 const DailyMissionSection = ({
@@ -11,12 +12,12 @@ const DailyMissionSection = ({
   const { currentChallenge } = useCurrentChallenge();
 
   const missionTitle =
-    dailyMission?.th === 100
+    dailyMission?.th === BONUS_MISSION_TH
       ? '보너스 미션'
       : `${dailyMission?.th}회차. ${dailyMission?.title}`;
 
   const missionDescription =
-    dailyMission?.th === 100
+    dailyMission?.th === BONUS_MISSION_TH
       ? '안녕하세요, 커리어의 첫걸음을 함께하는 렛츠커리어입니다!\n렛츠커리어의 챌린지 프로그램을 믿고 따라와주셔서 감사드리며, 1만원을 100% 지급해드리는 후기 이벤트를 안내드립니다!'
       : dailyMission?.description;
 

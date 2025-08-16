@@ -1,5 +1,6 @@
+import { Schedule } from '@/schema';
+import { BONUS_MISSION_TH } from '@/utils/constants';
 import clsx from 'clsx';
-import { Schedule } from '../../../../../schema';
 
 interface Props {
   className?: string;
@@ -16,7 +17,7 @@ const MissionNotStartedIcon = ({ className, schedule }: Props) => {
     >
       <div className="mb-[10%] flex h-[30%] min-h-[2.5rem] w-[30%] min-w-[2.5rem] rounded-full bg-[#D0CFCF]" />
       <span className="block text-sm font-semibold text-[#D0CFCF]">
-        {schedule.missionInfo.th === 100
+        {schedule.missionInfo.th === BONUS_MISSION_TH
           ? '보너스'
           : `${schedule.missionInfo.th}회차`}
       </span>
