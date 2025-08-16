@@ -93,7 +93,11 @@ const BonusMissionInputSection = ({
   };
 
   const cancelEdit = () => {
-    if (attendanceLink !== url) setIsOpenModal(true);
+    const notChanged =
+      attendanceLink === url &&
+      attendance?.accountNum === accountNum &&
+      attendance.accountType === accountType;
+    if (!notChanged) setIsOpenModal(true);
     else setIsEditing(false);
   };
 
@@ -186,6 +190,7 @@ const BonusMissionInputSection = ({
         />
         <input
           type="number"
+          inputMode="numeric"
           className={clsx(
             'flex-1 cursor-text rounded-sm p-3 text-xsmall14 outline-none disabled:bg-neutral-95',
             {
@@ -266,6 +271,8 @@ const BonusMissionInputSection = ({
         onClickCancel={() => setIsOpenModal(false)}
         onClickConfirm={() => {
           setUrl(attendanceLink ?? '');
+          setAccountNum(attendance?.accountNum ?? '');
+          setAccountType(attendance?.accountType ?? '');
           setIsEditing(false);
           setIsOpenModal(false);
         }}
