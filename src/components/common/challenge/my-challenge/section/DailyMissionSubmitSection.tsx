@@ -11,6 +11,7 @@ import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import DailyMissionLinkInputSection from '../../DailyMissionLinkInputSection';
 import DailyMissionReviewSection from '../../DailyMissionReviewSection';
+import DailyMissionSubmitButton from '../../DailyMissionSubmitButton';
 import OtMissionInputSection from '../../OtMissionInputSection';
 import LastMissionSubmitModal from './LastMissionSubmitModal';
 
@@ -153,6 +154,7 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
     <>
       <form onSubmit={handleMissionLinkSubmit}>
         <h3 className="mb-6 text-xsmall16 font-semibold">미션 제출하기</h3>
+        {/* 기본 미션 */}
         {!isOtMission && (
           <>
             <DailyMissionLinkInputSection
@@ -165,21 +167,28 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
               setIsLinkChecked={setIsLinkChecked}
             />
             <DailyMissionReviewSection
+              isEditing={isEditing}
+              review={review}
+              handleMissionReviewChanged={handleMissionReviewChanged}
+            />
+            <DailyMissionSubmitButton
               value={value}
               isEditing={isEditing}
               isLinkChecked={isLinkChecked}
               review={review}
               attendanceLink={attendanceLink ?? undefined}
-              handleMissionReviewChanged={handleMissionReviewChanged}
               cancelMisiionLinkChange={cancelMisiionLinkChange}
               setIsEditing={setIsEditing}
               setIsLinkChecked={setIsLinkChecked}
             />
           </>
         )}
+        {/* OT 미션 */}
         {isOtMission && myDailyMission.dailyMission?.id && (
           <OtMissionInputSection missionId={myDailyMission.dailyMission?.id} />
         )}
+        {/* 보너스 미션 */}
+
         {isAlertShown && (
           <BaseModal
             isOpen={isAlertShown}
@@ -212,6 +221,8 @@ const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
           </BaseModal>
         )}
       </form>
+
+      {/* 챌린지 리뷰 */}
       {lastMissionModal &&
         (reviewCompleted?.reviewId === null ||
           reviewCompleted?.reviewId === undefined) && (
