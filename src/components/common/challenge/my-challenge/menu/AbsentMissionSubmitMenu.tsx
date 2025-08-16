@@ -1,6 +1,3 @@
-import clsx from 'clsx';
-import { useEffect, useState } from 'react';
-
 import { usePatchAttendance } from '@/api/attendance';
 import {
   useGetChallengeReviewStatus,
@@ -8,6 +5,8 @@ import {
 } from '@/api/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { Schedule, UserChallengeMissionDetail } from '@/schema';
+import clsx from 'clsx';
+import { useEffect, useState } from 'react';
 import ParsedCommentBox from '../ParsedCommentBox';
 
 interface Props {
