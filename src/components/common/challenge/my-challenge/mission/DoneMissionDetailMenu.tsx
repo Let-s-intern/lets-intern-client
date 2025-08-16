@@ -1,10 +1,10 @@
-import { Link } from 'react-router-dom';
-
 import {
   MyChallengeMissionByType,
   Schedule,
   UserChallengeMissionDetail,
 } from '@/schema';
+import { BONUS_MISSION_TH } from '@/utils/constants';
+import { Link } from 'react-router-dom';
 import OtVideo from '../../OtVideo';
 import MenuContentsDropdown from '../dropdown/MenuContentsDropdown';
 import ParsedCommentBox from '../ParsedCommentBox';
@@ -32,6 +32,10 @@ const DoneMissionDetailMenu = ({
     missionDetail.additionalContentsList?.[0]?.link;
   const essentialContentsLink = missionDetail.essentialContentsList?.[0]?.link;
   const isOtMission = missionDetail.th === 0;
+  const isBonusMission = missionDetail.th === BONUS_MISSION_TH;
+  const showContent =
+    !isBonusMission && (additionalContentsLink || essentialContentsLink);
+  const showOtVod = isOtMission && missionDetail.vodLink;
 
   return (
     <>
@@ -46,15 +50,13 @@ const DoneMissionDetailMenu = ({
             {missionDetail.guide}
           </p>
         </div>
-        {(additionalContentsLink || essentialContentsLink) && (
+        {showContent && (
           <div className="mt-4 flex flex-col gap-2">
             <MenuContentsDropdown missionDetail={missionDetail} />
           </div>
         )}
         {/* OT 영상 */}
-        {isOtMission && missionDetail.vodLink && (
-          <OtVideo vodLink={missionDetail.vodLink} />
-        )}
+        {showOtVod && <OtVideo vodLink={missionDetail.vodLink!} />}
       </div>
       <hr className="my-4 border-[#DEDEDE]" />
       <div className="px-3">
