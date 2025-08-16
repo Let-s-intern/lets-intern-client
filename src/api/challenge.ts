@@ -531,11 +531,9 @@ export const useMentorMissionFeedbackAttendanceQuery = ({
 };
 
 /** 챌린지 미션 전체 목록 /api/v2/admin/challenge/{challengeId}/mission */
-export const ChallengeMissionListQueryKey = 'useChallengeMissionListQuery';
-
 export const useChallengeMissionListQuery = (challengeId?: string | number) => {
   return useQuery({
-    queryKey: [ChallengeMissionListQueryKey, challengeId],
+    queryKey: ['useChallengeMissionListQuery', challengeId],
     queryFn: async () => {
       const res = await axiosV2.get(`/admin/challenge/${challengeId}/mission`);
       return missionAdmin.parse(res.data.data);
