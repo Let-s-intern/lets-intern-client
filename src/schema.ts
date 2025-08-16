@@ -1252,8 +1252,8 @@ export const userChallengeMissionWithAttendance = z
       missionTag: z.string(),
       description: z.string(),
       guide: z.string(),
-      templateLink: z.string(),
-      vodLink: z.string(),
+      templateLink: z.string().nullish(),
+      vodLink: z.string().nullish(),
     }),
     attendanceInfo: z
       .object({
