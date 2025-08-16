@@ -10,7 +10,7 @@ import BonusMissionInputSection from '../../BonusMissionInputSection';
 import DailyMissionLinkInputSection from '../../DailyMissionLinkInputSection';
 import DailyMissionReviewSection from '../../DailyMissionReviewSection';
 import DailyMissionSubmitButton from '../../DailyMissionSubmitButton';
-import LinkChangeConfirmationModal from '../../LinkChangeConfirmationModal ';
+import LinkChangeConfirmationModal from '../../LinkChangeConfirmationModal';
 import OtMissionInputSection from '../../OtMissionInputSection';
 import LastMissionSubmitModal from './LastMissionSubmitModal';
 

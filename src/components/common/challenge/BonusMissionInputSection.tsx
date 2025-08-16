@@ -4,7 +4,7 @@ import { MyDailyMission } from '@/schema';
 import clsx from 'clsx';
 import { useState } from 'react';
 import BankSelectDropdown from './BankSelectDropdown';
-import LinkChangeConfirmationModal from './LinkChangeConfirmationModal ';
+import LinkChangeConfirmationModal from './LinkChangeConfirmationModal';
 
 interface Props {
   myDailyMission: MyDailyMission;
