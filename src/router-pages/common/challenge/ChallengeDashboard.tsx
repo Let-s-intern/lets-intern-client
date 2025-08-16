@@ -1,6 +1,5 @@
 import { useUserQuery } from '@/api/user';
 import DailyMissionSection from '@/components/common/challenge/dashboard/section/DailyMissionSection';
-import EndDailyMissionSection from '@/components/common/challenge/dashboard/section/EndDailyMissionSection';
 import GuideSection from '@/components/common/challenge/dashboard/section/GuideSection';
 import NoticeSection from '@/components/common/challenge/dashboard/section/NoticeSection';
 import ScoreSection from '@/components/common/challenge/dashboard/section/ScoreSection';
@@ -10,8 +9,36 @@ import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import { challengeGuides, challengeNotices, challengeScore } from '@/schema';
 import axios from '@/utils/axios';
+import MissionEndSection from '@components/common/challenge/MissionEndSection';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
+
+const MissionDetailSection = ({ todayTh }: { todayTh: number }) => {
+  const params = useParams();
+  const { schedules, dailyMission, isLoading } = useCurrentChallenge();
+
+  const { data: programData } = useQuery({
+    queryKey: ['challenge', params.programId, 'application'],
+    queryFn: async ({ queryKey }) => {
+      const res = await axios.get(
+        `/${queryKey[0]}/${queryKey[1]}/${queryKey[2]}`,
+      );
+      return res.data;
+    },
+  });
+
+  if (isLoading) return null;
+
+  const programEndDate = programData?.data?.endDate;
+  const isChallengeDone = getIsChallengeDone(programEndDate);
+  const isLastMissionSubmitted =
+    schedules[schedules.length - 1].attendanceInfo.submitted;
+
+  if (isLastMissionSubmitted || isChallengeDone || !dailyMission) {
+    return <MissionEndSection />;
+  }
+  return <DailyMissionSection dailyMission={dailyMission} />;
+};
 
 const getIsChallengeDone = (endDate: string) => {
   return dayjs(new Date()).isAfter(dayjs(endDate));
@@ -79,7 +106,6 @@ const ChallengeDashboard = () => {
   const totalScore = scoreGroup?.totalScore || 0;
   const currentScore = scoreGroup?.currentScore || 0;
 
-  const isChallengeDone = getIsChallengeDone(programEndDate);
   const isChallengeSubmitDone = getIsChallengeSubmitDone(programEndDate);
 
   return (
@@ -90,11 +116,7 @@ const ChallengeDashboard = () => {
       <div className="flex flex-col gap-4">
         <div className="mt-4 flex gap-4">
           {/* 챌린지 미션 상세 */}
-          {dailyMission ? (
-            <DailyMissionSection dailyMission={dailyMission} />
-          ) : (
-            isChallengeDone && <EndDailyMissionSection />
-          )}
+          <MissionDetailSection todayTh={todayTh} />
 
           {/* 공지사항, 미션점수 */}
           <div className="flex w-[12rem] flex-col gap-4">
