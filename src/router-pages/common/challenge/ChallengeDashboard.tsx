@@ -27,7 +27,7 @@ const ChallengeDashboard = () => {
   const params = useParams();
 
   const todayTh =
-    dailyMission?.th ||
+    dailyMission?.th ??
     schedules.reduce((th, schedule) => {
       return Math.max(th, schedule.missionInfo.th || 0);
     }, 0) + 1;
