@@ -119,7 +119,7 @@ const ChallengeDashboard = () => {
           <MissionDetailSection todayTh={todayTh} />
 
           {/* 공지사항, 미션점수 */}
-          <div className="flex w-[12rem] flex-col gap-4">
+          <div className="flex w-[22rem] flex-col gap-4">
             <NoticeSection notices={notices} />
             <div className="flex gap-3">
               <ScoreSection

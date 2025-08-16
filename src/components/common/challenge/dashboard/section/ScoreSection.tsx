@@ -38,8 +38,8 @@ const ScoreSection = ({
   });
 
   return (
-    <section className="relative flex w-full flex-col gap-y-4 rounded-xl border border-[#E4E4E7] p-6">
-      <div className="flex flex-col flex-1 gap-2">
+    <section className="relative flex w-[calc((100%-12px)/2)] flex-col gap-y-4 rounded-xs border border-[#E4E4E7] p-4">
+      <div className="flex flex-1 flex-col gap-2">
         <div className="flex items-center gap-2">
           <h2 className="font-semibold text-[#4A495C]">미션 점수 현황</h2>
           <ScoreTooltipQuestion />
@@ -57,7 +57,7 @@ const ScoreSection = ({
       </div>
       {currentScore < 80 || !isProgramDone ? (
         <button
-          className={`flex cursor-not-allowed items-center justify-center rounded-sm border-2 border-neutral-80 bg-neutral-100 px-4 py-1.5 text-xsmall14 font-medium text-neutral-35 outline-none`}
+          className={`flex cursor-not-allowed items-center justify-center rounded-xs border-2 border-neutral-80 px-4 py-2.5 text-xsmall14 font-medium text-neutral-35 outline-none`}
           onMouseEnter={() => {
             setIsHoverButton(true);
           }}
@@ -70,7 +70,7 @@ const ScoreSection = ({
       ) : (
         <button
           onClick={() => reactToPrintFn()}
-          className={`flex items-center justify-center rounded-sm border-2 border-primary bg-neutral-100 px-4 py-1.5 text-xsmall14 font-medium text-primary-dark outline-none`}
+          className={`flex items-center justify-center rounded-xs border-2 border-primary px-4 py-2.5 text-xsmall14 font-medium text-primary-dark outline-none`}
         >
           수료증 발급
         </button>
@@ -79,7 +79,7 @@ const ScoreSection = ({
         <div className="absolute bottom-[15px] left-1/2 w-[240px] -translate-x-1/2 translate-y-full transform px-[13.5px] pb-4 pt-[29px] text-xsmall14 text-[#333]">
           <div className="absolute bottom-0 left-0 z-0 h-[calc(100%-14px)] w-full shadow-[0_0_24px_rgba(204,204,206,0.27)]" />
           <img
-            className="absolute bottom-0 left-0 z-0 object-fill w-full h-full"
+            className="absolute bottom-0 left-0 z-0 h-full w-full object-fill"
             src="/images/textbox.png"
           />
           <p className="relative z-10">
@@ -89,7 +89,7 @@ const ScoreSection = ({
         </div>
       )}
       {/* A4 크기 */}
-      <div className="fixed top-0 left-0 z-50 items-center justify-center hidden w-screen h-screen overflow-hidden bg-white">
+      <div className="fixed left-0 top-0 z-50 hidden h-screen w-screen items-center justify-center overflow-hidden bg-white">
         <CertificatePaper
           ref={certificateRef}
           programName={programName}
