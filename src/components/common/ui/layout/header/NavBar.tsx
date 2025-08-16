@@ -109,12 +109,12 @@ const NavBar = () => {
               <GlobalNavItem
                 className="text-xsmall14 md:text-xsmall16"
                 isNew
-                href="https://letscareer.oopy.io/1ea5e77c-bee1-8098-8e19-ec5038fb1cc8"
+                href="https://letscareer.liveklass.com/?utm_source=letscareer&utm_medium=website&utm_campaign=GNB"
                 isNextRouter={false}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                커피챗
+                취준위키 VOD
               </GlobalNavItem>
             </div>
             <div
@@ -218,13 +218,13 @@ const NavBar = () => {
           서류 피드백 REPORT
         </SideNavItem>
         <SideNavItem
-          href="https://letscareer.oopy.io/1ea5e77c-bee1-8098-8e19-ec5038fb1cc8"
+          href="https://letscareer.liveklass.com/?utm_source=letscareer&utm_medium=website&utm_campaign=GNB"
           isNextRouter={false}
           target="_blank"
           isNew
           rel="noopener noreferrer"
         >
-          커피챗
+          취준위키 VOD
         </SideNavItem>
         <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
         <SideNavItem href="/review" isNextRouter={false} force>
