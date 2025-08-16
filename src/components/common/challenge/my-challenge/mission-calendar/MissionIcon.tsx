@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import { Link, useParams } from 'react-router-dom';
 import { Schedule } from '../../../../../schema';
 
+import { BONUS_MISSION_TH } from '@/utils/constants';
 import { missionSubmitToBadge } from '../../../../../utils/convert';
 
 interface Props {
@@ -69,7 +70,9 @@ const MissionIcon = ({ className, schedule, isDone }: Props) => {
             />
           </i>
         )}
-        <span className="text-sm font-semibold">{mission.th}회차</span>
+        <span className="text-sm font-semibold">
+          {mission.th === BONUS_MISSION_TH ? '보너스' : `${mission.th}회차`}
+        </span>
       </Link>
       <div className="mt-2 flex items-center justify-center">
         <span

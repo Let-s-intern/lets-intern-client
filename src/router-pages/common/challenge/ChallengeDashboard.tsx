@@ -111,7 +111,6 @@ const ChallengeDashboard = () => {
             />
             <NoticeSection notices={notices} />
           </div>
-          {/* <div className="flex h-full w-full max-w-[12rem] flex-col gap-4"> */}
           <GuideSection guides={guides} />
           {/* </div> */}
         </div>
@@ -133,7 +132,6 @@ const ChallengeDashboard = () => {
               />
             )}
           </section>
-          {/* <CurriculumSection /> */}
         </div>
       </div>
     </main>

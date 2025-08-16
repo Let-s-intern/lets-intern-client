@@ -1204,7 +1204,7 @@ export const userChallengeMissionDetail = z
       missionTag: z.string(),
       description: z.string(),
       guide: z.string(),
-      templateLink: z.string(),
+      templateLink: z.string().nullish(),
       vodLink: z.string().nullish(),
     }),
   })
@@ -1261,6 +1261,8 @@ export const userChallengeMissionWithAttendance = z
         status: AttendanceStatusEnum.nullable(),
         result: AttendanceResultEnum.nullable(),
         feedbackStatus: AttendanceFeedbackStatusEnum.nullable(),
+        accountType: z.string().nullish(),
+        accountNum: z.string().nullish(),
       })
       .nullable(),
   })
@@ -1366,6 +1368,8 @@ export const myDailyMission = z
         comments: z.string().nullable(),
         status: AttendanceStatusEnum.nullable(),
         result: AttendanceResultEnum.nullable(),
+        accountType: z.string().nullish(),
+        accountNum: z.string().nullish(),
       })
       .nullable(),
   })
