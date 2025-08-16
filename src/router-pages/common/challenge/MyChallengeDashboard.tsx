@@ -23,7 +23,7 @@ const MyChallengeDashboard = () => {
   const todayTh =
     myDailyMission?.dailyMission?.th ??
     schedules.reduce((th, schedule) => {
-      return Math.max(th, schedule.missionInfo.th ?? 0);
+      return Math.max(th, schedule.missionInfo.th || 0);
     }, 0) + 1;
 
   const { data: programData } = useQuery({
