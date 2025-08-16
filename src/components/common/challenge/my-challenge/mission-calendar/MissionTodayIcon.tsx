@@ -9,7 +9,7 @@ import { missionSubmitToBadge } from '../../../../../utils/convert';
 interface Props {
   mission: ScheduleMission;
   attendance: Schedule['attendanceInfo'];
-  className: string;
+  className?: string;
   isDone: boolean;
 }
 

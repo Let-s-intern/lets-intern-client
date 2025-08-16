@@ -27,7 +27,7 @@ const ScrollTooltipQuestion = () => {
         className="cursor-pointer"
         onClick={(e) => setIsTooltipOpen(!isTooltipOpen)}
       >
-        <img src="/icons/tooltip-question.svg" alt="tooltip question" />
+        <img src="/icons/info-circle.svg" alt="tooltip question" />
       </i>
       {isTooltipOpen && (
         <div className="absolute -bottom-4 left-1/2 z-30 -translate-x-1/2 translate-y-full rounded-xs bg-white shadow-[2px_0px_10px_rgba(0,0,0,0.07)]">
