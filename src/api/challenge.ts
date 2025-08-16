@@ -9,7 +9,7 @@ import {
   getChallengeIdPrimitiveSchema,
   getChallengeIdSchema,
   missionAdmin,
-  myDailyMission as myDailyMissionSchema,
+  myDailyMission,
   Pageable,
   ProgramClassification,
   ProgramStatus,
@@ -650,7 +650,7 @@ export const useChallengeMyDailyMission = (
     queryKey: ['useChallengeDailyMission', programId],
     queryFn: async () => {
       const res = await axios.get(`/challenge/${programId}/my/daily-mission`);
-      return myDailyMissionSchema.parse(res.data.data);
+      return myDailyMission.parse(res.data.data);
     },
   });
 };
