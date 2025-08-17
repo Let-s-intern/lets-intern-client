@@ -17,7 +17,7 @@ const MissionCalendar = ({ className, schedules, todayTh, isDone }: Props) => {
           key={index}
           schedule={schedule}
           todayTh={todayTh}
-          className="flex-1"
+          className="h-[104px] w-[75px]"
           isDone={isDone}
         />
       ))}

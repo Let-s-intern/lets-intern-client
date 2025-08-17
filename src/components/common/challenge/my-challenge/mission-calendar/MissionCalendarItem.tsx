@@ -41,8 +41,8 @@ const MissionCalendarItem = ({
             'font-semibold text-primary': mission.th === todayTh,
           })}
         >
-          {mission.startDate?.format('MM/DD(ddd)')}
-          <br />~ {mission.endDate?.format('MM/DD(ddd)')}
+          {mission.startDate?.format('MM.DD(ddd)')}
+          <br />~ {mission.endDate?.format('MM.DD(ddd)')}
         </span>
       </div>
     </div>

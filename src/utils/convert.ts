@@ -317,7 +317,7 @@ export const missionSubmitToBadge = ({
   if (result === 'WAITING') {
     return {
       text: '확인중',
-      style: 'bg-[#FFFACD] text-[#D3CB00]',
+      style: 'text-[#D3CB00]',
     };
   }
 
@@ -335,7 +335,7 @@ export const missionSubmitToBadge = ({
   if (result === 'WRONG') {
     return {
       text: '반려',
-      style: 'bg-[#E3E3E3] text-[#9B9B9B]',
+      style: 'text-[#9B9B9B]',
     };
   }
 
@@ -352,7 +352,7 @@ export const missionSubmitToBadge = ({
 
   return {
     text: '확인완료',
-    style: 'text-primary bg-[#E7E6FD]',
+    style: 'text-primary',
   };
 };
 
