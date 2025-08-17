@@ -2,13 +2,11 @@ import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import { useMissionStore } from '@/store/useMissionStore';
 import axios from '@/utils/axios';
-import DailyMissionSection from '@components/common/challenge/dashboard/section/DailyMissionSection';
 import MissionStatusMessage from '@components/common/challenge/my-challenge/mission/MissionStatusMessage';
 import MissionCalendarSection from '@components/common/challenge/my-challenge/section/MissionCalendarSection';
 import MissionGuideSection from '@components/common/challenge/my-challenge/section/MissionGuideSection';
 import MissionMentorCommentSection from '@components/common/challenge/my-challenge/section/MissionMentorCommentSection';
 import MissionSubmitSection from '@components/common/challenge/my-challenge/section/MissionSubmitSection';
-import OtherMissionSection from '@components/common/challenge/my-challenge/section/OtherMissionSection';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -120,13 +118,13 @@ const MyChallengeDashboard = () => {
         todayTh={todayTh}
         isDone={isChallengeDone}
       /> */}
-      {myDailyMission?.attendanceInfo && (
+      {/* {myDailyMission?.attendanceInfo && (
         <DailyMissionSection dailyMission={myDailyMission.dailyMission} />
       )}
 
       {typeof isChallengeSubmitDone === 'boolean' && (
         <OtherMissionSection todayTh={todayTh} isDone={isChallengeSubmitDone} />
-      )}
+      )} */}
     </main>
   );
 };

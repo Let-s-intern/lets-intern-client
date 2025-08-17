@@ -1,5 +1,4 @@
 import { Schedule } from '@/schema';
-import { useMissionStore } from '@/store/useMissionStore';
 import { BONUS_MISSION_TH } from '@/utils/constants';
 import MissionTooltipQuestion from '../../ui/tooltip-question/MissionTooltipQuestion';
 import MissionCalendar from '../mission-calendar/MissionCalendar';
@@ -37,14 +36,13 @@ interface Props {
 }
 
 const MissionCalendarSection = ({ schedules, todayTh, isDone }: Props) => {
-  const { selectedMissionTh } = useMissionStore();
   return (
     <section className="mt-4 rounded-xl border border-[#E4E4E7] px-10 pb-10 pt-6">
       <div className="flex items-center gap-2">
         <h2 className="text-lg font-semibold">
           <MissionStatusTitle
             isDone={isDone}
-            todayTh={selectedMissionTh}
+            todayTh={todayTh}
             schedules={schedules}
           />
         </h2>
