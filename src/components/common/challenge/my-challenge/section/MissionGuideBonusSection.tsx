@@ -40,7 +40,7 @@ const MissionGuideBonusSection = ({
 }: MissionGuideBonusSectionProps) => {
   // endDate를 월일 시간 형식으로 변환
   const formatDeadline = (endDate?: Dayjs) => {
-    if (!endDate) return '04.04 11:59';
+    if (!endDate) return '99.99 99:99';
     const date = dayjs(endDate);
     return date.format('MM.DD HH:mm');
   };
