@@ -6,14 +6,12 @@ import MissionHeaderSection from './MissionHeaderSection';
 
 interface MissionGuideZeroSectionProps {
   className?: string;
-  todayTh: number;
   missionData?: UserChallengeMissionWithAttendance; // API 응답 데이터
   selectedMissionTh?: number; // 선택된 미션의 회차
 }
 
 const MissionGuideZeroSection = ({
   className,
-  todayTh,
   missionData,
   selectedMissionTh,
 }: MissionGuideZeroSectionProps) => {

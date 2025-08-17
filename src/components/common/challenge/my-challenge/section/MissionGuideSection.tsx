@@ -25,8 +25,6 @@ const MissionGuideSection = ({
 
   // 선택된 미션의 ID 찾기
   const getMissionId = () => {
-    if (!selectedMissionTh) return undefined;
-
     // 제출된 미션에서 찾기
     const submittedMission = submittedMissions.find(
       (mission) => mission.th === selectedMissionTh,
