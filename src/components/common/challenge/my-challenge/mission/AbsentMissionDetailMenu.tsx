@@ -17,6 +17,8 @@ const AbsentMissionDetailMenu = ({
   currentSchedule,
   setOpenReviewModal,
 }: Props) => {
+  console.log('missionDetail:', missionDetail);
+  console.log('currentSchedule:', currentSchedule);
   const additionalContentsLink =
     missionDetail.additionalContentsList?.[0]?.link;
   const essentialContentsLink = missionDetail.essentialContentsList?.[0]?.link;
@@ -26,6 +28,8 @@ const AbsentMissionDetailMenu = ({
     isOtMission && (additionalContentsLink || essentialContentsLink);
   const showAbsentContent = !isOtMission && !isBonusMission;
   const showOtVod = isOtMission && missionDetail.vodLink;
+  console.log('isOtMission:', isOtMission);
+  console.log('showAbsentContent:', showAbsentContent);
 
   return (
     <>
