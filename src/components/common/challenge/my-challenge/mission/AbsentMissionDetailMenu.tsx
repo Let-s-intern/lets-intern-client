@@ -22,7 +22,7 @@ const AbsentMissionDetailMenu = ({
   const essentialContentsLink = missionDetail.essentialContentsList?.[0]?.link;
   const isOtMission = missionDetail.th === 0;
   const isBonusMission = missionDetail.th === BONUS_MISSION_TH;
-  const showContent =
+  const showOtContent =
     isOtMission && (additionalContentsLink || essentialContentsLink);
   // 일반 미션 여부를 나타내는 변수
   const isNormalMission = !isOtMission && !isBonusMission;
@@ -43,7 +43,7 @@ const AbsentMissionDetailMenu = ({
         </div>
         {/* OT 영상 */}
         {showOtVod && <OtVideo vodLink={missionDetail.vodLink!} />}
-        {showContent && (
+        {showOtContent && (
           <div className="mt-4 flex flex-col gap-2">
             <MenuContentsDropdown missionDetail={missionDetail} />
           </div>
