@@ -1,9 +1,9 @@
+import { Schedule } from '@/schema';
 import clsx from 'clsx';
-import { Link, useParams } from 'react-router-dom';
-import { Schedule } from '../../../../../schema';
 
+import { useMissionStore } from '@/store/useMissionStore';
 import { BONUS_MISSION_TH } from '@/utils/constants';
-import { missionSubmitToBadge } from '../../../../../utils/convert';
+import { missionSubmitToBadge } from '@/utils/convert';
 
 interface Props {
   className?: string;
@@ -12,23 +12,24 @@ interface Props {
 }
 
 const MissionIcon = ({ className, schedule, isDone }: Props) => {
-  const params = useParams();
   const mission = schedule.missionInfo;
   const attendance = schedule.attendanceInfo;
+  const { setSelectedMission } = useMissionStore();
 
   const isAttended =
     (attendance.result === 'WAITING' || attendance.result === 'PASS') &&
     attendance.status !== 'ABSENT';
 
+  const handleMissionClick = () => {
+    if (!isDone && mission.th !== null) {
+      setSelectedMission(mission.id, mission.th);
+    }
+  };
+
   return (
     <>
-      <Link
-        to={
-          !isDone
-            ? `/challenge/${params.applicationId}/${params.programId}/me?scroll_to_mission=${mission.id}`
-            : '#'
-        }
-        replace
+      <div
+        onClick={handleMissionClick}
         className={clsx(
           'relative flex aspect-square cursor-pointer flex-col items-center justify-center rounded-md text-white',
           {
@@ -73,7 +74,7 @@ const MissionIcon = ({ className, schedule, isDone }: Props) => {
         <span className="text-sm font-semibold">
           {mission.th === BONUS_MISSION_TH ? '보너스' : `${mission.th}회차`}
         </span>
-      </Link>
+      </div>
       <div className="mt-2 flex items-center justify-center">
         <span
           className={clsx(
