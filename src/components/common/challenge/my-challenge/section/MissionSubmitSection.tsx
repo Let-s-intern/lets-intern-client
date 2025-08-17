@@ -1,5 +1,6 @@
 import dayjs from '@/lib/dayjs';
 import { Schedule } from '@/schema';
+import { useMissionStore } from '@/store/useMissionStore';
 import { clsx } from 'clsx';
 import MissionSubmitBonusSection from './MissionSubmitBonusSection';
 import MissionSubmitRegularSection from './MissionSubmitRegularSection';
@@ -7,9 +8,7 @@ import MissionSubmitZeroSection from './MissionSubmitZeroSection';
 
 interface MissionSubmitSectionProps {
   className?: string;
-  todayTh: number;
   missionId?: number; // 0회차 미션 ID
-  selectedMissionTh?: number;
   todayId?: number; // 선택된 미션의 ID
   attendanceInfo?: Schedule['attendanceInfo'] | null;
   startDate?: string;
@@ -19,15 +18,14 @@ interface MissionSubmitSectionProps {
 
 const MissionSubmitSection = ({
   className,
-  todayTh,
   missionId,
-  selectedMissionTh, // eslint-disable-line @typescript-eslint/no-unused-vars
   todayId,
   startDate,
   attendanceInfo,
   onRefreshMissionData,
   onSubmitLastMission,
 }: MissionSubmitSectionProps) => {
+  const { selectedMissionTh } = useMissionStore();
   // 현재 시간이 startDate 이상인지 확인하는 함수
   const isMissionStarted = () => {
     if (!startDate) return false;
@@ -37,17 +35,20 @@ const MissionSubmitSection = ({
   };
   const renderSection = () => {
     // OT 미션
-    if (todayTh === 0) {
+    if (selectedMissionTh === 0) {
       return (
-        <MissionSubmitZeroSection todayTh={todayTh} missionId={missionId} />
+        <MissionSubmitZeroSection
+          selectedMissionTh={selectedMissionTh}
+          missionId={missionId}
+        />
       );
     }
 
     // 보너스 미션
-    if (todayTh === 100) {
+    if (selectedMissionTh === 100) {
       return (
         <MissionSubmitBonusSection
-          todayTh={todayTh}
+          selectedMissionTh={selectedMissionTh}
           missionId={missionId}
           todayId={todayId}
           attendanceInfo={attendanceInfo}
@@ -59,7 +60,7 @@ const MissionSubmitSection = ({
     if (isMissionStarted()) {
       return (
         <MissionSubmitRegularSection
-          todayTh={todayTh}
+          selectedMissionTh={selectedMissionTh}
           missionId={missionId}
           attendanceInfo={attendanceInfo}
           onRefreshMissionData={onRefreshMissionData}

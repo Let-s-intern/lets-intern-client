@@ -32,7 +32,7 @@ const DescriptionBox = ({
 
 interface MissionSubmitBonusSectionProps {
   className?: string;
-  todayTh: number;
+  selectedMissionTh: number;
   missionId?: number;
   todayId?: number; // 선택된 미션의 ID
   attendanceInfo?: Schedule['attendanceInfo'] | null;

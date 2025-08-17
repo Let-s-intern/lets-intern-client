@@ -6,6 +6,7 @@ import DailyMissionSection from '@components/common/challenge/dashboard/section/
 import MissionStatusMessage from '@components/common/challenge/my-challenge/mission/MissionStatusMessage';
 import MissionCalendarSection from '@components/common/challenge/my-challenge/section/MissionCalendarSection';
 import MissionGuideSection from '@components/common/challenge/my-challenge/section/MissionGuideSection';
+import MissionSubmitSection from '@components/common/challenge/my-challenge/section/MissionSubmitSection';
 import OtherMissionSection from '@components/common/challenge/my-challenge/section/OtherMissionSection';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -24,7 +25,8 @@ const MyChallengeDashboard = () => {
 
   const { schedules, myDailyMission } = useCurrentChallenge();
   const [modalOpen, setModalOpen] = useState(false);
-  const { selectedMissionTh, setSelectedMission } = useMissionStore();
+  const { selectedMissionTh, setSelectedMission, selectedMissionId } =
+    useMissionStore();
 
   // const todayTh = myDailyMission?.dailyMission?.th ?? schedules.length + 1;
 
@@ -81,31 +83,13 @@ const MyChallengeDashboard = () => {
           />
         </div> */}
         <div className="mt-6">
-          {/* <MissionSubmitSection
-            key={refreshKey} // 강제 리렌더링을 위한 key
-            todayTh={selectedMissionTh}
-            missionId={selectedMissionId}
-            selectedMissionTh={selectedMissionTh}
-            startDate={missionData?.missionInfo?.startDate?.toString()}
+          <MissionSubmitSection
             attendanceInfo={
               schedules.find(
                 (schedule) => schedule.missionInfo.id === selectedMissionId,
               )?.attendanceInfo
             }
-            todayId={
-              schedules.find((schedule) => schedule.missionInfo.th === todayTh)
-                ?.missionInfo.id
-            }
-            onRefreshMissionData={() => {
-              // schedules 데이터도 갱신 (attendanceInfo가 포함되어 있음)
-              queryClient.invalidateQueries({
-                queryKey: ['challenge', params.programId, 'schedule'],
-              });
-              // 현재 미션 데이터도 갱신
-              refetch();
-            }}
-            onSubmitLastMission={() => setModalOpen(true)}
-          /> */}
+          />
         </div>
         {/* 멘토 피드백 여부에 따라 값 받고 노출 */}
         <div className="mt-11">

@@ -11,7 +11,7 @@ import LinkInputSection from './LinkInputSection';
 
 interface MissionSubmitRegularSectionProps {
   className?: string;
-  todayTh: number;
+  selectedMissionTh: number;
   missionId?: number;
   attendanceInfo?: {
     link: string | null;
@@ -28,7 +28,7 @@ interface MissionSubmitRegularSectionProps {
 
 const MissionSubmitRegularSection = ({
   className,
-  todayTh,
+  selectedMissionTh,
   missionId,
   attendanceInfo,
   onRefreshMissionData,
@@ -175,7 +175,7 @@ const MissionSubmitRegularSection = ({
           disabled={isSubmitted && !isEditing}
           onLinkChange={handleLinkChange}
           onLinkVerified={handleLinkVerified}
-          todayTh={todayTh}
+          todayTh={selectedMissionTh}
           initialLink={linkValue}
           text={`미션 링크는 .notion.site 형식의 퍼블릭 링크만 입력 가능합니다.
           제출 후, 미션과 소감을 카카오톡으로 공유해야 제출이 인정됩니다.`}
