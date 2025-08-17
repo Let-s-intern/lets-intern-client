@@ -66,7 +66,6 @@ const MissionIcon = ({ className, schedule, isDone }: Props) => {
           },
           className,
         )}
-        onClick={handleClick}
         style={linkStyle}
       >
         <div
