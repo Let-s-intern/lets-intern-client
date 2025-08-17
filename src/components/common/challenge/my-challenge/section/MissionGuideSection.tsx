@@ -1,5 +1,6 @@
 import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { useMissionStore } from '@/store/useMissionStore';
 import { clsx } from 'clsx';
 import MissionGuideBonusSection from './MissionGuideBonusSection';
 import MissionGuideRegularSection from './MissionGuideRegularSection';
@@ -8,14 +9,13 @@ import MissionGuideZeroSection from './MissionGuideZeroSection';
 interface MissionGuideSectionProps {
   className?: string;
   todayTh: number;
-  selectedMissionTh?: number; // 선택된 미션의 회차
 }
 
 const MissionGuideSection = ({
   className,
   todayTh,
-  selectedMissionTh,
 }: MissionGuideSectionProps) => {
+  const { selectedMissionTh } = useMissionStore();
   const {
     submittedMissions,
     remainingMissions,

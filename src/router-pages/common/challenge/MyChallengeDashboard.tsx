@@ -1,5 +1,6 @@
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
+import { useMissionStore } from '@/store/useMissionStore';
 import axios from '@/utils/axios';
 import DailyMissionSection from '@components/common/challenge/dashboard/section/DailyMissionSection';
 import MissionStatusMessage from '@components/common/challenge/my-challenge/mission/MissionStatusMessage';
