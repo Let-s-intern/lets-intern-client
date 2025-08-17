@@ -155,7 +155,7 @@ const ChallengeDashboard = () => {
             {schedules && (
               // myChallenge 에 있는 미션캘린더 가져옴
               <MissionCalendar
-                className="mt-4"
+                className="mt-4 gap-2"
                 schedules={schedules}
                 todayTh={todayTh}
                 isDone={isChallengeSubmitDone}
