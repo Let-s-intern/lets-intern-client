@@ -16,18 +16,20 @@ const MissionFileLink = ({
   onClick,
 }: MissionFileLinkProps) => {
   return (
-    <button
+    <div
       className={clsx(
-        'flex cursor-pointer flex-col gap-0.5 md:flex-row md:items-center md:gap-3',
+        'flex flex-col gap-0.5 md:flex-row md:items-center md:gap-3',
         className,
       )}
     >
-      {title && (
+      {title ? (
         <h4 className="w-[74px] text-xsmall16 font-medium text-neutral-0">
           {title}
         </h4>
+      ) : (
+        <div className="w-[74px]" />
       )}
-      <div
+      <button
         className="flex items-center gap-1"
         onClick={disabled ? undefined : onClick}
       >
@@ -46,8 +48,8 @@ const MissionFileLink = ({
         >
           {fileName}
         </span>
-      </div>
-    </button>
+      </button>
+    </div>
   );
 };
 
