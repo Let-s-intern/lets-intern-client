@@ -85,7 +85,7 @@ const MyChallengeDashboard = () => {
   return (
     <main className="px-6">
       <header>
-        <h1 className="text-2xl font-bold">나의 미션</h1>
+        <h1 className="text-2xl font-semibold">나의 미션</h1>
       </header>
       <div className="mb-4 mt-6">
         <MissionStatusMessage todayTh={todayTh} />
