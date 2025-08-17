@@ -25,17 +25,28 @@ const MissionHeaderSection = ({
     }
     return `${selectedMissionTh}회차 미션`;
   };
-
   const isDeadlinePassed = () => {
     try {
-      // deadline 문자열에서 날짜 추출 (예: "04.04 11:59까지" -> "04.04 11:59")
+      // deadline 문자열에서 날짜와 시간 추출 (예: "8월3일 22:44까지" -> "8월3일 22:44")
       const deadlineText = deadline.replace(/까지$/, '').trim();
 
       // 현재 연도 추가해서 파싱
       const currentYear = dayjs().year();
-      let deadlineDate;
+      let deadlineDate: any;
 
-      if (deadlineText.includes('.')) {
+      if (deadlineText.includes('월') && deadlineText.includes('일')) {
+        // "8월3일 22:44" 형태
+        const match = deadlineText.match(/(\d+)월(\d+)일\s*(\d{1,2}):(\d{2})?/);
+        if (match) {
+          const [, month, day, hour, minute] = match;
+          const timeString = minute
+            ? `${hour.padStart(2, '0')}:${minute}`
+            : `${hour.padStart(2, '0')}:00`;
+          deadlineDate = dayjs(
+            `${currentYear}-${month.padStart(2, '0')}-${day.padStart(2, '0')} ${timeString}`,
+          );
+        }
+      } else if (deadlineText.includes('.')) {
         // "MM.DD" 또는 "MM.DD HH:mm" 형태
         const [datePart, timePart] = deadlineText.split(' ');
         const [month, day] = datePart.split('.');
@@ -48,6 +59,11 @@ const MissionHeaderSection = ({
         deadlineDate = dayjs(deadlineText);
       }
 
+      if (!deadlineDate || !deadlineDate.isValid()) {
+        return false;
+      }
+
+      // 현재 시간과 마감 시간을 비교 (분 단위까지 정확하게)
       return dayjs().isAfter(deadlineDate);
     } catch {
       // 파싱 실패 시 기본값 false 반환
