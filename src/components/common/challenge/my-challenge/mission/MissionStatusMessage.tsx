@@ -27,7 +27,7 @@ const MissionStatusMessage = ({
     params.programId,
   );
 
-  if (isLoading) return null;
+  if (isLoading || schedules.length === 0) return null;
 
   const programEndDate = applicationData?.endDate;
   const isChallengeDone = dayjs(new Date()).isAfter(dayjs(programEndDate));
