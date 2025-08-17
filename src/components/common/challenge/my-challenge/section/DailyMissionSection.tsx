@@ -41,6 +41,8 @@ const DailyMissionSection = ({ myDailyMission }: Props) => {
     },
   });
 
+  if (!missionDetail) return null;
+
   return (
     <section
       className="mt-5 scroll-mt-[calc(6rem+1rem)] text-[#333333]"

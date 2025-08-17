@@ -1,7 +1,11 @@
 import clsx from 'clsx';
 import { FaCheck } from 'react-icons/fa6';
+import { useNavigate, useParams } from 'react-router-dom';
 
+import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
 import { BONUS_MISSION_TH } from '@/utils/constants';
+import { isAxiosError } from 'axios';
+import { MouseEventHandler, useCallback } from 'react';
 import { Schedule, ScheduleMission } from '../../../../../schema';
 import { useMissionStore } from '../../../../../store/useMissionStore';
 import { missionSubmitToBadge } from '../../../../../utils/convert';
@@ -20,10 +24,37 @@ const MissionTodayIcon = ({
   isDone,
 }: Props) => {
   const { setSelectedMission } = useMissionStore();
-
+  const params = useParams();
   const handleMissionClick = () => {
     if (!isDone && mission.th !== null) {
       setSelectedMission(mission.id, mission.th);
+    }
+  };
+  const navigate = useNavigate();
+
+  const { isLoading, error } = useChallengeMissionAttendanceInfoQuery({
+    challengeId: params.programId,
+    missionId: mission.id,
+  });
+
+  const isValid = useCallback(() => {
+    if (isAxiosError(error)) {
+      const errorCode = error?.response?.data.status;
+      if (errorCode === 400) {
+        alert('0회차 미션을 먼저 완료해주세요.');
+      }
+      return false;
+    }
+    return true;
+  }, [error]);
+
+  const handleClick: MouseEventHandler<HTMLAnchorElement> = (e) => {
+    e.preventDefault();
+    if (isLoading || isDone) return;
+    if (isValid()) {
+      navigate(
+        `/challenge/${params.applicationId}/${params.programId}/me?scroll_to=daily-mission`,
+      );
     }
   };
 

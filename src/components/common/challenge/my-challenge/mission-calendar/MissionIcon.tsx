@@ -1,9 +1,17 @@
 import { Schedule } from '@/schema';
 import clsx from 'clsx';
 
+import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
 import { useMissionStore } from '@/store/useMissionStore';
 import { BONUS_MISSION_TH } from '@/utils/constants';
 import { missionSubmitToBadge } from '@/utils/convert';
+import { isAxiosError } from 'axios';
+import { useCallback } from 'react';
+import { useParams } from 'react-router-dom';
+
+const linkStyle = {
+  clipPath: 'polygon(30% 0, 100% 0, 100% 100%, 0 100%, 0 30%)',
+};
 
 interface Props {
   className?: string;
@@ -13,7 +21,13 @@ interface Props {
 
 const MissionIcon = ({ className, schedule, isDone }: Props) => {
   const mission = schedule.missionInfo;
+  const params = useParams();
   const attendance = schedule.attendanceInfo;
+
+  const { error } = useChallengeMissionAttendanceInfoQuery({
+    challengeId: params.programId,
+    missionId: mission.id,
+  });
   const { setSelectedMission } = useMissionStore();
 
   const isAttended =
@@ -21,10 +35,21 @@ const MissionIcon = ({ className, schedule, isDone }: Props) => {
     attendance.status !== 'ABSENT';
 
   const handleMissionClick = () => {
-    if (!isDone && mission.th !== null) {
+    if (!isDone && mission.th !== null && isValid()) {
       setSelectedMission(mission.id, mission.th);
     }
   };
+
+  const isValid = useCallback(() => {
+    if (isAxiosError(error)) {
+      const errorCode = error?.response?.data.status;
+      if (errorCode === 400) {
+        alert('0회차 미션을 먼저 완료해주세요.');
+      }
+      return false;
+    }
+    return true;
+  }, [error]);
 
   return (
     <>
@@ -41,9 +66,8 @@ const MissionIcon = ({ className, schedule, isDone }: Props) => {
           },
           className,
         )}
-        style={{
-          clipPath: 'polygon(30% 0, 100% 0, 100% 100%, 0 100%, 0 30%)',
-        }}
+        onClick={handleClick}
+        style={linkStyle}
       >
         <div
           className={clsx(
