@@ -6,6 +6,7 @@ import DailyMissionSection from '@components/common/challenge/dashboard/section/
 import MissionStatusMessage from '@components/common/challenge/my-challenge/mission/MissionStatusMessage';
 import MissionCalendarSection from '@components/common/challenge/my-challenge/section/MissionCalendarSection';
 import MissionGuideSection from '@components/common/challenge/my-challenge/section/MissionGuideSection';
+import MissionMentorCommentSection from '@components/common/challenge/my-challenge/section/MissionMentorCommentSection';
 import MissionSubmitSection from '@components/common/challenge/my-challenge/section/MissionSubmitSection';
 import OtherMissionSection from '@components/common/challenge/my-challenge/section/OtherMissionSection';
 import { useQuery } from '@tanstack/react-query';
@@ -54,7 +55,13 @@ const MyChallengeDashboard = () => {
   const isChallengeSubmitDone = programEndDate
     ? getIsChallengeSubmitDone(programEndDate)
     : false;
-
+  console.log(
+    'schedules',
+    schedules,
+    '선택함:',
+    selectedMissionId,
+    selectedMissionTh,
+  );
   return (
     <main className="px-6">
       <header>
@@ -89,11 +96,14 @@ const MyChallengeDashboard = () => {
                 (schedule) => schedule.missionInfo.id === selectedMissionId,
               )?.attendanceInfo
             }
+            startDate={schedules
+              .find((schedule) => schedule.missionInfo.id === selectedMissionId)
+              ?.missionInfo.startDate?.toString()}
           />
         </div>
         {/* 멘토 피드백 여부에 따라 값 받고 노출 */}
         <div className="mt-11">
-          {/* <MissionMentorCommentSection missionId={selectedMissionId} /> */}
+          <MissionMentorCommentSection missionId={selectedMissionId} />
         </div>
       </div>
       {modalOpen && (

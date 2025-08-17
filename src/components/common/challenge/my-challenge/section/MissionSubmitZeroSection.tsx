@@ -8,14 +8,16 @@ import MissionToast from '../mission/MissionToast';
 
 interface MissionSubmitZeroSectionProps {
   className?: string;
-  todayTh: number;
+  selectedMissionTh: number;
   missionId?: number; // 0회차 미션 ID
+  isSubmitDone?: boolean;
 }
 
 const MissionSubmitZeroSection = ({
   className,
-  todayTh,
+  selectedMissionTh,
   missionId,
+  isSubmitDone,
 }: MissionSubmitZeroSectionProps) => {
   const params = useParams<{ programId: string }>();
   const programId = params.programId;
@@ -25,7 +27,7 @@ const MissionSubmitZeroSection = ({
   const submitChallengeGoal = useSubmitChallengeGoal();
   const submitAttendance = useSubmitMission();
   const [textareaValue, setTextareaValue] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(isSubmitDone);
   const [showToast, setShowToast] = useState(false);
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -33,6 +35,7 @@ const MissionSubmitZeroSection = ({
   };
 
   const handleSubmit = async () => {
+    console.log('제출 ', isSubmitted, missionId, programId);
     if (isSubmitted || !programId || !missionId) {
       setIsSubmitted(false);
     } else {
