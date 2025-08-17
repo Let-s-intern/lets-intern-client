@@ -31,21 +31,23 @@ const MissionMentorCommentSection = ({ missionId }: Props) => {
 
   return (
     <section>
-      <div className="mb-11 h-px bg-neutral-80" />
       {/* 코멘트 섹션: 관리자가 남기는 코멘트 */}
       {comment && (
-        <div className="mb-6">
-          <div className="mb-2 rounded-xs bg-primary-5 p-3">
-            <span className="text-xsmall16 font-semibold text-primary">
-              코멘트
-            </span>
+        <>
+          <div className="mb-11 h-px bg-neutral-80" />
+          <div className="mb-6">
+            <div className="mb-2 rounded-xs bg-primary-5 p-3">
+              <span className="text-xsmall16 font-semibold text-primary">
+                코멘트
+              </span>
+            </div>
+            <div className="rounded-xxs border border-neutral-80 bg-white p-3">
+              <p className="min-h-[120px] text-xsmall14 leading-relaxed text-neutral-0 md:text-xsmall16">
+                {comment}
+              </p>
+            </div>
           </div>
-          <div className="rounded-xxs border border-neutral-80 bg-white p-3">
-            <p className="min-h-[120px] text-xsmall14 leading-relaxed text-neutral-0 md:text-xsmall16">
-              {comment}
-            </p>
-          </div>
-        </div>
+        </>
       )}
 
       {/* 멘토 피드백 섹션: 멘토가 남기는 피드백 */}
