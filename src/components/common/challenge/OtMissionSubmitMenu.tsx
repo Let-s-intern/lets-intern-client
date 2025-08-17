@@ -46,6 +46,7 @@ const OtMissionSubmitMenu = ({ currentSchedule }: Props) => {
         alert('미션 수정이 완료되었습니다.');
       } else {
         await submitGoal();
+        window.location.reload();
       }
       setIsAttended(true);
     } catch (error) {
