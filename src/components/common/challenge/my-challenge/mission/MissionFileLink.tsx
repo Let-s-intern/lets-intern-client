@@ -32,7 +32,7 @@ const MissionFileLink = ({
         onClick={disabled ? undefined : onClick}
       >
         <img
-          src="/icons/file-notext.svg"
+          src="/icons/file.svg"
           alt="file icon"
           className={clsx('h-5 w-5', disabled && 'opacity-50 brightness-0')}
         />
