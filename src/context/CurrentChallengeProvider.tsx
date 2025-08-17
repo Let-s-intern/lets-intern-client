@@ -1,3 +1,4 @@
+import { useChallengeMyDailyMission } from '@/api/challenge';
 import { useQuery } from '@tanstack/react-query';
 import { createContext, useContext } from 'react';
 import { useParams } from 'react-router-dom';
@@ -10,7 +11,6 @@ import {
   MyChallengeMissionByType,
   myChallengeMissionsByType,
   MyDailyMission,
-  myDailyMission as myDailyMissionSchema,
   Schedule,
 } from '../schema';
 import useAuthStore from '../store/useAuthStore';
@@ -86,18 +86,10 @@ export const CurrentChallengeProvider = ({
     },
   });
 
-  const { data: myDailyMission, isLoading: isMyDailyMissionLoading } = useQuery(
-    {
+  const { data: myDailyMission, isLoading: isMyDailyMissionLoading } =
+    useChallengeMyDailyMission(params.programId, {
       enabled: isLoggedIn,
-      queryKey: ['challenge', params.programId, 'my', 'daily-mission'],
-      queryFn: async () => {
-        const res = await axios.get(
-          `/challenge/${params.programId}/my/daily-mission`,
-        );
-        return myDailyMissionSchema.parse(res.data.data);
-      },
-    },
-  );
+    });
 
   const {
     data: submittedMissions = [],

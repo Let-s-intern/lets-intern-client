@@ -1,9 +1,13 @@
 import clsx from 'clsx';
 import { FaCheck } from 'react-icons/fa6';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
+import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
 import { BONUS_MISSION_TH } from '@/utils/constants';
+import { isAxiosError } from 'axios';
+import { useCallback } from 'react';
 import { Schedule, ScheduleMission } from '../../../../../schema';
+import { useMissionStore } from '../../../../../store/useMissionStore';
 import { missionSubmitToBadge } from '../../../../../utils/convert';
 
 interface Props {
@@ -19,17 +23,34 @@ const MissionTodayIcon = ({
   attendance,
   isDone,
 }: Props) => {
+  const { setSelectedMission } = useMissionStore();
   const params = useParams();
+  const handleMissionClick = () => {
+    if (!isDone && mission.th !== null && isValid()) {
+      setSelectedMission(mission.id, mission.th);
+    }
+  };
+
+  const { error } = useChallengeMissionAttendanceInfoQuery({
+    challengeId: params.programId,
+    missionId: mission.id,
+  });
+
+  const isValid = useCallback(() => {
+    if (isAxiosError(error)) {
+      const errorCode = error?.response?.data.status;
+      if (errorCode === 400) {
+        alert('0회차 미션을 먼저 완료해주세요.');
+      }
+      return false;
+    }
+    return true;
+  }, [error]);
 
   return (
     <>
-      <Link
-        to={
-          !isDone
-            ? `/challenge/${params.applicationId}/${params.programId}/me?scroll_to=daily-mission`
-            : '#'
-        }
-        replace
+      <div
+        onClick={handleMissionClick}
         className={clsx(
           'flex aspect-square cursor-pointer flex-col items-center justify-center rounded-md shadow-[0px_0px_10px_rgba(0,0,0,0.1)]',
           {
@@ -58,7 +79,7 @@ const MissionTodayIcon = ({
         <span className="text-sm font-semibold text-primary">
           {mission.th === BONUS_MISSION_TH ? '보너스' : `${mission.th}회차`}
         </span>
-      </Link>
+      </div>
       <div className="mt-2 flex items-center justify-center">
         <span
           className={clsx(

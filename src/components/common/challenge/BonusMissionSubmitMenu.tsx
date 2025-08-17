@@ -1,64 +1,48 @@
 import { usePatchAttendance } from '@/api/attendance';
-import {
-  useGetChallengeReviewStatus,
-  usePostChallengeAttendance,
-} from '@/api/challenge';
-import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
-import { Schedule, UserChallengeMissionDetail } from '@/schema';
+import { usePostBlogBonus } from '@/api/review';
+import { Schedule } from '@/schema';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
-import ParsedCommentBox from '../ParsedCommentBox';
+import BankSelectDropdown from './my-challenge/mission/BankSelectDropdown';
+import ParsedCommentBox from './my-challenge/ParsedCommentBox';
 
 interface Props {
-  missionDetail: UserChallengeMissionDetail;
   currentSchedule: Schedule;
   setOpenReviewModal?: (value: boolean) => void;
 }
 
-const AbsentMissionSubmitMenu = ({
-  missionDetail,
+const BonusMissionSubmitMenu = ({
   currentSchedule,
   setOpenReviewModal,
 }: Props) => {
-  const { schedules, currentChallenge } = useCurrentChallenge();
-  const lastMission = schedules.reduce((acc: Schedule | null, schedule) => {
-    if (acc === null) return schedule;
-
-    return schedule.missionInfo.th &&
-      acc.missionInfo.th &&
-      schedule.missionInfo.th > acc.missionInfo.th
-      ? schedule
-      : acc;
-  }, null);
-  const isLastMission =
-    lastMission?.missionInfo.th === currentSchedule.missionInfo.th;
+  const attendance = currentSchedule?.attendanceInfo;
+  const missionId = currentSchedule.missionInfo.id;
 
   const [isAttended, setIsAttended] = useState(
-    currentSchedule?.attendanceInfo.result === 'WRONG'
-      ? false
-      : currentSchedule?.attendanceInfo.submitted || false,
+    attendance.result === 'WRONG' ? false : attendance.submitted || false,
   );
-  const [value, setValue] = useState(
-    currentSchedule?.attendanceInfo?.link || '',
-  );
-  const [review, setReview] = useState(
-    currentSchedule?.attendanceInfo?.review || '',
-  );
+  const [link, setLink] = useState(attendance?.link || '');
   const [isLinkChecked, setIsLinkChecked] = useState(false);
   const [isValidLinkValue, setIsValidLinkValue] = useState(isAttended);
   const [isStartedHttp, setIsStartedHttp] = useState(false);
+  const [accountType, setAccountType] = useState(attendance?.accountType ?? '');
+  const [accountNum, setAccountNum] = useState(attendance?.accountNum ?? '');
+  const [privacyConsent, setPrivacyConsent] = useState(attendance.submitted);
 
-  const { data: reviewCompleted } = useGetChallengeReviewStatus(
-    currentChallenge?.id,
-  );
-
-  const { mutateAsync: tryPostAttendance } = usePostChallengeAttendance({});
-
+  const postBlogBonus = usePostBlogBonus();
   const patchAttendance = usePatchAttendance();
+
+  const isSubmittable =
+    !isAttended &&
+    link &&
+    isLinkChecked &&
+    privacyConsent &&
+    accountNum &&
+    accountType;
 
   const handleMissionLinkChanged = (e: any) => {
     const inputValue = e.target.value;
-    setValue(inputValue);
+    setLink(inputValue);
     if (inputValue.startsWith('https://') || inputValue.startsWith('http://')) {
       setIsStartedHttp(true);
     } else {
@@ -79,14 +63,22 @@ const AbsentMissionSubmitMenu = ({
   };
 
   useEffect(() => {
-    handleMissionLinkChanged({ target: { value } });
-  }, [value]);
+    handleMissionLinkChanged({ target: { value: link } });
+  }, [link]);
 
-  const handleMissionLinkSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!isValidLinkValue || !isLinkChecked || !value || !review) {
-      alert('올바른 URL 또는 미션 소감을 입력해주세요.');
+    const isValid =
+      isValidLinkValue &&
+      isLinkChecked &&
+      link &&
+      accountType &&
+      accountNum &&
+      privacyConsent;
+
+    if (!isValid) {
+      alert('올바른 값을 입력해주세요.');
       return;
     }
 
@@ -95,27 +87,23 @@ const AbsentMissionSubmitMenu = ({
         currentSchedule.attendanceInfo.result === 'WRONG' &&
         currentSchedule.attendanceInfo.id !== null
       ) {
+        // 수정하기
         await patchAttendance.mutateAsync({
           attendanceId: currentSchedule.attendanceInfo.id,
-          link: value,
-          review,
+          link,
+          accountNum,
+          accountType,
         });
         alert('미션 수정이 완료되었습니다.');
       } else {
-        await tryPostAttendance({
-          missionId: missionDetail.id,
-          link: value,
-          review,
+        // 생성하기
+        await postBlogBonus.mutateAsync({
+          missionId,
+          url: link,
+          accountType,
+          accountNum,
         });
-
-        if (
-          isLastMission &&
-          reviewCompleted &&
-          reviewCompleted.reviewId === null &&
-          setOpenReviewModal
-        ) {
-          setOpenReviewModal(true);
-        }
+        setOpenReviewModal?.(true);
       }
       setIsAttended(true);
     } catch (error) {
@@ -127,7 +115,7 @@ const AbsentMissionSubmitMenu = ({
 
   return (
     <>
-      <form onSubmit={handleMissionLinkSubmit} className="px-3">
+      <form onSubmit={handleSubmit} className="px-3">
         <h3 className="text-lg font-semibold">
           {currentSchedule?.attendanceInfo.result === 'WRONG' &&
           currentSchedule?.attendanceInfo.status === 'UPDATED'
@@ -162,7 +150,7 @@ const AbsentMissionSubmitMenu = ({
                 htmlFor="link"
                 className="flex items-center font-semibold text-[#626262]"
               >
-                링크
+                블로그 링크
               </label>
               <input
                 type="text"
@@ -170,8 +158,8 @@ const AbsentMissionSubmitMenu = ({
                   'flex-1 cursor-text rounded-lg border border-[#A3A3A3] px-3 py-2 text-sm outline-none',
                   {
                     'text-neutral-400': isAttended,
-                    'border-red-500': !isValidLinkValue && value && !isAttended,
-                    'border-primary': isValidLinkValue && value && !isAttended,
+                    'border-red-500': !isValidLinkValue && link && !isAttended,
+                    'border-primary': isValidLinkValue && link && !isAttended,
                   },
                 )}
                 id="link"
@@ -179,28 +167,28 @@ const AbsentMissionSubmitMenu = ({
                 placeholder="제출할 링크를 입력해주세요."
                 autoComplete="off"
                 onChange={handleMissionLinkChanged}
-                value={value}
+                value={link}
                 disabled={isAttended}
               />
               <button
                 type="button"
                 className="rounded bg-primary px-5 font-medium text-white disabled:bg-[#c7c7c7]"
                 onClick={() => {
-                  if (value) {
+                  if (link) {
                     Object.assign(document.createElement('a'), {
                       target: '_blank',
-                      href: value,
+                      href: link,
                       rel: 'noopener noreferrer',
                     }).click();
                     setIsLinkChecked(true);
                   }
                 }}
-                disabled={(!value && !isAttended) || !isValidLinkValue}
+                disabled={(!link && !isAttended) || !isValidLinkValue}
               >
                 링크 확인
               </button>
             </div>
-            {value &&
+            {link &&
               !isAttended &&
               (isLinkChecked ? (
                 <div className="ml-12 mt-1 text-xs font-medium text-primary">
@@ -219,45 +207,87 @@ const AbsentMissionSubmitMenu = ({
                   URL을 올바르게 입력하셨습니다. 링크 확인을 진행해주세요.
                 </div>
               ))}
-            <div className="mt-6 flex w-full flex-col gap-y-5">
+
+            {/* 리워드 받을 계좌번호 */}
+            <div className="mt-6 flex w-full flex-col gap-y-3">
               <h3 className="text-xsmall16 font-semibold text-neutral-0">
-                미션 소감
+                리워드 받을 계좌번호
               </h3>
-              <div
-                className={clsx('flex flex-col gap-y-2 rounded-md p-3', {
-                  'bg-neutral-95': !isAttended,
-                  'bg-white': isAttended,
-                })}
-              >
-                <textarea
+              <p className="text-xsmall14">
+                리워드 받을 은행과 계좌번호를 입력해주세요. 본인 명의가 아닌
+                계좌로는 리워드가 입금되지 않습니다.
+              </p>
+              <div className="mt-3 flex items-stretch gap-4">
+                <BankSelectDropdown
+                  selectedBank={accountType}
+                  onBankSelect={(bank: string) => {
+                    setAccountType(bank);
+                  }}
+                  disabled={isAttended}
+                />
+                <input
+                  type="number"
+                  inputMode="numeric"
                   className={clsx(
-                    'h-20 flex-1 resize-none bg-neutral-95 text-xsmall14 outline-none disabled:bg-white',
+                    'flex-1 cursor-text rounded-sm p-3 text-xsmall14 outline-none disabled:bg-neutral-95',
                     {
                       'text-neutral-400': isAttended,
                     },
                   )}
-                  placeholder={`오늘의 미션은 어떠셨나요?\n새롭게 배운 점, 어려운 부분, 궁금증 등 떠오르는 생각을 남겨 주세요.`}
-                  value={review}
-                  onChange={(e) => setReview(e.target.value)}
+                  id="accountNum"
+                  name="accountNum"
+                  placeholder="계좌번호를 입력해주세요."
+                  autoComplete="off"
+                  onChange={(e) => setAccountNum(e.target.value)}
+                  value={accountNum}
                   disabled={isAttended}
-                  maxLength={500}
                 />
-                <span className="w-full text-right text-xxsmall12 text-neutral-0/35">
-                  {review.length}/500
-                </span>
               </div>
             </div>
+
+            {/* 개인정보 활용 동의 */}
+            <label
+              htmlFor="privacyConsent"
+              className="mt-8 block text-xsmall14 font-semibold text-neutral-0"
+            >
+              개인정보 활용 동의
+            </label>
+            <p className="mt-1 text-xsmall14">
+              [개인정보 보호법] 제15조 및 제17조에 따라 아래의 내용으로
+              개인정보를 수집, 이용 및 제공하는데 동의합니다. <br />
+              □ 개인정보의 수집 및 이용에 관한 사항 <br />
+              ✓ 수집하는 개인정보 항목 : 성명, 전화번호, 계좌번호 <br />
+              ✓ 개인정보의 이용 목적 : 렛츠커리어 프로그램 후기 리워드 지급
+            </p>
+            <button
+              type="button"
+              className="mt-3 flex items-center gap-1 disabled:opacity-60"
+              disabled={isAttended}
+              onClick={() => setPrivacyConsent(!privacyConsent)}
+            >
+              {privacyConsent ? (
+                <img
+                  src="/icons/checkbox-fill.svg"
+                  className="h-6 w-6"
+                  alt=""
+                />
+              ) : (
+                <img
+                  src="/icons/Checkbox_Empty.svg"
+                  className="h-6 w-6"
+                  alt=""
+                />
+              )}
+              <span className="text-xsmall14 text-neutral-10">
+                리워드 지급을 위한 개인정보 활용에 동의합니다.
+              </span>
+            </button>
+
             <div className="mt-6 text-right">
               <button
                 type="submit"
                 className="rounded border border-[#DCDCDC] bg-white px-5 py-2 text-center font-semibold disabled:bg-gray-50 disabled:text-gray-600"
-                disabled={
-                  isAttended ||
-                  !value ||
-                  !isLinkChecked ||
-                  !isValidLinkValue ||
-                  !review
-                }
+                disabled={!isSubmittable}
               >
                 {isAttended ? '제출 완료' : '제출'}
               </button>
@@ -269,4 +299,4 @@ const AbsentMissionSubmitMenu = ({
   );
 };
 
-export default AbsentMissionSubmitMenu;
+export default BonusMissionSubmitMenu;

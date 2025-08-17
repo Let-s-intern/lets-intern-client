@@ -1,10 +1,11 @@
-import { Link } from 'react-router-dom';
-
+import { useGetChallengeGoal } from '@/api/challenge';
 import {
   MyChallengeMissionByType,
   Schedule,
   UserChallengeMissionDetail,
 } from '@/schema';
+import { BONUS_MISSION_TH } from '@/utils/constants';
+import { Link, useParams } from 'react-router-dom';
 import OtVideo from '../../OtVideo';
 import MenuContentsDropdown from '../dropdown/MenuContentsDropdown';
 import ParsedCommentBox from '../ParsedCommentBox';
@@ -28,10 +29,19 @@ const DoneMissionDetailMenu = ({
   challengeId,
   isFeedbackConfirmed = false,
 }: Props) => {
+  const params = useParams();
+
   const additionalContentsLink =
     missionDetail.additionalContentsList?.[0]?.link;
   const essentialContentsLink = missionDetail.essentialContentsList?.[0]?.link;
   const isOtMission = missionDetail.th === 0;
+  const isBonusMission = missionDetail.th === BONUS_MISSION_TH;
+  const showContent =
+    !isBonusMission && (additionalContentsLink || essentialContentsLink);
+  const showOtVod = isOtMission && missionDetail.vodLink;
+  const showMissionReview = !isOtMission && !isBonusMission;
+
+  const { data: goalData } = useGetChallengeGoal(params.programId);
 
   return (
     <>
@@ -46,15 +56,13 @@ const DoneMissionDetailMenu = ({
             {missionDetail.guide}
           </p>
         </div>
-        {(additionalContentsLink || essentialContentsLink) && (
+        {showContent && (
           <div className="mt-4 flex flex-col gap-2">
             <MenuContentsDropdown missionDetail={missionDetail} />
           </div>
         )}
         {/* OT 영상 */}
-        {isOtMission && missionDetail.vodLink && (
-          <OtVideo vodLink={missionDetail.vodLink} />
-        )}
+        {showOtVod && <OtVideo vodLink={missionDetail.vodLink!} />}
       </div>
       <hr className="my-4 border-[#DEDEDE]" />
       <div className="px-3">
@@ -77,12 +85,22 @@ const DoneMissionDetailMenu = ({
             />
           </div>
         )}
-        <div className="mt-10 flex w-full flex-col gap-y-2.5">
-          <h4 className="text-xsmall16 font-bold">미션 소감</h4>
-          <p className="h-20 overflow-auto rounded-md bg-neutral-95 p-3 text-xsmall14">
-            {schedule.attendanceInfo.review ?? '-'}
-          </p>
-        </div>
+        {showMissionReview && (
+          <div className="mt-10 flex w-full flex-col gap-y-2.5">
+            <h4 className="text-xsmall16 font-bold">미션 소감</h4>
+            <p className="h-20 overflow-auto rounded-md bg-neutral-95 p-3 text-xsmall14">
+              {schedule.attendanceInfo.review ?? '-'}
+            </p>
+          </div>
+        )}
+        {isOtMission && (
+          <div className="mt-4 flex w-full flex-col gap-y-2.5">
+            <h4 className="text-xsmall16 font-bold">챌린지 참여 목표</h4>
+            <p className="h-20 overflow-auto rounded-md bg-neutral-95 p-3 text-xsmall14">
+              {goalData?.goal}
+            </p>
+          </div>
+        )}
         {isFeedbackConfirmed && (
           <div className="mt-4">
             <h4 className="flex-shrink-0 text-lg font-semibold">미션 피드백</h4>

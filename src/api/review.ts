@@ -528,7 +528,6 @@ export const usePostBlogBonus = () => {
     },
     onError(error) {
       console.error(error);
-      alert('블로그 보너스 제출에 실패했습니다: ' + error);
     },
   });
 };
