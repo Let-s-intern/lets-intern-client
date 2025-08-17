@@ -8,7 +8,6 @@ import MissionSubmitZeroSection from './MissionSubmitZeroSection';
 
 interface MissionSubmitSectionProps {
   className?: string;
-  missionId?: number; // 0회차 미션 ID
   todayId?: number; // 선택된 미션의 ID
   attendanceInfo?: Schedule['attendanceInfo'] | null;
   startDate?: string;
@@ -18,7 +17,6 @@ interface MissionSubmitSectionProps {
 
 const MissionSubmitSection = ({
   className,
-  missionId,
   todayId,
   startDate,
   attendanceInfo,
@@ -51,8 +49,7 @@ const MissionSubmitSection = ({
       return (
         <MissionSubmitBonusSection
           selectedMissionTh={selectedMissionTh}
-          missionId={missionId}
-          todayId={todayId}
+          missionId={selectedMissionId}
           attendanceInfo={attendanceInfo}
         />
       );
@@ -63,7 +60,7 @@ const MissionSubmitSection = ({
       return (
         <MissionSubmitRegularSection
           selectedMissionTh={selectedMissionTh}
-          missionId={missionId}
+          missionId={selectedMissionId}
           attendanceInfo={attendanceInfo}
           onRefreshMissionData={onRefreshMissionData}
           onSubmitLastMission={onSubmitLastMission}

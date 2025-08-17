@@ -34,13 +34,12 @@ interface MissionSubmitBonusSectionProps {
   className?: string;
   selectedMissionTh: number;
   missionId?: number;
-  todayId?: number; // 선택된 미션의 ID
   attendanceInfo?: Schedule['attendanceInfo'] | null;
 }
 
 const MissionSubmitBonusSection = ({
   className,
-  todayId,
+  missionId,
   attendanceInfo,
 }: MissionSubmitBonusSectionProps) => {
   const params = useParams();
@@ -76,7 +75,7 @@ const MissionSubmitBonusSection = ({
       setIsSubmitted(false);
     } else {
       try {
-        if (!todayId) {
+        if (!missionId) {
           console.error('미션 ID가 없습니다.');
           return;
         }
@@ -85,7 +84,7 @@ const MissionSubmitBonusSection = ({
         const cleanAccountNumber = accountNumber.replace(/[^0-9]/g, '');
 
         await submitBlogBonus.mutateAsync({
-          missionId: todayId,
+          missionId,
           url: linkValue,
           accountType: selectedBank,
           accountNum: cleanAccountNumber,
