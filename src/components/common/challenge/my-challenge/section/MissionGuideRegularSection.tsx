@@ -80,6 +80,21 @@ const MissionGuideRegularSection = ({
 
             {/* 자료 링크들 */}
             <div className="flex flex-col gap-2">
+              {/* 미션 템플릿 */}
+              {missionData?.missionInfo?.templateLink && (
+                <MissionFileLink
+                  key={missionData?.missionInfo?.templateLink}
+                  title="미션 템플릿"
+                  fileName={'미션 템플릿'}
+                  disabled={false}
+                  onClick={() => {
+                    window.open(
+                      missionData?.missionInfo?.templateLink,
+                      '_blank',
+                    );
+                  }}
+                />
+              )}
               {/* 필수 콘텐츠 */}
               {missionData?.missionInfo?.essentialContentsList?.map(
                 (content: any, index: number) => (
