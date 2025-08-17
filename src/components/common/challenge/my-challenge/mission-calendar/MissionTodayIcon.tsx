@@ -52,7 +52,7 @@ const MissionTodayIcon = ({
       <div
         onClick={handleMissionClick}
         className={clsx(
-          'flex aspect-square cursor-pointer flex-col items-center justify-center rounded-md shadow-[0px_0px_10px_rgba(0,0,0,0.1)]',
+          'aspect-square cursor-pointer items-center justify-center rounded-md shadow-[0px_0px_10px_rgba(0,0,0,0.1)]',
           {
             'cursor-default': isDone,
           },

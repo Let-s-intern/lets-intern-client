@@ -22,7 +22,7 @@ const MissionCalendarItem = ({
 
   return (
     <div className={className}>
-      <div className="px-1.5">
+      <div className="h-[104px] w-[75px] rounded-xxs border border-neutral-80 px-2 py-2.5">
         {mission.th === todayTh ? (
           <MissionTodayIcon
             mission={mission}
@@ -37,7 +37,7 @@ const MissionCalendarItem = ({
           )
         )}
         <span
-          className={clsx('block w-full text-center text-xs', {
+          className={clsx('block w-full text-xxsmall10', {
             'font-semibold text-primary': mission.th === todayTh,
           })}
         >

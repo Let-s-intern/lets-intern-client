@@ -303,8 +303,9 @@ export const couponProgramTypeEnum = {
 };
 
 export const absent = {
-  text: '결석',
-  style: 'bg-[#E3E3E3] text-[#9B9B9B]',
+  text: '미제출',
+  icon: '/icons/submit_absent.svg',
+  style: 'text-system-error',
 };
 
 export const missionSubmitToBadge = ({
@@ -317,24 +318,31 @@ export const missionSubmitToBadge = ({
   if (result === 'WAITING') {
     return {
       text: '확인중',
-      style: 'text-[#D3CB00]',
+      icon: '/icons/submit_waiting.svg',
+      style: 'text-primary-90',
     };
   }
 
-  if (status === 'UPDATED' && result === 'WRONG') {
-    return absent;
-  }
-
-  if (status === 'UPDATED' && result === 'PASS') {
-    return {
-      text: '지각',
-      style: 'bg-[#E3E3E3] text-[#9B9B9B]',
-    };
-  }
+  // if (result === 'FINAL_WRONG') {
+  //   return {
+  //     text: '최종 반려',
+  //     icon: '/icons/submit_absent.svg',
+  //     style: 'text-neutral-30',
+  //   };
+  // }
 
   if (result === 'WRONG') {
     return {
-      text: '반려',
+      text: '제출 반려',
+      icon: '/icons/submit_absent.svg',
+      style: 'text-neutral-30',
+    };
+  }
+
+  if (status === 'LATE' && result === 'PASS') {
+    return {
+      text: '지각 제출',
+      icon: '/icons/submit_late.svg',
       style: 'text-[#9B9B9B]',
     };
   }
@@ -345,14 +353,16 @@ export const missionSubmitToBadge = ({
 
   if (status === 'LATE') {
     return {
-      text: '지각',
-      style: 'bg-[#E3E3E3] text-[#9B9B9B]',
+      text: '지각 제출',
+      icon: '/icons/submit_late.svg',
+      style: 'text-[#9B9B9B]',
     };
   }
 
   return {
-    text: '확인완료',
-    style: 'text-primary',
+    text: '제출 성공',
+    icon: '/icons/submit_success.svg',
+    style: 'text-primary-90',
   };
 };
 
