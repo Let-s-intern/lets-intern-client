@@ -3,7 +3,7 @@ import { usePostBlogBonus } from '@/api/review';
 import { Schedule } from '@/schema';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
-import BankSelectDropdown from './BankSelectDropdown';
+import BankSelectDropdown from './my-challenge/mission/BankSelectDropdown';
 import ParsedCommentBox from './my-challenge/ParsedCommentBox';
 
 interface Props {
