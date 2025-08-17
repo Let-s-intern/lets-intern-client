@@ -1,11 +1,11 @@
 import clsx from 'clsx';
 import { FaCheck } from 'react-icons/fa6';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
 import { BONUS_MISSION_TH } from '@/utils/constants';
 import { isAxiosError } from 'axios';
-import { MouseEventHandler, useCallback } from 'react';
+import { useCallback } from 'react';
 import { Schedule, ScheduleMission } from '../../../../../schema';
 import { useMissionStore } from '../../../../../store/useMissionStore';
 import { missionSubmitToBadge } from '../../../../../utils/convert';
@@ -26,13 +26,12 @@ const MissionTodayIcon = ({
   const { setSelectedMission } = useMissionStore();
   const params = useParams();
   const handleMissionClick = () => {
-    if (!isDone && mission.th !== null) {
+    if (!isDone && mission.th !== null && isValid()) {
       setSelectedMission(mission.id, mission.th);
     }
   };
-  const navigate = useNavigate();
 
-  const { isLoading, error } = useChallengeMissionAttendanceInfoQuery({
+  const { error } = useChallengeMissionAttendanceInfoQuery({
     challengeId: params.programId,
     missionId: mission.id,
   });
@@ -47,16 +46,6 @@ const MissionTodayIcon = ({
     }
     return true;
   }, [error]);
-
-  const handleClick: MouseEventHandler<HTMLAnchorElement> = (e) => {
-    e.preventDefault();
-    if (isLoading || isDone) return;
-    if (isValid()) {
-      navigate(
-        `/challenge/${params.applicationId}/${params.programId}/me?scroll_to=daily-mission`,
-      );
-    }
-  };
 
   return (
     <>
