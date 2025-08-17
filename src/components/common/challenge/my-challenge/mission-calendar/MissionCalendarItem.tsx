@@ -21,9 +21,6 @@ const MissionCalendarItem = ({
   const mission = schedule.missionInfo;
   const attendance = schedule.attendanceInfo;
 
-  console.log('mission.th:', mission.th);
-  console.log('todayTh:', todayTh);
-
   return (
     <div className={className}>
       <MissionTopStatusBar mission={schedule.missionInfo} todayTh={todayTh} />
