@@ -1,12 +1,13 @@
 import clsx from 'clsx';
 import { FaCheck } from 'react-icons/fa6';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
 import { BONUS_MISSION_TH } from '@/utils/constants';
 import { isAxiosError } from 'axios';
-import { MouseEventHandler, useCallback } from 'react';
+import { useCallback } from 'react';
 import { Schedule, ScheduleMission } from '../../../../../schema';
+import { useMissionStore } from '../../../../../store/useMissionStore';
 import { missionSubmitToBadge } from '../../../../../utils/convert';
 
 interface Props {
@@ -22,10 +23,15 @@ const MissionTodayIcon = ({
   attendance,
   isDone,
 }: Props) => {
+  const { setSelectedMission } = useMissionStore();
   const params = useParams();
-  const navigate = useNavigate();
+  const handleMissionClick = () => {
+    if (!isDone && mission.th !== null && isValid()) {
+      setSelectedMission(mission.id, mission.th);
+    }
+  };
 
-  const { isLoading, error } = useChallengeMissionAttendanceInfoQuery({
+  const { error } = useChallengeMissionAttendanceInfoQuery({
     challengeId: params.programId,
     missionId: mission.id,
   });
@@ -41,21 +47,10 @@ const MissionTodayIcon = ({
     return true;
   }, [error]);
 
-  const handleClick: MouseEventHandler<HTMLAnchorElement> = (e) => {
-    e.preventDefault();
-    if (isLoading || isDone) return;
-    if (isValid()) {
-      navigate(
-        `/challenge/${params.applicationId}/${params.programId}/me?scroll_to=daily-mission`,
-      );
-    }
-  };
-
   return (
     <>
-      <Link
-        to="#"
-        replace
+      <div
+        onClick={handleMissionClick}
         className={clsx(
           'flex aspect-square cursor-pointer flex-col items-center justify-center rounded-md shadow-[0px_0px_10px_rgba(0,0,0,0.1)]',
           {
@@ -63,7 +58,6 @@ const MissionTodayIcon = ({
           },
           className,
         )}
-        onClick={handleClick}
       >
         {attendance.status === 'ABSENT' ||
         attendance.result === 'WRONG' ||
@@ -85,7 +79,7 @@ const MissionTodayIcon = ({
         <span className="text-sm font-semibold text-primary">
           {mission.th === BONUS_MISSION_TH ? '보너스' : `${mission.th}회차`}
         </span>
-      </Link>
+      </div>
       <div className="mt-2 flex items-center justify-center">
         <span
           className={clsx(

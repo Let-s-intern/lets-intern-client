@@ -1,4 +1,5 @@
 import { Schedule } from '@/schema';
+import { useMissionStore } from '@/store/useMissionStore';
 import { BONUS_MISSION_TH } from '@/utils/constants';
 import clsx from 'clsx';
 
@@ -8,10 +9,19 @@ interface Props {
 }
 
 const MissionNotStartedIcon = ({ className, schedule }: Props) => {
+  const { setSelectedMission } = useMissionStore();
+
+  const handleMissionClick = () => {
+    if (schedule.missionInfo.th !== null) {
+      setSelectedMission(schedule.missionInfo.id, schedule.missionInfo.th);
+    }
+  };
+
   return (
     <div
+      onClick={handleMissionClick}
       className={clsx(
-        'flex aspect-square flex-col items-center justify-center rounded-md',
+        'flex aspect-square cursor-pointer flex-col items-center justify-center rounded-md',
         className,
       )}
     >

@@ -36,7 +36,7 @@ const NavBar = () => {
                 'text-[#4A495C]': activeStatus === 'MY_DASHBOARD',
               })}
             >
-              나의 기록장
+              나의 미션
             </Link>
           </li>
         </ul>

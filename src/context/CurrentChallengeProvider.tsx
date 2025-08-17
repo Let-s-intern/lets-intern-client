@@ -28,6 +28,7 @@ const currentChallengeContext = createContext<{
   submittedMissions: MyChallengeMissionByType[];
   remainingMissions: MyChallengeMissionByType[];
   absentMissions: MyChallengeMissionByType[];
+  isLoading: boolean;
 }>({
   currentChallenge: null,
   schedules: emptySchedules,
@@ -36,6 +37,7 @@ const currentChallengeContext = createContext<{
   submittedMissions: [],
   remainingMissions: [],
   absentMissions: [],
+  isLoading: true,
 });
 
 export const CurrentChallengeProvider = ({
@@ -46,7 +48,7 @@ export const CurrentChallengeProvider = ({
   const params = useParams();
   const { isLoggedIn } = useAuthStore();
 
-  const { data: currentChallenge } = useQuery({
+  const { data: currentChallenge, isLoading: isChallengeLoading } = useQuery({
     enabled: isLoggedIn,
     queryKey: ['challenge', params.programId],
     queryFn: async () => {
@@ -61,7 +63,7 @@ export const CurrentChallengeProvider = ({
     },
   });
 
-  const { data: schedules = [] } = useQuery({
+  const { data: schedules = [], isLoading: isSchedulesLoading } = useQuery({
     enabled: isLoggedIn,
     queryKey: ['challenge', params.programId, 'schedule'],
     queryFn: async () => {
@@ -73,7 +75,7 @@ export const CurrentChallengeProvider = ({
     },
   });
 
-  const { data: dailyMission } = useQuery({
+  const { data: dailyMission, isLoading: isDailyMissionLoading } = useQuery({
     enabled: isLoggedIn,
     queryKey: ['challenge', params.programId, 'daily-mission'],
     queryFn: async () => {
@@ -84,14 +86,15 @@ export const CurrentChallengeProvider = ({
     },
   });
 
-  const { data: myDailyMission } = useChallengeMyDailyMission(
-    params.programId,
-    {
+  const { data: myDailyMission, isLoading: isMyDailyMissionLoading } =
+    useChallengeMyDailyMission(params.programId, {
       enabled: isLoggedIn,
-    },
-  );
+    });
 
-  const { data: submittedMissions = [] } = useQuery({
+  const {
+    data: submittedMissions = [],
+    isLoading: isSubmittedMissionsLoading,
+  } = useQuery({
     enabled: isLoggedIn,
     queryKey: ['challenge', params.programId, 'missions', 'submitted'],
     queryFn: async () => {
@@ -102,7 +105,10 @@ export const CurrentChallengeProvider = ({
     },
   });
 
-  const { data: remainingMissions = [] } = useQuery({
+  const {
+    data: remainingMissions = [],
+    isLoading: isRemainingMissionsLoading,
+  } = useQuery({
     enabled: isLoggedIn,
     queryKey: ['challenge', params.programId, 'missions', 'remaining'],
     queryFn: async () => {
@@ -113,16 +119,26 @@ export const CurrentChallengeProvider = ({
     },
   });
 
-  const { data: absentMissions = [] } = useQuery({
-    enabled: isLoggedIn,
-    queryKey: ['challenge', params.programId, 'missions', 'absent'],
-    queryFn: async () => {
-      const res = await axios.get(
-        `/challenge/${params.programId}/missions?type=ABSENT`,
-      );
-      return myChallengeMissionsByType.parse(res.data.data).missionList;
-    },
-  });
+  const { data: absentMissions = [], isLoading: isAbsentMissionsLoading } =
+    useQuery({
+      enabled: isLoggedIn,
+      queryKey: ['challenge', params.programId, 'missions', 'absent'],
+      queryFn: async () => {
+        const res = await axios.get(
+          `/challenge/${params.programId}/missions?type=ABSENT`,
+        );
+        return myChallengeMissionsByType.parse(res.data.data).missionList;
+      },
+    });
+
+  const isLoading =
+    isChallengeLoading ||
+    isSchedulesLoading ||
+    isDailyMissionLoading ||
+    isMyDailyMissionLoading ||
+    isSubmittedMissionsLoading ||
+    isRemainingMissionsLoading ||
+    isAbsentMissionsLoading;
 
   return (
     <currentChallengeContext.Provider
@@ -134,6 +150,7 @@ export const CurrentChallengeProvider = ({
         submittedMissions,
         remainingMissions,
         absentMissions,
+        isLoading,
       }}
     >
       {children}
