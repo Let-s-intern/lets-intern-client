@@ -17,8 +17,6 @@ const AbsentMissionDetailMenu = ({
   currentSchedule,
   setOpenReviewModal,
 }: Props) => {
-  console.log('missionDetail:', missionDetail);
-  console.log('currentSchedule:', currentSchedule);
   const additionalContentsLink =
     missionDetail.additionalContentsList?.[0]?.link;
   const essentialContentsLink = missionDetail.essentialContentsList?.[0]?.link;
@@ -26,10 +24,9 @@ const AbsentMissionDetailMenu = ({
   const isBonusMission = missionDetail.th === BONUS_MISSION_TH;
   const showContent =
     isOtMission && (additionalContentsLink || essentialContentsLink);
-  const showAbsentContent = !isOtMission && !isBonusMission;
+  // 일반 미션 여부를 나타내는 변수
+  const isNormalMission = !isOtMission && !isBonusMission;
   const showOtVod = isOtMission && missionDetail.vodLink;
-  console.log('isOtMission:', isOtMission);
-  console.log('showAbsentContent:', showAbsentContent);
 
   return (
     <>
@@ -52,21 +49,18 @@ const AbsentMissionDetailMenu = ({
           </div>
         )}
       </div>
-      {showAbsentContent && (
+      {isNormalMission && (
         <AbsentContentsInfoMenu missionDetail={missionDetail} />
       )}
       <hr className="my-6 border-[0.5px] border-[#DEDEDE]" />
-      {isOtMission && (
-        <OtMissionSubmitMenu
+      {isOtMission && <OtMissionSubmitMenu currentSchedule={currentSchedule} />}
+      {isNormalMission && (
+        <AbsentMissionSubmitMenu
+          missionDetail={missionDetail}
           currentSchedule={currentSchedule}
           setOpenReviewModal={setOpenReviewModal}
         />
       )}
-      <AbsentMissionSubmitMenu
-        missionDetail={missionDetail}
-        currentSchedule={currentSchedule}
-        setOpenReviewModal={setOpenReviewModal}
-      />
     </>
   );
 };
