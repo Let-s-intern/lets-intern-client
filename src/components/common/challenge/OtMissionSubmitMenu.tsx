@@ -1,11 +1,9 @@
 import { usePatchAttendance } from '@/api/attendance';
 import {
   useGetChallengeGoal,
-  useGetChallengeReviewStatus,
   usePatchChallengeGoal,
   usePostChallengeAttendance,
 } from '@/api/challenge';
-import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { Schedule } from '@/schema';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
@@ -14,27 +12,10 @@ import ParsedCommentBox from './my-challenge/ParsedCommentBox';
 
 interface Props {
   currentSchedule: Schedule;
-  setOpenReviewModal?: (value: boolean) => void;
 }
 
-const OtMissionSubmitMenu = ({
-  currentSchedule,
-  setOpenReviewModal,
-}: Props) => {
+const OtMissionSubmitMenu = ({ currentSchedule }: Props) => {
   const params = useParams();
-
-  const { schedules, currentChallenge } = useCurrentChallenge();
-  const lastMission = schedules.reduce((acc: Schedule | null, schedule) => {
-    if (acc === null) return schedule;
-
-    return schedule.missionInfo.th &&
-      acc.missionInfo.th &&
-      schedule.missionInfo.th > acc.missionInfo.th
-      ? schedule
-      : acc;
-  }, null);
-  const isLastMission =
-    lastMission?.missionInfo.th === currentSchedule.missionInfo.th;
 
   const [isAttended, setIsAttended] = useState(
     currentSchedule?.attendanceInfo.result === 'WRONG'
@@ -43,9 +24,6 @@ const OtMissionSubmitMenu = ({
   );
   const [goal, setGoal] = useState('');
 
-  const { data: reviewCompleted } = useGetChallengeReviewStatus(
-    currentChallenge?.id,
-  );
   const patchAttendance = usePatchAttendance();
   const { data: goalData, isLoading } = useGetChallengeGoal(params.programId);
   const patchGoal = usePatchChallengeGoal();
@@ -68,14 +46,7 @@ const OtMissionSubmitMenu = ({
         alert('미션 수정이 완료되었습니다.');
       } else {
         await submitGoal();
-        if (
-          isLastMission &&
-          reviewCompleted &&
-          reviewCompleted.reviewId === null &&
-          setOpenReviewModal
-        ) {
-          setOpenReviewModal(true);
-        }
+        window.location.reload();
       }
       setIsAttended(true);
     } catch (error) {

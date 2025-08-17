@@ -1147,6 +1147,8 @@ export const challengeSchedule = z
           comments: z.string().nullable(),
           status: AttendanceStatusEnum.nullable(),
           result: AttendanceResultEnum.nullable(),
+          accountType: z.string().nullish(),
+          accountNum: z.string().nullish(),
         }),
       }),
     ),
