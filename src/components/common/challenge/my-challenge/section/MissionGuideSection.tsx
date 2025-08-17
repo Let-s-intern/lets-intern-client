@@ -58,7 +58,6 @@ const MissionGuideSection = ({
     if (selectedMissionTh === 0) {
       return (
         <MissionGuideZeroSection
-          todayTh={todayTh}
           missionData={missionData}
           selectedMissionTh={selectedMissionTh}
         />

@@ -24,6 +24,7 @@ const MyChallengeDashboard = () => {
 
   const { schedules, myDailyMission } = useCurrentChallenge();
   const [modalOpen, setModalOpen] = useState(false);
+  const { selectedMissionTh, setSelectedMission } = useMissionStore();
 
   // const todayTh = myDailyMission?.dailyMission?.th ?? schedules.length + 1;
 
@@ -47,40 +48,10 @@ const MyChallengeDashboard = () => {
       }, 0) + 1;
     return initialValue;
   });
-  const [selectedMissionTh, setSelectedMissionTh] = useState(todayTh);
   const isChallengeDone = getIsChallengeDone(programEndDate);
   const isChallengeSubmitDone = programEndDate
     ? getIsChallengeSubmitDone(programEndDate)
     : false;
-
-  const convertToMissionData = () => {
-    if (!myDailyMission?.dailyMission || !myDailyMission?.attendanceInfo) {
-      return null;
-    }
-
-    return {
-      missionInfo: {
-        ...myDailyMission.dailyMission,
-        startDate: myDailyMission.dailyMission.startDate || dayjs(),
-        endDate: myDailyMission.dailyMission.endDate || dayjs(),
-        description: myDailyMission.dailyMission.description || '',
-        missionTag: myDailyMission.dailyMission.missionTag || '',
-        guide: myDailyMission.dailyMission.guide || '',
-        vodLink: myDailyMission.dailyMission.vodLink || '',
-        templateLink: myDailyMission.dailyMission.templateLink || '',
-        essentialContentsList:
-          myDailyMission.dailyMission.essentialContentsList || [],
-        additionalContentsList:
-          myDailyMission.dailyMission.additionalContentsList || [],
-      },
-      attendanceInfo: {
-        ...myDailyMission.attendanceInfo,
-        feedbackStatus: null,
-      },
-    };
-  };
-
-  const missionData = convertToMissionData();
 
   return (
     <main className="px-6">
@@ -90,26 +61,14 @@ const MyChallengeDashboard = () => {
       <div className="mb-4 mt-6">
         <MissionStatusMessage todayTh={todayTh} />
       </div>
-      <button onClick={() => setSelectedMissionTh(1)}>1</button>
-      <button onClick={() => setSelectedMissionTh(2)}>2</button>
-      <button onClick={() => setSelectedMissionTh(3)}>3</button>
-      <button onClick={() => setSelectedMissionTh(4)}>4</button>
-      <button onClick={() => setSelectedMissionTh(5)}>5</button>
-      <button onClick={() => setSelectedMissionTh(6)}>6</button>
-      <button onClick={() => setSelectedMissionTh(7)}>7</button>
-      <button onClick={() => setSelectedMissionTh(8)}>8</button>
       <MissionCalendarSection
         schedules={schedules}
         todayTh={todayTh}
         isDone={isChallengeDone}
-        selectedMissionTh={selectedMissionTh}
       />
       <div>
         <div className="mt-8">
-          <MissionGuideSection
-            todayTh={todayTh}
-            selectedMissionTh={selectedMissionTh}
-          />
+          <MissionGuideSection todayTh={todayTh} />
         </div>
         {/* 보너스 미션 팝업 (다음 배포) */}
         {/* <div className="relative">
