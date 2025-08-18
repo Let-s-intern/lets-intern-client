@@ -79,12 +79,14 @@ export const challengeMissionFeedbackSchema = z.object({
     th: z.number().nullish(),
     title: z.string().nullish(),
   }),
-  attendanceInfo: z.object({
-    link: z.string(),
-    feedbackStatus: FeedbackStatusEnum.nullable().default('WAITING'),
-    feedback: z.string().nullish(),
-    mentorName: z.string().nullish(),
-  }),
+  attendanceInfo: z
+    .object({
+      link: z.string(),
+      feedbackStatus: FeedbackStatusEnum.nullable().default('WAITING'),
+      feedback: z.string().nullish(),
+      mentorName: z.string().nullish(),
+    })
+    .nullable(),
 });
 
 export const feedbackAttendanceSchema = z.object({
