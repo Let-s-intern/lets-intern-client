@@ -2,6 +2,7 @@ import { Schedule } from '@/schema';
 import { useMissionStore } from '@/store/useMissionStore';
 import { BONUS_MISSION_TH } from '@/utils/constants';
 import clsx from 'clsx';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface Props {
   className?: string;
@@ -10,10 +11,13 @@ interface Props {
 
 const MissionNotStartedIcon = ({ className, schedule }: Props) => {
   const { setSelectedMission } = useMissionStore();
+  const navigate = useNavigate();
+  const params = useParams();
 
   const handleMissionClick = () => {
     if (schedule.missionInfo.th !== null) {
       setSelectedMission(schedule.missionInfo.id, schedule.missionInfo.th);
+      navigate(`/challenge/${params.applicationId}/${params.programId}/me`);
     }
   };
 

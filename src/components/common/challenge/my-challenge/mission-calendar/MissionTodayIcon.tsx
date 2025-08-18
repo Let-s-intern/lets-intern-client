@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
 import { BONUS_MISSION_TH } from '@/utils/constants';
@@ -24,9 +24,12 @@ const MissionTodayIcon = ({
 }: Props) => {
   const { setSelectedMission } = useMissionStore();
   const params = useParams();
+  const navigate = useNavigate();
+
   const handleMissionClick = () => {
     if (!isDone && mission.th !== null && isValid()) {
       setSelectedMission(mission.id, mission.th);
+      navigate(`/challenge/${params.applicationId}/${params.programId}/me`);
     }
   };
 
