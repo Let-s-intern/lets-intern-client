@@ -1,8 +1,6 @@
 import { Schedule } from '@/schema';
-import { useMissionStore } from '@/store/useMissionStore';
 import { BONUS_MISSION_TH } from '@/utils/constants';
 import clsx from 'clsx';
-import { useNavigate, useParams } from 'react-router-dom';
 
 interface Props {
   className?: string;
@@ -10,22 +8,8 @@ interface Props {
 }
 
 const MissionNotStartedIcon = ({ className, schedule }: Props) => {
-  const { setSelectedMission } = useMissionStore();
-  const navigate = useNavigate();
-  const params = useParams();
-
-  const handleMissionClick = () => {
-    if (schedule.missionInfo.th !== null) {
-      setSelectedMission(schedule.missionInfo.id, schedule.missionInfo.th);
-      navigate(`/challenge/${params.applicationId}/${params.programId}/me`);
-    }
-  };
-
   return (
-    <div
-      onClick={handleMissionClick}
-      className={clsx('flex cursor-pointer flex-col', className)}
-    >
+    <div className={clsx('flex cursor-pointer flex-col', className)}>
       <i className="block h-3.5 w-3.5">
         <img
           src="/icons/submit_absent.svg"

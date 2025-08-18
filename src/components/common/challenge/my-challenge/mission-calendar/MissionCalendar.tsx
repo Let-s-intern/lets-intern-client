@@ -18,7 +18,7 @@ const MissionCalendar = ({ className, schedules, todayTh, isDone }: Props) => {
           schedule={schedule}
           todayTh={todayTh}
           isDone={isDone}
-          className="hover:bg-primary-5"
+          className="cursor-pointer hover:bg-primary-5"
         />
       ))}
     </div>

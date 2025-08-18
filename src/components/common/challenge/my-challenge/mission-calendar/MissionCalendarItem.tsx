@@ -1,9 +1,14 @@
 import { Schedule } from '@/schema';
 import clsx from 'clsx';
+import { useNavigate, useParams } from 'react-router-dom';
 import MissionIcon from './MissionIcon';
 import MissionNotStartedIcon from './MissionNotStartedIcon';
 import MissionTodayIcon from './MissionTodayIcon';
 
+import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
+import { useMissionStore } from '@/store/useMissionStore';
+import { isAxiosError } from 'axios';
+import { useCallback } from 'react';
 interface Props {
   schedule: Schedule;
   todayTh: number;
@@ -20,8 +25,35 @@ const MissionCalendarItem = ({
   const mission = schedule.missionInfo;
   const attendance = schedule.attendanceInfo;
 
+  const params = useParams();
+  const navigate = useNavigate();
+
+  const { error } = useChallengeMissionAttendanceInfoQuery({
+    challengeId: params.programId,
+    missionId: mission.id,
+  });
+  const { setSelectedMission } = useMissionStore();
+
+  const handleMissionClick = () => {
+    if (!isDone && mission.th !== null && isValid()) {
+      setSelectedMission(mission.id, mission.th);
+      navigate(`/challenge/${params.applicationId}/${params.programId}/me`);
+    }
+  };
+
+  const isValid = useCallback(() => {
+    if (isAxiosError(error)) {
+      const errorCode = error?.response?.data.status;
+      if (errorCode === 400) {
+        alert('0회차 미션을 먼저 완료해주세요.');
+      }
+      return false;
+    }
+    return true;
+  }, [error]);
+
   return (
-    <div className={className}>
+    <div className={className} onClick={handleMissionClick}>
       <div
         className={clsx(
           'h-[104px] w-[75px] rounded-xxs border px-2 py-2.5',

@@ -1,12 +1,7 @@
 import clsx from 'clsx';
-import { useNavigate, useParams } from 'react-router-dom';
 
-import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
 import { BONUS_MISSION_TH } from '@/utils/constants';
-import { isAxiosError } from 'axios';
-import { useCallback } from 'react';
 import { Schedule, ScheduleMission } from '../../../../../schema';
-import { useMissionStore } from '../../../../../store/useMissionStore';
 import { missionSubmitToBadge } from '../../../../../utils/convert';
 
 interface Props {
@@ -22,33 +17,6 @@ const MissionTodayIcon = ({
   attendance,
   isDone,
 }: Props) => {
-  const { setSelectedMission } = useMissionStore();
-  const params = useParams();
-  const navigate = useNavigate();
-
-  const handleMissionClick = () => {
-    if (!isDone && mission.th !== null && isValid()) {
-      setSelectedMission(mission.id, mission.th);
-      navigate(`/challenge/${params.applicationId}/${params.programId}/me`);
-    }
-  };
-
-  const { error } = useChallengeMissionAttendanceInfoQuery({
-    challengeId: params.programId,
-    missionId: mission.id,
-  });
-
-  const isValid = useCallback(() => {
-    if (isAxiosError(error)) {
-      const errorCode = error?.response?.data.status;
-      if (errorCode === 400) {
-        alert('0회차 미션을 먼저 완료해주세요.');
-      }
-      return false;
-    }
-    return true;
-  }, [error]);
-
   const { text, style, icon } = missionSubmitToBadge({
     status: attendance.status,
     result: attendance.result,
@@ -59,7 +27,6 @@ const MissionTodayIcon = ({
   return (
     <div>
       <div
-        onClick={handleMissionClick}
         className={clsx(
           'relative flex cursor-pointer flex-col justify-center rounded-md',
           {
