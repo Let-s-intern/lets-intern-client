@@ -322,11 +322,20 @@ export const missionSubmitToBadge = ({
       style: 'text-primary-90 text-sm',
     };
   }
+
   if (status === null) {
     return {
       text: '진행중',
       style: 'text-primary-90 text-sm',
       icon: '/icons/submit_waiting.svg',
+    };
+  }
+
+  if (result === 'WRONG') {
+    return {
+      text: '제출 반려',
+      icon: '/icons/submit_absent.svg',
+      style: 'text-neutral-30 text-[13px]',
     };
   }
   // if (result === 'FINAL_WRONG') {
@@ -336,25 +345,16 @@ export const missionSubmitToBadge = ({
   //     style: 'text-neutral-30',
   //   };
   // }
-
-  if (result === 'WRONG') {
+  if ((status === 'UPDATED' && result === 'PASS') || status === 'LATE') {
     return {
-      text: '제출 반려',
-      icon: '/icons/submit_absent.svg',
+      text: '지각 제출',
       style: 'text-neutral-30 text-[13px]',
+      icon: '/icons/submit_late.svg',
     };
   }
 
   if (status === 'ABSENT') {
     return absent;
-  }
-
-  if (status === 'LATE') {
-    return {
-      text: '지각 제출',
-      icon: '/icons/submit_late.svg',
-      style: 'text-neutral-30 text-[13px]',
-    };
   }
 
   return {
