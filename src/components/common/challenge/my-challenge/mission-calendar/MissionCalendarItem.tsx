@@ -19,15 +19,22 @@ const MissionCalendarItem = ({
 }: Props) => {
   const mission = schedule.missionInfo;
   const attendance = schedule.attendanceInfo;
-
   return (
     <div className={className}>
-      <div className="h-[104px] w-[75px] rounded-xxs border border-neutral-80 px-2 py-2.5">
+      <div
+        className={clsx(
+          'h-[104px] w-[75px] rounded-xxs border px-2 py-2.5',
+          mission.th === todayTh
+            ? 'border-[#A6AAFA] bg-primary-5'
+            : 'border-neutral-80',
+        )}
+      >
         {mission.th === todayTh ? (
           <MissionTodayIcon
             mission={mission}
             attendance={attendance}
             isDone={isDone}
+            className="bg-primary-5"
           />
         ) : (mission.th ?? 0) > todayTh ? (
           <MissionNotStartedIcon schedule={schedule} />
@@ -37,7 +44,7 @@ const MissionCalendarItem = ({
           )
         )}
         <span
-          className={clsx('block w-full text-xxsmall10', {
+          className={clsx('block w-full text-xxsmall10 leading-3', {
             'font-semibold text-primary': mission.th === todayTh,
           })}
         >

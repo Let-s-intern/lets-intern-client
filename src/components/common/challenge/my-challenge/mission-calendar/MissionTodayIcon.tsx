@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import { FaCheck } from 'react-icons/fa6';
 import { useParams } from 'react-router-dom';
 
 import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
@@ -47,62 +46,45 @@ const MissionTodayIcon = ({
     return true;
   }, [error]);
 
+  const { text, style, icon } = missionSubmitToBadge({
+    status: attendance.status,
+    result: attendance.result,
+  });
+
+  const isWaiting = attendance.result === 'WAITING';
+  const isBonus = mission.th === 100;
+
   return (
-    <>
+    <div>
       <div
         onClick={handleMissionClick}
         className={clsx(
-          'aspect-square cursor-pointer items-center justify-center rounded-md shadow-[0px_0px_10px_rgba(0,0,0,0.1)]',
+          'relative flex cursor-pointer flex-col justify-center rounded-md',
           {
             'cursor-default': isDone,
           },
           className,
         )}
       >
-        {attendance.status === 'ABSENT' ||
-        attendance.result === 'WRONG' ||
-        attendance.result === null ? (
-          <div className="mb-[10%] flex h-[30%] w-[50%] min-w-[2.5rem] items-center justify-center">
-            <img
-              src="/icons/general-mission.svg"
-              alt="general mission icon"
-              className="w-full"
-            />
-          </div>
-        ) : (
-          <div className="mb-[10%] flex h-[30%] w-[50%] min-w-[2.5rem] items-center justify-center rounded-full bg-primary">
-            <i className="text-2xl text-white">
-              <FaCheck />
-            </i>
-          </div>
+        <i className="block h-3.5 w-3.5">
+          <img
+            src={icon}
+            alt="mission status icon"
+            className="w-full object-cover"
+          />
+        </i>
+      </div>
+      <div
+        className={clsx(
+          'mb-[6px] mt-1 flex flex-col justify-center text-sm font-semibold leading-4',
+          style,
         )}
-        <span className="text-sm font-semibold text-primary">
-          {mission.th === BONUS_MISSION_TH ? '보너스' : `${mission.th}회차`}
-        </span>
+      >
+        {mission.th === BONUS_MISSION_TH ? '보너스' : `${mission.th}회차`}
+        <br />
+        {text}
       </div>
-      <div className="mt-2 flex items-center justify-center">
-        <span
-          className={clsx(
-            'rounded-xs px-2 py-[0.125rem] text-sm',
-            missionSubmitToBadge({
-              status: attendance.status,
-              result: attendance.result,
-            }).style,
-            {
-              'opacity-0':
-                attendance.status === 'ABSENT' || attendance.result === null,
-            },
-          )}
-        >
-          {
-            missionSubmitToBadge({
-              status: attendance.status,
-              result: attendance.result,
-            }).text
-          }
-        </span>
-      </div>
-    </>
+    </div>
   );
 };
 

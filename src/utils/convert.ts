@@ -322,7 +322,13 @@ export const missionSubmitToBadge = ({
       style: 'text-primary-90',
     };
   }
-
+  if (status === null) {
+    return {
+      text: '진행중',
+      style: 'text-primary-90',
+      icon: '/icons/submit_waiting.svg',
+    };
+  }
   // if (result === 'FINAL_WRONG') {
   //   return {
   //     text: '최종 반려',
