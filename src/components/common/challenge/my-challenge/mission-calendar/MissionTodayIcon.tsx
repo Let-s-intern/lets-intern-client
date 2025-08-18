@@ -52,7 +52,6 @@ const MissionTodayIcon = ({
   });
 
   const isWaiting = attendance.result === 'WAITING';
-  const isBonus = mission.th === 100;
 
   return (
     <div>
@@ -80,7 +79,11 @@ const MissionTodayIcon = ({
           style,
         )}
       >
-        {mission.th === BONUS_MISSION_TH ? '보너스' : `${mission.th}회차`}
+        {mission.th === BONUS_MISSION_TH
+          ? '보너스'
+          : isWaiting
+            ? `제출`
+            : `${mission.th}회차`}
         <br />
         {text}
       </div>

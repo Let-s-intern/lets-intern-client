@@ -19,6 +19,7 @@ const MissionCalendarItem = ({
 }: Props) => {
   const mission = schedule.missionInfo;
   const attendance = schedule.attendanceInfo;
+
   return (
     <div className={className}>
       <div
@@ -45,7 +46,7 @@ const MissionCalendarItem = ({
         )}
         <span
           className={clsx('block w-full text-xxsmall10 leading-3', {
-            'font-semibold text-primary': mission.th === todayTh,
+            'text-primary': mission.th === todayTh,
           })}
         >
           {mission.startDate?.format('MM.DD(ddd)')}

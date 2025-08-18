@@ -34,6 +34,7 @@ const MissionIcon = ({ className, schedule, isDone }: Props) => {
   // const isAttended =
   //   (attendance.result === 'WAITING' || attendance.result === 'PASS') &&
   //   attendance.status !== 'ABSENT';
+  const isWaiting = attendance.result === 'WAITING';
 
   const navigate = useNavigate();
 
@@ -77,11 +78,15 @@ const MissionIcon = ({ className, schedule, isDone }: Props) => {
       </div>
       <div
         className={clsx(
-          'mb-[6px] mt-1 flex flex-col justify-center text-sm font-semibold leading-4',
+          'mb-[6px] mt-1 flex flex-col justify-center font-semibold leading-4',
           style,
         )}
       >
-        {mission.th === BONUS_MISSION_TH ? '보너스' : `${mission.th}회차`}
+        {mission.th === BONUS_MISSION_TH
+          ? '보너스'
+          : isWaiting
+            ? `제출`
+            : `${mission.th}회차`}
         <br />
         {text}
       </div>
