@@ -15,7 +15,7 @@ const MissionGuideSection = ({
   className,
   todayTh,
 }: MissionGuideSectionProps) => {
-  const { selectedMissionTh } = useMissionStore();
+  const { selectedMissionTh, selectedMissionId } = useMissionStore();
   const {
     submittedMissions,
     remainingMissions,
@@ -43,11 +43,10 @@ const MissionGuideSection = ({
     );
     if (absentMission) return absentMission.id;
 
-    return undefined;
+    return selectedMissionId;
   };
 
   const missionId = getMissionId();
-
   // 선택된 미션의 상세 정보 가져오기
   const { data: missionData } = useChallengeMissionAttendanceInfoQuery({
     challengeId: currentChallenge?.id ?? 0,
