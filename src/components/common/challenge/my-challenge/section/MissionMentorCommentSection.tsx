@@ -21,10 +21,10 @@ const MissionMentorCommentSection = ({ missionId }: Props) => {
   const { selectedMissionTh } = useMissionStore();
   const scheduleIndex =
     selectedMissionTh === 100 ? schedules.length - 1 : selectedMissionTh;
-  const comment = schedules[scheduleIndex]?.attendanceInfo.comments;
-  const mentorFeedback = JSON.parse(
-    feedbackData?.attendanceInfo?.feedback ?? '{}',
-  );
+  const comment = schedules[scheduleIndex]?.attendanceInfo?.comments;
+  const mentorFeedback = feedbackData?.attendanceInfo?.feedback
+    ? JSON.parse(feedbackData.attendanceInfo.feedback)
+    : null;
   const isNoFeedbackOrComment = !comment && !mentorFeedback;
 
   if (isNoFeedbackOrComment) return null;
@@ -51,7 +51,7 @@ const MissionMentorCommentSection = ({ missionId }: Props) => {
       )}
 
       {/* 멘토 피드백 섹션: 멘토가 남기는 피드백 */}
-      {mentorFeedback?.root && (
+      {mentorFeedback && mentorFeedback.root && (
         <div>
           <div className="mb-2 rounded-xs bg-primary-5 p-3">
             <span className="text-xsmall16 font-semibold text-primary">

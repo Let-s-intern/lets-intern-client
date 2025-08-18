@@ -1297,7 +1297,7 @@ export const dailyMissionSchema = z
         endDate: z.string().nullable(),
         missionTag: z.string().nullable(),
         description: z.string().nullable(),
-        feedbackStatus: AttendanceFeedbackStatusEnum.nullable(),
+        feedbackStatus: AttendanceFeedbackStatusEnum.nullable().optional(),
       })
       .nullable(),
   })
@@ -1363,7 +1363,7 @@ export const myDailyMission = z
         guide: z.string().nullable(),
         templateLink: z.string().nullable(),
         vodLink: z.string().nullable(),
-        feedbackStatus: AttendanceFeedbackStatusEnum.nullable(),
+        feedbackStatus: AttendanceFeedbackStatusEnum.nullable().optional(),
       })
       .nullable(),
     attendanceInfo: z
