@@ -27,7 +27,9 @@ const DailyMissionSection = ({
       ? '안녕하세요, 커리어의 첫걸음을 함께하는 렛츠커리어입니다!\n렛츠커리어의 챌린지 프로그램을 믿고 따라와주셔서 감사드리며, 1만원을 100% 지급해드리는 후기 이벤트를 안내드립니다!'
       : dailyMission?.description;
 
-  const isSubmitted = schedules[0]?.attendanceInfo?.submitted ?? false;
+  const isSubmitted =
+    schedules.find((schedule) => schedule.missionInfo.id === dailyMission?.id)
+      ?.attendanceInfo?.submitted ?? false;
 
   return (
     <section
@@ -36,7 +38,7 @@ const DailyMissionSection = ({
         isSubmitted ? 'border-neutral-80' : 'border-primary-80',
       )}
     >
-      <div className="flex items-end items-center gap-2 border-b p-4">
+      <div className="flex items-center gap-2 border-b p-4">
         <h2 className="flex flex-row font-semibold text-[#4A495C]">
           <span className="relative inline-block font-semibold text-neutral-10 after:mx-[6px] after:h-[18px] after:border-r after:border-neutral-60 after:content-['']">
             {missionTh}

@@ -13,7 +13,6 @@ const MissionEndSection = () => {
             🎉 모든 미션이 완료되었습니다 🎉
           </h2>
         </div>
-        <div></div>
         <p className="mb-4 line-clamp-[9] flex-1 overflow-hidden whitespace-pre-line p-4 text-xsmall14 font-medium text-neutral-0 md:mb-0 md:text-xsmall16">
           챌린지 끝까지 완주하신 것을 축하드려요! <br />
           렛츠커리어와 함께한 여정이 여러분의 성장에 도움이 되었길 바랍니다.{' '}
