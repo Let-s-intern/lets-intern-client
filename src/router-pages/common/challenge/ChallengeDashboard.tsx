@@ -59,7 +59,7 @@ const ChallengeDashboard = () => {
     dailyMission?.th ??
     schedules.reduce((th, schedule) => {
       return Math.max(th, schedule.missionInfo.th ?? 0);
-    }, 0);
+    }, 0) + 1;
 
   const { data: notices = [] } = useQuery({
     enabled: Boolean(currentChallenge?.id),

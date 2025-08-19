@@ -1,8 +1,12 @@
+import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { DailyMission, Schedule } from '@/schema';
+import { useMissionStore } from '@/store/useMissionStore';
 import { BONUS_MISSION_TH } from '@/utils/constants';
+import { isAxiosError } from 'axios';
 import clsx from 'clsx';
-import { Link, useParams } from 'react-router-dom';
+import { useCallback } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 const DailyMissionSection = ({
   dailyMission,
@@ -13,6 +17,9 @@ const DailyMissionSection = ({
 }) => {
   const applicationId = useParams().applicationId;
   const { currentChallenge } = useCurrentChallenge();
+
+  const params = useParams();
+  const navigate = useNavigate();
 
   const missionTh =
     dailyMission?.th === BONUS_MISSION_TH
@@ -30,15 +37,43 @@ const DailyMissionSection = ({
   const targetSchedule = schedules.find(
     (schedule) => schedule.missionInfo.id === dailyMission?.id,
   );
+  const mission = targetSchedule?.missionInfo;
 
   const isSubmitted = targetSchedule?.attendanceInfo?.submitted ?? false;
-
   const isSubmitEdit = targetSchedule
     ? !(
         targetSchedule.attendanceInfo?.result === 'PASS' &&
         targetSchedule.attendanceInfo?.status === 'PRESENT'
       )
     : false;
+
+  const { error } = useChallengeMissionAttendanceInfoQuery({
+    challengeId: params.programId,
+    missionId: mission?.id,
+  });
+
+  const { setSelectedMission } = useMissionStore();
+
+  const isValid = useCallback(() => {
+    if (isAxiosError(error)) {
+      const errorCode = error?.response?.data.status;
+      if (errorCode === 400) {
+        alert('0회차 미션을 먼저 완료해주세요.');
+      }
+      return false;
+    }
+    return true;
+  }, [error]);
+
+  const handleMissionClick = () => {
+    if (!isSubmitEdit) return;
+    if (targetSchedule?.missionInfo.th === null) return;
+    if (!mission?.id || !mission?.th) return;
+    if (!isValid()) return;
+
+    setSelectedMission(mission.id, mission.th);
+    navigate(`/challenge/${params.applicationId}/${params.programId}/me`);
+  };
 
   return (
     <section
@@ -69,9 +104,7 @@ const DailyMissionSection = ({
             ? `/challenge/${applicationId}/${currentChallenge?.id}/me?scroll_to=daily-mission`
             : '#'
         }
-        onClick={(e) => {
-          if (!isSubmitEdit) e.preventDefault();
-        }}
+        onClick={handleMissionClick}
         className={clsx(
           'm-4 rounded-xs py-3 text-center font-semibold',
           isSubmitEdit
