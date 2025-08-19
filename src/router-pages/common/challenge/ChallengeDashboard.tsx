@@ -13,7 +13,7 @@ import MissionEndSection from '@components/common/challenge/MissionEndSection';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 
-const MissionDetailSection = ({ todayTh }: { todayTh: number }) => {
+const MissionDetailSection = () => {
   const params = useParams();
   const { schedules, dailyMission, isLoading } = useCurrentChallenge();
 
@@ -118,7 +118,7 @@ const ChallengeDashboard = () => {
       <div className="flex flex-col gap-5">
         <div className="mt-4 flex gap-3">
           {/* 챌린지 미션 상세 */}
-          <MissionDetailSection todayTh={todayTh} />
+          <MissionDetailSection />
 
           {/* 공지사항, 미션점수 */}
           <div className="flex w-[22rem] flex-col gap-2.5">
