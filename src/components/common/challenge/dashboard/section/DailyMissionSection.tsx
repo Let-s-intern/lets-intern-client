@@ -27,9 +27,18 @@ const DailyMissionSection = ({
       ? '안녕하세요, 커리어의 첫걸음을 함께하는 렛츠커리어입니다!\n렛츠커리어의 챌린지 프로그램을 믿고 따라와주셔서 감사드리며, 1만원을 100% 지급해드리는 후기 이벤트를 안내드립니다!'
       : dailyMission?.description;
 
-  const isSubmitted =
-    schedules.find((schedule) => schedule.missionInfo.id === dailyMission?.id)
-      ?.attendanceInfo?.submitted ?? false;
+  const targetSchedule = schedules.find(
+    (schedule) => schedule.missionInfo.id === dailyMission?.id,
+  );
+
+  const isSubmitted = targetSchedule?.attendanceInfo?.submitted ?? false;
+
+  const isSubmitEdit = targetSchedule
+    ? !(
+        targetSchedule.attendanceInfo?.result === 'PASS' &&
+        targetSchedule.attendanceInfo?.status === 'PRESENT'
+      )
+    : false;
 
   return (
     <section
@@ -55,8 +64,20 @@ const DailyMissionSection = ({
         </p>
       </div>
       <Link
-        to={`/challenge/${applicationId}/${currentChallenge?.id}/me?scroll_to=daily-mission`}
-        className="m-4 rounded-xs bg-primary py-3 text-center font-semibold text-white"
+        to={
+          isSubmitEdit
+            ? `/challenge/${applicationId}/${currentChallenge?.id}/me?scroll_to=daily-mission`
+            : '#'
+        }
+        onClick={(e) => {
+          if (!isSubmitEdit) e.preventDefault();
+        }}
+        className={clsx(
+          'm-4 rounded-xs py-3 text-center font-semibold',
+          isSubmitEdit
+            ? 'bg-primary text-white'
+            : 'cursor-not-allowed bg-neutral-70 text-white',
+        )}
       >
         {isSubmitted ? '제출 수정하기' : '미션 수행하기'}
       </Link>
