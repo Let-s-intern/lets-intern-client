@@ -14,7 +14,7 @@ export const useReadItems = (storageKey: string) => {
         setReadItems(new Set(parsedItems));
       }
     } catch (error) {
-      throw error;
+      console.error('Failed to load', error);
     }
   }, [storageKey]);
 
@@ -29,7 +29,7 @@ export const useReadItems = (storageKey: string) => {
             JSON.stringify(Array.from(newReadItems)),
           );
         } catch (error) {
-          throw error;
+          console.error('Failed to save', error);
         }
         return newReadItems;
       });
