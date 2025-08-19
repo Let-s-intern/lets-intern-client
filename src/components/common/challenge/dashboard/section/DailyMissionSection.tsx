@@ -78,7 +78,7 @@ const DailyMissionSection = ({
   return (
     <section
       className={clsx(
-        'flex flex-1 flex-col rounded-xs border md:h-[360px] md:min-h-[180px] md:w-[488px]',
+        'flex flex-col rounded-xs border md:h-[360px] md:min-h-[180px] md:w-[488px]',
         isSubmitted ? 'border-neutral-80' : 'border-primary-80',
       )}
     >
