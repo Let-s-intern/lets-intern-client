@@ -94,7 +94,7 @@ const DailyMissionSection = ({
         </span>
       </div>
       <div className="flex-1 overflow-hidden p-4">
-        <p className="mb-4 line-clamp-[9] whitespace-pre-line text-xsmall14 text-neutral-0 md:mb-0 md:text-xsmall16">
+        <p className="mb-4 line-clamp-[8] h-48 whitespace-pre-line text-xsmall14 text-neutral-0 md:mb-0 md:text-xsmall16">
           {missionDescription}
         </p>
       </div>
