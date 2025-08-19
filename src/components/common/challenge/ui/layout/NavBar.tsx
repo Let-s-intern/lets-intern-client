@@ -5,23 +5,24 @@ const NavBar = () => {
   const params = useParams();
   const location = useLocation();
   const applicationId = params.applicationId;
-  const activeStatus = /^\/challenge\/(\d+)\/others/.test(location.pathname)
-    ? 'OTHERS_DASHBOARD'
-    : /^\/challenge\/(\d+)\/me/.test(location.pathname)
-      ? 'MY_DASHBOARD'
-      : /^\/challenge\/(\d+)$/.test(location.pathname) && 'DASHBOARD';
+
+  const activeStatus = location.pathname.endsWith('me')
+    ? 'MY_DASHBOARD'
+    : location.pathname.endsWith('guide')
+      ? 'GUIDE'
+      : 'DASHBOARD';
 
   return (
     <>
       <nav className="fixed">
-        <ul className="flex w-40 flex-col gap-1">
+        <ul className="flex w-[220px] flex-col gap-1">
           <li>
             <Link
               to={`/challenge/${applicationId}/${params.programId}`}
-              className={clsx('block px-3 py-2', {
-                'rounded bg-[#E6E4FD] font-semibold text-primary':
+              className={clsx('block px-3 py-[10px]', {
+                'rounded-xxs bg-primary-5 font-semibold text-primary':
                   activeStatus === 'DASHBOARD',
-                'text-[#4A495C]': activeStatus === 'DASHBOARD',
+                'text-neutral-40': activeStatus !== 'DASHBOARD',
               })}
             >
               대시보드
@@ -30,10 +31,10 @@ const NavBar = () => {
           <li>
             <Link
               to={`/challenge/${applicationId}/${params.programId}/me`}
-              className={clsx('block px-3 py-2', {
-                'rounded bg-[#E6E4FD] font-medium text-primary':
+              className={clsx('block px-3 py-[10px]', {
+                'rounded-xxs bg-primary-5 font-semibold text-primary':
                   activeStatus === 'MY_DASHBOARD',
-                'text-[#4A495C]': activeStatus === 'MY_DASHBOARD',
+                'text-neutral-40': activeStatus !== 'MY_DASHBOARD',
               })}
             >
               나의 미션
@@ -41,7 +42,7 @@ const NavBar = () => {
           </li>
         </ul>
       </nav>
-      <div className="w-[10rem]"></div>
+      <div className="md:w-[220px]"></div>
     </>
   );
 };
