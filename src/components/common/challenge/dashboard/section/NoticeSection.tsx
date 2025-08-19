@@ -1,5 +1,5 @@
+import { useReadNotices } from '@/hooks/useReadItems';
 import clsx from 'clsx';
-import dayjs from 'dayjs';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChallengeNotice } from '../../../../../schema';
@@ -10,6 +10,7 @@ interface INoticeSectionProps {
 
 const NoticeSection = ({ notices }: INoticeSectionProps) => {
   const [currentPageNum, setCurrentPageNum] = useState(1);
+  const { isNewItem, markAsRead } = useReadNotices();
 
   const currentNoticeList = notices.slice(
     (currentPageNum - 1) * 4,
@@ -17,14 +18,16 @@ const NoticeSection = ({ notices }: INoticeSectionProps) => {
   );
 
   const totalPageCount = Math.ceil(notices.length / 4);
-  const NEW_BADGE_DURATION_DAYS = 3;
 
-  const isNewNotice = (createDate: dayjs.Dayjs | Date | string | null) => {
-    if (!createDate) return false;
-    return dayjs().diff(dayjs(createDate), 'day') < NEW_BADGE_DURATION_DAYS;
+  const hasNewNotice = notices.some((notice) =>
+    isNewItem(notice.createDate, notice.id),
+  );
+
+  const handleNoticeClick = (notice: ChallengeNotice) => {
+    if (isNewItem(notice.createDate, notice.id)) {
+      markAsRead(notice.id);
+    }
   };
-
-  const hasNewNotice = notices.some((notice) => isNewNotice(notice.createDate));
 
   return (
     <section className="flex w-full flex-col gap-4 md:h-[188px]">
@@ -50,9 +53,10 @@ const NoticeSection = ({ notices }: INoticeSectionProps) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-[#333333] hover:underline"
+                onClick={() => handleNoticeClick(notice)}
               >
                 <span className="truncate">{notice.title}</span>
-                {isNewNotice(notice.createDate) && (
+                {isNewItem(notice.createDate, notice.id) && (
                   <img
                     src="/icons/badge_new.svg"
                     alt="new"

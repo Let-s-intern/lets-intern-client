@@ -1,8 +1,12 @@
+import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { DailyMission, Schedule } from '@/schema';
+import { useMissionStore } from '@/store/useMissionStore';
 import { BONUS_MISSION_TH } from '@/utils/constants';
+import { isAxiosError } from 'axios';
 import clsx from 'clsx';
-import { Link, useParams } from 'react-router-dom';
+import { useCallback } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 const DailyMissionSection = ({
   dailyMission,
@@ -13,6 +17,9 @@ const DailyMissionSection = ({
 }) => {
   const applicationId = useParams().applicationId;
   const { currentChallenge } = useCurrentChallenge();
+
+  const params = useParams();
+  const navigate = useNavigate();
 
   const missionTh =
     dailyMission?.th === BONUS_MISSION_TH
@@ -27,14 +34,51 @@ const DailyMissionSection = ({
       ? '안녕하세요, 커리어의 첫걸음을 함께하는 렛츠커리어입니다!\n렛츠커리어의 챌린지 프로그램을 믿고 따라와주셔서 감사드리며, 1만원을 100% 지급해드리는 후기 이벤트를 안내드립니다!'
       : dailyMission?.description;
 
-  const isSubmitted =
-    schedules.find((schedule) => schedule.missionInfo.id === dailyMission?.id)
-      ?.attendanceInfo?.submitted ?? false;
+  const targetSchedule = schedules.find(
+    (schedule) => schedule.missionInfo.id === dailyMission?.id,
+  );
+  const mission = targetSchedule?.missionInfo;
+
+  const isSubmitted = targetSchedule?.attendanceInfo?.submitted ?? false;
+  const isSubmitEdit = targetSchedule
+    ? !(
+        targetSchedule.attendanceInfo?.result === 'PASS' &&
+        targetSchedule.attendanceInfo?.status === 'PRESENT'
+      )
+    : false;
+
+  const { error } = useChallengeMissionAttendanceInfoQuery({
+    challengeId: params.programId,
+    missionId: mission?.id,
+  });
+
+  const { setSelectedMission } = useMissionStore();
+
+  const isValid = useCallback(() => {
+    if (isAxiosError(error)) {
+      const errorCode = error?.response?.data.status;
+      if (errorCode === 400) {
+        alert('0회차 미션을 먼저 완료해주세요.');
+      }
+      return false;
+    }
+    return true;
+  }, [error]);
+
+  const handleMissionClick = () => {
+    if (!isSubmitEdit) return;
+    if (targetSchedule?.missionInfo.th === null) return;
+    if (!mission?.id || !mission?.th) return;
+    if (!isValid()) return;
+
+    setSelectedMission(mission.id, mission.th);
+    navigate(`/challenge/${params.applicationId}/${params.programId}/me`);
+  };
 
   return (
     <section
       className={clsx(
-        'flex flex-1 flex-col rounded-xs border md:h-[360px] md:min-h-[180px] md:w-[488px]',
+        'flex flex-col rounded-xs border md:h-[360px] md:min-h-[180px] md:w-[488px]',
         isSubmitted ? 'border-neutral-80' : 'border-primary-80',
       )}
     >
@@ -55,8 +99,18 @@ const DailyMissionSection = ({
         </p>
       </div>
       <Link
-        to={`/challenge/${applicationId}/${currentChallenge?.id}/me?scroll_to=daily-mission`}
-        className="m-4 rounded-xs bg-primary py-3 text-center font-semibold text-white"
+        to={
+          isSubmitEdit
+            ? `/challenge/${applicationId}/${currentChallenge?.id}/me?scroll_to=daily-mission`
+            : '#'
+        }
+        onClick={handleMissionClick}
+        className={clsx(
+          'm-4 rounded-xs py-3 text-center font-semibold',
+          isSubmitEdit
+            ? 'bg-primary text-white'
+            : 'cursor-not-allowed bg-neutral-70 text-white',
+        )}
       >
         {isSubmitted ? '제출 수정하기' : '미션 수행하기'}
       </Link>

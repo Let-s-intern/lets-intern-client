@@ -13,7 +13,7 @@ import MissionEndSection from '@components/common/challenge/MissionEndSection';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 
-const MissionDetailSection = ({ todayTh }: { todayTh: number }) => {
+const MissionDetailSection = () => {
   const params = useParams();
   const { schedules, dailyMission, isLoading } = useCurrentChallenge();
 
@@ -59,7 +59,7 @@ const ChallengeDashboard = () => {
     dailyMission?.th ??
     schedules.reduce((th, schedule) => {
       return Math.max(th, schedule.missionInfo.th ?? 0);
-    }, 0);
+    }, 0) + 1;
 
   const { data: notices = [] } = useQuery({
     enabled: Boolean(currentChallenge?.id),
@@ -113,12 +113,12 @@ const ChallengeDashboard = () => {
   return (
     <main className="mr-[-1rem] pl-6">
       <header>
-        <h1 className="text-2xl font-semibold">{user?.name}님의 대시보드</h1>
+        <h1 className="text-[22px] font-semibold">{user?.name}님의 대시보드</h1>
       </header>
       <div className="flex flex-col gap-5">
-        <div className="mt-4 flex gap-3">
+        <div className="mt-6 flex gap-3">
           {/* 챌린지 미션 상세 */}
-          <MissionDetailSection todayTh={todayTh} />
+          <MissionDetailSection />
 
           {/* 공지사항, 미션점수 */}
           <div className="flex w-[22rem] flex-col gap-2.5">
@@ -155,7 +155,7 @@ const ChallengeDashboard = () => {
             {schedules && (
               // myChallenge 에 있는 미션캘린더 가져옴
               <MissionCalendar
-                className="mt-4 gap-2"
+                className="mt-3 gap-2"
                 schedules={schedules}
                 todayTh={todayTh}
                 isDone={isChallengeSubmitDone}

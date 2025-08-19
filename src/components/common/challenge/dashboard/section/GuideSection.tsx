@@ -1,5 +1,5 @@
+import { useReadGuides } from '@/hooks/useReadItems';
 import clsx from 'clsx';
-import dayjs from 'dayjs';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChallengeGuide } from '../../../../../schema';
@@ -10,18 +10,19 @@ interface GuideSection {
 
 const GuideSection = ({ guides }: GuideSection) => {
   const [currentPageNum, setCurrentPageNum] = useState(1);
+  const { isNewItem, markAsRead } = useReadGuides();
 
   const currentGuideList = guides.slice(
     (currentPageNum - 1) * 3,
     currentPageNum * 3,
   );
+
   const totalPageCount = Math.ceil(guides.length / 3);
 
-  const NEW_BADGE_DURATION_DAYS = 3;
-
-  const isNewGuide = (createDate: dayjs.Dayjs | Date | string | null) => {
-    if (!createDate) return false;
-    return dayjs().diff(dayjs(createDate), 'day') < NEW_BADGE_DURATION_DAYS;
+  const handleGuideClick = (guide: ChallengeGuide) => {
+    if (isNewItem(guide.createDate, guide.id)) {
+      markAsRead(guide.id);
+    }
   };
 
   return (
@@ -43,9 +44,10 @@ const GuideSection = ({ guides }: GuideSection) => {
                 className="flex items-center gap-2 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-[#333333] hover:underline"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => handleGuideClick(guide)}
               >
                 <span className="truncate">{guide.title}</span>
-                {isNewGuide(guide.createDate) && (
+                {isNewItem(guide.createDate, guide.id) && (
                   <img
                     src="/icons/badge_new.svg"
                     alt="new"
