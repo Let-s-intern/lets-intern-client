@@ -64,7 +64,7 @@ const MissionSubmitButton = ({
     <div className={clsx('mt-10', className)}>
       <button
         className={clsx(
-          'w-full cursor-pointer rounded-xs p-4 text-xsmall16 font-medium transition-colors',
+          'w-full cursor-pointer rounded-xs p-4 text-xsmall16 font-medium transition-colors disabled:cursor-not-allowed',
           buttonColor,
           'hover:opacity-90',
         )}

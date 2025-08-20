@@ -26,7 +26,6 @@ const MissionSubmitSection = ({
   const { selectedMissionTh, selectedMissionId } = useMissionStore();
   // 현재 시간이 startDate 이상인지 확인하는 함수
   const isMissionStarted = () => {
-    console.log('startDate', startDate);
     if (!startDate) return false;
     const missionStartDate = dayjs(startDate);
     const now = dayjs();
@@ -35,13 +34,7 @@ const MissionSubmitSection = ({
   const renderSection = () => {
     // OT 미션
     if (selectedMissionTh === 0) {
-      return (
-        <MissionSubmitZeroSection
-          selectedMissionTh={selectedMissionTh}
-          missionId={selectedMissionId}
-          isSubmitDone={attendanceInfo?.submitted ?? false}
-        />
-      );
+      return <MissionSubmitZeroSection missionId={selectedMissionId} />;
     }
 
     // 보너스 미션
