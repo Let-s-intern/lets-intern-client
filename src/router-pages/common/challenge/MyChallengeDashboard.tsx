@@ -61,9 +61,7 @@ const MyChallengeDashboard = () => {
       />
 
       <div className="mt-10">
-        <div>
-          <MissionGuideSection todayTh={todayTh} />
-        </div>
+        <MissionGuideSection todayTh={todayTh} />
         <div className="mt-6">
           <MissionSubmitSection
             attendanceInfo={
