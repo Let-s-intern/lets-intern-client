@@ -2,8 +2,8 @@ import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import { useMissionStore } from '@/store/useMissionStore';
 import axios from '@/utils/axios';
+import MissionCalendar from '@components/common/challenge/my-challenge/mission-calendar/MissionCalendar';
 import MissionStatusMessage from '@components/common/challenge/my-challenge/mission/MissionStatusMessage';
-import MissionCalendarSection from '@components/common/challenge/my-challenge/section/MissionCalendarSection';
 import MissionGuideSection from '@components/common/challenge/my-challenge/section/MissionGuideSection';
 import MissionMentorCommentSection from '@components/common/challenge/my-challenge/section/MissionMentorCommentSection';
 import MissionSubmitSection from '@components/common/challenge/my-challenge/section/MissionSubmitSection';
@@ -41,14 +41,12 @@ const MyChallengeDashboard = () => {
 
   const programEndDate = programData?.data?.endDate;
 
-  const [todayTh, setTodayTh] = useState(() => {
-    const initialValue =
-      myDailyMission?.dailyMission?.th ||
-      schedules.reduce((th, schedule) => {
-        return Math.max(th, schedule.missionInfo.th || 0);
-      }, 0) + 1;
-    return initialValue;
-  });
+  const todayTh =
+    myDailyMission?.dailyMission?.th ??
+    schedules.reduce((th, schedule) => {
+      return Math.max(th, schedule.missionInfo.th ?? 0);
+    }, 0) + 1;
+
   const isChallengeDone = getIsChallengeDone(programEndDate);
   const isChallengeSubmitDone = programEndDate
     ? getIsChallengeSubmitDone(programEndDate)
@@ -68,7 +66,8 @@ const MyChallengeDashboard = () => {
       <div className="mb-4 mt-6">
         <MissionStatusMessage todayTh={todayTh} />
       </div>
-      <MissionCalendarSection
+      <MissionCalendar
+        className="mt-3 gap-2"
         schedules={schedules}
         todayTh={todayTh}
         isDone={isChallengeDone}
