@@ -130,13 +130,13 @@ const MissionSubmitBonusSection = ({
   };
 
   const handleCancelEdit = () => {
-    const isLinkChanged =
+    const isChanged =
       attendanceInfo?.link !== linkValue ||
       attendanceInfo?.accountType !== selectedBank ||
       attendanceInfo?.accountNum ||
       accountNumber;
-    // 입력값이 이전 링크와 다를 때만 팝업 띄우기
-    if (isLinkChanged) {
+    // 입력값이 이전 링크와 다르면 모달 띄우기
+    if (isChanged) {
       setIsLinkChangeModalOpen(true);
     } else {
       setIsEditing(false);
