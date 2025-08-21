@@ -1,5 +1,6 @@
 import { usePatchAttendance, useSubmitMission } from '@/api/attendance';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import dayjs from '@/lib/dayjs';
 import { AttendanceResult, AttendanceStatus } from '@/schema';
 import { useMissionStore } from '@/store/useMissionStore';
 import { clsx } from 'clsx';
@@ -39,7 +40,11 @@ const MissionSubmitRegularSection = ({
   const params = useParams();
 
   const { selectedMissionId } = useMissionStore();
-  const { schedules } = useCurrentChallenge();
+  const { schedules, currentChallenge } = useCurrentChallenge();
+
+  // 챌린지 종료 + 2일
+  const isSubmitPeriodEnded =
+    dayjs(currentChallenge?.endDate).add(2, 'day').isBefore(dayjs()) ?? true;
 
   const isLastMissionSubmit =
     schedules[schedules.length - 1].missionInfo.id === selectedMissionId;
@@ -188,14 +193,16 @@ const MissionSubmitRegularSection = ({
           />
         </section>
 
-        <MissionSubmitButton
-          isSubmitted={isSubmitted}
-          hasContent={canSubmit}
-          onButtonClick={handleSubmit}
-          isEditing={isEditing}
-          onCancelEdit={handleCancelEdit}
-          onSaveEdit={handleSaveEdit}
-        />
+        {!isSubmitPeriodEnded && (
+          <MissionSubmitButton
+            isSubmitted={isSubmitted}
+            hasContent={canSubmit}
+            onButtonClick={handleSubmit}
+            isEditing={isEditing}
+            onCancelEdit={handleCancelEdit}
+            onSaveEdit={handleSaveEdit}
+          />
+        )}
 
         <MissionToast
           isVisible={showToast}

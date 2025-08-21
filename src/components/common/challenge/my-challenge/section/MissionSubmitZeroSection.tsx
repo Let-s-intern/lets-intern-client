@@ -1,5 +1,7 @@
 import { useSubmitMission } from '@/api/attendance';
 import { useGetChallengeGoal, useSubmitChallengeGoal } from '@/api/challenge';
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import dayjs from '@/lib/dayjs';
 import { clsx } from 'clsx';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -18,7 +20,12 @@ const MissionSubmitZeroSection = ({
   const params = useParams<{ programId: string }>();
   const programId = params.programId;
 
+  const { schedules, currentChallenge } = useCurrentChallenge();
   const { data: goalData, isLoading } = useGetChallengeGoal(programId);
+
+  // 챌린지 종료 + 2일
+  const isSubmitPeriodEnded =
+    dayjs(currentChallenge?.endDate).add(2, 'day').isBefore(dayjs()) ?? true;
 
   const submitted = !!(goalData?.goal && goalData.goal.length > 0);
 
@@ -99,12 +106,14 @@ const MissionSubmitZeroSection = ({
         disabled={isSubmitted}
       />
 
-      <MissionSubmitButton
-        isSubmitted={isSubmitted}
-        hasContent={textareaValue.trim().length > 0}
-        onButtonClick={handleSubmit}
-        disabled={isSubmitted}
-      />
+      {!isSubmitPeriodEnded && (
+        <MissionSubmitButton
+          isSubmitted={isSubmitted}
+          hasContent={textareaValue.trim().length > 0}
+          onButtonClick={handleSubmit}
+          disabled={isSubmitted}
+        />
+      )}
 
       <MissionToast isVisible={showToast} onClose={() => setShowToast(false)} />
     </section>
