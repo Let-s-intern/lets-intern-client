@@ -54,43 +54,24 @@ const MissionSubmitRegularSection = ({
   const [linkValue, setLinkValue] = useState(attendanceInfo?.link || '');
   const [isLinkVerified, setIsLinkVerified] = useState(!!attendanceInfo?.link);
   const [isEditing, setIsEditing] = useState(false);
-  const [currentAttendanceId, setCurrentAttendanceId] = useState(
-    attendanceInfo?.id,
-  );
   // 링크 변경 확인 모달 오픈 상태
   const [isLinkChangeModalOpen, setIsLinkChangeModalOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-
-  // 원본 데이터 저장 (취소 시 복구용)
-  const [originalTextareaValue, setOriginalTextareaValue] = useState(
-    attendanceInfo?.review || '',
-  );
-  const [originalLinkValue, setOriginalLinkValue] = useState(
-    attendanceInfo?.link || '',
-  );
 
   const submitMission = useSubmitMission();
   const patchAttendance = usePatchAttendance();
 
   // attendanceInfo가 변경될 때마다 상태 업데이트 (다른 미션인 경우에만)
   useEffect(() => {
-    // 실제로 다른 미션인지 확인
-    if (attendanceInfo?.id !== currentAttendanceId) {
-      const reviewValue = attendanceInfo?.review || '';
-      const linkValue = attendanceInfo?.link || '';
+    const reviewValue = attendanceInfo?.review || '';
+    const linkValue = attendanceInfo?.link || '';
 
-      setTextareaValue(reviewValue);
-      setIsSubmitted(attendanceInfo?.submitted === true);
-      setLinkValue(linkValue);
-      setIsLinkVerified(!!linkValue);
-      setIsEditing(false); // 새 미션 선택 시 수정 모드 해제
-
-      // 원본 데이터도 업데이트
-      setOriginalTextareaValue(reviewValue);
-      setOriginalLinkValue(linkValue);
-      setCurrentAttendanceId(attendanceInfo?.id);
-    }
-  }, [attendanceInfo, missionId, currentAttendanceId]);
+    setTextareaValue(reviewValue);
+    setIsSubmitted(attendanceInfo?.submitted === true);
+    setLinkValue(linkValue);
+    setIsLinkVerified(!!linkValue);
+    setIsEditing(false); // 새 미션 선택 시 수정 모드 해제
+  }, [attendanceInfo]);
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTextareaValue(e.target.value);
@@ -121,13 +102,10 @@ const MissionSubmitRegularSection = ({
         review: textareaValue,
       });
       setIsSubmitted(true);
-      setShowToast(true);
-      // 원본 데이터 업데이트
-      setOriginalTextareaValue(textareaValue);
-      setOriginalLinkValue(linkValue);
       // 미션 데이터 새로고침
       onRefreshMissionData?.();
       onSubmitLastMission?.();
+      if (isLastMissionSubmit && !attendanceInfo?.submitted) setModalOpen(true);
     } catch {
       // 에러 처리 로직 추가 가능
     }
@@ -158,9 +136,6 @@ const MissionSubmitRegularSection = ({
       });
       setIsEditing(false);
       setShowToast(true);
-      // 원본 데이터 업데이트
-      setOriginalTextareaValue(textareaValue);
-      setOriginalLinkValue(linkValue);
       // 미션 데이터 새로고침
       onRefreshMissionData?.();
     } catch {
