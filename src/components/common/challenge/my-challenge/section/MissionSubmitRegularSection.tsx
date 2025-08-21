@@ -1,10 +1,13 @@
 import { usePatchAttendance, useSubmitMission } from '@/api/attendance';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import dayjs from '@/lib/dayjs';
+import { AttendanceResult, AttendanceStatus } from '@/schema';
 import { useMissionStore } from '@/store/useMissionStore';
 import { clsx } from 'clsx';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import DashboardCreateReviewModal from '../../dashboard/modal/DashboardCreateReviewModal';
+import LinkChangeConfirmationModal from '../../LinkChangeConfirmationModal';
 import MissionSubmitButton from '../mission/MissionSubmitButton';
 import MissionToast from '../mission/MissionToast';
 import LinkInputSection from './LinkInputSection';
@@ -15,11 +18,11 @@ interface MissionSubmitRegularSectionProps {
   missionId?: number;
   attendanceInfo?: {
     link: string | null;
-    status: 'PRESENT' | 'UPDATED' | 'LATE' | 'ABSENT' | null;
+    status: AttendanceStatus | null;
     id: number | null;
     submitted: boolean | null;
     comments: string | null;
-    result: 'WAITING' | 'PASS' | 'WRONG' | null;
+    result: AttendanceResult | null;
     review?: string | null;
   } | null;
   onRefreshMissionData?: () => void; // 미션 데이터 새로고침 callback
@@ -37,7 +40,11 @@ const MissionSubmitRegularSection = ({
   const params = useParams();
 
   const { selectedMissionId } = useMissionStore();
-  const { schedules } = useCurrentChallenge();
+  const { schedules, currentChallenge } = useCurrentChallenge();
+
+  // 챌린지 종료 + 2일
+  const isSubmitPeriodEnded =
+    dayjs(currentChallenge?.endDate).add(2, 'day').isBefore(dayjs()) ?? true;
 
   const isLastMissionSubmit =
     schedules[schedules.length - 1].missionInfo.id === selectedMissionId;
@@ -52,41 +59,24 @@ const MissionSubmitRegularSection = ({
   const [linkValue, setLinkValue] = useState(attendanceInfo?.link || '');
   const [isLinkVerified, setIsLinkVerified] = useState(!!attendanceInfo?.link);
   const [isEditing, setIsEditing] = useState(false);
-  const [currentAttendanceId, setCurrentAttendanceId] = useState(
-    attendanceInfo?.id,
-  );
+  // 링크 변경 확인 모달 오픈 상태
+  const [isLinkChangeModalOpen, setIsLinkChangeModalOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-
-  // 원본 데이터 저장 (취소 시 복구용)
-  const [originalTextareaValue, setOriginalTextareaValue] = useState(
-    attendanceInfo?.review || '',
-  );
-  const [originalLinkValue, setOriginalLinkValue] = useState(
-    attendanceInfo?.link || '',
-  );
 
   const submitMission = useSubmitMission();
   const patchAttendance = usePatchAttendance();
 
   // attendanceInfo가 변경될 때마다 상태 업데이트 (다른 미션인 경우에만)
   useEffect(() => {
-    // 실제로 다른 미션인지 확인
-    if (attendanceInfo?.id !== currentAttendanceId) {
-      const reviewValue = attendanceInfo?.review || '';
-      const linkValue = attendanceInfo?.link || '';
+    const reviewValue = attendanceInfo?.review || '';
+    const linkValue = attendanceInfo?.link || '';
 
-      setTextareaValue(reviewValue);
-      setIsSubmitted(attendanceInfo?.submitted === true);
-      setLinkValue(linkValue);
-      setIsLinkVerified(!!linkValue);
-      setIsEditing(false); // 새 미션 선택 시 수정 모드 해제
-
-      // 원본 데이터도 업데이트
-      setOriginalTextareaValue(reviewValue);
-      setOriginalLinkValue(linkValue);
-      setCurrentAttendanceId(attendanceInfo?.id);
-    }
-  }, [attendanceInfo, missionId, currentAttendanceId]);
+    setTextareaValue(reviewValue);
+    setIsSubmitted(attendanceInfo?.submitted === true);
+    setLinkValue(linkValue);
+    setIsLinkVerified(!!linkValue);
+    setIsEditing(false); // 새 미션 선택 시 수정 모드 해제
+  }, [attendanceInfo]);
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTextareaValue(e.target.value);
@@ -117,24 +107,25 @@ const MissionSubmitRegularSection = ({
         review: textareaValue,
       });
       setIsSubmitted(true);
-      setShowToast(true);
-      // 원본 데이터 업데이트
-      setOriginalTextareaValue(textareaValue);
-      setOriginalLinkValue(linkValue);
       // 미션 데이터 새로고침
       onRefreshMissionData?.();
       onSubmitLastMission?.();
+      if (isLastMissionSubmit && !attendanceInfo?.submitted) setModalOpen(true);
     } catch {
       // 에러 처리 로직 추가 가능
     }
   };
 
   const handleCancelEdit = () => {
-    // 원본 데이터로 복구
-    setTextareaValue(originalTextareaValue);
-    setLinkValue(originalLinkValue);
-    setIsLinkVerified(!!originalLinkValue);
-    setIsEditing(false);
+    const isChanged =
+      attendanceInfo?.link !== linkValue ||
+      attendanceInfo.review !== textareaValue;
+    // 입력값이 이전 링크와 다르면 모달 띄우기
+    if (isChanged) {
+      setIsLinkChangeModalOpen(true);
+    } else {
+      setIsEditing(false);
+    }
   };
 
   const handleSaveEdit = async () => {
@@ -150,9 +141,6 @@ const MissionSubmitRegularSection = ({
       });
       setIsEditing(false);
       setShowToast(true);
-      // 원본 데이터 업데이트
-      setOriginalTextareaValue(textareaValue);
-      setOriginalLinkValue(linkValue);
       // 미션 데이터 새로고침
       onRefreshMissionData?.();
     } catch {
@@ -205,20 +193,35 @@ const MissionSubmitRegularSection = ({
           />
         </section>
 
-        <MissionSubmitButton
-          isSubmitted={isSubmitted}
-          hasContent={canSubmit}
-          onButtonClick={handleSubmit}
-          isEditing={isEditing}
-          onCancelEdit={handleCancelEdit}
-          onSaveEdit={handleSaveEdit}
-        />
+        {!isSubmitPeriodEnded && (
+          <MissionSubmitButton
+            isSubmitted={isSubmitted}
+            hasContent={canSubmit}
+            onButtonClick={handleSubmit}
+            isEditing={isEditing}
+            onCancelEdit={handleCancelEdit}
+            onSaveEdit={handleSaveEdit}
+          />
+        )}
 
         <MissionToast
           isVisible={showToast}
           onClose={() => setShowToast(false)}
         />
       </section>
+
+      <LinkChangeConfirmationModal
+        isOpen={isLinkChangeModalOpen}
+        onClose={() => setIsLinkChangeModalOpen(false)}
+        onClickCancel={() => setIsLinkChangeModalOpen(false)}
+        onClickConfirm={() => {
+          setLinkValue(attendanceInfo?.link ?? '');
+          setTextareaValue(attendanceInfo?.review || '');
+          setIsEditing(false);
+          setIsLinkVerified(false);
+          setIsLinkChangeModalOpen(false);
+        }}
+      />
 
       {modalOpen && (
         <DashboardCreateReviewModal

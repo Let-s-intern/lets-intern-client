@@ -1,5 +1,7 @@
 import { useSubmitMission } from '@/api/attendance';
 import { useGetChallengeGoal, useSubmitChallengeGoal } from '@/api/challenge';
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import dayjs from '@/lib/dayjs';
 import { clsx } from 'clsx';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -8,26 +10,31 @@ import MissionToast from '../mission/MissionToast';
 
 interface MissionSubmitZeroSectionProps {
   className?: string;
-  selectedMissionTh: number;
   missionId?: number; // 0회차 미션 ID
-  isSubmitDone?: boolean;
 }
 
 const MissionSubmitZeroSection = ({
   className,
-  selectedMissionTh,
   missionId,
-  isSubmitDone,
 }: MissionSubmitZeroSectionProps) => {
   const params = useParams<{ programId: string }>();
   const programId = params.programId;
 
+  const { schedules, currentChallenge } = useCurrentChallenge();
   const { data: goalData, isLoading } = useGetChallengeGoal(programId);
+
+  // 챌린지 종료 + 2일
+  const isSubmitPeriodEnded =
+    dayjs(currentChallenge?.endDate).add(2, 'day').isBefore(dayjs()) ?? true;
+
+  const submitted = !!(goalData?.goal && goalData.goal.length > 0);
+
   // 챌린지 목표 제출 mutation
   const submitChallengeGoal = useSubmitChallengeGoal();
   const submitAttendance = useSubmitMission();
+
   const [textareaValue, setTextareaValue] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(isSubmitDone);
+  const [isSubmitted, setIsSubmitted] = useState(submitted);
   const [showToast, setShowToast] = useState(false);
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -35,7 +42,6 @@ const MissionSubmitZeroSection = ({
   };
 
   const handleSubmit = async () => {
-    console.log('제출 ', isSubmitted, missionId, programId);
     if (isSubmitted || !programId || !missionId) {
       setIsSubmitted(false);
     } else {
@@ -90,7 +96,7 @@ const MissionSubmitZeroSection = ({
           'w-full resize-none rounded-xxs border border-neutral-80 bg-white',
           'p-3 text-xsmall14 text-neutral-0 placeholder:text-neutral-50 md:text-base',
           'min-h-[120px] outline-none focus:border-primary',
-          'disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-50',
+          'disabled:bg-neutral-100 disabled:text-neutral-50',
         )}
         placeholder={
           '챌린지를 신청한 목적과 계기,\n또는 챌린지 참여를 통해 이루고 싶은 목표를 자유롭게 작성해주세요.'
@@ -100,12 +106,14 @@ const MissionSubmitZeroSection = ({
         disabled={isSubmitted}
       />
 
-      <MissionSubmitButton
-        isSubmitted={isSubmitted}
-        hasContent={textareaValue.trim().length > 0}
-        onButtonClick={handleSubmit}
-        disabled={!!goalData?.goal}
-      />
+      {!isSubmitPeriodEnded && (
+        <MissionSubmitButton
+          isSubmitted={isSubmitted}
+          hasContent={textareaValue.trim().length > 0}
+          onButtonClick={handleSubmit}
+          disabled={isSubmitted}
+        />
+      )}
 
       <MissionToast isVisible={showToast} onClose={() => setShowToast(false)} />
     </section>

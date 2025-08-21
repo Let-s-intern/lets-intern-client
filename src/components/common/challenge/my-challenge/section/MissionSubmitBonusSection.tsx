@@ -1,10 +1,14 @@
+import { usePatchAttendance } from '@/api/attendance';
 import { useSubmitMissionBlogBonus } from '@/api/mission';
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { Schedule } from '@/schema';
 import { clsx } from 'clsx';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import DashboardCreateReviewModal from '../../dashboard/modal/DashboardCreateReviewModal';
+import LinkChangeConfirmationModal from '../../LinkChangeConfirmationModal';
 import AgreementCheckbox from '../mission/AgreementCheckbox';
 import BankSelectDropdown from '../mission/BankSelectDropdown';
 import MissionSubmitButton from '../mission/MissionSubmitButton';
@@ -44,7 +48,14 @@ const MissionSubmitBonusSection = ({
 }: MissionSubmitBonusSectionProps) => {
   const params = useParams();
 
+  const { currentChallenge } = useCurrentChallenge();
+
+  // 챌린지 종료 + 2일
+  const isSubmitPeriodEnded =
+    dayjs(currentChallenge?.endDate).add(2, 'day').isBefore(dayjs()) ?? true;
+
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [selectedBank, setSelectedBank] = useState<string>('');
   const [accountNumber, setAccountNumber] = useState('');
@@ -52,9 +63,12 @@ const MissionSubmitBonusSection = ({
   const [linkValue, setLinkValue] = useState('');
   const [isLinkVerified, setIsLinkVerified] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  // 링크 변경 확인 모달 오픈 상태
+  const [isLinkChangeModalOpen, setIsLinkChangeModalOpen] = useState(false);
 
   // 블로그 보너스 제출 mutation
   const submitBlogBonus = useSubmitMissionBlogBonus();
+  const patchAttendance = usePatchAttendance();
 
   const handleAccountNumberChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -71,9 +85,9 @@ const MissionSubmitBonusSection = ({
   };
 
   const handleSubmit = async () => {
-    if (isSubmitted) {
-      setIsSubmitted(false);
-    } else {
+    setIsEditing(!isEditing);
+
+    if (isEditing) {
       try {
         if (!missionId) {
           console.error('미션 ID가 없습니다.');
@@ -104,6 +118,44 @@ const MissionSubmitBonusSection = ({
     setSelectedBank(bank);
   };
 
+  const handleSaveEdit = async () => {
+    if (!attendanceInfo?.id) return;
+
+    try {
+      await patchAttendance.mutateAsync({
+        attendanceId: attendanceInfo.id,
+        link: linkValue,
+        accountNum: accountNumber,
+        accountType: selectedBank,
+      });
+      setIsEditing(false);
+      setShowToast(true);
+    } catch (error) {
+      console.error('미션 수정 실패:', error);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    const isChanged =
+      attendanceInfo?.link !== linkValue ||
+      attendanceInfo?.accountType !== selectedBank ||
+      attendanceInfo?.accountNum !== accountNumber;
+    // 입력값이 이전 링크와 다르면 모달 띄우기
+    if (isChanged) {
+      setIsLinkChangeModalOpen(true);
+    } else {
+      setIsEditing(false);
+    }
+  };
+
+  const initValues = useCallback(() => {
+    setLinkValue(attendanceInfo?.link ?? '');
+    setSelectedBank(attendanceInfo?.accountType ?? '');
+    setAccountNumber(attendanceInfo?.accountNum ?? '');
+    setIsAgreed(attendanceInfo?.submitted ?? false);
+    setIsSubmitted(attendanceInfo?.submitted ?? false);
+  }, [attendanceInfo]);
+
   // 제출 버튼 활성화 조건: 링크 확인 완료 + 은행 선택 + 계좌번호 입력 + 개인정보 동의
   const cleanAccountNumber = accountNumber.replace(/[^0-9]/g, '');
   const canSubmit =
@@ -114,12 +166,8 @@ const MissionSubmitBonusSection = ({
 
   useEffect(() => {
     /** 상태 초기화 */
-    if (!attendanceInfo) return;
-    setIsSubmitted(attendanceInfo.submitted ?? false);
-    setLinkValue(attendanceInfo.link ?? '');
-    setSelectedBank(attendanceInfo.accountType ?? '');
-    setAccountNumber(attendanceInfo.accountNum ?? '');
-  }, [attendanceInfo]);
+    initValues();
+  }, [attendanceInfo, initValues]);
 
   return (
     <>
@@ -132,7 +180,7 @@ const MissionSubmitBonusSection = ({
         <div className="mt-7">
           <LinkInputSection
             initialLink={linkValue}
-            disabled={isSubmitted}
+            disabled={!isEditing}
             onLinkChange={handleLinkChange}
             onLinkVerified={handleLinkVerified}
             text="링크가 잘 열리는지 확인해주세요."
@@ -152,7 +200,7 @@ const MissionSubmitBonusSection = ({
             <BankSelectDropdown
               selectedBank={selectedBank}
               onBankSelect={handleBankSelect}
-              disabled={isSubmitted}
+              disabled={!isEditing}
             />
             <input
               type="number"
@@ -165,7 +213,7 @@ const MissionSubmitBonusSection = ({
               placeholder={'계좌번호를 입력해주세요.'}
               value={accountNumber}
               onChange={handleAccountNumberChange}
-              disabled={isSubmitted}
+              disabled={!isEditing}
             />
           </div>
         </div>
@@ -184,22 +232,21 @@ const MissionSubmitBonusSection = ({
           </DescriptionBox>
           <div className="mt-2">
             <AgreementCheckbox
-              checked={isAgreed || isSubmitted}
+              checked={isAgreed}
               onCheckedChange={setIsAgreed}
               disabled={isSubmitted}
             />
           </div>
         </div>
 
-        {isSubmitted ? (
-          <p className="mt-8 text-center text-small20 font-medium text-neutral-0">
-            이미 보너스 미션에 참여했습니다.
-          </p>
-        ) : (
+        {!isSubmitPeriodEnded && (
           <MissionSubmitButton
             isSubmitted={isSubmitted}
             hasContent={canSubmit}
             onButtonClick={handleSubmit}
+            isEditing={isEditing}
+            onSaveEdit={handleSaveEdit}
+            onCancelEdit={handleCancelEdit}
           />
         )}
 
@@ -208,6 +255,18 @@ const MissionSubmitBonusSection = ({
           onClose={() => setShowToast(false)}
         />
       </section>
+
+      <LinkChangeConfirmationModal
+        isOpen={isLinkChangeModalOpen}
+        onClose={() => setIsLinkChangeModalOpen(false)}
+        onClickCancel={() => setIsLinkChangeModalOpen(false)}
+        onClickConfirm={() => {
+          initValues();
+          setIsEditing(false);
+          setIsLinkVerified(false);
+          setIsLinkChangeModalOpen(false);
+        }}
+      />
 
       {modalOpen && (
         <DashboardCreateReviewModal

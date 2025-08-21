@@ -2,7 +2,6 @@ import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import { useMissionStore } from '@/store/useMissionStore';
 import axios from '@/utils/axios';
-import MissionStatusMessage from '@components/common/challenge/my-challenge/mission/MissionStatusMessage';
 import MissionCalendarSection from '@components/common/challenge/my-challenge/section/MissionCalendarSection';
 import MissionGuideSection from '@components/common/challenge/my-challenge/section/MissionGuideSection';
 import MissionMentorCommentSection from '@components/common/challenge/my-challenge/section/MissionMentorCommentSection';
@@ -41,52 +40,28 @@ const MyChallengeDashboard = () => {
 
   const programEndDate = programData?.data?.endDate;
 
-  const [todayTh, setTodayTh] = useState(() => {
-    const initialValue =
-      myDailyMission?.dailyMission?.th ||
-      schedules.reduce((th, schedule) => {
-        return Math.max(th, schedule.missionInfo.th || 0);
-      }, 0) + 1;
-    return initialValue;
-  });
+  const todayTh =
+    myDailyMission?.dailyMission?.th ??
+    schedules.reduce((th, schedule) => {
+      return Math.max(th, schedule.missionInfo.th ?? 0);
+    }, 0) + 1;
+
   const isChallengeDone = getIsChallengeDone(programEndDate);
   const isChallengeSubmitDone = programEndDate
     ? getIsChallengeSubmitDone(programEndDate)
     : false;
-  console.log(
-    'schedules',
-    schedules,
-    '선택함:',
-    selectedMissionId,
-    selectedMissionTh,
-  );
+
   return (
-    <main className="px-6">
-      <header>
-        <h1 className="text-2xl font-semibold">나의 미션</h1>
-      </header>
-      <div className="mb-4 mt-6">
-        <MissionStatusMessage todayTh={todayTh} />
-      </div>
+    <main className="pl-12">
+      <h1 className="text-medium22 font-semibold">나의 미션</h1>
       <MissionCalendarSection
         schedules={schedules}
         todayTh={todayTh}
         isDone={isChallengeDone}
       />
-      <div>
-        <div className="mt-8">
-          <MissionGuideSection todayTh={todayTh} />
-        </div>
-        {/* 보너스 미션 팝업 (다음 배포) */}
-        {/* <div className="relative">
-          <BonusMissionPopup
-            isVisible={
-              selectedMissionTh == 4 || selectedMissionTh == 6 || showPopup
-            }
-            onClose={closePopup}
-            onPopupClick={handlePopupClick}
-          />
-        </div> */}
+
+      <div className="mt-10">
+        <MissionGuideSection todayTh={todayTh} />
         <div className="mt-6">
           <MissionSubmitSection
             attendanceInfo={
@@ -104,27 +79,6 @@ const MyChallengeDashboard = () => {
           <MissionMentorCommentSection missionId={selectedMissionId} />
         </div>
       </div>
-      {modalOpen && (
-        <>tst</>
-        // <DashboardCreateReviewModal
-        //   programId={params.programId ?? ''}
-        //   applicationId={params.applicationId ?? ''}
-        //   onClose={() => setModalOpen(false)}
-        // />
-      )}
-      {/* 기존 코드 참고용 */}
-      {/* <MissionCalendarSection
-        schedules={schedules}
-        todayTh={todayTh}
-        isDone={isChallengeDone}
-      /> */}
-      {/* {myDailyMission?.attendanceInfo && (
-        <DailyMissionSection dailyMission={myDailyMission.dailyMission} />
-      )}
-
-      {typeof isChallengeSubmitDone === 'boolean' && (
-        <OtherMissionSection todayTh={todayTh} isDone={isChallengeSubmitDone} />
-      )} */}
     </main>
   );
 };
