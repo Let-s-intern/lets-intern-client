@@ -32,7 +32,7 @@ const MissionDetailSection = () => {
   const programEndDate = programData?.data?.endDate;
   const isChallengeDone = getIsChallengeDone(programEndDate);
   const isLastMissionSubmitted =
-    schedules[schedules.length - 1].attendanceInfo.submitted;
+    schedules[schedules.length - 1]?.attendanceInfo.submitted;
 
   if (isLastMissionSubmitted || isChallengeDone || !dailyMission) {
     return <MissionEndSection />;

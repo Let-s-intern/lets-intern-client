@@ -25,6 +25,7 @@ const MissionHeaderSection = ({
     }
     return `${selectedMissionTh}회차 미션`;
   };
+
   const isDeadlinePassed = () => {
     try {
       // deadline 문자열에서 날짜와 시간 추출 (예: "8월3일 22:44까지" -> "8월3일 22:44")

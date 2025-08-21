@@ -1,3 +1,4 @@
+import { twMerge } from '@/lib/twMerge';
 import { clsx } from 'clsx';
 
 interface AgreementCheckboxProps {
@@ -28,7 +29,7 @@ const AgreementCheckbox = ({
     >
       {/* 체크박스 */}
       <div
-        className={clsx(
+        className={twMerge(
           'flex h-4 w-4 cursor-pointer items-center justify-center',
           'rounded-xxs border transition-colors',
           checked ? 'border-primary bg-primary' : 'border-neutral-60 bg-white',

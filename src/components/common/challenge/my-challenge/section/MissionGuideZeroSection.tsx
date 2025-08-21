@@ -47,7 +47,7 @@ const MissionGuideZeroSection = ({
     <div className={clsx('flex flex-col gap-3', className)}>
       {/* 제목 및 마감일 섹션 */}
       <MissionHeaderSection
-        selectedMissionTh={selectedMissionTh || 0}
+        selectedMissionTh={selectedMissionTh ?? 0}
         missionType={missionData?.missionInfo?.title || 'OT 시청'}
         deadline={formatDeadline(missionData?.missionInfo?.endDate)}
       />
@@ -125,29 +125,30 @@ const MissionGuideZeroSection = ({
         </section>
 
         {/* OT 영상 섹션 */}
-        <section className="flex flex-col gap-3">
-          <h3 className="text-lg font-semibold text-neutral-0">OT 영상</h3>
-          {missionData?.missionInfo?.vodLink &&
-          convertToEmbedUrl(missionData.missionInfo.vodLink) ? (
-            <div className="relative flex aspect-video items-center justify-center rounded-sm bg-neutral-95">
-              <iframe
-                src={convertToEmbedUrl(missionData.missionInfo.vodLink)!}
-                className="h-full w-full rounded-sm"
-                allowFullScreen
-                title="OT 영상"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerPolicy="strict-origin-when-cross-origin"
-              />
-            </div>
-          ) : (
-            <div className="relative flex aspect-video cursor-pointer items-center justify-center rounded-sm bg-neutral-95 transition-colors hover:bg-neutral-90">
-              <div className="flex h-16 w-16 items-center justify-center rounded-sm bg-white shadow-lg">
-                <div className="ml-1 h-0 w-0 border-b-[8px] border-l-[12px] border-t-[8px] border-b-transparent border-l-neutral-0 border-t-transparent" />
+        {missionData?.missionInfo?.vodLink && (
+          <section className="flex flex-col gap-3">
+            <h3 className="text-lg font-semibold text-neutral-0">OT 영상</h3>
+            {convertToEmbedUrl(missionData.missionInfo.vodLink) ? (
+              <div className="relative flex aspect-video items-center justify-center rounded-sm bg-neutral-95">
+                <iframe
+                  src={convertToEmbedUrl(missionData.missionInfo.vodLink)!}
+                  className="h-full w-full rounded-sm"
+                  allowFullScreen
+                  title="OT 영상"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                />
               </div>
-            </div>
-          )}
-        </section>
+            ) : (
+              <div className="relative flex aspect-video cursor-pointer items-center justify-center rounded-sm bg-neutral-95 transition-colors hover:bg-neutral-90">
+                <div className="flex h-16 w-16 items-center justify-center rounded-sm bg-white shadow-lg">
+                  <div className="ml-1 h-0 w-0 border-b-[8px] border-l-[12px] border-t-[8px] border-b-transparent border-l-neutral-0 border-t-transparent" />
+                </div>
+              </div>
+            )}
+          </section>
+        )}
       </section>
     </div>
   );
