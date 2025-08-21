@@ -737,7 +737,12 @@ export const AttendanceStatusEnum = z.enum([
 ]);
 export type AttendanceStatus = z.infer<typeof AttendanceStatusEnum>;
 
-export const AttendanceResultEnum = z.enum(['WAITING', 'PASS', 'WRONG']);
+export const AttendanceResultEnum = z.enum([
+  'WAITING',
+  'PASS',
+  'WRONG',
+  'FINAL_WRONG',
+]);
 export const AttendanceFeedbackStatusEnum = z.enum([
   'WAITING',
   'IN_PROGRESS',
