@@ -27,10 +27,7 @@ const MissionSubmitButton = ({
       <div className={clsx('mt-10 flex gap-3', className)}>
         {/* 취소하기 버튼 */}
         <button
-          className={clsx(
-            'flex-1 cursor-pointer rounded-xs border border-neutral-70 bg-white p-4 text-xsmall16 font-medium text-neutral-40 transition-colors',
-            'hover:bg-neutral-95',
-          )}
+          className="flex-1 cursor-pointer rounded-xs border border-neutral-70 bg-white p-4 text-xsmall16 font-medium text-neutral-40 transition-colors hover:bg-neutral-95"
           onClick={onCancelEdit}
         >
           취소하기
@@ -38,7 +35,7 @@ const MissionSubmitButton = ({
         {/* 저장하기 버튼 */}
         <button
           className={clsx(
-            'flex-1 cursor-pointer rounded-xs p-4 text-xsmall16 font-medium transition-colors',
+            'flex-1 cursor-pointer rounded-xs p-4 text-xsmall16 font-medium transition-colors disabled:cursor-not-allowed',
             hasContent && !disabled
               ? 'bg-primary text-white hover:opacity-90'
               : 'cursor-not-allowed bg-neutral-70 text-neutral-100',

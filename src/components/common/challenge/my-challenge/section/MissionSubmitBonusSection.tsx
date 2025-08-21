@@ -77,9 +77,9 @@ const MissionSubmitBonusSection = ({
   };
 
   const handleSubmit = async () => {
-    if (isSubmitted) {
-      setIsSubmitted(false);
-    } else {
+    setIsEditing(!isEditing);
+
+    if (isEditing) {
       try {
         if (!missionId) {
           console.error('미션 ID가 없습니다.');
@@ -111,9 +111,7 @@ const MissionSubmitBonusSection = ({
   };
 
   const handleSaveEdit = async () => {
-    if (!attendanceInfo?.id) {
-      return;
-    }
+    if (!attendanceInfo?.id) return;
 
     try {
       await patchAttendance.mutateAsync({
@@ -133,8 +131,7 @@ const MissionSubmitBonusSection = ({
     const isChanged =
       attendanceInfo?.link !== linkValue ||
       attendanceInfo?.accountType !== selectedBank ||
-      attendanceInfo?.accountNum ||
-      accountNumber;
+      attendanceInfo?.accountNum !== accountNumber;
     // 입력값이 이전 링크와 다르면 모달 띄우기
     if (isChanged) {
       setIsLinkChangeModalOpen(true);
@@ -147,6 +144,8 @@ const MissionSubmitBonusSection = ({
     setLinkValue(attendanceInfo?.link ?? '');
     setSelectedBank(attendanceInfo?.accountType ?? '');
     setAccountNumber(attendanceInfo?.accountNum ?? '');
+    setIsAgreed(attendanceInfo?.submitted ?? false);
+    setIsSubmitted(attendanceInfo?.submitted ?? false);
   }, [attendanceInfo]);
 
   // 제출 버튼 활성화 조건: 링크 확인 완료 + 은행 선택 + 계좌번호 입력 + 개인정보 동의
@@ -159,8 +158,6 @@ const MissionSubmitBonusSection = ({
 
   useEffect(() => {
     /** 상태 초기화 */
-    if (!attendanceInfo) return;
-    setIsSubmitted(attendanceInfo.submitted ?? false);
     initValues();
   }, [attendanceInfo, initValues]);
 
@@ -175,7 +172,7 @@ const MissionSubmitBonusSection = ({
         <div className="mt-7">
           <LinkInputSection
             initialLink={linkValue}
-            disabled={isSubmitted}
+            disabled={!isEditing}
             onLinkChange={handleLinkChange}
             onLinkVerified={handleLinkVerified}
             text="링크가 잘 열리는지 확인해주세요."
@@ -195,7 +192,7 @@ const MissionSubmitBonusSection = ({
             <BankSelectDropdown
               selectedBank={selectedBank}
               onBankSelect={handleBankSelect}
-              disabled={isSubmitted}
+              disabled={!isEditing}
             />
             <input
               type="number"
@@ -208,7 +205,7 @@ const MissionSubmitBonusSection = ({
               placeholder={'계좌번호를 입력해주세요.'}
               value={accountNumber}
               onChange={handleAccountNumberChange}
-              disabled={isSubmitted}
+              disabled={!isEditing}
             />
           </div>
         </div>
@@ -227,7 +224,7 @@ const MissionSubmitBonusSection = ({
           </DescriptionBox>
           <div className="mt-2">
             <AgreementCheckbox
-              checked={isAgreed || isSubmitted}
+              checked={isAgreed}
               onCheckedChange={setIsAgreed}
               disabled={isSubmitted}
             />
