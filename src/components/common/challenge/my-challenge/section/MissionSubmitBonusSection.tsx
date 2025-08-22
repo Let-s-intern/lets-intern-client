@@ -55,7 +55,7 @@ const MissionSubmitBonusSection = ({
     dayjs(currentChallenge?.endDate).add(2, 'day').isBefore(dayjs()) ?? true;
 
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(true);
   const [showToast, setShowToast] = useState(false);
   const [selectedBank, setSelectedBank] = useState<string>('');
   const [accountNumber, setAccountNumber] = useState('');
