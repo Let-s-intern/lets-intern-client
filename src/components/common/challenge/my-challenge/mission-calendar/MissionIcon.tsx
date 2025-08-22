@@ -1,6 +1,7 @@
 import { Schedule } from '@/schema';
 import clsx from 'clsx';
 
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { BONUS_MISSION_TH } from '@/utils/constants';
 import { missionSubmitToBadge } from '@/utils/convert';
 
@@ -11,12 +12,15 @@ interface Props {
 }
 
 const MissionIcon = ({ className, schedule, isDone }: Props) => {
+  const { currentChallenge } = useCurrentChallenge();
+
   const mission = schedule.missionInfo;
   const attendance = schedule.attendanceInfo;
 
   const { text, style, icon } = missionSubmitToBadge({
     status: attendance.status || 'ABSENT',
     result: attendance.result,
+    challengeEndDate: currentChallenge?.endDate,
   });
 
   // const isAttended =

@@ -79,6 +79,7 @@ const DoneMissionItem = ({ mission }: Props) => {
                 missionSubmitToBadge({
                   status: mission.attendanceStatus,
                   result: mission.attendanceResult,
+                  challengeEndDate: currentChallenge?.endDate,
                 }).style,
               )}
             >
@@ -86,6 +87,7 @@ const DoneMissionItem = ({ mission }: Props) => {
                 missionSubmitToBadge({
                   status: mission.attendanceStatus,
                   result: mission.attendanceResult,
+                  challengeEndDate: currentChallenge?.endDate,
                 }).text
               }
             </span>

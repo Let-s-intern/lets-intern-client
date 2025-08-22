@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { BONUS_MISSION_TH } from '@/utils/constants';
 import { Schedule, ScheduleMission } from '../../../../../schema';
 import { missionSubmitToBadge } from '../../../../../utils/convert';
@@ -17,9 +18,11 @@ const MissionTodayIcon = ({
   attendance,
   isDone,
 }: Props) => {
+  const { currentChallenge } = useCurrentChallenge();
   const { text, style, icon } = missionSubmitToBadge({
     status: attendance.status,
     result: attendance.result,
+    challengeEndDate: currentChallenge?.endDate,
   });
 
   const isWaiting = attendance.result === 'WAITING';
