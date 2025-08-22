@@ -10,35 +10,16 @@ import { IoMdArrowDropdown } from 'react-icons/io';
 
 interface Props {
   attendance: AttendanceItem['attendance'];
-  attendanceResult: AttendanceItem['attendance']['result'];
-  setAttendanceResult: (
-    attendanceResult: AttendanceItem['attendance']['result'],
-  ) => void;
   cellWidthListIndex: number;
   setIsRefunded: (isRefunded: boolean) => void;
+  refetch: () => void;
 }
-
-const getAttendanceResultText = (
-  result: AttendanceItem['attendance']['result'],
-) => {
-  switch (result) {
-    case 'WAITING':
-      return '확인중';
-    case 'PASS':
-      return '확인 완료';
-    case 'WRONG':
-      return '반려';
-  }
-
-  return '';
-};
 
 const ResultDropdown = ({
   attendance,
-  attendanceResult,
-  setAttendanceResult,
   cellWidthListIndex,
   setIsRefunded,
+  refetch,
 }: Props) => {
   const queryClient = useQueryClient();
   const [isMenuShown, setIsMenuShown] = useState(false);
@@ -55,15 +36,18 @@ const ResultDropdown = ({
       return data;
     },
     onSuccess: async (_, result: AttendanceItem['attendance']['result']) => {
-      setIsMenuShown(false);
-      setIsRefunded(
-        result === 'PASS' && attendanceResult !== 'PASS' ? false : true,
-      );
-      setAttendanceResult(result);
-      missionRefetch();
-      queryClient.invalidateQueries({
+      await queryClient.invalidateQueries({
         queryKey: ['admin'],
       });
+      await queryClient.invalidateQueries({
+        queryKey: ['challenge'],
+      });
+      refetch();
+      missionRefetch();
+      setIsMenuShown(false);
+      setIsRefunded(
+        result === 'PASS' && attendance.result !== 'PASS' ? false : true,
+      );
     },
   });
 
@@ -81,7 +65,9 @@ const ResultDropdown = ({
           onClick={() => setIsMenuShown(!isMenuShown)}
         >
           <div className="flex items-center gap-1">
-            <span>{getAttendanceResultText(attendanceResult)}</span>
+            <span>
+              {attendance.result && attendanceResultToText[attendance.result]}
+            </span>
             <i>
               <IoMdArrowDropdown />
             </i>
