@@ -1,4 +1,5 @@
 import { AttendanceResult, AttendanceStatus } from '@/schema';
+import { z } from 'zod';
 import { FeedbackStatus } from './challengeSchema';
 
 /** [유저용] 출석 업데이트 PATCH /api/v1/attendance/{id} */
@@ -32,3 +33,19 @@ export type PatchAdminAttendanceReq = {
   accountType?: string;
   accountNum?: string;
 };
+
+export const essentialContentSchema = z.object({
+  id: z.number(),
+  title: z.string().nullish(),
+  link: z.string().nullish(),
+});
+
+export type EssentialContent = z.infer<typeof essentialContentSchema>;
+
+export const additionalContentSchema = z.object({
+  id: z.number(),
+  title: z.string().nullish(),
+  link: z.string().nullish(),
+});
+
+export type AdditionalContent = z.infer<typeof additionalContentSchema>;
