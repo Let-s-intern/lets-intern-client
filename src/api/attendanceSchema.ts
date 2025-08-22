@@ -34,18 +34,10 @@ export type PatchAdminAttendanceReq = {
   accountNum?: string;
 };
 
-export const essentialContentSchema = z.object({
+export const contentSchema = z.object({
   id: z.number(),
   title: z.string().nullish(),
   link: z.string().nullish(),
 });
 
-export type EssentialContent = z.infer<typeof essentialContentSchema>;
-
-export const additionalContentSchema = z.object({
-  id: z.number(),
-  title: z.string().nullish(),
-  link: z.string().nullish(),
-});
-
-export type AdditionalContent = z.infer<typeof additionalContentSchema>;
+export type Content = z.infer<typeof contentSchema>;

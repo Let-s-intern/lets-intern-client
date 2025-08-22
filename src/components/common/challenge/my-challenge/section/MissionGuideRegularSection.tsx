@@ -1,4 +1,4 @@
-import { AdditionalContent, EssentialContent } from '@/api/attendanceSchema';
+import { Content } from '@/api/attendanceSchema';
 import dayjs from '@/lib/dayjs';
 import { UserChallengeMissionWithAttendance } from '@/schema';
 import { clsx } from 'clsx';
@@ -100,7 +100,7 @@ const MissionGuideRegularSection = ({
               )}
               {/* 필수 콘텐츠 */}
               {missionData?.missionInfo?.essentialContentsList?.map(
-                (content: EssentialContent, index: number) => (
+                (content: Content, index: number) => (
                   <MissionFileLink
                     key={content.id || index}
                     title="필수 콘텐츠"
@@ -116,7 +116,7 @@ const MissionGuideRegularSection = ({
               {/* 추가 콘텐츠 */}
               <div className="flex flex-col gap-2">
                 {missionData?.missionInfo?.additionalContentsList?.map(
-                  (content: AdditionalContent, index: number) => (
+                  (content: Content, index: number) => (
                     <MissionFileLink
                       key={content.id || index}
                       title={index === 0 ? '추가 콘텐츠' : ''}
