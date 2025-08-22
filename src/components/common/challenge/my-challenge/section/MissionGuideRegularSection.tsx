@@ -104,7 +104,7 @@ const MissionGuideRegularSection = ({
                   <MissionFileLink
                     key={content.id || index}
                     title="필수 콘텐츠"
-                    fileName={content.title || ''}
+                    fileName={content.title || '필수 콘텐츠'}
                     disabled={false}
                     onClick={() => {
                       window.open(content.link || '#', '_blank');
