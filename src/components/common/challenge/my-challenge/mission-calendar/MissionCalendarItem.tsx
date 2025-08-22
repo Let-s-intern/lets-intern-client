@@ -35,7 +35,7 @@ const MissionCalendarItem = ({
   const { setSelectedMission } = useMissionStore();
 
   const handleMissionClick = () => {
-    if (!isDone && mission.th !== null && isValid()) {
+    if (mission.th !== null && isValid()) {
       setSelectedMission(mission.id, mission.th);
       navigate(`/challenge/${params.applicationId}/${params.programId}/me`);
     }
