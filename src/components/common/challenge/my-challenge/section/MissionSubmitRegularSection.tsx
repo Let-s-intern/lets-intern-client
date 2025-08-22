@@ -40,7 +40,8 @@ const MissionSubmitRegularSection = ({
   const params = useParams();
 
   const { selectedMissionId } = useMissionStore();
-  const { schedules, currentChallenge } = useCurrentChallenge();
+  const { schedules, currentChallenge, refetchSchedules } =
+    useCurrentChallenge();
 
   // 챌린지 종료 + 2일
   const isSubmitPeriodEnded =
@@ -111,6 +112,7 @@ const MissionSubmitRegularSection = ({
       onRefreshMissionData?.();
       onSubmitLastMission?.();
       if (isLastMissionSubmit && !attendanceInfo?.submitted) setModalOpen(true);
+      await refetchSchedules?.();
     } catch {
       // 에러 처리 로직 추가 가능
     }

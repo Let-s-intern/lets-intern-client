@@ -1,5 +1,9 @@
 import { useChallengeMyDailyMission } from '@/api/challenge';
-import { useQuery } from '@tanstack/react-query';
+import {
+  QueryObserverResult,
+  RefetchOptions,
+  useQuery,
+} from '@tanstack/react-query';
 import { createContext, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { z } from 'zod';
@@ -18,6 +22,10 @@ import axios from '../utils/axios';
 
 type CurrentChallenge = z.infer<typeof getChallengeIdSchema> & { id: number };
 
+type Refetch<Data, Error> = (
+  options?: RefetchOptions,
+) => Promise<QueryObserverResult<Data, Error>>;
+
 const emptySchedules: Schedule[] = [];
 
 const currentChallengeContext = createContext<{
@@ -29,6 +37,7 @@ const currentChallengeContext = createContext<{
   remainingMissions: MyChallengeMissionByType[];
   absentMissions: MyChallengeMissionByType[];
   isLoading: boolean;
+  refetchSchedules?: Refetch<Schedule[] | null, Error>;
 }>({
   currentChallenge: null,
   schedules: emptySchedules,
@@ -63,7 +72,11 @@ export const CurrentChallengeProvider = ({
     },
   });
 
-  const { data: schedules = [], isLoading: isSchedulesLoading } = useQuery({
+  const {
+    data: schedules = [],
+    isLoading: isSchedulesLoading,
+    refetch: refetchSchedules,
+  } = useQuery({
     enabled: isLoggedIn,
     queryKey: ['challenge', params.programId, 'schedule'],
     queryFn: async () => {
@@ -151,6 +164,7 @@ export const CurrentChallengeProvider = ({
         remainingMissions,
         absentMissions,
         isLoading,
+        refetchSchedules,
       }}
     >
       {children}
