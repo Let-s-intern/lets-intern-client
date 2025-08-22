@@ -107,12 +107,12 @@ const MissionSubmitRegularSection = ({
         link: linkValue,
         review: textareaValue,
       });
+      await refetchSchedules?.();
       setIsSubmitted(true);
       // 미션 데이터 새로고침
       onRefreshMissionData?.();
       onSubmitLastMission?.();
       if (isLastMissionSubmit && !attendanceInfo?.submitted) setModalOpen(true);
-      await refetchSchedules?.();
     } catch {
       // 에러 처리 로직 추가 가능
     }
