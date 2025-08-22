@@ -70,6 +70,8 @@ const MissionSubmitBonusSection = ({
   const submitBlogBonus = useSubmitMissionBlogBonus();
   const patchAttendance = usePatchAttendance();
 
+  const { refetchSchedules } = useCurrentChallenge();
+
   const handleAccountNumberChange = (
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -103,6 +105,7 @@ const MissionSubmitBonusSection = ({
           accountType: selectedBank,
           accountNum: cleanAccountNumber,
         });
+        await refetchSchedules?.();
 
         // 후기 모달 표시
         setModalOpen(true);
