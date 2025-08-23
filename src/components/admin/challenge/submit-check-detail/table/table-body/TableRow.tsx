@@ -152,7 +152,6 @@ const TableRow = ({
         attendance={attendanceItem.attendance}
         setIsRefunded={() => {}}
         cellWidthListIndex={7}
-        refetch={refetch}
       />
       <CommentCell
         attendance={attendanceItem.attendance}

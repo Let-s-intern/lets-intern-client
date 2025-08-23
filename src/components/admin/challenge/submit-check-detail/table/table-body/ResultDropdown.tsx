@@ -12,14 +12,12 @@ interface Props {
   attendance: AttendanceItem['attendance'];
   cellWidthListIndex: number;
   setIsRefunded: (isRefunded: boolean) => void;
-  refetch: () => void;
 }
 
 const ResultDropdown = ({
   attendance,
   cellWidthListIndex,
   setIsRefunded,
-  refetch,
 }: Props) => {
   const queryClient = useQueryClient();
   const [isMenuShown, setIsMenuShown] = useState(false);
@@ -36,14 +34,11 @@ const ResultDropdown = ({
       return data;
     },
     onSuccess: async (_, result: AttendanceItem['attendance']['result']) => {
-      await queryClient.invalidateQueries({
-        queryKey: ['admin'],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ['challenge'],
-      });
-      refetch();
-      missionRefetch();
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin'] }),
+        queryClient.invalidateQueries({ queryKey: ['challenge'] }),
+        missionRefetch(),
+      ]);
       setIsMenuShown(false);
       setIsRefunded(
         result === 'PASS' && attendance.result !== 'PASS' ? false : true,
