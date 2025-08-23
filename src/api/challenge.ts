@@ -114,7 +114,7 @@ export const usePatchChallengePayback = ({
   });
 };
 
-export const useGetChallengeTitle = (challengeId: number | string) => {
+export const useGetChallengeTitle = (challengeId?: number | string) => {
   return useQuery({
     queryKey: ['useGetChallengeTitle', challengeId],
     queryFn: async () => {
