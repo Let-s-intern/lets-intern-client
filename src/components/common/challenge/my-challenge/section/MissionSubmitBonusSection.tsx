@@ -54,6 +54,14 @@ const MissionSubmitBonusSection = ({
   const isSubmitPeriodEnded =
     dayjs(currentChallenge?.endDate).add(2, 'day').isBefore(dayjs()) ?? true;
 
+  // 재제출 불가
+  const isResubmitBlocked =
+    attendanceInfo?.result === 'PASS' ||
+    attendanceInfo?.result === 'FINAL_WRONG' ||
+    (attendanceInfo?.result === 'WAITING' &&
+      (attendanceInfo?.status === 'LATE' ||
+        attendanceInfo?.status === 'UPDATED'));
+
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -254,6 +262,7 @@ const MissionSubmitBonusSection = ({
             isEditing={isEditing}
             onSaveEdit={handleSaveEdit}
             onCancelEdit={handleCancelEdit}
+            disabled={isResubmitBlocked}
           />
         )}
 

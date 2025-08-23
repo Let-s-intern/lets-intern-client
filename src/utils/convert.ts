@@ -236,6 +236,7 @@ export const attendanceResultToText: any = {
   WAITING: '확인중',
   PASS: '확인 완료',
   WRONG: '반려',
+  FINAL_WRONG: '최종 반려',
 };
 
 export const couponTypeToText: Record<string, string> = {
@@ -323,13 +324,15 @@ export const missionSubmitToBadge = ({
       style: 'text-neutral-30 text-[13px]',
     };
   }
-  // if (result === 'FINAL_WRONG') {
-  //   return {
-  //     text: '최종 반려',
-  //     icon: '/icons/submit_absent.svg',
-  //     style: 'text-neutral-30',
-  //   };
-  // }
+
+  if (result === 'FINAL_WRONG') {
+    return {
+      text: '최종 반려',
+      icon: '/icons/submit_absent.svg',
+      style: 'text-neutral-30 text-[13px]',
+    };
+  }
+
   if ((status === 'UPDATED' && result === 'PASS') || status === 'LATE') {
     return {
       text: '지각 제출',
