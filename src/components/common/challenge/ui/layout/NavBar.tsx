@@ -14,8 +14,8 @@ const NavBar = () => {
 
   return (
     <>
-      <nav className="fixed">
-        <ul className="flex w-[220px] flex-col gap-1">
+      <nav className="w-full md:w-[220px]">
+        <ul className="flex flex-row gap-4 px-5 py-2 scrollbar-hide md:sticky md:top-[165px] md:flex-col md:gap-0 md:overflow-x-visible md:border-b-0 md:bg-transparent md:px-0 md:py-0">
           <li>
             <Link
               to={`/challenge/${applicationId}/${params.programId}`}
@@ -42,7 +42,6 @@ const NavBar = () => {
           </li>
         </ul>
       </nav>
-      <div className="md:w-[220px]"></div>
     </>
   );
 };
