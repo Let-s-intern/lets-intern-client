@@ -4,6 +4,7 @@ import { UserChallengeMissionWithAttendance } from '@/schema';
 import { clsx } from 'clsx';
 import { Dayjs } from 'dayjs';
 import MissionFileLink from '../mission/MissionFileLink';
+import MissionGuideSkeleton from './MissionGuideSkeleton';
 import MissionHeaderSection from './MissionHeaderSection';
 
 interface MissionGuideRegularSectionProps {
@@ -11,6 +12,7 @@ interface MissionGuideRegularSectionProps {
   todayTh: number;
   missionData?: UserChallengeMissionWithAttendance; // API 응답 데이터
   selectedMissionTh?: number; // 선택된 미션의 회차
+  isLoading?: boolean; // 로딩 상태 추가
 }
 
 // endDate를 월일 시간 형식으로 변환
@@ -25,6 +27,7 @@ const MissionGuideRegularSection = ({
   todayTh,
   missionData,
   selectedMissionTh,
+  isLoading = false,
 }: MissionGuideRegularSectionProps) => {
   // 현재 시간이 startDate 이상인지 확인하는 함수
   const isMissionStarted = () => {
@@ -33,6 +36,11 @@ const MissionGuideRegularSection = ({
     const now = dayjs();
     return now.isAfter(startDate) || now.isSame(startDate);
   };
+
+  // 로딩 중이거나 데이터가 없을 때 스켈레톤 표시
+  if (isLoading || !missionData) {
+    return <MissionGuideSkeleton variant="regular" />;
+  }
 
   return (
     <div className={clsx('flex flex-col gap-3', className)}>
@@ -51,7 +59,7 @@ const MissionGuideRegularSection = ({
             <div className="flex items-start gap-2">
               <span className="whitespace-pre-wrap text-xsmall14 font-medium text-neutral-0 md:text-xsmall16">
                 {missionData?.missionInfo?.description ||
-                  `데이터를 불러오는데 실패했습니다.`}
+                  '미션 설명이 없습니다.'}
               </span>
             </div>
           </div>
@@ -64,8 +72,7 @@ const MissionGuideRegularSection = ({
             미션 가이드
           </h3>
           <p className="whitespace-pre-wrap text-xsmall14 font-medium text-neutral-10 md:text-xsmall16">
-            {missionData?.missionInfo?.guide ||
-              `미션 가이드를 불러오는데 실패했습니다.`}
+            {missionData?.missionInfo?.guide || '미션 가이드가 없습니다.'}
           </p>
         </section>
 
