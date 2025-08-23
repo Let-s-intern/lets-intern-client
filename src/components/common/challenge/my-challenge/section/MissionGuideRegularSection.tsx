@@ -1,27 +1,34 @@
+import { Content } from '@/api/attendanceSchema';
 import dayjs from '@/lib/dayjs';
+import { UserChallengeMissionWithAttendance } from '@/schema';
 import { clsx } from 'clsx';
+import { Dayjs } from 'dayjs';
 import MissionFileLink from '../mission/MissionFileLink';
+import MissionGuideSkeleton from './MissionGuideSkeleton';
 import MissionHeaderSection from './MissionHeaderSection';
 
 interface MissionGuideRegularSectionProps {
   className?: string;
   todayTh: number;
-  missionData?: any; // API 응답 데이터
+  missionData?: UserChallengeMissionWithAttendance; // API 응답 데이터
   selectedMissionTh?: number; // 선택된 미션의 회차
+  isLoading?: boolean; // 로딩 상태 추가
 }
+
+// endDate를 월일 시간 형식으로 변환
+const formatDeadline = (endDate?: Dayjs) => {
+  if (!endDate) return '99.99 99:99';
+  const date = dayjs(endDate);
+  return date.format('MM.DD HH:mm');
+};
 
 const MissionGuideRegularSection = ({
   className,
   todayTh,
   missionData,
   selectedMissionTh,
+  isLoading = false,
 }: MissionGuideRegularSectionProps) => {
-  // endDate를 월일 시간 형식으로 변환
-  const formatDeadline = (endDate: string) => {
-    if (!endDate) return '99.99 99:99';
-    const date = dayjs(endDate);
-    return date.format('MM.DD HH:mm');
-  };
   // 현재 시간이 startDate 이상인지 확인하는 함수
   const isMissionStarted = () => {
     if (!missionData?.missionInfo?.startDate) return false;
@@ -29,6 +36,11 @@ const MissionGuideRegularSection = ({
     const now = dayjs();
     return now.isAfter(startDate) || now.isSame(startDate);
   };
+
+  // 로딩 중이거나 데이터가 없을 때 스켈레톤 표시
+  if (isLoading || !missionData) {
+    return <MissionGuideSkeleton variant="regular" />;
+  }
 
   return (
     <div className={clsx('flex flex-col gap-3', className)}>
@@ -47,7 +59,7 @@ const MissionGuideRegularSection = ({
             <div className="flex items-start gap-2">
               <span className="whitespace-pre-wrap text-xsmall14 font-medium text-neutral-0 md:text-xsmall16">
                 {missionData?.missionInfo?.description ||
-                  `데이터를 불러오는데 실패했습니다.`}
+                  '미션 설명이 없습니다.'}
               </span>
             </div>
           </div>
@@ -60,8 +72,7 @@ const MissionGuideRegularSection = ({
             미션 가이드
           </h3>
           <p className="whitespace-pre-wrap text-xsmall14 font-medium text-neutral-10 md:text-xsmall16">
-            {missionData?.missionInfo?.guide ||
-              `미션 가이드를 불러오는데 실패했습니다.`}
+            {missionData?.missionInfo?.guide || '미션 가이드가 없습니다.'}
           </p>
         </section>
 
@@ -88,7 +99,7 @@ const MissionGuideRegularSection = ({
                   disabled={false}
                   onClick={() => {
                     window.open(
-                      missionData?.missionInfo?.templateLink,
+                      missionData?.missionInfo?.templateLink || '',
                       '_blank',
                     );
                   }}
@@ -96,14 +107,14 @@ const MissionGuideRegularSection = ({
               )}
               {/* 필수 콘텐츠 */}
               {missionData?.missionInfo?.essentialContentsList?.map(
-                (content: any, index: number) => (
+                (content: Content, index: number) => (
                   <MissionFileLink
                     key={content.id || index}
                     title="필수 콘텐츠"
-                    fileName={content.title}
+                    fileName={content.title || '필수 콘텐츠'}
                     disabled={false}
                     onClick={() => {
-                      window.open(content.link, '_blank');
+                      window.open(content.link || '#', '_blank');
                     }}
                   />
                 ),
@@ -112,14 +123,14 @@ const MissionGuideRegularSection = ({
               {/* 추가 콘텐츠 */}
               <div className="flex flex-col gap-2">
                 {missionData?.missionInfo?.additionalContentsList?.map(
-                  (content: any, index: number) => (
+                  (content: Content, index: number) => (
                     <MissionFileLink
                       key={content.id || index}
                       title={index === 0 ? '추가 콘텐츠' : ''}
-                      fileName={content.title}
+                      fileName={content.title ?? '추가 콘텐츠'}
                       disabled={false}
                       onClick={() => {
-                        window.open(content.link, '_blank');
+                        window.open(content.link || '#', '_blank');
                       }}
                     />
                   ),

@@ -20,7 +20,8 @@ const MissionSubmitZeroSection = ({
   const params = useParams<{ programId: string }>();
   const programId = params.programId;
 
-  const { schedules, currentChallenge } = useCurrentChallenge();
+  const { schedules, currentChallenge, refetchSchedules } =
+    useCurrentChallenge();
   const { data: goalData, isLoading } = useGetChallengeGoal(programId);
 
   // 챌린지 종료 + 2일
@@ -58,6 +59,7 @@ const MissionSubmitZeroSection = ({
             review: textareaValue,
           }),
         ]);
+        await refetchSchedules?.();
         setIsSubmitted(true);
         setShowToast(true);
       } catch (error) {

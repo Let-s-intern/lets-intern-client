@@ -4,6 +4,7 @@ import { UserChallengeMissionWithAttendance } from '@/schema';
 import { clsx } from 'clsx';
 import { Dayjs } from 'dayjs';
 import { ReactNode } from 'react';
+import MissionGuideSkeleton from './MissionGuideSkeleton';
 import MissionHeaderSection from './MissionHeaderSection';
 
 const Heading3 = ({
@@ -30,6 +31,7 @@ interface MissionGuideBonusSectionProps {
   todayTh: number;
   missionData?: UserChallengeMissionWithAttendance; // API 응답 데이터
   selectedMissionTh?: number; // 선택된 미션의 회차
+  isLoading?: boolean; // 로딩 상태 추가
 }
 
 const MissionGuideBonusSection = ({
@@ -37,7 +39,13 @@ const MissionGuideBonusSection = ({
   todayTh,
   missionData,
   selectedMissionTh,
+  isLoading = false,
 }: MissionGuideBonusSectionProps) => {
+  // 로딩 중이거나 데이터가 없을 때 스켈레톤 표시
+  if (isLoading || !missionData) {
+    return <MissionGuideSkeleton variant="bonus" />;
+  }
+
   // endDate를 월일 시간 형식으로 변환
   const formatDeadline = (endDate?: Dayjs) => {
     if (!endDate) return '99.99 99:99';

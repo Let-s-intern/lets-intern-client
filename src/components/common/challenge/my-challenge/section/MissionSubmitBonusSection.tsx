@@ -70,6 +70,10 @@ const MissionSubmitBonusSection = ({
   const submitBlogBonus = useSubmitMissionBlogBonus();
   const patchAttendance = usePatchAttendance();
 
+  const { refetchSchedules } = useCurrentChallenge();
+
+  const disabled = isSubmitted && !isEditing;
+
   const handleAccountNumberChange = (
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -85,32 +89,35 @@ const MissionSubmitBonusSection = ({
   };
 
   const handleSubmit = async () => {
-    setIsEditing(!isEditing);
+    if (isSubmitted) {
+      // 이미 제출된 미션 → 수정 모드로 전환
+      setIsEditing(true);
+      return;
+    }
 
-    if (isEditing) {
-      try {
-        if (!missionId) {
-          console.error('미션 ID가 없습니다.');
-          return;
-        }
+    if (!missionId) {
+      console.error('미션 ID가 없습니다.');
+      return;
+    }
 
-        // 제출 시에만 숫자만 추출
-        const cleanAccountNumber = accountNumber.replace(/[^0-9]/g, '');
+    try {
+      // 제출 시에만 숫자만 추출
+      const cleanAccountNumber = accountNumber.replace(/[^0-9]/g, '');
 
-        await submitBlogBonus.mutateAsync({
-          missionId,
-          url: linkValue,
-          accountType: selectedBank,
-          accountNum: cleanAccountNumber,
-        });
+      await submitBlogBonus.mutateAsync({
+        missionId,
+        url: linkValue,
+        accountType: selectedBank,
+        accountNum: cleanAccountNumber,
+      });
+      await refetchSchedules?.();
 
-        // 후기 모달 표시
-        setModalOpen(true);
-        setIsSubmitted(true);
-        setShowToast(true);
-      } catch (error) {
-        console.error('제출 실패:', error);
-      }
+      // 후기 모달 표시
+      setModalOpen(true);
+      setIsSubmitted(true);
+      setShowToast(true);
+    } catch (error) {
+      console.error('제출 실패:', error);
     }
   };
 
@@ -180,7 +187,7 @@ const MissionSubmitBonusSection = ({
         <div className="mt-7">
           <LinkInputSection
             initialLink={linkValue}
-            disabled={!isEditing}
+            disabled={disabled}
             onLinkChange={handleLinkChange}
             onLinkVerified={handleLinkVerified}
             text="링크가 잘 열리는지 확인해주세요."
@@ -200,7 +207,7 @@ const MissionSubmitBonusSection = ({
             <BankSelectDropdown
               selectedBank={selectedBank}
               onBankSelect={handleBankSelect}
-              disabled={!isEditing}
+              disabled={disabled}
             />
             <input
               type="number"
@@ -213,7 +220,7 @@ const MissionSubmitBonusSection = ({
               placeholder={'계좌번호를 입력해주세요.'}
               value={accountNumber}
               onChange={handleAccountNumberChange}
-              disabled={!isEditing}
+              disabled={disabled}
             />
           </div>
         </div>
