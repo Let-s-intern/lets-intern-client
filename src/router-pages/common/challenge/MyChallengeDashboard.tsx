@@ -1,68 +1,21 @@
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
-import dayjs from '@/lib/dayjs';
+import { useChallengeProgram } from '@/hooks/useChallengeProgram';
+import { useMissionSelection } from '@/hooks/useMissionSelection';
 import { useMissionStore } from '@/store/useMissionStore';
-import axios from '@/utils/axios';
 import MissionCalendarSection from '@components/common/challenge/my-challenge/section/MissionCalendarSection';
 import MissionGuideSection from '@components/common/challenge/my-challenge/section/MissionGuideSection';
 import MissionMentorCommentSection from '@components/common/challenge/my-challenge/section/MissionMentorCommentSection';
 import MissionSubmitSection from '@components/common/challenge/my-challenge/section/MissionSubmitSection';
-import { useQuery } from '@tanstack/react-query';
-import { useEffect, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
-
-const getIsChallengeDone = (endDate: string) => {
-  return dayjs(new Date()).isAfter(dayjs(endDate));
-};
-
-const getIsChallengeSubmitDone = (endDate: string) => {
-  return dayjs(new Date()).isAfter(dayjs(endDate).add(2, 'day'));
-};
 
 const MyChallengeDashboard = () => {
-  const params = useParams<{ programId: string }>();
+  const { schedules } = useCurrentChallenge();
+  const { selectedMissionId } = useMissionStore();
 
-  const { schedules, myDailyMission } = useCurrentChallenge();
-  const { setSelectedMission, selectedMissionId } = useMissionStore();
+  // 미션 선택 관련 로직을 custom hook으로 분리
+  const { todayTh } = useMissionSelection();
 
-  // const todayTh = myDailyMission?.dailyMission?.th ?? schedules.length + 1;
-
-  const { data: programData } = useQuery({
-    queryKey: ['challenge', params.programId, 'application'],
-    queryFn: async ({ queryKey }) => {
-      const res = await axios.get(
-        `/${queryKey[0]}/${queryKey[1]}/${queryKey[2]}`,
-      );
-      return res.data;
-    },
-  });
-
-  const programEndDate = programData?.data?.endDate;
-
-  // todayTh 계산을 useMemo로 최적화
-  const todayTh = useMemo(() => {
-    return (
-      myDailyMission?.dailyMission?.th ??
-      schedules.reduce((th, schedule) => {
-        return Math.max(th, schedule.missionInfo.th ?? 0);
-      }, 0)
-    );
-  }, [myDailyMission?.dailyMission?.th, schedules]);
-
-  // useEffect를 사용하여 to dayTh가 변경될 때만 setSelectedMission 실행
-  useEffect(() => {
-    let todayId = schedules.find(
-      (schedule) => schedule.missionInfo.th === todayTh,
-    )?.missionInfo.id;
-    if (!todayId) {
-      todayId = schedules[schedules.length - 1]?.missionInfo.id;
-    }
-    setSelectedMission(todayId ?? -1, todayTh);
-  }, [todayTh, setSelectedMission]);
-
-  const isChallengeDone = getIsChallengeDone(programEndDate);
-  // const isChallengeSubmitDone = programEndDate
-  //   ? getIsChallengeSubmitDone(programEndDate)
-  //   : false;
+  // 챌린지 프로그램 정보 관련 로직을 custom hook으로 분리
+  const { isChallengeDone } = useChallengeProgram();
 
   return (
     <main className="pl-12">
