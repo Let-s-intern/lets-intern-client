@@ -82,6 +82,12 @@ function RecommendedProgramSection() {
     });
     setTimeout(() => (window.location.href = clickUrl), 300);
   };
+
+  // 'me' 경로에 포함되어 있으면 컴포넌트를 렌더링하지 않음
+  if (location.pathname.includes('me')) {
+    return null;
+  }
+
   console.log(isLoading, programs.length);
   if (isLoading || programs.length === 0) return null;
 
