@@ -88,7 +88,6 @@ function RecommendedProgramSection() {
     return null;
   }
 
-  console.log(isLoading, programs.length);
   if (isLoading || programs.length === 0) return null;
 
   return (
@@ -101,7 +100,7 @@ function RecommendedProgramSection() {
             참가자들이 선택한 프로그램만 모았어요.
           </h2>
           <MoreButton
-            visible={moreButtonInfo?.visible}
+            visible={moreButtonInfo?.visible && !!moreButtonInfo?.url}
             onClick={() =>
               handleClickMore(moreButtonInfo?.url ?? '', challenge?.title)
             }
@@ -109,7 +108,7 @@ function RecommendedProgramSection() {
         </div>
         <RecommendedProgramSwiper programs={programs} />
         <MobileMoreButton
-          visible={moreButtonInfo?.visible}
+          visible={moreButtonInfo?.visible && !!moreButtonInfo?.url}
           onClick={() =>
             handleClickMore(moreButtonInfo?.url ?? '', challenge?.title)
           }
