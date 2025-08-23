@@ -40,7 +40,8 @@ const MissionSubmitRegularSection = ({
   const params = useParams();
 
   const { selectedMissionId } = useMissionStore();
-  const { schedules, currentChallenge } = useCurrentChallenge();
+  const { schedules, currentChallenge, refetchSchedules } =
+    useCurrentChallenge();
 
   // 챌린지 종료 + 2일
   const isSubmitPeriodEnded =
@@ -106,6 +107,7 @@ const MissionSubmitRegularSection = ({
         link: linkValue,
         review: textareaValue,
       });
+      await refetchSchedules?.();
       setIsSubmitted(true);
       // 미션 데이터 새로고침
       onRefreshMissionData?.();

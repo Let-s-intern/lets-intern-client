@@ -48,10 +48,11 @@ const MissionGuideSection = ({
 
   const missionId = getMissionId();
   // 선택된 미션의 상세 정보 가져오기
-  const { data: missionData } = useChallengeMissionAttendanceInfoQuery({
-    challengeId: currentChallenge?.id ?? 0,
-    missionId: missionId ?? 0,
-  });
+  const { data: missionData, isLoading } =
+    useChallengeMissionAttendanceInfoQuery({
+      challengeId: currentChallenge?.id ?? 0,
+      missionId: missionId ?? 0,
+    });
 
   const renderSection = () => {
     if (selectedMissionTh === 0) {
@@ -59,6 +60,7 @@ const MissionGuideSection = ({
         <MissionGuideZeroSection
           missionData={missionData}
           selectedMissionTh={selectedMissionTh}
+          isLoading={isLoading}
         />
       );
     }
@@ -69,6 +71,7 @@ const MissionGuideSection = ({
           todayTh={todayTh}
           missionData={missionData}
           selectedMissionTh={selectedMissionTh}
+          isLoading={isLoading}
         />
       );
     }
@@ -79,6 +82,7 @@ const MissionGuideSection = ({
         todayTh={todayTh}
         missionData={missionData}
         selectedMissionTh={selectedMissionTh}
+        isLoading={isLoading}
       />
     );
   };

@@ -15,6 +15,8 @@ const banks = {
   SC제일은행: 'SC',
 };
 
+type BankKey = keyof typeof banks;
+
 interface BankSelectDropdownProps {
   className?: string;
   selectedBank?: string;
@@ -53,7 +55,7 @@ const BankSelectDropdown = ({
 
   const handleBankSelect = (bank: string) => {
     // 은행명을 API 코드로 변환하여 전달
-    const bankCode = banks[bank as keyof typeof banks];
+    const bankCode = banks[bank as BankKey];
     onBankSelect?.(bankCode);
     setIsOpen(false);
   };
@@ -62,12 +64,17 @@ const BankSelectDropdown = ({
 
   return (
     <div className={clsx('relative', className)}>
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-transparent"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
       {/* 드롭다운 입력 필드 */}
       <div
         className={clsx(
-          'flex h-[44px] w-full cursor-pointer items-center justify-between md:h-[44px] md:w-[184px]',
-          'rounded-xxs border border-neutral-80 bg-white px-3 py-2.5',
-          'transition-colors hover:border-neutral-60',
+          'z-10 flex h-[44px] w-full cursor-pointer items-center justify-between md:h-[44px] md:w-[184px]',
+          'rounded-xxs border border-neutral-80 bg-white px-3 py-2.5 transition-colors hover:border-neutral-60',
           'focus-within:border-primary focus-within:outline-none',
           disabled && 'cursor-not-allowed bg-neutral-100 text-neutral-50',
         )}
