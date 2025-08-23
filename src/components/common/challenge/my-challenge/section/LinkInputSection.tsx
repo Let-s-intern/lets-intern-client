@@ -169,7 +169,7 @@ const LinkInputSection = ({
         <button
           className={clsx(
             'h-[44px] rounded-xxs px-4 text-xsmall16 font-medium transition-colors',
-            'disabled:cursor-not-allowed',
+            'disabled:cursor-not-allowed disabled:bg-neutral-70 disabled:text-neutral-100',
             isVerified && linkValue === verifiedLink
               ? 'bg-green-500 text-white hover:bg-green-600'
               : linkValue && !linkError

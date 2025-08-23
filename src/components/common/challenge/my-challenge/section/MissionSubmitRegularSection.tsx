@@ -91,7 +91,16 @@ const MissionSubmitRegularSection = ({
     setIsLinkVerified(isVerified);
   };
 
+  const isResubmitBlocked =
+    attendanceInfo?.result === 'PASS' ||
+    attendanceInfo?.result === 'FINAL_WRONG' ||
+    (attendanceInfo?.result === 'WAITING' &&
+      (attendanceInfo?.status === 'LATE' ||
+        attendanceInfo?.status === 'UPDATED'));
+
   const handleSubmit = async () => {
+    if (isResubmitBlocked) return;
+
     if (isSubmitted) {
       // 이미 제출된 미션 → 수정 모드로 전환
       setIsEditing(true);
@@ -162,7 +171,7 @@ const MissionSubmitRegularSection = ({
 
         {/* 링크 섹션 */}
         <LinkInputSection
-          disabled={isSubmitted && !isEditing}
+          disabled={(isSubmitted && !isEditing) || isResubmitBlocked}
           onLinkChange={handleLinkChange}
           onLinkVerified={handleLinkVerified}
           todayTh={selectedMissionTh}
@@ -191,7 +200,7 @@ const MissionSubmitRegularSection = ({
 새롭게 배운 점, 어려운 부분, 궁금증 등 떠오르는 생각을 남겨 주세요.`}
             value={textareaValue}
             onChange={handleTextareaChange}
-            disabled={isSubmitted && !isEditing}
+            disabled={(isSubmitted && !isEditing) || isResubmitBlocked} // 재제출 차단 조건 추가
           />
         </section>
 
@@ -203,6 +212,7 @@ const MissionSubmitRegularSection = ({
             isEditing={isEditing}
             onCancelEdit={handleCancelEdit}
             onSaveEdit={handleSaveEdit}
+            disabled={isResubmitBlocked}
           />
         )}
 
