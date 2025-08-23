@@ -4,6 +4,7 @@ import { UserChallengeMissionWithAttendance } from '@/schema';
 import { clsx } from 'clsx';
 import { Dayjs } from 'dayjs';
 import { ReactNode } from 'react';
+import MissionGuideSkeleton from './MissionGuideSkeleton';
 import MissionHeaderSection from './MissionHeaderSection';
 
 const Heading3 = ({
@@ -33,46 +34,6 @@ interface MissionGuideBonusSectionProps {
   isLoading?: boolean; // 로딩 상태 추가
 }
 
-// 스켈레톤 UI 컴포넌트
-const MissionGuideBonusSkeleton = () => (
-  <div className="flex flex-col gap-3">
-    {/* 제목 및 마감일 스켈레톤 */}
-    <div className="flex flex-col gap-2">
-      <div className="rounded h-6 w-32 animate-pulse bg-neutral-80" />
-      <div className="rounded h-4 w-24 animate-pulse bg-neutral-80" />
-    </div>
-
-    {/* 미션 가이드 섹션 스켈레톤 */}
-    <section className="flex flex-col gap-5 rounded-xs border border-neutral-80 px-4 py-4">
-      <section>
-        <div className="rounded mb-2 h-5 w-64 animate-pulse bg-neutral-80" />
-        <div className="rounded h-4 w-full animate-pulse bg-neutral-80" />
-        <div className="rounded h-4 w-3/4 animate-pulse bg-neutral-80" />
-      </section>
-
-      <section className="flex flex-col gap-3">
-        <div className="rounded h-5 w-48 animate-pulse bg-neutral-80" />
-        <div className="flex flex-col gap-2 rounded-xxs bg-neutral-95 p-3">
-          <div className="rounded h-4 w-full animate-pulse bg-neutral-80" />
-          <div className="rounded h-4 w-3/4 animate-pulse bg-neutral-80" />
-          <div className="rounded h-4 w-2/3 animate-pulse bg-neutral-80" />
-        </div>
-      </section>
-
-      <div className="h-px bg-neutral-80" />
-
-      <section className="flex flex-col gap-4">
-        <div className="rounded h-5 w-56 animate-pulse bg-neutral-80" />
-        <div className="flex flex-col gap-2 rounded-xxs bg-primary-5 p-3">
-          <div className="rounded h-4 w-full animate-pulse bg-neutral-80" />
-          <div className="rounded h-4 w-3/4 animate-pulse bg-neutral-80" />
-          <div className="rounded h-4 w-2/3 animate-pulse bg-neutral-80" />
-        </div>
-      </section>
-    </section>
-  </div>
-);
-
 const MissionGuideBonusSection = ({
   className,
   todayTh,
@@ -80,9 +41,10 @@ const MissionGuideBonusSection = ({
   selectedMissionTh,
   isLoading = false,
 }: MissionGuideBonusSectionProps) => {
+  isLoading = true;
   // 로딩 중이거나 데이터가 없을 때 스켈레톤 표시
   if (isLoading || !missionData) {
-    return <MissionGuideBonusSkeleton />;
+    return <MissionGuideSkeleton variant="bonus" />;
   }
 
   // endDate를 월일 시간 형식으로 변환

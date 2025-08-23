@@ -4,6 +4,7 @@ import { UserChallengeMissionWithAttendance } from '@/schema';
 import { clsx } from 'clsx';
 import { Dayjs } from 'dayjs';
 import MissionFileLink from '../mission/MissionFileLink';
+import MissionGuideSkeleton from './MissionGuideSkeleton';
 import MissionHeaderSection from './MissionHeaderSection';
 
 interface MissionGuideRegularSectionProps {
@@ -21,46 +22,6 @@ const formatDeadline = (endDate?: Dayjs) => {
   return date.format('MM.DD HH:mm');
 };
 
-// 스켈레톤 UI 컴포넌트
-const MissionGuideSkeleton = () => (
-  <div className="flex flex-col gap-3">
-    {/* 제목 및 마감일 스켈레톤 */}
-    <div className="flex flex-col gap-2">
-      <div className="rounded h-6 w-32 animate-pulse bg-neutral-80" />
-    </div>
-
-    {/* 미션 가이드 섹션 스켈레톤 */}
-    <section className="flex flex-col gap-5 rounded-xs border border-neutral-80 px-4 py-4">
-      <section className="flex flex-col gap-3">
-        <div className="flex flex-col gap-2">
-          <div className="rounded h-4 w-full animate-pulse bg-neutral-80" />
-          <div className="rounded h-4 w-3/4 animate-pulse bg-neutral-80" />
-        </div>
-      </section>
-
-      <div className="h-px bg-neutral-80" />
-
-      <section className="flex flex-col gap-3">
-        <div className="rounded h-5 w-20 animate-pulse bg-neutral-80" />
-        <div className="rounded h-4 w-full animate-pulse bg-neutral-80" />
-        <div className="rounded h-4 w-2/3 animate-pulse bg-neutral-80" />
-      </section>
-
-      {/* 미션 자료 모음 스켈레톤 */}
-      <section className="flex flex-col gap-4 rounded-xxs bg-neutral-95 p-3 pb-5">
-        <div className="flex flex-col gap-2">
-          <div className="rounded h-5 w-24 animate-pulse bg-neutral-80" />
-          <div className="rounded h-4 w-48 animate-pulse bg-neutral-80" />
-        </div>
-        <div className="flex flex-col gap-2">
-          <div className="rounded h-10 w-full animate-pulse bg-neutral-80" />
-          <div className="rounded h-10 w-full animate-pulse bg-neutral-80" />
-        </div>
-      </section>
-    </section>
-  </div>
-);
-
 const MissionGuideRegularSection = ({
   className,
   todayTh,
@@ -68,7 +29,7 @@ const MissionGuideRegularSection = ({
   selectedMissionTh,
   isLoading = false,
 }: MissionGuideRegularSectionProps) => {
-  // isLoading = true;
+  isLoading = true;
   // 현재 시간이 startDate 이상인지 확인하는 함수
   const isMissionStarted = () => {
     if (!missionData?.missionInfo?.startDate) return false;
@@ -79,7 +40,7 @@ const MissionGuideRegularSection = ({
 
   // 로딩 중이거나 데이터가 없을 때 스켈레톤 표시
   if (isLoading || !missionData) {
-    return <MissionGuideSkeleton />;
+    return <MissionGuideSkeleton variant="regular" />;
   }
 
   return (
