@@ -7,7 +7,7 @@ import MissionGuideSection from '@components/common/challenge/my-challenge/secti
 import MissionMentorCommentSection from '@components/common/challenge/my-challenge/section/MissionMentorCommentSection';
 import MissionSubmitSection from '@components/common/challenge/my-challenge/section/MissionSubmitSection';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 const getIsChallengeDone = (endDate: string) => {
@@ -40,11 +40,20 @@ const MyChallengeDashboard = () => {
 
   const programEndDate = programData?.data?.endDate;
 
-  const todayTh =
-    myDailyMission?.dailyMission?.th ??
-    schedules.reduce((th, schedule) => {
-      return Math.max(th, schedule.missionInfo.th ?? 0);
-    }, 0) + 1;
+  // todayTh 계산을 useMemo로 최적화
+  const todayTh = useMemo(() => {
+    return (
+      myDailyMission?.dailyMission?.th ??
+      schedules.reduce((th, schedule) => {
+        return Math.max(th, schedule.missionInfo.th ?? 0);
+      }, 0) + 1
+    );
+  }, [myDailyMission?.dailyMission?.th, schedules]);
+
+  // useEffect를 사용하여 todayTh가 변경될 때만 setSelectedMission 실행
+  useEffect(() => {
+    setSelectedMission(myDailyMission?.dailyMission?.id ?? -1, todayTh);
+  }, [todayTh, setSelectedMission]);
 
   const isChallengeDone = getIsChallengeDone(programEndDate);
   const isChallengeSubmitDone = programEndDate
