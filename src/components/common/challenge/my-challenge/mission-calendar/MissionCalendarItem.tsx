@@ -87,7 +87,6 @@ const MissionCalendarItem = ({
             mission={mission}
             attendance={attendance}
             isDone={isDone}
-            className="bg-primary-5"
           />
         ) : (mission.th ?? 0) > todayTh ? (
           <MissionNotStartedIcon schedule={schedule} />
