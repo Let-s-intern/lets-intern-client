@@ -7,7 +7,7 @@ import MissionGuideSection from '@components/common/challenge/my-challenge/secti
 import MissionMentorCommentSection from '@components/common/challenge/my-challenge/section/MissionMentorCommentSection';
 import MissionSubmitSection from '@components/common/challenge/my-challenge/section/MissionSubmitSection';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 const getIsChallengeDone = (endDate: string) => {
@@ -22,9 +22,7 @@ const MyChallengeDashboard = () => {
   const params = useParams<{ programId: string }>();
 
   const { schedules, myDailyMission } = useCurrentChallenge();
-  const [modalOpen, setModalOpen] = useState(false);
-  const { selectedMissionTh, setSelectedMission, selectedMissionId } =
-    useMissionStore();
+  const { setSelectedMission, selectedMissionId } = useMissionStore();
 
   // const todayTh = myDailyMission?.dailyMission?.th ?? schedules.length + 1;
 
@@ -46,19 +44,25 @@ const MyChallengeDashboard = () => {
       myDailyMission?.dailyMission?.th ??
       schedules.reduce((th, schedule) => {
         return Math.max(th, schedule.missionInfo.th ?? 0);
-      }, 0) + 1
+      }, 0)
     );
   }, [myDailyMission?.dailyMission?.th, schedules]);
 
-  // useEffect를 사용하여 todayTh가 변경될 때만 setSelectedMission 실행
+  // useEffect를 사용하여 to dayTh가 변경될 때만 setSelectedMission 실행
   useEffect(() => {
-    setSelectedMission(myDailyMission?.dailyMission?.id ?? -1, todayTh);
+    let todayId = schedules.find(
+      (schedule) => schedule.missionInfo.th === todayTh,
+    )?.missionInfo.id;
+    if (!todayId) {
+      todayId = schedules[schedules.length - 1]?.missionInfo.id;
+    }
+    setSelectedMission(todayId ?? -1, todayTh);
   }, [todayTh, setSelectedMission]);
 
   const isChallengeDone = getIsChallengeDone(programEndDate);
-  const isChallengeSubmitDone = programEndDate
-    ? getIsChallengeSubmitDone(programEndDate)
-    : false;
+  // const isChallengeSubmitDone = programEndDate
+  //   ? getIsChallengeSubmitDone(programEndDate)
+  //   : false;
 
   return (
     <main className="pl-12">

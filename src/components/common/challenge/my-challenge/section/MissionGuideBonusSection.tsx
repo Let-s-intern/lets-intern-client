@@ -41,7 +41,6 @@ const MissionGuideBonusSection = ({
   selectedMissionTh,
   isLoading = false,
 }: MissionGuideBonusSectionProps) => {
-  isLoading = true;
   // 로딩 중이거나 데이터가 없을 때 스켈레톤 표시
   if (isLoading || !missionData) {
     return <MissionGuideSkeleton variant="bonus" />;

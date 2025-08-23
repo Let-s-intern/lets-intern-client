@@ -29,7 +29,6 @@ const MissionGuideRegularSection = ({
   selectedMissionTh,
   isLoading = false,
 }: MissionGuideRegularSectionProps) => {
-  isLoading = true;
   // 현재 시간이 startDate 이상인지 확인하는 함수
   const isMissionStarted = () => {
     if (!missionData?.missionInfo?.startDate) return false;
