@@ -8,12 +8,11 @@ import { SubNavItemProps } from './SubNavItem';
 import SuperInternPromotion from './SuperInternPromotion';
 
 interface Props {
-  isNextRouter: boolean;
   loginRedirect: string;
   toggleMenu: () => void;
 }
 
-function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
+function GlobalNavTopBar({ loginRedirect, toggleMenu }: Props) {
   const { isLoggedIn, logout } = useAuthStore();
   const { data: isAdmin } = useGetUserAdmin({
     enabled: isLoggedIn,
@@ -24,16 +23,12 @@ function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
     {
       children: '마이페이지',
       href: '/mypage/application',
-      isNextRouter,
-      force: isNextRouter,
     },
     ...(isAdmin
       ? [
           {
             children: '관리자페이지',
             href: '/admin',
-            isNextRouter,
-            force: isNextRouter,
           },
         ]
       : []),
@@ -43,26 +38,22 @@ function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
         logout();
         window.location.href = '/';
       },
-      isNextRouter,
-      force: isNextRouter,
     },
   ];
   return (
     <nav className="mw-1180 flex h-11 items-center justify-between md:h-full md:py-4">
       <div className="flex h-full items-center">
         {/* 로고 */}
-        <LogoLink className="mr-8" isNextRouter={isNextRouter} />
+        <LogoLink className="mr-8" />
         {/* 네비 메뉴 */}
         <GlobalNavItem
           className="mr-6 hidden h-[38px] items-center border-b-[1.5px] border-neutral-0 md:flex"
-          isNextRouter={isNextRouter}
           href="/"
         >
           홈
         </GlobalNavItem>
         <GlobalNavItem
           className="hidden items-center justify-center gap-1 md:flex"
-          isNextRouter={isNextRouter}
           href="https://letscareer.oopy.io/1df5e77c-bee1-80b3-8199-e7d2cc9d64cd"
           target="_blank"
           rel="noopener noreferrer"
@@ -80,7 +71,6 @@ function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
         {isLoggedIn ? (
           <GlobalNavItem
             className="hidden cursor-pointer items-center md:flex"
-            isNextRouter={isNextRouter}
             subNavList={userSubNavList}
             showDropdownIcon={false}
             align="right"
@@ -100,12 +90,8 @@ function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
         ) : (
           <div className="hidden items-center gap-2 md:flex">
             {/* 로그인 */}
-            <LoginLink
-              redirect={loginRedirect}
-              isNextRouter={isNextRouter}
-              force={isNextRouter}
-            />
-            <SignUpLink isNextRouter={isNextRouter} force={isNextRouter} />
+            <LoginLink redirect={loginRedirect} />
+            <SignUpLink />
           </div>
         )}
         <i

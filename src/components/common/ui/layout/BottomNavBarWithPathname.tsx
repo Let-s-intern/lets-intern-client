@@ -1,8 +1,8 @@
-import { useLocation } from 'react-router-dom';
+import { usePathname } from 'next/navigation';
 import BottomNavBar from './BottomNavBar';
 
 function BottomNavBarWithPathname() {
-  const location = useLocation();
-  return <BottomNavBar isNextRouter={false} pathname={location.pathname} />;
+  const pathname = usePathname();
+  return <BottomNavBar pathname={pathname} />;
 }
 export default BottomNavBarWithPathname;

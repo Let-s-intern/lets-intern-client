@@ -22,23 +22,18 @@ export default function useActiveReportNav() {
       {
         children: '이력서 진단 받기',
         href: '/report/landing/resume',
-        isNextRouter: true,
       },
       {
         children: '자기소개서 진단 받기',
         href: '/report/landing/personal-statement',
-        isNextRouter: true,
       },
       {
         children: '포트폴리오 진단 받기',
         href: '/report/landing/portfolio',
-        isNextRouter: true,
       },
       {
         children: 'MY 진단서 보기',
         href: '/report/management',
-        isNextRouter: true,
-        force: true,
       },
     ];
 

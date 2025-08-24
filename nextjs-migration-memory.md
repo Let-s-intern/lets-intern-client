@@ -227,7 +227,7 @@
 
 ## 🚀 진행 상황
 
-### ✅ 완료된 작업 (52/113) - 46.0%
+### ✅ 완료된 작업 (60/113) - 53.1%
 
 #### Phase 1: 핵심 인프라 (4개 완료)
 1. `src/context/CurrentChallengeProvider.tsx` - useParams → Next.js params로 변경
@@ -304,6 +304,16 @@
 50. `src/app/(user)/live/[id]/mentor/notification/before/page.tsx` - MentorNotificationBefore (멘토 사전 안내)
 51. `src/app/(user)/live/[id]/mentor/notification/after/page.tsx` - MentorNotificationAfter (멘토 후기 전달)
 52. `src/app/not-found.tsx` - NotFound (404 페이지)
+
+**Next 컴포넌트 통합 (8개 완료)**
+53. `NavBar` - NextNavBar 통합, isNextRouter props 제거, Next.js 전용으로 단순화
+54. `BottomNavBarWithPathname` - NextBottomNavBarWithPathname 통합  
+55. `HybridLink` - React Router 의존성 제거, Next.js Link만 사용
+56. `BackHeader` - NextBackHeader 통합, router.back() 자동 지원
+57. `Footer` - NextFooter 통합, isNextRouter props 제거
+58. 모든 네비게이션 컴포넌트에서 isNextRouter 조건부 로직 제거
+59. 유틸리티 함수들 (hideMobileBottomNavBar, getBottomNavBarClassNameByPath) NavBar로 이동
+60. 중복 Next 컴포넌트들 완전 제거 및 import 경로 통합
 
 ### 🔄 다음 작업 예정
 - 핵심 컴포넌트 수정 (네비게이션, 링크 컴포넌트 등)

@@ -8,12 +8,11 @@ import SignUpLink from './SignUpLink';
 
 interface Props {
   children?: ReactNode;
-  isNextRouter: boolean;
   isOpen: boolean;
   onClose: () => void;
 }
 
-function SideNavContainer({ children, isNextRouter, isOpen, onClose }: Props) {
+function SideNavContainer({ children, isOpen, onClose }: Props) {
   const { isLoggedIn, logout } = useAuthStore();
 
   const { data: user } = useUserQuery({ enabled: isLoggedIn, retry: 1 });
@@ -62,14 +61,10 @@ function SideNavContainer({ children, isNextRouter, isOpen, onClose }: Props) {
             <div className="flex gap-6">
               <LoginLink
                 className="p-0 font-medium"
-                isNextRouter={isNextRouter}
-                force={isNextRouter}
                 onClick={() => onClose()}
               />
               <SignUpLink
                 className="bg-transparent p-0 font-medium text-black"
-                isNextRouter={isNextRouter}
-                force={isNextRouter}
                 onClick={() => onClose()}
               />
             </div>

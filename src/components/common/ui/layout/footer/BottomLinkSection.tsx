@@ -1,10 +1,6 @@
 import DocumentLink from './DocumentLink';
 import IconLink from './IconLink';
 
-interface Props {
-  isNextRouter: boolean;
-}
-
 const onClickAddChannel = () => {
   window.Kakao.Channel.followChannel({
     channelPublicId: '_tCeHG',
@@ -13,19 +9,17 @@ const onClickAddChannel = () => {
   });
 };
 
-function BottomLinkSection({ isNextRouter }: Props) {
+function BottomLinkSection() {
   return (
     <div className="flex items-center justify-between lg:justify-start lg:gap-5">
       {/* 아이콘 링크 */}
       <div className="flex items-center gap-4">
         <IconLink
-          isNextRouter={isNextRouter}
           className="instagram_cta"
           imgSrc="/icons/instagram.svg"
           href="https://www.instagram.com/letscareer.official"
         />
         <IconLink
-          isNextRouter={isNextRouter}
           className="blog_cta"
           imgSrc="/icons/blog.png"
           href="https://blog.naver.com/PostList.naver?blogId=letsintern"
@@ -40,16 +34,10 @@ function BottomLinkSection({ isNextRouter }: Props) {
         />
       </div>
       <div className="flex items-center gap-6 text-neutral-0/[.65]">
-        <DocumentLink
-          isNextRouter={isNextRouter}
-          href="https://letscareer.oopy.io/a121a038-f72f-42d7-bde7-47624ecc0943"
-        >
+        <DocumentLink href="https://letscareer.oopy.io/a121a038-f72f-42d7-bde7-47624ecc0943">
           서비스 이용약관
         </DocumentLink>
-        <DocumentLink
-          isNextRouter={isNextRouter}
-          href="https://letscareer.oopy.io/c3af485b-fced-49ab-9601-f2d7bf07657d"
-        >
+        <DocumentLink href="https://letscareer.oopy.io/c3af485b-fced-49ab-9601-f2d7bf07657d">
           개인정보처리방침
         </DocumentLink>
       </div>
