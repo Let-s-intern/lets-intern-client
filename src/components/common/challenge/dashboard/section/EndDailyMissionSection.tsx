@@ -1,12 +1,14 @@
 import { useGetChallengeReviewStatus } from '@/api/challenge';
 import { useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
 import DashboardCreateReviewModal from '../modal/DashboardCreateReviewModal';
 import DashboardReviewModal from '../modal/DashboardReviewModal';
 
 const EndDailyMissionSection = () => {
-  const applicationId = useParams().applicationId;
+  const params = useParams<{ applicationId: string }>();
+  const applicationId = params.applicationId;
   const { currentChallenge } = useCurrentChallenge();
   const [modalOpen, setModalOpen] = useState(false);
   const { data: reviewStatus } = useGetChallengeReviewStatus(
@@ -27,7 +29,7 @@ const EndDailyMissionSection = () => {
         </p>
         <div className="mt-4 flex w-full items-center gap-x-3">
           <Link
-            to={`/challenge/${applicationId}/${currentChallenge?.id}/me`}
+            href={`/challenge/${applicationId}/${currentChallenge?.id}/me`}
             className="flex-1 rounded-sm border border-primary bg-white px-4 py-3 text-center font-medium text-primary"
           >
             이전 미션 돌아보기

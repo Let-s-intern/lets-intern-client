@@ -1,7 +1,7 @@
 import { useReadNotices } from '@/hooks/useReadItems';
 import clsx from 'clsx';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import HybridLink from '../../../ui/HybridLink';
 import { ChallengeNotice } from '../../../../../schema';
 
 interface INoticeSectionProps {
@@ -47,9 +47,9 @@ const NoticeSection = ({ notices }: INoticeSectionProps) => {
         ) : (
           <ul className="flex flex-1 flex-col gap-1.5">
             {currentNoticeList.map((notice) => (
-              <Link
+              <HybridLink
                 key={notice.id}
-                to={notice.link ?? ''}
+                href={notice.link ?? ''}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-[#333333] hover:underline"
@@ -63,7 +63,7 @@ const NoticeSection = ({ notices }: INoticeSectionProps) => {
                     className="h-3 w-3"
                   />
                 )}
-              </Link>
+              </HybridLink>
             ))}
             {currentNoticeList.length < 4 &&
               Array.from(
