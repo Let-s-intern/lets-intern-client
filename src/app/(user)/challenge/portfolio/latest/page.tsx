@@ -1,7 +1,9 @@
+'use client';
+
 import { useGetActiveChallenge, useGetChallengeList } from '@/api/challenge';
 import { challengeTypeSchema } from '@/schema';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 
 const { PORTFOLIO } = challengeTypeSchema.enum;
 
@@ -13,18 +15,39 @@ const { PORTFOLIO } = challengeTypeSchema.enum;
  * 2. 없을 경우 가장 최근 개설된 포트폴리오 챌린지로 이동
  */
 export default function PortfolioLatest() {
-  const navigate = useNavigate();
-  const { data: activeData } = useGetActiveChallenge(PORTFOLIO);
-  const { data: listData } = useGetChallengeList({
+  const router = useRouter();
+  const {
+    data: activeData,
+    error: activeError,
+    isLoading: activeLoading,
+  } = useGetActiveChallenge(PORTFOLIO);
+  const {
+    data: listData,
+    error: listError,
+    isLoading: listLoading,
+  } = useGetChallengeList({
     type: PORTFOLIO,
   });
 
   useEffect(() => {
+    // 로딩 중이면 대기
+    if (activeLoading || listLoading) {
+      return;
+    }
+
+    // 에러가 있으면 로그 출력 후 프로그램 페이지로 이동
+    if (activeError || listError) {
+      console.error('API 호출 에러:', { activeError, listError });
+      router.replace('/program');
+      return;
+    }
+
     // 활성화된 챌린지가 있는 경우
     const activeChallenge = activeData?.challengeList?.[0];
     if (activeChallenge?.id) {
       const title = activeChallenge.title ?? '';
       const redirectUrl = `/program/challenge/${activeChallenge.id}/${encodeURIComponent(title)}`;
+
       // Next.js App Router로 이동하기 위해 새로고침 강제 실행
       window.location.href = redirectUrl;
       return;
@@ -35,14 +58,23 @@ export default function PortfolioLatest() {
     if (latestChallenge?.id) {
       const title = latestChallenge.title ?? '';
       const redirectUrl = `/program/challenge/${latestChallenge.id}/${encodeURIComponent(title)}`;
+
       // Next.js App Router로 이동하기 위해 새로고침 강제 실행
       window.location.href = redirectUrl;
       return;
     }
 
     // 챌린지가 없는 경우 프로그램 페이지로 이동
-    navigate('/program', { replace: true });
-  }, [activeData, listData, navigate]);
+    router.replace('/program');
+  }, [
+    activeData,
+    listData,
+    activeError,
+    listError,
+    activeLoading,
+    listLoading,
+    router,
+  ]);
 
   // 로딩 상태 표시
   return (
@@ -50,6 +82,9 @@ export default function PortfolioLatest() {
       <div className="text-center">
         <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-primary"></div>
         <p className="text-gray-600">포트폴리오 완성 챌린지로 이동 중...</p>
+        {(activeLoading || listLoading) && (
+          <p className="mt-2 text-sm text-gray-500">데이터 로딩 중...</p>
+        )}
       </div>
     </div>
   );

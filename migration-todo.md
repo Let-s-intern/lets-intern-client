@@ -20,16 +20,16 @@
 ### 챌린지 시스템 (최우선)
 
 - [x] `src/router-pages/common/challenge/ChallengeDashboard.tsx` → `src/app/(user)/challenge/[applicationId]/[programId]/page.tsx`
-- [ ] `src/router-pages/common/challenge/MyChallengeDashboard.tsx` → `src/app/(user)/challenge/[applicationId]/[programId]/me/page.tsx`
-- [ ] `src/router-pages/common/challenge/ChallengeUserInfo.tsx` → `src/app/(user)/challenge/[applicationId]/[programId]/user/info/page.tsx`
-- [ ] `src/router-pages/common/challenge/MissionFeedback.tsx` → `src/app/(user)/challenge/[applicationId]/[programId]/challenge/[challengeId]/missions/[missionId]/feedback/page.tsx`
+- [x] `src/router-pages/common/challenge/MyChallengeDashboard.tsx` → `src/app/(user)/challenge/[applicationId]/[programId]/me/page.tsx`
+- [x] `src/router-pages/common/challenge/ChallengeUserInfo.tsx` → `src/app/(user)/challenge/[applicationId]/[programId]/user/info/page.tsx`
+- [x] `src/router-pages/common/challenge/MissionFeedback.tsx` → `src/app/(user)/challenge/[applicationId]/[programId]/challenge/[challengeId]/missions/[missionId]/feedback/page.tsx`
 
 ### Latest 리다이렉트 페이지
 
-- [ ] `src/router-pages/common/challenge/ExperienceSummaryLatest.tsx` → `src/app/(user)/challenge/experience-summary/latest/page.tsx`
-- [ ] `src/router-pages/common/challenge/PersonalStatementLatest.tsx` → `src/app/(user)/challenge/personal-statement/latest/page.tsx`
-- [ ] `src/router-pages/common/challenge/PortfolioLatest.tsx` → `src/app/(user)/challenge/portfolio/latest/page.tsx`
-- [ ] `src/router-pages/common/challenge/MarketingLatest.tsx` → `src/app/(user)/challenge/marketing/latest/page.tsx`
+- [x] `src/router-pages/common/challenge/ExperienceSummaryLatest.tsx` → `src/app/(user)/challenge/experience-summary/latest/page.tsx`
+- [x] `src/router-pages/common/challenge/PersonalStatementLatest.tsx` → `src/app/(user)/challenge/personal-statement/latest/page.tsx`
+- [x] `src/router-pages/common/challenge/PortfolioLatest.tsx` → `src/app/(user)/challenge/portfolio/latest/page.tsx`
+- [x] `src/router-pages/common/challenge/MarketingLatest.tsx` → `src/app/(user)/challenge/marketing/latest/page.tsx`
 
 ### 인증 페이지
 
@@ -207,18 +207,26 @@
 
 ## 🚀 진행 상황
 
-### ✅ 완료된 작업 (5/113)
+### ✅ 완료된 작업 (13/113)
 1. `src/context/CurrentChallengeProvider.tsx` - useParams → Next.js params로 변경
 2. `src/components/common/challenge/ui/layout/ChallengeLayout.tsx` - Outlet → children, useNavigate → useRouter로 변경
 3. `src/components/common/challenge/ui/layout/NavBar.tsx` - Link → Next.js Link, useLocation → usePathname으로 변경  
 4. `src/components/common/ui/layout/Layout.tsx` - Outlet → children으로 변경
 5. `src/app/(user)/challenge/[applicationId]/[programId]/page.tsx` - ChallengeDashboard Next.js 페이지 생성
+6. `src/app/(user)/challenge/[applicationId]/[programId]/me/page.tsx` - MyChallengeDashboard Next.js 페이지 생성
+7. `src/app/(user)/challenge/[applicationId]/[programId]/user/info/page.tsx` - ChallengeUserInfo Next.js 페이지 생성
+8. `src/app/(user)/challenge/[applicationId]/[programId]/challenge/[challengeId]/missions/[missionId]/feedback/page.tsx` - MissionFeedback Next.js 페이지 생성
+9. `src/app/(user)/challenge/experience-summary/latest/page.tsx` - ExperienceSummaryLatest Next.js 페이지 생성
+10. `src/app/(user)/challenge/personal-statement/latest/page.tsx` - PersonalStatementLatest Next.js 페이지 생성
+11. `src/app/(user)/challenge/portfolio/latest/page.tsx` - PortfolioLatest Next.js 페이지 생성
+12. `src/app/(user)/challenge/marketing/latest/page.tsx` - MarketingLatest Next.js 페이지 생성
+13. 기존 router-pages 파일들 제거 완료
 
 ### 🔄 다음 작업 예정
-- MyChallengeDashboard 페이지 변환
-- ChallengeUserInfo 페이지 변환
-- MissionFeedback 페이지 변환
-- Latest 리다이렉트 페이지들
+- 인증 페이지들 (Login, SignUp, FindPassword)
+- 마이페이지 시스템
+- 프로그램 관련 페이지들
+- 서류진단 시스템
 
 ## ⚠️ 주의사항
 
