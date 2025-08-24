@@ -3,35 +3,42 @@
 ## 🎯 Phase 1: 핵심 인프라 (우선순위: 🔴 HIGH)
 
 ### 라우터 설정 파일
+
 - [ ] `src/Router.tsx` - React Router 설정 완전 제거
 - [ ] `src/AdminRoutes.tsx` - 어드민 라우팅 (관리자용, 별도 처리)
 - [ ] `src/App.tsx` - BrowserRouter 제거, Next.js 설정으로 변경
 
 ### 핵심 컨텍스트 & 레이아웃
+
 - [ ] `src/context/CurrentChallengeProvider.tsx` - useParams → Next.js params로 변경
 - [ ] `src/components/common/challenge/ui/layout/ChallengeLayout.tsx` - 라우팅 로직 변경
 - [ ] `src/components/common/challenge/ui/layout/NavBar.tsx` - 네비게이션 링크 변경
+- [ ] `src/components/common/ui/layout/Layout.tsx` - 메인 레이아웃 컴포넌트
 
 ## 🎯 Phase 2: 페이지 컴포넌트 변환 (우선순위: 🔴 HIGH)
 
 ### 챌린지 시스템 (최우선)
+
 - [ ] `src/router-pages/common/challenge/ChallengeDashboard.tsx` → `src/app/(user)/challenge/[applicationId]/[programId]/page.tsx`
 - [ ] `src/router-pages/common/challenge/MyChallengeDashboard.tsx` → `src/app/(user)/challenge/[applicationId]/[programId]/me/page.tsx`
 - [ ] `src/router-pages/common/challenge/ChallengeUserInfo.tsx` → `src/app/(user)/challenge/[applicationId]/[programId]/user/info/page.tsx`
 - [ ] `src/router-pages/common/challenge/MissionFeedback.tsx` → `src/app/(user)/challenge/[applicationId]/[programId]/challenge/[challengeId]/missions/[missionId]/feedback/page.tsx`
 
 ### Latest 리다이렉트 페이지
+
 - [ ] `src/router-pages/common/challenge/ExperienceSummaryLatest.tsx` → `src/app/(user)/challenge/experience-summary/latest/page.tsx`
 - [ ] `src/router-pages/common/challenge/PersonalStatementLatest.tsx` → `src/app/(user)/challenge/personal-statement/latest/page.tsx`
 - [ ] `src/router-pages/common/challenge/PortfolioLatest.tsx` → `src/app/(user)/challenge/portfolio/latest/page.tsx`
 - [ ] `src/router-pages/common/challenge/MarketingLatest.tsx` → `src/app/(user)/challenge/marketing/latest/page.tsx`
 
 ### 인증 페이지
+
 - [ ] `src/router-pages/common/auth/Login.tsx` → `src/app/(user)/login/page.tsx`
 - [ ] `src/router-pages/common/auth/SignUp.tsx` → `src/app/(user)/signup/page.tsx`
 - [ ] `src/router-pages/common/auth/FindPassword.tsx` → `src/app/(user)/find-password/page.tsx`
 
 ### 마이페이지
+
 - [ ] `src/router-pages/common/mypage/MyPage.tsx` → `src/app/(user)/mypage/layout.tsx`
 - [ ] `src/router-pages/common/mypage/Application.tsx` → `src/app/(user)/mypage/application/page.tsx`
 - [ ] `src/router-pages/common/mypage/Review.tsx` → `src/app/(user)/mypage/review/page.tsx`
@@ -46,6 +53,7 @@
 ## 🎯 Phase 3: 서브 시스템 (우선순위: 🟡 MEDIUM)
 
 ### 프로그램 관련
+
 - [ ] `src/router-pages/common/program/Programs.tsx` → `src/app/(user)/program/page.tsx`
 - [ ] `src/router-pages/common/program/Payment.tsx` → `src/app/(user)/payment/page.tsx`
 - [ ] `src/router-pages/common/program/PaymentInputPage.tsx` → `src/app/(user)/payment-input/page.tsx`
@@ -53,6 +61,7 @@
 - [ ] `src/router-pages/common/program/PaymentFail.tsx` → `src/app/(user)/order/fail/page.tsx`
 
 ### 서류진단 시스템
+
 - [ ] `src/router-pages/common/report/ReportPage.tsx` → `src/app/(user)/report/landing/page.tsx`
 - [ ] `src/router-pages/common/report/ReportResumePage.tsx` → `src/app/(user)/report/landing/resume/[[...reportId]]/page.tsx`
 - [ ] `src/router-pages/common/report/ReportPersonalStatementPage.tsx` → `src/app/(user)/report/landing/personal-statement/[[...reportId]]/page.tsx`
@@ -66,6 +75,7 @@
 - [ ] `src/router-pages/common/report/ReportApplicationPage.tsx` → `src/app/(user)/report/[reportType]/application/[applicationId]/page.tsx`
 
 ### 리뷰 시스템
+
 - [ ] `src/router-pages/common/review/ChallengeReviewCreatePage.tsx` → `src/app/(user)/mypage/review/new/challenge/[programId]/page.tsx`
 - [ ] `src/router-pages/common/review/ChallengeReviewPage.tsx` → `src/app/(user)/mypage/review/challenge/[programId]/page.tsx`
 - [ ] `src/router-pages/common/review/LiveReviewCreatePage.tsx` → `src/app/(user)/mypage/review/new/live/[programId]/page.tsx`
@@ -74,6 +84,7 @@
 - [ ] `src/router-pages/common/review/ReportReviewPage.tsx` → `src/app/(user)/mypage/review/report/[reportId]/page.tsx`
 
 ### 기타 페이지
+
 - [ ] `src/router-pages/common/about/About.tsx` → `src/app/(user)/about/page.tsx`
 - [ ] `src/router-pages/common/home/Home.tsx` → `src/app/(user)/page.tsx` (이미 존재함, 확인 필요)
 - [ ] `src/router-pages/common/mentor/MentorNotificationBefore.tsx` → `src/app/(user)/live/[id]/mentor/notification/before/page.tsx`
@@ -82,13 +93,16 @@
 
 ## 🎯 Phase 4: 컴포넌트 수정 (우선순위: 🟡 MEDIUM)
 
-### 네비게이션 관련 컴포넌트 (useNavigate/Link 사용)
+### 핵심 레이아웃 & 네비게이션 컴포넌트 (최우선)
+
 - [ ] `src/components/common/ui/layout/header/NavBar.tsx` - Link → Next.js Link 변경
 - [ ] `src/components/common/ui/layout/BottomNavBarWithPathname.tsx` - useLocation → usePathname
 - [ ] `src/components/common/ui/HybridLink.tsx` - React Router Link → Next.js Link 통합
 - [ ] `src/components/common/ui/BackHeader.tsx` - useNavigate → router.back()
+- [ ] `src/components/common/auth/ui/SocialLogin.tsx` - 소셜 로그인 컴포넌트
 
 ### 챌린지 관련 컴포넌트
+
 - [ ] `src/components/common/challenge/dashboard/section/DailyMissionSection.tsx`
 - [ ] `src/components/common/challenge/dashboard/section/EndDailyMissionSection.tsx`
 - [ ] `src/components/common/challenge/dashboard/section/GuideSection.tsx`
@@ -109,10 +123,14 @@
 - [ ] `src/components/common/challenge/my-challenge/section/MissionSubmitBonusSection.tsx`
 - [ ] `src/components/common/challenge/my-challenge/section/MissionSubmitRegularSection.tsx`
 - [ ] `src/components/common/challenge/my-challenge/section/MissionSubmitZeroSection.tsx`
+- [ ] `src/components/common/challenge/my-challenge/section/RecommendedProgramSwiper.tsx`
+- [ ] `src/components/common/challenge/my-challenge/section/RecommendedProgramSection.tsx`
+- [ ] `src/components/common/challenge/my-challenge/section/OtherMissionSection.tsx`
 - [ ] `src/components/common/challenge/OtMissionInputSection.tsx`
 - [ ] `src/components/common/challenge/OtMissionSubmitMenu.tsx`
 
 ### 마이페이지 관련 컴포넌트
+
 - [ ] `src/components/common/mypage/application/section/ApplySection.tsx`
 - [ ] `src/components/common/mypage/credit/CreditListItem.tsx`
 - [ ] `src/components/common/mypage/credit/section/CreditList.tsx`
@@ -122,6 +140,7 @@
 - [ ] `src/components/common/mypage/ui/nav/NavItem.tsx`
 
 ### 프로그램 관련 컴포넌트
+
 - [ ] `src/components/common/program/banner/Banner.tsx`
 - [ ] `src/components/common/program/program-detail/apply/content/OverviewContent.tsx`
 - [ ] `src/components/common/program/program-detail/apply/content/ScheduleContent.tsx`
@@ -134,6 +153,7 @@
 - [ ] `src/components/common/program/ProgramCard.tsx`
 
 ### 기타 컴포넌트
+
 - [ ] `src/components/ChallengeView.tsx`
 - [ ] `src/components/LiveView.tsx`
 - [ ] `src/components/common/about/modal/BootcampModal.tsx`
@@ -150,20 +170,24 @@
 ## 🎯 Phase 5: 유틸리티 & 훅 (우선순위: 🟢 LOW)
 
 ### 훅 수정
+
 - [ ] `src/hooks/useMentorAccessControl.ts` - useParams → Next.js params
 - [ ] 기타 React Router 의존성 있는 커스텀 훅들
 
 ### 레거시 파일 제거
+
 - [ ] `src/router-pages/common/program/ChallengeDetailSSRPage.tsx` - 불필요한 레거시 파일
 - [ ] `src/router-pages/common/program/LiveDetailSSRPage.tsx` - 불필요한 레거시 파일
 - [ ] `src/router-pages/common/report/ReportNavigation.tsx` - 네비게이션 로직 통합
 - [ ] `src/components/page/ReportNavigation.tsx` - 중복 컴포넌트
 
 ## 🔧 Package.json 수정
+
 - [ ] `react-router-dom` 의존성 제거
 - [ ] 관련 타입 정의 제거 (`@types/react-router-dom`)
 
 ## 🧪 테스트 & 검증
+
 - [ ] 모든 페이지 접근 테스트
 - [ ] URL 파라미터 전달 검증
 - [ ] 네비게이션 흐름 테스트
@@ -173,16 +197,18 @@
 ---
 
 ## 📊 통계
-- **총 변경 파일**: 95개
+
+- **총 변경 파일**: 113개 (어드민 시스템 제외)
 - **신규 Next.js 페이지**: 47개
-- **수정 컴포넌트**: 48개
-- **예상 작업 기간**: 7-10주
-- **우선순위 HIGH**: 18개 파일
-- **우선순위 MEDIUM**: 65개 파일
-- **우선순위 LOW**: 12개 파일
+- **수정 컴포넌트**: 66개
+- **우선순위 HIGH**: 22개 파일
+- **우선순위 MEDIUM**: 78개 파일
+- **우선순위 LOW**: 13개 파일
 
 ## ⚠️ 주의사항
+
 1. **Phase 1 완료 후 Phase 2 시작** - 의존성 순서 중요
 2. **챌린지 시스템 우선** - 핵심 비즈니스 로직
 3. **URL 호환성 유지** - 기존 링크 깨짐 방지
-4. **점진적 테스트** - 각 Phase 완료 후 검증
+4. **모든 작업 완료 후 종합 테스트** - 전체 마이그레이션 완료 후 일괄 검증
+5. **어드민 시스템 제외** - 본 마이그레이션에서는 사용자 페이지만 대상
