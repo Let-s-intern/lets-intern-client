@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import useAuthStore from '../../../../store/useAuthStore';
 import axios from '../../../../utils/axios';
@@ -16,7 +16,7 @@ const InfoContainer = ({
   isSocial: boolean;
   email: string;
 }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [value, setValue] = useState<{
     inflow: string;
@@ -36,7 +36,7 @@ const InfoContainer = ({
   const [error, setError] = useState<unknown>(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [successModalOpen, setSuccessModalOpen] = useState(false);
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect');
   const { logout } = useAuthStore();
   let accessToken = '';
@@ -223,7 +223,7 @@ const InfoContainer = ({
       {successModalOpen && (
         <AlertModal
           onConfirm={() => {
-            navigate(redirect ? `/login?redirect=${redirect}` : '/login');
+            router.push(redirect ? `/login?redirect=${redirect}` : '/login');
           }}
           title="회원가입 완료"
           showCancel={false}

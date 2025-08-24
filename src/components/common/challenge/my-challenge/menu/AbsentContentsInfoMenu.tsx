@@ -1,5 +1,4 @@
 import { UserChallengeMissionDetail } from '@/schema';
-import { Link } from 'react-router-dom';
 
 import AbsentContentsDropdown from '../dropdown/AbsentContentsDropdown';
 
