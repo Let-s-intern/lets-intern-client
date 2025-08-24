@@ -1,10 +1,10 @@
-// TODO: 질문 enum으로 관리
+'use client';
 
 import { useMediaQuery } from '@mui/material';
 import { josa } from 'es-hangul';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'next/navigation';
 
-import { useGetReportTitle } from '@/api/report';
+import { useGetChallengeTitle } from '@/api/challenge';
 import { useGetProgramReviewDetail } from '@/api/review';
 import { useUserQuery } from '@/api/user';
 import GoalOrConcernsBox from '@components/common/review/GoalOrConcernsBox';
@@ -14,27 +14,27 @@ import ReviewQuestion from '@components/common/review/ReviewQuestion';
 import ReviewTextarea from '@components/common/review/ReviewTextarea';
 import TenScore from '@components/common/review/score/TenScore';
 
-const ReportReviewPage = () => {
-  const params = useParams();
+const ChallengeReviewPage = () => {
+  const params = useParams<{ programId: string }>();
+  const searchParams = useSearchParams();
   const isDesktop = useMediaQuery('(min-width:768px)');
-  const reportId = params.reportId;
-  const [searchParams] = useSearchParams();
+  const programId = params.programId;
   const reviewId = searchParams.get('reviewId');
 
   const { data: user } = useUserQuery({ enabled: true });
 
-  const { data: programTitle } = useGetReportTitle(Number(reportId));
+  const { data: programTitle } = useGetChallengeTitle(Number(programId));
 
   const { data: reviewData } = useGetProgramReviewDetail(
-    'REPORT_REVIEW',
+    'CHALLENGE_REVIEW',
     Number(reviewId),
   );
   const review = reviewData?.reviewInfo;
-  const worry = review?.reviewItemList?.find(
-    (r) => r.questionType === 'WORRY',
+  const goal = review?.reviewItemList?.find(
+    (r) => r.questionType === 'GOAL',
   )?.answer;
-  const worryResult = review?.reviewItemList?.find(
-    (r) => r.questionType === 'WORRY_RESULT',
+  const goalResult = review?.reviewItemList?.find(
+    (r) => r.questionType === 'GOAL_RESULT',
   )?.answer;
   const goodPoint = review?.reviewItemList?.find(
     (r) => r.questionType === 'GOOD_POINT',
@@ -68,58 +68,59 @@ const ReportReviewPage = () => {
         <TenScore tenScore={review?.reviewInfo.npsScore ?? 0} />
       </section>
 
-      {/* 서류 작성 고민 */}
+      {/* 목표 달성 */}
       <section>
         <ReviewQuestion required className="mb-5">
-          3. {programTitle?.title} 이용 후에 서류 작성 고민이 해결되셨나요?
+          3. {josa(programTitle?.title ?? '', '을/를')} 참여하기 전의 목표를
+          어떻게 달성하셨나요?
         </ReviewQuestion>
-        {worry && (
+        {goal && (
           <GoalOrConcernsBox className="mb-3">
             <div className="max-h-64 overflow-y-auto px-5 py-3 md:max-h-[9.5rem]">
               <span className="text-xsmall14">
                 {/* TODO: 사용자 이름 넣어야 함 */}
-                🤔 <b>{user?.name}</b>님이 작성하신 서류 고민
+                🎯 <b>{user?.name}</b>님이 작성하신 챌린지 시작 전 목표
               </span>
               <br />
-              {/* TODO: 사용자가 설정한 고민이 들어가야 함 */}
-              <p className="text-xsmall16 font-bold">{worry ?? '-'}</p>
+              {/* TODO: 사용자가 설정한 목표가 들어가야 함 */}
+              <p className="text-xsmall16 font-bold">{goal ?? '-'}</p>
             </div>
           </GoalOrConcernsBox>
         )}
         <ReviewTextarea
-          placeholder={`${programTitle?.title} 이용 전의 고민을 어느 정도 해결하셨는지, ${isDesktop ? '\n' : ''}그 과정에서 ${programTitle?.title}가 어떤 도움을 주었는지 작성해주세요.`}
-          value={worryResult ?? '-'}
+          value={goalResult ?? '-'}
           readOnly
+          placeholder={`챌린지 참여 전의 목표를 어느 정도 달성하셨는지, ${isDesktop ? '\n' : ''}그 과정에서 챌린지가 어떤 도움을 주었는지 작성해주세요.`}
         />
       </section>
 
       {/* 만족했던 점 */}
       <section>
         <ReviewQuestion required className="mb-5">
-          4. {josa(programTitle?.title ?? '', '을/를')} 이용하면서 가장 만족했던
+          4. {josa(programTitle?.title ?? '', '을/를')} 참여하면서 가장 만족했던
           점을 남겨주세요!
         </ReviewQuestion>
         <ReviewTextarea
-          placeholder={`${programTitle?.title}에서 가장 도움이 되었던 내용이나 ${isDesktop ? '\n' : ''}이용하면서 가장 만족했던 점을 자유롭게 작성해주세요.`}
           value={goodPoint ?? '-'}
           readOnly
+          placeholder="가장 도움이 되었던 미션이나 학습 콘텐츠와 같이 참여하면서 가장 만족했던 점을 자유롭게 작성해주세요."
         />
       </section>
 
       {/* 아쉬웠던 점 */}
       <section>
         <ReviewQuestion required className="mb-5">
-          5. {josa(programTitle?.title ?? '', '을/를')} 이용하면서 가장 아쉬웠던
+          5. {josa(programTitle?.title ?? '', '을/를')} 참여하면서 가장 아쉬웠던
           점을 남겨주세요!
         </ReviewQuestion>
         <ReviewTextarea
-          placeholder={`이용하면서 아쉬웠던 점이나 추가되었으면 좋겠는 내용이 있다면 ${isDesktop ? '\n' : ''}자유롭게 작성해주세요.`}
           value={badPoint ?? '-'}
           readOnly
+          placeholder="참여하면서 아쉬웠던 점이나 추가되었으면 좋겠는 내용이 있다면 자유롭게 작성해주세요."
         />
       </section>
     </ReviewModal>
   );
 };
 
-export default ReportReviewPage;
+export default ChallengeReviewPage;

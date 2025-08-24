@@ -227,7 +227,7 @@
 
 ## 🚀 진행 상황
 
-### ✅ 완료된 작업 (41/113) - 36.3%
+### ✅ 완료된 작업 (47/113) - 41.6%
 
 #### Phase 1: 핵심 인프라 (4개 완료)
 1. `src/context/CurrentChallengeProvider.tsx` - useParams → Next.js params로 변경
@@ -290,8 +290,15 @@
 40. `src/app/(user)/report/order/fail/page.tsx` - ReportPaymentFail (결제 실패 처리)
 41. `src/app/(user)/report/management/page.tsx` - ReportManagementPage (복잡한 필터링 및 상태 관리)
 
+**리뷰 시스템 (6개 완료)**
+42. `src/app/(user)/mypage/review/new/challenge/[programId]/page.tsx` - ChallengeReviewCreatePage (챌린지 리뷰 작성)
+43. `src/app/(user)/mypage/review/challenge/[programId]/page.tsx` - ChallengeReviewPage (챌린지 리뷰 조회)
+44. `src/app/(user)/mypage/review/new/live/[programId]/page.tsx` - LiveReviewCreatePage (라이브 클래스 리뷰 작성)
+45. `src/app/(user)/mypage/review/live/[programId]/page.tsx` - LiveReviewPage (라이브 클래스 리뷰 조회)
+46. `src/app/(user)/mypage/review/new/report/[reportId]/page.tsx` - ReportReviewCreatePage (서류진단 리뷰 작성)
+47. `src/app/(user)/mypage/review/report/[reportId]/page.tsx` - ReportReviewPage (서류진단 리뷰 조회)
+
 ### 🔄 다음 작업 예정
-- 리뷰 시스템 페이지들 (6개 페이지)  
 - 기타 페이지들 (MentorNotification, Home, NotFound)
 - 핵심 컴포넌트 수정 (네비게이션, 링크 컴포넌트 등)
 

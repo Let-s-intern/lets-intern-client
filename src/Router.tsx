@@ -41,12 +41,12 @@ import ReportApplicationPage from './router-pages/common/report/ReportApplicatio
 // import ReportPortfolioPage from './router-pages/common/report/ReportPortfolioPage';
 // import ReportResumePage from './router-pages/common/report/ReportResumePage';
 // import ReportTossPage from './router-pages/common/report/ReportTossPage';
-import ChallengeReviewCreatePage from './router-pages/common/review/ChallengeReviewCreatePage';
-import ChallengeReviewPage from './router-pages/common/review/ChallengeReviewPage';
-import LiveReviewCreatePage from './router-pages/common/review/LiveReviewCreatePage';
-import LiveReviewPage from './router-pages/common/review/LiveReviewPage';
-import ReportReviewCreatePage from './router-pages/common/review/ReportReviewCreatePage';
-import ReportReviewPage from './router-pages/common/review/ReportReviewPage';
+// import ChallengeReviewCreatePage from './router-pages/common/review/ChallengeReviewCreatePage';
+// import ChallengeReviewPage from './router-pages/common/review/ChallengeReviewPage';
+// import LiveReviewCreatePage from './router-pages/common/review/LiveReviewCreatePage';
+// import LiveReviewPage from './router-pages/common/review/LiveReviewPage';
+// import ReportReviewCreatePage from './router-pages/common/review/ReportReviewCreatePage';
+// import ReportReviewPage from './router-pages/common/review/ReportReviewPage';
 import Maintenance from './router-pages/maintenance/Maintenance';
 import NotFound from './router-pages/NotFound';
 
@@ -91,35 +91,17 @@ const Router = () => {
                 {/* /mypage/review */}
                 <Route path="review" />
                 {/* /mypage/review/new/challenge/:programId */}
-                <Route
-                  path="review/new/challenge/:programId"
-                  element={<ChallengeReviewCreatePage />}
-                />
+                <Route path="review/new/challenge/:programId" />
                 {/* /mypage/review/challenge */}
-                <Route
-                  path="review/challenge/:programId"
-                  element={<ChallengeReviewPage />}
-                />
+                <Route path="review/challenge/:programId" />
                 {/* /mypage/review/new/live/:programId */}
-                <Route
-                  path="review/new/live/:programId"
-                  element={<LiveReviewCreatePage />}
-                />
+                <Route path="review/new/live/:programId" />
                 {/* /mypage/review/live */}
-                <Route
-                  path="review/live/:programId"
-                  element={<LiveReviewPage />}
-                />
+                <Route path="review/live/:programId" />
                 {/* /mypage/review/new/report/:reportId */}
-                <Route
-                  path="review/new/report/:reportId"
-                  element={<ReportReviewCreatePage />}
-                />
+                <Route path="review/new/report/:reportId" />
                 {/* /mypage/review/report */}
-                <Route
-                  path="review/report/:reportId"
-                  element={<ReportReviewPage />}
-                />
+                <Route path="review/report/:reportId" />
                 <Route path="credit" />
                 <Route path="credit/:paymentId" />
                 <Route path="credit/:paymentId/delete" />

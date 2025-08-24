@@ -1,9 +1,11 @@
+'use client';
+
 // TODO: 질문 enum으로 관리
 
 import { useMediaQuery } from '@mui/material';
 import { josa } from 'es-hangul';
 import { useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 
 import { useGetReportMessage, useGetReportTitle } from '@/api/report';
 import { usePostReviewMutation } from '@/api/review';
@@ -16,11 +18,11 @@ import ReviewTextarea from '@components/common/review/ReviewTextarea';
 import TenScore from '@components/common/review/score/TenScore';
 
 const ReportReviewCreatePage = () => {
-  const navigate = useNavigate();
-  const params = useParams();
+  const router = useRouter();
+  const params = useParams<{ reportId: string }>();
   const isDesktop = useMediaQuery('(min-width:768px)');
   const reportId = params.reportId;
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams();
   const applicationId = searchParams.get('application');
 
   const { data: user } = useUserQuery({ enabled: true });
@@ -33,7 +35,7 @@ const ReportReviewCreatePage = () => {
     usePostReviewMutation({
       successCallback: () => {
         alert('리뷰 작성이 완료되었습니다.');
-        navigate('/mypage/review', { replace: true });
+        router.replace('/mypage/review');
       },
       errorCallback: (error) => {
         console.error('error', error);

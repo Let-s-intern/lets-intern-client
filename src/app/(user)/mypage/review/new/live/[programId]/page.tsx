@@ -1,38 +1,33 @@
-import { useMediaQuery } from '@mui/material';
+'use client';
+
+// TODO: 질문 enum으로 관리
+
 import { josa } from 'es-hangul';
 import { useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 
-import { useGetChallengeGoal, useGetChallengeTitle } from '@/api/challenge';
+import { useGetLiveTitle } from '@/api/program';
 import { usePostReviewMutation } from '@/api/review';
-import { useUserQuery } from '@/api/user';
-import GoalOrConcernsBox from '@components/common/review/GoalOrConcernsBox';
 import ReviewInstruction from '@components/common/review/ReviewInstruction';
 import ReviewModal from '@components/common/review/ReviewModal';
 import ReviewQuestion from '@components/common/review/ReviewQuestion';
 import ReviewTextarea from '@components/common/review/ReviewTextarea';
 import TenScore from '@components/common/review/score/TenScore';
 
-const ChallengeReviewCreatePage = () => {
-  const params = useParams();
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const isDesktop = useMediaQuery('(min-width:768px)');
+const LiveReviewCreatePage = () => {
+  const router = useRouter();
+  const params = useParams<{ programId: string }>();
   const programId = params.programId;
+  const searchParams = useSearchParams();
   const applicationId = searchParams.get('application');
 
-  const { data: user } = useUserQuery({ enabled: true });
-
-  const { data: challengeGoal } = useGetChallengeGoal(programId);
-
-  const { data: programTitle } = useGetChallengeTitle(Number(programId));
+  const { data: programTitle } = useGetLiveTitle(Number(programId));
 
   const { mutateAsync: tryPostReview, isPending: postReviewwIsPending } =
     usePostReviewMutation({
-      challengeId: Number(programId),
       successCallback: () => {
         alert('리뷰 작성이 완료되었습니다.');
-        navigate('/mypage/review', { replace: true });
+        router.replace('/mypage/review');
       },
       errorCallback: (error) => {
         console.error('error', error);
@@ -43,10 +38,11 @@ const ChallengeReviewCreatePage = () => {
   const [npsScore, setNpsScore] = useState<number | null>(null);
   const [goodPoint, setGoodPoint] = useState<string>('');
   const [badPoint, setBadPoint] = useState<string>('');
+  const [goal, setGoal] = useState<string>('');
   const [goalResult, setGoalResult] = useState<string>('');
 
   const isDisabled =
-    !score || !npsScore || !goodPoint || !badPoint || !goalResult;
+    !score || !npsScore || !goodPoint || !badPoint || !goal || !goalResult;
 
   const onClickSubmit = async () => {
     if (postReviewwIsPending) return;
@@ -60,7 +56,7 @@ const ChallengeReviewCreatePage = () => {
       await tryPostReview({
         applicationId: applicationId ?? '',
         reviewForm: {
-          type: 'CHALLENGE_REVIEW',
+          type: 'LIVE_REVIEW',
           score,
           npsScore,
           reviewItemList: [
@@ -72,23 +68,20 @@ const ChallengeReviewCreatePage = () => {
               questionType: 'BAD_POINT',
               answer: badPoint,
             },
-            {
-              questionType: 'GOAL_RESULT',
-              answer: goalResult,
-            },
+            { questionType: 'GOAL', answer: goal },
+            { questionType: 'GOAL_RESULT', answer: goalResult },
           ],
         },
       });
     } catch (error) {
       console.error(error);
-      alert('리뷰 작성에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
   return (
     <ReviewModal
-      disabled={postReviewwIsPending || isDisabled}
       onSubmit={onClickSubmit}
+      disabled={postReviewwIsPending || isDisabled}
     >
       {/* 만족도 평가 */}
       <section>
@@ -113,38 +106,34 @@ const ChallengeReviewCreatePage = () => {
         <TenScore tenScore={npsScore} setTenScore={setNpsScore} />
       </section>
 
-      {/* 목표 달성 */}
+      {/* 참여 이유 */}
       <section>
         <ReviewQuestion required className="mb-5">
-          3. {josa(programTitle?.title ?? '', '을/를')} 참여하기 전의 목표를
-          어떻게 달성하셨나요?
+          3. {programTitle?.title}에 참여하게 된 이유가 무엇인가요?
         </ReviewQuestion>
-        {challengeGoal?.goal && (
-          <GoalOrConcernsBox className="mb-3">
-            <div className="max-h-64 overflow-y-auto px-5 py-3 md:max-h-[9.5rem]">
-              <span className="text-xsmall14">
-                {/* TODO: 사용자 이름 넣어야 함 */}
-                🎯 <b>{user?.name}</b>님이 작성하신 챌린지 시작 전 목표
-              </span>
-              <br />
-              {/* TODO: 사용자가 설정한 목표가 들어가야 함 */}
-              <p className="text-xsmall16 font-bold">
-                {challengeGoal?.goal ?? '-'}
-              </p>
-            </div>
-          </GoalOrConcernsBox>
-        )}
         <ReviewTextarea
-          value={goalResult}
-          onChange={(e) => setGoalResult(e.target.value)}
-          placeholder={`챌린지 참여 전의 목표를 어느 정도 달성하셨는지, ${isDesktop ? '\n' : ''}그 과정에서 챌린지가 어떤 도움을 주었는지 작성해주세요.`}
+          placeholder="LIVE 클래스를 통해 어떤 어려움을 해결하고 싶으셨는지, 알려주세요."
+          value={goal}
+          onChange={(e) => setGoal(e.target.value)}
         />
       </section>
 
+      {/* 어려움 */}
+      <section>
+        <ReviewQuestion required className="mb-5">
+          4. {programTitle?.title}에 참여 후 위에 작성해주신 어려움이
+          해결되셨나요?
+        </ReviewQuestion>
+        <ReviewTextarea
+          placeholder="어려움을 해결하는 과정에서 LIVE 클래스가 어떤 도움을 주었는지 작성해주세요."
+          value={goalResult}
+          onChange={(e) => setGoalResult(e.target.value)}
+        />
+      </section>
       {/* 만족했던 점 */}
       <section>
         <ReviewQuestion required className="mb-5">
-          4. {josa(programTitle?.title ?? '', '을/를')} 참여하면서 가장 만족했던
+          5. {josa(programTitle?.title ?? '', '을/를')} 참여하면서 가장 만족했던
           점을 남겨주세요!
         </ReviewQuestion>
         <ReviewTextarea
@@ -157,7 +146,7 @@ const ChallengeReviewCreatePage = () => {
       {/* 아쉬웠던 점 */}
       <section>
         <ReviewQuestion required className="mb-5">
-          5. {josa(programTitle?.title ?? '', '을/를')} 참여하면서 가장 아쉬웠던
+          6. {josa(programTitle?.title ?? '', '을/를')} 참여하면서 가장 아쉬웠던
           점을 남겨주세요!
         </ReviewQuestion>
         <ReviewTextarea
@@ -170,4 +159,4 @@ const ChallengeReviewCreatePage = () => {
   );
 };
 
-export default ChallengeReviewCreatePage;
+export default LiveReviewCreatePage;
