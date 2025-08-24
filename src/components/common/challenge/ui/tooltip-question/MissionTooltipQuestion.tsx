@@ -30,7 +30,7 @@ const MissionTooltipQuestion = () => {
         className="cursor-pointer"
         onClick={() => setIsTooltipOpen(!isTooltipOpen)}
       >
-        <img src="/icons/tooltip-question.svg" alt="tooltip question" />
+        <img src="/icons/info-circle.svg" alt="tooltip question" />
       </i>
       {isTooltipOpen && (
         <div className="absolute -right-4 -top-3 z-30 translate-x-full drop-shadow-xl">
@@ -42,9 +42,9 @@ const MissionTooltipQuestion = () => {
             className="absolute left-[1.5px] top-1.5 h-6 w-3 -translate-x-full bg-white"
             style={{ clipPath: 'polygon(0% 50%, 100% 100%, 100% 0%)' }}
           />
-          <div className="flex h-[340px] w-[380px] items-center rounded-xs bg-static-100 p-4">
+          <div className="flex w-max items-center rounded-xs bg-static-100">
             <img
-              src="/images/mission-date-question-image.svg"
+              src="/images/mission-date-question-image-new.svg"
               alt="미션 제출 현황 아이콘 설명 이미지"
               className="h-full object-contain"
             />

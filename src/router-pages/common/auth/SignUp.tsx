@@ -1,6 +1,5 @@
 import MarketingModal from '@/components/common/auth/modal/MarketingModal';
 import PrivacyPolicyModal from '@/components/common/auth/modal/PrivacyPolicyModal';
-import CheckBox from '@/components/common/auth/ui/CheckBox';
 import InfoContainer from '@/components/common/auth/ui/InfoContainer';
 import PrivacyLink from '@/components/common/auth/ui/PrivacyLink';
 import SocialLogin from '@/components/common/auth/ui/SocialLogin';
@@ -14,6 +13,7 @@ import {
   isValidPassword,
   isValidPhoneNumber,
 } from '@/utils/valid';
+import CheckBox from '@components/common/ui/CheckBox';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { FormEvent, useEffect, useState } from 'react';

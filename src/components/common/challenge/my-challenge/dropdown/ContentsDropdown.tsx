@@ -13,13 +13,15 @@ const ContentsDropdown = ({ missionDetail }: Props) => {
     missionDetail.additionalContentsList?.[0]?.link;
   const essentialContentsLink = missionDetail.essentialContentsList?.[0]?.link;
 
+  const isOtMission = missionDetail.th === 0;
+
   return (
-    <div className="relative flex-1">
+    <div className="relative z-10 flex-1">
       <div
         className="cursor-pointer rounded-sm bg-primary-20 p-3 text-center text-xsmall16 font-medium text-primary"
         onClick={() => setIsMenuShown(!isMenuShown)}
       >
-        학습 콘텐츠
+        {isOtMission ? 'OT 자료' : '학습 콘텐츠'}
       </div>
       {isMenuShown && (essentialContentsLink || additionalContentsLink) && (
         <ul className="rounded absolute bottom-[-0.25rem] w-full translate-y-[100%] border border-[#DCDCDC] bg-white text-sm">
@@ -29,7 +31,7 @@ const ContentsDropdown = ({ missionDetail }: Props) => {
                 to={essentialContentsLink}
                 className="flex w-full items-center justify-between px-4 py-3 text-primary hover:bg-gray-200"
                 target="_blank"
-                rel="noopenner noreferrer"
+                rel="noopener noreferrer"
               >
                 <span>필수 콘텐츠</span>
                 <i>
@@ -45,7 +47,7 @@ const ContentsDropdown = ({ missionDetail }: Props) => {
                   to={item.link}
                   className="flex w-full items-center justify-between px-4 py-3 text-primary hover:bg-gray-200"
                   target="_blank"
-                  rel="noopenner noreferrer"
+                  rel="noopener noreferrer"
                 >
                   <span>{item.title}</span>
                   <i>

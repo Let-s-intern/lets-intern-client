@@ -1,6 +1,6 @@
 interface CheckBoxProps {
   checked: boolean;
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 const CheckBox = ({ checked, onClick }: CheckBoxProps) => {

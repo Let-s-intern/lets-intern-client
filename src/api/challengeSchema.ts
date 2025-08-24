@@ -2,7 +2,9 @@ import { z } from 'zod';
 import {
   AttendanceResultEnum,
   AttendanceStatusEnum,
+  challengePriceInfoSchema,
   ChallengePricePlanEnum,
+  ProgramStatusEnum,
 } from './../schema';
 
 export const challengeGoalSchema = z.object({
@@ -77,12 +79,14 @@ export const challengeMissionFeedbackSchema = z.object({
     th: z.number().nullish(),
     title: z.string().nullish(),
   }),
-  attendanceInfo: z.object({
-    link: z.string(),
-    feedbackStatus: FeedbackStatusEnum.nullable().default('WAITING'),
-    feedback: z.string().nullish(),
-    mentorName: z.string().nullish(),
-  }),
+  attendanceInfo: z
+    .object({
+      link: z.string(),
+      feedbackStatus: FeedbackStatusEnum.nullable().default('WAITING'),
+      feedback: z.string().nullish(),
+      mentorName: z.string().nullish(),
+    })
+    .nullable(),
 });
 
 export const feedbackAttendanceSchema = z.object({
@@ -90,3 +94,19 @@ export const feedbackAttendanceSchema = z.object({
     feedback: z.string().nullish(),
   }),
 });
+
+export const challengeApplicationSchema = z.object({
+  applied: z.boolean().default(false),
+  name: z.string().nullish(),
+  email: z.string().nullish(),
+  contactEmail: z.string().nullish(),
+  phoneNumber: z.string().nullish(),
+  criticalNotice: z.string().nullish(),
+  startDate: z.string().nullish(),
+  endDate: z.string().nullish(),
+  deadline: z.string().nullish(),
+  statusType: ProgramStatusEnum,
+  priceList: z.array(challengePriceInfoSchema),
+});
+
+export type ChallengeApplication = z.infer<typeof challengeApplicationSchema>;

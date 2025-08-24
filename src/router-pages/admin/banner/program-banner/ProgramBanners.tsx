@@ -128,7 +128,7 @@ const PopUpBanners = () => {
                 <Link
                   to={banner.link}
                   target="_blank"
-                  rel="noopenner noreferrer"
+                  rel="noopener noreferrer"
                   className="hover:underline"
                 >
                   {banner.link}

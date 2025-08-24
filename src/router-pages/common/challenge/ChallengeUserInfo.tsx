@@ -1,18 +1,11 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-
-import {
-  useGetChallengeGoal,
-  useGetChallengeTitle,
-  useGetUserChallengeInfo,
-  usePostChallengeGoal,
-} from '@/api/challenge';
+import { useGetChallengeTitle, useGetUserChallengeInfo } from '@/api/challenge';
 import { useGetChallengeQuery } from '@/api/program';
 import { usePatchUser, useUserQuery } from '@/api/user';
+import GradeDropdown from '@/components/common/mypage/privacy/form-control/GradeDropdown';
+import Input from '@/components/common/ui/input/Input';
 import { GOAL_DATE } from '@components/common/challenge/ui/layout/ChallengeLayout';
-import TextArea from '@components/common/ui/input/TextArea';
-import GradeDropdown from '../../../components/common/mypage/privacy/form-control/GradeDropdown';
-import Input from '../../../components/common/ui/input/Input';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const ChallengeUserInfo = () => {
   const params = useParams();
@@ -25,7 +18,6 @@ const ChallengeUserInfo = () => {
     major: '',
     wishJob: '',
     wishCompany: '',
-    goal: '',
   });
   const [buttonDisabled, setButtonDisabled] = useState(false);
 
@@ -37,9 +29,6 @@ const ChallengeUserInfo = () => {
 
   const { data: userData, isLoading: userDataIsLoading } = useUserQuery();
 
-  const { data: challengeGoal, isLoading: challengeGoalIsLoading } =
-    useGetChallengeGoal(programId);
-
   const { data: isValidUserInfoData, isLoading: isValidUserInfoLoading } =
     useGetUserChallengeInfo();
 
@@ -47,28 +36,25 @@ const ChallengeUserInfo = () => {
     useGetChallengeTitle(Number(programId));
 
   useEffect(() => {
-    if (userData || challengeGoal) {
+    if (userData) {
       setValue({
         university: userData?.university ?? '',
         grade: userData?.grade ?? '',
         major: userData?.major ?? '',
         wishJob: userData?.wishJob ?? '',
         wishCompany: userData?.wishCompany ?? '',
-        goal: challengeGoal?.goal ?? '',
       });
     }
-  }, [userData, challengeGoal]);
+  }, [userData]);
 
   const programTitle = programTitleData?.title;
   const username = userData?.name;
 
   const isValidUserInfo = isValidUserInfoData?.pass;
-  const hasChallengeGoal = challengeGoal?.goal;
   const isLoading =
     isValidUserInfoLoading ||
     programTitleDataIsLoading ||
     userDataIsLoading ||
-    challengeGoalIsLoading ||
     challengeIsLoading;
   const isStartAfterGoal =
     challenge?.startDate && GOAL_DATE.isBefore(challenge.startDate);
@@ -76,15 +62,8 @@ const ChallengeUserInfo = () => {
   const { mutateAsync: tryPatchUser, isPending: patchUserIsPending } =
     usePatchUser();
 
-  const { mutateAsync: tryPostGoal, isPending: postGoalIsPending } =
-    usePostChallengeGoal();
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue({ ...value, [e.target.name]: e.target.value });
-  };
-
-  const handleGoalChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setValue({ ...value, goal: e.target.value });
   };
 
   const handleGradeChange = (grade: string) => {
@@ -92,7 +71,7 @@ const ChallengeUserInfo = () => {
   };
 
   const handleSubmit = async () => {
-    if (patchUserIsPending || postGoalIsPending || !programId) {
+    if (patchUserIsPending || !programId) {
       return;
     }
 
@@ -103,11 +82,6 @@ const ChallengeUserInfo = () => {
         major: value.major,
         wishJob: value.wishJob,
         wishCompany: value.wishCompany,
-      });
-
-      await tryPostGoal({
-        challengeId: programId,
-        goal: value.goal,
       });
 
       navigate(`/challenge/${params.applicationId}/${programId}`);
@@ -123,8 +97,7 @@ const ChallengeUserInfo = () => {
         !value.grade ||
         !value.major ||
         !value.wishJob ||
-        !value.wishCompany ||
-        !value.goal,
+        !value.wishCompany,
     );
   }, [value]);
 
@@ -132,12 +105,7 @@ const ChallengeUserInfo = () => {
     if (isLoading) {
       return;
     }
-    if (isStartAfterGoal) {
-      if (isValidUserInfo && hasChallengeGoal) {
-        navigate(`/challenge/${params.applicationId}/${programId}`);
-        return;
-      }
-    } else if (isValidUserInfo) {
+    if (isValidUserInfo) {
       navigate(`/challenge/${params.applicationId}/${programId}`);
       return;
     }
@@ -145,7 +113,6 @@ const ChallengeUserInfo = () => {
     isValidUserInfo,
     isLoading,
     navigate,
-    hasChallengeGoal,
     isStartAfterGoal,
     params.applicationId,
     programId,
@@ -228,21 +195,6 @@ const ChallengeUserInfo = () => {
                 placeholder="희망 기업을 입력해주세요."
                 value={value.wishCompany}
                 onChange={handleInputChange}
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label htmlFor="wishCompany" className="text-1-medium">
-                챌린지 목표<span className="text-requirement">*</span>
-              </label>
-              <TextArea
-                id="goal"
-                name="goal"
-                wrapperClassName="h-28"
-                placeholder={`챌린지를 신청한 목적과 계기,\n또는 챌린지 참여를 통해 이루고 싶은 목표를 자유롭게 작성해주세요.`}
-                className="text-xsmall14 font-normal"
-                value={value.goal}
-                onChange={handleGoalChange}
-                maxLength={200}
               />
             </div>
           </div>

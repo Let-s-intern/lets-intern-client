@@ -127,7 +127,7 @@ const ReviewSection = () => {
               .filter((r) => r.reviewItemList && r.reviewItemList?.length > 0)
               .map((review, index) => (
                 <SwiperSlide
-                  key={'review' + review.reviewInfo.reviewId + index}
+                  key={`review-${review.reviewInfo.reviewId}-${index}`}
                 >
                   <ReviewItem review={review} />
                 </SwiperSlide>

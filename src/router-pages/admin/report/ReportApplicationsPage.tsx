@@ -27,9 +27,9 @@ import AdminPagination from '@/components/admin/ui/pagination/AdminPagination';
 import Table from '@/components/admin/ui/table/regacy/Table';
 import TD from '@/components/admin/ui/table/regacy/TD';
 import TH from '@/components/admin/ui/table/regacy/TH';
-import CheckBox from '@/components/common/auth/ui/CheckBox';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { generateRandomString } from '@/utils/random';
+import CheckBox from '@components/common/ui/CheckBox';
 
 const totalDateConverter = (date: string) => {
   return dayjs(date).format('YYYY.MM.DD (dd) A hh:mm');

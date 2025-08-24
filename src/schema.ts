@@ -737,7 +737,13 @@ export const AttendanceStatusEnum = z.enum([
 ]);
 export type AttendanceStatus = z.infer<typeof AttendanceStatusEnum>;
 
-export const AttendanceResultEnum = z.enum(['WAITING', 'PASS', 'WRONG']);
+export const AttendanceResultEnum = z.enum([
+  'WAITING',
+  'PASS',
+  'WRONG',
+  'FINAL_WRONG',
+]);
+
 export const AttendanceFeedbackStatusEnum = z.enum([
   'WAITING',
   'IN_PROGRESS',
@@ -803,7 +809,7 @@ export const liveTitleSchema = z.object({
   title: z.string().optional().nullable(),
 });
 
-/** PATCH /api/v1/attendance/{id} */
+/** [유저용] 출석 업데이트 PATCH /api/v1/attendance/{attendanceId} */
 export type UpdateAttendanceReq = {
   link?: string;
   status?: AttendanceStatus;
@@ -956,6 +962,7 @@ export const missionTemplateAdmin = z
         description: z.string(),
         guide: z.string(),
         templateLink: z.string().nullish(),
+        vodLink: z.string().nullish(),
       }),
     ),
   })
@@ -981,6 +988,7 @@ export type CreateMissionTemplateReq = {
   description: string;
   guide: string;
   templateLink: string;
+  vodLink?: string | null;
 };
 
 // PATCH /api/v1/mission-template/{id}
@@ -990,6 +998,7 @@ export type UpdateMissionTemplateReq = {
   description?: string;
   guide?: string;
   templateLink?: string;
+  vodLink?: string | null;
 };
 
 // POST /api/v1/contents
@@ -1144,6 +1153,9 @@ export const challengeSchedule = z
           comments: z.string().nullable(),
           status: AttendanceStatusEnum.nullable(),
           result: AttendanceResultEnum.nullable(),
+          feedbackStatus: AttendanceFeedbackStatusEnum.nullable(),
+          accountType: z.string().nullish(),
+          accountNum: z.string().nullish(),
         }),
       }),
     ),
@@ -1198,10 +1210,11 @@ export const userChallengeMissionDetail = z
         }),
       ),
       status: MissionStatusEnum,
-      missionTag: z.string(),
-      description: z.string(),
-      guide: z.string(),
-      templateLink: z.string(),
+      missionTag: z.string().nullish(),
+      description: z.string().nullish(),
+      guide: z.string().nullish(),
+      templateLink: z.string().nullish(),
+      vodLink: z.string().nullish(),
     }),
   })
   .transform((data) => {
@@ -1242,10 +1255,11 @@ export const userChallengeMissionWithAttendance = z
         }),
       ),
       status: MissionStatusEnum,
-      missionTag: z.string(),
-      description: z.string(),
-      guide: z.string(),
-      templateLink: z.string(),
+      missionTag: z.string().nullish(),
+      description: z.string().nullish(),
+      guide: z.string().nullish(),
+      templateLink: z.string().nullish(),
+      vodLink: z.string().nullish(),
     }),
     attendanceInfo: z
       .object({
@@ -1257,6 +1271,8 @@ export const userChallengeMissionWithAttendance = z
         status: AttendanceStatusEnum.nullable(),
         result: AttendanceResultEnum.nullable(),
         feedbackStatus: AttendanceFeedbackStatusEnum.nullable(),
+        accountType: z.string().nullish(),
+        accountNum: z.string().nullish(),
       })
       .nullable(),
   })
@@ -1287,6 +1303,7 @@ export const dailyMissionSchema = z
         endDate: z.string().nullable(),
         missionTag: z.string().nullable(),
         description: z.string().nullable(),
+        feedbackStatus: AttendanceFeedbackStatusEnum.nullable().optional(),
       })
       .nullable(),
   })
@@ -1351,6 +1368,8 @@ export const myDailyMission = z
         description: z.string().nullable(),
         guide: z.string().nullable(),
         templateLink: z.string().nullable(),
+        vodLink: z.string().nullable(),
+        feedbackStatus: AttendanceFeedbackStatusEnum.nullable().optional(),
       })
       .nullable(),
     attendanceInfo: z
@@ -1362,6 +1381,8 @@ export const myDailyMission = z
         comments: z.string().nullable(),
         status: AttendanceStatusEnum.nullable(),
         result: AttendanceResultEnum.nullable(),
+        accountType: z.string().nullish(),
+        accountNum: z.string().nullish(),
       })
       .nullable(),
   })
@@ -1384,7 +1405,7 @@ export const myDailyMission = z
 
 export type MyDailyMission = z.infer<typeof myDailyMission>;
 
-// GET /api/v1/challenge/{id}/missions?type=GENERAL
+// GET /api/v1/challenge/{challengeId}/missions?type=GENERAL
 export const myChallengeMissionsByType = z.object({
   missionList: z.array(
     z.object({

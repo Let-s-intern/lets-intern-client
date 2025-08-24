@@ -19,12 +19,13 @@ import { useMemo, useState } from 'react';
 
 const cellWidthList = [
   'w-[200px]',
-  'w-[40px]',
-  'w-[10%]',
-  'w-[15%]',
-  'w-[15%]',
-  'w-[16%]',
-  'w-[17%]',
+  'w-[80px]',
+  'w-[200px]',
+  'w-[200px]',
+  'w-[300px]',
+  'w-[300px]',
+  'w-[200px]',
+  'w-[200px]',
 ];
 
 const colNames = [
@@ -35,6 +36,7 @@ const colNames = [
   '내용',
   '가이드',
   '템플릿 링크',
+  'VOD 링크',
 ];
 
 type Row = MissionTemplateResItem & ItemWithStatus;
@@ -134,11 +136,13 @@ const ChallengeMissionManagement = () => {
                 'description',
                 'guide',
                 'templateLink',
+                'vodLink',
               ]}
               placeholders={colNames}
-              canEdits={[false, false, true, true, true, true, true]}
+              canEdits={[false, false, true, true, true, true, true, true]}
               contents={[
                 { type: TABLE_CONTENT.DATE },
+                { type: TABLE_CONTENT.INPUT },
                 { type: TABLE_CONTENT.INPUT },
                 { type: TABLE_CONTENT.INPUT },
                 { type: TABLE_CONTENT.INPUT },
@@ -163,6 +167,7 @@ const ChallengeMissionManagement = () => {
                     missionTag: item.missionTag,
                     templateLink: item.templateLink ?? '',
                     title: item.title,
+                    vodLink: item.vodLink,
                   });
                   refetch();
                   setInsertingMissionTemplate(null);
@@ -174,6 +179,7 @@ const ChallengeMissionManagement = () => {
                     missionTag: item.missionTag,
                     templateLink: item.templateLink ?? '',
                     title: item.title,
+                    vodLink: item.vodLink,
                   });
                   refetch();
                 }

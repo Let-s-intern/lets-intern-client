@@ -1,15 +1,14 @@
-import { useEffect } from 'react';
-import { Outlet, useNavigate, useParams } from 'react-router-dom';
-
 import {
-  useGetChallengeGoal,
   useGetChallengeValideUser,
   useGetUserChallengeInfo,
 } from '@/api/challenge';
 import { useGetChallengeQuery } from '@/api/program';
 import dayjs from '@/lib/dayjs';
+import useAuthStore from '@/store/useAuthStore';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import useAuthStore from '../../../../../store/useAuthStore';
+import { useEffect } from 'react';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
+import RecommendedProgramSection from '../../my-challenge/section/RecommendedProgramSection';
 import NavBar from './NavBar';
 
 export const GOAL_DATE = dayjs('2025-01-19');
@@ -18,6 +17,7 @@ const ChallengeLayout = () => {
   const navigate = useNavigate();
   const params = useParams();
   const { isLoggedIn } = useAuthStore();
+
   const programId = params.programId;
   const applicationId = params.applicationId;
 
@@ -33,16 +33,9 @@ const ChallengeLayout = () => {
   const { data: isValidUserInfoData, isLoading: isValidUserInfoLoading } =
     useGetUserChallengeInfo();
 
-  const { data: challengeGoal, isLoading: challengeGoalLoading } =
-    useGetChallengeGoal(programId);
-
   const isValidUserInfo = isValidUserInfoData?.pass;
-  const hasChallengeGoal = challengeGoal?.goal;
   const isLoading =
-    isValidUserInfoLoading ||
-    isValidUserAccessLoading ||
-    challengeGoalLoading ||
-    challengeIsLoading;
+    isValidUserInfoLoading || isValidUserAccessLoading || challengeIsLoading;
   const isStartAfterGoal =
     challenge?.startDate && GOAL_DATE.isBefore(challenge.startDate);
 
@@ -63,7 +56,7 @@ const ChallengeLayout = () => {
       return;
     }
 
-    if (!isValidUserInfo || (isStartAfterGoal && !hasChallengeGoal)) {
+    if (isStartAfterGoal && !isValidUserInfo) {
       navigate(`/challenge/${applicationId}/${programId}/user/info`);
       return;
     }
@@ -75,7 +68,6 @@ const ChallengeLayout = () => {
     programId,
     applicationId,
     accessibleData,
-    hasChallengeGoal,
     isStartAfterGoal,
   ]);
 
@@ -99,14 +91,15 @@ const ChallengeLayout = () => {
           </p>
         </div>
       </div>
-      <div className="hidden px-6 py-6 lg:block">
-        <div className="mx-auto flex w-[1024px]">
+      <div className="hidden px-6 pt-12 lg:block">
+        <div className="mx-auto flex w-[1120px]">
           <NavBar />
           <div className="min-w-0 flex-1">
             <Outlet />
           </div>
         </div>
       </div>
+      <RecommendedProgramSection />
     </div>
   );
 };

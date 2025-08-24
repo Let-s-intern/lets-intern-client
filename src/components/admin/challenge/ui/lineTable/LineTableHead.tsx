@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-
 import TableHeadCell from '../table/table-head/TableHeadCell';
 
 interface LineTableHeadProps {
@@ -22,11 +21,13 @@ const LineTableHead = ({
   return (
     <div className={clsx('flex w-full rounded-sm bg-neutral-200')}>
       {colNames.map((name, i) => (
-        <TableHeadCell key={name} className={clsx(cellWidthList[i])}>
+        <TableHeadCell key={name} className={cellWidthList[i]}>
           {name}
         </TableHeadCell>
       ))}
-      {editable ? <TableHeadCell className="flex-1">관리</TableHeadCell> : null}
+      {editable ? (
+        <TableHeadCell className="min-w-[100px] flex-1">관리</TableHeadCell>
+      ) : null}
     </div>
   );
 };
