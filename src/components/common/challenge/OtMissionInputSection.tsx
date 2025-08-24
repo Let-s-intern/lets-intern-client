@@ -5,14 +5,14 @@ import {
 } from '@/api/challenge';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'next/navigation';
 
 interface Props {
   missionId: number;
 }
 
 const OtMissionInputSection = ({ missionId }: Props) => {
-  const params = useParams();
+  const params = useParams<{ programId: string }>();
 
   const { data: goalData, isLoading } = useGetChallengeGoal(params.programId);
   const patchGoal = usePatchChallengeGoal();

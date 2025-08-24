@@ -2,12 +2,13 @@ import useAuthStore from '@/store/useAuthStore';
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { Outlet, useNavigate, useParams } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import NavBar from '../challenge/ui/layout/NavBar';
 
-const ReportLayout = () => {
-  const params = useParams();
-  const navigate = useNavigate();
+const ReportLayout = ({ children }: { children: React.ReactNode }) => {
+  const params = useParams<{ programId: string }>();
+  const router = useRouter();
   const { isLoggedIn } = useAuthStore();
 
   const { data: isValidUserAccessData, isLoading: isValidUserAccessLoading } =
@@ -39,7 +40,7 @@ const ReportLayout = () => {
       const newUrl = new URL(window.location.href);
       const searchParams = new URLSearchParams();
       searchParams.set('redirect', `${newUrl.pathname}?${newUrl.search}`);
-      navigate(`/login?${searchParams.toString()}`);
+      router.push(`/login?${searchParams.toString()}`);
       return;
     }
 
@@ -48,10 +49,10 @@ const ReportLayout = () => {
     }
 
     if (!isValidUserInfo) {
-      navigate(`/challenge/${params.programId}/user/info`);
+      router.push(`/challenge/${params.programId}/user/info`);
       return;
     }
-  }, [isLoading, isLoggedIn, isValidUserInfo, navigate, params.programId]);
+  }, [isLoading, isLoggedIn, isValidUserInfo, router, params.programId]);
 
   return (
     <div className="min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-6rem)]">
@@ -73,7 +74,7 @@ const ReportLayout = () => {
         <div className="mx-auto flex w-[1024px]">
           <NavBar />
           <div className="min-w-0 flex-1">
-            <Outlet />
+            {children}
           </div>
         </div>
       </div>

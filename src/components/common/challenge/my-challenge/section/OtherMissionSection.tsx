@@ -1,7 +1,7 @@
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'next/navigation';
 import AbsentMissionItem from '../mission/AbsentMissionItem';
 import DoneMissionItem from '../mission/DoneMissionItem';
 import YetMissionItem from '../mission/YetMissionItem';
@@ -21,7 +21,7 @@ const OtherMissionSection = ({ isDone }: Props) => {
     currentChallenge,
   } = useCurrentChallenge();
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const searchParams = useSearchParams();
 
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -39,7 +39,7 @@ const OtherMissionSection = ({ isDone }: Props) => {
       });
       setTabIndex(isExist ? 1 : 0);
     }
-  }, [searchParams, setSearchParams, submittedMissions]);
+  }, [searchParams, submittedMissions]);
 
   return (
     <>

@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Link } from 'react-router-dom';
+import HybridLink from '@/components/common/ui/HybridLink';
 
 import { twMerge } from '@/lib/twMerge';
 
@@ -11,14 +11,14 @@ export const parseLink = (text: string, openInNewTab = true) => {
 
   text.replace(regex, (match, caption, url, offset, string) => {
     const element = (
-      <Link
+      <HybridLink
         key={offset}
-        to={url}
+        href={url}
         className="text-primary underline"
         {...(openInNewTab && { target: '_blank', rel: 'noopener noreferrer' })}
       >
         {caption}
-      </Link>
+      </HybridLink>
     );
 
     result.push(string.substring(startIndex, offset), element);

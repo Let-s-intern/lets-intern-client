@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 import cn from 'classnames';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import AlertModal from '../../../../../../../ui/alert/AlertModal';
 
@@ -11,8 +11,8 @@ interface MemberSelectProps {
 }
 
 const MemberSelect = ({ setApplyPageIndex }: MemberSelectProps) => {
-  const navigate = useNavigate();
-  const params = useParams();
+  const router = useRouter();
+  const params = useParams<{ programId: string }>();
 
   const [memberChecked, setMemberChecked] = useState<'USER' | 'GUEST' | ''>('');
   const [isNextButtonDisabled, setIsNextButtonDisabled] = useState(true);
@@ -31,12 +31,13 @@ const MemberSelect = ({ setApplyPageIndex }: MemberSelectProps) => {
 
   const handleAlertConfirm = () => {
     setIsLoginModal(false);
-    navigate(`/login?redirect=/program/detail/${params.programId}`);
+    router.push(`/login?redirect=/program/detail/${params.programId}`);
     setMemberChecked('USER');
   };
 
   const handleAlertClose = () => {
     setIsLoginModal(false);
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     memberChecked === 'GUEST'
       ? setMemberChecked('GUEST')
       : setMemberChecked('');
