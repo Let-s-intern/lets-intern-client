@@ -21,6 +21,7 @@ import axiosV2 from '@/utils/axiosV2';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import {
+  challengeApplicationSchema,
   challengeGoalSchema,
   challengeMissionFeedbackAttendanceListSchema,
   challengeMissionFeedbackListSchema,
@@ -113,7 +114,7 @@ export const usePatchChallengePayback = ({
   });
 };
 
-export const useGetChallengeTitle = (challengeId: number | string) => {
+export const useGetChallengeTitle = (challengeId?: number | string) => {
   return useQuery({
     queryKey: ['useGetChallengeTitle', challengeId],
     queryFn: async () => {
@@ -459,6 +460,22 @@ export const useMentorMissionFeedbackListQuery = (
   });
 };
 
+/** 챌린지 목표 제출 /api/v1/challenge/{challengeId}/goal */
+export const useSubmitChallengeGoal = () => {
+  return useMutation({
+    mutationFn: async ({
+      challengeId,
+      goal,
+    }: {
+      challengeId: string | number;
+      goal: string;
+    }) => {
+      const res = await axios.patch(`/challenge/${challengeId}/goal`, { goal });
+      return res.data;
+    },
+  });
+};
+
 /** [어드민용] 챌린지 피드백 미션 전체 목록 /api/v2/admin/challenge/{challengeId}/mission/feedback */
 export const useChallengeMissionFeedbackListQuery = (
   challengeId?: number,
@@ -473,6 +490,18 @@ export const useChallengeMissionFeedbackListQuery = (
       return challengeMissionFeedbackListSchema.parse(res.data.data);
     },
     enabled,
+  });
+};
+
+// 챌린지 신청폼 조회 /api/v1/challenge/{challengeId}/application
+export const useChallengeApplicationQuery = (programId?: string | number) => {
+  return useQuery({
+    queryKey: ['challenge', programId, 'application'],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${programId}/application`);
+      return challengeApplicationSchema.parse(res.data.data);
+    },
+    enabled: !!programId,
   });
 };
 

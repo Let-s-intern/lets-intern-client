@@ -8,6 +8,7 @@ import useAuthStore from '@/store/useAuthStore';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useEffect } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
+import RecommendedProgramSection from '../../my-challenge/section/RecommendedProgramSection';
 import NavBar from './NavBar';
 
 export const GOAL_DATE = dayjs('2025-01-19');
@@ -90,14 +91,15 @@ const ChallengeLayout = () => {
           </p>
         </div>
       </div>
-      <div className="hidden px-6 py-6 lg:block">
-        <div className="mx-auto flex w-[1024px]">
+      <div className="hidden px-6 pt-12 lg:block">
+        <div className="mx-auto flex w-[1120px]">
           <NavBar />
           <div className="min-w-0 flex-1">
             <Outlet />
           </div>
         </div>
       </div>
+      <RecommendedProgramSection />
     </div>
   );
 };

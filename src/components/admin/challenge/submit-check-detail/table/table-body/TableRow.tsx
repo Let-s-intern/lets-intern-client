@@ -9,7 +9,6 @@ import { challengeSubmitDetailCellWidthList } from '@/utils/tableCellWidthList';
 import { Switch } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ChoiceCheckbox from './ChoiceCheckbox';
 import CommentCell from './CommentCell';
@@ -38,9 +37,6 @@ const TableRow = ({
   const queryClient = useQueryClient();
 
   const { currentChallenge } = useAdminCurrentChallenge();
-  const [attendanceResult, setAttendanceResult] = useState(
-    attendanceItem.attendance.result,
-  );
 
   const patchAdminAttendance = usePatchAdminAttendance();
 
@@ -154,8 +150,6 @@ const TableRow = ({
       {/* 확인여부 */}
       <ResultDropdown
         attendance={attendanceItem.attendance}
-        attendanceResult={attendanceResult}
-        setAttendanceResult={setAttendanceResult}
         setIsRefunded={() => {}}
         cellWidthListIndex={7}
       />
