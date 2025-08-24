@@ -1,17 +1,19 @@
+'use client';
+
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 
 import MyPageKakaoChannel from '@components/common/mypage/privacy/section/MyPageKakaoChannel';
-import BasicInfo from '../../../components/common/mypage/privacy/section/BasicInfo';
-import ChangePassword from '../../../components/common/mypage/privacy/section/ChangePassword';
-import MarketingAgree from '../../../components/common/mypage/privacy/section/MarketingAgree';
-import AlertModal from '../../../components/ui/alert/AlertModal';
-import useAuthStore from '../../../store/useAuthStore';
-import axios from '../../../utils/axios';
+import BasicInfo from '../../../../components/common/mypage/privacy/section/BasicInfo';
+import ChangePassword from '../../../../components/common/mypage/privacy/section/ChangePassword';
+import MarketingAgree from '../../../../components/common/mypage/privacy/section/MarketingAgree';
+import AlertModal from '../../../../components/ui/alert/AlertModal';
+import useAuthStore from '../../../../store/useAuthStore';
+import axios from '../../../../utils/axios';
 
 const Privacy = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -23,7 +25,7 @@ const Privacy = () => {
     },
     onSuccess: () => {
       logout();
-      navigate('/');
+      router.push('/');
     },
     onError: (error) => {
       alert('회원 탈퇴에 실패했습니다.');

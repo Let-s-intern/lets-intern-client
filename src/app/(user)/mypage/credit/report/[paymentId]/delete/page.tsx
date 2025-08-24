@@ -1,7 +1,9 @@
+'use client';
+
 import dayjs from '@/lib/dayjs';
 import { AxiosError } from 'axios';
 import { useMemo, useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 
 import {
   getCouponDiscountPrice,
@@ -27,11 +29,12 @@ const convertDateFormat = (date: string) => {
 };
 
 const ReportCreditDelete = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [isChecked, setIsChecked] = useState(false);
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams();
   const applicationId = searchParams.get('applicationId');
-  const { paymentId } = useParams<{ paymentId: string }>();
+  const params = useParams<{ paymentId: string }>();
+  const paymentId = params.paymentId;
 
   const {
     data: reportPaymentDetail,
@@ -44,7 +47,7 @@ const ReportCreditDelete = () => {
 
   const { mutate: tryCancelReportApplication } = useDeleteReportApplication({
     successCallback: () => {
-      navigate(
+      router.push(
         `/mypage/credit/report/${paymentId}?applicationId=${applicationId}`,
       );
     },
@@ -330,7 +333,7 @@ const ReportCreditDelete = () => {
               <div className="flex w-full items-center gap-x-3">
                 <button
                   className="h-[46px] grow rounded-sm border-2 border-primary bg-neutral-100 px-5 py-2 font-medium text-primary-dark"
-                  onClick={() => navigate(-1)}
+                  onClick={() => router.back()}
                 >
                   이전
                 </button>

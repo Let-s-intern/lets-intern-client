@@ -1,4 +1,24 @@
-# React Router → Next.js 마이그레이션 TODO
+# React Router → Next.js 마이그레이션 메모리
+
+## 🔄 매 커밋 필수 작업 지침
+
+**⚠️ 매번 페이지 변환 커밋 시 다음 작업을 반드시 수행:**
+
+1. **한 커밋에 삭제+추가**: 기존 router-pages 파일 삭제와 새 app 디렉토리 파일 추가를 동일한 커밋에 포함하여 git이 rename/replace로 인식하도록 함
+2. **Router.tsx 타입 에러 방지**: 변환된 페이지의 element props를 Router.tsx에서 제거하여 타입 에러 방지
+3. **Memory 파일 업데이트**: 완료된 작업을 이 파일에 체크 표시하고 진행 상황 업데이트
+4. **커밋 메시지 포맷**: 변환된 페이지 목록과 주요 변경사항을 명확히 기록
+
+**예시 커밋 순서:**
+```bash
+# 1. 새 페이지 생성
+# 2. 기존 router-pages 파일 삭제  
+# 3. Router.tsx element props 제거
+# 4. 이 메모리 파일 업데이트
+# 5. 모든 변경사항을 하나의 커밋으로 커밋
+```
+
+---
 
 ## 🎯 Phase 1: 핵심 인프라 (우선순위: 🔴 HIGH)
 
@@ -45,20 +65,20 @@
 - [x] `src/router-pages/common/mypage/Credit.tsx` → `src/app/(user)/mypage/credit/page.tsx`
 - [x] `src/router-pages/common/mypage/CreditDetail.tsx` → `src/app/(user)/mypage/credit/[paymentId]/page.tsx`
 - [x] `src/router-pages/common/mypage/CreditDelete.tsx` → `src/app/(user)/mypage/credit/[paymentId]/delete/page.tsx`
-- [ ] `src/router-pages/common/mypage/ReportCreditDetail.tsx` → `src/app/(user)/mypage/credit/report/[paymentId]/page.tsx`
-- [ ] `src/router-pages/common/mypage/ReportCreditDelete.tsx` → `src/app/(user)/mypage/credit/report/[paymentId]/delete/page.tsx`
-- [ ] `src/router-pages/common/mypage/Privacy.tsx` → `src/app/(user)/mypage/privacy/page.tsx`
-- [ ] `src/router-pages/common/mypage/Feedback.tsx` → `src/app/(user)/mypage/feedback/page.tsx`
+- [x] `src/router-pages/common/mypage/ReportCreditDetail.tsx` → `src/app/(user)/mypage/credit/report/[paymentId]/page.tsx`
+- [x] `src/router-pages/common/mypage/ReportCreditDelete.tsx` → `src/app/(user)/mypage/credit/report/[paymentId]/delete/page.tsx`
+- [x] `src/router-pages/common/mypage/Privacy.tsx` → `src/app/(user)/mypage/privacy/page.tsx`
+- [x] `src/router-pages/common/mypage/Feedback.tsx` → `src/app/(user)/mypage/feedback/page.tsx`
 
 ## 🎯 Phase 3: 서브 시스템 (우선순위: 🟡 MEDIUM)
 
 ### 프로그램 관련
 
-- [ ] `src/router-pages/common/program/Programs.tsx` → `src/app/(user)/program/page.tsx`
-- [ ] `src/router-pages/common/program/Payment.tsx` → `src/app/(user)/payment/page.tsx`
-- [ ] `src/router-pages/common/program/PaymentInputPage.tsx` → `src/app/(user)/payment-input/page.tsx`
-- [ ] `src/router-pages/common/program/PaymentResult.tsx` → `src/app/(user)/order/result/page.tsx`
-- [ ] `src/router-pages/common/program/PaymentFail.tsx` → `src/app/(user)/order/fail/page.tsx`
+- [x] `src/router-pages/common/program/Programs.tsx` → `src/app/(user)/program/page.tsx`
+- [x] `src/router-pages/common/program/Payment.tsx` → `src/app/(user)/payment/page.tsx`
+- [x] `src/router-pages/common/program/PaymentInputPage.tsx` → `src/app/(user)/payment-input/page.tsx`
+- [x] `src/router-pages/common/program/PaymentResult.tsx` → `src/app/(user)/order/result/page.tsx`
+- [x] `src/router-pages/common/program/PaymentFail.tsx` → `src/app/(user)/order/fail/page.tsx`
 
 ### 서류진단 시스템
 
@@ -85,7 +105,7 @@
 
 ### 기타 페이지
 
-- [ ] `src/router-pages/common/about/About.tsx` → `src/app/(user)/about/page.tsx`
+- [x] `src/router-pages/common/about/About.tsx` → `src/app/(user)/about/page.tsx`
 - [ ] `src/router-pages/common/home/Home.tsx` → `src/app/(user)/page.tsx` (이미 존재함, 확인 필요)
 - [ ] `src/router-pages/common/mentor/MentorNotificationBefore.tsx` → `src/app/(user)/live/[id]/mentor/notification/before/page.tsx`
 - [ ] `src/router-pages/common/mentor/MentorNotificationAfter.tsx` → `src/app/(user)/live/[id]/mentor/notification/after/page.tsx`
@@ -207,7 +227,7 @@
 
 ## 🚀 진행 상황
 
-### ✅ 완료된 작업 (22/113)
+### ✅ 완료된 작업 (32/113) - 28.3%
 
 #### Phase 1: 핵심 인프라 (4개 완료)
 1. `src/context/CurrentChallengeProvider.tsx` - useParams → Next.js params로 변경
@@ -215,7 +235,7 @@
 3. `src/components/common/challenge/ui/layout/NavBar.tsx` - Link → Next.js Link, useLocation → usePathname으로 변경  
 4. `src/components/common/ui/layout/Layout.tsx` - Outlet → children으로 변경
 
-#### Phase 2: 페이지 컴포넌트 (18개 완료)
+#### Phase 2: 페이지 컴포넌트 (23개 완료)
 
 **챌린지 시스템 (4개)**
 5. `src/app/(user)/challenge/[applicationId]/[programId]/page.tsx` - ChallengeDashboard
@@ -234,20 +254,35 @@
 14. `src/app/(user)/signup/page.tsx` - SignUp
 15. `src/app/(user)/find-password/page.tsx` - FindPassword
 
-**마이페이지 (7개)**
+**마이페이지 (10개)**
 16. `src/app/(user)/mypage/layout.tsx` - MyPage 레이아웃
 17. `src/app/(user)/mypage/application/page.tsx` - Application
 18. `src/app/(user)/mypage/review/page.tsx` - Review
 19. `src/app/(user)/mypage/credit/page.tsx` - Credit
 20. `src/app/(user)/mypage/credit/[paymentId]/page.tsx` - CreditDetail
 21. `src/app/(user)/mypage/credit/[paymentId]/delete/page.tsx` - CreditDelete
-22. 기존 router-pages 파일들 제거 완료
+22. `src/app/(user)/mypage/credit/report/[paymentId]/page.tsx` - ReportCreditDetail
+23. `src/app/(user)/mypage/credit/report/[paymentId]/delete/page.tsx` - ReportCreditDelete
+24. `src/app/(user)/mypage/privacy/page.tsx` - Privacy
+25. `src/app/(user)/mypage/feedback/page.tsx` - Feedback
+
+#### Phase 3: 서브 시스템 (5개 완료)
+
+**프로그램 관련 (5개)**
+26. `src/app/(user)/program/page.tsx` - Programs (복잡한 필터링 로직 포함)
+27. `src/app/(user)/payment/page.tsx` - Payment (Toss Payments 통합)
+28. `src/app/(user)/payment-input/page.tsx` - PaymentInputPage (복잡한 결제 폼)
+29. `src/app/(user)/order/result/page.tsx` - PaymentResult
+30. `src/app/(user)/order/fail/page.tsx` - PaymentFail
+
+**기타 페이지 (1개)**
+31. `src/app/(user)/about/page.tsx` - About
 
 ### 🔄 다음 작업 예정
-- 마이페이지 나머지 페이지들 (ReportCreditDetail, ReportCreditDelete, Privacy, Feedback)
-- 프로그램 관련 페이지들 (Programs, Payment 등)
-- 서류진단 시스템
-- 리뷰 시스템 페이지들
+- 서류진단 시스템 (11개 페이지)
+- 리뷰 시스템 페이지들 (6개 페이지)
+- 기타 페이지들 (MentorNotification, Home, NotFound)
+- 핵심 컴포넌트 수정 (네비게이션, 링크 컴포넌트 등)
 
 ## ⚠️ 주의사항
 
@@ -257,3 +292,4 @@
 4. **모든 작업 완료 후 종합 테스트** - 전체 마이그레이션 완료 후 일괄 검증
 5. **어드민 시스템 제외** - 본 마이그레이션에서는 사용자 페이지만 대상
 6. **useParams 타입 지정** - `const params = useParams<{ paramName: string }>();` 형태로 사용
+7. **매 커밋마다 Router.tsx 정리** - 타입 에러 방지를 위한 element props 제거

@@ -24,8 +24,8 @@ import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { Duration } from '@components/Duration';
 import { AxiosError } from 'axios';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import OrderProgramInfo from './OrderProgramInfo';
+import { useRouter } from 'next/navigation';
+import OrderProgramInfo from '../../../router-pages/common/program/OrderProgramInfo';
 
 function calculateTotalPrice({
   regularPrice = 0,
@@ -41,7 +41,7 @@ function calculateTotalPrice({
 }
 
 const PaymentInputPage = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const [allowNavigation, setAllowNavigation] = useState(false);
   const [nextPath, setNextPath] = useState('');
@@ -203,18 +203,18 @@ const PaymentInputPage = () => {
   // allowNavigation이 true로 변경되면 navigation 수행
   useEffect(() => {
     if (allowNavigation && nextPath) {
-      navigate(nextPath);
+      router.push(nextPath);
       setAllowNavigation(false);
     }
-  }, [allowNavigation, nextPath, navigate]);
+  }, [allowNavigation, nextPath, router]);
 
   useEffect(() => {
     if (checkInvalidate() || !isLoggedIn) {
       alert('잘못된 접근입니다.');
-      navigate('/', { replace: true });
+      router.push('/');
       initProgramApplicationForm();
     }
-  }, [isLoggedIn, navigate]);
+  }, [isLoggedIn, router]);
 
   if (programLoading || !program) {
     return <LoadingContainer />;
@@ -225,7 +225,7 @@ const PaymentInputPage = () => {
       className="mx-auto w-full max-w-[55rem] pb-6 md:pt-5"
       data-program-text={program?.title}
     >
-      <BackHeader onClick={() => navigate(-1)} className="mx-5">
+      <BackHeader onClick={() => router.back()} className="mx-5">
         결제하기
       </BackHeader>
 

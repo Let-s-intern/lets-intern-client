@@ -1,5 +1,7 @@
+'use client';
+
 import dayjs from '@/lib/dayjs';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 
 import {
   getCouponDiscountPrice,
@@ -25,10 +27,11 @@ const convertDateFormat = (date: string) => {
 };
 
 const ReportCreditDetail = () => {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const applicationId = searchParams.get('applicationId');
-  const { paymentId } = useParams<{ paymentId: string }>();
+  const params = useParams<{ paymentId: string }>();
+  const paymentId = params.paymentId;
 
   const {
     data: reportPaymentDetail,
@@ -229,7 +232,7 @@ const ReportCreditDetail = () => {
           alt="arrow-left"
           className="h-6 w-6 cursor-pointer"
           onClick={() => {
-            navigate(`/mypage/credit`);
+            router.push(`/mypage/credit`);
           }}
         />
         <h1 className="text-lg font-medium text-neutral-0">결제상세</h1>
@@ -634,7 +637,7 @@ const ReportCreditDetail = () => {
                 <button
                   className="flex w-full items-center justify-center rounded-sm bg-neutral-80 px-5 py-2.5 font-medium text-neutral-40"
                   onClick={() => {
-                    navigate(
+                    router.push(
                       `/mypage/credit/report/${paymentId}/delete?applicationId=${applicationId}`,
                     );
                   }}
@@ -645,7 +648,7 @@ const ReportCreditDetail = () => {
                 <MoreButton
                   className="other_program w-full md:flex"
                   onClick={() => {
-                    navigate('/report/landing');
+                    router.push('/report/landing');
                   }}
                 >
                   진단 서비스 더 둘러보기

@@ -1,3 +1,5 @@
+'use client';
+
 import { useProgramQuery } from '@/api/program';
 import { useUserQuery } from '@/api/user';
 import { PaymentMethodKey } from '@/data/getPaymentSearchParams';
@@ -7,7 +9,7 @@ import {
   WidgetPaymentMethodWidget,
 } from '@tosspayments/tosspayments-sdk';
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 
 type TossPaymentsWidgets = ReturnType<
   Awaited<ReturnType<typeof loadTossPayments>>['widgets']
@@ -16,14 +18,14 @@ type TossPaymentsWidgets = ReturnType<
 const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || '';
 
 const Payment = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { data: programApplicationData, checkInvalidate } = useProgramStore();
 
   if (checkInvalidate()) {
     console.error(programApplicationData);
 
     alert('잘못된 접근입니다.');
-    navigate('/');
+    router.push('/');
   }
 
   const { data: user } = useUserQuery();

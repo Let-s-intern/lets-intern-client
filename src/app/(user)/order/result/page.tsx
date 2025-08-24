@@ -1,3 +1,5 @@
+'use client';
+
 import {
   PostApplicationInterface,
   PostApplicationResult,
@@ -16,21 +18,20 @@ import useProgramStore from '@/store/useProgramStore';
 import axios from '@/utils/axios';
 import { searchParamsToObject } from '@/utils/network';
 import { useMemo, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const PaymentResult = () => {
   const { data: programApplicationData } = useProgramStore();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const [result, setResult] = useState<PostApplicationResult | null | 'error'>(
     null,
   );
 
   const params = useMemo(() => {
-    const obj = searchParamsToObject(
-      new URL(window.location.href).searchParams,
-    );
+    const obj = searchParamsToObject(searchParams);
     const result = paymentResultSearchParamsSchema.safeParse(obj);
 
     if (!result.success) {
@@ -41,20 +42,17 @@ const PaymentResult = () => {
     }
 
     return result.data;
-  }, []);
+  }, [searchParams]);
 
   useRunOnce(() => {
     if (!params || !programApplicationData) {
       return;
     }
 
-    if (
-      new URL(window.location.href).searchParams.get('postApplicationDone') ===
-      'true'
-    ) {
+    if (searchParams.get('postApplicationDone') === 'true') {
       // 즉시 리다이렉트 하면 알 수 없는 이유로 제대로 navigate 되지 않음. SSR 관련 이슈로 추정
       setTimeout(() => {
-        navigate(
+        router.push(
           `/program/${programApplicationData.programType}/${programApplicationData.programId}`,
         );
       }, 100);
@@ -108,13 +106,9 @@ const PaymentResult = () => {
       })
       .finally(() => {
         // postApplicationDone 를 true로 설정하여 추후 뒤로가기로 왔을 때 api를 타지 않도록 함
-        setSearchParams(
-          (prev) => {
-            prev.set('postApplicationDone', 'true');
-            return prev;
-          },
-          { replace: true },
-        );
+        const newSearchParams = new URLSearchParams(searchParams.toString());
+        newSearchParams.set('postApplicationDone', 'true');
+        router.replace(`${window.location.pathname}?${newSearchParams.toString()}`);
       });
   });
 
@@ -132,7 +126,7 @@ const PaymentResult = () => {
     }
 
     return `${base}?${searchParams.toString()}`;
-  }, [params]);
+  }, [params, searchParams]);
 
   return (
     <div
@@ -176,7 +170,7 @@ const PaymentResult = () => {
 
                   {isSuccess && (
                     <Link
-                      to="/program"
+                      href="/program"
                       className="other_program flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-neutral-100 px-6 py-3 text-lg font-medium text-primary-dark"
                     >
                       다른 프로그램 둘러보기
@@ -253,7 +247,7 @@ const PaymentResult = () => {
                           <div className="text-neutral-40">영수증</div>
                           <div className="flex grow items-center justify-end text-neutral-0">
                             <Link
-                              to={result?.tossInfo?.receipt?.url ?? '#'}
+                              href={result?.tossInfo?.receipt?.url ?? '#'}
                               target="_blank"
                               rel="noreferrer"
                               className="flex items-center justify-center rounded-sm border border-neutral-60 bg-white px-3 py-2 text-sm font-medium"
@@ -267,7 +261,7 @@ const PaymentResult = () => {
                   </div>
                   {isSuccess && (
                     <Link
-                      to="/mypage/application"
+                      href="/mypage/application"
                       className="mypage_button flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
                     >
                       마이페이지 바로가기
@@ -275,8 +269,7 @@ const PaymentResult = () => {
                   )}
                   {!isSuccess && (
                     <Link
-                      reloadDocument
-                      to={returnLink}
+                      href={returnLink}
                       className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
                     >
                       다시 결제하기

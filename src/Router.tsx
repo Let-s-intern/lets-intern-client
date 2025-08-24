@@ -1,7 +1,6 @@
 import ScrollToTop from '@components/ui/scroll-to-top/ScrollToTop';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { getAdminRoutes } from './AdminRoutes';
-import About from './router-pages/common/about/About';
 // import FindPassword from './router-pages/common/auth/FindPassword';
 // import Login from './router-pages/common/auth/Login';
 // import SignUp from './router-pages/common/auth/SignUp';
@@ -20,17 +19,17 @@ import MentorNotificationBefore from './router-pages/common/mentor/MentorNotific
 // import Credit from './router-pages/common/mypage/Credit';
 // import CreditDelete from './router-pages/common/mypage/CreditDelete';
 // import CreditDetail from './router-pages/common/mypage/CreditDetail';
-import Feedback from './router-pages/common/mypage/Feedback';
+// import Feedback from './router-pages/common/mypage/Feedback';
 // import MyPage from './router-pages/common/mypage/MyPage';
-import Privacy from './router-pages/common/mypage/Privacy';
-import ReportCreditDelete from './router-pages/common/mypage/ReportCreditDelete';
-import ReportCreditDetail from './router-pages/common/mypage/ReportCreditDetail';
+// import Privacy from './router-pages/common/mypage/Privacy';
+// import ReportCreditDelete from './router-pages/common/mypage/ReportCreditDelete';
+// import ReportCreditDetail from './router-pages/common/mypage/ReportCreditDetail';
 // import Review from './router-pages/common/mypage/Review';
-import Payment from './router-pages/common/program/Payment';
-import PaymentFail from './router-pages/common/program/PaymentFail';
-import PaymentInputPage from './router-pages/common/program/PaymentInputPage';
-import PaymentResult from './router-pages/common/program/PaymentResult';
-import Programs from './router-pages/common/program/Programs';
+// import Payment from './router-pages/common/program/Payment';
+// import PaymentFail from './router-pages/common/program/PaymentFail';
+// import PaymentInputPage from './router-pages/common/program/PaymentInputPage';
+// import PaymentResult from './router-pages/common/program/PaymentResult';
+// import Programs from './router-pages/common/program/Programs';
 import ReportApplicationPage from './router-pages/common/report/ReportApplicationPage';
 import ReportApplyPage from './router-pages/common/report/ReportApplyPage';
 import ReportManagementPage from './router-pages/common/report/ReportManagementPage';
@@ -66,18 +65,18 @@ const Router = () => {
               {/* / */}
               <Route path="" element={<Home />} />
               {/* /about */}
-              <Route path="about" element={<About />} />
+              <Route path="about" />
 
               {/* /program 프로그램 목록 */}
-              <Route path="program" element={<Programs />} />
+              <Route path="program" />
 
               {/* 프로그램 결제 페이지 */}
-              <Route path="payment-input" element={<PaymentInputPage />} />
-              <Route path="payment" element={<Payment />} />
+              <Route path="payment-input" />
+              <Route path="payment" />
 
               {/* 프로그램 결제 결과 페이지 */}
-              <Route path="order/result" element={<PaymentResult />} />
-              <Route path="order/fail" element={<PaymentFail />} />
+              <Route path="order/result" />
+              <Route path="order/fail" />
 
               {/* 챌린지별 latest 리다이렉트 라우트 */}
               <Route path="challenge/experience-summary/latest" />
@@ -124,18 +123,12 @@ const Router = () => {
                 <Route path="credit" />
                 <Route path="credit/:paymentId" />
                 <Route path="credit/:paymentId/delete" />
-                <Route
-                  path="credit/report/:paymentId"
-                  element={<ReportCreditDetail />}
-                />
-                <Route
-                  path="credit/report/:paymentId/delete"
-                  element={<ReportCreditDelete />}
-                />
+                <Route path="credit/report/:paymentId" />
+                <Route path="credit/report/:paymentId/delete" />
                 {/* /mypage/privacy */}
-                <Route path="privacy" element={<Privacy />} />
+                <Route path="privacy" />
                 {/* /mypage/feedback */}
-                <Route path="feedback" element={<Feedback />} />
+                <Route path="feedback" />
               </Route>
 
               {/* 로그인 */}

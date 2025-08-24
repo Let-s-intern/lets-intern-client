@@ -1,3 +1,5 @@
+'use client';
+
 import clsx from 'clsx';
 import {
   Dispatch,
@@ -8,7 +10,7 @@ import {
   useState,
 } from 'react';
 import { Helmet } from 'react-helmet';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'next/navigation';
 
 import { useUserProgramQuery } from '@/api/program';
 import Banner from '@/components/common/program/banner/Banner';
@@ -93,7 +95,7 @@ const FilterBar = ({
   typeDispatch: Dispatch<FilterCheckedAction>;
   statusDispatch: Dispatch<FilterCheckedAction>;
 }) => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const searchParams = useSearchParams();
 
   const resetPageable = () => {
     setPageable(initialPageable);
@@ -103,19 +105,22 @@ const FilterBar = ({
     typeDispatch({ type: 'init' });
     classificationDispatch({ type: 'init' });
     statusDispatch({ type: 'init' });
-    searchParams.delete(PROGRAM_QUERY_KEY.CLASSIFICATION);
-    searchParams.delete(PROGRAM_QUERY_KEY.TYPE);
-    searchParams.delete(PROGRAM_QUERY_KEY.STATUS);
-    setSearchParams(searchParams);
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete(PROGRAM_QUERY_KEY.CLASSIFICATION);
+    params.delete(PROGRAM_QUERY_KEY.TYPE);
+    params.delete(PROGRAM_QUERY_KEY.STATUS);
+    window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
   };
 
   const cancelFilter = (key: string, value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    
     // 파라미터 하나만 삭제
     const deleteParam = (target: string, key: string) => {
-      const checkedList = [...searchParams.getAll(key)];
-      searchParams.delete(key);
+      const checkedList = params.getAll(key);
+      params.delete(key);
       checkedList.forEach((item) => {
-        if (item !== target) searchParams.append(key, item);
+        if (item !== target) params.append(key, item);
       });
     };
 
@@ -140,7 +145,7 @@ const FilterBar = ({
       }
     }
     resetPageable();
-    setSearchParams(searchParams);
+    window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
   };
 
   useEffect(() => {
@@ -235,7 +240,7 @@ const ProgramContent = ({
   pageable: IPageable;
   setPageable: Dispatch<SetStateAction<IPageable>>;
 }) => {
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams();
 
   const [loading, setLoading] = useState(true);
   const [pageInfo, setPageInfo] = useState(initialPageInfo);
@@ -316,7 +321,7 @@ const ProgramContent = ({
 };
 
 const Programs = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const searchParams = useSearchParams();
 
   const [isOpen, setIsOpen] = useState(false);
   const [pageable, setPageable] = useState(initialPageable);
@@ -371,12 +376,14 @@ const Programs = () => {
   // 필터링 체크박스 클릭 이벤트
   const handleClickCheckbox = useCallback(
     (programType: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      
       // 파라미터 하나 삭제
       const deleteParam = (target: string, key: string) => {
-        const checkedList = [...searchParams.getAll(key)];
-        searchParams.delete(key);
+        const checkedList = params.getAll(key);
+        params.delete(key);
         checkedList.forEach((item) => {
-          if (item !== target) searchParams.append(key, item);
+          if (item !== target) params.append(key, item);
         });
       };
 
@@ -389,7 +396,7 @@ const Programs = () => {
             deleteParam(filterKey as string, PROGRAM_QUERY_KEY.CLASSIFICATION);
           } else {
             // 체크가 안된 상태일 때
-            searchParams.append(
+            params.append(
               PROGRAM_QUERY_KEY.CLASSIFICATION,
               filterKey as string,
             );
@@ -406,7 +413,7 @@ const Programs = () => {
             typeDispatch({ type: 'uncheck', value: filterKey });
             deleteParam(filterKey as string, PROGRAM_QUERY_KEY.TYPE);
           } else {
-            searchParams.append(PROGRAM_QUERY_KEY.TYPE, filterKey as string);
+            params.append(PROGRAM_QUERY_KEY.TYPE, filterKey as string);
             typeDispatch({ type: 'check', value: filterKey });
           }
           break;
@@ -421,21 +428,20 @@ const Programs = () => {
             deleteParam(filterKey as string, PROGRAM_QUERY_KEY.STATUS);
           } else {
             // 체크가 안된 상태일 때
-            searchParams.append(PROGRAM_QUERY_KEY.STATUS, filterKey as string);
+            params.append(PROGRAM_QUERY_KEY.STATUS, filterKey as string);
             statusDispatch({ type: 'check', value: filterKey });
           }
           break;
         }
       }
       resetPageable();
-      setSearchParams(searchParams);
+      window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
     },
     [
       filterClassification,
       filterStatus,
       filterType,
       searchParams,
-      setSearchParams,
     ],
   );
 
