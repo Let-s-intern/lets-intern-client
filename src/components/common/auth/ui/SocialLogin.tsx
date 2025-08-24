@@ -1,4 +1,4 @@
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'next/navigation';
 import styles from './SocialLogin.module.scss';
 
 interface SocialLoginProps {
@@ -6,7 +6,7 @@ interface SocialLoginProps {
 }
 
 const SocialLogin = ({ type }: SocialLoginProps) => {
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') || '/';
 
   const getSocialLink = (socialType: 'KAKAO' | 'NAVER') => {

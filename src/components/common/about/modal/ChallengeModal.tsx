@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import cn from 'classnames';
 
 import useScrollShadow from '../../../../hooks/useScrollShadow';
@@ -99,7 +99,7 @@ const ChallengeModal = ({
         {applyAvailable && (
           <div className="modal-footer">
             <Link
-              to={`/program/detail/${challenge.id}`}
+              href={`/program/detail/${challenge.id}`}
               className="apply-link-button"
             >
               신청하기

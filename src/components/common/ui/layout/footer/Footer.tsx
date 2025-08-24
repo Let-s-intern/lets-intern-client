@@ -1,3 +1,5 @@
+'use client';
+
 import useActiveReports from '@/hooks/useActiveReports';
 import { useEffect, useMemo } from 'react';
 import BottomLinkSection from './BottomLinkSection';
@@ -29,25 +31,24 @@ const Footer = () => {
           <div className="flex flex-col gap-[3.25rem] lg:flex-row lg:items-start lg:gap-[6.25rem]">
             {/* 사이트맵 */}
             <div className="flex flex-col gap-3">
-              <MainLink isNextRouter={false} href="/about">
+              <MainLink href="/about">
                 렛츠커리어 스토리
               </MainLink>
-              <MainLink isNextRouter={false} href="/program">
+              <MainLink href="/program">
                 프로그램
               </MainLink>
-              <MainLink isNextRouter={false} href="/review" force>
+              <MainLink href="/review">
                 100% 솔직 후기
               </MainLink>
-              <MainLink isNextRouter={false} href="/blog/list" force>
+              <MainLink href="/blog/list">
                 블로그
               </MainLink>
               {reportLInk && (
-                <MainLink isNextRouter={false} href={reportLInk} force>
+                <MainLink href={reportLInk}>
                   서류 진단 서비스
                 </MainLink>
               )}
               <MainLink
-                isNextRouter={false}
                 href="https://letscareer.oopy.io/1ea5e77c-bee1-8098-8e19-ec5038fb1cc8"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -59,7 +60,6 @@ const Footer = () => {
             {/* 기타 */}
             <div className="flex flex-col gap-3">
               <MainLink
-                isNextRouter={false}
                 href="https://letscareer.oopy.io"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -68,7 +68,6 @@ const Footer = () => {
                 공지사항
               </MainLink>
               <MainLink
-                isNextRouter={false}
                 href="https://docs.google.com/forms/d/e/1FAIpQLSeHM_d3yd0cOiH2aSqhprtSFmidIYFziyIxf5-9j7rgZCobvA/viewform"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -77,7 +76,6 @@ const Footer = () => {
                 광고/제휴 문의
               </MainLink>
               <MainLink
-                isNextRouter={false}
                 href="https://letscareer.oopy.io"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -92,19 +90,18 @@ const Footer = () => {
 
           <div className="text-0.75-medium flex flex-col gap-5 text-neutral-45">
             {/* 로고 */}
-            <MainLink
-              isNextRouter={false}
-              href="/"
-              className="w-[7.5rem]"
-              force
-            >
-              <img className="h-auto w-full" src="/logo/logo.svg" alt="Logo" />
+            <MainLink href="/" className="w-[7.5rem]">
+              <img
+                className="h-auto w-full"
+                src="/logo/logo.svg"
+                alt="렛츠커리어"
+              />
             </MainLink>
             {/* 사업자 정보 */}
             <BusinessInfo />
           </div>
         </div>
-        <BottomLinkSection isNextRouter={false} />
+        <BottomLinkSection />
       </div>
       <hr className="mb-10 mt-8" />
     </footer>

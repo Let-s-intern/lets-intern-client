@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import cn from 'classnames';
 
 import { ModalContentType } from './ProgramInfoModalGroup';
@@ -38,7 +38,7 @@ const LetsChatModal = ({
         {applyAvailable && (
           <div className="modal-footer">
             <Link
-              to="/program?category=LETS_CHAT"
+              href="/program?category=LETS_CHAT"
               className="apply-link-button"
             >
               신청하기

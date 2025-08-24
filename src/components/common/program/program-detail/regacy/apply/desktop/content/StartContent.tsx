@@ -1,4 +1,5 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import cn from 'classnames';
 
 import classes from './StartContent.module.scss';
@@ -19,15 +20,15 @@ const StartContent = ({
   isLoggedIn,
   setApplyPageIndex,
 }: StartContentProps) => {
-  const params = useParams();
-  const navigate = useNavigate();
+  const params = useParams<{ programId: string }>();
+  const router = useRouter();
 
   const handleNextButtonClick = () => {
     if (
       !isLoggedIn &&
       (program.type === 'CHALLENGE_FULL' || program.type === 'CHALLENGE_HALF')
     ) {
-      navigate(`/login?redirect=/program/detail/${params.programId}`);
+      router.push(`/login?redirect=/program/detail/${params.programId}`);
     } else if (!participated && program.status === 'OPEN') {
       if (isLoggedIn) {
         setApplyPageIndex(2);

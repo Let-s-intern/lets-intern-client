@@ -9,7 +9,7 @@ import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
 import LexicalContent from './common/blog/LexicalContent';
 import MoreReviewButton from './common/review/MoreReviewButton';
-import NextBackHeader from './common/ui/NextBackHeader';
+import BackHeader from './common/ui/BackHeader';
 import LiveBasicInfo from './live-view/LiveBasicInfo';
 import LiveCurriculum from './live-view/LiveCurriculum';
 import LiveFaq from './live-view/LiveFaq';
@@ -73,9 +73,9 @@ const LiveView: React.FC<{ live: LiveIdPrimitive; isPreview?: boolean }> = ({
     <div className="flex w-full flex-col">
       <div className="flex w-full flex-col items-center">
         <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
-          <NextBackHeader hideBack to="/program">
+          <BackHeader hideBack to="/program" className="my-6">
             {live.title ?? ''}
-          </NextBackHeader>
+          </BackHeader>
           {live.vod && <LiveVod className="mb-8 md:mb-12" />}
           <LiveBasicInfo live={liveTransformed} />
         </div>

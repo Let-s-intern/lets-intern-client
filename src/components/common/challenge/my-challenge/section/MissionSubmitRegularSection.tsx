@@ -4,8 +4,8 @@ import dayjs from '@/lib/dayjs';
 import { AttendanceResult, AttendanceStatus } from '@/schema';
 import { useMissionStore } from '@/store/useMissionStore';
 import { clsx } from 'clsx';
+import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import DashboardCreateReviewModal from '../../dashboard/modal/DashboardCreateReviewModal';
 import LinkChangeConfirmationModal from '../../LinkChangeConfirmationModal';
 import MissionSubmitButton from '../mission/MissionSubmitButton';
@@ -37,7 +37,7 @@ const MissionSubmitRegularSection = ({
   onRefreshMissionData,
   onSubmitLastMission,
 }: MissionSubmitRegularSectionProps) => {
-  const params = useParams();
+  const params = useParams<{ applicationId: string; programId: string }>();
 
   const { selectedMissionId } = useMissionStore();
   const { schedules, currentChallenge, refetchSchedules } =
