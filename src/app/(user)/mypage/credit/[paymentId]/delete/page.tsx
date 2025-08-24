@@ -1,3 +1,5 @@
+'use client';
+
 import { useCancelApplicationMutation } from '@/api/application';
 import DescriptionBox from '@/components/common/program/paymentSuccess/DescriptionBox';
 import PaymentInfoRow from '@/components/common/program/paymentSuccess/PaymentInfoRow';
@@ -6,7 +8,7 @@ import dayjs from '@/lib/dayjs';
 import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
 import { AxiosError } from 'axios';
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useRouter, useParams } from 'next/navigation';
 import OrderProgramInfo from '../program/OrderProgramInfo';
 
 const convertDateFormat = (date: string) => {
@@ -14,8 +16,9 @@ const convertDateFormat = (date: string) => {
 };
 
 const CreditDelete = () => {
-  const navigate = useNavigate();
-  const { paymentId } = useParams<{ paymentId: string }>();
+  const router = useRouter();
+  const params = useParams<{ paymentId: string }>();
+  const paymentId = params.paymentId;
 
   const [isChecked, setIsChecked] = useState(false);
 
@@ -31,7 +34,7 @@ const CreditDelete = () => {
   const { mutate: tryCancelPayment } = useCancelApplicationMutation({
     applicationId: paymentDetail?.programInfo.applicationId || 0,
     successCallback: () => {
-      navigate(`/mypage/credit/${paymentId}`);
+      router.push(`/mypage/credit/${paymentId}`);
     },
     errorCallback: (error) => {
       const err = error as AxiosError<{ status: number; message: string }>;
@@ -164,7 +167,7 @@ const CreditDelete = () => {
               <div className="flex w-full items-center gap-x-3">
                 <button
                   className="h-[46px] grow rounded-sm border-2 border-primary bg-neutral-100 px-5 py-2 font-medium text-primary-dark"
-                  onClick={() => navigate(-1)}
+                  onClick={() => router.back()}
                 >
                   이전
                 </button>

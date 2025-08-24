@@ -1,7 +1,9 @@
+'use client';
+
 import { twMerge } from '@/lib/twMerge';
 import { isAxiosError } from 'axios';
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 
 import Button from '../../../components/common/ui/button/Button';
 import Input from '../../../components/ui/input/Input';
@@ -9,7 +11,7 @@ import useAuthStore from '../../../store/useAuthStore';
 import axios from '../../../utils/axios';
 
 const FindPassword = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { isLoggedIn } = useAuthStore();
 
   const [email, setEmail] = useState('');
@@ -19,8 +21,8 @@ const FindPassword = () => {
   const [isError, setIsError] = useState(false);
 
   useEffect(() => {
-    if (isLoggedIn) navigate('/');
-  }, [navigate, isLoggedIn]);
+    if (isLoggedIn) router.push('/');
+  }, [router, isLoggedIn]);
 
   const handlePhoneNum = (e: React.ChangeEvent<HTMLInputElement>) => {
     let phone = e.target.value.replace(/[^0-9]/g, '');
@@ -58,7 +60,7 @@ const FindPassword = () => {
       await axios.post('/user/password', { name, email, phoneNum });
       setMessage('비밀번호 재설정 이메일을 전송하였습니다.');
       alert('입력하신 이메일로 임시 비밀번호가 전송되었습니다.');
-      navigate('/login');
+      router.push('/login');
     } catch (error) {
       setIsError(true);
       if (isAxiosError(error) && error.response?.status === 404) {

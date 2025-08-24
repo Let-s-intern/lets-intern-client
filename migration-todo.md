@@ -4,7 +4,7 @@
 
 ### 라우터 설정 파일
 
-- [ ] `src/Router.tsx` - React Router 설정 완전 제거
+- [ ] `src/Router.tsx` - React Router 설정 완전 제거 (현재: element props 제거 중, 타입 에러 방지)
 - [ ] `src/AdminRoutes.tsx` - 어드민 라우팅 (관리자용, 별도 처리)
 - [ ] `src/App.tsx` - BrowserRouter 제거, Next.js 설정으로 변경
 
@@ -33,18 +33,18 @@
 
 ### 인증 페이지
 
-- [ ] `src/router-pages/common/auth/Login.tsx` → `src/app/(user)/login/page.tsx`
-- [ ] `src/router-pages/common/auth/SignUp.tsx` → `src/app/(user)/signup/page.tsx`
-- [ ] `src/router-pages/common/auth/FindPassword.tsx` → `src/app/(user)/find-password/page.tsx`
+- [x] `src/router-pages/common/auth/Login.tsx` → `src/app/(user)/login/page.tsx`
+- [x] `src/router-pages/common/auth/SignUp.tsx` → `src/app/(user)/signup/page.tsx`
+- [x] `src/router-pages/common/auth/FindPassword.tsx` → `src/app/(user)/find-password/page.tsx`
 
 ### 마이페이지
 
-- [ ] `src/router-pages/common/mypage/MyPage.tsx` → `src/app/(user)/mypage/layout.tsx`
-- [ ] `src/router-pages/common/mypage/Application.tsx` → `src/app/(user)/mypage/application/page.tsx`
-- [ ] `src/router-pages/common/mypage/Review.tsx` → `src/app/(user)/mypage/review/page.tsx`
-- [ ] `src/router-pages/common/mypage/Credit.tsx` → `src/app/(user)/mypage/credit/page.tsx`
-- [ ] `src/router-pages/common/mypage/CreditDetail.tsx` → `src/app/(user)/mypage/credit/[paymentId]/page.tsx`
-- [ ] `src/router-pages/common/mypage/CreditDelete.tsx` → `src/app/(user)/mypage/credit/[paymentId]/delete/page.tsx`
+- [x] `src/router-pages/common/mypage/MyPage.tsx` → `src/app/(user)/mypage/layout.tsx`
+- [x] `src/router-pages/common/mypage/Application.tsx` → `src/app/(user)/mypage/application/page.tsx`
+- [x] `src/router-pages/common/mypage/Review.tsx` → `src/app/(user)/mypage/review/page.tsx`
+- [x] `src/router-pages/common/mypage/Credit.tsx` → `src/app/(user)/mypage/credit/page.tsx`
+- [x] `src/router-pages/common/mypage/CreditDetail.tsx` → `src/app/(user)/mypage/credit/[paymentId]/page.tsx`
+- [x] `src/router-pages/common/mypage/CreditDelete.tsx` → `src/app/(user)/mypage/credit/[paymentId]/delete/page.tsx`
 - [ ] `src/router-pages/common/mypage/ReportCreditDetail.tsx` → `src/app/(user)/mypage/credit/report/[paymentId]/page.tsx`
 - [ ] `src/router-pages/common/mypage/ReportCreditDelete.tsx` → `src/app/(user)/mypage/credit/report/[paymentId]/delete/page.tsx`
 - [ ] `src/router-pages/common/mypage/Privacy.tsx` → `src/app/(user)/mypage/privacy/page.tsx`
@@ -207,26 +207,47 @@
 
 ## 🚀 진행 상황
 
-### ✅ 완료된 작업 (13/113)
+### ✅ 완료된 작업 (22/113)
+
+#### Phase 1: 핵심 인프라 (4개 완료)
 1. `src/context/CurrentChallengeProvider.tsx` - useParams → Next.js params로 변경
 2. `src/components/common/challenge/ui/layout/ChallengeLayout.tsx` - Outlet → children, useNavigate → useRouter로 변경
 3. `src/components/common/challenge/ui/layout/NavBar.tsx` - Link → Next.js Link, useLocation → usePathname으로 변경  
 4. `src/components/common/ui/layout/Layout.tsx` - Outlet → children으로 변경
-5. `src/app/(user)/challenge/[applicationId]/[programId]/page.tsx` - ChallengeDashboard Next.js 페이지 생성
-6. `src/app/(user)/challenge/[applicationId]/[programId]/me/page.tsx` - MyChallengeDashboard Next.js 페이지 생성
-7. `src/app/(user)/challenge/[applicationId]/[programId]/user/info/page.tsx` - ChallengeUserInfo Next.js 페이지 생성
-8. `src/app/(user)/challenge/[applicationId]/[programId]/challenge/[challengeId]/missions/[missionId]/feedback/page.tsx` - MissionFeedback Next.js 페이지 생성
-9. `src/app/(user)/challenge/experience-summary/latest/page.tsx` - ExperienceSummaryLatest Next.js 페이지 생성
-10. `src/app/(user)/challenge/personal-statement/latest/page.tsx` - PersonalStatementLatest Next.js 페이지 생성
-11. `src/app/(user)/challenge/portfolio/latest/page.tsx` - PortfolioLatest Next.js 페이지 생성
-12. `src/app/(user)/challenge/marketing/latest/page.tsx` - MarketingLatest Next.js 페이지 생성
-13. 기존 router-pages 파일들 제거 완료
+
+#### Phase 2: 페이지 컴포넌트 (18개 완료)
+
+**챌린지 시스템 (4개)**
+5. `src/app/(user)/challenge/[applicationId]/[programId]/page.tsx` - ChallengeDashboard
+6. `src/app/(user)/challenge/[applicationId]/[programId]/me/page.tsx` - MyChallengeDashboard
+7. `src/app/(user)/challenge/[applicationId]/[programId]/user/info/page.tsx` - ChallengeUserInfo
+8. `src/app/(user)/challenge/[applicationId]/[programId]/challenge/[challengeId]/missions/[missionId]/feedback/page.tsx` - MissionFeedback
+
+**Latest 리다이렉트 (4개)**
+9. `src/app/(user)/challenge/experience-summary/latest/page.tsx` - ExperienceSummaryLatest
+10. `src/app/(user)/challenge/personal-statement/latest/page.tsx` - PersonalStatementLatest
+11. `src/app/(user)/challenge/portfolio/latest/page.tsx` - PortfolioLatest
+12. `src/app/(user)/challenge/marketing/latest/page.tsx` - MarketingLatest
+
+**인증 페이지 (3개)**
+13. `src/app/(user)/login/page.tsx` - Login
+14. `src/app/(user)/signup/page.tsx` - SignUp
+15. `src/app/(user)/find-password/page.tsx` - FindPassword
+
+**마이페이지 (7개)**
+16. `src/app/(user)/mypage/layout.tsx` - MyPage 레이아웃
+17. `src/app/(user)/mypage/application/page.tsx` - Application
+18. `src/app/(user)/mypage/review/page.tsx` - Review
+19. `src/app/(user)/mypage/credit/page.tsx` - Credit
+20. `src/app/(user)/mypage/credit/[paymentId]/page.tsx` - CreditDetail
+21. `src/app/(user)/mypage/credit/[paymentId]/delete/page.tsx` - CreditDelete
+22. 기존 router-pages 파일들 제거 완료
 
 ### 🔄 다음 작업 예정
-- 인증 페이지들 (Login, SignUp, FindPassword)
-- 마이페이지 시스템
-- 프로그램 관련 페이지들
+- 마이페이지 나머지 페이지들 (ReportCreditDetail, ReportCreditDelete, Privacy, Feedback)
+- 프로그램 관련 페이지들 (Programs, Payment 등)
 - 서류진단 시스템
+- 리뷰 시스템 페이지들
 
 ## ⚠️ 주의사항
 

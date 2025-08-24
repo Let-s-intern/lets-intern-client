@@ -1,3 +1,5 @@
+'use client';
+
 import { useUserQuery } from '@/api/user';
 import MoreButton from '@/components/common/mypage/ui/button/MoreButton';
 import PaymentInfoRow from '@/components/common/program/paymentSuccess/PaymentInfoRow';
@@ -5,7 +7,7 @@ import Input from '@/components/common/ui/input/Input';
 import useCredit from '@/hooks/useCredit';
 import dayjs from '@/lib/dayjs';
 import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useRouter, useParams } from 'next/navigation';
 import OrderProgramInfo from '../program/OrderProgramInfo';
 
 const convertDateFormat = (date: string) => {
@@ -13,8 +15,9 @@ const convertDateFormat = (date: string) => {
 };
 
 const CreditDetail = () => {
-  const navigate = useNavigate();
-  const { paymentId } = useParams<{ paymentId: string }>();
+  const router = useRouter();
+  const params = useParams<{ paymentId: string }>();
+  const paymentId = params.paymentId;
 
   const {
     data: paymentDetail,
@@ -50,7 +53,7 @@ const CreditDetail = () => {
           alt="arrow-left"
           className="h-6 w-6 cursor-pointer"
           onClick={() => {
-            navigate(`/mypage/credit`);
+            router.push(`/mypage/credit`);
           }}
         />
         <h1 className="text-lg font-medium text-neutral-0">결제상세</h1>
@@ -308,7 +311,7 @@ const CreditDetail = () => {
                 <button
                   className="flex w-full items-center justify-center rounded-sm bg-neutral-80 px-5 py-2.5 font-medium text-neutral-40"
                   onClick={() => {
-                    navigate(`/mypage/credit/${paymentId}/delete`);
+                    router.push(`/mypage/credit/${paymentId}/delete`);
                   }}
                 >
                   결제 취소하기
@@ -317,7 +320,7 @@ const CreditDetail = () => {
                 <MoreButton
                   className="other_program w-full md:flex"
                   onClick={() => {
-                    navigate('/program');
+                    router.push('/program');
                   }}
                 >
                   다른 프로그램 둘러보기

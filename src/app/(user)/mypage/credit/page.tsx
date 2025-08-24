@@ -1,3 +1,5 @@
+'use client';
+
 import CreditList from '@/components/common/mypage/credit/section/CreditList';
 
 const Credit = () => {

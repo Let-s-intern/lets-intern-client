@@ -1,47 +1,53 @@
+'use client';
+
 import clsx from 'clsx';
 import { useEffect, useMemo } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { useIsMentorQuery } from '@/api/user';
 import NavItem from '@/components/common/mypage/ui/nav/NavItem';
 import MobileCarousel from '@/components/common/ui/carousel/MobileCarousel';
 import useAuthStore from '@/store/useAuthStore';
 
-const MyPage = () => {
+interface MyPageLayoutProps {
+  children: React.ReactNode;
+}
+
+const MyPageLayout = ({ children }: MyPageLayoutProps) => {
   const { isLoggedIn } = useAuthStore();
-  const location = useLocation();
-  const navigate = useNavigate();
+  const pathname = usePathname();
+  const router = useRouter();
   const { data: isMentor } = useIsMentorQuery();
-  const isReviewCreatePage = location.pathname.startsWith('/mypage/review/new');
+  const isReviewCreatePage = pathname.startsWith('/mypage/review/new');
   const isReviewPage =
-    location.pathname.startsWith('/mypage/review/challenge') ||
-    location.pathname.startsWith('/mypage/review/live') ||
-    location.pathname.startsWith('/mypage/review/report') ||
-    location.pathname.startsWith('/mypage/review/challenge');
+    pathname.startsWith('/mypage/review/challenge') ||
+    pathname.startsWith('/mypage/review/live') ||
+    pathname.startsWith('/mypage/review/report') ||
+    pathname.startsWith('/mypage/review/challenge');
 
   const navItems = useMemo(() => {
     const baseItems = [
       {
         to: '/mypage/application',
-        active: location.pathname === '/mypage/application',
+        active: pathname === '/mypage/application',
         icon: 'edit-list-unordered',
         label: '신청현황',
       },
       {
         to: '/mypage/review',
-        active: location.pathname === '/mypage/review',
+        active: pathname === '/mypage/review',
         icon: 'commu-chat-remove',
         label: '후기작성',
       },
       {
         to: '/mypage/credit',
-        active: location.pathname.startsWith('/mypage/credit'),
+        active: pathname.startsWith('/mypage/credit'),
         icon: 'credit-list',
         label: '결제내역',
       },
       {
         to: '/mypage/privacy',
-        active: location.pathname === '/mypage/privacy',
+        active: pathname === '/mypage/privacy',
         icon: 'user-user-circle',
         label: '개인정보',
       },
@@ -50,24 +56,24 @@ const MyPage = () => {
     if (isMentor) {
       baseItems.push({
         to: '/mypage/feedback',
-        active: location.pathname === '/mypage/feedback',
+        active: pathname === '/mypage/feedback',
         icon: 'user-challenge-feedback',
         label: '챌린지 피드백',
       });
     }
 
     return baseItems;
-  }, [location.pathname, isMentor]);
+  }, [pathname, isMentor]);
 
   useEffect(() => {
     // login 페이지로 넘어간 이후 이 useEffect가 한번 더 실행되는 케이스가 있어서 방어로직 추가
-    if (!isLoggedIn && window.location.pathname.startsWith('/mypage')) {
+    if (!isLoggedIn && pathname.startsWith('/mypage')) {
       const newUrl = new URL(window.location.href);
       const searchParams = new URLSearchParams();
       searchParams.set('redirect', `${newUrl.pathname}?${newUrl.search}`);
-      navigate(`/login?${searchParams.toString()}`);
+      router.push(`/login?${searchParams.toString()}`);
     }
-  }, [isLoggedIn, navigate]);
+  }, [isLoggedIn, router, pathname]);
 
   return (
     <div className="flex w-full flex-col items-center justify-start lg:px-[7.5rem]">
@@ -102,7 +108,7 @@ const MyPage = () => {
         </nav>
         <div className="flex w-full grow flex-col items-start justify-center pb-8 md:w-auto">
           <div className="flex w-full flex-col items-start justify-center gap-y-8 lg:mx-auto lg:max-w-[37.5rem]">
-            <Outlet />
+            {children}
           </div>
         </div>
       </div>
@@ -110,4 +116,4 @@ const MyPage = () => {
   );
 };
 
-export default MyPage;
+export default MyPageLayout;

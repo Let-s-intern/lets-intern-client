@@ -1,34 +1,31 @@
 import ScrollToTop from '@components/ui/scroll-to-top/ScrollToTop';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { getAdminRoutes } from './AdminRoutes';
-import ChallengeLayout from './components/common/challenge/ui/layout/ChallengeLayout';
-import Layout from './components/common/ui/layout/Layout';
-import { CurrentChallengeProvider } from './context/CurrentChallengeProvider';
 import About from './router-pages/common/about/About';
-import FindPassword from './router-pages/common/auth/FindPassword';
-import Login from './router-pages/common/auth/Login';
-import SignUp from './router-pages/common/auth/SignUp';
-import ChallengeDashboard from './router-pages/common/challenge/ChallengeDashboard';
-import ChallengeUserInfo from './router-pages/common/challenge/ChallengeUserInfo';
-import ExperienceSummaryLatest from './router-pages/common/challenge/ExperienceSummaryLatest';
-import MarketingLatest from './router-pages/common/challenge/MarketingLatest';
-import MissionFeedback from './router-pages/common/challenge/MissionFeedback';
-import MyChallengeDashboard from './router-pages/common/challenge/MyChallengeDashboard';
-import PersonalStatementLatest from './router-pages/common/challenge/PersonalStatementLatest';
-import PortfolioLatest from './router-pages/common/challenge/PortfolioLatest';
+// import FindPassword from './router-pages/common/auth/FindPassword';
+// import Login from './router-pages/common/auth/Login';
+// import SignUp from './router-pages/common/auth/SignUp';
+// import ChallengeDashboard from './router-pages/common/challenge/ChallengeDashboard';
+// import ChallengeUserInfo from './router-pages/common/challenge/ChallengeUserInfo';
+// import ExperienceSummaryLatest from './router-pages/common/challenge/ExperienceSummaryLatest';
+// import MarketingLatest from './router-pages/common/challenge/MarketingLatest';
+// import MissionFeedback from './router-pages/common/challenge/MissionFeedback';
+// import MyChallengeDashboard from './router-pages/common/challenge/MyChallengeDashboard';
+// import PersonalStatementLatest from './router-pages/common/challenge/PersonalStatementLatest';
+// import PortfolioLatest from './router-pages/common/challenge/PortfolioLatest';
 import Home from './router-pages/common/home/Home';
 import MentorNotificationAfter from './router-pages/common/mentor/MentorNotificationAfter';
 import MentorNotificationBefore from './router-pages/common/mentor/MentorNotificationBefore';
-import Application from './router-pages/common/mypage/Application';
-import Credit from './router-pages/common/mypage/Credit';
-import CreditDelete from './router-pages/common/mypage/CreditDelete';
-import CreditDetail from './router-pages/common/mypage/CreditDetail';
+// import Application from './router-pages/common/mypage/Application';
+// import Credit from './router-pages/common/mypage/Credit';
+// import CreditDelete from './router-pages/common/mypage/CreditDelete';
+// import CreditDetail from './router-pages/common/mypage/CreditDetail';
 import Feedback from './router-pages/common/mypage/Feedback';
-import MyPage from './router-pages/common/mypage/MyPage';
+// import MyPage from './router-pages/common/mypage/MyPage';
 import Privacy from './router-pages/common/mypage/Privacy';
 import ReportCreditDelete from './router-pages/common/mypage/ReportCreditDelete';
 import ReportCreditDetail from './router-pages/common/mypage/ReportCreditDetail';
-import Review from './router-pages/common/mypage/Review';
+// import Review from './router-pages/common/mypage/Review';
 import Payment from './router-pages/common/program/Payment';
 import PaymentFail from './router-pages/common/program/PaymentFail';
 import PaymentInputPage from './router-pages/common/program/PaymentInputPage';
@@ -65,7 +62,7 @@ const Router = () => {
           <Route path="*" element={<Maintenance />} />
         ) : (
           <>
-            <Route path="/" element={<Layout />}>
+            <Route path="/">
               {/* / */}
               <Route path="" element={<Home />} />
               {/* /about */}
@@ -83,29 +80,17 @@ const Router = () => {
               <Route path="order/fail" element={<PaymentFail />} />
 
               {/* 챌린지별 latest 리다이렉트 라우트 */}
-              <Route
-                path="challenge/experience-summary/latest"
-                element={<ExperienceSummaryLatest />}
-              />
-              <Route
-                path="challenge/personal-statement/latest"
-                element={<PersonalStatementLatest />}
-              />
-              <Route
-                path="challenge/portfolio/latest"
-                element={<PortfolioLatest />}
-              />
-              <Route
-                path="challenge/marketing/latest"
-                element={<MarketingLatest />}
-              />
+              <Route path="challenge/experience-summary/latest" />
+              <Route path="challenge/personal-statement/latest" />
+              <Route path="challenge/portfolio/latest" />
+              <Route path="challenge/marketing/latest" />
 
               {/* 마이페이지 */}
-              <Route path="mypage" element={<MyPage />}>
+              <Route path="mypage">
                 {/* /mypage/application */}
-                <Route path="application" element={<Application />} />
+                <Route path="application" />
                 {/* /mypage/review */}
-                <Route path="review" element={<Review />} />
+                <Route path="review" />
                 {/* /mypage/review/new/challenge/:programId */}
                 <Route
                   path="review/new/challenge/:programId"
@@ -136,12 +121,9 @@ const Router = () => {
                   path="review/report/:reportId"
                   element={<ReportReviewPage />}
                 />
-                <Route path="credit" element={<Credit />} />
-                <Route path="credit/:paymentId" element={<CreditDetail />} />
-                <Route
-                  path="credit/:paymentId/delete"
-                  element={<CreditDelete />}
-                />
+                <Route path="credit" />
+                <Route path="credit/:paymentId" />
+                <Route path="credit/:paymentId/delete" />
                 <Route
                   path="credit/report/:paymentId"
                   element={<ReportCreditDetail />}
@@ -157,29 +139,19 @@ const Router = () => {
               </Route>
 
               {/* 로그인 */}
-              <Route path="login" element={<Login />} />
+              <Route path="login" />
               {/* 회원가입 */}
-              <Route path="signup" element={<SignUp />} />
+              <Route path="signup" />
               {/* 비밀번호 찾기 */}
-              <Route path="find-password" element={<FindPassword />} />
+              <Route path="find-password" />
 
               {/* 챌린지 대시보드 */}
-              <Route
-                path="challenge/:applicationId/:programId"
-                element={
-                  <CurrentChallengeProvider>
-                    <ChallengeLayout />
-                  </CurrentChallengeProvider>
-                }
-              >
-                <Route path="user/info" element={<ChallengeUserInfo />} />
-                <Route path="" element={<ChallengeDashboard />} />
-                <Route path="me" element={<MyChallengeDashboard />} />
+              <Route path="challenge/:applicationId/:programId">
+                <Route path="user/info" />
+                <Route path="" />
+                <Route path="me" />
                 {/* 미션 피드백 페이지 */}
-                <Route
-                  path="challenge/:challengeId/missions/:missionId/feedback"
-                  element={<MissionFeedback />}
-                />
+                <Route path="challenge/:challengeId/missions/:missionId/feedback" />
               </Route>
 
               {/* 서류진단 */}

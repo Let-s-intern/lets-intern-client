@@ -1,3 +1,5 @@
+'use client';
+
 import SocialLogin from '@/components/common/auth/ui/SocialLogin';
 import Button from '@/components/common/ui/button/Button';
 import Input from '@/components/ui/input/Input';
@@ -7,7 +9,8 @@ import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
 
 interface Token {
@@ -26,7 +29,7 @@ interface TextLinkProps {
 const TextLink = ({ to, dark, className, children }: TextLinkProps) => {
   return (
     <Link
-      to={to}
+      href={to}
       className={twMerge(
         'text-sm underline',
         dark ? 'text-neutral-grey' : 'text-primary',
@@ -45,13 +48,13 @@ const TextLink = ({ to, dark, className, children }: TextLinkProps) => {
 const Login = () => {
   const { isLoggedIn, login } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const redirect: string = searchParams.get('redirect') || '/';
-  const navigate = useNavigate();
 
   const fetchLogin = useMutation({
     mutationFn: async () => {
@@ -94,7 +97,7 @@ const Login = () => {
   useEffect(() => {
     const handleLoginSuccess = (token: Token) => {
       if (token.isNew) {
-        navigate(
+        router.push(
           `/signup?result=${JSON.stringify(token)}&redirect=${redirect}`,
         );
       } else {
@@ -114,10 +117,11 @@ const Login = () => {
       const parsedToken = searchParams.get('result')
         ? JSON.parse(searchParams.get('result') || '{}')
         : null;
-      const newSearchParams = new URLSearchParams(searchParams);
+      // Next.js에서는 searchParams를 직접 변경할 수 없으므로 router.replace 사용
+      const newSearchParams = new URLSearchParams(searchParams.toString());
       newSearchParams.delete('result');
       newSearchParams.set('isLoading', 'true');
-      setSearchParams(newSearchParams);
+      router.replace(`/login?${newSearchParams.toString()}`);
       handleLoginSuccess(parsedToken);
       return;
     }
@@ -130,7 +134,7 @@ const Login = () => {
       window.location.href = redirect;
       return;
     }
-  }, [searchParams, setSearchParams, isLoggedIn, redirect, login, navigate]);
+  }, [searchParams, router, isLoggedIn, redirect, login]);
 
   return (
     <>

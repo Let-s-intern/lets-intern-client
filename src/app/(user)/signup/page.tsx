@@ -1,3 +1,5 @@
+'use client';
+
 import MarketingModal from '@/components/common/auth/modal/MarketingModal';
 import PrivacyPolicyModal from '@/components/common/auth/modal/PrivacyPolicyModal';
 import InfoContainer from '@/components/common/auth/ui/InfoContainer';
@@ -17,13 +19,13 @@ import CheckBox from '@components/common/ui/CheckBox';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { FormEvent, useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const SignUp = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const { isLoggedIn, login } = useAuthStore();
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams();
   const [isSocial, setIsSocial] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(null);
   const [errorMessage, setErrorMessage] = useState('');
@@ -40,7 +42,7 @@ const SignUp = () => {
       const token = JSON.parse(result);
       if (!token.isNew) {
         login(token.accessToken, token.refreshToken);
-        navigate(searchParams.get('redirect') || '/');
+        router.push(searchParams.get('redirect') || '/');
         return;
       }
       setIsSocial(true);
@@ -61,7 +63,7 @@ const SignUp = () => {
         setAccessTokenForSocialSignup(accessTokenForSocialSignup);
       }
     }
-  }, [searchParams, login, navigate]);
+  }, [searchParams, login, router]);
 
   const [isSignupSuccess, setIsSignupSuccess] = useState<boolean>(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
@@ -165,9 +167,9 @@ const SignUp = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      navigate('/');
+      router.push('/');
     }
-  }, [navigate, isLoggedIn]);
+  }, [router, isLoggedIn]);
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
