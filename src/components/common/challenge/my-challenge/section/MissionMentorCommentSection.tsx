@@ -2,14 +2,14 @@ import { useChallengeMissionFeedbackQuery } from '@/api/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { useMissionStore } from '@/store/useMissionStore';
 import LexicalContent from '@components/common/blog/LexicalContent';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'next/navigation';
 
 interface Props {
   missionId: string | number;
 }
 
 const MissionMentorCommentSection = ({ missionId }: Props) => {
-  const params = useParams();
+  const params = useParams<{ programId: string }>();
 
   // 피드백 데이터
   const { data: feedbackData } = useChallengeMissionFeedbackQuery({

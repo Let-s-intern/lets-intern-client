@@ -5,8 +5,8 @@ import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { Schedule } from '@/schema';
 import { clsx } from 'clsx';
+import { useParams } from 'next/navigation';
 import { ReactNode, useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import DashboardCreateReviewModal from '../../dashboard/modal/DashboardCreateReviewModal';
 import LinkChangeConfirmationModal from '../../LinkChangeConfirmationModal';
 import AgreementCheckbox from '../mission/AgreementCheckbox';
@@ -46,7 +46,7 @@ const MissionSubmitBonusSection = ({
   missionId,
   attendanceInfo,
 }: MissionSubmitBonusSectionProps) => {
-  const params = useParams();
+  const params = useParams<{ applicationId: string; programId: string }>();
 
   const { currentChallenge } = useCurrentChallenge();
 
