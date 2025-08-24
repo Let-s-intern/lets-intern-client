@@ -1,8 +1,14 @@
+'use client';
+
+import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 
 import { uploadFile } from '@/api/file';
-import { convertReportTypeToDisplayName, ReportType, usePatchMyApplication } from '@/api/report';
+import {
+  convertReportTypeToDisplayName,
+  ReportType,
+  usePatchMyApplication,
+} from '@/api/report';
 import useRunOnce from '@/hooks/useRunOnce';
 import { ReportTypePathnameEnum } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
@@ -18,11 +24,12 @@ import {
   DocumentSection,
   PremiumSection,
   ScheduleSection,
-} from './ReportApplyPage';
+} from '../../../apply/[reportType]/[reportId]/page';
 
 const ReportApplicationPage = () => {
-  const navigate = useNavigate();
-  const { reportType, applicationId } = useParams();
+  const router = useRouter();
+  const params = useParams<{ reportType: string; applicationId: string }>();
+  const { reportType, applicationId } = params;
 
   const [applyFile, setApplyFile] = useState<File | null>(null);
   const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
@@ -81,7 +88,7 @@ const ReportApplicationPage = () => {
 
     const searchParams = new URLSearchParams();
     searchParams.set('redirect', window.location.pathname);
-    navigate(`/login?${searchParams.toString()}`);
+    router.push(`/login?${searchParams.toString()}`);
   });
 
   return (
@@ -101,7 +108,8 @@ const ReportApplicationPage = () => {
 
           {/* 프리미엄 채용공고 */}
           {reportApplication.reportPriceType === 'PREMIUM' &&
-            reportType !== ReportTypePathnameEnum.enum['personal-statement']  && (
+            reportType !==
+              ReportTypePathnameEnum.enum['personal-statement'] && (
               <PremiumSection
                 file={recruitmentFile}
                 dispatch={setRecruitmentFile}
@@ -194,7 +202,7 @@ const ReportApplicationPage = () => {
             message: reportApplication.message,
           });
           alert('제출이 완료되었습니다.');
-          navigate('/report/management');
+          router.push('/report/management');
           setIsLoading(false);
         }}
       />

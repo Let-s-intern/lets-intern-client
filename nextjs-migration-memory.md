@@ -92,24 +92,24 @@
 - [ ] `src/router-pages/common/report/ReportPaymentResult.tsx` → `src/app/(user)/report/order/result/page.tsx`
 - [ ] `src/router-pages/common/report/ReportPaymentFail.tsx` → `src/app/(user)/report/order/fail/page.tsx`
 - [ ] `src/router-pages/common/report/ReportManagementPage.tsx` → `src/app/(user)/report/management/page.tsx`
-- [ ] `src/router-pages/common/report/ReportApplicationPage.tsx` → `src/app/(user)/report/[reportType]/application/[applicationId]/page.tsx`
+- [x] `src/router-pages/common/report/ReportApplicationPage.tsx` → `src/app/(user)/report/[reportType]/application/[applicationId]/page.tsx`
 
 ### 리뷰 시스템
 
-- [ ] `src/router-pages/common/review/ChallengeReviewCreatePage.tsx` → `src/app/(user)/mypage/review/new/challenge/[programId]/page.tsx`
-- [ ] `src/router-pages/common/review/ChallengeReviewPage.tsx` → `src/app/(user)/mypage/review/challenge/[programId]/page.tsx`
-- [ ] `src/router-pages/common/review/LiveReviewCreatePage.tsx` → `src/app/(user)/mypage/review/new/live/[programId]/page.tsx`
-- [ ] `src/router-pages/common/review/LiveReviewPage.tsx` → `src/app/(user)/mypage/review/live/[programId]/page.tsx`
-- [ ] `src/router-pages/common/review/ReportReviewCreatePage.tsx` → `src/app/(user)/mypage/review/new/report/[reportId]/page.tsx`
-- [ ] `src/router-pages/common/review/ReportReviewPage.tsx` → `src/app/(user)/mypage/review/report/[reportId]/page.tsx`
+- [x] `src/router-pages/common/review/ChallengeReviewCreatePage.tsx` → `src/app/(user)/mypage/review/new/challenge/[programId]/page.tsx`
+- [x] `src/router-pages/common/review/ChallengeReviewPage.tsx` → `src/app/(user)/mypage/review/challenge/[programId]/page.tsx`
+- [x] `src/router-pages/common/review/LiveReviewCreatePage.tsx` → `src/app/(user)/mypage/review/new/live/[programId]/page.tsx`
+- [x] `src/router-pages/common/review/LiveReviewPage.tsx` → `src/app/(user)/mypage/review/live/[programId]/page.tsx`
+- [x] `src/router-pages/common/review/ReportReviewCreatePage.tsx` → `src/app/(user)/mypage/review/new/report/[reportId]/page.tsx`
+- [x] `src/router-pages/common/review/ReportReviewPage.tsx` → `src/app/(user)/mypage/review/report/[reportId]/page.tsx`
 
 ### 기타 페이지
 
 - [x] `src/router-pages/common/about/About.tsx` → `src/app/(user)/about/page.tsx`
-- [ ] `src/router-pages/common/home/Home.tsx` → `src/app/(user)/page.tsx` (이미 존재함, 확인 필요)
-- [ ] `src/router-pages/common/mentor/MentorNotificationBefore.tsx` → `src/app/(user)/live/[id]/mentor/notification/before/page.tsx`
-- [ ] `src/router-pages/common/mentor/MentorNotificationAfter.tsx` → `src/app/(user)/live/[id]/mentor/notification/after/page.tsx`
-- [ ] `src/router-pages/NotFound.tsx` → `src/app/not-found.tsx`
+- [x] `src/router-pages/common/home/Home.tsx` → `src/app/(user)/page.tsx` (기존 페이지에 내용 직접 이식)
+- [x] `src/router-pages/common/mentor/MentorNotificationBefore.tsx` → `src/app/(user)/live/[id]/mentor/notification/before/page.tsx`
+- [x] `src/router-pages/common/mentor/MentorNotificationAfter.tsx` → `src/app/(user)/live/[id]/mentor/notification/after/page.tsx`
+- [x] `src/router-pages/NotFound.tsx` → `src/app/not-found.tsx`
 
 ## 🎯 Phase 4: 컴포넌트 수정 (우선순위: 🟡 MEDIUM)
 
@@ -227,7 +227,7 @@
 
 ## 🚀 진행 상황
 
-### ✅ 완료된 작업 (47/113) - 41.6%
+### ✅ 완료된 작업 (52/113) - 46.0%
 
 #### Phase 1: 핵심 인프라 (4개 완료)
 1. `src/context/CurrentChallengeProvider.tsx` - useParams → Next.js params로 변경
@@ -298,9 +298,16 @@
 46. `src/app/(user)/mypage/review/new/report/[reportId]/page.tsx` - ReportReviewCreatePage (서류진단 리뷰 작성)
 47. `src/app/(user)/mypage/review/report/[reportId]/page.tsx` - ReportReviewPage (서류진단 리뷰 조회)
 
+**기타 페이지 (5개 완료)**
+48. `src/app/(user)/report/[reportType]/application/[applicationId]/page.tsx` - ReportApplicationPage (서류 제출)
+49. `src/app/(user)/page.tsx` - Home (홈페이지, 기존 페이지에 내용 직접 이식)
+50. `src/app/(user)/live/[id]/mentor/notification/before/page.tsx` - MentorNotificationBefore (멘토 사전 안내)
+51. `src/app/(user)/live/[id]/mentor/notification/after/page.tsx` - MentorNotificationAfter (멘토 후기 전달)
+52. `src/app/not-found.tsx` - NotFound (404 페이지)
+
 ### 🔄 다음 작업 예정
-- 기타 페이지들 (MentorNotification, Home, NotFound)
 - 핵심 컴포넌트 수정 (네비게이션, 링크 컴포넌트 등)
+- Phase 4: 컴포넌트 내부 React Router 의존성 제거
 
 ## ⚠️ 주의사항
 

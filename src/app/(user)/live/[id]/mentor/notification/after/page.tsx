@@ -1,22 +1,24 @@
+'use client';
+
 import { mentorNotificationSchema, MentorNotificationType } from '@/schema';
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 
 const MentorNotificationAfter = () => {
-  const params = useParams();
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const params = useParams<{ id: string }>();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const liveId = Number(params.id);
   const code = String(searchParams.get('code'));
 
   useEffect(() => {
     if (!code || !liveId) {
       alert('잘못된 접근입니다.');
-      navigate('/');
+      router.push('/');
     }
-  }, [code, liveId, navigate]);
+  }, [code, liveId, router]);
 
   const { data: notification, error } = useQuery({
     queryKey: ['mentor', liveId, 'notification', 'before'],
@@ -34,9 +36,9 @@ const MentorNotificationAfter = () => {
   useEffect(() => {
     if (error) {
       alert('잘못된 접근입니다.');
-      navigate('/');
+      router.push('/');
     }
-  }, [error, navigate]);
+  }, [error, router]);
 
   return (
     <div className="mx-auto max-w-[40rem] px-5 pt-20">

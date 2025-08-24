@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 const NotFound = () => {
   return (
@@ -15,7 +15,7 @@ const NotFound = () => {
             죄송합니다. 홈페이지에서 다양한 정보를 찾아보세요.
           </p>
           <Link
-            to="/"
+            href="/"
             className="my-4 inline-flex rounded-lg bg-primary px-5 py-2.5 text-center text-sm font-medium text-white transition hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-offset-2"
           >
             홈페이지로 돌아가기
