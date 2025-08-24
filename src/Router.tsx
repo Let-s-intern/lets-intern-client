@@ -35,7 +35,7 @@ import ReportApplyPage from './router-pages/common/report/ReportApplyPage';
 import ReportManagementPage from './router-pages/common/report/ReportManagementPage';
 import ReportPage from './router-pages/common/report/ReportPage';
 import ReportPaymentFail from './router-pages/common/report/ReportPaymentFail';
-import ReportPaymentPage from './router-pages/common/report/ReportPaymentPage';
+// import ReportPaymentPage from './router-pages/common/report/ReportPaymentPage';
 import ReportPaymentResult from './router-pages/common/report/ReportPaymentResult';
 import ReportPersonalStatementPage from './router-pages/common/report/ReportPersonalStatementPage';
 import ReportPortfolioPage from './router-pages/common/report/ReportPortfolioPage';
@@ -177,10 +177,7 @@ const Router = () => {
                 path="report/apply/:reportType/:reportId"
                 element={<ReportApplyPage />}
               />
-              <Route
-                path="report/payment/:reportType/:reportId"
-                element={<ReportPaymentPage />}
-              />
+              <Route path="report/payment/:reportType/:reportId" />
               <Route path="report/toss/payment" element={<ReportTossPage />} />
               <Route
                 path="report/order/result"

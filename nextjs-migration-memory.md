@@ -227,7 +227,7 @@
 
 ## 🚀 진행 상황
 
-### ✅ 완료된 작업 (32/113) - 28.3%
+### ✅ 완료된 작업 (33/113) - 29.2%
 
 #### Phase 1: 핵심 인프라 (4개 완료)
 1. `src/context/CurrentChallengeProvider.tsx` - useParams → Next.js params로 변경
@@ -278,8 +278,16 @@
 **기타 페이지 (1개)**
 31. `src/app/(user)/about/page.tsx` - About
 
+**서류진단 시스템 (5개)**
+32. `src/app/(user)/report/landing/page.tsx` - ReportPage
+33. `src/app/(user)/report/landing/resume/[[...reportId]]/page.tsx` - ReportResumePage  
+34. `src/app/(user)/report/landing/personal-statement/[[...reportId]]/page.tsx` - ReportPersonalStatementPage
+35. `src/app/(user)/report/landing/portfolio/[[...reportId]]/page.tsx` - ReportPortfolioPage
+36. `src/app/(user)/report/apply/[reportType]/[reportId]/page.tsx` - ReportApplyPage
+37. `src/app/(user)/report/payment/[reportType]/[reportId]/page.tsx` - ReportPaymentPage
+
 ### 🔄 다음 작업 예정
-- 서류진단 시스템 (11개 페이지)
+- 서류진단 시스템 (6개 남은 페이지)
 - 리뷰 시스템 페이지들 (6개 페이지)
 - 기타 페이지들 (MentorNotification, Home, NotFound)
 - 핵심 컴포넌트 수정 (네비게이션, 링크 컴포넌트 등)

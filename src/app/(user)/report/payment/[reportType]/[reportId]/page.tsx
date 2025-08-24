@@ -1,5 +1,7 @@
+'use client';
+
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useRouter, useParams } from 'next/navigation';
 
 import { useGetParticipationInfo } from '@/api/application';
 import { convertReportPriceType, useGetReportPriceDetail } from '@/api/report';
@@ -18,8 +20,9 @@ import BaseButton from '@components/common/ui/button/BaseButton';
 import Input from '@components/common/ui/input/Input';
 
 const ReportPaymentPage = () => {
-  const navigate = useNavigate();
-  const { reportType } = useParams();
+  const router = useRouter();
+  const params = useParams<{ reportType: string; reportId: string }>();
+  const { reportType, reportId } = params;
 
   const { data: reportApplication } = useReportApplicationStore();
   const { payment } = useReportPayment();
@@ -28,7 +31,7 @@ const ReportPaymentPage = () => {
   return (
     <div className="mx-auto max-w-[55rem] px-5 md:pt-5 lg:px-0">
       <BackHeader
-        to={`/report/apply/${reportType}/${reportApplication.reportId}`}
+        to={`/report/apply/${reportType}/${reportId}`}
       >
         결제하기
       </BackHeader>
@@ -51,10 +54,10 @@ const ReportPaymentPage = () => {
             });
 
             if (payment.amount === 0) {
-              navigate(`/report/order/result?orderId=${generateOrderId()}`);
+              router.push(`/report/order/result?orderId=${generateOrderId()}`);
               return;
             }
-            navigate(`/report/toss/payment`);
+            router.push(`/report/toss/payment`);
           }}
         >
           결제하기
@@ -76,10 +79,10 @@ const ReportPaymentPage = () => {
             });
 
             if (payment.amount === 0) {
-              navigate(`/report/order/result?orderId=${generateOrderId()}`);
+              router.push(`/report/order/result?orderId=${generateOrderId()}`);
               return;
             }
-            navigate(`/report/toss/payment`);
+            router.push(`/report/toss/payment`);
           }}
         >
           결제하기
