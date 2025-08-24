@@ -3,7 +3,7 @@ import dayjs from '@/lib/dayjs';
 import { getReportThumbnail } from '@components/common/mypage/credit/CreditListItem';
 import clsx from 'clsx';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import HybridLink from '../../../ui/HybridLink';
 import LinkButton from '../../button/LinkButton';
 import PriceInfoModal from '../../modal/PriceInfoModal';
 
@@ -49,9 +49,8 @@ const ApplicationCard = ({
           grayscale,
         })}
       >
-        <Link
-          to={window.location.origin + programLink}
-          reloadDocument
+        <HybridLink
+          href={programLink}
           className="flex-shrink-0 md:w-[11rem]"
         >
           <img
@@ -59,17 +58,16 @@ const ApplicationCard = ({
             alt="프로그램 썸네일"
             className="h-[7.5rem] w-full bg-primary-light object-cover md:h-[9rem] md:w-[11rem] md:rounded-xs"
           />
-        </Link>
+        </HybridLink>
         <div className="flex flex-col justify-between gap-2 py-2">
           <div className="flex w-full flex-col gap-y-0.5">
             <h2 className="font-semibold">
-              <Link
-                to={window.location.origin + programLink}
-                reloadDocument
+              <HybridLink
+                href={programLink}
                 className="hover:underline"
               >
                 {application.programTitle}
-              </Link>
+              </HybridLink>
             </h2>
             <p className="line-clamp-2 h-10 text-sm text-neutral-30 md:line-clamp-none md:h-auto">
               {application.programShortDesc}

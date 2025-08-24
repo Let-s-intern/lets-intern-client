@@ -1,3 +1,5 @@
+'use client';
+
 import { memo, useEffect, useState } from 'react';
 import HybridLink from '../HybridLink';
 

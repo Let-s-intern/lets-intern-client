@@ -10,9 +10,10 @@
 4. **커밋 메시지 포맷**: 변환된 페이지 목록과 주요 변경사항을 명확히 기록
 
 **예시 커밋 순서:**
+
 ```bash
 # 1. 새 페이지 생성
-# 2. 기존 router-pages 파일 삭제  
+# 2. 기존 router-pages 파일 삭제
 # 3. Router.tsx element props 제거
 # 4. 이 메모리 파일 업데이트
 # 5. 모든 변경사항을 하나의 커밋으로 커밋
@@ -227,34 +228,39 @@
 
 ## 🚀 진행 상황
 
-### ✅ 완료된 작업 (60/113) - 53.1%
+### ✅ 완료된 작업 (75/113) - 66.4%
 
 #### Phase 1: 핵심 인프라 (4개 완료)
+
 1. `src/context/CurrentChallengeProvider.tsx` - useParams → Next.js params로 변경
 2. `src/components/common/challenge/ui/layout/ChallengeLayout.tsx` - Outlet → children, useNavigate → useRouter로 변경
-3. `src/components/common/challenge/ui/layout/NavBar.tsx` - Link → Next.js Link, useLocation → usePathname으로 변경  
+3. `src/components/common/challenge/ui/layout/NavBar.tsx` - Link → Next.js Link, useLocation → usePathname으로 변경
 4. `src/components/common/ui/layout/Layout.tsx` - Outlet → children으로 변경
 
 #### Phase 2: 페이지 컴포넌트 (23개 완료)
 
 **챌린지 시스템 (4개)**
+
 5. `src/app/(user)/challenge/[applicationId]/[programId]/page.tsx` - ChallengeDashboard
 6. `src/app/(user)/challenge/[applicationId]/[programId]/me/page.tsx` - MyChallengeDashboard
 7. `src/app/(user)/challenge/[applicationId]/[programId]/user/info/page.tsx` - ChallengeUserInfo
 8. `src/app/(user)/challenge/[applicationId]/[programId]/challenge/[challengeId]/missions/[missionId]/feedback/page.tsx` - MissionFeedback
 
 **Latest 리다이렉트 (4개)**
+
 9. `src/app/(user)/challenge/experience-summary/latest/page.tsx` - ExperienceSummaryLatest
 10. `src/app/(user)/challenge/personal-statement/latest/page.tsx` - PersonalStatementLatest
 11. `src/app/(user)/challenge/portfolio/latest/page.tsx` - PortfolioLatest
 12. `src/app/(user)/challenge/marketing/latest/page.tsx` - MarketingLatest
 
 **인증 페이지 (3개)**
+
 13. `src/app/(user)/login/page.tsx` - Login
 14. `src/app/(user)/signup/page.tsx` - SignUp
 15. `src/app/(user)/find-password/page.tsx` - FindPassword
 
 **마이페이지 (10개)**
+
 16. `src/app/(user)/mypage/layout.tsx` - MyPage 레이아웃
 17. `src/app/(user)/mypage/application/page.tsx` - Application
 18. `src/app/(user)/mypage/review/page.tsx` - Review
@@ -269,6 +275,7 @@
 #### Phase 3: 서브 시스템 (5개 완료)
 
 **프로그램 관련 (5개)**
+
 26. `src/app/(user)/program/page.tsx` - Programs (복잡한 필터링 로직 포함)
 27. `src/app/(user)/payment/page.tsx` - Payment (Toss Payments 통합)
 28. `src/app/(user)/payment-input/page.tsx` - PaymentInputPage (복잡한 결제 폼)
@@ -276,9 +283,11 @@
 30. `src/app/(user)/order/fail/page.tsx` - PaymentFail
 
 **기타 페이지 (1개)**
+
 31. `src/app/(user)/about/page.tsx` - About
 
 **서류진단 시스템 (10개 완료)**
+
 32. `src/app/(user)/report/landing/page.tsx` - ReportPage (단순 리다이렉트)
 33. `src/app/(user)/report/landing/resume/[[...reportId]]/page.tsx` - ReportResumePage (옵셔널 catch-all 라우팅)
 34. `src/app/(user)/report/landing/personal-statement/[[...reportId]]/page.tsx` - ReportPersonalStatementPage (옵셔널 catch-all 라우팅)
@@ -291,6 +300,7 @@
 41. `src/app/(user)/report/management/page.tsx` - ReportManagementPage (복잡한 필터링 및 상태 관리)
 
 **리뷰 시스템 (6개 완료)**
+
 42. `src/app/(user)/mypage/review/new/challenge/[programId]/page.tsx` - ChallengeReviewCreatePage (챌린지 리뷰 작성)
 43. `src/app/(user)/mypage/review/challenge/[programId]/page.tsx` - ChallengeReviewPage (챌린지 리뷰 조회)
 44. `src/app/(user)/mypage/review/new/live/[programId]/page.tsx` - LiveReviewCreatePage (라이브 클래스 리뷰 작성)
@@ -299,6 +309,7 @@
 47. `src/app/(user)/mypage/review/report/[reportId]/page.tsx` - ReportReviewPage (서류진단 리뷰 조회)
 
 **기타 페이지 (5개 완료)**
+
 48. `src/app/(user)/report/[reportType]/application/[applicationId]/page.tsx` - ReportApplicationPage (서류 제출)
 49. `src/app/(user)/page.tsx` - Home (홈페이지, 기존 페이지에 내용 직접 이식)
 50. `src/app/(user)/live/[id]/mentor/notification/before/page.tsx` - MentorNotificationBefore (멘토 사전 안내)
@@ -306,8 +317,9 @@
 52. `src/app/not-found.tsx` - NotFound (404 페이지)
 
 **Next 컴포넌트 통합 (8개 완료)**
+
 53. `NavBar` - NextNavBar 통합, isNextRouter props 제거, Next.js 전용으로 단순화
-54. `BottomNavBarWithPathname` - NextBottomNavBarWithPathname 통합  
+54. `BottomNavBarWithPathname` - NextBottomNavBarWithPathname 통합
 55. `HybridLink` - React Router 의존성 제거, Next.js Link만 사용
 56. `BackHeader` - NextBackHeader 통합, router.back() 자동 지원
 57. `Footer` - NextFooter 통합, isNextRouter props 제거
@@ -315,9 +327,40 @@
 59. 유틸리티 함수들 (hideMobileBottomNavBar, getBottomNavBarClassNameByPath) NavBar로 이동
 60. 중복 Next 컴포넌트들 완전 제거 및 import 경로 통합
 
-### 🔄 다음 작업 예정
-- 핵심 컴포넌트 수정 (네비게이션, 링크 컴포넌트 등)
-- Phase 4: 컴포넌트 내부 React Router 의존성 제거
+#### Phase 4: 컴포넌트 React Router 의존성 제거 (15개 완료)
+
+**챌린지 관련 컴포넌트 (8개)**
+
+61. `src/components/common/challenge/dashboard/section/DailyMissionSection.tsx` - useNavigate → useRouter, Link → Next Link
+62. `src/components/common/challenge/dashboard/section/EndDailyMissionSection.tsx` - useParams 타입 지정, Link → Next Link
+63. `src/components/common/challenge/dashboard/section/GuideSection.tsx` - Link → HybridLink (외부 링크)
+64. `src/components/common/challenge/dashboard/section/NoticeSection.tsx` - Link → HybridLink (외부 링크)
+65. `src/components/common/challenge/MissionEndSection.tsx` - useParams 타입 지정, Link → Next Link
+66. `src/components/common/challenge/my-challenge/dropdown/AbsentContentsDropdown.tsx` - Link → HybridLink
+67. `src/components/common/challenge/my-challenge/dropdown/ContentsDropdown.tsx` - Link → HybridLink
+68. `src/components/common/challenge/my-challenge/dropdown/MenuContentsDropdown.tsx` - Link → HybridLink
+69. `src/components/common/challenge/my-challenge/section/RecommendedProgramSwiper.tsx` - useParams 타입 지정, Link → HybridLink
+70. `src/components/common/challenge/my-challenge/section/RecommendedProgramSection.tsx` - useLocation → usePathname
+
+**마이페이지 관련 컴포넌트 (7개)**
+
+71. `src/components/common/mypage/ui/nav/NavItem.tsx` - useNavigate → useRouter
+72. `src/components/common/mypage/ui/card/root/ApplicationCard.tsx` - Link → HybridLink, reloadDocument 처리
+73. `src/components/common/mypage/ui/button/LinkButton.tsx` - Link → HybridLink
+74. `src/components/common/mypage/application/section/ApplySection.tsx` - useNavigate → useRouter, Link → HybridLink
+75. `src/components/common/mypage/credit/section/CreditList.tsx` - Link → Next Link
+76. `src/components/common/mypage/credit/CreditListItem.tsx` - Link → Next Link
+77. `src/components/common/mypage/review/section/WaitingSection.tsx` - Link → Next Link
+
+**라우트 충돌 해결 (1개 작업)**
+
+78. Next.js 라우트 충돌 해결 - 중복된 page.tsx 파일들 제거 (report 시스템의 [[...reportId]] 충돌)
+
+### 🔄 다음 작업 예정 (35개 남음)
+
+- 남은 React Router 의존성 컴포넌트 변환
+- react-router-dom 패키지 의존성 제거
+- 종합 테스트 및 검증
 
 ## ⚠️ 주의사항
 

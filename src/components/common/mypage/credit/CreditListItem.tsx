@@ -1,7 +1,7 @@
 import { PaymentType } from '@/api/paymentSchema';
 import { ReportType } from '@/api/report';
 import { twMerge } from '@/lib/twMerge';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import CardStatus from './CardStatus';
 
 export const getReportThumbnail = (reportType: ReportType | null) => {
@@ -31,7 +31,7 @@ const CreditListItem = ({
   return (
     <Link
       className="flex w-full flex-col items-start justify-center gap-y-2"
-      to={
+      href={
         programInfo.programType === 'REPORT'
           ? `/mypage/credit/report/${programInfo.paymentId}?applicationId=${programInfo.applicationId}`
           : `/mypage/credit/${programInfo.paymentId}`

@@ -3,7 +3,7 @@ import BaseButton from '@/components/common/ui/button/BaseButton';
 import useGoogleAnalytics from '@/hooks/useGoogleAnalytics';
 import { ChallengeContent } from '@/types/interface';
 import { useMemo } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { usePathname, useParams } from 'next/navigation';
 import RecommendedProgramSwiper from './RecommendedProgramSwiper';
 
 const MoreButton = ({
@@ -49,8 +49,8 @@ const MobileMoreButton = ({
 };
 
 function RecommendedProgramSection() {
-  const location = useLocation();
-  const params = useParams();
+  const pathname = usePathname();
+  const params = useParams<{ programId: string }>();
   const trackEvent = useGoogleAnalytics();
   const { data: challenge, isLoading } = useChallengeQuery({
     challengeId: Number(params.programId),
@@ -84,7 +84,7 @@ function RecommendedProgramSection() {
   };
 
   // 'me' 경로에 포함되어 있으면 컴포넌트를 렌더링하지 않음
-  if (location.pathname.includes('me')) {
+  if (pathname.includes('me')) {
     return null;
   }
 

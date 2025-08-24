@@ -1,3 +1,5 @@
+'use client';
+
 import { useGetUserAdmin } from '@/api/user';
 import useActiveLink from '@/hooks/useActiveLink';
 import useActiveReportNav from '@/hooks/useActiveReportNav';
