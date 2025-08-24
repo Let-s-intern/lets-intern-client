@@ -23,9 +23,9 @@ import BackHeader from '@components/common/ui/BackHeader';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { Duration } from '@components/Duration';
 import { AxiosError } from 'axios';
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import OrderProgramInfo from '../../../router-pages/common/program/OrderProgramInfo';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import OrderProgramInfo from '../../../components/OrderProgramInfo';
 
 function calculateTotalPrice({
   regularPrice = 0,

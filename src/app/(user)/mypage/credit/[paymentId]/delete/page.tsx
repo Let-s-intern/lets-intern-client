@@ -5,11 +5,11 @@ import DescriptionBox from '@/components/common/program/paymentSuccess/Descripti
 import PaymentInfoRow from '@/components/common/program/paymentSuccess/PaymentInfoRow';
 import useCredit from '@/hooks/useCredit';
 import dayjs from '@/lib/dayjs';
+import OrderProgramInfo from '@components/OrderProgramInfo';
 import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
 import { AxiosError } from 'axios';
+import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import OrderProgramInfo from '../program/OrderProgramInfo';
 
 const convertDateFormat = (date: string) => {
   return dayjs(date).format('YYYY.MM.DD');

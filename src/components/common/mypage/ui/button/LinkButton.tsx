@@ -1,5 +1,5 @@
+import HybridLink from '@components/common/ui/HybridLink';
 import clsx from 'clsx';
-import HybridLink from '../../ui/HybridLink';
 
 interface LinkButtonProps {
   className?: string;

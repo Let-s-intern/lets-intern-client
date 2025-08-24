@@ -1,9 +1,9 @@
 import { MypageApplication } from '@/api/application';
 import dayjs from '@/lib/dayjs';
 import { getReportThumbnail } from '@components/common/mypage/credit/CreditListItem';
+import HybridLink from '@components/common/ui/HybridLink';
 import clsx from 'clsx';
 import { useState } from 'react';
-import HybridLink from '../../../ui/HybridLink';
 import LinkButton from '../../button/LinkButton';
 import PriceInfoModal from '../../modal/PriceInfoModal';
 
@@ -49,10 +49,7 @@ const ApplicationCard = ({
           grayscale,
         })}
       >
-        <HybridLink
-          href={programLink}
-          className="flex-shrink-0 md:w-[11rem]"
-        >
+        <HybridLink href={programLink} className="flex-shrink-0 md:w-[11rem]">
           <img
             src={thumbnail}
             alt="프로그램 썸네일"
@@ -62,10 +59,7 @@ const ApplicationCard = ({
         <div className="flex flex-col justify-between gap-2 py-2">
           <div className="flex w-full flex-col gap-y-0.5">
             <h2 className="font-semibold">
-              <HybridLink
-                href={programLink}
-                className="hover:underline"
-              >
+              <HybridLink href={programLink} className="hover:underline">
                 {application.programTitle}
               </HybridLink>
             </h2>

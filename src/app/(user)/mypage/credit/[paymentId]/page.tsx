@@ -7,8 +7,8 @@ import Input from '@/components/common/ui/input/Input';
 import useCredit from '@/hooks/useCredit';
 import dayjs from '@/lib/dayjs';
 import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
-import { useRouter, useParams } from 'next/navigation';
-import OrderProgramInfo from '../program/OrderProgramInfo';
+import OrderProgramInfo from '@components/OrderProgramInfo';
+import { useParams, useRouter } from 'next/navigation';
 
 const convertDateFormat = (date: string) => {
   return dayjs(date).format('YYYY.MM.DD');

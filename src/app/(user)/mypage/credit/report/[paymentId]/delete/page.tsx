@@ -2,9 +2,16 @@
 
 import dayjs from '@/lib/dayjs';
 import { AxiosError } from 'axios';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
-import { useRouter, useParams, useSearchParams } from 'next/navigation';
 
+import {
+  convertReportPriceType,
+  useDeleteReportApplication,
+  useGetReportPaymentDetailQuery,
+} from '@/api/report';
+import DescriptionBox from '@/components/common/program/paymentSuccess/DescriptionBox';
+import PaymentInfoRow from '@/components/common/program/paymentSuccess/PaymentInfoRow';
 import {
   getCouponDiscountPrice,
   getFeedbackDiscountedPrice,
@@ -16,13 +23,6 @@ import {
 } from '@/lib/refund';
 import ReportCreditRow from '@components/common/mypage/credit/ReportCreditRow';
 import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
-import {
-  convertReportPriceType,
-  useDeleteReportApplication,
-  useGetReportPaymentDetailQuery,
-} from '../../../api/report';
-import DescriptionBox from '../../../components/common/program/paymentSuccess/DescriptionBox';
-import PaymentInfoRow from '../../../components/common/program/paymentSuccess/PaymentInfoRow';
 
 const convertDateFormat = (date: string) => {
   return dayjs(date).format('YYYY.MM.DD');
@@ -296,12 +296,13 @@ const ReportCreditDelete = () => {
                           <button
                             className="flex items-center justify-center rounded-sm border border-neutral-60 bg-white px-2.5 py-1.5 text-sm font-medium"
                             onClick={() => {
-                              reportPaymentDetail.tossInfo?.receipt &&
+                              if (reportPaymentDetail.tossInfo?.receipt) {
                                 window.open(
                                   reportPaymentDetail.tossInfo.receipt.url ||
                                     '',
                                   '_blank',
                                 );
+                              }
                             }}
                           >
                             영수증 보기

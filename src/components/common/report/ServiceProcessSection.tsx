@@ -2,9 +2,9 @@ import { CSSProperties, memo, ReactNode } from 'react';
 
 import { convertReportTypeToDisplayName, ReportType } from '@/api/report';
 import { twMerge } from '@/lib/twMerge';
-import { REPORT_GUIDE_ID } from '@/router-pages/common/report/ReportNavigation';
-import { personalStatementColors } from '@/router-pages/common/report/ReportPersonalStatementPage';
-import { resumeColors } from '@/router-pages/common/report/ReportResumePage';
+import { REPORT_GUIDE_ID } from '@components/page/ReportNavigation';
+import { personalStatementColors } from '@components/page/ReportPersonalStatementPage';
+import { resumeColors } from '@components/page/ReportResumePage';
 import clsx from 'clsx';
 import MainHeader from './MainHeader';
 import SectionHeader from './SectionHeader';

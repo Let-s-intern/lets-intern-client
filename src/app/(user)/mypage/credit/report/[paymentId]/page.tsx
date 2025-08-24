@@ -1,8 +1,16 @@
 'use client';
 
 import dayjs from '@/lib/dayjs';
-import { useRouter, useParams, useSearchParams } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 
+import {
+  convertReportPriceType,
+  useGetReportPaymentDetailQuery,
+} from '@/api/report';
+import { useUserQuery } from '@/api/user';
+import MoreButton from '@/components/common/mypage/ui/button/MoreButton';
+import PaymentInfoRow from '@/components/common/program/paymentSuccess/PaymentInfoRow';
+import Input from '@/components/common/ui/input/Input';
 import {
   getCouponDiscountPrice,
   getFeedbackDiscountedPrice,
@@ -13,14 +21,6 @@ import {
 import ReportCreditRow from '@components/common/mypage/credit/ReportCreditRow';
 import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
 import { useMemo } from 'react';
-import {
-  convertReportPriceType,
-  useGetReportPaymentDetailQuery,
-} from '../../../api/report';
-import { useUserQuery } from '../../../api/user';
-import MoreButton from '../../../components/common/mypage/ui/button/MoreButton';
-import PaymentInfoRow from '../../../components/common/program/paymentSuccess/PaymentInfoRow';
-import Input from '../../../components/common/ui/input/Input';
 
 const convertDateFormat = (date: string) => {
   return dayjs(date).format('YYYY.MM.DD');
@@ -617,12 +617,13 @@ const ReportCreditDetail = () => {
                           <button
                             className="flex items-center justify-center rounded-sm border border-neutral-60 bg-white px-2.5 py-1.5 text-sm font-medium"
                             onClick={() => {
-                              reportPaymentDetail.tossInfo?.receipt &&
+                              if (reportPaymentDetail.tossInfo?.receipt) {
                                 window.open(
                                   reportPaymentDetail.tossInfo.receipt.url ||
                                     '',
                                   '_blank',
                                 );
+                              }
                             }}
                           >
                             영수증 보기

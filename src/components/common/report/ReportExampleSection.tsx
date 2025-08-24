@@ -4,10 +4,10 @@ import NextButton from '@/assets/icons/next-button.svg?react';
 import PrevButton from '@/assets/icons/prev-button.svg?react';
 import { REPORT_EXAMPLE } from '@/data/reportConstant';
 import { useControlScroll } from '@/hooks/useControlScroll';
-import { REPORT_EXAMPLE_ID } from '@/router-pages/common/report/ReportNavigation';
-import { personalStatementColors } from '@/router-pages/common/report/ReportPersonalStatementPage';
-import { resumeColors } from '@/router-pages/common/report/ReportResumePage';
 import { ReportExample } from '@/types/interface';
+import { REPORT_EXAMPLE_ID } from '@components/page/ReportNavigation';
+import { personalStatementColors } from '@components/page/ReportPersonalStatementPage';
+import { resumeColors } from '@components/page/ReportResumePage';
 import { useRef, useState } from 'react';
 import ReportExampleCard from './ReportExampleCard';
 
