@@ -78,7 +78,7 @@ const GuideSection = ({ guides }: GuideSection) => {
             ).map((pageNum) => (
               <button
                 key={pageNum}
-                className={clsx('h-2 w-2 cursor-pointer rounded-full', {
+                className={clsx('h-1.5 w-1.5 cursor-pointer rounded-full', {
                   'bg-[#B0B0B0]': pageNum === currentPageNum,
                   'bg-[#D1D1D1]': pageNum !== currentPageNum,
                 })}

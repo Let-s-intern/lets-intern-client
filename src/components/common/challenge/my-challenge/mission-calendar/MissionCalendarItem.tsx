@@ -1,6 +1,6 @@
 import { Schedule } from '@/schema';
 import clsx from 'clsx';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import MissionIcon from './MissionIcon';
 import MissionNotStartedIcon from './MissionNotStartedIcon';
 import MissionTodayIcon from './MissionTodayIcon';
@@ -32,7 +32,12 @@ const MissionCalendarItem = ({
     challengeId: params.programId,
     missionId: mission.id,
   });
-  const { setSelectedMission } = useMissionStore();
+
+  const { selectedMissionId, setSelectedMission } = useMissionStore();
+  const isSelected = selectedMissionId === mission.id;
+
+  const location = useLocation();
+  const isMissionPage = location.pathname.includes('/me');
 
   const handleMissionClick = () => {
     if (mission.th !== null && isValid()) {
@@ -52,12 +57,27 @@ const MissionCalendarItem = ({
     return true;
   }, [error]);
 
+  const isCardActive = () => {
+    if (!isMissionPage) {
+      // 대시보드 페이지: todayTh 활성화
+      return mission.th === todayTh;
+    } else {
+      if (selectedMissionId) {
+        // 특정 미션이 선택된 경우: 선택된 미션 활성화
+        return isSelected;
+      } else {
+        // 직접 진입한 경우: todayTh 활성화
+        return mission.th === todayTh;
+      }
+    }
+  };
+
   return (
     <div className={className} onClick={handleMissionClick}>
       <div
         className={clsx(
           'h-[104px] w-[74.8px] rounded-xxs border px-2 py-2.5',
-          mission.th === todayTh
+          isCardActive()
             ? 'border-[#A6AAFA] bg-primary-5'
             : 'border-neutral-80',
         )}
@@ -67,7 +87,6 @@ const MissionCalendarItem = ({
             mission={mission}
             attendance={attendance}
             isDone={isDone}
-            className="bg-primary-5"
           />
         ) : (mission.th ?? 0) > todayTh ? (
           <MissionNotStartedIcon schedule={schedule} />

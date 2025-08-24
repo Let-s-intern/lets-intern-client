@@ -106,7 +106,7 @@ const DailyMissionSection = ({
         }
         onClick={handleMissionClick}
         className={clsx(
-          'm-4 rounded-xs py-3 text-center font-semibold',
+          'm-4 rounded-xs py-3 text-center',
           isSubmitEdit
             ? 'bg-primary text-white'
             : 'cursor-not-allowed bg-neutral-70 text-white',
