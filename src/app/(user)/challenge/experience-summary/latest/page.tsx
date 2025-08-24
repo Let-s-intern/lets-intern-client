@@ -1,7 +1,9 @@
+'use client';
+
 import { useGetActiveChallenge, useGetChallengeList } from '@/api/challenge';
 import { challengeTypeSchema } from '@/schema';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 
 const { EXPERIENCE_SUMMARY } = challengeTypeSchema.enum;
 
@@ -13,7 +15,7 @@ const { EXPERIENCE_SUMMARY } = challengeTypeSchema.enum;
  * 2. 없을 경우 가장 최근 개설된 경험정리 챌린지로 이동
  */
 export default function ExperienceSummaryLatest() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const {
     data: activeData,
     error: activeError,
@@ -36,7 +38,7 @@ export default function ExperienceSummaryLatest() {
     // 에러가 있으면 로그 출력 후 프로그램 페이지로 이동
     if (activeError || listError) {
       console.error('API 호출 에러:', { activeError, listError });
-      navigate('/program', { replace: true });
+      router.replace('/program');
       return;
     }
 
@@ -63,8 +65,7 @@ export default function ExperienceSummaryLatest() {
     }
 
     // 챌린지가 없는 경우 프로그램 페이지로 이동
-
-    navigate('/program', { replace: true });
+    router.replace('/program');
   }, [
     activeData,
     listData,
@@ -72,7 +73,7 @@ export default function ExperienceSummaryLatest() {
     listError,
     activeLoading,
     listLoading,
-    navigate,
+    router,
   ]);
 
   // 로딩 상태 표시

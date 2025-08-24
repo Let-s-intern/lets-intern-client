@@ -1,3 +1,5 @@
+'use client';
+
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { useChallengeProgram } from '@/hooks/useChallengeProgram';
 import { useMissionSelection } from '@/hooks/useMissionSelection';

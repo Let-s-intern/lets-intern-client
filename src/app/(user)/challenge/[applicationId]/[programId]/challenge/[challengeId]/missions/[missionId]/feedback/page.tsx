@@ -1,18 +1,21 @@
+'use client';
+
 import {
   useChallengeMissionAttendanceInfoQuery,
   useChallengeMissionFeedbackQuery,
 } from '@/api/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import LexicalContent from '@components/common/blog/LexicalContent';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useRouter, useParams } from 'next/navigation';
 
 export default function MissionFeedback() {
-  const navigate = useNavigate();
-  const { applicationId, programId, missionId } = useParams<{
+  const router = useRouter();
+  const params = useParams<{
     applicationId: string;
     programId: string;
     missionId: string;
   }>();
+  const { applicationId, programId, missionId } = params;
   const { currentChallenge } = useCurrentChallenge();
   const challengeId = currentChallenge?.id;
 
@@ -29,7 +32,7 @@ export default function MissionFeedback() {
   });
 
   const handleGoBack = () => {
-    navigate(`/challenge/${applicationId}/${programId}/me`);
+    router.push(`/challenge/${applicationId}/${programId}/me`);
   };
   const missionInfo = missionData?.missionInfo;
   const attendanceInfo = missionData?.attendanceInfo;
