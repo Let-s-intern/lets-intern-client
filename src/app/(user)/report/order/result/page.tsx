@@ -1,3 +1,5 @@
+'use client';
+
 import { ApplicationResult } from '@/api/paymentSchema';
 import { convertReportPriceType, useGetReportDetailQuery } from '@/api/report';
 import DescriptionBox from '@/components/common/program/paymentSuccess/DescriptionBox';
@@ -19,11 +21,12 @@ import { searchParamsToObject } from '@/utils/network';
 import ReportCreditRow from '@components/common/mypage/credit/ReportCreditRow';
 import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const ReportPaymentResult = () => {
-  const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [result, setResult] = useState<ApplicationResult | null>(null);
 
@@ -35,9 +38,7 @@ const ReportPaymentResult = () => {
   const { payment } = useReportPayment();
 
   const params = useMemo(() => {
-    const obj = searchParamsToObject(
-      new URL(window.location.href).searchParams,
-    );
+    const obj = searchParamsToObject(searchParams);
     const result = paymentResultSearchParamsSchema.safeParse(obj);
 
     if (!result.success) {
@@ -47,7 +48,7 @@ const ReportPaymentResult = () => {
       return;
     }
     return result.data;
-  }, []);
+  }, [searchParams]);
 
   const subTitle =
     reportApplication.optionIds.length === 0
@@ -57,13 +58,10 @@ const ReportPaymentResult = () => {
 
   useRunOnce(() => {
     if (!params) return;
-    if (
-      new URL(window.location.href).searchParams.get('postApplicationDone') ===
-      'true'
-    ) {
+    if (searchParams.get('postApplicationDone') === 'true') {
       // 즉시 리다이렉트 하면 알 수 없는 이유로 제대로 navigate 되지 않음. SSR 관련 이슈로 추정
       setTimeout(() => {
-        navigate('/report/landing');
+        router.push('/report/landing');
       }, 100);
       return;
     }
@@ -98,13 +96,9 @@ const ReportPaymentResult = () => {
       })
       .finally(() => {
         // postApplicationDone를 true로 설정하여 추후 뒤로가기로 왔을 때 api를 타지 않도록 함
-        setSearchParams(
-          (prev) => {
-            prev.set('postApplicationDone', 'true');
-            return prev;
-          },
-          { replace: true },
-        );
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('postApplicationDone', 'true');
+        router.replace(currentUrl.pathname + '?' + currentUrl.searchParams.toString());
       });
   });
 
@@ -253,7 +247,7 @@ const ReportPaymentResult = () => {
                           <div className="text-neutral-40">영수증</div>
                           <div className="flex grow items-center justify-end text-neutral-0">
                             <Link
-                              to={result!.tossInfo?.receipt?.url ?? '#'}
+                              href={result!.tossInfo?.receipt?.url ?? '#'}
                               target="_blank"
                               rel="noreferrer"
                               className="flex items-center justify-center rounded-sm border border-neutral-60 bg-white px-3 py-2 text-sm font-medium"
@@ -268,7 +262,7 @@ const ReportPaymentResult = () => {
 
                   {isSuccess && (
                     <Link
-                      to="/report/management"
+                      href="/report/management"
                       className="myreport_button_click flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
                     >
                       {reportApplication.applyUrl
@@ -278,8 +272,7 @@ const ReportPaymentResult = () => {
                   )}
                   {!isSuccess && (
                     <Link
-                      reloadDocument
-                      to={`/report/payment/${reportDetail?.reportType?.toLocaleLowerCase()}/${reportApplication.reportId}`}
+                      href={`/report/payment/${reportDetail?.reportType?.toLocaleLowerCase()}/${reportApplication.reportId}`}
                       className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
                     >
                       다시 결제하기

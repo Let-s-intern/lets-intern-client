@@ -1,3 +1,5 @@
+'use client';
+
 import { convertReportPriceType, useGetReportDetailQuery } from '@/api/report';
 import Heading1 from '@/components/common/report/Heading1';
 import Heading2 from '@/components/common/report/Heading2';
@@ -11,11 +13,13 @@ import ReportCreditRow from '@components/common/mypage/credit/ReportCreditRow';
 import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
 import { useMediaQuery } from '@mui/material';
 import { useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 /** 처음부터 결제 실패 케이스일 시 이 페이지로 옵니다. 검증 단계에서의 실패는 PaymentResult에서 진행함. */
 const ReportPaymentFail = () => {
   const isUpTo1280 = useMediaQuery('(max-width: 1280px)');
+  const searchParams = useSearchParams();
 
   const { title, product, option } = useReportProgramInfo();
   const { data: reportApplication } = useReportApplicationStore();
@@ -25,9 +29,7 @@ const ReportPaymentFail = () => {
   const { payment } = useReportPayment();
 
   const params = useMemo(() => {
-    const obj = searchParamsToObject(
-      new URL(window.location.href).searchParams,
-    );
+    const obj = searchParamsToObject(searchParams);
     const result = paymentFailSearchParamsSchema.safeParse(obj);
     if (!result.success) {
       // eslint-disable-next-line no-console
@@ -37,7 +39,7 @@ const ReportPaymentFail = () => {
     }
 
     return result.data;
-  }, []);
+  }, [searchParams]);
 
   const paymentLink = useMemo(() => {
     if (isUpTo1280) {
@@ -45,7 +47,7 @@ const ReportPaymentFail = () => {
     }
 
     return `/report/apply/${reportDetail?.reportType?.toLocaleLowerCase()}/${reportApplication.reportId}`;
-  }, [reportDetail]);
+  }, [reportDetail, reportApplication.reportId, isUpTo1280]);
 
   const subTitle =
     reportApplication.optionIds.length === 0
@@ -138,8 +140,7 @@ const ReportPaymentFail = () => {
               )}
             </div>
             <Link
-              reloadDocument
-              to={paymentLink}
+              href={paymentLink}
               className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
             >
               다시 결제하기

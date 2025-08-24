@@ -1,11 +1,12 @@
+'use client';
+
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import { useParams } from 'react-router-dom';
 
 import { useGetActiveReports, useGetReportPriceDetail } from '@/api/report';
 import ReportApplyBottomSheet from '@/components/common/report/ReportApplyBottomSheet';
 import { useServerActiveReports } from '@/context/ActiveReports';
-import { personalStatementReportDescription } from '@/data/description';
+import { portfolioReportDescription } from '@/data/description';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { ReportContent } from '@/types/interface';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
@@ -19,50 +20,42 @@ import ReportProgramRecommendSlider from '@components/common/report/ReportProgra
 import ReportReviewSection from '@components/common/report/ReportReviewSection';
 import ServiceProcessSection from '@components/common/report/ServiceProcessSection';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import ReportNavigation from './ReportNavigation';
+import ReportNavigation from '@components/page/ReportNavigation';
+import { useParams } from 'next/navigation';
+import { resumeColors } from '../../resume/[[...reportId]]/page';
 
-export const personalStatementColors = {
-  C34AFF: '#C34AFF',
-  F9EEFF: '#F9EEFF',
-  CA60FF: '#CA60FF',
-  EB6CFF: '#EB6CFF',
-  F3A2FF: '#F3A2FF',
-  FCE9FF: '#FCE9FF',
-};
-
-const ReportPersonalStatementPage = () => {
-  const { reportId } = useParams();
+const ReportPortfolioPage = () => {
+  const params = useParams<{ reportId?: string[] }>();
+  const reportId = params.reportId?.[0];
+  const activeReportsFromServer = useServerActiveReports();
   const { data, isLoading } = useGetActiveReports();
 
-  const { initReportApplication } = useReportApplicationStore();
-
-  const activeReportsFromServer = useServerActiveReports();
-
-  const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/personal-statement${reportId ? `/${reportId}` : ''}`;
-  const description = personalStatementReportDescription;
+  const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing/portfolio${reportId ? `/${reportId}` : ''}`;
+  const description = portfolioReportDescription;
   const activeReports = data || activeReportsFromServer;
-  const visibleReports = activeReports.personalStatementInfoList.filter(
+  const visibleReports = activeReports.portfolioInfoList.filter(
     (item) =>
       item.isVisible === true &&
       item.visibleDate &&
       new Date(item.visibleDate) <= new Date(),
   );
+
   const report =
     reportId === undefined || isNaN(Number(reportId))
       ? visibleReports.length > 0
         ? visibleReports[0]
         : undefined
-      : activeReports.personalStatementInfoList.find(
+      : activeReports.portfolioInfoList.find(
           (item) => item.reportId === Number(reportId),
         );
 
-  const title = getReportLandingTitle(report?.title ?? '자기소개서');
-  const personalStatementContent: ReportContent = JSON.parse(
-    report?.contents ?? '{}',
-  );
+  const title = getReportLandingTitle(report?.title ?? '포트폴리오');
+  const portfolioContent: ReportContent = JSON.parse(report?.contents ?? '{}');
 
   const { data: priceDetail, isLoading: priceIsLoading } =
     useGetReportPriceDetail(report?.reportId);
+
+  const { initReportApplication } = useReportApplicationStore();
 
   useEffect(() => {
     initReportApplication();
@@ -100,72 +93,62 @@ const ReportPersonalStatementPage = () => {
               <div className="h-[56px] md:h-[66px]" />
               <ReportBasicInfo
                 reportBasic={report}
-                color={personalStatementColors.CA60FF}
+                color={resumeColors._2CE282}
               />
             </div>
           </div>
           <ReportNavigation
-            color={personalStatementColors.CA60FF}
+            color={resumeColors._2CE282}
             isDark
             isReady={!isLoading && !priceIsLoading}
           />
           <div
             id="content"
-            data-page-type="personal-statement"
+            data-page-type="portfolio"
             className="flex w-full flex-col items-center"
           >
             {/* 서비스 소개 */}
-            <ReportIntroSection type="PERSONAL_STATEMENT" />
+            <ReportIntroSection type="PORTFOLIO" />
             {/* 리포트 예시 */}
             <ReportExampleSection
-              type="PERSONAL_STATEMENT"
-              reportExample={personalStatementContent.reportExample}
+              type="PORTFOLIO"
+              reportExample={portfolioContent.reportExample}
             />
             {/* 후기 */}
             <ReportReviewSection
-              type="PERSONAL_STATEMENT"
-              reportReview={personalStatementContent.review}
+              type="PORTFOLIO"
+              reportReview={portfolioContent.review}
             />
-
             {/* 가격 및 플랜 */}
             {priceDetail && report?.reportType && (
               <ReportPlanSection
                 priceDetail={priceDetail}
-                reportType="PERSONAL_STATEMENT"
+                reportType="PORTFOLIO"
               />
             )}
-
             {/* 홍보 배너  */}
-            {report?.reportType && (
-              <PromoSection reportType="PERSONAL_STATEMENT" />
-            )}
-
+            {report?.reportType && <PromoSection reportType="PORTFOLIO" />}
             {/* 서비스 이용 안내 */}
             {report?.reportType && (
-              <ServiceProcessSection reportType="PERSONAL_STATEMENT" />
+              <ServiceProcessSection reportType="PORTFOLIO" />
             )}
-
             {/* FAQ  */}
             {report?.reportId && (
               <ReportFaqSection
+                reportType="PORTFOLIO"
                 reportId={report?.reportId}
-                reportType="PERSONAL_STATEMENT"
               />
             )}
-
             {/* 프로그램 추천 */}
-            {personalStatementContent.reportProgramRecommend && (
+            {portfolioContent.reportProgramRecommend && (
               <ReportProgramRecommendSlider
-                reportType="PERSONAL_STATEMENT"
-                reportProgramRecommend={
-                  personalStatementContent.reportProgramRecommend
-                }
+                reportType="PORTFOLIO"
+                reportProgramRecommend={portfolioContent.reportProgramRecommend}
               />
             )}
           </div>
         </div>
       )}
-
       {report && priceDetail && (
         <ReportApplyBottomSheet report={report} priceDetail={priceDetail} />
       )}
@@ -173,4 +156,4 @@ const ReportPersonalStatementPage = () => {
   );
 };
 
-export default ReportPersonalStatementPage;
+export default ReportPortfolioPage;

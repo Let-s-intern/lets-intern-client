@@ -1,8 +1,10 @@
+'use client';
+
 import dayjs from '@/lib/dayjs';
 import { FormControl, RadioGroup, SelectChangeEvent } from '@mui/material';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useRouter, useParams } from 'next/navigation';
 
 import { uploadFile } from '@/api/file';
 import {
@@ -33,8 +35,9 @@ import RequiredStar from '@components/ui/RequiredStar';
 import { ConfigType, Dayjs } from 'dayjs';
 
 const ReportApplyPage = () => {
-  const navigate = useNavigate();
-  const { reportType, reportId } = useParams();
+  const router = useRouter();
+  const params = useParams<{ reportType: string; reportId: string }>();
+  const { reportType, reportId } = params;
 
   const [applyFile, setApplyFile] = useState<File | null>(null);
   const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
@@ -87,7 +90,7 @@ const ReportApplyPage = () => {
 
     const searchParams = new URLSearchParams();
     searchParams.set('redirect', window.location.pathname);
-    navigate(`/login?${searchParams.toString()}`);
+    router.push(`/login?${searchParams.toString()}`);
   });
 
   return (
@@ -160,7 +163,7 @@ const ReportApplyPage = () => {
               // 지금 제출일 때만 파일 업로드
               if (isSubmitNow === 'true') await convertFile();
 
-              navigate(`/report/payment/${reportType}/${reportId}`);
+              router.push(`/report/payment/${reportType}/${reportId}`);
             }}
           >
             다음
@@ -192,7 +195,7 @@ const ReportApplyPage = () => {
             // 지금 제출일 때만 파일 업로드
             if (isSubmitNow === 'true') await convertFile();
 
-            navigate(`/report/payment/${reportType}/${reportId}`);
+            router.push(`/report/payment/${reportType}/${reportId}`);
           }}
         >
           다음
@@ -317,7 +320,8 @@ export const DocumentSection = ({
   file: File | null;
   dispatch: React.Dispatch<React.SetStateAction<File | null>>;
 }) => {
-  const { reportType } = useParams();
+  const params = useParams<{ reportType: string }>();
+  const { reportType } = params;
 
   const [value, setValue] = useState('file');
 
@@ -451,7 +455,8 @@ export const PremiumSection = ({
 };
 
 export const ScheduleSection = () => {
-  const { reportType } = useParams();
+  const params = useParams<{ reportType: string }>();
+  const { reportType } = params;
   const { data, setReportApplication } = useReportApplicationStore();
 
   const minDate = useMinDate({

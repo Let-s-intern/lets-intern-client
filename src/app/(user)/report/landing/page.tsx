@@ -1,13 +1,15 @@
+'use client';
+
 // TODO: 제거
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 
 import { reportDescription } from '@/data/description';
 import { getBaseUrlFromServer } from '@/utils/url';
 
 const ReportPage = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const title = '서류 진단 - 렛츠커리어';
   const url = `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}/report/landing`;
@@ -17,9 +19,9 @@ const ReportPage = () => {
     // TODO: Routes 컴포넌트가 매번 새롭게 리렌더링되어 너무 빠르게 이동하면 주소가 잘못 잡히는 문제가 있음.
     // Router 를 제대로 구성하면 setTimeout 안해도 될 듯.
     setTimeout(() => {
-      navigate('/report/landing/resume');
+      router.push('/report/landing/resume');
     }, 50);
-  }, [navigate]);
+  }, [router]);
 
   return (
     <Helmet>

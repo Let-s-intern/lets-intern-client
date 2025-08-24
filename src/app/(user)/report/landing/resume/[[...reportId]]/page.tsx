@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 
@@ -18,8 +20,8 @@ import ReportProgramRecommendSlider from '@components/common/report/ReportProgra
 import ReportReviewSection from '@components/common/report/ReportReviewSection';
 import ServiceProcessSection from '@components/common/report/ServiceProcessSection';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import { useParams } from 'react-router-dom';
-import ReportNavigation from './ReportNavigation';
+import ReportNavigation from '@components/page/ReportNavigation';
+import { useParams } from 'next/navigation';
 
 export const resumeColors = {
   E8FDF2: '#E8FDF2',
@@ -37,7 +39,8 @@ export const resumeColors = {
 };
 
 const ReportResumePage = () => {
-  const { reportId } = useParams();
+  const params = useParams<{ reportId?: string[] }>();
+  const reportId = params.reportId?.[0];
   const activeReportsFromServer = useServerActiveReports();
   const { data, isLoading } = useGetActiveReports();
 

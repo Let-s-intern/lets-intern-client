@@ -1,14 +1,16 @@
+'use client';
+
 import {
   loadTossPayments,
   WidgetPaymentMethodWidget,
 } from '@tosspayments/tosspayments-sdk';
 import { useEffect, useRef, useState } from 'react';
 
-import { useGetParticipationInfo } from '../../../api/application';
-import { useGetReportDetailQuery } from '../../../api/report';
-import { useUserQuery } from '../../../api/user';
-import { PaymentMethodKey } from '../../../data/getPaymentSearchParams';
-import useReportApplicationStore from '../../../store/useReportApplicationStore';
+import { useGetParticipationInfo } from '@/api/application';
+import { useGetReportDetailQuery } from '@/api/report';
+import { useUserQuery } from '@/api/user';
+import { PaymentMethodKey } from '@/data/getPaymentSearchParams';
+import useReportApplicationStore from '@/store/useReportApplicationStore';
 
 type TossPaymentsWidgets = ReturnType<
   Awaited<ReturnType<typeof loadTossPayments>>['widgets']

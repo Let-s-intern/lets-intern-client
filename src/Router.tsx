@@ -31,16 +31,16 @@ import MentorNotificationBefore from './router-pages/common/mentor/MentorNotific
 // import PaymentResult from './router-pages/common/program/PaymentResult';
 // import Programs from './router-pages/common/program/Programs';
 import ReportApplicationPage from './router-pages/common/report/ReportApplicationPage';
-import ReportApplyPage from './router-pages/common/report/ReportApplyPage';
-import ReportManagementPage from './router-pages/common/report/ReportManagementPage';
-import ReportPage from './router-pages/common/report/ReportPage';
-import ReportPaymentFail from './router-pages/common/report/ReportPaymentFail';
+// import ReportApplyPage from './router-pages/common/report/ReportApplyPage';
+// import ReportManagementPage from './router-pages/common/report/ReportManagementPage';
+// import ReportPage from './router-pages/common/report/ReportPage';
+// import ReportPaymentFail from './router-pages/common/report/ReportPaymentFail';
 // import ReportPaymentPage from './router-pages/common/report/ReportPaymentPage';
-import ReportPaymentResult from './router-pages/common/report/ReportPaymentResult';
-import ReportPersonalStatementPage from './router-pages/common/report/ReportPersonalStatementPage';
-import ReportPortfolioPage from './router-pages/common/report/ReportPortfolioPage';
-import ReportResumePage from './router-pages/common/report/ReportResumePage';
-import ReportTossPage from './router-pages/common/report/ReportTossPage';
+// import ReportPaymentResult from './router-pages/common/report/ReportPaymentResult';
+// import ReportPersonalStatementPage from './router-pages/common/report/ReportPersonalStatementPage';
+// import ReportPortfolioPage from './router-pages/common/report/ReportPortfolioPage';
+// import ReportResumePage from './router-pages/common/report/ReportResumePage';
+// import ReportTossPage from './router-pages/common/report/ReportTossPage';
 import ChallengeReviewCreatePage from './router-pages/common/review/ChallengeReviewCreatePage';
 import ChallengeReviewPage from './router-pages/common/review/ChallengeReviewPage';
 import LiveReviewCreatePage from './router-pages/common/review/LiveReviewCreatePage';
@@ -147,48 +147,19 @@ const Router = () => {
                 <Route path="challenge/:challengeId/missions/:missionId/feedback" />
               </Route>
 
-              {/* 서류진단 */}
-              <Route path="report/landing" element={<ReportPage />} />
-              <Route
-                path="report/landing/resume"
-                element={<ReportResumePage />}
-              />
-              <Route
-                path="report/landing/resume/:reportId"
-                element={<ReportResumePage />}
-              />
-              <Route
-                path="report/landing/personal-statement"
-                element={<ReportPersonalStatementPage />}
-              />
-              <Route
-                path="report/landing/personal-statement/:reportId"
-                element={<ReportPersonalStatementPage />}
-              />
-              <Route
-                path="report/landing/portfolio"
-                element={<ReportPortfolioPage />}
-              />
-              <Route
-                path="report/landing/portfolio/:reportId"
-                element={<ReportPortfolioPage />}
-              />
-              <Route
-                path="report/apply/:reportType/:reportId"
-                element={<ReportApplyPage />}
-              />
+              <Route path="report/landing" />
+              <Route path="report/landing/resume" />
+              <Route path="report/landing/resume/:reportId" />
+              <Route path="report/landing/personal-statement" />
+              <Route path="report/landing/personal-statement/:reportId" />
+              <Route path="report/landing/portfolio" />
+              <Route path="report/landing/portfolio/:reportId" />
+              <Route path="report/apply/:reportType/:reportId" />
               <Route path="report/payment/:reportType/:reportId" />
-              <Route path="report/toss/payment" element={<ReportTossPage />} />
-              <Route
-                path="report/order/result"
-                element={<ReportPaymentResult />}
-              />
-              <Route path="report/order/fail" element={<ReportPaymentFail />} />
-
-              <Route
-                path="report/management"
-                element={<ReportManagementPage />}
-              />
+              <Route path="report/toss/payment" />
+              <Route path="report/order/result" />
+              <Route path="report/order/fail" />
+              <Route path="report/management" />
               {/* 서류 제출 페이지 */}
               <Route
                 path="report/:reportType/application/:applicationId"

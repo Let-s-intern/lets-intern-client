@@ -1,3 +1,5 @@
+'use client';
+
 import dayjs from '@/lib/dayjs';
 import {
   ComponentPropsWithoutRef,
@@ -7,7 +9,8 @@ import {
   useEffect,
   useRef,
 } from 'react';
-import { Link, NavLink, useNavigate, useSearchParams } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import {
   convertFeedbackStatusToBadgeStatus,
@@ -163,9 +166,38 @@ export const ReportManagementButton: ReportManageButtonComponent = forwardRef(
 
 ReportManagementButton.displayName = 'ReportManagementButton';
 
+const FilterNavLink = ({ 
+  filter, 
+  filterStatus, 
+  filterType 
+}: { 
+  filter: { label: string; value: ReportFilter['type'] };
+  filterStatus: string;
+  filterType: string;
+}) => {
+  const router = useRouter();
+  const isActive = filterType === filter.value;
+  
+  const handleClick = () => {
+    router.push(`?status=${filterStatus}&type=${filter.value}`);
+  };
+
+  return (
+    <button
+      onClick={handleClick}
+      className={twMerge(
+        'inline-flex h-9 items-center justify-center px-2 text-xsmall14 text-neutral-0/45 transition hover:text-neutral-0/85 active:text-neutral-0/85',
+        isActive && 'font-medium text-neutral-0',
+      )}
+    >
+      {filter.label}
+    </button>
+  );
+};
+
 const ReportManagementPage = () => {
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const { isLoggedIn } = useAuthStore();
   const { initReportApplication, setReportApplication } =
@@ -179,11 +211,11 @@ const ReportManagementPage = () => {
       setTimeout(() => {
         const searchParams = new URLSearchParams();
         searchParams.set('redirect', '/report/management');
-        navigate('/login?' + searchParams.toString());
+        router.push('/login?' + searchParams.toString());
       }, 100);
     }
     initReportApplication(); // 서류 진단 전역 상태 초기화
-  }, [isLoggedIn, navigate, initReportApplication]);
+  }, [isLoggedIn, router, initReportApplication]);
 
   const filterStatus = (searchParams.get('status') ??
     'all') as ReportFilter['status'];
@@ -247,7 +279,7 @@ const ReportManagementPage = () => {
       reportPriceType: reportPriceType ?? 'BASIC',
       optionIds,
     });
-    navigate(
+    router.push(
       `/report/${convertReportTypeToPathname(reportType)}/application/${applicationId}`,
     );
   };
@@ -265,7 +297,7 @@ const ReportManagementPage = () => {
       return;
     }
 
-    navigate(reportLink());
+    router.push(reportLink());
   };
 
   useEffect(() => {
@@ -276,7 +308,7 @@ const ReportManagementPage = () => {
       alerted.current = true;
       window.alert('서류 진단서 신청내역이 없습니다.');
     }
-  }, [data?.myReportInfos.length, navigate, status]);
+  }, [data?.myReportInfos.length, router, status]);
 
   return (
     <div className="mx-auto max-w-5xl px-5 pb-10 lg:px-0">
@@ -302,16 +334,12 @@ const ReportManagementPage = () => {
 
       <div className="my-3 -ml-2 flex gap-2">
         {filters.map((filter) => (
-          <NavLink
+          <FilterNavLink
             key={filter.value}
-            to={`?status=${filterStatus}&type=${filter.value}`}
-            className={twMerge(
-              'inline-flex h-9 items-center justify-center px-2 text-xsmall14 text-neutral-0/45 transition hover:text-neutral-0/85 active:text-neutral-0/85',
-              filterType === filter.value && 'font-medium text-neutral-0',
-            )}
-          >
-            {filter.label}
-          </NavLink>
+            filter={filter}
+            filterStatus={filterStatus}
+            filterType={filterType}
+          />
         ))}
       </div>
 
@@ -364,31 +392,23 @@ const ReportManagementPage = () => {
                   {(item.applyUrl || item.recruitmentUrl) && (
                     <div className="-ml-1 mt-5 flex items-center gap-1">
                       {item.applyUrl ? (
-                        <Link
-                          to={item.applyUrl}
-                          onClick={(e: MouseEvent<HTMLAnchorElement>) => {
-                            e.preventDefault();
-                            handleDownloadOrOpen(item.applyUrl);
-                          }}
+                        <button
+                          onClick={() => handleDownloadOrOpen(item.applyUrl)}
                           className="flex flex-col items-center gap-1 rounded-sm px-1 py-0.5 text-xxsmall12 text-neutral-40 transition hover:bg-neutral-0/5"
                         >
                           <DocIcon />
                           <span>제출서류</span>
-                        </Link>
+                        </button>
                       ) : null}
 
                       {item.recruitmentUrl ? (
-                        <Link
-                          to={item.recruitmentUrl}
-                          onClick={(e: MouseEvent<HTMLAnchorElement>) => {
-                            e.preventDefault();
-                            handleDownloadOrOpen(item.applyUrl);
-                          }}
+                        <button
+                          onClick={() => handleDownloadOrOpen(item.applyUrl)}
                           className="flex flex-col items-center gap-1 rounded-sm px-1 py-0.5 text-xxsmall12 text-neutral-40 transition hover:bg-neutral-0/5"
                         >
                           <CompanyBagIcon />
                           <span>채용공고</span>
-                        </Link>
+                        </button>
                       ) : null}
                     </div>
                   )}
@@ -417,13 +437,8 @@ const ReportManagementPage = () => {
                       </ReportManagementButton>
                     ) : (
                       <ReportManagementButton
-                        as={Link}
-                        to={item.reportUrl || ''}
-                        onClick={(e: MouseEvent<HTMLAnchorElement>) => {
-                          e.preventDefault();
-                          handleDownloadOrOpen(item.reportUrl);
-                        }}
-                        download
+                        as="button"
+                        onClick={() => handleDownloadOrOpen(item.reportUrl)}
                         className="report_button_click max-w-40 flex-1"
                       >
                         진단서 확인하기
@@ -546,7 +561,7 @@ const ReportManagementPage = () => {
                         className="feedback_button_click"
                         as={Link}
                         target="_blank"
-                        to={item.zoomLink || ''}
+                        href={item.zoomLink || ''}
                         rel="noreferrer"
                       >
                         온라인 상담 참여하기
