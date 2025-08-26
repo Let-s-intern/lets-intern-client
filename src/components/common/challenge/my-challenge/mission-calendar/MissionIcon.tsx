@@ -16,12 +16,11 @@ const MissionIcon = ({ className, schedule, isDone }: Props) => {
 
   const mission = schedule.missionInfo;
   const attendance = schedule.attendanceInfo;
+  const isZerothMissionPassed =
+    mission.th === 0 && attendance.result === 'PASS';
 
   const { text, style, icon } = missionSubmitToBadge({
-    status:
-      mission.th === 0 && attendance.result === 'PASS'
-        ? 'PRESENT'
-        : (attendance.status ?? 'ABSENT'),
+    status: isZerothMissionPassed ? 'PRESENT' : (attendance.status ?? 'ABSENT'),
     result: attendance.result,
     challengeEndDate: currentChallenge?.endDate,
   });
