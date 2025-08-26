@@ -59,7 +59,7 @@ const LinkInputSection = ({
     }
   }, [initialLink, isSubmitted, isEditing]); // isSubmitted, isEditing 추가
 
-  const handleLinkChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setLinkValue(value);
     onLinkChange?.(value);
@@ -153,9 +153,10 @@ const LinkInputSection = ({
         </div>
       </div>
       <div className="flex gap-2 transition-all delay-200 duration-500 ease-out">
-        <textarea
+        <input
+          type="text"
           className={clsx(
-            'flex-1 resize-none items-center rounded-xxs border bg-white',
+            'flex-1 items-center rounded-xxs border bg-white',
             'px-3 py-2 text-xsmall14 text-neutral-0 placeholder:text-neutral-50 md:text-xsmall16',
             'h-[44px] outline-none focus:border-primary',
             'disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-50',
