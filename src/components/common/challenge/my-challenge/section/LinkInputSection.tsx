@@ -172,7 +172,7 @@ const LinkInputSection = ({
             'h-[44px] rounded-xxs px-4 text-xsmall16 font-medium transition-colors',
             'disabled:cursor-not-allowed disabled:bg-neutral-70 disabled:text-neutral-100',
             isVerified && linkValue === verifiedLink
-              ? 'bg-green-500 text-white hover:bg-green-600'
+              ? 'border border-primary bg-white text-primary hover:bg-neutral-90'
               : linkValue && !linkError
                 ? 'bg-primary text-white hover:bg-primary-90'
                 : 'bg-neutral-80 text-neutral-50',
