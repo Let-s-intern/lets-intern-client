@@ -47,7 +47,11 @@ const MissionTitleContainer = ({
         className,
       )}
     >
-      <img src="/icons/check-star.svg" alt="status icon" className="h-6 w-6" />
+      <img
+        src="/icons/check-star-primary.svg"
+        alt="status icon"
+        className="h-6 w-6"
+      />
       <span className="flex-1 text-xsmall16 font-semibold text-primary">
         {children}
       </span>

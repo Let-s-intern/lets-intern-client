@@ -192,7 +192,7 @@ const MissionSubmitBonusSection = ({
         </h2>
 
         {/* 블로그 링크 섹션 */}
-        <div className="mt-7">
+        <div className="mt-6">
           <LinkInputSection
             initialLink={linkValue}
             disabled={disabled}
@@ -203,7 +203,7 @@ const MissionSubmitBonusSection = ({
         </div>
 
         {/* 리워드 받을 계좌번호 */}
-        <div className="mt-4 flex flex-col">
+        <div className="mt-6 flex flex-col">
           <span className="text-xsmall16 font-semibold text-neutral-0">
             리워드 받을 계좌번호
           </span>
@@ -234,7 +234,7 @@ const MissionSubmitBonusSection = ({
         </div>
 
         {/* 개인정보 활용 동의 */}
-        <div className="mt-4 flex flex-col gap-1">
+        <div className="mt-6 flex flex-col gap-1">
           <span className="text-xsmall16 font-semibold text-neutral-0">
             개인정보 활용 동의
           </span>
