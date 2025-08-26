@@ -152,7 +152,7 @@ const LinkInputSection = ({
             '미션 링크는 .notion.site 형식의 퍼블릭 링크만 입력 가능합니다.\n제출 후, 미션과 소감을 카카오톡으로 공유해야 제출이 인정됩니다.'}
         </div>
       </div>
-      <div className="flex gap-2 transition-all delay-200 duration-500 ease-out">
+      <div className="mt-3 flex gap-2 transition-all delay-200 duration-500 ease-out">
         <input
           type="text"
           className={clsx(
