@@ -18,7 +18,10 @@ const MissionIcon = ({ className, schedule, isDone }: Props) => {
   const attendance = schedule.attendanceInfo;
 
   const { text, style, icon } = missionSubmitToBadge({
-    status: attendance.status || 'ABSENT',
+    status:
+      mission.th === 0 && attendance.result === 'PASS'
+        ? 'PRESENT'
+        : (attendance.status ?? 'ABSENT'),
     result: attendance.result,
     challengeEndDate: currentChallenge?.endDate,
   });
