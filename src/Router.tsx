@@ -1,6 +1,5 @@
 import ScrollToTop from '@components/ui/scroll-to-top/ScrollToTop';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { getAdminRoutes } from './AdminRoutes';
 // import FindPassword from './router-pages/common/auth/FindPassword';
 // import Login from './router-pages/common/auth/Login';
 // import SignUp from './router-pages/common/auth/SignUp';
@@ -47,7 +46,7 @@ import { getAdminRoutes } from './AdminRoutes';
 // import LiveReviewPage from './router-pages/common/review/LiveReviewPage';
 // import ReportReviewCreatePage from './router-pages/common/review/ReportReviewCreatePage';
 // import ReportReviewPage from './router-pages/common/review/ReportReviewPage';
-import Maintenance from './router-pages/maintenance/Maintenance';
+import Maintenance from '@/components/pages/maintenance/Maintenance';
 // import NotFound from './router-pages/NotFound';
 
 const isMaintenance = false;
@@ -153,7 +152,7 @@ const Router = () => {
               
               <Route path="*" />
             </Route>
-            {getAdminRoutes()}
+            {/* Admin routes moved to Next.js /admin */}
           </>
         )}
       </Routes>

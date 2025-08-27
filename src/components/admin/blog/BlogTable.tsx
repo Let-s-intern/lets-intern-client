@@ -1,3 +1,5 @@
+'use client';
+
 import clsx from 'clsx';
 import { CiTrash } from 'react-icons/ci';
 import { Link } from 'react-router-dom';
