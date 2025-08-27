@@ -1,3 +1,4 @@
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { twMerge } from '@/lib/twMerge';
 import { Schedule } from '@/schema';
 import React from 'react';
@@ -6,21 +7,30 @@ import MissionCalendar from '../mission-calendar/MissionCalendar';
 const MissionTitleContent = ({
   isDone,
   todayTh,
-  schedules,
 }: {
   isDone: boolean;
   todayTh: number;
-  schedules: Schedule[];
 }) => {
+  const { schedules } = useCurrentChallenge();
+
   const maxTh = Math.max(...schedules.map((item) => item.missionInfo.th ?? 0));
   const isAllMissionFinished = maxTh < todayTh;
   const isOtMission = todayTh === 0;
   const isBonusMission = todayTh === 100;
+  const bonusMissionSchedule = schedules.find(
+    (item) => item.missionInfo.th === 100,
+  );
+  const isBonusMissionSubmitted =
+    isBonusMission &&
+    (bonusMissionSchedule?.attendanceInfo.result === 'PASS' ||
+      bonusMissionSchedule?.attendanceInfo.result === 'FINAL_WRONG');
 
   if (isDone) return '챌린지가 종료되었습니다.';
-  if (isAllMissionFinished) return '🎉 모든 미션이 완료되었습니다 🎉';
+  if (isAllMissionFinished || isBonusMissionSubmitted) {
+    return '🎉 모든 미션이 완료되었습니다 🎉';
+  }
   if (isOtMission) return '챌린지가 시작됐어요! 함께 끝까지 완주해봐요!';
-  if (isBonusMission) return <>보너스 미션 완료하고 리워드 챙겨가세요!</>;
+  if (isBonusMission) return '보너스 미션 완료하고 리워드 챙겨가세요!';
 
   return (
     <>
@@ -74,13 +84,8 @@ const MissionCalendarSection = ({ schedules, todayTh, isDone }: Props) => {
   return (
     <section className="mt-6">
       <MissionTitleContainer>
-        <MissionTitleContent
-          isDone={isDone}
-          todayTh={todayTh}
-          schedules={schedules}
-        />
+        <MissionTitleContent isDone={isDone} todayTh={todayTh} />
       </MissionTitleContainer>
-      {/* <MissionTooltipQuestion /> */}
       <MissionCalendar
         className="mt-4 gap-2"
         schedules={schedules}

@@ -48,7 +48,7 @@ const MissionSubmitBonusSection = ({
 }: MissionSubmitBonusSectionProps) => {
   const params = useParams();
 
-  const { currentChallenge } = useCurrentChallenge();
+  const { currentChallenge, refetchSchedules } = useCurrentChallenge();
 
   // 챌린지 종료 + 2일
   const isSubmitPeriodEnded =
@@ -77,8 +77,6 @@ const MissionSubmitBonusSection = ({
   // 블로그 보너스 제출 mutation
   const submitBlogBonus = useSubmitMissionBlogBonus();
   const patchAttendance = usePatchAttendance();
-
-  const { refetchSchedules } = useCurrentChallenge();
 
   const disabled = isSubmitted && !isEditing;
 
