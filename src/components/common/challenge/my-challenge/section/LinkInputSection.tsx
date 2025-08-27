@@ -59,7 +59,7 @@ const LinkInputSection = ({
     }
   }, [initialLink, isSubmitted, isEditing]); // isSubmitted, isEditing 추가
 
-  const handleLinkChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setLinkValue(value);
     onLinkChange?.(value);
@@ -152,10 +152,11 @@ const LinkInputSection = ({
             '미션 링크는 .notion.site 형식의 퍼블릭 링크만 입력 가능합니다.\n제출 후, 미션과 소감을 카카오톡으로 공유해야 제출이 인정됩니다.'}
         </div>
       </div>
-      <div className="flex gap-2 transition-all delay-200 duration-500 ease-out">
-        <textarea
+      <div className="mt-3 flex gap-2 transition-all delay-200 duration-500 ease-out">
+        <input
+          type="text"
           className={clsx(
-            'flex-1 resize-none items-center rounded-xxs border bg-white',
+            'flex-1 items-center rounded-xxs border bg-white',
             'px-3 py-2 text-xsmall14 text-neutral-0 placeholder:text-neutral-50 md:text-xsmall16',
             'h-[44px] outline-none focus:border-primary',
             'disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-50',
@@ -171,7 +172,7 @@ const LinkInputSection = ({
             'h-[44px] rounded-xxs px-4 text-xsmall16 font-medium transition-colors',
             'disabled:cursor-not-allowed disabled:bg-neutral-70 disabled:text-neutral-100',
             isVerified && linkValue === verifiedLink
-              ? 'bg-green-500 text-white hover:bg-green-600'
+              ? 'border border-primary bg-white text-primary hover:bg-neutral-90'
               : linkValue && !linkError
                 ? 'bg-primary text-white hover:bg-primary-90'
                 : 'bg-neutral-80 text-neutral-50',
