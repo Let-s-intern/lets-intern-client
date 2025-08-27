@@ -141,6 +141,7 @@ const MissionSubmitBonusSection = ({
         accountNum: accountNumber,
         accountType: selectedBank,
       });
+      await refetchSchedules?.();
       setIsEditing(false);
       setShowToast(true);
     } catch (error) {
