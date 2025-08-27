@@ -65,7 +65,7 @@ const PERSONAL_STATEMENT_CHECK_LIST = [
     ],
     solution: [
       '→ 오픈카톡방 실시간 소감 및 작업물 공유와',
-      '미션 동기부여 페이백으로 강제성 제공',
+      '미션 동기부여로 강제성 제공',
     ],
   },
 ];
