@@ -1,3 +1,5 @@
+'use client';
+
 import {
   AdminBlogReview,
   useDeleteAdminBlogReview,
@@ -29,7 +31,7 @@ import {
 } from '@mui/x-data-grid';
 import { Check, Pencil, Trash, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import AdminReviewHeader from './AdminReviewHeader';
+import AdminReviewHeader from '../AdminReviewHeader';
 
 function CustomToolbar() {
   const csvOptions = {

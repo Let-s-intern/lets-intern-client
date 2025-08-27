@@ -1,3 +1,5 @@
+'use client';
+
 import { useGetAdminProgramReview } from '@/api/review';
 import dayjs from '@/lib/dayjs';
 import { ChallengeType } from '@/schema';
@@ -7,8 +9,8 @@ import VisibilityToggle from '@components/admin/review/VisibilityToggle';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useState } from 'react';
-import { challengeTypeOperators, Row } from './AdminChallengeReviewListPage';
-import AdminReviewHeader from './AdminReviewHeader';
+import { challengeTypeOperators, Row } from '../challenge/page';
+import AdminReviewHeader from '../AdminReviewHeader';
 
 const columns: GridColDef<Row>[] = [
   {

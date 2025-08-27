@@ -1,3 +1,5 @@
+'use client';
+
 import { useGetAdminProgramReview } from '@/api/review';
 import dayjs from '@/lib/dayjs';
 import ReviewDetailModal from '@components/admin/review/ReviewDetailModal';
@@ -10,8 +12,8 @@ import {
   GridColumnGroupingModel,
 } from '@mui/x-data-grid';
 import React, { useState } from 'react';
-import { Row } from './AdminChallengeReviewListPage';
-import AdminReviewHeader from './AdminReviewHeader';
+import { Row } from '../challenge/page';
+import AdminReviewHeader from '../AdminReviewHeader';
 
 const columns: GridColDef<Row>[] = [
   {

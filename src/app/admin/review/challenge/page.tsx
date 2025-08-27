@@ -1,3 +1,5 @@
+'use client';
+
 import { AdminProgramReview, useGetAdminProgramReview } from '@/api/review';
 import dayjs from '@/lib/dayjs';
 import { ChallengeType } from '@/schema';
@@ -14,7 +16,7 @@ import {
   GridFilterOperator,
 } from '@mui/x-data-grid';
 import { useState } from 'react';
-import AdminReviewHeader from './AdminReviewHeader';
+import AdminReviewHeader from '../AdminReviewHeader';
 
 export type Row = AdminProgramReview & {
   id: number | string;
