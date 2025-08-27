@@ -1,24 +1,23 @@
 'use client';
 
 import dayjs from '@/lib/dayjs';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
-
-import Button from '../../../components/admin/challenge/ui/button/Button';
-import Heading from '../../../components/admin/challenge/ui/heading/Heading';
-import LineTableBody from '../../../components/admin/challenge/ui/lineTable/LineTableBody';
-import LineTableBodyRow, {
-  ItemWithStatus,
-} from '../../../components/admin/challenge/ui/lineTable/LineTableBodyRow';
-import LineTableHead from '../../../components/admin/challenge/ui/lineTable/LineTableHead';
 import {
   ContentsResItem,
   CreateContentsReq,
   getContentsAdmin,
   UpdateContentsReq,
-} from '../../../schema';
-import axios from '../../../utils/axios';
-import { TABLE_CONTENT, TABLE_STATUS } from '../../../utils/convert';
+} from '@/schema';
+import axios from '@/utils/axios';
+import { TABLE_CONTENT, TABLE_STATUS } from '@/utils/convert';
+import Button from '@components/admin/challenge/ui/button/Button';
+import Heading from '@components/admin/challenge/ui/heading/Heading';
+import LineTableBody from '@components/admin/challenge/ui/lineTable/LineTableBody';
+import LineTableBodyRow, {
+  ItemWithStatus,
+} from '@components/admin/challenge/ui/lineTable/LineTableBodyRow';
+import LineTableHead from '@components/admin/challenge/ui/lineTable/LineTableHead';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMemo, useState } from 'react';
 
 const cellWidthList = [
   'w-[200px]',
