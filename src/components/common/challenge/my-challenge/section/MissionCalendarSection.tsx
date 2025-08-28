@@ -6,7 +6,6 @@ import MissionCalendar from '../mission-calendar/MissionCalendar';
 
 const MissionTitleContent = ({ todayTh }: { todayTh: number }) => {
   const { schedules } = useCurrentChallenge();
-  const isOtMission = todayTh === 0;
   const isBonusMission = todayTh === 100;
   const bonusMissionSchedule = schedules.find(
     (item) => item.missionInfo.th === 100,
@@ -16,7 +15,6 @@ const MissionTitleContent = ({ todayTh }: { todayTh: number }) => {
     (bonusMissionSchedule?.attendanceInfo.result === 'PASS' ||
       bonusMissionSchedule?.attendanceInfo.result === 'FINAL_WRONG');
 
-  if (isOtMission) return '챌린지가 시작됐어요! 함께 끝까지 완주해봐요!';
   if (isBonusMission && !isBonusMissionSubmitted)
     return '보너스 미션 완료하고 리워드 챙겨가세요!';
 
