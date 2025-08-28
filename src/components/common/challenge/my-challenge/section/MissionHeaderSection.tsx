@@ -65,7 +65,7 @@ const MissionHeaderSection = ({
       }
 
       // 현재 시간과 마감 시간을 비교 (분 단위까지 정확하게)
-      return dayjs().isAfter(deadlineDate);
+      return dayjs().startOf('minute').isAfter(deadlineDate.startOf('minute'));
     } catch {
       // 파싱 실패 시 기본값 false 반환
       return false;
