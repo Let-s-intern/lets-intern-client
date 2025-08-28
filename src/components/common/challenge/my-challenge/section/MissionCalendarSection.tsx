@@ -1,20 +1,17 @@
-import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { twMerge } from '@/lib/twMerge';
 import { Schedule } from '@/schema';
 import React from 'react';
 import MissionCalendar from '../mission-calendar/MissionCalendar';
 
-const MissionTitleContent = ({ todayTh }: { todayTh: number }) => {
-  const { schedules } = useCurrentChallenge();
-  const isBonusMission = todayTh === 100;
-  const bonusMissionSchedule = schedules.find(
-    (item) => item.missionInfo.th === 100,
-  );
-  const isBonusMissionSubmitted =
-    isBonusMission &&
-    (bonusMissionSchedule?.attendanceInfo.result === 'PASS' ||
-      bonusMissionSchedule?.attendanceInfo.result === 'FINAL_WRONG');
-
+const MissionTitleContent = ({
+  todayTh,
+  isBonusMission,
+  isBonusMissionSubmitted,
+}: {
+  todayTh: number;
+  isBonusMission: boolean;
+  isBonusMissionSubmitted: boolean;
+}) => {
   if (isBonusMission && !isBonusMissionSubmitted)
     return '보너스 미션 완료하고 리워드 챙겨가세요!';
 
@@ -84,7 +81,11 @@ const MissionCalendarSection = ({ schedules, todayTh, isDone }: Props) => {
     <section className="mt-6">
       {!isEndedStatus && (
         <MissionTitleContainer>
-          <MissionTitleContent todayTh={todayTh} />
+          <MissionTitleContent
+            todayTh={todayTh}
+            isBonusMission={isBonusMission}
+            isBonusMissionSubmitted={isBonusMissionSubmitted}
+          />
         </MissionTitleContainer>
       )}
       <MissionCalendar
