@@ -1,5 +1,5 @@
+import HybridLink from '@components/common/ui/HybridLink';
 import clsx from 'clsx';
-import { Link } from 'react-router-dom';
 
 interface LinkButtonProps {
   className?: string;
@@ -17,8 +17,8 @@ const LinkButton = ({
   rel,
 }: LinkButtonProps) => {
   return (
-    <Link
-      to={to}
+    <HybridLink
+      href={to}
       className={clsx(
         'flex w-full items-center justify-center gap-1 rounded-sm border-2 border-primary-xlight bg-neutral-100 px-5 py-1 text-xsmall14 font-semibold text-neutral-35 md:w-auto md:py-2 md:text-xsmall16',
         className,
@@ -27,7 +27,7 @@ const LinkButton = ({
       rel={rel}
     >
       {children}
-    </Link>
+    </HybridLink>
   );
 };
 

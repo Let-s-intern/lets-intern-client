@@ -1,6 +1,6 @@
 import { twMerge } from '@/lib/twMerge';
 import { Dayjs } from 'dayjs';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 const ProgramCard = ({
   endDate,
@@ -40,12 +40,11 @@ const ProgramCard = ({
       data-program-text={title}
     >
       <Link
-        to={programLink}
+        href={programLink}
         className={twMerge(
           'flex transition hover:opacity-80',
           thumbnailLinkClassName,
         )}
-        reloadDocument
       >
         <img
           src={thumbnail}
@@ -59,7 +58,7 @@ const ProgramCard = ({
       <div>
         <div className="flex justify-between">
           <h2 className="mb-3 break-keep text-xsmall16 font-semibold">
-            <Link to={programLink} className="hover:underline">
+            <Link href={programLink} className="hover:underline">
               {title}
             </Link>
           </h2>

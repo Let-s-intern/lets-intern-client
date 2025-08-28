@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
 
 interface HeaderProps {
@@ -6,11 +6,11 @@ interface HeaderProps {
 }
 
 const Header = ({ title }: HeaderProps) => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   return (
     <HeaderBlock>
-      <BackButton onClick={() => navigate('/program')}>
+      <BackButton onClick={() => router.push('/program')}>
         <i>
           <img src="/icons/back-icon.svg" alt="이전 버튼" className="w-full" />
         </i>

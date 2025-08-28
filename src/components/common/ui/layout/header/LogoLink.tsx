@@ -2,14 +2,13 @@ import { twMerge } from '@/lib/twMerge';
 import HybridLink from '../../HybridLink';
 
 interface Props {
-  isNextRouter: boolean;
   className?: string;
 }
 
-function LogoLink({ isNextRouter, className }: Props) {
+function LogoLink({ className }: Props) {
   return (
     <h1 className={twMerge('h-5 text-transparent md:h-[24px]', className)}>
-      <HybridLink isNextRouter={isNextRouter} href="/">
+      <HybridLink href="/">
         <img
           src="/logo/horizontal-logo.svg"
           alt="렛츠커리어"

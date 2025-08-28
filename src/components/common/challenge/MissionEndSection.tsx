@@ -1,8 +1,10 @@
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
-import { Link, useParams } from 'react-router-dom';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
 const MissionEndSection = () => {
-  const applicationId = useParams().applicationId;
+  const params = useParams<{ applicationId: string }>();
+  const applicationId = params.applicationId;
   const { currentChallenge } = useCurrentChallenge();
 
   return (
@@ -20,7 +22,7 @@ const MissionEndSection = () => {
           이전 미션들은 나의 기록장에서 확인하실 수 있습니다.
         </p>
         <Link
-          to={`/challenge/${applicationId}/${currentChallenge?.id}/me`}
+          href={`/challenge/${applicationId}/${currentChallenge?.id}/me`}
           className="m-3 rounded-xs bg-primary p-3 text-center font-medium text-white"
         >
           이전 미션 돌아보기

@@ -9,7 +9,7 @@ import dayjs from '@/lib/dayjs';
 import { useQueryClient } from '@tanstack/react-query';
 import { clsx } from 'clsx';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'next/navigation';
 import MissionSubmitButton from '../mission/MissionSubmitButton';
 import MissionToast from '../mission/MissionToast';
 

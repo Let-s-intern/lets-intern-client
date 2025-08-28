@@ -6,7 +6,8 @@ import { BONUS_MISSION_TH } from '@/utils/constants';
 import { isAxiosError } from 'axios';
 import clsx from 'clsx';
 import { useCallback } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter, useParams } from 'next/navigation';
 
 const DailyMissionSection = ({
   dailyMission,
@@ -15,11 +16,11 @@ const DailyMissionSection = ({
   dailyMission: DailyMission;
   schedules: Schedule[];
 }) => {
-  const applicationId = useParams().applicationId;
+  const params = useParams<{ applicationId: string; programId: string }>();
+  const applicationId = params.applicationId;
   const { currentChallenge } = useCurrentChallenge();
 
-  const params = useParams();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const missionTh =
     dailyMission?.th === BONUS_MISSION_TH
@@ -72,7 +73,7 @@ const DailyMissionSection = ({
     if (!isValid()) return;
 
     setSelectedMission(mission.id, mission.th);
-    navigate(`/challenge/${params.applicationId}/${params.programId}/me`);
+    router.push(`/challenge/${params.applicationId}/${params.programId}/me`);
   };
 
   return (
@@ -99,7 +100,7 @@ const DailyMissionSection = ({
         </p>
       </div>
       <Link
-        to={
+        href={
           isSubmitEdit
             ? `/challenge/${applicationId}/${currentChallenge?.id}/me?scroll_to=daily-mission`
             : '#'

@@ -1,6 +1,7 @@
 import { twMerge } from '@/lib/twMerge';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { MdOutlineArrowBack } from 'react-icons/md';
-import { Link } from 'react-router-dom';
 
 interface BackHeaderProps {
   to?: string;
@@ -17,10 +18,21 @@ const BackHeader = ({
   to,
   onClick,
 }: BackHeaderProps) => {
+  const router = useRouter();
+
+  const handleBackClick = (e: React.MouseEvent) => {
+    if (onClick) {
+      onClick();
+    } else if (!to) {
+      e.preventDefault();
+      router.back();
+    }
+  };
+
   return (
     <header className={twMerge('flex items-center gap-3 py-6', className)}>
       {!hideBack && (
-        <Link to={to ?? '#'} onClick={onClick}>
+        <Link href={to ?? '#'} onClick={handleBackClick}>
           <MdOutlineArrowBack size={'1.5rem'} />
         </Link>
       )}

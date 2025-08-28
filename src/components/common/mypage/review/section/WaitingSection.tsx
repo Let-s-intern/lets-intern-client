@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 import { useState } from 'react';
 import { MypageApplication } from '../../../../../api/application';
@@ -23,7 +23,7 @@ const WaitingSection = ({ applicationList }: WaitingSectionProps) => {
             프로그램 완주하고 후기를 작성해보세요!
           </p>
           <Link
-            to="/program"
+            href="/program"
             className="other_program rounded-sm border-2 border-primary-xlight bg-white px-5 py-2 font-medium text-neutral-35"
           >
             다른 프로그램 둘러보기

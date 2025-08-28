@@ -10,7 +10,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useRouter, useParams } from 'next/navigation';
 
 import axios from '../../../utils/axios';
 import {
@@ -49,7 +49,7 @@ interface CouponRequestValue {
 }
 
 const CouponEditor = ({ editorMode }: CouponEditorProps) => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const params = useParams();
   const queryClient = useQueryClient();
 
@@ -97,7 +97,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['coupon'] });
-      navigate('/admin/coupons');
+      router.push('/admin/coupons');
     },
     onError: (error) => handleSubmitError(error),
   });
@@ -110,7 +110,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['coupon'] });
-      navigate('/admin/coupons');
+      router.push('/admin/coupons');
     },
     onError: (error) => handleSubmitError(error),
   });
