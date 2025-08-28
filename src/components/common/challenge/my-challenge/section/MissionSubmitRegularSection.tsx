@@ -118,6 +118,7 @@ const MissionSubmitRegularSection = ({
       });
       await refetchSchedules?.();
       setIsSubmitted(true);
+      setShowToast(true);
       // 미션 데이터 새로고침
       onRefreshMissionData?.();
       onSubmitLastMission?.();
