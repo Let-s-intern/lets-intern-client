@@ -36,7 +36,7 @@ const MissionSubmitSection = ({
     }
 
     // 보너스 미션
-    if (selectedMissionTh === 100) {
+    if (selectedMissionTh >= 100) {
       return (
         <MissionSubmitBonusSection
           selectedMissionTh={selectedMissionTh}
