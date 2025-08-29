@@ -83,7 +83,12 @@ const MissionSubmitBonusSection = ({
   const handleAccountNumberChange = (
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    setAccountNumber(e.target.value);
+    const inputChar = (e.nativeEvent as InputEvent).data; // 연속으로 숫자가 아닌 문자를 입력하면 두 번째에 null로 뜸
+    const isNotNumber = inputChar && !/^[0-9]$/.test(inputChar);
+    if (!inputChar || isNotNumber) return;
+
+    const value = e.target.value;
+    setAccountNumber(value.replace(/[^0-9]/g, ''));
   };
 
   const handleLinkChange = (link: string) => {
