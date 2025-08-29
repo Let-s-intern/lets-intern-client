@@ -11,6 +11,9 @@ const NavBar = () => {
     : location.pathname.endsWith('guide')
       ? 'GUIDE'
       : 'DASHBOARD';
+  const isChallengeUserInfoPage = location.pathname.endsWith('/user/info');
+
+  if (isChallengeUserInfoPage) return null;
 
   return (
     <>

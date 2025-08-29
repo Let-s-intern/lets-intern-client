@@ -49,7 +49,6 @@ const ChallengeUserInfo = () => {
 
   const programTitle = programTitleData?.title;
   const username = userData?.name;
-
   const isValidUserInfo = isValidUserInfoData?.pass;
   const isLoading =
     isValidUserInfoLoading ||
