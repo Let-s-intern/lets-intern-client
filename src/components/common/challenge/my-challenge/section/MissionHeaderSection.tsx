@@ -1,5 +1,6 @@
 import dayjs from '@/lib/dayjs';
 import { clsx } from 'clsx';
+import { Dayjs } from 'dayjs';
 
 interface MissionHeaderSectionProps {
   className?: string;
@@ -7,6 +8,7 @@ interface MissionHeaderSectionProps {
   deadline: string;
   selectedMissionTh: number;
   isSubmitted?: boolean;
+  missionStartDate?: Dayjs;
 }
 
 const MissionHeaderSection = ({
@@ -15,6 +17,7 @@ const MissionHeaderSection = ({
   missionType,
   deadline,
   isSubmitted,
+  missionStartDate,
 }: MissionHeaderSectionProps) => {
   const getMissionTitle = () => {
     if (selectedMissionTh >= 100) {
@@ -71,6 +74,7 @@ const MissionHeaderSection = ({
 
   const shouldShowError =
     selectedMissionTh >= 1 && selectedMissionTh <= 8 && isSubmitted === false;
+  const isBeforeMissionStart = missionStartDate?.isBefore(dayjs());
 
   return (
     <section className={clsx('flex flex-col gap-1', className)}>
@@ -85,17 +89,20 @@ const MissionHeaderSection = ({
             {missionType}
           </h2>
         </div>
-        <p
-          className={clsx(
-            'flex flex-row items-end text-xsmall14 font-medium md:text-xsmall16',
-            {
-              'text-neutral-60': isDeadlinePassed(),
-              'text-primary-90': !isDeadlinePassed(),
-            },
-          )}
-        >
-          마감기한 {deadline}까지
-        </p>
+        {!missionStartDate ||
+          (isBeforeMissionStart && (
+            <p
+              className={clsx(
+                'flex flex-row items-end text-xsmall14 font-medium md:text-xsmall16',
+                {
+                  'text-neutral-60': isDeadlinePassed(),
+                  'text-primary-90': !isDeadlinePassed(),
+                },
+              )}
+            >
+              마감기한 {deadline}까지
+            </p>
+          ))}
       </div>
 
       {/* 에러 메시지 */}

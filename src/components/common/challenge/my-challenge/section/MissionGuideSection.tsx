@@ -47,6 +47,7 @@ const MissionGuideSection = ({
   };
 
   const missionId = getMissionId();
+
   // 선택된 미션의 상세 정보 가져오기
   const { data: missionData, isLoading } =
     useChallengeMissionAttendanceInfoQuery({

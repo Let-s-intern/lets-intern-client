@@ -61,6 +61,7 @@ const MissionGuideBonusSection = ({
           selectedMissionTh={selectedMissionTh || todayTh}
           missionType="블로그 후기 작성하고 리워드 받기!"
           deadline={formatDeadline(missionData?.missionInfo?.endDate)}
+          missionStartDate={missionData.missionInfo.startDate}
         />
 
         {/* 미션 가이드 섹션 */}

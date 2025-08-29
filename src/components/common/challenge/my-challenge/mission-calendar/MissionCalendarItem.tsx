@@ -27,11 +27,10 @@ const MissionCalendarItem = ({
   const params = useParams();
   const navigate = useNavigate();
 
-  const { error, refetch: refetchMission } =
-    useChallengeMissionAttendanceInfoQuery({
-      challengeId: params.programId,
-      missionId: mission.id,
-    });
+  const { error } = useChallengeMissionAttendanceInfoQuery({
+    challengeId: params.programId,
+    missionId: mission.id,
+  });
 
   const { selectedMissionId, setSelectedMission } = useMissionStore();
   const isSelected = selectedMissionId === mission.id;
@@ -40,9 +39,6 @@ const MissionCalendarItem = ({
   const isMissionPage = location.pathname.includes('/me');
 
   const handleMissionClick = async () => {
-    // await refetchMission();
-
-    console.log('after refetching, error:', error);
     if (mission.th !== null && isValid()) {
       setSelectedMission(mission.id, mission.th);
       navigate(`/challenge/${params.applicationId}/${params.programId}/me`);

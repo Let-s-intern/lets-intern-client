@@ -58,6 +58,7 @@ const MissionGuideZeroSection = ({
         selectedMissionTh={selectedMissionTh ?? 0}
         missionType={missionData?.missionInfo?.title || 'OT 시청'}
         deadline={formatDeadline(missionData?.missionInfo?.endDate)}
+        missionStartDate={missionData.missionInfo.startDate}
       />
       {/* 미션 가이드 섹션 */}
       <section className="flex flex-col gap-5 rounded-xs border border-neutral-80 px-4 py-4">
