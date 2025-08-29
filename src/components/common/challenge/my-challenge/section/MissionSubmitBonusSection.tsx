@@ -6,8 +6,6 @@ import { twMerge } from '@/lib/twMerge';
 import { Schedule } from '@/schema';
 import { clsx } from 'clsx';
 import { ReactNode, useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import DashboardCreateReviewModal from '../../dashboard/modal/DashboardCreateReviewModal';
 import LinkChangeConfirmationModal from '../../LinkChangeConfirmationModal';
 import AgreementCheckbox from '../mission/AgreementCheckbox';
 import BankSelectDropdown from '../mission/BankSelectDropdown';
@@ -46,8 +44,6 @@ const MissionSubmitBonusSection = ({
   missionId,
   attendanceInfo,
 }: MissionSubmitBonusSectionProps) => {
-  const params = useParams();
-
   const { currentChallenge, refetchSchedules } = useCurrentChallenge();
 
   // 챌린지 종료 + 2일
@@ -70,7 +66,6 @@ const MissionSubmitBonusSection = ({
   const [isAgreed, setIsAgreed] = useState(false);
   const [linkValue, setLinkValue] = useState('');
   const [isLinkVerified, setIsLinkVerified] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
   // 링크 변경 확인 모달 오픈 상태
   const [isLinkChangeModalOpen, setIsLinkChangeModalOpen] = useState(false);
 
@@ -122,9 +117,6 @@ const MissionSubmitBonusSection = ({
         accountNum: cleanAccountNumber,
       });
       await refetchSchedules?.();
-
-      // 후기 모달 표시
-      setModalOpen(true);
       setIsSubmitted(true);
       setShowToast(true);
     } catch (error) {
@@ -287,14 +279,6 @@ const MissionSubmitBonusSection = ({
           setIsLinkChangeModalOpen(false);
         }}
       />
-
-      {modalOpen && (
-        <DashboardCreateReviewModal
-          programId={params.programId ?? ''}
-          applicationId={params.applicationId ?? ''}
-          onClose={() => setModalOpen(false)}
-        />
-      )}
     </>
   );
 };

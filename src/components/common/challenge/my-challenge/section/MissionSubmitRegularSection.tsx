@@ -47,8 +47,13 @@ const MissionSubmitRegularSection = ({
   const isSubmitPeriodEnded =
     dayjs(currentChallenge?.endDate).add(2, 'day').isBefore(dayjs()) ?? true;
 
-  const isLastMissionSubmit =
-    schedules[schedules.length - 1].missionInfo.id === selectedMissionId;
+  const lastMissionId = schedules[schedules.length - 1].missionInfo.id;
+  const lastRegularMissionId =
+    lastMissionId === 100
+      ? schedules[schedules.length - 2].missionInfo.id
+      : lastMissionId;
+
+  const isLastRegularMissionSubmit = lastRegularMissionId === selectedMissionId;
 
   const [textareaValue, setTextareaValue] = useState(
     attendanceInfo?.review || '',
@@ -122,7 +127,9 @@ const MissionSubmitRegularSection = ({
       // 미션 데이터 새로고침
       onRefreshMissionData?.();
       onSubmitLastMission?.();
-      if (isLastMissionSubmit && !attendanceInfo?.submitted) setModalOpen(true);
+      if (isLastRegularMissionSubmit && !attendanceInfo?.submitted) {
+        setModalOpen(true);
+      }
     } catch {
       // 에러 처리 로직 추가 가능
     }
