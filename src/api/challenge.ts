@@ -572,6 +572,7 @@ export const useChallengeMissionListQuery = (challengeId?: string | number) => {
 };
 
 /** 챌린지 미션 attendanceInfo 조회 /api/v1/challenge/{challengeId}/missions/{missionId} */
+export const ChallengeMissionQueryKey = 'useChallengeMissionAttendanceInfo';
 export const useChallengeMissionAttendanceInfoQuery = ({
   challengeId,
   missionId,
@@ -582,7 +583,7 @@ export const useChallengeMissionAttendanceInfoQuery = ({
   enabled?: boolean;
 }) => {
   return useQuery({
-    queryKey: ['useChallengeMissionAttendanceInfo', challengeId, missionId],
+    queryKey: [ChallengeMissionQueryKey, challengeId, missionId],
     queryFn: async () => {
       const res = await axios.get(
         `/challenge/${challengeId}/missions/${missionId}`,

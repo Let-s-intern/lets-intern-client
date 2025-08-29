@@ -8,7 +8,6 @@ import MissionTodayIcon from './MissionTodayIcon';
 import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
 import { useMissionStore } from '@/store/useMissionStore';
 import { isAxiosError } from 'axios';
-import { useCallback } from 'react';
 interface Props {
   schedule: Schedule;
   todayTh: number;
@@ -39,15 +38,16 @@ const MissionCalendarItem = ({
   const location = useLocation();
   const isMissionPage = location.pathname.includes('/me');
 
-  const handleMissionClick = () => {
+  const handleMissionClick = async () => {
     if (mission.th !== null && isValid()) {
       setSelectedMission(mission.id, mission.th);
       navigate(`/challenge/${params.applicationId}/${params.programId}/me`);
     }
   };
 
-  const isValid = useCallback(() => {
+  const isValid = () => {
     if (isAxiosError(error)) {
+      console.log('error:', error);
       const errorCode = error?.response?.data.status;
       if (errorCode === 400) {
         alert('0회차 미션을 먼저 완료해주세요.');
@@ -55,7 +55,7 @@ const MissionCalendarItem = ({
       return false;
     }
     return true;
-  }, [error]);
+  };
 
   const isCardActive = () => {
     if (!isMissionPage) {

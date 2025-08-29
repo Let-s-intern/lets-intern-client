@@ -1,7 +1,12 @@
 import { useSubmitMission } from '@/api/attendance';
-import { useGetChallengeGoal, useSubmitChallengeGoal } from '@/api/challenge';
+import {
+  ChallengeMissionQueryKey,
+  useGetChallengeGoal,
+  useSubmitChallengeGoal,
+} from '@/api/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
+import { useQueryClient } from '@tanstack/react-query';
 import { clsx } from 'clsx';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -19,9 +24,9 @@ const MissionSubmitZeroSection = ({
 }: MissionSubmitZeroSectionProps) => {
   const params = useParams<{ programId: string }>();
   const programId = params.programId;
+  const queryClient = useQueryClient();
 
-  const { schedules, currentChallenge, refetchSchedules } =
-    useCurrentChallenge();
+  const { currentChallenge, refetchSchedules } = useCurrentChallenge();
   const { data: goalData, isLoading } = useGetChallengeGoal(programId);
 
   // 챌린지 종료 + 2일
@@ -59,7 +64,13 @@ const MissionSubmitZeroSection = ({
             review: textareaValue,
           }),
         ]);
-        await refetchSchedules?.();
+        await Promise.all([
+          refetchSchedules?.(),
+          // 모든 미션 정보 invalidate
+          queryClient.invalidateQueries({
+            queryKey: [ChallengeMissionQueryKey],
+          }),
+        ]);
         setIsSubmitted(true);
         setShowToast(true);
       } catch (error) {

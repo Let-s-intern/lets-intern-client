@@ -107,9 +107,9 @@ const MissionSubmitRegularSection = ({
       return;
     }
 
-    // 새 미션 제출
     if (!missionId || missionId === 0) return;
 
+    // 새 미션 제출
     try {
       await submitMission.mutateAsync({
         missionId,
@@ -118,6 +118,7 @@ const MissionSubmitRegularSection = ({
       });
       await refetchSchedules?.();
       setIsSubmitted(true);
+      setShowToast(true);
       // 미션 데이터 새로고침
       onRefreshMissionData?.();
       onSubmitLastMission?.();
@@ -150,6 +151,7 @@ const MissionSubmitRegularSection = ({
         link: linkValue,
         review: textareaValue,
       });
+      await refetchSchedules?.();
       setIsEditing(false);
       setShowToast(true);
       // 미션 데이터 새로고침

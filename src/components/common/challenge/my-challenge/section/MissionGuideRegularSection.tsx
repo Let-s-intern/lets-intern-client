@@ -49,6 +49,7 @@ const MissionGuideRegularSection = ({
         selectedMissionTh={selectedMissionTh || todayTh}
         missionType={missionData?.missionInfo?.title || '직무 탐색'}
         deadline={formatDeadline(missionData?.missionInfo?.endDate)}
+        missionStartDate={missionData.missionInfo.startDate}
       />
 
       {/* 미션 가이드 섹션 */}
