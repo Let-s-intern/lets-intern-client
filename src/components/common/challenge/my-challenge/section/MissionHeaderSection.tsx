@@ -17,11 +17,8 @@ const MissionHeaderSection = ({
   isSubmitted,
 }: MissionHeaderSectionProps) => {
   const getMissionTitle = () => {
-    if (selectedMissionTh === 100) {
+    if (selectedMissionTh >= 100) {
       return '보너스 미션';
-    }
-    if (selectedMissionTh === 101) {
-      return '0회차 미션';
     }
     return `${selectedMissionTh}회차 미션`;
   };

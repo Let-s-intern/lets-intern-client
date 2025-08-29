@@ -65,7 +65,7 @@ const MissionGuideSection = ({
       );
     }
 
-    if (selectedMissionTh === 100) {
+    if (selectedMissionTh >= 100) {
       return (
         <MissionGuideBonusSection
           todayTh={todayTh}
