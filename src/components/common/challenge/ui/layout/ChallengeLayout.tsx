@@ -8,7 +8,6 @@ import useAuthStore from '@/store/useAuthStore';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useEffect } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
-import RecommendedProgramSection from '../../my-challenge/section/RecommendedProgramSection';
 import NavBar from './NavBar';
 
 export const GOAL_DATE = dayjs('2025-01-19');
@@ -99,7 +98,7 @@ const ChallengeLayout = () => {
           </div>
         </div>
       </div>
-      <RecommendedProgramSection />
+      {/* <RecommendedProgramSection /> */}
     </div>
   );
 };
