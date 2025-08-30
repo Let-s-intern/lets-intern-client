@@ -48,11 +48,11 @@ const Footer = () => {
               )}
               <MainLink
                 isNextRouter={false}
-                href="https://letscareer.oopy.io/1ea5e77c-bee1-8098-8e19-ec5038fb1cc8"
+                href="https://letscareer.liveklass.com/?utm_source=letscareer&utm_medium=website&utm_campaign=GNB"
                 target="_blank"
-                rel="noopenner noreferrer"
+                rel="noopener noreferrer"
               >
-                커피챗
+                취준위키 VOD
               </MainLink>
             </div>
 
