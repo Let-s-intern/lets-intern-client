@@ -110,6 +110,7 @@ export const liveToCreateInput = (live: LiveIdSchema): CreateLiveReq => {
     mentorIntroduction: live.mentorIntroduction ?? '',
     mentorJob: live.mentorJob ?? '',
     vod: live.vod ?? false,
+    desktopThumbnail: live.desktopThumbnail ?? '',
   };
 };
 
