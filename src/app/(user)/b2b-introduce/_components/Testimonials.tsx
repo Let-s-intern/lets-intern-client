@@ -43,13 +43,13 @@ export default function Testimonials() {
                 className="rounded-xl bg-white p-5 shadow-sm"
               >
                 <p className="text-0.875 text-neutral-800">“{q.text}”</p>
-                <footer className="text-0.875-medium mt-3 text-neutral-600">
+                <footer className="text-0.875-medium mt-3 text-neutral-40">
                   — {q.author}
                 </footer>
               </blockquote>
             ))}
             {g === '교육생 합격 후기' && (
-              <div className="text-0.875 rounded-xl bg-white p-5 text-center text-neutral-600 shadow-sm">
+              <div className="text-0.875 rounded-xl bg-white p-5 text-center text-neutral-40 shadow-sm">
                 교육생 합격 후기는 운영 중인 서비스의 실제 캡처/링크로 교체
                 예정입니다.
                 <div className="mt-3 aspect-[16/9] w-full rounded-lg bg-neutral-200" />

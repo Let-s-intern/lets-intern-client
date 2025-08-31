@@ -47,9 +47,9 @@ function FeatureRow({ title, desc, align }: Block) {
   const image = <div className="aspect-[16/11] w-full rounded-xl bg-neutral-200" />;
   const text = (
     <div className="w-full">
-      <p className="text-0.875-medium text-[#6E7AFF]">프로그램 하이라이트</p>
+      <p className="text-xsmall16 font-medium text-primary-90 text-center">프로그램 하이라이트</p>
       <h3 className="mt-2 text-1.375-semibold">{title}</h3>
-      <p className="mt-2 text-1.125 text-neutral-600">{desc}</p>
+      <p className="mt-2 text-1.125 text-neutral-40">{desc}</p>
     </div>
   );
   return (

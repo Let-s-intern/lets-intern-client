@@ -20,12 +20,12 @@ export default function PainPoints() {
     <ul className="mx-auto grid max-w-3xl gap-6">
       {items.map((it, i) => (
         <li key={i} className="flex items-start gap-4">
-          <span className="text-0.875-semibold mt-1 inline-flex h-7 w-7 items-center justify-center rounded-full bg-[#6E7AFF] text-white">
+          <span className="text-0.875-semibold mt-1 inline-flex h-7 w-7 items-center justify-center rounded-full bg-primary-90 text-white">
             {i + 1}
           </span>
           <div>
             <p className="text-1.125-bold">{it.title}</p>
-            <p className="text-0.875 mt-1 text-neutral-600">{it.desc}</p>
+            <p className="text-0.875 mt-1 text-neutral-40">{it.desc}</p>
           </div>
         </li>
       ))}
