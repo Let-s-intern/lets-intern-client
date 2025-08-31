@@ -23,10 +23,10 @@ export default function Metrics() {
             const unit = m ? m[2] : '';
             return (
               <div key={i} className="text-center">
-                <div className="text-xsmall16 font-medium text-neutral-20">
+                <div className="text-xsmall16 font-medium leading-relaxed md:leading-normal text-neutral-20">
                   {s.label}
                 </div>
-                <div className="mt-1">
+                <div className="mt-2 md:mt-1 leading-[1.3] md:leading-tight">
                   <span className="text-[36px] font-bold tracking-[-3px] text-static-0">
                     {number}
                   </span>
