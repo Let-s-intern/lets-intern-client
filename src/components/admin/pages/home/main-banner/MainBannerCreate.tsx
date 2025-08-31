@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 
 import { BannerItemType, usePostBannerForAdmin } from '@/api/banner';
-import MainBannerInputContent from '../../../../components/admin/home/main-banner/MainBannerInputContent';
-import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
+import MainBannerInputContent from '@/components/admin/home/main-banner/MainBannerInputContent';
+import EditorTemplate from '@/components/admin/program/ui/editor/EditorTemplate';
 
 const MainBannerCreate = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const [value, setValue] = useState<BannerItemType>({
     title: '',
@@ -21,7 +21,7 @@ const MainBannerCreate = () => {
   const { mutate: addMainBanner } = usePostBannerForAdmin({
     successCallback: () => {
       alert('홈 상단 배너가 등록되었습니다.');
-      navigate('/admin/home/main-banners');
+      router.push('/admin/home/main-banners');
     },
     errorCallback: (error) => {
       alert(error);

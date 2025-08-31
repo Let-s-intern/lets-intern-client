@@ -1,11 +1,11 @@
 import { challengeSchema } from '@/schema';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from '../../../utils/axios';
+import { useRouter } from 'next/navigation';
+import axios from '@/utils/axios';
 
 const ChallengeOnboarding = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const { data } = useQuery({
     queryKey: ['challenge', 'admin'],
@@ -18,9 +18,9 @@ const ChallengeOnboarding = () => {
 
   useEffect(() => {
     if (data) {
-      navigate(`/admin/challenge/operation/${data.programList[0]?.id}/home`);
+      router.push(`/admin/challenge/operation/${data.programList[0]?.id}/home`);
     }
-  }, [data, navigate]);
+  }, [data, router]);
 
   return null;
 };

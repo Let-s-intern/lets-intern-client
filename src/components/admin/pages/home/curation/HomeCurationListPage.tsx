@@ -107,7 +107,7 @@ const HomeCurationListPage = () => {
         },
       },
     ],
-    [navigate, snackbar, updateCuration, updateIsLoading],
+    [router, snackbar, updateCuration, updateIsLoading],
   );
 
   return (

@@ -1,6 +1,13 @@
+import {
+  CreateReportData,
+  getReportsForAdminQueryKey,
+  ReportType,
+  usePostReportMutation,
+} from '@/api/report';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import dayjs from '@/lib/dayjs';
 import { ProgramTypeEnum } from '@/schema';
+import { ReportContent, ReportEditingPrice } from '@/types/interface';
 import AdminReportFeedback from '@components/admin/report/AdminReportFeedback';
 import ReportProgramRecommendEditor from '@components/admin/report/ReportProgramRecommendEditor';
 import ReportReviewEditor from '@components/admin/report/ReportReviewEditor';
@@ -23,13 +30,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { ChangeEvent, useState } from 'react';
 import { FaTrashCan } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
-import {
-  CreateReportData,
-  getReportsForAdminQueryKey,
-  ReportType,
-  usePostReportMutation,
-} from '../../../api/report';
-import { ReportContent, ReportEditingPrice } from '../../../types/interface';
 import AdminReportActiveGuide from './AdminReportActiveGuide';
 
 const initialReport: Omit<CreateReportData, 'contents'> = {

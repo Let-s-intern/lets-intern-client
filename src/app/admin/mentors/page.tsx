@@ -12,8 +12,8 @@ import Heading from '@components/admin/ui/heading/Heading';
 import { Button, Checkbox, TextField } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useQueryClient } from '@tanstack/react-query';
-import { ChangeEvent, FormEvent, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { ChangeEvent, FormEvent, useRef, useState } from 'react';
 
 interface Row {
   id: number;
@@ -175,8 +175,6 @@ const MentorFilter = () => {
 };
 
 export default function AdminMentorPage() {
-  const pageSizeRef = useRef(10);
-
   const [paginationModel, setPaginationModel] = useState({
     pageSize: 10,
     page: 0,
@@ -209,9 +207,6 @@ export default function AdminMentorPage() {
         pageSizeOptions={[10, 20, 50]}
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
-        onPageSizeChange={(pageSize) => {
-          pageSizeRef.current = pageSize;
-        }}
       />
     </section>
   );

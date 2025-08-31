@@ -24,7 +24,7 @@ import {
   DocumentSection,
   PremiumSection,
   ScheduleSection,
-} from '../../../apply/[reportType]/[reportId]/page';
+} from '@/components/pages/report/ReportApplyPage';
 
 const ReportApplicationPage = () => {
   const router = useRouter();

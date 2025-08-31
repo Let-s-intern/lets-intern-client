@@ -2,12 +2,13 @@ import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { Button } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbarContainer } from '@mui/x-data-grid';
 import { useEffect, useMemo } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   AdminReportListItem,
   convertReportTypeToDisplayName,
   useGetReportsForAdmin,
-} from '../../../api/report';
+} from '@/api/report';
 
 type Row = AdminReportListItem & { id: number };
 
@@ -109,14 +110,14 @@ function Toolbar() {
         <div className="flex w-full items-center justify-between">
           <div className="flex items-center gap-2">-</div>
           <div className="flex items-center gap-2">
-            <Button
-              component={Link}
-              to="/admin/report/create"
-              variant="contained"
-              color="primary"
-            >
-              등록
-            </Button>
+            <Link href="/admin/report/create">
+              <Button
+                variant="contained"
+                color="primary"
+              >
+                등록
+              </Button>
+            </Link>
           </div>
         </div>
       </GridToolbarContainer>
@@ -126,36 +127,32 @@ function Toolbar() {
 
 const AdminReportListPage = () => {
   const { data: reportsData } = useGetReportsForAdmin({});
-  const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const { snackbar: setSnackbar } = useAdminSnackbar();
 
   useEffect(() => {
     const message = searchParams.get('message');
     if (message) {
       setSnackbar(message);
-      setSearchParams(
-        (prev) => {
-          prev.delete('message');
-          return prev;
-        },
-        {
-          replace: true,
-        },
-      );
+      // Remove message from URL by navigating to the same path without the message param
+      const newSearchParams = new URLSearchParams(searchParams.toString());
+      newSearchParams.delete('message');
+      const newUrl = window.location.pathname + (newSearchParams.toString() ? '?' + newSearchParams.toString() : '');
+      router.replace(newUrl);
     }
-  }, [searchParams, setSearchParams, setSnackbar]);
+  }, [searchParams, router, setSnackbar]);
 
   const columns = useMemo(() => {
     return createColumns({
       handleEdit(id) {
-        navigate(`/admin/report/edit/${id}`);
+        router.push(`/admin/report/edit/${id}`);
       },
       moveApplicationPage(reportId) {
-        navigate(`/admin/report/applications?reportId=${reportId}`);
+        router.push(`/admin/report/applications?reportId=${reportId}`);
       },
     });
-  }, [navigate]);
+  }, [router]);
 
   const rows = useMemo(() => {
     return (

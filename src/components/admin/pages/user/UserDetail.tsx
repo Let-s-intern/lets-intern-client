@@ -1,8 +1,8 @@
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useUserDetailAdminQuery } from '../../../api/user';
-import ActionButton from '../../../components/admin/ui/button/ActionButton';
-import { gradeToText } from '../../../utils/convert';
+import { useUserDetailAdminQuery } from '@/api/user';
+import ActionButton from '@/components/admin/ui/button/ActionButton';
+import { gradeToText } from '@/utils/convert';
 
 const UserDetail = () => {
   const params = useParams();

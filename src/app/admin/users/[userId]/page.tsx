@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter, useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
 import { useUserDetailAdminQuery } from '@/api/user';
 import ActionButton from '@/components/admin/ui/button/ActionButton';
@@ -114,7 +114,6 @@ const UserDetail = () => {
           뒤로가기
         </ActionButton>
         <ActionButton
-          isPrimary
           onClick={() => {
             router.push(`/admin/users/${params.userId}/edit`);
           }}

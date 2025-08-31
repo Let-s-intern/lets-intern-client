@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams, useRouter } from 'next/navigation';
 
 import {
   BannerItemType,
@@ -8,11 +8,11 @@ import {
 } from '@/api/banner';
 import EmptyContainer from '@components/common/ui/EmptyContainer';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import MainBannerInputContent from '../../../../components/admin/home/main-banner/MainBannerInputContent';
-import EditorTemplate from '../../../../components/admin/program/ui/editor/EditorTemplate';
+import MainBannerInputContent from '@/components/admin/home/main-banner/MainBannerInputContent';
+import EditorTemplate from '@/components/admin/program/ui/editor/EditorTemplate';
 
 const BottomBannerEdit = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const params = useParams();
   const bannerId = Number(params.bannerId);
 
@@ -35,7 +35,7 @@ const BottomBannerEdit = () => {
   const { mutate: editBottomBanner } = useEditBannerForAdmin({
     successCallback: () => {
       alert('홈 하단 배너가 수정되었습니다.');
-      navigate('/admin/home/bottom-banners');
+      router.push('/admin/home/bottom-banners');
     },
     errorCallback: (error) => {
       alert(error);

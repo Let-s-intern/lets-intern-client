@@ -1,9 +1,9 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import ProgramInputContent from '../../../components/admin/program/ui/editor/ProgramInputContent';
-import axios from '../../../utils/axios';
-import { generateRandomString } from '../../../utils/random';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import ProgramInputContent from '@/components/admin/program/ui/editor/ProgramInputContent';
+import axios from '@/utils/axios';
+import { generateRandomString } from '@/utils/random';
 
 interface AllValue {
   program?: string;
@@ -130,9 +130,9 @@ interface ProgramEditorProps {
 }
 
 const ProgramEditor = ({ mode }: ProgramEditorProps) => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const params = useParams();
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(null);
@@ -245,7 +245,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
       return res.data;
     },
     onSuccess: () => {
-      navigate('/admin/programs');
+      router.push('/admin/programs');
     },
     onError: () => {
       alert('프로그램 생성에 실패했습니다.');
@@ -258,7 +258,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
       return res.data;
     },
     onSuccess: () => {
-      navigate(-1);
+      router.back();
     },
     onError: () => {
       alert('프로그램 수정에 실패했습니다.');
@@ -271,7 +271,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
       return res.data;
     },
     onSuccess: () => {
-      navigate('/admin/programs');
+      router.push('/admin/programs');
     },
     onError: () => {
       alert('프로그램 생성에 실패했습니다.');
@@ -284,7 +284,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
       return res.data;
     },
     onSuccess: () => {
-      navigate(-1);
+      router.back();
     },
     onError: () => {
       alert('프로그램 수정에 실패했습니다.');
@@ -297,7 +297,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
       return res.data;
     },
     onSuccess: () => {
-      navigate('/admin/programs');
+      router.push('/admin/programs');
     },
     onError: () => {
       alert('프로그램 생성에 실패했습니다.');
@@ -310,7 +310,7 @@ const ProgramEditor = ({ mode }: ProgramEditorProps) => {
       return res.data;
     },
     onSuccess: () => {
-      navigate(-1);
+      router.back();
     },
     onError: () => {
       alert('프로그램 수정에 실패했습니다.');
