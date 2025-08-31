@@ -1,4 +1,7 @@
+
 'use client';
+
+import FeatureCard from './FeatureCard';
 
 export default function Metrics() {
   const stats = [
@@ -40,32 +43,20 @@ export default function Metrics() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
-        <article className="rounded-xl bg-white p-4 shadow-sm">
-          <div className="aspect-[16/9] w-full rounded-lg bg-neutral-200" />
-          <h3 className="text-1.125-bold mt-3">취업 트렌드 콘텐츠 상시 제공</h3>
-          <p className="text-0.875 mt-1 text-neutral-40">
-            렛츠커리어 자체 블로그 및 인스타그램을 통해 취업 시장 트렌드에 맞는
-            콘텐츠를 제공합니다.
-          </p>
-        </article>
-        <article className="rounded-xl bg-white p-4 shadow-sm">
-          <div className="aspect-[16/9] w-full rounded-lg bg-neutral-200" />
-          <h3 className="text-1.125-bold mt-3">
-            취업 여정에 맞는 서류 작성 교육
-          </h3>
-          <p className="text-0.875 mt-1 text-neutral-40">
-            경험정리부터 직무탐색, 서류 3중 완성 및 면접 전까지 취업 여정에 맞춘
-            교육을 제공합니다.
-          </p>
-        </article>
-        <article className="rounded-xl bg-white p-4 shadow-sm">
-          <div className="aspect-[16/9] w-full rounded-lg bg-neutral-200" />
-          <h3 className="text-1.125-bold mt-3">교육 참여 후 후속 관리</h3>
-          <p className="text-0.875 mt-1 text-neutral-40">
-            교육 마무리 후에도 무제한 질문응답과 커뮤니티를 통해 취업 성공까지
-            함께합니다.
-          </p>
-        </article>
+        <FeatureCard
+          title="취업 트렌드 콘텐츠 상시 제공"
+          desc="렛츠커리어 자체 블로그 및 인스타그램을 통해 취업 시장 트렌드에 맞는 콘텐츠를 제공합니다."
+        />
+
+        <FeatureCard
+          title="취업 여정에 맞는 서류 작성 교육"
+          desc="경험정리부터 직무탐색, 서류 3중 완성 및 면접 전까지 취업 여정에 맞춘 교육을 제공합니다."
+        />
+
+        <FeatureCard
+          title="교육 참여 후 후속 관리"
+          desc="교육 마무리 후에도 무제한 질문응답과 커뮤니티를 통해 취업 성공까지 함께합니다."
+        />
       </div>
     </div>
   );
