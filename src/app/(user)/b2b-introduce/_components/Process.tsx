@@ -13,7 +13,7 @@ export default function Process() {
     <ol className="mx-auto max-w-4xl">
       {steps.map((s, i) => (
         <li key={i} className="relative flex items-start gap-4 py-4">
-          <span className="mt-0.5 inline-flex h-8 w-8 flex-none items-center justify-center rounded-full bg-[#6E7AFF] text-white text-0.875-semibold">
+          <span className="text-0.875-semibold mt-0.5 inline-flex h-8 w-8 flex-none items-center justify-center rounded-full bg-[#6E7AFF] text-white">
             {i + 1}
           </span>
           <div>
@@ -27,4 +27,3 @@ export default function Process() {
     </ol>
   );
 }
-

@@ -88,7 +88,7 @@ export default function LeadModal({ open, onClose }: Props) {
     >
       <div
         ref={dialogRef}
-        className="w-full max-w-xl rounded-2xl bg-white p-6 shadow-xl"
+        className="rounded-2xl w-full max-w-xl bg-white p-6 shadow-xl"
       >
         <div className="flex items-start justify-between gap-4">
           <h3 className="text-1.375-semibold">맞춤 견적 및 상담 요청</h3>
@@ -147,7 +147,7 @@ export default function LeadModal({ open, onClose }: Props) {
             </label>
           </div>
 
-          <label className="block text-0.875-medium">
+          <label className="text-0.875-medium block">
             희망 교육(선택)
             <select
               value={form.interest}
@@ -162,7 +162,7 @@ export default function LeadModal({ open, onClose }: Props) {
             </select>
           </label>
 
-          <label className="block text-0.875-medium">
+          <label className="text-0.875-medium block">
             전달 사항
             <textarea
               value={form.msg}
@@ -173,7 +173,7 @@ export default function LeadModal({ open, onClose }: Props) {
             />
           </label>
 
-          <label className="flex items-center gap-2 text-0.875">
+          <label className="text-0.875 flex items-center gap-2">
             <input
               type="checkbox"
               checked={form.agree}
@@ -186,25 +186,22 @@ export default function LeadModal({ open, onClose }: Props) {
           <div className="mt-2 flex items-center justify-between gap-4">
             <button
               type="button"
-              className="rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-1-medium hover:bg-neutral-50"
+              className="text-1-medium rounded-lg border border-neutral-300 bg-white px-4 py-2.5 hover:bg-neutral-50"
               onClick={onClose}
             >
               취소
             </button>
             <button
               disabled={loading}
-              className="rounded-lg bg-[#6E7AFF] px-5 py-2.5 text-white text-1-medium disabled:opacity-60"
+              className="text-1-medium rounded-lg bg-[#6E7AFF] px-5 py-2.5 text-white disabled:opacity-60"
             >
               {loading ? '전송 중...' : '상담 요청 보내기'}
             </button>
           </div>
 
-          {result && (
-            <p className="mt-3 text-0.875 text-[#375D3B]">{result}</p>
-          )}
+          {result && <p className="text-0.875 mt-3 text-[#375D3B]">{result}</p>}
         </form>
       </div>
     </div>
   );
 }
-
