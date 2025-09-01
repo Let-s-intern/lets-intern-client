@@ -63,7 +63,7 @@ const OldChallengeLayout = () => {
     }
 
     if (!isValidUserInfo || (isStartAfterGoal && !hasChallengeGoal)) {
-      navigate(`/challenge/${applicationId}/${programId}/user/info`);
+      navigate(`/old/challenge/${applicationId}/${programId}/user/info`);
       return;
     }
   }, [

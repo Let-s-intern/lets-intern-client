@@ -49,6 +49,13 @@ const ChallengeLayout = () => {
       return;
     }
 
+    if (Number(programId) <= 60) {
+      navigate(`/old/challenge/${applicationId}/${programId}`);
+      return;
+    } else {
+      setRedirecting(false);
+    }
+
     if (isLoading) return;
 
     if (!accessibleData) {
@@ -71,14 +78,6 @@ const ChallengeLayout = () => {
     accessibleData,
     isStartAfterGoal,
   ]);
-
-  useEffect(() => {
-    if (Number(programId) <= 60) {
-      navigate(`/old/challenge/${applicationId}/${programId}`);
-    } else {
-      setRedirecting(false);
-    }
-  }, [programId, applicationId, navigate]);
 
   if (isLoading || redirecting) {
     return <LoadingContainer />;
