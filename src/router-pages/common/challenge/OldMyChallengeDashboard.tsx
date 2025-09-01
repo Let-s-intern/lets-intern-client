@@ -3,23 +3,9 @@ import MissionCalendarSection from '@/components/common/challenge/my-challenge/s
 import OtherMissionSection from '@/components/common/challenge/my-challenge/section/OtherMissionSection';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
-import { Schedule } from '@/schema';
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
-
-// TODO: [나중에...] 외부로 빼야 함
-const getIsDone = (schedules: Schedule[]) => {
-  const last = schedules.reduce((acc, schedule) => {
-    const endDate = dayjs(schedule.missionInfo.endDate) ?? dayjs('2000-01-01');
-    if (acc.isBefore(endDate)) {
-      return endDate;
-    }
-    return acc;
-  }, dayjs('2000-01-01'));
-
-  return last.isBefore(dayjs());
-};
 
 const getIsChallengeDone = (endDate: string) => {
   return dayjs(new Date()).isAfter(dayjs(endDate));
