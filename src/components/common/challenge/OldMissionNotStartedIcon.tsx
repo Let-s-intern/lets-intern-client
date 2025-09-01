@@ -6,7 +6,7 @@ interface Props {
   schedule: Schedule;
 }
 
-const MissionNotStartedIcon = ({ className, schedule }: Props) => {
+const OldMissionNotStartedIcon = ({ className, schedule }: Props) => {
   return (
     <div
       className={clsx(
@@ -22,4 +22,4 @@ const MissionNotStartedIcon = ({ className, schedule }: Props) => {
   );
 };
 
-export default MissionNotStartedIcon;
+export default OldMissionNotStartedIcon;

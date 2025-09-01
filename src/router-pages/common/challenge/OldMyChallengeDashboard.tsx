@@ -1,9 +1,9 @@
-import DailyMissionSection from '@/components/common/challenge/my-challenge/section/DailyMissionSection';
 import OtherMissionSection from '@/components/common/challenge/my-challenge/section/OtherMissionSection';
 import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import axios from '@/utils/axios';
 import OldMissionCalendarSection from '@components/common/challenge/OldMissionCalendarSection';
+import OldMyDailyMissionSection from '@components/OldMyDailyMissionSection';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 
@@ -50,7 +50,7 @@ const OldMyChallengeDashboard = () => {
         isDone={isChallengeDone}
       />
       {myDailyMission?.attendanceInfo && myDailyMission.dailyMission && (
-        <DailyMissionSection myDailyMission={myDailyMission} />
+        <OldMyDailyMissionSection myDailyMission={myDailyMission} />
       )}
       {typeof isChallengeSubmitDone === 'boolean' && (
         <OtherMissionSection todayTh={todayTh} isDone={isChallengeSubmitDone} />
