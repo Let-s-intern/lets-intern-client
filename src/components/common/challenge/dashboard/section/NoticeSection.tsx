@@ -1,8 +1,8 @@
 import { useReadNotices } from '@/hooks/useReadItems';
+import { ChallengeNotice } from '@/schema';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChallengeNotice } from '../../../../../schema';
 
 interface INoticeSectionProps {
   notices: ChallengeNotice[];

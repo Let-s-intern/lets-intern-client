@@ -1,8 +1,5 @@
 import { useUserQuery } from '@/api/user';
 import EndDailyMissionSection from '@/components/common/challenge/dashboard/section/EndDailyMissionSection';
-import GuideSection from '@/components/common/challenge/dashboard/section/GuideSection';
-import NoticeSection from '@/components/common/challenge/dashboard/section/NoticeSection';
-import ScoreSection from '@/components/common/challenge/dashboard/section/ScoreSection';
 import MissionCalendar from '@/components/common/challenge/my-challenge/mission-calendar/MissionCalendar';
 import MissionTooltipQuestion from '@/components/common/challenge/ui/tooltip-question/MissionTooltipQuestion';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
@@ -10,6 +7,9 @@ import dayjs from '@/lib/dayjs';
 import { challengeGuides, challengeNotices, challengeScore } from '@/schema';
 import axios from '@/utils/axios';
 import OldDailyMissionSection from '@components/common/challenge/OldDailyMissionSection';
+import OldGuideSection from '@components/common/challenge/OldGuideSection';
+import OldNoticeSection from '@components/common/challenge/OldNoticeSection';
+import OldScoreSection from '@components/common/challenge/OldScoreSection';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 
@@ -95,7 +95,7 @@ const OldChallengeDashboard = () => {
             isChallengeDone && <EndDailyMissionSection />
           )}
           <div className="flex w-[12rem] flex-col gap-4">
-            <ScoreSection
+            <OldScoreSection
               programName={currentChallenge?.title || ''}
               isProgramDone={dayjs(new Date()).isAfter(
                 currentChallenge?.endDate,
@@ -109,11 +109,9 @@ const OldChallengeDashboard = () => {
               totalScore={totalScore}
               currentScore={currentScore}
             />
-            <NoticeSection notices={notices} />
+            <OldNoticeSection notices={notices} />
           </div>
-          {/* <div className="flex h-full w-full max-w-[12rem] flex-col gap-4"> */}
-          <GuideSection guides={guides} />
-          {/* </div> */}
+          <OldGuideSection guides={guides} />
         </div>
         <div className="flex gap-4">
           <section className="flex-1 rounded-xl border border-neutral-80 px-10 py-8">
@@ -124,7 +122,6 @@ const OldChallengeDashboard = () => {
               <MissionTooltipQuestion />
             </div>
             {schedules && (
-              // myChallenge 에 있는 미션캘린더 가져옴
               <MissionCalendar
                 className="mt-4"
                 schedules={schedules}
@@ -133,7 +130,6 @@ const OldChallengeDashboard = () => {
               />
             )}
           </section>
-          {/* <CurriculumSection /> */}
         </div>
       </div>
     </main>

@@ -9,7 +9,7 @@ import useAuthStore from '@/store/useAuthStore';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useEffect } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
-import NavBar from './NavBar';
+import OldNavBar from '../../OldNavBar';
 
 export const GOAL_DATE = dayjs('2025-01-19');
 
@@ -100,7 +100,7 @@ const OldChallengeLayout = () => {
       </div>
       <div className="hidden px-6 py-6 lg:block">
         <div className="mx-auto flex w-[1024px]">
-          <NavBar />
+          <OldNavBar />
           <div className="min-w-0 flex-1">
             <Outlet />
           </div>

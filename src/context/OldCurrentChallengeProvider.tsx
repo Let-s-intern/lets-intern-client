@@ -1,7 +1,3 @@
-import { useQuery } from '@tanstack/react-query';
-import { createContext, useContext } from 'react';
-import { useParams } from 'react-router-dom';
-import { z } from 'zod';
 import {
   challengeSchedule,
   DailyMission,
@@ -12,9 +8,13 @@ import {
   MyDailyMission,
   myDailyMission as myDailyMissionSchema,
   Schedule,
-} from '../schema';
-import useAuthStore from '../store/useAuthStore';
-import axios from '../utils/axios';
+} from '@/schema';
+import useAuthStore from '@/store/useAuthStore';
+import axios from '@/utils/axios';
+import { useQuery } from '@tanstack/react-query';
+import { createContext, useContext } from 'react';
+import { useParams } from 'react-router-dom';
+import { z } from 'zod';
 
 type CurrentChallenge = z.infer<typeof getChallengeIdSchema> & { id: number };
 

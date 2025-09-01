@@ -1,8 +1,8 @@
 import { useReadGuides } from '@/hooks/useReadItems';
+import { ChallengeGuide } from '@/schema';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChallengeGuide } from '../../../../../schema';
 
 interface GuideSection {
   guides: ChallengeGuide[];

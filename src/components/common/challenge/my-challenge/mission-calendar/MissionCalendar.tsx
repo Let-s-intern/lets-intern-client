@@ -1,6 +1,6 @@
 import { twMerge } from '@/lib/twMerge';
 import { Schedule } from '@/schema';
-import MissionCalendarItem from './MissionCalendarItem';
+import OldMissionCalendarItem from '../../OldMissionCalendarItem';
 
 interface Props {
   className?: string;
@@ -13,7 +13,7 @@ const MissionCalendar = ({ className, schedules, todayTh, isDone }: Props) => {
   return (
     <div className={twMerge('flex', className)}>
       {schedules.map((schedule, index) => (
-        <MissionCalendarItem
+        <OldMissionCalendarItem
           key={index}
           schedule={schedule}
           todayTh={todayTh}
