@@ -6,7 +6,7 @@ import { useGetChallengeQuery } from '@/api/program';
 import dayjs from '@/lib/dayjs';
 import useAuthStore from '@/store/useAuthStore';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import NavBar from './NavBar';
 
@@ -16,6 +16,8 @@ const ChallengeLayout = () => {
   const navigate = useNavigate();
   const params = useParams();
   const { isLoggedIn } = useAuthStore();
+
+  const [redirecting, setRedirecting] = useState(true);
 
   const programId = params.programId;
   const applicationId = params.applicationId;
@@ -70,7 +72,15 @@ const ChallengeLayout = () => {
     isStartAfterGoal,
   ]);
 
-  if (isLoading) {
+  useEffect(() => {
+    if (Number(programId) <= 56) {
+      navigate(`/old/challenge/${applicationId}/${programId}`);
+    } else {
+      setRedirecting(false);
+    }
+  }, [programId, applicationId, navigate]);
+
+  if (isLoading || redirecting) {
     return <LoadingContainer />;
   }
 
