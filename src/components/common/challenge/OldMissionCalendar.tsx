@@ -16,7 +16,6 @@ const OldMissionCalendar = ({
   isDone,
 }: Props) => {
   return (
-    // <div className={clsx('grid grid-cols-7 gap-y-6', className)}>
     <div className={twMerge('flex', className)}>
       {schedules.map((schedule, index) => (
         <OldMissionCalendarItem

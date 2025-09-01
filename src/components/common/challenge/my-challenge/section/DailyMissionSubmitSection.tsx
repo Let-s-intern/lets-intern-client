@@ -3,7 +3,7 @@ import {
   useGetChallengeReviewStatus,
   usePostChallengeAttendance,
 } from '@/api/challenge';
-import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import { MyDailyMission, Schedule } from '@/schema';
 import { BONUS_MISSION_TH } from '@/utils/constants';
 import { useEffect, useState } from 'react';
@@ -20,7 +20,7 @@ interface Props {
 }
 
 const DailyMissionSubmitSection = ({ myDailyMission }: Props) => {
-  const { schedules, currentChallenge } = useCurrentChallenge();
+  const { schedules, currentChallenge } = useOldCurrentChallenge();
 
   const lastMission = schedules.reduce((acc: Schedule | null, schedule) => {
     if (acc === null) return schedule;

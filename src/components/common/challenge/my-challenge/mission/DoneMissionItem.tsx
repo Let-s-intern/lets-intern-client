@@ -1,5 +1,5 @@
 import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
-import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import { MyChallengeMissionByType } from '@/schema';
 import { BONUS_MISSION_TH } from '@/utils/constants';
 import { missionSubmitToBadge } from '@/utils/convert';
@@ -18,7 +18,7 @@ const DoneMissionItem = ({ mission }: Props) => {
     applicationId: string;
     programId: string;
   }>();
-  const { currentChallenge, schedules } = useCurrentChallenge();
+  const { currentChallenge, schedules } = useOldCurrentChallenge();
   const itemRef = useRef<HTMLLIElement>(null);
   const [isDetailShown, setIsDetailShown] = useState(false);
 

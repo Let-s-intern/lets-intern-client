@@ -1,13 +1,13 @@
 import { useUserQuery } from '@/api/user';
 import EndDailyMissionSection from '@/components/common/challenge/dashboard/section/EndDailyMissionSection';
-import MissionTooltipQuestion from '@/components/common/challenge/ui/tooltip-question/MissionTooltipQuestion';
-import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import { challengeGuides, challengeNotices, challengeScore } from '@/schema';
 import axios from '@/utils/axios';
 import OldDailyMissionSection from '@components/common/challenge/OldDailyMissionSection';
 import OldGuideSection from '@components/common/challenge/OldGuideSection';
 import OldMissionCalendar from '@components/common/challenge/OldMissionCalendar';
+import OldMissionTooltipQuestion from '@components/common/challenge/OldMissionTooltipQuestion';
 import OldNoticeSection from '@components/common/challenge/OldNoticeSection';
 import OldScoreSection from '@components/common/challenge/OldScoreSection';
 import { useQuery } from '@tanstack/react-query';
@@ -22,7 +22,8 @@ const getIsChallengeSubmitDone = (endDate: string) => {
 };
 
 const OldChallengeDashboard = () => {
-  const { currentChallenge, schedules, dailyMission } = useCurrentChallenge();
+  const { currentChallenge, schedules, dailyMission } =
+    useOldCurrentChallenge();
 
   const params = useParams();
 
@@ -119,7 +120,7 @@ const OldChallengeDashboard = () => {
               <h2 className="text-1-bold text-neutral-30">
                 일정 및 미션 제출 현황
               </h2>
-              <MissionTooltipQuestion />
+              <OldMissionTooltipQuestion />
             </div>
             {schedules && (
               <OldMissionCalendar

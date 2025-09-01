@@ -145,6 +145,6 @@ export const OldCurrentChallengeProvider = ({
   );
 };
 
-export const useCurrentChallenge = () => {
+export const useOldCurrentChallenge = () => {
   return useContext(currentChallengeContext);
 };

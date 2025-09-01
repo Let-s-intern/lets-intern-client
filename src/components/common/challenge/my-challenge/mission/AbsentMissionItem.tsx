@@ -1,4 +1,4 @@
-import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import { MyChallengeMissionByType, userChallengeMissionDetail } from '@/schema';
 import axios from '@/utils/axios';
 import { BONUS_MISSION_TH } from '@/utils/constants';
@@ -17,7 +17,7 @@ interface Props {
 
 const AbsentMissionItem = ({ mission, isDone, setOpenReviewModal }: Props) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { currentChallenge, schedules } = useCurrentChallenge();
+  const { currentChallenge, schedules } = useOldCurrentChallenge();
 
   const th =
     mission?.th === BONUS_MISSION_TH ? '보너스' : `  ${mission?.th}회차`;

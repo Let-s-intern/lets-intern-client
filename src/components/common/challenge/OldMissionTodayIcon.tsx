@@ -1,3 +1,4 @@
+import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import { Schedule, ScheduleMission } from '@/schema';
 import { missionSubmitToBadge } from '@/utils/convert';
 import clsx from 'clsx';
@@ -18,13 +19,15 @@ const OldMissionTodayIcon = ({
   isDone,
 }: Props) => {
   const params = useParams();
+  const { currentChallenge } = useOldCurrentChallenge();
+  const challengeEndDate = currentChallenge?.endDate;
 
   return (
     <>
       <Link
         to={
           !isDone
-            ? `/challenge/${params.applicationId}/${params.programId}/me?scroll_to=daily-mission`
+            ? `/old/challenge/${params.applicationId}/${params.programId}/me?scroll_to=daily-mission`
             : '#'
         }
         replace
@@ -64,6 +67,7 @@ const OldMissionTodayIcon = ({
             missionSubmitToBadge({
               status: attendance.status,
               result: attendance.result,
+              challengeEndDate,
             }).style,
             {
               'opacity-0':
@@ -75,6 +79,7 @@ const OldMissionTodayIcon = ({
             missionSubmitToBadge({
               status: attendance.status,
               result: attendance.result,
+              challengeEndDate,
             }).text
           }
         </span>

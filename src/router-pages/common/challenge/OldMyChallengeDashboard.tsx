@@ -1,9 +1,9 @@
 import DailyMissionSection from '@/components/common/challenge/my-challenge/section/DailyMissionSection';
-import MissionCalendarSection from '@/components/common/challenge/my-challenge/section/MissionCalendarSection';
 import OtherMissionSection from '@/components/common/challenge/my-challenge/section/OtherMissionSection';
-import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import axios from '@/utils/axios';
+import OldMissionCalendarSection from '@components/common/challenge/OldMissionCalendarSection';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 
@@ -18,7 +18,7 @@ const getIsChallengeSubmitDone = (endDate: string) => {
 const OldMyChallengeDashboard = () => {
   const params = useParams<{ programId: string }>();
 
-  const { schedules, myDailyMission } = useCurrentChallenge();
+  const { schedules, myDailyMission } = useOldCurrentChallenge();
 
   const todayTh = myDailyMission?.dailyMission?.th ?? schedules.length + 1;
 
@@ -44,7 +44,7 @@ const OldMyChallengeDashboard = () => {
       <header>
         <h1 className="text-2xl font-bold">나의 기록장</h1>
       </header>
-      <MissionCalendarSection
+      <OldMissionCalendarSection
         schedules={schedules}
         todayTh={todayTh}
         isDone={isChallengeDone}

@@ -73,7 +73,7 @@ const ChallengeLayout = () => {
   ]);
 
   useEffect(() => {
-    if (Number(programId) <= 56) {
+    if (Number(programId) <= 60) {
       navigate(`/old/challenge/${applicationId}/${programId}`);
     } else {
       setRedirecting(false);
