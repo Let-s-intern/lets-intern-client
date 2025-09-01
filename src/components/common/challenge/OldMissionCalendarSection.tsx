@@ -1,5 +1,5 @@
 import { Schedule } from '@/schema';
-import MissionCalendar from './my-challenge/mission-calendar/MissionCalendar';
+import OldMissionCalendar from './OldMissionCalendar';
 import MissionTooltipQuestion from './ui/tooltip-question/MissionTooltipQuestion';
 
 interface Props {
@@ -27,7 +27,7 @@ const OldMissionCalendarSection = ({ schedules, todayTh, isDone }: Props) => {
         </h2>
         <MissionTooltipQuestion />
       </div>
-      <MissionCalendar
+      <OldMissionCalendar
         className="mt-4"
         schedules={schedules}
         todayTh={todayTh}

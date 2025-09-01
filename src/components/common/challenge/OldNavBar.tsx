@@ -5,11 +5,13 @@ const OldNavBar = () => {
   const params = useParams();
   const location = useLocation();
   const applicationId = params.applicationId;
-  const activeStatus = /^\/challenge\/(\d+)\/others/.test(location.pathname)
+  const activeStatus = /^\/old\/challenge\/(\d+)\/others/.test(
+    location.pathname,
+  )
     ? 'OTHERS_DASHBOARD'
-    : /^\/challenge\/(\d+)\/me/.test(location.pathname)
+    : /^\/old\/challenge\/(\d+)\/me/.test(location.pathname)
       ? 'MY_DASHBOARD'
-      : /^\/challenge\/(\d+)$/.test(location.pathname) && 'DASHBOARD';
+      : /^\/old\/challenge\/(\d+)$/.test(location.pathname) && 'DASHBOARD';
 
   return (
     <>

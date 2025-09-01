@@ -1,6 +1,5 @@
 import { useUserQuery } from '@/api/user';
 import EndDailyMissionSection from '@/components/common/challenge/dashboard/section/EndDailyMissionSection';
-import MissionCalendar from '@/components/common/challenge/my-challenge/mission-calendar/MissionCalendar';
 import MissionTooltipQuestion from '@/components/common/challenge/ui/tooltip-question/MissionTooltipQuestion';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
@@ -8,6 +7,7 @@ import { challengeGuides, challengeNotices, challengeScore } from '@/schema';
 import axios from '@/utils/axios';
 import OldDailyMissionSection from '@components/common/challenge/OldDailyMissionSection';
 import OldGuideSection from '@components/common/challenge/OldGuideSection';
+import OldMissionCalendar from '@components/common/challenge/OldMissionCalendar';
 import OldNoticeSection from '@components/common/challenge/OldNoticeSection';
 import OldScoreSection from '@components/common/challenge/OldScoreSection';
 import { useQuery } from '@tanstack/react-query';
@@ -122,7 +122,7 @@ const OldChallengeDashboard = () => {
               <MissionTooltipQuestion />
             </div>
             {schedules && (
-              <MissionCalendar
+              <OldMissionCalendar
                 className="mt-4"
                 schedules={schedules}
                 todayTh={todayTh}
