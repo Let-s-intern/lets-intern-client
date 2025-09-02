@@ -111,17 +111,17 @@ const ChallengeDashboard = () => {
   const isChallengeSubmitDone = getIsChallengeSubmitDone(programEndDate);
 
   return (
-    <main className="pl-12">
+    <main className="px-5 md:pl-12 md:pr-0">
       <header>
         <h1 className="text-[22px] font-semibold">{user?.name}님의 대시보드</h1>
       </header>
-      <div className="flex flex-col gap-5">
-        <div className="mt-6 flex gap-3">
+      <div className="flex flex-col gap-4 md:gap-5">
+        <div className="mt-6 flex flex-col gap-3 md:flex-row">
           {/* 챌린지 미션 상세 */}
           <MissionDetailSection />
 
           {/* 공지사항, 미션점수 */}
-          <div className="flex w-[22rem] flex-col gap-2.5">
+          <div className="flex flex-col gap-2.5 md:w-[22rem]">
             <NoticeSection notices={notices} />
             <div className="flex gap-2.5">
               <ScoreSection

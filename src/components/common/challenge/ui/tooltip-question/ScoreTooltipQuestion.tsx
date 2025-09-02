@@ -39,7 +39,7 @@ const ScrollTooltipQuestion = () => {
             className="absolute left-1/2 top-[1.5px] h-3 w-6 -translate-x-1/2 -translate-y-full bg-white"
             style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }}
           />
-          <div className="flex w-max items-center justify-center p-3 text-sm font-light">
+          <div className="flex w-[212px] items-center justify-center p-3 text-sm font-light md:w-max">
             미션 점수의 총합이 80점 이상인 경우에, 페이백 환급이 진행됩니다.
             <br />
             자세한 내용은 환급정책을 확인해주세요.
