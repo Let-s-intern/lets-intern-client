@@ -14,8 +14,6 @@ interface Props {
   isDone: boolean;
 }
 
-const VISIBLE_RANGE = 3;
-
 const MissionCalendar = ({ schedules, todayTh, isDone }: Props) => {
   const swiperRef = useRef<SwiperType | null>(null);
   const { selectedMissionTh } = useMissionStore();
@@ -34,8 +32,9 @@ const MissionCalendar = ({ schedules, todayTh, isDone }: Props) => {
     const swiper = swiperRef.current;
     if (!swiper) return;
 
-    // 3보다 큰 경우에만 스크롤
-    if (targetIndex > VISIBLE_RANGE) {
+    // 모바일에서 3을 넘어가면 스크롤
+    const isDesktop = window.innerWidth >= 768;
+    if (!isDesktop && targetIndex > 3) {
       swiper.slideTo(targetIndex, 100);
     }
   }, [targetIndex, schedules.length]);
