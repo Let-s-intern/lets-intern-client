@@ -1,5 +1,10 @@
-import { twMerge } from '@/lib/twMerge';
 import { Schedule } from '@/schema';
+import { useMissionStore } from '@/store/useMissionStore';
+import { useEffect, useMemo, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
+import type { Swiper as SwiperType } from 'swiper';
+import 'swiper/css';
+import { Swiper, SwiperSlide } from 'swiper/react';
 import MissionCalendarItem from './MissionCalendarItem';
 
 interface Props {
@@ -9,19 +14,55 @@ interface Props {
   isDone: boolean;
 }
 
-const MissionCalendar = ({ className, schedules, todayTh, isDone }: Props) => {
+const VISIBLE_RANGE = 3;
+
+const MissionCalendar = ({ schedules, todayTh, isDone }: Props) => {
+  const swiperRef = useRef<SwiperType | null>(null);
+  const { selectedMissionTh } = useMissionStore();
+  const location = useLocation();
+
+  const isMissionPage = useMemo(
+    () => location.pathname.includes('/me'),
+    [location.pathname],
+  );
+
+  const targetIndex = useMemo(() => {
+    return isMissionPage ? (selectedMissionTh ?? todayTh) : todayTh;
+  }, [isMissionPage, selectedMissionTh, todayTh]);
+
+  useEffect(() => {
+    const swiper = swiperRef.current;
+    if (!swiper) return;
+
+    // 3보다 큰 경우에만 스크롤
+    if (targetIndex > VISIBLE_RANGE) {
+      swiper.slideTo(targetIndex, 100);
+    }
+  }, [targetIndex, schedules.length]);
+
   return (
-    <div className={twMerge('flex', className)}>
+    <Swiper
+      onSwiper={(swiper) => (swiperRef.current = swiper)}
+      slidesPerView="auto"
+      breakpoints={{
+        768: {
+          slidesPerView: 10,
+          slidesOffsetBefore: 0,
+          slidesOffsetAfter: 0,
+        },
+      }}
+    >
       {schedules.map((schedule, index) => (
-        <MissionCalendarItem
-          key={index}
-          schedule={schedule}
-          todayTh={todayTh}
-          isDone={isDone}
-          className="cursor-pointer hover:bg-primary-5"
-        />
+        <SwiperSlide key={index} className="mt-3 !w-[82px]">
+          <MissionCalendarItem
+            schedule={schedule}
+            todayTh={todayTh}
+            isDone={isDone}
+            className="w-full cursor-pointer"
+          />
+        </SwiperSlide>
       ))}
-    </div>
+    </Swiper>
   );
 };
 

@@ -145,7 +145,7 @@ const ChallengeDashboard = () => {
 
         {/* 일정 및 제출 현황 */}
         <div className="flex gap-4">
-          <section className="flex-1 rounded-xs border border-neutral-80 p-4">
+          <section className="w-full flex-1 rounded-xs border border-neutral-80 p-4">
             <div className="flex items-center gap-2">
               <h2 className="text-1-bold text-neutral-30">
                 일정 및 미션 제출 현황
