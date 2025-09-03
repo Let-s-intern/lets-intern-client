@@ -25,9 +25,6 @@ const MissionIcon = ({ className, schedule, isDone }: Props) => {
     challengeEndDate: currentChallenge?.endDate,
   });
 
-  // const isAttended =
-  //   (attendance.result === 'WAITING' || attendance.result === 'PASS') &&
-  //   attendance.status !== 'ABSENT';
   const isWaiting = attendance.result === 'WAITING';
 
   return (

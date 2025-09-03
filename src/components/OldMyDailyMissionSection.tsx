@@ -1,19 +1,19 @@
-import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { MyDailyMission, userChallengeMissionDetail } from '@/schema';
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import DailyMissionInfoSection from './DailyMissionInfoSection';
-import DailyMissionSubmitSection from './DailyMissionSubmitSection';
+import DailyMissionInfoSection from './common/challenge/my-challenge/section/DailyMissionInfoSection';
+import DailyMissionSubmitSection from './common/challenge/my-challenge/section/DailyMissionSubmitSection';
 
 interface Props {
   myDailyMission: MyDailyMission;
 }
 
-const DailyMissionSection = ({ myDailyMission }: Props) => {
+const OldMyDailyMissionSection = ({ myDailyMission }: Props) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { currentChallenge } = useOldCurrentChallenge();
+  const { currentChallenge } = useCurrentChallenge();
 
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -41,8 +41,6 @@ const DailyMissionSection = ({ myDailyMission }: Props) => {
     },
   });
 
-  if (!missionDetail) return null;
-
   return (
     <section
       className="mt-5 scroll-mt-[calc(6rem+1rem)] text-[#333333]"
@@ -62,4 +60,4 @@ const DailyMissionSection = ({ myDailyMission }: Props) => {
   );
 };
 
-export default DailyMissionSection;
+export default OldMyDailyMissionSection;

@@ -1,4 +1,4 @@
-import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import { MyChallengeMissionByType, userChallengeMissionDetail } from '@/schema';
 import axios from '@/utils/axios';
 import { BONUS_MISSION_TH } from '@/utils/constants';
@@ -14,7 +14,7 @@ interface Props {
 
 const YetMissionItem = ({ mission }: Props) => {
   const [isDetailShown, setIsDetailShown] = useState(false);
-  const { currentChallenge } = useCurrentChallenge();
+  const { currentChallenge } = useOldCurrentChallenge();
 
   const th =
     mission?.th === BONUS_MISSION_TH ? '보너스' : `  ${mission?.th}회차`;
