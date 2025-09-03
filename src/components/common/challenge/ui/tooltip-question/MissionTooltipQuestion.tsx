@@ -33,20 +33,29 @@ const MissionTooltipQuestion = () => {
         <img src="/icons/info-circle.svg" alt="tooltip question" />
       </i>
       {isTooltipOpen && (
-        <div className="absolute -right-4 -top-3 z-30 translate-x-full drop-shadow-xl">
+        <div className="absolute left-1/2 top-full z-30 mt-2 -translate-x-1/2 shadow-[2px_0px_10px_rgba(0,0,0,0.07)] drop-shadow-xl md:-right-4 md:left-auto md:top-0 md:-translate-y-3 md:translate-x-full">
           <div
-            className="absolute left-[1.5px] top-1.5 h-6 w-3 -translate-x-full bg-static-100"
+            className="absolute left-[1.5px] top-1.5 hidden h-6 w-3 -translate-x-full bg-static-100 md:block"
             style={{ clipPath: 'polygon(0 50%, 100% 100%, 100% 0)' }}
           />
           <div
-            className="absolute left-[1.5px] top-1.5 h-6 w-3 -translate-x-full bg-white"
+            className="absolute left-[1.5px] top-1.5 hidden h-6 w-3 -translate-x-full bg-white md:block"
             style={{ clipPath: 'polygon(0% 50%, 100% 100%, 100% 0%)' }}
+          />
+          <div
+            className="rotate-270 absolute left-1/2 top-[-10px] h-3 w-6 -translate-x-1/2 bg-white md:hidden"
+            style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }}
           />
           <div className="flex w-max items-center rounded-xs bg-static-100">
             <img
               src="/images/mission-date-question-image-new.svg"
               alt="미션 제출 현황 아이콘 설명 이미지"
-              className="h-full object-contain"
+              className="hidden h-full object-contain md:block"
+            />
+            <img
+              src="/images/mission-date-question-image-mo.svg"
+              alt="미션 제출 현황 아이콘 설명 이미지"
+              className="h-full object-contain md:hidden"
             />
           </div>
         </div>
