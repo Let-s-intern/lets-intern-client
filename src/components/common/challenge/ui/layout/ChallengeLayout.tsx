@@ -76,9 +76,9 @@ const ChallengeLayout = () => {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-6rem)]">
-      <div className="mx-auto flex flex-col md:w-[1120px] md:flex-row md:px-5 md:pt-12">
+      <div className="mx-auto flex flex-col md:w-[1120px] md:flex-row md:pt-12">
         <NavBar />
-        <div className="min-w-0 flex-1 py-8 md:px-5 md:py-8">
+        <div className="min-w-0 flex-1 py-8 md:py-0">
           <Outlet />
         </div>
       </div>
