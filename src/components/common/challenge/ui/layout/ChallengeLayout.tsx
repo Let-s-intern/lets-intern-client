@@ -12,7 +12,7 @@ import NavBar from './NavBar';
 
 export const GOAL_DATE = dayjs('2025-01-19');
 const CHALLENGE_DASHBOARD_ID_THRESHOLD =
-  process.env.NODE_ENV === 'development' ? 60 : 116;
+  process.env.NODE_ENV === 'development' ? 60 : 60; // todo: 운영 배포 전 ID 수정 116
 
 const ChallengeLayout = () => {
   const navigate = useNavigate();
