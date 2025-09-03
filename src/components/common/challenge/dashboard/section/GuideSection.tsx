@@ -32,7 +32,7 @@ const GuideSection = ({ guides }: GuideSection) => {
           <h2 className="font-semibold text-neutral-10">챌린지 가이드</h2>
         </div>
         {currentGuideList.length === 0 ? (
-          <div className="flex h-[5.75rem] justify-center">
+          <div className="flex h-[4.4rem] justify-center md:h-[5.75rem]">
             <span className="text-sm">챌린지 가이드가 없습니다.</span>
           </div>
         ) : (

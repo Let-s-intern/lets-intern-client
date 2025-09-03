@@ -46,8 +46,8 @@ const ScoreSection = ({
         </div>
         <div className="flex items-center justify-start">
           <div className="flex items-end">
-            <span className="text-3xl font-bold text-primary">
-              {currentScore}
+            <span className="text-2xl font-bold text-primary">
+              {currentScore}점
             </span>
             <span className="mb-[1px] ml-1 font-semibold text-[#D3D3D3]">
               /{totalScore}
