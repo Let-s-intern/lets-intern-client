@@ -18,7 +18,7 @@ const MyChallengeDashboard = () => {
   const { isChallengeDone } = useChallengeProgram();
 
   return (
-    <main className="pl-12">
+    <main className="px-5 md:px-0 md:pl-12">
       <h1 className="text-medium22 font-semibold">나의 미션</h1>
       <MissionCalendarSection
         schedules={schedules}
