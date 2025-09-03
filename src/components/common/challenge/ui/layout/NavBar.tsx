@@ -24,7 +24,7 @@ const DashboardNavBar = () => {
                 {
                   'font-semibold text-primary md:bg-primary-5':
                     activeStatus === 'DASHBOARD',
-                  'font-medium text-[#4A495C]': activeStatus !== 'DASHBOARD',
+                  'font-medium text-neutral-30': activeStatus !== 'DASHBOARD',
                 },
               )}
             >
@@ -39,7 +39,7 @@ const DashboardNavBar = () => {
                 {
                   'font-semibold text-primary md:bg-primary-5':
                     activeStatus === 'MY_MISSION',
-                  'font-medium text-[#4A495C]': activeStatus !== 'MY_MISSION',
+                  'font-medium text-neutral-30': activeStatus !== 'MY_MISSION',
                 },
               )}
             >
