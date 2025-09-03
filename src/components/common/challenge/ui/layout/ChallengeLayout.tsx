@@ -11,6 +11,8 @@ import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import NavBar from './NavBar';
 
 export const GOAL_DATE = dayjs('2025-01-19');
+const CHALLENGE_DASHBOARD_ID_THRESHOLD =
+  process.env.NODE_ENV === 'development' ? 60 : 116;
 
 const ChallengeLayout = () => {
   const navigate = useNavigate();
@@ -49,7 +51,7 @@ const ChallengeLayout = () => {
       return;
     }
 
-    if (Number(programId) <= 60) {
+    if (Number(programId) <= CHALLENGE_DASHBOARD_ID_THRESHOLD) {
       navigate(`/old/challenge/${applicationId}/${programId}`);
       return;
     } else {
