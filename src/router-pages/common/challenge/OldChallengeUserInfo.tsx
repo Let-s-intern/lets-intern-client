@@ -133,11 +133,11 @@ const OldChallengeUserInfo = () => {
     }
     if (isStartAfterGoal) {
       if (isValidUserInfo && hasChallengeGoal) {
-        navigate(`/challenge/${params.applicationId}/${programId}`);
+        navigate(`/old/challenge/${params.applicationId}/${programId}`);
         return;
       }
     } else if (isValidUserInfo) {
-      navigate(`/challenge/${params.applicationId}/${programId}`);
+      navigate(`/old/challenge/${params.applicationId}/${programId}`);
       return;
     }
   }, [
