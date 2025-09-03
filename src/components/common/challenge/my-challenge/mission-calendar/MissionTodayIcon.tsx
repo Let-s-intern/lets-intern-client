@@ -1,9 +1,8 @@
-import clsx from 'clsx';
-
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { Schedule, ScheduleMission } from '@/schema';
 import { BONUS_MISSION_TH } from '@/utils/constants';
-import { Schedule, ScheduleMission } from '../../../../../schema';
-import { missionSubmitToBadge } from '../../../../../utils/convert';
+import { missionSubmitToBadge } from '@/utils/convert';
+import clsx from 'clsx';
 
 interface Props {
   mission: ScheduleMission;

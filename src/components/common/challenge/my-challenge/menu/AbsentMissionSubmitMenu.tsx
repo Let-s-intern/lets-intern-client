@@ -3,7 +3,7 @@ import {
   useGetChallengeReviewStatus,
   usePostChallengeAttendance,
 } from '@/api/challenge';
-import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import { Schedule, UserChallengeMissionDetail } from '@/schema';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
@@ -20,7 +20,7 @@ const AbsentMissionSubmitMenu = ({
   currentSchedule,
   setOpenReviewModal,
 }: Props) => {
-  const { schedules, currentChallenge } = useCurrentChallenge();
+  const { schedules, currentChallenge } = useOldCurrentChallenge();
   const lastMission = schedules.reduce((acc: Schedule | null, schedule) => {
     if (acc === null) return schedule;
 

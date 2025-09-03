@@ -1,4 +1,4 @@
-import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -19,7 +19,7 @@ const OtherMissionSection = ({ isDone }: Props) => {
     remainingMissions,
     submittedMissions,
     currentChallenge,
-  } = useCurrentChallenge();
+  } = useOldCurrentChallenge();
 
   const [searchParams, setSearchParams] = useSearchParams();
 

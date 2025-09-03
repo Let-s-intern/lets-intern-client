@@ -1,4 +1,4 @@
-import { ScheduleMission } from '../../../../../schema';
+import { ScheduleMission } from '@/schema';
 
 interface Props {
   mission: ScheduleMission;

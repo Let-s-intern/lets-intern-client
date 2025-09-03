@@ -1,9 +1,11 @@
+import OldChallengeLayout from '@components/common/challenge/ui/layout/OldChallengeLayout';
 import ScrollToTop from '@components/ui/scroll-to-top/ScrollToTop';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { getAdminRoutes } from './AdminRoutes';
 import ChallengeLayout from './components/common/challenge/ui/layout/ChallengeLayout';
 import Layout from './components/common/ui/layout/Layout';
 import { CurrentChallengeProvider } from './context/CurrentChallengeProvider';
+import { OldCurrentChallengeProvider } from './context/OldCurrentChallengeProvider';
 import About from './router-pages/common/about/About';
 import FindPassword from './router-pages/common/auth/FindPassword';
 import Login from './router-pages/common/auth/Login';
@@ -14,6 +16,9 @@ import ExperienceSummaryLatest from './router-pages/common/challenge/ExperienceS
 import MarketingLatest from './router-pages/common/challenge/MarketingLatest';
 import MissionFeedback from './router-pages/common/challenge/MissionFeedback';
 import MyChallengeDashboard from './router-pages/common/challenge/MyChallengeDashboard';
+import OldChallengeDashboard from './router-pages/common/challenge/OldChallengeDashboard';
+import OldChallengeUserInfo from './router-pages/common/challenge/OldChallengeUserInfo';
+import OldMyChallengeDashboard from './router-pages/common/challenge/OldMyChallengeDashboard';
 import PersonalStatementLatest from './router-pages/common/challenge/PersonalStatementLatest';
 import PortfolioLatest from './router-pages/common/challenge/PortfolioLatest';
 import Home from './router-pages/common/home/Home';
@@ -180,6 +185,20 @@ const Router = () => {
                   path="challenge/:challengeId/missions/:missionId/feedback"
                   element={<MissionFeedback />}
                 />
+              </Route>
+
+              {/* Old 챌린지 대시보드 */}
+              <Route
+                path="old/challenge/:applicationId/:programId"
+                element={
+                  <OldCurrentChallengeProvider>
+                    <OldChallengeLayout />
+                  </OldCurrentChallengeProvider>
+                }
+              >
+                <Route path="user/info" element={<OldChallengeUserInfo />} />
+                <Route path="" element={<OldChallengeDashboard />} />
+                <Route path="me" element={<OldMyChallengeDashboard />} />
               </Route>
 
               {/* 서류진단 */}
