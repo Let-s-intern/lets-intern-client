@@ -9,7 +9,6 @@ import { usePatchUser, useUserQuery } from '@/api/user';
 import GradeDropdown from '@/components/common/mypage/privacy/form-control/GradeDropdown';
 import Input from '@/components/common/ui/input/Input';
 import { GOAL_DATE } from '@components/common/challenge/ui/layout/ChallengeLayout';
-import TextArea from '@components/common/ui/input/TextArea';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -229,7 +228,7 @@ const OldChallengeUserInfo = () => {
                 onChange={handleInputChange}
               />
             </div>
-            <div className="flex flex-col gap-1">
+            {/* <div className="flex flex-col gap-1">
               <label htmlFor="wishCompany" className="text-1-medium">
                 챌린지 목표<span className="text-requirement">*</span>
               </label>
@@ -243,7 +242,7 @@ const OldChallengeUserInfo = () => {
                 onChange={handleGoalChange}
                 maxLength={200}
               />
-            </div>
+            </div> */}
           </div>
         </section>
 
