@@ -49,7 +49,7 @@ const MissionSubmitRegularSection = ({
 
   const lastMissionId = schedules[schedules.length - 1].missionInfo.id;
   const lastRegularMissionId =
-    lastMissionId === 100
+    lastMissionId === lastMissionId
       ? schedules[schedules.length - 2].missionInfo.id
       : lastMissionId;
 
