@@ -15,6 +15,7 @@ import ClientTestimonials from './ClientTestimonials';
 import Features from './Features';
 import FinalCTA from './FinalCTA';
 import Hero from './Hero';
+import LogoRail from './LogoRail';
 import MentorMarquee from './MentorMarquee';
 import Metrics from './Metrics';
 import PainPoints from './PainPoints';
@@ -37,9 +38,9 @@ export default function Client() {
         </div>
       </section>
 
-      {/* Intro copy + mock logo rail */}
+      {/* Intro copy + logo rail */}
       <section id="intro" className="w-full">
-        <div className="mx-auto max-w-[1120px] py-16 md:py-20">
+        <div className="mx-auto py-16 md:py-32">
           <div className="text-center">
             <p className="text-center text-xsmall16 font-medium text-primary-90">
               교육 파트너 소개
@@ -56,16 +57,8 @@ export default function Client() {
               취업 교육을 확인하세요.
             </p>
           </div>
-          <div className="mt-10 rounded-xl bg-neutral-100/80 p-8">
-            <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="h-14 rounded-md bg-neutral-200/90"
-                  aria-hidden
-                />
-              ))}
-            </div>
+          <div className="mt-12">
+            <LogoRail />
           </div>
         </div>
       </section>
