@@ -262,6 +262,7 @@ export const adminBlogReviewSchema = z
     programTitle: z.string().optional().nullable(),
     name: z.string().optional().nullable(),
     title: z.string().optional().nullable(),
+    description: z.string().optional().nullable(),
     url: z.string().optional().nullable(),
     thumbnail: z.string().optional().nullable(),
     isVisible: z.boolean().optional().nullable(),
@@ -298,6 +299,7 @@ interface AdminBlogReviewPostReq {
   name?: string | null;
   url?: string | null;
   postDate?: string | null;
+  description?: string | null;
 }
 
 export const usePostAdminBlogReview = () => {
