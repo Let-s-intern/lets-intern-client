@@ -47,12 +47,12 @@ const MissionSubmitRegularSection = ({
   const isSubmitPeriodEnded =
     dayjs(currentChallenge?.endDate).add(2, 'day').isBefore(dayjs()) ?? true;
 
-  const lastMissionId = schedules[schedules.length - 1].missionInfo.id;
-  const lastRegularMissionId =
-    lastMissionId === lastMissionId
-      ? schedules[schedules.length - 2].missionInfo.id
-      : lastMissionId;
-
+  // missionTh를 기준으로 마지막 정규 미션 찾기 (보너스 미션 제외)
+  const regularMissions = schedules.filter(
+    (schedule) => schedule.missionInfo.th !== 100,
+  );
+  const lastRegularMission = regularMissions[regularMissions.length - 1];
+  const lastRegularMissionId = lastRegularMission?.missionInfo.id;
   const isLastRegularMissionSubmit = lastRegularMissionId === selectedMissionId;
 
   const [textareaValue, setTextareaValue] = useState(
