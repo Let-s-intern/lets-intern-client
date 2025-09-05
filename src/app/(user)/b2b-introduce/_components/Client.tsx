@@ -3,13 +3,15 @@
 import { Break } from '@components/Break';
 // TODO:
 // - GTM 이벤트(뷰/클릭/제출/성공) 연결
-// - “기업소개서 받기” 실제 파일/링크 연결
+// - “기업소개서 받기” 실제 링크 연결
 // - OG 전용 이미지 생성/교체
 // - 실제 파트너 로고/캡처 삽입 및 next/image 최적화
-// Hero 뱃지 아이콘 아이콘 수정
+// Hero 뱃지 아이콘 위치 수정
 
 // import { Break } from '@components/Break';
+import heroBg from '../_images/hero-bg.png';
 import CaseStudies from './CaseStudies';
+import ClientTestimonials from './ClientTestimonials';
 import Features from './Features';
 import FinalCTA from './FinalCTA';
 import Hero from './Hero';
@@ -18,18 +20,26 @@ import Metrics from './Metrics';
 import PainPoints from './PainPoints';
 import Process from './Process';
 import StudentTestimonials from './StudentTestimonials';
-import ClientTestimonials from './ClientTestimonials';
 
 export default function Client() {
   const CONTACT_LINK = '#contact';
   return (
     <main className="w-full text-neutral-900">
       {/* Hero */}
-      <Hero primaryHref={CONTACT_LINK} />
+      <section className="relative w-full overflow-hidden pt-8">
+        <div
+          className="relative mx-auto max-w-[1336px] rounded-none bg-cover bg-center py-16 md:rounded-lg md:py-24 lg:py-36"
+          style={{
+            backgroundImage: `url("${heroBg.src}")`,
+          }}
+        >
+          <Hero primaryHref={CONTACT_LINK} />
+        </div>
+      </section>
 
       {/* Intro copy + mock logo rail */}
       <section id="intro" className="w-full">
-        <div className="mw-1180 py-16 md:py-20">
+        <div className="mx-auto max-w-[1120px] py-16 md:py-20">
           <div className="text-center">
             <p className="text-center text-xsmall16 font-medium text-primary-90">
               교육 파트너 소개
@@ -62,7 +72,7 @@ export default function Client() {
 
       {/* Metrics + cards */}
       <section className="w-full bg-[#F7F9FF]">
-        <div className="mw-1180 py-16 md:py-24">
+        <div className="mx-auto max-w-[1120px] py-16 md:py-24">
           <div className="text-center">
             <p className="inline-block bg-primary-5 text-center text-xsmall16 font-medium text-primary-90">
               성과로 이어지는 렛츠커리어 서류 교육
@@ -83,7 +93,7 @@ export default function Client() {
 
       {/* Pain points */}
       <section className="w-full">
-        <div className="mw-1180 py-16 md:py-20">
+        <div className="mx-auto max-w-[1120px] py-16 md:py-20">
           <p className="text-center text-xsmall16 font-medium text-primary-90">
             혹시 이런 고민들을 갖고 있지 않으신가요?
           </p>
@@ -98,7 +108,7 @@ export default function Client() {
 
       {/* Features/Programs */}
       <section className="w-full">
-        <div className="mw-1180 py-16 md:py-24">
+        <div className="mx-auto max-w-[1120px] py-16 md:py-24">
           <p className="text-center text-xsmall16 font-medium text-primary-90">
             렛츠커리어 취업 교육 솔루션
           </p>
@@ -128,7 +138,7 @@ export default function Client() {
 
       {/* Case studies */}
       <section className="w-full">
-        <div className="mw-1180 py-16 md:py-24">
+        <div className="mx-auto max-w-[1120px] py-16 md:py-24">
           <p className="text-center text-xsmall16 font-medium text-primary-90">
             고객사 사례
           </p>
@@ -143,7 +153,7 @@ export default function Client() {
 
       {/* Mentors marquee */}
       <section className="w-full">
-        <div className="mw-1180 py-16 md:py-24">
+        <div className="mx-auto max-w-[1120px] py-16 md:py-24">
           <p className="text-center text-xsmall16 font-medium text-primary-90">
             현직자 멘토 네트워크
           </p>
@@ -158,21 +168,21 @@ export default function Client() {
 
       {/* Testimonials - Students */}
       <section className="w-full bg-[#F7F9FF]">
-        <div className="mw-1180 py-16 md:py-24">
+        <div className="mx-auto max-w-[1120px] py-16 md:py-24">
           <StudentTestimonials />
         </div>
       </section>
 
       {/* Testimonials - Clients */}
       <section className="w-full bg-[#F7F9FF]">
-        <div className="mw-1180 py-16 md:py-24">
+        <div className="mx-auto max-w-[1120px] py-16 md:py-24">
           <ClientTestimonials />
         </div>
       </section>
 
       {/* Final CTA (inline, same as Hero) */}
       <section className="w-full bg-[#F7F9FF]">
-        <div className="mw-1180 py-16 md:py-24">
+        <div className="mx-auto max-w-[1120px] py-16 md:py-24">
           <FinalCTA />
         </div>
       </section>
