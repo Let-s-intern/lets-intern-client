@@ -121,8 +121,7 @@ const OldChallengeUserInfo = () => {
         !value.grade ||
         !value.major ||
         !value.wishJob ||
-        !value.wishCompany ||
-        !value.goal,
+        !value.wishCompany,
     );
   }, [value]);
 

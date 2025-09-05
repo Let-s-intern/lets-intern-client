@@ -36,7 +36,7 @@ const OldChallengeLayout = () => {
     useGetChallengeGoal(programId);
 
   const isValidUserInfo = isValidUserInfoData?.pass;
-  const hasChallengeGoal = challengeGoal?.goal;
+  const hasChallengeGoal = challengeGoal?.goal != null;
   const isLoading =
     isValidUserInfoLoading ||
     isValidUserAccessLoading ||
@@ -61,7 +61,6 @@ const OldChallengeLayout = () => {
       navigate('/');
       return;
     }
-
     if (!isValidUserInfo || (isStartAfterGoal && !hasChallengeGoal)) {
       navigate(`/old/challenge/${applicationId}/${programId}/user/info`);
       return;
