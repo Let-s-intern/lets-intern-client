@@ -51,15 +51,14 @@ export default function CaseCard({
         </h3>
 
         {/* Content */}
-        {content}
-        <p className="break-keep text-xsmall14 text-neutral-40"></p>
+        <p className="break-keep text-xsmall14 text-neutral-0">{content}</p>
 
         {/* Tags */}
-        <div className="mt-2.5 flex flex-wrap gap-2">
+        <div className="mt-2.5 flex flex-wrap gap-1">
           {tags.map((tag, index) => (
             <span
               key={index}
-              className="rounded-full bg-neutral-90 px-2 py-1 text-xxsmall12 text-neutral-30"
+              className="rounded-full bg-neutral-90 px-2 py-1 text-xxsmall12 text-neutral-10"
             >
               {tag}
             </span>
