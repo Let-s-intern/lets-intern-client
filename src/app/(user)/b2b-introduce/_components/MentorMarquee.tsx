@@ -1,49 +1,304 @@
 'use client';
 
-import Image from 'next/image';
+import Image, { StaticImageData } from 'next/image';
+
+// Figure images
+import figureFemale1 from '../_images/figure-female1.png';
+import figureFemale2 from '../_images/figure-female2.png';
+import figureFemale3 from '../_images/figure-female3.png';
+import figureFemale4 from '../_images/figure-female4.png';
+import figureFemale5 from '../_images/figure-female5.png';
+import figureMale1 from '../_images/figure-male1.png';
+import figureMale2 from '../_images/figure-male2.png';
+import figureMale3 from '../_images/figure-male3.png';
+
+// Company logos
+import squareBCG from '../_images/square-BCG.png';
+import squareCashnote from '../_images/square-cashnote.png';
+import squareDB from '../_images/square-DB.png';
+import squareHankookTire from '../_images/square-hankook-tire.png';
+import squareHanwhaOcean from '../_images/square-hanwha-ocean.png';
+import squareHD from '../_images/square-HD.png';
+import squareHyundaiGroup from '../_images/square-hyundai-group.png';
+import squareHyundaiMotor from '../_images/square-hyundai-motor.png';
+import squareHyundaiRotem from '../_images/square-hyundai-rotem.png';
+import squareLC from '../_images/square-LC.png';
+import squareLgEnergy from '../_images/square-lg-energy.png';
+import squareLG from '../_images/square-LG.png';
+import squareMusinsa from '../_images/square-musinsa.png';
+import squarePWC from '../_images/square-PWC.png';
+import squareSamsung from '../_images/square-samsung.png';
+import squareShinhan from '../_images/square-shinhan-financial.png';
+import squareSKhynix from '../_images/square-SKhynix.png';
+import squareSKInno from '../_images/square-SKInno.png';
+import squareToss from '../_images/square-toss.png';
+import squareUnivTomorrow from '../_images/square-univ-tomorrow.png';
+import squareWrtn from '../_images/square-wrtn.png';
 
 type Mentor = {
   name: string;
   role: string;
   company?: string;
   imageSrc?: string;
+  figureImage?: StaticImageData;
+  companyLogo?: StaticImageData;
+};
+
+const figureImages = [
+  figureFemale1,
+  figureFemale2,
+  figureFemale3,
+  figureFemale4,
+  figureFemale5,
+  figureMale1,
+  figureMale2,
+  figureMale3,
+];
+
+const companyLogos: Record<string, any> = {
+  렙츠커리어: squareLC,
+  LG에너지솔루션: squareLgEnergy,
+  신한투자증권: squareShinhan,
+  HD현대일렉트릭: squareHD,
+  기아차: squareHyundaiGroup,
+  현대자동차: squareHyundaiMotor,
+  SK이노베이션: squareSKInno,
+  토스: squareToss,
+  캐시노트: squareCashnote,
+  BCG: squareBCG,
+  현대코퍼레이션: squareHyundaiGroup,
+  한국타이어: squareHankookTire,
+  한화오션: squareHanwhaOcean,
+  SK하이닉스: squareSKhynix,
+  삼일PwC: squarePWC,
+  대학내일: squareUnivTomorrow,
+  뤼튼테크놀로지스: squareWrtn,
+  현대로템: squareHyundaiRotem,
+  무신사: squareMusinsa,
+  삼성전자: squareSamsung,
+  삼성바이오로직스: squareSamsung,
+  LG디스플레이: squareLG,
+  'DB Inc': squareDB,
 };
 
 const MENTORS: Mentor[] = [
-  { name: '쥬디 멘토', role: '렙츠커리어 CEO' },
-  { name: '팀탐 멘토', role: '렙츠커리어 COO' },
-  { name: '레오 멘토', role: '렙츠커리어 CPO' },
-  { name: '소피아 멘토', role: 'LG에너지솔루션', company: '전략기획' },
-  { name: '크리스 멘토', role: '신한투자증권', company: '금융업,IB' },
-  { name: '브라이언 멘토', role: 'HD현대일렉트릭', company: '해외영업' },
-  { name: '우디 멘토', role: '기아차', company: '브랜드 마케팅' },
-  { name: '헤일리 멘토', role: '현대자동차', company: '글로벌 커뮤니케이션' },
-  { name: '줄리아 멘토', role: '현대자동차', company: '상품전략' },
-  { name: '이프썜 멘토', role: 'SK이노베이션', company: '마케팅' },
-  { name: '휴고 멘토', role: '현대자동차', company: '상품기획' },
-  { name: '하이디 멘토', role: '토스', company: '세일즈' },
-  { name: '이린 멘토', role: '캐시노트', company: '마케팅' },
-  { name: '벤자민 멘토', role: 'BCG', company: '컨설턴트' },
-  { name: '유나 멘토', role: '현대코퍼레이션', company: 'PM' },
-  { name: '미니 멘토', role: '한국타이어', company: 'HR' },
-  { name: '세라 멘토', role: '한화오션', company: '해외영업' },
-  { name: '쥬쌤 멘토', role: 'SK하이닉스', company: '영업마케팅' },
-  { name: '루크 멘토', role: '삼일PwC', company: 'ESG 컨설턴트' },
-  { name: '후추썜 멘토', role: '대학내일', company: 'AE' },
-  { name: '영 멘토', role: '뤼튼테크놀로지스', company: 'AI개발' },
-  { name: '파도 멘토', role: '뤼튼테크놀로지스', company: '서비스 기획' },
-  { name: 'Seren 멘토', role: '현대로템', company: 'AI데이터사이언티스트' },
-  { name: '도니 멘토', role: '무신사', company: '백엔드 개발자' },
-  { name: '제이 멘토', role: '무신사', company: '백엔드 개발자' },
-  { name: '찰스 멘토', role: '삼성전자', company: '반도체 엔지니어링' },
-  { name: '머스캣 멘토', role: '삼성바이오로직스', company: '공정엔지니어링' },
-  { name: '길라잡이 멘토', role: 'LG디스플레이', company: 'AI개발' },
-  { name: '루카 멘토', role: 'DB Inc', company: 'SW 엔지니어' },
-  { name: '준 멘토', role: '현대자동차', company: 'IT 서비스 기획' },
+  {
+    name: '쥬디 멘토', // 여성
+    role: '렙츠커리어 CEO',
+    figureImage: figureFemale1,
+    companyLogo: companyLogos['렙츠커리어'],
+  },
+  {
+    name: '팀탐 멘토', // 남성
+    role: '렙츠커리어 COO',
+    figureImage: figureMale1,
+    companyLogo: companyLogos['렙츠커리어'],
+  },
+  {
+    name: '레오 멘토', // 남성
+    role: '렙츠커리어 CPO',
+    figureImage: figureMale2,
+    companyLogo: companyLogos['렙츠커리어'],
+  },
+  {
+    name: '소피아 멘토', // 여성
+    role: 'LG에너지솔루션',
+    company: '전략기획',
+    figureImage: figureFemale2,
+    companyLogo: companyLogos['LG에너지솔루션'],
+  },
+  {
+    name: '크리스 멘토', // 남성
+    role: '신한투자증권',
+    company: '금융업,IB',
+    figureImage: figureMale3,
+    companyLogo: companyLogos['신한투자증권'],
+  },
+  {
+    name: '브라이언 멘토', // 남성
+    role: 'HD현대일렉트릭',
+    company: '해외영업',
+    figureImage: figureMale1,
+    companyLogo: companyLogos['HD현대일렉트릭'],
+  },
+  {
+    name: '우디 멘토', // 남성
+    role: '기아차',
+    company: '브랜드 마케팅',
+    figureImage: figureMale2,
+    companyLogo: companyLogos['기아차'],
+  },
+  {
+    name: '헤일리 멘토', // 여성
+    role: '현대자동차',
+    company: '글로벌 커뮤니케이션',
+    figureImage: figureFemale3,
+    companyLogo: companyLogos['현대자동차'],
+  },
+  {
+    name: '줄리아 멘토', // 여성
+    role: '현대자동차',
+    company: '상품전략',
+    figureImage: figureFemale4,
+    companyLogo: companyLogos['현대자동차'],
+  },
+  {
+    name: '이프썜 멘토', // 여성
+    role: 'SK이노베이션',
+    company: '마케팅',
+    figureImage: figureFemale5,
+    companyLogo: companyLogos['SK이노베이션'],
+  },
+  {
+    name: '휴고 멘토', // 남성
+    role: '현대자동차',
+    company: '상품기획',
+    figureImage: figureMale3,
+    companyLogo: companyLogos['현대자동차'],
+  },
+  {
+    name: '하이디 멘토', // 여성
+    role: '토스',
+    company: '세일즈',
+    figureImage: figureFemale1,
+    companyLogo: companyLogos['토스'],
+  },
+  {
+    name: '이린 멘토', // 여성
+    role: '캐시노트',
+    company: '마케팅',
+    figureImage: figureFemale2,
+    companyLogo: companyLogos['캐시노트'],
+  },
+  {
+    name: '벤자민 멘토', // 남성
+    role: 'BCG',
+    company: '컨설턴트',
+    figureImage: figureMale1,
+    companyLogo: companyLogos['BCG'],
+  },
+  {
+    name: '유나 멘토', // 여성
+    role: '현대코퍼레이션',
+    company: 'PM',
+    figureImage: figureFemale3,
+    companyLogo: companyLogos['현대코퍼레이션'],
+  },
+  {
+    name: '미니 멘토', // 여성
+    role: '한국타이어',
+    company: 'HR',
+    figureImage: figureFemale4,
+    companyLogo: companyLogos['한국타이어'],
+  },
+  {
+    name: '세라 멘토', // 여성
+    role: '한화오션',
+    company: '해외영업',
+    figureImage: figureFemale5,
+    companyLogo: companyLogos['한화오션'],
+  },
+  {
+    name: '쥬쌤 멘토', // 여성
+    role: 'SK하이닉스',
+    company: '영업마케팅',
+    figureImage: figureFemale1,
+    companyLogo: companyLogos['SK하이닉스'],
+  },
+  {
+    name: '루크 멘토', // 남성
+    role: '삼일PwC',
+    company: 'ESG 컨설턴트',
+    figureImage: figureMale2,
+    companyLogo: companyLogos['삼일PwC'],
+  },
+  {
+    name: '후추썜 멘토', // 여성
+    role: '대학내일',
+    company: 'AE',
+    figureImage: figureFemale2,
+    companyLogo: companyLogos['대학내일'],
+  },
+  {
+    name: '영 멘토', // 남성
+    role: '뤼튼테크놀로지스',
+    company: 'AI개발',
+    figureImage: figureMale3,
+    companyLogo: companyLogos['뤼튼테크놀로지스'],
+  },
+  {
+    name: '파도 멘토', // 남성
+    role: '뤼튼테크놀로지스',
+    company: '서비스 기획',
+    figureImage: figureMale1,
+    companyLogo: companyLogos['뤼튼테크놀로지스'],
+  },
+  {
+    name: 'Seren 멘토', // 여성
+    role: '현대로템',
+    company: 'AI데이터사이언티스트',
+    figureImage: figureFemale3,
+    companyLogo: companyLogos['현대로템'],
+  },
+  {
+    name: '도니 멘토', // 남성
+    role: '무신사',
+    company: '백엔드 개발자',
+    figureImage: figureMale2,
+    companyLogo: companyLogos['무신사'],
+  },
+  {
+    name: '제이 멘토', // 남성
+    role: '무신사',
+    company: '백엔드 개발자',
+    figureImage: figureMale3,
+    companyLogo: companyLogos['무신사'],
+  },
+  {
+    name: '찰스 멘토', // 남성
+    role: '삼성전자',
+    company: '반도체 엔지니어링',
+    figureImage: figureMale1,
+    companyLogo: companyLogos['삼성전자'],
+  },
+  {
+    name: '머스캣 멘토', // 남성
+    role: '삼성바이오로직스',
+    company: '공정엔지니어링',
+    figureImage: figureMale2,
+    companyLogo: companyLogos['삼성바이오로직스'],
+  },
+  {
+    name: '길라잡이 멘토', // 여성
+    role: 'LG디스플레이',
+    company: 'AI개발',
+    figureImage: figureFemale4,
+    companyLogo: companyLogos['LG디스플레이'],
+  },
+  {
+    name: '루카 멘토', // 남성
+    role: 'DB Inc',
+    company: 'SW 엔지니어',
+    figureImage: figureMale3,
+    companyLogo: companyLogos['DB Inc'],
+  },
+  {
+    name: '준 멘토', // 남성
+    role: '현대자동차',
+    company: 'IT 서비스 기획',
+    figureImage: figureMale1,
+    companyLogo: companyLogos['현대자동차'],
+  },
 ];
 
-function Row({ reverse = false }: { reverse?: boolean }) {
-  const items = [...MENTORS, ...MENTORS];
+function Row({
+  reverse = false,
+  mentors,
+}: {
+  reverse?: boolean;
+  mentors: Mentor[];
+}) {
+  const items = [...mentors, ...mentors];
   return (
     <div className="overflow-hidden">
       <div
@@ -52,25 +307,35 @@ function Row({ reverse = false }: { reverse?: boolean }) {
         {items.map((m, idx) => (
           <div
             key={`${m.name}-${idx}`}
-            className="flex w-[260px] flex-none items-center gap-3 rounded-xl bg-white p-4 shadow-sm"
+            className="flex w-[280px] flex-none flex-col overflow-hidden rounded-sm border border-neutral-85 bg-white shadow-sm"
           >
-            <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full bg-neutral-200">
-              {m.imageSrc ? (
+            <div className="relative h-[160px] bg-neutral-95">
+              {m.companyLogo && (
+                <div className="rounded absolute left-2.5 top-2.5 h-[66px] w-[66px] overflow-hidden rounded-xs border bg-white">
+                  <Image
+                    src={m.companyLogo}
+                    alt={`${m.role} 로고`}
+                    fill
+                    className="object-contain p-1"
+                  />
+                </div>
+              )}
+              {m.figureImage && (
                 <Image
-                  src={m.imageSrc}
+                  src={m.figureImage}
                   alt={m.name}
                   fill
                   className="object-cover"
                 />
-              ) : null}
+              )}
             </div>
-            <div className="min-w-0">
-              <div className="truncate text-xsmall16 font-semibold text-neutral-0">
+            <div className="p-4 text-center">
+              <div className="text-small20 font-semibold text-neutral-0">
                 {m.name}
               </div>
-              <div className="truncate text-xsmall14 text-neutral-40">
+              <div className="text-xsmall16 text-neutral-40">
                 {m.role}
-                {m.company ? ` · ${m.company}` : ''}
+                {m.company ? `/${m.company}` : ''}
               </div>
             </div>
           </div>
@@ -94,10 +359,10 @@ function Row({ reverse = false }: { reverse?: boolean }) {
           }
         }
         .marquee-left {
-          animation: marquee-left 30s linear infinite;
+          animation: marquee-left 120s linear infinite;
         }
         .marquee-right {
-          animation: marquee-right 30s linear infinite;
+          animation: marquee-right 120s linear infinite;
         }
       `}</style>
     </div>
@@ -105,10 +370,13 @@ function Row({ reverse = false }: { reverse?: boolean }) {
 }
 
 export default function MentorMarquee() {
+  const firstRowMentors = MENTORS.slice(0, 15); // 쥬디 멘토부터 유나 멘토까지
+  const secondRowMentors = MENTORS.slice(15); // 미니 멘토부터 끝까지
+
   return (
     <div className="space-y-4">
-      <Row />
-      <Row reverse />
+      <Row mentors={firstRowMentors} />
+      <Row mentors={secondRowMentors} reverse />
     </div>
   );
 }

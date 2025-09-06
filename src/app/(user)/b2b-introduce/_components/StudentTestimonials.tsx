@@ -1,5 +1,6 @@
 'use client';
 
+import { Break } from '@components/Break';
 import Image from 'next/image';
 import { LOGO } from '../_images/logos';
 
@@ -63,7 +64,8 @@ const STUDENT_REVIEWS: StudentReview[] = [
       result: '합격',
       course: 'LG전자 DX스쿨 2기 교육생',
     },
-    mainReview: '렛츠커리어 덕분에 프로젝트 성과를 구체적으로 표현할 수 있었어요.',
+    mainReview:
+      '렛츠커리어 덕분에 프로젝트 성과를 구체적으로 표현할 수 있었어요.',
     detailedReview:
       '막상 포트폴리오에 어떻게 써야 할지 몰랐던 경험을 렛츠커리어 교육에서 STAR 기법으로 풀어내는 방법을 배우니 부트캠프에서 진행했던 팀 프로젝트 성과를 구체적으로 설명할 수 있습니다.',
     program: '렛츠커리어 서류 3종 작성 교육 수강',
@@ -76,7 +78,8 @@ const STUDENT_REVIEWS: StudentReview[] = [
       result: '합격',
       course: 'LG전자 DX스쿨 2기 교육생',
     },
-    mainReview: '렛츠커리어 교육중에 어느것 하나 필요하지 않은 내용이 없었습니다.',
+    mainReview:
+      '렛츠커리어 교육중에 어느것 하나 필요하지 않은 내용이 없었습니다.',
     detailedReview:
       '이력서/자소서 수업, 커피챗 등등 현재 회사에 들어가보니 그때 당시에는 굳이 해야하는 수업인가 생각했지만 렛츠커리어 교육들이 유익하고 더 열심히 할걸 이라는 후회가 남을정도로 다방면으로 알게되어 너무 너무 좋은 기회였습니다!!',
     program: '렛츠커리어 현직자 1:1 멘토링 및 서류 3종 작성 교육 수강',
@@ -102,7 +105,8 @@ const STUDENT_REVIEWS: StudentReview[] = [
       result: '합격',
       course: '[러닝스푼즈] SeSAC 광진캠퍼스 패션MD, 마케팅 과정 교육생',
     },
-    mainReview: '지금까지의 경험과 부트캠프의 새로운 경험을 바탕으로 서류를 완성할 수 있었습니다.',
+    mainReview:
+      '지금까지의 경험과 부트캠프의 새로운 경험을 바탕으로 서류를 완성할 수 있었습니다.',
     detailedReview:
       '과거의 경험을 다시 정리할 수 있었던 시간이었습니다. 그리고, 새로운 경험을 추가해 이력서를 한층 더 업그레이드 할 수 있었습니다.',
     program: '렛츠커리어 서류 3종 작성 교육 수강',
@@ -128,7 +132,8 @@ const STUDENT_REVIEWS: StudentReview[] = [
       result: '합격',
       course: '코드스테이츠 PM 부트캠프 교육생',
     },
-    mainReview: '렛츠커리어 챌린지로 부트캠프 경험이 필살 경험으로 재탄생했습니다.',
+    mainReview:
+      '렛츠커리어 챌린지로 부트캠프 경험이 필살 경험으로 재탄생했습니다.',
     detailedReview:
       '렛츠커리어 챌린지에서 경험을 직무 역량과 연결하는 훈련을 하면서, 그저 활동 기록이 아닌 저만의 강점 스토리로 완성할 수 있었고 실제 서비스 운영 직무 합격으로 이어졌습니다.',
     program: '렛츠커리어 포트폴리오 완성 챌린지 11기 수강',
@@ -141,7 +146,8 @@ const STUDENT_REVIEWS: StudentReview[] = [
       result: '합격',
       course: '국비지원 SW 웹개발 기초반 교육생',
     },
-    mainReview: '렛츠커리어 현직자 멘토님의 피드백 덕분에 합격할 수 있었습니다.',
+    mainReview:
+      '렛츠커리어 현직자 멘토님의 피드백 덕분에 합격할 수 있었습니다.',
     detailedReview:
       '혼자 서류를 작성할 때는 제 경험이 제대로 드러나지 않았지만 렛츠커리어 현직자 멘토님이 직접 제 서류를 피드백해주신 덕분에 조언을 반영해 완성한 서류로 지원했고, 결국 합격이라는 결과를 얻을 수 있었습니다.',
     program: '렛츠커리어 기필코 경험정리 챌린지 26기 수강',
@@ -151,9 +157,9 @@ const STUDENT_REVIEWS: StudentReview[] = [
 
 function StudentCard({ review }: { review: StudentReview }) {
   return (
-    <article className="overflow-hidden rounded-lg border border-neutral-200 bg-white">
+    <article className="overflow-hidden rounded-lg bg-white">
       {/* Logo */}
-      <div className="flex h-20 items-center justify-center border-b border-neutral-95 bg-neutral-98">
+      <div className="bg-neutral-98 flex h-20 items-center justify-center border-b border-neutral-95">
         <Image
           src={review.logo}
           alt={review.studentInfo.company}
@@ -166,13 +172,15 @@ function StudentCard({ review }: { review: StudentReview }) {
       {/* Content */}
       <div className="p-6">
         {/* Student Info */}
-        <p className="mb-3 text-xsmall14 font-medium text-primary-90">
-          {review.studentInfo.name} / {review.studentInfo.company} {review.studentInfo.result} /{' '}
-          {review.studentInfo.course}
+        <p className="mb-3 rounded-xxs bg-primary-5 px-1.5 py-1 text-xsmall14 font-semibold text-primary-dark">
+          {review.studentInfo.name} / {review.studentInfo.company}{' '}
+          {review.studentInfo.result} / {review.studentInfo.course}
         </p>
 
         {/* Main Review */}
-        <h3 className="mb-3 text-small18 font-semibold text-neutral-0">{review.mainReview}</h3>
+        <h3 className="mb-3 text-small18 font-semibold text-neutral-0">
+          {review.mainReview}
+        </h3>
 
         {/* Detailed Review */}
         <p className="mb-4 break-keep text-xsmall14 leading-relaxed text-neutral-40">
@@ -180,7 +188,9 @@ function StudentCard({ review }: { review: StudentReview }) {
         </p>
 
         {/* Program */}
-        <p className="text-xsmall14 font-medium text-neutral-30">{review.program}</p>
+        <p className="text-xsmall14 font-medium text-neutral-30">
+          {review.program}
+        </p>
       </div>
     </article>
   );
@@ -189,13 +199,16 @@ function StudentCard({ review }: { review: StudentReview }) {
 export default function StudentTestimonials() {
   return (
     <div>
-      <p className="text-center text-xsmall16 font-medium text-primary-90">교육생 합격 후기</p>
+      <p className="text-center text-xsmall16 font-medium text-primary-90">
+        교육생 합격 후기
+      </p>
       <h2 className="mt-7 break-keep text-center text-[40px] font-bold text-static-0">
-        합격으로 교육 효과를 증명합니다
+        부트캠프의 소중한 경험이 <Break />
+        합격에 필살 경험이 되도록
       </h2>
-      
+
       {/* Student Review Cards Grid */}
-      <div className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-16 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
         {STUDENT_REVIEWS.map((review, index) => (
           <StudentCard key={index} review={review} />
         ))}

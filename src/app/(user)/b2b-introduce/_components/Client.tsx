@@ -141,13 +141,21 @@ export default function Client() {
 
       {/* Mentors marquee */}
       <section className="w-full">
-        <div className="mx-auto max-w-[1120px] py-24 md:py-32">
-          <p className="text-center text-xsmall16 font-medium text-primary-90">
-            현직자 멘토 네트워크
+        <div className="mx-auto py-24 text-center md:py-32">
+          <p className="text-xsmall16 font-medium text-primary-90">
+            렛츠커리어 현직자 멘토
           </p>
-          <h2 className="mt-7 break-keep text-center text-[40px] font-bold text-static-0">
-            현직자 멘토가 함께 설계하고 피드백합니다
+          <h2 className="mt-7 break-keep text-[40px] font-bold text-static-0">
+            다양한 산업·직무 현직자 멘토풀로, <Break />
+            교육생에게 최신 합격 트렌드를 제공합니다.
           </h2>
+          <p className="text-1.125 mt-7 break-keep text-neutral-40">
+            렛츠커리어는 마케팅, PM, 개발등 다양한 직무의 현직자 멘토풀을
+            보유하고 있습니다. <Break />
+            현직자 멘토풀을 통해 교육생들에게 최신 합격 트렌드를 기반으로 한
+            <Break />
+            1:1 멘토링, 특강, 서류 첨삭을 제공합니다.
+          </p>
           <div className="mt-16">
             <MentorMarquee />
           </div>
