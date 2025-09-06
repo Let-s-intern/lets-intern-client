@@ -1,4 +1,5 @@
 import {
+  useGetChallengeGoal,
   useGetChallengeValideUser,
   useGetUserChallengeInfo,
 } from '@/api/challenge';
@@ -36,11 +37,18 @@ const ChallengeLayout = () => {
   const { data: isValidUserInfoData, isLoading: isValidUserInfoLoading } =
     useGetUserChallengeInfo();
 
+  const { data: challengeGoal, isLoading: challengeGoalLoading } =
+    useGetChallengeGoal(programId);
+
   const isValidUserInfo = isValidUserInfoData?.pass;
   const isLoading =
-    isValidUserInfoLoading || isValidUserAccessLoading || challengeIsLoading;
+    isValidUserInfoLoading ||
+    isValidUserAccessLoading ||
+    challengeIsLoading ||
+    challengeGoalLoading;
   const isStartAfterGoal =
     challenge?.startDate && GOAL_DATE.isBefore(challenge.startDate);
+  const hasChallengeGoal = challengeGoal?.goal != null;
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -66,7 +74,7 @@ const ChallengeLayout = () => {
       return;
     }
 
-    if (isStartAfterGoal && !isValidUserInfo) {
+    if (!isValidUserInfo || !hasChallengeGoal) {
       navigate(`/challenge/${applicationId}/${programId}/user/info`);
       return;
     }
@@ -79,6 +87,7 @@ const ChallengeLayout = () => {
     applicationId,
     accessibleData,
     isStartAfterGoal,
+    hasChallengeGoal,
   ]);
 
   if (isLoading || redirecting) {
