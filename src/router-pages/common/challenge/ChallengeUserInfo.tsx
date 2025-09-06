@@ -1,11 +1,19 @@
-import { useGetChallengeTitle, useGetUserChallengeInfo } from '@/api/challenge';
-import { useGetChallengeQuery } from '@/api/program';
+import {
+  useGetChallengeTitle,
+  useGetUserChallengeInfo,
+  usePatchChallengeGoal,
+} from '@/api/challenge';
 import { usePatchUser, useUserQuery } from '@/api/user';
 import GradeDropdown from '@/components/common/mypage/privacy/form-control/GradeDropdown';
 import Input from '@/components/common/ui/input/Input';
-import { GOAL_DATE } from '@components/common/challenge/ui/layout/ChallengeLayout';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+
+/**  최초 입장을 판별하기 위한 아무값
+ * 0회차에서 목표를 사용자가 입력하기 때문에
+ * 목표가 visit이면 입력하지 않은 것으로 판단해야 한다.
+ */
+export const DASHBOARD_FIRST_VISIT_GOAL = 'visit';
 
 const ChallengeUserInfo = () => {
   const params = useParams();
@@ -21,12 +29,6 @@ const ChallengeUserInfo = () => {
   });
   const [buttonDisabled, setButtonDisabled] = useState(false);
 
-  const { data: challenge, isLoading: challengeIsLoading } =
-    useGetChallengeQuery({
-      challengeId: Number(programId),
-      enabled: !!programId && !isNaN(Number(programId)),
-    });
-
   const { data: userData, isLoading: userDataIsLoading } = useUserQuery();
 
   const { data: isValidUserInfoData, isLoading: isValidUserInfoLoading } =
@@ -34,6 +36,8 @@ const ChallengeUserInfo = () => {
 
   const { data: programTitleData, isLoading: programTitleDataIsLoading } =
     useGetChallengeTitle(Number(programId));
+
+  const { mutateAsync: tryPostGoal } = usePatchChallengeGoal();
 
   useEffect(() => {
     if (userData) {
@@ -51,12 +55,7 @@ const ChallengeUserInfo = () => {
   const username = userData?.name;
   const isValidUserInfo = isValidUserInfoData?.pass;
   const isLoading =
-    isValidUserInfoLoading ||
-    programTitleDataIsLoading ||
-    userDataIsLoading ||
-    challengeIsLoading;
-  const isStartAfterGoal =
-    challenge?.startDate && GOAL_DATE.isBefore(challenge.startDate);
+    isValidUserInfoLoading || programTitleDataIsLoading || userDataIsLoading;
 
   const { mutateAsync: tryPatchUser, isPending: patchUserIsPending } =
     usePatchUser();
@@ -70,9 +69,7 @@ const ChallengeUserInfo = () => {
   };
 
   const handleSubmit = async () => {
-    if (patchUserIsPending || !programId) {
-      return;
-    }
+    if (patchUserIsPending || !programId) return;
 
     try {
       await tryPatchUser({
@@ -81,6 +78,11 @@ const ChallengeUserInfo = () => {
         major: value.major,
         wishJob: value.wishJob,
         wishCompany: value.wishCompany,
+      });
+
+      await tryPostGoal({
+        challengeId: programId,
+        goal: DASHBOARD_FIRST_VISIT_GOAL,
       });
 
       navigate(`/challenge/${params.applicationId}/${programId}`);
@@ -101,21 +103,13 @@ const ChallengeUserInfo = () => {
   }, [value]);
 
   useEffect(() => {
-    if (isLoading) {
-      return;
-    }
+    if (isLoading) return;
+
     if (isValidUserInfo) {
       navigate(`/challenge/${params.applicationId}/${programId}`);
       return;
     }
-  }, [
-    isValidUserInfo,
-    isLoading,
-    navigate,
-    isStartAfterGoal,
-    params.applicationId,
-    programId,
-  ]);
+  }, [isValidUserInfo, isLoading, navigate, params.applicationId, programId]);
 
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-6 pb-24 pt-12">
