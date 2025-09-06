@@ -1,5 +1,6 @@
 'use client';
 
+import { motion } from 'motion/react';
 import Image, { StaticImageData } from 'next/image';
 import Avatar1 from '../_images/avatar-1.svg';
 import Avatar2 from '../_images/avatar-2.svg';
@@ -55,20 +56,42 @@ const quotes: Quote[] = [
 export default function ClientTestimonials() {
   return (
     <div>
-      <p className="text-center text-xsmall16 font-medium text-primary-90">
+      <motion.p
+        className="text-center text-xsmall16 font-medium text-primary-90"
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+        transition={{ duration: 0.55 }}
+      >
         고객사 후기
-      </p>
-      <h2 className="mt-7 break-keep text-center text-[40px] font-bold">
+      </motion.p>
+      <motion.h2
+        className="mt-7 break-keep text-center text-[40px] font-bold"
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+        transition={{ duration: 0.55, delay: 0.05 }}
+      >
         렛츠커리어와 함께한 교육 담당자분들의 이야기입니다
-      </h2>
+      </motion.h2>
       {/* Client Review Cards - Horizontal Scroll */}
-      <div className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-16 w-screen">
+      <motion.div
+        className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-16 w-screen"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+        transition={{ duration: 0.6 }}
+      >
         <div className="relative overflow-x-auto scrollbar-hide">
           <div className="grid w-max auto-cols-[360px] grid-flow-col gap-3 px-[max(1.5rem,calc((100vw-1120px)/2))]">
             {quotes.map((q, i) => (
-              <blockquote
+              <motion.blockquote
                 key={i}
                 className="relative rounded-sm bg-white shadow-sm"
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+                transition={{ duration: 0.5, delay: i * 0.05 }}
               >
                 <div className="p-2.5 px-4 pb-1.5">
                   <Image
@@ -97,11 +120,11 @@ export default function ClientTestimonials() {
                     </footer>
                   </div>
                 </div>
-              </blockquote>
+              </motion.blockquote>
             ))}
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

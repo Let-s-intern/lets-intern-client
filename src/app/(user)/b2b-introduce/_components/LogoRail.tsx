@@ -1,5 +1,6 @@
 'use client';
 
+import { motion } from 'motion/react';
 import Image, { StaticImageData } from 'next/image';
 
 import l11 from '../_images/l-1-1.png'; // seoul software academy
@@ -115,11 +116,17 @@ function MarqueeRow({
 
 export default function LogoRail({ className, speedSec = 28 }: Props) {
   return (
-    <div className={className}>
+    <motion.div
+      className={className}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+      transition={{ duration: 0.6 }}
+    >
       <div className="space-y-6">
         <MarqueeRow images={ROW1} direction="rtl" duration={speedSec} />
         <MarqueeRow images={ROW2} direction="ltr" duration={speedSec + 4} />
       </div>
-    </div>
+    </motion.div>
   );
 }

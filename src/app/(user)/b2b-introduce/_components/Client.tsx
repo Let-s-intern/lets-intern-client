@@ -1,6 +1,7 @@
 'use client';
 
 import { Break } from '@components/Break';
+import { motion } from 'motion/react';
 // TODO:
 // - GTM 이벤트(뷰/클릭/제출/성공) 연결
 // - “기업소개서 받기” 실제 링크 연결
@@ -29,38 +30,65 @@ export default function Client() {
     <main className="w-full text-neutral-900">
       {/* Hero */}
       <section className="relative w-full overflow-hidden pt-8">
-        <div
+        <motion.div
           className="relative mx-auto max-w-[1336px] rounded-none bg-cover bg-center px-4 py-36 md:rounded-lg"
           style={{
             backgroundImage: `url("${heroBg.src}")`,
           }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
         >
           <Hero primaryHref={CONTACT_LINK} />
-        </div>
+        </motion.div>
       </section>
 
       {/* Intro copy + logo rail */}
       <section id="intro" className="w-full">
         <div className="mx-auto max-w-[1120px] py-24 md:py-32">
           <div className="text-center">
-            <p className="text-center text-xsmall16 font-medium text-primary-90">
+            <motion.p
+              className="text-center text-xsmall16 font-medium text-primary-90"
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+              transition={{ duration: 0.55 }}
+            >
               교육 파트너 소개
-            </p>
-            <h2 className="mt-7 break-keep text-[40px] font-bold text-static-0">
+            </motion.p>
+            <motion.h2
+              className="mt-7 break-keep text-[40px] font-bold text-static-0"
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+              transition={{ duration: 0.55 }}
+            >
               교육생의 취업을 원하는 기관이라면,
               <br />
               렛츠커리어를 선택했습니다
-            </h2>
-            <p className="text-1.125 mt-7 break-keep text-neutral-40">
+            </motion.h2>
+            <motion.p
+              className="text-1.125 mt-7 break-keep text-neutral-40"
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+              transition={{ duration: 0.55 }}
+            >
               다양한 부트캠프 운영 기관과 협력하여 교육생들의 취업 교육을
               담당했습니다.
               <Break /> 교육 파트너와 함께한 성과를 통해 렛츠커리어의 검증된
               취업 교육을 확인하세요.
-            </p>
+            </motion.p>
           </div>
-          <div className="mt-12">
+          <motion.div
+            className="mt-12"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+            transition={{ duration: 0.6 }}
+          >
             <LogoRail />
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -68,32 +96,68 @@ export default function Client() {
       <section className="w-full bg-[#F7F9FF]">
         <div className="mx-auto max-w-[1120px] py-24 md:py-32">
           <div className="text-center">
-            <p className="inline-block bg-primary-5 text-center text-xsmall16 font-medium text-primary-90">
+            <motion.p
+              className="inline-block bg-primary-5 text-center text-xsmall16 font-medium text-primary-90"
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+              transition={{ duration: 0.55 }}
+            >
               성과로 이어지는 렛츠커리어 서류 교육
-            </p>
-            <h2 className="mt-7 break-keep text-[40px] font-bold text-static-0">
+            </motion.p>
+            <motion.h2
+              className="mt-7 break-keep text-[40px] font-bold text-static-0"
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+              transition={{ duration: 0.55 }}
+            >
               경험정리, 직무탐색부터 서류 완성 이후까지 관리
-            </h2>
-            <p className="text-1.125 mt-7 break-keep text-neutral-40">
+            </motion.h2>
+            <motion.p
+              className="text-1.125 mt-7 break-keep text-neutral-40"
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+              transition={{ duration: 0.55 }}
+            >
               수많은 취업준비생들과 교육 파트너가 렛츠커리어와 함께하는
               이유입니다.
-            </p>
+            </motion.p>
           </div>
-          <div className="mt-10">
+          <motion.div
+            className="mt-10"
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+            transition={{ duration: 0.55 }}
+          >
             <Metrics />
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Pain points */}
       <section className="w-full">
         <div className="mx-auto max-w-[1120px] py-24 md:py-32">
-          <p className="text-center text-xsmall16 font-medium text-primary-90">
+          <motion.p
+            className="text-center text-xsmall16 font-medium text-primary-90"
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+            transition={{ duration: 0.55 }}
+          >
             혹시 이런 고민들을 갖고 있지 않으신가요?
-          </p>
-          <h2 className="mt-7 break-keep text-center text-[40px] font-bold text-static-0">
+          </motion.p>
+          <motion.h2
+            className="mt-7 break-keep text-center text-[40px] font-bold text-static-0"
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+            transition={{ duration: 0.55 }}
+          >
             이런 고민을 갖고 있는 교육 운영 담당자분들께 추천드려요
-          </h2>
+          </motion.h2>
           <div className="mt-16">
             <PainPoints />
           </div>
@@ -103,12 +167,24 @@ export default function Client() {
       {/* Features/Programs */}
       <section className="w-full">
         <div className="mx-auto max-w-[1120px] py-24 md:py-32">
-          <p className="text-center text-xsmall16 font-medium text-primary-90">
+          <motion.p
+            className="text-center text-xsmall16 font-medium text-primary-90"
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+            transition={{ duration: 0.55 }}
+          >
             렛츠커리어 취업 교육 솔루션
-          </p>
-          <h2 className="mt-7 break-keep text-center text-[40px] font-bold text-static-0">
+          </motion.p>
+          <motion.h2
+            className="mt-7 break-keep text-center text-[40px] font-bold text-static-0"
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+            transition={{ duration: 0.55 }}
+          >
             교육기관의 목표에 맞는 최적의 교육을 제공합니다
-          </h2>
+          </motion.h2>
 
           <div className="mt-24">
             <Features />
@@ -122,44 +198,92 @@ export default function Client() {
       {/* Case studies */}
       <section className="w-full bg-neutral-95">
         <div className="mx-auto max-w-[1120px] py-24 text-center md:py-32">
-          <p className="text-xsmall16 font-medium text-primary-90">
+          <motion.p
+            className="text-xsmall16 font-medium text-primary-90"
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+            transition={{ duration: 0.55 }}
+          >
             고객사 사례
-          </p>
-          <h2 className="mt-7 break-keep text-[40px] font-bold text-neutral-0">
+          </motion.p>
+          <motion.h2
+            className="mt-7 break-keep text-[40px] font-bold text-neutral-0"
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+            transition={{ duration: 0.55 }}
+          >
             다양한 산업 및 직무, 목적에 맞춘
             <Break />
             렛츠커리어 취업교육 사례
-          </h2>
-          <p className="text-1.125 mt-7 break-keep text-neutral-40">
+          </motion.h2>
+          <motion.p
+            className="text-1.125 mt-7 break-keep text-neutral-40"
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+            transition={{ duration: 0.55 }}
+          >
             렛츠커리어와 함께한 성공사례를 만나보세요.
-          </p>
+          </motion.p>
 
-          <div className="mt-16">
+          <motion.div
+            className="mt-16"
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+            transition={{ duration: 0.55 }}
+          >
             <CaseStudies />
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Mentors marquee */}
       <section className="w-full">
         <div className="mx-auto py-24 text-center md:py-32">
-          <p className="text-xsmall16 font-medium text-primary-90">
+          <motion.p
+            className="text-xsmall16 font-medium text-primary-90"
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+            transition={{ duration: 0.55 }}
+          >
             렛츠커리어 현직자 멘토
-          </p>
-          <h2 className="mt-7 break-keep text-[40px] font-bold text-static-0">
+          </motion.p>
+          <motion.h2
+            className="mt-7 break-keep text-[40px] font-bold text-static-0"
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+            transition={{ duration: 0.55 }}
+          >
             다양한 산업·직무 현직자 멘토풀로, <Break />
             교육생에게 최신 합격 트렌드를 제공합니다.
-          </h2>
-          <p className="text-1.125 mt-7 break-keep text-neutral-40">
+          </motion.h2>
+          <motion.p
+            className="text-1.125 mt-7 break-keep text-neutral-40"
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+            transition={{ duration: 0.55 }}
+          >
             렛츠커리어는 마케팅, PM, 개발 등 다양한 직무의 현직자 멘토풀을
             보유하고 있습니다. <Break />
             현직자 멘토풀을 통해 교육생들에게 최신 합격 트렌드를 기반으로 한
             <Break />
             1:1 멘토링, 특강, 서류 첨삭을 제공합니다.
-          </p>
-          <div className="mt-16">
+          </motion.p>
+          <motion.div
+            className="mt-16"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+            transition={{ duration: 0.6 }}
+          >
             <MentorMarquee />
-          </div>
+          </motion.div>
         </div>
       </section>
 

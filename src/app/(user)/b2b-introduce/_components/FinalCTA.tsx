@@ -1,6 +1,7 @@
 'use client';
 
 import { Break } from '@components/Break';
+import { motion } from 'motion/react';
 import finalCtaBg from '../_images/final-cta-bg.png';
 
 export default function FinalCTA() {
@@ -11,25 +12,39 @@ export default function FinalCTA() {
         backgroundImage: `url("${finalCtaBg.src}")`,
       }}
     >
-      <h3 className="text-1.5-semibold text-xxlarge36 font-semibold text-white">
+      <motion.h3
+        className="text-1.5-semibold text-xxlarge36 font-semibold text-white"
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+        transition={{ duration: 0.55 }}
+      >
         여러분의 기관에 맞춘 취업 교육
         <Break />
         지금 바로 제안 받아 보세요.
-      </h3>
+      </motion.h3>
       <div className="mt-8 flex items-center justify-center gap-3">
-        <a
+        <motion.a
           href="#intro"
           className="inline-flex items-center justify-center rounded-xs bg-white px-5 py-3 text-xsmall16 font-medium text-black shadow-sm transition hover:text-neutral-20 md:px-5 md:text-xsmall16"
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+          transition={{ duration: 0.55 }}
         >
           기업 소개서 받기
-        </a>
+        </motion.a>
 
-        <a
+        <motion.a
           href="#contact"
           className="inline-flex items-center justify-center rounded-xs bg-neutral-900 px-5 py-3 text-xsmall16 font-medium text-white shadow-sm hover:bg-neutral-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 md:px-5 md:text-xsmall16"
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+          transition={{ duration: 0.55, delay: 0.06 }}
         >
           맞춤 교육 문의
-        </a>
+        </motion.a>
       </div>
     </div>
   );

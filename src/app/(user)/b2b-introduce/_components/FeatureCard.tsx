@@ -1,6 +1,7 @@
 'use client';
 
 import { twMerge } from '@/lib/twMerge';
+import { motion } from 'motion/react';
 import Image, { StaticImageData } from 'next/image';
 
 type Props = {
@@ -19,11 +20,15 @@ export default function FeatureCard({
   className = '',
 }: Props) {
   return (
-    <section
+    <motion.section
       className={twMerge(
         'overflow-hidden rounded-ms bg-white shadow-sm',
         className,
       )}
+      initial={{ opacity: 0, y: 12 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+      transition={{ duration: 0.55 }}
     >
       <div className="relative">
         <div className="relative aspect-[365/171]">
@@ -43,6 +48,6 @@ export default function FeatureCard({
           {desc}
         </p>
       </div>
-    </section>
+    </motion.section>
   );
 }

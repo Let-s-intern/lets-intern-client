@@ -1,9 +1,10 @@
 'use client';
 
-import FeatureCard from './FeatureCard';
+import { motion } from 'motion/react';
 import a1 from '../_images/achievement-1.png';
 import a2 from '../_images/achievement-2.png';
 import a3 from '../_images/achievement-3.png';
+import FeatureCard from './FeatureCard';
 
 export default function Metrics() {
   const stats = [
@@ -24,7 +25,14 @@ export default function Metrics() {
             const number = m ? m[1] : s.value;
             const unit = m ? m[2] : '';
             return (
-              <div key={i} className="text-center">
+              <motion.div
+                key={i}
+                className="text-center"
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+                transition={{ duration: 0.5, delay: i * 0.05 }}
+              >
                 <div className="text-xsmall16 font-medium leading-relaxed text-neutral-20 md:leading-normal">
                   {s.label}
                 </div>
@@ -38,7 +46,7 @@ export default function Metrics() {
                     </span>
                   )}
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>

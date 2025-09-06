@@ -1,6 +1,7 @@
 'use client';
 
 import { Break } from '@components/Break';
+import { motion } from 'motion/react';
 import Image from 'next/image';
 import { LOGO } from '../_images/logos';
 
@@ -195,20 +196,46 @@ function StudentCard({ review }: { review: StudentReview }) {
 export default function StudentTestimonials() {
   return (
     <div>
-      <p className="text-center text-xsmall16 font-medium text-primary-90">
+      <motion.p
+        className="text-center text-xsmall16 font-medium text-primary-90"
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+        transition={{ duration: 0.55 }}
+      >
         교육생 합격 후기
-      </p>
-      <h2 className="mt-7 break-keep text-center text-[40px] font-bold text-static-0">
+      </motion.p>
+      <motion.h2
+        className="mt-7 break-keep text-center text-[40px] font-bold text-static-0"
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+        transition={{ duration: 0.55, delay: 0.05 }}
+      >
         부트캠프의 소중한 경험이 <Break />
         합격에 필살 경험이 되도록
-      </h2>
+      </motion.h2>
 
       {/* Student Review Cards - Horizontal Scroll */}
-      <div className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-16 w-screen">
+      <motion.div
+        className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-16 w-screen"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+        transition={{ duration: 0.6 }}
+      >
         <div className="relative overflow-x-auto scrollbar-hide">
           <div className="grid w-max auto-cols-[360px] grid-flow-col gap-3 px-[max(1.5rem,calc((100vw-1120px)/2))]">
             {STUDENT_REVIEWS.map((review, index) => (
-              <StudentCard key={index} review={review} />
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+                transition={{ duration: 0.5, delay: index * 0.05 }}
+              >
+                <StudentCard review={review} />
+              </motion.div>
             ))}
           </div>
         </div>
@@ -216,7 +243,7 @@ export default function StudentTestimonials() {
         <div className="pointer-events-none absolute left-0 top-0 h-full w-16 bg-gradient-to-r from-white to-transparent"></div>
         {/* Right fade */}
         <div className="pointer-events-none absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-white to-transparent"></div>
-      </div>
+      </motion.div>
     </div>
   );
 }

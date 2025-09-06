@@ -1,5 +1,6 @@
 'use client';
 
+import { motion } from 'motion/react';
 import Image, { StaticImageData } from 'next/image';
 
 type Block = {
@@ -87,17 +88,27 @@ function FeatureRow({
   className,
 }: Block) {
   const imageEl = (
-    <div
+    <motion.div
       className={twMerge(
         'relative aspect-[500/380] w-full overflow-hidden rounded-xl',
         className,
       )}
+      initial={{ opacity: 0, y: 12 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+      transition={{ duration: 0.55 }}
     >
       <Image src={image} alt="솔루션 이미지" fill className="object-contain" />
-    </div>
+    </motion.div>
   );
   const text = (
-    <div className="w-full">
+    <motion.div
+      className="w-full"
+      initial={{ opacity: 0, y: 12 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+      transition={{ duration: 0.55, delay: 0.05 }}
+    >
       {badge && (
         <span className="inline-flex items-center gap-2 rounded-md bg-neutral-90 px-3 py-2 text-xsmall16 text-neutral-10">
           <span className="text-primary-90">{num}</span> {badge}
@@ -107,7 +118,7 @@ function FeatureRow({
         {title}
       </h3>
       <p className="mt-3 break-keep text-small20 text-neutral-40">{desc}</p>
-    </div>
+    </motion.div>
   );
   return (
     <div className="grid items-center gap-8 md:grid-cols-2 md:gap-16">

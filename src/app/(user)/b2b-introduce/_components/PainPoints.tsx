@@ -1,6 +1,7 @@
 'use client';
 
 import { Break } from '@components/Break';
+import { motion } from 'motion/react';
 
 export default function PainPoints() {
   const items = [
@@ -40,7 +41,14 @@ export default function PainPoints() {
     <div className="flex justify-center">
       <ul className="grid gap-8">
         {items.map((it, i) => (
-          <li key={i} className="flex items-start gap-4">
+          <motion.li
+            key={i}
+            className="flex items-start gap-4"
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+            transition={{ duration: 0.5, delay: i * 0.06 }}
+          >
             <span
               className={`mt-1 flex h-[34px] w-[34px] items-center justify-center rounded-full text-small20 font-semibold text-neutral-0 ${
                 i === 0
@@ -60,7 +68,7 @@ export default function PainPoints() {
                 {it.desc}
               </p>
             </div>
-          </li>
+          </motion.li>
         ))}
       </ul>
     </div>
