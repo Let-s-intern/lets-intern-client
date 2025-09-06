@@ -3,9 +3,9 @@ import useAuthStore from '@/store/useAuthStore';
 import GlobalNavItem from './GlobalNavItem';
 import LoginLink from './LoginLink';
 import LogoLink from './LogoLink';
+import SuperInternPromotion from './Promotion';
 import SignUpLink from './SignUpLink';
 import { SubNavItemProps } from './SubNavItem';
-import SuperInternPromotion from './SuperInternPromotion';
 
 interface Props {
   isNextRouter: boolean;

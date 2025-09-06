@@ -1,6 +1,9 @@
-
 'use client';
 
+import { motion } from 'motion/react';
+import a1 from '../_images/achievement-1.png';
+import a2 from '../_images/achievement-2.png';
+import a3 from '../_images/achievement-3.png';
 import FeatureCard from './FeatureCard';
 
 export default function Metrics() {
@@ -22,11 +25,18 @@ export default function Metrics() {
             const number = m ? m[1] : s.value;
             const unit = m ? m[2] : '';
             return (
-              <div key={i} className="text-center">
-                <div className="text-xsmall16 font-medium leading-relaxed md:leading-normal text-neutral-20">
+              <motion.div
+                key={i}
+                className="text-center"
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+                transition={{ duration: 0.5, delay: i * 0.05 }}
+              >
+                <div className="text-xsmall16 font-medium leading-relaxed text-neutral-20 md:leading-normal">
                   {s.label}
                 </div>
-                <div className="mt-2 md:mt-1 leading-[1.3] md:leading-tight">
+                <div className="mt-2 leading-[1.3] md:mt-1 md:leading-tight">
                   <span className="text-[36px] font-bold tracking-[-3px] text-static-0">
                     {number}
                   </span>
@@ -36,7 +46,7 @@ export default function Metrics() {
                     </span>
                   )}
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>
@@ -46,16 +56,22 @@ export default function Metrics() {
         <FeatureCard
           title="취업 트렌드 콘텐츠 상시 제공"
           desc="렛츠커리어 자체 블로그 및 인스타그램을 통해 취업 시장 트렌드에 맞는 콘텐츠를 제공합니다."
+          imageSrc={a1}
+          imageAlt="성과 이미지 1"
         />
 
         <FeatureCard
           title="취업 여정에 맞는 서류 작성 교육"
-          desc="경험정리부터 직무탐색, 서류 3중 완성 및 면접 전까지 취업 여정에 맞춘 교육을 제공합니다."
+          desc="경험정리부터 직무탐색, 서류 3종 완성 및 발전까지 취업 여정에 맞는 교육을 제공합니다."
+          imageSrc={a2}
+          imageAlt="성과 이미지 2"
         />
 
         <FeatureCard
           title="교육 참여 후 후속 관리"
-          desc="교육 마무리 후에도 무제한 질문응답과 커뮤니티를 통해 취업 성공까지 함께합니다."
+          desc="교육 마무리 후에도 무제한 질의응답이 가능하고, 취준생 간 네트워킹 및 정보 교류가 가능한 커뮤니티를 통해 취업 성공까지 함께합니다."
+          imageSrc={a3}
+          imageAlt="성과 이미지 3"
         />
       </div>
     </div>

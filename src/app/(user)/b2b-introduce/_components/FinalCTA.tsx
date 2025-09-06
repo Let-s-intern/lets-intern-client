@@ -1,28 +1,52 @@
 'use client';
 
+import { Break } from '@components/Break';
+import { motion } from 'motion/react';
+import finalCtaBg from '../_images/final-cta-bg.png';
+import { contactLink } from './const';
+
 export default function FinalCTA() {
   return (
-    <div className="rounded-2xl bg-white p-8 text-center shadow-sm md:p-12">
-      <h3 className="text-1.5-semibold">
-        여러분의 기관에 맞춘 취업 교육, 지금 바로 제안 받아보세요.
-      </h3>
-      <p className="text-1.125 mt-2 text-neutral-40">
-        간단한 정보를 남겨주시면 담당자가 빠르게 연락드릴게요.
-      </p>
+    <div
+      className="rounded-md bg-cover bg-center p-8 text-center shadow-sm md:p-12"
+      style={{
+        backgroundImage: `url("${finalCtaBg.src}")`,
+      }}
+    >
+      <motion.h3
+        className="text-1.5-semibold text-xxlarge36 font-semibold text-white"
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+        transition={{ duration: 0.55 }}
+      >
+        여러분의 기관에 맞춘 취업 교육
+        <Break />
+        지금 바로 제안 받아 보세요.
+      </motion.h3>
       <div className="mt-8 flex items-center justify-center gap-3">
-        <a
+        <motion.a
           href="#intro"
-          className="inline-flex items-center justify-center rounded-xs bg-primary-90 px-5 py-3 text-xsmall16 font-medium text-white shadow-sm hover:bg-primary-90 md:px-5 md:text-xsmall16"
+          className="inline-flex items-center justify-center rounded-xs bg-white px-5 py-3 text-xsmall16 font-medium text-black shadow-sm transition hover:text-neutral-20 md:px-5 md:text-xsmall16"
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+          transition={{ duration: 0.55 }}
         >
-          기업 소개서 받기
-        </a>
+          교육 소개서 받기
+        </motion.a>
 
-        <a
-          href="#contact"
+        <motion.a
+          href={contactLink}
+          target="_blank"
           className="inline-flex items-center justify-center rounded-xs bg-neutral-900 px-5 py-3 text-xsmall16 font-medium text-white shadow-sm hover:bg-neutral-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 md:px-5 md:text-xsmall16"
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+          transition={{ duration: 0.55, delay: 0.06 }}
         >
           맞춤 교육 문의
-        </a>
+        </motion.a>
       </div>
     </div>
   );
