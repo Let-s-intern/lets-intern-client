@@ -112,32 +112,27 @@ export default function Client() {
           <div className="mt-24">
             <Features />
           </div>
-
-          {/* Inline process block (included in Features section) */}
-          <div className="mx-auto mt-16 max-w-3xl text-left">
-            <h3 className="break-keep text-small18 font-semibold text-neutral-0">
-              맞춤형 취업 교육을 위한 단계
-            </h3>
-            <p className="mt-3 break-keep text-small20 text-neutral-40">
-              렛츠커리는 교육 파트너의 취업 교육 대상, 목적, 직무에 맞춰서
-              맞춤형 서류 작성 교육을 제공합니다.
-            </p>
-            <div className="mt-8">
-              <Process />
-            </div>
-          </div>
         </div>
       </section>
 
+      {/* Process section - Full width background */}
+      <Process />
+
       {/* Case studies */}
       <section className="w-full">
-        <div className="mx-auto max-w-[1120px] py-24 md:py-32">
-          <p className="text-center text-xsmall16 font-medium text-primary-90">
+        <div className="mx-auto max-w-[1120px] py-24 text-center md:py-32">
+          <p className="text-xsmall16 font-medium text-primary-90">
             고객사 사례
           </p>
-          <h2 className="mt-7 break-keep text-center text-[40px] font-bold text-static-0">
-            교육 기관의 목표에 맞춘 맞춤형 교육 사례
+          <h2 className="mt-7 break-keep text-[40px] font-bold text-static-0">
+            다양한 산업 및 직무, 목적에 맞춘
+            <Break />
+            렛츠커리어 취업교육 사례
           </h2>
+          <p className="text-1.125 mt-7 break-keep text-neutral-40">
+            렛츠커리어와 함께한 성공사례를 만나보세요.
+          </p>
+
           <div className="mt-16">
             <CaseStudies />
           </div>
