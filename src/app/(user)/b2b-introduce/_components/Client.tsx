@@ -4,12 +4,9 @@ import { Break } from '@components/Break';
 import { motion } from 'motion/react';
 // TODO:
 // - GTM 이벤트(뷰/클릭/제출/성공) 연결
-// - “기업소개서 받기” 실제 링크 연결
 // - OG 전용 이미지 생성/교체
-// - 실제 파트너 로고/캡처 삽입 및 next/image 최적화
-// Hero 뱃지 아이콘 위치 수정
+// - search console 이나 네이버 등에 등록
 
-// import { Break } from '@components/Break';
 import heroBg from '../_images/hero-bg.png';
 import CaseStudies from './CaseStudies';
 import ClientTestimonials from './ClientTestimonials';
@@ -25,7 +22,6 @@ import StickyCTA from './StickyCTA';
 import StudentTestimonials from './StudentTestimonials';
 
 export default function Client() {
-  const CONTACT_LINK = '#contact';
   return (
     <main className="w-full text-neutral-900">
       {/* Hero */}
@@ -39,7 +35,7 @@ export default function Client() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
         >
-          <Hero primaryHref={CONTACT_LINK} />
+          <Hero />
         </motion.div>
       </section>
 
