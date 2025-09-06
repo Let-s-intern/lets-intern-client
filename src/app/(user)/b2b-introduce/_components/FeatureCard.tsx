@@ -1,12 +1,12 @@
 'use client';
 
 import { twMerge } from '@/lib/twMerge';
-import Image from 'next/image';
+import Image, { StaticImageData } from 'next/image';
 
 type Props = {
   title: string;
   desc: string;
-  imageSrc?: string;
+  imageSrc?: string | StaticImageData;
   imageAlt?: string;
   className?: string;
 };
@@ -21,12 +21,12 @@ export default function FeatureCard({
   return (
     <section
       className={twMerge(
-        'overflow-hidden rounded-ms bg-neutral-100',
+        'overflow-hidden rounded-ms bg-white shadow-sm',
         className,
       )}
     >
       <div className="relative">
-        <div className="relative aspect-[16/9] bg-neutral-200">
+        <div className="relative aspect-[365/171]">
           {imageSrc ? (
             <Image
               src={imageSrc}

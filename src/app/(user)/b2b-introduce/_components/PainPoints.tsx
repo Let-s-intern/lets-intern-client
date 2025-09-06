@@ -28,7 +28,7 @@ export default function PainPoints() {
       title: '전반적인 취업 교육 참여 및 만족도 관리가 어려워요.',
       desc: (
         <>
-          자체적으로 취업 교육을 진행했을때,
+          자체적으로 취업 교육을 진행했을 때,
           <Break />
           교육생들의 참여도가 매우 낮거나 수료하는 비율이 너무 낮아요.
         </>
@@ -56,7 +56,9 @@ export default function PainPoints() {
               <p className="text-[26px] font-semibold text-neutral-0">
                 {it.title}
               </p>
-            <p className="mt-3 break-keep text-small20 text-neutral-40">{it.desc}</p>
+              <p className="mt-3 break-keep text-small20 text-neutral-40">
+                {it.desc}
+              </p>
             </div>
           </li>
         ))}

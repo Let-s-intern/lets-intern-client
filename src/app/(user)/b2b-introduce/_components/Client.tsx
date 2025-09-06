@@ -29,7 +29,7 @@ export default function Client() {
       {/* Hero */}
       <section className="relative w-full overflow-hidden pt-8">
         <div
-          className="relative mx-auto max-w-[1336px] rounded-none bg-cover bg-center py-16 md:rounded-lg md:py-24 lg:py-36"
+          className="relative mx-auto max-w-[1336px] rounded-none bg-cover bg-center px-4 py-36 md:rounded-lg"
           style={{
             backgroundImage: `url("${heroBg.src}")`,
           }}
@@ -40,7 +40,7 @@ export default function Client() {
 
       {/* Intro copy + logo rail */}
       <section id="intro" className="w-full">
-        <div className="mx-auto py-16 md:py-32">
+        <div className="mx-auto max-w-[1120px] py-24 md:py-32">
           <div className="text-center">
             <p className="text-center text-xsmall16 font-medium text-primary-90">
               교육 파트너 소개
@@ -65,7 +65,7 @@ export default function Client() {
 
       {/* Metrics + cards */}
       <section className="w-full bg-[#F7F9FF]">
-        <div className="mx-auto max-w-[1120px] py-16 md:py-24">
+        <div className="mx-auto max-w-[1120px] py-24 md:py-32">
           <div className="text-center">
             <p className="inline-block bg-primary-5 text-center text-xsmall16 font-medium text-primary-90">
               성과로 이어지는 렛츠커리어 서류 교육
@@ -86,7 +86,7 @@ export default function Client() {
 
       {/* Pain points */}
       <section className="w-full">
-        <div className="mx-auto max-w-[1120px] py-16 md:py-20">
+        <div className="mx-auto max-w-[1120px] py-24 md:py-32">
           <p className="text-center text-xsmall16 font-medium text-primary-90">
             혹시 이런 고민들을 갖고 있지 않으신가요?
           </p>
@@ -101,7 +101,7 @@ export default function Client() {
 
       {/* Features/Programs */}
       <section className="w-full">
-        <div className="mx-auto max-w-[1120px] py-16 md:py-24">
+        <div className="mx-auto max-w-[1120px] py-24 md:py-32">
           <p className="text-center text-xsmall16 font-medium text-primary-90">
             렛츠커리어 취업 교육 솔루션
           </p>
@@ -131,7 +131,7 @@ export default function Client() {
 
       {/* Case studies */}
       <section className="w-full">
-        <div className="mx-auto max-w-[1120px] py-16 md:py-24">
+        <div className="mx-auto max-w-[1120px] py-24 md:py-32">
           <p className="text-center text-xsmall16 font-medium text-primary-90">
             고객사 사례
           </p>
@@ -146,7 +146,7 @@ export default function Client() {
 
       {/* Mentors marquee */}
       <section className="w-full">
-        <div className="mx-auto max-w-[1120px] py-16 md:py-24">
+        <div className="mx-auto max-w-[1120px] py-24 md:py-32">
           <p className="text-center text-xsmall16 font-medium text-primary-90">
             현직자 멘토 네트워크
           </p>
@@ -161,21 +161,21 @@ export default function Client() {
 
       {/* Testimonials - Students */}
       <section className="w-full bg-[#F7F9FF]">
-        <div className="mx-auto max-w-[1120px] py-16 md:py-24">
+        <div className="mx-auto max-w-[1120px] py-24 md:py-32">
           <StudentTestimonials />
         </div>
       </section>
 
       {/* Testimonials - Clients */}
       <section className="w-full bg-[#F7F9FF]">
-        <div className="mx-auto max-w-[1120px] py-16 md:py-24">
+        <div className="mx-auto max-w-[1120px] py-24 md:py-32">
           <ClientTestimonials />
         </div>
       </section>
 
       {/* Final CTA (inline, same as Hero) */}
       <section className="w-full bg-[#F7F9FF]">
-        <div className="mx-auto max-w-[1120px] py-16 md:py-24">
+        <div className="mx-auto max-w-[1120px] py-24 md:py-32">
           <FinalCTA />
         </div>
       </section>

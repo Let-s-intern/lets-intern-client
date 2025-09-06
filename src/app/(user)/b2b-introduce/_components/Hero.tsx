@@ -2,6 +2,9 @@
 
 import { twMerge } from '@/lib/twMerge';
 import { Break } from '@components/Break';
+import iconPortfolio from '../_images/icon-portfolio-32-32.svg';
+import iconResume from '../_images/icon-resume-32-32.svg';
+import iconSelf from '../_images/icon-self-32-32.svg';
 
 type Props = { primaryHref: string };
 
@@ -10,28 +13,32 @@ export default function Hero({ primaryHref }: Props) {
     <>
       {/* floating badges (desktop only) */}
       <div className="pointer-events-none absolute inset-0 hidden md:block">
-        <div className="absolute left-2 top-1/3 -translate-y-1/3 md:left-8">
+        <div className="absolute left-1/2 top-1/3 -translate-x-[450px]">
           <HeroBadge
             label="포트폴리오"
             animate="float"
             duration={6.2}
             amplitude={6}
+            icon={iconPortfolio}
           />
         </div>
-        <div className="absolute right-8 top-16">
+        <div className="absolute left-1/2 top-16 translate-x-[100px]">
           <HeroBadge
             label="이력서"
             animate="float"
             duration={7.4}
             amplitude={6}
+            icon={iconResume}
           />
         </div>
-        <div className="absolute bottom-10 right-6 md:right-16">
+        <div className="absolute left-1/2 top-1/2 -translate-y-[40px] translate-x-[330px]">
           <HeroBadge
             label="자기소개서"
             animate="float"
             duration={5.6}
             amplitude={6}
+            delay={0.3}
+            icon={iconSelf}
           />
         </div>
       </div>
@@ -111,6 +118,7 @@ function HeroBadge({
   duration = 6,
   amplitude = 6,
   delay = 0,
+  icon,
 }: {
   label: string;
   className?: string;
@@ -118,6 +126,9 @@ function HeroBadge({
   duration?: number; // seconds
   amplitude?: number; // px
   delay?: number; // seconds
+  icon?:
+    | React.ComponentType<{ className?: string; 'aria-hidden'?: boolean }>
+    | React.ReactNode;
 }) {
   const animStyle =
     animate === 'float'
@@ -132,21 +143,35 @@ function HeroBadge({
   return (
     <div
       className={twMerge(
-        'flex h-12 items-center gap-2 rounded-xxs bg-white/90 px-3 drop-shadow-md backdrop-blur-md',
+        'flex h-12 items-center gap-2 rounded-xxs bg-white/90 px-3 shadow-06 backdrop-blur-md',
         className,
       )}
       style={animStyle}
     >
-      <span className="inline-flex h-8 w-8 items-center justify-center rounded-xxs bg-[#EEF0FF]">
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="#7F89FF"
-          aria-hidden
-        >
-          <path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
-        </svg>
+      <span className="inline-flex h-8 w-8 items-center justify-center overflow-hidden rounded-xxs">
+        {(() => {
+          if (!icon) {
+            return (
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="#7F89FF"
+                aria-hidden
+              >
+                <path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
+              </svg>
+            );
+          }
+          if (typeof icon === 'function') {
+            const Icon = icon as React.ComponentType<{
+              className?: string;
+              'aria-hidden'?: boolean;
+            }>;
+            return <Icon className="h-8 w-8" aria-hidden />;
+          }
+          return icon as React.ReactNode;
+        })()}
       </span>
       <span className="text-xsmall16 text-neutral-10">{label}</span>
       <style jsx>{`
