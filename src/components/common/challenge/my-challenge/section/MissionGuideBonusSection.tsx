@@ -137,12 +137,12 @@ const MissionGuideBonusSection = ({
             <Heading3>
               3️⃣ 후기 작성 예시가 궁금하다면? 👉 아래 링크 참고
             </Heading3>
-            <div className="flex flex-row items-center gap-2">
+            <div className="flex flex-col gap-2">
               <a
                 href="https://www.letscareer.co.kr/review/blog"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xsmall14 text-primary hover:underline md:text-xsmall16"
+                className="break-all text-xsmall14 text-primary hover:underline md:text-xsmall16"
               >
                 후기 모음 보기: https://www.letscareer.co.kr/review/blog
               </a>
