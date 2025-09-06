@@ -2,6 +2,7 @@
 
 import { motion } from 'motion/react';
 import DownArrow from '../_images/down-arrow-36-20.svg';
+import { contactLink } from './const';
 
 const steps = [
   '교육 문의하기',
@@ -17,7 +18,7 @@ export default function Process() {
       <div className="mx-auto max-w-[1120px] px-4">
         <div className="grid gap-8 md:grid-cols-2 md:gap-24">
           {/* Left side - Title and description */}
-          <div className="flex flex-col items-start justify-center">
+          <div className="flex flex-col items-start justify-center pb-3">
             <motion.h3
               className="mb-6 text-[32px] font-bold text-white md:text-[40px]"
               initial={{ opacity: 0, y: 12 }}
@@ -40,7 +41,8 @@ export default function Process() {
               맞춤형 서류 작성 교육을 제공합니다.
             </motion.p>
             <motion.a
-              href="#"
+              href={contactLink}
+              target="_blank"
               className="inline-flex items-center justify-center rounded-xs bg-primary-90 px-5 py-3 text-xsmall16 font-medium text-white shadow-sm transition hover:bg-primary-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 md:px-5 md:text-xsmall16"
               initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}

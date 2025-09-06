@@ -82,7 +82,7 @@ export default function ClientTestimonials() {
         viewport={{ once: true, margin: '0px 0px -10% 0px' }}
         transition={{ duration: 0.6 }}
       >
-        <div className="relative overflow-x-auto scrollbar-hide">
+        <div className="relative overflow-x-auto overflow-y-visible pb-3 scrollbar-hide">
           <div className="grid w-max auto-cols-[360px] grid-flow-col gap-3 px-[max(1.5rem,calc((100vw-1120px)/2))]">
             {quotes.map((q, i) => (
               <motion.blockquote

@@ -3,6 +3,7 @@
 import { Break } from '@components/Break';
 import { motion } from 'motion/react';
 import finalCtaBg from '../_images/final-cta-bg.png';
+import { contactLink } from './const';
 
 export default function FinalCTA() {
   return (
@@ -32,11 +33,12 @@ export default function FinalCTA() {
           viewport={{ once: true, margin: '0px 0px -10% 0px' }}
           transition={{ duration: 0.55 }}
         >
-          기업 소개서 받기
+          교육 소개서 받기
         </motion.a>
 
         <motion.a
-          href="#contact"
+          href={contactLink}
+          target="_blank"
           className="inline-flex items-center justify-center rounded-xs bg-neutral-900 px-5 py-3 text-xsmall16 font-medium text-white shadow-sm hover:bg-neutral-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 md:px-5 md:text-xsmall16"
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}

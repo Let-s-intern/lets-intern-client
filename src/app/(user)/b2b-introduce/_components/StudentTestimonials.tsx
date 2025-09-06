@@ -156,9 +156,21 @@ const STUDENT_REVIEWS: StudentReview[] = [
   },
 ];
 
-function StudentCard({ review }: { review: StudentReview }) {
+function StudentCard({
+  review,
+  index,
+}: {
+  review: StudentReview;
+  index: number;
+}) {
   return (
-    <article className="overflow-hidden rounded-lg bg-white p-5 pt-2.5">
+    <motion.article
+      initial={{ opacity: 0, y: 12 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+      transition={{ duration: 0.5, delay: index * 0.05 }}
+      className="overflow-hidden rounded-lg bg-white p-5 pt-2.5"
+    >
       {/* Logo */}
       <div className="mb-2 flex items-center justify-start border-b border-neutral-95">
         <Image
@@ -189,7 +201,7 @@ function StudentCard({ review }: { review: StudentReview }) {
       <p className="text-xsmall14 font-semibold text-neutral-0">
         {review.program}
       </p>
-    </article>
+    </motion.article>
   );
 }
 
@@ -224,18 +236,10 @@ export default function StudentTestimonials() {
         viewport={{ once: true, margin: '0px 0px -10% 0px' }}
         transition={{ duration: 0.6 }}
       >
-        <div className="relative overflow-x-auto scrollbar-hide">
+        <div className="relative overflow-y-visible overflow-x-scroll pb-3 scrollbar-hide">
           <div className="grid w-max auto-cols-[360px] grid-flow-col gap-3 px-[max(1.5rem,calc((100vw-1120px)/2))]">
             {STUDENT_REVIEWS.map((review, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '0px 0px -10% 0px' }}
-                transition={{ duration: 0.5, delay: index * 0.05 }}
-              >
-                <StudentCard review={review} />
-              </motion.div>
+              <StudentCard review={review} index={index} key={index} />
             ))}
           </div>
         </div>

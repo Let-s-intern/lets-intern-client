@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
+import { contactLink } from './const';
 
 export default function StickyCTA() {
   const [showAnimation, setShowAnimation] = useState(false);
@@ -24,7 +25,12 @@ export default function StickyCTA() {
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 100, opacity: 0 }}
-        transition={{ type: 'spring', stiffness: 100, damping: 20, duration: 1.2 }}
+        transition={{
+          type: 'spring',
+          stiffness: 100,
+          damping: 20,
+          duration: 1.2,
+        }}
       >
         <div className="flex items-center gap-3 rounded-sm bg-black/60 px-6 py-3 shadow-lg backdrop-blur-lg">
           <span className="text-small20 font-semibold text-white md:mr-20">
@@ -39,7 +45,8 @@ export default function StickyCTA() {
             </a>
 
             <a
-              href="#contact"
+              href={contactLink}
+              target="_blank"
               className="inline-flex items-center justify-center rounded-xs bg-primary px-5 py-3 text-xsmall16 font-medium text-white shadow-sm hover:bg-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 md:px-5 md:text-xsmall16"
             >
               맞춤 교육 문의

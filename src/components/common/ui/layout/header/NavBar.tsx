@@ -188,7 +188,7 @@ const NavBar = () => {
           </span>
         </SideNavItem>
         <SideNavItem
-          href="https://recruit.superpasshr.com/?utm_source=letscareer&utm_medium=letscareer_homepage&utm_campaign=letscareer_homepage"
+          href="/b2b-introduce"
           isNextRouter
           force
           target="_blank"
@@ -196,14 +196,14 @@ const NavBar = () => {
           className="!h-auto !max-h-none !flex-col !items-start py-3"
         >
           <div className="flex items-center gap-1.5">
-            슈퍼인턴 채용관
-            <div className="flex h-4 w-4 items-center justify-center rounded-full bg-system-error text-[8px] font-bold leading-none text-white">
+            기업 교육
+            {/* <div className="flex h-4 w-4 items-center justify-center rounded-full bg-system-error text-[8px] font-bold leading-none text-white">
               N
-            </div>
+            </div> */}
           </div>
-          <span className="flex items-center text-xxsmall12 font-normal">
-            기업에게 먼저 면접 제안 받자!
-          </span>
+          {/* <span className="flex items-center text-xxsmall12 font-normal">
+            렛츠커리어와 함께하는 기업 교육
+          </span> */}
         </SideNavItem>
         <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
         <SideNavItem href="/program" isNextRouter={false}>

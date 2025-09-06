@@ -6,10 +6,9 @@ import { motion } from 'motion/react';
 import iconPortfolio from '../_images/icon-portfolio-32-32.svg';
 import iconResume from '../_images/icon-resume-32-32.svg';
 import iconSelf from '../_images/icon-self-32-32.svg';
+import { contactLink } from './const';
 
-type Props = { primaryHref: string };
-
-export default function Hero({ primaryHref }: Props) {
+export default function Hero() {
   return (
     <>
       {/* floating badges (desktop only) */}
@@ -107,10 +106,11 @@ export default function Hero({ primaryHref }: Props) {
             viewport={{ once: true, margin: '0px 0px -10% 0px' }}
             transition={{ duration: 0.55 }}
           >
-            기업 소개서 받기
+            교육 소개서 받기
           </motion.a>
           <motion.a
-            href={primaryHref}
+            href={contactLink}
+            target="_blank"
             className="inline-flex items-center justify-center rounded-xs bg-neutral-900 px-5 py-3 text-xsmall16 font-medium text-white shadow-sm hover:bg-neutral-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 md:px-5 md:text-xsmall16"
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
