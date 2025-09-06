@@ -14,7 +14,7 @@ export default function FinalCTA() {
       <h3 className="text-1.5-semibold text-xxlarge36 font-semibold text-white">
         여러분의 기관에 맞춘 취업 교육
         <Break />
-        지금 바로 제안 받아보세요.
+        지금 바로 제안 받아 보세요.
       </h3>
       <div className="mt-8 flex items-center justify-center gap-3">
         <a

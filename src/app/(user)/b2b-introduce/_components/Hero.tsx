@@ -60,7 +60,7 @@ export default function Hero({ primaryHref }: Props) {
           <br className="hidden md:block" /> 렛츠커리어가 설계합니다
         </h1>
         <p className="mt-6 break-keep text-small20 text-neutral-40">
-          직무별 취업시장 맞춤형 교육으로, 취업준비생의 경험과 역량을
+          직무별 취업 시장 맞춤형 교육으로, 취업준비생의 경험과 역량을
           <Break />
           극대화하여 이력서·자기소개서·포트폴리오를 완성합니다.
         </p>

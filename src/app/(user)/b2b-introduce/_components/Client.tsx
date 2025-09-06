@@ -92,7 +92,7 @@ export default function Client() {
             혹시 이런 고민들을 갖고 있지 않으신가요?
           </p>
           <h2 className="mt-7 break-keep text-center text-[40px] font-bold text-static-0">
-            이런 고민을 갖고있는 교육 운영 담당자분들께 추천드려요
+            이런 고민을 갖고 있는 교육 운영 담당자분들께 추천드려요
           </h2>
           <div className="mt-16">
             <PainPoints />
@@ -107,7 +107,7 @@ export default function Client() {
             렛츠커리어 취업 교육 솔루션
           </p>
           <h2 className="mt-7 break-keep text-center text-[40px] font-bold text-static-0">
-            교육 기관의 목표에 맞는 최적의 교육을 제공합니다
+            교육기관의 목표에 맞는 최적의 교육을 제공합니다
           </h2>
 
           <div className="mt-24">
@@ -151,7 +151,7 @@ export default function Client() {
             교육생에게 최신 합격 트렌드를 제공합니다.
           </h2>
           <p className="text-1.125 mt-7 break-keep text-neutral-40">
-            렛츠커리어는 마케팅, PM, 개발등 다양한 직무의 현직자 멘토풀을
+            렛츠커리어는 마케팅, PM, 개발 등 다양한 직무의 현직자 멘토풀을
             보유하고 있습니다. <Break />
             현직자 멘토풀을 통해 교육생들에게 최신 합격 트렌드를 기반으로 한
             <Break />
@@ -186,6 +186,7 @@ export default function Client() {
 
       {/* Sticky CTA */}
       <StickyCTA />
+      <div className="h-32 md:h-40" />
     </main>
   );
 }

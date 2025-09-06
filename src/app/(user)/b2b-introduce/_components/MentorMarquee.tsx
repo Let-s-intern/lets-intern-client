@@ -44,19 +44,8 @@ type Mentor = {
   companyLogo?: StaticImageData;
 };
 
-const figureImages = [
-  figureFemale1,
-  figureFemale2,
-  figureFemale3,
-  figureFemale4,
-  figureFemale5,
-  figureMale1,
-  figureMale2,
-  figureMale3,
-];
-
 const companyLogos: Record<string, any> = {
-  렙츠커리어: squareLC,
+  렛츠커리어: squareLC,
   LG에너지솔루션: squareLgEnergy,
   신한투자증권: squareShinhan,
   HD현대일렉트릭: squareHD,
@@ -84,208 +73,211 @@ const companyLogos: Record<string, any> = {
 const MENTORS: Mentor[] = [
   {
     name: '쥬디 멘토', // 여성
-    role: '렙츠커리어 CEO',
+    role: 'CEO',
+    company: '렛츠커리어',
     figureImage: figureFemale1,
-    companyLogo: companyLogos['렙츠커리어'],
+    companyLogo: companyLogos['렛츠커리어'],
   },
   {
     name: '팀탐 멘토', // 남성
-    role: '렙츠커리어 COO',
+    role: 'COO',
+    company: '렛츠커리어',
     figureImage: figureMale1,
-    companyLogo: companyLogos['렙츠커리어'],
+    companyLogo: companyLogos['렛츠커리어'],
   },
   {
     name: '레오 멘토', // 남성
-    role: '렙츠커리어 CPO',
+    role: 'CPO',
+    company: '렛츠커리어',
     figureImage: figureMale2,
-    companyLogo: companyLogos['렙츠커리어'],
+    companyLogo: companyLogos['렛츠커리어'],
   },
   {
     name: '소피아 멘토', // 여성
-    role: 'LG에너지솔루션',
-    company: '전략기획',
+    company: 'LG에너지솔루션',
+    role: '전략기획',
     figureImage: figureFemale2,
     companyLogo: companyLogos['LG에너지솔루션'],
   },
   {
     name: '크리스 멘토', // 남성
-    role: '신한투자증권',
-    company: '금융업,IB',
+    company: '신한투자증권',
+    role: '금융업, IB',
     figureImage: figureMale3,
     companyLogo: companyLogos['신한투자증권'],
   },
   {
     name: '브라이언 멘토', // 남성
-    role: 'HD현대일렉트릭',
-    company: '해외영업',
+    company: 'HD현대일렉트릭',
+    role: '해외영업',
     figureImage: figureMale1,
     companyLogo: companyLogos['HD현대일렉트릭'],
   },
   {
     name: '우디 멘토', // 남성
-    role: '기아차',
-    company: '브랜드 마케팅',
+    company: '기아차',
+    role: '브랜드 마케팅',
     figureImage: figureMale2,
     companyLogo: companyLogos['기아차'],
   },
   {
     name: '헤일리 멘토', // 여성
-    role: '현대자동차',
-    company: '글로벌 커뮤니케이션',
+    company: '현대자동차',
+    role: '글로벌 커뮤니케이션',
     figureImage: figureFemale3,
     companyLogo: companyLogos['현대자동차'],
   },
   {
     name: '줄리아 멘토', // 여성
-    role: '현대자동차',
-    company: '상품전략',
+    company: '현대자동차',
+    role: '상품 전략',
     figureImage: figureFemale4,
     companyLogo: companyLogos['현대자동차'],
   },
   {
-    name: '이프썜 멘토', // 여성
-    role: 'SK이노베이션',
-    company: '마케팅',
+    name: '이프쌤 멘토', // 여성
+    company: 'SK이노베이션',
+    role: '마케팅',
     figureImage: figureFemale5,
     companyLogo: companyLogos['SK이노베이션'],
   },
   {
     name: '휴고 멘토', // 남성
-    role: '현대자동차',
-    company: '상품기획',
+    company: '현대자동차',
+    role: '상품 기획',
     figureImage: figureMale3,
     companyLogo: companyLogos['현대자동차'],
   },
   {
     name: '하이디 멘토', // 여성
-    role: '토스',
-    company: '세일즈',
+    company: '토스',
+    role: '세일즈',
     figureImage: figureFemale1,
     companyLogo: companyLogos['토스'],
   },
   {
     name: '이린 멘토', // 여성
-    role: '캐시노트',
-    company: '마케팅',
+    company: '캐시노트',
+    role: '마케팅',
     figureImage: figureFemale2,
     companyLogo: companyLogos['캐시노트'],
   },
   {
     name: '벤자민 멘토', // 남성
-    role: 'BCG',
-    company: '컨설턴트',
+    company: 'BCG',
+    role: '컨설턴트',
     figureImage: figureMale1,
     companyLogo: companyLogos['BCG'],
   },
   {
     name: '유나 멘토', // 여성
-    role: '현대코퍼레이션',
-    company: 'PM',
+    company: '현대코퍼레이션',
+    role: 'PM',
     figureImage: figureFemale3,
     companyLogo: companyLogos['현대코퍼레이션'],
   },
   {
     name: '미니 멘토', // 여성
-    role: '한국타이어',
-    company: 'HR',
+    company: '한국타이어',
+    role: 'HR',
     figureImage: figureFemale4,
     companyLogo: companyLogos['한국타이어'],
   },
   {
     name: '세라 멘토', // 여성
-    role: '한화오션',
-    company: '해외영업',
+    company: '한화오션',
+    role: '해외영업',
     figureImage: figureFemale5,
     companyLogo: companyLogos['한화오션'],
   },
   {
     name: '쥬쌤 멘토', // 여성
-    role: 'SK하이닉스',
-    company: '영업마케팅',
+    company: 'SK하이닉스',
+    role: '영업마케팅',
     figureImage: figureFemale1,
     companyLogo: companyLogos['SK하이닉스'],
   },
   {
     name: '루크 멘토', // 남성
-    role: '삼일PwC',
-    company: 'ESG 컨설턴트',
+    company: '삼일PwC',
+    role: 'ESG 컨설턴트',
     figureImage: figureMale2,
     companyLogo: companyLogos['삼일PwC'],
   },
   {
-    name: '후추썜 멘토', // 여성
-    role: '대학내일',
-    company: 'AE',
+    name: '후추쌤 멘토', // 여성
+    company: '대학내일',
+    role: 'AE',
     figureImage: figureFemale2,
     companyLogo: companyLogos['대학내일'],
   },
   {
     name: '영 멘토', // 남성
-    role: '뤼튼테크놀로지스',
-    company: 'AI개발',
+    company: '뤼튼테크놀로지스',
+    role: 'AI 개발',
     figureImage: figureMale3,
     companyLogo: companyLogos['뤼튼테크놀로지스'],
   },
   {
     name: '파도 멘토', // 남성
-    role: '뤼튼테크놀로지스',
-    company: '서비스 기획',
+    company: '뤼튼테크놀로지스',
+    role: '서비스 기획',
     figureImage: figureMale1,
     companyLogo: companyLogos['뤼튼테크놀로지스'],
   },
   {
     name: 'Seren 멘토', // 여성
-    role: '현대로템',
-    company: 'AI데이터사이언티스트',
+    company: '현대로템',
+    role: 'AI 데이터 사이언티스트',
     figureImage: figureFemale3,
     companyLogo: companyLogos['현대로템'],
   },
   {
     name: '도니 멘토', // 남성
-    role: '무신사',
-    company: '백엔드 개발자',
+    company: '무신사',
+    role: '백엔드 개발자',
     figureImage: figureMale2,
     companyLogo: companyLogos['무신사'],
   },
   {
     name: '제이 멘토', // 남성
-    role: '무신사',
-    company: '백엔드 개발자',
+    company: '무신사',
+    role: '백엔드 개발자',
     figureImage: figureMale3,
     companyLogo: companyLogos['무신사'],
   },
   {
     name: '찰스 멘토', // 남성
-    role: '삼성전자',
-    company: '반도체 엔지니어링',
+    company: '삼성전자',
+    role: '반도체 엔지니어링',
     figureImage: figureMale1,
     companyLogo: companyLogos['삼성전자'],
   },
   {
     name: '머스캣 멘토', // 남성
-    role: '삼성바이오로직스',
-    company: '공정엔지니어링',
+    company: '삼성바이오로직스',
+    role: '공정 엔지니어링',
     figureImage: figureMale2,
     companyLogo: companyLogos['삼성바이오로직스'],
   },
   {
     name: '길라잡이 멘토', // 여성
-    role: 'LG디스플레이',
-    company: 'AI개발',
+    company: 'LG디스플레이',
+    role: 'AI 개발',
     figureImage: figureFemale4,
     companyLogo: companyLogos['LG디스플레이'],
   },
   {
     name: '루카 멘토', // 남성
-    role: 'DB Inc',
-    company: 'SW 엔지니어',
+    company: 'DB Inc',
+    role: 'SW 엔지니어',
     figureImage: figureMale3,
     companyLogo: companyLogos['DB Inc'],
   },
   {
     name: '준 멘토', // 남성
-    role: '현대자동차',
-    company: 'IT 서비스 기획',
+    company: '현대자동차',
+    role: 'IT 서비스 기획',
     figureImage: figureMale1,
     companyLogo: companyLogos['현대자동차'],
   },
@@ -314,7 +306,7 @@ function Row({
                 <div className="rounded absolute left-2.5 top-2.5 h-[66px] w-[66px] overflow-hidden rounded-xs border bg-white">
                   <Image
                     src={m.companyLogo}
-                    alt={`${m.role} 로고`}
+                    alt={`${m.company ?? ''} 로고`}
                     fill
                     className="object-contain p-1"
                   />
@@ -334,8 +326,8 @@ function Row({
                 {m.name}
               </div>
               <div className="text-xsmall16 text-neutral-40">
-                {m.role}
-                {m.company ? `/${m.company}` : ''}
+                {m.company}
+                {m.role ? `/${m.role}` : ''}
               </div>
             </div>
           </div>

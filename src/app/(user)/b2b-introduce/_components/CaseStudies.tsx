@@ -28,7 +28,7 @@ const CASES: CaseItem[] = [
   {
     title: '[부산광역시] AI 브랜드 마케팅 마이크로 워커 양성 과정',
     content:
-      '챌린지 현직자 1:1 멘토링 기업 프로젝트구성으로 이력서/자기소개서/포트폴리오 9주 간 완성',
+      '챌린지 + 현직자 1:1 멘토링 + 기업 프로젝트 구성으로 이력서/자기소개서/포트폴리오 9주간 완성',
     tags: ['챌린지', '멘토링', '기업 프로젝트'],
     imageSrc: case01png.src,
     logoImageSrc: LOGO['부산시'].src,
@@ -36,7 +36,7 @@ const CASES: CaseItem[] = [
   {
     title: '[한경닷컴] 디지털 마케팅 8기',
     content:
-      '챌린지 + 현직자 1:1 멘토링+ 취업 특강의 구성으로 이력서/자기소개서/포트폴리오 4주 간 완성',
+      '챌린지 + 현직자 1:1 멘토링 + 취업 특강의 구성으로 이력서/자기소개서/포트폴리오 4주간 완성',
     tags: ['챌린지', '취업 특강', '멘토링', '서류 피드백'],
     imageSrc: case02png.src,
     logoImageSrc: LOGO['한경닷컴'].src,
@@ -44,7 +44,7 @@ const CASES: CaseItem[] = [
   {
     title: '[스나이퍼팩토리] 카카오클라우드로 배우는 AlaaS 마스터 클래스 1기',
     content:
-      '챌린지 + 현직자 1:1 멘토링 + 취업 특강의 구성으로 이력서/자기소개서/포트폴리오 6주 간 완성',
+      '챌린지 + 현직자 1:1 멘토링 + 취업 특강의 구성으로 이력서/자기소개서/포트폴리오 6주간 완성',
     tags: ['챌린지', '취업 특강', '멘토링'],
     imageSrc: case03png.src,
     logoImageSrc: LOGO['sniperfactory'].src,
@@ -60,14 +60,14 @@ const CASES: CaseItem[] = [
   {
     title: '[러닝스푼즈] SeSAC 양천캠퍼스 글로벌 BM/MD 과정',
     content:
-      '챌린지 + 취업 특강의 구성으로 이력서/자기소개서/포트폴리오 3주 간 완성',
+      '챌린지 + 취업 특강의 구성으로 이력서/자기소개서/포트폴리오 3주간 완성',
     tags: ['챌린지', '취업 특강'],
     imageSrc: case05png.src,
     logoImageSrc: LOGO['learn spoonz'].src,
   },
   {
     title: '[한국교통대학교] ICT 오픈이노베이션 취업 교육',
-    content: '챌린지 구성으로 이력서/자기소개서/포트폴리오 3주 간 완성',
+    content: '챌린지 구성으로 이력서/자기소개서/포트폴리오 3주간 완성',
     tags: ['챌린지'],
     imageSrc: case06png.src,
     logoImageSrc: LOGO['한국교통대'].src,
@@ -75,7 +75,7 @@ const CASES: CaseItem[] = [
   {
     title: '[러닝스푼즈] SeSAC 동작캠퍼스 서비스 기획 과정',
     content:
-      '챌린지 + 취업 특강의 구성으로 이력서/자기소개서/포트폴리오 3주 간 완성',
+      '챌린지 + 취업 특강의 구성으로 이력서/자기소개서/포트폴리오 3주간 완성',
     tags: ['챌린지', '취업 특강'],
     imageSrc: case07png.src,
     logoImageSrc: LOGO['learn spoonz'].src,
@@ -83,7 +83,7 @@ const CASES: CaseItem[] = [
   {
     title: '[러닝스푼즈] SeSAC 광진캠퍼스 패션MD, 마케팅 과정',
     content:
-      '챌린지 + 취업 특강의 구성으로 이력서/자기소개서/포트폴리오 3주 간 완성',
+      '챌린지 + 취업 특강의 구성으로 이력서/자기소개서/포트폴리오 3주간 완성',
     tags: ['챌린지', '취업 특강'],
     imageSrc: case08png.src,
     logoImageSrc: LOGO['learn spoonz'].src,
@@ -91,7 +91,7 @@ const CASES: CaseItem[] = [
   {
     title: '[랩포디엑스] LG전자 DX SCHOOL 2기',
     content:
-      '챌린지 + 현직자 1:1 멘토링 + 취업 특강의 구성으로 이력서/자기소개서/포트폴리오 4주 간 완성',
+      '챌린지 + 현직자 1:1 멘토링 + 취업 특강의 구성으로 이력서/자기소개서/포트폴리오 4주간 완성',
     tags: ['챌린지', '취업 특강', '멘토링'],
     imageSrc: case09png.src,
     logoImageSrc: LOGO['labdx'].src,
@@ -99,7 +99,7 @@ const CASES: CaseItem[] = [
   {
     title: '[러닝스푼즈] SeSAC 마포캠퍼스 서비스 기획 과정',
     content:
-      '챌린지 + 취업 특강의 구성으로 이력서/자기소개서/포트폴리오 3주 간 완성',
+      '챌린지 + 취업 특강의 구성으로 이력서/자기소개서/포트폴리오 3주간 완성',
     tags: ['챌린지', '취업 특강'],
     imageSrc: case10png.src,
     logoImageSrc: LOGO['learn spoonz'].src,
@@ -115,7 +115,7 @@ const CASES: CaseItem[] = [
   {
     title: '[스나이퍼팩토리] 한컴 AI 아카데미 1기',
     content:
-      '챌린지 + 현직자 1:1 멘토링 + 취업 특강의 구성으로 이력서/자기소개서/포트폴리오 6주 간 완성',
+      '챌린지 + 현직자 1:1 멘토링 + 취업 특강의 구성으로 이력서/자기소개서/포트폴리오 6주간 완성',
     tags: ['챌린지', '취업 특강', '멘토링'],
     imageSrc: case12png.src,
     logoImageSrc: LOGO['sniperfactory'].src,

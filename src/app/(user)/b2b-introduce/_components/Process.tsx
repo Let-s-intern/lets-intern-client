@@ -3,7 +3,7 @@
 import DownArrow from '../_images/down-arrow-36-20.svg';
 
 const steps = [
-  '교육 문의 하기',
+  '교육 문의하기',
   '교육 담당자의 고민 미팅',
   '맞춤형 취업 교육 제안',
   '교육 과정 운영',
