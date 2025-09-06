@@ -1,6 +1,7 @@
 import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
-import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import { MyChallengeMissionByType } from '@/schema';
+import { BONUS_MISSION_TH } from '@/utils/constants';
 import { missionSubmitToBadge } from '@/utils/convert';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
@@ -17,9 +18,12 @@ const DoneMissionItem = ({ mission }: Props) => {
     applicationId: string;
     programId: string;
   }>();
-  const { currentChallenge, schedules } = useCurrentChallenge();
+  const { currentChallenge, schedules } = useOldCurrentChallenge();
   const itemRef = useRef<HTMLLIElement>(null);
   const [isDetailShown, setIsDetailShown] = useState(false);
+
+  const th =
+    mission?.th === BONUS_MISSION_TH ? '보너스' : `  ${mission?.th}회차`;
 
   const {
     data: missionDetailData,
@@ -67,7 +71,7 @@ const DoneMissionItem = ({ mission }: Props) => {
         <div className="flex flex-1 items-center justify-between">
           <div className="flex items-center gap-3">
             <h4 className="text-lg font-semibold">
-              {mission.th}회차. {mission.title}
+              {th}. {mission.title}
             </h4>
             <span
               className={clsx(
@@ -75,6 +79,7 @@ const DoneMissionItem = ({ mission }: Props) => {
                 missionSubmitToBadge({
                   status: mission.attendanceStatus,
                   result: mission.attendanceResult,
+                  challengeEndDate: currentChallenge?.endDate,
                 }).style,
               )}
             >
@@ -82,6 +87,7 @@ const DoneMissionItem = ({ mission }: Props) => {
                 missionSubmitToBadge({
                   status: mission.attendanceStatus,
                   result: mission.attendanceResult,
+                  challengeEndDate: currentChallenge?.endDate,
                 }).text
               }
             </span>

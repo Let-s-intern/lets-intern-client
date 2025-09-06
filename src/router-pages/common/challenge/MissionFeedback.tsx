@@ -59,7 +59,7 @@ export default function MissionFeedback() {
             <span className="text-sm font-medium text-gray-700">멘토명:</span>
           </div>
           <div className="text-sm text-gray-900">
-            {feedbackData?.attendanceInfo.mentorName || '-'}
+            {feedbackData?.attendanceInfo?.mentorName || '-'}
           </div>
 
           <div className="flex items-center gap-2">
@@ -94,7 +94,7 @@ export default function MissionFeedback() {
                 <div className="mb-2 text-lg font-medium text-gray-600">
                   피드백 내용
                 </div>
-                {feedbackData?.attendanceInfo.feedback && (
+                {feedbackData?.attendanceInfo?.feedback && (
                   <LexicalContent
                     node={
                       JSON.parse(

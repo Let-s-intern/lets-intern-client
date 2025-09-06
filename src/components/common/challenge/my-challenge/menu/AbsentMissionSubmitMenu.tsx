@@ -1,13 +1,12 @@
-import clsx from 'clsx';
-import { useEffect, useState } from 'react';
-
+import { usePatchAttendance } from '@/api/attendance';
 import {
   useGetChallengeReviewStatus,
-  usePatchChallengeAttendance,
   usePostChallengeAttendance,
 } from '@/api/challenge';
-import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import { Schedule, UserChallengeMissionDetail } from '@/schema';
+import clsx from 'clsx';
+import { useEffect, useState } from 'react';
 import ParsedCommentBox from '../ParsedCommentBox';
 
 interface Props {
@@ -21,7 +20,7 @@ const AbsentMissionSubmitMenu = ({
   currentSchedule,
   setOpenReviewModal,
 }: Props) => {
-  const { schedules, currentChallenge } = useCurrentChallenge();
+  const { schedules, currentChallenge } = useOldCurrentChallenge();
   const lastMission = schedules.reduce((acc: Schedule | null, schedule) => {
     if (acc === null) return schedule;
 
@@ -55,11 +54,7 @@ const AbsentMissionSubmitMenu = ({
 
   const { mutateAsync: tryPostAttendance } = usePostChallengeAttendance({});
 
-  const { mutateAsync: tryPatchAttendance } = usePatchChallengeAttendance({
-    successCallback: () => {
-      alert('미션 수정이 완료되었습니다.');
-    },
-  });
+  const patchAttendance = usePatchAttendance();
 
   const handleMissionLinkChanged = (e: any) => {
     const inputValue = e.target.value;
@@ -100,11 +95,12 @@ const AbsentMissionSubmitMenu = ({
         currentSchedule.attendanceInfo.result === 'WRONG' &&
         currentSchedule.attendanceInfo.id !== null
       ) {
-        await tryPatchAttendance({
+        await patchAttendance.mutateAsync({
           attendanceId: currentSchedule.attendanceInfo.id,
           link: value,
           review,
         });
+        alert('미션 수정이 완료되었습니다.');
       } else {
         await tryPostAttendance({
           missionId: missionDetail.id,
@@ -194,7 +190,7 @@ const AbsentMissionSubmitMenu = ({
                     Object.assign(document.createElement('a'), {
                       target: '_blank',
                       href: value,
-                      rel: 'noopenner noreferrer',
+                      rel: 'noopener noreferrer',
                     }).click();
                     setIsLinkChecked(true);
                   }

@@ -1,7 +1,7 @@
+import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
 import AbsentMissionItem from '../mission/AbsentMissionItem';
 import DoneMissionItem from '../mission/DoneMissionItem';
 import YetMissionItem from '../mission/YetMissionItem';
@@ -19,7 +19,7 @@ const OtherMissionSection = ({ isDone }: Props) => {
     remainingMissions,
     submittedMissions,
     currentChallenge,
-  } = useCurrentChallenge();
+  } = useOldCurrentChallenge();
 
   const [searchParams, setSearchParams] = useSearchParams();
 

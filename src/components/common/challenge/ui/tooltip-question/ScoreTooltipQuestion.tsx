@@ -27,20 +27,21 @@ const ScrollTooltipQuestion = () => {
         className="cursor-pointer"
         onClick={(e) => setIsTooltipOpen(!isTooltipOpen)}
       >
-        <img src="/icons/tooltip-question.svg" alt="tooltip question" />
+        <img src="/icons/info-circle.svg" alt="tooltip question" />
       </i>
       {isTooltipOpen && (
-        <div className="rounded absolute -bottom-4 left-1/2 z-30 -translate-x-1/2 translate-y-full border border-gray-400 bg-white">
+        <div className="absolute -bottom-4 left-1/2 z-30 -translate-x-1/2 translate-y-full rounded-xs bg-white shadow-[2px_0px_10px_rgba(0,0,0,0.07)]">
           <div
-            className="absolute left-1/2 top-0 h-3 w-6 -translate-x-1/2 -translate-y-full bg-gray-400"
+            className="absolute left-1/2 top-0 h-3 w-6 -translate-x-1/2 -translate-y-full bg-gray-300 blur-md"
             style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }}
           />
           <div
             className="absolute left-1/2 top-[1.5px] h-3 w-6 -translate-x-1/2 -translate-y-full bg-white"
             style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }}
           />
-          <div className="flex w-[300px] items-center justify-center px-4 py-4 text-sm">
+          <div className="flex w-[212px] items-center justify-center p-3 text-sm font-light md:w-max">
             미션 점수의 총합이 80점 이상인 경우에, 페이백 환급이 진행됩니다.
+            <br />
             자세한 내용은 환급정책을 확인해주세요.
           </div>
         </div>

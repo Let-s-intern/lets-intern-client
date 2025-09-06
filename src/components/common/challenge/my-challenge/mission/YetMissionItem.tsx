@@ -1,51 +1,36 @@
+import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
+import { MyChallengeMissionByType, userChallengeMissionDetail } from '@/schema';
+import axios from '@/utils/axios';
+import { BONUS_MISSION_TH } from '@/utils/constants';
 import { useQuery } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import { useState } from 'react';
-import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
-import {
-  MyChallengeMissionByType, userChallengeMissionDetail
-} from '../../../../../schema';
-import axios from '../../../../../utils/axios';
 import YetMissionDetailMenu from './YetMissionDetailMenu';
 
+/** 아직 시작하지 않은 미션 */
 interface Props {
   mission: MyChallengeMissionByType;
 }
 
 const YetMissionItem = ({ mission }: Props) => {
   const [isDetailShown, setIsDetailShown] = useState(false);
-  // const mission = schedule.missionInfo;
-  const { currentChallenge } = useCurrentChallenge();
+  const { currentChallenge } = useOldCurrentChallenge();
 
-  // const {
-  //   data: missionDetail,
-  //   isLoading: isDetailLoading,
-  //   error: detailError,
-  // } = useQuery({
-  //   queryKey: ['mission', mission.id, 'detail', { status: mission.status }],
-  //   queryFn: async () => {
-  //     const res = await axios.get(`/mission/${mission.id}/detail`, {
-  //       params: { status: mission.status },
-  //     });
-  //     const data = res.data;
-  //     return data;
-  //   },
-  //   enabled: isDetailShown,
-  // });
+  const th =
+    mission?.th === BONUS_MISSION_TH ? '보너스' : `  ${mission?.th}회차`;
 
   const {
     data: missionDetail,
     isLoading: isDetailLoading,
     error: detailError,
-    refetch,
   } = useQuery({
-    enabled: Boolean(currentChallenge?.id) && isDetailShown,
+    enabled: Boolean(currentChallenge?.id),
     queryKey: [
       'challenge',
       currentChallenge?.id,
       'mission',
       mission.id,
       'detail',
-      // { status: schedule.attendanceInfo.status },
     ],
     queryFn: async () => {
       const res = await axios.get(
@@ -55,13 +40,30 @@ const YetMissionItem = ({ mission }: Props) => {
     },
   });
 
+  const toggle = () => {
+    if (!isDetailShown && !isValid()) return;
+    setIsDetailShown(!isDetailShown);
+  };
+
+  const isValid = () => {
+    if (isAxiosError(detailError)) {
+      const errorCode = detailError?.response?.data.status;
+      if (errorCode === 400) {
+        alert('0회차 미션을 먼저 완료해주세요.');
+        setIsDetailShown(false);
+      }
+      return false;
+    }
+    return true;
+  };
+
   return (
     <li key={mission.id} className="rounded-xl bg-white p-6">
       <div className="flex items-center justify-between px-3">
         <h4 className="text-lg font-semibold">
-          {mission?.th}회차. {mission?.title}
+          {th}. {mission?.title}
         </h4>
-        <button onClick={() => setIsDetailShown(!isDetailShown)}>
+        <button onClick={toggle}>
           {!isDetailShown || isDetailLoading ? '미션보기' : '닫기'}
         </button>
       </div>

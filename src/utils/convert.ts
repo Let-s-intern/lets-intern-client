@@ -1,5 +1,7 @@
 import { CurationLocationType, CurationType } from '@/api/curation';
 import { QuestionType } from '@/api/review';
+import dayjs from '@/lib/dayjs';
+import { Dayjs } from 'dayjs';
 import {
   AttendanceResult,
   AttendanceStatus,
@@ -125,6 +127,8 @@ export const bankTypeToText: Record<string, string> = {
   MG: '새마을금고',
   KAKAO: '카카오뱅크',
   TOSS: '토스뱅크',
+  KBANK: '케이뱅크',
+  SC: 'SC제일은행',
 };
 
 export const gradeToText: Record<string, string> = {
@@ -204,32 +208,6 @@ export const wishJobToText: any = {
   RESEARCH_RND: 'R&D 연구원',
 };
 
-const topicRequiredToText: any = {
-  EXPERIENCE: '경험정리',
-  JOB: '직무탐색',
-  CONCEPT: '컨셉잡기',
-  DOCUMENT: '서류작성',
-  RECRUITMENT: '공고분석',
-  APPLY: '지원하기',
-};
-
-const topicToText: any = {
-  ...topicRequiredToText,
-  NULL: '없음',
-};
-
-const missionTypeToText: any = {
-  GENERAL: '일반',
-  ADDITIONAL: '제한 컨텐츠',
-  REFUND: '보증금',
-};
-
-const contentsTypeToText: any = {
-  ESSENTIAL: '필수',
-  ADDITIONAL: '추가',
-  LIMITED: '제한',
-};
-
 export const missionStatusToText: any = {
   WAITING: '대기',
   CHECK_DONE: '확인완료',
@@ -258,6 +236,7 @@ export const attendanceResultToText: any = {
   WAITING: '확인중',
   PASS: '확인 완료',
   WRONG: '반려',
+  FINAL_WRONG: '최종 반려',
 };
 
 export const couponTypeToText: Record<string, string> = {
@@ -301,39 +280,65 @@ export const couponProgramTypeEnum = {
 };
 
 export const absent = {
-  text: '결석',
-  style: 'bg-[#E3E3E3] text-[#9B9B9B]',
+  text: '미제출',
+  icon: '/icons/submit_absent.svg',
+  style: 'text-system-error text-[13px]',
 };
 
 export const missionSubmitToBadge = ({
   status,
   result,
+  challengeEndDate,
 }: {
   status?: AttendanceStatus | null;
   result?: AttendanceResult | null;
+  challengeEndDate?: Dayjs | null;
 }) => {
+  const isChallengePeriodOver = challengeEndDate
+    ?.add(2, 'day')
+    .isBefore(dayjs());
+
   if (result === 'WAITING') {
     return {
       text: '확인중',
-      style: 'bg-[#FFFACD] text-[#D3CB00]',
+      icon: '/icons/submit_waiting.svg',
+      style: 'text-primary-90 text-sm',
     };
   }
 
-  if (status === 'UPDATED' && result === 'WRONG') {
-    return absent;
+  if (status === null) {
+    return {
+      text: '진행중',
+      style: 'text-primary-90 text-sm',
+      icon: '/icons/submit_waiting.svg',
+    };
   }
 
-  if (status === 'UPDATED' && result === 'PASS') {
+  // 반려 AND (챌린지 종료 + 2일) 지나면면
+  if (
+    result === 'FINAL_WRONG' ||
+    (result === 'WRONG' && isChallengePeriodOver)
+  ) {
     return {
-      text: '지각',
-      style: 'bg-[#E3E3E3] text-[#9B9B9B]',
+      text: '최종 반려',
+      icon: '/icons/submit_absent.svg',
+      style: 'text-neutral-30 text-[13px]',
     };
   }
 
   if (result === 'WRONG') {
     return {
-      text: '반려',
-      style: 'bg-[#E3E3E3] text-[#9B9B9B]',
+      text: '제출 반려',
+      icon: '/icons/submit_absent.svg',
+      style: 'text-neutral-30 text-[13px]',
+    };
+  }
+
+  if ((status === 'UPDATED' && result === 'PASS') || status === 'LATE') {
+    return {
+      text: '지각 제출',
+      style: 'text-neutral-30 text-[13px]',
+      icon: '/icons/submit_late.svg',
     };
   }
 
@@ -341,16 +346,10 @@ export const missionSubmitToBadge = ({
     return absent;
   }
 
-  if (status === 'LATE') {
-    return {
-      text: '지각',
-      style: 'bg-[#E3E3E3] text-[#9B9B9B]',
-    };
-  }
-
   return {
-    text: '확인완료',
-    style: 'text-primary bg-[#E7E6FD]',
+    text: '제출 성공',
+    icon: '/icons/submit_success.svg',
+    style: 'text-primary-90 text-sm',
   };
 };
 
@@ -376,10 +375,6 @@ export const blogCategory: Record<string, string> = {
   PROGRAM_REVIEWS: '프로그램 후기',
   LETSCAREER_NEWS: '렛츠커리어 소식',
   CAREER_STORIES: '취뽀 & 근무 후기',
-  // JOB_SUCCESS_STORIES: '취뽀 후기', // LEGACY
-  // WORK_EXPERIENCES: '근무 후기', // LEGACY
-  // JUNIOR_STORIES: '주니어 이야기',
-  // JOB_POSTING: '채용 공고',
 };
 
 export const convertCurationLocationTypeToText = (

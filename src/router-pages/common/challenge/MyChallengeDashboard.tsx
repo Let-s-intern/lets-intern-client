@@ -1,74 +1,50 @@
-import dayjs from '@/lib/dayjs';
-import { useQuery } from '@tanstack/react-query';
-import { useParams } from 'react-router-dom';
-import DailyMissionSection from '../../../components/common/challenge/my-challenge/section/DailyMissionSection';
-import MissionCalendarSection from '../../../components/common/challenge/my-challenge/section/MissionCalendarSection';
-import OtherMissionSection from '../../../components/common/challenge/my-challenge/section/OtherMissionSection';
-import { useCurrentChallenge } from '../../../context/CurrentChallengeProvider';
-import { Schedule } from '../../../schema';
-import axios from '../../../utils/axios';
-
-// TODO: [나중에...] 외부로 빼야 함
-const getIsDone = (schedules: Schedule[]) => {
-  const last = schedules.reduce((acc, schedule) => {
-    const endDate = dayjs(schedule.missionInfo.endDate) ?? dayjs('2000-01-01');
-    if (acc.isBefore(endDate)) {
-      return endDate;
-    }
-    return acc;
-  }, dayjs('2000-01-01'));
-
-  return last.isBefore(dayjs());
-};
-
-const getIsChallengeDone = (endDate: string) => {
-  return dayjs(new Date()).isAfter(dayjs(endDate));
-};
-
-const getIsChallengeSubmitDone = (endDate: string) => {
-  return dayjs(new Date()).isAfter(dayjs(endDate).add(2, 'day'));
-};
+import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { useChallengeProgram } from '@/hooks/useChallengeProgram';
+import { useMissionSelection } from '@/hooks/useMissionSelection';
+import { useMissionStore } from '@/store/useMissionStore';
+import MissionCalendarSection from '@components/common/challenge/my-challenge/section/MissionCalendarSection';
+import MissionGuideSection from '@components/common/challenge/my-challenge/section/MissionGuideSection';
+import MissionMentorCommentSection from '@components/common/challenge/my-challenge/section/MissionMentorCommentSection';
+import MissionSubmitSection from '@components/common/challenge/my-challenge/section/MissionSubmitSection';
 
 const MyChallengeDashboard = () => {
-  const params = useParams<{ programId: string }>();
+  const { schedules } = useCurrentChallenge();
+  const { selectedMissionId } = useMissionStore();
 
-  const { schedules, myDailyMission } = useCurrentChallenge();
+  // 미션 선택 관련 로직을 custom hook으로 분리
+  const { todayTh } = useMissionSelection();
 
-  const todayTh = myDailyMission?.dailyMission?.th ?? schedules.length + 1;
-
-  const { data: programData } = useQuery({
-    queryKey: ['challenge', params.programId, 'application'],
-    queryFn: async ({ queryKey }) => {
-      const res = await axios.get(
-        `/${queryKey[0]}/${queryKey[1]}/${queryKey[2]}`,
-      );
-      return res.data;
-    },
-  });
-
-  const programEndDate = programData?.data?.endDate;
-
-  const isChallengeDone = getIsChallengeDone(programEndDate);
-  const isChallengeSubmitDone = programEndDate
-    ? getIsChallengeSubmitDone(programEndDate)
-    : undefined;
+  // 챌린지 프로그램 정보 관련 로직을 custom hook으로 분리
+  const { isChallengeDone } = useChallengeProgram();
 
   return (
-    <main className="px-6">
-      <header>
-        <h1 className="text-2xl font-bold">나의 기록장</h1>
-      </header>
+    <main className="px-5 md:px-0 md:pl-12">
+      <h1 className="text-medium22 font-semibold">나의 미션</h1>
       <MissionCalendarSection
         schedules={schedules}
         todayTh={todayTh}
         isDone={isChallengeDone}
       />
-      {myDailyMission?.attendanceInfo && myDailyMission.dailyMission && (
-        <DailyMissionSection myDailyMission={myDailyMission} />
-      )}
-      {typeof isChallengeSubmitDone === 'boolean' && (
-        <OtherMissionSection todayTh={todayTh} isDone={isChallengeSubmitDone} />
-      )}
+
+      <div className="mt-10">
+        <MissionGuideSection todayTh={todayTh} />
+        <div className="mt-6">
+          <MissionSubmitSection
+            attendanceInfo={
+              schedules.find(
+                (schedule) => schedule.missionInfo.id === selectedMissionId,
+              )?.attendanceInfo
+            }
+            startDate={schedules
+              .find((schedule) => schedule.missionInfo.id === selectedMissionId)
+              ?.missionInfo.startDate?.toString()}
+          />
+        </div>
+        {/* 멘토 피드백 여부에 따라 값 받고 노출 */}
+        <div className="mt-16">
+          <MissionMentorCommentSection missionId={selectedMissionId} />
+        </div>
+      </div>
     </main>
   );
 };
