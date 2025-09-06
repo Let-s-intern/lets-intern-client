@@ -124,14 +124,15 @@ const CASES: CaseItem[] = [
 
 export default function CaseStudies() {
   return (
-    <div className="grid gap-6 md:grid-cols-2">
+    <div className="grid gap-x-3 gap-y-6 md:grid-cols-3">
       {CASES.map((c, i) => (
         <CaseCard
           key={i}
-          company={c.company}
           title={c.title}
-          desc={c.desc}
+          content={c.content}
+          tags={c.tags}
           imageSrc={c.imageSrc}
+          logoImageSrc={c.logoImageSrc}
         />
       ))}
     </div>
