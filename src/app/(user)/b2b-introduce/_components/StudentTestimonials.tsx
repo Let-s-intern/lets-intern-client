@@ -157,41 +157,37 @@ const STUDENT_REVIEWS: StudentReview[] = [
 
 function StudentCard({ review }: { review: StudentReview }) {
   return (
-    <article className="overflow-hidden rounded-lg bg-white">
+    <article className="overflow-hidden rounded-lg bg-white p-5 pt-2.5">
       {/* Logo */}
-      <div className="bg-neutral-98 flex h-20 items-center justify-center border-b border-neutral-95">
+      <div className="mb-2 flex items-center justify-start border-b border-neutral-95">
         <Image
           src={review.logo}
           alt={review.studentInfo.company}
           width={140}
-          height={40}
-          className="h-10 w-auto object-contain"
+          height={48}
+          className="h-12 w-auto object-contain"
         />
       </div>
+      {/* Student Info */}
+      <p className="mb-2 break-keep rounded-xxs bg-primary-5 px-1.5 py-1 text-xsmall14 font-semibold text-primary-dark">
+        {review.studentInfo.name} / {review.studentInfo.company}{' '}
+        {review.studentInfo.result} / {review.studentInfo.course}
+      </p>
 
-      {/* Content */}
-      <div className="p-6">
-        {/* Student Info */}
-        <p className="mb-3 rounded-xxs bg-primary-5 px-1.5 py-1 text-xsmall14 font-semibold text-primary-dark">
-          {review.studentInfo.name} / {review.studentInfo.company}{' '}
-          {review.studentInfo.result} / {review.studentInfo.course}
-        </p>
+      {/* Main Review */}
+      <h3 className="mb-1.5 break-keep text-small18 font-semibold text-neutral-0">
+        {review.mainReview}
+      </h3>
 
-        {/* Main Review */}
-        <h3 className="mb-3 text-small18 font-semibold text-neutral-0">
-          {review.mainReview}
-        </h3>
+      {/* Detailed Review */}
+      <p className="mb-2 break-keep text-xsmall16 leading-relaxed text-neutral-20">
+        {review.detailedReview}
+      </p>
 
-        {/* Detailed Review */}
-        <p className="mb-4 break-keep text-xsmall14 leading-relaxed text-neutral-40">
-          {review.detailedReview}
-        </p>
-
-        {/* Program */}
-        <p className="text-xsmall14 font-medium text-neutral-30">
-          {review.program}
-        </p>
-      </div>
+      {/* Program */}
+      <p className="text-xsmall14 font-semibold text-neutral-0">
+        {review.program}
+      </p>
     </article>
   );
 }
@@ -207,11 +203,19 @@ export default function StudentTestimonials() {
         합격에 필살 경험이 되도록
       </h2>
 
-      {/* Student Review Cards Grid */}
-      <div className="mt-16 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-        {STUDENT_REVIEWS.map((review, index) => (
-          <StudentCard key={index} review={review} />
-        ))}
+      {/* Student Review Cards - Horizontal Scroll */}
+      <div className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-16 w-screen">
+        <div className="relative overflow-x-auto scrollbar-hide">
+          <div className="grid w-max auto-cols-[360px] grid-flow-col gap-3 px-[max(1.5rem,calc((100vw-1120px)/2))]">
+            {STUDENT_REVIEWS.map((review, index) => (
+              <StudentCard key={index} review={review} />
+            ))}
+          </div>
+        </div>
+        {/* Left fade */}
+        <div className="pointer-events-none absolute left-0 top-0 h-full w-16 bg-gradient-to-r from-white to-transparent"></div>
+        {/* Right fade */}
+        <div className="pointer-events-none absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-white to-transparent"></div>
       </div>
     </div>
   );

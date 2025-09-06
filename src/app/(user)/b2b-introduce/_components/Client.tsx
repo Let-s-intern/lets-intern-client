@@ -20,6 +20,7 @@ import MentorMarquee from './MentorMarquee';
 import Metrics from './Metrics';
 import PainPoints from './PainPoints';
 import Process from './Process';
+import StickyCTA from './StickyCTA';
 import StudentTestimonials from './StudentTestimonials';
 
 export default function Client() {
@@ -119,12 +120,12 @@ export default function Client() {
       <Process />
 
       {/* Case studies */}
-      <section className="w-full">
+      <section className="w-full bg-neutral-95">
         <div className="mx-auto max-w-[1120px] py-24 text-center md:py-32">
           <p className="text-xsmall16 font-medium text-primary-90">
             고객사 사례
           </p>
-          <h2 className="mt-7 break-keep text-[40px] font-bold text-static-0">
+          <h2 className="mt-7 break-keep text-[40px] font-bold text-neutral-0">
             다양한 산업 및 직무, 목적에 맞춘
             <Break />
             렛츠커리어 취업교육 사례
@@ -170,18 +171,21 @@ export default function Client() {
       </section>
 
       {/* Testimonials - Clients */}
-      <section className="w-full bg-[#F7F9FF]">
+      <section className="w-full bg-[#0F1B42] text-white">
         <div className="mx-auto max-w-[1120px] py-24 md:py-32">
           <ClientTestimonials />
         </div>
       </section>
 
       {/* Final CTA (inline, same as Hero) */}
-      <section className="w-full bg-[#F7F9FF]">
+      <section className="w-full bg-white">
         <div className="mx-auto max-w-[1120px] py-24 md:py-32">
           <FinalCTA />
         </div>
       </section>
+
+      {/* Sticky CTA */}
+      <StickyCTA />
     </main>
   );
 }
