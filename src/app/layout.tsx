@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-sync-scripts */
 /* eslint-disable @next/next/next-script-for-ga */
 
+import { getBaseUrlFromServer } from '@/utils/url';
 import { Metadata, Viewport } from 'next';
 import '../fonts/font.css';
 import '../index.css';
@@ -11,6 +12,7 @@ import '../styles/modal.scss';
 import '../styles/mypage.scss';
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getBaseUrlFromServer()),
   other: {
     'naver-site-verification': '15caf82243b739e694f52cc6a5527956db0cd4a0',
   },
