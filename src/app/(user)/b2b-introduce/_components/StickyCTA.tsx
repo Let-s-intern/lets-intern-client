@@ -38,7 +38,9 @@ export default function StickyCTA() {
           </span>
           <div className="flex items-center gap-3">
             <a
-              href="#intro"
+              href="https://drive.google.com/drive/folders/16neodrrBoI3RcS_FLvVVS9TisZTwWlbn?usp=sharing"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center justify-center rounded-xs bg-white px-5 py-3 text-xsmall16 font-medium text-primary shadow-sm transition hover:text-primary-90 md:px-5 md:text-xsmall16"
             >
               교육 소개서 받기
