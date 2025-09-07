@@ -1,6 +1,6 @@
 import { useMissionsOfCurrentChallengeRefetch } from '@/context/CurrentAdminChallengeProvider';
 import { AttendanceItem } from '@/schema';
-import axios from '@/utils/axios';
+import axiosV2 from '@/utils/axiosV2';
 import { attendanceStatusToText } from '@/utils/convert';
 import { challengeSubmitDetailCellWidthList } from '@/utils/tableCellWidthList';
 import AlertModal from '@components/ui/alert/AlertModal';
@@ -26,7 +26,7 @@ const StatusDropdown = ({ attendance, cellWidthListIndex, refetch }: Props) => {
 
   const editAttendanceStatus = useMutation({
     mutationFn: async (status: string) => {
-      const res = await axios.patch(`/attendance/${attendance.id}`, {
+      const res = await axiosV2.patch(`/admin/attendance/${attendance.id}`, {
         status,
       });
       const data = res.data;

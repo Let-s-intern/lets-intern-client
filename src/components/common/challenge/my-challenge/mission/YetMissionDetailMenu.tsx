@@ -1,10 +1,14 @@
-import { UserChallengeMissionDetail } from "../../../../../schema";
+import { UserChallengeMissionDetail } from '@/schema';
+import OtVideo from '../../OtVideo';
 
 interface Props {
   missionDetail: UserChallengeMissionDetail;
 }
 
 const YetMissionDetailMenu = ({ missionDetail }: Props) => {
+  const isOtMission = missionDetail.th === 0;
+  const showOtVod = isOtMission && missionDetail.vodLink;
+
   return (
     <>
       <hr className="my-4 border-[#DEDEDE]" />
@@ -18,6 +22,8 @@ const YetMissionDetailMenu = ({ missionDetail }: Props) => {
             {missionDetail.guide}
           </p>
         </div>
+        {/* OT 영상 */}
+        {showOtVod && <OtVideo vodLink={missionDetail.vodLink!} />}
       </div>
     </>
   );

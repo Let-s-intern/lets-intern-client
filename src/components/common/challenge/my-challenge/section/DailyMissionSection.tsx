@@ -1,4 +1,4 @@
-import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import { MyDailyMission, userChallengeMissionDetail } from '@/schema';
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
@@ -13,7 +13,7 @@ interface Props {
 
 const DailyMissionSection = ({ myDailyMission }: Props) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { currentChallenge } = useCurrentChallenge();
+  const { currentChallenge } = useOldCurrentChallenge();
 
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -40,6 +40,8 @@ const DailyMissionSection = ({ myDailyMission }: Props) => {
       return userChallengeMissionDetail.parse(res.data.data).missionInfo;
     },
   });
+
+  if (!missionDetail) return null;
 
   return (
     <section

@@ -29,7 +29,8 @@ export const hideMobileBottomNavBar = (pathname: string) =>
   pathname.startsWith('/blog') ||
   pathname.startsWith('/mypage') ||
   pathname === '/login' ||
-  pathname === '/signup';
+  pathname === '/signup' ||
+  pathname.startsWith('/challenge');
 
 export const getBottomNavBarClassNameByPath = (pathname: string) => {
   return hideMobileBottomNavBar(pathname) && 'hidden md:flex';
@@ -73,7 +74,9 @@ const NextNavBar = () => {
       {/* 상단 네비게이션 바 */}
       <div
         className={twMerge(
-          'fixed top-0 z-30 w-screen border-b border-neutral-80 bg-white transition-transform duration-300',
+          'fixed top-0 z-30 w-screen bg-white transition-transform duration-300',
+          !(isMobile && location.pathname.startsWith('/challenge')) &&
+            'border-b border-neutral-80',
           scrollDirection === 'DOWN' ? '-translate-y-full' : 'translate-y-0',
         )}
       >

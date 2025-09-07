@@ -11,10 +11,10 @@ const AbsentContentsInfoMenu = ({ missionDetail }: Props) => {
   return (
     <div className="mt-5 flex gap-4 px-3">
       <Link
-        to={missionDetail.templateLink}
+        to={missionDetail.templateLink || '#'}
         className="rounded flex-1 border border-[#DCDCDC] bg-white px-8 py-2 text-center font-semibold shadow"
         target="_blank"
-        rel="noopenner noreferrer"
+        rel="noopener noreferrer"
       >
         미션 템플릿
       </Link>
