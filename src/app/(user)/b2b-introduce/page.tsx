@@ -11,13 +11,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title,
     description,
-    metadataBase: new URL('https://www.letscareer.co.kr'),
     alternates: { canonical: '/b2b-introduce' },
     openGraph: {
       type: 'website',
       title,
       description,
-      url: 'https://www.letscareer.co.kr/b2b-introduce',
       siteName: '렛츠커리어',
       locale: 'ko_KR',
     },
