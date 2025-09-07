@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-function SuperInternPromotion() {
+function Promotion() {
   return (
     <Link
       href="/b2b-introduce"
@@ -16,4 +16,4 @@ function SuperInternPromotion() {
   );
 }
 
-export default SuperInternPromotion;
+export default Promotion;
