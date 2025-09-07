@@ -41,7 +41,7 @@ export default function StickyCTA() {
               href="https://drive.google.com/drive/folders/16neodrrBoI3RcS_FLvVVS9TisZTwWlbn?usp=sharing"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center rounded-xs bg-white px-5 py-3 text-xsmall16 font-medium text-primary shadow-sm transition hover:text-primary-90 md:px-5 md:text-xsmall16"
+              className="b2b-sticky-intro-download inline-flex items-center justify-center rounded-xs bg-white px-5 py-3 text-xsmall16 font-medium text-primary shadow-sm transition hover:text-primary-90 md:px-5 md:text-xsmall16"
             >
               교육 소개서 받기
             </a>
@@ -49,7 +49,7 @@ export default function StickyCTA() {
             <a
               href={contactLink}
               target="_blank"
-              className="inline-flex items-center justify-center rounded-xs bg-primary px-5 py-3 text-xsmall16 font-medium text-white shadow-sm hover:bg-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 md:px-5 md:text-xsmall16"
+              className="b2b-sticky-contact-form inline-flex items-center justify-center rounded-xs bg-primary px-5 py-3 text-xsmall16 font-medium text-white shadow-sm hover:bg-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 md:px-5 md:text-xsmall16"
             >
               맞춤 교육 문의
             </a>
