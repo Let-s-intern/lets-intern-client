@@ -40,13 +40,13 @@ export default function CaseCard({
       {/* Text content */}
       <div className="px-6 py-4 text-left">
         {/* Logo */}
-        <div className="mb-1.5 h-8">
+        <div className="mb-1">
           <Image
             src={logoImageSrc}
             alt=""
-            width={240}
-            height={64}
-            className="h-8 w-auto object-contain object-left"
+            width={300}
+            height={40}
+            className="h-10 w-auto object-contain object-left"
           />
         </div>
 
