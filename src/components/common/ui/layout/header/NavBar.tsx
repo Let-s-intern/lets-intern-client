@@ -193,8 +193,6 @@ const NavBar = () => {
           href="/b2b-introduce"
           isNextRouter
           force
-          target="_blank"
-          rel="noopener noreferrer"
           className="!h-auto !max-h-none !flex-col !items-start py-3"
         >
           <div className="flex items-center gap-1.5">
