@@ -11,10 +11,9 @@ import { contactLink } from './const';
 export default function Hero() {
   return (
     <>
-      {/* floating badges (desktop only) */}
-      <div className="pointer-events-none absolute inset-0 hidden md:block">
+      <div className="absolute inset-0">
         <motion.div
-          className="absolute left-1/2 top-1/3 -translate-x-[450px]"
+          className="absolute left-[50px] top-[80px] md:left-1/2 md:top-1/3 md:-translate-x-[450px]"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.0 }}
@@ -24,11 +23,11 @@ export default function Hero() {
             animate="float"
             duration={6.2}
             amplitude={6}
-            icon={iconPortfolio}
+            Icon={iconPortfolio}
           />
         </motion.div>
         <motion.div
-          className="absolute left-1/2 top-16 translate-x-[100px]"
+          className="absolute left-[calc(50%-20px)] top-[50px] md:top-16 md:translate-x-[100px]"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.08 }}
@@ -38,11 +37,11 @@ export default function Hero() {
             animate="float"
             duration={7.4}
             amplitude={6}
-            icon={iconResume}
+            Icon={iconResume}
           />
         </motion.div>
         <motion.div
-          className="absolute left-1/2 top-1/2 -translate-y-[40px] translate-x-[330px]"
+          className="absolute right-[50px] top-[95px] md:left-1/2 md:top-1/2 md:-translate-y-[40px] md:translate-x-[330px]"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.16 }}
@@ -53,31 +52,14 @@ export default function Hero() {
             duration={5.6}
             amplitude={6}
             delay={0.3}
-            icon={iconSelf}
+            Icon={iconSelf}
           />
         </motion.div>
       </div>
 
       <div className="relative mx-auto max-w-4xl text-center">
-        {/* chips above heading (mobile only) */}
-        <motion.div
-          className="mb-4 flex flex-wrap items-center justify-center gap-2 md:hidden"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: '0px 0px -10% 0px' }}
-          transition={{ duration: 0.55 }}
-        >
-          {['포트폴리오', '이력서', '자기소개서'].map((label) => (
-            <span
-              key={label}
-              className="inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white/90 px-3 py-1.5 text-xsmall16 text-neutral-10 shadow-sm backdrop-blur"
-            >
-              {label}
-            </span>
-          ))}
-        </motion.div>
         <motion.h1
-          className="mx-auto break-keep text-[52px] font-extrabold leading-[1.15] tracking-[-0.02em] md:text-[3.5rem]"
+          className="mx-auto break-keep text-[30px] font-bold leading-[1.4] tracking-[-0.02em] md:text-[3.5rem] md:font-extrabold md:leading-[1.15]"
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '0px 0px -10% 0px' }}
@@ -87,7 +69,7 @@ export default function Hero() {
           <br className="hidden md:block" /> 렛츠커리어가 설계합니다
         </motion.h1>
         <motion.p
-          className="mt-6 break-keep text-small20 text-neutral-40"
+          className="mx-auto mt-6 w-[256px] break-keep text-xsmall14 leading-[22px] text-neutral-40 md:w-auto md:px-0 md:text-small20"
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '0px 0px -10% 0px' }}
@@ -162,7 +144,7 @@ function HeroBadge({
   duration = 6,
   amplitude = 6,
   delay = 0,
-  icon,
+  Icon,
 }: {
   label: string;
   className?: string;
@@ -170,16 +152,14 @@ function HeroBadge({
   duration?: number; // seconds
   amplitude?: number; // px
   delay?: number; // seconds
-  icon?:
-    | React.ComponentType<{ className?: string; 'aria-hidden'?: boolean }>
-    | React.ReactNode;
+  Icon: React.ComponentType<React.ComponentProps<'svg'>>;
 }) {
   const animStyle =
     animate === 'float'
       ? ({
-          ['--float-d' as any]: `${duration}s`,
-          ['--float-a' as any]: `${amplitude}px`,
-          ['--float-delay' as any]: `${delay}s`,
+          '--float-d': `${duration}s`,
+          '--float-a': `${amplitude}px`,
+          '--float-delay': `${delay}s`,
           animation:
             'hero-badge-float var(--float-d) ease-in-out var(--float-delay) infinite',
         } as React.CSSProperties)
@@ -187,37 +167,21 @@ function HeroBadge({
   return (
     <div
       className={twMerge(
-        'flex h-12 items-center gap-2 rounded-xxs bg-white/90 px-3 shadow-06 backdrop-blur-md',
+        'flex items-center gap-2 rounded-xxs bg-white/90 p-1.5 shadow-06 backdrop-blur-md md:p-3',
         className,
       )}
       style={animStyle}
     >
-      <span className="inline-flex h-8 w-8 items-center justify-center overflow-hidden rounded-xxs">
-        {(() => {
-          if (!icon) {
-            return (
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="#7F89FF"
-                aria-hidden
-              >
-                <path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
-              </svg>
-            );
-          }
-          if (typeof icon === 'function') {
-            const Icon = icon as React.ComponentType<{
-              className?: string;
-              'aria-hidden'?: boolean;
-            }>;
-            return <Icon className="h-8 w-8" aria-hidden />;
-          }
-          return icon as React.ReactNode;
-        })()}
+      <span className="inline-flex items-center justify-center overflow-hidden rounded-xxs">
+        <Icon
+          viewBox="0 0 32 32 "
+          className="h-4 w-4 md:h-8 md:w-8"
+          aria-hidden
+        />
       </span>
-      <span className="text-xsmall16 text-neutral-10">{label}</span>
+      <span className="text-xxsmall12 text-neutral-10 md:text-xsmall16">
+        {label}
+      </span>
       <style jsx>{`
         @keyframes hero-badge-float {
           0% {

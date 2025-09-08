@@ -15,7 +15,7 @@ const steps = [
 export default function Process() {
   return (
     <div className="w-full bg-[#0F1B42] py-16 md:py-20">
-      <div className="mx-auto max-w-[1120px] px-4">
+      <div className="mw-1180 px-4">
         <div className="grid gap-8 md:grid-cols-2 md:gap-24">
           {/* Left side - Title and description */}
           <div className="flex flex-col items-start justify-center pb-3">

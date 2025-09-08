@@ -25,9 +25,9 @@ export default function Client() {
   return (
     <main className="w-full text-neutral-900">
       {/* Hero */}
-      <section className="relative w-full overflow-hidden pt-8">
+      <section className="relative w-full overflow-hidden md:pt-8">
         <motion.div
-          className="relative mx-auto max-w-[1336px] rounded-none bg-cover bg-center px-4 py-36 md:rounded-lg"
+          className="relative mx-auto max-w-[1336px] rounded-none bg-cover bg-center px-4 pb-12 pt-36 md:rounded-lg md:py-36"
           style={{
             backgroundImage: `url("${heroBg.src}")`,
           }}
@@ -41,7 +41,7 @@ export default function Client() {
 
       {/* Intro copy + logo rail */}
       <section id="intro" className="w-full">
-        <div className="mx-auto max-w-[1120px] py-24 md:py-32">
+        <div className="mw-1180 py-24 md:py-32">
           <div className="text-center">
             <motion.p
               className="text-center text-xsmall16 font-medium text-primary-90"
@@ -90,7 +90,7 @@ export default function Client() {
 
       {/* Metrics + cards */}
       <section className="w-full bg-[#F7F9FF]">
-        <div className="mx-auto max-w-[1120px] py-24 md:py-32">
+        <div className="mw-1180 py-24 md:py-32">
           <div className="text-center">
             <motion.p
               className="inline-block bg-primary-5 text-center text-xsmall16 font-medium text-primary-90"
@@ -135,7 +135,7 @@ export default function Client() {
 
       {/* Pain points */}
       <section className="w-full">
-        <div className="mx-auto max-w-[1120px] py-24 md:py-32">
+        <div className="mw-1180 py-24 md:py-32">
           <motion.p
             className="text-center text-xsmall16 font-medium text-primary-90"
             initial={{ opacity: 0, y: 12 }}
@@ -162,7 +162,7 @@ export default function Client() {
 
       {/* Features/Programs */}
       <section className="w-full">
-        <div className="mx-auto max-w-[1120px] py-24 md:py-32">
+        <div className="mw-1180 py-24 md:py-32">
           <motion.p
             className="text-center text-xsmall16 font-medium text-primary-90"
             initial={{ opacity: 0, y: 12 }}
@@ -193,7 +193,7 @@ export default function Client() {
 
       {/* Case studies */}
       <section className="w-full bg-neutral-95">
-        <div className="mx-auto max-w-[1120px] py-24 text-center md:py-32">
+        <div className="mw-1180 py-24 text-center md:py-32">
           <motion.p
             className="text-xsmall16 font-medium text-primary-90"
             initial={{ opacity: 0, y: 12 }}
@@ -285,21 +285,21 @@ export default function Client() {
 
       {/* Testimonials - Students */}
       <section className="w-full bg-[#F7F9FF]">
-        <div className="mx-auto max-w-[1120px] py-24 md:py-32">
+        <div className="mw-1180 py-24 md:py-32">
           <StudentTestimonials />
         </div>
       </section>
 
       {/* Testimonials - Clients */}
       <section className="w-full bg-[#0F1B42] text-white">
-        <div className="mx-auto max-w-[1120px] py-24 md:py-32">
+        <div className="mw-1180 py-24 md:py-32">
           <ClientTestimonials />
         </div>
       </section>
 
       {/* Final CTA (inline, same as Hero) */}
       <section className="w-full bg-white">
-        <div className="mx-auto max-w-[1120px] py-24 md:py-32">
+        <div className="mw-1180 py-24 md:py-32">
           <FinalCTA />
         </div>
       </section>
