@@ -64,7 +64,7 @@ export default function PainPoints() {
               <p className="text-[26px] font-semibold text-neutral-0">
                 {it.title}
               </p>
-              <p className="mt-3 break-keep text-small20 text-neutral-40">
+              <p className="mt-3 break-keep text-xsmall14 leading-[22px] text-neutral-40 md:text-small20 md:leading-[1.6]">
                 {it.desc}
               </p>
             </div>

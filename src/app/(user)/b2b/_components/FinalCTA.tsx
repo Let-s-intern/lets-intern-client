@@ -14,7 +14,7 @@ export default function FinalCTA() {
       }}
     >
       <motion.h3
-        className="text-1.5-semibold text-xxlarge36 font-semibold text-white"
+        className="text-[28px] font-semibold text-white md:text-xxlarge36"
         initial={{ opacity: 0, y: 12 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '0px 0px -10% 0px' }}

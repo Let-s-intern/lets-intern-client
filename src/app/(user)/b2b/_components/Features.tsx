@@ -117,7 +117,9 @@ function FeatureRow({
       <h3 className="mt-6 text-[28px] font-bold text-static-0 md:text-[34px]">
         {title}
       </h3>
-      <p className="mt-3 break-keep text-small20 text-neutral-40">{desc}</p>
+      <p className="mt-3 break-keep text-xsmall14 leading-[22px] text-neutral-40 md:text-small20 md:leading-[1.6]">
+        {desc}
+      </p>
     </motion.div>
   );
   return (

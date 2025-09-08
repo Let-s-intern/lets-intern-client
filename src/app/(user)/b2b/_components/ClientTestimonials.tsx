@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
+import SectionHeader from './SectionHeader';
 import Image, { StaticImageData } from 'next/image';
 import Avatar1 from '../_images/avatar-1.svg';
 import Avatar2 from '../_images/avatar-2.svg';
@@ -56,24 +57,12 @@ const quotes: Quote[] = [
 export default function ClientTestimonials() {
   return (
     <div>
-      <motion.p
-        className="text-center text-xsmall16 font-medium text-primary-90"
-        initial={{ opacity: 0, y: 12 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '0px 0px -10% 0px' }}
-        transition={{ duration: 0.55 }}
-      >
-        고객사 후기
-      </motion.p>
-      <motion.h2
-        className="mt-7 break-keep text-center text-[40px] font-bold"
-        initial={{ opacity: 0, y: 12 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '0px 0px -10% 0px' }}
-        transition={{ duration: 0.55, delay: 0.05 }}
-      >
-        렛츠커리어와 함께한 교육 담당자분들의 이야기입니다
-      </motion.h2>
+      <SectionHeader
+        align="center"
+        theme="dark"
+        kicker={<>고객사 후기</>}
+        title={<>렛츠커리어와 함께한 교육 담당자분들의 이야기입니다</>}
+      />
       {/* Client Review Cards - Horizontal Scroll */}
       <motion.div
         className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-16 w-screen"
@@ -83,7 +72,7 @@ export default function ClientTestimonials() {
         transition={{ duration: 0.6 }}
       >
         <div className="relative overflow-x-auto overflow-y-visible pb-3 scrollbar-hide">
-          <div className="grid w-max auto-cols-[360px] grid-flow-col gap-3 px-[max(1.5rem,calc((100vw-1120px)/2))]">
+          <div className="grid w-max auto-cols-[300px] md:auto-cols-[360px] grid-flow-col gap-3 px-[max(1.5rem,calc((100vw-1120px)/2))]">
             {quotes.map((q, i) => (
               <motion.blockquote
                 key={i}

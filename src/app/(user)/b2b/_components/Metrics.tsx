@@ -37,7 +37,7 @@ export default function Metrics() {
                   {s.label}
                 </div>
                 <div className="mt-2 leading-[1.3] md:mt-1 md:leading-tight">
-                  <span className="text-[36px] font-bold tracking-[-3px] text-static-0">
+                  <span className="text-[36px] font-bold tracking-[-0.02em] md:tracking-[-3px] text-static-0">
                     {number}
                   </span>
                   {unit && (
