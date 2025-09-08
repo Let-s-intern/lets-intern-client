@@ -11,7 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title,
     description,
-    alternates: { canonical: '/b2b-introduce' },
+    alternates: { canonical: '/b2b' },
     openGraph: {
       type: 'website',
       title,
@@ -23,6 +23,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function B2BIntroducePage() {
+export default function B2BPage() {
   return <Client />;
 }

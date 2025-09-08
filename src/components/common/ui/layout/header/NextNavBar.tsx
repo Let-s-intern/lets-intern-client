@@ -200,7 +200,7 @@ const NextNavBar = () => {
           </span>
         </SideNavItem>
         <SideNavItem
-          href="/b2b-introduce"
+          href="/b2b"
           isNextRouter
           force
           className="!h-auto !max-h-none !flex-col !items-start py-3"
