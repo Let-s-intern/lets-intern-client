@@ -41,7 +41,7 @@ export default function Hero() {
           />
         </motion.div>
         <motion.div
-          className="absolute right-[50px] top-[95px] md:left-1/2 md:top-1/2 md:-translate-y-[40px] md:translate-x-[330px]"
+          className="absolute right-[50px] top-[95px] md:left-1/2 md:right-auto md:top-1/2 md:-translate-y-[40px] md:translate-x-[330px]"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.16 }}
