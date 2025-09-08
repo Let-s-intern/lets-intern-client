@@ -3,7 +3,6 @@ import useAuthStore from '@/store/useAuthStore';
 import GlobalNavItem from './GlobalNavItem';
 import LoginLink from './LoginLink';
 import LogoLink from './LogoLink';
-import Promotion from './Promotion';
 import SignUpLink from './SignUpLink';
 import { SubNavItemProps } from './SubNavItem';
 
@@ -61,6 +60,13 @@ function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
           홈
         </GlobalNavItem>
         <GlobalNavItem
+          className="mr-6 hidden h-[38px] items-center md:flex"
+          isNextRouter={isNextRouter}
+          href="/b2b"
+        >
+          기업/학교 취업 교육 문의
+        </GlobalNavItem>
+        <GlobalNavItem
           className="hidden items-center justify-center gap-1 md:flex"
           isNextRouter={isNextRouter}
           href="https://letscareer.oopy.io/1df5e77c-bee1-80b3-8199-e7d2cc9d64cd"
@@ -76,7 +82,7 @@ function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
 
       <div className="flex items-center justify-center gap-1">
         {/* 슈퍼인턴 프로모션 영역 */}
-        <Promotion />
+        {/* <Promotion /> */}
         {isLoggedIn ? (
           <GlobalNavItem
             className="hidden cursor-pointer items-center md:flex"
@@ -98,7 +104,7 @@ function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
             </div>
           </GlobalNavItem>
         ) : (
-          <div className="hidden items-center gap-2 md:flex">
+          <div className="-mr-3 hidden items-center md:flex">
             {/* 로그인 */}
             <LoginLink
               redirect={loginRedirect}

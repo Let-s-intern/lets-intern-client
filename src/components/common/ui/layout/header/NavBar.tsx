@@ -189,21 +189,8 @@ const NavBar = () => {
             +현직자 멘토 참여중
           </span>
         </SideNavItem>
-        <SideNavItem
-          href="/b2b"
-          isNextRouter
-          force
-          className="!h-auto !max-h-none !flex-col !items-start py-3"
-        >
-          <div className="flex items-center gap-1.5">
-            기업 교육
-            {/* <div className="flex h-4 w-4 items-center justify-center rounded-full bg-system-error text-[8px] font-bold leading-none text-white">
-              N
-            </div> */}
-          </div>
-          {/* <span className="flex items-center text-xxsmall12 font-normal">
-            렛츠커리어와 함께하는 기업 교육
-          </span> */}
+        <SideNavItem href="/b2b" isNextRouter={false} force>
+          기업/학교 취업 교육 문의
         </SideNavItem>
         <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
         <SideNavItem href="/program" isNextRouter={false}>

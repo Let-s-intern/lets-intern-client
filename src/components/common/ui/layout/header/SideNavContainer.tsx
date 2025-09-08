@@ -67,7 +67,7 @@ function SideNavContainer({ children, isNextRouter, isOpen, onClose }: Props) {
                 onClick={() => onClose()}
               />
               <SignUpLink
-                className="bg-transparent p-0 font-medium text-black"
+                className="bg-transparent p-0 font-medium"
                 isNextRouter={isNextRouter}
                 force={isNextRouter}
                 onClick={() => onClose()}
