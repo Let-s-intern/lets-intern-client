@@ -62,6 +62,7 @@ function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
         <GlobalNavItem
           className="mr-6 hidden h-[38px] items-center md:flex"
           isNextRouter={isNextRouter}
+          force={!isNextRouter}
           href="/b2b"
         >
           기업/학교 취업 교육 문의
