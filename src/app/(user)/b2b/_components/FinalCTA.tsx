@@ -8,13 +8,13 @@ import { contactLink } from './const';
 export default function FinalCTA() {
   return (
     <div
-      className="rounded-md bg-cover bg-center p-8 text-center shadow-sm md:p-12"
+      className="rounded-md bg-cover bg-center px-4 py-10 text-center shadow-sm md:p-12"
       style={{
         backgroundImage: `url("${finalCtaBg.src}")`,
       }}
     >
       <motion.h3
-        className="text-[28px] font-semibold text-white md:text-xxlarge36"
+        className="break-keep text-[26px] font-semibold text-white md:text-xxlarge36"
         initial={{ opacity: 0, y: 12 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '0px 0px -10% 0px' }}

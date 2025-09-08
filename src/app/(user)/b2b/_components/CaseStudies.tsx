@@ -123,18 +123,59 @@ const CASES: CaseItem[] = [
 ];
 
 export default function CaseStudies() {
+  // 모바일: 짝/홀 인덱스로 두 줄 분리하여 각 줄 독립 스크롤
+  const row1 = CASES.filter((_, i) => i % 2 === 0);
+  const row2 = CASES.filter((_, i) => i % 2 === 1);
+
   return (
-    <div className="grid gap-x-3 gap-y-6 md:grid-cols-3">
-      {CASES.map((c, i) => (
-        <CaseCard
-          key={i}
-          title={c.title}
-          content={c.content}
-          tags={c.tags}
-          imageSrc={c.imageSrc}
-          logoImageSrc={c.logoImageSrc}
-        />
-      ))}
+    <div>
+      {/* Mobile (two independent horizontal rows) */}
+      <div className="md:hidden">
+        {/* Row 1 */}
+        <div className="relative overflow-x-auto overflow-y-visible pb-3 scrollbar-hide">
+          <div className="grid w-max auto-cols-[300px] grid-flow-col gap-3 px-[max(1.5rem,calc((100vw-1120px)/2))]">
+            {row1.map((c, i) => (
+              <CaseCard
+                key={`r1-${i}`}
+                title={c.title}
+                content={c.content}
+                tags={c.tags}
+                imageSrc={c.imageSrc}
+                logoImageSrc={c.logoImageSrc}
+              />
+            ))}
+          </div>
+        </div>
+        {/* Row 2 */}
+        <div className="relative overflow-x-auto overflow-y-visible pb-3 scrollbar-hide">
+          <div className="grid w-max auto-cols-[300px] grid-flow-col gap-3 px-[max(1.5rem,calc((100vw-1120px)/2))]">
+            {row2.map((c, i) => (
+              <CaseCard
+                key={`r2-${i}`}
+                title={c.title}
+                content={c.content}
+                tags={c.tags}
+                imageSrc={c.imageSrc}
+                logoImageSrc={c.logoImageSrc}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop (original 3-col grid) */}
+      <div className="hidden grid-cols-3 gap-x-3 gap-y-6 md:grid">
+        {CASES.map((c, i) => (
+          <CaseCard
+            key={i}
+            title={c.title}
+            content={c.content}
+            tags={c.tags}
+            imageSrc={c.imageSrc}
+            logoImageSrc={c.logoImageSrc}
+          />
+        ))}
+      </div>
     </div>
   );
 }

@@ -39,18 +39,18 @@ export default function PainPoints() {
 
   return (
     <div className="flex justify-center">
-      <ul className="grid gap-8">
+      <ul className="grid gap-5 md:gap-8">
         {items.map((it, i) => (
           <motion.li
             key={i}
-            className="flex items-start gap-4"
+            className="flex flex-col items-center gap-2 break-keep text-center md:flex-row md:items-start md:gap-4 md:text-left"
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '0px 0px -10% 0px' }}
             transition={{ duration: 0.5, delay: i * 0.06 }}
           >
             <span
-              className={`mt-1 flex h-[34px] w-[34px] items-center justify-center rounded-full text-small20 font-semibold text-neutral-0 ${
+              className={`mt-1 flex h-5 w-5 items-center justify-center rounded-full text-xsmall14 font-semibold text-neutral-0 md:h-[34px] md:w-[34px] md:text-small20 ${
                 i === 0
                   ? 'bg-primary-20'
                   : i === 1
@@ -61,10 +61,10 @@ export default function PainPoints() {
               {i + 1}
             </span>
             <div>
-              <p className="text-[26px] font-semibold text-neutral-0">
+              <p className="text-small18 font-semibold text-neutral-0 md:text-[26px]">
                 {it.title}
               </p>
-              <p className="mt-3 break-keep text-xsmall14 leading-[22px] text-neutral-40 md:text-small20 md:leading-[1.6]">
+              <p className="mt-1 break-keep text-xsmall14 leading-[22px] text-neutral-40 md:mt-3 md:text-small20 md:leading-[1.6]">
                 {it.desc}
               </p>
             </div>

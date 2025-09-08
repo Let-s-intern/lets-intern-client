@@ -54,7 +54,7 @@ export default function SectionHeader({
 
       <motion.h2
         className={twMerge(
-          'mt-6 break-keep text-[26px] font-bold leading-[1.35]',
+          'mt-4 break-keep text-[26px] font-bold leading-[1.35] md:mt-6',
           'md:text-[40px]',
           isDark ? 'text-white' : 'text-static-0',
         )}

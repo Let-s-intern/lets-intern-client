@@ -1,13 +1,13 @@
 'use client';
 
 import { motion } from 'motion/react';
-import SectionHeader from './SectionHeader';
 import Image, { StaticImageData } from 'next/image';
 import Avatar1 from '../_images/avatar-1.svg';
 import Avatar2 from '../_images/avatar-2.svg';
 import Avatar3 from '../_images/avatar-3.svg';
 import Avatar4 from '../_images/avatar-4.svg';
 import { LOGO } from '../_images/logos';
+import SectionHeader from './SectionHeader';
 
 type Quote = {
   logo: StaticImageData;
@@ -72,7 +72,7 @@ export default function ClientTestimonials() {
         transition={{ duration: 0.6 }}
       >
         <div className="relative overflow-x-auto overflow-y-visible pb-3 scrollbar-hide">
-          <div className="grid w-max auto-cols-[300px] md:auto-cols-[360px] grid-flow-col gap-3 px-[max(1.5rem,calc((100vw-1120px)/2))]">
+          <div className="grid w-max auto-cols-[300px] grid-flow-col gap-3 px-[max(1.5rem,calc((100vw-1120px)/2))] md:auto-cols-[360px]">
             {quotes.map((q, i) => (
               <motion.blockquote
                 key={i}
@@ -96,15 +96,15 @@ export default function ClientTestimonials() {
                     aria-hidden
                     className="absolute left-4 top-2 text-[44px] leading-none text-primary-20"
                   ></span>
-                  <h3 className="mb-2 break-keep text-small18 font-semibold text-neutral-800">
+                  <h3 className="mb-2 break-keep text-xsmall16 font-semibold text-neutral-800 md:text-small18">
                     {q.title}
                   </h3>
-                  <p className="mb-4 break-keep text-xsmall16 text-neutral-600">
+                  <p className="mb-4 break-keep text-xsmall14 text-neutral-600 md:text-xsmall16">
                     {q.content}
                   </p>
                   <div className="flex items-center gap-3">
                     <q.Avatar className="h-8 w-8 rounded-full" />
-                    <footer className="text-0.875-medium text-neutral-40">
+                    <footer className="text-xsmall14 text-neutral-40 md:text-xsmall16">
                       {q.author}
                     </footer>
                   </div>
