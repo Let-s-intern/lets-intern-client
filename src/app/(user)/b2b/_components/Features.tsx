@@ -114,7 +114,7 @@ function FeatureRow({
           <span className="text-primary-90">{num}</span> {badge}
         </span>
       )}
-      <h3 className="mt-3 break-keep text-[28px] font-bold leading-[1.4] text-static-0 md:mt-6 md:text-[34px]">
+      <h3 className="mt-3 break-keep text-[24px] font-bold leading-[1.4] text-static-0 md:mt-6 md:text-[34px]">
         {title}
       </h3>
       <p className="mt-2 break-keep text-xsmall14 leading-[22px] text-neutral-40 md:mt-3 md:text-small20 md:leading-[1.6]">
