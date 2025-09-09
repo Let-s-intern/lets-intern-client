@@ -1,8 +1,13 @@
-import { usePatchChallengeAttendance } from '@/api/challenge';
+/* eslint-disable no-console */
+
+import { usePatchAdminAttendance } from '@/api/attendance';
+import { getChallengeAttendancesQueryKey } from '@/api/challenge';
+import { getAdminProgramReviewQueryKey } from '@/api/review';
 import { useAdminCurrentChallenge } from '@/context/CurrentAdminChallengeProvider';
 import { AttendanceItem, Mission } from '@/schema';
 import { challengeSubmitDetailCellWidthList } from '@/utils/tableCellWidthList';
 import { Switch } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -30,25 +35,38 @@ const TableRow = ({
   setIsCheckedList,
   refetch,
 }: Props) => {
+  const queryClient = useQueryClient();
+
   const { currentChallenge } = useAdminCurrentChallenge();
   const [attendanceResult, setAttendanceResult] = useState(
     attendanceItem.attendance.result,
   );
 
-  const { mutate: updateAttendance } = usePatchChallengeAttendance({
-    errorCallback: (error) => {
-      alert(error);
-    },
-  });
+  const patchAdminAttendance = usePatchAdminAttendance();
 
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
-  const handleToggle = () => {
-    updateAttendance({
-      attendanceId: attendanceItem.attendance.id,
-      challengeId: currentChallenge?.id,
-      missionId: missionDetail?.id,
-      reviewIsVisible: !attendanceItem.attendance.reviewIsVisible,
+  const handleToggle = async () => {
+    try {
+      await patchAdminAttendance.mutateAsync({
+        attendanceId: attendanceItem.attendance.id,
+        reviewIsVisible: !attendanceItem.attendance.reviewIsVisible,
+      });
+      invalidateQuerie(currentChallenge?.id, missionDetail?.id);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const invalidateQuerie = (challengeId?: number, missionId?: number) => {
+    queryClient.invalidateQueries({
+      queryKey: ['challenge'],
+    });
+    queryClient.invalidateQueries({
+      queryKey: getAdminProgramReviewQueryKey('MISSION_REVIEW'),
+    });
+    queryClient.invalidateQueries({
+      queryKey: getChallengeAttendancesQueryKey(challengeId, missionId),
     });
   };
 

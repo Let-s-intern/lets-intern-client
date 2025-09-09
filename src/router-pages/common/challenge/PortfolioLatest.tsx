@@ -14,15 +14,12 @@ const { PORTFOLIO } = challengeTypeSchema.enum;
  */
 export default function PortfolioLatest() {
   const navigate = useNavigate();
-  const { data: activeData, isLoading: activeLoading } =
-    useGetActiveChallenge(PORTFOLIO);
-  const { data: listData, isLoading: listLoading } = useGetChallengeList({
+  const { data: activeData } = useGetActiveChallenge(PORTFOLIO);
+  const { data: listData } = useGetChallengeList({
     type: PORTFOLIO,
   });
 
   useEffect(() => {
-    if (activeLoading || listLoading) return;
-
     // 활성화된 챌린지가 있는 경우
     const activeChallenge = activeData?.challengeList?.[0];
     if (activeChallenge?.id) {
@@ -45,7 +42,7 @@ export default function PortfolioLatest() {
 
     // 챌린지가 없는 경우 프로그램 페이지로 이동
     navigate('/program', { replace: true });
-  }, [activeData, listData, navigate, activeLoading, listLoading]);
+  }, [activeData, listData, navigate]);
 
   // 로딩 상태 표시
   return (

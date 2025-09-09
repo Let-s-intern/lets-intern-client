@@ -1,13 +1,14 @@
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 
+import { usePatchAttendance } from '@/api/attendance';
 import {
   useGetChallengeReviewStatus,
-  usePatchChallengeAttendance,
   usePostChallengeAttendance,
 } from '@/api/challenge';
+import { UserChallengeMissionDetail } from '@/api/challengeSchema';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
-import { Schedule, UserChallengeMissionDetail } from '@/schema';
+import { Schedule } from '@/schema';
 import ParsedCommentBox from '../ParsedCommentBox';
 
 interface Props {
@@ -55,11 +56,7 @@ const AbsentMissionSubmitMenu = ({
 
   const { mutateAsync: tryPostAttendance } = usePostChallengeAttendance({});
 
-  const { mutateAsync: tryPatchAttendance } = usePatchChallengeAttendance({
-    successCallback: () => {
-      alert('미션 수정이 완료되었습니다.');
-    },
-  });
+  const patchAttendance = usePatchAttendance();
 
   const handleMissionLinkChanged = (e: any) => {
     const inputValue = e.target.value;
@@ -100,11 +97,12 @@ const AbsentMissionSubmitMenu = ({
         currentSchedule.attendanceInfo.result === 'WRONG' &&
         currentSchedule.attendanceInfo.id !== null
       ) {
-        await tryPatchAttendance({
+        await patchAttendance.mutateAsync({
           attendanceId: currentSchedule.attendanceInfo.id,
           link: value,
           review,
         });
+        alert('미션 수정이 완료되었습니다.');
       } else {
         await tryPostAttendance({
           missionId: missionDetail.id,

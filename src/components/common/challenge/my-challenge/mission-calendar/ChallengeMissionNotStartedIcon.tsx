@@ -1,5 +1,5 @@
+import { Schedule } from '@/schema';
 import clsx from 'clsx';
-import { Schedule } from '../../../../../schema';
 
 interface Props {
   className?: string;

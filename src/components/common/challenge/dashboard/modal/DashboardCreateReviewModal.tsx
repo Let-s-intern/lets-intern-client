@@ -1,7 +1,3 @@
-import { useMediaQuery } from '@mui/material';
-import { josa } from 'es-hangul';
-import { useState } from 'react';
-
 import { useGetChallengeGoal, useGetChallengeTitle } from '@/api/challenge';
 import { usePostReviewMutation } from '@/api/review';
 import { useUserQuery } from '@/api/user';
@@ -11,6 +7,9 @@ import ReviewModal from '@components/common/review/ReviewModal';
 import ReviewQuestion from '@components/common/review/ReviewQuestion';
 import ReviewTextarea from '@components/common/review/ReviewTextarea';
 import TenScore from '@components/common/review/score/TenScore';
+import { useMediaQuery } from '@mui/material';
+import { josa } from 'es-hangul';
+import { useState } from 'react';
 
 interface DashboardCreateReviewModalProps {
   programId: string;

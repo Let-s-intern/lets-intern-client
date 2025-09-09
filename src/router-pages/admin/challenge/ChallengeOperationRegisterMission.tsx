@@ -229,6 +229,7 @@ const useMissionColumns = () => {
             className="w-full"
             value={params.row.startDate.format('YYYY-MM-DDTHH:mm')}
             onChange={(e) => {
+              console.log(e.target.value);
               params.api.setEditCellValue({
                 id: params.id,
                 field: 'startDate',
@@ -257,7 +258,7 @@ const useMissionColumns = () => {
               params.api.setEditCellValue({
                 id: params.id,
                 field: 'endDate',
-                value: dayjs(e.target.value),
+                value: dayjs(e.target.value).set('second', 59),
               });
             }}
           />

@@ -132,6 +132,8 @@ export const bankTypeToText: Record<string, string> = {
   MG: '새마을금고',
   KAKAO: '카카오뱅크',
   TOSS: '토스뱅크',
+  KBANK: '케이뱅크',
+  SC: "SC제일은행"
 };
 
 export const gradeToText: Record<string, string> = {

@@ -1,5 +1,6 @@
+import { userChallengeMissionDetail } from '@/api/challengeSchema';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
-import { MyDailyMission, userChallengeMissionDetail } from '@/schema';
+import { MyDailyMission } from '@/schema';
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';

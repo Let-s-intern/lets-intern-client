@@ -49,7 +49,7 @@ const MissionGuideBonusSection = ({
     <div className={clsx('flex flex-col gap-3', className)}>
       {/* 제목 및 마감일 섹션 */}
       <MissionHeaderSection
-        todayTh={selectedMissionTh || todayTh}
+        selectedMissionTh={selectedMissionTh || todayTh}
         missionType="블로그 후기 작성하고 리워드 받기!"
         deadline={formatDeadline(missionData?.missionInfo?.endDate)}
       />
@@ -95,7 +95,7 @@ const MissionGuideBonusSection = ({
           <Heading3>2️⃣ 블로그 후기 가이드라인을 안내드려요</Heading3>
           <div className="flex flex-col gap-2 rounded-xxs bg-primary-5 p-3">
             <div className="flex items-start gap-2">
-              <ol className="list-inside list-decimal text-xsmall16 font-medium leading-8 text-neutral-0">
+              <ol className="list-inside list-decimal text-xsmall14 font-medium leading-8 text-neutral-0 md:text-xsmall16">
                 <li>
                   <b>이미지</b> <br />- 활동 인증 이미지 3장 이상 필수 첨부
                 </li>
@@ -127,7 +127,7 @@ const MissionGuideBonusSection = ({
               href="https://www.letscareer.co.kr/review/blog"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xsmall16 text-primary hover:underline"
+              className="text-xsmall14 text-primary hover:underline md:text-xsmall16"
             >
               후기 모음 보기: https://www.letscareer.co.kr/review/blog
             </a>
@@ -137,7 +137,7 @@ const MissionGuideBonusSection = ({
         {/* 문의 */}
         <section className="flex flex-col gap-3 font-medium">
           <Heading3>4️⃣ 문의</Heading3>
-          <div>
+          <div className="flex flex-col text-xsmall14 md:text-xsmall16">
             문의는 편한 방식으로 부탁드립니다!
             <ul className="list-inside list-disc">
               <li>official@letscareer.co.kr로 이메일 문의 가능</li>
@@ -146,7 +146,7 @@ const MissionGuideBonusSection = ({
           </div>
         </section>
 
-        <p className="font-semibold">
+        <p className="text-xsmall14 font-semibold text-neutral-0 md:text-xsmall16">
           챌린지 이후 좋은 소식들만 가득하세요! 솔직하고 생생한 후기
           기대하겠습니다
         </p>
