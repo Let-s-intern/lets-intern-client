@@ -107,7 +107,7 @@ const DoneMissionDetailMenu = ({
             <div className="mt-2">
               <ParsedCommentBox
                 className="rounded-md bg-[#F2F2F2] px-8 py-6 text-sm"
-                comment={`(미션 피드백 페이지로 이동)[/challenge/${applicationId}/${programId}/challenge/${challengeId}/missions/${missionDetail.id}/feedback]`}
+                comment={`(미션 피드백 페이지로 이동)[/challenge/${applicationId}/${programId}/missions/${missionDetail.id}/feedback]`}
                 openInNewTab={false}
               />
             </div>
