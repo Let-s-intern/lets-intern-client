@@ -1,10 +1,6 @@
-import { useGetActiveChallenge, useGetChallengeList } from '@/api/challenge';
+import { useGetChallengeHome } from '@/api/challenge';
 import { SubNavItemProps } from '@/components/common/ui/layout/header/SubNavItem';
-import {
-  ActiveChallengeResponse,
-  ChallengeList,
-  challengeTypeSchema,
-} from '@/schema';
+import { challengeTypeSchema } from '@/schema';
 
 const {
   EXPERIENCE_SUMMARY,
@@ -15,40 +11,47 @@ const {
 } = challengeTypeSchema.enum;
 
 export default function useProgramCategoryNav(isNextRouter: boolean) {
-  const { data: experienceSummaryData } = useGetChallengeList({
+  const { data: experienceSummaryData } = useGetChallengeHome({
     type: EXPERIENCE_SUMMARY,
   });
-  const { data: personalStatementData } = useGetChallengeList({
+  const { data: personalStatementData } = useGetChallengeHome({
     type: PERSONAL_STATEMENT,
   });
-  const { data: personalStatementLargeCorpData } = useGetChallengeList({
+  const { data: personalStatementLargeCorpData } = useGetChallengeHome({
     type: PERSONAL_STATEMENT_LARGE_CORP,
   });
-  const { data: portfolioData } = useGetChallengeList({ type: PORTFOLIO });
-  const { data: marketingData } = useGetChallengeList({ type: MARKETING });
-  const { data: activePersonalStatement } =
-    useGetActiveChallenge(PERSONAL_STATEMENT);
-  const { data: activePersonalStatementLargeCorp } = useGetActiveChallenge(
-    PERSONAL_STATEMENT_LARGE_CORP,
-  );
-  const { data: activeMarketing } = useGetActiveChallenge(MARKETING);
-  const { data: activePortfolio } = useGetActiveChallenge(PORTFOLIO);
-  const { data: activeExperienceSummary } =
-    useGetActiveChallenge(EXPERIENCE_SUMMARY);
+  const { data: portfolioData } = useGetChallengeHome({ type: PORTFOLIO });
+  const { data: marketingData } = useGetChallengeHome({ type: MARKETING });
 
-  const getProgramHref = (
-    activeData?: ActiveChallengeResponse,
-    listData?: ChallengeList,
-  ): string | undefined => {
-    const activeId = activeData?.challengeList?.[0]?.id;
-    const activeTitle = activeData?.challengeList?.[0]?.title ?? '';
-    const listId = listData?.programList?.[0]?.id;
-    const listTitle = listData?.programList?.[0]?.title ?? '';
-    if (activeId !== undefined)
-      return `/program/challenge/${activeId}/${encodeURIComponent(activeTitle)}`;
-    if (listId !== undefined)
-      return `/program/challenge/${listId}/${encodeURIComponent(listTitle)}`;
-    return undefined;
+  // IntroSection과 동일한 getCurrentChallenge 로직 사용
+  const getCurrentChallenge = (type: string): string | undefined => {
+    switch (type) {
+      case EXPERIENCE_SUMMARY:
+        return experienceSummaryData &&
+          experienceSummaryData.programList.length > 0
+          ? `/program/challenge/${experienceSummaryData.programList[0].id}/${encodeURIComponent(experienceSummaryData.programList[0].title ?? '')}`
+          : undefined;
+      case PERSONAL_STATEMENT:
+        return personalStatementData &&
+          personalStatementData.programList.length > 0
+          ? `/program/challenge/${personalStatementData.programList[0].id}/${encodeURIComponent(personalStatementData.programList[0].title ?? '')}`
+          : undefined;
+      case PERSONAL_STATEMENT_LARGE_CORP:
+        return personalStatementLargeCorpData &&
+          personalStatementLargeCorpData.programList.length > 0
+          ? `/program/challenge/${personalStatementLargeCorpData.programList[0].id}/${encodeURIComponent(personalStatementLargeCorpData.programList[0].title ?? '')}`
+          : undefined;
+      case PORTFOLIO:
+        return portfolioData && portfolioData.programList.length > 0
+          ? `/program/challenge/${portfolioData.programList[0].id}/${encodeURIComponent(portfolioData.programList[0].title ?? '')}`
+          : undefined;
+      case MARKETING:
+        return marketingData && marketingData.programList.length > 0
+          ? `/program/challenge/${marketingData.programList[0].id}/${encodeURIComponent(marketingData.programList[0].title ?? '')}`
+          : undefined;
+      default:
+        return undefined;
+    }
   };
 
   const programCategoryLists: SubNavItemProps[] = [
@@ -60,34 +63,31 @@ export default function useProgramCategoryNav(isNextRouter: boolean) {
     },
     {
       children: '경험정리 챌린지',
-      href: getProgramHref(activeExperienceSummary, experienceSummaryData),
+      href: getCurrentChallenge(EXPERIENCE_SUMMARY),
       isNextRouter,
       force: !isNextRouter,
     },
     {
       children: '자기소개서 완성 챌린지',
-      href: getProgramHref(activePersonalStatement, personalStatementData),
+      href: getCurrentChallenge(PERSONAL_STATEMENT),
       isNextRouter,
       force: !isNextRouter,
     },
     {
       children: '포트폴리오 완성 챌린지',
-      href: getProgramHref(activePortfolio, portfolioData),
+      href: getCurrentChallenge(PORTFOLIO),
       isNextRouter,
       force: !isNextRouter,
     },
     {
       children: '마케팅 서류 완성 챌린지',
-      href: getProgramHref(activeMarketing, marketingData),
+      href: getCurrentChallenge(MARKETING),
       isNextRouter,
       force: !isNextRouter,
     },
     {
       children: '대기업 완성 챌린지',
-      href: getProgramHref(
-        activePersonalStatementLargeCorp,
-        personalStatementLargeCorpData,
-      ),
+      href: getCurrentChallenge(PERSONAL_STATEMENT_LARGE_CORP),
       isNextRouter,
       force: !isNextRouter,
     },
