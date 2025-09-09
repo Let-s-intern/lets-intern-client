@@ -182,7 +182,7 @@ const Router = () => {
                 <Route path="me" element={<MyChallengeDashboard />} />
                 {/* 미션 피드백 페이지 */}
                 <Route
-                  path="challenge/:challengeId/missions/:missionId/feedback"
+                  path="missions/:missionId/feedback"
                   element={<MissionFeedback />}
                 />
               </Route>
@@ -199,6 +199,10 @@ const Router = () => {
                 <Route path="user/info" element={<OldChallengeUserInfo />} />
                 <Route path="" element={<OldChallengeDashboard />} />
                 <Route path="me" element={<OldMyChallengeDashboard />} />
+                <Route
+                  path="missions/:missionId/feedback"
+                  element={<MissionFeedback />}
+                />
               </Route>
 
               {/* 서류진단 */}
