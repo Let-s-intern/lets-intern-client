@@ -18,6 +18,7 @@ import MissionFeedback from './router-pages/common/challenge/MissionFeedback';
 import MyChallengeDashboard from './router-pages/common/challenge/MyChallengeDashboard';
 import OldChallengeDashboard from './router-pages/common/challenge/OldChallengeDashboard';
 import OldChallengeUserInfo from './router-pages/common/challenge/OldChallengeUserInfo';
+import OldMissionFeedback from './router-pages/common/challenge/OldMissionFeedback';
 import OldMyChallengeDashboard from './router-pages/common/challenge/OldMyChallengeDashboard';
 import PersonalStatementLatest from './router-pages/common/challenge/PersonalStatementLatest';
 import PortfolioLatest from './router-pages/common/challenge/PortfolioLatest';
@@ -201,7 +202,7 @@ const Router = () => {
                 <Route path="me" element={<OldMyChallengeDashboard />} />
                 <Route
                   path="missions/:missionId/feedback"
-                  element={<MissionFeedback />}
+                  element={<OldMissionFeedback />}
                 />
               </Route>
 
