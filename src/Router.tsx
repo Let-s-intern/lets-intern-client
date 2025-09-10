@@ -18,6 +18,7 @@ import MissionFeedback from './router-pages/common/challenge/MissionFeedback';
 import MyChallengeDashboard from './router-pages/common/challenge/MyChallengeDashboard';
 import OldChallengeDashboard from './router-pages/common/challenge/OldChallengeDashboard';
 import OldChallengeUserInfo from './router-pages/common/challenge/OldChallengeUserInfo';
+import OldMissionFeedback from './router-pages/common/challenge/OldMissionFeedback';
 import OldMyChallengeDashboard from './router-pages/common/challenge/OldMyChallengeDashboard';
 import PersonalStatementLatest from './router-pages/common/challenge/PersonalStatementLatest';
 import PortfolioLatest from './router-pages/common/challenge/PortfolioLatest';
@@ -182,7 +183,7 @@ const Router = () => {
                 <Route path="me" element={<MyChallengeDashboard />} />
                 {/* 미션 피드백 페이지 */}
                 <Route
-                  path="challenge/:challengeId/missions/:missionId/feedback"
+                  path="missions/:missionId/feedback"
                   element={<MissionFeedback />}
                 />
               </Route>
@@ -199,6 +200,10 @@ const Router = () => {
                 <Route path="user/info" element={<OldChallengeUserInfo />} />
                 <Route path="" element={<OldChallengeDashboard />} />
                 <Route path="me" element={<OldMyChallengeDashboard />} />
+                <Route
+                  path="missions/:missionId/feedback"
+                  element={<OldMissionFeedback />}
+                />
               </Route>
 
               {/* 서류진단 */}

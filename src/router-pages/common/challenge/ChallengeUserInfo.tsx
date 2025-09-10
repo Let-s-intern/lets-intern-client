@@ -102,15 +102,6 @@ const ChallengeUserInfo = () => {
     );
   }, [value]);
 
-  useEffect(() => {
-    if (isLoading) return;
-
-    if (isValidUserInfo) {
-      navigate(`/challenge/${params.applicationId}/${programId}`);
-      return;
-    }
-  }, [isValidUserInfo, isLoading, navigate, params.applicationId, programId]);
-
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-6 pb-24 pt-12">
       <div className="flex flex-col gap-2">
