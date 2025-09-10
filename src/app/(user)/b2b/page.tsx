@@ -3,15 +3,15 @@ import Client from './_components/Client';
 
 export async function generateMetadata(): Promise<Metadata> {
   const isNoIndex = process.env.NO_INDEX === 'true';
-  const title =
-    '합격으로 이어지는 서류, 렛츠커리어가 설계합니다 - 기업 교육 | 렛츠커리어';
+  const title = '렛츠커리어 | 합격으로 이어지는 기업/학교 취업 교육';
   const description =
-    '교육기관 맞춤형 취업·커리어 교육 파트너. 경험정리부터 직무탐색, 서류 완성, 이후 관리까지 한 번에 제공합니다.';
+    '교육생의 경험정리부터 직무탐색, 서류 완성, 이후 관리까지 교육기관 맞춤형 취업교육을 제공합니다.';
 
   return {
     title,
     description,
-    alternates: { canonical: '/b2b-introduce' },
+    keywords: ['서류 교육', '취업 교육', '이력서', '자기소개서', '포트폴리오'],
+    alternates: { canonical: '/b2b' },
     openGraph: {
       type: 'website',
       title,
@@ -23,6 +23,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function B2BIntroducePage() {
+export default function B2BPage() {
   return <Client />;
 }

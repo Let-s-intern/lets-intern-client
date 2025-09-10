@@ -2,8 +2,10 @@
 
 import { Break } from '@components/Break';
 import { motion } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { LOGO } from '../_images/logos';
+import SectionHeader from './SectionHeader';
 
 type StudentReview = {
   studentInfo: {
@@ -188,12 +190,12 @@ function StudentCard({
       </p>
 
       {/* Main Review */}
-      <h3 className="mb-1.5 break-keep text-small18 font-semibold text-neutral-0">
+      <h3 className="text-small16 mb-1.5 break-keep font-semibold text-neutral-0 md:text-small18">
         {review.mainReview}
       </h3>
 
       {/* Detailed Review */}
-      <p className="mb-2 break-keep text-xsmall16 leading-relaxed text-neutral-20">
+      <p className="mb-2 break-keep text-xsmall14 leading-relaxed text-neutral-20 md:text-xsmall16">
         {review.detailedReview}
       </p>
 
@@ -206,27 +208,57 @@ function StudentCard({
 }
 
 export default function StudentTestimonials() {
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [showLeftFade, setShowLeftFade] = useState(false);
+  const [showRightFade, setShowRightFade] = useState(false);
+  const ticking = useRef(false);
+  const rafId = useRef<number | null>(null);
+
+  const updateFades = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const atStart = el.scrollLeft <= 1;
+    const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1;
+    const nextLeft = !atStart;
+    const nextRight = !atEnd;
+    setShowLeftFade((prev) => (prev !== nextLeft ? nextLeft : prev));
+    setShowRightFade((prev) => (prev !== nextRight ? nextRight : prev));
+  };
+
+  const scheduleUpdate = () => {
+    if (ticking.current) return;
+    ticking.current = true;
+    rafId.current = window.requestAnimationFrame(() => {
+      updateFades();
+      ticking.current = false;
+    });
+  };
+
+  useEffect(() => {
+    updateFades();
+    const el = scrollRef.current;
+    if (!el) return;
+    el.addEventListener('scroll', scheduleUpdate, { passive: true });
+    window.addEventListener('resize', scheduleUpdate);
+    return () => {
+      el.removeEventListener('scroll', scheduleUpdate);
+      window.removeEventListener('resize', scheduleUpdate);
+      if (rafId.current) cancelAnimationFrame(rafId.current);
+    };
+  }, []);
+
   return (
     <div>
-      <motion.p
-        className="text-center text-xsmall16 font-medium text-primary-90"
-        initial={{ opacity: 0, y: 12 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '0px 0px -10% 0px' }}
-        transition={{ duration: 0.55 }}
-      >
-        교육생 합격 후기
-      </motion.p>
-      <motion.h2
-        className="mt-7 break-keep text-center text-[40px] font-bold text-static-0"
-        initial={{ opacity: 0, y: 12 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '0px 0px -10% 0px' }}
-        transition={{ duration: 0.55, delay: 0.05 }}
-      >
-        부트캠프의 소중한 경험이 <Break />
-        합격에 필살 경험이 되도록
-      </motion.h2>
+      <SectionHeader
+        align="center"
+        kicker={<>교육생 합격 후기</>}
+        title={
+          <>
+            부트캠프의 소중한 경험이 <Break />
+            합격에 필살 경험이 되도록
+          </>
+        }
+      />
 
       {/* Student Review Cards - Horizontal Scroll */}
       <motion.div
@@ -236,17 +268,24 @@ export default function StudentTestimonials() {
         viewport={{ once: true, margin: '0px 0px -10% 0px' }}
         transition={{ duration: 0.6 }}
       >
-        <div className="relative overflow-y-visible overflow-x-scroll pb-3 scrollbar-hide">
-          <div className="grid w-max auto-cols-[360px] grid-flow-col gap-3 px-[max(1.5rem,calc((100vw-1120px)/2))]">
+        <div
+          ref={scrollRef}
+          className="relative overflow-y-visible overflow-x-scroll pb-3 scrollbar-hide"
+        >
+          <div className="grid w-max auto-cols-[300px] grid-flow-col gap-3 px-[max(1.5rem,calc((100vw-1120px)/2))] md:auto-cols-[360px]">
             {STUDENT_REVIEWS.map((review, index) => (
               <StudentCard review={review} index={index} key={index} />
             ))}
           </div>
         </div>
         {/* Left fade */}
-        <div className="pointer-events-none absolute left-0 top-0 h-full w-16 bg-gradient-to-r from-white to-transparent"></div>
+        <div
+          className={`pointer-events-none absolute bottom-3 left-0 top-0 w-16 bg-gradient-to-r from-white to-transparent transition-opacity duration-200 ${showLeftFade ? 'opacity-100' : 'opacity-0'}`}
+        ></div>
         {/* Right fade */}
-        <div className="pointer-events-none absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-white to-transparent"></div>
+        <div
+          className={`pointer-events-none absolute bottom-3 right-0 top-0 w-16 bg-gradient-to-l from-white to-transparent transition-opacity duration-200 ${showRightFade ? 'opacity-100' : 'opacity-0'}`}
+        ></div>
       </motion.div>
     </div>
   );

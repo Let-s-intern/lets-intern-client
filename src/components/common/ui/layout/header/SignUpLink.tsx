@@ -12,7 +12,7 @@ function SignUpLink({ isNextRouter, force, className, onClick }: Props) {
   return (
     <HybridLink
       className={twMerge(
-        'rounded-xxs bg-primary px-3 py-1.5 text-xsmall16 font-medium text-white',
+        'px-3 py-1.5 text-xsmall14 font-medium text-primary transition hover:opacity-80',
         className,
       )}
       isNextRouter={isNextRouter}

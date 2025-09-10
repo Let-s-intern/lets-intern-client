@@ -90,7 +90,7 @@ function FeatureRow({
   const imageEl = (
     <motion.div
       className={twMerge(
-        'relative aspect-[500/380] w-full overflow-hidden rounded-xl',
+        'relative aspect-[500/380] w-full overflow-hidden rounded-sm md:rounded-xl',
         className,
       )}
       initial={{ opacity: 0, y: 12 }}
@@ -103,25 +103,27 @@ function FeatureRow({
   );
   const text = (
     <motion.div
-      className="w-full"
+      className="w-full text-center md:text-left"
       initial={{ opacity: 0, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '0px 0px -10% 0px' }}
       transition={{ duration: 0.55, delay: 0.05 }}
     >
       {badge && (
-        <span className="inline-flex items-center gap-2 rounded-md bg-neutral-90 px-3 py-2 text-xsmall16 text-neutral-10">
+        <span className="inline-flex items-center gap-2 rounded-xxs bg-neutral-90 px-3 py-2 text-xxsmall12 text-neutral-10 md:mx-0 md:rounded-md md:text-xsmall16">
           <span className="text-primary-90">{num}</span> {badge}
         </span>
       )}
-      <h3 className="mt-6 text-[28px] font-bold text-static-0 md:text-[34px]">
+      <h3 className="mt-3 break-keep text-[24px] font-bold leading-[1.4] text-static-0 md:mt-6 md:text-[34px]">
         {title}
       </h3>
-      <p className="mt-3 break-keep text-small20 text-neutral-40">{desc}</p>
+      <p className="mt-2 break-keep text-xsmall14 leading-[22px] text-neutral-40 md:mt-3 md:text-small20 md:leading-[1.6]">
+        {desc}
+      </p>
     </motion.div>
   );
   return (
-    <div className="grid items-center gap-8 md:grid-cols-2 md:gap-16">
+    <div className="grid items-center gap-4 md:grid-cols-2 md:gap-16">
       {align === 'left' ? (
         <>
           <div className="order-2 md:order-1">{imageEl}</div>

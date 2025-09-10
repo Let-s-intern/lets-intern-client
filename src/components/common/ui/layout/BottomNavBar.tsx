@@ -60,7 +60,8 @@ function BottomNavBar({ isNextRouter, pathname = '' }: Props) {
     pathname.startsWith('/program/') ||
     pathname === '/about' ||
     pathname.startsWith('/payment') ||
-    pathname.startsWith('/challenge');
+    pathname.startsWith('/challenge') ||
+    pathname.startsWith('/b2b');
 
   const menuInfo: Menu[] = [
     {
