@@ -43,7 +43,7 @@ export default function StickyCTA() {
               target="_blank"
               rel="noopener noreferrer"
               className={twMerge(
-                'b2b-sticky-intro-download',
+                'b2b_introduce_download',
                 'rounded-xs bg-white px-5 py-3 text-xsmall14 font-medium text-primary shadow-sm transition hover:text-primary-90',
                 'inline-flex flex-1 items-center justify-center md:flex-auto md:text-xsmall16',
               )}
@@ -55,7 +55,7 @@ export default function StickyCTA() {
               href={contactLink}
               target="_blank"
               className={twMerge(
-                'b2b-sticky-contact-form',
+                'b2b_education_inquire',
                 'rounded-xs bg-primary px-5 py-3 text-xsmall14 font-medium text-white shadow-sm hover:bg-primary',
                 'inline-flex flex-1 items-center justify-center md:flex-auto md:text-xsmall16',
               )}

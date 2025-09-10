@@ -68,7 +68,7 @@ function GlobalNavTopBar({ isNextRouter, loginRedirect, toggleMenu }: Props) {
         </GlobalNavItem>
         <GlobalNavItem
           className={twMerge(
-            'mr-6 hidden h-9 items-center border-b-[1.5px] border-transparent md:flex',
+            'b2b_landing_click mr-6 hidden h-9 items-center border-b-[1.5px] border-transparent md:flex',
             pathname.startsWith('/b2b') && 'border-neutral-0',
           )}
           isNextRouter={isNextRouter}
