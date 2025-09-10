@@ -18,6 +18,7 @@ interface Props {
   onClose?: () => void;
   readOnly?: boolean;
   programTitle?: string;
+  className?: string;
 }
 
 /** 마이페이지 후기 작성(생성) 모달
@@ -31,10 +32,12 @@ function ReviewModal({
   onClose,
   readOnly,
   programTitle,
+  className,
 }: Props) {
   const navigate = useNavigate();
   const [isExitOpen, setIsExitOpen] = useState(false);
   const isDesktop = useMediaQuery('(min-width:768px)');
+
   useControlScroll(isDesktop); // 데스크탑(모달)에서는 body 스크롤 제어
 
   const buttonText = isLastMission ? '제출하기' : '등록하기';
@@ -59,7 +62,10 @@ function ReviewModal({
     <>
       {/* 바탕 */}
       <div
-        className="mx-auto bg-neutral-0/50 md:fixed md:inset-0 md:z-50 md:flex md:flex-col md:items-center md:justify-center md:py-24"
+        className={twMerge(
+          'mx-auto bg-neutral-0/50 md:fixed md:inset-0 md:z-50 md:flex md:flex-col md:items-center md:justify-center md:py-24',
+          className,
+        )}
         onClick={() => {
           if (readOnly) {
             if (onClose) {
@@ -70,7 +76,7 @@ function ReviewModal({
           }
         }}
       >
-        <main
+        <div
           className="relative bg-white md:overflow-hidden md:rounded-ms"
           onClick={(e) => e.stopPropagation()} // 바탕 클릭 시 모달 닫힘 방지
         >
@@ -160,7 +166,7 @@ function ReviewModal({
               </span>
             )}
           </div>
-        </main>
+        </div>
       </div>
       <ReviewExitModal
         isOpen={isExitOpen}
