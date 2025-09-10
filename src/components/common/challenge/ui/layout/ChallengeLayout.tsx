@@ -48,7 +48,7 @@ const ChallengeLayout = () => {
     challengeGoalLoading;
   const isStartAfterGoal =
     challenge?.startDate && GOAL_DATE.isBefore(challenge.startDate);
-  const hasChallengeGoal = challengeGoal?.goal !== null;
+  const hasChallengeGoal = challengeGoal?.goal != null;
 
   useEffect(() => {
     if (!isLoggedIn) {
