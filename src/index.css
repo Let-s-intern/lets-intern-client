@@ -254,14 +254,6 @@ body.non-scroll {
   padding-right: 1rem;
 }
 
-@layer utilities {
-  .mw-1180 {
-    margin: 0 auto;
-    max-width: 1180px;
-    width: calc(100% - 40px);
-  }
-}
-
 /* 모바일 환경 */
 @media (hover: none) and (pointer: coarse) {
   body.non-scroll {
