@@ -62,6 +62,8 @@ const MissionSubmitRegularSection = ({
     attendanceInfo?.submitted === true,
   );
   const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
   const [linkValue, setLinkValue] = useState(attendanceInfo?.link || '');
   const [isLinkVerified, setIsLinkVerified] = useState(!!attendanceInfo?.link);
   const [isEditing, setIsEditing] = useState(false);
@@ -102,7 +104,6 @@ const MissionSubmitRegularSection = ({
     (attendanceInfo?.result === 'WAITING' &&
       (attendanceInfo?.status === 'LATE' ||
         attendanceInfo?.status === 'UPDATED'));
-
   const handleSubmit = async () => {
     if (isResubmitBlocked) return;
 
@@ -122,6 +123,7 @@ const MissionSubmitRegularSection = ({
         review: textareaValue,
       });
       await refetchSchedules?.();
+      setToastMessage('미션 제출이 완료되었습니다.');
       setIsSubmitted(true);
       setShowToast(true);
       // 미션 데이터 새로고침
@@ -160,6 +162,7 @@ const MissionSubmitRegularSection = ({
       });
       await refetchSchedules?.();
       setIsEditing(false);
+      setToastMessage('수정사항이 저장되었습니다.');
       setShowToast(true);
       // 미션 데이터 새로고침
       onRefreshMissionData?.();
@@ -170,7 +173,6 @@ const MissionSubmitRegularSection = ({
 
   // 제출 버튼 활성화 조건: 링크 확인 완료 + 미션 소감 입력
   const canSubmit = isLinkVerified && textareaValue.trim().length > 0;
-
   return (
     <>
       <section className={clsx('', className)}>
@@ -224,8 +226,8 @@ const MissionSubmitRegularSection = ({
             disabled={isResubmitBlocked}
           />
         )}
-
         <MissionToast
+          message={toastMessage}
           isVisible={showToast}
           onClose={() => setShowToast(false)}
         />
