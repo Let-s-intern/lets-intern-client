@@ -27,14 +27,14 @@ const MissionMentorCommentSection = ({ missionId }: Props) => {
     : null;
   const isNoFeedbackOrComment = !comment && !mentorFeedback;
 
-  if (isNoFeedbackOrComment) return null;
+  if (isNoFeedbackOrComment) return <section className="mb-8 h-px" />;
 
   return (
     <section>
       {/* 코멘트 섹션: 관리자가 남기는 코멘트 */}
       {comment && (
         <>
-          <div className="mb-11 h-px bg-neutral-80" />
+          <div className="mb-8 h-px bg-neutral-80" />
           <div className="mb-6">
             <div className="mb-2 rounded-xs bg-primary-5 p-3">
               <span className="text-xsmall16 font-semibold text-primary">
@@ -51,7 +51,7 @@ const MissionMentorCommentSection = ({ missionId }: Props) => {
       )}
 
       {/* 멘토 피드백 섹션: 멘토가 남기는 피드백 */}
-      {mentorFeedback && mentorFeedback.root && (
+      {mentorFeedback && mentorFeedback.root ? (
         <div>
           <div className="mb-2 rounded-xs bg-primary-5 p-3">
             <span className="text-xsmall16 font-semibold text-primary">
@@ -64,9 +64,11 @@ const MissionMentorCommentSection = ({ missionId }: Props) => {
             </div>
           </div>
         </div>
+      ) : (
+        <div className="mb-6 h-px" />
       )}
     </section>
   );
 };
-
+// 24+16 = 40
 export default MissionMentorCommentSection;
