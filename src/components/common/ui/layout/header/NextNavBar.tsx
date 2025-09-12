@@ -199,7 +199,12 @@ const NextNavBar = () => {
             +현직자 멘토 참여중
           </span>
         </SideNavItem>
-        <SideNavItem href="/b2b" isNextRouter force>
+        <SideNavItem
+          className="b2b_landing_click"
+          href="/b2b"
+          isNextRouter
+          force
+        >
           기업/학교 취업 교육 문의
         </SideNavItem>
         <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />

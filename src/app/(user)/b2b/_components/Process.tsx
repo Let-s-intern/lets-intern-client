@@ -43,7 +43,7 @@ export default function Process() {
             <motion.a
               href={contactLink}
               target="_blank"
-              className="b2b-process-contact-form inline-flex w-full items-center justify-center rounded-xs bg-primary-90 px-5 py-3 text-xsmall16 font-medium text-white shadow-sm transition hover:bg-primary-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 md:w-auto md:px-5 md:text-xsmall16"
+              className="b2b_education_inquire inline-flex w-full items-center justify-center rounded-xs bg-primary-90 px-5 py-3 text-xsmall16 font-medium text-white shadow-sm transition hover:bg-primary-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 md:w-auto md:px-5 md:text-xsmall16"
               initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '0px 0px -10% 0px' }}
