@@ -71,5 +71,4 @@ const MissionMentorCommentSection = ({ missionId }: Props) => {
     </section>
   );
 };
-// 24+16 = 40
 export default MissionMentorCommentSection;
