@@ -3,6 +3,7 @@ import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import { AttendanceResult, AttendanceStatus } from '@/schema';
 import { useMissionStore } from '@/store/useMissionStore';
+import { BONUS_MISSION_TH } from '@/utils/constants';
 import { clsx } from 'clsx';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -50,7 +51,7 @@ const MissionSubmitRegularSection = ({
 
   // missionTh를 기준으로 마지막 정규 미션 찾기 (보너스 미션 제외)
   const regularMissions = schedules.filter(
-    (schedule) => schedule.missionInfo.th !== 100,
+    (schedule) => schedule.missionInfo.th !== BONUS_MISSION_TH,
   );
   const lastRegularMission = regularMissions[regularMissions.length - 1];
   const lastRegularMissionId = lastRegularMission?.missionInfo.id;
@@ -74,7 +75,9 @@ const MissionSubmitRegularSection = ({
   const submitMission = useSubmitMission();
   const patchAttendance = usePatchAttendance();
 
-  const bonusMission = schedules.find((item) => item.missionInfo.th === 100);
+  const bonusMission = schedules.find(
+    (item) => item.missionInfo.th === BONUS_MISSION_TH,
+  );
 
   // attendanceInfo가 변경될 때마다 상태 업데이트 (다른 미션인 경우에만)
   useEffect(() => {
