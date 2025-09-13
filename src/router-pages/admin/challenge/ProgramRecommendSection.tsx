@@ -6,7 +6,7 @@ import {
   OperationRecommendMoreButton,
   ProgramRecommend,
 } from '@/types/interface';
-import MoreButtonSection from '@components/admin/ui/MoreButtonSection';
+import MoreButtonSection from '@components/admin/ui/section/MoreButtonSection';
 import ProgramRecommendEditor from '@components/ProgramRecommendEditor';
 import { Button } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
