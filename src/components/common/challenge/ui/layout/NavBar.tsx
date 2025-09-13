@@ -5,11 +5,14 @@ const DashboardNavBar = () => {
   const params = useParams();
   const location = useLocation();
   const applicationId = params.applicationId;
-  const activeStatus = location.pathname.endsWith('me')
-    ? 'MY_MISSION'
-    : location.pathname.endsWith('guide')
-      ? 'GUIDE'
-      : 'DASHBOARD';
+
+  if (location.pathname.endsWith('user/info')) return null;
+
+  const activeStatus = (() => {
+    if (location.pathname.endsWith('me')) return 'MY_MISSION';
+    if (location.pathname.endsWith('guides')) return 'GUIDE';
+    return 'DASHBOARD';
+  })();
 
   return (
     <>
