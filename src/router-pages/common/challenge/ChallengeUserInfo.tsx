@@ -103,13 +103,14 @@ const ChallengeUserInfo = () => {
   }, [value]);
 
   return (
-    <main className="mx-auto flex max-w-3xl flex-col gap-6 pb-24 pt-12">
+    <main className="mx-auto flex max-w-3xl flex-col gap-6 px-5 md:px-0 md:pb-24 md:pt-12">
       <div className="flex flex-col gap-2">
         <h1 className="text-center text-xl font-semibold">
           챌린지 대시보드 추가정보 입력
         </h1>
-        <p className="text-center text-neutral-40">
-          안녕하세요, {username}님! {programTitle}에 입장하신 걸 환영합니다!
+        <p className="break-keep text-center text-neutral-40">
+          안녕하세요, {username}님!
+          <br className="md:hidden" /> {programTitle}에 입장하신 걸 환영합니다!
           <br />
           챌린지 대시보드 입장을 위해 추가정보를 입력해주세요.
         </p>
@@ -118,7 +119,7 @@ const ChallengeUserInfo = () => {
         <section className="flex flex-col gap-6">
           <div className="flex flex-col gap-1">
             <h2 className="text-lg font-semibold">기본 정보</h2>
-            <p className="text-neutral-40">
+            <p className="break-keep text-neutral-40">
               * 기본 정보를 바탕으로 더 유익한 학습콘텐츠를 제공해드릴게요!
             </p>
           </div>
