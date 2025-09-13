@@ -27,7 +27,8 @@ const MissionMentorCommentSection = ({ missionId }: Props) => {
     : null;
   const isNoFeedbackOrComment = !comment && !mentorFeedback;
 
-  if (isNoFeedbackOrComment) return <section className="mb-8 h-px" />;
+  if (isNoFeedbackOrComment)
+    return <section className="mb-8 hidden h-px md:block" />;
 
   return (
     <section>
