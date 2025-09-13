@@ -2,6 +2,7 @@ import MissionResultItem from '@/components/admin/challenge/home/item/MissionRes
 import GuideSection from '@/components/admin/challenge/home/section/GuideSection';
 import NoticeSection from '@/components/admin/challenge/home/section/NoticeSection';
 import { useAdminMissionsOfCurrentChallenge } from '@/context/CurrentAdminChallengeProvider';
+import ProgramRecommendSection from './ProgramRecommendSection';
 
 const ChallengeOperationHome = () => {
   const missions = useAdminMissionsOfCurrentChallenge();
@@ -20,6 +21,7 @@ const ChallengeOperationHome = () => {
         <NoticeSection className="flex-1" />
         <GuideSection className="flex-1" />
       </div>
+      <ProgramRecommendSection />
     </main>
   );
 };
