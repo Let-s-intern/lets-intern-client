@@ -18,7 +18,7 @@ const MoreButton = ({
   return (
     <button
       type="button"
-      className="hidden text-xsmall14 font-medium text-neutral-45 md:inline"
+      className="dashboard_moreprogramrec hidden text-xsmall14 font-medium text-neutral-45 md:inline"
       onClick={onClick}
     >
       더보기
