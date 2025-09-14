@@ -1,10 +1,10 @@
 import { useGetChallengeGuides, useGetChallengeNotices } from '@/api/challenge';
 import { useReadGuides, useReadNotices } from '@/hooks/useReadItems';
 import { twMerge } from '@/lib/twMerge';
-import { useState, type ReactNode } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { type ReactNode } from 'react';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 
-const enum TabMenu {
+export const enum TabMenu {
   NOTICE,
   GUIDE,
 }
@@ -127,8 +127,13 @@ const GuideList = () => {
   ));
 };
 
-function ChallengeGuidePage() {
-  const [activeTab, setActiveTab] = useState<TabMenu>(TabMenu.NOTICE);
+const ChallengeGuidePage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = Number(searchParams.get('tab'));
+
+  const handleTabClick = (tab: TabMenu) => {
+    setSearchParams({ tab: tab as unknown as string });
+  };
 
   return (
     <main
@@ -145,14 +150,14 @@ function ChallengeGuidePage() {
         <nav aria-label="공지/가이드 탭" className="mt-6">
           <ul className="flex items-center gap-2">
             <TabButton
-              isActive={activeTab === TabMenu.NOTICE}
-              onClick={() => setActiveTab(TabMenu.NOTICE)}
+              isActive={activeTab ? activeTab === TabMenu.NOTICE : true}
+              onClick={() => handleTabClick(TabMenu.NOTICE)}
             >
               공지사항
             </TabButton>
             <TabButton
               isActive={activeTab === TabMenu.GUIDE}
-              onClick={() => setActiveTab(TabMenu.GUIDE)}
+              onClick={() => handleTabClick(TabMenu.GUIDE)}
             >
               챌린지 가이드
             </TabButton>
@@ -169,6 +174,6 @@ function ChallengeGuidePage() {
       </section>
     </main>
   );
-}
+};
 
 export default ChallengeGuidePage;

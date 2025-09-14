@@ -1,4 +1,5 @@
 import { useReadNotices } from '@/hooks/useReadItems';
+import { TabMenu } from '@/router-pages/common/challenge/ChallengeGuidePage';
 import { ChallengeNotice } from '@/schema';
 import clsx from 'clsx';
 import { useState } from 'react';
@@ -42,7 +43,7 @@ const NoticeSection = ({ notices }: INoticeSectionProps) => {
               </span>
             )}
           </div>
-          <NoticeGuideLink />
+          <NoticeGuideLink tab={TabMenu.NOTICE} />
         </div>
         {currentNoticeList.length === 0 ? (
           <div className="flex h-[5.75rem] justify-center">

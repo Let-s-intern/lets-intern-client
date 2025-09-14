@@ -1,4 +1,5 @@
 import { useReadGuides } from '@/hooks/useReadItems';
+import { TabMenu } from '@/router-pages/common/challenge/ChallengeGuidePage';
 import { ChallengeGuide } from '@/schema';
 import clsx from 'clsx';
 import { useState } from 'react';
@@ -31,7 +32,7 @@ const GuideSection = ({ guides }: GuideSection) => {
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <h2 className="font-semibold text-neutral-10">챌린지 가이드</h2>
-          <NoticeGuideLink />
+          <NoticeGuideLink tab={TabMenu.GUIDE} />
         </div>
         {currentGuideList.length === 0 ? (
           <div className="flex h-[4.4rem] justify-center md:h-[5.75rem]">
