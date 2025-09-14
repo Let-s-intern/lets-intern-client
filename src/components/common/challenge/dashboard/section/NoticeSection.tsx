@@ -3,6 +3,7 @@ import { ChallengeNotice } from '@/schema';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import NoticeGuideLink from '../../NoticeGuideLink';
 
 interface INoticeSectionProps {
   notices: ChallengeNotice[];
@@ -32,13 +33,16 @@ const NoticeSection = ({ notices }: INoticeSectionProps) => {
   return (
     <section className="flex w-full flex-col gap-4 md:h-[188px]">
       <div className="flex flex-1 flex-col gap-3 rounded-xs border border-[#E4E4E7] p-4">
-        <div className="flex items-center gap-3">
-          <h2 className="font-semibold text-[#4A495C]">공지사항</h2>
-          {hasNewNotice && (
-            <span className="relative rounded-xxs bg-primary-90 px-2 py-[5px] text-[12px] text-static-100 before:absolute before:right-full before:top-1/2 before:-translate-y-1/2 before:border-y-[6px] before:border-r-[8px] before:border-y-transparent before:border-r-primary-90">
-              새로운 공지를 확인해주세요!
-            </span>
-          )}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <h2 className="font-semibold text-[#4A495C]">공지사항</h2>
+            {hasNewNotice && (
+              <span className="relative rounded-xxs bg-primary-90 px-2 py-[5px] text-[12px] text-static-100 before:absolute before:right-full before:top-1/2 before:-translate-y-1/2 before:border-y-[6px] before:border-r-[8px] before:border-y-transparent before:border-r-primary-90">
+                새로운 공지를 확인해주세요!
+              </span>
+            )}
+          </div>
+          <NoticeGuideLink />
         </div>
         {currentNoticeList.length === 0 ? (
           <div className="flex h-[5.75rem] justify-center">
