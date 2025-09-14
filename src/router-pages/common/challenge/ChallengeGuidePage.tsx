@@ -110,7 +110,7 @@ const GuideList = () => {
   if (isEmpty) {
     return (
       <p className="mt-6 text-xsmall14 text-neutral-40">
-        등록된 공지사항이 없습니다.
+        등록된 가이드가 없습니다.
       </p>
     );
   }
