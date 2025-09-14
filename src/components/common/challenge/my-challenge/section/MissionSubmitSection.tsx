@@ -1,6 +1,7 @@
 import dayjs from '@/lib/dayjs';
 import { Schedule } from '@/schema';
 import { useMissionStore } from '@/store/useMissionStore';
+import { BONUS_MISSION_TH } from '@/utils/constants';
 import { clsx } from 'clsx';
 import MissionSubmitBonusSection from './MissionSubmitBonusSection';
 import MissionSubmitRegularSection from './MissionSubmitRegularSection';
@@ -36,7 +37,7 @@ const MissionSubmitSection = ({
     }
 
     // 보너스 미션
-    if (selectedMissionTh >= 100) {
+    if (selectedMissionTh >= BONUS_MISSION_TH) {
       return (
         <MissionSubmitBonusSection
           selectedMissionTh={selectedMissionTh}
