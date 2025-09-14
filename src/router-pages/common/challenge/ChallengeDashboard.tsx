@@ -6,6 +6,7 @@ import ScoreSection from '@/components/common/challenge/dashboard/section/ScoreS
 import MissionCalendar from '@/components/common/challenge/my-challenge/mission-calendar/MissionCalendar';
 import MissionTooltipQuestion from '@/components/common/challenge/ui/tooltip-question/MissionTooltipQuestion';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { useMissionCalculation } from '@/hooks/useMissionCalculation';
 import dayjs from '@/lib/dayjs';
 import { challengeGuides, challengeNotices, challengeScore } from '@/schema';
 import axios from '@/utils/axios';
@@ -16,6 +17,7 @@ import { useParams } from 'react-router-dom';
 const MissionDetailSection = () => {
   const params = useParams();
   const { schedules, dailyMission, isLoading } = useCurrentChallenge();
+  const { isLastMissionSubmitted } = useMissionCalculation();
 
   const { data: programData } = useQuery({
     queryKey: ['challenge', params.programId, 'application'],
@@ -31,8 +33,6 @@ const MissionDetailSection = () => {
 
   const programEndDate = programData?.data?.endDate;
   const isChallengeDone = getIsChallengeDone(programEndDate);
-  const isLastMissionSubmitted =
-    schedules[schedules.length - 1]?.attendanceInfo.submitted;
 
   if (isLastMissionSubmitted || isChallengeDone || !dailyMission) {
     return <MissionEndSection />;
@@ -51,15 +51,10 @@ const getIsChallengeSubmitDone = (endDate: string) => {
 };
 
 const ChallengeDashboard = () => {
-  const { currentChallenge, schedules, dailyMission } = useCurrentChallenge();
+  const { currentChallenge, schedules } = useCurrentChallenge();
+  const { todayTh } = useMissionCalculation();
 
   const params = useParams();
-
-  const todayTh =
-    dailyMission?.th ??
-    schedules.reduce((th, schedule) => {
-      return Math.max(th, schedule.missionInfo.th ?? 0);
-    }, 0) + 1;
 
   const { data: notices = [] } = useQuery({
     enabled: Boolean(currentChallenge?.id),

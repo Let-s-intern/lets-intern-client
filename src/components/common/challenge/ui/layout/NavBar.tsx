@@ -5,6 +5,9 @@ const DashboardNavBar = () => {
   const params = useParams();
   const location = useLocation();
   const applicationId = params.applicationId;
+
+  if (location.pathname.endsWith('user/info')) return null;
+
   const activeStatus = (() => {
     if (location.pathname.endsWith('me')) return 'MY_MISSION';
     if (location.pathname.endsWith('guides')) return 'GUIDE';
@@ -50,10 +53,11 @@ const DashboardNavBar = () => {
             <Link
               to={`/challenge/${applicationId}/${params.programId}/guides`}
               className={clsx(
-                'flex flex-row items-center whitespace-nowrap rounded-xxs text-xsmall14 font-semibold transition-colors md:h-[44px] md:px-3 md:text-xsmall16',
+                'flex flex-row items-center whitespace-nowrap rounded-xxs text-xsmall14 font-semibold transition-colors md:h-[44px] md:px-3 md:text-xsmall16 md:font-medium',
                 {
-                  'text-primary md:bg-primary-5': activeStatus === 'GUIDE',
-                  'text-[#4A495C]': activeStatus !== 'GUIDE',
+                  'font-semibold text-primary md:bg-primary-5':
+                    activeStatus === 'GUIDE',
+                  'font-medium text-neutral-30': activeStatus !== 'GUIDE',
                 },
               )}
             >
