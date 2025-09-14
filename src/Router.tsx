@@ -11,6 +11,7 @@ import FindPassword from './router-pages/common/auth/FindPassword';
 import Login from './router-pages/common/auth/Login';
 import SignUp from './router-pages/common/auth/SignUp';
 import ChallengeDashboard from './router-pages/common/challenge/ChallengeDashboard';
+import ChallengeGuidePage from './router-pages/common/challenge/ChallengeGuidePage';
 import ChallengeUserInfo from './router-pages/common/challenge/ChallengeUserInfo';
 import ExperienceSummaryLatest from './router-pages/common/challenge/ExperienceSummaryLatest';
 import MarketingLatest from './router-pages/common/challenge/MarketingLatest';
@@ -186,6 +187,8 @@ const Router = () => {
                   path="missions/:missionId/feedback"
                   element={<MissionFeedback />}
                 />
+                {/* 공지사항/가이드 */}
+                <Route path="guides" element={<ChallengeGuidePage />} />
               </Route>
 
               {/* Old 챌린지 대시보드 */}

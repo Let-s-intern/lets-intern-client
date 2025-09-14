@@ -1,8 +1,10 @@
 import {
   activeChallengeResponse,
   attendances,
+  challengeGuides,
   ChallengeIdPrimitive,
   challengeListSchema,
+  challengeNotices,
   challengeTitleSchema,
   ChallengeType,
   faqSchema,
@@ -10,7 +12,6 @@ import {
   getChallengeIdSchema,
   missionAdmin,
   myDailyMission as myDailyMissionSchema,
-  Pageable,
   ProgramClassification,
   ProgramStatus,
   reviewTotalSchema,
@@ -20,6 +21,7 @@ import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
+import { Pageable } from './../schema';
 import {
   challengeApplicationSchema,
   challengeGoalSchema,
@@ -654,6 +656,35 @@ export const useChallengeMyDailyMission = (
     queryFn: async () => {
       const res = await axios.get(`/challenge/${programId}/my/daily-mission`);
       return myDailyMissionSchema.parse(res.data.data);
+    },
+  });
+};
+
+/** GET 챌린지 공지사항 조회 */
+export const useGetChallengeNotices = (
+  challengeId?: string,
+  params?: Pageable,
+) => {
+  return useQuery({
+    enabled: !!challengeId,
+    queryKey: ['useGetChallengeNotices', challengeId, params],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${challengeId}/notices`, {
+        params,
+      });
+      return challengeNotices.parse(res.data.data);
+    },
+  });
+};
+
+/** GET 챌린지 가이드 조회 */
+export const useGetChallengeGuides = (challengeId?: string) => {
+  return useQuery({
+    enabled: !!challengeId,
+    queryKey: ['useGetChallengeGuides', challengeId],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${challengeId}/guides`);
+      return challengeGuides.parse(res.data.data);
     },
   });
 };
