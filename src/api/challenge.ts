@@ -123,6 +123,7 @@ export const useGetChallengeTitle = (challengeId?: number | string) => {
       const res = await axios.get(`/challenge/${challengeId}/title`);
       return challengeTitleSchema.parse(res.data.data);
     },
+    enabled: !!challengeId,
   });
 };
 

@@ -10,6 +10,7 @@ import { useParams } from 'react-router-dom';
 import BonusMissionModal from '../../BonusMissionModal';
 import DashboardCreateReviewModal from '../../dashboard/modal/DashboardCreateReviewModal';
 import LinkChangeConfirmationModal from '../../LinkChangeConfirmationModal';
+import MobileReviewModal from '../../MobileReviewModal';
 import MissionSubmitButton from '../mission/MissionSubmitButton';
 import MissionToast from '../mission/MissionToast';
 import LinkInputSection from './LinkInputSection';
@@ -270,11 +271,17 @@ const MissionSubmitRegularSection = ({
 
       {modalOpen && (
         <DashboardCreateReviewModal
+          className="hidden md:flex"
           programId={params.programId ?? ''}
           applicationId={params.applicationId ?? ''}
           onClose={() => setModalOpen(false)}
         />
       )}
+
+      <MobileReviewModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+      />
       {/* 보너스 미션 모달 */}
       {bonusMission && (
         <BonusMissionModal
