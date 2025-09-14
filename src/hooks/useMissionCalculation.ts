@@ -15,7 +15,7 @@ export const useMissionCalculation = () => {
    * @todo: 해당 미션이 없으면 null로 하든 가장 큰 th로 하든 로직 수정이 필요함
    */
   const todayTh = useMemo(() => {
-    if (myDailyMission?.dailyMission?.th && !isLastMissionSubmitted) {
+    if (myDailyMission?.dailyMission?.th != null && !isLastMissionSubmitted) {
       return myDailyMission.dailyMission.th;
     }
     return (
