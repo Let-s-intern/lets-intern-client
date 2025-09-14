@@ -3,7 +3,7 @@ import Link from 'next/link';
 function Promotion() {
   return (
     <Link
-      href="/b2b-introduce"
+      href="/b2b"
       className="hidden h-[36px] cursor-pointer items-center justify-center gap-1 rounded-[2px] border border-neutral-80 px-2.5 py-2 transition-colors md:flex"
     >
       <span className="text-xsmall14 font-medium text-neutral-0">

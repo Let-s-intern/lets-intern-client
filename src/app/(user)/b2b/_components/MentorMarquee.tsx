@@ -44,7 +44,7 @@ type Mentor = {
   companyLogo?: StaticImageData;
 };
 
-const companyLogos: Record<string, any> = {
+const companyLogos: Record<string, StaticImageData> = {
   렛츠커리어: squareLC,
   LG에너지솔루션: squareLgEnergy,
   신한투자증권: squareShinhan,
@@ -299,16 +299,16 @@ function Row({
         {items.map((m, idx) => (
           <div
             key={`${m.name}-${idx}`}
-            className="flex w-[280px] flex-none flex-col overflow-hidden rounded-sm border border-neutral-85 bg-white shadow-sm"
+            className="flex w-[200px] flex-none flex-col overflow-hidden rounded-sm border border-neutral-85 bg-white shadow-sm md:w-[280px]"
           >
-            <div className="relative h-[160px] bg-neutral-95">
+            <div className="relative h-[90px] bg-neutral-95 md:h-[160px]">
               {m.companyLogo && (
-                <div className="rounded absolute left-2.5 top-2.5 h-[66px] w-[66px] overflow-hidden rounded-xs border bg-white">
+                <div className="rounded absolute left-2.5 top-2.5 h-9 w-9 overflow-hidden rounded-xs border bg-white md:h-[66px] md:w-[66px]">
                   <Image
                     src={m.companyLogo}
                     alt={`${m.company ?? ''} 로고`}
                     fill
-                    className="object-contain p-1"
+                    className="object-contain"
                   />
                 </div>
               )}
@@ -322,10 +322,10 @@ function Row({
               )}
             </div>
             <div className="p-4 text-center">
-              <div className="text-small20 font-semibold text-neutral-0">
+              <div className="mb-1 text-xsmall14 font-semibold text-neutral-0 md:mb-0 md:text-small20">
                 {m.name}
               </div>
-              <div className="text-xsmall16 text-neutral-40">
+              <div className="text-xxsmall12 text-neutral-40 md:text-xsmall16">
                 {m.company}
                 {m.role ? `/${m.role}` : ''}
               </div>

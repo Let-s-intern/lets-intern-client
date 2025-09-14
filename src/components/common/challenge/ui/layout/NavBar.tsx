@@ -5,11 +5,11 @@ const DashboardNavBar = () => {
   const params = useParams();
   const location = useLocation();
   const applicationId = params.applicationId;
-  const activeStatus = location.pathname.endsWith('me')
-    ? 'MY_MISSION'
-    : location.pathname.endsWith('guide')
-      ? 'GUIDE'
-      : 'DASHBOARD';
+  const activeStatus = (() => {
+    if (location.pathname.endsWith('me')) return 'MY_MISSION';
+    if (location.pathname.endsWith('guides')) return 'GUIDE';
+    return 'DASHBOARD';
+  })();
 
   return (
     <>
@@ -46,9 +46,9 @@ const DashboardNavBar = () => {
               나의 미션
             </Link>
           </li>
-          {/* <li className="flex-shrink-0 md:flex-shrink">
+          <li className="flex-shrink-0 md:flex-shrink">
             <Link
-              to={`/challenge/${params.programId}/dashboard/${applicationId}/guide`}
+              to={`/challenge/${applicationId}/${params.programId}/guides`}
               className={clsx(
                 'flex flex-row items-center whitespace-nowrap rounded-xxs text-xsmall14 font-semibold transition-colors md:h-[44px] md:px-3 md:text-xsmall16',
                 {
@@ -59,7 +59,7 @@ const DashboardNavBar = () => {
             >
               공지사항 / 챌린지 가이드
             </Link>
-          </li> */}
+          </li>
         </ul>
       </nav>
     </>

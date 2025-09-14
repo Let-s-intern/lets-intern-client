@@ -1,5 +1,6 @@
 'use client';
 
+import { twMerge } from '@/lib/twMerge';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { contactLink } from './const';
@@ -21,7 +22,7 @@ export default function StickyCTA() {
   return (
     <AnimatePresence>
       <motion.div
-        className="sticky bottom-4 z-50 mx-auto w-fit"
+        className="sticky bottom-4 z-50 mx-auto w-full md:w-fit"
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 100, opacity: 0 }}
@@ -32,16 +33,20 @@ export default function StickyCTA() {
           duration: 1.2,
         }}
       >
-        <div className="flex items-center gap-3 rounded-sm bg-black/60 px-6 py-3 shadow-lg backdrop-blur-lg">
-          <span className="text-small20 font-semibold text-white md:mr-20">
+        <div className="mx-4 flex items-center gap-3 rounded-sm bg-black/60 px-4 py-3 shadow-lg backdrop-blur-lg md:px-6">
+          <span className="hidden text-small20 font-semibold text-white md:mr-20 md:block">
             취업 교육은 렛츠커리어
           </span>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-1 items-center gap-3 md:flex-auto">
             <a
               href="https://drive.google.com/drive/folders/16neodrrBoI3RcS_FLvVVS9TisZTwWlbn?usp=sharing"
               target="_blank"
               rel="noopener noreferrer"
-              className="b2b-sticky-intro-download inline-flex items-center justify-center rounded-xs bg-white px-5 py-3 text-xsmall16 font-medium text-primary shadow-sm transition hover:text-primary-90 md:px-5 md:text-xsmall16"
+              className={twMerge(
+                'b2b_introduce_download',
+                'rounded-xs bg-white px-5 py-3 text-xsmall14 font-medium text-primary shadow-sm transition hover:text-primary-90',
+                'inline-flex flex-1 items-center justify-center md:flex-auto md:text-xsmall16',
+              )}
             >
               교육 소개서 받기
             </a>
@@ -49,7 +54,11 @@ export default function StickyCTA() {
             <a
               href={contactLink}
               target="_blank"
-              className="b2b-sticky-contact-form inline-flex items-center justify-center rounded-xs bg-primary px-5 py-3 text-xsmall16 font-medium text-white shadow-sm hover:bg-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 md:px-5 md:text-xsmall16"
+              className={twMerge(
+                'b2b_education_inquire',
+                'rounded-xs bg-primary px-5 py-3 text-xsmall14 font-medium text-white shadow-sm hover:bg-primary',
+                'inline-flex flex-1 items-center justify-center md:flex-auto md:text-xsmall16',
+              )}
             >
               맞춤 교육 문의
             </a>
