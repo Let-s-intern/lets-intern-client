@@ -130,7 +130,7 @@ const ProgramRecommendEditor = ({
                   name="recommendTitle"
                   placeholder="프로그램 추천 제목을 입력해주세요"
                   value={item.recommendTitle ?? ''}
-                  maxLength={16}
+                  maxLength={18}
                   size="small"
                   onChange={(e) =>
                     onChangeItem(
