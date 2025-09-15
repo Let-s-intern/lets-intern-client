@@ -129,7 +129,8 @@ const ProgramRecommendEditor = ({
                   type="text"
                   name="recommendTitle"
                   placeholder="프로그램 추천 제목을 입력해주세요"
-                  defaultValue={item.recommendTitle}
+                  value={item.recommendTitle ?? ''}
+                  maxLength={16}
                   size="small"
                   onChange={(e) =>
                     onChangeItem(
@@ -144,7 +145,8 @@ const ProgramRecommendEditor = ({
                   type="text"
                   name="recommendCTA"
                   placeholder="프로그램 추천 CTA를 입력해주세요"
-                  defaultValue={item.recommendCTA}
+                  value={item.recommendCTA ?? ''}
+                  maxLength={16}
                   size="small"
                   onChange={(e) =>
                     onChangeItem(
@@ -232,12 +234,14 @@ const ProgramRecommendEditor = ({
                                             ele.programClassification,
                                         })),
                                       adminClassificationList:
-                                      item.adminClassificationList ? item.adminClassificationList.map(
-                                          (ele) => ({
-                                            programAdminClassification:
-                                              ele.programAdminClassification,
-                                          }),
-                                        ) : [],
+                                        item.adminClassificationList
+                                          ? item.adminClassificationList.map(
+                                              (ele) => ({
+                                                programAdminClassification:
+                                                  ele.programAdminClassification,
+                                              }),
+                                            )
+                                          : [],
                                     },
                                   ],
                                 });
