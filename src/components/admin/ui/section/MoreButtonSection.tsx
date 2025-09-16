@@ -37,7 +37,6 @@ function MoreButtonSection({
         size="small"
         disabled={!checked}
         value={url}
-        maxLength={17}
         onChange={handleChangeUrl}
       />
     </div>
