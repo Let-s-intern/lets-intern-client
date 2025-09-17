@@ -5,6 +5,7 @@ import { Dayjs } from 'dayjs';
 import {
   AttendanceResult,
   AttendanceStatus,
+  ChallengePricePlan,
   ChallengeType,
   ChallengeUserType,
   LiveProgressType,
@@ -409,4 +410,10 @@ export const convertCurationTypeToText = (type: CurationType | null) => {
     default:
       return '';
   }
+};
+
+export const challengePricePlanToText: Record<ChallengePricePlan, string> = {
+  BASIC: '베이직',
+  STANDARD: '스탠다드',
+  PREMIUM: '프리미엄',
 };
