@@ -59,6 +59,7 @@ function ChallengeOptionSection({ options }: Props) {
       code: '',
       price: 0,
       discountPrice: 0,
+      isFeedback: true,
     });
   };
 
