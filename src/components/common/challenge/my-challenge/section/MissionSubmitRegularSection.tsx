@@ -285,7 +285,6 @@ const MissionSubmitRegularSection = ({
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
       />
-
       {/* 보너스 미션 모달 */}
       {bonusMission && (
         <BonusMissionModal
