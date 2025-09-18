@@ -1,10 +1,6 @@
 import Announcement from '@/assets/icons/announcement.svg?react';
 import ClockIcon from '@/assets/icons/clock.svg?react';
 import Pin from '@/assets/icons/pin.svg?react';
-import {
-  LOCALIZED_YYYY_MDdd_HH,
-  LOCALIZED_YYYY_MDdd_HHmm,
-} from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import {
   ActiveChallengeType,
@@ -245,17 +241,11 @@ const ChallengeBasicInfo = ({
           />
           <BasicInfoRow
             icon={<LuCalendarDays size={20} />}
-            title="OT 일자"
+            title="OT 안내"
             content={
               <>
-                {challenge.startDate?.get('minute') === 0
-                  ? challenge.startDate?.format(LOCALIZED_YYYY_MDdd_HH)
-                  : challenge.startDate?.format(LOCALIZED_YYYY_MDdd_HHmm)}{' '}
-                ~ {challenge.startDate?.add(40, 'minute').format('HH시 mm분')}
-                <br />
-                <span className="text-xxsmall12 text-neutral-35 md:text-xsmall14">
-                  *실시간 참여 권장 (불참시 녹화본 제공 가능)
-                </span>
+                챌린지 대시보드 입장 후 0회차 미션을 통해 OT 영상 시청
+                부탁드립니다.
               </>
             }
           />
