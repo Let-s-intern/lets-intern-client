@@ -103,15 +103,8 @@ interface Props {
 }
 
 export default function ChallengeRecruitmentInfoSection({ challenge }: Props) {
-  const {
-    startDate,
-    deadline,
-    startDateWithTime,
-    endDateWithTime,
-    isStartTimeOnTheHour,
-    startDateWithHour,
-    orientationEndTime,
-  } = getChallengeSchedule(challenge);
+  const { startDate, deadline, startDateWithTime, endDateWithTime } =
+    getChallengeSchedule(challenge);
 
   const basicPriceInfo = challenge.priceInfo.find(
     (item) => item.challengePricePlanType === 'BASIC',
