@@ -1,10 +1,7 @@
 import { getVod } from '@/api/program';
 import Check from '@/assets/icons/chevron-down.svg?react';
 import HoleIcon from '@/assets/icons/hole.svg?react';
-import {
-  LOCALIZED_YYYY_MDdd_HH,
-  LOCALIZED_YYYY_MDdd_HHmm,
-} from '@/data/dayjsFormat';
+import { LOCALIZED_YYYY_MDdd_HHmm } from '@/data/dayjsFormat';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema, ProgramTypeEnum } from '@/schema';
 import { ChallengePoint, ProgramRecommend } from '@/types/interface';
@@ -78,10 +75,6 @@ const ChallengePointView = ({
     {
       index: 3,
       title: 'OT',
-      subTitle:
-        challengeType === EXPERIENCE_SUMMARY || challengeType === ETC
-          ? '비대면 진행'
-          : '*실시간 진행',
     },
     {
       index: 4,
@@ -122,20 +115,10 @@ const ChallengePointView = ({
       content: `${startDate.format(LOCALIZED_YYYY_MDdd_HHmm)}\n~ ${endDate.format(LOCALIZED_YYYY_MDdd_HHmm)}`,
     },
     {
-      title: 'OT 일자',
+      title: 'OT 안내',
       content: (
         <>
-          {/* 정각이면 'mm분' 생략 */}
-          {startDate.get('minute') === 0
-            ? startDate.format(LOCALIZED_YYYY_MDdd_HH)
-            : startDate.format(LOCALIZED_YYYY_MDdd_HHmm)}{' '}
-          ~ {startDate.add(40, 'minute').format('HH시 mm분')}
-          <br />
-          *실시간 참여 권장
-          <br className="hidden md:block" />{' '}
-          <span className="text-xxsmall12 text-neutral-35 md:text-xsmall14">
-            (불참시 녹화본 제공 가능)
-          </span>
+          챌린지 대시보드 입장 후 0회차 미션을 통해 OT 영상 시청 부탁드립니다.
         </>
       ),
     },

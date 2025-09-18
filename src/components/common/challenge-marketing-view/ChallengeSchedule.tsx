@@ -116,15 +116,10 @@ function ChallengeSchedule({ challenge }: Props) {
           <IconTitle
             icon={<LuCalendarDays color="#4A76FF" className="h-5 w-5" />}
           >
-            <span className='inline-block after:ml-2 after:w-16 after:text-xsmall14 after:font-normal after:text-neutral-30 after:content-["온라인_진행"]'>
-              OT 일자
-            </span>
+            <span className="inline-block">OT 안내</span>
           </IconTitle>
           <ScheduleDescription>
-            {isStartTimeOnTheHour
-              ? startDateWithHour
-              : `${startDateWithTime}
-          ~ ${orientationEndTime}`}
+            챌린지 대시보드 입장 후 0회차 미션을 통해 OT 영상 시청 부탁드립니다.
           </ScheduleDescription>
         </ScheduleWrapper>
       </ScheduleBox>

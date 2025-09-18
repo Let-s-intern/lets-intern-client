@@ -103,15 +103,8 @@ interface Props {
 }
 
 export default function ChallengeRecruitmentInfoSection({ challenge }: Props) {
-  const {
-    startDate,
-    deadline,
-    startDateWithTime,
-    endDateWithTime,
-    isStartTimeOnTheHour,
-    startDateWithHour,
-    orientationEndTime,
-  } = getChallengeSchedule(challenge);
+  const { startDate, deadline, startDateWithTime, endDateWithTime } =
+    getChallengeSchedule(challenge);
 
   const basicPriceInfo = challenge.priceInfo.find(
     (item) => item.challengePricePlanType === 'BASIC',
@@ -175,11 +168,8 @@ export default function ChallengeRecruitmentInfoSection({ challenge }: Props) {
         </Box>
         <Box className="mb-5 rounded-t-none md:mb-0 md:rounded-sm">
           <InfoWrapper label="모집 마감">{deadline}</InfoWrapper>
-          <InfoWrapper label="OT 일자 (온라인 진행)">
-            {isStartTimeOnTheHour
-              ? startDateWithHour
-              : `${startDateWithTime}
-          ~ ${orientationEndTime}`}
+          <InfoWrapper label="OT 안내">
+            챌린지 대시보드 입장 후 0회차 미션을 통해 OT 영상 시청 부탁드립니다.
           </InfoWrapper>
           <InfoWrapper label="진행방식">100% 온라인</InfoWrapper>
         </Box>
