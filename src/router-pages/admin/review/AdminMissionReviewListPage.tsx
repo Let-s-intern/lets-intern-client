@@ -127,7 +127,6 @@ const AdminMissionReviewListPage = () => {
           disableRowSelectionOnClick
           disableColumnSelector
           disableDensitySelector
-          hideFooter
         />
       )}
       <ReviewDetailModal
