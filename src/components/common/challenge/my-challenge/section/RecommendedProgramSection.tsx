@@ -96,8 +96,8 @@ function RecommendedProgramSection() {
       <section className="flex flex-col gap-5 pb-12">
         <div className="flex w-full max-w-[1120px] items-center justify-between px-5 md:mx-auto md:px-0">
           <h2 className="text-xsmall16 font-semibold md:text-small18">
-            함께 들으면 더 좋아요. <br className="md:hidden" />
-            참가자들이 선택한 프로그램만 모았어요.
+            챌린지 참여자들이 선택한 <br className="md:hidden" />
+            다른 프로그램도 확인해보세요 🔍
           </h2>
           <MoreButton
             visible={moreButtonInfo?.visible && !!moreButtonInfo?.url}
