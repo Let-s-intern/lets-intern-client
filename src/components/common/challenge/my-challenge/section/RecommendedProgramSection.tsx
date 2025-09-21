@@ -97,7 +97,10 @@ function RecommendedProgramSection() {
         <div className="flex w-full max-w-[1120px] items-center justify-between px-5 md:mx-auto md:px-0">
           <h2 className="text-xsmall16 font-semibold md:text-small18">
             챌린지 참여자들이 선택한 <br className="md:hidden" />
-            다른 프로그램도 확인해보세요 🔍
+            다른 프로그램도 확인해보세요{' '}
+            <span role="img" aria-label="돋보기">
+              🔍
+            </span>
           </h2>
           <MoreButton
             visible={moreButtonInfo?.visible && !!moreButtonInfo?.url}
