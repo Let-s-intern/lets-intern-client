@@ -92,8 +92,7 @@ function RecommendedProgramSection() {
 
   return (
     <>
-      <hr className="mx-5 my-8 border-t border-neutral-85 md:mx-auto md:my-12 md:max-w-[1120px]" />
-      <section className="flex flex-col gap-5 pb-12">
+      <section className="mt-14 flex flex-col gap-5 pb-12 md:mt-[72px]">
         <div className="flex w-full max-w-[1120px] items-center justify-between px-5 md:mx-auto md:px-0">
           <h2 className="text-xsmall16 font-semibold md:text-small18">
             함께 들으면 더 좋아요. <br className="md:hidden" />
