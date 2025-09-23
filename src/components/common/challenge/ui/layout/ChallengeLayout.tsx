@@ -99,7 +99,7 @@ const ChallengeLayout = () => {
     <div className="min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-6rem)]">
       <div className="mx-auto flex flex-col md:w-[1120px] md:flex-row md:pt-12">
         <NavBar />
-        <div className="min-w-0 flex-1 py-8 md:py-0">
+        <div className="min-w-0 flex-1">
           <Outlet />
         </div>
       </div>
