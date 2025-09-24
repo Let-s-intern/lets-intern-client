@@ -1,4 +1,4 @@
-import { useGetActiveChallenge, useGetChallengeList } from '@/api/challenge';
+import { useGetActiveChallenge, useGetChallengeHome } from '@/api/challenge';
 import { SubNavItemProps } from '@/components/common/ui/layout/header/SubNavItem';
 import {
   ActiveChallengeResponse,
@@ -15,17 +15,17 @@ const {
 } = challengeTypeSchema.enum;
 
 export default function useProgramCategoryNav(isNextRouter: boolean) {
-  const { data: experienceSummaryData } = useGetChallengeList({
+  const { data: experienceSummaryData } = useGetChallengeHome({
     type: EXPERIENCE_SUMMARY,
   });
-  const { data: personalStatementData } = useGetChallengeList({
+  const { data: personalStatementData } = useGetChallengeHome({
     type: PERSONAL_STATEMENT,
   });
-  const { data: personalStatementLargeCorpData } = useGetChallengeList({
+  const { data: personalStatementLargeCorpData } = useGetChallengeHome({
     type: PERSONAL_STATEMENT_LARGE_CORP,
   });
-  const { data: portfolioData } = useGetChallengeList({ type: PORTFOLIO });
-  const { data: marketingData } = useGetChallengeList({ type: MARKETING });
+  const { data: portfolioData } = useGetChallengeHome({ type: PORTFOLIO });
+  const { data: marketingData } = useGetChallengeHome({ type: MARKETING });
   const { data: activePersonalStatement } =
     useGetActiveChallenge(PERSONAL_STATEMENT);
   const { data: activePersonalStatementLargeCorp } = useGetActiveChallenge(
@@ -42,12 +42,20 @@ export default function useProgramCategoryNav(isNextRouter: boolean) {
   ): string | undefined => {
     const activeId = activeData?.challengeList?.[0]?.id;
     const activeTitle = activeData?.challengeList?.[0]?.title ?? '';
-    const listId = listData?.programList?.[0]?.id;
-    const listTitle = listData?.programList?.[0]?.title ?? '';
     if (activeId !== undefined)
       return `/program/challenge/${activeId}/${encodeURIComponent(activeTitle)}`;
-    if (listId !== undefined)
-      return `/program/challenge/${listId}/${encodeURIComponent(listTitle)}`;
+
+    const latest = (listData?.programList ?? [])
+      .filter((p) => Boolean(p.deadline))
+      .sort(
+        (a, b) =>
+          new Date(b.deadline ?? '').getTime() -
+          new Date(a.deadline ?? '').getTime(),
+      )[0];
+    if (latest?.id !== undefined) {
+      const title = latest.title ?? '';
+      return `/program/challenge/${latest.id}/${encodeURIComponent(title)}`;
+    }
     return undefined;
   };
 
@@ -93,16 +101,16 @@ export default function useProgramCategoryNav(isNextRouter: boolean) {
     },
     {
       children: '현직자 LIVE 클래스',
-      href: '/program?type=LIVE',
+      href: 'https://www.letscareer.co.kr/program?type=LIVE',
       isNextRouter,
-      force: isNextRouter,
+      force: true,
     },
 
     {
       children: '취준위키 VOD',
-      href: '/program?type=VOD',
+      href: 'https://www.letscareer.co.kr/program?type=VOD',
       isNextRouter,
-      force: isNextRouter,
+      force: true,
     },
   ];
 
