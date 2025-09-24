@@ -101,16 +101,16 @@ export default function useProgramCategoryNav(isNextRouter: boolean) {
     },
     {
       children: '현직자 LIVE 클래스',
-      href: 'https://www.letscareer.co.kr/program?type=LIVE',
+      href: '/program?type=LIVE',
       isNextRouter,
-      force: true,
+      force: !isNextRouter,
     },
 
     {
       children: '취준위키 VOD',
-      href: 'https://www.letscareer.co.kr/program?type=VOD',
+      href: '/program?type=VOD',
       isNextRouter,
-      force: true,
+      force: !isNextRouter,
     },
   ];
 
