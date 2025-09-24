@@ -9,7 +9,6 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import BonusMissionModal from '../../BonusMissionModal';
 import DashboardCreateReviewModal from '../../dashboard/modal/DashboardCreateReviewModal';
-import LinkChangeConfirmationModal from '../../LinkChangeConfirmationModal';
 import MobileReviewModal from '../../MobileReviewModal';
 import MissionSubmitButton from '../mission/MissionSubmitButton';
 import MissionToast from '../mission/MissionToast';
@@ -71,7 +70,6 @@ const MissionSubmitRegularSection = ({
   const [isLinkVerified, setIsLinkVerified] = useState(!!attendanceInfo?.link);
   const [isEditing, setIsEditing] = useState(false);
   // 링크 변경 확인 모달 오픈 상태
-  const [isLinkChangeModalOpen, setIsLinkChangeModalOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [isBonusMissionModalOpen, setIsBonusMissionModalOpen] = useState(false);
 
@@ -152,7 +150,10 @@ const MissionSubmitRegularSection = ({
       attendanceInfo.review !== textareaValue;
     // 입력값이 이전 링크와 다르면 모달 띄우기
     if (isChanged) {
-      setIsLinkChangeModalOpen(true);
+      setLinkValue(attendanceInfo?.link ?? '');
+      setTextareaValue(attendanceInfo?.review || '');
+      setIsEditing(false);
+      setIsLinkVerified(false);
     } else {
       setIsEditing(false);
     }
@@ -258,19 +259,6 @@ const MissionSubmitRegularSection = ({
           onClose={() => setShowToast(false)}
         />
       </section>
-
-      <LinkChangeConfirmationModal
-        isOpen={isLinkChangeModalOpen}
-        onClose={() => setIsLinkChangeModalOpen(false)}
-        onClickCancel={() => setIsLinkChangeModalOpen(false)}
-        onClickConfirm={() => {
-          setLinkValue(attendanceInfo?.link ?? '');
-          setTextareaValue(attendanceInfo?.review || '');
-          setIsEditing(false);
-          setIsLinkVerified(false);
-          setIsLinkChangeModalOpen(false);
-        }}
-      />
 
       {modalOpen && (
         <DashboardCreateReviewModal
