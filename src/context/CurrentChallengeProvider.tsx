@@ -5,7 +5,7 @@ import {
   useQuery,
 } from '@tanstack/react-query';
 import { createContext, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'next/navigation';
 import { z } from 'zod';
 import {
   challengeSchedule,
@@ -54,7 +54,7 @@ export const CurrentChallengeProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const params = useParams();
+  const params = useParams<{ programId: string }>();
   const { isLoggedIn } = useAuthStore();
 
   const { data: currentChallenge, isLoading: isChallengeLoading } = useQuery({

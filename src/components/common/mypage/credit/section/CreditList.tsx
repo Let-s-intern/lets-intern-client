@@ -1,7 +1,7 @@
 import { usePaymentQuery } from '@/api/payment';
 import { PaymentType } from '@/api/paymentSchema';
 import dayjs from '@/lib/dayjs';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import CreditDateContainer from '../CreditDateContainer';
 import CreditListItem from '../CreditListItem';
 
@@ -49,7 +49,7 @@ const CreditList = () => {
                 결제한 프로그램이 아직 없어요.
               </p>
               <Link
-                to="/program"
+                href="/program"
                 className="other_program rounded-sm border-2 border-primary-xlight bg-white px-5 py-2 font-medium text-neutral-35"
               >
                 다른 프로그램 둘러보기

@@ -7,8 +7,8 @@ import { useGetChallengeQuery } from '@/api/program';
 import dayjs from '@/lib/dayjs';
 import useAuthStore from '@/store/useAuthStore';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import RecommendedProgramSection from '../../my-challenge/section/RecommendedProgramSection';
 import NavBar from './NavBar';
 
@@ -16,9 +16,9 @@ export const GOAL_DATE = dayjs('2025-01-19');
 const CHALLENGE_DASHBOARD_ID_THRESHOLD =
   process.env.NEXT_PUBLIC_PROFILE === 'development' ? 60 : 116;
 
-const ChallengeLayout = () => {
-  const navigate = useNavigate();
-  const params = useParams();
+const ChallengeLayout = ({ children }: { children: React.ReactNode }) => {
+  const router = useRouter();
+  const params = useParams<{ programId: string; applicationId: string }>();
   const { isLoggedIn } = useAuthStore();
 
   const [redirecting, setRedirecting] = useState(true);
@@ -56,12 +56,12 @@ const ChallengeLayout = () => {
       const newUrl = new URL(window.location.href);
       const searchParams = new URLSearchParams();
       searchParams.set('redirect', `${newUrl.pathname}?${newUrl.search}`);
-      navigate(`/login?${searchParams.toString()}`);
+      router.push(`/login?${searchParams.toString()}`);
       return;
     }
 
     if (Number(programId) <= CHALLENGE_DASHBOARD_ID_THRESHOLD) {
-      navigate(`/old/challenge/${applicationId}/${programId}`);
+      router.push(`/old/challenge/${applicationId}/${programId}`);
       return;
     } else {
       setRedirecting(false);
@@ -71,19 +71,19 @@ const ChallengeLayout = () => {
 
     if (!accessibleData) {
       alert('접근 권한이 없습니다.');
-      navigate('/');
+      router.push('/');
       return;
     }
 
     if (!isValidUserInfo || !hasChallengeGoal) {
-      navigate(`/challenge/${applicationId}/${programId}/user/info`);
+      router.push(`/challenge/${applicationId}/${programId}/user/info`);
       return;
     }
   }, [
     isLoading,
     isLoggedIn,
     isValidUserInfo,
-    navigate,
+    router,
     programId,
     applicationId,
     accessibleData,
@@ -99,9 +99,7 @@ const ChallengeLayout = () => {
     <div className="min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-6rem)]">
       <div className="mx-auto flex flex-col md:w-[1120px] md:flex-row md:pt-12">
         <NavBar />
-        <div className="min-w-0 flex-1 py-8 md:py-0">
-          <Outlet />
-        </div>
+        <div className="min-w-0 flex-1">{children}</div>
       </div>
       <RecommendedProgramSection />
     </div>

@@ -21,5 +21,11 @@
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
     ".yoyo": true
-  }
+  },
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "text": "한국어(Korean)로 작성",
+      "file": ".copilot-commit-message-instructions.md"
+    }
+  ]
 }

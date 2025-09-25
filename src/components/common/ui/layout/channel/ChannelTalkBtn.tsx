@@ -41,6 +41,8 @@ const ChannelTalkBtn = () => {
     if (pathname.endsWith('payment')) setIsHidden(true);
   }, [pathname]);
 
+  const hiddenByPathname = pathname.startsWith('/b2b');
+
   return (
     <button
       id="custom-channel-button"
@@ -52,7 +54,7 @@ const ChannelTalkBtn = () => {
           (pathname.startsWith('/payment-input') && isUpTo991)
           ? 'bottom-32'
           : 'bottom-20',
-        isHidden && 'hidden',
+        (isHidden || hiddenByPathname) && 'hidden',
       )}
       onClick={() => channelService.showMessenger()}
     >

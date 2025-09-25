@@ -1,13 +1,17 @@
 import clsx from 'clsx';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import Link from 'next/link';
+import { useParams, usePathname } from 'next/navigation';
 
-const DashboardNavBar = () => {
-  const params = useParams();
-  const location = useLocation();
+const NavBar = () => {
+  const params = useParams<{ programId: string; applicationId: string }>();
+  const pathname = usePathname();
   const applicationId = params.applicationId;
-  const activeStatus = location.pathname.endsWith('me')
+
+  if (location.pathname.endsWith('user/info')) return null;
+
+  const activeStatus = pathname.endsWith('me')
     ? 'MY_MISSION'
-    : location.pathname.endsWith('guide')
+    : pathname.endsWith('guides')
       ? 'GUIDE'
       : 'DASHBOARD';
 
@@ -18,7 +22,7 @@ const DashboardNavBar = () => {
         <ul className="flex h-[40px] flex-row gap-4 overflow-x-auto border-b bg-white px-5 py-2 scrollbar-hide md:sticky md:flex-col md:gap-0 md:overflow-x-visible md:border-b-0 md:bg-transparent md:px-0 md:py-0">
           <li className="flex-shrink-0 md:flex-shrink">
             <Link
-              to={`/challenge/${applicationId}/${params.programId}`}
+              href={`/challenge/${applicationId}/${params.programId}`}
               className={clsx(
                 'flex flex-row items-center whitespace-nowrap rounded-xxs text-xsmall14 font-semibold transition-colors md:h-[44px] md:px-3 md:text-xsmall16 md:font-medium',
                 {
@@ -33,7 +37,7 @@ const DashboardNavBar = () => {
           </li>
           <li className="flex-shrink-0 md:flex-shrink">
             <Link
-              to={`/challenge/${applicationId}/${params.programId}/me`}
+              href={`/challenge/${applicationId}/${params.programId}/me`}
               className={clsx(
                 'flex flex-row items-center whitespace-nowrap rounded-xxs text-xsmall14 font-semibold transition-colors md:h-[44px] md:px-3 md:text-xsmall16 md:font-medium',
                 {
@@ -46,24 +50,25 @@ const DashboardNavBar = () => {
               나의 미션
             </Link>
           </li>
-          {/* <li className="flex-shrink-0 md:flex-shrink">
+          <li className="flex-shrink-0 md:flex-shrink">
             <Link
-              to={`/challenge/${params.programId}/dashboard/${applicationId}/guide`}
+              href={`/challenge/${applicationId}/${params.programId}/guides`}
               className={clsx(
-                'flex flex-row items-center whitespace-nowrap rounded-xxs text-xsmall14 font-semibold transition-colors md:h-[44px] md:px-3 md:text-xsmall16',
+                'flex flex-row items-center whitespace-nowrap rounded-xxs text-xsmall14 font-semibold transition-colors md:h-[44px] md:px-3 md:text-xsmall16 md:font-medium',
                 {
-                  'text-primary md:bg-primary-5': activeStatus === 'GUIDE',
-                  'text-[#4A495C]': activeStatus !== 'GUIDE',
+                  'font-semibold text-primary md:bg-primary-5':
+                    activeStatus === 'GUIDE',
+                  'font-medium text-neutral-30': activeStatus !== 'GUIDE',
                 },
               )}
             >
               공지사항 / 챌린지 가이드
             </Link>
-          </li> */}
+          </li>
         </ul>
       </nav>
     </>
   );
 };
 
-export default DashboardNavBar;
+export default NavBar;

@@ -1,8 +1,10 @@
 import { useReadGuides } from '@/hooks/useReadItems';
+import { TabMenu } from '@/router-pages/common/challenge/ChallengeGuidePage';
 import { ChallengeGuide } from '@/schema';
 import clsx from 'clsx';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import HybridLink from '../../../ui/HybridLink';
+import NoticeGuideLink from '../../NoticeGuideLink';
 
 interface GuideSection {
   guides: ChallengeGuide[];
@@ -30,6 +32,7 @@ const GuideSection = ({ guides }: GuideSection) => {
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <h2 className="font-semibold text-neutral-10">챌린지 가이드</h2>
+          <NoticeGuideLink tab={TabMenu.GUIDE} />
         </div>
         {currentGuideList.length === 0 ? (
           <div className="flex h-[4.4rem] justify-center md:h-[5.75rem]">
@@ -38,9 +41,9 @@ const GuideSection = ({ guides }: GuideSection) => {
         ) : (
           <ul className="flex flex-1 flex-col gap-1.5">
             {currentGuideList.map((guide) => (
-              <Link
+              <HybridLink
                 key={guide.id}
-                to={guide.link ?? ''}
+                href={guide.link ?? ''}
                 className="flex items-center gap-2 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-[#333333] hover:underline"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -54,7 +57,7 @@ const GuideSection = ({ guides }: GuideSection) => {
                     className="h-3 w-3"
                   />
                 )}
-              </Link>
+              </HybridLink>
             ))}
             {currentGuideList.length < 3 &&
               Array.from(

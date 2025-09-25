@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 
 interface NavItemProps {
   to?: string;
@@ -7,7 +7,7 @@ interface NavItemProps {
 }
 
 const NavItem = ({ to, active, children }: NavItemProps) => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   return (
     <div
@@ -18,7 +18,7 @@ const NavItem = ({ to, active, children }: NavItemProps) => {
       }`}
       onClick={() => {
         if (to) {
-          navigate(to);
+          router.push(to);
         }
       }}
     >

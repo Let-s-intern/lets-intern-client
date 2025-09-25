@@ -1,10 +1,10 @@
 import { useIsAdminQuery, useMentorChallengeListQuery } from '@/api/user';
 import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useRouter, useParams } from 'next/navigation';
 
 export default function useMentorAccessControl() {
-  const { programId } = useParams();
-  const navigate = useNavigate();
+  const { programId } = useParams<{ programId: string }>();
+  const router = useRouter();
 
   const { data, isLoading: isChallengeLoading } = useMentorChallengeListQuery();
   const { data: isAdmin } = useIsAdminQuery();
@@ -18,7 +18,7 @@ export default function useMentorAccessControl() {
 
   useEffect(() => {
     if (isLoading || isValidMentor) return;
-    navigate('/');
+    router.push('/');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading, isValidMentor]);
 

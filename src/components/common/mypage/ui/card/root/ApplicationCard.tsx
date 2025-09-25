@@ -1,9 +1,11 @@
 import { MypageApplication } from '@/api/application';
 import dayjs from '@/lib/dayjs';
+import { ChallengePricePlan } from '@/schema';
+import { challengePricePlanToText } from '@/utils/convert';
 import { getReportThumbnail } from '@components/common/mypage/credit/CreditListItem';
+import HybridLink from '@components/common/ui/HybridLink';
 import clsx from 'clsx';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import LinkButton from '../../button/LinkButton';
 import PriceInfoModal from '../../modal/PriceInfoModal';
 
@@ -39,9 +41,20 @@ const ApplicationCard = ({
       ? '/report/management'
       : `/program/${application.programType?.toLowerCase()}/${application.programId}`;
 
+  const getChallengePlanLabel = (pricePlanType: ChallengePricePlan | null) => {
+    switch (pricePlanType) {
+      case 'PREMIUM':
+        return `${challengePricePlanToText[pricePlanType]} (피드백 2회)`;
+      case 'STANDARD':
+        return `${challengePricePlanToText[pricePlanType]} (피드백 1회)`;
+      default:
+        return '베이직';
+    }
+  };
+
   return (
     <div
-      className="flex h-[282px] w-full flex-col items-start gap-4 overflow-hidden rounded-xs md:h-full md:flex-row md:border md:border-neutral-85 md:p-2.5"
+      className="flex min-h-max w-full flex-col items-start gap-4 overflow-hidden rounded-xs md:h-full md:flex-row md:border md:border-neutral-85 md:p-2.5"
       data-program-text={application.programTitle}
     >
       <div
@@ -49,41 +62,43 @@ const ApplicationCard = ({
           grayscale,
         })}
       >
-        <Link
-          to={window.location.origin + programLink}
-          reloadDocument
-          className="flex-shrink-0 md:w-[11rem]"
-        >
+        <HybridLink href={programLink} className="flex-shrink-0 md:w-[11rem]">
           <img
             src={thumbnail}
             alt="프로그램 썸네일"
             className="h-[7.5rem] w-full bg-primary-light object-cover md:h-[9rem] md:w-[11rem] md:rounded-xs"
           />
-        </Link>
+        </HybridLink>
         <div className="flex flex-col justify-between gap-2 py-2">
           <div className="flex w-full flex-col gap-y-0.5">
             <h2 className="font-semibold">
-              <Link
-                to={window.location.origin + programLink}
-                reloadDocument
-                className="hover:underline"
-              >
+              <HybridLink href={programLink} className="hover:underline">
                 {application.programTitle}
-              </Link>
+              </HybridLink>
             </h2>
             <p className="line-clamp-2 h-10 text-sm text-neutral-30 md:line-clamp-none md:h-auto">
               {application.programShortDesc}
             </p>
           </div>
-          <div className="flex items-center gap-1.5 md:justify-start">
-            <span className="text-xs text-neutral-0">
-              {application.programType === 'REPORT' ? '신청일자' : '진행기간'}
-            </span>
-            <span className="text-xs font-medium text-primary-dark">
-              {application.programType === 'REPORT'
-                ? application.createDate?.format('YY.MM.DD')
-                : `${application.programStartDate?.format('YY.MM.DD')} ~ ${application.programEndDate?.format('YY.MM.DD')}`}
-            </span>
+          <div>
+            <div className="flex items-center gap-1.5 md:justify-start">
+              <span className="text-xs text-neutral-0">
+                {application.programType === 'REPORT' ? '신청일자' : '진행기간'}
+              </span>
+              <span className="text-xs font-medium text-primary-dark">
+                {application.programType === 'REPORT'
+                  ? application.createDate?.format('YY.MM.DD')
+                  : `${application.programStartDate?.format('YY.MM.DD')} ~ ${application.programEndDate?.format('YY.MM.DD')}`}
+              </span>
+            </div>
+            {application.programType === 'CHALLENGE' && (
+              <div className="flex items-center gap-1.5 md:justify-start">
+                <span className="text-xs text-neutral-0">신청플랜</span>
+                <span className="text-xs font-medium text-primary-dark">
+                  {getChallengePlanLabel(application.pricePlanType)}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>

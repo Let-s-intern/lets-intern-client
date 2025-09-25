@@ -5,8 +5,8 @@ import { BONUS_MISSION_TH } from '@/utils/constants';
 import { useQuery } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import clsx from 'clsx';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import AbsentMissionDetailMenu from './AbsentMissionDetailMenu';
 
 interface Props {
@@ -16,7 +16,8 @@ interface Props {
 }
 
 const AbsentMissionItem = ({ mission, isDone, setOpenReviewModal }: Props) => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const { currentChallenge, schedules } = useOldCurrentChallenge();
 
   const th =
@@ -69,7 +70,7 @@ const AbsentMissionItem = ({ mission, isDone, setOpenReviewModal }: Props) => {
 
   useEffect(() => {
     if (isDone) {
-      setSearchParams({}, { replace: true });
+      router.replace(window.location.pathname);
       return;
     }
     const scrollToMission = searchParams.get('scroll_to_mission');
@@ -78,11 +79,11 @@ const AbsentMissionItem = ({ mission, isDone, setOpenReviewModal }: Props) => {
         setIsDetailShown(true);
         if (isDetailShown) {
           itemRef.current?.scrollIntoView({ behavior: 'smooth' });
-          setSearchParams({}, { replace: true });
+          router.replace(window.location.pathname);
         }
       }
     }
-  }, [searchParams, setSearchParams, isDetailShown, isDone, mission.id]);
+  }, [searchParams, router, isDetailShown, isDone, mission.id]);
 
   return (
     <li

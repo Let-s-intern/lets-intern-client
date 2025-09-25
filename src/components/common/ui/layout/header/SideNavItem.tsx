@@ -7,17 +7,13 @@ import HybridLink from '../../HybridLink';
 import SubNavItem, { SubNavItemProps } from './SubNavItem';
 
 interface Props extends AnchorHTMLAttributes<HTMLAnchorElement> {
-  isNextRouter: boolean;
   subNavList?: SubNavItemProps[];
-  force?: boolean;
   isNew?: boolean;
 }
 
 function SideNavItem({
   children,
-  force = false,
   className,
-  isNextRouter,
   href = '#',
   subNavList,
   isNew = false,
@@ -39,8 +35,6 @@ function SideNavItem({
       <HybridLink
         className={linkClassName}
         href={href}
-        isNextRouter={isNextRouter}
-        force={force}
         onClick={(e) => {
           if (onClick) onClick(e);
           if (subNavList) {

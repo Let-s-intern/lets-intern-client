@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 interface ProgramCardProps {
   link: string;
@@ -17,7 +17,7 @@ const ProgramCard = ({
 }: ProgramCardProps) => {
   return (
     <Link
-      to={link}
+      href={link}
       className={`relative w-full rounded-xl md:h-[14.875rem] md:min-w-[17.75rem] ${bgColorClassName} px-6 pb-[3.25rem] pt-7 xl:pb-[4.5rem]`}
     >
       <div className="mb-3 flex items-center gap-2">

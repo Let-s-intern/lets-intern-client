@@ -1,4 +1,4 @@
-import { Row } from '@/router-pages/admin/review/AdminChallengeReviewListPage';
+import { Row } from '@/components/admin/pages/review/AdminChallengeReviewListPage';
 import { Box, Button, Modal, Typography } from '@mui/material';
 
 interface ReviewDetailModalProps {

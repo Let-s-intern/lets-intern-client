@@ -2,7 +2,7 @@ import { useChallengeApplicationQuery } from '@/api/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import { clsx } from 'clsx';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'next/navigation';
 
 interface MissionStatusMessageProps {
   todayTh: number;
@@ -20,7 +20,7 @@ const MissionStatusMessage = ({
   isFixed = false,
   className,
 }: MissionStatusMessageProps) => {
-  const params = useParams();
+  const params = useParams<{ programId: string }>();
 
   const { schedules, isLoading } = useCurrentChallenge();
   const { data: applicationData } = useChallengeApplicationQuery(

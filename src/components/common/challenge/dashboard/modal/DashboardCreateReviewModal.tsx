@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useGetChallengeGoal, useGetChallengeTitle } from '@/api/challenge';
 import { usePostReviewMutation } from '@/api/review';
 import { useUserQuery } from '@/api/user';
+import { twMerge } from '@/lib/twMerge';
 import GoalOrConcernsBox from '@components/common/review/GoalOrConcernsBox';
 import ReviewInstruction from '@components/common/review/ReviewInstruction';
 import ReviewModal from '@components/common/review/ReviewModal';
@@ -16,11 +17,13 @@ interface DashboardCreateReviewModalProps {
   programId: string;
   applicationId: string;
   onClose: () => void;
+  className?: string;
 }
 
 const DashboardCreateReviewModal = ({
   programId,
   applicationId,
+  className,
   onClose,
 }: DashboardCreateReviewModalProps) => {
   const isDesktop = useMediaQuery('(min-width:768px)');
@@ -90,6 +93,10 @@ const DashboardCreateReviewModal = ({
 
   return (
     <ReviewModal
+      className={twMerge(
+        'fixed inset-0 z-50 flex flex-col items-center justify-center py-24',
+        className,
+      )}
       disabled={postReviewwIsPending || isDisabled}
       onSubmit={onClickSubmit}
       onClose={onClose}
