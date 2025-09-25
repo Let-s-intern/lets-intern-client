@@ -1,7 +1,13 @@
 import { useSubmitMission } from '@/api/attendance';
-import { useGetChallengeGoal, useSubmitChallengeGoal } from '@/api/challenge';
+import {
+  ChallengeMissionQueryKey,
+  useGetChallengeGoal,
+  useSubmitChallengeGoal,
+} from '@/api/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
+import { DASHBOARD_FIRST_VISIT_GOAL } from '@/router-pages/common/challenge/ChallengeUserInfo';
+import { useQueryClient } from '@tanstack/react-query';
 import { clsx } from 'clsx';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
@@ -19,23 +25,21 @@ const MissionSubmitZeroSection = ({
 }: MissionSubmitZeroSectionProps) => {
   const params = useParams<{ programId: string }>();
   const programId = params.programId;
+  const queryClient = useQueryClient();
 
-  const { schedules, currentChallenge, refetchSchedules } =
-    useCurrentChallenge();
+  const { currentChallenge, refetchSchedules } = useCurrentChallenge();
   const { data: goalData, isLoading } = useGetChallengeGoal(programId);
 
   // 챌린지 종료 + 2일
   const isSubmitPeriodEnded =
     dayjs(currentChallenge?.endDate).add(2, 'day').isBefore(dayjs()) ?? true;
 
-  const submitted = !!(goalData?.goal && goalData.goal.length > 0);
-
   // 챌린지 목표 제출 mutation
   const submitChallengeGoal = useSubmitChallengeGoal();
   const submitAttendance = useSubmitMission();
 
   const [textareaValue, setTextareaValue] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(submitted);
+  const [isSubmitted, setIsSubmitted] = useState(true);
   const [showToast, setShowToast] = useState(false);
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -59,7 +63,13 @@ const MissionSubmitZeroSection = ({
             review: textareaValue,
           }),
         ]);
-        await refetchSchedules?.();
+        await Promise.all([
+          refetchSchedules?.(),
+          // 모든 미션 정보 invalidate
+          queryClient.invalidateQueries({
+            queryKey: [ChallengeMissionQueryKey],
+          }),
+        ]);
         setIsSubmitted(true);
         setShowToast(true);
       } catch (error) {
@@ -71,10 +81,14 @@ const MissionSubmitZeroSection = ({
   useEffect(() => {
     /** 상태 초기화 */
     if (isLoading) return;
-    setTextareaValue(goalData?.goal || '');
+
+    const isFirstVisit = goalData?.goal === DASHBOARD_FIRST_VISIT_GOAL;
+    setTextareaValue(isFirstVisit ? '' : goalData?.goal || '');
     // goalData가 있으면 이미 제출된 상태로 설정
-    if (goalData?.goal) {
+    if (!isFirstVisit && goalData?.goal) {
       setIsSubmitted(true);
+    } else {
+      setIsSubmitted(false);
     }
   }, [goalData, isLoading]);
 

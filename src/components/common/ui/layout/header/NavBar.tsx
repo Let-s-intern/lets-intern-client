@@ -74,7 +74,9 @@ const NavBar = () => {
       {/* 상단 네비게이션 바 */}
       <div
         className={twMerge(
-          'fixed top-0 z-30 w-screen border-b border-neutral-80 bg-white transition-transform duration-300',
+          'fixed top-0 z-30 w-screen bg-white transition-transform duration-300',
+          !(isMobile && location.pathname.startsWith('/challenge')) &&
+            'border-b border-neutral-80',
           scrollDirection === 'DOWN' ? '-translate-y-full' : 'translate-y-0',
         )}
       >
@@ -119,11 +121,11 @@ const NavBar = () => {
               <GlobalNavItem
                 className="text-xsmall14 md:text-xsmall16"
                 isNew
-                href="https://letscareer.oopy.io/1ea5e77c-bee1-8098-8e19-ec5038fb1cc8"
+                href="https://letscareer.liveklass.com/?utm_source=letscareer&utm_medium=website&utm_campaign=GNB"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                커피챗
+                취준위키 VOD
               </GlobalNavItem>
             </div>
             <div
@@ -179,21 +181,8 @@ const NavBar = () => {
             +현직자 멘토 참여중
           </span>
         </SideNavItem>
-        <SideNavItem
-          href="https://recruit.superpasshr.com/?utm_source=letscareer&utm_medium=letscareer_homepage&utm_campaign=letscareer_homepage"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="!h-auto !max-h-none !flex-col !items-start py-3"
-        >
-          <div className="flex items-center gap-1.5">
-            슈퍼인턴 채용관
-            <div className="flex h-4 w-4 items-center justify-center rounded-full bg-system-error text-[8px] font-bold leading-none text-white">
-              N
-            </div>
-          </div>
-          <span className="flex items-center text-xxsmall12 font-normal">
-            기업에게 먼저 면접 제안 받자!
-          </span>
+        <SideNavItem className="b2b_landing_click" href="/b2b">
+          기업/학교 취업 교육 문의
         </SideNavItem>
         <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
         <SideNavItem href="/program">전체 프로그램</SideNavItem>
@@ -201,12 +190,12 @@ const NavBar = () => {
           서류 피드백 REPORT
         </SideNavItem>
         <SideNavItem
-          href="https://letscareer.oopy.io/1ea5e77c-bee1-8098-8e19-ec5038fb1cc8"
+          href="https://letscareer.liveklass.com/?utm_source=letscareer&utm_medium=website&utm_campaign=GNB"
           target="_blank"
           isNew
           rel="noopener noreferrer"
         >
-          커피챗
+          취준위키 VOD
         </SideNavItem>
         <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
         <SideNavItem href="/review">수강생 솔직 후기</SideNavItem>

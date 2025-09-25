@@ -7,6 +7,7 @@ import {
   CreateLiveReq,
   CreateVodReq,
   faqSchema,
+  getChallengeIdPrimitiveSchema,
   getChallengeIdSchema,
   getLiveIdPrimitiveSchema,
   getLiveIdSchema,
@@ -203,6 +204,18 @@ export const usePostChallengeMutation = ({
     },
     onSuccess: successCallback,
     onError: errorCallback,
+  });
+};
+
+/** 챌린지 상세 조회 */
+export const useChallengeQuery = (challengeId?: string | number) => {
+  return useQuery({
+    queryKey: ['useChallengeQuery', challengeId],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${challengeId}`);
+      return getChallengeIdPrimitiveSchema.parse(res.data.data);
+    },
+    enabled: !!challengeId,
   });
 };
 

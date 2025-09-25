@@ -1,3 +1,4 @@
+import OldChallengeLayout from '@components/common/challenge/ui/layout/OldChallengeLayout';
 import ScrollToTop from '@components/ui/scroll-to-top/ScrollToTop';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 // import FindPassword from './router-pages/common/auth/FindPassword';
@@ -48,6 +49,12 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 // import ReportReviewPage from './router-pages/common/review/ReportReviewPage';
 import Maintenance from '@/components/pages/maintenance/Maintenance';
 // import NotFound from './router-pages/NotFound';
+import { OldCurrentChallengeProvider } from './context/OldCurrentChallengeProvider';
+import ChallengeGuidePage from './router-pages/common/challenge/ChallengeGuidePage';
+import OldChallengeDashboard from './router-pages/common/challenge/OldChallengeDashboard';
+import OldChallengeUserInfo from './router-pages/common/challenge/OldChallengeUserInfo';
+import OldMissionFeedback from './router-pages/common/challenge/OldMissionFeedback';
+import OldMyChallengeDashboard from './router-pages/common/challenge/OldMyChallengeDashboard';
 
 const isMaintenance = false;
 
@@ -125,7 +132,27 @@ const Router = () => {
                 <Route path="" />
                 <Route path="me" />
                 {/* 미션 피드백 페이지 */}
-                <Route path="challenge/:challengeId/missions/:missionId/feedback" />
+                <Route path="missions/:missionId/feedback" />
+                {/* 공지사항/가이드 */}
+                <Route path="guides" element={<ChallengeGuidePage />} />
+              </Route>
+
+              {/* Old 챌린지 대시보드 */}
+              <Route
+                path="old/challenge/:applicationId/:programId"
+                element={
+                  <OldCurrentChallengeProvider>
+                    <OldChallengeLayout />
+                  </OldCurrentChallengeProvider>
+                }
+              >
+                <Route path="user/info" element={<OldChallengeUserInfo />} />
+                <Route path="" element={<OldChallengeDashboard />} />
+                <Route path="me" element={<OldMyChallengeDashboard />} />
+                <Route
+                  path="missions/:missionId/feedback"
+                  element={<OldMissionFeedback />}
+                />
               </Route>
 
               <Route path="report/landing" />
@@ -149,7 +176,7 @@ const Router = () => {
 
               {/* LIVE 클래스 멘토 전달 후기 */}
               <Route path="live/:id/mentor/notification/after" />
-              
+
               <Route path="*" />
             </Route>
             {/* Admin routes moved to Next.js /admin */}

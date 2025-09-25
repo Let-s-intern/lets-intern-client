@@ -8,7 +8,6 @@ import MissionTodayIcon from './MissionTodayIcon';
 import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
 import { useMissionStore } from '@/store/useMissionStore';
 import { isAxiosError } from 'axios';
-import { useCallback } from 'react';
 interface Props {
   schedule: Schedule;
   todayTh: number;
@@ -39,15 +38,16 @@ const MissionCalendarItem = ({
   const pathname = usePathname();
   const isMissionPage = pathname.includes('/me');
 
-  const handleMissionClick = () => {
+  const handleMissionClick = async () => {
     if (mission.th !== null && isValid()) {
       setSelectedMission(mission.id, mission.th);
       router.push(`/challenge/${params.applicationId}/${params.programId}/me`);
     }
   };
 
-  const isValid = useCallback(() => {
+  const isValid = () => {
     if (isAxiosError(error)) {
+      console.log('error:', error);
       const errorCode = error?.response?.data.status;
       if (errorCode === 400) {
         alert('0회차 미션을 먼저 완료해주세요.');
@@ -55,7 +55,7 @@ const MissionCalendarItem = ({
       return false;
     }
     return true;
-  }, [error]);
+  };
 
   const isCardActive = () => {
     if (!isMissionPage) {
@@ -76,7 +76,7 @@ const MissionCalendarItem = ({
     <div className={className} onClick={handleMissionClick}>
       <div
         className={clsx(
-          'h-[104px] w-[74.8px] rounded-xxs border px-2 py-2.5',
+          'h-[104px] w-[74.8px] rounded-xxs border px-2 py-2.5 hover:bg-primary-5',
           isCardActive()
             ? 'border-[#A6AAFA] bg-primary-5'
             : 'border-neutral-80',

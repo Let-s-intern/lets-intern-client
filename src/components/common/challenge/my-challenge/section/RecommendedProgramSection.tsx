@@ -18,7 +18,7 @@ const MoreButton = ({
   return (
     <button
       type="button"
-      className="hidden text-xsmall14 font-medium text-neutral-45 md:inline"
+      className="dashboard_moreprogramrec hidden text-xsmall14 font-medium text-neutral-45 md:inline"
       onClick={onClick}
     >
       더보기
@@ -92,12 +92,14 @@ function RecommendedProgramSection() {
 
   return (
     <>
-      <hr className="mx-5 my-8 border-t border-neutral-85 md:mx-auto md:my-12 md:max-w-[1120px]" />
-      <section className="flex flex-col gap-5 pb-12">
+      <section className="mt-14 flex flex-col gap-5 pb-12 md:mt-[72px]">
         <div className="flex w-full max-w-[1120px] items-center justify-between px-5 md:mx-auto md:px-0">
           <h2 className="text-xsmall16 font-semibold md:text-small18">
-            함께 들으면 더 좋아요. <br className="md:hidden" />
-            참가자들이 선택한 프로그램만 모았어요.
+            챌린지 참여자들이 선택한 <br className="md:hidden" />
+            다른 프로그램도 확인해보세요{' '}
+            <span role="img" aria-label="돋보기">
+              🔍
+            </span>
           </h2>
           <MoreButton
             visible={moreButtonInfo?.visible && !!moreButtonInfo?.url}

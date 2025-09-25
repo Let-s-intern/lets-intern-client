@@ -70,6 +70,59 @@ const PERSONAL_STATEMENT_CHECK_LIST = [
   },
 ];
 
+const PERSONAL_STATEMENT_LARGE_CORP_CHECK_LIST = [
+  {
+    title: ['서류를 단 한 번도 써본 적이 없는데', '괜찮을까요?'],
+    content: [
+      [
+        '마스터 자기소개서를 써본 적이 없어요!',
+        '어떤 문항으로 준비해야 하나요?',
+      ],
+      [
+        '지원 동기도 어렵고, 회사가 원하는',
+        '직무 경험이 무엇인지 감이 안 잡혀요.',
+      ],
+      ['자소서에 대한 기본적인 뼈대를', '처음부터 잘 만들어 나가고 싶어요.'],
+    ],
+    solution: [
+      '→ 체계적인 커리큘럼으로 지원동기,',
+      '직무역량 등 포함한 마스터 자소서 완성!',
+    ],
+  },
+  {
+    title: ['서류를 완성했는데, 계속 서류에서', '부터 떨어지고 있어요…'],
+    content: [
+      ['제 경험을 얼마나 구체적으로', '작성해야 하는지 잘 모르겠어요.'],
+      [
+        '제 자소서가 특색 없고 구구절절 쓰는 거',
+        '같아요. 차별성을 높이고 싶어요.',
+      ],
+      ['회사와 나의 연결고리를 찾아서 FIT하게', '만들기가 가장 어려워요!'],
+    ],
+    solution: [
+      '→ 채용 공고 분석과 경험-역량 연결로',
+      '차별화된 강점을 어필하는 자소서로 변신!',
+    ],
+  },
+  {
+    title: [
+      '미리 취업을 준비하고 싶은데,',
+      '지금 너무 바빠서 강제성이 필요해요!',
+    ],
+    content: [
+      ['4학년 막학기인데 취업 준비와 병행해서', '준비할 수 있을까요?'],
+      [
+        '직장에 근무 중인데 퇴근하면 너무 힘들어서,',
+        '꾸준히 취준을 독려해 줄 시스템이 필요해요',
+      ],
+    ],
+    solution: [
+      '→ 오픈카톡방 실시간 소감 및 작업물 공유와',
+      '미션 동기부여로 강제성 제공',
+    ],
+  },
+];
+
 const PORTFOLIO_CHECK_LIST = [
   {
     title: ['포트폴리오를 어떻게 만들어야 할지', '감이 안 잡혀요…'],
@@ -237,6 +290,8 @@ function ChallengeCheckList({
         return EXPERIENCE_SUMMARY_CHECK_LIST;
       case ETC:
         return EXPERIENCE_SUMMARY_CHECK_LIST;
+      case PERSONAL_STATEMENT_LARGE_CORP:
+        return PERSONAL_STATEMENT_LARGE_CORP_CHECK_LIST;
       default:
         return PERSONAL_STATEMENT_CHECK_LIST;
     }

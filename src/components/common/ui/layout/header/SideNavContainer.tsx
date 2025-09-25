@@ -64,7 +64,7 @@ function SideNavContainer({ children, isOpen, onClose }: Props) {
                 onClick={() => onClose()}
               />
               <SignUpLink
-                className="bg-transparent p-0 font-medium text-black"
+                className="bg-transparent p-0 font-medium"
                 onClick={() => onClose()}
               />
             </div>

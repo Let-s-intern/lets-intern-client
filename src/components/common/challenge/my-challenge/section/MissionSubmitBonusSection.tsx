@@ -5,9 +5,7 @@ import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { Schedule } from '@/schema';
 import { clsx } from 'clsx';
-import { useParams } from 'next/navigation';
 import { ReactNode, useCallback, useEffect, useState } from 'react';
-import DashboardCreateReviewModal from '../../dashboard/modal/DashboardCreateReviewModal';
 import LinkChangeConfirmationModal from '../../LinkChangeConfirmationModal';
 import AgreementCheckbox from '../mission/AgreementCheckbox';
 import BankSelectDropdown from '../mission/BankSelectDropdown';
@@ -46,9 +44,7 @@ const MissionSubmitBonusSection = ({
   missionId,
   attendanceInfo,
 }: MissionSubmitBonusSectionProps) => {
-  const params = useParams<{ applicationId: string; programId: string }>();
-
-  const { currentChallenge } = useCurrentChallenge();
+  const { currentChallenge, refetchSchedules } = useCurrentChallenge();
 
   // 챌린지 종료 + 2일
   const isSubmitPeriodEnded =
@@ -70,7 +66,6 @@ const MissionSubmitBonusSection = ({
   const [isAgreed, setIsAgreed] = useState(false);
   const [linkValue, setLinkValue] = useState('');
   const [isLinkVerified, setIsLinkVerified] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
   // 링크 변경 확인 모달 오픈 상태
   const [isLinkChangeModalOpen, setIsLinkChangeModalOpen] = useState(false);
 
@@ -78,14 +73,17 @@ const MissionSubmitBonusSection = ({
   const submitBlogBonus = useSubmitMissionBlogBonus();
   const patchAttendance = usePatchAttendance();
 
-  const { refetchSchedules } = useCurrentChallenge();
-
   const disabled = isSubmitted && !isEditing;
 
   const handleAccountNumberChange = (
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    setAccountNumber(e.target.value);
+    const inputChar = (e.nativeEvent as InputEvent).data; // 연속으로 숫자가 아닌 문자를 입력하면 두 번째에 null로 뜸
+    const isNotNumber = inputChar && !/^[0-9]$/.test(inputChar);
+    if (isNotNumber) return;
+
+    const value = e.target.value;
+    setAccountNumber(value.replace(/[^0-9]/g, ''));
   };
 
   const handleLinkChange = (link: string) => {
@@ -119,9 +117,6 @@ const MissionSubmitBonusSection = ({
         accountNum: cleanAccountNumber,
       });
       await refetchSchedules?.();
-
-      // 후기 모달 표시
-      setModalOpen(true);
       setIsSubmitted(true);
       setShowToast(true);
     } catch (error) {
@@ -143,6 +138,7 @@ const MissionSubmitBonusSection = ({
         accountNum: accountNumber,
         accountType: selectedBank,
       });
+      await refetchSchedules?.();
       setIsEditing(false);
       setShowToast(true);
     } catch (error) {
@@ -283,14 +279,6 @@ const MissionSubmitBonusSection = ({
           setIsLinkChangeModalOpen(false);
         }}
       />
-
-      {modalOpen && (
-        <DashboardCreateReviewModal
-          programId={params.programId ?? ''}
-          applicationId={params.applicationId ?? ''}
-          onClose={() => setModalOpen(false)}
-        />
-      )}
     </>
   );
 };

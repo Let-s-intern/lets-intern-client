@@ -1,13 +1,21 @@
 'use client';
 
-import { useGetChallengeTitle, useGetUserChallengeInfo } from '@/api/challenge';
-import { useGetChallengeQuery } from '@/api/program';
+import {
+  useGetChallengeTitle,
+  useGetUserChallengeInfo,
+  usePatchChallengeGoal,
+} from '@/api/challenge';
 import { usePatchUser, useUserQuery } from '@/api/user';
 import GradeDropdown from '@/components/common/mypage/privacy/form-control/GradeDropdown';
 import Input from '@/components/common/ui/input/Input';
-import { GOAL_DATE } from '@components/common/challenge/ui/layout/ChallengeLayout';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+
+/**  최초 입장을 판별하기 위한 아무값
+ * 0회차에서 목표를 사용자가 입력하기 때문에
+ * 목표가 visit이면 입력하지 않은 것으로 판단해야 한다.
+ */
+export const DASHBOARD_FIRST_VISIT_GOAL = 'visit';
 
 const ChallengeUserInfo = () => {
   const params = useParams<{ programId: string; applicationId: string }>();
@@ -23,12 +31,6 @@ const ChallengeUserInfo = () => {
   });
   const [buttonDisabled, setButtonDisabled] = useState(false);
 
-  const { data: challenge, isLoading: challengeIsLoading } =
-    useGetChallengeQuery({
-      challengeId: Number(programId),
-      enabled: !!programId && !isNaN(Number(programId)),
-    });
-
   const { data: userData, isLoading: userDataIsLoading } = useUserQuery();
 
   const { data: isValidUserInfoData, isLoading: isValidUserInfoLoading } =
@@ -36,6 +38,8 @@ const ChallengeUserInfo = () => {
 
   const { data: programTitleData, isLoading: programTitleDataIsLoading } =
     useGetChallengeTitle(Number(programId));
+
+  const { mutateAsync: tryPostGoal } = usePatchChallengeGoal();
 
   useEffect(() => {
     if (userData) {
@@ -51,15 +55,9 @@ const ChallengeUserInfo = () => {
 
   const programTitle = programTitleData?.title;
   const username = userData?.name;
-
   const isValidUserInfo = isValidUserInfoData?.pass;
   const isLoading =
-    isValidUserInfoLoading ||
-    programTitleDataIsLoading ||
-    userDataIsLoading ||
-    challengeIsLoading;
-  const isStartAfterGoal =
-    challenge?.startDate && GOAL_DATE.isBefore(challenge.startDate);
+    isValidUserInfoLoading || programTitleDataIsLoading || userDataIsLoading;
 
   const { mutateAsync: tryPatchUser, isPending: patchUserIsPending } =
     usePatchUser();
@@ -73,9 +71,7 @@ const ChallengeUserInfo = () => {
   };
 
   const handleSubmit = async () => {
-    if (patchUserIsPending || !programId) {
-      return;
-    }
+    if (patchUserIsPending || !programId) return;
 
     try {
       await tryPatchUser({
@@ -84,6 +80,11 @@ const ChallengeUserInfo = () => {
         major: value.major,
         wishJob: value.wishJob,
         wishCompany: value.wishCompany,
+      });
+
+      await tryPostGoal({
+        challengeId: programId,
+        goal: DASHBOARD_FIRST_VISIT_GOAL,
       });
 
       router.push(`/challenge/${params.applicationId}/${programId}`);
@@ -103,31 +104,15 @@ const ChallengeUserInfo = () => {
     );
   }, [value]);
 
-  useEffect(() => {
-    if (isLoading) {
-      return;
-    }
-    if (isValidUserInfo) {
-      router.push(`/challenge/${params.applicationId}/${programId}`);
-      return;
-    }
-  }, [
-    isValidUserInfo,
-    isLoading,
-    router,
-    isStartAfterGoal,
-    params.applicationId,
-    programId,
-  ]);
-
   return (
-    <main className="mx-auto flex max-w-3xl flex-col gap-6 pb-24 pt-12">
+    <main className="mx-auto flex max-w-3xl flex-col gap-6 px-5 md:px-0 md:pb-24 md:pt-12">
       <div className="flex flex-col gap-2">
         <h1 className="text-center text-xl font-semibold">
           챌린지 대시보드 추가정보 입력
         </h1>
-        <p className="text-center text-neutral-40">
-          안녕하세요, {username}님! {programTitle}에 입장하신 걸 환영합니다!
+        <p className="break-keep text-center text-neutral-40">
+          안녕하세요, {username}님!
+          <br className="md:hidden" /> {programTitle}에 입장하신 걸 환영합니다!
           <br />
           챌린지 대시보드 입장을 위해 추가정보를 입력해주세요.
         </p>
@@ -136,7 +121,7 @@ const ChallengeUserInfo = () => {
         <section className="flex flex-col gap-6">
           <div className="flex flex-col gap-1">
             <h2 className="text-lg font-semibold">기본 정보</h2>
-            <p className="text-neutral-40">
+            <p className="break-keep text-neutral-40">
               * 기본 정보를 바탕으로 더 유익한 학습콘텐츠를 제공해드릴게요!
             </p>
           </div>

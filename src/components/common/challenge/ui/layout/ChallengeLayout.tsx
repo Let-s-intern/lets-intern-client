@@ -1,4 +1,5 @@
 import {
+  useGetChallengeGoal,
   useGetChallengeValideUser,
   useGetUserChallengeInfo,
 } from '@/api/challenge';
@@ -6,17 +7,21 @@ import { useGetChallengeQuery } from '@/api/program';
 import dayjs from '@/lib/dayjs';
 import useAuthStore from '@/store/useAuthStore';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import { useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import RecommendedProgramSection from '../../my-challenge/section/RecommendedProgramSection';
 import NavBar from './NavBar';
 
 export const GOAL_DATE = dayjs('2025-01-19');
+const CHALLENGE_DASHBOARD_ID_THRESHOLD =
+  process.env.NEXT_PUBLIC_PROFILE === 'development' ? 60 : 116;
 
 const ChallengeLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const params = useParams<{ programId: string; applicationId: string }>();
   const { isLoggedIn } = useAuthStore();
+
+  const [redirecting, setRedirecting] = useState(true);
 
   const programId = params.programId;
   const applicationId = params.applicationId;
@@ -33,11 +38,18 @@ const ChallengeLayout = ({ children }: { children: React.ReactNode }) => {
   const { data: isValidUserInfoData, isLoading: isValidUserInfoLoading } =
     useGetUserChallengeInfo();
 
+  const { data: challengeGoal, isLoading: challengeGoalLoading } =
+    useGetChallengeGoal(programId);
+
   const isValidUserInfo = isValidUserInfoData?.pass;
   const isLoading =
-    isValidUserInfoLoading || isValidUserAccessLoading || challengeIsLoading;
+    isValidUserInfoLoading ||
+    isValidUserAccessLoading ||
+    challengeIsLoading ||
+    challengeGoalLoading;
   const isStartAfterGoal =
     challenge?.startDate && GOAL_DATE.isBefore(challenge.startDate);
+  const hasChallengeGoal = challengeGoal?.goal != null;
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -48,6 +60,13 @@ const ChallengeLayout = ({ children }: { children: React.ReactNode }) => {
       return;
     }
 
+    if (Number(programId) <= CHALLENGE_DASHBOARD_ID_THRESHOLD) {
+      router.push(`/old/challenge/${applicationId}/${programId}`);
+      return;
+    } else {
+      setRedirecting(false);
+    }
+
     if (isLoading) return;
 
     if (!accessibleData) {
@@ -56,7 +75,7 @@ const ChallengeLayout = ({ children }: { children: React.ReactNode }) => {
       return;
     }
 
-    if (isStartAfterGoal && !isValidUserInfo) {
+    if (!isValidUserInfo || !hasChallengeGoal) {
       router.push(`/challenge/${applicationId}/${programId}/user/info`);
       return;
     }
@@ -69,35 +88,18 @@ const ChallengeLayout = ({ children }: { children: React.ReactNode }) => {
     applicationId,
     accessibleData,
     isStartAfterGoal,
+    hasChallengeGoal,
   ]);
 
-  if (isLoading) {
+  if (isLoading || redirecting) {
     return <LoadingContainer />;
   }
 
   return (
     <div className="min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-6rem)]">
-      <div className="flex h-[calc(100vh-4rem)] flex-col items-center justify-center sm:h-[calc(100vh-6rem)] lg:hidden">
-        <div className="-mt-24">
-          <h1 className="text-neutral-black text-center text-2xl font-semibold">
-            챌린지 페이지는
-            <br />
-            데스크탑에서만 이용 가능합니다!
-          </h1>
-          <p className="mt-2 text-center">
-            데스크탑으로 접속해주시거나
-            <br />
-            화면의 크기를 좌우로 늘려주세요!
-          </p>
-        </div>
-      </div>
-      <div className="hidden px-6 pt-12 lg:block">
-        <div className="mx-auto flex w-[1120px]">
-          <NavBar />
-          <div className="min-w-0 flex-1">
-            {children}
-          </div>
-        </div>
+      <div className="mx-auto flex flex-col md:w-[1120px] md:flex-row md:pt-12">
+        <NavBar />
+        <div className="min-w-0 flex-1">{children}</div>
       </div>
       <RecommendedProgramSection />
     </div>

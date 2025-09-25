@@ -3,11 +3,14 @@ import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import { AttendanceResult, AttendanceStatus } from '@/schema';
 import { useMissionStore } from '@/store/useMissionStore';
+import { BONUS_MISSION_TH } from '@/utils/constants';
 import { clsx } from 'clsx';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import BonusMissionModal from '../../BonusMissionModal';
 import DashboardCreateReviewModal from '../../dashboard/modal/DashboardCreateReviewModal';
 import LinkChangeConfirmationModal from '../../LinkChangeConfirmationModal';
+import MobileReviewModal from '../../MobileReviewModal';
 import MissionSubmitButton from '../mission/MissionSubmitButton';
 import MissionToast from '../mission/MissionToast';
 import LinkInputSection from './LinkInputSection';
@@ -39,7 +42,7 @@ const MissionSubmitRegularSection = ({
 }: MissionSubmitRegularSectionProps) => {
   const params = useParams<{ applicationId: string; programId: string }>();
 
-  const { selectedMissionId } = useMissionStore();
+  const { selectedMissionId, setSelectedMission } = useMissionStore();
   const { schedules, currentChallenge, refetchSchedules } =
     useCurrentChallenge();
 
@@ -47,8 +50,13 @@ const MissionSubmitRegularSection = ({
   const isSubmitPeriodEnded =
     dayjs(currentChallenge?.endDate).add(2, 'day').isBefore(dayjs()) ?? true;
 
-  const isLastMissionSubmit =
-    schedules[schedules.length - 1].missionInfo.id === selectedMissionId;
+  // missionTh를 기준으로 마지막 정규 미션 찾기 (보너스 미션 제외)
+  const regularMissions = schedules.filter(
+    (schedule) => schedule.missionInfo.th !== BONUS_MISSION_TH,
+  );
+  const lastRegularMission = regularMissions[regularMissions.length - 1];
+  const lastRegularMissionId = lastRegularMission?.missionInfo.id;
+  const isLastRegularMissionSubmit = lastRegularMissionId === selectedMissionId;
 
   const [textareaValue, setTextareaValue] = useState(
     attendanceInfo?.review || '',
@@ -57,15 +65,22 @@ const MissionSubmitRegularSection = ({
     attendanceInfo?.submitted === true,
   );
   const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
   const [linkValue, setLinkValue] = useState(attendanceInfo?.link || '');
   const [isLinkVerified, setIsLinkVerified] = useState(!!attendanceInfo?.link);
   const [isEditing, setIsEditing] = useState(false);
   // 링크 변경 확인 모달 오픈 상태
   const [isLinkChangeModalOpen, setIsLinkChangeModalOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [isBonusMissionModalOpen, setIsBonusMissionModalOpen] = useState(false);
 
   const submitMission = useSubmitMission();
   const patchAttendance = usePatchAttendance();
+
+  const bonusMission = schedules.find(
+    (item) => item.missionInfo.th === BONUS_MISSION_TH,
+  );
 
   // attendanceInfo가 변경될 때마다 상태 업데이트 (다른 미션인 경우에만)
   useEffect(() => {
@@ -97,7 +112,6 @@ const MissionSubmitRegularSection = ({
     (attendanceInfo?.result === 'WAITING' &&
       (attendanceInfo?.status === 'LATE' ||
         attendanceInfo?.status === 'UPDATED'));
-
   const handleSubmit = async () => {
     if (isResubmitBlocked) return;
 
@@ -107,9 +121,9 @@ const MissionSubmitRegularSection = ({
       return;
     }
 
-    // 새 미션 제출
     if (!missionId || missionId === 0) return;
 
+    // 새 미션 제출
     try {
       await submitMission.mutateAsync({
         missionId,
@@ -117,11 +131,16 @@ const MissionSubmitRegularSection = ({
         review: textareaValue,
       });
       await refetchSchedules?.();
+      setToastMessage('미션 제출이 완료되었습니다.');
       setIsSubmitted(true);
+      setShowToast(true);
       // 미션 데이터 새로고침
       onRefreshMissionData?.();
       onSubmitLastMission?.();
-      if (isLastMissionSubmit && !attendanceInfo?.submitted) setModalOpen(true);
+      handleOpenBonusMissionModalAtSubmission(selectedMissionTh);
+      if (isLastRegularMissionSubmit && !attendanceInfo?.submitted) {
+        setModalOpen(true);
+      }
     } catch {
       // 에러 처리 로직 추가 가능
     }
@@ -150,7 +169,9 @@ const MissionSubmitRegularSection = ({
         link: linkValue,
         review: textareaValue,
       });
+      await refetchSchedules?.();
       setIsEditing(false);
+      setToastMessage('수정사항이 저장되었습니다.');
       setShowToast(true);
       // 미션 데이터 새로고침
       onRefreshMissionData?.();
@@ -162,9 +183,25 @@ const MissionSubmitRegularSection = ({
   // 제출 버튼 활성화 조건: 링크 확인 완료 + 미션 소감 입력
   const canSubmit = isLinkVerified && textareaValue.trim().length > 0;
 
+  const handleOpenBonusMissionModalAtSubmission = (
+    currentSubmissionMissionTh: number,
+  ) => {
+    if (!bonusMission) return;
+    // th는 0부터 시작
+    const totalMissionCount = schedules.length;
+    const isFirstThirdMission =
+      Math.floor(totalMissionCount * (1 / 3)) === currentSubmissionMissionTh; // 전체 미션 중 1/3회차
+    const isSecondThirdMission =
+      Math.floor(totalMissionCount * (2 / 3)) === currentSubmissionMissionTh; // 전체 미션 중 2/3회차
+
+    if (isFirstThirdMission || isSecondThirdMission) {
+      setIsBonusMissionModalOpen(true);
+    }
+  };
+
   return (
     <>
-      <section className={clsx('', className)}>
+      <section className={className}>
         <h2 className="mb-6 text-small18 font-bold text-neutral-0">
           미션 제출하기
         </h2>
@@ -215,8 +252,8 @@ const MissionSubmitRegularSection = ({
             disabled={isResubmitBlocked}
           />
         )}
-
         <MissionToast
+          message={toastMessage}
           isVisible={showToast}
           onClose={() => setShowToast(false)}
         />
@@ -237,9 +274,27 @@ const MissionSubmitRegularSection = ({
 
       {modalOpen && (
         <DashboardCreateReviewModal
+          className="hidden md:flex"
           programId={params.programId ?? ''}
           applicationId={params.applicationId ?? ''}
           onClose={() => setModalOpen(false)}
+        />
+      )}
+
+      <MobileReviewModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+      />
+      {/* 보너스 미션 모달 */}
+      {bonusMission && (
+        <BonusMissionModal
+          isOpen={isBonusMissionModalOpen}
+          onClose={() => setIsBonusMissionModalOpen(false)}
+          onClickModal={() => {
+            const { id, th } = bonusMission.missionInfo;
+            if (!th) return;
+            setSelectedMission(id, th);
+          }}
         />
       )}
     </>

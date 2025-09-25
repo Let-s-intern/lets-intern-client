@@ -8,6 +8,7 @@ import ScoreSection from '@/components/common/challenge/dashboard/section/ScoreS
 import MissionCalendar from '@/components/common/challenge/my-challenge/mission-calendar/MissionCalendar';
 import MissionTooltipQuestion from '@/components/common/challenge/ui/tooltip-question/MissionTooltipQuestion';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { useMissionCalculation } from '@/hooks/useMissionCalculation';
 import dayjs from '@/lib/dayjs';
 import { challengeGuides, challengeNotices, challengeScore } from '@/schema';
 import axios from '@/utils/axios';
@@ -18,6 +19,7 @@ import { useParams } from 'next/navigation';
 const MissionDetailSection = () => {
   const params = useParams<{ programId: string }>();
   const { schedules, dailyMission, isLoading } = useCurrentChallenge();
+  const { isLastMissionSubmitted } = useMissionCalculation();
 
   const { data: programData } = useQuery({
     queryKey: ['challenge', params.programId, 'application'],
@@ -33,8 +35,6 @@ const MissionDetailSection = () => {
 
   const programEndDate = programData?.data?.endDate;
   const isChallengeDone = getIsChallengeDone(programEndDate);
-  const isLastMissionSubmitted =
-    schedules[schedules.length - 1]?.attendanceInfo.submitted;
 
   if (isLastMissionSubmitted || isChallengeDone || !dailyMission) {
     return <MissionEndSection />;
@@ -53,15 +53,10 @@ const getIsChallengeSubmitDone = (endDate: string) => {
 };
 
 const ChallengeDashboard = () => {
-  const { currentChallenge, schedules, dailyMission } = useCurrentChallenge();
+  const { currentChallenge, schedules } = useCurrentChallenge();
+  const { todayTh } = useMissionCalculation();
 
   const params = useParams<{ programId: string }>();
-
-  const todayTh =
-    dailyMission?.th ??
-    schedules.reduce((th, schedule) => {
-      return Math.max(th, schedule.missionInfo.th ?? 0);
-    }, 0) + 1;
 
   const { data: notices = [] } = useQuery({
     enabled: Boolean(currentChallenge?.id),
@@ -113,17 +108,17 @@ const ChallengeDashboard = () => {
   const isChallengeSubmitDone = getIsChallengeSubmitDone(programEndDate);
 
   return (
-    <main className="pl-12">
+    <main className="px-5 md:pl-12 md:pr-0">
       <header>
         <h1 className="text-[22px] font-semibold">{user?.name}님의 대시보드</h1>
       </header>
-      <div className="flex flex-col gap-5">
-        <div className="mt-6 flex gap-3">
+      <div className="flex flex-col gap-4 md:gap-5">
+        <div className="mt-6 flex flex-col gap-3 md:flex-row">
           {/* 챌린지 미션 상세 */}
           <MissionDetailSection />
 
           {/* 공지사항, 미션점수 */}
-          <div className="flex w-[22rem] flex-col gap-2.5">
+          <div className="flex flex-col gap-2.5 md:w-[22rem]">
             <NoticeSection notices={notices} />
             <div className="flex gap-2.5">
               <ScoreSection
@@ -147,7 +142,7 @@ const ChallengeDashboard = () => {
 
         {/* 일정 및 제출 현황 */}
         <div className="flex gap-4">
-          <section className="flex-1 rounded-xs border border-neutral-80 p-4">
+          <section className="w-full flex-1 rounded-xs border border-neutral-80 p-4">
             <div className="flex items-center gap-2">
               <h2 className="text-1-bold text-neutral-30">
                 일정 및 미션 제출 현황

@@ -5,6 +5,7 @@ import { Dayjs } from 'dayjs';
 import {
   AttendanceResult,
   AttendanceStatus,
+  ChallengePricePlan,
   ChallengeType,
   ChallengeUserType,
   LiveProgressType,
@@ -315,19 +316,20 @@ export const missionSubmitToBadge = ({
   }
 
   // 반려 AND (챌린지 종료 + 2일) 지나면면
-  if (result === 'WRONG' && isChallengePeriodOver) return absent;
-
-  if (result === 'WRONG') {
+  if (
+    result === 'FINAL_WRONG' ||
+    (result === 'WRONG' && isChallengePeriodOver)
+  ) {
     return {
-      text: '제출 반려',
+      text: '최종 반려',
       icon: '/icons/submit_absent.svg',
       style: 'text-neutral-30 text-[13px]',
     };
   }
 
-  if (result === 'FINAL_WRONG') {
+  if (result === 'WRONG') {
     return {
-      text: '최종 반려',
+      text: '제출 반려',
       icon: '/icons/submit_absent.svg',
       style: 'text-neutral-30 text-[13px]',
     };
@@ -408,4 +410,10 @@ export const convertCurationTypeToText = (type: CurationType | null) => {
     default:
       return '';
   }
+};
+
+export const challengePricePlanToText: Record<ChallengePricePlan, string> = {
+  BASIC: '베이직',
+  STANDARD: '스탠다드',
+  PREMIUM: '프리미엄',
 };

@@ -113,6 +113,12 @@ export default function AdminBlogReviewListPage() {
       width: 200,
     },
     {
+      field: 'description',
+      headerName: '설명',
+      sortable: false,
+      width: 200,
+    },
+    {
       field: 'url',
       headerName: 'URL',
       sortable: false,
@@ -209,6 +215,7 @@ export default function AdminBlogReviewListPage() {
     programTitle: undefined,
     name: undefined,
     title: undefined,
+    description: undefined,
     url: undefined,
     thumbnail: undefined,
     isVisible: false,
@@ -257,6 +264,7 @@ export default function AdminBlogReviewListPage() {
       isVisible,
       programTitle,
       name,
+      description,
       url,
       postDate,
     } = newRow;
@@ -271,6 +279,7 @@ export default function AdminBlogReviewListPage() {
         programType: programType ?? ProgramTypeEnum.enum.CHALLENGE,
         programTitle,
         name,
+        description,
         url,
         postDate: dayjs(postDate).format(YYYY_MMDD_THHmmss),
       });
@@ -281,6 +290,7 @@ export default function AdminBlogReviewListPage() {
         programType: programType ?? ProgramTypeEnum.enum.CHALLENGE,
         programTitle,
         name,
+        description,
         url,
         isVisible: isVisible ?? false,
         postDate: dayjs(postDate).format(YYYY_MMDD_THHmmss),

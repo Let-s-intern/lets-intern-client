@@ -61,6 +61,7 @@ const MissionGuideBonusSection = ({
           selectedMissionTh={selectedMissionTh || todayTh}
           missionType="블로그 후기 작성하고 리워드 받기!"
           deadline={formatDeadline(missionData?.missionInfo?.endDate)}
+          missionStartDate={missionData.missionInfo.startDate}
         />
 
         {/* 미션 가이드 섹션 */}
@@ -85,7 +86,7 @@ const MissionGuideBonusSection = ({
                 <ol className="list-inside list-decimal whitespace-pre-wrap text-xsmall14 font-medium text-neutral-0 md:text-xsmall16">
                   <li>
                     이번 챌린지를 통해 배운 점, 성장한 점 등을 바탕으로 네이버
-                    블로그, 티스토리, 브런치등 택하여 후기를 작성해주세요.
+                    블로그, 티스토리, 미디엄 등 택하여 후기를 작성해주세요.
                   </li>
                   <li>
                     작성한 후기 링크를 챌린지 대시보드 &gt; 보너스 미션 제출란에
@@ -136,12 +137,12 @@ const MissionGuideBonusSection = ({
             <Heading3>
               3️⃣ 후기 작성 예시가 궁금하다면? 👉 아래 링크 참고
             </Heading3>
-            <div className="flex flex-row items-center gap-2">
+            <div className="flex flex-col gap-2">
               <a
                 href="https://www.letscareer.co.kr/review/blog"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xsmall14 text-primary hover:underline md:text-xsmall16"
+                className="break-all text-xsmall14 text-primary hover:underline md:text-xsmall16"
               >
                 후기 모음 보기: https://www.letscareer.co.kr/review/blog
               </a>

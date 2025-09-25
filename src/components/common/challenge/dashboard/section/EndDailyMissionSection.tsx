@@ -1,7 +1,7 @@
 import { useGetChallengeReviewStatus } from '@/api/challenge';
-import { useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useState } from 'react';
 import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
 import DashboardCreateReviewModal from '../modal/DashboardCreateReviewModal';
 import DashboardReviewModal from '../modal/DashboardReviewModal';
@@ -29,7 +29,7 @@ const EndDailyMissionSection = () => {
         </p>
         <div className="mt-4 flex w-full items-center gap-x-3">
           <Link
-            href={`/challenge/${applicationId}/${currentChallenge?.id}/me`}
+            href={`/old/challenge/${applicationId}/${currentChallenge?.id}/me`}
             className="flex-1 rounded-sm border border-primary bg-white px-4 py-3 text-center font-medium text-primary"
           >
             이전 미션 돌아보기

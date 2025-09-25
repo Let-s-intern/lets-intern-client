@@ -53,7 +53,9 @@ function BottomNavBar({ pathname = '' }: Props) {
     pathname.startsWith('/report') ||
     pathname.startsWith('/program/') ||
     pathname === '/about' ||
-    pathname.startsWith('/payment');
+    pathname.startsWith('/payment') ||
+    pathname.startsWith('/challenge') ||
+    pathname.startsWith('/b2b');
 
   const menuInfo: Menu[] = [
     {

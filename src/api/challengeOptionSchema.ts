@@ -24,6 +24,7 @@ export interface PostChallengeOptionReq {
   code: string;
   price: number;
   discountPrice: number;
+  isFeedback: boolean;
 }
 
 // PATCH 챌린지 옵션 수정 Request

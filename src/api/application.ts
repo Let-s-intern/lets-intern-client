@@ -1,8 +1,10 @@
 import dayjs from '@/lib/dayjs';
+import axiosV2 from '@/utils/axiosV2';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import {
   challengeApplicationPriceType,
+  ChallengePricePlanEnum,
   liveApplicationPriceType,
   ProgramStatusEnum,
   ProgramTypeEnum,
@@ -174,6 +176,11 @@ export const mypageApplicationsSchema = z
         programEndDate: z.string().nullable().optional(),
         reviewId: z.number().nullable().optional(),
         paymentId: z.number().nullable().optional(),
+        pricePlanType: ChallengePricePlanEnum.nullable().default('BASIC'),
+        challengeOptionList: z
+          .array(z.string())
+          .nullable()
+          .default(() => []),
       }),
     ),
   })
@@ -202,7 +209,7 @@ export const useMypageApplicationsQuery = () => {
   return useQuery({
     queryKey: [useMypageApplicationsQueryKey],
     queryFn: async () => {
-      const res = await axios.get('/user/applications');
+      const res = await axiosV2.get('/user/applications');
       return mypageApplicationsSchema
         .parse(res.data.data)
         .applicationList.filter(

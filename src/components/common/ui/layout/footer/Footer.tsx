@@ -31,29 +31,19 @@ const Footer = () => {
           <div className="flex flex-col gap-[3.25rem] lg:flex-row lg:items-start lg:gap-[6.25rem]">
             {/* 사이트맵 */}
             <div className="flex flex-col gap-3">
-              <MainLink href="/about">
-                렛츠커리어 스토리
-              </MainLink>
-              <MainLink href="/program">
-                프로그램
-              </MainLink>
-              <MainLink href="/review">
-                100% 솔직 후기
-              </MainLink>
-              <MainLink href="/blog/list">
-                블로그
-              </MainLink>
+              <MainLink href="/about">렛츠커리어 스토리</MainLink>
+              <MainLink href="/program">프로그램</MainLink>
+              <MainLink href="/review">100% 솔직 후기</MainLink>
+              <MainLink href="/blog/list">블로그</MainLink>
               {reportLInk && (
-                <MainLink href={reportLInk}>
-                  서류 진단 서비스
-                </MainLink>
+                <MainLink href={reportLInk}>서류 진단 서비스</MainLink>
               )}
               <MainLink
-                href="https://letscareer.oopy.io/1ea5e77c-bee1-8098-8e19-ec5038fb1cc8"
+                href="https://letscareer.liveklass.com/?utm_source=letscareer&utm_medium=website&utm_campaign=GNB"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                커피챗
+                취준위키 VOD
               </MainLink>
             </div>
 

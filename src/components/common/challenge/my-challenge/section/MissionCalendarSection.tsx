@@ -4,23 +4,16 @@ import React from 'react';
 import MissionCalendar from '../mission-calendar/MissionCalendar';
 
 const MissionTitleContent = ({
-  isDone,
   todayTh,
-  schedules,
+  isBonusMission,
+  isBonusMissionSubmitted,
 }: {
-  isDone: boolean;
   todayTh: number;
-  schedules: Schedule[];
+  isBonusMission: boolean;
+  isBonusMissionSubmitted: boolean;
 }) => {
-  const maxTh = Math.max(...schedules.map((item) => item.missionInfo.th ?? 0));
-  const isAllMissionFinished = maxTh < todayTh;
-  const isOtMission = todayTh === 0;
-  const isBonusMission = todayTh === 100;
-
-  if (isDone) return '챌린지가 종료되었습니다.';
-  if (isAllMissionFinished) return '🎉 모든 미션이 완료되었습니다 🎉';
-  if (isOtMission) return '챌린지가 시작됐어요! 함께 끝까지 완주해봐요!';
-  if (isBonusMission) return <>보너스 미션 완료하고 리워드 챙겨가세요!</>;
+  if (isBonusMission && !isBonusMissionSubmitted)
+    return '보너스 미션 완료하고 리워드 챙겨가세요!';
 
   return (
     <>
@@ -71,16 +64,30 @@ interface Props {
 }
 
 const MissionCalendarSection = ({ schedules, todayTh, isDone }: Props) => {
+  const maxTh = Math.max(...schedules.map((item) => item.missionInfo.th ?? 0));
+  const isAllMissionFinished = maxTh < todayTh;
+  const isBonusMission = todayTh === 100;
+  const bonusMissionSchedule = schedules.find(
+    (item) => item.missionInfo.th === 100,
+  );
+  const isBonusMissionSubmitted =
+    isBonusMission &&
+    (bonusMissionSchedule?.attendanceInfo.result === 'PASS' ||
+      bonusMissionSchedule?.attendanceInfo.result === 'FINAL_WRONG');
+  const isEndedStatus =
+    isDone || isBonusMissionSubmitted || isAllMissionFinished;
+
   return (
     <section className="mt-6">
-      <MissionTitleContainer>
-        <MissionTitleContent
-          isDone={isDone}
-          todayTh={todayTh}
-          schedules={schedules}
-        />
-      </MissionTitleContainer>
-      {/* <MissionTooltipQuestion /> */}
+      {!isEndedStatus && (
+        <MissionTitleContainer>
+          <MissionTitleContent
+            todayTh={todayTh}
+            isBonusMission={isBonusMission}
+            isBonusMissionSubmitted={isBonusMissionSubmitted}
+          />
+        </MissionTitleContainer>
+      )}
       <MissionCalendar
         className="mt-4 gap-2"
         schedules={schedules}

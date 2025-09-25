@@ -2,8 +2,8 @@
 
 import { useGetActiveChallenge, useGetChallengeList } from '@/api/challenge';
 import { challengeTypeSchema } from '@/schema';
-import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 const { PERSONAL_STATEMENT } = challengeTypeSchema.enum;
 
@@ -30,18 +30,7 @@ export default function PersonalStatementLatest() {
   });
 
   useEffect(() => {
-    // 로딩 중이면 대기
-    if (activeLoading || listLoading) {
-      return;
-    }
-
-    // 에러가 있으면 로그 출력 후 프로그램 페이지로 이동
-    if (activeError || listError) {
-      console.error('API 호출 에러:', { activeError, listError });
-      router.replace('/program');
-      return;
-    }
-
+    if (activeLoading || listLoading) return;
     // 활성화된 챌린지가 있는 경우
     const activeChallenge = activeData?.challengeList?.[0];
     if (activeChallenge?.id) {

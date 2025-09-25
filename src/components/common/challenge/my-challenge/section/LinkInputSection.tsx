@@ -156,7 +156,7 @@ const LinkInputSection = ({
         <input
           type="text"
           className={clsx(
-            'flex-1 items-center rounded-xxs border bg-white',
+            'min-w-0 flex-1 items-center rounded-xxs border bg-white',
             'px-3 py-2 text-xsmall14 text-neutral-0 placeholder:text-neutral-50 md:text-xsmall16',
             'h-[44px] outline-none focus:border-primary',
             'disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-50',
@@ -170,8 +170,9 @@ const LinkInputSection = ({
         <button
           className={clsx(
             'h-[44px] rounded-xxs px-4 text-xsmall16 font-medium transition-colors',
+            'flex-shrink-0 whitespace-nowrap',
             'disabled:cursor-not-allowed disabled:bg-neutral-70 disabled:text-neutral-100',
-            isVerified && linkValue === verifiedLink
+            isVerified && linkValue === verifiedLink && !disabled
               ? 'border border-primary bg-white text-primary hover:bg-neutral-90'
               : linkValue && !linkError
                 ? 'bg-primary text-white hover:bg-primary-90'

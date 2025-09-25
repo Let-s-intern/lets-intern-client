@@ -31,7 +31,7 @@ function GlobalNavItem({
   ...restProps
 }: Props) {
   const linkClassName = twMerge(
-    'text-small18 font-semibold',
+    'text-small18 font-semibold transition hover:opacity-80',
     active ? 'text-primary' : 'text-neutral-0',
     isNew &&
       "flex items-center gap-1 after:flex after:h-3 after:w-3 after:items-center after:justify-center after:rounded-full after:bg-system-error after:text-[8px] after:font-bold after:leading-none after:text-white after:content-['N']",
