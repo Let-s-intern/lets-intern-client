@@ -48,6 +48,8 @@ const MobileMoreButton = ({
   );
 };
 
+const EXCLUDED_PATHS = ['me', 'guides', 'user/info', 'feedback'];
+
 function RecommendedProgramSection() {
   const location = useLocation();
   const params = useParams();
@@ -84,7 +86,6 @@ function RecommendedProgramSection() {
   };
 
   // 컴포넌트를 렌더링하지 않음
-  const EXCLUDED_PATHS = ['me', 'guides', 'user/info', 'feedback'];
   const shouldHideSection = EXCLUDED_PATHS.some((path) =>
     location.pathname.includes(path),
   );
