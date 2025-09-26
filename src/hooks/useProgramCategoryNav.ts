@@ -1,11 +1,11 @@
 import { useGetActiveChallenge, useGetChallengeHome } from '@/api/challenge';
-import useIsB2BChallenge from './useIsB2BChallenge';
 import { SubNavItemProps } from '@/components/common/ui/layout/header/SubNavItem';
 import {
   ActiveChallengeResponse,
   ChallengeList,
   challengeTypeSchema,
 } from '@/schema';
+import useIsB2BChallenge from './useIsB2BChallenge';
 
 const {
   EXPERIENCE_SUMMARY,
@@ -48,9 +48,12 @@ export default function useProgramCategoryNav(isNextRouter: boolean) {
   };
 
   // 후보 ID 계산 (활성 또는 최신)
-  const activeExperienceSummaryId = activeExperienceSummary?.challengeList?.[0]?.id;
-  const activePersonalStatementId = activePersonalStatement?.challengeList?.[0]?.id;
-  const activeLargeCorpId = activePersonalStatementLargeCorp?.challengeList?.[0]?.id;
+  const activeExperienceSummaryId =
+    activeExperienceSummary?.challengeList?.[0]?.id;
+  const activePersonalStatementId =
+    activePersonalStatement?.challengeList?.[0]?.id;
+  const activeLargeCorpId =
+    activePersonalStatementLargeCorp?.challengeList?.[0]?.id;
   const activeMarketingId = activeMarketing?.challengeList?.[0]?.id;
   const activePortfolioId = activePortfolio?.challengeList?.[0]?.id;
 
@@ -61,10 +64,18 @@ export default function useProgramCategoryNav(isNextRouter: boolean) {
   const latestPortfolio = getLatest(portfolioData);
 
   // B2B 여부 훅 호출 (항상 같은 순서/개수 유지)
-  const isB2BActiveExperienceSummary = useIsB2BChallenge(activeExperienceSummaryId);
-  const isB2BLatestExperienceSummary = useIsB2BChallenge(latestExperienceSummary?.id);
-  const isB2BActivePersonalStatement = useIsB2BChallenge(activePersonalStatementId);
-  const isB2BLatestPersonalStatement = useIsB2BChallenge(latestPersonalStatement?.id);
+  const isB2BActiveExperienceSummary = useIsB2BChallenge(
+    activeExperienceSummaryId,
+  );
+  const isB2BLatestExperienceSummary = useIsB2BChallenge(
+    latestExperienceSummary?.id,
+  );
+  const isB2BActivePersonalStatement = useIsB2BChallenge(
+    activePersonalStatementId,
+  );
+  const isB2BLatestPersonalStatement = useIsB2BChallenge(
+    latestPersonalStatement?.id,
+  );
   const isB2BActiveLargeCorp = useIsB2BChallenge(activeLargeCorpId);
   const isB2BLatestLargeCorp = useIsB2BChallenge(latestLargeCorp?.id);
   const isB2BActiveMarketing = useIsB2BChallenge(activeMarketingId);
