@@ -48,6 +48,8 @@ const MobileMoreButton = ({
   );
 };
 
+const EXCLUDED_PATHS = ['me', 'guides', 'user/info', 'feedback'];
+
 function RecommendedProgramSection() {
   const location = useLocation();
   const params = useParams();
@@ -83,12 +85,11 @@ function RecommendedProgramSection() {
     setTimeout(() => (window.location.href = clickUrl), 300);
   };
 
-  // 'me' 경로에 포함되어 있으면 컴포넌트를 렌더링하지 않음
-  if (
-    location.pathname.includes('me') ||
-    location.pathname.includes('guides') ||
-    location.pathname.includes('user/info')
-  ) {
+  // 컴포넌트를 렌더링하지 않음
+  const shouldHideSection = EXCLUDED_PATHS.some((path) =>
+    location.pathname.includes(path),
+  );
+  if (shouldHideSection) {
     return null;
   }
 
