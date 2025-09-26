@@ -10,6 +10,7 @@ import Intro5 from '@/assets/graphic/home/intro/5.svg?react';
 import Intro6 from '@/assets/graphic/home/intro/6.svg?react';
 import Intro8 from '@/assets/graphic/home/intro/8.svg?react';
 import useActiveReports from '@/hooks/useActiveReports';
+import useIsB2BChallenge from '@/hooks/useIsB2BChallenge';
 import { twMerge } from '@/lib/twMerge';
 import { challengeTypeSchema } from '@/schema';
 import Link from 'next/link';
@@ -224,6 +225,32 @@ const IntroSection = () => {
     }
   };
 
+  // 후보 프로그램 ID 계산 (B2B 판별용)
+  const getCurrentChallengeId = (type: string): number | undefined => {
+    switch (type) {
+      case EXPERIENCE_SUMMARY:
+        return experienceSummaryData?.programList?.[0]?.id;
+      case PERSONAL_STATEMENT:
+        return personalStatementData?.programList?.[0]?.id;
+      case PERSONAL_STATEMENT_LARGE_CORP:
+        return personalStatementLargeCorpData?.programList?.[0]?.id;
+      case PORTFOLIO:
+        return portfolioData?.programList?.[0]?.id;
+      default:
+        return undefined;
+    }
+  };
+
+  const experienceSummaryId = getCurrentChallengeId(EXPERIENCE_SUMMARY);
+  const personalStatementId = getCurrentChallengeId(PERSONAL_STATEMENT);
+  const largeCorpId = getCurrentChallengeId(PERSONAL_STATEMENT_LARGE_CORP);
+  const portfolioId = getCurrentChallengeId(PORTFOLIO);
+
+  const isB2BExperienceSummary = useIsB2BChallenge(experienceSummaryId);
+  const isB2BPersonalStatement = useIsB2BChallenge(personalStatementId);
+  const isB2BLargeCorp = useIsB2BChallenge(largeCorpId);
+  const isB2BPortfolio = useIsB2BChallenge(portfolioId);
+
   const filteredItems = HOME_INTRO.items.basic.filter((item, index) => {
     // 이력서 피드백 받기
     if (index === 4 && !hasActiveResume) return false;
@@ -233,10 +260,24 @@ const IntroSection = () => {
   });
 
   const menus = filteredItems.map((item, index) => {
-    const challengePathname = getCurrentChallenge(item.href.split('=')[1]);
+    const typeParam = item.href.startsWith('type=')
+      ? item.href.split('=')[1]
+      : undefined;
+    const challengePathname = typeParam
+      ? getCurrentChallenge(typeParam)
+      : undefined;
     const isInvalidProgram =
       item.href.startsWith('type=') && !challengePathname;
     const href = item.href.startsWith('type=') ? challengePathname : item.href;
+
+    // B2 타입 = B2B && (홈 목록 노출된 상태)인 경우 숨김 처리
+    if (
+      (typeParam === EXPERIENCE_SUMMARY && isB2BExperienceSummary) ||
+      (typeParam === PERSONAL_STATEMENT && isB2BPersonalStatement) ||
+      (typeParam === PERSONAL_STATEMENT_LARGE_CORP && isB2BLargeCorp) ||
+      (typeParam === PORTFOLIO && isB2BPortfolio)
+    )
+      return null;
 
     if (isInvalidProgram) return null;
 
