@@ -1,10 +1,10 @@
 import { useReadNotices } from '@/hooks/useReadItems';
-import { TabMenu } from '@/router-pages/common/challenge/ChallengeGuidePage';
 import { ChallengeNotice } from '@/schema';
+import NoticeGuideLink from '@components/common/challenge/NoticeGuideLink';
+import HybridLink from '@components/common/ui/HybridLink';
+import { TabMenu } from '@components/pages/challenge/ChallengeGuidePage';
 import clsx from 'clsx';
 import { useState } from 'react';
-import HybridLink from '../../../ui/HybridLink';
-import NoticeGuideLink from '../../NoticeGuideLink';
 
 interface INoticeSectionProps {
   notices: ChallengeNotice[];

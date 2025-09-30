@@ -108,7 +108,7 @@ const ChallengeDashboard = () => {
   const isChallengeSubmitDone = getIsChallengeSubmitDone(programEndDate);
 
   return (
-    <main className="px-5 md:pl-12 md:pr-0">
+    <main className="px-5 pt-8 md:pl-12 md:pr-0 md:pt-0">
       <header>
         <h1 className="text-[22px] font-semibold">{user?.name}님의 대시보드</h1>
       </header>

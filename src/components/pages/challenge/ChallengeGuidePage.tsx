@@ -1,8 +1,9 @@
 import { useGetChallengeGuides, useGetChallengeNotices } from '@/api/challenge';
 import { useReadGuides, useReadNotices } from '@/hooks/useReadItems';
 import { twMerge } from '@/lib/twMerge';
+import Link from 'next/link';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { type ReactNode } from 'react';
-import { Link, useParams, useSearchParams } from 'react-router-dom';
 
 export const enum TabMenu {
   NOTICE,
@@ -47,7 +48,7 @@ const NoticeItem = ({
 }) => {
   return (
     <li className="border-b border-neutral-80 py-4">
-      <Link to={link} target="_blank" onClick={onClick}>
+      <Link href={link} target="_blank" onClick={onClick}>
         <h3 className="flex-1 text-xsmall16 font-medium leading-[26px] text-neutral-10 md:text-small18">
           {children}{' '}
           {isNew && (
@@ -65,7 +66,7 @@ const NoticeItem = ({
 };
 
 const NoticeList = () => {
-  const params = useParams();
+  const params = useParams<{ programId: string }>();
 
   const { data: noticeData } = useGetChallengeNotices(params.programId, {
     page: 1,
@@ -98,7 +99,7 @@ const NoticeList = () => {
 };
 
 const GuideList = () => {
-  const params = useParams();
+  const params = useParams<{ programId: string }>();
 
   const { data: guideData } = useGetChallengeGuides(params.programId);
 
@@ -128,11 +129,14 @@ const GuideList = () => {
 };
 
 const ChallengeGuidePage = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const searchParams = useSearchParams();
   const activeTab = Number(searchParams.get('tab'));
+  const router = useRouter();
 
   const handleTabClick = (tab: TabMenu) => {
-    setSearchParams({ tab: tab as unknown as string });
+    const newParams = new URLSearchParams(searchParams); // 기존 쿼리 유지
+    newParams.set('tab', String(tab));
+    router.push(`?${newParams.toString()}`);
   };
 
   return (

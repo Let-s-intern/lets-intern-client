@@ -4,15 +4,15 @@ import {
   useGetChallengeGoal,
   useSubmitChallengeGoal,
 } from '@/api/challenge';
+import { DASHBOARD_FIRST_VISIT_GOAL } from '@/app/(user)/challenge/[applicationId]/[programId]/user/info/page';
+import MissionSubmitButton from '@/components/common/challenge/my-challenge/mission/MissionSubmitButton';
+import MissionToast from '@/components/common/challenge/my-challenge/mission/MissionToast';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
-import { DASHBOARD_FIRST_VISIT_GOAL } from '@/router-pages/common/challenge/ChallengeUserInfo';
 import { useQueryClient } from '@tanstack/react-query';
 import { clsx } from 'clsx';
-import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import MissionSubmitButton from '../mission/MissionSubmitButton';
-import MissionToast from '../mission/MissionToast';
+import { useEffect, useState } from 'react';
 
 interface MissionSubmitZeroSectionProps {
   className?: string;

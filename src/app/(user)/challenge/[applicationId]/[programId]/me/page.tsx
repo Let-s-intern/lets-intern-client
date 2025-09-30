@@ -8,12 +8,13 @@ import MissionCalendarSection from '@components/common/challenge/my-challenge/se
 import MissionGuideSection from '@components/common/challenge/my-challenge/section/MissionGuideSection';
 import MissionMentorCommentSection from '@components/common/challenge/my-challenge/section/MissionMentorCommentSection';
 import MissionSubmitSection from '@components/common/challenge/my-challenge/section/MissionSubmitSection';
-import { Link, useParams } from 'react-router-dom';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
 const MyChallengeDashboard = () => {
   const { schedules } = useCurrentChallenge();
   const { selectedMissionId } = useMissionStore();
-  const params = useParams();
+  const params = useParams<{ programId: string; applicationId: string }>();
   const applicationId = params.applicationId;
   // 미션 선택 관련 로직을 custom hook으로 분리
   const { todayTh } = useMissionSelection();
@@ -49,7 +50,7 @@ const MyChallengeDashboard = () => {
         </div>
       </div>
       <Link
-        to={`/challenge/${applicationId}/${params.programId}`}
+        href={`/challenge/${applicationId}/${params.programId}`}
         className="flex gap-2 text-neutral-35 md:hidden"
       >
         <img src="/icons/Arrow_Left.svg" alt="대시보드" />

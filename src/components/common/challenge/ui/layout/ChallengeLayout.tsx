@@ -19,7 +19,7 @@ const CHALLENGE_DASHBOARD_ID_THRESHOLD =
 const ChallengeLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const params = useParams<{ programId: string; applicationId: string }>();
-  const { isLoggedIn } = useAuthStore();
+  const { isLoggedIn, isInitialized } = useAuthStore();
 
   const [redirecting, setRedirecting] = useState(true);
 
@@ -52,6 +52,8 @@ const ChallengeLayout = ({ children }: { children: React.ReactNode }) => {
   const hasChallengeGoal = challengeGoal?.goal != null;
 
   useEffect(() => {
+    if (!isInitialized) return;
+
     if (!isLoggedIn) {
       const newUrl = new URL(window.location.href);
       const searchParams = new URLSearchParams();
@@ -80,6 +82,7 @@ const ChallengeLayout = ({ children }: { children: React.ReactNode }) => {
       return;
     }
   }, [
+    isInitialized,
     isLoading,
     isLoggedIn,
     isValidUserInfo,
