@@ -2,8 +2,8 @@ import { useChallengeQuery } from '@/api/challenge';
 import BaseButton from '@/components/common/ui/button/BaseButton';
 import useGoogleAnalytics from '@/hooks/useGoogleAnalytics';
 import { ChallengeContent } from '@/types/interface';
+import { useParams, usePathname } from 'next/navigation';
 import { useMemo } from 'react';
-import { usePathname, useParams } from 'next/navigation';
 import RecommendedProgramSwiper from './RecommendedProgramSwiper';
 
 const MoreButton = ({
@@ -83,8 +83,12 @@ function RecommendedProgramSection() {
     setTimeout(() => (window.location.href = clickUrl), 300);
   };
 
-  // 'me' 경로에 포함되어 있으면 컴포넌트를 렌더링하지 않음
-  if (pathname.includes('me')) {
+  const EXCLUDED_PATHS = ['me', 'guides', 'user/info', 'feedback'];
+  // 컴포넌트를 렌더링하지 않음
+  const shouldHideSection = EXCLUDED_PATHS.some((path) =>
+    pathname.includes(path),
+  );
+  if (shouldHideSection) {
     return null;
   }
 
