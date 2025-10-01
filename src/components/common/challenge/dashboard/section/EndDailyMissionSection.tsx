@@ -1,15 +1,16 @@
 import { useGetChallengeReviewStatus } from '@/api/challenge';
+import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
-import { useCurrentChallenge } from '../../../../../context/CurrentChallengeProvider';
 import DashboardCreateReviewModal from '../modal/DashboardCreateReviewModal';
 import DashboardReviewModal from '../modal/DashboardReviewModal';
 
 const EndDailyMissionSection = () => {
   const params = useParams<{ applicationId: string }>();
   const applicationId = params.applicationId;
-  const { currentChallenge } = useCurrentChallenge();
+  const { currentChallenge } = useOldCurrentChallenge();
+
   const [modalOpen, setModalOpen] = useState(false);
   const { data: reviewStatus } = useGetChallengeReviewStatus(
     currentChallenge?.id,

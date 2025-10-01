@@ -7,15 +7,15 @@ import { useGetChallengeQuery } from '@/api/program';
 import dayjs from '@/lib/dayjs';
 import useAuthStore from '@/store/useAuthStore';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import OldNavBar from '../../OldNavBar';
 
 export const GOAL_DATE = dayjs('2025-01-19');
 
-const OldChallengeLayout = () => {
-  const navigate = useNavigate();
-  const params = useParams();
+const OldChallengeLayout = ({ children }: { children: React.ReactNode }) => {
+  const router = useRouter();
+  const params = useParams<{ programId: string; applicationId: string }>();
   const { isLoggedIn } = useAuthStore();
   const programId = params.programId;
   const applicationId = params.applicationId;
@@ -50,7 +50,7 @@ const OldChallengeLayout = () => {
       const newUrl = new URL(window.location.href);
       const searchParams = new URLSearchParams();
       searchParams.set('redirect', `${newUrl.pathname}?${newUrl.search}`);
-      navigate(`/login?${searchParams.toString()}`);
+      router.push(`/login?${searchParams.toString()}`);
       return;
     }
 
@@ -58,18 +58,18 @@ const OldChallengeLayout = () => {
 
     if (!accessibleData) {
       alert('접근 권한이 없습니다.');
-      navigate('/');
+      router.push('/');
       return;
     }
     if (!isValidUserInfo || (isStartAfterGoal && !hasChallengeGoal)) {
-      navigate(`/old/challenge/${applicationId}/${programId}/user/info`);
+      router.push(`/old/challenge/${applicationId}/${programId}/user/info`);
       return;
     }
   }, [
     isLoading,
     isLoggedIn,
     isValidUserInfo,
-    navigate,
+    router,
     programId,
     applicationId,
     accessibleData,
@@ -100,9 +100,7 @@ const OldChallengeLayout = () => {
       <div className="hidden px-6 py-6 lg:block">
         <div className="mx-auto flex w-[1024px]">
           <OldNavBar />
-          <div className="min-w-0 flex-1">
-            <Outlet />
-          </div>
+          <div className="min-w-0 flex-1">{children}</div>
         </div>
       </div>
     </div>

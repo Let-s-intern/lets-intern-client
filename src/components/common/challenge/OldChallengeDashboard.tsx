@@ -11,7 +11,7 @@ import OldMissionTooltipQuestion from '@components/common/challenge/OldMissionTo
 import OldNoticeSection from '@components/common/challenge/OldNoticeSection';
 import OldScoreSection from '@components/common/challenge/OldScoreSection';
 import { useQuery } from '@tanstack/react-query';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'next/navigation';
 
 const getIsChallengeDone = (endDate: string) => {
   return dayjs(new Date()).isAfter(dayjs(endDate));
@@ -25,7 +25,7 @@ const OldChallengeDashboard = () => {
   const { currentChallenge, schedules, dailyMission } =
     useOldCurrentChallenge();
 
-  const params = useParams();
+  const params = useParams<{ programId: string }>();
 
   const todayTh =
     dailyMission?.th ||

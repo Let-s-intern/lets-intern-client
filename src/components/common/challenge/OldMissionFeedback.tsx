@@ -4,15 +4,16 @@ import {
 } from '@/api/challenge';
 import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import LexicalContent from '@components/common/blog/LexicalContent';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams, useRouter } from 'next/navigation';
 
 export default function OldMissionFeedback() {
-  const navigate = useNavigate();
-  const { applicationId, programId, missionId } = useParams<{
+  const router = useRouter();
+  const params = useParams<{
     applicationId: string;
     programId: string;
     missionId: string;
   }>();
+  const { applicationId, programId, missionId } = params;
   const { currentChallenge } = useOldCurrentChallenge();
   const challengeId = currentChallenge?.id;
 
@@ -29,7 +30,7 @@ export default function OldMissionFeedback() {
   });
 
   const handleGoBack = () => {
-    navigate(`/challenge/${applicationId}/${programId}/me`);
+    router.push(`/challenge/${applicationId}/${programId}/me`);
   };
 
   const missionInfo = missionData?.missionInfo;

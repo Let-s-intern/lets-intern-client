@@ -5,7 +5,7 @@ import axios from '@/utils/axios';
 import OldMissionCalendarSection from '@components/common/challenge/OldMissionCalendarSection';
 import OldMyDailyMissionSection from '@components/OldMyDailyMissionSection';
 import { useQuery } from '@tanstack/react-query';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'next/navigation';
 
 const getIsChallengeDone = (endDate: string) => {
   return dayjs(new Date()).isAfter(dayjs(endDate));

@@ -10,13 +10,13 @@ import GradeDropdown from '@/components/common/mypage/privacy/form-control/Grade
 import Input from '@/components/common/ui/input/Input';
 import { GOAL_DATE } from '@components/common/challenge/ui/layout/ChallengeLayout';
 import TextArea from '@components/common/ui/input/TextArea';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 
 const OldChallengeUserInfo = () => {
-  const params = useParams();
+  const params = useParams<{ programId: string; applicationId: string }>();
   const programId = params.programId;
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const [value, setValue] = useState({
     university: '',
@@ -108,7 +108,7 @@ const OldChallengeUserInfo = () => {
         goal: value.goal,
       });
 
-      navigate(`/challenge/${params.applicationId}/${programId}`);
+      router.push(`/challenge/${params.applicationId}/${programId}`);
     } catch (error) {
       console.error(error);
       alert(`입력에 실패했습니다. 다시 시도해주세요.\n${error}`);
@@ -132,17 +132,17 @@ const OldChallengeUserInfo = () => {
     }
     if (isStartAfterGoal) {
       if (isValidUserInfo && hasChallengeGoal) {
-        navigate(`/old/challenge/${params.applicationId}/${programId}`);
+        router.push(`/old/challenge/${params.applicationId}/${programId}`);
         return;
       }
     } else if (isValidUserInfo) {
-      navigate(`/old/challenge/${params.applicationId}/${programId}`);
+      router.push(`/old/challenge/${params.applicationId}/${programId}`);
       return;
     }
   }, [
     isValidUserInfo,
     isLoading,
-    navigate,
+    router,
     hasChallengeGoal,
     isStartAfterGoal,
     params.applicationId,
