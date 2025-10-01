@@ -96,7 +96,7 @@ const MissionGuideRegularSection = ({
                 <MissionFileLink
                   key={missionData?.missionInfo?.templateLink}
                   title="미션 템플릿"
-                  fileName={'미션 템플릿'}
+                  fileName={'미션 템플릿 확인하기'}
                   disabled={false}
                   onClick={() => {
                     window.open(
@@ -112,7 +112,7 @@ const MissionGuideRegularSection = ({
                   <MissionFileLink
                     key={content.id || index}
                     title="필수 콘텐츠"
-                    fileName={content.title || '필수 콘텐츠'}
+                    fileName={'필수 콘텐츠 확인하기'}
                     disabled={false}
                     onClick={() => {
                       window.open(content.link || '#', '_blank');
@@ -128,7 +128,7 @@ const MissionGuideRegularSection = ({
                     <MissionFileLink
                       key={content.id || index}
                       title={index === 0 ? '추가 콘텐츠' : ''}
-                      fileName={content.title ?? '추가 콘텐츠'}
+                      fileName={'추가 콘텐츠 확인하기'}
                       disabled={false}
                       onClick={() => {
                         window.open(content.link || '#', '_blank');
