@@ -19,17 +19,21 @@ const axiosV2 = Axios.create({
   },
 });
 
+// 🔥 v2용 single-flight 플래그
+let isRefreshingV2 = false;
+
 // Add a request interceptor
 axiosV2.interceptors.request.use(
   function (config) {
     // Do something before request is sent
     const accessToken = useAuthStore.getState().accessToken;
     const refreshToken = useAuthStore.getState().refreshToken;
-    config.headers.Authorization = config.headers.Authorization
-      ? config.headers.Authorization
-      : accessToken && refreshToken
-        ? `Bearer ${accessToken}`
-        : '';
+
+    // 🔥 빈 토큰일 때는 Authorization 헤더를 아예 보내지 않음
+    if (accessToken && refreshToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+
     return config;
   },
   function (error) {
@@ -53,21 +57,30 @@ axiosV2.interceptors.response.use(
         return Promise.reject(error);
       }
 
+      // 🔥 이미 리프레시 중이면 그냥 실패 처리
+      if (isRefreshingV2) {
+        return Promise.reject(error);
+      }
+
+      // 리프레시 시작
+      isRefreshingV2 = true;
+
       try {
-        if (limiter.check()) {
-          const res = await reissuer.patch('/user/token', { refreshToken });
-          useAuthStore.setState({
-            accessToken: res.data.data.accessToken,
-            refreshToken: res.data.data.refreshToken,
-            isLoggedIn: true,
-          });
-          return axiosV2(originalRequest);
-        } else {
-          return Promise.reject(error);
-        }
+        const res = await reissuer.patch('/user/token', { refreshToken });
+        useAuthStore.setState({
+          accessToken: res.data.data.accessToken,
+          refreshToken: res.data.data.refreshToken,
+          isLoggedIn: true,
+        });
+
+        // 원본 요청만 재시도
+        return axiosV2(originalRequest);
       } catch (error) {
         initAuth();
         return Promise.reject(error);
+      } finally {
+        // 🔥 리프레시 완료 후 플래그 해제
+        isRefreshingV2 = false;
       }
     } else {
       // 로그인 상태라면 무조건 성공해야 할 API(/api/v1/user) 가 알 수 없는 이유로 실패했을 때는 로그아웃 시킴
