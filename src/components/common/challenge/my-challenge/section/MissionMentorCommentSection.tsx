@@ -21,7 +21,9 @@ const MissionMentorCommentSection = ({ missionId }: Props) => {
   const { selectedMissionTh } = useMissionStore();
   const scheduleIndex =
     selectedMissionTh === 100 ? schedules.length - 1 : selectedMissionTh;
-  const comment = schedules[scheduleIndex]?.attendanceInfo?.comments;
+  const startsFromZero = schedules[0]?.missionInfo?.th === 0; // 0회차 존재 여부
+  const adjustedIndex = startsFromZero ? scheduleIndex : scheduleIndex - 1;
+  const comment = schedules[adjustedIndex]?.attendanceInfo?.comments;
   const mentorFeedback = feedbackData?.attendanceInfo?.feedback
     ? JSON.parse(feedbackData.attendanceInfo.feedback)
     : null;
@@ -43,7 +45,7 @@ const MissionMentorCommentSection = ({ missionId }: Props) => {
               </span>
             </div>
             <div className="rounded-xxs border border-neutral-80 bg-white p-3">
-              <p className="min-h-[120px] text-xsmall14 leading-relaxed text-neutral-0 md:text-xsmall16">
+              <p className="min-h-[120px] break-all text-xsmall14 leading-relaxed text-neutral-0 md:text-xsmall16">
                 {comment}
               </p>
             </div>
