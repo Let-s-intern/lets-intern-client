@@ -48,7 +48,7 @@ const MyChallengeDashboard = () => {
       </div>
       <Link
         to={`/challenge/${applicationId}/${params.programId}`}
-        className="flex gap-2 text-neutral-35 md:hidden"
+        className="flex gap-2 pb-10 text-neutral-35 md:hidden md:pb-0"
       >
         <img src="/icons/Arrow_Left.svg" alt="대시보드" />
         <span>대시보드로 돌아가기</span>
