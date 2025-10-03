@@ -21,7 +21,7 @@ const MyChallengeDashboard = () => {
 
   return (
     <main className="px-5 md:px-0 md:pl-12">
-      <h2 className="text-medium22 font-semibold">나의 미션</h2>
+      <h2 className="mt-8 text-medium22 font-semibold">나의 미션</h2>
       <MissionCalendarSection
         schedules={schedules}
         todayTh={todayTh}
