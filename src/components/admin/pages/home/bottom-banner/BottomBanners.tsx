@@ -13,7 +13,7 @@ import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import WarningModal from '@components/ui/alert/WarningModal';
 import { DataGrid, GridColDef, GridRowParams } from '@mui/x-data-grid';
 import { Pencil, Trash } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 const BottomBanners = () => {
   const [isDeleteModalShown, setIsDeleteModalShown] = useState<boolean>(false);
@@ -78,7 +78,7 @@ const BottomBanners = () => {
 
           return [
             <Link
-              to={`/admin/home/bottom-banners/${id}/edit`}
+              href={`/admin/home/bottom-banners/${id}/edit`}
               key={'edit' + id}
             >
               <Pencil />

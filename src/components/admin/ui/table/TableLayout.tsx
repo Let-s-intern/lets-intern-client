@@ -1,5 +1,5 @@
+import Link from 'next/link';
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 interface TableLayoutProps {
   title: string;
@@ -17,7 +17,7 @@ const TableLayout = ({ title, headerButton, children }: TableLayoutProps) => {
         <h1 className="text-2xl font-semibold">{title}</h1>
         {headerButton && (
           <Link
-            to={headerButton.href}
+            href={headerButton.href}
             className="h-full rounded-xxs border border-primary bg-white px-4 py-0.5 text-xsmall14 text-primary duration-200 hover:bg-primary-20 hover:font-semibold"
           >
             {headerButton.label}

@@ -1,7 +1,6 @@
 'use client';
 
 import { Checkbox } from '@mui/material';
-import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import {
@@ -9,9 +8,6 @@ import {
   useEditProgramBannerMutation,
   useGetProgramBannerListQuery,
 } from '@/api/program';
-import dayjs from '@/lib/dayjs';
-import { CiTrash } from 'react-icons/ci';
-import { Link } from 'react-router-dom';
 import TableCell from '@/components/admin/ui/table/new/TableCell';
 import TableManageContent from '@/components/admin/ui/table/new/TableManageContent';
 import TableRow from '@/components/admin/ui/table/new/TableRow';
@@ -19,6 +15,9 @@ import TableTemplate, {
   TableTemplateProps,
 } from '@/components/admin/ui/table/new/TableTemplate';
 import AlertModal from '@/components/ui/alert/AlertModal';
+import dayjs from '@/lib/dayjs';
+import Link from 'next/link';
+import { CiTrash } from 'react-icons/ci';
 
 type ProgramBannersTableKey =
   | 'title'
@@ -28,8 +27,6 @@ type ProgramBannersTableKey =
   | 'management';
 
 const PopUpBanners = () => {
-  const queryClient = useQueryClient();
-
   const [isDeleteModalShown, setIsDeleteModalShown] = useState<boolean>(false);
   const [bannerIdForDeleting, setBannerIdForDeleting] = useState<number>();
 
@@ -128,7 +125,7 @@ const PopUpBanners = () => {
               </TableCell>
               <TableCell cellWidth={columnMetaData.link.cellWidth} textEllipsis>
                 <Link
-                  to={banner.link}
+                  href={banner.link}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:underline"
@@ -150,7 +147,9 @@ const PopUpBanners = () => {
               </TableCell>
               <TableCell cellWidth={columnMetaData.management.cellWidth}>
                 <TableManageContent>
-                  <Link to={`/admin/banner/program-banners/${banner.id}/edit`}>
+                  <Link
+                    href={`/admin/banner/program-banners/${banner.id}/edit`}
+                  >
                     <i>
                       <img src="/icons/edit-icon.svg" alt="수정 아이콘" />
                     </i>

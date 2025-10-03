@@ -1,6 +1,5 @@
 'use client';
 
-import { useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 
 import {
@@ -16,11 +15,9 @@ import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import WarningModal from '@components/ui/alert/WarningModal';
 import { DataGrid, GridColDef, GridRowParams } from '@mui/x-data-grid';
 import { Pencil, Trash } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 const TopBarBanners = () => {
-  const queryClient = useQueryClient();
-
   const [isDeleteModalShown, setIsDeleteModalShown] = useState<boolean>(false);
   const [bannerIdForDeleting, setBannerIdForDeleting] = useState<number>();
 
@@ -83,7 +80,7 @@ const TopBarBanners = () => {
 
           return [
             <Link
-              to={`/admin/banner/top-bar-banners/${id}/edit`}
+              href={`/admin/banner/top-bar-banners/${id}/edit`}
               key={'edit' + id}
             >
               <Pencil />

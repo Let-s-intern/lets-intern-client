@@ -2,7 +2,6 @@
 
 import dayjs from '@/lib/dayjs';
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
 
 import {
   BannerAdminListItemType,
@@ -16,6 +15,7 @@ import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import WarningModal from '@components/ui/alert/WarningModal';
 import { DataGrid, GridColDef, GridRowParams } from '@mui/x-data-grid';
 import { Pencil, Trash } from 'lucide-react';
+import Link from 'next/link';
 
 const PopUpBanners = () => {
   const [isDeleteModalShown, setIsDeleteModalShown] = useState<boolean>(false);
@@ -79,7 +79,7 @@ const PopUpBanners = () => {
           const id = params.id;
 
           return [
-            <Link to={`/admin/banner/pop-up/${id}/edit`} key={'edit' + id}>
+            <Link href={`/admin/banner/pop-up/${id}/edit`} key={'edit' + id}>
               <Pencil />
             </Link>,
             <Trash
