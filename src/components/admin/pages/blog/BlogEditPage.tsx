@@ -38,6 +38,7 @@ import {
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { isAxiosError } from 'axios';
 import { Dayjs } from 'dayjs';
+import { useParams, useRouter } from 'next/navigation';
 import {
   ChangeEvent,
   FormEvent,
@@ -46,7 +47,6 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 
 // const maxCtaTextLength = 23;
 const maxTitleLength = 49;
@@ -76,8 +76,8 @@ interface EditBlog {
 }
 
 const BlogEditPage = () => {
-  const navgiate = useNavigate();
-  const { id } = useParams();
+  const router = useRouter();
+  const { id } = useParams<{ id: string }>();
 
   const { snackbar: setSnackbar } = useAdminSnackbar();
 
@@ -502,7 +502,7 @@ const BlogEditPage = () => {
                   variant="outlined"
                   type="button"
                   onClick={() => {
-                    navgiate('/admin/blog/list');
+                    router.push('/admin/blog/list');
                   }}
                 >
                   취소 (리스트로 돌아가기)

@@ -5,16 +5,16 @@ import {
   useEditBannerForAdmin,
   useGetBannerDetailForAdmin,
 } from '@/api/banner';
-import EmptyContainer from '@components/common/ui/EmptyContainer';
-import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 import PopUpBannerInputContent from '@/components/admin/banner/pop-up-banner/PopUpBannerInputContent';
 import EditorTemplate from '@/components/admin/program/ui/editor/EditorTemplate';
+import EmptyContainer from '@components/common/ui/EmptyContainer';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 const PopUpBannerEdit = () => {
-  const navigate = useNavigate();
-  const params = useParams();
+  const router = useRouter();
+  const params = useParams<{ bannerId: string }>();
   const bannerId = Number(params.bannerId);
 
   const [value, setValue] = useState<BannerItemType>({
@@ -35,7 +35,7 @@ const PopUpBannerEdit = () => {
   const { mutate: editPopUpBanner } = useEditBannerForAdmin({
     successCallback: () => {
       alert('팝업이 수정되었습니다.');
-      navigate('/admin/banner/pop-up');
+      router.push('/admin/banner/pop-up');
     },
     errorCallback: (error) => {
       alert(error);

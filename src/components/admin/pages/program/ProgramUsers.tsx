@@ -16,14 +16,14 @@ import {
 import axios from '@/utils/axios';
 import { Button } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
+import { useParams, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
 
 const { CHALLENGE, LIVE, VOD } = ProgramTypeEnum.enum;
 
 const ProgramUsers = () => {
-  const [searchParams] = useSearchParams();
-  const params = useParams();
+  const searchParams = useSearchParams();
+  const params = useParams<{ programId: string }>();
   const programId = Number(params.programId);
 
   const [filter, setFilter] = useState<UserTableHeadProps['filter']>({

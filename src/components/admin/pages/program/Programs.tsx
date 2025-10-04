@@ -41,16 +41,17 @@ import {
 } from '@mui/x-data-grid';
 import { useQueryClient } from '@tanstack/react-query';
 import { Pencil } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useMemo, useRef, useState } from 'react';
 import { FaCopy, FaList, FaPlus, FaTrashCan } from 'react-icons/fa6';
-import { Link, useNavigate } from 'react-router-dom';
 
 type Row = ProgramAdminListItem & {
   id: number | string;
 };
 
 const Programs = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const queryClient = useQueryClient();
   const { snackbar } = useAdminSnackbar();
 
@@ -124,8 +125,7 @@ const Programs = () => {
               params.row.programInfo.id
             }
             className="text-blue-500 underline transition hover:text-blue-300"
-            to={`/program/${params.row.programInfo.programType.toLowerCase()}/${params.row.programInfo.id}`}
-            reloadDocument
+            href={`/program/${params.row.programInfo.programType.toLowerCase()}/${params.row.programInfo.id}`}
             target="_blank"
           >
             보기
@@ -190,13 +190,13 @@ const Programs = () => {
               onClick={() => {
                 switch (params.row.programInfo.programType) {
                   case 'CHALLENGE':
-                    navigate(`/admin/challenge/${id}/edit`);
+                    router.push(`/admin/challenge/${id}/edit`);
                     break;
                   case 'LIVE':
-                    navigate(`/admin/live/${id}/edit`);
+                    router.push(`/admin/live/${id}/edit`);
                     break;
                   case 'VOD':
-                    navigate(`/admin/vod/${id}/edit`);
+                    router.push(`/admin/vod/${id}/edit`);
                     break;
                   case 'REPORT':
                     throw new Error("Don't use this page");
@@ -212,7 +212,7 @@ const Programs = () => {
               size="small"
               startIcon={<FaList />}
               onClick={() => {
-                navigate(
+                router.push(
                   `/admin/programs/${id}/users?programType=${params.row.programInfo.programType}`,
                 );
               }}
@@ -331,7 +331,7 @@ const Programs = () => {
       editVisible,
       snackbar,
       visibleLoading,
-      navigate,
+      router,
     ],
   );
 
@@ -344,7 +344,7 @@ const Programs = () => {
             variant="contained"
             color="primary"
             startIcon={<FaPlus size={12} />}
-            onClick={() => navigate(`/admin/challenge/create`)}
+            onClick={() => router.push(`/admin/challenge/create`)}
           >
             챌린지 등록
           </Button>
@@ -352,7 +352,7 @@ const Programs = () => {
             variant="contained"
             color="primary"
             startIcon={<FaPlus size={12} />}
-            onClick={() => navigate(`/admin/live/create`)}
+            onClick={() => router.push(`/admin/live/create`)}
           >
             LIVE 클래스 등록
           </Button>
@@ -360,7 +360,7 @@ const Programs = () => {
             variant="contained"
             color="primary"
             startIcon={<FaPlus size={12} />}
-            onClick={() => navigate(`/admin/vod/create`)}
+            onClick={() => router.push(`/admin/vod/create`)}
           >
             VOD 클래스 등록
           </Button>

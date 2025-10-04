@@ -21,8 +21,9 @@ import useInvalidateQueries from '@/hooks/useInvalidateQueries';
 import SelectFormControl from '@components/admin/program/SelectFormControl';
 import { MenuItem, SelectChangeEvent } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
 
 const NO_MENTOR_ID = 0;
 
@@ -44,7 +45,10 @@ export interface AttendanceRow {
 const FeedbackStatusEnumForMentor = FeedbackStatusEnum.exclude(['CONFIRMED']);
 
 const useAttendanceHandler = () => {
-  const { programId, missionId } = useParams();
+  const { programId, missionId } = useParams<{
+    programId: string;
+    missionId: string;
+  }>();
   const { data: isAdmin } = useIsAdminQuery();
 
   const queryKey = isAdmin
@@ -64,7 +68,7 @@ const useAttendanceHandler = () => {
 const MentorRenderCell = (
   params: GridRenderCellParams<AttendanceRow, number>,
 ) => {
-  const { programId } = useParams();
+  const { programId } = useParams<{ programId: string }>();
 
   const { patchAttendance, invalidateAttendance } = useAttendanceHandler();
 
@@ -185,7 +189,7 @@ const columns: GridColDef<AttendanceRow>[] = [
     width: 120,
     renderCell: (params: GridRenderCellParams<AttendanceRow, string>) => (
       <Link
-        to={params.value || '#'}
+        href={params.value || '#'}
         target="_blank"
         rel="noopener noreferrer"
         className="text-primary underline"
@@ -200,7 +204,7 @@ const columns: GridColDef<AttendanceRow>[] = [
     width: 120,
     renderCell: (params: GridRenderCellParams<AttendanceRow, string>) => (
       <Link
-        to={params.value || '#'}
+        href={params.value || '#'}
         className="text-primary underline"
         onClick={() => {
           localStorage.setItem('attendance', JSON.stringify(params.row)); // 선택한 행 정보 저장
@@ -219,7 +223,10 @@ const columns: GridColDef<AttendanceRow>[] = [
 ];
 
 const useRoleBasedAttendanceData = () => {
-  const { missionId, programId } = useParams();
+  const { missionId, programId } = useParams<{
+    missionId: string;
+    programId: string;
+  }>();
 
   const { data: isAdmin, isLoading: isAdminLoading } = useIsAdminQuery();
 

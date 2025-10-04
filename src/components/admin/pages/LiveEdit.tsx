@@ -29,14 +29,14 @@ import Heading from '@components/admin/ui/heading/Heading';
 import Heading2 from '@components/admin/ui/heading/Heading2';
 import { Button, Checkbox, FormControlLabel } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
+import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
-import { useNavigate, useParams } from 'react-router-dom';
 import ProgramSchedule from './program/ProgramSchedule';
 
 const LiveEdit: React.FC = () => {
-  const { liveId: liveIdString } = useParams();
-  const navigate = useNavigate();
+  const { liveId: liveIdString } = useParams<{ liveId: string }>();
+  const router = useRouter();
   const client = useQueryClient();
   const { snackbar } = useAdminSnackbar();
 
@@ -111,11 +111,9 @@ const LiveEdit: React.FC = () => {
   useEffect(() => {
     // 구 버전인지 판단
     if (live && isDeprecatedProgram(live)) {
-      navigate(`/admin/programs/${liveIdString}/edit?programType=LIVE`, {
-        replace: true,
-      });
+      router.replace(`/admin/programs/${liveIdString}/edit?programType=LIVE`);
     }
-  }, [live, liveIdString, navigate]);
+  }, [live, liveIdString, router]);
 
   useEffect(() => {
     // receivedContent가 초기화되면 content에 적용

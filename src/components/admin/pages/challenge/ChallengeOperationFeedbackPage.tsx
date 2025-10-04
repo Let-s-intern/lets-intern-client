@@ -6,8 +6,9 @@ import { useIsAdminQuery } from '@/api/user';
 import { LOCALIZED_YYYY_MD_Hm } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
 
 interface Row {
   id: number | string;
@@ -60,7 +61,7 @@ const columns: GridColDef<Row>[] = [
     width: 120,
     renderCell: (params: GridRenderCellParams<Row, string>) => (
       <Link
-        to={params.value || '#'}
+        href={params.value || '#'}
         className="text-primary underline"
         onClick={() => {
           // 선택한 행 정보 저장
@@ -74,7 +75,7 @@ const columns: GridColDef<Row>[] = [
 ];
 
 const useFeedbackMissionRows = () => {
-  const { programId } = useParams();
+  const { programId } = useParams<{ programId: string }>();
 
   const { data: isAdmin } = useIsAdminQuery();
   const { data: dataForAdmin, isLoading: isAdminLoading } =

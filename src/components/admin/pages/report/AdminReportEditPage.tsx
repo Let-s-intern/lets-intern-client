@@ -31,9 +31,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { useQueryClient } from '@tanstack/react-query';
+import { useParams, useRouter } from 'next/navigation';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { FaTrashCan } from 'react-icons/fa6';
-import { useNavigate, useParams } from 'react-router-dom';
 import AdminReportActiveGuide from './AdminReportActiveGuide';
 
 const initialReport: Omit<UpdateReportData, 'contents'> = {
@@ -61,8 +61,8 @@ const initialContent = {
 type EditingOptions = Exclude<UpdateReportData['optionInfo'], undefined | null>;
 
 const AdminReportEditPage = () => {
-  const params = useParams();
-  const navigate = useNavigate();
+  const params = useParams<{ id: string }>();
+  const router = useRouter();
   const queryClient = useQueryClient();
 
   const reportId = params.id;
@@ -94,9 +94,9 @@ const AdminReportEditPage = () => {
     if (isLoadError) {
       const s = new URLSearchParams();
       s.set('message', '해당 서류 진단이 존재하지 않습니다.');
-      navigate(`/admin/report/list?${s.toString()}`);
+      router.push(`/admin/report/list?${s.toString()}`);
     }
-  }, [isLoadError, navigate]);
+  }, [isLoadError, router]);
 
   useEffect(() => {
     if (reportDetail) {
@@ -704,7 +704,7 @@ const AdminReportEditPage = () => {
                 variant="outlined"
                 type="button"
                 onClick={() => {
-                  navigate('/admin/report/list');
+                  router.push('/admin/report/list');
                 }}
               >
                 취소 (리스트로 돌아가기)

@@ -2,7 +2,6 @@ import dayjs from '@/lib/dayjs';
 import { Button, MenuItem, Select } from '@mui/material';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
 
 import { uploadFile } from '@/api/file';
 import {
@@ -30,6 +29,7 @@ import TH from '@/components/admin/ui/table/regacy/TH';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { generateRandomString } from '@/utils/random';
 import CheckBox from '@components/common/ui/CheckBox';
+import { useSearchParams } from 'next/navigation';
 
 const totalDateConverter = (date: string) => {
   return dayjs(date).format('YYYY.MM.DD (dd) A hh:mm');
@@ -90,7 +90,7 @@ const reportApplicatoinsStatusList: {
 ];
 
 const ReportApplicationsPage = () => {
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams();
   const { snackbar: setSnackbar } = useAdminSnackbar();
 
   const reportId = searchParams.get('reportId');

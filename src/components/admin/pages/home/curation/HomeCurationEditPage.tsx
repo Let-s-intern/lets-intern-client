@@ -14,13 +14,13 @@ import Heading from '@components/admin/ui/heading/Heading';
 import ErrorContainer from '@components/common/ui/ErrorContainer';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { Button } from '@mui/material';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 
 const HomeCurationEditPage = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { snackbar } = useAdminSnackbar();
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
 
   const [locationType, setLocationType] =
     useState<CurationLocationType>('UNDER_BANNER');
@@ -37,7 +37,7 @@ const HomeCurationEditPage = () => {
     usePatchAdminCuration({
       successCallback: () => {
         snackbar('홈 큐레이션을 수정했습니다.');
-        navigate('/admin/home/curation');
+        router.push('/admin/home/curation');
       },
     });
 
@@ -121,7 +121,7 @@ const HomeCurationEditPage = () => {
               <Button
                 variant="contained"
                 color="error"
-                onClick={() => navigate('/admin/home/curation')}
+                onClick={() => router.push('/admin/home/curation')}
               >
                 취소
               </Button>

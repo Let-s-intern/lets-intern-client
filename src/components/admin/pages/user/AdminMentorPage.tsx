@@ -12,8 +12,8 @@ import Heading from '@components/admin/ui/heading/Heading';
 import { Button, Checkbox, TextField } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useQueryClient } from '@tanstack/react-query';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ChangeEvent, FormEvent, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
 
 interface Row {
   id: number;
@@ -84,7 +84,7 @@ const useMentorRows = ({ page, size }: { page: number; size: number }) => {
     size,
   };
 
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams();
   const filters = {
     email: searchParams.get('email'),
     name: searchParams.get('name'),
@@ -109,8 +109,9 @@ const MentorFilter = () => {
     name: '',
     phoneNum: '',
   });
-  const [_, setSearchParams] = useSearchParams();
   const [inputs, setInputs] = useState(defaultRef.current);
+  const router = useRouter();
+  const pathname = usePathname();
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -123,12 +124,13 @@ const MentorFilter = () => {
     const newSearchParams = Object.fromEntries(
       Object.entries(inputs).filter(([, value]) => value),
     );
-    setSearchParams(newSearchParams);
+    const params = new URLSearchParams(newSearchParams);
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   const resetFilter = () => {
     setInputs(defaultRef.current);
-    setSearchParams({});
+    router.replace(window.location.pathname);
   };
 
   return (

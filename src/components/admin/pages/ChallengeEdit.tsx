@@ -42,9 +42,9 @@ import Heading2 from '@components/admin/ui/heading/Heading2';
 import Heading3 from '@components/admin/ui/heading/Heading3';
 import { Button } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
+import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
-import { useNavigate, useParams } from 'react-router-dom';
 import ChallengeFaqCategory from './program/ChallengeFaqCategory';
 import ChallengeMentorRegistrationSection from './program/ChallengeMentorRegistrationSection';
 import ProgramSchedule from './program/ProgramSchedule';
@@ -87,12 +87,14 @@ const useDeleteDifferMentors = () => {
 };
 
 const ChallengeEdit: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const client = useQueryClient();
   const { snackbar } = useAdminSnackbar();
 
   /** 챌린지 관련 상태 */
-  const { challengeId: challengeIdString } = useParams();
+  const { challengeId: challengeIdString } = useParams<{
+    challengeId: string;
+  }>();
   const { mutateAsync: patchChallenge } = usePatchChallengeMutation();
   const { data: challenge } = useGetChallengeQuery({
     challengeId: Number(challengeIdString),
@@ -283,12 +285,11 @@ const ChallengeEdit: React.FC = () => {
   useEffect(() => {
     // 구 버전 프로그램인지 판단
     if (challenge && isDeprecatedProgram(challenge)) {
-      navigate(
+      router.replace(
         `/admin/programs/${challengeIdString}/edit?programType=CHALLENGE`,
-        { replace: true },
       );
     }
-  }, [challenge, challengeIdString, navigate]);
+  }, [challenge, challengeIdString, router]);
 
   useEffect(() => {
     // 챌린지 금액 초기 값 설정

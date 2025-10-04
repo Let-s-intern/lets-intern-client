@@ -5,16 +5,14 @@ import {
   useEditProgramBannerMutation,
   useGetProgramBannerDetailQuery,
 } from '@/api/program';
-import { useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 import ProgramBannerInputContent from '@/components/admin/banner/program-banner/ProgramBannerInputContent';
 import EditorTemplate from '@/components/admin/program/ui/editor/EditorTemplate';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 const ProgramBannerEdit = () => {
-  const { bannerId } = useParams();
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { bannerId } = useParams<{ bannerId: string }>();
+  const router = useRouter();
 
   const [value, setValue] = useState<BannerItemType>({
     title: '',
@@ -47,7 +45,7 @@ const ProgramBannerEdit = () => {
 
   const { mutate: tryEditProgramBanner } = useEditProgramBannerMutation({
     onSuccess: async () => {
-      navigate('/admin/banner/program-banners', { replace: true });
+      router.replace('/admin/banner/program-banners');
     },
     onError: (error) => {
       console.error(error);

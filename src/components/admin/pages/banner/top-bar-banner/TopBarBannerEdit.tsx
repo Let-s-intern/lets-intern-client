@@ -5,16 +5,16 @@ import {
   useEditBannerForAdmin,
   useGetBannerDetailForAdmin,
 } from '@/api/banner';
-import EmptyContainer from '@components/common/ui/EmptyContainer';
-import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 import TopBarBannerInputContent from '@/components/admin/banner/top-bar-banner/TopBarBannerInputContent';
 import EditorTemplate from '@/components/admin/program/ui/editor/EditorTemplate';
+import EmptyContainer from '@components/common/ui/EmptyContainer';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 const TopBarBannerEdit = () => {
-  const navigate = useNavigate();
-  const params = useParams();
+  const router = useRouter();
+  const params = useParams<{ bannerId: string }>();
   const bannerId = Number(params.bannerId);
 
   const [value, setValue] = useState<BannerItemType>({
@@ -36,7 +36,7 @@ const TopBarBannerEdit = () => {
   const { mutate: editTopBarBanner } = useEditBannerForAdmin({
     successCallback: () => {
       alert('상단 띠 배너가 수정되었습니다.');
-      navigate('/admin/banner/top-bar-banners');
+      router.push('/admin/banner/top-bar-banners');
     },
     errorCallback: (error) => {
       alert(error);

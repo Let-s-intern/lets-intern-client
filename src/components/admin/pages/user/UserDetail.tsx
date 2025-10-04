@@ -1,12 +1,11 @@
-import { useNavigate, useParams } from 'react-router-dom';
-
 import { useUserDetailAdminQuery } from '@/api/user';
 import ActionButton from '@/components/admin/ui/button/ActionButton';
 import { gradeToText } from '@/utils/convert';
+import { useParams, useRouter } from 'next/navigation';
 
 const UserDetail = () => {
-  const params = useParams();
-  const navigate = useNavigate();
+  const params = useParams<{ userId: string }>();
+  const router = useRouter();
 
   const { data, isLoading } = useUserDetailAdminQuery({
     userId: Number(params.userId || 0),
@@ -104,7 +103,7 @@ const UserDetail = () => {
         )}
       </div>
       <div className="flex items-center justify-center gap-x-5">
-        <ActionButton bgColor="gray" onClick={() => navigate(-1)}>
+        <ActionButton bgColor="gray" onClick={() => router.back()}>
           이전
         </ActionButton>
         <ActionButton

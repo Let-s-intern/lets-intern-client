@@ -18,8 +18,9 @@ import Heading2 from '@components/admin/ui/heading/Heading2';
 import LexicalContent from '@components/common/blog/LexicalContent';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { Button } from '@mui/material';
+import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
 import { memo, useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
 import { AttendanceRow } from './FeedbackParticipantPage';
 
 const useLocalStorageState = () => {
@@ -46,7 +47,7 @@ const AttendanceInfoList = memo(function AttendanceInfoList() {
     `참여자 정보: ${attendance?.major} / ${attendance?.wishCompany} / ${attendance?.wishJob}`,
     <Link
       key={attendance?.link}
-      to={attendance?.link || '#'}
+      href={attendance?.link || '#'}
       className="text-primary underline"
       target="_blank"
       rel="noopener noreferrer"
@@ -65,7 +66,11 @@ const AttendanceInfoList = memo(function AttendanceInfoList() {
 });
 
 const useAttendanceFeedback = () => {
-  const { programId, missionId, userId } = useParams();
+  const { programId, missionId, userId } = useParams<{
+    programId: string;
+    missionId: string;
+    userId: string;
+  }>();
 
   const { data, isLoading } = useFeedbackAttendanceQuery({
     challengeId: programId,
@@ -145,8 +150,12 @@ const FeedbackEditorApp = ({
 };
 
 export default function ChallengeFeedbackPage() {
-  const navigate = useNavigate();
-  const { programId, missionId, userId } = useParams();
+  const router = useRouter();
+  const { programId, missionId, userId } = useParams<{
+    programId: string;
+    missionId: string;
+    userId: string;
+  }>();
 
   const { snackbar } = useAdminSnackbar();
   const { mutateAsync: patchAttendanceMentor } = usePatchAttendanceMentor();
@@ -187,7 +196,7 @@ export default function ChallengeFeedbackPage() {
       );
       if (!isConfirm) return;
     }
-    navigate(
+    router.push(
       `/admin/challenge/operation/${programId}/feedback/mission/${missionId}/participants`,
     );
   };

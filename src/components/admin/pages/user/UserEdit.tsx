@@ -7,12 +7,12 @@ import ActionButton from '@/components/admin/ui/button/ActionButton';
 import GradeDropdown from '@/components/common/mypage/privacy/form-control/GradeDropdown';
 import Input from '@/components/ui/input/Input';
 import { isValidEmail, isValidPhoneNumber } from '@/utils/valid';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 
 const UserEdit = () => {
-  const params = useParams();
-  const navigate = useNavigate();
+  const params = useParams<{ userId: string }>();
+  const router = useRouter();
   const [userForm, setUserForm] = useState<PatchUserType>({
     name: '',
     email: '',
@@ -35,7 +35,7 @@ const UserEdit = () => {
     userId: Number(params.userId || 0),
     successCallback: () => {
       alert('수정되었습니다.');
-      navigate(-1);
+      router.back();
     },
     errorCallback: (error: Error) => {
       console.log(error);
@@ -50,7 +50,7 @@ const UserEdit = () => {
   }, [data]);
 
   const handleCancelButtonClick = () => {
-    navigate(-1);
+    router.back();
   };
 
   const handleInputChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
