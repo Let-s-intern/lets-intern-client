@@ -9,8 +9,8 @@ import {
 import MoreButtonSection from '@components/admin/ui/section/MoreButtonSection';
 import ProgramRecommendEditor from '@components/ProgramRecommendEditor';
 import { Button } from '@mui/material';
+import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
 
 const defaultMoreButton: OperationRecommendMoreButton = {
   visible: false,
@@ -20,7 +20,7 @@ const defaultMoreButton: OperationRecommendMoreButton = {
 const defaultPrograms: ProgramRecommend = { list: [] };
 
 function ProgramRecommendSection() {
-  const params = useParams();
+  const params = useParams<{ programId: string }>();
   const programId = Number(params.programId);
 
   const { snackbar } = useAdminSnackbar();

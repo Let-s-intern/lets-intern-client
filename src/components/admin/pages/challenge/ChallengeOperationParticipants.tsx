@@ -6,7 +6,7 @@ import {
 import axios from '@/utils/axios';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useQuery } from '@tanstack/react-query';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'next/navigation';
 import { z } from 'zod';
 
 const gradeToText: Record<z.infer<typeof grade>, string> = {
@@ -95,7 +95,7 @@ const columns: GridColDef<ChallengeApplication['application']>[] = [
 ];
 
 const ChallengeOperationParticipants = () => {
-  const params = useParams();
+  const params = useParams<{ programId: string }>();
   const challengeId = params.programId;
 
   const { data } = useQuery({

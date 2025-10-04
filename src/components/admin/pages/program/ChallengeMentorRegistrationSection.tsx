@@ -10,8 +10,8 @@ import {
   MenuItem,
   SelectChangeEvent,
 } from '@mui/material';
+import { useParams } from 'next/navigation';
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
 
 const SelectedMentorNames = ({ selected }: { selected: number[] }) => {
   const { data } = useAdminUserMentorListQuery();
@@ -29,7 +29,8 @@ const SelectedMentorNames = ({ selected }: { selected: number[] }) => {
 };
 
 const useMentorSelect = () => {
-  const { challengeId } = useParams();
+  const params = useParams<{ challengeId: string }>();
+  const { challengeId } = params;
   const { data: challengeData } = useAdminChallengeMentorListQuery(challengeId);
 
   const defaultMentorIds =

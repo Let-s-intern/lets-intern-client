@@ -11,14 +11,15 @@ import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
 import { Button } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
+import { useParams } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
-import { useParams } from 'react-router-dom';
 import VodEditor from './program/VodEditor';
 
 const VodEdit: React.FC = () => {
   const { mutateAsync: patchVod } = usePatchVodMutation();
-  const { vodId: vodIdString } = useParams();
+  const params = useParams<{ vodId: string }>();
+  const { vodId: vodIdString } = params;
   const client = useQueryClient();
   const { data: vod } = useGetVodQuery({
     vodId: Number(vodIdString),

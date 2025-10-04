@@ -12,8 +12,8 @@ import {
   useGridApiContext,
 } from '@mui/x-data-grid';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { useParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import { z } from 'zod';
 
 type Payback = z.infer<
@@ -222,7 +222,7 @@ function Toolbar({
 }
 
 const ChallengeOperationPayback = () => {
-  const params = useParams();
+  const params = useParams<{ programId: string }>();
   const challengeId = params.programId;
   const challengeTitle = useAdminChallengeTitle();
   const [isPaybackModalOpen, setIsPaybackModalOpen] = useState(false);
