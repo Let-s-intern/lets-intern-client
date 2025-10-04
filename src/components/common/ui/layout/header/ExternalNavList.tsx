@@ -1,18 +1,16 @@
 import GlobalNavItem from './GlobalNavItem';
 
 interface Props {
-  isNextRouter: boolean;
   isLoggedIn: boolean;
   isAdmin: boolean | undefined;
 }
 
-function ExternalNavList({ isNextRouter, isLoggedIn, isAdmin }: Props) {
+function ExternalNavList({ isLoggedIn, isAdmin }: Props) {
   return (
     <div className="hidden items-center gap-1 md:flex">
       <GlobalNavItem
         className="notice_gnb text-xsmall16 font-normal text-neutral-30"
         href="https://letscareer.oopy.io"
-        isNextRouter={isNextRouter}
         target="_blank"
         rel="noopener noreferrer"
       >
@@ -24,7 +22,6 @@ function ExternalNavList({ isNextRouter, isLoggedIn, isAdmin }: Props) {
       <GlobalNavItem
         className="q&a_gnb text-xsmall16 font-normal text-neutral-30"
         href="https://letscareer.oopy.io"
-        isNextRouter={isNextRouter}
         target="_blank"
         rel="noopener noreferrer"
       >
@@ -34,8 +31,6 @@ function ExternalNavList({ isNextRouter, isLoggedIn, isAdmin }: Props) {
         <GlobalNavItem
           className="ml-4 inline-block text-xsmall16 font-normal text-neutral-30"
           href="/admin"
-          isNextRouter={isNextRouter}
-          force
         >
           관리자 페이지
         </GlobalNavItem>

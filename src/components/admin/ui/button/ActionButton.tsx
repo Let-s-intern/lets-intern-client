@@ -1,5 +1,5 @@
 import { twMerge } from '@/lib/twMerge';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
 
 type BackgroundColor = 'red' | 'green' | 'blue' | 'lightBlue' | 'gray';
@@ -30,7 +30,20 @@ const ActionButton = ({
   className,
   disabled,
 }: ActionButtonProps) => {
-  const navigate = useNavigate();
+  const router = useRouter();
+
+  const handleClick = () => {
+    // onClick 콜백이 있으면 실행
+    onClick?.();
+
+    if (to) {
+      if (to === '-1') {
+        router.back();
+      } else {
+        router.push(to);
+      }
+    }
+  };
 
   return (
     <ActionButtonBlock
@@ -42,10 +55,7 @@ const ActionButton = ({
       )}
       $bgColor={bgColor}
       $width={width}
-      onClick={() => {
-        onClick && onClick();
-        to && (to === '-1' ? navigate(-1) : navigate(to));
-      }}
+      onClick={handleClick}
       disabled={disabled}
     >
       {children}

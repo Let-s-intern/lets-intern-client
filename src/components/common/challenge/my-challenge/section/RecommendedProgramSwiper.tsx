@@ -2,7 +2,8 @@ import { useGetChallengeTitle } from '@/api/challenge';
 import useGoogleAnalytics from '@/hooks/useGoogleAnalytics';
 import { ProgramRecommend } from '@/types/interface';
 import { ChevronRight } from 'lucide-react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'next/navigation';
+import HybridLink from '../../../ui/HybridLink';
 import 'swiper/css';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
@@ -15,7 +16,7 @@ interface Props {
 }
 
 function RecommendedProgramSwiper({ programs }: Props) {
-  const params = useParams();
+  const params = useParams<{ programId: string }>();
   const programId = params.programId;
 
   const trackEvent = useGoogleAnalytics();
@@ -80,12 +81,12 @@ function RecommendedProgramSwiper({ programs }: Props) {
                   </div>
                 </div>
 
-                <Link to={url} className="flex justify-between" reloadDocument>
+                <HybridLink href={url} className="flex justify-between">
                   <span className="font-medium text-neutral-0">
                     {item.recommendCTA || '자세히 보기'}
                   </span>
                   <ChevronRight className="mt-0.5" size={20} color="#CFCFCF" />
-                </Link>
+                </HybridLink>
               </div>
             </SwiperSlide>
           );

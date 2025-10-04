@@ -5,8 +5,8 @@ import { AttendanceResult, AttendanceStatus } from '@/schema';
 import { useMissionStore } from '@/store/useMissionStore';
 import { BONUS_MISSION_TH } from '@/utils/constants';
 import { clsx } from 'clsx';
+import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import BonusMissionModal from '../../BonusMissionModal';
 import DashboardCreateReviewModal from '../../dashboard/modal/DashboardCreateReviewModal';
 import MobileReviewModal from '../../MobileReviewModal';
@@ -39,7 +39,7 @@ const MissionSubmitRegularSection = ({
   onRefreshMissionData,
   onSubmitLastMission,
 }: MissionSubmitRegularSectionProps) => {
-  const params = useParams();
+  const params = useParams<{ applicationId: string; programId: string }>();
 
   const { selectedMissionId, setSelectedMission } = useMissionStore();
   const { schedules, currentChallenge, refetchSchedules } =

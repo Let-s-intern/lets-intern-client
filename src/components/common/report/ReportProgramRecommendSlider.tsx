@@ -1,9 +1,9 @@
 import { useGetProgramRecommend } from '@/api/program';
 import { ReportType } from '@/api/report';
 import dayjs from '@/lib/dayjs';
-import { personalStatementColors } from '@/router-pages/common/report/ReportPersonalStatementPage';
-import { resumeColors } from '@/router-pages/common/report/ReportResumePage';
 import { ReportProgramRecommend } from '@/types/interface';
+import { personalStatementColors } from '@components/page/ReportPersonalStatementPage';
+import { resumeColors } from '@components/page/ReportResumePage';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import ProgramRecommendSlider from '../ui/ProgramRecommendSlider';

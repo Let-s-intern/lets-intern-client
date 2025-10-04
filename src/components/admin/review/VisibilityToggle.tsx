@@ -1,6 +1,6 @@
 import { usePatchAdminAttendance } from '@/api/attendance';
 import { ReviewType, useUpdateAdminProgramReview } from '@/api/review';
-import { Row } from '@/router-pages/admin/review/AdminChallengeReviewListPage';
+import { Row } from '@/components/admin/pages/review/AdminChallengeReviewListPage';
 import { Switch } from '@mui/material';
 
 const VisibilityToggle = ({ type, row }: { type: ReviewType; row: Row }) => {

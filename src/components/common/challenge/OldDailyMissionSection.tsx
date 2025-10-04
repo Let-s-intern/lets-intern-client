@@ -1,13 +1,15 @@
 import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import { DailyMission } from '@/schema';
-import { Link, useParams } from 'react-router-dom';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
 const OldDailyMissionSection = ({
   dailyMission,
 }: {
   dailyMission: DailyMission;
 }) => {
-  const applicationId = useParams().applicationId;
+  const params = useParams<{ applicationId: string }>();
+  const applicationId = params.applicationId;
   const { currentChallenge } = useOldCurrentChallenge();
   return (
     <section className="flex flex-1 flex-col rounded-xl border border-[#E4E4E7] p-6">
@@ -23,7 +25,7 @@ const OldDailyMissionSection = ({
         {dailyMission?.description}
       </p>
       <Link
-        to={`/old/challenge/${applicationId}/${currentChallenge?.id}/me?scroll_to=daily-mission`}
+        href={`/old/challenge/${applicationId}/${currentChallenge?.id}/me?scroll_to=daily-mission`}
         className="mt-4 w-full rounded-xxs bg-primary px-4 py-3 text-center font-semibold text-white"
       >
         {dailyMission?.th}회차 미션 수행하기

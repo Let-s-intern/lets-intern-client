@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import useAuthStore from '../../../../../../store/useAuthStore';
 import { ProgramType } from '../../../../../../types/common';
 import { newProgramTypeToText } from '../../../../../../utils/convert';
@@ -23,11 +23,11 @@ const ScheduleContent = ({
   isApplied,
 }: ScheduleContentProps) => {
   const { isLoggedIn } = useAuthStore();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleNextButtonClick = () => {
     if (!isLoggedIn) {
-      navigate(`/login?redirect=${window.location.pathname}`);
+      router.push(`/login?redirect=${window.location.pathname}`);
       return;
     }
     setContentIndex(contentIndex + 1);

@@ -1,10 +1,10 @@
 import { useReadGuides } from '@/hooks/useReadItems';
-import { TabMenu } from '@/router-pages/common/challenge/ChallengeGuidePage';
 import { ChallengeGuide } from '@/schema';
+import NoticeGuideLink from '@components/common/challenge/NoticeGuideLink';
+import HybridLink from '@components/common/ui/HybridLink';
+import { TabMenu } from '@components/pages/challenge/ChallengeGuidePage';
 import clsx from 'clsx';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import NoticeGuideLink from '../../NoticeGuideLink';
 
 interface GuideSection {
   guides: ChallengeGuide[];
@@ -41,9 +41,9 @@ const GuideSection = ({ guides }: GuideSection) => {
         ) : (
           <ul className="flex flex-1 flex-col gap-1.5">
             {currentGuideList.map((guide) => (
-              <Link
+              <HybridLink
                 key={guide.id}
-                to={guide.link ?? ''}
+                href={guide.link ?? ''}
                 className="flex items-center gap-2 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-[#333333] hover:underline"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -57,7 +57,7 @@ const GuideSection = ({ guides }: GuideSection) => {
                     className="h-3 w-3"
                   />
                 )}
-              </Link>
+              </HybridLink>
             ))}
             {currentGuideList.length < 3 &&
               Array.from(

@@ -1,8 +1,8 @@
 import { Schedule } from '@/schema';
 import { missionSubmitToBadge } from '@/utils/convert';
 import clsx from 'clsx';
-import { Link, useParams } from 'react-router-dom';
-
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 interface Props {
   className?: string;
   schedule: Schedule;
@@ -10,7 +10,7 @@ interface Props {
 }
 
 const OldMissionIcon = ({ className, schedule, isDone }: Props) => {
-  const params = useParams();
+  const params = useParams<{ programId: string; applicationId: string }>();
   const mission = schedule.missionInfo;
   const attendance = schedule.attendanceInfo;
 
@@ -21,7 +21,7 @@ const OldMissionIcon = ({ className, schedule, isDone }: Props) => {
   return (
     <>
       <Link
-        to={
+        href={
           !isDone
             ? `/old/challenge/${params.applicationId}/${params.programId}/me?scroll_to_mission=${mission.id}`
             : '#'

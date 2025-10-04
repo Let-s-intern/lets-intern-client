@@ -12,8 +12,8 @@ import {
 import useAuthStore from '@/store/useAuthStore';
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
+import { useParams } from 'next/navigation';
 import { createContext, useContext } from 'react';
-import { useParams } from 'react-router-dom';
 import { z } from 'zod';
 
 type CurrentChallenge = z.infer<typeof getChallengeIdSchema> & { id: number };
@@ -43,7 +43,7 @@ export const OldCurrentChallengeProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const params = useParams();
+  const params = useParams<{ programId: string }>();
   const { isLoggedIn } = useAuthStore();
 
   const { data: currentChallenge } = useQuery({
