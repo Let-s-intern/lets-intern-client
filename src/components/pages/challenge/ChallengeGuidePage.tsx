@@ -147,7 +147,7 @@ const ChallengeGuidePage = () => {
       <section className="mb-2 md:mb-6">
         <h2
           id="guide-heading"
-          className="text-medium22 font-semibold text-neutral-0"
+          className="mt-8 text-medium22 font-semibold text-neutral-0 md:mt-0"
         >
           공지사항 / 챌린지 가이드
         </h2>
