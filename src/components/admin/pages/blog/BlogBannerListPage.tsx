@@ -12,15 +12,15 @@ import {
   GridRowParams,
 } from '@mui/x-data-grid';
 import { Pencil, Trash } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 type Row = {
   id: number;
 } & AdminBlogBannerListItem;
 
 export default function BlogBannerListPage() {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const { data } = useGetAdminBlogBannerList();
   const patch = usePatchAdminBlogBanner();
@@ -78,7 +78,7 @@ export default function BlogBannerListPage() {
             key={'edit' + id}
             icon={<Pencil size={20} />}
             label="Edit"
-            onClick={() => navigate(`/admin/blog/banner/edit/${id}`)}
+            onClick={() => router.push(`/admin/blog/banner/edit/${id}`)}
           />,
           <GridActionsCellItem
             key={'delete' + id}
@@ -98,7 +98,7 @@ export default function BlogBannerListPage() {
         <Button
           className="h-fit"
           variant="outlined"
-          onClick={() => navigate('/admin/blog/banner/create')}
+          onClick={() => router.push('/admin/blog/banner/create')}
         >
           등록
         </Button>

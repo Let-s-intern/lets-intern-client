@@ -38,8 +38,8 @@ import {
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { isAxiosError } from 'axios';
 import { Dayjs } from 'dayjs';
+import { useRouter } from 'next/navigation';
 import { ChangeEvent, FormEvent, MouseEvent, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 // const maxCtaTextLength = 23;
 const maxTitleLength = 49;
@@ -63,7 +63,7 @@ const initialContent: BlogContent = {
 };
 
 const BlogCreatePage = () => {
-  const navgiate = useNavigate();
+  const router = useRouter();
 
   const [editingValue, setEditingValue] =
     useState<Omit<PostBlogReqBody, 'content'>>(initialBlog);
@@ -433,7 +433,7 @@ const BlogCreatePage = () => {
                 variant="outlined"
                 type="button"
                 onClick={() => {
-                  navgiate('/admin/blog/list');
+                  router.push('/admin/blog/list');
                 }}
               >
                 취소 (리스트로 돌아가기)

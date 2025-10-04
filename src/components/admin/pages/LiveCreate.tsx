@@ -23,13 +23,13 @@ import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
 import Heading2 from '@components/admin/ui/heading/Heading2';
 import { Button, Checkbox, FormControlLabel, TextField } from '@mui/material';
+import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
 import ProgramSchedule from './program/ProgramSchedule';
 
 const LiveCreate: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { snackbar } = useAdminSnackbar();
 
   const [loading, setLoading] = useState(false);
@@ -103,8 +103,8 @@ const LiveCreate: React.FC = () => {
 
     setLoading(false);
     snackbar('라이브가 생성되었습니다.');
-    navigate('/admin/programs');
-  }, [input, content, postLive, snackbar, navigate]);
+    router.push('/admin/programs');
+  }, [input, content, postLive, snackbar, router]);
 
   const [importJsonString, setImportJsonString] = useState('');
   const [importProcessing, setImportProcessing] = useState(false);

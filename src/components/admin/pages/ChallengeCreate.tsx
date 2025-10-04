@@ -32,9 +32,9 @@ import Heading from '@components/admin/ui/heading/Heading';
 import Heading2 from '@components/admin/ui/heading/Heading2';
 import Heading3 from '@components/admin/ui/heading/Heading3';
 import { Button, TextField } from '@mui/material';
+import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
 import ChallengeFaqCategory from './program/ChallengeFaqCategory';
 import ChallengeMentorRegistrationSection from './program/ChallengeMentorRegistrationSection';
 import ProgramSchedule from './program/ProgramSchedule';
@@ -79,7 +79,7 @@ const initialInput: Omit<CreateChallengeReq, 'desc'> = {
  * 챌린지 생성 페이지
  */
 const ChallengeCreate: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { snackbar } = useAdminSnackbar();
 
   /** 챌린지  */
@@ -172,13 +172,13 @@ const ChallengeCreate: React.FC = () => {
 
     setLoading(false);
     snackbar('챌린지가 생성되었습니다.');
-    navigate('/admin/programs');
+    router.push('/admin/programs');
   }, [
     input,
     content,
     postChallenge,
     snackbar,
-    navigate,
+    router,
     premiumOptIds,
     pricePlan,
     premiumInfo,

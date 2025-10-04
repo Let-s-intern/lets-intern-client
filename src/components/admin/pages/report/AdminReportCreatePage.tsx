@@ -27,9 +27,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { ChangeEvent, useState } from 'react';
 import { FaTrashCan } from 'react-icons/fa6';
-import { useNavigate } from 'react-router-dom';
 import AdminReportActiveGuide from './AdminReportActiveGuide';
 
 const initialReport: Omit<CreateReportData, 'contents'> = {
@@ -53,7 +53,7 @@ const initialContent = {
 };
 
 const AdminReportCreatePage = () => {
-  const navgiate = useNavigate();
+  const router = useRouter();
 
   const [editingValue, setEditingValue] =
     useState<Omit<CreateReportData, 'contents'>>(initialReport);
@@ -142,7 +142,7 @@ const AdminReportCreatePage = () => {
 
     setSnackbar('서류 진단이 생성되었습니다.');
 
-    navgiate('/admin/report/list');
+    router.push('/admin/report/list');
   };
 
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -592,7 +592,7 @@ const AdminReportCreatePage = () => {
               variant="outlined"
               type="button"
               onClick={() => {
-                navgiate('/admin/report/list');
+                router.push('/admin/report/list');
               }}
             >
               취소 (리스트로 돌아가기)

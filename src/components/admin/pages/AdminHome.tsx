@@ -1,12 +1,12 @@
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const AdminHome = () => {
-  const navgiate = useNavigate();
+  const router = useRouter();
 
   useEffect(() => {
-    navgiate('/admin/programs');
-  }, [navgiate]);
+    router.push('/admin/programs');
+  }, [router]);
 
   return <></>;
 };

@@ -1,14 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { BannerItemType, usePostBannerForAdmin } from '@/api/banner';
 import PopUpBannerInputContent from '@/components/admin/banner/pop-up-banner/PopUpBannerInputContent';
 import EditorTemplate from '@/components/admin/program/ui/editor/EditorTemplate';
+import { useRouter } from 'next/navigation';
 
 const PopUpBannerCreate = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const [value, setValue] = useState<BannerItemType>({
     title: '',
@@ -22,7 +22,7 @@ const PopUpBannerCreate = () => {
   const { mutate: addPopUpBanner } = usePostBannerForAdmin({
     successCallback: () => {
       alert('팝업이 등록되었습니다.');
-      navigate('/admin/banner/pop-up');
+      router.push('/admin/banner/pop-up');
     },
     errorCallback: (error) => {
       alert(error);

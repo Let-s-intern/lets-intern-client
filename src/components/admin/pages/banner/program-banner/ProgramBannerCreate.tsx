@@ -2,15 +2,15 @@
 
 import { BannerItemType } from '@/api/banner';
 import { useCreateProgramBannerMutation } from '@/api/program';
-import { useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import ProgramBannerInputContent from '@/components/admin/banner/program-banner/ProgramBannerInputContent';
 import EditorTemplate from '@/components/admin/program/ui/editor/EditorTemplate';
+import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 const ProgramBannerCreate = () => {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const [value, setValue] = useState<BannerItemType>({
     title: '',
@@ -26,7 +26,7 @@ const ProgramBannerCreate = () => {
   const { mutate: tryCreateProgramBanner } = useCreateProgramBannerMutation({
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['banner'] });
-      navigate('/admin/banner/program-banners');
+      router.push('/admin/banner/program-banners');
     },
     onError: (error) => {
       console.error(error);

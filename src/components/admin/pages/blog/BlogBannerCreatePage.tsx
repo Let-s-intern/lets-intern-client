@@ -9,11 +9,11 @@ import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Heading from '@components/admin/ui/heading/Heading';
 import { Button, TextField } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers';
+import { useRouter } from 'next/navigation';
 import { ChangeEvent, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const BlogBannerCreatePage = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const [reqBody, setReqBody] = useState<PostAdminBlogBannerReqBody>({
     title: '',
@@ -105,7 +105,7 @@ const BlogBannerCreatePage = () => {
           </Button>
           <Button
             variant="outlined"
-            onClick={() => navigate('/admin/blog/banner')}
+            onClick={() => router.push('/admin/blog/banner')}
           >
             취소
           </Button>
