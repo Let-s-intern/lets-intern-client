@@ -21,7 +21,7 @@ const MyChallengeDashboard = () => {
 
   return (
     <main className="px-5 md:px-0 md:pl-12">
-      <h2 className="text-medium22 font-semibold">나의 미션</h2>
+      <h2 className="mt-8 text-medium22 font-semibold md:mt-0">나의 미션</h2>
       <MissionCalendarSection
         schedules={schedules}
         todayTh={todayTh}
@@ -48,7 +48,7 @@ const MyChallengeDashboard = () => {
       </div>
       <Link
         to={`/challenge/${applicationId}/${params.programId}`}
-        className="flex gap-2 text-neutral-35 md:hidden"
+        className="flex gap-2 pb-10 text-neutral-35 md:hidden md:pb-0"
       >
         <img src="/icons/Arrow_Left.svg" alt="대시보드" />
         <span>대시보드로 돌아가기</span>
