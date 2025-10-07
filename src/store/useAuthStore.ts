@@ -1,26 +1,59 @@
+import { inferExpFromJwtMs, TokenSet } from '@/utils/auth';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-interface AuthStore {
+export interface AuthStore {
+  token: TokenSet | null;
   isLoggedIn: boolean;
-  accessToken?: string;
-  refreshToken?: string;
   login: (accessToken: string, refreshToken: string) => void;
   logout: () => void;
+  setToken: (tokens: TokenSet | null) => void;
 }
 
 const useAuthStore = create(
   persist<AuthStore>(
     (set) => ({
+      token: null,
       isLoggedIn: false,
       login: (accessToken, refreshToken) => {
-        set({ accessToken, refreshToken, isLoggedIn: true });
+        const accessTokenExpiresAt = inferExpFromJwtMs(accessToken);
+        const refreshTokenExpiresAt = inferExpFromJwtMs(refreshToken);
+        if (!accessTokenExpiresAt || !refreshTokenExpiresAt) {
+          throw new Error('Invalid token format');
+        }
+        set({
+          token: {
+            accessToken,
+            refreshToken,
+            accessExpiresAt: accessTokenExpiresAt,
+            refreshExpiresAt: refreshTokenExpiresAt,
+          },
+          isLoggedIn: true,
+        });
       },
       logout: () => {
         set({
-          accessToken: undefined,
-          refreshToken: undefined,
           isLoggedIn: false,
+        });
+      },
+      setToken: (token) => {
+        if (
+          !token ||
+          !token.accessToken ||
+          !token.refreshToken ||
+          !token.accessExpiresAt ||
+          !token.refreshExpiresAt
+        ) {
+          set({
+            token: null,
+            isLoggedIn: false,
+          });
+          return;
+        }
+
+        set({
+          token,
+          isLoggedIn: true,
         });
       },
     }),
