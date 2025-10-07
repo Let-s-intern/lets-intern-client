@@ -10,142 +10,70 @@ export type TokenSet = {
 };
 
 export type RequireAuthReason =
-  | 'bootstrap-no-refresh'
-  | 'refresh-fail'
   | '401'
-  | 'invalid-token-error';
+  | 'invalid-token-error'
+  | 'refresh-expired'
+  | 'refresh-failed'
+  | 'unexpected-401';
 
-const DEFAULT_SKEW_MS = 60_000;
-
+const THIRTY_SECONDS_MS = 30_000;
 const REFRESH_PATH =
-  process.env.NEXT_PUBLIC_API_BASE_PATH + '/api/v2/user/token';
+  (process.env.NEXT_PUBLIC_API_BASE_PATH ?? '') + '/api/v2/user/token';
 
-let rehydrated = false;
+let storeRehydrated = false;
 let tokens: TokenSet | null = null;
 let readyPromise: Promise<void> | null = null;
 let refreshPromise: Promise<boolean> | null = null;
 let requireAuthHandler: ((reason: RequireAuthReason) => void) | null = null;
-let refreshExecutor: (refreshToken: string) => Promise<TokenSet | null>;
 
 export function inferExpFromJwtMs(token?: string | null): EpochMs | null {
-  if (!token) {
-    return null;
-  }
+  if (!token) return null;
   const parts = token.split('.');
-  if (parts.length !== 3) {
-    return null;
-  }
-
+  if (parts.length !== 3) return null;
   try {
-    const payloadBase64 = parts[1]!;
-    const buf = Buffer.from(payloadBase64, 'base64');
-    const decoded = buf.toString('utf-8');
-    const payload = JSON.parse(decoded);
-
-    if (typeof payload.exp !== 'number') return null;
-    return payload.exp * 1000;
+    const payload = JSON.parse(
+      Buffer.from(parts[1]!, 'base64').toString('utf-8'),
+    );
+    return typeof payload.exp === 'number' ? payload.exp * 1000 : null;
   } catch {
     return null;
   }
 }
 
-function isMissingOrExpired(
-  exp?: EpochMs | null,
-  skewMs = DEFAULT_SKEW_MS,
-): boolean {
-  if (!exp) return true;
-  return Date.now() >= exp - skewMs;
+function getNow(): number {
+  return Date.now();
 }
 
-function hasAnyToken(stack: TokenSet | null): boolean {
-  return Boolean(stack?.accessToken || stack?.refreshToken);
-}
-
-function normalizeTokenSet(t: TokenSet | null): TokenSet | null {
-  if (!t) return null;
-  const accessExpiresAt =
-    t.accessExpiresAt ?? inferExpFromJwtMs(t.accessToken ?? null);
-  const refreshExpiresAt =
-    t.refreshExpiresAt ?? inferExpFromJwtMs(t.refreshToken ?? null);
-  return {
-    accessToken: t.accessToken ?? null,
-    refreshToken: t.refreshToken ?? null,
-    accessExpiresAt: accessExpiresAt ?? null,
-    refreshExpiresAt: refreshExpiresAt ?? null,
-  };
-}
-
-function parseEpochMs(value: unknown): number | null {
-  if (value == null) return null;
-  if (typeof value === 'number') {
-    return normalizeEpoch(value);
+function asEpochMs(value: unknown): EpochMs | null {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return value > 1e11 ? Math.floor(value) : Math.floor(value * 1000);
   }
-  if (typeof value === 'string') {
-    const trimmed = value.trim();
-    if (!trimmed) return null;
-    const numeric = Number(trimmed);
+  if (typeof value === 'string' && value.trim()) {
+    const numeric = Number(value);
     if (!Number.isNaN(numeric)) {
-      return normalizeEpoch(numeric);
+      return numeric > 1e11 ? Math.floor(numeric) : Math.floor(numeric * 1000);
     }
-    const date = Date.parse(trimmed);
-    if (!Number.isNaN(date)) return date;
   }
   return null;
 }
 
-function normalizeEpoch(input: number): number | null {
-  if (!Number.isFinite(input)) return null;
-  if (input > 1e12) return input; // already ms precision
-  if (input > 1e10) return Math.floor(input); // assume ms but as float
-  if (input > 0) return Math.floor(input * 1000);
-  return null;
+function isExpiringSoon(exp: number | null | undefined): boolean {
+  if (!exp) return true;
+  return exp - getNow() <= THIRTY_SECONDS_MS;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function mapRefreshResponse(json: any): TokenSet {
-  const root = json?.data ?? json ?? {};
-  const payload = root?.data ?? root;
-  const accessToken = payload?.accessToken ?? payload?.access_token ?? null;
-  const refreshToken = payload?.refreshToken ?? payload?.refresh_token ?? null;
-  const accessExpiresAt =
-    parseEpochMs(
-      payload?.accessExpiresAt ??
-        payload?.access_exp ??
-        payload?.accessTokenExpiredAt ??
-        payload?.accessTokenExpiresAt,
-      // 23 hours
-    ) ?? 23 * 60 * 60 * 1000 + Date.now();
-  const refreshExpiresAt =
-    parseEpochMs(
-      payload?.refreshExpiresAt ??
-        payload?.refresh_exp ??
-        payload?.refreshTokenExpiredAt ??
-        payload?.refreshTokenExpiresAt,
-      // 6 days
-    ) ?? 6 * 24 * 60 * 60 * 1000 + Date.now();
-  return {
-    accessToken,
-    refreshToken,
-    accessExpiresAt,
-    refreshExpiresAt,
-  };
+function hasTokenShape(value: TokenSet | null): value is TokenSet {
+  return (
+    !!value &&
+    typeof value.accessToken === 'string' &&
+    typeof value.refreshToken === 'string' &&
+    typeof value.accessExpiresAt === 'number' &&
+    typeof value.refreshExpiresAt === 'number'
+  );
 }
 
-function applyTokensToStore(next: TokenSet | null) {
-  useAuthStore.getState().setToken(next);
-}
-
-function setTokens(next: TokenSet | null) {
-  tokens = normalizeTokenSet(next);
-  applyTokensToStore(tokens);
-}
-
-function getTokens(): TokenSet | null {
-  return tokens;
-}
-
-async function ensureStoreRehydrated() {
-  if (rehydrated) return;
+async function rehydrateStore(): Promise<void> {
+  if (storeRehydrated) return;
   const persistApi = (
     useAuthStore as unknown as {
       persist?: { rehydrate?: () => Promise<void> | void };
@@ -154,28 +82,23 @@ async function ensureStoreRehydrated() {
   if (persistApi?.rehydrate) {
     await persistApi.rehydrate();
   }
-  rehydrated = true;
+  storeRehydrated = true;
 }
 
-async function loadTokens(): Promise<TokenSet | null> {
-  await ensureStoreRehydrated();
-  const state = useAuthStore.getState();
-  const snapshot: TokenSet | null = state.token;
-  return normalizeTokenSet(snapshot);
+function applyTokens(next: TokenSet | null) {
+  tokens = next;
+  useAuthStore.getState().setToken(next);
 }
 
-function getSkewMs(): number {
-  const fromEnv = Number(process.env.NEXT_PUBLIC_AUTH_SKEW_MS);
-  if (Number.isFinite(fromEnv) && fromEnv >= 0) {
-    return fromEnv;
-  }
-  return DEFAULT_SKEW_MS;
+function readTokensFromStore(): TokenSet | null {
+  const snapshot = useAuthStore.getState().token;
+  return hasTokenShape(snapshot) ? snapshot : null;
 }
 
-async function hardReset(reason: RequireAuthReason) {
-  setTokens(null);
+async function requireAuth(reason: RequireAuthReason): Promise<void> {
+  applyTokens(null);
   const handler = requireAuthHandler ?? defaultRequireAuthHandler;
-  handler?.(reason);
+  handler(reason);
 }
 
 function defaultRequireAuthHandler(reason: RequireAuthReason) {
@@ -184,14 +107,12 @@ function defaultRequireAuthHandler(reason: RequireAuthReason) {
     typeof window.location?.reload === 'function'
   ) {
     // eslint-disable-next-line no-console
-    console.warn('[auth] reloading page due to auth requirement:', reason);
+    console.warn('[auth] resetting session due to', reason);
     window.location.reload();
   }
 }
 
-async function defaultRefreshExecutor(
-  refreshToken: string,
-): Promise<TokenSet | null> {
+async function requestRefresh(refreshToken: string): Promise<TokenSet | null> {
   const response = await fetch(REFRESH_PATH, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
@@ -199,53 +120,90 @@ async function defaultRefreshExecutor(
     body: JSON.stringify({ refreshToken }),
   });
 
-  let json: any = null;
+  let payload: unknown = null;
   try {
-    json = await response.json();
+    payload = await response.json();
   } catch {
-    if (response.ok) {
-      json = {};
-    }
+    payload = null;
   }
 
   if (!response.ok) {
-    const statusText = response.statusText || 'Unknown error';
-    throw new Error(
-      `Refresh request failed with status ${response.status}: ${statusText}`,
-    );
+    const error = new Error(`refresh-${response.status}`);
+    (error as Error & { status?: number }).status = response.status;
+    throw error;
   }
 
-  return mapRefreshResponse(json ?? {});
+  return mapRefreshResponse(payload);
 }
 
-refreshExecutor = defaultRefreshExecutor;
+function mapRefreshResponse(payload: unknown): TokenSet | null {
+  if (!payload || typeof payload !== 'object') return null;
+  const root = (payload as { data?: unknown }).data ?? payload;
+  const data = (root as { data?: unknown }).data ?? root;
 
-async function refreshOnce(): Promise<boolean> {
-  if (refreshPromise) return refreshPromise;
+  if (!data || typeof data !== 'object') return null;
+
+  const record = data as Record<string, unknown>;
+  const accessToken = record.accessToken ?? record.access_token;
+  const refreshToken = record.refreshToken ?? record.refresh_token;
+  const accessExpiresAtRaw =
+    record.accessExpiresAt ??
+    record.access_expires_at ??
+    record.accessTokenExpiresAt;
+  const refreshExpiresAtRaw =
+    record.refreshExpiresAt ??
+    record.refresh_expires_at ??
+    record.refreshTokenExpiresAt;
+
+  if (typeof accessToken !== 'string' || typeof refreshToken !== 'string') {
+    return null;
+  }
+
+  const accessExpiresAt =
+    asEpochMs(accessExpiresAtRaw) ?? inferExpFromJwtMs(accessToken);
+  const refreshExpiresAt =
+    asEpochMs(refreshExpiresAtRaw) ?? inferExpFromJwtMs(refreshToken);
+
+  if (!accessExpiresAt || !refreshExpiresAt) {
+    return null;
+  }
+
+  return {
+    accessToken,
+    refreshToken,
+    accessExpiresAt,
+    refreshExpiresAt,
+  };
+}
+
+async function refreshTokens(): Promise<boolean> {
+  if (!tokens?.refreshToken) return false;
+
+  if (isExpiringSoon(tokens.refreshExpiresAt)) {
+    await requireAuth('refresh-expired');
+    return false;
+  }
+
+  if (refreshPromise) {
+    return refreshPromise;
+  }
 
   refreshPromise = (async () => {
     try {
-      if (
-        !tokens?.refreshToken ||
-        isMissingOrExpired(tokens.refreshExpiresAt, 0)
-      ) {
+      const next = await requestRefresh(tokens!.refreshToken);
+      if (!next) {
+        await requireAuth('refresh-failed');
         return false;
       }
-      const raw = await refreshExecutor(tokens.refreshToken);
-      const next = normalizeTokenSet(raw);
-      if (!next?.accessToken) {
-        return false;
-      }
-      setTokens(next);
+      applyTokens(next);
       return true;
     } catch (err) {
-      const details =
-        err instanceof Error
-          ? err.message
-          : typeof err === 'string'
-            ? err
-            : JSON.stringify(err);
-      console.error('[auth] token refresh failed', details);
+      const status = (err as Error & { status?: number }).status;
+      if (status === 401) {
+        await requireAuth('unexpected-401');
+      } else {
+        await requireAuth('refresh-failed');
+      }
       return false;
     } finally {
       refreshPromise = null;
@@ -256,99 +214,72 @@ async function refreshOnce(): Promise<boolean> {
 }
 
 async function bootstrap(): Promise<void> {
-  if (readyPromise) return readyPromise;
+  if (!readyPromise) {
+    readyPromise = (async () => {
+      await rehydrateStore();
+      const initial = readTokensFromStore();
+      applyTokens(initial);
 
-  readyPromise = (async () => {
-    setTokens(await loadTokens());
-
-    if (!hasAnyToken(tokens)) return;
-
-    const skewMs = getSkewMs();
-    const accessBad = isMissingOrExpired(tokens?.accessExpiresAt, 0);
-    const refreshBad = isMissingOrExpired(tokens?.refreshExpiresAt, 0);
-
-    if (accessBad && refreshBad) {
-      await hardReset('bootstrap-no-refresh');
-      return;
-    }
-
-    if (isMissingOrExpired(tokens?.accessExpiresAt, skewMs) && !refreshBad) {
-      const ok = await refreshOnce();
-      if (!ok) {
-        await hardReset('refresh-fail');
+      if (!hasTokenShape(initial)) {
+        return;
       }
-    }
-  })();
+
+      if (isExpiringSoon(initial.refreshExpiresAt)) {
+        await requireAuth('refresh-expired');
+        return;
+      }
+
+      if (isExpiringSoon(initial.accessExpiresAt)) {
+        await refreshTokens();
+      }
+    })();
+  }
 
   await readyPromise;
 }
 
 async function ready(): Promise<void> {
-  if (!readyPromise) {
-    await bootstrap();
-    return;
-  }
-  await readyPromise;
+  await bootstrap();
 }
 
-async function waitForRefresh(): Promise<void> {
-  if (refreshPromise) {
-    await refreshPromise;
-  }
+async function ensureValidAccessToken(): Promise<boolean> {
+  await ready();
+  if (!hasTokenShape(tokens)) return false;
+  if (!isExpiringSoon(tokens.accessExpiresAt)) return true;
+  return refreshTokens();
 }
 
-function needsPreemptiveRefresh(): boolean {
-  if (!tokens?.accessToken) return false;
-  const skewMs = getSkewMs();
-  const accessSoon = isMissingOrExpired(tokens.accessExpiresAt, skewMs);
-  const refreshOk =
-    !!tokens.refreshToken && !isMissingOrExpired(tokens.refreshExpiresAt, 0);
-  return accessSoon && refreshOk;
-}
-
-export function getAuthHeader(): null | {
-  Authorization: string;
-} {
-  if (tokens?.accessToken) {
-    return {
-      Authorization: `Bearer ${tokens.accessToken}`,
-    };
-  }
-  return null;
+function getTokens(): TokenSet | null {
+  return tokens;
 }
 
 function hasTokens(): boolean {
-  return hasAnyToken(tokens);
+  return hasTokenShape(tokens);
+}
+
+function getAuthHeader(): { Authorization: string } | null {
+  if (!tokens?.accessToken) return null;
+  return { Authorization: `Bearer ${tokens.accessToken}` };
 }
 
 function setRequireAuthHandler(handler: (reason: RequireAuthReason) => void) {
   requireAuthHandler = handler;
 }
 
-function setRefreshExecutorForTests(
-  executor: (refreshToken: string) => Promise<TokenSet | null>,
-) {
-  refreshExecutor = executor;
-}
-
-function resetForTests() {
-  rehydrated = false;
-  readyPromise = null;
-  refreshPromise = null;
-  requireAuthHandler = null;
-  setTokens(null);
-}
-
 export const auth = {
   bootstrap,
+  ready,
+  ensureValidAccessToken,
+  refreshTokens,
   getTokens,
   hasTokens,
-  needsPreemptiveRefresh,
-  refreshOnce,
-  requireAuth: hardReset,
+  getAuthHeader,
+  requireAuth,
   setRequireAuthHandler,
-  setTokens,
-  waitForRefresh,
-  __resetForTests: resetForTests,
-  __setRefreshExecutorForTests: setRefreshExecutorForTests,
 };
+
+void (async () => {
+  if (typeof window !== 'undefined') {
+    await bootstrap();
+  }
+})();
