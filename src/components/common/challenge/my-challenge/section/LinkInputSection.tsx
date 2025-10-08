@@ -1,6 +1,29 @@
 import { clsx } from 'clsx';
 import { useEffect, useState } from 'react';
 
+// 허용된 블로그 플랫폼 도메인 목록
+const ALLOWED_DOMAINS = [
+  'blog.naver.com', // 네이버 블로그 (모바일)
+  'm.blog.naver.com', // 네이버 블로그 (모바일)
+  'tistory.com', // 티스토리
+  'medium.com', // 미디엄
+  'velog.io', // 벨로그
+  'disqus.com', // 디스콰이엇
+];
+
+// URL 도메인 검증 함수
+const validateDomain = (url: string): boolean => {
+  try {
+    const urlObj = new URL(url);
+    return ALLOWED_DOMAINS.some(
+      (domain) =>
+        urlObj.hostname === domain || urlObj.hostname.endsWith(`.${domain}`),
+    );
+  } catch {
+    return false;
+  }
+};
+
 interface LinkInputSectionProps {
   className?: string;
   disabled?: boolean;
@@ -76,26 +99,6 @@ const LinkInputSection = ({
     }
   };
 
-  const isValidUrl = (url: string) => {
-    try {
-      const urlObj = new URL(url);
-      const isValidProtocol =
-        urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
-
-      // todayTh가 1~99 사이일 때 .notion.site 포함 여부 체크
-      const isRegularMissionWithNotionLink =
-        todayTh && todayTh >= 1 && todayTh <= 99;
-
-      if (isRegularMissionWithNotionLink) {
-        return isValidProtocol && url.includes('.notion.site');
-      }
-
-      return isValidProtocol;
-    } catch {
-      return false;
-    }
-  };
-
   const handleLinkCheck = () => {
     // 이미 확인된 링크를 다시 클릭한 경우
     if (isVerified && linkValue === verifiedLink) {
@@ -110,17 +113,48 @@ const LinkInputSection = ({
       return;
     }
 
-    if (!isValidUrl(linkValue)) {
-      const isRegularMissionWithNotionLink =
-        todayTh && todayTh >= 1 && todayTh <= 99;
-      const errorMessage = isRegularMissionWithNotionLink
-        ? 'URL 형식이 올바르지 않습니다. (https:// 또는 http://로 시작하고 .notion.site가 포함되어야 합니다.)'
-        : 'URL 형식이 올바르지 않습니다. (https:// 또는 http://로 시작해야 합니다.)';
+    // URL 형식 검증
+    let isValidProtocol = false;
+    try {
+      const urlObj = new URL(linkValue);
+      isValidProtocol =
+        urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+    } catch {
+      isValidProtocol = false;
+    }
 
-      setLinkError(errorMessage);
+    if (!isValidProtocol) {
+      setLinkError(
+        'URL 형식이 올바르지 않습니다. (https:// 또는 http://로 시작해야 합니다.)',
+      );
       setIsVerified(false);
       onLinkVerified?.(false);
       return;
+    }
+
+    // todayTh가 1~99 사이일 때 .notion.site 포함 여부 체크
+    const isRegularMissionWithNotionLink =
+      todayTh && todayTh >= 1 && todayTh <= 99;
+
+    if (isRegularMissionWithNotionLink) {
+      if (!linkValue.includes('.notion.site')) {
+        setLinkError(
+          'URL 형식이 올바르지 않습니다. (https:// 또는 http://로 시작하고 .notion.site가 포함되어야 합니다.)',
+        );
+        setIsVerified(false);
+        onLinkVerified?.(false);
+        return;
+      }
+    } else {
+      // 일반 미션의 경우 도메인 검증
+      if (!validateDomain(linkValue)) {
+        setLinkError(
+          '지원되지 않는 블로그 플랫폼입니다. 네이버 블로그(모바일), 티스토리, 미디엄, 벨로그, 디스콰이엇 링크만 입력 가능합니다.',
+        );
+        setIsVerified(false);
+        onLinkVerified?.(false);
+        return;
+      }
     }
 
     setLinkSuccess(
