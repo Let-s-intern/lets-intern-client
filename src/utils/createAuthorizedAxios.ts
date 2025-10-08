@@ -60,49 +60,13 @@ export function createAuthorizedAxios({
   instance.interceptors.response.use(
     (response) => response,
     async (error: AxiosError) => {
-      if (error.response?.status === 401) {
-        await auth.ready();
-        const snapshot = auth.getTokens();
-        if (!snapshot) {
-          return Promise.reject(error);
-        }
-
-        const now = Date.now();
-
-        if (snapshot.accessExpiresAt > now) {
-          await auth.requireAuth('unexpected-401');
-          return Promise.reject(error);
-        }
-
-        if (snapshot.refreshExpiresAt - now <= EXPIRY_THRESHOLD_MS) {
-          await auth.requireAuth('refresh-expired');
-          return Promise.reject(error);
-        }
-
-        const originalRequest = error.config;
-        if (!originalRequest) {
-          await auth.requireAuth('401');
-          return Promise.reject(error);
-        }
-
-        if ((originalRequest as any).__isRetry) {
-          await auth.requireAuth('401');
-          return Promise.reject(error);
-        }
-
-        (originalRequest as any).__isRetry = true;
-
-        const refreshed = await auth.refreshTokens();
-        if (refreshed) {
-          return instance.request(originalRequest);
-        }
-
-        return Promise.reject(error);
-      }
-
-      const message = extractErrorMessage(error.response?.data);
-      if (message && message.includes('토큰이 유효하지 않습니다')) {
-        await auth.requireAuth('invalid-token-error');
+      if (
+        error.response?.status === 401 &&
+        extractErrorMessage(error.response.data)?.includes(
+          '토큰이 유효하지 않습니다',
+        )
+      ) {
+        await auth.requireAuth('unexpected-401');
         return Promise.reject(error);
       }
 

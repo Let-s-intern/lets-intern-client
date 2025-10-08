@@ -95,13 +95,13 @@ function readTokensFromStore(): TokenSet | null {
   return hasTokenShape(snapshot) ? snapshot : null;
 }
 
+/** 로그인이 필요할 때 **/
 async function requireAuth(reason: RequireAuthReason): Promise<void> {
-  applyTokens(null);
-  const handler = requireAuthHandler ?? defaultRequireAuthHandler;
-  handler(reason);
+  (requireAuthHandler ?? defaultRequireAuthHandler)(reason);
 }
 
 function defaultRequireAuthHandler(reason: RequireAuthReason) {
+  applyTokens(null);
   if (
     typeof window !== 'undefined' &&
     typeof window.location?.reload === 'function'
@@ -262,10 +262,6 @@ function getAuthHeader(): { Authorization: string } | null {
   return { Authorization: `Bearer ${tokens.accessToken}` };
 }
 
-function setRequireAuthHandler(handler: (reason: RequireAuthReason) => void) {
-  requireAuthHandler = handler;
-}
-
 export const auth = {
   bootstrap,
   ready,
@@ -275,7 +271,10 @@ export const auth = {
   hasTokens,
   getAuthHeader,
   requireAuth,
-  setRequireAuthHandler,
+  /** 테스트용 */
+  setRequireAuthHandler: (handler: (reason: RequireAuthReason) => void) => {
+    requireAuthHandler = handler;
+  },
 };
 
 void (async () => {
