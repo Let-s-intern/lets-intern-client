@@ -19,16 +19,20 @@ const MissionMentorCommentSection = ({ missionId }: Props) => {
 
   const { schedules } = useCurrentChallenge();
   const { selectedMissionTh } = useMissionStore();
-  const scheduleIndex =
-    selectedMissionTh === 100 ? schedules.length - 1 : selectedMissionTh;
+
   const startsFromZero = schedules[0]?.missionInfo?.th === 0; // 0회차 존재 여부
-  const adjustedIndex = startsFromZero ? scheduleIndex : scheduleIndex - 1;
-  const comment = schedules[adjustedIndex]?.attendanceInfo?.comments;
+
+  const getScheduleIndex = () => {
+    if (selectedMissionTh === 100) return schedules.length - 1;
+    return startsFromZero ? selectedMissionTh : selectedMissionTh - 1;
+  };
+  const scheduleIndex = getScheduleIndex();
+  const comment = schedules[scheduleIndex]?.attendanceInfo?.comments;
+
   const mentorFeedback = feedbackData?.attendanceInfo?.feedback
     ? JSON.parse(feedbackData.attendanceInfo.feedback)
     : null;
   const isNoFeedbackOrComment = !comment && !mentorFeedback;
-
   if (isNoFeedbackOrComment)
     return <section className="mb-8 hidden h-px md:block" />;
 
