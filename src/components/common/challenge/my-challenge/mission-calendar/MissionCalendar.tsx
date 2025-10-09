@@ -30,14 +30,17 @@ const MissionCalendar = ({ schedules, todayTh, isDone }: Props) => {
 
   useEffect(() => {
     const swiper = swiperRef.current;
-    if (!swiper) return;
-
-    // 모바일에서 3을 넘어가면 스크롤
     const isDesktop = window.innerWidth >= 768;
-    if (!isDesktop && targetIndex > 3) {
-      swiper.slideTo(targetIndex, 100);
+
+    if (!swiper || isDesktop) return;
+
+    const startsFromZero = schedules[0]?.missionInfo?.th === 0;
+    const visibleLimit = startsFromZero ? 3 : 4;
+
+    if (targetIndex > visibleLimit) {
+      swiper.slideTo(startsFromZero ? targetIndex : targetIndex - 1, 100);
     }
-  }, [targetIndex, schedules.length]);
+  }, [targetIndex, schedules.length, schedules]);
 
   return (
     <Swiper
