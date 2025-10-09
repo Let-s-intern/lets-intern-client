@@ -51,7 +51,12 @@ const MissionGuideRegularSection = ({
         deadline={formatDeadline(missionData?.missionInfo?.endDate)}
         missionStartDate={missionData.missionInfo.startDate}
       />
-
+      {selectedMissionTh &&
+        missionData?.attendanceInfo?.submitted === false && (
+          <p className="text-xsmall16 font-normal text-red-500">
+            제출하지 않은 미션입니다. 늦더라도 제출을 완료해주세요!
+          </p>
+        )}
       {/* 미션 가이드 섹션 */}
       <section className="flex flex-col gap-5 rounded-xs border border-neutral-80 px-4 py-4">
         {/* 미션 목록 섹션 */}
