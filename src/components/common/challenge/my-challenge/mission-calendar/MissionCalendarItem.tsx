@@ -82,7 +82,9 @@ const MissionCalendarItem = ({
             : 'border-neutral-80',
         )}
       >
-        {mission.th === todayTh ? (
+        {mission.th === 100 && attendance?.submitted ? (
+          <MissionIcon schedule={schedule} isDone={isDone} />
+        ) : mission.th === todayTh ? (
           <MissionTodayIcon
             mission={mission}
             attendance={attendance}
