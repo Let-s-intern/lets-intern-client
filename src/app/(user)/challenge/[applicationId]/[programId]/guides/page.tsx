@@ -1,5 +1,13 @@
 'use client';
 
+import { Suspense } from 'react';
+
 import ChallengeGuidePage from '@components/pages/challenge/ChallengeGuidePage';
 
-export default ChallengeGuidePage;
+const ChallengeGuidePageWithSuspense = () => (
+  <Suspense fallback={null}>
+    <ChallengeGuidePage />
+  </Suspense>
+);
+
+export default ChallengeGuidePageWithSuspense;

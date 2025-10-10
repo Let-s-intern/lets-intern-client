@@ -8,7 +8,7 @@ import axios from '@/utils/axios';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
@@ -45,7 +45,7 @@ const TextLink = ({ to, dark, className, children }: TextLinkProps) => {
  * Next.js 페이지로 가려면 강제 리다이렉트를 해야 하므로 window.location.href를 사용합니다.
  * TODO: 모든 페이지가 Next.js로 이동되면 window.location.href 대신 router.push 하거나 서버 단계에서 리다이렉트 하기
  */
-const Login = () => {
+const LoginContent = () => {
   const { isLoggedIn, login } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
   const searchParams = useSearchParams();
@@ -180,6 +180,14 @@ const Login = () => {
         </div>
       )}
     </>
+  );
+};
+
+const Login = () => {
+  return (
+    <Suspense fallback={null}>
+      <LoginContent />
+    </Suspense>
   );
 };
 

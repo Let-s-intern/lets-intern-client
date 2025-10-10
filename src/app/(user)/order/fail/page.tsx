@@ -6,12 +6,12 @@ import ProgramCard from '@/components/common/program/ProgramCard';
 import { paymentFailSearchParamsSchema } from '@/data/getPaymentSearchParams';
 import useProgramStore from '@/store/useProgramStore';
 import { searchParamsToObject } from '@/utils/network';
-import { useMemo } from 'react';
+import { Suspense, useMemo } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
 /** 처음부터 결제 실패 케이스일 시 이 페이지로 옵니다. 검증 단계에서의 실패는 PaymentResult 에서 진행함. */
-const PaymentFail = () => {
+const PaymentFailContent = () => {
   const { data: programApplicationData } = useProgramStore();
   const searchParams = useSearchParams();
 
@@ -118,6 +118,14 @@ const PaymentFail = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const PaymentFail = () => {
+  return (
+    <Suspense fallback={null}>
+      <PaymentFailContent />
+    </Suspense>
   );
 };
 

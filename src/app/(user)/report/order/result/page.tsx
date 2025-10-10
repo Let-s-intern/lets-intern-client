@@ -20,11 +20,11 @@ import axios from '@/utils/axios';
 import { searchParamsToObject } from '@/utils/network';
 import ReportCreditRow from '@components/common/mypage/credit/ReportCreditRow';
 import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
-import { useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-const ReportPaymentResult = () => {
+const ReportPaymentResultContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -285,6 +285,14 @@ const ReportPaymentResult = () => {
         </main>
       </div>
     </div>
+  );
+};
+
+const ReportPaymentResult = () => {
+  return (
+    <Suspense fallback={null}>
+      <ReportPaymentResultContent />
+    </Suspense>
   );
 };
 

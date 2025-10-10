@@ -2,7 +2,7 @@
 
 import { useMediaQuery } from '@mui/material';
 import { josa } from 'es-hangul';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 
 import { useGetChallengeGoal, useGetChallengeTitle } from '@/api/challenge';
@@ -15,7 +15,7 @@ import ReviewQuestion from '@components/common/review/ReviewQuestion';
 import ReviewTextarea from '@components/common/review/ReviewTextarea';
 import TenScore from '@components/common/review/score/TenScore';
 
-const ChallengeReviewCreatePage = () => {
+const ChallengeReviewCreatePageContent = () => {
   const params = useParams<{ programId: string }>();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -169,6 +169,14 @@ const ChallengeReviewCreatePage = () => {
         />
       </section>
     </ReviewModal>
+  );
+};
+
+const ChallengeReviewCreatePage = () => {
+  return (
+    <Suspense fallback={null}>
+      <ChallengeReviewCreatePageContent />
+    </Suspense>
   );
 };
 

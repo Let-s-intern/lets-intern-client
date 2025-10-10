@@ -3,7 +3,7 @@
 // TODO: 질문 enum으로 관리
 
 import { josa } from 'es-hangul';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 
 import { useGetLiveTitle } from '@/api/program';
@@ -14,7 +14,7 @@ import ReviewQuestion from '@components/common/review/ReviewQuestion';
 import ReviewTextarea from '@components/common/review/ReviewTextarea';
 import TenScore from '@components/common/review/score/TenScore';
 
-const LiveReviewCreatePage = () => {
+const LiveReviewCreatePageContent = () => {
   const router = useRouter();
   const params = useParams<{ programId: string }>();
   const programId = params.programId;
@@ -158,5 +158,11 @@ const LiveReviewCreatePage = () => {
     </ReviewModal>
   );
 };
+
+const LiveReviewCreatePage = () => (
+  <Suspense fallback={null}>
+    <LiveReviewCreatePageContent />
+  </Suspense>
+);
 
 export default LiveReviewCreatePage;

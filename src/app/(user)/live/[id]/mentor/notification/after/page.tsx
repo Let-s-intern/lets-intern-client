@@ -3,10 +3,10 @@
 import { mentorNotificationSchema, MentorNotificationType } from '@/schema';
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 
-const MentorNotificationAfter = () => {
+const MentorNotificationAfterContent = () => {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -69,6 +69,14 @@ const MentorNotificationAfter = () => {
         <p>아직 후기가 없습니다.</p>
       )}
     </div>
+  );
+};
+
+const MentorNotificationAfter = () => {
+  return (
+    <Suspense fallback={null}>
+      <MentorNotificationAfterContent />
+    </Suspense>
   );
 };
 

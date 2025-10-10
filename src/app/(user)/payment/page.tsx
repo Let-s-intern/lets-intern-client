@@ -8,8 +8,8 @@ import {
   loadTossPayments,
   WidgetPaymentMethodWidget,
 } from '@tosspayments/tosspayments-sdk';
-import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 
 type TossPaymentsWidgets = ReturnType<
   Awaited<ReturnType<typeof loadTossPayments>>['widgets']
@@ -21,10 +21,9 @@ const Payment = () => {
   const router = useRouter();
   const { data: programApplicationData, checkInvalidate } = useProgramStore();
 
-  if (checkInvalidate()) {
+  if (checkInvalidate() && typeof window !== 'undefined') {
     console.error(programApplicationData);
-
-    alert('잘못된 접근입니다.');
+    window.alert('잘못된 접근입니다.');
     router.push('/');
   }
 

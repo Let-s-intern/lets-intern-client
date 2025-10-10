@@ -1,6 +1,7 @@
 'use client';
 
 import { josa } from 'es-hangul';
+import { Suspense } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 
 import { useGetLiveTitle } from '@/api/program';
@@ -11,7 +12,7 @@ import ReviewQuestion from '@components/common/review/ReviewQuestion';
 import ReviewTextarea from '@components/common/review/ReviewTextarea';
 import TenScore from '@components/common/review/score/TenScore';
 
-const LiveReviewPage = () => {
+const LiveReviewPageContent = () => {
   const params = useParams<{ programId: string }>();
   const searchParams = useSearchParams();
   const programId = params.programId;
@@ -114,5 +115,11 @@ const LiveReviewPage = () => {
     </ReviewModal>
   );
 };
+
+const LiveReviewPage = () => (
+  <Suspense fallback={null}>
+    <LiveReviewPageContent />
+  </Suspense>
+);
 
 export default LiveReviewPage;

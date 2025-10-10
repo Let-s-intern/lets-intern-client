@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import {
   mentorNotificationSchema,
@@ -9,7 +9,7 @@ import {
 } from '../../../../../../../schema';
 import axios from '../../../../../../../utils/axios';
 
-const MentorNotificationBefore = () => {
+const MentorNotificationBeforeContent = () => {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -118,6 +118,14 @@ const MentorNotificationBefore = () => {
         </>
       ) : null}
     </div>
+  );
+};
+
+const MentorNotificationBefore = () => {
+  return (
+    <Suspense fallback={null}>
+      <MentorNotificationBeforeContent />
+    </Suspense>
   );
 };
 

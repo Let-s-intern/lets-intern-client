@@ -4,7 +4,7 @@
 
 import { useMediaQuery } from '@mui/material';
 import { josa } from 'es-hangul';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 
 import { useGetReportMessage, useGetReportTitle } from '@/api/report';
@@ -17,7 +17,7 @@ import ReviewQuestion from '@components/common/review/ReviewQuestion';
 import ReviewTextarea from '@components/common/review/ReviewTextarea';
 import TenScore from '@components/common/review/score/TenScore';
 
-const ReportReviewCreatePage = () => {
+const ReportReviewCreatePageContent = () => {
   const router = useRouter();
   const params = useParams<{ reportId: string }>();
   const isDesktop = useMediaQuery('(min-width:768px)');
@@ -171,5 +171,11 @@ const ReportReviewCreatePage = () => {
     </ReviewModal>
   );
 };
+
+const ReportReviewCreatePage = () => (
+  <Suspense fallback={null}>
+    <ReportReviewCreatePageContent />
+  </Suspense>
+);
 
 export default ReportReviewCreatePage;

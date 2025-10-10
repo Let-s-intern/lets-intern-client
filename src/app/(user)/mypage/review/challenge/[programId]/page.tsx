@@ -3,6 +3,7 @@
 import { useMediaQuery } from '@mui/material';
 import { josa } from 'es-hangul';
 import { useParams, useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
 import { useGetChallengeTitle } from '@/api/challenge';
 import { useGetProgramReviewDetail } from '@/api/review';
@@ -14,7 +15,7 @@ import ReviewQuestion from '@components/common/review/ReviewQuestion';
 import ReviewTextarea from '@components/common/review/ReviewTextarea';
 import TenScore from '@components/common/review/score/TenScore';
 
-const ChallengeReviewPage = () => {
+const ChallengeReviewPageContent = () => {
   const params = useParams<{ programId: string }>();
   const searchParams = useSearchParams();
   const isDesktop = useMediaQuery('(min-width:768px)');
@@ -120,6 +121,14 @@ const ChallengeReviewPage = () => {
         />
       </section>
     </ReviewModal>
+  );
+};
+
+const ChallengeReviewPage = () => {
+  return (
+    <Suspense fallback={null}>
+      <ChallengeReviewPageContent />
+    </Suspense>
   );
 };
 

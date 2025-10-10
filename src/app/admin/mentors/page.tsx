@@ -2,6 +2,8 @@
 
 'use client';
 
+import { Suspense, useRef, useState } from 'react';
+
 import {
   usePatchUserAdminMutation,
   useUserAdminQuery,
@@ -13,7 +15,7 @@ import { Button, Checkbox, TextField } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
-import { ChangeEvent, FormEvent, useRef, useState } from 'react';
+import { ChangeEvent, FormEvent } from 'react';
 
 interface Row {
   id: number;
@@ -174,7 +176,7 @@ const MentorFilter = () => {
   );
 };
 
-export default function AdminMentorPage() {
+const AdminMentorPageContent = () => {
   const [paginationModel, setPaginationModel] = useState({
     pageSize: 10,
     page: 0,
@@ -209,5 +211,13 @@ export default function AdminMentorPage() {
         onPaginationModelChange={setPaginationModel}
       />
     </section>
+  );
+};
+
+export default function AdminMentorPage() {
+  return (
+    <Suspense fallback={null}>
+      <AdminMentorPageContent />
+    </Suspense>
   );
 }

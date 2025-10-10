@@ -1,3 +1,5 @@
+import { Suspense } from 'react';
+
 import ProgramsPage from '@/components/pages/program/ProgramsPage';
 import type { Metadata } from 'next';
 
@@ -25,8 +27,10 @@ export const metadata: Metadata = {
   },
 };
 
-const ProgramPage = () => {
-  return <ProgramsPage />;
-};
+const ProgramPage = () => (
+  <Suspense fallback={null}>
+    <ProgramsPage />
+  </Suspense>
+);
 
 export default ProgramPage;

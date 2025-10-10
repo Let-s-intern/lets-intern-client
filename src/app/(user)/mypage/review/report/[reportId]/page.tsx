@@ -5,6 +5,7 @@
 import { useMediaQuery } from '@mui/material';
 import { josa } from 'es-hangul';
 import { useParams, useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
 import { useGetReportTitle } from '@/api/report';
 import { useGetProgramReviewDetail } from '@/api/review';
@@ -16,7 +17,7 @@ import ReviewQuestion from '@components/common/review/ReviewQuestion';
 import ReviewTextarea from '@components/common/review/ReviewTextarea';
 import TenScore from '@components/common/review/score/TenScore';
 
-const ReportReviewPage = () => {
+const ReportReviewPageContent = () => {
   const params = useParams<{ reportId: string }>();
   const isDesktop = useMediaQuery('(min-width:768px)');
   const reportId = params.reportId;
@@ -121,6 +122,14 @@ const ReportReviewPage = () => {
         />
       </section>
     </ReviewModal>
+  );
+};
+
+const ReportReviewPage = () => {
+  return (
+    <Suspense fallback={null}>
+      <ReportReviewPageContent />
+    </Suspense>
   );
 };
 

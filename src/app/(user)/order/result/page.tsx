@@ -17,11 +17,11 @@ import dayjs from '@/lib/dayjs';
 import useProgramStore from '@/store/useProgramStore';
 import axios from '@/utils/axios';
 import { searchParamsToObject } from '@/utils/network';
-import { useMemo, useState } from 'react';
+import { Suspense, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-const PaymentResult = () => {
+const PaymentResultContent = () => {
   const { data: programApplicationData } = useProgramStore();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -284,5 +284,11 @@ const PaymentResult = () => {
     </div>
   );
 };
+
+const PaymentResult = () => (
+  <Suspense fallback={null}>
+    <PaymentResultContent />
+  </Suspense>
+);
 
 export default PaymentResult;

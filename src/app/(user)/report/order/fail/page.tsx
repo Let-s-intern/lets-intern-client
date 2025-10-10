@@ -12,12 +12,12 @@ import { searchParamsToObject } from '@/utils/network';
 import ReportCreditRow from '@components/common/mypage/credit/ReportCreditRow';
 import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
 import { useMediaQuery } from '@mui/material';
-import { useMemo } from 'react';
+import { Suspense, useMemo } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
 /** 처음부터 결제 실패 케이스일 시 이 페이지로 옵니다. 검증 단계에서의 실패는 PaymentResult에서 진행함. */
-const ReportPaymentFail = () => {
+const ReportPaymentFailContent = () => {
   const isUpTo1280 = useMediaQuery('(max-width: 1280px)');
   const searchParams = useSearchParams();
 
@@ -149,6 +149,14 @@ const ReportPaymentFail = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const ReportPaymentFail = () => {
+  return (
+    <Suspense fallback={null}>
+      <ReportPaymentFailContent />
+    </Suspense>
   );
 };
 

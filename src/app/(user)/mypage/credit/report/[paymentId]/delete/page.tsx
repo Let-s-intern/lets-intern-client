@@ -3,7 +3,7 @@
 import dayjs from '@/lib/dayjs';
 import { AxiosError } from 'axios';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { Suspense, useMemo, useState } from 'react';
 
 import {
   convertReportPriceType,
@@ -28,7 +28,7 @@ const convertDateFormat = (date: string) => {
   return dayjs(date).format('YYYY.MM.DD');
 };
 
-const ReportCreditDelete = () => {
+const ReportCreditDeleteContent = () => {
   const router = useRouter();
   const [isChecked, setIsChecked] = useState(false);
   const searchParams = useSearchParams();
@@ -358,5 +358,11 @@ const ReportCreditDelete = () => {
     </section>
   );
 };
+
+const ReportCreditDelete = () => (
+  <Suspense fallback={null}>
+    <ReportCreditDeleteContent />
+  </Suspense>
+);
 
 export default ReportCreditDelete;
