@@ -7,8 +7,8 @@ import {
   Select,
 } from '@mui/material';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { useRouter } from 'next/navigation';
 import { useMemo, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import storage from '../../../../../Firebase';
 import {
@@ -44,7 +44,7 @@ const ProgramInputContent = ({
   editorMode,
   handleImageUpload,
 }: ProgramEditorProps) => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const quillRef = useRef<any>();
 
   const imageHandler = () => {
@@ -640,7 +640,7 @@ const ProgramInputContent = ({
           <button
             type="button"
             className="w-20 rounded-xxs bg-gray-400 py-2 text-center font-medium text-white"
-            onClick={() => navigate(-1)}
+            onClick={() => router.back()}
           >
             취소
           </button>

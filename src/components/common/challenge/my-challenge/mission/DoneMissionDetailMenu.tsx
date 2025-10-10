@@ -5,7 +5,8 @@ import {
   UserChallengeMissionDetail,
 } from '@/schema';
 import { BONUS_MISSION_TH } from '@/utils/constants';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'next/navigation';
+import HybridLink from '@/components/common/ui/HybridLink';
 import OtVideo from '../../OtVideo';
 import MenuContentsDropdown from '../dropdown/MenuContentsDropdown';
 import ParsedCommentBox from '../ParsedCommentBox';
@@ -29,7 +30,7 @@ const DoneMissionDetailMenu = ({
   challengeId,
   isFeedbackConfirmed = false,
 }: Props) => {
-  const params = useParams();
+  const params = useParams<{ programId: string }>();
 
   const additionalContentsLink =
     missionDetail.additionalContentsList?.[0]?.link;
@@ -68,14 +69,14 @@ const DoneMissionDetailMenu = ({
       <div className="px-3">
         <div className="flex items-center gap-4 overflow-hidden">
           <h4 className="flex-shrink-0 text-lg font-semibold">제출한 미션</h4>
-          <Link
-            to={missionByType.attendanceLink ?? ''}
+          <HybridLink
+            href={missionByType.attendanceLink ?? ''}
             target="_blank"
             rel="noopener noreferrer"
             className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-gray-500 hover:underline"
           >
             {missionByType.attendanceLink}
-          </Link>
+          </HybridLink>
         </div>
         {schedule.attendanceInfo.comments && (
           <div className="mt-4">

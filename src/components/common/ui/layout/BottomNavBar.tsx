@@ -1,3 +1,5 @@
+'use client';
+
 import { memo, useEffect, useState } from 'react';
 import HybridLink from '../HybridLink';
 
@@ -6,18 +8,15 @@ type Menu = {
   img: string;
   activeImg: string;
   href: string;
-  force: boolean;
 };
 
 const MenuLink = memo(
   function Menu({
     menu,
-    isNextRouter,
     active,
     onClick,
   }: {
     menu: Menu;
-    isNextRouter: boolean;
     active: boolean;
     onClick?: () => void;
   }) {
@@ -25,9 +24,7 @@ const MenuLink = memo(
       <HybridLink
         key={menu.name}
         className="flex flex-1 flex-col items-center pb-2.5 pt-1.5"
-        isNextRouter={isNextRouter}
         href={menu.href}
-        force={menu.force}
         onClick={onClick}
       >
         <img
@@ -41,19 +38,16 @@ const MenuLink = memo(
       </HybridLink>
     );
   },
-  (oldProps, newProps) =>
-    oldProps.isNextRouter === newProps.isNextRouter &&
-    oldProps.active === newProps.active,
+  (oldProps, newProps) => oldProps.active === newProps.active,
 );
 
 interface Props {
-  isNextRouter: boolean;
   pathname?: string;
 }
 
 type Active = '블로그' | '후기' | '홈' | '프로그램' | '마이페이지';
 
-function BottomNavBar({ isNextRouter, pathname = '' }: Props) {
+function BottomNavBar({ pathname = '' }: Props) {
   // 모바일 네비게이션 바 숨김 조건
   const hidden =
     pathname.startsWith('/report') ||
@@ -69,35 +63,30 @@ function BottomNavBar({ isNextRouter, pathname = '' }: Props) {
       img: 'blog.svg',
       activeImg: 'blog-active.svg',
       href: '/blog/list',
-      force: !isNextRouter,
     },
     {
       name: '후기',
       img: 'review.svg',
       activeImg: 'review-active.svg',
       href: '/review',
-      force: !isNextRouter,
     },
     {
       name: '홈',
       img: 'home.svg',
       activeImg: 'home-active.svg',
       href: '/',
-      force: !isNextRouter,
     },
     {
       name: '프로그램',
       img: 'program.svg',
       activeImg: 'program-active.svg',
       href: '/program',
-      force: isNextRouter,
     },
     {
       name: '마이페이지',
       img: 'mypage.svg',
       activeImg: 'mypage-active.svg',
       href: '/mypage/application',
-      force: isNextRouter,
     },
   ];
 
@@ -122,7 +111,6 @@ function BottomNavBar({ isNextRouter, pathname = '' }: Props) {
     <nav className="fixed bottom-0 left-0 right-0 z-30 flex items-center border-t border-neutral-80 bg-white md:hidden">
       {menuInfo.map((item) => (
         <MenuLink
-          isNextRouter={isNextRouter}
           menu={item}
           key={item.name}
           active={item.name === active}

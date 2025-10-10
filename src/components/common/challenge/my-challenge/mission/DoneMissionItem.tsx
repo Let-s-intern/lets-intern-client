@@ -5,7 +5,7 @@ import { BONUS_MISSION_TH } from '@/utils/constants';
 import { missionSubmitToBadge } from '@/utils/convert';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import DoneMissionDetailMenu from './DoneMissionDetailMenu';
 
 interface Props {
@@ -13,7 +13,8 @@ interface Props {
 }
 
 const DoneMissionItem = ({ mission }: Props) => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const { applicationId, programId } = useParams<{
     applicationId: string;
     programId: string;
@@ -48,11 +49,13 @@ const DoneMissionItem = ({ mission }: Props) => {
         setIsDetailShown(true);
         if (isDetailShown) {
           itemRef.current?.scrollIntoView({ behavior: 'smooth' });
-          setSearchParams({}, { replace: true });
+          // Next.js에서는 쿠리 파라미터를 제거하여 대체
+          const pathname = window.location.pathname;
+          router.replace(pathname);
         }
       }
     }
-  }, [searchParams, setSearchParams, isDetailShown, mission.id]);
+  }, [searchParams, router, isDetailShown, mission.id]);
 
   return (
     <li

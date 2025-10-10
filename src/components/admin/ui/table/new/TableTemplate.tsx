@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 export interface TableTemplateProps<T extends string> {
   title: string;
@@ -30,7 +30,7 @@ const TableTemplate = <T extends string>({
         <h1 className="text-2xl font-semibold">{title}</h1>
         {headerButton && (
           <Link
-            to={headerButton.href}
+            href={headerButton.href}
             className="rounded-xxs border border-zinc-600 bg-white px-4 py-[2px] text-xs duration-200 hover:bg-neutral-700 hover:text-white"
           >
             {headerButton.label}

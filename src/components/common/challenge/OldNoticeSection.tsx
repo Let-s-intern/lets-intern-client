@@ -1,7 +1,7 @@
 import { ChallengeNotice } from '@/schema';
 import clsx from 'clsx';
+import Link from 'next/link';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 
 interface IOldNoticeSectionProps {
   notices: ChallengeNotice[];
@@ -30,9 +30,9 @@ const OldNoticeSection = ({ notices }: IOldNoticeSectionProps) => {
             {currentNoticeList.map((notice) => (
               <Link
                 key={notice.id}
-                to={notice.link ?? ''}
+                href={notice.link ?? ''}
                 target="_blank"
-                rel="noopenner noreferrer"
+                rel="noopener noreferrer"
                 className="overflow-hidden text-ellipsis whitespace-nowrap text-sm text-[#333333] hover:underline"
               >
                 {notice.title}

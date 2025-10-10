@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import cn from 'classnames';
 import clsx from 'clsx';
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'next/navigation';
 import axios from '../../../../../../../../utils/axios';
 import { typeToText } from '../../../../../../../../utils/converTypeToText';
 import CautionPriceContent from '../../../ui/price/CautionPriceContent';
@@ -26,7 +26,7 @@ const CautionContent = ({
   setAnnouncementDate,
   couponDiscount,
 }: CautionContentProps) => {
-  const params = useParams();
+  const params = useParams<{ programId: string }>();
   const queryClient = useQueryClient();
   const [error, setError] = useState<unknown>();
   const [message, setMessage] = useState('');

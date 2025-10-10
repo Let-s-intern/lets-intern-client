@@ -7,16 +7,13 @@ import { AnchorHTMLAttributes, Fragment, useState } from 'react';
 import HybridLink from '../../HybridLink';
 import SubNavItem, { SubNavItemProps } from './SubNavItem';
 /**
- * @param {boolean} force
- *   true로 설정하면 window.location.href으로 라우팅
- *   Next.js App Router <-> React Router로 이동할 때 사용합니다.
+ * 글로벌 네비게이션 아이템 컴포넌트
+ * 드롭다운 서브메뉴를 지원합니다.
  */
 
 interface Props extends AnchorHTMLAttributes<HTMLAnchorElement> {
   active?: boolean;
-  isNextRouter: boolean;
   subNavList?: SubNavItemProps[];
-  force?: boolean;
   isNew?: boolean;
   showDropdownIcon?: boolean;
   align?: 'left' | 'right';
@@ -25,9 +22,7 @@ interface Props extends AnchorHTMLAttributes<HTMLAnchorElement> {
 function GlobalNavItem({
   children,
   active = false,
-  force = false,
   className,
-  isNextRouter,
   href = '#',
   subNavList,
   isNew = false,
@@ -62,13 +57,7 @@ function GlobalNavItem({
       onMouseLeave={() => setHover(false)}
       className="relative"
     >
-      <HybridLink
-        isNextRouter={isNextRouter}
-        force={force}
-        className={linkClassName}
-        href={href}
-        {...restProps}
-      >
+      <HybridLink className={linkClassName} href={href} {...restProps}>
         <span className="flex items-center">
           {children}
           {isMounted && showDropdownIcon && (
@@ -90,7 +79,7 @@ function GlobalNavItem({
           </div>
           <div className="my-3 flex w-full flex-col rounded-xs bg-white py-1">
             {subNavList.map((item, index) => (
-              <Fragment key={item.href}>
+              <Fragment key={`${item.href}-${index}`}>
                 <SubNavItem key={index} {...item} align={align}>
                   {item.children}
                 </SubNavItem>

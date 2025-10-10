@@ -2,8 +2,8 @@ import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import { MyDailyMission, userChallengeMissionDetail } from '@/schema';
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import DailyMissionInfoSection from './DailyMissionInfoSection';
 import DailyMissionSubmitSection from './DailyMissionSubmitSection';
 
@@ -12,7 +12,8 @@ interface Props {
 }
 
 const DailyMissionSection = ({ myDailyMission }: Props) => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const { currentChallenge } = useOldCurrentChallenge();
 
   const sectionRef = useRef<HTMLElement>(null);
@@ -21,9 +22,9 @@ const DailyMissionSection = ({ myDailyMission }: Props) => {
     const scrollTo = searchParams.get('scroll_to');
     if (scrollTo === 'daily-mission') {
       sectionRef.current?.scrollIntoView({ behavior: 'smooth' });
-      setSearchParams({}, { replace: true });
+      router.replace(window.location.pathname);
     }
-  }, [sectionRef, searchParams, setSearchParams]);
+  }, [sectionRef, searchParams, router]);
 
   const { data: missionDetail } = useQuery({
     enabled: Boolean(currentChallenge?.id),

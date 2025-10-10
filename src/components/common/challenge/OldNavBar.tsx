@@ -1,13 +1,12 @@
 import clsx from 'clsx';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import Link from 'next/link';
+import { useParams, usePathname } from 'next/navigation';
 
 const OldNavBar = () => {
-  const params = useParams();
-  const location = useLocation();
+  const params = useParams<{ programId: string; applicationId: string }>();
+  const pathname = usePathname();
   const applicationId = params.applicationId;
-  const activeStatus = /^\/old\/challenge\/(\d+)\/others/.test(
-    location.pathname,
-  )
+  const activeStatus = /^\/old\/challenge\/(\d+)\/others/.test(pathname)
     ? 'OTHERS_DASHBOARD'
     : /^\/old\/challenge\/(\d+)\/me/.test(location.pathname)
       ? 'MY_DASHBOARD'
@@ -19,7 +18,7 @@ const OldNavBar = () => {
         <ul className="flex w-40 flex-col gap-1">
           <li>
             <Link
-              to={`/old/challenge/${applicationId}/${params.programId}`}
+              href={`/old/challenge/${applicationId}/${params.programId}`}
               className={clsx('block px-3 py-2', {
                 'rounded bg-[#E6E4FD] font-semibold text-primary':
                   activeStatus === 'DASHBOARD',
@@ -31,7 +30,7 @@ const OldNavBar = () => {
           </li>
           <li>
             <Link
-              to={`/old/challenge/${applicationId}/${params.programId}/me`}
+              href={`/old/challenge/${applicationId}/${params.programId}/me`}
               className={clsx('block px-3 py-2', {
                 'rounded bg-[#E6E4FD] font-medium text-primary':
                   activeStatus === 'MY_DASHBOARD',

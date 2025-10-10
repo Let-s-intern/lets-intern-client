@@ -9,7 +9,7 @@ import { challengeSubmitDetailCellWidthList } from '@/utils/tableCellWidthList';
 import { Switch } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import ChoiceCheckbox from './ChoiceCheckbox';
 import CommentCell from './CommentCell';
 import ResultDropdown from './ResultDropdown';
@@ -137,7 +137,7 @@ const TableRow = ({
       >
         {attendanceItem.attendance.link && (
           <Link
-            to={attendanceItem.attendance.link}
+            href={attendanceItem.attendance.link}
             target="_blank"
             rel="noopener noreferrer"
             className="rounded-xxs border border-zinc-600 px-4 py-[2px] text-xs duration-200 hover:bg-neutral-700 hover:text-white"

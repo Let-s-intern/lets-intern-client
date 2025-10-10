@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 import { ImExit } from 'react-icons/im';
 import { IoIosArrowDown } from 'react-icons/io';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
 
 import { useIsAdminQuery, useIsMentorQuery } from '@/api/user';
 import { AdminSnackbarProvider } from '@/hooks/useAdminSnackbar';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const navData = [
   {
@@ -146,7 +147,7 @@ const AdminSidebar = () => {
               {navSection.itemList.map((navItem, index) => (
                 <li key={index}>
                   <Link
-                    to={navItem.url}
+                    href={navItem.url}
                     className="flex items-center gap-1 py-2 pl-6 text-xsmall14 hover:bg-[#2A2A2A]"
                   >
                     {navItem.name}
@@ -166,8 +167,8 @@ const AdminSidebar = () => {
   );
 };
 
-const AdminLayout = () => {
-  const navigate = useNavigate();
+const AdminLayout = ({ children }: { children: React.ReactNode }) => {
+  const router = useRouter();
 
   const { data: isAdmin, isLoading: isAdminLoading } = useIsAdminQuery();
   const { data: isMentor, isLoading: isMentorLoading } = useIsMentorQuery();
@@ -177,7 +178,7 @@ const AdminLayout = () => {
 
   useEffect(() => {
     if (isLoading || isMentorLoading) return;
-    if (!isAdmin && !isMentor) navigate('/');
+    if (!isAdmin && !isMentor) router.push('/');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin, isMentor, isLoading, isMentorLoading]);
 
@@ -188,9 +189,7 @@ const AdminLayout = () => {
     <div className="flex">
       <AdminSidebar />
       <section className="relative min-h-screen min-w-[800px] flex-1">
-        <AdminSnackbarProvider>
-          <Outlet />
-        </AdminSnackbarProvider>
+        <AdminSnackbarProvider>{children} </AdminSnackbarProvider>
       </section>
     </div>
   );

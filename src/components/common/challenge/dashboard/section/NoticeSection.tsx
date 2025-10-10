@@ -1,10 +1,10 @@
 import { useReadNotices } from '@/hooks/useReadItems';
-import { TabMenu } from '@/router-pages/common/challenge/ChallengeGuidePage';
 import { ChallengeNotice } from '@/schema';
+import NoticeGuideLink from '@components/common/challenge/NoticeGuideLink';
+import HybridLink from '@components/common/ui/HybridLink';
+import { TabMenu } from '@components/pages/challenge/ChallengeGuidePage';
 import clsx from 'clsx';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import NoticeGuideLink from '../../NoticeGuideLink';
 
 interface INoticeSectionProps {
   notices: ChallengeNotice[];
@@ -52,9 +52,9 @@ const NoticeSection = ({ notices }: INoticeSectionProps) => {
         ) : (
           <ul className="flex flex-1 flex-col gap-1.5">
             {currentNoticeList.map((notice) => (
-              <Link
+              <HybridLink
                 key={notice.id}
-                to={notice.link ?? ''}
+                href={notice.link ?? ''}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-[#333333] hover:underline"
@@ -68,7 +68,7 @@ const NoticeSection = ({ notices }: INoticeSectionProps) => {
                     className="h-3 w-3"
                   />
                 )}
-              </Link>
+              </HybridLink>
             ))}
             {currentNoticeList.length < 4 &&
               Array.from(

@@ -7,11 +7,10 @@
  */
 
 export function setDomHiddenUntilFound(dom: HTMLElement): void {
-  // @ts-expect-error
+  // @ts-expect-error Property 'hidden' does not exist on type 'HTMLElement'
   dom.hidden = 'until-found';
 }
 
 export function domOnBeforeMatch(dom: HTMLElement, callback: () => void): void {
-  // @ts-expect-error
   dom.onbeforematch = callback;
 }

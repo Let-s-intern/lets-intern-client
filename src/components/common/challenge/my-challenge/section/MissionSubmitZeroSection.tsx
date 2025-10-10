@@ -4,15 +4,20 @@ import {
   useGetChallengeGoal,
   useSubmitChallengeGoal,
 } from '@/api/challenge';
+import MissionSubmitButton from '@/components/common/challenge/my-challenge/mission/MissionSubmitButton';
+import MissionToast from '@/components/common/challenge/my-challenge/mission/MissionToast';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
-import { DASHBOARD_FIRST_VISIT_GOAL } from '@/router-pages/common/challenge/ChallengeUserInfo';
 import { useQueryClient } from '@tanstack/react-query';
 import { clsx } from 'clsx';
+import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import MissionSubmitButton from '../mission/MissionSubmitButton';
-import MissionToast from '../mission/MissionToast';
+
+/**  최초 입장을 판별하기 위한 아무값
+ * 0회차에서 목표를 사용자가 입력하기 때문에
+ * 목표가 visit이면 입력하지 않은 것으로 판단해야 한다.
+ */
+export const DASHBOARD_FIRST_VISIT_GOAL = 'visit';
 
 interface MissionSubmitZeroSectionProps {
   className?: string;

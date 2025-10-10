@@ -1,8 +1,8 @@
 import { ChallengeApplication } from '@/schema';
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
+import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import ActionButton from '../../../ui/button/ActionButton';
 
 interface ChallengeActionDropdownProps {
@@ -12,7 +12,7 @@ interface ChallengeActionDropdownProps {
 const ChallengeActionDropdown = ({
   applications,
 }: ChallengeActionDropdownProps) => {
-  const params = useParams();
+  const params = useParams<{ programId: string }>();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [downloadMailListType, setDownloadMailListType] = useState<string>('');

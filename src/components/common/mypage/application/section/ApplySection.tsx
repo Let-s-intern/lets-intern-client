@@ -1,6 +1,7 @@
 import { MypageApplication } from '@/api/application';
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
+import HybridLink from '../../../ui/HybridLink';
 import MoreButton from '../../ui/button/MoreButton';
 import ApplicationCard from '../../ui/card/root/ApplicationCard';
 
@@ -10,7 +11,7 @@ interface ApplySectionProps {
 }
 
 const ApplySection = ({ applicationList, refetch }: ApplySectionProps) => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [showMore, setShowMore] = useState(false);
 
   const viewList = showMore ? applicationList : applicationList.slice(0, 3);
@@ -23,13 +24,12 @@ const ApplySection = ({ applicationList, refetch }: ApplySectionProps) => {
           <p className="text-neutral-0 text-opacity-[36%]">
             참여 예정인 프로그램이 아직 없어요.
           </p>
-          <Link
-            to="/program"
+          <HybridLink
+            href="/program"
             className="other_program flex w-full items-center justify-center rounded-sm border-2 border-primary-xlight bg-white px-5 py-2 font-medium text-neutral-35 md:w-auto"
-            reloadDocument
           >
             다른 프로그램 둘러보기
-          </Link>
+          </HybridLink>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-4 md:flex md:flex-col">
@@ -48,7 +48,7 @@ const ApplySection = ({ applicationList, refetch }: ApplySectionProps) => {
           className={`md:flex ${showMore ? 'other-program border-2 border-primary bg-neutral-100 text-primary-dark' : ''}`}
           onClick={() => {
             if (showMore) {
-              navigate('/program');
+              router.push('/program');
             } else {
               setShowMore(true);
             }
@@ -60,7 +60,7 @@ const ApplySection = ({ applicationList, refetch }: ApplySectionProps) => {
         applicationList.length > 0 && (
           <MoreButton
             className="border-2 border-primary bg-neutral-100 text-primary-dark"
-            onClick={() => navigate('/program')}
+            onClick={() => router.push('/program')}
           >
             다른 프로그램 둘러보기
           </MoreButton>

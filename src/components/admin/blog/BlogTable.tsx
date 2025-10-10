@@ -1,8 +1,10 @@
+'use client';
+
 import clsx from 'clsx';
 import { CiTrash } from 'react-icons/ci';
-import { Link } from 'react-router-dom';
 
 import dayjs from '@/lib/dayjs';
+import Link from 'next/link';
 import { ChangeEvent, useCallback, useState } from 'react';
 import {
   useBlogListQuery,
@@ -117,7 +119,7 @@ export default function BlogTable() {
             >
               <TableBodyCell widthClassName={blogColumnWidth.id}>
                 <Link
-                  to={`/blog/${blogInfo.blogThumbnailInfo.id}`}
+                  href={`/blog/${blogInfo.blogThumbnailInfo.id}`}
                   className="underline"
                 >
                   {blogInfo.blogThumbnailInfo.id}
@@ -155,8 +157,7 @@ export default function BlogTable() {
               <TableBodyCell widthClassName={blogColumnWidth.management}>
                 <div className="flex items-center gap-4">
                   <Link
-                    to={`/admin/blog/edit/${blogInfo.blogThumbnailInfo.id}`}
-                    reloadDocument
+                    href={`/admin/blog/edit/${blogInfo.blogThumbnailInfo.id}`}
                   >
                     <i>
                       <img src="/icons/edit-icon.svg" alt="수정 아이콘" />

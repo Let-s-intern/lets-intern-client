@@ -1,5 +1,5 @@
 import { ChallengeGuide } from '@/schema';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 interface Props {
   guides: ChallengeGuide[];
@@ -12,7 +12,7 @@ const OldGuideSection = ({ guides }: Props) => {
         {guides.map((guide) => (
           <li className="flex-1" key={guide.id}>
             <Link
-              to={guide.link ?? ''}
+              href={guide.link ?? ''}
               className="flex h-full items-center justify-center rounded-xl border border-[#E4E4E7] font-medium duration-150 hover:bg-neutral-90"
               target="_blank"
               rel="noopenner noreferrer"
