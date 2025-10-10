@@ -1,5 +1,5 @@
-/** 참여자별 피드백 페이지 (피드백 작성 페이지) */
 'use client';
+/** 참여자별 피드백 페이지 (피드백 작성 페이지) */
 
 import { usePatchAttendanceMentor } from '@/api/attendance';
 import {

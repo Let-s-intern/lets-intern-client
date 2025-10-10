@@ -1,3 +1,5 @@
+'use client';
+
 import ProgramEditor from './ProgramEditor';
 
 const ProgramEdit = () => {

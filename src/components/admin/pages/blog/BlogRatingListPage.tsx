@@ -1,3 +1,5 @@
+'use client';
+
 import BlogRatingTable from '@/components/admin/blog/BlogRatingTable';
 
 export default function BlogRatingListPage() {

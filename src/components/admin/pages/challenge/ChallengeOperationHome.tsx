@@ -1,3 +1,5 @@
+'use client';
+
 import MissionResultItem from '@/components/admin/challenge/home/item/MissionResultItem';
 import GuideSection from '@/components/admin/challenge/home/section/GuideSection';
 import NoticeSection from '@/components/admin/challenge/home/section/NoticeSection';

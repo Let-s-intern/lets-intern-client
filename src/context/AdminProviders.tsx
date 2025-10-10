@@ -1,5 +1,8 @@
 'use client';
 
+import { AdminSnackbarProvider } from '@/hooks/useAdminSnackbar';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import {
   QueryCache,
   QueryClient,
@@ -8,7 +11,7 @@ import {
 import { useState } from 'react';
 import { ZodError } from 'zod';
 
-const Providers: React.FC<{
+const AdminProviders: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   // Instead do this, which ensures each request has its own cache:
@@ -38,8 +41,12 @@ const Providers: React.FC<{
   );
 
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
+        <AdminSnackbarProvider>{children}</AdminSnackbarProvider>
+      </LocalizationProvider>
+    </QueryClientProvider>
   );
 };
 
-export default Providers;
+export default AdminProviders;

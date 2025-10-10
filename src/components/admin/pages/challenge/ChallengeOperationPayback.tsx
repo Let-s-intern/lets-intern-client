@@ -1,3 +1,5 @@
+'use client';
+
 import { usePatchChallengePayback } from '@/api/challenge';
 import { useAdminChallengeTitle } from '@/context/CurrentAdminChallengeProvider';
 import dayjs from '@/lib/dayjs';

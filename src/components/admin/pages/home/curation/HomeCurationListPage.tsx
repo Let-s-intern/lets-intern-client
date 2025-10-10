@@ -19,8 +19,8 @@ import { Button, Switch } from '@mui/material';
 import { DataGrid, GridActionsCellItem, GridColDef } from '@mui/x-data-grid';
 import { josa } from 'es-hangul';
 import { Pencil, Plus, Trash } from 'lucide-react';
-import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useMemo, useState } from 'react';
 
 type Row = CurationListItemType & {
   id: number | string;

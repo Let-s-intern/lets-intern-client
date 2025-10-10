@@ -57,11 +57,7 @@ function GlobalNavItem({
       onMouseLeave={() => setHover(false)}
       className="relative"
     >
-      <HybridLink
-        className={linkClassName}
-        href={href}
-        {...restProps}
-      >
+      <HybridLink className={linkClassName} href={href} {...restProps}>
         <span className="flex items-center">
           {children}
           {isMounted && showDropdownIcon && (
@@ -83,7 +79,7 @@ function GlobalNavItem({
           </div>
           <div className="my-3 flex w-full flex-col rounded-xs bg-white py-1">
             {subNavList.map((item, index) => (
-              <Fragment key={item.href}>
+              <Fragment key={`${item.href}-${index}`}>
                 <SubNavItem key={index} {...item} align={align}>
                   {item.children}
                 </SubNavItem>

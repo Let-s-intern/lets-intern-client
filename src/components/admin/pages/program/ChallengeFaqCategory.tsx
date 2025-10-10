@@ -1,3 +1,5 @@
+'use client';
+
 import { ChallengeContent } from '@/types/interface';
 import Heading2 from '@components/admin/ui/heading/Heading2';
 import Input from '@components/ui/input/Input';

@@ -1,9 +1,11 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+'use client';
+
 import ProgramInputContent from '@/components/admin/program/ui/editor/ProgramInputContent';
 import axios from '@/utils/axios';
 import { generateRandomString } from '@/utils/random';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 
 interface AllValue {
   program?: string;

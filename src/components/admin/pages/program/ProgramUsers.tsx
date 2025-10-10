@@ -1,3 +1,5 @@
+'use client';
+
 import BottomAction from '@/components/admin/program/program-user/bottom-action/BottomAction';
 import UserTableBody from '@/components/admin/program/program-user/table-content/TableBody';
 import TableHead, {

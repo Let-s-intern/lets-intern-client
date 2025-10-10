@@ -1,3 +1,5 @@
+'use client';
+
 import BlogTable from '@/components/admin/blog/BlogTable';
 import Link from 'next/link';
 

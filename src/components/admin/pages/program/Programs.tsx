@@ -1,3 +1,5 @@
+'use client';
+
 import {
   useGetProgramAdminQuery,
   useGetProgramAdminQueryKey,
@@ -489,7 +491,6 @@ const ProgramStatusTypeFilterInput = (props: GridFilterInputValueProps) => {
   const { item, applyValue } = props;
   const selectedValues = item.value || [];
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = event.target;
@@ -522,7 +523,6 @@ const ProgramStatusTypeFilterInput = (props: GridFilterInputValueProps) => {
     <FormControl className="h-full" component="fieldset">
       {/* 필터 버튼 */}
       <Button
-        ref={buttonRef}
         variant="outlined"
         className="h-full"
         onClick={handleOpen}

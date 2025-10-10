@@ -1,8 +1,10 @@
+'use client';
+
 import { challengeSchema } from '@/schema';
-import { useQuery } from '@tanstack/react-query';
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import axios from '@/utils/axios';
+import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 const ChallengeOnboarding = () => {
   const router = useRouter();

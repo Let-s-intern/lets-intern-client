@@ -1,3 +1,5 @@
+'use client';
+
 import { fileType, uploadFile } from '@/api/file';
 import {
   CreateVodReq,

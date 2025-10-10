@@ -1,3 +1,5 @@
+'use client';
+
 import { useGetChallengeAttendances } from '@/api/challenge';
 import ChallengeSubmitDetail from '@/components/admin/challenge/submit-check/table/table-body/ChallengeSubmitDetail';
 import LineTableBody from '@/components/admin/challenge/ui/lineTable/LineTableBody';

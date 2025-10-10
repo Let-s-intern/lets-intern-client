@@ -1,3 +1,5 @@
+'use client';
+
 import { useGetAdminBlogBannerList, usePatchAdminBlogBanner } from '@/api/blog';
 import { AdminBlogBannerListItem } from '@/api/blogSchema';
 import { LOCALIZED_YYYY_MDdd_HHmm } from '@/data/dayjsFormat';
