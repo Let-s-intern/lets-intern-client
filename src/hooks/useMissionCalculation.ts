@@ -1,4 +1,5 @@
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { BONUS_MISSION_TH } from '@/utils/constants';
 import { useMemo } from 'react';
 
 export const useMissionCalculation = () => {
@@ -6,14 +7,14 @@ export const useMissionCalculation = () => {
 
   const isLastMissionSubmitted = useMemo(() => {
     const lastSchedule = schedules[schedules.length - 1];
-    const isBonus = lastSchedule?.missionInfo?.th === 100;
+    const isBonus = lastSchedule?.missionInfo?.th === BONUS_MISSION_TH;
 
     if (isBonus) {
       // 보너스 회차가 있으면: 보너스 회차(100) + 마지막 미션 둘 다 제출되어야 함
-      const LastMissionSchedule = schedules[schedules.length - 2];
+      const lastMissionSchedule = schedules[schedules.length - 2];
       return (
         lastSchedule?.attendanceInfo?.submitted &&
-        LastMissionSchedule?.attendanceInfo?.submitted
+        lastMissionSchedule?.attendanceInfo?.submitted
       );
     }
     // 보너스가 없으면: 마지막만 제출되면 됨
