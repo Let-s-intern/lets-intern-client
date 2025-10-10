@@ -205,9 +205,9 @@ testWithAuth('POST /api/v1/user/signup', async ({ request, skip }) => {
 });
 
 // PATCH
-// /api/v1/user/token
+// /api/v2/user/token
 // 유저 토큰 재발급
-testWithAuth('PATCH /api/v1/user/token', async ({ request, skip }) => {
+testWithAuth('PATCH /api/v2/user/token', async ({ request, skip }) => {
   skip();
 });
 

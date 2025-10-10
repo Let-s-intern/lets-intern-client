@@ -1,3 +1,11 @@
+if (!process.env.NEXT_PUBLIC_API_BASE_PATH) {
+  throw new Error('NEXT_PUBLIC_API_BASE_PATH is not defined');
+}
+
+if (!process.env.NEXT_PUBLIC_SERVER_API) {
+  throw new Error('NEXT_PUBLIC_SERVER_API is not defined');
+}
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
