@@ -1,7 +1,5 @@
 'use client';
 
-import { Helmet } from 'react-helmet';
-import { usePathname } from 'next/navigation';
 import AboutHeader from '../../../components/common/about/header/AboutHeader';
 import ResultSection from '../../../components/common/about/ResultSection';
 import CommunitySection from '../../../components/common/about/section/CommunitySection';
@@ -15,27 +13,8 @@ import ReviewSection from '../../../components/common/about/section/ReviewSectio
 import SolutionSection from '../../../components/common/about/section/solution/SolutionSection';
 
 const About = () => {
-  const pathname = usePathname();
-
-  const title = `렛츠커리어 스토리`;
-  const url = `${window.location.origin}${pathname}`;
-  const description =
-    '커리어 성장, 이제 렛츠커리어가 취업준비생과 주니어의 길라잡이가 되겠습니다.';
-
   return (
     <div>
-      <Helmet>
-        <title>{title}</title>
-        <link rel="canonical" href={url} />
-        <meta name="description" content={description} />
-        <meta property="og:title" content={title} />
-        <meta property="og:url" content={url} />
-        <meta property="og:description" content={description} />
-        <meta name="twitter:title" content={title} />
-        <meta name="twitter:url" content={url} />
-        <meta name="twitter:description" content={description} />
-        <meta name="twitter:card" content="summary" />
-      </Helmet>
       <AboutHeader />
       <main>
         <ProblemSection />
