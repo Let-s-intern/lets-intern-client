@@ -1,6 +1,6 @@
 import Announcement from '@/assets/icons/announcement.svg?react';
 import ClockIcon from '@/assets/icons/clock.svg?react';
-import Pin from '@/assets/icons/pin.svg?react';
+import Pin from '@/assets/icons/pin.svg';
 import dayjs from '@/lib/dayjs';
 import {
   ActiveChallengeType,
