@@ -8,14 +8,9 @@ import {
 import { usePatchUser, useUserQuery } from '@/api/user';
 import GradeDropdown from '@/components/common/mypage/privacy/form-control/GradeDropdown';
 import Input from '@/components/common/ui/input/Input';
+import { DASHBOARD_FIRST_VISIT_GOAL } from '@components/common/challenge/my-challenge/section/MissionSubmitZeroSection';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-
-/**  최초 입장을 판별하기 위한 아무값
- * 0회차에서 목표를 사용자가 입력하기 때문에
- * 목표가 visit이면 입력하지 않은 것으로 판단해야 한다.
- */
-export const DASHBOARD_FIRST_VISIT_GOAL = 'visit';
 
 const ChallengeUserInfo = () => {
   const params = useParams<{ programId: string; applicationId: string }>();
