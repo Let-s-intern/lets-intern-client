@@ -1,3 +1,5 @@
+'use client';
+
 import { useDeleteUserMutation, useUserAdminQuery } from '@/api/user';
 import Header from '@/components/admin/ui/header/Header';
 import Heading from '@/components/admin/ui/heading/Heading';

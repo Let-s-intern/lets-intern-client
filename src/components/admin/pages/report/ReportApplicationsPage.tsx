@@ -1,3 +1,5 @@
+'use client';
+
 import dayjs from '@/lib/dayjs';
 import { Button, MenuItem, Select } from '@mui/material';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';

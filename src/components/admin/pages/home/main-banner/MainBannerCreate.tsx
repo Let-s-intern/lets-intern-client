@@ -1,5 +1,7 @@
-import { useState } from 'react';
+'use client';
+
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 import { BannerItemType, usePostBannerForAdmin } from '@/api/banner';
 import MainBannerInputContent from '@/components/admin/home/main-banner/MainBannerInputContent';

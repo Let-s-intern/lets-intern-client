@@ -118,21 +118,17 @@ const Programs = () => {
         field: 'userPage',
         headerName: '페이지 이동',
         width: 150,
-        type: 'actions',
-        getActions: (params) => [
+        sortable: false,
+        filterable: false,
+        renderCell: ({ row }) => (
           <Link
-            key={
-              'view' +
-              params.row.programInfo.programType +
-              params.row.programInfo.id
-            }
             className="text-blue-500 underline transition hover:text-blue-300"
-            href={`/program/${params.row.programInfo.programType.toLowerCase()}/${params.row.programInfo.id}`}
+            href={`/program/${row.programInfo.programType.toLowerCase()}/${row.programInfo.id}`}
             target="_blank"
           >
             보기
-          </Link>,
-        ],
+          </Link>
+        ),
       },
       {
         field: 'programStatusType',

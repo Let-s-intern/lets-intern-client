@@ -1,15 +1,17 @@
-import { useEffect, useState } from 'react';
+'use client';
+
 import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import {
   BannerItemType,
   useEditBannerForAdmin,
   useGetBannerDetailForAdmin,
 } from '@/api/banner';
-import EmptyContainer from '@components/common/ui/EmptyContainer';
-import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import MainBannerInputContent from '@/components/admin/home/main-banner/MainBannerInputContent';
 import EditorTemplate from '@/components/admin/program/ui/editor/EditorTemplate';
+import EmptyContainer from '@components/common/ui/EmptyContainer';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 
 const MainBannerEdit = () => {
   const router = useRouter();

@@ -1,3 +1,5 @@
+'use client';
+
 import { useUserDetailAdminQuery } from '@/api/user';
 import ActionButton from '@/components/admin/ui/button/ActionButton';
 import { gradeToText } from '@/utils/convert';

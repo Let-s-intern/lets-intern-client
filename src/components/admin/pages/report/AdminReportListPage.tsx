@@ -1,14 +1,16 @@
-import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import { Button } from '@mui/material';
-import { DataGrid, GridColDef, GridToolbarContainer } from '@mui/x-data-grid';
-import { useEffect, useMemo } from 'react';
-import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+'use client';
+
 import {
   AdminReportListItem,
   convertReportTypeToDisplayName,
   useGetReportsForAdmin,
 } from '@/api/report';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import { Button } from '@mui/material';
+import { DataGrid, GridColDef, GridToolbarContainer } from '@mui/x-data-grid';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useMemo } from 'react';
 
 type Row = AdminReportListItem & { id: number };
 
@@ -111,10 +113,7 @@ function Toolbar() {
           <div className="flex items-center gap-2">-</div>
           <div className="flex items-center gap-2">
             <Link href="/admin/report/create">
-              <Button
-                variant="contained"
-                color="primary"
-              >
+              <Button variant="contained" color="primary">
                 등록
               </Button>
             </Link>
@@ -138,7 +137,9 @@ const AdminReportListPage = () => {
       // Remove message from URL by navigating to the same path without the message param
       const newSearchParams = new URLSearchParams(searchParams.toString());
       newSearchParams.delete('message');
-      const newUrl = window.location.pathname + (newSearchParams.toString() ? '?' + newSearchParams.toString() : '');
+      const newUrl =
+        window.location.pathname +
+        (newSearchParams.toString() ? '?' + newSearchParams.toString() : '');
       router.replace(newUrl);
     }
   }, [searchParams, router, setSnackbar]);
