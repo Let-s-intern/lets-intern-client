@@ -1,13 +1,9 @@
+import type { EpochMs, TokenSet } from '@/types/token';
 import useAuthStore from '../store/useAuthStore';
+import { inferExpFromJwtMs } from './token';
 
-type EpochMs = number;
-
-export type TokenSet = {
-  accessToken: string;
-  refreshToken: string;
-  accessExpiresAt: EpochMs;
-  refreshExpiresAt: EpochMs;
-};
+export type { TokenSet } from '@/types/token';
+export { inferExpFromJwtMs } from './token';
 
 export type RequireAuthReason =
   | '401'
@@ -25,20 +21,6 @@ let tokens: TokenSet | null = null;
 let readyPromise: Promise<void> | null = null;
 let refreshPromise: Promise<boolean> | null = null;
 let requireAuthHandler: ((reason: RequireAuthReason) => void) | null = null;
-
-export function inferExpFromJwtMs(token?: string | null): EpochMs | null {
-  if (!token) return null;
-  const parts = token.split('.');
-  if (parts.length !== 3) return null;
-  try {
-    const payload = JSON.parse(
-      Buffer.from(parts[1]!, 'base64').toString('utf-8'),
-    );
-    return typeof payload.exp === 'number' ? payload.exp * 1000 : null;
-  } catch {
-    return null;
-  }
-}
 
 function getNow(): number {
   return Date.now();

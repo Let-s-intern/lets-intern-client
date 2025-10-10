@@ -1,4 +1,5 @@
-import { inferExpFromJwtMs, TokenSet } from '@/utils/auth';
+import type { TokenSet } from '@/types/token';
+import { inferExpFromJwtMs } from '@/utils/token';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
