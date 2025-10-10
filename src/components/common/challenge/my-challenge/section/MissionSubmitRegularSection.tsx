@@ -42,12 +42,21 @@ const MissionSubmitRegularSection = ({
   const params = useParams();
 
   const { selectedMissionId, setSelectedMission } = useMissionStore();
-  const { schedules, currentChallenge, refetchSchedules } =
-    useCurrentChallenge();
+  const { schedules, refetchSchedules } = useCurrentChallenge();
 
-  // 챌린지 종료 + 2일
-  const isSubmitPeriodEnded =
-    dayjs(currentChallenge?.endDate).add(2, 'day').isBefore(dayjs()) ?? true;
+  // 현재 선택된 미션의 종료일 찾기
+  const currentMission = schedules.find(
+    (schedule) => schedule.missionInfo.th === selectedMissionTh,
+  );
+  const missionEndDate = currentMission?.missionInfo?.endDate;
+
+  // 미션 종료 + 2일 (미션 종료일 기준)
+  const isSubmitPeriodEnded = missionEndDate
+    ? dayjs(missionEndDate)
+        .tz('Asia/Seoul')
+        .add(2, 'day')
+        .isBefore(dayjs().tz('Asia/Seoul'))
+    : true;
 
   // missionTh를 기준으로 마지막 정규 미션 찾기 (보너스 미션 제외)
   const regularMissions = schedules.filter(
@@ -209,7 +218,11 @@ const MissionSubmitRegularSection = ({
 
         {/* 링크 섹션 */}
         <LinkInputSection
-          disabled={(isSubmitted && !isEditing) || isResubmitBlocked}
+          disabled={
+            (isSubmitted && !isEditing) ||
+            isResubmitBlocked ||
+            isSubmitPeriodEnded
+          }
           onLinkChange={handleLinkChange}
           onLinkVerified={handleLinkVerified}
           todayTh={selectedMissionTh}
@@ -238,7 +251,11 @@ const MissionSubmitRegularSection = ({
 새롭게 배운 점, 어려운 부분, 궁금증 등 떠오르는 생각을 남겨 주세요.`}
             value={textareaValue}
             onChange={handleTextareaChange}
-            disabled={(isSubmitted && !isEditing) || isResubmitBlocked} // 재제출 차단 조건 추가
+            disabled={
+              (isSubmitted && !isEditing) ||
+              isResubmitBlocked ||
+              isSubmitPeriodEnded
+            } // 재제출 차단 조건 추가
           />
         </section>
 
