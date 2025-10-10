@@ -37,6 +37,26 @@ const MissionGuideRegularSection = ({
     return now.isAfter(startDate) || now.isSame(startDate);
   };
 
+  // 넛지 메시지 노출 조건: 미제출 + 미션 종료일로부터 2일 이내
+  const shouldShowNudgeMessage = () => {
+    if (
+      !selectedMissionTh ||
+      missionData?.attendanceInfo?.submitted !== false
+    ) {
+      return false;
+    }
+
+    // 미션별 종료일 사용
+    const missionEndDate = missionData?.missionInfo?.endDate;
+    if (!missionEndDate) return false;
+
+    const endDate = dayjs(missionEndDate).tz('Asia/Seoul');
+    const now = dayjs().tz('Asia/Seoul');
+    const twoDaysAfterEnd = endDate.add(2, 'day');
+
+    return now.isBefore(twoDaysAfterEnd) || now.isSame(twoDaysAfterEnd);
+  };
+
   // 로딩 중이거나 데이터가 없을 때 스켈레톤 표시
   if (isLoading || !missionData) {
     return <MissionGuideSkeleton variant="regular" />;
@@ -51,12 +71,11 @@ const MissionGuideRegularSection = ({
         deadline={formatDeadline(missionData?.missionInfo?.endDate)}
         missionStartDate={missionData.missionInfo.startDate}
       />
-      {selectedMissionTh &&
-        missionData?.attendanceInfo?.submitted === false && (
-          <p className="text-xsmall16 font-normal text-red-500">
-            제출하지 않은 미션입니다. 늦더라도 제출을 완료해주세요!
-          </p>
-        )}
+      {shouldShowNudgeMessage() && (
+        <p className="text-xsmall16 font-normal text-red-500">
+          제출하지 않은 미션입니다. 늦더라도 제출을 완료해주세요!
+        </p>
+      )}
       {/* 미션 가이드 섹션 */}
       <section className="flex flex-col gap-5 rounded-xs border border-neutral-80 px-4 py-4">
         {/* 미션 목록 섹션 */}
