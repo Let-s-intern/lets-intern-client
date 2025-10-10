@@ -1,11 +1,7 @@
-import { useGetActiveChallenge, useGetChallengeHome } from '@/api/challenge';
+import { useGetActiveChallenge } from '@/api/challenge';
 import { SubNavItemProps } from '@/components/common/ui/layout/header/SubNavItem';
-import {
-  ActiveChallengeResponse,
-  ChallengeList,
-  challengeTypeSchema,
-} from '@/schema';
-import useIsB2BChallenge from './useIsB2BChallenge';
+import { ActiveChallengeResponse, challengeTypeSchema } from '@/schema';
+import { useNavB2CChallenges } from './useFirstB2CChallenge';
 
 const {
   EXPERIENCE_SUMMARY,
@@ -16,17 +12,6 @@ const {
 } = challengeTypeSchema.enum;
 
 export default function useProgramCategoryNav(isNextRouter: boolean) {
-  const { data: experienceSummaryData } = useGetChallengeHome({
-    type: EXPERIENCE_SUMMARY,
-  });
-  const { data: personalStatementData } = useGetChallengeHome({
-    type: PERSONAL_STATEMENT,
-  });
-  const { data: personalStatementLargeCorpData } = useGetChallengeHome({
-    type: PERSONAL_STATEMENT_LARGE_CORP,
-  });
-  const { data: portfolioData } = useGetChallengeHome({ type: PORTFOLIO });
-  const { data: marketingData } = useGetChallengeHome({ type: MARKETING });
   const { data: activePersonalStatement } =
     useGetActiveChallenge(PERSONAL_STATEMENT);
   const { data: activePersonalStatementLargeCorp } = useGetActiveChallenge(
@@ -37,69 +22,29 @@ export default function useProgramCategoryNav(isNextRouter: boolean) {
   const { data: activeExperienceSummary } =
     useGetActiveChallenge(EXPERIENCE_SUMMARY);
 
-  const getLatest = (listData?: ChallengeList) => {
-    return (listData?.programList ?? [])
-      .filter((p) => Boolean(p.deadline))
-      .sort(
-        (a, b) =>
-          new Date(b.deadline ?? '').getTime() -
-          new Date(a.deadline ?? '').getTime(),
-      )[0];
-  };
-
-  // 후보 ID 계산 (활성 또는 최신)
-  const activeExperienceSummaryId =
-    activeExperienceSummary?.challengeList?.[0]?.id;
-  const activePersonalStatementId =
-    activePersonalStatement?.challengeList?.[0]?.id;
-  const activeLargeCorpId =
-    activePersonalStatementLargeCorp?.challengeList?.[0]?.id;
-  const activeMarketingId = activeMarketing?.challengeList?.[0]?.id;
-  const activePortfolioId = activePortfolio?.challengeList?.[0]?.id;
-
-  const latestExperienceSummary = getLatest(experienceSummaryData);
-  const latestPersonalStatement = getLatest(personalStatementData);
-  const latestLargeCorp = getLatest(personalStatementLargeCorpData);
-  const latestMarketing = getLatest(marketingData);
-  const latestPortfolio = getLatest(portfolioData);
-
-  // B2B 여부 훅 호출 (항상 같은 순서/개수 유지)
-  const isB2BActiveExperienceSummary = useIsB2BChallenge(
-    activeExperienceSummaryId,
-  );
-  const isB2BLatestExperienceSummary = useIsB2BChallenge(
-    latestExperienceSummary?.id,
-  );
-  const isB2BActivePersonalStatement = useIsB2BChallenge(
-    activePersonalStatementId,
-  );
-  const isB2BLatestPersonalStatement = useIsB2BChallenge(
-    latestPersonalStatement?.id,
-  );
-  const isB2BActiveLargeCorp = useIsB2BChallenge(activeLargeCorpId);
-  const isB2BLatestLargeCorp = useIsB2BChallenge(latestLargeCorp?.id);
-  const isB2BActiveMarketing = useIsB2BChallenge(activeMarketingId);
-  const isB2BLatestMarketing = useIsB2BChallenge(latestMarketing?.id);
-  const isB2BActivePortfolio = useIsB2BChallenge(activePortfolioId);
-  const isB2BLatestPortfolio = useIsB2BChallenge(latestPortfolio?.id);
+  // 새로운 훅을 사용하여 각 타입별 첫 번째 B2C 챌린지 가져오기
+  const {
+    experienceSummary,
+    personalStatement,
+    personalStatementLargeCorp,
+    portfolio,
+    marketing,
+  } = useNavB2CChallenges();
 
   const getProgramHref = (
     activeData?: ActiveChallengeResponse,
-    listData?: ChallengeList,
-    isB2BActive?: boolean,
-    isB2BLatest?: boolean,
+    b2cChallenge?: { href: string },
   ): string | undefined => {
+    // 1. 활성 챌린지가 있는 경우
     const activeId = activeData?.challengeList?.[0]?.id;
     const activeTitle = activeData?.challengeList?.[0]?.title ?? '';
-    if (activeId !== undefined && !isB2BActive)
-      return `/program/challenge/${activeId}/${encodeURIComponent(activeTitle)}`;
 
-    const latest = getLatest(listData);
-    if (latest?.id !== undefined && !isB2BLatest) {
-      const title = latest.title ?? '';
-      return `/program/challenge/${latest.id}/${encodeURIComponent(title)}`;
+    if (activeId !== undefined) {
+      return `/program/challenge/${activeId}/${encodeURIComponent(activeTitle)}`;
     }
-    return undefined;
+
+    // 2. 활성 챌린지가 없는 경우, 첫 번째 B2C 챌린지 사용
+    return b2cChallenge?.href;
   };
 
   const programCategoryLists: SubNavItemProps[] = [
@@ -111,45 +56,25 @@ export default function useProgramCategoryNav(isNextRouter: boolean) {
     },
     {
       children: '경험정리 챌린지',
-      href: getProgramHref(
-        activeExperienceSummary,
-        experienceSummaryData,
-        isB2BActiveExperienceSummary,
-        isB2BLatestExperienceSummary,
-      ),
+      href: getProgramHref(activeExperienceSummary, experienceSummary),
       isNextRouter,
       force: !isNextRouter,
     },
     {
       children: '자기소개서 완성 챌린지',
-      href: getProgramHref(
-        activePersonalStatement,
-        personalStatementData,
-        isB2BActivePersonalStatement,
-        isB2BLatestPersonalStatement,
-      ),
+      href: getProgramHref(activePersonalStatement, personalStatement),
       isNextRouter,
       force: !isNextRouter,
     },
     {
       children: '포트폴리오 완성 챌린지',
-      href: getProgramHref(
-        activePortfolio,
-        portfolioData,
-        isB2BActivePortfolio,
-        isB2BLatestPortfolio,
-      ),
+      href: getProgramHref(activePortfolio, portfolio),
       isNextRouter,
       force: !isNextRouter,
     },
     {
       children: '마케팅 서류 완성 챌린지',
-      href: getProgramHref(
-        activeMarketing,
-        marketingData,
-        isB2BActiveMarketing,
-        isB2BLatestMarketing,
-      ),
+      href: getProgramHref(activeMarketing, marketing),
       isNextRouter,
       force: !isNextRouter,
     },
@@ -157,9 +82,7 @@ export default function useProgramCategoryNav(isNextRouter: boolean) {
       children: '대기업 완성 챌린지',
       href: getProgramHref(
         activePersonalStatementLargeCorp,
-        personalStatementLargeCorpData,
-        isB2BActiveLargeCorp,
-        isB2BLatestLargeCorp,
+        personalStatementLargeCorp,
       ),
       isNextRouter,
       force: !isNextRouter,
@@ -170,7 +93,6 @@ export default function useProgramCategoryNav(isNextRouter: boolean) {
       isNextRouter,
       force: !isNextRouter,
     },
-
     {
       children: '취준위키 VOD',
       href: '/program?type=VOD',

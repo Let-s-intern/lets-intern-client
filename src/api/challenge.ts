@@ -108,10 +108,9 @@ export const usePatchChallengePayback = ({
       setPaybackModalClose();
       setIsPaybackFinished();
     },
-    onError: (error) => {
+    onError: () => {
       alert('페이백에 실패했습니다.');
       setPaybackModalClose();
-      console.error(error);
     },
   });
 };
