@@ -1,6 +1,7 @@
 import { useChallengeMissionFeedbackQuery } from '@/api/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { useMissionStore } from '@/store/useMissionStore';
+import { BONUS_MISSION_TH } from '@/utils/constants';
 import LexicalContent from '@components/common/blog/LexicalContent';
 import { useParams } from 'react-router-dom';
 
@@ -23,7 +24,7 @@ const MissionMentorCommentSection = ({ missionId }: Props) => {
   const startsFromZero = schedules[0]?.missionInfo?.th === 0; // 0회차 존재 여부
 
   const getScheduleIndex = () => {
-    if (selectedMissionTh === 100) return schedules.length - 1;
+    if (selectedMissionTh === BONUS_MISSION_TH) return schedules.length - 1;
     return startsFromZero ? selectedMissionTh : selectedMissionTh - 1;
   };
   const scheduleIndex = getScheduleIndex();

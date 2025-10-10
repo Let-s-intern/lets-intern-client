@@ -7,6 +7,7 @@ import MissionTodayIcon from './MissionTodayIcon';
 
 import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
 import { useMissionStore } from '@/store/useMissionStore';
+import { BONUS_MISSION_TH } from '@/utils/constants';
 import { isAxiosError } from 'axios';
 interface Props {
   schedule: Schedule;
@@ -82,7 +83,7 @@ const MissionCalendarItem = ({
             : 'border-neutral-80',
         )}
       >
-        {mission.th === 100 && attendance?.submitted ? (
+        {mission.th === BONUS_MISSION_TH && attendance?.submitted ? (
           <MissionIcon schedule={schedule} isDone={isDone} />
         ) : mission.th === todayTh ? (
           <MissionTodayIcon
