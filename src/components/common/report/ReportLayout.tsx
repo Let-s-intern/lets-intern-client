@@ -1,15 +1,14 @@
 import useAuthStore from '@/store/useAuthStore';
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useParams } from 'next/navigation';
 import NavBar from '../challenge/ui/layout/NavBar';
 
 const ReportLayout = ({ children }: { children: React.ReactNode }) => {
   const params = useParams<{ programId: string }>();
   const router = useRouter();
-  const { isLoggedIn } = useAuthStore();
+  const { isLoggedIn, isInitialized } = useAuthStore();
 
   const { data: isValidUserAccessData, isLoading: isValidUserAccessLoading } =
     useQuery({
@@ -36,6 +35,8 @@ const ReportLayout = ({ children }: { children: React.ReactNode }) => {
   const isLoading = isValidUserInfoLoading || isValidUserAccessLoading;
 
   useEffect(() => {
+    if (!isInitialized) return;
+
     if (!isLoggedIn) {
       const newUrl = new URL(window.location.href);
       const searchParams = new URLSearchParams();
@@ -52,7 +53,14 @@ const ReportLayout = ({ children }: { children: React.ReactNode }) => {
       router.push(`/challenge/${params.programId}/user/info`);
       return;
     }
-  }, [isLoading, isLoggedIn, isValidUserInfo, router, params.programId]);
+  }, [
+    isLoading,
+    isLoggedIn,
+    isValidUserInfo,
+    router,
+    params.programId,
+    isInitialized,
+  ]);
 
   return (
     <div className="min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-6rem)]">
@@ -73,9 +81,7 @@ const ReportLayout = ({ children }: { children: React.ReactNode }) => {
       <div className="hidden px-6 py-6 lg:block">
         <div className="mx-auto flex w-[1024px]">
           <NavBar />
-          <div className="min-w-0 flex-1">
-            {children}
-          </div>
+          <div className="min-w-0 flex-1">{children}</div>
         </div>
       </div>
     </div>

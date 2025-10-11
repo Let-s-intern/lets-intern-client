@@ -1,16 +1,15 @@
 'use client';
 
 import dayjs from '@/lib/dayjs';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   ComponentPropsWithoutRef,
   ElementType,
   forwardRef,
-  MouseEvent,
   useEffect,
   useRef,
 } from 'react';
-import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
 
 import {
   convertFeedbackStatusToBadgeStatus,
@@ -166,18 +165,18 @@ export const ReportManagementButton: ReportManageButtonComponent = forwardRef(
 
 ReportManagementButton.displayName = 'ReportManagementButton';
 
-const FilterNavLink = ({ 
-  filter, 
-  filterStatus, 
-  filterType 
-}: { 
+const FilterNavLink = ({
+  filter,
+  filterStatus,
+  filterType,
+}: {
   filter: { label: string; value: ReportFilter['type'] };
   filterStatus: string;
   filterType: string;
 }) => {
   const router = useRouter();
   const isActive = filterType === filter.value;
-  
+
   const handleClick = () => {
     router.push(`?status=${filterStatus}&type=${filter.value}`);
   };
@@ -199,23 +198,25 @@ const ReportManagementPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const { isLoggedIn } = useAuthStore();
+  const { isLoggedIn, isInitialized } = useAuthStore();
   const { initReportApplication, setReportApplication } =
     useReportApplicationStore();
   const { hasActiveResume, hasActivePortfolio, hasActivePersonalStatement } =
     useActiveReports();
 
   useEffect(() => {
+    if (!isInitialized) return;
+
     if (!isLoggedIn) {
       // TODO: Router 구조 리팩토링 후 setTimeout 제거
       setTimeout(() => {
         const searchParams = new URLSearchParams();
         searchParams.set('redirect', '/report/management');
-        router.push('/login?' + searchParams.toString());
+        router.push(`/login?${searchParams.toString()}`);
       }, 100);
     }
     initReportApplication(); // 서류 진단 전역 상태 초기화
-  }, [isLoggedIn, router, initReportApplication]);
+  }, [isLoggedIn, router, initReportApplication, isInitialized]);
 
   const filterStatus = (searchParams.get('status') ??
     'all') as ReportFilter['status'];
