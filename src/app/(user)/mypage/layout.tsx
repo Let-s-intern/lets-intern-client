@@ -1,8 +1,8 @@
 'use client';
 
 import clsx from 'clsx';
-import { useEffect, useMemo } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useMemo } from 'react';
 
 import { useIsMentorQuery } from '@/api/user';
 import NavItem from '@/components/common/mypage/ui/nav/NavItem';
@@ -14,7 +14,7 @@ interface MyPageLayoutProps {
 }
 
 const MyPageLayout = ({ children }: MyPageLayoutProps) => {
-  const { isLoggedIn } = useAuthStore();
+  const { isLoggedIn, isInitialized } = useAuthStore();
   const pathname = usePathname();
   const router = useRouter();
   const { data: isMentor } = useIsMentorQuery();
@@ -66,6 +66,8 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
   }, [pathname, isMentor]);
 
   useEffect(() => {
+    if (!isInitialized) return;
+
     // login 페이지로 넘어간 이후 이 useEffect가 한번 더 실행되는 케이스가 있어서 방어로직 추가
     if (!isLoggedIn && pathname.startsWith('/mypage')) {
       const newUrl = new URL(window.location.href);
@@ -73,7 +75,7 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
       searchParams.set('redirect', `${newUrl.pathname}?${newUrl.search}`);
       router.push(`/login?${searchParams.toString()}`);
     }
-  }, [isLoggedIn, router, pathname]);
+  }, [isLoggedIn, router, pathname, isInitialized]);
 
   return (
     <div className="flex w-full flex-col items-center justify-start lg:px-[7.5rem]">

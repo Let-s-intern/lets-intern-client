@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { uploadFile } from '@/api/file';
 import {
@@ -9,7 +9,13 @@ import {
   ReportType,
   usePatchMyApplication,
 } from '@/api/report';
-import useRunOnce from '@/hooks/useRunOnce';
+import {
+  AdditionalInfoSection,
+  CallOut,
+  DocumentSection,
+  PremiumSection,
+  ScheduleSection,
+} from '@/components/pages/report/ReportApplyPage';
 import { ReportTypePathnameEnum } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
@@ -18,13 +24,6 @@ import BottomSheet from '@components/common/ui/BottomSheeet';
 import BaseButton from '@components/common/ui/button/BaseButton';
 import HorizontalRule from '@components/ui/HorizontalRule';
 import ReportSubmitModal from '@components/ui/ReportSubmitModal';
-import {
-  AdditionalInfoSection,
-  CallOut,
-  DocumentSection,
-  PremiumSection,
-  ScheduleSection,
-} from '@/components/pages/report/ReportApplyPage';
 
 const ReportApplicationPage = () => {
   const router = useRouter();
@@ -36,7 +35,7 @@ const ReportApplicationPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { isLoggedIn } = useAuthStore();
+  const { isLoggedIn, isInitialized } = useAuthStore();
   const {
     data: reportApplication,
     setReportApplication,
@@ -83,13 +82,15 @@ const ReportApplicationPage = () => {
     return { message: '', isValid: true };
   };
 
-  useRunOnce(() => {
+  useEffect(() => {
+    if (!isInitialized) return;
+
     if (isLoggedIn) return;
 
     const searchParams = new URLSearchParams();
     searchParams.set('redirect', window.location.pathname);
     router.push(`/login?${searchParams.toString()}`);
-  });
+  }, [isInitialized, isLoggedIn, router]);
 
   return (
     <div className="mx-auto max-w-[55rem] px-5 md:pb-10 md:pt-5 xl:flex xl:gap-16">

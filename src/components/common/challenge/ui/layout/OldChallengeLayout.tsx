@@ -16,7 +16,7 @@ export const GOAL_DATE = dayjs('2025-01-19');
 const OldChallengeLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const params = useParams<{ programId: string; applicationId: string }>();
-  const { isLoggedIn } = useAuthStore();
+  const { isLoggedIn, isInitialized } = useAuthStore();
   const programId = params.programId;
   const applicationId = params.applicationId;
 
@@ -46,6 +46,8 @@ const OldChallengeLayout = ({ children }: { children: React.ReactNode }) => {
     challenge?.startDate && GOAL_DATE.isBefore(challenge.startDate);
 
   useEffect(() => {
+    if (!isInitialized) return;
+
     if (!isLoggedIn) {
       const newUrl = new URL(window.location.href);
       const searchParams = new URLSearchParams();
@@ -75,6 +77,7 @@ const OldChallengeLayout = ({ children }: { children: React.ReactNode }) => {
     accessibleData,
     hasChallengeGoal,
     isStartAfterGoal,
+    isInitialized,
   ]);
 
   if (isLoading) {

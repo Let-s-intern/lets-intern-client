@@ -2,9 +2,9 @@
 
 import dayjs from '@/lib/dayjs';
 import { FormControl, RadioGroup, SelectChangeEvent } from '@mui/material';
+import { useParams, useRouter } from 'next/navigation';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
-import { useRouter, useParams } from 'next/navigation';
 
 import { uploadFile } from '@/api/file';
 import {
@@ -13,7 +13,6 @@ import {
 } from '@/api/report';
 import useMinDate from '@/hooks/useMinDate';
 import useReportProgramInfo from '@/hooks/useReportProgramInfo';
-import useRunOnce from '@/hooks/useRunOnce';
 import useValidateUrl from '@/hooks/useValidateUrl';
 import { twMerge } from '@/lib/twMerge';
 import { ReportTypePathnameEnum } from '@/schema';
@@ -43,7 +42,7 @@ const ReportApplyPage = () => {
   const [recruitmentFile, setRecruitmentFile] = useState<File | null>(null);
   const [isSubmitNow, setIsSubmitNow] = useState('true');
 
-  const { isLoggedIn } = useAuthStore();
+  const { isLoggedIn, isInitialized } = useAuthStore();
 
   const {
     data: reportApplication,
@@ -85,13 +84,15 @@ const ReportApplyPage = () => {
     return { message: '', isValid: true };
   };
 
-  useRunOnce(() => {
+  useEffect(() => {
+    if (!isInitialized) return;
+
     if (isLoggedIn) return;
 
     const searchParams = new URLSearchParams();
     searchParams.set('redirect', window.location.pathname);
     router.push(`/login?${searchParams.toString()}`);
-  });
+  }, [isInitialized, isLoggedIn, router]);
 
   return (
     <div className="mx-auto max-w-[55rem] px-5 md:pb-10 md:pt-5 lg:px-0 xl:flex xl:gap-16">
