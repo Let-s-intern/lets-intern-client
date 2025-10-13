@@ -4,12 +4,13 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export interface AuthStore {
-  token: TokenSet | null;
+  accessToken?: string | null;
+  refreshToken?: string | null;
+  accessExpiresAt?: number | null;
+  refreshExpiresAt?: number | null;
   isLoggedIn: boolean;
   setToken: (tokens: TokenSet | null) => void;
   isInitialized: boolean; // 스토어 초기화 여부
-  accessToken?: string;
-  refreshToken?: string;
   login: (accessToken: string, refreshToken: string) => void;
   logout: () => void;
   setInitialized: (initialized: boolean) => void;
@@ -28,12 +29,10 @@ const useAuthStore = create(
           throw new Error('Invalid token format');
         }
         set({
-          token: {
-            accessToken,
-            refreshToken,
-            accessExpiresAt: accessTokenExpiresAt,
-            refreshExpiresAt: refreshTokenExpiresAt,
-          },
+          accessToken,
+          refreshToken,
+          accessExpiresAt: accessTokenExpiresAt,
+          refreshExpiresAt: refreshTokenExpiresAt,
           isLoggedIn: true,
         });
       },
@@ -51,14 +50,20 @@ const useAuthStore = create(
           !token.refreshExpiresAt
         ) {
           set({
-            token: null,
+            accessToken: null,
+            refreshToken: null,
+            accessExpiresAt: null,
+            refreshExpiresAt: null,
             isLoggedIn: false,
           });
           return;
         }
 
         set({
-          token,
+          accessToken: token.accessToken,
+          refreshToken: token.refreshToken,
+          accessExpiresAt: token.accessExpiresAt,
+          refreshExpiresAt: token.refreshExpiresAt,
           isLoggedIn: true,
         });
       },
