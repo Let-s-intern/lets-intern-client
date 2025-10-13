@@ -1,6 +1,4 @@
-import type { EpochMs } from '@/types/token';
-
-export function inferExpFromJwtMs(token?: string | null): EpochMs | null {
+export function inferExpFromJwtMs(token?: string | null): number | null {
   if (!token) return null;
   const parts = token.split('.');
   if (parts.length !== 3) return null;

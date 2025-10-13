@@ -20,9 +20,9 @@ import axios from '@/utils/axios';
 import { searchParamsToObject } from '@/utils/network';
 import ReportCreditRow from '@components/common/mypage/credit/ReportCreditRow';
 import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
-import { Suspense, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 
 const ReportPaymentResultContent = () => {
   const router = useRouter();
@@ -98,7 +98,9 @@ const ReportPaymentResultContent = () => {
         // postApplicationDone를 true로 설정하여 추후 뒤로가기로 왔을 때 api를 타지 않도록 함
         const currentUrl = new URL(window.location.href);
         currentUrl.searchParams.set('postApplicationDone', 'true');
-        router.replace(currentUrl.pathname + '?' + currentUrl.searchParams.toString());
+        router.replace(
+          currentUrl.pathname + '?' + currentUrl.searchParams.toString(),
+        );
       });
   });
 

@@ -1,75 +1,106 @@
-import type { TokenSet } from '@/types/token';
 import { inferExpFromJwtMs } from '@/utils/token';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+export type TokenSet = {
+  accessToken: string;
+  refreshToken: string;
+  accessTokenExpiresAt: number;
+  refreshTokenExpiresAt: number;
+};
+
 export interface AuthStore {
-  token: TokenSet | null;
+  accessToken: string | null;
+  refreshToken: string | null;
+  accessTokenExpiresAt: number | null;
+  refreshTokenExpiresAt: number | null;
   isLoggedIn: boolean;
+  setToken: (tokens: TokenSet | null) => void;
   isInitialized: boolean; // 스토어 초기화 여부
-  accessToken?: string;
-  refreshToken?: string;
   login: (accessToken: string, refreshToken: string) => void;
   logout: () => void;
   setInitialized: (initialized: boolean) => void;
-  setToken: (tokens: TokenSet | null) => void;
 }
+
+const emptyTokens = {
+  token: null as TokenSet | null,
+  accessToken: null as string | null,
+  refreshToken: null as string | null,
+  accessTokenExpiresAt: null as number | null,
+  refreshTokenExpiresAt: null as number | null,
+  isLoggedIn: false,
+};
 
 const useAuthStore = create(
   persist<AuthStore>(
-    (set) => ({
-      token: null,
-      isLoggedIn: false,
-      isInitialized: false,
-      login: (accessToken, refreshToken) => {
-        const accessTokenExpiresAt = inferExpFromJwtMs(accessToken);
-        const refreshTokenExpiresAt = inferExpFromJwtMs(refreshToken);
-        if (!accessTokenExpiresAt || !refreshTokenExpiresAt) {
-          throw new Error('Invalid token format');
-        }
+    (set, get) => {
+      const setEmptyTokens = () => {
         set({
-          token: {
+          ...emptyTokens,
+        });
+      };
+
+      return {
+        ...emptyTokens,
+
+        isInitialized: false,
+        login: (accessToken, refreshToken) => {
+          const accessTokenExpiresAt = inferExpFromJwtMs(accessToken);
+          const refreshTokenExpiresAt = inferExpFromJwtMs(refreshToken);
+          if (!accessTokenExpiresAt || !refreshTokenExpiresAt) {
+            throw new Error('Invalid token format');
+          }
+          get().setToken({
             accessToken,
             refreshToken,
-            accessExpiresAt: accessTokenExpiresAt,
-            refreshExpiresAt: refreshTokenExpiresAt,
-          },
-          isLoggedIn: true,
-        });
-      },
-      logout: () => {
-        set({
-          isLoggedIn: false,
-        });
-      },
-      setInitialized: (initialized) => {
-        set({ isInitialized: initialized });
-      },
-      setToken: (token) => {
-        if (
-          !token ||
-          !token.accessToken ||
-          !token.refreshToken ||
-          !token.accessExpiresAt ||
-          !token.refreshExpiresAt
-        ) {
-          set({
-            token: null,
-            isLoggedIn: false,
+            accessTokenExpiresAt,
+            refreshTokenExpiresAt,
           });
-          return;
-        }
+        },
+        logout: () => {
+          get().setToken(null);
+        },
+        setToken: (token) => {
+          if (!token) {
+            setEmptyTokens();
+            return;
+          }
 
-        set({
-          token,
-          isLoggedIn: true,
-        });
-      },
-    }),
+          set({
+            accessToken: token.accessToken,
+            refreshToken: token.refreshToken,
+            accessTokenExpiresAt: token.accessTokenExpiresAt,
+            refreshTokenExpiresAt: token.refreshTokenExpiresAt,
+            isLoggedIn: true,
+          });
+        },
+        setInitialized: (initialized) => {
+          set({ isInitialized: initialized });
+        },
+      };
+    },
     {
       name: 'userLoginStatus',
       onRehydrateStorage: () => (state) => {
         state?.setInitialized(true);
+
+        if (!state) {
+          return;
+        }
+
+        if (
+          state.accessToken &&
+          state.refreshToken &&
+          typeof state.accessTokenExpiresAt === 'number' &&
+          typeof state.refreshTokenExpiresAt === 'number'
+        ) {
+          state.setToken({
+            accessToken: state.accessToken,
+            refreshToken: state.refreshToken,
+            accessTokenExpiresAt: state.accessTokenExpiresAt,
+            refreshTokenExpiresAt: state.refreshTokenExpiresAt,
+          });
+        }
       },
     },
   ),

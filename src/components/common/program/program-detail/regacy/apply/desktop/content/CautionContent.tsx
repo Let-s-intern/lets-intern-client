@@ -1,8 +1,9 @@
+import { getAuthHeader } from '@/utils/auth';
 import { useQueryClient } from '@tanstack/react-query';
 import cn from 'classnames';
 import clsx from 'clsx';
-import { useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useState } from 'react';
 import axios from '../../../../../../../../utils/axios';
 import { typeToText } from '../../../../../../../../utils/converTypeToText';
 import CautionPriceContent from '../../../ui/price/CautionPriceContent';
@@ -49,16 +50,11 @@ const CautionContent = ({
           guestPhoneNum: formData.phoneNum,
         };
       }
+      const authHeader = await getAuthHeader();
       const res = await axios.post(
         `/application/${params.programId}`,
         newUser,
-        {
-          headers: {
-            Authorization: isLoggedIn
-              ? `Bearer ${localStorage.getItem('access-token')}`
-              : '',
-          },
-        },
+        isLoggedIn && authHeader ? { headers: authHeader } : undefined,
       );
       setMessage('신청 작업이 완료되었습니다.');
       setAnnouncementDate(res.data.announcementDate);

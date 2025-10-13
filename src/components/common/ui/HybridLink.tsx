@@ -18,9 +18,10 @@ function HybridLink({
     target,
     rel,
     onClick: (e: MouseEvent<HTMLAnchorElement>) => {
-      if (onClick) onClick(e);
+      if (onClick) {
+        onClick(e);
+      }
 
-      // 외부 링크인 경우 기본 브라우저 동작 사용
       if (isExternalLink) {
         e.preventDefault();
         if (target === '_blank') {
@@ -29,7 +30,6 @@ function HybridLink({
           window.location.href = href;
         }
       }
-      // 내부 링크인 경우 Next.js Link가 처리
     },
   };
 
