@@ -1,3 +1,5 @@
+'use client';
+
 /** 멘토 관리 페이지 */
 
 'use client';
