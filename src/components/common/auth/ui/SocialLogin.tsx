@@ -1,3 +1,4 @@
+import { getUniversalBaseUrl } from '@/utils/url';
 import { useSearchParams } from 'next/navigation';
 import styles from './SocialLogin.module.scss';
 
@@ -10,7 +11,7 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
   const redirect = searchParams.get('redirect') || '/';
 
   const getSocialLink = (socialType: 'KAKAO' | 'NAVER') => {
-    const redirectPath = `${window.location.origin}/${type === 'LOGIN' ? 'login' : 'signup'}?redirect=${redirect}`;
+    const redirectPath = `${getUniversalBaseUrl()}/${type === 'LOGIN' ? 'login' : 'signup'}?redirect=${redirect}`;
     const basePath = process.env.NEXT_PUBLIC_API_BASE_PATH;
     if (!basePath) {
       alert('No base path.\n잠시 후 다시 로그인 해주세요.');
