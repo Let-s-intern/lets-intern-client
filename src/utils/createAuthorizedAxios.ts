@@ -1,6 +1,5 @@
 import Axios, { AxiosError, AxiosHeaders, AxiosInstance } from 'axios';
-
-import { auth } from './auth';
+import { getAuthHeader, logoutAndRefreshPage } from './auth';
 
 export type AuthorizedAxiosOptions = {
   baseURL: string;
@@ -9,8 +8,6 @@ export type AuthorizedAxiosOptions = {
 const DEFAULT_HEADERS = {
   'Content-Type': 'application/json',
 };
-
-const EXPIRY_THRESHOLD_MS = 30_000;
 
 function extractErrorMessage(data: unknown, depth = 0): string | null {
   if (data == null || depth > 3) return null;
@@ -42,8 +39,7 @@ export function createAuthorizedAxios({
 
   instance.interceptors.request.use(
     async (config) => {
-      await auth.ensureValidAccessToken();
-      const header = auth.getAuthHeader();
+      const header = await getAuthHeader();
       if (header) {
         const headers =
           config.headers instanceof AxiosHeaders
@@ -66,7 +62,7 @@ export function createAuthorizedAxios({
           '토큰이 유효하지 않습니다',
         )
       ) {
-        await auth.requireAuth('unexpected-401');
+        logoutAndRefreshPage();
         return Promise.reject(error);
       }
 
