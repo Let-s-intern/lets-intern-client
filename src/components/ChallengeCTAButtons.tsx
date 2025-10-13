@@ -4,6 +4,7 @@ import { useProgramApplicationQuery } from '@/api/application';
 import dayjs from '@/lib/dayjs';
 import { ChallengeIdPrimitive } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { DesktopApplyCTA, MobileApplyCTA } from './common/ApplyCTA';
 import PricePlanBottomSheet from './common/program/PricePlanBottomSheet';
@@ -16,6 +17,7 @@ const ChallengeCTAButtons = ({
   challengeId: string;
 }) => {
   const { isLoggedIn } = useAuthStore();
+  const router = useRouter();
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -29,7 +31,10 @@ const ChallengeCTAButtons = ({
 
   const handleOpen = () => {
     if (!isLoggedIn) {
-      window.location.href = `/login?redirect=${encodeURIComponent(`/program/challenge/${challengeId}`)}`;
+      router.push(
+        `/login?redirect=${encodeURIComponent(`/program/challenge/${challengeId}`)}`,
+      );
+
       return;
     }
 

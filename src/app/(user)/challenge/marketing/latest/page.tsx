@@ -2,8 +2,8 @@
 
 import { useGetActiveChallenge, useGetChallengeList } from '@/api/challenge';
 import { challengeTypeSchema } from '@/schema';
-import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 const { MARKETING } = challengeTypeSchema.enum;
 
@@ -47,9 +47,8 @@ export default function MarketingLatest() {
     if (activeChallenge?.id) {
       const title = activeChallenge.title ?? '';
       const redirectUrl = `/program/challenge/${activeChallenge.id}/${encodeURIComponent(title)}`;
+      router.push(redirectUrl);
 
-      // Next.js App Router로 이동하기 위해 새로고침 강제 실행
-      window.location.href = redirectUrl;
       return;
     }
 
@@ -58,9 +57,8 @@ export default function MarketingLatest() {
     if (latestChallenge?.id) {
       const title = latestChallenge.title ?? '';
       const redirectUrl = `/program/challenge/${latestChallenge.id}/${encodeURIComponent(title)}`;
+      router.push(redirectUrl);
 
-      // Next.js App Router로 이동하기 위해 새로고침 강제 실행
-      window.location.href = redirectUrl;
       return;
     }
 

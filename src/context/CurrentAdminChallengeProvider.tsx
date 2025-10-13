@@ -1,7 +1,9 @@
+'use client';
+
 import { useChallengeMissionListQuery } from '@/api/challenge';
 import { useQuery } from '@tanstack/react-query';
-import { createContext, useContext } from 'react';
 import { useParams } from 'next/navigation';
+import { createContext, useContext } from 'react';
 import { z } from 'zod';
 import { getChallengeIdSchema, missionAdmin } from '../schema';
 import axios from '../utils/axios';

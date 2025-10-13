@@ -1,5 +1,6 @@
 import cn from 'classnames';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import useAuthStore from '@/store/useAuthStore';
 import AlertModal from '../../../../../../../ui/alert/AlertModal';
 import CautionContent from '../content/CautionContent';
 import InputContent from '../content/InputContent';
@@ -26,13 +27,13 @@ const ApplyAside = ({
 }: ApplyAsdieProps) => {
   const [applyPageIndex, setApplyPageIndex] = useState(0);
   const [formData, setFormData] = useState<any>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [announcementDate, setAnnouncementDate] = useState<string>('');
   const [showAlert, setShowAlert] = useState(false);
   const [alertInfo, setAlertInfo] = useState({
     title: '',
     message: '',
   });
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
   const handleModalClose = () => {
     if (applyPageIndex === 3) {
@@ -41,17 +42,6 @@ const ApplyAside = ({
       setApplyPageIndex(applyPageIndex - 1);
     }
   };
-
-  useEffect(() => {
-    const accessToken = localStorage.getItem('access-token');
-    const refreshToken = localStorage.getItem('refresh-token');
-
-    if (accessToken && refreshToken) {
-      setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
-    }
-  }, []);
 
   let content;
   let modalContent;
