@@ -1,8 +1,8 @@
 import { useMediaQuery } from '@mui/material';
 
 import { ReportType } from '@/api/report';
-import { personalStatementColors } from '@/router-pages/common/report/ReportPersonalStatementPage';
-import { resumeColors } from '@/router-pages/common/report/ReportResumePage';
+import { personalStatementColors } from '@components/page/ReportPersonalStatementPage';
+import { resumeColors } from '@components/page/ReportResumePage';
 import MainHeader from './MainHeader';
 import SubHeader from './SubHeader';
 

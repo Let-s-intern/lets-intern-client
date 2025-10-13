@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 
 import AlertModal from '../../../../../../../ui/alert/AlertModal';
 import ListItem from '../ui/ListItem';
@@ -13,13 +14,13 @@ const MemberTypeContent = ({
   memberChecked,
   setMemberChecked,
 }: MemberTypeContentProps) => {
-  const params = useParams();
-  const navigate = useNavigate();
+  const params = useParams<{ programId: string }>();
+  const router = useRouter();
   const [isLoginModal, setIsLoginModal] = useState(false);
 
   const onConfirm = () => {
     setIsLoginModal(false);
-    navigate(`/login?redirect=/program/detail/${params.programId}`);
+    router.push(`/login?redirect=/program/detail/${params.programId}`);
     setMemberChecked('USER');
   };
 

@@ -6,7 +6,7 @@ import FilledButton from '@/components/common/program/program-detail/button/Fill
 import NotiButton from '@/components/common/program/program-detail/button/NotiButton';
 import ApplySection from '@/components/common/program/program-detail/section/ApplySection';
 import TabSection from '@/components/common/program/program-detail/section/TabSection';
-import NextBackHeader from '@/components/common/ui/NextBackHeader';
+import BackHeader from '@/components/common/ui/BackHeader';
 import useRunOnce from '@/hooks/useRunOnce';
 import dayjs from '@/lib/dayjs';
 import { isNewProgram } from '@/lib/isDeprecatedProgram';
@@ -123,7 +123,7 @@ const ProgramDetailLegacyPage = ({
         </div>
       ) : (
         <div className="mx-auto max-w-5xl">
-          <NextBackHeader to="/program">{programTitle}</NextBackHeader>
+          <BackHeader to="/program" className="my-6">{programTitle}</BackHeader>
           <div className="flex min-h-screen flex-col">
             {/* 프로그램 상세 */}
             <section className="flex items-start gap-10 md:mt-8">

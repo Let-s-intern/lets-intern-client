@@ -1,6 +1,6 @@
 import { ReportType, useGetReportFaqs } from '@/api/report';
-import { personalStatementColors } from '@/router-pages/common/report/ReportPersonalStatementPage';
-import { resumeColors } from '@/router-pages/common/report/ReportResumePage';
+import { personalStatementColors } from '@components/page/ReportPersonalStatementPage';
+import { resumeColors } from '@components/page/ReportResumePage';
 import FaqChat from '../ui/FaqChat';
 import FaqDropdown from '../ui/FaqDropdown';
 import MainHeader from './MainHeader';

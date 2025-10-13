@@ -4,7 +4,7 @@ import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
 import { josa } from 'es-hangul';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import BackHeader from '../ui/BackHeader';
 import BaseButton from '../ui/button/BaseButton';
 import ReviewExitModal from './ReviewExitModal';
@@ -34,7 +34,7 @@ function ReviewModal({
   programTitle,
   className,
 }: Props) {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [isExitOpen, setIsExitOpen] = useState(false);
   const isDesktop = useMediaQuery('(min-width:768px)');
 
@@ -71,7 +71,7 @@ function ReviewModal({
             if (onClose) {
               onClose();
             } else {
-              navigate('/mypage/review', { replace: true });
+              router.replace('/mypage/review');
             }
           }
         }}
@@ -107,7 +107,7 @@ function ReviewModal({
                       if (onClose) {
                         onClose();
                       } else {
-                        navigate('/mypage/review', { replace: true });
+                        router.replace('/mypage/review');
                       }
                     } else {
                       setIsExitOpen(true);
@@ -175,7 +175,7 @@ function ReviewModal({
           if (onClose) {
             onClose();
           } else {
-            navigate('/mypage/review', { replace: true });
+            router.replace('/mypage/review');
           }
         }}
       />

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import cn from 'classnames';
 
 import { ModalContentType } from './ProgramInfoModalGroup';
@@ -62,7 +62,7 @@ const BootcampModal = ({
         </div>
         {applyAvailable && (
           <div className="modal-footer">
-            <Link to="/program?category=BOOTCAMP" className="apply-link-button">
+            <Link href="/program?category=BOOTCAMP" className="apply-link-button">
               신청하기
             </Link>
           </div>

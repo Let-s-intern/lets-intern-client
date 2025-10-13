@@ -1,7 +1,7 @@
 import { UserChallengeMissionDetail } from '@/schema';
 import { useState } from 'react';
 import { IoIosLink } from 'react-icons/io';
-import { Link } from 'react-router-dom';
+import HybridLink from '../../../ui/HybridLink';
 
 interface Props {
   missionDetail: UserChallengeMissionDetail;
@@ -25,8 +25,8 @@ const AbsentContentsDropdown = ({ missionDetail }: Props) => {
         <ul className="rounded absolute bottom-[-0.25rem] w-full translate-y-[100%] border border-[#DCDCDC] bg-white text-sm">
           {essentialContentsLink && (
             <li>
-              <Link
-                to={essentialContentsLink}
+              <HybridLink
+                href={essentialContentsLink}
                 className="flex flex-1 items-center justify-between px-4 py-3 text-primary duration-200 hover:bg-gray-200"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -35,14 +35,14 @@ const AbsentContentsDropdown = ({ missionDetail }: Props) => {
                 <i>
                   <IoIosLink />
                 </i>
-              </Link>
+              </HybridLink>
             </li>
           )}
           {missionDetail.additionalContentsList.map((item) =>
             item.link ? (
               <li key={item.id}>
-                <Link
-                  to={item.link}
+                <HybridLink
+                  href={item.link}
                   className="flex w-full items-center justify-between px-4 py-3 text-primary hover:bg-gray-200"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -51,7 +51,7 @@ const AbsentContentsDropdown = ({ missionDetail }: Props) => {
                   <i>
                     <IoIosLink />
                   </i>
-                </Link>
+                </HybridLink>
               </li>
             ) : null,
           )}

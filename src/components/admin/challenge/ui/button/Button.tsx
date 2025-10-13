@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
 import clsx from 'clsx';
+import Link from 'next/link';
 
 interface Props {
   type?: 'button' | 'submit' | 'reset' | undefined;
@@ -32,7 +32,7 @@ const Button = ({
 
   if (to) {
     return (
-      <Link to={to} className={clsx(buttonStyle, 'block')} onClick={onClick}>
+      <Link href={to} className={clsx(buttonStyle, 'block')} onClick={onClick}>
         {children}
       </Link>
     );

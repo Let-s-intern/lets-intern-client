@@ -5,11 +5,11 @@ import {
   ReportType,
 } from '@/api/report';
 import { twMerge } from '@/lib/twMerge';
-import { REPORT_PLAN_ID } from '@/router-pages/common/report/ReportNavigation';
-import { personalStatementColors } from '@/router-pages/common/report/ReportPersonalStatementPage';
-import { resumeColors } from '@/router-pages/common/report/ReportResumePage';
 import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
 import { generateUUID } from '@/utils/random';
+import { REPORT_PLAN_ID } from '@components/page/ReportNavigation';
+import { personalStatementColors } from '@components/page/ReportPersonalStatementPage';
+import { resumeColors } from '@components/page/ReportResumePage';
 import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
 import { CSSProperties, memo, ReactNode, useMemo } from 'react';

@@ -1,5 +1,5 @@
 import { useMediaQuery } from '@mui/material';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 const EndSection = () => {
   const matches = useMediaQuery('(max-width: 991px)');
@@ -11,7 +11,7 @@ const EndSection = () => {
         <br />
         <span className="text-primary-xlight">렛츠커리어</span>가 응원해요!
       </h2>
-      <Link className="z-10" to="/program">
+      <Link className="z-10" href="/program">
         <button className="text-1.125-bold md:text-1.25-bold xl:text-1.5-bold mt-10 rounded-full bg-static-100 px-6 py-3 text-primary">
           렛츠커리어 프로그램 둘러보기
         </button>

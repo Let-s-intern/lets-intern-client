@@ -10,7 +10,7 @@ import TenScore from '@components/common/review/score/TenScore';
 import { useMediaQuery } from '@mui/material';
 import { josa } from 'es-hangul';
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'next/navigation';
 
 interface LastMissionSubmitModalProps {
   onClose: () => void;
@@ -21,7 +21,7 @@ const LastMissionSubmitModal = ({
   onClose,
   challengeId,
 }: LastMissionSubmitModalProps) => {
-  const params = useParams();
+  const params = useParams<{ applicationId: string }>();
   const applicationId = params.applicationId;
   const isDesktop = useMediaQuery('(min-width:768px)');
 

@@ -4,16 +4,12 @@ import HybridLink from '../../HybridLink';
 
 export interface SubNavItemProps
   extends AnchorHTMLAttributes<HTMLAnchorElement> {
-  isNextRouter: boolean;
-  force?: boolean;
   align?: 'left' | 'right';
 }
 
 function SubNavItem({
   children,
   className,
-  force = false,
-  isNextRouter,
   href = '#',
   align = 'left',
   onClick,
@@ -28,8 +24,6 @@ function SubNavItem({
         className,
         align === 'right' ? 'w-[120px]' : 'w-[172px]',
       )}
-      isNextRouter={isNextRouter}
-      force={force}
       href={href}
       onClick={onClick}
       {...restProps}

@@ -1,6 +1,5 @@
 'use client';
 
-import { AdminSnackbarProvider } from '@/hooks/useAdminSnackbar';
 import {
   QueryCache,
   QueryClient,
@@ -39,9 +38,7 @@ const Providers: React.FC<{
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AdminSnackbarProvider>{children}</AdminSnackbarProvider>
-    </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 };
 

@@ -1,7 +1,7 @@
 import { useChallengeMissionListQuery } from '@/api/challenge';
 import { useQuery } from '@tanstack/react-query';
 import { createContext, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'next/navigation';
 import { z } from 'zod';
 import { getChallengeIdSchema, missionAdmin } from '../schema';
 import axios from '../utils/axios';
@@ -24,7 +24,7 @@ export const CurrentAdminChallengeProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const params = useParams();
+  const params = useParams<{ programId: string }>();
 
   const { data: currentChallenge } = useQuery({
     queryKey: ['admin', 'challenge', params.programId],

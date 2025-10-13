@@ -1,8 +1,8 @@
 import { convertReportTypeToDisplayName, ReportType } from '@/api/report';
-import { REPORT_REVIEW_ID } from '@/router-pages/common/report/ReportNavigation';
-import { personalStatementColors } from '@/router-pages/common/report/ReportPersonalStatementPage';
-import { resumeColors } from '@/router-pages/common/report/ReportResumePage';
 import { ReportReview } from '@/types/interface';
+import { REPORT_REVIEW_ID } from '@components/page/ReportNavigation';
+import { personalStatementColors } from '@components/page/ReportPersonalStatementPage';
+import { resumeColors } from '@components/page/ReportResumePage';
 import { useMediaQuery } from '@mui/material';
 import MoreReviewButton from '../review/MoreReviewButton';
 import ReportInterviewCard from './ReportInterviewCard';

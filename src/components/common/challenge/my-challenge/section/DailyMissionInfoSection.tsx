@@ -1,6 +1,6 @@
 import { UserChallengeMissionDetail } from '@/schema';
 import { BONUS_MISSION_TH } from '@/utils/constants';
-import { Link } from 'react-router-dom';
+import HybridLink from '@/components/common/ui/HybridLink';
 import OtVideo from '../../OtVideo';
 import ContentsDropdown from '../dropdown/ContentsDropdown';
 
@@ -29,14 +29,14 @@ const MissionInfo = ({
       <div className="mt-8 flex gap-4">
         {/* OT 자료 */}
         {!isOtMission && (
-          <Link
-            to={missionDetail.templateLink || '#'}
+          <HybridLink
+            href={missionDetail.templateLink || '#'}
             className="flex-1 rounded-sm border border-primary-20 bg-white p-3 text-center text-xsmall16 font-medium"
             target="_blank"
             rel="noopener noreferrer"
           >
             미션 템플릿
-          </Link>
+          </HybridLink>
         )}
         <ContentsDropdown missionDetail={missionDetail} />
       </div>

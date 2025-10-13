@@ -6,9 +6,13 @@ import { persist } from 'zustand/middleware';
 export interface AuthStore {
   token: TokenSet | null;
   isLoggedIn: boolean;
+  setToken: (tokens: TokenSet | null) => void;
+  isInitialized: boolean; // 스토어 초기화 여부
+  accessToken?: string;
+  refreshToken?: string;
   login: (accessToken: string, refreshToken: string) => void;
   logout: () => void;
-  setToken: (tokens: TokenSet | null) => void;
+  setInitialized: (initialized: boolean) => void;
 }
 
 const useAuthStore = create(
@@ -16,6 +20,7 @@ const useAuthStore = create(
     (set) => ({
       token: null,
       isLoggedIn: false,
+      isInitialized: false,
       login: (accessToken, refreshToken) => {
         const accessTokenExpiresAt = inferExpFromJwtMs(accessToken);
         const refreshTokenExpiresAt = inferExpFromJwtMs(refreshToken);
@@ -57,9 +62,15 @@ const useAuthStore = create(
           isLoggedIn: true,
         });
       },
+      setInitialized: (initialized) => {
+        set({ isInitialized: initialized });
+      },
     }),
     {
       name: 'userLoginStatus',
+      onRehydrateStorage: () => (state) => {
+        state?.setInitialized(true);
+      },
     },
   ),
 );
