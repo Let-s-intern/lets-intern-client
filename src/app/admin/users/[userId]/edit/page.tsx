@@ -1,5 +1,5 @@
 'use client';
 
-import AdminUserEditPage from '@/components/admin/pages/users/AdminUserEditPage';
+import UserEdit from '@components/admin/pages/user/UserEdit';
 
-export default AdminUserEditPage;
+export default UserEdit;

@@ -1,5 +1,5 @@
 'use client';
 
-import AdminUsersManagementPage from '@/components/admin/pages/users/AdminUsersManagementPage';
+import AdminUsersPage from '@components/admin/pages/user/AdminUsersPage';
 
-export default AdminUsersManagementPage;
+export default AdminUsersPage;
