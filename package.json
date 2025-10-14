@@ -70,9 +70,10 @@
     "zustand": "^4.5.4"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
+    "dev:sentry": "next dev",
     "build": "next build",
-    "build:memory": "node --max-old-space-size=4096 ./node_modules/.bin/next build",
+    "build:sentry": "node --max-old-space-size=4096 ./node_modules/.bin/next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
