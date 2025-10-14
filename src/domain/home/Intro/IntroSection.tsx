@@ -264,6 +264,14 @@ const IntroSection = () => {
           {HOME_INTRO.description}
           {HOME_INTRO.title}
         </div>
+        <button
+          type="button"
+          onClick={() => {
+            throw new Error('Sentry Test Error');
+          }}
+        >
+          Break the world
+        </button>
         <div className="-mx-5 h-full w-screen overflow-x-auto pt-2.5 md:mx-auto md:w-fit md:overflow-x-visible md:px-0 md:pt-0">
           <div
             className={twMerge(
