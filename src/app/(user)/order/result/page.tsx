@@ -12,17 +12,17 @@ import {
   getPaymentMethodLabel,
   paymentResultSearchParamsSchema,
 } from '@/data/getPaymentSearchParams';
-import useRunOnce from '@/hooks/useRunOnce';
 import dayjs from '@/lib/dayjs';
 import useProgramStore from '@/store/useProgramStore';
 import axios from '@/utils/axios';
 import { searchParamsToObject } from '@/utils/network';
-import { Suspense, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 
 const PaymentResultContent = () => {
-  const { data: programApplicationData } = useProgramStore();
+  const { data: programApplicationData, _hasHydrated } = useProgramStore();
+  const hasRequested = useRef(false);
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -44,10 +44,17 @@ const PaymentResultContent = () => {
     return result.data;
   }, [searchParams]);
 
-  useRunOnce(() => {
-    if (!params || !programApplicationData) {
+  useEffect(() => {
+    if (!params || !programApplicationData || !_hasHydrated) {
       return;
     }
+
+    if (hasRequested.current) {
+      return;
+    }
+    hasRequested.current = true;
+
+    console.log('programApplicationData', programApplicationData);
 
     if (searchParams.get('postApplicationDone') === 'true') {
       // 즉시 리다이렉트 하면 알 수 없는 이유로 제대로 navigate 되지 않음. SSR 관련 이슈로 추정
@@ -108,9 +115,11 @@ const PaymentResultContent = () => {
         // postApplicationDone 를 true로 설정하여 추후 뒤로가기로 왔을 때 api를 타지 않도록 함
         const newSearchParams = new URLSearchParams(searchParams.toString());
         newSearchParams.set('postApplicationDone', 'true');
-        router.replace(`${window.location.pathname}?${newSearchParams.toString()}`);
+        router.replace(
+          `${window.location.pathname}?${newSearchParams.toString()}`,
+        );
       });
-  });
+  }, [_hasHydrated, params, programApplicationData, router, searchParams]);
 
   const program = useProgramQuery({
     programId: programApplicationData.programId ?? -1,

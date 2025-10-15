@@ -2,6 +2,7 @@ import { ReportPriceType } from '@/api/report';
 import dayjs from '@/lib/dayjs';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { HydrationStore } from './hydration';
 
 export interface ReportApplication {
   reportId: number | null;
@@ -26,10 +27,13 @@ export interface ReportApplication {
   contactEmail: string;
 }
 
-interface ReportApplicationStore {
+interface ReportApplicationStore extends HydrationStore {
   data: ReportApplication;
+  /** 계산 완료 여부 (payment -> application 로딩이 느려서 final로 판단함) */
+  final: boolean;
   setReportApplication: (
     params: Partial<ReportApplicationStore['data']>,
+    isFinal?: boolean,
   ) => void;
   initReportApplication: () => void;
   validate: () => { isValid: boolean; message: string | null };
@@ -38,6 +42,14 @@ interface ReportApplicationStore {
 const useReportApplicationStore = create(
   persist<ReportApplicationStore>(
     (set, get) => ({
+      _hasHydrated: false,
+      setHasHydrated: (state) => {
+        set({
+          _hasHydrated: state,
+        });
+      },
+      final: false,
+
       data: {
         reportId: null,
         reportPriceType: undefined,
@@ -58,13 +70,14 @@ const useReportApplicationStore = create(
         message: '',
         contactEmail: '',
       },
-      setReportApplication: (newData) => {
+      setReportApplication: (newData, isFinal?: boolean) => {
         const currentData = get().data;
         set({
           data: {
             ...currentData,
             ...newData, // 전달된 값들만 업데이트
           },
+          ...(typeof isFinal === 'boolean' ? { final: isFinal } : {}),
         });
       },
       initReportApplication: () => {
@@ -89,6 +102,7 @@ const useReportApplicationStore = create(
             message: '',
             contactEmail: '',
           },
+          final: false,
         });
       },
       validate: () => {
@@ -152,6 +166,9 @@ const useReportApplicationStore = create(
     }),
     {
       name: 'reportApplicationForm',
+      onRehydrateStorage: (state) => {
+        return () => state.setHasHydrated(true);
+      },
     },
   ),
 );
