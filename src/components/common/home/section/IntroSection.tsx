@@ -149,14 +149,10 @@ const IntroItem = ({
       target={href && href.startsWith('http') ? '_blank' : undefined}
       onClick={(e) => {
         if (!href || href === '#') {
+          e.preventDefault();
           alert('준비중입니다.');
           return;
         }
-        if (href.startsWith('http')) {
-          return;
-        }
-        e.preventDefault();
-        window.location.href = href;
       }}
       data-url={href}
       data-text={gaTitle}

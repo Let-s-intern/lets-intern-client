@@ -9,6 +9,7 @@ import useProgramStore from '@/store/useProgramStore';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import BaseBottomSheet from '@components/ui/BaseBottomSheet';
 import { RadioGroup } from '@mui/material';
+import { useRouter } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 import BaseButton from '../ui/button/BaseButton';
 import { OptionFormRadioControlLabel } from '../ui/ControlLabel';
@@ -44,6 +45,7 @@ function PricePlanBottomSheet({
   isOpen: boolean;
   onClose: () => void;
 }) {
+  const router = useRouter();
   const basicPriceInfo =
     challenge.priceInfo.find((item) => item.challengePricePlanType === BASIC) ??
     challenge.priceInfo[0];
@@ -162,14 +164,17 @@ function PricePlanBottomSheet({
       deposit: challenge.priceInfo[0].refund ?? 0,
     });
 
-    window.location.href = '/payment-input';
+    router.push('/payment-input');
   }, [
-    pricePlan,
     application,
-    challenge,
-    challengeId,
+    pricePlan,
+    finalPriceInfo.regularPrice,
+    finalPriceInfo.discountPrice,
     setProgramApplicationForm,
-    finalPriceInfo,
+    challenge.title,
+    challenge.priceInfo,
+    challengeId,
+    router,
   ]);
 
   return (

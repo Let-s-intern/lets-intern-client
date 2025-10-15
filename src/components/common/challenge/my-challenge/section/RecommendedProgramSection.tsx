@@ -2,7 +2,7 @@ import { useChallengeQuery } from '@/api/challenge';
 import BaseButton from '@/components/common/ui/button/BaseButton';
 import useGoogleAnalytics from '@/hooks/useGoogleAnalytics';
 import { ChallengeContent } from '@/types/interface';
-import { useParams, usePathname } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import RecommendedProgramSwiper from './RecommendedProgramSwiper';
 
@@ -50,6 +50,7 @@ const MobileMoreButton = ({
 
 function RecommendedProgramSection() {
   const pathname = usePathname();
+  const router = useRouter();
   const params = useParams<{ programId: string }>();
   const trackEvent = useGoogleAnalytics();
   const { data: challenge, isLoading } = useChallengeQuery({
@@ -80,7 +81,7 @@ function RecommendedProgramSection() {
         current_dashboard_challenge_name: currentChallengeTitle,
       },
     });
-    setTimeout(() => (window.location.href = clickUrl), 300);
+    router.push(clickUrl);
   };
 
   const EXCLUDED_PATHS = ['me', 'guides', 'user/info', 'feedback'];

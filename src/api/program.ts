@@ -47,12 +47,12 @@ export const useProgramQuery = ({
 }) => {
   const liveQuery = useGetLiveQuery({
     liveId: programId,
-    enabled: type === 'live',
+    enabled: type === 'live' && programId !== -1,
   });
 
   const challengeQuery = useGetChallengeQuery({
     challengeId: programId,
-    enabled: type === 'challenge',
+    enabled: type === 'challenge' && programId !== -1,
   });
 
   switch (type) {

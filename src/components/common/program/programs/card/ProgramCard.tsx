@@ -9,6 +9,7 @@ import {
   PROGRAM_TYPE,
 } from '@/utils/programConst';
 import clsx from 'clsx';
+import { useRouter } from 'next/navigation';
 import { memo, useEffect, useState } from 'react';
 import ProgramClassificationTag from './ProgramClassificationTag';
 import ProgramStatusTag from './ProgramStatusTag';
@@ -18,6 +19,7 @@ interface ProgramCardProps {
 }
 
 const ProgramCard = ({ program }: ProgramCardProps) => {
+  const router = useRouter();
   const [link, setLink] = useState(
     `/program/${program.programInfo.programType.toLowerCase()}/${
       program.programInfo.id
@@ -50,7 +52,7 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
         if (program.programInfo.programType === PROGRAM_TYPE.VOD) {
           window.open(link);
         } else {
-          window.location.href = link;
+          router.push(link);
         }
       }}
       className="program_card flex w-full cursor-pointer flex-col overflow-hidden rounded-xs md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5"

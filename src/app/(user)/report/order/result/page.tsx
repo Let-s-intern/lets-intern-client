@@ -13,7 +13,6 @@ import {
 } from '@/data/getPaymentSearchParams';
 import useReportPayment from '@/hooks/useReportPayment';
 import useReportProgramInfo from '@/hooks/useReportProgramInfo';
-import useRunOnce from '@/hooks/useRunOnce';
 import dayjs from '@/lib/dayjs';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import axios from '@/utils/axios';
@@ -22,7 +21,7 @@ import ReportCreditRow from '@components/common/mypage/credit/ReportCreditRow';
 import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 
 const ReportPaymentResultContent = () => {
   const router = useRouter();
@@ -30,12 +29,21 @@ const ReportPaymentResultContent = () => {
 
   const [result, setResult] = useState<ApplicationResult | null>(null);
 
-  const { data: reportApplication } = useReportApplicationStore();
+  const {
+    data: reportApplication,
+    _hasHydrated,
+    final,
+  } = useReportApplicationStore();
+  const hasRequested = useRef(false);
   const { title, product, option } = useReportProgramInfo();
   const { data: reportDetail } = useGetReportDetailQuery(
     reportApplication.reportId!,
   );
   const { payment } = useReportPayment();
+
+  useEffect(() => {
+    console.log('[useEffect] reportApplication', reportApplication);
+  }, [reportApplication]);
 
   const params = useMemo(() => {
     const obj = searchParamsToObject(searchParams);
@@ -56,8 +64,19 @@ const ReportPaymentResultContent = () => {
       : `${convertReportPriceType(reportApplication.reportPriceType)} + 옵션`;
   const isSuccess = typeof result === 'object' && result !== null;
 
-  useRunOnce(() => {
-    if (!params) return;
+  useEffect(() => {
+    if (!params || !_hasHydrated || !reportApplication || !final) {
+      return;
+    }
+
+    if (hasRequested.current) {
+      console.warn('이미 신청 요청을 보냈습니다.');
+      return;
+    }
+
+    hasRequested.current = true;
+    console.log('reportApplication', reportApplication);
+
     if (searchParams.get('postApplicationDone') === 'true') {
       // 즉시 리다이렉트 하면 알 수 없는 이유로 제대로 navigate 되지 않음. SSR 관련 이슈로 추정
       setTimeout(() => {
@@ -102,7 +121,15 @@ const ReportPaymentResultContent = () => {
           currentUrl.pathname + '?' + currentUrl.searchParams.toString(),
         );
       });
-  });
+  }, [
+    _hasHydrated,
+    params,
+    reportApplication,
+    reportDetail?.reportType,
+    reportDetail?.title,
+    router,
+    searchParams,
+  ]);
 
   useEffect(() => {
     if (!params) return;

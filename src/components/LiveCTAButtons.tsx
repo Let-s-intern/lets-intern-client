@@ -87,8 +87,15 @@ const LiveCTAButtons = ({
       isFree,
     });
 
-    window.location.href = '/payment-input';
-  }, [application, live.title, liveId, isLoggedIn, setProgramApplicationForm]);
+    router.push('/payment-input');
+  }, [
+    isLoggedIn,
+    application,
+    setProgramApplicationForm,
+    live.title,
+    liveId,
+    router,
+  ]);
 
   return (
     <>

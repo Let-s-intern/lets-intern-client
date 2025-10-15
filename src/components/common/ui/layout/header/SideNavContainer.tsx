@@ -1,6 +1,7 @@
 import { useUserQuery } from '@/api/user';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
+import { logoutAndRefreshPage } from '@/utils/auth';
 import { ReactNode } from 'react';
 import KakaoChannel from './KakaoChannel';
 import LoginLink from './LoginLink';
@@ -49,9 +50,7 @@ function SideNavContainer({ children, isOpen, onClose }: Props) {
                 type="button"
                 className="text-primary"
                 onClick={() => {
-                  logout();
-                  window.location.href = '/';
-                  onClose();
+                  logoutAndRefreshPage();
                 }}
               >
                 로그아웃

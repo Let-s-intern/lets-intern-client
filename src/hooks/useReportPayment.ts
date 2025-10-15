@@ -15,6 +15,7 @@ export interface ReportPriceInfo {
   coupon: number;
   amount: number;
   isFeedbackApplied: boolean;
+  final: boolean;
 }
 
 const initialPayment = {
@@ -29,6 +30,8 @@ const initialPayment = {
   coupon: 0,
   amount: 0, // 결제 금액
   isFeedbackApplied: false,
+  /** 계산 완료 여부 (payment -> application 로딩이 느려서 final로 판단함) */
+  final: false,
 };
 
 export default function useReportPayment() {
@@ -130,34 +133,36 @@ export default function useReportPayment() {
         feedback -
         (reportDiscount + optionDiscount + feedbackDiscount),
       isFeedbackApplied,
-    }));
-
-    // 쿠폰 가격 책정 (쿠폰은 1:1 피드백에 적용되지 않음)
-    if (couponId === null) return;
-
-    setPayment((prev) => ({
-      ...prev,
-      coupon:
-        reportApplication.couponDiscount === -1
-          ? prev.amount - (prev.feedback - prev.feedbackDiscount)
-          : (reportApplication.couponDiscount ?? 0),
-      amount:
-        reportApplication.couponDiscount === -1
-          ? prev.feedback - prev.feedbackDiscount
-          : prev.amount - (reportApplication.couponDiscount ?? 0),
+      // 쿠폰 가격 책정 (쿠폰은 1:1 피드백에 적용되지 않음)
+      ...(couponId
+        ? {
+            coupon:
+              reportApplication.couponDiscount === -1
+                ? prev.amount - (prev.feedback - prev.feedbackDiscount)
+                : (reportApplication.couponDiscount ?? 0),
+            amount:
+              reportApplication.couponDiscount === -1
+                ? prev.feedback - prev.feedbackDiscount
+                : prev.amount - (reportApplication.couponDiscount ?? 0),
+          }
+        : {}),
+      final: true,
     }));
   }, [reportPriceDetail, reportApplication.couponId]);
 
   useEffect(() => {
     // 진단서 정보 업데이트
-    setReportApplication({
-      amount: payment.amount,
-      programPrice: payment.report + payment.feedback + payment.option,
-      programDiscount:
-        payment.reportDiscount +
-        payment.feedbackDiscount +
-        payment.optionDiscount,
-    });
+    setReportApplication(
+      {
+        amount: payment.amount,
+        programPrice: payment.report + payment.feedback + payment.option,
+        programDiscount:
+          payment.reportDiscount +
+          payment.feedbackDiscount +
+          payment.optionDiscount,
+      },
+      payment.final === true ? true : undefined,
+    );
   }, [payment, setReportApplication]);
 
   return { payment, applyCoupon, cancelCoupon };

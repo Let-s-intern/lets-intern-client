@@ -104,6 +104,7 @@ async function refreshTokenAtOnce(): Promise<boolean> {
 
   refreshPromise = (async () => {
     try {
+      console.log('[letscareer] refreshToken Started');
       const next = await requestRefresh(refreshToken);
       if (!next) {
         logoutAndRefreshPage();
@@ -120,6 +121,7 @@ async function refreshTokenAtOnce(): Promise<boolean> {
       }
       return false;
     } finally {
+      console.log('[letscareer] refreshToken Finished ⚡');
       refreshPromise = null;
     }
   })();
@@ -134,7 +136,8 @@ async function bootstrap(): Promise<void> {
 
   if (!readyPromise) {
     readyPromise = (async () => {
-      console.log('bootstrap!!!');
+      // eslint-disable-next-line no-console
+      console.log('[letscareer] Token Bootstrap Started');
       await ensureHydratedStore();
       const initial = useAuthStore.getState();
 
