@@ -2,10 +2,10 @@ import { useGetChallengeTitle } from '@/api/challenge';
 import useGoogleAnalytics from '@/hooks/useGoogleAnalytics';
 import { ProgramRecommend } from '@/types/interface';
 import { ChevronRight } from 'lucide-react';
-import { useParams } from 'next/navigation';
-import HybridLink from '../../../ui/HybridLink';
+import { useParams, useRouter } from 'next/navigation';
 import 'swiper/css';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import HybridLink from '../../../ui/HybridLink';
 
 const TEXT_SHADOW_STYLE = {
   textShadow: '0 0 8.4px rgba(33, 33, 37, 0.40)',
@@ -17,6 +17,7 @@ interface Props {
 
 function RecommendedProgramSwiper({ programs }: Props) {
   const params = useParams<{ programId: string }>();
+  const router = useRouter();
   const programId = params.programId;
 
   const trackEvent = useGoogleAnalytics();
@@ -35,7 +36,7 @@ function RecommendedProgramSwiper({ programs }: Props) {
         current_dashboard_challenge_name: challengeTitleData?.title,
       },
     });
-    window.location.href = clickProgramUrl;
+    router.push(clickProgramUrl);
   };
 
   return (

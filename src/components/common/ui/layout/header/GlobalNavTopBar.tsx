@@ -1,6 +1,7 @@
 import { useGetUserAdmin, useUserQuery } from '@/api/user';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
+import { logoutAndRefreshPage } from '@/utils/auth';
 import { usePathname } from 'next/navigation';
 import GlobalNavItem from './GlobalNavItem';
 import LoginLink from './LoginLink';
@@ -16,7 +17,7 @@ interface Props {
 function GlobalNavTopBar({ loginRedirect, toggleMenu }: Props) {
   const pathname = usePathname(); // for nextjs pathname change detect
 
-  const { isLoggedIn, logout } = useAuthStore();
+  const { isLoggedIn } = useAuthStore();
   const { data: isAdmin } = useGetUserAdmin({
     enabled: isLoggedIn,
     retry: 1,
@@ -37,10 +38,7 @@ function GlobalNavTopBar({ loginRedirect, toggleMenu }: Props) {
       : []),
     {
       children: '로그아웃',
-      onClick: () => {
-        logout();
-        window.location.href = '/';
-      },
+      onClick: logoutAndRefreshPage,
     },
   ];
   return (
