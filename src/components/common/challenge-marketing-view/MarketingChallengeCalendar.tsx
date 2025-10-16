@@ -40,7 +40,7 @@ const ChallengeScheduleSection = ({ challenge }: Props) => {
                 <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#65C065] text-[12px] font-semibold text-white md:h-5 md:w-5 md:text-[14px]">
                   3
                 </span>
-                <span className="font-bold">현직자 Live Q&A 5회</span>
+                <span className="font-bold">현직자 Live Q&A 4회</span>
               </div>
               <span>
                 현직자 마케터의 Live Q&A를 <br />
