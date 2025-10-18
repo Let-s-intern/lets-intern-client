@@ -11,16 +11,16 @@ const ChallengeScheduleSection = ({ challenge }: Props) => {
         한눈에 보는 {challenge.title ?? ''} 일정
       </h2>
 
-      <div className="flex w-full flex-col-reverse items-center gap-4 md:max-h-[506px] md:w-fit md:flex-row md:gap-3">
+      <div className="flex w-full flex-col-reverse items-center gap-4 md:h-[580px] md:w-fit md:flex-row md:gap-3">
         {/* 왼쪽 박스 */}
-        <div className="relative w-full text-[#0C1737] shadow-lg">
-          <ul className="mb-1.5 flex min-w-[292px] flex-col gap-3 rounded-sm bg-white p-3 text-xsmall14 md:mb-2 md:p-5">
+        <div className="relative grid h-full w-full grid-rows-2 gap-2 text-[#0C1737] shadow-lg">
+          <ul className="flex min-w-[278px] flex-col gap-3 rounded-sm bg-white p-3 text-xsmall14 leading-[22px] md:p-5 md:pl-4">
             <li className="flex flex-col gap-1">
               <div className="flex items-center gap-2 text-[16px]">
                 <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#3B82F6] text-[12px] font-semibold text-white md:h-5 md:w-5 md:text-[14px]">
                   1
                 </span>
-                <span className="font-bold">합격 콘텐츠 & 미션 8회차</span>
+                <span className="font-semibold">합격 콘텐츠 & 미션 8회차</span>
               </div>
               챌린지 대시보드를 통해 합격 자료를 확인 후 <br />
               회차별 미션을 제출합니다.
@@ -30,7 +30,9 @@ const ChallengeScheduleSection = ({ challenge }: Props) => {
                 <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#FB923C] text-[12px] font-semibold text-white md:h-5 md:w-5 md:text-[14px]">
                   2
                 </span>
-                <span className="font-bold">마케터 필수 역량 Class 4회</span>
+                <span className="font-semibold">
+                  마케터 필수 역량 Class 4회
+                </span>
               </div>
               실무 역량을 빠르게 기르는 압축 Class를 <br />
               매주 수요일 저녁에 진행합니다.
@@ -40,7 +42,7 @@ const ChallengeScheduleSection = ({ challenge }: Props) => {
                 <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#65C065] text-[12px] font-semibold text-white md:h-5 md:w-5 md:text-[14px]">
                   3
                 </span>
-                <span className="font-bold">현직자 Live Q&A 4회</span>
+                <span className="font-semibold">현직자 Live Q&A 4회</span>
               </div>
               <span>
                 현직자 마케터의 Live Q&A를 <br />
@@ -48,7 +50,7 @@ const ChallengeScheduleSection = ({ challenge }: Props) => {
               </span>
             </li>
           </ul>
-          <ul className="flex min-w-[292px] flex-col gap-3 rounded-sm bg-white p-3 text-xsmall14 md:p-5">
+          <ul className="flex min-w-[278px] flex-col gap-3 rounded-sm bg-white p-3 text-xsmall14 leading-[22px] md:py-5 md:pl-4 md:pr-0">
             <li className="flex flex-col gap-1">
               <div className="text-[16px]">
                 <span className="font-bold">+ </span>
@@ -77,14 +79,14 @@ const ChallengeScheduleSection = ({ challenge }: Props) => {
         </div>
 
         {/* 오른쪽 달력 이미지 */}
-        <div className="relative aspect-[4/3] w-full md:h-[506px]">
+        <div className="relative aspect-[1.16] w-full md:h-[580px]">
           <picture>
             <source
-              srcSet="/images/marketing/calendar-june-mobile.png"
+              srcSet="/images/marketing/calendar-november-mobile.png"
               media="(orientation: portrait)"
             />
             <Image
-              src="/images/marketing/calendar-june.png"
+              src="/images/marketing/calendar-november.png"
               alt="마케팅 챌린지 달력"
               fill
               unoptimized

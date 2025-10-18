@@ -83,7 +83,7 @@ const professionals = [
     profile: 'profile3.png',
     week: '11월 4주차',
     company: '야놀자',
-    role: '그로스 마케터',
+    role: 'CRM 마케터',
   },
 ];
 
