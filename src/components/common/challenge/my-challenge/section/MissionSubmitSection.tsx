@@ -5,6 +5,7 @@ import { BONUS_MISSION_TH } from '@/utils/constants';
 import { clsx } from 'clsx';
 import MissionSubmitBonusSection from './MissionSubmitBonusSection';
 import MissionSubmitRegularSection from './MissionSubmitRegularSection';
+import MissionSubmitTalentPoolSection from './MissionSubmitTalentPoolSection';
 import MissionSubmitZeroSection from './MissionSubmitZeroSection';
 
 interface MissionSubmitSectionProps {
@@ -40,6 +41,16 @@ const MissionSubmitSection = ({
     if (selectedMissionTh >= BONUS_MISSION_TH) {
       return (
         <MissionSubmitBonusSection
+          selectedMissionTh={selectedMissionTh}
+          missionId={selectedMissionId}
+          attendanceInfo={attendanceInfo}
+        />
+      );
+    }
+
+    if (selectedMissionTh === 99) {
+      return (
+        <MissionSubmitTalentPoolSection
           selectedMissionTh={selectedMissionTh}
           missionId={selectedMissionId}
           attendanceInfo={attendanceInfo}
