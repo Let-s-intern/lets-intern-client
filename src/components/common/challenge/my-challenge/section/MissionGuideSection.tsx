@@ -4,6 +4,7 @@ import { useMissionStore } from '@/store/useMissionStore';
 import { clsx } from 'clsx';
 import MissionGuideBonusSection from './MissionGuideBonusSection';
 import MissionGuideRegularSection from './MissionGuideRegularSection';
+import MissionGuideTalentPoolSection from './MissionGuideTalentPoolSection';
 import MissionGuideZeroSection from './MissionGuideZeroSection';
 
 interface MissionGuideSectionProps {
@@ -69,6 +70,17 @@ const MissionGuideSection = ({
     if (selectedMissionTh >= 100) {
       return (
         <MissionGuideBonusSection
+          todayTh={todayTh}
+          missionData={missionData}
+          selectedMissionTh={selectedMissionTh}
+          isLoading={isLoading}
+        />
+      );
+    }
+
+    if (selectedMissionTh === 99) {
+      return (
+        <MissionGuideTalentPoolSection
           todayTh={todayTh}
           missionData={missionData}
           selectedMissionTh={selectedMissionTh}
