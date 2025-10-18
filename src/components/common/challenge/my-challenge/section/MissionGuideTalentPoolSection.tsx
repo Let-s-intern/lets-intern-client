@@ -26,7 +26,7 @@ const Heading3 = ({
   );
 };
 
-interface MissionGuideBonusSectionProps {
+interface MissionGuideTalentPoolSectionProps {
   className?: string;
   todayTh: number;
   missionData?: UserChallengeMissionWithAttendance; // API 응답 데이터
@@ -40,7 +40,7 @@ const MissionGuideTalentPoolSection = ({
   missionData,
   selectedMissionTh,
   isLoading = false,
-}: MissionGuideBonusSectionProps) => {
+}: MissionGuideTalentPoolSectionProps) => {
   // 로딩 중이거나 데이터가 없을 때 스켈레톤 표시
   if (isLoading || !missionData) {
     return <MissionGuideSkeleton variant="bonus" />;

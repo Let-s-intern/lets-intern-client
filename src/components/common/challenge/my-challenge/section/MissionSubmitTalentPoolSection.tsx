@@ -8,7 +8,6 @@ import MissionToast from '../mission/MissionToast';
 
 interface MissionSubmitTalentPoolSectionProps {
   className?: string;
-  selectedMissionTh: number;
   missionId?: number;
   attendanceInfo?: Schedule['attendanceInfo'] | null;
 }

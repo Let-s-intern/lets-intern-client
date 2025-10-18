@@ -1,6 +1,7 @@
 import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { useMissionStore } from '@/store/useMissionStore';
+import { TALENT_POOL_MISSION_TH } from '@/utils/constants';
 import { clsx } from 'clsx';
 import MissionGuideBonusSection from './MissionGuideBonusSection';
 import MissionGuideRegularSection from './MissionGuideRegularSection';
@@ -78,7 +79,7 @@ const MissionGuideSection = ({
       );
     }
 
-    if (selectedMissionTh === 99) {
+    if (selectedMissionTh === TALENT_POOL_MISSION_TH) {
       return (
         <MissionGuideTalentPoolSection
           todayTh={todayTh}
