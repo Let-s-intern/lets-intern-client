@@ -24,11 +24,6 @@ const summaryItems = [
     description: '단 4주간 제공되는,\n무제한 질의응답 커뮤니티',
     icon: '/images/marketing/summary-icon4.svg',
   },
-  {
-    title: '슈퍼인터뷰 채용 연계를 통해\n챌린지 수료 후 면접 제안까지!',
-    description: '서류 검토 후 가장 Fit한 \n기업의 면접을 제안드립니다.',
-    icon: '/images/marketing/summary-icon5.svg',
-  },
 ];
 
 const SummaryItem = ({
@@ -87,7 +82,7 @@ const MarketingSummarySection: React.FC = () => {
       </div>
 
       {/* 아래 3개 (3열) */}
-      <div className="grid w-full max-w-[1000px] grid-cols-1 gap-2.5 md:grid-cols-3">
+      <div className="grid w-full max-w-[1000px] grid-cols-1 gap-2.5 md:grid-cols-2">
         {summaryItems.slice(2).map((item, idx) => (
           <SummaryItem key={idx + 2} {...item} />
         ))}
