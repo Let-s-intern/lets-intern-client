@@ -173,7 +173,7 @@ export const curriculums = [
             className="bg-[#FFF3F2]"
             companyImg="corpuniv.png"
             role="대학내일 AE"
-            date="| 11/22 저녁 8시 (온라인) "
+            date="| 11/22 저녁 8시 (온라인)"
             description={
               <>
                 대학내일ES, 이런 포트폴리오를 기다려요. <br />

@@ -79,7 +79,7 @@ const ChallengeScheduleSection = ({ challenge }: Props) => {
         </div>
 
         {/* 오른쪽 달력 이미지 */}
-        <div className="relative aspect-[1.16] w-full md:h-[580px]">
+        <div className="relative aspect-[29/25] w-full md:h-[580px]">
           <picture>
             <source
               srcSet="/images/marketing/calendar-november-mobile.png"
