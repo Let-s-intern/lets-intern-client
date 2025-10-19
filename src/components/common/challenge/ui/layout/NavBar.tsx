@@ -7,7 +7,7 @@ const NavBar = () => {
   const pathname = usePathname();
   const applicationId = params.applicationId;
 
-  if (location.pathname.endsWith('user/info')) return null;
+  if (pathname.endsWith('user/info')) return null;
 
   const activeStatus = pathname.endsWith('me')
     ? 'MY_MISSION'
