@@ -50,7 +50,7 @@ export const curriculums = [
           <Highlight
             companyImg="class101.png"
             role="Class 101 콘텐츠 마케터"
-            date="| 11/8 저녁 8시 (온라인) "
+            date="| 11/8 저녁 8시 (온라인)"
             description={
               <>
                 현직 콘텐츠 마케터와 함께 <br className="hidden md:block" />
