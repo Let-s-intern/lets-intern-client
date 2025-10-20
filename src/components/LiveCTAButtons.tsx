@@ -6,6 +6,7 @@ import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import { LiveIdPrimitive } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import useProgramStore from '@/store/useProgramStore';
+import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import { DesktopApplyCTA, MobileApplyCTA } from './common/ApplyCTA';
 
@@ -17,6 +18,7 @@ const LiveCTAButtons = ({
   liveId: string;
 }) => {
   const { isLoggedIn } = useAuthStore();
+  const router = useRouter();
   const { data: application } = useProgramApplicationQuery(
     'live',
     Number(liveId),
@@ -29,7 +31,9 @@ const LiveCTAButtons = ({
 
   const onApplyClick = useCallback(() => {
     if (!isLoggedIn) {
-      window.location.href = `/login?redirect=${encodeURIComponent(`/program/live/${liveId}`)}`;
+      router.push(
+        `/login?redirect=${encodeURIComponent(`/program/live/${liveId}`)}`,
+      );
       return;
     }
 
@@ -83,8 +87,15 @@ const LiveCTAButtons = ({
       isFree,
     });
 
-    window.location.href = '/payment-input';
-  }, [application, live.title, liveId, isLoggedIn, setProgramApplicationForm]);
+    router.push('/payment-input');
+  }, [
+    isLoggedIn,
+    application,
+    setProgramApplicationForm,
+    live.title,
+    liveId,
+    router,
+  ]);
 
   return (
     <>

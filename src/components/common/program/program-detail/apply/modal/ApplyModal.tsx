@@ -1,3 +1,5 @@
+import { useRouter } from 'next/navigation';
+
 const CONTENT = {
   TITLE: '제출이 완료되었습니다!',
   BUTTON_CAPTION: '신청 내역 확인하기',
@@ -8,9 +10,11 @@ interface ApplyModalProps {
 }
 
 const ApplyModal = ({ toggle }: ApplyModalProps) => {
+  const router = useRouter();
+
   const onClick = () => {
     toggle();
-    window.location.href = '/mypage/application';
+    router.push('/mypage/application');
   };
   return (
     <div className="z-100 fixed inset-0 flex items-center justify-center bg-neutral-0/50 px-8">

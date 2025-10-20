@@ -1,7 +1,7 @@
 import { Schedule } from '@/schema';
 import { useMissionStore } from '@/store/useMissionStore';
+import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
 import type { Swiper as SwiperType } from 'swiper';
 import 'swiper/css';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -17,12 +17,9 @@ interface Props {
 const MissionCalendar = ({ schedules, todayTh, isDone }: Props) => {
   const swiperRef = useRef<SwiperType | null>(null);
   const { selectedMissionTh } = useMissionStore();
-  const location = useLocation();
+  const pathname = usePathname();
 
-  const isMissionPage = useMemo(
-    () => location.pathname.includes('/me'),
-    [location.pathname],
-  );
+  const isMissionPage = useMemo(() => pathname.includes('/me'), [pathname]);
 
   const targetIndex = useMemo(() => {
     return isMissionPage ? (selectedMissionTh ?? todayTh) : todayTh;

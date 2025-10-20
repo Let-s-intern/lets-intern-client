@@ -1,5 +1,5 @@
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import AlertModal from '../../../../ui/alert/AlertModal';
 import Input from '../../../../ui/input/Input';
 import ActionButton from '../../../ui/button/ActionButton';
@@ -9,7 +9,7 @@ interface FilterProps {
 }
 
 const AdminUserFilter = ({ setSearchValues }: FilterProps) => {
-  const [, setSearchParams] = useSearchParams();
+  const router = useRouter();
   const [values, setValues] = useState<any>({});
   const [isShowAlert, setIsShowAlert] = useState(false);
 
@@ -26,7 +26,7 @@ const AdminUserFilter = ({ setSearchValues }: FilterProps) => {
       setIsShowAlert(true);
       return;
     }
-    setSearchParams({});
+    router.push(window.location.pathname);
     setSearchValues(values);
   };
 
@@ -76,7 +76,7 @@ const AdminUserFilter = ({ setSearchValues }: FilterProps) => {
             onClick={() => {
               setSearchValues({});
               setValues({});
-              setSearchParams({});
+              router.push(window.location.pathname);
             }}
           >
             전체 보기

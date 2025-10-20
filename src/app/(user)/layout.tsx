@@ -1,8 +1,8 @@
 import Providers from '@/context/Providers';
 import ChannelTalkBtn from '@components/common/ui/layout/channel/ChannelTalkBtn';
-import NextFooter from '@components/common/ui/layout/footer/NextFooter';
-import NextNavBar from '@components/common/ui/layout/header/NextNavBar';
-import NextBottomNavBarWithPathname from '@components/common/ui/layout/NextBottomNavBarWithPathname';
+import Footer from '@components/common/ui/layout/footer/Footer';
+import NavBar from '@components/common/ui/layout/header/NavBar';
+import BottomNavBarWithPathname from '@components/common/ui/layout/BottomNavBarWithPathname';
 import { Metadata } from 'next';
 import React from 'react';
 
@@ -40,11 +40,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <Providers>
       <div>
-        <NextNavBar />
+        <NavBar />
         <div className="min-h-[31rem] w-full">{children}</div>
-        <NextFooter />
+        <Footer />
         <ChannelTalkBtn />
-        <NextBottomNavBarWithPathname />
+        <BottomNavBarWithPathname />
       </div>
     </Providers>
   );

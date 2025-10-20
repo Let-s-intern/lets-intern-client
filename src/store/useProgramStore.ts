@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { HydrationStore } from './hydration';
 
-interface ProgramApplicationFormStore {
+interface ProgramApplicationFormStore extends HydrationStore {
   data: {
     priceId: number | null;
     price: number | null; // 정가 = 이용료 + 보증금 + 모든 옵션 정가
@@ -32,6 +33,13 @@ interface ProgramApplicationFormStore {
 const useProgramStore = create(
   persist<ProgramApplicationFormStore>(
     (set, get) => ({
+      _hasHydrated: false,
+      setHasHydrated: (state) => {
+        set({
+          _hasHydrated: state,
+        });
+      },
+
       data: {
         priceId: null,
         price: null,
@@ -94,6 +102,9 @@ const useProgramStore = create(
     }),
     {
       name: 'programApplicationForm',
+      onRehydrateStorage: (state) => {
+        return () => state.setHasHydrated(true);
+      },
     },
   ),
 );

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import HybridLink from '../../ui/HybridLink';
 
 import { useGetUserProgramBannerListQuery } from '@/api/program';
 
@@ -55,8 +55,8 @@ const Banner = () => {
         className="flex flex-nowrap items-center transition-transform duration-300 ease-in-out"
       >
         {data.bannerList.map((banner) => (
-          <Link
-            to={banner.link}
+          <HybridLink
+            href={banner.link}
             key={banner.id}
             className="program_banner w-full shrink-0"
             target={
@@ -69,7 +69,7 @@ const Banner = () => {
               src={isMobile ? banner.mobileImgUrl : banner.imgUrl}
               alt="배너 이미지"
             />
-          </Link>
+          </HybridLink>
         ))}
       </div>
       <div className="absolute bottom-4 left-5 flex items-center gap-1.5 md:bottom-6 md:left-8">

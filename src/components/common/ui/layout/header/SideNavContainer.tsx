@@ -1,6 +1,7 @@
 import { useUserQuery } from '@/api/user';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
+import { logoutAndRefreshPage } from '@/utils/auth';
 import { ReactNode } from 'react';
 import KakaoChannel from './KakaoChannel';
 import LoginLink from './LoginLink';
@@ -8,12 +9,11 @@ import SignUpLink from './SignUpLink';
 
 interface Props {
   children?: ReactNode;
-  isNextRouter: boolean;
   isOpen: boolean;
   onClose: () => void;
 }
 
-function SideNavContainer({ children, isNextRouter, isOpen, onClose }: Props) {
+function SideNavContainer({ children, isOpen, onClose }: Props) {
   const { isLoggedIn, logout } = useAuthStore();
 
   const { data: user } = useUserQuery({ enabled: isLoggedIn, retry: 1 });
@@ -50,9 +50,7 @@ function SideNavContainer({ children, isNextRouter, isOpen, onClose }: Props) {
                 type="button"
                 className="text-primary"
                 onClick={() => {
-                  logout();
-                  window.location.href = '/';
-                  onClose();
+                  logoutAndRefreshPage();
                 }}
               >
                 로그아웃
@@ -62,14 +60,10 @@ function SideNavContainer({ children, isNextRouter, isOpen, onClose }: Props) {
             <div className="flex gap-6">
               <LoginLink
                 className="p-0 font-medium"
-                isNextRouter={isNextRouter}
-                force={isNextRouter}
                 onClick={() => onClose()}
               />
               <SignUpLink
                 className="bg-transparent p-0 font-medium"
-                isNextRouter={isNextRouter}
-                force={isNextRouter}
                 onClick={() => onClose()}
               />
             </div>

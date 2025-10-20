@@ -3,28 +3,23 @@ import HybridLink from '../../HybridLink';
 
 interface Props {
   redirect?: string;
-  isNextRouter: boolean;
-  force: boolean;
   className?: string;
   onClick?: () => void;
 }
 
-function LoginLink({
-  redirect,
-  isNextRouter,
-  force,
-  className,
-  onClick,
-}: Props) {
+function LoginLink({ redirect, className, onClick }: Props) {
+  const searchParams = new URLSearchParams();
+  if (redirect) {
+    searchParams.set('redirect', redirect);
+  }
+
   return (
     <HybridLink
       className={twMerge(
         'px-3 py-1.5 text-xsmall14 font-medium transition hover:opacity-80',
         className,
       )}
-      isNextRouter={isNextRouter}
-      force={force}
-      href={`/login?redirect=${redirect}`}
+      href={`/login?${searchParams.toString()}`}
       onClick={() => {
         if (onClick) onClick();
       }}

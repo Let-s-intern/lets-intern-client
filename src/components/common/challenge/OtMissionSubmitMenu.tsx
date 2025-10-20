@@ -7,7 +7,7 @@ import {
 import { Schedule } from '@/schema';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'next/navigation';
 import ParsedCommentBox from './my-challenge/ParsedCommentBox';
 
 interface Props {
@@ -15,7 +15,7 @@ interface Props {
 }
 
 const OtMissionSubmitMenu = ({ currentSchedule }: Props) => {
-  const params = useParams();
+  const params = useParams<{ programId: string }>();
 
   const [isAttended, setIsAttended] = useState(
     currentSchedule?.attendanceInfo.result === 'WRONG'

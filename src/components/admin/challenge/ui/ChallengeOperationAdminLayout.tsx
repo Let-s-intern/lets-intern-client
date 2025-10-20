@@ -1,3 +1,5 @@
+'use client';
+
 import {
   ChallengeList,
   getClickCopy,
@@ -12,8 +14,9 @@ import Heading from '@components/admin/ui/heading/Heading';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import BaseModal from '@components/ui/BaseModal';
 import { Button, Checkbox } from '@mui/material';
+import Link from 'next/link';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { NavLink, Outlet, useNavigate, useParams } from 'react-router-dom';
 
 const getNavLinks = (programId?: string | number) => {
   return [
@@ -51,7 +54,7 @@ const getNavLinks = (programId?: string | number) => {
 };
 
 const Actions = ({ openModal }: { openModal: () => void }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const { data } = useGetChallengeList({
     pageable: {
@@ -75,7 +78,7 @@ const Actions = ({ openModal }: { openModal: () => void }) => {
         className="ml-3 border p-3"
         onChange={(e) => {
           if (e.target.value) {
-            navigate(`/admin/challenge/operation/${e.target.value}/home`);
+            router.push(`/admin/challenge/operation/${e.target.value}/home`);
           }
         }}
       >
@@ -93,7 +96,8 @@ const Actions = ({ openModal }: { openModal: () => void }) => {
 };
 
 const Navigation = () => {
-  const params = useParams();
+  const params = useParams<{ programId: string }>();
+  const pathname = usePathname();
   const navLinks = getNavLinks(params.programId);
 
   const { data: isAdmin } = useIsAdminQuery();
@@ -102,17 +106,18 @@ const Navigation = () => {
 
   return (
     <nav id="sidebar" className="flex">
-      {navLinks.map((navLink) => (
-        <NavLink
-          key={navLink.to}
-          to={navLink.to}
-          className={({ isActive }) =>
-            twMerge('block px-4 py-2', isActive && 'text-blue-600')
-          }
-        >
-          {navLink.text}
-        </NavLink>
-      ))}
+      {navLinks.map((navLink) => {
+        const isActive = pathname === navLink.to;
+        return (
+          <Link
+            key={navLink.to}
+            href={navLink.to}
+            className={twMerge('block px-4 py-2', isActive && 'text-blue-600')}
+          >
+            {navLink.text}
+          </Link>
+        );
+      })}
     </nav>
   );
 };
@@ -175,7 +180,7 @@ const ChallengeDashBoardModal = ({
   );
 };
 
-const ChallengeAdminLayout = () => {
+const ChallengeAdminLayout = ({ children }: { children: React.ReactNode }) => {
   const { data } = useGetChallengeList({
     pageable: {
       size: 1000,
@@ -202,8 +207,7 @@ const ChallengeAdminLayout = () => {
       </div>
 
       <Navigation />
-      <Outlet />
-
+      {children}
       {/* 대시보드를 복제할 챌린지 리스트 */}
       {isAdmin && data && (
         <ChallengeDashBoardModal

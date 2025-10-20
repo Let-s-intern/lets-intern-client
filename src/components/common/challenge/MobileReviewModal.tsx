@@ -4,8 +4,8 @@ import { useUserQuery } from '@/api/user';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import ModalPortal from '@components/ui/ModalPortal';
 import { josa } from 'es-hangul';
+import { useParams } from 'next/navigation';
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
 import GoalOrConcernsBox from '../review/GoalOrConcernsBox';
 import ReviewInstruction from '../review/ReviewInstruction';
 import ReviewQuestion from '../review/ReviewQuestion';
@@ -19,7 +19,7 @@ interface Props {
 }
 
 function MobileReviewModal({ isOpen, onClose }: Props) {
-  const params = useParams();
+  const params = useParams<{ programId: string; applicationId: string }>();
 
   const { data: user } = useUserQuery({ enabled: true });
   const { data: challengeGoal } = useGetChallengeGoal(params.programId);

@@ -1,3 +1,5 @@
+'use client';
+
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { twMerge } from '@/lib/twMerge';
 import {

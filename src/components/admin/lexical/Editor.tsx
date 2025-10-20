@@ -66,7 +66,6 @@ import YouTubePlugin from './plugins/YouTubePlugin';
 import ContentEditable from './ui/ContentEditable';
 
 const skipCollaborationInit =
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error
   window.parent != null && window.parent.frames.right === window;
 

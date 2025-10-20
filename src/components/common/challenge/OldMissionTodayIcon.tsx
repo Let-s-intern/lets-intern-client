@@ -2,9 +2,9 @@ import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import { Schedule, ScheduleMission } from '@/schema';
 import { missionSubmitToBadge } from '@/utils/convert';
 import clsx from 'clsx';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { FaCheck } from 'react-icons/fa6';
-import { Link, useParams } from 'react-router-dom';
-
 interface Props {
   mission: ScheduleMission;
   attendance: Schedule['attendanceInfo'];
@@ -18,14 +18,14 @@ const OldMissionTodayIcon = ({
   attendance,
   isDone,
 }: Props) => {
-  const params = useParams();
+  const params = useParams<{ programId: string; applicationId: string }>();
   const { currentChallenge } = useOldCurrentChallenge();
   const challengeEndDate = currentChallenge?.endDate;
 
   return (
     <>
       <Link
-        to={
+        href={
           !isDone
             ? `/old/challenge/${params.applicationId}/${params.programId}/me?scroll_to=daily-mission`
             : '#'

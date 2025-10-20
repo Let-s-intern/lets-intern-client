@@ -2,8 +2,8 @@ import { useChallengeQuery } from '@/api/challenge';
 import BaseButton from '@/components/common/ui/button/BaseButton';
 import useGoogleAnalytics from '@/hooks/useGoogleAnalytics';
 import { ChallengeContent } from '@/types/interface';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
 import RecommendedProgramSwiper from './RecommendedProgramSwiper';
 
 const MoreButton = ({
@@ -48,11 +48,10 @@ const MobileMoreButton = ({
   );
 };
 
-const EXCLUDED_PATHS = ['me', 'guides', 'user/info', 'feedback'];
-
 function RecommendedProgramSection() {
-  const location = useLocation();
-  const params = useParams();
+  const pathname = usePathname();
+  const router = useRouter();
+  const params = useParams<{ programId: string }>();
   const trackEvent = useGoogleAnalytics();
   const { data: challenge, isLoading } = useChallengeQuery({
     challengeId: Number(params.programId),
@@ -82,12 +81,13 @@ function RecommendedProgramSection() {
         current_dashboard_challenge_name: currentChallengeTitle,
       },
     });
-    setTimeout(() => (window.location.href = clickUrl), 300);
+    router.push(clickUrl);
   };
 
+  const EXCLUDED_PATHS = ['me', 'guides', 'user/info', 'feedback'];
   // 컴포넌트를 렌더링하지 않음
   const shouldHideSection = EXCLUDED_PATHS.some((path) =>
-    location.pathname.includes(path),
+    pathname.includes(path),
   );
   if (shouldHideSection) {
     return null;

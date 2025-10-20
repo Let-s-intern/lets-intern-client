@@ -88,6 +88,13 @@ export function getBaseUrlFromServer(): string {
   return process.env.BASE_URL || 'http://localhost:3000';
 }
 
+export function getUniversalBaseUrl(): string {
+  if (typeof window !== 'undefined') {
+    return window.location.origin;
+  }
+  return getBaseUrlFromServer();
+}
+
 export function getUniversalLink(pathname: string): string {
   return `${typeof window !== 'undefined' ? window.location.origin : getBaseUrlFromServer()}${pathname}`;
 }

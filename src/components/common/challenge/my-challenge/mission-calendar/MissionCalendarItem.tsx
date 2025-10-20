@@ -1,6 +1,6 @@
 import { Schedule } from '@/schema';
 import clsx from 'clsx';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { usePathname, useRouter, useParams } from 'next/navigation';
 import MissionIcon from './MissionIcon';
 import MissionNotStartedIcon from './MissionNotStartedIcon';
 import MissionTodayIcon from './MissionTodayIcon';
@@ -25,8 +25,8 @@ const MissionCalendarItem = ({
   const mission = schedule.missionInfo;
   const attendance = schedule.attendanceInfo;
 
-  const params = useParams();
-  const navigate = useNavigate();
+  const params = useParams<{ applicationId: string; programId: string }>();
+  const router = useRouter();
 
   const { error } = useChallengeMissionAttendanceInfoQuery({
     challengeId: params.programId,
@@ -36,13 +36,13 @@ const MissionCalendarItem = ({
   const { selectedMissionId, setSelectedMission } = useMissionStore();
   const isSelected = selectedMissionId === mission.id;
 
-  const location = useLocation();
-  const isMissionPage = location.pathname.includes('/me');
+  const pathname = usePathname();
+  const isMissionPage = pathname.includes('/me');
 
   const handleMissionClick = async () => {
     if (mission.th !== null && isValid()) {
       setSelectedMission(mission.id, mission.th);
-      navigate(`/challenge/${params.applicationId}/${params.programId}/me`);
+      router.push(`/challenge/${params.applicationId}/${params.programId}/me`);
     }
   };
 

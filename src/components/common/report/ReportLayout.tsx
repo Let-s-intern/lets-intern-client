@@ -1,14 +1,14 @@
 import useAuthStore from '@/store/useAuthStore';
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import NavBar from '../challenge/ui/layout/NavBar';
 
-const ReportLayout = () => {
-  const params = useParams();
-  const navigate = useNavigate();
-  const { isLoggedIn } = useAuthStore();
+const ReportLayout = ({ children }: { children: React.ReactNode }) => {
+  const params = useParams<{ programId: string }>();
+  const router = useRouter();
+  const { isLoggedIn, isInitialized } = useAuthStore();
 
   const { data: isValidUserAccessData, isLoading: isValidUserAccessLoading } =
     useQuery({
@@ -35,11 +35,13 @@ const ReportLayout = () => {
   const isLoading = isValidUserInfoLoading || isValidUserAccessLoading;
 
   useEffect(() => {
+    if (!isInitialized) return;
+
     if (!isLoggedIn) {
       const newUrl = new URL(window.location.href);
       const searchParams = new URLSearchParams();
       searchParams.set('redirect', `${newUrl.pathname}?${newUrl.search}`);
-      navigate(`/login?${searchParams.toString()}`);
+      router.push(`/login?${searchParams.toString()}`);
       return;
     }
 
@@ -48,10 +50,17 @@ const ReportLayout = () => {
     }
 
     if (!isValidUserInfo) {
-      navigate(`/challenge/${params.programId}/user/info`);
+      router.push(`/challenge/${params.programId}/user/info`);
       return;
     }
-  }, [isLoading, isLoggedIn, isValidUserInfo, navigate, params.programId]);
+  }, [
+    isLoading,
+    isLoggedIn,
+    isValidUserInfo,
+    router,
+    params.programId,
+    isInitialized,
+  ]);
 
   return (
     <div className="min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-6rem)]">
@@ -72,9 +81,7 @@ const ReportLayout = () => {
       <div className="hidden px-6 py-6 lg:block">
         <div className="mx-auto flex w-[1024px]">
           <NavBar />
-          <div className="min-w-0 flex-1">
-            <Outlet />
-          </div>
+          <div className="min-w-0 flex-1">{children}</div>
         </div>
       </div>
     </div>

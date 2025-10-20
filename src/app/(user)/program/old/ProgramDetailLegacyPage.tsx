@@ -6,7 +6,7 @@ import FilledButton from '@/components/common/program/program-detail/button/Fill
 import NotiButton from '@/components/common/program/program-detail/button/NotiButton';
 import ApplySection from '@/components/common/program/program-detail/section/ApplySection';
 import TabSection from '@/components/common/program/program-detail/section/TabSection';
-import NextBackHeader from '@/components/common/ui/NextBackHeader';
+import BackHeader from '@/components/common/ui/BackHeader';
 import useRunOnce from '@/hooks/useRunOnce';
 import dayjs from '@/lib/dayjs';
 import { isNewProgram } from '@/lib/isDeprecatedProgram';
@@ -17,6 +17,7 @@ import { ProgramType } from '@/types/common';
 import axios from '@/utils/axios';
 import { useMediaQuery } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { useEffect, useReducer, useState } from 'react';
 
 interface ProgramDetailProps {
@@ -29,7 +30,7 @@ const ProgramDetailLegacyPage = ({
   programId,
 }: ProgramDetailProps) => {
   const [isNew, setIsNew] = useState(true);
-
+  const router = useRouter();
   const [programTitle, setProgramTitle] = useState('');
 
   const isDesktop = useMediaQuery('(min-width: 991px)');
@@ -69,12 +70,12 @@ const ProgramDetailLegacyPage = ({
   useEffect(() => {
     if (programType && program?.query.data) {
       if (isNewProgram({ desc: program.query.data.desc })) {
-        window.location.href = `/program/${programType}/${programId}`;
+        router.push(`/program/${programType}/${programId}`);
       } else {
         setIsNew(false);
       }
     }
-  }, [program.query.data, programId, programType]);
+  }, [program.query.data, programId, programType, router]);
 
   const programDate =
     program && program.query.data
@@ -99,7 +100,7 @@ const ProgramDetailLegacyPage = ({
       alert('로그인 후 이용해주세요.');
       const params = new URLSearchParams();
       params.set('redirect', window.location.pathname);
-      window.location.href = `/login?${params.toString()}`;
+      router.push(`/login?${params.toString()}`);
       return;
     }
     dispatchIsDrawerOpen({ type: 'toggle' });
@@ -123,7 +124,9 @@ const ProgramDetailLegacyPage = ({
         </div>
       ) : (
         <div className="mx-auto max-w-5xl">
-          <NextBackHeader to="/program">{programTitle}</NextBackHeader>
+          <BackHeader to="/program" className="my-6">
+            {programTitle}
+          </BackHeader>
           <div className="flex min-h-screen flex-col">
             {/* 프로그램 상세 */}
             <section className="flex items-start gap-10 md:mt-8">
