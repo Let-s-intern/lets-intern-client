@@ -22,7 +22,6 @@ export interface TableData {
 export interface DataTableProps {
   headers: TableHeader[];
   data: TableData[];
-  selectable?: boolean;
   selectedRowIds?: Set<string>;
   onSelectionChange?: (selectedIds: Set<string>) => void;
   className?: string;
