@@ -1,6 +1,8 @@
 import { useGetChallengeTitle } from '@/api/challenge';
+import { useGetVodLinks } from '@/api/program';
 import useGoogleAnalytics from '@/hooks/useGoogleAnalytics';
 import { ProgramRecommend } from '@/types/interface';
+import { PROGRAM_TYPE } from '@/utils/programConst';
 import { ChevronRight } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import 'swiper/css';
@@ -21,6 +23,23 @@ function RecommendedProgramSwiper({ programs }: Props) {
   const trackEvent = useGoogleAnalytics();
 
   const { data: challengeTitleData } = useGetChallengeTitle(programId);
+
+  // VOD ID 추출
+  const vodIds = programs
+    .filter((item) => item.programInfo.programType === PROGRAM_TYPE.VOD)
+    .map((item) => item.programInfo.id);
+  // VOD 링크 조회
+  const vodQueries = useGetVodLinks(vodIds);
+  // 링크 객체로 변환
+  const vodLinks = vodQueries.reduce(
+    (acc, query) => {
+      if (query.data?.link) {
+        acc[query.data.id] = query.data.link;
+      }
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
 
   const handleClickSlide = (
     clickProgramUrl: string,
@@ -55,7 +74,11 @@ function RecommendedProgramSwiper({ programs }: Props) {
       >
         {programs.map((item) => {
           const info = item.programInfo;
-          const url = `/program/${info.programType.toLocaleLowerCase()}/${info.id}/${encodeURIComponent(info.title ?? '')}`;
+          const baseUrl = `/program/${info.programType.toLocaleLowerCase()}/${info.id}/${encodeURIComponent(info.title ?? '')}`;
+          const url =
+            info.programType === PROGRAM_TYPE.VOD && vodLinks[info.id]
+              ? vodLinks[info.id]
+              : baseUrl;
 
           return (
             <SwiperSlide
