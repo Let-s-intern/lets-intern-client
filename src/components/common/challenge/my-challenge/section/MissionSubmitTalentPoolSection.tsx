@@ -5,6 +5,7 @@ import { clsx } from 'clsx';
 import { useCallback, useEffect, useState } from 'react';
 import MissionSubmitButton from '../mission/MissionSubmitButton';
 import MissionToast from '../mission/MissionToast';
+import PersonalInfoConsent from './PersonalInfoConsent';
 
 interface MissionSubmitTalentPoolSectionProps {
   className?: string;
@@ -87,6 +88,7 @@ const MissionSubmitTalentPoolSection = ({
         {/* 서류 업로드 영역 */}
 
         {/* 개인정보 수집 활용 동의서 */}
+<PersonalInfoConsent checked={isAgreed} onChange={setIsAgreed} />
 
         {!isSubmitPeriodEnded && (
           <MissionSubmitButton
