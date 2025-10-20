@@ -7,7 +7,7 @@ import DataTable, {
 // 사용 예시 컴포넌트
 export const DataTableExample: React.FC = () => {
   return (
-    <div className="p-6">
+    <div className="w-full p-6">
       <h2 className="mb-4 text-2xl font-bold">경험 데이터 테이블 예시</h2>
 
       {/* 기본 테이블 사용 예시 */}
