@@ -14,6 +14,7 @@ export interface TableHeader {
 
 // 테이블 데이터 타입 정의
 export interface TableData {
+  id: string;
   [key: string]: any;
 }
 
@@ -21,6 +22,9 @@ export interface TableData {
 export interface DataTableProps {
   headers: TableHeader[];
   data: TableData[];
+  selectable?: boolean;
+  selectedRowIds?: Set<string>;
+  onSelectionChange?: (selectedIds: Set<string>) => void;
   className?: string;
 }
 
@@ -28,14 +32,44 @@ export interface DataTableProps {
 export const DataTable: React.FC<DataTableProps> = ({
   headers,
   data,
+  selectedRowIds,
+  onSelectionChange,
   className = '',
 }) => {
+  const toggleRowSelection = (id: string) => {
+    if (!selectedRowIds || !onSelectionChange) return;
+
+    const newSet = new Set(selectedRowIds);
+    if (newSet.has(id)) newSet.delete(id);
+    else newSet.add(id);
+    onSelectionChange(newSet);
+  };
+
+  const toggleAllSelection = () => {
+    if (!selectedRowIds || !onSelectionChange) return;
+
+    let newSet: Set<string>;
+    if (selectedRowIds.size === data.length) newSet = new Set();
+    else newSet = new Set(data.map((row) => row.id));
+    onSelectionChange(newSet);
+  };
+
   return (
     <div className={`overflow-x-auto ${className}`}>
       <table className="w-full min-w-max border-collapse">
         {/* 테이블 헤더 */}
         <thead>
           <tr className="border-b bg-gray-50">
+            {selectedRowIds && (
+              <th className="w-10 px-3 text-center">
+                <input
+                  type="checkbox"
+                  checked={selectedRowIds.size === data.length}
+                  onChange={toggleAllSelection}
+                  className="cursor-pointer"
+                />
+              </th>
+            )}
             {headers.map((header) => (
               <th
                 key={header.key}
@@ -56,26 +90,40 @@ export const DataTable: React.FC<DataTableProps> = ({
 
         {/* 테이블 바디 */}
         <tbody>
-          {data.map((row, rowIndex) => (
-            <tr key={rowIndex} className="border-b hover:bg-gray-50">
-              {headers.map((header) => (
-                <td
-                  key={header.key}
-                  className={`px-4 py-3 text-[0.8125rem] font-normal text-gray-900 ${
-                    header.align === 'center'
-                      ? 'text-center'
-                      : header.align === 'right'
-                        ? 'text-right'
-                        : 'text-left'
-                  }`}
-                >
-                  {header.cellRenderer
-                    ? header.cellRenderer(row[header.key], row)
-                    : row[header.key]}
-                </td>
-              ))}
-            </tr>
-          ))}
+          {data.map((row) => {
+            const isSelected = selectedRowIds?.has(row.id);
+
+            return (
+              <tr key={row.id} className="border-b hover:bg-gray-50">
+                {selectedRowIds && (
+                  <td className="text-center">
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => toggleRowSelection(row.id)}
+                      className="cursor-pointer"
+                    />
+                  </td>
+                )}
+                {headers.map((header) => (
+                  <td
+                    key={header.key}
+                    className={`px-4 py-3 text-[0.8125rem] font-normal text-gray-900 ${
+                      header.align === 'center'
+                        ? 'text-center'
+                        : header.align === 'right'
+                          ? 'text-right'
+                          : 'text-left'
+                    }`}
+                  >
+                    {header.cellRenderer
+                      ? header.cellRenderer(row[header.key], row)
+                      : row[header.key]}
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
@@ -84,6 +132,7 @@ export const DataTable: React.FC<DataTableProps> = ({
 
 // 사용 예시를 위한 샘플 데이터 타입
 export interface ExperienceData {
+  id: string;
   experienceName: string;
   experienceCategory: string;
   organization: string;
@@ -171,6 +220,7 @@ export const experienceTableHeaders: TableHeader[] = [
 // 샘플 데이터 (이미지에서 본 내용 기반)
 export const sampleExperienceData: ExperienceData[] = [
   {
+    id: '1',
     experienceName: '신제품 런칭 캠페인 기획 및 실행',
     experienceCategory: '프로젝트',
     organization: 'it 연합 동아리 it 연합 동아리 it 연합 동아리',
@@ -192,6 +242,7 @@ export const sampleExperienceData: ExperienceData[] = [
   },
   // 추가 샘플 데이터들...
   {
+    id: '2',
     experienceName: '신제품 런칭 캠페인 기획 및 실행',
     experienceCategory: '프로젝트',
     organization: 'it 연합 동아리 it 연합 동아리 it 연합 동아리',
@@ -212,6 +263,7 @@ export const sampleExperienceData: ExperienceData[] = [
     deleteAction: '🗑️',
   },
   {
+    id: '3',
     experienceName: '신제품 런칭 캠페인 기획 및 실행',
     experienceCategory: '프로젝트',
     organization: 'it 연합 동아리 it 연합 동아리 it 연합 동아리',
@@ -232,6 +284,7 @@ export const sampleExperienceData: ExperienceData[] = [
     deleteAction: '🗑️',
   },
   {
+    id: '4',
     experienceName: '신제품 런칭 캠페인 기획 및 실행',
     experienceCategory: '프로젝트',
     organization: 'it 연합 동아리 it 연합 동아리 it 연합 동아리',

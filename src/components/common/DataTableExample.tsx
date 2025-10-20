@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import DataTable, {
   experienceTableHeaders,
   sampleExperienceData,
@@ -6,6 +8,12 @@ import DataTable, {
 
 // 사용 예시 컴포넌트
 export const DataTableExample: React.FC = () => {
+  const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
+
+  const handleSelectionChange = (selectedIds: Set<string>) => {
+    setSelectedRowIds(selectedIds);
+  };
+
   return (
     <div className="w-full p-6">
       <h2 className="mb-4 text-2xl font-bold">경험 데이터 테이블 예시</h2>
@@ -14,6 +22,8 @@ export const DataTableExample: React.FC = () => {
       <DataTable
         headers={experienceTableHeaders}
         data={sampleExperienceData}
+        selectedRowIds={selectedRowIds}
+        onSelectionChange={handleSelectionChange}
         className="rounded-lg border"
       />
 
@@ -29,18 +39,21 @@ export const DataTableExample: React.FC = () => {
           ]}
           data={[
             {
+              id: '1',
               name: '김철수',
               age: 25,
               email: 'kim@example.com',
               status: '활성',
             },
             {
+              id: '2',
               name: '이영희',
               age: 30,
               email: 'lee@example.com',
               status: '비활성',
             },
             {
+              id: '3',
               name: '박민수',
               age: 28,
               email: 'park@example.com',
