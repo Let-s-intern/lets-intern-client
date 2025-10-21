@@ -43,6 +43,7 @@ type LeadHistoryGroupRow = {
   name: string | null;
   email: string | null;
   inflow: string | null;
+  firstInflowDate: string | null;
   university: string | null;
   major: string | null;
   wishField: string | null;
@@ -457,6 +458,18 @@ const LeadHistoryPage = () => {
         return null;
       };
 
+      const getOldestValue = <T,>(
+        selector: (item: LeadHistory) => T | null | undefined,
+      ): T | null => {
+        for (let index = sorted.length - 1; index >= 0; index -= 1) {
+          const value = selector(sorted[index]);
+          if (!isEmptyValue(value)) {
+            return (value as T) ?? null;
+          }
+        }
+        return null;
+      };
+
       const primaryPhone =
         getLatestValue((item) => item.phoneNum?.trim()) ?? null;
 
@@ -497,7 +510,8 @@ const LeadHistoryPage = () => {
         displayPhoneNum,
         name: getLatestValue((item) => item.name),
         email: getLatestValue((item) => item.email),
-        inflow: getLatestValue((item) => item.inflow),
+        inflow: getOldestValue((item) => item.inflow),
+        firstInflowDate: getOldestValue((item) => item.createDate),
         university: getLatestValue((item) => item.university),
         major: getLatestValue((item) => item.major),
         wishField: getLatestValue((item) => item.wishField),
@@ -622,6 +636,15 @@ const LeadHistoryPage = () => {
         valueFormatter: (value) => formatNullableText(value),
       },
       {
+        field: 'firstInflowDate',
+        headerName: '첫 유입일자',
+        width: 160,
+        valueFormatter: (value) =>
+          value && typeof value === 'string'
+            ? dayjs(value).format('YYYY/MM/DD')
+            : '-',
+      },
+      {
         field: 'totalActions',
         headerName: '전체 행동 횟수',
         width: 160,
@@ -642,16 +665,16 @@ const LeadHistoryPage = () => {
       },
       {
         field: 'latestCreateDate',
-        headerName: '최근 활동일',
-        width: 200,
+        headerName: '최신 유입일자',
+        width: 160,
         valueFormatter: (value) =>
           value && typeof value === 'string'
-            ? dayjs(value).format('YYYY/MM/DD HH:mm')
+            ? dayjs(value).format('YYYY/MM/DD')
             : '-',
       },
       {
         field: 'inflow',
-        headerName: '유입 경로',
+        headerName: '첫 유입 경로',
         width: 160,
         valueFormatter: (value) => formatNullableText(value),
       },
@@ -765,11 +788,12 @@ const LeadHistoryPage = () => {
       '이메일',
       '최신 이벤트 유형',
       '최신 이벤트',
+      '첫 유입일자',
+      '첫 유입 경로',
       '전체 행동 횟수',
       '프로그램 참여 수',
       '총 결제 금액',
-      '최근 활동일',
-      '유입 경로',
+      '최신 유입일자',
       '대학',
       '전공',
       '희망 분야',
@@ -786,13 +810,16 @@ const LeadHistoryPage = () => {
       row.email ?? '',
       row.latestEventType ? leadHistoryEventTypeLabels[row.latestEventType] : '',
       row.latestEventTitle ?? '',
+      row.firstInflowDate
+        ? dayjs(row.firstInflowDate).format('YYYY/MM/DD')
+        : '',
+      row.inflow ?? '',
       String(row.totalActions ?? ''),
       String(row.programCount ?? ''),
       String(row.totalFinalPrice ?? ''),
       row.latestCreateDate
-        ? dayjs(row.latestCreateDate).format('YYYY/MM/DD HH:mm')
+        ? dayjs(row.latestCreateDate).format('YYYY/MM/DD')
         : '',
-      row.inflow ?? '',
       row.university ?? '',
       row.major ?? '',
       row.wishField ?? '',
