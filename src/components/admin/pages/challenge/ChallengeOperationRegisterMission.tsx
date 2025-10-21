@@ -215,7 +215,121 @@ const useMissionColumns = () => {
       headerName: '회차',
       editable: true,
       width: 70,
-      type: 'number',
+      renderEditCell(params) {
+        return (
+          <input
+            type="number"
+            className="w-full"
+            value={params.value ?? ''}
+            onChange={(e) => {
+              const value =
+                e.target.value === '' ? null : Number(e.target.value);
+
+              // th 값 설정
+              params.api.setEditCellValue({
+                id: params.id,
+                field: 'th',
+                value,
+              });
+
+              // th에 따라 missionType 자동 설정
+              if (value === 100) {
+                params.api.setEditCellValue({
+                  id: params.id,
+                  field: 'missionType',
+                  value: 'BONUS',
+                });
+              } else if (value === 99) {
+                params.api.setEditCellValue({
+                  id: params.id,
+                  field: 'missionType',
+                  value: 'POOL',
+                });
+              } else if (value === 0) {
+                params.api.setEditCellValue({
+                  id: params.id,
+                  field: 'missionType',
+                  value: 'OT',
+                });
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Backspace' || e.key === 'Delete') {
+                e.stopPropagation();
+              }
+            }}
+          />
+        );
+      },
+    },
+    {
+      field: 'missionType',
+      headerName: '미션 타입',
+      editable: true,
+      width: 100,
+      valueFormatter(_, row) {
+        const typeLabels = {
+          OT: 'OT',
+          POOL: '인재풀',
+          BONUS: '보너스',
+          EXPERIENCE_1: '경험정리1',
+          EXPERIENCE_2: '경험정리2',
+        };
+        return row.missionType ? typeLabels[row.missionType] : '기본';
+      },
+      renderCell(params) {
+        return (
+          params.formattedValue || (
+            <span className="text-gray-400">더블클릭하여 편집</span>
+          )
+        );
+      },
+      renderEditCell(params) {
+        return (
+          <select
+            className="w-full"
+            value={params.row.missionType ?? ''}
+            onChange={(e) => {
+              const value = e.target.value === '' ? null : e.target.value;
+
+              // missionType 값 설정
+              params.api.setEditCellValue({
+                id: params.id,
+                field: 'missionType',
+                value,
+              });
+
+              // missionType에 따라 th 자동 설정
+              if (value === 'BONUS') {
+                params.api.setEditCellValue({
+                  id: params.id,
+                  field: 'th',
+                  value: 100,
+                });
+              } else if (value === 'POOL') {
+                params.api.setEditCellValue({
+                  id: params.id,
+                  field: 'th',
+                  value: 99,
+                });
+              } else if (value === 'OT') {
+                params.api.setEditCellValue({
+                  id: params.id,
+                  field: 'th',
+                  value: 0,
+                });
+              }
+            }}
+          >
+            <option value="">기본</option>
+            <option value="OT">OT</option>
+            <option value="POOL">인재풀</option>
+            <option value="BONUS">보너스</option>
+            <option value="EXPERIENCE_1">경험정리1</option>
+            <option value="EXPERIENCE_2">경험정리2</option>
+          </select>
+        );
+      },
     },
     {
       field: 'startDate',
@@ -403,7 +517,6 @@ const useMissionColumns = () => {
       width: 160,
       renderCell: ChallengeOptionRenderCell,
     },
-
     {
       field: 'actions',
       editable: true,
@@ -647,6 +760,7 @@ const ChallengeOperationRegisterMission = () => {
               row.missionTemplatesOptions.find(
                 (t) => t.id === row.missionTemplateId,
               )?.title ?? '',
+            missionType: row.missionType,
           });
           if (apiRef.current?.getRowMode(row.id) === 'edit') {
             apiRef.current?.stopRowEditMode({
@@ -675,6 +789,7 @@ const ChallengeOperationRegisterMission = () => {
             id: row.id,
             lateScore: row.lateScore,
             missionTemplateId: row.missionTemplateId,
+            missionType: row.missionType,
             score: row.score,
             startDate: row.startDate.tz().format('YYYY-MM-DDTHH:mm:ss'),
             endDate: row.endDate
@@ -786,7 +901,8 @@ const ChallengeOperationRegisterMission = () => {
                 applicationCount: 0,
                 additionalContentsList: [],
                 essentialContentsList: [],
-                missionType: '',
+                missionTag: '',
+                missionType: null,
                 challengeOptionCode: '',
                 challengeOptionId: -1,
               });
