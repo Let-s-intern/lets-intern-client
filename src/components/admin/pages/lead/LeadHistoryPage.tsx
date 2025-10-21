@@ -5,7 +5,7 @@ import {
   LeadEvent,
   LeadHistory,
   LeadHistoryEventType,
-  LeadHistoryListParams,
+  LeadHistoryFilters,
   useCreateLeadHistoryMutation,
   useLeadEventListQuery,
   useLeadHistoryListQuery,
@@ -13,6 +13,7 @@ import {
 import Heading from '@/components/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import dayjs from '@/lib/dayjs';
+import { groupBy } from 'es-toolkit';
 import {
   Button,
   Checkbox,
@@ -26,12 +27,46 @@ import {
   Typography,
 } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { ChangeEvent, FormEvent, useMemo, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 const leadHistoryEventTypeLabels: Record<LeadHistoryEventType, string> = {
   SIGN_UP: '회원가입',
-  PROGRAM: '프로그램',
+  PROGRAM: '프로그램 참여',
   LEAD_EVENT: '리드 이벤트',
+};
+
+type LeadHistoryGroupRow = {
+  id: string;
+  phoneNum: string | null;
+  displayPhoneNum: string;
+  name: string | null;
+  email: string | null;
+  inflow: string | null;
+  university: string | null;
+  major: string | null;
+  wishField: string | null;
+  wishCompany: string | null;
+  wishIndustry: string | null;
+  wishJob: string | null;
+  jobStatus: string | null;
+  instagramId: string | null;
+  latestEventType?: LeadHistoryEventType;
+  latestEventTitle: string | null;
+  latestCreateDate: string | null;
+  latestTimestamp: number;
+  totalActions: number;
+  programCount: number;
+  totalFinalPrice: number;
+  items: LeadHistory[];
+};
+
+type FilterFormState = {
+  eventTypes: LeadHistoryEventType[];
+  leadEventIds: string;
+  leadEventTypes: string;
+  names: string;
+  phoneNums: string;
 };
 
 const splitToList = (value: string) =>
@@ -45,39 +80,73 @@ const splitToNumberList = (value: string) =>
     .map((item) => Number(item))
     .filter((num) => !Number.isNaN(num));
 
-const optionalArray = <T,>(value: T[]) => (value.length > 0 ? value : undefined);
-
-type LeadHistoryRow = LeadHistory & {
-  id: number;
-  eventTitle: string | null;
+const isEmptyValue = (value: unknown) => {
+  if (value === null || value === undefined) return true;
+  if (typeof value === 'string') return value.trim().length === 0;
+  return false;
 };
 
-const defaultFilterForm = {
-  eventTypes: [] as LeadHistoryEventType[],
+const toTimestamp = (value?: string | null) => {
+  if (!value) return Number.NEGATIVE_INFINITY;
+  const date = dayjs(value);
+  return date.isValid() ? date.valueOf() : Number.NEGATIVE_INFINITY;
+};
+
+const formatNullableText = (value: unknown) => {
+  if (typeof value === 'string') {
+    return value.trim().length ? value : '-';
+  }
+  if (typeof value === 'number') {
+    return String(value);
+  }
+  return '-';
+};
+
+const parseEventTypeParam = (param: string | null): LeadHistoryEventType[] => {
+  if (!param) return [];
+  return param
+    .split(',')
+    .map((value) => value.trim())
+    .filter((value): value is LeadHistoryEventType =>
+      value === 'SIGN_UP' || value === 'PROGRAM' || value === 'LEAD_EVENT',
+    );
+};
+
+const buildFiltersFromParams = (params: URLSearchParams): LeadHistoryFilters => {
+  const leadEventIdsParam = params.get('leadEventIds') ?? '';
+  const leadEventTypesParam = params.get('leadEventTypes') ?? '';
+  const namesParam = params.get('names') ?? '';
+  const phoneNumsParam = params.get('phoneNums') ?? '';
+
+  const eventTypeList = parseEventTypeParam(params.get('eventTypes'));
+  const leadEventIdList = splitToNumberList(leadEventIdsParam);
+  const leadEventTypeList = splitToList(leadEventTypesParam);
+  const nameList = splitToList(namesParam);
+  const phoneNumList = splitToList(phoneNumsParam);
+
+  return {
+    eventTypeList: eventTypeList.length ? eventTypeList : undefined,
+    leadEventIdList: leadEventIdList.length ? leadEventIdList : undefined,
+    leadEventTypeList: leadEventTypeList.length ? leadEventTypeList : undefined,
+    nameList: nameList.length ? nameList : undefined,
+    phoneNumList: phoneNumList.length ? phoneNumList : undefined,
+  };
+};
+
+const buildFormStateFromParams = (params: URLSearchParams): FilterFormState => ({
+  eventTypes: parseEventTypeParam(params.get('eventTypes')),
+  leadEventIds: params.get('leadEventIds') ?? '',
+  leadEventTypes: params.get('leadEventTypes') ?? '',
+  names: params.get('names') ?? '',
+  phoneNums: params.get('phoneNums') ?? '',
+});
+
+const defaultFormState: FilterFormState = {
+  eventTypes: [],
   leadEventIds: '',
   leadEventTypes: '',
   names: '',
   phoneNums: '',
-};
-
-const defaultCreateForm: Record<
-  keyof CreateLeadHistoryRequest | 'userId' | 'leadEventId',
-  string
-> = {
-  leadEventId: '',
-  userId: '',
-  name: '',
-  phoneNum: '',
-  email: '',
-  inflow: '',
-  university: '',
-  major: '',
-  wishField: '',
-  wishCompany: '',
-  wishIndustry: '',
-  wishJob: '',
-  jobStatus: '',
-  instagramId: '',
 };
 
 const CreateLeadHistoryDialog = ({
@@ -95,7 +164,24 @@ const CreateLeadHistoryDialog = ({
   leadEvents?: LeadEvent[];
   onValidationError: (message: string) => void;
 }) => {
-  const [form, setForm] = useState(defaultCreateForm);
+  const [form, setForm] = useState<
+    Record<keyof CreateLeadHistoryRequest | 'userId' | 'leadEventId', string>
+  >({
+    leadEventId: '',
+    userId: '',
+    name: '',
+    phoneNum: '',
+    email: '',
+    inflow: '',
+    university: '',
+    major: '',
+    wishField: '',
+    wishCompany: '',
+    wishIndustry: '',
+    wishJob: '',
+    jobStatus: '',
+    instagramId: '',
+  });
 
   const handleChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -105,7 +191,22 @@ const CreateLeadHistoryDialog = ({
   };
 
   const handleClose = () => {
-    setForm(defaultCreateForm);
+    setForm({
+      leadEventId: '',
+      userId: '',
+      name: '',
+      phoneNum: '',
+      email: '',
+      inflow: '',
+      university: '',
+      major: '',
+      wishField: '',
+      wishCompany: '',
+      wishIndustry: '',
+      wishJob: '',
+      jobStatus: '',
+      instagramId: '',
+    });
     onClose();
   };
 
@@ -139,7 +240,7 @@ const CreateLeadHistoryDialog = ({
     }
 
     await onSubmit(payload);
-    setForm(defaultCreateForm);
+    handleClose();
   };
 
   return (
@@ -260,28 +361,28 @@ const CreateLeadHistoryDialog = ({
 };
 
 const LeadHistoryPage = () => {
-  const [filterForm, setFilterForm] = useState(defaultFilterForm);
-  const [appliedFilters, setAppliedFilters] = useState<
-    Partial<Omit<LeadHistoryListParams, 'pageable'>>
-  >({});
-  const [paginationModel, setPaginationModel] = useState({
-    pageSize: 20,
-    page: 0,
-  });
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParamsString = searchParams.toString();
+
+  const [formState, setFormState] = useState<FilterFormState>(() =>
+    buildFormStateFromParams(searchParams),
+  );
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const { snackbar } = useAdminSnackbar();
 
-  const queryParams = useMemo<LeadHistoryListParams>(
-    () => ({
-      pageable: {
-        page: paginationModel.page + 1,
-        size: paginationModel.pageSize,
-      },
-      ...appliedFilters,
-    }),
-    [appliedFilters, paginationModel.page, paginationModel.pageSize],
+  useEffect(() => {
+    setFormState(buildFormStateFromParams(searchParams));
+  }, [searchParamsString, searchParams]);
+
+  const appliedFilters = useMemo<LeadHistoryFilters>(
+    () => buildFiltersFromParams(searchParams),
+    [searchParamsString, searchParams],
   );
 
-  const { data, isLoading } = useLeadHistoryListQuery(queryParams);
+  const { data: leadHistoryData = [], isLoading } =
+    useLeadHistoryListQuery(appliedFilters);
 
   const leadEventListParams = useMemo(
     () => ({
@@ -299,162 +400,331 @@ const LeadHistoryPage = () => {
     return map;
   }, [leadEventData]);
 
-  const rows = useMemo<LeadHistoryRow[]>(() => {
-    const list = data?.leadHistoryList ?? [];
-    const baseIndex = paginationModel.page * paginationModel.pageSize;
+  const groupedRows = useMemo<LeadHistoryGroupRow[]>(() => {
+    if (!leadHistoryData.length) return [];
 
-    return list.map((item, index) => ({
-      ...item,
-      id: baseIndex + index,
-      eventTitle:
-        item.title ??
-        (item.leadEventId != null
-          ? leadEventMap.get(item.leadEventId) ?? null
-          : null),
-    }));
-  }, [data, leadEventMap, paginationModel.page, paginationModel.pageSize]);
+    const groups = groupBy(leadHistoryData, (item) => {
+      const normalizedPhone = item.phoneNum?.trim();
+      if (normalizedPhone) return `PHONE_${normalizedPhone}`;
+      if (item.userId !== null && item.userId !== undefined) {
+        return `USER_${item.userId}`;
+      }
+      return '__NO_PHONE__';
+    });
 
-  const columns = useMemo<GridColDef<LeadHistoryRow>[]>(
+    const createRow = (rowId: string, items: LeadHistory[]): LeadHistoryGroupRow => {
+      const sorted = [...items].sort(
+        (a, b) => toTimestamp(b.createDate) - toTimestamp(a.createDate),
+      );
+
+      const getLatestValue = <T,>(
+        selector: (item: LeadHistory) => T | null | undefined,
+      ): T | null => {
+        for (const history of sorted) {
+          const value = selector(history);
+          if (!isEmptyValue(value)) {
+            return (value as T) ?? null;
+          }
+        }
+        return null;
+      };
+
+      const primaryPhone =
+        getLatestValue((item) => item.phoneNum?.trim()) ?? null;
+
+      const normalizedKeyPhone = rowId.startsWith('PHONE_')
+        ? rowId.replace('PHONE_', '')
+        : null;
+
+      const displayPhoneNum =
+        primaryPhone ??
+        normalizedKeyPhone ??
+        (rowId.startsWith('USER_')
+          ? `회원 #${rowId.replace('USER_', '')}`
+          : '미등록');
+
+      const latestCreateDate = sorted.find((item) => item.createDate)?.createDate ?? null;
+      const latestTimestamp = toTimestamp(latestCreateDate);
+
+      const latestEventType = sorted.find((item) => item.eventType)?.eventType;
+
+      const latestEventTitleFromData =
+        getLatestValue((item) => item.title) ?? null;
+
+      let latestEventTitle = latestEventTitleFromData;
+      if (!latestEventTitle) {
+        const historyWithEventId = sorted.find(
+          (item) => item.leadEventId !== null && item.leadEventId !== undefined,
+        );
+        if (historyWithEventId?.leadEventId != null) {
+          latestEventTitle = leadEventMap.get(historyWithEventId.leadEventId) ?? null;
+        }
+      }
+
+      return {
+        id: rowId,
+        phoneNum: primaryPhone,
+        displayPhoneNum,
+        name: getLatestValue((item) => item.name),
+        email: getLatestValue((item) => item.email),
+        inflow: getLatestValue((item) => item.inflow),
+        university: getLatestValue((item) => item.university),
+        major: getLatestValue((item) => item.major),
+        wishField: getLatestValue((item) => item.wishField),
+        wishCompany: getLatestValue((item) => item.wishCompany),
+        wishIndustry: getLatestValue((item) => item.wishIndustry),
+        wishJob: getLatestValue((item) => item.wishJob),
+        jobStatus: getLatestValue((item) => item.jobStatus),
+        instagramId: getLatestValue((item) => item.instagramId),
+        latestEventType: latestEventType ?? undefined,
+        latestEventTitle,
+        latestCreateDate,
+        latestTimestamp,
+        totalActions: items.length,
+        programCount: items.filter((item) => item.eventType === 'PROGRAM').length,
+        totalFinalPrice: items.reduce(
+          (sum, item) => sum + (item.finalPrice ?? 0),
+          0,
+        ),
+        items,
+      };
+    };
+
+    const rows: LeadHistoryGroupRow[] = [];
+
+    Object.entries(groups).forEach(([groupKey, items]) => {
+      if (groupKey === '__NO_PHONE__') {
+        items.forEach((item, index) => {
+          rows.push(createRow(`${groupKey}_${index}`, [item]));
+        });
+      } else {
+        rows.push(createRow(groupKey, items));
+      }
+    });
+
+    return rows.sort((a, b) => b.latestTimestamp - a.latestTimestamp);
+  }, [leadHistoryData, leadEventMap]);
+
+  const filteredRows = useMemo(() => {
+    return groupedRows.filter((row) => {
+      if (
+        appliedFilters.eventTypeList &&
+        !appliedFilters.eventTypeList.some((type) =>
+          row.items.some((item) => item.eventType === type),
+        )
+      ) {
+        return false;
+      }
+
+      if (
+        appliedFilters.leadEventIdList &&
+        !appliedFilters.leadEventIdList.some((id) =>
+          row.items.some((item) => item.leadEventId === id),
+        )
+      ) {
+        return false;
+      }
+
+      if (
+        appliedFilters.leadEventTypeList &&
+        !appliedFilters.leadEventTypeList.some((type) =>
+          row.items.some((item) => item.leadEventType === type),
+        )
+      ) {
+        return false;
+      }
+
+      if (
+        appliedFilters.nameList &&
+        !appliedFilters.nameList.some((name) =>
+          row.items.some((item) => item.name === name),
+        )
+      ) {
+        return false;
+      }
+
+      if (
+        appliedFilters.phoneNumList &&
+        !appliedFilters.phoneNumList.some((phone) =>
+          row.items.some((item) => item.phoneNum?.trim() === phone),
+        )
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [appliedFilters, groupedRows]);
+
+  const columns = useMemo<GridColDef<LeadHistoryGroupRow>[]>(
     () => [
       {
-        field: 'eventType',
-        headerName: '유형',
-        width: 120,
-        valueFormatter: ({ value }) =>
-          value ? leadHistoryEventTypeLabels[value as LeadHistoryEventType] : '-',
-      },
-      {
-        field: 'eventTitle',
-        headerName: '이벤트',
-        width: 200,
-        valueGetter: ({ row }: { row: LeadHistoryRow }) =>
-          row.eventTitle ??
-          (row.leadEventId ? `#${row.leadEventId}` : '미지정 이벤트'),
+        field: 'displayPhoneNum',
+        headerName: '전화번호',
+        width: 160,
       },
       {
         field: 'name',
         headerName: '이름',
         width: 120,
-      },
-      {
-        field: 'phoneNum',
-        headerName: '전화번호',
-        width: 140,
+        valueFormatter: ({ value }) => formatNullableText(value),
       },
       {
         field: 'email',
         headerName: '이메일',
         width: 220,
+        valueFormatter: ({ value }) => formatNullableText(value),
+      },
+      {
+        field: 'latestEventType',
+        headerName: '최신 이벤트 유형',
+        width: 160,
+        valueFormatter: ({ value }) =>
+          value ? leadHistoryEventTypeLabels[value as LeadHistoryEventType] : '-',
+      },
+      {
+        field: 'latestEventTitle',
+        headerName: '최신 이벤트',
+        width: 220,
+        valueFormatter: ({ value }) => formatNullableText(value),
+      },
+      {
+        field: 'totalActions',
+        headerName: '전체 행동 횟수',
+        width: 160,
+      },
+      {
+        field: 'programCount',
+        headerName: '프로그램 참여 수',
+        width: 180,
+      },
+      {
+        field: 'totalFinalPrice',
+        headerName: '총 결제 금액',
+        width: 160,
+        valueFormatter: ({ value }) =>
+          typeof value === 'number'
+            ? new Intl.NumberFormat('ko-KR').format(value as number)
+            : '-',
+      },
+      {
+        field: 'latestCreateDate',
+        headerName: '최근 활동일',
+        width: 200,
+        valueFormatter: ({ value }) =>
+          value && typeof value === 'string'
+            ? dayjs(value).format('YYYY/MM/DD HH:mm')
+            : '-',
       },
       {
         field: 'inflow',
         headerName: '유입 경로',
         width: 160,
+        valueFormatter: ({ value }) => formatNullableText(value),
+      },
+      {
+        field: 'university',
+        headerName: '대학',
+        width: 150,
+        valueFormatter: ({ value }) => formatNullableText(value),
+      },
+      {
+        field: 'major',
+        headerName: '전공',
+        width: 150,
+        valueFormatter: ({ value }) => formatNullableText(value),
       },
       {
         field: 'wishField',
         headerName: '희망 분야',
         width: 150,
+        valueFormatter: ({ value }) => formatNullableText(value),
       },
       {
         field: 'wishCompany',
         headerName: '희망 회사',
         width: 150,
+        valueFormatter: ({ value }) => formatNullableText(value),
       },
       {
         field: 'wishIndustry',
         headerName: '희망 산업군',
-        width: 150,
+        width: 160,
+        valueFormatter: ({ value }) => formatNullableText(value),
       },
       {
         field: 'wishJob',
         headerName: '희망 직무',
         width: 150,
-      },
-      {
-        field: 'university',
-        headerName: '대학',
-        width: 140,
-      },
-      {
-        field: 'major',
-        headerName: '전공',
-        width: 140,
+        valueFormatter: ({ value }) => formatNullableText(value),
       },
       {
         field: 'jobStatus',
         headerName: '현 직무 상태',
         width: 160,
-      },
-      {
-        field: 'finalPrice',
-        headerName: '최종 결제 금액',
-        width: 160,
-        valueFormatter: ({ value }) =>
-          typeof value === 'number'
-            ? new Intl.NumberFormat('ko-KR').format(value)
-            : '-',
+        valueFormatter: ({ value }) => formatNullableText(value),
       },
       {
         field: 'instagramId',
         headerName: '인스타그램',
         width: 160,
-      },
-      {
-        field: 'createDate',
-        headerName: '등록일',
-        width: 200,
-        valueFormatter: ({ value }) =>
-          value ? dayjs(value as string).format('YYYY/MM/DD HH:mm') : '-',
+        valueFormatter: ({ value }) => formatNullableText(value),
       },
     ],
     [],
   );
 
-  const handleFilterChange = (
+  const createLeadHistory = useCreateLeadHistoryMutation();
+
+  const handleInputChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = event.target;
-    setFilterForm((prev) => ({ ...prev, [name]: value }));
+    setFormState((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleEventTypeToggle = (value: LeadHistoryEventType) => {
-    setFilterForm((prev) => {
+    setFormState((prev) => {
       const hasValue = prev.eventTypes.includes(value);
-      const nextEventTypes = hasValue
-        ? prev.eventTypes.filter((item) => item !== value)
-        : [...prev.eventTypes, value];
-
-      return { ...prev, eventTypes: nextEventTypes };
+      return {
+        ...prev,
+        eventTypes: hasValue
+          ? prev.eventTypes.filter((item) => item !== value)
+          : [...prev.eventTypes, value],
+      };
     });
   };
 
   const handleFilterSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const leadEventIdList = splitToNumberList(filterForm.leadEventIds);
-    const leadEventTypeList = splitToList(filterForm.leadEventTypes);
-    const nameList = splitToList(filterForm.names);
-    const phoneNumList = splitToList(filterForm.phoneNums);
+    const nextParams = new URLSearchParams();
 
-    setAppliedFilters({
-      eventTypeList: optionalArray(filterForm.eventTypes),
-      leadEventIdList: optionalArray(leadEventIdList),
-      leadEventTypeList: optionalArray(leadEventTypeList),
-      nameList: optionalArray(nameList),
-      phoneNumList: optionalArray(phoneNumList),
-    });
-    setPaginationModel((prev) => ({ ...prev, page: 0 }));
+    if (formState.eventTypes.length) {
+      nextParams.set('eventTypes', formState.eventTypes.join(','));
+    }
+
+    const setSearchParam = (key: string, value: string) => {
+      if (value.trim().length) {
+        nextParams.set(key, value);
+      }
+    };
+
+    setSearchParam('leadEventIds', formState.leadEventIds);
+    setSearchParam('leadEventTypes', formState.leadEventTypes);
+    setSearchParam('names', formState.names);
+    setSearchParam('phoneNums', formState.phoneNums);
+
+    const nextUrl = nextParams.toString()
+      ? `${pathname}?${nextParams.toString()}`
+      : pathname;
+    router.replace(nextUrl);
   };
 
   const handleFilterReset = () => {
-    setFilterForm(defaultFilterForm);
-    setAppliedFilters({});
-    setPaginationModel((prev) => ({ ...prev, page: 0 }));
+    setFormState(defaultFormState);
+    router.replace(pathname);
   };
-
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const createLeadHistory = useCreateLeadHistoryMutation();
 
   const handleCreate = async (payload: CreateLeadHistoryRequest) => {
     try {
@@ -482,7 +752,7 @@ const LeadHistoryPage = () => {
                 key={type}
                 control={
                   <Checkbox
-                    checked={filterForm.eventTypes.includes(type)}
+                    checked={formState.eventTypes.includes(type)}
                     onChange={() => handleEventTypeToggle(type)}
                   />
                 }
@@ -495,29 +765,29 @@ const LeadHistoryPage = () => {
           <TextField
             label="리드 이벤트 ID"
             name="leadEventIds"
-            value={filterForm.leadEventIds}
-            onChange={handleFilterChange}
+            value={formState.leadEventIds}
+            onChange={handleInputChange}
             placeholder="쉼표(,) 또는 줄바꿈으로 다중 입력"
           />
           <TextField
             label="리드 이벤트 타입"
             name="leadEventTypes"
-            value={filterForm.leadEventTypes}
-            onChange={handleFilterChange}
+            value={formState.leadEventTypes}
+            onChange={handleInputChange}
             placeholder="쉼표(,) 또는 줄바꿈으로 다중 입력"
           />
           <TextField
             label="이름"
             name="names"
-            value={filterForm.names}
-            onChange={handleFilterChange}
+            value={formState.names}
+            onChange={handleInputChange}
             placeholder="쉼표(,) 또는 줄바꿈으로 다중 입력"
           />
           <TextField
             label="전화번호"
             name="phoneNums"
-            value={filterForm.phoneNums}
-            onChange={handleFilterChange}
+            value={formState.phoneNums}
+            onChange={handleInputChange}
             placeholder="쉼표(,) 또는 줄바꿈으로 다중 입력"
           />
         </div>
@@ -529,15 +799,16 @@ const LeadHistoryPage = () => {
             전체보기
           </Button>
           <Typography className="text-xsmall14 text-neutral-400">
-            여러 값을 입력할 경우 쉼표(,) 또는 줄바꿈으로 구분해주세요.
+            전화번호 기준으로 리드가 그룹화되어 표기됩니다. 여러 값을 입력할 경우
+            쉼표(,) 또는 줄바꿈으로 구분해주세요.
           </Typography>
         </div>
       </form>
 
       <div className="mb-4 flex justify-between">
         <Typography className="text-xsmall14 text-neutral-500">
-          필터 적용 시 페이지는 초기화됩니다. 그리드의 정렬 및 검색 기능은
-          지원하지 않습니다.
+          전체 행동 횟수·프로그램 참여 수·총 결제 금액이 전화번호 단위로 집계되어
+          노출됩니다.
         </Typography>
         <Button variant="contained" onClick={() => setIsCreateOpen(true)}>
           리드 등록
@@ -545,16 +816,16 @@ const LeadHistoryPage = () => {
       </div>
 
       <DataGrid
-        rows={rows}
+        rows={filteredRows}
         columns={columns}
         disableRowSelectionOnClick
         loading={isLoading}
-        rowCount={data?.pageInfo.totalElements ?? 0}
-        paginationMode="server"
-        paginationModel={paginationModel}
-        onPaginationModelChange={setPaginationModel}
-        pageSizeOptions={[20, 50, 100]}
         autoHeight
+        getRowId={(row) => row.id}
+        initialState={{
+          pagination: { paginationModel: { pageSize: 20, page: 0 } },
+        }}
+        pageSizeOptions={[20, 50, 100]}
       />
 
       <CreateLeadHistoryDialog
