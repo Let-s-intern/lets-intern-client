@@ -65,7 +65,7 @@ const DocumentUploadSection = ({
         : type === 'portfolio'
           ? portfolioInputRef
           : selfIntroductionInputRef;
-    
+
     if (inputRef.current) {
       inputRef.current.value = '';
     }
@@ -85,6 +85,13 @@ const DocumentUploadSection = ({
 
       return updated;
     });
+  };
+
+  const handleLoadDocument = (
+    type: 'resume' | 'portfolio' | 'selfIntroduction',
+  ) => {
+    // TODO: db에서 서류 불러오기
+    // onFilesChange?.({})
   };
 
   const renderFileList = (
@@ -146,10 +153,11 @@ const DocumentUploadSection = ({
             </button>
 
             {/* 서류 불러오기 버튼*/}
+            {/* TODO: db에 서류 있는 경우 불러오기 */}
             <button
               type="button"
-              disabled
-              className="flex items-center gap-2 rounded-xs border-[1px] border-neutral-80 bg-white px-4 py-[.375rem] text-xsmall14 font-medium text-neutral-20 transition hover:border-neutral-70 hover:bg-neutral-95"
+              onClick={() => handleLoadDocument(type)}
+              className="flex items-center gap-2 rounded-xs border-[1px] border-neutral-80 bg-white px-4 py-[.375rem] text-xsmall14 font-medium text-neutral-20 transition enabled:hover:bg-neutral-95 disabled:text-neutral-50"
             >
               <RefreshCw size={16} />
               서류 불러오기
