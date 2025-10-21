@@ -13,7 +13,6 @@ import {
 import Heading from '@/components/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import dayjs from '@/lib/dayjs';
-import { groupBy } from 'es-toolkit';
 import {
   Button,
   Checkbox,
@@ -27,8 +26,9 @@ import {
   Typography,
 } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from 'react';
+import { groupBy } from 'es-toolkit';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from 'react';
 
 const leadHistoryEventTypeLabels: Record<LeadHistoryEventType, string> = {
   SIGN_UP: '회원가입',
@@ -107,12 +107,15 @@ const parseEventTypeParam = (param: string | null): LeadHistoryEventType[] => {
   return param
     .split(',')
     .map((value) => value.trim())
-    .filter((value): value is LeadHistoryEventType =>
-      value === 'SIGN_UP' || value === 'PROGRAM' || value === 'LEAD_EVENT',
+    .filter(
+      (value): value is LeadHistoryEventType =>
+        value === 'SIGN_UP' || value === 'PROGRAM' || value === 'LEAD_EVENT',
     );
 };
 
-const buildFiltersFromParams = (params: URLSearchParams): LeadHistoryFilters => {
+const buildFiltersFromParams = (
+  params: URLSearchParams,
+): LeadHistoryFilters => {
   const leadEventIdsParam = params.get('leadEventIds') ?? '';
   const leadEventTypesParam = params.get('leadEventTypes') ?? '';
   const namesParam = params.get('names') ?? '';
@@ -133,7 +136,9 @@ const buildFiltersFromParams = (params: URLSearchParams): LeadHistoryFilters => 
   };
 };
 
-const buildFormStateFromParams = (params: URLSearchParams): FilterFormState => ({
+const buildFormStateFromParams = (
+  params: URLSearchParams,
+): FilterFormState => ({
   eventTypes: parseEventTypeParam(params.get('eventTypes')),
   leadEventIds: params.get('leadEventIds') ?? '',
   leadEventTypes: params.get('leadEventTypes') ?? '',
@@ -412,7 +417,10 @@ const LeadHistoryPage = () => {
       return '__NO_PHONE__';
     });
 
-    const createRow = (rowId: string, items: LeadHistory[]): LeadHistoryGroupRow => {
+    const createRow = (
+      rowId: string,
+      items: LeadHistory[],
+    ): LeadHistoryGroupRow => {
       const sorted = [...items].sort(
         (a, b) => toTimestamp(b.createDate) - toTimestamp(a.createDate),
       );
@@ -443,7 +451,8 @@ const LeadHistoryPage = () => {
           ? `회원 #${rowId.replace('USER_', '')}`
           : '미등록');
 
-      const latestCreateDate = sorted.find((item) => item.createDate)?.createDate ?? null;
+      const latestCreateDate =
+        sorted.find((item) => item.createDate)?.createDate ?? null;
       const latestTimestamp = toTimestamp(latestCreateDate);
 
       const latestEventType = sorted.find((item) => item.eventType)?.eventType;
@@ -457,7 +466,8 @@ const LeadHistoryPage = () => {
           (item) => item.leadEventId !== null && item.leadEventId !== undefined,
         );
         if (historyWithEventId?.leadEventId != null) {
-          latestEventTitle = leadEventMap.get(historyWithEventId.leadEventId) ?? null;
+          latestEventTitle =
+            leadEventMap.get(historyWithEventId.leadEventId) ?? null;
         }
       }
 
@@ -481,7 +491,8 @@ const LeadHistoryPage = () => {
         latestCreateDate,
         latestTimestamp,
         totalActions: items.length,
-        programCount: items.filter((item) => item.eventType === 'PROGRAM').length,
+        programCount: items.filter((item) => item.eventType === 'PROGRAM')
+          .length,
         totalFinalPrice: items.reduce(
           (sum, item) => sum + (item.finalPrice ?? 0),
           0,
@@ -567,26 +578,28 @@ const LeadHistoryPage = () => {
         field: 'name',
         headerName: '이름',
         width: 120,
-        valueFormatter: ({ value }) => formatNullableText(value),
+        valueFormatter: (value) => formatNullableText(value),
       },
       {
         field: 'email',
         headerName: '이메일',
         width: 220,
-        valueFormatter: ({ value }) => formatNullableText(value),
+        valueFormatter: (value) => formatNullableText(value),
       },
       {
         field: 'latestEventType',
         headerName: '최신 이벤트 유형',
         width: 160,
-        valueFormatter: ({ value }) =>
-          value ? leadHistoryEventTypeLabels[value as LeadHistoryEventType] : '-',
+        valueFormatter: (value) =>
+          value
+            ? leadHistoryEventTypeLabels[value as LeadHistoryEventType]
+            : '-',
       },
       {
         field: 'latestEventTitle',
         headerName: '최신 이벤트',
         width: 220,
-        valueFormatter: ({ value }) => formatNullableText(value),
+        valueFormatter: (value) => formatNullableText(value),
       },
       {
         field: 'totalActions',
@@ -602,7 +615,7 @@ const LeadHistoryPage = () => {
         field: 'totalFinalPrice',
         headerName: '총 결제 금액',
         width: 160,
-        valueFormatter: ({ value }) =>
+        valueFormatter: (value) =>
           typeof value === 'number'
             ? new Intl.NumberFormat('ko-KR').format(value as number)
             : '-',
@@ -611,7 +624,7 @@ const LeadHistoryPage = () => {
         field: 'latestCreateDate',
         headerName: '최근 활동일',
         width: 200,
-        valueFormatter: ({ value }) =>
+        valueFormatter: (value) =>
           value && typeof value === 'string'
             ? dayjs(value).format('YYYY/MM/DD HH:mm')
             : '-',
@@ -620,55 +633,55 @@ const LeadHistoryPage = () => {
         field: 'inflow',
         headerName: '유입 경로',
         width: 160,
-        valueFormatter: ({ value }) => formatNullableText(value),
+        valueFormatter: (value) => formatNullableText(value),
       },
       {
         field: 'university',
         headerName: '대학',
         width: 150,
-        valueFormatter: ({ value }) => formatNullableText(value),
+        valueFormatter: (value) => formatNullableText(value),
       },
       {
         field: 'major',
         headerName: '전공',
         width: 150,
-        valueFormatter: ({ value }) => formatNullableText(value),
+        valueFormatter: (value) => formatNullableText(value),
       },
       {
         field: 'wishField',
         headerName: '희망 분야',
         width: 150,
-        valueFormatter: ({ value }) => formatNullableText(value),
+        valueFormatter: (value) => formatNullableText(value),
       },
       {
         field: 'wishCompany',
         headerName: '희망 회사',
         width: 150,
-        valueFormatter: ({ value }) => formatNullableText(value),
+        valueFormatter: (value) => formatNullableText(value),
       },
       {
         field: 'wishIndustry',
         headerName: '희망 산업군',
         width: 160,
-        valueFormatter: ({ value }) => formatNullableText(value),
+        valueFormatter: (value) => formatNullableText(value),
       },
       {
         field: 'wishJob',
         headerName: '희망 직무',
         width: 150,
-        valueFormatter: ({ value }) => formatNullableText(value),
+        valueFormatter: (value) => formatNullableText(value),
       },
       {
         field: 'jobStatus',
         headerName: '현 직무 상태',
         width: 160,
-        valueFormatter: ({ value }) => formatNullableText(value),
+        valueFormatter: (value) => formatNullableText(value),
       },
       {
         field: 'instagramId',
         headerName: '인스타그램',
         width: 160,
-        valueFormatter: ({ value }) => formatNullableText(value),
+        valueFormatter: (value) => formatNullableText(value),
       },
     ],
     [],
@@ -742,24 +755,24 @@ const LeadHistoryPage = () => {
     <section className="p-5">
       <Heading className="mb-4">리드 히스토리 관리</Heading>
       <form
-        className="mb-4 flex flex-col gap-4 rounded bg-neutral-90 p-4"
+        className="rounded mb-4 flex flex-col gap-4 bg-neutral-90 p-4"
         onSubmit={handleFilterSubmit}
       >
         <div className="flex flex-wrap gap-4">
-          {(Object.keys(leadHistoryEventTypeLabels) as LeadHistoryEventType[]).map(
-            (type) => (
-              <FormControlLabel
-                key={type}
-                control={
-                  <Checkbox
-                    checked={formState.eventTypes.includes(type)}
-                    onChange={() => handleEventTypeToggle(type)}
-                  />
-                }
-                label={leadHistoryEventTypeLabels[type]}
-              />
-            ),
-          )}
+          {(
+            Object.keys(leadHistoryEventTypeLabels) as LeadHistoryEventType[]
+          ).map((type) => (
+            <FormControlLabel
+              key={type}
+              control={
+                <Checkbox
+                  checked={formState.eventTypes.includes(type)}
+                  onChange={() => handleEventTypeToggle(type)}
+                />
+              }
+              label={leadHistoryEventTypeLabels[type]}
+            />
+          ))}
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <TextField
@@ -799,16 +812,16 @@ const LeadHistoryPage = () => {
             전체보기
           </Button>
           <Typography className="text-xsmall14 text-neutral-400">
-            전화번호 기준으로 리드가 그룹화되어 표기됩니다. 여러 값을 입력할 경우
-            쉼표(,) 또는 줄바꿈으로 구분해주세요.
+            전화번호 기준으로 리드가 그룹화되어 표기됩니다. 여러 값을 입력할
+            경우 쉼표(,) 또는 줄바꿈으로 구분해주세요.
           </Typography>
         </div>
       </form>
 
       <div className="mb-4 flex justify-between">
         <Typography className="text-xsmall14 text-neutral-500">
-          전체 행동 횟수·프로그램 참여 수·총 결제 금액이 전화번호 단위로 집계되어
-          노출됩니다.
+          전체 행동 횟수·프로그램 참여 수·총 결제 금액이 전화번호 단위로
+          집계되어 노출됩니다.
         </Typography>
         <Button variant="contained" onClick={() => setIsCreateOpen(true)}>
           리드 등록

@@ -5,6 +5,7 @@ import {
   LeadEvent,
   LeadEventListParams,
   useCreateLeadEventMutation,
+  useDeleteLeadEventMutation,
   useLeadEventListQuery,
 } from '@/api/lead';
 import Heading from '@/components/admin/ui/heading/Heading';
@@ -20,7 +21,13 @@ import {
   Typography,
 } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { ChangeEvent, FormEvent, useMemo, useState } from 'react';
+import {
+  ChangeEvent,
+  FormEvent,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 
 const splitToList = (value: string) =>
   value
@@ -152,34 +159,6 @@ const LeadEventPage = () => {
     }));
   }, [data, paginationModel.page, paginationModel.pageSize]);
 
-  const columns = useMemo<GridColDef<LeadEventRow>[]>(
-    () => [
-      {
-        field: 'leadEventId',
-        headerName: '이벤트 ID',
-        width: 140,
-      },
-      {
-        field: 'title',
-        headerName: '제목',
-        width: 240,
-      },
-      {
-        field: 'type',
-        headerName: '타입',
-        width: 180,
-      },
-      {
-        field: 'createDate',
-        headerName: '생성일',
-        width: 200,
-        valueFormatter: ({ value }) =>
-          value ? dayjs(value as string).format('YYYY/MM/DD HH:mm') : '-',
-      },
-    ],
-    [],
-  );
-
   const handleFilterChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -210,6 +189,7 @@ const LeadEventPage = () => {
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const createLeadEvent = useCreateLeadEventMutation();
+  const deleteLeadEvent = useDeleteLeadEventMutation();
 
   const handleCreate = async (payload: CreateLeadEventRequest) => {
     try {
@@ -222,6 +202,69 @@ const LeadEventPage = () => {
       snackbar('등록에 실패했습니다. 다시 시도해주세요.');
     }
   };
+
+  const handleDelete = useCallback(
+    async (leadEventId: number) => {
+      const confirmed = window.confirm('해당 리드 이벤트를 삭제하시겠습니까?');
+      if (!confirmed) return;
+
+      try {
+        await deleteLeadEvent.mutateAsync(leadEventId);
+        snackbar('이벤트가 삭제되었습니다.');
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(error);
+        snackbar('삭제에 실패했습니다. 다시 시도해주세요.');
+      }
+    },
+    [deleteLeadEvent, snackbar],
+  );
+
+  const columns = useMemo<GridColDef<LeadEventRow>[]>(
+    () => [
+      {
+        field: 'leadEventId',
+        headerName: '이벤트 ID',
+        width: 140,
+      },
+      {
+        field: 'title',
+        headerName: '제목',
+        width: 240,
+      },
+      {
+        field: 'type',
+        headerName: '타입',
+        width: 180,
+      },
+      {
+        field: 'createDate',
+        headerName: '생성일',
+        width: 200,
+        valueFormatter: ({ value }) =>
+          value ? dayjs(value as string).format('YYYY/MM/DD HH:mm') : '-',
+      },
+      {
+        field: 'actions',
+        headerName: '관리',
+        width: 140,
+        sortable: false,
+        filterable: false,
+        renderCell: ({ row }) => (
+          <Button
+            color="error"
+            size="small"
+            variant="outlined"
+            onClick={() => handleDelete(row.leadEventId)}
+            disabled={deleteLeadEvent.isPending}
+          >
+            삭제
+          </Button>
+        ),
+      },
+    ],
+    [deleteLeadEvent.isPending, handleDelete],
+  );
 
   return (
     <section className="p-5">

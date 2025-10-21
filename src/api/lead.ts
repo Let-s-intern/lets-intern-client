@@ -180,6 +180,20 @@ export type CreateLeadEventRequest = {
   title?: string;
 };
 
+export const useDeleteLeadEventMutation = () => {
+  const client = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (leadEventId: number) => {
+      return axios.delete(`/admin/lead-event/${leadEventId}`);
+    },
+    onSuccess: async () => {
+      await client.invalidateQueries({ queryKey: [leadEventListQueryKey] });
+    },
+    onError: (error) => console.error('useDeleteLeadEventMutation >>', error),
+  });
+};
+
 export const useCreateLeadEventMutation = () => {
   const client = useQueryClient();
 
