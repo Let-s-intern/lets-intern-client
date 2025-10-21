@@ -1,14 +1,19 @@
 import { If } from '@/components/common/If';
+import { ExperienceData } from '@components/common/DataTable';
 import { EmptyState } from './components/EmptyState';
+import { ExperienceList } from './components/ExperienceList';
+import { dummyExperiences } from './data';
 
 interface MissionSubmitListFormProps {
   experienceCount?: number;
+  experiences?: ExperienceData[];
 }
 
 export const MissionSubmitListForm = ({
   experienceCount = 0,
 }: MissionSubmitListFormProps) => {
-  experienceCount = 1;
+  // 테스트용으로 experienceCount를 4로 설정
+  experienceCount = 2;
   return (
     <div className="space-y-6">
       {/* 미션 제출 안내사항 */}
@@ -80,12 +85,7 @@ export const MissionSubmitListForm = ({
             </If>
 
             <If condition={experienceCount >= 3}>
-              <div className="w-full">
-                {/* 여기에 경험 목록을 렌더링할 예정 */}
-                <p className="text-center text-xsmall14 text-neutral-20">
-                  경험 목록이 여기에 표시됩니다.
-                </p>
-              </div>
+              <ExperienceList experiences={dummyExperiences} />
             </If>
           </div>
         </div>

@@ -12,7 +12,7 @@ import DashboardCreateReviewModal from '../../dashboard/modal/DashboardCreateRev
 import MobileReviewModal from '../../MobileReviewModal';
 import MissionSubmitButton from '../mission/MissionSubmitButton';
 import MissionToast from '../mission/MissionToast';
-import { MissionSubmitListForm } from './MissionSubmitListForm';
+import { MissionSubmitListForm } from './mission-submit-list-form';
 
 interface MissionSubmitRegularSectionProps {
   className?: string;
