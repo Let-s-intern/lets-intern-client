@@ -8,6 +8,7 @@ interface MissionSubmitListFormProps {
 export const MissionSubmitListForm = ({
   experienceCount = 0,
 }: MissionSubmitListFormProps) => {
+  experienceCount = 1;
   return (
     <div className="space-y-6">
       {/* 미션 제출 안내사항 */}
@@ -72,7 +73,8 @@ export const MissionSubmitListForm = ({
 
             <If condition={experienceCount > 0 && experienceCount < 3}>
               <EmptyState
-                text="제출 가능한 경험이 3개 미만입니다.\n미션을 제출하려면 최소 3개의 경험이 필요해요."
+                text={`제출 가능한 경험이 3개 미만입니다.
+미션을 제출하려면 최소 3개의 경험이 필요해요.`}
                 buttonText="경험 작성하러 가기"
               />
             </If>
