@@ -54,6 +54,7 @@ type LeadHistoryGroupRow = {
   instagramId: string | null;
   latestEventType?: LeadHistoryEventType;
   latestEventTitle: string | null;
+  programHistory: { date: string; title: string | null }[];
   latestCreateDate: string | null;
   latestTimestamp: number;
   totalActions: number;
@@ -504,6 +505,13 @@ const LeadHistoryPage = () => {
         }
       }
 
+      const programHistory = sorted
+        .filter((item) => item.eventType === 'PROGRAM')
+        .map((item) => ({
+          date: item.createDate ?? '',
+          title: item.title ?? null,
+        }));
+
       return {
         id: rowId,
         phoneNum: primaryPhone,
@@ -522,6 +530,7 @@ const LeadHistoryPage = () => {
         instagramId: getLatestValue((item) => item.instagramId),
         latestEventType: latestEventType ?? undefined,
         latestEventTitle,
+        programHistory,
         latestCreateDate,
         latestTimestamp,
         totalActions: items.length,
@@ -636,6 +645,15 @@ const LeadHistoryPage = () => {
         valueFormatter: (value) => formatNullableText(value),
       },
       {
+        field: 'latestCreateDate',
+        headerName: '최신 유입일자',
+        width: 160,
+        valueFormatter: (value) =>
+          value && typeof value === 'string'
+            ? dayjs(value).format('YYYY/MM/DD')
+            : '-',
+      },
+      {
         field: 'firstInflowDate',
         headerName: '첫 유입일자',
         width: 160,
@@ -643,6 +661,12 @@ const LeadHistoryPage = () => {
           value && typeof value === 'string'
             ? dayjs(value).format('YYYY/MM/DD')
             : '-',
+      },
+      {
+        field: 'inflow',
+        headerName: '첫 유입 경로',
+        width: 160,
+        valueFormatter: (value) => formatNullableText(value),
       },
       {
         field: 'totalActions',
@@ -655,6 +679,28 @@ const LeadHistoryPage = () => {
         width: 180,
       },
       {
+        field: 'programHistory',
+        headerName: '프로그램 참여 이력',
+        width: 220,
+        sortable: false,
+        renderCell: ({ value }) => {
+          if (!Array.isArray(value) || value.length === 0) return '-';
+          return (
+            <div className="whitespace-normal text-[11px] leading-tight">
+              {value
+                .slice(0, 5)
+                .map((item: { date: string; title: string | null }, idx: number) => (
+                  <div key={`${item.date}-${idx}`}>
+                    {item.date ? dayjs(item.date).format('YY/MM/DD') : '—'}
+                    {item.title ? ` - ${item.title}` : ''}
+                  </div>
+                ))}
+              {value.length > 5 && <div>외 {value.length - 5}건</div>}
+            </div>
+          );
+        },
+      },
+      {
         field: 'totalFinalPrice',
         headerName: '총 결제 금액',
         width: 160,
@@ -662,21 +708,6 @@ const LeadHistoryPage = () => {
           typeof value === 'number'
             ? new Intl.NumberFormat('ko-KR').format(value as number)
             : '-',
-      },
-      {
-        field: 'latestCreateDate',
-        headerName: '최신 유입일자',
-        width: 160,
-        valueFormatter: (value) =>
-          value && typeof value === 'string'
-            ? dayjs(value).format('YYYY/MM/DD')
-            : '-',
-      },
-      {
-        field: 'inflow',
-        headerName: '첫 유입 경로',
-        width: 160,
-        valueFormatter: (value) => formatNullableText(value),
       },
       {
         field: 'university',
@@ -788,12 +819,13 @@ const LeadHistoryPage = () => {
       '이메일',
       '최신 이벤트 유형',
       '최신 이벤트',
+      '최신 유입일자',
       '첫 유입일자',
       '첫 유입 경로',
-      '전체 행동 횟수',
       '프로그램 참여 수',
+      '프로그램 참여 이력',
+      '전체 행동 횟수',
       '총 결제 금액',
-      '최신 유입일자',
       '대학',
       '전공',
       '희망 분야',
@@ -810,16 +842,26 @@ const LeadHistoryPage = () => {
       row.email ?? '',
       row.latestEventType ? leadHistoryEventTypeLabels[row.latestEventType] : '',
       row.latestEventTitle ?? '',
+      row.latestCreateDate
+        ? dayjs(row.latestCreateDate).format('YYYY/MM/DD')
+        : '',
       row.firstInflowDate
         ? dayjs(row.firstInflowDate).format('YYYY/MM/DD')
         : '',
       row.inflow ?? '',
-      String(row.totalActions ?? ''),
       String(row.programCount ?? ''),
+      row.programHistory
+        .map((item) =>
+          [
+            item.date ? dayjs(item.date).format('YY/MM/DD') : '',
+            item.title ?? '',
+          ]
+            .filter(Boolean)
+            .join(' - '),
+        )
+        .join(' | '),
+      String(row.totalActions ?? ''),
       String(row.totalFinalPrice ?? ''),
-      row.latestCreateDate
-        ? dayjs(row.latestCreateDate).format('YYYY/MM/DD')
-        : '',
       row.university ?? '',
       row.major ?? '',
       row.wishField ?? '',
