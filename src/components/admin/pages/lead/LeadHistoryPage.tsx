@@ -28,14 +28,7 @@ import {
 import { DataGrid, GridColDef, GridRowId } from '@mui/x-data-grid';
 import { groupBy } from 'es-toolkit';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import {
-  ChangeEvent,
-  FormEvent,
-  memo,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react';
+import { ChangeEvent, FormEvent, memo, useCallback, useMemo, useState } from 'react';
 
 const leadHistoryEventTypeLabels: Record<LeadHistoryEventType, string> = {
   SIGN_UP: '회원가입',
@@ -101,11 +94,18 @@ const formatNullableText = (value: unknown) => {
   return '-';
 };
 
+const escapeCsvValue = (value: unknown) => {
+  if (value === null || value === undefined) return '';
+  const stringValue = typeof value === 'string' ? value : String(value);
+  if (!/[",\n]/.test(stringValue)) return stringValue;
+  return `"${stringValue.replace(/"/g, '""')}"`;
+};
+
 const INITIAL_GRID_STATE = {
   pagination: { paginationModel: { pageSize: 20, page: 0 } },
 } as const;
 
-const PAGE_SIZE_OPTIONS = [20, 50, 100];
+const PAGE_SIZE_OPTIONS = [20];
 
 const parseEventTypeParam = (param: string | null): LeadHistoryEventType[] => {
   if (!param) return [];
@@ -753,6 +753,73 @@ const LeadHistoryPage = () => {
     router.replace(pathname);
   };
 
+  const handleDownloadCsv = useCallback(() => {
+    if (!filteredRows.length) {
+      snackbar('다운로드할 데이터가 없습니다.');
+      return;
+    }
+
+    const headers = [
+      '전화번호',
+      '이름',
+      '이메일',
+      '최신 이벤트 유형',
+      '최신 이벤트',
+      '전체 행동 횟수',
+      '프로그램 참여 수',
+      '총 결제 금액',
+      '최근 활동일',
+      '유입 경로',
+      '대학',
+      '전공',
+      '희망 분야',
+      '희망 회사',
+      '희망 산업군',
+      '희망 직무',
+      '현 직무 상태',
+      '인스타그램 ID',
+    ];
+
+    const rows = filteredRows.map((row) => [
+      row.displayPhoneNum ?? '',
+      row.name ?? '',
+      row.email ?? '',
+      row.latestEventType ? leadHistoryEventTypeLabels[row.latestEventType] : '',
+      row.latestEventTitle ?? '',
+      String(row.totalActions ?? ''),
+      String(row.programCount ?? ''),
+      String(row.totalFinalPrice ?? ''),
+      row.latestCreateDate
+        ? dayjs(row.latestCreateDate).format('YYYY/MM/DD HH:mm')
+        : '',
+      row.inflow ?? '',
+      row.university ?? '',
+      row.major ?? '',
+      row.wishField ?? '',
+      row.wishCompany ?? '',
+      row.wishIndustry ?? '',
+      row.wishJob ?? '',
+      row.jobStatus ?? '',
+      row.instagramId ?? '',
+    ]);
+
+    const csvContent = [headers, ...rows]
+      .map((row) => row.map(escapeCsvValue).join(','))
+      .join('\n');
+
+    const blob = new Blob([csvContent], {
+      type: 'text/csv;charset=utf-8;',
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `lead-history-${dayjs().format('YYYYMMDDHHmmss')}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }, [filteredRows, snackbar]);
+
   const handleCreate = async (payload: CreateLeadHistoryRequest) => {
     try {
       await createLeadHistory.mutateAsync(payload);
@@ -829,14 +896,23 @@ const LeadHistoryPage = () => {
         </div>
       </form>
 
-      <div className="mb-4 flex justify-between">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <Typography className="text-xsmall14 text-neutral-500">
           전체 행동 횟수·프로그램 참여 수·총 결제 금액이 전화번호 단위로
           집계되어 노출됩니다.
         </Typography>
-        <Button variant="contained" onClick={() => setIsCreateOpen(true)}>
-          리드 등록
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outlined"
+            onClick={handleDownloadCsv}
+            disabled={!filteredRows.length}
+          >
+            CSV 다운로드
+          </Button>
+          <Button variant="contained" onClick={() => setIsCreateOpen(true)}>
+            리드 등록
+          </Button>
+        </div>
       </div>
 
       <LeadHistoryDataGrid
