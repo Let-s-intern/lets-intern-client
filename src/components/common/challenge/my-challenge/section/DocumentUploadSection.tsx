@@ -1,5 +1,5 @@
 import { clsx } from 'clsx';
-import { RefreshCw, Upload } from 'lucide-react';
+import { RefreshCw, Trash2, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';
 
 interface DocumentUploadSectionProps {
@@ -55,6 +55,38 @@ const DocumentUploadSection = ({
     });
   };
 
+  const handleFileDelete = (
+    type: 'resume' | 'portfolio' | 'selfIntroduction',
+  ) => {
+    // input value 초기화
+    const inputRef =
+      type === 'resume'
+        ? resumeInputRef
+        : type === 'portfolio'
+          ? portfolioInputRef
+          : selfIntroductionInputRef;
+    
+    if (inputRef.current) {
+      inputRef.current.value = '';
+    }
+
+    setUploadedFiles((prev) => {
+      const updated = {
+        ...prev,
+        [type]: null,
+      };
+
+      // 부모 컴포넌트에 파일 변경 알림
+      onFilesChange?.({
+        resume: updated.resume,
+        portfolio: updated.portfolio,
+        selfIntroduction: updated.selfIntroduction,
+      });
+
+      return updated;
+    });
+  };
+
   const handleInputClick = (inputRef: React.RefObject<HTMLInputElement>) => {
     inputRef.current?.click();
   };
@@ -97,6 +129,13 @@ const DocumentUploadSection = ({
             <span className="truncate text-xsmall14 font-normal text-neutral-0 underline">
               {file.name}
             </span>
+            <button
+              type="button"
+              onClick={() => handleFileDelete(type)}
+              className="ml-2 flex-shrink-0 text-red-500 hover:text-red-700"
+            >
+              <Trash2 size={16} />
+            </button>
           </div>
         ) : (
           <div className="flex gap-4">
