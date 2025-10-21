@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQueries,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 
 import { client } from '@/utils/client';
 import {
@@ -357,6 +362,7 @@ export const useGetLiveFaq = (liveId: number | string) => {
 };
 
 export const useGetVodQueryKey = 'useGetVodQueryKey';
+export const useGetVodLinksQueryKey = 'useGetVodLinks';
 
 export const useGetVodQuery = ({
   vodId,
@@ -372,6 +378,23 @@ export const useGetVodQuery = ({
       const res = await axios.get(`/vod/${vodId}`);
       return getVodIdSchema.parse(res.data.data);
     },
+  });
+};
+
+// VOD 링크들을 한번에 가져오는 훅
+export const useGetVodLinks = (vodIds: number[]) => {
+  return useQueries({
+    queries: vodIds.map((vodId) => ({
+      queryKey: [useGetVodLinksQueryKey, vodId],
+      queryFn: async () => {
+        const res = await axios.get(`/vod/${vodId}`);
+        const data = getVodIdSchema.parse(res.data.data);
+        return {
+          id: vodId,
+          link: data.vodInfo.link,
+        };
+      },
+    })),
   });
 };
 
