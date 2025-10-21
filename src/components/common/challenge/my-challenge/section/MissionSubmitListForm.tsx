@@ -1,3 +1,4 @@
+import { If } from '@/components/common/If';
 import { EmptyState } from './components/EmptyState';
 
 interface MissionSubmitListFormProps {
@@ -62,24 +63,28 @@ export const MissionSubmitListForm = ({
         {/* 작성된 경험 불러오는 컴포넌트 */}
         <div className="flex min-h-[200px] items-center justify-center rounded-xxs border border-neutral-80 bg-white p-6">
           <div className="flex flex-col items-center justify-center space-y-4">
-            {experienceCount === 0 ? (
+            <If condition={experienceCount === 0}>
               <EmptyState
                 text="작성된 경험이 없습니다."
                 buttonText="경험 작성하러 가기"
               />
-            ) : experienceCount < 3 ? (
+            </If>
+
+            <If condition={experienceCount > 0 && experienceCount < 3}>
               <EmptyState
                 text="제출 가능한 경험이 3개 미만입니다.\n미션을 제출하려면 최소 3개의 경험이 필요해요."
                 buttonText="경험 작성하러 가기"
               />
-            ) : (
+            </If>
+
+            <If condition={experienceCount >= 3}>
               <div className="w-full">
                 {/* 여기에 경험 목록을 렌더링할 예정 */}
                 <p className="text-center text-xsmall14 text-neutral-20">
                   경험 목록이 여기에 표시됩니다.
                 </p>
               </div>
-            )}
+            </If>
           </div>
         </div>
       </section>
