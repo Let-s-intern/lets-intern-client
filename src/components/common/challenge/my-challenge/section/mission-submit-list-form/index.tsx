@@ -1,7 +1,9 @@
 import { If } from '@/components/common/If';
 import { ExperienceData } from '@components/common/DataTable';
+import { useState } from 'react';
 import { EmptyState } from './components/EmptyState';
 import { ExperienceList } from './components/ExperienceList';
+import { ExperienceSelectModal } from './components/ExperienceSelectModal';
 import { dummyExperiences } from './data';
 
 interface MissionSubmitListFormProps {
@@ -13,7 +15,22 @@ export const MissionSubmitListForm = ({
   experienceCount = 0,
 }: MissionSubmitListFormProps) => {
   // 테스트용으로 experienceCount를 4로 설정
-  experienceCount = 2;
+  experienceCount = 3;
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleSelectComplete = () => {
+    // TODO: 선택된 경험 ID를 실제 경험 데이터로 변환
+    // 선택된 경험들을 처리하는 로직 추가 예정
+    setIsModalOpen(false);
+  };
   return (
     <div className="space-y-6">
       {/* 미션 제출 안내사항 */}
@@ -60,7 +77,13 @@ export const MissionSubmitListForm = ({
           </h3>
           <button
             type="button"
-            className="rounded-xxs border border-neutral-80 bg-white px-3 py-2 text-xsmall14 text-neutral-50 hover:bg-neutral-95"
+            onClick={handleOpenModal}
+            disabled={experienceCount < 3}
+            className={`rounded-xxs border border-neutral-80 bg-white px-3 py-2 text-xsmall14 font-medium hover:bg-neutral-95 disabled:cursor-not-allowed disabled:bg-neutral-95 ${
+              experienceCount >= 3
+                ? 'text-primary'
+                : 'text-neutral-50 disabled:text-neutral-30'
+            }`}
           >
             작성한 경험 불러오기
           </button>
@@ -90,6 +113,13 @@ export const MissionSubmitListForm = ({
           </div>
         </div>
       </section>
+
+      {/* 경험 선택 모달 */}
+      <ExperienceSelectModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSelectComplete={handleSelectComplete}
+      />
     </div>
   );
 };
