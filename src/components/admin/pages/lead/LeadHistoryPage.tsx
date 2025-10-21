@@ -25,10 +25,17 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowId } from '@mui/x-data-grid';
 import { groupBy } from 'es-toolkit';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from 'react';
+import {
+  ChangeEvent,
+  FormEvent,
+  memo,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 
 const leadHistoryEventTypeLabels: Record<LeadHistoryEventType, string> = {
   SIGN_UP: '회원가입',
@@ -59,14 +66,6 @@ type LeadHistoryGroupRow = {
   programCount: number;
   totalFinalPrice: number;
   items: LeadHistory[];
-};
-
-type FilterFormState = {
-  eventTypes: LeadHistoryEventType[];
-  leadEventIds: string;
-  leadEventTypes: string;
-  names: string;
-  phoneNums: string;
 };
 
 const splitToList = (value: string) =>
@@ -102,6 +101,12 @@ const formatNullableText = (value: unknown) => {
   return '-';
 };
 
+const INITIAL_GRID_STATE = {
+  pagination: { paginationModel: { pageSize: 20, page: 0 } },
+} as const;
+
+const PAGE_SIZE_OPTIONS = [20, 50, 100];
+
 const parseEventTypeParam = (param: string | null): LeadHistoryEventType[] => {
   if (!param) return [];
   return param
@@ -136,9 +141,7 @@ const buildFiltersFromParams = (
   };
 };
 
-const buildFormStateFromParams = (
-  params: URLSearchParams,
-): FilterFormState => ({
+const buildFormStateFromParams = (params: URLSearchParams) => ({
   eventTypes: parseEventTypeParam(params.get('eventTypes')),
   leadEventIds: params.get('leadEventIds') ?? '',
   leadEventTypes: params.get('leadEventTypes') ?? '',
@@ -146,13 +149,34 @@ const buildFormStateFromParams = (
   phoneNums: params.get('phoneNums') ?? '',
 });
 
-const defaultFormState: FilterFormState = {
-  eventTypes: [],
-  leadEventIds: '',
-  leadEventTypes: '',
-  names: '',
-  phoneNums: '',
-};
+const LeadHistoryDataGrid = memo(
+  ({
+    rows,
+    columns,
+    loading,
+    getRowId,
+  }: {
+    rows: LeadHistoryGroupRow[];
+    columns: GridColDef<LeadHistoryGroupRow>[];
+    loading: boolean;
+    getRowId: (row: LeadHistoryGroupRow) => GridRowId;
+  }) => {
+    return (
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        disableRowSelectionOnClick
+        loading={loading}
+        autoHeight
+        getRowId={getRowId}
+        initialState={INITIAL_GRID_STATE}
+        pageSizeOptions={PAGE_SIZE_OPTIONS}
+      />
+    );
+  },
+);
+
+LeadHistoryDataGrid.displayName = 'LeadHistoryDataGrid';
 
 const CreateLeadHistoryDialog = ({
   open,
@@ -369,21 +393,17 @@ const LeadHistoryPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
-  const searchParamsString = searchParams.toString();
 
-  const [formState, setFormState] = useState<FilterFormState>(() =>
-    buildFormStateFromParams(searchParams),
+  const defaultFormValues = useMemo(
+    () => buildFormStateFromParams(searchParams),
+    [searchParams],
   );
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const { snackbar } = useAdminSnackbar();
 
-  useEffect(() => {
-    setFormState(buildFormStateFromParams(searchParams));
-  }, [searchParamsString, searchParams]);
-
   const appliedFilters = useMemo<LeadHistoryFilters>(
     () => buildFiltersFromParams(searchParams),
-    [searchParamsString, searchParams],
+    [searchParams],
   );
 
   const { data: leadHistoryData = [], isLoading } =
@@ -687,46 +707,41 @@ const LeadHistoryPage = () => {
     [],
   );
 
+  const getRowId = useCallback((row: LeadHistoryGroupRow) => row.id, []);
+
   const createLeadHistory = useCreateLeadHistoryMutation();
-
-  const handleInputChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = event.target;
-    setFormState((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleEventTypeToggle = (value: LeadHistoryEventType) => {
-    setFormState((prev) => {
-      const hasValue = prev.eventTypes.includes(value);
-      return {
-        ...prev,
-        eventTypes: hasValue
-          ? prev.eventTypes.filter((item) => item !== value)
-          : [...prev.eventTypes, value],
-      };
-    });
-  };
 
   const handleFilterSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    const formData = new FormData(event.currentTarget);
+
+    const eventTypes = formData
+      .getAll('eventTypes')
+      .filter(Boolean) as string[];
+    const leadEventIds = (formData.get('leadEventIds') as string | null) ?? '';
+    const leadEventTypes =
+      (formData.get('leadEventTypes') as string | null) ?? '';
+    const names = (formData.get('names') as string | null) ?? '';
+    const phoneNums = (formData.get('phoneNums') as string | null) ?? '';
+
     const nextParams = new URLSearchParams();
 
-    if (formState.eventTypes.length) {
-      nextParams.set('eventTypes', formState.eventTypes.join(','));
+    if (eventTypes.length) {
+      const uniqueEventTypes = Array.from(new Set(eventTypes));
+      nextParams.set('eventTypes', uniqueEventTypes.join(','));
     }
 
     const setSearchParam = (key: string, value: string) => {
       if (value.trim().length) {
-        nextParams.set(key, value);
+        nextParams.set(key, value.trim());
       }
     };
 
-    setSearchParam('leadEventIds', formState.leadEventIds);
-    setSearchParam('leadEventTypes', formState.leadEventTypes);
-    setSearchParam('names', formState.names);
-    setSearchParam('phoneNums', formState.phoneNums);
+    setSearchParam('leadEventIds', leadEventIds);
+    setSearchParam('leadEventTypes', leadEventTypes);
+    setSearchParam('names', names);
+    setSearchParam('phoneNums', phoneNums);
 
     const nextUrl = nextParams.toString()
       ? `${pathname}?${nextParams.toString()}`
@@ -735,7 +750,6 @@ const LeadHistoryPage = () => {
   };
 
   const handleFilterReset = () => {
-    setFormState(defaultFormState);
     router.replace(pathname);
   };
 
@@ -766,8 +780,9 @@ const LeadHistoryPage = () => {
               key={type}
               control={
                 <Checkbox
-                  checked={formState.eventTypes.includes(type)}
-                  onChange={() => handleEventTypeToggle(type)}
+                  name="eventTypes"
+                  value={type}
+                  defaultChecked={defaultFormValues.eventTypes.includes(type)}
                 />
               }
               label={leadHistoryEventTypeLabels[type]}
@@ -778,29 +793,25 @@ const LeadHistoryPage = () => {
           <TextField
             label="리드 이벤트 ID"
             name="leadEventIds"
-            value={formState.leadEventIds}
-            onChange={handleInputChange}
+            defaultValue={defaultFormValues.leadEventIds}
             placeholder="쉼표(,) 또는 줄바꿈으로 다중 입력"
           />
           <TextField
             label="리드 이벤트 타입"
             name="leadEventTypes"
-            value={formState.leadEventTypes}
-            onChange={handleInputChange}
+            defaultValue={defaultFormValues.leadEventTypes}
             placeholder="쉼표(,) 또는 줄바꿈으로 다중 입력"
           />
           <TextField
             label="이름"
             name="names"
-            value={formState.names}
-            onChange={handleInputChange}
+            defaultValue={defaultFormValues.names}
             placeholder="쉼표(,) 또는 줄바꿈으로 다중 입력"
           />
           <TextField
             label="전화번호"
             name="phoneNums"
-            value={formState.phoneNums}
-            onChange={handleInputChange}
+            defaultValue={defaultFormValues.phoneNums}
             placeholder="쉼표(,) 또는 줄바꿈으로 다중 입력"
           />
         </div>
@@ -828,17 +839,11 @@ const LeadHistoryPage = () => {
         </Button>
       </div>
 
-      <DataGrid
+      <LeadHistoryDataGrid
         rows={filteredRows}
         columns={columns}
-        disableRowSelectionOnClick
         loading={isLoading}
-        autoHeight
-        getRowId={(row) => row.id}
-        initialState={{
-          pagination: { paginationModel: { pageSize: 20, page: 0 } },
-        }}
-        pageSizeOptions={[20, 50, 100]}
+        getRowId={getRowId}
       />
 
       <CreateLeadHistoryDialog
