@@ -28,7 +28,14 @@ import {
 import { DataGrid, GridColDef, GridRowId } from '@mui/x-data-grid';
 import { groupBy } from 'es-toolkit';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { ChangeEvent, FormEvent, memo, useCallback, useMemo, useState } from 'react';
+import {
+  ChangeEvent,
+  FormEvent,
+  memo,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 
 const leadHistoryEventTypeLabels: Record<LeadHistoryEventType, string> = {
   SIGN_UP: '회원가입',
@@ -686,15 +693,20 @@ const LeadHistoryPage = () => {
         renderCell: ({ value }) => {
           if (!Array.isArray(value) || value.length === 0) return '-';
           return (
-            <div className="whitespace-normal text-[11px] leading-tight">
+            <div className="h-full overflow-y-auto whitespace-normal text-[11px] leading-tight">
               {value
                 .slice(0, 5)
-                .map((item: { date: string; title: string | null }, idx: number) => (
-                  <div key={`${item.date}-${idx}`}>
-                    {item.date ? dayjs(item.date).format('YY/MM/DD') : '—'}
-                    {item.title ? ` - ${item.title}` : ''}
-                  </div>
-                ))}
+                .map(
+                  (
+                    item: { date: string; title: string | null },
+                    idx: number,
+                  ) => (
+                    <div key={`${item.date}-${idx}`}>
+                      {item.date ? dayjs(item.date).format('YY/MM/DD') : '—'}
+                      {item.title ? ` - ${item.title}` : ''}
+                    </div>
+                  ),
+                )}
               {value.length > 5 && <div>외 {value.length - 5}건</div>}
             </div>
           );
@@ -840,7 +852,9 @@ const LeadHistoryPage = () => {
       row.displayPhoneNum ?? '',
       row.name ?? '',
       row.email ?? '',
-      row.latestEventType ? leadHistoryEventTypeLabels[row.latestEventType] : '',
+      row.latestEventType
+        ? leadHistoryEventTypeLabels[row.latestEventType]
+        : '',
       row.latestEventTitle ?? '',
       row.latestCreateDate
         ? dayjs(row.latestCreateDate).format('YYYY/MM/DD')
