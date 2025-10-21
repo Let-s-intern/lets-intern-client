@@ -31,15 +31,12 @@ function RecommendedProgramSwiper({ programs }: Props) {
   // VOD 링크 조회
   const vodQueries = useGetVodLinks(vodIds);
   // 링크 객체로 변환
-  const vodLinks = vodQueries.reduce(
-    (acc, query) => {
-      if (query.data?.link) {
-        acc[query.data.id] = query.data.link;
-      }
-      return acc;
-    },
-    {} as Record<string, string>,
-  );
+  const vodLinks = vodQueries.reduce<Record<number, string>>((acc, query) => {
+    if (query.data?.link) {
+      acc[query.data.id] = query.data.link;
+    }
+    return acc;
+  }, {});
 
   const handleClickSlide = (
     clickProgramUrl: string,
