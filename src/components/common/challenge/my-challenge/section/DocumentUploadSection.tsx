@@ -87,10 +87,6 @@ const DocumentUploadSection = ({
     });
   };
 
-  const handleInputClick = (inputRef: React.RefObject<HTMLInputElement>) => {
-    inputRef.current?.click();
-  };
-
   const renderFileList = (
     type: 'resume' | 'portfolio' | 'selfIntroduction',
     file: File | null,
@@ -142,7 +138,7 @@ const DocumentUploadSection = ({
             {/* 파일 업로드 버튼 */}
             <button
               type="button"
-              onClick={() => handleInputClick(inputRef)}
+              onClick={() => inputRef.current?.click()}
               className="flex items-center gap-2 rounded-xs bg-primary-10 px-4 py-2 text-xsmall14 font-medium text-primary transition hover:bg-primary-20"
             >
               <Upload size={16} />
