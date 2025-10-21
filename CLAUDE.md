@@ -1,1 +1,0 @@
-- Next.js 라우팅 시스템으로 전환 작업: @nextjs-migration-memory.md 파일. (브랜치: LC-2367-migrate-nextjs-router)
