@@ -223,6 +223,10 @@ export const MissionStatusEnum = z.enum([
   'REFUND_DONE',
 ]);
 
+export const MissionTypeEnum = z
+  .enum(['OT', 'POOL', 'BONUS', 'EXPERIENCE_1', 'EXPERIENCE_2'])
+  .nullable();
+
 export type MissionStatus = z.infer<typeof MissionStatusEnum>;
 
 export const challengePriceInfoSchema = z.object({
@@ -679,7 +683,8 @@ export const missionAdmin = z
       z.object({
         id: z.number(),
         th: z.number(),
-        missionType: z.string(),
+        missionTag: z.string(),
+        missionType: MissionTypeEnum,
         missionStatusType: MissionStatusEnum,
         attendanceCount: z.number(),
         lateAttendanceCount: z.number(),
@@ -929,6 +934,7 @@ const postMissionIdReq = z.object({
   startDate: z.string(),
   endDate: z.string(),
   missionTemplateId: z.number().or(z.null()),
+  missionType: MissionTypeEnum,
   essentialContentsIdList: z.array(z.number()),
   additionalContentsIdList: z.array(z.number()),
 });
@@ -944,6 +950,7 @@ const patchMissionIdReq = z.object({
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   missionTemplateId: z.number().optional(),
+  missionType: MissionTypeEnum.optional(),
   essentialContentsIdList: z.array(z.number()).optional(),
   additionalContentsIdList: z.array(z.number()).optional(),
 });
