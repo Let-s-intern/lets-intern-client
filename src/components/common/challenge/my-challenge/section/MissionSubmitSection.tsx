@@ -1,10 +1,11 @@
 import dayjs from '@/lib/dayjs';
 import { Schedule } from '@/schema';
 import { useMissionStore } from '@/store/useMissionStore';
-import { BONUS_MISSION_TH } from '@/utils/constants';
+import { BONUS_MISSION_TH, TALENT_POOL_MISSION_TH } from '@/utils/constants';
 import { clsx } from 'clsx';
 import MissionSubmitBonusSection from './MissionSubmitBonusSection';
 import MissionSubmitRegularSection from './MissionSubmitRegularSection';
+import MissionSubmitTalentPoolSection from './MissionSubmitTalentPoolSection';
 import MissionSubmitZeroSection from './MissionSubmitZeroSection';
 
 interface MissionSubmitSectionProps {
@@ -41,6 +42,15 @@ const MissionSubmitSection = ({
       return (
         <MissionSubmitBonusSection
           selectedMissionTh={selectedMissionTh}
+          missionId={selectedMissionId}
+          attendanceInfo={attendanceInfo}
+        />
+      );
+    }
+
+    if (selectedMissionTh === TALENT_POOL_MISSION_TH) {
+      return (
+        <MissionSubmitTalentPoolSection
           missionId={selectedMissionId}
           attendanceInfo={attendanceInfo}
         />
