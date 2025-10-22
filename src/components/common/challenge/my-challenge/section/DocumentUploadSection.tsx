@@ -94,6 +94,25 @@ const DocumentUploadSection = ({
     // onFilesChange?.({})
   };
 
+  const handleFilePreview = (file: File) => {
+    const url = URL.createObjectURL(file);
+    const newWindow = window.open(
+      url,
+      '_blank',
+      'width=800,height=600,scrollbars=yes,resizable=yes',
+    );
+
+    // 새창이 열리지 않은 경우 URL 해제
+    if (!newWindow) {
+      URL.revokeObjectURL(url);
+    } else {
+      // 새창이 닫힐 때 URL 해제를 위한 이벤트 리스너
+      newWindow.addEventListener('beforeunload', () => {
+        URL.revokeObjectURL(url);
+      });
+    }
+  };
+
   const renderFileList = (
     type: 'resume' | 'portfolio' | 'selfIntroduction',
     file: File | null,
@@ -128,10 +147,13 @@ const DocumentUploadSection = ({
 
         {file ? (
           <div className="flex items-center">
-            {/* TODO: 클릭시 미리보기 */}
-            <span className="truncate text-xsmall14 font-normal text-neutral-0 underline">
+            <button
+              type="button"
+              onClick={() => handleFilePreview(file)}
+              className="truncate text-xsmall14 font-normal text-neutral-0 underline"
+            >
               {file.name}
-            </span>
+            </button>
             <button
               type="button"
               onClick={() => handleFileDelete(type)}
