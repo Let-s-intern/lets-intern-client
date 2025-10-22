@@ -16,10 +16,13 @@ import {
 import { Content, Row } from '@/types/interface';
 import axios from '@/utils/axios';
 import { END_OF_SECONDS } from '@/utils/constants';
+import { GridApi } from '@mui/x-data-grid';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 
-export const useMissionOperations = (apiRef: any) => {
+export const useMissionOperations = (
+  apiRef: React.MutableRefObject<GridApi | undefined>,
+) => {
   const missions = useAdminMissionsOfCurrentChallenge();
   const { currentChallenge } = useAdminCurrentChallenge();
   const refetchMissions = useMissionsOfCurrentChallengeRefetch();
@@ -141,7 +144,6 @@ export const useMissionOperations = (apiRef: any) => {
           setSnackbar('미션을 생성했습니다.');
           setEditingMission(null);
           refetchMissions();
-          apiRef?.current?.forceUpdate();
           return;
 
         case 'edit':

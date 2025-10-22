@@ -210,23 +210,20 @@ export const getMissionColumns = (): GridColDef<Row>[] => {
                 value,
               });
 
-              if (value === 100) {
+              const TH_TO_MISSION_TYPE_MAP = {
+                100: 'BONUS',
+                99: 'POOL',
+                0: 'OT',
+              };
+
+              if (value !== null && value in TH_TO_MISSION_TYPE_MAP) {
                 params.api.setEditCellValue({
                   id: params.id,
                   field: 'missionType',
-                  value: 'BONUS',
-                });
-              } else if (value === 99) {
-                params.api.setEditCellValue({
-                  id: params.id,
-                  field: 'missionType',
-                  value: 'POOL',
-                });
-              } else if (value === 0) {
-                params.api.setEditCellValue({
-                  id: params.id,
-                  field: 'missionType',
-                  value: 'OT',
+                  value:
+                    TH_TO_MISSION_TYPE_MAP[
+                      value as keyof typeof TH_TO_MISSION_TYPE_MAP
+                    ],
                 });
               }
             }}
