@@ -78,7 +78,7 @@ const DataTable = ({
           <tr className="border-b bg-gray-50">
             {/* TODO: 가로스크롤해도 체크박스는 고정되게 하기 */}
             {selectedRowIds && (
-              <th className="w-10 px-3 text-center">
+              <th className="sticky left-0 z-10 w-10 bg-gray-50 px-3">
                 <input
                   type="checkbox"
                   checked={selectedRowIds.size === data.length}
@@ -113,9 +113,9 @@ const DataTable = ({
             const isExpanded = expandedRows.has(row.id);
 
             return (
-              <tr key={row.id} className="border-b hover:bg-gray-50">
+              <tr key={row.id} className="group border-b hover:bg-gray-50">
                 {selectedRowIds && (
-                  <td className="text-center">
+                  <td className="sticky left-0 z-10 w-10 bg-white px-3 group-hover:bg-gray-50">
                     <input
                       type="checkbox"
                       checked={isSelected}
