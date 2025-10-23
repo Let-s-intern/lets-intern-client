@@ -215,7 +215,11 @@ const LeadHistoryTable = memo(
                       >
                         <button
                           type="button"
-                          onClick={canSort ? header.column.getToggleSortingHandler() : undefined}
+                          onClick={
+                            canSort
+                              ? header.column.getToggleSortingHandler()
+                              : undefined
+                          }
                           className={`flex items-center gap-1 ${canSort ? 'cursor-pointer select-none' : 'cursor-default'}`}
                         >
                           {flexRender(
@@ -223,12 +227,18 @@ const LeadHistoryTable = memo(
                             header.getContext(),
                           )}
                           {sorted === 'asc' && (
-                            <span aria-hidden className="text-[10px] leading-none">
+                            <span
+                              aria-hidden
+                              className="text-[10px] leading-none"
+                            >
                               ▲
                             </span>
                           )}
                           {sorted === 'desc' && (
-                            <span aria-hidden className="text-[10px] leading-none">
+                            <span
+                              aria-hidden
+                              className="text-[10px] leading-none"
+                            >
                               ▼
                             </span>
                           )}
@@ -830,8 +840,7 @@ const LeadHistoryPage = () => {
         enableSorting: false,
         meta: {
           headerClassName: 'min-w-[220px]',
-          cellClassName:
-            'min-w-[220px]',
+          cellClassName: 'min-w-[220px]',
         },
         cell: ({ row }) => {
           const value = row.original.programHistory;
@@ -1184,3 +1193,148 @@ const LeadHistoryPage = () => {
 };
 
 export default LeadHistoryPage;
+
+import {
+  getAggregatedRowModel,
+  getExpandedRowModel,
+  getFilteredRowModel,
+  getGroupedRowModel,
+  getPaginationRowModel,
+} from '@tanstack/react-table';
+
+type Row = {
+  id: string;
+  team: string; // 그룹 기준
+  title: string; // 개별 로우로만 표시
+  orders: number; // 집계: count or sum 등
+  amount: number; // 집계: sum
+  createdAt: string; // 개별 로우로만 표시
+};
+
+const columns: ColumnDef<Row>[] = [
+  {
+    accessorKey: 'team',
+    header: 'Team',
+    enableGrouping: true,
+    // 그룹 헤더 셀(그룹 로우일 때)
+    groupedCell: ({ row, getValue }) => (
+      <div style={{ fontWeight: 600 }}>
+        {getValue()} — {row.subRows.length} rows
+      </div>
+    ),
+    // 일반 셀(리프 로우일 때)
+    cell: (info) => info.getValue<string>(),
+    // 집계 셀(그룹 집계 로우일 때 이 컬럼이 집계값을 가지진 않지만, 라벨처럼 쓰려면 여기에 표시해도 됨)
+    aggregatedCell: ({ getValue }) => <span>{getValue() as string}</span>,
+  },
+  {
+    accessorKey: 'title',
+    header: 'Title',
+    // 집계 대상이 아님: 집계 로우에서는 보이지 않게/대시 처리
+    aggregationFn: undefined,
+    cell: (info) => info.getValue<string>(),
+    aggregatedCell: () => <span style={{ opacity: 0.5 }}>—</span>,
+  },
+  {
+    accessorKey: 'orders',
+    header: 'Orders',
+    // 예: sum
+    aggregationFn: 'sum',
+    cell: (info) => info.getValue<number>(),
+    aggregatedCell: ({ getValue }) => (
+      <strong>Total: {getValue<number>()}</strong>
+    ),
+  },
+  {
+    accessorKey: 'amount',
+    header: 'Amount',
+    aggregationFn: 'sum',
+    cell: (info) => Intl.NumberFormat().format(info.getValue<number>()),
+    aggregatedCell: ({ getValue }) => (
+      <strong>Σ {Intl.NumberFormat().format(getValue<number>())}</strong>
+    ),
+  },
+  {
+    accessorKey: 'createdAt',
+    header: 'Created At',
+    aggregationFn: undefined,
+    cell: (info) => new Date(info.getValue<string>()).toLocaleString(),
+    aggregatedCell: () => <span style={{ opacity: 0.5 }}>—</span>,
+  },
+];
+
+export function GroupedTable({ data }: { data: Row[] }) {
+  const [grouping, setGrouping] = React.useState<string[]>(['team']); // 초기 그룹
+  const [expanded, setExpanded] = React.useState({}); // 그룹 펼침 상태
+
+  const table = useReactTable({
+    data,
+    columns,
+    state: { grouping, expanded },
+    onGroupingChange: setGrouping,
+    onExpandedChange: setExpanded,
+    getCoreRowModel: getCoreRowModel(),
+    getGroupedRowModel: getGroupedRowModel(), // 그룹핑
+    getExpandedRowModel: getExpandedRowModel(), // 그룹 펼치기
+    getAggregatedRowModel: getAggregatedRowModel(), // 집계 계산
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+  });
+
+  return (
+    <div>
+      {/* 그룹 토글 UI 예시 */}
+      <div style={{ marginBottom: 8 }}>
+        <button
+          onClick={() =>
+            setGrouping((g) => (g.includes('team') ? [] : ['team']))
+          }
+        >
+          {grouping.length ? 'Ungroup' : 'Group by team'}
+        </button>
+      </div>
+
+      <table>
+        <thead>
+          {table.getHeaderGroups().map((hg) => (
+            <tr key={hg.id}>
+              {hg.headers.map((header) => (
+                <th key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map((row) => {
+            return (
+              <tr key={row.id}>
+                {row.getVisibleCells().map((cell) => {
+                  // 셀 렌더링: grouped/aggregated/placeholder/normal 순서로 자동 선택됨
+                  // flexRender가 columnDef의 groupedCell/aggregatedCell/cell을 알아서 사용
+                  return (
+                    <td key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+
+      {/* 페이지네이션 등 필요 시 추가 */}
+    </div>
+  );
+}
