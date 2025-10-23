@@ -2,6 +2,7 @@
 
 import { twMerge } from '@/lib/twMerge';
 import ExpandableCell from '@components/common/table/ExpandableCell';
+import CheckBox from '@components/common/ui/CheckBox';
 import { ReactNode, useMemo, useState } from 'react';
 
 export interface TableHeader {
@@ -79,11 +80,9 @@ const DataTable = ({
             {/* TODO: 가로스크롤해도 체크박스는 고정되게 하기 */}
             {selectedRowIds && (
               <th className="sticky left-0 z-10 w-10 bg-gray-50 px-3">
-                <input
-                  type="checkbox"
+                <CheckBox
                   checked={selectedRowIds.size === data.length}
-                  onChange={toggleAllSelection}
-                  className="cursor-pointer"
+                  onClick={toggleAllSelection}
                 />
               </th>
             )}
@@ -116,11 +115,9 @@ const DataTable = ({
               <tr key={row.id} className="group border-b hover:bg-gray-50">
                 {selectedRowIds && (
                   <td className="sticky left-0 z-10 w-10 bg-white px-3 group-hover:bg-gray-50">
-                    <input
-                      type="checkbox"
-                      checked={isSelected}
-                      onChange={() => toggleRowSelection(row.id)}
-                      className="cursor-pointer"
+                    <CheckBox
+                      checked={!!isSelected}
+                      onClick={() => toggleRowSelection(row.id)}
                     />
                   </td>
                 )}
