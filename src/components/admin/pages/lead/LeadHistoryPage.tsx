@@ -25,7 +25,14 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { DataGrid, GridColDef, GridRowId } from '@mui/x-data-grid';
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  SortingState,
+  useReactTable,
+} from '@tanstack/react-table';
 import { groupBy } from 'es-toolkit';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -110,12 +117,6 @@ const escapeCsvValue = (value: unknown) => {
   return `"${stringValue.replace(/"/g, '""')}"`;
 };
 
-const INITIAL_GRID_STATE = {
-  pagination: { paginationModel: { pageSize: 20, page: 0 } },
-} as const;
-
-const PAGE_SIZE_OPTIONS = [20];
-
 const parseEventTypeParam = (param: string | null): LeadHistoryEventType[] => {
   if (!param) return [];
   return param
@@ -158,34 +159,139 @@ const buildFormStateFromParams = (params: URLSearchParams) => ({
   phoneNums: params.get('phoneNums') ?? '',
 });
 
-const LeadHistoryDataGrid = memo(
+declare module '@tanstack/react-table' {
+  interface ColumnMeta<TData, TValue> {
+    headerClassName?: string;
+    cellClassName?: string;
+  }
+}
+
+const LeadHistoryTable = memo(
   ({
-    rows,
+    data,
     columns,
-    loading,
-    getRowId,
+    isLoading,
   }: {
-    rows: LeadHistoryGroupRow[];
-    columns: GridColDef<LeadHistoryGroupRow>[];
-    loading: boolean;
-    getRowId: (row: LeadHistoryGroupRow) => GridRowId;
+    data: LeadHistoryGroupRow[];
+    columns: ColumnDef<LeadHistoryGroupRow>[];
+    isLoading: boolean;
   }) => {
+    const [sorting, setSorting] = useState<SortingState>([]);
+
+    const table = useReactTable({
+      data,
+      columns,
+      state: { sorting },
+      onSortingChange: setSorting,
+      getCoreRowModel: getCoreRowModel(),
+      getSortedRowModel: getSortedRowModel(),
+      getRowId: (row) => row.id,
+    });
+
+    const columnCount = table.getAllLeafColumns().length || columns.length || 1;
+
     return (
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        disableRowSelectionOnClick
-        loading={loading}
-        autoHeight
-        getRowId={getRowId}
-        initialState={INITIAL_GRID_STATE}
-        pageSizeOptions={PAGE_SIZE_OPTIONS}
-      />
+      <div className="rounded border border-neutral-200">
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-left text-sm">
+            <thead className="bg-neutral-100">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    if (header.isPlaceholder) {
+                      return <th key={header.id} className="px-3 py-2" />;
+                    }
+
+                    const sorted = header.column.getIsSorted();
+                    const canSort = header.column.getCanSort();
+
+                    const headerClassName =
+                      header.column.columnDef.meta?.headerClassName ?? '';
+
+                    return (
+                      <th
+                        key={header.id}
+                        className={`px-3 py-2 font-medium text-neutral-700 ${headerClassName}`}
+                      >
+                        <button
+                          type="button"
+                          onClick={canSort ? header.column.getToggleSortingHandler() : undefined}
+                          className={`flex items-center gap-1 ${canSort ? 'cursor-pointer select-none' : 'cursor-default'}`}
+                        >
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                          {sorted === 'asc' && (
+                            <span aria-hidden className="text-[10px] leading-none">
+                              ▲
+                            </span>
+                          )}
+                          {sorted === 'desc' && (
+                            <span aria-hidden className="text-[10px] leading-none">
+                              ▼
+                            </span>
+                          )}
+                        </button>
+                      </th>
+                    );
+                  })}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr>
+                  <td
+                    colSpan={columnCount}
+                    className="px-3 py-10 text-center text-neutral-500"
+                  >
+                    로딩 중...
+                  </td>
+                </tr>
+              ) : table.getRowModel().rows.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={columnCount}
+                    className="px-3 py-6 text-center text-neutral-500"
+                  >
+                    표시할 데이터가 없습니다.
+                  </td>
+                </tr>
+              ) : (
+                table.getRowModel().rows.map((row) => (
+                  <tr
+                    key={row.id}
+                    className="border-t border-neutral-100 hover:bg-neutral-90/40"
+                  >
+                    {row.getVisibleCells().map((cell) => {
+                      const cellClassName =
+                        cell.column.columnDef.meta?.cellClassName ?? '';
+
+                      return (
+                        <td
+                          key={cell.id}
+                          className={`px-3 py-2 align-top text-neutral-900 ${cellClassName}`}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     );
   },
 );
 
-LeadHistoryDataGrid.displayName = 'LeadHistoryDataGrid';
+LeadHistoryTable.displayName = 'LeadHistoryTable';
 
 const CreateLeadHistoryDialog = ({
   open,
@@ -617,163 +723,224 @@ const LeadHistoryPage = () => {
     });
   }, [appliedFilters, groupedRows]);
 
-  const columns = useMemo<GridColDef<LeadHistoryGroupRow>[]>(
+  const columns = useMemo<ColumnDef<LeadHistoryGroupRow>[]>(
     () => [
       {
-        field: 'displayPhoneNum',
-        headerName: '전화번호',
-        width: 160,
+        accessorKey: 'displayPhoneNum',
+        header: '전화번호',
+        meta: {
+          headerClassName: 'min-w-[160px]',
+          cellClassName: 'min-w-[160px]',
+        },
+        cell: ({ row }) => formatNullableText(row.original.displayPhoneNum),
       },
       {
-        field: 'name',
-        headerName: '이름',
-        width: 120,
-        valueFormatter: (value) => formatNullableText(value),
+        accessorKey: 'name',
+        header: '이름',
+        meta: {
+          headerClassName: 'min-w-[120px]',
+          cellClassName: 'min-w-[120px]',
+        },
+        cell: ({ row }) => formatNullableText(row.original.name),
       },
       {
-        field: 'email',
-        headerName: '이메일',
-        width: 220,
-        valueFormatter: (value) => formatNullableText(value),
+        accessorKey: 'email',
+        header: '이메일',
+        meta: {
+          headerClassName: 'min-w-[220px]',
+          cellClassName: 'min-w-[220px]',
+        },
+        cell: ({ row }) => formatNullableText(row.original.email),
       },
       {
-        field: 'latestEventType',
-        headerName: '최신 이벤트 유형',
-        width: 160,
-        valueFormatter: (value) =>
-          value
-            ? leadHistoryEventTypeLabels[value as LeadHistoryEventType]
-            : '-',
+        accessorKey: 'latestEventType',
+        header: '최신 이벤트 유형',
+        meta: {
+          headerClassName: 'min-w-[160px]',
+          cellClassName: 'min-w-[160px]',
+        },
+        cell: ({ row }) => {
+          const value = row.original.latestEventType;
+          return value ? leadHistoryEventTypeLabels[value] : '-';
+        },
       },
       {
-        field: 'latestEventTitle',
-        headerName: '최신 이벤트',
-        width: 220,
-        valueFormatter: (value) => formatNullableText(value),
+        accessorKey: 'latestEventTitle',
+        header: '최신 이벤트',
+        meta: {
+          headerClassName: 'min-w-[220px]',
+          cellClassName: 'min-w-[220px]',
+        },
+        cell: ({ row }) => formatNullableText(row.original.latestEventTitle),
       },
       {
-        field: 'latestCreateDate',
-        headerName: '최신 유입일자',
-        width: 160,
-        valueFormatter: (value) =>
-          value && typeof value === 'string'
-            ? dayjs(value).format('YYYY/MM/DD')
-            : '-',
+        accessorKey: 'latestCreateDate',
+        header: '최신 유입일자',
+        meta: {
+          headerClassName: 'min-w-[160px]',
+          cellClassName: 'min-w-[160px]',
+        },
+        cell: ({ row }) => {
+          const value = row.original.latestCreateDate;
+          return value ? dayjs(value).format('YYYY/MM/DD') : '-';
+        },
       },
       {
-        field: 'firstInflowDate',
-        headerName: '첫 유입일자',
-        width: 160,
-        valueFormatter: (value) =>
-          value && typeof value === 'string'
-            ? dayjs(value).format('YYYY/MM/DD')
-            : '-',
+        accessorKey: 'firstInflowDate',
+        header: '첫 유입일자',
+        meta: {
+          headerClassName: 'min-w-[160px]',
+          cellClassName: 'min-w-[160px]',
+        },
+        cell: ({ row }) => {
+          const value = row.original.firstInflowDate;
+          return value ? dayjs(value).format('YYYY/MM/DD') : '-';
+        },
       },
       {
-        field: 'inflow',
-        headerName: '첫 유입 경로',
-        width: 160,
-        valueFormatter: (value) => formatNullableText(value),
+        accessorKey: 'inflow',
+        header: '첫 유입 경로',
+        meta: {
+          headerClassName: 'min-w-[160px]',
+          cellClassName: 'min-w-[160px]',
+        },
+        cell: ({ row }) => formatNullableText(row.original.inflow),
       },
       {
-        field: 'totalActions',
-        headerName: '전체 행동 횟수',
-        width: 160,
+        accessorKey: 'totalActions',
+        header: '전체 행동 횟수',
+        meta: {
+          headerClassName: 'min-w-[160px]',
+          cellClassName: 'min-w-[160px]',
+        },
+        cell: ({ row }) => row.original.totalActions ?? '-',
       },
       {
-        field: 'programCount',
-        headerName: '프로그램 참여 수',
-        width: 180,
+        accessorKey: 'programCount',
+        header: '프로그램 참여 수',
+        meta: {
+          headerClassName: 'min-w-[180px]',
+          cellClassName: 'min-w-[180px]',
+        },
+        cell: ({ row }) => row.original.programCount ?? '-',
       },
       {
-        field: 'programHistory',
-        headerName: '프로그램 참여 이력',
-        width: 220,
-        sortable: false,
-        renderCell: ({ value }) => {
-          if (!Array.isArray(value) || value.length === 0) return '-';
+        accessorKey: 'programHistory',
+        header: '프로그램 참여 이력',
+        enableSorting: false,
+        meta: {
+          headerClassName: 'min-w-[220px]',
+          cellClassName:
+            'min-w-[220px]',
+        },
+        cell: ({ row }) => {
+          const value = row.original.programHistory;
+          if (!Array.isArray(value) || value.length === 0) {
+            return <span>-</span>;
+          }
+
           return (
-            <div className="h-full overflow-y-auto whitespace-normal text-[11px] leading-tight">
-              {value
-                .slice(0, 5)
-                .map(
-                  (
-                    item: { date: string; title: string | null },
-                    idx: number,
-                  ) => (
-                    <div key={`${item.date}-${idx}`}>
-                      {item.date ? dayjs(item.date).format('YY/MM/DD') : '—'}
-                      {item.title ? ` - ${item.title}` : ''}
-                    </div>
-                  ),
-                )}
+            <div className="max-h-32 overflow-y-auto whitespace-normal text-[11px] leading-tight">
+              {value.slice(0, 5).map((item, idx) => (
+                <div key={`${item.date}-${idx}`}>
+                  {item.date ? dayjs(item.date).format('YY/MM/DD') : '—'}
+                  {item.title ? ` - ${item.title}` : ''}
+                </div>
+              ))}
               {value.length > 5 && <div>외 {value.length - 5}건</div>}
             </div>
           );
         },
       },
       {
-        field: 'totalFinalPrice',
-        headerName: '총 결제 금액',
-        width: 160,
-        valueFormatter: (value) =>
-          typeof value === 'number'
-            ? new Intl.NumberFormat('ko-KR').format(value as number)
-            : '-',
+        accessorKey: 'totalFinalPrice',
+        header: '총 결제 금액',
+        meta: {
+          headerClassName: 'min-w-[160px]',
+          cellClassName: 'min-w-[160px]',
+        },
+        cell: ({ row }) => {
+          const value = row.original.totalFinalPrice;
+          return typeof value === 'number'
+            ? new Intl.NumberFormat('ko-KR').format(value)
+            : '-';
+        },
       },
       {
-        field: 'university',
-        headerName: '대학',
-        width: 150,
-        valueFormatter: (value) => formatNullableText(value),
+        accessorKey: 'university',
+        header: '대학',
+        meta: {
+          headerClassName: 'min-w-[150px]',
+          cellClassName: 'min-w-[150px]',
+        },
+        cell: ({ row }) => formatNullableText(row.original.university),
       },
       {
-        field: 'major',
-        headerName: '전공',
-        width: 150,
-        valueFormatter: (value) => formatNullableText(value),
+        accessorKey: 'major',
+        header: '전공',
+        meta: {
+          headerClassName: 'min-w-[150px]',
+          cellClassName: 'min-w-[150px]',
+        },
+        cell: ({ row }) => formatNullableText(row.original.major),
       },
       {
-        field: 'wishField',
-        headerName: '희망 분야',
-        width: 150,
-        valueFormatter: (value) => formatNullableText(value),
+        accessorKey: 'wishField',
+        header: '희망 분야',
+        meta: {
+          headerClassName: 'min-w-[150px]',
+          cellClassName: 'min-w-[150px]',
+        },
+        cell: ({ row }) => formatNullableText(row.original.wishField),
       },
       {
-        field: 'wishCompany',
-        headerName: '희망 회사',
-        width: 150,
-        valueFormatter: (value) => formatNullableText(value),
+        accessorKey: 'wishCompany',
+        header: '희망 회사',
+        meta: {
+          headerClassName: 'min-w-[150px]',
+          cellClassName: 'min-w-[150px]',
+        },
+        cell: ({ row }) => formatNullableText(row.original.wishCompany),
       },
       {
-        field: 'wishIndustry',
-        headerName: '희망 산업군',
-        width: 160,
-        valueFormatter: (value) => formatNullableText(value),
+        accessorKey: 'wishIndustry',
+        header: '희망 산업군',
+        meta: {
+          headerClassName: 'min-w-[160px]',
+          cellClassName: 'min-w-[160px]',
+        },
+        cell: ({ row }) => formatNullableText(row.original.wishIndustry),
       },
       {
-        field: 'wishJob',
-        headerName: '희망 직무',
-        width: 150,
-        valueFormatter: (value) => formatNullableText(value),
+        accessorKey: 'wishJob',
+        header: '희망 직무',
+        meta: {
+          headerClassName: 'min-w-[150px]',
+          cellClassName: 'min-w-[150px]',
+        },
+        cell: ({ row }) => formatNullableText(row.original.wishJob),
       },
       {
-        field: 'jobStatus',
-        headerName: '현 직무 상태',
-        width: 160,
-        valueFormatter: (value) => formatNullableText(value),
+        accessorKey: 'jobStatus',
+        header: '현 직무 상태',
+        meta: {
+          headerClassName: 'min-w-[160px]',
+          cellClassName: 'min-w-[160px]',
+        },
+        cell: ({ row }) => formatNullableText(row.original.jobStatus),
       },
       {
-        field: 'instagramId',
-        headerName: '인스타그램',
-        width: 160,
-        valueFormatter: (value) => formatNullableText(value),
+        accessorKey: 'instagramId',
+        header: '인스타그램',
+        meta: {
+          headerClassName: 'min-w-[160px]',
+          cellClassName: 'min-w-[160px]',
+        },
+        cell: ({ row }) => formatNullableText(row.original.instagramId),
       },
     ],
     [],
   );
-
-  const getRowId = useCallback((row: LeadHistoryGroupRow) => row.id, []);
 
   const createLeadHistory = useCreateLeadHistoryMutation();
 
@@ -998,11 +1165,10 @@ const LeadHistoryPage = () => {
         </div>
       </div>
 
-      <LeadHistoryDataGrid
-        rows={filteredRows}
+      <LeadHistoryTable
+        data={filteredRows}
         columns={columns}
-        loading={isLoading}
-        getRowId={getRowId}
+        isLoading={isLoading}
       />
 
       <CreateLeadHistoryDialog
