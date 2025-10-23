@@ -71,6 +71,10 @@ export default function RootLayout({
         ></script>
         {/* <!-- Kakao Javascript End --> */}
 
+        <meta
+          name="naver-site-verification"
+          content="15caf82243b739e694f52cc6a5527956db0cd4a0"
+        />
         <link
           rel="apple-touch-icon"
           sizes="57x57"
