@@ -39,8 +39,10 @@ import { nanoid } from 'nanoid';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   ChangeEvent,
+  Dispatch,
   memo,
   type ReactNode,
+  SetStateAction,
   useCallback,
   useMemo,
   useState,
@@ -449,23 +451,26 @@ const LeadHistoryTable = memo(
     data,
     columns,
     isLoading,
+    expanded,
+    onExpandedChange,
   }: {
     data: LeadHistoryRow[];
     columns: ColumnDef<LeadHistoryRow>[];
     isLoading: boolean;
+    expanded: ExpandedState;
+    onExpandedChange: Dispatch<SetStateAction<ExpandedState>>;
   }) => {
     const [sorting, setSorting] = useState<SortingState>([
       { id: 'createDate', desc: true },
     ]);
     const [grouping] = useState<GroupingState>(['displayPhoneNum']);
-    const [expanded, setExpanded] = useState<ExpandedState>(true);
 
     const table = useReactTable({
       data,
       columns,
       state: { sorting, grouping, expanded },
       onSortingChange: setSorting,
-      onExpandedChange: setExpanded,
+      onExpandedChange,
       getCoreRowModel: getCoreRowModel(),
       getSortedRowModel: getSortedRowModel(),
       getGroupedRowModel: getGroupedRowModel(),
@@ -845,6 +850,7 @@ const CreateLeadHistoryDialog = ({
 
 const LeadHistoryPage = () => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [expanded, setExpanded] = useState<ExpandedState>(true);
   const { snackbar } = useAdminSnackbar();
 
   const router = useRouter();
@@ -1742,6 +1748,14 @@ const LeadHistoryPage = () => {
     URL.revokeObjectURL(url);
   }, [columns, filteredRows]);
 
+  const handleExpandAll = useCallback(() => {
+    setExpanded(true);
+  }, [setExpanded]);
+
+  const handleCollapseAll = useCallback(() => {
+    setExpanded({});
+  }, [setExpanded]);
+
   const createLeadHistory = useCreateLeadHistoryMutation();
 
   const handleCreate = async (payload: CreateLeadHistoryRequest) => {
@@ -1787,10 +1801,24 @@ const LeadHistoryPage = () => {
       </div>
 
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <Typography className="text-xsmall14 text-gray-500">
-          전화번호별 그룹이 기본으로 확장되어 개별 리드 히스토리를 바로 확인할
-          수 있습니다.
-        </Typography>
+        <div className="flex gap-2">
+          <Button
+            size="small"
+            variant="text"
+            onClick={handleCollapseAll}
+            disabled={!filteredRows.length}
+          >
+            모두 접기
+          </Button>
+          <Button
+            size="small"
+            variant="text"
+            onClick={handleExpandAll}
+            disabled={!filteredRows.length}
+          >
+            모두 펼치기
+          </Button>
+        </div>
         <div className="flex gap-2">
           <Button
             variant="outlined"
@@ -1800,7 +1828,7 @@ const LeadHistoryPage = () => {
             CSV 다운로드
           </Button>
           <Button variant="contained" onClick={() => setIsCreateOpen(true)}>
-            리드 등록
+            리드 히스토리 등록
           </Button>
         </div>
       </div>
@@ -1809,6 +1837,8 @@ const LeadHistoryPage = () => {
         data={filteredRows}
         columns={columns}
         isLoading={isLoading}
+        expanded={expanded}
+        onExpandedChange={setExpanded}
       />
 
       <CreateLeadHistoryDialog
