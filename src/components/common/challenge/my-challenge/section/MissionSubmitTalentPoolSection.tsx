@@ -1,3 +1,5 @@
+import { usePostMissionTalentPoolMutation } from '@/api/mission';
+import { DocumentType } from '@/api/missionSchema';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import { Schedule } from '@/schema';
@@ -28,6 +30,7 @@ const MissionSubmitTalentPoolSection = ({
   attendanceInfo,
 }: MissionSubmitTalentPoolSectionProps) => {
   const { currentChallenge } = useCurrentChallenge();
+  const submitMissionTalentPool = usePostMissionTalentPoolMutation();
 
   // 챌린지 종료 + 2일
   const isSubmitPeriodEnded =
@@ -63,11 +66,43 @@ const MissionSubmitTalentPoolSection = ({
       console.error('미션 ID가 없습니다.');
       return;
     }
-    console.log('제출하기', {
-      resume: uploadedFiles.resume,
-      portfolio: uploadedFiles.portfolio,
-      selfIntroduction: uploadedFiles.selfIntroduction,
+
+    // 새롭게 업로드된 파일들만 필터링
+    const filesToUpload = [
+      { type: 'RESUME' as DocumentType, file: uploadedFiles.resume },
+      { type: 'PORTFOLIO' as DocumentType, file: uploadedFiles.portfolio },
+      {
+        type: 'SELF_INTRODUCTION' as DocumentType,
+        file: uploadedFiles.selfIntroduction,
+      },
+    ].filter(
+      (item): item is { type: DocumentType; file: File } =>
+        item.file instanceof File,
+    ); // File 객체인 경우만 (새로 업로드된 파일)
+
+    // 각 파일을 formData 형식으로 변환
+    const formDataList = filesToUpload.map(({ type, file }) => {
+      const formData = new FormData();
+      formData.append(
+        'requestDto',
+        JSON.stringify({ documentType: type, fileUrl: file }),
+      );
+      formData.append('file', file as File);
+      return formData;
     });
+
+    try {
+      // TODO: 에러 처리
+      await Promise.all(
+        formDataList.map((formData) =>
+          submitMissionTalentPool.mutate(formData),
+        ),
+      );
+      setIsSubmitted(true);
+      setShowToast(true);
+    } catch (error) {
+      console.error('파일 업로드 중 오류 발생:', error);
+    }
   };
 
   const initValues = useCallback(() => {
