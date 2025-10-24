@@ -1,3 +1,5 @@
+import { useGetUserDocumentListQuery } from '@/api/user';
+import { UserDocument } from '@/api/userSchema';
 import { clsx } from 'clsx';
 import { RefreshCw, Trash2, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';
@@ -15,6 +17,9 @@ const DocumentUploadSection = ({
   className,
   onFilesChange,
 }: DocumentUploadSectionProps) => {
+  const { data: userDocumentList, isLoading: isUserDocumentListLoading } =
+    useGetUserDocumentListQuery();
+
   const [uploadedFiles, setUploadedFiles] = useState<{
     resume: File | null;
     portfolio: File | null;
@@ -131,6 +136,10 @@ const DocumentUploadSection = ({
           ? '포트폴리오 첨부'
           : '자기소개서 첨부';
     const requiredText = isRequired ? '(필수제출)' : '';
+    const isDocumentExists = userDocumentList?.userDocumentList?.some(
+      (document: UserDocument) =>
+        document.userDocumentType === type.toUpperCase(),
+    );
 
     return (
       <div className="mb-6">
@@ -179,6 +188,7 @@ const DocumentUploadSection = ({
             <button
               type="button"
               onClick={() => handleLoadDocument(type)}
+              disabled={isUserDocumentListLoading || !isDocumentExists}
               className="flex items-center gap-2 rounded-xs border-[1px] border-neutral-80 bg-white px-4 py-[.375rem] text-xsmall14 font-medium text-neutral-20 transition enabled:hover:bg-neutral-95 disabled:text-neutral-50"
             >
               <RefreshCw size={16} />

@@ -79,3 +79,18 @@ export const mentorUserSchema = z.object({
 export const mentorListSchema = z.object({
   mentorList: z.array(mentorListItemSchema),
 });
+
+/** GET [유저] 서류 전체 조회 /api/v1/user-document */
+export const userDocumentListSchema = z.object({
+  userDocumentList: z.array(
+    z.object({
+      userDocumentId: z.number(),
+      userDocumentType: z.enum(['RESUME', 'PORTFOLIO', 'PERSONAL_STATEMENT']),
+      fileUrl: z.string(),
+    }),
+  ),
+});
+
+export type UserDocument = z.infer<
+  typeof userDocumentListSchema
+>['userDocumentList'][number];

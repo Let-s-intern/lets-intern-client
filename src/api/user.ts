@@ -14,6 +14,7 @@ import {
   isMentorSchema,
   mentorListSchema,
   userAdminType,
+  userDocumentListSchema,
 } from './userSchema';
 
 export const UseMentorListQueryKey = 'useMentorListQueryKey';
@@ -275,6 +276,18 @@ export const useIsAdminQuery = () => {
     queryFn: async () => {
       const res = await axios.get('/user/isAdmin');
       return isAdminSchema.parse(res.data.data);
+    },
+  });
+};
+
+/** GET [유저] 서류(자소서, 포트폴리오 등) 조회 /api/v1/user-document */
+export const UseGetUserDocumentListQueryKey = 'useGetUserDocumentListQueryKey';
+export const useGetUserDocumentListQuery = () => {
+  return useQuery({
+    queryKey: [UseGetUserDocumentListQueryKey],
+    queryFn: async () => {
+      const res = await axios.get('/user-document');
+      return userDocumentListSchema.parse(res.data.data);
     },
   });
 };
