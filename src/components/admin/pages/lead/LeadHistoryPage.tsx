@@ -45,6 +45,7 @@ import {
   useMemo,
   useState,
 } from 'react';
+import { nanoid } from 'nanoid';
 
 declare module '@tanstack/react-table' {
   interface ColumnMeta<TData, TValue> {
@@ -97,18 +98,43 @@ type LeadHistoryFilterField = 'leadEvent' | 'program' | 'eventType';
 type LeadHistoryFilterOperator = 'include' | 'exclude';
 type LeadHistoryFilterCombinator = 'AND' | 'OR';
 
-type LeadHistoryFilterCondition = {
+type LeadHistoryFilterConditionNode = {
   id: string;
+  type: 'condition';
   field: LeadHistoryFilterField;
   operator: LeadHistoryFilterOperator;
   values: string[];
-  combinator: LeadHistoryFilterCombinator;
 };
 
-type StoredLeadHistoryFilterCondition = Omit<LeadHistoryFilterCondition, 'id'>;
+type LeadHistoryFilterGroupNode = {
+  id: string;
+  type: 'group';
+  combinator: LeadHistoryFilterCombinator;
+  children: LeadHistoryFilterNode[];
+};
+
+type LeadHistoryFilterNode =
+  | LeadHistoryFilterGroupNode
+  | LeadHistoryFilterConditionNode;
+
+type StoredLeadHistoryFilterConditionNode = {
+  type: 'condition';
+  field: LeadHistoryFilterField;
+  operator: LeadHistoryFilterOperator;
+  values?: string[];
+};
+
+type StoredLeadHistoryFilterGroupNode = {
+  type: 'group';
+  combinator: LeadHistoryFilterCombinator;
+  children?: StoredLeadHistoryFilterNode[];
+};
+
+type StoredLeadHistoryFilterNode =
+  | StoredLeadHistoryFilterConditionNode
+  | StoredLeadHistoryFilterGroupNode;
 
 type LeadHistoryGroupSummary = {
-  rows: LeadHistoryRow[];
   leadEventIds: Set<string>;
   eventTypes: Set<LeadHistoryEventType>;
   programTitles: Set<string>;
@@ -131,13 +157,6 @@ const filterOperatorOptions: Array<{
   { value: 'exclude', label: '하나도 없음' },
 ];
 
-const generateFilterId = () => {
-  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
-    return crypto.randomUUID();
-  }
-  return `filter_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-};
-
 const isFilterField = (value: unknown): value is LeadHistoryFilterField => {
   return value === 'leadEvent' || value === 'program' || value === 'eventType';
 };
@@ -154,107 +173,139 @@ const isFilterCombinator = (
   return value === 'AND' || value === 'OR';
 };
 
-const serializeFilterConditions = (
-  filters: LeadHistoryFilterCondition[],
+const createConditionNode = (
+  overrides: Partial<Omit<LeadHistoryFilterConditionNode, 'id' | 'type'>> = {},
+): LeadHistoryFilterConditionNode => ({
+  id: nanoid(),
+  type: 'condition',
+  field: overrides.field ?? 'leadEvent',
+  operator: overrides.operator ?? 'include',
+  values: overrides.values ?? [],
+});
+
+const createGroupNode = (
+  overrides: Partial<Omit<LeadHistoryFilterGroupNode, 'id' | 'type'>> = {},
+): LeadHistoryFilterGroupNode => ({
+  id: nanoid(),
+  type: 'group',
+  combinator: overrides.combinator ?? 'AND',
+  children: overrides.children ?? [],
+});
+
+const toStoredNode = (
+  node: LeadHistoryFilterNode,
+): StoredLeadHistoryFilterNode => {
+  if (node.type === 'condition') {
+    return {
+      type: 'condition',
+      field: node.field,
+      operator: node.operator,
+      values: node.values,
+    };
+  }
+
+  return {
+    type: 'group',
+    combinator: node.combinator,
+    children: node.children.map(toStoredNode),
+  };
+};
+
+const fromStoredNode = (
+  node: StoredLeadHistoryFilterNode,
+): LeadHistoryFilterNode | null => {
+  if (node.type === 'condition') {
+    if (!isFilterField(node.field) || !isFilterOperator(node.operator)) {
+      return null;
+    }
+    const values = Array.isArray(node.values)
+      ? node.values.map((value) => String(value))
+      : [];
+    return createConditionNode({
+      field: node.field,
+      operator: node.operator,
+      values,
+    });
+  }
+
+  if (node.type === 'group') {
+    if (!isFilterCombinator(node.combinator)) {
+      return null;
+    }
+
+    const children = Array.isArray(node.children)
+      ? node.children
+          .map((child) => fromStoredNode(child))
+          .filter(
+            (child): child is LeadHistoryFilterNode => child !== null,
+          )
+      : [];
+
+    return createGroupNode({
+      combinator: node.combinator,
+      children,
+    });
+  }
+
+  return null;
+};
+
+const serializeFilterTree = (
+  root: LeadHistoryFilterGroupNode,
 ): string | undefined => {
-  if (!filters.length) {
+  if (!root.children.length) {
     return undefined;
   }
 
-  const stored: StoredLeadHistoryFilterCondition[] = filters.map(
-    ({ id: _id, ...rest }, index) => ({
-      ...rest,
-      combinator: index === 0 ? 'AND' : rest.combinator,
-    }),
-  );
-
-  return JSON.stringify(stored);
+  return JSON.stringify(toStoredNode(root));
 };
 
-const deserializeFilterConditions = (
+const deserializeFilterTree = (
   raw: string | null,
-): LeadHistoryFilterCondition[] => {
+): LeadHistoryFilterGroupNode => {
   if (!raw) {
-    return [];
+    return createGroupNode();
   }
 
   try {
     const parsed = JSON.parse(raw) as unknown;
-    if (!Array.isArray(parsed)) {
-      return [];
-    }
-
-    const deserialized: LeadHistoryFilterCondition[] = parsed
-      .map((item, index) => {
-        if (typeof item !== 'object' || item === null) {
-          return null;
-        }
-
-        const { field, operator, values, combinator } =
-          item as StoredLeadHistoryFilterCondition;
-
-        if (!isFilterField(field) || !isFilterOperator(operator)) {
-          return null;
-        }
-
-        const normalizedValues = Array.isArray(values)
-          ? values.map((value) => String(value))
-          : [];
-
-        const normalizedCombinator =
-          index === 0 || !isFilterCombinator(combinator) ? 'AND' : combinator;
-
-        return {
-          id: generateFilterId(),
-          field,
-          operator,
-          values: normalizedValues,
-          combinator: normalizedCombinator,
-        };
-      })
-      .filter((item): item is LeadHistoryFilterCondition => item !== null);
-
-    return deserialized;
-  } catch {
-    return [];
-  }
-};
-
-const areFilterConditionsEqual = (
-  current: LeadHistoryFilterCondition[],
-  next: LeadHistoryFilterCondition[],
-): boolean => {
-  if (current.length !== next.length) {
-    return false;
-  }
-
-  return current.every((condition, index) => {
-    const target = next[index];
-    if (!target) {
-      return false;
-    }
-
     if (
-      condition.field !== target.field ||
-      condition.operator !== target.operator ||
-      condition.combinator !== target.combinator
+      !parsed ||
+      typeof parsed !== 'object' ||
+      (parsed as { type?: string }).type !== 'group'
     ) {
-      return false;
+      return createGroupNode();
     }
-
-    if (condition.values.length !== target.values.length) {
-      return false;
-    }
-
-    return condition.values.every(
-      (value, valueIndex) => value === target.values[valueIndex],
+    const restored = fromStoredNode(
+      parsed as StoredLeadHistoryFilterGroupNode,
     );
-  });
+    if (restored && restored.type === 'group') {
+      return restored;
+    }
+  } catch {
+    // ignore
+  }
+
+  return createGroupNode();
 };
 
-const evaluateConditionAgainstSummary = (
+const getFilterTreeSignature = (root: LeadHistoryFilterGroupNode) => {
+  return serializeFilterTree(root) ?? '';
+};
+
+const hasConditionWithValues = (
+  node: LeadHistoryFilterNode,
+): boolean => {
+  if (node.type === 'condition') {
+    return node.values.length > 0;
+  }
+
+  return node.children.some((child) => hasConditionWithValues(child));
+};
+
+const evaluateConditionNode = (
   summary: LeadHistoryGroupSummary,
-  condition: LeadHistoryFilterCondition,
+  condition: LeadHistoryFilterConditionNode,
 ): boolean => {
   if (!condition.values.length) {
     return true;
@@ -282,6 +333,98 @@ const evaluateConditionAgainstSummary = (
     default:
       return true;
   }
+};
+
+const evaluateFilterNode = (
+  summary: LeadHistoryGroupSummary,
+  node: LeadHistoryFilterNode,
+): boolean => {
+  if (node.type === 'condition') {
+    return evaluateConditionNode(summary, node);
+  }
+
+  if (!node.children.length) {
+    return true;
+  }
+
+  if (node.combinator === 'AND') {
+    return node.children.every((child) =>
+      evaluateFilterNode(summary, child),
+    );
+  }
+
+  return node.children.some((child) =>
+    evaluateFilterNode(summary, child),
+  );
+};
+
+const updateFilterNode = (
+  node: LeadHistoryFilterNode,
+  targetId: string,
+  updater: (node: LeadHistoryFilterNode) => LeadHistoryFilterNode,
+): LeadHistoryFilterNode => {
+  if (node.id === targetId) {
+    return updater(node);
+  }
+
+  if (node.type === 'group') {
+    return {
+      ...node,
+      children: node.children.map((child) =>
+        updateFilterNode(child, targetId, updater),
+      ),
+    };
+  }
+
+  return node;
+};
+
+const appendChildToGroup = (
+  node: LeadHistoryFilterNode,
+  targetGroupId: string,
+  child: LeadHistoryFilterNode,
+): LeadHistoryFilterNode => {
+  if (node.id === targetGroupId && node.type === 'group') {
+    return {
+      ...node,
+      children: [...node.children, child],
+    };
+  }
+
+  if (node.type === 'group') {
+    return {
+      ...node,
+      children: node.children.map((nested) =>
+        appendChildToGroup(nested, targetGroupId, child),
+      ),
+    };
+  }
+
+  return node;
+};
+
+const removeFilterNode = (
+  node: LeadHistoryFilterNode,
+  targetId: string,
+): LeadHistoryFilterNode | null => {
+  if (node.id === targetId) {
+    return null;
+  }
+
+  if (node.type !== 'group') {
+    return node;
+  }
+
+  const nextChildren = node.children
+    .map((child) => removeFilterNode(child, targetId))
+    .filter(
+      (child): child is LeadHistoryFilterNode => child !== null,
+    );
+
+  return {
+    ...node,
+    children: nextChildren,
+  };
 };
 
 const renderGroupedLeaf = (
@@ -341,6 +484,7 @@ const LeadHistoryTable = memo(
       getSortedRowModel: getSortedRowModel(),
       getGroupedRowModel: getGroupedRowModel(),
       getExpandedRowModel: getExpandedRowModel(),
+      autoResetExpanded: false,
       getRowId: (row) => row.id,
     });
 
@@ -350,7 +494,7 @@ const LeadHistoryTable = memo(
       <div className="rounded border border-neutral-200">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left text-sm">
-            <thead className="bg-gray-50">
+            <thead className="bg-neutral-100">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header, i) => {
@@ -720,8 +864,8 @@ const LeadHistoryPage = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [filters, setFilters] = useState<LeadHistoryFilterCondition[]>(() =>
-    deserializeFilterConditions(searchParams.get(FILTER_QUERY_KEY)),
+  const [filterTree, setFilterTree] = useState<LeadHistoryFilterGroupNode>(() =>
+    deserializeFilterTree(searchParams.get(FILTER_QUERY_KEY)),
   );
 
   const { data: leadHistoryData = [], isLoading } = useLeadHistoryListQuery();
@@ -735,16 +879,19 @@ const LeadHistoryPage = () => {
   const { data: leadEventData } = useLeadEventListQuery(leadEventListParams);
 
   useEffect(() => {
-    const parsed = deserializeFilterConditions(
+    const parsed = deserializeFilterTree(
       searchParams.get(FILTER_QUERY_KEY),
     );
-    setFilters((prev) =>
-      areFilterConditionsEqual(prev, parsed) ? prev : parsed,
-    );
-  }, [searchParams]);
+    if (
+      getFilterTreeSignature(parsed) === getFilterTreeSignature(filterTree)
+    ) {
+      return;
+    }
+    setFilterTree(parsed);
+  }, [searchParams, filterTree]);
 
   useEffect(() => {
-    const serialized = serializeFilterConditions(filters);
+    const serialized = serializeFilterTree(filterTree);
     const currentSerialized = searchParams.get(FILTER_QUERY_KEY) ?? undefined;
     if (
       serialized === currentSerialized ||
@@ -763,7 +910,7 @@ const LeadHistoryPage = () => {
     router.replace(queryString ? `${pathname}?${queryString}` : pathname, {
       scroll: false,
     });
-  }, [filters, pathname, router, searchParams]);
+  }, [filterTree, pathname, router, searchParams]);
 
   const leadEventMap = useMemo(() => {
     const map = new Map<number, string>();
@@ -859,14 +1006,13 @@ const LeadHistoryPage = () => {
     const map = new Map<string, LeadHistoryGroupSummary>();
     allRows.forEach((row) => {
       const key = row.displayPhoneNum;
-      const summary = map.get(key) ?? {
-        rows: [],
-        leadEventIds: new Set<string>(),
-        eventTypes: new Set<LeadHistoryEventType>(),
-        programTitles: new Set<string>(),
-      };
-
-      summary.rows.push(row);
+      const summary =
+        map.get(key) ??
+        {
+          leadEventIds: new Set<string>(),
+          eventTypes: new Set<LeadHistoryEventType>(),
+          programTitles: new Set<string>(),
+        };
 
       if (row.leadEventId !== null && row.leadEventId !== undefined) {
         summary.leadEventIds.add(String(row.leadEventId));
@@ -885,45 +1031,20 @@ const LeadHistoryPage = () => {
     return map;
   }, [allRows]);
 
-  const activeFilters = useMemo(() => {
-    const nonEmpty = filters.filter((condition) => condition.values.length > 0);
-    if (!nonEmpty.length) {
-      return [];
-    }
-    return nonEmpty.map((condition, index) => ({
-      ...condition,
-      combinator: index === 0 ? 'AND' : condition.combinator,
-    }));
-  }, [filters]);
+  const hasActiveFilter = useMemo(
+    () => hasConditionWithValues(filterTree),
+    [filterTree],
+  );
 
   const filteredRows = useMemo(() => {
-    if (!activeFilters.length) {
+    if (!hasActiveFilter) {
       return allRows;
     }
 
     const allowed = new Set<string>();
 
     groupSummaryMap.forEach((summary, key) => {
-      let match = true;
-
-      activeFilters.forEach((condition, index) => {
-        const conditionResult = evaluateConditionAgainstSummary(
-          summary,
-          condition,
-        );
-
-        if (index === 0) {
-          match = conditionResult;
-          return;
-        }
-
-        match =
-          condition.combinator === 'AND'
-            ? match && conditionResult
-            : match || conditionResult;
-      });
-
-      if (match) {
+      if (evaluateFilterNode(summary, filterTree)) {
         allowed.add(key);
       }
     });
@@ -933,72 +1054,128 @@ const LeadHistoryPage = () => {
     }
 
     return allRows.filter((row) => allowed.has(row.displayPhoneNum));
-  }, [activeFilters, allRows, groupSummaryMap]);
+  }, [allRows, filterTree, groupSummaryMap, hasActiveFilter]);
 
-  const handleAddCondition = useCallback(() => {
-    setFilters((prev) => [
-      ...prev,
-      {
-        id: generateFilterId(),
-        field: 'leadEvent',
-        operator: 'include',
-        values: [],
-        combinator: 'AND',
-      },
-    ]);
+  const handleResetFilters = useCallback(() => {
+    setFilterTree(createGroupNode());
   }, []);
 
-  const handleUpdateCondition = useCallback(
-    (id: string, updates: Partial<Omit<LeadHistoryFilterCondition, 'id'>>) => {
-      setFilters((prev) =>
-        prev.map((condition, index) => {
-          if (condition.id !== id) {
-            return condition;
+  const filteredGroupCount = useMemo(() => {
+    if (!filteredRows.length) {
+      return 0;
+    }
+    const groups = new Set<string>();
+    filteredRows.forEach((row) => {
+      groups.add(row.displayPhoneNum);
+    });
+    return groups.size;
+  }, [filteredRows]);
+
+  const totalGroupCount = groupSummaryMap.size;
+
+  const handleAddCondition = useCallback((groupId: string) => {
+    setFilterTree((prev) =>
+      appendChildToGroup(
+        prev,
+        groupId,
+        createConditionNode(),
+      ) as LeadHistoryFilterGroupNode,
+    );
+  }, []);
+
+  const handleAddGroup = useCallback((groupId: string) => {
+    setFilterTree((prev) =>
+      appendChildToGroup(
+        prev,
+        groupId,
+        createGroupNode(),
+      ) as LeadHistoryFilterGroupNode,
+    );
+  }, []);
+
+  const handleUpdateGroupCombinator = useCallback(
+    (groupId: string, combinator: LeadHistoryFilterCombinator) => {
+      setFilterTree((prev) =>
+        updateFilterNode(prev, groupId, (node) => {
+          if (node.type !== 'group') {
+            return node;
           }
-
-          const nextCondition: LeadHistoryFilterCondition = { ...condition };
-
-          if (updates.field && updates.field !== condition.field) {
-            nextCondition.field = updates.field;
-            nextCondition.values = [];
-          } else if (updates.field) {
-            nextCondition.field = updates.field;
-          }
-
-          if (updates.operator) {
-            nextCondition.operator = updates.operator;
-          }
-
-          if ('values' in updates && updates.values !== undefined) {
-            nextCondition.values = updates.values;
-          }
-
-          if (index === 0) {
-            nextCondition.combinator = 'AND';
-          } else if (updates.combinator) {
-            nextCondition.combinator = updates.combinator;
-          }
-
-          return nextCondition;
-        }),
+          return {
+            ...node,
+            combinator,
+          };
+        }) as LeadHistoryFilterGroupNode,
       );
     },
     [],
   );
 
-  const handleRemoveCondition = useCallback((id: string) => {
-    setFilters((prev) => {
-      const next = prev.filter((condition) => condition.id !== id);
-      if (next.length > 0) {
-        next[0] = { ...next[0], combinator: 'AND' };
+  const handleUpdateCondition = useCallback(
+    (
+      conditionId: string,
+      updates: Partial<Omit<LeadHistoryFilterConditionNode, 'id' | 'type'>>,
+    ) => {
+      setFilterTree((prev) =>
+        updateFilterNode(prev, conditionId, (node) => {
+          if (node.type !== 'condition') {
+            return node;
+          }
+
+          let next: LeadHistoryFilterConditionNode = { ...node };
+
+          if (updates.field && updates.field !== node.field) {
+            next = {
+              ...next,
+              field: updates.field,
+              values: [],
+            };
+          } else if (updates.field) {
+            next = {
+              ...next,
+              field: updates.field,
+            };
+          }
+
+          if (updates.operator) {
+            next = {
+              ...next,
+              operator: updates.operator,
+            };
+          }
+
+          if (updates.values) {
+            next = {
+              ...next,
+              values: updates.values,
+            };
+          } else if (updates.values !== undefined) {
+            next = {
+              ...next,
+              values: [],
+            };
+          }
+
+          return next;
+        }) as LeadHistoryFilterGroupNode,
+      );
+    },
+    [],
+  );
+
+  const handleRemoveNode = useCallback((nodeId: string) => {
+    setFilterTree((prev) => {
+      if (prev.id === nodeId) {
+        return prev;
+      }
+      const next = removeFilterNode(prev, nodeId);
+      if (!next || next.type !== 'group') {
+        return prev;
       }
       return next;
     });
   }, []);
 
-  const handleResetFilters = useCallback(() => {
-    setFilters([]);
-  }, []);
+  const rootHasChildren = filterTree.children.length > 0;
 
   const getValueLabel = useCallback(
     (field: LeadHistoryFilterField, value: string) => {
@@ -1018,18 +1195,198 @@ const LeadHistoryPage = () => {
     [leadEventLabelMap],
   );
 
-  const filteredGroupCount = useMemo(() => {
-    if (!filteredRows.length) {
-      return 0;
-    }
-    const groups = new Set<string>();
-    filteredRows.forEach((row) => {
-      groups.add(row.displayPhoneNum);
-    });
-    return groups.size;
-  }, [filteredRows]);
+  const getOptionsForField = useCallback(
+    (field: LeadHistoryFilterField) => {
+      if (field === 'leadEvent') {
+        return leadEventOptions;
+      }
+      if (field === 'program') {
+        return programOptions;
+      }
+      return eventTypeOptions;
+    },
+    [eventTypeOptions, leadEventOptions, programOptions],
+  );
 
-  const totalGroupCount = groupSummaryMap.size;
+  const FilterConditionEditor = ({
+    node,
+  }: {
+    node: LeadHistoryFilterConditionNode;
+  }) => {
+    const valueOptions = getOptionsForField(node.field);
+
+    return (
+      <div className="flex w-full flex-wrap items-end gap-2 rounded border border-neutral-200 bg-white px-2 py-2">
+        <TextField
+          select
+          size="small"
+          label="대상"
+          value={node.field}
+          onChange={(event) =>
+            handleUpdateCondition(node.id, {
+              field: event.target.value as LeadHistoryFilterField,
+            })
+          }
+          className="min-w-[120px]"
+        >
+          {Object.entries(filterFieldDefinitions).map(([value, { label }]) => (
+            <MenuItem key={value} value={value}>
+              {label}
+            </MenuItem>
+          ))}
+        </TextField>
+        <TextField
+          select
+          size="small"
+          label="조건"
+          value={node.operator}
+          onChange={(event) =>
+            handleUpdateCondition(node.id, {
+              operator: event.target.value as LeadHistoryFilterOperator,
+            })
+          }
+          className="min-w-[120px]"
+        >
+          {filterOperatorOptions.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </TextField>
+        <TextField
+          select
+          size="small"
+          fullWidth
+          label={filterFieldDefinitions[node.field].valueLabel}
+          value={node.values}
+          onChange={(event) => {
+            const { value } = event.target;
+            const nextValues = Array.isArray(value)
+              ? value.map((item) => String(item))
+              : [String(value)];
+            handleUpdateCondition(node.id, {
+              values: nextValues,
+            });
+          }}
+          SelectProps={{
+            multiple: true,
+            displayEmpty: true,
+            renderValue: (selected) => {
+              if (
+                !selected ||
+                (Array.isArray(selected) && !selected.length)
+              ) {
+                return '선택 없음';
+              }
+              const list = Array.isArray(selected) ? selected : [selected];
+              return list
+                .map((item) => getValueLabel(node.field, String(item)))
+                .join(', ');
+            },
+          }}
+          className="min-w-[200px] flex-1"
+          disabled={!valueOptions.length}
+          helperText={
+            !valueOptions.length ? '선택 가능한 항목이 없습니다.' : undefined
+          }
+        >
+          {valueOptions.map(({ value, label }) => (
+            <MenuItem key={value} value={value}>
+              {label}
+            </MenuItem>
+          ))}
+        </TextField>
+        <Button
+          size="small"
+          color="error"
+          variant="text"
+          onClick={() => handleRemoveNode(node.id)}
+        >
+          삭제
+        </Button>
+      </div>
+    );
+  };
+
+  const FilterGroupEditor = ({
+    node,
+    isRoot = false,
+  }: {
+    node: LeadHistoryFilterGroupNode;
+    isRoot?: boolean;
+  }) => {
+    return (
+      <div
+        className={twMerge(
+          'flex flex-col gap-2 rounded border border-neutral-200 bg-neutral-50 p-3',
+          !isRoot && 'ml-4',
+        )}
+      >
+        <div className="flex flex-wrap items-center gap-2">
+          <Typography className="text-[11px] font-medium text-neutral-600">
+            {isRoot ? '최상위 그룹' : '하위 그룹'}
+          </Typography>
+          <TextField
+            select
+            size="small"
+            label="연결"
+            value={node.combinator}
+            onChange={(event) =>
+              handleUpdateGroupCombinator(
+                node.id,
+                event.target.value as LeadHistoryFilterCombinator,
+              )
+            }
+            className="w-24"
+          >
+            <MenuItem value="AND">AND</MenuItem>
+            <MenuItem value="OR">OR</MenuItem>
+          </TextField>
+          <div className="ml-auto flex items-center gap-1">
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={() => handleAddCondition(node.id)}
+            >
+              조건
+            </Button>
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={() => handleAddGroup(node.id)}
+            >
+              그룹
+            </Button>
+            {!isRoot && (
+              <Button
+                size="small"
+                color="error"
+                variant="text"
+                onClick={() => handleRemoveNode(node.id)}
+              >
+                삭제
+              </Button>
+            )}
+          </div>
+        </div>
+        {node.children.length === 0 ? (
+          <Typography className="rounded border border-dashed border-neutral-200 bg-white px-2 py-2 text-[12px] text-neutral-500">
+            조건이 없습니다. 버튼을 눌러 조건 또는 하위 그룹을 추가하세요.
+          </Typography>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {node.children.map((child) =>
+              child.type === 'condition' ? (
+                <FilterConditionEditor key={child.id} node={child} />
+              ) : (
+                <FilterGroupEditor key={child.id} node={child} />
+              ),
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   const columns = useMemo<ColumnDef<LeadHistoryRow>[]>(
     () => [
@@ -1324,182 +1681,43 @@ const LeadHistoryPage = () => {
     <section className="p-5">
       <Heading className="mb-4">리드 히스토리 관리</Heading>
 
-      <div className="rounded mb-4 border border-neutral-200 bg-white p-4 shadow-sm">
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <Typography className="text-sm font-medium text-neutral-700">
-              전화번호 그룹 필터
-            </Typography>
-            <Typography className="text-xs text-neutral-500">
-              조건을 AND/OR로 조합해 특정 이벤트·프로그램 참여 이력을 기반으로
-              전화번호 그룹을 필터링합니다.
-            </Typography>
-          </div>
-          <div className="flex gap-2">
+      <div className="mb-4 rounded border border-neutral-200 bg-white p-4 shadow-sm">
+        <div className="mb-2 flex flex-wrap items-center gap-2">
+          <Typography className="text-xs text-neutral-600">
+            AND/OR 트리를 구성해 특정 이벤트·프로그램 참여 이력 여부로 전화번호
+            그룹을 필터링할 수 있습니다.
+          </Typography>
+          <div className="ml-auto flex gap-1">
             <Button
               size="small"
               variant="text"
               onClick={handleResetFilters}
-              disabled={!filters.length}
+              disabled={!rootHasChildren}
             >
               조건 초기화
             </Button>
             <Button
               size="small"
               variant="outlined"
-              onClick={handleAddCondition}
+              onClick={() => handleAddCondition(filterTree.id)}
             >
               조건 추가
+            </Button>
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={() => handleAddGroup(filterTree.id)}
+            >
+              그룹 추가
             </Button>
           </div>
         </div>
 
-        {filters.length === 0 ? (
-          <Typography className="rounded border border-dashed border-neutral-200 p-3 text-xs text-neutral-500">
-            추가된 필터 조건이 없습니다. &ldquo;조건 추가&rdquo; 버튼을 눌러
-            조건을 구성하세요.
-          </Typography>
-        ) : (
-          <div className="flex flex-col gap-3">
-            {filters.map((condition, index) => {
-              const valueOptions =
-                condition.field === 'leadEvent'
-                  ? leadEventOptions
-                  : condition.field === 'program'
-                    ? programOptions
-                    : eventTypeOptions;
+        <FilterGroupEditor node={filterTree} isRoot />
 
-              return (
-                <div
-                  key={condition.id}
-                  className="rounded flex w-full flex-wrap items-end gap-2 border border-neutral-200 bg-gray-50 p-3"
-                >
-                  {index > 0 && (
-                    <TextField
-                      select
-                      size="small"
-                      label="연결"
-                      value={condition.combinator}
-                      onChange={(event) =>
-                        handleUpdateCondition(condition.id, {
-                          combinator: event.target
-                            .value as LeadHistoryFilterCombinator,
-                        })
-                      }
-                      className="w-20 min-w-[80px]"
-                    >
-                      <MenuItem value="AND">AND</MenuItem>
-                      <MenuItem value="OR">OR</MenuItem>
-                    </TextField>
-                  )}
-                  <TextField
-                    select
-                    size="small"
-                    label="대상"
-                    value={condition.field}
-                    onChange={(event) =>
-                      handleUpdateCondition(condition.id, {
-                        field: event.target.value as LeadHistoryFilterField,
-                      })
-                    }
-                    className="min-w-[160px]"
-                  >
-                    {Object.entries(filterFieldDefinitions).map(
-                      ([value, { label }]) => (
-                        <MenuItem
-                          key={value}
-                          value={value as LeadHistoryFilterField}
-                        >
-                          {label}
-                        </MenuItem>
-                      ),
-                    )}
-                  </TextField>
-                  <TextField
-                    select
-                    size="small"
-                    label="조건"
-                    value={condition.operator}
-                    onChange={(event) =>
-                      handleUpdateCondition(condition.id, {
-                        operator: event.target
-                          .value as LeadHistoryFilterOperator,
-                      })
-                    }
-                    className="min-w-[140px]"
-                  >
-                    {filterOperatorOptions.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                  <TextField
-                    select
-                    fullWidth
-                    size="small"
-                    label={filterFieldDefinitions[condition.field].valueLabel}
-                    value={condition.values}
-                    onChange={(event) => {
-                      const { value } = event.target;
-                      const nextValues = Array.isArray(value)
-                        ? value.map((item) => String(item))
-                        : [String(value)];
-                      handleUpdateCondition(condition.id, {
-                        values: nextValues,
-                      });
-                    }}
-                    SelectProps={{
-                      multiple: true,
-                      displayEmpty: true,
-                      renderValue: (selected) => {
-                        if (
-                          !selected ||
-                          (Array.isArray(selected) && !selected.length)
-                        ) {
-                          return '';
-                        }
-                        const list = Array.isArray(selected)
-                          ? selected
-                          : [selected];
-                        return list
-                          .map((item) =>
-                            getValueLabel(condition.field, String(item)),
-                          )
-                          .join(', ');
-                      },
-                    }}
-                    className="min-w-[220px] flex-1"
-                    disabled={!valueOptions.length}
-                    helperText={
-                      !valueOptions.length
-                        ? '선택 가능한 항목이 없습니다.'
-                        : undefined
-                    }
-                  >
-                    {valueOptions.map(({ value, label }) => (
-                      <MenuItem key={value} value={value}>
-                        {label}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                  <Button
-                    size="small"
-                    color="error"
-                    variant="text"
-                    onClick={() => handleRemoveCondition(condition.id)}
-                  >
-                    삭제
-                  </Button>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        <div className="mt-3 text-right text-xs text-neutral-500">
-          조건에 맞는 전화번호 그룹 {filteredGroupCount}/{totalGroupCount}개 ·
-          리드 {filteredRows.length}/{allRows.length}건
+        <div className="mt-2 text-right text-[12px] text-neutral-500">
+          조건에 맞는 전화번호 그룹 {filteredGroupCount}/{totalGroupCount}개 · 리드{' '}
+          {filteredRows.length}/{allRows.length}건
         </div>
       </div>
 
