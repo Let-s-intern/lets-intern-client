@@ -33,7 +33,6 @@ const MissionSubmitTalentPoolSection = ({
         attendanceInfo?.status === 'UPDATED'));
 
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [isAgreed, setIsAgreed] = useState(false);
 
@@ -45,25 +44,11 @@ const MissionSubmitTalentPoolSection = ({
   const canSubmit = isAgreed;
 
   const handleSubmit = async () => {
-    if (isSubmitted) {
-      // 이미 제출된 미션 → 수정 모드로 전환
-      setIsEditing(true);
-      return;
-    }
-
     if (!missionId) {
       console.error('미션 ID가 없습니다.');
       return;
     }
     console.log('제출하기');
-  };
-
-  const handleSaveEdit = async () => {
-    console.log('수정하기 저장');
-  };
-
-  const handleCancelEdit = () => {
-    console.log('수정하기 취소');
   };
 
   const initValues = useCallback(() => {
@@ -95,9 +80,7 @@ const MissionSubmitTalentPoolSection = ({
             isSubmitted={isSubmitted}
             hasContent={canSubmit}
             onButtonClick={handleSubmit}
-            isEditing={isEditing}
-            onSaveEdit={handleSaveEdit}
-            onCancelEdit={handleCancelEdit}
+            isEditing={false}
             disabled={isResubmitBlocked}
           />
         )}
