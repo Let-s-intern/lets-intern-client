@@ -1209,7 +1209,7 @@ const LeadHistoryPage = () => {
       }
       return eventTypeOptions;
     },
-    [eventTypeOptions, leadEventOptions, programOptions],
+    [leadEventOptions, programOptions],
   );
 
   const FilterConditionEditor = ({
@@ -1234,7 +1234,7 @@ const LeadHistoryPage = () => {
           className="min-w-[120px]"
         >
           {Object.entries(filterFieldDefinitions).map(([value, { label }]) => (
-            <MenuItem key={value} value={value}>
+            <MenuItem key={value} value={value} className="text-xsmall14">
               {label}
             </MenuItem>
           ))}
@@ -1652,6 +1652,96 @@ const LeadHistoryPage = () => {
     [],
   );
 
+  const handleDownloadCsv = useCallback(() => {
+    if (!filteredRows.length) return;
+
+    const exportColumns = columns.filter((column) => {
+      return (
+        Object.prototype.hasOwnProperty.call(column, 'accessorKey') &&
+        typeof (column as { accessorKey?: unknown }).accessorKey === 'string'
+      );
+    }) as Array<
+      ColumnDef<LeadHistoryRow> & {
+        accessorKey: keyof LeadHistoryRow;
+      }
+    >;
+
+    if (!exportColumns.length) return;
+
+    const headerRow = exportColumns
+      .map((column) => {
+        const headerProp = column.header;
+        let headerLabel: string;
+
+        if (typeof headerProp === 'string' || typeof headerProp === 'number') {
+          headerLabel = String(headerProp);
+        } else if (typeof headerProp === 'function') {
+          headerLabel = column.id ?? column.accessorKey ?? '';
+        } else {
+          headerLabel = column.id ?? column.accessorKey ?? '';
+        }
+
+        return escapeCsvValue(headerLabel);
+      })
+      .join(',');
+
+    const rows = filteredRows.map((row) => {
+      return exportColumns
+        .map((column) => {
+          const key = column.accessorKey;
+          let rawValue: unknown = row[key];
+
+          switch (key) {
+            case 'createDate':
+              rawValue = row.createDate
+                ? dayjs(row.createDate).format('YYYY.MM.DD.')
+                : '';
+              break;
+            case 'eventType':
+              rawValue = row.eventType
+                ? leadHistoryEventTypeLabels[row.eventType]
+                : '';
+              break;
+            case 'finalPrice':
+              rawValue =
+                row.finalPrice !== null && row.finalPrice !== undefined
+                  ? new Intl.NumberFormat('ko-KR').format(row.finalPrice)
+                  : '';
+              break;
+            default:
+              rawValue = rawValue ?? '';
+              break;
+          }
+
+          const normalized =
+            rawValue === null || rawValue === undefined
+              ? ''
+              : typeof rawValue === 'string'
+                ? rawValue
+                : String(rawValue);
+
+          return escapeCsvValue(normalized);
+        })
+        .join(',');
+    });
+
+    const csvBody = [headerRow, ...rows].join('\n');
+    const blob = new Blob([`\uFEFF${csvBody}`], {
+      type: 'text/csv;charset=utf-8;',
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute(
+      'download',
+      `lead-history_${dayjs().format('YYYYMMDD_HHmmss')}.csv`,
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }, [columns, filteredRows]);
+
   const createLeadHistory = useCreateLeadHistoryMutation();
 
   const handleCreate = async (payload: CreateLeadHistoryRequest) => {
@@ -1685,20 +1775,6 @@ const LeadHistoryPage = () => {
             >
               조건 초기화
             </Button>
-            <Button
-              size="small"
-              variant="outlined"
-              onClick={() => handleAddCondition(filterTree.id)}
-            >
-              조건 추가
-            </Button>
-            <Button
-              size="small"
-              variant="outlined"
-              onClick={() => handleAddGroup(filterTree.id)}
-            >
-              그룹 추가
-            </Button>
           </div>
         </div>
 
@@ -1716,7 +1792,11 @@ const LeadHistoryPage = () => {
           수 있습니다.
         </Typography>
         <div className="flex gap-2">
-          <Button variant="outlined" disabled={!filteredRows.length}>
+          <Button
+            variant="outlined"
+            onClick={handleDownloadCsv}
+            disabled={!filteredRows.length}
+          >
             CSV 다운로드
           </Button>
           <Button variant="contained" onClick={() => setIsCreateOpen(true)}>
