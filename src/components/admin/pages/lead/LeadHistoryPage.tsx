@@ -35,17 +35,16 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
+import { nanoid } from 'nanoid';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   ChangeEvent,
   memo,
   type ReactNode,
   useCallback,
-  useEffect,
   useMemo,
   useState,
 } from 'react';
-import { nanoid } from 'nanoid';
 
 declare module '@tanstack/react-table' {
   interface ColumnMeta<TData, TValue> {
@@ -236,9 +235,7 @@ const fromStoredNode = (
     const children = Array.isArray(node.children)
       ? node.children
           .map((child) => fromStoredNode(child))
-          .filter(
-            (child): child is LeadHistoryFilterNode => child !== null,
-          )
+          .filter((child): child is LeadHistoryFilterNode => child !== null)
       : [];
 
     return createGroupNode({
@@ -276,9 +273,7 @@ const deserializeFilterTree = (
     ) {
       return createGroupNode();
     }
-    const restored = fromStoredNode(
-      parsed as StoredLeadHistoryFilterGroupNode,
-    );
+    const restored = fromStoredNode(parsed as StoredLeadHistoryFilterGroupNode);
     if (restored && restored.type === 'group') {
       return restored;
     }
@@ -293,9 +288,7 @@ const getFilterTreeSignature = (root: LeadHistoryFilterGroupNode) => {
   return serializeFilterTree(root) ?? '';
 };
 
-const hasConditionWithValues = (
-  node: LeadHistoryFilterNode,
-): boolean => {
+const hasConditionWithValues = (node: LeadHistoryFilterNode): boolean => {
   if (node.type === 'condition') {
     return node.values.length > 0;
   }
@@ -348,14 +341,10 @@ const evaluateFilterNode = (
   }
 
   if (node.combinator === 'AND') {
-    return node.children.every((child) =>
-      evaluateFilterNode(summary, child),
-    );
+    return node.children.every((child) => evaluateFilterNode(summary, child));
   }
 
-  return node.children.some((child) =>
-    evaluateFilterNode(summary, child),
-  );
+  return node.children.some((child) => evaluateFilterNode(summary, child));
 };
 
 const updateFilterNode = (
@@ -417,9 +406,7 @@ const removeFilterNode = (
 
   const nextChildren = node.children
     .map((child) => removeFilterNode(child, targetId))
-    .filter(
-      (child): child is LeadHistoryFilterNode => child !== null,
-    );
+    .filter((child): child is LeadHistoryFilterNode => child !== null);
 
   return {
     ...node,
@@ -432,7 +419,7 @@ const renderGroupedLeaf = (
   render: (original: LeadHistoryRow) => ReactNode,
 ) => {
   if (row.getIsGrouped()) {
-    return <span className="text-neutral-400"></span>;
+    return <span className="text-gray-400"></span>;
   }
   const original = row.original;
   if (!original) {
@@ -491,10 +478,10 @@ const LeadHistoryTable = memo(
     const columnCount = table.getAllLeafColumns().length || columns.length || 1;
 
     return (
-      <div className="rounded border border-neutral-200">
+      <div className="rounded border border-gray-200">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left text-sm">
-            <thead className="bg-neutral-100">
+            <thead className="bg-gray-100">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header, i) => {
@@ -511,7 +498,7 @@ const LeadHistoryTable = memo(
                     return (
                       <th
                         key={header.id}
-                        className={`px-3 py-2 font-medium text-neutral-700 ${headerClassName}`}
+                        className={`px-3 py-2 font-medium text-gray-700 ${headerClassName}`}
                         style={{
                           ...(i === 0
                             ? {
@@ -572,7 +559,7 @@ const LeadHistoryTable = memo(
                 <tr>
                   <td
                     colSpan={columnCount}
-                    className="px-3 py-10 text-center text-neutral-500"
+                    className="px-3 py-10 text-center text-gray-500"
                   >
                     로딩 중...
                   </td>
@@ -581,7 +568,7 @@ const LeadHistoryTable = memo(
                 <tr>
                   <td
                     colSpan={columnCount}
-                    className="px-3 py-6 text-center text-neutral-500"
+                    className="px-3 py-6 text-center text-gray-500"
                   >
                     표시할 데이터가 없습니다.
                   </td>
@@ -591,7 +578,7 @@ const LeadHistoryTable = memo(
                   <tr
                     key={row.id}
                     className={twMerge(
-                      'border-t border-neutral-100',
+                      'border-t border-gray-100',
                       !row.getIsGrouped() && 'bg-slate-50',
                       row.getIsGrouped() && 'font-medium',
                     )}
@@ -603,7 +590,7 @@ const LeadHistoryTable = memo(
                       return (
                         <td
                           key={cell.id}
-                          className={`px-3 py-2 align-top text-neutral-900 ${cellClassName}`}
+                          className={`px-3 py-2 align-top text-gray-900 ${cellClassName}`}
                           style={{
                             padding: '8px',
                             borderBottom: '1px solid #eee',
@@ -864,8 +851,9 @@ const LeadHistoryPage = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [filterTree, setFilterTree] = useState<LeadHistoryFilterGroupNode>(() =>
-    deserializeFilterTree(searchParams.get(FILTER_QUERY_KEY)),
+  const filterTree = useMemo<LeadHistoryFilterGroupNode>(
+    () => deserializeFilterTree(searchParams.get(FILTER_QUERY_KEY)),
+    [searchParams],
   );
 
   const { data: leadHistoryData = [], isLoading } = useLeadHistoryListQuery();
@@ -878,39 +866,45 @@ const LeadHistoryPage = () => {
   );
   const { data: leadEventData } = useLeadEventListQuery(leadEventListParams);
 
-  useEffect(() => {
-    const parsed = deserializeFilterTree(
-      searchParams.get(FILTER_QUERY_KEY),
-    );
-    if (
-      getFilterTreeSignature(parsed) === getFilterTreeSignature(filterTree)
-    ) {
-      return;
-    }
-    setFilterTree(parsed);
-  }, [searchParams, filterTree]);
+  const replaceFilterTree = useCallback(
+    (nextTree: LeadHistoryFilterGroupNode) => {
+      const currentSignature = getFilterTreeSignature(filterTree);
+      const nextSignature = getFilterTreeSignature(nextTree);
 
-  useEffect(() => {
-    const serialized = serializeFilterTree(filterTree);
-    const currentSerialized = searchParams.get(FILTER_QUERY_KEY) ?? undefined;
-    if (
-      serialized === currentSerialized ||
-      (!serialized && !currentSerialized)
-    ) {
-      return;
-    }
+      if (currentSignature === nextSignature) {
+        console.log('[lead] No changes in filter tree, skipping URL update');
+        return;
+      }
 
-    const params = new URLSearchParams(searchParams.toString());
-    if (serialized) {
-      params.set(FILTER_QUERY_KEY, serialized);
-    } else {
-      params.delete(FILTER_QUERY_KEY);
-    }
-    const queryString = params.toString();
-    router.replace(queryString ? `${pathname}?${queryString}` : pathname, {
-      scroll: false,
-    });
-  }, [filterTree, pathname, router, searchParams]);
+      const serialized = serializeFilterTree(nextTree);
+      const params = new URLSearchParams(searchParams.toString());
+
+      if (serialized) {
+        params.set(FILTER_QUERY_KEY, serialized);
+      } else {
+        params.delete(FILTER_QUERY_KEY);
+      }
+
+      const queryString = params.toString();
+      router.replace(queryString ? `${pathname}?${queryString}` : pathname, {
+        scroll: false,
+      });
+    },
+    [pathname, router, searchParams],
+  );
+
+  const updateFilterTree = useCallback(
+    (
+      updater: (
+        current: LeadHistoryFilterGroupNode,
+      ) => LeadHistoryFilterGroupNode,
+    ) => {
+      const baseTree = filterTree;
+      const nextTree = updater(baseTree);
+      replaceFilterTree(nextTree);
+    },
+    [filterTree, replaceFilterTree],
+  );
 
   const leadEventMap = useMemo(() => {
     const map = new Map<number, string>();
@@ -1006,13 +1000,11 @@ const LeadHistoryPage = () => {
     const map = new Map<string, LeadHistoryGroupSummary>();
     allRows.forEach((row) => {
       const key = row.displayPhoneNum;
-      const summary =
-        map.get(key) ??
-        {
-          leadEventIds: new Set<string>(),
-          eventTypes: new Set<LeadHistoryEventType>(),
-          programTitles: new Set<string>(),
-        };
+      const summary = map.get(key) ?? {
+        leadEventIds: new Set<string>(),
+        eventTypes: new Set<LeadHistoryEventType>(),
+        programTitles: new Set<string>(),
+      };
 
       if (row.leadEventId !== null && row.leadEventId !== undefined) {
         summary.leadEventIds.add(String(row.leadEventId));
@@ -1057,8 +1049,9 @@ const LeadHistoryPage = () => {
   }, [allRows, filterTree, groupSummaryMap, hasActiveFilter]);
 
   const handleResetFilters = useCallback(() => {
-    setFilterTree(createGroupNode());
-  }, []);
+    const nextTree = createGroupNode();
+    replaceFilterTree(nextTree);
+  }, [replaceFilterTree]);
 
   const filteredGroupCount = useMemo(() => {
     if (!filteredRows.length) {
@@ -1073,41 +1066,50 @@ const LeadHistoryPage = () => {
 
   const totalGroupCount = groupSummaryMap.size;
 
-  const handleAddCondition = useCallback((groupId: string) => {
-    setFilterTree((prev) =>
-      appendChildToGroup(
-        prev,
-        groupId,
-        createConditionNode(),
-      ) as LeadHistoryFilterGroupNode,
-    );
-  }, []);
+  const handleAddCondition = useCallback(
+    (groupId: string) => {
+      updateFilterTree(
+        (prev) =>
+          appendChildToGroup(
+            prev,
+            groupId,
+            createConditionNode(),
+          ) as LeadHistoryFilterGroupNode,
+      );
+    },
+    [updateFilterTree],
+  );
 
-  const handleAddGroup = useCallback((groupId: string) => {
-    setFilterTree((prev) =>
-      appendChildToGroup(
-        prev,
-        groupId,
-        createGroupNode(),
-      ) as LeadHistoryFilterGroupNode,
-    );
-  }, []);
+  const handleAddGroup = useCallback(
+    (groupId: string) => {
+      updateFilterTree(
+        (prev) =>
+          appendChildToGroup(
+            prev,
+            groupId,
+            createGroupNode(),
+          ) as LeadHistoryFilterGroupNode,
+      );
+    },
+    [updateFilterTree],
+  );
 
   const handleUpdateGroupCombinator = useCallback(
     (groupId: string, combinator: LeadHistoryFilterCombinator) => {
-      setFilterTree((prev) =>
-        updateFilterNode(prev, groupId, (node) => {
-          if (node.type !== 'group') {
-            return node;
-          }
-          return {
-            ...node,
-            combinator,
-          };
-        }) as LeadHistoryFilterGroupNode,
+      updateFilterTree(
+        (prev) =>
+          updateFilterNode(prev, groupId, (node) => {
+            if (node.type !== 'group') {
+              return node;
+            }
+            return {
+              ...node,
+              combinator,
+            };
+          }) as LeadHistoryFilterGroupNode,
       );
     },
-    [],
+    [updateFilterTree],
   );
 
   const handleUpdateCondition = useCallback(
@@ -1115,65 +1117,69 @@ const LeadHistoryPage = () => {
       conditionId: string,
       updates: Partial<Omit<LeadHistoryFilterConditionNode, 'id' | 'type'>>,
     ) => {
-      setFilterTree((prev) =>
-        updateFilterNode(prev, conditionId, (node) => {
-          if (node.type !== 'condition') {
-            return node;
-          }
+      updateFilterTree(
+        (prev) =>
+          updateFilterNode(prev, conditionId, (node) => {
+            if (node.type !== 'condition') {
+              return node;
+            }
 
-          let next: LeadHistoryFilterConditionNode = { ...node };
+            let next: LeadHistoryFilterConditionNode = { ...node };
 
-          if (updates.field && updates.field !== node.field) {
-            next = {
-              ...next,
-              field: updates.field,
-              values: [],
-            };
-          } else if (updates.field) {
-            next = {
-              ...next,
-              field: updates.field,
-            };
-          }
+            if (updates.field && updates.field !== node.field) {
+              next = {
+                ...next,
+                field: updates.field,
+                values: [],
+              };
+            } else if (updates.field) {
+              next = {
+                ...next,
+                field: updates.field,
+              };
+            }
 
-          if (updates.operator) {
-            next = {
-              ...next,
-              operator: updates.operator,
-            };
-          }
+            if (updates.operator) {
+              next = {
+                ...next,
+                operator: updates.operator,
+              };
+            }
 
-          if (updates.values) {
-            next = {
-              ...next,
-              values: updates.values,
-            };
-          } else if (updates.values !== undefined) {
-            next = {
-              ...next,
-              values: [],
-            };
-          }
+            if (updates.values) {
+              next = {
+                ...next,
+                values: updates.values,
+              };
+            } else if (updates.values !== undefined) {
+              next = {
+                ...next,
+                values: [],
+              };
+            }
 
-          return next;
-        }) as LeadHistoryFilterGroupNode,
+            return next;
+          }) as LeadHistoryFilterGroupNode,
       );
     },
-    [],
+    [updateFilterTree],
   );
 
-  const handleRemoveNode = useCallback((nodeId: string) => {
-    setFilterTree((prev) => {
-      if (prev.id === nodeId) {
-        return prev;
-      }
-      const next = removeFilterNode(prev, nodeId);
-      if (!next || next.type !== 'group') {
-        return prev;
-      }
-      return next;
-    });
-  }, []);
+  const handleRemoveNode = useCallback(
+    (nodeId: string) => {
+      updateFilterTree((prev) => {
+        if (prev.id === nodeId) {
+          return prev;
+        }
+        const next = removeFilterNode(prev, nodeId);
+        if (!next || next.type !== 'group') {
+          return prev;
+        }
+        return next;
+      });
+    },
+    [updateFilterTree],
+  );
 
   const rootHasChildren = filterTree.children.length > 0;
 
@@ -1216,7 +1222,7 @@ const LeadHistoryPage = () => {
     const valueOptions = getOptionsForField(node.field);
 
     return (
-      <div className="flex w-full flex-wrap items-end gap-2 rounded border border-neutral-200 bg-white px-2 py-2">
+      <div className="rounded flex w-full flex-wrap items-end gap-2 border border-gray-200 bg-white px-2 py-2">
         <TextField
           select
           size="small"
@@ -1272,11 +1278,8 @@ const LeadHistoryPage = () => {
             multiple: true,
             displayEmpty: true,
             renderValue: (selected) => {
-              if (
-                !selected ||
-                (Array.isArray(selected) && !selected.length)
-              ) {
-                return '선택 없음';
+              if (!selected || (Array.isArray(selected) && !selected.length)) {
+                return '';
               }
               const list = Array.isArray(selected) ? selected : [selected];
               return list
@@ -1318,12 +1321,12 @@ const LeadHistoryPage = () => {
     return (
       <div
         className={twMerge(
-          'flex flex-col gap-2 rounded border border-neutral-200 bg-neutral-50 p-3',
+          'rounded flex flex-col gap-2 border border-gray-200 bg-gray-50 p-3',
           !isRoot && 'ml-4',
         )}
       >
         <div className="flex flex-wrap items-center gap-2">
-          <Typography className="text-[11px] font-medium text-neutral-600">
+          <Typography className="text-[11px] font-medium text-gray-600">
             {isRoot ? '최상위 그룹' : '하위 그룹'}
           </Typography>
           <TextField
@@ -1370,7 +1373,7 @@ const LeadHistoryPage = () => {
           </div>
         </div>
         {node.children.length === 0 ? (
-          <Typography className="rounded border border-dashed border-neutral-200 bg-white px-2 py-2 text-[12px] text-neutral-500">
+          <Typography className="rounded border border-dashed border-gray-200 bg-white px-2 py-2 text-[12px] text-gray-500">
             조건이 없습니다. 버튼을 눌러 조건 또는 하위 그룹을 추가하세요.
           </Typography>
         ) : (
@@ -1408,7 +1411,7 @@ const LeadHistoryPage = () => {
                 <button
                   type="button"
                   onClick={row.getToggleExpandedHandler()}
-                  className="rounded flex h-6 w-6 items-center justify-center border border-neutral-200 text-[10px] leading-none text-neutral-600"
+                  className="rounded flex h-6 w-6 items-center justify-center border border-gray-200 text-[10px] leading-none text-gray-600"
                   aria-label={
                     row.getIsExpanded()
                       ? '전화번호 그룹 접기'
@@ -1418,7 +1421,7 @@ const LeadHistoryPage = () => {
                   {row.getIsExpanded() ? '-' : '+'}
                 </button>
                 <span>{value}</span>
-                <span className="text-xs text-neutral-400">({count}건)</span>
+                <span className="text-xs text-gray-400">({count}건)</span>
               </div>
             );
           }
@@ -1681,9 +1684,9 @@ const LeadHistoryPage = () => {
     <section className="p-5">
       <Heading className="mb-4">리드 히스토리 관리</Heading>
 
-      <div className="mb-4 rounded border border-neutral-200 bg-white p-4 shadow-sm">
+      <div className="rounded mb-4 border border-gray-200 bg-white p-4 shadow-sm">
         <div className="mb-2 flex flex-wrap items-center gap-2">
-          <Typography className="text-xs text-neutral-600">
+          <Typography className="text-xs text-gray-600">
             AND/OR 트리를 구성해 특정 이벤트·프로그램 참여 이력 여부로 전화번호
             그룹을 필터링할 수 있습니다.
           </Typography>
@@ -1715,14 +1718,14 @@ const LeadHistoryPage = () => {
 
         <FilterGroupEditor node={filterTree} isRoot />
 
-        <div className="mt-2 text-right text-[12px] text-neutral-500">
-          조건에 맞는 전화번호 그룹 {filteredGroupCount}/{totalGroupCount}개 · 리드{' '}
-          {filteredRows.length}/{allRows.length}건
+        <div className="mt-2 text-right text-[12px] text-gray-500">
+          조건에 맞는 전화번호 그룹 {filteredGroupCount}/{totalGroupCount}개 ·
+          리드 {filteredRows.length}/{allRows.length}건
         </div>
       </div>
 
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <Typography className="text-xsmall14 text-neutral-500">
+        <Typography className="text-xsmall14 text-gray-500">
           전화번호별 그룹이 기본으로 확장되어 개별 리드 히스토리를 바로 확인할
           수 있습니다.
         </Typography>
