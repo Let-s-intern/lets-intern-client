@@ -73,7 +73,6 @@ type LeadHistoryRow = {
   name: string | null;
   email: string | null;
   inflow: string | null;
-  firstInflowDate: string | null;
   university: string | null;
   major: string | null;
   wishField: string | null;
@@ -944,7 +943,6 @@ const LeadHistoryPage = () => {
         name: item.name ?? null,
         email: item.email ?? null,
         inflow: item.inflow ?? null,
-        firstInflowDate: item.createDate ?? null,
         university: item.university ?? null,
         major: item.major ?? null,
         wishField: item.wishField ?? null,
@@ -1447,6 +1445,19 @@ const LeadHistoryPage = () => {
         },
       },
       {
+        accessorKey: 'createDate',
+        header: '생성일',
+        meta: {
+          headerClassName: 'min-w-[170px]',
+          cellClassName: 'min-w-[170px]',
+        },
+        cell: ({ row }) =>
+          renderGroupedLeaf(row, (original) => {
+            const value = original.createDate;
+            return value ? dayjs(value).format('YYYY.MM.DD.') : '-';
+          }),
+      },
+      {
         accessorKey: 'eventType',
         header: '이벤트 유형',
         meta: {
@@ -1507,32 +1518,7 @@ const LeadHistoryPage = () => {
             formatNullableText(original.userId),
           ),
       },
-      {
-        accessorKey: 'createDate',
-        header: '유입일시',
-        meta: {
-          headerClassName: 'min-w-[170px]',
-          cellClassName: 'min-w-[170px]',
-        },
-        cell: ({ row }) =>
-          renderGroupedLeaf(row, (original) => {
-            const value = original.createDate;
-            return value ? dayjs(value).format('YYYY.MM.DD.') : '-';
-          }),
-      },
-      {
-        accessorKey: 'firstInflowDate',
-        header: '첫 유입일자',
-        meta: {
-          headerClassName: 'min-w-[150px]',
-          cellClassName: 'min-w-[150px]',
-        },
-        cell: ({ row }) =>
-          renderGroupedLeaf(row, (original) => {
-            const value = original.firstInflowDate;
-            return value ? dayjs(value).format('YYYY.MM.DD.') : '-';
-          }),
-      },
+
       {
         accessorKey: 'inflow',
         header: '유입 경로',
