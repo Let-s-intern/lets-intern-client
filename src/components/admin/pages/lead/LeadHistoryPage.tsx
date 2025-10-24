@@ -3,9 +3,7 @@
 import {
   CreateLeadHistoryRequest,
   LeadEvent,
-  LeadHistory,
   LeadHistoryEventType,
-  LeadHistoryFilters,
   useCreateLeadHistoryMutation,
   useLeadEventListQuery,
   useLeadHistoryListQuery,
@@ -13,29 +11,49 @@ import {
 import Heading from '@/components/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import dayjs from '@/lib/dayjs';
+import { twMerge } from '@/lib/twMerge';
 import {
   Button,
-  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControlLabel,
   MenuItem,
   TextField,
   Typography,
 } from '@mui/material';
-import { DataGrid, GridColDef, GridRowId } from '@mui/x-data-grid';
-import { groupBy } from 'es-toolkit';
+import {
+  ColumnDef,
+  ExpandedState,
+  flexRender,
+  getCoreRowModel,
+  getExpandedRowModel,
+  getGroupedRowModel,
+  getSortedRowModel,
+  GroupingState,
+  type Row,
+  SortingState,
+  useReactTable,
+} from '@tanstack/react-table';
+import { nanoid } from 'nanoid';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   ChangeEvent,
-  FormEvent,
+  Dispatch,
   memo,
+  type ReactNode,
+  SetStateAction,
   useCallback,
   useMemo,
   useState,
 } from 'react';
+
+declare module '@tanstack/react-table' {
+  interface ColumnMeta<TData, TValue> {
+    headerClassName?: string;
+    cellClassName?: string;
+  }
+}
 
 const leadHistoryEventTypeLabels: Record<LeadHistoryEventType, string> = {
   SIGN_UP: '회원가입',
@@ -43,14 +61,20 @@ const leadHistoryEventTypeLabels: Record<LeadHistoryEventType, string> = {
   LEAD_EVENT: '리드 이벤트',
 };
 
-type LeadHistoryGroupRow = {
+const eventTypeOptions: Array<{ value: LeadHistoryEventType; label: string }> =
+  (
+    Object.entries(leadHistoryEventTypeLabels) as Array<
+      [LeadHistoryEventType, string]
+    >
+  ).map(([value, label]) => ({ value, label }));
+
+type LeadHistoryRow = {
   id: string;
   phoneNum: string | null;
   displayPhoneNum: string;
   name: string | null;
   email: string | null;
   inflow: string | null;
-  firstInflowDate: string | null;
   university: string | null;
   major: string | null;
   wishField: string | null;
@@ -59,38 +83,350 @@ type LeadHistoryGroupRow = {
   wishJob: string | null;
   jobStatus: string | null;
   instagramId: string | null;
-  latestEventType?: LeadHistoryEventType;
-  latestEventTitle: string | null;
-  programHistory: { date: string; title: string | null }[];
-  latestCreateDate: string | null;
-  latestTimestamp: number;
-  totalActions: number;
-  programCount: number;
-  totalFinalPrice: number;
-  items: LeadHistory[];
+  eventType?: LeadHistoryEventType;
+  leadEventId?: number | null;
+  leadEventType?: string | null;
+  userId?: number | null;
+  title?: string | null;
+  finalPrice?: number | null;
+  createDate?: string | null;
 };
 
-const splitToList = (value: string) =>
-  value
-    .split(/[\n,]/)
-    .map((item) => item.trim())
-    .filter((item) => item.length > 0);
+const FILTER_QUERY_KEY = 'filters';
 
-const splitToNumberList = (value: string) =>
-  splitToList(value)
-    .map((item) => Number(item))
-    .filter((num) => !Number.isNaN(num));
+type LeadHistoryFilterField = 'leadEvent' | 'program' | 'eventType';
+type LeadHistoryFilterOperator = 'include' | 'exclude';
+type LeadHistoryFilterCombinator = 'AND' | 'OR';
 
-const isEmptyValue = (value: unknown) => {
-  if (value === null || value === undefined) return true;
-  if (typeof value === 'string') return value.trim().length === 0;
-  return false;
+type LeadHistoryFilterConditionNode = {
+  id: string;
+  type: 'condition';
+  field: LeadHistoryFilterField;
+  operator: LeadHistoryFilterOperator;
+  values: string[];
 };
 
-const toTimestamp = (value?: string | null) => {
-  if (!value) return Number.NEGATIVE_INFINITY;
-  const date = dayjs(value);
-  return date.isValid() ? date.valueOf() : Number.NEGATIVE_INFINITY;
+type LeadHistoryFilterGroupNode = {
+  id: string;
+  type: 'group';
+  combinator: LeadHistoryFilterCombinator;
+  children: LeadHistoryFilterNode[];
+};
+
+type LeadHistoryFilterNode =
+  | LeadHistoryFilterGroupNode
+  | LeadHistoryFilterConditionNode;
+
+type StoredLeadHistoryFilterConditionNode = {
+  type: 'condition';
+  field: LeadHistoryFilterField;
+  operator: LeadHistoryFilterOperator;
+  values?: string[];
+};
+
+type StoredLeadHistoryFilterGroupNode = {
+  type: 'group';
+  combinator: LeadHistoryFilterCombinator;
+  children?: StoredLeadHistoryFilterNode[];
+};
+
+type StoredLeadHistoryFilterNode =
+  | StoredLeadHistoryFilterConditionNode
+  | StoredLeadHistoryFilterGroupNode;
+
+type LeadHistoryGroupSummary = {
+  leadEventIds: Set<string>;
+  eventTypes: Set<LeadHistoryEventType>;
+  programTitles: Set<string>;
+};
+
+const filterFieldDefinitions: Record<
+  LeadHistoryFilterField,
+  { label: string; valueLabel: string }
+> = {
+  leadEvent: { label: '리드 이벤트', valueLabel: '이벤트 선택' },
+  program: { label: '프로그램', valueLabel: '프로그램 선택' },
+  eventType: { label: '이벤트 유형', valueLabel: '이벤트 유형 선택' },
+};
+
+const filterOperatorOptions: Array<{
+  value: LeadHistoryFilterOperator;
+  label: string;
+}> = [
+  { value: 'include', label: '하나라도 있음' },
+  { value: 'exclude', label: '하나도 없음' },
+];
+
+const isFilterField = (value: unknown): value is LeadHistoryFilterField => {
+  return value === 'leadEvent' || value === 'program' || value === 'eventType';
+};
+
+const isFilterOperator = (
+  value: unknown,
+): value is LeadHistoryFilterOperator => {
+  return value === 'include' || value === 'exclude';
+};
+
+const isFilterCombinator = (
+  value: unknown,
+): value is LeadHistoryFilterCombinator => {
+  return value === 'AND' || value === 'OR';
+};
+
+const createConditionNode = (
+  overrides: Partial<Omit<LeadHistoryFilterConditionNode, 'id' | 'type'>> = {},
+): LeadHistoryFilterConditionNode => ({
+  id: nanoid(),
+  type: 'condition',
+  field: overrides.field ?? 'leadEvent',
+  operator: overrides.operator ?? 'include',
+  values: overrides.values ?? [],
+});
+
+const createGroupNode = (
+  overrides: Partial<Omit<LeadHistoryFilterGroupNode, 'id' | 'type'>> = {},
+): LeadHistoryFilterGroupNode => ({
+  id: nanoid(),
+  type: 'group',
+  combinator: overrides.combinator ?? 'AND',
+  children: overrides.children ?? [],
+});
+
+const toStoredNode = (
+  node: LeadHistoryFilterNode,
+): StoredLeadHistoryFilterNode => {
+  if (node.type === 'condition') {
+    return {
+      type: 'condition',
+      field: node.field,
+      operator: node.operator,
+      values: node.values,
+    };
+  }
+
+  return {
+    type: 'group',
+    combinator: node.combinator,
+    children: node.children.map(toStoredNode),
+  };
+};
+
+const fromStoredNode = (
+  node: StoredLeadHistoryFilterNode,
+): LeadHistoryFilterNode | null => {
+  if (node.type === 'condition') {
+    if (!isFilterField(node.field) || !isFilterOperator(node.operator)) {
+      return null;
+    }
+    const values = Array.isArray(node.values)
+      ? node.values.map((value) => String(value))
+      : [];
+    return createConditionNode({
+      field: node.field,
+      operator: node.operator,
+      values,
+    });
+  }
+
+  if (node.type === 'group') {
+    if (!isFilterCombinator(node.combinator)) {
+      return null;
+    }
+
+    const children = Array.isArray(node.children)
+      ? node.children
+          .map((child) => fromStoredNode(child))
+          .filter((child): child is LeadHistoryFilterNode => child !== null)
+      : [];
+
+    return createGroupNode({
+      combinator: node.combinator,
+      children,
+    });
+  }
+
+  return null;
+};
+
+const serializeFilterTree = (
+  root: LeadHistoryFilterGroupNode,
+): string | undefined => {
+  if (!root.children.length) {
+    return undefined;
+  }
+
+  return JSON.stringify(toStoredNode(root));
+};
+
+const deserializeFilterTree = (
+  raw: string | null,
+): LeadHistoryFilterGroupNode => {
+  if (!raw) {
+    return createGroupNode();
+  }
+
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (
+      !parsed ||
+      typeof parsed !== 'object' ||
+      (parsed as { type?: string }).type !== 'group'
+    ) {
+      return createGroupNode();
+    }
+    const restored = fromStoredNode(parsed as StoredLeadHistoryFilterGroupNode);
+    if (restored && restored.type === 'group') {
+      return restored;
+    }
+  } catch {
+    // ignore
+  }
+
+  return createGroupNode();
+};
+
+const getFilterTreeSignature = (root: LeadHistoryFilterGroupNode) => {
+  return serializeFilterTree(root) ?? '';
+};
+
+const hasConditionWithValues = (node: LeadHistoryFilterNode): boolean => {
+  if (node.type === 'condition') {
+    return node.values.length > 0;
+  }
+
+  return node.children.some((child) => hasConditionWithValues(child));
+};
+
+const evaluateConditionNode = (
+  summary: LeadHistoryGroupSummary,
+  condition: LeadHistoryFilterConditionNode,
+): boolean => {
+  if (!condition.values.length) {
+    return true;
+  }
+
+  switch (condition.field) {
+    case 'leadEvent': {
+      const hasAny = condition.values.some((value) =>
+        summary.leadEventIds.has(String(value)),
+      );
+      return condition.operator === 'include' ? hasAny : !hasAny;
+    }
+    case 'program': {
+      const hasAny = condition.values.some((value) =>
+        summary.programTitles.has(String(value)),
+      );
+      return condition.operator === 'include' ? hasAny : !hasAny;
+    }
+    case 'eventType': {
+      const hasAny = condition.values.some((value) =>
+        summary.eventTypes.has(value as LeadHistoryEventType),
+      );
+      return condition.operator === 'include' ? hasAny : !hasAny;
+    }
+    default:
+      return true;
+  }
+};
+
+const evaluateFilterNode = (
+  summary: LeadHistoryGroupSummary,
+  node: LeadHistoryFilterNode,
+): boolean => {
+  if (node.type === 'condition') {
+    return evaluateConditionNode(summary, node);
+  }
+
+  if (!node.children.length) {
+    return true;
+  }
+
+  if (node.combinator === 'AND') {
+    return node.children.every((child) => evaluateFilterNode(summary, child));
+  }
+
+  return node.children.some((child) => evaluateFilterNode(summary, child));
+};
+
+const updateFilterNode = (
+  node: LeadHistoryFilterNode,
+  targetId: string,
+  updater: (node: LeadHistoryFilterNode) => LeadHistoryFilterNode,
+): LeadHistoryFilterNode => {
+  if (node.id === targetId) {
+    return updater(node);
+  }
+
+  if (node.type === 'group') {
+    return {
+      ...node,
+      children: node.children.map((child) =>
+        updateFilterNode(child, targetId, updater),
+      ),
+    };
+  }
+
+  return node;
+};
+
+const appendChildToGroup = (
+  node: LeadHistoryFilterNode,
+  targetGroupId: string,
+  child: LeadHistoryFilterNode,
+): LeadHistoryFilterNode => {
+  if (node.id === targetGroupId && node.type === 'group') {
+    return {
+      ...node,
+      children: [...node.children, child],
+    };
+  }
+
+  if (node.type === 'group') {
+    return {
+      ...node,
+      children: node.children.map((nested) =>
+        appendChildToGroup(nested, targetGroupId, child),
+      ),
+    };
+  }
+
+  return node;
+};
+
+const removeFilterNode = (
+  node: LeadHistoryFilterNode,
+  targetId: string,
+): LeadHistoryFilterNode | null => {
+  if (node.id === targetId) {
+    return null;
+  }
+
+  if (node.type !== 'group') {
+    return node;
+  }
+
+  const nextChildren = node.children
+    .map((child) => removeFilterNode(child, targetId))
+    .filter((child): child is LeadHistoryFilterNode => child !== null);
+
+  return {
+    ...node,
+    children: nextChildren,
+  };
+};
+
+const renderGroupedLeaf = (
+  row: Row<LeadHistoryRow>,
+  render: (original: LeadHistoryRow) => ReactNode,
+) => {
+  if (row.getIsGrouped()) {
+    return <span className="text-gray-400"></span>;
+  }
+  const original = row.original;
+  if (!original) {
+    return null;
+  }
+  return render(original);
 };
 
 const formatNullableText = (value: unknown) => {
@@ -110,82 +446,196 @@ const escapeCsvValue = (value: unknown) => {
   return `"${stringValue.replace(/"/g, '""')}"`;
 };
 
-const INITIAL_GRID_STATE = {
-  pagination: { paginationModel: { pageSize: 20, page: 0 } },
-} as const;
-
-const PAGE_SIZE_OPTIONS = [20];
-
-const parseEventTypeParam = (param: string | null): LeadHistoryEventType[] => {
-  if (!param) return [];
-  return param
-    .split(',')
-    .map((value) => value.trim())
-    .filter(
-      (value): value is LeadHistoryEventType =>
-        value === 'SIGN_UP' || value === 'PROGRAM' || value === 'LEAD_EVENT',
-    );
-};
-
-const buildFiltersFromParams = (
-  params: URLSearchParams,
-): LeadHistoryFilters => {
-  const leadEventIdsParam = params.get('leadEventIds') ?? '';
-  const leadEventTypesParam = params.get('leadEventTypes') ?? '';
-  const namesParam = params.get('names') ?? '';
-  const phoneNumsParam = params.get('phoneNums') ?? '';
-
-  const eventTypeList = parseEventTypeParam(params.get('eventTypes'));
-  const leadEventIdList = splitToNumberList(leadEventIdsParam);
-  const leadEventTypeList = splitToList(leadEventTypesParam);
-  const nameList = splitToList(namesParam);
-  const phoneNumList = splitToList(phoneNumsParam);
-
-  return {
-    eventTypeList: eventTypeList.length ? eventTypeList : undefined,
-    leadEventIdList: leadEventIdList.length ? leadEventIdList : undefined,
-    leadEventTypeList: leadEventTypeList.length ? leadEventTypeList : undefined,
-    nameList: nameList.length ? nameList : undefined,
-    phoneNumList: phoneNumList.length ? phoneNumList : undefined,
-  };
-};
-
-const buildFormStateFromParams = (params: URLSearchParams) => ({
-  eventTypes: parseEventTypeParam(params.get('eventTypes')),
-  leadEventIds: params.get('leadEventIds') ?? '',
-  leadEventTypes: params.get('leadEventTypes') ?? '',
-  names: params.get('names') ?? '',
-  phoneNums: params.get('phoneNums') ?? '',
-});
-
-const LeadHistoryDataGrid = memo(
+const LeadHistoryTable = memo(
   ({
-    rows,
+    data,
     columns,
-    loading,
-    getRowId,
+    isLoading,
+    expanded,
+    onExpandedChange,
   }: {
-    rows: LeadHistoryGroupRow[];
-    columns: GridColDef<LeadHistoryGroupRow>[];
-    loading: boolean;
-    getRowId: (row: LeadHistoryGroupRow) => GridRowId;
+    data: LeadHistoryRow[];
+    columns: ColumnDef<LeadHistoryRow>[];
+    isLoading: boolean;
+    expanded: ExpandedState;
+    onExpandedChange: Dispatch<SetStateAction<ExpandedState>>;
   }) => {
+    const [sorting, setSorting] = useState<SortingState>([
+      { id: 'createDate', desc: true },
+    ]);
+    const [grouping] = useState<GroupingState>(['displayPhoneNum']);
+
+    const table = useReactTable({
+      data,
+      columns,
+      state: { sorting, grouping, expanded },
+      onSortingChange: setSorting,
+      onExpandedChange,
+      getCoreRowModel: getCoreRowModel(),
+      getSortedRowModel: getSortedRowModel(),
+      getGroupedRowModel: getGroupedRowModel(),
+      getExpandedRowModel: getExpandedRowModel(),
+      autoResetExpanded: false,
+      getRowId: (row) => row.id,
+    });
+
+    const columnCount = table.getAllLeafColumns().length || columns.length || 1;
+
     return (
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        disableRowSelectionOnClick
-        loading={loading}
-        autoHeight
-        getRowId={getRowId}
-        initialState={INITIAL_GRID_STATE}
-        pageSizeOptions={PAGE_SIZE_OPTIONS}
-      />
+      <div className="rounded border border-gray-200">
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-left text-sm">
+            <thead className="bg-gray-100">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header, i) => {
+                    if (header.isPlaceholder) {
+                      return <th key={header.id} className="px-3 py-2" />;
+                    }
+
+                    const sorted = header.column.getIsSorted();
+                    const canSort = header.column.getCanSort();
+
+                    const headerClassName =
+                      header.column.columnDef.meta?.headerClassName ?? '';
+
+                    return (
+                      <th
+                        key={header.id}
+                        className={`px-3 py-2 font-medium text-gray-700 ${headerClassName}`}
+                        style={{
+                          ...(i === 0
+                            ? {
+                                position: 'sticky',
+                                left: 0,
+                                background: '#fff',
+                                zIndex: 1,
+                              }
+                            : // : i === 1
+                              //   ? {
+                              //       position: 'sticky',
+                              //       left: 200,
+                              //       background: '#fff',
+                              //       borderRight: '1px solid #ddd',
+                              //       zIndex: 2,
+                              //     }
+                              {}),
+                        }}
+                      >
+                        <button
+                          type="button"
+                          onClick={
+                            canSort
+                              ? header.column.getToggleSortingHandler()
+                              : undefined
+                          }
+                          className={`flex items-center gap-1 ${canSort ? 'cursor-pointer select-none' : 'cursor-default'}`}
+                        >
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                          {sorted === 'asc' && (
+                            <span
+                              aria-hidden
+                              className="text-[10px] leading-none"
+                            >
+                              ▲
+                            </span>
+                          )}
+                          {sorted === 'desc' && (
+                            <span
+                              aria-hidden
+                              className="text-[10px] leading-none"
+                            >
+                              ▼
+                            </span>
+                          )}
+                        </button>
+                      </th>
+                    );
+                  })}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr>
+                  <td
+                    colSpan={columnCount}
+                    className="px-3 py-10 text-center text-gray-500"
+                  >
+                    로딩 중...
+                  </td>
+                </tr>
+              ) : table.getRowModel().rows.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={columnCount}
+                    className="px-3 py-6 text-center text-gray-500"
+                  >
+                    표시할 데이터가 없습니다.
+                  </td>
+                </tr>
+              ) : (
+                table.getRowModel().rows.map((row) => (
+                  <tr
+                    key={row.id}
+                    className={twMerge(
+                      'border-t border-gray-100',
+                      !row.getIsGrouped() && 'bg-slate-50',
+                      row.getIsGrouped() && 'font-medium',
+                    )}
+                  >
+                    {row.getVisibleCells().map((cell, i) => {
+                      const cellClassName =
+                        cell.column.columnDef.meta?.cellClassName ?? '';
+
+                      return (
+                        <td
+                          key={cell.id}
+                          className={`px-3 py-2 align-top text-gray-900 ${cellClassName}`}
+                          style={{
+                            padding: '8px',
+                            borderBottom: '1px solid #eee',
+                            // 첫 번째 컬럼 고정
+                            ...(i === 0
+                              ? {
+                                  position: 'sticky',
+                                  left: 0,
+                                  background: '#fff',
+                                  zIndex: 1,
+                                }
+                              : // : i === 1
+                                //   ? {
+                                //       position: 'sticky',
+                                //       left: 200,
+                                //       background: '#fff',
+                                //       borderRight: '1px solid #ddd',
+                                //       zIndex: 2,
+                                //     }
+                                {}),
+                          }}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     );
   },
 );
 
-LeadHistoryDataGrid.displayName = 'LeadHistoryDataGrid';
+LeadHistoryTable.displayName = 'LeadHistoryTable';
 
 const CreateLeadHistoryDialog = ({
   open,
@@ -399,24 +849,19 @@ const CreateLeadHistoryDialog = ({
 };
 
 const LeadHistoryPage = () => {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
-
-  const defaultFormValues = useMemo(
-    () => buildFormStateFromParams(searchParams),
-    [searchParams],
-  );
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [expanded, setExpanded] = useState<ExpandedState>(true);
   const { snackbar } = useAdminSnackbar();
 
-  const appliedFilters = useMemo<LeadHistoryFilters>(
-    () => buildFiltersFromParams(searchParams),
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const filterTree = useMemo<LeadHistoryFilterGroupNode>(
+    () => deserializeFilterTree(searchParams.get(FILTER_QUERY_KEY)),
     [searchParams],
   );
 
-  const { data: leadHistoryData = [], isLoading } =
-    useLeadHistoryListQuery(appliedFilters);
+  const { data: leadHistoryData = [], isLoading } = useLeadHistoryListQuery();
 
   const leadEventListParams = useMemo(
     () => ({
@@ -426,6 +871,46 @@ const LeadHistoryPage = () => {
   );
   const { data: leadEventData } = useLeadEventListQuery(leadEventListParams);
 
+  const replaceFilterTree = useCallback(
+    (nextTree: LeadHistoryFilterGroupNode) => {
+      const currentSignature = getFilterTreeSignature(filterTree);
+      const nextSignature = getFilterTreeSignature(nextTree);
+
+      if (currentSignature === nextSignature) {
+        console.log('[lead] No changes in filter tree, skipping URL update');
+        return;
+      }
+
+      const serialized = serializeFilterTree(nextTree);
+      const params = new URLSearchParams(searchParams.toString());
+
+      if (serialized) {
+        params.set(FILTER_QUERY_KEY, serialized);
+      } else {
+        params.delete(FILTER_QUERY_KEY);
+      }
+
+      const queryString = params.toString();
+      router.replace(queryString ? `${pathname}?${queryString}` : pathname, {
+        scroll: false,
+      });
+    },
+    [pathname, router, searchParams],
+  );
+
+  const updateFilterTree = useCallback(
+    (
+      updater: (
+        current: LeadHistoryFilterGroupNode,
+      ) => LeadHistoryFilterGroupNode,
+    ) => {
+      const baseTree = filterTree;
+      const nextTree = updater(baseTree);
+      replaceFilterTree(nextTree);
+    },
+    [filterTree, replaceFilterTree],
+  );
+
   const leadEventMap = useMemo(() => {
     const map = new Map<number, string>();
     leadEventData?.leadEventList.forEach((event) => {
@@ -434,474 +919,844 @@ const LeadHistoryPage = () => {
     return map;
   }, [leadEventData]);
 
-  const groupedRows = useMemo<LeadHistoryGroupRow[]>(() => {
+  const allRows = useMemo<LeadHistoryRow[]>(() => {
     if (!leadHistoryData.length) return [];
 
-    const groups = groupBy(leadHistoryData, (item) => {
-      const normalizedPhone = item.phoneNum?.trim();
-      if (normalizedPhone) return `PHONE_${normalizedPhone}`;
-      if (item.userId !== null && item.userId !== undefined) {
-        return `USER_${item.userId}`;
-      }
-      return '__NO_PHONE__';
-    });
-
-    const createRow = (
-      rowId: string,
-      items: LeadHistory[],
-    ): LeadHistoryGroupRow => {
-      const sorted = [...items].sort(
-        (a, b) => toTimestamp(b.createDate) - toTimestamp(a.createDate),
-      );
-
-      const getLatestValue = <T,>(
-        selector: (item: LeadHistory) => T | null | undefined,
-      ): T | null => {
-        for (const history of sorted) {
-          const value = selector(history);
-          if (!isEmptyValue(value)) {
-            return (value as T) ?? null;
-          }
-        }
-        return null;
-      };
-
-      const getOldestValue = <T,>(
-        selector: (item: LeadHistory) => T | null | undefined,
-      ): T | null => {
-        for (let index = sorted.length - 1; index >= 0; index -= 1) {
-          const value = selector(sorted[index]);
-          if (!isEmptyValue(value)) {
-            return (value as T) ?? null;
-          }
-        }
-        return null;
-      };
-
-      const primaryPhone =
-        getLatestValue((item) => item.phoneNum?.trim()) ?? null;
-
-      const normalizedKeyPhone = rowId.startsWith('PHONE_')
-        ? rowId.replace('PHONE_', '')
-        : null;
-
+    return leadHistoryData.map((item, index) => {
+      const trimmedPhone = item.phoneNum?.trim() ?? null;
       const displayPhoneNum =
-        primaryPhone ??
-        normalizedKeyPhone ??
-        (rowId.startsWith('USER_')
-          ? `회원 #${rowId.replace('USER_', '')}`
+        trimmedPhone ??
+        (item.userId !== null && item.userId !== undefined
+          ? `회원 #${item.userId}`
           : '미등록');
 
-      const latestCreateDate =
-        sorted.find((item) => item.createDate)?.createDate ?? null;
-      const latestTimestamp = toTimestamp(latestCreateDate);
+      const leadEventTitle =
+        item.title ??
+        (item.leadEventId !== null && item.leadEventId !== undefined
+          ? (leadEventMap.get(item.leadEventId) ?? null)
+          : null);
 
-      const latestEventType = sorted.find((item) => item.eventType)?.eventType;
-
-      const latestEventTitleFromData =
-        getLatestValue((item) => item.title) ?? null;
-
-      let latestEventTitle = latestEventTitleFromData;
-      if (!latestEventTitle) {
-        const historyWithEventId = sorted.find(
-          (item) => item.leadEventId !== null && item.leadEventId !== undefined,
-        );
-        if (historyWithEventId?.leadEventId != null) {
-          latestEventTitle =
-            leadEventMap.get(historyWithEventId.leadEventId) ?? null;
-        }
-      }
-
-      const programHistory = sorted
-        .filter((item) => item.eventType === 'PROGRAM')
-        .map((item) => ({
-          date: item.createDate ?? '',
-          title: item.title ?? null,
-        }));
+      const rowId = [
+        trimmedPhone ?? 'NO_PHONE',
+        item.leadEventId ?? 'NO_EVENT',
+        item.createDate ?? index,
+      ].join('_');
 
       return {
         id: rowId,
-        phoneNum: primaryPhone,
+        phoneNum: trimmedPhone,
         displayPhoneNum,
-        name: getLatestValue((item) => item.name),
-        email: getLatestValue((item) => item.email),
-        inflow: getOldestValue((item) => item.inflow),
-        firstInflowDate: getOldestValue((item) => item.createDate),
-        university: getLatestValue((item) => item.university),
-        major: getLatestValue((item) => item.major),
-        wishField: getLatestValue((item) => item.wishField),
-        wishCompany: getLatestValue((item) => item.wishCompany),
-        wishIndustry: getLatestValue((item) => item.wishIndustry),
-        wishJob: getLatestValue((item) => item.wishJob),
-        jobStatus: getLatestValue((item) => item.jobStatus),
-        instagramId: getLatestValue((item) => item.instagramId),
-        latestEventType: latestEventType ?? undefined,
-        latestEventTitle,
-        programHistory,
-        latestCreateDate,
-        latestTimestamp,
-        totalActions: items.length,
-        programCount: items.filter((item) => item.eventType === 'PROGRAM')
-          .length,
-        totalFinalPrice: items.reduce(
-          (sum, item) => sum + (item.finalPrice ?? 0),
-          0,
-        ),
-        items,
+        name: item.name ?? null,
+        email: item.email ?? null,
+        inflow: item.inflow ?? null,
+        university: item.university ?? null,
+        major: item.major ?? null,
+        wishField: item.wishField ?? null,
+        wishCompany: item.wishCompany ?? null,
+        wishIndustry: item.wishIndustry ?? null,
+        wishJob: item.wishJob ?? null,
+        jobStatus: item.jobStatus ?? null,
+        instagramId: item.instagramId ?? null,
+        eventType: item.eventType,
+        leadEventId: item.leadEventId ?? null,
+        leadEventType: item.leadEventType ?? null,
+        userId: item.userId ?? null,
+        title: leadEventTitle,
+        finalPrice: item.finalPrice ?? null,
+        createDate: item.createDate ?? null,
       };
-    };
-
-    const rows: LeadHistoryGroupRow[] = [];
-
-    Object.entries(groups).forEach(([groupKey, items]) => {
-      if (groupKey === '__NO_PHONE__') {
-        items.forEach((item, index) => {
-          rows.push(createRow(`${groupKey}_${index}`, [item]));
-        });
-      } else {
-        rows.push(createRow(groupKey, items));
-      }
     });
-
-    return rows.sort((a, b) => b.latestTimestamp - a.latestTimestamp);
   }, [leadHistoryData, leadEventMap]);
 
-  const filteredRows = useMemo(() => {
-    return groupedRows.filter((row) => {
-      if (
-        appliedFilters.eventTypeList &&
-        !appliedFilters.eventTypeList.some((type) =>
-          row.items.some((item) => item.eventType === type),
-        )
-      ) {
-        return false;
-      }
+  const leadEventOptions = useMemo(
+    () =>
+      (leadEventData?.leadEventList ?? []).map((event) => ({
+        value: String(event.leadEventId),
+        label: event.title ?? `#${event.leadEventId}`,
+      })),
+    [leadEventData],
+  );
 
-      if (
-        appliedFilters.leadEventIdList &&
-        !appliedFilters.leadEventIdList.some((id) =>
-          row.items.some((item) => item.leadEventId === id),
-        )
-      ) {
-        return false;
-      }
-
-      if (
-        appliedFilters.leadEventTypeList &&
-        !appliedFilters.leadEventTypeList.some((type) =>
-          row.items.some((item) => item.leadEventType === type),
-        )
-      ) {
-        return false;
-      }
-
-      if (
-        appliedFilters.nameList &&
-        !appliedFilters.nameList.some((name) =>
-          row.items.some((item) => item.name === name),
-        )
-      ) {
-        return false;
-      }
-
-      if (
-        appliedFilters.phoneNumList &&
-        !appliedFilters.phoneNumList.some((phone) =>
-          row.items.some((item) => item.phoneNum?.trim() === phone),
-        )
-      ) {
-        return false;
-      }
-
-      return true;
+  const leadEventLabelMap = useMemo(() => {
+    const map = new Map<string, string>();
+    leadEventOptions.forEach(({ value, label }) => {
+      map.set(value, label);
     });
-  }, [appliedFilters, groupedRows]);
+    return map;
+  }, [leadEventOptions]);
 
-  const columns = useMemo<GridColDef<LeadHistoryGroupRow>[]>(
+  const programOptions = useMemo(() => {
+    const unique = new Set<string>();
+    allRows.forEach((row) => {
+      if (row.eventType === 'PROGRAM' && row.title) {
+        unique.add(row.title);
+      }
+    });
+    return Array.from(unique)
+      .sort((a, b) => a.localeCompare(b))
+      .map((title) => ({
+        value: title,
+        label: title,
+      }));
+  }, [allRows]);
+
+  const groupSummaryMap = useMemo(() => {
+    const map = new Map<string, LeadHistoryGroupSummary>();
+    allRows.forEach((row) => {
+      const key = row.displayPhoneNum;
+      const summary = map.get(key) ?? {
+        leadEventIds: new Set<string>(),
+        eventTypes: new Set<LeadHistoryEventType>(),
+        programTitles: new Set<string>(),
+      };
+
+      if (row.leadEventId !== null && row.leadEventId !== undefined) {
+        summary.leadEventIds.add(String(row.leadEventId));
+      }
+
+      if (row.eventType) {
+        summary.eventTypes.add(row.eventType);
+      }
+
+      if (row.eventType === 'PROGRAM' && row.title) {
+        summary.programTitles.add(row.title);
+      }
+
+      map.set(key, summary);
+    });
+    return map;
+  }, [allRows]);
+
+  const hasActiveFilter = useMemo(
+    () => hasConditionWithValues(filterTree),
+    [filterTree],
+  );
+
+  const filteredRows = useMemo(() => {
+    if (!hasActiveFilter) {
+      return allRows;
+    }
+
+    const allowed = new Set<string>();
+
+    groupSummaryMap.forEach((summary, key) => {
+      if (evaluateFilterNode(summary, filterTree)) {
+        allowed.add(key);
+      }
+    });
+
+    if (!allowed.size) {
+      return [];
+    }
+
+    return allRows.filter((row) => allowed.has(row.displayPhoneNum));
+  }, [allRows, filterTree, groupSummaryMap, hasActiveFilter]);
+
+  const handleResetFilters = useCallback(() => {
+    const nextTree = createGroupNode();
+    replaceFilterTree(nextTree);
+  }, [replaceFilterTree]);
+
+  const filteredGroupCount = useMemo(() => {
+    if (!filteredRows.length) {
+      return 0;
+    }
+    const groups = new Set<string>();
+    filteredRows.forEach((row) => {
+      groups.add(row.displayPhoneNum);
+    });
+    return groups.size;
+  }, [filteredRows]);
+
+  const totalGroupCount = groupSummaryMap.size;
+
+  const handleAddCondition = useCallback(
+    (groupId: string) => {
+      updateFilterTree(
+        (prev) =>
+          appendChildToGroup(
+            prev,
+            groupId,
+            createConditionNode(),
+          ) as LeadHistoryFilterGroupNode,
+      );
+    },
+    [updateFilterTree],
+  );
+
+  const handleAddGroup = useCallback(
+    (groupId: string) => {
+      updateFilterTree(
+        (prev) =>
+          appendChildToGroup(
+            prev,
+            groupId,
+            createGroupNode(),
+          ) as LeadHistoryFilterGroupNode,
+      );
+    },
+    [updateFilterTree],
+  );
+
+  const handleUpdateGroupCombinator = useCallback(
+    (groupId: string, combinator: LeadHistoryFilterCombinator) => {
+      updateFilterTree(
+        (prev) =>
+          updateFilterNode(prev, groupId, (node) => {
+            if (node.type !== 'group') {
+              return node;
+            }
+            return {
+              ...node,
+              combinator,
+            };
+          }) as LeadHistoryFilterGroupNode,
+      );
+    },
+    [updateFilterTree],
+  );
+
+  const handleUpdateCondition = useCallback(
+    (
+      conditionId: string,
+      updates: Partial<Omit<LeadHistoryFilterConditionNode, 'id' | 'type'>>,
+    ) => {
+      updateFilterTree(
+        (prev) =>
+          updateFilterNode(prev, conditionId, (node) => {
+            if (node.type !== 'condition') {
+              return node;
+            }
+
+            let next: LeadHistoryFilterConditionNode = { ...node };
+
+            if (updates.field && updates.field !== node.field) {
+              next = {
+                ...next,
+                field: updates.field,
+                values: [],
+              };
+            } else if (updates.field) {
+              next = {
+                ...next,
+                field: updates.field,
+              };
+            }
+
+            if (updates.operator) {
+              next = {
+                ...next,
+                operator: updates.operator,
+              };
+            }
+
+            if (updates.values) {
+              next = {
+                ...next,
+                values: updates.values,
+              };
+            } else if (updates.values !== undefined) {
+              next = {
+                ...next,
+                values: [],
+              };
+            }
+
+            return next;
+          }) as LeadHistoryFilterGroupNode,
+      );
+    },
+    [updateFilterTree],
+  );
+
+  const handleRemoveNode = useCallback(
+    (nodeId: string) => {
+      updateFilterTree((prev) => {
+        if (prev.id === nodeId) {
+          return prev;
+        }
+        const next = removeFilterNode(prev, nodeId);
+        if (!next || next.type !== 'group') {
+          return prev;
+        }
+        return next;
+      });
+    },
+    [updateFilterTree],
+  );
+
+  const rootHasChildren = filterTree.children.length > 0;
+
+  const getValueLabel = useCallback(
+    (field: LeadHistoryFilterField, value: string) => {
+      if (field === 'leadEvent') {
+        return leadEventLabelMap.get(value) ?? value;
+      }
+      if (field === 'program') {
+        return value;
+      }
+      if (field === 'eventType') {
+        return (
+          leadHistoryEventTypeLabels[value as LeadHistoryEventType] ?? value
+        );
+      }
+      return value;
+    },
+    [leadEventLabelMap],
+  );
+
+  const getOptionsForField = useCallback(
+    (field: LeadHistoryFilterField) => {
+      if (field === 'leadEvent') {
+        return leadEventOptions;
+      }
+      if (field === 'program') {
+        return programOptions;
+      }
+      return eventTypeOptions;
+    },
+    [leadEventOptions, programOptions],
+  );
+
+  const FilterConditionEditor = ({
+    node,
+  }: {
+    node: LeadHistoryFilterConditionNode;
+  }) => {
+    const valueOptions = getOptionsForField(node.field);
+
+    return (
+      <div className="rounded flex w-full flex-wrap items-end gap-2 border border-gray-200 bg-white px-2 py-2">
+        <TextField
+          select
+          size="small"
+          label="대상"
+          value={node.field}
+          onChange={(event) =>
+            handleUpdateCondition(node.id, {
+              field: event.target.value as LeadHistoryFilterField,
+            })
+          }
+          className="min-w-[120px]"
+        >
+          {Object.entries(filterFieldDefinitions).map(([value, { label }]) => (
+            <MenuItem key={value} value={value} className="text-xsmall14">
+              {label}
+            </MenuItem>
+          ))}
+        </TextField>
+        <TextField
+          select
+          size="small"
+          label="조건"
+          value={node.operator}
+          onChange={(event) =>
+            handleUpdateCondition(node.id, {
+              operator: event.target.value as LeadHistoryFilterOperator,
+            })
+          }
+          className="min-w-[120px]"
+        >
+          {filterOperatorOptions.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </TextField>
+        <TextField
+          select
+          size="small"
+          fullWidth
+          label={filterFieldDefinitions[node.field].valueLabel}
+          value={node.values}
+          onChange={(event) => {
+            const { value } = event.target;
+            const nextValues = Array.isArray(value)
+              ? value.map((item) => String(item))
+              : [String(value)];
+            handleUpdateCondition(node.id, {
+              values: nextValues,
+            });
+          }}
+          SelectProps={{
+            multiple: true,
+            displayEmpty: true,
+            renderValue: (selected) => {
+              if (!selected || (Array.isArray(selected) && !selected.length)) {
+                return '';
+              }
+              const list = Array.isArray(selected) ? selected : [selected];
+              return list
+                .map((item) => getValueLabel(node.field, String(item)))
+                .join(', ');
+            },
+          }}
+          className="min-w-[200px] flex-1"
+          disabled={!valueOptions.length}
+          helperText={
+            !valueOptions.length ? '선택 가능한 항목이 없습니다.' : undefined
+          }
+        >
+          {valueOptions.map(({ value, label }) => (
+            <MenuItem key={value} value={value}>
+              {label}
+            </MenuItem>
+          ))}
+        </TextField>
+        <Button
+          size="small"
+          color="error"
+          variant="text"
+          onClick={() => handleRemoveNode(node.id)}
+        >
+          삭제
+        </Button>
+      </div>
+    );
+  };
+
+  const FilterGroupEditor = ({
+    node,
+    isRoot = false,
+  }: {
+    node: LeadHistoryFilterGroupNode;
+    isRoot?: boolean;
+  }) => {
+    return (
+      <div
+        className={twMerge(
+          'rounded flex flex-col gap-2 border border-gray-200 bg-gray-50 p-3',
+          !isRoot && 'ml-4',
+        )}
+      >
+        <div className="flex flex-wrap items-center gap-2">
+          <Typography className="text-[11px] font-medium text-gray-600">
+            {isRoot ? '최상위 그룹' : '하위 그룹'}
+          </Typography>
+          <TextField
+            select
+            size="small"
+            label="연결"
+            value={node.combinator}
+            onChange={(event) =>
+              handleUpdateGroupCombinator(
+                node.id,
+                event.target.value as LeadHistoryFilterCombinator,
+              )
+            }
+            className="w-24"
+          >
+            <MenuItem value="AND">AND</MenuItem>
+            <MenuItem value="OR">OR</MenuItem>
+          </TextField>
+          <div className="ml-auto flex items-center gap-1">
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={() => handleAddCondition(node.id)}
+            >
+              조건
+            </Button>
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={() => handleAddGroup(node.id)}
+            >
+              그룹
+            </Button>
+            {!isRoot && (
+              <Button
+                size="small"
+                color="error"
+                variant="text"
+                onClick={() => handleRemoveNode(node.id)}
+              >
+                삭제
+              </Button>
+            )}
+          </div>
+        </div>
+        {node.children.length === 0 ? (
+          <Typography className="rounded border border-dashed border-gray-200 bg-white px-2 py-2 text-[12px] text-gray-500">
+            조건이 없습니다. 버튼을 눌러 조건 또는 하위 그룹을 추가하세요.
+          </Typography>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {node.children.map((child) =>
+              child.type === 'condition' ? (
+                <FilterConditionEditor key={child.id} node={child} />
+              ) : (
+                <FilterGroupEditor key={child.id} node={child} />
+              ),
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const columns = useMemo<ColumnDef<LeadHistoryRow>[]>(
     () => [
       {
-        field: 'displayPhoneNum',
-        headerName: '전화번호',
-        width: 160,
-      },
-      {
-        field: 'name',
-        headerName: '이름',
-        width: 120,
-        valueFormatter: (value) => formatNullableText(value),
-      },
-      {
-        field: 'email',
-        headerName: '이메일',
-        width: 220,
-        valueFormatter: (value) => formatNullableText(value),
-      },
-      {
-        field: 'latestEventType',
-        headerName: '최신 이벤트 유형',
-        width: 160,
-        valueFormatter: (value) =>
-          value
-            ? leadHistoryEventTypeLabels[value as LeadHistoryEventType]
-            : '-',
-      },
-      {
-        field: 'latestEventTitle',
-        headerName: '최신 이벤트',
-        width: 220,
-        valueFormatter: (value) => formatNullableText(value),
-      },
-      {
-        field: 'latestCreateDate',
-        headerName: '최신 유입일자',
-        width: 160,
-        valueFormatter: (value) =>
-          value && typeof value === 'string'
-            ? dayjs(value).format('YYYY/MM/DD')
-            : '-',
-      },
-      {
-        field: 'firstInflowDate',
-        headerName: '첫 유입일자',
-        width: 160,
-        valueFormatter: (value) =>
-          value && typeof value === 'string'
-            ? dayjs(value).format('YYYY/MM/DD')
-            : '-',
-      },
-      {
-        field: 'inflow',
-        headerName: '첫 유입 경로',
-        width: 160,
-        valueFormatter: (value) => formatNullableText(value),
-      },
-      {
-        field: 'totalActions',
-        headerName: '전체 행동 횟수',
-        width: 160,
-      },
-      {
-        field: 'programCount',
-        headerName: '프로그램 참여 수',
-        width: 180,
-      },
-      {
-        field: 'programHistory',
-        headerName: '프로그램 참여 이력',
-        width: 220,
-        sortable: false,
-        renderCell: ({ value }) => {
-          if (!Array.isArray(value) || value.length === 0) return '-';
-          return (
-            <div className="h-full overflow-y-auto whitespace-normal text-[11px] leading-tight">
-              {value
-                .slice(0, 5)
-                .map(
-                  (
-                    item: { date: string; title: string | null },
-                    idx: number,
-                  ) => (
-                    <div key={`${item.date}-${idx}`}>
-                      {item.date ? dayjs(item.date).format('YY/MM/DD') : '—'}
-                      {item.title ? ` - ${item.title}` : ''}
-                    </div>
-                  ),
-                )}
-              {value.length > 5 && <div>외 {value.length - 5}건</div>}
-            </div>
-          );
+        accessorKey: 'displayPhoneNum',
+        header: '전화번호',
+        enableGrouping: true,
+        groupedColumnMode: 'remove',
+        meta: {
+          headerClassName: 'min-w-[200px]',
+          cellClassName: 'min-w-[200px]',
+        },
+        cell: ({ row, getValue }) => {
+          const value = formatNullableText(getValue());
+          if (row.getIsGrouped()) {
+            const count = row.subRows?.length ?? 0;
+            return (
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={row.getToggleExpandedHandler()}
+                  className="rounded flex h-6 w-6 items-center justify-center border border-gray-200 text-[10px] leading-none text-gray-600"
+                  aria-label={
+                    row.getIsExpanded()
+                      ? '전화번호 그룹 접기'
+                      : '전화번호 그룹 펼치기'
+                  }
+                >
+                  {row.getIsExpanded() ? '-' : '+'}
+                </button>
+                <span>{value}</span>
+                <span className="text-xs text-gray-400">({count}건)</span>
+              </div>
+            );
+          }
+          return value;
         },
       },
       {
-        field: 'totalFinalPrice',
-        headerName: '총 결제 금액',
-        width: 160,
-        valueFormatter: (value) =>
-          typeof value === 'number'
-            ? new Intl.NumberFormat('ko-KR').format(value as number)
-            : '-',
+        accessorKey: 'name',
+        header: '이름',
+        meta: {
+          headerClassName: 'min-w-[120px]',
+          cellClassName: 'min-w-[120px]',
+        },
+        aggregationFn: 'unique',
+      },
+
+      {
+        accessorKey: 'email',
+        header: '이메일',
+        meta: {
+          headerClassName: 'min-w-[220px]',
+          cellClassName: 'min-w-[220px]',
+        },
       },
       {
-        field: 'university',
-        headerName: '대학',
-        width: 150,
-        valueFormatter: (value) => formatNullableText(value),
+        accessorKey: 'createDate',
+        header: '생성일',
+        meta: {
+          headerClassName: 'min-w-[170px]',
+          cellClassName: 'min-w-[170px]',
+        },
+        cell: ({ row }) =>
+          renderGroupedLeaf(row, (original) => {
+            const value = original.createDate;
+            return value ? dayjs(value).format('YYYY.MM.DD.') : '-';
+          }),
       },
       {
-        field: 'major',
-        headerName: '전공',
-        width: 150,
-        valueFormatter: (value) => formatNullableText(value),
+        accessorKey: 'eventType',
+        header: '이벤트 유형',
+        meta: {
+          headerClassName: 'min-w-[140px]',
+          cellClassName: 'min-w-[140px]',
+        },
+        cell: ({ row }) =>
+          renderGroupedLeaf(row, (original) => {
+            const value = original.eventType;
+            return value ? leadHistoryEventTypeLabels[value] : '-';
+          }),
       },
       {
-        field: 'wishField',
-        headerName: '희망 분야',
-        width: 150,
-        valueFormatter: (value) => formatNullableText(value),
+        accessorKey: 'title',
+        header: '이벤트 제목',
+        meta: {
+          headerClassName: 'min-w-[220px]',
+          cellClassName: 'min-w-[220px]',
+        },
+        cell: ({ row }) =>
+          renderGroupedLeaf(row, (original) =>
+            formatNullableText(original.title),
+          ),
       },
       {
-        field: 'wishCompany',
-        headerName: '희망 회사',
-        width: 150,
-        valueFormatter: (value) => formatNullableText(value),
+        accessorKey: 'leadEventId',
+        header: '리드 이벤트 ID',
+        meta: {
+          headerClassName: 'min-w-[140px]',
+          cellClassName: 'min-w-[140px]',
+        },
+        cell: ({ row }) =>
+          renderGroupedLeaf(row, (original) =>
+            formatNullableText(original.leadEventId),
+          ),
       },
       {
-        field: 'wishIndustry',
-        headerName: '희망 산업군',
-        width: 160,
-        valueFormatter: (value) => formatNullableText(value),
+        accessorKey: 'leadEventType',
+        header: '리드 이벤트 타입',
+        meta: {
+          headerClassName: 'min-w-[160px]',
+          cellClassName: 'min-w-[160px]',
+        },
+        cell: ({ row }) =>
+          renderGroupedLeaf(row, (original) =>
+            formatNullableText(original.leadEventType),
+          ),
       },
       {
-        field: 'wishJob',
-        headerName: '희망 직무',
-        width: 150,
-        valueFormatter: (value) => formatNullableText(value),
+        accessorKey: 'userId',
+        header: '회원 ID',
+        meta: {
+          headerClassName: 'min-w-[120px]',
+          cellClassName: 'min-w-[120px]',
+        },
+        cell: ({ row }) =>
+          renderGroupedLeaf(row, (original) =>
+            formatNullableText(original.userId),
+          ),
+      },
+
+      {
+        accessorKey: 'inflow',
+        header: '유입 경로',
+        meta: {
+          headerClassName: 'min-w-[160px]',
+          cellClassName: 'min-w-[160px]',
+        },
+        cell: ({ row }) =>
+          renderGroupedLeaf(row, (original) =>
+            formatNullableText(original.inflow),
+          ),
       },
       {
-        field: 'jobStatus',
-        headerName: '현 직무 상태',
-        width: 160,
-        valueFormatter: (value) => formatNullableText(value),
+        accessorKey: 'university',
+        header: '대학',
+        meta: {
+          headerClassName: 'min-w-[150px]',
+          cellClassName: 'min-w-[150px]',
+        },
+        cell: ({ row }) =>
+          renderGroupedLeaf(row, (original) =>
+            formatNullableText(original.university),
+          ),
       },
       {
-        field: 'instagramId',
-        headerName: '인스타그램',
-        width: 160,
-        valueFormatter: (value) => formatNullableText(value),
+        accessorKey: 'major',
+        header: '전공',
+        meta: {
+          headerClassName: 'min-w-[150px]',
+          cellClassName: 'min-w-[150px]',
+        },
+        cell: ({ row }) =>
+          renderGroupedLeaf(row, (original) =>
+            formatNullableText(original.major),
+          ),
+      },
+      {
+        accessorKey: 'wishField',
+        header: '희망 분야',
+        meta: {
+          headerClassName: 'min-w-[150px]',
+          cellClassName: 'min-w-[150px]',
+        },
+        cell: ({ row }) =>
+          renderGroupedLeaf(row, (original) =>
+            formatNullableText(original.wishField),
+          ),
+      },
+      {
+        accessorKey: 'wishCompany',
+        header: '희망 회사',
+        meta: {
+          headerClassName: 'min-w-[150px]',
+          cellClassName: 'min-w-[150px]',
+        },
+        cell: ({ row }) =>
+          renderGroupedLeaf(row, (original) =>
+            formatNullableText(original.wishCompany),
+          ),
+      },
+      {
+        accessorKey: 'wishIndustry',
+        header: '희망 산업군',
+        meta: {
+          headerClassName: 'min-w-[160px]',
+          cellClassName: 'min-w-[160px]',
+        },
+        cell: ({ row }) =>
+          renderGroupedLeaf(row, (original) =>
+            formatNullableText(original.wishIndustry),
+          ),
+      },
+      {
+        accessorKey: 'wishJob',
+        header: '희망 직무',
+        meta: {
+          headerClassName: 'min-w-[150px]',
+          cellClassName: 'min-w-[150px]',
+        },
+        cell: ({ row }) =>
+          renderGroupedLeaf(row, (original) =>
+            formatNullableText(original.wishJob),
+          ),
+      },
+      {
+        accessorKey: 'jobStatus',
+        header: '현 직무 상태',
+        meta: {
+          headerClassName: 'min-w-[150px]',
+          cellClassName: 'min-w-[150px]',
+        },
+        cell: ({ row }) =>
+          renderGroupedLeaf(row, (original) =>
+            formatNullableText(original.jobStatus),
+          ),
+      },
+      {
+        accessorKey: 'instagramId',
+        header: '인스타그램 ID',
+        meta: {
+          headerClassName: 'min-w-[160px]',
+          cellClassName: 'min-w-[160px]',
+        },
+        cell: ({ row }) =>
+          renderGroupedLeaf(row, (original) =>
+            formatNullableText(original.instagramId),
+          ),
+      },
+      {
+        accessorKey: 'finalPrice',
+        header: '결제 금액',
+        meta: {
+          headerClassName: 'min-w-[140px]',
+          cellClassName: 'min-w-[140px]',
+        },
+        // cell: ({ row, getValue }) =>
+
+        cell: (info) => {
+          const v = info.getValue<number>()
+            ? new Intl.NumberFormat('ko-KR').format(info.getValue<number>())
+            : '-';
+          if (info.row.getIsGrouped()) {
+            return <strong>{v}</strong>;
+          }
+          return v;
+        },
+
+        aggregationFn: 'sum',
       },
     ],
     [],
   );
 
-  const getRowId = useCallback((row: LeadHistoryGroupRow) => row.id, []);
-
-  const createLeadHistory = useCreateLeadHistoryMutation();
-
-  const handleFilterSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const formData = new FormData(event.currentTarget);
-
-    const eventTypes = formData
-      .getAll('eventTypes')
-      .filter(Boolean) as string[];
-    const leadEventIds = (formData.get('leadEventIds') as string | null) ?? '';
-    const leadEventTypes =
-      (formData.get('leadEventTypes') as string | null) ?? '';
-    const names = (formData.get('names') as string | null) ?? '';
-    const phoneNums = (formData.get('phoneNums') as string | null) ?? '';
-
-    const nextParams = new URLSearchParams();
-
-    if (eventTypes.length) {
-      const uniqueEventTypes = Array.from(new Set(eventTypes));
-      nextParams.set('eventTypes', uniqueEventTypes.join(','));
-    }
-
-    const setSearchParam = (key: string, value: string) => {
-      if (value.trim().length) {
-        nextParams.set(key, value.trim());
-      }
-    };
-
-    setSearchParam('leadEventIds', leadEventIds);
-    setSearchParam('leadEventTypes', leadEventTypes);
-    setSearchParam('names', names);
-    setSearchParam('phoneNums', phoneNums);
-
-    const nextUrl = nextParams.toString()
-      ? `${pathname}?${nextParams.toString()}`
-      : pathname;
-    router.replace(nextUrl);
-  };
-
-  const handleFilterReset = () => {
-    router.replace(pathname);
-  };
-
   const handleDownloadCsv = useCallback(() => {
-    if (!filteredRows.length) {
-      snackbar('다운로드할 데이터가 없습니다.');
-      return;
-    }
+    if (!filteredRows.length) return;
 
-    const headers = [
-      '전화번호',
-      '이름',
-      '이메일',
-      '최신 이벤트 유형',
-      '최신 이벤트',
-      '최신 유입일자',
-      '첫 유입일자',
-      '첫 유입 경로',
-      '프로그램 참여 수',
-      '프로그램 참여 이력',
-      '전체 행동 횟수',
-      '총 결제 금액',
-      '대학',
-      '전공',
-      '희망 분야',
-      '희망 회사',
-      '희망 산업군',
-      '희망 직무',
-      '현 직무 상태',
-      '인스타그램 ID',
-    ];
+    const exportColumns = columns.filter((column) => {
+      return (
+        Object.prototype.hasOwnProperty.call(column, 'accessorKey') &&
+        typeof (column as { accessorKey?: unknown }).accessorKey === 'string'
+      );
+    }) as Array<
+      ColumnDef<LeadHistoryRow> & {
+        accessorKey: keyof LeadHistoryRow;
+      }
+    >;
 
-    const rows = filteredRows.map((row) => [
-      row.displayPhoneNum ?? '',
-      row.name ?? '',
-      row.email ?? '',
-      row.latestEventType
-        ? leadHistoryEventTypeLabels[row.latestEventType]
-        : '',
-      row.latestEventTitle ?? '',
-      row.latestCreateDate
-        ? dayjs(row.latestCreateDate).format('YYYY/MM/DD')
-        : '',
-      row.firstInflowDate
-        ? dayjs(row.firstInflowDate).format('YYYY/MM/DD')
-        : '',
-      row.inflow ?? '',
-      String(row.programCount ?? ''),
-      row.programHistory
-        .map((item) =>
-          [
-            item.date ? dayjs(item.date).format('YY/MM/DD') : '',
-            item.title ?? '',
-          ]
-            .filter(Boolean)
-            .join(' - '),
-        )
-        .join(' | '),
-      String(row.totalActions ?? ''),
-      String(row.totalFinalPrice ?? ''),
-      row.university ?? '',
-      row.major ?? '',
-      row.wishField ?? '',
-      row.wishCompany ?? '',
-      row.wishIndustry ?? '',
-      row.wishJob ?? '',
-      row.jobStatus ?? '',
-      row.instagramId ?? '',
-    ]);
+    if (!exportColumns.length) return;
 
-    const csvContent = [headers, ...rows]
-      .map((row) => row.map(escapeCsvValue).join(','))
-      .join('\n');
+    const headerRow = exportColumns
+      .map((column) => {
+        const headerProp = column.header;
+        let headerLabel: string;
 
-    const blob = new Blob([csvContent], {
+        if (typeof headerProp === 'string' || typeof headerProp === 'number') {
+          headerLabel = String(headerProp);
+        } else if (typeof headerProp === 'function') {
+          headerLabel = column.id ?? column.accessorKey ?? '';
+        } else {
+          headerLabel = column.id ?? column.accessorKey ?? '';
+        }
+
+        return escapeCsvValue(headerLabel);
+      })
+      .join(',');
+
+    const rows = filteredRows.map((row) => {
+      return exportColumns
+        .map((column) => {
+          const key = column.accessorKey;
+          let rawValue: unknown = row[key];
+
+          switch (key) {
+            case 'createDate':
+              rawValue = row.createDate
+                ? dayjs(row.createDate).format('YYYY.MM.DD.')
+                : '';
+              break;
+            case 'eventType':
+              rawValue = row.eventType
+                ? leadHistoryEventTypeLabels[row.eventType]
+                : '';
+              break;
+            case 'finalPrice':
+              rawValue =
+                row.finalPrice !== null && row.finalPrice !== undefined
+                  ? new Intl.NumberFormat('ko-KR').format(row.finalPrice)
+                  : '';
+              break;
+            default:
+              rawValue = rawValue ?? '';
+              break;
+          }
+
+          const normalized =
+            rawValue === null || rawValue === undefined
+              ? ''
+              : typeof rawValue === 'string'
+                ? rawValue
+                : String(rawValue);
+
+          return escapeCsvValue(normalized);
+        })
+        .join(',');
+    });
+
+    const csvBody = [headerRow, ...rows].join('\n');
+    const blob = new Blob([`\uFEFF${csvBody}`], {
       type: 'text/csv;charset=utf-8;',
     });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `lead-history-${dayjs().format('YYYYMMDDHHmmss')}.csv`;
+    link.setAttribute(
+      'download',
+      `lead-history_${dayjs().format('YYYYMMDD_HHmmss')}.csv`,
+    );
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-  }, [filteredRows, snackbar]);
+  }, [columns, filteredRows]);
+
+  const handleExpandAll = useCallback(() => {
+    setExpanded(true);
+  }, [setExpanded]);
+
+  const handleCollapseAll = useCallback(() => {
+    setExpanded({});
+  }, [setExpanded]);
+
+  const createLeadHistory = useCreateLeadHistoryMutation();
 
   const handleCreate = async (payload: CreateLeadHistoryRequest) => {
     try {
@@ -918,72 +1773,52 @@ const LeadHistoryPage = () => {
   return (
     <section className="p-5">
       <Heading className="mb-4">리드 히스토리 관리</Heading>
-      <form
-        className="rounded mb-4 flex flex-col gap-4 bg-neutral-90 p-4"
-        onSubmit={handleFilterSubmit}
-      >
-        <div className="flex flex-wrap gap-4">
-          {(
-            Object.keys(leadHistoryEventTypeLabels) as LeadHistoryEventType[]
-          ).map((type) => (
-            <FormControlLabel
-              key={type}
-              control={
-                <Checkbox
-                  name="eventTypes"
-                  value={type}
-                  defaultChecked={defaultFormValues.eventTypes.includes(type)}
-                />
-              }
-              label={leadHistoryEventTypeLabels[type]}
-            />
-          ))}
-        </div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <TextField
-            label="리드 이벤트 ID"
-            name="leadEventIds"
-            defaultValue={defaultFormValues.leadEventIds}
-            placeholder="쉼표(,) 또는 줄바꿈으로 다중 입력"
-          />
-          <TextField
-            label="리드 이벤트 타입"
-            name="leadEventTypes"
-            defaultValue={defaultFormValues.leadEventTypes}
-            placeholder="쉼표(,) 또는 줄바꿈으로 다중 입력"
-          />
-          <TextField
-            label="이름"
-            name="names"
-            defaultValue={defaultFormValues.names}
-            placeholder="쉼표(,) 또는 줄바꿈으로 다중 입력"
-          />
-          <TextField
-            label="전화번호"
-            name="phoneNums"
-            defaultValue={defaultFormValues.phoneNums}
-            placeholder="쉼표(,) 또는 줄바꿈으로 다중 입력"
-          />
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Button type="submit" variant="contained">
-            검색
-          </Button>
-          <Button type="button" variant="outlined" onClick={handleFilterReset}>
-            전체보기
-          </Button>
-          <Typography className="text-xsmall14 text-neutral-400">
-            전화번호 기준으로 리드가 그룹화되어 표기됩니다. 여러 값을 입력할
-            경우 쉼표(,) 또는 줄바꿈으로 구분해주세요.
+
+      <div className="rounded mb-4 border border-gray-200 bg-white p-4 shadow-sm">
+        <div className="mb-2 flex flex-wrap items-center gap-2">
+          <Typography className="text-xs text-gray-600">
+            AND/OR 트리를 구성해 특정 이벤트·프로그램 참여 이력 여부로 전화번호
+            그룹을 필터링할 수 있습니다.
           </Typography>
+          <div className="ml-auto flex gap-1">
+            <Button
+              size="small"
+              variant="text"
+              onClick={handleResetFilters}
+              disabled={!rootHasChildren}
+            >
+              조건 초기화
+            </Button>
+          </div>
         </div>
-      </form>
+
+        <FilterGroupEditor node={filterTree} isRoot />
+
+        <div className="mt-2 text-right text-[12px] text-gray-500">
+          조건에 맞는 전화번호 그룹 {filteredGroupCount}/{totalGroupCount}개 ·
+          리드 {filteredRows.length}/{allRows.length}건
+        </div>
+      </div>
 
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <Typography className="text-xsmall14 text-neutral-500">
-          전체 행동 횟수·프로그램 참여 수·총 결제 금액이 전화번호 단위로
-          집계되어 노출됩니다.
-        </Typography>
+        <div className="flex gap-2">
+          <Button
+            size="small"
+            variant="text"
+            onClick={handleCollapseAll}
+            disabled={!filteredRows.length}
+          >
+            모두 접기
+          </Button>
+          <Button
+            size="small"
+            variant="text"
+            onClick={handleExpandAll}
+            disabled={!filteredRows.length}
+          >
+            모두 펼치기
+          </Button>
+        </div>
         <div className="flex gap-2">
           <Button
             variant="outlined"
@@ -993,16 +1828,17 @@ const LeadHistoryPage = () => {
             CSV 다운로드
           </Button>
           <Button variant="contained" onClick={() => setIsCreateOpen(true)}>
-            리드 등록
+            리드 히스토리 등록
           </Button>
         </div>
       </div>
 
-      <LeadHistoryDataGrid
-        rows={filteredRows}
+      <LeadHistoryTable
+        data={filteredRows}
         columns={columns}
-        loading={isLoading}
-        getRowId={getRowId}
+        isLoading={isLoading}
+        expanded={expanded}
+        onExpandedChange={setExpanded}
       />
 
       <CreateLeadHistoryDialog
