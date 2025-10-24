@@ -2,33 +2,22 @@ import { useGetUserDocumentListQuery } from '@/api/user';
 import { UserDocument } from '@/api/userSchema';
 import { clsx } from 'clsx';
 import { RefreshCw, Trash2, Upload } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
+import { UploadedFiles } from './MissionSubmitTalentPoolSection';
 
 interface DocumentUploadSectionProps {
   className?: string;
-  onFilesChange?: (files: {
-    resume: File | null;
-    portfolio: File | null;
-    selfIntroduction: File | null;
-  }) => void;
+  uploadedFiles: UploadedFiles;
+  onFilesChange: (files: UploadedFiles) => void;
 }
 
 const DocumentUploadSection = ({
   className,
+  uploadedFiles,
   onFilesChange,
 }: DocumentUploadSectionProps) => {
   const { data: userDocumentList, isLoading: isUserDocumentListLoading } =
     useGetUserDocumentListQuery();
-
-  const [uploadedFiles, setUploadedFiles] = useState<{
-    resume: File | null;
-    portfolio: File | null;
-    selfIntroduction: File | null;
-  }>({
-    resume: null,
-    portfolio: null,
-    selfIntroduction: null,
-  });
 
   const resumeInputRef = useRef<HTMLInputElement>(null);
   const portfolioInputRef = useRef<HTMLInputElement>(null);
@@ -43,21 +32,13 @@ const DocumentUploadSection = ({
     // TODO: pdf 형식, 50MB 이하 유효성 검사
     const file = files[0]; // 첫 번째 파일만 사용
 
-    setUploadedFiles((prev) => {
-      const updated = {
-        ...prev,
-        [type]: file,
-      };
+    const updatedFiles = {
+      ...uploadedFiles,
+      [type]: file,
+    };
 
-      // 부모 컴포넌트에 파일 변경 알림
-      onFilesChange?.({
-        resume: updated.resume,
-        portfolio: updated.portfolio,
-        selfIntroduction: updated.selfIntroduction,
-      });
-
-      return updated;
-    });
+    // 부모 컴포넌트에 파일 변경 알림
+    onFilesChange(updatedFiles);
   };
 
   const handleFileDelete = (
@@ -75,21 +56,13 @@ const DocumentUploadSection = ({
       inputRef.current.value = '';
     }
 
-    setUploadedFiles((prev) => {
-      const updated = {
-        ...prev,
-        [type]: null,
-      };
+    const updatedFiles: UploadedFiles = {
+      ...uploadedFiles,
+      [type]: null,
+    };
 
-      // 부모 컴포넌트에 파일 변경 알림
-      onFilesChange?.({
-        resume: updated.resume,
-        portfolio: updated.portfolio,
-        selfIntroduction: updated.selfIntroduction,
-      });
-
-      return updated;
-    });
+    // 부모 컴포넌트에 파일 변경 알림
+    onFilesChange(updatedFiles);
   };
 
   const handleLoadDocument = (
@@ -99,7 +72,12 @@ const DocumentUploadSection = ({
     // onFilesChange?.({})
   };
 
-  const handleFilePreview = (file: File) => {
+  const handleFilePreview = (file: File | string) => {
+    if (typeof file === 'string') {
+      // TODO: file이 string인 경우 처리
+      return;
+    }
+
     const url = URL.createObjectURL(file);
     const newWindow = window.open(
       url,
@@ -120,7 +98,7 @@ const DocumentUploadSection = ({
 
   const renderFileList = (
     type: 'resume' | 'portfolio' | 'selfIntroduction',
-    file: File | null,
+    file: File | string | null,
     isRequired: boolean,
   ) => {
     const inputRef =
@@ -161,7 +139,8 @@ const DocumentUploadSection = ({
               onClick={() => handleFilePreview(file)}
               className="truncate text-xsmall14 font-normal text-neutral-0 underline"
             >
-              {file.name}
+              {/* TODO: file이 string인 경우 처리 */}
+              {typeof file === 'string' ? file : file.name}
             </button>
             <button
               type="button"
@@ -184,7 +163,6 @@ const DocumentUploadSection = ({
             </button>
 
             {/* 서류 불러오기 버튼*/}
-            {/* TODO: db에 서류 있는 경우 불러오기 */}
             <button
               type="button"
               onClick={() => handleLoadDocument(type)}

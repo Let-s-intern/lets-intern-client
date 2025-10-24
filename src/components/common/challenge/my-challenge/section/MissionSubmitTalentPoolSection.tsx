@@ -5,7 +5,16 @@ import { clsx } from 'clsx';
 import { useCallback, useEffect, useState } from 'react';
 import MissionSubmitButton from '../mission/MissionSubmitButton';
 import MissionToast from '../mission/MissionToast';
+import DocumentUploadSection from './DocumentUploadSection';
 import PersonalInfoConsent from './PersonalInfoConsent';
+
+export interface UploadedFiles {
+  resume: File | string | null;
+  portfolio: File | string | null;
+  selfIntroduction: File | string | null;
+}
+
+export type UploadedFileType = keyof UploadedFiles;
 
 interface MissionSubmitTalentPoolSectionProps {
   className?: string;
@@ -35,20 +44,30 @@ const MissionSubmitTalentPoolSection = ({
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [isAgreed, setIsAgreed] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFiles>({
+    resume: null,
+    portfolio: null,
+    selfIntroduction: null,
+  });
 
-  {
-    /* TODO: 서류 업로드 컴포넌트 추가 + 제출 로직 연동 필요) */
-  }
+  // 제출 버튼 활성화 조건: 필수 항목(이력서, 포트폴리오 + 개인정보 동의) 입력 완료 시 활성화
+  const canSubmit =
+    isAgreed && !!uploadedFiles.resume && !!uploadedFiles.portfolio;
 
-  // 제출 버튼 활성화 조건: 필수 항목(이력서 + 개인정보 동의) 입력 완료 시 활성화
-  const canSubmit = isAgreed;
+  const handleFilesChange = (files: UploadedFiles) => {
+    setUploadedFiles(files);
+  };
 
   const handleSubmit = async () => {
     if (!missionId) {
       console.error('미션 ID가 없습니다.');
       return;
     }
-    console.log('제출하기');
+    console.log('제출하기', {
+      resume: uploadedFiles.resume,
+      portfolio: uploadedFiles.portfolio,
+      selfIntroduction: uploadedFiles.selfIntroduction,
+    });
   };
 
   const initValues = useCallback(() => {
@@ -64,16 +83,21 @@ const MissionSubmitTalentPoolSection = ({
   return (
     <>
       <section className={clsx('', className)}>
-        <h2 className="mb-6 text-small18 font-bold text-neutral-0">
+        <h2 className="mb-1 text-small18 font-bold text-neutral-0">
           인재풀 등록하기
         </h2>
 
         {/* 희망 조건 입력 영역 */}
 
         {/* 서류 업로드 영역 */}
+        <DocumentUploadSection
+          className="mb-6"
+          uploadedFiles={uploadedFiles}
+          onFilesChange={handleFilesChange}
+        />
 
         {/* 개인정보 수집 활용 동의서 */}
-<PersonalInfoConsent checked={isAgreed} onChange={setIsAgreed} />
+        <PersonalInfoConsent checked={isAgreed} onChange={setIsAgreed} />
 
         {!isSubmitPeriodEnded && (
           <MissionSubmitButton
