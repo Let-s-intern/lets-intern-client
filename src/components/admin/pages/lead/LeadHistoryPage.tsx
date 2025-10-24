@@ -35,7 +35,16 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { ChangeEvent, memo, type ReactNode, useMemo, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import {
+  ChangeEvent,
+  memo,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 declare module '@tanstack/react-table' {
   interface ColumnMeta<TData, TValue> {
@@ -49,6 +58,13 @@ const leadHistoryEventTypeLabels: Record<LeadHistoryEventType, string> = {
   PROGRAM: '프로그램 참여',
   LEAD_EVENT: '리드 이벤트',
 };
+
+const eventTypeOptions: Array<{ value: LeadHistoryEventType; label: string }> =
+  (
+    Object.entries(leadHistoryEventTypeLabels) as Array<
+      [LeadHistoryEventType, string]
+    >
+  ).map(([value, label]) => ({ value, label }));
 
 type LeadHistoryRow = {
   id: string;
@@ -73,6 +89,199 @@ type LeadHistoryRow = {
   title?: string | null;
   finalPrice?: number | null;
   createDate?: string | null;
+};
+
+const FILTER_QUERY_KEY = 'filters';
+
+type LeadHistoryFilterField = 'leadEvent' | 'program' | 'eventType';
+type LeadHistoryFilterOperator = 'include' | 'exclude';
+type LeadHistoryFilterCombinator = 'AND' | 'OR';
+
+type LeadHistoryFilterCondition = {
+  id: string;
+  field: LeadHistoryFilterField;
+  operator: LeadHistoryFilterOperator;
+  values: string[];
+  combinator: LeadHistoryFilterCombinator;
+};
+
+type StoredLeadHistoryFilterCondition = Omit<LeadHistoryFilterCondition, 'id'>;
+
+type LeadHistoryGroupSummary = {
+  rows: LeadHistoryRow[];
+  leadEventIds: Set<string>;
+  eventTypes: Set<LeadHistoryEventType>;
+  programTitles: Set<string>;
+};
+
+const filterFieldDefinitions: Record<
+  LeadHistoryFilterField,
+  { label: string; valueLabel: string }
+> = {
+  leadEvent: { label: '리드 이벤트', valueLabel: '이벤트 선택' },
+  program: { label: '프로그램', valueLabel: '프로그램 선택' },
+  eventType: { label: '이벤트 유형', valueLabel: '이벤트 유형 선택' },
+};
+
+const filterOperatorOptions: Array<{
+  value: LeadHistoryFilterOperator;
+  label: string;
+}> = [
+  { value: 'include', label: '하나라도 있음' },
+  { value: 'exclude', label: '하나도 없음' },
+];
+
+const generateFilterId = () => {
+  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
+    return crypto.randomUUID();
+  }
+  return `filter_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+};
+
+const isFilterField = (value: unknown): value is LeadHistoryFilterField => {
+  return value === 'leadEvent' || value === 'program' || value === 'eventType';
+};
+
+const isFilterOperator = (
+  value: unknown,
+): value is LeadHistoryFilterOperator => {
+  return value === 'include' || value === 'exclude';
+};
+
+const isFilterCombinator = (
+  value: unknown,
+): value is LeadHistoryFilterCombinator => {
+  return value === 'AND' || value === 'OR';
+};
+
+const serializeFilterConditions = (
+  filters: LeadHistoryFilterCondition[],
+): string | undefined => {
+  if (!filters.length) {
+    return undefined;
+  }
+
+  const stored: StoredLeadHistoryFilterCondition[] = filters.map(
+    ({ id: _id, ...rest }, index) => ({
+      ...rest,
+      combinator: index === 0 ? 'AND' : rest.combinator,
+    }),
+  );
+
+  return JSON.stringify(stored);
+};
+
+const deserializeFilterConditions = (
+  raw: string | null,
+): LeadHistoryFilterCondition[] => {
+  if (!raw) {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    const deserialized: LeadHistoryFilterCondition[] = parsed
+      .map((item, index) => {
+        if (typeof item !== 'object' || item === null) {
+          return null;
+        }
+
+        const { field, operator, values, combinator } =
+          item as StoredLeadHistoryFilterCondition;
+
+        if (!isFilterField(field) || !isFilterOperator(operator)) {
+          return null;
+        }
+
+        const normalizedValues = Array.isArray(values)
+          ? values.map((value) => String(value))
+          : [];
+
+        const normalizedCombinator =
+          index === 0 || !isFilterCombinator(combinator) ? 'AND' : combinator;
+
+        return {
+          id: generateFilterId(),
+          field,
+          operator,
+          values: normalizedValues,
+          combinator: normalizedCombinator,
+        };
+      })
+      .filter((item): item is LeadHistoryFilterCondition => item !== null);
+
+    return deserialized;
+  } catch {
+    return [];
+  }
+};
+
+const areFilterConditionsEqual = (
+  current: LeadHistoryFilterCondition[],
+  next: LeadHistoryFilterCondition[],
+): boolean => {
+  if (current.length !== next.length) {
+    return false;
+  }
+
+  return current.every((condition, index) => {
+    const target = next[index];
+    if (!target) {
+      return false;
+    }
+
+    if (
+      condition.field !== target.field ||
+      condition.operator !== target.operator ||
+      condition.combinator !== target.combinator
+    ) {
+      return false;
+    }
+
+    if (condition.values.length !== target.values.length) {
+      return false;
+    }
+
+    return condition.values.every(
+      (value, valueIndex) => value === target.values[valueIndex],
+    );
+  });
+};
+
+const evaluateConditionAgainstSummary = (
+  summary: LeadHistoryGroupSummary,
+  condition: LeadHistoryFilterCondition,
+): boolean => {
+  if (!condition.values.length) {
+    return true;
+  }
+
+  switch (condition.field) {
+    case 'leadEvent': {
+      const hasAny = condition.values.some((value) =>
+        summary.leadEventIds.has(String(value)),
+      );
+      return condition.operator === 'include' ? hasAny : !hasAny;
+    }
+    case 'program': {
+      const hasAny = condition.values.some((value) =>
+        summary.programTitles.has(String(value)),
+      );
+      return condition.operator === 'include' ? hasAny : !hasAny;
+    }
+    case 'eventType': {
+      const hasAny = condition.values.some((value) =>
+        summary.eventTypes.has(value as LeadHistoryEventType),
+      );
+      return condition.operator === 'include' ? hasAny : !hasAny;
+    }
+    default:
+      return true;
+  }
 };
 
 const renderGroupedLeaf = (
@@ -141,7 +350,7 @@ const LeadHistoryTable = memo(
       <div className="rounded border border-neutral-200">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left text-sm">
-            <thead className="bg-neutral-100">
+            <thead className="bg-gray-50">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header, i) => {
@@ -508,6 +717,13 @@ const LeadHistoryPage = () => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const { snackbar } = useAdminSnackbar();
 
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [filters, setFilters] = useState<LeadHistoryFilterCondition[]>(() =>
+    deserializeFilterConditions(searchParams.get(FILTER_QUERY_KEY)),
+  );
+
   const { data: leadHistoryData = [], isLoading } = useLeadHistoryListQuery();
 
   const leadEventListParams = useMemo(
@@ -518,6 +734,37 @@ const LeadHistoryPage = () => {
   );
   const { data: leadEventData } = useLeadEventListQuery(leadEventListParams);
 
+  useEffect(() => {
+    const parsed = deserializeFilterConditions(
+      searchParams.get(FILTER_QUERY_KEY),
+    );
+    setFilters((prev) =>
+      areFilterConditionsEqual(prev, parsed) ? prev : parsed,
+    );
+  }, [searchParams]);
+
+  useEffect(() => {
+    const serialized = serializeFilterConditions(filters);
+    const currentSerialized = searchParams.get(FILTER_QUERY_KEY) ?? undefined;
+    if (
+      serialized === currentSerialized ||
+      (!serialized && !currentSerialized)
+    ) {
+      return;
+    }
+
+    const params = new URLSearchParams(searchParams.toString());
+    if (serialized) {
+      params.set(FILTER_QUERY_KEY, serialized);
+    } else {
+      params.delete(FILTER_QUERY_KEY);
+    }
+    const queryString = params.toString();
+    router.replace(queryString ? `${pathname}?${queryString}` : pathname, {
+      scroll: false,
+    });
+  }, [filters, pathname, router, searchParams]);
+
   const leadEventMap = useMemo(() => {
     const map = new Map<number, string>();
     leadEventData?.leadEventList.forEach((event) => {
@@ -526,7 +773,7 @@ const LeadHistoryPage = () => {
     return map;
   }, [leadEventData]);
 
-  const rows = useMemo<LeadHistoryRow[]>(() => {
+  const allRows = useMemo<LeadHistoryRow[]>(() => {
     if (!leadHistoryData.length) return [];
 
     return leadHistoryData.map((item, index) => {
@@ -575,6 +822,214 @@ const LeadHistoryPage = () => {
       };
     });
   }, [leadHistoryData, leadEventMap]);
+
+  const leadEventOptions = useMemo(
+    () =>
+      (leadEventData?.leadEventList ?? []).map((event) => ({
+        value: String(event.leadEventId),
+        label: event.title ?? `#${event.leadEventId}`,
+      })),
+    [leadEventData],
+  );
+
+  const leadEventLabelMap = useMemo(() => {
+    const map = new Map<string, string>();
+    leadEventOptions.forEach(({ value, label }) => {
+      map.set(value, label);
+    });
+    return map;
+  }, [leadEventOptions]);
+
+  const programOptions = useMemo(() => {
+    const unique = new Set<string>();
+    allRows.forEach((row) => {
+      if (row.eventType === 'PROGRAM' && row.title) {
+        unique.add(row.title);
+      }
+    });
+    return Array.from(unique)
+      .sort((a, b) => a.localeCompare(b))
+      .map((title) => ({
+        value: title,
+        label: title,
+      }));
+  }, [allRows]);
+
+  const groupSummaryMap = useMemo(() => {
+    const map = new Map<string, LeadHistoryGroupSummary>();
+    allRows.forEach((row) => {
+      const key = row.displayPhoneNum;
+      const summary = map.get(key) ?? {
+        rows: [],
+        leadEventIds: new Set<string>(),
+        eventTypes: new Set<LeadHistoryEventType>(),
+        programTitles: new Set<string>(),
+      };
+
+      summary.rows.push(row);
+
+      if (row.leadEventId !== null && row.leadEventId !== undefined) {
+        summary.leadEventIds.add(String(row.leadEventId));
+      }
+
+      if (row.eventType) {
+        summary.eventTypes.add(row.eventType);
+      }
+
+      if (row.eventType === 'PROGRAM' && row.title) {
+        summary.programTitles.add(row.title);
+      }
+
+      map.set(key, summary);
+    });
+    return map;
+  }, [allRows]);
+
+  const activeFilters = useMemo(() => {
+    const nonEmpty = filters.filter((condition) => condition.values.length > 0);
+    if (!nonEmpty.length) {
+      return [];
+    }
+    return nonEmpty.map((condition, index) => ({
+      ...condition,
+      combinator: index === 0 ? 'AND' : condition.combinator,
+    }));
+  }, [filters]);
+
+  const filteredRows = useMemo(() => {
+    if (!activeFilters.length) {
+      return allRows;
+    }
+
+    const allowed = new Set<string>();
+
+    groupSummaryMap.forEach((summary, key) => {
+      let match = true;
+
+      activeFilters.forEach((condition, index) => {
+        const conditionResult = evaluateConditionAgainstSummary(
+          summary,
+          condition,
+        );
+
+        if (index === 0) {
+          match = conditionResult;
+          return;
+        }
+
+        match =
+          condition.combinator === 'AND'
+            ? match && conditionResult
+            : match || conditionResult;
+      });
+
+      if (match) {
+        allowed.add(key);
+      }
+    });
+
+    if (!allowed.size) {
+      return [];
+    }
+
+    return allRows.filter((row) => allowed.has(row.displayPhoneNum));
+  }, [activeFilters, allRows, groupSummaryMap]);
+
+  const handleAddCondition = useCallback(() => {
+    setFilters((prev) => [
+      ...prev,
+      {
+        id: generateFilterId(),
+        field: 'leadEvent',
+        operator: 'include',
+        values: [],
+        combinator: 'AND',
+      },
+    ]);
+  }, []);
+
+  const handleUpdateCondition = useCallback(
+    (id: string, updates: Partial<Omit<LeadHistoryFilterCondition, 'id'>>) => {
+      setFilters((prev) =>
+        prev.map((condition, index) => {
+          if (condition.id !== id) {
+            return condition;
+          }
+
+          const nextCondition: LeadHistoryFilterCondition = { ...condition };
+
+          if (updates.field && updates.field !== condition.field) {
+            nextCondition.field = updates.field;
+            nextCondition.values = [];
+          } else if (updates.field) {
+            nextCondition.field = updates.field;
+          }
+
+          if (updates.operator) {
+            nextCondition.operator = updates.operator;
+          }
+
+          if ('values' in updates && updates.values !== undefined) {
+            nextCondition.values = updates.values;
+          }
+
+          if (index === 0) {
+            nextCondition.combinator = 'AND';
+          } else if (updates.combinator) {
+            nextCondition.combinator = updates.combinator;
+          }
+
+          return nextCondition;
+        }),
+      );
+    },
+    [],
+  );
+
+  const handleRemoveCondition = useCallback((id: string) => {
+    setFilters((prev) => {
+      const next = prev.filter((condition) => condition.id !== id);
+      if (next.length > 0) {
+        next[0] = { ...next[0], combinator: 'AND' };
+      }
+      return next;
+    });
+  }, []);
+
+  const handleResetFilters = useCallback(() => {
+    setFilters([]);
+  }, []);
+
+  const getValueLabel = useCallback(
+    (field: LeadHistoryFilterField, value: string) => {
+      if (field === 'leadEvent') {
+        return leadEventLabelMap.get(value) ?? value;
+      }
+      if (field === 'program') {
+        return value;
+      }
+      if (field === 'eventType') {
+        return (
+          leadHistoryEventTypeLabels[value as LeadHistoryEventType] ?? value
+        );
+      }
+      return value;
+    },
+    [leadEventLabelMap],
+  );
+
+  const filteredGroupCount = useMemo(() => {
+    if (!filteredRows.length) {
+      return 0;
+    }
+    const groups = new Set<string>();
+    filteredRows.forEach((row) => {
+      groups.add(row.displayPhoneNum);
+    });
+    return groups.size;
+  }, [filteredRows]);
+
+  const totalGroupCount = groupSummaryMap.size;
 
   const columns = useMemo<ColumnDef<LeadHistoryRow>[]>(
     () => [
@@ -869,13 +1324,192 @@ const LeadHistoryPage = () => {
     <section className="p-5">
       <Heading className="mb-4">리드 히스토리 관리</Heading>
 
+      <div className="rounded mb-4 border border-neutral-200 bg-white p-4 shadow-sm">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <Typography className="text-sm font-medium text-neutral-700">
+              전화번호 그룹 필터
+            </Typography>
+            <Typography className="text-xs text-neutral-500">
+              조건을 AND/OR로 조합해 특정 이벤트·프로그램 참여 이력을 기반으로
+              전화번호 그룹을 필터링합니다.
+            </Typography>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              size="small"
+              variant="text"
+              onClick={handleResetFilters}
+              disabled={!filters.length}
+            >
+              조건 초기화
+            </Button>
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={handleAddCondition}
+            >
+              조건 추가
+            </Button>
+          </div>
+        </div>
+
+        {filters.length === 0 ? (
+          <Typography className="rounded border border-dashed border-neutral-200 p-3 text-xs text-neutral-500">
+            추가된 필터 조건이 없습니다. &ldquo;조건 추가&rdquo; 버튼을 눌러
+            조건을 구성하세요.
+          </Typography>
+        ) : (
+          <div className="flex flex-col gap-3">
+            {filters.map((condition, index) => {
+              const valueOptions =
+                condition.field === 'leadEvent'
+                  ? leadEventOptions
+                  : condition.field === 'program'
+                    ? programOptions
+                    : eventTypeOptions;
+
+              return (
+                <div
+                  key={condition.id}
+                  className="rounded flex w-full flex-wrap items-end gap-2 border border-neutral-200 bg-gray-50 p-3"
+                >
+                  {index > 0 && (
+                    <TextField
+                      select
+                      size="small"
+                      label="연결"
+                      value={condition.combinator}
+                      onChange={(event) =>
+                        handleUpdateCondition(condition.id, {
+                          combinator: event.target
+                            .value as LeadHistoryFilterCombinator,
+                        })
+                      }
+                      className="w-20 min-w-[80px]"
+                    >
+                      <MenuItem value="AND">AND</MenuItem>
+                      <MenuItem value="OR">OR</MenuItem>
+                    </TextField>
+                  )}
+                  <TextField
+                    select
+                    size="small"
+                    label="대상"
+                    value={condition.field}
+                    onChange={(event) =>
+                      handleUpdateCondition(condition.id, {
+                        field: event.target.value as LeadHistoryFilterField,
+                      })
+                    }
+                    className="min-w-[160px]"
+                  >
+                    {Object.entries(filterFieldDefinitions).map(
+                      ([value, { label }]) => (
+                        <MenuItem
+                          key={value}
+                          value={value as LeadHistoryFilterField}
+                        >
+                          {label}
+                        </MenuItem>
+                      ),
+                    )}
+                  </TextField>
+                  <TextField
+                    select
+                    size="small"
+                    label="조건"
+                    value={condition.operator}
+                    onChange={(event) =>
+                      handleUpdateCondition(condition.id, {
+                        operator: event.target
+                          .value as LeadHistoryFilterOperator,
+                      })
+                    }
+                    className="min-w-[140px]"
+                  >
+                    {filterOperatorOptions.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                  <TextField
+                    select
+                    fullWidth
+                    size="small"
+                    label={filterFieldDefinitions[condition.field].valueLabel}
+                    value={condition.values}
+                    onChange={(event) => {
+                      const { value } = event.target;
+                      const nextValues = Array.isArray(value)
+                        ? value.map((item) => String(item))
+                        : [String(value)];
+                      handleUpdateCondition(condition.id, {
+                        values: nextValues,
+                      });
+                    }}
+                    SelectProps={{
+                      multiple: true,
+                      displayEmpty: true,
+                      renderValue: (selected) => {
+                        if (
+                          !selected ||
+                          (Array.isArray(selected) && !selected.length)
+                        ) {
+                          return '';
+                        }
+                        const list = Array.isArray(selected)
+                          ? selected
+                          : [selected];
+                        return list
+                          .map((item) =>
+                            getValueLabel(condition.field, String(item)),
+                          )
+                          .join(', ');
+                      },
+                    }}
+                    className="min-w-[220px] flex-1"
+                    disabled={!valueOptions.length}
+                    helperText={
+                      !valueOptions.length
+                        ? '선택 가능한 항목이 없습니다.'
+                        : undefined
+                    }
+                  >
+                    {valueOptions.map(({ value, label }) => (
+                      <MenuItem key={value} value={value}>
+                        {label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                  <Button
+                    size="small"
+                    color="error"
+                    variant="text"
+                    onClick={() => handleRemoveCondition(condition.id)}
+                  >
+                    삭제
+                  </Button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        <div className="mt-3 text-right text-xs text-neutral-500">
+          조건에 맞는 전화번호 그룹 {filteredGroupCount}/{totalGroupCount}개 ·
+          리드 {filteredRows.length}/{allRows.length}건
+        </div>
+      </div>
+
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <Typography className="text-xsmall14 text-neutral-500">
           전화번호별 그룹이 기본으로 확장되어 개별 리드 히스토리를 바로 확인할
           수 있습니다.
         </Typography>
         <div className="flex gap-2">
-          <Button variant="outlined" disabled={!rows.length}>
+          <Button variant="outlined" disabled={!filteredRows.length}>
             CSV 다운로드
           </Button>
           <Button variant="contained" onClick={() => setIsCreateOpen(true)}>
@@ -884,7 +1518,11 @@ const LeadHistoryPage = () => {
         </div>
       </div>
 
-      <LeadHistoryTable data={rows} columns={columns} isLoading={isLoading} />
+      <LeadHistoryTable
+        data={filteredRows}
+        columns={columns}
+        isLoading={isLoading}
+      />
 
       <CreateLeadHistoryDialog
         open={isCreateOpen}
