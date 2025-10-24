@@ -1,3 +1,4 @@
+import { DocumentType } from '@/api/missionSchema';
 import { useGetUserDocumentListQuery } from '@/api/user';
 import { UserDocument } from '@/api/userSchema';
 import { clsx } from 'clsx';
@@ -23,10 +24,7 @@ const DocumentUploadSection = ({
   const portfolioInputRef = useRef<HTMLInputElement>(null);
   const selfIntroductionInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileUpload = (
-    type: 'resume' | 'portfolio' | 'selfIntroduction',
-    files: FileList | null,
-  ) => {
+  const handleFileUpload = (type: DocumentType, files: FileList | null) => {
     if (!files || files.length === 0) return;
 
     // TODO: pdf 형식, 50MB 이하 유효성 검사
@@ -41,14 +39,12 @@ const DocumentUploadSection = ({
     onFilesChange(updatedFiles);
   };
 
-  const handleFileDelete = (
-    type: 'resume' | 'portfolio' | 'selfIntroduction',
-  ) => {
+  const handleFileDelete = (type: DocumentType) => {
     // input value 초기화
     const inputRef =
-      type === 'resume'
+      type === 'RESUME'
         ? resumeInputRef
-        : type === 'portfolio'
+        : type === 'PORTFOLIO'
           ? portfolioInputRef
           : selfIntroductionInputRef;
 
@@ -65,9 +61,7 @@ const DocumentUploadSection = ({
     onFilesChange(updatedFiles);
   };
 
-  const handleLoadDocument = (
-    type: 'resume' | 'portfolio' | 'selfIntroduction',
-  ) => {
+  const handleLoadDocument = (type: DocumentType) => {
     // TODO: db에서 서류 불러오기
     // onFilesChange?.({})
   };
@@ -97,20 +91,20 @@ const DocumentUploadSection = ({
   };
 
   const renderFileList = (
-    type: 'resume' | 'portfolio' | 'selfIntroduction',
+    type: DocumentType,
     file: File | string | null,
     isRequired: boolean,
   ) => {
     const inputRef =
-      type === 'resume'
+      type === 'RESUME'
         ? resumeInputRef
-        : type === 'portfolio'
+        : type === 'PORTFOLIO'
           ? portfolioInputRef
           : selfIntroductionInputRef;
     const label =
-      type === 'resume'
+      type === 'RESUME'
         ? '이력서 첨부'
-        : type === 'portfolio'
+        : type === 'PORTFOLIO'
           ? '포트폴리오 첨부'
           : '자기소개서 첨부';
     const requiredText = isRequired ? '(필수제출)' : '';
@@ -195,10 +189,10 @@ const DocumentUploadSection = ({
         PDF 형식만 지원하며, 파일 용량은 500MB 이하로 업로드해 주세요.
       </p>
 
-      {renderFileList('resume', uploadedFiles.resume, true)}
-      {renderFileList('portfolio', uploadedFiles.portfolio, true)}
+      {renderFileList('RESUME', uploadedFiles.resume, true)}
+      {renderFileList('PORTFOLIO', uploadedFiles.portfolio, true)}
       {renderFileList(
-        'selfIntroduction',
+        'PERSONAL_STATEMENT',
         uploadedFiles.selfIntroduction,
         false,
       )}
