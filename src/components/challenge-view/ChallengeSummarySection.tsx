@@ -76,8 +76,6 @@ function ChallengeSummarySection({
         수많은 취준생의 어려움을 해결하고자 기획했습니다.
       </div>
       <MainTitle className="mb-6">
-        {' '}
-        {/* MainTitle 컴포넌트 import 필요 */}
         경험 정리부터 <br className="md:hidden" />
         <span className="text-bold mx-1 bg-[#4A76FF] px-2 py-1 text-medium22 text-white md:text-xlarge30">
           이력서 완성

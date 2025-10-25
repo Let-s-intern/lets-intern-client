@@ -139,7 +139,7 @@ const ChallengePointView = ({
         ];
       case CAREER_START:
         return [
-          Number(id) >= 157
+          Number(id) >= 143
             ? '/images/payback-career-start157.png'
             : '/images/payback-career-start.png',
           '/icons/bg-logo-career-start.svg',
