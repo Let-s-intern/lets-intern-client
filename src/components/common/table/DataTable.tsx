@@ -76,10 +76,9 @@ const DataTable = ({
       <table className="w-full min-w-max border-collapse">
         {/* 테이블 헤더 */}
         <thead>
-          <tr className="border-b bg-gray-50">
-            {/* TODO: 가로스크롤해도 체크박스는 고정되게 하기 */}
+          <tr className="border-b border-neutral-80 bg-neutral-95">
             {selectedRowIds && (
-              <th className="sticky left-0 z-10 w-10 bg-gray-50 px-3">
+              <th className="sticky left-0 z-10 w-10 bg-neutral-95 p-2">
                 <CheckBox
                   checked={selectedRowIds.size === data.length}
                   onClick={toggleAllSelection}
@@ -90,7 +89,7 @@ const DataTable = ({
               <th
                 key={header.key}
                 className={twMerge(
-                  'px-4 py-3 text-left text-sm font-medium text-gray-700',
+                  'px-2 py-2.5 text-left text-sm font-medium text-neutral-10',
                   header.align === 'center'
                     ? 'text-center'
                     : header.align === 'right'
@@ -112,9 +111,12 @@ const DataTable = ({
             const isExpanded = expandedRows.has(row.id);
 
             return (
-              <tr key={row.id} className="group border-b hover:bg-gray-50">
+              <tr
+                key={row.id}
+                className="group border-b border-neutral-80 hover:bg-neutral-95"
+              >
                 {selectedRowIds && (
-                  <td className="sticky left-0 z-10 w-10 bg-white px-3 group-hover:bg-gray-50">
+                  <td className="sticky left-0 z-10 w-10 bg-white p-2 group-hover:bg-neutral-95">
                     <CheckBox
                       checked={!!isSelected}
                       onClick={() => toggleRowSelection(row.id)}

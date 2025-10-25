@@ -45,7 +45,7 @@ const ExpandableCell = ({ content, isRowExpanded, onToggleExpand, align = 'left'
       <div
         ref={contentRef}
         className={twMerge(
-          'flex items-start px-4 py-3 text-[0.8125rem] font-normal text-gray-900',
+          'flex items-start p-2 text-[0.8125rem] font-normal text-neutral-30',
           isRowExpanded ? 'h-auto' : 'h-[9.25rem] overflow-hidden',
           align === 'center'
             ? 'text-center'
