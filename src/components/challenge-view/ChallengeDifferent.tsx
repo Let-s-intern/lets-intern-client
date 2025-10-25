@@ -240,51 +240,38 @@ const ChallengeDifferent = ({
       <div className="flex w-full flex-col gap-y-8 md:gap-y-20">
         <div className="flex w-full flex-col gap-y-6 md:gap-y-12">
           <SuperTitle style={{ color: styles.primaryColor }}>차별점</SuperTitle>
-          {isResumeTemplate ? (
-            <div className="flex flex-col gap-y-3 md:items-center">
-              <p
-                className="text-xsmall16 font-bold md:text-small18"
-                style={{ color: styles.primaryColor }}
-              >
-                {challengeTitle}에서 얻어갈 수 있는 것들
-              </p>
-              <div className="whitespace-pre text-[22px] font-bold text-black md:text-center md:text-xlarge28">
-                <span>렛츠커리어 챌린지만의 차별점</span>
-                <br />
-                <span>
-                  이 모든걸{' '}
-                  <img
-                    className="inline-block h-auto w-8 md:w-10"
-                    src={`/icons/${iconName}`}
-                    alt=""
-                  />{' '}
-                  얻어가실 수 있어요!
-                </span>
-              </div>
+          <div className="flex flex-col gap-y-3 md:items-center">
+            <p
+              className="text-xsmall16 font-bold md:text-small18"
+              style={{ color: styles.primaryColor }}
+            >
+              {isResumeTemplate
+                ? `${challengeTitle}에서 얻어갈 수 있는 것들`
+                : '비교 불가!'}
+            </p>
+            <div className="whitespace-pre text-[22px] font-bold text-black md:text-center md:text-xlarge28">
+              {isResumeTemplate ? (
+                <>
+                  <span>렛츠커리어 챌린지만의 차별점</span>
+                  <br />
+                </>
+              ) : (
+                <>
+                  <span>{challengeTitle}만의</span>
+                  <br />
+                </>
+              )}
+              <span>
+                {isResumeTemplate ? '이 모든걸 ' : '차별점, 이 모든걸 '}
+                <img
+                  className="inline-block h-auto w-8 md:w-10"
+                  src={`/icons/${iconName}`}
+                  alt=""
+                />{' '}
+                얻어가실 수 있어요!
+              </span>
             </div>
-          ) : (
-            <div className="flex flex-col gap-y-3 md:items-center">
-              <p
-                className="text-xsmall16 font-bold md:text-small18"
-                style={{ color: styles.primaryColor }}
-              >
-                비교 불가!
-              </p>
-              <div className="whitespace-pre text-[22px] font-bold text-black md:text-center md:text-xlarge28">
-                <span>{challengeTitle}만의</span>
-                <br />
-                <span>
-                  차별점, 이 모든걸{' '}
-                  <img
-                    className="inline-block h-auto w-8 md:w-10"
-                    src={`/icons/${iconName}`}
-                    alt=""
-                  />{' '}
-                  얻어가실 수 있어요!
-                </span>
-              </div>
-            </div>
-          )}
+          </div>
         </div>
         <div className="flex w-full flex-col gap-y-6">
           {differentList.map((different) => (
@@ -311,19 +298,11 @@ const ChallengeDifferent = ({
                 <br className="md:hidden" /> {deposit / 10000}
                 만원을 페이백해드려요!
               </p>
-              {isResumeTemplate ? (
-                <img
-                  className="absolute bottom-0 right-0 h-auto w-28 md:top-0 md:w-48"
-                  src={paypackImgSrc}
-                  alt={`페이백 ${deposit / 10000}만원`}
-                />
-              ) : (
-                <img
-                  className="absolute bottom-0 right-0 h-auto w-28 md:top-0 md:w-48"
-                  src={paypackImgSrc}
-                  alt={`페이백 ${deposit / 10000}만원`}
-                />
-              )}
+              <img
+                className="absolute bottom-0 right-0 h-auto w-28 md:top-0 md:w-48"
+                src={paypackImgSrc}
+                alt={`페이백 ${deposit / 10000}만원`}
+              />
             </div>
           )}
         </div>

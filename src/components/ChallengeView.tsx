@@ -238,6 +238,8 @@ const ChallengeView: React.FC<{
                 challengeTitle={challenge.title ?? ''}
                 programRecommend={receivedContent.programRecommend}
                 deposit={challenge.priceInfo[0].refund ?? 0}
+                challengeId={Number(id)}
+                isResumeTemplate={isResumeTemplate}
               />
             </section>
 
@@ -269,6 +271,7 @@ const ChallengeView: React.FC<{
             </section>
 
             <ChallengeCheckList
+              challengeId={Number(id)}
               isResumeTemplate={isResumeTemplate}
               challengeType={challenge.challengeType}
               challengeTitle={challenge.title ?? ''}
