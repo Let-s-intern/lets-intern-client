@@ -12,7 +12,7 @@ import ProgramRecommendSlider from '@components/common/ui/ProgramRecommendSlider
 import { Dayjs } from 'dayjs';
 import { josa } from 'es-hangul';
 import dynamic from 'next/dynamic';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { ReactNode, useMemo } from 'react';
 
 const Balancer = dynamic(() => import('react-wrap-balancer'), { ssr: false });
@@ -52,6 +52,7 @@ const ChallengePointView = ({
   challengeTitle,
   programRecommend,
   deposit,
+  challengeId,
 }: {
   point: ChallengePoint;
   startDate: Dayjs;
@@ -60,6 +61,7 @@ const ChallengePointView = ({
   challengeTitle: string;
   programRecommend?: ProgramRecommend;
   deposit: number;
+  challengeId: number;
 }) => {
   const router = useRouter();
 
@@ -128,7 +130,9 @@ const ChallengePointView = ({
     },
   ];
 
-  const { id } = useParams<{ id: string }>();
+  const isResumeTemplateId = useMemo(() => {
+    return challengeId >= 143;
+  }, [challengeId]);
 
   const [paypackImgSrc, recommendLogoSrc] = useMemo(() => {
     switch (challengeType) {
@@ -139,7 +143,7 @@ const ChallengePointView = ({
         ];
       case CAREER_START:
         return [
-          Number(id) >= 143
+          isResumeTemplateId
             ? '/images/payback-career-start157.png'
             : '/images/payback-career-start.png',
           '/icons/bg-logo-career-start.svg',
@@ -162,7 +166,7 @@ const ChallengePointView = ({
       default:
         return [null, null];
     }
-  }, [challengeType]);
+  }, [challengeType, isResumeTemplateId]);
 
   const slideList = useMemo(() => {
     const list = [];
@@ -200,11 +204,6 @@ const ChallengePointView = ({
 
     return list;
   }, [programRecommend?.list, router]);
-
-  const challengeId = useParams<{ id: string }>().id;
-  const isResumeTemplateId = useMemo(() => {
-    return Number(challengeId) >= 143;
-  }, [challengeId]);
 
   const styles = useMemo(() => {
     switch (challengeType) {

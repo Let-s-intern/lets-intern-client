@@ -10,7 +10,6 @@ import OutlinedBox from '@components/common/program/program-detail/OutlineBox';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import Heading2 from '@components/common/ui/Heading2';
 import { josa } from 'es-hangul';
-import { useParams } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
 
 const superTitle = '취업 준비 현황 체크리스트';
@@ -330,16 +329,15 @@ interface ChallengeCheckListProps {
   challengeType: ChallengeIdSchema['challengeType'];
   challengeTitle: string;
   isResumeTemplate: boolean;
+  challengeId: number;
 }
 
 function ChallengeCheckList({
   challengeType,
   challengeTitle,
   isResumeTemplate,
+  challengeId,
 }: ChallengeCheckListProps) {
-  const params = useParams<{ id: string }>();
-  const challengeId = Number(params.id);
-
   const description = [
     '취업 준비를 하면서 어떤 고민들을 가지고 계셨나요?',
     `아래 고민 중 1개라도 해당한다면 ${josa(challengeTitle, '을/를')} 추천해요!`,
