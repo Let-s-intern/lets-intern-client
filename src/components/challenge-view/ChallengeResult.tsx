@@ -11,6 +11,27 @@ import Heading2 from '@components/common/ui/Heading2';
 
 const superTitle = '이 모든 고민을 한번에 해결!';
 
+const RESUME_CAREER_START_CONTENT = [
+  {
+    beforeImg: '/images/resume-start-before1.svg',
+    beforeCaption: '정리되지 않은 날 것의 경험과 역량들',
+    afterImg: '/images/resume-start-after1.svg',
+    afterCaption: '구체적이고 직무 역량이 구조화된 경험',
+  },
+  {
+    beforeImg: '/images/resume-start-before2.svg',
+    beforeCaption: '경험이 나열되기만 한 이력서',
+    afterImg: '/images/resume-start-after2.svg',
+    afterCaption: '업무의 세부 사항부터 역량까지 돋보이는 이력서',
+  },
+  {
+    beforeImg: '/images/resume-start-before3.svg',
+    beforeCaption: '역량이 보이지 않는 낡은 이력서 양식',
+    afterImg: '/images/resume-start-after3.svg',
+    afterCaption: '역량이 돋보이는 이력서 템플릿 활용',
+  },
+];
+
 const PERSONAL_STATEMENT_CONTENT = [
   {
     beforeImg: '/images/personal-statement-before1.jpg',
@@ -94,15 +115,22 @@ const {
 interface ChallengeResultProps {
   challengeType: ChallengeType;
   challengeTitle: string;
+  isResumeTemplate: boolean;
 }
 
 function ChallengeResult({
   challengeType,
   challengeTitle,
+  isResumeTemplate,
 }: ChallengeResultProps) {
   const isDesktop = useMediaQuery('(min-width: 991px)');
 
   const contents = useMemo(() => {
+    // 커리어 시작 + id 143 이상일 때 이력서 템플릿 콘텐츠 반환
+    if (isResumeTemplate) {
+      return RESUME_CAREER_START_CONTENT;
+    }
+
     switch (challengeType) {
       case PORTFOLIO:
         return PORTFOLIO_CONTENT;
@@ -115,7 +143,7 @@ function ChallengeResult({
       default:
         return PERSONAL_STATEMENT_CONTENT;
     }
-  }, [challengeType]);
+  }, [challengeType, isResumeTemplate]);
 
   const iconName = (() => {
     switch (challengeType) {
@@ -222,9 +250,15 @@ function ChallengeResult({
     >
       <div className="flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-20 md:gap-y-20 md:pb-[150px] md:pt-[140px] lg:px-0">
         <div className="flex w-full flex-col gap-y-3 md:items-center">
-          <SuperTitle className="mb-1" style={styles.superTitleStyle}>
-            {superTitle}
-          </SuperTitle>
+          {isResumeTemplate ? (
+            <SuperTitle className="mb-1" style={styles.superTitleStyle}>
+              {challengeTitle}와 함께라면
+            </SuperTitle>
+          ) : (
+            <SuperTitle className="mb-1" style={styles.superTitleStyle}>
+              {superTitle}
+            </SuperTitle>
+          )}
           <Heading2 className="text-white">
             {challengeType === EXPERIENCE_SUMMARY || challengeType === ETC ? (
               <>
@@ -236,6 +270,18 @@ function ChallengeResult({
                 />{' '}
                 파악하게 해줄
                 <br /> 기필코 경험정리 챌린지
+              </>
+            ) : isResumeTemplate ? (
+              <>
+                채용 담당자가{' '}
+                <img
+                  className="mb-1 inline-block h-auto w-7 md:mb-2 md:w-10"
+                  src={`/icons/${iconName}`}
+                  alt=""
+                />{' '}
+                <br className="md:hidden" />
+                끝까지 읽게 되는 <br className="hidden md:block" />
+                이력서의 확실한 변화
               </>
             ) : (
               <>

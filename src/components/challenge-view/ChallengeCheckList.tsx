@@ -10,6 +10,7 @@ import OutlinedBox from '@components/common/program/program-detail/OutlineBox';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import Heading2 from '@components/common/ui/Heading2';
 import { josa } from 'es-hangul';
+import { useParams } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
 
 const superTitle = '취업 준비 현황 체크리스트';
@@ -179,51 +180,110 @@ const PORTFOLIO_CHECK_LIST = [
   },
 ];
 
-const CAREER_START_CHECK_LIST = [
-  {
-    title: ['본격적인 취업 준비 시작! …', '그런데 어떤 거 부터 해야 하죠?'],
-    content: [
-      ['이력서도, 자기소개서도, 포트폴리오도', '한 번도 써본 적이 없어요'],
-      ['취업 정보가 너무 분산되어 있어서', '어떤 말을 따라야 할지 모르겠어요.'],
-      ['아직 구체적인 직무도 정하지 못했는데', '서류부터 작성해도 괜찮을까요?'],
-    ],
-    solution: [
-      '→ 체계적인 2주 커리큘럼으로 경험',
-      '분석-직무 탐색-서류 준비 3step 완료!',
-    ],
-  },
-  {
-    title: ['서류를 완성했는데, 계속 서류에서', '부터 떨어지고 있어요…'],
-    content: [
-      ['회사 맞춤형 서류를 쓰는 데 시간이', '너무 오래 걸려요.'],
-      [
-        '채용 공고를 분석하고 내 경험을 바탕으로',
-        '어필하는 방법을 잘 모르겠어요.',
+const getCareerStartCheckList = (challengeId: number) => {
+  if (challengeId >= 143) {
+    return [
+      {
+        title: [
+          '제 경험이 부족한 걸까요?',
+          '막상 이력서를 쓰려니 할 말이 없는 것 같아요...',
+        ],
+        content: [
+          [
+            '동아리, 학회, 학생회 등의 경험을 ',
+            '어떻게 풀어내야 할 지 모르겠어요.',
+          ],
+          ['부트캠프 들었는데', '이력서에 녹여내는 방법이 어려워요.'],
+          ['경험들이 있는데', '실무 경험이라고 하기에는 애매해요.'],
+        ],
+        solution: [
+          '→ 멘토 코멘트를 통해 객관적인 시선에서',
+          '경험을 점검할 수 있어요.',
+        ],
+      },
+      {
+        title: [
+          '경험을 잘 풀어내지 못하는 걸까요?',
+          '구체적으로 쓰려니 막막해요...',
+        ],
+        content: [
+          ['인턴 경험이 있긴 한데 ', '이력서에 어떻게 써야 할 지 막연해요.'],
+          ['경험에서 어떤 역량을 강조해야 하는지', '판단하는 게 어려워요.'],
+        ],
+        solution: [
+          '→ 2025년 주요 기업/직무 합격 이력서를 통해',
+          '경험을 Fit하게 풀어내는 방법을 배워요.',
+        ],
+      },
+      {
+        title: [
+          '반복되는 서류 탈락에 지쳐요.',
+          '합격률을 높이는 방법이 궁금해요...',
+        ],
+        content: [
+          ['채용 공고를 보고 최대한 노력했는데', '자꾸 서류에서 떨어져요.'],
+          ['경험이 부족한 건지', '취업 준비 자체가 너무 어려워요.'],
+        ],
+        solution: [
+          '→ 이력서에서 꼭 해야 하는 일을 확인 후 ',
+          '서류 준비를 시작할 수 있어요.',
+        ],
+      },
+    ];
+  }
+
+  return [
+    {
+      title: ['본격적인 취업 준비 시작! …', '그런데 어떤 거 부터 해야 하죠?'],
+      content: [
+        ['이력서도, 자기소개서도, 포트폴리오도', '한 번도 써본 적이 없어요'],
+        [
+          '취업 정보가 너무 분산되어 있어서',
+          '어떤 말을 따라야 할지 모르겠어요.',
+        ],
+        [
+          '아직 구체적인 직무도 정하지 못했는데',
+          '서류부터 작성해도 괜찮을까요?',
+        ],
       ],
-    ],
-    solution: [
-      '→ 나의 경험과 ‘강점’을 채용공고와',
-      '연결짓는 퍼스널 브랜딩 비결 배우기!',
-    ],
-  },
-  {
-    title: [
-      '미리 취업을 준비하고 싶은데,',
-      '지금 너무 바빠서 강제성이 필요해요!',
-    ],
-    content: [
-      ['4학년 막학기인데 취업 준비와 병행해서', '준비할 수 있을까요?'],
-      [
-        '직장에 근무 중인데 퇴근하면 너무 힘들어서,',
-        '꾸준히 취준을 독려해 줄 시스템이 필요해요',
+      solution: [
+        '→ 체계적인 2주 커리큘럼으로 경험',
+        '분석-직무 탐색-서류 준비 3step 완료!',
       ],
-    ],
-    solution: [
-      '→ 오픈카톡방 실시간 소감 및 작업물 공유와',
-      '미션 동기부여 페이백으로 강제성 제공',
-    ],
-  },
-];
+    },
+    {
+      title: ['서류를 완성했는데, 계속 서류에서', '부터 떨어지고 있어요…'],
+      content: [
+        ['회사 맞춤형 서류를 쓰는 데 시간이', '너무 오래 걸려요.'],
+        [
+          '채용 공고를 분석하고 내 경험을 바탕으로',
+          '어필하는 방법을 잘 모르겠어요.',
+        ],
+      ],
+      solution: [
+        '→ 나의 경험과 ‘강점’을 채용공고와',
+        '연결짓는 퍼스널 브랜딩 비결 배우기!',
+      ],
+    },
+    {
+      title: [
+        '미리 취업을 준비하고 싶은데,',
+        '지금 너무 바빠서 강제성이 필요해요!',
+      ],
+      content: [
+        ['4학년 막학기인데 취업 준비와 병행해서', '준비할 수 있을까요?'],
+        [
+          '직장에 근무 중인데 퇴근하면 너무 힘들어서,',
+          '꾸준히 취준을 독려해 줄 시스템이 필요해요',
+        ],
+      ],
+      solution: [
+        '→ 오픈카톡방 실시간 소감 및 작업물 공유와',
+        '미션 동기부여 페이백으로 강제성 제공',
+      ],
+    },
+  ];
+};
 
 const EXPERIENCE_SUMMARY_CHECK_LIST = [
   {
@@ -269,12 +329,17 @@ const {
 interface ChallengeCheckListProps {
   challengeType: ChallengeIdSchema['challengeType'];
   challengeTitle: string;
+  isResumeTemplate: boolean;
 }
 
 function ChallengeCheckList({
   challengeType,
   challengeTitle,
+  isResumeTemplate,
 }: ChallengeCheckListProps) {
+  const params = useParams<{ id: string }>();
+  const challengeId = Number(params.id);
+
   const description = [
     '취업 준비를 하면서 어떤 고민들을 가지고 계셨나요?',
     `아래 고민 중 1개라도 해당한다면 ${josa(challengeTitle, '을/를')} 추천해요!`,
@@ -283,7 +348,7 @@ function ChallengeCheckList({
   const checkList = useMemo(() => {
     switch (challengeType) {
       case CAREER_START:
-        return CAREER_START_CHECK_LIST;
+        return getCareerStartCheckList(challengeId);
       case PORTFOLIO:
         return PORTFOLIO_CHECK_LIST;
       case EXPERIENCE_SUMMARY:
@@ -295,7 +360,7 @@ function ChallengeCheckList({
       default:
         return PERSONAL_STATEMENT_CHECK_LIST;
     }
-  }, [challengeType]);
+  }, [challengeType, challengeId]);
 
   const styles = useMemo(() => {
     switch (challengeType) {
@@ -400,19 +465,39 @@ function ChallengeCheckList({
 
   return (
     <section className="flex w-full max-w-[1000px] flex-col px-5 py-20 md:px-10 md:pb-[140px] md:pt-[130px] lg:px-0">
-      <div className="mb-16 md:mb-20">
-        <SuperTitle
-          className="mb-3 md:text-center"
-          style={styles.superTitleStyle}
-        >
-          {superTitle}
-        </SuperTitle>
-        <Heading2>{title.join('\n')}</Heading2>
-        <Description className="mt-3 md:mt-8 md:text-center">
-          {description.join('\n')}
-        </Description>
-      </div>
-
+      {isResumeTemplate ? (
+        <div className="mb-16 md:mb-20">
+          <SuperTitle
+            className="mb-3 md:text-center"
+            style={styles.superTitleStyle}
+          >
+            이력서 1주 완성 챌린지가 필요한 이유
+          </SuperTitle>
+          <Heading2>
+            이력서는 취업의 필수!
+            <br />
+            채용 담당자가 가장 먼저 나를 판단하게 되는 서류입니다.
+          </Heading2>
+          <Description className="mt-3 md:mt-8 md:text-center">
+            가장 중요한 서류임에도 불구하고 자꾸 미뤄두셨다면
+            <br />
+            이번 챌린지를 통해 함께 1주 만에 꼭 완성해요!
+          </Description>
+        </div>
+      ) : (
+        <div className="mb-16 md:mb-20">
+          <SuperTitle
+            className="mb-3 md:text-center"
+            style={styles.superTitleStyle}
+          >
+            {superTitle}
+          </SuperTitle>
+          <Heading2>{title.join('\n')}</Heading2>
+          <Description className="mt-3 md:mt-8 md:text-center">
+            {description.join('\n')}
+          </Description>
+        </div>
+      )}
       <div className="flex w-full flex-col gap-16 md:gap-32 md:px-16">
         {checkList.map((item, index) => (
           <div
