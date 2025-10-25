@@ -132,7 +132,7 @@ const experienceTableHeaders: TableHeader[] = [
             <TempBadge key={idx} content={item} />
           ))}
           {hiddenCount > 0 && (
-            <span className="text-neutral-30">+{hiddenCount}</span>
+            <span className="text-xs text-neutral-30">+{hiddenCount}</span>
           )}
         </div>
       );
