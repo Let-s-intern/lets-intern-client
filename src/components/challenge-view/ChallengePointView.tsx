@@ -52,6 +52,7 @@ const ChallengePointView = ({
   challengeTitle,
   programRecommend,
   deposit,
+  challengeId,
 }: {
   point: ChallengePoint;
   startDate: Dayjs;
@@ -60,6 +61,7 @@ const ChallengePointView = ({
   challengeTitle: string;
   programRecommend?: ProgramRecommend;
   deposit: number;
+  challengeId: number;
 }) => {
   const router = useRouter();
 
@@ -128,6 +130,10 @@ const ChallengePointView = ({
     },
   ];
 
+  const isResumeTemplateId = useMemo(() => {
+    return challengeId >= 143;
+  }, [challengeId]);
+
   const [paypackImgSrc, recommendLogoSrc] = useMemo(() => {
     switch (challengeType) {
       case PORTFOLIO:
@@ -137,7 +143,9 @@ const ChallengePointView = ({
         ];
       case CAREER_START:
         return [
-          '/images/payback-career-start.png',
+          isResumeTemplateId
+            ? '/images/payback-career-start157.png'
+            : '/images/payback-career-start.png',
           '/icons/bg-logo-career-start.svg',
         ];
       case EXPERIENCE_SUMMARY:
@@ -158,7 +166,7 @@ const ChallengePointView = ({
       default:
         return [null, null];
     }
-  }, [challengeType]);
+  }, [challengeType, isResumeTemplateId]);
 
   const slideList = useMemo(() => {
     const list = [];
@@ -271,24 +279,38 @@ const ChallengePointView = ({
           >
             프로그램 소개
           </SuperTitle>
-          <Heading2 className="mb-10 break-keep lg:mb-20">
-            {josa(challengeTitle, '을/를')} 통해
-            <br />
-            <span
-              style={{
-                color: styles.introHeadingColor,
-              }}
-            >
-              하루 30분
-            </span>
-            , 단 {point.weekText}만에{' '}
-            {challengeType === EXPERIENCE_SUMMARY || challengeType === ETC
-              ? '경험 정리'
-              : '서류 준비'}
-            를 <br className="lg:hidden" />
-            끝낼 수 있어요
-          </Heading2>
-
+          {isResumeTemplateId && challengeType === CAREER_START ? (
+            <Heading2 className="mb-10 break-keep lg:mb-20">
+              매력적인 이력서를 완성하는 {point.weekText}
+              <br />
+              <span
+                style={{
+                  color: styles.introHeadingColor,
+                }}
+              >
+                합격 서류 확인하고 멘토 코멘트와 함께
+              </span>{' '}
+              이력서 완성해요!
+            </Heading2>
+          ) : (
+            <Heading2 className="mb-10 break-keep lg:mb-20">
+              {josa(challengeTitle, '을/를')} 통해
+              <br />
+              <span
+                style={{
+                  color: styles.introHeadingColor,
+                }}
+              >
+                하루 30분
+              </span>
+              , 단 {point.weekText}만에{' '}
+              {challengeType === EXPERIENCE_SUMMARY || challengeType === ETC
+                ? '경험 정리'
+                : '서류 준비'}
+              를 <br className="lg:hidden" />
+              끝낼 수 있어요
+            </Heading2>
+          )}
           <div className="mb-[70px] w-full space-y-10 md:mb-[120px] md:space-y-[60px] md:px-14">
             <ul className="max-w-[826px] space-y-4 md:space-y-6">
               {point.list?.map((item, index) => (
@@ -301,7 +323,18 @@ const ChallengePointView = ({
                 />
               ))}
             </ul>
-            {challengeType === CAREER_START && (
+            {challengeType === CAREER_START && isResumeTemplateId && (
+              <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
+                본 프로그램은 취업의 기초가 되는
+                <br className="md:hidden" />{' '}
+                <span className="font-bold">경험 구조화 및 이력서 작성</span>
+                을 다룹니다.
+                <br />
+                자기소개서 및 포트폴리오 완성 프로그램은
+                <br className="md:hidden" /> 별도로 준비되어 있습니다.
+              </p>
+            )}
+            {challengeType === CAREER_START && !isResumeTemplateId && (
               <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
                 본 프로그램은 취업의 기초가 되는
                 <br className="md:hidden" />{' '}
