@@ -55,10 +55,12 @@ const ChallengeDifferent = ({
   challengeType,
   challengeTitle,
   deposit,
+  isResumeTemplate,
 }: {
   challengeType: ChallengeType;
   challengeTitle: string;
   deposit: number;
+  isResumeTemplate: boolean;
 }) => {
   const styles = useMemo(() => {
     switch (challengeType) {
@@ -102,51 +104,99 @@ const ChallengeDifferent = ({
     }
   }, [challengeType]);
 
-  const differentList: DifferentCardProps[] = [
-    {
-      order: 1,
-      title: `취업 준비가 더 이상 막막하지 않도록\nA부터 Z까지 알려주는 학습 콘텐츠`,
-      options: [
-        '초보 취준생도 따라갈 수 있는 친절한 길라잡이',
-        '합격자 예시를 포함하여 콘텐츠 이해도 UP',
-        'PDF 30페이지 분량의 추가 콘텐츠 제공',
-      ],
-      imageUrl: {
-        desktop: '/challenge-detail/different/desktop/contents_desktop.gif',
-        mobile: '/challenge-detail/different/mobile/contents_mobile.gif',
-      },
-      styles,
-    },
-    {
-      order: 2,
-      title: `서류와 면접의 기초 베이스가 되어줄\n미션 템플릿으로 나만의 취업 가이드북 완성`,
-      options: [
-        '하루 30분, 서류를 완성하는 실습',
-        '누구나 쉽게 채울 수 있는 노션 템플릿',
-        '수료 후에도 자산으로 남는 취업 가이드북',
-      ],
-      imageUrl: {
-        desktop: '/challenge-detail/different/desktop/template_desktop.gif',
-        mobile: '/challenge-detail/different/mobile/template_mobile.gif',
-      },
-      styles,
-    },
-    {
-      order: 3,
-      title: `시간은 어느새 흐르고,\n혼자 하기 어렵다면 사람들과\n함께 공유하며 성장하는 동기부여 시스템`,
-      options: [
-        `사람들과 함께 공유하며 성장하는\n오픈 카톡 커뮤니티`,
-        '미션 80점 이상 완료 시, 수료증 지급',
-      ],
-      imageUrl: {
-        desktop: '/challenge-detail/different/desktop/community_desktop.gif',
-        mobile: '/challenge-detail/different/mobile/community_mobile.gif',
-      },
-      styles,
-    },
-  ];
+  const differentList: DifferentCardProps[] = isResumeTemplate
+    ? [
+        {
+          order: 1,
+          title: `취업 준비가 더 이상 막막하지 않도록\nA부터 Z까지 알려주는 학습 콘텐츠`,
+          options: [
+            '초보 취준생도 따라갈 수 있는 친절한 길라잡이',
+            '합격자 예시를 포함하여 서류 작성 스킬 UP',
+            '2025년 주요 기업/직무 합격 자료로 파악하는 채용 트렌드',
+          ],
+          imageUrl: {
+            desktop: '/challenge-detail/different/desktop/contents_desktop.gif',
+            mobile: '/challenge-detail/different/mobile/contents_mobile.gif',
+          },
+          styles,
+        },
+        {
+          order: 2,
+          title: `서류와 면접의 기초 베이스가 되어줄\n미션 템플릿으로 나만의 이력서 완성`,
+          options: [
+            '하루 30분, 경험 정리부터 이력서까지 완성하는 실습',
+            '누구나 쉽게 채울 수 있는 노션 템플릿',
+            '수료 후에도 자산으로 남는 경험 회고록',
+          ],
+          imageUrl: {
+            desktop: '/challenge-detail/different/desktop/template_desktop.gif',
+            mobile: '/challenge-detail/different/mobile/template_mobile.gif',
+          },
+          styles,
+        },
+        {
+          order: 3,
+          title: `함께라서 할 수 있어요.\n챌린지 참여자들과 함께 동기부여!`,
+          options: [
+            '취업 여정의 동료들과 함께 지치지 않고 완성해요.',
+            '자유로운 커뮤니티를 통해 스터디 함께할 수 있어요.',
+            '서류 작성을 통해 커리어 고민 함께 나눠요.',
+          ],
+          imageUrl: {
+            desktop:
+              '/challenge-detail/different/desktop/community_desktop.gif',
+            mobile: '/challenge-detail/different/mobile/community_mobile.gif',
+          },
+          styles,
+        },
+      ]
+    : [
+        {
+          order: 1,
+          title: `취업 준비가 더 이상 막막하지 않도록\nA부터 Z까지 알려주는 학습 콘텐츠`,
+          options: [
+            '초보 취준생도 따라갈 수 있는 친절한 길라잡이',
+            '합격자 예시를 포함하여 콘텐츠 이해도 UP',
+            'PDF 30페이지 분량의 추가 콘텐츠 제공',
+          ],
+          imageUrl: {
+            desktop: '/challenge-detail/different/desktop/contents_desktop.gif',
+            mobile: '/challenge-detail/different/mobile/contents_mobile.gif',
+          },
+          styles,
+        },
+        {
+          order: 2,
+          title: `서류와 면접의 기초 베이스가 되어줄\n미션 템플릿으로 나만의 취업 가이드북 완성`,
+          options: [
+            '하루 30분, 서류를 완성하는 실습',
+            '누구나 쉽게 채울 수 있는 노션 템플릿',
+            '수료 후에도 자산으로 남는 취업 가이드북',
+          ],
+          imageUrl: {
+            desktop: '/challenge-detail/different/desktop/template_desktop.gif',
+            mobile: '/challenge-detail/different/mobile/template_mobile.gif',
+          },
+          styles,
+        },
+        {
+          order: 3,
+          title: `시간은 어느새 흐르고,\n혼자 하기 어렵다면 사람들과\n함께 공유하며 성장하는 동기부여 시스템`,
+          options: [
+            `사람들과 함께 공유하며 성장하는\n오픈 카톡 커뮤니티`,
+            '미션 80점 이상 완료 시, 수료증 지급',
+          ],
+          imageUrl: {
+            desktop:
+              '/challenge-detail/different/desktop/community_desktop.gif',
+            mobile: '/challenge-detail/different/mobile/community_mobile.gif',
+          },
+          styles,
+        },
+      ];
 
   const paypackImgSrc = (() => {
+    if (isResumeTemplate) return '/images/payback-career-start157.png';
     switch (challengeType) {
       case PORTFOLIO:
         return '/images/payback-portfolio.png';
@@ -190,27 +240,51 @@ const ChallengeDifferent = ({
       <div className="flex w-full flex-col gap-y-8 md:gap-y-20">
         <div className="flex w-full flex-col gap-y-6 md:gap-y-12">
           <SuperTitle style={{ color: styles.primaryColor }}>차별점</SuperTitle>
-          <div className="flex flex-col gap-y-3 md:items-center">
-            <p
-              className="text-xsmall16 font-bold md:text-small18"
-              style={{ color: styles.primaryColor }}
-            >
-              비교 불가!
-            </p>
-            <div className="whitespace-pre text-[22px] font-bold text-black md:text-center md:text-xlarge28">
-              <span>{challengeTitle}만의</span>
-              <br />
-              <span>
-                차별점, 이 모든걸{' '}
-                <img
-                  className="inline-block h-auto w-8 md:w-10"
-                  src={`/icons/${iconName}`}
-                  alt=""
-                />{' '}
-                얻어가실 수 있어요!
-              </span>
+          {isResumeTemplate ? (
+            <div className="flex flex-col gap-y-3 md:items-center">
+              <p
+                className="text-xsmall16 font-bold md:text-small18"
+                style={{ color: styles.primaryColor }}
+              >
+                {challengeTitle}에서 얻어갈 수 있는 것들
+              </p>
+              <div className="whitespace-pre text-[22px] font-bold text-black md:text-center md:text-xlarge28">
+                <span>렛츠커리어 챌린지만의 차별점</span>
+                <br />
+                <span>
+                  이 모든걸{' '}
+                  <img
+                    className="inline-block h-auto w-8 md:w-10"
+                    src={`/icons/${iconName}`}
+                    alt=""
+                  />{' '}
+                  얻어가실 수 있어요!
+                </span>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="flex flex-col gap-y-3 md:items-center">
+              <p
+                className="text-xsmall16 font-bold md:text-small18"
+                style={{ color: styles.primaryColor }}
+              >
+                비교 불가!
+              </p>
+              <div className="whitespace-pre text-[22px] font-bold text-black md:text-center md:text-xlarge28">
+                <span>{challengeTitle}만의</span>
+                <br />
+                <span>
+                  차별점, 이 모든걸{' '}
+                  <img
+                    className="inline-block h-auto w-8 md:w-10"
+                    src={`/icons/${iconName}`}
+                    alt=""
+                  />{' '}
+                  얻어가실 수 있어요!
+                </span>
+              </div>
+            </div>
+          )}
         </div>
         <div className="flex w-full flex-col gap-y-6">
           {differentList.map((different) => (
@@ -237,11 +311,19 @@ const ChallengeDifferent = ({
                 <br className="md:hidden" /> {deposit / 10000}
                 만원을 페이백해드려요!
               </p>
-              <img
-                className="absolute bottom-0 right-0 h-auto w-28 md:top-0 md:w-48"
-                src={paypackImgSrc}
-                alt={`페이백 ${deposit / 10000}만원`}
-              />
+              {isResumeTemplate ? (
+                <img
+                  className="absolute bottom-0 right-0 h-auto w-28 md:top-0 md:w-48"
+                  src={paypackImgSrc}
+                  alt={`페이백 ${deposit / 10000}만원`}
+                />
+              ) : (
+                <img
+                  className="absolute bottom-0 right-0 h-auto w-28 md:top-0 md:w-48"
+                  src={paypackImgSrc}
+                  alt={`페이백 ${deposit / 10000}만원`}
+                />
+              )}
             </div>
           )}
         </div>
@@ -272,11 +354,13 @@ const ChallengeDifferent = ({
             options={tripleBenefits[1].options}
             imgUrl={tripleBenefits[1].imgUrl.src}
           />
-          <BenefitCard
-            title={tripleBenefits[2].title}
-            options={tripleBenefits[2].options}
-            imgUrl={tripleBenefits[2].imgUrl.src}
-          />{' '}
+          {!isResumeTemplate && (
+            <BenefitCard
+              title={tripleBenefits[2].title}
+              options={tripleBenefits[2].options}
+              imgUrl={tripleBenefits[2].imgUrl.src}
+            />
+          )}
           <BenefitCard
             title={tripleBenefits[3].title}
             options={tripleBenefits[3].options}
