@@ -239,6 +239,7 @@ const ChallengeView: React.FC<{
                 programRecommend={receivedContent.programRecommend}
                 deposit={challenge.priceInfo[0].refund ?? 0}
                 challengeId={Number(id)}
+                isResumeTemplate={isResumeTemplate}
               />
             </section>
 

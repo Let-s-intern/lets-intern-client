@@ -463,39 +463,26 @@ function ChallengeCheckList({
 
   return (
     <section className="flex w-full max-w-[1000px] flex-col px-5 py-20 md:px-10 md:pb-[140px] md:pt-[130px] lg:px-0">
-      {isResumeTemplate ? (
-        <div className="mb-16 md:mb-20">
-          <SuperTitle
-            className="mb-3 md:text-center"
-            style={styles.superTitleStyle}
-          >
-            이력서 1주 완성 챌린지가 필요한 이유
-          </SuperTitle>
-          <Heading2>
-            이력서는 취업의 필수!
-            <br />
-            채용 담당자가 가장 먼저 나를 판단하게 되는 서류입니다.
-          </Heading2>
-          <Description className="mt-3 md:mt-8 md:text-center">
-            가장 중요한 서류임에도 불구하고 자꾸 미뤄두셨다면
-            <br />
-            이번 챌린지를 통해 함께 1주 만에 꼭 완성해요!
-          </Description>
-        </div>
-      ) : (
-        <div className="mb-16 md:mb-20">
-          <SuperTitle
-            className="mb-3 md:text-center"
-            style={styles.superTitleStyle}
-          >
-            {superTitle}
-          </SuperTitle>
-          <Heading2>{title.join('\n')}</Heading2>
-          <Description className="mt-3 md:mt-8 md:text-center">
-            {description.join('\n')}
-          </Description>
-        </div>
-      )}
+      <div className="mb-16 md:mb-20">
+        <SuperTitle
+          className="mb-3 md:text-center"
+          style={styles.superTitleStyle}
+        >
+          {isResumeTemplate
+            ? '이력서 1주 완성 챌린지가 필요한 이유'
+            : superTitle}
+        </SuperTitle>
+        <Heading2>
+          {isResumeTemplate
+            ? '이력서는 취업의 필수!\n채용 담당자가 가장 먼저 나를 판단하게 되는 서류입니다.'
+            : title.join('\n')}
+        </Heading2>
+        <Description className="mt-3 md:mt-8 md:text-center">
+          {isResumeTemplate
+            ? '가장 중요한 서류임에도 불구하고 자꾸 미뤄두셨다면\n이번 챌린지를 통해 함께 1주 만에 꼭 완성해요!'
+            : description.join('\n')}
+        </Description>
+      </div>
       <div className="flex w-full flex-col gap-16 md:gap-32 md:px-16">
         {checkList.map((item, index) => (
           <div

@@ -44,6 +44,119 @@ const {
   ETC,
 } = challengeTypeSchema.enum;
 
+const getProgramNotice = (
+  challengeType: ChallengeType,
+  isResumeTemplate: boolean,
+) => {
+  if (isResumeTemplate) {
+    return (
+      <>
+        본 프로그램은 취업의 기초가 되는
+        <br className="md:hidden" />{' '}
+        <span className="font-bold">경험 구조화 및 이력서 작성</span>을
+        다룹니다.
+        <br />
+        자기소개서 및 포트폴리오 완성 프로그램은
+        <br className="md:hidden" /> 별도로 준비되어 있습니다.
+      </>
+    );
+  }
+
+  if (challengeType === CAREER_START) {
+    return (
+      <>
+        본 프로그램은 취업의 기초가 되는
+        <br className="md:hidden" />{' '}
+        <span className="font-bold">퍼스널 브랜딩과 마스터 이력서 작성</span>을
+        다룹니다.
+        <br />
+        자기소개서 및 포트폴리오 완성 프로그램은
+        <br className="md:hidden" /> 별도로 준비되어 있습니다.
+      </>
+    );
+  }
+
+  if (
+    challengeType === PERSONAL_STATEMENT ||
+    challengeType === PERSONAL_STATEMENT_LARGE_CORP
+  ) {
+    return (
+      <>
+        본 프로그램은 취업의 기초가 되는
+        <br className="md:hidden" />{' '}
+        <span className="font-bold">자기소개서 작성</span>을 다룹니다.
+        <br /> 서류 기초 완성 및 포트폴리오 완성 프로그램은
+        <br className="md:hidden" /> 별도로 준비되어 있습니다.
+      </>
+    );
+  }
+
+  if (challengeType === PORTFOLIO) {
+    return (
+      <>
+        본 프로그램은 나만의 필살기를 만들 수 있는
+        <br className="md:hidden" />{' '}
+        <span className="font-bold">포트폴리오 제작 방법</span>을 다룹니다.
+        <br /> 서류 기초 작성 및 자기소개서 프로그램은
+        <br className="md:hidden" /> 별도로 준비되어 있습니다.
+      </>
+    );
+  }
+
+  if (challengeType === EXPERIENCE_SUMMARY || challengeType === ETC) {
+    return (
+      <>
+        본 프로그램은 서류 준비의 기초가 되는 경험정리를 다룹니다.
+        <br className="hidden md:block" /> 이력서, 자기소개서, 포트폴리오
+        프로그램에 앞서 수강하기를 권장드립니다.
+      </>
+    );
+  }
+
+  return null;
+};
+
+const IntroHeading = ({
+  challengeType,
+  challengeTitle,
+  weekText,
+  isResumeTemplate,
+  introHeadingColor,
+}: {
+  challengeType: ChallengeType;
+  challengeTitle: string;
+  weekText: ChallengePoint['weekText'];
+  isResumeTemplate: boolean;
+  introHeadingColor: string;
+}) => {
+  if (isResumeTemplate) {
+    return (
+      <Heading2 className="mb-10 break-keep lg:mb-20">
+        매력적인 이력서를 완성하는 {weekText}
+        <br />
+        <span style={{ color: introHeadingColor }}>
+          합격 서류 확인하고 멘토 코멘트와 함께
+        </span>{' '}
+        이력서 완성해요!
+      </Heading2>
+    );
+  }
+
+  const isExperienceSummary =
+    challengeType === EXPERIENCE_SUMMARY || challengeType === ETC;
+  const taskText = isExperienceSummary ? '경험 정리' : '서류 준비';
+
+  return (
+    <Heading2 className="mb-10 break-keep lg:mb-20">
+      {josa(challengeTitle, '을/를')} 통해
+      <br />
+      <span style={{ color: introHeadingColor }}>하루 30분</span>, 단 {weekText}
+      만에 {taskText}를 <br className="lg:hidden" />
+      끝낼 수 있어요
+    </Heading2>
+  );
+};
+
 const ChallengePointView = ({
   point,
   startDate,
@@ -53,6 +166,7 @@ const ChallengePointView = ({
   programRecommend,
   deposit,
   challengeId,
+  isResumeTemplate,
 }: {
   point: ChallengePoint;
   startDate: Dayjs;
@@ -62,30 +176,16 @@ const ChallengePointView = ({
   programRecommend?: ProgramRecommend;
   deposit: number;
   challengeId: number;
+  isResumeTemplate: boolean;
 }) => {
   const router = useRouter();
 
   const progress = [
-    {
-      index: 1,
-      title: '신청 완료',
-    },
-    {
-      index: 2,
-      title: '챌린지 대시보드 및\n오픈채팅방 초대',
-    },
-    {
-      index: 3,
-      title: 'OT',
-    },
-    {
-      index: 4,
-      title: '회차별 챌린지 가이드북\n및 미션 템플릿 제공',
-    },
-    {
-      index: 5,
-      title: '회차별 미션 수행',
-    },
+    { index: 1, title: '신청 완료' },
+    { index: 2, title: '챌린지 대시보드 및\n오픈채팅방 초대' },
+    { index: 3, title: 'OT' },
+    { index: 4, title: '회차별 챌린지 가이드북\n및 미션 템플릿 제공' },
+    { index: 5, title: '회차별 미션 수행' },
     {
       index: 6,
       title: '챌린지 종료 및 평가',
@@ -130,10 +230,6 @@ const ChallengePointView = ({
     },
   ];
 
-  const isResumeTemplateId = useMemo(() => {
-    return challengeId >= 143;
-  }, [challengeId]);
-
   const [paypackImgSrc, recommendLogoSrc] = useMemo(() => {
     switch (challengeType) {
       case PORTFOLIO:
@@ -143,7 +239,7 @@ const ChallengePointView = ({
         ];
       case CAREER_START:
         return [
-          isResumeTemplateId
+          challengeId >= 143
             ? '/images/payback-career-start157.png'
             : '/images/payback-career-start.png',
           '/icons/bg-logo-career-start.svg',
@@ -166,7 +262,7 @@ const ChallengePointView = ({
       default:
         return [null, null];
     }
-  }, [challengeType, isResumeTemplateId]);
+  }, [challengeType, challengeId]);
 
   const slideList = useMemo(() => {
     const list = [];
@@ -279,38 +375,13 @@ const ChallengePointView = ({
           >
             프로그램 소개
           </SuperTitle>
-          {isResumeTemplateId && challengeType === CAREER_START ? (
-            <Heading2 className="mb-10 break-keep lg:mb-20">
-              매력적인 이력서를 완성하는 {point.weekText}
-              <br />
-              <span
-                style={{
-                  color: styles.introHeadingColor,
-                }}
-              >
-                합격 서류 확인하고 멘토 코멘트와 함께
-              </span>{' '}
-              이력서 완성해요!
-            </Heading2>
-          ) : (
-            <Heading2 className="mb-10 break-keep lg:mb-20">
-              {josa(challengeTitle, '을/를')} 통해
-              <br />
-              <span
-                style={{
-                  color: styles.introHeadingColor,
-                }}
-              >
-                하루 30분
-              </span>
-              , 단 {point.weekText}만에{' '}
-              {challengeType === EXPERIENCE_SUMMARY || challengeType === ETC
-                ? '경험 정리'
-                : '서류 준비'}
-              를 <br className="lg:hidden" />
-              끝낼 수 있어요
-            </Heading2>
-          )}
+          <IntroHeading
+            challengeType={challengeType}
+            challengeTitle={challengeTitle}
+            weekText={point.weekText}
+            isResumeTemplate={isResumeTemplate}
+            introHeadingColor={styles.introHeadingColor}
+          />
           <div className="mb-[70px] w-full space-y-10 md:mb-[120px] md:space-y-[60px] md:px-14">
             <ul className="max-w-[826px] space-y-4 md:space-y-6">
               {point.list?.map((item, index) => (
@@ -323,58 +394,9 @@ const ChallengePointView = ({
                 />
               ))}
             </ul>
-            {challengeType === CAREER_START && isResumeTemplateId && (
-              <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
-                본 프로그램은 취업의 기초가 되는
-                <br className="md:hidden" />{' '}
-                <span className="font-bold">경험 구조화 및 이력서 작성</span>
-                을 다룹니다.
-                <br />
-                자기소개서 및 포트폴리오 완성 프로그램은
-                <br className="md:hidden" /> 별도로 준비되어 있습니다.
-              </p>
-            )}
-            {challengeType === CAREER_START && !isResumeTemplateId && (
-              <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
-                본 프로그램은 취업의 기초가 되는
-                <br className="md:hidden" />{' '}
-                <span className="font-bold">
-                  퍼스널 브랜딩과 마스터 이력서 작성
-                </span>
-                을 다룹니다.
-                <br />
-                자기소개서 및 포트폴리오 완성 프로그램은
-                <br className="md:hidden" /> 별도로 준비되어 있습니다.
-              </p>
-            )}
-            {(challengeType === PERSONAL_STATEMENT ||
-              challengeType === PERSONAL_STATEMENT_LARGE_CORP) && (
-              <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
-                본 프로그램은 취업의 기초가 되는
-                <br className="md:hidden" />{' '}
-                <span className="font-bold">자기소개서 작성</span>을 다룹니다.
-                <br /> 서류 기초 완성 및 포트폴리오 완성 프로그램은
-                <br className="md:hidden" /> 별도로 준비되어 있습니다.
-              </p>
-            )}
-            {challengeType === PORTFOLIO && (
-              <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
-                본 프로그램은 나만의 필살기를 만들 수 있는
-                <br className="md:hidden" />{' '}
-                <span className="font-bold">포트폴리오 제작 방법</span>을
-                다룹니다.
-                <br /> 서류 기초 작성 및 자기소개서 프로그램은
-                <br className="md:hidden" /> 별도로 준비되어 있습니다.
-              </p>
-            )}
-            {(challengeType === EXPERIENCE_SUMMARY ||
-              challengeType === ETC) && (
-              <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
-                본 프로그램은 서류 준비의 기초가 되는 경험정리를 다룹니다.
-                <br className="hidden md:block" /> 이력서, 자기소개서,
-                포트폴리오 프로그램에 앞서 수강하기를 권장드립니다.
-              </p>
-            )}
+            <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
+              {getProgramNotice(challengeType, isResumeTemplate)}
+            </p>
           </div>
         </div>
       )}

@@ -6,7 +6,13 @@ interface ChallengeResultProps {
   isResumeTemplate?: boolean;
 }
 
-const summaryItems = [
+interface SummaryItemData {
+  title: string;
+  description: string;
+  icon: string;
+}
+
+const SUMMARY_ITEMS: SummaryItemData[] = [
   {
     title: '현직자 코멘트와 함께\n현황 점검해요.',
     description:
@@ -34,15 +40,7 @@ const summaryItems = [
   },
 ];
 
-const SummaryItem = ({
-  title,
-  description,
-  icon,
-}: {
-  title: string;
-  description: string;
-  icon: string;
-}) => {
+const SummaryItem = ({ title, description, icon }: SummaryItemData) => {
   return (
     <div className="flex flex-row items-center gap-5 rounded-xs bg-white p-5 md:flex-col md:items-start md:gap-4 md:p-6">
       <div className="mb-2 shrink-0 md:mb-0 md:h-12 md:w-12">
@@ -64,6 +62,18 @@ const SummaryItem = ({
   );
 };
 
+const SummaryGrid = ({ items }: { items: SummaryItemData[] }) => {
+  return (
+    <div className="grid w-full max-w-[1000px] grid-cols-1 gap-2.5 md:grid-cols-2">
+      {items.map((item, idx) => (
+        <SummaryItem key={idx} {...item} />
+      ))}
+    </div>
+  );
+};
+
+// challengeType이 'CAREER_START'이고
+// isResumeTemplate이 true일 때만 표시
 function ChallengeSummarySection({
   challengeType,
   isResumeTemplate = false,
@@ -88,16 +98,9 @@ function ChallengeSummarySection({
         작성하는 1주의 시간
       </MainTitle>
 
-      <div className="mb-2.5 grid w-full max-w-[1000px] grid-cols-1 gap-2.5 md:grid-cols-2">
-        {summaryItems.slice(0, 2).map((item, idx) => (
-          <SummaryItem key={idx} {...item} />
-        ))}
-      </div>
-
-      <div className="grid w-full max-w-[1000px] grid-cols-1 gap-2.5 md:grid-cols-2">
-        {summaryItems.slice(2).map((item, idx) => (
-          <SummaryItem key={idx + 2} {...item} />
-        ))}
+      <div className="flex w-full max-w-[1000px] flex-col gap-2.5">
+        <SummaryGrid items={SUMMARY_ITEMS.slice(0, 2)} />
+        <SummaryGrid items={SUMMARY_ITEMS.slice(2)} />
       </div>
     </section>
   );
