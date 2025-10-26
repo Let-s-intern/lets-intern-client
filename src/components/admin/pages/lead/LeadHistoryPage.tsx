@@ -35,6 +35,7 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
+import { Plus } from 'lucide-react';
 import { nanoid } from 'nanoid';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -68,6 +69,11 @@ const eventTypeOptions: Array<{ value: LeadHistoryEventType; label: string }> =
     >
   ).map(([value, label]) => ({ value, label }));
 
+const membershipOptions: Array<{ value: string; label: string }> = [
+  { value: 'signedUp', label: '회원가입' },
+  { value: 'notSignedUp', label: '미가입' },
+];
+
 type LeadHistoryRow = {
   id: string;
   phoneNum: string | null;
@@ -94,7 +100,11 @@ type LeadHistoryRow = {
 
 const FILTER_QUERY_KEY = 'filters';
 
-type LeadHistoryFilterField = 'leadEvent' | 'program' | 'eventType';
+type LeadHistoryFilterField =
+  | 'leadEvent'
+  | 'program'
+  | 'eventType'
+  | 'membership';
 type LeadHistoryFilterOperator = 'include' | 'exclude';
 type LeadHistoryFilterCombinator = 'AND' | 'OR';
 
@@ -138,6 +148,7 @@ type LeadHistoryGroupSummary = {
   leadEventIds: Set<string>;
   eventTypes: Set<LeadHistoryEventType>;
   programTitles: Set<string>;
+  hasSignedUp: boolean;
 };
 
 const filterFieldDefinitions: Record<
@@ -147,6 +158,7 @@ const filterFieldDefinitions: Record<
   leadEvent: { label: '리드 이벤트', valueLabel: '이벤트 선택' },
   program: { label: '프로그램', valueLabel: '프로그램 선택' },
   eventType: { label: '이벤트 유형', valueLabel: '이벤트 유형 선택' },
+  membership: { label: '회원가입 여부', valueLabel: '회원가입 여부 선택' },
 };
 
 const filterOperatorOptions: Array<{
@@ -158,7 +170,12 @@ const filterOperatorOptions: Array<{
 ];
 
 const isFilterField = (value: unknown): value is LeadHistoryFilterField => {
-  return value === 'leadEvent' || value === 'program' || value === 'eventType';
+  return (
+    value === 'leadEvent' ||
+    value === 'program' ||
+    value === 'eventType' ||
+    value === 'membership'
+  );
 };
 
 const isFilterOperator = (
@@ -223,7 +240,7 @@ const fromStoredNode = (
       : [];
     return createConditionNode({
       field: node.field,
-      operator: node.operator,
+      operator: node.field === 'membership' ? 'include' : node.operator,
       values,
     });
   }
@@ -322,6 +339,11 @@ const evaluateConditionNode = (
       const hasAny = condition.values.some((value) =>
         summary.eventTypes.has(value as LeadHistoryEventType),
       );
+      return condition.operator === 'include' ? hasAny : !hasAny;
+    }
+    case 'membership': {
+      const status = summary.hasSignedUp ? 'signedUp' : 'notSignedUp';
+      const hasAny = condition.values.some((value) => value === status);
       return condition.operator === 'include' ? hasAny : !hasAny;
     }
     default:
@@ -1008,6 +1030,7 @@ const LeadHistoryPage = () => {
         leadEventIds: new Set<string>(),
         eventTypes: new Set<LeadHistoryEventType>(),
         programTitles: new Set<string>(),
+        hasSignedUp: false,
       };
 
       if (row.leadEventId !== null && row.leadEventId !== undefined) {
@@ -1020,6 +1043,10 @@ const LeadHistoryPage = () => {
 
       if (row.eventType === 'PROGRAM' && row.title) {
         summary.programTitles.add(row.title);
+      }
+
+      if (row.userId !== null && row.userId !== undefined) {
+        summary.hasSignedUp = true;
       }
 
       map.set(key, summary);
@@ -1135,6 +1162,10 @@ const LeadHistoryPage = () => {
                 ...next,
                 field: updates.field,
                 values: [],
+                operator:
+                  updates.field === 'membership'
+                    ? 'include'
+                    : next.operator,
               };
             } else if (updates.field) {
               next = {
@@ -1143,7 +1174,7 @@ const LeadHistoryPage = () => {
               };
             }
 
-            if (updates.operator) {
+            if (updates.operator && next.field !== 'membership') {
               next = {
                 ...next,
                 operator: updates.operator,
@@ -1200,6 +1231,10 @@ const LeadHistoryPage = () => {
           leadHistoryEventTypeLabels[value as LeadHistoryEventType] ?? value
         );
       }
+      if (field === 'membership') {
+        const option = membershipOptions.find((item) => item.value === value);
+        return option?.label ?? value;
+      }
       return value;
     },
     [leadEventLabelMap],
@@ -1212,6 +1247,9 @@ const LeadHistoryPage = () => {
       }
       if (field === 'program') {
         return programOptions;
+      }
+      if (field === 'membership') {
+        return membershipOptions;
       }
       return eventTypeOptions;
     },
@@ -1245,24 +1283,26 @@ const LeadHistoryPage = () => {
             </MenuItem>
           ))}
         </TextField>
-        <TextField
-          select
-          size="small"
-          label="조건"
-          value={node.operator}
-          onChange={(event) =>
-            handleUpdateCondition(node.id, {
-              operator: event.target.value as LeadHistoryFilterOperator,
-            })
-          }
-          className="min-w-[120px]"
-        >
-          {filterOperatorOptions.map((option) => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </TextField>
+        {node.field !== 'membership' && (
+          <TextField
+            select
+            size="small"
+            label="조건"
+            value={node.operator}
+            onChange={(event) =>
+              handleUpdateCondition(node.id, {
+                operator: event.target.value as LeadHistoryFilterOperator,
+              })
+            }
+            className="min-w-[120px]"
+          >
+            {filterOperatorOptions.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
+        )}
         <TextField
           select
           size="small"
@@ -1355,6 +1395,7 @@ const LeadHistoryPage = () => {
               variant="outlined"
               onClick={() => handleAddCondition(node.id)}
             >
+              <Plus size={12} className="mr-1" />
               조건
             </Button>
             <Button
@@ -1362,6 +1403,7 @@ const LeadHistoryPage = () => {
               variant="outlined"
               onClick={() => handleAddGroup(node.id)}
             >
+              <Plus size={12} className="mr-1" />
               그룹
             </Button>
             {!isRoot && (
