@@ -14,6 +14,7 @@ import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import {
   Button,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -1317,17 +1318,42 @@ const LeadHistoryPage = () => {
               values: nextValues,
             });
           }}
-          SelectProps={{
-            multiple: true,
-            displayEmpty: true,
-            renderValue: (selected) => {
-              if (!selected || (Array.isArray(selected) && !selected.length)) {
-                return '';
-              }
-              const list = Array.isArray(selected) ? selected : [selected];
-              return list
-                .map((item) => getValueLabel(node.field, String(item)))
-                .join(', ');
+          slotProps={{
+            select: {
+              multiple: true,
+              displayEmpty: true,
+              renderValue: (selected) => {
+                if (
+                  !selected ||
+                  (Array.isArray(selected) && selected.length === 0)
+                ) {
+                  return '';
+                }
+
+                const list = Array.isArray(selected) ? selected : [selected];
+                const normalizedList = list.filter(
+                  (item): item is string | number =>
+                    item !== undefined &&
+                    item !== null &&
+                    String(item).length > 0,
+                );
+
+                if (!normalizedList.length) {
+                  return '';
+                }
+
+                return (
+                  <div className="flex flex-wrap gap-1">
+                    {normalizedList.map((item) => (
+                      <Chip
+                        key={String(item)}
+                        size="small"
+                        label={getValueLabel(node.field, String(item))}
+                      />
+                    ))}
+                  </div>
+                );
+              },
             },
           }}
           className="min-w-[200px] flex-1"
