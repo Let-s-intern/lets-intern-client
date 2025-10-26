@@ -899,6 +899,7 @@ const LeadHistoryPage = () => {
       const nextSignature = getFilterTreeSignature(nextTree);
 
       if (currentSignature === nextSignature) {
+        // eslint-disable-next-line no-console
         console.log('[lead] No changes in filter tree, skipping URL update');
         return;
       }
@@ -917,7 +918,7 @@ const LeadHistoryPage = () => {
         scroll: false,
       });
     },
-    [pathname, router, searchParams],
+    [filterTree, pathname, router, searchParams],
   );
 
   const updateFilterTree = useCallback(
@@ -1163,9 +1164,7 @@ const LeadHistoryPage = () => {
                 field: updates.field,
                 values: [],
                 operator:
-                  updates.field === 'membership'
-                    ? 'include'
-                    : next.operator,
+                  updates.field === 'membership' ? 'include' : next.operator,
               };
             } else if (updates.field) {
               next = {
