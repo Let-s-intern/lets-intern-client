@@ -314,7 +314,8 @@ const ChallengeDifferent = ({
           여기서 끝이 아니죠
           <br />
           {challengeTitle}
-          <br className="md:hidden" /> 참여자만을 위한 트리플 혜택!
+          <br className="md:hidden" /> 참여자만을 위한{' '}
+          {isResumeTemplate ? '' : '트리플'} 혜택!
         </p>
 
         <div
