@@ -3,7 +3,7 @@ import { useGetUserDocumentListQuery } from '@/api/user';
 import { UserDocument } from '@/api/userSchema';
 import { clsx } from 'clsx';
 import { RefreshCw, Trash2, Upload } from 'lucide-react';
-import { useRef } from 'react';
+import { useRef, type RefObject } from 'react';
 import { UploadedFiles } from './MissionSubmitTalentPoolSection';
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
@@ -45,6 +45,150 @@ const getFileNameFromUrl = (type: DocumentType, url: string): string => {
   return removeTypePrefixFromFileName(type, fileName);
 };
 
+// 파일 미리보기 처리
+const handleFilePreview = (file: File | string) => {
+  const url = typeof file === 'string' ? file : URL.createObjectURL(file);
+  const newWindow = window.open(
+    url,
+    '_blank',
+    'width=800,height=600,scrollbars=yes,resizable=yes',
+  );
+
+  // File 객체인 경우에만 URL 해제 (string인 경우는 서버 URL이므로 해제하지 않음)
+  if (typeof file === 'string' || !newWindow) {
+    if (typeof file !== 'string') URL.revokeObjectURL(url);
+    return;
+  }
+
+  // 새창이 닫힐 때 URL 해제를 위한 이벤트 리스너
+  newWindow.addEventListener('beforeunload', () => {
+    URL.revokeObjectURL(url);
+  });
+};
+
+interface DocumentFileItemProps {
+  type: DocumentType;
+  file: File | string | null;
+  isRequired: boolean;
+  isSubmitted: boolean;
+  inputRef: RefObject<HTMLInputElement>;
+  userDocumentList: UserDocument[] | undefined;
+  isLoading: boolean;
+  onFileUpload: (type: DocumentType, files: FileList | null) => void;
+  onFileDelete: (type: DocumentType) => void;
+  onLoadDocument: (type: DocumentType) => void;
+}
+
+const DocumentFileItem = ({
+  type,
+  file,
+  isRequired,
+  isSubmitted,
+  inputRef,
+  userDocumentList,
+  isLoading,
+  onFileUpload,
+  onFileDelete,
+  onLoadDocument,
+}: DocumentFileItemProps) => {
+  const label =
+    type === 'RESUME'
+      ? '이력서 첨부'
+      : type === 'PORTFOLIO'
+        ? '포트폴리오 첨부'
+        : '자기소개서 첨부';
+
+  const isDocumentExists = userDocumentList?.some(
+    (document: UserDocument) =>
+      document.userDocumentType === type.toUpperCase(),
+  );
+
+  // 제출 완료된 경우, 저장된 서류를 찾아서 표시
+  const submittedDocument =
+    isSubmitted && !file
+      ? userDocumentList?.find(
+          (document: UserDocument) =>
+            document.userDocumentType === type.toUpperCase(),
+        )
+      : null;
+
+  // 실제로 표시할 파일 (업로드된 파일 or 제출된 서류)
+  const displayFile = file || submittedDocument?.fileUrl || null;
+  const hasFile = !!displayFile;
+  const canEdit = !isSubmitted;
+
+  return (
+    <div className="mb-6">
+      <div className="mb-3">
+        <span className="text-xsmall16 font-medium text-neutral-20">
+          {label}
+        </span>
+        {isRequired && (
+          <span className="ml-1 text-xsmall16 font-normal text-primary-90">
+            (필수제출)
+          </span>
+        )}
+      </div>
+
+      {hasFile ? (
+        <div className="flex items-center">
+          <button
+            type="button"
+            onClick={() => handleFilePreview(displayFile)}
+            className="truncate text-xsmall14 font-normal text-neutral-0 underline"
+          >
+            {typeof displayFile === 'string'
+              ? getFileNameFromUrl(type, displayFile)
+              : displayFile.name}
+          </button>
+          {canEdit && file && (
+            <button
+              type="button"
+              onClick={() => onFileDelete(type)}
+              className="ml-2 flex-shrink-0 text-red-500 hover:text-red-700"
+            >
+              <Trash2 size={16} />
+            </button>
+          )}
+        </div>
+      ) : (
+        <div className="flex gap-4">
+          {/* 파일 업로드 버튼 */}
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            disabled={isSubmitted}
+            className="hover:bg-primary-15 flex items-center gap-2 rounded-xs bg-primary-10 px-4 py-2 text-xsmall14 font-medium text-primary transition disabled:cursor-not-allowed disabled:bg-neutral-85 disabled:text-neutral-50"
+          >
+            <Upload size={16} />
+            파일 업로드
+          </button>
+
+          {/* 서류 불러오기 버튼*/}
+          <button
+            type="button"
+            onClick={() => onLoadDocument(type)}
+            disabled={isSubmitted || isLoading || !isDocumentExists}
+            className="flex items-center gap-2 rounded-xs border-[1px] border-neutral-80 bg-white px-4 py-[.375rem] text-xsmall14 font-medium text-neutral-20 transition hover:bg-neutral-95 disabled:cursor-not-allowed disabled:bg-neutral-85 disabled:text-neutral-50"
+          >
+            <RefreshCw size={16} />
+            서류 불러오기
+          </button>
+        </div>
+      )}
+
+      <input
+        ref={inputRef}
+        type="file"
+        accept=".pdf"
+        className="hidden"
+        onChange={(e) => onFileUpload(type, e.target.files)}
+        disabled={isSubmitted}
+      />
+    </div>
+  );
+};
+
 interface DocumentUploadSectionProps {
   className?: string;
   uploadedFiles: UploadedFiles;
@@ -58,25 +202,20 @@ const DocumentUploadSection = ({
   onFilesChange,
   isSubmitted = false,
 }: DocumentUploadSectionProps) => {
-  const { data: userDocumentList, isLoading: isUserDocumentListLoading } =
-    useGetUserDocumentListQuery();
+  const { data: userDocumentList, isLoading } = useGetUserDocumentListQuery();
 
   const resumeInputRef = useRef<HTMLInputElement>(null);
   const portfolioInputRef = useRef<HTMLInputElement>(null);
   const personalStatementInputRef = useRef<HTMLInputElement>(null);
 
   const resetInput = (type: DocumentType) => {
-    // input value 초기화
     const inputRef =
       type === 'RESUME'
         ? resumeInputRef
         : type === 'PORTFOLIO'
           ? portfolioInputRef
           : personalStatementInputRef;
-
-    if (inputRef.current) {
-      inputRef.current.value = '';
-    }
+    if (inputRef.current) inputRef.current.value = '';
   };
 
   const handleFileUpload = (type: DocumentType, files: FileList | null) => {
@@ -113,7 +252,6 @@ const DocumentUploadSection = ({
   const handleLoadDocument = (type: DocumentType) => {
     if (!userDocumentList?.userDocumentList) return;
 
-    // userDocumentList에서 해당 타입의 문서 찾기
     const document = userDocumentList.userDocumentList.find(
       (doc) => doc.userDocumentType === type,
     );
@@ -125,7 +263,6 @@ const DocumentUploadSection = ({
       return;
     }
 
-    // URL을 string으로 저장
     const updatedFiles = {
       ...uploadedFiles,
       [type.toLowerCase()]: document.fileUrl,
@@ -134,142 +271,13 @@ const DocumentUploadSection = ({
     onFilesChange(updatedFiles);
   };
 
-  const handleFilePreview = (file: File | string) => {
-    let url: string;
-
-    if (typeof file === 'string') {
-      url = file;
-    } else {
-      url = URL.createObjectURL(file);
-    }
-
-    const newWindow = window.open(
-      url,
-      '_blank',
-      'width=800,height=600,scrollbars=yes,resizable=yes',
-    );
-
-    // File 객체인 경우에만 URL 해제 (string인 경우는 서버 URL이므로 해제하지 않음)
-    if (typeof file !== 'string' && !newWindow) {
-      URL.revokeObjectURL(url);
-    } else if (typeof file !== 'string' && newWindow) {
-      // 새창이 닫힐 때 URL 해제를 위한 이벤트 리스너
-      newWindow.addEventListener('beforeunload', () => {
-        URL.revokeObjectURL(url);
-      });
-    }
-  };
-
-  const renderFileList = (
-    type: DocumentType,
-    file: File | string | null,
-    isRequired: boolean,
-    isSubmitted: boolean,
-  ) => {
-    const inputRef =
-      type === 'RESUME'
-        ? resumeInputRef
-        : type === 'PORTFOLIO'
-          ? portfolioInputRef
-          : personalStatementInputRef;
-    const label =
-      type === 'RESUME'
-        ? '이력서 첨부'
-        : type === 'PORTFOLIO'
-          ? '포트폴리오 첨부'
-          : '자기소개서 첨부';
-    const requiredText = isRequired ? '(필수제출)' : '';
-    const isDocumentExists = userDocumentList?.userDocumentList?.some(
-      (document: UserDocument) =>
-        document.userDocumentType === type.toUpperCase(),
-    );
-
-    // 제출 완료된 경우, 저장된 서류를 찾아서 표시
-    const submittedDocument =
-      isSubmitted && !file
-        ? userDocumentList?.userDocumentList?.find(
-            (document: UserDocument) =>
-              document.userDocumentType === type.toUpperCase(),
-          )
-        : null;
-
-    // 실제로 표시할 파일 (업로드된 파일 or 제출된 서류)
-    const displayFile = file || submittedDocument?.fileUrl || null;
-
-    return (
-      <div className="mb-6">
-        <div className="mb-3">
-          <span className="text-xsmall16 font-medium text-neutral-20">
-            {label}
-          </span>
-          {isRequired && (
-            <span className="ml-1 text-xsmall16 font-normal text-primary-90">
-              {requiredText}
-            </span>
-          )}
-        </div>
-
-        {displayFile ? (
-          <div className="flex items-center">
-            <button
-              type="button"
-              onClick={() => handleFilePreview(displayFile)}
-              className="truncate text-xsmall14 font-normal text-neutral-0 underline"
-            >
-              {typeof displayFile === 'string'
-                ? getFileNameFromUrl(type, displayFile)
-                : displayFile.name}
-            </button>
-            {!isSubmitted && file && (
-              <button
-                type="button"
-                onClick={() => handleFileDelete(type)}
-                className="ml-2 flex-shrink-0 text-red-500 hover:text-red-700"
-              >
-                <Trash2 size={16} />
-              </button>
-            )}
-          </div>
-        ) : (
-          <div className="flex gap-4">
-            {/* 파일 업로드 버튼 */}
-            <button
-              type="button"
-              onClick={() => inputRef.current?.click()}
-              disabled={isSubmitted}
-              // TODO: 호버 스타일
-              className="hover:bg-primary-15 flex items-center gap-2 rounded-xs bg-primary-10 px-4 py-2 text-xsmall14 font-medium text-primary transition disabled:cursor-not-allowed disabled:bg-neutral-85 disabled:text-neutral-50"
-            >
-              <Upload size={16} />
-              파일 업로드
-            </button>
-
-            {/* 서류 불러오기 버튼*/}
-            <button
-              type="button"
-              onClick={() => handleLoadDocument(type)}
-              disabled={
-                isSubmitted || isUserDocumentListLoading || !isDocumentExists
-              }
-              // TODO: 호버 스타일
-              className="flex items-center gap-2 rounded-xs border-[1px] border-neutral-80 bg-white px-4 py-[.375rem] text-xsmall14 font-medium text-neutral-20 transition hover:bg-neutral-95 disabled:cursor-not-allowed disabled:bg-neutral-85 disabled:text-neutral-50"
-            >
-              <RefreshCw size={16} />
-              서류 불러오기
-            </button>
-          </div>
-        )}
-
-        <input
-          ref={inputRef}
-          type="file"
-          accept=".pdf"
-          className="hidden"
-          onChange={(e) => handleFileUpload(type, e.target.files)}
-          disabled={isSubmitted}
-        />
-      </div>
-    );
+  const commonProps = {
+    isSubmitted,
+    userDocumentList: userDocumentList?.userDocumentList,
+    isLoading,
+    onFileUpload: handleFileUpload,
+    onFileDelete: handleFileDelete,
+    onLoadDocument: handleLoadDocument,
   };
 
   return (
@@ -281,14 +289,27 @@ const DocumentUploadSection = ({
         PDF 형식만 지원하며, 파일 용량은 50MB 이하로 업로드해 주세요.
       </p>
 
-      {renderFileList('RESUME', uploadedFiles.resume, true, isSubmitted)}
-      {renderFileList('PORTFOLIO', uploadedFiles.portfolio, true, isSubmitted)}
-      {renderFileList(
-        'PERSONAL_STATEMENT',
-        uploadedFiles.personal_statement,
-        false,
-        isSubmitted,
-      )}
+      <DocumentFileItem
+        type="RESUME"
+        file={uploadedFiles.resume}
+        isRequired
+        inputRef={resumeInputRef}
+        {...commonProps}
+      />
+      <DocumentFileItem
+        type="PORTFOLIO"
+        file={uploadedFiles.portfolio}
+        isRequired
+        inputRef={portfolioInputRef}
+        {...commonProps}
+      />
+      <DocumentFileItem
+        type="PERSONAL_STATEMENT"
+        file={uploadedFiles.personal_statement}
+        isRequired={false}
+        inputRef={personalStatementInputRef}
+        {...commonProps}
+      />
     </div>
   );
 };
