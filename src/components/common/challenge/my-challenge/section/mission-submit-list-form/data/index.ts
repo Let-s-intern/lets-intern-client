@@ -1,5 +1,7 @@
+import { TableHeader } from '@/components/common/table/DataTable';
+
 // 경험 데이터 타입 정의 (이미지 참고)
-interface ExperienceData {
+export interface ExperienceData {
   id: string;
   name: string; // 경험 이름
   category: string; // 경험 분류 (프로젝트, 인턴십 등)
@@ -16,6 +18,23 @@ interface ExperienceData {
   learnings: string; // 느낀 점 / 배운 점
   coreCompetencies: string[]; // 핵심역량 (배열)
 }
+
+// 경험 테이블 헤더 (재사용)
+export const getExperienceHeaders = (): TableHeader[] => [
+  { key: 'name', label: '경험 이름', width: '160px' },
+  { key: 'category', label: '경험 분류', width: '120px' },
+  { key: 'organization', label: '기관', width: '120px' },
+  { key: 'role', label: '역할 및 담당 업무', width: '180px' },
+  { key: 'type', label: '팀·개인 여부', width: '120px', align: 'center' },
+  { key: 'period', label: '기간', width: '140px', align: 'center' },
+  { key: 'year', label: '연도', width: '60px', align: 'center' },
+  { key: 'situation', label: 'Situation(상황)', width: '150px' },
+  { key: 'task', label: 'Task(문제)', width: '140px' },
+  { key: 'action', label: 'Action(행동)', width: '140px' },
+  { key: 'result', label: 'Result(결과)', width: '150px' },
+  { key: 'learnings', label: '느낀 점 / 배운 점', width: '180px' },
+  { key: 'coreCompetencies', label: '핵심역량', width: '150px' },
+];
 // 더미 데이터 (이미지 참고)
 export const dummyExperiences: ExperienceData[] = [
   {

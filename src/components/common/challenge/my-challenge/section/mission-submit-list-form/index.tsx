@@ -1,14 +1,13 @@
 import { If } from '@/components/common/If';
-import { TableData } from '@/components/common/table/DataTable';
 import { useState } from 'react';
 import { EmptyState } from './components/EmptyState';
 import { ExperienceList } from './components/ExperienceList';
 import { ExperienceSelectModal } from './components/ExperienceSelectModal';
-import { dummyExperiences } from './data';
+import { ExperienceData } from './data';
 
 interface MissionSubmitListFormProps {
   experienceCount?: number;
-  experiences?: TableData[];
+  experiences?: ExperienceData[];
 }
 
 export const MissionSubmitListForm = ({
@@ -18,6 +17,10 @@ export const MissionSubmitListForm = ({
   experienceCount = 3;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedExperiences, setSelectedExperiences] = useState<
+    ExperienceData[]
+  >([]);
+
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -26,9 +29,8 @@ export const MissionSubmitListForm = ({
     setIsModalOpen(false);
   };
 
-  const handleSelectComplete = () => {
-    // TODO: 선택된 경험 ID를 실제 경험 데이터로 변환
-    // 선택된 경험들을 처리하는 로직 추가 예정
+  const handleSelectComplete = (selectedExperiences: ExperienceData[]) => {
+    setSelectedExperiences(selectedExperiences);
     setIsModalOpen(false);
   };
   return (
@@ -108,7 +110,7 @@ export const MissionSubmitListForm = ({
             </If>
 
             <If condition={experienceCount >= 3}>
-              <ExperienceList experiences={dummyExperiences} />
+              <ExperienceList experiences={selectedExperiences} />
             </If>
           </div>
         </div>

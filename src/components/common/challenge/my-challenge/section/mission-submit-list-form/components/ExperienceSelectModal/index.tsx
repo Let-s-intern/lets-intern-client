@@ -1,14 +1,20 @@
 'use client';
 
+import DataTable from '@/components/common/table/DataTable';
 import BaseModal from '@/components/ui/BaseModal';
 import { useState } from 'react';
+import {
+  ExperienceData,
+  dummyExperiences,
+  getExperienceHeaders,
+} from '../../data';
 import { ExperienceSelectModalFilters } from './ExperienceSelectModalFilters';
 import { ExperienceSelectModalHeader } from './ExperienceSelectModalHeader';
 
 interface ExperienceSelectModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelectComplete: () => void;
+  onSelectComplete: (selectedExperiences: ExperienceData[]) => void;
 }
 
 export const ExperienceSelectModal = ({
@@ -23,10 +29,14 @@ export const ExperienceSelectModal = ({
     competency: '전체',
   });
 
-  // TODO: 테이블 컴포넌트가 완성되면 경험 선택 로직 구현
+  const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
+  const headers = getExperienceHeaders();
 
   const handleComplete = () => {
-    onSelectComplete();
+    const selectedExperiences = dummyExperiences.filter((experience) =>
+      selectedRowIds.has(experience.id),
+    );
+    onSelectComplete(selectedExperiences);
     onClose();
   };
 
@@ -36,30 +46,38 @@ export const ExperienceSelectModal = ({
       onClose={onClose}
       className="mx-4 h-[630px] w-[860px] max-w-6xl shadow-xl"
     >
-      {/* 헤더 */}
-      <ExperienceSelectModalHeader onClose={onClose} />
+      <div className="flex h-full flex-col">
+        {/* 헤더 */}
+        <ExperienceSelectModalHeader onClose={onClose} />
 
-      {/* 필터 */}
-      <ExperienceSelectModalFilters
-        filters={filters}
-        onFiltersChange={setFilters}
-      />
+        {/* 필터 */}
+        <ExperienceSelectModalFilters
+          filters={filters}
+          onFiltersChange={setFilters}
+        />
 
-      <div className="flex-1 overflow-auto px-6 py-4">
-        <div className="text-center text-gray-500">
-          선택 가능한 테이블 컴포넌트
+        {/* 테이블 */}
+        <div className="flex-1 overflow-hidden px-6 py-4">
+          <div className="h-full overflow-auto rounded-xxs border border-neutral-80">
+            <DataTable
+              headers={headers}
+              data={dummyExperiences}
+              selectedRowIds={selectedRowIds}
+              onSelectionChange={setSelectedRowIds}
+            />
+          </div>
         </div>
-      </div>
 
-      {/* 푸터 */}
-      <div className="px-6 py-4">
-        <div className="flex justify-end">
-          <button
-            onClick={handleComplete}
-            className="rounded-xs bg-primary px-3 py-2.5 font-medium text-white"
-          >
-            0개 선택 완료
-          </button>
+        {/* 푸터 */}
+        <div className="px-6 py-4">
+          <div className="flex justify-end">
+            <button
+              onClick={handleComplete}
+              className="rounded-xs bg-primary px-3 py-2.5 font-medium text-white"
+            >
+              {selectedRowIds.size}개 선택 완료
+            </button>
+          </div>
         </div>
       </div>
     </BaseModal>
