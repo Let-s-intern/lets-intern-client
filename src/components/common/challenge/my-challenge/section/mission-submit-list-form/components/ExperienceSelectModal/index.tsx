@@ -1,5 +1,6 @@
 'use client';
 
+import MuiPagination from '@/components/common/program/pagination/MuiPagination';
 import DataTable from '@/components/common/table/DataTable';
 import BaseModal from '@/components/ui/BaseModal';
 import { useState } from 'react';
@@ -8,9 +9,8 @@ import {
   dummyExperiences,
   getExperienceHeaders,
 } from '../../data';
-import { ExperienceSelectModalFilters } from './ExperienceSelectModalFilters';
-import { ExperienceSelectModalHeader } from './ExperienceSelectModalHeader';
-
+import { ExperienceSelectModalFilters } from './components/ExperienceSelectModalFilters';
+import { ExperienceSelectModalHeader } from './components/ExperienceSelectModalHeader';
 interface ExperienceSelectModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -32,8 +32,41 @@ export const ExperienceSelectModal = ({
   const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
   const headers = getExperienceHeaders();
 
+  // 필터링된 경험 데이터
+  const filteredExperiences = dummyExperiences.filter((experience) => {
+    // 경험 분류 필터
+    if (
+      filters.category !== '전체' &&
+      experience.category !== filters.category
+    ) {
+      return false;
+    }
+
+    // 팀·개인 필터
+    if (filters.type !== '전체' && experience.type !== filters.type) {
+      return false;
+    }
+
+    // 연도 필터
+    if (filters.year !== '전체' && experience.year !== parseInt(filters.year)) {
+      return false;
+    }
+
+    // 핵심 역량 필터
+    if (filters.competency !== '전체') {
+      const hasCompetency = experience.coreCompetencies.some((comp) =>
+        comp.toLowerCase().includes(filters.competency.toLowerCase()),
+      );
+      if (!hasCompetency) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+
   const handleComplete = () => {
-    const selectedExperiences = dummyExperiences.filter((experience) =>
+    const selectedExperiences = filteredExperiences.filter((experience) =>
       selectedRowIds.has(experience.id),
     );
     onSelectComplete(selectedExperiences);
@@ -49,25 +82,32 @@ export const ExperienceSelectModal = ({
       <div className="flex h-full flex-col">
         {/* 헤더 */}
         <ExperienceSelectModalHeader onClose={onClose} />
-
         {/* 필터 */}
         <ExperienceSelectModalFilters
           filters={filters}
           onFiltersChange={setFilters}
         />
-
         {/* 테이블 */}
         <div className="flex-1 overflow-hidden px-6 py-4">
           <div className="h-full overflow-auto rounded-xxs border border-neutral-80">
             <DataTable
               headers={headers}
-              data={dummyExperiences}
+              data={filteredExperiences}
               selectedRowIds={selectedRowIds}
               onSelectionChange={setSelectedRowIds}
             />
           </div>
         </div>
-
+        <MuiPagination
+          page={1}
+          onChange={() => {}}
+          pageInfo={{
+            pageNum: 1,
+            pageSize: 10,
+            totalElements: 100,
+            totalPages: 10,
+          }}
+        />
         {/* 푸터 */}
         <div className="px-6 py-4">
           <div className="flex justify-end">
