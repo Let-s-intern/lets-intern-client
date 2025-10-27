@@ -34,6 +34,13 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
         label: '신청현황',
       },
       {
+        to: '/mypage/experience',
+        active: pathname === '/mypage/experience',
+        icon: 'book-open-text',
+        label: '경험 정리',
+        isNew: true,
+      },
+      {
         to: '/mypage/review',
         active: pathname === '/mypage/review',
         icon: 'commu-chat-remove',
@@ -98,6 +105,12 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
                     className="hidden h-[1.625rem] w-[1.625rem] md:block"
                   />
                   {item.label}
+                  {/* 새로 추가된 기능이면 N 뱃지 표시 */}
+                  {item.isNew && (
+                    <span className="flex h-3 w-3 items-center justify-center rounded-full bg-system-error text-[8px] font-bold leading-none text-white">
+                      N
+                    </span>
+                  )}
                 </NavItem>
               )}
               itemWidth="auto"
