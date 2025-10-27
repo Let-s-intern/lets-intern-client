@@ -1,5 +1,5 @@
 import { If } from '@/components/common/If';
-import { ExperienceData } from '@components/common/DataTable';
+import { TableData } from '@/components/common/table/DataTable';
 import { useState } from 'react';
 import { EmptyState } from './components/EmptyState';
 import { ExperienceList } from './components/ExperienceList';
@@ -8,7 +8,7 @@ import { dummyExperiences } from './data';
 
 interface MissionSubmitListFormProps {
   experienceCount?: number;
-  experiences?: ExperienceData[];
+  experiences?: TableData[];
 }
 
 export const MissionSubmitListForm = ({
@@ -90,7 +90,7 @@ export const MissionSubmitListForm = ({
         </div>
 
         {/* 작성된 경험 불러오는 컴포넌트 */}
-        <div className="flex min-h-[200px] items-center justify-center rounded-xxs border border-neutral-80 bg-white p-6">
+        <div className="flex min-h-[200px] items-center justify-center rounded-xxs border border-neutral-80 bg-white">
           <div className="flex flex-col items-center justify-center space-y-4">
             <If condition={experienceCount === 0}>
               <EmptyState
