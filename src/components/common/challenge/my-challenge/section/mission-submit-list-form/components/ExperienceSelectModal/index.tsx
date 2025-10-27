@@ -3,7 +3,7 @@
 import MuiPagination from '@/components/common/program/pagination/MuiPagination';
 import DataTable from '@/components/common/table/DataTable';
 import BaseModal from '@/components/ui/BaseModal';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ExperienceData,
   dummyExperiences,
@@ -22,6 +22,8 @@ export const ExperienceSelectModal = ({
   onClose,
   onSelectComplete,
 }: ExperienceSelectModalProps) => {
+  const PAGE_SIZE = 5;
+
   const [filters, setFilters] = useState({
     category: '전체',
     type: '전체',
@@ -29,6 +31,7 @@ export const ExperienceSelectModal = ({
     competency: '전체',
   });
 
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
   const headers = getExperienceHeaders();
 
@@ -65,6 +68,24 @@ export const ExperienceSelectModal = ({
     return true;
   });
 
+  // 페이지네이션 로직
+  const totalPages = Math.ceil(filteredExperiences.length / PAGE_SIZE);
+  const startIndex = (currentPage - 1) * PAGE_SIZE;
+  const endIndex = startIndex + PAGE_SIZE;
+  const paginatedExperiences = filteredExperiences.slice(startIndex, endIndex);
+
+  // 필터 변경 시 페이지 초기화
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters]);
+
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    page: number,
+  ) => {
+    setCurrentPage(page);
+  };
+
   const handleComplete = () => {
     const selectedExperiences = filteredExperiences.filter((experience) =>
       selectedRowIds.has(experience.id),
@@ -92,28 +113,37 @@ export const ExperienceSelectModal = ({
           <div className="h-full overflow-auto rounded-xxs border border-neutral-80">
             <DataTable
               headers={headers}
-              data={filteredExperiences}
+              data={paginatedExperiences}
               selectedRowIds={selectedRowIds}
               onSelectionChange={setSelectedRowIds}
             />
           </div>
         </div>
-        <MuiPagination
-          page={1}
-          onChange={() => {}}
-          pageInfo={{
-            pageNum: 1,
-            pageSize: 10,
-            totalElements: 100,
-            totalPages: 10,
-          }}
-        />
+
+        {/* 페이지네이션 */}
+        <div className="px-6 py-2">
+          <MuiPagination
+            page={currentPage}
+            onChange={handlePageChange}
+            pageInfo={{
+              pageNum: currentPage,
+              pageSize: PAGE_SIZE,
+              totalElements: filteredExperiences.length,
+              totalPages,
+            }}
+          />
+        </div>
         {/* 푸터 */}
         <div className="px-6 py-4">
           <div className="flex justify-end">
             <button
               onClick={handleComplete}
-              className="rounded-xs bg-primary px-3 py-2.5 font-medium text-white"
+              disabled={selectedRowIds.size < 3}
+              className={`rounded-xs px-3 py-2.5 font-medium ${
+                selectedRowIds.size >= 3
+                  ? 'bg-primary text-white'
+                  : 'cursor-not-allowed bg-gray-300 text-gray-500'
+              }`}
             >
               {selectedRowIds.size}개 선택 완료
             </button>
