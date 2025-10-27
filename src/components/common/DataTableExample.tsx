@@ -10,9 +10,7 @@ export const DataTableExample: React.FC = () => {
   const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
 
   return (
-    <div className="w-full p-6">
-      <h2 className="mb-4 text-2xl font-bold">경험 데이터 테이블 예시</h2>
-
+    <div className="w-full">
       {/* 기본 테이블 사용 예시 */}
       <DataTable
         headers={experienceTableHeaders}
