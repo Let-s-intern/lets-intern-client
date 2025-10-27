@@ -85,7 +85,9 @@ const MissionSubmitTalentPoolSection = ({
       const formData = new FormData();
       formData.append(
         'requestDto',
-        JSON.stringify({ documentType: type, fileUrl: file }),
+        new Blob([JSON.stringify({ documentType: type, fileUrl: file })], {
+          type: 'application/json',
+        }),
       );
       formData.append('file', file as File);
       return formData;
