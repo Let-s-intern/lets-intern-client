@@ -1,3 +1,5 @@
+'use client';
+
 import DataTableExample from '@components/common/DataTableExample';
 import { Plus } from 'lucide-react';
 
