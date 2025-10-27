@@ -30,7 +30,7 @@ const MissionSubmitTalentPoolSection = ({
   missionId,
   attendanceInfo,
 }: MissionSubmitTalentPoolSectionProps) => {
-  const { currentChallenge } = useCurrentChallenge();
+  const { currentChallenge, refetchSchedules } = useCurrentChallenge();
 
   const submitMissionTalentPool = usePostMissionTalentPoolMutation();
   const submitAttendance = useSubmitMission();
@@ -111,14 +111,14 @@ const MissionSubmitTalentPoolSection = ({
 
     try {
       // 단순 출석 체크용
-      // TODO: API 확인 필요
       await submitAttendance.mutateAsync({
         missionId,
         link: 'https://example.com',
         review: '',
       });
+      // TODO: 추가 invalidate 필요한지 확인 필요
+      await refetchSchedules?.();
       setShowToast(true);
-      // TODO: invalidate
     } catch (error) {
       console.error('출석 체크 중 오류 발생:', error);
       alert('출석 체크에 실패했습니다. 다시 시도해주세요.');
