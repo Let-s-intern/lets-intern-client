@@ -6,6 +6,8 @@ import { RefreshCw, Trash2, Upload } from 'lucide-react';
 import { useRef } from 'react';
 import { UploadedFiles } from './MissionSubmitTalentPoolSection';
 
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+
 interface DocumentUploadSectionProps {
   className?: string;
   uploadedFiles: UploadedFiles;
@@ -24,22 +26,7 @@ const DocumentUploadSection = ({
   const portfolioInputRef = useRef<HTMLInputElement>(null);
   const personalStatementInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileUpload = (type: DocumentType, files: FileList | null) => {
-    if (!files || files.length === 0) return;
-
-    // TODO: pdf 형식, 50MB 이하 유효성 검사
-    const file = files[0]; // 첫 번째 파일만 사용
-
-    const updatedFiles = {
-      ...uploadedFiles,
-      [type.toLowerCase()]: file,
-    };
-
-    // 부모 컴포넌트에 파일 변경 알림
-    onFilesChange(updatedFiles);
-  };
-
-  const handleFileDelete = (type: DocumentType) => {
+  const resetInput = (type: DocumentType) => {
     // input value 초기화
     const inputRef =
       type === 'RESUME'
@@ -51,13 +38,36 @@ const DocumentUploadSection = ({
     if (inputRef.current) {
       inputRef.current.value = '';
     }
+  };
+
+  const handleFileUpload = (type: DocumentType, files: FileList | null) => {
+    if (!files || files.length === 0) return;
+
+    const file = files[0]; // 첫 번째 파일만 사용
+
+    // 파일 크기 검증 (50MB 이하)
+    if (file.size > MAX_FILE_SIZE) {
+      alert('50MB 이하의 PDF 파일만 업로드할 수 있습니다.');
+      resetInput(type);
+      return;
+    }
+
+    const updatedFiles = {
+      ...uploadedFiles,
+      [type.toLowerCase()]: file,
+    };
+
+    onFilesChange(updatedFiles);
+  };
+
+  const handleFileDelete = (type: DocumentType) => {
+    resetInput(type);
 
     const updatedFiles: UploadedFiles = {
       ...uploadedFiles,
       [type.toLowerCase()]: null,
     };
 
-    // 부모 컴포넌트에 파일 변경 알림
     onFilesChange(updatedFiles);
   };
 
@@ -186,7 +196,7 @@ const DocumentUploadSection = ({
         서류 제출
       </h2>
       <p className="mb-6 text-xsmall14 text-neutral-30">
-        PDF 형식만 지원하며, 파일 용량은 500MB 이하로 업로드해 주세요.
+        PDF 형식만 지원하며, 파일 용량은 50MB 이하로 업로드해 주세요.
       </p>
 
       {renderFileList('RESUME', uploadedFiles.resume, true)}
