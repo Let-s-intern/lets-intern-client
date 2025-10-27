@@ -64,8 +64,7 @@ const ExpandableCell = ({ content, isRowExpanded, onToggleExpand, align = 'left'
             e.stopPropagation();
             onToggleExpand();
           }}
-          // TODO: 그림자 스타일 추가
-          className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-xxs border border-neutral-80 bg-neutral-100"
+          className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-xxs border border-neutral-80 bg-neutral-100 shadow-03"
           aria-label={isRowExpanded ? '축소' : '확장'}
         >
           {isRowExpanded ? (
