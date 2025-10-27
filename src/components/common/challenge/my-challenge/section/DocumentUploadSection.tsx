@@ -49,12 +49,14 @@ interface DocumentUploadSectionProps {
   className?: string;
   uploadedFiles: UploadedFiles;
   onFilesChange: (files: UploadedFiles) => void;
+  isSubmitted?: boolean;
 }
 
 const DocumentUploadSection = ({
   className,
   uploadedFiles,
   onFilesChange,
+  isSubmitted = false,
 }: DocumentUploadSectionProps) => {
   const { data: userDocumentList, isLoading: isUserDocumentListLoading } =
     useGetUserDocumentListQuery();
@@ -162,6 +164,7 @@ const DocumentUploadSection = ({
     type: DocumentType,
     file: File | string | null,
     isRequired: boolean,
+    isSubmitted: boolean,
   ) => {
     const inputRef =
       type === 'RESUME'
@@ -181,6 +184,18 @@ const DocumentUploadSection = ({
         document.userDocumentType === type.toUpperCase(),
     );
 
+    // 제출 완료된 경우, 저장된 서류를 찾아서 표시
+    const submittedDocument =
+      isSubmitted && !file
+        ? userDocumentList?.userDocumentList?.find(
+            (document: UserDocument) =>
+              document.userDocumentType === type.toUpperCase(),
+          )
+        : null;
+
+    // 실제로 표시할 파일 (업로드된 파일 or 제출된 서류)
+    const displayFile = file || submittedDocument?.fileUrl || null;
+
     return (
       <div className="mb-6">
         <div className="mb-3">
@@ -194,24 +209,26 @@ const DocumentUploadSection = ({
           )}
         </div>
 
-        {file ? (
+        {displayFile ? (
           <div className="flex items-center">
             <button
               type="button"
-              onClick={() => handleFilePreview(file)}
+              onClick={() => handleFilePreview(displayFile)}
               className="truncate text-xsmall14 font-normal text-neutral-0 underline"
             >
-              {typeof file === 'string'
-                ? getFileNameFromUrl(type, file)
-                : file.name}
+              {typeof displayFile === 'string'
+                ? getFileNameFromUrl(type, displayFile)
+                : displayFile.name}
             </button>
-            <button
-              type="button"
-              onClick={() => handleFileDelete(type)}
-              className="ml-2 flex-shrink-0 text-red-500 hover:text-red-700"
-            >
-              <Trash2 size={16} />
-            </button>
+            {!isSubmitted && file && (
+              <button
+                type="button"
+                onClick={() => handleFileDelete(type)}
+                className="ml-2 flex-shrink-0 text-red-500 hover:text-red-700"
+              >
+                <Trash2 size={16} />
+              </button>
+            )}
           </div>
         ) : (
           <div className="flex gap-4">
@@ -219,7 +236,9 @@ const DocumentUploadSection = ({
             <button
               type="button"
               onClick={() => inputRef.current?.click()}
-              className="flex items-center gap-2 rounded-xs bg-primary-10 px-4 py-2 text-xsmall14 font-medium text-primary transition hover:bg-primary-20"
+              disabled={isSubmitted}
+              // TODO: 호버 스타일
+              className="hover:bg-primary-15 flex items-center gap-2 rounded-xs bg-primary-10 px-4 py-2 text-xsmall14 font-medium text-primary transition disabled:cursor-not-allowed disabled:bg-neutral-85 disabled:text-neutral-50"
             >
               <Upload size={16} />
               파일 업로드
@@ -229,8 +248,11 @@ const DocumentUploadSection = ({
             <button
               type="button"
               onClick={() => handleLoadDocument(type)}
-              disabled={isUserDocumentListLoading || !isDocumentExists}
-              className="flex items-center gap-2 rounded-xs border-[1px] border-neutral-80 bg-white px-4 py-[.375rem] text-xsmall14 font-medium text-neutral-20 transition enabled:hover:bg-neutral-95 disabled:text-neutral-50"
+              disabled={
+                isSubmitted || isUserDocumentListLoading || !isDocumentExists
+              }
+              // TODO: 호버 스타일
+              className="flex items-center gap-2 rounded-xs border-[1px] border-neutral-80 bg-white px-4 py-[.375rem] text-xsmall14 font-medium text-neutral-20 transition hover:bg-neutral-95 disabled:cursor-not-allowed disabled:bg-neutral-85 disabled:text-neutral-50"
             >
               <RefreshCw size={16} />
               서류 불러오기
@@ -244,6 +266,7 @@ const DocumentUploadSection = ({
           accept=".pdf"
           className="hidden"
           onChange={(e) => handleFileUpload(type, e.target.files)}
+          disabled={isSubmitted}
         />
       </div>
     );
@@ -258,12 +281,13 @@ const DocumentUploadSection = ({
         PDF 형식만 지원하며, 파일 용량은 50MB 이하로 업로드해 주세요.
       </p>
 
-      {renderFileList('RESUME', uploadedFiles.resume, true)}
-      {renderFileList('PORTFOLIO', uploadedFiles.portfolio, true)}
+      {renderFileList('RESUME', uploadedFiles.resume, true, isSubmitted)}
+      {renderFileList('PORTFOLIO', uploadedFiles.portfolio, true, isSubmitted)}
       {renderFileList(
         'PERSONAL_STATEMENT',
         uploadedFiles.personal_statement,
         false,
+        isSubmitted,
       )}
     </div>
   );

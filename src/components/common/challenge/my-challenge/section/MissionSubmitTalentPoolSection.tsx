@@ -47,7 +47,6 @@ const MissionSubmitTalentPoolSection = ({
       (attendanceInfo?.status === 'LATE' ||
         attendanceInfo?.status === 'UPDATED'));
 
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [isAgreed, setIsAgreed] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFiles>({
@@ -55,6 +54,8 @@ const MissionSubmitTalentPoolSection = ({
     portfolio: null,
     personal_statement: null,
   });
+
+  const isSubmitted = attendanceInfo?.submitted ?? false;
 
   // 제출 버튼 활성화 조건: 필수 항목(이력서, 포트폴리오 + 개인정보 동의) 입력 완료 시 활성화
   const canSubmit =
@@ -116,8 +117,8 @@ const MissionSubmitTalentPoolSection = ({
         link: 'https://example.com',
         review: '',
       });
-      setIsSubmitted(true);
       setShowToast(true);
+      // TODO: invalidate
     } catch (error) {
       console.error('출석 체크 중 오류 발생:', error);
       alert('출석 체크에 실패했습니다. 다시 시도해주세요.');
@@ -126,7 +127,6 @@ const MissionSubmitTalentPoolSection = ({
 
   const initValues = useCallback(() => {
     setIsAgreed(attendanceInfo?.submitted ?? false);
-    setIsSubmitted(attendanceInfo?.submitted ?? false);
   }, [attendanceInfo]);
 
   useEffect(() => {
@@ -148,10 +148,15 @@ const MissionSubmitTalentPoolSection = ({
           className="mb-6"
           uploadedFiles={uploadedFiles}
           onFilesChange={handleFilesChange}
+          isSubmitted={isSubmitted}
         />
 
         {/* 개인정보 수집 활용 동의서 */}
-        <PersonalInfoConsent checked={isAgreed} onChange={setIsAgreed} />
+        <PersonalInfoConsent
+          checked={isAgreed}
+          onChange={setIsAgreed}
+          disabled={isSubmitted}
+        />
 
         {!isSubmitPeriodEnded && (
           <MissionSubmitButton

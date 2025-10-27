@@ -1,11 +1,15 @@
+import { clsx } from 'clsx';
+
 interface PersonalInfoConsentProps {
   checked: boolean;
   onChange: (checked: boolean) => void;
+  disabled?: boolean;
 }
 
 const PersonalInfoConsent = ({
   checked,
   onChange,
+  disabled = false,
 }: PersonalInfoConsentProps) => {
   return (
     <div>
@@ -56,23 +60,34 @@ const PersonalInfoConsent = ({
 
       {/* 체크 영역 */}
       {/* TODO: 컴포넌트화 */}
-      <label className="mt-3 flex cursor-pointer items-center gap-1">
+      <label
+        className={clsx(
+          'mt-3 flex items-center gap-1',
+          disabled ? 'cursor-not-allowed' : 'cursor-pointer',
+        )}
+      >
         <div className="">
           <img
             src={
               checked ? '/icons/checkbox-fill.svg' : '/icons/Checkbox_Empty.svg'
             }
             alt={checked ? '체크됨' : '체크 안됨'}
-            className="h-6 w-6"
+            className={clsx('h-6 w-6', disabled && 'opacity-50')}
           />
         </div>
         <input
           type="checkbox"
           checked={checked}
           onChange={(e) => onChange(e.target.checked)}
+          disabled={disabled}
           className="sr-only"
         />
-        <span className="text-xsmall14 font-normal leading-[1.375rem] text-neutral-10">
+        <span
+          className={clsx(
+            'text-xsmall14 font-normal leading-[1.375rem]',
+            disabled ? 'text-neutral-50' : 'text-neutral-10',
+          )}
+        >
           인재풀 등록을 위한 개인정보 활용에 동의합니다.
         </span>
       </label>
