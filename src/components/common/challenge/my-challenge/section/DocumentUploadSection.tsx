@@ -8,6 +8,43 @@ import { UploadedFiles } from './MissionSubmitTalentPoolSection';
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 
+// 타입에 따라 파일명에서 접두사 제거
+const removeTypePrefixFromFileName = (
+  type: DocumentType,
+  fileName: string,
+): string => {
+  const typeLower = type.toLowerCase();
+  const fileNameLower = fileName.toLowerCase();
+
+  // 파일명이 타입으로 시작하는 경우
+  if (fileNameLower.startsWith(typeLower)) {
+    // 접두사 + 언더스코어 또는 공백 제거
+    const prefixPattern = new RegExp(`^${typeLower}[_-]?`, 'i');
+    return fileName.replace(prefixPattern, '');
+  }
+
+  return fileName;
+};
+
+// URL에서 파일 이름 추출
+const getFileNameFromUrl = (type: DocumentType, url: string): string => {
+  let fileName = '';
+
+  try {
+    const urlObj = new URL(url);
+    const pathname = urlObj.pathname;
+    fileName = pathname.substring(pathname.lastIndexOf('/') + 1);
+    // URL 디코딩 (특수문자 처리)
+    fileName = decodeURIComponent(fileName);
+  } catch {
+    console.error('URL 파싱 실패:', url);
+    return 'FILE_NAME_PARSING_FAILED';
+  }
+
+  // 타입 접두사 제거
+  return removeTypePrefixFromFileName(type, fileName);
+};
+
 interface DocumentUploadSectionProps {
   className?: string;
   uploadedFiles: UploadedFiles;
@@ -72,27 +109,48 @@ const DocumentUploadSection = ({
   };
 
   const handleLoadDocument = (type: DocumentType) => {
-    // TODO: db에서 서류 불러오기
-    // onFilesChange?.({})
-  };
+    if (!userDocumentList?.userDocumentList) return;
 
-  const handleFilePreview = (file: File | string) => {
-    if (typeof file === 'string') {
-      // TODO: file이 string인 경우 처리
+    // userDocumentList에서 해당 타입의 문서 찾기
+    const document = userDocumentList.userDocumentList.find(
+      (doc) => doc.userDocumentType === type,
+    );
+
+    if (!document) {
+      alert(
+        '저장된 서류가 없습니다. "파일 업로드" 버튼을 눌러 파일을 등록해 주세요.',
+      );
       return;
     }
 
-    const url = URL.createObjectURL(file);
+    // URL을 string으로 저장
+    const updatedFiles = {
+      ...uploadedFiles,
+      [type.toLowerCase()]: document.fileUrl,
+    };
+
+    onFilesChange(updatedFiles);
+  };
+
+  const handleFilePreview = (file: File | string) => {
+    let url: string;
+
+    if (typeof file === 'string') {
+      url = file;
+    } else {
+      url = URL.createObjectURL(file);
+    }
+
     const newWindow = window.open(
       url,
       '_blank',
       'width=800,height=600,scrollbars=yes,resizable=yes',
     );
 
-    // 새창이 열리지 않은 경우 URL 해제
-    if (!newWindow) {
+    // File 객체인 경우에만 URL 해제 (string인 경우는 서버 URL이므로 해제하지 않음)
+    if (typeof file !== 'string' && !newWindow) {
       URL.revokeObjectURL(url);
-    } else {
+    } else if (typeof file !== 'string' && newWindow) {
       // 새창이 닫힐 때 URL 해제를 위한 이벤트 리스너
       newWindow.addEventListener('beforeunload', () => {
         URL.revokeObjectURL(url);
@@ -143,8 +201,9 @@ const DocumentUploadSection = ({
               onClick={() => handleFilePreview(file)}
               className="truncate text-xsmall14 font-normal text-neutral-0 underline"
             >
-              {/* TODO: file이 string인 경우 처리 */}
-              {typeof file === 'string' ? file : file.name}
+              {typeof file === 'string'
+                ? getFileNameFromUrl(type, file)
+                : file.name}
             </button>
             <button
               type="button"
