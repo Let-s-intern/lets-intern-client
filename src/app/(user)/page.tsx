@@ -1,5 +1,6 @@
 import TopBanner from '@/components/common/home/new/banner/TopBanner';
 import Popup from '@/components/common/home/new/ui/Popup';
+import DataTableExample from '@components/common/DataTableExample';
 import ActiveProgramSection from '@components/common/home/section/ActiveProgramSection';
 import BlogCurationSection from '@components/common/home/section/BlogCurationSection';
 import BottomBannerSection from '@components/common/home/section/BottomBannerSection';
@@ -22,6 +23,7 @@ export default function Page() {
     <>
       <TopBanner />
       <div className="mb-20 flex w-full flex-col items-center justify-center pt-9 md:mb-44 md:pt-[68px]">
+        <DataTableExample />
         <IntroSection />
         <MainBannerSection />
         <MainCurationSection />
