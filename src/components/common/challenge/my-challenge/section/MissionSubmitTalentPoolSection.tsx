@@ -13,7 +13,7 @@ import PersonalInfoConsent from './PersonalInfoConsent';
 export interface UploadedFiles {
   resume: File | string | null;
   portfolio: File | string | null;
-  selfIntroduction: File | string | null;
+  personal_statement: File | string | null;
 }
 
 export type UploadedFileType = keyof UploadedFiles;
@@ -50,7 +50,7 @@ const MissionSubmitTalentPoolSection = ({
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFiles>({
     resume: null,
     portfolio: null,
-    selfIntroduction: null,
+    personal_statement: null,
   });
 
   // 제출 버튼 활성화 조건: 필수 항목(이력서, 포트폴리오 + 개인정보 동의) 입력 완료 시 활성화
@@ -72,8 +72,8 @@ const MissionSubmitTalentPoolSection = ({
       { type: 'RESUME' as DocumentType, file: uploadedFiles.resume },
       { type: 'PORTFOLIO' as DocumentType, file: uploadedFiles.portfolio },
       {
-        type: 'SELF_INTRODUCTION' as DocumentType,
-        file: uploadedFiles.selfIntroduction,
+        type: 'PERSONAL_STATEMENT' as DocumentType,
+        file: uploadedFiles.personal_statement,
       },
     ].filter(
       (item): item is { type: DocumentType; file: File } =>

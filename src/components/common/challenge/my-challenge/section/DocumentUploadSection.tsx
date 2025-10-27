@@ -22,7 +22,7 @@ const DocumentUploadSection = ({
 
   const resumeInputRef = useRef<HTMLInputElement>(null);
   const portfolioInputRef = useRef<HTMLInputElement>(null);
-  const selfIntroductionInputRef = useRef<HTMLInputElement>(null);
+  const personalStatementInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = (type: DocumentType, files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -32,7 +32,7 @@ const DocumentUploadSection = ({
 
     const updatedFiles = {
       ...uploadedFiles,
-      [type]: file,
+      [type.toLowerCase()]: file,
     };
 
     // 부모 컴포넌트에 파일 변경 알림
@@ -46,7 +46,7 @@ const DocumentUploadSection = ({
         ? resumeInputRef
         : type === 'PORTFOLIO'
           ? portfolioInputRef
-          : selfIntroductionInputRef;
+          : personalStatementInputRef;
 
     if (inputRef.current) {
       inputRef.current.value = '';
@@ -54,7 +54,7 @@ const DocumentUploadSection = ({
 
     const updatedFiles: UploadedFiles = {
       ...uploadedFiles,
-      [type]: null,
+      [type.toLowerCase()]: null,
     };
 
     // 부모 컴포넌트에 파일 변경 알림
@@ -100,7 +100,7 @@ const DocumentUploadSection = ({
         ? resumeInputRef
         : type === 'PORTFOLIO'
           ? portfolioInputRef
-          : selfIntroductionInputRef;
+          : personalStatementInputRef;
     const label =
       type === 'RESUME'
         ? '이력서 첨부'
@@ -193,7 +193,7 @@ const DocumentUploadSection = ({
       {renderFileList('PORTFOLIO', uploadedFiles.portfolio, true)}
       {renderFileList(
         'PERSONAL_STATEMENT',
-        uploadedFiles.selfIntroduction,
+        uploadedFiles.personal_statement,
         false,
       )}
     </div>
