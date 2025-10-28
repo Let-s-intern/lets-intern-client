@@ -12,7 +12,7 @@ import DashboardCreateReviewModal from '../../dashboard/modal/DashboardCreateRev
 import MobileReviewModal from '../../MobileReviewModal';
 import MissionSubmitButton from '../mission/MissionSubmitButton';
 import MissionToast from '../mission/MissionToast';
-import LinkInputSection from './LinkInputSection';
+import { MissionSubmitListForm } from './mission-submit-list-form';
 
 interface MissionSubmitRegularSectionProps {
   className?: string;
@@ -203,12 +203,13 @@ const MissionSubmitRegularSection = ({
   return (
     <>
       <section className={className}>
-        <h2 className="mb-6 text-small18 font-bold text-neutral-0">
+        {/* <h2 className="mb-6 text-small18 font-bold text-neutral-0">
           미션 제출하기
-        </h2>
+        </h2> */}
 
         {/* 링크 섹션 */}
-        <LinkInputSection
+        <MissionSubmitListForm experienceCount={0} />
+        {/* <LinkInputSection
           disabled={(isSubmitted && !isEditing) || isResubmitBlocked}
           onLinkChange={handleLinkChange}
           onLinkVerified={handleLinkVerified}
@@ -216,7 +217,7 @@ const MissionSubmitRegularSection = ({
           initialLink={linkValue}
           text={`미션 링크는 .notion.site 형식의 퍼블릭 링크만 입력 가능합니다.
           제출 후, 미션과 소감을 카카오톡으로 공유해야 제출이 인정됩니다.`}
-        />
+        /> */}
 
         {/* 미션 소감 */}
         <section>
