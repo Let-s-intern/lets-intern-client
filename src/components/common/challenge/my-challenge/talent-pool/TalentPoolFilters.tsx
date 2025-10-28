@@ -1,8 +1,8 @@
 import { DESIRED_INDUSTRY, JOB_FIELD_ROLES } from '@/utils/constants';
-import { ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { SelectButtonSection } from './SelectButtonSection';
 import { CheckboxItem } from './WishJobCheckBox';
-import { WishJobModalWrapper } from './WishJobModalWrapper';
+import { WishJobModal } from './WishJobModal';
 
 interface JobField {
   id: number;
@@ -16,36 +16,6 @@ interface JobPosition {
 }
 
 type ModalStep = 'field' | 'position' | 'industry' | null;
-
-interface SelectButtonProps {
-  label: string;
-  value: string;
-  placeholder: string;
-  onClick: () => void;
-}
-
-function SelectButton({
-  label,
-  value,
-  placeholder,
-  onClick,
-}: SelectButtonProps) {
-  const isEmpty = value === placeholder;
-  return (
-    <div>
-      <label className="mb-1.5 block">{label}</label>
-      <button
-        onClick={onClick}
-        className="flex w-full items-center justify-between rounded-xxs border border-neutral-80 px-3 py-2.5 text-left"
-      >
-        <span className={isEmpty ? 'text-neutral-50' : 'text-gray-0'}>
-          {value}
-        </span>
-        <ChevronRight className="stroke-[1.5] text-neutral-50" size={24} />
-      </button>
-    </div>
-  );
-}
 
 export default function TalentPoolFilters() {
   const [modalStep, setModalStep] = useState<ModalStep>(null);
@@ -195,21 +165,21 @@ export default function TalentPoolFilters() {
   return (
     <div>
       <div className="flex flex-col gap-4">
-        <SelectButton
+        <SelectButtonSection
           label="희망 직군"
           value={getFieldDisplayText()}
           placeholder="희망 직군을 선택해 주세요."
           onClick={openFieldModal}
         />
 
-        <SelectButton
+        <SelectButtonSection
           label="희망 직무 (최대 3개)"
           value={getPositionDisplayText()}
           placeholder="희망 직무를 선택해 주세요."
           onClick={openPositionModal}
         />
 
-        <SelectButton
+        <SelectButtonSection
           label="희망 산업 (최대 3개)"
           value={getIndustryDisplayText()}
           placeholder="희망 산업을 선택해 주세요."
@@ -219,7 +189,7 @@ export default function TalentPoolFilters() {
 
       {/* 직군 모달 */}
       {modalStep === 'field' && (
-        <WishJobModalWrapper title="직군" onClose={closeModal}>
+        <WishJobModal title="직군" onClose={closeModal}>
           {jobCategories.map((item) => {
             const isSelected = selectedField === item.id;
             return (
@@ -247,11 +217,11 @@ export default function TalentPoolFilters() {
               </button>
             );
           })}
-        </WishJobModalWrapper>
+        </WishJobModal>
       )}
       {/* 직무 선택 모달 */}
       {modalStep === 'position' && (
-        <WishJobModalWrapper
+        <WishJobModal
           title="직무 선택 (최대 3개)"
           onClose={closeModal}
           footer={
@@ -302,12 +272,12 @@ export default function TalentPoolFilters() {
               />
             );
           })}
-        </WishJobModalWrapper>
+        </WishJobModal>
       )}
 
       {/* 산업 선택 모달 */}
       {modalStep === 'industry' && (
-        <WishJobModalWrapper
+        <WishJobModal
           title="산업 선택 (최대 3개)"
           onClose={closeModal}
           footer={
@@ -343,7 +313,7 @@ export default function TalentPoolFilters() {
               />
             );
           })}
-        </WishJobModalWrapper>
+        </WishJobModal>
       )}
     </div>
   );

@@ -1,18 +1,18 @@
 import { X } from 'lucide-react';
 
-interface ModalWrapperProps {
+interface WishJobModalProps {
   title: string;
   onClose: () => void;
   children: React.ReactNode;
   footer?: React.ReactNode;
 }
 
-export function WishJobModalWrapper({
+export function WishJobModal({
   title,
   onClose,
   children,
   footer,
-}: ModalWrapperProps) {
+}: WishJobModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="flex max-h-[476px] w-[340px] flex-col rounded-sm bg-white">
