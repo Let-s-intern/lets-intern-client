@@ -7,7 +7,7 @@ interface SelectButtonProps {
   onClick: () => void;
 }
 
-export function SelectButtonSection({
+export function SelectButton({
   label,
   value,
   placeholder,

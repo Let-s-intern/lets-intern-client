@@ -1,6 +1,6 @@
 import { DESIRED_INDUSTRY, JOB_FIELD_ROLES } from '@/utils/constants';
+import { SelectButton } from '@components/common/ui/button/SelectButton';
 import { useEffect, useState } from 'react';
-import { SelectButtonSection } from './SelectButtonSection';
 import { CheckboxItem } from './WishJobCheckBox';
 import { WishJobModal } from './WishJobModal';
 
@@ -165,21 +165,21 @@ export default function TalentPoolFilters() {
   return (
     <div>
       <div className="flex flex-col gap-4">
-        <SelectButtonSection
+        <SelectButton
           label="희망 직군"
           value={getFieldDisplayText()}
           placeholder="희망 직군을 선택해 주세요."
           onClick={openFieldModal}
         />
 
-        <SelectButtonSection
+        <SelectButton
           label="희망 직무 (최대 3개)"
           value={getPositionDisplayText()}
           placeholder="희망 직무를 선택해 주세요."
           onClick={openPositionModal}
         />
 
-        <SelectButtonSection
+        <SelectButton
           label="희망 산업 (최대 3개)"
           value={getIndustryDisplayText()}
           placeholder="희망 산업을 선택해 주세요."
