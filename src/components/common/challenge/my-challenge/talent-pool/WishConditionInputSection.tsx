@@ -174,13 +174,14 @@ export default function WishConditionInputSection({
   };
 
   return (
-    <div>
+    <div className="mb-9">
       <div className="flex flex-col gap-4">
         <SelectButton
           label="희망 직군"
           value={getFieldDisplayText()}
           placeholder="희망 직군을 선택해 주세요."
           onClick={openFieldModal}
+          isRequired={true}
         />
 
         <SelectButton
@@ -188,6 +189,7 @@ export default function WishConditionInputSection({
           value={getPositionDisplayText()}
           placeholder="희망 직무를 선택해 주세요."
           onClick={openPositionModal}
+          isRequired={true}
         />
 
         <SelectButton
@@ -195,6 +197,7 @@ export default function WishConditionInputSection({
           value={getIndustryDisplayText()}
           placeholder="희망 산업을 선택해 주세요."
           onClick={openIndustryModal}
+          isRequired={true}
         />
       </div>
 
