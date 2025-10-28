@@ -17,11 +17,24 @@ interface JobPosition {
 
 type ModalStep = 'field' | 'position' | 'industry' | null;
 
-export default function TalentPoolFilters() {
+interface WishConditionInputSectionProps {
+  selectedField: number | null;
+  selectedPositions: number[];
+  selectedIndustries: number[];
+  onFieldChange: (field: number | null) => void;
+  onPositionsChange: (positions: number[]) => void;
+  onIndustriesChange: (industries: number[]) => void;
+}
+
+export default function WishConditionInputSection({
+  selectedField,
+  selectedPositions,
+  selectedIndustries,
+  onFieldChange,
+  onPositionsChange,
+  onIndustriesChange,
+}: WishConditionInputSectionProps) {
   const [modalStep, setModalStep] = useState<ModalStep>(null);
-  const [selectedField, setSelectedField] = useState<number | null>(null);
-  const [selectedPositions, setSelectedPositions] = useState<number[]>([]);
-  const [selectedIndustries, setSelectedIndustries] = useState<number[]>([]);
 
   const jobCategories: JobField[] = JOB_FIELD_ROLES.map((field, index) => ({
     id: index,
@@ -53,12 +66,12 @@ export default function TalentPoolFilters() {
   }, [modalStep]);
 
   const handleFieldSelect = (id: number): void => {
-    setSelectedField(id);
-    setSelectedPositions([]);
+    onFieldChange(id);
+    onPositionsChange([]);
 
     // 직군 무관을 선택한 경우
     if (jobCategories[id].name === '직군 무관') {
-      setSelectedPositions([]);
+      onPositionsChange([]);
       setModalStep(null);
     } else {
       setModalStep('position');
@@ -67,16 +80,14 @@ export default function TalentPoolFilters() {
 
   const toggleSelection = (
     id: number,
-    setSelectedItems: React.Dispatch<React.SetStateAction<number[]>>,
+    selectedItems: number[],
+    setSelectedItems: (items: number[]) => void,
   ) => {
-    setSelectedItems((prev) => {
-      if (prev.includes(id)) {
-        return prev.filter((item) => item !== id);
-      } else if (prev.length < 3) {
-        return [...prev, id];
-      }
-      return prev;
-    });
+    if (selectedItems.includes(id)) {
+      setSelectedItems(selectedItems.filter((item) => item !== id));
+    } else if (selectedItems.length < 3) {
+      setSelectedItems([...selectedItems, id]);
+    }
   };
 
   const handlePositionSelect = (id: number): void => {
@@ -85,7 +96,7 @@ export default function TalentPoolFilters() {
 
     // "직무 전체" 선택
     if (selectedPosition?.name.includes('직무 전체')) {
-      setSelectedPositions(selectedPositions.includes(id) ? [] : [id]);
+      onPositionsChange(selectedPositions.includes(id) ? [] : [id]);
       return;
     }
 
@@ -97,7 +108,7 @@ export default function TalentPoolFilters() {
 
     if (hasAll) return;
 
-    toggleSelection(id, setSelectedPositions);
+    toggleSelection(id, selectedPositions, onPositionsChange);
   };
 
   const handleIndustrySelect = (id: number): void => {
@@ -105,7 +116,7 @@ export default function TalentPoolFilters() {
 
     // "산업 무관" 선택
     if (selectedIndustry?.name === '산업 무관') {
-      setSelectedIndustries(selectedIndustries.includes(id) ? [] : [id]);
+      onIndustriesChange(selectedIndustries.includes(id) ? [] : [id]);
       return;
     }
     // 산업 무관이 이미 선택되어 있으면 다른 산업 선택 불가
@@ -116,7 +127,7 @@ export default function TalentPoolFilters() {
 
     if (hasUnrelated) return;
 
-    toggleSelection(id, setSelectedIndustries);
+    toggleSelection(id, selectedIndustries, onIndustriesChange);
   };
   const openFieldModal = (): void => setModalStep('field');
 
