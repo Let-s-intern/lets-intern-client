@@ -14,3 +14,14 @@ export interface PatchMissionReq {
   essentialContentsIdList?: number[];
   additionalContentsIdList?: number[];
 }
+
+export type DocumentType = 'RESUME' | 'PORTFOLIO' | 'PERSONAL_STATEMENT';
+
+/** POST [유저] 인재풀 미션 제출 */
+// export interface PostMissionTalentPoolReq {
+//   requestDto: {
+//     documentType: DocumentType;
+//     fileUrl?: string;
+//   };
+//   file?: File;
+// }

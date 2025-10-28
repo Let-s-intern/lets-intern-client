@@ -60,3 +60,17 @@ export const useSubmitMissionBlogBonus = () => {
     },
   });
 };
+
+/** POST [유저] 인재풀 미션 제출 /api/v1/user-document */
+export const usePostMissionTalentPoolMutation = () => {
+  return useMutation({
+    mutationFn: async (req: FormData) => {
+      const res = await axios.post(`/user-document`, req, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return res.data;
+    },
+  });
+};

@@ -1,3 +1,6 @@
+import { useSubmitMission } from '@/api/attendance';
+import { usePostMissionTalentPoolMutation } from '@/api/mission';
+import { DocumentType } from '@/api/missionSchema';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import { Schedule } from '@/schema';
@@ -6,6 +9,16 @@ import { useCallback, useEffect, useState } from 'react';
 import MissionSubmitButton from '../mission/MissionSubmitButton';
 import MissionToast from '../mission/MissionToast';
 import TalentPoolFilters from '../talent-pool/TalentPoolFilters';
+import DocumentUploadSection from './DocumentUploadSection';
+import PersonalInfoConsent from './PersonalInfoConsent';
+
+export interface UploadedFiles {
+  resume: File | string | null;
+  portfolio: File | string | null;
+  personal_statement: File | string | null;
+}
+
+export type UploadedFileType = keyof UploadedFiles;
 
 interface MissionSubmitTalentPoolSectionProps {
   className?: string;
@@ -18,7 +31,10 @@ const MissionSubmitTalentPoolSection = ({
   missionId,
   attendanceInfo,
 }: MissionSubmitTalentPoolSectionProps) => {
-  const { currentChallenge } = useCurrentChallenge();
+  const { currentChallenge, refetchSchedules } = useCurrentChallenge();
+
+  const submitMissionTalentPool = usePostMissionTalentPoolMutation();
+  const submitAttendance = useSubmitMission();
 
   // 챌린지 종료 + 2일
   const isSubmitPeriodEnded =
@@ -32,43 +48,86 @@ const MissionSubmitTalentPoolSection = ({
       (attendanceInfo?.status === 'LATE' ||
         attendanceInfo?.status === 'UPDATED'));
 
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [isAgreed, setIsAgreed] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFiles>({
+    resume: null,
+    portfolio: null,
+    personal_statement: null,
+  });
 
-  {
-    /* TODO: 서류 업로드 컴포넌트 추가 + 제출 로직 연동 필요) */
-  }
+  const isSubmitted = attendanceInfo?.submitted ?? false;
 
-  // 제출 버튼 활성화 조건: 필수 항목(이력서 + 개인정보 동의) 입력 완료 시 활성화
-  const canSubmit = isAgreed;
+  // 제출 버튼 활성화 조건: 필수 항목(이력서, 포트폴리오 + 개인정보 동의) 입력 완료 시 활성화
+  const canSubmit =
+    isAgreed && !!uploadedFiles.resume && !!uploadedFiles.portfolio;
+
+  const handleFilesChange = (files: UploadedFiles) => {
+    setUploadedFiles(files);
+  };
 
   const handleSubmit = async () => {
-    if (isSubmitted) {
-      // 이미 제출된 미션 → 수정 모드로 전환
-      setIsEditing(true);
-      return;
-    }
-
     if (!missionId) {
       console.error('미션 ID가 없습니다.');
       return;
     }
-    console.log('제출하기');
-  };
 
-  const handleSaveEdit = async () => {
-    console.log('수정하기 저장');
-  };
+    // 새롭게 업로드된 파일들만 필터링
+    const filesToUpload = [
+      { type: 'RESUME' as DocumentType, file: uploadedFiles.resume },
+      { type: 'PORTFOLIO' as DocumentType, file: uploadedFiles.portfolio },
+      {
+        type: 'PERSONAL_STATEMENT' as DocumentType,
+        file: uploadedFiles.personal_statement,
+      },
+    ].filter(
+      (item): item is { type: DocumentType; file: File } =>
+        item.file instanceof File,
+    ); // File 객체인 경우만 (새로 업로드된 파일)
 
-  const handleCancelEdit = () => {
-    console.log('수정하기 취소');
+    // 각 파일을 formData 형식으로 변환
+    const formDataList = filesToUpload.map(({ type, file }) => {
+      const formData = new FormData();
+      formData.append(
+        'requestDto',
+        new Blob([JSON.stringify({ documentType: type, fileUrl: '' })], {
+          type: 'application/json',
+        }),
+      );
+      formData.append('file', file as File);
+      return formData;
+    });
+
+    try {
+      await Promise.all(
+        formDataList.map((formData) =>
+          submitMissionTalentPool.mutateAsync(formData),
+        ),
+      );
+    } catch (error) {
+      console.error('파일 업로드 중 오류 발생:', error);
+      alert('업로드에 실패했습니다. 다시 시도해주세요.');
+      return;
+    }
+
+    try {
+      // 단순 출석 체크용
+      await submitAttendance.mutateAsync({
+        missionId,
+        link: 'https://example.com',
+        review: '',
+      });
+      // TODO: 추가 invalidate 필요한지 확인 필요
+      await refetchSchedules?.();
+      setShowToast(true);
+    } catch (error) {
+      console.error('출석 체크 중 오류 발생:', error);
+      alert('출석 체크에 실패했습니다. 다시 시도해주세요.');
+    }
   };
 
   const initValues = useCallback(() => {
     setIsAgreed(attendanceInfo?.submitted ?? false);
-    setIsSubmitted(attendanceInfo?.submitted ?? false);
   }, [attendanceInfo]);
 
   useEffect(() => {
@@ -79,24 +138,33 @@ const MissionSubmitTalentPoolSection = ({
   return (
     <>
       <section className={clsx('', className)}>
-        <h2 className="mb-6 text-small18 font-bold text-neutral-0">
+        <h2 className="mb-1 text-small18 font-bold text-neutral-0">
           인재풀 등록하기
         </h2>
-
         {/* 희망 조건 입력 영역 */}
         <TalentPoolFilters />
+
         {/* 서류 업로드 영역 */}
+        <DocumentUploadSection
+          className="mb-6"
+          uploadedFiles={uploadedFiles}
+          onFilesChange={handleFilesChange}
+          isSubmitted={isSubmitted}
+        />
 
         {/* 개인정보 수집 활용 동의서 */}
+        <PersonalInfoConsent
+          checked={isAgreed}
+          onChange={setIsAgreed}
+          disabled={isSubmitted}
+        />
 
         {!isSubmitPeriodEnded && (
           <MissionSubmitButton
             isSubmitted={isSubmitted}
             hasContent={canSubmit}
             onButtonClick={handleSubmit}
-            isEditing={isEditing}
-            onSaveEdit={handleSaveEdit}
-            onCancelEdit={handleCancelEdit}
+            isEditing={false}
             disabled={isResubmitBlocked}
           />
         )}
