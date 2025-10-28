@@ -14,8 +14,14 @@ export function WishJobModal({
   footer,
 }: WishJobModalProps) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="flex max-h-[476px] w-[340px] flex-col rounded-sm bg-white">
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black bg-opacity-50 md:items-center"
+      onClick={onClose}
+    >
+      <div
+        className="flex max-h-[476px] w-full flex-col rounded-t-lg bg-white md:w-[340px] md:rounded-sm"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex items-center justify-between p-5">
           <h3 className="text-small18 font-semibold">{title}</h3>
           <button onClick={onClose}>
