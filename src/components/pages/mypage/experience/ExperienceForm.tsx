@@ -30,7 +30,11 @@ const PLACEHOLDERS = {
     '예) 캠페인 시작 3주 만에 신규 유입률이 45% 상승했고, 광고 클릭률이 이전 대비 2.3배 개선되었습니다.',
   learnings:
     '예) 단순히 예산을 투입하는 것보다 타겟을 명확히 정의하고 콘텐츠 전략을 정교화하는 것이 성과에 큰 영향을 준다는 것을 배웠습니다. 데이터 기반으로 캠페인을 설계하는 역량을 키우는 계기가 되었습니다.',
+  coreCompetencies:
+    '키워드를 입력해주세요. (예. 데이터 분석, QA, 커뮤니케이션)',
 };
+
+const MAX_COMPETENCIES = 5;
 
 interface ExperienceFormProps {
   onClose: () => void;
@@ -65,6 +69,17 @@ export const ExperienceForm = ({
     }
   }, [initialData, setValue]);
 
+  const handleCompetencyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const text = e.target.value;
+
+    // 핵심 역량 입력 상태 (콤마 4개까지 허용하여 5단어 제한)
+    const commaCount = (text.match(/,/g) || []).length;
+    if (commaCount > MAX_COMPETENCIES - 1) {
+      return;
+    }
+    setValue('coreCompetenciesText', text, { shouldDirty: true });
+  };
+
   // 경험 분류 선택 모달 상태
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   // 기간 선택 모달 상태
@@ -92,7 +107,7 @@ export const ExperienceForm = ({
       </header>
 
       {/* 스크롤 가능한 메인 컨텐츠 */}
-      <div className="flex-1 overflow-y-auto px-7 py-2">
+      <div className="flex-1 overflow-y-auto px-7 pb-[60px] pt-2">
         {/* 가이드 텍스트 */}
         <div className="mb-6 rounded-sm bg-primary-5 px-4 py-3">
           <p className="text-xsmall14 font-normal leading-[1.375rem] text-neutral-30">
@@ -473,11 +488,33 @@ export const ExperienceForm = ({
             </div>
           </div>
 
-          {/* TODO: 핵심 역량 섹션 */}
+          {/* ============================== 핵심 역량 섹션 ============================= */}
           <div className="flex flex-col gap-5 pt-8">
             <h2 className="text-small16 font-semibold text-neutral-0">
               핵심 역량
             </h2>
+
+            <div className="flex flex-col gap-[6px]">
+              <label
+                htmlFor="coreCompetencies"
+                className="text-xsmall16 font-medium text-neutral-20"
+              >
+                핵심 역량 (최대 5개)
+              </label>
+              <p className="text-xsmall14 font-normal text-[#7F7F7F]">
+                키워드를 입력한 뒤 콤마(,)를 누르면 자동으로 태그가
+                만들어집니다.
+              </p>
+              {/* 입력 필드 (콤마 4개 제한) */}
+              <input
+                id="coreCompetencies"
+                type="text"
+                value={formData.coreCompetenciesText || ''}
+                onChange={handleCompetencyChange}
+                placeholder={PLACEHOLDERS.coreCompetencies}
+                className="rounded-xs border border-solid border-neutral-80 px-3 py-[9px] text-xsmall16 font-normal placeholder:text-neutral-50 focus:border-primary focus:outline-none"
+              />
+            </div>
           </div>
         </form>
       </div>

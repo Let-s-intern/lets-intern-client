@@ -20,6 +20,10 @@ export const experienceFormSchema = z.object({
   action: z.string().optional(),
   result: z.string().optional(),
   learnings: z.string().optional(),
+  // 핵심 역량 (최대 5개)
+  coreCompetencies: z.array(z.string()).max(5).optional(),
+  // 입력 필드용 텍스트 (표시는 문자열, 제출은 배열을 사용)
+  coreCompetenciesText: z.string().optional(),
 });
 
 export type ExperienceFormData = z.infer<typeof experienceFormSchema>;
@@ -42,4 +46,6 @@ export const defaultFormData: ExperienceFormData = {
   action: '',
   result: '',
   learnings: '',
+  coreCompetencies: [],
+  coreCompetenciesText: '',
 };
