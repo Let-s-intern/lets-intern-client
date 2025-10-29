@@ -8,6 +8,7 @@ import { clsx } from 'clsx';
 import { useCallback, useEffect, useState } from 'react';
 import MissionSubmitButton from '../mission/MissionSubmitButton';
 import MissionToast from '../mission/MissionToast';
+import WishConditionInputSection from '../talent-pool/WishConditionInputSection';
 import DocumentUploadSection from './DocumentUploadSection';
 import PersonalInfoConsent from './PersonalInfoConsent';
 
@@ -31,6 +32,9 @@ const MissionSubmitTalentPoolSection = ({
   attendanceInfo,
 }: MissionSubmitTalentPoolSectionProps) => {
   const { currentChallenge, refetchSchedules } = useCurrentChallenge();
+  const [selectedField, setSelectedField] = useState<number | null>(null); // 희망 직군
+  const [selectedPositions, setSelectedPositions] = useState<number[]>([]); // 희망 직무
+  const [selectedIndustries, setSelectedIndustries] = useState<number[]>([]); // 희망 산업
 
   const submitMissionTalentPool = usePostMissionTalentPoolMutation();
   const submitAttendance = useSubmitMission();
@@ -137,11 +141,18 @@ const MissionSubmitTalentPoolSection = ({
   return (
     <>
       <section className={clsx('', className)}>
-        <h2 className="mb-1 text-small18 font-bold text-neutral-0">
+        <h2 className="mb-6 text-small18 font-semibold text-neutral-0">
           인재풀 등록하기
         </h2>
-
         {/* 희망 조건 입력 영역 */}
+        <WishConditionInputSection
+          selectedField={selectedField}
+          selectedPositions={selectedPositions}
+          selectedIndustries={selectedIndustries}
+          onFieldChange={setSelectedField}
+          onPositionsChange={setSelectedPositions}
+          onIndustriesChange={setSelectedIndustries}
+        />
 
         {/* 서류 업로드 영역 */}
         <DocumentUploadSection
