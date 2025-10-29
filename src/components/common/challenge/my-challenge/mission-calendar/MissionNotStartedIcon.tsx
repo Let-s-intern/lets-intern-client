@@ -1,5 +1,5 @@
 import { Schedule } from '@/schema';
-import { BONUS_MISSION_TH } from '@/utils/constants';
+import { BONUS_MISSION_TH, TALENT_POOL_MISSION_TH } from '@/utils/constants';
 import clsx from 'clsx';
 
 interface Props {
@@ -18,7 +18,8 @@ const MissionNotStartedIcon = ({ className, schedule }: Props) => {
         />
       </i>
       <span className="mb-[6px] mt-1 block text-[13px] font-semibold leading-4 text-neutral-30">
-        {schedule.missionInfo.th === BONUS_MISSION_TH
+        {schedule.missionInfo.th === BONUS_MISSION_TH ||
+        schedule.missionInfo.th === TALENT_POOL_MISSION_TH
           ? '보너스'
           : `${schedule.missionInfo.th}회차`}
         <br />
