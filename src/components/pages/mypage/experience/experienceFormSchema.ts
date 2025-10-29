@@ -14,6 +14,12 @@ export const experienceFormSchema = z.object({
   endYear: z.number().optional(),
   endMonth: z.number().optional(),
   year: z.number().optional(),
+  // 경험 상세 작성 (STAR)
+  situation: z.string().optional(),
+  task: z.string().optional(),
+  action: z.string().optional(),
+  result: z.string().optional(),
+  learnings: z.string().optional(),
 });
 
 export type ExperienceFormData = z.infer<typeof experienceFormSchema>;
@@ -31,4 +37,9 @@ export const defaultFormData: ExperienceFormData = {
   endYear: undefined,
   endMonth: undefined,
   year: undefined,
+  situation: '',
+  task: '',
+  action: '',
+  result: '',
+  learnings: '',
 };

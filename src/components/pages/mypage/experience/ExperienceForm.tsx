@@ -20,6 +20,16 @@ const PLACEHOLDERS = {
   startYear: '시작 연도, 월',
   endYear: '종료 연도, 월',
   year: '기간을 선택하면 자동으로 입력됩니다.',
+  //
+  situation:
+    '예) 신제품 출시 후 초기 유입이 목표 대비 40% 낮아, 원인 분석과 신규 캠페인 기획이 필요했습니다.',
+  task: '예) 한 달 안에 신규 유입률을 30% 이상 끌어올릴 수 있는 디지털 마케팅 전략을 수립하고 실행해야 했습니다.',
+  action:
+    '예) 타겟 리서치를 통해 핵심 고객군을 재정의하고, SNS 광고 크리에이티브 3종과 콘텐츠 캠페인 시리즈를 직접 기획·운영했습니다. 인플루언서 협업을 통해 바이럴 채널도 확대했습니다.',
+  result:
+    '예) 캠페인 시작 3주 만에 신규 유입률이 45% 상승했고, 광고 클릭률이 이전 대비 2.3배 개선되었습니다.',
+  learnings:
+    '예) 단순히 예산을 투입하는 것보다 타겟을 명확히 정의하고 콘텐츠 전략을 정교화하는 것이 성과에 큰 영향을 준다는 것을 배웠습니다. 데이터 기반으로 캠페인을 설계하는 역량을 키우는 계기가 되었습니다.',
 };
 
 interface ExperienceFormProps {
@@ -295,11 +305,172 @@ export const ExperienceForm = ({
             </div>
           </div>
 
-          {/* TODO: 경험 상세 작성 섹션 */}
+          {/* ============================== 경험 상세 작성 섹션 ============================= */}
           <div className="flex flex-col gap-5 pt-8">
             <h2 className="text-small16 font-semibold text-neutral-0">
               경험 상세 작성
             </h2>
+
+            <div className="flex flex-col gap-5">
+              {/* Situation(상황) */}
+              <div>
+                <div className="mb-[6px] flex items-center justify-between">
+                  <label
+                    htmlFor="situation"
+                    className="text-xsmall16 font-medium text-neutral-20"
+                  >
+                    Situation (상황)
+                  </label>
+                  <button
+                    type="button"
+                    className="rounded-xxs border border-neutral-80 px-[6px] py-1 text-xsmall14 font-medium text-primary-80"
+                    onClick={() => {
+                      // TODO: 참고 예시 툴팁 표시
+                    }}
+                  >
+                    💡 참고 예시
+                  </button>
+                </div>
+                <p className="mb-[10px] text-xsmall14 font-normal text-[#7F7F7F]">
+                  경험이 일어난 배경과 맥락을 간단히 설명해주세요.
+                </p>
+                <textarea
+                  id="situation"
+                  rows={4}
+                  {...register('situation')}
+                  placeholder={PLACEHOLDERS.situation}
+                  className="inline-block h-[144px] w-full resize-none rounded-xxs border border-solid border-neutral-80 p-3 text-xsmall16 font-normal leading-[1.625rem] placeholder:text-neutral-50 focus:border-primary focus:outline-none"
+                />
+              </div>
+
+              {/* Task (문제) */}
+              <div>
+                <div className="mb-[6px] flex items-center justify-between">
+                  <label
+                    htmlFor="task"
+                    className="text-xsmall16 font-medium text-neutral-20"
+                  >
+                    Task (문제)
+                  </label>
+                  <button
+                    type="button"
+                    className="rounded-xxs border border-neutral-80 px-[6px] py-1 text-xsmall14 font-medium text-primary-80"
+                    onClick={() => {
+                      // TODO: 참고 예시 툴팁 표시
+                    }}
+                  >
+                    💡 참고 예시
+                  </button>
+                </div>
+                <p className="mb-[10px] text-xsmall14 font-normal text-[#7F7F7F]">
+                  그 상황에서 맡았던 목표나 해결해야 했던 과제를 구체적으로
+                  적어주세요.
+                </p>
+                <textarea
+                  id="task"
+                  rows={4}
+                  {...register('task')}
+                  placeholder={PLACEHOLDERS.task}
+                  className="inline-block h-[144px] w-full resize-none rounded-xxs border border-solid border-neutral-80 p-3 text-xsmall16 font-normal leading-[1.625rem] placeholder:text-neutral-50 focus:border-primary focus:outline-none"
+                />
+              </div>
+
+              {/* Action (행동) */}
+              <div>
+                <div className="mb-[6px] flex items-center justify-between">
+                  <label
+                    htmlFor="action"
+                    className="text-xsmall16 font-medium text-neutral-20"
+                  >
+                    Action (행동)
+                  </label>
+                  <button
+                    type="button"
+                    className="rounded-xxs border border-neutral-80 px-[6px] py-1 text-xsmall14 font-medium text-primary-80"
+                    onClick={() => {
+                      // TODO: 참고 예시 툴팁 표시
+                    }}
+                  >
+                    💡 참고 예시
+                  </button>
+                </div>
+                <p className="mb-[10px] text-xsmall14 font-normal text-[#7F7F7F]">
+                  과제를 해결하기 위해 직접 수행한 행동과 역할을 상세히
+                  서술해주세요.
+                </p>
+                <textarea
+                  id="action"
+                  rows={4}
+                  {...register('action')}
+                  placeholder={PLACEHOLDERS.action}
+                  className="inline-block h-[144px] w-full resize-none rounded-xxs border border-solid border-neutral-80 p-3 text-xsmall16 font-normal leading-[1.625rem] placeholder:text-neutral-50 focus:border-primary focus:outline-none"
+                />
+              </div>
+
+              {/* Result (결과) */}
+              <div>
+                <div className="mb-[6px] flex items-center justify-between">
+                  <label
+                    htmlFor="result"
+                    className="text-xsmall16 font-medium text-neutral-20"
+                  >
+                    Result (결과)
+                  </label>
+                  <button
+                    type="button"
+                    className="rounded-xxs border border-neutral-80 px-[6px] py-1 text-xsmall14 font-medium text-primary-80"
+                    onClick={() => {
+                      // TODO: 참고 예시 툴팁 표시
+                    }}
+                  >
+                    💡 참고 예시
+                  </button>
+                </div>
+                <p className="mb-[10px] text-xsmall14 font-normal text-[#7F7F7F]">
+                  그 행동을 통해 얻은 성과나 변화, 배운 점을 수치나 사례로
+                  표현해주세요.
+                </p>
+                <textarea
+                  id="result"
+                  rows={4}
+                  {...register('result')}
+                  placeholder={PLACEHOLDERS.result}
+                  className="inline-block h-[144px] w-full resize-none rounded-xxs border border-solid border-neutral-80 p-3 text-xsmall16 font-normal leading-[1.625rem] placeholder:text-neutral-50 focus:border-primary focus:outline-none"
+                />
+              </div>
+
+              {/* 느낀 점 / 배운 점 */}
+              <div>
+                <div className="flex items-center justify-between">
+                  <label
+                    htmlFor="learnings"
+                    className="text-xsmall16 font-medium text-neutral-20"
+                  >
+                    느낀 점 / 배운 점
+                  </label>
+                  <button
+                    type="button"
+                    className="rounded-xxs border border-neutral-80 px-[6px] py-1 text-xsmall14 font-medium text-primary-80"
+                    onClick={() => {
+                      // TODO: 참고 예시 툴팁 표시
+                    }}
+                  >
+                    💡 참고 예시
+                  </button>
+                </div>
+                <p className="mb-[10px] text-xsmall14 font-normal text-[#7F7F7F]">
+                  이 경험을 통해 얻은 깨달음이나 성장 포인트를 자유롭게
+                  작성해주세요.
+                </p>
+                <textarea
+                  id="learnings"
+                  rows={4}
+                  {...register('learnings')}
+                  placeholder={PLACEHOLDERS.learnings}
+                  className="inline-block h-[144px] w-full resize-none rounded-xxs border border-solid border-neutral-80 p-3 text-xsmall16 font-normal leading-[1.625rem] placeholder:text-neutral-50 focus:border-primary focus:outline-none"
+                />
+              </div>
+            </div>
           </div>
 
           {/* TODO: 핵심 역량 섹션 */}
