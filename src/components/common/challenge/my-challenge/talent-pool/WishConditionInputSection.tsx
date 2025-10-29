@@ -1,6 +1,6 @@
 import { DESIRED_INDUSTRY, JOB_FIELD_ROLES } from '@/utils/constants';
 import { SelectButton } from '@components/common/ui/button/SelectButton';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { CheckboxItem } from './WishJobCheckBox';
 import { WishJobModal } from './WishJobModal';
 
@@ -36,27 +36,39 @@ export default function WishConditionInputSection({
 }: WishConditionInputSectionProps) {
   const [modalStep, setModalStep] = useState<ModalStep>(null);
 
-  const jobCategories: JobField[] = JOB_FIELD_ROLES.map((field, index) => ({
-    id: index,
-    name: field.jobField,
-  }));
-
-  const jobPositions: Record<number, JobPosition[]> = JOB_FIELD_ROLES.reduce(
-    (acc, field, index) => {
-      acc[index] = field.jobRoles.map((role, roleIndex) => ({
-        id: index * 100 + roleIndex,
-        name: role,
-        fieldId: index,
-      }));
-      return acc;
-    },
-    {} as Record<number, JobPosition[]>,
+  const jobCategories: JobField[] = useMemo(
+    () =>
+      JOB_FIELD_ROLES.map((field, index) => ({
+        id: index,
+        name: field.jobField,
+      })),
+    [],
   );
 
-  const industries = DESIRED_INDUSTRY.industryList.map((name, index) => ({
-    id: index,
-    name,
-  }));
+  const jobPositions: Record<number, JobPosition[]> = useMemo(
+    () =>
+      JOB_FIELD_ROLES.reduce(
+        (acc, field, index) => {
+          acc[index] = field.jobRoles.map((role, roleIndex) => ({
+            id: index * 100 + roleIndex,
+            name: role,
+            fieldId: index,
+          }));
+          return acc;
+        },
+        {} as Record<number, JobPosition[]>,
+      ),
+    [],
+  );
+
+  const industries = useMemo(
+    () =>
+      DESIRED_INDUSTRY.industryList.map((name, index) => ({
+        id: index,
+        name,
+      })),
+    [],
+  );
 
   useEffect(() => {
     document.body.style.overflow = modalStep !== null ? 'hidden' : 'auto';
