@@ -103,7 +103,9 @@ export default function WishConditionInputSection({
   };
 
   const handlePositionSelect = (id: number): void => {
-    const allPositions = jobPositions[selectedField!] || [];
+    if (selectedField === null) return;
+
+    const allPositions = jobPositions[selectedField] || [];
     const selectedPosition = allPositions.find((pos) => pos.id === id);
 
     // "직무 전체" 선택
@@ -170,8 +172,8 @@ export default function WishConditionInputSection({
     if (field.name === '직군 무관') return '직무 무관';
     if (selectedPositions.length === 0) return '희망 직무를 선택해 주세요.';
 
-    const allPositions = Object.values(jobPositions).flat();
-    return allPositions
+    const positionsForField = jobPositions[selectedField!] || [];
+    return positionsForField
       .filter((pos) => selectedPositions.includes(pos.id))
       .map((pos) => pos.name)
       .join(', ');
@@ -246,7 +248,7 @@ export default function WishConditionInputSection({
         </WishJobModal>
       )}
       {/* 직무 선택 모달 */}
-      {modalStep === 'position' && (
+      {modalStep === 'position' && selectedField !== null && (
         <WishJobModal
           title="직무 선택 (최대 3개)"
           onClose={closeModal}
@@ -271,9 +273,9 @@ export default function WishConditionInputSection({
             </>
           }
         >
-          {(jobPositions[selectedField!] || []).map((item) => {
+          {(jobPositions[selectedField] || []).map((item) => {
             const isSelected = selectedPositions.includes(item.id);
-            const allPositions = jobPositions[selectedField!] || [];
+            const allPositions = jobPositions[selectedField] || [];
 
             // "직무 전체"가 선택되어 있는지 확인
             const hasAll = selectedPositions.some((posId) => {
