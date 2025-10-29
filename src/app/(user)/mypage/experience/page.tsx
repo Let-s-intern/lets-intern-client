@@ -1,5 +1,6 @@
 'use client';
 
+import { useControlScroll } from '@/hooks/useControlScroll';
 import drawerReducer from '@/reducers/drawerReducer';
 import ExperienceCreateButton from '@components/common/mypage/experience/ExperienceCreateButton';
 import ExperienceDataTable from '@components/common/mypage/experience/ExperienceDataTable';
@@ -21,6 +22,9 @@ const Experience = () => {
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
   const [sortBy, setSortBy] = useState('latest');
   const [isDrawerOpen, dispatchIsDrawerOpen] = useReducer(drawerReducer, false);
+
+  // drawer가 열리면 뒷 배경 스크롤 제한
+  useControlScroll(isDrawerOpen);
 
   const handleFilterChange = (filterType: keyof Filters, value: string) => {
     setFilters((prev) => {
