@@ -1,7 +1,11 @@
 'use client';
 
+import {
+  useGetAllUserExperienceQuery,
+  usePostUserExperienceMutation,
+} from '@/api/experience';
 import { FilterDropdown } from '@components/common/challenge/my-challenge/section/mission-submit-list-form/components/ExperienceSelectModal/components/FilterDropdown';
-import DataTableExample from '@components/common/DataTableExample';
+import { TableHeader } from '@components/common/table/DataTable';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 
@@ -56,6 +60,36 @@ const Experience = () => {
     competency: '전체',
   });
 
+  const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
+  const { data: userExperienceData } = useGetAllUserExperienceQuery({
+    page: 1,
+    size: 10,
+    sort: [],
+  });
+
+  // console.log('userExperienceData: ', userExperienceData);
+
+  const { mutate: postUserExperience } = usePostUserExperienceMutation();
+
+  // useEffect(() => {
+  //   // 임시 데이터 추가
+  //   postUserExperience({
+  //     startDate: '2025-10-29',
+  //     endDate: '2025-10-29',
+  //     title: '제목',
+  //     activityType: 'TEAM',
+  //     experienceCategory: 'PROJECT',
+  //     role: 'FE',
+  //     situation: 'test',
+  //     task: 'test',
+  //     action: 'test',
+  //     result: 'test',
+  //     coreCompetency: 'test',
+  //     customCategoryName: 'test',
+  //     isAdminAdded: true,
+  //   });
+  // }, []);
+
   const handleFilterChange = (filterType: keyof Filters, value: string) => {
     setFilters({
       ...filters,
@@ -107,12 +141,80 @@ const Experience = () => {
         </div>
       </div>
 
-      <DataTableExample />
+      <div className="w-full">
+        {/* 기본 테이블 사용 예시 */}
+        {/* <DataTable
+          headers={experienceTableHeaders}
+          data={sampleExperienceData}
+          selectedRowIds={selectedRowIds}
+          onSelectionChange={setSelectedRowIds}
+          className="rounded-lg border"
+        /> */}
+      </div>
     </section>
   );
 };
 
 export default Experience;
+
+const experienceTableHeaders: TableHeader[] = [
+  { key: 'experienceName', label: '경험 이름', width: '150px' },
+  {
+    key: 'experienceCategory',
+    label: '경험 분류',
+    width: '110px',
+  },
+  { key: 'organization', label: '기관', width: '150px' },
+  {
+    key: 'roleAndResponsibilities',
+    label: '역할 및 담당 업무',
+    width: '150px',
+  },
+  {
+    key: 'teamOrIndividual',
+    label: '팀·개인 여부',
+    width: '100px',
+  },
+  { key: 'period', label: '기간', width: '140px' },
+  {
+    key: 'year',
+    label: '연도',
+    width: '80px',
+  },
+  { key: 'situation', label: 'Situation(상황)', width: '200px' },
+  { key: 'task', label: 'Task(문제)', width: '200px' },
+  { key: 'action', label: 'Action(행동)', width: '200px' },
+  { key: 'result', label: 'Result(결과)', width: '200px' },
+  { key: 'lessonsLearned', label: '느낀 점 / 배운 점', width: '150px' },
+  {
+    key: 'coreCompetencies',
+    label: '핵심역량',
+    width: '140px',
+  },
+  {
+    key: 'deleteAction',
+    label: '목록 삭제',
+    width: '100px',
+  },
+];
+
+export interface ExperienceData {
+  id: string;
+  experienceName: string;
+  experienceCategory: string;
+  organization: string;
+  roleAndResponsibilities: string;
+  teamOrIndividual: string;
+  period: string;
+  year: string;
+  situation: string;
+  task: string;
+  action: string;
+  result: string;
+  lessonsLearned: string;
+  coreCompetencies: string[];
+  deleteAction: string;
+}
 
 // TODO: props로 variant 등 추가 예정
 interface SolidButtonProps {
