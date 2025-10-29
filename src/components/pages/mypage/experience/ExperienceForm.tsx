@@ -1,12 +1,73 @@
 'use client';
 
-import { XIcon } from 'lucide-react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { ChevronRight, XIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+
+import {
+  defaultFormData,
+  ExperienceFormData,
+  experienceFormSchema,
+} from './experienceFormSchema';
+
+const PLACEHOLDERS = {
+  experienceName: '예) 여름 방학 UX 기획 프로젝트 / △△△ 동아리 운영팀 활동',
+  experienceCategory: '경험 분류를 선택해주세요',
+  organization: '예) 네이버 / 서울대학교 / △△△ 스타트업 / ○○ 마케팅 공모전',
+  roleAndResponsibilities:
+    '예) 마케팅 전략 수립 및 실행 / 서비스 기획 및 UX 설계',
+  startYear: '시작 연도, 월',
+  endYear: '종료 연도, 월',
+  year: '기간을 선택하면 자동으로 입력됩니다.',
+};
 
 interface ExperienceFormProps {
   onClose: () => void;
+  initialData?: ExperienceFormData;
 }
 
-export const ExperienceForm = ({ onClose }: ExperienceFormProps) => {
+export const ExperienceForm = ({
+  onClose,
+  initialData,
+}: ExperienceFormProps) => {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors, isDirty },
+  } = useForm<ExperienceFormData>({
+    resolver: zodResolver(experienceFormSchema),
+    defaultValues: initialData || defaultFormData,
+  });
+
+  const formData = watch();
+
+  // 초기 데이터 설정
+  useEffect(() => {
+    if (initialData) {
+      Object.entries(initialData).forEach(([key, value]) => {
+        setValue(key as keyof ExperienceFormData, value, {
+          shouldDirty: false,
+        });
+      });
+    }
+  }, [initialData, setValue]);
+
+  // 경험 분류 선택 모달 상태
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  // 기간 선택 모달 상태
+  const [isStartPeriodModalOpen, setIsStartPeriodModalOpen] = useState(false);
+  const [isEndPeriodModalOpen, setIsEndPeriodModalOpen] = useState(false);
+
+  // 폼 제출 핸들러
+  const onSubmit = (data: ExperienceFormData) => {
+    console.log('Form submitted:', data);
+    // TODO: API 호출
+    onClose();
+  };
+
   return (
     <div className="flex h-full flex-col bg-white">
       {/* 헤더 */}
@@ -41,12 +102,213 @@ export const ExperienceForm = ({ onClose }: ExperienceFormProps) => {
           </span>
         </div>
 
-        {/* 메인 폼 영역 - 추후 섹션들이 추가될 예정 */}
-        <div className="flex flex-col gap-8">
-          {/* TODO: 기본 정보 섹션 */}
+        {/* 메인 폼 영역 */}
+        <form
+          id="experienceForm"
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col gap-8 divide-y divide-neutral-85"
+        >
+          {/* 기본 정보 섹션 */}
+          <div className="flex flex-col gap-5">
+            <h2 className="text-small16 font-semibold text-neutral-0">
+              기본 정보
+            </h2>
+
+            <div className="flex flex-col gap-4">
+              {/* 경험 이름 */}
+              <div className="flex flex-col gap-[6px]">
+                <label
+                  htmlFor="experienceName"
+                  className="text-xsmall16 font-medium text-neutral-20"
+                >
+                  경험 이름
+                </label>
+                <input
+                  id="experienceName"
+                  type="text"
+                  {...register('experienceName')}
+                  placeholder={PLACEHOLDERS.experienceName}
+                  className="rounded-xs border border-solid border-neutral-80 px-3 py-[9px] text-xsmall16 font-normal placeholder:text-neutral-50 focus:border-primary focus:outline-none"
+                />
+              </div>
+
+              {/* 경험 분류 */}
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="experienceCategory"
+                  className="text-xsmall16 font-medium text-neutral-20"
+                >
+                  경험 분류
+                </label>
+                <button
+                  id="experienceCategory"
+                  type="button"
+                  onClick={() => setIsCategoryModalOpen(true)}
+                  className="flex items-center justify-between rounded-xs border border-solid border-neutral-80 px-3 py-[9px] text-xsmall16 font-normal focus:border-primary focus:outline-none"
+                >
+                  <span
+                    className={
+                      formData?.experienceCategory
+                        ? 'text-neutral-0'
+                        : 'text-neutral-50'
+                    }
+                  >
+                    {formData?.experienceCategory ||
+                      PLACEHOLDERS.experienceCategory}
+                  </span>
+                  <ChevronRight size={20} className="text-neutral-400" />
+                </button>
+              </div>
+
+              {/* 기관 */}
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="organization"
+                  className="text-xsmall16 font-medium text-neutral-20"
+                >
+                  기관
+                </label>
+                <input
+                  id="organization"
+                  type="text"
+                  {...register('organization')}
+                  placeholder={PLACEHOLDERS.organization}
+                  className="rounded-xs border border-solid border-neutral-80 px-3 py-[9px] text-xsmall16 font-normal placeholder:text-neutral-50 focus:border-primary focus:outline-none"
+                />
+              </div>
+
+              {/* 역할 및 담당 업무 */}
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="roleAndResponsibilities"
+                  className="text-xsmall16 font-medium text-neutral-20"
+                >
+                  역할 및 담당 업무
+                </label>
+                <input
+                  id="roleAndResponsibilities"
+                  type="text"
+                  {...register('roleAndResponsibilities')}
+                  placeholder={PLACEHOLDERS.roleAndResponsibilities}
+                  className="rounded-xs border border-solid border-neutral-80 px-3 py-[9px] text-xsmall16 font-normal placeholder:text-neutral-50 focus:border-primary focus:outline-none"
+                />
+              </div>
+
+              {/* 팀·개인 여부 */}
+              <div className="flex flex-col gap-2">
+                <label className="text-xsmall16 font-medium text-neutral-20">
+                  팀·개인 여부
+                </label>
+                <div className="flex gap-4">
+                  <label className="flex cursor-pointer items-center gap-2">
+                    <input
+                      type="radio"
+                      {...register('type')}
+                      value="INDIVIDUAL"
+                      className="m-[2.5px] h-[19px] w-[19px] cursor-pointer appearance-none rounded-full border border-solid border-neutral-70 checked:border-[5px] checked:border-primary-90"
+                    />
+                    <span className="text-xsmall16 font-normal text-neutral-0">
+                      개인
+                    </span>
+                  </label>
+                  <label className="flex cursor-pointer items-center gap-2">
+                    <input
+                      type="radio"
+                      {...register('type')}
+                      value="TEAM"
+                      className="m-[2.5px] h-[19px] w-[19px] cursor-pointer appearance-none rounded-full border border-solid border-neutral-70 checked:border-[5px] checked:border-primary-90"
+                    />
+                    <span className="text-xsmall16 font-normal text-neutral-0">
+                      팀
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              {/* 기간 */}
+              <div className="flex flex-col gap-4">
+                <label className="text-xsmall16 font-medium text-neutral-20">
+                  기간
+                </label>
+                <div className="flex items-center gap-3">
+                  <div className="relative flex-1">
+                    <button
+                      type="button"
+                      onClick={() => setIsStartPeriodModalOpen(true)}
+                      className="flex w-full items-center justify-between rounded-xs border border-solid border-neutral-80 px-3 py-[10px] text-left text-xsmall16 font-normal focus:border-primary focus:outline-none"
+                    >
+                      <span
+                        className={
+                          formData.startYear && formData.startMonth
+                            ? 'text-neutral-0'
+                            : 'text-neutral-50'
+                        }
+                      >
+                        {formData.startYear && formData.startMonth
+                          ? `${formData.startYear}년 ${formData.startMonth}월`
+                          : PLACEHOLDERS.startYear}
+                      </span>
+                      <ChevronRight size={20} className="text-neutral-400" />
+                    </button>
+                  </div>
+                  <span className="w-2 text-xsmall16 text-neutral-400">-</span>
+                  <div className="relative flex-1">
+                    <button
+                      type="button"
+                      onClick={() => setIsEndPeriodModalOpen(true)}
+                      className="flex w-full items-center justify-between rounded-xs border border-solid border-neutral-80 px-3 py-[10px] text-left text-xsmall16 font-normal focus:border-primary focus:outline-none"
+                    >
+                      <span
+                        className={
+                          formData.endYear && formData.endMonth
+                            ? 'text-neutral-0'
+                            : 'text-neutral-50'
+                        }
+                      >
+                        {formData.endYear && formData.endMonth
+                          ? `${formData.endYear}년 ${formData.endMonth}월`
+                          : PLACEHOLDERS.endYear}
+                      </span>
+                      <ChevronRight size={20} className="text-neutral-400" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* 연도 (자동 입력) */}
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="year"
+                  className="text-xsmall16 font-medium text-neutral-20"
+                >
+                  연도
+                </label>
+                <input
+                  id="year"
+                  type="text"
+                  {...register('year')}
+                  placeholder={PLACEHOLDERS.year}
+                  readOnly
+                  className="rounded-xs border border-solid border-neutral-80 px-3 py-[9px] text-xsmall16 font-normal text-neutral-0 placeholder:text-neutral-50 focus:border-primary focus:outline-none"
+                />
+              </div>
+            </div>
+          </div>
+
           {/* TODO: 경험 상세 작성 섹션 */}
+          <div className="flex flex-col gap-5 pt-8">
+            <h2 className="text-small16 font-semibold text-neutral-0">
+              경험 상세 작성
+            </h2>
+          </div>
+
           {/* TODO: 핵심 역량 섹션 */}
-        </div>
+          <div className="flex flex-col gap-5 pt-8">
+            <h2 className="text-small16 font-semibold text-neutral-0">
+              핵심 역량
+            </h2>
+          </div>
+        </form>
       </div>
 
       {/* 푸터 */}
@@ -56,8 +318,10 @@ export const ExperienceForm = ({ onClose }: ExperienceFormProps) => {
           자동 저장 완료 10.19 04:17
         </div>
         <button
-          className="hover:bg-primary-hover w-[80px] rounded-sm bg-primary px-3 py-2 text-xsmall16 font-medium text-white disabled:bg-neutral-70 disabled:text-white"
-          disabled
+          type="submit"
+          form="experienceForm"
+          className="w-[80px] rounded-sm bg-primary px-3 py-2 text-xsmall16 font-medium text-white hover:bg-primary-hover disabled:bg-neutral-70 disabled:text-white"
+          disabled={!isDirty}
         >
           저장
         </button>
