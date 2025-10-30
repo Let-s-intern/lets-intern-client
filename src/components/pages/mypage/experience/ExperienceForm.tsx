@@ -1,5 +1,6 @@
 'use client';
 
+import Polygon from '@/assets/icons/polygon.svg?react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronRight, XIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -35,6 +36,32 @@ const PLACEHOLDERS = {
 };
 
 const MAX_COMPETENCIES = 5;
+
+const EXAMPLE_TOOLTIPS = {
+  situation: `가게 정보 중심의 프로필 세팅과 대형 인플루언서 협업으로 운영되어 왔으나, 예약 링크 클릭 및 목표 고객 유입이 저조했고, 인플루언서 마케팅의 효과도 점차 감소하는 상황`,
+  task: `1. 프로필 노출 및 링크 클릭 저조: 단순 매장 정보를 서술한 프로필 구성으로, 지역 키워드가 부족해 도달 및 검색 노출 효과 낮음. 명확한 CTA 문구가 없어 프로필 방문 대비 예약 링크 클릭 수가 매우 적음.
+
+2. 인플루언서 마케팅 효율성 저하: 팔로워 수에만 집중한 대형 인플루언서 협업으로 타겟 고객 유입률이 낮고 재방문율 및 매출 증가 효과가 미미함.`,
+  action: `인스타그램 프로필 및 콘텐츠 최적화
+• 업체 대표 상품 3종과 지역 키워드를 반영하여 프로필 소개글과 키워드 구조를 재설계.
+• 예약 링크 클릭을 유도하기 위해 첫 예약 50% 할인 혜택을 안내하는 CTA 문구를 삽입.
+• 대표 상품을 소개하는 짧은 릴스(영상)를 제작하여 프로필 상단 고정, 시청자 관심과 접근성 강화.
+
+인플루언서 마케팅 전략 재구성
+• 경쟁사와 협업한 인플루언서 중 브랜드와 핏이 맞는 인플루언서를 탐색
+• 협업 최소 기준을 세워 팔로워 타겟층, 게시물 카테고리 일관성, 최근 콘텐츠 조회수 등 평가 요소를 명확히 규정.
+• 스프레드시트로 인플루언서 협업 '적합/부적합/보류' 분류 및 리스트업.
+• 팔로워 인게이지먼트가 높고 충성도 있는 마이크로 인플루언서와 협업 진행.`,
+  result: `• 프로필 도달 계정 약 125% 증가
+• 프로필 방문 약 165% 증가
+• 예약 링크 클릭 1400% 증가
+• 월평균 매출 약 75% 이상 증가
+• 타겟 고객 방문과 재방문율이 향상되어 단기적 효과가 아닌 매출 안정적 유지`,
+  learnings: `이 경험을 통해 인플루언서 마케팅의 성공이 단순히 팔로워 수에 의존하지 않는다는 점을 깊이 깨달았다. 
+  타겟층과 브랜드의 적합성, 콘텐츠의 일관성, 최신 콘텐츠의 조회수 등 다양한 기준을 고려해야만 효과적인 협업이 가능하다는 사실을 알게 되었고, 이를 바탕으로 기존의 마케팅 방향을 전면적으로 수정했다. 
+  
+  이후, 이러한 전략적 전환이 실제 매출 상승과 재방문율 증가라는 큰 성과로 이어진 순간, 마케터로서의 진정한 흥미와 업무에 대한 자신감을 느꼈다. 주도적으로 문제를 발견하고 해결책을 모색하며 성과를 만들어내는 과정에서, 마케팅 직무에 대한 확신과 효능감을 갖게 된 매우 뜻깊은 경험이었다.`,
+};
 
 interface ExperienceFormProps {
   onClose: () => void;
@@ -85,6 +112,10 @@ export const ExperienceForm = ({
   // 기간 선택 모달 상태
   const [isStartPeriodModalOpen, setIsStartPeriodModalOpen] = useState(false);
   const [isEndPeriodModalOpen, setIsEndPeriodModalOpen] = useState(false);
+
+  const [hoveredTooltip, setHoveredTooltip] = useState<
+    'situation' | 'task' | 'action' | 'result' | 'learnings' | null
+  >(null);
 
   // 폼 제출 핸들러
   const onSubmit = (data: ExperienceFormData) => {
@@ -328,7 +359,7 @@ export const ExperienceForm = ({
 
             <div className="flex flex-col gap-5">
               {/* Situation(상황) */}
-              <div>
+              <div className="relative">
                 <div className="mb-[6px] flex items-center justify-between">
                   <label
                     htmlFor="situation"
@@ -336,15 +367,38 @@ export const ExperienceForm = ({
                   >
                     Situation (상황)
                   </label>
-                  <button
-                    type="button"
-                    className="rounded-xxs border border-neutral-80 px-[6px] py-1 text-xsmall14 font-medium text-primary-80"
-                    onClick={() => {
-                      // TODO: 참고 예시 툴팁 표시
-                    }}
-                  >
-                    💡 참고 예시
-                  </button>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      className="rounded-xxs border border-neutral-80 px-[6px] py-1 text-xsmall14 font-medium text-primary-80"
+                      onMouseEnter={() => setHoveredTooltip('situation')}
+                      onMouseLeave={() => setHoveredTooltip(null)}
+                    >
+                      💡 참고 예시
+                    </button>
+                    {hoveredTooltip === 'situation' && (
+                      <div className="z-[100]">
+                        <Polygon
+                          style={{
+                            height: '11px',
+                            width: '12px',
+                            filter: 'drop-shadow(0 -1px 1px rgb(0,0,0,0.08))',
+                          }}
+                          className="absolute right-[50%] top-[calc(100%+2px)] z-[102] translate-x-1/2 text-white"
+                          preserveAspectRatio="none"
+                        />
+                        <div
+                          className="absolute right-0 top-[calc(100%+12px)] z-[101] w-[384px] rounded-xxs bg-white p-3 text-neutral-0 drop-shadow"
+                          onMouseEnter={() => setHoveredTooltip('situation')}
+                          onMouseLeave={() => setHoveredTooltip(null)}
+                        >
+                          <p className="whitespace-pre-line text-xsmall14 font-normal">
+                            {EXAMPLE_TOOLTIPS.situation}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <p className="mb-[10px] text-xsmall14 font-normal text-[#7F7F7F]">
                   경험이 일어난 배경과 맥락을 간단히 설명해주세요.
@@ -359,7 +413,7 @@ export const ExperienceForm = ({
               </div>
 
               {/* Task (문제) */}
-              <div>
+              <div className="relative">
                 <div className="mb-[6px] flex items-center justify-between">
                   <label
                     htmlFor="task"
@@ -367,15 +421,38 @@ export const ExperienceForm = ({
                   >
                     Task (문제)
                   </label>
-                  <button
-                    type="button"
-                    className="rounded-xxs border border-neutral-80 px-[6px] py-1 text-xsmall14 font-medium text-primary-80"
-                    onClick={() => {
-                      // TODO: 참고 예시 툴팁 표시
-                    }}
-                  >
-                    💡 참고 예시
-                  </button>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      className="rounded-xxs border border-neutral-80 px-[6px] py-1 text-xsmall14 font-medium text-primary-80"
+                      onMouseEnter={() => setHoveredTooltip('task')}
+                      onMouseLeave={() => setHoveredTooltip(null)}
+                    >
+                      💡 참고 예시
+                    </button>
+                    {hoveredTooltip === 'task' && (
+                      <div className="z-[100]">
+                        <Polygon
+                          style={{
+                            height: '11px',
+                            width: '12px',
+                            filter: 'drop-shadow(0 -1px 1px rgb(0,0,0,0.08))',
+                          }}
+                          className="absolute right-[50%] top-[calc(100%+2px)] z-[102] translate-x-1/2 text-white"
+                          preserveAspectRatio="none"
+                        />
+                        <div
+                          className="absolute right-0 top-[calc(100%+12px)] z-[101] w-[384px] rounded-xxs bg-white p-3 text-neutral-0 drop-shadow"
+                          onMouseEnter={() => setHoveredTooltip('task')}
+                          onMouseLeave={() => setHoveredTooltip(null)}
+                        >
+                          <p className="whitespace-pre-line text-xsmall14 font-normal">
+                            {EXAMPLE_TOOLTIPS.task}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <p className="mb-[10px] text-xsmall14 font-normal text-[#7F7F7F]">
                   그 상황에서 맡았던 목표나 해결해야 했던 과제를 구체적으로
@@ -391,7 +468,7 @@ export const ExperienceForm = ({
               </div>
 
               {/* Action (행동) */}
-              <div>
+              <div className="relative">
                 <div className="mb-[6px] flex items-center justify-between">
                   <label
                     htmlFor="action"
@@ -399,15 +476,38 @@ export const ExperienceForm = ({
                   >
                     Action (행동)
                   </label>
-                  <button
-                    type="button"
-                    className="rounded-xxs border border-neutral-80 px-[6px] py-1 text-xsmall14 font-medium text-primary-80"
-                    onClick={() => {
-                      // TODO: 참고 예시 툴팁 표시
-                    }}
-                  >
-                    💡 참고 예시
-                  </button>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      className="rounded-xxs border border-neutral-80 px-[6px] py-1 text-xsmall14 font-medium text-primary-80"
+                      onMouseEnter={() => setHoveredTooltip('action')}
+                      onMouseLeave={() => setHoveredTooltip(null)}
+                    >
+                      💡 참고 예시
+                    </button>
+                    {hoveredTooltip === 'action' && (
+                      <div className="z-[100]">
+                        <Polygon
+                          style={{
+                            height: '11px',
+                            width: '12px',
+                            filter: 'drop-shadow(0 -1px 1px rgb(0,0,0,0.08))',
+                          }}
+                          className="absolute right-[50%] top-[calc(100%+2px)] z-[102] translate-x-1/2 text-white"
+                          preserveAspectRatio="none"
+                        />
+                        <div
+                          className="absolute right-0 top-[calc(100%+12px)] z-[101] w-[384px] rounded-xxs bg-white p-3 text-neutral-0 drop-shadow"
+                          onMouseEnter={() => setHoveredTooltip('action')}
+                          onMouseLeave={() => setHoveredTooltip(null)}
+                        >
+                          <p className="whitespace-pre-line text-xsmall14 font-normal">
+                            {EXAMPLE_TOOLTIPS.action}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <p className="mb-[10px] text-xsmall14 font-normal text-[#7F7F7F]">
                   과제를 해결하기 위해 직접 수행한 행동과 역할을 상세히
@@ -423,7 +523,7 @@ export const ExperienceForm = ({
               </div>
 
               {/* Result (결과) */}
-              <div>
+              <div className="relative">
                 <div className="mb-[6px] flex items-center justify-between">
                   <label
                     htmlFor="result"
@@ -431,15 +531,38 @@ export const ExperienceForm = ({
                   >
                     Result (결과)
                   </label>
-                  <button
-                    type="button"
-                    className="rounded-xxs border border-neutral-80 px-[6px] py-1 text-xsmall14 font-medium text-primary-80"
-                    onClick={() => {
-                      // TODO: 참고 예시 툴팁 표시
-                    }}
-                  >
-                    💡 참고 예시
-                  </button>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      className="rounded-xxs border border-neutral-80 px-[6px] py-1 text-xsmall14 font-medium text-primary-80"
+                      onMouseEnter={() => setHoveredTooltip('result')}
+                      onMouseLeave={() => setHoveredTooltip(null)}
+                    >
+                      💡 참고 예시
+                    </button>
+                    {hoveredTooltip === 'result' && (
+                      <div className="z-[100]">
+                        <Polygon
+                          style={{
+                            height: '11px',
+                            width: '12px',
+                            filter: 'drop-shadow(0 -1px 1px rgb(0,0,0,0.08))',
+                          }}
+                          className="absolute right-[50%] top-[calc(100%+2px)] z-[102] translate-x-1/2 text-white"
+                          preserveAspectRatio="none"
+                        />
+                        <div
+                          className="absolute right-0 top-[calc(100%+12px)] z-[101] w-[384px] rounded-xxs bg-white p-3 text-neutral-0 drop-shadow"
+                          onMouseEnter={() => setHoveredTooltip('result')}
+                          onMouseLeave={() => setHoveredTooltip(null)}
+                        >
+                          <p className="whitespace-pre-line text-xsmall14 font-normal">
+                            {EXAMPLE_TOOLTIPS.result}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <p className="mb-[10px] text-xsmall14 font-normal text-[#7F7F7F]">
                   그 행동을 통해 얻은 성과나 변화, 배운 점을 수치나 사례로
@@ -455,7 +578,7 @@ export const ExperienceForm = ({
               </div>
 
               {/* 느낀 점 / 배운 점 */}
-              <div>
+              <div className="relative">
                 <div className="flex items-center justify-between">
                   <label
                     htmlFor="learnings"
@@ -463,15 +586,38 @@ export const ExperienceForm = ({
                   >
                     느낀 점 / 배운 점
                   </label>
-                  <button
-                    type="button"
-                    className="rounded-xxs border border-neutral-80 px-[6px] py-1 text-xsmall14 font-medium text-primary-80"
-                    onClick={() => {
-                      // TODO: 참고 예시 툴팁 표시
-                    }}
-                  >
-                    💡 참고 예시
-                  </button>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      className="rounded-xxs border border-neutral-80 px-[6px] py-1 text-xsmall14 font-medium text-primary-80"
+                      onMouseEnter={() => setHoveredTooltip('learnings')}
+                      onMouseLeave={() => setHoveredTooltip(null)}
+                    >
+                      💡 참고 예시
+                    </button>
+                    {hoveredTooltip === 'learnings' && (
+                      <div className="z-[100]">
+                        <Polygon
+                          style={{
+                            height: '11px',
+                            width: '12px',
+                            filter: 'drop-shadow(0 -1px 1px rgb(0,0,0,0.08))',
+                          }}
+                          className="absolute right-[50%] top-[calc(100%+2px)] z-[102] translate-x-1/2 text-white"
+                          preserveAspectRatio="none"
+                        />
+                        <div
+                          className="absolute right-0 top-[calc(100%+12px)] z-[101] w-[384px] rounded-xxs bg-white p-3 text-neutral-0 drop-shadow"
+                          onMouseEnter={() => setHoveredTooltip('learnings')}
+                          onMouseLeave={() => setHoveredTooltip(null)}
+                        >
+                          <p className="whitespace-pre-line text-xsmall14 font-normal">
+                            {EXAMPLE_TOOLTIPS.learnings}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <p className="mb-[10px] text-xsmall14 font-normal text-[#7F7F7F]">
                   이 경험을 통해 얻은 깨달음이나 성장 포인트를 자유롭게
