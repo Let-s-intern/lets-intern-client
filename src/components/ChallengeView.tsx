@@ -19,6 +19,7 @@ import { useEffect, useMemo } from 'react';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
 import ChallengeBrand from './challenge-view/ChallengeBrand';
 import ChallengeDifferent from './challenge-view/ChallengeDifferent';
+import ChallengeFeedbackUI from './challenge-view/ChallengeFeedback';
 import ChallengeInfoBottom from './challenge-view/ChallengeInfoBottom';
 import ChallengeIntroCareerStart from './challenge-view/ChallengeIntroCareerStart';
 import ChallengeIntroExpericeSummary from './challenge-view/ChallengeIntroExpericeSummary';
@@ -41,6 +42,7 @@ import ProgramDetailNavigation, {
 const {
   CAREER_START,
   PORTFOLIO,
+  PERSONAL_STATEMENT,
   PERSONAL_STATEMENT_LARGE_CORP,
   EXPERIENCE_SUMMARY,
   ETC,
@@ -242,6 +244,11 @@ const ChallengeView: React.FC<{
                 isResumeTemplate={isResumeTemplate}
               />
             </section>
+
+            {(challenge.challengeType === PORTFOLIO ||
+              challenge.challengeType === PERSONAL_STATEMENT) && (
+              <ChallengeFeedbackUI challengeType={challenge.challengeType} />
+            )}
 
             {/* 특별 챌린지, 합격자 후기 */}
             {receivedContent.mainDescription?.root && (
