@@ -48,3 +48,13 @@ export const EXAMPLE_TOOLTIPS = {
 };
 
 export const MAX_COMPETENCIES = 5;
+
+export const DESCRIPTIONS = {
+  situation: '경험이 일어난 배경과 맥락을 간단히 설명해주세요.',
+  task: '그 상황에서 맡았던 목표나 해결해야 했던 과제를 구체적으로 적어주세요.',
+  action: '과제를 해결하기 위해 직접 수행한 행동과 역할을 상세히 서술해주세요.',
+  result:
+    '그 행동을 통해 얻은 성과나 변화, 배운 점을 수치나 사례로 표현해주세요.',
+  learnings:
+    '이 경험을 통해 얻은 깨달음이나 성장 포인트를 자유롭게 작성해주세요.',
+};

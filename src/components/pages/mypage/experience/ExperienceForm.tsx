@@ -1,17 +1,24 @@
 'use client';
 
-import Polygon from '@/assets/icons/polygon.svg?react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronRight, XIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { EXAMPLE_TOOLTIPS, MAX_COMPETENCIES, PLACEHOLDERS } from './constants';
+import {
+  DESCRIPTIONS,
+  EXAMPLE_TOOLTIPS,
+  MAX_COMPETENCIES,
+  PLACEHOLDERS,
+} from './constants';
 
 import {
   defaultFormData,
   ExperienceFormData,
   experienceFormSchema,
 } from './experienceFormSchema';
+
+import { FieldSection } from './FeildSection';
+import { TooltipButton } from './TooltipButton';
 
 interface ExperienceFormProps {
   onClose: () => void;
@@ -62,10 +69,6 @@ export const ExperienceForm = ({
   // 기간 선택 모달 상태
   const [isStartPeriodModalOpen, setIsStartPeriodModalOpen] = useState(false);
   const [isEndPeriodModalOpen, setIsEndPeriodModalOpen] = useState(false);
-
-  const [hoveredTooltip, setHoveredTooltip] = useState<
-    'situation' | 'task' | 'action' | 'result' | 'learnings' | null
-  >(null);
 
   // 폼 제출 핸들러
   const onSubmit = (data: ExperienceFormData) => {
@@ -122,21 +125,16 @@ export const ExperienceForm = ({
 
             <div className="flex flex-col gap-4">
               {/* 경험 이름 */}
-              <div className="flex flex-col gap-[6px]">
-                <label
-                  htmlFor="experienceName"
-                  className="text-xsmall16 font-medium text-neutral-20"
-                >
+              <FieldSection.Root className="flex flex-col gap-2">
+                <FieldSection.Label htmlFor="experienceName">
                   경험 이름
-                </label>
-                <input
+                </FieldSection.Label>
+                <FieldSection.Input<ExperienceFormData>
                   id="experienceName"
-                  type="text"
-                  {...register('experienceName')}
                   placeholder={PLACEHOLDERS.experienceName}
-                  className="rounded-xs border border-solid border-neutral-80 px-3 py-[9px] text-xsmall16 font-normal placeholder:text-neutral-50 focus:border-primary focus:outline-none"
+                  register={register}
                 />
-              </div>
+              </FieldSection.Root>
 
               {/* 경험 분류 */}
               <div className="flex flex-col gap-2">
@@ -167,75 +165,63 @@ export const ExperienceForm = ({
               </div>
 
               {/* 기관 */}
-              <div className="flex flex-col gap-2">
-                <label
-                  htmlFor="organization"
-                  className="text-xsmall16 font-medium text-neutral-20"
-                >
+              <FieldSection.Root className="flex flex-col gap-2">
+                <FieldSection.Label htmlFor="organization">
                   기관
-                </label>
-                <input
+                </FieldSection.Label>
+                <FieldSection.Input<ExperienceFormData>
                   id="organization"
-                  type="text"
-                  {...register('organization')}
                   placeholder={PLACEHOLDERS.organization}
-                  className="rounded-xs border border-solid border-neutral-80 px-3 py-[9px] text-xsmall16 font-normal placeholder:text-neutral-50 focus:border-primary focus:outline-none"
+                  register={register}
                 />
-              </div>
+              </FieldSection.Root>
 
               {/* 역할 및 담당 업무 */}
-              <div className="flex flex-col gap-2">
-                <label
-                  htmlFor="roleAndResponsibilities"
-                  className="text-xsmall16 font-medium text-neutral-20"
-                >
+              <FieldSection.Root className="flex flex-col gap-2">
+                <FieldSection.Label htmlFor="roleAndResponsibilities">
                   역할 및 담당 업무
-                </label>
-                <input
+                </FieldSection.Label>
+                <FieldSection.Input<ExperienceFormData>
                   id="roleAndResponsibilities"
-                  type="text"
-                  {...register('roleAndResponsibilities')}
                   placeholder={PLACEHOLDERS.roleAndResponsibilities}
-                  className="rounded-xs border border-solid border-neutral-80 px-3 py-[9px] text-xsmall16 font-normal placeholder:text-neutral-50 focus:border-primary focus:outline-none"
+                  register={register}
                 />
-              </div>
+              </FieldSection.Root>
 
               {/* 팀·개인 여부 */}
-              <div className="flex flex-col gap-2">
-                <label className="text-xsmall16 font-medium text-neutral-20">
+              <FieldSection.Root className="flex flex-col gap-2">
+                <FieldSection.Label htmlFor="type">
                   팀·개인 여부
-                </label>
+                </FieldSection.Label>
                 <div className="flex gap-4">
                   <label className="flex cursor-pointer items-center gap-2">
-                    <input
+                    <FieldSection.Input<ExperienceFormData>
+                      id="type"
                       type="radio"
-                      {...register('type')}
+                      register={register}
                       value="INDIVIDUAL"
-                      className="m-[2.5px] h-[19px] w-[19px] cursor-pointer appearance-none rounded-full border border-solid border-neutral-70 checked:border-[5px] checked:border-primary-90"
                     />
                     <span className="text-xsmall16 font-normal text-neutral-0">
                       개인
                     </span>
                   </label>
                   <label className="flex cursor-pointer items-center gap-2">
-                    <input
+                    <FieldSection.Input<ExperienceFormData>
+                      id="type"
                       type="radio"
-                      {...register('type')}
+                      register={register}
                       value="TEAM"
-                      className="m-[2.5px] h-[19px] w-[19px] cursor-pointer appearance-none rounded-full border border-solid border-neutral-70 checked:border-[5px] checked:border-primary-90"
                     />
                     <span className="text-xsmall16 font-normal text-neutral-0">
                       팀
                     </span>
                   </label>
                 </div>
-              </div>
+              </FieldSection.Root>
 
               {/* 기간 */}
-              <div className="flex flex-col gap-4">
-                <label className="text-xsmall16 font-medium text-neutral-20">
-                  기간
-                </label>
+              <FieldSection.Root className="flex flex-col gap-4">
+                <FieldSection.Label htmlFor="period">기간</FieldSection.Label>
                 <div className="flex items-center gap-3">
                   <div className="relative flex-1">
                     <button
@@ -279,25 +265,19 @@ export const ExperienceForm = ({
                     </button>
                   </div>
                 </div>
-              </div>
+              </FieldSection.Root>
 
               {/* 연도 (자동 입력) */}
-              <div className="flex flex-col gap-2">
-                <label
-                  htmlFor="year"
-                  className="text-xsmall16 font-medium text-neutral-20"
-                >
-                  연도
-                </label>
-                <input
+              <FieldSection.Root className="flex flex-col gap-2">
+                <FieldSection.Label htmlFor="year">연도</FieldSection.Label>
+                <FieldSection.Input<ExperienceFormData>
                   id="year"
                   type="text"
-                  {...register('year')}
+                  register={register}
                   placeholder={PLACEHOLDERS.year}
                   readOnly
-                  className="rounded-xs border border-solid border-neutral-80 px-3 py-[9px] text-xsmall16 font-normal text-neutral-0 placeholder:text-neutral-50 focus:border-primary focus:outline-none"
                 />
-              </div>
+              </FieldSection.Root>
             </div>
           </div>
 
@@ -308,279 +288,95 @@ export const ExperienceForm = ({
             </h2>
 
             <div className="flex flex-col gap-5">
-              {/* Situation(상황) */}
-              <div className="relative">
+              {/* Situation (상황) */}
+              <FieldSection.Root>
                 <div className="mb-[6px] flex items-center justify-between">
-                  <label
-                    htmlFor="situation"
-                    className="text-xsmall16 font-medium text-neutral-20"
-                  >
+                  <FieldSection.Label htmlFor="situation">
                     Situation (상황)
-                  </label>
-                  <div className="relative">
-                    <button
-                      type="button"
-                      className="rounded-xxs border border-neutral-80 px-[6px] py-1 text-xsmall14 font-medium text-primary-80"
-                      onMouseEnter={() => setHoveredTooltip('situation')}
-                      onMouseLeave={() => setHoveredTooltip(null)}
-                    >
-                      💡 참고 예시
-                    </button>
-                    {hoveredTooltip === 'situation' && (
-                      <div className="z-[100]">
-                        <Polygon
-                          style={{
-                            height: '11px',
-                            width: '12px',
-                            filter: 'drop-shadow(0 -1px 1px rgb(0,0,0,0.08))',
-                          }}
-                          className="absolute right-[50%] top-[calc(100%+2px)] z-[102] translate-x-1/2 text-white"
-                          preserveAspectRatio="none"
-                        />
-                        <div
-                          className="absolute right-0 top-[calc(100%+12px)] z-[101] w-[384px] rounded-xxs bg-white p-3 text-neutral-0 drop-shadow"
-                          onMouseEnter={() => setHoveredTooltip('situation')}
-                          onMouseLeave={() => setHoveredTooltip(null)}
-                        >
-                          <p className="whitespace-pre-line text-xsmall14 font-normal">
-                            {EXAMPLE_TOOLTIPS.situation}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  </FieldSection.Label>
+                  <TooltipButton example={EXAMPLE_TOOLTIPS.situation} />
                 </div>
-                <p className="mb-[10px] text-xsmall14 font-normal text-[#7F7F7F]">
-                  경험이 일어난 배경과 맥락을 간단히 설명해주세요.
-                </p>
-                <textarea
+                <FieldSection.Description>
+                  {DESCRIPTIONS.situation}
+                </FieldSection.Description>
+                <FieldSection.Textarea
                   id="situation"
-                  rows={4}
-                  {...register('situation')}
+                  register={register}
                   placeholder={PLACEHOLDERS.situation}
-                  className="inline-block h-[144px] w-full resize-none rounded-xxs border border-solid border-neutral-80 p-3 text-xsmall16 font-normal leading-[1.625rem] placeholder:text-neutral-50 focus:border-primary focus:outline-none"
                 />
-              </div>
+              </FieldSection.Root>
 
               {/* Task (문제) */}
-              <div className="relative">
+              <FieldSection.Root>
                 <div className="mb-[6px] flex items-center justify-between">
-                  <label
-                    htmlFor="task"
-                    className="text-xsmall16 font-medium text-neutral-20"
-                  >
+                  <FieldSection.Label htmlFor="task">
                     Task (문제)
-                  </label>
-                  <div className="relative">
-                    <button
-                      type="button"
-                      className="rounded-xxs border border-neutral-80 px-[6px] py-1 text-xsmall14 font-medium text-primary-80"
-                      onMouseEnter={() => setHoveredTooltip('task')}
-                      onMouseLeave={() => setHoveredTooltip(null)}
-                    >
-                      💡 참고 예시
-                    </button>
-                    {hoveredTooltip === 'task' && (
-                      <div className="z-[100]">
-                        <Polygon
-                          style={{
-                            height: '11px',
-                            width: '12px',
-                            filter: 'drop-shadow(0 -1px 1px rgb(0,0,0,0.08))',
-                          }}
-                          className="absolute right-[50%] top-[calc(100%+2px)] z-[102] translate-x-1/2 text-white"
-                          preserveAspectRatio="none"
-                        />
-                        <div
-                          className="absolute right-0 top-[calc(100%+12px)] z-[101] w-[384px] rounded-xxs bg-white p-3 text-neutral-0 drop-shadow"
-                          onMouseEnter={() => setHoveredTooltip('task')}
-                          onMouseLeave={() => setHoveredTooltip(null)}
-                        >
-                          <p className="whitespace-pre-line text-xsmall14 font-normal">
-                            {EXAMPLE_TOOLTIPS.task}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  </FieldSection.Label>
+                  <TooltipButton example={EXAMPLE_TOOLTIPS.task} />
                 </div>
-                <p className="mb-[10px] text-xsmall14 font-normal text-[#7F7F7F]">
-                  그 상황에서 맡았던 목표나 해결해야 했던 과제를 구체적으로
-                  적어주세요.
-                </p>
-                <textarea
+                <FieldSection.Description>
+                  {DESCRIPTIONS.task}
+                </FieldSection.Description>
+                <FieldSection.Textarea
                   id="task"
-                  rows={4}
-                  {...register('task')}
+                  register={register}
                   placeholder={PLACEHOLDERS.task}
-                  className="inline-block h-[144px] w-full resize-none rounded-xxs border border-solid border-neutral-80 p-3 text-xsmall16 font-normal leading-[1.625rem] placeholder:text-neutral-50 focus:border-primary focus:outline-none"
                 />
-              </div>
+              </FieldSection.Root>
 
               {/* Action (행동) */}
-              <div className="relative">
+              <FieldSection.Root>
                 <div className="mb-[6px] flex items-center justify-between">
-                  <label
-                    htmlFor="action"
-                    className="text-xsmall16 font-medium text-neutral-20"
-                  >
+                  <FieldSection.Label htmlFor="action">
                     Action (행동)
-                  </label>
-                  <div className="relative">
-                    <button
-                      type="button"
-                      className="rounded-xxs border border-neutral-80 px-[6px] py-1 text-xsmall14 font-medium text-primary-80"
-                      onMouseEnter={() => setHoveredTooltip('action')}
-                      onMouseLeave={() => setHoveredTooltip(null)}
-                    >
-                      💡 참고 예시
-                    </button>
-                    {hoveredTooltip === 'action' && (
-                      <div className="z-[100]">
-                        <Polygon
-                          style={{
-                            height: '11px',
-                            width: '12px',
-                            filter: 'drop-shadow(0 -1px 1px rgb(0,0,0,0.08))',
-                          }}
-                          className="absolute right-[50%] top-[calc(100%+2px)] z-[102] translate-x-1/2 text-white"
-                          preserveAspectRatio="none"
-                        />
-                        <div
-                          className="absolute right-0 top-[calc(100%+12px)] z-[101] w-[384px] rounded-xxs bg-white p-3 text-neutral-0 drop-shadow"
-                          onMouseEnter={() => setHoveredTooltip('action')}
-                          onMouseLeave={() => setHoveredTooltip(null)}
-                        >
-                          <p className="whitespace-pre-line text-xsmall14 font-normal">
-                            {EXAMPLE_TOOLTIPS.action}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  </FieldSection.Label>
+                  <TooltipButton example={EXAMPLE_TOOLTIPS.action} />
                 </div>
-                <p className="mb-[10px] text-xsmall14 font-normal text-[#7F7F7F]">
-                  과제를 해결하기 위해 직접 수행한 행동과 역할을 상세히
-                  서술해주세요.
-                </p>
-                <textarea
+                <FieldSection.Description>
+                  {DESCRIPTIONS.action}
+                </FieldSection.Description>
+                <FieldSection.Textarea
                   id="action"
-                  rows={4}
-                  {...register('action')}
+                  register={register}
                   placeholder={PLACEHOLDERS.action}
-                  className="inline-block h-[144px] w-full resize-none rounded-xxs border border-solid border-neutral-80 p-3 text-xsmall16 font-normal leading-[1.625rem] placeholder:text-neutral-50 focus:border-primary focus:outline-none"
                 />
-              </div>
+              </FieldSection.Root>
 
               {/* Result (결과) */}
-              <div className="relative">
+              <FieldSection.Root>
                 <div className="mb-[6px] flex items-center justify-between">
-                  <label
-                    htmlFor="result"
-                    className="text-xsmall16 font-medium text-neutral-20"
-                  >
+                  <FieldSection.Label htmlFor="result">
                     Result (결과)
-                  </label>
-                  <div className="relative">
-                    <button
-                      type="button"
-                      className="rounded-xxs border border-neutral-80 px-[6px] py-1 text-xsmall14 font-medium text-primary-80"
-                      onMouseEnter={() => setHoveredTooltip('result')}
-                      onMouseLeave={() => setHoveredTooltip(null)}
-                    >
-                      💡 참고 예시
-                    </button>
-                    {hoveredTooltip === 'result' && (
-                      <div className="z-[100]">
-                        <Polygon
-                          style={{
-                            height: '11px',
-                            width: '12px',
-                            filter: 'drop-shadow(0 -1px 1px rgb(0,0,0,0.08))',
-                          }}
-                          className="absolute right-[50%] top-[calc(100%+2px)] z-[102] translate-x-1/2 text-white"
-                          preserveAspectRatio="none"
-                        />
-                        <div
-                          className="absolute right-0 top-[calc(100%+12px)] z-[101] w-[384px] rounded-xxs bg-white p-3 text-neutral-0 drop-shadow"
-                          onMouseEnter={() => setHoveredTooltip('result')}
-                          onMouseLeave={() => setHoveredTooltip(null)}
-                        >
-                          <p className="whitespace-pre-line text-xsmall14 font-normal">
-                            {EXAMPLE_TOOLTIPS.result}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  </FieldSection.Label>
+                  <TooltipButton example={EXAMPLE_TOOLTIPS.result} />
                 </div>
-                <p className="mb-[10px] text-xsmall14 font-normal text-[#7F7F7F]">
-                  그 행동을 통해 얻은 성과나 변화, 배운 점을 수치나 사례로
-                  표현해주세요.
-                </p>
-                <textarea
+                <FieldSection.Description>
+                  {DESCRIPTIONS.result}
+                </FieldSection.Description>
+                <FieldSection.Textarea
                   id="result"
-                  rows={4}
-                  {...register('result')}
+                  register={register}
                   placeholder={PLACEHOLDERS.result}
-                  className="inline-block h-[144px] w-full resize-none rounded-xxs border border-solid border-neutral-80 p-3 text-xsmall16 font-normal leading-[1.625rem] placeholder:text-neutral-50 focus:border-primary focus:outline-none"
                 />
-              </div>
+              </FieldSection.Root>
 
               {/* 느낀 점 / 배운 점 */}
-              <div className="relative">
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="learnings"
-                    className="text-xsmall16 font-medium text-neutral-20"
-                  >
+              <FieldSection.Root>
+                <div className="mb-[6px] flex items-center justify-between">
+                  <FieldSection.Label htmlFor="learnings">
                     느낀 점 / 배운 점
-                  </label>
-                  <div className="relative">
-                    <button
-                      type="button"
-                      className="rounded-xxs border border-neutral-80 px-[6px] py-1 text-xsmall14 font-medium text-primary-80"
-                      onMouseEnter={() => setHoveredTooltip('learnings')}
-                      onMouseLeave={() => setHoveredTooltip(null)}
-                    >
-                      💡 참고 예시
-                    </button>
-                    {hoveredTooltip === 'learnings' && (
-                      <div className="z-[100]">
-                        <Polygon
-                          style={{
-                            height: '11px',
-                            width: '12px',
-                            filter: 'drop-shadow(0 -1px 1px rgb(0,0,0,0.08))',
-                          }}
-                          className="absolute right-[50%] top-[calc(100%+2px)] z-[102] translate-x-1/2 text-white"
-                          preserveAspectRatio="none"
-                        />
-                        <div
-                          className="absolute right-0 top-[calc(100%+12px)] z-[101] w-[384px] rounded-xxs bg-white p-3 text-neutral-0 drop-shadow"
-                          onMouseEnter={() => setHoveredTooltip('learnings')}
-                          onMouseLeave={() => setHoveredTooltip(null)}
-                        >
-                          <p className="whitespace-pre-line text-xsmall14 font-normal">
-                            {EXAMPLE_TOOLTIPS.learnings}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  </FieldSection.Label>
+                  <TooltipButton example={EXAMPLE_TOOLTIPS.learnings} />
                 </div>
-                <p className="mb-[10px] text-xsmall14 font-normal text-[#7F7F7F]">
-                  이 경험을 통해 얻은 깨달음이나 성장 포인트를 자유롭게
-                  작성해주세요.
-                </p>
-                <textarea
+                <FieldSection.Description>
+                  {DESCRIPTIONS.learnings}
+                </FieldSection.Description>
+                <FieldSection.Textarea
                   id="learnings"
-                  rows={4}
-                  {...register('learnings')}
+                  register={register}
                   placeholder={PLACEHOLDERS.learnings}
-                  className="inline-block h-[144px] w-full resize-none rounded-xxs border border-solid border-neutral-80 p-3 text-xsmall16 font-normal leading-[1.625rem] placeholder:text-neutral-50 focus:border-primary focus:outline-none"
                 />
-              </div>
+              </FieldSection.Root>
             </div>
           </div>
 
