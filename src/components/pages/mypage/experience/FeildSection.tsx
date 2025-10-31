@@ -2,26 +2,36 @@ import { cn } from '@/utils/cn';
 import { ComponentProps } from 'react';
 import { FieldValues, Path, useForm } from 'react-hook-form';
 
-const FieldSectionRoot = ({ ...props }: ComponentProps<'div'>) => (
+interface FieldSectionRootProps extends ComponentProps<'div'> {}
+
+const FieldSectionRoot = (props: FieldSectionRootProps) => (
   <div {...props} className={cn('relative', props.className)}>
     {props.children}
   </div>
 );
 
-const FieldSectionLabel = ({ ...props }: ComponentProps<'label'>) => (
+interface FieldSectionLabelProps extends ComponentProps<'label'> {}
+
+const FieldSectionLabel = (props: FieldSectionLabelProps) => (
   <label
     htmlFor={props.htmlFor}
-    className={cn('text-xsmall16 font-medium text-neutral-20', props.className)}
+    className={cn(
+      'font-medium text-neutral-20',
+      props.className,
+      'text-xsmall14 md:text-xsmall16',
+    )}
   >
     {props.children}
   </label>
 );
 
-const FieldSectionDescription = ({ ...props }: ComponentProps<'p'>) => (
+interface FieldSectionDescriptionProps extends ComponentProps<'p'> {}
+
+const FieldSectionDescription = (props: FieldSectionDescriptionProps) => (
   <p
     {...props}
     className={cn(
-      'mb-[10px] text-xsmall14 font-normal text-[#7F7F7F]',
+      'mb-[10px] text-xsmall14 font-normal [color:#7F7F7F]',
       props.className,
     )}
   >
@@ -36,18 +46,19 @@ const FieldSectionInput = <T extends FieldValues>({
   ...props
 }: {
   id: string;
-  register: ReturnType<typeof useForm<T>>['register'];
+  register?: ReturnType<typeof useForm<T>>['register'];
 } & ComponentProps<'input'>) => {
   if (type === 'radio') {
     return (
       <input
-        {...register(id as Path<T>)}
+        {...(register && register(id as Path<T>))}
         {...props}
         id={id}
         type={type}
         className={cn(
           'm-[2.5px] h-[19px] w-[19px] cursor-pointer appearance-none rounded-full border border-solid border-neutral-70 checked:border-[5px] checked:border-primary-90',
           props.className,
+          'text-xsmall14 md:text-xsmall16',
         )}
       />
     );
@@ -55,13 +66,14 @@ const FieldSectionInput = <T extends FieldValues>({
 
   return (
     <input
-      {...register(id as Path<T>)}
+      {...(register && register(id as Path<T>))}
       {...props}
       id={id}
       type={type}
       className={cn(
-        'rounded-xs border border-solid border-neutral-80 px-3 py-[9px] text-xsmall16 font-normal placeholder:text-neutral-50 focus:border-primary focus:outline-none',
+        'rounded-xs border border-solid border-neutral-80 px-3 py-[9px] font-normal placeholder:text-neutral-50 focus:border-primary focus:outline-none',
         props.className,
+        'text-xsmall14 md:text-xsmall16',
       )}
     />
   );
@@ -73,16 +85,17 @@ const FieldSectionTextarea = <T extends FieldValues>({
   ...props
 }: {
   id: string;
-  register: ReturnType<typeof useForm<T>>['register'];
+  register?: ReturnType<typeof useForm<T>>['register'];
 } & ComponentProps<'textarea'>) => (
   <textarea
-    {...register(id as Path<T>)}
+    {...(register && register(id as Path<T>))}
     {...props}
     id={id}
     rows={4}
     className={cn(
-      'inline-block h-[144px] w-full resize-none rounded-xxs border border-solid border-neutral-80 p-3 text-xsmall16 font-normal leading-[1.625rem] placeholder:text-neutral-50 focus:border-primary focus:outline-none',
+      'inline-block h-[144px] w-full resize-none rounded-xxs border border-solid border-neutral-80 p-3 font-normal leading-[1.625rem] placeholder:text-neutral-50 focus:border-primary focus:outline-none',
       props.className,
+      'text-xsmall14 md:text-xsmall16',
     )}
   />
 );

@@ -143,9 +143,12 @@ export const ExperienceForm = ({
 
             <div className="flex flex-col gap-4">
               {/* 경험 이름 */}
-              <FieldSection.Root className="flex flex-col gap-2">
-                <FieldSection.Label htmlFor="experienceName">
-                  경험 이름
+              <FieldSection.Root className="flex flex-col">
+                <FieldSection.Label
+                  className="mb-[6px]"
+                  htmlFor="experienceName"
+                >
+                  {EXPERIENCE_FORM['experienceName'].label}
                 </FieldSection.Label>
                 <FieldSection.Input<ExperienceFormData>
                   id="experienceName"
@@ -155,18 +158,19 @@ export const ExperienceForm = ({
               </FieldSection.Root>
 
               {/* 경험 분류 */}
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col">
                 <label
                   htmlFor="experienceCategory"
-                  className="text-xsmall16 font-medium text-neutral-20"
+                  className="mb-[6px] text-xsmall14 font-medium text-neutral-20 md:text-xsmall16"
                 >
-                  경험 분류
+                  {EXPERIENCE_FORM['experienceCategory'].label}
                 </label>
+                {/* TODO: SelectButton 컴포넌트 적용 */}
                 <button
                   id="experienceCategory"
                   type="button"
                   onClick={() => setIsCategoryModalOpen(true)}
-                  className="flex items-center justify-between rounded-xs border border-solid border-neutral-80 px-3 py-[9px] text-xsmall16 font-normal focus:border-primary focus:outline-none"
+                  className="flex items-center justify-between rounded-xs border border-solid border-neutral-80 px-3 py-[9px] text-xsmall14 font-normal focus:border-primary focus:outline-none md:text-xsmall16"
                 >
                   <span
                     className={
@@ -182,22 +186,23 @@ export const ExperienceForm = ({
                 </button>
 
                 {experienceCategory === '기타(직접입력)' && (
-                  <FieldSection.Root>
+                  <FieldSection.Root className="mt-2">
                     <FieldSection.Input<ExperienceFormData>
                       id="customCategory"
                       placeholder={
                         EXPERIENCE_FORM['customCategory'].placeholder
                       }
                       register={register}
+                      className="block w-full"
                     />
                   </FieldSection.Root>
                 )}
               </div>
 
               {/* 기관 */}
-              <FieldSection.Root className="flex flex-col gap-2">
-                <FieldSection.Label htmlFor="organization">
-                  기관
+              <FieldSection.Root className="flex flex-col">
+                <FieldSection.Label className="mb-[6px]" htmlFor="organization">
+                  {EXPERIENCE_FORM['organization'].label}
                 </FieldSection.Label>
                 <FieldSection.Input<ExperienceFormData>
                   id="organization"
@@ -207,9 +212,12 @@ export const ExperienceForm = ({
               </FieldSection.Root>
 
               {/* 역할 및 담당 업무 */}
-              <FieldSection.Root className="flex flex-col gap-2">
-                <FieldSection.Label htmlFor="roleAndResponsibilities">
-                  역할 및 담당 업무
+              <FieldSection.Root className="flex flex-col">
+                <FieldSection.Label
+                  className="mb-[6px]"
+                  htmlFor="roleAndResponsibilities"
+                >
+                  {EXPERIENCE_FORM['roleAndResponsibilities'].label}
                 </FieldSection.Label>
                 <FieldSection.Input<ExperienceFormData>
                   id="roleAndResponsibilities"
@@ -221,8 +229,8 @@ export const ExperienceForm = ({
               </FieldSection.Root>
 
               {/* 팀·개인 여부 */}
-              <FieldSection.Root className="flex flex-col gap-2">
-                <FieldSection.Label htmlFor="type">
+              <FieldSection.Root className="flex flex-col">
+                <FieldSection.Label className="mb-[6px]" htmlFor="type">
                   팀·개인 여부
                 </FieldSection.Label>
                 <div className="flex gap-4">
@@ -233,7 +241,7 @@ export const ExperienceForm = ({
                       register={register}
                       value="INDIVIDUAL"
                     />
-                    <span className="text-xsmall16 font-normal text-neutral-0">
+                    <span className="text-xsmall14 font-normal text-neutral-0 md:text-xsmall16">
                       개인
                     </span>
                   </label>
@@ -244,7 +252,7 @@ export const ExperienceForm = ({
                       register={register}
                       value="TEAM"
                     />
-                    <span className="text-xsmall16 font-normal text-neutral-0">
+                    <span className="text-xsmall14 font-normal text-neutral-0 md:text-xsmall16">
                       팀
                     </span>
                   </label>
@@ -252,14 +260,16 @@ export const ExperienceForm = ({
               </FieldSection.Root>
 
               {/* 기간 */}
-              <FieldSection.Root className="flex flex-col gap-4">
-                <FieldSection.Label htmlFor="period">기간</FieldSection.Label>
+              <FieldSection.Root className="flex flex-col">
+                <FieldSection.Label className="mb-[6px]" htmlFor="period">
+                  기간
+                </FieldSection.Label>
                 <div className="flex items-center gap-3">
                   <div className="relative flex-1">
                     <button
                       type="button"
                       onClick={() => setIsStartPeriodModalOpen(true)}
-                      className="flex w-full items-center justify-between rounded-xs border border-solid border-neutral-80 px-3 py-[10px] text-left text-xsmall16 font-normal focus:border-primary focus:outline-none"
+                      className="flex w-full items-center justify-between rounded-xs border border-solid border-neutral-80 px-3 py-[10px] text-left text-xsmall14 font-normal focus:border-primary focus:outline-none md:text-xsmall16"
                     >
                       {/* TODO: date로 관리 */}
                       <span
@@ -276,12 +286,14 @@ export const ExperienceForm = ({
                       <ChevronRight size={20} className="text-neutral-400" />
                     </button>
                   </div>
-                  <span className="w-2 text-xsmall16 text-neutral-400">-</span>
+                  <span className="w-2 text-xsmall14 text-neutral-400 md:text-xsmall16">
+                    -
+                  </span>
                   <div className="relative flex-1">
                     <button
                       type="button"
                       onClick={() => setIsEndPeriodModalOpen(true)}
-                      className="flex w-full items-center justify-between rounded-xs border border-solid border-neutral-80 px-3 py-[10px] text-left text-xsmall16 font-normal focus:border-primary focus:outline-none"
+                      className="flex w-full items-center justify-between rounded-xs border border-solid border-neutral-80 px-3 py-[10px] text-left text-xsmall14 font-normal focus:border-primary focus:outline-none md:text-xsmall16"
                     >
                       {/* TODO: date로 관리 */}
                       <span
@@ -302,8 +314,10 @@ export const ExperienceForm = ({
               </FieldSection.Root>
 
               {/* 연도 (자동 입력) */}
-              <FieldSection.Root className="flex flex-col gap-2">
-                <FieldSection.Label htmlFor="year">연도</FieldSection.Label>
+              <FieldSection.Root className="flex flex-col">
+                <FieldSection.Label className="mb-[6px]" htmlFor="year">
+                  {EXPERIENCE_FORM['year'].label}
+                </FieldSection.Label>
                 <FieldSection.Input<ExperienceFormData>
                   id="year"
                   type="text"
@@ -359,41 +373,34 @@ export const ExperienceForm = ({
               핵심 역량
             </h2>
 
-            <div className="flex flex-col gap-[6px]">
-              <label
-                htmlFor="coreCompetency"
-                className="text-xsmall16 font-medium text-neutral-20"
-              >
-                핵심 역량 (최대 5개)
-              </label>
-              <p className="text-xsmall14 font-normal text-[#7F7F7F]">
-                키워드를 입력한 뒤 콤마(,)를 누르면 자동으로 태그가
-                만들어집니다.
-              </p>
-              {/* 입력 필드 (콤마 4개 제한) */}
-              <input
+            <FieldSection.Root className="flex flex-col">
+              <FieldSection.Label className="mb-[6px]" htmlFor="coreCompetency">
+                {EXPERIENCE_FORM['coreCompetency'].label}
+              </FieldSection.Label>
+              <FieldSection.Description>
+                {EXPERIENCE_FORM['coreCompetency'].description}
+              </FieldSection.Description>
+              <FieldSection.Input<ExperienceFormData>
                 id="coreCompetency"
-                type="text"
                 value={formData.coreCompetency || ''}
                 onChange={handleCompetencyChange}
                 placeholder={EXPERIENCE_FORM['coreCompetency'].placeholder}
-                className="rounded-xs border border-solid border-neutral-80 px-3 py-[9px] text-xsmall16 font-normal placeholder:text-neutral-50 focus:border-primary focus:outline-none"
               />
-            </div>
+            </FieldSection.Root>
           </div>
         </form>
       </div>
 
       {/* 푸터 */}
-      <footer className="flex h-[64px] items-center justify-end gap-4 px-5 py-3">
+      <footer className="flex h-[100px] flex-col items-center gap-1 border-t border-neutral-85 px-5 py-4 md:h-[64px] md:flex-row md:justify-end md:gap-4 md:border-t-0 md:py-3">
         {/* TODO: 자동 저장 시간 표시 */}
-        <div className="text-xsmall14 leading-[1.375rem] text-neutral-50">
+        <div className="text-xxsmall12 text-neutral-50 md:text-xsmall14 md:leading-[1.375rem]">
           자동 저장 완료 10.19 04:17
         </div>
         <button
           type="submit"
           form="experienceForm"
-          className="w-[80px] rounded-sm bg-primary px-3 py-2 text-xsmall16 font-medium text-white hover:bg-primary-hover disabled:bg-neutral-70 disabled:text-white"
+          className="w-full rounded-sm bg-primary px-3 py-3 text-xsmall16 font-medium text-white hover:bg-primary-hover disabled:bg-neutral-70 disabled:text-white md:w-[80px] md:py-2"
           disabled={!isDirty}
         >
           저장

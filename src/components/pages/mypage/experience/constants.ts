@@ -52,7 +52,7 @@ export const EXPERIENCE_FORM: ExperienceForm = {
     placeholder: '종료 연도, 월',
   },
   year: {
-    label: '기간',
+    label: '연도',
     placeholder: '기간을 선택하면 자동으로 입력됩니다.',
   },
   // 경험 상세 작성
@@ -112,5 +112,7 @@ export const EXPERIENCE_FORM: ExperienceForm = {
   coreCompetency: {
     label: '핵심 역량',
     placeholder: '키워드를 입력해주세요. (예. 데이터 분석, QA, 커뮤니케이션)',
+    description:
+      '키워드를 입력한 뒤 콤마(,)를 누르면 자동으로 태그가 만들어집니다.',
   },
 } as const;
