@@ -2,6 +2,15 @@ import type { ExperienceFormData } from './experienceFormSchema';
 
 export const MAX_COMPETENCIES = 5;
 
+export const EXPERIENCE_CATEGORIES = [
+  '프로젝트',
+  '동아리',
+  '학회',
+  '교육',
+  '공모전',
+  '기타(직접입력)',
+];
+
 type ExperienceForm = Record<
   Exclude<keyof ExperienceFormData, 'type'>,
   {

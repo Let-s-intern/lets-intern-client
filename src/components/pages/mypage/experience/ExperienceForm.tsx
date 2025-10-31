@@ -4,14 +4,19 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronRight, XIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { EXPERIENCE_FORM, MAX_COMPETENCIES } from './constants';
+import {
+  EXPERIENCE_CATEGORIES,
+  EXPERIENCE_FORM,
+  MAX_COMPETENCIES,
+} from './constants';
 
 import {
   defaultFormData,
-  ExperienceFormData,
   experienceFormSchema,
+  type ExperienceFormData,
 } from './experienceFormSchema';
 
+import { ExperienceCategoryModal } from './ExperienceCategoryModal';
 import { FieldSection } from './FeildSection';
 import { TooltipButton } from './TooltipButton';
 
@@ -36,6 +41,7 @@ export const ExperienceForm = ({
   });
 
   const formData = watch();
+  const experienceCategory = watch('experienceCategory');
 
   // 초기 데이터 설정
   useEffect(() => {
@@ -71,6 +77,23 @@ export const ExperienceForm = ({
     // TODO: API 호출
     onClose();
   };
+
+  const handleCategorySelect = (name: string) => {
+    setValue('experienceCategory', name, { shouldDirty: true });
+    // 기타가 아닌 경우 커스텀 입력값 초기화
+    if (name !== '기타(직접입력)') {
+      setValue('customCategory', '', { shouldDirty: true });
+    }
+    setIsCategoryModalOpen(false);
+  };
+
+  // 모달 오픈 시 스크롤 락
+  useEffect(() => {
+    document.body.style.overflow = isCategoryModalOpen ? 'hidden' : 'auto';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isCategoryModalOpen]);
 
   return (
     <div className="flex h-full flex-col bg-white">
@@ -157,6 +180,18 @@ export const ExperienceForm = ({
                   </span>
                   <ChevronRight size={20} className="text-neutral-400" />
                 </button>
+
+                {experienceCategory === '기타(직접입력)' && (
+                  <FieldSection.Root>
+                    <FieldSection.Input<ExperienceFormData>
+                      id="customCategory"
+                      placeholder={
+                        EXPERIENCE_FORM['customCategory'].placeholder
+                      }
+                      register={register}
+                    />
+                  </FieldSection.Root>
+                )}
               </div>
 
               {/* 기관 */}
@@ -364,6 +399,14 @@ export const ExperienceForm = ({
           저장
         </button>
       </footer>
+
+      <ExperienceCategoryModal
+        open={isCategoryModalOpen}
+        onClose={() => setIsCategoryModalOpen(false)}
+        selected={experienceCategory || ''}
+        categories={EXPERIENCE_CATEGORIES}
+        onSelect={handleCategorySelect}
+      />
     </div>
   );
 };

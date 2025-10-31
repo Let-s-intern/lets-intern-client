@@ -9,6 +9,7 @@ import ExperienceFilters, {
 } from '@components/common/mypage/experience/ExperienceFilters';
 import SortFilterDropdown from '@components/common/mypage/experience/SortFilterDropdown';
 import { ExperienceForm } from '@components/pages/mypage/experience/ExperienceForm';
+import { Plus } from 'lucide-react';
 import { useCallback, useReducer, useState } from 'react';
 
 const DEFAULT_FILTERS: Filters = {
@@ -68,8 +69,8 @@ const Experience = () => {
   return (
     <>
       {isDrawerOpen && (
-        <div className="fixed bottom-0 left-0 right-0 top-0 z-30 bg-black/50">
-          <div className="absolute bottom-0 right-0 top-0 w-[600px] bg-white">
+        <div className="fixed bottom-0 left-0 right-0 top-0 z-30 mb-[57px] bg-black/50 md:mb-0">
+          <div className="absolute bottom-0 right-0 top-0 max-w-[600px] bg-white">
             <ExperienceForm onClose={handleDrawerClose} />
           </div>
         </div>
@@ -100,3 +101,22 @@ const Experience = () => {
 };
 
 export default Experience;
+
+// TODO: props로 variant 등 추가 예정
+interface SolidButtonProps {
+  variant?: 'primary' | 'secondary';
+  children: React.ReactNode;
+  onClick?: () => void;
+}
+
+const SolidButton = ({ children, onClick }: SolidButtonProps) => {
+  return (
+    <button
+      className="flex cursor-pointer items-center gap-1 rounded-xs bg-primary-10 px-3 py-2 text-primary hover:bg-primary-15"
+      onClick={onClick}
+    >
+      <Plus size={16} />
+      <span className="text-sm font-medium">{children}</span>
+    </button>
+  );
+};
