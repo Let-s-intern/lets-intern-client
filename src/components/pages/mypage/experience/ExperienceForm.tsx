@@ -4,12 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronRight, XIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import {
-  DESCRIPTIONS,
-  EXAMPLE_TOOLTIPS,
-  MAX_COMPETENCIES,
-  PLACEHOLDERS,
-} from './constants';
+import { EXPERIENCE_FORM, MAX_COMPETENCIES } from './constants';
 
 import {
   defaultFormData,
@@ -131,7 +126,7 @@ export const ExperienceForm = ({
                 </FieldSection.Label>
                 <FieldSection.Input<ExperienceFormData>
                   id="experienceName"
-                  placeholder={PLACEHOLDERS.experienceName}
+                  placeholder={EXPERIENCE_FORM['experienceName'].placeholder}
                   register={register}
                 />
               </FieldSection.Root>
@@ -158,7 +153,7 @@ export const ExperienceForm = ({
                     }
                   >
                     {formData?.experienceCategory ||
-                      PLACEHOLDERS.experienceCategory}
+                      EXPERIENCE_FORM['experienceCategory'].placeholder}
                   </span>
                   <ChevronRight size={20} className="text-neutral-400" />
                 </button>
@@ -171,7 +166,7 @@ export const ExperienceForm = ({
                 </FieldSection.Label>
                 <FieldSection.Input<ExperienceFormData>
                   id="organization"
-                  placeholder={PLACEHOLDERS.organization}
+                  placeholder={EXPERIENCE_FORM['organization'].placeholder}
                   register={register}
                 />
               </FieldSection.Root>
@@ -183,7 +178,9 @@ export const ExperienceForm = ({
                 </FieldSection.Label>
                 <FieldSection.Input<ExperienceFormData>
                   id="roleAndResponsibilities"
-                  placeholder={PLACEHOLDERS.roleAndResponsibilities}
+                  placeholder={
+                    EXPERIENCE_FORM['roleAndResponsibilities'].placeholder
+                  }
                   register={register}
                 />
               </FieldSection.Root>
@@ -238,7 +235,7 @@ export const ExperienceForm = ({
                       >
                         {formData.startYear && formData.startMonth
                           ? `${formData.startYear}년 ${formData.startMonth}월`
-                          : PLACEHOLDERS.startYear}
+                          : EXPERIENCE_FORM['startYear'].placeholder}
                       </span>
                       <ChevronRight size={20} className="text-neutral-400" />
                     </button>
@@ -259,7 +256,7 @@ export const ExperienceForm = ({
                       >
                         {formData.endYear && formData.endMonth
                           ? `${formData.endYear}년 ${formData.endMonth}월`
-                          : PLACEHOLDERS.endYear}
+                          : EXPERIENCE_FORM['endYear'].placeholder}
                       </span>
                       <ChevronRight size={20} className="text-neutral-400" />
                     </button>
@@ -274,7 +271,7 @@ export const ExperienceForm = ({
                   id="year"
                   type="text"
                   register={register}
-                  placeholder={PLACEHOLDERS.year}
+                  placeholder={EXPERIENCE_FORM['year'].placeholder}
                   readOnly
                 />
               </FieldSection.Root>
@@ -294,15 +291,17 @@ export const ExperienceForm = ({
                   <FieldSection.Label htmlFor="situation">
                     Situation (상황)
                   </FieldSection.Label>
-                  <TooltipButton example={EXAMPLE_TOOLTIPS.situation} />
+                  <TooltipButton
+                    example={EXPERIENCE_FORM['situation'].exampleTooltips}
+                  />
                 </div>
                 <FieldSection.Description>
-                  {DESCRIPTIONS.situation}
+                  {EXPERIENCE_FORM['situation'].description}
                 </FieldSection.Description>
                 <FieldSection.Textarea
                   id="situation"
                   register={register}
-                  placeholder={PLACEHOLDERS.situation}
+                  placeholder={EXPERIENCE_FORM['situation'].placeholder}
                 />
               </FieldSection.Root>
 
@@ -312,15 +311,17 @@ export const ExperienceForm = ({
                   <FieldSection.Label htmlFor="task">
                     Task (문제)
                   </FieldSection.Label>
-                  <TooltipButton example={EXAMPLE_TOOLTIPS.task} />
+                  <TooltipButton
+                    example={EXPERIENCE_FORM['task'].exampleTooltips}
+                  />
                 </div>
                 <FieldSection.Description>
-                  {DESCRIPTIONS.task}
+                  {EXPERIENCE_FORM['task'].description}
                 </FieldSection.Description>
                 <FieldSection.Textarea
                   id="task"
                   register={register}
-                  placeholder={PLACEHOLDERS.task}
+                  placeholder={EXPERIENCE_FORM['task'].placeholder}
                 />
               </FieldSection.Root>
 
@@ -330,15 +331,17 @@ export const ExperienceForm = ({
                   <FieldSection.Label htmlFor="action">
                     Action (행동)
                   </FieldSection.Label>
-                  <TooltipButton example={EXAMPLE_TOOLTIPS.action} />
+                  <TooltipButton
+                    example={EXPERIENCE_FORM['action'].exampleTooltips}
+                  />
                 </div>
                 <FieldSection.Description>
-                  {DESCRIPTIONS.action}
+                  {EXPERIENCE_FORM['action'].description}
                 </FieldSection.Description>
                 <FieldSection.Textarea
                   id="action"
                   register={register}
-                  placeholder={PLACEHOLDERS.action}
+                  placeholder={EXPERIENCE_FORM['action'].placeholder}
                 />
               </FieldSection.Root>
 
@@ -348,15 +351,17 @@ export const ExperienceForm = ({
                   <FieldSection.Label htmlFor="result">
                     Result (결과)
                   </FieldSection.Label>
-                  <TooltipButton example={EXAMPLE_TOOLTIPS.result} />
+                  <TooltipButton
+                    example={EXPERIENCE_FORM['result'].exampleTooltips}
+                  />
                 </div>
                 <FieldSection.Description>
-                  {DESCRIPTIONS.result}
+                  {EXPERIENCE_FORM['result'].description}
                 </FieldSection.Description>
                 <FieldSection.Textarea
                   id="result"
                   register={register}
-                  placeholder={PLACEHOLDERS.result}
+                  placeholder={EXPERIENCE_FORM['result'].placeholder}
                 />
               </FieldSection.Root>
 
@@ -366,15 +371,17 @@ export const ExperienceForm = ({
                   <FieldSection.Label htmlFor="learnings">
                     느낀 점 / 배운 점
                   </FieldSection.Label>
-                  <TooltipButton example={EXAMPLE_TOOLTIPS.learnings} />
+                  <TooltipButton
+                    example={EXPERIENCE_FORM['learnings'].exampleTooltips}
+                  />
                 </div>
                 <FieldSection.Description>
-                  {DESCRIPTIONS.learnings}
+                  {EXPERIENCE_FORM['learnings'].description}
                 </FieldSection.Description>
                 <FieldSection.Textarea
                   id="learnings"
                   register={register}
-                  placeholder={PLACEHOLDERS.learnings}
+                  placeholder={EXPERIENCE_FORM['learnings'].placeholder}
                 />
               </FieldSection.Root>
             </div>
@@ -403,7 +410,7 @@ export const ExperienceForm = ({
                 type="text"
                 value={formData.coreCompetenciesText || ''}
                 onChange={handleCompetencyChange}
-                placeholder={PLACEHOLDERS.coreCompetencies}
+                placeholder={EXPERIENCE_FORM['coreCompetencies'].placeholder}
                 className="rounded-xs border border-solid border-neutral-80 px-3 py-[9px] text-xsmall16 font-normal placeholder:text-neutral-50 focus:border-primary focus:outline-none"
               />
             </div>
