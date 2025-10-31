@@ -56,7 +56,7 @@ export const ExperienceForm = ({
     if (commaCount > MAX_COMPETENCIES - 1) {
       return;
     }
-    setValue('coreCompetenciesText', text, { shouldDirty: true });
+    setValue('coreCompetency', text, { shouldDirty: true });
   };
 
   // 경험 분류 선택 모달 상태
@@ -226,16 +226,17 @@ export const ExperienceForm = ({
                       onClick={() => setIsStartPeriodModalOpen(true)}
                       className="flex w-full items-center justify-between rounded-xs border border-solid border-neutral-80 px-3 py-[10px] text-left text-xsmall16 font-normal focus:border-primary focus:outline-none"
                     >
+                      {/* TODO: date로 관리 */}
                       <span
                         className={
-                          formData.startYear && formData.startMonth
+                          formData.startDate
                             ? 'text-neutral-0'
                             : 'text-neutral-50'
                         }
                       >
-                        {formData.startYear && formData.startMonth
-                          ? `${formData.startYear}년 ${formData.startMonth}월`
-                          : EXPERIENCE_FORM['startYear'].placeholder}
+                        {formData.startDate
+                          ? `${formData.startDate}년 ${formData.startDate}월`
+                          : EXPERIENCE_FORM['startDate'].placeholder}
                       </span>
                       <ChevronRight size={20} className="text-neutral-400" />
                     </button>
@@ -247,16 +248,17 @@ export const ExperienceForm = ({
                       onClick={() => setIsEndPeriodModalOpen(true)}
                       className="flex w-full items-center justify-between rounded-xs border border-solid border-neutral-80 px-3 py-[10px] text-left text-xsmall16 font-normal focus:border-primary focus:outline-none"
                     >
+                      {/* TODO: date로 관리 */}
                       <span
                         className={
-                          formData.endYear && formData.endMonth
+                          formData.endDate
                             ? 'text-neutral-0'
                             : 'text-neutral-50'
                         }
                       >
-                        {formData.endYear && formData.endMonth
-                          ? `${formData.endYear}년 ${formData.endMonth}월`
-                          : EXPERIENCE_FORM['endYear'].placeholder}
+                        {formData.endDate
+                          ? `${formData.endDate}년 ${formData.endDate}월`
+                          : EXPERIENCE_FORM['endDate'].placeholder}
                       </span>
                       <ChevronRight size={20} className="text-neutral-400" />
                     </button>
@@ -285,105 +287,34 @@ export const ExperienceForm = ({
             </h2>
 
             <div className="flex flex-col gap-5">
-              {/* Situation (상황) */}
-              <FieldSection.Root>
-                <div className="mb-[6px] flex items-center justify-between">
-                  <FieldSection.Label htmlFor="situation">
-                    Situation (상황)
-                  </FieldSection.Label>
-                  <TooltipButton
-                    example={EXPERIENCE_FORM['situation'].exampleTooltips}
+              {(
+                [
+                  'situation',
+                  'task',
+                  'action',
+                  'result',
+                  'learnings',
+                ] as const satisfies readonly (keyof ExperienceFormData)[]
+              ).map((id) => (
+                <FieldSection.Root key={id}>
+                  <div className="mb-[6px] flex items-center justify-between">
+                    <FieldSection.Label htmlFor={id}>
+                      {EXPERIENCE_FORM[id].label}
+                    </FieldSection.Label>
+                    <TooltipButton
+                      example={EXPERIENCE_FORM[id].exampleTooltips || ''}
+                    />
+                  </div>
+                  <FieldSection.Description>
+                    {EXPERIENCE_FORM[id].description}
+                  </FieldSection.Description>
+                  <FieldSection.Textarea
+                    id={id}
+                    register={register}
+                    placeholder={EXPERIENCE_FORM[id].placeholder}
                   />
-                </div>
-                <FieldSection.Description>
-                  {EXPERIENCE_FORM['situation'].description}
-                </FieldSection.Description>
-                <FieldSection.Textarea
-                  id="situation"
-                  register={register}
-                  placeholder={EXPERIENCE_FORM['situation'].placeholder}
-                />
-              </FieldSection.Root>
-
-              {/* Task (문제) */}
-              <FieldSection.Root>
-                <div className="mb-[6px] flex items-center justify-between">
-                  <FieldSection.Label htmlFor="task">
-                    Task (문제)
-                  </FieldSection.Label>
-                  <TooltipButton
-                    example={EXPERIENCE_FORM['task'].exampleTooltips}
-                  />
-                </div>
-                <FieldSection.Description>
-                  {EXPERIENCE_FORM['task'].description}
-                </FieldSection.Description>
-                <FieldSection.Textarea
-                  id="task"
-                  register={register}
-                  placeholder={EXPERIENCE_FORM['task'].placeholder}
-                />
-              </FieldSection.Root>
-
-              {/* Action (행동) */}
-              <FieldSection.Root>
-                <div className="mb-[6px] flex items-center justify-between">
-                  <FieldSection.Label htmlFor="action">
-                    Action (행동)
-                  </FieldSection.Label>
-                  <TooltipButton
-                    example={EXPERIENCE_FORM['action'].exampleTooltips}
-                  />
-                </div>
-                <FieldSection.Description>
-                  {EXPERIENCE_FORM['action'].description}
-                </FieldSection.Description>
-                <FieldSection.Textarea
-                  id="action"
-                  register={register}
-                  placeholder={EXPERIENCE_FORM['action'].placeholder}
-                />
-              </FieldSection.Root>
-
-              {/* Result (결과) */}
-              <FieldSection.Root>
-                <div className="mb-[6px] flex items-center justify-between">
-                  <FieldSection.Label htmlFor="result">
-                    Result (결과)
-                  </FieldSection.Label>
-                  <TooltipButton
-                    example={EXPERIENCE_FORM['result'].exampleTooltips}
-                  />
-                </div>
-                <FieldSection.Description>
-                  {EXPERIENCE_FORM['result'].description}
-                </FieldSection.Description>
-                <FieldSection.Textarea
-                  id="result"
-                  register={register}
-                  placeholder={EXPERIENCE_FORM['result'].placeholder}
-                />
-              </FieldSection.Root>
-
-              {/* 느낀 점 / 배운 점 */}
-              <FieldSection.Root>
-                <div className="mb-[6px] flex items-center justify-between">
-                  <FieldSection.Label htmlFor="learnings">
-                    느낀 점 / 배운 점
-                  </FieldSection.Label>
-                  <TooltipButton
-                    example={EXPERIENCE_FORM['learnings'].exampleTooltips}
-                  />
-                </div>
-                <FieldSection.Description>
-                  {EXPERIENCE_FORM['learnings'].description}
-                </FieldSection.Description>
-                <FieldSection.Textarea
-                  id="learnings"
-                  register={register}
-                  placeholder={EXPERIENCE_FORM['learnings'].placeholder}
-                />
-              </FieldSection.Root>
+                </FieldSection.Root>
+              ))}
             </div>
           </div>
 
@@ -395,7 +326,7 @@ export const ExperienceForm = ({
 
             <div className="flex flex-col gap-[6px]">
               <label
-                htmlFor="coreCompetencies"
+                htmlFor="coreCompetency"
                 className="text-xsmall16 font-medium text-neutral-20"
               >
                 핵심 역량 (최대 5개)
@@ -406,11 +337,11 @@ export const ExperienceForm = ({
               </p>
               {/* 입력 필드 (콤마 4개 제한) */}
               <input
-                id="coreCompetencies"
+                id="coreCompetency"
                 type="text"
-                value={formData.coreCompetenciesText || ''}
+                value={formData.coreCompetency || ''}
                 onChange={handleCompetencyChange}
-                placeholder={EXPERIENCE_FORM['coreCompetencies'].placeholder}
+                placeholder={EXPERIENCE_FORM['coreCompetency'].placeholder}
                 className="rounded-xs border border-solid border-neutral-80 px-3 py-[9px] text-xsmall16 font-normal placeholder:text-neutral-50 focus:border-primary focus:outline-none"
               />
             </div>
