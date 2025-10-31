@@ -18,6 +18,7 @@ import {
 
 import { ExperienceCategoryModal } from './ExperienceCategoryModal';
 import { FieldSection } from './FeildSection';
+import { PeriodSelectModal } from './PeriodSelectModal';
 import { TooltipButton } from './TooltipButton';
 
 interface ExperienceFormProps {
@@ -71,6 +72,19 @@ export const ExperienceForm = ({
   const [isStartPeriodModalOpen, setIsStartPeriodModalOpen] = useState(false);
   const [isEndPeriodModalOpen, setIsEndPeriodModalOpen] = useState(false);
 
+  // 기간 선택 핸들러
+  const handleStartPeriodSelect = (year: number, month: number) => {
+    const dateString = `${year}-${String(month).padStart(2, '0')}-01`;
+    setValue('startDate', dateString, { shouldDirty: true });
+  };
+
+  const handleEndPeriodSelect = (year: number, month: number) => {
+    const dateString = `${year}-${String(month).padStart(2, '0')}-01`;
+    setValue('endDate', dateString, { shouldDirty: true });
+    // TODO: 종료 날짜 기준 맞는지 확인 필요
+    setValue('year', year, { shouldDirty: true });
+  };
+
   // 폼 제출 핸들러
   const onSubmit = (data: ExperienceFormData) => {
     console.log('Form submitted:', data);
@@ -89,323 +103,340 @@ export const ExperienceForm = ({
 
   // 모달 오픈 시 스크롤 락
   useEffect(() => {
-    document.body.style.overflow = isCategoryModalOpen ? 'hidden' : 'auto';
+    document.body.style.overflow =
+      isCategoryModalOpen || isStartPeriodModalOpen || isEndPeriodModalOpen
+        ? 'hidden'
+        : 'auto';
     return () => {
       document.body.style.overflow = 'auto';
     };
-  }, [isCategoryModalOpen]);
+  }, [isCategoryModalOpen, isStartPeriodModalOpen, isEndPeriodModalOpen]);
 
   return (
-    <div className="flex h-full flex-col bg-white">
-      {/* 헤더 */}
-      <header className="flex h-[72px] items-center justify-between px-4 py-5">
-        <h1 className="text-small20 font-semibold">경험 작성</h1>
-        <button
-          onClick={onClose}
-          className="flex h-7 w-7 items-center justify-center"
-        >
-          <XIcon size={24} />
-        </button>
-      </header>
+    <>
+      <div className="flex h-full flex-col bg-white">
+        {/* 헤더 */}
+        <header className="flex h-[72px] items-center justify-between px-4 py-5">
+          <h1 className="text-small20 font-semibold">경험 작성</h1>
+          <button
+            onClick={onClose}
+            className="flex h-7 w-7 items-center justify-center"
+          >
+            <XIcon size={24} />
+          </button>
+        </header>
 
-      {/* 스크롤 가능한 메인 컨텐츠 */}
-      <div className="flex-1 overflow-y-auto px-7 pb-[60px] pt-2">
-        {/* 가이드 텍스트 */}
-        <div className="mb-6 rounded-sm bg-primary-5 px-4 py-3">
-          <p className="text-xsmall14 font-normal leading-[1.375rem] text-neutral-30">
-            활동이 다양할 수록 좋겠지만, 활동 내용 보다는 구체적인
-            에피소드(직면한 문제, 내 역할, 역량, 배운점 등)을 중심으로 STAR
-            양식을 정리해 주세요. 즉, 하나의 활동에도 여러 STAR 양식이 나올 수
-            있습니다.
-          </p>
-          <span className="mt-1 flex items-center gap-1 text-sm text-primary-dark underline">
-            <a
-              href="https://letsintern.notion.site/28f5e77cbee180e6b9eff73282349c88"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              👉다양한 경험 정리 우수 예시 보러가기👈
-            </a>
-          </span>
-        </div>
-
-        {/* 메인 폼 영역 */}
-        <form
-          id="experienceForm"
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-8 divide-y divide-neutral-85"
-        >
-          {/* 기본 정보 섹션 */}
-          <div className="flex flex-col gap-5">
-            <h2 className="text-small16 font-semibold text-neutral-0">
-              기본 정보
-            </h2>
-
-            <div className="flex flex-col gap-4">
-              {/* 경험 이름 */}
-              <FieldSection.Root className="flex flex-col">
-                <FieldSection.Label
-                  className="mb-[6px]"
-                  htmlFor="experienceName"
-                >
-                  {EXPERIENCE_FORM['experienceName'].label}
-                </FieldSection.Label>
-                <FieldSection.Input<ExperienceFormData>
-                  id="experienceName"
-                  placeholder={EXPERIENCE_FORM['experienceName'].placeholder}
-                  register={register}
-                />
-              </FieldSection.Root>
-
-              {/* 경험 분류 */}
-              <div className="flex flex-col">
-                <label
-                  htmlFor="experienceCategory"
-                  className="mb-[6px] text-xsmall14 font-medium text-neutral-20 md:text-xsmall16"
-                >
-                  {EXPERIENCE_FORM['experienceCategory'].label}
-                </label>
-                {/* TODO: SelectButton 컴포넌트 적용 */}
-                <button
-                  id="experienceCategory"
-                  type="button"
-                  onClick={() => setIsCategoryModalOpen(true)}
-                  className="flex items-center justify-between rounded-xs border border-solid border-neutral-80 px-3 py-[9px] text-xsmall14 font-normal focus:border-primary focus:outline-none md:text-xsmall16"
-                >
-                  <span
-                    className={
-                      formData?.experienceCategory
-                        ? 'text-neutral-0'
-                        : 'text-neutral-50'
-                    }
-                  >
-                    {formData?.experienceCategory ||
-                      EXPERIENCE_FORM['experienceCategory'].placeholder}
-                  </span>
-                  <ChevronRight size={20} className="text-neutral-400" />
-                </button>
-
-                {experienceCategory === '기타(직접입력)' && (
-                  <FieldSection.Root className="mt-2">
-                    <FieldSection.Input<ExperienceFormData>
-                      id="customCategory"
-                      placeholder={
-                        EXPERIENCE_FORM['customCategory'].placeholder
-                      }
-                      register={register}
-                      className="block w-full"
-                    />
-                  </FieldSection.Root>
-                )}
-              </div>
-
-              {/* 기관 */}
-              <FieldSection.Root className="flex flex-col">
-                <FieldSection.Label className="mb-[6px]" htmlFor="organization">
-                  {EXPERIENCE_FORM['organization'].label}
-                </FieldSection.Label>
-                <FieldSection.Input<ExperienceFormData>
-                  id="organization"
-                  placeholder={EXPERIENCE_FORM['organization'].placeholder}
-                  register={register}
-                />
-              </FieldSection.Root>
-
-              {/* 역할 및 담당 업무 */}
-              <FieldSection.Root className="flex flex-col">
-                <FieldSection.Label
-                  className="mb-[6px]"
-                  htmlFor="roleAndResponsibilities"
-                >
-                  {EXPERIENCE_FORM['roleAndResponsibilities'].label}
-                </FieldSection.Label>
-                <FieldSection.Input<ExperienceFormData>
-                  id="roleAndResponsibilities"
-                  placeholder={
-                    EXPERIENCE_FORM['roleAndResponsibilities'].placeholder
-                  }
-                  register={register}
-                />
-              </FieldSection.Root>
-
-              {/* 팀·개인 여부 */}
-              <FieldSection.Root className="flex flex-col">
-                <FieldSection.Label className="mb-[6px]" htmlFor="type">
-                  팀·개인 여부
-                </FieldSection.Label>
-                <div className="flex gap-4">
-                  <label className="flex cursor-pointer items-center gap-2">
-                    <FieldSection.Input<ExperienceFormData>
-                      id="type"
-                      type="radio"
-                      register={register}
-                      value="INDIVIDUAL"
-                    />
-                    <span className="text-xsmall14 font-normal text-neutral-0 md:text-xsmall16">
-                      개인
-                    </span>
-                  </label>
-                  <label className="flex cursor-pointer items-center gap-2">
-                    <FieldSection.Input<ExperienceFormData>
-                      id="type"
-                      type="radio"
-                      register={register}
-                      value="TEAM"
-                    />
-                    <span className="text-xsmall14 font-normal text-neutral-0 md:text-xsmall16">
-                      팀
-                    </span>
-                  </label>
-                </div>
-              </FieldSection.Root>
-
-              {/* 기간 */}
-              <FieldSection.Root className="flex flex-col">
-                <FieldSection.Label className="mb-[6px]" htmlFor="period">
-                  기간
-                </FieldSection.Label>
-                <div className="flex items-center gap-3">
-                  <div className="relative flex-1">
-                    <button
-                      type="button"
-                      onClick={() => setIsStartPeriodModalOpen(true)}
-                      className="flex w-full items-center justify-between rounded-xs border border-solid border-neutral-80 px-3 py-[10px] text-left text-xsmall14 font-normal focus:border-primary focus:outline-none md:text-xsmall16"
-                    >
-                      {/* TODO: date로 관리 */}
-                      <span
-                        className={
-                          formData.startDate
-                            ? 'text-neutral-0'
-                            : 'text-neutral-50'
-                        }
-                      >
-                        {formData.startDate
-                          ? `${formData.startDate}년 ${formData.startDate}월`
-                          : EXPERIENCE_FORM['startDate'].placeholder}
-                      </span>
-                      <ChevronRight size={20} className="text-neutral-400" />
-                    </button>
-                  </div>
-                  <span className="w-2 text-xsmall14 text-neutral-400 md:text-xsmall16">
-                    -
-                  </span>
-                  <div className="relative flex-1">
-                    <button
-                      type="button"
-                      onClick={() => setIsEndPeriodModalOpen(true)}
-                      className="flex w-full items-center justify-between rounded-xs border border-solid border-neutral-80 px-3 py-[10px] text-left text-xsmall14 font-normal focus:border-primary focus:outline-none md:text-xsmall16"
-                    >
-                      {/* TODO: date로 관리 */}
-                      <span
-                        className={
-                          formData.endDate
-                            ? 'text-neutral-0'
-                            : 'text-neutral-50'
-                        }
-                      >
-                        {formData.endDate
-                          ? `${formData.endDate}년 ${formData.endDate}월`
-                          : EXPERIENCE_FORM['endDate'].placeholder}
-                      </span>
-                      <ChevronRight size={20} className="text-neutral-400" />
-                    </button>
-                  </div>
-                </div>
-              </FieldSection.Root>
-
-              {/* 연도 (자동 입력) */}
-              <FieldSection.Root className="flex flex-col">
-                <FieldSection.Label className="mb-[6px]" htmlFor="year">
-                  {EXPERIENCE_FORM['year'].label}
-                </FieldSection.Label>
-                <FieldSection.Input<ExperienceFormData>
-                  id="year"
-                  type="text"
-                  register={register}
-                  placeholder={EXPERIENCE_FORM['year'].placeholder}
-                  readOnly
-                />
-              </FieldSection.Root>
-            </div>
+        {/* 스크롤 가능한 메인 컨텐츠 */}
+        <div className="flex-1 overflow-y-auto px-7 pb-[60px] pt-2">
+          {/* 가이드 텍스트 */}
+          <div className="mb-6 rounded-sm bg-primary-5 px-4 py-3">
+            <p className="text-xsmall14 font-normal leading-[1.375rem] text-neutral-30">
+              활동이 다양할 수록 좋겠지만, 활동 내용 보다는 구체적인
+              에피소드(직면한 문제, 내 역할, 역량, 배운점 등)을 중심으로 STAR
+              양식을 정리해 주세요. 즉, 하나의 활동에도 여러 STAR 양식이 나올 수
+              있습니다.
+            </p>
+            <span className="mt-1 flex items-center gap-1 text-sm text-primary-dark underline">
+              <a
+                href="https://letsintern.notion.site/28f5e77cbee180e6b9eff73282349c88"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                👉다양한 경험 정리 우수 예시 보러가기👈
+              </a>
+            </span>
           </div>
 
-          {/* ============================== 경험 상세 작성 섹션 ============================= */}
-          <div className="flex flex-col gap-5 pt-8">
-            <h2 className="text-small16 font-semibold text-neutral-0">
-              경험 상세 작성
-            </h2>
-
+          {/* 메인 폼 영역 */}
+          <form
+            id="experienceForm"
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col gap-8 divide-y divide-neutral-85"
+          >
+            {/* 기본 정보 섹션 */}
             <div className="flex flex-col gap-5">
-              {(
-                [
-                  'situation',
-                  'task',
-                  'action',
-                  'result',
-                  'learnings',
-                ] as const satisfies readonly (keyof ExperienceFormData)[]
-              ).map((id) => (
-                <FieldSection.Root key={id}>
-                  <div className="mb-[6px] flex items-center justify-between">
-                    <FieldSection.Label htmlFor={id}>
-                      {EXPERIENCE_FORM[id].label}
-                    </FieldSection.Label>
-                    <TooltipButton
-                      example={EXPERIENCE_FORM[id].exampleTooltips || ''}
-                    />
-                  </div>
-                  <FieldSection.Description>
-                    {EXPERIENCE_FORM[id].description}
-                  </FieldSection.Description>
-                  <FieldSection.Textarea
-                    id={id}
+              <h2 className="text-small16 font-semibold text-neutral-0">
+                기본 정보
+              </h2>
+
+              <div className="flex flex-col gap-4">
+                {/* 경험 이름 */}
+                <FieldSection.Root className="flex flex-col">
+                  <FieldSection.Label
+                    className="mb-[6px]"
+                    htmlFor="experienceName"
+                  >
+                    {EXPERIENCE_FORM['experienceName'].label}
+                  </FieldSection.Label>
+                  <FieldSection.Input<ExperienceFormData>
+                    id="experienceName"
+                    placeholder={EXPERIENCE_FORM['experienceName'].placeholder}
                     register={register}
-                    placeholder={EXPERIENCE_FORM[id].placeholder}
                   />
                 </FieldSection.Root>
-              ))}
+
+                {/* 경험 분류 */}
+                <div className="flex flex-col">
+                  <label
+                    htmlFor="experienceCategory"
+                    className="mb-[6px] text-xsmall14 font-medium text-neutral-20 md:text-xsmall16"
+                  >
+                    {EXPERIENCE_FORM['experienceCategory'].label}
+                  </label>
+                  {/* TODO: SelectButton 컴포넌트 적용 */}
+                  <button
+                    id="experienceCategory"
+                    type="button"
+                    onClick={() => setIsCategoryModalOpen(true)}
+                    className="flex items-center justify-between rounded-xs border border-solid border-neutral-80 px-3 py-[9px] text-xsmall14 font-normal focus:border-primary focus:outline-none md:text-xsmall16"
+                  >
+                    <span
+                      className={
+                        formData?.experienceCategory
+                          ? 'text-neutral-0'
+                          : 'text-neutral-50'
+                      }
+                    >
+                      {formData?.experienceCategory ||
+                        EXPERIENCE_FORM['experienceCategory'].placeholder}
+                    </span>
+                    <ChevronRight size={20} className="text-neutral-400" />
+                  </button>
+
+                  {experienceCategory === '기타(직접입력)' && (
+                    <FieldSection.Root className="mt-2">
+                      <FieldSection.Input<ExperienceFormData>
+                        id="customCategory"
+                        placeholder={
+                          EXPERIENCE_FORM['customCategory'].placeholder
+                        }
+                        register={register}
+                        className="block w-full"
+                      />
+                    </FieldSection.Root>
+                  )}
+                </div>
+
+                {/* 기관 */}
+                <FieldSection.Root className="flex flex-col">
+                  <FieldSection.Label
+                    className="mb-[6px]"
+                    htmlFor="organization"
+                  >
+                    {EXPERIENCE_FORM['organization'].label}
+                  </FieldSection.Label>
+                  <FieldSection.Input<ExperienceFormData>
+                    id="organization"
+                    placeholder={EXPERIENCE_FORM['organization'].placeholder}
+                    register={register}
+                  />
+                </FieldSection.Root>
+
+                {/* 역할 및 담당 업무 */}
+                <FieldSection.Root className="flex flex-col">
+                  <FieldSection.Label
+                    className="mb-[6px]"
+                    htmlFor="roleAndResponsibilities"
+                  >
+                    {EXPERIENCE_FORM['roleAndResponsibilities'].label}
+                  </FieldSection.Label>
+                  <FieldSection.Input<ExperienceFormData>
+                    id="roleAndResponsibilities"
+                    placeholder={
+                      EXPERIENCE_FORM['roleAndResponsibilities'].placeholder
+                    }
+                    register={register}
+                  />
+                </FieldSection.Root>
+
+                {/* 팀·개인 여부 */}
+                <FieldSection.Root className="flex flex-col">
+                  <FieldSection.Label className="mb-[6px]" htmlFor="type">
+                    팀·개인 여부
+                  </FieldSection.Label>
+                  <div className="flex gap-4">
+                    <label className="flex cursor-pointer items-center gap-2">
+                      <FieldSection.Input<ExperienceFormData>
+                        id="type"
+                        type="radio"
+                        register={register}
+                        value="INDIVIDUAL"
+                      />
+                      <span className="text-xsmall14 font-normal text-neutral-0 md:text-xsmall16">
+                        개인
+                      </span>
+                    </label>
+                    <label className="flex cursor-pointer items-center gap-2">
+                      <FieldSection.Input<ExperienceFormData>
+                        id="type"
+                        type="radio"
+                        register={register}
+                        value="TEAM"
+                      />
+                      <span className="text-xsmall14 font-normal text-neutral-0 md:text-xsmall16">
+                        팀
+                      </span>
+                    </label>
+                  </div>
+                </FieldSection.Root>
+
+                {/* 기간 */}
+                <FieldSection.Root className="flex flex-col">
+                  <FieldSection.Label className="mb-[6px]" htmlFor="period">
+                    기간
+                  </FieldSection.Label>
+                  <div className="flex items-center gap-3">
+                    <div className="relative flex-1">
+                      <button
+                        type="button"
+                        onClick={() => setIsStartPeriodModalOpen(true)}
+                        className="flex w-full items-center justify-between rounded-xs border border-solid border-neutral-80 px-3 py-[10px] text-left text-xsmall14 font-normal focus:border-primary focus:outline-none md:text-xsmall16"
+                      >
+                        <span
+                          className={
+                            formData.startDate
+                              ? 'text-neutral-0'
+                              : 'text-neutral-50'
+                          }
+                        >
+                          {formData.startDate
+                            ? (() => {
+                                const [year, month] =
+                                  formData.startDate.split('-');
+                                return `${year}.${String(month).padStart(2, '0')}`;
+                              })()
+                            : EXPERIENCE_FORM['startDate'].placeholder}
+                        </span>
+                        <ChevronRight size={20} className="text-neutral-400" />
+                      </button>
+                    </div>
+                    <span className="w-2 text-xsmall14 text-neutral-400 md:text-xsmall16">
+                      -
+                    </span>
+                    <div className="relative flex-1">
+                      <button
+                        type="button"
+                        onClick={() => setIsEndPeriodModalOpen(true)}
+                        className="flex w-full items-center justify-between rounded-xs border border-solid border-neutral-80 px-3 py-[10px] text-left text-xsmall14 font-normal focus:border-primary focus:outline-none md:text-xsmall16"
+                      >
+                        <span
+                          className={
+                            formData.endDate
+                              ? 'text-neutral-0'
+                              : 'text-neutral-50'
+                          }
+                        >
+                          {formData.endDate
+                            ? (() => {
+                                const [year, month] =
+                                  formData.endDate.split('-');
+                                return `${year}.${String(month).padStart(2, '0')}`;
+                              })()
+                            : EXPERIENCE_FORM['endDate'].placeholder}
+                        </span>
+                        <ChevronRight size={20} className="text-neutral-400" />
+                      </button>
+                    </div>
+                  </div>
+                </FieldSection.Root>
+
+                {/* 연도 (자동 입력) */}
+                <FieldSection.Root className="flex flex-col">
+                  <FieldSection.Label className="mb-[6px]" htmlFor="year">
+                    {EXPERIENCE_FORM['year'].label}
+                  </FieldSection.Label>
+                  <FieldSection.Input<ExperienceFormData>
+                    id="year"
+                    type="text"
+                    register={register}
+                    placeholder={EXPERIENCE_FORM['year'].placeholder}
+                    readOnly
+                  />
+                </FieldSection.Root>
+              </div>
             </div>
-          </div>
 
-          {/* ============================== 핵심 역량 섹션 ============================= */}
-          <div className="flex flex-col gap-5 pt-8">
-            <h2 className="text-small16 font-semibold text-neutral-0">
-              핵심 역량
-            </h2>
+            {/* ============================== 경험 상세 작성 섹션 ============================= */}
+            <div className="flex flex-col gap-5 pt-8">
+              <h2 className="text-small16 font-semibold text-neutral-0">
+                경험 상세 작성
+              </h2>
 
-            <FieldSection.Root className="flex flex-col">
-              <FieldSection.Label className="mb-[6px]" htmlFor="coreCompetency">
-                {EXPERIENCE_FORM['coreCompetency'].label}
-              </FieldSection.Label>
-              <FieldSection.Description>
-                {EXPERIENCE_FORM['coreCompetency'].description}
-              </FieldSection.Description>
-              <FieldSection.Input<ExperienceFormData>
-                id="coreCompetency"
-                value={formData.coreCompetency || ''}
-                onChange={handleCompetencyChange}
-                placeholder={EXPERIENCE_FORM['coreCompetency'].placeholder}
-              />
-            </FieldSection.Root>
-          </div>
-        </form>
-      </div>
+              <div className="flex flex-col gap-5">
+                {(
+                  [
+                    'situation',
+                    'task',
+                    'action',
+                    'result',
+                    'learnings',
+                  ] as const satisfies readonly (keyof ExperienceFormData)[]
+                ).map((id) => (
+                  <FieldSection.Root key={id}>
+                    <div className="mb-[6px] flex items-center justify-between">
+                      <FieldSection.Label htmlFor={id}>
+                        {EXPERIENCE_FORM[id].label}
+                      </FieldSection.Label>
+                      <TooltipButton
+                        example={EXPERIENCE_FORM[id].exampleTooltips || ''}
+                      />
+                    </div>
+                    <FieldSection.Description>
+                      {EXPERIENCE_FORM[id].description}
+                    </FieldSection.Description>
+                    <FieldSection.Textarea
+                      id={id}
+                      register={register}
+                      placeholder={EXPERIENCE_FORM[id].placeholder}
+                    />
+                  </FieldSection.Root>
+                ))}
+              </div>
+            </div>
 
-      {/* 푸터 */}
-      <footer className="flex h-[100px] flex-col items-center gap-1 border-t border-neutral-85 px-5 py-4 md:h-[64px] md:flex-row md:justify-end md:gap-4 md:border-t-0 md:py-3">
-        {/* TODO: 자동 저장 시간 표시 */}
-        <div className="text-xxsmall12 text-neutral-50 md:text-xsmall14 md:leading-[1.375rem]">
-          자동 저장 완료 10.19 04:17
+            {/* ============================== 핵심 역량 섹션 ============================= */}
+            <div className="flex flex-col gap-5 pt-8">
+              <h2 className="text-small16 font-semibold text-neutral-0">
+                핵심 역량
+              </h2>
+
+              <FieldSection.Root className="flex flex-col">
+                <FieldSection.Label
+                  className="mb-[6px]"
+                  htmlFor="coreCompetency"
+                >
+                  {EXPERIENCE_FORM['coreCompetency'].label}
+                </FieldSection.Label>
+                <FieldSection.Description>
+                  {EXPERIENCE_FORM['coreCompetency'].description}
+                </FieldSection.Description>
+                <FieldSection.Input<ExperienceFormData>
+                  id="coreCompetency"
+                  value={formData.coreCompetency || ''}
+                  onChange={handleCompetencyChange}
+                  placeholder={EXPERIENCE_FORM['coreCompetency'].placeholder}
+                />
+              </FieldSection.Root>
+            </div>
+          </form>
         </div>
-        <button
-          type="submit"
-          form="experienceForm"
-          className="w-full rounded-sm bg-primary px-3 py-3 text-xsmall16 font-medium text-white hover:bg-primary-hover disabled:bg-neutral-70 disabled:text-white md:w-[80px] md:py-2"
-          disabled={!isDirty}
-        >
-          저장
-        </button>
-      </footer>
+
+        {/* 푸터 */}
+        <footer className="flex h-[100px] flex-col items-center gap-1 border-t border-neutral-85 px-5 py-4 md:h-[64px] md:flex-row md:justify-end md:gap-4 md:border-t-0 md:py-3">
+          {/* TODO: 자동 저장 시간 표시 */}
+          <div className="text-xxsmall12 text-neutral-50 md:text-xsmall14 md:leading-[1.375rem]">
+            자동 저장 완료 10.19 04:17
+          </div>
+          <button
+            type="submit"
+            form="experienceForm"
+            className="w-full rounded-sm bg-primary px-3 py-3 text-xsmall16 font-medium text-white hover:bg-primary-hover disabled:bg-neutral-70 disabled:text-white md:w-[80px] md:py-2"
+            disabled={!isDirty}
+          >
+            저장
+          </button>
+        </footer>
+      </div>
 
       <ExperienceCategoryModal
         open={isCategoryModalOpen}
@@ -414,6 +445,30 @@ export const ExperienceForm = ({
         categories={EXPERIENCE_CATEGORIES}
         onSelect={handleCategorySelect}
       />
-    </div>
+
+      <PeriodSelectModal
+        isOpen={isStartPeriodModalOpen}
+        onClose={() => setIsStartPeriodModalOpen(false)}
+        onSelect={handleStartPeriodSelect}
+        initialYear={
+          formData.startDate ? parseInt(formData.startDate.split('-')[0]) : null
+        }
+        initialMonth={
+          formData.startDate ? parseInt(formData.startDate.split('-')[1]) : null
+        }
+      />
+
+      <PeriodSelectModal
+        isOpen={isEndPeriodModalOpen}
+        onClose={() => setIsEndPeriodModalOpen(false)}
+        onSelect={handleEndPeriodSelect}
+        initialYear={
+          formData.endDate ? parseInt(formData.endDate.split('-')[0]) : null
+        }
+        initialMonth={
+          formData.endDate ? parseInt(formData.endDate.split('-')[1]) : null
+        }
+      />
+    </>
   );
 };

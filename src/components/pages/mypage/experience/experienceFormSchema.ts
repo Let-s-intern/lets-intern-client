@@ -9,8 +9,8 @@ export const basicInfoSchema = z.object({
   organization: z.string().optional(),
   roleAndResponsibilities: z.string().optional(),
   type: z.enum(['TEAM', 'INDIVIDUAL']).optional(),
-  startDate: z.number().optional(),
-  endDate: z.number().optional(),
+  startDate: z.string().optional(), // YYYY-MM-01 형식
+  endDate: z.string().optional(), // YYYY-MM-01 형식
   year: z.number().optional(),
 });
 
