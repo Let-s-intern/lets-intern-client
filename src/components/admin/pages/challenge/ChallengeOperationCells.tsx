@@ -225,6 +225,18 @@ export const getMissionColumns = (): GridColDef<Row>[] => {
                       value as keyof typeof TH_TO_MISSION_TYPE_MAP
                     ],
                 });
+              } else if (
+                value !== null &&
+                value > 0 &&
+                value !== 99 &&
+                value !== 100
+              ) {
+                // 1~n회차(일반)로 변경 시 missionType null로 (일반 템플릿)
+                params.api.setEditCellValue({
+                  id: params.id,
+                  field: 'missionType',
+                  value: null,
+                });
               }
             }}
             onKeyDown={(e) => {
@@ -265,6 +277,7 @@ export const getMissionColumns = (): GridColDef<Row>[] => {
             value={params.row.missionType ?? ''}
             onChange={(e) => {
               const value = e.target.value === '' ? null : e.target.value;
+              const currentTh = params.row.th;
 
               params.api.setEditCellValue({
                 id: params.id,
@@ -290,6 +303,15 @@ export const getMissionColumns = (): GridColDef<Row>[] => {
                   field: 'th',
                   value: 0,
                 });
+              } else {
+                // 기본 선택 시 0회차면 1회차로 변경
+                if (currentTh === 0 || currentTh === 99 || currentTh === 100) {
+                  params.api.setEditCellValue({
+                    id: params.id,
+                    field: 'th',
+                    value: 1,
+                  });
+                }
               }
             }}
           >
