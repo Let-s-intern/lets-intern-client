@@ -136,7 +136,8 @@ export const ExperienceForm = ({
       result: data.result,
       learnings: data.learnings,
       coreCompetency: data.coreCompetency,
-      isAdminAdded: data.isAdminAdded || false,
+      isAdminAdded:
+        process.env.NODE_ENV === 'production' ? data.isAdminAdded : true,
     };
   };
 
@@ -147,7 +148,7 @@ export const ExperienceForm = ({
     if (!validData) return;
 
     try {
-      // await createExperienceMutation.mutateAsync(validData);
+      await createExperienceMutation.mutateAsync(validData);
       alert('경험 정리가 성공적으로 저장되었습니다.');
       onClose();
     } catch (error) {
