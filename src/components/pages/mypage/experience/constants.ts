@@ -1,18 +1,24 @@
-import type { ExperienceFormData } from './experienceFormSchema';
+import type {
+  DisplayExperienceCategory,
+  ExperienceCategory,
+  UserExperience,
+} from '@/api/userSchema';
+import { CATEGORY_PAIRS } from '@/api/userSchema';
 
 export const MAX_COMPETENCIES = 5;
 
-export const EXPERIENCE_CATEGORIES = [
-  '프로젝트',
-  '동아리',
-  '학회',
-  '교육',
-  '공모전',
-  '기타(직접입력)',
-];
+export const CATEGORY_MAP: Record<
+  DisplayExperienceCategory,
+  ExperienceCategory
+> = Object.fromEntries(CATEGORY_PAIRS) as any;
 
-type ExperienceForm = Record<
-  Exclude<keyof ExperienceFormData, 'type'>,
+export const CATEGORY_REVERSE_MAP: Record<
+  ExperienceCategory,
+  DisplayExperienceCategory
+> = Object.fromEntries(CATEGORY_PAIRS.map(([d, a]) => [a, d])) as any;
+
+type ExperienceFormText = Record<
+  Exclude<keyof UserExperience, 'activityType' | 'isAdminAdded'> | 'year',
   {
     label: string;
     placeholder: string;
@@ -21,9 +27,9 @@ type ExperienceForm = Record<
   }
 >;
 
-export const EXPERIENCE_FORM: ExperienceForm = {
+export const EXPERIENCE_FORM_TEXT: ExperienceFormText = {
   // 기본 정보
-  experienceName: {
+  title: {
     label: '경험 이름',
     placeholder: '예) 여름 방학 UX 기획 프로젝트 / △△△ 동아리 운영팀 활동',
   },
@@ -31,7 +37,7 @@ export const EXPERIENCE_FORM: ExperienceForm = {
     label: '경험 분류',
     placeholder: '경험 분류를 선택해주세요',
   },
-  customCategory: {
+  customCategoryName: {
     label: '직접 입력',
     placeholder: '직접 입력해주세요.',
   },
@@ -39,7 +45,7 @@ export const EXPERIENCE_FORM: ExperienceForm = {
     label: '기관',
     placeholder: '예) 네이버 / 서울대학교 / △△△ 스타트업 / ○○ 마케팅 공모전',
   },
-  roleAndResponsibilities: {
+  role: {
     label: '역할 및 담당 업무',
     placeholder: '예) 마케팅 전략 수립 및 실행 / 서비스 기획 및 UX 설계',
   },

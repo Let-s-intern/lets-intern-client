@@ -1,13 +1,14 @@
 // TODO: 모바일 반응형 스타일
 
+import { DisplayExperienceCategory } from '@/api/userSchema';
 import { WishJobModal } from '@components/common/challenge/my-challenge/talent-pool/WishJobModal';
 
 interface ExperienceCategoryModalProps {
   open: boolean;
   onClose: () => void;
   selected: string;
-  categories: string[];
-  onSelect: (name: string) => void;
+  categories: DisplayExperienceCategory[];
+  onSelect: (name: DisplayExperienceCategory) => void;
 }
 export const ExperienceCategoryModal = ({
   open,

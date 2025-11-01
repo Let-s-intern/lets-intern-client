@@ -15,6 +15,8 @@ import {
   mentorListSchema,
   userAdminType,
   userDocumentListSchema,
+  UserExperience,
+  userExperienceSchema,
 } from './userSchema';
 
 export const UseMentorListQueryKey = 'useMentorListQueryKey';
@@ -291,3 +293,20 @@ export const useGetUserDocumentListQuery = () => {
     },
   });
 };
+
+/** POST [유저] 경험 정리 생성 /api/v1/user-experience */
+export const usePostUserExperienceMutation = () => {
+  return useMutation({
+    mutationFn: async (data: UserExperience) => {
+      // 요청 데이터 검증
+      // const validatedData = userExperienceSchema.parse(data);
+
+      const res = await axios.post('/user-experience', data);
+      return userExperienceSchema.parse(res.data.data);
+    },
+  });
+};
+
+/** GET [유저] 경험 정리 조회 /api/v1/user-experience */
+/** PATCH [유저] 경험 정리 수정 /api/v1/user-experience */
+/** DELETE [유저] 경험 정리 삭제 /api/v1/user-experience */

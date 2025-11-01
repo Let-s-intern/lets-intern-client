@@ -5,25 +5,47 @@ import { ChevronRight, XIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
-  EXPERIENCE_CATEGORIES,
-  EXPERIENCE_FORM,
+  CATEGORY_MAP,
+  CATEGORY_REVERSE_MAP,
+  EXPERIENCE_FORM_TEXT,
   MAX_COMPETENCIES,
 } from './constants';
 
+import { usePostUserExperienceMutation } from '@/api/user';
 import {
-  defaultFormData,
-  experienceFormSchema,
-  type ExperienceFormData,
-} from './experienceFormSchema';
-
+  CATEGORY_PAIRS,
+  userExperienceSchema,
+  type DisplayExperienceCategory,
+  type UserExperience,
+} from '@/api/userSchema';
 import { ExperienceCategoryModal } from './ExperienceCategoryModal';
 import { FieldSection } from './FeildSection';
 import { PeriodSelectModal } from './PeriodSelectModal';
 import { TooltipButton } from './TooltipButton';
 
+// 기본값 정의
+// TODO: nullable ??
+export const defaultFormData: Partial<UserExperience> = {
+  title: '',
+  experienceCategory: undefined,
+  customCategoryName: '',
+  organization: '',
+  role: '',
+  activityType: 'INDIVIDUAL',
+  startDate: '',
+  endDate: '',
+  situation: '',
+  task: '',
+  action: '',
+  result: '',
+  learnings: '',
+  coreCompetency: '',
+  isAdminAdded: false,
+};
+
 interface ExperienceFormProps {
   onClose: () => void;
-  initialData?: ExperienceFormData;
+  initialData?: UserExperience;
 }
 
 export const ExperienceForm = ({
@@ -36,27 +58,36 @@ export const ExperienceForm = ({
     watch,
     setValue,
     formState: { errors, isDirty },
-  } = useForm<ExperienceFormData>({
-    resolver: zodResolver(experienceFormSchema),
+  } = useForm<UserExperience>({
+    resolver: zodResolver(userExperienceSchema),
     defaultValues: initialData || defaultFormData,
   });
 
   const formData = watch();
   const experienceCategory = watch('experienceCategory');
 
+  // API mutation
+  const createExperienceMutation = usePostUserExperienceMutation();
+
   // 초기 데이터 설정
   useEffect(() => {
     if (initialData) {
       Object.entries(initialData).forEach(([key, value]) => {
-        setValue(key as keyof ExperienceFormData, value, {
+        setValue(key as keyof UserExperience, value, {
           shouldDirty: false,
         });
       });
+      // startDate에서 연도 추출
+      if (initialData.startDate) {
+        const year = parseInt(initialData.startDate.split('-')[0]);
+        setDisplayYear(year);
+      }
     }
   }, [initialData, setValue]);
 
   const handleCompetencyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value;
+    // TODO: 태그 추가 로직 구현
 
     // 핵심 역량 입력 상태 (콤마 4개까지 허용하여 5단어 제한)
     const commaCount = (text.match(/,/g) || []).length;
@@ -71,32 +102,67 @@ export const ExperienceForm = ({
   // 기간 선택 모달 상태
   const [isStartPeriodModalOpen, setIsStartPeriodModalOpen] = useState(false);
   const [isEndPeriodModalOpen, setIsEndPeriodModalOpen] = useState(false);
+  const [displayYear, setDisplayYear] = useState<number | null>(null);
+  // 자동 저장 상태
+  const [lastAutoSaveTime, setLastAutoSaveTime] = useState<Date | null>(null);
 
   // 기간 선택 핸들러
   const handleStartPeriodSelect = (year: number, month: number) => {
     const dateString = `${year}-${String(month).padStart(2, '0')}-01`;
     setValue('startDate', dateString, { shouldDirty: true });
+    setDisplayYear(year);
   };
 
   const handleEndPeriodSelect = (year: number, month: number) => {
     const dateString = `${year}-${String(month).padStart(2, '0')}-01`;
     setValue('endDate', dateString, { shouldDirty: true });
-    // TODO: 종료 날짜 기준 맞는지 확인 필요
-    setValue('year', year, { shouldDirty: true });
+  };
+
+  // 폼 데이터를 API 요청 형식으로 변환
+  const validateFormData = (data: UserExperience): UserExperience | null => {
+    // TODO: 필수 필드 || 유효성 검사 로직 구현
+
+    return {
+      title: data.title,
+      experienceCategory: data.experienceCategory,
+      customCategoryName: data.customCategoryName,
+      organization: data.organization,
+      role: data.role,
+      activityType: data.activityType,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      situation: data.situation,
+      task: data.task,
+      action: data.action,
+      result: data.result,
+      learnings: data.learnings,
+      coreCompetency: data.coreCompetency,
+      isAdminAdded: data.isAdminAdded || false,
+    };
   };
 
   // 폼 제출 핸들러
-  const onSubmit = (data: ExperienceFormData) => {
-    console.log('Form submitted:', data);
-    // TODO: API 호출
-    onClose();
+  const onSubmit = async (data: UserExperience) => {
+    const validData = validateFormData(data);
+    console.log(validData);
+    if (!validData) return;
+
+    try {
+      // await createExperienceMutation.mutateAsync(validData);
+      alert('경험 정리가 성공적으로 저장되었습니다.');
+      onClose();
+    } catch (error) {
+      console.error('경험 정리 저장 실패:', error);
+      alert('저장 중 오류가 발생했습니다. 다시 시도해주세요.');
+    }
   };
 
-  const handleCategorySelect = (name: string) => {
-    setValue('experienceCategory', name, { shouldDirty: true });
+  const handleCategorySelect = (name: DisplayExperienceCategory) => {
+    const apiCategory = CATEGORY_MAP[name];
+    setValue('experienceCategory', apiCategory, { shouldDirty: true });
     // 기타가 아닌 경우 커스텀 입력값 초기화
     if (name !== '기타(직접입력)') {
-      setValue('customCategory', '', { shouldDirty: true });
+      setValue('customCategoryName', '', { shouldDirty: true });
     }
     setIsCategoryModalOpen(false);
   };
@@ -111,6 +177,31 @@ export const ExperienceForm = ({
       document.body.style.overflow = 'auto';
     };
   }, [isCategoryModalOpen, isStartPeriodModalOpen, isEndPeriodModalOpen]);
+
+  // 자동 저장 로직 (30초마다)
+  useEffect(() => {
+    // 초기 데이터가 있거나 변경사항이 있을 때만 자동 저장
+    if (!isDirty) return;
+
+    const autoSaveInterval = setInterval(
+      async () => {
+        const validData = validateFormData(formData);
+        if (!validData) return;
+
+        try {
+          console.log('auto save', validData);
+          // await createExperienceMutation.mutateAsync(validData);
+          setLastAutoSaveTime(new Date());
+          // 자동 저장 후 isDirty 상태 리셋하지 않음 (사용자가 명시적으로 저장 버튼을 눌러야 함)
+        } catch (error) {
+          console.error('자동 저장 실패:', error);
+        }
+      },
+      30000, // 30초
+    );
+
+    return () => clearInterval(autoSaveInterval);
+  }, [isDirty, formData]); // formData 의존성 추가
 
   return (
     <>
@@ -162,15 +253,12 @@ export const ExperienceForm = ({
               <div className="flex flex-col gap-4">
                 {/* 경험 이름 */}
                 <FieldSection.Root className="flex flex-col">
-                  <FieldSection.Label
-                    className="mb-[6px]"
-                    htmlFor="experienceName"
-                  >
-                    {EXPERIENCE_FORM['experienceName'].label}
+                  <FieldSection.Label className="mb-[6px]" htmlFor="title">
+                    {EXPERIENCE_FORM_TEXT['title'].label}
                   </FieldSection.Label>
-                  <FieldSection.Input<ExperienceFormData>
-                    id="experienceName"
-                    placeholder={EXPERIENCE_FORM['experienceName'].placeholder}
+                  <FieldSection.Input<UserExperience>
+                    id="title"
+                    placeholder={EXPERIENCE_FORM_TEXT['title'].placeholder}
                     register={register}
                   />
                 </FieldSection.Root>
@@ -181,7 +269,7 @@ export const ExperienceForm = ({
                     htmlFor="experienceCategory"
                     className="mb-[6px] text-xsmall14 font-medium text-neutral-20 md:text-xsmall16"
                   >
-                    {EXPERIENCE_FORM['experienceCategory'].label}
+                    {EXPERIENCE_FORM_TEXT['experienceCategory'].label}
                   </label>
                   {/* TODO: SelectButton 컴포넌트 적용 */}
                   <button
@@ -197,18 +285,20 @@ export const ExperienceForm = ({
                           : 'text-neutral-50'
                       }
                     >
-                      {formData?.experienceCategory ||
-                        EXPERIENCE_FORM['experienceCategory'].placeholder}
+                      {formData?.experienceCategory
+                        ? CATEGORY_REVERSE_MAP[formData.experienceCategory]
+                        : EXPERIENCE_FORM_TEXT['experienceCategory']
+                            .placeholder}
                     </span>
                     <ChevronRight size={20} className="text-neutral-400" />
                   </button>
 
-                  {experienceCategory === '기타(직접입력)' && (
+                  {experienceCategory === 'OTHER' && (
                     <FieldSection.Root className="mt-2">
-                      <FieldSection.Input<ExperienceFormData>
-                        id="customCategory"
+                      <FieldSection.Input<UserExperience>
+                        id="customCategoryName"
                         placeholder={
-                          EXPERIENCE_FORM['customCategory'].placeholder
+                          EXPERIENCE_FORM_TEXT['customCategoryName'].placeholder
                         }
                         register={register}
                         className="block w-full"
@@ -223,41 +313,41 @@ export const ExperienceForm = ({
                     className="mb-[6px]"
                     htmlFor="organization"
                   >
-                    {EXPERIENCE_FORM['organization'].label}
+                    {EXPERIENCE_FORM_TEXT['organization'].label}
                   </FieldSection.Label>
-                  <FieldSection.Input<ExperienceFormData>
+                  <FieldSection.Input<UserExperience>
                     id="organization"
-                    placeholder={EXPERIENCE_FORM['organization'].placeholder}
+                    placeholder={
+                      EXPERIENCE_FORM_TEXT['organization'].placeholder
+                    }
                     register={register}
                   />
                 </FieldSection.Root>
 
                 {/* 역할 및 담당 업무 */}
                 <FieldSection.Root className="flex flex-col">
-                  <FieldSection.Label
-                    className="mb-[6px]"
-                    htmlFor="roleAndResponsibilities"
-                  >
-                    {EXPERIENCE_FORM['roleAndResponsibilities'].label}
+                  <FieldSection.Label className="mb-[6px]" htmlFor="role">
+                    {EXPERIENCE_FORM_TEXT['role'].label}
                   </FieldSection.Label>
-                  <FieldSection.Input<ExperienceFormData>
-                    id="roleAndResponsibilities"
-                    placeholder={
-                      EXPERIENCE_FORM['roleAndResponsibilities'].placeholder
-                    }
+                  <FieldSection.Input<UserExperience>
+                    id="role"
+                    placeholder={EXPERIENCE_FORM_TEXT['role'].placeholder}
                     register={register}
                   />
                 </FieldSection.Root>
 
                 {/* 팀·개인 여부 */}
                 <FieldSection.Root className="flex flex-col">
-                  <FieldSection.Label className="mb-[6px]" htmlFor="type">
+                  <FieldSection.Label
+                    className="mb-[6px]"
+                    htmlFor="activityType"
+                  >
                     팀·개인 여부
                   </FieldSection.Label>
                   <div className="flex gap-4">
                     <label className="flex cursor-pointer items-center gap-2">
-                      <FieldSection.Input<ExperienceFormData>
-                        id="type"
+                      <FieldSection.Input<UserExperience>
+                        id="activityType"
                         type="radio"
                         register={register}
                         value="INDIVIDUAL"
@@ -267,8 +357,8 @@ export const ExperienceForm = ({
                       </span>
                     </label>
                     <label className="flex cursor-pointer items-center gap-2">
-                      <FieldSection.Input<ExperienceFormData>
-                        id="type"
+                      <FieldSection.Input<UserExperience>
+                        id="activityType"
                         type="radio"
                         register={register}
                         value="TEAM"
@@ -305,7 +395,7 @@ export const ExperienceForm = ({
                                   formData.startDate.split('-');
                                 return `${year}.${String(month).padStart(2, '0')}`;
                               })()
-                            : EXPERIENCE_FORM['startDate'].placeholder}
+                            : EXPERIENCE_FORM_TEXT['startDate'].placeholder}
                         </span>
                         <ChevronRight size={20} className="text-neutral-400" />
                       </button>
@@ -332,25 +422,28 @@ export const ExperienceForm = ({
                                   formData.endDate.split('-');
                                 return `${year}.${String(month).padStart(2, '0')}`;
                               })()
-                            : EXPERIENCE_FORM['endDate'].placeholder}
+                            : EXPERIENCE_FORM_TEXT['endDate'].placeholder}
                         </span>
                         <ChevronRight size={20} className="text-neutral-400" />
                       </button>
                     </div>
                   </div>
+                  {/* TODO: 유효성 검사 필요한지 확인 필요 */}
                 </FieldSection.Root>
 
                 {/* 연도 (자동 입력) */}
+                {/* TODO: 시작 연도 & api 요청시 값 필요없음 */}
                 <FieldSection.Root className="flex flex-col">
                   <FieldSection.Label className="mb-[6px]" htmlFor="year">
-                    {EXPERIENCE_FORM['year'].label}
+                    {EXPERIENCE_FORM_TEXT['year'].label}
                   </FieldSection.Label>
-                  <FieldSection.Input<ExperienceFormData>
+                  <input
                     id="year"
                     type="text"
-                    register={register}
-                    placeholder={EXPERIENCE_FORM['year'].placeholder}
+                    value={displayYear ? displayYear.toString() : ''}
+                    placeholder={EXPERIENCE_FORM_TEXT['year'].placeholder}
                     readOnly
+                    className="rounded-xs border border-solid border-neutral-80 px-3 py-[10px] text-xsmall14 font-normal text-neutral-0 placeholder:text-neutral-50 focus:border-primary focus:outline-none disabled:bg-neutral-95 disabled:text-neutral-50 md:text-xsmall16"
                   />
                 </FieldSection.Root>
               </div>
@@ -370,24 +463,24 @@ export const ExperienceForm = ({
                     'action',
                     'result',
                     'learnings',
-                  ] as const satisfies readonly (keyof ExperienceFormData)[]
+                  ] as const satisfies readonly (keyof UserExperience)[]
                 ).map((id) => (
                   <FieldSection.Root key={id}>
                     <div className="mb-[6px] flex items-center justify-between">
                       <FieldSection.Label htmlFor={id}>
-                        {EXPERIENCE_FORM[id].label}
+                        {EXPERIENCE_FORM_TEXT[id].label}
                       </FieldSection.Label>
                       <TooltipButton
-                        example={EXPERIENCE_FORM[id].exampleTooltips || ''}
+                        example={EXPERIENCE_FORM_TEXT[id].exampleTooltips || ''}
                       />
                     </div>
                     <FieldSection.Description>
-                      {EXPERIENCE_FORM[id].description}
+                      {EXPERIENCE_FORM_TEXT[id].description}
                     </FieldSection.Description>
                     <FieldSection.Textarea
                       id={id}
                       register={register}
-                      placeholder={EXPERIENCE_FORM[id].placeholder}
+                      placeholder={EXPERIENCE_FORM_TEXT[id].placeholder}
                     />
                   </FieldSection.Root>
                 ))}
@@ -405,16 +498,18 @@ export const ExperienceForm = ({
                   className="mb-[6px]"
                   htmlFor="coreCompetency"
                 >
-                  {EXPERIENCE_FORM['coreCompetency'].label}
+                  {EXPERIENCE_FORM_TEXT['coreCompetency'].label}
                 </FieldSection.Label>
                 <FieldSection.Description>
-                  {EXPERIENCE_FORM['coreCompetency'].description}
+                  {EXPERIENCE_FORM_TEXT['coreCompetency'].description}
                 </FieldSection.Description>
-                <FieldSection.Input<ExperienceFormData>
+                <FieldSection.Input<UserExperience>
                   id="coreCompetency"
                   value={formData.coreCompetency || ''}
                   onChange={handleCompetencyChange}
-                  placeholder={EXPERIENCE_FORM['coreCompetency'].placeholder}
+                  placeholder={
+                    EXPERIENCE_FORM_TEXT['coreCompetency'].placeholder
+                  }
                 />
               </FieldSection.Root>
             </div>
@@ -423,17 +518,18 @@ export const ExperienceForm = ({
 
         {/* 푸터 */}
         <footer className="flex h-[100px] flex-col items-center gap-1 border-t border-neutral-85 px-5 py-4 md:h-[64px] md:flex-row md:justify-end md:gap-4 md:border-t-0 md:py-3">
-          {/* TODO: 자동 저장 시간 표시 */}
+          {/* 자동 저장 시간 표시 */}
           <div className="text-xxsmall12 text-neutral-50 md:text-xsmall14 md:leading-[1.375rem]">
-            자동 저장 완료 10.19 04:17
+            {lastAutoSaveTime &&
+              `자동 저장 완료 ${lastAutoSaveTime.getMonth() + 1}.${lastAutoSaveTime.getDate()} ${String(lastAutoSaveTime.getHours()).padStart(2, '0')}:${String(lastAutoSaveTime.getMinutes()).padStart(2, '0')}`}
           </div>
           <button
             type="submit"
             form="experienceForm"
             className="w-full rounded-sm bg-primary px-3 py-3 text-xsmall16 font-medium text-white hover:bg-primary-hover disabled:bg-neutral-70 disabled:text-white md:w-[80px] md:py-2"
-            disabled={!isDirty}
+            disabled={!isDirty || createExperienceMutation.isPending}
           >
-            저장
+            {createExperienceMutation.isPending ? '저장 중...' : '저장'}
           </button>
         </footer>
       </div>
@@ -441,8 +537,10 @@ export const ExperienceForm = ({
       <ExperienceCategoryModal
         open={isCategoryModalOpen}
         onClose={() => setIsCategoryModalOpen(false)}
-        selected={experienceCategory || ''}
-        categories={EXPERIENCE_CATEGORIES}
+        selected={
+          experienceCategory ? CATEGORY_REVERSE_MAP[experienceCategory] : ''
+        }
+        categories={CATEGORY_PAIRS.map(([d]) => d)}
         onSelect={handleCategorySelect}
       />
 

@@ -94,3 +94,73 @@ export const userDocumentListSchema = z.object({
 export type UserDocument = z.infer<
   typeof userDocumentListSchema
 >['userDocumentList'][number];
+
+export const CATEGORY_PAIRS = [
+  ['프로젝트', 'PROJECT'],
+  ['학회', 'ACADEMIC'],
+  ['동아리', 'CLUB'],
+  ['교육', 'EDUCATION'],
+  ['공모전', 'COMPETITION'],
+  ['대외활동', 'EXTRACURRICULAR'],
+  ['인턴', 'INTERNSHIP'],
+  ['회사', 'COMPANY'],
+  ['대학교', 'UNIVERSITY'],
+  ['기타(직접입력)', 'OTHER'],
+] as const;
+
+export type DisplayExperienceCategory = (typeof CATEGORY_PAIRS)[number][0];
+export type ExperienceCategory = (typeof CATEGORY_PAIRS)[number][1];
+
+export const experienceCategoryEnum = z.enum(
+  CATEGORY_PAIRS.map(([, api]) => api) as [
+    ExperienceCategory,
+    ...ExperienceCategory[],
+  ],
+);
+
+const ACTIVITY_TYPE_PAIRS = [
+  ['팀', 'TEAM'],
+  ['개인', 'INDIVIDUAL'],
+] as const;
+
+// export type DisplayActivityType = (typeof ACTIVITY_TYPE_PAIRS)[number][0];
+export type ActivityType = (typeof ACTIVITY_TYPE_PAIRS)[number][1];
+
+const activityTypeEnum = z.enum(
+  ACTIVITY_TYPE_PAIRS.map(([, api]) => api) as [
+    ActivityType,
+    ...ActivityType[],
+  ],
+);
+
+/** 경험 정리 /api/v1/user-experience/* */
+export const userExperienceSchema = z.object({
+  title: z.string(),
+  experienceCategory: experienceCategoryEnum,
+  customCategoryName: z.string().optional(),
+  organization: z.string().optional(), // 기관 추가 필요
+  role: z.string(),
+  activityType: activityTypeEnum,
+  startDate: z.string(), // YYYY-MM-DD 형식
+  endDate: z.string(), // YYYY-MM-DD 형식
+  ////
+  situation: z.string(),
+  task: z.string(),
+  action: z.string(),
+  result: z.string(),
+  learnings: z.string().optional(), // 느낀점/배운점 추가 필요
+  ////
+  coreCompetency: z.string().optional(),
+  isAdminAdded: z.boolean().optional(),
+});
+
+export type UserExperience = z.infer<typeof userExperienceSchema>;
+
+/** 경험 정리 생성 응답 */
+export const userExperienceInfoSchema = userExperienceSchema.extend({
+  id: z.number(),
+  createdDate: z.string(),
+  updatedDate: z.string(),
+});
+
+export type UserExperienceInfo = z.infer<typeof userExperienceInfoSchema>;
