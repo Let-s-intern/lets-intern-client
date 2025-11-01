@@ -26,7 +26,7 @@ export const TooltipButton = ({ example }: { example: string }) => {
             preserveAspectRatio="none"
           />
           <div
-            className="absolute right-0 top-[calc(100%+12px)] z-[101] w-[384px] rounded-xxs bg-white p-3 text-neutral-0 drop-shadow"
+            className="absolute right-0 top-[calc(100%+12px)] z-[101] w-[320px] rounded-xxs bg-white p-3 text-neutral-0 drop-shadow md:w-[384px]"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
