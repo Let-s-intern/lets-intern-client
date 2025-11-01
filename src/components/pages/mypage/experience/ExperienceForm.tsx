@@ -33,7 +33,7 @@ export const defaultFormData: Partial<UserExperience> = {
   customCategoryName: '',
   organization: '',
   role: '',
-  activityType: 'INDIVIDUAL',
+  activityType: undefined,
   startDate: '',
   endDate: '',
   situation: '',
