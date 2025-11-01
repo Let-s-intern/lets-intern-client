@@ -1,8 +1,5 @@
 'use client';
 
-import { useGetAllUserExperienceQuery } from '@/api/experience';
-import { Pageable } from '@/api/experienceSchema';
-import { convertFilterUiToApiFormat } from '@/app/(user)/mypage/experience/utils';
 import ExperienceDataTable from '@components/common/mypage/experience/ExperienceDataTable';
 import ExperienceFilters, {
   Filters,
@@ -12,23 +9,11 @@ import { useState } from 'react';
 
 const Experience = () => {
   const [filters, setFilters] = useState<Filters>({
-    category: '전체',
-    activity: '전체',
-    year: '전체',
-    coreCompetency: '전체',
+    category: 'ALL',
+    activity: 'ALL',
+    year: 'ALL',
+    coreCompetency: 'ALL',
   });
-
-  const [pageable, setPageable] = useState<Pageable>({
-    page: 0,
-    size: 10,
-  });
-
-  const { data } = useGetAllUserExperienceQuery(
-    convertFilterUiToApiFormat(filters),
-    pageable,
-  );
-
-  const userExperiences = data?.userExperiences || [];
 
   const handleFilterChange = (filterType: keyof Filters, value: string) => {
     setFilters({
@@ -57,7 +42,7 @@ const Experience = () => {
         {/* 정렬 필터 영역 (추후 구현) */}
       </section>
 
-      <ExperienceDataTable data={userExperiences} />
+      <ExperienceDataTable filters={filters} />
     </div>
   );
 };

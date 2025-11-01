@@ -49,11 +49,11 @@ export const convertFilterResToUiFormat = (data: UserExperienceFilters) => {
  */
 export const convertFilterUiToApiFormat = (filters: Filters) => {
   return {
-    availableCategories: filters.category === '전체' ? [] : [filters.category],
+    availableCategories: filters.category === 'ALL' ? [] : [filters.category],
     availableActivityTypes:
-      filters.activity === '전체' ? [] : [filters.activity],
-    availableYears: filters.year === '전체' ? [] : [Number(filters.year)],
+      filters.activity === 'ALL' ? [] : [filters.activity],
+    availableYears: filters.year === 'ALL' ? [] : [Number(filters.year)],
     availableCoreCompetencies:
-      filters.coreCompetency === '전체' ? [] : [filters.coreCompetency],
+      filters.coreCompetency === 'ALL' ? [] : [filters.coreCompetency],
   };
 };

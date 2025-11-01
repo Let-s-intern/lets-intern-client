@@ -26,7 +26,11 @@ export const useGetAllUserExperienceQuery = (
   pageable: Pageable,
 ) => {
   return useQuery({
-    queryKey: [UserExperienceQueryKey, filter, pageable],
+    queryKey: [
+      UserExperienceQueryKey,
+      ...Object.values(filter),
+      ...Object.values(pageable),
+    ],
     queryFn: async () => {
       const res = await axios.post(
         `/user-experience/search?page=${pageable.page}&size=${pageable.size}`,

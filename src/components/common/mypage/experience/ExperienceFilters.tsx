@@ -5,8 +5,8 @@ import { FilterDropdown } from '@components/common/challenge/my-challenge/sectio
 import { useMemo } from 'react';
 
 export interface Filters {
-  category: CategoryType | '전체';
-  activity: ActivityType | '전체';
+  category: CategoryType | 'ALL';
+  activity: ActivityType | 'ALL';
   year: string;
   coreCompetency: string;
 }
