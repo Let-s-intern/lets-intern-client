@@ -177,30 +177,30 @@ export const ExperienceForm = ({
     };
   }, [isCategoryModalOpen, isStartPeriodModalOpen, isEndPeriodModalOpen]);
 
-  // 자동 저장 로직 (30초마다)
-  useEffect(() => {
-    // 초기 데이터가 있거나 변경사항이 있을 때만 자동 저장
-    if (!isDirty) return;
+  // // 자동 저장 로직 (30초마다)
+  // useEffect(() => {
+  //   // 초기 데이터가 있거나 변경사항이 있을 때만 자동 저장
+  //   if (!isDirty) return;
 
-    const autoSaveInterval = setInterval(
-      async () => {
-        const validData = validateFormData(formData);
-        if (!validData) return;
+  //   const autoSaveInterval = setInterval(
+  //     async () => {
+  //       const validData = validateFormData(formData);
+  //       if (!validData) return;
 
-        try {
-          console.log('auto save', validData);
-          // await createExperienceMutation.mutateAsync(validData);
-          setLastAutoSaveTime(new Date());
-          // 자동 저장 후 isDirty 상태 리셋하지 않음 (사용자가 명시적으로 저장 버튼을 눌러야 함)
-        } catch (error) {
-          console.error('자동 저장 실패:', error);
-        }
-      },
-      30000, // 30초
-    );
+  //       try {
+  //         console.log('auto save', validData);
+  //         // await createExperienceMutation.mutateAsync(validData);
+  //         setLastAutoSaveTime(new Date());
+  //         // 자동 저장 후 isDirty 상태 리셋하지 않음 (사용자가 명시적으로 저장 버튼을 눌러야 함)
+  //       } catch (error) {
+  //         console.error('자동 저장 실패:', error);
+  //       }
+  //     },
+  //     30000, // 30초
+  //   );
 
-    return () => clearInterval(autoSaveInterval);
-  }, [isDirty, formData]); // formData 의존성 추가
+  //   return () => clearInterval(autoSaveInterval);
+  // }, [isDirty, formData]); // formData 의존성 추가
 
   return (
     <>
