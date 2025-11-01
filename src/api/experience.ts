@@ -1,18 +1,37 @@
 import axios from '@/utils/axios';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
+  Pageable,
+  UserExperienceFilters,
   userExperienceListSchema,
   userExperienceSchema,
-  UserExperienceType
+  UserExperienceType,
 } from './experienceSchema';
 
-export const UseUserExperienceQueryKey = 'useUserExperienceQueryKey';
+export const UserExperienceFiltersQueryKey = 'userExperienceFiltersQueryKey';
+export const UserExperienceQueryKey = 'userExperienceQueryKey';
 
-export const useGetAllUserExperienceQuery = ({page, size, sort}: {page: number; size: number; sort: string[]}) => {
+export const useGetUserExperienceFiltersQuery = () => {
   return useQuery({
-    queryKey: [UseUserExperienceQueryKey, page, size, sort],
+    queryKey: [UserExperienceFiltersQueryKey],
     queryFn: async () => {
-      const res = await axios.get(`/user-experience`, { params: { page, size, sort } });
+      const res = await axios.get(`/user-experience/filters`);
+      return res.data.data;
+    },
+  });
+};
+
+export const useGetAllUserExperienceQuery = (
+  filter: UserExperienceFilters,
+  pageable: Pageable,
+) => {
+  return useQuery({
+    queryKey: [UserExperienceQueryKey, filter, pageable],
+    queryFn: async () => {
+      const res = await axios.post(
+        `/user-experience/search?page=${pageable.page}&size=${pageable.size}`,
+        filter,
+      );
       return userExperienceListSchema.parse(res.data.data);
     },
   });
