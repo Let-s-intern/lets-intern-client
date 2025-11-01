@@ -109,12 +109,12 @@ export const ExperienceForm = ({
   const handleStartPeriodSelect = (year: number, month: number) => {
     const dateString = `${year}-${String(month).padStart(2, '0')}-01`;
     setValue('startDate', dateString, { shouldDirty: true });
-    setDisplayYear(year);
   };
 
   const handleEndPeriodSelect = (year: number, month: number) => {
     const dateString = `${year}-${String(month).padStart(2, '0')}-01`;
     setValue('endDate', dateString, { shouldDirty: true });
+    setDisplayYear(year);
   };
 
   // 폼 데이터를 API 요청 형식으로 변환
