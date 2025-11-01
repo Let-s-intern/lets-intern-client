@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronRight, XIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   CATEGORY_MAP,
@@ -18,6 +18,7 @@ import {
   type DisplayExperienceCategory,
   type UserExperience,
 } from '@/api/userSchema';
+import { useUnsavedChangesWarning } from '@/hooks/useUnsavedChangesWarning';
 import { CompetencyBadges } from './components/CompetencyBadges';
 import { ExperienceCategoryModal } from './components/ExperienceCategoryModal';
 import { FieldSection } from './components/FeildSection';
@@ -69,6 +70,15 @@ export const ExperienceForm = ({
 
   // API mutation
   const createExperienceMutation = usePostUserExperienceMutation();
+
+  // 저장 완료 여부를 추적하는 ref
+  const isSavedRef = useRef(false);
+
+  // 저장되지 않은 변경사항 경고
+  useUnsavedChangesWarning(
+    isDirty && !isSavedRef.current,
+    '작성 중인 경험 정리가 저장되지 않았습니다. 저장하지 않고 나가시겠습니까?',
+  );
 
   // 초기 데이터 설정
   useEffect(() => {
@@ -149,6 +159,8 @@ export const ExperienceForm = ({
 
     try {
       await createExperienceMutation.mutateAsync(validData);
+      // 저장 성공 시 플래그 설정
+      isSavedRef.current = true;
       alert('경험 정리가 성공적으로 저장되었습니다.');
       onClose();
     } catch (error) {
@@ -203,6 +215,19 @@ export const ExperienceForm = ({
   //   return () => clearInterval(autoSaveInterval);
   // }, [isDirty, formData]); // formData 의존성 추가
 
+  // X 버튼 클릭 핸들러 (저장되지 않은 변경사항 확인)
+  const handleClose = () => {
+    if (isDirty && !isSavedRef.current) {
+      const confirmClose = window.confirm(
+        '작성 중인 경험 정리가 저장되지 않았습니다. 저장하지 않고 나가시겠습니까?',
+      );
+      if (!confirmClose) {
+        return;
+      }
+    }
+    onClose();
+  };
+
   return (
     <>
       <div className="flex h-full flex-col bg-white">
@@ -210,7 +235,7 @@ export const ExperienceForm = ({
         <header className="flex h-[72px] items-center justify-between px-4 py-5">
           <h1 className="text-small20 font-semibold">경험 작성</h1>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="flex h-7 w-7 items-center justify-center"
           >
             <XIcon size={24} />

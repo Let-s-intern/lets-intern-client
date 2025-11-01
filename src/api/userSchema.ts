@@ -135,19 +135,19 @@ const activityTypeEnum = z.enum(
 
 /** 경험 정리 /api/v1/user-experience/* */
 export const userExperienceSchema = z.object({
-  title: z.string(),
-  experienceCategory: experienceCategoryEnum,
+  title: z.string().optional(),
+  experienceCategory: experienceCategoryEnum.optional(),
   customCategoryName: z.string().optional(),
   organization: z.string().optional(), // 기관 추가 필요
-  role: z.string(),
-  activityType: activityTypeEnum,
+  role: z.string().optional(),
+  activityType: activityTypeEnum.optional(),
   startDate: z.string(), // YYYY-MM-DD 형식
   endDate: z.string(), // YYYY-MM-DD 형식
   ////
-  situation: z.string(),
-  task: z.string(),
-  action: z.string(),
-  result: z.string(),
+  situation: z.string().optional(),
+  task: z.string().optional(),
+  action: z.string().optional(),
+  result: z.string().optional(),
   learnings: z.string().optional(), // 느낀점/배운점 추가 필요
   ////
   coreCompetency: z.string().optional(),
