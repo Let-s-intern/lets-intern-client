@@ -18,10 +18,10 @@ import {
   type DisplayExperienceCategory,
   type UserExperience,
 } from '@/api/userSchema';
-import { ExperienceCategoryModal } from './ExperienceCategoryModal';
-import { FieldSection } from './FeildSection';
-import { PeriodSelectModal } from './PeriodSelectModal';
-import { TooltipButton } from './TooltipButton';
+import { ExperienceCategoryModal } from './components/ExperienceCategoryModal';
+import { FieldSection } from './components/FeildSection';
+import { PeriodSelectModal } from './components/PeriodSelectModal';
+import { TooltipButton } from './components/TooltipButton';
 
 // 기본값 정의
 // TODO: nullable ??
