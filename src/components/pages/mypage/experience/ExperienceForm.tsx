@@ -18,6 +18,7 @@ import {
   type DisplayExperienceCategory,
   type UserExperience,
 } from '@/api/userSchema';
+import { CompetencyBadges } from './components/CompetencyBadges';
 import { ExperienceCategoryModal } from './components/ExperienceCategoryModal';
 import { FieldSection } from './components/FeildSection';
 import { PeriodSelectModal } from './components/PeriodSelectModal';
@@ -87,8 +88,6 @@ export const ExperienceForm = ({
 
   const handleCompetencyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value;
-    // TODO: 태그 추가 로직 구현
-
     // 핵심 역량 입력 상태 (콤마 4개까지 허용하여 5단어 제한)
     const commaCount = (text.match(/,/g) || []).length;
     if (commaCount > MAX_COMPETENCIES - 1) {
@@ -510,6 +509,17 @@ export const ExperienceForm = ({
                   placeholder={
                     EXPERIENCE_FORM_TEXT['coreCompetency'].placeholder
                   }
+                />
+                <CompetencyBadges
+                  coreCompetency={formData.coreCompetency || ''}
+                  onRemove={(index) => {
+                    if (!formData.coreCompetency) return;
+                    const competencies = formData.coreCompetency.split(',');
+                    competencies.splice(index, 1);
+                    setValue('coreCompetency', competencies.join(','), {
+                      shouldDirty: true,
+                    });
+                  }}
                 />
               </FieldSection.Root>
             </div>
