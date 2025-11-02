@@ -483,9 +483,6 @@ export const useSubmitChallengeGoal = () => {
 // [어드민용] 미션 제출한 유저의 경험 목록 조회 api/v2/admin/attendance/user-experiences/{missionId}
 export const MissionAttendanceUserExperiencesQueryKey =
   'useMissionAttendanceUserExperiencesQuery';
-export type UserAttendanceExperience = z.infer<
-  typeof userAttendanceExperienceSchema
->['userExperiences'][number];
 
 export const useMissionAttendanceUserExperiencesQuery = ({
   missionId,

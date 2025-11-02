@@ -1,9 +1,7 @@
 'use client';
 
-import {
-  useMissionAttendanceUserExperiencesQuery,
-  UserAttendanceExperience,
-} from '@/api/challenge';
+import { useMissionAttendanceUserExperiencesQuery } from '@/api/challenge';
+import { UserAttendanceExperience } from '@/api/experienceSchema';
 import DataTable, { TableHeader } from '@components/common/table/DataTable';
 import { useParams } from 'next/navigation';
 import { FaSpinner } from 'react-icons/fa6';
@@ -49,7 +47,7 @@ function Page() {
   );
 }
 
-const formatExperienceData = (data: UserAttendanceExperience[]) => {
+const formatExperienceData = (data: UserAttendanceExperience) => {
   return data.map((item) => {
     if (!item.startDate || !item.endDate) {
       return { ...item, period: '-', year: '-' };
