@@ -41,7 +41,7 @@ export const EXPERIENCE_FORM_TEXT: ExperienceFormText = {
     label: '직접 입력',
     placeholder: '직접 입력해주세요.',
   },
-  organization: {
+  organ: {
     label: '기관',
     placeholder: '예) 네이버 / 서울대학교 / △△△ 스타트업 / ○○ 마케팅 공모전',
   },
@@ -105,7 +105,7 @@ export const EXPERIENCE_FORM_TEXT: ExperienceFormText = {
     exampleTooltips:
       '• 프로필 도달 계정 약 125% 증가\n• 프로필 방문 약 165% 증가\n• 예약 링크 클릭 1400% 증가\n• 월평균 매출 약 75% 이상 증가\n• 타겟 고객 방문과 재방문율이 향상되어 단기적 효과가 아닌 매출 안정적 유지',
   },
-  learnings: {
+  reflection: {
     label: '느낀 점 / 배운 점',
     placeholder:
       '예) 단순히 예산을 투입하는 것보다 타겟을 명확히 정의하고 콘텐츠 전략을 정교화하는 것이 성과에 큰 영향을 준다는 것을 배웠습니다. 데이터 기반으로 캠페인을 설계하는 역량을 키우는 계기가 되었습니다.',

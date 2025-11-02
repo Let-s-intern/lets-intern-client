@@ -31,7 +31,7 @@ export const defaultFormData: Partial<UserExperience> = {
   title: '',
   experienceCategory: undefined,
   customCategoryName: '',
-  organization: '',
+  organ: '',
   role: '',
   activityType: undefined,
   startDate: '',
@@ -40,7 +40,7 @@ export const defaultFormData: Partial<UserExperience> = {
   task: '',
   action: '',
   result: '',
-  learnings: '',
+  reflection: '',
   coreCompetency: '',
   isAdminAdded: false,
 };
@@ -135,7 +135,7 @@ export const ExperienceForm = ({
       title: data.title,
       experienceCategory: data.experienceCategory,
       customCategoryName: data.customCategoryName,
-      organization: data.organization,
+      organ: data.organ,
       role: data.role,
       activityType: data.activityType,
       startDate: data.startDate,
@@ -144,7 +144,7 @@ export const ExperienceForm = ({
       task: data.task,
       action: data.action,
       result: data.result,
-      learnings: data.learnings,
+      reflection: data.reflection,
       coreCompetency: data.coreCompetency,
       isAdminAdded:
         process.env.NODE_ENV === 'production' ? data.isAdminAdded : true,
@@ -334,17 +334,12 @@ export const ExperienceForm = ({
 
                 {/* 기관 */}
                 <FieldSection.Root className="flex flex-col">
-                  <FieldSection.Label
-                    className="mb-[6px]"
-                    htmlFor="organization"
-                  >
-                    {EXPERIENCE_FORM_TEXT['organization'].label}
+                  <FieldSection.Label className="mb-[6px]" htmlFor="organ">
+                    {EXPERIENCE_FORM_TEXT['organ'].label}
                   </FieldSection.Label>
                   <FieldSection.Input<UserExperience>
-                    id="organization"
-                    placeholder={
-                      EXPERIENCE_FORM_TEXT['organization'].placeholder
-                    }
+                    id="organ"
+                    placeholder={EXPERIENCE_FORM_TEXT['organ'].placeholder}
                     register={register}
                   />
                 </FieldSection.Root>
@@ -487,7 +482,7 @@ export const ExperienceForm = ({
                     'task',
                     'action',
                     'result',
-                    'learnings',
+                    'reflection',
                   ] as const satisfies readonly (keyof UserExperience)[]
                 ).map((id) => (
                   <FieldSection.Root key={id}>

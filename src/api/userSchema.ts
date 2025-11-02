@@ -138,7 +138,7 @@ export const userExperienceSchema = z.object({
   title: z.string().optional(),
   experienceCategory: experienceCategoryEnum.optional(),
   customCategoryName: z.string().optional(),
-  organization: z.string().optional(), // 기관 추가 필요
+  organ: z.string().optional(), // 기관 추가 필요
   role: z.string().optional(),
   activityType: activityTypeEnum.optional(),
   startDate: z.string(), // YYYY-MM-DD 형식
@@ -148,7 +148,7 @@ export const userExperienceSchema = z.object({
   task: z.string().optional(),
   action: z.string().optional(),
   result: z.string().optional(),
-  learnings: z.string().optional(), // 느낀점/배운점 추가 필요
+  reflection: z.string().optional(), // 느낀점/배운점 추가 필요
   ////
   coreCompetency: z.string().optional(),
   isAdminAdded: z.boolean().optional(),
