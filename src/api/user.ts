@@ -16,7 +16,7 @@ import {
   userAdminType,
   userDocumentListSchema,
   UserExperience,
-  userExperienceSchema,
+  userExperienceInfoSchema,
 } from './userSchema';
 
 export const UseMentorListQueryKey = 'useMentorListQueryKey';
@@ -298,11 +298,8 @@ export const useGetUserDocumentListQuery = () => {
 export const usePostUserExperienceMutation = () => {
   return useMutation({
     mutationFn: async (data: UserExperience) => {
-      // 요청 데이터 검증
-      // const validatedData = userExperienceSchema.parse(data);
-
       const res = await axios.post('/user-experience', data);
-      return userExperienceSchema.parse(res.data.data);
+      return userExperienceInfoSchema.parse(res.data.data);
     },
   });
 };
