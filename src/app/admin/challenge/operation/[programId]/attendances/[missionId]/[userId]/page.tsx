@@ -1,6 +1,9 @@
 'use client';
 
-import { useMissionAttendanceUserExperiencesQuery } from '@/api/challenge';
+import {
+  useMissionAttendanceUserExperiencesQuery,
+  UserAttendanceExperience,
+} from '@/api/challenge';
 import DataTable, { TableHeader } from '@components/common/table/DataTable';
 import { useParams } from 'next/navigation';
 import { FaSpinner } from 'react-icons/fa6';
@@ -35,51 +38,52 @@ function Page() {
     return <div>데이터가 없습니다.</div>;
   }
 
+  const formattedData = formatExperienceData(userExperiences);
+
   return (
     <div className="p-4">
       <DataTable
         headers={experienceTableHeaders}
-        data={userExperiences}
+        data={formattedData}
         className="rounded-lg border"
       />
     </div>
   );
 }
 
+const formatExperienceData = (data: UserAttendanceExperience[]) => {
+  return data.map((item) => {
+    if (!item.startDate || !item.endDate) {
+      return { ...item, period: '-', year: '-' };
+    }
+    const start = new Date(item.startDate);
+    const end = new Date(item.endDate);
+    // 기간: yyyy.mm.dd ~ yyyy.mm.dd
+    const period = `${start.toLocaleDateString('ko-KR')} ~ ${end.toLocaleDateString('ko-KR')}`;
+    // 연도: endDate의 연도만 추출
+    const year = end.getFullYear();
+    return {
+      ...item,
+      period,
+      year,
+    };
+  });
+};
+
 const experienceTableHeaders: TableHeader[] = [
   { key: 'title', label: '경험 이름', width: '160px' },
-  {
-    key: 'experienceCategory',
-    label: '경험 분류',
-    width: '110px',
-  },
-  { key: 'organization', label: '기관', width: '140px' },
-  {
-    key: 'role',
-    label: '역할 및 담당 업무',
-    width: '140px',
-  },
-  {
-    key: 'activityType',
-    label: '팀·개인 여부',
-    width: '100px',
-  },
-  { key: 'period', label: '기간', width: '140px' },
-  {
-    key: 'year',
-    label: '연도',
-    width: '80px',
-  },
+  { key: 'experienceCategory', label: '경험 분류', width: '110px' },
+  { key: 'organ', label: '기관', width: '140px' },
+  { key: 'role', label: '역할 및 담당 업무', width: '140px' },
+  { key: 'activityType', label: '팀·개인 여부', width: '100px' },
+  { key: 'period', label: '기간', width: '180px' },
+  { key: 'year', label: '연도', width: '80px' },
   { key: 'situation', label: 'Situation(상황)', width: '200px' },
   { key: 'task', label: 'Task(문제)', width: '200px' },
   { key: 'action', label: 'Action(행동)', width: '200px' },
   { key: 'result', label: 'Result(결과)', width: '200px' },
-  { key: 'lessonsLearned', label: '느낀 점 / 배운 점', width: '200px' },
-  {
-    key: 'coreCompetency',
-    label: '핵심 역량',
-    width: '140px',
-  },
+  { key: 'reflection', label: '느낀 점 / 배운 점', width: '200px' },
+  { key: 'coreCompetency', label: '핵심 역량', width: '140px' },
 ];
 
 export default Page;
