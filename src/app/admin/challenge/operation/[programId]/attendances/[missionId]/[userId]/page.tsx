@@ -31,9 +31,7 @@ function Page() {
     return <div>에러가 발생했습니다: {String(error)}</div>;
   }
 
-  const userExperiences =
-    data?.userExperiences || (Array.isArray(data) ? data : []);
-
+  const userExperiences = data?.userExperiences ?? [];
   if (userExperiences.length === 0) {
     return <div>데이터가 없습니다.</div>;
   }
