@@ -1,5 +1,5 @@
 import axios from '@/utils/axios';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Pageable,
   UserExperienceFilters,
@@ -51,9 +51,14 @@ export const usePostUserExperienceMutation = () => {
 };
 
 export const useDeleteUserExperienceMutation = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (experienceId: number) => {
       await axios.delete(`/user-experience/${experienceId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['UserExperience'] });
     },
   });
 };

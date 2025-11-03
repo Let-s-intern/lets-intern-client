@@ -6,6 +6,12 @@ import {
 } from '@/app/(user)/mypage/experience/utils';
 import { Filters } from '@components/common/mypage/experience/ExperienceFilters';
 import OutlinedButton from '@components/common/mypage/experience/OutlinedButton';
+import ActivityTypeCell from '@components/common/mypage/experience/table-cell/ActivityTypeCell';
+import CategoryCell from '@components/common/mypage/experience/table-cell/CategoryCell';
+import CoreCompetencyCell from '@components/common/mypage/experience/table-cell/CoreCompetencyCell';
+import DeleteCell from '@components/common/mypage/experience/table-cell/DeleteCell';
+import PeriodCell from '@components/common/mypage/experience/table-cell/PeriodCell';
+import YearCell from '@components/common/mypage/experience/table-cell/YearCell';
 import MuiPagination from '@components/common/program/pagination/MuiPagination';
 import DataTable, { TableHeader } from '@components/common/table/DataTable';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
@@ -72,7 +78,7 @@ const ExperienceDataTable = ({
       <DataTable
         headers={experienceTableHeaders}
         data={sortedExperiences}
-        className="rounded-lg border"
+        className="rounded-xs border border-neutral-80"
       />
 
       <MuiPagination
@@ -136,8 +142,9 @@ const experienceTableHeaders: TableHeader[] = [
     key: 'experienceCategory',
     label: '경험 분류',
     width: '110px',
+    cellRenderer: (value: string) => <CategoryCell value={value} />,
   },
-  { key: 'organization', label: '기관', width: '140px' },
+  { key: 'organ', label: '기관', width: '140px' },
   {
     key: 'role',
     label: '역할 및 담당 업무',
@@ -147,26 +154,36 @@ const experienceTableHeaders: TableHeader[] = [
     key: 'activityType',
     label: '팀·개인 여부',
     width: '100px',
+    cellRenderer: (value: string) => <ActivityTypeCell value={value} />,
   },
-  { key: 'period', label: '기간', width: '140px' },
+  {
+    key: 'period',
+    label: '기간',
+    width: '140px',
+    cellRenderer: (_, row) => <PeriodCell row={row} />,
+  },
   {
     key: 'year',
     label: '연도',
     width: '80px',
+    cellRenderer: (_, row) => <YearCell row={row} />,
   },
   { key: 'situation', label: 'Situation(상황)', width: '200px' },
   { key: 'task', label: 'Task(문제)', width: '200px' },
   { key: 'action', label: 'Action(행동)', width: '200px' },
   { key: 'result', label: 'Result(결과)', width: '200px' },
-  { key: 'lessonsLearned', label: '느낀 점 / 배운 점', width: '200px' },
+  { key: 'reflection', label: '느낀 점 / 배운 점', width: '200px' },
   {
     key: 'coreCompetency',
     label: '핵심 역량',
     width: '140px',
+    cellRenderer: (value: string) => <CoreCompetencyCell value={value} />,
   },
   {
     key: 'deleteAction',
     label: '목록 삭제',
     width: '90px',
+    align: { vertical: 'middle' },
+    cellRenderer: (_, row) => <DeleteCell row={row} />,
   },
 ];

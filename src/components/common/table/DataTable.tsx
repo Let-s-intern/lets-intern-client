@@ -9,7 +9,10 @@ export interface TableHeader {
   key: string;
   label: string;
   width?: string;
-  align?: 'left' | 'center' | 'right';
+  align?: {
+    horizontal?: 'left' | 'center' | 'right';
+    vertical?: 'top' | 'middle' | 'bottom';
+  };
   cellRenderer?: (value: any, row: TableData) => ReactNode;
 }
 
@@ -90,9 +93,9 @@ const DataTable = ({
                 key={header.key}
                 className={twMerge(
                   'px-2 py-2.5 text-left text-sm font-medium text-neutral-10',
-                  header.align === 'center'
+                  header.align?.horizontal === 'center'
                     ? 'text-center'
-                    : header.align === 'right'
+                    : header.align?.horizontal === 'right'
                       ? 'text-right'
                       : 'text-left',
                 )}
@@ -130,12 +133,23 @@ const DataTable = ({
                     : row[header.key];
 
                   return (
-                    <td key={header.key} className="align-top">
+                    <td
+                      key={header.key}
+                      className={
+                        header.align?.vertical === 'top'
+                          ? 'align-top'
+                          : header.align?.vertical === 'middle'
+                            ? 'align-middle'
+                            : header.align?.vertical === 'bottom'
+                              ? 'align-bottom'
+                              : 'align-top'
+                      }
+                    >
                       <ExpandableCell
                         content={cellContent}
                         isRowExpanded={isExpanded}
                         onToggleExpand={() => toggleExpandRow(row.id)}
-                        align={header.align}
+                        align={header.align?.horizontal}
                       />
                     </td>
                   );
