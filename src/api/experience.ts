@@ -1,8 +1,8 @@
 import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  ExperienceFiltersReq,
   Pageable,
-  UserExperienceFilters,
   userExperienceListSchema,
   userExperienceSchema,
   UserExperienceType,
@@ -22,7 +22,7 @@ export const useGetUserExperienceFiltersQuery = () => {
 };
 
 export const useGetAllUserExperienceQuery = (
-  filter: UserExperienceFilters,
+  filter: ExperienceFiltersReq,
   pageable: Pageable,
 ) => {
   return useQuery({

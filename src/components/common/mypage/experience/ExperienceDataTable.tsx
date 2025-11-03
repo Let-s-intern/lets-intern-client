@@ -3,7 +3,7 @@ import {
   convertFilterUiToApiFormat,
   isAllFilters,
   sortExperiences,
-} from '@/app/(user)/mypage/experience/utils';
+} from '@/utils/experience';
 import { Filters } from '@components/common/mypage/experience/ExperienceFilters';
 import OutlinedButton from '@components/common/mypage/experience/OutlinedButton';
 import ActivityTypeCell from '@components/common/mypage/experience/table-cell/ActivityTypeCell';

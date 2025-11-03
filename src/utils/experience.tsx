@@ -1,6 +1,7 @@
 import {
   ACTIVITY_TYPE_KR,
   EXPERIENCE_CATEGORY_KR,
+  ExperienceFiltersRes,
 } from '@/api/experienceSchema';
 import { Filters } from '@components/common/mypage/experience/ExperienceFilters';
 
@@ -8,7 +9,7 @@ import { Filters } from '@components/common/mypage/experience/ExperienceFilters'
  * ✅ API 응답 데이터를 UI 드롭다운 옵션 형식으로 변환
  * (API → UI)
  */
-export const convertFilterResToUiFormat = (data: any) => {
+export const convertFilterResToUiFormat = (data: ExperienceFiltersRes) => {
   const addAllOption = (options: { value: string; label: string }[]) => [
     { value: 'ALL', label: '전체' },
     ...options,
@@ -55,6 +56,9 @@ export const convertFilterUiToApiFormat = (filters: Filters) => {
   };
 };
 
+/**
+ * ✅ 모든 필터가 '전체' 상태인지 확인
+ */
 export const isAllFilters = (filters: Filters) => {
   return (
     filters.category.length === 0 &&
@@ -64,6 +68,9 @@ export const isAllFilters = (filters: Filters) => {
   );
 };
 
+/**
+ * ✅ 경험 목록 정렬 (최신 순, 오래된 순, 최근 수정일 순)
+ */
 export const sortExperiences = (experiences: any[], sortBy: string) => {
   if (!Array.isArray(experiences)) return [];
 

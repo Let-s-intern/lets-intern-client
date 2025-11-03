@@ -71,24 +71,3 @@ const Experience = () => {
 };
 
 export default Experience;
-
-// // 임시: 경험 추가 뮤테이션 테스트
-// const { mutate: postUserExperience } = usePostUserExperienceMutation();
-// useEffect(() => {
-//   // 임시 데이터 추가 (테스트 용도)
-//   postUserExperience({
-//     startDate: '2025-10-29',
-//     endDate: '2025-10-29',
-//     title: '제목',
-//     activityType: 'TEAM',
-//     experienceCategory: 'ACADEMIC',
-//     role: 'FE',
-//     situation: 'test',
-//     task: 'test',
-//     action: 'test',
-//     result: 'test',
-//     // coreCompetency: 'test',
-//     // customCategoryName: 'test',
-//     isAdminAdded: false,
-//   });
-// }, []);

@@ -1,6 +1,6 @@
 import { useGetUserExperienceFiltersQuery } from '@/api/experience';
 import { ActivityType, CategoryType } from '@/api/experienceSchema';
-import { convertFilterResToUiFormat } from '@/app/(user)/mypage/experience/utils';
+import { convertFilterResToUiFormat } from '@/utils/experience';
 import { FilterDropdown } from '@components/common/challenge/my-challenge/section/mission-submit-list-form/components/ExperienceSelectModal/components/FilterDropdown';
 import { MultiFilterDropdown } from '@components/common/challenge/my-challenge/section/mission-submit-list-form/components/ExperienceSelectModal/components/MultiFilterDropdown';
 import { useMemo } from 'react';
