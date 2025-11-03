@@ -28,7 +28,7 @@ export const MultiFilterDropdown = ({
 
   const getFilterLabel = () => {
     if (selectedValues.length === 0) {
-      return options[0].label;
+      return '전체';
     }
 
     // selectedValues 중 options 배열에서 가장 앞에 있는 항목 찾기

@@ -80,8 +80,8 @@ interface ExperienceFilterOptions {
 }
 
 const EXPERIENCE_FILTER_OPTIONS: ExperienceFilterOptions = {
-  availableCategories: [{ value: 'ALL', label: '전체' }],
+  availableCategories: [],
   availableActivityTypes: [{ value: 'ALL', label: '전체' }],
   availableYears: [{ value: 'ALL', label: '전체' }],
-  availableCoreCompetencies: [{ value: 'ALL', label: '전체' }],
+  availableCoreCompetencies: [],
 };
