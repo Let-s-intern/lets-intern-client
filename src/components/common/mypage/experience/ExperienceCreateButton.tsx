@@ -1,3 +1,4 @@
+import SolidButton from '@components/common/mypage/experience/SolidButton';
 import { Plus, X } from 'lucide-react';
 import { useState } from 'react';
 
@@ -8,7 +9,9 @@ const ExperienceCreateButton = () => {
 
   return (
     <div className="relative">
-      <SolidButton onClick={handleDrawerOpen}>경험 작성</SolidButton>
+      <SolidButton icon={<Plus size={16} />} onClick={handleDrawerOpen}>
+        경험 작성
+      </SolidButton>
 
       <div className="absolute right-[calc(100%+10px)] top-1/2 z-10 -translate-y-1/2">
         <Tooltip>
@@ -23,25 +26,6 @@ const ExperienceCreateButton = () => {
 };
 
 export default ExperienceCreateButton;
-
-// TODO: props로 variant 등 추가 예정
-interface SolidButtonProps {
-  variant?: 'primary' | 'secondary';
-  children: React.ReactNode;
-  onClick?: () => void;
-}
-
-const SolidButton = ({ children, onClick }: SolidButtonProps) => {
-  return (
-    <button
-      className="flex cursor-pointer items-center gap-1 rounded-xs bg-primary-10 px-3 py-2 text-primary hover:bg-primary-15"
-      onClick={onClick}
-    >
-      <Plus size={16} />
-      <span className="text-sm font-medium">{children}</span>
-    </button>
-  );
-};
 
 const Tooltip = ({ children }: { children: React.ReactNode }) => {
   const [isOpen, setIsOpen] = useState(true);

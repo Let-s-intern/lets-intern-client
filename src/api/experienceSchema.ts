@@ -63,10 +63,10 @@ export const userExperienceListSchema = z.object({
 });
 
 export interface UserExperienceFilters {
-  availableCategories: z.infer<typeof categorySchema>[];
-  availableActivityTypes: z.infer<typeof activitySchema>[];
-  availableYears: number[];
-  availableCoreCompetencies: string[];
+  experienceCategories: z.infer<typeof categorySchema>[];
+  activityTypes: z.infer<typeof activitySchema>[];
+  years: number[];
+  coreCompetencies: string[];
 }
 
 export interface Pageable {

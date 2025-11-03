@@ -1,7 +1,6 @@
 import {
   ACTIVITY_TYPE_KR,
   EXPERIENCE_CATEGORY_KR,
-  UserExperienceFilters,
 } from '@/api/experienceSchema';
 import { Filters } from '@components/common/mypage/experience/ExperienceFilters';
 
@@ -9,7 +8,7 @@ import { Filters } from '@components/common/mypage/experience/ExperienceFilters'
  * ✅ API 응답 데이터를 UI 드롭다운 옵션 형식으로 변환
  * (API → UI)
  */
-export const convertFilterResToUiFormat = (data: UserExperienceFilters) => {
+export const convertFilterResToUiFormat = (data: any) => {
   const addAllOption = (options: { value: string; label: string }[]) => [
     { value: 'ALL', label: '전체' },
     ...options,
@@ -49,11 +48,11 @@ export const convertFilterResToUiFormat = (data: UserExperienceFilters) => {
  */
 export const convertFilterUiToApiFormat = (filters: Filters) => {
   return {
-    availableCategories: filters.category === 'ALL' ? [] : [filters.category],
-    availableActivityTypes:
-      filters.activity === 'ALL' ? [] : [filters.activity],
-    availableYears: filters.year === 'ALL' ? [] : [Number(filters.year)],
-    availableCoreCompetencies:
-      filters.coreCompetency === 'ALL' ? [] : [filters.coreCompetency],
+    experienceCategories:
+      filters.category === 'ALL' ? null : [filters.category],
+    activityTypes: filters.activity === 'ALL' ? null : [filters.activity],
+    years: filters.year === 'ALL' ? null : [Number(filters.year)],
+    coreCompetencies:
+      filters.coreCompetency === 'ALL' ? null : [filters.coreCompetency],
   };
 };

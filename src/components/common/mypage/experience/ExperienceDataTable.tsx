@@ -1,8 +1,10 @@
 import { useGetAllUserExperienceQuery } from '@/api/experience';
 import { convertFilterUiToApiFormat } from '@/app/(user)/mypage/experience/utils';
 import { Filters } from '@components/common/mypage/experience/ExperienceFilters';
+import OutlinedButton from '@components/common/mypage/experience/OutlinedButton';
 import MuiPagination from '@components/common/program/pagination/MuiPagination';
 import DataTable, { TableHeader } from '@components/common/table/DataTable';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useEffect, useState } from 'react';
 
 const PAGE_SIZE = 10;
@@ -10,7 +12,7 @@ const PAGE_SIZE = 10;
 const ExperienceDataTable = ({ filters }: { filters: Filters }) => {
   const [page, setPage] = useState(1);
 
-  const { data } = useGetAllUserExperienceQuery(
+  const { data, isLoading } = useGetAllUserExperienceQuery(
     convertFilterUiToApiFormat(filters),
     {
       page,
@@ -25,6 +27,12 @@ const ExperienceDataTable = ({ filters }: { filters: Filters }) => {
     totalElements: 0,
   };
 
+  const isAllFilters =
+    filters.category === 'ALL' &&
+    filters.activity === 'ALL' &&
+    filters.year === 'ALL' &&
+    filters.coreCompetency === 'ALL';
+
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
     page: number,
@@ -32,9 +40,49 @@ const ExperienceDataTable = ({ filters }: { filters: Filters }) => {
     setPage(page);
   };
 
+  const handleResetFilters = () => {
+    // 필터 초기화 로직 구현 (부모 컴포넌트로부터 전달된 함수 호출 등)
+  };
+
+  const handleDrawerOpen = () => {
+    // 드로어 열기 로직 구현
+  };
+
   useEffect(() => {
     setPage(1);
   }, [filters]);
+
+  if (isLoading) {
+    return (
+      <LoadingContainer
+        className="mt-[14%]"
+        text="경험을 불러오는 중입니다.."
+      />
+    );
+  }
+
+  if (userExperiences.length === 0) {
+    if (isAllFilters)
+      return (
+        <div className="flex h-[25rem] flex-col items-center justify-center gap-3">
+          <p className="text-sm text-neutral-20">
+            지금까지 쌓아온 경험을 작성해 주세요.
+          </p>
+          <OutlinedButton onClick={handleDrawerOpen}>
+            경험 작성하기
+          </OutlinedButton>
+        </div>
+      );
+
+    return (
+      <div className="flex h-[25rem] flex-col items-center justify-center gap-3">
+        <p className="text-sm text-neutral-20">
+          해당 조건에 맞는 경험이 없습니다.
+        </p>
+        <OutlinedButton onClick={handleResetFilters}>초기화하기</OutlinedButton>
+      </div>
+    );
+  }
 
   return (
     <section>
