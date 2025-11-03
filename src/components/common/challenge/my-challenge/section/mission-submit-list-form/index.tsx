@@ -53,7 +53,7 @@ export const MissionSubmitListForm = ({
               <span>
                 아직 경험을 작성하지 않았거나 삭제, 수정이 필요하다면,{' '}
                 <a
-                  href="/career/experience"
+                  href="/mypage/experience"
                   className="text-primary underline hover:text-primary/80"
                 >
                   [커리어 관리 &gt; 경험 정리]
