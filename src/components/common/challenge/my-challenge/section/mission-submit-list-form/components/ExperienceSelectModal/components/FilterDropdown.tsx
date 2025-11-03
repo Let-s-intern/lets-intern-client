@@ -1,5 +1,6 @@
 'use client';
 
+import { Check } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 interface FilterOption {
@@ -90,18 +91,23 @@ export const FilterDropdown = ({
       </button>
       {isOpen && (
         <div
-          className={`absolute z-20 mt-1 ${width} rounded-sm border border-gray-300 bg-white shadow-lg`}
+          className={`absolute z-20 mt-1 w-full rounded-sm border border-gray-300 bg-white shadow-lg`}
         >
-          {options.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              onClick={() => handleSelect(option.value)}
-              className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
-            >
-              {option.label}
-            </button>
-          ))}
+          {options.map((option) => {
+            const isSelected = option.value === selectedValue;
+
+            return (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => handleSelect(option.value)}
+                className="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+              >
+                {option.label}
+                {isSelected && <Check size={20} className="text-primary-80" />}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>
