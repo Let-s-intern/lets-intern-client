@@ -49,3 +49,11 @@ export const usePostUserExperienceMutation = () => {
     },
   });
 };
+
+export const useDeleteUserExperienceMutation = () => {
+  return useMutation({
+    mutationFn: async (experienceId: number) => {
+      await axios.delete(`/user-experience/${experienceId}`);
+    },
+  });
+};
