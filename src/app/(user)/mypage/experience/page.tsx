@@ -1,10 +1,10 @@
 'use client';
 
+import ExperienceCreateButton from '@components/common/mypage/experience/ExperienceCreateButton';
 import ExperienceDataTable from '@components/common/mypage/experience/ExperienceDataTable';
 import ExperienceFilters, {
   Filters,
 } from '@components/common/mypage/experience/ExperienceFilters';
-import { Plus } from 'lucide-react';
 import { useState } from 'react';
 
 const Experience = () => {
@@ -22,15 +22,11 @@ const Experience = () => {
     });
   };
 
-  const handleDrawerOpen = () => {
-    // 드로어 열기 로직 구현
-  };
-
   return (
     <div className="flex w-full flex-col gap-3 px-5 pb-20">
       <section className="flex w-full justify-between">
         <h1 className="text-lg font-semibold">경험 정리 목록</h1>
-        <SolidButton onClick={handleDrawerOpen}>경험 작성</SolidButton>
+        <ExperienceCreateButton />
       </section>
 
       <section className="flex justify-between">
@@ -38,7 +34,6 @@ const Experience = () => {
           filters={filters}
           onFiltersChange={handleFilterChange}
         />
-
         {/* 정렬 필터 영역 (추후 구현) */}
       </section>
 
@@ -49,21 +44,23 @@ const Experience = () => {
 
 export default Experience;
 
-// TODO: props로 variant 등 추가 예정
-interface SolidButtonProps {
-  variant?: 'primary' | 'secondary';
-  children: React.ReactNode;
-  onClick?: () => void;
-}
-
-const SolidButton = ({ children, onClick }: SolidButtonProps) => {
-  return (
-    <button
-      className="flex cursor-pointer items-center gap-1 rounded-xs bg-primary-10 px-3 py-2 text-primary hover:bg-primary-15"
-      onClick={onClick}
-    >
-      <Plus size={16} />
-      <span className="text-sm font-medium">{children}</span>
-    </button>
-  );
-};
+// // 임시: 경험 추가 뮤테이션 테스트
+// const { mutate: postUserExperience } = usePostUserExperienceMutation();
+// useEffect(() => {
+//   // 임시 데이터 추가 (테스트 용도)
+//   postUserExperience({
+//     startDate: '2025-10-29',
+//     endDate: '2025-10-29',
+//     title: '제목',
+//     activityType: 'TEAM',
+//     experienceCategory: 'ACADEMIC',
+//     role: 'FE',
+//     situation: 'test',
+//     task: 'test',
+//     action: 'test',
+//     result: 'test',
+//     // coreCompetency: 'test',
+//     // customCategoryName: 'test',
+//     isAdminAdded: false,
+//   });
+// }, []);
