@@ -5,6 +5,7 @@ import dayjs from '@/lib/dayjs';
 // 경험 데이터 타입 정의 (이미지 참고)
 export interface ExperienceData {
   id: string;
+  originalId: number; // API의 원본 ID (서버 전송용)
   name: string; // 경험 이름
   category: string; // 경험 분류 (프로젝트, 인턴십 등)
   organization: string; // 기관
@@ -66,6 +67,7 @@ export const convertUserExperienceToExperienceData = (
 
   return {
     id: String(userExp.id),
+    originalId: userExp.id, // API의 원본 number ID 보존
     name: userExp.title,
     category:
       experienceCategoryToLabel[userExp.experienceCategory] ||
@@ -104,6 +106,7 @@ export const getExperienceHeaders = (): TableHeader[] => [
 export const dummyExperiences: ExperienceData[] = [
   {
     id: '1',
+    originalId: 1,
     name: '신제품 런칭 캠페인 기획 및 실행',
     category: '프로젝트',
     organization: 'IT 연합 동아리',
@@ -124,6 +127,7 @@ export const dummyExperiences: ExperienceData[] = [
   },
   {
     id: '2',
+    originalId: 2,
     name: '모바일 앱 개발 프로젝트',
     category: '프로젝트',
     organization: 'ABC 소프트웨어',
@@ -144,6 +148,7 @@ export const dummyExperiences: ExperienceData[] = [
   },
   {
     id: '3',
+    originalId: 3,
     name: '데이터 분석 및 시각화',
     category: '개인 프로젝트',
     organization: '개인',

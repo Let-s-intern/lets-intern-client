@@ -8,10 +8,12 @@ import { ExperienceData } from './data';
 interface MissionSubmitListFormProps {
   experienceCount?: number;
   experiences?: ExperienceData[];
+  onExperienceIdsChange?: (ids: number[]) => void;
 }
 
 export const MissionSubmitListForm = ({
   experienceCount = 0,
+  onExperienceIdsChange,
 }: MissionSubmitListFormProps) => {
   // 테스트용으로 experienceCount를 4로 설정
   experienceCount = 3;
@@ -31,6 +33,9 @@ export const MissionSubmitListForm = ({
 
   const handleSelectComplete = (selectedExperiences: ExperienceData[]) => {
     setSelectedExperiences(selectedExperiences);
+    // 선택된 경험들의 originalId 추출하여 부모에게 전달
+    const experienceIds = selectedExperiences.map((exp) => exp.originalId);
+    onExperienceIdsChange?.(experienceIds);
     setIsModalOpen(false);
   };
   return (

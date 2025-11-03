@@ -72,6 +72,10 @@ const MissionSubmitRegularSection = ({
   // 링크 변경 확인 모달 오픈 상태
   const [modalOpen, setModalOpen] = useState(false);
   const [isBonusMissionModalOpen, setIsBonusMissionModalOpen] = useState(false);
+  // 선택된 경험 ID들
+  const [selectedExperienceIds, setSelectedExperienceIds] = useState<number[]>(
+    [],
+  );
 
   const submitMission = useSubmitMission();
   const patchAttendance = usePatchAttendance();
@@ -96,14 +100,6 @@ const MissionSubmitRegularSection = ({
     setTextareaValue(e.target.value);
   };
 
-  const handleLinkChange = (link: string) => {
-    setLinkValue(link);
-  };
-
-  const handleLinkVerified = (isVerified: boolean) => {
-    setIsLinkVerified(isVerified);
-  };
-
   const isResubmitBlocked =
     attendanceInfo?.result === 'PASS' ||
     attendanceInfo?.result === 'FINAL_WRONG' ||
@@ -125,8 +121,9 @@ const MissionSubmitRegularSection = ({
     try {
       await submitMission.mutateAsync({
         missionId,
-        link: linkValue,
+        link: '', // 빈 문자열로 전송
         review: textareaValue,
+        userExperienceIds: selectedExperienceIds,
       });
       await refetchSchedules?.();
       setToastMessage('미션 제출이 완료되었습니다.');
@@ -203,21 +200,11 @@ const MissionSubmitRegularSection = ({
   return (
     <>
       <section className={className}>
-        {/* <h2 className="mb-6 text-small18 font-bold text-neutral-0">
-          미션 제출하기
-        </h2> */}
-
         {/* 링크 섹션 */}
-        <MissionSubmitListForm experienceCount={0} />
-        {/* <LinkInputSection
-          disabled={(isSubmitted && !isEditing) || isResubmitBlocked}
-          onLinkChange={handleLinkChange}
-          onLinkVerified={handleLinkVerified}
-          todayTh={selectedMissionTh}
-          initialLink={linkValue}
-          text={`미션 링크는 .notion.site 형식의 퍼블릭 링크만 입력 가능합니다.
-          제출 후, 미션과 소감을 카카오톡으로 공유해야 제출이 인정됩니다.`}
-        /> */}
+        <MissionSubmitListForm
+          experienceCount={0}
+          onExperienceIdsChange={setSelectedExperienceIds}
+        />
 
         {/* 미션 소감 */}
         <section>
