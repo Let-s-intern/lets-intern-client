@@ -1,4 +1,6 @@
+import { UserExperience } from '@/api/userExperienceSchema';
 import { TableHeader } from '@/components/common/table/DataTable';
+import dayjs from '@/lib/dayjs';
 
 // 경험 데이터 타입 정의 (이미지 참고)
 export interface ExperienceData {
@@ -18,6 +20,69 @@ export interface ExperienceData {
   learnings: string; // 느낀 점 / 배운 점
   coreCompetencies: string[]; // 핵심역량 (배열)
 }
+
+// API 값과 UI 표시 값 간 매핑
+export const experienceCategoryToLabel: Record<string, string> = {
+  PROJECT: '프로젝트',
+  INTERNSHIP: '인턴십',
+  CLUB: '동아리',
+  CONFERENCE: '학회',
+  EDUCATION: '교육',
+  CONTEST: '공모전',
+  ACTIVITY: '대외활동',
+  COMPANY: '회사',
+  UNIVERSITY: '대학교',
+  ETC: '기타',
+};
+
+export const activityTypeToLabel: Record<string, string> = {
+  TEAM: '팀',
+  INDIVIDUAL: '개인',
+};
+
+// UI 표시 값 -> API 값 역매핑
+export const labelToExperienceCategory: Record<string, string> =
+  Object.fromEntries(
+    Object.entries(experienceCategoryToLabel).map(([key, value]) => [
+      value,
+      key,
+    ]),
+  );
+
+export const labelToActivityType: Record<string, string> = Object.fromEntries(
+  Object.entries(activityTypeToLabel).map(([key, value]) => [value, key]),
+);
+
+// API 응답을 ExperienceData로 변환
+export const convertUserExperienceToExperienceData = (
+  userExp: UserExperience,
+): ExperienceData => {
+  const startDate = dayjs(userExp.startDate);
+  const endDate = dayjs(userExp.endDate);
+  const year = startDate.year();
+
+  // 기간 포맷: "2024.01 - 2025.12"
+  const period = `${startDate.format('YYYY.MM')} - ${endDate.format('YYYY.MM')}`;
+
+  return {
+    id: String(userExp.id),
+    name: userExp.title,
+    category:
+      experienceCategoryToLabel[userExp.experienceCategory] ||
+      userExp.experienceCategory,
+    organization: userExp.organ,
+    role: userExp.role,
+    type: activityTypeToLabel[userExp.activityType] as '팀' | '개인',
+    period,
+    year,
+    situation: userExp.situation,
+    task: userExp.task,
+    action: userExp.action,
+    result: userExp.result,
+    learnings: userExp.reflection,
+    coreCompetencies: userExp.coreCompetency ? [userExp.coreCompetency] : [],
+  };
+};
 
 // 경험 테이블 헤더 (재사용)
 export const getExperienceHeaders = (): TableHeader[] => [
