@@ -2,20 +2,23 @@ import { useGetAllUserExperienceQuery } from '@/api/experience';
 import {
   convertFilterUiToApiFormat,
   isAllFilters,
+  sortExperiences,
 } from '@/app/(user)/mypage/experience/utils';
 import { Filters } from '@components/common/mypage/experience/ExperienceFilters';
 import OutlinedButton from '@components/common/mypage/experience/OutlinedButton';
 import MuiPagination from '@components/common/program/pagination/MuiPagination';
 import DataTable, { TableHeader } from '@components/common/table/DataTable';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 const PAGE_SIZE = 10;
 
 const ExperienceDataTable = ({
+  sortBy,
   filters,
   onResetFilters,
 }: {
+  sortBy: string;
   filters: Filters;
   onResetFilters: () => void;
 }) => {
@@ -35,6 +38,10 @@ const ExperienceDataTable = ({
     totalPages: 0,
     totalElements: 0,
   };
+
+  const sortedExperiences = useMemo(() => {
+    return sortExperiences(userExperiences, sortBy);
+  }, [userExperiences, sortBy]);
 
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
@@ -64,7 +71,7 @@ const ExperienceDataTable = ({
     <section>
       <DataTable
         headers={experienceTableHeaders}
-        data={userExperiences}
+        data={sortedExperiences}
         className="rounded-lg border"
       />
 

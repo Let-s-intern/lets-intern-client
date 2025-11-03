@@ -9,19 +9,21 @@ interface FilterOption {
 }
 
 interface FilterDropdownProps {
-  labelPrefix: string;
+  labelPrefix?: string;
   options: FilterOption[];
   selectedValue: string;
   onSelect: (value: string) => void;
   width?: string;
+  className?: string;
 }
 
 export const FilterDropdown = ({
-  labelPrefix,
+  labelPrefix = '',
   options,
   selectedValue,
   onSelect,
   width = 'w-48',
+  className = '',
 }: FilterDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -68,9 +70,9 @@ export const FilterDropdown = ({
       <button
         type="button"
         onClick={toggleDropdown}
-        className={`flex ${width} items-center justify-between gap-1.5 rounded-sm border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50`}
+        className={`flex ${width} items-center justify-between gap-1.5 rounded-sm border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 ${className}`}
       >
-        <span>{labelPrefix} </span>
+        {labelPrefix && <span>{labelPrefix} </span>}
         <span className="text-primary-dark">{getFilterLabel()}</span>
 
         <svg

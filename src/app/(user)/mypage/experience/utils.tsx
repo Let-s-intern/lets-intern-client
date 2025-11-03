@@ -63,3 +63,27 @@ export const isAllFilters = (filters: Filters) => {
     filters.coreCompetency.length === 0
   );
 };
+
+export const sortExperiences = (experiences: any[], sortBy: string) => {
+  if (!Array.isArray(experiences)) return [];
+
+  const sorted = [...experiences]; // 원본 불변성 유지
+
+  switch (sortBy) {
+    case 'recentlyModified':
+      return sorted.sort(
+        (a, b) =>
+          new Date(b.lastModifiedDate).getTime() -
+          new Date(a.lastModifiedDate).getTime(),
+      );
+
+    case 'oldest':
+      return sorted.sort(
+        (a, b) =>
+          new Date(a.createDate).getTime() - new Date(b.createDate).getTime(),
+      );
+
+    default:
+      return experiences;
+  }
+};

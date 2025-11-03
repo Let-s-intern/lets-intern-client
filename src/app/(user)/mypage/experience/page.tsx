@@ -5,6 +5,7 @@ import ExperienceDataTable from '@components/common/mypage/experience/Experience
 import ExperienceFilters, {
   Filters,
 } from '@components/common/mypage/experience/ExperienceFilters';
+import SortFilterDropdown from '@components/common/mypage/experience/SortFilterDropdown';
 import { useState } from 'react';
 
 const DEFAULT_FILTERS: Filters = {
@@ -12,10 +13,11 @@ const DEFAULT_FILTERS: Filters = {
   activity: 'ALL',
   year: 'ALL',
   coreCompetency: [],
-} as const;
+};
 
 const Experience = () => {
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
+  const [sortBy, setSortBy] = useState('latest');
 
   const handleFilterChange = (filterType: keyof Filters, value: string) => {
     setFilters((prev) => {
@@ -55,10 +57,12 @@ const Experience = () => {
           filters={filters}
           onFiltersChange={handleFilterChange}
         />
-        {/* 정렬 필터 영역 (추후 구현) */}
+
+        <SortFilterDropdown sortBy={sortBy} onSortChange={setSortBy} />
       </section>
 
       <ExperienceDataTable
+        sortBy={sortBy}
         filters={filters}
         onResetFilters={handleResetFilters}
       />
