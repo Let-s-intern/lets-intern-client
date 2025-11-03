@@ -7,29 +7,38 @@ interface FilterOption {
   label: string;
 }
 
-interface FilterDropdownProps {
+interface MultiFilterDropdownProps {
   labelPrefix: string;
   options: FilterOption[];
-  selectedValue: string;
+  selectedValues: string[];
   onSelect: (value: string) => void;
   width?: string;
 }
 
-export const FilterDropdown = ({
+export const MultiFilterDropdown = ({
   labelPrefix,
   options,
-  selectedValue,
+  selectedValues,
   onSelect,
   width = 'w-48',
-}: FilterDropdownProps) => {
+}: MultiFilterDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const getFilterLabel = () => {
-    const selectedOption = options.find(
-      (option) => option.value === selectedValue,
+    if (selectedValues.length === 0) {
+      return options[0].label;
+    }
+
+    // selectedValues 중 options 배열에서 가장 앞에 있는 항목 찾기
+    const selectedOption = options.find((option) =>
+      selectedValues.includes(option.value),
     );
-    return selectedOption?.label || options[0].label;
+
+    if (selectedValues.length === 1) {
+      return selectedOption?.label;
+    }
+    return `${selectedOption?.label} 외 N`;
   };
 
   const handleSelect = (value: string) => {

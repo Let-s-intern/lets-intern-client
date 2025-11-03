@@ -48,20 +48,18 @@ export const convertFilterResToUiFormat = (data: any) => {
  */
 export const convertFilterUiToApiFormat = (filters: Filters) => {
   return {
-    experienceCategories:
-      filters.category === 'ALL' ? null : [filters.category],
-    activityTypes: filters.activity === 'ALL' ? null : [filters.activity],
-    years: filters.year === 'ALL' ? null : [Number(filters.year)],
-    coreCompetencies:
-      filters.coreCompetency === 'ALL' ? null : [filters.coreCompetency],
+    experienceCategories: filters.category,
+    activityTypes: filters.activity === 'ALL' ? [] : [filters.activity],
+    years: filters.year === 'ALL' ? [] : [Number(filters.year)],
+    coreCompetencies: filters.coreCompetency,
   };
 };
 
 export const isAllFilters = (filters: Filters) => {
   return (
-    filters.category === 'ALL' &&
+    filters.category.length === 0 &&
     filters.activity === 'ALL' &&
     filters.year === 'ALL' &&
-    filters.coreCompetency === 'ALL'
+    filters.coreCompetency.length === 0
   );
 };

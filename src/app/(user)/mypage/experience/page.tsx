@@ -8,19 +8,34 @@ import ExperienceFilters, {
 import { useState } from 'react';
 
 const DEFAULT_FILTERS: Filters = {
-  category: 'ALL',
+  category: [],
   activity: 'ALL',
   year: 'ALL',
-  coreCompetency: 'ALL',
+  coreCompetency: [],
 } as const;
 
 const Experience = () => {
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
 
   const handleFilterChange = (filterType: keyof Filters, value: string) => {
-    setFilters({
-      ...filters,
-      [filterType]: value,
+    setFilters((prev) => {
+      const currentValue = prev[filterType];
+
+      // 기존 값이 배열일 경우 (다중 선택 필터)
+      if (Array.isArray(currentValue)) {
+        if (value === 'ALL') {
+          return { ...prev, [filterType]: [] };
+        }
+
+        const nextValue = currentValue.includes(value as any)
+          ? currentValue.filter((v) => v !== value)
+          : [...currentValue, value];
+
+        return { ...prev, [filterType]: nextValue };
+      }
+
+      // 단일 선택 필터일 경우
+      return { ...prev, [filterType]: value };
     });
   };
 

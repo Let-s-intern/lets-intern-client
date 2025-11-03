@@ -2,13 +2,14 @@ import { useGetUserExperienceFiltersQuery } from '@/api/experience';
 import { ActivityType, CategoryType } from '@/api/experienceSchema';
 import { convertFilterResToUiFormat } from '@/app/(user)/mypage/experience/utils';
 import { FilterDropdown } from '@components/common/challenge/my-challenge/section/mission-submit-list-form/components/ExperienceSelectModal/components/FilterDropdown';
+import { MultiFilterDropdown } from '@components/common/challenge/my-challenge/section/mission-submit-list-form/components/ExperienceSelectModal/components/MultiFilterDropdown';
 import { useMemo } from 'react';
 
 export interface Filters {
-  category: CategoryType | 'ALL';
+  category: CategoryType[];
   activity: ActivityType | 'ALL';
   year: string;
-  coreCompetency: string;
+  coreCompetency: string[];
 }
 
 interface ExperienceFiltersProps {
@@ -32,10 +33,10 @@ const ExperienceFilters = ({
 
   return (
     <div className="flex gap-2">
-      <FilterDropdown
+      <MultiFilterDropdown
         labelPrefix="경험 분류"
         options={filterOptions.availableCategories}
-        selectedValue={filters.category}
+        selectedValues={filters.category}
         onSelect={(value) => onFiltersChange('category', value)}
         width="min-w-[8.25rem]"
       />
@@ -53,10 +54,10 @@ const ExperienceFilters = ({
         onSelect={(value) => onFiltersChange('year', value)}
         width="min-w-[6.5rem]"
       />
-      <FilterDropdown
+      <MultiFilterDropdown
         labelPrefix="핵심 역량"
         options={filterOptions.availableCoreCompetencies}
-        selectedValue={filters.coreCompetency}
+        selectedValues={filters.coreCompetency}
         onSelect={(value) => onFiltersChange('coreCompetency', value)}
         width="min-w-[8.25rem]"
       />
