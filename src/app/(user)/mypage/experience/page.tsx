@@ -7,19 +7,25 @@ import ExperienceFilters, {
 } from '@components/common/mypage/experience/ExperienceFilters';
 import { useState } from 'react';
 
+const DEFAULT_FILTERS: Filters = {
+  category: 'ALL',
+  activity: 'ALL',
+  year: 'ALL',
+  coreCompetency: 'ALL',
+} as const;
+
 const Experience = () => {
-  const [filters, setFilters] = useState<Filters>({
-    category: 'ALL',
-    activity: 'ALL',
-    year: 'ALL',
-    coreCompetency: 'ALL',
-  });
+  const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
 
   const handleFilterChange = (filterType: keyof Filters, value: string) => {
     setFilters({
       ...filters,
       [filterType]: value,
     });
+  };
+
+  const handleResetFilters = () => {
+    setFilters(DEFAULT_FILTERS);
   };
 
   return (
@@ -37,7 +43,10 @@ const Experience = () => {
         {/* 정렬 필터 영역 (추후 구현) */}
       </section>
 
-      <ExperienceDataTable filters={filters} />
+      <ExperienceDataTable
+        filters={filters}
+        onResetFilters={handleResetFilters}
+      />
     </div>
   );
 };

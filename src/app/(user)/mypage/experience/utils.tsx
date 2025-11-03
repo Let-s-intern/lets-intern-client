@@ -56,3 +56,12 @@ export const convertFilterUiToApiFormat = (filters: Filters) => {
       filters.coreCompetency === 'ALL' ? null : [filters.coreCompetency],
   };
 };
+
+export const isAllFilters = (filters: Filters) => {
+  return (
+    filters.category === 'ALL' &&
+    filters.activity === 'ALL' &&
+    filters.year === 'ALL' &&
+    filters.coreCompetency === 'ALL'
+  );
+};
