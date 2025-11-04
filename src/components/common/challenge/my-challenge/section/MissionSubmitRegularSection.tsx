@@ -26,6 +26,7 @@ interface MissionSubmitRegularSectionProps {
     comments: string | null;
     result: AttendanceResult | null;
     review?: string | null;
+    submittedUserExperienceIds?: number[] | null;
   } | null;
   onRefreshMissionData?: () => void; // 미션 데이터 새로고침 callback
   onSubmitLastMission?: () => void;
@@ -94,6 +95,8 @@ const MissionSubmitRegularSection = ({
     setLinkValue(linkValue);
     setIsLinkVerified(!!linkValue);
     setIsEditing(false); // 새 미션 선택 시 수정 모드 해제
+    // 초기 경험 ID 설정
+    setSelectedExperienceIds(attendanceInfo?.submittedUserExperienceIds || []);
   }, [attendanceInfo]);
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -149,6 +152,9 @@ const MissionSubmitRegularSection = ({
     if (isChanged) {
       setLinkValue(attendanceInfo?.link ?? '');
       setTextareaValue(attendanceInfo?.review || '');
+      setSelectedExperienceIds(
+        attendanceInfo?.submittedUserExperienceIds || [],
+      );
       setIsEditing(false);
       setIsLinkVerified(false);
     } else {
@@ -182,6 +188,9 @@ const MissionSubmitRegularSection = ({
   const canSubmit =
     selectedExperienceIds.length >= 3 && textareaValue.trim().length > 0;
 
+  // "작성한 경험 불러오기" 버튼 활성화 조건: 수정 가능할 때만
+  const isLoadButtonEnabled = isEditing && !isResubmitBlocked;
+
   const handleOpenBonusMissionModalAtSubmission = (
     currentSubmissionMissionTh: number,
   ) => {
@@ -204,6 +213,8 @@ const MissionSubmitRegularSection = ({
         {/* 링크 섹션 */}
         <MissionSubmitListForm
           onExperienceIdsChange={setSelectedExperienceIds}
+          initialExperienceIds={attendanceInfo?.submittedUserExperienceIds}
+          isLoadButtonEnabled={isLoadButtonEnabled}
         />
 
         {/* 미션 소감 */}

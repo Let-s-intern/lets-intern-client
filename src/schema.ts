@@ -1164,6 +1164,7 @@ export const challengeSchedule = z
           feedbackStatus: AttendanceFeedbackStatusEnum.nullable(),
           accountType: z.string().nullish(),
           accountNum: z.string().nullish(),
+          submittedUserExperienceIds: z.array(z.number()).nullable(),
         }),
       }),
     ),
