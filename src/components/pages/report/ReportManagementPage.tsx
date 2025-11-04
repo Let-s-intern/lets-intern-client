@@ -130,8 +130,8 @@ type ReportManageButtonComponent = {
   displayName?: string | undefined;
 };
 
-export const ReportManagementButton: ReportManageButtonComponent = forwardRef(
-  <T extends ElementType = 'button'>(
+export const ReportManagementButton = forwardRef(
+  (
     {
       as,
       children,
@@ -139,8 +139,8 @@ export const ReportManagementButton: ReportManageButtonComponent = forwardRef(
       disabled = false,
       type = 'button',
       ...props
-    }: ReportManagementButtonProps<T>,
-    ref: React.Ref<Element>,
+    }: any,
+    ref,
   ) => {
     const Component = (as || 'button') as JSX.ElementType;
     return (
