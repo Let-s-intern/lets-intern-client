@@ -65,6 +65,10 @@ export const useExperienceSelectModal = ({
   const [filters, setFilters] = useState<Filters>(INITIAL_FILTERS);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
+  // 모든 페이지에서 선택된 경험 데이터를 저장하는 Map (id -> ExperienceData)
+  const [selectedExperiencesMap, setSelectedExperiencesMap] = useState<
+    Map<string, ExperienceData>
+  >(new Map());
 
   // 필터 옵션 조회
   const { data: filterOptions } = useUserExperienceFiltersQuery();
@@ -131,20 +135,43 @@ export const useExperienceSelectModal = ({
     );
   }, [searchResponse]);
 
-  // 전체 선택된 경험 데이터 (현재 페이지 기준)
-  const allSelectedExperiences = useMemo(() => {
-    if (!searchResponse?.userExperiences) {
-      return [];
-    }
-    return searchResponse.userExperiences
-      .filter((exp) => selectedRowIds.has(String(exp.id)))
-      .map(convertUserExperienceToExperienceData);
-  }, [searchResponse, selectedRowIds]);
+  // selectedRowIds와 현재 페이지 experiences 변경 시 Map 업데이트
+  useEffect(() => {
+    if (!experiences.length) return;
+
+    setSelectedExperiencesMap((prevMap) => {
+      const newMap = new Map(prevMap);
+
+      // 현재 페이지의 모든 경험을 순회
+      experiences.forEach((exp) => {
+        const expId = String(exp.id);
+        const isSelected = selectedRowIds.has(expId);
+
+        if (isSelected) {
+          // 선택된 경우 Map에 추가/업데이트
+          newMap.set(expId, exp);
+        } else {
+          // 선택 해제된 경우 Map에서 제거
+          newMap.delete(expId);
+        }
+      });
+
+      return newMap;
+    });
+  }, [experiences, selectedRowIds]);
 
   // 필터 변경 시 페이지 초기화
   useEffect(() => {
     setCurrentPage(1);
   }, [filters]);
+
+  // 모달이 닫힐 때 선택 상태 초기화
+  useEffect(() => {
+    if (!isOpen) {
+      setSelectedRowIds(new Set());
+      setSelectedExperiencesMap(new Map());
+    }
+  }, [isOpen]);
 
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
@@ -157,6 +184,8 @@ export const useExperienceSelectModal = ({
     onSelectComplete: (selectedExperiences: ExperienceData[]) => void,
     onClose: () => void,
   ) => {
+    // Map의 모든 값들을 배열로 변환
+    const allSelectedExperiences = Array.from(selectedExperiencesMap.values());
     onSelectComplete(allSelectedExperiences);
     onClose();
   };
@@ -180,7 +209,7 @@ export const useExperienceSelectModal = ({
     selection: {
       selectedRowIds,
       setSelectedRowIds,
-      selectedCount: selectedRowIds.size,
+      selectedCount: selectedExperiencesMap.size,
     },
     handleComplete,
   };
