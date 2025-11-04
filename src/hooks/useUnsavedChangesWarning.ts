@@ -34,9 +34,9 @@ export function useUnsavedChangesWarning(
     // 1. 브라우저 새로고침/탭 닫기 방지
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       if (hasUnsavedChanges) {
-        event.preventDefault();
         // 최신 브라우저에서는 커스텀 메시지가 무시되고 브라우저 기본 메시지가 표시됩니다
-        return (event.returnValue = message);
+        // returnValue를 빈 문자열로 설정하는 것이 표준 방법입니다
+        event.returnValue = '';
       }
     };
 
