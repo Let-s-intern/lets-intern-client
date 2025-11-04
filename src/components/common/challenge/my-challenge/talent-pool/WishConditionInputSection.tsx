@@ -86,7 +86,7 @@ export default function WishConditionInputSection({
 
     // 직군 무관을 선택한 경우
     if (fieldName === '직군 무관') {
-      onPositionsChange([]);
+      onPositionsChange(['직무 무관']);
       setModalStep(null);
     } else {
       setModalStep('position');
