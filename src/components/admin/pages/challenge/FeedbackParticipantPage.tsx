@@ -293,7 +293,7 @@ export default function FeedbackParticipantPage() {
         renderCell: FeedbackStatusRenderCell,
       },
     ],
-    [missionId],
+    [missionId, programId],
   );
 
   return (
