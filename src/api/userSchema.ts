@@ -133,31 +133,92 @@ const activityTypeEnum = z.enum(
   ],
 );
 
-/** 경험 정리 /api/v1/user-experience/* */
-export const userExperienceSchema = z.object({
-  title: z.string().optional(),
-  experienceCategory: experienceCategoryEnum.optional(),
+/**
+ * 경험 정리
+ * */
+const userExperienceBaseSchema = z.object({
+  // === 기본 정보 ===
+  title: z.string(),
+  experienceCategory: experienceCategoryEnum,
   customCategoryName: z.string().optional(),
-  organ: z.string().optional(), // 기관 추가 필요
-  role: z.string().optional(),
-  activityType: activityTypeEnum.optional(),
-  startDate: z.string(), // YYYY-MM-DD 형식
-  endDate: z.string(), // YYYY-MM-DD 형식
-  ////
+  organ: z.string(),
+  role: z.string(),
+  activityType: activityTypeEnum,
+  startDate: z.string(),
+  endDate: z.string(),
+  // === 경험 상세 작성 ===
   situation: z.string().optional(),
   task: z.string().optional(),
   action: z.string().optional(),
   result: z.string().optional(),
-  reflection: z.string().optional(), // 느낀점/배운점 추가 필요
-  ////
+  reflection: z.string().optional(),
+  // === 핵심 역량 ===
   coreCompetency: z.string().optional(),
   isAdminAdded: z.boolean().optional(),
 });
 
+export const userExperienceSchema = userExperienceBaseSchema
+  .extend({
+    // 필수 필드 검증 추가
+    title: z
+      .string()
+      .min(1, '경험 이름은 필수값입니다.')
+      .refine((val) => val.trim().length > 0, {
+        message: '경험 이름은 필수값입니다.',
+      }),
+    experienceCategory: experienceCategoryEnum
+      .optional()
+      .refine((val) => val !== undefined && val !== null, {
+        message: '경험 분류는 필수값입니다.',
+      }),
+    organ: z
+      .string()
+      .min(1, '기관은 필수값입니다.')
+      .refine((val) => val.trim().length > 0, {
+        message: '기관은 필수값입니다.',
+      }),
+    role: z
+      .string()
+      .min(1, '역할은 필수값입니다.')
+      .refine((val) => val.trim().length > 0, {
+        message: '역할은 필수값입니다.',
+      }),
+    activityType: activityTypeEnum,
+    startDate: z.string().min(1, '시작 기간은 필수값입니다.'),
+    endDate: z.string().min(1, '종료 기간은 필수값입니다.'),
+  })
+  .refine(
+    (data) => {
+      // experienceCategory가 OTHER일 때 customCategoryName 필수
+      if (data.experienceCategory === 'OTHER') {
+        return (
+          data.customCategoryName && data.customCategoryName.trim().length > 0
+        );
+      }
+      return true;
+    },
+    {
+      message: '기타 분류명을 입력해주세요.',
+      path: ['customCategoryName'],
+    },
+  )
+  .refine(
+    (data) => {
+      // 날짜 유효성: 시작일 <= 종료일
+      if (data.startDate && data.endDate) {
+        return new Date(data.startDate) <= new Date(data.endDate);
+      }
+      return true;
+    },
+    {
+      message: '종료일은 시작일 이후여야 합니다.',
+      path: ['endDate'],
+    },
+  );
+
 export type UserExperience = z.infer<typeof userExperienceSchema>;
 
-/** 경험 정리 생성 응답 */
-export const userExperienceInfoSchema = userExperienceSchema.extend({
+export const userExperienceInfoSchema = userExperienceBaseSchema.extend({
   id: z.number(),
   createdDate: z.string(),
   updatedDate: z.string(),

@@ -304,6 +304,15 @@ export const usePostUserExperienceMutation = () => {
   });
 };
 
+/** PATCH [유저] 경험 정리 수정 /api/v1/user-experience/:id */
+export const usePatchUserExperienceMutation = () => {
+  return useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: UserExperience }) => {
+      const res = await axios.patch(`/user-experience/${id}`, data);
+      return userExperienceInfoSchema.parse(res.data.data);
+    },
+  });
+};
+
 /** GET [유저] 경험 정리 조회 /api/v1/user-experience */
-/** PATCH [유저] 경험 정리 수정 /api/v1/user-experience */
 /** DELETE [유저] 경험 정리 삭제 /api/v1/user-experience */
