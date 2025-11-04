@@ -75,7 +75,9 @@ export const usePostMissionTalentPoolMutation = () => {
       return res.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['test'] });
+      queryClient.invalidateQueries({
+        queryKey: ['useGetUserDocumentListQueryKey'],
+      });
     },
   });
 };

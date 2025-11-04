@@ -28,7 +28,8 @@ export function SelectButton({
       </label>
 
       <button
-        onClick={disabled ? undefined : onClick}
+        onClick={onClick}
+        disabled={disabled}
         className={`flex w-full items-center justify-between truncate rounded-xxs border border-neutral-80 px-3 py-2.5 text-left ${
           disabled
             ? 'cursor-not-allowed border-neutral-80 bg-neutral-100 text-neutral-50'

@@ -1270,18 +1270,20 @@ export const userChallengeMissionWithAttendance = z
       templateLink: z.string().nullish(),
       vodLink: z.string().nullish(),
     }),
-    attendanceInfo: z.object({
-      submitted: z.boolean(),
-      id: z.number().nullable(),
-      link: z.string().nullable(),
-      review: z.string().nullable().optional(),
-      comments: z.string().nullable(),
-      status: AttendanceStatusEnum.nullable(),
-      result: AttendanceResultEnum.nullable(),
-      feedbackStatus: AttendanceFeedbackStatusEnum.nullable(),
-      accountType: z.string().nullish(),
-      accountNum: z.string().nullish(),
-    }),
+    attendanceInfo: z
+      .object({
+        submitted: z.boolean(),
+        id: z.number().nullable(),
+        link: z.string().nullable(),
+        review: z.string().nullable().optional(),
+        comments: z.string().nullable(),
+        status: AttendanceStatusEnum.nullable(),
+        result: AttendanceResultEnum.nullable(),
+        feedbackStatus: AttendanceFeedbackStatusEnum.nullable(),
+        accountType: z.string().nullish(),
+        accountNum: z.string().nullish(),
+      })
+      .nullable(),
     userDocumentInfos: z
       .array(
         z.object({

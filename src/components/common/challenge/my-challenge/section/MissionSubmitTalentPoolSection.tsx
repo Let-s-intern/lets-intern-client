@@ -167,24 +167,26 @@ const MissionSubmitTalentPoolSection = ({
         setSelectedIndustries(firstDoc.wishIndustry.split(','));
 
       // 파일 URL 설정
-      const newUploadedFiles: UploadedFiles = {
-        resume: null,
-        portfolio: null,
-        personal_statement: null,
-      };
-
-      userDocumentInfos.forEach((doc) => {
-        if (doc.userDocumentType === 'RESUME' && doc.fileUrl) {
-          newUploadedFiles.resume = doc.fileUrl;
-        } else if (doc.userDocumentType === 'PORTFOLIO' && doc.fileUrl) {
-          newUploadedFiles.portfolio = doc.fileUrl;
-        } else if (
-          doc.userDocumentType === 'PERSONAL_STATEMENT' &&
-          doc.fileUrl
-        ) {
-          newUploadedFiles.personal_statement = doc.fileUrl;
-        }
-      });
+      const newUploadedFiles = userDocumentInfos.reduce<UploadedFiles>(
+        (acc, doc) => {
+          if (!doc.fileUrl) {
+            return acc;
+          }
+          switch (doc.userDocumentType) {
+            case 'RESUME':
+              acc.resume = doc.fileUrl;
+              break;
+            case 'PORTFOLIO':
+              acc.portfolio = doc.fileUrl;
+              break;
+            case 'PERSONAL_STATEMENT':
+              acc.personal_statement = doc.fileUrl;
+              break;
+          }
+          return acc;
+        },
+        { resume: null, portfolio: null, personal_statement: null },
+      );
 
       setUploadedFiles(newUploadedFiles);
     }
