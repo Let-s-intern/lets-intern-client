@@ -32,6 +32,7 @@ import {
   challengeValidUserSchema,
   feedbackAttendanceSchema,
 } from './challengeSchema';
+import { userAttendanceExperienceSchema } from './experienceSchema';
 
 const useChallengeQueryKey = 'useChallengeQueryKey';
 
@@ -476,6 +477,34 @@ export const useSubmitChallengeGoal = () => {
       const res = await axios.patch(`/challenge/${challengeId}/goal`, { goal });
       return res.data;
     },
+  });
+};
+
+// [어드민용] 미션 제출한 유저의 경험 목록 조회 api/v2/admin/attendance/user-experiences/{missionId}
+export const MissionAttendanceUserExperiencesQueryKey =
+  'useMissionAttendanceUserExperiencesQuery';
+
+export const useMissionAttendanceUserExperiencesQuery = ({
+  missionId,
+  userId,
+  enabled,
+}: {
+  missionId?: number | string;
+  userId?: number | string;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    queryKey: [MissionAttendanceUserExperiencesQueryKey, missionId, userId],
+    queryFn: async () => {
+      const res = await axiosV2.get(
+        `/admin/attendance/user-experiences/${missionId}`,
+        {
+          params: { userId },
+        },
+      );
+      return userAttendanceExperienceSchema.parse(res.data.data);
+    },
+    enabled,
   });
 };
 

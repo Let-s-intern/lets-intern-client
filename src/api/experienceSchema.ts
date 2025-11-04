@@ -4,6 +4,9 @@ export type UserExperienceType = z.infer<typeof userExperienceSchema>;
 export type UserExperienceListType = z.infer<typeof userExperienceListSchema>;
 export type ActivityType = z.infer<typeof activitySchema>;
 export type CategoryType = z.infer<typeof categorySchema>;
+export type UserAttendanceExperience = z.infer<
+  typeof userAttendanceExperienceSchema
+>['userExperiences'];
 
 const activitySchema = z.enum(['TEAM', 'INDIVIDUAL']);
 const categorySchema = z.enum([
@@ -58,6 +61,29 @@ export const userExperienceSchema = z.object({
   lastModifiedDate: z.string().nullable().optional(),
   isAddedByAdmin: z.boolean().nullable().optional(),
   isAdminAdded: z.boolean().nullable().optional(),
+});
+
+export const userAttendanceExperienceSchema = z.object({
+  userExperiences: z.array(
+    z.object({
+      id: z.number(),
+      startDate: z.string().nullable().optional(), // ISO 날짜 문자열 (예: "2025-10-29")
+      endDate: z.string().nullable().optional(), // ISO 날짜 문자열 (예: "2025-10-29")
+      title: z.string().nullable().optional(),
+      activityType: activitySchema.nullable().optional(),
+      experienceCategory: categorySchema.nullable().optional(),
+      role: z.string().nullable().optional(),
+      situation: z.string().nullable().optional(),
+      task: z.string().nullable().optional(),
+      action: z.string().nullable().optional(),
+      result: z.string().nullable().optional(),
+      coreCompetency: z.string().nullable().optional(),
+      customCategoryName: z.string().nullable().optional(),
+      reflection: z.string().nullable().optional(),
+      organ: z.string().nullable().optional(),
+      isAdminAdded: z.boolean().nullable().optional(),
+    }),
+  ),
 });
 
 export const userExperienceListSchema = z.object({
