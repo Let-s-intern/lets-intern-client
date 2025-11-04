@@ -1,5 +1,6 @@
 'use client';
 
+import { UserExperienceType } from '@/api/experienceSchema';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import drawerReducer from '@/reducers/drawerReducer';
 import ExperienceCreateButton from '@components/common/mypage/experience/ExperienceCreateButton';
@@ -23,6 +24,8 @@ const Experience = () => {
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
   const [sortBy, setSortBy] = useState('latest');
   const [isDrawerOpen, dispatchIsDrawerOpen] = useReducer(drawerReducer, false);
+  const [selectedExperience, setSelectedExperience] =
+    useState<UserExperienceType | null>(null);
 
   // drawer가 열리면 뒷 배경 스크롤 제한
   useControlScroll(isDrawerOpen);
@@ -54,24 +57,38 @@ const Experience = () => {
   };
 
   const handleDrawerOpen = useCallback(() => {
+    setSelectedExperience(null); // 생성 모드
     dispatchIsDrawerOpen({
       type: 'open',
     });
   }, [dispatchIsDrawerOpen]);
 
   const handleDrawerClose = useCallback(() => {
-    // TODO: 작성 중 닫을 경우 고려
+    setSelectedExperience(null);
     dispatchIsDrawerOpen({
       type: 'close',
     });
   }, [dispatchIsDrawerOpen]);
+
+  const handleRowClick = useCallback(
+    (experience: UserExperienceType) => {
+      setSelectedExperience(experience); // 수정 모드
+      dispatchIsDrawerOpen({
+        type: 'open',
+      });
+    },
+    [dispatchIsDrawerOpen],
+  );
 
   return (
     <>
       {isDrawerOpen && (
         <div className="fixed bottom-0 left-0 right-0 top-0 z-[100] bg-black/50 md:mb-0">
           <div className="absolute bottom-0 right-0 top-0 max-w-[600px] bg-white">
-            <ExperienceForm onClose={handleDrawerClose} />
+            <ExperienceForm
+              onClose={handleDrawerClose}
+              initialData={selectedExperience}
+            />
           </div>
         </div>
       )}
@@ -94,6 +111,7 @@ const Experience = () => {
           sortBy={sortBy}
           filters={filters}
           onResetFilters={handleResetFilters}
+          onRowClick={handleRowClick}
         />
       </div>
     </>

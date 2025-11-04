@@ -11,6 +11,7 @@ import {
   MAX_COMPETENCIES,
 } from './constants';
 
+import { UserExperienceType } from '@/api/experienceSchema';
 import {
   useGetUserAdmin,
   usePatchUserExperienceMutation,
@@ -21,7 +22,6 @@ import {
   userExperienceSchema,
   type DisplayExperienceCategory,
   type UserExperience,
-  type UserExperienceInfo,
 } from '@/api/userSchema';
 import { useUnsavedChangesWarning } from '@/hooks/useUnsavedChangesWarning';
 import { isAxiosError } from 'axios';
@@ -56,7 +56,7 @@ export const defaultFormData: Partial<UserExperience> = {
 
 interface ExperienceFormProps {
   onClose: () => void;
-  initialData?: UserExperienceInfo;
+  initialData: UserExperienceType | null;
 }
 
 export const ExperienceForm = ({
@@ -92,7 +92,7 @@ export const ExperienceForm = ({
   // 저장 완료 여부를 추적하는 ref
   const isSavedRef = useRef(false);
   // 생성된 경험 정리 ID (자동 저장 시 사용)
-  const experienceIdRef = useRef<number | null>(initialData?.id || null);
+  const experienceIdRef = useRef<number | null>(initialData?.id ?? null);
   // 자동 저장 중 여부
   const isAutoSavingRef = useRef(false);
   // 디바운싱 타이머
@@ -115,7 +115,26 @@ export const ExperienceForm = ({
   // 초기 데이터 설정
   useEffect(() => {
     if (initialData) {
-      reset(initialData, { keepDefaultValues: false });
+      // UserExperienceType과 UserExperienceInfo의 nullable 필드를 처리
+      const formattedData: any = {
+        ...initialData,
+        title: initialData.title ?? '',
+        experienceCategory: initialData.experienceCategory ?? undefined,
+        organ: initialData.organ ?? '',
+        role: initialData.role ?? '',
+        situation: initialData.situation ?? '',
+        task: initialData.task ?? '',
+        action: initialData.action ?? '',
+        result: initialData.result ?? '',
+        reflection: initialData.reflection ?? '',
+        coreCompetency: initialData.coreCompetency ?? '',
+        customCategoryName: initialData.customCategoryName ?? '',
+        startDate: initialData.startDate ?? '',
+        endDate: initialData.endDate ?? '',
+        activityType: initialData.activityType ?? 'INDIVIDUAL',
+      };
+      reset(formattedData, { keepDefaultValues: false });
+
       // startDate에서 연도 추출
       if (initialData.startDate) {
         const year = parseInt(initialData.startDate.split('-')[0]);
@@ -287,6 +306,7 @@ export const ExperienceForm = ({
       isSavedRef.current = true;
       alert('경험 정리가 성공적으로 저장되었습니다.');
       onClose();
+      // TODO: invalidateQueries 추가
     } catch (error) {
       console.error('경험 정리 저장 실패:', error);
       const errorMessage =
