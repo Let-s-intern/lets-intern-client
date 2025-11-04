@@ -16,12 +16,12 @@ import {
 import { Content, Row } from '@/types/interface';
 import axios from '@/utils/axios';
 import { END_OF_SECONDS } from '@/utils/constants';
-import { GridApi } from '@mui/x-data-grid';
+import { GridApiCommunity } from '@mui/x-data-grid/internals';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 
 export const useMissionOperations = (
-  apiRef: React.MutableRefObject<GridApi | undefined>,
+  apiRef: React.RefObject<GridApiCommunity>,
 ) => {
   const missions = useAdminMissionsOfCurrentChallenge();
   const { currentChallenge } = useAdminCurrentChallenge();
