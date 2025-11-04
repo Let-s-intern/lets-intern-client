@@ -9,20 +9,23 @@ export interface TableHeader {
   key: string;
   label: string;
   width?: string;
-  align?: 'left' | 'center' | 'right';
+  align?: {
+    horizontal?: 'left' | 'center' | 'right';
+    vertical?: 'top' | 'middle' | 'bottom';
+  };
   cellRenderer?: (value: any, row: TableData) => ReactNode;
 }
 
 export interface TableData {
-  id: string;
+  id: number;
   [key: string]: any;
 }
 
 export interface DataTableProps {
   headers: TableHeader[];
   data: TableData[];
-  selectedRowIds?: Set<string>;
-  onSelectionChange?: (selectedIds: Set<string>) => void;
+  selectedRowIds?: Set<number>;
+  onSelectionChange?: (selectedIds: Set<number>) => void;
   className?: string;
 }
 
@@ -34,10 +37,10 @@ const DataTable = ({
   className = '',
 }: DataTableProps) => {
   // 확장된 행의 ID를 관리
-  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
 
   // 특정 행의 확장 상태를 토글
-  const toggleExpandRow = (id: string) => {
+  const toggleExpandRow = (id: number) => {
     setExpandedRows((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(id)) {
@@ -50,7 +53,7 @@ const DataTable = ({
   };
 
   // 특정 행의 체크박스 토글
-  const toggleRowSelection = (id: string) => {
+  const toggleRowSelection = (id: number) => {
     if (!selectedRowIds || !onSelectionChange) return;
 
     const newSet = new Set(selectedRowIds);
@@ -65,7 +68,7 @@ const DataTable = ({
   const toggleAllSelection = () => {
     if (!selectedRowIds || !onSelectionChange) return;
 
-    let newSet: Set<string>;
+    let newSet: Set<number>;
     if (selectedRowIds.size === data.length) newSet = new Set();
     else newSet = new Set(allRowIds);
     onSelectionChange(newSet);
@@ -90,9 +93,9 @@ const DataTable = ({
                 key={header.key}
                 className={twMerge(
                   'px-2 py-2.5 text-left text-sm font-medium text-neutral-10',
-                  header.align === 'center'
+                  header.align?.horizontal === 'center'
                     ? 'text-center'
-                    : header.align === 'right'
+                    : header.align?.horizontal === 'right'
                       ? 'text-right'
                       : 'text-left',
                 )}
@@ -130,12 +133,23 @@ const DataTable = ({
                     : row[header.key];
 
                   return (
-                    <td key={header.key} className="align-top">
+                    <td
+                      key={header.key}
+                      className={
+                        header.align?.vertical === 'top'
+                          ? 'align-top'
+                          : header.align?.vertical === 'middle'
+                            ? 'align-middle'
+                            : header.align?.vertical === 'bottom'
+                              ? 'align-bottom'
+                              : 'align-top'
+                      }
+                    >
                       <ExpandableCell
                         content={cellContent}
                         isRowExpanded={isExpanded}
                         onToggleExpand={() => toggleExpandRow(row.id)}
-                        align={header.align}
+                        align={header.align?.horizontal}
                       />
                     </td>
                   );

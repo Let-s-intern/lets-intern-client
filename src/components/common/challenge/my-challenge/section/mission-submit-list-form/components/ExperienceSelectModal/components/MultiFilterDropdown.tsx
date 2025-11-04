@@ -8,31 +8,38 @@ interface FilterOption {
   label: string;
 }
 
-interface FilterDropdownProps {
-  labelPrefix?: string;
+interface MultiFilterDropdownProps {
+  labelPrefix: string;
   options: FilterOption[];
-  selectedValue: string;
+  selectedValues: string[];
   onSelect: (value: string) => void;
   width?: string;
-  className?: string;
 }
 
-export const FilterDropdown = ({
-  labelPrefix = '',
+export const MultiFilterDropdown = ({
+  labelPrefix,
   options,
-  selectedValue,
+  selectedValues,
   onSelect,
   width = 'w-48',
-  className = '',
-}: FilterDropdownProps) => {
+}: MultiFilterDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const getFilterLabel = () => {
-    const selectedOption = options.find(
-      (option) => option.value === selectedValue,
+    if (selectedValues.length === 0) {
+      return '전체';
+    }
+
+    // selectedValues 중 options 배열에서 가장 앞에 있는 항목 찾기
+    const selectedOption = options.find((option) =>
+      selectedValues.includes(option.value),
     );
-    return selectedOption?.label || options[0].label;
+
+    if (selectedValues.length === 1) {
+      return selectedOption?.label;
+    }
+    return `${selectedOption?.label} 외 N`;
   };
 
   const handleSelect = (value: string) => {
@@ -70,9 +77,9 @@ export const FilterDropdown = ({
       <button
         type="button"
         onClick={toggleDropdown}
-        className={`flex ${width} items-center justify-between gap-1.5 rounded-xs border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 ${className}`}
+        className={`flex ${width} items-center justify-between gap-1.5 rounded-xs border border-neutral-80 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50`}
       >
-        {labelPrefix && <span>{labelPrefix} </span>}
+        <span>{labelPrefix} </span>
         <span className="text-primary-dark">{getFilterLabel()}</span>
 
         <svg
@@ -93,10 +100,12 @@ export const FilterDropdown = ({
       </button>
       {isOpen && (
         <div
-          className={`absolute z-20 mt-1 w-full rounded-xs border border-neutral-80 bg-white shadow-lg`}
+          className={`absolute z-20 mt-1 w-full rounded-xs border border-gray-300 bg-white shadow-lg`}
         >
           {options.map((option) => {
-            const isSelected = option.value === selectedValue;
+            const isSelected =
+              selectedValues.includes(option.value) ||
+              (selectedValues.length === 0 && option.value === 'ALL');
 
             return (
               <button
