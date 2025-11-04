@@ -7,11 +7,13 @@ import { ExperienceList } from './ExperienceList';
 interface MissionSubmitExperienceListProps {
   selectedExperiences: ExperienceData[];
   onOpenModal: () => void;
+  isLoadButtonEnabled?: boolean;
 }
 
 export const MissionSubmitExperienceList = ({
   selectedExperiences,
   onOpenModal,
+  isLoadButtonEnabled = false,
 }: MissionSubmitExperienceListProps) => {
   const { data } = useSearchUserExperiencesQuery({
     filter: {
@@ -27,6 +29,8 @@ export const MissionSubmitExperienceList = ({
   });
 
   const experienceCount = data?.userExperiences.length ?? 0;
+  const isButtonDisabled = !isLoadButtonEnabled || experienceCount < 3;
+
   return (
     <section>
       <div className="mb-3 flex items-center justify-between">
@@ -36,9 +40,9 @@ export const MissionSubmitExperienceList = ({
         <button
           type="button"
           onClick={onOpenModal}
-          disabled={experienceCount < 3}
+          disabled={isButtonDisabled}
           className={`rounded-xxs border border-neutral-80 bg-white px-3 py-2 text-xsmall14 font-medium hover:bg-neutral-95 disabled:cursor-not-allowed disabled:bg-neutral-95 ${
-            experienceCount >= 3
+            !isButtonDisabled && experienceCount >= 3
               ? 'text-primary'
               : 'text-neutral-50 disabled:text-neutral-30'
           }`}
