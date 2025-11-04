@@ -178,8 +178,9 @@ const MissionSubmitRegularSection = ({
     }
   };
 
-  // 제출 버튼 활성화 조건: 링크 확인 완료 + 미션 소감 입력
-  const canSubmit = isLinkVerified && textareaValue.trim().length > 0;
+  // 제출 버튼 활성화 조건: 경험 3개 이상 선택 + 미션 소감 입력
+  const canSubmit =
+    selectedExperienceIds.length >= 3 && textareaValue.trim().length > 0;
 
   const handleOpenBonusMissionModalAtSubmission = (
     currentSubmissionMissionTh: number,
