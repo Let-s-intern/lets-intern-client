@@ -93,7 +93,7 @@ export const FilterDropdown = ({
       </button>
       {isOpen && (
         <div
-          className={`absolute z-20 mt-1 w-full rounded-xs border border-neutral-80 bg-white shadow-lg`}
+          className={`absolute z-20 mt-1 max-h-[28.125rem] w-full overflow-auto rounded-xs border border-neutral-80 bg-white shadow-lg`}
         >
           {options.map((option) => {
             const isSelected = option.value === selectedValue;
