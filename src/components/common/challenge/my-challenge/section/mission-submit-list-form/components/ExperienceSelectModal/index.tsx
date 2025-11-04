@@ -58,9 +58,22 @@ export const ExperienceSelectModal = ({
             ) : (
               <DataTable
                 headers={headers}
-                data={data.experiences}
-                selectedRowIds={selection.selectedRowIds}
-                onSelectionChange={selection.setSelectedRowIds}
+                data={data.experiences.map((exp) => ({
+                  ...exp,
+                  id: exp.originalId,
+                }))}
+                selectedRowIds={
+                  new Set(
+                    Array.from(selection.selectedRowIds).map((id) =>
+                      Number(id),
+                    ),
+                  )
+                }
+                onSelectionChange={(selectedIds) => {
+                  selection.setSelectedRowIds(
+                    new Set(Array.from(selectedIds).map(String)),
+                  );
+                }}
               />
             )}
           </div>
