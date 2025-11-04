@@ -53,6 +53,9 @@ export const userExperienceSchema = z.object({
   reflection: z.string().nullable().optional(),
   coreCompetency: z.string().nullable().optional(),
   customCategoryName: z.string().nullable().optional(),
+  reflection: z.string().nullable().optional(),
+  createDate: z.string().nullable().optional(),
+  lastModifiedDate: z.string().nullable().optional(),
   isAddedByAdmin: z.boolean().nullable().optional(),
   isAdminAdded: z.boolean().nullable().optional(),
 });
