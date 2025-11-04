@@ -65,6 +65,9 @@ importers:
       '@lexical/utils':
         specifier: ^0.16.1
         version: 0.16.1
+      '@lexical/yjs':
+        specifier: 0.16.1
+        version: 0.16.1(yjs@13.6.27)
       '@mui/material':
         specifier: ^6.4.0
         version: 6.5.0(@emotion/react@11.14.0(@types/react@18.3.26)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.26)(react@18.3.1))(@types/react@18.3.26)(react@18.3.1))(@types/react@18.3.26)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
