@@ -5,18 +5,12 @@ import { MissionSubmitGuidance } from './components/MissionSubmitGuidance';
 import { ExperienceData } from './data';
 
 interface MissionSubmitListFormProps {
-  experienceCount?: number;
-  experiences?: ExperienceData[];
   onExperienceIdsChange?: (ids: number[]) => void;
 }
 
 export const MissionSubmitListForm = ({
-  experienceCount = 0,
   onExperienceIdsChange,
 }: MissionSubmitListFormProps) => {
-  // 테스트용으로 experienceCount를 4로 설정
-  experienceCount = 3;
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedExperiences, setSelectedExperiences] = useState<
     ExperienceData[]

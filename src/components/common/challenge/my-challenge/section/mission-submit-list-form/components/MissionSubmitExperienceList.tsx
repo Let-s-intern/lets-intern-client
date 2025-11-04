@@ -4,16 +4,15 @@ import { EmptyState } from './EmptyState';
 import { ExperienceList } from './ExperienceList';
 
 interface MissionSubmitExperienceListProps {
-  experienceCount: number;
   selectedExperiences: ExperienceData[];
   onOpenModal: () => void;
 }
 
 export const MissionSubmitExperienceList = ({
-  experienceCount,
   selectedExperiences,
   onOpenModal,
 }: MissionSubmitExperienceListProps) => {
+  const experienceCount = 0;
   return (
     <section>
       <div className="mb-3 flex items-center justify-between">
