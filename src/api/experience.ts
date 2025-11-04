@@ -24,6 +24,7 @@ export const useGetUserExperienceFiltersQuery = () => {
 export const useGetAllUserExperienceQuery = (
   filter: ExperienceFiltersReq,
   pageable: Pageable,
+  options?: { enabled?: boolean },
 ) => {
   const params = new URLSearchParams({
     page: pageable.page.toString(),
@@ -37,6 +38,7 @@ export const useGetAllUserExperienceQuery = (
       const res = await axios.get(`/user-experience/search`, { params });
       return userExperienceListSchema.parse(res.data.data);
     },
+    enabled: options?.enabled,
   });
 };
 
