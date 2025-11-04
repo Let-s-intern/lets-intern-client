@@ -35,11 +35,9 @@ const TableRow = ({
   refetch,
 }: Props) => {
   const queryClient = useQueryClient();
-
   const { currentChallenge } = useAdminCurrentChallenge();
 
   const patchAdminAttendance = usePatchAdminAttendance();
-
   const cellWidthList = challengeSubmitDetailCellWidthList;
 
   const handleToggle = async () => {
@@ -135,16 +133,31 @@ const TableRow = ({
           cellWidthList[6],
         )}
       >
-        {attendanceItem.attendance.link && (
-          <Link
-            href={attendanceItem.attendance.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-xxs border border-zinc-600 px-4 py-[2px] text-xs duration-200 hover:bg-neutral-700 hover:text-white"
-          >
-            확인
-          </Link>
-        )}
+        {(() => {
+          const experienceSummaryLink =
+            currentChallenge?.id &&
+            missionDetail?.id &&
+            attendanceItem.attendance.userId
+              ? `/admin/challenge/operation/${currentChallenge.id}/attendances/${missionDetail.id}/${attendanceItem.attendance.userId}`
+              : null;
+          const linkHref =
+            attendanceItem.attendance.link || experienceSummaryLink;
+
+          if (!linkHref) {
+            return null;
+          }
+
+          return (
+            <Link
+              href={linkHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-xxs border border-zinc-600 px-4 py-[2px] text-xs duration-200 hover:bg-neutral-700 hover:text-white"
+            >
+              확인
+            </Link>
+          );
+        })()}
       </div>
 
       {/* 확인여부 */}

@@ -765,6 +765,7 @@ export const attendances = z
       z.object({
         attendance: z.object({
           id: z.number(),
+          userId: z.number().nullable().optional(),
           name: z.string().nullable().optional(),
           email: z.string().nullable().optional(),
           status: AttendanceStatusEnum.nullable().optional(),
