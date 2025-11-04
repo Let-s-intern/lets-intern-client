@@ -32,9 +32,9 @@ const MissionSubmitTalentPoolSection = ({
   attendanceInfo,
 }: MissionSubmitTalentPoolSectionProps) => {
   const { currentChallenge, refetchSchedules } = useCurrentChallenge();
-  const [selectedField, setSelectedField] = useState<number | null>(null); // 희망 직군
-  const [selectedPositions, setSelectedPositions] = useState<number[]>([]); // 희망 직무
-  const [selectedIndustries, setSelectedIndustries] = useState<number[]>([]); // 희망 산업
+  const [selectedField, setSelectedField] = useState<string | null>(null);
+  const [selectedPositions, setSelectedPositions] = useState<string[]>([]);
+  const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
 
   const submitMissionTalentPool = usePostMissionTalentPoolMutation();
   const submitAttendance = useSubmitMission();
@@ -75,6 +75,20 @@ const MissionSubmitTalentPoolSection = ({
       return;
     }
 
+    let attendanceId: number | undefined;
+    try {
+      // 단순 출석 체크용
+      const attendanceResponse = await submitAttendance.mutateAsync({
+        missionId,
+        link: null,
+        review: null,
+      });
+      attendanceId = attendanceResponse.data.attendanceId; // 응답에서 ID 추출
+    } catch (error) {
+      console.error('출석 체크 중 오류 발생:', error);
+      alert('출석 체크에 실패했습니다. 다시 시도해주세요.');
+    }
+
     // 새롭게 업로드된 파일들만 필터링
     const filesToUpload = [
       { type: 'RESUME' as DocumentType, file: uploadedFiles.resume },
@@ -93,9 +107,21 @@ const MissionSubmitTalentPoolSection = ({
       const formData = new FormData();
       formData.append(
         'requestDto',
-        new Blob([JSON.stringify({ documentType: type, fileUrl: '' })], {
-          type: 'application/json',
-        }),
+        new Blob(
+          [
+            JSON.stringify({
+              documentType: type,
+              fileUrl: '',
+              attendanceId,
+              wishField: selectedField,
+              wishJob: selectedPositions.join(','),
+              wishIndustry: selectedIndustries.join(','),
+            }),
+          ],
+          {
+            type: 'application/json',
+          },
+        ),
       );
       formData.append('file', file as File);
       return formData;
@@ -111,21 +137,6 @@ const MissionSubmitTalentPoolSection = ({
       console.error('파일 업로드 중 오류 발생:', error);
       alert('업로드에 실패했습니다. 다시 시도해주세요.');
       return;
-    }
-
-    try {
-      // 단순 출석 체크용
-      await submitAttendance.mutateAsync({
-        missionId,
-        link: 'https://example.com',
-        review: '',
-      });
-      // TODO: 추가 invalidate 필요한지 확인 필요
-      await refetchSchedules?.();
-      setShowToast(true);
-    } catch (error) {
-      console.error('출석 체크 중 오류 발생:', error);
-      alert('출석 체크에 실패했습니다. 다시 시도해주세요.');
     }
   };
 

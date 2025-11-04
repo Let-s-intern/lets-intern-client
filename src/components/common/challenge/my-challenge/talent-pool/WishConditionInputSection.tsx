@@ -18,12 +18,12 @@ interface JobPosition {
 type ModalStep = 'field' | 'position' | 'industry' | null;
 
 interface WishConditionInputSectionProps {
-  selectedField: number | null;
-  selectedPositions: number[];
-  selectedIndustries: number[];
-  onFieldChange: (field: number | null) => void;
-  onPositionsChange: (positions: number[]) => void;
-  onIndustriesChange: (industries: number[]) => void;
+  selectedField: string | null;
+  selectedPositions: string[];
+  selectedIndustries: string[];
+  onFieldChange: (field: string | null) => void;
+  onPositionsChange: (positions: string[]) => void;
+  onIndustriesChange: (industries: string[]) => void;
 }
 
 export default function WishConditionInputSection({
@@ -78,11 +78,12 @@ export default function WishConditionInputSection({
   }, [modalStep]);
 
   const handleFieldSelect = (id: number): void => {
-    onFieldChange(id);
+    const fieldName = jobCategories[id].name;
+    onFieldChange(fieldName);
     onPositionsChange([]);
 
     // 직군 무관을 선택한 경우
-    if (jobCategories[id].name === '직군 무관') {
+    if (fieldName === '직군 무관') {
       onPositionsChange([]);
       setModalStep(null);
     } else {
@@ -91,65 +92,73 @@ export default function WishConditionInputSection({
   };
 
   const toggleSelection = (
-    id: number,
-    selectedItems: number[],
-    setSelectedItems: (items: number[]) => void,
+    name: string,
+    selectedItems: string[],
+    setSelectedItems: (items: string[]) => void,
   ) => {
-    if (selectedItems.includes(id)) {
-      setSelectedItems(selectedItems.filter((item) => item !== id));
+    if (selectedItems.includes(name)) {
+      setSelectedItems(selectedItems.filter((item) => item !== name));
     } else if (selectedItems.length < 3) {
-      setSelectedItems([...selectedItems, id]);
+      setSelectedItems([...selectedItems, name]);
     }
   };
 
   const handlePositionSelect = (id: number): void => {
     if (selectedField === null) return;
 
-    const allPositions = jobPositions[selectedField] || [];
+    const fieldIndex = jobCategories.findIndex(
+      (cat) => cat.name === selectedField,
+    );
+    if (fieldIndex === -1) return;
+
+    const allPositions = jobPositions[fieldIndex] || [];
     const selectedPosition = allPositions.find((pos) => pos.id === id);
+    if (!selectedPosition) return;
+
+    const positionName = selectedPosition.name;
 
     // "직무 전체" 선택
     if (selectedPosition?.name.includes('직무 전체')) {
-      onPositionsChange(selectedPositions.includes(id) ? [] : [id]);
+      onPositionsChange(
+        selectedPositions.includes(positionName) ? [] : [positionName],
+      );
       return;
     }
 
     // "직무 전체"가 선택되어 있으면 다른 직무 선택 불가
-    const hasAll = selectedPositions.some((posId) => {
-      const pos = allPositions.find((p) => p.id === posId);
-      return pos?.name.includes('직무 전체');
-    });
+    const hasAll = selectedPositions.some((name) => name.includes('직무 전체'));
 
     if (hasAll) return;
 
-    toggleSelection(id, selectedPositions, onPositionsChange);
+    toggleSelection(positionName, selectedPositions, onPositionsChange);
   };
 
   const handleIndustrySelect = (id: number): void => {
     const selectedIndustry = industries.find((ind) => ind.id === id);
+    if (!selectedIndustry) return;
+
+    const industryName = selectedIndustry.name;
 
     // "산업 무관" 선택
-    if (selectedIndustry?.name === '산업 무관') {
-      onIndustriesChange(selectedIndustries.includes(id) ? [] : [id]);
+    if (industryName === '산업 무관') {
+      onIndustriesChange(
+        selectedIndustries.includes(industryName) ? [] : [industryName],
+      );
       return;
     }
     // 산업 무관이 이미 선택되어 있으면 다른 산업 선택 불가
-    const hasUnrelated = selectedIndustries.some((industryId) => {
-      const industry = industries.find((ind) => ind.id === industryId);
-      return industry?.name === '산업 무관';
-    });
+    const hasUnrelated = selectedIndustries.some(
+      (name) => name === '산업 무관',
+    );
 
     if (hasUnrelated) return;
 
-    toggleSelection(id, selectedIndustries, onIndustriesChange);
+    toggleSelection(industryName, selectedIndustries, onIndustriesChange);
   };
   const openFieldModal = (): void => setModalStep('field');
 
   const openPositionModal = (): void => {
-    if (
-      selectedField === null ||
-      jobCategories[selectedField].name === '직군 무관'
-    ) {
+    if (selectedField === null || selectedField === '직군 무관') {
       setModalStep('field');
     } else {
       setModalStep('position');
@@ -162,29 +171,19 @@ export default function WishConditionInputSection({
 
   const getFieldDisplayText = (): string => {
     if (selectedField === null) return '희망 직군을 선택해 주세요.';
-    return jobCategories[selectedField]?.name || '';
+    return selectedField;
   };
 
   const getPositionDisplayText = (): string => {
     if (selectedField === null) return '희망 직무를 선택해 주세요.';
-
-    const field = jobCategories[selectedField];
-    if (field.name === '직군 무관') return '직무 무관';
+    if (selectedField === '직군 무관') return '직무 무관';
     if (selectedPositions.length === 0) return '희망 직무를 선택해 주세요.';
-
-    const positionsForField = jobPositions[selectedField!] || [];
-    return positionsForField
-      .filter((pos) => selectedPositions.includes(pos.id))
-      .map((pos) => pos.name)
-      .join(', ');
+    return selectedPositions.join(', ');
   };
 
   const getIndustryDisplayText = (): string => {
     if (selectedIndustries.length === 0) return '희망 산업을 선택해 주세요.';
-    return industries
-      .filter((ind) => selectedIndustries.includes(ind.id))
-      .map((ind) => ind.name)
-      .join(', ');
+    return selectedIndustries.join(', ');
   };
 
   return (
@@ -219,7 +218,7 @@ export default function WishConditionInputSection({
       {modalStep === 'field' && (
         <WishJobModal title="직군" onClose={closeModal}>
           {jobCategories.map((item) => {
-            const isSelected = selectedField === item.id;
+            const isSelected = selectedField === item.name;
             return (
               <button
                 key={item.id}
@@ -273,33 +272,38 @@ export default function WishConditionInputSection({
             </>
           }
         >
-          {(jobPositions[selectedField] || []).map((item) => {
-            const isSelected = selectedPositions.includes(item.id);
-            const allPositions = jobPositions[selectedField] || [];
-
-            // "직무 전체"가 선택되어 있는지 확인
-            const hasAll = selectedPositions.some((posId) => {
-              const pos = allPositions.find((p) => p.id === posId);
-              return pos?.name.includes('직무 전체');
-            });
-
-            // 현재 항목이 "직무 전체"인지 확인
-            const isAllPosition = item.name.includes('직무 전체');
-
-            const isDisabled =
-              (!isSelected && selectedPositions.length >= 3) ||
-              (!isSelected && !isAllPosition && hasAll);
-
-            return (
-              <CheckboxItem
-                key={item.id}
-                label={item.name}
-                isSelected={isSelected}
-                isDisabled={isDisabled}
-                onChange={() => handlePositionSelect(item.id)}
-              />
+          {(() => {
+            const fieldIndex = jobCategories.findIndex(
+              (cat) => cat.name === selectedField,
             );
-          })}
+            if (fieldIndex === -1) return null;
+
+            return (jobPositions[fieldIndex] || []).map((item) => {
+              const isSelected = selectedPositions.includes(item.name);
+
+              // "직무 전체"가 선택되어 있는지 확인
+              const hasAll = selectedPositions.some((name) =>
+                name.includes('직무 전체'),
+              );
+
+              // 현재 항목이 "직무 전체"인지 확인
+              const isAllPosition = item.name.includes('직무 전체');
+
+              const isDisabled =
+                (!isSelected && selectedPositions.length >= 3) ||
+                (!isSelected && !isAllPosition && hasAll);
+
+              return (
+                <CheckboxItem
+                  key={item.id}
+                  label={item.name}
+                  isSelected={isSelected}
+                  isDisabled={isDisabled}
+                  onChange={() => handlePositionSelect(item.id)}
+                />
+              );
+            });
+          })()}
         </WishJobModal>
       )}
 
@@ -322,14 +326,11 @@ export default function WishConditionInputSection({
           }
         >
           {industries.map((industry) => {
-            const isSelected = selectedIndustries.includes(industry.id);
+            const isSelected = selectedIndustries.includes(industry.name);
             const isDisabled =
               (!isSelected && selectedIndustries.length >= 3) ||
               (!isSelected &&
-                selectedIndustries.some((id) => {
-                  const ind = industries.find((industry) => industry.id === id);
-                  return ind?.name === '산업 무관';
-                }));
+                selectedIndustries.some((name) => name === '산업 무관'));
 
             return (
               <CheckboxItem
