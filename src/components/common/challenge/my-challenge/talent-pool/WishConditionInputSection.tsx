@@ -21,6 +21,7 @@ interface WishConditionInputSectionProps {
   selectedField: string | null;
   selectedPositions: string[];
   selectedIndustries: string[];
+  isSubmitted: boolean;
   onFieldChange: (field: string | null) => void;
   onPositionsChange: (positions: string[]) => void;
   onIndustriesChange: (industries: string[]) => void;
@@ -30,6 +31,7 @@ export default function WishConditionInputSection({
   selectedField,
   selectedPositions,
   selectedIndustries,
+  isSubmitted,
   onFieldChange,
   onPositionsChange,
   onIndustriesChange,
@@ -195,6 +197,7 @@ export default function WishConditionInputSection({
           placeholder="희망 직군을 선택해 주세요."
           onClick={openFieldModal}
           isRequired={true}
+          disabled={isSubmitted}
         />
 
         <SelectButton
@@ -203,6 +206,7 @@ export default function WishConditionInputSection({
           placeholder="희망 직무를 선택해 주세요."
           onClick={openPositionModal}
           isRequired={true}
+          disabled={isSubmitted}
         />
 
         <SelectButton
@@ -211,6 +215,7 @@ export default function WishConditionInputSection({
           placeholder="희망 산업을 선택해 주세요."
           onClick={openIndustryModal}
           isRequired={true}
+          disabled={isSubmitted}
         />
       </div>
 

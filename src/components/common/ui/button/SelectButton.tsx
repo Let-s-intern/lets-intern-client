@@ -4,6 +4,7 @@ interface SelectButtonProps {
   value: string;
   placeholder: string;
   isRequired: boolean;
+  disabled: boolean;
   onClick: () => void;
 }
 
@@ -12,6 +13,7 @@ export function SelectButton({
   value,
   placeholder,
   isRequired,
+  disabled,
   onClick,
 }: SelectButtonProps) {
   const isEmpty = value === placeholder;
@@ -26,8 +28,12 @@ export function SelectButton({
       </label>
 
       <button
-        onClick={onClick}
-        className="flex w-full items-center justify-between truncate rounded-xxs border border-neutral-80 px-3 py-2.5 text-left"
+        onClick={disabled ? undefined : onClick}
+        className={`flex w-full items-center justify-between truncate rounded-xxs border border-neutral-80 px-3 py-2.5 text-left ${
+          disabled
+            ? 'cursor-not-allowed border-neutral-80 bg-neutral-100 text-neutral-50'
+            : ''
+        }`}
       >
         <span
           className={`truncate ${isEmpty ? 'text-neutral-50' : 'text-gray-0'}`}
