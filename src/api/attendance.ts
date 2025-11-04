@@ -49,12 +49,18 @@ export const useSubmitMission = () => {
       missionId,
       link,
       review,
+      userExperienceIds,
     }: {
       missionId: number;
-      link: string;
-      review: string;
+      link: string | null;
+      review: string | null;
+      userExperienceIds?: number[];
     }) => {
-      return axios.post(`/attendance/${missionId}`, { link, review });
+      return axios.post(`/attendance/${missionId}`, {
+        link,
+        review,
+        userExperienceIds,
+      });
     },
     onError: (error) => console.error('useSubmitZeroMission >>', error),
   });

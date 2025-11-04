@@ -1,7 +1,12 @@
-import { ProgramAdminListItem } from '@/schema';
+import {
+  getContentsAdminSimple,
+  Mission,
+  MissionTemplateResItem,
+  ProgramAdminListItem,
+} from '@/schema';
 import { SerializedEditorState } from 'lexical';
+import { z } from 'zod';
 import { TABLE_STATUS } from '../utils/convert';
-
 export * from './Banner.interface';
 export * from './Mission.interface';
 export * from './Program.interface';
@@ -229,4 +234,22 @@ export type ReportEditingFeedbackPrice = {
   type: 'basic';
   price: number;
   discount: number;
+};
+
+// 미션 관련 타입
+export type Content = z.infer<
+  typeof getContentsAdminSimple
+>['contentsSimpleList'][number];
+
+export type Row = Mission & {
+  mode: 'normal' | 'create';
+  additionalContentsOptions: Content[];
+  essentialContentsOptions: Content[];
+  missionTemplatesOptions: MissionTemplateResItem[];
+  challengeOptionId: number | null;
+  challengeOptionCode: string | null;
+  onAction(params: {
+    action: 'create' | 'cancel' | 'edit' | 'delete';
+    row: Row;
+  }): void;
 };

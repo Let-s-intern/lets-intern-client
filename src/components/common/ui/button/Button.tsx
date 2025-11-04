@@ -1,3 +1,4 @@
+'use client';
 interface ButtonProps {
   to?: string;
   type?: 'button' | 'submit' | 'reset';

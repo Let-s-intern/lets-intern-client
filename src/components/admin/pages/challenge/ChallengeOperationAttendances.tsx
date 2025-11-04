@@ -66,7 +66,7 @@ const ChallengeOperationAttendances = () => {
                 editable={false}
                 attrNames={[
                   'th',
-                  'missionType',
+                  'missionTag',
                   'startDate',
                   'endDate',
                   'currentAttendance',
