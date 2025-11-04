@@ -187,7 +187,7 @@ export const ExperienceForm = ({
           isAdminAdded: isAdmin ?? false,
         };
         const result = await createExperienceMutation.mutateAsync(createData);
-        experienceIdRef.current = result.id;
+        experienceIdRef.current = result.userExperienceId;
       }
 
       // 자동 저장 성공 시 시간 업데이트
@@ -284,8 +284,6 @@ export const ExperienceForm = ({
     // 자동 저장 타이머 정리 (중복 저장 방지)
     clearAutoSaveTimer();
 
-    console.log('제출 데이터:', data);
-
     try {
       // 자동 저장으로 이미 생성되었으면 업데이트, 아니면 생성
       if (experienceIdRef.current) {
@@ -299,7 +297,7 @@ export const ExperienceForm = ({
           isAdminAdded: isAdmin ?? false,
         };
         const result = await createExperienceMutation.mutateAsync(createData);
-        experienceIdRef.current = result.id;
+        experienceIdRef.current = result.userExperienceId;
       }
 
       // 저장 성공 시 플래그 설정

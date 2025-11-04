@@ -16,7 +16,6 @@ import {
   userAdminType,
   userDocumentListSchema,
   UserExperience,
-  userExperienceInfoSchema,
 } from './userSchema';
 
 export const UseMentorListQueryKey = 'useMentorListQueryKey';
@@ -310,7 +309,8 @@ export const usePatchUserExperienceMutation = () => {
   return useMutation({
     mutationFn: async ({ id, data }: { id: number; data: UserExperience }) => {
       const res = await axios.patch(`/user-experience/${id}`, data);
-      return userExperienceInfoSchema.parse(res.data.data.userExperience);
+      // return userExperienceInfoSchema.parse(res.data.data.userExperience);
+      return res.data.data;
     },
   });
 };
