@@ -12,6 +12,7 @@ import {
 } from './constants';
 
 import {
+  useGetUserAdmin,
   usePatchUserExperienceMutation,
   usePostUserExperienceMutation,
 } from '@/api/user';
@@ -51,7 +52,6 @@ export const defaultFormData: Partial<UserExperience> = {
   result: '',
   reflection: '',
   coreCompetency: '',
-  isAdminAdded: false,
 };
 
 interface ExperienceFormProps {
@@ -85,6 +85,9 @@ export const ExperienceForm = ({
   // API mutation
   const createExperienceMutation = usePostUserExperienceMutation();
   const updateExperienceMutation = usePatchUserExperienceMutation();
+
+  // 관리자 여부 조회
+  const { data: isAdmin } = useGetUserAdmin();
 
   // 저장 완료 여부를 추적하는 ref
   const isSavedRef = useRef(false);
@@ -153,19 +156,18 @@ export const ExperienceForm = ({
     isAutoSavingRef.current = true;
 
     try {
-      // Zod로 검증된 데이터 사용
-      const payload = parsed.data;
-
       // 첫 저장이면 POST, 이미 ID가 있으면 PATCH
       if (experienceIdRef.current) {
-        // 업데이트
         await updateExperienceMutation.mutateAsync({
           id: experienceIdRef.current,
-          data: payload,
+          data: parsed.data,
         });
       } else {
-        // 생성
-        const result = await createExperienceMutation.mutateAsync(payload);
+        const createData = {
+          ...parsed.data,
+          isAdminAdded: isAdmin ?? false,
+        };
+        const result = await createExperienceMutation.mutateAsync(createData);
         experienceIdRef.current = result.id;
       }
 
@@ -191,6 +193,7 @@ export const ExperienceForm = ({
     updateExperienceMutation,
     createExperienceMutation,
     reset,
+    isAdmin,
   ]);
 
   // 3초 디바운싱된 자동 저장 함수
@@ -257,47 +260,26 @@ export const ExperienceForm = ({
     debouncedAutoSave();
   };
 
-  // 폼 데이터를 API 요청 형식으로 변환
-  const validateFormData = (data: UserExperience): UserExperience | null => {
-    return {
-      title: data.title,
-      experienceCategory: data.experienceCategory!,
-      customCategoryName: data.customCategoryName,
-      organ: data.organ,
-      role: data.role,
-      activityType: data.activityType!,
-      startDate: data.startDate,
-      endDate: data.endDate,
-      situation: data.situation,
-      task: data.task,
-      action: data.action,
-      result: data.result,
-      reflection: data.reflection,
-      coreCompetency: data.coreCompetency,
-      // TODO: 권한 처리
-      isAdminAdded:
-        process.env.NODE_ENV === 'production' ? data.isAdminAdded : true,
-    };
-  };
-
   // 폼 제출 핸들러 (명시적 저장)
   const onSubmit = async (data: UserExperience) => {
     // 자동 저장 타이머 정리 (중복 저장 방지)
     clearAutoSaveTimer();
 
-    const validData = validateFormData(data);
-    console.log(validData);
-    if (!validData) return;
+    console.log('제출 데이터:', data);
 
     try {
       // 자동 저장으로 이미 생성되었으면 업데이트, 아니면 생성
       if (experienceIdRef.current) {
         await updateExperienceMutation.mutateAsync({
           id: experienceIdRef.current,
-          data: validData,
+          data: data,
         });
       } else {
-        const result = await createExperienceMutation.mutateAsync(validData);
+        const createData = {
+          ...data,
+          isAdminAdded: isAdmin ?? false,
+        };
+        const result = await createExperienceMutation.mutateAsync(createData);
         experienceIdRef.current = result.id;
       }
 

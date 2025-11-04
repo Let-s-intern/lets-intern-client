@@ -154,7 +154,6 @@ const userExperienceBaseSchema = z.object({
   reflection: z.string().optional(),
   // === 핵심 역량 ===
   coreCompetency: z.string().optional(),
-  isAdminAdded: z.boolean().optional(),
 });
 
 export const userExperienceSchema = userExperienceBaseSchema
