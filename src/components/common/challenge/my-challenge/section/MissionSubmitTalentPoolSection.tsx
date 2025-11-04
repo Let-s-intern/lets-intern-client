@@ -1,6 +1,6 @@
 import { useSubmitMission } from '@/api/attendance';
+import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
 import { usePostMissionTalentPoolMutation } from '@/api/mission';
-import { DocumentType } from '@/api/missionSchema';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import { Schedule } from '@/schema';
@@ -38,18 +38,16 @@ const MissionSubmitTalentPoolSection = ({
 
   const submitMissionTalentPool = usePostMissionTalentPoolMutation();
   const submitAttendance = useSubmitMission();
+  const { data: missionData } = useChallengeMissionAttendanceInfoQuery({
+    challengeId: currentChallenge?.id,
+    missionId,
+    enabled: !!currentChallenge?.id && !!missionId,
+  });
+  const userDocumentInfos = missionData?.userDocumentInfos;
 
   // 챌린지 종료 + 2일
   const isSubmitPeriodEnded =
     dayjs(currentChallenge?.endDate).add(2, 'day').isBefore(dayjs()) ?? true;
-
-  // 재제출 불가
-  const isResubmitBlocked =
-    attendanceInfo?.result === 'PASS' ||
-    attendanceInfo?.result === 'FINAL_WRONG' ||
-    (attendanceInfo?.result === 'WAITING' &&
-      (attendanceInfo?.status === 'LATE' ||
-        attendanceInfo?.status === 'UPDATED'));
 
   const [showToast, setShowToast] = useState(false);
   const [isAgreed, setIsAgreed] = useState(false);
@@ -60,10 +58,14 @@ const MissionSubmitTalentPoolSection = ({
   });
 
   const isSubmitted = attendanceInfo?.submitted ?? false;
-
-  // 제출 버튼 활성화 조건: 필수 항목(이력서, 포트폴리오 + 개인정보 동의) 입력 완료 시 활성화
+  // 제출 버튼 활성화 조건: 필수 항목 입력 완료 시 활성화
   const canSubmit =
-    isAgreed && !!uploadedFiles.resume && !!uploadedFiles.portfolio;
+    isAgreed &&
+    !!uploadedFiles.resume &&
+    !!uploadedFiles.portfolio &&
+    !!selectedField &&
+    selectedPositions.length > 0 &&
+    selectedIndustries.length > 0;
 
   const handleFilesChange = (files: UploadedFiles) => {
     setUploadedFiles(files);
@@ -83,47 +85,40 @@ const MissionSubmitTalentPoolSection = ({
         link: null,
         review: null,
       });
-      attendanceId = attendanceResponse.data.attendanceId; // 응답에서 ID 추출
+      attendanceId = attendanceResponse.data.data.attendanceId;
     } catch (error) {
       console.error('출석 체크 중 오류 발생:', error);
-      alert('출석 체크에 실패했습니다. 다시 시도해주세요.');
+      return;
     }
 
     // 새롭게 업로드된 파일들만 필터링
     const filesToUpload = [
-      { type: 'RESUME' as DocumentType, file: uploadedFiles.resume },
-      { type: 'PORTFOLIO' as DocumentType, file: uploadedFiles.portfolio },
-      {
-        type: 'PERSONAL_STATEMENT' as DocumentType,
-        file: uploadedFiles.personal_statement,
-      },
-    ].filter(
-      (item): item is { type: DocumentType; file: File } =>
-        item.file instanceof File,
-    ); // File 객체인 경우만 (새로 업로드된 파일)
+      { type: 'RESUME', file: uploadedFiles.resume },
+      { type: 'PORTFOLIO', file: uploadedFiles.portfolio },
+      { type: 'PERSONAL_STATEMENT', file: uploadedFiles.personal_statement },
+    ].filter((item) => item.file);
 
     // 각 파일을 formData 형식으로 변환
     const formDataList = filesToUpload.map(({ type, file }) => {
       const formData = new FormData();
+      const isFileObject = file instanceof File;
+
+      const requestData = {
+        documentType: type,
+        fileUrl: isFileObject ? null : file,
+        attendanceId,
+        wishField: selectedField,
+        wishJob: selectedPositions.join(','),
+        wishIndustry: selectedIndustries.join(','),
+      };
+
       formData.append(
         'requestDto',
-        new Blob(
-          [
-            JSON.stringify({
-              documentType: type,
-              fileUrl: '',
-              attendanceId,
-              wishField: selectedField,
-              wishJob: selectedPositions.join(','),
-              wishIndustry: selectedIndustries.join(','),
-            }),
-          ],
-          {
-            type: 'application/json',
-          },
-        ),
+        new Blob([JSON.stringify(requestData)], { type: 'application/json' }),
       );
-      formData.append('file', file as File);
+      if (isFileObject) {
+        formData.append('file', file);
+      }
       return formData;
     });
 
@@ -133,6 +128,9 @@ const MissionSubmitTalentPoolSection = ({
           submitMissionTalentPool.mutateAsync(formData),
         ),
       );
+      // TODO: 추가 invalidate 필요한지 확인 필요
+      await refetchSchedules?.();
+      setShowToast(true);
     } catch (error) {
       console.error('파일 업로드 중 오류 발생:', error);
       alert('업로드에 실패했습니다. 다시 시도해주세요.');
@@ -141,8 +139,55 @@ const MissionSubmitTalentPoolSection = ({
   };
 
   const initValues = useCallback(() => {
+    if (!attendanceInfo?.submitted) {
+      setIsAgreed(false);
+      setSelectedField(null);
+      setSelectedPositions([]);
+      setSelectedIndustries([]);
+      setUploadedFiles({
+        resume: null,
+        portfolio: null,
+        personal_statement: null,
+      });
+      return;
+    }
+
     setIsAgreed(attendanceInfo?.submitted ?? false);
-  }, [attendanceInfo]);
+
+    if (userDocumentInfos && userDocumentInfos.length > 0) {
+      // wishField, wishJob, wishIndustry는 모든 문서에 동일하게 저장되므로 첫 번째 항목에서 가져옴
+      const firstDoc = userDocumentInfos[0];
+      if (firstDoc.wishField) setSelectedField(firstDoc.wishField);
+      if (firstDoc.wishJob) {
+        setSelectedPositions(firstDoc.wishJob.split(',').filter(Boolean));
+      }
+      if (firstDoc.wishIndustry) {
+        setSelectedIndustries(firstDoc.wishIndustry.split(',').filter(Boolean));
+      }
+
+      // 파일 URL 설정
+      const newUploadedFiles: UploadedFiles = {
+        resume: null,
+        portfolio: null,
+        personal_statement: null,
+      };
+
+      userDocumentInfos.forEach((doc) => {
+        if (doc.userDocumentType === 'RESUME' && doc.fileUrl) {
+          newUploadedFiles.resume = doc.fileUrl;
+        } else if (doc.userDocumentType === 'PORTFOLIO' && doc.fileUrl) {
+          newUploadedFiles.portfolio = doc.fileUrl;
+        } else if (
+          doc.userDocumentType === 'PERSONAL_STATEMENT' &&
+          doc.fileUrl
+        ) {
+          newUploadedFiles.personal_statement = doc.fileUrl;
+        }
+      });
+
+      setUploadedFiles(newUploadedFiles);
+    }
+  }, [attendanceInfo, userDocumentInfos]);
 
   useEffect(() => {
     /** 상태 초기화 */

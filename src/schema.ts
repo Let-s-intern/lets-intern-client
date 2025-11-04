@@ -1269,19 +1269,30 @@ export const userChallengeMissionWithAttendance = z
       templateLink: z.string().nullish(),
       vodLink: z.string().nullish(),
     }),
-    attendanceInfo: z
-      .object({
-        submitted: z.boolean(),
-        id: z.number().nullable(),
-        link: z.string().nullable(),
-        review: z.string().nullable().optional(),
-        comments: z.string().nullable(),
-        status: AttendanceStatusEnum.nullable(),
-        result: AttendanceResultEnum.nullable(),
-        feedbackStatus: AttendanceFeedbackStatusEnum.nullable(),
-        accountType: z.string().nullish(),
-        accountNum: z.string().nullish(),
-      })
+    attendanceInfo: z.object({
+      submitted: z.boolean(),
+      id: z.number().nullable(),
+      link: z.string().nullable(),
+      review: z.string().nullable().optional(),
+      comments: z.string().nullable(),
+      status: AttendanceStatusEnum.nullable(),
+      result: AttendanceResultEnum.nullable(),
+      feedbackStatus: AttendanceFeedbackStatusEnum.nullable(),
+      accountType: z.string().nullish(),
+      accountNum: z.string().nullish(),
+    }),
+    userDocumentInfos: z
+      .array(
+        z.object({
+          userDocumentId: z.number(),
+          userDocumentType: reportTypeSchema,
+          fileUrl: z.string().nullable(),
+          fileName: z.string().nullable(),
+          wishField: z.string().nullable(),
+          wishJob: z.string().nullable(),
+          wishIndustry: z.string().nullable(),
+        }),
+      )
       .nullable(),
   })
   .transform((data) => {
@@ -1292,6 +1303,7 @@ export const userChallengeMissionWithAttendance = z
         endDate: dayjs(data.missionInfo.endDate),
       },
       attendanceInfo: data.attendanceInfo,
+      userDocumentInfos: data.userDocumentInfos,
     };
   });
 
