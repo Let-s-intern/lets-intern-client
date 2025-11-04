@@ -24,6 +24,7 @@ export const useGetUserExperienceFiltersQuery = () => {
 export const useGetAllUserExperienceQuery = (
   filter: ExperienceFiltersReq,
   pageable: Pageable,
+  options?: { enabled?: boolean },
 ) => {
   return useQuery({
     queryKey: [UserExperienceQueryKey, filter, pageable],
@@ -34,6 +35,7 @@ export const useGetAllUserExperienceQuery = (
       );
       return userExperienceListSchema.parse(res.data.data);
     },
+    enabled: options?.enabled,
   });
 };
 

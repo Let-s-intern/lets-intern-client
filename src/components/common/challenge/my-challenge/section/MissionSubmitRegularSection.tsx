@@ -4,7 +4,6 @@ import dayjs from '@/lib/dayjs';
 import { AttendanceResult, AttendanceStatus } from '@/schema';
 import { useMissionStore } from '@/store/useMissionStore';
 import { BONUS_MISSION_TH } from '@/utils/constants';
-import { clsx } from 'clsx';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import BonusMissionModal from '../../BonusMissionModal';
@@ -13,6 +12,7 @@ import MobileReviewModal from '../../MobileReviewModal';
 import MissionSubmitButton from '../mission/MissionSubmitButton';
 import MissionToast from '../mission/MissionToast';
 import { MissionSubmitListForm } from './mission-submit-list-form';
+import { MissionReviewInputSection } from './MissionReviewInputSection';
 
 interface MissionSubmitRegularSectionProps {
   className?: string;
@@ -72,6 +72,10 @@ const MissionSubmitRegularSection = ({
   // 링크 변경 확인 모달 오픈 상태
   const [modalOpen, setModalOpen] = useState(false);
   const [isBonusMissionModalOpen, setIsBonusMissionModalOpen] = useState(false);
+  // 선택된 경험 ID들
+  const [selectedExperienceIds, setSelectedExperienceIds] = useState<number[]>(
+    [],
+  );
 
   const submitMission = useSubmitMission();
   const patchAttendance = usePatchAttendance();
@@ -96,14 +100,6 @@ const MissionSubmitRegularSection = ({
     setTextareaValue(e.target.value);
   };
 
-  const handleLinkChange = (link: string) => {
-    setLinkValue(link);
-  };
-
-  const handleLinkVerified = (isVerified: boolean) => {
-    setIsLinkVerified(isVerified);
-  };
-
   const isResubmitBlocked =
     attendanceInfo?.result === 'PASS' ||
     attendanceInfo?.result === 'FINAL_WRONG' ||
@@ -125,8 +121,9 @@ const MissionSubmitRegularSection = ({
     try {
       await submitMission.mutateAsync({
         missionId,
-        link: linkValue,
+        link: '', // 빈 문자열로 전송
         review: textareaValue,
+        userExperienceIds: selectedExperienceIds,
       });
       await refetchSchedules?.();
       setToastMessage('미션 제출이 완료되었습니다.');
@@ -181,8 +178,9 @@ const MissionSubmitRegularSection = ({
     }
   };
 
-  // 제출 버튼 활성화 조건: 링크 확인 완료 + 미션 소감 입력
-  const canSubmit = isLinkVerified && textareaValue.trim().length > 0;
+  // 제출 버튼 활성화 조건: 경험 3개 이상 선택 + 미션 소감 입력
+  const canSubmit =
+    selectedExperienceIds.length >= 3 && textareaValue.trim().length > 0;
 
   const handleOpenBonusMissionModalAtSubmission = (
     currentSubmissionMissionTh: number,
@@ -203,45 +201,17 @@ const MissionSubmitRegularSection = ({
   return (
     <>
       <section className={className}>
-        {/* <h2 className="mb-6 text-small18 font-bold text-neutral-0">
-          미션 제출하기
-        </h2> */}
-
         {/* 링크 섹션 */}
-        <MissionSubmitListForm experienceCount={0} />
-        {/* <LinkInputSection
-          disabled={(isSubmitted && !isEditing) || isResubmitBlocked}
-          onLinkChange={handleLinkChange}
-          onLinkVerified={handleLinkVerified}
-          todayTh={selectedMissionTh}
-          initialLink={linkValue}
-          text={`미션 링크는 .notion.site 형식의 퍼블릭 링크만 입력 가능합니다.
-          제출 후, 미션과 소감을 카카오톡으로 공유해야 제출이 인정됩니다.`}
-        /> */}
+        <MissionSubmitListForm
+          onExperienceIdsChange={setSelectedExperienceIds}
+        />
 
         {/* 미션 소감 */}
-        <section>
-          <div className="mb-1.5 mt-7">
-            <div className="mb-1.5 flex items-center gap-2">
-              <span className="text-xsmall16 font-semibold text-neutral-0">
-                미션 소감
-              </span>
-            </div>
-          </div>
-          <textarea
-            className={clsx(
-              'w-full resize-none rounded-xxs border border-neutral-80 bg-white',
-              'px-3 py-2 text-xsmall14 text-neutral-0 placeholder:text-neutral-50 md:text-xsmall16',
-              'min-h-[144px] outline-none focus:border-primary',
-              'disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-50',
-            )}
-            placeholder={`오늘의 미션은 어떠셨나요?
-새롭게 배운 점, 어려운 부분, 궁금증 등 떠오르는 생각을 남겨 주세요.`}
-            value={textareaValue}
-            onChange={handleTextareaChange}
-            disabled={(isSubmitted && !isEditing) || isResubmitBlocked} // 재제출 차단 조건 추가
-          />
-        </section>
+        <MissionReviewInputSection
+          value={textareaValue}
+          onChange={handleTextareaChange}
+          disabled={(isSubmitted && !isEditing) || isResubmitBlocked}
+        />
 
         {!isSubmitPeriodEnded && (
           <MissionSubmitButton
