@@ -140,7 +140,7 @@ const userExperienceBaseSchema = z.object({
   // === 기본 정보 ===
   title: z.string(),
   experienceCategory: experienceCategoryEnum,
-  customCategoryName: z.string().optional(),
+  customCategoryName: z.string().nullable().optional(),
   organ: z.string(),
   role: z.string(),
   activityType: activityTypeEnum,
@@ -213,7 +213,15 @@ export const userExperienceSchema = userExperienceBaseSchema
       message: '종료일은 시작일 이후여야 합니다.',
       path: ['endDate'],
     },
-  );
+  )
+  .transform((data) => {
+    // experienceCategory가 OTHER가 아니면 customCategoryName을 null로 설정
+    return {
+      ...data,
+      customCategoryName:
+        data.experienceCategory === 'OTHER' ? data.customCategoryName : null,
+    };
+  });
 
 export type UserExperience = z.infer<typeof userExperienceSchema>;
 
