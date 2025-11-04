@@ -57,7 +57,7 @@ export const useDeleteUserExperienceMutation = () => {
       await axios.delete(`/user-experience/${experienceId}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['UserExperience'] });
+      queryClient.invalidateQueries({ queryKey: [UserExperienceQueryKey] });
     },
   });
 };
