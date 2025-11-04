@@ -274,17 +274,23 @@ export default function FeedbackParticipantPage() {
         field: 'feedbackPageLink',
         headerName: '피드백 페이지',
         width: 120,
-        renderCell: (params: GridRenderCellParams<AttendanceRow, string>) => (
-          <Link
-            href={params.value || '#'}
-            className="text-primary underline"
-            onClick={() => {
-              localStorage.setItem('attendance', JSON.stringify(params.row)); // 선택한 행 정보 저장
-            }}
-          >
-            바로가기
-          </Link>
-        ),
+        renderCell: (params: GridRenderCellParams<AttendanceRow, string>) => {
+          const fallbackUrl =
+            programId && missionId && params.row.userId
+              ? `/admin/challenge/operation/${programId}/attendances/${missionId}/${params.row.userId}`
+              : null;
+          const href = params.value || fallbackUrl;
+          return href ? (
+            <Link
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline"
+            >
+              미션 링크
+            </Link>
+          ) : null;
+        },
       },
       {
         field: 'feedbackStatus',

@@ -2,7 +2,11 @@ import { useGetChallengeOptions } from '@/api/challengeOption';
 import { useUpdateMissionOption } from '@/hooks/useUpdateMissionOption';
 import dayjs from '@/lib/dayjs';
 import { Row } from '@/types/interface';
-import { NO_OPTION_ID } from '@/utils/constants';
+import {
+  BONUS_MISSION_TH,
+  NO_OPTION_ID,
+  TALENT_POOL_MISSION_TH,
+} from '@/utils/constants';
 import SelectFormControl from '@components/admin/program/SelectFormControl';
 import {
   Button,
@@ -228,8 +232,8 @@ export const getMissionColumns = (): GridColDef<Row>[] => {
               } else if (
                 value !== null &&
                 value > 0 &&
-                value !== 99 &&
-                value !== 100
+                value !== TALENT_POOL_MISSION_TH &&
+                value !== BONUS_MISSION_TH
               ) {
                 // 1~n회차(일반)로 변경 시 missionType null로 (일반 템플릿)
                 params.api.setEditCellValue({
@@ -305,7 +309,11 @@ export const getMissionColumns = (): GridColDef<Row>[] => {
                 });
               } else {
                 // 기본 선택 시 0회차면 1회차로 변경
-                if (currentTh === 0 || currentTh === 99 || currentTh === 100) {
+                if (
+                  currentTh === 0 ||
+                  currentTh === TALENT_POOL_MISSION_TH ||
+                  currentTh === BONUS_MISSION_TH
+                ) {
                   params.api.setEditCellValue({
                     id: params.id,
                     field: 'th',
