@@ -1,11 +1,7 @@
-import { useGetAllUserExperienceQuery } from '@/api/experience';
 import {
-  ActivityType,
-  CategoryType,
-  ExperienceFiltersReq,
-  Pageable,
-} from '@/api/experienceSchema';
-import { useUserExperienceFiltersQuery } from '@/api/userExperience';
+  useSearchUserExperiencesQuery,
+  useUserExperienceFiltersQuery,
+} from '@/api/userExperience';
 import {
   convertUserExperienceToExperienceData,
   ExperienceData,
@@ -73,53 +69,56 @@ export const useExperienceSelectModal = ({
   // 필터 옵션 조회
   const { data: filterOptions } = useUserExperienceFiltersQuery();
 
-  // API 필터 요청 생성
-  const experienceFilter = useMemo<ExperienceFiltersReq>(() => {
-    const filter: ExperienceFiltersReq = {
-      experienceCategories: [],
-      activityTypes: [],
-      years: [],
-      coreCompetencies: [],
+  // API 검색 요청 생성
+  const searchRequest = useMemo(() => {
+    const request: {
+      filter: {
+        experienceCategories?: string[];
+        activityTypes?: string[];
+        years?: number[];
+        coreCompetencies?: string[];
+      };
+      pageable: {
+        page: number;
+        size: number;
+      };
+    } = {
+      filter: {},
+      pageable: {
+        page: currentPage - 1, // API는 0부터 시작
+        size: pageSize,
+      },
     };
 
     if (filters.category !== '전체') {
       const categoryApiValue = labelToExperienceCategory[filters.category];
       if (categoryApiValue) {
-        filter.experienceCategories = [categoryApiValue as CategoryType];
+        request.filter.experienceCategories = [categoryApiValue];
       }
     }
 
     if (filters.type !== '전체') {
       const typeApiValue = labelToActivityType[filters.type];
       if (typeApiValue) {
-        filter.activityTypes = [typeApiValue as ActivityType];
+        request.filter.activityTypes = [typeApiValue];
       }
     }
 
     if (filters.year !== '전체') {
-      filter.years = [parseInt(filters.year)];
+      request.filter.years = [parseInt(filters.year)];
     }
 
     if (filters.competency !== '전체') {
-      filter.coreCompetencies = [filters.competency];
+      request.filter.coreCompetencies = [filters.competency];
     }
 
-    return filter;
-  }, [filters]);
-
-  // 페이지네이션 요청 생성
-  const pageable = useMemo<Pageable>(() => {
-    return {
-      page: currentPage - 1, // API는 0부터 시작
-      size: pageSize,
-    };
-  }, [currentPage, pageSize]);
+    return request;
+  }, [filters, currentPage, pageSize]);
 
   // 경험 데이터 검색
-  const { data: searchResponse, isLoading } = useGetAllUserExperienceQuery(
-    experienceFilter,
-    pageable,
-    { enabled: isOpen },
+  const { data: searchResponse, isLoading } = useSearchUserExperiencesQuery(
+    searchRequest,
+    isOpen,
   );
 
   // API 응답을 ExperienceData로 변환
@@ -127,10 +126,8 @@ export const useExperienceSelectModal = ({
     if (!searchResponse?.userExperiences) {
       return [];
     }
-    return searchResponse.userExperiences.map((exp) =>
-      convertUserExperienceToExperienceData(
-        exp as Parameters<typeof convertUserExperienceToExperienceData>[0],
-      ),
+    return searchResponse.userExperiences.map(
+      convertUserExperienceToExperienceData,
     );
   }, [searchResponse]);
 
@@ -141,11 +138,7 @@ export const useExperienceSelectModal = ({
     }
     return searchResponse.userExperiences
       .filter((exp) => selectedRowIds.has(String(exp.id)))
-      .map((exp) =>
-        convertUserExperienceToExperienceData(
-          exp as Parameters<typeof convertUserExperienceToExperienceData>[0],
-        ),
-      );
+      .map(convertUserExperienceToExperienceData);
   }, [searchResponse, selectedRowIds]);
 
   // 필터 변경 시 페이지 초기화
