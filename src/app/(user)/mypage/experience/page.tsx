@@ -78,7 +78,7 @@ const Experience = () => {
       <div className="flex w-full flex-col gap-3 px-5 pb-20">
         <section className="flex w-full justify-between">
           <h1 className="text-lg font-semibold">경험 정리 목록</h1>
-          <ExperienceCreateButton />
+          <ExperienceCreateButton onClick={handleDrawerOpen} />
         </section>
 
         <section className="flex justify-between">
