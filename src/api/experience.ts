@@ -25,17 +25,16 @@ export const useGetAllUserExperienceQuery = (
   filter: ExperienceFiltersReq,
   pageable: Pageable,
 ) => {
+  const params = new URLSearchParams({
+    page: pageable.page.toString(),
+    size: pageable.size.toString(),
+    filter: JSON.stringify(filter),
+  });
+
   return useQuery({
-    queryKey: [
-      UserExperienceQueryKey,
-      ...Object.values(filter),
-      ...Object.values(pageable),
-    ],
+    queryKey: [UserExperienceQueryKey, filter, pageable],
     queryFn: async () => {
-      const res = await axios.post(
-        `/user-experience/search?page=${pageable.page}&size=${pageable.size}`,
-        filter,
-      );
+      const res = await axios.get(`/user-experience/search`, { params });
       return userExperienceListSchema.parse(res.data.data);
     },
   });

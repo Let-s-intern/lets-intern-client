@@ -26,6 +26,7 @@ export interface DataTableProps {
   data: TableData[];
   selectedRowIds?: Set<number>;
   onSelectionChange?: (selectedIds: Set<number>) => void;
+  onRowClick?: (row: TableData) => void;
   className?: string;
 }
 
@@ -34,6 +35,7 @@ const DataTable = ({
   data,
   selectedRowIds,
   onSelectionChange,
+  onRowClick,
   className = '',
 }: DataTableProps) => {
   // 확장된 행의 ID를 관리
@@ -116,10 +118,17 @@ const DataTable = ({
             return (
               <tr
                 key={row.id}
-                className="group border-b border-neutral-80 hover:bg-neutral-95"
+                className={twMerge(
+                  'group border-b border-neutral-80 hover:bg-neutral-95',
+                  onRowClick && 'cursor-pointer',
+                )}
+                onClick={() => onRowClick?.(row)}
               >
                 {selectedRowIds && (
-                  <td className="sticky left-0 z-10 w-10 bg-white p-2 group-hover:bg-neutral-95">
+                  <td
+                    className="sticky left-0 z-10 w-10 bg-white p-2 group-hover:bg-neutral-95"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <CheckBox
                       checked={!!isSelected}
                       onClick={() => toggleRowSelection(row.id)}
@@ -144,6 +153,11 @@ const DataTable = ({
                               ? 'align-bottom'
                               : 'align-top'
                       }
+                      onClick={(e) => {
+                        if (header.key === 'deleteAction') {
+                          e.stopPropagation();
+                        }
+                      }}
                     >
                       <ExpandableCell
                         content={cellContent}
@@ -164,4 +178,3 @@ const DataTable = ({
 };
 
 export default DataTable;
-

@@ -2,14 +2,10 @@ import SolidButton from '@components/common/mypage/experience/SolidButton';
 import { Plus, X } from 'lucide-react';
 import { useState } from 'react';
 
-const ExperienceCreateButton = () => {
-  const handleDrawerOpen = () => {
-    // 드로어 열기 로직 구현
-  };
-
+const ExperienceCreateButton = ({ onClick }: { onClick: () => void }) => {
   return (
     <div className="relative">
-      <SolidButton icon={<Plus size={16} />} onClick={handleDrawerOpen}>
+      <SolidButton icon={<Plus size={16} />} onClick={onClick}>
         경험 작성
       </SolidButton>
 
