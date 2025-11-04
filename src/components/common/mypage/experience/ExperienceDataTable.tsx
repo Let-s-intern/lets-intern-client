@@ -13,7 +13,10 @@ import DeleteCell from '@components/common/mypage/experience/table-cell/DeleteCe
 import PeriodCell from '@components/common/mypage/experience/table-cell/PeriodCell';
 import YearCell from '@components/common/mypage/experience/table-cell/YearCell';
 import MuiPagination from '@components/common/program/pagination/MuiPagination';
-import DataTable, { TableHeader } from '@components/common/table/DataTable';
+import DataTable, {
+  TableData,
+  TableHeader,
+} from '@components/common/table/DataTable';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -23,10 +26,12 @@ const ExperienceDataTable = ({
   sortBy,
   filters,
   onResetFilters,
+  onRowClick,
 }: {
   sortBy: string;
   filters: Filters;
   onResetFilters: () => void;
+  onRowClick?: (experience: TableData) => void;
 }) => {
   const [page, setPage] = useState(1);
 
@@ -78,6 +83,7 @@ const ExperienceDataTable = ({
       <DataTable
         headers={experienceTableHeaders}
         data={sortedExperiences}
+        onRowClick={onRowClick}
         className="rounded-xs border border-neutral-80"
       />
 

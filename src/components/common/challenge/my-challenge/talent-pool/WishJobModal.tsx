@@ -1,4 +1,6 @@
+import { cn } from '@/utils/cn';
 import { X } from 'lucide-react';
+import { ComponentProps } from 'react';
 
 interface WishJobModalProps {
   title: string;
@@ -12,10 +14,15 @@ export function WishJobModal({
   onClose,
   children,
   footer,
-}: WishJobModalProps) {
+  ...props
+}: WishJobModalProps & ComponentProps<'div'>) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black bg-opacity-50 md:items-center"
+      {...props}
+      className={cn(
+        'fixed inset-0 z-50 flex items-end justify-center bg-black bg-opacity-50 md:items-center',
+        props.className,
+      )}
       onClick={onClose}
     >
       <div
@@ -28,7 +35,7 @@ export function WishJobModal({
             <X size={20} />
           </button>
         </div>
-        <div className="flex flex-1 flex-col gap-1.5 overflow-y-auto px-2">
+        <div className="flex flex-1 flex-col gap-1.5 overflow-y-auto px-2 pb-5">
           {children}
         </div>
         {footer && (
