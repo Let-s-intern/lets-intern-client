@@ -38,7 +38,6 @@ export const MissionSubmitListForm = ({
 
       {/* 제출할 경험 목록 */}
       <MissionSubmitExperienceList
-        experienceCount={experienceCount}
         selectedExperiences={selectedExperiences}
         onOpenModal={handleOpenModal}
       />

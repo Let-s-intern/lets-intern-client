@@ -202,7 +202,6 @@ const MissionSubmitRegularSection = ({
       <section className={className}>
         {/* 링크 섹션 */}
         <MissionSubmitListForm
-          experienceCount={0}
           onExperienceIdsChange={setSelectedExperienceIds}
         />
 

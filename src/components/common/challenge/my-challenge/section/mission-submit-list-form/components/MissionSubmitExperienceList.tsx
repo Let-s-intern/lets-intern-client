@@ -1,3 +1,4 @@
+import { useSearchUserExperiencesQuery } from '@/api/userExperience';
 import { If } from '@/components/common/If';
 import { ExperienceData } from '../data';
 import { EmptyState } from './EmptyState';
@@ -12,7 +13,20 @@ export const MissionSubmitExperienceList = ({
   selectedExperiences,
   onOpenModal,
 }: MissionSubmitExperienceListProps) => {
-  const experienceCount = 0;
+  const { data } = useSearchUserExperiencesQuery({
+    filter: {
+      experienceCategories: [],
+      activityTypes: [],
+      years: [],
+      coreCompetencies: [],
+    },
+    pageable: {
+      page: 0,
+      size: 100,
+    },
+  });
+
+  const experienceCount = data?.userExperiences.length ?? 0;
   return (
     <section>
       <div className="mb-3 flex items-center justify-between">
