@@ -81,16 +81,18 @@ const ExperienceDataTable = ({
         className="rounded-xs border border-neutral-80"
       />
 
-      <MuiPagination
-        page={currentPage + 1}
-        onChange={handlePageChange}
-        pageInfo={{
-          pageNum: currentPage + 1,
-          pageSize: PAGE_SIZE,
-          totalElements,
-          totalPages,
-        }}
-      />
+      {totalPages > 1 && (
+        <MuiPagination
+          page={currentPage + 1}
+          onChange={handlePageChange}
+          pageInfo={{
+            pageNum: currentPage + 1,
+            pageSize: PAGE_SIZE,
+            totalElements,
+            totalPages,
+          }}
+        />
+      )}
     </section>
   );
 };
