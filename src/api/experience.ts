@@ -24,19 +24,18 @@ export const useGetUserExperienceFiltersQuery = () => {
 export const useGetAllUserExperienceQuery = (
   filter: ExperienceFiltersReq,
   pageable: Pageable,
+  options?: { enabled?: boolean },
 ) => {
-  const params = new URLSearchParams({
-    page: pageable.page.toString(),
-    size: pageable.size.toString(),
-    filter: JSON.stringify(filter),
-  });
-
   return useQuery({
     queryKey: [UserExperienceQueryKey, filter, pageable],
     queryFn: async () => {
-      const res = await axios.get(`/user-experience/search`, { params });
+      const res = await axios.post(
+        `/user-experience/search?page=${pageable.page}&size=${pageable.size}`,
+        filter,
+      );
       return userExperienceListSchema.parse(res.data.data);
     },
+    enabled: options?.enabled,
   });
 };
 
@@ -57,7 +56,7 @@ export const useDeleteUserExperienceMutation = () => {
       await axios.delete(`/user-experience/${experienceId}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['UserExperience'] });
+      queryClient.invalidateQueries({ queryKey: [UserExperienceQueryKey] });
     },
   });
 };

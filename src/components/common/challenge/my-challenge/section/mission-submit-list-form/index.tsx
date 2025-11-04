@@ -1,25 +1,68 @@
-import { If } from '@/components/common/If';
-import { useState } from 'react';
-import { EmptyState } from './components/EmptyState';
-import { ExperienceList } from './components/ExperienceList';
+import { useSearchUserExperiencesQuery } from '@/api/userExperience';
+import { useEffect, useState } from 'react';
 import { ExperienceSelectModal } from './components/ExperienceSelectModal';
-import { ExperienceData } from './data';
+import { MissionSubmitExperienceList } from './components/MissionSubmitExperienceList';
+import { MissionSubmitGuidance } from './components/MissionSubmitGuidance';
+import { convertUserExperienceToExperienceData, ExperienceData } from './data';
 
 interface MissionSubmitListFormProps {
-  experienceCount?: number;
-  experiences?: ExperienceData[];
+  onExperienceIdsChange?: (ids: number[]) => void;
+  initialExperienceIds?: number[] | null;
+  isLoadButtonEnabled?: boolean;
 }
 
 export const MissionSubmitListForm = ({
-  experienceCount = 0,
+  onExperienceIdsChange,
+  initialExperienceIds,
+  isLoadButtonEnabled = false,
 }: MissionSubmitListFormProps) => {
-  // 테스트용으로 experienceCount를 4로 설정
-  experienceCount = 3;
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedExperiences, setSelectedExperiences] = useState<
     ExperienceData[]
   >([]);
+
+  // 모든 경험 데이터 검색 (초기 로드용)
+  const { data: allExperiencesData } = useSearchUserExperiencesQuery(
+    {
+      filter: {
+        experienceCategories: [],
+        activityTypes: [],
+        years: [],
+        coreCompetencies: [],
+      },
+      pageable: {
+        page: 0,
+        size: 100,
+      },
+    },
+    !!initialExperienceIds && initialExperienceIds.length > 0,
+  );
+
+  // initialExperienceIds가 변경되면 초기 선택 상태 설정
+  useEffect(() => {
+    if (!initialExperienceIds || initialExperienceIds.length === 0) {
+      setSelectedExperiences([]);
+      onExperienceIdsChange?.([]);
+      return;
+    }
+
+    if (!allExperiencesData?.userExperiences) {
+      return;
+    }
+
+    // 모든 경험을 ExperienceData로 변환
+    const allExperiences = allExperiencesData.userExperiences.map(
+      convertUserExperienceToExperienceData,
+    );
+
+    // initialExperienceIds에 포함된 경험만 필터링
+    const initialExperiences = allExperiences.filter((exp) =>
+      initialExperienceIds.includes(exp.originalId),
+    );
+
+    setSelectedExperiences(initialExperiences);
+    onExperienceIdsChange?.(initialExperienceIds);
+  }, [initialExperienceIds, allExperiencesData, onExperienceIdsChange]);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -31,90 +74,22 @@ export const MissionSubmitListForm = ({
 
   const handleSelectComplete = (selectedExperiences: ExperienceData[]) => {
     setSelectedExperiences(selectedExperiences);
+    // 선택된 경험들의 originalId 추출하여 부모에게 전달
+    const experienceIds = selectedExperiences.map((exp) => exp.originalId);
+    onExperienceIdsChange?.(experienceIds);
     setIsModalOpen(false);
   };
   return (
     <div className="space-y-6">
       {/* 미션 제출 안내사항 */}
-      <section>
-        <h3 className="mb-3 text-small18 font-semibold text-neutral-0">
-          미션 제출 안내사항
-        </h3>
-        <div className="rounded-xxs bg-neutral-95 p-3">
-          <ul className="text-xsmall14 text-neutral-10">
-            <li className="flex items-start">
-              <span className="mr-2 text-neutral-10">-</span>
-              <span>
-                미션 시작일 이후 작성하거나 수정한 경험만 제출할 수 있어요.
-              </span>
-            </li>
-            <li className="flex items-start">
-              <span className="mr-2 text-neutral-10">-</span>
-              <span>
-                아직 경험을 작성하지 않았거나 삭제, 수정이 필요하다면,{' '}
-                <a
-                  href="/career/experience"
-                  className="text-primary underline hover:text-primary/80"
-                >
-                  [커리어 관리 &gt; 경험 정리]
-                </a>
-                에서 진행해주세요.
-              </span>
-            </li>
-            <li className="flex items-start">
-              <span className="mr-2 text-neutral-10">-</span>
-              <span>
-                제출 후, 미션과 소감을 카카오톡으로 공유해야 제출이 인정됩니다.
-              </span>
-            </li>
-          </ul>
-        </div>
-      </section>
+      <MissionSubmitGuidance />
 
       {/* 제출할 경험 목록 */}
-      <section>
-        <div className="mb-3 flex items-center justify-between">
-          <h3 className="text-small18 font-semibold text-neutral-0">
-            제출할 경험 목록
-          </h3>
-          <button
-            type="button"
-            onClick={handleOpenModal}
-            disabled={experienceCount < 3}
-            className={`rounded-xxs border border-neutral-80 bg-white px-3 py-2 text-xsmall14 font-medium hover:bg-neutral-95 disabled:cursor-not-allowed disabled:bg-neutral-95 ${
-              experienceCount >= 3
-                ? 'text-primary'
-                : 'text-neutral-50 disabled:text-neutral-30'
-            }`}
-          >
-            작성한 경험 불러오기
-          </button>
-        </div>
-
-        {/* 작성된 경험 불러오는 컴포넌트 */}
-        <div className="flex min-h-[200px] items-center justify-center rounded-xxs border border-neutral-80 bg-white">
-          <div className="flex flex-col items-center justify-center space-y-4">
-            <If condition={experienceCount === 0}>
-              <EmptyState
-                text="작성된 경험이 없습니다."
-                buttonText="경험 작성하러 가기"
-              />
-            </If>
-
-            <If condition={experienceCount > 0 && experienceCount < 3}>
-              <EmptyState
-                text={`제출 가능한 경험이 3개 미만입니다.
-미션을 제출하려면 최소 3개의 경험이 필요해요.`}
-                buttonText="경험 작성하러 가기"
-              />
-            </If>
-
-            <If condition={experienceCount >= 3}>
-              <ExperienceList experiences={selectedExperiences} />
-            </If>
-          </div>
-        </div>
-      </section>
+      <MissionSubmitExperienceList
+        selectedExperiences={selectedExperiences}
+        onOpenModal={handleOpenModal}
+        isLoadButtonEnabled={isLoadButtonEnabled}
+      />
 
       {/* 경험 선택 모달 */}
       <ExperienceSelectModal

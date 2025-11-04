@@ -43,7 +43,7 @@ export const ExperienceSelectModalHeader = ({
         <p>
           • 수정은,{' '}
           <a
-            href="/career/experience"
+            href="/mypage/experience"
             className="text-blue-600 underline hover:text-blue-800"
           >
             [커리어 관리 &gt; 경험 정리]
