@@ -2,7 +2,7 @@
 
 import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { PatchMissionReq } from './missionSchema';
 
@@ -63,6 +63,8 @@ export const useSubmitMissionBlogBonus = () => {
 
 /** POST [유저] 인재풀 미션 제출 /api/v1/user-document */
 export const usePostMissionTalentPoolMutation = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (req: FormData) => {
       const res = await axios.post(`/user-document`, req, {
@@ -71,6 +73,9 @@ export const usePostMissionTalentPoolMutation = () => {
         },
       });
       return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['test'] });
     },
   });
 };

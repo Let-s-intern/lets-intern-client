@@ -73,6 +73,7 @@ interface DocumentFileItemProps {
   isSubmitted: boolean;
   inputRef: RefObject<HTMLInputElement>;
   userDocumentList: UserDocument[] | undefined;
+  uploadedFiles: UploadedFiles;
   isLoading: boolean;
   onFileUpload: (type: DocumentType, files: FileList | null) => void;
   onFileDelete: (type: DocumentType) => void;
@@ -86,6 +87,7 @@ const DocumentFileItem = ({
   isSubmitted,
   inputRef,
   userDocumentList,
+  uploadedFiles,
   isLoading,
   onFileUpload,
   onFileDelete,
@@ -106,17 +108,13 @@ const DocumentFileItem = ({
   // 제출 완료된 경우, 저장된 서류를 찾아서 표시
   const submittedDocument =
     isSubmitted && !file
-      ? userDocumentList?.find(
-          (document: UserDocument) =>
-            document.userDocumentType === type.toUpperCase(),
-        )
+      ? uploadedFiles?.[type.toLowerCase() as keyof UploadedFiles] || null
       : null;
 
   // 실제로 표시할 파일 (업로드된 파일 or 제출된 서류)
-  const displayFile = file || submittedDocument?.fileUrl || null;
+  const displayFile = file || submittedDocument || null;
   const hasFile = !!displayFile;
   const canEdit = !isSubmitted;
-
   return (
     <div className="mb-6">
       <div className="mb-3">
@@ -158,7 +156,7 @@ const DocumentFileItem = ({
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={isSubmitted}
-            className="hover:bg-primary-15 flex items-center gap-2 rounded-xs bg-primary-10 px-4 py-2 text-xsmall14 font-medium text-primary transition disabled:cursor-not-allowed disabled:bg-neutral-85 disabled:text-neutral-50"
+            className="flex items-center gap-2 rounded-xs bg-primary-10 px-4 py-2 text-xsmall14 font-medium text-primary transition hover:bg-primary-15 disabled:cursor-not-allowed disabled:bg-neutral-85 disabled:text-neutral-50"
           >
             <Upload size={16} />
             파일 업로드
@@ -203,7 +201,6 @@ const DocumentUploadSection = ({
   isSubmitted = false,
 }: DocumentUploadSectionProps) => {
   const { data: userDocumentList, isLoading } = useGetUserDocumentListQuery();
-
   const resumeInputRef = useRef<HTMLInputElement>(null);
   const portfolioInputRef = useRef<HTMLInputElement>(null);
   const personalStatementInputRef = useRef<HTMLInputElement>(null);
@@ -275,6 +272,7 @@ const DocumentUploadSection = ({
     isSubmitted,
     userDocumentList: userDocumentList?.userDocumentList,
     isLoading,
+    uploadedFiles,
     onFileUpload: handleFileUpload,
     onFileDelete: handleFileDelete,
     onLoadDocument: handleLoadDocument,

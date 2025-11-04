@@ -38,11 +38,12 @@ const MissionSubmitTalentPoolSection = ({
 
   const submitMissionTalentPool = usePostMissionTalentPoolMutation();
   const submitAttendance = useSubmitMission();
-  const { data: missionData } = useChallengeMissionAttendanceInfoQuery({
-    challengeId: currentChallenge?.id,
-    missionId,
-    enabled: !!currentChallenge?.id && !!missionId,
-  });
+  const { data: missionData, refetch: refetchMissionData } =
+    useChallengeMissionAttendanceInfoQuery({
+      challengeId: currentChallenge?.id,
+      missionId,
+      enabled: !!currentChallenge?.id && !!missionId,
+    });
   const userDocumentInfos = missionData?.userDocumentInfos;
 
   // 챌린지 종료 + 2일
@@ -128,7 +129,7 @@ const MissionSubmitTalentPoolSection = ({
           submitMissionTalentPool.mutateAsync(formData),
         ),
       );
-      // TODO: 추가 invalidate 필요한지 확인 필요
+      await refetchMissionData();
       await refetchSchedules?.();
       setShowToast(true);
     } catch (error) {
@@ -154,16 +155,16 @@ const MissionSubmitTalentPoolSection = ({
 
     setIsAgreed(attendanceInfo?.submitted ?? false);
 
-    if (userDocumentInfos && userDocumentInfos.length > 0) {
-      // wishField, wishJob, wishIndustry는 모든 문서에 동일하게 저장되므로 첫 번째 항목에서 가져옴
+    if (
+      attendanceInfo?.submitted &&
+      userDocumentInfos &&
+      userDocumentInfos.length > 0
+    ) {
       const firstDoc = userDocumentInfos[0];
       if (firstDoc.wishField) setSelectedField(firstDoc.wishField);
-      if (firstDoc.wishJob) {
-        setSelectedPositions(firstDoc.wishJob.split(',').filter(Boolean));
-      }
-      if (firstDoc.wishIndustry) {
-        setSelectedIndustries(firstDoc.wishIndustry.split(',').filter(Boolean));
-      }
+      if (firstDoc.wishJob) setSelectedPositions(firstDoc.wishJob.split(','));
+      if (firstDoc.wishIndustry)
+        setSelectedIndustries(firstDoc.wishIndustry.split(','));
 
       // 파일 URL 설정
       const newUploadedFiles: UploadedFiles = {
