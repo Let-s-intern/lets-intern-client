@@ -11,6 +11,7 @@ import {
   MAX_COMPETENCIES,
 } from './constants';
 
+import { UserExperienceQueryKey } from '@/api/experience';
 import { UserExperienceType } from '@/api/experienceSchema';
 import {
   useGetUserAdmin,
@@ -24,6 +25,7 @@ import {
   type UserExperience,
 } from '@/api/userSchema';
 import { useUnsavedChangesWarning } from '@/hooks/useUnsavedChangesWarning';
+import { useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { CompetencyBadges } from './components/CompetencyBadges';
 import { ExperienceCategoryModal } from './components/ExperienceCategoryModal';
@@ -63,6 +65,7 @@ export const ExperienceForm = ({
   onClose,
   initialData,
 }: ExperienceFormProps) => {
+  const queryClient = useQueryClient();
   const {
     register,
     handleSubmit,
@@ -88,6 +91,11 @@ export const ExperienceForm = ({
 
   // 관리자 여부 조회
   const { data: isAdmin } = useGetUserAdmin();
+
+  const onCloseDrawer = useCallback(() => {
+    onClose();
+    queryClient.invalidateQueries({ queryKey: [UserExperienceQueryKey] });
+  }, [onClose, queryClient]);
 
   // 저장 완료 여부를 추적하는 ref
   const isSavedRef = useRef(false);
@@ -303,8 +311,7 @@ export const ExperienceForm = ({
       // 저장 성공 시 플래그 설정
       isSavedRef.current = true;
       alert('경험 정리가 성공적으로 저장되었습니다.');
-      onClose();
-      // TODO: invalidateQueries 추가
+      onCloseDrawer();
     } catch (error) {
       console.error('경험 정리 저장 실패:', error);
       const errorMessage =
@@ -350,7 +357,7 @@ export const ExperienceForm = ({
         return;
       }
     }
-    onClose();
+    onCloseDrawer();
   };
 
   return (
