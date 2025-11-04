@@ -274,6 +274,7 @@ export const ExperienceForm = ({
       result: data.result,
       reflection: data.reflection,
       coreCompetency: data.coreCompetency,
+      // TODO: 권한 처리
       isAdminAdded:
         process.env.NODE_ENV === 'production' ? data.isAdminAdded : true,
     };
@@ -397,6 +398,9 @@ export const ExperienceForm = ({
             <div className="flex flex-col gap-5">
               <h2 className="text-small16 font-semibold text-neutral-0">
                 기본 정보
+                <span className="ml-1.5 text-xsmall16 font-normal text-primary-90">
+                  *필수
+                </span>
               </h2>
 
               <div className="flex flex-col gap-4">
