@@ -160,6 +160,7 @@ const MissionSubmitTalentPoolSection = ({
           selectedField={selectedField}
           selectedPositions={selectedPositions}
           selectedIndustries={selectedIndustries}
+          isSubmitted={isSubmitted}
           onFieldChange={setSelectedField}
           onPositionsChange={setSelectedPositions}
           onIndustriesChange={setSelectedIndustries}
@@ -186,7 +187,7 @@ const MissionSubmitTalentPoolSection = ({
             hasContent={canSubmit}
             onButtonClick={handleSubmit}
             isEditing={false}
-            disabled={isResubmitBlocked}
+            disabled={isSubmitted}
           />
         )}
 
