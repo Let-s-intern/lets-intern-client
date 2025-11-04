@@ -221,6 +221,7 @@ export const userExperienceInfoSchema = userExperienceBaseSchema.extend({
   id: z.number(),
   createdDate: z.string(),
   updatedDate: z.string(),
+  isAddedByAdmin: z.boolean().optional(),
 });
 
 export type UserExperienceInfo = z.infer<typeof userExperienceInfoSchema>;

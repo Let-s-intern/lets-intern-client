@@ -299,7 +299,8 @@ export const usePostUserExperienceMutation = () => {
   return useMutation({
     mutationFn: async (data: UserExperience) => {
       const res = await axios.post('/user-experience', data);
-      return userExperienceInfoSchema.parse(res.data.data);
+      // return userExperienceInfoSchema.parse(res.data.data);
+      return res.data.data;
     },
   });
 };
@@ -309,7 +310,7 @@ export const usePatchUserExperienceMutation = () => {
   return useMutation({
     mutationFn: async ({ id, data }: { id: number; data: UserExperience }) => {
       const res = await axios.patch(`/user-experience/${id}`, data);
-      return userExperienceInfoSchema.parse(res.data.data);
+      return userExperienceInfoSchema.parse(res.data.data.userExperience);
     },
   });
 };
