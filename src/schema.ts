@@ -1284,6 +1284,19 @@ export const userChallengeMissionWithAttendance = z
         accountNum: z.string().nullish(),
       })
       .nullable(),
+    userDocumentInfos: z
+      .array(
+        z.object({
+          userDocumentId: z.number(),
+          userDocumentType: reportTypeSchema,
+          fileUrl: z.string().nullable(),
+          fileName: z.string().nullable(),
+          wishField: z.string().nullable(),
+          wishJob: z.string().nullable(),
+          wishIndustry: z.string().nullable(),
+        }),
+      )
+      .nullable(),
   })
   .transform((data) => {
     return {
@@ -1293,6 +1306,7 @@ export const userChallengeMissionWithAttendance = z
         endDate: dayjs(data.missionInfo.endDate),
       },
       attendanceInfo: data.attendanceInfo,
+      userDocumentInfos: data.userDocumentInfos,
     };
   });
 

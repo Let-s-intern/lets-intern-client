@@ -52,8 +52,8 @@ export const useSubmitMission = () => {
       userExperienceIds,
     }: {
       missionId: number;
-      link: string;
-      review: string;
+      link: string | null;
+      review: string | null;
       userExperienceIds?: number[];
     }) => {
       return axios.post(`/attendance/${missionId}`, {
