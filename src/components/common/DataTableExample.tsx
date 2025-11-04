@@ -2,23 +2,21 @@
 
 import { twMerge } from '@/lib/twMerge';
 import { Trash2 } from 'lucide-react';
-import React, { useState } from 'react';
-import DataTable, { TableData, TableHeader } from './table/DataTable';
+import React from 'react';
+import { TableData, TableHeader } from './table/DataTable';
 
 // 사용 예시 컴포넌트
 export const DataTableExample: React.FC = () => {
-  const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
-
   return (
     <div className="w-full">
       {/* 기본 테이블 사용 예시 */}
-      <DataTable
+      {/* <DataTable
         headers={experienceTableHeaders}
         data={sampleExperienceData}
         selectedRowIds={selectedRowIds}
         onSelectionChange={setSelectedRowIds}
         className="rounded-lg border"
-      />
+      /> */}
     </div>
   );
 };
