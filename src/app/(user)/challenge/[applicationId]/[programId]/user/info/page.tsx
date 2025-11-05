@@ -6,6 +6,7 @@ import RadioButton from '@/components/challenge-view/RadioButton';
 import GradeDropdown from '@/components/common/mypage/privacy/form-control/GradeDropdown';
 import Input from '@/components/common/ui/input/Input';
 import { DASHBOARD_FIRST_VISIT_GOAL } from '@components/common/challenge/my-challenge/section/MissionSubmitZeroSection';
+import { josa } from 'es-hangul';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -87,7 +88,7 @@ const ChallengeUserInfo = () => {
     }
   }, [userData]);
 
-  const programTitle = programTitleData?.title;
+  const programTitle = programTitleData?.title || '챌린지';
   const username = userData?.name;
 
   const { mutateAsync: tryPatchUser, isPending: patchUserIsPending } =
@@ -179,7 +180,7 @@ const ChallengeUserInfo = () => {
           <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-1">
               <label htmlFor="university" className="text-1-medium">
-                학교<span className="text-requirement">*</span>
+                학교<span className="pl-1 text-requirement">*</span>
               </label>
               <Input
                 id="university"
@@ -191,7 +192,7 @@ const ChallengeUserInfo = () => {
             </div>
             <div className="flex flex-col gap-1">
               <label htmlFor="grade" className="text-1-medium">
-                학년<span className="text-requirement">*</span>
+                학년<span className="pl-1 text-requirement">*</span>
               </label>
               <GradeDropdown
                 value={value.grade}
@@ -201,7 +202,7 @@ const ChallengeUserInfo = () => {
             </div>
             <div className="flex flex-col gap-1">
               <label htmlFor="major" className="text-1-medium">
-                전공<span className="text-requirement">*</span>
+                전공<span className="pl-1 text-requirement">*</span>
               </label>
               <Input
                 id="major"
@@ -213,7 +214,7 @@ const ChallengeUserInfo = () => {
             </div>
             <div className="flex flex-col gap-1">
               <label htmlFor="wishJob" className="text-1-medium">
-                희망 직무<span className="text-requirement">*</span>
+                희망 직무<span className="pl-1 text-requirement">*</span>
               </label>
               <Input
                 id="wishJob"
@@ -225,7 +226,7 @@ const ChallengeUserInfo = () => {
             </div>
             <div className="flex flex-col gap-1">
               <label htmlFor="wishCompany" className="text-1-medium">
-                희망 기업<span className="text-requirement">*</span>
+                희망 기업<span className="pl-1 text-requirement">*</span>
               </label>
               <Input
                 id="wishCompany"
@@ -235,18 +236,20 @@ const ChallengeUserInfo = () => {
                 onChange={handleInputChange}
               />
             </div>
-            <div className="flex flex-col gap-4 pt-4">
+            <hr className="my-4" />
+            <div className="flex flex-col gap-8 pt-4">
               <div className="flex flex-col gap-1">
-                <h3 className="text-base font-semibold">
+                <h2 className="text-lg font-semibold">
                   렛츠커리어 챌린지를 언제, 어떤 계기로 결제하게 되셨나요?
-                </h3>
-                <p className="text-1-medium text-neutral-40">
-                  *아래 중 본인 상황과 가장 가까운 항목을 선택해주세요.
+                </h2>
+                <p className="mb-2 break-keep text-neutral-40">
+                  아래 중 본인 상황과 가장 가까운 항목을 선택해주세요.
                 </p>
               </div>
               <div className="flex flex-col gap-2">
                 <span className="text-1-medium" id="challengeAwarenessLabel">
-                  {'챌린지명'}이 개설된 사실을 어떻게 아셨나요?
+                  {josa(`${programTitle}`, '이/가')} 개설된 사실을 어떻게
+                  아셨나요?<span className="pl-1 text-requirement">*</span>
                 </span>
                 <div className="flex flex-col gap-2">
                   {awarenessOptions.map((option) => (
@@ -274,15 +277,17 @@ const ChallengeUserInfo = () => {
                   ))}
                 </div>
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-1">
                 <span
                   className="text-1-medium"
                   id="challengeDecisionPeriodLabel"
                 >
-                  {'챌린지명'}를 알게 된 후, 결제하기까지 얼마나 고민하셨나요?
+                  {josa(`${programTitle}`, '을/를')} 알게 된 후, 결제하기까지
+                  얼마나 고민하셨나요?
+                  <span className="pl-1 text-requirement">*</span>
                 </span>
-                <p className="text-1-medium text-neutral-40">
-                  *처음 챌린지 소식을 접한 시점부터 결제 완료까지의 기간을
+                <p className="mb-2 break-keep text-neutral-40">
+                  처음 챌린지 소식을 접한 시점부터 결제 완료까지의 기간을
                   선택해주세요.
                 </p>
                 <div className="flex flex-col gap-2">
@@ -301,8 +306,9 @@ const ChallengeUserInfo = () => {
               </div>
               <div className="flex flex-col gap-2">
                 <span className="text-1-medium" id="challengeEntryPointLabel">
-                  그렇다면 {'챌린지명'}을 실제 결제 하기 직전에는 어디를 통해
-                  결제 페이지에 들어오셨나요?
+                  그렇다면 {josa(`${programTitle}`, '을/를')} 실제 결제 하기
+                  직전에는 어디를 통해 결제 페이지에 들어오셨나요?
+                  <span className="pl-1 text-requirement">*</span>
                 </span>
                 <div className="flex flex-col gap-2">
                   {entryPointOptions.map((option) => (
