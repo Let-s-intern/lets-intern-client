@@ -177,6 +177,7 @@ const MissionSubmitRegularSection = ({
         attendanceId: attendanceInfo.id,
         link: linkValue,
         review: textareaValue,
+        userExperienceIds: selectedExperienceIds,
       });
       await refetchSchedules?.();
       setIsEditing(false);
