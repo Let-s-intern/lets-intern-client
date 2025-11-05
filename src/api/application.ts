@@ -14,6 +14,7 @@ import { ProgramType } from '../types/common';
 import axios from '../utils/axios';
 import { UsePaymentDetailQueryKey, UsePaymentQueryKey } from './payment';
 import { tossInfoType } from './paymentSchema';
+import { useUserQueryKey } from './user';
 
 export const programApplicationSchema = z.object({
   applied: z.boolean().nullable().optional(),
@@ -49,14 +50,14 @@ export const fetchProgramApplication = async (
   return programApplicationSchema.parse(data.data);
 };
 
-const UseProgramApplicationQueryKey = 'useProgramApplicationQueryKey';
+export const useProgramApplicationQueryKey = 'useProgramApplicationQueryKey';
 
 export const useProgramApplicationQuery = (
   programType: ProgramType,
   programId: number,
 ) => {
   return useQuery({
-    queryKey: [UseProgramApplicationQueryKey, programType, programId],
+    queryKey: [useProgramApplicationQueryKey, programType, programId],
     queryFn: async () => {
       const res = await axios.get(`/${programType}/${programId}/application`);
       return programApplicationSchema.parse(res.data.data);
@@ -150,7 +151,57 @@ export const useCancelApplicationMutation = ({
   });
 };
 
-const useMypageApplicationsQueryKey = 'useMypageApplicationsQueryKey';
+export interface PatchApplicationSurveyInterface {
+  awarenessPath: string;
+  decisionPeriod: string;
+  paymentPath: string;
+}
+
+export type PatchApplicationSurveyField = keyof PatchApplicationSurveyInterface;
+
+export const usePatchApplicationSurveyMutation = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+}) => {
+  const client = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      programType,
+      applicationId,
+      requestBody,
+    }: {
+      programType: string;
+      applicationId: number;
+      requestBody: PatchApplicationSurveyInterface;
+    }) => {
+      const res = await axios.patch(
+        `/application/${applicationId}/survey`,
+        requestBody,
+        {
+          params: { type: programType.toUpperCase() },
+        },
+      );
+      return res.data;
+    },
+    onSuccess: () => {
+      if (successCallback) {
+        successCallback();
+      }
+      client.invalidateQueries({
+        queryKey: [useUserQueryKey, useProgramApplicationQueryKey],
+      });
+    },
+    onError: (error) => {
+      if (errorCallback) {
+        errorCallback(error);
+      }
+    },
+  });
+};
 
 const applicationStatus = z.union([
   z.literal('WAITING'),
@@ -204,6 +255,8 @@ export const mypageApplicationsSchema = z
 export type MypageApplication = z.infer<
   typeof mypageApplicationsSchema
 >['applicationList'][0];
+
+const useMypageApplicationsQueryKey = 'useMypageApplicationsQueryKey';
 
 export const useMypageApplicationsQuery = () => {
   return useQuery({
