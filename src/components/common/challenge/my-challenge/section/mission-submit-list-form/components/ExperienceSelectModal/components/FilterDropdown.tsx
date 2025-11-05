@@ -107,7 +107,7 @@ export const FilterDropdown = ({
                 key={option.value}
                 type="button"
                 onClick={() => handleSelect(option.value)}
-                className="flex w-full items-center gap-1 px-2 py-1.5 text-left text-sm text-neutral-20 hover:bg-gray-100"
+                className="flex w-full items-center justify-between px-2 py-1.5 text-left text-sm text-neutral-20 hover:bg-gray-100"
               >
                 {option.label}
                 {isSelected && <Check size={20} className="text-primary-80" />}
