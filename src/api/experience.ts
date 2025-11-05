@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ExperienceFiltersReq,
   Pageable,
+  Sortable,
   userExperienceListSchema,
   userExperienceSchema,
   UserExperienceType,
@@ -23,15 +24,16 @@ export const useGetUserExperienceFiltersQuery = () => {
 
 export const useGetAllUserExperienceQuery = (
   filter: ExperienceFiltersReq,
+  sortable: Sortable,
   pageable: Pageable,
   options?: { enabled?: boolean },
 ) => {
   return useQuery({
-    queryKey: [UserExperienceQueryKey, filter, pageable],
+    queryKey: [UserExperienceQueryKey, filter, sortable, pageable],
     queryFn: async () => {
       const res = await axios.post(
         `/user-experience/search?page=${pageable.page}&size=${pageable.size}`,
-        filter,
+        { ...filter, sortType: sortable },
       );
       return userExperienceListSchema.parse(res.data.data);
     },

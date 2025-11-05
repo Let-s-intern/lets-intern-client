@@ -1,6 +1,6 @@
 'use client';
 
-import { UserExperienceType } from '@/api/experienceSchema';
+import { Sortable, UserExperienceType } from '@/api/experienceSchema';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import drawerReducer from '@/reducers/drawerReducer';
 import ExperienceCreateButton from '@components/common/mypage/experience/ExperienceCreateButton';
@@ -10,7 +10,6 @@ import ExperienceFilters, {
 } from '@components/common/mypage/experience/ExperienceFilters';
 import SortFilterDropdown from '@components/common/mypage/experience/SortFilterDropdown';
 import { ExperienceForm } from '@components/pages/mypage/experience/ExperienceForm';
-import { Plus } from 'lucide-react';
 import { useCallback, useReducer, useState } from 'react';
 
 const DEFAULT_FILTERS: Filters = {
@@ -22,7 +21,7 @@ const DEFAULT_FILTERS: Filters = {
 
 const Experience = () => {
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
-  const [sortBy, setSortBy] = useState('latest');
+  const [sortBy, setSortBy] = useState<Sortable>('LATEST');
   const [isDrawerOpen, dispatchIsDrawerOpen] = useReducer(drawerReducer, false);
   const [selectedExperience, setSelectedExperience] =
     useState<UserExperienceType | null>(null);
@@ -120,21 +119,3 @@ const Experience = () => {
 
 export default Experience;
 
-// TODO: props로 variant 등 추가 예정
-interface SolidButtonProps {
-  variant?: 'primary' | 'secondary';
-  children: React.ReactNode;
-  onClick?: () => void;
-}
-
-const SolidButton = ({ children, onClick }: SolidButtonProps) => {
-  return (
-    <button
-      className="flex cursor-pointer items-center gap-1 rounded-xs bg-primary-10 px-3 py-2 text-primary hover:bg-primary-15"
-      onClick={onClick}
-    >
-      <Plus size={16} />
-      <span className="text-sm font-medium">{children}</span>
-    </button>
-  );
-};
