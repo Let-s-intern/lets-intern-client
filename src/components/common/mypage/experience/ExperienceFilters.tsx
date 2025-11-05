@@ -32,7 +32,7 @@ const ExperienceFilters = ({
   );
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 overflow-x-auto scrollbar-hide">
       <MultiFilterDropdown
         labelPrefix="경험 분류"
         options={filterOptions.availableCategories}

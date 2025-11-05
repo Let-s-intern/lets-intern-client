@@ -24,7 +24,23 @@ export const MultiFilterDropdown = ({
   width = 'w-48',
 }: MultiFilterDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [dropdownStyle, setDropdownStyle] = useState({});
+
+  // 필터 버튼에 맞게 드롭다운 위치와 너비 설정
+  useEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setDropdownStyle({
+        position: 'fixed',
+        zIndex: 50,
+        top: `${rect.bottom + 4}px`,
+        left: `${rect.left}px`,
+        width: `${rect.width}px`,
+      });
+    }
+  }, [isOpen, selectedValues]);
 
   const getFilterLabel = () => {
     if (selectedValues.length === 0) {
@@ -75,6 +91,7 @@ export const MultiFilterDropdown = ({
     <div className="relative" ref={dropdownRef}>
       <button
         type="button"
+        ref={buttonRef}
         onClick={toggleDropdown}
         className={`flex ${width} items-center justify-between gap-1.5 rounded-xs border border-neutral-80 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50`}
       >
@@ -101,7 +118,8 @@ export const MultiFilterDropdown = ({
       </button>
       {isOpen && (
         <div
-          className={`shadow-07 absolute z-20 mt-1 max-h-[28.125rem] w-full divide-y divide-neutral-95 overflow-auto rounded-xs bg-white px-1 py-1.5 scrollbar-hide`}
+          className={`shadow-07 max-h-[28.125rem] w-full divide-y divide-neutral-95 overflow-auto rounded-xs bg-white px-1 py-1.5 scrollbar-hide`}
+          style={dropdownStyle}
         >
           {options.map((option) => {
             const isSelected =
