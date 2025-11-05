@@ -193,9 +193,6 @@ const MissionSubmitRegularSection = ({
   const canSubmit =
     selectedExperienceIds.length >= 3 && textareaValue.trim().length > 0;
 
-  // "작성한 경험 불러오기" 버튼 활성화 조건: 수정 가능할 때만
-  const isLoadButtonEnabled = isEditing && !isResubmitBlocked;
-
   const handleOpenBonusMissionModalAtSubmission = (
     currentSubmissionMissionTh: number,
   ) => {
@@ -219,8 +216,9 @@ const MissionSubmitRegularSection = ({
         <MissionSubmitListForm
           onExperienceIdsChange={setSelectedExperienceIds}
           initialExperienceIds={attendanceInfo?.submittedUserExperienceIds}
-          isLoadButtonEnabled={isLoadButtonEnabled}
           missionStartDate={missionStartDate}
+          isSubmitted={isSubmitted}
+          isEditing={isEditing}
         />
 
         {/* 미션 소감 */}

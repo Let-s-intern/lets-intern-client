@@ -12,15 +12,17 @@ type ExperienceLevel = 'LV1' | 'LV2';
 interface MissionSubmitListFormProps {
   onExperienceIdsChange?: (ids: number[]) => void;
   initialExperienceIds?: number[] | null;
-  isLoadButtonEnabled?: boolean;
   missionStartDate?: Dayjs | null;
+  isSubmitted?: boolean;
+  isEditing?: boolean;
 }
 
 export const MissionSubmitListForm = ({
   onExperienceIdsChange,
   initialExperienceIds,
-  isLoadButtonEnabled = false,
   missionStartDate,
+  isSubmitted,
+  isEditing,
 }: MissionSubmitListFormProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedExperiences, setSelectedExperiences] = useState<
@@ -110,9 +112,10 @@ export const MissionSubmitListForm = ({
       <MissionSubmitExperienceList
         selectedExperiences={selectedExperiences}
         onOpenModal={handleOpenModal}
-        isLoadButtonEnabled={isLoadButtonEnabled}
         level={level}
         missionStartDate={missionStartDate}
+        isSubmitted={isSubmitted}
+        isEditing={isEditing}
       />
 
       {/* 경험 선택 모달 */}

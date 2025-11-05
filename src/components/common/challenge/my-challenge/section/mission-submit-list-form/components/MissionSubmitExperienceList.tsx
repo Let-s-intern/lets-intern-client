@@ -12,17 +12,19 @@ type ExperienceLevel = 'LV1' | 'LV2';
 interface MissionSubmitExperienceListProps {
   selectedExperiences: ExperienceData[];
   onOpenModal: () => void;
-  isLoadButtonEnabled?: boolean;
   level: ExperienceLevel;
   missionStartDate?: Dayjs | null;
+  isSubmitted?: boolean;
+  isEditing?: boolean;
 }
 
 export const MissionSubmitExperienceList = ({
   selectedExperiences,
   onOpenModal,
-  isLoadButtonEnabled = false,
   level,
   missionStartDate,
+  isSubmitted,
+  isEditing,
 }: MissionSubmitExperienceListProps) => {
   const { data } = useSearchUserExperiencesQuery({
     filter: {
@@ -62,7 +64,12 @@ export const MissionSubmitExperienceList = ({
 
   const experienceCount = submitableExperiences.length;
 
-  const isButtonDisabled = isLoadButtonEnabled || experienceCount < 3;
+  // 버튼 비활성화 조건:
+  // 1. 경험 수가 3개 미만이면 disabled
+  // 2. 제출되어 있고 수정 모드가 아니면 disabled
+  // 3. 그 외 (경험 수 3개 이상이고, (제출 안 됨 OR 수정 모드임)) → enabled
+  const isButtonDisabled =
+    experienceCount < 3 || (isSubmitted === true && isEditing !== true);
 
   // EmptyState 텍스트 결정
   const getEmptyStateText = () => {
@@ -100,9 +107,7 @@ export const MissionSubmitExperienceList = ({
           onClick={onOpenModal}
           disabled={isButtonDisabled}
           className={`rounded-xxs border border-neutral-80 bg-white px-3 py-2 text-xsmall14 font-medium disabled:cursor-not-allowed ${
-            !isButtonDisabled && experienceCount >= 3
-              ? 'text-primary'
-              : 'text-neutral-50'
+            isButtonDisabled ? 'text-neutral-50' : 'text-primary'
           }`}
         >
           작성한 경험 불러오기
