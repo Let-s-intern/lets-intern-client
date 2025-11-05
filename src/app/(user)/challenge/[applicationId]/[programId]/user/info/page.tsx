@@ -1,5 +1,6 @@
 'use client';
 
+import { PatchApplicationSurveyField } from '@/api/application';
 import { useGetChallengeTitle, usePatchChallengeGoal } from '@/api/challenge';
 import { usePatchUser, useUserQuery } from '@/api/user';
 import RadioButton from '@/components/challenge-view/RadioButton';
@@ -63,13 +64,13 @@ const ChallengeUserInfo = () => {
   const { data: userData } = useUserQuery();
 
   const [surveySelections, setSurveySelections] = useState({
-    awareness: '',
+    awarenessPath: '',
     decisionPeriod: '',
-    entryPoint: '',
+    paymentPath: '',
   });
   const [surveyEtcText, setSurveyEtcText] = useState({
-    awareness: '',
-    entryPoint: '',
+    awarenessPath: '',
+    paymentPath: '',
   });
 
   const { data: programTitleData } = useGetChallengeTitle(Number(programId));
@@ -95,21 +96,20 @@ const ChallengeUserInfo = () => {
     usePatchUser();
 
   const handleSurveySelection =
-    (field: 'awareness' | 'decisionPeriod' | 'entryPoint') =>
-    (option: string) => {
+    (field: PatchApplicationSurveyField) => (option: string) => {
       setSurveySelections((prev) => ({ ...prev, [field]: option }));
 
-      if (field === 'awareness' && option !== '기타') {
-        setSurveyEtcText((prev) => ({ ...prev, awareness: '' }));
+      if (field === 'awarenessPath' && option !== '기타') {
+        setSurveyEtcText((prev) => ({ ...prev, awarenessPath: '' }));
       }
 
-      if (field === 'entryPoint' && option !== '기타') {
-        setSurveyEtcText((prev) => ({ ...prev, entryPoint: '' }));
+      if (field === 'paymentPath' && option !== '기타') {
+        setSurveyEtcText((prev) => ({ ...prev, paymentPath: '' }));
       }
     };
 
   const handleSurveyEtcChange =
-    (field: 'awareness' | 'entryPoint') =>
+    (field: PatchApplicationSurveyField) =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setSurveyEtcText((prev) => ({ ...prev, [field]: event.target.value }));
     };
@@ -174,7 +174,7 @@ const ChallengeUserInfo = () => {
           <div className="flex flex-col gap-1">
             <h2 className="text-lg font-semibold">기본 정보</h2>
             <p className="break-keep text-neutral-40">
-              * 기본 정보를 바탕으로 더 유익한 학습콘텐츠를 제공해드릴게요!
+              기본 정보를 바탕으로 더 유익한 학습콘텐츠를 제공해드릴게요!
             </p>
           </div>
           <div className="flex flex-col gap-3">
@@ -256,20 +256,20 @@ const ChallengeUserInfo = () => {
                     <div key={option} className="flex flex-col gap-2">
                       <RadioButton
                         color={radioColor}
-                        checked={surveySelections.awareness === option}
+                        checked={surveySelections.awarenessPath === option}
                         label={option}
                         onClick={() =>
-                          handleSurveySelection('awareness')(option)
+                          handleSurveySelection('awarenessPath')(option)
                         }
                       />
                       {option === '기타' &&
-                        surveySelections.awareness === '기타' && (
+                        surveySelections.awarenessPath === '기타' && (
                           <Input
                             id="challengeAwarenessEtc"
                             name="challengeAwarenessEtc"
                             placeholder="기타 항목을 입력해주세요."
-                            value={surveyEtcText.awareness}
-                            onChange={handleSurveyEtcChange('awareness')}
+                            value={surveyEtcText.awarenessPath}
+                            onChange={handleSurveyEtcChange('awarenessPath')}
                             className="ml-7 mt-1 w-full max-w-sm"
                           />
                         )}
@@ -315,20 +315,20 @@ const ChallengeUserInfo = () => {
                     <div key={option} className="flex flex-col gap-2">
                       <RadioButton
                         color={radioColor}
-                        checked={surveySelections.entryPoint === option}
+                        checked={surveySelections.paymentPath === option}
                         label={option}
                         onClick={() =>
-                          handleSurveySelection('entryPoint')(option)
+                          handleSurveySelection('paymentPath')(option)
                         }
                       />
                       {option === '기타' &&
-                        surveySelections.entryPoint === '기타' && (
+                        surveySelections.paymentPath === '기타' && (
                           <Input
                             id="challengeEntryPointEtc"
                             name="challengeEntryPointEtc"
                             placeholder="기타 항목을 입력해주세요."
-                            value={surveyEtcText.entryPoint}
-                            onChange={handleSurveyEtcChange('entryPoint')}
+                            value={surveyEtcText.paymentPath}
+                            onChange={handleSurveyEtcChange('paymentPath')}
                             className="ml-7 mt-1 w-full max-w-sm"
                           />
                         )}
