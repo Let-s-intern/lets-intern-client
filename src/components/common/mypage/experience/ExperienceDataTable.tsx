@@ -82,16 +82,18 @@ const ExperienceDataTable = ({
       />
 
       {totalPages > 1 && (
-        <MuiPagination
-          page={currentPage + 1}
-          onChange={handlePageChange}
-          pageInfo={{
-            pageNum: currentPage + 1,
-            pageSize: PAGE_SIZE,
-            totalElements,
-            totalPages,
-          }}
-        />
+        <div className="mx-auto mt-6 w-fit">
+          <MuiPagination
+            page={currentPage + 1}
+            onChange={handlePageChange}
+            pageInfo={{
+              pageNum: currentPage + 1,
+              pageSize: PAGE_SIZE,
+              totalElements,
+              totalPages,
+            }}
+          />
+        </div>
       )}
     </section>
   );
