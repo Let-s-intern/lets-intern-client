@@ -1,6 +1,7 @@
 'use client';
 
-import { Check } from 'lucide-react';
+import BottomSheet from '@components/common/ui/BottomSheeet';
+import { Check, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 interface FilterOption {
@@ -112,27 +113,67 @@ export const FilterDropdown = ({
           />
         </svg>
       </button>
-      {isOpen && (
-        <div
-          className={`shadow-07 max-h-[28.125rem] w-full divide-y divide-neutral-95 overflow-auto rounded-xs bg-white px-1 py-1.5 scrollbar-hide`}
-          style={dropdownStyle}
-        >
-          {options.map((option) => {
-            const isSelected = option.value === selectedValue;
 
-            return (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => handleSelect(option.value)}
-                className="flex w-full items-center justify-between px-2 py-1.5 text-left text-sm text-neutral-20 hover:bg-gray-100"
-              >
-                {option.label}
-                {isSelected && <Check size={20} className="text-primary-80" />}
-              </button>
-            );
-          })}
-        </div>
+      {isOpen && (
+        <>
+          <div
+            className={`shadow-07 hidden max-h-[28.125rem] w-full divide-y divide-neutral-95 overflow-auto rounded-xs bg-white px-1 py-1.5 scrollbar-hide md:block`}
+            style={dropdownStyle}
+          >
+            {options.map((option) => {
+              const isSelected = option.value === selectedValue;
+
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => handleSelect(option.value)}
+                  className="flex w-full items-center justify-between px-2 py-1.5 text-left text-sm text-neutral-20 hover:bg-gray-100"
+                >
+                  {option.label}
+                  {isSelected && (
+                    <Check size={20} className="text-primary-80" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          <BottomSheet className="md:hidden">
+            <div className="flex max-h-[62vh] w-full flex-col">
+              <header className="flex items-center justify-between pb-4">
+                <span className="text-lg font-semibold text-neutral-0">
+                  {labelPrefix}
+                </span>
+
+                <X
+                  onClick={toggleDropdown}
+                  className="cursor-pointer self-end text-neutral-0"
+                />
+              </header>
+
+              <div className="flex flex-col gap-1.5 overflow-y-auto scrollbar-hide">
+                {options.map((option) => {
+                  const isSelected = option.value === selectedValue;
+
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => handleSelect(option.value)}
+                      className="flex w-full items-center justify-between py-2 text-left font-normal text-neutral-20"
+                    >
+                      {option.label}
+                      {isSelected && (
+                        <Check size={20} className="text-primary-80" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </BottomSheet>
+        </>
       )}
     </div>
   );
