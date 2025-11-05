@@ -25,15 +25,12 @@ import {
 } from '@mui/material';
 import {
   ColumnDef,
-  ExpandedState,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
   getGroupedRowModel,
-  getSortedRowModel,
   GroupingState,
   type Row,
-  SortingState,
   useReactTable,
 } from '@tanstack/react-table';
 import { Plus } from 'lucide-react';
@@ -41,10 +38,7 @@ import { nanoid } from 'nanoid';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   ChangeEvent,
-  Dispatch,
-  memo,
   type ReactNode,
-  SetStateAction,
   useCallback,
   useMemo,
   useState,
@@ -469,64 +463,151 @@ const escapeCsvValue = (value: unknown) => {
   return `"${stringValue.replace(/"/g, '""')}"`;
 };
 
-const LeadHistoryTable = memo(
-  ({
+const VISIBLE_GROUP_LIMIT = 3;
+
+const LeadHistoryTable = ({
+  data,
+  columns,
+  isLoading,
+}: {
+  data: LeadHistoryRow[];
+  columns: ColumnDef<LeadHistoryRow>[];
+  isLoading: boolean;
+}) => {
+  const [grouping] = useState<GroupingState>(['displayPhoneNum']);
+  const table = useReactTable({
     data,
     columns,
-    isLoading,
-    expanded,
-    onExpandedChange,
-  }: {
-    data: LeadHistoryRow[];
-    columns: ColumnDef<LeadHistoryRow>[];
-    isLoading: boolean;
-    expanded: ExpandedState;
-    onExpandedChange: Dispatch<SetStateAction<ExpandedState>>;
-  }) => {
-    const [sorting, setSorting] = useState<SortingState>([
-      { id: 'createDate', desc: true },
-    ]);
-    const [grouping] = useState<GroupingState>(['displayPhoneNum']);
+    state: { grouping, expanded: true },
+    getCoreRowModel: getCoreRowModel(),
+    getGroupedRowModel: getGroupedRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    autoResetExpanded: false,
+    getRowId: (row) => row.id,
+  });
 
-    const table = useReactTable({
-      data,
-      columns,
-      state: { sorting, grouping, expanded },
-      onSortingChange: setSorting,
-      onExpandedChange,
-      getCoreRowModel: getCoreRowModel(),
-      getSortedRowModel: getSortedRowModel(),
-      getGroupedRowModel: getGroupedRowModel(),
-      getExpandedRowModel: getExpandedRowModel(),
-      autoResetExpanded: false,
-      getRowId: (row) => row.id,
-    });
+  const groupedRowModel = table.getGroupedRowModel();
+  const totalGroupCount = groupedRowModel.rows.length;
+  const displayedGroupCount =
+    totalGroupCount === 0
+      ? 0
+      : Math.min(totalGroupCount, VISIBLE_GROUP_LIMIT);
+  const remainingGroupCount = Math.max(
+    totalGroupCount - displayedGroupCount,
+    0,
+  );
+  const allRows = table.getRowModel().rows;
+  const rowsToRender = useMemo(() => {
+    if (!allRows.length) return allRows;
+    const result: typeof allRows = [];
+    let groupsSeen = 0;
 
-    const columnCount = table.getAllLeafColumns().length || columns.length || 1;
+    for (const row of allRows) {
+      if (row.depth === 0) {
+        groupsSeen += 1;
+        if (groupsSeen > VISIBLE_GROUP_LIMIT) {
+          break;
+        }
+      }
+      result.push(row);
+    }
 
-    return (
-      <div className="rounded border border-gray-200">
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-left text-sm">
-            <thead className="bg-gray-100">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header, i) => {
-                    if (header.isPlaceholder) {
-                      return <th key={header.id} className="px-3 py-2" />;
-                    }
+    return result;
+  }, [allRows]);
 
-                    const sorted = header.column.getIsSorted();
-                    const canSort = header.column.getCanSort();
+  const columnCount = table.getAllLeafColumns().length || columns.length || 1;
 
-                    const headerClassName =
-                      header.column.columnDef.meta?.headerClassName ?? '';
+  return (
+    <div className="rounded border border-gray-200">
+      <div className="overflow-x-auto">
+        <table className="min-w-full text-left text-sm">
+          <thead className="bg-gray-100">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header, i) => {
+                  if (header.isPlaceholder) {
+                    return <th key={header.id} className="px-3 py-2" />;
+                  }
+
+                  const headerClassName =
+                    header.column.columnDef.meta?.headerClassName ?? '';
+
+                  return (
+                    <th
+                      key={header.id}
+                      className={`px-3 py-2 font-medium text-gray-700 ${headerClassName}`}
+                      style={{
+                        ...(i === 0
+                          ? {
+                              position: 'sticky',
+                              left: 0,
+                              background: '#fff',
+                              zIndex: 1,
+                            }
+                          : // : i === 1
+                            //   ? {
+                            //       position: 'sticky',
+                            //       left: 200,
+                            //       background: '#fff',
+                            //       borderRight: '1px solid #ddd',
+                            //       zIndex: 2,
+                            //     }
+                            {}),
+                      }}
+                    >
+                      <div className="flex items-center gap-1">
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                      </div>
+                    </th>
+                  );
+                })}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {isLoading ? (
+              <tr>
+                <td
+                  colSpan={columnCount}
+                  className="px-3 py-10 text-center text-gray-500"
+                >
+                  로딩 중...
+                </td>
+              </tr>
+            ) : allRows.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={columnCount}
+                  className="px-3 py-6 text-center text-gray-500"
+                >
+                  표시할 데이터가 없습니다.
+                </td>
+              </tr>
+            ) : (
+              rowsToRender.map((row) => (
+                <tr
+                  key={row.id}
+                  className={twMerge(
+                    'border-t border-gray-100',
+                    !row.getIsGrouped() && 'bg-slate-50',
+                    row.getIsGrouped() && 'font-medium',
+                  )}
+                >
+                  {row.getVisibleCells().map((cell, i) => {
+                    const cellClassName =
+                      cell.column.columnDef.meta?.cellClassName ?? '';
 
                     return (
-                      <th
-                        key={header.id}
-                        className={`px-3 py-2 font-medium text-gray-700 ${headerClassName}`}
+                      <td
+                        key={cell.id}
+                        className={`px-3 py-2 align-top text-gray-900 ${cellClassName}`}
                         style={{
+                          padding: '8px',
+                          borderBottom: '1px solid #eee',
+                          // 첫 번째 컬럼 고정
                           ...(i === 0
                             ? {
                                 position: 'sticky',
@@ -545,120 +626,32 @@ const LeadHistoryTable = memo(
                               {}),
                         }}
                       >
-                        <button
-                          type="button"
-                          onClick={
-                            canSort
-                              ? header.column.getToggleSortingHandler()
-                              : undefined
-                          }
-                          className={`flex items-center gap-1 ${canSort ? 'cursor-pointer select-none' : 'cursor-default'}`}
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                          {sorted === 'asc' && (
-                            <span
-                              aria-hidden
-                              className="text-[10px] leading-none"
-                            >
-                              ▲
-                            </span>
-                          )}
-                          {sorted === 'desc' && (
-                            <span
-                              aria-hidden
-                              className="text-[10px] leading-none"
-                            >
-                              ▼
-                            </span>
-                          )}
-                        </button>
-                      </th>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </td>
                     );
                   })}
                 </tr>
-              ))}
-            </thead>
-            <tbody>
-              {isLoading ? (
-                <tr>
-                  <td
-                    colSpan={columnCount}
-                    className="px-3 py-10 text-center text-gray-500"
-                  >
-                    로딩 중...
-                  </td>
-                </tr>
-              ) : table.getRowModel().rows.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={columnCount}
-                    className="px-3 py-6 text-center text-gray-500"
-                  >
-                    표시할 데이터가 없습니다.
-                  </td>
-                </tr>
-              ) : (
-                table.getRowModel().rows.map((row) => (
-                  <tr
-                    key={row.id}
-                    className={twMerge(
-                      'border-t border-gray-100',
-                      !row.getIsGrouped() && 'bg-slate-50',
-                      row.getIsGrouped() && 'font-medium',
-                    )}
-                  >
-                    {row.getVisibleCells().map((cell, i) => {
-                      const cellClassName =
-                        cell.column.columnDef.meta?.cellClassName ?? '';
-
-                      return (
-                        <td
-                          key={cell.id}
-                          className={`px-3 py-2 align-top text-gray-900 ${cellClassName}`}
-                          style={{
-                            padding: '8px',
-                            borderBottom: '1px solid #eee',
-                            // 첫 번째 컬럼 고정
-                            ...(i === 0
-                              ? {
-                                  position: 'sticky',
-                                  left: 0,
-                                  background: '#fff',
-                                  zIndex: 1,
-                                }
-                              : // : i === 1
-                                //   ? {
-                                //       position: 'sticky',
-                                //       left: 200,
-                                //       background: '#fff',
-                                //       borderRight: '1px solid #ddd',
-                                //       zIndex: 2,
-                                //     }
-                                {}),
-                          }}
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
-    );
-  },
-);
-
-LeadHistoryTable.displayName = 'LeadHistoryTable';
+      {!isLoading && remainingGroupCount > 0 && (
+        <div className="border-t border-gray-200 bg-gray-50 px-3 py-2 text-center text-[12px] text-gray-500">
+          상위 {displayedGroupCount}개 전화번호 그룹만 표시됩니다. 외 {remainingGroupCount}개는 CSV 다운로드로 확인하세요.
+        </div>
+      )}
+      {!isLoading && remainingGroupCount === 0 && totalGroupCount > 0 && (
+        <div className="border-t border-gray-200 bg-gray-50 px-3 py-2 text-center text-[12px] text-gray-500">
+          전화번호 그룹 {totalGroupCount}개를 모두 보여주고 있습니다.
+        </div>
+      )}
+    </div>
+  );
+};
 
 const CreateLeadHistoryDialog = ({
   open,
@@ -873,7 +866,6 @@ const CreateLeadHistoryDialog = ({
 
 const LeadHistoryPage = () => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [expanded, setExpanded] = useState<ExpandedState>(true);
   const { snackbar } = useAdminSnackbar();
 
   const router = useRouter();
@@ -1479,18 +1471,6 @@ const LeadHistoryPage = () => {
             const count = row.subRows?.length ?? 0;
             return (
               <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={row.getToggleExpandedHandler()}
-                  className="rounded flex h-6 w-6 items-center justify-center border border-gray-200 text-[10px] leading-none text-gray-600"
-                  aria-label={
-                    row.getIsExpanded()
-                      ? '전화번호 그룹 접기'
-                      : '전화번호 그룹 펼치기'
-                  }
-                >
-                  {row.getIsExpanded() ? '-' : '+'}
-                </button>
                 <span>{value}</span>
                 <span className="text-xs text-gray-400">({count}건)</span>
               </div>
@@ -1815,14 +1795,6 @@ const LeadHistoryPage = () => {
     URL.revokeObjectURL(url);
   }, [columns, filteredRows]);
 
-  const handleExpandAll = useCallback(() => {
-    setExpanded(true);
-  }, [setExpanded]);
-
-  const handleCollapseAll = useCallback(() => {
-    setExpanded({});
-  }, [setExpanded]);
-
   const createLeadHistory = useCreateLeadHistoryMutation();
 
   const handleCreate = async (payload: CreateLeadHistoryRequest) => {
@@ -1867,25 +1839,7 @@ const LeadHistoryPage = () => {
         </div>
       </div>
 
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex gap-2">
-          <Button
-            size="small"
-            variant="text"
-            onClick={handleCollapseAll}
-            disabled={!filteredRows.length}
-          >
-            모두 접기
-          </Button>
-          <Button
-            size="small"
-            variant="text"
-            onClick={handleExpandAll}
-            disabled={!filteredRows.length}
-          >
-            모두 펼치기
-          </Button>
-        </div>
+      <div className="mb-4 flex flex-wrap items-center justify-end gap-3">
         <div className="flex gap-2">
           <Button
             variant="outlined"
@@ -1904,8 +1858,6 @@ const LeadHistoryPage = () => {
         data={filteredRows}
         columns={columns}
         isLoading={isLoading}
-        expanded={expanded}
-        onExpandedChange={setExpanded}
       />
 
       <CreateLeadHistoryDialog
