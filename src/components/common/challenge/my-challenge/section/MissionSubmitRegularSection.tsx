@@ -50,6 +50,11 @@ const MissionSubmitRegularSection = ({
   const isSubmitPeriodEnded =
     dayjs(currentChallenge?.endDate).add(2, 'day').isBefore(dayjs()) ?? true;
 
+  // 현재 선택된 미션의 startDate 찾기
+  const currentMission = schedules.find(
+    (schedule) => schedule.missionInfo.id === selectedMissionId,
+  );
+  const missionStartDate = currentMission?.missionInfo.startDate ?? null;
   // missionTh를 기준으로 마지막 정규 미션 찾기 (보너스 미션 제외)
   const regularMissions = schedules.filter(
     (schedule) => schedule.missionInfo.th !== BONUS_MISSION_TH,
@@ -215,6 +220,7 @@ const MissionSubmitRegularSection = ({
           onExperienceIdsChange={setSelectedExperienceIds}
           initialExperienceIds={attendanceInfo?.submittedUserExperienceIds}
           isLoadButtonEnabled={isLoadButtonEnabled}
+          missionStartDate={missionStartDate}
         />
 
         {/* 미션 소감 */}
