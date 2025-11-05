@@ -192,7 +192,7 @@ export const ExperienceForm = ({
       } else {
         const createData = {
           ...parsed.data,
-          isAdminAdded: isAdmin ?? false,
+          isAdminAdded: false,
         };
         const result = await createExperienceMutation.mutateAsync(createData);
         experienceIdRef.current = result.userExperienceId;
@@ -302,7 +302,7 @@ export const ExperienceForm = ({
       } else {
         const createData = {
           ...data,
-          isAdminAdded: isAdmin ?? false,
+          isAdminAdded: false,
         };
         const result = await createExperienceMutation.mutateAsync(createData);
         experienceIdRef.current = result.userExperienceId;
