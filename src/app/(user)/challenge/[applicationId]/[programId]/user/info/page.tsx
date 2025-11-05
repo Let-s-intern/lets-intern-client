@@ -1,6 +1,9 @@
 'use client';
 
-import { PatchApplicationSurveyField } from '@/api/application';
+import {
+  PatchApplicationSurveyField,
+  usePatchApplicationSurveyMutation,
+} from '@/api/application';
 import { useGetChallengeTitle, usePatchChallengeGoal } from '@/api/challenge';
 import { usePatchUser, useUserQuery } from '@/api/user';
 import RadioButton from '@/components/challenge-view/RadioButton';
@@ -9,7 +12,7 @@ import Input from '@/components/common/ui/input/Input';
 import { DASHBOARD_FIRST_VISIT_GOAL } from '@components/common/challenge/my-challenge/section/MissionSubmitZeroSection';
 import { josa } from 'es-hangul';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 const radioColor = '#5177FF';
 const awarenessOptions = [
@@ -59,8 +62,6 @@ const ChallengeUserInfo = () => {
     wishJob: '',
     wishCompany: '',
   });
-  const [buttonDisabled, setButtonDisabled] = useState(false);
-
   const { data: userData } = useUserQuery();
 
   const [surveySelections, setSurveySelections] = useState({
@@ -95,6 +96,9 @@ const ChallengeUserInfo = () => {
   const { mutateAsync: tryPatchUser, isPending: patchUserIsPending } =
     usePatchUser();
 
+  const { mutateAsync: patchApplicationSurvey } =
+    usePatchApplicationSurveyMutation({});
+
   const handleSurveySelection =
     (field: PatchApplicationSurveyField) => (option: string) => {
       setSurveySelections((prev) => ({ ...prev, [field]: option }));
@@ -126,7 +130,7 @@ const ChallengeUserInfo = () => {
     if (patchUserIsPending || !programId) return;
 
     try {
-      await tryPatchUser({
+      const tryPatchUserRes = await tryPatchUser({
         university: value.university,
         grade: value.grade,
         major: value.major,
@@ -134,10 +138,38 @@ const ChallengeUserInfo = () => {
         wishCompany: value.wishCompany,
       });
 
-      await tryPostGoal({
+      console.log('tryPatchUser success', tryPatchUserRes.data);
+
+      const tryPostGoalRes = await tryPostGoal({
         challengeId: programId,
         goal: DASHBOARD_FIRST_VISIT_GOAL,
       });
+
+      console.log('tryPostGoal success', tryPostGoalRes.data);
+
+      const awarenessPath =
+        surveySelections.awarenessPath === '기타'
+          ? surveyEtcText.awarenessPath
+          : surveySelections.awarenessPath;
+      const paymentPath =
+        surveySelections.paymentPath === '기타'
+          ? surveyEtcText.paymentPath
+          : surveySelections.paymentPath;
+
+      const patchApplicationSurveyRes = await patchApplicationSurvey({
+        programType: 'challenge',
+        applicationId: Number(params.applicationId),
+        requestBody: {
+          awarenessPath,
+          decisionPeriod: surveySelections.decisionPeriod,
+          paymentPath,
+        },
+      });
+
+      console.log(
+        'patchApplicationSurvey success',
+        patchApplicationSurveyRes.data,
+      );
 
       router.push(`/challenge/${params.applicationId}/${programId}`);
     } catch (error) {
@@ -146,15 +178,34 @@ const ChallengeUserInfo = () => {
     }
   };
 
-  useEffect(() => {
-    setButtonDisabled(
+  const isSubmitDisabled = useMemo(() => {
+    const isAwarenessSelected = Boolean(surveySelections.awarenessPath);
+    const isDecisionPeriodSelected = Boolean(surveySelections.decisionPeriod);
+    const isPaymentPathSelected = Boolean(surveySelections.paymentPath);
+
+    const isAwarenessValid =
+      !surveySelections.awarenessPath ||
+      surveySelections.awarenessPath !== '기타' ||
+      surveyEtcText.awarenessPath.trim().length > 0;
+
+    const isPaymentPathValid =
+      !surveySelections.paymentPath ||
+      surveySelections.paymentPath !== '기타' ||
+      surveyEtcText.paymentPath.trim().length > 0;
+
+    return (
       !value.university ||
-        !value.grade ||
-        !value.major ||
-        !value.wishJob ||
-        !value.wishCompany,
+      !value.grade ||
+      !value.major ||
+      !value.wishJob ||
+      !value.wishCompany ||
+      !isAwarenessSelected ||
+      !isDecisionPeriodSelected ||
+      !isPaymentPathSelected ||
+      !isAwarenessValid ||
+      !isPaymentPathValid
     );
-  }, [value]);
+  }, [value, surveySelections, surveyEtcText]);
 
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-6 px-5 md:px-0 md:pb-24 md:pt-12">
@@ -343,7 +394,7 @@ const ChallengeUserInfo = () => {
         <button
           className="rounded-md bg-primary px-4 py-3 font-medium text-white disabled:bg-neutral-60"
           onClick={handleSubmit}
-          disabled={buttonDisabled}
+          disabled={isSubmitDisabled}
         >
           챌린지 대시보드 입장하기
         </button>
