@@ -15,11 +15,13 @@ export interface Filters {
 interface ExperienceFiltersProps {
   filters: Filters;
   onFiltersChange: (filterType: keyof Filters, value: string) => void;
+  onReset: (filterType: keyof Filters) => void;
 }
 
 const ExperienceFilters = ({
   filters,
   onFiltersChange,
+  onReset,
 }: ExperienceFiltersProps) => {
   const { data: userExperienceFilters } = useGetUserExperienceFiltersQuery();
 
@@ -38,6 +40,7 @@ const ExperienceFilters = ({
         options={filterOptions.availableCategories}
         selectedValues={filters.category}
         onSelect={(value) => onFiltersChange('category', value)}
+        onReset={() => onReset('category')}
         width="min-w-[8.25rem]"
       />
       <FilterDropdown
@@ -59,6 +62,7 @@ const ExperienceFilters = ({
         options={filterOptions.availableCoreCompetencies}
         selectedValues={filters.coreCompetency}
         onSelect={(value) => onFiltersChange('coreCompetency', value)}
+        onReset={() => onReset('coreCompetency')}
         width="min-w-[8.25rem]"
       />
     </div>

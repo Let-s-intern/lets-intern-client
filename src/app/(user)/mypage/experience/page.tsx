@@ -51,6 +51,18 @@ const Experience = () => {
     });
   };
 
+  const handleResetFilter = (filterType: keyof Filters) => {
+    setFilters((prev) => {
+      if (filterType === 'category') {
+        return { ...prev, category: [] };
+      }
+      if (filterType === 'coreCompetency') {
+        return { ...prev, coreCompetency: [] };
+      }
+      return { ...prev, [filterType]: 'ALL' };
+    });
+  };
+
   const handleResetFilters = () => {
     setFilters(DEFAULT_FILTERS);
   };
@@ -102,6 +114,7 @@ const Experience = () => {
           <ExperienceFilters
             filters={filters}
             onFiltersChange={handleFilterChange}
+            onReset={handleResetFilter}
           />
 
           <SortFilterDropdown sortBy={sortBy} onSortChange={setSortBy} />
@@ -121,6 +134,7 @@ const Experience = () => {
           <ExperienceFilters
             filters={filters}
             onFiltersChange={handleFilterChange}
+            onReset={handleResetFilter}
           />
         </section>
 
