@@ -41,10 +41,10 @@ export const MissionSubmitExperienceList = ({
           type="button"
           onClick={onOpenModal}
           disabled={isButtonDisabled}
-          className={`rounded-xxs border border-neutral-80 bg-white px-3 py-2 text-xsmall14 font-medium hover:bg-neutral-95 disabled:cursor-not-allowed disabled:bg-neutral-95 ${
+          className={`rounded-xxs border border-neutral-80 bg-white px-3 py-2 text-xsmall14 font-medium hover:text-neutral-60 disabled:cursor-not-allowed ${
             !isButtonDisabled && experienceCount >= 3
               ? 'text-primary'
-              : 'text-neutral-50 disabled:text-neutral-30'
+              : 'text-neutral-50'
           }`}
         >
           작성한 경험 불러오기
