@@ -111,7 +111,7 @@ const Experience = () => {
         <section className="w-full flex-col px-5 md:hidden">
           <h1 className="text-lg font-semibold">경험 정리 목록</h1>
 
-          <div className="mt-4 flex justify-between">
+          <div className="mb-2 mt-4 flex justify-between">
             <ExperienceCreateButton onClick={handleDrawerOpen} />
             <SortFilterDropdown sortBy={sortBy} onSortChange={setSortBy} />
           </div>
