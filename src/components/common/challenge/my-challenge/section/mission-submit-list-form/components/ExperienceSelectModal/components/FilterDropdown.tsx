@@ -72,8 +72,12 @@ export const FilterDropdown = ({
         onClick={toggleDropdown}
         className={`flex ${width} items-center justify-between gap-1.5 rounded-xs border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 ${className}`}
       >
-        {labelPrefix && <span>{labelPrefix} </span>}
-        <span className="text-primary-dark">{getFilterLabel()}</span>
+        {labelPrefix && (
+          <span className="whitespace-nowrap">{labelPrefix} </span>
+        )}
+        <span className="whitespace-nowrap text-primary-dark">
+          {getFilterLabel()}
+        </span>
 
         <svg
           className={`h-4 w-4 transition-transform ${
@@ -93,7 +97,7 @@ export const FilterDropdown = ({
       </button>
       {isOpen && (
         <div
-          className={`absolute z-20 mt-1 max-h-[28.125rem] w-full overflow-auto rounded-xs border border-neutral-80 bg-white shadow-lg`}
+          className={`shadow-07 absolute z-20 mt-1 max-h-[28.125rem] w-full divide-y divide-neutral-95 overflow-auto rounded-xs bg-white px-1 py-1.5 scrollbar-hide`}
         >
           {options.map((option) => {
             const isSelected = option.value === selectedValue;
@@ -103,7 +107,7 @@ export const FilterDropdown = ({
                 key={option.value}
                 type="button"
                 onClick={() => handleSelect(option.value)}
-                className="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+                className="flex w-full items-center gap-1 px-2 py-1.5 text-left text-sm text-neutral-20 hover:bg-gray-100"
               >
                 {option.label}
                 {isSelected && <Check size={20} className="text-primary-80" />}
