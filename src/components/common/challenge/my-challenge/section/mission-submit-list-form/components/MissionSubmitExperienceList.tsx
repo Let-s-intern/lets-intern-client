@@ -29,7 +29,8 @@ export const MissionSubmitExperienceList = ({
   });
 
   const experienceCount = data?.userExperiences.length ?? 0;
-  const isButtonDisabled = !isLoadButtonEnabled || experienceCount < 3;
+
+  const isButtonDisabled = isLoadButtonEnabled && experienceCount < 3;
 
   return (
     <section>
@@ -41,7 +42,7 @@ export const MissionSubmitExperienceList = ({
           type="button"
           onClick={onOpenModal}
           disabled={isButtonDisabled}
-          className={`rounded-xxs border border-neutral-80 bg-white px-3 py-2 text-xsmall14 font-medium hover:text-neutral-60 disabled:cursor-not-allowed ${
+          className={`rounded-xxs border border-neutral-80 bg-white px-3 py-2 text-xsmall14 font-medium disabled:cursor-not-allowed ${
             !isButtonDisabled && experienceCount >= 3
               ? 'text-primary'
               : 'text-neutral-50'
