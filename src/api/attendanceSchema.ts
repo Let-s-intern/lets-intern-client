@@ -9,6 +9,7 @@ export type PatchAttendanceReq = {
   review?: string;
   accountType?: string;
   accountNum?: string;
+  userExperienceIds?: number[];
 };
 
 /** [멘토용] 출석 업데이트 /api/v1/attendance/{attendanceId}/mentor */

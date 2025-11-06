@@ -1,9 +1,6 @@
 import { useGetAllUserExperienceQuery } from '@/api/experience';
-import {
-  convertFilterUiToApiFormat,
-  isAllFilters,
-  sortExperiences,
-} from '@/utils/experience';
+import { Sortable } from '@/api/experienceSchema';
+import { convertFilterUiToApiFormat, isAllFilters } from '@/utils/experience';
 import { Filters } from '@components/common/mypage/experience/ExperienceFilters';
 import OutlinedButton from '@components/common/mypage/experience/OutlinedButton';
 import ActivityTypeCell from '@components/common/mypage/experience/table-cell/ActivityTypeCell';
@@ -18,7 +15,7 @@ import DataTable, {
   TableHeader,
 } from '@components/common/table/DataTable';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const PAGE_SIZE = 10;
 
@@ -27,16 +24,19 @@ const ExperienceDataTable = ({
   filters,
   onResetFilters,
   onRowClick,
+  onCreateClick,
 }: {
-  sortBy: string;
+  sortBy: Sortable;
   filters: Filters;
   onResetFilters: () => void;
   onRowClick?: (experience: TableData) => void;
+  onCreateClick: () => void;
 }) => {
   const [page, setPage] = useState(1);
 
   const { data, isLoading } = useGetAllUserExperienceQuery(
     convertFilterUiToApiFormat(filters),
+    sortBy,
     {
       page,
       size: PAGE_SIZE,
@@ -49,10 +49,6 @@ const ExperienceDataTable = ({
     totalPages: 0,
     totalElements: 0,
   };
-
-  const sortedExperiences = useMemo(() => {
-    return sortExperiences(userExperiences, sortBy);
-  }, [userExperiences, sortBy]);
 
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
@@ -69,11 +65,12 @@ const ExperienceDataTable = ({
     return <ExperienceDataTableLoading />;
   }
 
-  if (userExperiences.length === 0) {
+  if (userExperiences.length !== 0) {
     return (
       <ExperienceDataTableEmpty
         isAllFilters={isAllFilters(filters)}
         onResetFilters={onResetFilters}
+        onCreateClick={onCreateClick}
       />
     );
   }
@@ -82,22 +79,24 @@ const ExperienceDataTable = ({
     <section>
       <DataTable
         headers={experienceTableHeaders}
-        data={sortedExperiences}
+        data={userExperiences}
         onRowClick={onRowClick}
         className="rounded-xs border border-neutral-80"
       />
 
       {totalPages > 1 && (
-        <MuiPagination
-          page={currentPage + 1}
-          onChange={handlePageChange}
-          pageInfo={{
-            pageNum: currentPage + 1,
-            pageSize: PAGE_SIZE,
-            totalElements,
-            totalPages,
-          }}
-        />
+        <div className="mx-auto mt-6 w-fit">
+          <MuiPagination
+            page={currentPage + 1}
+            onChange={handlePageChange}
+            pageInfo={{
+              pageNum: currentPage + 1,
+              pageSize: PAGE_SIZE,
+              totalElements,
+              totalPages,
+            }}
+          />
+        </div>
       )}
     </section>
   );
@@ -112,14 +111,12 @@ const ExperienceDataTableLoading = () => (
 const ExperienceDataTableEmpty = ({
   isAllFilters,
   onResetFilters,
+  onCreateClick,
 }: {
   isAllFilters: boolean;
   onResetFilters: () => void;
+  onCreateClick: () => void;
 }) => {
-  const handleDrawerOpen = () => {
-    // 드로어 열기 로직 구현
-  };
-
   // 모든 필터가 초기 상태인 경우
   if (isAllFilters)
     return (
@@ -127,9 +124,7 @@ const ExperienceDataTableEmpty = ({
         <p className="text-sm text-neutral-20">
           지금까지 쌓아온 경험을 작성해 주세요.
         </p>
-        <OutlinedButton onClick={handleDrawerOpen}>
-          경험 작성하기
-        </OutlinedButton>
+        <OutlinedButton onClick={onCreateClick}>경험 작성하기</OutlinedButton>
       </div>
     );
 

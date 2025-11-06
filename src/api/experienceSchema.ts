@@ -110,3 +110,5 @@ export interface Pageable {
   page: number;
   size: number;
 }
+
+export type Sortable = 'LATEST' | 'OLDEST' | 'RECENTLY_EDITED';
