@@ -144,6 +144,7 @@ const Experience = () => {
             filters={filters}
             onResetFilters={handleResetFilters}
             onRowClick={handleRowClick}
+            onCreateClick={handleDrawerOpen}
           />
         </div>
       </div>
@@ -152,4 +153,3 @@ const Experience = () => {
 };
 
 export default Experience;
-
