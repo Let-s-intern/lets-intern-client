@@ -19,6 +19,7 @@ const MissionGuideSection = ({
 }: MissionGuideSectionProps) => {
   const { selectedMissionTh, selectedMissionId } = useMissionStore();
   const {
+    schedules,
     submittedMissions,
     remainingMissions,
     absentMissions,
@@ -27,6 +28,19 @@ const MissionGuideSection = ({
 
   // 선택된 미션의 ID 찾기
   const getMissionId = () => {
+    // selectedMissionId를 최우선으로 사용 (같은 th를 가진 여러 미션 구분)
+    if (selectedMissionId && selectedMissionId !== 0) {
+      return selectedMissionId;
+    }
+
+    // schedules에서 th와 missionType으로 찾기 (같은 th를 가진 여러 미션 구분)
+    const scheduleByTh = schedules.find(
+      (schedule) => schedule.missionInfo.th === selectedMissionTh,
+    );
+    if (scheduleByTh) {
+      return scheduleByTh.missionInfo.id;
+    }
+
     // 제출된 미션에서 찾기
     const submittedMission = submittedMissions.find(
       (mission) => mission.th === selectedMissionTh,
