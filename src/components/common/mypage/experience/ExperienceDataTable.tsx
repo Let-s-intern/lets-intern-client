@@ -24,11 +24,13 @@ const ExperienceDataTable = ({
   filters,
   onResetFilters,
   onRowClick,
+  onCreateClick,
 }: {
   sortBy: Sortable;
   filters: Filters;
   onResetFilters: () => void;
   onRowClick?: (experience: TableData) => void;
+  onCreateClick: () => void;
 }) => {
   const [page, setPage] = useState(1);
 
@@ -63,11 +65,12 @@ const ExperienceDataTable = ({
     return <ExperienceDataTableLoading />;
   }
 
-  if (userExperiences.length === 0) {
+  if (userExperiences.length !== 0) {
     return (
       <ExperienceDataTableEmpty
         isAllFilters={isAllFilters(filters)}
         onResetFilters={onResetFilters}
+        onCreateClick={onCreateClick}
       />
     );
   }
@@ -108,14 +111,12 @@ const ExperienceDataTableLoading = () => (
 const ExperienceDataTableEmpty = ({
   isAllFilters,
   onResetFilters,
+  onCreateClick,
 }: {
   isAllFilters: boolean;
   onResetFilters: () => void;
+  onCreateClick: () => void;
 }) => {
-  const handleDrawerOpen = () => {
-    // 드로어 열기 로직 구현
-  };
-
   // 모든 필터가 초기 상태인 경우
   if (isAllFilters)
     return (
@@ -123,9 +124,7 @@ const ExperienceDataTableEmpty = ({
         <p className="text-sm text-neutral-20">
           지금까지 쌓아온 경험을 작성해 주세요.
         </p>
-        <OutlinedButton onClick={handleDrawerOpen}>
-          경험 작성하기
-        </OutlinedButton>
+        <OutlinedButton onClick={onCreateClick}>경험 작성하기</OutlinedButton>
       </div>
     );
 
