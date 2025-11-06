@@ -18,6 +18,8 @@ export const MissionSubmitGuidance = () => {
               아직 경험을 작성하지 않았거나 삭제, 수정이 필요하다면,{' '}
               <a
                 href="/mypage/experience"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-primary underline hover:text-primary/80"
               >
                 [커리어 관리 &gt; 경험 정리]

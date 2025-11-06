@@ -1152,6 +1152,7 @@ export const challengeSchedule = z
           startDate: z.string().nullable(),
           endDate: z.string().nullable(),
           status: MissionStatusEnum.nullable(),
+          missionType: MissionTypeEnum.optional(),
         }),
         attendanceInfo: z.object({
           submitted: z.boolean().nullable(),

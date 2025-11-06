@@ -50,6 +50,11 @@ const MissionSubmitRegularSection = ({
   const isSubmitPeriodEnded =
     dayjs(currentChallenge?.endDate).add(2, 'day').isBefore(dayjs()) ?? true;
 
+  // 현재 선택된 미션의 startDate 찾기
+  const currentMission = schedules.find(
+    (schedule) => schedule.missionInfo.id === selectedMissionId,
+  );
+  const missionStartDate = currentMission?.missionInfo.startDate ?? null;
   // missionTh를 기준으로 마지막 정규 미션 찾기 (보너스 미션 제외)
   const regularMissions = schedules.filter(
     (schedule) => schedule.missionInfo.th !== BONUS_MISSION_TH,
@@ -172,6 +177,7 @@ const MissionSubmitRegularSection = ({
         attendanceId: attendanceInfo.id,
         link: linkValue,
         review: textareaValue,
+        userExperienceIds: selectedExperienceIds,
       });
       await refetchSchedules?.();
       setIsEditing(false);
@@ -187,9 +193,6 @@ const MissionSubmitRegularSection = ({
   // 제출 버튼 활성화 조건: 경험 3개 이상 선택 + 미션 소감 입력
   const canSubmit =
     selectedExperienceIds.length >= 3 && textareaValue.trim().length > 0;
-
-  // "작성한 경험 불러오기" 버튼 활성화 조건: 수정 가능할 때만
-  const isLoadButtonEnabled = isEditing && !isResubmitBlocked;
 
   const handleOpenBonusMissionModalAtSubmission = (
     currentSubmissionMissionTh: number,
@@ -214,7 +217,9 @@ const MissionSubmitRegularSection = ({
         <MissionSubmitListForm
           onExperienceIdsChange={setSelectedExperienceIds}
           initialExperienceIds={attendanceInfo?.submittedUserExperienceIds}
-          isLoadButtonEnabled={isLoadButtonEnabled}
+          missionStartDate={missionStartDate}
+          isSubmitted={isSubmitted}
+          isEditing={isEditing}
         />
 
         {/* 미션 소감 */}
