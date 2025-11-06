@@ -1,6 +1,6 @@
 'use client';
 
-import { UserExperienceType } from '@/api/experienceSchema';
+import { Sortable, UserExperienceType } from '@/api/experienceSchema';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import drawerReducer from '@/reducers/drawerReducer';
 import ExperienceCreateButton from '@components/common/mypage/experience/ExperienceCreateButton';
@@ -10,7 +10,6 @@ import ExperienceFilters, {
 } from '@components/common/mypage/experience/ExperienceFilters';
 import SortFilterDropdown from '@components/common/mypage/experience/SortFilterDropdown';
 import { ExperienceForm } from '@components/pages/mypage/experience/ExperienceForm';
-import { Plus } from 'lucide-react';
 import { useCallback, useReducer, useState } from 'react';
 
 const DEFAULT_FILTERS: Filters = {
@@ -22,7 +21,7 @@ const DEFAULT_FILTERS: Filters = {
 
 const Experience = () => {
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
-  const [sortBy, setSortBy] = useState('latest');
+  const [sortBy, setSortBy] = useState<Sortable>('LATEST');
   const [isDrawerOpen, dispatchIsDrawerOpen] = useReducer(drawerReducer, false);
   const [selectedExperience, setSelectedExperience] =
     useState<UserExperienceType | null>(null);
@@ -49,6 +48,18 @@ const Experience = () => {
 
       // 단일 선택 필터일 경우
       return { ...prev, [filterType]: value };
+    });
+  };
+
+  const handleResetFilter = (filterType: keyof Filters) => {
+    setFilters((prev) => {
+      if (filterType === 'category') {
+        return { ...prev, category: [] };
+      }
+      if (filterType === 'coreCompetency') {
+        return { ...prev, coreCompetency: [] };
+      }
+      return { ...prev, [filterType]: 'ALL' };
     });
   };
 
@@ -92,27 +103,49 @@ const Experience = () => {
           </div>
         </div>
       )}
-      <div className="flex w-full flex-col gap-3 px-5 pb-20">
-        <section className="flex w-full justify-between">
+      <div className="flex w-full flex-col gap-3 pb-20">
+        {/* 데스크탑 버전에서의 타이틀+버튼+필터 배치 */}
+        <section className="hidden w-full justify-between px-5 md:flex">
           <h1 className="text-lg font-semibold">경험 정리 목록</h1>
           <ExperienceCreateButton onClick={handleDrawerOpen} />
         </section>
 
-        <section className="flex justify-between">
+        <section className="hidden justify-between px-5 md:flex">
           <ExperienceFilters
             filters={filters}
             onFiltersChange={handleFilterChange}
+            onReset={handleResetFilter}
           />
 
           <SortFilterDropdown sortBy={sortBy} onSortChange={setSortBy} />
         </section>
 
-        <ExperienceDataTable
-          sortBy={sortBy}
-          filters={filters}
-          onResetFilters={handleResetFilters}
-          onRowClick={handleRowClick}
-        />
+        {/* 모바일 버전에서의 타이틀+버튼+필터 배치 */}
+        <section className="w-full flex-col px-5 md:hidden">
+          <h1 className="text-lg font-semibold">경험 정리 목록</h1>
+
+          <div className="mb-2 mt-4 flex justify-between">
+            <ExperienceCreateButton onClick={handleDrawerOpen} />
+            <SortFilterDropdown sortBy={sortBy} onSortChange={setSortBy} />
+          </div>
+        </section>
+
+        <section className="flex justify-between border-b border-t border-neutral-85 bg-neutral-95 px-5 py-3 md:hidden">
+          <ExperienceFilters
+            filters={filters}
+            onFiltersChange={handleFilterChange}
+            onReset={handleResetFilter}
+          />
+        </section>
+
+        <div className="px-5">
+          <ExperienceDataTable
+            sortBy={sortBy}
+            filters={filters}
+            onResetFilters={handleResetFilters}
+            onRowClick={handleRowClick}
+          />
+        </div>
       </div>
     </>
   );
@@ -120,21 +153,3 @@ const Experience = () => {
 
 export default Experience;
 
-// TODO: props로 variant 등 추가 예정
-interface SolidButtonProps {
-  variant?: 'primary' | 'secondary';
-  children: React.ReactNode;
-  onClick?: () => void;
-}
-
-const SolidButton = ({ children, onClick }: SolidButtonProps) => {
-  return (
-    <button
-      className="flex cursor-pointer items-center gap-1 rounded-xs bg-primary-10 px-3 py-2 text-primary hover:bg-primary-15"
-      onClick={onClick}
-    >
-      <Plus size={16} />
-      <span className="text-sm font-medium">{children}</span>
-    </button>
-  );
-};

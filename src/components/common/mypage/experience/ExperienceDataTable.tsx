@@ -1,9 +1,6 @@
 import { useGetAllUserExperienceQuery } from '@/api/experience';
-import {
-  convertFilterUiToApiFormat,
-  isAllFilters,
-  sortExperiences,
-} from '@/utils/experience';
+import { Sortable } from '@/api/experienceSchema';
+import { convertFilterUiToApiFormat, isAllFilters } from '@/utils/experience';
 import { Filters } from '@components/common/mypage/experience/ExperienceFilters';
 import OutlinedButton from '@components/common/mypage/experience/OutlinedButton';
 import ActivityTypeCell from '@components/common/mypage/experience/table-cell/ActivityTypeCell';
@@ -18,7 +15,7 @@ import DataTable, {
   TableHeader,
 } from '@components/common/table/DataTable';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const PAGE_SIZE = 10;
 
@@ -28,7 +25,7 @@ const ExperienceDataTable = ({
   onResetFilters,
   onRowClick,
 }: {
-  sortBy: string;
+  sortBy: Sortable;
   filters: Filters;
   onResetFilters: () => void;
   onRowClick?: (experience: TableData) => void;
@@ -37,6 +34,7 @@ const ExperienceDataTable = ({
 
   const { data, isLoading } = useGetAllUserExperienceQuery(
     convertFilterUiToApiFormat(filters),
+    sortBy,
     {
       page,
       size: PAGE_SIZE,
@@ -49,10 +47,6 @@ const ExperienceDataTable = ({
     totalPages: 0,
     totalElements: 0,
   };
-
-  const sortedExperiences = useMemo(() => {
-    return sortExperiences(userExperiences, sortBy);
-  }, [userExperiences, sortBy]);
 
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
@@ -82,22 +76,24 @@ const ExperienceDataTable = ({
     <section>
       <DataTable
         headers={experienceTableHeaders}
-        data={sortedExperiences}
+        data={userExperiences}
         onRowClick={onRowClick}
         className="rounded-xs border border-neutral-80"
       />
 
       {totalPages > 1 && (
-        <MuiPagination
-          page={currentPage + 1}
-          onChange={handlePageChange}
-          pageInfo={{
-            pageNum: currentPage + 1,
-            pageSize: PAGE_SIZE,
-            totalElements,
-            totalPages,
-          }}
-        />
+        <div className="mx-auto mt-6 w-fit">
+          <MuiPagination
+            page={currentPage + 1}
+            onChange={handlePageChange}
+            pageInfo={{
+              pageNum: currentPage + 1,
+              pageSize: PAGE_SIZE,
+              totalElements,
+              totalPages,
+            }}
+          />
+        </div>
       )}
     </section>
   );

@@ -1,6 +1,7 @@
 'use client';
 
-import { Check } from 'lucide-react';
+import BottomSheet from '@components/common/ui/BottomSheeet';
+import { Check, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 interface FilterOption {
@@ -26,7 +27,23 @@ export const FilterDropdown = ({
   className = '',
 }: FilterDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [dropdownStyle, setDropdownStyle] = useState({});
+
+  // 필터 버튼에 맞게 드롭다운 위치와 너비 설정
+  useEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setDropdownStyle({
+        position: 'fixed',
+        zIndex: 50,
+        top: `${rect.bottom + 4}px`,
+        left: `${rect.left}px`,
+        width: `${rect.width}px`,
+      });
+    }
+  }, [isOpen]);
 
   const getFilterLabel = () => {
     const selectedOption = options.find(
@@ -69,11 +86,16 @@ export const FilterDropdown = ({
     <div className="relative" ref={dropdownRef}>
       <button
         type="button"
+        ref={buttonRef}
         onClick={toggleDropdown}
-        className={`flex ${width} items-center justify-between gap-1.5 rounded-xs border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 ${className}`}
+        className={`flex ${width} items-center justify-between gap-1.5 rounded-xs border border-neutral-80 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 ${className}`}
       >
-        {labelPrefix && <span>{labelPrefix} </span>}
-        <span className="text-primary-dark">{getFilterLabel()}</span>
+        {labelPrefix && (
+          <span className="whitespace-nowrap">{labelPrefix} </span>
+        )}
+        <span className="whitespace-nowrap text-primary-dark">
+          {getFilterLabel()}
+        </span>
 
         <svg
           className={`h-4 w-4 transition-transform ${
@@ -91,26 +113,67 @@ export const FilterDropdown = ({
           />
         </svg>
       </button>
-      {isOpen && (
-        <div
-          className={`absolute z-20 mt-1 max-h-[28.125rem] w-full overflow-auto rounded-xs border border-neutral-80 bg-white shadow-lg`}
-        >
-          {options.map((option) => {
-            const isSelected = option.value === selectedValue;
 
-            return (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => handleSelect(option.value)}
-                className="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
-              >
-                {option.label}
-                {isSelected && <Check size={20} className="text-primary-80" />}
-              </button>
-            );
-          })}
-        </div>
+      {isOpen && (
+        <>
+          <div
+            className={`shadow-07 hidden max-h-[28.125rem] w-full divide-y divide-neutral-95 overflow-auto rounded-xs bg-white px-1 py-1.5 scrollbar-hide md:block`}
+            style={dropdownStyle}
+          >
+            {options.map((option) => {
+              const isSelected = option.value === selectedValue;
+
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => handleSelect(option.value)}
+                  className="flex w-full items-center justify-between px-2 py-1.5 text-left text-sm text-neutral-20 hover:bg-gray-100"
+                >
+                  {option.label}
+                  {isSelected && (
+                    <Check size={20} className="text-primary-80" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          <BottomSheet className="md:hidden">
+            <div className="flex max-h-[62vh] w-full flex-col">
+              <header className="flex items-center justify-between pb-4">
+                <span className="text-lg font-semibold text-neutral-0">
+                  {labelPrefix}
+                </span>
+
+                <X
+                  onClick={toggleDropdown}
+                  className="cursor-pointer self-end text-neutral-0"
+                />
+              </header>
+
+              <div className="flex flex-col gap-1.5 overflow-y-auto scrollbar-hide">
+                {options.map((option) => {
+                  const isSelected = option.value === selectedValue;
+
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => handleSelect(option.value)}
+                      className="flex w-full items-center justify-between py-2 text-left font-normal text-neutral-20"
+                    >
+                      {option.label}
+                      {isSelected && (
+                        <Check size={20} className="text-primary-80" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </BottomSheet>
+        </>
       )}
     </div>
   );
