@@ -11,6 +11,7 @@ export const TooltipButton = ({ example }: { example: string }) => {
         className="rounded-xxs border border-neutral-80 px-[6px] py-1 text-xsmall14 font-medium text-primary-80"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        onClick={() => setIsHovered((prev) => !prev)}
       >
         💡 참고 예시
       </button>
