@@ -2,6 +2,7 @@
 
 import { useMissionAttendanceUserExperiencesQuery } from '@/api/challenge';
 import { UserAttendanceExperience } from '@/api/experienceSchema';
+import { getExperienceRowHeight } from '@/utils/experience';
 import DataTable, { TableHeader } from '@components/common/table/DataTable';
 import { useParams } from 'next/navigation';
 import { FaSpinner } from 'react-icons/fa6';
@@ -41,6 +42,7 @@ function Page() {
       <DataTable
         headers={experienceTableHeaders}
         data={formattedData}
+        getRowHeight={getExperienceRowHeight}
         className="rounded-lg border"
       />
     </div>

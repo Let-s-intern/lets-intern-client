@@ -1,4 +1,5 @@
 import DataTable from '@/components/common/table/DataTable';
+import { getExperienceRowHeight } from '@/utils/experience';
 import { ExperienceData, getExperienceHeaders } from '../data';
 
 interface ExperienceListProps {
@@ -27,6 +28,7 @@ export const ExperienceList = ({ experiences = [] }: ExperienceListProps) => {
           ...exp,
           id: exp.originalId,
         }))}
+        getRowHeight={getExperienceRowHeight}
       />
     </div>
   );

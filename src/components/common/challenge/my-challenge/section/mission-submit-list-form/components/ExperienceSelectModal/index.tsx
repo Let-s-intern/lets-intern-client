@@ -4,6 +4,7 @@ import MuiPagination from '@/components/common/program/pagination/MuiPagination'
 import DataTable from '@/components/common/table/DataTable';
 import BaseModal from '@/components/ui/BaseModal';
 import { useExperienceSelectModal } from '@/hooks/useExperienceSelectModal';
+import { getExperienceRowHeight } from '@/utils/experience';
 import { ExperienceData, getExperienceHeaders } from '../../data';
 import { ExperienceSelectModalFilters } from './components/ExperienceSelectModalFilters';
 import { ExperienceSelectModalHeader } from './components/ExperienceSelectModalHeader';
@@ -74,6 +75,7 @@ export const ExperienceSelectModal = ({
                     new Set(Array.from(selectedIds).map(String)),
                   );
                 }}
+                getRowHeight={getExperienceRowHeight}
               />
             )}
           </div>

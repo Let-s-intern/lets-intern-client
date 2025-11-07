@@ -13,9 +13,16 @@ interface ExpandableCellProps {
   isRowExpanded: boolean;
   onToggleExpand: () => void;
   align?: 'left' | 'center' | 'right';
+  height?: string;
 }
 
-const ExpandableCell = ({ content, isRowExpanded, onToggleExpand, align = 'left' }: ExpandableCellProps) => {
+const ExpandableCell = ({
+  content,
+  isRowExpanded,
+  onToggleExpand,
+  align = 'left',
+  height = '66px',
+}: ExpandableCellProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -46,13 +53,16 @@ const ExpandableCell = ({ content, isRowExpanded, onToggleExpand, align = 'left'
         ref={contentRef}
         className={twMerge(
           'flex items-start p-2 text-[0.8125rem] font-normal text-neutral-30',
-          isRowExpanded ? 'h-auto' : 'h-[9.25rem] overflow-hidden',
           align === 'center'
             ? 'text-center'
             : align === 'right'
               ? 'text-right'
               : 'text-left',
         )}
+        style={{
+          height: isRowExpanded ? 'auto' : height,
+          overflow: isRowExpanded ? 'visible' : 'hidden',
+        }}
       >
         {content}
       </div>
