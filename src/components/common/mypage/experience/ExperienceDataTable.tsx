@@ -65,7 +65,7 @@ const ExperienceDataTable = ({
     return <ExperienceDataTableLoading />;
   }
 
-  if (userExperiences.length !== 0) {
+  if (userExperiences.length === 0) {
     return (
       <ExperienceDataTableEmpty
         isAllFilters={isAllFilters(filters)}
