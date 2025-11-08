@@ -120,6 +120,21 @@ export const ExperienceForm = ({
     '작성 중인 경험 정리가 저장되지 않았습니다. 저장하지 않고 나가시겠습니까?',
   );
 
+  // 연도 범위 계산
+  const startDate = watch('startDate');
+  const endDate = watch('endDate');
+  useEffect(() => {
+    if (startDate && endDate) {
+      const startYear = new Date(startDate).getFullYear();
+      const endYear = new Date(endDate).getFullYear();
+      const yearsInRange: number[] = [];
+      for (let year = startYear; year <= endYear; year++) {
+        yearsInRange.push(year);
+      }
+      setDisplayYears(yearsInRange);
+    }
+  }, [startDate, endDate]);
+
   // 초기 데이터 설정
   useEffect(() => {
     if (initialData) {
@@ -143,10 +158,16 @@ export const ExperienceForm = ({
       };
       reset(formattedData, { keepDefaultValues: false });
 
-      // startDate에서 연도 추출
-      if (initialData.startDate) {
-        const year = parseInt(initialData.startDate.split('-')[0]);
-        setDisplayYear(year);
+      // startDate와 endDate에서 연도 범위 계산
+      if (initialData.startDate && initialData.endDate) {
+        const startYear = new Date(initialData.startDate).getFullYear();
+        const endYear = new Date(initialData.endDate).getFullYear();
+
+        const yearsInRange: number[] = [];
+        for (let year = startYear; year <= endYear; year++) {
+          yearsInRange.push(year);
+        }
+        setDisplayYears(yearsInRange);
       }
     }
   }, [initialData, reset]);
@@ -183,15 +204,20 @@ export const ExperienceForm = ({
     isAutoSavingRef.current = true;
 
     try {
+      const saveData = {
+        ...parsed.data,
+        yearBadges: displayYears,
+      };
+
       // 첫 저장이면 POST, 이미 ID가 있으면 PATCH
       if (experienceIdRef.current) {
         await updateExperienceMutation.mutateAsync({
           id: experienceIdRef.current,
-          data: parsed.data,
+          data: saveData,
         });
       } else {
         const createData = {
-          ...parsed.data,
+          ...saveData,
           isAdminAdded: false,
         };
         const result = await createExperienceMutation.mutateAsync(createData);
@@ -219,7 +245,6 @@ export const ExperienceForm = ({
     getValues,
     updateExperienceMutation,
     createExperienceMutation,
-    reset,
     isAdmin,
   ]);
 
@@ -265,7 +290,7 @@ export const ExperienceForm = ({
   // 기간 선택 모달 상태
   const [isStartPeriodModalOpen, setIsStartPeriodModalOpen] = useState(false);
   const [isEndPeriodModalOpen, setIsEndPeriodModalOpen] = useState(false);
-  const [displayYear, setDisplayYear] = useState<number | null>(null);
+  const [displayYears, setDisplayYears] = useState<number[]>([]);
   // 자동 저장 상태
   const [lastAutoSaveTime, setLastAutoSaveTime] = useState<Date | null>(null);
 
@@ -281,27 +306,33 @@ export const ExperienceForm = ({
   const handleEndPeriodSelect = async (year: number, month: number) => {
     const dateString = `${year}-${String(month).padStart(2, '0')}-01`;
     setValue('endDate', dateString, { shouldDirty: true });
-    setDisplayYear(year);
     // 기간 선택 후 검증 및 디바운싱된 자동 저장
     await trigger('endDate');
     debouncedAutoSave();
   };
-
+  const isManualSavingRef = useRef(false);
   // 폼 제출 핸들러 (명시적 저장)
   const onSubmit = async (data: UserExperience) => {
+    // 이미 저장 중이면 리턴 (중복 방지)
+    if (isManualSavingRef.current) return;
     // 자동 저장 타이머 정리 (중복 저장 방지)
     clearAutoSaveTimer();
+    isManualSavingRef.current = true;
 
     try {
+      const submitData = {
+        ...data,
+        yearBadges: displayYears,
+      };
       // 자동 저장으로 이미 생성되었으면 업데이트, 아니면 생성
       if (experienceIdRef.current) {
         await updateExperienceMutation.mutateAsync({
           id: experienceIdRef.current,
-          data: data,
+          data: submitData,
         });
       } else {
         const createData = {
-          ...data,
+          ...submitData,
           isAdminAdded: false,
         };
         const result = await createExperienceMutation.mutateAsync(createData);
@@ -320,6 +351,8 @@ export const ExperienceForm = ({
           ? error.response?.data?.message
           : '다시 시도해주세요.');
       alert(errorMessage);
+    } finally {
+      isManualSavingRef.current = false; // 저장 종료
     }
   };
 
@@ -619,7 +652,9 @@ export const ExperienceForm = ({
                   <input
                     id="year"
                     type="text"
-                    value={displayYear ? displayYear.toString() : ''}
+                    value={
+                      displayYears.length > 0 ? displayYears.join(', ') : ''
+                    }
                     placeholder={EXPERIENCE_FORM_TEXT['year'].placeholder}
                     readOnly
                     className="rounded-xs border border-solid border-neutral-80 px-3 py-[10px] text-xsmall14 font-normal text-neutral-0 placeholder:text-neutral-50 focus:border-primary focus:outline-none disabled:bg-neutral-95 disabled:text-neutral-50 md:text-xsmall16"
@@ -721,12 +756,7 @@ export const ExperienceForm = ({
             type="submit"
             form="experienceForm"
             className="w-full rounded-sm bg-primary px-3 py-3 text-xsmall16 font-medium text-white hover:bg-primary-hover disabled:bg-neutral-70 disabled:text-white md:w-[80px] md:py-2"
-            disabled={
-              !isValid ||
-              !isDirty ||
-              createExperienceMutation.isPending ||
-              updateExperienceMutation.isPending
-            }
+            disabled={!isValid || isManualSavingRef.current}
           >
             저장
           </button>

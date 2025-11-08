@@ -1,8 +1,8 @@
 'use client';
 
-import { ChevronsDownUp, ChevronsUpDown } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { twMerge } from "tailwind-merge";
+import { ChevronsDownUp, ChevronsUpDown } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 /**
  * 테이블 행 확장 가능한 셀 컴포넌트 - 텍스트 오버플로우 감지 및 확장 버튼 표시
@@ -52,7 +52,7 @@ const ExpandableCell = ({
       <div
         ref={contentRef}
         className={twMerge(
-          'flex items-start p-2 text-[0.8125rem] font-normal text-neutral-30',
+          'flex items-start whitespace-normal p-2 text-[0.8125rem] font-normal text-neutral-30',
           align === 'center'
             ? 'text-center'
             : align === 'right'
