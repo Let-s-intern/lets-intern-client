@@ -1,14 +1,25 @@
-const YearCell = ({ row }: { row: any }) => {
-  // startDate와 endDate로 연도 배열 생성
+interface YearCellProps {
+  row: {
+    startDate: string;
+    endDate: string;
+  };
+}
+
+const YearCell = ({ row }: YearCellProps) => {
+  if (!row.startDate || !row.endDate) {
+    return null;
+  }
+
   const startYear = new Date(row.startDate).getFullYear();
   const endYear = new Date(row.endDate).getFullYear();
 
-  const yearBadges: number[] = [];
-  for (let year = startYear; year <= endYear; year++) {
-    yearBadges.push(year);
-  }
+  if (isNaN(startYear) || isNaN(endYear) || startYear > endYear) return null;
 
-  // 표시할 항목과 숨겨진 항목 수 계산
+  const yearBadges = Array.from(
+    { length: endYear - startYear + 1 },
+    (_, i) => startYear + i,
+  );
+
   const visibleItems = yearBadges.slice(0, 3);
   const hiddenCount = Math.max(0, yearBadges.length - 3);
 
@@ -22,7 +33,6 @@ const YearCell = ({ row }: { row: any }) => {
           {year}
         </span>
       ))}
-      <br />
       {hiddenCount > 0 && <span className="text-xs text-neutral-30">+n</span>}
     </div>
   );

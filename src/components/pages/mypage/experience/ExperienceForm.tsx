@@ -120,11 +120,10 @@ export const ExperienceForm = ({
     '작성 중인 경험 정리가 저장되지 않았습니다. 저장하지 않고 나가시겠습니까?',
   );
 
-  // startDate와 endDate가 변경될 때마다 연도 범위 계산
+  // 연도 범위 계산
+  const startDate = watch('startDate');
+  const endDate = watch('endDate');
   useEffect(() => {
-    const startDate = watch('startDate');
-    const endDate = watch('endDate');
-
     if (startDate && endDate) {
       const startYear = new Date(startDate).getFullYear();
       const endYear = new Date(endDate).getFullYear();
@@ -134,7 +133,7 @@ export const ExperienceForm = ({
       }
       setDisplayYears(yearsInRange);
     }
-  }, [watch('startDate'), watch('endDate')]);
+  }, [startDate, endDate]);
 
   // 초기 데이터 설정
   useEffect(() => {
@@ -161,8 +160,8 @@ export const ExperienceForm = ({
 
       // startDate와 endDate에서 연도 범위 계산
       if (initialData.startDate && initialData.endDate) {
-        const startYear = parseInt(initialData.startDate.split('-')[0]);
-        const endYear = parseInt(initialData.endDate.split('-')[0]);
+        const startYear = new Date(initialData.startDate).getFullYear();
+        const endYear = new Date(initialData.endDate).getFullYear();
 
         const yearsInRange: number[] = [];
         for (let year = startYear; year <= endYear; year++) {
@@ -311,11 +310,14 @@ export const ExperienceForm = ({
     await trigger('endDate');
     debouncedAutoSave();
   };
-
+  const isManualSavingRef = useRef(false);
   // 폼 제출 핸들러 (명시적 저장)
   const onSubmit = async (data: UserExperience) => {
+    // 이미 저장 중이면 리턴 (중복 방지)
+    if (isManualSavingRef.current) return;
     // 자동 저장 타이머 정리 (중복 저장 방지)
     clearAutoSaveTimer();
+    isManualSavingRef.current = true;
 
     try {
       const submitData = {
@@ -349,6 +351,8 @@ export const ExperienceForm = ({
           ? error.response?.data?.message
           : '다시 시도해주세요.');
       alert(errorMessage);
+    } finally {
+      isManualSavingRef.current = false; // 저장 종료
     }
   };
 
@@ -752,7 +756,7 @@ export const ExperienceForm = ({
             type="submit"
             form="experienceForm"
             className="w-full rounded-sm bg-primary px-3 py-3 text-xsmall16 font-medium text-white hover:bg-primary-hover disabled:bg-neutral-70 disabled:text-white md:w-[80px] md:py-2"
-            disabled={!isValid}
+            disabled={!isValid || isManualSavingRef.current}
           >
             저장
           </button>
