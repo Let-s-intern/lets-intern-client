@@ -57,8 +57,8 @@ const DataTable = ({
   };
 
   // 특정 행의 체크박스 토글
-  const toggleRowSelection = (id: number) => {
-    if (!selectedRowIds || !onSelectionChange) return;
+  const toggleRowSelection = (id: number, isDisabled?: boolean) => {
+    if (!selectedRowIds || !onSelectionChange || isDisabled) return;
 
     const newSet = new Set(selectedRowIds);
     if (newSet.has(id)) newSet.delete(id);
@@ -117,6 +117,7 @@ const DataTable = ({
             const isSelected = selectedRowIds?.has(row.id);
             const isExpanded = expandedRows.has(row.id);
             const rowHeight = getRowHeight?.(row);
+            const isDisabled = row.isDisabled === true;
 
             return (
               <tr
@@ -134,7 +135,8 @@ const DataTable = ({
                   >
                     <CheckBox
                       checked={!!isSelected}
-                      onClick={() => toggleRowSelection(row.id)}
+                      onClick={() => toggleRowSelection(row.id, isDisabled)}
+                      disabled={isDisabled}
                     />
                   </td>
                 )}

@@ -2,6 +2,8 @@
 
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { useChallengeProgram } from '@/hooks/useChallengeProgram';
+import { useExperienceLevel } from '@/hooks/useExperienceLevel';
+import { useFilteredSchedules } from '@/hooks/useFilteredSchedules';
 import { useMissionSelection } from '@/hooks/useMissionSelection';
 import { useMissionStore } from '@/store/useMissionStore';
 import MissionCalendarSection from '@components/common/challenge/my-challenge/section/MissionCalendarSection';
@@ -22,11 +24,17 @@ const MyChallengeDashboard = () => {
   // 챌린지 프로그램 정보 관련 로직을 custom hook으로 분리
   const { isChallengeDone } = useChallengeProgram();
 
+  // 경험정리 레벨 판별
+  const experienceLevel = useExperienceLevel(schedules);
+
+  // 레벨에 맞게 필터링된 schedules
+  const filteredSchedules = useFilteredSchedules(schedules, experienceLevel);
+
   return (
     <main className="px-5 md:px-0 md:pl-12">
       <h2 className="mt-8 text-medium22 font-semibold md:mt-0">나의 미션</h2>
       <MissionCalendarSection
-        schedules={schedules}
+        schedules={filteredSchedules}
         todayTh={todayTh}
         isDone={isChallengeDone}
       />
@@ -35,11 +43,11 @@ const MyChallengeDashboard = () => {
         <div className="mt-6">
           <MissionSubmitSection
             attendanceInfo={
-              schedules.find(
+              filteredSchedules.find(
                 (schedule) => schedule.missionInfo.id === selectedMissionId,
               )?.attendanceInfo
             }
-            startDate={schedules
+            startDate={filteredSchedules
               .find((schedule) => schedule.missionInfo.id === selectedMissionId)
               ?.missionInfo.startDate?.toString()}
           />

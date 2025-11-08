@@ -8,6 +8,8 @@ import ScoreSection from '@/components/common/challenge/dashboard/section/ScoreS
 import MissionCalendar from '@/components/common/challenge/my-challenge/mission-calendar/MissionCalendar';
 import MissionTooltipQuestion from '@/components/common/challenge/ui/tooltip-question/MissionTooltipQuestion';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import { useExperienceLevel } from '@/hooks/useExperienceLevel';
+import { useFilteredSchedules } from '@/hooks/useFilteredSchedules';
 import { useMissionCalculation } from '@/hooks/useMissionCalculation';
 import dayjs from '@/lib/dayjs';
 import { challengeGuides, challengeNotices, challengeScore } from '@/schema';
@@ -20,6 +22,12 @@ const MissionDetailSection = () => {
   const params = useParams<{ programId: string }>();
   const { schedules, dailyMission, isLoading } = useCurrentChallenge();
   const { isLastMissionSubmitted } = useMissionCalculation();
+
+  // 경험정리 레벨 판별
+  const experienceLevel = useExperienceLevel(schedules);
+
+  // 레벨에 맞게 필터링된 schedules
+  const filteredSchedules = useFilteredSchedules(schedules, experienceLevel);
 
   const { data: programData } = useQuery({
     queryKey: ['challenge', params.programId, 'application'],
@@ -40,7 +48,10 @@ const MissionDetailSection = () => {
     return <MissionEndSection />;
   }
   return (
-    <DailyMissionSection dailyMission={dailyMission} schedules={schedules} />
+    <DailyMissionSection
+      dailyMission={dailyMission}
+      schedules={filteredSchedules}
+    />
   );
 };
 
@@ -55,6 +66,12 @@ const getIsChallengeSubmitDone = (endDate: string) => {
 const ChallengeDashboard = () => {
   const { currentChallenge, schedules } = useCurrentChallenge();
   const { todayTh } = useMissionCalculation();
+
+  // 경험정리 레벨 판별
+  const experienceLevel = useExperienceLevel(schedules);
+
+  // 레벨에 맞게 필터링된 schedules
+  const filteredSchedules = useFilteredSchedules(schedules, experienceLevel);
 
   const params = useParams<{ programId: string }>();
 
@@ -149,11 +166,11 @@ const ChallengeDashboard = () => {
               </h2>
               <MissionTooltipQuestion />
             </div>
-            {schedules && (
+            {filteredSchedules && (
               // myChallenge 에 있는 미션캘린더 가져옴
               <MissionCalendar
                 className="mt-3 gap-2"
-                schedules={schedules}
+                schedules={filteredSchedules}
                 todayTh={todayTh}
                 isDone={isChallengeSubmitDone}
               />
