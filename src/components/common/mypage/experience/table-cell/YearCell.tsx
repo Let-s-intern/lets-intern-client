@@ -18,8 +18,8 @@ const YearCell = ({ row }: YearCellProps) => {
     (_, i) => startYear + i,
   );
 
-  const visibleItems = yearBadges.slice(0, 3);
-  const hiddenCount = Math.max(0, yearBadges.length - 3);
+  const visibleItems = yearBadges.slice(0, 2);
+  const hiddenCount = Math.max(0, yearBadges.length - 2);
 
   return (
     <div className="flex flex-wrap items-center gap-1">

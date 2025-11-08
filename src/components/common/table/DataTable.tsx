@@ -80,7 +80,7 @@ const DataTable = ({
 
   return (
     <div className={twMerge('overflow-x-auto', className)}>
-      <table className="w-full min-w-max border-collapse">
+      <table className="w-full min-w-max table-fixed border-collapse">
         {/* 테이블 헤더 */}
         <thead>
           <tr className="border-b border-neutral-80 bg-neutral-95">
