@@ -1,6 +1,10 @@
 import { useGetAllUserExperienceQuery } from '@/api/experience';
 import { Sortable } from '@/api/experienceSchema';
-import { convertFilterUiToApiFormat, isAllFilters } from '@/utils/experience';
+import {
+  convertFilterUiToApiFormat,
+  getExperienceRowHeight,
+  isAllFilters,
+} from '@/utils/experience';
 import { Filters } from '@components/common/mypage/experience/ExperienceFilters';
 import OutlinedButton from '@components/common/mypage/experience/OutlinedButton';
 import ActivityTypeCell from '@components/common/mypage/experience/table-cell/ActivityTypeCell';
@@ -81,6 +85,7 @@ const ExperienceDataTable = ({
         headers={experienceTableHeaders}
         data={userExperiences}
         onRowClick={onRowClick}
+        getRowHeight={getExperienceRowHeight}
         className="rounded-xs border border-neutral-80"
       />
 

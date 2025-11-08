@@ -2,6 +2,7 @@ import {
   ACTIVITY_TYPE_KR,
   EXPERIENCE_CATEGORY_KR,
   ExperienceFiltersRes,
+  UserExperienceType,
 } from '@/api/experienceSchema';
 import { Filters } from '@components/common/mypage/experience/ExperienceFilters';
 
@@ -93,4 +94,22 @@ export const sortExperiences = (experiences: any[], sortBy: string) => {
     default:
       return experiences;
   }
+};
+
+/**
+ * ✅ 경험 정리 테이블 행 높이 결정
+ */
+export const getExperienceRowHeight = (row: UserExperienceType) => {
+  const hasOnlyBasicInfo =
+    isExperienceContentEmpty(row.situation) &&
+    isExperienceContentEmpty(row.task) &&
+    isExperienceContentEmpty(row.action) &&
+    isExperienceContentEmpty(row.result) &&
+    isExperienceContentEmpty(row.reflection);
+
+  return hasOnlyBasicInfo ? '66px' : '150px';
+};
+
+export const isExperienceContentEmpty = (value?: string | null) => {
+  return value == null || value.trim() === ''; // null, undefined, 빈 문자열 체크
 };

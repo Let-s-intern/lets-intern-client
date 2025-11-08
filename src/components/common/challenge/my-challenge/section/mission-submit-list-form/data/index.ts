@@ -86,6 +86,38 @@ export const convertUserExperienceToExperienceData = (
   };
 };
 
+// 값이 비어있는지 확인하는 헬퍼 함수
+const isEmpty = (value: unknown): boolean => {
+  if (value === null || value === undefined) return true;
+  if (typeof value === 'string') return value.trim() === '';
+  if (Array.isArray(value)) {
+    return value.length === 0 || value.every((item) => isEmpty(item));
+  }
+  return false;
+};
+
+// 경험이 모든 필드를 작성했는지 확인하는 함수
+export const isExperienceComplete = (experience: ExperienceData): boolean => {
+  // 테이블에 표시되는 모든 필드 확인
+  const requiredFields: (keyof ExperienceData)[] = [
+    'name',
+    'category',
+    'organization',
+    'role',
+    'type',
+    'period',
+    'year',
+    'situation',
+    'task',
+    'action',
+    'result',
+    'learnings',
+    'coreCompetencies',
+  ];
+
+  return requiredFields.every((field) => !isEmpty(experience[field]));
+};
+
 // 경험 테이블 헤더 (재사용)
 export const getExperienceHeaders = (): TableHeader[] => [
   { key: 'name', label: '경험 이름', width: '160px' },

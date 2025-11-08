@@ -1,8 +1,8 @@
 'use client';
 
-import { ChevronsDownUp, ChevronsUpDown } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { twMerge } from "tailwind-merge";
+import { ChevronsDownUp, ChevronsUpDown } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 /**
  * 테이블 행 확장 가능한 셀 컴포넌트 - 텍스트 오버플로우 감지 및 확장 버튼 표시
@@ -13,9 +13,16 @@ interface ExpandableCellProps {
   isRowExpanded: boolean;
   onToggleExpand: () => void;
   align?: 'left' | 'center' | 'right';
+  height?: string;
 }
 
-const ExpandableCell = ({ content, isRowExpanded, onToggleExpand, align = 'left' }: ExpandableCellProps) => {
+const ExpandableCell = ({
+  content,
+  isRowExpanded,
+  onToggleExpand,
+  align = 'left',
+  height = '66px',
+}: ExpandableCellProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -45,14 +52,17 @@ const ExpandableCell = ({ content, isRowExpanded, onToggleExpand, align = 'left'
       <div
         ref={contentRef}
         className={twMerge(
-          'flex items-start p-2 text-[0.8125rem] font-normal text-neutral-30',
-          isRowExpanded ? 'h-auto' : 'h-[9.25rem] overflow-hidden',
+          'flex items-start whitespace-normal p-2 text-[0.8125rem] font-normal text-neutral-30',
           align === 'center'
             ? 'text-center'
             : align === 'right'
               ? 'text-right'
               : 'text-left',
         )}
+        style={{
+          height: isRowExpanded ? 'auto' : height,
+          overflow: isRowExpanded ? 'visible' : 'hidden',
+        }}
       >
         {content}
       </div>

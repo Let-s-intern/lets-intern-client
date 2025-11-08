@@ -27,6 +27,7 @@ export interface DataTableProps {
   selectedRowIds?: Set<number>;
   onSelectionChange?: (selectedIds: Set<number>) => void;
   onRowClick?: (row: TableData) => void;
+  getRowHeight?: (row: TableData) => string;
   className?: string;
 }
 
@@ -36,6 +37,7 @@ const DataTable = ({
   selectedRowIds,
   onSelectionChange,
   onRowClick,
+  getRowHeight,
   className = '',
 }: DataTableProps) => {
   // 확장된 행의 ID를 관리
@@ -55,8 +57,8 @@ const DataTable = ({
   };
 
   // 특정 행의 체크박스 토글
-  const toggleRowSelection = (id: number) => {
-    if (!selectedRowIds || !onSelectionChange) return;
+  const toggleRowSelection = (id: number, isDisabled?: boolean) => {
+    if (!selectedRowIds || !onSelectionChange || isDisabled) return;
 
     const newSet = new Set(selectedRowIds);
     if (newSet.has(id)) newSet.delete(id);
@@ -114,6 +116,8 @@ const DataTable = ({
           {data.map((row) => {
             const isSelected = selectedRowIds?.has(row.id);
             const isExpanded = expandedRows.has(row.id);
+            const rowHeight = getRowHeight?.(row);
+            const isDisabled = row.isDisabled === true;
 
             return (
               <tr
@@ -131,7 +135,8 @@ const DataTable = ({
                   >
                     <CheckBox
                       checked={!!isSelected}
-                      onClick={() => toggleRowSelection(row.id)}
+                      onClick={() => toggleRowSelection(row.id, isDisabled)}
+                      disabled={isDisabled}
                     />
                   </td>
                 )}
@@ -164,6 +169,7 @@ const DataTable = ({
                         isRowExpanded={isExpanded}
                         onToggleExpand={() => toggleExpandRow(row.id)}
                         align={header.align?.horizontal}
+                        height={rowHeight}
                       />
                     </td>
                   );
