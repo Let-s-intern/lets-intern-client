@@ -246,7 +246,6 @@ export const ExperienceForm = ({
     getValues,
     updateExperienceMutation,
     createExperienceMutation,
-    reset,
     isAdmin,
   ]);
 
@@ -753,12 +752,7 @@ export const ExperienceForm = ({
             type="submit"
             form="experienceForm"
             className="w-full rounded-sm bg-primary px-3 py-3 text-xsmall16 font-medium text-white hover:bg-primary-hover disabled:bg-neutral-70 disabled:text-white md:w-[80px] md:py-2"
-            disabled={
-              !isValid ||
-              !isDirty ||
-              createExperienceMutation.isPending ||
-              updateExperienceMutation.isPending
-            }
+            disabled={!isValid}
           >
             저장
           </button>
