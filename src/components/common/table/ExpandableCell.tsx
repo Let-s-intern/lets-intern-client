@@ -74,7 +74,6 @@ const ExpandableCell = ({
         style={{
           height: isRowExpanded ? 'auto' : height,
           overflow: isRowExpanded ? 'visible' : 'hidden',
-          wordBreak: 'break-word',
         }}
       >
         {content}
