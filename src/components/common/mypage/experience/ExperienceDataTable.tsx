@@ -189,9 +189,9 @@ const experienceTableHeaders: TableHeader[] = [
   },
   {
     key: 'deleteAction',
-    label: '목록 삭제',
+    label: '삭제',
     width: '90px',
-    align: { vertical: 'middle' },
+    align: { horizontal: 'center', vertical: 'middle' },
     cellRenderer: (_, row) => <DeleteCell row={row} />,
   },
 ];
