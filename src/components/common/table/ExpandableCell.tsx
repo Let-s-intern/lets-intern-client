@@ -26,6 +26,18 @@ const ExpandableCell = ({
   const contentRef = useRef<HTMLDivElement>(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // 모바일 여부 감지
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // 텍스트가 셀 밖으로 넘치는지 확인
   useEffect(() => {
@@ -45,14 +57,14 @@ const ExpandableCell = ({
 
   return (
     <div
-      className="relative"
+      className="relative w-full"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <div
         ref={contentRef}
         className={twMerge(
-          'flex items-start whitespace-normal p-2 text-[0.8125rem] font-normal text-neutral-30',
+          'w-full whitespace-normal break-words p-2 text-[0.8125rem] font-normal text-neutral-30',
           align === 'center'
             ? 'text-center'
             : align === 'right'
@@ -62,13 +74,14 @@ const ExpandableCell = ({
         style={{
           height: isRowExpanded ? 'auto' : height,
           overflow: isRowExpanded ? 'visible' : 'hidden',
+          wordBreak: 'break-word',
         }}
       >
         {content}
       </div>
 
-      {/* 오버플로우가 있고 hover 상태일 때만 화살표 버튼 표시 */}
-      {isOverflowing && isHovered && (
+      {/* 모바일: 오버플로우가 있으면 항상 표시, 데스크톱: hover 시에만 표시 */}
+      {isOverflowing && (isMobile || isHovered) && (
         <button
           onClick={(e) => {
             e.stopPropagation();
