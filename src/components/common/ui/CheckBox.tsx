@@ -2,11 +2,26 @@ interface CheckBoxProps {
   checked: boolean;
   onClick?: () => void;
   width?: string;
+  disabled?: boolean;
 }
 
-const CheckBox = ({ checked, onClick, width = 'w-8' }: CheckBoxProps) => {
+const CheckBox = ({
+  checked,
+  onClick,
+  width = 'w-8',
+  disabled = false,
+}: CheckBoxProps) => {
+  const handleClick = () => {
+    if (!disabled && onClick) {
+      onClick();
+    }
+  };
+
   return (
-    <div className="flex cursor-pointer items-center" onClick={onClick}>
+    <div
+      className={`flex items-center ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+      onClick={handleClick}
+    >
       {checked ? (
         <img src="/icons/checkbox-fill.svg" alt="체크됨" className={width} />
       ) : (
