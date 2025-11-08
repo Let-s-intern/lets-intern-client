@@ -116,7 +116,7 @@ export const EXPERIENCE_FORM_TEXT: ExperienceFormText = {
   },
   // 핵심 역량
   coreCompetency: {
-    label: '핵심 역량',
+    label: '핵심 역량 (최대 5개)',
     placeholder: '키워드를 입력해주세요. (예. 데이터 분석, QA, 커뮤니케이션)',
     description:
       '키워드를 입력한 뒤 콤마(,)를 누르면 자동으로 태그가 만들어집니다.',

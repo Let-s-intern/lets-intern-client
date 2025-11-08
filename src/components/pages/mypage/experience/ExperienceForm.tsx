@@ -61,6 +61,15 @@ interface ExperienceFormProps {
   initialData: UserExperienceType | null;
 }
 
+const normalizeCoreCompetency = (competency: string | undefined): string => {
+  if (!competency) return '';
+  return competency
+    .split(',')
+    .map((item) => item.trim())
+    .filter((item) => item.length > 0)
+    .join(', ');
+};
+
 export const ExperienceForm = ({
   onClose,
   initialData,
@@ -206,6 +215,7 @@ export const ExperienceForm = ({
     try {
       const saveData = {
         ...parsed.data,
+        coreCompetency: normalizeCoreCompetency(parsed.data.coreCompetency),
         yearBadges: displayYears,
       };
 
@@ -322,6 +332,7 @@ export const ExperienceForm = ({
     try {
       const submitData = {
         ...data,
+        coreCompetency: normalizeCoreCompetency(data.coreCompetency),
         yearBadges: displayYears,
       };
       // 자동 저장으로 이미 생성되었으면 업데이트, 아니면 생성

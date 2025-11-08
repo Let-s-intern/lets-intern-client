@@ -1,15 +1,13 @@
+import { TableData } from '@components/common/table/DataTable';
+
 interface YearCellProps {
-  row: {
-    startDate: string;
-    endDate: string;
-  };
+  row: TableData;
 }
 
 const YearCell = ({ row }: YearCellProps) => {
   if (!row.startDate || !row.endDate) {
     return null;
   }
-
   const startYear = new Date(row.startDate).getFullYear();
   const endYear = new Date(row.endDate).getFullYear();
 
