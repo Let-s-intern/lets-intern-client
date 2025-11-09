@@ -20,11 +20,7 @@ export const ExperienceCategoryModal = ({
   if (!open) return null;
 
   return (
-    <WishJobModal
-      title="경험 분류 선택"
-      onClose={onClose}
-      className="mb-[57px] md:mb-0"
-    >
+    <WishJobModal title="경험 분류 선택" onClose={onClose}>
       {categories.map((name) => {
         const isSelected = selected === name;
         return (
