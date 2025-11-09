@@ -2,13 +2,17 @@ import {
   useSearchUserExperiencesQuery,
   useUserExperienceFiltersQuery,
 } from '@/api/userExperience';
+import { UserExperience } from '@/api/userExperienceSchema';
 import {
   convertUserExperienceToExperienceData,
   ExperienceData,
+  isUserExperienceComplete,
   labelToActivityType,
   labelToExperienceCategory,
 } from '@/components/common/challenge/my-challenge/section/mission-submit-list-form/data';
-import { useEffect, useMemo, useState } from 'react';
+import dayjs from '@/lib/dayjs';
+import { Dayjs } from 'dayjs';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 interface Filters {
   category: string;
@@ -20,6 +24,7 @@ interface Filters {
 interface UseExperienceSelectModalOptions {
   isOpen: boolean;
   pageSize?: number;
+  missionStartDate?: Dayjs | null;
 }
 
 interface UseExperienceSelectModalReturn {
@@ -61,6 +66,7 @@ const DEFAULT_PAGE_SIZE = 5;
 export const useExperienceSelectModal = ({
   isOpen,
   pageSize = DEFAULT_PAGE_SIZE,
+  missionStartDate,
 }: UseExperienceSelectModalOptions): UseExperienceSelectModalReturn => {
   const [filters, setFilters] = useState<Filters>(INITIAL_FILTERS);
   const [currentPage, setCurrentPage] = useState(1);
@@ -73,67 +79,110 @@ export const useExperienceSelectModal = ({
   // 필터 옵션 조회
   const { data: filterOptions } = useUserExperienceFiltersQuery();
 
-  // API 검색 요청 생성
-  const searchRequest = useMemo(() => {
+  // 모든 데이터를 가져오기 위한 요청 (필터링 전 전체 데이터)
+  const allDataRequest = useMemo(() => {
     const request: {
-      filter: {
-        experienceCategories?: string[];
-        activityTypes?: string[];
-        years?: number[];
-        coreCompetencies?: string[];
-      };
-      pageable: {
-        page: number;
-        size: number;
-      };
+      experienceCategories?: string[];
+      activityTypes?: string[];
+      years?: number[];
+      coreCompetencies?: string[];
+      sortType?: 'LATEST' | 'OLDEST' | 'RECENTLY_EDITED';
+      page: number;
+      size: number;
     } = {
-      filter: {},
-      pageable: {
-        page: currentPage - 1, // API는 0부터 시작
-        size: pageSize,
-      },
+      page: 1,
+      size: 1000, // 충분히 큰 값으로 모든 데이터 가져오기
+      sortType: 'LATEST' as const,
     };
 
     if (filters.category !== '전체') {
       const categoryApiValue = labelToExperienceCategory[filters.category];
       if (categoryApiValue) {
-        request.filter.experienceCategories = [categoryApiValue];
+        request.experienceCategories = [categoryApiValue];
       }
     }
 
     if (filters.type !== '전체') {
       const typeApiValue = labelToActivityType[filters.type];
       if (typeApiValue) {
-        request.filter.activityTypes = [typeApiValue];
+        request.activityTypes = [typeApiValue];
       }
     }
 
     if (filters.year !== '전체') {
-      request.filter.years = [parseInt(filters.year)];
+      request.years = [parseInt(filters.year)];
     }
 
     if (filters.competency !== '전체') {
-      request.filter.coreCompetencies = [filters.competency];
+      request.coreCompetencies = [filters.competency];
     }
 
     return request;
-  }, [filters, currentPage, pageSize]);
+  }, [filters]);
 
-  // 경험 데이터 검색
-  const { data: searchResponse, isLoading } = useSearchUserExperiencesQuery(
-    searchRequest,
+  // 모든 경험 데이터 검색 (필터링 전)
+  const { data: allSearchResponse, isLoading } = useSearchUserExperiencesQuery(
+    allDataRequest,
     isOpen,
   );
 
-  // API 응답을 ExperienceData로 변환
-  const experiences = useMemo(() => {
-    if (!searchResponse?.userExperiences) {
+  // 필터링 로직: 미션 시작일 이후 추가/수정된 경험만 표시
+  const shouldIncludeExperience = (
+    exp: UserExperience,
+    missionStart: Dayjs | null,
+  ): boolean => {
+    // missionStartDate가 없으면 필터링하지 않음
+    if (!missionStart) return true;
+
+    // 운영자 추가 경험 제외
+    if (exp.isAddedByAdmin) return false;
+
+    // 미션 시작일 이후 추가/수정 확인 (시작일 포함)
+    const createDate = dayjs(exp.createDate).startOf('day');
+    const lastModifiedDate = dayjs(exp.lastModifiedDate).startOf('day');
+    const missionStartDay = missionStart.startOf('day');
+
+    const isCreatedAfterMissionStart = !createDate.isBefore(
+      missionStartDay,
+      'day',
+    );
+    const isModifiedAfterMissionStart = !lastModifiedDate.isBefore(
+      missionStartDay,
+      'day',
+    );
+
+    // 미션 시작일 이전에 추가되고 수정되지 않은 경험 제외
+    if (!isCreatedAfterMissionStart && !isModifiedAfterMissionStart) {
+      return false;
+    }
+
+    // 경험정리 필드 모두 채운 경험만
+    return isUserExperienceComplete(exp);
+  };
+
+  // 필터링된 모든 경험 데이터 (클라이언트 필터링 적용)
+  const allFilteredExperiences = useMemo(() => {
+    if (!allSearchResponse?.userExperiences) {
       return [];
     }
-    return searchResponse.userExperiences.map(
-      convertUserExperienceToExperienceData,
+
+    const filtered = allSearchResponse.userExperiences.filter((exp) =>
+      shouldIncludeExperience(exp, missionStartDate || null),
     );
-  }, [searchResponse]);
+
+    return filtered.map(convertUserExperienceToExperienceData);
+  }, [allSearchResponse, missionStartDate]);
+
+  // 필터링된 결과를 페이지네이션하여 현재 페이지의 데이터만 추출
+  const experiences = useMemo(() => {
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    return allFilteredExperiences.slice(startIndex, endIndex);
+  }, [allFilteredExperiences, currentPage, pageSize]);
+
+  // 필터링된 결과의 총 개수와 페이지 수
+  const filteredTotalElements = allFilteredExperiences.length;
+  const filteredTotalPages = Math.ceil(filteredTotalElements / pageSize);
 
   // selectedRowIds와 현재 페이지 experiences 변경 시 Map 업데이트
   useEffect(() => {
@@ -144,21 +193,39 @@ export const useExperienceSelectModal = ({
 
       // 현재 페이지의 모든 경험을 순회
       experiences.forEach((exp) => {
-        const expId = String(exp.id);
+        // originalId를 String으로 변환하여 ID로 사용 (DataTable과 일치)
+        const expId = String(exp.originalId);
         const isSelected = selectedRowIds.has(expId);
 
         if (isSelected) {
           // 선택된 경우 Map에 추가/업데이트
           newMap.set(expId, exp);
-        } else {
-          // 선택 해제된 경우 Map에서 제거
-          newMap.delete(expId);
         }
+        // 선택 해제된 경우는 onSelectionChange에서 처리하므로 여기서는 제거하지 않음
+        // 다른 페이지에서 선택한 항목이 Map에서 제거되지 않도록 보장
       });
 
       return newMap;
     });
   }, [experiences, selectedRowIds]);
+
+  // selectedRowIds에서 제거된 항목을 Map에서도 제거
+  useEffect(() => {
+    setSelectedExperiencesMap((prevMap) => {
+      const newMap = new Map(prevMap);
+      let hasChanges = false;
+
+      // Map에 있지만 selectedRowIds에 없는 항목 제거
+      newMap.forEach((_, expId) => {
+        if (!selectedRowIds.has(expId)) {
+          newMap.delete(expId);
+          hasChanges = true;
+        }
+      });
+
+      return hasChanges ? newMap : prevMap;
+    });
+  }, [selectedRowIds]);
 
   // 필터 변경 시 페이지 초기화
   useEffect(() => {
@@ -173,12 +240,12 @@ export const useExperienceSelectModal = ({
     }
   }, [isOpen]);
 
-  const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
-    page: number,
-  ) => {
-    setCurrentPage(page);
-  };
+  const handlePageChange = useCallback(
+    (event: React.ChangeEvent<unknown>, page: number) => {
+      setCurrentPage(page);
+    },
+    [],
+  );
 
   const handleComplete = (
     onSelectComplete: (selectedExperiences: ExperienceData[]) => void,
@@ -190,18 +257,23 @@ export const useExperienceSelectModal = ({
     onClose();
   };
 
+  const pagination = useMemo(
+    () => ({
+      currentPage,
+      totalElements: filteredTotalElements,
+      totalPages: filteredTotalPages,
+      handlePageChange,
+    }),
+    [currentPage, filteredTotalElements, filteredTotalPages, handlePageChange],
+  );
+
   return {
     filters: {
       value: filters,
       onChange: setFilters,
       options: filterOptions,
     },
-    pagination: {
-      currentPage,
-      totalElements: searchResponse?.totalElements ?? 0,
-      totalPages: searchResponse?.totalPages ?? 0,
-      handlePageChange,
-    },
+    pagination,
     data: {
       experiences,
       isLoading,

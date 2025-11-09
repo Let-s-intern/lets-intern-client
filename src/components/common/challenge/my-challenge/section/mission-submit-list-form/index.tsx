@@ -32,16 +32,13 @@ export const MissionSubmitListForm = ({
   // 모든 경험 데이터 검색 (초기 로드용)
   const { data: allExperiencesData } = useSearchUserExperiencesQuery(
     {
-      filter: {
-        experienceCategories: [],
-        activityTypes: [],
-        years: [],
-        coreCompetencies: [],
-      },
-      pageable: {
-        page: 0,
-        size: 100,
-      },
+      experienceCategories: [],
+      activityTypes: [],
+      years: [],
+      coreCompetencies: [],
+      sortType: 'LATEST' as const,
+      page: 1,
+      size: 100,
     },
     !!initialExperienceIds && initialExperienceIds.length > 0,
   );
@@ -123,6 +120,7 @@ export const MissionSubmitListForm = ({
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onSelectComplete={handleSelectComplete}
+        missionStartDate={missionStartDate}
       />
     </div>
   );
