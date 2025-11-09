@@ -5,11 +5,8 @@ import DataTable from '@/components/common/table/DataTable';
 import BaseModal from '@/components/ui/BaseModal';
 import { useExperienceSelectModal } from '@/hooks/useExperienceSelectModal';
 import { getExperienceRowHeight } from '@/utils/experience';
-import {
-  ExperienceData,
-  getExperienceHeaders,
-  isExperienceComplete,
-} from '../../data';
+import { Dayjs } from 'dayjs';
+import { ExperienceData, getExperienceHeaders } from '../../data';
 import { ExperienceSelectModalFilters } from './components/ExperienceSelectModalFilters';
 import { ExperienceSelectModalHeader } from './components/ExperienceSelectModalHeader';
 
@@ -17,6 +14,7 @@ interface ExperienceSelectModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectComplete: (selectedExperiences: ExperienceData[]) => void;
+  missionStartDate?: Dayjs | null;
 }
 
 const PAGE_SIZE = 5;
@@ -25,11 +23,13 @@ export const ExperienceSelectModal = ({
   isOpen,
   onClose,
   onSelectComplete,
+  missionStartDate,
 }: ExperienceSelectModalProps) => {
   const { filters, pagination, data, selection, handleComplete } =
     useExperienceSelectModal({
       isOpen,
       pageSize: PAGE_SIZE,
+      missionStartDate,
     });
 
   const headers = getExperienceHeaders();
@@ -66,7 +66,6 @@ export const ExperienceSelectModal = ({
                 data={data.experiences.map((exp) => ({
                   ...exp,
                   id: exp.originalId,
-                  isDisabled: !isExperienceComplete(exp),
                 }))}
                 selectedRowIds={
                   new Set(

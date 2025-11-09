@@ -123,6 +123,7 @@ export const MissionSubmitListForm = ({
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onSelectComplete={handleSelectComplete}
+        missionStartDate={missionStartDate}
       />
     </div>
   );
