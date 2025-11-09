@@ -2,7 +2,7 @@ import { DocumentType } from '@/api/missionSchema';
 import { useGetUserDocumentListQuery } from '@/api/user';
 import { UserDocument } from '@/api/userSchema';
 import { clsx } from 'clsx';
-import { RefreshCw, Trash2, Upload } from 'lucide-react';
+import { Trash2, Upload } from 'lucide-react';
 import { useRef, type RefObject } from 'react';
 import { UploadedFiles } from './MissionSubmitTalentPoolSection';
 
@@ -163,7 +163,7 @@ const DocumentFileItem = ({
           </button>
 
           {/* 서류 불러오기 버튼*/}
-          <button
+          {/* <button
             type="button"
             onClick={() => onLoadDocument(type)}
             disabled={isSubmitted || isLoading || !isDocumentExists}
@@ -171,7 +171,7 @@ const DocumentFileItem = ({
           >
             <RefreshCw size={16} />
             서류 불러오기
-          </button>
+          </button> */}
         </div>
       )}
 

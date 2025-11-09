@@ -1,3 +1,4 @@
+import { useMissionStore } from '@/store/useMissionStore';
 import { clsx } from 'clsx';
 
 interface MissionSubmitButtonProps {
@@ -50,9 +51,13 @@ const MissionSubmitButton = ({
       </div>
     );
   }
-
+  const { selectedMissionTh } = useMissionStore();
   // 기본 모드: 단일 버튼
-  const buttonText = isSubmitted ? '수정하기' : '제출하기';
+  const buttonText = isSubmitted
+    ? [0, 99, 100].includes(selectedMissionTh)
+      ? '제출 완료'
+      : '수정하기'
+    : '제출하기';
   const buttonColor =
     (isSubmitted || hasContent) && !disabled
       ? 'bg-primary text-white'
