@@ -72,9 +72,21 @@ const DataTable = ({
   const toggleAllSelection = () => {
     if (!selectedRowIds || !onSelectionChange) return;
 
-    let newSet: Set<number>;
-    if (selectedRowIds.size === data.length) newSet = new Set();
-    else newSet = new Set(allRowIds);
+    // 현재 페이지의 모든 항목이 선택되어 있는지 확인
+    const allCurrentPageSelected = allRowIds.every((id) =>
+      selectedRowIds.has(id),
+    );
+
+    const newSet = new Set(selectedRowIds);
+
+    if (allCurrentPageSelected) {
+      // 현재 페이지의 모든 항목이 선택되어 있으면 현재 페이지 항목만 제거
+      allRowIds.forEach((id) => newSet.delete(id));
+    } else {
+      // 현재 페이지의 모든 항목이 선택되어 있지 않으면 현재 페이지 항목을 모두 추가
+      allRowIds.forEach((id) => newSet.add(id));
+    }
+
     onSelectionChange(newSet);
   };
 
