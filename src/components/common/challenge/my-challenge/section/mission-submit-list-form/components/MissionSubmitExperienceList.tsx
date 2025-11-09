@@ -27,16 +27,13 @@ export const MissionSubmitExperienceList = ({
   isEditing,
 }: MissionSubmitExperienceListProps) => {
   const { data } = useSearchUserExperiencesQuery({
-    filter: {
-      experienceCategories: [],
-      activityTypes: [],
-      years: [],
-      coreCompetencies: [],
-    },
-    pageable: {
-      page: 0,
-      size: 100,
-    },
+    experienceCategories: [],
+    activityTypes: [],
+    years: [],
+    coreCompetencies: [],
+    sortType: 'LATEST' as const,
+    page: 1,
+    size: 100,
   });
   // 제출 가능한 경험 필터링: LV1은 전체, LV2는 미션 시작일 이후 생성/수정된 경험만
   const submitableExperiences = useMemo(() => {
