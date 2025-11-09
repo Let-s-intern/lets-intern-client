@@ -12,17 +12,11 @@ export type UserExperienceFilters = z.infer<typeof userExperienceFiltersSchema>;
 
 /** POST /api/v1/user-experience/search - 검색 요청 */
 export const userExperienceSearchRequestSchema = z.object({
-  filter: z.object({
-    experienceCategories: z.array(z.string()).optional(),
-    activityTypes: z.array(z.string()).optional(),
-    years: z.array(z.number()).optional(),
-    coreCompetencies: z.array(z.string()).optional(),
-  }),
-  pageable: z.object({
-    page: z.number(),
-    size: z.number(),
-    sort: z.array(z.string()).optional(),
-  }),
+  experienceCategories: z.array(z.string()).optional(),
+  activityTypes: z.array(z.string()).optional(),
+  years: z.array(z.number()).optional(),
+  coreCompetencies: z.array(z.string()).optional(),
+  sortType: z.enum(['LATEST', 'OLDEST', 'RECENTLY_EDITED']).optional(),
 });
 
 export type UserExperienceSearchRequest = z.infer<
