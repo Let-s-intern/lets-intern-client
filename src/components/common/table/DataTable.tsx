@@ -68,14 +68,15 @@ const DataTable = ({
 
   const allRowIds = useMemo(() => data.map((row) => row.id), [data]);
 
+  // 현재 페이지의 모든 항목이 선택되어 있는지 확인
+  const allCurrentPageSelected = useMemo(() => {
+    if (!selectedRowIds || allRowIds.length === 0) return false;
+    return allRowIds.every((id) => selectedRowIds.has(id));
+  }, [selectedRowIds, allRowIds]);
+
   // 모든 행의 체크박스 토글
   const toggleAllSelection = () => {
     if (!selectedRowIds || !onSelectionChange) return;
-
-    // 현재 페이지의 모든 항목이 선택되어 있는지 확인
-    const allCurrentPageSelected = allRowIds.every((id) =>
-      selectedRowIds.has(id),
-    );
 
     const newSet = new Set(selectedRowIds);
 
@@ -99,7 +100,7 @@ const DataTable = ({
             {selectedRowIds && (
               <th className="sticky left-0 z-10 w-10 bg-neutral-95 p-2">
                 <CheckBox
-                  checked={selectedRowIds.size === data.length}
+                  checked={allCurrentPageSelected}
                   onClick={toggleAllSelection}
                 />
               </th>
