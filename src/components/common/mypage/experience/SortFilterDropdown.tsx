@@ -18,6 +18,8 @@ const SortFilterDropdown = ({
 }: SortFilterDropdownProps) => {
   return (
     <FilterDropdown
+      labelPrefix="정렬"
+      isHideLabel={true}
       options={options}
       selectedValue={sortBy}
       onSelect={(value) => onSortChange(value as Sortable)}
