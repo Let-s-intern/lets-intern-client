@@ -22,8 +22,8 @@ export function SelectButton({
       <label className="mb-1.5 flex items-center gap-1.5">
         <span>{label}</span>
         <Asterisk
-          className={`text-primary ${!isRequired && 'hidden'}`}
-          size={10}
+          className={`pb-1 text-primary ${!isRequired && 'hidden'}`}
+          size={16}
         />
       </label>
 
