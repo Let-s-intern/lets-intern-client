@@ -171,9 +171,16 @@ export const MultiFilterDropdown = ({
 
               <div className="flex flex-col gap-1.5 overflow-y-auto pb-20 scrollbar-hide">
                 {options.map((option) => {
+                  const isAllOptionsSelected =
+                    nonAllOptions.length > 0 &&
+                    nonAllOptions.every((opt) =>
+                      selectedValues.includes(opt.value),
+                    );
+
                   const isSelected =
                     selectedValues.includes(option.value) ||
-                    (selectedValues.length === 0 && option.value === 'ALL');
+                    (selectedValues.length === 0 && option.value === 'ALL') ||
+                    (isAllOptionsSelected && option.value === 'ALL');
 
                   return (
                     <button
