@@ -121,7 +121,7 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
             />
           </div>
         </nav>
-        <div className="flex w-full grow flex-col items-start justify-center pb-8 md:w-auto">
+        <div className="flex w-full grow flex-col items-start justify-center pb-8">
           <div className="flex w-full flex-col items-start justify-center gap-y-8 lg:mx-auto lg:max-w-[53.375rem]">
             {children}
           </div>
