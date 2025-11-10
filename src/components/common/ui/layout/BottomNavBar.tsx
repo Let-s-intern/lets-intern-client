@@ -86,7 +86,7 @@ function BottomNavBar({ pathname = '' }: Props) {
       name: '마이페이지',
       img: 'mypage.svg',
       activeImg: 'mypage-active.svg',
-      href: '/mypage/application',
+      href: '/mypage/career',
     },
   ];
 

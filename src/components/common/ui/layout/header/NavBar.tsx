@@ -171,7 +171,7 @@ const NavBar = () => {
 
       {/* 사이드 네비게이션 바 */}
       <SideNavContainer isOpen={isOpen} onClose={closeMenu}>
-        <SideNavItem href="/mypage/application">마이페이지</SideNavItem>
+        <SideNavItem href="/mypage/career">마이페이지</SideNavItem>
         <SideNavItem
           href="https://letscareer.oopy.io/1df5e77c-bee1-80b3-8199-e7d2cc9d64cd"
           target="_blank"
