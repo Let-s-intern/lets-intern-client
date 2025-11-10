@@ -408,11 +408,11 @@ export const ExperienceForm = ({
     <>
       <div className="flex h-full flex-col bg-white">
         {/* 헤더 */}
-        <header className="flex h-[72px] items-center justify-between px-4 py-5">
+        <header className="relative flex h-[72px] items-center justify-center px-4 py-5">
           <h1 className="text-small20 font-semibold">경험 작성</h1>
           <button
             onClick={handleClose}
-            className="flex h-7 w-7 items-center justify-center"
+            className="absolute right-4 flex h-7 w-7 items-center justify-center"
           >
             <XIcon size={24} />
           </button>
