@@ -17,7 +17,7 @@ const DeleteCell = ({ row }: { row: any }) => {
     <div className="flex h-full w-full items-center justify-center">
       <Trash2
         size={20}
-        className="cursor-pointer text-neutral-30"
+        className="cursor-pointer p-0.5 text-neutral-30"
         onClick={() => setIsDeleteModalOpen(true)}
       />
 
