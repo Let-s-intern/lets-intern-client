@@ -1,18 +1,20 @@
+import { useControlScroll } from '@/hooks/useControlScroll';
 import { twMerge } from '@/lib/twMerge';
-import { useEffect } from 'react';
 
 interface BottomSheetProps {
   children: React.ReactNode;
   className?: string;
+  isOpen?: boolean;
 }
 
-const BottomSheet = ({ children, className }: BottomSheetProps) => {
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, []);
+const BottomSheet = ({
+  children,
+  className,
+  isOpen = true,
+}: BottomSheetProps) => {
+  useControlScroll(isOpen);
+
+  if (!isOpen) return null;
 
   return (
     <>
