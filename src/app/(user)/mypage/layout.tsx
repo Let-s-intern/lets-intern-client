@@ -58,6 +58,12 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
         icon: 'user-user-circle',
         label: '개인정보',
       },
+      {
+        to: '/mypage/career',
+        active: pathname === '/mypage/career',
+        icon: 'user-user-circle',
+        label: '커리어 (임시, 나중에 병합)',
+      },
     ];
 
     if (isMentor) {
