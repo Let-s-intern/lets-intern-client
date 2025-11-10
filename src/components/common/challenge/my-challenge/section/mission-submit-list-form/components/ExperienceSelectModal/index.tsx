@@ -7,7 +7,6 @@ import { useExperienceSelectModal } from '@/hooks/useExperienceSelectModal';
 import { getExperienceRowHeight } from '@/utils/experience';
 import { Dayjs } from 'dayjs';
 import { ExperienceData, getExperienceHeaders } from '../../data';
-import { ExperienceSelectModalFilters } from './components/ExperienceSelectModalFilters';
 import { ExperienceSelectModalHeader } from './components/ExperienceSelectModalHeader';
 
 interface ExperienceSelectModalProps {
@@ -47,12 +46,7 @@ export const ExperienceSelectModal = ({
       <div className="flex h-full flex-col">
         {/* 헤더 */}
         <ExperienceSelectModalHeader onClose={onClose} />
-        {/* 필터 */}
-        <ExperienceSelectModalFilters
-          filters={filters.value}
-          onFiltersChange={filters.onChange}
-          filterOptions={filters.options}
-        />
+
         {/* 테이블 */}
         <div className="flex-1 overflow-hidden px-6 py-4">
           <div className="h-full overflow-auto rounded-xxs border border-neutral-80">
