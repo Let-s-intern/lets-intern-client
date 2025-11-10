@@ -167,7 +167,7 @@ const DocumentFileItem = ({
             type="button"
             onClick={() => onLoadDocument(type)}
             disabled={isSubmitted || isLoading || !isDocumentExists}
-            className="flex items-center gap-2 rounded-xs border-[1px] border-neutral-80 bg-white px-4 py-[.375rem] text-xsmall14 font-medium text-neutral-20 transition hover:bg-neutral-95 disabled:cursor-not-allowed disabled:bg-neutral-85 disabled:text-neutral-50"
+            className="flex items-center gap-2 rounded-xs border-[1px] border-neutral-80 bg-white px-4 py-[.375rem] text-xsmall14 font-medium text-neutral-20 transition hover:bg-neutral-95 disabled:cursor-not-allowed disabled:stroke-neutral-80 disabled:text-neutral-50"
           >
             <RefreshCw size={16} />
             서류 불러오기
