@@ -23,7 +23,7 @@ const MissionSubmitButton = ({
   disabled = false,
 }: MissionSubmitButtonProps) => {
   // 수정 모드일 때 두 개의 버튼 표시
-
+  console.log(disabled);
   if (isEditing) {
     return (
       <div className={clsx('mt-10 flex gap-3', className)}>
