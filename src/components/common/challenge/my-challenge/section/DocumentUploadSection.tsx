@@ -116,7 +116,7 @@ const DocumentFileItem = ({
   const hasFile = !!displayFile;
   const canEdit = !isSubmitted;
   return (
-    <div className="mb-6">
+    <div className="mb-5">
       <div className="mb-3">
         <span className="text-xsmall16 font-medium text-neutral-20">
           {label}
