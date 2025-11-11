@@ -190,7 +190,7 @@ export default function WishConditionInputSection({
 
   return (
     <div className="mb-9">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-5">
         <SelectButton
           label="희망 직군"
           value={getFieldDisplayText()}

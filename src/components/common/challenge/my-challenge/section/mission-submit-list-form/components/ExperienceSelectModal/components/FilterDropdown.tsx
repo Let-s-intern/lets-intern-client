@@ -16,6 +16,7 @@ interface FilterDropdownProps {
   onSelect: (value: string) => void;
   width?: string;
   className?: string;
+  isHideLabel?: boolean;
 }
 
 export const FilterDropdown = ({
@@ -25,6 +26,7 @@ export const FilterDropdown = ({
   onSelect,
   width = 'w-48',
   className = '',
+  isHideLabel = false,
 }: FilterDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -90,7 +92,7 @@ export const FilterDropdown = ({
         onClick={toggleDropdown}
         className={`flex ${width} items-center justify-between gap-1.5 rounded-xs border border-neutral-80 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 ${className}`}
       >
-        {labelPrefix && (
+        {!isHideLabel && labelPrefix && (
           <span className="whitespace-nowrap">{labelPrefix} </span>
         )}
         <span className="whitespace-nowrap text-primary-dark">
@@ -117,7 +119,7 @@ export const FilterDropdown = ({
       {isOpen && (
         <>
           <div
-            className={`shadow-07 hidden max-h-[28.125rem] w-full divide-y divide-neutral-95 overflow-auto rounded-xs bg-white px-1 py-1.5 scrollbar-hide md:block`}
+            className={`hidden max-h-[28.125rem] w-full divide-y divide-neutral-95 overflow-auto rounded-xs bg-white px-1 py-1.5 shadow-07 scrollbar-hide md:block`}
             style={dropdownStyle}
           >
             {options.map((option) => {

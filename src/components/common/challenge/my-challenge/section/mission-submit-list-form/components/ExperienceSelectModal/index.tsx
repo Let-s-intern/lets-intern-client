@@ -5,18 +5,15 @@ import DataTable from '@/components/common/table/DataTable';
 import BaseModal from '@/components/ui/BaseModal';
 import { useExperienceSelectModal } from '@/hooks/useExperienceSelectModal';
 import { getExperienceRowHeight } from '@/utils/experience';
-import {
-  ExperienceData,
-  getExperienceHeaders,
-  isExperienceComplete,
-} from '../../data';
-import { ExperienceSelectModalFilters } from './components/ExperienceSelectModalFilters';
+import { Dayjs } from 'dayjs';
+import { ExperienceData, getExperienceHeaders } from '../../data';
 import { ExperienceSelectModalHeader } from './components/ExperienceSelectModalHeader';
 
 interface ExperienceSelectModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectComplete: (selectedExperiences: ExperienceData[]) => void;
+  missionStartDate?: Dayjs | null;
 }
 
 const PAGE_SIZE = 5;
@@ -25,11 +22,13 @@ export const ExperienceSelectModal = ({
   isOpen,
   onClose,
   onSelectComplete,
+  missionStartDate,
 }: ExperienceSelectModalProps) => {
   const { filters, pagination, data, selection, handleComplete } =
     useExperienceSelectModal({
       isOpen,
       pageSize: PAGE_SIZE,
+      missionStartDate,
     });
 
   const headers = getExperienceHeaders();
@@ -47,12 +46,7 @@ export const ExperienceSelectModal = ({
       <div className="flex h-full flex-col">
         {/* 헤더 */}
         <ExperienceSelectModalHeader onClose={onClose} />
-        {/* 필터 */}
-        <ExperienceSelectModalFilters
-          filters={filters.value}
-          onFiltersChange={filters.onChange}
-          filterOptions={filters.options}
-        />
+
         {/* 테이블 */}
         <div className="flex-1 overflow-hidden px-6 py-4">
           <div className="h-full overflow-auto rounded-xxs border border-neutral-80">
@@ -66,7 +60,6 @@ export const ExperienceSelectModal = ({
                 data={data.experiences.map((exp) => ({
                   ...exp,
                   id: exp.originalId,
-                  isDisabled: !isExperienceComplete(exp),
                 }))}
                 selectedRowIds={
                   new Set(

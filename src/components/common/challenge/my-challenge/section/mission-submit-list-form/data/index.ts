@@ -96,7 +96,7 @@ const isEmpty = (value: unknown): boolean => {
   return false;
 };
 
-// 경험이 모든 필드를 작성했는지 확인하는 함수
+// 경험이 모든 필드를 작성했는지 확인하는 함수 (ExperienceData용)
 export const isExperienceComplete = (experience: ExperienceData): boolean => {
   // 테이블에 표시되는 모든 필드 확인
   const requiredFields: (keyof ExperienceData)[] = [
@@ -116,6 +116,35 @@ export const isExperienceComplete = (experience: ExperienceData): boolean => {
   ];
 
   return requiredFields.every((field) => !isEmpty(experience[field]));
+};
+
+// 경험이 모든 필드를 작성했는지 확인하는 함수 (UserExperience용)
+export const isUserExperienceComplete = (
+  experience: UserExperience,
+): boolean => {
+  // 테이블에 표시되는 모든 필드 확인
+  const startDate = dayjs(experience.startDate);
+  const endDate = dayjs(experience.endDate);
+  const year = startDate.year();
+  const period = `${startDate.format('YYYY.MM')} - ${endDate.format('YYYY.MM')}`;
+
+  const requiredFields = [
+    experience.title, // name
+    experience.experienceCategory, // category
+    experience.organ, // organization
+    experience.role, // role
+    experience.activityType, // type
+    period, // period
+    year, // year
+    experience.situation, // situation
+    experience.task, // task
+    experience.action, // action
+    experience.result, // result
+    experience.reflection, // learnings
+    experience.coreCompetency ? [experience.coreCompetency] : [], // coreCompetencies
+  ];
+
+  return requiredFields.every((field) => !isEmpty(field));
 };
 
 // 경험 테이블 헤더 (재사용)

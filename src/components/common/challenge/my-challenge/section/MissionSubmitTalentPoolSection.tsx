@@ -216,7 +216,7 @@ const MissionSubmitTalentPoolSection = ({
 
         {/* 서류 업로드 영역 */}
         <DocumentUploadSection
-          className="mb-6"
+          className="mb-12"
           uploadedFiles={uploadedFiles}
           onFilesChange={handleFilesChange}
           isSubmitted={isSubmitted}

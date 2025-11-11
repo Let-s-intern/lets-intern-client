@@ -14,9 +14,13 @@ export const fetchUserExperienceFilters = async () => {
 
 /** POST /api/v1/user-experience/search - 유저 경험 검색 */
 export const searchUserExperiences = async (
-  request: UserExperienceSearchRequest,
+  request: UserExperienceSearchRequest & { page: number; size: number },
 ) => {
-  const res = await axios.post('/user-experience/search', request);
+  const { page, size, ...body } = request;
+  const res = await axios.post(
+    `/user-experience/search?page=${page}&size=${size}`,
+    body,
+  );
   return userExperienceSearchResponseSchema.parse(res.data.data);
 };
 
@@ -30,7 +34,7 @@ export const useUserExperienceFiltersQuery = () => {
 
 /** React Query 훅 - 경험 데이터 검색 */
 export const useSearchUserExperiencesQuery = (
-  request: UserExperienceSearchRequest,
+  request: UserExperienceSearchRequest & { page: number; size: number },
   enabled: boolean = true,
 ) => {
   return useQuery({

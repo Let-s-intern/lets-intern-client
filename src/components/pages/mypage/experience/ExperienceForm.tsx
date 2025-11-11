@@ -27,7 +27,6 @@ import {
 import { useUnsavedChangesWarning } from '@/hooks/useUnsavedChangesWarning';
 import { useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
-import { CompetencyBadges } from './components/CompetencyBadges';
 import { ExperienceCategoryModal } from './components/ExperienceCategoryModal';
 import { FieldSection } from './components/FeildSection';
 import { PeriodSelectModal } from './components/PeriodSelectModal';
@@ -408,11 +407,11 @@ export const ExperienceForm = ({
     <>
       <div className="flex h-full flex-col bg-white">
         {/* 헤더 */}
-        <header className="flex h-[72px] items-center justify-between px-4 py-5">
+        <header className="relative flex h-[72px] items-center justify-center px-4 py-5">
           <h1 className="text-small20 font-semibold">경험 작성</h1>
           <button
             onClick={handleClose}
-            className="flex h-7 w-7 items-center justify-center"
+            className="absolute right-4 flex h-7 w-7 items-center justify-center"
           >
             <XIcon size={24} />
           </button>
@@ -454,7 +453,7 @@ export const ExperienceForm = ({
                 </span>
               </h2>
 
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-5">
                 {/* 경험 이름 */}
                 <FieldSection.Root className="flex flex-col">
                   <FieldSection.Label className="mb-[6px]" htmlFor="title">
@@ -737,7 +736,7 @@ export const ExperienceForm = ({
                     EXPERIENCE_FORM_TEXT['coreCompetency'].placeholder
                   }
                 />
-                <CompetencyBadges
+                {/* <CompetencyBadges
                   coreCompetency={formData.coreCompetency || ''}
                   onRemove={(index) => {
                     if (!formData.coreCompetency) return;
@@ -747,7 +746,7 @@ export const ExperienceForm = ({
                       shouldDirty: true,
                     });
                   }}
-                />
+                /> */}
               </FieldSection.Root>
             </div>
           </form>

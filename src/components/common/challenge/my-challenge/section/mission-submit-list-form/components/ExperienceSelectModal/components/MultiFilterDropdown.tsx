@@ -1,6 +1,5 @@
 'use client';
 
-
 import BottomSheet from '@components/common/ui/BottomSheeet';
 import Button from '@components/common/ui/button/Button';
 import CheckBox from '@components/common/ui/CheckBox';
@@ -35,6 +34,8 @@ export const MultiFilterDropdown = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [dropdownStyle, setDropdownStyle] = useState({});
 
+  const nonAllOptions = options.filter((option) => option.value !== 'ALL');
+
   // 필터 버튼에 맞게 드롭다운 위치와 너비 설정
   useEffect(() => {
     if (isOpen && buttonRef.current) {
@@ -54,9 +55,9 @@ export const MultiFilterDropdown = ({
       return '전체';
     }
 
-    // selectedValues 중 options 배열에서 가장 앞에 있는 항목 찾기
-    const selectedOption = options.find((option) =>
-      selectedValues.includes(option.value),
+    // 선택한 순서대로 첫 번째 항목 표시
+    const selectedOption = options.find(
+      (option) => option.value === selectedValues[0],
     );
 
     if (selectedValues.length === 1) {
@@ -126,14 +127,20 @@ export const MultiFilterDropdown = ({
       {isOpen && (
         <>
           <div
-            className={`shadow-07 hidden max-h-[28.125rem] w-full divide-y divide-neutral-95 overflow-auto rounded-xs bg-white px-1 py-1.5 scrollbar-hide md:block`}
+            className={`hidden max-h-[28.125rem] w-full divide-y divide-neutral-95 overflow-auto rounded-xs bg-white px-1 py-1.5 shadow-07 scrollbar-hide md:block`}
             style={dropdownStyle}
           >
             {options.map((option) => {
+              const isAllOptionsSelected =
+                nonAllOptions.length > 0 &&
+                nonAllOptions.every((opt) =>
+                  selectedValues.includes(opt.value),
+                );
+
               const isSelected =
                 selectedValues.includes(option.value) ||
-                (selectedValues.length === 0 && option.value === 'ALL');
-
+                (selectedValues.length === 0 && option.value === 'ALL') ||
+                (isAllOptionsSelected && option.value === 'ALL');
               return (
                 <button
                   key={option.value}
@@ -164,9 +171,16 @@ export const MultiFilterDropdown = ({
 
               <div className="flex flex-col gap-1.5 overflow-y-auto pb-20 scrollbar-hide">
                 {options.map((option) => {
+                  const isAllOptionsSelected =
+                    nonAllOptions.length > 0 &&
+                    nonAllOptions.every((opt) =>
+                      selectedValues.includes(opt.value),
+                    );
+
                   const isSelected =
                     selectedValues.includes(option.value) ||
-                    (selectedValues.length === 0 && option.value === 'ALL');
+                    (selectedValues.length === 0 && option.value === 'ALL') ||
+                    (isAllOptionsSelected && option.value === 'ALL');
 
                   return (
                     <button
