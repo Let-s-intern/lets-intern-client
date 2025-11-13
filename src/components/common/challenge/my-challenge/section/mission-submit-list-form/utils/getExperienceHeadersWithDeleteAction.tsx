@@ -25,9 +25,7 @@ export const getExperienceHeadersWithDeleteAction = (
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              if (!isDeleteDisabled) {
-                onDeleteExperience?.(row.originalId);
-              }
+              onDeleteExperience?.(row.originalId);
             }}
             disabled={isDeleteDisabled}
             className={`flex items-center justify-center p-0.5 ${
