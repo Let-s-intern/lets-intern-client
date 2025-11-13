@@ -12,6 +12,7 @@ type ExperienceLevel = 'LV1' | 'LV2';
 interface MissionSubmitExperienceListProps {
   selectedExperiences: ExperienceData[];
   onOpenModal: () => void;
+  onDeleteExperience?: (experienceId: number) => void;
   level: ExperienceLevel;
   missionStartDate?: Dayjs | null;
   isSubmitted?: boolean;
@@ -21,6 +22,7 @@ interface MissionSubmitExperienceListProps {
 export const MissionSubmitExperienceList = ({
   selectedExperiences,
   onOpenModal,
+  onDeleteExperience,
   level,
   missionStartDate,
   isSubmitted,
@@ -68,9 +70,10 @@ export const MissionSubmitExperienceList = ({
   const experienceCount = submitableExperiences.length;
 
   // 버튼 비활성화 조건:
-  // 1. 경험 수가 3개 미만이면 disabled
+  // 1. 제출 가능한 경험 수가 3개 미만이면 disabled
   // 2. 제출되어 있고 수정 모드가 아니면 disabled
   // 3. 그 외 (경험 수 3개 이상이고, (제출 안 됨 OR 수정 모드임)) → enabled
+  // 선택된 경험 수는 제출 시점에 체크하므로 여기서는 체크하지 않음
   const isButtonDisabled =
     experienceCount < 3 || (isSubmitted === true && isEditing !== true);
 
@@ -129,7 +132,12 @@ export const MissionSubmitExperienceList = ({
           </If>
 
           <If condition={experienceCount >= 3}>
-            <ExperienceList experiences={selectedExperiences} />
+            <ExperienceList
+              experiences={selectedExperiences}
+              onDeleteExperience={onDeleteExperience}
+              isSubmitted={isSubmitted}
+              isEditing={isEditing}
+            />
           </If>
         </div>
       </div>

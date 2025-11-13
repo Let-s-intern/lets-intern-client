@@ -1,13 +1,26 @@
 import DataTable from '@/components/common/table/DataTable';
 import { getExperienceRowHeight } from '@/utils/experience';
-import { ExperienceData, getExperienceHeaders } from '../data';
+import { ExperienceData } from '../data';
+import { getExperienceHeadersWithDeleteAction } from '../utils/getExperienceHeadersWithDeleteAction';
 
 interface ExperienceListProps {
   experiences?: ExperienceData[];
+  onDeleteExperience?: (experienceId: number) => void;
+  isSubmitted?: boolean;
+  isEditing?: boolean;
 }
 
-export const ExperienceList = ({ experiences = [] }: ExperienceListProps) => {
-  const headers = getExperienceHeaders();
+export const ExperienceList = ({
+  experiences = [],
+  onDeleteExperience,
+  isSubmitted,
+  isEditing,
+}: ExperienceListProps) => {
+  const headers = getExperienceHeadersWithDeleteAction(
+    onDeleteExperience,
+    isSubmitted,
+    isEditing,
+  );
 
   // 데이터가 없으면 안내 메시지 표시
   if (experiences.length === 0) {

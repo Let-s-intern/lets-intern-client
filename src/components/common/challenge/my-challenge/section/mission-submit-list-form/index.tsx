@@ -100,6 +100,17 @@ export const MissionSubmitListForm = ({
     onExperienceIdsChange?.(experienceIds);
     setIsModalOpen(false);
   };
+
+  const handleDeleteExperience = (experienceId: number) => {
+    const updatedExperiences = selectedExperiences.filter(
+      (exp) => exp.originalId !== experienceId,
+    );
+    setSelectedExperiences(updatedExperiences);
+    // 업데이트된 경험들의 originalId 추출하여 부모에게 전달
+    const experienceIds = updatedExperiences.map((exp) => exp.originalId);
+    onExperienceIdsChange?.(experienceIds);
+  };
+
   return (
     <div className="space-y-6">
       {/* 미션 제출 안내사항 */}
@@ -109,6 +120,7 @@ export const MissionSubmitListForm = ({
       <MissionSubmitExperienceList
         selectedExperiences={selectedExperiences}
         onOpenModal={handleOpenModal}
+        onDeleteExperience={handleDeleteExperience}
         level={level}
         missionStartDate={missionStartDate}
         isSubmitted={isSubmitted}
