@@ -1,6 +1,7 @@
 'use client';
 
 import { useGetActiveChallenge, useGetChallengeList } from '@/api/challenge';
+import { useFilterB2CChallenges } from '@/hooks/useFilterB2CChallenges';
 import { challengeTypeSchema } from '@/schema';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -11,8 +12,8 @@ const { MARKETING } = challengeTypeSchema.enum;
  * 마케팅 서류 완성 챌린지의 latest 리다이렉트를 처리하는 컴포넌트
  *
  * 리다이렉트 우선순위:
- * 1. 모집중인(active) 마케팅 챌린지가 있을 경우 해당 챌린지로 이동
- * 2. 없을 경우 가장 최근 개설된 마케팅 챌린지로 이동
+ * 1. 모집중인(active) 마케팅 챌린지 중 B2C 챌린지가 있을 경우 해당 챌린지로 이동
+ * 2. 없을 경우 가장 최근 개설된 마케팅 챌린지 중 B2C 챌린지로 이동
  */
 export default function MarketingLatest() {
   const router = useRouter();
@@ -29,9 +30,19 @@ export default function MarketingLatest() {
     type: MARKETING,
   });
 
+  // B2C 챌린지만 필터링
+  const {
+    filteredChallenges: filteredActiveChallenges,
+    isFiltering: isFilteringActive,
+  } = useFilterB2CChallenges(activeData?.challengeList);
+  const {
+    filteredChallenges: filteredListChallenges,
+    isFiltering: isFilteringList,
+  } = useFilterB2CChallenges(listData?.programList);
+
   useEffect(() => {
-    // 로딩 중이면 대기
-    if (activeLoading || listLoading) {
+    // 로딩 중이거나 필터링 중이면 대기
+    if (activeLoading || listLoading || isFilteringActive || isFilteringList) {
       return;
     }
 
@@ -42,8 +53,8 @@ export default function MarketingLatest() {
       return;
     }
 
-    // 활성화된 챌린지가 있는 경우
-    const activeChallenge = activeData?.challengeList?.[0];
+    // 활성화된 B2C 챌린지가 있는 경우
+    const activeChallenge = filteredActiveChallenges?.[0];
     if (activeChallenge?.id) {
       const title = activeChallenge.title ?? '';
       const redirectUrl = `/program/challenge/${activeChallenge.id}/${encodeURIComponent(title)}`;
@@ -52,8 +63,8 @@ export default function MarketingLatest() {
       return;
     }
 
-    // 활성화된 챌린지가 없는 경우, 가장 최근 챌린지로 이동
-    const latestChallenge = listData?.programList?.[0];
+    // 활성화된 챌린지가 없는 경우, 가장 최근 B2C 챌린지로 이동
+    const latestChallenge = filteredListChallenges?.[0];
     if (latestChallenge?.id) {
       const title = latestChallenge.title ?? '';
       const redirectUrl = `/program/challenge/${latestChallenge.id}/${encodeURIComponent(title)}`;
@@ -71,6 +82,10 @@ export default function MarketingLatest() {
     listError,
     activeLoading,
     listLoading,
+    filteredActiveChallenges,
+    filteredListChallenges,
+    isFilteringActive,
+    isFilteringList,
     router,
   ]);
 
@@ -80,7 +95,10 @@ export default function MarketingLatest() {
       <div className="text-center">
         <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-primary"></div>
         <p className="text-gray-600">마케팅 서류 완성 챌린지로 이동 중...</p>
-        {(activeLoading || listLoading) && (
+        {(activeLoading ||
+          listLoading ||
+          isFilteringActive ||
+          isFilteringList) && (
           <p className="mt-2 text-sm text-gray-500">데이터 로딩 중...</p>
         )}
       </div>
