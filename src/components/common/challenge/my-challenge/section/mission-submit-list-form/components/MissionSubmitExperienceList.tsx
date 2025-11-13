@@ -113,7 +113,7 @@ export const MissionSubmitExperienceList = ({
 
       {/* 작성된 경험 불러오는 컴포넌트 */}
       <div className="flex min-h-[200px] items-center justify-center rounded-xxs border border-neutral-80 bg-white">
-        <div className="flex flex-col items-center justify-center space-y-4">
+        <div className="flex w-full flex-col items-center justify-center space-y-4">
           <If condition={emptyStateText !== null}>
             <EmptyState
               text={emptyStateText ?? ''}
