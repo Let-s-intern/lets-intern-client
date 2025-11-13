@@ -3,7 +3,7 @@ import { If } from '@/components/common/If';
 import dayjs from '@/lib/dayjs';
 import { Dayjs } from 'dayjs';
 import { useMemo } from 'react';
-import { ExperienceData } from '../data';
+import { ExperienceData, isUserExperienceComplete } from '../data';
 import { EmptyState } from './EmptyState';
 import { ExperienceList } from './ExperienceList';
 
@@ -36,27 +36,33 @@ export const MissionSubmitExperienceList = ({
     size: 100,
   });
   // 제출 가능한 경험 필터링: LV1은 전체, LV2는 미션 시작일 이후 생성/수정된 경험만
+  // 마지막에 경험정리 필드 모두 채운 경험만 필터링
   const submitableExperiences = useMemo(() => {
     if (!data?.userExperiences) return [];
 
+    let filtered: typeof data.userExperiences;
+
     if (level === 'LV1') {
-      return data.userExperiences;
+      filtered = data.userExperiences;
+    } else {
+      if (!missionStartDate) {
+        return [];
+      }
+
+      filtered = data.userExperiences.filter((exp) => {
+        const createDate = dayjs(exp.createDate);
+        const lastModifiedDate = dayjs(exp.lastModifiedDate);
+        return (
+          createDate.isAfter(missionStartDate, 'day') ||
+          createDate.isSame(missionStartDate, 'day') ||
+          lastModifiedDate.isAfter(missionStartDate, 'day') ||
+          lastModifiedDate.isSame(missionStartDate, 'day')
+        );
+      });
     }
 
-    if (!missionStartDate) {
-      return [];
-    }
-
-    return data.userExperiences.filter((exp) => {
-      const createDate = dayjs(exp.createDate);
-      const lastModifiedDate = dayjs(exp.lastModifiedDate);
-      return (
-        createDate.isAfter(missionStartDate, 'day') ||
-        createDate.isSame(missionStartDate, 'day') ||
-        lastModifiedDate.isAfter(missionStartDate, 'day') ||
-        lastModifiedDate.isSame(missionStartDate, 'day')
-      );
-    });
+    // 경험정리 필드 모두 채운 경험만
+    return filtered.filter(isUserExperienceComplete);
   }, [data, level, missionStartDate]);
 
   const experienceCount = submitableExperiences.length;
