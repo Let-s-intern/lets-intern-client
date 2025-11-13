@@ -5,6 +5,7 @@ import DataTable from '@/components/common/table/DataTable';
 import BaseModal from '@/components/ui/BaseModal';
 import { useExperienceSelectModal } from '@/hooks/useExperienceSelectModal';
 import { getExperienceRowHeight } from '@/utils/experience';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { Dayjs } from 'dayjs';
 import { ExperienceData, getExperienceHeaders } from '../../data';
 import { ExperienceSelectModalFilters } from './components/ExperienceSelectModalFilters';
@@ -58,7 +59,7 @@ export const ExperienceSelectModal = ({
           <div className="h-full overflow-auto rounded-xxs border border-neutral-80">
             {data.isLoading ? (
               <div className="flex h-full items-center justify-center">
-                <p>로딩 중...</p>
+                <LoadingContainer text="경험정리를 불러오는 중입니다.." />
               </div>
             ) : (
               <DataTable
