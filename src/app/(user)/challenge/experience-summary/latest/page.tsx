@@ -1,6 +1,7 @@
 'use client';
 
 import { useGetActiveChallenge, useGetChallengeList } from '@/api/challenge';
+import LoadingContainer from '@/components/common/ui/loading/LoadingContainer';
 import { useFilterB2CChallenges } from '@/hooks/useFilterB2CChallenges';
 import { challengeTypeSchema } from '@/schema';
 import { useRouter } from 'next/navigation';
@@ -91,17 +92,9 @@ export default function ExperienceSummaryLatest() {
 
   // 로딩 상태 표시
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="text-center">
-        <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-primary"></div>
-        <p className="text-gray-600">경험정리 챌린지로 이동 중...</p>
-        {(activeLoading ||
-          listLoading ||
-          isFilteringActive ||
-          isFilteringList) && (
-          <p className="mt-2 text-sm text-gray-500">데이터 로딩 중...</p>
-        )}
-      </div>
-    </div>
+    <LoadingContainer
+      className="min-h-screen"
+      text="경험정리 챌린지로 이동 중..."
+    />
   );
 }
