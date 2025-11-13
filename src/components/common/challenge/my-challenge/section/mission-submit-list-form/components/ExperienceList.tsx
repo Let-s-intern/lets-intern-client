@@ -21,7 +21,7 @@ export const ExperienceList = ({ experiences = [] }: ExperienceListProps) => {
 
   // 데이터가 있으면 DataTable 렌더링
   return (
-    <div className="h-[400px] w-[852px] overflow-auto rounded-xxs border border-neutral-80">
+    <div className="h-[400px] w-full overflow-auto rounded-xxs border border-neutral-80 md:w-[852px]">
       <DataTable
         headers={headers}
         data={experiences.map((exp) => ({
