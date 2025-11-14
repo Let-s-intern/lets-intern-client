@@ -31,7 +31,7 @@ import { useUnsavedChangesWarning } from '@/hooks/useUnsavedChangesWarning';
 import { useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { ExperienceCategoryModal } from './components/ExperienceCategoryModal';
-import { FieldSection } from './components/FeildSection';
+import { FieldSection } from './components/FieldSection';
 import { PeriodSelectModal } from './components/PeriodSelectModal';
 import { TooltipButton } from './components/TooltipButton';
 
