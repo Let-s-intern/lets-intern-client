@@ -83,7 +83,7 @@ export const ExperienceSelectModalFilters = ({
           options={filterOptionsFormatted.category}
           selectedValue={filters.category}
           onSelect={(value: string) => handleFilterChange('category', value)}
-          width="w-52"
+          width="min-w-[8.25rem]"
         />
 
         {/* 팀·개인 필터 */}
@@ -92,7 +92,7 @@ export const ExperienceSelectModalFilters = ({
           options={filterOptionsFormatted.type}
           selectedValue={filters.type}
           onSelect={(value: string) => handleFilterChange('type', value)}
-          width="w-36"
+          width="min-w-[7.5rem]"
         />
 
         {/* 연도 필터 */}
@@ -101,7 +101,7 @@ export const ExperienceSelectModalFilters = ({
           options={filterOptionsFormatted.year}
           selectedValue={filters.year}
           onSelect={(value: string) => handleFilterChange('year', value)}
-          width="w-32"
+          width="min-w-[6.5rem]"
         />
 
         {/* 핵심 역량 필터 */}
@@ -110,7 +110,7 @@ export const ExperienceSelectModalFilters = ({
           options={filterOptionsFormatted.competency}
           selectedValue={filters.competency}
           onSelect={(value: string) => handleFilterChange('competency', value)}
-          width="w-44"
+          width="min-w-[8.25rem]"
         />
       </div>
     </div>
