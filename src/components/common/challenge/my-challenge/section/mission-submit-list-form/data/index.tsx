@@ -28,15 +28,15 @@ export interface ExperienceData {
 // API 값과 UI 표시 값 간 매핑
 export const experienceCategoryToLabel: Record<string, string> = {
   PROJECT: '프로젝트',
-  INTERNSHIP: '인턴십',
+  INTERNSHIP: '인턴',
   CLUB: '동아리',
-  CONFERENCE: '학회',
+  ACADEMIC: '학회',
   EDUCATION: '교육',
-  CONTEST: '공모전',
-  ACTIVITY: '대외활동',
+  COMPETITION: '공모전',
+  EXTRACURRICULAR: '대외활동',
   COMPANY: '회사',
   UNIVERSITY: '대학교',
-  ETC: '기타',
+  OTHER: '기타',
 };
 
 export const activityTypeToLabel: Record<string, string> = {
