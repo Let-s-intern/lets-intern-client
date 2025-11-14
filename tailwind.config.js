@@ -189,11 +189,11 @@ module.exports = {
             animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)',
           },
         },
-        fadeIn: {
+        'fade-in': {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
         },
-        slideInRight: {
+        'slide-in-right': {
           '0%': { transform: 'translateX(100%)' },
           '100%': { transform: 'translateX(0)' },
         },
@@ -204,8 +204,8 @@ module.exports = {
         'live-infinite-scroll-mobile':
           'live-infinite-scroll-mobile 12s linear infinite',
         'bounce-x': 'bounce-x 0.7s infinite',
-        fadeIn: 'fadeIn 0.2s ease-out',
-        slideInRight: 'slideInRight 0.2s ease-out',
+        'fade-in': 'fade-in 0.2s ease-out',
+        'slide-in-right': 'slide-in-right 0.2s ease-out',
       },
     },
     borderRadius: {
