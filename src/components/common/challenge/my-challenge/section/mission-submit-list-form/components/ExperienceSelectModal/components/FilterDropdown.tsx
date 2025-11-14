@@ -113,7 +113,7 @@ export const FilterDropdown = ({
       {isOpen && (
         <>
           <div
-            className={`absolute top-[43px] z-10 hidden max-h-[28.125rem] w-full divide-y divide-neutral-95 overflow-auto rounded-xs bg-white px-1 py-1.5 shadow-07 scrollbar-hide md:block`}
+            className={`absolute top-[43px] z-20 hidden max-h-[28.125rem] w-full divide-y divide-neutral-95 overflow-auto rounded-xs bg-white px-1 py-1.5 shadow-07 scrollbar-hide md:block`}
           >
             {options.map((option) => {
               const isSelected = option.value === selectedValue;
