@@ -29,7 +29,7 @@ export const userExperienceSchema = z.object({
   startDate: z.string(),
   endDate: z.string(),
   title: z.string(),
-  activityType: z.string(),
+  activityType: z.enum(['TEAM', 'INDIVIDUAL']),
   experienceCategory: z.string(),
   role: z.string(),
   organ: z.string(),

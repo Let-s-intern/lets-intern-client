@@ -16,7 +16,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 interface Filters {
   category: string;
-  type: string;
+  activityType: string;
   year: string;
   competency: string;
 }
@@ -56,7 +56,7 @@ interface UseExperienceSelectModalReturn {
 
 const INITIAL_FILTERS: Filters = {
   category: '전체',
-  type: '전체',
+  activityType: '전체',
   year: '전체',
   competency: '전체',
 };
@@ -102,8 +102,8 @@ export const useExperienceSelectModal = ({
       }
     }
 
-    if (filters.type !== '전체') {
-      const typeApiValue = labelToActivityType[filters.type];
+    if (filters.activityType !== '전체') {
+      const typeApiValue = labelToActivityType[filters.activityType];
       if (typeApiValue) {
         request.activityTypes = [typeApiValue];
       }
