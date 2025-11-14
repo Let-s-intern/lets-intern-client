@@ -1,15 +1,35 @@
-import { useDeleteUserExperienceMutation } from '@/api/experience';
+import {
+  useDeleteUserExperienceMutation,
+  UserExperienceFiltersQueryKey,
+} from '@/api/experience';
 import BaseModal from '@components/ui/BaseModal';
+import { useQueryClient } from '@tanstack/react-query';
 import { Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
-const DeleteCell = ({ row }: { row: any }) => {
+const DeleteCell = ({
+  row,
+  onFilterReset,
+}: {
+  row: any;
+  onFilterReset?: () => void;
+}) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   const { mutate: deleteUserExperience } = useDeleteUserExperienceMutation();
 
   const handleDelete = (row: any) => {
-    deleteUserExperience(row.id);
+    deleteUserExperience(row.id, {
+      onSuccess: () => {
+        // 필터 초기화
+        onFilterReset?.();
+        // 쿼리 무효화
+        queryClient.invalidateQueries({
+          queryKey: [UserExperienceFiltersQueryKey],
+        });
+      },
+    });
     setIsDeleteModalOpen(false);
   };
 

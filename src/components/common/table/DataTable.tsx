@@ -143,7 +143,7 @@ const DataTable = ({
               >
                 {selectedRowIds && (
                   <td
-                    className="sticky left-0 z-10 w-10 bg-white p-2 group-hover:bg-neutral-95"
+                    className="sticky left-0 z-10 w-10 content-start bg-white p-2 group-hover:bg-neutral-95"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <CheckBox

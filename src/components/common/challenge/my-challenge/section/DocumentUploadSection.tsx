@@ -115,6 +115,7 @@ const DocumentFileItem = ({
   const displayFile = file || submittedDocument || null;
   const hasFile = !!displayFile;
   const canEdit = !isSubmitted;
+
   return (
     <div className="mb-5">
       <div className="mb-3">
@@ -178,7 +179,7 @@ const DocumentFileItem = ({
       <input
         ref={inputRef}
         type="file"
-        accept=".pdf"
+        accept="application/pdf,.pdf"
         className="hidden"
         onChange={(e) => onFileUpload(type, e.target.files)}
         disabled={isSubmitted}
@@ -219,6 +220,16 @@ const DocumentUploadSection = ({
     if (!files || files.length === 0) return;
 
     const file = files[0]; // 첫 번째 파일만 사용
+
+    // 파일 타입 검증
+    if (
+      file.type !== 'application/pdf' ||
+      !file.name.toLowerCase().endsWith('.pdf')
+    ) {
+      alert('PDF 파일만 업로드할 수 있습니다.');
+      resetInput(type);
+      return;
+    }
 
     // 파일 크기 검증 (50MB 이하)
     if (file.size > MAX_FILE_SIZE) {
