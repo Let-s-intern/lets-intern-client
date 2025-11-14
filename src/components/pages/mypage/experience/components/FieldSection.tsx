@@ -1,4 +1,5 @@
 import { cn } from '@/utils/cn';
+import { Asterisk } from 'lucide-react';
 import { ComponentProps } from 'react';
 import { FieldValues, Path, useForm } from 'react-hook-form';
 
@@ -10,18 +11,24 @@ const FieldSectionRoot = (props: FieldSectionRootProps) => (
   </div>
 );
 
-interface FieldSectionLabelProps extends ComponentProps<'label'> {}
+interface FieldSectionLabelProps extends ComponentProps<'label'> {
+  isRequired?: boolean;
+}
 
 const FieldSectionLabel = (props: FieldSectionLabelProps) => (
   <label
     htmlFor={props.htmlFor}
     className={cn(
-      'font-medium text-neutral-20',
+      'flex items-center gap-1.5 font-medium text-neutral-20',
       props.className,
       'text-xsmall14 md:text-xsmall16',
     )}
   >
-    {props.children}
+    <span>{props.children}</span>
+    <Asterisk
+      className={`pb-1 text-primary ${!props.isRequired && 'hidden'}`}
+      size={16}
+    />
   </label>
 );
 

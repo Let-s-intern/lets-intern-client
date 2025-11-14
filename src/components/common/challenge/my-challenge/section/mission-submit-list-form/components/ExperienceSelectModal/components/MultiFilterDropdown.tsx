@@ -36,20 +36,6 @@ export const MultiFilterDropdown = ({
 
   const nonAllOptions = options.filter((option) => option.value !== 'ALL');
 
-  // 필터 버튼에 맞게 드롭다운 위치와 너비 설정
-  useEffect(() => {
-    if (isOpen && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      setDropdownStyle({
-        position: 'fixed',
-        zIndex: 50,
-        top: `${rect.bottom + 4}px`,
-        left: `${rect.left}px`,
-        width: `${rect.width}px`,
-      });
-    }
-  }, [isOpen, selectedValues]);
-
   const getFilterLabel = () => {
     if (selectedValues.length === 0) {
       return '전체';
@@ -127,8 +113,7 @@ export const MultiFilterDropdown = ({
       {isOpen && (
         <>
           <div
-            className={`hidden max-h-[28.125rem] w-full divide-y divide-neutral-95 overflow-auto rounded-xs bg-white px-1 py-1.5 shadow-07 scrollbar-hide md:block`}
-            style={dropdownStyle}
+            className={`absolute top-[43px] z-10 hidden max-h-[28.125rem] w-full divide-y divide-neutral-95 overflow-auto rounded-xs bg-white px-1 py-1.5 shadow-07 scrollbar-hide md:block`}
           >
             {options.map((option) => {
               const isAllOptionsSelected =
