@@ -76,7 +76,11 @@ export const FilterDropdown = ({
         type="button"
         ref={buttonRef}
         onClick={toggleDropdown}
-        className={`flex ${width} items-center justify-between gap-1.5 rounded-xs border border-neutral-80 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 ${className}`}
+        className={twMerge(
+          `flex ${width} items-center gap-1.5 rounded-xs border border-neutral-80 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50`,
+          isHideLabel ? 'justify-end' : 'justify-between',
+          className,
+        )}
       >
         {!isHideLabel && labelPrefix && (
           <span className="whitespace-nowrap">{labelPrefix} </span>
@@ -84,7 +88,7 @@ export const FilterDropdown = ({
         <span
           className={twMerge(
             'whitespace-nowrap',
-            isHideLabel ? 'justify-end text-neutral-0' : 'text-primary-dark',
+            isHideLabel ? 'text-neutral-0' : 'text-primary-dark',
           )}
         >
           {' '}
@@ -92,9 +96,7 @@ export const FilterDropdown = ({
         </span>
 
         <svg
-          className={`h-4 w-4 transition-transform ${
-            isOpen ? 'rotate-180' : ''
-          }`}
+          className="h-4 w-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

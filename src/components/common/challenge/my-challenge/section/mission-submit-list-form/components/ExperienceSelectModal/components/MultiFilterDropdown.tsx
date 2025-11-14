@@ -95,9 +95,7 @@ export const MultiFilterDropdown = ({
         </span>
 
         <svg
-          className={`h-4 w-4 transition-transform ${
-            isOpen ? 'rotate-180' : ''
-          }`}
+          className="h-4 w-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
