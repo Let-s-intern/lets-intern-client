@@ -8,7 +8,7 @@ import { FilterDropdown } from './FilterDropdown';
 
 interface Filters {
   category: string;
-  type: string;
+  activityType: string;
   year: string;
   competency: string;
 }
@@ -90,8 +90,10 @@ export const ExperienceSelectModalFilters = ({
         <FilterDropdown
           labelPrefix="팀·개인"
           options={filterOptionsFormatted.type}
-          selectedValue={filters.type}
-          onSelect={(value: string) => handleFilterChange('type', value)}
+          selectedValue={filters.activityType}
+          onSelect={(value: string) =>
+            handleFilterChange('activityType', value)
+          }
           width="min-w-[7.5rem]"
         />
 
