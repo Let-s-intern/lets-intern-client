@@ -3,6 +3,7 @@
 import BottomSheet from '@components/common/ui/BottomSheeet';
 import { Check, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 interface FilterOption {
   value: string;
@@ -80,7 +81,13 @@ export const FilterDropdown = ({
         {!isHideLabel && labelPrefix && (
           <span className="whitespace-nowrap">{labelPrefix} </span>
         )}
-        <span className="whitespace-nowrap text-primary-dark">
+        <span
+          className={twMerge(
+            'whitespace-nowrap',
+            isHideLabel ? 'justify-end text-neutral-0' : 'text-primary-dark',
+          )}
+        >
+          {' '}
           {getFilterLabel()}
         </span>
 
