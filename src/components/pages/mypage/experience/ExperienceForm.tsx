@@ -11,7 +11,10 @@ import {
   MAX_COMPETENCIES,
 } from './constants';
 
-import { UserExperienceQueryKey } from '@/api/experience';
+import {
+  UserExperienceFiltersQueryKey,
+  UserExperienceQueryKey,
+} from '@/api/experience';
 import { UserExperienceType } from '@/api/experienceSchema';
 import {
   useGetUserAdmin,
@@ -103,6 +106,9 @@ export const ExperienceForm = ({
   const onCloseDrawer = useCallback(() => {
     onClose();
     queryClient.invalidateQueries({ queryKey: [UserExperienceQueryKey] });
+    queryClient.invalidateQueries({
+      queryKey: [UserExperienceFiltersQueryKey],
+    });
   }, [onClose, queryClient]);
 
   // 저장 완료 여부를 추적하는 ref
