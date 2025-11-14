@@ -44,7 +44,7 @@ const ExperienceFilters = ({
       (comp) => !availableCompetencyValues.includes(comp),
     );
     if (invalidCompetencies.length > 0) {
-      onFiltersChange('coreCompetency', 'ALL');
+      onReset('coreCompetency');
     }
 
     // 연도 필터
