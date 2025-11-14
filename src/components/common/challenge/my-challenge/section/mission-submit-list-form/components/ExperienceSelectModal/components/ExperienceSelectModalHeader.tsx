@@ -6,7 +6,7 @@ export const ExperienceSelectModalHeader = ({
   onClose,
 }: ExperienceSelectModalHeaderProps) => {
   return (
-    <div className="px-6 py-4">
+    <div className="px-6 py-5">
       {/* 제목과 닫기 버튼 */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">

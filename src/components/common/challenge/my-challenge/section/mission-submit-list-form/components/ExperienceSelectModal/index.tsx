@@ -43,7 +43,7 @@ export const ExperienceSelectModal = ({
     <BaseModal
       isOpen={isOpen}
       onClose={onClose}
-      className="mx-4 h-[630px] w-[860px] max-w-6xl shadow-xl"
+      className="mx-4 h-[700px] w-[860px] max-w-6xl shadow-xl"
     >
       <div className="flex h-full flex-col">
         {/* 헤더 */}
@@ -55,7 +55,7 @@ export const ExperienceSelectModal = ({
           filterOptions={filters.options}
         />
         {/* 테이블 */}
-        <div className="flex-1 overflow-hidden px-6 py-4">
+        <div className="flex-1 overflow-hidden px-6 pb-4">
           <div className="h-full overflow-auto rounded-xxs border border-neutral-80">
             {data.isLoading ? (
               <div className="flex h-full items-center justify-center">
@@ -87,7 +87,7 @@ export const ExperienceSelectModal = ({
         </div>
 
         {/* 페이지네이션 */}
-        <div className="px-6 py-2">
+        <div className="px-6">
           <MuiPagination
             page={pagination.currentPage}
             onChange={pagination.handlePageChange}
@@ -100,7 +100,7 @@ export const ExperienceSelectModal = ({
           />
         </div>
         {/* 푸터 */}
-        <div className="px-6 py-4">
+        <div className="px-6 pb-6">
           <div className="flex justify-end">
             <button
               onClick={onCompleteClick}

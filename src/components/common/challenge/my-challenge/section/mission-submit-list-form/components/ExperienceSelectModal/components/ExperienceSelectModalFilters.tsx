@@ -1,8 +1,9 @@
 'use client';
 
+import { CategoryType, EXPERIENCE_CATEGORY_KR } from '@/api/experienceSchema';
 import { UserExperienceFilters } from '@/api/userExperienceSchema';
 import { useMemo } from 'react';
-import { activityTypeToLabel, experienceCategoryToLabel } from '../../../data';
+import { activityTypeToLabel } from '../../../data';
 import { FilterDropdown } from './FilterDropdown';
 
 interface Filters {
@@ -35,8 +36,8 @@ export const ExperienceSelectModalFilters = ({
     const categoryOptions = [
       { value: '전체', label: '전체' },
       ...(filterOptions?.availableCategories.map((cat) => ({
-        value: experienceCategoryToLabel[cat] || cat,
-        label: experienceCategoryToLabel[cat] || cat,
+        value: EXPERIENCE_CATEGORY_KR[cat as CategoryType] || cat,
+        label: EXPERIENCE_CATEGORY_KR[cat as CategoryType] || cat,
       })) || []),
     ];
 
@@ -73,9 +74,9 @@ export const ExperienceSelectModalFilters = ({
       competency: competencyOptions,
     };
   }, [filterOptions]);
-
+  console.log(filterOptionsFormatted.category);
   return (
-    <div className="hidden px-6 py-4 md:block">
+    <div className="hidden px-6 pb-4 md:block">
       <div className="flex gap-3">
         {/* 경험 분류 필터 */}
         <FilterDropdown
