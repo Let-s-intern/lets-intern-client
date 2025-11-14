@@ -105,10 +105,10 @@ export const ExperienceSelectModal = ({
             <button
               onClick={onCompleteClick}
               disabled={selection.selectedCount < 3}
-              className={`rounded-xs px-3 py-2.5 font-medium ${
+              className={`rounded-xs px-3 py-2.5 text-xsmall14 ${
                 selection.selectedCount >= 3
                   ? 'bg-primary text-white'
-                  : 'cursor-not-allowed bg-gray-300 text-gray-500'
+                  : 'cursor-not-allowed bg-neutral-70 text-white'
               }`}
             >
               {selection.selectedCount}개 선택 완료

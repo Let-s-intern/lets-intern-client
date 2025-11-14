@@ -75,7 +75,7 @@ export const ExperienceSelectModalFilters = ({
     };
   }, [filterOptions]);
   return (
-    <div className="hidden px-6 pb-4 md:block">
+    <div className="hidden px-6 pb-3 md:block">
       <div className="flex gap-3">
         {/* 경험 분류 필터 */}
         <FilterDropdown

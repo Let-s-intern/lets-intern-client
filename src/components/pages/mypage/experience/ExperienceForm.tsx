@@ -417,7 +417,7 @@ export const ExperienceForm = ({
           <h1 className="text-small20 font-semibold">경험 작성</h1>
           <button
             onClick={handleClose}
-            className="absolute right-4 flex h-7 w-7 items-center justify-center"
+            className="absolute right-6 flex h-7 w-7 items-center justify-center"
           >
             <XIcon size={24} />
           </button>

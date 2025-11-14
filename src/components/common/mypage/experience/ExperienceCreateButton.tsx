@@ -1,6 +1,8 @@
 import SolidButton from '@components/common/mypage/experience/SolidButton';
 import { Plus, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+const TOOLTIP_STORAGE_KEY = 'experience-tooltip';
 
 const ExperienceCreateButton = ({ onClick }: { onClick: () => void }) => {
   return (
@@ -33,18 +35,25 @@ const ExperienceCreateButton = ({ onClick }: { onClick: () => void }) => {
 export default ExperienceCreateButton;
 
 const RightTooltip = ({ children }: { children: React.ReactNode }) => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    // 컴포넌트 마운트 시 localStorage 확인
+    const isClosed = localStorage.getItem(TOOLTIP_STORAGE_KEY);
+    if (!isClosed) setIsOpen(true);
+  }, []);
+
+  const handleClose = () => {
+    setIsOpen(false);
+    localStorage.setItem(TOOLTIP_STORAGE_KEY, 'true');
+  };
 
   if (!isOpen) return null;
 
   return (
     <div className="relative flex items-center gap-1 whitespace-nowrap rounded-xs bg-neutral-10 py-2 pl-2.5 pr-0.5 text-xs text-white">
       {children}
-      <X
-        size={16}
-        onClick={() => setIsOpen(false)}
-        className="m-2 cursor-pointer"
-      />
+      <X size={16} onClick={handleClose} className="m-2 cursor-pointer" />
 
       {/* 꼬리 (SVG) */}
       <svg
@@ -65,18 +74,27 @@ const RightTooltip = ({ children }: { children: React.ReactNode }) => {
 };
 
 const LeftTooltip = ({ children }: { children: React.ReactNode }) => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    // 컴포넌트 마운트 시 localStorage 확인
+    const isClosed = localStorage.getItem(TOOLTIP_STORAGE_KEY);
+    if (!isClosed) {
+      setIsOpen(true);
+    }
+  }, []);
+
+  const handleClose = () => {
+    setIsOpen(false);
+    localStorage.setItem(TOOLTIP_STORAGE_KEY, 'true');
+  };
 
   if (!isOpen) return null;
 
   return (
     <div className="relative flex items-center gap-1 rounded-xs bg-neutral-10 py-2 pl-2.5 pr-0.5 text-xs text-white">
       {children}
-      <X
-        size={16}
-        onClick={() => setIsOpen(false)}
-        className="m-2 cursor-pointer"
-      />
+      <X size={16} onClick={handleClose} className="m-2 cursor-pointer" />
 
       {/* 꼬리 (SVG) */}
       <svg
