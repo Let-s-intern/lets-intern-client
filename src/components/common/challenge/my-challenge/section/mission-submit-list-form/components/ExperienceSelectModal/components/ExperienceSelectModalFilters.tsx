@@ -74,7 +74,6 @@ export const ExperienceSelectModalFilters = ({
       competency: competencyOptions,
     };
   }, [filterOptions]);
-  console.log(filterOptionsFormatted.category);
   return (
     <div className="hidden px-6 pb-4 md:block">
       <div className="flex gap-3">

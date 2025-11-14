@@ -216,27 +216,16 @@ const DocumentUploadSection = ({
     if (inputRef.current) inputRef.current.value = '';
   };
 
-  const validateFileType = (file: File): boolean => {
-    // MIME 타입 체크
-    if (file.type !== 'application/pdf') {
-      return false;
-    }
-
-    const fileName = file.name.toLowerCase();
-    if (!fileName.endsWith('.pdf')) {
-      return false;
-    }
-
-    return true;
-  };
-
   const handleFileUpload = (type: DocumentType, files: FileList | null) => {
     if (!files || files.length === 0) return;
 
     const file = files[0]; // 첫 번째 파일만 사용
 
     // 파일 타입 검증
-    if (!validateFileType(file)) {
+    if (
+      file.type !== 'application/pdf' ||
+      !file.name.toLowerCase().endsWith('.pdf')
+    ) {
       alert('PDF 파일만 업로드할 수 있습니다.');
       resetInput(type);
       return;
