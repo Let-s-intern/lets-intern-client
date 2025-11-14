@@ -3,7 +3,7 @@ import { ActivityType, CategoryType } from '@/api/experienceSchema';
 import { convertFilterResToUiFormat } from '@/utils/experience';
 import { FilterDropdown } from '@components/common/challenge/my-challenge/section/mission-submit-list-form/components/ExperienceSelectModal/components/FilterDropdown';
 import { MultiFilterDropdown } from '@components/common/challenge/my-challenge/section/mission-submit-list-form/components/ExperienceSelectModal/components/MultiFilterDropdown';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 export interface Filters {
   category: CategoryType[];
@@ -32,6 +32,26 @@ const ExperienceFilters = ({
         : EXPERIENCE_FILTER_OPTIONS,
     [userExperienceFilters],
   );
+
+  useEffect(() => {
+    const availableCompetencyValues =
+      filterOptions.availableCoreCompetencies.map((opt) => opt.value);
+    const availableYearValues = filterOptions.availableYears.map(
+      (opt) => opt.value,
+    );
+    // 핵심 역량 필터
+    const invalidCompetencies = filters.coreCompetency.filter(
+      (comp) => !availableCompetencyValues.includes(comp),
+    );
+    if (invalidCompetencies.length > 0) {
+      onFiltersChange('coreCompetency', 'ALL');
+    }
+
+    // 연도 필터
+    if (filters.year !== 'ALL' && !availableYearValues.includes(filters.year)) {
+      onFiltersChange('year', 'ALL');
+    }
+  }, [filterOptions, filters, onFiltersChange]);
 
   return (
     <div className="flex gap-2 overflow-x-auto scrollbar-hide">
