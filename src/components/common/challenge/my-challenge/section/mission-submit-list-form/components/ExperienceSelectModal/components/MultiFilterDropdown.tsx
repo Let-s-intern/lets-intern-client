@@ -63,7 +63,7 @@ export const MultiFilterDropdown = ({
     if (selectedValues.length === 1) {
       return selectedOption?.label;
     }
-    return `${selectedOption?.label} 외 N`;
+    return `${selectedOption?.label} 외 ${selectedValues.length - 1}`;
   };
 
   const handleSelect = (value: string) => {
