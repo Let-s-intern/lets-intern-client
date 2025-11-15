@@ -24,7 +24,7 @@ const Feedback = () => {
   if (!user) return null;
 
   return (
-    <section className="flex flex-col gap-6 pl-5">
+    <section className="flex flex-col gap-6">
       <h2 className="text-small18 font-bold">참여 중</h2>
 
       {isLoading ? (
