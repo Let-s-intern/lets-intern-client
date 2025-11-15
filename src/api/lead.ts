@@ -26,6 +26,7 @@ const leadHistoryItemSchema = z.object({
   jobStatus: z.string().nullable().optional(),
   inflow: z.string().nullable().optional(),
   instagramId: z.string().nullable().optional(),
+  marketingAgree: z.boolean().nullable().optional(),
   finalPrice: z.number().nullable().optional(),
   createDate: z.string().nullable().optional(),
 });
