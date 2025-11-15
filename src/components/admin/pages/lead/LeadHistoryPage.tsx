@@ -57,6 +57,15 @@ const membershipOptions: Array<{ value: string; label: string }> = [
   { value: 'notSignedUp', label: '미가입' },
 ];
 
+const marketingAgreeOptions: Array<{ value: string; label: string }> = [
+  { value: 'agreed', label: '마케팅 동의' },
+  { value: 'notAgreed', label: '미동의' },
+];
+
+const marketingAgreeLabelMap = new Map(
+  marketingAgreeOptions.map(({ value, label }) => [value, label]),
+);
+
 type LeadHistoryRow = {
   id: string;
   phoneNum: string | null;
@@ -72,6 +81,7 @@ type LeadHistoryRow = {
   wishJob: string | null;
   jobStatus: string | null;
   instagramId: string | null;
+  marketingAgree: boolean | null;
   eventType?: LeadHistoryEventType;
   leadEventId?: number | null;
   leadEventType?: string | null;
@@ -87,6 +97,7 @@ type LeadHistoryFilterField =
   | 'leadEvent'
   | 'program'
   | 'leadEventType'
+  | 'marketingAgree'
   | 'membership';
 type LeadHistoryFilterOperator = 'include' | 'exclude';
 type LeadHistoryFilterCombinator = 'AND' | 'OR';
@@ -132,6 +143,7 @@ type LeadHistoryGroupSummary = {
   leadEventTypes: Set<string>;
   programTitles: Set<string>;
   hasSignedUp: boolean;
+  hasMarketingAgreement: boolean;
 };
 
 const filterFieldDefinitions: Record<
@@ -141,6 +153,10 @@ const filterFieldDefinitions: Record<
   leadEvent: { label: '리드 이벤트', valueLabel: '이벤트 선택' },
   program: { label: '프로그램', valueLabel: '프로그램 선택' },
   leadEventType: { label: '리드 이벤트 타입', valueLabel: '타입 선택' },
+  marketingAgree: {
+    label: '마케팅 동의 여부',
+    valueLabel: '마케팅 동의 여부 선택',
+  },
   membership: { label: '회원가입 여부', valueLabel: '회원가입 여부 선택' },
 };
 
@@ -151,6 +167,11 @@ const filterOperatorOptions: Array<{
   { value: 'include', label: '하나라도 있음' },
   { value: 'exclude', label: '하나도 없음' },
 ];
+
+const operatorLockedFields = new Set<LeadHistoryFilterField>([
+  'membership',
+  'marketingAgree',
+]);
 
 const createConditionNode = (
   overrides: Partial<Omit<LeadHistoryFilterConditionNode, 'id' | 'type'>> = {},
@@ -195,7 +216,10 @@ const fromStoredConditionNode = (
 ): LeadHistoryFilterConditionNode => {
   return createConditionNode({
     field: node.field,
-    operator: node.field === 'membership' ? 'include' : node.operator,
+    operator:
+      node.field === 'membership' || node.field === 'marketingAgree'
+        ? 'include'
+        : node.operator,
     values: node.values?.map((value) => String(value)) ?? [],
   });
 };
@@ -276,6 +300,11 @@ const evaluateConditionNode = (
     }
     case 'membership': {
       const status = summary.hasSignedUp ? 'signedUp' : 'notSignedUp';
+      const hasAny = condition.values.some((value) => value === status);
+      return condition.operator === 'include' ? hasAny : !hasAny;
+    }
+    case 'marketingAgree': {
+      const status = summary.hasMarketingAgreement ? 'agreed' : 'notAgreed';
       const hasAny = condition.values.some((value) => value === status);
       return condition.operator === 'include' ? hasAny : !hasAny;
     }
@@ -912,6 +941,7 @@ const LeadHistoryPage = () => {
         wishJob: item.wishJob ?? null,
         jobStatus: item.jobStatus ?? null,
         instagramId: item.instagramId ?? null,
+        marketingAgree: item.marketingAgree ?? null,
         eventType: item.eventType,
         leadEventId: item.leadEventId ?? null,
         leadEventType: item.leadEventType ?? null,
@@ -987,6 +1017,7 @@ const LeadHistoryPage = () => {
         leadEventTypes: new Set<string>(),
         programTitles: new Set<string>(),
         hasSignedUp: false,
+        hasMarketingAgreement: false,
       };
 
       if (row.leadEventId !== null && row.leadEventId !== undefined) {
@@ -1003,6 +1034,10 @@ const LeadHistoryPage = () => {
 
       if (row.userId !== null && row.userId !== undefined) {
         summary.hasSignedUp = true;
+      }
+
+      if (row.marketingAgree === true) {
+        summary.hasMarketingAgreement = true;
       }
 
       map.set(key, summary);
@@ -1125,7 +1160,9 @@ const LeadHistoryPage = () => {
                 field: updates.field,
                 values: [],
                 operator:
-                  updates.field === 'membership' ? 'include' : next.operator,
+                  updates.field && operatorLockedFields.has(updates.field)
+                    ? 'include'
+                    : next.operator,
               };
             } else if (updates.field) {
               next = {
@@ -1134,7 +1171,7 @@ const LeadHistoryPage = () => {
               };
             }
 
-            if (updates.operator && next.field !== 'membership') {
+            if (updates.operator && !operatorLockedFields.has(next.field)) {
               next = {
                 ...next,
                 operator: updates.operator,
@@ -1189,6 +1226,9 @@ const LeadHistoryPage = () => {
       if (field === 'leadEventType') {
         return leadEventTypeLabelMap.get(value) ?? value;
       }
+      if (field === 'marketingAgree') {
+        return marketingAgreeLabelMap.get(value) ?? value;
+      }
       if (field === 'membership') {
         const option = membershipOptions.find((item) => item.value === value);
         return option?.label ?? value;
@@ -1211,6 +1251,9 @@ const LeadHistoryPage = () => {
       }
       if (field === 'membership') {
         return membershipOptions;
+      }
+      if (field === 'marketingAgree') {
+        return marketingAgreeOptions;
       }
       return [];
     },
@@ -1244,7 +1287,7 @@ const LeadHistoryPage = () => {
             </MenuItem>
           ))}
         </TextField>
-        {node.field !== 'membership' && (
+        {!operatorLockedFields.has(node.field) && (
           <TextField
             select
             size="small"
@@ -1475,6 +1518,22 @@ const LeadHistoryPage = () => {
           headerClassName: 'min-w-[220px]',
           cellClassName: 'min-w-[220px]',
         },
+      },
+      {
+        accessorKey: 'marketingAgree',
+        header: '마케팅 동의',
+        meta: {
+          headerClassName: 'min-w-[70px]',
+          cellClassName: 'min-w-[70px]',
+        },
+        cell: ({ row }) =>
+          renderGroupedLeaf(row, (original) => {
+            const value = original.marketingAgree;
+            if (value === true) return 'O';
+            if (value === false)
+              return <span className="text-gray-400">X</span>;
+            return '-';
+          }),
       },
       {
         accessorKey: 'createDate',
