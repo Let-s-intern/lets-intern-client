@@ -527,25 +527,11 @@ const LeadHistoryTable = ({
                   return (
                     <th
                       key={header.id}
-                      className={`px-3 py-2 font-medium text-gray-700 ${headerClassName}`}
-                      style={{
-                        ...(i === 0
-                          ? {
-                              position: 'sticky',
-                              left: 0,
-                              background: '#fff',
-                              zIndex: 1,
-                            }
-                          : // : i === 1
-                            //   ? {
-                            //       position: 'sticky',
-                            //       left: 200,
-                            //       background: '#fff',
-                            //       borderRight: '1px solid #ddd',
-                            //       zIndex: 2,
-                            //     }
-                            {}),
-                      }}
+                      className={twMerge(
+                        `px-3 py-2 font-medium text-gray-700`,
+                        headerClassName,
+                        i === 0 && 'z-1 sticky left-0 bg-gray-100',
+                      )}
                     >
                       <div className="flex items-center gap-1">
                         {flexRender(
@@ -595,28 +581,12 @@ const LeadHistoryTable = ({
                     return (
                       <td
                         key={cell.id}
-                        className={`px-3 py-2 align-top text-gray-900 ${cellClassName}`}
-                        style={{
-                          padding: '8px',
-                          borderBottom: '1px solid #eee',
-                          // 첫 번째 컬럼 고정
-                          ...(i === 0
-                            ? {
-                                position: 'sticky',
-                                left: 0,
-                                background: '#fff',
-                                zIndex: 1,
-                              }
-                            : // : i === 1
-                              //   ? {
-                              //       position: 'sticky',
-                              //       left: 200,
-                              //       background: '#fff',
-                              //       borderRight: '1px solid #ddd',
-                              //       zIndex: 2,
-                              //     }
-                              {}),
-                        }}
+                        className={twMerge(
+                          `border-b px-3 py-2 align-top text-gray-900`,
+                          cellClassName,
+                          i === 0 && 'z-1 sticky left-0 bg-slate-50',
+                          row.getIsGrouped() && 'bg-white',
+                        )}
                       >
                         {flexRender(
                           cell.column.columnDef.cell,
