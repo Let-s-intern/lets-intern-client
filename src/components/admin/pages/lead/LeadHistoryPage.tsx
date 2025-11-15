@@ -410,6 +410,53 @@ const escapeCsvValue = (value: unknown) => {
   return `"${stringValue.replace(/"/g, '""')}"`;
 };
 
+const koreanNameCollator = new Intl.Collator('ko-KR', {
+  sensitivity: 'base',
+});
+
+const compareLeadHistoryRowsByName = (a: LeadHistoryRow, b: LeadHistoryRow) => {
+  const nameA = a.name?.trim() ?? '';
+  const nameB = b.name?.trim() ?? '';
+
+  if (nameA && nameB) {
+    const nameCompare = koreanNameCollator.compare(nameA, nameB);
+    if (nameCompare !== 0) {
+      return nameCompare;
+    }
+  } else if (nameA) {
+    return -1;
+  } else if (nameB) {
+    return 1;
+  }
+
+  const phoneCompare = (a.displayPhoneNum ?? '').localeCompare(
+    b.displayPhoneNum ?? '',
+    'ko-KR',
+    { numeric: true, sensitivity: 'base' },
+  );
+  if (phoneCompare !== 0) {
+    return phoneCompare;
+  }
+
+  return (a.createDate ?? '').localeCompare(b.createDate ?? '');
+};
+
+const groupRowsByPhonePreservingOrder = (rows: LeadHistoryRow[]) => {
+  const phoneOrder: string[] = [];
+  const grouped = new Map<string, LeadHistoryRow[]>();
+
+  rows.forEach((row) => {
+    const phoneKey = row.displayPhoneNum;
+    if (!grouped.has(phoneKey)) {
+      grouped.set(phoneKey, []);
+      phoneOrder.push(phoneKey);
+    }
+    grouped.get(phoneKey)?.push(row);
+  });
+
+  return phoneOrder.flatMap((phone) => grouped.get(phone) ?? []);
+};
+
 const VISIBLE_GROUP_LIMIT = 10;
 
 const LeadHistoryTable = ({
@@ -889,7 +936,8 @@ const LeadHistoryPage = () => {
       const rowId = [
         trimmedPhone ?? 'NO_PHONE',
         item.leadEventId ?? 'NO_EVENT',
-        item.createDate ?? index,
+        item.createDate ?? 'NO_DATE',
+        index,
       ].join('_');
 
       return {
@@ -988,23 +1036,29 @@ const LeadHistoryPage = () => {
   );
 
   const filteredRows = useMemo(() => {
-    if (!hasActiveFilter) {
-      return allRows;
-    }
-
-    const allowed = new Set<string>();
-
-    groupSummaryMap.forEach((summary, key) => {
-      if (evaluateFilterNode(summary, filterTree)) {
-        allowed.add(key);
-      }
-    });
-
-    if (!allowed.size) {
+    if (!allRows.length) {
       return [];
     }
 
-    return allRows.filter((row) => allowed.has(row.displayPhoneNum));
+    let rowsToSort: LeadHistoryRow[] = allRows;
+
+    if (hasActiveFilter) {
+      const allowed = new Set<string>();
+
+      groupSummaryMap.forEach((summary, key) => {
+        if (evaluateFilterNode(summary, filterTree)) {
+          allowed.add(key);
+        }
+      });
+
+      if (!allowed.size) {
+        return [];
+      }
+
+      rowsToSort = allRows.filter((row) => allowed.has(row.displayPhoneNum));
+    }
+
+    return [...rowsToSort].sort(compareLeadHistoryRowsByName);
   }, [allRows, filterTree, groupSummaryMap, hasActiveFilter]);
 
   const handleResetFilters = useCallback(() => {
@@ -1421,6 +1475,9 @@ const LeadHistoryPage = () => {
           cellClassName: 'min-w-[120px]',
         },
         aggregationFn: (_, leafRows) => {
+          if (leafRows[0].original.displayPhoneNum === '미등록') {
+            return '-';
+          }
           const names = new Set<string>(
             leafRows
               .map((row) => row.original.name)
@@ -1666,23 +1723,13 @@ const LeadHistoryPage = () => {
       return column.id ?? column.accessorKey ?? '';
     };
 
-    const sortedRows = [...filteredRows].sort((a, b) => {
-      const phoneCompare = (a.displayPhoneNum ?? '').localeCompare(
-        b.displayPhoneNum ?? '',
-        undefined,
-        { sensitivity: 'base' },
-      );
-      if (phoneCompare !== 0) {
-        return phoneCompare;
-      }
-      return (a.createDate ?? '').localeCompare(b.createDate ?? '');
-    });
-
     const headerRow = columns
       .map((column) => escapeCsvValue(resolveHeaderLabel(column)))
       .join(',');
 
-    const formattedRows = sortedRows.map((row) => {
+    const groupedRowsForCsv = groupRowsByPhonePreservingOrder(filteredRows);
+
+    const formattedRows = groupedRowsForCsv.map((row) => {
       return columns.map((column) => {
         const key = column.accessorKey as keyof LeadHistoryRow;
 
