@@ -4,6 +4,9 @@ interface CareerCardProps {
   career: UserCareerType;
 }
 
+/**
+ * 커리어 조회용 UI
+ */
 const CareerCard = ({
   career: { position, company, employeeType, startDate, endDate },
 }: CareerCardProps) => {

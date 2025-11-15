@@ -13,6 +13,9 @@ interface CareerFormProps {
   handleSubmit: (data: UserCareerType) => void;
 }
 
+/**
+ * 커리어 작성/수정 UI
+ */
 // TODO: form 유효성 검사 추가 예정 (라이브러리 도입 검토)
 const CareerForm = ({ handleCancel, handleSubmit }: CareerFormProps) => {
   const [form, setForm] = useState<UserCareerType>({

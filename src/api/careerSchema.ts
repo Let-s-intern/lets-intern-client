@@ -14,6 +14,7 @@ export const employeeTypeSchema = z.enum([
 ]);
 
 export const userCareerSchema = z.object({
+  id: z.string().nullable().optional(),
   company: z.string().nullable().optional(),
   position: z.string().nullable().optional(),
   employeeType: employeeTypeSchema.nullable().optional(),
