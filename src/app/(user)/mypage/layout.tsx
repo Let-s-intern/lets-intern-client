@@ -270,7 +270,7 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
             )}
 
             {/* 페이지 컨텐츠 */}
-            {children}
+            <div className="mx-5 md:mx-0">{children}</div>
           </div>
         </main>
       </div>
