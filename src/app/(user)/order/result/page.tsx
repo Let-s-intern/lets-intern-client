@@ -270,7 +270,7 @@ const PaymentResultContent = () => {
                   </div>
                   {isSuccess && (
                     <Link
-                      href="/mypage/career"
+                      href="/mypage/career/board"
                       className="mypage_button flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
                     >
                       마이페이지 바로가기

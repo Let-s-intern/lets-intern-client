@@ -26,7 +26,7 @@ function GlobalNavTopBar({ loginRedirect, toggleMenu }: Props) {
   const userSubNavList: SubNavItemProps[] = [
     {
       children: '마이페이지',
-      href: '/mypage/career',
+      href: '/mypage/career/board',
     },
     ...(isAdmin
       ? [
