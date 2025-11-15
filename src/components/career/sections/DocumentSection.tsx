@@ -1,4 +1,4 @@
-import CareerCard from '../card/CareerCard';
+import CareerCard from '../../common/mypage/career/card/CareerCard';
 
 const DocumentSection = () => {
   return (
