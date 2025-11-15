@@ -52,19 +52,6 @@ declare module '@tanstack/react-table' {
   }
 }
 
-const leadHistoryEventTypeLabels: Record<LeadHistoryEventType, string> = {
-  SIGN_UP: '회원가입',
-  PROGRAM: '프로그램 참여',
-  LEAD_EVENT: '리드 이벤트',
-};
-
-const eventTypeOptions: Array<{ value: LeadHistoryEventType; label: string }> =
-  (
-    Object.entries(leadHistoryEventTypeLabels) as Array<
-      [LeadHistoryEventType, string]
-    >
-  ).map(([value, label]) => ({ value, label }));
-
 const membershipOptions: Array<{ value: string; label: string }> = [
   { value: 'signedUp', label: '회원가입' },
   { value: 'notSignedUp', label: '미가입' },
@@ -99,7 +86,7 @@ const FILTER_QUERY_KEY = 'filters';
 type LeadHistoryFilterField =
   | 'leadEvent'
   | 'program'
-  | 'eventType'
+  | 'leadEventType'
   | 'membership';
 type LeadHistoryFilterOperator = 'include' | 'exclude';
 type LeadHistoryFilterCombinator = 'AND' | 'OR';
@@ -142,7 +129,7 @@ type StoredLeadHistoryFilterNode =
 
 type LeadHistoryGroupSummary = {
   leadEventIds: Set<string>;
-  eventTypes: Set<LeadHistoryEventType>;
+  leadEventTypes: Set<string>;
   programTitles: Set<string>;
   hasSignedUp: boolean;
 };
@@ -153,7 +140,7 @@ const filterFieldDefinitions: Record<
 > = {
   leadEvent: { label: '리드 이벤트', valueLabel: '이벤트 선택' },
   program: { label: '프로그램', valueLabel: '프로그램 선택' },
-  eventType: { label: '이벤트 유형', valueLabel: '이벤트 유형 선택' },
+  leadEventType: { label: '리드 이벤트 타입', valueLabel: '타입 선택' },
   membership: { label: '회원가입 여부', valueLabel: '회원가입 여부 선택' },
 };
 
@@ -281,9 +268,9 @@ const evaluateConditionNode = (
       );
       return condition.operator === 'include' ? hasAny : !hasAny;
     }
-    case 'eventType': {
+    case 'leadEventType': {
       const hasAny = condition.values.some((value) =>
-        summary.eventTypes.has(value as LeadHistoryEventType),
+        summary.leadEventTypes.has(String(value)),
       );
       return condition.operator === 'include' ? hasAny : !hasAny;
     }
@@ -968,13 +955,36 @@ const LeadHistoryPage = () => {
       }));
   }, [allRows]);
 
+  const leadEventTypeOptions = useMemo(() => {
+    const unique = new Set<string>();
+    allRows.forEach((row) => {
+      if (row.leadEventType) {
+        unique.add(row.leadEventType);
+      }
+    });
+    return Array.from(unique)
+      .sort((a, b) => a.localeCompare(b))
+      .map((type) => ({
+        value: type,
+        label: type,
+      }));
+  }, [allRows]);
+
+  const leadEventTypeLabelMap = useMemo(() => {
+    const map = new Map<string, string>();
+    leadEventTypeOptions.forEach(({ value, label }) => {
+      map.set(value, label);
+    });
+    return map;
+  }, [leadEventTypeOptions]);
+
   const groupSummaryMap = useMemo(() => {
     const map = new Map<string, LeadHistoryGroupSummary>();
     allRows.forEach((row) => {
       const key = row.displayPhoneNum;
       const summary = map.get(key) ?? {
         leadEventIds: new Set<string>(),
-        eventTypes: new Set<LeadHistoryEventType>(),
+        leadEventTypes: new Set<string>(),
         programTitles: new Set<string>(),
         hasSignedUp: false,
       };
@@ -983,8 +993,8 @@ const LeadHistoryPage = () => {
         summary.leadEventIds.add(String(row.leadEventId));
       }
 
-      if (row.eventType) {
-        summary.eventTypes.add(row.eventType);
+      if (row.leadEventType) {
+        summary.leadEventTypes.add(row.leadEventType);
       }
 
       if (row.eventType === 'PROGRAM' && row.title) {
@@ -1176,10 +1186,8 @@ const LeadHistoryPage = () => {
       if (field === 'program') {
         return value;
       }
-      if (field === 'eventType') {
-        return (
-          leadHistoryEventTypeLabels[value as LeadHistoryEventType] ?? value
-        );
+      if (field === 'leadEventType') {
+        return leadEventTypeLabelMap.get(value) ?? value;
       }
       if (field === 'membership') {
         const option = membershipOptions.find((item) => item.value === value);
@@ -1187,7 +1195,7 @@ const LeadHistoryPage = () => {
       }
       return value;
     },
-    [leadEventLabelMap],
+    [leadEventLabelMap, leadEventTypeLabelMap],
   );
 
   const getOptionsForField = useCallback(
@@ -1198,12 +1206,15 @@ const LeadHistoryPage = () => {
       if (field === 'program') {
         return programOptions;
       }
+      if (field === 'leadEventType') {
+        return leadEventTypeOptions;
+      }
       if (field === 'membership') {
         return membershipOptions;
       }
-      return eventTypeOptions;
+      return [];
     },
-    [leadEventOptions, programOptions],
+    [leadEventOptions, programOptions, leadEventTypeOptions],
   );
 
   const FilterConditionEditor = ({
@@ -1486,10 +1497,9 @@ const LeadHistoryPage = () => {
           cellClassName: 'min-w-[140px]',
         },
         cell: ({ row }) =>
-          renderGroupedLeaf(row, (original) => {
-            const value = original.eventType;
-            return value ? leadHistoryEventTypeLabels[value] : '-';
-          }),
+          renderGroupedLeaf(row, (original) =>
+            formatNullableText(original.eventType),
+          ),
       },
       {
         accessorKey: 'title',
@@ -1707,10 +1717,6 @@ const LeadHistoryPage = () => {
           case 'createDate':
             return row.createDate
               ? dayjs(row.createDate).format('YYYY.MM.DD.')
-              : '';
-          case 'eventType':
-            return row.eventType
-              ? leadHistoryEventTypeLabels[row.eventType]
               : '';
           case 'finalPrice':
             return row.finalPrice !== null && row.finalPrice !== undefined
