@@ -1649,64 +1649,65 @@ const LeadHistoryPage = () => {
   const handleDownloadCsv = useCallback(() => {
     if (!filteredRows.length) {
       window.alert('다운로드할 리드 히스토리가 없습니다.');
+      return;
     }
 
+    const resolveHeaderLabel = (
+      column: AccessorKeyColumnDef<LeadHistoryRow>,
+    ) => {
+      const headerProp = column.header;
+
+      if (typeof headerProp === 'string' || typeof headerProp === 'number') {
+        return String(headerProp);
+      }
+      if (typeof headerProp === 'function') {
+        return column.id ?? column.accessorKey ?? '';
+      }
+      return column.id ?? column.accessorKey ?? '';
+    };
+
+    const sortedRows = [...filteredRows].sort((a, b) => {
+      const phoneCompare = (a.displayPhoneNum ?? '').localeCompare(
+        b.displayPhoneNum ?? '',
+        undefined,
+        { sensitivity: 'base' },
+      );
+      if (phoneCompare !== 0) {
+        return phoneCompare;
+      }
+      return (a.createDate ?? '').localeCompare(b.createDate ?? '');
+    });
+
     const headerRow = columns
-      .map((column) => {
-        const headerProp = column.header;
-        let headerLabel: string;
-
-        if (typeof headerProp === 'string' || typeof headerProp === 'number') {
-          headerLabel = String(headerProp);
-        } else if (typeof headerProp === 'function') {
-          headerLabel = column.id ?? column.accessorKey ?? '';
-        } else {
-          headerLabel = column.id ?? column.accessorKey ?? '';
-        }
-
-        return escapeCsvValue(headerLabel);
-      })
+      .map((column) => escapeCsvValue(resolveHeaderLabel(column)))
       .join(',');
 
-    const rows = filteredRows.map((row) => {
-      return columns
-        .map((column) => {
-          const key = column.accessorKey as keyof LeadHistoryRow;
-          let rawValue: unknown = row[key];
+    const formattedRows = sortedRows.map((row) => {
+      return columns.map((column) => {
+        const key = column.accessorKey as keyof LeadHistoryRow;
 
-          switch (key) {
-            case 'createDate':
-              rawValue = row.createDate
-                ? dayjs(row.createDate).format('YYYY.MM.DD.')
-                : '';
-              break;
-            case 'eventType':
-              rawValue = row.eventType
-                ? leadHistoryEventTypeLabels[row.eventType]
-                : '';
-              break;
-            case 'finalPrice':
-              rawValue =
-                row.finalPrice !== null && row.finalPrice !== undefined
-                  ? new Intl.NumberFormat('ko-KR').format(row.finalPrice)
-                  : '';
-              break;
-            default:
-              rawValue = rawValue ?? '';
-              break;
-          }
-
-          const normalized =
-            rawValue === null || rawValue === undefined
-              ? ''
-              : typeof rawValue === 'string'
-                ? rawValue
-                : String(rawValue);
-
-          return escapeCsvValue(normalized);
-        })
-        .join(',');
+        switch (key) {
+          case 'createDate':
+            return row.createDate
+              ? dayjs(row.createDate).format('YYYY.MM.DD.')
+              : '';
+          case 'eventType':
+            return row.eventType
+              ? leadHistoryEventTypeLabels[row.eventType]
+              : '';
+          case 'finalPrice':
+            return row.finalPrice !== null && row.finalPrice !== undefined
+              ? new Intl.NumberFormat('ko-KR').format(row.finalPrice)
+              : '';
+          default:
+            return row[key] ?? '';
+        }
+      });
     });
+
+    const rows = formattedRows.map((row) =>
+      row.map((value) => escapeCsvValue(value)).join(','),
+    );
 
     const csvBody = [headerRow, ...rows].join('\n');
     const blob = new Blob([`\uFEFF${csvBody}`], {
