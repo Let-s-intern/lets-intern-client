@@ -1,34 +1,34 @@
 'use client';
 
 import { useGetActiveChallenge, useGetChallengeList } from '@/api/challenge';
-import LoadingContainer from '@/components/common/ui/loading/LoadingContainer';
 import { useFilterB2CChallenges } from '@/hooks/useFilterB2CChallenges';
 import { challengeTypeSchema } from '@/schema';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-const { PERSONAL_STATEMENT } = challengeTypeSchema.enum;
+const { CAREER_START } = challengeTypeSchema.enum;
 
 /**
- * 자기소개서 완성 챌린지의 latest 리다이렉트를 처리하는 컴포넌트
+ * 이력서 챌린지의 latest 리다이렉트를 처리하는 컴포넌트
  *
  * 리다이렉트 우선순위:
- * 1. 모집중인(active) 자기소개서 챌린지 중 B2C 챌린지가 있을 경우 해당 챌린지로 이동
- * 2. 없을 경우 가장 최근 개설된 자기소개서 챌린지 중 B2C 챌린지로 이동
+ * 1. 모집중인(active) 이력서 챌린지 중 B2C 챌린지가 있을 경우 해당 챌린지로 이동
+ * 2. 없을 경우 가장 최근 개설된 이력서 챌린지 중 B2C 챌린지로 이동
  */
-export default function PersonalStatementLatest() {
+export default function ResumeLatest() {
   const router = useRouter();
   const {
     data: activeData,
     error: activeError,
     isLoading: activeLoading,
-  } = useGetActiveChallenge(PERSONAL_STATEMENT);
+  } = useGetActiveChallenge(CAREER_START);
   const {
     data: listData,
     error: listError,
     isLoading: listLoading,
   } = useGetChallengeList({
-    type: PERSONAL_STATEMENT,
+    type: CAREER_START,
   });
 
   // B2C 챌린지만 필터링
@@ -94,7 +94,7 @@ export default function PersonalStatementLatest() {
   return (
     <LoadingContainer
       className="min-h-screen"
-      text="자기소개서 완성 챌린지로 이동 중..."
+      text="이력서 완성 챌린지로 이동 중..."
     />
   );
 }
