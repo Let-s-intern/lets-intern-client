@@ -2,18 +2,16 @@ import { UserCareerType } from '@/api/careerSchema';
 
 interface CareerCardProps {
   career: UserCareerType;
+  handleEdit: (id: string) => void;
 }
 
 /**
  * 커리어 조회용 UI
  */
 const CareerCard = ({
-  career: { position, company, employeeType, startDate, endDate },
+  career: { id, position, company, employeeType, startDate, endDate },
+  handleEdit,
 }: CareerCardProps) => {
-  const handleEdit = () => {
-    // TODO: 수정 버튼 클릭 시 동작할 함수
-  };
-
   const handleDelete = () => {
     // TODO: 삭제 버튼 클릭 시 동작할 함수
   };
@@ -24,7 +22,7 @@ const CareerCard = ({
         <span className="text-sm text-neutral-0">{position}</span>
 
         <div className="flex items-center gap-2 text-sm text-neutral-35">
-          <span className="cursor-pointer px-2" onClick={handleEdit}>
+          <span className="cursor-pointer px-2" onClick={() => handleEdit(id!)}>
             수정
           </span>
           <span className="h-3 w-[1px] bg-neutral-70" />

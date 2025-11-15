@@ -22,13 +22,14 @@ const Career = () => {
   const [careers, setCareers] = useState<UserCareerType[]>([]);
 
   const handleCancel = () => {
-    setCareers((prev) => prev.slice(1));
+    setCareers((prev) => prev.slice(1)); // 추후 제거
     setEditingId(null);
   };
 
   const handleSubmit = (career: UserCareerType) => {
-    setCareers((prev) => prev.slice(1));
-    setCareers((prev) => [...prev, career]);
+    setCareers((prev) => prev.slice(1)); // 추후 제거
+    // TODO: API 연동 예정 (생성 후 재조회)
+    setCareers((prev) => [career, ...prev]);
     setEditingId(null);
   };
 
@@ -36,6 +37,10 @@ const Career = () => {
     const randomId = crypto.randomUUID();
     setCareers((prev) => [{ ...initialCareer, id: randomId }, ...prev]);
     setEditingId(randomId);
+  };
+
+  const handleEdit = (id: string) => {
+    setEditingId(id);
   };
 
   return (
@@ -71,6 +76,7 @@ const Career = () => {
               writeMode={editingId === career.id}
               handleCancel={handleCancel}
               handleSubmit={handleSubmit}
+              handleEdit={handleEdit}
             />
           ))}
         </section>

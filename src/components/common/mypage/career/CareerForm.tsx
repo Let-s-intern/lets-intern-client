@@ -9,6 +9,7 @@ import { ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 
 interface CareerFormProps {
+  initialCareer: UserCareerType;
   handleCancel: () => void;
   handleSubmit: (data: UserCareerType) => void;
 }
@@ -17,14 +18,19 @@ interface CareerFormProps {
  * 커리어 작성/수정 UI
  */
 // TODO: form 유효성 검사 추가 예정 (라이브러리 도입 검토)
-const CareerForm = ({ handleCancel, handleSubmit }: CareerFormProps) => {
+const CareerForm = ({
+  initialCareer,
+  handleCancel,
+  handleSubmit,
+}: CareerFormProps) => {
   const [form, setForm] = useState<UserCareerType>({
-    company: '',
-    position: '',
-    employeeType: null,
-    employeeTypeOther: '',
-    startDate: '',
-    endDate: '',
+    id: initialCareer.id,
+    company: initialCareer.company,
+    position: initialCareer.position,
+    employeeType: initialCareer.employeeType,
+    employeeTypeOther: initialCareer.employeeTypeOther,
+    startDate: initialCareer.startDate,
+    endDate: initialCareer.endDate,
   });
 
   const [employeeTypeModalOpen, setEmployeeTypeModalOpen] = useState(false);

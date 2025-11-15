@@ -7,6 +7,7 @@ interface CareerItemProps {
   writeMode: boolean;
   handleCancel: () => void;
   handleSubmit: (data: UserCareerType) => void;
+  handleEdit: (id: string) => void;
 }
 
 /**
@@ -17,13 +18,18 @@ const CareerItem = ({
   writeMode,
   handleCancel,
   handleSubmit,
+  handleEdit,
 }: CareerItemProps) => {
   return (
     <>
       {writeMode ? (
-        <CareerForm handleCancel={handleCancel} handleSubmit={handleSubmit} />
+        <CareerForm
+          initialCareer={career}
+          handleCancel={handleCancel}
+          handleSubmit={handleSubmit}
+        />
       ) : (
-        <CareerCard career={career} />
+        <CareerCard career={career} handleEdit={handleEdit} />
       )}
     </>
   );
