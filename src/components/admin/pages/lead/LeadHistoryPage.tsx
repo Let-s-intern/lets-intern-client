@@ -24,6 +24,7 @@ import {
   Typography,
 } from '@mui/material';
 import {
+  AccessorKeyColumnDef,
   ColumnDef,
   flexRender,
   getCoreRowModel,
@@ -1387,7 +1388,7 @@ const LeadHistoryPage = () => {
     );
   };
 
-  const columns = useMemo<ColumnDef<LeadHistoryRow>[]>(
+  const columns = useMemo<AccessorKeyColumnDef<LeadHistoryRow>[]>(
     () => [
       {
         accessorKey: 'displayPhoneNum',
@@ -1646,22 +1647,11 @@ const LeadHistoryPage = () => {
   );
 
   const handleDownloadCsv = useCallback(() => {
-    if (!filteredRows.length) return;
+    if (!filteredRows.length) {
+      window.alert('다운로드할 리드 히스토리가 없습니다.');
+    }
 
-    const exportColumns = columns.filter((column) => {
-      return (
-        Object.prototype.hasOwnProperty.call(column, 'accessorKey') &&
-        typeof (column as { accessorKey?: unknown }).accessorKey === 'string'
-      );
-    }) as Array<
-      ColumnDef<LeadHistoryRow> & {
-        accessorKey: keyof LeadHistoryRow;
-      }
-    >;
-
-    if (!exportColumns.length) return;
-
-    const headerRow = exportColumns
+    const headerRow = columns
       .map((column) => {
         const headerProp = column.header;
         let headerLabel: string;
@@ -1679,9 +1669,9 @@ const LeadHistoryPage = () => {
       .join(',');
 
     const rows = filteredRows.map((row) => {
-      return exportColumns
+      return columns
         .map((column) => {
-          const key = column.accessorKey;
+          const key = column.accessorKey as keyof LeadHistoryRow;
           let rawValue: unknown = row[key];
 
           switch (key) {
