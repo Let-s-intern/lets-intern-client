@@ -164,27 +164,6 @@ const filterOperatorOptions: Array<{
   { value: 'exclude', label: '하나도 없음' },
 ];
 
-const isFilterField = (value: unknown): value is LeadHistoryFilterField => {
-  return (
-    value === 'leadEvent' ||
-    value === 'program' ||
-    value === 'eventType' ||
-    value === 'membership'
-  );
-};
-
-const isFilterOperator = (
-  value: unknown,
-): value is LeadHistoryFilterOperator => {
-  return value === 'include' || value === 'exclude';
-};
-
-const isFilterCombinator = (
-  value: unknown,
-): value is LeadHistoryFilterCombinator => {
-  return value === 'AND' || value === 'OR';
-};
-
 const createConditionNode = (
   overrides: Partial<Omit<LeadHistoryFilterConditionNode, 'id' | 'type'>> = {},
 ): LeadHistoryFilterConditionNode => ({
@@ -223,41 +202,28 @@ const toStoredNode = (
   };
 };
 
-const fromStoredNode = (
-  node: StoredLeadHistoryFilterNode,
-): LeadHistoryFilterNode | null => {
-  if (node.type === 'condition') {
-    if (!isFilterField(node.field) || !isFilterOperator(node.operator)) {
-      return null;
-    }
-    const values = Array.isArray(node.values)
-      ? node.values.map((value) => String(value))
-      : [];
-    return createConditionNode({
-      field: node.field,
-      operator: node.field === 'membership' ? 'include' : node.operator,
-      values,
-    });
-  }
+const fromStoredConditionNode = (
+  node: StoredLeadHistoryFilterConditionNode,
+): LeadHistoryFilterConditionNode => {
+  return createConditionNode({
+    field: node.field,
+    operator: node.field === 'membership' ? 'include' : node.operator,
+    values: node.values?.map((value) => String(value)) ?? [],
+  });
+};
 
-  if (node.type === 'group') {
-    if (!isFilterCombinator(node.combinator)) {
-      return null;
-    }
-
-    const children = Array.isArray(node.children)
-      ? node.children
-          .map((child) => fromStoredNode(child))
-          .filter((child): child is LeadHistoryFilterNode => child !== null)
-      : [];
-
-    return createGroupNode({
-      combinator: node.combinator,
-      children,
-    });
-  }
-
-  return null;
+const fromStoredGroupNode = (
+  node: StoredLeadHistoryFilterGroupNode,
+): LeadHistoryFilterGroupNode => {
+  return createGroupNode({
+    combinator: node.combinator,
+    children:
+      node.children?.map((child) =>
+        child.type === 'condition'
+          ? fromStoredConditionNode(child)
+          : fromStoredGroupNode(child),
+      ) ?? [],
+  });
 };
 
 const serializeFilterTree = (
@@ -277,24 +243,8 @@ const deserializeFilterTree = (
     return createGroupNode();
   }
 
-  try {
-    const parsed = JSON.parse(raw) as unknown;
-    if (
-      !parsed ||
-      typeof parsed !== 'object' ||
-      (parsed as { type?: string }).type !== 'group'
-    ) {
-      return createGroupNode();
-    }
-    const restored = fromStoredNode(parsed as StoredLeadHistoryFilterGroupNode);
-    if (restored && restored.type === 'group') {
-      return restored;
-    }
-  } catch {
-    // ignore
-  }
-
-  return createGroupNode();
+  const parsed = JSON.parse(raw) as StoredLeadHistoryFilterGroupNode;
+  return fromStoredGroupNode(parsed);
 };
 
 const getFilterTreeSignature = (root: LeadHistoryFilterGroupNode) => {
@@ -439,11 +389,7 @@ const renderGroupedLeaf = (
   if (row.getIsGrouped()) {
     return <span className="text-gray-400"></span>;
   }
-  const original = row.original;
-  if (!original) {
-    return null;
-  }
-  return render(original);
+  return render(row.original);
 };
 
 const formatNullableText = (value: unknown) => {
@@ -463,7 +409,7 @@ const escapeCsvValue = (value: unknown) => {
   return `"${stringValue.replace(/"/g, '""')}"`;
 };
 
-const VISIBLE_GROUP_LIMIT = 3;
+const VISIBLE_GROUP_LIMIT = 10;
 
 const LeadHistoryTable = ({
   data,
@@ -489,9 +435,7 @@ const LeadHistoryTable = ({
   const groupedRowModel = table.getGroupedRowModel();
   const totalGroupCount = groupedRowModel.rows.length;
   const displayedGroupCount =
-    totalGroupCount === 0
-      ? 0
-      : Math.min(totalGroupCount, VISIBLE_GROUP_LIMIT);
+    totalGroupCount === 0 ? 0 : Math.min(totalGroupCount, VISIBLE_GROUP_LIMIT);
   const remainingGroupCount = Math.max(
     totalGroupCount - displayedGroupCount,
     0,
@@ -641,7 +585,8 @@ const LeadHistoryTable = ({
       </div>
       {!isLoading && remainingGroupCount > 0 && (
         <div className="border-t border-gray-200 bg-gray-50 px-3 py-2 text-center text-[12px] text-gray-500">
-          상위 {displayedGroupCount}개 전화번호 그룹만 표시됩니다. 외 {remainingGroupCount}개는 CSV 다운로드로 확인하세요.
+          상위 {displayedGroupCount}개 전화번호 그룹만 표시됩니다. 외{' '}
+          {remainingGroupCount}개는 CSV 다운로드로 확인하세요.
         </div>
       )}
       {!isLoading && remainingGroupCount === 0 && totalGroupCount > 0 && (
@@ -659,14 +604,12 @@ const CreateLeadHistoryDialog = ({
   onSubmit,
   isSubmitting,
   leadEvents,
-  onValidationError,
 }: {
   open: boolean;
   onClose: () => void;
   onSubmit: (payload: CreateLeadHistoryRequest) => Promise<void>;
   isSubmitting: boolean;
   leadEvents?: LeadEvent[];
-  onValidationError: (message: string) => void;
 }) => {
   const [form, setForm] = useState<
     Record<keyof CreateLeadHistoryRequest | 'userId' | 'leadEventId', string>
@@ -715,11 +658,6 @@ const CreateLeadHistoryDialog = ({
   };
 
   const handleSubmit = async () => {
-    if (!form.leadEventId) {
-      onValidationError('리드 이벤트를 선택해주세요.');
-      return;
-    }
-
     const payload: CreateLeadHistoryRequest = {
       leadEventId: Number(form.leadEventId),
       name: form.name || undefined,
@@ -736,12 +674,7 @@ const CreateLeadHistoryDialog = ({
       instagramId: form.instagramId || undefined,
     };
 
-    if (form.userId) {
-      const userId = Number(form.userId);
-      if (!Number.isNaN(userId)) {
-        payload.userId = userId;
-      }
-    }
+    payload.userId = form.userId ? Number(form.userId) : undefined;
 
     await onSubmit(payload);
     handleClose();
@@ -1486,7 +1419,14 @@ const LeadHistoryPage = () => {
           headerClassName: 'min-w-[120px]',
           cellClassName: 'min-w-[120px]',
         },
-        aggregationFn: 'unique',
+        aggregationFn: (_, leafRows) => {
+          const names = new Set<string>(
+            leafRows
+              .map((row) => row.original.name)
+              .filter((name): name is string => !!name),
+          );
+          return Array.from(names).join(', ');
+        },
       },
 
       {
@@ -1866,7 +1806,6 @@ const LeadHistoryPage = () => {
         onSubmit={handleCreate}
         isSubmitting={createLeadHistory.isPending}
         leadEvents={leadEventData?.leadEventList}
-        onValidationError={(message) => snackbar(message)}
       />
     </section>
   );
