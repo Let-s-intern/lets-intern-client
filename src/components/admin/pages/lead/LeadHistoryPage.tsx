@@ -24,16 +24,14 @@ import {
   Typography,
 } from '@mui/material';
 import {
+  AccessorKeyColumnDef,
   ColumnDef,
-  ExpandedState,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
   getGroupedRowModel,
-  getSortedRowModel,
   GroupingState,
   type Row,
-  SortingState,
   useReactTable,
 } from '@tanstack/react-table';
 import { Plus } from 'lucide-react';
@@ -41,10 +39,7 @@ import { nanoid } from 'nanoid';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   ChangeEvent,
-  Dispatch,
-  memo,
   type ReactNode,
-  SetStateAction,
   useCallback,
   useMemo,
   useState,
@@ -57,23 +52,19 @@ declare module '@tanstack/react-table' {
   }
 }
 
-const leadHistoryEventTypeLabels: Record<LeadHistoryEventType, string> = {
-  SIGN_UP: '회원가입',
-  PROGRAM: '프로그램 참여',
-  LEAD_EVENT: '리드 이벤트',
-};
-
-const eventTypeOptions: Array<{ value: LeadHistoryEventType; label: string }> =
-  (
-    Object.entries(leadHistoryEventTypeLabels) as Array<
-      [LeadHistoryEventType, string]
-    >
-  ).map(([value, label]) => ({ value, label }));
-
 const membershipOptions: Array<{ value: string; label: string }> = [
   { value: 'signedUp', label: '회원가입' },
   { value: 'notSignedUp', label: '미가입' },
 ];
+
+const marketingAgreeOptions: Array<{ value: string; label: string }> = [
+  { value: 'agreed', label: '마케팅 동의' },
+  { value: 'notAgreed', label: '미동의' },
+];
+
+const marketingAgreeLabelMap = new Map(
+  marketingAgreeOptions.map(({ value, label }) => [value, label]),
+);
 
 type LeadHistoryRow = {
   id: string;
@@ -90,6 +81,7 @@ type LeadHistoryRow = {
   wishJob: string | null;
   jobStatus: string | null;
   instagramId: string | null;
+  marketingAgree: boolean | null;
   eventType?: LeadHistoryEventType;
   leadEventId?: number | null;
   leadEventType?: string | null;
@@ -104,7 +96,8 @@ const FILTER_QUERY_KEY = 'filters';
 type LeadHistoryFilterField =
   | 'leadEvent'
   | 'program'
-  | 'eventType'
+  | 'leadEventType'
+  | 'marketingAgree'
   | 'membership';
 type LeadHistoryFilterOperator = 'include' | 'exclude';
 type LeadHistoryFilterCombinator = 'AND' | 'OR';
@@ -147,9 +140,10 @@ type StoredLeadHistoryFilterNode =
 
 type LeadHistoryGroupSummary = {
   leadEventIds: Set<string>;
-  eventTypes: Set<LeadHistoryEventType>;
+  leadEventTypes: Set<string>;
   programTitles: Set<string>;
   hasSignedUp: boolean;
+  hasMarketingAgreement: boolean;
 };
 
 const filterFieldDefinitions: Record<
@@ -158,7 +152,11 @@ const filterFieldDefinitions: Record<
 > = {
   leadEvent: { label: '리드 이벤트', valueLabel: '이벤트 선택' },
   program: { label: '프로그램', valueLabel: '프로그램 선택' },
-  eventType: { label: '이벤트 유형', valueLabel: '이벤트 유형 선택' },
+  leadEventType: { label: '리드 이벤트 타입', valueLabel: '타입 선택' },
+  marketingAgree: {
+    label: '마케팅 동의 여부',
+    valueLabel: '마케팅 동의 여부 선택',
+  },
   membership: { label: '회원가입 여부', valueLabel: '회원가입 여부 선택' },
 };
 
@@ -170,26 +168,10 @@ const filterOperatorOptions: Array<{
   { value: 'exclude', label: '하나도 없음' },
 ];
 
-const isFilterField = (value: unknown): value is LeadHistoryFilterField => {
-  return (
-    value === 'leadEvent' ||
-    value === 'program' ||
-    value === 'eventType' ||
-    value === 'membership'
-  );
-};
-
-const isFilterOperator = (
-  value: unknown,
-): value is LeadHistoryFilterOperator => {
-  return value === 'include' || value === 'exclude';
-};
-
-const isFilterCombinator = (
-  value: unknown,
-): value is LeadHistoryFilterCombinator => {
-  return value === 'AND' || value === 'OR';
-};
+const operatorLockedFields = new Set<LeadHistoryFilterField>([
+  'membership',
+  'marketingAgree',
+]);
 
 const createConditionNode = (
   overrides: Partial<Omit<LeadHistoryFilterConditionNode, 'id' | 'type'>> = {},
@@ -229,41 +211,31 @@ const toStoredNode = (
   };
 };
 
-const fromStoredNode = (
-  node: StoredLeadHistoryFilterNode,
-): LeadHistoryFilterNode | null => {
-  if (node.type === 'condition') {
-    if (!isFilterField(node.field) || !isFilterOperator(node.operator)) {
-      return null;
-    }
-    const values = Array.isArray(node.values)
-      ? node.values.map((value) => String(value))
-      : [];
-    return createConditionNode({
-      field: node.field,
-      operator: node.field === 'membership' ? 'include' : node.operator,
-      values,
-    });
-  }
+const fromStoredConditionNode = (
+  node: StoredLeadHistoryFilterConditionNode,
+): LeadHistoryFilterConditionNode => {
+  return createConditionNode({
+    field: node.field,
+    operator:
+      node.field === 'membership' || node.field === 'marketingAgree'
+        ? 'include'
+        : node.operator,
+    values: node.values?.map((value) => String(value)) ?? [],
+  });
+};
 
-  if (node.type === 'group') {
-    if (!isFilterCombinator(node.combinator)) {
-      return null;
-    }
-
-    const children = Array.isArray(node.children)
-      ? node.children
-          .map((child) => fromStoredNode(child))
-          .filter((child): child is LeadHistoryFilterNode => child !== null)
-      : [];
-
-    return createGroupNode({
-      combinator: node.combinator,
-      children,
-    });
-  }
-
-  return null;
+const fromStoredGroupNode = (
+  node: StoredLeadHistoryFilterGroupNode,
+): LeadHistoryFilterGroupNode => {
+  return createGroupNode({
+    combinator: node.combinator,
+    children:
+      node.children?.map((child) =>
+        child.type === 'condition'
+          ? fromStoredConditionNode(child)
+          : fromStoredGroupNode(child),
+      ) ?? [],
+  });
 };
 
 const serializeFilterTree = (
@@ -283,24 +255,8 @@ const deserializeFilterTree = (
     return createGroupNode();
   }
 
-  try {
-    const parsed = JSON.parse(raw) as unknown;
-    if (
-      !parsed ||
-      typeof parsed !== 'object' ||
-      (parsed as { type?: string }).type !== 'group'
-    ) {
-      return createGroupNode();
-    }
-    const restored = fromStoredNode(parsed as StoredLeadHistoryFilterGroupNode);
-    if (restored && restored.type === 'group') {
-      return restored;
-    }
-  } catch {
-    // ignore
-  }
-
-  return createGroupNode();
+  const parsed = JSON.parse(raw) as StoredLeadHistoryFilterGroupNode;
+  return fromStoredGroupNode(parsed);
 };
 
 const getFilterTreeSignature = (root: LeadHistoryFilterGroupNode) => {
@@ -336,14 +292,19 @@ const evaluateConditionNode = (
       );
       return condition.operator === 'include' ? hasAny : !hasAny;
     }
-    case 'eventType': {
+    case 'leadEventType': {
       const hasAny = condition.values.some((value) =>
-        summary.eventTypes.has(value as LeadHistoryEventType),
+        summary.leadEventTypes.has(String(value)),
       );
       return condition.operator === 'include' ? hasAny : !hasAny;
     }
     case 'membership': {
       const status = summary.hasSignedUp ? 'signedUp' : 'notSignedUp';
+      const hasAny = condition.values.some((value) => value === status);
+      return condition.operator === 'include' ? hasAny : !hasAny;
+    }
+    case 'marketingAgree': {
+      const status = summary.hasMarketingAgreement ? 'agreed' : 'notAgreed';
       const hasAny = condition.values.some((value) => value === status);
       return condition.operator === 'include' ? hasAny : !hasAny;
     }
@@ -445,11 +406,7 @@ const renderGroupedLeaf = (
   if (row.getIsGrouped()) {
     return <span className="text-gray-400"></span>;
   }
-  const original = row.original;
-  if (!original) {
-    return null;
-  }
-  return render(original);
+  return render(row.original);
 };
 
 const formatNullableText = (value: unknown) => {
@@ -469,196 +426,211 @@ const escapeCsvValue = (value: unknown) => {
   return `"${stringValue.replace(/"/g, '""')}"`;
 };
 
-const LeadHistoryTable = memo(
-  ({
+const koreanNameCollator = new Intl.Collator('ko-KR', {
+  sensitivity: 'base',
+});
+
+const compareLeadHistoryRowsByName = (a: LeadHistoryRow, b: LeadHistoryRow) => {
+  const nameA = a.name?.trim() ?? '';
+  const nameB = b.name?.trim() ?? '';
+
+  if (nameA && nameB) {
+    const nameCompare = koreanNameCollator.compare(nameA, nameB);
+    if (nameCompare !== 0) {
+      return nameCompare;
+    }
+  } else if (nameA) {
+    return -1;
+  } else if (nameB) {
+    return 1;
+  }
+
+  const phoneCompare = (a.displayPhoneNum ?? '').localeCompare(
+    b.displayPhoneNum ?? '',
+    'ko-KR',
+    { numeric: true, sensitivity: 'base' },
+  );
+  if (phoneCompare !== 0) {
+    return phoneCompare;
+  }
+
+  return (a.createDate ?? '').localeCompare(b.createDate ?? '');
+};
+
+const groupRowsByPhonePreservingOrder = (rows: LeadHistoryRow[]) => {
+  const phoneOrder: string[] = [];
+  const grouped = new Map<string, LeadHistoryRow[]>();
+
+  rows.forEach((row) => {
+    const phoneKey = row.displayPhoneNum;
+    if (!grouped.has(phoneKey)) {
+      grouped.set(phoneKey, []);
+      phoneOrder.push(phoneKey);
+    }
+    grouped.get(phoneKey)?.push(row);
+  });
+
+  return phoneOrder.flatMap((phone) => grouped.get(phone) ?? []);
+};
+
+const VISIBLE_GROUP_LIMIT = 10;
+
+const LeadHistoryTable = ({
+  data,
+  columns,
+  isLoading,
+}: {
+  data: LeadHistoryRow[];
+  columns: ColumnDef<LeadHistoryRow>[];
+  isLoading: boolean;
+}) => {
+  const [grouping] = useState<GroupingState>(['displayPhoneNum']);
+  const table = useReactTable({
     data,
     columns,
-    isLoading,
-    expanded,
-    onExpandedChange,
-  }: {
-    data: LeadHistoryRow[];
-    columns: ColumnDef<LeadHistoryRow>[];
-    isLoading: boolean;
-    expanded: ExpandedState;
-    onExpandedChange: Dispatch<SetStateAction<ExpandedState>>;
-  }) => {
-    const [sorting, setSorting] = useState<SortingState>([
-      { id: 'createDate', desc: true },
-    ]);
-    const [grouping] = useState<GroupingState>(['displayPhoneNum']);
+    state: { grouping, expanded: true },
+    getCoreRowModel: getCoreRowModel(),
+    getGroupedRowModel: getGroupedRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    autoResetExpanded: false,
+    getRowId: (row) => row.id,
+  });
 
-    const table = useReactTable({
-      data,
-      columns,
-      state: { sorting, grouping, expanded },
-      onSortingChange: setSorting,
-      onExpandedChange,
-      getCoreRowModel: getCoreRowModel(),
-      getSortedRowModel: getSortedRowModel(),
-      getGroupedRowModel: getGroupedRowModel(),
-      getExpandedRowModel: getExpandedRowModel(),
-      autoResetExpanded: false,
-      getRowId: (row) => row.id,
-    });
+  const groupedRowModel = table.getGroupedRowModel();
+  const totalGroupCount = groupedRowModel.rows.length;
+  const displayedGroupCount =
+    totalGroupCount === 0 ? 0 : Math.min(totalGroupCount, VISIBLE_GROUP_LIMIT);
+  const remainingGroupCount = Math.max(
+    totalGroupCount - displayedGroupCount,
+    0,
+  );
+  const allRows = table.getRowModel().rows;
+  const rowsToRender = useMemo(() => {
+    if (!allRows.length) return allRows;
+    const result: typeof allRows = [];
+    let groupsSeen = 0;
 
-    const columnCount = table.getAllLeafColumns().length || columns.length || 1;
+    for (const row of allRows) {
+      if (row.depth === 0) {
+        groupsSeen += 1;
+        if (groupsSeen > VISIBLE_GROUP_LIMIT) {
+          break;
+        }
+      }
+      result.push(row);
+    }
 
-    return (
-      <div className="rounded border border-gray-200">
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-left text-sm">
-            <thead className="bg-gray-100">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header, i) => {
-                    if (header.isPlaceholder) {
-                      return <th key={header.id} className="px-3 py-2" />;
-                    }
+    return result;
+  }, [allRows]);
 
-                    const sorted = header.column.getIsSorted();
-                    const canSort = header.column.getCanSort();
+  const columnCount = table.getAllLeafColumns().length || columns.length || 1;
 
-                    const headerClassName =
-                      header.column.columnDef.meta?.headerClassName ?? '';
+  return (
+    <div className="rounded border border-gray-200">
+      <div className="overflow-x-auto">
+        <table className="min-w-full text-left text-sm">
+          <thead className="bg-gray-100">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header, i) => {
+                  if (header.isPlaceholder) {
+                    return <th key={header.id} className="px-3 py-2" />;
+                  }
+
+                  const headerClassName =
+                    header.column.columnDef.meta?.headerClassName ?? '';
+
+                  return (
+                    <th
+                      key={header.id}
+                      className={twMerge(
+                        `px-3 py-2 font-medium text-gray-700`,
+                        headerClassName,
+                        i === 0 && 'z-1 sticky left-0 bg-gray-100',
+                      )}
+                    >
+                      <div className="flex items-center gap-1">
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                      </div>
+                    </th>
+                  );
+                })}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {isLoading ? (
+              <tr>
+                <td
+                  colSpan={columnCount}
+                  className="px-3 py-10 text-center text-gray-500"
+                >
+                  로딩 중...
+                </td>
+              </tr>
+            ) : allRows.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={columnCount}
+                  className="px-3 py-6 text-center text-gray-500"
+                >
+                  표시할 데이터가 없습니다.
+                </td>
+              </tr>
+            ) : (
+              rowsToRender.map((row) => (
+                <tr
+                  key={row.id}
+                  className={twMerge(
+                    'border-t border-gray-100',
+                    !row.getIsGrouped() && 'bg-slate-50',
+                    row.getIsGrouped() && 'font-medium',
+                  )}
+                >
+                  {row.getVisibleCells().map((cell, i) => {
+                    const cellClassName =
+                      cell.column.columnDef.meta?.cellClassName ?? '';
 
                     return (
-                      <th
-                        key={header.id}
-                        className={`px-3 py-2 font-medium text-gray-700 ${headerClassName}`}
-                        style={{
-                          ...(i === 0
-                            ? {
-                                position: 'sticky',
-                                left: 0,
-                                background: '#fff',
-                                zIndex: 1,
-                              }
-                            : // : i === 1
-                              //   ? {
-                              //       position: 'sticky',
-                              //       left: 200,
-                              //       background: '#fff',
-                              //       borderRight: '1px solid #ddd',
-                              //       zIndex: 2,
-                              //     }
-                              {}),
-                        }}
+                      <td
+                        key={cell.id}
+                        className={twMerge(
+                          `border-b px-3 py-2 align-top text-gray-900`,
+                          cellClassName,
+                          i === 0 && 'z-1 sticky left-0 bg-slate-50',
+                          row.getIsGrouped() && 'bg-white',
+                        )}
                       >
-                        <button
-                          type="button"
-                          onClick={
-                            canSort
-                              ? header.column.getToggleSortingHandler()
-                              : undefined
-                          }
-                          className={`flex items-center gap-1 ${canSort ? 'cursor-pointer select-none' : 'cursor-default'}`}
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                          {sorted === 'asc' && (
-                            <span
-                              aria-hidden
-                              className="text-[10px] leading-none"
-                            >
-                              ▲
-                            </span>
-                          )}
-                          {sorted === 'desc' && (
-                            <span
-                              aria-hidden
-                              className="text-[10px] leading-none"
-                            >
-                              ▼
-                            </span>
-                          )}
-                        </button>
-                      </th>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </td>
                     );
                   })}
                 </tr>
-              ))}
-            </thead>
-            <tbody>
-              {isLoading ? (
-                <tr>
-                  <td
-                    colSpan={columnCount}
-                    className="px-3 py-10 text-center text-gray-500"
-                  >
-                    로딩 중...
-                  </td>
-                </tr>
-              ) : table.getRowModel().rows.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={columnCount}
-                    className="px-3 py-6 text-center text-gray-500"
-                  >
-                    표시할 데이터가 없습니다.
-                  </td>
-                </tr>
-              ) : (
-                table.getRowModel().rows.map((row) => (
-                  <tr
-                    key={row.id}
-                    className={twMerge(
-                      'border-t border-gray-100',
-                      !row.getIsGrouped() && 'bg-slate-50',
-                      row.getIsGrouped() && 'font-medium',
-                    )}
-                  >
-                    {row.getVisibleCells().map((cell, i) => {
-                      const cellClassName =
-                        cell.column.columnDef.meta?.cellClassName ?? '';
-
-                      return (
-                        <td
-                          key={cell.id}
-                          className={`px-3 py-2 align-top text-gray-900 ${cellClassName}`}
-                          style={{
-                            padding: '8px',
-                            borderBottom: '1px solid #eee',
-                            // 첫 번째 컬럼 고정
-                            ...(i === 0
-                              ? {
-                                  position: 'sticky',
-                                  left: 0,
-                                  background: '#fff',
-                                  zIndex: 1,
-                                }
-                              : // : i === 1
-                                //   ? {
-                                //       position: 'sticky',
-                                //       left: 200,
-                                //       background: '#fff',
-                                //       borderRight: '1px solid #ddd',
-                                //       zIndex: 2,
-                                //     }
-                                {}),
-                          }}
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
-    );
-  },
-);
-
-LeadHistoryTable.displayName = 'LeadHistoryTable';
+      {!isLoading && remainingGroupCount > 0 && (
+        <div className="border-t border-gray-200 bg-gray-50 px-3 py-2 text-center text-[12px] text-gray-500">
+          상위 {displayedGroupCount}개 전화번호 그룹만 표시됩니다. 외{' '}
+          {remainingGroupCount}개는 CSV 다운로드로 확인하세요.
+        </div>
+      )}
+      {!isLoading && remainingGroupCount === 0 && totalGroupCount > 0 && (
+        <div className="border-t border-gray-200 bg-gray-50 px-3 py-2 text-center text-[12px] text-gray-500">
+          전화번호 그룹 {totalGroupCount}개를 모두 보여주고 있습니다.
+        </div>
+      )}
+    </div>
+  );
+};
 
 const CreateLeadHistoryDialog = ({
   open,
@@ -666,14 +638,12 @@ const CreateLeadHistoryDialog = ({
   onSubmit,
   isSubmitting,
   leadEvents,
-  onValidationError,
 }: {
   open: boolean;
   onClose: () => void;
   onSubmit: (payload: CreateLeadHistoryRequest) => Promise<void>;
   isSubmitting: boolean;
   leadEvents?: LeadEvent[];
-  onValidationError: (message: string) => void;
 }) => {
   const [form, setForm] = useState<
     Record<keyof CreateLeadHistoryRequest | 'userId' | 'leadEventId', string>
@@ -722,11 +692,6 @@ const CreateLeadHistoryDialog = ({
   };
 
   const handleSubmit = async () => {
-    if (!form.leadEventId) {
-      onValidationError('리드 이벤트를 선택해주세요.');
-      return;
-    }
-
     const payload: CreateLeadHistoryRequest = {
       leadEventId: Number(form.leadEventId),
       name: form.name || undefined,
@@ -743,12 +708,7 @@ const CreateLeadHistoryDialog = ({
       instagramId: form.instagramId || undefined,
     };
 
-    if (form.userId) {
-      const userId = Number(form.userId);
-      if (!Number.isNaN(userId)) {
-        payload.userId = userId;
-      }
-    }
+    payload.userId = form.userId ? Number(form.userId) : undefined;
 
     await onSubmit(payload);
     handleClose();
@@ -873,7 +833,6 @@ const CreateLeadHistoryDialog = ({
 
 const LeadHistoryPage = () => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [expanded, setExpanded] = useState<ExpandedState>(true);
   const { snackbar } = useAdminSnackbar();
 
   const router = useRouter();
@@ -963,7 +922,8 @@ const LeadHistoryPage = () => {
       const rowId = [
         trimmedPhone ?? 'NO_PHONE',
         item.leadEventId ?? 'NO_EVENT',
-        item.createDate ?? index,
+        item.createDate ?? 'NO_DATE',
+        index,
       ].join('_');
 
       return {
@@ -981,6 +941,7 @@ const LeadHistoryPage = () => {
         wishJob: item.wishJob ?? null,
         jobStatus: item.jobStatus ?? null,
         instagramId: item.instagramId ?? null,
+        marketingAgree: item.marketingAgree ?? null,
         eventType: item.eventType,
         leadEventId: item.leadEventId ?? null,
         leadEventType: item.leadEventType ?? null,
@@ -1024,23 +985,47 @@ const LeadHistoryPage = () => {
       }));
   }, [allRows]);
 
+  const leadEventTypeOptions = useMemo(() => {
+    const unique = new Set<string>();
+    allRows.forEach((row) => {
+      if (row.leadEventType) {
+        unique.add(row.leadEventType);
+      }
+    });
+    return Array.from(unique)
+      .sort((a, b) => a.localeCompare(b))
+      .map((type) => ({
+        value: type,
+        label: type,
+      }));
+  }, [allRows]);
+
+  const leadEventTypeLabelMap = useMemo(() => {
+    const map = new Map<string, string>();
+    leadEventTypeOptions.forEach(({ value, label }) => {
+      map.set(value, label);
+    });
+    return map;
+  }, [leadEventTypeOptions]);
+
   const groupSummaryMap = useMemo(() => {
     const map = new Map<string, LeadHistoryGroupSummary>();
     allRows.forEach((row) => {
       const key = row.displayPhoneNum;
       const summary = map.get(key) ?? {
         leadEventIds: new Set<string>(),
-        eventTypes: new Set<LeadHistoryEventType>(),
+        leadEventTypes: new Set<string>(),
         programTitles: new Set<string>(),
         hasSignedUp: false,
+        hasMarketingAgreement: false,
       };
 
       if (row.leadEventId !== null && row.leadEventId !== undefined) {
         summary.leadEventIds.add(String(row.leadEventId));
       }
 
-      if (row.eventType) {
-        summary.eventTypes.add(row.eventType);
+      if (row.leadEventType) {
+        summary.leadEventTypes.add(row.leadEventType);
       }
 
       if (row.eventType === 'PROGRAM' && row.title) {
@@ -1049,6 +1034,10 @@ const LeadHistoryPage = () => {
 
       if (row.userId !== null && row.userId !== undefined) {
         summary.hasSignedUp = true;
+      }
+
+      if (row.marketingAgree === true) {
+        summary.hasMarketingAgreement = true;
       }
 
       map.set(key, summary);
@@ -1062,23 +1051,29 @@ const LeadHistoryPage = () => {
   );
 
   const filteredRows = useMemo(() => {
-    if (!hasActiveFilter) {
-      return allRows;
-    }
-
-    const allowed = new Set<string>();
-
-    groupSummaryMap.forEach((summary, key) => {
-      if (evaluateFilterNode(summary, filterTree)) {
-        allowed.add(key);
-      }
-    });
-
-    if (!allowed.size) {
+    if (!allRows.length) {
       return [];
     }
 
-    return allRows.filter((row) => allowed.has(row.displayPhoneNum));
+    let rowsToSort: LeadHistoryRow[] = allRows;
+
+    if (hasActiveFilter) {
+      const allowed = new Set<string>();
+
+      groupSummaryMap.forEach((summary, key) => {
+        if (evaluateFilterNode(summary, filterTree)) {
+          allowed.add(key);
+        }
+      });
+
+      if (!allowed.size) {
+        return [];
+      }
+
+      rowsToSort = allRows.filter((row) => allowed.has(row.displayPhoneNum));
+    }
+
+    return [...rowsToSort].sort(compareLeadHistoryRowsByName);
   }, [allRows, filterTree, groupSummaryMap, hasActiveFilter]);
 
   const handleResetFilters = useCallback(() => {
@@ -1165,7 +1160,9 @@ const LeadHistoryPage = () => {
                 field: updates.field,
                 values: [],
                 operator:
-                  updates.field === 'membership' ? 'include' : next.operator,
+                  updates.field && operatorLockedFields.has(updates.field)
+                    ? 'include'
+                    : next.operator,
               };
             } else if (updates.field) {
               next = {
@@ -1174,7 +1171,7 @@ const LeadHistoryPage = () => {
               };
             }
 
-            if (updates.operator && next.field !== 'membership') {
+            if (updates.operator && !operatorLockedFields.has(next.field)) {
               next = {
                 ...next,
                 operator: updates.operator,
@@ -1226,10 +1223,11 @@ const LeadHistoryPage = () => {
       if (field === 'program') {
         return value;
       }
-      if (field === 'eventType') {
-        return (
-          leadHistoryEventTypeLabels[value as LeadHistoryEventType] ?? value
-        );
+      if (field === 'leadEventType') {
+        return leadEventTypeLabelMap.get(value) ?? value;
+      }
+      if (field === 'marketingAgree') {
+        return marketingAgreeLabelMap.get(value) ?? value;
       }
       if (field === 'membership') {
         const option = membershipOptions.find((item) => item.value === value);
@@ -1237,7 +1235,7 @@ const LeadHistoryPage = () => {
       }
       return value;
     },
-    [leadEventLabelMap],
+    [leadEventLabelMap, leadEventTypeLabelMap],
   );
 
   const getOptionsForField = useCallback(
@@ -1248,12 +1246,18 @@ const LeadHistoryPage = () => {
       if (field === 'program') {
         return programOptions;
       }
+      if (field === 'leadEventType') {
+        return leadEventTypeOptions;
+      }
       if (field === 'membership') {
         return membershipOptions;
       }
-      return eventTypeOptions;
+      if (field === 'marketingAgree') {
+        return marketingAgreeOptions;
+      }
+      return [];
     },
-    [leadEventOptions, programOptions],
+    [leadEventOptions, programOptions, leadEventTypeOptions],
   );
 
   const FilterConditionEditor = ({
@@ -1283,7 +1287,7 @@ const LeadHistoryPage = () => {
             </MenuItem>
           ))}
         </TextField>
-        {node.field !== 'membership' && (
+        {!operatorLockedFields.has(node.field) && (
           <TextField
             select
             size="small"
@@ -1462,7 +1466,7 @@ const LeadHistoryPage = () => {
     );
   };
 
-  const columns = useMemo<ColumnDef<LeadHistoryRow>[]>(
+  const columns = useMemo<AccessorKeyColumnDef<LeadHistoryRow>[]>(
     () => [
       {
         accessorKey: 'displayPhoneNum',
@@ -1479,18 +1483,6 @@ const LeadHistoryPage = () => {
             const count = row.subRows?.length ?? 0;
             return (
               <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={row.getToggleExpandedHandler()}
-                  className="rounded flex h-6 w-6 items-center justify-center border border-gray-200 text-[10px] leading-none text-gray-600"
-                  aria-label={
-                    row.getIsExpanded()
-                      ? '전화번호 그룹 접기'
-                      : '전화번호 그룹 펼치기'
-                  }
-                >
-                  {row.getIsExpanded() ? '-' : '+'}
-                </button>
                 <span>{value}</span>
                 <span className="text-xs text-gray-400">({count}건)</span>
               </div>
@@ -1506,7 +1498,17 @@ const LeadHistoryPage = () => {
           headerClassName: 'min-w-[120px]',
           cellClassName: 'min-w-[120px]',
         },
-        aggregationFn: 'unique',
+        aggregationFn: (_, leafRows) => {
+          if (leafRows[0].original.displayPhoneNum === '미등록') {
+            return '-';
+          }
+          const names = new Set<string>(
+            leafRows
+              .map((row) => row.original.name)
+              .filter((name): name is string => !!name),
+          );
+          return Array.from(names).join(', ');
+        },
       },
 
       {
@@ -1516,6 +1518,22 @@ const LeadHistoryPage = () => {
           headerClassName: 'min-w-[220px]',
           cellClassName: 'min-w-[220px]',
         },
+      },
+      {
+        accessorKey: 'marketingAgree',
+        header: '마케팅 동의',
+        meta: {
+          headerClassName: 'min-w-[70px]',
+          cellClassName: 'min-w-[70px]',
+        },
+        cell: ({ row }) =>
+          renderGroupedLeaf(row, (original) => {
+            const value = original.marketingAgree;
+            if (value === true) return 'O';
+            if (value === false)
+              return <span className="text-gray-400">X</span>;
+            return '-';
+          }),
       },
       {
         accessorKey: 'createDate',
@@ -1538,10 +1556,9 @@ const LeadHistoryPage = () => {
           cellClassName: 'min-w-[140px]',
         },
         cell: ({ row }) =>
-          renderGroupedLeaf(row, (original) => {
-            const value = original.eventType;
-            return value ? leadHistoryEventTypeLabels[value] : '-';
-          }),
+          renderGroupedLeaf(row, (original) =>
+            formatNullableText(original.eventType),
+          ),
       },
       {
         accessorKey: 'title',
@@ -1726,77 +1743,53 @@ const LeadHistoryPage = () => {
   );
 
   const handleDownloadCsv = useCallback(() => {
-    if (!filteredRows.length) return;
+    if (!filteredRows.length) {
+      window.alert('다운로드할 리드 히스토리가 없습니다.');
+      return;
+    }
 
-    const exportColumns = columns.filter((column) => {
-      return (
-        Object.prototype.hasOwnProperty.call(column, 'accessorKey') &&
-        typeof (column as { accessorKey?: unknown }).accessorKey === 'string'
-      );
-    }) as Array<
-      ColumnDef<LeadHistoryRow> & {
-        accessorKey: keyof LeadHistoryRow;
+    const resolveHeaderLabel = (
+      column: AccessorKeyColumnDef<LeadHistoryRow>,
+    ) => {
+      const headerProp = column.header;
+
+      if (typeof headerProp === 'string' || typeof headerProp === 'number') {
+        return String(headerProp);
       }
-    >;
+      if (typeof headerProp === 'function') {
+        return column.id ?? column.accessorKey ?? '';
+      }
+      return column.id ?? column.accessorKey ?? '';
+    };
 
-    if (!exportColumns.length) return;
-
-    const headerRow = exportColumns
-      .map((column) => {
-        const headerProp = column.header;
-        let headerLabel: string;
-
-        if (typeof headerProp === 'string' || typeof headerProp === 'number') {
-          headerLabel = String(headerProp);
-        } else if (typeof headerProp === 'function') {
-          headerLabel = column.id ?? column.accessorKey ?? '';
-        } else {
-          headerLabel = column.id ?? column.accessorKey ?? '';
-        }
-
-        return escapeCsvValue(headerLabel);
-      })
+    const headerRow = columns
+      .map((column) => escapeCsvValue(resolveHeaderLabel(column)))
       .join(',');
 
-    const rows = filteredRows.map((row) => {
-      return exportColumns
-        .map((column) => {
-          const key = column.accessorKey;
-          let rawValue: unknown = row[key];
+    const groupedRowsForCsv = groupRowsByPhonePreservingOrder(filteredRows);
 
-          switch (key) {
-            case 'createDate':
-              rawValue = row.createDate
-                ? dayjs(row.createDate).format('YYYY.MM.DD.')
-                : '';
-              break;
-            case 'eventType':
-              rawValue = row.eventType
-                ? leadHistoryEventTypeLabels[row.eventType]
-                : '';
-              break;
-            case 'finalPrice':
-              rawValue =
-                row.finalPrice !== null && row.finalPrice !== undefined
-                  ? new Intl.NumberFormat('ko-KR').format(row.finalPrice)
-                  : '';
-              break;
-            default:
-              rawValue = rawValue ?? '';
-              break;
-          }
+    const formattedRows = groupedRowsForCsv.map((row) => {
+      return columns.map((column) => {
+        const key = column.accessorKey as keyof LeadHistoryRow;
 
-          const normalized =
-            rawValue === null || rawValue === undefined
-              ? ''
-              : typeof rawValue === 'string'
-                ? rawValue
-                : String(rawValue);
-
-          return escapeCsvValue(normalized);
-        })
-        .join(',');
+        switch (key) {
+          case 'createDate':
+            return row.createDate
+              ? dayjs(row.createDate).format('YYYY.MM.DD.')
+              : '';
+          case 'finalPrice':
+            return row.finalPrice !== null && row.finalPrice !== undefined
+              ? new Intl.NumberFormat('ko-KR').format(row.finalPrice)
+              : '';
+          default:
+            return row[key] ?? '';
+        }
+      });
     });
+
+    const rows = formattedRows.map((row) =>
+      row.map((value) => escapeCsvValue(value)).join(','),
+    );
 
     const csvBody = [headerRow, ...rows].join('\n');
     const blob = new Blob([`\uFEFF${csvBody}`], {
@@ -1814,14 +1807,6 @@ const LeadHistoryPage = () => {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   }, [columns, filteredRows]);
-
-  const handleExpandAll = useCallback(() => {
-    setExpanded(true);
-  }, [setExpanded]);
-
-  const handleCollapseAll = useCallback(() => {
-    setExpanded({});
-  }, [setExpanded]);
 
   const createLeadHistory = useCreateLeadHistoryMutation();
 
@@ -1867,25 +1852,7 @@ const LeadHistoryPage = () => {
         </div>
       </div>
 
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex gap-2">
-          <Button
-            size="small"
-            variant="text"
-            onClick={handleCollapseAll}
-            disabled={!filteredRows.length}
-          >
-            모두 접기
-          </Button>
-          <Button
-            size="small"
-            variant="text"
-            onClick={handleExpandAll}
-            disabled={!filteredRows.length}
-          >
-            모두 펼치기
-          </Button>
-        </div>
+      <div className="mb-4 flex flex-wrap items-center justify-end gap-3">
         <div className="flex gap-2">
           <Button
             variant="outlined"
@@ -1904,8 +1871,6 @@ const LeadHistoryPage = () => {
         data={filteredRows}
         columns={columns}
         isLoading={isLoading}
-        expanded={expanded}
-        onExpandedChange={setExpanded}
       />
 
       <CreateLeadHistoryDialog
@@ -1914,7 +1879,6 @@ const LeadHistoryPage = () => {
         onSubmit={handleCreate}
         isSubmitting={createLeadHistory.isPending}
         leadEvents={leadEventData?.leadEventList}
-        onValidationError={(message) => snackbar(message)}
       />
     </section>
   );

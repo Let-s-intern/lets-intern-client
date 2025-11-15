@@ -21,13 +21,7 @@ import {
   Typography,
 } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import {
-  ChangeEvent,
-  FormEvent,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react';
+import { ChangeEvent, FormEvent, useCallback, useMemo, useState } from 'react';
 
 const splitToList = (value: string) =>
   value
@@ -40,7 +34,8 @@ const splitToNumberList = (value: string) =>
     .map((item) => Number(item))
     .filter((num) => !Number.isNaN(num));
 
-const optionalArray = <T,>(value: T[]) => (value.length > 0 ? value : undefined);
+const optionalArray = <T,>(value: T[]) =>
+  value.length > 0 ? value : undefined;
 
 type LeadEventRow = LeadEvent & { id: number };
 
@@ -241,8 +236,8 @@ const LeadEventPage = () => {
         field: 'createDate',
         headerName: '생성일',
         width: 200,
-        valueFormatter: ({ value }) =>
-          value ? dayjs(value as string).format('YYYY/MM/DD HH:mm') : '-',
+        valueFormatter: (value) =>
+          value ? dayjs(value).format('YYYY.MM.DD HH:mm') : '-',
       },
       {
         field: 'actions',
@@ -270,7 +265,7 @@ const LeadEventPage = () => {
     <section className="p-5">
       <Heading className="mb-4">리드 이벤트 관리</Heading>
       <form
-        className="mb-4 flex flex-col gap-4 rounded bg-neutral-90 p-4"
+        className="rounded mb-4 flex flex-col gap-4 bg-neutral-90 p-4"
         onSubmit={handleFilterSubmit}
       >
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

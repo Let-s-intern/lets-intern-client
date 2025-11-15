@@ -192,7 +192,10 @@ export const usePatchApplicationSurveyMutation = ({
         successCallback();
       }
       client.invalidateQueries({
-        queryKey: [useUserQueryKey, useProgramApplicationQueryKey],
+        queryKey: [useUserQueryKey],
+      });
+      client.invalidateQueries({
+        queryKey: [useProgramApplicationQueryKey],
       });
     },
     onError: (error) => {
