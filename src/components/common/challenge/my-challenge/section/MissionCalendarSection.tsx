@@ -12,6 +12,8 @@ const MissionTitleContent = ({
   isBonusMission: boolean;
   isBonusMissionSubmitted: boolean;
 }) => {
+  if (todayTh === 99) return '인재풀 미션 완료하고 채용 제안을 받아보세요!';
+
   if (isBonusMission && !isBonusMissionSubmitted)
     return '보너스 미션 완료하고 리워드 챙겨가세요!';
 
