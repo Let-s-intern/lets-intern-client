@@ -70,7 +70,7 @@ const CareerPlanBody = ({
         <span className="font-regular text-sm text-[#4138A3]">
           희망 직군 / 직무
         </span>
-        <span className="text-sm text-neutral-0">
+        <span className="truncate text-sm text-neutral-0">
           {jobRoleText || '미설정'}
         </span>
       </div>
@@ -79,7 +79,7 @@ const CareerPlanBody = ({
       {/* 희망 산업 */}
       <div className="flex flex-col gap-1">
         <span className="font-regular text-sm text-[#4138A3]">희망 산업</span>
-        <span className="text-sm text-neutral-0">
+        <span className="truncate text-sm text-neutral-0">
           {wishIndustry || '미설정'}
         </span>
       </div>
@@ -88,7 +88,7 @@ const CareerPlanBody = ({
       {/* 희망 기업 */}
       <div className="flex flex-col gap-1">
         <span className="font-regular text-sm text-[#4138A3]">희망 기업</span>
-        <span className="text-sm text-neutral-0">
+        <span className="truncate text-sm text-neutral-0">
           {wishCompany || '미설정'}
         </span>
       </div>
