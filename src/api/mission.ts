@@ -81,3 +81,25 @@ export const usePostMissionTalentPoolMutation = () => {
     },
   });
 };
+
+/** POST [유저] 인재풀 미션 출석 생성 /api/v1/attendance/pool/{missionId} */
+export const usePostTalentPoolAttendanceMutation = (
+  missionId: number | undefined,
+) => {
+  return useMutation({
+    mutationFn: async (req: FormData) => {
+      await axios.post(`/attendance/pool/${missionId}`, req, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+    },
+    onError(error: AxiosError<ErrorResponse>) {
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        '알 수 없는 오류가 발생했습니다.';
+      alert('인재풀 제출에 실패했습니다: ' + errorMessage);
+    },
+  });
+};
