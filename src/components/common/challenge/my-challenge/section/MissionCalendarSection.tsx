@@ -1,5 +1,6 @@
 import { twMerge } from '@/lib/twMerge';
 import { Schedule } from '@/schema';
+import { TALENT_POOL_MISSION_TH } from '@/utils/constants';
 import React from 'react';
 import MissionCalendar from '../mission-calendar/MissionCalendar';
 
@@ -12,7 +13,8 @@ const MissionTitleContent = ({
   isBonusMission: boolean;
   isBonusMissionSubmitted: boolean;
 }) => {
-  if (todayTh === 99) return '인재풀 미션 완료하고 채용 제안을 받아보세요!';
+  if (todayTh === TALENT_POOL_MISSION_TH)
+    return '인재풀 미션 완료하고 채용 제안을 받아보세요!';
 
   if (isBonusMission && !isBonusMissionSubmitted)
     return '보너스 미션 완료하고 리워드 챙겨가세요!';
