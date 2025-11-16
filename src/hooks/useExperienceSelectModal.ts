@@ -18,7 +18,7 @@ interface Filters {
   category: string;
   activityType: string;
   year: string;
-  competency: string;
+  competency: string[];
 }
 
 interface UseExperienceSelectModalOptions {
@@ -58,7 +58,7 @@ const INITIAL_FILTERS: Filters = {
   category: '전체',
   activityType: '전체',
   year: '전체',
-  competency: '전체',
+  competency: [],
 };
 
 const DEFAULT_PAGE_SIZE = 5;
@@ -113,8 +113,8 @@ export const useExperienceSelectModal = ({
       request.years = [parseInt(filters.year)];
     }
 
-    if (filters.competency !== '전체') {
-      request.coreCompetencies = [filters.competency];
+    if (filters.competency.length > 0) {
+      request.coreCompetencies = filters.competency;
     }
 
     return request;

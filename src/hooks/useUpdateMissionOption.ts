@@ -12,14 +12,17 @@ export const useUpdateMissionOption = () => {
   const updateMissionOption = useCallback(
     async ({
       missionId,
+      missionType,
       challengeOptionId,
     }: {
       missionId: number;
+      missionType?: string | null;
       challengeOptionId: number;
     }) => {
       await Promise.all([
         patchMission.mutateAsync({
           missionId,
+          missionType,
           challengeOptionId,
         }),
         challengeOptionId === NO_OPTION_ID

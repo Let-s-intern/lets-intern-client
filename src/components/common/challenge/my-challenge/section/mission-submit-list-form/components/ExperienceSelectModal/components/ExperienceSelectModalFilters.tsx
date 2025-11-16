@@ -5,12 +5,13 @@ import { UserExperienceFilters } from '@/api/userExperienceSchema';
 import { useMemo } from 'react';
 import { activityTypeToLabel } from '../../../data';
 import { FilterDropdown } from './FilterDropdown';
+import { MultiFilterDropdown } from './MultiFilterDropdown';
 
 interface Filters {
   category: string;
   activityType: string;
   year: string;
-  competency: string;
+  competency: string[];
 }
 
 interface ExperienceSelectModalFiltersProps {
@@ -25,10 +26,28 @@ export const ExperienceSelectModalFilters = ({
   filterOptions,
 }: ExperienceSelectModalFiltersProps) => {
   const handleFilterChange = (filterType: keyof Filters, value: string) => {
-    onFiltersChange({
-      ...filters,
-      [filterType]: value,
-    });
+    if (filterType === 'competency') {
+      if (value === 'ALL') {
+        onFiltersChange({
+          ...filters,
+          [filterType]: [],
+        });
+      } else {
+        const currentValues = filters.competency;
+        const newValues = currentValues.includes(value)
+          ? currentValues.filter((v) => v !== value)
+          : [...currentValues, value];
+        onFiltersChange({
+          ...filters,
+          [filterType]: newValues,
+        });
+      }
+    } else {
+      onFiltersChange({
+        ...filters,
+        [filterType]: value,
+      });
+    }
   };
 
   // API 필터 옵션을 UI 옵션으로 변환
@@ -60,7 +79,7 @@ export const ExperienceSelectModalFilters = ({
     ];
 
     const competencyOptions = [
-      { value: '전체', label: '전체' },
+      { value: 'ALL', label: '전체' },
       ...(filterOptions?.availableCoreCompetencies.map((comp) => ({
         value: comp,
         label: comp,
@@ -107,11 +126,17 @@ export const ExperienceSelectModalFilters = ({
         />
 
         {/* 핵심 역량 필터 */}
-        <FilterDropdown
+        <MultiFilterDropdown
           labelPrefix="핵심 역량"
           options={filterOptionsFormatted.competency}
-          selectedValue={filters.competency}
+          selectedValues={filters.competency}
           onSelect={(value: string) => handleFilterChange('competency', value)}
+          onReset={() =>
+            onFiltersChange({
+              ...filters,
+              competency: [],
+            })
+          }
           width="min-w-[8.25rem]"
         />
       </div>
