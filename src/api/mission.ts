@@ -2,7 +2,7 @@
 
 import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { PatchMissionReq } from './missionSchema';
 
@@ -57,6 +57,53 @@ export const useSubmitMissionBlogBonus = () => {
         error.message ||
         '알 수 없는 오류가 발생했습니다.';
       alert('블로그 보너스 제출에 실패했습니다: ' + errorMessage);
+    },
+  });
+};
+
+/** POST [유저] 인재풀 미션 제출 /api/v1/user-document */
+export const usePostMissionTalentPoolMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (req: FormData) => {
+      const res = await axios.post(`/user-document`, req, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['useGetUserDocumentListQueryKey'],
+      });
+    },
+  });
+};
+
+/** POST [유저] 인재풀 미션 출석 생성 /api/v1/attendance/pool/{missionId} */
+export const usePostTalentPoolAttendanceMutation = () => {
+  return useMutation({
+    mutationFn: async ({
+      missionId,
+      req,
+    }: {
+      missionId: number;
+      req: FormData;
+    }) => {
+      await axios.post(`/attendance/pool/${missionId}`, req, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+    },
+    onError(error: AxiosError<ErrorResponse>) {
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        '알 수 없는 오류가 발생했습니다.';
+      alert('인재풀 제출에 실패했습니다: ' + errorMessage);
     },
   });
 };

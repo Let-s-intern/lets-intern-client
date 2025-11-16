@@ -25,12 +25,13 @@ import { MenuItem, SelectChangeEvent } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 const NO_MENTOR_ID = 0;
 
 export interface AttendanceRow {
   id: number | string;
+  userId?: number | null; // userId 추가
   mentorId: number | null;
   mentorName: string | null;
   missionTitle: string;
@@ -76,7 +77,6 @@ const MentorRenderCell = (
 
   const { data: isAdmin } = useIsAdminQuery();
   const { data } = useAdminChallengeMentorListQuery(programId);
-
   const handleChange = async (e: SelectChangeEvent<number>) => {
     const attendanceId = params.row.id;
     await patchAttendance({
@@ -147,83 +147,6 @@ const FeedbackStatusRenderCell = (
   );
 };
 
-const columns: GridColDef<AttendanceRow>[] = [
-  {
-    field: 'mentorId',
-    headerName: '담당 멘토',
-    type: 'number',
-    width: 120,
-    renderCell: MentorRenderCell,
-  },
-  {
-    field: 'missionTitle',
-    headerName: '미션 명',
-    width: 160,
-  },
-  {
-    field: 'missionRound',
-    headerName: '미션 회차',
-    width: 80,
-  },
-  {
-    field: 'name',
-    headerName: '이름',
-    width: 100,
-  },
-  {
-    field: 'major',
-    headerName: '전공',
-    width: 150,
-  },
-  {
-    field: 'wishCompany',
-    headerName: '희망 기업',
-    width: 120,
-  },
-  {
-    field: 'wishJob',
-    headerName: '희망 직무',
-    width: 150,
-  },
-  {
-    field: 'link',
-    headerName: '미션 제출 링크',
-    width: 120,
-    renderCell: (params: GridRenderCellParams<AttendanceRow, string>) => (
-      <Link
-        href={params.value || '#'}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-primary underline"
-      >
-        미션 링크
-      </Link>
-    ),
-  },
-  {
-    field: 'feedbackPageLink',
-    headerName: '피드백 페이지',
-    width: 120,
-    renderCell: (params: GridRenderCellParams<AttendanceRow, string>) => (
-      <Link
-        href={params.value || '#'}
-        className="text-primary underline"
-        onClick={() => {
-          localStorage.setItem('attendance', JSON.stringify(params.row)); // 선택한 행 정보 저장
-        }}
-      >
-        바로가기
-      </Link>
-    ),
-  },
-  {
-    field: 'feedbackStatus',
-    headerName: '진행 상태',
-    width: 120,
-    renderCell: FeedbackStatusRenderCell,
-  },
-];
-
 const useRoleBasedAttendanceData = () => {
   const { missionId, programId } = useParams<{
     missionId: string;
@@ -254,7 +177,6 @@ const useFeedbackParticipantRows = () => {
   const { missionId, programId } = useParams();
 
   const { data, isLoading } = useRoleBasedAttendanceData();
-
   const [rows, setRows] = useState<AttendanceRow[]>([]);
 
   const selectedMission = JSON.parse(localStorage.getItem('mission') || '{}');
@@ -285,7 +207,94 @@ const useFeedbackParticipantRows = () => {
 };
 
 export default function FeedbackParticipantPage() {
+  const { missionId, programId } = useParams<{
+    missionId: string;
+    programId: string;
+  }>();
   const rows = useFeedbackParticipantRows();
+
+  const columns: GridColDef<AttendanceRow>[] = useMemo(
+    () => [
+      {
+        field: 'mentorId',
+        headerName: '담당 멘토',
+        type: 'number',
+        width: 120,
+        renderCell: MentorRenderCell,
+      },
+      {
+        field: 'missionTitle',
+        headerName: '미션 명',
+        width: 160,
+      },
+      {
+        field: 'missionRound',
+        headerName: '미션 회차',
+        width: 80,
+      },
+      {
+        field: 'name',
+        headerName: '이름',
+        width: 100,
+      },
+      {
+        field: 'major',
+        headerName: '전공',
+        width: 150,
+      },
+      {
+        field: 'wishCompany',
+        headerName: '희망 기업',
+        width: 120,
+      },
+      {
+        field: 'wishJob',
+        headerName: '희망 직무',
+        width: 150,
+      },
+      {
+        field: 'link',
+        headerName: '미션 제출 링크',
+        width: 120,
+        renderCell: (params: GridRenderCellParams<AttendanceRow, string>) => (
+          <Link
+            href={
+              params.value ||
+              `/admin/challenge/operation/${programId}/attendances/${missionId}/${params.row.userId}`
+            }
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
+            미션 링크
+          </Link>
+        ),
+      },
+      {
+        field: 'feedbackPageLink',
+        headerName: '피드백 페이지',
+        width: 120,
+        renderCell: (params: GridRenderCellParams<AttendanceRow, string>) => (
+          <Link
+            href={params.value || '#'}
+            className="text-primary underline"
+            onClick={() => {
+              localStorage.setItem('attendance', JSON.stringify(params.row)); // 선택한 행 정보 저장
+            }}
+          >
+            바로가기
+          </Link>
+        ),
+      },
+      {
+        field: 'feedbackStatus',
+        headerName: '진행 상태',
+        width: 120,
+        renderCell: FeedbackStatusRenderCell,
+      },
+    ],
+    [missionId, programId],
+  );
 
   return (
     <DataGrid

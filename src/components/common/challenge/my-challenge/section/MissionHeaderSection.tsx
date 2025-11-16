@@ -20,9 +20,8 @@ const MissionHeaderSection = ({
   missionStartDate,
 }: MissionHeaderSectionProps) => {
   const getMissionTitle = () => {
-    if (selectedMissionTh >= 100) {
-      return '보너스 미션';
-    }
+    if (selectedMissionTh === 100) return '보너스 미션';
+    if (selectedMissionTh === 99) return '인재풀 미션';
     return `${selectedMissionTh}회차 미션`;
   };
 

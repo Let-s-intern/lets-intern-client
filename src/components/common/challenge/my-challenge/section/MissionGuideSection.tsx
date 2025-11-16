@@ -1,9 +1,11 @@
 import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { useMissionStore } from '@/store/useMissionStore';
+import { TALENT_POOL_MISSION_TH } from '@/utils/constants';
 import { clsx } from 'clsx';
 import MissionGuideBonusSection from './MissionGuideBonusSection';
 import MissionGuideRegularSection from './MissionGuideRegularSection';
+import MissionGuideTalentPoolSection from './MissionGuideTalentPoolSection';
 import MissionGuideZeroSection from './MissionGuideZeroSection';
 
 interface MissionGuideSectionProps {
@@ -17,6 +19,7 @@ const MissionGuideSection = ({
 }: MissionGuideSectionProps) => {
   const { selectedMissionTh, selectedMissionId } = useMissionStore();
   const {
+    schedules,
     submittedMissions,
     remainingMissions,
     absentMissions,
@@ -25,6 +28,19 @@ const MissionGuideSection = ({
 
   // 선택된 미션의 ID 찾기
   const getMissionId = () => {
+    // selectedMissionId를 최우선으로 사용 (같은 th를 가진 여러 미션 구분)
+    if (selectedMissionId && selectedMissionId !== 0) {
+      return selectedMissionId;
+    }
+
+    // schedules에서 th와 missionType으로 찾기 (같은 th를 가진 여러 미션 구분)
+    const scheduleByTh = schedules.find(
+      (schedule) => schedule.missionInfo.th === selectedMissionTh,
+    );
+    if (scheduleByTh) {
+      return scheduleByTh.missionInfo.id;
+    }
+
     // 제출된 미션에서 찾기
     const submittedMission = submittedMissions.find(
       (mission) => mission.th === selectedMissionTh,
@@ -69,6 +85,17 @@ const MissionGuideSection = ({
     if (selectedMissionTh >= 100) {
       return (
         <MissionGuideBonusSection
+          todayTh={todayTh}
+          missionData={missionData}
+          selectedMissionTh={selectedMissionTh}
+          isLoading={isLoading}
+        />
+      );
+    }
+
+    if (selectedMissionTh === TALENT_POOL_MISSION_TH) {
+      return (
+        <MissionGuideTalentPoolSection
           todayTh={todayTh}
           missionData={missionData}
           selectedMissionTh={selectedMissionTh}

@@ -14,6 +14,8 @@ import {
   isMentorSchema,
   mentorListSchema,
   userAdminType,
+  userDocumentListSchema,
+  UserExperience,
 } from './userSchema';
 
 export const UseMentorListQueryKey = 'useMentorListQueryKey';
@@ -278,3 +280,40 @@ export const useIsAdminQuery = () => {
     },
   });
 };
+
+/** GET [유저] 서류(자소서, 포트폴리오 등) 조회 /api/v1/user-document */
+export const UseGetUserDocumentListQueryKey = 'useGetUserDocumentListQueryKey';
+export const useGetUserDocumentListQuery = () => {
+  return useQuery({
+    queryKey: [UseGetUserDocumentListQueryKey],
+    queryFn: async () => {
+      const res = await axios.get('/user-document');
+      return userDocumentListSchema.parse(res.data.data);
+    },
+  });
+};
+
+/** POST [유저] 경험 정리 생성 /api/v1/user-experience */
+export const usePostUserExperienceMutation = () => {
+  return useMutation({
+    mutationFn: async (data: UserExperience) => {
+      const res = await axios.post('/user-experience', data);
+      // return userExperienceInfoSchema.parse(res.data.data);
+      return res.data.data;
+    },
+  });
+};
+
+/** PATCH [유저] 경험 정리 수정 /api/v1/user-experience/:id */
+export const usePatchUserExperienceMutation = () => {
+  return useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: UserExperience }) => {
+      const res = await axios.patch(`/user-experience/${id}`, data);
+      // return userExperienceInfoSchema.parse(res.data.data.userExperience);
+      return res.data.data;
+    },
+  });
+};
+
+/** GET [유저] 경험 정리 조회 /api/v1/user-experience */
+/** DELETE [유저] 경험 정리 삭제 /api/v1/user-experience */

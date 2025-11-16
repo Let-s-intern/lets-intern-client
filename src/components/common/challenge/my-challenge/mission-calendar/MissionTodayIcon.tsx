@@ -1,6 +1,6 @@
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { Schedule, ScheduleMission } from '@/schema';
-import { BONUS_MISSION_TH } from '@/utils/constants';
+import { BONUS_MISSION_TH, TALENT_POOL_MISSION_TH } from '@/utils/constants';
 import { missionSubmitToBadge } from '@/utils/convert';
 import clsx from 'clsx';
 
@@ -53,9 +53,11 @@ const MissionTodayIcon = ({
       >
         {mission.th === BONUS_MISSION_TH
           ? '보너스'
-          : isWaiting
-            ? `제출`
-            : `${mission.th}회차`}
+          : mission.th === TALENT_POOL_MISSION_TH
+            ? '인재풀'
+            : isWaiting
+              ? `제출`
+              : `${mission.th}회차`}
         <br />
         {text}
       </div>

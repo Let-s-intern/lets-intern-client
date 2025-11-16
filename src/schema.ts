@@ -223,6 +223,10 @@ export const MissionStatusEnum = z.enum([
   'REFUND_DONE',
 ]);
 
+export const MissionTypeEnum = z
+  .enum(['OT', 'POOL', 'BONUS', 'EXPERIENCE_1', 'EXPERIENCE_2'])
+  .nullable();
+
 export type MissionStatus = z.infer<typeof MissionStatusEnum>;
 
 export const challengePriceInfoSchema = z.object({
@@ -679,7 +683,8 @@ export const missionAdmin = z
       z.object({
         id: z.number(),
         th: z.number(),
-        missionType: z.string(),
+        missionTag: z.string(),
+        missionType: MissionTypeEnum,
         missionStatusType: MissionStatusEnum,
         attendanceCount: z.number(),
         lateAttendanceCount: z.number(),
@@ -760,6 +765,7 @@ export const attendances = z
       z.object({
         attendance: z.object({
           id: z.number(),
+          userId: z.number().nullable().optional(),
           name: z.string().nullable().optional(),
           email: z.string().nullable().optional(),
           status: AttendanceStatusEnum.nullable().optional(),
@@ -929,6 +935,7 @@ const postMissionIdReq = z.object({
   startDate: z.string(),
   endDate: z.string(),
   missionTemplateId: z.number().or(z.null()),
+  missionType: MissionTypeEnum,
   essentialContentsIdList: z.array(z.number()),
   additionalContentsIdList: z.array(z.number()),
 });
@@ -944,6 +951,7 @@ const patchMissionIdReq = z.object({
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   missionTemplateId: z.number().optional(),
+  missionType: MissionTypeEnum.optional(),
   essentialContentsIdList: z.array(z.number()).optional(),
   additionalContentsIdList: z.array(z.number()).optional(),
 });
@@ -1144,6 +1152,7 @@ export const challengeSchedule = z
           startDate: z.string().nullable(),
           endDate: z.string().nullable(),
           status: MissionStatusEnum.nullable(),
+          missionType: MissionTypeEnum.optional(),
         }),
         attendanceInfo: z.object({
           submitted: z.boolean().nullable(),
@@ -1156,6 +1165,7 @@ export const challengeSchedule = z
           feedbackStatus: AttendanceFeedbackStatusEnum.nullable(),
           accountType: z.string().nullish(),
           accountNum: z.string().nullish(),
+          submittedUserExperienceIds: z.array(z.number()).nullable(),
         }),
       }),
     ),
@@ -1275,6 +1285,19 @@ export const userChallengeMissionWithAttendance = z
         accountNum: z.string().nullish(),
       })
       .nullable(),
+    userDocumentInfos: z
+      .array(
+        z.object({
+          userDocumentId: z.number(),
+          userDocumentType: reportTypeSchema,
+          fileUrl: z.string().nullable(),
+          fileName: z.string().nullable(),
+          wishField: z.string().nullable(),
+          wishJob: z.string().nullable(),
+          wishIndustry: z.string().nullable(),
+        }),
+      )
+      .nullable(),
   })
   .transform((data) => {
     return {
@@ -1284,6 +1307,7 @@ export const userChallengeMissionWithAttendance = z
         endDate: dayjs(data.missionInfo.endDate),
       },
       attendanceInfo: data.attendanceInfo,
+      userDocumentInfos: data.userDocumentInfos,
     };
   });
 

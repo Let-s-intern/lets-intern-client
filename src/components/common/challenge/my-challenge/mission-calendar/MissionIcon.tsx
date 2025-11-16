@@ -2,7 +2,7 @@ import { Schedule } from '@/schema';
 import clsx from 'clsx';
 
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
-import { BONUS_MISSION_TH } from '@/utils/constants';
+import { BONUS_MISSION_TH, TALENT_POOL_MISSION_TH } from '@/utils/constants';
 import { missionSubmitToBadge } from '@/utils/convert';
 
 interface Props {
@@ -16,11 +16,13 @@ const MissionIcon = ({ className, schedule, isDone }: Props) => {
 
   const mission = schedule.missionInfo;
   const attendance = schedule.attendanceInfo;
-  const isZerothMissionPassed =
-    mission.th === 0 && attendance.result === 'PASS';
+  const isSpecialMissionPassed =
+    (mission.th === 0 || mission.th === 99) && attendance.result === 'PASS';
 
   const { text, style, icon } = missionSubmitToBadge({
-    status: isZerothMissionPassed ? 'PRESENT' : (attendance.status ?? 'ABSENT'),
+    status: isSpecialMissionPassed
+      ? 'PRESENT'
+      : (attendance.status ?? 'ABSENT'),
     result: attendance.result,
     challengeEndDate: currentChallenge?.endDate,
   });
@@ -54,9 +56,11 @@ const MissionIcon = ({ className, schedule, isDone }: Props) => {
       >
         {mission.th === BONUS_MISSION_TH
           ? '보너스'
-          : isWaiting
-            ? `제출`
-            : `${mission.th}회차`}
+          : mission.th === TALENT_POOL_MISSION_TH
+            ? '인재풀'
+            : isWaiting
+              ? `제출`
+              : `${mission.th}회차`}
         <br />
         {text}
       </div>
