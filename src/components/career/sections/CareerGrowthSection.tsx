@@ -6,12 +6,13 @@ const CareerGrowthSection = () => {
   return (
     <CareerCard
       title="커리어 성장"
+      labelOnClick={() => router.push('/mypage/application')}
       body={
         <CareerCard.Empty
           description="참여 중인 프로그램이 없어요."
           buttonText="프로그램 둘러보기"
-          buttonHref="/programs"
-          onClick={() => router.push('/programs')}
+          buttonHref="/program"
+          onClick={() => router.push('/program')}
         />
       }
     />

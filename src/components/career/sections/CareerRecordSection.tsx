@@ -6,6 +6,7 @@ const CareerRecordSection = () => {
   return (
     <CareerCard
       title="커리어 기록"
+      labelOnClick={() => router.push('/mypage/career/record')}
       body={
         <CareerCard.Empty
           description="아직 등록된 커리어가 없어요"

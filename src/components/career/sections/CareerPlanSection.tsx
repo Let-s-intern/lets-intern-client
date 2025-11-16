@@ -6,6 +6,7 @@ const CareerPlanSection = () => {
   return (
     <CareerCard
       title="커리어 계획"
+      labelOnClick={() => router.push('/mypage/career/plan')}
       body={
         <CareerCard.Empty
           description="아직 커리어 방향을 설정하지 않았어요."
