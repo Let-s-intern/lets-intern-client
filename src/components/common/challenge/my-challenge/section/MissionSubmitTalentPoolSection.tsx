@@ -35,8 +35,7 @@ const MissionSubmitTalentPoolSection = ({
   const [selectedPositions, setSelectedPositions] = useState<string[]>([]);
   const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
 
-  const submitTalentPoolAttendance =
-    usePostTalentPoolAttendanceMutation(missionId);
+  const submitTalentPoolAttendance = usePostTalentPoolAttendanceMutation();
   const { data: missionData, refetch: refetchMissionData } =
     useChallengeMissionAttendanceInfoQuery({
       challengeId: currentChallenge?.id,
@@ -110,7 +109,10 @@ const MissionSubmitTalentPoolSection = ({
     });
 
     try {
-      await submitTalentPoolAttendance.mutateAsync(formData);
+      await submitTalentPoolAttendance.mutateAsync({
+        missionId,
+        req: formData,
+      });
       await refetchMissionData();
       await refetchSchedules?.();
       setShowToast(true);

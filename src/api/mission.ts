@@ -83,11 +83,15 @@ export const usePostMissionTalentPoolMutation = () => {
 };
 
 /** POST [유저] 인재풀 미션 출석 생성 /api/v1/attendance/pool/{missionId} */
-export const usePostTalentPoolAttendanceMutation = (
-  missionId: number | undefined,
-) => {
+export const usePostTalentPoolAttendanceMutation = () => {
   return useMutation({
-    mutationFn: async (req: FormData) => {
+    mutationFn: async ({
+      missionId,
+      req,
+    }: {
+      missionId: number;
+      req: FormData;
+    }) => {
       await axios.post(`/attendance/pool/${missionId}`, req, {
         headers: {
           'Content-Type': 'multipart/form-data',
