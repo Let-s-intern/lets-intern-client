@@ -167,7 +167,7 @@ const userSchema = z.object({
 
 export type User = z.infer<typeof userSchema>;
 
-const useUserQueryKey = 'useUserQueryKey';
+export const useUserQueryKey = 'useUserQueryKey';
 
 export const useUserQuery = ({
   ...options

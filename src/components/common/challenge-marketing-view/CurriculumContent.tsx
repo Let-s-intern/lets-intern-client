@@ -4,11 +4,11 @@ import { ReactNode } from 'react';
 
 export const curriculums = [
   {
-    date: '6/21-28',
-    title: '+ 캐시노트 현직자 강연',
+    date: '11/3-9',
+    title: '+ 클래스101 현직자 강연',
     detail: [
       {
-        date: '6/21-23',
+        date: '11/3-5',
         title: '1회차 직무 탐색',
         content: (
           <Description>
@@ -17,7 +17,7 @@ export const curriculums = [
         ),
       },
       {
-        date: '6/24-27',
+        date: '11/6-9',
         title: '2회차 경험 정리',
         content: (
           <Description>
@@ -26,7 +26,7 @@ export const curriculums = [
         ),
       },
       {
-        date: '6/25',
+        date: '11/5',
         title: '역량 더하기 | 렛츠커리어 LIVE 클래스',
         content: (
           <Highlight
@@ -44,19 +44,17 @@ export const curriculums = [
         ),
       },
       {
-        date: '6/28',
+        date: '11/8',
         title: '현직자에게 듣는 합격하는 서류의 A-Z',
         content: (
           <Highlight
-            className="bg-[#E9F4FF] md:mt-0"
-            companyImg="cashnote.png"
-            role="캐시노트 그로스 마케터"
-            date="| 6/28 저녁 8시 (온라인)"
+            companyImg="class101.png"
+            role="Class 101 콘텐츠 마케터"
+            date="| 11/8 저녁 8시 (온라인) "
             description={
               <>
-                현직 마케터가 들려주는 그로스 마케팅의 A-Z,
-                <br className="hidden md:block" /> 합격하는 서류의 공통점을
-                소개합니다.
+                현직 콘텐츠 마케터와 함께 <br className="hidden md:block" />
+                콘텐츠 마케터에게 가장 필요한 경험과 역량을 살펴봅니다.
               </>
             }
           />
@@ -65,11 +63,11 @@ export const curriculums = [
     ],
   },
   {
-    date: '6/29-7/5',
-    title: '+ 클래스101 현직자 강연',
+    date: '11/10-16',
+    title: '+ 캐시노트 현직자 강연',
     detail: [
       {
-        date: '6/28-6/30',
+        date: '11/10-12',
         title: '3회차 경험 분석',
         content: (
           <Description>
@@ -80,7 +78,7 @@ export const curriculums = [
         ),
       },
       {
-        date: '7/1-7/4',
+        date: '11/13-17',
         title: '4회차 컨셉 잡기',
         content: (
           <Description>
@@ -89,7 +87,7 @@ export const curriculums = [
         ),
       },
       {
-        date: '7/2',
+        date: '11/12',
         title: '역량 더하기 | 렛츠커리어 LIVE 클래스',
         content: (
           <Highlight
@@ -107,17 +105,19 @@ export const curriculums = [
         ),
       },
       {
-        date: '7/5',
+        date: '11/15',
         title: '현직자에게 듣는 합격하는 서류의 A-Z',
         content: (
           <Highlight
-            companyImg="class101.png"
-            role="Class 101 콘텐츠 마케터"
-            date="| 7/5 저녁 8시 (온라인) "
+            className="bg-[#E9F4FF] md:mt-0"
+            companyImg="cashnote.png"
+            role="캐시노트 그로스 마케터"
+            date="| 11/15 저녁 8시 (온라인)"
             description={
               <>
-                현직 콘텐츠 마케터와 함께 <br className="hidden md:block" />
-                콘텐츠 마케터에게 가장 필요한 경험과 역량을 살펴봅니다.
+                현직 마케터가 들려주는 그로스 마케팅의 A-Z,
+                <br className="hidden md:block" /> 합격하는 서류의 공통점을
+                소개합니다.
               </>
             }
           />
@@ -126,11 +126,11 @@ export const curriculums = [
     ],
   },
   {
-    date: '7/6-12',
-    title: '+ 야놀자 현직자 강연',
+    date: '11/17-23',
+    title: '+ 대학내일 현직자 강연',
     detail: [
       {
-        date: '7/5-7/7',
+        date: '11/17-19',
         title: '5회차 이력서 작성',
         content: (
           <Description>
@@ -139,7 +139,7 @@ export const curriculums = [
         ),
       },
       {
-        date: '7/8-7/11',
+        date: '11/20-23',
         title: '6회차 자기소개서 작성',
         content: (
           <Description>
@@ -148,7 +148,7 @@ export const curriculums = [
         ),
       },
       {
-        date: '7/9',
+        date: '11/19',
         title: '역량 더하기 | 렛츠커리어 LIVE 클래스',
         content: (
           <Highlight
@@ -166,18 +166,18 @@ export const curriculums = [
         ),
       },
       {
-        date: '7/12',
+        date: '11/22',
         title: '현직자에게 듣는 합격하는 서류의 A-Z',
         content: (
           <Highlight
-            className="bg-[#FFF0F4]"
-            companyImg="yanolja.png"
-            role="야놀자 그로스 마케터"
-            date="| 7/12 저녁 8시 (온라인)"
+            className="bg-[#FFF3F2]"
+            companyImg="corpuniv.png"
+            role="대학내일 AE"
+            date="| 11/22 저녁 8시 (온라인)"
             description={
               <>
-                IT 스타트업 현직 마케터와 함께 <br />
-                그로스 마케터에게 가장 필수적인 경험과 역량을 살펴봅니다.
+                대학내일ES, 이런 포트폴리오를 기다려요. <br />
+                AE 취업을 위한 나만의 무기를 함께 찾아봅니다.
               </>
             }
           />
@@ -186,11 +186,11 @@ export const curriculums = [
     ],
   },
   {
-    date: '7/13-19',
-    title: '+ 대학내일 현직자 강연',
+    date: '11/24-30',
+    title: '+ 야놀자 현직자 강연',
     detail: [
       {
-        date: '7/12-7/14',
+        date: '11/24-26',
         title: '7회차 포트폴리오 기초',
         content: (
           <Description>
@@ -199,7 +199,7 @@ export const curriculums = [
         ),
       },
       {
-        date: '7/15-7/18',
+        date: '11/27-30',
         title: '8회차 포트폴리오 완성',
         content: (
           <Description>
@@ -208,7 +208,7 @@ export const curriculums = [
         ),
       },
       {
-        date: '7/16',
+        date: '11/26',
         title: '역량 더하기 | 렛츠커리어 LIVE 클래스',
         content: (
           <Highlight
@@ -227,18 +227,18 @@ export const curriculums = [
         ),
       },
       {
-        date: '7/19',
+        date: '11/29',
         title: '현직자에게 듣는 합격하는 서류의 A-Z',
         content: (
           <Highlight
-            className="bg-[#FFF3F2]"
-            companyImg="corpuniv.png"
-            role="대학내일 AE"
-            date="| 7/19 저녁 8시 (온라인) "
+            className="bg-[#FFF0F4]"
+            companyImg="yanolja.png"
+            role="야놀자 CRM 마케터"
+            date="| 11/29 저녁 8시 (온라인)"
             description={
               <>
-                대학내일ES, 이런 포트폴리오를 기다려요. <br />
-                AE 취업을 위한 나만의 무기를 함께 찾아봅니다.
+                IT 스타트업 현직 마케터와 함께 <br />
+                CRM 마케터에게 가장 필수적인 경험과 역량을 살펴봅니다.
               </>
             }
           />

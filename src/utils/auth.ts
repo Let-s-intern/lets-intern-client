@@ -42,6 +42,7 @@ async function requestRefresh(refreshToken: string): Promise<TokenSet | null> {
   }
 
   if (!response.ok) {
+    console.error('[letscareer] Token refresh failed:', payload);
     const error = new Error(`refresh-${response.status}`);
     (error as Error & { status?: number }).status = response.status;
     throw error;

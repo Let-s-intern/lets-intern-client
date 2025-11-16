@@ -106,6 +106,19 @@ const navData = [
     ],
   },
   {
+    title: '리드 관리',
+    itemList: [
+      {
+        name: '리드 히스토리',
+        url: '/admin/leads/history',
+      },
+      {
+        name: '리드 이벤트',
+        url: '/admin/leads/events',
+      },
+    ],
+  },
+  {
     title: '서류 진단',
     itemList: [
       {
