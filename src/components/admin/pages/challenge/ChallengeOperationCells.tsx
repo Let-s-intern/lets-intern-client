@@ -46,6 +46,7 @@ const ChallengeOptionRenderCell = (
     const challengeOptionId = Number(e.target.value);
     await updateMissionOption({
       missionId: params.row.id,
+      missionType: params.row.missionType,
       challengeOptionId,
     });
   };
