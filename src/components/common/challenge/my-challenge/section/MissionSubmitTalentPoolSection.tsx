@@ -30,6 +30,7 @@ const MissionSubmitTalentPoolSection = ({
   missionId,
   attendanceInfo,
 }: MissionSubmitTalentPoolSectionProps) => {
+  const [isDocSubmitting, setIsDocSubmitting] = useState(false);
   const { currentChallenge, refetchSchedules } = useCurrentChallenge();
   const [selectedField, setSelectedField] = useState<string | null>(null);
   const [selectedPositions, setSelectedPositions] = useState<string[]>([]);
@@ -75,6 +76,7 @@ const MissionSubmitTalentPoolSection = ({
       console.error('미션 ID가 없습니다.');
       return;
     }
+    setIsDocSubmitting(true);
 
     const filesToUpload = [
       { type: 'RESUME', file: uploadedFiles.resume },
@@ -119,6 +121,8 @@ const MissionSubmitTalentPoolSection = ({
     } catch (error) {
       console.error('인재풀 미션 제출 중 오류 발생:', error);
       return;
+    } finally {
+      setIsDocSubmitting(false);
     }
   };
 
@@ -202,7 +206,7 @@ const MissionSubmitTalentPoolSection = ({
           className="mb-12"
           uploadedFiles={uploadedFiles}
           onFilesChange={handleFilesChange}
-          isSubmitted={isSubmitted}
+          isSubmitted={isSubmitted || isDocSubmitting}
         />
 
         {/* 개인정보 수집 활용 동의서 */}
@@ -218,7 +222,7 @@ const MissionSubmitTalentPoolSection = ({
             hasContent={canSubmit}
             onButtonClick={handleSubmit}
             isEditing={false}
-            disabled={isSubmitted}
+            disabled={isSubmitted || isDocSubmitting}
           />
         )}
 
