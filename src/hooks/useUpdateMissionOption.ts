@@ -16,7 +16,7 @@ export const useUpdateMissionOption = () => {
       challengeOptionId,
     }: {
       missionId: number;
-      missionType: string | null;
+      missionType?: string | null;
       challengeOptionId: number;
     }) => {
       await Promise.all([
