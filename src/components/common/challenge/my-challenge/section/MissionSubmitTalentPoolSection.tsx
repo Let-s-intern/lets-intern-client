@@ -1,6 +1,5 @@
-import { useSubmitMission } from '@/api/attendance';
 import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
-import { usePostMissionTalentPoolMutation } from '@/api/mission';
+import { usePostTalentPoolAttendanceMutation } from '@/api/mission';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import { Schedule } from '@/schema';
@@ -31,13 +30,13 @@ const MissionSubmitTalentPoolSection = ({
   missionId,
   attendanceInfo,
 }: MissionSubmitTalentPoolSectionProps) => {
+  const [isDocSubmitting, setIsDocSubmitting] = useState(false);
   const { currentChallenge, refetchSchedules } = useCurrentChallenge();
   const [selectedField, setSelectedField] = useState<string | null>(null);
   const [selectedPositions, setSelectedPositions] = useState<string[]>([]);
   const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
 
-  const submitMissionTalentPool = usePostMissionTalentPoolMutation();
-  const submitAttendance = useSubmitMission();
+  const submitTalentPoolAttendance = usePostTalentPoolAttendanceMutation();
   const { data: missionData, refetch: refetchMissionData } =
     useChallengeMissionAttendanceInfoQuery({
       challengeId: currentChallenge?.id,
@@ -77,65 +76,53 @@ const MissionSubmitTalentPoolSection = ({
       console.error('미션 ID가 없습니다.');
       return;
     }
+    setIsDocSubmitting(true);
 
-    let attendanceId: number | undefined;
-    try {
-      // 단순 출석 체크용
-      const attendanceResponse = await submitAttendance.mutateAsync({
-        missionId,
-        link: null,
-        review: null,
-      });
-      attendanceId = attendanceResponse.data.data.attendanceId;
-    } catch (error) {
-      console.error('출석 체크 중 오류 발생:', error);
-      return;
-    }
-
-    // 새롭게 업로드된 파일들만 필터링
     const filesToUpload = [
       { type: 'RESUME', file: uploadedFiles.resume },
       { type: 'PORTFOLIO', file: uploadedFiles.portfolio },
       { type: 'PERSONAL_STATEMENT', file: uploadedFiles.personal_statement },
     ].filter((item) => item.file);
 
-    // 각 파일을 formData 형식으로 변환
-    const formDataList = filesToUpload.map(({ type, file }) => {
-      const formData = new FormData();
-      const isFileObject = file instanceof File;
+    const userDocumentList = filesToUpload.map(({ type, file }) => ({
+      documentType: type,
+      fileUrl: file instanceof File ? null : file,
+      wishField: selectedField,
+      wishJob: selectedPositions.join(','),
+      wishIndustry: selectedIndustries.join(','),
+    }));
 
-      const requestData = {
-        documentType: type,
-        fileUrl: isFileObject ? null : file,
-        attendanceId,
-        wishField: selectedField,
-        wishJob: selectedPositions.join(','),
-        wishIndustry: selectedIndustries.join(','),
-      };
+    // File 객체만 추출
+    const fileList = filesToUpload
+      .map(({ file }) => (file instanceof File ? file : null))
+      .filter((file): file is File => file !== null);
 
-      formData.append(
-        'requestDto',
-        new Blob([JSON.stringify(requestData)], { type: 'application/json' }),
-      );
-      if (isFileObject) {
-        formData.append('file', file);
-      }
-      return formData;
+    const formData = new FormData();
+
+    formData.append(
+      'userDocumentList',
+      new Blob([JSON.stringify(userDocumentList)], {
+        type: 'application/json',
+      }),
+    );
+
+    fileList.forEach((file) => {
+      formData.append('fileList', file);
     });
 
     try {
-      await Promise.all(
-        formDataList.map((formData) =>
-          submitMissionTalentPool.mutateAsync(formData),
-        ),
-      );
+      await submitTalentPoolAttendance.mutateAsync({
+        missionId,
+        req: formData,
+      });
       await refetchMissionData();
       await refetchSchedules?.();
       setShowToast(true);
     } catch (error) {
-      console.error('파일 업로드 중 오류 발생:', error);
-      alert('업로드에 실패했습니다. 다시 시도해주세요.');
+      console.error('인재풀 미션 제출 중 오류 발생:', error);
       return;
+    } finally {
+      setIsDocSubmitting(false);
     }
   };
 
@@ -219,7 +206,7 @@ const MissionSubmitTalentPoolSection = ({
           className="mb-12"
           uploadedFiles={uploadedFiles}
           onFilesChange={handleFilesChange}
-          isSubmitted={isSubmitted}
+          isSubmitted={isSubmitted || isDocSubmitting}
         />
 
         {/* 개인정보 수집 활용 동의서 */}
@@ -235,7 +222,7 @@ const MissionSubmitTalentPoolSection = ({
             hasContent={canSubmit}
             onButtonClick={handleSubmit}
             isEditing={false}
-            disabled={isSubmitted}
+            disabled={isSubmitted || isDocSubmitting}
           />
         )}
 

@@ -169,7 +169,10 @@ export default function WishConditionInputSection({
 
   const openIndustryModal = (): void => setModalStep('industry');
   const closeModal = (): void => setModalStep(null);
-  const backToField = (): void => setModalStep('field');
+  const backToField = () => {
+    onPositionsChange([]);
+    setModalStep('field');
+  };
 
   const getFieldDisplayText = (): string => {
     if (selectedField === null) return '희망 직군을 선택해 주세요.';
