@@ -64,34 +64,26 @@ const CareerPlanBody = ({
 
   return (
     <div className="flex flex-col gap-2">
-      {/* 희망 직군/직무 */}
-
-      <div className="flex flex-col gap-1">
-        <span className="font-regular text-sm text-[#4138A3]">
-          희망 직군 / 직무
-        </span>
-        <span className="truncate text-sm text-neutral-0">
-          {jobRoleText || '미설정'}
-        </span>
-      </div>
-      <div className="border-b border-[#EFEFEF]" />
-
-      {/* 희망 산업 */}
-      <div className="flex flex-col gap-1">
-        <span className="font-regular text-sm text-[#4138A3]">희망 산업</span>
-        <span className="truncate text-sm text-neutral-0">
-          {wishIndustry || '미설정'}
-        </span>
-      </div>
-      <div className="border-b border-[#EFEFEF]" />
-
-      {/* 희망 기업 */}
-      <div className="flex flex-col gap-1">
-        <span className="font-regular text-sm text-[#4138A3]">희망 기업</span>
-        <span className="truncate text-sm text-neutral-0">
-          {wishCompany || '미설정'}
-        </span>
-      </div>
+      <PlanFieldItem label="희망 직군 / 직무" value={jobRoleText || '미설정'} />
+      <PlanFieldItem label="희망 산업" value={wishIndustry || '미설정'} />
+      <PlanFieldItem label="희망 기업" value={wishCompany || '미설정'} />
     </div>
+  );
+};
+
+interface PlanFieldItemProps {
+  label: string;
+  value: string;
+}
+
+const PlanFieldItem = ({ label, value }: PlanFieldItemProps) => {
+  return (
+    <>
+      <div className="flex flex-col gap-1">
+        <span className="font-regular text-sm text-[#4138A3]">{label}</span>
+        <span className="truncate text-sm text-neutral-0">{value}</span>
+      </div>
+      <div className="border-b border-[#EFEFEF]" />
+    </>
   );
 };
