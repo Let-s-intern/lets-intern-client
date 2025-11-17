@@ -1,18 +1,19 @@
 'use client';
 
+import { useGetUserCareerQuery, usePostUserCareerMutation } from '@/api/career';
 import { UserCareerType } from '@/api/careerSchema';
 import CareerItem from '@components/common/mypage/career/CareerItem';
 import OutlinedButton from '@components/ui/button/OutlinedButton';
 import SolidButton from '@components/ui/button/SolidButton';
 import { Plus } from 'lucide-react';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const initialCareer: UserCareerType = {
   company: '',
-  position: '',
-  employeeType: null,
-  employeeTypeOther: '',
+  job: '',
+  employmentType: null,
+  employmentTypeOther: '',
   startDate: '',
   endDate: '',
 };
@@ -20,6 +21,39 @@ const initialCareer: UserCareerType = {
 const Career = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [careers, setCareers] = useState<UserCareerType[]>([]);
+
+  const { data } = useGetUserCareerQuery({
+    page: 1,
+    size: 10,
+  });
+
+  const createCareerMutation = usePostUserCareerMutation();
+
+  useEffect(() => {
+    const createCareer = async () => {
+      const formData = new FormData();
+      const requestDto = new Blob(
+        [
+          JSON.stringify({
+            company: '렛커',
+            job: '프론트엔드 개발자',
+            employmentType: 'TIME',
+            startDate: '2025-11-17',
+            endDate: '2025-11-17',
+          }),
+        ],
+        { type: 'application/json' },
+      );
+
+      formData.append('requestDto', requestDto);
+      formData.append('verificationFile', '');
+
+      const result = await createCareerMutation.mutateAsync(formData);
+      // console.log('career data:', result);
+    };
+
+    // createCareer();
+  }, []);
 
   const handleCancel = () => {
     setCareers((prev) => prev.slice(1)); // 추후 제거
