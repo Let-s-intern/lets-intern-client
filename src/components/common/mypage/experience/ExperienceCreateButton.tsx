@@ -5,7 +5,12 @@ import { useState } from 'react';
 const ExperienceCreateButton = ({ onClick }: { onClick: () => void }) => {
   return (
     <div className="relative">
-      <SolidButton icon={<Plus size={16} />} onClick={onClick}>
+      <SolidButton
+        variant="secondary"
+        size="xs"
+        icon={<Plus size={16} />}
+        onClick={onClick}
+      >
         경험 작성
       </SolidButton>
 

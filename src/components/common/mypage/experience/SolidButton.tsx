@@ -1,33 +1,57 @@
 import { twMerge } from '@/lib/twMerge';
 
-// TODO: props로 variant 등 추가 예정
 interface SolidButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary';
   children: React.ReactNode;
+  variant?: 'primary' | 'secondary';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   icon?: React.ReactNode;
-  onClick?: () => void;
+  disabled?: boolean;
   className?: string;
 }
 
 const SolidButton = ({
   children,
-  onClick,
+  variant = 'primary',
+  size = 'lg',
   icon,
+  disabled = false,
   className,
   ...rest
 }: SolidButtonProps) => {
+  const baseStyles =
+    'flex cursor-pointer items-center justify-center gap-1 rounded-xs font-regular';
+
+  const sizeStyles = {
+    xs: 'px-3 py-2 text-sm',
+    sm: 'px-3 py-2.5 text-sm',
+    md: 'px-3 py-2 text-base',
+    lg: 'px-3 py-3 text-base',
+    xl: 'px-3 py-4 text-base',
+  };
+
+  const variantStyles = {
+    primary: 'bg-primary text-white hover:bg-primary-hover',
+    secondary: 'bg-primary-10 text-primary hover:bg-primary-15',
+  };
+
+  const disabledStyles =
+    'cursor-not-allowed bg-neutral-70 text-white pointer-events-none';
+
   return (
     <button
       {...rest}
       className={twMerge(
-        'flex cursor-pointer items-center justify-center gap-1 rounded-xs bg-primary-10 px-3 py-2 text-primary hover:bg-primary-15',
+        baseStyles,
+        variantStyles[variant],
+        sizeStyles[size],
+        disabled && disabledStyles,
         className,
       )}
-      onClick={onClick}
+      disabled={disabled}
     >
       {icon}
-      <span className="text-sm font-medium">{children}</span>
+      {children}
     </button>
   );
 };

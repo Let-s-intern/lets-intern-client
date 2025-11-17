@@ -129,7 +129,9 @@ const ExperienceDataTableEmpty = ({
         <p className="text-sm text-neutral-20">
           지금까지 쌓아온 경험을 작성해 주세요.
         </p>
-        <OutlinedButton onClick={onCreateClick}>경험 작성하기</OutlinedButton>
+        <OutlinedButton size="xs" onClick={onCreateClick}>
+          경험 작성하기
+        </OutlinedButton>
       </div>
     );
 
@@ -139,7 +141,9 @@ const ExperienceDataTableEmpty = ({
       <p className="text-sm text-neutral-20">
         해당 조건에 맞는 경험이 없습니다.
       </p>
-      <OutlinedButton onClick={onResetFilters}>초기화하기</OutlinedButton>
+      <OutlinedButton size="xs" onClick={onResetFilters}>
+        초기화하기
+      </OutlinedButton>
     </div>
   );
 };

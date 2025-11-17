@@ -1,30 +1,57 @@
 import { twMerge } from '@/lib/twMerge';
 
-// TODO: props로 variant 등 추가 예정
-interface OutlinedButtonProps {
-  variant?: 'primary' | 'secondary';
+interface OutlinedButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
+  variant?: 'primary' | 'secondary';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   icon?: React.ReactNode;
-  onClick?: () => void;
+  disabled?: boolean;
   className?: string;
 }
 
 const OutlinedButton = ({
   children,
-  onClick,
+  variant = 'primary',
+  size = 'lg',
   icon,
+  disabled = false,
   className,
+  ...rest
 }: OutlinedButtonProps) => {
+  const baseStyles =
+    'flex cursor-pointer items-center justify-center gap-1 rounded-xxs font-regular';
+
+  const sizeStyles = {
+    xs: 'px-3 py-1.5 text-sm',
+    sm: 'px-3 py-2 text-sm',
+    md: 'px-3 py-2 text-base',
+    lg: 'px-3 py-3 text-base',
+    xl: 'px-3 py-4 text-base',
+  };
+
+  const variantStyles = {
+    primary: 'border border-primary text-primary hover:bg-neutral-100',
+    secondary: 'border border-neutral-80 text-primary hover:bg-neutral-100',
+  };
+
+  const disabledStyles =
+    'cursor-not-allowed bg-white border-neutral-80 text-neutral-50 pointer-events-none';
+
   return (
     <button
+      {...rest}
       className={twMerge(
-        'flex cursor-pointer items-center justify-center gap-1 rounded-xxs border border-primary px-3 py-1.5 text-primary hover:bg-neutral-100',
+        baseStyles,
+        variantStyles[variant],
+        sizeStyles[size],
+        disabled && disabledStyles,
         className,
       )}
-      onClick={onClick}
+      disabled={disabled}
     >
       {icon}
-      <span className="text-sm font-medium">{children}</span>
+      {children}
     </button>
   );
 };

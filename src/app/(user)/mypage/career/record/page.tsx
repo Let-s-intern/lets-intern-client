@@ -52,7 +52,7 @@ const Career = () => {
             <p>아직 등록된 커리어가 없어요.</p>
             <p>지금까지의 경력을 기록해두면, 서류 준비가 훨씬 쉬워져요.</p>
           </div>
-          <OutlinedButton onClick={handleCreateNew} className="w-fit">
+          <OutlinedButton size="xs" onClick={handleCreateNew} className="w-fit">
             커리어 기록하기
           </OutlinedButton>
         </section>
@@ -64,7 +64,12 @@ const Career = () => {
               커리어 기록(경력사항)
             </header>
             {editingId === null && (
-              <SolidButton icon={<Plus size={16} />} onClick={handleCreateNew}>
+              <SolidButton
+                variant="secondary"
+                size="xs"
+                icon={<Plus size={16} />}
+                onClick={handleCreateNew}
+              >
                 경력 정보 추가
               </SolidButton>
             )}
