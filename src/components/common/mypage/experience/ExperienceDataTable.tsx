@@ -6,7 +6,6 @@ import {
   isAllFilters,
 } from '@/utils/experience';
 import { Filters } from '@components/common/mypage/experience/ExperienceFilters';
-import OutlinedButton from '@components/common/mypage/experience/OutlinedButton';
 import ActivityTypeCell from '@components/common/mypage/experience/table-cell/ActivityTypeCell';
 import CategoryCell from '@components/common/mypage/experience/table-cell/CategoryCell';
 import CoreCompetencyCell from '@components/common/mypage/experience/table-cell/CoreCompetencyCell';
@@ -19,6 +18,7 @@ import DataTable, {
   TableHeader,
 } from '@components/common/table/DataTable';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
+import OutlinedButton from '@components/ui/button/OutlinedButton';
 import { useEffect, useState } from 'react';
 
 const PAGE_SIZE = 10;

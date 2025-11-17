@@ -2,9 +2,9 @@
 
 import { EmployeeType, UserCareerType } from '@/api/careerSchema';
 import { EmployeeTypeModal } from '@components/common/mypage/career/EmployeeTypeModal';
-import OutlinedButton from '@components/common/mypage/experience/OutlinedButton';
-import SolidButton from '@components/common/mypage/experience/SolidButton';
 import { PeriodSelectModal } from '@components/pages/mypage/experience/components/PeriodSelectModal';
+import OutlinedButton from '@components/ui/button/OutlinedButton';
+import SolidButton from '@components/ui/button/SolidButton';
 import { ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 
@@ -183,8 +183,7 @@ const CareerForm = ({
           </div>
         </fieldset>
 
-        {/* TODO: 추후 버튼 스타일 변경 */}
-        <div className="flex w-full gap-2">
+        <div className="mt-11 flex w-full gap-2">
           <OutlinedButton onClick={handleCancel} className="flex-1">
             취소하기
           </OutlinedButton>

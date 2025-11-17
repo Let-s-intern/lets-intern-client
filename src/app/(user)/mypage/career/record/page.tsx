@@ -2,8 +2,8 @@
 
 import { UserCareerType } from '@/api/careerSchema';
 import CareerItem from '@components/common/mypage/career/CareerItem';
-import OutlinedButton from '@components/common/mypage/experience/OutlinedButton';
-import SolidButton from '@components/common/mypage/experience/SolidButton';
+import OutlinedButton from '@components/ui/button/OutlinedButton';
+import SolidButton from '@components/ui/button/SolidButton';
 import { Plus } from 'lucide-react';
 
 import { useState } from 'react';

@@ -1,4 +1,4 @@
-import SolidButton from '@components/common/mypage/experience/SolidButton';
+import SolidButton from '@components/ui/button/SolidButton';
 import { Plus, X } from 'lucide-react';
 import { useState } from 'react';
 
