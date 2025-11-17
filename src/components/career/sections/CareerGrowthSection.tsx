@@ -1,3 +1,4 @@
+import { twMerge } from '@/lib/twMerge';
 import { useRouter } from 'next/navigation';
 import CareerCard from '../../common/mypage/career/card/CareerCard';
 
@@ -100,57 +101,77 @@ interface ProgramCardProps {
 }
 
 const ProgramCard = ({ program }: ProgramCardProps) => {
-  const router = useRouter();
   const period = `${program.startDate} ~ ${program.endDate}`;
 
   return (
-    <div className="flex gap-4">
-      {/* 썸네일 */}
-      <div className="h-[119px] w-[158px] shrink-0 rounded-xs bg-neutral-80" />
+    <div className="flex flex-col gap-3 md:flex-row md:gap-4">
+      <div className="flex gap-3 md:flex-row md:gap-4">
+        {/* 썸네일 */}
+        <div className="h-[85px] w-[113px] shrink-0 rounded-xs bg-neutral-80 md:h-[119px] md:w-[158px]" />
 
-      {/* 내용 */}
-      <div className="flex min-w-0 flex-1 flex-col gap-2">
-        {/* 상단: 태그, 프로그램 종류, 진행기간, 버튼 */}
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex min-w-0 flex-1 items-center gap-2">
-            <span className="rounded-xxs bg-primary-10 px-2 py-0.5 text-xxsmall12 font-normal text-primary">
-              {program.status}
-            </span>
-            <span className="text-xxsmall12 font-normal text-neutral-40">
-              {program.programType}
-            </span>
-            <div className="h-4 w-px bg-neutral-80" />
-            <span className="text-xxsmall12 font-normal text-neutral-40">
-              진행기간 {period}
+        {/* 내용 */}
+        <div className="flex min-w-0 flex-1 flex-col gap-2">
+          {/* 상단: 태그, 프로그램 종류, 진행기간, 버튼 */}
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-xxs bg-primary-10 px-2 py-0.5 text-xxsmall12 font-normal text-primary">
+                {program.status}
+              </span>
+              <span className="text-xxsmall12 font-normal text-neutral-40">
+                {program.programType}
+              </span>
+              <div className="hidden h-4 w-px bg-neutral-80 md:block" />
+              <span className="text-xxsmall12 font-normal text-neutral-40">
+                진행기간 {period}
+              </span>
+            </div>
+            <DashboardButton programId={program.id} variant="desktop" />
+          </div>
+
+          {/* 중간: 제목, 설명 */}
+          <div className="flex flex-col gap-1">
+            <h3 className="text-xsmall16 font-semibold text-neutral-0">
+              {program.title}
+            </h3>
+            <p className="text-xsmall14 text-neutral-20 md:line-clamp-2">
+              {program.description}
+            </p>
+          </div>
+
+          {/* 하단: 구매플랜 */}
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <span className="flex flex-row gap-1 text-xxsmall12 text-neutral-0">
+              구매플랜
+              <p className="text-xxsmall12 text-primary">
+                {program.purchasePlan}
+              </p>
             </span>
           </div>
         </div>
-
-        {/* 중간: 제목, 설명 */}
-        <div className="flex flex-col gap-1">
-          <h3 className="text-xsmall16 font-semibold text-neutral-0">
-            {program.title}
-          </h3>
-          <p className="line-clamp-2 text-xsmall14 text-neutral-20">
-            {program.description}
-          </p>
-        </div>
-
-        {/* 하단: 구매플랜 */}
-        <span className="flex flex-row gap-1 text-xxsmall12 text-neutral-0">
-          구매플랜
-          <p className="text-xxsmall12 text-primary">{program.purchasePlan}</p>
-        </span>
       </div>
-      <div>
-        <button
-          type="button"
-          onClick={() => router.push(`/program/challenge/${program.id}`)}
-          className="ml-8 h-auto w-auto rounded-xxs border border-primary px-3 py-1.5 text-xxsmall12 font-normal text-primary hover:bg-neutral-100"
-        >
-          대시보드 입장
-        </button>
-      </div>
+      <DashboardButton programId={program.id} variant="mobile" />
     </div>
+  );
+};
+
+interface DashboardButtonProps {
+  programId: number;
+  variant: 'mobile' | 'desktop';
+}
+
+const DashboardButton = ({ programId, variant }: DashboardButtonProps) => {
+  const router = useRouter();
+
+  return (
+    <button
+      type="button"
+      onClick={() => router.push(`/program/challenge/${programId}`)}
+      className={twMerge(
+        'rounded-xxs border border-primary px-3 py-1.5 text-xxsmall12 font-normal text-primary transition-colors hover:bg-primary/5',
+        variant === 'mobile' ? 'w-full md:hidden' : 'hidden shrink-0 md:block',
+      )}
+    >
+      대시보드 입장
+    </button>
   );
 };
