@@ -1,24 +1,42 @@
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
-import { BONUS_MISSION_TH } from '@/utils/constants';
+import { Schedule } from '@/schema';
+import { BONUS_MISSION_TH, TALENT_POOL_MISSION_TH } from '@/utils/constants';
 import { useMemo } from 'react';
 
 export const useMissionCalculation = () => {
   const { schedules, myDailyMission } = useCurrentChallenge();
 
   const isLastMissionSubmitted = useMemo(() => {
-    const lastSchedule = schedules[schedules.length - 1];
-    const isBonus = lastSchedule?.missionInfo?.th === BONUS_MISSION_TH;
+    if (schedules.length === 0) return false;
 
-    if (isBonus) {
-      // 보너스 회차가 있으면: 보너스 회차(100) + 마지막 미션 둘 다 제출되어야 함
-      const lastMissionSchedule = schedules[schedules.length - 2];
-      return (
-        lastSchedule?.attendanceInfo?.submitted &&
-        lastMissionSchedule?.attendanceInfo?.submitted
+    const lastSchedule = schedules[schedules.length - 1];
+    const secondLastSchedule = schedules[schedules.length - 2];
+    const thirdLastSchedule = schedules[schedules.length - 3];
+
+    const isSpecialMission = (schedule: Schedule | undefined) => {
+      const th = schedule?.missionInfo?.th;
+      return th === BONUS_MISSION_TH || th === TALENT_POOL_MISSION_TH;
+    };
+
+    const isLastSpecial = isSpecialMission(lastSchedule);
+    const isSecondLastSpecial = isSpecialMission(secondLastSchedule);
+
+    // N회차
+    if (!isLastSpecial) {
+      return lastSchedule?.attendanceInfo?.submitted ?? false;
+    }
+
+    // 인재풀+보너스+N회차
+    if (isSecondLastSpecial) {
+      return [lastSchedule, secondLastSchedule, thirdLastSchedule].every(
+        (schedule) => schedule?.attendanceInfo?.submitted,
       );
     }
-    // 보너스가 없으면: 마지막만 제출되면 됨
-    return lastSchedule?.attendanceInfo?.submitted;
+
+    // 보너스+N회차
+    return [lastSchedule, secondLastSchedule].every(
+      (schedule) => schedule?.attendanceInfo?.submitted,
+    );
   }, [schedules]);
 
   /**

@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ChevronRight, XIcon } from 'lucide-react';
+import { Asterisk, ChevronRight, XIcon } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
@@ -11,7 +11,10 @@ import {
   MAX_COMPETENCIES,
 } from './constants';
 
-import { UserExperienceQueryKey } from '@/api/experience';
+import {
+  UserExperienceFiltersQueryKey,
+  UserExperienceQueryKey,
+} from '@/api/experience';
 import { UserExperienceType } from '@/api/experienceSchema';
 import {
   useGetUserAdmin,
@@ -27,9 +30,8 @@ import {
 import { useUnsavedChangesWarning } from '@/hooks/useUnsavedChangesWarning';
 import { useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
-import { CompetencyBadges } from './components/CompetencyBadges';
 import { ExperienceCategoryModal } from './components/ExperienceCategoryModal';
-import { FieldSection } from './components/FeildSection';
+import { FieldSection } from './components/FieldSection';
 import { PeriodSelectModal } from './components/PeriodSelectModal';
 import { TooltipButton } from './components/TooltipButton';
 
@@ -104,6 +106,9 @@ export const ExperienceForm = ({
   const onCloseDrawer = useCallback(() => {
     onClose();
     queryClient.invalidateQueries({ queryKey: [UserExperienceQueryKey] });
+    queryClient.invalidateQueries({
+      queryKey: [UserExperienceFiltersQueryKey],
+    });
   }, [onClose, queryClient]);
 
   // 저장 완료 여부를 추적하는 ref
@@ -408,18 +413,18 @@ export const ExperienceForm = ({
     <>
       <div className="flex h-full flex-col bg-white">
         {/* 헤더 */}
-        <header className="flex h-[72px] items-center justify-between px-4 py-5">
+        <header className="relative flex h-[72px] items-center justify-center px-7 py-5 md:justify-start">
           <h1 className="text-small20 font-semibold">경험 작성</h1>
           <button
             onClick={handleClose}
-            className="flex h-7 w-7 items-center justify-center"
+            className="absolute right-6 flex h-7 w-7 items-center justify-center"
           >
             <XIcon size={24} />
           </button>
         </header>
 
         {/* 스크롤 가능한 메인 컨텐츠 */}
-        <div className="flex-1 overflow-y-auto px-7 pb-[60px] pt-2">
+        <div className="flex-1 overflow-y-auto px-7 pb-[60px]">
           {/* 가이드 텍스트 */}
           <div className="mb-6 rounded-sm bg-primary-5 px-4 py-3">
             <p className="text-xsmall14 font-normal leading-[1.375rem] text-neutral-30">
@@ -449,15 +454,16 @@ export const ExperienceForm = ({
             <div className="flex flex-col gap-5">
               <h2 className="text-small16 font-semibold text-neutral-0">
                 기본 정보
-                <span className="ml-1.5 text-xsmall16 font-normal text-primary-90">
-                  *필수
-                </span>
               </h2>
 
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-5">
                 {/* 경험 이름 */}
                 <FieldSection.Root className="flex flex-col">
-                  <FieldSection.Label className="mb-[6px]" htmlFor="title">
+                  <FieldSection.Label
+                    isRequired={true}
+                    className="mb-[6px]"
+                    htmlFor="title"
+                  >
                     {EXPERIENCE_FORM_TEXT['title'].label}
                   </FieldSection.Label>
                   <FieldSection.Input<UserExperience>
@@ -471,14 +477,16 @@ export const ExperienceForm = ({
                     </p>
                   )}
                 </FieldSection.Root>
-
                 {/* 경험 분류 */}
                 <div className="flex flex-col">
                   <label
                     htmlFor="experienceCategory"
-                    className="mb-[6px] text-xsmall14 font-medium text-neutral-20 md:text-xsmall16"
+                    className="mb-[6px] flex items-center gap-1.5 text-xsmall14 font-medium text-neutral-20 md:text-xsmall16"
                   >
-                    {EXPERIENCE_FORM_TEXT['experienceCategory'].label}
+                    <span>
+                      {EXPERIENCE_FORM_TEXT['experienceCategory'].label}
+                    </span>
+                    <Asterisk className="pb-1 text-primary" size={16} />
                   </label>
                   {/* TODO: SelectButton 컴포넌트 적용 */}
                   <button
@@ -523,7 +531,11 @@ export const ExperienceForm = ({
 
                 {/* 기관 */}
                 <FieldSection.Root className="flex flex-col">
-                  <FieldSection.Label className="mb-[6px]" htmlFor="organ">
+                  <FieldSection.Label
+                    isRequired={true}
+                    className="mb-[6px]"
+                    htmlFor="organ"
+                  >
                     {EXPERIENCE_FORM_TEXT['organ'].label}
                   </FieldSection.Label>
                   <FieldSection.Input<UserExperience>
@@ -540,7 +552,11 @@ export const ExperienceForm = ({
 
                 {/* 역할 및 담당 업무 */}
                 <FieldSection.Root className="flex flex-col">
-                  <FieldSection.Label className="mb-[6px]" htmlFor="role">
+                  <FieldSection.Label
+                    isRequired={true}
+                    className="mb-[6px]"
+                    htmlFor="role"
+                  >
                     {EXPERIENCE_FORM_TEXT['role'].label}
                   </FieldSection.Label>
                   <FieldSection.Input<UserExperience>
@@ -557,8 +573,9 @@ export const ExperienceForm = ({
 
                 {/* 팀·개인 여부 */}
                 <fieldset className="relative flex flex-col border-0 p-0">
-                  <legend className="mb-[6px] text-xsmall14 font-medium text-neutral-20 md:text-xsmall16">
-                    팀·개인 여부
+                  <legend className="mb-[6px] flex items-center text-xsmall14 font-medium text-neutral-20 md:text-xsmall16">
+                    <span>팀·개인 여부</span>
+                    <Asterisk className="pb-1 text-primary" size={16} />
                   </legend>
                   <div className="flex gap-4" role="radiogroup">
                     <label
@@ -601,7 +618,11 @@ export const ExperienceForm = ({
 
                 {/* 기간 */}
                 <FieldSection.Root className="flex flex-col">
-                  <FieldSection.Label className="mb-[6px]" htmlFor="period">
+                  <FieldSection.Label
+                    isRequired={true}
+                    className="mb-[6px]"
+                    htmlFor="period"
+                  >
                     기간
                   </FieldSection.Label>
                   <div className="flex items-center gap-3">
@@ -657,7 +678,11 @@ export const ExperienceForm = ({
                 {/* 연도 (자동 입력) */}
                 {/* TODO: 시작 연도 & api 요청시 값 필요없음 */}
                 <FieldSection.Root className="flex flex-col">
-                  <FieldSection.Label className="mb-[6px]" htmlFor="year">
+                  <FieldSection.Label
+                    isRequired={true}
+                    className="mb-[6px]"
+                    htmlFor="year"
+                  >
                     {EXPERIENCE_FORM_TEXT['year'].label}
                   </FieldSection.Label>
                   <input
@@ -737,7 +762,7 @@ export const ExperienceForm = ({
                     EXPERIENCE_FORM_TEXT['coreCompetency'].placeholder
                   }
                 />
-                <CompetencyBadges
+                {/* <CompetencyBadges
                   coreCompetency={formData.coreCompetency || ''}
                   onRemove={(index) => {
                     if (!formData.coreCompetency) return;
@@ -747,7 +772,7 @@ export const ExperienceForm = ({
                       shouldDirty: true,
                     });
                   }}
-                />
+                /> */}
               </FieldSection.Root>
             </div>
           </form>

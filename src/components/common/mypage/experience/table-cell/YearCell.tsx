@@ -31,7 +31,9 @@ const YearCell = ({ row }: YearCellProps) => {
           {year}
         </span>
       ))}
-      {hiddenCount > 0 && <span className="text-xs text-neutral-30">+n</span>}
+      {hiddenCount > 0 && (
+        <span className="text-xs text-neutral-30">+{hiddenCount}</span>
+      )}
     </div>
   );
 };

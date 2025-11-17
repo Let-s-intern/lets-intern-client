@@ -169,7 +169,10 @@ export default function WishConditionInputSection({
 
   const openIndustryModal = (): void => setModalStep('industry');
   const closeModal = (): void => setModalStep(null);
-  const backToField = (): void => setModalStep('field');
+  const backToField = () => {
+    onPositionsChange([]);
+    setModalStep('field');
+  };
 
   const getFieldDisplayText = (): string => {
     if (selectedField === null) return '희망 직군을 선택해 주세요.';
@@ -190,7 +193,7 @@ export default function WishConditionInputSection({
 
   return (
     <div className="mb-9">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-5">
         <SelectButton
           label="희망 직군"
           value={getFieldDisplayText()}

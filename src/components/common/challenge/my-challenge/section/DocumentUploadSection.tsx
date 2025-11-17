@@ -2,7 +2,7 @@ import { DocumentType } from '@/api/missionSchema';
 import { useGetUserDocumentListQuery } from '@/api/user';
 import { UserDocument } from '@/api/userSchema';
 import { clsx } from 'clsx';
-import { RefreshCw, Trash2, Upload } from 'lucide-react';
+import { Trash2, Upload } from 'lucide-react';
 import { useRef, type RefObject } from 'react';
 import { UploadedFiles } from './MissionSubmitTalentPoolSection';
 
@@ -115,8 +115,9 @@ const DocumentFileItem = ({
   const displayFile = file || submittedDocument || null;
   const hasFile = !!displayFile;
   const canEdit = !isSubmitted;
+
   return (
-    <div className="mb-6">
+    <div className="mb-5">
       <div className="mb-3">
         <span className="text-xsmall16 font-medium text-neutral-20">
           {label}
@@ -163,22 +164,22 @@ const DocumentFileItem = ({
           </button>
 
           {/* 서류 불러오기 버튼*/}
-          <button
+          {/* <button
             type="button"
             onClick={() => onLoadDocument(type)}
             disabled={isSubmitted || isLoading || !isDocumentExists}
-            className="flex items-center gap-2 rounded-xs border-[1px] border-neutral-80 bg-white px-4 py-[.375rem] text-xsmall14 font-medium text-neutral-20 transition hover:bg-neutral-95 disabled:cursor-not-allowed disabled:bg-neutral-85 disabled:text-neutral-50"
+            className="flex items-center gap-2 rounded-xs border-[1px] border-neutral-80 bg-white px-4 py-[.375rem] text-xsmall14 font-medium text-neutral-20 transition hover:bg-neutral-95 disabled:cursor-not-allowed disabled:stroke-neutral-80 disabled:text-neutral-50"
           >
             <RefreshCw size={16} />
             서류 불러오기
-          </button>
+          </button> */}
         </div>
       )}
 
       <input
         ref={inputRef}
         type="file"
-        accept=".pdf"
+        accept="application/pdf,.pdf"
         className="hidden"
         onChange={(e) => onFileUpload(type, e.target.files)}
         disabled={isSubmitted}
@@ -219,6 +220,16 @@ const DocumentUploadSection = ({
     if (!files || files.length === 0) return;
 
     const file = files[0]; // 첫 번째 파일만 사용
+
+    // 파일 타입 검증
+    if (
+      file.type !== 'application/pdf' ||
+      !file.name.toLowerCase().endsWith('.pdf')
+    ) {
+      alert('PDF 파일만 업로드할 수 있습니다.');
+      resetInput(type);
+      return;
+    }
 
     // 파일 크기 검증 (50MB 이하)
     if (file.size > MAX_FILE_SIZE) {

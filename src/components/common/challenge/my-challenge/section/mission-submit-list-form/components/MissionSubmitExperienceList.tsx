@@ -3,7 +3,7 @@ import { If } from '@/components/common/If';
 import dayjs from '@/lib/dayjs';
 import { Dayjs } from 'dayjs';
 import { useMemo } from 'react';
-import { ExperienceData } from '../data';
+import { ExperienceData, isUserExperienceComplete } from '../data';
 import { EmptyState } from './EmptyState';
 import { ExperienceList } from './ExperienceList';
 
@@ -12,6 +12,7 @@ type ExperienceLevel = 'LV1' | 'LV2';
 interface MissionSubmitExperienceListProps {
   selectedExperiences: ExperienceData[];
   onOpenModal: () => void;
+  onDeleteExperience?: (experienceId: number) => void;
   level: ExperienceLevel;
   missionStartDate?: Dayjs | null;
   isSubmitted?: boolean;
@@ -21,53 +22,58 @@ interface MissionSubmitExperienceListProps {
 export const MissionSubmitExperienceList = ({
   selectedExperiences,
   onOpenModal,
+  onDeleteExperience,
   level,
   missionStartDate,
   isSubmitted,
   isEditing,
 }: MissionSubmitExperienceListProps) => {
   const { data } = useSearchUserExperiencesQuery({
-    filter: {
-      experienceCategories: [],
-      activityTypes: [],
-      years: [],
-      coreCompetencies: [],
-    },
-    pageable: {
-      page: 0,
-      size: 100,
-    },
+    experienceCategories: [],
+    activityTypes: [],
+    years: [],
+    coreCompetencies: [],
+    sortType: 'LATEST' as const,
+    page: 1,
+    size: 100,
   });
   // 제출 가능한 경험 필터링: LV1은 전체, LV2는 미션 시작일 이후 생성/수정된 경험만
+  // 마지막에 경험정리 필드 모두 채운 경험만 필터링
   const submitableExperiences = useMemo(() => {
     if (!data?.userExperiences) return [];
 
+    let filtered: typeof data.userExperiences;
+
     if (level === 'LV1') {
-      return data.userExperiences;
+      filtered = data.userExperiences;
+    } else {
+      if (!missionStartDate) {
+        return [];
+      }
+
+      filtered = data.userExperiences.filter((exp) => {
+        const createDate = dayjs(exp.createDate);
+        const lastModifiedDate = dayjs(exp.lastModifiedDate);
+        return (
+          createDate.isAfter(missionStartDate, 'day') ||
+          createDate.isSame(missionStartDate, 'day') ||
+          lastModifiedDate.isAfter(missionStartDate, 'day') ||
+          lastModifiedDate.isSame(missionStartDate, 'day')
+        );
+      });
     }
 
-    if (!missionStartDate) {
-      return [];
-    }
-
-    return data.userExperiences.filter((exp) => {
-      const createDate = dayjs(exp.createDate);
-      const lastModifiedDate = dayjs(exp.lastModifiedDate);
-      return (
-        createDate.isAfter(missionStartDate, 'day') ||
-        createDate.isSame(missionStartDate, 'day') ||
-        lastModifiedDate.isAfter(missionStartDate, 'day') ||
-        lastModifiedDate.isSame(missionStartDate, 'day')
-      );
-    });
+    // 경험정리 필드 모두 채운 경험만
+    return filtered.filter(isUserExperienceComplete);
   }, [data, level, missionStartDate]);
 
   const experienceCount = submitableExperiences.length;
 
   // 버튼 비활성화 조건:
-  // 1. 경험 수가 3개 미만이면 disabled
+  // 1. 제출 가능한 경험 수가 3개 미만이면 disabled
   // 2. 제출되어 있고 수정 모드가 아니면 disabled
   // 3. 그 외 (경험 수 3개 이상이고, (제출 안 됨 OR 수정 모드임)) → enabled
+  // 선택된 경험 수는 제출 시점에 체크하므로 여기서는 체크하지 않음
   const isButtonDisabled =
     experienceCount < 3 || (isSubmitted === true && isEditing !== true);
 
@@ -116,7 +122,7 @@ export const MissionSubmitExperienceList = ({
 
       {/* 작성된 경험 불러오는 컴포넌트 */}
       <div className="flex min-h-[200px] items-center justify-center rounded-xxs border border-neutral-80 bg-white">
-        <div className="flex flex-col items-center justify-center space-y-4">
+        <div className="flex w-full flex-col items-center justify-center space-y-4">
           <If condition={emptyStateText !== null}>
             <EmptyState
               text={emptyStateText ?? ''}
@@ -126,7 +132,12 @@ export const MissionSubmitExperienceList = ({
           </If>
 
           <If condition={experienceCount >= 3}>
-            <ExperienceList experiences={selectedExperiences} />
+            <ExperienceList
+              experiences={selectedExperiences}
+              onDeleteExperience={onDeleteExperience}
+              isSubmitted={isSubmitted}
+              isEditing={isEditing}
+            />
           </If>
         </div>
       </div>

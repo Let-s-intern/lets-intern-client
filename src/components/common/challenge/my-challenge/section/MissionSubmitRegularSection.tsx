@@ -11,6 +11,7 @@ import DashboardCreateReviewModal from '../../dashboard/modal/DashboardCreateRev
 import MobileReviewModal from '../../MobileReviewModal';
 import MissionSubmitButton from '../mission/MissionSubmitButton';
 import MissionToast from '../mission/MissionToast';
+import LinkInputSection from './LinkInputSection';
 import { MissionSubmitListForm } from './mission-submit-list-form';
 import { MissionReviewInputSection } from './MissionReviewInputSection';
 
@@ -45,7 +46,6 @@ const MissionSubmitRegularSection = ({
   const { selectedMissionId, setSelectedMission } = useMissionStore();
   const { schedules, currentChallenge, refetchSchedules } =
     useCurrentChallenge();
-
   // 챌린지 종료 + 2일
   const isSubmitPeriodEnded =
     dayjs(currentChallenge?.endDate).add(2, 'day').isBefore(dayjs()) ?? true;
@@ -130,7 +130,7 @@ const MissionSubmitRegularSection = ({
     try {
       await submitMission.mutateAsync({
         missionId,
-        link: '', // 빈 문자열로 전송
+        link: linkValue,
         review: textareaValue,
         userExperienceIds: selectedExperienceIds,
       });
@@ -192,8 +192,9 @@ const MissionSubmitRegularSection = ({
   };
 
   // 제출 버튼 활성화 조건: 경험 3개 이상 선택 + 미션 소감 입력
-  const canSubmit =
-    selectedExperienceIds.length >= 3 && textareaValue.trim().length > 0;
+  const canSubmit = !currentSelectedMission?.missionInfo?.missionType
+    ? isLinkVerified && textareaValue.trim().length > 0 // 링크 미션
+    : selectedExperienceIds.length >= 3 && textareaValue.trim().length > 0; // 경험 정리 미션
 
   const handleOpenBonusMissionModalAtSubmission = (
     currentSubmissionMissionTh: number,
@@ -210,19 +211,44 @@ const MissionSubmitRegularSection = ({
       setIsBonusMissionModalOpen(true);
     }
   };
+  const handleLinkChange = (link: string) => {
+    setLinkValue(link);
+  };
 
+  const handleLinkVerified = (isVerified: boolean) => {
+    setIsLinkVerified(isVerified);
+  };
   return (
     <>
       <section className={className}>
-        {/* 링크 섹션 */}
-        <MissionSubmitListForm
-          onExperienceIdsChange={setSelectedExperienceIds}
-          initialExperienceIds={attendanceInfo?.submittedUserExperienceIds}
-          missionStartDate={missionStartDate}
-          isSubmitted={isSubmitted}
-          isEditing={isEditing}
-        />
+        {!currentSelectedMission?.missionInfo?.missionType ? (
+          <>
+            {/* 링크 섹션 */}
+            <h2 className="mb-6 text-small18 font-bold text-neutral-0">
+              미션 제출하기
+            </h2>
 
+            {/* 링크 섹션 */}
+            <LinkInputSection
+              disabled={(isSubmitted && !isEditing) || isResubmitBlocked}
+              onLinkChange={handleLinkChange}
+              onLinkVerified={handleLinkVerified}
+              todayTh={selectedMissionTh}
+              initialLink={linkValue}
+              text={`미션 링크는 .notion.site 형식의 퍼블릭 링크만 입력 가능합니다.
+          제출 후, 미션과 소감을 카카오톡으로 공유해야 제출이 인정됩니다.`}
+            />
+          </>
+        ) : (
+          // 경험 정리 섹션
+          <MissionSubmitListForm
+            onExperienceIdsChange={setSelectedExperienceIds}
+            initialExperienceIds={attendanceInfo?.submittedUserExperienceIds}
+            missionStartDate={missionStartDate}
+            isSubmitted={isSubmitted}
+            isEditing={isEditing}
+          />
+        )}
         {/* 미션 소감 */}
         <MissionReviewInputSection
           value={textareaValue}

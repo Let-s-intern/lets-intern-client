@@ -32,16 +32,13 @@ export const MissionSubmitListForm = ({
   // 모든 경험 데이터 검색 (초기 로드용)
   const { data: allExperiencesData } = useSearchUserExperiencesQuery(
     {
-      filter: {
-        experienceCategories: [],
-        activityTypes: [],
-        years: [],
-        coreCompetencies: [],
-      },
-      pageable: {
-        page: 0,
-        size: 100,
-      },
+      experienceCategories: [],
+      activityTypes: [],
+      years: [],
+      coreCompetencies: [],
+      sortType: 'LATEST' as const,
+      page: 1,
+      size: 100,
     },
     !!initialExperienceIds && initialExperienceIds.length > 0,
   );
@@ -103,6 +100,17 @@ export const MissionSubmitListForm = ({
     onExperienceIdsChange?.(experienceIds);
     setIsModalOpen(false);
   };
+
+  const handleDeleteExperience = (experienceId: number) => {
+    const updatedExperiences = selectedExperiences.filter(
+      (exp) => exp.originalId !== experienceId,
+    );
+    setSelectedExperiences(updatedExperiences);
+    // 업데이트된 경험들의 originalId 추출하여 부모에게 전달
+    const experienceIds = updatedExperiences.map((exp) => exp.originalId);
+    onExperienceIdsChange?.(experienceIds);
+  };
+
   return (
     <div className="space-y-6">
       {/* 미션 제출 안내사항 */}
@@ -112,6 +120,7 @@ export const MissionSubmitListForm = ({
       <MissionSubmitExperienceList
         selectedExperiences={selectedExperiences}
         onOpenModal={handleOpenModal}
+        onDeleteExperience={handleDeleteExperience}
         level={level}
         missionStartDate={missionStartDate}
         isSubmitted={isSubmitted}
@@ -123,6 +132,7 @@ export const MissionSubmitListForm = ({
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onSelectComplete={handleSelectComplete}
+        missionStartDate={missionStartDate}
       />
     </div>
   );

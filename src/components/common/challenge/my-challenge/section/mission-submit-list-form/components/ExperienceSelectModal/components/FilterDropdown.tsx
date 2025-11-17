@@ -3,6 +3,7 @@
 import BottomSheet from '@components/common/ui/BottomSheeet';
 import { Check, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 interface FilterOption {
   value: string;
@@ -16,6 +17,7 @@ interface FilterDropdownProps {
   onSelect: (value: string) => void;
   width?: string;
   className?: string;
+  isHideLabel?: boolean;
 }
 
 export const FilterDropdown = ({
@@ -25,25 +27,11 @@ export const FilterDropdown = ({
   onSelect,
   width = 'w-48',
   className = '',
+  isHideLabel = false,
 }: FilterDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const [dropdownStyle, setDropdownStyle] = useState({});
-
-  // 필터 버튼에 맞게 드롭다운 위치와 너비 설정
-  useEffect(() => {
-    if (isOpen && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      setDropdownStyle({
-        position: 'fixed',
-        zIndex: 50,
-        top: `${rect.bottom + 4}px`,
-        left: `${rect.left}px`,
-        width: `${rect.width}px`,
-      });
-    }
-  }, [isOpen]);
 
   const getFilterLabel = () => {
     const selectedOption = options.find(
@@ -88,19 +76,27 @@ export const FilterDropdown = ({
         type="button"
         ref={buttonRef}
         onClick={toggleDropdown}
-        className={`flex ${width} items-center justify-between gap-1.5 rounded-xs border border-neutral-80 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 ${className}`}
+        className={twMerge(
+          `flex ${width} items-center gap-1.5 rounded-xs border border-neutral-80 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50`,
+          isHideLabel ? 'justify-end' : 'justify-between',
+          className,
+        )}
       >
-        {labelPrefix && (
+        {!isHideLabel && labelPrefix && (
           <span className="whitespace-nowrap">{labelPrefix} </span>
         )}
-        <span className="whitespace-nowrap text-primary-dark">
+        <span
+          className={twMerge(
+            'whitespace-nowrap',
+            isHideLabel ? 'text-neutral-0' : 'text-primary-dark',
+          )}
+        >
+          {' '}
           {getFilterLabel()}
         </span>
 
         <svg
-          className={`h-4 w-4 transition-transform ${
-            isOpen ? 'rotate-180' : ''
-          }`}
+          className="h-4 w-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -117,8 +113,7 @@ export const FilterDropdown = ({
       {isOpen && (
         <>
           <div
-            className={`shadow-07 hidden max-h-[28.125rem] w-full divide-y divide-neutral-95 overflow-auto rounded-xs bg-white px-1 py-1.5 scrollbar-hide md:block`}
-            style={dropdownStyle}
+            className={`absolute top-[43px] z-20 hidden max-h-[28.125rem] w-full divide-y divide-neutral-95 overflow-auto rounded-xs bg-white px-1 py-1.5 shadow-07 scrollbar-hide md:block`}
           >
             {options.map((option) => {
               const isSelected = option.value === selectedValue;

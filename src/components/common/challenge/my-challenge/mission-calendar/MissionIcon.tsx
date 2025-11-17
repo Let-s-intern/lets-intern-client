@@ -16,11 +16,13 @@ const MissionIcon = ({ className, schedule, isDone }: Props) => {
 
   const mission = schedule.missionInfo;
   const attendance = schedule.attendanceInfo;
-  const isZerothMissionPassed =
-    mission.th === 0 && attendance.result === 'PASS';
+  const isSpecialMissionPassed =
+    (mission.th === 0 || mission.th === 99) && attendance.result === 'PASS';
 
   const { text, style, icon } = missionSubmitToBadge({
-    status: isZerothMissionPassed ? 'PRESENT' : (attendance.status ?? 'ABSENT'),
+    status: isSpecialMissionPassed
+      ? 'PRESENT'
+      : (attendance.status ?? 'ABSENT'),
     result: attendance.result,
     challengeEndDate: currentChallenge?.endDate,
   });
@@ -52,12 +54,13 @@ const MissionIcon = ({ className, schedule, isDone }: Props) => {
           style,
         )}
       >
-        {mission.th === BONUS_MISSION_TH ||
-        mission.th === TALENT_POOL_MISSION_TH
+        {mission.th === BONUS_MISSION_TH
           ? '보너스'
-          : isWaiting
-            ? `제출`
-            : `${mission.th}회차`}
+          : mission.th === TALENT_POOL_MISSION_TH
+            ? '인재풀'
+            : isWaiting
+              ? `제출`
+              : `${mission.th}회차`}
         <br />
         {text}
       </div>

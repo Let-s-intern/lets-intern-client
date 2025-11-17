@@ -19,7 +19,7 @@ import DataTable, {
 } from '@components/common/table/DataTable';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import OutlinedButton from '@components/ui/button/OutlinedButton';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 const PAGE_SIZE = 10;
 
@@ -64,6 +64,63 @@ const ExperienceDataTable = ({
   useEffect(() => {
     setPage(1);
   }, [filters]);
+
+  const experienceTableHeaders: TableHeader[] = useMemo(
+    () => [
+      { key: 'title', label: '경험 이름', width: '160px' },
+      {
+        key: 'experienceCategory',
+        label: '경험 분류',
+        width: '110px',
+        cellRenderer: (value: string) => <CategoryCell value={value} />,
+      },
+      { key: 'organ', label: '기관', width: '140px' },
+      {
+        key: 'role',
+        label: '역할 및 담당 업무',
+        width: '140px',
+      },
+      {
+        key: 'activityType',
+        label: '팀·개인 여부',
+        width: '100px',
+        cellRenderer: (value: string) => <ActivityTypeCell value={value} />,
+      },
+      {
+        key: 'period',
+        label: '기간',
+        width: '140px',
+        cellRenderer: (_, row) => <PeriodCell row={row} />,
+      },
+      {
+        key: 'year',
+        label: '연도',
+        width: '80px',
+        cellRenderer: (_, row) => <YearCell row={row} />,
+      },
+      { key: 'situation', label: 'Situation(상황)', width: '200px' },
+      { key: 'task', label: 'Task(문제)', width: '200px' },
+      { key: 'action', label: 'Action(행동)', width: '200px' },
+      { key: 'result', label: 'Result(결과)', width: '200px' },
+      { key: 'reflection', label: '느낀 점 / 배운 점', width: '200px' },
+      {
+        key: 'coreCompetency',
+        label: '핵심 역량',
+        width: '140px',
+        cellRenderer: (value: string) => <CoreCompetencyCell value={value} />,
+      },
+      {
+        key: 'deleteAction',
+        label: '삭제',
+        width: '90px',
+        align: { horizontal: 'center', vertical: 'middle' },
+        cellRenderer: (_, row) => (
+          <DeleteCell row={row} onFilterReset={onResetFilters} />
+        ),
+      },
+    ],
+    [onResetFilters],
+  );
 
   if (isLoading) {
     return <ExperienceDataTableLoading />;
@@ -147,55 +204,3 @@ const ExperienceDataTableEmpty = ({
     </div>
   );
 };
-
-const experienceTableHeaders: TableHeader[] = [
-  { key: 'title', label: '경험 이름', width: '160px' },
-  {
-    key: 'experienceCategory',
-    label: '경험 분류',
-    width: '110px',
-    cellRenderer: (value: string) => <CategoryCell value={value} />,
-  },
-  { key: 'organ', label: '기관', width: '140px' },
-  {
-    key: 'role',
-    label: '역할 및 담당 업무',
-    width: '140px',
-  },
-  {
-    key: 'activityType',
-    label: '팀·개인 여부',
-    width: '100px',
-    cellRenderer: (value: string) => <ActivityTypeCell value={value} />,
-  },
-  {
-    key: 'period',
-    label: '기간',
-    width: '140px',
-    cellRenderer: (_, row) => <PeriodCell row={row} />,
-  },
-  {
-    key: 'year',
-    label: '연도',
-    width: '80px',
-    cellRenderer: (_, row) => <YearCell row={row} />,
-  },
-  { key: 'situation', label: 'Situation(상황)', width: '200px' },
-  { key: 'task', label: 'Task(문제)', width: '200px' },
-  { key: 'action', label: 'Action(행동)', width: '200px' },
-  { key: 'result', label: 'Result(결과)', width: '200px' },
-  { key: 'reflection', label: '느낀 점 / 배운 점', width: '200px' },
-  {
-    key: 'coreCompetency',
-    label: '핵심 역량',
-    width: '140px',
-    cellRenderer: (value: string) => <CoreCompetencyCell value={value} />,
-  },
-  {
-    key: 'deleteAction',
-    label: '삭제',
-    width: '90px',
-    align: { horizontal: 'center', vertical: 'middle' },
-    cellRenderer: (_, row) => <DeleteCell row={row} />,
-  },
-];

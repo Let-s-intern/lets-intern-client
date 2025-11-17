@@ -1,15 +1,17 @@
 'use client';
 
+import { CategoryType, EXPERIENCE_CATEGORY_KR } from '@/api/experienceSchema';
 import { UserExperienceFilters } from '@/api/userExperienceSchema';
 import { useMemo } from 'react';
-import { activityTypeToLabel, experienceCategoryToLabel } from '../../../data';
+import { activityTypeToLabel } from '../../../data';
 import { FilterDropdown } from './FilterDropdown';
+import { MultiFilterDropdown } from './MultiFilterDropdown';
 
 interface Filters {
   category: string;
-  type: string;
+  activityType: string;
   year: string;
-  competency: string;
+  competency: string[];
 }
 
 interface ExperienceSelectModalFiltersProps {
@@ -24,10 +26,28 @@ export const ExperienceSelectModalFilters = ({
   filterOptions,
 }: ExperienceSelectModalFiltersProps) => {
   const handleFilterChange = (filterType: keyof Filters, value: string) => {
-    onFiltersChange({
-      ...filters,
-      [filterType]: value,
-    });
+    if (filterType === 'competency') {
+      if (value === 'ALL') {
+        onFiltersChange({
+          ...filters,
+          [filterType]: [],
+        });
+      } else {
+        const currentValues = filters.competency;
+        const newValues = currentValues.includes(value)
+          ? currentValues.filter((v) => v !== value)
+          : [...currentValues, value];
+        onFiltersChange({
+          ...filters,
+          [filterType]: newValues,
+        });
+      }
+    } else {
+      onFiltersChange({
+        ...filters,
+        [filterType]: value,
+      });
+    }
   };
 
   // API 필터 옵션을 UI 옵션으로 변환
@@ -35,8 +55,8 @@ export const ExperienceSelectModalFilters = ({
     const categoryOptions = [
       { value: '전체', label: '전체' },
       ...(filterOptions?.availableCategories.map((cat) => ({
-        value: experienceCategoryToLabel[cat] || cat,
-        label: experienceCategoryToLabel[cat] || cat,
+        value: EXPERIENCE_CATEGORY_KR[cat as CategoryType] || cat,
+        label: EXPERIENCE_CATEGORY_KR[cat as CategoryType] || cat,
       })) || []),
     ];
 
@@ -59,7 +79,7 @@ export const ExperienceSelectModalFilters = ({
     ];
 
     const competencyOptions = [
-      { value: '전체', label: '전체' },
+      { value: 'ALL', label: '전체' },
       ...(filterOptions?.availableCoreCompetencies.map((comp) => ({
         value: comp,
         label: comp,
@@ -73,9 +93,8 @@ export const ExperienceSelectModalFilters = ({
       competency: competencyOptions,
     };
   }, [filterOptions]);
-
   return (
-    <div className="px-6 py-4">
+    <div className="hidden px-6 pb-3 md:block">
       <div className="flex gap-3">
         {/* 경험 분류 필터 */}
         <FilterDropdown
@@ -83,16 +102,18 @@ export const ExperienceSelectModalFilters = ({
           options={filterOptionsFormatted.category}
           selectedValue={filters.category}
           onSelect={(value: string) => handleFilterChange('category', value)}
-          width="w-52"
+          width="min-w-[8.25rem]"
         />
 
         {/* 팀·개인 필터 */}
         <FilterDropdown
           labelPrefix="팀·개인"
           options={filterOptionsFormatted.type}
-          selectedValue={filters.type}
-          onSelect={(value: string) => handleFilterChange('type', value)}
-          width="w-36"
+          selectedValue={filters.activityType}
+          onSelect={(value: string) =>
+            handleFilterChange('activityType', value)
+          }
+          width="min-w-[7.5rem]"
         />
 
         {/* 연도 필터 */}
@@ -101,16 +122,22 @@ export const ExperienceSelectModalFilters = ({
           options={filterOptionsFormatted.year}
           selectedValue={filters.year}
           onSelect={(value: string) => handleFilterChange('year', value)}
-          width="w-32"
+          width="min-w-[6.5rem]"
         />
 
         {/* 핵심 역량 필터 */}
-        <FilterDropdown
+        <MultiFilterDropdown
           labelPrefix="핵심 역량"
           options={filterOptionsFormatted.competency}
-          selectedValue={filters.competency}
+          selectedValues={filters.competency}
           onSelect={(value: string) => handleFilterChange('competency', value)}
-          width="w-44"
+          onReset={() =>
+            onFiltersChange({
+              ...filters,
+              competency: [],
+            })
+          }
+          width="min-w-[8.25rem]"
         />
       </div>
     </div>

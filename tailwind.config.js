@@ -139,9 +139,7 @@ module.exports = {
           '0px 0px 12px 0px rgba(255, 255, 255, 0.45)',
           '4px 4px 8px 0px rgba(0, 0, 0, 0.04)',
         ],
-        '07': [
-          '0px 0px 8px 0px rgba(0, 0, 0, 0.08)',
-        ],
+        '07': ['0px 0px 8px 0px rgba(0, 0, 0, 0.14)'],
         10: ['0px 0px 10px 0px rgba(0, 0, 0, 0.08)'],
         button:
           '0px 16px 20px 0px rgba(0, 0, 0, 0.12), 0px 8px 16px 0px rgba(0, 0, 0, 0.08), 0px 0px 8px 0px rgba(0, 0, 0, 0.08)',
@@ -191,6 +189,14 @@ module.exports = {
             animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)',
           },
         },
+        'fade-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        'slide-in-right': {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(0)' },
+        },
       },
       animation: {
         'live-infinite-scroll-desktop':
@@ -198,6 +204,8 @@ module.exports = {
         'live-infinite-scroll-mobile':
           'live-infinite-scroll-mobile 12s linear infinite',
         'bounce-x': 'bounce-x 0.7s infinite',
+        'fade-in': 'fade-in 0.2s ease-out',
+        'slide-in-right': 'slide-in-right 0.2s ease-out',
       },
     },
     borderRadius: {

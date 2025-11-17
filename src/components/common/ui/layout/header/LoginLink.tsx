@@ -8,13 +8,18 @@ interface Props {
 }
 
 function LoginLink({ redirect, className, onClick }: Props) {
+  const searchParams = new URLSearchParams();
+  if (redirect) {
+    searchParams.set('redirect', redirect);
+  }
+
   return (
     <HybridLink
       className={twMerge(
         'px-3 py-1.5 text-xsmall14 font-medium transition hover:opacity-80',
         className,
       )}
-      href={`/login?redirect=${redirect}`}
+      href={`/login?${searchParams.toString()}`}
       onClick={() => {
         if (onClick) onClick();
       }}

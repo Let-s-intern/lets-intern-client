@@ -51,12 +51,13 @@ const MissionTodayIcon = ({
           style,
         )}
       >
-        {mission.th === BONUS_MISSION_TH ||
-        mission.th === TALENT_POOL_MISSION_TH
+        {mission.th === BONUS_MISSION_TH
           ? '보너스'
-          : isWaiting
-            ? `제출`
-            : `${mission.th}회차`}
+          : mission.th === TALENT_POOL_MISSION_TH
+            ? '인재풀'
+            : isWaiting
+              ? `제출`
+              : `${mission.th}회차`}
         <br />
         {text}
       </div>
