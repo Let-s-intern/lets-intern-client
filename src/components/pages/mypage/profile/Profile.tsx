@@ -1,6 +1,7 @@
 'use client';
 
 import { useUserQuery } from '@/api/user';
+import { useRouter } from 'next/navigation';
 
 function ProfileAvatar() {
   return (
@@ -54,11 +55,16 @@ function ProfileInfoRow({
 }
 
 export function Profile() {
+  const router = useRouter();
   const { data: user, isLoading } = useUserQuery();
 
   const userName = user?.name || '사용자';
   const wishJobDisplay = user?.wishJob || '미설정';
   const wishCompanyDisplay = user?.wishCompany || '미설정';
+
+  const handleClickProfileEdit = () => {
+    router.push('/mypage/career/plan');
+  };
 
   // 로딩 상태
   if (isLoading) {
@@ -105,7 +111,10 @@ export function Profile() {
         <ProfileInfoRow label="희망기업" value={wishCompanyDisplay} />
       </div>
 
-      <button className="mt-5 w-full rounded-xxs border border-neutral-80 px-3 py-1.5 text-xsmall14 font-normal text-neutral-20">
+      <button
+        className="mt-5 w-full rounded-xxs border border-neutral-80 px-3 py-1.5 text-xsmall14 font-normal text-neutral-20"
+        onClick={handleClickProfileEdit}
+      >
         프로필 수정
       </button>
     </div>
