@@ -3,7 +3,7 @@ interface SelectButtonProps {
   label: string;
   value: string;
   placeholder: string;
-  isRequired: boolean;
+  isRequired?: boolean;
   disabled: boolean;
   onClick: () => void;
 }
