@@ -18,14 +18,20 @@ const initialCareer: UserCareerType = {
   endDate: '',
 };
 
+const PAGE_SIZE = 10;
+
 const Career = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [careers, setCareers] = useState<UserCareerType[]>([]);
+  // const [careers, setCareers] = useState<UserCareerType[]>([]);
 
   const { data } = useGetUserCareerQuery({
     page: 1,
-    size: 10,
+    size: PAGE_SIZE,
   });
+
+  const { userCareers, pageInfo } = data ?? {};
+
+  console.log('userCareers:', data);
 
   const createCareerMutation = usePostUserCareerMutation();
 
@@ -49,27 +55,26 @@ const Career = () => {
       formData.append('verificationFile', '');
 
       const result = await createCareerMutation.mutateAsync(formData);
-      // console.log('career data:', result);
     };
 
     // createCareer();
   }, []);
 
   const handleCancel = () => {
-    setCareers((prev) => prev.slice(1)); // 추후 제거
+    // setCareers((prev) => prev.slice(1)); // 추후 제거
     setEditingId(null);
   };
 
   const handleSubmit = (career: UserCareerType) => {
-    setCareers((prev) => prev.slice(1)); // 추후 제거
+    // setCareers((prev) => prev.slice(1)); // 추후 제거
     // TODO: API 연동 예정 (생성 후 재조회)
-    setCareers((prev) => [career, ...prev]);
+    // setCareers((prev) => [career, ...prev]);
     setEditingId(null);
   };
 
   const handleCreateNew = () => {
     const randomId = crypto.randomUUID();
-    setCareers((prev) => [{ ...initialCareer, id: randomId }, ...prev]);
+    // setCareers((prev) => [{ ...initialCareer, id: randomId }, ...prev]);
     setEditingId(randomId);
   };
 
@@ -79,7 +84,7 @@ const Career = () => {
 
   return (
     <div className="flex w-full flex-col items-center">
-      {careers.length === 0 ? (
+      {userCareers?.length === 0 ? (
         // 커리어가 없을 때
         <section className="flex h-[28rem] flex-col items-center justify-center gap-3">
           <div className="flex flex-col items-center text-sm text-neutral-20">
@@ -108,7 +113,7 @@ const Career = () => {
               </SolidButton>
             )}
           </div>
-          {careers.map((career) => (
+          {userCareers?.map((career) => (
             <CareerItem
               key={career.id}
               career={career}

@@ -1,3 +1,4 @@
+import { Pageable, userCareerListSchema } from '@/api/careerSchema';
 import axios from '@/utils/axios';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
@@ -10,7 +11,7 @@ export const useGetUserCareerQuery = (pageable: Pageable) => {
       const res = await axios.get(
         `/user-career/my?page=${pageable.page}&size=${pageable.size}`,
       );
-      return res.data.data;
+      return userCareerListSchema.parse(res.data.data);
     },
   });
 };
@@ -18,17 +19,11 @@ export const useGetUserCareerQuery = (pageable: Pageable) => {
 export const usePostUserCareerMutation = () => {
   return useMutation({
     mutationFn: async (careerData: FormData) => {
-      const { data } = await axios.post('/user-career/my', careerData, {
+      await axios.post('/user-career/my', careerData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      return data.data;
     },
   });
 };
-
-export interface Pageable {
-  page: number;
-  size: number;
-}
