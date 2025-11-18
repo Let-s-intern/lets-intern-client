@@ -155,18 +155,26 @@ const userSchema = z.object({
   contactEmail: z.string().nullable(),
   phoneNum: z.string().nullable(),
   university: z.string().nullable(),
+  inflowPath: z.string().nullable(),
   grade: grade.nullable(),
   major: z.string().nullable(),
+  wishField: z.string().nullable(),
   wishJob: z.string().nullable(),
+  wishIndustry: z.string().nullable(),
+  wishEmploymentType: z.string().nullable(),
   wishCompany: z.string().nullable(),
   accountType: accountType.nullable(),
   accountNum: z.string().nullable(),
   marketingAgree: z.boolean().nullable(),
   authProvider: authProviderSchema.nullable(),
+  role: z.string().nullable(),
+  careerType: z.enum(['QUALIFIED', 'NONE']).nullable(),
+  memo: z.string().nullable(),
 });
 
 export type User = z.infer<typeof userSchema>;
 
+/** GET /api/v1/user */
 export const useUserQueryKey = 'useUserQueryKey';
 
 export const useUserQuery = ({
