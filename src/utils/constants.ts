@@ -125,3 +125,11 @@ export const JOB_FIELD_ROLES = [
   },
   { jobField: '직군 무관', jobRoles: [] },
 ];
+
+export const JOB_CONDITIONS = [
+  { value: 'PUBLIC', label: '대기업 공채에 지원하고 싶어요.' },
+  { value: 'STARTUP', label: '스타트업/중소기업 정규직으로 가고 싶어요.' },
+  { value: 'INTERN', label: '채용형 인턴에 도전하고 싶어요.' },
+  { value: 'EXPERIENCE', label: '체험형 인턴으로 경험을 먼저 쌓고 싶어요.' },
+  { value: 'FREELANCE', label: '계약직/프로젝트성 일자리도 괜찮아요.' },
+];
