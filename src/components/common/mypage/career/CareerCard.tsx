@@ -10,7 +10,15 @@ interface CareerCardProps {
  * 커리어 조회용 UI
  */
 const CareerCard = ({
-  career: { id, job, company, employmentType, startDate, endDate },
+  career: {
+    id,
+    job,
+    company,
+    employmentType,
+    employmentTypeOther,
+    startDate,
+    endDate,
+  },
   handleEdit,
 }: CareerCardProps) => {
   const mutation = useDeleteUserCareerMutation();
@@ -38,7 +46,11 @@ const CareerCard = ({
       <div className="text-neutral-0">{company}</div>
 
       <div className="flex items-center gap-2 text-sm text-neutral-0">
-        <span>{employmentType}</span>
+        <span>
+          {employmentType === '기타(직접입력)'
+            ? employmentTypeOther
+            : employmentType}
+        </span>
         <span className="text-neutral-40">
           {startDate} - {endDate}
         </span>

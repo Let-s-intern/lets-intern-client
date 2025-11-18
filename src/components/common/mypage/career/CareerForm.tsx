@@ -23,22 +23,14 @@ const CareerForm = ({
   handleCancel,
   handleSubmit,
 }: CareerFormProps) => {
-  const [form, setForm] = useState<UserCareerType>({
-    id: initialCareer.id,
-    company: initialCareer.company,
-    job: initialCareer.job,
-    employmentType: initialCareer.employmentType,
-    employmentTypeOther: initialCareer.employmentTypeOther,
-    startDate: initialCareer.startDate,
-    endDate: initialCareer.endDate,
-  });
+  const [form, setForm] = useState<UserCareerType>(initialCareer);
 
   const [employeeTypeModalOpen, setEmployeeTypeModalOpen] = useState(false);
   const [startDateModalOpen, setStartDateModalOpen] = useState(false);
   const [endDateModalOpen, setEndDateModalOpen] = useState(false);
 
   const handleEmployeeTypeSelect = (type: EmployeeType) => {
-    setForm((prev) => ({ ...prev, employeeType: type }));
+    setForm((prev) => ({ ...prev, employmentType: type }));
     setEmployeeTypeModalOpen(false);
   };
 
@@ -132,7 +124,7 @@ const CareerForm = ({
               onChange={(e) =>
                 setForm((prev) => ({
                   ...prev,
-                  employeeTypeOther: e.target.value,
+                  employmentTypeOther: e.target.value,
                 }))
               }
               placeholder="직접 입력해 주세요."
@@ -196,7 +188,7 @@ const CareerForm = ({
       <EmployeeTypeModal
         open={employeeTypeModalOpen}
         onClose={() => setEmployeeTypeModalOpen(false)}
-        selected={form.employmentType}
+        selected={form.employmentType as EmployeeType}
         onSelect={handleEmployeeTypeSelect}
       />
 

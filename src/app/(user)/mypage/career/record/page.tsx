@@ -2,12 +2,16 @@
 
 import { useGetUserCareerQuery, usePostUserCareerMutation } from '@/api/career';
 import { UserCareerType } from '@/api/careerSchema';
+import {
+  convertCareerApiToUiFormat,
+  convertCareerUiToApiFormat,
+} from '@/utils/career';
 import CareerItem from '@components/common/mypage/career/CareerItem';
-import OutlinedButton from '@components/ui/button/OutlinedButton';
+import NoCareerView from '@components/common/mypage/career/NoCareerView';
 import SolidButton from '@components/ui/button/SolidButton';
 import { Plus } from 'lucide-react';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const initialCareer: UserCareerType = {
   company: '',
@@ -21,8 +25,8 @@ const initialCareer: UserCareerType = {
 const PAGE_SIZE = 10;
 
 const Career = () => {
+  const [createMode, setCreateMode] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
-  // const [careers, setCareers] = useState<UserCareerType[]>([]);
 
   const { data } = useGetUserCareerQuery({
     page: 1,
@@ -31,54 +35,36 @@ const Career = () => {
 
   const { userCareers, pageInfo } = data ?? {};
 
-  console.log('userCareers:', data);
-
   const createCareerMutation = usePostUserCareerMutation();
 
-  useEffect(() => {
-    const createCareer = async () => {
-      const formData = new FormData();
-      const requestDto = new Blob(
-        [
-          JSON.stringify({
-            company: '렛커',
-            job: '프론트엔드 개발자',
-            employmentType: '정규직',
-            startDate: '2025-11-17',
-            endDate: '2025-11-17',
-          }),
-        ],
-        { type: 'application/json' },
-      );
-
-      formData.append('requestDto', requestDto);
-      formData.append('verificationFile', '');
-
-      await createCareerMutation.mutateAsync(formData);
-    };
-
-    // createCareer();
-  }, []);
-
   const handleCancel = () => {
-    // setCareers((prev) => prev.slice(1)); // 추후 제거
+    setCreateMode(false);
     setEditingId(null);
   };
 
-  const handleSubmit = (career: UserCareerType) => {
-    // setCareers((prev) => prev.slice(1)); // 추후 제거
-    // TODO: API 연동 예정 (생성 후 재조회)
-    // setCareers((prev) => [career, ...prev]);
+  // 수정인지 생성인지 구분 필요
+  const handleSubmit = async (career: UserCareerType) => {
+    const formData = new FormData();
+    const careerReq = convertCareerUiToApiFormat(career);
+
+    const requestDto = new Blob([JSON.stringify(careerReq)], {
+      type: 'application/json',
+    });
+
+    formData.append('requestDto', requestDto);
+
+    await createCareerMutation.mutateAsync(formData);
+    setCreateMode(false);
     setEditingId(null);
   };
 
   const handleCreateNew = () => {
-    const randomId = crypto.randomUUID();
-    // setCareers((prev) => [{ ...initialCareer, id: randomId }, ...prev]);
-    setEditingId(Number(randomId));
+    setCreateMode(true);
+    setEditingId(null);
   };
 
   const handleEdit = (id: number) => {
+    setCreateMode(false);
     setEditingId(id);
   };
 
@@ -86,15 +72,7 @@ const Career = () => {
     <div className="flex w-full flex-col items-center">
       {userCareers?.length === 0 ? (
         // 커리어가 없을 때
-        <section className="flex h-[28rem] flex-col items-center justify-center gap-3">
-          <div className="flex flex-col items-center text-sm text-neutral-20">
-            <p>아직 등록된 커리어가 없어요.</p>
-            <p>지금까지의 경력을 기록해두면, 서류 준비가 훨씬 쉬워져요.</p>
-          </div>
-          <OutlinedButton size="xs" onClick={handleCreateNew} className="w-fit">
-            커리어 기록하기
-          </OutlinedButton>
-        </section>
+        <NoCareerView handleCreateNew={handleCreateNew} />
       ) : (
         // 커리어가 하나 이상 있을 때
         <section className="flex w-full flex-col gap-3">
@@ -113,10 +91,21 @@ const Career = () => {
               </SolidButton>
             )}
           </div>
+
+          {createMode && (
+            <CareerItem
+              career={initialCareer}
+              writeMode={true}
+              handleCancel={handleCancel}
+              handleSubmit={handleSubmit}
+              handleEdit={handleEdit}
+            />
+          )}
+
           {userCareers?.map((career) => (
             <CareerItem
               key={career.id}
-              career={career}
+              career={convertCareerApiToUiFormat(career)}
               writeMode={editingId === career.id}
               handleCancel={handleCancel}
               handleSubmit={handleSubmit}
