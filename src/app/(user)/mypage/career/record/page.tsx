@@ -9,22 +9,14 @@ import { UserCareerType } from '@/api/careerSchema';
 import { convertCareerUiToApiFormat } from '@/utils/career';
 import CareerItem from '@components/common/mypage/career/CareerItem';
 import CareerList from '@components/common/mypage/career/CareerList';
+import {
+  DEFAULT_CAREER,
+  PAGE_SIZE,
+} from '@components/common/mypage/career/constants';
 import NoCareerView from '@components/common/mypage/career/NoCareerView';
 import SolidButton from '@components/ui/button/SolidButton';
 import { Plus } from 'lucide-react';
-
 import { useState } from 'react';
-
-const initialCareer: UserCareerType = {
-  company: '',
-  job: '',
-  employmentType: null,
-  employmentTypeOther: '',
-  startDate: '',
-  endDate: '',
-};
-
-const PAGE_SIZE = 10;
 
 const Career = () => {
   const [createMode, setCreateMode] = useState(false);
@@ -104,7 +96,7 @@ const Career = () => {
 
           {createMode && (
             <CareerItem
-              career={initialCareer}
+              career={DEFAULT_CAREER}
               writeMode={true}
               handleCancel={handleCancel}
               handleSubmit={handleSubmit}
