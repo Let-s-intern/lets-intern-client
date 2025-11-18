@@ -17,6 +17,8 @@ export const useGetUserCareerQuery = (pageable: Pageable) => {
 };
 
 export const usePostUserCareerMutation = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (careerData: FormData) => {
       await axios.post('/user-career/my', careerData, {
@@ -24,6 +26,9 @@ export const usePostUserCareerMutation = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [UserCareerQueryKey] });
     },
   });
 };
