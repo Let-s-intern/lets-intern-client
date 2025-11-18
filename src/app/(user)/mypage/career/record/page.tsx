@@ -1,6 +1,10 @@
 'use client';
 
-import { useGetUserCareerQuery, usePostUserCareerMutation } from '@/api/career';
+import {
+  useGetUserCareerQuery,
+  usePatchUserCareerMutation,
+  usePostUserCareerMutation,
+} from '@/api/career';
 import { UserCareerType } from '@/api/careerSchema';
 import {
   convertCareerApiToUiFormat,
@@ -36,13 +40,13 @@ const Career = () => {
   const { userCareers, pageInfo } = data ?? {};
 
   const createCareerMutation = usePostUserCareerMutation();
+  const patchCareerMutation = usePatchUserCareerMutation();
 
   const handleCancel = () => {
     setCreateMode(false);
     setEditingId(null);
   };
 
-  // 수정인지 생성인지 구분 필요
   const handleSubmit = async (career: UserCareerType) => {
     const formData = new FormData();
     const careerReq = convertCareerUiToApiFormat(career);
@@ -53,7 +57,15 @@ const Career = () => {
 
     formData.append('requestDto', requestDto);
 
-    await createCareerMutation.mutateAsync(formData);
+    if (editingId === null) {
+      await createCareerMutation.mutateAsync(formData);
+    } else {
+      await patchCareerMutation.mutateAsync({
+        careerId: editingId,
+        careerData: formData,
+      });
+    }
+
     setCreateMode(false);
     setEditingId(null);
   };

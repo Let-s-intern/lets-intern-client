@@ -45,3 +45,21 @@ export const useDeleteUserCareerMutation = () => {
     },
   });
 };
+
+export const usePatchUserCareerMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: { careerId: number; careerData: FormData }) => {
+      const { careerId, careerData: formData } = data;
+      await axios.patch(`/user-career/my/${careerId}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [UserCareerQueryKey] });
+    },
+  });
+};
