@@ -2,6 +2,7 @@ import { useGetUserCareerQuery } from '@/api/career';
 import { UserCareerType } from '@/api/careerSchema';
 import { convertCareerApiToUiFormat } from '@/utils/career';
 import CareerItem from '@components/common/mypage/career/CareerItem';
+import { DEFAULT_PAGE_INFO } from '@components/common/mypage/career/constants';
 import MuiPagination from '@components/common/program/pagination/MuiPagination';
 import { useState } from 'react';
 
@@ -34,15 +35,10 @@ const CareerList = ({
     pageSize,
     totalPages,
     totalElements,
-  } = pageInfo ?? {
-    pageNum: 0,
-    pageSize: 0,
-    totalPages: 0,
-    totalElements: 0,
-  };
+  } = pageInfo ?? DEFAULT_PAGE_INFO;
 
   const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
+    _event: React.ChangeEvent<unknown>,
     page: number,
   ) => {
     setPage(page);

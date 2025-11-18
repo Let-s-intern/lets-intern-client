@@ -7,6 +7,7 @@ import {
 } from '@/api/career';
 import { UserCareerType } from '@/api/careerSchema';
 import { convertCareerUiToApiFormat } from '@/utils/career';
+import CareerHeader from '@components/common/mypage/career/CareerHeader';
 import CareerItem from '@components/common/mypage/career/CareerItem';
 import CareerList from '@components/common/mypage/career/CareerList';
 import {
@@ -14,14 +15,14 @@ import {
   PAGE_SIZE,
 } from '@components/common/mypage/career/constants';
 import NoCareerView from '@components/common/mypage/career/NoCareerView';
-import SolidButton from '@components/ui/button/SolidButton';
-import { Plus } from 'lucide-react';
 import { useState } from 'react';
 
 const Career = () => {
-  const [createMode, setCreateMode] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [createMode, setCreateMode] = useState(false); // 신규 작성 모드
+  const [editingId, setEditingId] = useState<number | null>(null); // 수정 중인 커리어 ID
 
+  const createCareerMutation = usePostUserCareerMutation();
+  const patchCareerMutation = usePatchUserCareerMutation();
   const { data } = useGetUserCareerQuery({
     page: 1,
     size: PAGE_SIZE,
@@ -29,15 +30,12 @@ const Career = () => {
 
   const { userCareers } = data ?? {};
 
-  const createCareerMutation = usePostUserCareerMutation();
-  const patchCareerMutation = usePatchUserCareerMutation();
-
-  const handleCancel = () => {
+  const handleCloseForm = () => {
     setCreateMode(false);
     setEditingId(null);
   };
 
-  const handleSubmit = async (career: UserCareerType) => {
+  const handleSubmitForm = async (career: UserCareerType) => {
     const formData = new FormData();
     const careerReq = convertCareerUiToApiFormat(career);
 
@@ -56,75 +54,63 @@ const Career = () => {
       });
     }
 
-    setCreateMode(false);
-    setEditingId(null);
+    handleCloseForm();
   };
 
-  const handleCreateNew = () => {
+  const handleCreateBtnClick = () => {
     setCreateMode(true);
     setEditingId(null);
   };
 
-  const handleEdit = (id: number) => {
+  const handleEditBtnClick = (id: number) => {
     setCreateMode(false);
     setEditingId(id);
   };
 
+  const renderCreateForm = () => (
+    <CareerItem
+      career={DEFAULT_CAREER}
+      writeMode
+      handleCancel={handleCloseForm}
+      handleSubmit={handleSubmitForm}
+      handleEdit={handleEditBtnClick}
+    />
+  );
+
+  const isEmpty = userCareers?.length === 0;
+
+  // 커리어 기록이 없을 때
+  if (isEmpty) {
+    if (createMode) return renderCreateForm();
+    return <NoCareerView handleCreateNew={handleCreateBtnClick} />;
+  }
+
+  // 커리어 기록이 하나 이상 있을 때
   return (
-    <div className="flex w-full flex-col items-center">
-      {userCareers?.length === 0 ? (
-        // 커리어가 없을 때
-        <>
-          {createMode ? (
-            <CareerItem
-              career={DEFAULT_CAREER}
-              writeMode={true}
-              handleCancel={handleCancel}
-              handleSubmit={handleSubmit}
-              handleEdit={handleEdit}
-            />
-          ) : (
-            <NoCareerView handleCreateNew={handleCreateNew} />
-          )}
-        </>
-      ) : (
-        // 커리어가 하나 이상 있을 때
-        <section className="flex w-full flex-col gap-3">
-          <div className="flex items-center justify-between">
-            <header className="text-lg font-medium">
-              커리어 기록(경력사항)
-            </header>
-            {editingId === null && !createMode && (
-              <SolidButton
-                variant="secondary"
-                size="xs"
-                icon={<Plus size={16} />}
-                onClick={handleCreateNew}
-              >
-                경력 정보 추가
-              </SolidButton>
-            )}
-          </div>
+    <section className="flex w-full flex-col gap-3">
+      <CareerHeader
+        editingId={editingId}
+        createMode={createMode}
+        handleCreateBtnClick={handleCreateBtnClick}
+      />
 
-          {createMode && (
-            <CareerItem
-              career={DEFAULT_CAREER}
-              writeMode={true}
-              handleCancel={handleCancel}
-              handleSubmit={handleSubmit}
-              handleEdit={handleEdit}
-            />
-          )}
-
-          <CareerList
-            editingId={editingId}
-            handleCancel={handleCancel}
-            handleSubmit={handleSubmit}
-            handleEdit={handleEdit}
-          />
-        </section>
+      {createMode && (
+        <CareerItem
+          career={DEFAULT_CAREER}
+          writeMode={true}
+          handleCancel={handleCloseForm}
+          handleSubmit={handleSubmitForm}
+          handleEdit={handleEditBtnClick}
+        />
       )}
-    </div>
+
+      <CareerList
+        editingId={editingId}
+        handleCancel={handleCloseForm}
+        handleSubmit={handleSubmitForm}
+        handleEdit={handleEditBtnClick}
+      />
+    </section>
   );
 };
 
