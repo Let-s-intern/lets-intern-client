@@ -12,7 +12,7 @@ interface CareerModalsProps {
   initialIndustries: string[];
   userGrade?: string;
   onGradeComplete: (grade: string) => void;
-  onFieldComplete: (field: string, positions: string[]) => void;
+  onFieldComplete: (field: string | null, positions: string[]) => void;
   onPositionsComplete: (positions: string[]) => void;
   onIndustriesComplete: (industries: string[]) => void;
   onClose: () => void;
@@ -30,7 +30,6 @@ export default function CareerModals({
   onIndustriesComplete,
   onClose,
 }: CareerModalsProps) {
-  // 모달 내부 상태 (임시 선택값)
   const [selectedField, setSelectedField] = useState<string | null>(
     initialField,
   );
@@ -39,7 +38,6 @@ export default function CareerModals({
   const [selectedIndustries, setSelectedIndustries] =
     useState<string[]>(initialIndustries);
 
-  // 모달이 닫힐 때마다 초기값으로 리셋
   useEffect(() => {
     if (modalStep !== null) {
       setSelectedField(initialField);
@@ -48,7 +46,6 @@ export default function CareerModals({
     }
   }, [modalStep, initialField, initialPositions, initialIndustries]);
 
-  // body scroll 제어
   useEffect(() => {
     document.body.style.overflow = modalStep !== null ? 'hidden' : 'auto';
     return () => {
@@ -92,7 +89,6 @@ export default function CareerModals({
 
   const grades = ['1학년', '2학년', '3학년', '4학년', '5학년', '졸업생'];
 
-  // 헬퍼 함수
   const toggleSelection = (
     name: string,
     selectedItems: string[],
@@ -105,7 +101,6 @@ export default function CareerModals({
     }
   };
 
-  // 핸들러들
   const handleFieldSelect = (id: number): void => {
     const fieldName = jobCategories[id].name;
     setSelectedField(fieldName);
@@ -171,7 +166,7 @@ export default function CareerModals({
   const handleBackToField = () => {
     setSelectedPositions([]);
     setSelectedField(null);
-    onFieldComplete(null as any, []); // 직군 선택 취소
+    onFieldComplete(null, []);
   };
 
   if (!modalStep) return null;
@@ -193,17 +188,7 @@ export default function CareerModals({
               }`}
             >
               <span className="text-left">{grade}</span>
-              {isSelected && (
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path
-                    d="M16.6667 5L7.50004 14.1667L3.33337 10"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              )}
+              {isSelected && <CheckIcon />}
             </button>
           );
         })}
@@ -228,17 +213,7 @@ export default function CareerModals({
               }`}
             >
               <span className="text-left">{item.name}</span>
-              {isSelected && (
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path
-                    d="M16.6667 5L7.50004 14.1667L3.33337 10"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              )}
+              {isSelected && <CheckIcon />}
             </button>
           );
         })}
@@ -343,3 +318,17 @@ export default function CareerModals({
 
   return null;
 }
+
+const CheckIcon = () => {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <path
+        d="M16.6667 5L7.50004 14.1667L3.33337 10"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+};
