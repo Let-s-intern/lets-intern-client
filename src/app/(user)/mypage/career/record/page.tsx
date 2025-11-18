@@ -21,7 +21,7 @@ const initialCareer: UserCareerType = {
 const PAGE_SIZE = 10;
 
 const Career = () => {
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<number | null>(null);
   // const [careers, setCareers] = useState<UserCareerType[]>([]);
 
   const { data } = useGetUserCareerQuery({
@@ -43,7 +43,7 @@ const Career = () => {
           JSON.stringify({
             company: '렛커',
             job: '프론트엔드 개발자',
-            employmentType: 'TIME',
+            employmentType: '정규직',
             startDate: '2025-11-17',
             endDate: '2025-11-17',
           }),
@@ -54,7 +54,7 @@ const Career = () => {
       formData.append('requestDto', requestDto);
       formData.append('verificationFile', '');
 
-      const result = await createCareerMutation.mutateAsync(formData);
+      await createCareerMutation.mutateAsync(formData);
     };
 
     // createCareer();
@@ -75,10 +75,10 @@ const Career = () => {
   const handleCreateNew = () => {
     const randomId = crypto.randomUUID();
     // setCareers((prev) => [{ ...initialCareer, id: randomId }, ...prev]);
-    setEditingId(randomId);
+    setEditingId(Number(randomId));
   };
 
-  const handleEdit = (id: string) => {
+  const handleEdit = (id: number) => {
     setEditingId(id);
   };
 

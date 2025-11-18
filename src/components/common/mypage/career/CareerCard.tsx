@@ -1,8 +1,9 @@
+import { useDeleteUserCareerMutation } from '@/api/career';
 import { UserCareerType } from '@/api/careerSchema';
 
 interface CareerCardProps {
   career: UserCareerType;
-  handleEdit: (id: string) => void;
+  handleEdit: (id: number) => void;
 }
 
 /**
@@ -12,8 +13,10 @@ const CareerCard = ({
   career: { id, job, company, employmentType, startDate, endDate },
   handleEdit,
 }: CareerCardProps) => {
+  const mutation = useDeleteUserCareerMutation();
+
   const handleDelete = () => {
-    // TODO: 삭제 버튼 클릭 시 동작할 함수
+    mutation.mutate(id!);
   };
 
   return (

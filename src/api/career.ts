@@ -1,6 +1,6 @@
 import { Pageable, userCareerListSchema } from '@/api/careerSchema';
 import axios from '@/utils/axios';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export const UserCareerQueryKey = 'userCareerQueryKey';
 
@@ -24,6 +24,19 @@ export const usePostUserCareerMutation = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
+    },
+  });
+};
+
+export const useDeleteUserCareerMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (careerId: number) => {
+      await axios.delete(`/user-career/my/${careerId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [UserCareerQueryKey] });
     },
   });
 };
