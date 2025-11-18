@@ -89,20 +89,11 @@ const Career = () => {
   return (
     <section className="flex w-full flex-col gap-3">
       <CareerHeader
-        editingId={editingId}
-        createMode={createMode}
+        showCreateButton={editingId === null && !createMode}
         handleCreateBtnClick={handleCreateBtnClick}
       />
 
-      {createMode && (
-        <CareerItem
-          career={DEFAULT_CAREER}
-          writeMode={true}
-          handleCancel={handleCloseForm}
-          handleSubmit={handleSubmitForm}
-          handleEdit={handleEditBtnClick}
-        />
-      )}
+      {createMode && renderCreateForm()}
 
       <CareerList
         editingId={editingId}
