@@ -6,11 +6,9 @@ import {
   usePostUserCareerMutation,
 } from '@/api/career';
 import { UserCareerType } from '@/api/careerSchema';
-import {
-  convertCareerApiToUiFormat,
-  convertCareerUiToApiFormat,
-} from '@/utils/career';
+import { convertCareerUiToApiFormat } from '@/utils/career';
 import CareerItem from '@components/common/mypage/career/CareerItem';
+import CareerList from '@components/common/mypage/career/CareerList';
 import NoCareerView from '@components/common/mypage/career/NoCareerView';
 import SolidButton from '@components/ui/button/SolidButton';
 import { Plus } from 'lucide-react';
@@ -37,7 +35,7 @@ const Career = () => {
     size: PAGE_SIZE,
   });
 
-  const { userCareers, pageInfo } = data ?? {};
+  const { userCareers } = data ?? {};
 
   const createCareerMutation = usePostUserCareerMutation();
   const patchCareerMutation = usePatchUserCareerMutation();
@@ -114,16 +112,12 @@ const Career = () => {
             />
           )}
 
-          {userCareers?.map((career) => (
-            <CareerItem
-              key={career.id}
-              career={convertCareerApiToUiFormat(career)}
-              writeMode={editingId === career.id}
-              handleCancel={handleCancel}
-              handleSubmit={handleSubmit}
-              handleEdit={handleEdit}
-            />
-          ))}
+          <CareerList
+            editingId={editingId}
+            handleCancel={handleCancel}
+            handleSubmit={handleSubmit}
+            handleEdit={handleEdit}
+          />
         </section>
       )}
     </div>

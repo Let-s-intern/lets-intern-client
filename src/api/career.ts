@@ -6,7 +6,7 @@ export const UserCareerQueryKey = 'userCareerQueryKey';
 
 export const useGetUserCareerQuery = (pageable: Pageable) => {
   return useQuery({
-    queryKey: [UserCareerQueryKey],
+    queryKey: [UserCareerQueryKey, ...Object.values(pageable)],
     queryFn: async () => {
       const res = await axios.get(
         `/user-career/my?page=${pageable.page}&size=${pageable.size}`,

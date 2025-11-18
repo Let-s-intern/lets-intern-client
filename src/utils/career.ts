@@ -51,12 +51,19 @@ export const convertCareerUiToApiFormat = (
   const apiEmploymentType =
     employmentType === '기타(직접입력)' ? employmentTypeOther : employmentType;
 
+  const startDate = career.startDate
+    ? career.startDate.replace(/\./g, '-') + '-01'
+    : null;
+  const endDate = career.endDate
+    ? career.endDate.replace(/\./g, '-') + '-01'
+    : null;
+
   return {
     id: career.id,
     company: career.company,
     job: career.job,
     employmentType: apiEmploymentType,
-    startDate: career.startDate?.replace(/\./g, '-') + '-01',
-    endDate: career.endDate?.replace(/\./g, '-') + '-01',
+    startDate,
+    endDate,
   };
 };
