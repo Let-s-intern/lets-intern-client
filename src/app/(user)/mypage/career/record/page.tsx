@@ -92,7 +92,7 @@ const Career = () => {
             <header className="text-lg font-medium">
               커리어 기록(경력사항)
             </header>
-            {editingId === null && (
+            {editingId === null && !createMode && (
               <SolidButton
                 variant="secondary"
                 size="xs"
