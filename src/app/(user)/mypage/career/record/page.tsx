@@ -74,7 +74,19 @@ const Career = () => {
     <div className="flex w-full flex-col items-center">
       {userCareers?.length === 0 ? (
         // 커리어가 없을 때
-        <NoCareerView handleCreateNew={handleCreateNew} />
+        <>
+          {createMode ? (
+            <CareerItem
+              career={DEFAULT_CAREER}
+              writeMode={true}
+              handleCancel={handleCancel}
+              handleSubmit={handleSubmit}
+              handleEdit={handleEdit}
+            />
+          ) : (
+            <NoCareerView handleCreateNew={handleCreateNew} />
+          )}
+        </>
       ) : (
         // 커리어가 하나 이상 있을 때
         <section className="flex w-full flex-col gap-3">
