@@ -34,11 +34,13 @@ export default function Page() {
     jobConditions: [],
   });
 
+  const [isEditing, setIsEditing] = useState(false);
   const [modalStep, setModalStep] = useState<ModalStep>(null);
   const [selectedField, setSelectedField] = useState<string | null>(null);
   const [selectedPositions, setSelectedPositions] = useState<string[]>([]);
   const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
 
+  const handleCreateNew = () => setIsEditing(true);
   const handleConditionToggle = (value: string) => {
     setUser((prev) => ({
       ...prev,
@@ -93,13 +95,13 @@ export default function Page() {
 
   return (
     <div className="flex w-full flex-col">
-      {user.university !== '' ? (
+      {!isEditing ? (
         <section className="flex h-[28rem] flex-col items-center justify-center gap-3">
           <div className="flex flex-col text-center text-sm text-neutral-20">
             <p>아직 커리어 방향을 설정하지 않았어요.</p>
             <p>목표를 세우면, 그 길에 한걸음 더 가까워질 수 있어요.</p>
           </div>
-          <OutlinedButton size="xs" className="w-fit">
+          <OutlinedButton size="xs" onClick={handleCreateNew} className="w-fit">
             커리어 계획하기
           </OutlinedButton>
         </section>
@@ -117,6 +119,9 @@ export default function Page() {
                   name="university"
                   placeholder="학교 이름을 입력해 주세요."
                   value={user.university}
+                  onChange={(e) =>
+                    setUser((prev) => ({ ...prev, university: e.target.value }))
+                  }
                 />
               </div>
               <SelectButton
@@ -135,6 +140,9 @@ export default function Page() {
                   name="major"
                   placeholder="전공을 입력해 주세요."
                   value={user.major}
+                  onChange={(e) =>
+                    setUser((prev) => ({ ...prev, major: e.target.value }))
+                  }
                 />
               </div>
             </div>
@@ -169,6 +177,12 @@ export default function Page() {
                   name="wishTargetCompany"
                   placeholder="희망 기업을 입력해주세요."
                   value={user.wishTargetCompany}
+                  onChange={(e) =>
+                    setUser((prev) => ({
+                      ...prev,
+                      wishTargetCompany: e.target.value,
+                    }))
+                  }
                 />
               </div>
             </div>
