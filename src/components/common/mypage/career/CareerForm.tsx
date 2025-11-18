@@ -23,22 +23,14 @@ const CareerForm = ({
   handleCancel,
   handleSubmit,
 }: CareerFormProps) => {
-  const [form, setForm] = useState<UserCareerType>({
-    id: initialCareer.id,
-    company: initialCareer.company,
-    position: initialCareer.position,
-    employeeType: initialCareer.employeeType,
-    employeeTypeOther: initialCareer.employeeTypeOther,
-    startDate: initialCareer.startDate,
-    endDate: initialCareer.endDate,
-  });
+  const [form, setForm] = useState<UserCareerType>(initialCareer);
 
   const [employeeTypeModalOpen, setEmployeeTypeModalOpen] = useState(false);
   const [startDateModalOpen, setStartDateModalOpen] = useState(false);
   const [endDateModalOpen, setEndDateModalOpen] = useState(false);
 
   const handleEmployeeTypeSelect = (type: EmployeeType) => {
-    setForm((prev) => ({ ...prev, employeeType: type }));
+    setForm((prev) => ({ ...prev, employmentType: type }));
     setEmployeeTypeModalOpen(false);
   };
 
@@ -93,9 +85,9 @@ const CareerForm = ({
           <input
             id="career-position"
             type="text"
-            value={form.position ?? ''}
+            value={form.job ?? ''}
             onChange={(e) =>
-              setForm((prev) => ({ ...prev, position: e.target.value }))
+              setForm((prev) => ({ ...prev, job: e.target.value }))
             }
             placeholder="예) 서비스 기획자"
             className="w-full rounded-xxs border border-neutral-80 px-3 py-2 text-neutral-0 placeholder:text-neutral-50 focus:border-primary focus:outline-none"
@@ -116,23 +108,23 @@ const CareerForm = ({
             onClick={() => setEmployeeTypeModalOpen(true)}
             className="flex w-full items-center justify-between rounded-xxs border border-neutral-80 px-3 py-2 text-neutral-50"
           >
-            {form.employeeType ? (
-              <span className="text-neutral-0">{form.employeeType}</span>
+            {form.employmentType ? (
+              <span className="text-neutral-0">{form.employmentType}</span>
             ) : (
               <span>고용 형태를 선택해 주세요.</span>
             )}
             <ChevronRight size={20} className="text-neutral-50" />
           </button>
 
-          {form.employeeType === '기타(직접입력)' && (
+          {form.employmentType === '기타(직접입력)' && (
             <input
               id="career-employee-type-other"
               type="text"
-              value={form.employeeTypeOther ?? ''}
+              value={form.employmentTypeOther ?? ''}
               onChange={(e) =>
                 setForm((prev) => ({
                   ...prev,
-                  employeeTypeOther: e.target.value,
+                  employmentTypeOther: e.target.value,
                 }))
               }
               placeholder="직접 입력해 주세요."
@@ -196,7 +188,7 @@ const CareerForm = ({
       <EmployeeTypeModal
         open={employeeTypeModalOpen}
         onClose={() => setEmployeeTypeModalOpen(false)}
-        selected={form.employeeType}
+        selected={form.employmentType as EmployeeType}
         onSelect={handleEmployeeTypeSelect}
       />
 

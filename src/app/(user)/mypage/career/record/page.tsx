@@ -1,92 +1,116 @@
 'use client';
 
+import {
+  useGetUserCareerQuery,
+  usePatchUserCareerMutation,
+  usePostUserCareerMutation,
+} from '@/api/career';
 import { UserCareerType } from '@/api/careerSchema';
+import { convertCareerUiToApiFormat } from '@/utils/career';
+import CareerHeader from '@components/common/mypage/career/CareerHeader';
 import CareerItem from '@components/common/mypage/career/CareerItem';
-import OutlinedButton from '@components/ui/button/OutlinedButton';
-import SolidButton from '@components/ui/button/SolidButton';
-import { Plus } from 'lucide-react';
-
+import CareerList from '@components/common/mypage/career/CareerList';
+import {
+  DEFAULT_CAREER,
+  PAGE_SIZE,
+} from '@components/common/mypage/career/constants';
+import NoCareerView from '@components/common/mypage/career/NoCareerView';
 import { useState } from 'react';
 
-const initialCareer: UserCareerType = {
-  company: '',
-  position: '',
-  employeeType: null,
-  employeeTypeOther: '',
-  startDate: '',
-  endDate: '',
-};
-
 const Career = () => {
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [careers, setCareers] = useState<UserCareerType[]>([]);
+  const [createMode, setCreateMode] = useState(false); // 신규 작성 모드
+  const [editingId, setEditingId] = useState<number | null>(null); // 수정 중인 커리어 ID
 
-  const handleCancel = () => {
-    setCareers((prev) => prev.slice(1)); // 추후 제거
+  const createCareerMutation = usePostUserCareerMutation();
+  const patchCareerMutation = usePatchUserCareerMutation();
+  const { data } = useGetUserCareerQuery({
+    page: 1,
+    size: PAGE_SIZE,
+  });
+
+  const { userCareers } = data ?? {};
+
+  const handleCloseForm = () => {
+    setCreateMode(false);
     setEditingId(null);
   };
 
-  const handleSubmit = (career: UserCareerType) => {
-    setCareers((prev) => prev.slice(1)); // 추후 제거
-    // TODO: API 연동 예정 (생성 후 재조회)
-    setCareers((prev) => [career, ...prev]);
+  const handleSubmitForm = async (career: UserCareerType) => {
+    const formData = new FormData();
+    const careerReq = convertCareerUiToApiFormat(career);
+
+    const requestDto = new Blob([JSON.stringify(careerReq)], {
+      type: 'application/json',
+    });
+
+    formData.append('requestDto', requestDto);
+
+    if (editingId === null) {
+      await createCareerMutation.mutateAsync(formData);
+    } else {
+      await patchCareerMutation.mutateAsync({
+        careerId: editingId,
+        careerData: formData,
+      });
+    }
+
+    handleCloseForm();
+  };
+
+  const handleCreateBtnClick = () => {
+    setCreateMode(true);
     setEditingId(null);
   };
 
-  const handleCreateNew = () => {
-    const randomId = crypto.randomUUID();
-    setCareers((prev) => [{ ...initialCareer, id: randomId }, ...prev]);
-    setEditingId(randomId);
-  };
-
-  const handleEdit = (id: string) => {
+  const handleEditBtnClick = (id: number) => {
+    setCreateMode(false);
     setEditingId(id);
   };
 
+  const renderCreateForm = () => (
+    <CareerItem
+      career={DEFAULT_CAREER}
+      writeMode
+      handleCancel={handleCloseForm}
+      handleSubmit={handleSubmitForm}
+      handleEdit={handleEditBtnClick}
+    />
+  );
+
+  const isEmpty = userCareers?.length === 0;
+
+  // 커리어 기록이 없을 때
+  if (isEmpty) {
+    if (createMode) return renderCreateForm();
+    return <NoCareerView handleCreateNew={handleCreateBtnClick} />;
+  }
+
+  // 커리어 기록이 하나 이상 있을 때
   return (
-    <div className="flex w-full flex-col items-center">
-      {careers.length === 0 ? (
-        // 커리어가 없을 때
-        <section className="flex h-[28rem] flex-col items-center justify-center gap-3">
-          <div className="flex flex-col items-center text-sm text-neutral-20">
-            <p>아직 등록된 커리어가 없어요.</p>
-            <p>지금까지의 경력을 기록해두면, 서류 준비가 훨씬 쉬워져요.</p>
-          </div>
-          <OutlinedButton size="xs" onClick={handleCreateNew} className="w-fit">
-            커리어 기록하기
-          </OutlinedButton>
-        </section>
-      ) : (
-        // 커리어가 하나 이상 있을 때
-        <section className="flex w-full flex-col gap-3">
-          <div className="flex items-center justify-between">
-            <header className="text-lg font-medium">
-              커리어 기록(경력사항)
-            </header>
-            {editingId === null && (
-              <SolidButton
-                variant="secondary"
-                size="xs"
-                icon={<Plus size={16} />}
-                onClick={handleCreateNew}
-              >
-                경력 정보 추가
-              </SolidButton>
-            )}
-          </div>
-          {careers.map((career) => (
-            <CareerItem
-              key={career.id}
-              career={career}
-              writeMode={editingId === career.id}
-              handleCancel={handleCancel}
-              handleSubmit={handleSubmit}
-              handleEdit={handleEdit}
-            />
-          ))}
-        </section>
+    <section className="flex w-full flex-col gap-3">
+      <CareerHeader
+        editingId={editingId}
+        createMode={createMode}
+        handleCreateBtnClick={handleCreateBtnClick}
+      />
+
+      {createMode && (
+        <CareerItem
+          career={DEFAULT_CAREER}
+          writeMode={true}
+          handleCancel={handleCloseForm}
+          handleSubmit={handleSubmitForm}
+          handleEdit={handleEditBtnClick}
+        />
       )}
-    </div>
+
+      <CareerList
+        editingId={editingId}
+        handleCancel={handleCloseForm}
+        handleSubmit={handleSubmitForm}
+        handleEdit={handleEditBtnClick}
+      />
+    </section>
   );
 };
 

@@ -7,7 +7,7 @@ interface CareerItemProps {
   writeMode: boolean;
   handleCancel: () => void;
   handleSubmit: (data: UserCareerType) => void;
-  handleEdit: (id: string) => void;
+  handleEdit: (id: number) => void;
 }
 
 /**
