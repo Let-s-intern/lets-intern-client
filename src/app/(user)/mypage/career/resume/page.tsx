@@ -2,7 +2,7 @@
 
 import { UploadedFiles } from '@components/common/challenge/my-challenge/section/MissionSubmitTalentPoolSection';
 import MyDocUploadSection from '@components/common/challenge/my-challenge/section/MyDocUploadSection';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 export default function Page() {
   const [isDocSubmitting, setIsDocSubmitting] = useState(false);
@@ -13,9 +13,9 @@ export default function Page() {
     personal_statement: null,
   });
 
-  const handleFilesChange = (files: UploadedFiles) => {
+  const handleFilesChange = useCallback((files: UploadedFiles) => {
     setUploadedFiles(files);
-  };
+  }, []);
 
   return (
     <div>
