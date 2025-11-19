@@ -1,6 +1,6 @@
 'use client';
 
-import { useDeleteUserMutation, useUserAdminQuery } from '@/api/user';
+import { useUserAdminQuery } from '@/api/user';
 import Header from '@/components/admin/ui/header/Header';
 import Heading from '@/components/admin/ui/heading/Heading';
 import AdminPagination from '@/components/admin/ui/pagination/AdminPagination';
@@ -8,7 +8,6 @@ import Table from '@/components/admin/ui/table/regacy/Table';
 import AdminUserFilter from '@/components/admin/user/users/filter/AdminUserFilter';
 import TableBody from '@/components/admin/user/users/table-content/TableBody';
 import TableHead from '@/components/admin/user/users/table-content/TableHead';
-import AlertModal from '@/components/ui/alert/AlertModal';
 import { useState } from 'react';
 
 const AdminUsersPage = () => {
@@ -34,23 +33,10 @@ const AdminUsersPage = () => {
 
   const maxPage = data?.pageInfo.totalPages || 1;
 
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState({
-    isOpen: false,
-    phoneNum: '',
-  });
-
-  const {
-    mutate: tryDeleteUser,
-    isPending,
-    isSuccess,
-  } = useDeleteUserMutation(() => {
-    setIsDeleteModalOpen({ isOpen: false, phoneNum: '' });
-  });
-
   return (
     <div className="p-8">
       <Header>
-        <Heading>회원 관리</Heading>
+        <Heading>커리어 DB</Heading>
       </Header>
       <main>
         <div className="mb-4">
@@ -66,15 +52,7 @@ const AdminUsersPage = () => {
           <>
             <Table>
               <TableHead />
-              <TableBody
-                userList={data.userAdminList}
-                handleDeleteUser={(phoneNum: string) => {
-                  setIsDeleteModalOpen({
-                    isOpen: true,
-                    phoneNum: phoneNum.toString(),
-                  });
-                }}
-              />
+              <TableBody userList={data.userAdminList} />
             </Table>
             <div className="mt-4">
               <AdminPagination
@@ -84,30 +62,6 @@ const AdminUsersPage = () => {
               />
             </div>
           </>
-        )}
-
-        {isDeleteModalOpen.isOpen && (
-          <AlertModal
-            onConfirm={() => {
-              tryDeleteUser(isDeleteModalOpen.phoneNum);
-            }}
-            onCancel={() =>
-              setIsDeleteModalOpen({ isOpen: false, phoneNum: '' })
-            }
-            className="break-keep"
-            title="회원 탈퇴"
-          >
-            {isPending || isSuccess ? (
-              '로딩 중...'
-            ) : (
-              <>
-                회원을 삭제하시겠습니까?
-                <div className="mt-4 text-sm text-system-error">
-                  회원 삭제 시 복구가 불가능하며, 모든 정보가 삭제됩니다.
-                </div>
-              </>
-            )}
-          </AlertModal>
         )}
       </main>
     </div>

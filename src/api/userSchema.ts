@@ -24,20 +24,38 @@ export const userAdminType = z.object({
     z.object({
       userInfo: z.object({
         id: z.number(),
+        careerType: z.enum(['QUALIFIED', 'NONE']).nullable(),
         name: z.string(),
         email: z.string(),
         contactEmail: z.string().nullable(),
+        university: z.string().nullable(),
+        wishField: z.string().nullable(),
+        wishIndustry: z.string().nullable(),
+        wishEmploymentType: z.string().nullable(),
         phoneNum: z.string(),
         createdDate: z.string().optional(),
         accountType: accountType.nullable().optional(),
         accountNum: z.string().nullable().optional(),
         marketingAgree: z.boolean().nullable(),
+        memo: z.string().nullable().optional(),
         isMentor: z.boolean().nullable().optional(),
       }),
       applicationInfos: z.array(
         z.object({
           programId: z.number().nullable(),
           programTitle: z.string(),
+        }),
+      ),
+      documentInfos: z.array(
+        z.object({
+          userDocumentId: z.number(),
+          userDocumentType: z.enum([
+            'RESUME',
+            'PORTFOLIO',
+            'PERSONAL_STATEMENT',
+          ]),
+          fileName: z.string(),
+          fileUrl: z.string(),
         }),
       ),
     }),

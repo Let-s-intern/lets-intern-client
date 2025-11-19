@@ -1,15 +1,42 @@
 import { UserAdmin } from '@/api/userSchema';
-import dayjs from '@/lib/dayjs';
 import { useState } from 'react';
 import ActionButton from '../../../ui/button/ActionButton';
 import TD from '../../../ui/table/regacy/TD';
 
 interface TableBodyProps {
   userList: UserAdmin;
-  handleDeleteUser: (phoneNum: string) => void;
 }
+const DocumentLink = ({
+  documentInfos,
+  type,
+}: {
+  documentInfos?: Array<{
+    userDocumentType: string;
+    fileUrl: string;
+    fileName: string;
+  }>;
+  type: string;
+}) => {
+  const doc = documentInfos?.find((doc) => doc.userDocumentType === type);
 
-const TableBody = ({ userList, handleDeleteUser }: TableBodyProps) => {
+  if (!doc) return <>-</>;
+
+  return (
+    <a
+      href={doc.fileUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{
+        textDecoration: 'underline',
+        cursor: 'pointer',
+      }}
+    >
+      {doc.fileName.split('/').pop()}
+    </a>
+  );
+};
+
+const TableBody = ({ userList }: TableBodyProps) => {
   const [hoveredUserId, setHoveredUserId] = useState<number | null>(null);
 
   const handleMouseEnter = (userId: number) => {
@@ -24,11 +51,14 @@ const TableBody = ({ userList, handleDeleteUser }: TableBodyProps) => {
     <tbody>
       {userList.map((user) => (
         <tr key={user.userInfo.id}>
+          <TD>{user.userInfo.careerType === 'QUALIFIED' ? '인재' : '없음'}</TD>
           <TD>{user.userInfo.name}</TD>
-          <TD>{user.userInfo.email}</TD>
-          <TD>{`${user.userInfo.contactEmail ? user.userInfo.contactEmail : '-'}`}</TD>
           <TD>{user.userInfo.phoneNum}</TD>
-          <TD>{dayjs(user.userInfo.createdDate).format('YYYY-MM-DD (dd)')}</TD>
+          <TD>{user.userInfo.email}</TD>
+          <TD>{user.userInfo.university}</TD>
+          <TD>{user.userInfo.wishField}</TD>
+          <TD>{user.userInfo.wishIndustry}</TD>
+          <TD>{user.userInfo.wishEmploymentType}</TD>
           <TD>
             <div
               className="relative flex cursor-default items-center justify-center rounded-xl bg-neutral-80 px-2 py-1"
@@ -53,7 +83,21 @@ const TableBody = ({ userList, handleDeleteUser }: TableBodyProps) => {
               </div>
             </div>
           </TD>
-          <TD>{user.userInfo.marketingAgree ? 'O' : 'X'}</TD>
+          <TD>주요 경험</TD>
+          <TD>주요 경력</TD>
+          <TD>
+            <DocumentLink documentInfos={user.documentInfos} type="RESUME" />
+          </TD>
+          <TD>
+            <DocumentLink documentInfos={user.documentInfos} type="PORTFOLIO" />
+          </TD>
+          <TD>
+            <DocumentLink
+              documentInfos={user.documentInfos}
+              type="PERSONAL_STATEMENT"
+            />
+          </TD>
+          <TD>{user.userInfo.memo}</TD>
           <TD>
             <div className="flex justify-center gap-2">
               <ActionButton
@@ -61,20 +105,6 @@ const TableBody = ({ userList, handleDeleteUser }: TableBodyProps) => {
                 bgColor="lightBlue"
               >
                 상세
-              </ActionButton>
-              <ActionButton
-                to={`/admin/users/${user.userInfo.id}/edit`}
-                bgColor="green"
-              >
-                수정
-              </ActionButton>
-              <ActionButton
-                bgColor="red"
-                onClick={() => {
-                  handleDeleteUser(user.userInfo.phoneNum);
-                }}
-              >
-                삭제
               </ActionButton>
             </div>
           </TD>
