@@ -1,9 +1,9 @@
 import { useGetActiveChallenge, useGetChallengeHome } from '@/api/challenge';
-import { useFilterB2CChallenges } from '@/hooks/useFilterB2CChallenges';
 import dayjs from '@/lib/dayjs';
 import { ChallengeType } from '@/schema';
+import { filterB2CChallenges } from '@/utils/challengeFilter';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 /**
  * 챌린지 타입별 latest 리다이렉트를 처리하는 훅
@@ -17,6 +17,8 @@ import { useEffect, useMemo } from 'react';
  */
 export function useLatestChallengeRedirect(type: ChallengeType) {
   const router = useRouter();
+  const hasRedirectedRef = useRef(false);
+
   const {
     data: activeData,
     error: activeError,
@@ -45,77 +47,95 @@ export function useLatestChallengeRedirect(type: ChallengeType) {
     [homeData?.programList, activeChallengeIds],
   );
 
-  // B2C 챌린지만 필터링
-  const {
-    filteredChallenges: filteredActiveChallenges,
-    isFiltering: isFilteringActive,
-  } = useFilterB2CChallenges(activeData?.challengeList);
-  const {
-    filteredChallenges: filteredNonActiveChallengesRaw,
-    isFiltering: isFilteringNonActive,
-  } = useFilterB2CChallenges(nonActiveChallenges);
-
-  // B2C 필터링 후 createDate 기준 최신순 정렬
-  const filteredNonActiveChallenges = useMemo(() => {
-    if (
-      !filteredNonActiveChallengesRaw ||
-      filteredNonActiveChallengesRaw.length === 0
-    ) {
-      return [];
+  useEffect(() => {
+    // 이미 리다이렉트가 완료된 경우 재실행 방지
+    if (hasRedirectedRef.current) {
+      return;
     }
 
-    return [...filteredNonActiveChallengesRaw].sort((a, b) => {
-      const aDate = a.createDate ? dayjs(a.createDate) : null;
-      const bDate = b.createDate ? dayjs(b.createDate) : null;
-
-      if (!aDate && !bDate) return 0;
-      if (!aDate) return 1;
-      if (!bDate) return -1;
-
-      // 최신순 (내림차순)
-      return bDate.unix() - aDate.unix();
-    });
-  }, [filteredNonActiveChallengesRaw]);
-
-  useEffect(() => {
-    // 로딩 중이거나 필터링 중이면 대기
-    if (
-      activeLoading ||
-      homeLoading ||
-      isFilteringActive ||
-      isFilteringNonActive
-    ) {
+    // 로딩 중이면 대기
+    if (activeLoading || homeLoading) {
       return;
     }
 
     // 에러가 있으면 프로그램 페이지로 이동
     if (activeError || homeError) {
+      hasRedirectedRef.current = true;
       router.replace('/program');
       return;
     }
 
-    // 활성화된 B2C 챌린지가 있는 경우
-    const activeChallenge = filteredActiveChallenges?.[0];
-    if (activeChallenge?.id) {
-      const title = activeChallenge.title ?? '';
-      const redirectUrl = `/program/challenge/${activeChallenge.id}/${encodeURIComponent(title)}`;
-
-      router.push(redirectUrl);
+    // 데이터가 아직 로드되지 않은 경우 대기
+    // activeData와 homeData가 모두 undefined가 아니어야 함 (빈 배열은 허용)
+    if (activeData === undefined || homeData === undefined) {
       return;
     }
 
-    // 활성화된 챌린지가 없는 경우, 노출된 챌린지 중 가장 최근 B2C 챌린지로 이동
-    const latestChallenge = filteredNonActiveChallenges?.[0];
-    if (latestChallenge?.id) {
-      const title = latestChallenge.title ?? '';
-      const redirectUrl = `/program/challenge/${latestChallenge.id}/${encodeURIComponent(title)}`;
+    // 원본 데이터가 로드되었는지 확인
+    // activeData.challengeList와 homeData.programList가 존재해야 필터링이 의미있음
+    const hasActiveData = activeData?.challengeList !== undefined;
+    const hasHomeData = homeData?.programList !== undefined;
 
-      router.push(redirectUrl);
+    // 원본 데이터가 없으면 대기
+    if (!hasActiveData || !hasHomeData) {
       return;
     }
 
-    // 챌린지가 없는 경우 프로그램 페이지로 이동
-    router.replace('/program');
+    let isCancelled = false;
+
+    const resolveRedirect = async () => {
+      try {
+        const [filteredActive, filteredNonActiveRaw] = await Promise.all([
+          filterB2CChallenges(activeData?.challengeList ?? []),
+          filterB2CChallenges(nonActiveChallenges),
+        ]);
+
+        if (isCancelled) {
+          return;
+        }
+
+        const sortedNonActive = [...filteredNonActiveRaw].sort((a, b) => {
+          const aDate = a.createDate ? dayjs(a.createDate) : null;
+          const bDate = b.createDate ? dayjs(b.createDate) : null;
+
+          if (!aDate && !bDate) return 0;
+          if (!aDate) return 1;
+          if (!bDate) return -1;
+
+          // 최신순 (내림차순)
+          return bDate.unix() - aDate.unix();
+        });
+
+        const targetChallenge = filteredActive[0] ?? sortedNonActive[0];
+        if (targetChallenge?.id) {
+          hasRedirectedRef.current = true;
+          const title = targetChallenge.title ?? '';
+          router.push(
+            `/program/challenge/${targetChallenge.id}/${encodeURIComponent(
+              title,
+            )}`,
+          );
+          return;
+        }
+
+        // 챌린지가 없으면 프로그램 페이지로 이동
+        hasRedirectedRef.current = true;
+        router.replace('/program');
+      } catch {
+        if (isCancelled) {
+          return;
+        }
+
+        hasRedirectedRef.current = true;
+        router.replace('/program');
+      }
+    };
+
+    resolveRedirect();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [
     activeData,
     homeData,
@@ -123,19 +143,10 @@ export function useLatestChallengeRedirect(type: ChallengeType) {
     homeError,
     activeLoading,
     homeLoading,
-    filteredActiveChallenges,
-    filteredNonActiveChallenges,
-    filteredNonActiveChallengesRaw,
-    isFilteringActive,
-    isFilteringNonActive,
-    router,
-    activeChallengeIds,
     nonActiveChallenges,
-    type,
+    router,
   ]);
 
   // 로딩 상태 반환
-  return (
-    activeLoading || homeLoading || isFilteringActive || isFilteringNonActive
-  );
+  return activeLoading || homeLoading;
 }
