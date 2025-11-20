@@ -1,4 +1,5 @@
 import { useGetAllUserExperienceQuery } from '@/api/experience';
+import LoadingContainer from '@/components/common/ui/loading/LoadingContainer';
 import { getTopCoreCompetencies } from '@components/career-board/utils/experienceSummary';
 import { useRouter } from 'next/navigation';
 import CareerCard from '../../common/mypage/career/card/CareerCard';
@@ -7,7 +8,7 @@ const ExperienceSection = () => {
   const router = useRouter();
 
   // API 호출
-  const { data } = useGetAllUserExperienceQuery(
+  const { data, isLoading } = useGetAllUserExperienceQuery(
     {
       experienceCategories: [],
       activityTypes: [],
@@ -17,6 +18,16 @@ const ExperienceSection = () => {
     'LATEST',
     { page: 1, size: 1000 },
   );
+
+  if (isLoading) {
+    return (
+      <CareerCard
+        title="경험 정리"
+        labelOnClick={() => router.push('/mypage/career/experience')}
+        body={<LoadingContainer text="경험 정리 조회 중" />}
+      />
+    );
+  }
 
   // 사용자가 직접 입력한 경험만 필터링
   const userExperiences =
