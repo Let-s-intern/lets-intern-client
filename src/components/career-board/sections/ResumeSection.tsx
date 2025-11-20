@@ -1,28 +1,68 @@
+import { useGetUserDocumentListQuery } from '@/api/user';
+import { UserDocument } from '@/api/userSchema';
 import { useRouter } from 'next/navigation';
 import CareerCard from '../../common/mypage/career/card/CareerCard';
 
+// 문서 타입을 한국어로 매핑
+const DOCUMENT_TYPE_MAP: Record<UserDocument['userDocumentType'], string> = {
+  RESUME: '이력서',
+  PERSONAL_STATEMENT: '자기소개서',
+  PORTFOLIO: '포트폴리오',
+};
+
+// 표시할 문서 타입 순서
+const DOCUMENT_TYPE_ORDER: UserDocument['userDocumentType'][] = [
+  'RESUME',
+  'PERSONAL_STATEMENT',
+  'PORTFOLIO',
+];
+
+// URL에서 파일명 추출
+const getFileNameFromUrl = (url: string): string => {
+  try {
+    // URL이 상대 경로인 경우와 절대 경로인 경우 모두 처리
+    const lastSlashIndex = url.lastIndexOf('/');
+    if (lastSlashIndex !== -1 && lastSlashIndex < url.length - 1) {
+      return url.substring(lastSlashIndex + 1);
+    }
+    return url;
+  } catch {
+    return url;
+  }
+};
+
+interface Document {
+  type: string;
+  fileName: string | null;
+  fileUrl: string | null;
+}
+
 const ResumeSection = () => {
   const router = useRouter();
+  const { data: userDocumentData } = useGetUserDocumentListQuery();
 
-  // TODO: 서버에서 받아올 데이터 (임시 하드코딩)
-  const documents = [
-    {
-      type: '이력서',
-      fileName: '김렛츠_이력서_진단 PDF',
-    },
-    {
-      type: '자기소개서',
-      fileName: null,
-    },
-    {
-      type: '포트폴리오',
-      fileName:
-        '김렛츠_이력서_진단 PDF 김렛츠_이력서_진단 PDF 김렛츠_이력서_진단 PDF',
-    },
-  ];
+  // API 응답을 UI 형식으로 변환
+  const documents: Document[] = DOCUMENT_TYPE_ORDER.map((docType) => {
+    const document = userDocumentData?.userDocumentList.find(
+      (doc) => doc.userDocumentType === docType,
+    );
 
-  // 데이터 존재 여부 확인
-  const hasData = documents.some((doc) => doc.fileName !== null);
+    // fileName이 있으면 파일명만 추출하고, 없으면 fileUrl에서 추출
+    const fileName = document?.fileName
+      ? getFileNameFromUrl(document.fileName)
+      : document?.fileUrl
+        ? getFileNameFromUrl(document.fileUrl)
+        : null;
+
+    return {
+      type: DOCUMENT_TYPE_MAP[docType],
+      fileName,
+      fileUrl: document?.fileUrl ?? null,
+    };
+  });
+
+  // 데이터 존재 여부 확인 (fileUrl이 있는지 확인)
+  const hasData = documents.some((doc) => doc.fileUrl !== null);
 
   return (
     <CareerCard
@@ -46,11 +86,6 @@ const ResumeSection = () => {
 
 export default ResumeSection;
 
-interface Document {
-  type: string;
-  fileName: string | null;
-}
-
 interface ResumeBodyProps {
   documents: Document[];
 }
@@ -65,7 +100,12 @@ const ResumeBody = ({ documents }: ResumeBodyProps) => {
         </span>
         <div className="flex flex-col gap-1">
           {documents.map((doc, index) => (
-            <DocumentItem key={index} type={doc.type} fileName={doc.fileName} />
+            <DocumentItem
+              key={index}
+              type={doc.type}
+              fileName={doc.fileName}
+              fileUrl={doc.fileUrl}
+            />
           ))}
         </div>
       </div>
@@ -76,16 +116,26 @@ const ResumeBody = ({ documents }: ResumeBodyProps) => {
 interface DocumentItemProps {
   type: string;
   fileName: string | null;
+  fileUrl: string | null;
 }
 
-const DocumentItem = ({ type, fileName }: DocumentItemProps) => {
+const DocumentItem = ({ type, fileName, fileUrl }: DocumentItemProps) => {
+  const handleFileClick = () => {
+    if (fileUrl) {
+      window.open(fileUrl, '_blank');
+    }
+  };
+
   return (
     <div className="flex min-w-0 items-center gap-2">
       <span className="w-[52px] whitespace-nowrap text-xxsmall12 font-normal text-neutral-40">
         {type}
       </span>
-      {fileName ? (
-        <span className="min-w-0 cursor-pointer truncate whitespace-nowrap text-xsmall14 font-normal text-neutral-0 underline">
+      {fileUrl ? (
+        <span
+          className="min-w-0 cursor-pointer truncate whitespace-nowrap text-xsmall14 font-normal text-neutral-0 underline"
+          onClick={handleFileClick}
+        >
           {fileName}
         </span>
       ) : (
