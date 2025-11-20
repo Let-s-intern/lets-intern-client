@@ -1,10 +1,11 @@
+import { usePostDocumentMutation } from '@/api/mission';
 import { DocumentType } from '@/api/missionSchema';
 import {
   useDeleteUserDocMutation,
   useGetUserDocumentListQuery,
 } from '@/api/user';
 import { clsx } from 'clsx';
-import { Trash2, Upload } from 'lucide-react';
+import { Loader, Trash2, Upload } from 'lucide-react';
 import { useEffect, useRef, type RefObject } from 'react';
 import { UploadedFiles } from './MissionSubmitTalentPoolSection';
 
@@ -72,6 +73,7 @@ interface DocumentFileItemProps {
   type: DocumentType;
   file: File | string | null;
   isSubmitted: boolean;
+  isUploading: boolean;
   inputRef: RefObject<HTMLInputElement>;
   uploadedFiles: UploadedFiles;
   onFileUpload: (type: DocumentType, files: FileList | null) => void;
@@ -82,6 +84,7 @@ export const DocumentFileItem = ({
   type,
   file,
   isSubmitted,
+  isUploading,
   inputRef,
   uploadedFiles,
   onFileUpload,
@@ -111,18 +114,24 @@ export const DocumentFileItem = ({
         <span className="text-xsmall14 text-neutral-35">{label}</span>
       </div>
 
-      {hasFile ? (
+      {hasFile || isUploading ? (
         <div className="flex items-center">
           <button
             type="button"
-            onClick={() => handleFilePreview(displayFile)}
+            onClick={() => displayFile && handleFilePreview(displayFile)}
             className="truncate text-xsmall14 font-normal text-neutral-0 underline"
           >
             {typeof displayFile === 'string'
               ? getFileNameFromUrl(type, displayFile)
-              : displayFile.name}
+              : displayFile?.name}
           </button>
-          {canEdit && file && (
+          {isUploading && (
+            <Loader
+              size={16}
+              className="flex-shrink-0 animate-spin text-primary"
+            />
+          )}
+          {canEdit && file && !isUploading && (
             <button
               type="button"
               onClick={() => onFileDelete(type)}
@@ -171,10 +180,13 @@ const MyDocUploadSection = ({
 }: MyDocUploadSectionProps) => {
   const { data: userDocumentList } = useGetUserDocumentListQuery();
   const deleteUserDocMutation = useDeleteUserDocMutation();
+  const postDocumentMutation = usePostDocumentMutation();
 
   const resumeInputRef = useRef<HTMLInputElement>(null);
   const portfolioInputRef = useRef<HTMLInputElement>(null);
   const personalStatementInputRef = useRef<HTMLInputElement>(null);
+
+  const isUploading = postDocumentMutation.isPending;
 
   // 저장된 서류 자동 로드
   useEffect(() => {
@@ -219,7 +231,10 @@ const MyDocUploadSection = ({
     if (inputRef.current) inputRef.current.value = '';
   };
 
-  const handleFileUpload = (type: DocumentType, files: FileList | null) => {
+  const handleFileUpload = async (
+    type: DocumentType,
+    files: FileList | null,
+  ) => {
     if (!files || files.length === 0) return;
 
     const file = files[0]; // 첫 번째 파일만 사용
@@ -241,12 +256,38 @@ const MyDocUploadSection = ({
       return;
     }
 
-    const updatedFiles = {
-      ...uploadedFiles,
-      [type.toLowerCase()]: file,
-    };
+    // FormData 생성
+    const formData = new FormData();
+    formData.append(
+      'requestDto',
+      new Blob(
+        [
+          JSON.stringify({
+            documentType: type,
+            fileUrl: '',
+            wishField: '',
+            wishIndustry: '',
+            wishJob: '',
+          }),
+        ],
+        {
+          type: 'application/json',
+        },
+      ),
+    );
+    formData.append('file', file);
 
-    onFilesChange(updatedFiles);
+    try {
+      await postDocumentMutation.mutateAsync(formData);
+      const updatedFiles = {
+        ...uploadedFiles,
+        [type.toLowerCase()]: file,
+      };
+      onFilesChange(updatedFiles);
+    } catch (error) {
+      alert('파일 업로드에 실패했습니다.');
+      resetInput(type);
+    }
   };
 
   const handleFileDelete = async (type: DocumentType) => {
@@ -262,17 +303,11 @@ const MyDocUploadSection = ({
         return;
       }
     }
-    // 삭제 성공 후 상태 업데이트
-    resetInput(type);
-    const updatedFiles: UploadedFiles = {
-      ...uploadedFiles,
-      [type.toLowerCase()]: null,
-    };
-    onFilesChange(updatedFiles);
   };
 
   const commonProps = {
     isSubmitted,
+    isUploading,
     uploadedFiles,
     onFileUpload: handleFileUpload,
     onFileDelete: handleFileDelete,
