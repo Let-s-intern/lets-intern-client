@@ -1,5 +1,6 @@
 import { useGetUserDocumentListQuery } from '@/api/user';
 import { UserDocument } from '@/api/userSchema';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useRouter } from 'next/navigation';
 import CareerCard from '../../common/mypage/career/card/CareerCard';
 
@@ -39,8 +40,17 @@ interface Document {
 
 const ResumeSection = () => {
   const router = useRouter();
-  const { data: userDocumentData } = useGetUserDocumentListQuery();
+  const { data: userDocumentData, isLoading } = useGetUserDocumentListQuery();
 
+  if (isLoading) {
+    return (
+      <CareerCard
+        title="서류 정리"
+        labelOnClick={() => router.push('/mypage/career/resume')}
+        body={<LoadingContainer text="서류 정리 조회 중" />}
+      />
+    );
+  }
   // API 응답을 UI 형식으로 변환
   const documents: Document[] = DOCUMENT_TYPE_ORDER.map((docType) => {
     const document = userDocumentData?.userDocumentList.find(
