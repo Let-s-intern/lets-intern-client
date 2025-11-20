@@ -5,8 +5,8 @@ import {
   useGetUserDocumentListQuery,
 } from '@/api/user';
 import { clsx } from 'clsx';
-import { Loader, Trash2, Upload } from 'lucide-react';
-import { useEffect, useRef, type RefObject } from 'react';
+import { LoaderCircle, Trash2, Upload } from 'lucide-react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 import { UploadedFiles } from './MissionSubmitTalentPoolSection';
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
@@ -72,6 +72,7 @@ const handleFilePreview = (file: File | string) => {
 interface DocumentFileItemProps {
   type: DocumentType;
   file: File | string | null;
+  uploadingFile: File | null;
   isSubmitted: boolean;
   isUploading: boolean;
   inputRef: RefObject<HTMLInputElement>;
@@ -83,6 +84,7 @@ interface DocumentFileItemProps {
 export const DocumentFileItem = ({
   type,
   file,
+  uploadingFile,
   isSubmitted,
   isUploading,
   inputRef,
@@ -104,7 +106,7 @@ export const DocumentFileItem = ({
       : null;
 
   // 실제로 표시할 파일 (업로드된 파일 or 제출된 서류)
-  const displayFile = file || submittedDocument || null;
+  const displayFile = uploadingFile || file || submittedDocument || null;
   const hasFile = !!displayFile;
   const canEdit = !isSubmitted;
 
@@ -115,7 +117,7 @@ export const DocumentFileItem = ({
       </div>
 
       {hasFile || isUploading ? (
-        <div className="flex items-center">
+        <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => displayFile && handleFilePreview(displayFile)}
@@ -126,10 +128,13 @@ export const DocumentFileItem = ({
               : displayFile?.name}
           </button>
           {isUploading && (
-            <Loader
-              size={16}
-              className="flex-shrink-0 animate-spin text-primary"
-            />
+            <div className="flex items-center text-xsmall14 text-neutral-35">
+              <span>업로드 중...</span>
+              <LoaderCircle
+                size={16}
+                className="flex-shrink-0 animate-spin text-primary"
+              />
+            </div>
           )}
           {canEdit && file && !isUploading && (
             <button
@@ -186,7 +191,14 @@ const MyDocUploadSection = ({
   const portfolioInputRef = useRef<HTMLInputElement>(null);
   const personalStatementInputRef = useRef<HTMLInputElement>(null);
 
-  const isUploading = postDocumentMutation.isPending;
+  const [uploadingType, setUploadingType] = useState<DocumentType | null>(null);
+  const [uploadingFiles, setUploadingFiles] = useState<
+    Record<DocumentType, File | null>
+  >({
+    RESUME: null,
+    PORTFOLIO: null,
+    PERSONAL_STATEMENT: null,
+  });
 
   // 저장된 서류 자동 로드
   useEffect(() => {
@@ -219,7 +231,7 @@ const MyDocUploadSection = ({
     if (hasChanges) {
       onFilesChange(updatedFiles);
     }
-  }, [userDocumentList, isSubmitted, uploadedFiles, onFilesChange]);
+  }, [userDocumentList, isSubmitted, onFilesChange]);
 
   const resetInput = (type: DocumentType) => {
     const inputRef =
@@ -276,6 +288,8 @@ const MyDocUploadSection = ({
       ),
     );
     formData.append('file', file);
+    setUploadingType(type);
+    setUploadingFiles((prev) => ({ ...prev, [type]: file }));
 
     try {
       await postDocumentMutation.mutateAsync(formData);
@@ -287,6 +301,9 @@ const MyDocUploadSection = ({
     } catch (error) {
       alert('파일 업로드에 실패했습니다.');
       resetInput(type);
+    } finally {
+      setUploadingType(null);
+      setUploadingFiles((prev) => ({ ...prev, [type]: null }));
     }
   };
 
@@ -303,11 +320,16 @@ const MyDocUploadSection = ({
         return;
       }
     }
+    const updatedFiles = {
+      ...uploadedFiles,
+      [type.toLowerCase()]: null,
+    };
+    onFilesChange(updatedFiles);
+    resetInput(type);
   };
 
   const commonProps = {
     isSubmitted,
-    isUploading,
     uploadedFiles,
     onFileUpload: handleFileUpload,
     onFileDelete: handleFileDelete,
@@ -319,18 +341,24 @@ const MyDocUploadSection = ({
         type="RESUME"
         file={uploadedFiles.resume}
         inputRef={resumeInputRef}
+        isUploading={uploadingType === 'RESUME'}
+        uploadingFile={uploadingFiles.RESUME}
         {...commonProps}
       />
       <DocumentFileItem
         type="PORTFOLIO"
         file={uploadedFiles.portfolio}
         inputRef={portfolioInputRef}
+        isUploading={uploadingType === 'PORTFOLIO'}
+        uploadingFile={uploadingFiles.PORTFOLIO}
         {...commonProps}
       />
       <DocumentFileItem
         type="PERSONAL_STATEMENT"
         file={uploadedFiles.personal_statement}
         inputRef={personalStatementInputRef}
+        isUploading={uploadingType === 'PERSONAL_STATEMENT'}
+        uploadingFile={uploadingFiles.PERSONAL_STATEMENT}
         {...commonProps}
       />
     </div>
