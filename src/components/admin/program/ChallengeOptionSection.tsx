@@ -78,7 +78,7 @@ function ChallengeOptionSection({ options }: Props) {
         <Heading2>옵션 설정</Heading2>
         <div className="flex gap-4">
           <Button variant="contained" onClick={handleSave}>
-            수정 내용 저장
+            옵션 저장
           </Button>
           <Button variant="outlined" onClick={handleCreate}>
             옵션 생성
