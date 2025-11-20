@@ -1,14 +1,24 @@
 import {
+  DateObjectType,
   EmployeeType,
   employeeTypeSchema,
   UserCareerType,
 } from '@/api/careerSchema';
+import { format } from 'date-fns';
 
 /**
  * 특정 문자열이 EmployeeType enum에 속하는지 확인
  */
 const isEmployeeType = (value: string): value is EmployeeType => {
   return employeeTypeSchema.safeParse(value).success;
+};
+
+/**
+ * 커리어 날짜 객체를 YYYY.MM.DD 형식으로 포맷팅
+ */
+export const formatCareerDate = (date: DateObjectType): string => {
+  const dateObj = new Date(date.year, date.monthValue - 1, 1);
+  return format(dateObj, 'yyyy.MM.dd');
 };
 
 /**

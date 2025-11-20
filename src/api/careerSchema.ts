@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export type EmployeeType = z.infer<typeof employeeTypeSchema>;
 export type UserCareerType = z.infer<typeof userCareerSchema>;
+export type DateObjectType = z.infer<typeof dateObjectSchema>;
 
 export const employeeTypeSchema = z.enum([
   '정규직',
@@ -13,14 +14,21 @@ export const employeeTypeSchema = z.enum([
   '기타(직접입력)',
 ]);
 
+export const dateObjectSchema = z.object({
+  year: z.number(),
+  month: z.string(),
+  monthValue: z.number(),
+  leapYear: z.boolean(),
+});
+
 export const userCareerSchema = z.object({
   id: z.number().nullable().optional(),
   company: z.string().nullable().optional(),
   job: z.string().nullable().optional(),
   employmentType: z.string().nullable().optional(),
   employmentTypeOther: z.string().nullable().optional(),
-  startDate: z.string().nullable().optional(),
-  endDate: z.string().nullable().optional(),
+  startDate: dateObjectSchema.nullable().optional(),
+  endDate: dateObjectSchema.nullable().optional(),
 });
 
 export const userCareerListSchema = z.object({
