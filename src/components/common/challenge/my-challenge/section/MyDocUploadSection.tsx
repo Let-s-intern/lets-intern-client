@@ -1,5 +1,8 @@
 import { DocumentType } from '@/api/missionSchema';
-import { useGetUserDocumentListQuery } from '@/api/user';
+import {
+  useDeleteUserDocMutation,
+  useGetUserDocumentListQuery,
+} from '@/api/user';
 import { clsx } from 'clsx';
 import { Trash2, Upload } from 'lucide-react';
 import { useEffect, useRef, type RefObject } from 'react';
@@ -167,6 +170,8 @@ const MyDocUploadSection = ({
   isSubmitted = false,
 }: MyDocUploadSectionProps) => {
   const { data: userDocumentList } = useGetUserDocumentListQuery();
+  const deleteUserDocMutation = useDeleteUserDocMutation();
+
   const resumeInputRef = useRef<HTMLInputElement>(null);
   const portfolioInputRef = useRef<HTMLInputElement>(null);
   const personalStatementInputRef = useRef<HTMLInputElement>(null);
@@ -244,14 +249,25 @@ const MyDocUploadSection = ({
     onFilesChange(updatedFiles);
   };
 
-  const handleFileDelete = (type: DocumentType) => {
+  const handleFileDelete = async (type: DocumentType) => {
+    const document = userDocumentList?.userDocumentList.find(
+      (doc) => doc.userDocumentType === type,
+    );
+    // 문서가 있으면 삭제 API 호출
+    if (document?.userDocumentId) {
+      try {
+        await deleteUserDocMutation.mutateAsync(document?.userDocumentId);
+      } catch (error) {
+        alert('문서 삭제에 실패했습니다.');
+        return;
+      }
+    }
+    // 삭제 성공 후 상태 업데이트
     resetInput(type);
-
     const updatedFiles: UploadedFiles = {
       ...uploadedFiles,
       [type.toLowerCase()]: null,
     };
-
     onFilesChange(updatedFiles);
   };
 
