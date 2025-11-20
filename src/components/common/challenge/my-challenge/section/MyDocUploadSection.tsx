@@ -200,24 +200,27 @@ const MyDocUploadSection = ({
     PORTFOLIO: null,
     PERSONAL_STATEMENT: null,
   });
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   // 저장된 서류 자동 로드
   useEffect(() => {
-    if (!userDocumentList?.userDocumentList || isSubmitted) return;
+    if (!userDocumentList?.userDocumentList || isSubmitted || !isInitialLoad)
+      return;
 
     const documentTypes: DocumentType[] = [
       'RESUME',
       'PORTFOLIO',
       'PERSONAL_STATEMENT',
     ];
-    const updatedFiles = { ...uploadedFiles };
+    const updatedFiles: UploadedFiles = {
+      resume: null,
+      portfolio: null,
+      personal_statement: null,
+    };
     let hasChanges = false;
 
     documentTypes.forEach((type) => {
       const key = type.toLowerCase() as keyof UploadedFiles;
-
-      // 이미 파일이 있으면 스킵
-      if (uploadedFiles[key]) return;
 
       const document = userDocumentList.userDocumentList.find(
         (doc) => doc.userDocumentType === type,
@@ -232,7 +235,9 @@ const MyDocUploadSection = ({
     if (hasChanges) {
       onFilesChange(updatedFiles);
     }
-  }, [userDocumentList, isSubmitted, onFilesChange]);
+
+    setIsInitialLoad(false);
+  }, [userDocumentList, isSubmitted, onFilesChange, isInitialLoad]);
 
   if (isLoading) return <LoadingContainer />;
 
