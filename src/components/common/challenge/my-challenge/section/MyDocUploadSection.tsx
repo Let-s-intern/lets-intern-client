@@ -4,6 +4,7 @@ import {
   useDeleteUserDocMutation,
   useGetUserDocumentListQuery,
 } from '@/api/user';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { clsx } from 'clsx';
 import { LoaderCircle, Trash2, Upload } from 'lucide-react';
 import { useEffect, useRef, useState, type RefObject } from 'react';
@@ -183,7 +184,7 @@ const MyDocUploadSection = ({
   onFilesChange,
   isSubmitted = false,
 }: MyDocUploadSectionProps) => {
-  const { data: userDocumentList } = useGetUserDocumentListQuery();
+  const { data: userDocumentList, isLoading } = useGetUserDocumentListQuery();
   const deleteUserDocMutation = useDeleteUserDocMutation();
   const postDocumentMutation = usePostDocumentMutation();
 
@@ -232,6 +233,8 @@ const MyDocUploadSection = ({
       onFilesChange(updatedFiles);
     }
   }, [userDocumentList, isSubmitted, onFilesChange]);
+
+  if (isLoading) return <LoadingContainer />;
 
   const resetInput = (type: DocumentType) => {
     const inputRef =
