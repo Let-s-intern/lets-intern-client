@@ -3,15 +3,13 @@
 import { useUserAdminQuery } from '@/api/user';
 import Header from '@/components/admin/ui/header/Header';
 import Heading from '@/components/admin/ui/heading/Heading';
-import AdminPagination from '@/components/admin/ui/pagination/AdminPagination';
-import Table from '@/components/admin/ui/table/regacy/Table';
 import AdminUserFilter from '@/components/admin/user/users/filter/AdminUserFilter';
-import TableBody from '@/components/admin/user/users/table-content/TableBody';
-import TableHead from '@/components/admin/user/users/table-content/TableHead';
+import UserAdminTable from '@/components/admin/user/users/table-content/UserAdminTable';
 import { useState } from 'react';
 
 const AdminUsersPage = () => {
   const [pageNum, setPageNum] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
   const [searchValues, setSearchValues] = useState<{
     name: string;
     email: string;
@@ -21,17 +19,21 @@ const AdminUsersPage = () => {
     email: '',
     phoneNum: '',
   });
+
   const { data, isLoading, isError } = useUserAdminQuery({
     email: searchValues.email,
     name: searchValues.name,
     phoneNum: searchValues.phoneNum,
     pageable: {
       page: pageNum,
-      size: 10,
+      size: pageSize,
     },
   });
 
-  const maxPage = data?.pageInfo.totalPages || 1;
+  const handlePageChange = (page: number, size: number) => {
+    setPageNum(page);
+    setPageSize(size);
+  };
 
   return (
     <div className="p-8">
@@ -42,26 +44,17 @@ const AdminUsersPage = () => {
         <div className="mb-4">
           <AdminUserFilter setSearchValues={setSearchValues} />
         </div>
-        {isLoading ? (
-          <div className="py-4 text-center">로딩 중...</div>
-        ) : isError ? (
-          <div className="py-4 text-center">에러 발생</div>
-        ) : !data || data.userAdminList.length === 0 ? (
-          <div className="py-4 text-center">유저가 없습니다.</div>
+        {isError ? (
+          <div className="py-4 text-center">에러가 발생했습니다.</div>
         ) : (
-          <>
-            <Table>
-              <TableHead />
-              <TableBody userList={data.userAdminList} />
-            </Table>
-            <div className="mt-4">
-              <AdminPagination
-                maxPage={maxPage}
-                pageNum={pageNum}
-                setPageNum={setPageNum}
-              />
-            </div>
-          </>
+          <UserAdminTable
+            userList={data?.userAdminList || []}
+            isLoading={isLoading}
+            pageNum={pageNum}
+            pageSize={pageSize}
+            totalElements={data?.pageInfo.totalElements || 0}
+            onPageChange={handlePageChange}
+          />
         )}
       </main>
     </div>
