@@ -4,7 +4,8 @@ import {
   PatchApplicationSurveyField,
   usePatchApplicationSurveyMutation,
 } from '@/api/application';
-import { useGetChallengeTitle, usePatchChallengeGoal } from '@/api/challenge';
+import { usePatchChallengeGoal } from '@/api/challenge';
+import { useProgramQuery } from '@/api/program';
 import { usePatchUser, useUserQuery } from '@/api/user';
 import RadioButton from '@/components/challenge-view/RadioButton';
 import GradeDropdown from '@/components/common/mypage/privacy/form-control/GradeDropdown';
@@ -19,7 +20,7 @@ const awarenessOptions = [
   '인스타그램',
   '쥬디톡방',
   '문자/카카오톡 알림',
-  '렛츠커리어 웹사이트',
+  '렛츠커리어 웹사이트(배너, 프로그램 리스트, 챌린지 대시보드등에서 확인) ',
   '네이버 블로그 후기',
   '구글/네이버 검색',
   '무료 세미나',
@@ -40,7 +41,6 @@ const entryPointOptions = [
   '인스타그램 프로필 링크/스토리',
   '쥬디톡방 링크',
   '문자/카카오톡 알림 링크',
-  '렛츠커리어 웹사이트',
   '네이버 블로그 후기내 링크',
   '구글/네이버 검색',
   '무료 세미나 제공 자료내 링크',
@@ -76,7 +76,18 @@ const ChallengeUserInfo = () => {
     paymentPath: '',
   });
 
-  const { data: programTitleData } = useGetChallengeTitle(Number(programId));
+  const program = useProgramQuery({
+    programId: Number(programId),
+    type: 'challenge',
+  });
+
+  const challenge = program.type === 'challenge' ? program : null;
+  const programTitle = challenge ? challenge?.query.data?.title : '';
+  const showSourceSurvey = Boolean(
+    challenge?.query.data?.adminClassificationInfo?.find(
+      (info) => info.programAdminClassification === 'B2C',
+    ),
+  );
 
   const { mutateAsync: tryPostGoal } = usePatchChallengeGoal();
 
@@ -92,7 +103,6 @@ const ChallengeUserInfo = () => {
     }
   }, [userData]);
 
-  const programTitle = programTitleData?.title || '챌린지';
   const username = userData?.name;
 
   const { mutateAsync: tryPatchUser, isPending: patchUserIsPending } =
@@ -181,33 +191,38 @@ const ChallengeUserInfo = () => {
   };
 
   const isSubmitDisabled = useMemo(() => {
+    if (
+      !value.university ||
+      !value.grade ||
+      !value.major ||
+      !value.wishJob ||
+      !value.wishCompany
+    ) {
+      return true;
+    }
+
+    if (!showSourceSurvey) return false;
+
     const isAwarenessSelected = Boolean(surveySelections.awarenessPath);
     const isDecisionPeriodSelected = Boolean(surveySelections.decisionPeriod);
     const isPaymentPathSelected = Boolean(surveySelections.paymentPath);
 
     const isAwarenessValid =
-      !surveySelections.awarenessPath ||
       surveySelections.awarenessPath !== '기타' ||
       surveyEtcText.awarenessPath.trim().length > 0;
 
     const isPaymentPathValid =
-      !surveySelections.paymentPath ||
       surveySelections.paymentPath !== '기타' ||
       surveyEtcText.paymentPath.trim().length > 0;
 
     return (
-      !value.university ||
-      !value.grade ||
-      !value.major ||
-      !value.wishJob ||
-      !value.wishCompany ||
       !isAwarenessSelected ||
       !isDecisionPeriodSelected ||
       !isPaymentPathSelected ||
       !isAwarenessValid ||
       !isPaymentPathValid
     );
-  }, [value, surveySelections, surveyEtcText]);
+  }, [value, surveySelections, surveyEtcText, showSourceSurvey]);
 
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-6 px-5 md:px-0 md:pb-24 md:pt-12">
@@ -290,106 +305,108 @@ const ChallengeUserInfo = () => {
               />
             </div>
             <hr className="my-4" />
-            <div className="flex flex-col gap-8 pt-4">
-              <div className="flex flex-col gap-1">
-                <h2 className="text-lg font-semibold">
-                  렛츠커리어 챌린지를 언제, 어떤 계기로 결제하게 되셨나요?
-                </h2>
-                <p className="mb-2 break-keep text-neutral-40">
-                  아래 중 본인 상황과 가장 가까운 항목을 선택해주세요.
-                </p>
-              </div>
-              <div className="flex flex-col gap-2">
-                <span className="text-1-medium" id="challengeAwarenessLabel">
-                  {josa(`${programTitle}`, '이/가')} 개설된 사실을 어떻게
-                  아셨나요?<span className="pl-1 text-requirement">*</span>
-                </span>
+            {showSourceSurvey ? (
+              <div className="flex flex-col gap-8 pt-4" id="sourceSurvey">
+                <div className="flex flex-col gap-1">
+                  <h2 className="text-lg font-semibold">
+                    렛츠커리어 챌린지를 언제, 어떤 계기로 결제하게 되셨나요?
+                  </h2>
+                  <p className="mb-2 break-keep text-neutral-40">
+                    아래 중 본인 상황과 가장 가까운 항목을 선택해주세요.
+                  </p>
+                </div>
                 <div className="flex flex-col gap-2">
-                  {awarenessOptions.map((option) => (
-                    <div key={option} className="flex flex-col gap-2">
+                  <span className="text-1-medium" id="challengeAwarenessLabel">
+                    {josa(`${programTitle}`, '이/가')} 개설된 사실을 어떻게
+                    아셨나요?<span className="pl-1 text-requirement">*</span>
+                  </span>
+                  <div className="flex flex-col gap-2">
+                    {awarenessOptions.map((option) => (
+                      <div key={option} className="flex flex-col gap-2">
+                        <RadioButton
+                          color={radioColor}
+                          checked={surveySelections.awarenessPath === option}
+                          label={option}
+                          onClick={() =>
+                            handleSurveySelection('awarenessPath')(option)
+                          }
+                        />
+                        {option === '기타' &&
+                          surveySelections.awarenessPath === '기타' && (
+                            <Input
+                              id="challengeAwarenessEtc"
+                              name="challengeAwarenessEtc"
+                              placeholder="기타 항목을 입력해주세요."
+                              value={surveyEtcText.awarenessPath}
+                              onChange={handleSurveyEtcChange('awarenessPath')}
+                              className="ml-7 mt-1 w-full max-w-sm"
+                            />
+                          )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span
+                    className="text-1-medium"
+                    id="challengeDecisionPeriodLabel"
+                  >
+                    {josa(`${programTitle}`, '을/를')} 알게 된 후, 결제하기까지
+                    얼마나 고민하셨나요?
+                    <span className="pl-1 text-requirement">*</span>
+                  </span>
+                  <p className="mb-2 break-keep text-neutral-40">
+                    처음 챌린지 소식을 접한 시점부터 결제 완료까지의 기간을
+                    선택해주세요.
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    {decisionPeriodOptions.map((option) => (
                       <RadioButton
+                        key={option}
                         color={radioColor}
-                        checked={surveySelections.awarenessPath === option}
+                        checked={surveySelections.decisionPeriod === option}
                         label={option}
                         onClick={() =>
-                          handleSurveySelection('awarenessPath')(option)
+                          handleSurveySelection('decisionPeriod')(option)
                         }
                       />
-                      {option === '기타' &&
-                        surveySelections.awarenessPath === '기타' && (
-                          <Input
-                            id="challengeAwarenessEtc"
-                            name="challengeAwarenessEtc"
-                            placeholder="기타 항목을 입력해주세요."
-                            value={surveyEtcText.awarenessPath}
-                            onChange={handleSurveyEtcChange('awarenessPath')}
-                            className="ml-7 mt-1 w-full max-w-sm"
-                          />
-                        )}
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-col gap-1">
-                <span
-                  className="text-1-medium"
-                  id="challengeDecisionPeriodLabel"
-                >
-                  {josa(`${programTitle}`, '을/를')} 알게 된 후, 결제하기까지
-                  얼마나 고민하셨나요?
-                  <span className="pl-1 text-requirement">*</span>
-                </span>
-                <p className="mb-2 break-keep text-neutral-40">
-                  처음 챌린지 소식을 접한 시점부터 결제 완료까지의 기간을
-                  선택해주세요.
-                </p>
                 <div className="flex flex-col gap-2">
-                  {decisionPeriodOptions.map((option) => (
-                    <RadioButton
-                      key={option}
-                      color={radioColor}
-                      checked={surveySelections.decisionPeriod === option}
-                      label={option}
-                      onClick={() =>
-                        handleSurveySelection('decisionPeriod')(option)
-                      }
-                    />
-                  ))}
+                  <span className="text-1-medium" id="challengeEntryPointLabel">
+                    그렇다면 {josa(`${programTitle}`, '을/를')} 실제 결제 하기
+                    직전에는 어디를 통해 결제 페이지에 들어오셨나요?
+                    <span className="pl-1 text-requirement">*</span>
+                  </span>
+                  <div className="flex flex-col gap-2">
+                    {entryPointOptions.map((option) => (
+                      <div key={option} className="flex flex-col gap-2">
+                        <RadioButton
+                          color={radioColor}
+                          checked={surveySelections.paymentPath === option}
+                          label={option}
+                          onClick={() =>
+                            handleSurveySelection('paymentPath')(option)
+                          }
+                        />
+                        {option === '기타' &&
+                          surveySelections.paymentPath === '기타' && (
+                            <Input
+                              id="challengeEntryPointEtc"
+                              name="challengeEntryPointEtc"
+                              placeholder="기타 항목을 입력해주세요."
+                              value={surveyEtcText.paymentPath}
+                              onChange={handleSurveyEtcChange('paymentPath')}
+                              className="ml-7 mt-1 w-full max-w-sm"
+                            />
+                          )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-              <div className="flex flex-col gap-2">
-                <span className="text-1-medium" id="challengeEntryPointLabel">
-                  그렇다면 {josa(`${programTitle}`, '을/를')} 실제 결제 하기
-                  직전에는 어디를 통해 결제 페이지에 들어오셨나요?
-                  <span className="pl-1 text-requirement">*</span>
-                </span>
-                <div className="flex flex-col gap-2">
-                  {entryPointOptions.map((option) => (
-                    <div key={option} className="flex flex-col gap-2">
-                      <RadioButton
-                        color={radioColor}
-                        checked={surveySelections.paymentPath === option}
-                        label={option}
-                        onClick={() =>
-                          handleSurveySelection('paymentPath')(option)
-                        }
-                      />
-                      {option === '기타' &&
-                        surveySelections.paymentPath === '기타' && (
-                          <Input
-                            id="challengeEntryPointEtc"
-                            name="challengeEntryPointEtc"
-                            placeholder="기타 항목을 입력해주세요."
-                            value={surveyEtcText.paymentPath}
-                            onChange={handleSurveyEtcChange('paymentPath')}
-                            className="ml-7 mt-1 w-full max-w-sm"
-                          />
-                        )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            ) : null}
           </div>
         </section>
 
