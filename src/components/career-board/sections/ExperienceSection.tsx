@@ -1,19 +1,32 @@
+import { useGetAllUserExperienceQuery } from '@/api/experience';
+import { getTopCoreCompetencies } from '@components/career-board/utils/experienceSummary';
 import { useRouter } from 'next/navigation';
 import CareerCard from '../../common/mypage/career/card/CareerCard';
 
 const ExperienceSection = () => {
   const router = useRouter();
 
-  // TODO: 서버에서 받아올 데이터 (임시 하드코딩)
-  const experienceCount = 12;
-  const coreCompetencies = [
-    '데이터 분석',
-    '데이터 분석데이터 분석',
-    '데이터 분석 데이터 분석데이터 분석',
-  ];
+  // API 호출
+  const { data } = useGetAllUserExperienceQuery(
+    {
+      experienceCategories: [],
+      activityTypes: [],
+      years: [],
+      coreCompetencies: [],
+    },
+    'LATEST',
+    { page: 1, size: 1000 },
+  );
+
+  // 사용자가 직접 입력한 경험만 필터링
+  const userExperiences =
+    data?.userExperiences.filter((exp) => exp.isAddedByAdmin === false) ?? [];
+
+  const experienceCount = userExperiences.length;
+  const coreCompetencies = getTopCoreCompetencies(data?.userExperiences ?? []);
 
   // 데이터 존재 여부 확인
-  const hasData = experienceCount > 0 || coreCompetencies.length > 0;
+  const hasData = experienceCount > 0;
 
   return (
     <CareerCard
