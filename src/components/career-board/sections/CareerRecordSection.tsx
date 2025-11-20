@@ -1,34 +1,65 @@
+import { useGetUserCareerQuery } from '@/api/career';
+import LoadingContainer from '@/components/common/ui/loading/LoadingContainer';
+import { formatCareerDate } from '@/utils/career';
 import { useRouter } from 'next/navigation';
 import CareerCard from '../../common/mypage/career/card/CareerCard';
 
 const CareerRecordSection = () => {
   const router = useRouter();
 
-  // TODO: 서버에서 받아올 데이터 (임시 하드코딩)
-  const category = '경력';
-  const jobTitle = '서비스 기획자';
-  const companyName =
-    '회사 이름 회사 이름 회사 이름 회사 이름 회사 이름 회사 이름 회사 이름 회사 이름 ';
-  const employmentType = '정규직';
-  const startDate = '2025.01.01';
-  const endDate = '2025.02.02';
+  const { data, isLoading } = useGetUserCareerQuery({ page: 0, size: 1 });
 
-  // 데이터 존재 여부 확인
-  const hasData = category || jobTitle || companyName;
+  if (isLoading) {
+    return (
+      <CareerCard
+        title="커리어 기록"
+        labelOnClick={() => router.push('/mypage/career/record')}
+        body={<LoadingContainer text="커리어 기록 조회 중" />}
+      />
+    );
+  }
+
+  // 가장 최근 커리어 1개 추출 (startDate 기준 정렬)
+  const latestCareer = data?.userCareers
+    .filter(
+      (career) =>
+        career.startDate &&
+        career.job &&
+        career.company &&
+        career.employmentType,
+    )
+    .sort((a, b) => {
+      if (!a.startDate || !b.startDate) return 0;
+      if (a.startDate.year !== b.startDate.year) {
+        return b.startDate.year - a.startDate.year;
+      }
+      return b.startDate.monthValue - a.startDate.monthValue;
+    })[0];
+
+  const hasData = !!latestCareer;
 
   return (
     <CareerCard
       title="커리어 기록"
       labelOnClick={() => router.push('/mypage/career/record')}
       body={
-        hasData ? (
+        hasData && latestCareer ? (
           <CareerRecordBody
-            category={category}
-            jobTitle={jobTitle}
-            companyName={companyName}
-            employmentType={employmentType}
-            startDate={startDate}
-            endDate={endDate}
+            category="경력"
+            jobTitle={latestCareer.job || ''}
+            companyName={latestCareer.company || ''}
+            employmentType={latestCareer.employmentType || ''}
+            startDate={
+              latestCareer.startDate &&
+              typeof latestCareer.startDate === 'object'
+                ? formatCareerDate(latestCareer.startDate)
+                : ''
+            }
+            endDate={
+              latestCareer.endDate && typeof latestCareer.endDate === 'object'
+                ? formatCareerDate(latestCareer.endDate)
+                : ''
+            }
           />
         ) : (
           <CareerCard.Empty
@@ -62,7 +93,7 @@ const CareerRecordBody = ({
   startDate,
   endDate,
 }: CareerRecordBodyProps) => {
-  const workPeriod = `${startDate} - ${endDate}`;
+  const workPeriod = endDate ? `${startDate} - ${endDate}` : startDate;
 
   return (
     <div className="flex flex-col gap-4">

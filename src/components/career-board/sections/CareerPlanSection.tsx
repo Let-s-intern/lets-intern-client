@@ -1,10 +1,21 @@
 import { useUserQuery } from '@/api/user';
+import LoadingContainer from '@/components/common/ui/loading/LoadingContainer';
 import { useRouter } from 'next/navigation';
 import CareerCard from '../../common/mypage/career/card/CareerCard';
 
 const CareerPlanSection = () => {
   const router = useRouter();
-  const { data: userData } = useUserQuery();
+  const { data: userData, isLoading } = useUserQuery();
+
+  if (isLoading) {
+    return (
+      <CareerCard
+        title="커리어 계획"
+        labelOnClick={() => router.push('/mypage/career/plan')}
+        body={<LoadingContainer text="커리어 계획 조회 중" />}
+      />
+    );
+  }
 
   // 서버에서 받아온 데이터
   const wishField = userData?.wishField ?? null;
