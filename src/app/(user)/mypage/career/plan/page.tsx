@@ -243,9 +243,13 @@ export default function Page() {
               label="희망 직무 (최대 3개)"
               value={getPositionDisplayText()}
               placeholder="희망 직무를 선택해 주세요."
-              onClick={() =>
-                selectedField ? setModalStep('position') : setModalStep('field')
-              }
+              onClick={() => {
+                if (!selectedField || selectedField === '직군 무관') {
+                  setModalStep('field');
+                } else {
+                  setModalStep('position');
+                }
+              }}
             />
             <SelectButton
               className="text-xsmall14 md:text-xsmall16"
@@ -318,6 +322,7 @@ export default function Page() {
         </div>
       </section>
       <CareerModals
+        setModalStep={setModalStep}
         modalStep={modalStep}
         initialField={selectedField}
         initialPositions={selectedPositions}
