@@ -214,7 +214,10 @@ export type PatchUserBody = {
   grade?: string | null;
   major?: string | null;
   wishJob?: string | null;
+  wishField?: string | null;
   wishCompany?: string | null;
+  wishIndustry?: string | null;
+  wishEmploymentType?: string | null;
   marketingAgree?: boolean;
 };
 
