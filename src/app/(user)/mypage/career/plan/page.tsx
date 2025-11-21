@@ -36,9 +36,9 @@ export default function Page() {
 
   const [status, setStatus] = useState<CareerPlanStatus>('EMPTY');
   const [user, setUser] = useState<CareerPlanValues>({
-    university: '',
-    grade: '',
-    major: '',
+    university: null,
+    grade: null,
+    major: null,
     wishField: null,
     wishJob: null,
     wishCompany: null,
@@ -157,14 +157,29 @@ export default function Page() {
 
   const closeModal = () => setModalStep(null);
 
+  const isEmptyData =
+    !data?.university &&
+    !data?.grade &&
+    !data?.major &&
+    !data?.wishField &&
+    !data?.wishJob &&
+    !data?.wishIndustry &&
+    !data?.wishCompany &&
+    !data?.wishEmploymentType;
+
   const handleCancel = () => {
+    if (isEmptyData) {
+      setStatus('EMPTY');
+    } else {
+      setStatus('COMPLETE');
+    }
+
     if (initialUser) {
       setUser(initialUser);
-      setSelectedField(initialField);
-      setSelectedPositions(initialPositions);
-      setSelectedIndustries(initialIndustries);
     }
-    setStatus(initialUser ? 'COMPLETE' : 'EMPTY');
+    setSelectedField(initialField);
+    setSelectedPositions(initialPositions);
+    setSelectedIndustries(initialIndustries);
   };
 
   const getFieldDisplayText = () => {
