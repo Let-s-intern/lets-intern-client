@@ -4,7 +4,7 @@ interface SelectButtonProps {
   value: string;
   placeholder: string;
   isRequired?: boolean;
-  disabled: boolean;
+  disabled?: boolean;
   onClick: () => void;
 }
 
