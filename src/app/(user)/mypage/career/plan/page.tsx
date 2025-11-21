@@ -1,6 +1,7 @@
 'use client';
 
 import { usePatchUser, useUserQuery } from '@/api/user';
+import { useCareerModals } from '@/hooks/useCareerModals';
 import { useChangeDetection } from '@/hooks/useChangeDetectionHook';
 import { GRADE_ENUM_TO_KOREAN, JOB_CONDITIONS } from '@/utils/constants';
 import CareerModals from '@components/common/mypage/career/CareerModal';
@@ -25,7 +26,6 @@ interface CareerPlanValues {
 }
 
 type CareerPlanStatus = 'EMPTY' | 'EDIT' | 'COMPLETE';
-type ModalStep = 'grade' | 'field' | 'position' | 'industry' | null;
 
 const GRADE_KOREAN_TO_ENUM = Object.fromEntries(
   Object.entries(GRADE_ENUM_TO_KOREAN).map(([key, value]) => [value, key]),
@@ -41,6 +41,28 @@ const CareerPlanEmptySection = ({ handleEdit }: { handleEdit: () => void }) => (
       커리어 계획하기
     </OutlinedButton>
   </section>
+);
+
+const ConditionList = ({
+  selected,
+  onToggle,
+}: {
+  selected: string[];
+  onToggle: (value: string) => void;
+}) => (
+  <div className="flex flex-col gap-2">
+    {JOB_CONDITIONS.map((option) => (
+      <button
+        key={option.value}
+        type="button"
+        onClick={() => onToggle(option.value)}
+        className="flex w-full items-center gap-1 text-xsmall14"
+      >
+        <CheckBox checked={selected.includes(option.value)} width="w-6" />
+        <span className="text-xsmall14 md:text-xsmall16">{option.label}</span>
+      </button>
+    ))}
+  </div>
 );
 
 export default function Page() {
@@ -59,10 +81,20 @@ export default function Page() {
     wishEmploymentType: null,
   });
 
-  const [modalStep, setModalStep] = useState<ModalStep>(null);
-  const [selectedField, setSelectedField] = useState<string | null>(null);
-  const [selectedPositions, setSelectedPositions] = useState<string[]>([]);
-  const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
+  const {
+    modalStep,
+    setModalStep,
+    selectedField,
+    setSelectedField,
+    selectedPositions,
+    setSelectedPositions,
+    selectedIndustries,
+    setSelectedIndustries,
+    getFieldDisplayText,
+    getPositionDisplayText,
+    getIndustryDisplayText,
+    closeModal,
+  } = useCareerModals();
 
   const changeDetection = useChangeDetection({
     user,
@@ -114,13 +146,6 @@ export default function Page() {
     setSelectedPositions(data.wishJob ? [data.wishJob] : []);
     setSelectedIndustries(data.wishIndustry ? [data.wishIndustry] : []);
   }, [data]);
-
-  useEffect(() => {
-    document.body.style.overflow = modalStep !== null ? 'hidden' : 'auto';
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, [modalStep]);
 
   if (isLoading) return <LoadingContainer />;
 
@@ -183,8 +208,6 @@ export default function Page() {
     setStatus('EDIT');
   };
 
-  const closeModal = () => setModalStep(null);
-
   const isEmptyData =
     !data?.university &&
     !data?.grade &&
@@ -208,25 +231,6 @@ export default function Page() {
     setSelectedField(changeDetection.initialField);
     setSelectedPositions(changeDetection.initialPositions);
     setSelectedIndustries(changeDetection.initialIndustries);
-  };
-
-  const getFieldDisplayText = () => {
-    if (selectedField === null || selectedField === '') {
-      return '희망 직군을 선택해 주세요.';
-    }
-    return selectedField;
-  };
-
-  const getPositionDisplayText = () => {
-    if (selectedField === null) return '희망 직무를 선택해 주세요.';
-    if (selectedField === '직군 무관') return '직무 무관';
-    if (selectedPositions.length === 0) return '희망 직무를 선택해 주세요.';
-    return selectedPositions.join(', ');
-  };
-
-  const getIndustryDisplayText = () => {
-    if (selectedIndustries.length === 0) return '희망 산업을 선택해 주세요.';
-    return selectedIndustries.join(', ');
   };
 
   if (status === 'EMPTY') {
@@ -333,30 +337,13 @@ export default function Page() {
             <span className="text-xsmall14 md:text-xsmall16">
               희망 구직 조건
             </span>
-            <div className="flex flex-col gap-2">
-              {JOB_CONDITIONS.map((option) => {
-                const selected = (user.wishEmploymentType ?? '')
-                  .split(',')
-                  .map((v) => v.trim())
-                  .filter(Boolean);
-                return (
-                  <button
-                    key={option.value}
-                    type="button"
-                    onClick={() => handleConditionToggle(option.value)}
-                    className="flex w-full items-center gap-1 text-xsmall14"
-                  >
-                    <CheckBox
-                      checked={selected.includes(option.value)}
-                      width="w-6"
-                    />
-                    <span className="text-xsmall14 md:text-xsmall16">
-                      {option.label}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+            <ConditionList
+              selected={(user.wishEmploymentType ?? '')
+                .split(',')
+                .map((v) => v.trim())
+                .filter(Boolean)}
+              onToggle={handleConditionToggle}
+            />
           </div>
         </div>
         <div className="mt-12 flex gap-3">
