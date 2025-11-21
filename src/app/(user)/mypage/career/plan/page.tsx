@@ -26,6 +26,24 @@ interface CareerPlanValues {
 type CareerPlanStatus = 'EMPTY' | 'EDIT' | 'COMPLETE';
 type ModalStep = 'grade' | 'field' | 'position' | 'industry' | null;
 
+const GRADE_ENUM_TO_KOREAN = {
+  FIRST: '1학년',
+  SECOND: '2학년',
+  THIRD: '3학년',
+  FOURTH: '4학년',
+  ETC: '5학년',
+  GRADUATE: '졸업생',
+} as const;
+
+const GRADE_KOREAN_TO_ENUM: Record<string, string> = {
+  '1학년': 'FIRST',
+  '2학년': 'SECOND',
+  '3학년': 'THIRD',
+  '4학년': 'FOURTH',
+  '5학년': 'ETC',
+  졸업생: 'GRADUATE',
+};
+
 export default function Page() {
   const { data, isLoading } = useUserQuery();
   const patchUser = usePatchUser();
@@ -61,10 +79,14 @@ export default function Page() {
       data.wishEmploymentType;
 
     if (isCareerFilled) setStatus('COMPLETE');
+    const koreanGrade = data.grade
+      ? GRADE_ENUM_TO_KOREAN[data.grade as keyof typeof GRADE_ENUM_TO_KOREAN] ||
+        data.grade
+      : '';
 
     setUser({
       university: data.university ?? '',
-      grade: data.grade ?? '',
+      grade: koreanGrade ?? '',
       major: data.major ?? '',
       wishField: data.wishField,
       wishJob: data.wishJob,
@@ -102,14 +124,18 @@ export default function Page() {
   };
 
   const handleSubmit = () => {
+    const enumGrade = user.grade
+      ? GRADE_KOREAN_TO_ENUM[user.grade] || user.grade
+      : null;
+
     patchUser.mutate(
       {
         university: user.university,
-        grade: user.grade,
+        grade: enumGrade,
         major: user.major,
         wishField: selectedField,
-        wishJob: selectedPositions[0] ?? null,
-        wishIndustry: selectedIndustries[0] ?? null,
+        wishJob: selectedPositions.join(', ') ?? null,
+        wishIndustry: selectedIndustries.join(', ') ?? null,
         wishCompany: user.wishCompany,
         wishEmploymentType: user.wishEmploymentType,
       },
@@ -123,8 +149,12 @@ export default function Page() {
   const handleEdit = () => setStatus('EDIT');
 
   const closeModal = () => setModalStep(null);
-  const getFieldDisplayText = () => selectedField ?? '-';
-
+  const getFieldDisplayText = () => {
+    if (selectedField === null || selectedField === '') {
+      return '희망 직군을 선택해 주세요.';
+    }
+    return selectedField;
+  };
   const getPositionDisplayText = () => {
     if (selectedField === null) return '희망 직무를 선택해 주세요.';
     if (selectedField === '직군 무관') return '직무 무관';
@@ -167,14 +197,13 @@ export default function Page() {
   return (
     <div className="flex w-full flex-col">
       <section>
-        <h1 className="mb-6 text-small18">기본 정보</h1>
+        <h1 className="mb-6 text-xsmall16 md:text-small18">기본 정보</h1>
         <div>
           <div className="mb-10 flex flex-col gap-4">
             <div className="flex flex-col gap-[6px]">
-              <label htmlFor="university" className="text-xsmall16">
-                학교
-              </label>
+              <label className="text-xsmall14 md:text-xsmall16">학교</label>
               <LineInput
+                className="text-xsmall14 md:text-xsmall16"
                 placeholder="학교 이름을 입력해 주세요."
                 value={user.university ?? ''}
                 onChange={(e) =>
@@ -184,15 +213,15 @@ export default function Page() {
             </div>
             <SelectButton
               label="학년"
+              className="text-xsmall14 md:text-xsmall16"
               value={user.grade || '학년을 선택해 주세요.'}
               placeholder="학년을 선택해 주세요."
               onClick={() => setModalStep('grade')}
             />
             <div className="flex flex-col gap-[6px]">
-              <label htmlFor="major" className="text-xsmall16">
-                전공
-              </label>
+              <label className="text-xsmall14 md:text-xsmall16">전공</label>
               <LineInput
+                className="text-xsmall14 md:text-xsmall16"
                 placeholder="전공을 입력해 주세요."
                 value={user.major ?? ''}
                 onChange={(e) =>
@@ -203,12 +232,14 @@ export default function Page() {
           </div>
           <div className="mb-8 flex flex-col gap-4">
             <SelectButton
+              className="text-xsmall14 md:text-xsmall16"
               label="희망 직군"
               value={getFieldDisplayText()}
               placeholder="희망 직군을 선택해 주세요."
               onClick={() => setModalStep('field')}
             />
             <SelectButton
+              className="text-xsmall14 md:text-xsmall16"
               label="희망 직무 (최대 3개)"
               value={getPositionDisplayText()}
               placeholder="희망 직무를 선택해 주세요."
@@ -217,16 +248,20 @@ export default function Page() {
               }
             />
             <SelectButton
+              className="text-xsmall14 md:text-xsmall16"
               label="희망 산업 (최대 3개)"
               value={getIndustryDisplayText()}
               placeholder="희망 산업을 선택해 주세요."
               onClick={() => setModalStep('industry')}
             />
             <div className="flex flex-col gap-[6px]">
-              <label className="text-xsmall16">희망 기업</label>
+              <label className="text-xsmall14 md:text-xsmall16">
+                희망 기업
+              </label>
               <LineInput
                 id="wishTargetCompany"
                 name="wishTargetCompany"
+                className="text-xsmall14 md:text-xsmall16"
                 placeholder="희망 기업을 입력해 주세요."
                 value={user.wishCompany || ''}
                 onChange={(e) =>
@@ -239,7 +274,9 @@ export default function Page() {
             </div>
           </div>
           <div className="flex flex-col gap-3">
-            <span className="text-xsmall16">희망 구직 조건</span>
+            <span className="text-xsmall14 md:text-xsmall16">
+              희망 구직 조건
+            </span>
             <div className="flex flex-col gap-2">
               {JOB_CONDITIONS.map((option) => {
                 const selected = (user.wishEmploymentType ?? '').split(',');
@@ -254,7 +291,9 @@ export default function Page() {
                       checked={selected.includes(option.value)}
                       width="w-6"
                     />
-                    <span>{option.label}</span>
+                    <span className="text-xsmall14 md:text-xsmall16">
+                      {option.label}
+                    </span>
                   </button>
                 );
               })}
