@@ -26,8 +26,8 @@ export const convertCareerApiToUiFormat = (
     : '기타(직접입력)';
 
   const employmentTypeOther = isEmployeeType(rawType) ? '' : rawType;
-  const startDate = career.startDate?.split('-').slice(0, 2).join('.');
-  const endDate = career.endDate?.split('-').slice(0, 2).join('.');
+  const startDate = career.startDate?.split('-').join('.');
+  const endDate = career.endDate?.split('-').join('.');
 
   return {
     id: career.id,
@@ -52,10 +52,10 @@ export const convertCareerUiToApiFormat = (
     employmentType === '기타(직접입력)' ? employmentTypeOther : employmentType;
 
   const startDate = career.startDate
-    ? career.startDate.replace(/\./g, '-') + '-01'
+    ? career.startDate.replace(/\./g, '-')
     : null;
   const endDate = career.endDate
-    ? career.endDate.replace(/\./g, '-') + '-01'
+    ? career.endDate.replace(/\./g, '-')
     : null;
 
   return {
