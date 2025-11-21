@@ -116,7 +116,7 @@ export default function Page() {
       const updated = list.includes(value)
         ? list.filter((v) => v !== value)
         : [...list, value];
-      return { ...prev, wishEmploymentType: updated.join(',') };
+      return { ...prev, wishEmploymentType: updated.join(', ') };
     });
   };
 
@@ -323,7 +323,7 @@ export default function Page() {
             </span>
             <div className="flex flex-col gap-2">
               {JOB_CONDITIONS.map((option) => {
-                const selected = (user.wishEmploymentType ?? '').split(',');
+                const selected = (user.wishEmploymentType ?? '').split(', ');
                 return (
                   <button
                     key={option.value}

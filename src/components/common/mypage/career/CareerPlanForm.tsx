@@ -54,7 +54,7 @@ const FormChecklist = ({ label, items }: FormChecklistProps) => (
 
 const CareerPlanForm = ({ user, setStatus }: CareerPlanFormProps) => {
   const employmentList = user.wishEmploymentType
-    ? user.wishEmploymentType.split(',').filter(Boolean)
+    ? user.wishEmploymentType.split(', ').filter(Boolean)
     : [];
 
   const employmentLabels = employmentList
