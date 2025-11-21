@@ -1,7 +1,7 @@
 'use client';
 
 import { usePatchUser, useUserQuery } from '@/api/user';
-import { JOB_CONDITIONS } from '@/utils/constants';
+import { GRADE_ENUM_TO_KOREAN, JOB_CONDITIONS } from '@/utils/constants';
 import CareerModals from '@components/common/mypage/career/CareerModal';
 import CareerPlanForm from '@components/common/mypage/career/CareerPlanForm';
 import { SelectButton } from '@components/common/ui/button/SelectButton';
@@ -26,23 +26,9 @@ interface CareerPlanValues {
 type CareerPlanStatus = 'EMPTY' | 'EDIT' | 'COMPLETE';
 type ModalStep = 'grade' | 'field' | 'position' | 'industry' | null;
 
-const GRADE_ENUM_TO_KOREAN = {
-  FIRST: '1학년',
-  SECOND: '2학년',
-  THIRD: '3학년',
-  FOURTH: '4학년',
-  ETC: '5학년',
-  GRADUATE: '졸업생',
-} as const;
-
-const GRADE_KOREAN_TO_ENUM: Record<string, string> = {
-  '1학년': 'FIRST',
-  '2학년': 'SECOND',
-  '3학년': 'THIRD',
-  '4학년': 'FOURTH',
-  '5학년': 'ETC',
-  졸업생: 'GRADUATE',
-};
+const GRADE_KOREAN_TO_ENUM = Object.fromEntries(
+  Object.entries(GRADE_ENUM_TO_KOREAN).map(([key, value]) => [value, key]),
+);
 
 export default function Page() {
   const { data, isLoading } = useUserQuery();
@@ -59,6 +45,11 @@ export default function Page() {
     wishIndustry: null,
     wishEmploymentType: null,
   });
+
+  const [initialUser, setInitialUser] = useState<CareerPlanValues | null>(null);
+  const [initialField, setInitialField] = useState<string | null>(null);
+  const [initialPositions, setInitialPositions] = useState<string[]>([]);
+  const [initialIndustries, setInitialIndustries] = useState<string[]>([]);
 
   const [modalStep, setModalStep] = useState<ModalStep>(null);
   const [selectedField, setSelectedField] = useState<string | null>(null);
@@ -79,12 +70,13 @@ export default function Page() {
       data.wishEmploymentType;
 
     if (isCareerFilled) setStatus('COMPLETE');
+
     const koreanGrade = data.grade
       ? GRADE_ENUM_TO_KOREAN[data.grade as keyof typeof GRADE_ENUM_TO_KOREAN] ||
         data.grade
       : '';
 
-    setUser({
+    const newUser: CareerPlanValues = {
       university: data.university ?? '',
       grade: koreanGrade ?? '',
       major: data.major ?? '',
@@ -93,11 +85,19 @@ export default function Page() {
       wishIndustry: data.wishIndustry,
       wishCompany: data.wishCompany,
       wishEmploymentType: data.wishEmploymentType ?? '',
-    });
+    };
+
+    setUser(newUser);
+    setInitialUser(newUser);
 
     setSelectedField(data.wishField);
+    setInitialField(data.wishField);
+
     setSelectedPositions(data.wishJob ? [data.wishJob] : []);
+    setInitialPositions(data.wishJob ? [data.wishJob] : []);
+
     setSelectedIndustries(data.wishIndustry ? [data.wishIndustry] : []);
+    setInitialIndustries(data.wishIndustry ? [data.wishIndustry] : []);
   }, [data]);
 
   useEffect(() => {
@@ -112,13 +112,10 @@ export default function Page() {
   const handleConditionToggle = (value: string) => {
     setUser((prev) => {
       const current = prev.wishEmploymentType ?? '';
-
-      const list = current ? current.split(',') : [];
-
+      const list = current ? current.split(', ') : [];
       const updated = list.includes(value)
         ? list.filter((v) => v !== value)
         : [...list, value];
-
       return { ...prev, wishEmploymentType: updated.join(',') };
     });
   };
@@ -142,13 +139,34 @@ export default function Page() {
       {
         onSuccess: () => {
           setStatus('COMPLETE');
+          setInitialUser(user);
+          setInitialField(selectedField);
+          setInitialPositions(selectedPositions);
+          setInitialIndustries(selectedIndustries);
         },
       },
     );
   };
-  const handleEdit = () => setStatus('EDIT');
+  const handleEdit = () => {
+    setInitialUser(user);
+    setInitialField(selectedField);
+    setInitialPositions([...selectedPositions]);
+    setInitialIndustries([...selectedIndustries]);
+    setStatus('EDIT');
+  };
 
   const closeModal = () => setModalStep(null);
+
+  const handleCancel = () => {
+    if (initialUser) {
+      setUser(initialUser);
+      setSelectedField(initialField);
+      setSelectedPositions(initialPositions);
+      setSelectedIndustries(initialIndustries);
+    }
+    setStatus(initialUser ? 'COMPLETE' : 'EMPTY');
+  };
+
   const getFieldDisplayText = () => {
     if (selectedField === null || selectedField === '') {
       return '희망 직군을 선택해 주세요.';
@@ -166,6 +184,13 @@ export default function Page() {
     if (selectedIndustries.length === 0) return '희망 산업을 선택해 주세요.';
     return selectedIndustries.join(', ');
   };
+
+  const hasChanges =
+    initialUser &&
+    (JSON.stringify(user) !== JSON.stringify(initialUser) ||
+      JSON.stringify(selectedField) !== JSON.stringify(initialField) ||
+      JSON.stringify(selectedPositions) !== JSON.stringify(initialPositions) ||
+      JSON.stringify(selectedIndustries) !== JSON.stringify(initialIndustries));
 
   if (status === 'EMPTY') {
     return (
@@ -305,18 +330,14 @@ export default function Page() {
           </div>
         </div>
         <div className="mt-12 flex gap-3">
-          <OutlinedButton
-            size="md"
-            onClick={
-              status === 'EDIT'
-                ? () => setStatus('COMPLETE')
-                : () => setStatus('EMPTY')
-            }
-            className="flex-1"
-          >
+          <OutlinedButton size="md" onClick={handleCancel} className="flex-1">
             취소하기
           </OutlinedButton>
-          <SolidButton className="flex-1" onClick={handleSubmit}>
+          <SolidButton
+            className="flex-1"
+            onClick={handleSubmit}
+            disabled={!hasChanges}
+          >
             입력 완료
           </SolidButton>
         </div>
