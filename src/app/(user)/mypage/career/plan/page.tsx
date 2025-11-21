@@ -1,6 +1,7 @@
 'use client';
 
 import { usePatchUser, useUserQuery } from '@/api/user';
+import { useChangeDetection } from '@/hooks/useChangeDetectionHook';
 import { GRADE_ENUM_TO_KOREAN, JOB_CONDITIONS } from '@/utils/constants';
 import CareerModals from '@components/common/mypage/career/CareerModal';
 import CareerPlanForm from '@components/common/mypage/career/CareerPlanForm';
@@ -30,6 +31,18 @@ const GRADE_KOREAN_TO_ENUM = Object.fromEntries(
   Object.entries(GRADE_ENUM_TO_KOREAN).map(([key, value]) => [value, key]),
 );
 
+const CareerPlanEmptySection = ({ handleEdit }: { handleEdit: () => void }) => (
+  <section className="flex h-[28rem] flex-col items-center justify-center gap-3">
+    <div className="flex flex-col text-center text-sm text-neutral-20">
+      <p>아직 커리어 방향을 설정하지 않았어요.</p>
+      <p>목표를 세우면, 그 길에 한걸음 더 가까워질 수 있어요.</p>
+    </div>
+    <OutlinedButton size="xs" onClick={handleEdit} className="w-fit">
+      커리어 계획하기
+    </OutlinedButton>
+  </section>
+);
+
 export default function Page() {
   const { data, isLoading } = useUserQuery();
   const patchUser = usePatchUser();
@@ -46,15 +59,17 @@ export default function Page() {
     wishEmploymentType: null,
   });
 
-  const [initialUser, setInitialUser] = useState<CareerPlanValues | null>(null);
-  const [initialField, setInitialField] = useState<string | null>(null);
-  const [initialPositions, setInitialPositions] = useState<string[]>([]);
-  const [initialIndustries, setInitialIndustries] = useState<string[]>([]);
-
   const [modalStep, setModalStep] = useState<ModalStep>(null);
   const [selectedField, setSelectedField] = useState<string | null>(null);
   const [selectedPositions, setSelectedPositions] = useState<string[]>([]);
   const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
+
+  const changeDetection = useChangeDetection({
+    user,
+    selectedField,
+    selectedPositions,
+    selectedIndustries,
+  });
 
   useEffect(() => {
     if (!data) return;
@@ -88,16 +103,16 @@ export default function Page() {
     };
 
     setUser(newUser);
-    setInitialUser(newUser);
+    changeDetection.setInitialValues(
+      newUser,
+      data.wishField,
+      data.wishJob ? [data.wishJob] : [],
+      data.wishIndustry ? [data.wishIndustry] : [],
+    );
 
     setSelectedField(data.wishField);
-    setInitialField(data.wishField);
-
     setSelectedPositions(data.wishJob ? [data.wishJob] : []);
-    setInitialPositions(data.wishJob ? [data.wishJob] : []);
-
     setSelectedIndustries(data.wishIndustry ? [data.wishIndustry] : []);
-    setInitialIndustries(data.wishIndustry ? [data.wishIndustry] : []);
   }, [data]);
 
   useEffect(() => {
@@ -112,11 +127,19 @@ export default function Page() {
   const handleConditionToggle = (value: string) => {
     setUser((prev) => {
       const current = prev.wishEmploymentType ?? '';
-      const list = current ? current.split(', ') : [];
+      const list = current
+        ? current
+            .split(',')
+            .map((v) => v.trim())
+            .filter(Boolean)
+        : [];
       const updated = list.includes(value)
         ? list.filter((v) => v !== value)
         : [...list, value];
-      return { ...prev, wishEmploymentType: updated.join(', ') };
+      return {
+        ...prev,
+        wishEmploymentType: updated.length > 0 ? updated.join(', ') : '',
+      };
     });
   };
 
@@ -139,19 +162,24 @@ export default function Page() {
       {
         onSuccess: () => {
           setStatus('COMPLETE');
-          setInitialUser(user);
-          setInitialField(selectedField);
-          setInitialPositions(selectedPositions);
-          setInitialIndustries(selectedIndustries);
+          changeDetection.setInitialValues(
+            user,
+            selectedField,
+            selectedPositions,
+            selectedIndustries,
+          );
         },
       },
     );
   };
+
   const handleEdit = () => {
-    setInitialUser(user);
-    setInitialField(selectedField);
-    setInitialPositions([...selectedPositions]);
-    setInitialIndustries([...selectedIndustries]);
+    changeDetection.setInitialValues(
+      user,
+      selectedField,
+      [...selectedPositions],
+      [...selectedIndustries],
+    );
     setStatus('EDIT');
   };
 
@@ -174,12 +202,12 @@ export default function Page() {
       setStatus('COMPLETE');
     }
 
-    if (initialUser) {
-      setUser(initialUser);
+    if (changeDetection.initialUser) {
+      setUser(changeDetection.initialUser);
     }
-    setSelectedField(initialField);
-    setSelectedPositions(initialPositions);
-    setSelectedIndustries(initialIndustries);
+    setSelectedField(changeDetection.initialField);
+    setSelectedPositions(changeDetection.initialPositions);
+    setSelectedIndustries(changeDetection.initialIndustries);
   };
 
   const getFieldDisplayText = () => {
@@ -188,6 +216,7 @@ export default function Page() {
     }
     return selectedField;
   };
+
   const getPositionDisplayText = () => {
     if (selectedField === null) return '희망 직무를 선택해 주세요.';
     if (selectedField === '직군 무관') return '직무 무관';
@@ -200,25 +229,8 @@ export default function Page() {
     return selectedIndustries.join(', ');
   };
 
-  const hasChanges =
-    initialUser &&
-    (JSON.stringify(user) !== JSON.stringify(initialUser) ||
-      JSON.stringify(selectedField) !== JSON.stringify(initialField) ||
-      JSON.stringify(selectedPositions) !== JSON.stringify(initialPositions) ||
-      JSON.stringify(selectedIndustries) !== JSON.stringify(initialIndustries));
-
   if (status === 'EMPTY') {
-    return (
-      <section className="flex h-[28rem] flex-col items-center justify-center gap-3">
-        <div className="flex flex-col text-center text-sm text-neutral-20">
-          <p>아직 커리어 방향을 설정하지 않았어요.</p>
-          <p>목표를 세우면, 그 길에 한걸음 더 가까워질 수 있어요.</p>
-        </div>
-        <OutlinedButton size="xs" onClick={handleEdit} className="w-fit">
-          커리어 계획하기
-        </OutlinedButton>
-      </section>
-    );
+    return <CareerPlanEmptySection handleEdit={handleEdit} />;
   }
 
   if (status === 'COMPLETE') {
@@ -323,7 +335,10 @@ export default function Page() {
             </span>
             <div className="flex flex-col gap-2">
               {JOB_CONDITIONS.map((option) => {
-                const selected = (user.wishEmploymentType ?? '').split(', ');
+                const selected = (user.wishEmploymentType ?? '')
+                  .split(',')
+                  .map((v) => v.trim())
+                  .filter(Boolean);
                 return (
                   <button
                     key={option.value}
@@ -351,7 +366,7 @@ export default function Page() {
           <SolidButton
             className="flex-1"
             onClick={handleSubmit}
-            disabled={!hasChanges}
+            disabled={!changeDetection.hasChanges}
           >
             입력 완료
           </SolidButton>
