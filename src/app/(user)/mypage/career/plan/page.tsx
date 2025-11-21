@@ -186,13 +186,27 @@ export default function Page() {
       },
       {
         onSuccess: () => {
-          setStatus('COMPLETE');
-          changeDetection.setInitialValues(
-            user,
-            selectedField,
-            selectedPositions,
-            selectedIndustries,
-          );
+          const isAllEmpty =
+            !user.university &&
+            !user.grade &&
+            !user.major &&
+            !selectedField &&
+            selectedPositions.length === 0 &&
+            selectedIndustries.length === 0 &&
+            !user.wishCompany &&
+            !user.wishEmploymentType;
+
+          if (isAllEmpty) {
+            setStatus('EMPTY');
+          } else {
+            setStatus('COMPLETE');
+            changeDetection.setInitialValues(
+              user,
+              selectedField,
+              selectedPositions,
+              selectedIndustries,
+            );
+          }
         },
       },
     );
