@@ -168,9 +168,12 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
       <div className="flex w-full flex-1 flex-col pb-14 pt-8 md:flex-row md:gap-x-14 md:pb-[60px] md:pt-0">
         {/* 데스크톱 사이드바 */}
         <aside
-          className={clsx('hidden w-full bg-white md:block md:w-[254px]', {
-            hidden: isReviewCreatePage || isReviewPage,
-          })}
+          className={clsx(
+            'hidden w-full flex-shrink-0 bg-white md:block md:w-[254px]',
+            {
+              hidden: isReviewCreatePage || isReviewPage,
+            },
+          )}
         >
           <div className="sticky top-0 flex flex-col gap-7">
             <h1 className="hidden text-medium24 font-semibold text-neutral-0 md:block">
