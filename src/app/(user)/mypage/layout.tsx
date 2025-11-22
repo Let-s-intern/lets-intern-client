@@ -175,7 +175,7 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
             },
           )}
         >
-          <div className="sticky top-0 flex flex-col gap-7">
+          <div className="flex flex-col gap-7">
             <h1 className="hidden text-medium24 font-semibold text-neutral-0 md:block">
               마이페이지
             </h1>
