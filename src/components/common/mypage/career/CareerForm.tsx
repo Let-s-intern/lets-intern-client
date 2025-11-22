@@ -52,7 +52,7 @@ const CareerForm = ({
           e.preventDefault();
           handleSubmit(form);
         }}
-        className="flex w-full flex-col gap-3 rounded-xs border border-neutral-80 p-5"
+        className="flex w-full flex-col gap-3 rounded-xs border border-neutral-80 p-5 text-sm md:text-base"
       >
         {/* 기업 이름 */}
         <fieldset className="flex flex-col gap-1.5">
@@ -135,7 +135,7 @@ const CareerForm = ({
 
         {/* 근무 기간 */}
         <fieldset className="flex flex-col gap-1.5">
-          <div className="flex items-baseline gap-2">
+          <div className="flex flex-col items-baseline gap-1 md:flex-row md:gap-2">
             <span id="career-period" className="font-medium text-neutral-20">
               근무 기간
             </span>
