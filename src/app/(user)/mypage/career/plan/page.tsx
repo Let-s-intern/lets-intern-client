@@ -1,227 +1,384 @@
 'use client';
 
-import { JOB_CONDITIONS } from '@/utils/constants';
+import { usePatchUser, useUserQuery } from '@/api/user';
+import { useCareerModals } from '@/hooks/useCareerModals';
+import { useChangeDetection } from '@/hooks/useChangeDetectionHook';
+import {
+  GRADE_ENUM_TO_KOREAN,
+  GRADE_KOREAN_TO_ENUM,
+  JOB_CONDITIONS,
+} from '@/utils/constants';
 import CareerModals from '@components/common/mypage/career/CareerModal';
+import CareerPlanForm from '@components/common/mypage/career/CareerPlanForm';
 import { SelectButton } from '@components/common/ui/button/SelectButton';
 import CheckBox from '@components/common/ui/CheckBox';
 import LineInput from '@components/common/ui/input/LineInput';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import OutlinedButton from '@components/ui/button/OutlinedButton';
 import SolidButton from '@components/ui/button/SolidButton';
 import { useEffect, useState } from 'react';
 
 interface CareerPlanValues {
-  university: string;
-  grade: string;
-  major: string;
-  wishJob: string;
-  wishCompany: string;
-  wishIndustry: string;
-  wishTargetCompany: string;
-  jobConditions: string[];
+  university: string | null;
+  grade: string | null;
+  major: string | null;
+  wishField: string | null;
+  wishJob: string | null;
+  wishCompany: string | null;
+  wishIndustry: string | null;
+  wishEmploymentType: string | null;
 }
 
-type ModalStep = 'grade' | 'field' | 'position' | 'industry' | null;
+type CareerPlanStatus = 'EMPTY' | 'EDIT' | 'COMPLETE';
+
+const CareerPlanEmptySection = ({ handleEdit }: { handleEdit: () => void }) => (
+  <section className="flex h-[28rem] flex-col items-center justify-center gap-3">
+    <div className="flex flex-col text-center text-sm text-neutral-20">
+      <p>아직 커리어 방향을 설정하지 않았어요.</p>
+      <p>목표를 세우면, 그 길에 한걸음 더 가까워질 수 있어요.</p>
+    </div>
+    <OutlinedButton size="xs" onClick={handleEdit} className="w-fit">
+      커리어 계획하기
+    </OutlinedButton>
+  </section>
+);
+
+const ConditionList = ({
+  selected,
+  onToggle,
+}: {
+  selected: string[];
+  onToggle: (value: string) => void;
+}) => (
+  <div className="flex flex-col gap-2">
+    {JOB_CONDITIONS.map((option) => (
+      <button
+        key={option.value}
+        type="button"
+        onClick={() => onToggle(option.value)}
+        className="flex w-full items-center gap-1 text-xsmall14"
+      >
+        <CheckBox checked={selected.includes(option.value)} width="w-6" />
+        <span className="text-xsmall14 md:text-xsmall16">{option.label}</span>
+      </button>
+    ))}
+  </div>
+);
 
 export default function Page() {
+  const { data, isLoading } = useUserQuery();
+  const patchUser = usePatchUser();
+
+  const [status, setStatus] = useState<CareerPlanStatus>('EMPTY');
   const [user, setUser] = useState<CareerPlanValues>({
-    university: '',
-    grade: '',
-    major: '',
-    wishJob: '',
-    wishCompany: '',
-    wishIndustry: '',
-    wishTargetCompany: '',
-    jobConditions: [],
+    university: null,
+    grade: null,
+    major: null,
+    wishField: null,
+    wishJob: null,
+    wishCompany: null,
+    wishIndustry: null,
+    wishEmploymentType: null,
   });
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [modalStep, setModalStep] = useState<ModalStep>(null);
-  const [selectedField, setSelectedField] = useState<string | null>(null);
-  const [selectedPositions, setSelectedPositions] = useState<string[]>([]);
-  const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
+  const {
+    modalStep,
+    setModalStep,
+    selectedField,
+    setSelectedField,
+    selectedPositions,
+    setSelectedPositions,
+    selectedIndustries,
+    setSelectedIndustries,
+    getFieldDisplayText,
+    getPositionDisplayText,
+    getIndustryDisplayText,
+    closeModal,
+  } = useCareerModals();
 
-  const handleCreateNew = () => setIsEditing(true);
-  const handleConditionToggle = (value: string) => {
-    setUser((prev) => ({
-      ...prev,
-      jobConditions: prev.jobConditions.includes(value)
-        ? prev.jobConditions.filter((v) => v !== value)
-        : [...prev.jobConditions, value],
-    }));
-  };
+  const changeDetection = useChangeDetection({
+    user,
+    selectedField,
+    selectedPositions,
+    selectedIndustries,
+  });
 
   useEffect(() => {
-    document.body.style.overflow = modalStep !== null ? 'hidden' : 'auto';
-    return () => {
-      document.body.style.overflow = 'auto';
+    if (!data) return;
+
+    const isCareerFilled =
+      data.university ||
+      data.grade ||
+      data.major ||
+      data.wishField ||
+      data.wishJob ||
+      data.wishIndustry ||
+      data.wishCompany ||
+      data.wishEmploymentType;
+
+    if (isCareerFilled) setStatus('COMPLETE');
+
+    const koreanGrade = data.grade
+      ? GRADE_ENUM_TO_KOREAN[data.grade as keyof typeof GRADE_ENUM_TO_KOREAN] ||
+        data.grade
+      : '';
+
+    const newUser: CareerPlanValues = {
+      university: data.university ?? '',
+      grade: koreanGrade ?? '',
+      major: data.major ?? '',
+      wishField: data.wishField,
+      wishJob: data.wishJob,
+      wishIndustry: data.wishIndustry,
+      wishCompany: data.wishCompany,
+      wishEmploymentType: data.wishEmploymentType ?? '',
     };
-  }, [modalStep]);
+
+    setUser(newUser);
+    changeDetection.setInitialValues(
+      newUser,
+      data.wishField,
+      data.wishJob ? [data.wishJob] : [],
+      data.wishIndustry ? [data.wishIndustry] : [],
+    );
+
+    setSelectedField(data.wishField);
+    setSelectedPositions(
+      data.wishJob ? data.wishJob.split(',').map((s) => s.trim()) : [],
+    );
+    setSelectedIndustries(
+      data.wishIndustry
+        ? data.wishIndustry.split(',').map((s) => s.trim())
+        : [],
+    );
+  }, [data]);
+
+  if (isLoading) return <LoadingContainer />;
+
+  const handleConditionToggle = (value: string) => {
+    setUser((prev) => {
+      const current = prev.wishEmploymentType ?? '';
+      const list = current
+        ? current
+            .split(',')
+            .map((v) => v.trim())
+            .filter(Boolean)
+        : [];
+      const updated = list.includes(value)
+        ? list.filter((v) => v !== value)
+        : [...list, value];
+      return {
+        ...prev,
+        wishEmploymentType: updated.length > 0 ? updated.join(', ') : '',
+      };
+    });
+  };
+
+  const handleSubmit = () => {
+    const enumGrade = user.grade
+      ? GRADE_KOREAN_TO_ENUM[user.grade] || user.grade
+      : null;
+
+    patchUser.mutate(
+      {
+        university: user.university,
+        grade: enumGrade,
+        major: user.major,
+        wishField: selectedField,
+        wishJob:
+          selectedPositions.length > 0 ? selectedPositions.join(', ') : null,
+        wishIndustry:
+          selectedIndustries.length > 0 ? selectedIndustries.join(', ') : null,
+        wishCompany: user.wishCompany,
+        wishEmploymentType: user.wishEmploymentType,
+      },
+      {
+        onSuccess: () => {
+          const isAllEmpty =
+            !user.university &&
+            !user.grade &&
+            !user.major &&
+            !selectedField &&
+            selectedPositions.length === 0 &&
+            selectedIndustries.length === 0 &&
+            !user.wishCompany &&
+            !user.wishEmploymentType;
+
+          if (isAllEmpty) {
+            setStatus('EMPTY');
+          } else {
+            setStatus('COMPLETE');
+            changeDetection.setInitialValues(
+              user,
+              selectedField,
+              selectedPositions,
+              selectedIndustries,
+            );
+          }
+        },
+      },
+    );
+  };
+
+  const handleEdit = () => {
+    changeDetection.setInitialValues(
+      user,
+      selectedField,
+      [...selectedPositions],
+      [...selectedIndustries],
+    );
+    setStatus('EDIT');
+  };
+
+  const isEmptyData =
+    !data?.university &&
+    !data?.grade &&
+    !data?.major &&
+    !data?.wishField &&
+    !data?.wishJob &&
+    !data?.wishIndustry &&
+    !data?.wishCompany &&
+    !data?.wishEmploymentType;
 
   const handleCancel = () => {
-    console.log('cancel');
-    /* TODO : 취소 로직  */
-  };
-
-  const openGradeModal = (): void => setModalStep('grade');
-  const openFieldModal = (): void => setModalStep('field');
-  const openPositionModal = (): void => {
-    if (selectedField === null || selectedField === '직군 무관') {
-      setModalStep('field');
+    if (isEmptyData) {
+      setStatus('EMPTY');
     } else {
-      setModalStep('position');
+      setStatus('COMPLETE');
     }
-  };
-  const openIndustryModal = (): void => setModalStep('industry');
-  const closeModal = (): void => setModalStep(null);
 
-  const getFieldDisplayText = (): string => {
-    if (selectedField === null) return '희망 직군을 선택해 주세요.';
-    return selectedField;
-  };
-
-  const getPositionDisplayText = (): string => {
-    if (selectedField === null) return '희망 직무를 선택해 주세요.';
-    if (selectedField === '직군 무관') return '직무 무관';
-    if (selectedPositions.length === 0) return '희망 직무를 선택해 주세요.';
-    return selectedPositions.join(', ');
+    if (changeDetection.initialUser) {
+      setUser(changeDetection.initialUser);
+    }
+    setSelectedField(changeDetection.initialField);
+    setSelectedPositions(changeDetection.initialPositions);
+    setSelectedIndustries(changeDetection.initialIndustries);
   };
 
-  const getIndustryDisplayText = (): string => {
-    if (selectedIndustries.length === 0) return '희망 산업을 선택해 주세요.';
-    return selectedIndustries.join(', ');
-  };
+  if (status === 'EMPTY') {
+    return <CareerPlanEmptySection handleEdit={handleEdit} />;
+  }
 
-  const isSubmitted = false;
+  if (status === 'COMPLETE') {
+    return <CareerPlanForm user={user} handleEdit={handleEdit} />;
+  }
 
   return (
     <div className="flex w-full flex-col">
-      {!isEditing ? (
-        <section className="flex h-[28rem] flex-col items-center justify-center gap-3">
-          <div className="flex flex-col text-center text-sm text-neutral-20">
-            <p>아직 커리어 방향을 설정하지 않았어요.</p>
-            <p>목표를 세우면, 그 길에 한걸음 더 가까워질 수 있어요.</p>
+      <section>
+        <h1 className="mb-6 text-xsmall16 md:text-small18">기본 정보</h1>
+        <div>
+          <div className="mb-10 flex flex-col gap-4">
+            <div className="flex flex-col gap-[6px]">
+              <label className="text-xsmall14 md:text-xsmall16">학교</label>
+              <LineInput
+                className="text-xsmall14 md:text-xsmall16"
+                placeholder="학교 이름을 입력해 주세요."
+                value={user.university ?? ''}
+                onChange={(e) =>
+                  setUser((prev) => ({ ...prev, university: e.target.value }))
+                }
+              />
+            </div>
+            <SelectButton
+              label="학년"
+              className="text-xsmall14 md:text-xsmall16"
+              value={user.grade || '학년을 선택해 주세요.'}
+              placeholder="학년을 선택해 주세요."
+              onClick={() => setModalStep('grade')}
+            />
+            <div className="flex flex-col gap-[6px]">
+              <label className="text-xsmall14 md:text-xsmall16">전공</label>
+              <LineInput
+                className="text-xsmall14 md:text-xsmall16"
+                placeholder="전공을 입력해 주세요."
+                value={user.major ?? ''}
+                onChange={(e) =>
+                  setUser((prev) => ({ ...prev, major: e.target.value }))
+                }
+              />
+            </div>
           </div>
-          <OutlinedButton size="xs" onClick={handleCreateNew} className="w-fit">
-            커리어 계획하기
+          <div className="mb-8 flex flex-col gap-4">
+            <SelectButton
+              className="text-xsmall14 md:text-xsmall16"
+              label="희망 직군"
+              value={getFieldDisplayText()}
+              placeholder="희망 직군을 선택해 주세요."
+              onClick={() => setModalStep('field')}
+            />
+            <SelectButton
+              className="text-xsmall14 md:text-xsmall16"
+              label="희망 직무 (최대 3개)"
+              value={getPositionDisplayText()}
+              placeholder="희망 직무를 선택해 주세요."
+              onClick={() => {
+                if (!selectedField || selectedField === '직군 무관') {
+                  setModalStep('field');
+                } else {
+                  setModalStep('position');
+                }
+              }}
+            />
+            <SelectButton
+              className="text-xsmall14 md:text-xsmall16"
+              label="희망 산업 (최대 3개)"
+              value={getIndustryDisplayText()}
+              placeholder="희망 산업을 선택해 주세요."
+              onClick={() => setModalStep('industry')}
+            />
+            <div className="flex flex-col gap-[6px]">
+              <label className="text-xsmall14 md:text-xsmall16">
+                희망 기업
+              </label>
+              <LineInput
+                id="wishTargetCompany"
+                name="wishTargetCompany"
+                className="text-xsmall14 md:text-xsmall16"
+                placeholder="희망 기업을 입력해 주세요."
+                value={user.wishCompany || ''}
+                onChange={(e) =>
+                  setUser((prev) => ({
+                    ...prev,
+                    wishCompany: e.target.value,
+                  }))
+                }
+              />
+            </div>
+          </div>
+          <div className="flex flex-col gap-3">
+            <span className="text-xsmall14 md:text-xsmall16">
+              희망 구직 조건
+            </span>
+            <ConditionList
+              selected={(user.wishEmploymentType ?? '')
+                .split(',')
+                .map((v) => v.trim())
+                .filter(Boolean)}
+              onToggle={handleConditionToggle}
+            />
+          </div>
+        </div>
+        <div className="mt-12 flex gap-3">
+          <OutlinedButton size="md" onClick={handleCancel} className="flex-1">
+            취소하기
           </OutlinedButton>
-        </section>
-      ) : (
-        <section>
-          <h1 className="mb-6 text-small18">기본 정보</h1>
-          <div>
-            <div className="mb-10 flex flex-col gap-4">
-              <div className="flex flex-col gap-[6px]">
-                <label htmlFor="university" className="text-xsmall16">
-                  학교
-                </label>
-                <LineInput
-                  id="university"
-                  name="university"
-                  placeholder="학교 이름을 입력해 주세요."
-                  value={user.university}
-                  onChange={(e) =>
-                    setUser((prev) => ({ ...prev, university: e.target.value }))
-                  }
-                />
-              </div>
-              <SelectButton
-                label="학년"
-                value={user.grade || '학년을 선택해 주세요.'}
-                placeholder="학년을 선택해 주세요."
-                onClick={openGradeModal}
-                disabled={isSubmitted}
-              />
-              <div className="flex flex-col gap-[6px]">
-                <label htmlFor="major" className="text-xsmall16">
-                  전공
-                </label>
-                <LineInput
-                  id="major"
-                  name="major"
-                  placeholder="전공을 입력해 주세요."
-                  value={user.major}
-                  onChange={(e) =>
-                    setUser((prev) => ({ ...prev, major: e.target.value }))
-                  }
-                />
-              </div>
-            </div>
-            <div className="mb-8 flex flex-col gap-4">
-              <SelectButton
-                label="희망 직군"
-                value={getFieldDisplayText()}
-                placeholder="희망 직군을 선택해 주세요."
-                onClick={openFieldModal}
-                disabled={isSubmitted}
-              />
-              <SelectButton
-                label="희망 직무 (최대 3개)"
-                value={getPositionDisplayText()}
-                placeholder="희망 직무를 선택해 주세요."
-                onClick={openPositionModal}
-                disabled={isSubmitted}
-              />
-              <SelectButton
-                label="희망 산업 (최대 3개)"
-                value={getIndustryDisplayText()}
-                placeholder="희망 산업을 선택해 주세요."
-                onClick={openIndustryModal}
-                disabled={isSubmitted}
-              />
-              <div className="flex flex-col gap-[6px]">
-                <label htmlFor="wishTargetCompany" className="text-xsmall16">
-                  희망 기업
-                </label>
-                <LineInput
-                  id="wishTargetCompany"
-                  name="wishTargetCompany"
-                  placeholder="희망 기업을 입력해주세요."
-                  value={user.wishTargetCompany}
-                  onChange={(e) =>
-                    setUser((prev) => ({
-                      ...prev,
-                      wishTargetCompany: e.target.value,
-                    }))
-                  }
-                />
-              </div>
-            </div>
-            <div className="flex flex-col gap-3">
-              <span className="text-xsmall16">희망 구직 조건</span>
-              <div className="flex flex-col gap-2">
-                {JOB_CONDITIONS.map((option) => {
-                  const isSelected = user.jobConditions.includes(option.value);
-                  return (
-                    <button
-                      key={option.value}
-                      type="button"
-                      onClick={() => handleConditionToggle(option.value)}
-                      className="flex w-full items-center gap-1 text-xsmall14"
-                    >
-                      <CheckBox checked={isSelected} width="w-6" />
-                      <span>{option.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-          <div className="mt-12 flex gap-3">
-            <OutlinedButton size="md" onClick={handleCancel} className="flex-1">
-              취소하기
-            </OutlinedButton>
-            <SolidButton form="career-form" type="submit" className="flex-1">
-              입력 완료
-            </SolidButton>
-          </div>
-        </section>
-      )}
+          <SolidButton
+            className="flex-1"
+            onClick={handleSubmit}
+            disabled={!changeDetection.hasChanges}
+          >
+            입력 완료
+          </SolidButton>
+        </div>
+      </section>
       <CareerModals
+        setModalStep={setModalStep}
         modalStep={modalStep}
         initialField={selectedField}
         initialPositions={selectedPositions}
         initialIndustries={selectedIndustries}
-        userGrade={user.grade}
+        userGrade={user.grade ?? ''}
         onGradeComplete={(grade) => {
           setUser((prev) => ({ ...prev, grade }));
           closeModal();

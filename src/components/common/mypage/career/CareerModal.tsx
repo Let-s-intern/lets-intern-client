@@ -7,6 +7,7 @@ type ModalStep = 'grade' | 'field' | 'position' | 'industry' | null;
 
 interface CareerModalsProps {
   modalStep: ModalStep;
+  setModalStep: (step: ModalStep) => void;
   initialField: string | null;
   initialPositions: string[];
   initialIndustries: string[];
@@ -20,6 +21,7 @@ interface CareerModalsProps {
 
 export default function CareerModals({
   modalStep,
+  setModalStep,
   initialField,
   initialPositions,
   initialIndustries,
@@ -166,7 +168,7 @@ export default function CareerModals({
   const handleBackToField = () => {
     setSelectedPositions([]);
     setSelectedField(null);
-    onFieldComplete(null, []);
+    setModalStep('field');
   };
 
   if (!modalStep) return null;
