@@ -3,7 +3,11 @@
 import { usePatchUser, useUserQuery } from '@/api/user';
 import { useCareerModals } from '@/hooks/useCareerModals';
 import { useChangeDetection } from '@/hooks/useChangeDetectionHook';
-import { GRADE_ENUM_TO_KOREAN, JOB_CONDITIONS } from '@/utils/constants';
+import {
+  GRADE_ENUM_TO_KOREAN,
+  GRADE_KOREAN_TO_ENUM,
+  JOB_CONDITIONS,
+} from '@/utils/constants';
 import CareerModals from '@components/common/mypage/career/CareerModal';
 import CareerPlanForm from '@components/common/mypage/career/CareerPlanForm';
 import { SelectButton } from '@components/common/ui/button/SelectButton';
@@ -26,10 +30,6 @@ interface CareerPlanValues {
 }
 
 type CareerPlanStatus = 'EMPTY' | 'EDIT' | 'COMPLETE';
-
-const GRADE_KOREAN_TO_ENUM = Object.fromEntries(
-  Object.entries(GRADE_ENUM_TO_KOREAN).map(([key, value]) => [value, key]),
-);
 
 const CareerPlanEmptySection = ({ handleEdit }: { handleEdit: () => void }) => (
   <section className="flex h-[28rem] flex-col items-center justify-center gap-3">
@@ -185,8 +185,10 @@ export default function Page() {
         grade: enumGrade,
         major: user.major,
         wishField: selectedField,
-        wishJob: selectedPositions.join(', ') ?? null,
-        wishIndustry: selectedIndustries.join(', ') ?? null,
+        wishJob:
+          selectedPositions.length > 0 ? selectedPositions.join(', ') : null,
+        wishIndustry:
+          selectedIndustries.length > 0 ? selectedIndustries.join(', ') : null,
         wishCompany: user.wishCompany,
         wishEmploymentType: user.wishEmploymentType,
       },
@@ -258,16 +260,7 @@ export default function Page() {
   }
 
   if (status === 'COMPLETE') {
-    return (
-      <CareerPlanForm
-        user={user}
-        setStatus={setStatus}
-        getFieldDisplayText={getFieldDisplayText}
-        getPositionDisplayText={getPositionDisplayText}
-        getIndustryDisplayText={getIndustryDisplayText}
-        handleEdit={handleEdit}
-      />
-    );
+    return <CareerPlanForm user={user} handleEdit={handleEdit} />;
   }
 
   return (

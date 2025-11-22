@@ -12,10 +12,6 @@ interface CareerPlanFormProps {
     wishCompany: string | null;
     wishEmploymentType: string | null;
   };
-  setStatus: (status: 'EMPTY' | 'EDIT' | 'COMPLETE') => void;
-  getFieldDisplayText: () => string;
-  getPositionDisplayText: () => string;
-  getIndustryDisplayText: () => string;
   handleEdit: () => void;
 }
 
@@ -52,7 +48,7 @@ const FormChecklist = ({ label, items }: FormChecklistProps) => (
   </div>
 );
 
-const CareerPlanForm = ({ user, setStatus }: CareerPlanFormProps) => {
+const CareerPlanForm = ({ user, handleEdit }: CareerPlanFormProps) => {
   const employmentList = user.wishEmploymentType
     ? user.wishEmploymentType.split(', ').filter(Boolean)
     : [];
@@ -69,7 +65,7 @@ const CareerPlanForm = ({ user, setStatus }: CareerPlanFormProps) => {
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-small18">기본 정보</h1>
         <button
-          onClick={() => setStatus('EDIT')}
+          onClick={handleEdit}
           className="flex items-center gap-1 text-neutral-35"
         >
           <Pencil size={16} />

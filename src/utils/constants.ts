@@ -142,3 +142,7 @@ export const GRADE_ENUM_TO_KOREAN = {
   ETC: '5학년',
   GRADUATE: '졸업생',
 } as const;
+
+export const GRADE_KOREAN_TO_ENUM = Object.fromEntries(
+  Object.entries(GRADE_ENUM_TO_KOREAN).map(([key, value]) => [value, key]),
+);
