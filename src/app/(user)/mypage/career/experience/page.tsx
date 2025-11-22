@@ -94,8 +94,8 @@ const Experience = () => {
   return (
     <>
       {isDrawerOpen && (
-        <div className="animate-fade-in fixed bottom-0 left-0 right-0 top-0 z-[100] bg-black/50">
-          <div className="animate-slide-in-right absolute bottom-0 right-0 top-0 max-w-[600px] bg-white">
+        <div className="fixed bottom-0 left-0 right-0 top-0 z-[100] animate-fade-in bg-black/50">
+          <div className="absolute bottom-0 right-0 top-0 max-w-[600px] animate-slide-in-right bg-white">
             <ExperienceForm
               onClose={handleDrawerClose}
               initialData={selectedExperience}
@@ -103,10 +103,10 @@ const Experience = () => {
           </div>
         </div>
       )}
-      <div className="flex min-w-0 w-full flex-col gap-3">
+      <div className="flex w-full min-w-0 flex-col gap-3">
         {/* 데스크탑 버전에서의 타이틀+버튼+필터 배치 */}
         <section className="hidden w-full justify-between md:flex">
-          <h1 className="text-lg font-semibold">경험 정리 목록</h1>
+          <h1 className="text-small18 font-medium">경험 정리 목록</h1>
           <ExperienceCreateButton onClick={handleDrawerOpen} />
         </section>
 
@@ -122,7 +122,7 @@ const Experience = () => {
 
         {/* 모바일 버전에서의 타이틀+버튼+필터 배치 */}
         <section className="w-full flex-col md:hidden">
-          <h1 className="text-lg font-semibold">경험 정리 목록</h1>
+          <h1 className="text-small18 font-medium">경험 정리 목록</h1>
 
           <div className="mb-2 mt-4 flex justify-between">
             <ExperienceCreateButton onClick={handleDrawerOpen} />
