@@ -207,7 +207,7 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
         </aside>
 
         {/* 컨텐츠 영역 */}
-        <main className="flex-1">
+        <main className="min-w-0 flex-1">
           <div>
             {/* 서브 탭 네비게이션 (데스크톱) */}
             {showCareerSubTabs && (

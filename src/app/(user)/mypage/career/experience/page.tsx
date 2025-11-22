@@ -103,7 +103,7 @@ const Experience = () => {
           </div>
         </div>
       )}
-      <div className="flex w-full flex-col gap-3">
+      <div className="flex min-w-0 w-full flex-col gap-3">
         {/* 데스크탑 버전에서의 타이틀+버튼+필터 배치 */}
         <section className="hidden w-full justify-between md:flex">
           <h1 className="text-lg font-semibold">경험 정리 목록</h1>
