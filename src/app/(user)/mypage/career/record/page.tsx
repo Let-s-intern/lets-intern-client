@@ -79,29 +79,28 @@ const Career = () => {
 
   const isEmpty = userCareers?.length === 0;
 
-  // 커리어 기록이 없을 때
-  if (isEmpty) {
-    if (createMode) return renderCreateForm();
-    return <NoCareerView handleCreateNew={handleCreateBtnClick} />;
-  }
-
-  // 커리어 기록이 하나 이상 있을 때
   return (
-    <section className="flex w-full flex-col gap-3">
-      <CareerHeader
-        showCreateButton={editingId === null && !createMode}
-        handleCreateBtnClick={handleCreateBtnClick}
-      />
+    <>
+      {isEmpty && !createMode ? (
+        <NoCareerView handleCreateNew={handleCreateBtnClick} />
+      ) : (
+        <section className="flex w-full flex-col gap-3">
+          <CareerHeader
+            showCreateButton={editingId === null && !createMode}
+            handleCreateBtnClick={handleCreateBtnClick}
+          />
 
-      {createMode && renderCreateForm()}
+          {createMode && renderCreateForm()}
 
-      <CareerList
-        editingId={editingId}
-        handleCancel={handleCloseForm}
-        handleSubmit={handleSubmitForm}
-        handleEdit={handleEditBtnClick}
-      />
-    </section>
+          <CareerList
+            editingId={editingId}
+            handleCancel={handleCloseForm}
+            handleSubmit={handleSubmitForm}
+            handleEdit={handleEditBtnClick}
+          />
+        </section>
+      )}
+    </>
   );
 };
 
