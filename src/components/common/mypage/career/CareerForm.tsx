@@ -184,6 +184,8 @@ const CareerForm = ({
               <ChevronRight size={20} className="text-neutral-50" />
             </button>
           </div>
+
+          <ErrorMsg msg={errors.startDate?.message} />
         </fieldset>
 
         <div className="mt-11 flex w-full gap-2">

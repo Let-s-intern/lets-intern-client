@@ -1,9 +1,12 @@
 import { z } from 'zod';
 
+export type YearMonthType = z.infer<typeof yearMonthSchema>;
 export type EmployeeType = z.infer<typeof employeeTypeSchema>;
 export type UserCareerType = z.infer<typeof userCareerSchema>;
 export type CareerFormType = z.infer<typeof careerFormSchema>;
-export type DateObjectType = z.infer<typeof dateObjectSchema>;
+
+// "2025-08" or "2025.08"
+export const yearMonthSchema = z.string().regex(/^\d{4}[-\.]\d{2}$/);
 
 export const employeeTypeSchema = z.enum([
   '정규직',
@@ -15,13 +18,6 @@ export const employeeTypeSchema = z.enum([
   '기타(직접입력)',
 ]);
 
-export const dateObjectSchema = z.object({
-  year: z.number(),
-  month: z.string(),
-  monthValue: z.number(),
-  leapYear: z.boolean(), // 윤년 여부
-});
-
 /* -------------------------
  * 유저 커리어 스키마 (API 응답/요청용)
  * 서버와 통신 시 사용되는 기본 스키마
@@ -31,8 +27,10 @@ export const userCareerSchema = z.object({
   company: z.string(),
   job: z.string(),
   employmentType: z.string(),
-  startDate: z.string(),
-  endDate: z.string().nullable().optional(),
+  startDate: yearMonthSchema, // "2025-08"
+  endDate: yearMonthSchema // "2025-08"
+    .nullable()
+    .optional(),
 });
 
 /* -------------------------
@@ -51,7 +49,14 @@ export const careerFormSchema = userCareerSchema
         message: '고용 형태를 선택해주세요.',
       }),
     employmentTypeOther: z.string().nullable().optional(),
-    startDate: z.string().min(1, '시작연도,월을 선택해주세요.'),
+    startDate: z
+      .string()
+      .nullable()
+      .optional()
+      .refine((val) => val !== null && val !== '', {
+        message: '시작연도,월을 선택해주세요.',
+      }),
+    endDate: z.string().nullable().optional(),
   })
   .refine(
     (data) => {
@@ -82,4 +87,9 @@ export const userCareerListSchema = z.object({
 export interface Pageable {
   page: number;
   size: number;
+}
+
+export interface Sortable {
+  sort: 'asc' | 'desc';
+  sortType: 'LATEST' | 'START_DATE';
 }

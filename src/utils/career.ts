@@ -1,11 +1,10 @@
 import {
   CareerFormType,
-  DateObjectType,
   EmployeeType,
   employeeTypeSchema,
   UserCareerType,
+  YearMonthType,
 } from '@/api/careerSchema';
-import { format } from 'date-fns';
 
 /**
  * 특정 문자열이 EmployeeType enum에 속하는지 확인
@@ -15,11 +14,17 @@ const isEmployeeType = (value: string): value is EmployeeType => {
 };
 
 /**
- * 커리어 날짜 객체를 YYYY.MM.DD 형식으로 포맷팅
+ * 커리어 날짜 객체를 yyyy.MM 형식으로 포맷팅
  */
-export const formatCareerDate = (date: DateObjectType): string => {
-  const dateObj = new Date(date.year, date.monthValue - 1, 1);
-  return format(dateObj, 'yyyy.MM');
+export const toCareerDateDot = (date: YearMonthType): YearMonthType => {
+  return date.replace('-', '.');
+};
+
+/**
+ * 커리어 날짜 객체를 yyyy-MM 형식으로 포맷팅
+ */
+export const toCareerDateDash = (date: YearMonthType): YearMonthType => {
+  return date.replace('.', '-');
 };
 
 /**
@@ -37,8 +42,8 @@ export const convertCareerApiToUiFormat = (
     : '기타(직접입력)';
 
   const employmentTypeOther = isEmployeeType(rawType) ? '' : rawType;
-  const startDate = career.startDate.split('-').join('.');
-  const endDate = career.endDate?.split('-').join('.');
+  const startDate = toCareerDateDot(career.startDate);
+  const endDate = career.endDate ? toCareerDateDot(career.endDate) : null;
 
   return {
     id: career.id,
@@ -62,9 +67,8 @@ export const convertCareerUiToApiFormat = (
   const apiEmploymentType =
     employmentType === '기타(직접입력)' ? employmentTypeOther : employmentType;
 
-  const startDate = career.startDate.replace(/\./g, '-');
-  const endDate = career.endDate ? career.endDate.replace(/\./g, '-') : null;
-
+  const startDate = toCareerDateDash(career.startDate!);
+  const endDate = career.endDate ? toCareerDateDash(career.endDate) : null;
   return {
     id: career.id,
     company: career.company,
