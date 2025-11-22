@@ -125,3 +125,24 @@ export const JOB_FIELD_ROLES = [
   },
   { jobField: '직군 무관', jobRoles: [] },
 ];
+
+export const JOB_CONDITIONS = [
+  { value: 'PUBLIC', label: '대기업 공채에 지원하고 싶어요.' },
+  { value: 'STARTUP', label: '스타트업/중소기업 정규직으로 가고 싶어요.' },
+  { value: 'INTERN', label: '채용형 인턴에 도전하고 싶어요.' },
+  { value: 'EXPERIENCE', label: '체험형 인턴으로 경험을 먼저 쌓고 싶어요.' },
+  { value: 'FREELANCE', label: '계약직/프로젝트성 일자리도 괜찮아요.' },
+];
+
+export const GRADE_ENUM_TO_KOREAN = {
+  FIRST: '1학년',
+  SECOND: '2학년',
+  THIRD: '3학년',
+  FOURTH: '4학년',
+  ETC: '5학년',
+  GRADUATE: '졸업생',
+} as const;
+
+export const GRADE_KOREAN_TO_ENUM = Object.fromEntries(
+  Object.entries(GRADE_ENUM_TO_KOREAN).map(([key, value]) => [value, key]),
+);

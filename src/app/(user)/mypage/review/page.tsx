@@ -30,7 +30,7 @@ const Review = () => {
   }, [applications]);
 
   return (
-    <main className="flex w-full flex-col gap-16 px-5 pb-20">
+    <main className="flex w-full flex-col gap-16">
       <WaitingSection applicationList={waitingList} />
       <DoneSection applicationList={doneList} />
     </main>

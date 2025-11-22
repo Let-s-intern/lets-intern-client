@@ -28,7 +28,7 @@ const Application = () => {
   if (isLoading) return <></>;
 
   return (
-    <main className="flex w-full flex-col gap-16 px-5 pb-20">
+    <main className="flex w-full flex-col gap-16">
       <ApplySection
         applicationList={waitingApplicationList}
         refetch={() => refetch()}

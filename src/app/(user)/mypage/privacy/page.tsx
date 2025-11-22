@@ -1,8 +1,8 @@
 'use client';
 
 import { useMutation } from '@tanstack/react-query';
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 import MyPageKakaoChannel from '@components/common/mypage/privacy/section/MyPageKakaoChannel';
 import BasicInfo from '../../../../components/common/mypage/privacy/section/BasicInfo';
@@ -34,7 +34,7 @@ const Privacy = () => {
   });
 
   return (
-    <main className="flex w-full flex-col gap-16 px-5 pb-16 md:w-4/5">
+    <main className="flex w-full flex-col gap-16 md:w-4/5">
       <BasicInfo />
       {/* <AccountInfo /> */}
       <ChangePassword />

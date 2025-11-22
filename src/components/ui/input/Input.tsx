@@ -56,22 +56,22 @@ const Input = ({
         },
         '& .MuiOutlinedInput-root': {
           '&:hover .MuiOutlinedInput-notchedOutline': {
-            borderColor: '#6963f6',
+            borderColor: '#1976D2',
           },
           '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-            borderColor: '#6963f6',
+            borderColor: '#1976D2',
           },
         },
         '& .MuiOutlinedInput-root.Mui-disabled': {
           '&:hover .MuiOutlinedInput-notchedOutline': {
-            borderColor: '#B9B9B9',
+            borderColor: '#1976D2',
           },
           '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-            borderColor: '#B9B9B9',
+            borderColor: '#1976D2',
           },
         },
         '& label.Mui-focused': {
-          color: '#6963F6',
+          color: '#1976D2',
         },
       }
     : {};

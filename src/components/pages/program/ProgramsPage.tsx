@@ -1,6 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
+import { useSearchParams } from 'next/navigation';
 import {
   Dispatch,
   SetStateAction,
@@ -9,15 +10,14 @@ import {
   useReducer,
   useState,
 } from 'react';
-import { useSearchParams } from 'next/navigation';
 
 import { useUserProgramQuery } from '@/api/program';
-import Banner from '@/components/common/program/banner/Banner';
 import FilterItem from '@/components/common/program/filter/FilterItem';
 import FilterSideBar from '@/components/common/program/filter/FilterSideBar';
 import MuiPagination from '@/components/common/program/pagination/MuiPagination';
 import EmptyCardList from '@/components/common/program/programs/card/EmptyCardList';
 import ProgramCard from '@/components/common/program/programs/card/ProgramCard';
+import Banner from '@/components/common/ui/banner/Banner';
 import LoadingContainer from '@/components/common/ui/loading/LoadingContainer';
 import {
   FilterCheckedAction,

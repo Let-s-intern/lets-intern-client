@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import { useUserQueryKey } from '@/api/user';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from '../../../../../utils/axios';
 import Input from '../../../ui/input/Input';
@@ -55,6 +56,7 @@ const BasicInfo = () => {
     onSuccess: async () => {
       alert('정보가 수정되었습니다.');
       await queryClient.invalidateQueries({ queryKey: ['user'] });
+      await queryClient.invalidateQueries({ queryKey: [useUserQueryKey] });
     },
     onError: (error) => {
       alert('정보 수정에 실패했습니다.');

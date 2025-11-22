@@ -81,7 +81,7 @@ const ActionButtonBlock = styled.button<ActionButtonBlockProps>`
       : props.$bgColor === 'red'
         ? 'background-color: #f56565;'
         : props.$bgColor === 'blue'
-          ? 'background-color: #4f46e5;'
+          ? 'background-color: #1976D2;'
           : props.$bgColor === 'lightBlue'
             ? 'background-color: #4299e1;'
             : props.$bgColor === 'gray'

@@ -41,7 +41,7 @@ const navData = [
     title: '사용자 관리',
     itemList: [
       {
-        name: '회원 DB',
+        name: '커리어 DB',
         url: '/admin/users',
       },
       {
