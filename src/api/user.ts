@@ -49,7 +49,7 @@ export const useUserAdminQuery = ({
   return useQuery({
     queryKey: [UseUserAdminQueryKey, email, name, phoneNum, pageable],
     queryFn: async () => {
-      const res = await axios.get('/user/admin', {
+      const res = await axiosV2.get('/admin/user', {
         params: {
           email,
           name,
@@ -117,6 +117,8 @@ export type PatchUserType = {
   wishJob?: string | null;
   wishCompany?: string | null;
   isMentor?: boolean;
+  careerType?: string | null;
+  memo?: string | null;
 };
 
 export const usePatchUserAdminMutation = ({
