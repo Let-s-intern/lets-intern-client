@@ -1,13 +1,16 @@
 import { useGetUserCareerQuery } from '@/api/career';
 import LoadingContainer from '@/components/common/ui/loading/LoadingContainer';
-import { formatCareerDate } from '@/utils/career';
+import { toCareerDateDot } from '@/utils/career';
 import { useRouter } from 'next/navigation';
 import CareerCard from '../../common/mypage/career/card/CareerCard';
 
 const CareerRecordSection = () => {
   const router = useRouter();
 
-  const { data, isLoading } = useGetUserCareerQuery({ page: 0, size: 1 });
+  const { data, isLoading } = useGetUserCareerQuery(
+    { page: 0, size: 1 },
+    { sort: 'desc', sortType: 'START_DATE' },
+  );
 
   if (isLoading) {
     return (
@@ -19,23 +22,7 @@ const CareerRecordSection = () => {
     );
   }
 
-  // 가장 최근 커리어 1개 추출 (startDate 기준 정렬)
-  const latestCareer = data?.userCareers
-    .filter(
-      (career) =>
-        career.startDate &&
-        career.job &&
-        career.company &&
-        career.employmentType,
-    )
-    .sort((a, b) => {
-      if (!a.startDate || !b.startDate) return 0;
-      if (a.startDate.year !== b.startDate.year) {
-        return b.startDate.year - a.startDate.year;
-      }
-      return b.startDate.monthValue - a.startDate.monthValue;
-    })[0];
-
+  const latestCareer = data?.userCareers[0];
   const hasData = !!latestCareer;
 
   return (
@@ -49,16 +36,9 @@ const CareerRecordSection = () => {
             jobTitle={latestCareer.job || ''}
             companyName={latestCareer.company || ''}
             employmentType={latestCareer.employmentType || ''}
-            startDate={
-              latestCareer.startDate &&
-              typeof latestCareer.startDate === 'object'
-                ? formatCareerDate(latestCareer.startDate)
-                : ''
-            }
+            startDate={toCareerDateDot(latestCareer.startDate)}
             endDate={
-              latestCareer.endDate && typeof latestCareer.endDate === 'object'
-                ? formatCareerDate(latestCareer.endDate)
-                : ''
+              latestCareer.endDate ? toCareerDateDot(latestCareer.endDate) : ''
             }
           />
         ) : (

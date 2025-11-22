@@ -1,16 +1,31 @@
-import { Pageable, userCareerListSchema } from '@/api/careerSchema';
+import { Pageable, Sortable, userCareerListSchema } from '@/api/careerSchema';
 import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export const UserCareerQueryKey = 'userCareerQueryKey';
 
-export const useGetUserCareerQuery = (pageable: Pageable) => {
+export const useGetUserCareerQuery = (
+  pageable: Pageable,
+  sortable?: Sortable,
+) => {
   return useQuery({
-    queryKey: [UserCareerQueryKey, ...Object.values(pageable)],
+    queryKey: [
+      UserCareerQueryKey,
+      ...Object.values(pageable),
+      ...(sortable ? Object.values(sortable) : []),
+    ],
     queryFn: async () => {
-      const res = await axios.get(
-        `/user-career/my?page=${pageable.page}&size=${pageable.size}`,
-      );
+      const params = new URLSearchParams({
+        page: String(pageable.page),
+        size: String(pageable.size),
+      });
+
+      if (sortable) {
+        params.append('sort', String(sortable.sort));
+        params.append('sortType', String(sortable.sortType));
+      }
+
+      const res = await axios.get(`/user-career/my?${params.toString()}`);
       return userCareerListSchema.parse(res.data.data);
     },
   });
