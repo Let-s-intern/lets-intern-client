@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 
 import { useIsMentorQuery } from '@/api/user';
+import Banner from '@/components/common/program/banner/Banner';
 import { Profile } from '@/components/pages/mypage/profile/Profile';
 import useAuthStore from '@/store/useAuthStore';
 
@@ -122,8 +123,8 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
 
   return (
     <div className="m-auto flex w-full max-w-[1120px] flex-col md:py-12">
-      {/* TODO: 배너 (모바일) */}
-      <div className="h-[100px] w-full bg-neutral-80 md:hidden"></div>
+      {/* 배너 (모바일) */}
+      <Banner variant="mypage-mobile" />
 
       {/* 메인 탭 네비게이션 (모바일) */}
       <nav className="flex w-full gap-6 overflow-x-auto border-b border-neutral-85 px-5 pt-3 scrollbar-hide md:hidden">
@@ -197,8 +198,8 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
               ))}
             </nav>
 
-            {/* TODO: 배너 (데스크탑) */}
-            <div className="hidden h-[120px] w-full bg-neutral-80 md:block"></div>
+            {/* 배너 (데스크탑) */}
+            <Banner variant="mypage-desktop" />
           </div>
         </aside>
 
