@@ -260,7 +260,7 @@ const UserAdminTable = ({
             handleClick(`/admin/users/${params.row.id}`);
           }}
         >
-          수정
+          상세
         </Button>
       ),
     },
