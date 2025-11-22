@@ -143,8 +143,14 @@ export default function Page() {
     );
 
     setSelectedField(data.wishField);
-    setSelectedPositions(data.wishJob ? [data.wishJob] : []);
-    setSelectedIndustries(data.wishIndustry ? [data.wishIndustry] : []);
+    setSelectedPositions(
+      data.wishJob ? data.wishJob.split(',').map((s) => s.trim()) : [],
+    );
+    setSelectedIndustries(
+      data.wishIndustry
+        ? data.wishIndustry.split(',').map((s) => s.trim())
+        : [],
+    );
   }, [data]);
 
   if (isLoading) return <LoadingContainer />;
