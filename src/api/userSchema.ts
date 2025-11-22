@@ -58,6 +58,17 @@ export const userAdminType = z.object({
           fileUrl: z.string(),
         }),
       ),
+      experienceInfos: z.array(
+        z.object({
+          title: z.string(),
+        }),
+      ),
+      careerInfos: z.array(
+        z.object({
+          company: z.string(),
+          job: z.string(),
+        }),
+      ),
     }),
   ),
   pageInfo,

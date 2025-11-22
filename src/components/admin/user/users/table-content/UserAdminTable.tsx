@@ -183,14 +183,28 @@ const UserAdminTable = ({
     {
       field: 'experience',
       headerName: '주요 경험',
-      width: 120,
-      renderCell: () => '주요 경험',
+      width: 180,
+      renderCell: (params) => {
+        const experienceInfos = params.row.experienceInfos || [];
+        return experienceInfos
+          .map((info: { title: string }) => info.title)
+          .join(', ');
+      },
     },
     {
       field: 'career',
       headerName: '주요 경력',
-      width: 120,
-      renderCell: () => '주요 경력',
+      width: 180,
+      renderCell: (params) => {
+        const careerInfos = params.row.careerInfos || [];
+        if (!careerInfos.length) return '-';
+        return careerInfos
+          .map(
+            (info: { company: string; job: string }) =>
+              `${info.company}/${info.job}`,
+          )
+          .join(', ');
+      },
     },
     {
       field: 'resume',
@@ -263,6 +277,8 @@ const UserAdminTable = ({
     wishIndustry: user.userInfo.wishIndustry,
     wishEmploymentType: user.userInfo.wishEmploymentType,
     applicationInfos: user.applicationInfos,
+    experienceInfos: user.experienceInfos,
+    careerInfos: user.careerInfos,
     documentInfos: user.documentInfos,
     memo: user.userInfo.memo,
   }));
