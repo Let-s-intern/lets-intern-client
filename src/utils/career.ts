@@ -28,6 +28,23 @@ export const toCareerDateDash = (date: YearMonthType): YearMonthType => {
 };
 
 /**
+ * 종료일이 시작일 이후인지 검증
+ * @param startDate - 시작일 (YYYY-MM 또는 YYYY.MM 형식)
+ * @param endDate - 종료일 (YYYY-MM 또는 YYYY.MM 형식)
+ * @returns 종료일이 시작일과 같거나 이후면 true
+ */
+export const isEndDateAfterStartDate = (
+  startDate: string,
+  endDate: string,
+): boolean => {
+  // 날짜 형식 통일 (YYYY-MM)
+  const start = startDate.replace(/\./g, '-');
+  const end = endDate.replace(/\./g, '-');
+
+  return end >= start;
+};
+
+/**
  * ✅ 커리어 API 응답을 UI 상태 형식으로 변환
  */
 export const convertCareerApiToUiFormat = (

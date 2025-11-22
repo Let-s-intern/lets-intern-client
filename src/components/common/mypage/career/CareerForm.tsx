@@ -186,6 +186,7 @@ const CareerForm = ({
           </div>
 
           <ErrorMsg msg={errors.startDate?.message} />
+          <ErrorMsg msg={errors.endDate?.message} />
         </fieldset>
 
         <div className="mt-11 flex w-full gap-2">

@@ -1,3 +1,4 @@
+import { isEndDateAfterStartDate } from '@/utils/career';
 import { z } from 'zod';
 
 export type YearMonthType = z.infer<typeof yearMonthSchema>;
@@ -33,6 +34,16 @@ export const userCareerSchema = z.object({
     .optional(),
 });
 
+export const userCareerListSchema = z.object({
+  userCareers: z.array(userCareerSchema),
+  pageInfo: z.object({
+    pageNum: z.number().min(0),
+    pageSize: z.number().min(0),
+    totalElements: z.number().min(0),
+    totalPages: z.number().min(0),
+  }),
+});
+
 /* -------------------------
  * 커리어 폼 스키마 (UI 유효성 검사용)
  * 사용자 입력값 검증 및 에러 메시지 포함
@@ -54,7 +65,7 @@ export const careerFormSchema = userCareerSchema
       .nullable()
       .optional()
       .refine((val) => val !== null && val !== '', {
-        message: '시작연도,월을 선택해주세요.',
+        message: '시작일을 선택해주세요.',
       }),
     endDate: z.string().nullable().optional(),
   })
@@ -72,17 +83,18 @@ export const careerFormSchema = userCareerSchema
       message: '고용 형태를 입력해주세요.',
       path: ['employmentTypeOther'],
     },
-  );
+  )
+  .refine(
+    (data) => {
+      if (!data.startDate || !data.endDate) return true;
 
-export const userCareerListSchema = z.object({
-  userCareers: z.array(userCareerSchema),
-  pageInfo: z.object({
-    pageNum: z.number().min(0),
-    pageSize: z.number().min(0),
-    totalElements: z.number().min(0),
-    totalPages: z.number().min(0),
-  }),
-});
+      return isEndDateAfterStartDate(data.startDate, data.endDate);
+    },
+    {
+      message: '종료일은 시작일 이후여야 합니다.',
+      path: ['endDate'],
+    },
+  );
 
 export interface Pageable {
   page: number;
