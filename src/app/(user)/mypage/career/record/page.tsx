@@ -14,6 +14,7 @@ import {
   PAGE_SIZE,
 } from '@components/common/mypage/career/constants';
 import NoCareerView from '@components/common/mypage/career/NoCareerView';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useState } from 'react';
 
 const Career = () => {
@@ -22,7 +23,7 @@ const Career = () => {
 
   const createCareerMutation = usePostUserCareerMutation();
   const patchCareerMutation = usePatchUserCareerMutation();
-  const { data } = useGetUserCareerQuery({
+  const { data, isLoading } = useGetUserCareerQuery({
     page: 1,
     size: PAGE_SIZE,
   });
@@ -66,6 +67,9 @@ const Career = () => {
   };
 
   const isEmpty = userCareers?.length === 0;
+
+  if (isLoading)
+    return <LoadingContainer text="커리어 기록 조회 중" className="h-[62vh]" />;
 
   return (
     <>
