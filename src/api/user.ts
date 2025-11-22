@@ -117,6 +117,8 @@ export type PatchUserType = {
   wishJob?: string | null;
   wishCompany?: string | null;
   isMentor?: boolean;
+  careerType?: string | null;
+  memo?: string | null;
 };
 
 export const usePatchUserAdminMutation = ({

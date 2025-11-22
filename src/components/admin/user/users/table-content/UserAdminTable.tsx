@@ -1,5 +1,6 @@
+import { usePatchUserAdminMutation } from '@/api/user';
 import { UserAdmin } from '@/api/userSchema';
-import { Button } from '@mui/material';
+import { Button, MenuItem, Select, TextField } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { Pencil } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -62,7 +63,6 @@ const ProgramCell = ({ applicationInfos }: { applicationInfos: any[] }) => {
       >
         보기
       </div>
-      {/* Portal로 body에 띄우는 드롭다운 */}
       {isHovered &&
         createPortal(
           <div
@@ -99,6 +99,113 @@ const ProgramCell = ({ applicationInfos }: { applicationInfos: any[] }) => {
   );
 };
 
+const EditableCareerTypeCell = ({
+  userId,
+  initialValue,
+}: {
+  userId: number;
+  initialValue: string;
+}) => {
+  const [value, setValue] = useState(initialValue || 'NONE');
+  const { mutate: patchUser } = usePatchUserAdminMutation({ userId });
+
+  const handleChange = (newValue: string) => {
+    setValue(newValue);
+    patchUser({
+      id: userId,
+      careerType: newValue,
+    });
+  };
+
+  return (
+    <Select
+      value={value}
+      onChange={(e) => handleChange(e.target.value)}
+      size="small"
+      variant="standard"
+      disableUnderline
+      sx={{
+        fontSize: '14px',
+        '& .MuiSelect-select': {
+          padding: '4px 8px',
+        },
+      }}
+    >
+      <MenuItem className="text-xsmall14" value="QUALIFIED">
+        인재
+      </MenuItem>
+      <MenuItem value="NONE">없음</MenuItem>
+    </Select>
+  );
+};
+
+const EditableMemoCell = ({
+  userId,
+  initialValue,
+}: {
+  userId: number;
+  initialValue: string;
+}) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [value, setValue] = useState(initialValue || '');
+  const { mutate: patchUser } = usePatchUserAdminMutation({ userId });
+
+  const handleSave = () => {
+    setIsEditing(false);
+    if (value !== initialValue) {
+      patchUser({
+        id: userId,
+        memo: value,
+      });
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSave();
+    } else if (e.key === 'Escape') {
+      setValue(initialValue || '');
+      setIsEditing(false);
+    }
+  };
+
+  if (isEditing) {
+    return (
+      <TextField
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onBlur={handleSave}
+        onKeyDown={handleKeyDown}
+        autoFocus
+        multiline
+        size="small"
+        variant="standard"
+        fullWidth
+        sx={{
+          '& .MuiInputBase-input': {
+            padding: '4px 8px',
+          },
+        }}
+      />
+    );
+  }
+
+  return (
+    <div
+      onClick={() => setIsEditing(true)}
+      style={{
+        cursor: 'pointer',
+        padding: '4px 8px',
+        minHeight: '24px',
+        width: '100%',
+      }}
+    >
+      {value || ''}
+    </div>
+  );
+};
+
 interface UserAdminTableProps {
   userList: UserAdmin;
   isLoading: boolean;
@@ -132,9 +239,13 @@ const UserAdminTable = ({
     {
       field: 'careerType',
       headerName: '분류',
-      width: 60,
-      renderCell: (params: GridRenderCellParams) =>
-        params.value === 'QUALIFIED' ? '인재' : '-',
+      width: 80,
+      renderCell: (params: GridRenderCellParams) => (
+        <EditableCareerTypeCell
+          userId={params.row.id}
+          initialValue={params.value}
+        />
+      ),
     },
     {
       field: 'name',
@@ -242,7 +353,10 @@ const UserAdminTable = ({
     {
       field: 'memo',
       headerName: '메모',
-      width: 100,
+      width: 120,
+      renderCell: (params: GridRenderCellParams) => (
+        <EditableMemoCell userId={params.row.id} initialValue={params.value} />
+      ),
     },
     {
       field: 'actions',
