@@ -168,11 +168,14 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
       <div className="flex w-full flex-1 flex-col pb-14 pt-8 md:flex-row md:gap-x-14 md:pb-[60px] md:pt-0">
         {/* 데스크톱 사이드바 */}
         <aside
-          className={clsx('hidden w-full bg-white md:block md:w-[254px]', {
-            hidden: isReviewCreatePage || isReviewPage,
-          })}
+          className={clsx(
+            'hidden w-full flex-shrink-0 bg-white md:block md:w-[254px]',
+            {
+              hidden: isReviewCreatePage || isReviewPage,
+            },
+          )}
         >
-          <div className="sticky top-0 flex flex-col gap-7">
+          <div className="flex flex-col gap-7">
             <h1 className="hidden text-medium24 font-semibold text-neutral-0 md:block">
               마이페이지
             </h1>
@@ -204,7 +207,7 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
         </aside>
 
         {/* 컨텐츠 영역 */}
-        <main className="flex-1">
+        <main className="min-w-0 flex-1">
           <div>
             {/* 서브 탭 네비게이션 (데스크톱) */}
             {showCareerSubTabs && (
