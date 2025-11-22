@@ -1,8 +1,8 @@
 import { useDeleteUserCareerMutation } from '@/api/career';
-import { UserCareerType } from '@/api/careerSchema';
+import { CareerFormType } from '@/api/careerSchema';
 
 interface CareerCardProps {
-  career: UserCareerType;
+  career: CareerFormType;
   handleEdit: (id: number) => void;
 }
 

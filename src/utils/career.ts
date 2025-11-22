@@ -1,4 +1,5 @@
 import {
+  CareerFormType,
   DateObjectType,
   EmployeeType,
   employeeTypeSchema,
@@ -18,7 +19,7 @@ const isEmployeeType = (value: string): value is EmployeeType => {
  */
 export const formatCareerDate = (date: DateObjectType): string => {
   const dateObj = new Date(date.year, date.monthValue - 1, 1);
-  return format(dateObj, 'yyyy.MM.dd');
+  return format(dateObj, 'yyyy.MM');
 };
 
 /**
@@ -26,7 +27,7 @@ export const formatCareerDate = (date: DateObjectType): string => {
  */
 export const convertCareerApiToUiFormat = (
   career: UserCareerType,
-): UserCareerType => {
+): CareerFormType => {
   const rawType = career.employmentType;
 
   if (rawType == null) throw new Error('employmentType is null');
@@ -36,7 +37,7 @@ export const convertCareerApiToUiFormat = (
     : '기타(직접입력)';
 
   const employmentTypeOther = isEmployeeType(rawType) ? '' : rawType;
-  const startDate = career.startDate?.split('-').join('.');
+  const startDate = career.startDate.split('-').join('.');
   const endDate = career.endDate?.split('-').join('.');
 
   return {
@@ -45,7 +46,7 @@ export const convertCareerApiToUiFormat = (
     job: career.job,
     employmentType,
     employmentTypeOther,
-    ...(startDate && { startDate }),
+    startDate,
     ...(endDate ? { endDate } : { endDate: null }),
   };
 };
@@ -54,25 +55,21 @@ export const convertCareerApiToUiFormat = (
  * ✅ 커리어 UI 상태 형식을 API 요청 형식으로 변환
  */
 export const convertCareerUiToApiFormat = (
-  career: UserCareerType,
+  career: CareerFormType,
 ): UserCareerType => {
   const { employmentType, employmentTypeOther } = career;
 
   const apiEmploymentType =
     employmentType === '기타(직접입력)' ? employmentTypeOther : employmentType;
 
-  const startDate = career.startDate
-    ? career.startDate.replace(/\./g, '-')
-    : null;
-  const endDate = career.endDate
-    ? career.endDate.replace(/\./g, '-')
-    : null;
+  const startDate = career.startDate.replace(/\./g, '-');
+  const endDate = career.endDate ? career.endDate.replace(/\./g, '-') : null;
 
   return {
     id: career.id,
     company: career.company,
     job: career.job,
-    employmentType: apiEmploymentType,
+    employmentType: apiEmploymentType!,
     startDate,
     endDate,
   };

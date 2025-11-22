@@ -1,15 +1,23 @@
 'use client';
 
-import { EmployeeType, UserCareerType } from '@/api/careerSchema';
+import {
+  careerFormSchema,
+  CareerFormType,
+  EmployeeType,
+  UserCareerType,
+} from '@/api/careerSchema';
+import { convertCareerUiToApiFormat } from '@/utils/career';
 import { EmployeeTypeModal } from '@components/common/mypage/career/EmployeeTypeModal';
 import { PeriodSelectModal } from '@components/pages/mypage/experience/components/PeriodSelectModal';
 import OutlinedButton from '@components/ui/button/OutlinedButton';
 import SolidButton from '@components/ui/button/SolidButton';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronRight } from 'lucide-react';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 interface CareerFormProps {
-  initialCareer: UserCareerType;
+  initialCareer: CareerFormType;
   handleCancel: () => void;
   handleSubmit: (data: UserCareerType) => void;
 }
@@ -17,41 +25,53 @@ interface CareerFormProps {
 /**
  * 커리어 작성/수정 UI
  */
-// TODO: form 유효성 검사 추가 예정 (라이브러리 도입 검토)
 const CareerForm = ({
   initialCareer,
   handleCancel,
   handleSubmit,
 }: CareerFormProps) => {
-  const [form, setForm] = useState<UserCareerType>(initialCareer);
+  const {
+    register,
+    setValue,
+    watch,
+    formState: { errors },
+    handleSubmit: rhfHandleSubmit,
+  } = useForm<CareerFormType>({
+    resolver: zodResolver(careerFormSchema),
+    defaultValues: initialCareer,
+    mode: 'onChange',
+  });
 
   const [employeeTypeModalOpen, setEmployeeTypeModalOpen] = useState(false);
   const [startDateModalOpen, setStartDateModalOpen] = useState(false);
   const [endDateModalOpen, setEndDateModalOpen] = useState(false);
 
+  const form = watch();
+
+  const onSubmit = (validatedData: CareerFormType) => {
+    handleSubmit(convertCareerUiToApiFormat(validatedData));
+  };
+
   const handleEmployeeTypeSelect = (type: EmployeeType) => {
-    setForm((prev) => ({ ...prev, employmentType: type }));
+    setValue('employmentType', type, { shouldValidate: true });
     setEmployeeTypeModalOpen(false);
   };
 
   const handleStartDateSelect = (year: number, month: number) => {
     const dateString = `${year}.${String(month).padStart(2, '0')}`;
-    setForm((prev) => ({ ...prev, startDate: dateString }));
+    setValue('startDate', dateString, { shouldValidate: true });
   };
 
   const handleEndDateSelect = (year: number, month: number) => {
     const dateString = `${year}.${String(month).padStart(2, '0')}`;
-    setForm((prev) => ({ ...prev, endDate: dateString }));
+    setValue('endDate', dateString, { shouldValidate: true });
   };
 
   return (
     <>
       <form
         id="career-form"
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit(form);
-        }}
+        onSubmit={rhfHandleSubmit(onSubmit)}
         className="flex w-full flex-col gap-3 rounded-xs border border-neutral-80 p-5 text-sm md:text-base"
       >
         {/* 기업 이름 */}
@@ -64,34 +84,27 @@ const CareerForm = ({
           </label>
           <input
             id="career-company"
-            value={form.company ?? ''}
-            onChange={(e) =>
-              setForm((prev) => ({ ...prev, company: e.target.value }))
-            }
+            {...register('company')}
             type="text"
             placeholder="예) 렛츠커리어"
             className="w-full rounded-xxs border border-neutral-80 px-3 py-2 text-neutral-0 placeholder:text-neutral-50 focus:border-primary focus:outline-none"
           />
+          <ErrorMsg msg={errors.company?.message} />
         </fieldset>
 
         {/* 직무 */}
         <fieldset className="flex flex-col gap-1.5">
-          <label
-            htmlFor="career-position"
-            className="font-medium text-neutral-20"
-          >
+          <label htmlFor="career-job" className="font-medium text-neutral-20">
             직무
           </label>
           <input
-            id="career-position"
+            id="career-job"
             type="text"
-            value={form.job ?? ''}
-            onChange={(e) =>
-              setForm((prev) => ({ ...prev, job: e.target.value }))
-            }
+            {...register('job')}
             placeholder="예) 서비스 기획자"
             className="w-full rounded-xxs border border-neutral-80 px-3 py-2 text-neutral-0 placeholder:text-neutral-50 focus:border-primary focus:outline-none"
           />
+          <ErrorMsg msg={errors.job?.message} />
         </fieldset>
 
         {/* 고용 형태 */}
@@ -116,21 +129,19 @@ const CareerForm = ({
             <ChevronRight size={20} className="text-neutral-50" />
           </button>
 
+          <ErrorMsg msg={errors.employmentType?.message} />
+
           {form.employmentType === '기타(직접입력)' && (
             <input
               id="career-employee-type-other"
               type="text"
-              value={form.employmentTypeOther ?? ''}
-              onChange={(e) =>
-                setForm((prev) => ({
-                  ...prev,
-                  employmentTypeOther: e.target.value,
-                }))
-              }
+              {...register('employmentTypeOther')}
               placeholder="직접 입력해 주세요."
               className="mt-0.5 w-full rounded-xxs border border-neutral-80 px-3 py-2 text-neutral-0 placeholder:text-neutral-50 focus:border-primary focus:outline-none"
             />
           )}
+
+          <ErrorMsg msg={errors.employmentTypeOther?.message} />
         </fieldset>
 
         {/* 근무 기간 */}
@@ -216,3 +227,8 @@ const CareerForm = ({
 };
 
 export default CareerForm;
+
+const ErrorMsg = ({ msg }: { msg?: string }) => {
+  if (!msg) return;
+  return <span className="mt-1 text-xxsmall12 text-red-500">{msg}</span>;
+};

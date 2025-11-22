@@ -1,9 +1,9 @@
-import { UserCareerType } from '@/api/careerSchema';
+import { CareerFormType, UserCareerType } from '@/api/careerSchema';
 import CareerCard from '@components/common/mypage/career/CareerCard';
 import CareerForm from '@components/common/mypage/career/CareerForm';
 
 interface CareerItemProps {
-  career: UserCareerType;
+  career: CareerFormType;
   writeMode: boolean;
   handleCancel: () => void;
   handleSubmit: (data: UserCareerType) => void;

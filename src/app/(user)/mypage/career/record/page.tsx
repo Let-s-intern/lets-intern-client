@@ -6,7 +6,6 @@ import {
   usePostUserCareerMutation,
 } from '@/api/career';
 import { UserCareerType } from '@/api/careerSchema';
-import { convertCareerUiToApiFormat } from '@/utils/career';
 import CareerHeader from '@components/common/mypage/career/CareerHeader';
 import CareerItem from '@components/common/mypage/career/CareerItem';
 import CareerList from '@components/common/mypage/career/CareerList';
@@ -37,9 +36,8 @@ const Career = () => {
 
   const handleSubmitForm = async (career: UserCareerType) => {
     const formData = new FormData();
-    const careerReq = convertCareerUiToApiFormat(career);
 
-    const requestDto = new Blob([JSON.stringify(careerReq)], {
+    const requestDto = new Blob([JSON.stringify(career)], {
       type: 'application/json',
     });
 
@@ -67,16 +65,6 @@ const Career = () => {
     setEditingId(id);
   };
 
-  const renderCreateForm = () => (
-    <CareerItem
-      career={DEFAULT_CAREER}
-      writeMode
-      handleCancel={handleCloseForm}
-      handleSubmit={handleSubmitForm}
-      handleEdit={handleEditBtnClick}
-    />
-  );
-
   const isEmpty = userCareers?.length === 0;
 
   return (
@@ -90,7 +78,15 @@ const Career = () => {
             handleCreateBtnClick={handleCreateBtnClick}
           />
 
-          {createMode && renderCreateForm()}
+          {createMode && (
+            <CareerItem
+              career={DEFAULT_CAREER}
+              writeMode
+              handleCancel={handleCloseForm}
+              handleSubmit={handleSubmitForm}
+              handleEdit={handleEditBtnClick}
+            />
+          )}
 
           <CareerList
             editingId={editingId}
