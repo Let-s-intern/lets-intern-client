@@ -94,8 +94,14 @@ const Experience = () => {
   return (
     <>
       {isDrawerOpen && (
-        <div className="animate-fade-in fixed bottom-0 left-0 right-0 top-0 z-[100] bg-black/50">
-          <div className="animate-slide-in-right absolute bottom-0 right-0 top-0 max-w-[600px] bg-white">
+        <div
+          className="fixed bottom-0 left-0 right-0 top-0 z-[100] animate-fade-in bg-black/50"
+          onClick={handleDrawerClose}
+        >
+          <div
+            className="absolute bottom-0 right-0 top-0 max-w-[600px] animate-slide-in-right bg-white"
+            onClick={(e) => e.stopPropagation()}
+          >
             <ExperienceForm
               onClose={handleDrawerClose}
               initialData={selectedExperience}
