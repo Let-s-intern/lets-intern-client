@@ -43,8 +43,7 @@ const CareerForm = ({
   });
 
   const [employeeTypeModalOpen, setEmployeeTypeModalOpen] = useState(false);
-  const [startDateModalOpen, setStartDateModalOpen] = useState(false);
-  const [endDateModalOpen, setEndDateModalOpen] = useState(false);
+  const [periodMode, setPeriodMode] = useState<'start' | 'end' | null>(null);
 
   const form = watch();
 
@@ -159,7 +158,7 @@ const CareerForm = ({
             <button
               id="career-period"
               type="button"
-              onClick={() => setStartDateModalOpen(true)}
+              onClick={() => setPeriodMode('start')}
               className="flex w-full items-center justify-between rounded-xxs border border-neutral-80 px-3 py-2 text-neutral-50"
             >
               {form.startDate ? (
@@ -173,7 +172,13 @@ const CareerForm = ({
             <button
               id="career-period"
               type="button"
-              onClick={() => setEndDateModalOpen(true)}
+              onClick={() => {
+                if (!form.startDate) {
+                  setPeriodMode('start');
+                } else {
+                  setPeriodMode('end');
+                }
+              }}
               className="flex w-full items-center justify-between rounded-xxs border border-neutral-80 px-3 py-2 text-neutral-50"
             >
               {form.endDate ? (
@@ -206,25 +211,36 @@ const CareerForm = ({
         onSelect={handleEmployeeTypeSelect}
       />
 
-      <PeriodSelectModal
-        isOpen={startDateModalOpen}
-        onClose={() => setStartDateModalOpen(false)}
-        onSelect={handleStartDateSelect}
-        initialYear={
-          form.startDate ? Number(form.startDate.split('.')[0]) : null
-        }
-        initialMonth={
-          form.startDate ? Number(form.startDate.split('.')[1]) : null
-        }
-      />
-
-      <PeriodSelectModal
-        isOpen={endDateModalOpen}
-        onClose={() => setEndDateModalOpen(false)}
-        onSelect={handleEndDateSelect}
-        initialYear={form.endDate ? Number(form.endDate.split('.')[0]) : null}
-        initialMonth={form.endDate ? Number(form.endDate.split('.')[1]) : null}
-      />
+      {periodMode && (
+        <PeriodSelectModal
+          isOpen={!!periodMode}
+          mode={periodMode}
+          onClose={() => setPeriodMode(null)}
+          onNext={() => setPeriodMode('end')}
+          onPrev={() => setPeriodMode('start')}
+          onSelect={
+            periodMode === 'start' ? handleStartDateSelect : handleEndDateSelect
+          }
+          initialYear={
+            periodMode === 'start'
+              ? form.startDate
+                ? Number(form.startDate.split('.')[0])
+                : null
+              : form.endDate
+                ? Number(form.endDate.split('.')[0])
+                : null
+          }
+          initialMonth={
+            periodMode === 'start'
+              ? form.startDate
+                ? Number(form.startDate.split('.')[1])
+                : null
+              : form.endDate
+                ? Number(form.endDate.split('.')[1])
+                : null
+          }
+        />
+      )}
     </>
   );
 };

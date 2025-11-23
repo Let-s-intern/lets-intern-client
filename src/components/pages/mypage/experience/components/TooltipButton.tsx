@@ -1,11 +1,41 @@
 import Polygon from '@/assets/icons/polygon.svg?react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export const TooltipButton = ({ example }: { example: string }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseLeave = () => {
+    // 0.1초 후에 사라지도록 타이머
+    timeoutRef.current = setTimeout(() => {
+      setIsHovered(false);
+    }, 100);
+  };
+
+  const handleMouseEnter = () => {
+    // 마우스가 다시 들어오면 타이머 취소
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    setIsHovered(true);
+  };
+
+  // 컴포넌트 언마운트 시 타이머 정리
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
-    <div className="relative">
+    <div
+      className="relative"
+      onMouseLeave={handleMouseLeave}
+      onMouseEnter={handleMouseEnter}
+    >
       <button
         type="button"
         className="rounded-xxs border border-neutral-80 px-[6px] py-1 text-xsmall14 font-medium text-primary-80"

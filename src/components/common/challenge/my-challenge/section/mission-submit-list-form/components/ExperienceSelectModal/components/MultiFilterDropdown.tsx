@@ -139,7 +139,7 @@ export const MultiFilterDropdown = ({
             })}
           </div>
 
-          <BottomSheet className="md:hidden">
+          <BottomSheet className="md:hidden" onClose={() => setIsOpen(false)}>
             <div className="flex max-h-[62vh] w-full flex-col">
               <header className="flex items-center justify-between pb-4">
                 <span className="text-lg font-semibold text-neutral-0">
