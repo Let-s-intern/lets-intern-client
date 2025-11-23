@@ -34,7 +34,10 @@ const PeriodSelectItem = ({
 
 interface PeriodSelectModalProps {
   isOpen: boolean;
+  mode: 'start' | 'end';
   onClose: () => void;
+  onNext: () => void;
+  onPrev: () => void;
   onSelect: (year: number, month: number) => void;
   initialYear: number | null;
   initialMonth: number | null;
@@ -42,7 +45,10 @@ interface PeriodSelectModalProps {
 
 export const PeriodSelectModal = ({
   isOpen,
+  mode,
   onClose,
+  onNext,
+  onPrev,
   onSelect,
   initialYear,
   initialMonth,
@@ -85,34 +91,64 @@ export const PeriodSelectModal = ({
     }, 100);
   }, [isOpen, initialYear, initialMonth]);
 
-  const handleSelectComplete = () => {
-    if (selectedYear !== null && selectedMonth !== null) {
+  const handleSelect = () => {
+    if (selectedYear && selectedMonth) {
       onSelect(selectedYear, selectedMonth);
-      onClose();
+      if (mode === 'start') {
+        onNext(); // 종료일 모달로 전환
+      } else {
+        onClose();
+      }
     }
   };
 
-  const isCompleteDisabled = selectedYear === null || selectedMonth === null;
+  const isDisabled = selectedYear === null || selectedMonth === null;
 
   if (!isOpen) return null;
 
   return (
     <WishJobModal
-      title="기간 선택"
+      title={mode === 'start' ? '시작 기간 선택' : '종료 기간 선택'}
       onClose={onClose}
       footer={
-        <button
-          type="button"
-          onClick={handleSelectComplete}
-          disabled={isCompleteDisabled}
-          className={`w-full rounded-xs px-4 py-3 text-xsmall16 font-medium transition-colors ${
-            isCompleteDisabled
-              ? 'bg-neutral-70 text-white'
-              : 'bg-primary text-white hover:bg-primary-hover'
-          }`}
-        >
-          선택 완료
-        </button>
+        mode === 'start' ? (
+          <button
+            type="button"
+            disabled={isDisabled}
+            onClick={handleSelect}
+            className={`w-full rounded-xs py-3 text-xsmall16 font-medium ${
+              isDisabled
+                ? 'bg-neutral-70 text-white'
+                : 'bg-primary text-white hover:bg-primary-hover'
+            }`}
+          >
+            다음으로
+          </button>
+        ) : (
+          // 종료일 모달: 이전으로 + 선택 완료
+          <div className="flex w-full gap-2">
+            <button
+              type="button"
+              onClick={onPrev}
+              className="flex-1 rounded-xs border border-primary py-3 font-medium text-primary"
+            >
+              이전으로
+            </button>
+
+            <button
+              type="button"
+              disabled={isDisabled}
+              onClick={handleSelect}
+              className={`flex-1 rounded-xs py-3 font-medium text-white ${
+                isDisabled
+                  ? 'bg-neutral-70'
+                  : 'bg-primary hover:bg-primary-hover'
+              }`}
+            >
+              선택 완료
+            </button>
+          </div>
+        )
       }
     >
       {/* 연도/월 선택 */}
