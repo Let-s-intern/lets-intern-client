@@ -6,7 +6,6 @@ import {
   isAllFilters,
 } from '@/utils/experience';
 import { Filters } from '@components/common/mypage/experience/ExperienceFilters';
-import OutlinedButton from '@components/common/mypage/experience/OutlinedButton';
 import ActivityTypeCell from '@components/common/mypage/experience/table-cell/ActivityTypeCell';
 import CategoryCell from '@components/common/mypage/experience/table-cell/CategoryCell';
 import CoreCompetencyCell from '@components/common/mypage/experience/table-cell/CoreCompetencyCell';
@@ -19,6 +18,7 @@ import DataTable, {
   TableHeader,
 } from '@components/common/table/DataTable';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
+import OutlinedButton from '@components/ui/button/OutlinedButton';
 import { useEffect, useMemo, useState } from 'react';
 
 const PAGE_SIZE = 10;
@@ -186,7 +186,9 @@ const ExperienceDataTableEmpty = ({
         <p className="text-sm text-neutral-20">
           지금까지 쌓아온 경험을 작성해 주세요.
         </p>
-        <OutlinedButton onClick={onCreateClick}>경험 작성하기</OutlinedButton>
+        <OutlinedButton size="xs" onClick={onCreateClick}>
+          경험 작성하기
+        </OutlinedButton>
       </div>
     );
 
@@ -196,7 +198,9 @@ const ExperienceDataTableEmpty = ({
       <p className="text-sm text-neutral-20">
         해당 조건에 맞는 경험이 없습니다.
       </p>
-      <OutlinedButton onClick={onResetFilters}>초기화하기</OutlinedButton>
+      <OutlinedButton size="xs" onClick={onResetFilters}>
+        초기화하기
+      </OutlinedButton>
     </div>
   );
 };

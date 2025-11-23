@@ -19,6 +19,7 @@ import { useEffect, useMemo } from 'react';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
 import ChallengeBrand from './challenge-view/ChallengeBrand';
 import ChallengeDifferent from './challenge-view/ChallengeDifferent';
+import ChallengeFeedbackUI from './challenge-view/ChallengeFeedback';
 import ChallengeInfoBottom from './challenge-view/ChallengeInfoBottom';
 import ChallengeIntroCareerStart from './challenge-view/ChallengeIntroCareerStart';
 import ChallengeIntroExpericeSummary from './challenge-view/ChallengeIntroExpericeSummary';
@@ -26,6 +27,7 @@ import ChallengeIntroPersonalStatement from './challenge-view/ChallengeIntroPers
 import ChallengeIntroPortfolio from './challenge-view/ChallengeIntroPortfolio';
 import ChallengePointView from './challenge-view/ChallengePointView';
 import ChallengePricePlanSection from './challenge-view/ChallengePricePlanSection';
+import ChallengeSummarySection from './challenge-view/ChallengeSummarySection';
 import LexicalContent from './common/blog/LexicalContent';
 import MoreReviewButton from './common/review/MoreReviewButton';
 import ProgramBestReviewSection from './ProgramBestReviewSection';
@@ -40,6 +42,7 @@ import ProgramDetailNavigation, {
 const {
   CAREER_START,
   PORTFOLIO,
+  PERSONAL_STATEMENT,
   PERSONAL_STATEMENT_LARGE_CORP,
   EXPERIENCE_SUMMARY,
   ETC,
@@ -116,6 +119,9 @@ const ChallengeView: React.FC<{
   isPreview?: boolean;
 }> = ({ challenge, isPreview }) => {
   const { id } = useParams<{ id: string }>();
+  const isResumeTemplate = useMemo(() => {
+    return Number(id) >= 143 && challenge.challengeType === CAREER_START;
+  }, [challenge.challengeType, id]);
 
   const { initProgramApplicationForm } = useProgramStore();
 
@@ -234,8 +240,15 @@ const ChallengeView: React.FC<{
                 challengeTitle={challenge.title ?? ''}
                 programRecommend={receivedContent.programRecommend}
                 deposit={challenge.priceInfo[0].refund ?? 0}
+                challengeId={Number(id)}
+                isResumeTemplate={isResumeTemplate}
               />
             </section>
+
+            {(challenge.challengeType === PORTFOLIO ||
+              challenge.challengeType === PERSONAL_STATEMENT) && (
+              <ChallengeFeedbackUI challengeType={challenge.challengeType} />
+            )}
 
             {/* 특별 챌린지, 합격자 후기 */}
             {receivedContent.mainDescription?.root && (
@@ -249,6 +262,7 @@ const ChallengeView: React.FC<{
                 <ChallengeIntroPortfolio />
               ) : challenge.challengeType === CAREER_START ? (
                 <ChallengeIntroCareerStart
+                  isResumeTemplate={isResumeTemplate}
                   challengeType={challenge.challengeType}
                   challengeTitle={challenge.title ?? ''}
                   weekText={receivedContent.challengePoint.weekText}
@@ -264,13 +278,21 @@ const ChallengeView: React.FC<{
             </section>
 
             <ChallengeCheckList
+              challengeId={Number(id)}
+              isResumeTemplate={isResumeTemplate}
               challengeType={challenge.challengeType}
               challengeTitle={challenge.title ?? ''}
             />
 
             <ChallengeResult
+              isResumeTemplate={isResumeTemplate}
               challengeType={challenge.challengeType}
               challengeTitle={challenge.title ?? ''}
+            />
+
+            <ChallengeSummarySection
+              challengeType={challenge.challengeType}
+              isResumeTemplate={isResumeTemplate}
             />
           </div>
 
@@ -295,6 +317,7 @@ const ChallengeView: React.FC<{
             className="challenge_difference flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0"
           >
             <ChallengeDifferent
+              isResumeTemplate={isResumeTemplate}
               challengeTitle={challenge.title ?? ''}
               challengeType={challenge.challengeType}
               deposit={challenge.priceInfo[0].refund ?? 0}

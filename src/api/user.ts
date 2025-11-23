@@ -49,7 +49,7 @@ export const useUserAdminQuery = ({
   return useQuery({
     queryKey: [UseUserAdminQueryKey, email, name, phoneNum, pageable],
     queryFn: async () => {
-      const res = await axios.get('/user/admin', {
+      const res = await axiosV2.get('/admin/user', {
         params: {
           email,
           name,
@@ -117,6 +117,8 @@ export type PatchUserType = {
   wishJob?: string | null;
   wishCompany?: string | null;
   isMentor?: boolean;
+  careerType?: string | null;
+  memo?: string | null;
 };
 
 export const usePatchUserAdminMutation = ({
@@ -155,19 +157,27 @@ const userSchema = z.object({
   contactEmail: z.string().nullable(),
   phoneNum: z.string().nullable(),
   university: z.string().nullable(),
+  inflowPath: z.string().nullable(),
   grade: grade.nullable(),
   major: z.string().nullable(),
+  wishField: z.string().nullable(),
   wishJob: z.string().nullable(),
+  wishIndustry: z.string().nullable(),
+  wishEmploymentType: z.string().nullable(),
   wishCompany: z.string().nullable(),
   accountType: accountType.nullable(),
   accountNum: z.string().nullable(),
   marketingAgree: z.boolean().nullable(),
   authProvider: authProviderSchema.nullable(),
+  role: z.string().nullable(),
+  careerType: z.enum(['QUALIFIED', 'NONE']).nullable(),
+  memo: z.string().nullable(),
 });
 
 export type User = z.infer<typeof userSchema>;
 
-const useUserQueryKey = 'useUserQueryKey';
+/** GET /api/v1/user */
+export const useUserQueryKey = 'useUserQueryKey';
 
 export const useUserQuery = ({
   ...options
@@ -206,7 +216,10 @@ export type PatchUserBody = {
   grade?: string | null;
   major?: string | null;
   wishJob?: string | null;
+  wishField?: string | null;
   wishCompany?: string | null;
+  wishIndustry?: string | null;
+  wishEmploymentType?: string | null;
   marketingAgree?: boolean;
 };
 
@@ -289,6 +302,23 @@ export const useGetUserDocumentListQuery = () => {
     queryFn: async () => {
       const res = await axios.get('/user-document');
       return userDocumentListSchema.parse(res.data.data);
+    },
+  });
+};
+
+/** DELETE [유저] 서류(자소서, 포트폴리오 등) 삭제 /api/v1/user-document/{userDocumentId}*/
+export const useDeleteUserDocMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (userDocumentId: number) => {
+      const res = await axios.delete(`/user-document/${userDocumentId}`);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [UseGetUserDocumentListQueryKey],
+      });
     },
   });
 };

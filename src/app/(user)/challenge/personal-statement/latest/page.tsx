@@ -1,9 +1,8 @@
 'use client';
 
-import { useGetActiveChallenge, useGetChallengeList } from '@/api/challenge';
+import LoadingContainer from '@/components/common/ui/loading/LoadingContainer';
+import { useLatestChallengeRedirect } from '@/hooks/useLatestChallengeRedirect';
 import { challengeTypeSchema } from '@/schema';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 
 const { PERSONAL_STATEMENT } = challengeTypeSchema.enum;
 
@@ -11,68 +10,16 @@ const { PERSONAL_STATEMENT } = challengeTypeSchema.enum;
  * 자기소개서 완성 챌린지의 latest 리다이렉트를 처리하는 컴포넌트
  *
  * 리다이렉트 우선순위:
- * 1. 모집중인(active) 자기소개서 챌린지가 있을 경우 해당 챌린지로 이동
- * 2. 없을 경우 가장 최근 개설된 자기소개서 챌린지로 이동
+ * 1. 모집중인(active) 자기소개서 챌린지 중 B2C 챌린지가 있을 경우 해당 챌린지로 이동
+ * 2. 없을 경우 노출된 챌린지 중 활성화되지 않은 가장 최근 B2C 챌린지로 이동
  */
 export default function PersonalStatementLatest() {
-  const router = useRouter();
-  const {
-    data: activeData,
-    error: activeError,
-    isLoading: activeLoading,
-  } = useGetActiveChallenge(PERSONAL_STATEMENT);
-  const {
-    data: listData,
-    error: listError,
-    isLoading: listLoading,
-  } = useGetChallengeList({
-    type: PERSONAL_STATEMENT,
-  });
+  useLatestChallengeRedirect(PERSONAL_STATEMENT);
 
-  useEffect(() => {
-    if (activeLoading || listLoading) return;
-    // 활성화된 챌린지가 있는 경우
-    const activeChallenge = activeData?.challengeList?.[0];
-    if (activeChallenge?.id) {
-      const title = activeChallenge.title ?? '';
-      const redirectUrl = `/program/challenge/${activeChallenge.id}/${encodeURIComponent(title)}`;
-      router.push(redirectUrl);
-
-      return;
-    }
-
-    // 활성화된 챌린지가 없는 경우, 가장 최근 챌린지로 이동
-    const latestChallenge = listData?.programList?.[0];
-    if (latestChallenge?.id) {
-      const title = latestChallenge.title ?? '';
-      const redirectUrl = `/program/challenge/${latestChallenge.id}/${encodeURIComponent(title)}`;
-      router.push(redirectUrl);
-
-      return;
-    }
-
-    // 챌린지가 없는 경우 프로그램 페이지로 이동
-    router.replace('/program');
-  }, [
-    activeData,
-    listData,
-    activeError,
-    listError,
-    activeLoading,
-    listLoading,
-    router,
-  ]);
-
-  // 로딩 상태 표시
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="text-center">
-        <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-primary"></div>
-        <p className="text-gray-600">자기소개서 완성 챌린지로 이동 중...</p>
-        {(activeLoading || listLoading) && (
-          <p className="mt-2 text-sm text-gray-500">데이터 로딩 중...</p>
-        )}
-      </div>
-    </div>
+    <LoadingContainer
+      className="min-h-screen"
+      text="자기소개서 완성 챌린지로 이동 중..."
+    />
   );
 }

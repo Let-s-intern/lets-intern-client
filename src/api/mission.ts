@@ -61,8 +61,8 @@ export const useSubmitMissionBlogBonus = () => {
   });
 };
 
-/** POST [유저] 인재풀 미션 제출 /api/v1/user-document */
-export const usePostMissionTalentPoolMutation = () => {
+/** POST [유저] 서류 제출 /api/v1/user-document */
+export const usePostDocumentMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({

@@ -1,6 +1,5 @@
 'use client';
 
-import { useGetChallengeHome } from '@/api/challenge';
 import { convertReportTypeToLandingPath } from '@/api/report';
 import Intro1 from '@/assets/graphic/home/intro/1.svg?react';
 import Intro10 from '@/assets/graphic/home/intro/10.svg?react';
@@ -10,6 +9,7 @@ import Intro5 from '@/assets/graphic/home/intro/5.svg?react';
 import Intro6 from '@/assets/graphic/home/intro/6.svg?react';
 import Intro8 from '@/assets/graphic/home/intro/8.svg?react';
 import useActiveReports from '@/hooks/useActiveReports';
+import { useIntroSectionB2CChallenges } from '@/hooks/useFirstB2CChallenge';
 import { twMerge } from '@/lib/twMerge';
 import { challengeTypeSchema } from '@/schema';
 import Link from 'next/link';
@@ -181,40 +181,30 @@ const IntroItem = ({
 };
 
 const IntroSection = () => {
-  const { data: experienceSummaryData } = useGetChallengeHome({
-    type: EXPERIENCE_SUMMARY,
-  });
-  const { data: personalStatementData } = useGetChallengeHome({
-    type: PERSONAL_STATEMENT,
-  });
-  const { data: personalStatementLargeCorpData } = useGetChallengeHome({
-    type: PERSONAL_STATEMENT_LARGE_CORP,
-  });
-  const { data: portfolioData } = useGetChallengeHome({ type: PORTFOLIO });
-
   const { hasActiveResume, hasActivePersonalStatement } = useActiveReports();
+
+  // 새로운 훅을 사용하여 각 타입별 첫 번째 B2C 챌린지 가져오기
+  const {
+    experienceSummary,
+    personalStatement,
+    personalStatementLargeCorp,
+    portfolio,
+  } = useIntroSectionB2CChallenges();
 
   const getCurrentChallenge = (type: string): string | undefined => {
     switch (type) {
       case EXPERIENCE_SUMMARY:
-        return experienceSummaryData &&
-          experienceSummaryData.programList.length > 0
-          ? `/program/challenge/${experienceSummaryData.programList[0].id}/${encodeURIComponent(experienceSummaryData.programList[0].title ?? '')}`
-          : undefined;
+        return experienceSummary?.href;
+
       case PERSONAL_STATEMENT:
-        return personalStatementData &&
-          personalStatementData.programList.length > 0
-          ? `/program/challenge/${personalStatementData.programList[0].id}/${encodeURIComponent(personalStatementData.programList[0].title ?? '')}`
-          : undefined;
+        return personalStatement?.href;
+
       case PERSONAL_STATEMENT_LARGE_CORP:
-        return personalStatementLargeCorpData &&
-          personalStatementLargeCorpData.programList.length > 0
-          ? `/program/challenge/${personalStatementLargeCorpData.programList[0].id}/${encodeURIComponent(personalStatementLargeCorpData.programList[0].title ?? '')}`
-          : undefined;
+        return personalStatementLargeCorp?.href;
+
       case PORTFOLIO:
-        return portfolioData && portfolioData.programList.length > 0
-          ? `/program/challenge/${portfolioData.programList[0].id}/${encodeURIComponent(portfolioData.programList[0].title ?? '')}`
-          : undefined;
+        return portfolio?.href;
+
       default:
         return undefined;
     }
@@ -229,10 +219,17 @@ const IntroSection = () => {
   });
 
   const menus = filteredItems.map((item, index) => {
-    const challengePathname = getCurrentChallenge(item.href.split('=')[1]);
+    const typeParam = item.href.startsWith('type=')
+      ? item.href.split('=')[1]
+      : undefined;
+    const challengePathname = typeParam
+      ? getCurrentChallenge(typeParam)
+      : undefined;
     const isInvalidProgram =
       item.href.startsWith('type=') && !challengePathname;
     const href = item.href.startsWith('type=') ? challengePathname : item.href;
+
+    // B2B 필터링은 getCurrentChallenge 함수에서 이미 처리됨
 
     if (isInvalidProgram) return null;
 

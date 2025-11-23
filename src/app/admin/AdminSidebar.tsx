@@ -41,7 +41,7 @@ const navData = [
     title: '사용자 관리',
     itemList: [
       {
-        name: '회원 DB',
+        name: '커리어 DB',
         url: '/admin/users',
       },
       {
@@ -102,6 +102,19 @@ const navData = [
       {
         name: '블로그 광고 배너',
         url: '/admin/blog/banner',
+      },
+    ],
+  },
+  {
+    title: '리드 관리',
+    itemList: [
+      {
+        name: '리드 히스토리',
+        url: '/admin/leads/history',
+      },
+      {
+        name: '리드 이벤트',
+        url: '/admin/leads/events',
       },
     ],
   },
