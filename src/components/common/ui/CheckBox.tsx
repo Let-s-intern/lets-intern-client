@@ -30,7 +30,7 @@ const CheckBox = ({
         />
       ) : (
         <img
-          src="/icons/checkbox-unchecked-box.svg"
+          src="/icons/checkbox-unchecked-box2.svg"
           alt="체크되지 않음"
           className={width}
         />

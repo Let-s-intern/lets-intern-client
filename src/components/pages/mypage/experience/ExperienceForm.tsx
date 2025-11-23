@@ -119,6 +119,8 @@ export const ExperienceForm = ({
   const isAutoSavingRef = useRef(false);
   // 디바운싱 타이머
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
+  // 기간 모드 상태
+  const [periodMode, setPeriodMode] = useState<'start' | 'end' | null>(null);
 
   // 타이머 정리 함수
   const clearAutoSaveTimer = useCallback(() => {
@@ -303,8 +305,6 @@ export const ExperienceForm = ({
   // 경험 분류 선택 모달 상태
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   // 기간 선택 모달 상태
-  const [isStartPeriodModalOpen, setIsStartPeriodModalOpen] = useState(false);
-  const [isEndPeriodModalOpen, setIsEndPeriodModalOpen] = useState(false);
   const [displayYears, setDisplayYears] = useState<number[]>([]);
   // 자동 저장 상태
   const [lastAutoSaveTime, setLastAutoSaveTime] = useState<Date | null>(null);
@@ -316,6 +316,7 @@ export const ExperienceForm = ({
     // 기간 선택 후 검증 및 디바운싱된 자동 저장
     await trigger('startDate');
     debouncedAutoSave();
+    setPeriodMode('end');
   };
 
   const handleEndPeriodSelect = async (year: number, month: number) => {
@@ -324,6 +325,7 @@ export const ExperienceForm = ({
     // 기간 선택 후 검증 및 디바운싱된 자동 저장
     await trigger('endDate');
     debouncedAutoSave();
+    setPeriodMode(null);
   };
   const isManualSavingRef = useRef(false);
   // 폼 제출 핸들러 (명시적 저장)
@@ -388,14 +390,11 @@ export const ExperienceForm = ({
   // 모달 오픈 시 스크롤 락
   useEffect(() => {
     document.body.style.overflow =
-      isCategoryModalOpen || isStartPeriodModalOpen || isEndPeriodModalOpen
-        ? 'hidden'
-        : 'auto';
+      isCategoryModalOpen || periodMode !== null ? 'hidden' : 'auto';
     return () => {
       document.body.style.overflow = 'auto';
     };
-  }, [isCategoryModalOpen, isStartPeriodModalOpen, isEndPeriodModalOpen]);
-
+  }, [isCategoryModalOpen, periodMode]);
   // X 버튼 클릭 핸들러 (저장되지 않은 변경사항 확인)
   const handleClose = () => {
     if (isDirty && !isSavedRef.current) {
@@ -629,7 +628,7 @@ export const ExperienceForm = ({
                     <div className="relative flex-1">
                       <button
                         type="button"
-                        onClick={() => setIsStartPeriodModalOpen(true)}
+                        onClick={() => setPeriodMode('start')}
                         className="flex w-full items-center justify-between rounded-xs border border-solid border-neutral-80 px-3 py-[10px] text-left text-xsmall14 font-normal focus:border-primary focus:outline-none md:text-xsmall16"
                       >
                         <span
@@ -651,7 +650,15 @@ export const ExperienceForm = ({
                     <div className="relative flex-1">
                       <button
                         type="button"
-                        onClick={() => setIsEndPeriodModalOpen(true)}
+                        onClick={() => {
+                          if (!formData.startDate) {
+                            // 시작일이 없으면 시작 모달
+                            setPeriodMode('start');
+                          } else {
+                            // 시작일이 있으면 종료 모달
+                            setPeriodMode('end');
+                          }
+                        }}
                         className="flex w-full items-center justify-between rounded-xs border border-solid border-neutral-80 px-3 py-[10px] text-left text-xsmall14 font-normal focus:border-primary focus:outline-none md:text-xsmall16"
                       >
                         <span
@@ -809,37 +816,38 @@ export const ExperienceForm = ({
         onSelect={handleCategorySelect}
       />
 
-      <PeriodSelectModal
-        isOpen={isStartPeriodModalOpen}
-        onClose={() => setIsStartPeriodModalOpen(false)}
-        onSelect={handleStartPeriodSelect}
-        initialYear={
-          formData.startDate && formData.startDate !== ''
-            ? parseInt(formData.startDate.split('-')[0])
-            : null
-        }
-        initialMonth={
-          formData.startDate && formData.startDate !== ''
-            ? parseInt(formData.startDate.split('-')[1])
-            : null
-        }
-      />
-
-      <PeriodSelectModal
-        isOpen={isEndPeriodModalOpen}
-        onClose={() => setIsEndPeriodModalOpen(false)}
-        onSelect={handleEndPeriodSelect}
-        initialYear={
-          formData.endDate && formData.endDate !== ''
-            ? parseInt(formData.endDate.split('-')[0])
-            : null
-        }
-        initialMonth={
-          formData.endDate && formData.endDate !== ''
-            ? parseInt(formData.endDate.split('-')[1])
-            : null
-        }
-      />
+      {periodMode && (
+        <PeriodSelectModal
+          isOpen={!!periodMode}
+          mode={periodMode}
+          onClose={() => setPeriodMode(null)}
+          onNext={() => setPeriodMode('end')}
+          onPrev={() => setPeriodMode('start')}
+          onSelect={
+            periodMode === 'start'
+              ? handleStartPeriodSelect
+              : handleEndPeriodSelect
+          }
+          initialYear={
+            periodMode === 'start'
+              ? formData.startDate
+                ? Number(formData.startDate.split('-')[0])
+                : null
+              : formData.endDate
+                ? Number(formData.endDate.split('-')[0])
+                : null
+          }
+          initialMonth={
+            periodMode === 'start'
+              ? formData.startDate
+                ? Number(formData.startDate.split('-')[1])
+                : null
+              : formData.endDate
+                ? Number(formData.endDate.split('-')[1])
+                : null
+          }
+        />
+      )}
     </>
   );
 };
