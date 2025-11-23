@@ -122,7 +122,7 @@ export const PeriodSelectModal = ({
                 : 'bg-primary text-white hover:bg-primary-hover'
             }`}
           >
-            다음으로
+            선택 완료
           </button>
         ) : (
           // 종료일 모달: 이전으로 + 선택 완료
