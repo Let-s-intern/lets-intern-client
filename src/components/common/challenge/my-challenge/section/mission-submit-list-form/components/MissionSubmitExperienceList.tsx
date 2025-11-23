@@ -112,7 +112,7 @@ export const MissionSubmitExperienceList = ({
           type="button"
           onClick={onOpenModal}
           disabled={isButtonDisabled}
-          className={`rounded-xxs border border-neutral-80 bg-white px-3 py-2 text-xsmall14 font-medium disabled:cursor-not-allowed ${
+          className={`rounded-xxs border border-neutral-80 bg-white px-3 py-2 text-xsmall14 font-medium hover:bg-neutral-100 disabled:cursor-not-allowed ${
             isButtonDisabled ? 'text-neutral-50' : 'text-primary'
           }`}
         >
