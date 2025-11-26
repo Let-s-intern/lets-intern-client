@@ -34,7 +34,7 @@ const CareerForm = ({
     register,
     setValue,
     watch,
-    formState: { errors },
+    formState: { errors, isDirty },
     handleSubmit: rhfHandleSubmit,
   } = useForm<CareerFormType>({
     resolver: zodResolver(careerFormSchema),
@@ -52,18 +52,34 @@ const CareerForm = ({
   };
 
   const handleEmployeeTypeSelect = (type: EmployeeType) => {
-    setValue('employmentType', type, { shouldValidate: true });
+    if (type !== '기타(직접입력)') {
+      setValue('employmentTypeOther', '', {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+
+    setValue('employmentType', type, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
     setEmployeeTypeModalOpen(false);
   };
 
   const handleStartDateSelect = (year: number, month: number) => {
     const dateString = `${year}.${String(month).padStart(2, '0')}`;
-    setValue('startDate', dateString, { shouldValidate: true });
+    setValue('startDate', dateString, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
   };
 
   const handleEndDateSelect = (year: number, month: number) => {
     const dateString = `${year}.${String(month).padStart(2, '0')}`;
-    setValue('endDate', dateString, { shouldValidate: true });
+    setValue('endDate', dateString, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
   };
 
   return (
@@ -198,7 +214,12 @@ const CareerForm = ({
           <OutlinedButton onClick={handleCancel} className="flex-1">
             취소하기
           </OutlinedButton>
-          <SolidButton form="career-form" type="submit" className="flex-1">
+          <SolidButton
+            form="career-form"
+            type="submit"
+            disabled={!isDirty}
+            className="flex-1"
+          >
             입력 완료
           </SolidButton>
         </div>
