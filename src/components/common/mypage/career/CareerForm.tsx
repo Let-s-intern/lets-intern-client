@@ -87,6 +87,11 @@ const CareerForm = ({
       <form
         id="career-form"
         onSubmit={rhfHandleSubmit(onSubmit)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+          }
+        }}
         className="flex w-full flex-col gap-3 rounded-xs border border-neutral-80 p-5 text-sm md:text-base"
       >
         {/* 기업 이름 */}
