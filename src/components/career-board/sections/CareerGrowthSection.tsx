@@ -184,7 +184,7 @@ const ProgramCard = ({
     dayjs().isBefore(programStartDate);
 
   return (
-    <div className="flex flex-col gap-3 md:flex-row md:gap-4">
+    <div className="flex flex-col gap-5 md:flex-row md:gap-4">
       <div className="flex w-full gap-3 md:flex-row md:gap-4">
         {/* 썸네일 */}
         {program.thumbnail ? (
@@ -275,7 +275,7 @@ const DashboardButton = ({
       }
       disabled={disabled}
       className={twMerge(
-        'rounded-xxs border px-3 py-1.5 text-xxsmall12 font-normal transition-colors',
+        'rounded-xxs border px-3 py-1.5 text-xsmall14 font-normal transition-colors',
         disabled
           ? 'cursor-not-allowed border-neutral-60 bg-neutral-90 text-neutral-40'
           : 'border-primary text-primary hover:bg-primary/5',
