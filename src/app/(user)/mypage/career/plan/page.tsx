@@ -268,7 +268,7 @@ export default function Page() {
       <section>
         <h1 className="mb-6 text-xsmall16 md:text-small18">기본 정보</h1>
         <div>
-          <div className="mb-10 flex flex-col gap-4">
+          <div className="mb-8 flex flex-col gap-4">
             <div className="flex flex-col gap-[6px]">
               <label className="text-xsmall14 md:text-xsmall16">학교</label>
               <LineInput
