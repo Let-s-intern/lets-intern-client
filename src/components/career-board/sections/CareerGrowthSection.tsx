@@ -11,8 +11,9 @@ import {
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { Dayjs } from 'dayjs';
 import { useRouter } from 'next/navigation';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import CareerCard from '../../common/mypage/career/card/CareerCard';
+import { useCareerDataStatus } from '../contexts/CareerDataStatusContext';
 
 const CareerGrowthSection = () => {
   const router = useRouter();
@@ -21,6 +22,8 @@ const CareerGrowthSection = () => {
     isLoading,
     isError,
   } = useMypageApplicationsQuery();
+  const { setHasCareerData } = useCareerDataStatus();
+
   console.log(applications);
   // API 데이터를 Program 인터페이스로 변환
   const programs = useMemo(() => {
@@ -60,6 +63,12 @@ const CareerGrowthSection = () => {
 
   // 데이터 존재 여부 확인
   const hasData = programs.length > 0;
+
+  useEffect(() => {
+    if (hasData) {
+      setHasCareerData(true);
+    }
+  }, [hasData, setHasCareerData]);
 
   if (isLoading) {
     return (

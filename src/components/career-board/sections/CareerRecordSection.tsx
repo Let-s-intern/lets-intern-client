@@ -2,7 +2,9 @@ import { useGetUserCareerQuery } from '@/api/career';
 import LoadingContainer from '@/components/common/ui/loading/LoadingContainer';
 import { toCareerDateDot } from '@/utils/career';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import CareerCard from '../../common/mypage/career/card/CareerCard';
+import { useCareerDataStatus } from '../contexts/CareerDataStatusContext';
 
 const CareerRecordSection = () => {
   const router = useRouter();
@@ -11,6 +13,16 @@ const CareerRecordSection = () => {
     { page: 0, size: 1 },
     { sort: 'desc', sortType: 'START_DATE' },
   );
+  const { setHasCareerData } = useCareerDataStatus();
+
+  const latestCareer = data?.userCareers[0];
+  const hasData = !!latestCareer;
+
+  useEffect(() => {
+    if (hasData) {
+      setHasCareerData(true);
+    }
+  }, [hasData, setHasCareerData]);
 
   if (isLoading) {
     return (
@@ -21,9 +33,6 @@ const CareerRecordSection = () => {
       />
     );
   }
-
-  const latestCareer = data?.userCareers[0];
-  const hasData = !!latestCareer;
 
   return (
     <CareerCard
