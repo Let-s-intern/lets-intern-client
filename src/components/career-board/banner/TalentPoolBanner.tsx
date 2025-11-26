@@ -42,7 +42,7 @@ const TalentPoolBanner = ({
           <p className="text-xs text-[#666666] md:text-sm">{subMessage}</p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-[#5C5F66]">
+          <span className="hidden text-xs font-medium text-[#5C5F66] md:block">
             인재풀 등록
           </span>
           <button
