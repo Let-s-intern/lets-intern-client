@@ -10,7 +10,6 @@ import {
   labelToActivityType,
   labelToExperienceCategory,
 } from '@/components/common/challenge/my-challenge/section/mission-submit-list-form/data';
-import dayjs from '@/lib/dayjs';
 import { Dayjs } from 'dayjs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -66,7 +65,7 @@ const DEFAULT_PAGE_SIZE = 5;
 export const useExperienceSelectModal = ({
   isOpen,
   pageSize = DEFAULT_PAGE_SIZE,
-  missionStartDate,
+  missionStartDate: _missionStartDate, // eslint-disable-line @typescript-eslint/no-unused-vars
 }: UseExperienceSelectModalOptions): UseExperienceSelectModalReturn => {
   const [filters, setFilters] = useState<Filters>(INITIAL_FILTERS);
   const [currentPage, setCurrentPage] = useState(1);
@@ -126,36 +125,10 @@ export const useExperienceSelectModal = ({
     isOpen,
   );
 
-  // 필터링 로직: 미션 시작일 이후 추가/수정된 경험만 표시
-  const shouldIncludeExperience = (
-    exp: UserExperience,
-    missionStart: Dayjs | null,
-  ): boolean => {
-    // missionStartDate가 없으면 필터링하지 않음
-    if (!missionStart) return true;
-
+  // 필터링 로직: 운영자 추가 경험 제외 및 경험정리 필드 완성 여부만 체크
+  const shouldIncludeExperience = (exp: UserExperience): boolean => {
     // 운영자 추가 경험 제외
     if (exp.isAddedByAdmin) return false;
-
-    // 미션 시작일 이후 추가/수정 확인 (시작일 포함)
-    const createDate = dayjs(exp.createDate).startOf('day');
-    const lastModifiedDate = dayjs(exp.lastModifiedDate).startOf('day');
-    const missionStartDay = missionStart.startOf('day');
-
-    const isCreatedAfterMissionStart = !createDate.isBefore(
-      missionStartDay,
-      'day',
-    );
-    const isModifiedAfterMissionStart = !lastModifiedDate.isBefore(
-      missionStartDay,
-      'day',
-    );
-
-    // 미션 시작일 이전에 추가되고 수정되지 않은 경험 제외
-    if (!isCreatedAfterMissionStart && !isModifiedAfterMissionStart) {
-      return false;
-    }
-
     // 경험정리 필드 모두 채운 경험만
     return isUserExperienceComplete(exp);
   };
@@ -167,11 +140,11 @@ export const useExperienceSelectModal = ({
     }
 
     const filtered = allSearchResponse.userExperiences.filter((exp) =>
-      shouldIncludeExperience(exp, missionStartDate || null),
+      shouldIncludeExperience(exp),
     );
 
     return filtered.map(convertUserExperienceToExperienceData);
-  }, [allSearchResponse, missionStartDate]);
+  }, [allSearchResponse]);
 
   // 필터링된 결과를 페이지네이션하여 현재 페이지의 데이터만 추출
   const experiences = useMemo(() => {
