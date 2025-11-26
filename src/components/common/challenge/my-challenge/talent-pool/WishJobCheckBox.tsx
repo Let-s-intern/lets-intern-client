@@ -41,7 +41,9 @@ export function CheckboxItem({
           </svg>
         )}
       </div>
-      <span>{label}</span>
+      <span className={isDisabled ? 'text-neutral-50' : 'text-neutral-20'}>
+        {label}
+      </span>
     </label>
   );
 }
