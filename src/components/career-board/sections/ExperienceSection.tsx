@@ -2,7 +2,9 @@ import { useGetAllUserExperienceQuery } from '@/api/experience';
 import LoadingContainer from '@/components/common/ui/loading/LoadingContainer';
 import { getTopCoreCompetencies } from '@components/career-board/utils/experienceSummary';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import CareerCard from '../../common/mypage/career/card/CareerCard';
+import { useCareerDataStatus } from '../contexts/CareerDataStatusContext';
 
 const ExperienceSection = () => {
   const router = useRouter();
@@ -18,16 +20,7 @@ const ExperienceSection = () => {
     'LATEST',
     { page: 1, size: 1000 },
   );
-
-  if (isLoading) {
-    return (
-      <CareerCard
-        title="경험 정리"
-        labelOnClick={() => router.push('/mypage/career/experience')}
-        body={<LoadingContainer text="경험 정리 조회 중" />}
-      />
-    );
-  }
+  const { setHasCareerData } = useCareerDataStatus();
 
   // 사용자가 직접 입력한 경험만 필터링
   const userExperiences =
@@ -38,6 +31,22 @@ const ExperienceSection = () => {
 
   // 데이터 존재 여부 확인
   const hasData = experienceCount > 0;
+
+  useEffect(() => {
+    if (hasData) {
+      setHasCareerData(true);
+    }
+  }, [hasData, setHasCareerData]);
+
+  if (isLoading) {
+    return (
+      <CareerCard
+        title="경험 정리"
+        labelOnClick={() => router.push('/mypage/career/experience')}
+        body={<LoadingContainer text="경험 정리 조회 중" />}
+      />
+    );
+  }
 
   return (
     <CareerCard
