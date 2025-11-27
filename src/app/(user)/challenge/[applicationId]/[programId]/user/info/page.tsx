@@ -406,17 +406,20 @@ const ChallengeUserInfo = () => {
             </div>
             <hr className="my-4" />
             {showSourceSurvey ? (
-              <div className="flex flex-col gap-8 pt-4" id="sourceSurvey">
+              <div className="flex flex-col gap-6" id="sourceSurvey">
                 <div className="flex flex-col gap-1">
                   <h2 className="text-lg font-semibold">
                     렛츠커리어 챌린지를 언제, 어떤 계기로 결제하게 되셨나요?
                   </h2>
-                  <p className="mb-2 break-keep text-neutral-40">
+                  <p className="break-keep text-neutral-40">
                     아래 중 본인 상황과 가장 가까운 항목을 선택해주세요.
                   </p>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <span className="text-1-medium" id="challengeAwarenessLabel">
+                  <span
+                    className="text-xsmall14 md:text-xsmall16"
+                    id="challengeAwarenessLabel"
+                  >
                     {josa(`${programTitle}`, '이/가')} 개설된 사실을 어떻게
                     아셨나요?<span className="pl-1 text-requirement">*</span>
                   </span>
@@ -448,7 +451,7 @@ const ChallengeUserInfo = () => {
                 </div>
                 <div className="flex flex-col gap-1">
                   <span
-                    className="text-1-medium"
+                    className="text-xsmall14 md:text-xsmall16"
                     id="challengeDecisionPeriodLabel"
                   >
                     {josa(`${programTitle}`, '을/를')} 알게 된 후, 결제하기까지
@@ -474,7 +477,10 @@ const ChallengeUserInfo = () => {
                   </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <span className="text-1-medium" id="challengeEntryPointLabel">
+                  <span
+                    className="text-xsmall14 md:text-xsmall16"
+                    id="challengeEntryPointLabel"
+                  >
                     그렇다면 {josa(`${programTitle}`, '을/를')} 실제 결제 하기
                     직전에는 어디를 통해 결제 페이지에 들어오셨나요?
                     <span className="pl-1 text-requirement">*</span>
