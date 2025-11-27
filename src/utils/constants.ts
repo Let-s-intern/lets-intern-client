@@ -134,14 +134,14 @@ export const JOB_CONDITIONS = [
   { value: 'FREELANCE', label: '계약직/프로젝트성 일자리도 괜찮아요.' },
 ];
 
-export const GRADE_ENUM_TO_KOREAN: { [key: string]: string } = {
+export const GRADE_ENUM_TO_KOREAN = {
   FIRST: '1학년',
   SECOND: '2학년',
   THIRD: '3학년',
   FOURTH: '4학년',
   ETC: '5학년',
   GRADUATE: '졸업생',
-};
+} as const;
 
 export const GRADE_KOREAN_TO_ENUM = Object.fromEntries(
   Object.entries(GRADE_ENUM_TO_KOREAN).map(([key, value]) => [value, key]),
