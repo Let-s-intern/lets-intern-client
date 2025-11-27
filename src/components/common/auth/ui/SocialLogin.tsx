@@ -26,9 +26,10 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
 
   return (
     <div className={styles.login}>
-      <span className={styles['gray-text']}>또는</span>
       <div className={styles.content}>
-        <h2>SNS 계정으로 {type === 'LOGIN' ? '로그인' : '회원가입'}하기</h2>
+        <h2 className="text-xsmall14 font-normal text-neutral-45">
+          또는 SNS 간편 {type === 'LOGIN' ? '로그인' : '회원 가입'}
+        </h2>
         <div className={styles.buttons}>
           <a
             className="flex h-[43px] w-[43px] items-center justify-center rounded-full bg-[#FEE500]"
