@@ -1638,6 +1638,8 @@ export const userAdminDetailType = z.object({
     major: z.string().nullable(),
     wishJob: z.string().nullable(),
     wishCompany: z.string().nullable(),
+    wishIndustry: z.string().nullable(),
+    wishEmploymentType: z.string().nullable(),
     accountType: accountType.nullable(),
     accountNum: z.string().nullable(),
     marketingAgree: z.boolean().nullable(),
@@ -1649,6 +1651,19 @@ export const userAdminDetailType = z.object({
       programTitle: z.string(),
     }),
   ),
+  userDocumentInfo: z
+    .array(
+      z.object({
+        userDocumentId: z.number(),
+        userDocumentType: reportTypeSchema,
+        fileUrl: z.string().nullable(),
+        fileName: z.string().nullable(),
+        wishField: z.string().nullable(),
+        wishJob: z.string().nullable(),
+        wishIndustry: z.string().nullable(),
+      }),
+    )
+    .nullable(),
 });
 
 export type UserAdminDetail = z.infer<typeof userAdminDetailType>;
