@@ -36,9 +36,7 @@ const TalentPoolBanner = ({
     <div className="w-full rounded-xs border border-primary-20 bg-[#FBFCFF] px-4 py-3 md:px-4 md:py-3">
       <div className="flex items-center justify-between gap-4">
         <div className="flex flex-1 flex-col gap-1">
-          <p className="text-sm font-medium text-[#333333] md:text-base">
-            {message}
-          </p>
+          <p className="text-xsmall14 font-medium text-[#333333]">{message}</p>
           <p className="text-xs text-[#666666] md:text-sm">{subMessage}</p>
         </div>
         <div className="flex items-center gap-2">
