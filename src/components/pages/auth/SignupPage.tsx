@@ -258,8 +258,8 @@ const SignUp = () => {
       {isSignupSuccess ? (
         <InfoContainer isSocial={isSocial} email={value.email} />
       ) : (
-        <div className="mx-auto w-full max-w-[600px] py-16">
-          <section className="mb-[60px]">
+        <div className="w-full pt-9 md:mx-auto md:w-[448px] md:py-16">
+          <section className="mx-5 mb-[80px] md:mx-0 md:mb-[60px]">
             <div className="mb-9">
               {/* 헤더 */}
               <span className="text-xsmall16 leading-[1.625rem] text-neutral-30">
@@ -383,7 +383,7 @@ const SignUp = () => {
               )}
 
               {/* 약관 동의 */}
-              <div className="mt-12 flex flex-col gap-3">
+              <div className="mt-12 flex flex-col gap-2">
                 {/* 전체 동의 */}
                 <button
                   type="button"
@@ -494,7 +494,7 @@ const SignUp = () => {
                       width="w-6"
                       showCheckIcon
                     />
-                    <span className="text-xsmall14 text-neutral-0">
+                    <span className="block break-words break-keep text-left text-xsmall14 text-neutral-0">
                       [선택] 렛츠커리어 프로그램 개설 소식을 가장 먼저
                       받아볼래요!
                     </span>
