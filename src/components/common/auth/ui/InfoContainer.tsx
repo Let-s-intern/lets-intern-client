@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 
 import useAuthStore from '../../../../store/useAuthStore';
 import axios from '../../../../utils/axios';
@@ -144,14 +144,22 @@ const InfoContainer = ({
   }, [value, isSocial]);
 
   return (
-    <div className="container mx-auto mt-8 p-5">
-      <div className="mx-auto mb-16 w-full sm:max-w-md">
-        <span className="mb-2 block font-bold">정보입력</span>
-        <h1 className="mb-10 pt-4 text-2xl">
-          빠르고 편리한 이용을 위해
-          <br />
-          상세 정보를 입력해주세요
-        </h1>
+    <div className="w-full pt-9 md:mx-auto md:w-[448px] md:py-16">
+      <section className="mx-5 mb-[80px] md:mx-0 md:mb-[60px]">
+        <div className="mb-9">
+          <span className="mb-6 block text-xsmall16 font-normal text-neutral-30">
+            정보입력
+          </span>
+          <h1 className="text-medium22 font-semibold text-neutral-0">
+            <span className="block md:inline">
+              커리어 정보를
+              <br className="block md:hidden" />
+              입력해 주세요. (선택)
+            </span>
+          </h1>
+        </div>
+
+        {/* TODO: 챌린지 대시보드 입장시 추가정보 입력창 컴포넌트 붙이기 */}
         <form onSubmit={handleSubmit} className="flex flex-col space-y-3">
           <div>
             <Input
@@ -209,17 +217,22 @@ const InfoContainer = ({
             >
               회원가입 완료
             </Button>
-            <div
-              className="mt-4 flex h-[50px] cursor-pointer items-center justify-center text-xs text-neutral-40"
-              onClick={() => {
-                setSuccessModalOpen(true);
-              }}
-            >
-              다음에 하기
-            </div>
           </div>
         </form>
-      </div>
+
+        <div className="flex justify-center pb-3 pt-5">
+          <button
+            type="button"
+            className="text-xsmall16 font-normal text-neutral-40"
+            onClick={() => {
+              setSuccessModalOpen(true);
+            }}
+          >
+            다음에 하기
+          </button>
+        </div>
+      </section>
+
       {successModalOpen && (
         <AlertModal
           onConfirm={() => {
