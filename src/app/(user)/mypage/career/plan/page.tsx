@@ -43,7 +43,7 @@ const CareerPlanEmptySection = ({ handleEdit }: { handleEdit: () => void }) => (
   </section>
 );
 
-const ConditionList = ({
+export const ConditionList = ({
   selected,
   onToggle,
 }: {
