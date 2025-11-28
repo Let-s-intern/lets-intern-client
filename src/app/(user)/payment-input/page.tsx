@@ -91,11 +91,8 @@ const PaymentInputPage = () => {
   const shouldShowCouponSection = (() => {
     if (programApplicationData.programType !== 'challenge') return true;
     if (!program || !('challengeType' in program)) return true;
-
-    const challengeType = program.challengeType;
-    return (
-      challengeType !== 'CAREER_START' && challengeType !== 'EXPERIENCE_SUMMARY'
-    );
+    const couponDisabledChallengeTypes = ['CAREER_START', 'EXPERIENCE_SUMMARY'];
+    return !couponDisabledChallengeTypes.includes(program.challengeType);
   })();
 
   const setUserInfo = useCallback((info: UserInfo) => {
