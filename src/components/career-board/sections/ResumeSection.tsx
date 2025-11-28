@@ -93,6 +93,7 @@ const ResumeSection = () => {
           <ResumeBody documents={documents} />
         ) : (
           <CareerCard.Empty
+            height={109}
             description="아직 등록된 서류가 없어요"
             buttonText="서류 정리하기"
             buttonHref="/mypage/career/resume"
@@ -112,7 +113,7 @@ interface ResumeBodyProps {
 
 const ResumeBody = ({ documents }: ResumeBodyProps) => {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex h-[109px] flex-col gap-4">
       {/* 내 서류 */}
       <div className="flex flex-col gap-2.5">
         <span className="text-xxsmall12 font-normal text-[#4138A3]">
