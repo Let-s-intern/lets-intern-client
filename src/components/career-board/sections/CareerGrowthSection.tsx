@@ -202,7 +202,14 @@ const ProgramCard = ({
           {/* 상단: 태그, 프로그램 종류, 진행기간, 버튼 */}
           <div className="flex w-full flex-wrap items-center justify-between gap-2">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-xxs bg-primary-10 px-2 py-0.5 text-xxsmall12 font-normal text-primary">
+              <span
+                className={twMerge(
+                  'rounded-xxs px-2 py-0.5 text-xxsmall12 font-normal',
+                  program.status === '진행예정'
+                    ? 'border border-neutral-80 text-neutral-80'
+                    : 'bg-primary-10 text-primary',
+                )}
+              >
                 {program.status}
               </span>
               <span className="text-xxsmall12 font-normal text-neutral-40">
