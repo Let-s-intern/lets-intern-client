@@ -20,6 +20,7 @@ import DataTable, {
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import OutlinedButton from '@components/ui/button/OutlinedButton';
 import { useEffect, useMemo, useState } from 'react';
+import CopyCell from './table-cell/CopyCell';
 
 const PAGE_SIZE = 10;
 
@@ -110,9 +111,18 @@ const ExperienceDataTable = ({
         cellRenderer: (value: string) => <CoreCompetencyCell value={value} />,
       },
       {
+        key: 'copyAction',
+        label: '복제',
+        width: '48px',
+        align: { horizontal: 'center', vertical: 'middle' },
+        cellRenderer: (_, row) => (
+          <CopyCell row={row} onFilterReset={onResetFilters} />
+        ),
+      },
+      {
         key: 'deleteAction',
         label: '삭제',
-        width: '90px',
+        width: '48px',
         align: { horizontal: 'center', vertical: 'middle' },
         cellRenderer: (_, row) => (
           <DeleteCell row={row} onFilterReset={onResetFilters} />
