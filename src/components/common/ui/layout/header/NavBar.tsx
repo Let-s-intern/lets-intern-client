@@ -36,7 +36,9 @@ export const getBottomNavBarClassNameByPath = (pathname: string) => {
   return hideMobileBottomNavBar(pathname) && 'hidden md:flex';
 };
 
-const NavBar = () => {
+interface NavBarProps extends React.ComponentProps<'header'> {}
+
+const NavBar = (props: NavBarProps) => {
   const pathname = usePathname();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -71,7 +73,7 @@ const NavBar = () => {
   useControlScroll(isOpen);
 
   return (
-    <header>
+    <header className={props.className}>
       {/* 상단 네비게이션 바 */}
       <div
         className={twMerge(

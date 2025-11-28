@@ -1,25 +1,13 @@
 .login {
-  .gray-text {
-    margin: 2rem 0;
-    display: block;
-    text-align: center;
-    font-size: 0.875rem;
-    color: #7f7f7f;
-  }
+  margin-top: 2rem;
 
   .content {
     display: flex;
     flex-direction: column;
     align-items: center;
 
-    h2 {
-      text-align: center;
-      font-weight: 500;
-      color: #6c6c6c;
-    }
-
     .buttons {
-      margin-top: 1rem;
+      margin-top: 2rem;
       display: flex;
       gap: 1rem;
     }
