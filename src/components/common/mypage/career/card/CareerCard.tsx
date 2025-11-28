@@ -46,6 +46,7 @@ const CareerCard = ({
 };
 
 interface EmptyProps {
+  height?: number;
   description: string;
   buttonText: string;
   buttonHref?: string;
@@ -54,6 +55,7 @@ interface EmptyProps {
 }
 
 const Empty = ({
+  height,
   description,
   buttonText,
   buttonHref,
@@ -70,7 +72,12 @@ const Empty = ({
   };
 
   return (
-    <div className="flex h-[118px] flex-col items-center justify-center gap-3">
+    <div
+      className={clsx(
+        'flex flex-col items-center justify-center gap-3',
+        height && `h-[${height}px]`,
+      )}
+    >
       <p className="text-sm text-[#666666]">{description}</p>
       <button
         type="button"

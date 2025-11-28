@@ -116,6 +116,10 @@ export const userDocumentListSchema = z.object({
       userDocumentId: z.number(),
       userDocumentType: z.enum(['RESUME', 'PORTFOLIO', 'PERSONAL_STATEMENT']),
       fileUrl: z.string(),
+      fileName: z.string().optional(),
+      wishField: z.string().optional(),
+      wishJob: z.string().optional(),
+      wishIndustry: z.string().optional(),
     }),
   ),
 });

@@ -1,12 +1,13 @@
-import TalentPoolBanner from '../banner/TalentPoolBanner';
-import CareerGrowthSection from '../sections/CareerGrowthSection';
-import CareerPlanSection from '../sections/CareerPlanSection';
-import CareerRecordSection from '../sections/CareerRecordSection';
-import ExperienceSection from '../sections/ExperienceSection';
-import DocumentSection from '../sections/ResumeSection';
+import TalentPoolBanner from './banner/TalentPoolBanner';
+import { useCareerDataStatus } from './contexts/CareerDataStatusContext';
+import CareerGrowthSection from './sections/CareerGrowthSection';
+import CareerPlanSection from './sections/CareerPlanSection';
+import CareerRecordSection from './sections/CareerRecordSection';
+import ExperienceSection from './sections/ExperienceSection';
+import DocumentSection from './sections/ResumeSection';
 
 const CareerBoard = () => {
-  const hasCareerData = true; // 커리어 관리 정보 데이터 존재 여부
+  const { hasCareerData } = useCareerDataStatus(); // 커리어 관리 정보 데이터 존재 여부
   const isTalentPoolRegistered = false; // 인재풀 등록 여부
 
   const handleTalentPoolToggle = (value: boolean) => {

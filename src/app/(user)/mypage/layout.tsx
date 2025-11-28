@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 
 import { useIsMentorQuery } from '@/api/user';
+import Banner from '@/components/common/ui/banner/Banner';
 import { Profile } from '@/components/pages/mypage/profile/Profile';
 import useAuthStore from '@/store/useAuthStore';
 
@@ -122,8 +123,8 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
 
   return (
     <div className="m-auto flex w-full max-w-[1120px] flex-col md:py-12">
-      {/* TODO: 배너 (모바일) */}
-      <div className="h-[100px] w-full bg-neutral-80 md:hidden"></div>
+      {/* 배너 (모바일) */}
+      <Banner variant="mypage-mobile" />
 
       {/* 메인 탭 네비게이션 (모바일) */}
       <nav className="flex w-full gap-6 overflow-x-auto border-b border-neutral-85 px-5 pt-3 scrollbar-hide md:hidden">
@@ -167,11 +168,14 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
       <div className="flex w-full flex-1 flex-col pb-14 pt-8 md:flex-row md:gap-x-14 md:pb-[60px] md:pt-0">
         {/* 데스크톱 사이드바 */}
         <aside
-          className={clsx('hidden w-full bg-white md:block md:w-[254px]', {
-            hidden: isReviewCreatePage || isReviewPage,
-          })}
+          className={clsx(
+            'hidden w-full flex-shrink-0 bg-white md:block md:w-[254px]',
+            {
+              hidden: isReviewCreatePage || isReviewPage,
+            },
+          )}
         >
-          <div className="sticky top-0 flex flex-col gap-7">
+          <div className="flex flex-col gap-7">
             <h1 className="hidden text-medium24 font-semibold text-neutral-0 md:block">
               마이페이지
             </h1>
@@ -197,13 +201,13 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
               ))}
             </nav>
 
-            {/* TODO: 배너 (데스크탑) */}
-            <div className="hidden h-[120px] w-full bg-neutral-80 md:block"></div>
+            {/* 배너 (데스크탑) */}
+            <Banner variant="mypage-desktop" />
           </div>
         </aside>
 
         {/* 컨텐츠 영역 */}
-        <main className="flex-1">
+        <main className="min-w-0 flex-1">
           <div>
             {/* 서브 탭 네비게이션 (데스크톱) */}
             {showCareerSubTabs && (

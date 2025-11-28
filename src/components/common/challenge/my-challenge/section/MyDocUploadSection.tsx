@@ -1,8 +1,13 @@
+import { usePostDocumentMutation } from '@/api/mission';
 import { DocumentType } from '@/api/missionSchema';
-import { useGetUserDocumentListQuery } from '@/api/user';
+import {
+  useDeleteUserDocMutation,
+  useGetUserDocumentListQuery,
+} from '@/api/user';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { clsx } from 'clsx';
-import { Trash2, Upload } from 'lucide-react';
-import { useEffect, useRef, type RefObject } from 'react';
+import { LoaderCircle, Trash2, Upload } from 'lucide-react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 import { UploadedFiles } from './MissionSubmitTalentPoolSection';
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
@@ -68,7 +73,9 @@ const handleFilePreview = (file: File | string) => {
 interface DocumentFileItemProps {
   type: DocumentType;
   file: File | string | null;
+  uploadingFile: File | null;
   isSubmitted: boolean;
+  isUploading: boolean;
   inputRef: RefObject<HTMLInputElement>;
   uploadedFiles: UploadedFiles;
   onFileUpload: (type: DocumentType, files: FileList | null) => void;
@@ -78,7 +85,9 @@ interface DocumentFileItemProps {
 export const DocumentFileItem = ({
   type,
   file,
+  uploadingFile,
   isSubmitted,
+  isUploading,
   inputRef,
   uploadedFiles,
   onFileUpload,
@@ -98,7 +107,7 @@ export const DocumentFileItem = ({
       : null;
 
   // 실제로 표시할 파일 (업로드된 파일 or 제출된 서류)
-  const displayFile = file || submittedDocument || null;
+  const displayFile = uploadingFile || file || submittedDocument || null;
   const hasFile = !!displayFile;
   const canEdit = !isSubmitted;
 
@@ -108,18 +117,27 @@ export const DocumentFileItem = ({
         <span className="text-xsmall14 text-neutral-35">{label}</span>
       </div>
 
-      {hasFile ? (
-        <div className="flex items-center">
+      {hasFile || isUploading ? (
+        <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => handleFilePreview(displayFile)}
+            onClick={() => displayFile && handleFilePreview(displayFile)}
             className="truncate text-xsmall14 font-normal text-neutral-0 underline"
           >
             {typeof displayFile === 'string'
               ? getFileNameFromUrl(type, displayFile)
-              : displayFile.name}
+              : displayFile?.name}
           </button>
-          {canEdit && file && (
+          {isUploading && (
+            <div className="flex items-center text-xsmall14 text-neutral-35">
+              <span>업로드 중...</span>
+              <LoaderCircle
+                size={16}
+                className="flex-shrink-0 animate-spin text-primary"
+              />
+            </div>
+          )}
+          {canEdit && file && !isUploading && (
             <button
               type="button"
               onClick={() => onFileDelete(type)}
@@ -166,28 +184,43 @@ const MyDocUploadSection = ({
   onFilesChange,
   isSubmitted = false,
 }: MyDocUploadSectionProps) => {
-  const { data: userDocumentList } = useGetUserDocumentListQuery();
+  const { data: userDocumentList, isLoading } = useGetUserDocumentListQuery();
+  const deleteUserDocMutation = useDeleteUserDocMutation();
+  const postDocumentMutation = usePostDocumentMutation();
+
   const resumeInputRef = useRef<HTMLInputElement>(null);
   const portfolioInputRef = useRef<HTMLInputElement>(null);
   const personalStatementInputRef = useRef<HTMLInputElement>(null);
 
+  const [uploadingType, setUploadingType] = useState<DocumentType | null>(null);
+  const [uploadingFiles, setUploadingFiles] = useState<
+    Record<DocumentType, File | null>
+  >({
+    RESUME: null,
+    PORTFOLIO: null,
+    PERSONAL_STATEMENT: null,
+  });
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
   // 저장된 서류 자동 로드
   useEffect(() => {
-    if (!userDocumentList?.userDocumentList || isSubmitted) return;
+    if (!userDocumentList?.userDocumentList || isSubmitted || !isInitialLoad)
+      return;
 
     const documentTypes: DocumentType[] = [
       'RESUME',
       'PORTFOLIO',
       'PERSONAL_STATEMENT',
     ];
-    const updatedFiles = { ...uploadedFiles };
+    const updatedFiles: UploadedFiles = {
+      resume: null,
+      portfolio: null,
+      personal_statement: null,
+    };
     let hasChanges = false;
 
     documentTypes.forEach((type) => {
       const key = type.toLowerCase() as keyof UploadedFiles;
-
-      // 이미 파일이 있으면 스킵
-      if (uploadedFiles[key]) return;
 
       const document = userDocumentList.userDocumentList.find(
         (doc) => doc.userDocumentType === type,
@@ -202,7 +235,11 @@ const MyDocUploadSection = ({
     if (hasChanges) {
       onFilesChange(updatedFiles);
     }
-  }, [userDocumentList, isSubmitted, uploadedFiles, onFilesChange]);
+
+    setIsInitialLoad(false);
+  }, [userDocumentList, isSubmitted, onFilesChange, isInitialLoad]);
+
+  if (isLoading) return <LoadingContainer />;
 
   const resetInput = (type: DocumentType) => {
     const inputRef =
@@ -214,7 +251,10 @@ const MyDocUploadSection = ({
     if (inputRef.current) inputRef.current.value = '';
   };
 
-  const handleFileUpload = (type: DocumentType, files: FileList | null) => {
+  const handleFileUpload = async (
+    type: DocumentType,
+    files: FileList | null,
+  ) => {
     if (!files || files.length === 0) return;
 
     const file = files[0]; // 첫 번째 파일만 사용
@@ -236,23 +276,64 @@ const MyDocUploadSection = ({
       return;
     }
 
-    const updatedFiles = {
-      ...uploadedFiles,
-      [type.toLowerCase()]: file,
-    };
+    // FormData 생성
+    const formData = new FormData();
+    formData.append(
+      'requestDto',
+      new Blob(
+        [
+          JSON.stringify({
+            documentType: type,
+            fileUrl: '',
+            wishField: '',
+            wishIndustry: '',
+            wishJob: '',
+          }),
+        ],
+        {
+          type: 'application/json',
+        },
+      ),
+    );
+    formData.append('file', file);
+    setUploadingType(type);
+    setUploadingFiles((prev) => ({ ...prev, [type]: file }));
 
-    onFilesChange(updatedFiles);
+    try {
+      await postDocumentMutation.mutateAsync(formData);
+      const updatedFiles = {
+        ...uploadedFiles,
+        [type.toLowerCase()]: file,
+      };
+      onFilesChange(updatedFiles);
+    } catch (error) {
+      alert('파일 업로드에 실패했습니다.');
+      resetInput(type);
+    } finally {
+      setUploadingType(null);
+      setUploadingFiles((prev) => ({ ...prev, [type]: null }));
+    }
   };
 
-  const handleFileDelete = (type: DocumentType) => {
-    resetInput(type);
-
-    const updatedFiles: UploadedFiles = {
+  const handleFileDelete = async (type: DocumentType) => {
+    const document = userDocumentList?.userDocumentList.find(
+      (doc) => doc.userDocumentType === type,
+    );
+    // 문서가 있으면 삭제 API 호출
+    if (document?.userDocumentId) {
+      try {
+        await deleteUserDocMutation.mutateAsync(document?.userDocumentId);
+      } catch (error) {
+        alert('문서 삭제에 실패했습니다.');
+        return;
+      }
+    }
+    const updatedFiles = {
       ...uploadedFiles,
       [type.toLowerCase()]: null,
     };
-
     onFilesChange(updatedFiles);
+    resetInput(type);
   };
 
   const commonProps = {
@@ -268,18 +349,24 @@ const MyDocUploadSection = ({
         type="RESUME"
         file={uploadedFiles.resume}
         inputRef={resumeInputRef}
+        isUploading={uploadingType === 'RESUME'}
+        uploadingFile={uploadingFiles.RESUME}
         {...commonProps}
       />
       <DocumentFileItem
         type="PORTFOLIO"
         file={uploadedFiles.portfolio}
         inputRef={portfolioInputRef}
+        isUploading={uploadingType === 'PORTFOLIO'}
+        uploadingFile={uploadingFiles.PORTFOLIO}
         {...commonProps}
       />
       <DocumentFileItem
         type="PERSONAL_STATEMENT"
         file={uploadedFiles.personal_statement}
         inputRef={personalStatementInputRef}
+        isUploading={uploadingType === 'PERSONAL_STATEMENT'}
+        uploadingFile={uploadingFiles.PERSONAL_STATEMENT}
         {...commonProps}
       />
     </div>

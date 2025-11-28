@@ -1,19 +1,52 @@
+import { useGetAllUserExperienceQuery } from '@/api/experience';
+import LoadingContainer from '@/components/common/ui/loading/LoadingContainer';
+import { getTopCoreCompetencies } from '@components/career-board/utils/experienceSummary';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import CareerCard from '../../common/mypage/career/card/CareerCard';
+import { useCareerDataStatus } from '../contexts/CareerDataStatusContext';
 
 const ExperienceSection = () => {
   const router = useRouter();
 
-  // TODO: 서버에서 받아올 데이터 (임시 하드코딩)
-  const experienceCount = 12;
-  const coreCompetencies = [
-    '데이터 분석',
-    '데이터 분석데이터 분석',
-    '데이터 분석 데이터 분석데이터 분석',
-  ];
+  // API 호출
+  const { data, isLoading } = useGetAllUserExperienceQuery(
+    {
+      experienceCategories: [],
+      activityTypes: [],
+      years: [],
+      coreCompetencies: [],
+    },
+    'LATEST',
+    { page: 1, size: 1000 },
+  );
+  const { setHasCareerData } = useCareerDataStatus();
+
+  // 사용자가 직접 입력한 경험만 필터링
+  const userExperiences =
+    data?.userExperiences.filter((exp) => exp.isAddedByAdmin === false) ?? [];
+
+  const experienceCount = userExperiences.length;
+  const coreCompetencies = getTopCoreCompetencies(data?.userExperiences ?? []);
 
   // 데이터 존재 여부 확인
-  const hasData = experienceCount > 0 || coreCompetencies.length > 0;
+  const hasData = experienceCount > 0;
+
+  useEffect(() => {
+    if (hasData) {
+      setHasCareerData(true);
+    }
+  }, [hasData, setHasCareerData]);
+
+  if (isLoading) {
+    return (
+      <CareerCard
+        title="경험 정리"
+        labelOnClick={() => router.push('/mypage/career/experience')}
+        body={<LoadingContainer text="경험 정리 조회 중" />}
+      />
+    );
+  }
 
   return (
     <CareerCard
@@ -27,6 +60,7 @@ const ExperienceSection = () => {
           />
         ) : (
           <CareerCard.Empty
+            height={179}
             description="아직 정리된 경험이 없어요"
             buttonText="경험 정리하기"
             buttonHref="/mypage/career/experience"
@@ -50,7 +84,7 @@ const ExperienceBody = ({
   coreCompetencies,
 }: ExperienceBodyProps) => {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex h-[179px] flex-col gap-4">
       {/* 지금까지 정리한 경험 */}
       <div className="flex flex-col gap-1">
         <span className="text-xxsmall12 font-normal text-[#4138A3]">

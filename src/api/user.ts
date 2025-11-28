@@ -216,7 +216,10 @@ export type PatchUserBody = {
   grade?: string | null;
   major?: string | null;
   wishJob?: string | null;
+  wishField?: string | null;
   wishCompany?: string | null;
+  wishIndustry?: string | null;
+  wishEmploymentType?: string | null;
   marketingAgree?: boolean;
 };
 
@@ -299,6 +302,23 @@ export const useGetUserDocumentListQuery = () => {
     queryFn: async () => {
       const res = await axios.get('/user-document');
       return userDocumentListSchema.parse(res.data.data);
+    },
+  });
+};
+
+/** DELETE [유저] 서류(자소서, 포트폴리오 등) 삭제 /api/v1/user-document/{userDocumentId}*/
+export const useDeleteUserDocMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (userDocumentId: number) => {
+      const res = await axios.delete(`/user-document/${userDocumentId}`);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [UseGetUserDocumentListQueryKey],
+      });
     },
   });
 };

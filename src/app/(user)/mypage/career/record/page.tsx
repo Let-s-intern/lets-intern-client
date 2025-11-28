@@ -6,7 +6,6 @@ import {
   usePostUserCareerMutation,
 } from '@/api/career';
 import { UserCareerType } from '@/api/careerSchema';
-import { convertCareerUiToApiFormat } from '@/utils/career';
 import CareerHeader from '@components/common/mypage/career/CareerHeader';
 import CareerItem from '@components/common/mypage/career/CareerItem';
 import CareerList from '@components/common/mypage/career/CareerList';
@@ -15,6 +14,7 @@ import {
   PAGE_SIZE,
 } from '@components/common/mypage/career/constants';
 import NoCareerView from '@components/common/mypage/career/NoCareerView';
+import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useState } from 'react';
 
 const Career = () => {
@@ -23,7 +23,7 @@ const Career = () => {
 
   const createCareerMutation = usePostUserCareerMutation();
   const patchCareerMutation = usePatchUserCareerMutation();
-  const { data } = useGetUserCareerQuery({
+  const { data, isLoading } = useGetUserCareerQuery({
     page: 1,
     size: PAGE_SIZE,
   });
@@ -37,9 +37,8 @@ const Career = () => {
 
   const handleSubmitForm = async (career: UserCareerType) => {
     const formData = new FormData();
-    const careerReq = convertCareerUiToApiFormat(career);
 
-    const requestDto = new Blob([JSON.stringify(careerReq)], {
+    const requestDto = new Blob([JSON.stringify(career)], {
       type: 'application/json',
     });
 
@@ -67,41 +66,41 @@ const Career = () => {
     setEditingId(id);
   };
 
-  const renderCreateForm = () => (
-    <CareerItem
-      career={DEFAULT_CAREER}
-      writeMode
-      handleCancel={handleCloseForm}
-      handleSubmit={handleSubmitForm}
-      handleEdit={handleEditBtnClick}
-    />
-  );
-
   const isEmpty = userCareers?.length === 0;
 
-  // 커리어 기록이 없을 때
-  if (isEmpty) {
-    if (createMode) return renderCreateForm();
-    return <NoCareerView handleCreateNew={handleCreateBtnClick} />;
-  }
+  if (isLoading)
+    return <LoadingContainer text="커리어 기록 조회 중" className="h-[62vh]" />;
 
-  // 커리어 기록이 하나 이상 있을 때
   return (
-    <section className="flex w-full flex-col gap-3">
-      <CareerHeader
-        showCreateButton={editingId === null && !createMode}
-        handleCreateBtnClick={handleCreateBtnClick}
-      />
+    <>
+      {isEmpty && !createMode ? (
+        <NoCareerView handleCreateNew={handleCreateBtnClick} />
+      ) : (
+        <section className="flex w-full flex-col gap-3">
+          <CareerHeader
+            showCreateButton={editingId === null && !createMode}
+            handleCreateBtnClick={handleCreateBtnClick}
+          />
 
-      {createMode && renderCreateForm()}
+          {createMode && (
+            <CareerItem
+              career={DEFAULT_CAREER}
+              writeMode
+              handleCancel={handleCloseForm}
+              handleSubmit={handleSubmitForm}
+              handleEdit={handleEditBtnClick}
+            />
+          )}
 
-      <CareerList
-        editingId={editingId}
-        handleCancel={handleCloseForm}
-        handleSubmit={handleSubmitForm}
-        handleEdit={handleEditBtnClick}
-      />
-    </section>
+          <CareerList
+            editingId={editingId}
+            handleCancel={handleCloseForm}
+            handleSubmit={handleSubmitForm}
+            handleEdit={handleEditBtnClick}
+          />
+        </section>
+      )}
+    </>
   );
 };
 

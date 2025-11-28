@@ -1,15 +1,17 @@
 import { Asterisk, ChevronRight } from 'lucide-react';
 interface SelectButtonProps {
   label: string;
+  className?: string;
   value: string;
   placeholder: string;
-  isRequired: boolean;
-  disabled: boolean;
+  isRequired?: boolean;
+  disabled?: boolean;
   onClick: () => void;
 }
 
 export function SelectButton({
   label,
+  className,
   value,
   placeholder,
   isRequired,
@@ -20,7 +22,7 @@ export function SelectButton({
   return (
     <div>
       <label className="mb-1.5 flex items-center gap-1.5">
-        <span>{label}</span>
+        <span className={className}>{label}</span>
         <Asterisk
           className={`pb-1 text-primary ${!isRequired && 'hidden'}`}
           size={16}
@@ -30,7 +32,7 @@ export function SelectButton({
       <button
         onClick={onClick}
         disabled={disabled}
-        className={`flex w-full items-center justify-between truncate rounded-xxs border border-neutral-80 px-3 py-2.5 text-left ${
+        className={`${className} flex w-full items-center justify-between truncate rounded-xxs border border-neutral-80 px-3 py-2.5 text-left ${
           disabled
             ? 'cursor-not-allowed border-neutral-80 bg-neutral-100 text-neutral-50'
             : ''
