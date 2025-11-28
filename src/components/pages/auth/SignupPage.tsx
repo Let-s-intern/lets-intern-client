@@ -365,7 +365,10 @@ const SignUp = () => {
                       placeholder="비밀번호를 다시 입력해 주세요."
                       value={value.passwordConfirm}
                       onChange={(e) =>
-                        setValue({ ...value, passwordConfirm: e.target.value })
+                        setValue({
+                          ...value,
+                          passwordConfirm: e.target.value,
+                        })
                       }
                     />
                   </div>
@@ -424,7 +427,10 @@ const SignUp = () => {
                     type="button"
                     className="flex items-center gap-2"
                     onClick={() =>
-                      setValue({ ...value, agreeToTerms: !value.agreeToTerms })
+                      setValue({
+                        ...value,
+                        agreeToTerms: !value.agreeToTerms,
+                      })
                     }
                   >
                     <CheckBox
