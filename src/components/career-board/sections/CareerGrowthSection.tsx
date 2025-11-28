@@ -43,19 +43,23 @@ const CareerGrowthSection = () => {
       }
     });
 
-    // 진행중 프로그램이 있으면 진행중만 표시, 없으면 진행예정 표시
-    const targetPrograms =
-      proceedingPrograms.length > 0 ? proceedingPrograms : upcomingPrograms;
+    // 진행중과 진행예정 프로그램을 모두 표시 (진행중 우선)
+    // 각 그룹 내에서는 시작일 기준 오름차순 정렬
+    const sortByStartDate = (a: MypageApplication, b: MypageApplication) => {
+      const dateA = a.programStartDate;
+      const dateB = b.programStartDate;
+      if (!dateA || !dateB) return 0;
+      return dateA.isBefore(dateB) ? -1 : 1;
+    };
 
-    // 진행중 프로그램이 2개 이상이면 시작일 기준 오름차순 정렬
-    if (targetPrograms.length > 1) {
-      targetPrograms.sort((a, b) => {
-        const dateA = a.programStartDate;
-        const dateB = b.programStartDate;
-        if (!dateA || !dateB) return 0;
-        return dateA.isBefore(dateB) ? -1 : 1;
-      });
+    if (proceedingPrograms.length > 1) {
+      proceedingPrograms.sort(sortByStartDate);
     }
+    if (upcomingPrograms.length > 1) {
+      upcomingPrograms.sort(sortByStartDate);
+    }
+
+    const targetPrograms = [...proceedingPrograms, ...upcomingPrograms];
 
     return targetPrograms.map((app) => convertApplicationToProgram(app));
   }, [applications]);
@@ -205,7 +209,7 @@ const ProgramCard = ({
                 className={twMerge(
                   'rounded-xxs px-2 py-0.5 text-xxsmall12 font-normal',
                   program.status === '진행예정'
-                    ? 'border border-neutral-80 text-neutral-80'
+                    ? 'border border-neutral-80 text-primary'
                     : 'bg-primary-10 text-primary',
                 )}
               >
