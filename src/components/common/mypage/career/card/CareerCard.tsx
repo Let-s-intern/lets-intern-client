@@ -22,7 +22,7 @@ const CareerCard = ({
     <div className={clsx({ 'w-full': fullWidth })}>
       <div
         className={clsx(
-          'flex flex-1 flex-col gap-3 rounded-xs border border-[#E4E4E7] p-4',
+          'flex flex-1 flex-col gap-3 rounded-xs border border-neutral-85 p-4',
           className,
         )}
       >
