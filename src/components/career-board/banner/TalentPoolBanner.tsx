@@ -48,7 +48,7 @@ const TalentPoolBanner = ({
             onClick={handleToggle}
             disabled={isDisabled}
             className={clsx(
-              'relative h-6 w-10 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+              'relative h-6 w-10 rounded-full transition-colors',
               {
                 'bg-primary': isEnabled && !isDisabled,
                 'bg-[#D1D1D1]': !isEnabled || isDisabled,
