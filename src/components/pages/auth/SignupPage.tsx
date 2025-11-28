@@ -133,7 +133,9 @@ const SignUp = () => {
           axiosError.response.data?.message || '이미 가입된 사용자입니다.',
         );
       } else {
-        setErrorMessage('회원가입에 실패했습니다.');
+        setErrorMessage(
+          axiosError.response?.data?.message || '회원가입에 실패했습니다.',
+        );
       }
     },
   });
