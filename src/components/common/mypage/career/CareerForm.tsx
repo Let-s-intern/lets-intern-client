@@ -9,6 +9,7 @@ import {
 import { convertCareerUiToApiFormat } from '@/utils/career';
 import { EmployeeTypeModal } from '@components/common/mypage/career/EmployeeTypeModal';
 import { PeriodSelectModal } from '@components/pages/mypage/experience/components/PeriodSelectModal';
+import WarningModal from '@components/ui/alert/WarningModal';
 import OutlinedButton from '@components/ui/button/OutlinedButton';
 import SolidButton from '@components/ui/button/SolidButton';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -44,6 +45,7 @@ const CareerForm = ({
 
   const [employeeTypeModalOpen, setEmployeeTypeModalOpen] = useState(false);
   const [periodMode, setPeriodMode] = useState<'start' | 'end' | null>(null);
+  const [showCancelWarning, setShowCancelWarning] = useState(false);
 
   const form = watch();
 
@@ -80,6 +82,19 @@ const CareerForm = ({
       shouldValidate: true,
       shouldDirty: true,
     });
+  };
+
+  const handleCancelClick = () => {
+    if (isDirty) {
+      setShowCancelWarning(true);
+    } else {
+      handleCancel();
+    }
+  };
+
+  const handleConfirmCancel = () => {
+    setShowCancelWarning(false);
+    handleCancel();
   };
 
   return (
@@ -216,7 +231,7 @@ const CareerForm = ({
         </fieldset>
 
         <div className="mt-11 flex w-full gap-2">
-          <OutlinedButton onClick={handleCancel} className="flex-1">
+          <OutlinedButton onClick={handleCancelClick} className="flex-1">
             취소하기
           </OutlinedButton>
           <SolidButton
@@ -267,6 +282,12 @@ const CareerForm = ({
           }
         />
       )}
+
+      <WarningModal
+        isOpen={showCancelWarning}
+        onCancel={() => setShowCancelWarning(false)}
+        onConfirm={handleConfirmCancel}
+      />
     </>
   );
 };
