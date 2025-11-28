@@ -60,6 +60,7 @@ const ExperienceSection = () => {
           />
         ) : (
           <CareerCard.Empty
+            height={179}
             description="아직 정리된 경험이 없어요"
             buttonText="경험 정리하기"
             buttonHref="/mypage/career/experience"
@@ -83,7 +84,7 @@ const ExperienceBody = ({
   coreCompetencies,
 }: ExperienceBodyProps) => {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex h-[179px] flex-col gap-4">
       {/* 지금까지 정리한 경험 */}
       <div className="flex flex-col gap-1">
         <span className="text-xxsmall12 font-normal text-[#4138A3]">

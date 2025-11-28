@@ -24,7 +24,6 @@ const CareerGrowthSection = () => {
   } = useMypageApplicationsQuery();
   const { setHasCareerData } = useCareerDataStatus();
 
-  console.log(applications);
   // API 데이터를 Program 인터페이스로 변환
   const programs = useMemo(() => {
     if (!applications || applications.length === 0) return [];

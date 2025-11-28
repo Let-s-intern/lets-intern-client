@@ -53,6 +53,7 @@ const CareerPlanSection = () => {
           />
         ) : (
           <CareerCard.Empty
+            height={179}
             description="아직 커리어 방향을 설정하지 않았어요."
             buttonText="커리어 계획하기"
             buttonHref="/mypage/career/plan"
@@ -88,7 +89,7 @@ const CareerPlanBody = ({
   })();
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex h-[179px] flex-col gap-2">
       <PlanFieldItem label="희망 직군 / 직무" value={jobRoleText || '미설정'} />
       <PlanFieldItem
         label="희망 산업"
