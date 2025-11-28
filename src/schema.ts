@@ -1664,6 +1664,19 @@ export const userAdminDetailType = z.object({
       }),
     )
     .nullable(),
+  experienceInfos: z
+    .array(
+      z.object({
+        // userExperienceId: z.number(),
+        // experienceType: z.string().nullable(),
+        title: z.string().nullable(),
+        // content: z.string().nullable(),
+        // startDate: z.string().nullable(),
+        // endDate: z.string().nullable(),
+        // isCurrentlyWorking: z.boolean().nullable(),
+      }),
+    )
+    .nullable(),
 });
 
 export type UserAdminDetail = z.infer<typeof userAdminDetailType>;

@@ -5,6 +5,7 @@ import ActionButton from '@/components/admin/ui/button/ActionButton';
 import Header from '@/components/admin/ui/header/Header';
 import Heading from '@/components/admin/ui/heading/Heading';
 import { useParams, useRouter } from 'next/navigation';
+import PersonalExperience from './PersonalExperience';
 import PersonalHistory from './PersonalHistory';
 import PersonalInfo from './PersonalInfo';
 
@@ -30,9 +31,12 @@ const UserDetail = () => {
           <Header>
             <Heading>커리어 DB</Heading>
           </Header>
-          <main className="grid w-full grid-cols-2 flex-col gap-x-8 gap-y-4">
-            <PersonalInfo data={data} />
-            <PersonalHistory data={data} />
+          <main className="flex w-full flex-col gap-y-8">
+            <div className="grid w-full grid-cols-2 flex-col gap-x-8 gap-y-4">
+              <PersonalInfo data={data} />
+              <PersonalHistory data={data} />
+            </div>
+            <PersonalExperience data={data} />
           </main>
         </div>
       )}
