@@ -53,7 +53,7 @@ const InfoContainer = ({
     mutationFn: async () => {
       // 한글 학년을 enum 값으로 변환
       const enumGrade = value.grade
-        ? GRADE_KOREAN_TO_ENUM[value.grade] || value.grade
+        ? (GRADE_KOREAN_TO_ENUM[value.grade] ?? null)
         : null;
 
       const res = await axios.patch(`/user/additional-info`, {
@@ -89,7 +89,7 @@ const InfoContainer = ({
     mutationFn: async () => {
       // 한글 학년을 enum 값으로 변환
       const enumGrade = value.grade
-        ? GRADE_KOREAN_TO_ENUM[value.grade] || value.grade
+        ? (GRADE_KOREAN_TO_ENUM[value.grade] ?? value.grade)
         : null;
 
       const res = await axios({

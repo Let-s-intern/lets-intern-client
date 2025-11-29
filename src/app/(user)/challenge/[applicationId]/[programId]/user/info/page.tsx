@@ -166,7 +166,7 @@ const ChallengeUserInfo = () => {
 
     try {
       const enumGrade = value.grade
-        ? GRADE_KOREAN_TO_ENUM[value.grade] || value.grade
+        ? (GRADE_KOREAN_TO_ENUM[value.grade] ?? null)
         : null;
 
       const tryPatchUserRes = await tryPatchUser({
