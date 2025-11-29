@@ -11,8 +11,33 @@ const PersonalHistory = ({ data }: { data: UserAdminDetail }) => {
             <IoAdd size={20} />
           </button>
         </div>
+        <div className="mt-4">
+          {data.careerInfos?.length === 0 ? (
+            <div className="text-center text-neutral-500">
+              등록된 경력이 없습니다.
+            </div>
+          ) : (
+            <div className="flex flex-col gap-4">
+              {data.careerInfos?.map((career, index) => (
+                <div
+                  key={index}
+                  className="flex w-full flex-col gap-1 rounded-xs border border-neutral-80 p-4"
+                >
+                  <div className="text-sm text-neutral-0">{career.job}</div>
+                  <span className="text-neutral-0">{career.company}</span>
+                  <div className="flex items-center gap-2 text-sm text-neutral-0">
+                    <span>{career.employmentType}</span>
+                    <span className="text-neutral-40">
+                      {career.startDate} - {career.endDate}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </section>
-      <section>
+      <section className="mt-6">
         <div className="flex items-center justify-between border-b pb-2">
           <h1 className="text-lg font-semibold">서류</h1>
         </div>

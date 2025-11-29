@@ -1665,6 +1665,18 @@ export const userAdminDetailType = z.object({
       }),
     )
     .nullable(),
+  careerInfos: z
+    .array(
+      z.object({
+        company: z.string().nullable(),
+        job: z.string().nullable(),
+        employmentType: z.string().nullable(),
+        startDate: z.string().nullable(), // ISO 날짜 문자열 (예: "2025-10-29")
+        endDate: z.string().nullable(), // ISO 날짜 문자열 (예: "2025-10-29")
+        verificationFile: z.string().nullable(),
+      }),
+    )
+    .nullable(),
   experienceInfos: z
     .array(
       z.object({

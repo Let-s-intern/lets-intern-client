@@ -9,7 +9,7 @@ import DataTable, { TableHeader } from '@components/common/table/DataTable';
 
 const PersonalExperience = ({ data }: { data: UserAdminDetail }) => {
   const formattedData = formatExperienceData(data.experienceInfos);
-  if (formattedData.length === 0) return <div>경험 데이터가 없습니다.</div>;
+  if (formattedData.length === 0) return;
 
   return (
     <div>
