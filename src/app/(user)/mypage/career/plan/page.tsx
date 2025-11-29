@@ -6,13 +6,8 @@ import CareerInfoForm, {
 } from '@/components/common/mypage/career/CareerInfoForm';
 import { useCareerModals } from '@/hooks/useCareerModals';
 import { useChangeDetection } from '@/hooks/useChangeDetectionHook';
-import {
-  GRADE_ENUM_TO_KOREAN,
-  GRADE_KOREAN_TO_ENUM,
-  JOB_CONDITIONS,
-} from '@/utils/constants';
+import { GRADE_ENUM_TO_KOREAN, GRADE_KOREAN_TO_ENUM } from '@/utils/constants';
 import CareerPlanForm from '@components/common/mypage/career/CareerPlanForm';
-import CheckBox from '@components/common/ui/CheckBox';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import OutlinedButton from '@components/ui/button/OutlinedButton';
 import SolidButton from '@components/ui/button/SolidButton';
@@ -41,32 +36,6 @@ const CareerPlanEmptySection = ({ handleEdit }: { handleEdit: () => void }) => (
       커리어 계획하기
     </OutlinedButton>
   </section>
-);
-
-export const ConditionList = ({
-  selected,
-  onToggle,
-}: {
-  selected: string[];
-  onToggle: (value: string) => void;
-}) => (
-  <div className="flex flex-col gap-2">
-    {JOB_CONDITIONS.map((option) => (
-      <button
-        key={option.value}
-        type="button"
-        onClick={() => onToggle(option.value)}
-        className="flex w-full items-center gap-1 text-xsmall14"
-      >
-        <CheckBox
-          checked={selected.includes(option.value)}
-          width="w-6"
-          showCheckIcon
-        />
-        <span className="text-xsmall14 md:text-xsmall16">{option.label}</span>
-      </button>
-    ))}
-  </div>
 );
 
 export default function Page() {

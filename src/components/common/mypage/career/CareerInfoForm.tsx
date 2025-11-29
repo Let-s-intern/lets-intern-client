@@ -1,9 +1,36 @@
-import { ConditionList } from '@/app/(user)/mypage/career/plan/page';
 import { useCareerModals } from '@/hooks/useCareerModals';
+import { JOB_CONDITIONS } from '@/utils/constants';
 import { SelectButton } from '@components/common/ui/button/SelectButton';
+import CheckBox from '@components/common/ui/CheckBox';
 import LineInput from '@components/common/ui/input/LineInput';
 import { useEffect } from 'react';
 import CareerModals from './CareerModal';
+
+const ConditionList = ({
+  selected,
+  onToggle,
+}: {
+  selected: string[];
+  onToggle: (value: string) => void;
+}) => (
+  <div className="flex flex-col gap-2">
+    {JOB_CONDITIONS.map((option) => (
+      <button
+        key={option.value}
+        type="button"
+        onClick={() => onToggle(option.value)}
+        className="flex w-full items-center gap-1 text-xsmall14"
+      >
+        <CheckBox
+          checked={selected.includes(option.value)}
+          width="w-6"
+          showCheckIcon
+        />
+        <span className="text-xsmall14 md:text-xsmall16">{option.label}</span>
+      </button>
+    ))}
+  </div>
+);
 
 export interface CareerInfoValues {
   university: string;
