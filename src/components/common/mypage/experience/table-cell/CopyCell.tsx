@@ -1,3 +1,4 @@
+import { UserExperienceType } from '@/api/experienceSchema';
 import BaseModal from '@components/ui/BaseModal';
 import { Copy } from 'lucide-react';
 import { useState } from 'react';
@@ -7,7 +8,7 @@ const CopyCell = ({
   onCopy,
 }: {
   row: any;
-  onCopy: (copiedExperience: any) => void;
+  onCopy: (copiedExperience: UserExperienceType) => void;
 }) => {
   const [isCopyModalOpen, setIsCopyModalOpen] = useState(false);
 
@@ -31,7 +32,10 @@ const CopyCell = ({
   };
 
   return (
-    <div className="flex h-full w-full items-center justify-center">
+    <div
+      onClick={(e) => e.stopPropagation()}
+      className="flex h-full w-full items-center justify-center"
+    >
       <Copy
         size={20}
         className="cursor-pointer p-0.5 text-neutral-30"
@@ -40,7 +44,6 @@ const CopyCell = ({
           setIsCopyModalOpen(true);
         }}
       />
-
       <BaseModal
         isOpen={isCopyModalOpen}
         onClose={() => setIsCopyModalOpen(false)}
@@ -57,19 +60,13 @@ const CopyCell = ({
 
         <div className="flex h-[3.375rem] w-full divide-x divide-neutral-80 border-t border-neutral-80">
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsCopyModalOpen(false);
-            }}
+            onClick={() => setIsCopyModalOpen(false)}
             className="flex-1 text-sm font-medium text-neutral-35"
           >
             취소
           </button>
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleCopy();
-            }}
+            onClick={() => handleCopy()}
             className="flex-1 text-sm font-semibold text-primary"
           >
             복제하기
