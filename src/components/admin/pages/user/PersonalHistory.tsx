@@ -1,5 +1,17 @@
 import { UserAdminDetail } from '@/schema';
-import { IoAdd } from 'react-icons/io5';
+
+const getDocumentLabel = (type: string) => {
+  switch (type) {
+    case 'RESUME':
+      return '이력서';
+    case 'COVER_LETTER':
+      return '자기소개서';
+    case 'PORTFOLIO':
+      return '포트폴리오';
+    default:
+      return '서류';
+  }
+};
 
 const PersonalHistory = ({ data }: { data: UserAdminDetail }) => {
   return (
@@ -7,9 +19,6 @@ const PersonalHistory = ({ data }: { data: UserAdminDetail }) => {
       <section>
         <div className="flex items-center justify-between border-b pb-2">
           <h1 className="pb-1 text-lg font-semibold">경력</h1>
-          <button>
-            <IoAdd size={20} />
-          </button>
         </div>
         <div className="mt-4">
           {data.careerInfos?.length === 0 ? (
@@ -49,19 +58,6 @@ const PersonalHistory = ({ data }: { data: UserAdminDetail }) => {
           ) : (
             <ul className="mt-2 flex flex-col gap-y-2">
               {data.userDocumentInfo?.map((doc) => {
-                const getDocumentLabel = (type: string) => {
-                  switch (type) {
-                    case 'RESUME':
-                      return '이력서';
-                    case 'COVER_LETTER':
-                      return '자기소개서';
-                    case 'PORTFOLIO':
-                      return '포트폴리오';
-                    default:
-                      return '서류';
-                  }
-                };
-
                 return (
                   <li key={doc.userDocumentId} className="rounded-sm py-2">
                     <a
