@@ -126,9 +126,6 @@ const CareerInfoForm = ({
     initialSelections?.field,
     initialSelections?.positions,
     initialSelections?.industries,
-    setSelectedField,
-    setSelectedPositions,
-    setSelectedIndustries,
   ]);
 
   // 선택 값 변경 시 부모 컴포넌트에 알림 (내부 모드일 때만)
