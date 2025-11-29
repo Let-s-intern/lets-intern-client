@@ -30,12 +30,14 @@ const ExperienceDataTable = ({
   onResetFilters,
   onRowClick,
   onCreateClick,
+  onCopy,
 }: {
   sortBy: Sortable;
   filters: Filters;
   onResetFilters: () => void;
   onRowClick?: (experience: TableData) => void;
   onCreateClick: () => void;
+  onCopy: (copiedExperience: TableData) => void;
 }) => {
   const [page, setPage] = useState(1);
 
@@ -115,9 +117,7 @@ const ExperienceDataTable = ({
         label: '복제',
         width: '48px',
         align: { horizontal: 'center', vertical: 'middle' },
-        cellRenderer: (_, row) => (
-          <CopyCell row={row} onFilterReset={onResetFilters} />
-        ),
+        cellRenderer: (_, row) => <CopyCell row={row} onCopy={onCopy} />,
       },
       {
         key: 'deleteAction',
@@ -129,7 +129,7 @@ const ExperienceDataTable = ({
         ),
       },
     ],
-    [onResetFilters],
+    [onResetFilters, onCopy],
   );
 
   if (isLoading) {

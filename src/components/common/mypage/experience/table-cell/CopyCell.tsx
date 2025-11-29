@@ -2,13 +2,32 @@ import BaseModal from '@components/ui/BaseModal';
 import { Copy } from 'lucide-react';
 import { useState } from 'react';
 
-const CopyCell = ({ row }: { row: any; onFilterReset?: () => void }) => {
+const CopyCell = ({
+  row,
+  onCopy,
+}: {
+  row: any;
+  onCopy: (copiedExperience: any) => void;
+}) => {
   const [isCopyModalOpen, setIsCopyModalOpen] = useState(false);
 
   const handleCopy = () => {
     setIsCopyModalOpen(false);
-    /** TODO : 복제 기능 추가 */
-    console.log(row);
+
+    // 기본 정보만 복제
+    const copiedExperience = {
+      ...row,
+      id: undefined,
+      title: `${row.title}_복제`,
+      // STAR 내용 제거
+      situation: '',
+      task: '',
+      action: '',
+      result: '',
+      reflection: '',
+      coreCompetency: '',
+    };
+    onCopy(copiedExperience);
   };
 
   return (
