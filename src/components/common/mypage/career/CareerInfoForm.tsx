@@ -146,20 +146,22 @@ const CareerInfoForm = ({
   ]);
 
   const handleConditionToggle = (conditionValue: string) => {
-    const current = value.wishEmploymentType ?? '';
-    const list = current
-      ? current
-          .split(',')
-          .map((v) => v.trim())
-          .filter(Boolean)
-      : [];
-    const updated = list.includes(conditionValue)
-      ? list.filter((v) => v !== conditionValue)
-      : [...list, conditionValue];
+    const currentValues = new Set(
+      (value.wishEmploymentType ?? '')
+        .split(',')
+        .map((v) => v.trim())
+        .filter(Boolean),
+    );
+
+    if (currentValues.has(conditionValue)) {
+      currentValues.delete(conditionValue);
+    } else {
+      currentValues.add(conditionValue);
+    }
 
     onChange({
       ...value,
-      wishEmploymentType: updated.length > 0 ? updated.join(', ') : '',
+      wishEmploymentType: Array.from(currentValues).join(', '),
     });
   };
 
