@@ -1,4 +1,3 @@
-import { UserAttendanceExperience } from '@/api/experienceSchema';
 import { UserAdminDetail } from '@/schema';
 import { getExperienceRowHeight } from '@/utils/experience';
 import ActivityTypeCell from '@components/common/mypage/experience/table-cell/ActivityTypeCell';
@@ -10,6 +9,7 @@ import DataTable, { TableHeader } from '@components/common/table/DataTable';
 
 const PersonalExperience = ({ data }: { data: UserAdminDetail }) => {
   const formattedData = formatExperienceData(data.experienceInfos);
+  if (formattedData.length === 0) return <div>경험 데이터가 없습니다.</div>;
 
   return (
     <div>
@@ -26,10 +26,11 @@ const PersonalExperience = ({ data }: { data: UserAdminDetail }) => {
   );
 };
 
-const formatExperienceData = (data: UserAttendanceExperience) => {
-  return data.map((item) => {
+const formatExperienceData = (data: UserAdminDetail['experienceInfos']) => {
+  if (!data) return [];
+  return data.map((item, index) => {
     if (!item.startDate || !item.endDate) {
-      return { ...item, period: '-', year: '-' };
+      return { ...item, id: index, period: '-', year: '-' };
     }
     const start = new Date(item.startDate);
     const end = new Date(item.endDate);
@@ -37,6 +38,7 @@ const formatExperienceData = (data: UserAttendanceExperience) => {
     const year = end.getFullYear();
     return {
       ...item,
+      id: index,
       period,
       year,
     };

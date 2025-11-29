@@ -1,6 +1,7 @@
 import dayjs from '@/lib/dayjs';
 import { z } from 'zod';
 import { challengeOptionSchema } from './api/challengeOptionSchema';
+import { activitySchema, categorySchema } from './api/experienceSchema';
 
 export interface Pageable {
   page: number;
@@ -1667,13 +1668,20 @@ export const userAdminDetailType = z.object({
   experienceInfos: z
     .array(
       z.object({
-        // userExperienceId: z.number(),
-        // experienceType: z.string().nullable(),
-        title: z.string().nullable(),
-        // content: z.string().nullable(),
-        // startDate: z.string().nullable(),
-        // endDate: z.string().nullable(),
-        // isCurrentlyWorking: z.boolean().nullable(),
+        title: z.string().nullable().optional(),
+        startDate: z.string().nullable().optional(), // ISO 날짜 문자열 (예: "2025-10-29")
+        endDate: z.string().nullable().optional(), // ISO 날짜 문자열 (예: "2025-10-29")
+        activityType: activitySchema.nullable().optional(),
+        experienceCategory: categorySchema.nullable().optional(),
+        role: z.string().nullable().optional(),
+        situation: z.string().nullable().optional(),
+        task: z.string().nullable().optional(),
+        action: z.string().nullable().optional(),
+        result: z.string().nullable().optional(),
+        coreCompetency: z.string().nullable().optional(),
+        customCategoryName: z.string().nullable().optional(),
+        reflection: z.string().nullable().optional(),
+        organ: z.string().nullable().optional(),
       }),
     )
     .nullable(),
