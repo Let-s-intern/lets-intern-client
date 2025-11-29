@@ -91,6 +91,14 @@ const Experience = () => {
     [dispatchIsDrawerOpen],
   );
 
+  const handleCopy = useCallback(
+    (copiedExperience: UserExperienceType) => {
+      setSelectedExperience(copiedExperience); // 복제된 경험을 선택
+      dispatchIsDrawerOpen({ type: 'open' }); // 드로어 열기
+    },
+    [dispatchIsDrawerOpen],
+  );
+
   return (
     <>
       {isDrawerOpen && (
@@ -105,6 +113,7 @@ const Experience = () => {
             <ExperienceForm
               onClose={handleDrawerClose}
               initialData={selectedExperience}
+              isCopy={!!(selectedExperience && !selectedExperience.id)}
             />
           </div>
         </div>
@@ -151,6 +160,7 @@ const Experience = () => {
             onResetFilters={handleResetFilters}
             onRowClick={handleRowClick}
             onCreateClick={handleDrawerOpen}
+            onCopy={handleCopy}
           />
         </div>
       </div>
