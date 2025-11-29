@@ -58,7 +58,11 @@ export const ConditionList = ({
         onClick={() => onToggle(option.value)}
         className="flex w-full items-center gap-1 text-xsmall14"
       >
-        <CheckBox checked={selected.includes(option.value)} width="w-6" />
+        <CheckBox
+          checked={selected.includes(option.value)}
+          width="w-6"
+          showCheckIcon
+        />
         <span className="text-xsmall14 md:text-xsmall16">{option.label}</span>
       </button>
     ))}
