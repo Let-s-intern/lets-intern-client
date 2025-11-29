@@ -113,6 +113,7 @@ const Experience = () => {
             <ExperienceForm
               onClose={handleDrawerClose}
               initialData={selectedExperience}
+              isCopy={!!(selectedExperience && !selectedExperience.id)}
             />
           </div>
         </div>
