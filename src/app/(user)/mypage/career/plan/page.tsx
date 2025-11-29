@@ -1,6 +1,9 @@
 'use client';
 
 import { usePatchUser, useUserQuery } from '@/api/user';
+import CareerInfoForm, {
+  CareerInfoValues,
+} from '@/components/common/mypage/career/CareerInfoForm';
 import { useCareerModals } from '@/hooks/useCareerModals';
 import { useChangeDetection } from '@/hooks/useChangeDetectionHook';
 import {
@@ -8,11 +11,8 @@ import {
   GRADE_KOREAN_TO_ENUM,
   JOB_CONDITIONS,
 } from '@/utils/constants';
-import CareerModals from '@components/common/mypage/career/CareerModal';
 import CareerPlanForm from '@components/common/mypage/career/CareerPlanForm';
-import { SelectButton } from '@components/common/ui/button/SelectButton';
 import CheckBox from '@components/common/ui/CheckBox';
-import LineInput from '@components/common/ui/input/LineInput';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import OutlinedButton from '@components/ui/button/OutlinedButton';
 import SolidButton from '@components/ui/button/SolidButton';
@@ -81,20 +81,16 @@ export default function Page() {
     wishEmploymentType: null,
   });
 
+  // 외부 모달 컨트롤 - CareerInfoForm에 전달
+  const modalControls = useCareerModals();
   const {
-    modalStep,
-    setModalStep,
     selectedField,
     setSelectedField,
     selectedPositions,
     setSelectedPositions,
     selectedIndustries,
     setSelectedIndustries,
-    getFieldDisplayText,
-    getPositionDisplayText,
-    getIndustryDisplayText,
-    closeModal,
-  } = useCareerModals();
+  } = modalControls;
 
   const changeDetection = useChangeDetection({
     user,
@@ -154,25 +150,6 @@ export default function Page() {
   }, [data]);
 
   if (isLoading) return <LoadingContainer />;
-
-  const handleConditionToggle = (value: string) => {
-    setUser((prev) => {
-      const current = prev.wishEmploymentType ?? '';
-      const list = current
-        ? current
-            .split(',')
-            .map((v) => v.trim())
-            .filter(Boolean)
-        : [];
-      const updated = list.includes(value)
-        ? list.filter((v) => v !== value)
-        : [...list, value];
-      return {
-        ...prev,
-        wishEmploymentType: updated.length > 0 ? updated.join(', ') : '',
-      };
-    });
-  };
 
   const handleSubmit = () => {
     const enumGrade = user.grade
@@ -247,12 +224,33 @@ export default function Page() {
       setStatus('COMPLETE');
     }
 
+    // 기존 값으로 복원
     if (changeDetection.initialUser) {
       setUser(changeDetection.initialUser);
     }
     setSelectedField(changeDetection.initialField);
     setSelectedPositions(changeDetection.initialPositions);
     setSelectedIndustries(changeDetection.initialIndustries);
+  };
+
+  // CareerInfoForm에 전달할 값 변환
+  const formValue: CareerInfoValues = {
+    university: user.university ?? '',
+    grade: user.grade ?? '',
+    major: user.major ?? '',
+    wishCompany: user.wishCompany ?? '',
+    wishEmploymentType: user.wishEmploymentType ?? '',
+  };
+
+  const handleFormChange = (newValue: CareerInfoValues) => {
+    setUser((prev) => ({
+      ...prev,
+      university: newValue.university,
+      grade: newValue.grade,
+      major: newValue.major,
+      wishCompany: newValue.wishCompany,
+      wishEmploymentType: newValue.wishEmploymentType,
+    }));
   };
 
   if (status === 'EMPTY') {
@@ -266,99 +264,13 @@ export default function Page() {
   return (
     <div className="flex w-full flex-col">
       <section>
-        <h1 className="mb-6 text-xsmall16 md:text-small18">기본 정보</h1>
-        <div>
-          <div className="mb-8 flex flex-col gap-4">
-            <div className="flex flex-col gap-[6px]">
-              <label className="text-xsmall14 md:text-xsmall16">학교</label>
-              <LineInput
-                className="text-xsmall14 md:text-xsmall16"
-                placeholder="학교 이름을 입력해 주세요."
-                value={user.university ?? ''}
-                onChange={(e) =>
-                  setUser((prev) => ({ ...prev, university: e.target.value }))
-                }
-              />
-            </div>
-            <SelectButton
-              label="학년"
-              className="text-xsmall14 md:text-xsmall16"
-              value={user.grade || '학년을 선택해 주세요.'}
-              placeholder="학년을 선택해 주세요."
-              onClick={() => setModalStep('grade')}
-            />
-            <div className="flex flex-col gap-[6px]">
-              <label className="text-xsmall14 md:text-xsmall16">전공</label>
-              <LineInput
-                className="text-xsmall14 md:text-xsmall16"
-                placeholder="전공을 입력해 주세요."
-                value={user.major ?? ''}
-                onChange={(e) =>
-                  setUser((prev) => ({ ...prev, major: e.target.value }))
-                }
-              />
-            </div>
-          </div>
-          <div className="mb-8 flex flex-col gap-4">
-            <SelectButton
-              className="text-xsmall14 md:text-xsmall16"
-              label="희망 직군"
-              value={getFieldDisplayText()}
-              placeholder="희망 직군을 선택해 주세요."
-              onClick={() => setModalStep('field')}
-            />
-            <SelectButton
-              className="text-xsmall14 md:text-xsmall16"
-              label="희망 직무 (최대 3개)"
-              value={getPositionDisplayText()}
-              placeholder="희망 직무를 선택해 주세요."
-              onClick={() => {
-                if (!selectedField || selectedField === '직군 무관') {
-                  setModalStep('field');
-                } else {
-                  setModalStep('position');
-                }
-              }}
-            />
-            <SelectButton
-              className="text-xsmall14 md:text-xsmall16"
-              label="희망 산업 (최대 3개)"
-              value={getIndustryDisplayText()}
-              placeholder="희망 산업을 선택해 주세요."
-              onClick={() => setModalStep('industry')}
-            />
-            <div className="flex flex-col gap-[6px]">
-              <label className="text-xsmall14 md:text-xsmall16">
-                희망 기업
-              </label>
-              <LineInput
-                id="wishTargetCompany"
-                name="wishTargetCompany"
-                className="text-xsmall14 md:text-xsmall16"
-                placeholder="희망 기업을 입력해 주세요."
-                value={user.wishCompany || ''}
-                onChange={(e) =>
-                  setUser((prev) => ({
-                    ...prev,
-                    wishCompany: e.target.value,
-                  }))
-                }
-              />
-            </div>
-          </div>
-          <div className="flex flex-col gap-3">
-            <span className="text-xsmall14 md:text-xsmall16">
-              희망 구직 조건
-            </span>
-            <ConditionList
-              selected={(user.wishEmploymentType ?? '')
-                .split(',')
-                .map((v) => v.trim())
-                .filter(Boolean)}
-              onToggle={handleConditionToggle}
-            />
-          </div>
-        </div>
+        <CareerInfoForm
+          value={formValue}
+          onChange={handleFormChange}
+          externalModalControls={modalControls}
+          showSectionTitle={true}
+          sectionTitle="기본 정보"
+        />
         <div className="mt-12 flex gap-3">
           <OutlinedButton size="md" onClick={handleCancel} className="flex-1">
             취소하기
@@ -372,36 +284,6 @@ export default function Page() {
           </SolidButton>
         </div>
       </section>
-      <CareerModals
-        setModalStep={setModalStep}
-        modalStep={modalStep}
-        initialField={selectedField}
-        initialPositions={selectedPositions}
-        initialIndustries={selectedIndustries}
-        userGrade={user.grade ?? ''}
-        onGradeComplete={(grade) => {
-          setUser((prev) => ({ ...prev, grade }));
-          closeModal();
-        }}
-        onFieldComplete={(field, positions) => {
-          setSelectedField(field);
-          setSelectedPositions(positions);
-          if (field === '직군 무관') {
-            closeModal();
-          } else {
-            setModalStep('position');
-          }
-        }}
-        onPositionsComplete={(positions) => {
-          setSelectedPositions(positions);
-          closeModal();
-        }}
-        onIndustriesComplete={(industries) => {
-          setSelectedIndustries(industries);
-          closeModal();
-        }}
-        onClose={closeModal}
-      />
     </div>
   );
 }
