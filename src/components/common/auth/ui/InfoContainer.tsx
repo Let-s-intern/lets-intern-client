@@ -8,6 +8,7 @@ import CareerInfoForm, {
 } from '@/components/common/mypage/career/CareerInfoForm';
 import useAuthStore from '@/store/useAuthStore';
 import axios from '@/utils/axios';
+import { GRADE_KOREAN_TO_ENUM } from '@/utils/constants';
 import SolidButton from '@components/ui/button/SolidButton';
 import AlertModal from '../../../ui/alert/AlertModal';
 
@@ -50,11 +51,16 @@ const InfoContainer = ({
 
   const patchEmailUserInfo = useMutation({
     mutationFn: async () => {
+      // 한글 학년을 enum 값으로 변환
+      const enumGrade = value.grade
+        ? GRADE_KOREAN_TO_ENUM[value.grade] || value.grade
+        : null;
+
       const res = await axios.patch(`/user/additional-info`, {
         email,
         university: value.university,
         major: value.major,
-        grade: value.grade,
+        grade: enumGrade,
         wishField: selections.selectedField,
         wishJob:
           selections.selectedPositions.length > 0
@@ -81,12 +87,17 @@ const InfoContainer = ({
 
   const patchSocialUserInfo = useMutation({
     mutationFn: async () => {
+      // 한글 학년을 enum 값으로 변환
+      const enumGrade = value.grade
+        ? GRADE_KOREAN_TO_ENUM[value.grade] || value.grade
+        : null;
+
       const res = await axios({
         method: 'patch',
         url: '/user',
         data: {
           university: value.university,
-          grade: value.grade,
+          grade: enumGrade,
           major: value.major,
           wishField: selections.selectedField,
           wishJob:

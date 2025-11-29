@@ -13,7 +13,7 @@ import CareerInfoForm, {
   CareerInfoValues,
 } from '@/components/common/mypage/career/CareerInfoForm';
 import Input from '@/components/common/ui/input/Input';
-import { GRADE_ENUM_TO_KOREAN } from '@/utils/constants';
+import { GRADE_ENUM_TO_KOREAN, GRADE_KOREAN_TO_ENUM } from '@/utils/constants';
 import { DASHBOARD_FIRST_VISIT_GOAL } from '@components/common/challenge/my-challenge/section/MissionSubmitZeroSection';
 import { josa } from 'es-hangul';
 import { useParams, useRouter } from 'next/navigation';
@@ -165,9 +165,13 @@ const ChallengeUserInfo = () => {
     if (patchUserIsPending || !programId) return;
 
     try {
+      const enumGrade = value.grade
+        ? GRADE_KOREAN_TO_ENUM[value.grade] || value.grade
+        : null;
+
       const tryPatchUserRes = await tryPatchUser({
         university: value.university,
-        grade: value.grade,
+        grade: enumGrade,
         major: value.major,
         wishField: selections.selectedField,
         wishJob:
