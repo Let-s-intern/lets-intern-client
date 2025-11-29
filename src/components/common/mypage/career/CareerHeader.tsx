@@ -11,7 +11,7 @@ const CareerHeader = ({
   handleCreateBtnClick,
 }: CareerHeaderProps) => {
   return (
-    <header className="flex items-center justify-between">
+    <header className="flex h-9 items-center justify-between">
       <span className="text-lg font-medium">커리어 기록(경력사항)</span>
       {showCreateButton && (
         <SolidButton

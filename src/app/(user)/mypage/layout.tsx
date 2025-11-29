@@ -122,7 +122,7 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
   const showCareerSubTabs = pathname.startsWith('/mypage/career');
 
   return (
-    <div className="m-auto flex w-full max-w-[1120px] flex-col md:py-12">
+    <div className="m-auto flex w-full max-w-[1180px] flex-col md:py-12">
       {/* 배너 (모바일) */}
       <Banner variant="mypage-mobile" />
 
@@ -165,7 +165,7 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
       )}
 
       {/* 메인 컨텐츠 영역 */}
-      <div className="flex w-full flex-1 flex-col pb-14 pt-8 md:flex-row md:gap-x-14 md:pb-[60px] md:pt-0">
+      <div className="flex w-full flex-1 flex-col pb-14 pt-8 md:flex-row md:gap-x-[60px] md:pb-[60px] md:pt-0">
         {/* 데스크톱 사이드바 */}
         <aside
           className={clsx(

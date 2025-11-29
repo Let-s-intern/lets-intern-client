@@ -5,18 +5,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from '../../../../../utils/axios';
 import Input from '../../../ui/input/Input';
 import Button from '../../ui/button/Button';
-import GradeDropdown from '../form-control/GradeDropdown';
 
 interface BasicInfoValue {
   name: string;
   phoneNum: string;
   email: string;
   contactEmail: string;
-  university: string;
-  grade: string;
-  major: string;
-  wishJob: string;
-  wishCompany: string;
   authProvider: string;
 }
 
@@ -28,11 +22,6 @@ const BasicInfo = () => {
     phoneNum: '',
     email: '',
     contactEmail: '',
-    university: '',
-    grade: '',
-    major: '',
-    wishJob: '',
-    wishCompany: '',
     authProvider: '',
   });
   const [isSameEmail, setIsSameEmail] = useState<boolean>(false);
@@ -105,10 +94,6 @@ const BasicInfo = () => {
     } else {
       setUser({ ...user, contactEmail: user.email });
     }
-  };
-
-  const handleGradeChange = (grade: string) => {
-    setUser({ ...user, grade });
   };
 
   const handleSubmit = () => {
@@ -233,76 +218,9 @@ const BasicInfo = () => {
             onChange={handleInputChange}
           />
         </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="university" className="text-1-medium">
-            학교
-          </label>
-          <Input
-            id="university"
-            name="university"
-            placeholder="렛츠대학교"
-            value={user.university}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="grade" className="text-1-medium">
-            학년
-          </label>
-          <GradeDropdown
-            value={user.grade}
-            setValue={handleGradeChange}
-            type={'MYPAGE'}
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="major" className="text-1-medium">
-            전공
-          </label>
-          <Input
-            id="major"
-            name="major"
-            placeholder="OO학과"
-            value={user.major}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="wishJob" className="text-1-medium">
-            희망 직무
-          </label>
-          <Input
-            id="wishJob"
-            name="wishJob"
-            placeholder="희망 직무를 입력해주세요."
-            value={user.wishJob}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="wishCompany" className="text-1-medium">
-            희망 기업
-          </label>
-          <Input
-            id="wishCompany"
-            name="wishCompany"
-            placeholder="희망 기업을 입력해주세요."
-            value={user.wishCompany}
-            onChange={handleInputChange}
-          />
-        </div>
       </div>
       <Button onClick={handleSubmit}>
-        {!(
-          user.contactEmail ||
-          user.university ||
-          user.grade ||
-          user.major ||
-          user.wishJob ||
-          user.wishCompany
-        )
-          ? '기본 정보 등록하기'
-          : '기본 정보 수정하기'}
+        {!user.contactEmail ? '기본 정보 등록하기' : '기본 정보 수정하기'}
       </Button>
     </section>
   );

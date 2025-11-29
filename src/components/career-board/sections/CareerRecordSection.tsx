@@ -2,7 +2,9 @@ import { useGetUserCareerQuery } from '@/api/career';
 import LoadingContainer from '@/components/common/ui/loading/LoadingContainer';
 import { toCareerDateDot } from '@/utils/career';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import CareerCard from '../../common/mypage/career/card/CareerCard';
+import { useCareerDataStatus } from '../contexts/CareerDataStatusContext';
 
 const CareerRecordSection = () => {
   const router = useRouter();
@@ -11,6 +13,16 @@ const CareerRecordSection = () => {
     { page: 0, size: 1 },
     { sort: 'desc', sortType: 'START_DATE' },
   );
+  const { setHasCareerData } = useCareerDataStatus();
+
+  const latestCareer = data?.userCareers[0];
+  const hasData = !!latestCareer;
+
+  useEffect(() => {
+    if (hasData) {
+      setHasCareerData(true);
+    }
+  }, [hasData, setHasCareerData]);
 
   if (isLoading) {
     return (
@@ -21,9 +33,6 @@ const CareerRecordSection = () => {
       />
     );
   }
-
-  const latestCareer = data?.userCareers[0];
-  const hasData = !!latestCareer;
 
   return (
     <CareerCard
@@ -43,6 +52,7 @@ const CareerRecordSection = () => {
           />
         ) : (
           <CareerCard.Empty
+            height={109}
             description="아직 등록된 커리어가 없어요"
             buttonText="커리어 기록하기"
             buttonHref="/mypage/career/record"
@@ -76,7 +86,7 @@ const CareerRecordBody = ({
   const workPeriod = endDate ? `${startDate} - ${endDate}` : startDate;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex h-[109px] flex-col gap-4">
       {/* 경력 카테고리 */}
       <div className="flex flex-col gap-2.5">
         <span className="text-xxsmall12 font-normal text-[#4138A3]">

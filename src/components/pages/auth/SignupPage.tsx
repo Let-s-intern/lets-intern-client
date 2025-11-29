@@ -5,8 +5,9 @@ import PrivacyPolicyModal from '@/components/common/auth/modal/PrivacyPolicyModa
 import InfoContainer from '@/components/common/auth/ui/InfoContainer';
 import PrivacyLink from '@/components/common/auth/ui/PrivacyLink';
 import SocialLogin from '@/components/common/auth/ui/SocialLogin';
-import Button from '@/components/common/ui/button/Button';
-import Input from '@/components/ui/input/Input';
+import CheckBox from '@/components/common/ui/CheckBox';
+import LineInput from '@/components/common/ui/input/LineInput';
+import SolidButton from '@/components/ui/button/SolidButton';
 import useAuthStore from '@/store/useAuthStore';
 import { ErrorResonse } from '@/types/interface';
 import axios from '@/utils/axios';
@@ -15,11 +16,10 @@ import {
   isValidPassword,
   isValidPhoneNumber,
 } from '@/utils/valid';
-import CheckBox from '@components/common/ui/CheckBox';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { FormEvent, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { FormEvent, useEffect, useState } from 'react';
 
 const SignUp = () => {
   const router = useRouter();
@@ -133,7 +133,9 @@ const SignUp = () => {
           axiosError.response.data?.message || '이미 가입된 사용자입니다.',
         );
       } else {
-        setErrorMessage('회원가입에 실패했습니다.');
+        setErrorMessage(
+          axiosError.response?.data?.message || '회원가입에 실패했습니다.',
+        );
       }
     },
   });
@@ -236,338 +238,312 @@ const SignUp = () => {
     }
   }, [value, isSocial]);
 
+  const isAllAgreed =
+    value.acceptedAge &&
+    value.agreeToTerms &&
+    value.agreeToPrivacy &&
+    value.agreeToMarketing;
+
+  const handleToggleAll = () => {
+    const newValue = !isAllAgreed;
+    setValue({
+      ...value,
+      acceptedAge: newValue,
+      agreeToTerms: newValue,
+      agreeToPrivacy: newValue,
+      agreeToMarketing: newValue,
+    });
+  };
+
   return (
     <>
       {isSignupSuccess ? (
         <InfoContainer isSocial={isSocial} email={value.email} />
       ) : (
-        <>
-          <div className="container mx-auto mt-8 p-5">
-            <div className="mx-auto mb-16 w-full sm:max-w-md">
-              <span className="mb-2 block font-bold">회원가입</span>
+        <div className="w-full pt-9 md:mx-auto md:w-[448px] md:py-16">
+          <section className="mx-5 mb-[80px] md:mx-0 md:mb-[60px]">
+            <div className="mb-9">
+              {/* 헤더 */}
+              <span className="text-xsmall16 leading-[1.625rem] text-neutral-30">
+                회원가입
+              </span>
+              {/* 타이틀 */}
               {!isSocial && (
-                <h1 className="mb-10 text-2xl">
-                  기본 정보를
-                  <br />
-                  입력하세요
+                <h1 className="mt-6 text-medium24 font-semibold text-neutral-0">
+                  기본 정보를 입력해 주세요.
                 </h1>
               )}
-              <form onSubmit={onSubmit} className="flex flex-col space-y-3">
-                {isSocial ? (
-                  <div className="flex flex-col gap-2">
-                    <div>
-                      <label htmlFor="contactEmail" className="text-1-medium">
-                        렛츠커리어 정보 수신용 이메일
-                      </label>
-                      <div className="flex flex-col gap-1.5">
-                        <p className="text-sm text-neutral-0 text-opacity-[52%]">
-                          * 결제정보 및 프로그램 신청 관련 알림 수신을 위해,
-                          자주 사용하는 이메일 주소를 입력해주세요!
-                        </p>
-                      </div>
-                    </div>
-                    <Input
+            </div>
+
+            <form onSubmit={onSubmit}>
+              {/* 기본 정보 입력 필드 */}
+              {isSocial ? (
+                <div className="flex flex-col gap-4">
+                  <div>
+                    <label className="text-xsmall14 text-neutral-0">
+                      렛츠커리어 정보 수신용 이메일
+                    </label>
+                    <p className="mb-1 text-xsmall14 text-neutral-40">
+                      * 결제정보 및 프로그램 신청 관련 알림 수신을 위해, 자주
+                      사용하는 이메일 주소를 입력해주세요!
+                    </p>
+                    <LineInput
                       name="contactEmail"
-                      placeholder="example@example.com"
+                      placeholder="이메일을 입력해 주세요."
                       value={value.email}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setValue({ ...value, email: e.target.value });
-                      }}
+                      onChange={(e) =>
+                        setValue({ ...value, email: e.target.value })
+                      }
                     />
-                    <Input
-                      label="유입경로"
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xsmall14 text-neutral-0">
+                      유입경로
+                    </label>
+                    <LineInput
+                      placeholder="유입경로를 입력해 주세요."
                       value={value.inflow}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      onChange={(e) =>
                         setValue({ ...value, inflow: e.target.value })
                       }
                     />
                   </div>
-                ) : (
-                  <>
-                    <div>
-                      <Input
-                        label="이메일"
-                        placeholder="example@example.com"
-                        value={value.email}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          setValue({ ...value, email: e.target.value })
-                        }
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        label="이름"
-                        value={value.name}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          setValue({ ...value, name: e.target.value })
-                        }
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        label="휴대폰 번호"
-                        placeholder="010-1234-4567"
-                        value={value.phoneNum}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          handlePhoneNumChange(e)
-                        }
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        type="password"
-                        label="비밀번호"
-                        placeholder="영어, 숫자, 특수문자 포함 8자 이상"
-                        value={value.password}
-                        onChange={(e: any) => {
-                          setValue({ ...value, password: e.target.value });
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        type="password"
-                        label="비밀번호 확인"
-                        value={value.passwordConfirm}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          setValue({
-                            ...value,
-                            passwordConfirm: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        label="유입경로"
-                        value={value.inflow}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          setValue({ ...value, inflow: e.target.value })
-                        }
-                      />
-                    </div>
-                  </>
-                )}
-                <hr />
-                <div className="flex flex-col space-y-2">
-                  <div className="flex items-center">
-                    <CheckBox
-                      checked={
-                        value.acceptedAge &&
-                        value.agreeToTerms &&
-                        value.agreeToPrivacy &&
-                        value.agreeToMarketing
-                      }
-                      onClick={() =>
-                        setValue(
-                          value.acceptedAge &&
-                            value.agreeToTerms &&
-                            value.agreeToPrivacy &&
-                            value.agreeToMarketing
-                            ? {
-                                ...value,
-                                acceptedAge: false,
-                                agreeToTerms: false,
-                                agreeToPrivacy: false,
-                                agreeToMarketing: false,
-                              }
-                            : {
-                                ...value,
-                                acceptedAge: true,
-                                agreeToTerms: true,
-                                agreeToPrivacy: true,
-                                agreeToMarketing: true,
-                              },
-                        )
-                      }
-                    />
-                    <label
-                      htmlFor="agree-to-all"
-                      className="ml-2 w-full cursor-pointer text-xs font-bold"
-                      onClick={() =>
-                        setValue(
-                          value.acceptedAge &&
-                            value.agreeToTerms &&
-                            value.agreeToPrivacy &&
-                            value.agreeToMarketing
-                            ? {
-                                ...value,
-                                acceptedAge: false,
-                                agreeToTerms: false,
-                                agreeToPrivacy: false,
-                                agreeToMarketing: false,
-                              }
-                            : {
-                                ...value,
-                                acceptedAge: true,
-                                agreeToTerms: true,
-                                agreeToPrivacy: true,
-                                agreeToMarketing: true,
-                              },
-                        )
-                      }
-                    >
-                      전체 동의
+                </div>
+              ) : (
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xsmall14 text-neutral-0">
+                      이메일
                     </label>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckBox
-                      checked={value.acceptedAge}
-                      onClick={() =>
-                        setValue({
-                          ...value,
-                          acceptedAge: !value.acceptedAge,
-                        })
+                    <LineInput
+                      placeholder="이메일을 입력해 주세요."
+                      value={value.email}
+                      onChange={(e) =>
+                        setValue({ ...value, email: e.target.value })
                       }
-                    />
-                    <label
-                      htmlFor="accepted-age"
-                      className="ml-2 w-full cursor-pointer text-xs"
-                      onClick={() =>
-                        setValue({
-                          ...value,
-                          acceptedAge: !value.acceptedAge,
-                        })
-                      }
-                    >
-                      [필수] 만 14세 이상입니다.
-                    </label>
-                  </div>
-                  <div className="flex w-full items-center">
-                    <CheckBox
-                      checked={value.agreeToTerms}
-                      onClick={() =>
-                        setValue({
-                          ...value,
-                          agreeToTerms: !value.agreeToTerms,
-                        })
-                      }
-                    />
-                    <label
-                      htmlFor="agree-to-terms"
-                      className="ml-2 flex w-full cursor-pointer items-center justify-between text-xs"
-                      onClick={() =>
-                        setValue({
-                          ...value,
-                          agreeToTerms: !value.agreeToTerms,
-                        })
-                      }
-                    >
-                      <div>
-                        [필수]{' '}
-                        <span className="text-[#0500FF]">서비스 이용약관</span>{' '}
-                        동의
-                      </div>
-                      <PrivacyLink
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          window.open(
-                            'https://letsintern.notion.site/a121a038f72f42d7bde747624ecc0943?pvs=4',
-                            '_blank',
-                          );
-                        }}
-                      >
-                        보기
-                      </PrivacyLink>
-                    </label>
-                  </div>
-                  <div className="flex w-full items-center">
-                    <CheckBox
-                      checked={value.agreeToPrivacy}
-                      onClick={() =>
-                        setValue({
-                          ...value,
-                          agreeToPrivacy: !value.agreeToPrivacy,
-                        })
-                      }
-                    />
-                    <label
-                      htmlFor="agree-to-privacy"
-                      className="ml-2 flex w-full cursor-pointer items-center justify-between text-xs"
-                      onClick={() =>
-                        setValue({
-                          ...value,
-                          agreeToPrivacy: !value.agreeToPrivacy,
-                        })
-                      }
-                    >
-                      <div>
-                        [필수]{' '}
-                        <span className="text-[#0500FF]">
-                          개인정보 수집 및 이용
-                        </span>{' '}
-                        동의
-                      </div>
-                      <PrivacyLink
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setShowPrivacyModal(true);
-                        }}
-                      >
-                        보기
-                      </PrivacyLink>
-                    </label>
-                    <PrivacyPolicyModal
-                      showModal={showPrivacyModal}
-                      setShowModal={setShowPrivacyModal}
                     />
                   </div>
-                  <div className="flex w-full items-center">
-                    <CheckBox
-                      checked={value.agreeToMarketing}
-                      onClick={() =>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xsmall14 text-neutral-0">이름</label>
+                    <LineInput
+                      placeholder="이름을 입력해 주세요."
+                      value={value.name}
+                      onChange={(e) =>
+                        setValue({ ...value, name: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xsmall14 text-neutral-0">
+                      휴대폰 번호
+                    </label>
+                    <LineInput
+                      placeholder="휴대폰 번호를 입력해 주세요."
+                      value={value.phoneNum}
+                      onChange={handlePhoneNumChange}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xsmall14 text-neutral-0">
+                      비밀번호
+                    </label>
+                    <LineInput
+                      type="password"
+                      placeholder="비밀번호를 입력해 주세요."
+                      value={value.password}
+                      onChange={(e) =>
+                        setValue({ ...value, password: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xsmall14 text-neutral-0">
+                      비밀번호 확인
+                    </label>
+                    <LineInput
+                      type="password"
+                      placeholder="비밀번호를 다시 입력해 주세요."
+                      value={value.passwordConfirm}
+                      onChange={(e) =>
                         setValue({
                           ...value,
-                          agreeToMarketing: !value.agreeToMarketing,
+                          passwordConfirm: e.target.value,
                         })
                       }
                     />
-                    <label
-                      htmlFor="agree-to-marketing"
-                      className="ml-2 flex w-full cursor-pointer items-center justify-between gap-x-2.5 text-xs"
-                      onClick={() =>
-                        setValue({
-                          ...value,
-                          agreeToMarketing: !value.agreeToMarketing,
-                        })
-                      }
-                    >
-                      <div className="grow break-keep">
-                        [선택] 렛츠커리어 프로그램 개설 소식을 가장 먼저
-                        받아볼래요!
-                      </div>
-                      <PrivacyLink
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setShowMarketingModal(true);
-                        }}
-                      >
-                        보기
-                      </PrivacyLink>
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xsmall14 text-neutral-0">
+                      유입경로
                     </label>
-                    <MarketingModal
-                      showModal={showMarketingModal}
-                      setShowModal={setShowMarketingModal}
+                    <LineInput
+                      placeholder="유입경로를 입력해 주세요."
+                      value={value.inflow}
+                      onChange={(e) =>
+                        setValue({ ...value, inflow: e.target.value })
+                      }
                     />
                   </div>
                 </div>
-                {error ? (
-                  <span className="block text-center text-sm text-red-500">
-                    {errorMessage ? errorMessage : ''}
-                  </span>
-                ) : null}
-                <Button
-                  type="submit"
-                  className="mt-8"
-                  {...(buttonDisabled && { disabled: true })}
+              )}
+
+              {/* 약관 동의 */}
+              <div className="mt-12 flex flex-col gap-2">
+                {/* 전체 동의 */}
+                <button
+                  type="button"
+                  className="flex items-center gap-2"
+                  onClick={handleToggleAll}
                 >
-                  {isSocial ? '다음' : '회원가입'}
-                </Button>
-              </form>
-              {!isSocial && <SocialLogin type="SIGN_UP" />}
-            </div>
-          </div>
-        </>
+                  <CheckBox checked={isAllAgreed} width="w-6" showCheckIcon />
+                  <span className="text-xsmall14 font-semibold text-neutral-0">
+                    전체 동의
+                  </span>
+                </button>
+
+                <hr className="border-neutral-80" />
+
+                {/* 필수: 만 14세 이상 */}
+                <button
+                  type="button"
+                  className="flex items-center gap-2"
+                  onClick={() =>
+                    setValue({ ...value, acceptedAge: !value.acceptedAge })
+                  }
+                >
+                  <CheckBox
+                    checked={value.acceptedAge}
+                    width="w-6"
+                    showCheckIcon
+                  />
+                  <span className="text-xsmall14 text-neutral-0">
+                    [필수] 만 14세 이상입니다.
+                  </span>
+                </button>
+
+                {/* 필수: 서비스 이용약관 */}
+                <div className="flex items-center justify-between">
+                  <button
+                    type="button"
+                    className="flex items-center gap-2"
+                    onClick={() =>
+                      setValue({
+                        ...value,
+                        agreeToTerms: !value.agreeToTerms,
+                      })
+                    }
+                  >
+                    <CheckBox
+                      checked={value.agreeToTerms}
+                      width="w-6"
+                      showCheckIcon
+                    />
+                    <span className="text-xsmall14 text-neutral-0">
+                      [필수]{' '}
+                      <span className="text-primary">서비스 이용약관</span> 동의
+                    </span>
+                  </button>
+                  <PrivacyLink
+                    onClick={() =>
+                      window.open(
+                        'https://letsintern.notion.site/a121a038f72f42d7bde747624ecc0943?pvs=4',
+                        '_blank',
+                      )
+                    }
+                  >
+                    보기
+                  </PrivacyLink>
+                </div>
+
+                {/* 필수: 개인정보 수집 및 이용 */}
+                <div className="flex items-center justify-between">
+                  <button
+                    type="button"
+                    className="flex items-center gap-2"
+                    onClick={() =>
+                      setValue({
+                        ...value,
+                        agreeToPrivacy: !value.agreeToPrivacy,
+                      })
+                    }
+                  >
+                    <CheckBox
+                      checked={value.agreeToPrivacy}
+                      width="w-6"
+                      showCheckIcon
+                    />
+                    <span className="text-xsmall14 text-neutral-0">
+                      [필수]{' '}
+                      <span className="text-primary">
+                        개인정보 수집 및 이용
+                      </span>{' '}
+                      동의
+                    </span>
+                  </button>
+                  <PrivacyLink onClick={() => setShowPrivacyModal(true)}>
+                    보기
+                  </PrivacyLink>
+                </div>
+
+                {/* 선택: 마케팅 수신 동의 */}
+                <div className="flex items-center justify-between">
+                  <button
+                    type="button"
+                    className="flex items-center gap-2"
+                    onClick={() =>
+                      setValue({
+                        ...value,
+                        agreeToMarketing: !value.agreeToMarketing,
+                      })
+                    }
+                  >
+                    <CheckBox
+                      checked={value.agreeToMarketing}
+                      width="w-6"
+                      showCheckIcon
+                    />
+                    <span className="block break-words break-keep text-left text-xsmall14 text-neutral-0">
+                      [선택] 렛츠커리어 프로그램 개설 소식을 가장 먼저
+                      받아볼래요!
+                    </span>
+                  </button>
+                  <PrivacyLink onClick={() => setShowMarketingModal(true)}>
+                    보기
+                  </PrivacyLink>
+                </div>
+              </div>
+
+              {/* 에러 메시지 */}
+              {error ? (
+                <p className="mt-4 text-center text-xsmall14 text-system-error">
+                  {errorMessage}
+                </p>
+              ) : null}
+
+              {/* 가입하기 버튼 */}
+              <SolidButton
+                type="submit"
+                className="mt-12 w-full"
+                disabled={buttonDisabled}
+              >
+                {isSocial ? '다음' : '가입하기'}
+              </SolidButton>
+            </form>
+
+            {/* SNS 간편 회원가입 */}
+            {!isSocial && <SocialLogin type="SIGN_UP" />}
+          </section>
+
+          {/* 모달 */}
+          <PrivacyPolicyModal
+            showModal={showPrivacyModal}
+            setShowModal={setShowPrivacyModal}
+          />
+          <MarketingModal
+            showModal={showMarketingModal}
+            setShowModal={setShowMarketingModal}
+          />
+        </div>
       )}
     </>
   );

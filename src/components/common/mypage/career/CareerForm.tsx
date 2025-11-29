@@ -9,6 +9,7 @@ import {
 import { convertCareerUiToApiFormat } from '@/utils/career';
 import { EmployeeTypeModal } from '@components/common/mypage/career/EmployeeTypeModal';
 import { PeriodSelectModal } from '@components/pages/mypage/experience/components/PeriodSelectModal';
+import WarningModal from '@components/ui/alert/WarningModal';
 import OutlinedButton from '@components/ui/button/OutlinedButton';
 import SolidButton from '@components/ui/button/SolidButton';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -34,7 +35,7 @@ const CareerForm = ({
     register,
     setValue,
     watch,
-    formState: { errors },
+    formState: { errors, isDirty },
     handleSubmit: rhfHandleSubmit,
   } = useForm<CareerFormType>({
     resolver: zodResolver(careerFormSchema),
@@ -44,6 +45,7 @@ const CareerForm = ({
 
   const [employeeTypeModalOpen, setEmployeeTypeModalOpen] = useState(false);
   const [periodMode, setPeriodMode] = useState<'start' | 'end' | null>(null);
+  const [showCancelWarning, setShowCancelWarning] = useState(false);
 
   const form = watch();
 
@@ -52,18 +54,47 @@ const CareerForm = ({
   };
 
   const handleEmployeeTypeSelect = (type: EmployeeType) => {
-    setValue('employmentType', type, { shouldValidate: true });
+    if (type !== '기타(직접입력)') {
+      setValue('employmentTypeOther', '', {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+
+    setValue('employmentType', type, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
     setEmployeeTypeModalOpen(false);
   };
 
   const handleStartDateSelect = (year: number, month: number) => {
     const dateString = `${year}.${String(month).padStart(2, '0')}`;
-    setValue('startDate', dateString, { shouldValidate: true });
+    setValue('startDate', dateString, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
   };
 
   const handleEndDateSelect = (year: number, month: number) => {
     const dateString = `${year}.${String(month).padStart(2, '0')}`;
-    setValue('endDate', dateString, { shouldValidate: true });
+    setValue('endDate', dateString, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+  };
+
+  const handleCancelClick = () => {
+    if (isDirty) {
+      setShowCancelWarning(true);
+    } else {
+      handleCancel();
+    }
+  };
+
+  const handleConfirmCancel = () => {
+    setShowCancelWarning(false);
+    handleCancel();
   };
 
   return (
@@ -71,6 +102,11 @@ const CareerForm = ({
       <form
         id="career-form"
         onSubmit={rhfHandleSubmit(onSubmit)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+          }
+        }}
         className="flex w-full flex-col gap-3 rounded-xs border border-neutral-80 p-5 text-sm md:text-base"
       >
         {/* 기업 이름 */}
@@ -195,10 +231,15 @@ const CareerForm = ({
         </fieldset>
 
         <div className="mt-11 flex w-full gap-2">
-          <OutlinedButton onClick={handleCancel} className="flex-1">
+          <OutlinedButton onClick={handleCancelClick} className="flex-1">
             취소하기
           </OutlinedButton>
-          <SolidButton form="career-form" type="submit" className="flex-1">
+          <SolidButton
+            form="career-form"
+            type="submit"
+            disabled={!isDirty}
+            className="flex-1"
+          >
             입력 완료
           </SolidButton>
         </div>
@@ -241,6 +282,12 @@ const CareerForm = ({
           }
         />
       )}
+
+      <WarningModal
+        isOpen={showCancelWarning}
+        onCancel={() => setShowCancelWarning(false)}
+        onConfirm={handleConfirmCancel}
+      />
     </>
   );
 };

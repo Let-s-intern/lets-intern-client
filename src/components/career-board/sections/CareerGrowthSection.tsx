@@ -11,8 +11,9 @@ import {
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { Dayjs } from 'dayjs';
 import { useRouter } from 'next/navigation';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import CareerCard from '../../common/mypage/career/card/CareerCard';
+import { useCareerDataStatus } from '../contexts/CareerDataStatusContext';
 
 const CareerGrowthSection = () => {
   const router = useRouter();
@@ -21,7 +22,8 @@ const CareerGrowthSection = () => {
     isLoading,
     isError,
   } = useMypageApplicationsQuery();
-  console.log(applications);
+  const { setHasCareerData } = useCareerDataStatus();
+
   // API 데이터를 Program 인터페이스로 변환
   const programs = useMemo(() => {
     if (!applications || applications.length === 0) return [];
@@ -41,25 +43,35 @@ const CareerGrowthSection = () => {
       }
     });
 
-    // 진행중 프로그램이 있으면 진행중만 표시, 없으면 진행예정 표시
-    const targetPrograms =
-      proceedingPrograms.length > 0 ? proceedingPrograms : upcomingPrograms;
+    // 진행중과 진행예정 프로그램을 모두 표시 (진행중 우선)
+    // 각 그룹 내에서는 시작일 기준 오름차순 정렬
+    const sortByStartDate = (a: MypageApplication, b: MypageApplication) => {
+      const dateA = a.programStartDate;
+      const dateB = b.programStartDate;
+      if (!dateA || !dateB) return 0;
+      return dateA.isBefore(dateB) ? -1 : 1;
+    };
 
-    // 진행중 프로그램이 2개 이상이면 시작일 기준 오름차순 정렬
-    if (targetPrograms.length > 1) {
-      targetPrograms.sort((a, b) => {
-        const dateA = a.programStartDate;
-        const dateB = b.programStartDate;
-        if (!dateA || !dateB) return 0;
-        return dateA.isBefore(dateB) ? -1 : 1;
-      });
+    if (proceedingPrograms.length > 1) {
+      proceedingPrograms.sort(sortByStartDate);
     }
+    if (upcomingPrograms.length > 1) {
+      upcomingPrograms.sort(sortByStartDate);
+    }
+
+    const targetPrograms = [...proceedingPrograms, ...upcomingPrograms];
 
     return targetPrograms.map((app) => convertApplicationToProgram(app));
   }, [applications]);
 
   // 데이터 존재 여부 확인
   const hasData = programs.length > 0;
+
+  useEffect(() => {
+    if (hasData) {
+      setHasCareerData(true);
+    }
+  }, [hasData, setHasCareerData]);
 
   if (isLoading) {
     return (
@@ -175,7 +187,7 @@ const ProgramCard = ({
     dayjs().isBefore(programStartDate);
 
   return (
-    <div className="flex flex-col gap-3 md:flex-row md:gap-4">
+    <div className="flex flex-col gap-5 md:flex-row md:gap-4">
       <div className="flex w-full gap-3 md:flex-row md:gap-4">
         {/* 썸네일 */}
         {program.thumbnail ? (
@@ -193,7 +205,14 @@ const ProgramCard = ({
           {/* 상단: 태그, 프로그램 종류, 진행기간, 버튼 */}
           <div className="flex w-full flex-wrap items-center justify-between gap-2">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-xxs bg-primary-10 px-2 py-0.5 text-xxsmall12 font-normal text-primary">
+              <span
+                className={twMerge(
+                  'rounded-xxs px-2 py-0.5 text-xxsmall12 font-normal',
+                  program.status === '진행예정'
+                    ? 'border border-neutral-80 text-primary'
+                    : 'bg-primary-10 text-primary',
+                )}
+              >
                 {program.status}
               </span>
               <span className="text-xxsmall12 font-normal text-neutral-40">
@@ -266,7 +285,7 @@ const DashboardButton = ({
       }
       disabled={disabled}
       className={twMerge(
-        'rounded-xxs border px-3 py-1.5 text-xxsmall12 font-normal transition-colors',
+        'rounded-xxs border px-3 py-1.5 text-xsmall14 font-normal transition-colors',
         disabled
           ? 'cursor-not-allowed border-neutral-60 bg-neutral-90 text-neutral-40'
           : 'border-primary text-primary hover:bg-primary/5',

@@ -2,7 +2,9 @@ import { useGetUserDocumentListQuery } from '@/api/user';
 import { UserDocument } from '@/api/userSchema';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import CareerCard from '../../common/mypage/career/card/CareerCard';
+import { useCareerDataStatus } from '../contexts/CareerDataStatusContext';
 
 // 문서 타입을 한국어로 매핑
 const DOCUMENT_TYPE_MAP: Record<UserDocument['userDocumentType'], string> = {
@@ -41,16 +43,8 @@ interface Document {
 const ResumeSection = () => {
   const router = useRouter();
   const { data: userDocumentData, isLoading } = useGetUserDocumentListQuery();
+  const { setHasCareerData } = useCareerDataStatus();
 
-  if (isLoading) {
-    return (
-      <CareerCard
-        title="서류 정리"
-        labelOnClick={() => router.push('/mypage/career/resume')}
-        body={<LoadingContainer text="서류 정리 조회 중" />}
-      />
-    );
-  }
   // API 응답을 UI 형식으로 변환
   const documents: Document[] = DOCUMENT_TYPE_ORDER.map((docType) => {
     const document = userDocumentData?.userDocumentList.find(
@@ -74,6 +68,22 @@ const ResumeSection = () => {
   // 데이터 존재 여부 확인 (fileUrl이 있는지 확인)
   const hasData = documents.some((doc) => doc.fileUrl !== null);
 
+  useEffect(() => {
+    if (hasData) {
+      setHasCareerData(true);
+    }
+  }, [hasData, setHasCareerData]);
+
+  if (isLoading) {
+    return (
+      <CareerCard
+        title="서류 정리"
+        labelOnClick={() => router.push('/mypage/career/resume')}
+        body={<LoadingContainer text="서류 정리 조회 중" />}
+      />
+    );
+  }
+
   return (
     <CareerCard
       title="서류 정리"
@@ -83,6 +93,7 @@ const ResumeSection = () => {
           <ResumeBody documents={documents} />
         ) : (
           <CareerCard.Empty
+            height={109}
             description="아직 등록된 서류가 없어요"
             buttonText="서류 정리하기"
             buttonHref="/mypage/career/resume"
@@ -102,7 +113,7 @@ interface ResumeBodyProps {
 
 const ResumeBody = ({ documents }: ResumeBodyProps) => {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex h-[109px] flex-col gap-4">
       {/* 내 서류 */}
       <div className="flex flex-col gap-2.5">
         <span className="text-xxsmall12 font-normal text-[#4138A3]">

@@ -1,7 +1,12 @@
 'use client';
 
 import CareerBoard from '@components/career-board';
+import { CareerDataStatusProvider } from '@components/career-board/contexts/CareerDataStatusContext';
 
 export default function Page() {
-  return <CareerBoard />;
+  return (
+    <CareerDataStatusProvider>
+      <CareerBoard />
+    </CareerDataStatusProvider>
+  );
 }

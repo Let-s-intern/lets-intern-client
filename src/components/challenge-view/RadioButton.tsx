@@ -17,13 +17,13 @@ const RadioButton = ({ color, checked, label, onClick }: RadioButtonProps) => {
       onClick={onClick}
     >
       {checked ? (
-        <RadioChecked width={24} height={24} />
+        <RadioChecked className="h-5 w-5 md:h-6 md:w-6" />
       ) : (
-        <RadioEmpty width={24} height={24} />
+        <RadioEmpty className="h-5 w-5 md:h-6 md:w-6" />
       )}
       <span
         className={twMerge(
-          `text-xsmall16`,
+          `text-xsmall14 md:text-xsmall16`,
           !checked && 'text-neutral-0',
           checked && 'font-semibold',
         )}

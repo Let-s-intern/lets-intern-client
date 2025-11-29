@@ -1,13 +1,16 @@
 'use client';
 
 import useActiveReports from '@/hooks/useActiveReports';
+import { twMerge } from '@/lib/twMerge';
 import { useEffect, useMemo } from 'react';
 import BottomLinkSection from './BottomLinkSection';
 import BusinessInfo from './BusinessInfo';
 import CustomerSupport from './CustomerSupport';
 import MainLink from './MainLink';
 
-const Footer = () => {
+interface FooterProps extends React.ComponentProps<'footer'> {}
+
+const Footer = (props: FooterProps) => {
   const { hasActiveResume, hasActivePortfolio, hasActivePersonalStatement } =
     useActiveReports();
 
@@ -25,7 +28,12 @@ const Footer = () => {
   }, []);
 
   return (
-    <footer className="border-t-1 w-full border-neutral-80 bg-neutral-85 px-5 pb-16 pt-10 md:pb-12 lg:px-10 xl:px-52">
+    <footer
+      className={twMerge(
+        'border-t-1 w-full border-neutral-80 bg-neutral-85 px-5 pb-16 pt-10 md:pb-12 lg:px-10 xl:px-52',
+        props.className,
+      )}
+    >
       <div className="flex flex-col gap-[3.25rem] lg:justify-between lg:gap-7">
         <div className="flex flex-col gap-[3.25rem] lg:flex-row-reverse lg:justify-between">
           <div className="flex flex-col gap-[3.25rem] lg:flex-row lg:items-start lg:gap-[6.25rem]">

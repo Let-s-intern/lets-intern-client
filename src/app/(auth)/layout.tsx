@@ -1,0 +1,58 @@
+import Providers from '@/context/Providers';
+import ChannelTalkBtn from '@components/common/ui/layout/channel/ChannelTalkBtn';
+import Footer from '@components/common/ui/layout/footer/Footer';
+import LogoLink from '@components/common/ui/layout/header/LogoLink';
+import NavBar from '@components/common/ui/layout/header/NavBar';
+import { Metadata } from 'next';
+import React from 'react';
+
+export const metadata: Metadata = {
+  title: '렛츠커리어 | 인턴/신입, 커리어의 첫 걸음을 함께 해요',
+  description:
+    '커리어 탐색, 서류 준비, 면접 준비까지 취업 준비생 관점에서 함께 하는 커리어 플랫폼, 렛츠커리어',
+  keywords:
+    '렛츠커리어, letscareer, 렛츠인턴, 챌린지, 인턴, 신입, 취업, 취업준비, 취뽀, 인턴합격, 신입합격, 서류합격, 면접합격',
+  openGraph: {
+    type: 'website',
+    title: '렛츠커리어 | 인턴/신입, 커리어의 첫 걸음을 함께 해요',
+    siteName: '렛츠커리어',
+    images:
+      'https://letsintern-bucket.s3.ap-northeast-2.amazonaws.com/banner/popup/%E1%84%85%E1%85%A6%E1%86%BA%E1%84%8E%E1%85%B3%E1%84%8F%E1%85%A5%E1%84%85%E1%85%B5%E1%84%8B%E1%85%A5%20%E1%84%85%E1%85%A9%E1%84%80%E1%85%A9%20og_image%201200_630.png',
+    url: 'https://www.letscareer.co.kr',
+    description:
+      '커리어 탐색, 서류 준비, 면접 준비까지 취업 준비생 관점에서 함께 하는 커리어 플랫폼, 렛츠커리어',
+    locale: 'ko_KR',
+  },
+  alternates: {
+    canonical: 'https://www.letscareer.co.kr',
+  },
+};
+
+if (process.env.NO_INDEX === 'true') {
+  metadata.robots = 'noindex';
+} else {
+  metadata.robots = 'index, follow';
+}
+
+/**
+ * Auth 페이지 전용 레이아웃
+ * - 모바일: NavBar, Footer, ChannelTalkBtn 숨김
+ * - 데스크톱: 전체 표시
+ */
+const AuthLayout = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <Providers>
+      <div>
+        <NavBar className="hidden md:block" />
+        <nav className="box-content flex items-center border-b-[1.5px] border-neutral-90 px-5 py-2.5 md:hidden">
+          <LogoLink className="my-[2px] w-fit" />
+        </nav>
+        <div className="min-h-screen w-full md:min-h-[31rem]">{children}</div>
+        <Footer className="hidden md:block" />
+        <ChannelTalkBtn className="hidden md:block" />
+      </div>
+    </Providers>
+  );
+};
+
+export default AuthLayout;
