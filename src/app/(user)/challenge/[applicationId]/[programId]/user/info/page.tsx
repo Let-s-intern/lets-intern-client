@@ -7,18 +7,17 @@ import {
 import { usePatchChallengeGoal } from '@/api/challenge';
 import { useProgramQuery } from '@/api/program';
 import { usePatchUser, useUserQuery } from '@/api/user';
-import { ConditionList } from '@/app/(user)/mypage/career/plan/page';
 import RadioButton from '@/components/challenge-view/RadioButton';
+import CareerInfoForm, {
+  CareerInfoSelections,
+  CareerInfoValues,
+} from '@/components/common/mypage/career/CareerInfoForm';
 import Input from '@/components/common/ui/input/Input';
-import { useCareerModals } from '@/hooks/useCareerModals';
-import { GRADE_ENUM_TO_KOREAN } from '@/utils/constants';
+import { GRADE_ENUM_TO_KOREAN, GRADE_KOREAN_TO_ENUM } from '@/utils/constants';
 import { DASHBOARD_FIRST_VISIT_GOAL } from '@components/common/challenge/my-challenge/section/MissionSubmitZeroSection';
-import CareerModals from '@components/common/mypage/career/CareerModal';
-import { SelectButton } from '@components/common/ui/button/SelectButton';
-import LineInput from '@components/common/ui/input/LineInput';
 import { josa } from 'es-hangul';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const radioColor = '#5177FF';
 const awarenessOptions = [
@@ -62,16 +61,26 @@ const ChallengeUserInfo = () => {
   const programId = params.programId;
   const router = useRouter();
 
-  const [value, setValue] = useState({
+  const [value, setValue] = useState<CareerInfoValues>({
     university: '',
     grade: '',
     major: '',
-    wishField: '',
-    wishJob: '',
     wishCompany: '',
-    wishIndustry: '',
     wishEmploymentType: '',
   });
+
+  const [selections, setSelections] = useState<CareerInfoSelections>({
+    selectedField: null,
+    selectedPositions: [],
+    selectedIndustries: [],
+  });
+
+  const [initialSelections, setInitialSelections] = useState<{
+    field?: string | null;
+    positions?: string[];
+    industries?: string[];
+  }>({});
+
   const { data: userData } = useUserQuery();
 
   const [surveySelections, setSurveySelections] = useState({
@@ -99,21 +108,6 @@ const ChallengeUserInfo = () => {
 
   const { mutateAsync: tryPostGoal } = usePatchChallengeGoal();
 
-  const {
-    modalStep,
-    setModalStep,
-    selectedField,
-    setSelectedField,
-    selectedPositions,
-    setSelectedPositions,
-    selectedIndustries,
-    setSelectedIndustries,
-    getFieldDisplayText,
-    getPositionDisplayText,
-    getIndustryDisplayText,
-    closeModal,
-  } = useCareerModals();
-
   useEffect(() => {
     if (userData) {
       const koreanGrade = userData.grade
@@ -124,25 +118,21 @@ const ChallengeUserInfo = () => {
         university: userData?.university ?? '',
         grade: koreanGrade,
         major: userData?.major ?? '',
-        wishField: userData?.wishField ?? '',
-        wishJob: userData?.wishJob ?? '',
         wishCompany: userData?.wishCompany ?? '',
-        wishIndustry: userData?.wishIndustry ?? '',
         wishEmploymentType: userData?.wishEmploymentType ?? '',
       });
-      setSelectedField(userData.wishField || '');
-      setSelectedPositions(
-        userData.wishJob
+
+      setInitialSelections({
+        field: userData.wishField || null,
+        positions: userData.wishJob
           ? userData.wishJob.split(',').map((s) => s.trim())
           : [],
-      );
-      setSelectedIndustries(
-        userData.wishIndustry
+        industries: userData.wishIndustry
           ? userData.wishIndustry.split(',').map((s) => s.trim())
           : [],
-      );
+      });
     }
-  }, [setSelectedField, setSelectedIndustries, setSelectedPositions, userData]);
+  }, [userData]);
 
   const username = userData?.name;
 
@@ -175,12 +165,25 @@ const ChallengeUserInfo = () => {
     if (patchUserIsPending || !programId) return;
 
     try {
+      const enumGrade = value.grade
+        ? (GRADE_KOREAN_TO_ENUM[value.grade] ?? null)
+        : null;
+
       const tryPatchUserRes = await tryPatchUser({
         university: value.university,
-        grade: value.grade,
+        grade: enumGrade,
         major: value.major,
-        wishJob: value.wishJob,
+        wishField: selections.selectedField,
+        wishJob:
+          selections.selectedPositions.length > 0
+            ? selections.selectedPositions.join(', ')
+            : null,
+        wishIndustry:
+          selections.selectedIndustries.length > 0
+            ? selections.selectedIndustries.join(', ')
+            : null,
         wishCompany: value.wishCompany,
+        wishEmploymentType: value.wishEmploymentType,
       });
 
       console.log('tryPatchUser success', tryPatchUserRes.data);
@@ -223,6 +226,13 @@ const ChallengeUserInfo = () => {
     }
   };
 
+  const handleSelectionsChange = useCallback(
+    (newSelections: CareerInfoSelections) => {
+      setSelections(newSelections);
+    },
+    [],
+  );
+
   const isSubmitDisabled = useMemo(() => {
     if (
       !value.university ||
@@ -235,9 +245,9 @@ const ChallengeUserInfo = () => {
     }
 
     if (
-      !selectedField ||
-      selectedPositions.length === 0 ||
-      selectedIndustries.length === 0
+      !selections.selectedField ||
+      selections.selectedPositions.length === 0 ||
+      selections.selectedIndustries.length === 0
     ) {
       return true;
     }
@@ -262,34 +272,7 @@ const ChallengeUserInfo = () => {
       !isAwarenessValid ||
       !isPaymentPathValid
     );
-  }, [
-    value,
-    selectedField,
-    selectedPositions,
-    selectedIndustries,
-    surveySelections,
-    surveyEtcText,
-    showSourceSurvey,
-  ]);
-
-  const handleConditionToggle = (value: string) => {
-    setValue((prev) => {
-      const current = prev.wishEmploymentType ?? '';
-      const list = current
-        ? current
-            .split(',')
-            .map((v) => v.trim())
-            .filter(Boolean)
-        : [];
-      const updated = list.includes(value)
-        ? list.filter((v) => v !== value)
-        : [...list, value];
-      return {
-        ...prev,
-        wishEmploymentType: updated.length > 0 ? updated.join(', ') : '',
-      };
-    });
-  };
+  }, [value, selections, surveySelections, surveyEtcText, showSourceSurvey]);
 
   return (
     <main className="mx-auto flex max-w-md flex-col gap-9 px-5 pb-16 pt-12 md:px-0 md:pb-24 md:pt-10">
@@ -304,256 +287,134 @@ const ChallengeUserInfo = () => {
         </p>
       </div>
       <div className="flex flex-col gap-9">
-        <section className="flex flex-col gap-6">
-          <div className="flex flex-col gap-1">
-            <h2 className="text-lg font-semibold">기본 정보</h2>
-          </div>
-          <div className="flex flex-col gap-3">
-            <div>
-              <div className="mb-10 flex flex-col gap-4">
-                <div className="flex flex-col gap-[6px]">
-                  <label className="text-xsmall14 md:text-xsmall16">학교</label>
-                  <LineInput
-                    className="text-xsmall14 md:text-xsmall16"
-                    placeholder="학교 이름을 입력해 주세요."
-                    value={value.university ?? ''}
-                    onChange={(e) =>
-                      setValue((prev) => ({
-                        ...prev,
-                        university: e.target.value,
-                      }))
-                    }
-                  />
-                </div>
-                <SelectButton
-                  label="학년"
-                  className="text-xsmall14 md:text-xsmall16"
-                  value={value.grade || '학년을 선택해 주세요.'}
-                  placeholder="학년을 선택해 주세요."
-                  onClick={() => setModalStep('grade')}
-                />
-                <div className="flex flex-col gap-[6px]">
-                  <label className="text-xsmall14 md:text-xsmall16">전공</label>
-                  <LineInput
-                    className="text-xsmall14 md:text-xsmall16"
-                    placeholder="전공을 입력해 주세요."
-                    value={value.major ?? ''}
-                    onChange={(e) =>
-                      setValue((prev) => ({ ...prev, major: e.target.value }))
-                    }
-                  />
-                </div>
-              </div>
-              <div className="mb-8 flex flex-col gap-4">
-                <SelectButton
-                  className="text-xsmall14 md:text-xsmall16"
-                  label="희망 직군"
-                  value={getFieldDisplayText()}
-                  placeholder="희망 직군을 선택해 주세요."
-                  onClick={() => setModalStep('field')}
-                />
-                <SelectButton
-                  className="text-xsmall14 md:text-xsmall16"
-                  label="희망 직무 (최대 3개)"
-                  value={getPositionDisplayText()}
-                  placeholder="희망 직무를 선택해 주세요."
-                  onClick={() => {
-                    if (!selectedField || selectedField === '직군 무관') {
-                      setModalStep('field');
-                    } else {
-                      setModalStep('position');
-                    }
-                  }}
-                />
-                <SelectButton
-                  className="text-xsmall14 md:text-xsmall16"
-                  label="희망 산업 (최대 3개)"
-                  value={getIndustryDisplayText()}
-                  placeholder="희망 산업을 선택해 주세요."
-                  onClick={() => setModalStep('industry')}
-                />
-                <div className="flex flex-col gap-[6px]">
-                  <label className="text-xsmall14 md:text-xsmall16">
-                    희망 기업
-                  </label>
-                  <LineInput
-                    id="wishTargetCompany"
-                    name="wishTargetCompany"
-                    className="text-xsmall14 md:text-xsmall16"
-                    placeholder="희망 기업을 입력해 주세요."
-                    value={value.wishCompany || ''}
-                    onChange={(e) =>
-                      setValue((prev) => ({
-                        ...prev,
-                        wishCompany: e.target.value,
-                      }))
-                    }
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col gap-3">
-                <span className="text-xsmall14 md:text-xsmall16">
-                  희망 구직 조건
-                </span>
-                <ConditionList
-                  selected={(value.wishEmploymentType ?? '')
-                    .split(',')
-                    .map((v) => v.trim())
-                    .filter(Boolean)}
-                  onToggle={handleConditionToggle}
-                />
-              </div>
-            </div>
-            <hr className="my-4" />
-            {showSourceSurvey ? (
-              <div className="flex flex-col gap-6" id="sourceSurvey">
-                <div className="flex flex-col gap-1">
-                  <h2 className="text-lg font-semibold">
-                    렛츠커리어 챌린지를 언제, 어떤 계기로 결제하게 되셨나요?
-                  </h2>
-                  <p className="break-keep text-neutral-40">
-                    아래 중 본인 상황과 가장 가까운 항목을 선택해주세요.
-                  </p>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <span
-                    className="text-xsmall14 md:text-xsmall16"
-                    id="challengeAwarenessLabel"
-                  >
-                    {josa(`${programTitle}`, '이/가')} 개설된 사실을 어떻게
-                    아셨나요?<span className="pl-1 text-requirement">*</span>
-                  </span>
-                  <div className="flex flex-col gap-2">
-                    {awarenessOptions.map((option) => (
-                      <div key={option} className="flex flex-col gap-2">
-                        <RadioButton
-                          color={radioColor}
-                          checked={surveySelections.awarenessPath === option}
-                          label={option}
-                          onClick={() =>
-                            handleSurveySelection('awarenessPath')(option)
-                          }
-                        />
-                        {option === '기타' &&
-                          surveySelections.awarenessPath === '기타' && (
-                            <Input
-                              id="challengeAwarenessEtc"
-                              name="challengeAwarenessEtc"
-                              placeholder="기타 항목을 입력해주세요."
-                              value={surveyEtcText.awarenessPath}
-                              onChange={handleSurveyEtcChange('awarenessPath')}
-                              className="ml-7 mt-1 w-full max-w-sm"
-                            />
-                          )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <span
-                    className="text-xsmall14 md:text-xsmall16"
-                    id="challengeDecisionPeriodLabel"
-                  >
-                    {josa(`${programTitle}`, '을/를')} 알게 된 후, 결제하기까지
-                    얼마나 고민하셨나요?
-                    <span className="pl-1 text-requirement">*</span>
-                  </span>
-                  <p className="mb-2 break-keep text-neutral-40">
-                    처음 챌린지 소식을 접한 시점부터 결제 완료까지의 기간을
-                    선택해주세요.
-                  </p>
-                  <div className="flex flex-col gap-2">
-                    {decisionPeriodOptions.map((option) => (
-                      <RadioButton
-                        key={option}
-                        color={radioColor}
-                        checked={surveySelections.decisionPeriod === option}
-                        label={option}
-                        onClick={() =>
-                          handleSurveySelection('decisionPeriod')(option)
-                        }
-                      />
-                    ))}
-                  </div>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <span
-                    className="text-xsmall14 md:text-xsmall16"
-                    id="challengeEntryPointLabel"
-                  >
-                    그렇다면 {josa(`${programTitle}`, '을/를')} 실제 결제 하기
-                    직전에는 어디를 통해 결제 페이지에 들어오셨나요?
-                    <span className="pl-1 text-requirement">*</span>
-                  </span>
-                  <div className="flex flex-col gap-2">
-                    {entryPointOptions.map((option) => (
-                      <div key={option} className="flex flex-col gap-2">
-                        <RadioButton
-                          color={radioColor}
-                          checked={surveySelections.paymentPath === option}
-                          label={option}
-                          onClick={() =>
-                            handleSurveySelection('paymentPath')(option)
-                          }
-                        />
-                        {option === '기타' &&
-                          surveySelections.paymentPath === '기타' && (
-                            <Input
-                              id="challengeEntryPointEtc"
-                              name="challengeEntryPointEtc"
-                              placeholder="기타 항목을 입력해주세요."
-                              value={surveyEtcText.paymentPath}
-                              onChange={handleSurveyEtcChange('paymentPath')}
-                              className="ml-7 mt-1 w-full max-w-sm"
-                            />
-                          )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ) : null}
-          </div>
+        <section>
+          <CareerInfoForm
+            value={value}
+            onChange={setValue}
+            initialSelections={initialSelections}
+            onSelectionsChange={handleSelectionsChange}
+          />
         </section>
 
+        {showSourceSurvey ? (
+          <section>
+            <div className="flex flex-col gap-6" id="sourceSurvey">
+              <div className="flex flex-col gap-1">
+                <h2 className="text-xsmall16 font-semibold md:text-small18">
+                  렛츠커리어 챌린지를 언제, 어떤 계기로 결제하게 되셨나요?
+                </h2>
+                <p className="break-keep text-xsmall14 text-neutral-40 md:text-xsmall16">
+                  아래 중 본인 상황과 가장 가까운 항목을 선택해주세요.
+                </p>
+              </div>
+              <div className="flex flex-col gap-2">
+                <span
+                  className="text-xsmall14 md:text-xsmall16"
+                  id="challengeAwarenessLabel"
+                >
+                  {josa(`${programTitle}`, '이/가')} 개설된 사실을 어떻게
+                  아셨나요?<span className="pl-1 text-requirement">*</span>
+                </span>
+                <div className="flex flex-col gap-2">
+                  {awarenessOptions.map((option) => (
+                    <div key={option} className="flex flex-col gap-2">
+                      <RadioButton
+                        color={radioColor}
+                        checked={surveySelections.awarenessPath === option}
+                        label={option}
+                        onClick={() =>
+                          handleSurveySelection('awarenessPath')(option)
+                        }
+                      />
+                      {option === '기타' &&
+                        surveySelections.awarenessPath === '기타' && (
+                          <Input
+                            id="challengeAwarenessEtc"
+                            name="challengeAwarenessEtc"
+                            placeholder="기타 항목을 입력해주세요."
+                            value={surveyEtcText.awarenessPath}
+                            onChange={handleSurveyEtcChange('awarenessPath')}
+                            className="ml-7 mt-1 w-full max-w-sm"
+                          />
+                        )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col gap-1">
+                <span
+                  className="text-xsmall14 md:text-xsmall16"
+                  id="challengeDecisionPeriodLabel"
+                >
+                  {josa(`${programTitle}`, '을/를')} 알게 된 후, 결제하기까지
+                  얼마나 고민하셨나요?
+                  <span className="pl-1 text-requirement">*</span>
+                </span>
+                <p className="mb-2 break-keep text-xsmall14 text-neutral-40 md:text-xsmall16">
+                  처음 챌린지 소식을 접한 시점부터 결제 완료까지의 기간을
+                  선택해주세요.
+                </p>
+                <div className="flex flex-col gap-2">
+                  {decisionPeriodOptions.map((option) => (
+                    <RadioButton
+                      key={option}
+                      color={radioColor}
+                      checked={surveySelections.decisionPeriod === option}
+                      label={option}
+                      onClick={() =>
+                        handleSurveySelection('decisionPeriod')(option)
+                      }
+                    />
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <span
+                  className="text-xsmall14 md:text-xsmall16"
+                  id="challengeEntryPointLabel"
+                >
+                  그렇다면 {josa(`${programTitle}`, '을/를')} 실제 결제 하기
+                  직전에는 어디를 통해 결제 페이지에 들어오셨나요?
+                  <span className="pl-1 text-requirement">*</span>
+                </span>
+                <div className="flex flex-col gap-2">
+                  {entryPointOptions.map((option) => (
+                    <div key={option} className="flex flex-col gap-2">
+                      <RadioButton
+                        color={radioColor}
+                        checked={surveySelections.paymentPath === option}
+                        label={option}
+                        onClick={() =>
+                          handleSurveySelection('paymentPath')(option)
+                        }
+                      />
+                      {option === '기타' &&
+                        surveySelections.paymentPath === '기타' && (
+                          <Input
+                            id="challengeEntryPointEtc"
+                            name="challengeEntryPointEtc"
+                            placeholder="기타 항목을 입력해주세요."
+                            value={surveyEtcText.paymentPath}
+                            onChange={handleSurveyEtcChange('paymentPath')}
+                            className="ml-7 mt-1 w-full max-w-sm"
+                          />
+                        )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        ) : null}
+
         <button
-          className="rounded-xs bg-primary px-4 py-3 font-medium text-white disabled:bg-neutral-70"
+          className="rounded-xs bg-primary px-4 py-3 text-xsmall14 font-medium text-white disabled:bg-neutral-70 md:text-xsmall16"
           onClick={handleSubmit}
           disabled={isSubmitDisabled}
         >
           대시보드 입장하기
         </button>
       </div>
-      <CareerModals
-        setModalStep={setModalStep}
-        modalStep={modalStep}
-        initialField={selectedField}
-        initialPositions={selectedPositions}
-        initialIndustries={selectedIndustries}
-        userGrade={value.grade ?? ''}
-        onGradeComplete={(grade) => {
-          setValue((prev) => ({ ...prev, grade }));
-          closeModal();
-        }}
-        onFieldComplete={(field, positions) => {
-          setSelectedField(field);
-          setSelectedPositions(positions);
-          if (field === '직군 무관') {
-            closeModal();
-          } else {
-            setModalStep('position');
-          }
-        }}
-        onPositionsComplete={(positions) => {
-          setSelectedPositions(positions);
-          closeModal();
-        }}
-        onIndustriesComplete={(industries) => {
-          setSelectedIndustries(industries);
-          closeModal();
-        }}
-        onClose={closeModal}
-      />
     </main>
   );
 };
