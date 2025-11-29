@@ -283,23 +283,23 @@ const ChallengeUserInfo = () => {
         </p>
       </div>
       <div className="flex flex-col gap-9">
-        <section className="flex flex-col gap-6">
+        <section>
           <CareerInfoForm
             value={value}
             onChange={setValue}
             initialSelections={initialSelections}
             onSelectionsChange={handleSelectionsChange}
           />
+        </section>
 
-          <hr className="my-4" />
-
-          {showSourceSurvey ? (
+        {showSourceSurvey ? (
+          <section>
             <div className="flex flex-col gap-6" id="sourceSurvey">
               <div className="flex flex-col gap-1">
-                <h2 className="text-lg font-semibold">
+                <h2 className="text-xsmall16 font-semibold md:text-small18">
                   렛츠커리어 챌린지를 언제, 어떤 계기로 결제하게 되셨나요?
                 </h2>
-                <p className="break-keep text-neutral-40">
+                <p className="break-keep text-xsmall14 text-neutral-40 md:text-xsmall16">
                   아래 중 본인 상황과 가장 가까운 항목을 선택해주세요.
                 </p>
               </div>
@@ -346,7 +346,7 @@ const ChallengeUserInfo = () => {
                   얼마나 고민하셨나요?
                   <span className="pl-1 text-requirement">*</span>
                 </span>
-                <p className="mb-2 break-keep text-neutral-40">
+                <p className="mb-2 break-keep text-xsmall14 text-neutral-40 md:text-xsmall16">
                   처음 챌린지 소식을 접한 시점부터 결제 완료까지의 기간을
                   선택해주세요.
                 </p>
@@ -400,11 +400,11 @@ const ChallengeUserInfo = () => {
                 </div>
               </div>
             </div>
-          ) : null}
-        </section>
+          </section>
+        ) : null}
 
         <button
-          className="rounded-xs bg-primary px-4 py-3 font-medium text-white disabled:bg-neutral-70"
+          className="rounded-xs bg-primary px-4 py-3 text-xsmall14 font-medium text-white disabled:bg-neutral-70 md:text-xsmall16"
           onClick={handleSubmit}
           disabled={isSubmitDisabled}
         >
