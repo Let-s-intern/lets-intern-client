@@ -53,8 +53,7 @@ const TableRow = ({ applicationItem, programType }: Props) => {
 
     /** 챌린지 결제금액 */
     const { couponDiscount, isCanceled, finalPrice } = challengeApp.application;
-    if (couponDiscount === -1) return 0;
-
+    if (couponDiscount === -1) return finalPrice ?? 0;
     if (isCanceled) {
       const deposit = challengeApp.application.refundPrice ?? 0; // 보증금
       const optionSellingPrice =
