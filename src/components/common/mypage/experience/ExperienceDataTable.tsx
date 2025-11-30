@@ -20,6 +20,7 @@ import DataTable, {
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import OutlinedButton from '@components/ui/button/OutlinedButton';
 import { useEffect, useMemo, useState } from 'react';
+import CopyCell from './table-cell/CopyCell';
 
 const PAGE_SIZE = 10;
 
@@ -29,12 +30,14 @@ const ExperienceDataTable = ({
   onResetFilters,
   onRowClick,
   onCreateClick,
+  onCopy,
 }: {
   sortBy: Sortable;
   filters: Filters;
   onResetFilters: () => void;
   onRowClick?: (experience: TableData) => void;
   onCreateClick: () => void;
+  onCopy: (copiedExperience: TableData) => void;
 }) => {
   const [page, setPage] = useState(1);
 
@@ -110,16 +113,23 @@ const ExperienceDataTable = ({
         cellRenderer: (value: string) => <CoreCompetencyCell value={value} />,
       },
       {
+        key: 'copyAction',
+        label: '복제',
+        width: '48px',
+        align: { horizontal: 'center', vertical: 'middle' },
+        cellRenderer: (_, row) => <CopyCell row={row} onCopy={onCopy} />,
+      },
+      {
         key: 'deleteAction',
         label: '삭제',
-        width: '90px',
+        width: '48px',
         align: { horizontal: 'center', vertical: 'middle' },
         cellRenderer: (_, row) => (
           <DeleteCell row={row} onFilterReset={onResetFilters} />
         ),
       },
     ],
-    [onResetFilters],
+    [onResetFilters, onCopy],
   );
 
   if (isLoading) {

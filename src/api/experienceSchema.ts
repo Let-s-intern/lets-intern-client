@@ -8,8 +8,8 @@ export type UserAttendanceExperience = z.infer<
   typeof userAttendanceExperienceSchema
 >['userExperiences'];
 
-const activitySchema = z.enum(['TEAM', 'INDIVIDUAL']);
-const categorySchema = z.enum([
+export const activitySchema = z.enum(['TEAM', 'INDIVIDUAL']);
+export const categorySchema = z.enum([
   'PROJECT',
   'ACADEMIC',
   'CLUB',

@@ -61,6 +61,7 @@ export const defaultFormData: Partial<UserExperience> = {
 interface ExperienceFormProps {
   onClose: () => void;
   initialData: UserExperienceType | null;
+  isCopy?: boolean;
 }
 
 const normalizeCoreCompetency = (competency: string | undefined): string => {
@@ -75,6 +76,7 @@ const normalizeCoreCompetency = (competency: string | undefined): string => {
 export const ExperienceForm = ({
   onClose,
   initialData,
+  isCopy = false,
 }: ExperienceFormProps) => {
   const queryClient = useQueryClient();
   const {
@@ -185,8 +187,11 @@ export const ExperienceForm = ({
         }
         setDisplayYears(yearsInRange);
       }
+
+      // 복제 모드면 바로 저장
+      if (isCopy && !initialData.id) setTimeout(() => handleAutoSave(), 0);
     }
-  }, [initialData, reset]);
+  }, [initialData, reset, isCopy]);
 
   const handleCompetencyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value;
@@ -203,8 +208,8 @@ export const ExperienceForm = ({
     // 이미 자동 저장 중이면 중복 실행 방지
     if (isAutoSavingRef.current) return;
 
-    // isDirty 체크 - 변경사항이 없으면 저장 안 함
-    if (!isDirty) return;
+    // isDirty 체크 - 변경사항이 없으면 저장 안 함 (복제가 아닐 때만 체크)
+    if (!isCopy && !isDirty) return;
 
     // 폼 데이터 스냅샷 (단 한 번만!)
     const snapshot = getValues();
@@ -244,7 +249,7 @@ export const ExperienceForm = ({
       // 자동 저장 성공 시 시간 업데이트
       setLastAutoSaveTime(new Date());
       // 현재 값을 새로운 기준점으로 설정 (이후 변경사항 추적을 위해)
-      reset(snapshot, { keepDefaultValues: false });
+      if (!isCopy) reset(snapshot, { keepDefaultValues: false });
       console.log('자동 저장 완료');
     } catch (error) {
       console.error('자동 저장 실패:', error);
