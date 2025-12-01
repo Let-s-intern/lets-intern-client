@@ -28,7 +28,7 @@ const CareerGrowthSection = () => {
   const programs = useMemo(() => {
     if (!applications || applications.length === 0) return [];
 
-    // 진행중과 진행예정 프로그램 분리
+    // 진행중과 참여예정 프로그램 분리
     const proceedingPrograms: MypageApplication[] = [];
     const upcomingPrograms: MypageApplication[] = [];
 
@@ -43,7 +43,7 @@ const CareerGrowthSection = () => {
       }
     });
 
-    // 진행중과 진행예정 프로그램을 모두 표시 (진행중 우선)
+    // 진행중과 참여예정 프로그램을 모두 표시 (진행중 우선)
     // 각 그룹 내에서는 시작일 기준 오름차순 정렬
     const sortByStartDate = (a: MypageApplication, b: MypageApplication) => {
       const dateA = a.programStartDate;
@@ -208,7 +208,7 @@ const ProgramCard = ({
               <span
                 className={twMerge(
                   'rounded-xxs px-2 py-0.5 text-xxsmall12 font-normal',
-                  program.status === '진행예정'
+                  program.status === '참여예정'
                     ? 'border border-neutral-80 text-primary'
                     : 'bg-primary-10 text-primary',
                 )}
@@ -305,7 +305,7 @@ const convertApplicationToProgram = (
     application.programStatusType === 'PROCEEDING'
       ? '참여중'
       : application.programStatusType === 'PREV'
-        ? '진행예정'
+        ? '참여예정'
         : '';
 
   const programType = application.programType
