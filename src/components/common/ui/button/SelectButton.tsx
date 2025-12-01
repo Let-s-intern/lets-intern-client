@@ -30,6 +30,7 @@ export function SelectButton({
       </label>
 
       <button
+        type="button"
         onClick={onClick}
         disabled={disabled}
         className={`${className} flex w-full items-center justify-between truncate rounded-xxs border border-neutral-80 px-3 py-2.5 text-left ${

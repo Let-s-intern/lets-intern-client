@@ -170,8 +170,7 @@ const InfoContainer = ({
           </span>
           <h1 className="text-medium22 font-semibold text-neutral-0">
             <span className="block md:inline">
-              커리어 정보를
-              <br className="block md:hidden" />
+              커리어 정보를 <br className="block md:hidden" />
               입력해 주세요. (선택)
             </span>
           </h1>
