@@ -100,7 +100,7 @@ const MissionGuideZeroSection = ({
                 (content, index) => (
                   <MissionFileLink
                     key={content.id || index}
-                    fileName={content.title || ''}
+                    fileName={'필수 콘텐츠 확인하기'}
                     title={index === 0 ? '필수 콘텐츠' : ''}
                     disabled={false}
                     onClick={() => {
