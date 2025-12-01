@@ -2,7 +2,7 @@
 
 import { convertReportTypeToLandingPath } from '@/api/report';
 import Intro1 from '@/assets/graphic/home/intro/1.svg?react';
-import Intro10 from '@/assets/graphic/home/intro/10.svg?react';
+import Intro11 from '@/assets/graphic/home/intro/11.svg?react';
 import Intro2 from '@/assets/graphic/home/intro/2.svg?react';
 import Intro3 from '@/assets/graphic/home/intro/3.svg?react';
 import Intro5 from '@/assets/graphic/home/intro/5.svg?react';
@@ -17,6 +17,7 @@ import { ReactNode } from 'react';
 
 const {
   EXPERIENCE_SUMMARY,
+  CAREER_START,
   PERSONAL_STATEMENT,
   PERSONAL_STATEMENT_LARGE_CORP,
   PORTFOLIO,
@@ -39,14 +40,26 @@ const HOME_INTRO = {
       {
         title: (
           <p>
-            경험정리 <br className="md:hidden" />& 이력서{' '}
-            <br className="hidden md:block" />
-            준비
+            경험
+            <br />
+            정리하기
           </p>
         ),
         icon: <Intro1 width={44} height={44} />,
         href: `type=${EXPERIENCE_SUMMARY}`,
-        gaTitle: '경험 정리 & 이력서 준비',
+        gaTitle: '경험 정리하기',
+      },
+      {
+        title: (
+          <p>
+            이력서
+            <br />
+            준비하기
+          </p>
+        ),
+        icon: <Intro11 width={44} height={44} />,
+        href: `type=${CAREER_START}`,
+        gaTitle: '이력서 준비하기',
       },
       {
         title: (
@@ -108,18 +121,6 @@ const HOME_INTRO = {
         icon: <Intro6 width={44} height={44} />,
         href: convertReportTypeToLandingPath('PERSONAL_STATEMENT'),
         gaTitle: '자기소개서 피드백 받기',
-      },
-      {
-        title: (
-          <p>
-            기업에게
-            <br />
-            면접 제안 받기
-          </p>
-        ),
-        icon: <Intro10 width={40} height={40} />,
-        href: 'https://recruit.superpasshr.com/?utm_source=letscareer&utm_medium=letscareer_homepage&utm_campaign=letscareer_homepage',
-        gaTitle: '기업에게 면접 제안 받기',
       },
     ],
   },
@@ -186,6 +187,7 @@ const IntroSection = () => {
   // 새로운 훅을 사용하여 각 타입별 첫 번째 B2C 챌린지 가져오기
   const {
     experienceSummary,
+    resume,
     personalStatement,
     personalStatementLargeCorp,
     portfolio,
@@ -195,6 +197,9 @@ const IntroSection = () => {
     switch (type) {
       case EXPERIENCE_SUMMARY:
         return experienceSummary?.href;
+
+      case CAREER_START:
+        return resume?.href;
 
       case PERSONAL_STATEMENT:
         return personalStatement?.href;
