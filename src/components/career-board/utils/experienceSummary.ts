@@ -3,6 +3,7 @@ import { UserExperienceType } from '@/api/experienceSchema';
 /**
  * 핵심 역량 빈도 계산 및 상위 3개 추출
  * - isAddedByAdmin === false인 항목만 필터링
+ * - coreCompetency를 쉼표로 분리하여 개별 숫자별 빈도수 계산
  * - 빈도 내림차순 정렬
  * - 상위 2개는 고정 선택
  * - 3번째는 동점 항목 중 랜덤 선택
@@ -15,16 +16,22 @@ export const getTopCoreCompetencies = (
     (exp) => exp.isAddedByAdmin === false,
   );
 
-  // 핵심 역량 빈도 계산
+  // 핵심 역량 빈도 계산 (쉼표로 분리된 개별 숫자별로 계산)
   const competencyCountMap = new Map<string, number>();
 
   userExperiences.forEach((exp) => {
     const competency = exp.coreCompetency?.trim();
     if (competency) {
-      competencyCountMap.set(
-        competency,
-        (competencyCountMap.get(competency) || 0) + 1,
-      );
+      // 쉼표로 분리하여 개별 숫자 추출
+      const competencies = competency
+        .split(',')
+        .map((c) => c.trim())
+        .filter((c) => c !== '');
+
+      // 각 숫자의 빈도수 계산
+      competencies.forEach((c) => {
+        competencyCountMap.set(c, (competencyCountMap.get(c) || 0) + 1);
+      });
     }
   });
 
