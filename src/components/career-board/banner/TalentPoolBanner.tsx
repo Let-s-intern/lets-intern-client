@@ -1,27 +1,47 @@
 'use client';
 
+import { usePatchUserPoolUpMutation, useUserQuery } from '@/api/user';
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface TalentPoolBannerProps {
   hasCareerData?: boolean;
-  isRegistered?: boolean;
-  onToggle?: (value: boolean) => void;
 }
 
-const TalentPoolBanner = ({
-  hasCareerData = false,
-  isRegistered = false,
-  onToggle,
-}: TalentPoolBannerProps) => {
-  const [isEnabled, setIsEnabled] = useState(isRegistered);
-  const isDisabled = !hasCareerData;
+const TalentPoolBanner = ({ hasCareerData = false }: TalentPoolBannerProps) => {
+  const { data: userData, isLoading: isUserLoading } = useUserQuery();
+  const [isEnabled, setIsEnabled] = useState(false);
+  const isDisabled = !hasCareerData || isUserLoading;
+  // API에서 받은 isPoolUp 값으로 초기 상태 설정
+  useEffect(() => {
+    if (userData?.isPoolUp !== null && userData?.isPoolUp !== undefined) {
+      setIsEnabled(userData.isPoolUp);
+    }
+  }, [userData?.isPoolUp]);
+
+  const patchUserPoolUpMutation = usePatchUserPoolUpMutation(
+    () => {
+      // 성공 시 상태는 invalidate로 자동 업데이트됨
+    },
+    (error) => {
+      // 실패 시 이전 상태로 롤백
+      setIsEnabled((prev) => !prev);
+      // eslint-disable-next-line no-console
+      console.error('인재풀 등록 상태 변경 실패:', error);
+    },
+  );
 
   const handleToggle = () => {
-    if (isDisabled) return;
+    if (isDisabled || !userData?.userId || patchUserPoolUpMutation.isPending)
+      return;
+
     const newValue = !isEnabled;
+    // 낙관적 업데이트
     setIsEnabled(newValue);
-    onToggle?.(newValue);
+    patchUserPoolUpMutation.mutate({
+      userId: userData.userId,
+      isPoolUp: newValue,
+    });
   };
 
   const message = isEnabled
@@ -52,8 +72,10 @@ const TalentPoolBanner = ({
               {
                 'bg-primary': isEnabled && !isDisabled,
                 'bg-[#D1D1D1]': !isEnabled || isDisabled,
-                'cursor-not-allowed opacity-50': isDisabled,
-                'cursor-pointer': !isDisabled,
+                'cursor-not-allowed opacity-50':
+                  isDisabled || patchUserPoolUpMutation.isPending,
+                'cursor-pointer':
+                  !isDisabled && !patchUserPoolUpMutation.isPending,
               },
             )}
             aria-label="인재풀 등록 토글"
