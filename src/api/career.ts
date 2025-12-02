@@ -78,3 +78,23 @@ export const usePatchUserCareerMutation = () => {
     },
   });
 };
+
+export const usePostAdminCareerMutation = (userId: number) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (careerData: FormData) => {
+      await axios.post(`/admin/user-career/user/${userId}`, careerData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [UserCareerQueryKey] });
+      queryClient.invalidateQueries({
+        queryKey: ['useUserDetailQueryKey', userId],
+      });
+    },
+  });
+};

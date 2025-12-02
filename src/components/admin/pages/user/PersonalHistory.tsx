@@ -1,4 +1,10 @@
+import { usePostAdminCareerMutation } from '@/api/career';
+import { UserCareerType } from '@/api/careerSchema';
 import { UserAdminDetail } from '@/schema';
+import CareerForm from '@components/common/mypage/career/CareerForm';
+import { DEFAULT_CAREER } from '@components/common/mypage/career/constants';
+import { Plus } from 'lucide-react';
+import { useState } from 'react';
 
 const getDocumentLabel = (type: string) => {
   switch (type) {
@@ -14,19 +20,42 @@ const getDocumentLabel = (type: string) => {
 };
 
 const PersonalHistory = ({ data }: { data: UserAdminDetail }) => {
+  const [isWriteOpen, setIsWriteOpen] = useState(false);
+  const createCareerMutation = usePostAdminCareerMutation(+data.userInfo.id);
+
+  const handleSubmit = async (career: UserCareerType) => {
+    const formData = new FormData();
+
+    const requestDto = new Blob([JSON.stringify(career)], {
+      type: 'application/json',
+    });
+
+    formData.append('requestDto', requestDto);
+
+    try {
+      await createCareerMutation.mutateAsync(formData);
+      setIsWriteOpen(false);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
   return (
     <div>
       <section>
         <div className="flex items-center justify-between border-b pb-2">
           <h1 className="pb-1 text-lg font-semibold">경력</h1>
+          <button onClick={() => setIsWriteOpen(true)}>
+            <Plus size={20} />
+          </button>
         </div>
         <div className="mt-4">
-          {data.careerInfos?.length === 0 ? (
+          {data.careerInfos?.length === 0 && !isWriteOpen ? (
             <div className="text-center text-neutral-500">
               등록된 경력이 없습니다.
             </div>
           ) : (
-            <div className="flex flex-col gap-4">
+            <div className="mb-4 flex flex-col gap-4">
               {data.careerInfos?.map((career, index) => (
                 <div
                   key={index}
@@ -44,8 +73,17 @@ const PersonalHistory = ({ data }: { data: UserAdminDetail }) => {
               ))}
             </div>
           )}
+          {/* 경력 추가 모달 */}
+          {isWriteOpen && (
+            <CareerForm
+              initialCareer={DEFAULT_CAREER}
+              handleCancel={() => setIsWriteOpen(false)}
+              handleSubmit={handleSubmit}
+            />
+          )}
         </div>
       </section>
+
       <section className="mt-6">
         <div className="flex items-center justify-between border-b pb-2">
           <h1 className="text-lg font-semibold">서류</h1>
