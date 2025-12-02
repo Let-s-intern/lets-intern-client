@@ -80,7 +80,7 @@ const Empty = ({
       <button
         type="button"
         onClick={handleButtonClick}
-        className="w-fit rounded-xs border border-primary px-3 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-primary/5"
+        className="h-[32px] w-fit rounded-xs border border-primary px-3 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-primary/5"
       >
         {buttonText}
       </button>
