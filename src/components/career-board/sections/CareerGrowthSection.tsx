@@ -202,26 +202,37 @@ const ProgramCard = ({
 
         {/* 내용 */}
         <div className="flex flex-1 flex-col gap-2">
-          {/* 상단: 태그, 프로그램 종류, 진행기간, 버튼 */}
-          <div className="flex w-full flex-wrap items-center justify-between gap-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <span
-                className={twMerge(
-                  'rounded-xxs px-2 py-0.5 text-xxsmall12 font-normal',
-                  program.status === '참여예정'
-                    ? 'border border-neutral-80 text-primary'
-                    : 'bg-primary-10 text-primary',
-                )}
-              >
-                {program.status}
-              </span>
-              <span className="text-xxsmall12 font-normal text-neutral-40">
-                {program.programType}
-              </span>
-              <div className="hidden h-4 w-px bg-neutral-80 md:block" />
-              <span className="text-xxsmall12 font-normal text-neutral-40">
-                진행기간 {period}
-              </span>
+          {/* 상단: 태그, 프로그램 종류, 진행기간 */}
+          <div className="flex w-full flex-wrap items-center gap-2">
+            <span
+              className={twMerge(
+                'rounded-xxs px-2 py-0.5 text-xxsmall12 font-normal',
+                program.status === '참여예정'
+                  ? 'border border-neutral-80 text-primary'
+                  : 'bg-primary-10 text-primary',
+              )}
+            >
+              {program.status}
+            </span>
+            <span className="text-xxsmall12 font-normal text-neutral-40">
+              {program.programType}
+            </span>
+            <div className="hidden h-4 w-px bg-neutral-80 md:block" />
+            <span className="text-xxsmall12 font-normal text-neutral-40">
+              진행기간 {period}
+            </span>
+          </div>
+
+          {/* 중간: 제목, 설명과 버튼 */}
+          <div className="flex flex-col gap-1 md:flex-row md:items-start md:gap-12">
+            <div className="flex flex-1 flex-col gap-1">
+              <h3 className="text-xsmall16 font-semibold text-neutral-0">
+                {program.title}
+              </h3>
+              <p className="text-xsmall14 text-neutral-20 md:line-clamp-2">
+                {program.description}
+                ㄴㅇㄹㅁㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㅁㄴㅇㄹㅁㄴㅇㄹㅁ
+              </p>
             </div>
             <DashboardButton
               programId={program.programId}
@@ -229,16 +240,6 @@ const ProgramCard = ({
               variant="desktop"
               disabled={isDashboardDisabled}
             />
-          </div>
-
-          {/* 중간: 제목, 설명 */}
-          <div className="flex flex-col gap-1">
-            <h3 className="text-xsmall16 font-semibold text-neutral-0">
-              {program.title}
-            </h3>
-            <p className="text-xsmall14 text-neutral-20 md:line-clamp-2">
-              {program.description}
-            </p>
           </div>
 
           {/* 하단: 구매플랜 */}

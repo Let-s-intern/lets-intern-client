@@ -21,7 +21,7 @@ const PeriodSelectItem = ({
     <button
       {...props}
       type="button"
-      className={`rounded-xxs px-3 py-1.5 text-left text-xsmall16 font-medium transition-colors ${
+      className={`mr-2 rounded-xxs px-3 py-1.5 text-left text-xsmall16 font-medium transition-colors ${
         isSelected
           ? 'bg-primary-5 text-primary'
           : 'text-neutral-20 hover:bg-neutral-95'

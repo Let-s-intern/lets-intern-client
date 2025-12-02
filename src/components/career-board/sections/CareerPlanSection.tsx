@@ -53,7 +53,6 @@ const CareerPlanSection = () => {
           />
         ) : (
           <CareerCard.Empty
-            height={179}
             description="아직 커리어 방향을 설정하지 않았어요."
             buttonText="커리어 계획하기"
             buttonHref="/mypage/career/plan"
@@ -89,7 +88,7 @@ const CareerPlanBody = ({
   })();
 
   return (
-    <div className="flex h-[179px] flex-col gap-2">
+    <div className="flex flex-col gap-2">
       <PlanFieldItem label="희망 직군 / 직무" value={jobRoleText || '미설정'} />
       <PlanFieldItem
         label="희망 산업"
@@ -112,7 +111,9 @@ const PlanFieldItem = ({ label, value }: PlanFieldItemProps) => {
   return (
     <>
       <div className="flex flex-col gap-1">
-        <span className="font-regular text-sm text-[#4138A3]">{label}</span>
+        <span className="font-regular text-xxsmall12 text-[#4138A3]">
+          {label}
+        </span>
         <span className="truncate text-sm text-neutral-0">{value}</span>
       </div>
       <div className="border-b border-[#EFEFEF]" />
