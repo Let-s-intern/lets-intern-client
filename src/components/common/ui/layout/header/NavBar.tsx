@@ -36,9 +36,11 @@ export const getBottomNavBarClassNameByPath = (pathname: string) => {
   return hideMobileBottomNavBar(pathname) && 'hidden md:flex';
 };
 
-interface NavBarProps extends React.ComponentProps<'header'> {}
+interface NavBarProps extends React.ComponentProps<'header'> {
+  isLoginPage?: boolean;
+}
 
-const NavBar = (props: NavBarProps) => {
+const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
   const pathname = usePathname();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -87,6 +89,7 @@ const NavBar = (props: NavBarProps) => {
         <GlobalNavTopBar
           loginRedirect={encodeURIComponent(pathname)}
           toggleMenu={toggleMenu}
+          isLoginPage={isLoginPage}
         />
         {/* 2단 */}
         <nav

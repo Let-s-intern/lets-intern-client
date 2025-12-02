@@ -1,8 +1,5 @@
+import ConditionalLayout from '@/components/common/ui/layout/ConditionalLayout';
 import Providers from '@/context/Providers';
-import ChannelTalkBtn from '@components/common/ui/layout/channel/ChannelTalkBtn';
-import Footer from '@components/common/ui/layout/footer/Footer';
-import NavBar from '@components/common/ui/layout/header/NavBar';
-import BottomNavBarWithPathname from '@components/common/ui/layout/BottomNavBarWithPathname';
 import { Metadata } from 'next';
 import React from 'react';
 
@@ -39,13 +36,7 @@ if (process.env.NO_INDEX === 'true') {
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <Providers>
-      <div>
-        <NavBar />
-        <div className="min-h-[31rem] w-full">{children}</div>
-        <Footer />
-        <ChannelTalkBtn />
-        <BottomNavBarWithPathname />
-      </div>
+      <ConditionalLayout>{children}</ConditionalLayout>
     </Providers>
   );
 };
