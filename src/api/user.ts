@@ -151,6 +151,7 @@ export const usePatchUserAdminMutation = ({
 
 /** GET /api/v1/user */
 const userSchema = z.object({
+  userId: z.number(),
   id: z.string().nullable(),
   name: z.string().nullable(),
   email: z.string().nullable(),
@@ -172,6 +173,7 @@ const userSchema = z.object({
   role: z.string().nullable(),
   careerType: z.enum(['QUALIFIED', 'NONE']).nullable(),
   memo: z.string().nullable(),
+  isPoolUp: z.boolean().nullable(),
 });
 
 export type User = z.infer<typeof userSchema>;
@@ -231,6 +233,32 @@ export const usePatchUser = (
   return useMutation({
     mutationFn: async (body: PatchUserBody) => {
       return await axios.patch('/user', body);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [useUserQueryKey] });
+      return successCallback && successCallback();
+    },
+    onError: (error: Error) => {
+      return errorCallback && errorCallback(error);
+    },
+  });
+};
+
+/** PATCH /api/v2/admin/user/{userId}/pool-up */
+export const usePatchUserPoolUpMutation = (
+  successCallback?: () => void,
+  errorCallback?: (error: Error) => void,
+) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      userId,
+      isPoolUp,
+    }: {
+      userId: number;
+      isPoolUp: boolean;
+    }) => {
+      return await axiosV2.patch(`/admin/user/${userId}/pool-up`, { isPoolUp });
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: [useUserQueryKey] });

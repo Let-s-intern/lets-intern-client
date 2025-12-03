@@ -24,6 +24,7 @@ interface UseExperienceSelectModalOptions {
   isOpen: boolean;
   pageSize?: number;
   missionStartDate?: Dayjs | null;
+  initialSelectedExperienceIds?: number[];
 }
 
 interface UseExperienceSelectModalReturn {
@@ -66,6 +67,7 @@ export const useExperienceSelectModal = ({
   isOpen,
   pageSize = DEFAULT_PAGE_SIZE,
   missionStartDate: _missionStartDate, // eslint-disable-line @typescript-eslint/no-unused-vars
+  initialSelectedExperienceIds,
 }: UseExperienceSelectModalOptions): UseExperienceSelectModalReturn => {
   const [filters, setFilters] = useState<Filters>(INITIAL_FILTERS);
   const [currentPage, setCurrentPage] = useState(1);
@@ -205,13 +207,32 @@ export const useExperienceSelectModal = ({
     setCurrentPage(1);
   }, [filters]);
 
-  // 모달이 닫힐 때 선택 상태 초기화
+  // 모달이 열릴 때 초기 선택 상태 설정
   useEffect(() => {
-    if (!isOpen) {
-      setSelectedRowIds(new Set());
-      setSelectedExperiencesMap(new Map());
+    if (!isOpen || !initialSelectedExperienceIds?.length) {
+      return;
     }
-  }, [isOpen]);
+
+    // 경험 데이터가 로드되지 않았으면 대기
+    if (!allFilteredExperiences.length) {
+      return;
+    }
+
+    // initialSelectedExperienceIds에 해당하는 경험들을 찾아서 선택 상태로 설정
+    const initialSelectedIds = new Set<string>();
+    const initialSelectedMap = new Map<string, ExperienceData>();
+
+    allFilteredExperiences.forEach((exp) => {
+      if (initialSelectedExperienceIds.includes(exp.originalId)) {
+        const expId = String(exp.originalId);
+        initialSelectedIds.add(expId);
+        initialSelectedMap.set(expId, exp);
+      }
+    });
+
+    setSelectedRowIds(initialSelectedIds);
+    setSelectedExperiencesMap(initialSelectedMap);
+  }, [isOpen, initialSelectedExperienceIds, allFilteredExperiences]);
 
   const handlePageChange = useCallback(
     (event: React.ChangeEvent<unknown>, page: number) => {

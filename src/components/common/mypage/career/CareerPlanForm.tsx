@@ -63,7 +63,7 @@ const CareerPlanForm = ({ user, handleEdit }: CareerPlanFormProps) => {
   return (
     <section>
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-small18">기본 정보</h1>
+        <h1 className="text-small18 font-medium">기본 정보</h1>
         <button
           onClick={handleEdit}
           className="flex items-center gap-1 text-neutral-35"

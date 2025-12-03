@@ -282,8 +282,8 @@ const ChallengeUserInfo = () => {
         </h1>
         <p className="break-keep text-xsmall14 text-neutral-20 md:text-xsmall16">
           안녕하세요! {username}님
-          <br /> {programTitle}에 입장하신 걸 환영합니다! 챌린지 대시보드 입장을
-          위해 추가정보를 입력해주세요.
+          <br /> {programTitle}에 입장하신 걸 환영합니다! <br />
+          챌린지 대시보드 입장을 위해 추가정보를 입력해주세요.
         </p>
       </div>
       <div className="flex flex-col gap-9">

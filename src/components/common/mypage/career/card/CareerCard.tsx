@@ -1,6 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
+import { ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 interface CareerCardProps {
@@ -28,16 +29,13 @@ const CareerCard = ({
       >
         <div className="flex items-center justify-between">
           <h3 className="font-semibold text-[#4A495C]">{title}</h3>
-          <img
-            src="/icons/chevron-right-filled.svg"
-            alt=""
-            className="h-4 w-4 cursor-pointer text-[#B0B0B0]"
-            onClick={labelOnClick}
-            onError={(e) => {
-              // chevron 아이콘이 없을 경우 대체
-              e.currentTarget.style.display = 'none';
-            }}
-          />
+          {labelOnClick && (
+            <ChevronRight
+              className="cursor-pointer stroke-[1.5] text-neutral-50"
+              size={24}
+              onClick={labelOnClick}
+            />
+          )}
         </div>
         {body}
       </div>
@@ -82,7 +80,7 @@ const Empty = ({
       <button
         type="button"
         onClick={handleButtonClick}
-        className="w-fit rounded-xs border border-primary px-3 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-primary/5"
+        className="h-[32px] w-fit rounded-xs border border-primary px-3 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-primary/5"
       >
         {buttonText}
       </button>

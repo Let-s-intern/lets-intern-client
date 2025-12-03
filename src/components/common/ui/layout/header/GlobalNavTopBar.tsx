@@ -2,7 +2,7 @@ import { useGetUserAdmin, useUserQuery } from '@/api/user';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
 import { logoutAndRefreshPage } from '@/utils/auth';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import GlobalNavItem from './GlobalNavItem';
 import LoginLink from './LoginLink';
 import LogoLink from './LogoLink';
@@ -12,9 +12,11 @@ import { SubNavItemProps } from './SubNavItem';
 interface Props {
   loginRedirect: string;
   toggleMenu: () => void;
+  isLoginPage?: boolean;
 }
 
-function GlobalNavTopBar({ loginRedirect, toggleMenu }: Props) {
+function GlobalNavTopBar({ loginRedirect, toggleMenu, isLoginPage }: Props) {
+  const router = useRouter();
   const pathname = usePathname(); // for nextjs pathname change detect
 
   const { isLoggedIn } = useAuthStore();
@@ -107,17 +109,31 @@ function GlobalNavTopBar({ loginRedirect, toggleMenu }: Props) {
             <SignUpLink />
           </div>
         )}
-        <i
-          className="cursor-pointer md:hidden"
-          aria-label="메뉴 열기"
-          onClick={toggleMenu}
-        >
-          <img
-            className="h-6 w-6"
-            src="/icons/hamburger-md-black.svg"
-            alt="네비게이션 아이콘"
-          />
-        </i>
+        {isLoginPage ? (
+          <i
+            className="cursor-pointer md:hidden"
+            aria-label="홈으로 이동"
+            onClick={() => router.push('/')}
+          >
+            <img
+              className="h-6 w-6"
+              src="/icons/Close_SM.svg"
+              alt="닫기 아이콘"
+            />
+          </i>
+        ) : (
+          <i
+            className="cursor-pointer md:hidden"
+            aria-label="메뉴 열기"
+            onClick={toggleMenu}
+          >
+            <img
+              className="h-6 w-6"
+              src="/icons/hamburger-md-black.svg"
+              alt="네비게이션 아이콘"
+            />
+          </i>
+        )}
       </div>
     </nav>
   );

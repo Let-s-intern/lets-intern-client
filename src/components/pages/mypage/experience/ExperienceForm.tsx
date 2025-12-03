@@ -16,11 +16,7 @@ import {
   UserExperienceQueryKey,
 } from '@/api/experience';
 import { UserExperienceType } from '@/api/experienceSchema';
-import {
-  useGetUserAdmin,
-  usePatchUserExperienceMutation,
-  usePostUserExperienceMutation,
-} from '@/api/user';
+import { useGetUserAdmin, usePatchUserExperienceMutation } from '@/api/user';
 import {
   CATEGORY_PAIRS,
   userExperienceSchema,
@@ -28,7 +24,7 @@ import {
   type UserExperience,
 } from '@/api/userSchema';
 import { useUnsavedChangesWarning } from '@/hooks/useUnsavedChangesWarning';
-import { useQueryClient } from '@tanstack/react-query';
+import { UseMutationResult, useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { ExperienceCategoryModal } from './components/ExperienceCategoryModal';
 import { FieldSection } from './components/FieldSection';
@@ -58,10 +54,26 @@ export const defaultFormData: Partial<UserExperience> = {
   coreCompetency: '',
 };
 
+export interface CreateExperienceResponse {
+  userExperienceId: number;
+}
+
+export interface UpdateExperienceParams {
+  id: number;
+  data: UserExperience;
+}
+
 interface ExperienceFormProps {
   onClose: () => void;
   initialData: UserExperienceType | null;
   isCopy?: boolean;
+  isAdminMode?: boolean;
+  createMutation: UseMutationResult<
+    CreateExperienceResponse,
+    Error,
+    UserExperience,
+    unknown
+  >;
 }
 
 const normalizeCoreCompetency = (competency: string | undefined): string => {
@@ -77,6 +89,8 @@ export const ExperienceForm = ({
   onClose,
   initialData,
   isCopy = false,
+  isAdminMode = false,
+  createMutation,
 }: ExperienceFormProps) => {
   const queryClient = useQueryClient();
   const {
@@ -99,7 +113,6 @@ export const ExperienceForm = ({
   const experienceCategory = watch('experienceCategory');
 
   // API mutation
-  const createExperienceMutation = usePostUserExperienceMutation();
   const updateExperienceMutation = usePatchUserExperienceMutation();
 
   // 관리자 여부 조회
@@ -205,6 +218,9 @@ export const ExperienceForm = ({
 
   // 자동 저장 함수 (실제 저장 로직)
   const handleAutoSave = useCallback(async () => {
+    // 어드민 모드면 자동 저장 안 함
+    if (isAdminMode) return;
+
     // 이미 자동 저장 중이면 중복 실행 방지
     if (isAutoSavingRef.current) return;
 
@@ -242,7 +258,7 @@ export const ExperienceForm = ({
           ...saveData,
           isAdminAdded: false,
         };
-        const result = await createExperienceMutation.mutateAsync(createData);
+        const result = await createMutation.mutateAsync(createData);
         experienceIdRef.current = result.userExperienceId;
       }
 
@@ -263,15 +279,19 @@ export const ExperienceForm = ({
       isAutoSavingRef.current = false;
     }
   }, [
+    isAdminMode,
     isDirty,
     getValues,
     updateExperienceMutation,
-    createExperienceMutation,
+    createMutation,
     isAdmin,
   ]);
 
   // 3초 디바운싱된 자동 저장 함수
   const debouncedAutoSave = useCallback(() => {
+    // 어드민 모드면 자동 저장 안 함
+    if (isAdminMode) return;
+
     // 이전 타이머 제거
     clearAutoSaveTimer();
 
@@ -279,7 +299,7 @@ export const ExperienceForm = ({
     autoSaveTimerRef.current = setTimeout(() => {
       handleAutoSave();
     }, 3000);
-  }, [handleAutoSave, clearAutoSaveTimer]);
+  }, [isAdminMode, handleAutoSave, clearAutoSaveTimer]);
 
   // 컴포넌트 언마운트 시 타이머 정리
   useEffect(() => {
@@ -358,7 +378,7 @@ export const ExperienceForm = ({
           ...submitData,
           isAdminAdded: false,
         };
-        const result = await createExperienceMutation.mutateAsync(createData);
+        const result = await createMutation.mutateAsync(createData);
         experienceIdRef.current = result.userExperienceId;
       }
 
@@ -793,13 +813,15 @@ export const ExperienceForm = ({
         {/* 푸터 */}
         <footer className="flex h-[100px] flex-col items-center gap-1 border-t border-neutral-85 px-5 py-4 md:h-[64px] md:flex-row md:justify-end md:gap-4 md:border-t-0 md:py-3">
           {/* 자동 저장 시간 표시 */}
-          <div
-            aria-live="polite"
-            className="h-4 text-xxsmall12 text-neutral-50 md:h-[22px] md:text-xsmall14 md:leading-[1.375rem]"
-          >
-            {lastAutoSaveTime &&
-              `자동 저장 완료 ${lastAutoSaveTime.getMonth() + 1}.${lastAutoSaveTime.getDate()} ${String(lastAutoSaveTime.getHours()).padStart(2, '0')}:${String(lastAutoSaveTime.getMinutes()).padStart(2, '0')}`}
-          </div>
+          {!isAdminMode && (
+            <div
+              aria-live="polite"
+              className="h-4 text-xxsmall12 text-neutral-50 md:h-[22px] md:text-xsmall14 md:leading-[1.375rem]"
+            >
+              {lastAutoSaveTime &&
+                `자동 저장 완료 ${lastAutoSaveTime.getMonth() + 1}.${lastAutoSaveTime.getDate()} ${String(lastAutoSaveTime.getHours()).padStart(2, '0')}:${String(lastAutoSaveTime.getMinutes()).padStart(2, '0')}`}
+            </div>
+          )}
           <button
             type="submit"
             form="experienceForm"

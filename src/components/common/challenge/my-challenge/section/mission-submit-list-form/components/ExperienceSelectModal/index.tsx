@@ -16,6 +16,7 @@ interface ExperienceSelectModalProps {
   onClose: () => void;
   onSelectComplete: (selectedExperiences: ExperienceData[]) => void;
   missionStartDate?: Dayjs | null;
+  initialSelectedExperienceIds?: number[];
 }
 
 const PAGE_SIZE = 8;
@@ -25,12 +26,14 @@ export const ExperienceSelectModal = ({
   onClose,
   onSelectComplete,
   missionStartDate,
+  initialSelectedExperienceIds,
 }: ExperienceSelectModalProps) => {
   const { filters, pagination, data, selection, handleComplete } =
     useExperienceSelectModal({
       isOpen,
       pageSize: PAGE_SIZE,
       missionStartDate,
+      initialSelectedExperienceIds,
     });
 
   const headers = getExperienceHeaders();

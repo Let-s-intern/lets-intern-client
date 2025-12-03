@@ -1,6 +1,7 @@
 'use client';
 
 import { Sortable, UserExperienceType } from '@/api/experienceSchema';
+import { usePostUserExperienceMutation } from '@/api/user';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import drawerReducer from '@/reducers/drawerReducer';
 import ExperienceCreateButton from '@components/common/mypage/experience/ExperienceCreateButton';
@@ -99,6 +100,8 @@ const Experience = () => {
     [dispatchIsDrawerOpen],
   );
 
+  const createMutation = usePostUserExperienceMutation();
+
   return (
     <>
       {isDrawerOpen && (
@@ -114,6 +117,7 @@ const Experience = () => {
               onClose={handleDrawerClose}
               initialData={selectedExperience}
               isCopy={!!(selectedExperience && !selectedExperience.id)}
+              createMutation={createMutation}
             />
           </div>
         </div>

@@ -20,7 +20,7 @@ export default function Page() {
   return (
     <div>
       <label>
-        <h1 className="mb-1.5 text-small18">나의 서류</h1>
+        <h1 className="mb-1.5 text-small18 font-medium">나의 서류</h1>
         <span className="text-xsmall14 text-neutral-45">
           50MB 이하의 PDF 파일만 업로드할 수 있습니다.
         </span>

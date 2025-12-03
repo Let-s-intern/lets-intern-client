@@ -154,7 +154,7 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
               className={clsx(
                 'flex-shrink-0 whitespace-nowrap pb-3 text-xsmall14',
                 tab.active
-                  ? 'border-b-2 border-neutral-0 font-semibold'
+                  ? '-mb-2 border-b-2 border-neutral-0 font-semibold'
                   : 'font-medium text-neutral-40',
               )}
             >
@@ -219,7 +219,7 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
                     className={clsx(
                       'pb-3 text-xsmall16 font-medium',
                       tab.active
-                        ? 'border-b-[1.6px] border-neutral-10 font-semibold text-neutral-10'
+                        ? '-mb-[1.6px] border-b-[1.6px] border-neutral-10 font-semibold text-neutral-10'
                         : 'text-neutral-45 hover:bg-white/50',
                     )}
                   >
