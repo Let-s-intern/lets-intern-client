@@ -84,17 +84,6 @@ const PaymentInputPage = () => {
         (challengeBasicPriceInfo?.discount ?? 0)
       : Infinity;
 
-  /**
-   * 쿠폰 입력창 표시 여부
-   * @note 경험정리/커리어시작 챌린지는 쿠폰 입력창 숨김
-   */
-  const shouldShowCouponSection = (() => {
-    if (programApplicationData.programType !== 'challenge') return true;
-    if (!program || !('challengeType' in program)) return true;
-    const couponDisabledChallengeTypes = ['CAREER_START', 'EXPERIENCE_SUMMARY'];
-    return !couponDisabledChallengeTypes.includes(program.challengeType);
-  })();
-
   const setUserInfo = useCallback((info: UserInfo) => {
     const { contactEmail, email, name, phoneNumber, question } = info;
     setProgramApplicationForm({
@@ -293,13 +282,12 @@ const PaymentInputPage = () => {
         <div className="mx-5 mb-10 flex flex-col gap-y-6">
           <div className="font-semibold text-neutral-0">결제 정보</div>
           <div className="flex flex-col gap-y-5">
-            {shouldShowCouponSection && (
-              <CouponSection
-                setCoupon={setCoupon}
-                programType={programApplicationData.programType ?? 'live'}
-                maxAmount={maxCouponAmount}
-              />
-            )}
+            <CouponSection
+              setCoupon={setCoupon}
+              programType={programApplicationData.programType ?? 'live'}
+              maxAmount={maxCouponAmount}
+            />
+
             <hr className="bg-neutral-85" />
 
             {programApplicationData.programType === 'challenge' &&
