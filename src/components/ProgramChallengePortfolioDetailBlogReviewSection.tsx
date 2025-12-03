@@ -14,7 +14,7 @@ const ProgramChallengePortfolioDetailBlogReviewSection = ({
   programType: ProgramType;
 }) => {
   return (
-    <div className="flex w-full flex-col items-center bg-[#1A2A5D] md:pb-32">
+    <div className="flex w-full flex-col items-center bg-[#1A2A5D] pb-16 md:pb-32">
       <section className="flex w-full max-w-[1000px] flex-col px-5 md:items-center md:px-10 lg:px-0">
         <div className="mb-6 w-full md:mb-16">
           <div className="relative mb-3 flex items-start justify-between md:mb-7 md:block">

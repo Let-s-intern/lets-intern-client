@@ -306,27 +306,32 @@ const ChallengePortfolioView: React.FC<{
                   },
                 ].map((item, index) => (
                   <div
-                    className="flex flex-col gap-6 rounded-md bg-[#F0F4FF] px-10 py-12"
+                    className="flex flex-col gap-6 rounded-md bg-[#F0F4FF] px-8 py-10 md:px-10 md:py-12"
                     key={index}
                   >
-                    <h3 className="text-medium24 font-bold">{item.title}</h3>
-                    <p className="break-keep text-small18 font-medium text-neutral-40">
+                    <h3 className="text-small18 font-bold md:text-medium24">
+                      {item.title}
+                    </h3>
+                    <p className="break-keep text-xsmall16 font-medium text-neutral-40 md:text-small18">
                       {item.content}
                     </p>
                   </div>
                 ))}
               </div>
 
-              <Heading2 className="mt-10 text-small20 md:mt-32 md:text-center md:text-xlarge28">
+              <Heading2 className="mt-10 break-keep text-small20 md:mt-32 md:text-center md:text-xlarge28">
                 그리고 이런{' '}
                 <span style={{ color: challengeColors._4A76FF }}>
                   수강생들의 후기 100+개가 인증
                 </span>
-                하는<br></br>렛츠커리어 포트폴리오 2주 완성 챌린지!
+                하는
+                <Break />
+                렛츠커리어 포트폴리오 2주 완성 챌린지!
               </Heading2>
 
-              <Description className="mt-3 md:mt-8 md:text-center">
-                학과, 직무, 경험 구분 없이 다양한 수강생들이<br></br>
+              <Description className="mt-3 break-keep md:mt-8 md:text-center">
+                학과, 직무, 경험 구분 없이 다양한 수강생들이
+                <Break />
                 만족도 평균 4.9점으로 남겨준 진심 100% 후기
               </Description>
 
@@ -344,11 +349,13 @@ const ChallengePortfolioView: React.FC<{
                 <div className="h-1 w-1 rounded-full bg-neutral-0"></div>
               </div>
 
-              <p className="mt-2 text-center text-medium24 font-bold">
-                챌린지로 준비해서 서류·최종 합격까지 성공했어요!
+              <p className="mt-2 text-left text-medium22 font-bold md:text-center md:text-medium24">
+                챌린지로 준비해서
+                <br className="md:hidden" />
+                서류·최종 합격까지 성공했어요!
               </p>
 
-              <div className="mb-20 mt-4 grid grid-cols-1 gap-4 md:mb-40 md:mt-8 md:grid-cols-2 md:gap-6">
+              <div className="mb-20 mt-8 grid grid-cols-1 gap-4 md:mb-40 md:mt-8 md:grid-cols-2 md:gap-6">
                 {[
                   {
                     title: '그로스 PM',
@@ -364,23 +371,22 @@ const ChallengePortfolioView: React.FC<{
                   },
                 ].map((item) => (
                   <div
-                    className="flex gap-5 rounded-md bg-white p-10"
+                    className="flex gap-5 rounded-md bg-white px-6 py-8 md:p-10"
                     key={item.title}
                   >
                     <div className="flex flex-col gap-6">
-                      <h3 className="text-medium24 font-bold">{item.title}</h3>
-                      <p className="text-small18 font-medium text-neutral-40">
+                      <h3 className="text-small18 font-bold md:text-medium24">
+                        {item.title}
+                      </h3>
+                      <p className="text-xsmall14 font-medium text-neutral-40 md:text-small18">
                         {item.content}
                       </p>
                     </div>
                     <div>
-                      <Image
+                      <img
                         src={item.imageSrc}
                         alt="수강생 프로필 이미지"
-                        unoptimized
-                        width={192}
-                        height={192}
-                        className="h-48 w-48 flex-none bg-gray-100 object-cover"
+                        className="h-[105px] w-[90px] flex-none bg-gray-100 object-cover md:h-48 md:w-48"
                       />
                     </div>
                   </div>
@@ -471,16 +477,18 @@ const ChallengePortfolioView: React.FC<{
 
           {/* 이제 진짜 만들기 시작해야 하는데... */}
           <section className="w-full bg-[#4A76FF] px-5 py-20 md:px-10 md:py-32 lg:px-0">
-            <div className="mb-[30px] flex flex-col items-center gap-2 md:mb-[50px] md:gap-3">
-              <SectionSubHeader className="text-white">
+            <div className="mb-[30px] flex flex-col items-start gap-2 md:mb-[50px] md:items-center md:gap-3">
+              <SectionSubHeader className="text-left font-normal text-white md:text-center">
                 이젠 진짜 만들기 시작해야하는데...
               </SectionSubHeader>
-              <MainTitle className="text-white">
-                필수 서류 중 하나인 포폴, 혼자 만들 때 어떠셨나요?
+              <MainTitle className="text-left text-white md:text-center">
+                필수 서류 중 하나인 포폴,
+                <br className="md:hidden" />
+                혼자 만들 때 어떠셨나요?
               </MainTitle>
             </div>
 
-            <div className="mx-auto flex w-full max-w-[1000px] flex-col items-stretch gap-3 px-3 max-md:max-w-full md:flex-row md:px-0">
+            <div className="mx-auto flex w-full max-w-[1000px] flex-col items-stretch gap-3 max-md:max-w-full md:flex-row md:px-0">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 {[
                   {
@@ -501,7 +509,7 @@ const ChallengePortfolioView: React.FC<{
                 ].map((item) => (
                   <div
                     key={item.content}
-                    className="flex gap-5 rounded-md bg-white text-center md:flex-col md:px-8 md:py-5"
+                    className="flex items-center gap-5 rounded-md bg-white px-6 py-4 text-left md:flex-col md:px-8 md:py-5 md:text-center"
                   >
                     <p className="text-xxlarge36">{item.icon}</p>
                     <p className="break-keep text-xsmall16 font-medium">

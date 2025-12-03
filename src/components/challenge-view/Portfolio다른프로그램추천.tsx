@@ -509,7 +509,7 @@ const Portfolio다른프로그램추천 = ({
             </div>
           </div>
 
-          <div className="mb-16 flex w-full max-w-[1000px] flex-col px-5 pt-[60px] md:px-10 md:pt-[120px] lg:px-0">
+          <div className="mb-8 flex w-full max-w-[1000px] flex-col px-5 pt-[60px] md:mb-16 md:px-10 md:pt-[120px] lg:px-0">
             <p className="mx-auto flex w-fit items-center gap-3 rounded-md bg-[#111C3F] px-3.5 py-2.5 font-bold text-white md:text-medium24">
               <Image
                 src="/images/calendar-icon-30-30.svg"
@@ -520,7 +520,7 @@ const Portfolio다른프로그램추천 = ({
               <span>2주 여정 한번에 보기</span>
             </p>
           </div>
-          <div className="mb-18 w-screen md:mb-36">
+          <div className="mb-16 w-screen md:mb-36">
             <div className="flex w-full gap-5 overflow-x-auto px-[max(1.5rem,calc((100vw-1000px)/2))] pb-4 scrollbar-hide">
               {[
                 {
@@ -574,16 +574,16 @@ const Portfolio다른프로그램추천 = ({
               ].map((item, index) => (
                 <div
                   key={index}
-                  className="flex min-w-[320px] flex-col md:min-w-[424px] md:gap-4"
+                  className="flex min-w-[320px] flex-col gap-3 md:min-w-[424px] md:gap-4"
                 >
                   <div className="flex items-center justify-start gap-3">
                     <span
-                      className="rounded-full px-3 py-1.5 font-semibold text-white md:text-xsmall16"
+                      className="rounded-full px-3 py-1.5 text-xxsmall12 font-semibold text-white md:text-xsmall16"
                       style={{ backgroundColor: styles.primaryColor }}
                     >
                       {item.step}
                     </span>
-                    <h3 className="text-medium22 font-bold text-white">
+                    <h3 className="text-xsmall14 font-bold text-white md:text-medium22">
                       {item.title}
                     </h3>
                   </div>
@@ -594,7 +594,7 @@ const Portfolio다른프로그램추천 = ({
                     height={203}
                     className="h-auto w-full rounded-md"
                   />
-                  <p className="break-keep text-neutral-75 md:px-4 md:text-xsmall16">
+                  <p className="break-keep px-2 text-xxsmall12 text-neutral-75 md:px-4 md:text-xsmall16">
                     {item.description}
                   </p>
                 </div>

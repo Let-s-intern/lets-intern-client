@@ -85,7 +85,7 @@ function ChallengeIntroPortfolio() {
       </div>
 
       <div className="mb-20 md:mb-52">
-        <Heading2 className="mb-3 md:mb-8">
+        <Heading2 className="mb-3 break-keep md:mb-8">
           포트폴리오, 혼자 만들면 자꾸 미루게 되니까
           <Break />
           <span className="text-[#4A76FF]">
@@ -110,12 +110,12 @@ function ChallengeIntroPortfolio() {
       </div>
 
       <div>
-        <Heading2 className="mb-6 md:mb-16">
+        <Heading2 className="mb-6 break-keep md:mb-16">
           실제 참가자들의 후기에서도 직접 확인할 수 있어요!
         </Heading2>
 
         <div className="mx-auto flex max-w-[876px] flex-col items-start gap-[30px] font-medium">
-          <p className="relative mb-[30px] w-fit rounded-xl bg-[#1A2A5D] text-white md:px-10 md:py-6 md:text-small20">
+          <p className="relative mb-[30px] w-fit rounded-xl bg-[#1A2A5D] px-5 py-3 text-xxsmall12 text-white md:px-10 md:py-6 md:text-small20">
             2주간의 포트폴리오 챌린지, 어떠셨나요?
             <Image
               src="/images/말꼬리표-남-18-18.svg"
@@ -129,8 +129,8 @@ function ChallengeIntroPortfolio() {
           </p>
         </div>
 
-        <div className="mx-auto flex max-w-[876px] flex-col items-end gap-[30px] font-medium">
-          <p className="relative w-fit rounded-xl bg-white md:px-10 md:py-6 md:text-small20">
+        <div className="mx-auto flex max-w-[876px] flex-col items-end gap-[30px] text-right font-medium">
+          <p className="relative w-fit break-keep rounded-xl bg-white px-5 py-3 text-xxsmall12 md:px-10 md:py-6 md:text-small20">
             각 프로젝트의 배경-문제-해결-결과 흐름을 다시 재정립하면서{' '}
             <span className="font-bold">
               스스로의 역량을
@@ -149,7 +149,7 @@ function ChallengeIntroPortfolio() {
             />
           </p>
 
-          <p className="relative w-fit rounded-xl bg-white md:px-10 md:py-6 md:text-small20">
+          <p className="relative w-fit break-keep rounded-xl bg-white px-5 py-3 text-xxsmall12 md:px-10 md:py-6 md:text-small20">
             포폴이 디자인이라고 생각해서 정말 막막했는데{' '}
             <span className="font-bold">
               경험을 먼저 정리하고
@@ -168,7 +168,7 @@ function ChallengeIntroPortfolio() {
             />
           </p>
 
-          <p className="relative w-fit rounded-xl bg-white md:px-10 md:py-6 md:text-small20">
+          <p className="relative w-fit break-keep rounded-xl bg-white px-5 py-3 text-xxsmall12 md:px-10 md:py-6 md:text-small20">
             기존에는 사진만 마구 넣은 포트폴리오였는데, 챌린지 이후로{' '}
             <span className="font-bold">
               가시성도 정말
@@ -190,7 +190,7 @@ function ChallengeIntroPortfolio() {
             />
           </p>
 
-          <p className="relative w-fit rounded-xl bg-white md:px-10 md:py-6 md:text-small20">
+          <p className="relative w-fit break-keep rounded-xl bg-white px-5 py-3 text-xxsmall12 md:px-10 md:py-6 md:text-small20">
             <span className="font-bold">
               혼자 했더라면 아직도 완성하지 못했을텐데
               <Break />
