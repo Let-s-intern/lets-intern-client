@@ -96,7 +96,7 @@ function ChallengeIntroPortfolio() {
         <Description className="mb-10 md:mb-20 md:text-center">
           사람들과 함께 매 미션이 끝날 때마다 느낀 점을 공유하고 질문하며
           <Break />
-          성장하는 오픈 카톡 커뮤니티를 활용하기 때문에 2주동안 힘내서 달릴 수
+          성장하는 오픈 카톡 커뮤니티를 활용하기 때문에 2주 동안 힘내서 달릴 수
           있어요
         </Description>
         <Image

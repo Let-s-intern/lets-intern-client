@@ -90,7 +90,7 @@ const ProgramBestReviewSection = ({
       </div>
       {/* 슬라이드 */}
       <div className="custom-scrollbar mx-auto w-screen">
-        <div className="relative overflow-y-visible overflow-x-scroll pb-3 scrollbar-hide">
+        <div className="custom-scrollbar relative overflow-y-visible overflow-x-scroll pb-3">
           <div className="grid w-max auto-cols-[300px] grid-flow-col gap-3 px-[max(1.5rem,calc((100vw-1000px)/2))] md:auto-cols-[371px]">
             {reviews.map((review, index) => (
               <ProgramDetailReviewItem

@@ -350,8 +350,7 @@ const ChallengePortfolioView: React.FC<{
               </div>
 
               <p className="mt-2 text-left text-medium22 font-bold md:text-center md:text-medium24">
-                챌린지로 준비해서
-                <br className="md:hidden" />
+                챌린지로 준비해서 <br className="md:hidden" />
                 서류·최종 합격까지 성공했어요!
               </p>
 
