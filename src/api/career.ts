@@ -1,4 +1,5 @@
 import { Pageable, Sortable, userCareerListSchema } from '@/api/careerSchema';
+import { UserExperience } from '@/api/userSchema';
 import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -95,6 +96,18 @@ export const usePostAdminCareerMutation = (userId: number) => {
       queryClient.invalidateQueries({
         queryKey: ['useUserDetailQueryKey', userId],
       });
+    },
+  });
+};
+
+export const usePostAdminExperienceMutation = (userId: number) => {
+  return useMutation({
+    mutationFn: async (data: UserExperience) => {
+      const res = await axios.post(
+        `/admin/user-experience/user/${userId}`,
+        data,
+      );
+      return res.data.data;
     },
   });
 };

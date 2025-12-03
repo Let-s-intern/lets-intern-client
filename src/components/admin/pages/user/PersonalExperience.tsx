@@ -6,22 +6,51 @@ import CoreCompetencyCell from '@components/common/mypage/experience/table-cell/
 import PeriodCell from '@components/common/mypage/experience/table-cell/PeriodCell';
 import YearCell from '@components/common/mypage/experience/table-cell/YearCell';
 import DataTable, { TableHeader } from '@components/common/table/DataTable';
+import { ExperienceForm } from '@components/pages/mypage/experience/ExperienceForm';
+import { Plus } from 'lucide-react';
+import { useState } from 'react';
 
 const PersonalExperience = ({ data }: { data: UserAdminDetail }) => {
   const formattedData = formatExperienceData(data.experienceInfos);
-  if (formattedData.length === 0) return;
+  const [isWriteOpen, setIsWriteOpen] = useState(false);
 
   return (
     <div>
       <div className="flex items-center justify-between border-b pb-2">
         <h1 className="text-lg font-semibold">경험</h1>
+        <button onClick={() => setIsWriteOpen(true)}>
+          <Plus size={20} />
+        </button>
       </div>
-      <DataTable
-        headers={experienceTableHeaders}
-        data={formattedData}
-        getRowHeight={getExperienceRowHeight}
-        className="mt-4 rounded-lg border"
-      />
+      {formattedData.length === 0 ? (
+        <div className="mt-4 text-center text-neutral-500">
+          경험이 없습니다.
+        </div>
+      ) : (
+        <DataTable
+          headers={experienceTableHeaders}
+          data={formattedData}
+          getRowHeight={getExperienceRowHeight}
+          className="mt-4 rounded-lg border"
+        />
+      )}
+      {isWriteOpen && (
+        <div
+          className="fixed bottom-0 left-0 right-0 top-0 z-[100] animate-fade-in bg-black/50"
+          onClick={() => setIsWriteOpen(false)}
+        >
+          <div
+            className="absolute bottom-0 right-0 top-0 max-w-[600px] animate-slide-in-right bg-white"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <ExperienceForm
+              onClose={() => setIsWriteOpen(false)}
+              initialData={null}
+              isCopy={false}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
