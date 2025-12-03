@@ -417,8 +417,8 @@ const Portfolio다른프로그램추천 = ({
           <div className="relative z-10 px-5 py-16 md:py-32 lg:px-0">
             <Heading2>
               잠깐, 다른 커리어 고민이 있으신가요?
-              <br /> 커리어 단계에 맞는 프로그램을
-              <br className="md:hidden" /> 추천드려요
+              <br /> 커리어 단계에 맞춰 미리
+              <br className="md:hidden" /> 준비해두었어요
             </Heading2>
             <ProgramRecommendSlider
               buttonStyle={{ backgroundColor: styles.buttonBgColor }}
@@ -518,11 +518,11 @@ const Portfolio다른프로그램추천 = ({
                 width={30}
                 height={30}
               />
-              <span>2주 여정 한번에 보기</span>
+              <span>2주 여정 한 번에 보기</span>
             </p>
           </div>
           <div className="mb-16 w-screen md:mb-36">
-            <div className="flex w-full gap-5 overflow-x-auto px-[max(1.5rem,calc((100vw-1000px)/2))] pb-4 scrollbar-hide">
+            <div className="custom-scrollbar flex w-full gap-5 overflow-x-auto px-[max(1.5rem,calc((100vw-1000px)/2))] pb-4">
               {[
                 {
                   step: 'Step 1',
