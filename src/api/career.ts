@@ -101,6 +101,8 @@ export const usePostAdminCareerMutation = (userId: number) => {
 };
 
 export const usePostAdminExperienceMutation = (userId: number) => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (data: UserExperience) => {
       const res = await axios.post(
@@ -108,6 +110,11 @@ export const usePostAdminExperienceMutation = (userId: number) => {
         data,
       );
       return res.data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['useUserDetailQueryKey', userId],
+      });
     },
   });
 };

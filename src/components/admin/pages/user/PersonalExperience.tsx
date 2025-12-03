@@ -1,3 +1,4 @@
+import { usePostAdminExperienceMutation } from '@/api/career';
 import { UserAdminDetail } from '@/schema';
 import { getExperienceRowHeight } from '@/utils/experience';
 import ActivityTypeCell from '@components/common/mypage/experience/table-cell/ActivityTypeCell';
@@ -13,6 +14,8 @@ import { useState } from 'react';
 const PersonalExperience = ({ data }: { data: UserAdminDetail }) => {
   const formattedData = formatExperienceData(data.experienceInfos);
   const [isWriteOpen, setIsWriteOpen] = useState(false);
+
+  const createMutation = usePostAdminExperienceMutation(+data.userInfo.id);
 
   return (
     <div>
@@ -47,6 +50,8 @@ const PersonalExperience = ({ data }: { data: UserAdminDetail }) => {
               onClose={() => setIsWriteOpen(false)}
               initialData={null}
               isCopy={false}
+              createMutation={createMutation}
+              isAdminMode={true}
             />
           </div>
         </div>
