@@ -1,7 +1,9 @@
-import { FaCheck } from 'react-icons/fa6';
-
+import { Break } from '@components/Break';
 import Description from '@components/common/program/program-detail/Description';
+import MoreReviewButton from '@components/common/review/MoreReviewButton';
 import Heading2 from '@components/common/ui/Heading2';
+import Image from 'next/image';
+import { FaCheck } from 'react-icons/fa6';
 
 const templates: Template[] = [
   {
@@ -66,7 +68,7 @@ function ChallengeIntroPortfolio() {
         <TemplateItem template={templates[0]} />
       </div>
 
-      <div>
+      <div className="mb-20 md:mb-52">
         <Heading2 className="mb-3 md:mb-8">
           포트폴리오, <span className="text-[#4A76FF]">디자인보다 구조화</span>
           입니다.
@@ -75,11 +77,143 @@ function ChallengeIntroPortfolio() {
           <br className="md:hidden" /> 모두 제공!
         </Heading2>
         <Description className="mb-10 md:mb-20 md:text-center">
-          가장 중요한 건 핵심 내용을 어떻게 도식화 하는냐죠. <br />내 경험에
-          맞는 다양한 구조화 템플릿, 최소한의 디자인을 도와줄 폰트/디자인
-          가이드까지 모두 드려요!
+          가장 중요한 건 핵심 내용을 어떻게 도식화 하는가인데요. <Break />내
+          경험에 맞춰 적용할 수 있도록 다양한 구조화 템플릿, 최소한의 디자인을
+          도와줄 폰트/디자인 가이드까지 모두 드려요!
         </Description>
         <TemplateItem template={templates[1]} />
+      </div>
+
+      <div className="mb-20 md:mb-52">
+        <Heading2 className="mb-3 md:mb-8">
+          포트폴리오, 혼자 만들면 자꾸 미루게 되니까
+          <Break />
+          <span className="text-[#4A76FF]">
+            함께 공유하며 성장하는 오픈채팅방
+          </span>
+          에서 달려요!
+        </Heading2>
+        <Description className="mb-10 md:mb-20 md:text-center">
+          사람들과 함께 매 미션이 끝날 때마다 느낀 점을 공유하고 질문하며
+          <Break />
+          성장하는 오픈 카톡 커뮤니티를 활용하기 때문에 2주동안 힘내서 달릴 수
+          있어요
+        </Description>
+        <Image
+          src="/images/community_desktop-1000-672.gif"
+          alt="오픈채팅방에서 미션을 공유하는 모습"
+          unoptimized
+          width={1000}
+          height={672}
+          className="mx-auto h-auto w-full max-w-[1000px] rounded-md"
+        />
+      </div>
+
+      <div>
+        <Heading2 className="mb-6 md:mb-16">
+          실제 참가자들의 후기에서도 직접 확인할 수 있어요!
+        </Heading2>
+
+        <div className="mx-auto flex max-w-[876px] flex-col items-start gap-[30px] font-medium">
+          <p className="relative mb-[30px] w-fit rounded-xl bg-[#1A2A5D] text-white md:px-10 md:py-6 md:text-small20">
+            2주간의 포트폴리오 챌린지, 어떠셨나요?
+            <Image
+              src="/images/말꼬리표-남-18-18.svg"
+              alt="말꼬리표 아이콘"
+              unoptimized
+              width={18}
+              height={18}
+              aria-hidden="true"
+              className="absolute -bottom-[18px] left-[60px]"
+            />
+          </p>
+        </div>
+
+        <div className="mx-auto flex max-w-[876px] flex-col items-end gap-[30px] font-medium">
+          <p className="relative w-fit rounded-xl bg-white md:px-10 md:py-6 md:text-small20">
+            각 프로젝트의 배경-문제-해결-결과 흐름을 다시 재정립하면서{' '}
+            <span className="font-bold">
+              스스로의 역량을
+              <Break />
+              객관적으로 돌아볼 수 있었고, 실제 포트폴리오 문서 완성에 큰 도움
+            </span>
+            이 되었습니다.
+            <Image
+              src="/images/말꼬리표-18-18.svg"
+              alt="말꼬리표 아이콘"
+              unoptimized
+              width={18}
+              height={18}
+              aria-hidden="true"
+              className="absolute -bottom-[18px] right-[60px]"
+            />
+          </p>
+
+          <p className="relative w-fit rounded-xl bg-white md:px-10 md:py-6 md:text-small20">
+            포폴이 디자인이라고 생각해서 정말 막막했는데{' '}
+            <span className="font-bold">
+              경험을 먼저 정리하고
+              <Break />
+              구조화하고 백지 피피티를 완성하니 훨씬 더 만들기가 쉬웠던 것
+              같아요!
+            </span>
+            <Image
+              src="/images/말꼬리표-18-18.svg"
+              alt="말꼬리표 아이콘"
+              unoptimized
+              width={18}
+              height={18}
+              aria-hidden="true"
+              className="absolute -bottom-[18px] right-[60px]"
+            />
+          </p>
+
+          <p className="relative w-fit rounded-xl bg-white md:px-10 md:py-6 md:text-small20">
+            기존에는 사진만 마구 넣은 포트폴리오였는데, 챌린지 이후로{' '}
+            <span className="font-bold">
+              가시성도 정말
+              <Break />
+              많이 좋아졌고,
+            </span>{' '}
+            필살기 경험만 넣어서{' '}
+            <span className="font-bold">
+              직무 관련성도 훨씬 높아진 것 같아요!
+            </span>
+            <Image
+              src="/images/말꼬리표-18-18.svg"
+              alt="말꼬리표 아이콘"
+              unoptimized
+              width={18}
+              height={18}
+              aria-hidden="true"
+              className="absolute -bottom-[18px] right-[60px]"
+            />
+          </p>
+
+          <p className="relative w-fit rounded-xl bg-white md:px-10 md:py-6 md:text-small20">
+            <span className="font-bold">
+              혼자 했더라면 아직도 완성하지 못했을텐데
+              <Break />
+              챌린지를 통해 여기까지 올 수 있었어요!
+            </span>
+
+            <Image
+              src="/images/말꼬리표-18-18.svg"
+              alt="말꼬리표 아이콘"
+              unoptimized
+              width={18}
+              height={18}
+              aria-hidden="true"
+              className="absolute -bottom-[18px] right-[60px]"
+            />
+          </p>
+        </div>
+        <MoreReviewButton
+          type="CHALLENGE"
+          challengeType={'PORTFOLIO'}
+          mainColor="#1A2A5D"
+          subColor="#F8AE00"
+        />
       </div>
     </section>
   );

@@ -4,12 +4,13 @@ import { FaCheck } from 'react-icons/fa6';
 
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
+import { Break } from '@components/Break';
 import { challengeColors } from '@components/ChallengeView';
 import Box from '@components/common/program/program-detail/Box';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import Heading2 from '@components/common/ui/Heading2';
 
-const superTitle = '이 모든 고민을 한번에 해결!';
+const superTitle = '더 미루지 않고 지금 렛커와 함께 한다면';
 
 const RESUME_CAREER_START_CONTENT = [
   {
@@ -49,15 +50,15 @@ const PERSONAL_STATEMENT_CONTENT = [
 
 const PORTFOLIO_CONTENT = [
   {
-    beforeImg: '/images/portfolio-before1.png',
+    beforeImg: '/images/up-1-before-494-302.png',
     beforeCaption: '마치 서비스 소개서처럼 솔루션만 설명',
-    afterImg: '/images/portfolio-after1.jpg',
+    afterImg: '/images/up-1-after-494-302.png',
     afterCaption: '유저 인터뷰 등을 통한 UX/UI 변경 부분 작성',
   },
   {
-    beforeImg: '/images/portfolio-before2.jpg',
+    beforeImg: '/images/up-2-before-494-302.png',
     beforeCaption: '어떤 콘텐츠를 만들었는지 경험만 나열',
-    afterImg: '/images/portfolio-after2.jpg',
+    afterImg: '/images/up-2-after-494-302.png',
     afterCaption: '문제점 → 전략 → 솔루션을 보여주는 구조화',
   },
 ];
@@ -181,7 +182,7 @@ function ChallengeResult({
           sectionStyle: {
             background: challengeColors._1A2A5D,
           },
-          checkIconColor: challengeColors._4A56FF,
+          checkIconColor: '#FFCE5B',
           badgeStyle: {
             backgroundColor: challengeColors._4A76FF,
             background: `linear-gradient(45deg, ${challengeColors._4D55F5}, ${challengeColors._4A56FF})`,
@@ -279,15 +280,16 @@ function ChallengeResult({
               </>
             ) : (
               <>
-                서류 합격률을 300%{' '}
+                {/* TODO: receivedContent.challengePoint.weekText? */}
+                2주 뒤에 포트포리오 완성하고
+                <Break />
+                서류 합격률을 <span className="text-[#FFCE5B]">300%</span>
                 <img
                   className="mb-1 inline-block h-auto w-7 md:mb-2 md:w-10"
                   src={`/icons/${iconName}`}
                   alt=""
                 />{' '}
-                <br className="md:hidden" />
-                높일 수 있는 <br className="hidden md:block" />
-                {challengeTitle}
+                높일 수 있어요
               </>
             )}
           </Heading2>
@@ -322,9 +324,9 @@ function ChallengeResult({
                   </BadgedBox>
                   <div className="flex items-start gap-1">
                     <FaCheck
-                      className="mt-1"
+                      className="mr-1 mt-1"
                       color={styles.checkIconColor}
-                      size={isDesktop ? 20 : 16}
+                      size={isDesktop ? 18 : 14}
                     />
                     <span className="text-xsmall14 font-semibold text-white md:text-small20">
                       {content.afterCaption}
