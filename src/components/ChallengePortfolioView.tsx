@@ -361,13 +361,13 @@ const ChallengePortfolioView: React.FC<{
                     title: '그로스 PM',
                     content:
                       '“계속 미루고 있던 취준을 가장 효과적으로, 빨리 시작할 수 있게 도와주었어요.”',
-                    imageSrc: '/images/review-profile-1.png',
+                    imageSrc: '/images/앳홈-384-384.png',
                   },
                   {
                     title: 'B2B 마케터',
                     content:
                       '“한눈에 들어오는 가독성 있는 포트폴리오를 구성하는 데 큰 도움을 받았어요”',
-                    imageSrc: '/images/review-profile-1.png',
+                    imageSrc: '/images/히릿소프트-1024-1024.png',
                   },
                 ].map((item) => (
                   <div
@@ -382,13 +382,12 @@ const ChallengePortfolioView: React.FC<{
                         {item.content}
                       </p>
                     </div>
-                    <div>
-                      <img
-                        src={item.imageSrc}
-                        alt="수강생 프로필 이미지"
-                        className="h-[105px] w-[90px] flex-none bg-gray-100 object-cover md:h-48 md:w-48"
-                      />
-                    </div>
+
+                    <img
+                      src={item.imageSrc}
+                      alt="수강생의 회사 이미지"
+                      className="block h-[105px] w-[105px] flex-none rounded-md bg-gray-100 object-contain md:h-48 md:w-48"
+                    />
                   </div>
                 ))}
               </div>

@@ -512,6 +512,7 @@ const Portfolio다른프로그램추천 = ({
           <div className="mb-8 flex w-full max-w-[1000px] flex-col px-5 pt-[60px] md:mb-16 md:px-10 md:pt-[120px] lg:px-0">
             <p className="mx-auto flex w-fit items-center gap-3 rounded-md bg-[#111C3F] px-3.5 py-2.5 font-bold text-white md:text-medium24">
               <Image
+                unoptimized
                 src="/images/calendar-icon-30-30.svg"
                 alt="캘린더 아이콘"
                 width={30}
@@ -592,6 +593,7 @@ const Portfolio다른프로그램추천 = ({
                     alt={`프로그램 참여 과정 ${index + 1}`}
                     width={320}
                     height={203}
+                    unoptimized
                     className="h-auto w-full rounded-md"
                   />
                   <p className="break-keep px-2 text-xxsmall12 text-neutral-75 md:px-4 md:text-xsmall16">
