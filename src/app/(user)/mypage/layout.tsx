@@ -153,9 +153,7 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
               onClick={() => router.push(tab.path)}
               className={clsx(
                 'flex-shrink-0 whitespace-nowrap pb-3 text-xsmall14',
-                tab.active
-                  ? '-mb-2 border-b-2 border-neutral-0 font-semibold'
-                  : 'font-medium text-neutral-40',
+                tab.active ? 'font-semibold' : 'font-medium text-neutral-40',
               )}
             >
               {tab.label}
