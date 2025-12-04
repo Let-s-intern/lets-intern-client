@@ -57,7 +57,7 @@ const PORTFOLIO_CONTENT = [
   },
   {
     beforeImg: '/images/up-2-before-494-302.png',
-    beforeCaption: '어떤 콘텐츠를 만들었는지 경험만 나열',
+    beforeCaption: '어떤 활동을 했는지 경험만 나열',
     afterImg: '/images/up-2-after-494-302.png',
     afterCaption: '문제점 → 전략 → 솔루션을 보여주는 구조화',
   },
@@ -281,7 +281,7 @@ function ChallengeResult({
             ) : (
               <>
                 {/* TODO: receivedContent.challengePoint.weekText? */}
-                2주 뒤에 포트포리오 완성하고
+                2주 뒤에 포트폴리오 완성하고
                 <Break />
                 서류 합격률을 <span className="text-[#FFCE5B]">300%</span>
                 <img

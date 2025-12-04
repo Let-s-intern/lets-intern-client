@@ -480,8 +480,7 @@ const ChallengePortfolioView: React.FC<{
                 이젠 진짜 만들기 시작해야하는데...
               </SectionSubHeader>
               <MainTitle className="text-left text-white md:text-center">
-                필수 서류 중 하나인 포폴,
-                <br className="md:hidden" />
+                필수 서류 중 하나인 포폴, <br className="md:hidden" />
                 혼자 만들 때 어떠셨나요?
               </MainTitle>
             </div>
