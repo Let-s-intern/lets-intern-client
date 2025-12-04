@@ -147,7 +147,7 @@ const CareerGrowthBody = ({
 }: CareerGrowthBodyProps) => {
   // programId로 application 찾기
   const getApplication = (programId: number) => {
-    return applications.find((app) => app.programId === programId);
+    return applications.find((app) => app.id === programId);
   };
 
   return (
