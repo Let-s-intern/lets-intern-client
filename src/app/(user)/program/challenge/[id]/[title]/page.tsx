@@ -1,4 +1,5 @@
 import { fetchChallengeData } from '@/api/challenge';
+import dayjs from '@/lib/dayjs';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import {
   getBaseUrlFromServer,
@@ -7,6 +8,7 @@ import {
 } from '@/utils/url';
 import ChallengeCTAButtons from '@components/ChallengeCTAButtons';
 import ChallengeMarketingView from '@components/ChallengeMarketingView';
+import ChallengePortfolioView from '@components/ChallengePortfolioView';
 import ChallengeView from '@components/ChallengeView';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
@@ -69,6 +71,11 @@ const Page = async ({
       {parseInt(id) > MARKETING_ID_THRESHOLD &&
       challenge.challengeType === 'MARKETING' ? (
         <ChallengeMarketingView challenge={challenge} />
+      ) : challenge.challengeType === 'PORTFOLIO' &&
+        challenge.startDate &&
+        // 포폴 상페 개선 https://letscareer-team.atlassian.net/browse/LC-2737
+        dayjs(challenge.startDate).isAfter(dayjs('2025-12-02')) ? (
+        <ChallengePortfolioView challenge={challenge} />
       ) : (
         <ChallengeView challenge={challenge} />
       )}
