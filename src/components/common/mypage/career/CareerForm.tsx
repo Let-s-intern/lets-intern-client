@@ -231,7 +231,11 @@ const CareerForm = ({
         </fieldset>
 
         <div className="mt-11 flex w-full gap-2">
-          <OutlinedButton onClick={handleCancelClick} className="flex-1">
+          <OutlinedButton
+            type="button"
+            onClick={handleCancelClick}
+            className="flex-1"
+          >
             취소하기
           </OutlinedButton>
           <SolidButton
