@@ -56,7 +56,9 @@ export const getTopCoreCompetencies = (
 
   const thirdFrequency = sortedCompetencies[2][1];
   const tiedCompetencies = sortedCompetencies
-    .filter(([, count]) => count === thirdFrequency)
+    .filter(([competency, count]) => {
+      return count === thirdFrequency && !topTwo.includes(competency);
+    })
     .map(([competency]) => competency);
 
   // 동점 항목 중 랜덤 선택
