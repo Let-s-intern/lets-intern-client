@@ -10,7 +10,7 @@ import Box from '@components/common/program/program-detail/Box';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import Heading2 from '@components/common/ui/Heading2';
 
-const superTitle = '더 미루지 않고 지금 렛커와 함께 한다면';
+const superTitle = '이 모든 고민을 한번에 해결!';
 
 const RESUME_CAREER_START_CONTENT = [
   {
@@ -252,7 +252,11 @@ function ChallengeResult({
       <div className="flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-20 md:gap-y-20 md:pb-[150px] md:pt-[140px] lg:px-0">
         <div className="flex w-full flex-col gap-y-3 md:items-center">
           <SuperTitle className="mb-1" style={styles.superTitleStyle}>
-            {isResumeTemplate ? `${challengeTitle}와 함께라면` : superTitle}
+            {isResumeTemplate
+              ? `${challengeTitle}와 함께라면`
+              : challengeType === PORTFOLIO
+                ? '더 미루지 않고 지금 렛커와 함께 한다면'
+                : superTitle}
           </SuperTitle>
           <Heading2 className="text-white">
             {challengeType === EXPERIENCE_SUMMARY || challengeType === ETC ? (
