@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { useUserQueryKey } from '@/api/user';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useUserQuery, useUserQueryKey } from '@/api/user';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from '../../../../../utils/axios';
 import Input from '../../../ui/input/Input';
 import Button from '../../ui/button/Button';
@@ -25,17 +25,17 @@ const BasicInfo = () => {
     authProvider: '',
   });
   const [isSameEmail, setIsSameEmail] = useState<boolean>(false);
+  const { data: userData } = useUserQuery();
 
-  useQuery({
-    queryKey: ['user', '_basic-info'],
-    queryFn: async () => {
-      const res = await axios.get('/user');
-      setUser({
-        ...res.data.data,
-      });
-      return res.data;
-    },
-  });
+  useEffect(() => {
+    setUser({
+      name: userData?.name || '',
+      phoneNum: userData?.phoneNum || '',
+      email: userData?.email || '',
+      contactEmail: userData?.contactEmail || '',
+      authProvider: userData?.authProvider || '',
+    });
+  }, [userData]);
 
   const editMyInfo = useMutation({
     mutationFn: async ({ user }: { user: BasicInfoValue }) => {
@@ -44,7 +44,6 @@ const BasicInfo = () => {
     },
     onSuccess: async () => {
       alert('정보가 수정되었습니다.');
-      await queryClient.invalidateQueries({ queryKey: ['user'] });
       await queryClient.invalidateQueries({ queryKey: [useUserQueryKey] });
     },
     onError: (error) => {
