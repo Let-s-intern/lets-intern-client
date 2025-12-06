@@ -1,3 +1,5 @@
+'use client';
+
 import AdminProviders from '@/context/AdminProviders';
 import { AdminGuard } from './AdminGuard';
 import { AdminSidebar } from './AdminSidebar';
