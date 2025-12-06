@@ -36,27 +36,43 @@ export const useUserAdminQuery = ({
   email,
   name,
   phoneNum,
+  university,
+  memo,
   pageable,
 }: {
   email?: string | null;
   name?: string | null;
   phoneNum?: string | null;
+  university?: string | null;
+  memo?: string | null;
   pageable?: {
     page: number;
     size: number;
   };
 } = {}) => {
   return useQuery({
-    queryKey: [UseUserAdminQueryKey, email, name, phoneNum, pageable],
+    queryKey: [
+      UseUserAdminQueryKey,
+      email,
+      name,
+      phoneNum,
+      university,
+      memo,
+      pageable,
+    ],
     queryFn: async () => {
-      const res = await axiosV2.get('/admin/user', {
-        params: {
+      const params = Object.fromEntries(
+        Object.entries({
           email,
           name,
           phoneNum,
+          university,
+          memo,
           ...pageable,
-        },
-      });
+        }).filter(([_, v]) => v !== null && v !== undefined && v !== ''),
+      );
+
+      const res = await axiosV2.get('/admin/user', { params });
       return userAdminType.parse(res.data.data);
     },
   });

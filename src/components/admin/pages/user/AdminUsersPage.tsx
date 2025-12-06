@@ -14,16 +14,22 @@ const AdminUsersPage = () => {
     name: string;
     email: string;
     phoneNum: string;
+    university: string;
+    memo: string;
   }>({
     name: '',
     email: '',
     phoneNum: '',
+    university: '',
+    memo: '',
   });
 
   const { data, isLoading, isError } = useUserAdminQuery({
     email: searchValues.email,
     name: searchValues.name,
     phoneNum: searchValues.phoneNum,
+    university: searchValues.university,
+    memo: searchValues.memo,
     pageable: {
       page: pageNum,
       size: pageSize,

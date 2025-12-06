@@ -75,6 +75,16 @@ const AdminUserFilter = ({ setSearchValues }: FilterProps) => {
             <MenuItem value="name">이름</MenuItem>
             <MenuItem value="email">이메일</MenuItem>
             <MenuItem value="phoneNum">휴대폰 번호</MenuItem>
+            <MenuItem value="university">대학교</MenuItem>
+            {/* <MenuItem value="wishField">희망 직무</MenuItem> */}
+            {/* <MenuItem value="wishIndustry">희망 산업</MenuItem> */}
+            {/* <MenuItem value="wishEmploymentType">희망 구직 조건</MenuItem> */}
+            {/* <MenuItem value="programTitle">참여프로그램</MenuItem> */}
+            {/* <MenuItem value="careerInfos">주요 경험</MenuItem> */}
+            {/* <MenuItem value="documentInfos">이력서</MenuItem> */}
+            {/* <MenuItem value="documentInfos">포트폴리오</MenuItem> */}
+            {/* <MenuItem value="documentInfos">자기소개서</MenuItem> */}
+            <MenuItem value="memo">메모</MenuItem>
           </Select>
         </FormControl>
 
