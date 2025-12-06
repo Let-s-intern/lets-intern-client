@@ -34,7 +34,7 @@ const PersonalExperience = ({ data }: { data: UserAdminDetail }) => {
           headers={experienceTableHeaders}
           data={formattedData}
           getRowHeight={getExperienceRowHeight}
-          className="mt-4 rounded-lg border"
+          className="mt-4 max-h-[600px] overflow-auto rounded-lg border"
         />
       )}
       {isWriteOpen && (
