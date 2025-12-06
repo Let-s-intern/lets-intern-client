@@ -17,7 +17,6 @@ import {
 import { uploadFile } from '@/api/file';
 import TagSelector from '@/components/admin/blog/TagSelector';
 import TextFieldLimit from '@/components/admin/blog/TextFieldLimit';
-import EditorApp from '@/components/admin/lexical/EditorApp';
 import ImageUpload from '@/components/admin/program/ui/form/ImageUpload';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import useBlogMenuItems from '@/hooks/useBlogMenuItems';
@@ -38,8 +37,13 @@ import {
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { isAxiosError } from 'axios';
 import { Dayjs } from 'dayjs';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { ChangeEvent, FormEvent, MouseEvent, useState } from 'react';
+const EditorApp = dynamic(
+  () => import('@/components/admin/lexical/EditorApp'),
+  { ssr: false },
+);
 
 // const maxCtaTextLength = 23;
 const maxTitleLength = 49;

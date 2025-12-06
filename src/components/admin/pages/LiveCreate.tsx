@@ -4,7 +4,6 @@ import { fileType, uploadFile } from '@/api/file';
 import { usePostLiveMutation } from '@/api/program';
 import LiveBasic from '@/components/admin/program/LiveBasic';
 import LiveCurriculum from '@/components/admin/program/LiveCurriculum';
-import LiveInformation from '@/components/admin/program/LiveInformation';
 import LiveMentor from '@/components/admin/program/LiveMentor';
 import LivePrice from '@/components/admin/program/LivePrice';
 import ProgramBestReview from '@/components/admin/program/ProgramBestReview';
@@ -16,17 +15,26 @@ import { liveToCreateInput } from '@/hooks/useDuplicateProgram';
 import dayjs from '@/lib/dayjs';
 import { CreateLiveReq, getLiveIdSchema, ProgramTypeEnum } from '@/schema';
 import { LiveContent } from '@/types/interface';
-import EditorApp from '@components/admin/lexical/EditorApp';
 import LivePreviewButton from '@components/admin/LivePreviewButton';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
 import Heading2 from '@components/admin/ui/heading/Heading2';
 import { Button, Checkbox, FormControlLabel, TextField } from '@mui/material';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import ProgramSchedule from './program/ProgramSchedule';
+
+const LiveInformation = dynamic(
+  () => import('@/components/admin/program/LiveInformation'),
+  { ssr: false },
+);
+
+const EditorApp = dynamic(() => import('@components/admin/lexical/EditorApp'), {
+  ssr: false,
+});
 
 const LiveCreate: React.FC = () => {
   const router = useRouter();
@@ -164,7 +172,7 @@ const LiveCreate: React.FC = () => {
                 (info) => info.classificationInfo,
               ),
             }}
-            setInput={setInput}
+            setInput={setInput as any}
           />
         </section>
         {/* 가격 정보 & 일정 */}
@@ -183,7 +191,7 @@ const LiveCreate: React.FC = () => {
               priceId: 0,
               livePriceType: input.priceInfo.livePriceType,
             }}
-            setInput={setInput}
+            setInput={setInput as any}
           />
           <ProgramSchedule
             defaultValue={{
@@ -208,7 +216,7 @@ const LiveCreate: React.FC = () => {
                 },
               }));
             }}
-            setInput={setInput}
+            setInput={setInput as any}
           />
           <FormControlLabel
             defaultChecked={input.vod}
@@ -256,7 +264,7 @@ const LiveCreate: React.FC = () => {
               onChange={onChangeImage}
             />
           </div>
-          <LiveMentor defaultValue={input} setInput={setInput} />
+          <LiveMentor defaultValue={input} setInput={setInput as any} />
         </div>
       </section>
 

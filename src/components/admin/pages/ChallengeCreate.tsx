@@ -24,7 +24,6 @@ import {
 } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import ChallengePreviewButton from '@components/admin/ChallengePreviewButton';
-import EditorApp from '@components/admin/lexical/EditorApp';
 import ChallengeOptionSection from '@components/admin/program/ChallengeOptionSection';
 import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
@@ -32,12 +31,16 @@ import Heading from '@components/admin/ui/heading/Heading';
 import Heading2 from '@components/admin/ui/heading/Heading2';
 import Heading3 from '@components/admin/ui/heading/Heading3';
 import { Button, TextField } from '@mui/material';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import ChallengeFaqCategory from './program/ChallengeFaqCategory';
 import ChallengeMentorRegistrationSection from './program/ChallengeMentorRegistrationSection';
 import ProgramSchedule from './program/ProgramSchedule';
+const EditorApp = dynamic(() => import('@components/admin/lexical/EditorApp'), {
+  ssr: false,
+});
 
 const { BASIC, STANDARD, PREMIUM } = ChallengePricePlanEnum.enum;
 
