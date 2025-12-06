@@ -231,7 +231,6 @@ const ProgramCard = ({
               </h3>
               <p className="text-xsmall14 text-neutral-20 md:line-clamp-2">
                 {program.description}
-                ㄴㅇㄹㅁㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㅁㄴㅇㄹㅁㄴㅇㄹㅁ
               </p>
             </div>
             <DashboardButton
