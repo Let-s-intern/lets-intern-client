@@ -4,7 +4,7 @@ import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { PatchMissionReq } from './missionSchema';
+import { PatchMissionReq, PostDocumentReq } from './missionSchema';
 
 interface ErrorResponse {
   message: string;
@@ -66,12 +66,8 @@ export const usePostDocumentMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (req: FormData) => {
-      const res = await axios.post(`/user-document`, req, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+    mutationFn: async (req: PostDocumentReq) => {
+      const res = await axios.post(`/user-document`, req);
       return res.data;
     },
     onSuccess: () => {
@@ -82,6 +78,7 @@ export const usePostDocumentMutation = () => {
   });
 };
 
+// 수정 필요
 /** POST [유저] 인재풀 미션 출석 생성 /api/v1/attendance/pool/{missionId} */
 export const usePostTalentPoolAttendanceMutation = () => {
   return useMutation({
