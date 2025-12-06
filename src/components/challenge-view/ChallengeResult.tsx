@@ -10,7 +10,7 @@ import Box from '@components/common/program/program-detail/Box';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import Heading2 from '@components/common/ui/Heading2';
 
-const superTitle = '더 미루지 않고 지금 렛커와 함께 한다면';
+const superTitle = '이 모든 고민을 한번에 해결!';
 
 const RESUME_CAREER_START_CONTENT = [
   {
@@ -57,7 +57,7 @@ const PORTFOLIO_CONTENT = [
   },
   {
     beforeImg: '/images/up-2-before-494-302.png',
-    beforeCaption: '어떤 콘텐츠를 만들었는지 경험만 나열',
+    beforeCaption: '어떤 활동을 했는지 경험만 나열',
     afterImg: '/images/up-2-after-494-302.png',
     afterCaption: '문제점 → 전략 → 솔루션을 보여주는 구조화',
   },
@@ -252,7 +252,11 @@ function ChallengeResult({
       <div className="flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-20 md:gap-y-20 md:pb-[150px] md:pt-[140px] lg:px-0">
         <div className="flex w-full flex-col gap-y-3 md:items-center">
           <SuperTitle className="mb-1" style={styles.superTitleStyle}>
-            {isResumeTemplate ? `${challengeTitle}와 함께라면` : superTitle}
+            {isResumeTemplate
+              ? `${challengeTitle}와 함께라면`
+              : challengeType === PORTFOLIO
+                ? '더 미루지 않고 지금 렛커와 함께 한다면'
+                : superTitle}
           </SuperTitle>
           <Heading2 className="text-white">
             {challengeType === EXPERIENCE_SUMMARY || challengeType === ETC ? (
@@ -281,7 +285,7 @@ function ChallengeResult({
             ) : (
               <>
                 {/* TODO: receivedContent.challengePoint.weekText? */}
-                2주 뒤에 포트포리오 완성하고
+                2주 뒤에 포트폴리오 완성하고
                 <Break />
                 서류 합격률을 <span className="text-[#FFCE5B]">300%</span>
                 <img

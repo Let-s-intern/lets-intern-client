@@ -77,7 +77,7 @@ function ChallengeIntroPortfolio() {
           <br className="md:hidden" /> 모두 제공!
         </Heading2>
         <Description className="mb-10 md:mb-20 md:text-center">
-          가장 중요한 건 핵심 내용을 어떻게 도식화 하는가인데요. <Break />내
+          가장 중요한 건 핵심 내용을 어떻게 도식화하는가인데요. <Break />내
           경험에 맞춰 적용할 수 있도록 다양한 구조화 템플릿, 최소한의 디자인을
           도와줄 폰트/디자인 가이드까지 모두 드려요!
         </Description>

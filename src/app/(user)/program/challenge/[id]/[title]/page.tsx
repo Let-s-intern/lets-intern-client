@@ -73,6 +73,7 @@ const Page = async ({
         <ChallengeMarketingView challenge={challenge} />
       ) : challenge.challengeType === 'PORTFOLIO' &&
         challenge.startDate &&
+        // 포폴 상페 개선 https://letscareer-team.atlassian.net/browse/LC-2737
         dayjs(challenge.startDate).isAfter(dayjs('2025-12-02')) ? (
         <ChallengePortfolioView challenge={challenge} />
       ) : (

@@ -91,7 +91,7 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
       id="pricing"
       className="flex scroll-mt-[56px] flex-col items-center bg-neutral-90 px-5 py-[70px] md:scroll-mt-[60px] md:px-0 md:pb-[140px] md:pt-[100px]"
     >
-      <SectionHeader className="mb-6 md:mb-[60px]">가격 구성</SectionHeader>
+      <SectionHeader className="mb-6 md:mb-[60px]">가격 플랜</SectionHeader>
       <div className="mb-[30px] flex flex-col items-center gap-2 md:mb-[50px] md:gap-3">
         <SectionSubHeader className="text-[#4A76FF]">
           취준 비용 부담은 낮추고, 퀄리티는 높이고
