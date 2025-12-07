@@ -32,21 +32,7 @@ export const useMentorListQuery = () => {
 
 export const UseUserAdminQueryKey = 'useUserListQueryKey';
 
-export const useUserAdminQuery = ({
-  email,
-  name,
-  phoneNum,
-  university,
-  wishField,
-  wishIndustry,
-  wishEmploymentType,
-  programTitle,
-  title,
-  company,
-  job,
-  memo,
-  pageable,
-}: {
+export type UserAdminQueryParams = {
   email?: string | null;
   name?: string | null;
   phoneNum?: string | null;
@@ -63,7 +49,23 @@ export const useUserAdminQuery = ({
     page: number;
     size: number;
   };
-} = {}) => {
+};
+
+export const useUserAdminQuery = ({
+  email,
+  name,
+  phoneNum,
+  university,
+  wishField,
+  wishIndustry,
+  wishEmploymentType,
+  programTitle,
+  title,
+  company,
+  job,
+  memo,
+  pageable,
+}: UserAdminQueryParams = {}) => {
   return useQuery({
     queryKey: [
       UseUserAdminQueryKey,
