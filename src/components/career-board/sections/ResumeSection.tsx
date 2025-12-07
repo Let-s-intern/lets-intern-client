@@ -1,5 +1,6 @@
 import { useGetUserDocumentListQuery } from '@/api/user';
 import { UserDocument } from '@/api/userSchema';
+import { getFileNameFromUrl } from '@/utils/getFileNameFromUrl';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -20,20 +21,6 @@ const DOCUMENT_TYPE_ORDER: UserDocument['userDocumentType'][] = [
   'PORTFOLIO',
 ];
 
-// URL에서 파일명 추출
-const getFileNameFromUrl = (url: string): string => {
-  try {
-    // URL이 상대 경로인 경우와 절대 경로인 경우 모두 처리
-    const lastSlashIndex = url.lastIndexOf('/');
-    if (lastSlashIndex !== -1 && lastSlashIndex < url.length - 1) {
-      return url.substring(lastSlashIndex + 1);
-    }
-    return url;
-  } catch {
-    return url;
-  }
-};
-
 interface Document {
   type: string;
   fileName: string | null;
@@ -50,13 +37,10 @@ const ResumeSection = () => {
     const document = userDocumentData?.userDocumentList.find(
       (doc) => doc.userDocumentType === docType,
     );
-
-    // fileName이 있으면 파일명만 추출하고, 없으면 fileUrl에서 추출
-    const fileName = document?.fileName
-      ? getFileNameFromUrl(document.fileName)
-      : document?.fileUrl
-        ? getFileNameFromUrl(document.fileUrl)
-        : null;
+    // fileUrl에서 추출
+    const fileName = document?.fileUrl
+      ? getFileNameFromUrl(document.userDocumentType, document.fileUrl)
+      : null;
 
     return {
       type: DOCUMENT_TYPE_MAP[docType],
