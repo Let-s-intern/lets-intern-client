@@ -134,11 +134,11 @@ const PortfolioFeedbackInfo = () => {
               </Balancer>
             </Description>
           </div>
-          <div className="flex flex-col-reverse gap-5 md:flex-row md:gap-10">
+          <div className="flex flex-col-reverse gap-5 md:flex-row md:items-start md:gap-10">
             <img
               src="/images/mentoring-500-185.jpg"
               alt="멘토링 이미지"
-              className="mx-auto h-auto w-[500px]"
+              className="mx-auto aspect-[500/185] w-[500px] min-w-0"
             />
             <div className="flex flex-col items-start gap-4">
               <span className="rounded-full bg-[#7897F9] px-4 py-1 text-xxsmall12 font-semibold text-white md:text-xsmall16">
