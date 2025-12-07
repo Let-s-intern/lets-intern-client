@@ -1,5 +1,7 @@
 import { usePostDocumentMutation } from '@/api/mission';
 import { DocumentType } from '@/api/missionSchema';
+import { getPresignedUrl, uploadToS3 } from '@/api/presignedUrl';
+import { convertReportTypeToPathname } from '@/api/report';
 import {
   useDeleteUserDocMutation,
   useGetUserDocumentListQuery,
@@ -276,31 +278,29 @@ const MyDocUploadSection = ({
       return;
     }
 
-    // FormData 생성
-    const formData = new FormData();
-    formData.append(
-      'requestDto',
-      new Blob(
-        [
-          JSON.stringify({
-            documentType: type,
-            fileUrl: '',
-            wishField: '',
-            wishIndustry: '',
-            wishJob: '',
-          }),
-        ],
-        {
-          type: 'application/json',
-        },
-      ),
-    );
-    formData.append('file', file);
     setUploadingType(type);
     setUploadingFiles((prev) => ({ ...prev, [type]: file }));
 
     try {
-      await postDocumentMutation.mutateAsync(formData);
+      // 1. Presigned URL 받아오기
+      const fileNameWithApiUrl = `user-document/${convertReportTypeToPathname(type)}/${file.name}`;
+      const presignedUrl = await getPresignedUrl(type, fileNameWithApiUrl);
+
+      // 2. S3에 직접 업로드
+      await uploadToS3(presignedUrl, file);
+
+      // 3. 서버에 문서 메타데이터 저장
+      const requestData = {
+        documentType: type,
+        fileUrl: presignedUrl.split('?')[0], // query parameter 제거한 실제 S3 URL
+        fileName: file.name,
+        wishField: '',
+        wishJob: '',
+        wishIndustry: '',
+      };
+
+      await postDocumentMutation.mutateAsync(requestData);
+
       const updatedFiles = {
         ...uploadedFiles,
         [type.toLowerCase()]: file,

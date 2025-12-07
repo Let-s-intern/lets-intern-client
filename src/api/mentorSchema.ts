@@ -31,3 +31,13 @@ export interface PostAdminChallengeMentorReq {
   challengeId: number;
   mentorIdList: number[];
 }
+
+export interface TalentPoolDocumentReq {
+  attendanceId: number;
+  documentType: string;
+  fileUrl: string;
+  fileName: string;
+  wishField: string;
+  wishJob: string;
+  wishIndustry: string;
+}

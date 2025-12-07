@@ -4,7 +4,8 @@ import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { PatchMissionReq } from './missionSchema';
+import { TalentPoolDocumentReq } from './mentorSchema';
+import { PatchMissionReq, PostDocumentReq } from './missionSchema';
 
 interface ErrorResponse {
   message: string;
@@ -66,12 +67,8 @@ export const usePostDocumentMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (req: FormData) => {
-      const res = await axios.post(`/user-document`, req, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+    mutationFn: async (req: PostDocumentReq) => {
+      const res = await axios.post(`/user-document`, req);
       return res.data;
     },
     onSuccess: () => {
@@ -90,13 +87,9 @@ export const usePostTalentPoolAttendanceMutation = () => {
       req,
     }: {
       missionId: number;
-      req: FormData;
+      req: TalentPoolDocumentReq[];
     }) => {
-      await axios.post(`/attendance/pool/${missionId}`, req, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      await axios.post(`/attendance/pool/${missionId}`, req);
     },
     onError(error: AxiosError<ErrorResponse>) {
       const errorMessage =
