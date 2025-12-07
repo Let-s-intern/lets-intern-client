@@ -192,7 +192,7 @@ const Portfolio다른프로그램추천 = ({
   const progress = [
     { index: 1, title: '신청 완료' },
     { index: 2, title: '챌린지 대시보드 및\n오픈채팅방 초대' },
-    { index: 3, title: 'OT', subTitle: '*실시간 진행' },
+    { index: 3, title: 'OT' },
     { index: 4, title: '회차별 챌린지 가이드북\n및 미션 템플릿 제공' },
     { index: 5, title: '회차별 미션 수행' },
     {
