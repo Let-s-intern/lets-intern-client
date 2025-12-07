@@ -32,31 +32,77 @@ export const useMentorListQuery = () => {
 
 export const UseUserAdminQueryKey = 'useUserListQueryKey';
 
-export const useUserAdminQuery = ({
-  email,
-  name,
-  phoneNum,
-  pageable,
-}: {
+export type UserAdminQueryParams = {
   email?: string | null;
   name?: string | null;
   phoneNum?: string | null;
+  university?: string | null;
+  wishField?: string | null;
+  wishIndustry?: string | null;
+  wishEmploymentType?: string | null;
+  programTitle?: string | null;
+  title?: string | null;
+  company?: string | null;
+  job?: string | null;
+  memo?: string | null;
   pageable?: {
     page: number;
     size: number;
   };
-} = {}) => {
+};
+
+export const useUserAdminQuery = ({
+  email,
+  name,
+  phoneNum,
+  university,
+  wishField,
+  wishIndustry,
+  wishEmploymentType,
+  programTitle,
+  title,
+  company,
+  job,
+  memo,
+  pageable,
+}: UserAdminQueryParams = {}) => {
   return useQuery({
-    queryKey: [UseUserAdminQueryKey, email, name, phoneNum, pageable],
+    queryKey: [
+      UseUserAdminQueryKey,
+      email,
+      name,
+      phoneNum,
+      university,
+      wishField,
+      wishIndustry,
+      wishEmploymentType,
+      programTitle,
+      title,
+      company,
+      job,
+      memo,
+      pageable,
+    ],
     queryFn: async () => {
-      const res = await axiosV2.get('/admin/user', {
-        params: {
+      const params = Object.fromEntries(
+        Object.entries({
           email,
           name,
           phoneNum,
+          university,
+          wishField,
+          wishIndustry,
+          wishEmploymentType,
+          programTitle,
+          company,
+          job,
+          title,
+          memo,
           ...pageable,
-        },
-      });
+        }).filter(([_, v]) => v !== null && v !== undefined && v !== ''),
+      );
+
+      const res = await axiosV2.get('/admin/user', { params });
       return userAdminType.parse(res.data.data);
     },
   });
