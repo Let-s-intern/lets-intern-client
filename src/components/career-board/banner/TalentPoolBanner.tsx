@@ -1,6 +1,6 @@
 'use client';
 
-import { usePatchUserPoolUpMutation, useUserQuery } from '@/api/user';
+import { usePatchUser, useUserQuery } from '@/api/user';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 
@@ -19,7 +19,7 @@ const TalentPoolBanner = ({ hasCareerData = false }: TalentPoolBannerProps) => {
     }
   }, [userData?.isPoolUp]);
 
-  const patchUserPoolUpMutation = usePatchUserPoolUpMutation(
+  const patchUserMutation = usePatchUser(
     () => {
       // 성공 시 상태는 invalidate로 자동 업데이트됨
     },
@@ -32,14 +32,29 @@ const TalentPoolBanner = ({ hasCareerData = false }: TalentPoolBannerProps) => {
   );
 
   const handleToggle = () => {
-    if (isDisabled || !userData?.userId || patchUserPoolUpMutation.isPending)
-      return;
+    if (isDisabled || !userData || patchUserMutation.isPending) return;
 
     const newValue = !isEnabled;
     // 낙관적 업데이트
     setIsEnabled(newValue);
-    patchUserPoolUpMutation.mutate({
-      userId: userData.userId,
+    // 전체 유저 정보와 함께 isPoolUp 상태를 업데이트
+    patchUserMutation.mutate({
+      email: userData.email ?? undefined,
+      name: userData.name ?? undefined,
+      phoneNum: userData.phoneNum ?? undefined,
+      university: userData.university ?? null,
+      grade: userData.grade ?? null,
+      major: userData.major ?? null,
+      wishField: userData.wishField ?? null,
+      wishJob: userData.wishJob ?? null,
+      wishIndustry: userData.wishIndustry ?? null,
+      wishEmploymentType: userData.wishEmploymentType ?? null,
+      wishCompany: userData.wishCompany ?? null,
+      marketingAgree: userData.marketingAgree ?? undefined,
+      contactEmail: userData.contactEmail ?? null,
+      accountType: userData.accountType ?? null,
+      accountNum: userData.accountNum ?? null,
+      inflowPath: userData.inflowPath ?? null,
       isPoolUp: newValue,
     });
   };
@@ -73,9 +88,8 @@ const TalentPoolBanner = ({ hasCareerData = false }: TalentPoolBannerProps) => {
                 'bg-primary': isEnabled && !isDisabled,
                 'bg-[#D1D1D1]': !isEnabled || isDisabled,
                 'cursor-not-allowed opacity-50':
-                  isDisabled || patchUserPoolUpMutation.isPending,
-                'cursor-pointer':
-                  !isDisabled && !patchUserPoolUpMutation.isPending,
+                  isDisabled || patchUserMutation.isPending,
+                'cursor-pointer': !isDisabled && !patchUserMutation.isPending,
               },
             )}
             aria-label="인재풀 등록 토글"
