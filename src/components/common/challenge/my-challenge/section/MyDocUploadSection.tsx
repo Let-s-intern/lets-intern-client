@@ -289,15 +289,12 @@ const MyDocUploadSection = ({
 
       // 3. 서버에 문서 메타데이터 저장
       const requestData = {
-        requestDto: {
-          attendanceId: 0,
-          documentType: type,
-          fileUrl: presignedUrl.split('?')[0], // query parameter 제거한 실제 S3 URL
-          fileName: file.name,
-          wishField: '',
-          wishJob: '',
-          wishIndustry: '',
-        },
+        documentType: type,
+        fileUrl: presignedUrl.split('?')[0], // query parameter 제거한 실제 S3 URL
+        fileName: file.name,
+        wishField: '',
+        wishJob: '',
+        wishIndustry: '',
       };
 
       await postDocumentMutation.mutateAsync(requestData);

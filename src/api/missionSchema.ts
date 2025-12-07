@@ -16,15 +16,13 @@ export interface PatchMissionReq {
   additionalContentsIdList?: number[];
 }
 export interface PostDocumentReq {
-  requestDto: {
-    attendanceId: number;
-    documentType: string;
-    fileUrl: string;
-    fileName: string;
-    wishField: string;
-    wishJob: string;
-    wishIndustry: string;
-  };
+  attendanceId?: number;
+  documentType: string;
+  fileUrl: string;
+  fileName: string;
+  wishField: string;
+  wishJob: string;
+  wishIndustry: string;
 }
 
 export type DocumentType = 'RESUME' | 'PORTFOLIO' | 'PERSONAL_STATEMENT';
