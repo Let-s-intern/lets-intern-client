@@ -92,10 +92,12 @@ const MissionSubmitTalentPoolSection = ({
       for (const { type, file } of filesToUpload) {
         let fileUrl: string;
         let fileName: string;
+        let fileNameWithApiUrl: string;
 
         if (file instanceof File) {
           // 1. Presigned URL 받아오기
-          const presignedUrl = await getPresignedUrl(type, file.name);
+          fileNameWithApiUrl = `attendance/pool/${missionId}/${file.name}`;
+          const presignedUrl = await getPresignedUrl(type, fileNameWithApiUrl);
 
           // 2. S3에 직접 업로드
           await uploadToS3(presignedUrl, file);

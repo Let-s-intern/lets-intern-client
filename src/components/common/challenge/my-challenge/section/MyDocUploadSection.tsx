@@ -1,6 +1,7 @@
 import { usePostDocumentMutation } from '@/api/mission';
 import { DocumentType } from '@/api/missionSchema';
 import { getPresignedUrl, uploadToS3 } from '@/api/presignedUrl';
+import { convertReportTypeToPathname } from '@/api/report';
 import {
   useDeleteUserDocMutation,
   useGetUserDocumentListQuery,
@@ -282,7 +283,8 @@ const MyDocUploadSection = ({
 
     try {
       // 1. Presigned URL 받아오기
-      const presignedUrl = await getPresignedUrl(type, file.name);
+      const fileNameWithApiUrl = `user-document/${convertReportTypeToPathname(type)}/${file.name}`;
+      const presignedUrl = await getPresignedUrl(type, fileNameWithApiUrl);
 
       // 2. S3에 직접 업로드
       await uploadToS3(presignedUrl, file);
