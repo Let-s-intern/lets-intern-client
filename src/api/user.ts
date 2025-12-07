@@ -37,6 +37,13 @@ export const useUserAdminQuery = ({
   name,
   phoneNum,
   university,
+  wishField,
+  wishIndustry,
+  wishEmploymentType,
+  programTitle,
+  title,
+  company,
+  job,
   memo,
   pageable,
 }: {
@@ -44,6 +51,13 @@ export const useUserAdminQuery = ({
   name?: string | null;
   phoneNum?: string | null;
   university?: string | null;
+  wishField?: string | null;
+  wishIndustry?: string | null;
+  wishEmploymentType?: string | null;
+  programTitle?: string | null;
+  title?: string | null;
+  company?: string | null;
+  job?: string | null;
   memo?: string | null;
   pageable?: {
     page: number;
@@ -57,6 +71,13 @@ export const useUserAdminQuery = ({
       name,
       phoneNum,
       university,
+      wishField,
+      wishIndustry,
+      wishEmploymentType,
+      programTitle,
+      title,
+      company,
+      job,
       memo,
       pageable,
     ],
@@ -67,6 +88,13 @@ export const useUserAdminQuery = ({
           name,
           phoneNum,
           university,
+          wishField,
+          wishIndustry,
+          wishEmploymentType,
+          programTitle,
+          company,
+          job,
+          title,
           memo,
           ...pageable,
         }).filter(([_, v]) => v !== null && v !== undefined && v !== ''),

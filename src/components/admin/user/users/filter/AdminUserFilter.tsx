@@ -31,7 +31,17 @@ const AdminUserFilter = ({ setSearchValues }: FilterProps) => {
   const search = () => {
     const searchValues: any = {};
 
-    if (searchText.trim()) {
+    // career 카테고리인 경우 "/" 기준으로 분리
+    if (values.category === 'career') {
+      const parts = searchText.trim().split('/');
+      if (parts.length === 2) {
+        searchValues.company = parts[0].trim();
+        searchValues.job = parts[1].trim();
+      } else if (parts.length === 1) {
+        // "/" 없이 입력된 경우 company로만 검색
+        searchValues.company = parts[0].trim();
+      }
+    } else {
       searchValues[values.category] = searchText.trim();
     }
 
@@ -76,14 +86,12 @@ const AdminUserFilter = ({ setSearchValues }: FilterProps) => {
             <MenuItem value="email">이메일</MenuItem>
             <MenuItem value="phoneNum">휴대폰 번호</MenuItem>
             <MenuItem value="university">대학교</MenuItem>
-            {/* <MenuItem value="wishField">희망 직무</MenuItem> */}
-            {/* <MenuItem value="wishIndustry">희망 산업</MenuItem> */}
-            {/* <MenuItem value="wishEmploymentType">희망 구직 조건</MenuItem> */}
-            {/* <MenuItem value="programTitle">참여프로그램</MenuItem> */}
-            {/* <MenuItem value="careerInfos">주요 경험</MenuItem> */}
-            {/* <MenuItem value="documentInfos">이력서</MenuItem> */}
-            {/* <MenuItem value="documentInfos">포트폴리오</MenuItem> */}
-            {/* <MenuItem value="documentInfos">자기소개서</MenuItem> */}
+            <MenuItem value="wishField">희망 직무</MenuItem>
+            <MenuItem value="wishIndustry">희망 산업</MenuItem>
+            <MenuItem value="wishEmploymentType">희망 구직 조건</MenuItem>
+            <MenuItem value="programTitle">참여프로그램</MenuItem>
+            <MenuItem value="title">주요 경험</MenuItem>
+            <MenuItem value="career">주요 경력</MenuItem>
             <MenuItem value="memo">메모</MenuItem>
           </Select>
         </FormControl>
@@ -95,6 +103,9 @@ const AdminUserFilter = ({ setSearchValues }: FilterProps) => {
             value={searchText}
             onChange={handleSearchTextChange}
             onKeyDown={onKeyDown}
+            placeholder={
+              values.category === 'career' ? '회사명/직무 형식으로 입력' : ''
+            }
             size="small"
           />
         </div>

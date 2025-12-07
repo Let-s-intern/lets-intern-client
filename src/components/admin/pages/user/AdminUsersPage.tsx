@@ -15,12 +15,26 @@ const AdminUsersPage = () => {
     email: string;
     phoneNum: string;
     university: string;
+    wishField: string;
+    wishIndustry: string;
+    wishEmploymentType: string;
+    programTitle: string;
+    title: string;
+    company: string;
+    job: string;
     memo: string;
   }>({
     name: '',
     email: '',
     phoneNum: '',
     university: '',
+    wishField: '',
+    wishIndustry: '',
+    wishEmploymentType: '',
+    programTitle: '',
+    title: '',
+    company: '',
+    job: '',
     memo: '',
   });
 
@@ -29,6 +43,13 @@ const AdminUsersPage = () => {
     name: searchValues.name,
     phoneNum: searchValues.phoneNum,
     university: searchValues.university,
+    wishField: searchValues.wishField,
+    wishIndustry: searchValues.wishIndustry,
+    wishEmploymentType: searchValues.wishEmploymentType,
+    programTitle: searchValues.programTitle,
+    title: searchValues.title,
+    company: searchValues.company,
+    job: searchValues.job,
     memo: searchValues.memo,
     pageable: {
       page: pageNum,
