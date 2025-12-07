@@ -5,9 +5,6 @@ import { MdChevronRight } from 'react-icons/md';
 import Description from './common/program/program-detail/Description';
 import Heading2 from './common/ui/Heading2';
 
-/**
- * TODO: 파일 어디론가 옮기기.
- */
 const ProgramDetailBlogReviewSection = ({
   review,
   programType,

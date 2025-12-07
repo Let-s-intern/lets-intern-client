@@ -112,7 +112,7 @@ function ChallengePricePlanSection({ challengeType, priceInfoList }: Props) {
 
   return (
     <section className="w-full bg-neutral-90 px-5 pb-[8.75rem] pt-[6.25rem] text-center lg:px-0">
-      <SectionHeader className="mb-6 md:mb-14">가격 구성</SectionHeader>
+      <SectionHeader className="mb-6 md:mb-14">가격 플랜</SectionHeader>
       <SectionSubHeader className="mb-1 md:mb-3" style={subHeaderStyle}>
         취준 비용 부담은 낮추고, 퀄리티는 높이고
       </SectionSubHeader>
