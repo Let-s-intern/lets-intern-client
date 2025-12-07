@@ -223,6 +223,10 @@ export type PatchUserBody = {
   wishIndustry?: string | null;
   wishEmploymentType?: string | null;
   marketingAgree?: boolean;
+  accountType?: string | null;
+  accountNum?: string | null;
+  accountOwner?: string | null;
+  isPoolUp?: boolean;
 };
 
 export const usePatchUser = (
