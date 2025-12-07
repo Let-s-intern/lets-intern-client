@@ -33,7 +33,7 @@ const DocumentLink = ({
         color: '#1976d2',
       }}
     >
-      {doc.fileName.split('/').pop()}
+      {doc.fileName?.split('/')?.pop() || ''}
     </a>
   );
 };

@@ -1,5 +1,6 @@
 import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
 import { usePostTalentPoolAttendanceMutation } from '@/api/mission';
+import { getPresignedUrl, uploadToS3 } from '@/api/presignedUrl';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import { Schedule } from '@/schema';
@@ -78,43 +79,55 @@ const MissionSubmitTalentPoolSection = ({
     }
     setIsDocSubmitting(true);
 
-    const filesToUpload = [
-      { type: 'RESUME', file: uploadedFiles.resume },
-      { type: 'PORTFOLIO', file: uploadedFiles.portfolio },
-      { type: 'PERSONAL_STATEMENT', file: uploadedFiles.personal_statement },
-    ].filter((item) => item.file);
-
-    const userDocumentList = filesToUpload.map(({ type, file }) => ({
-      documentType: type,
-      fileUrl: file instanceof File ? null : file,
-      wishField: selectedField,
-      wishJob: selectedPositions.join(','),
-      wishIndustry: selectedIndustries.join(','),
-    }));
-
-    // File 객체만 추출
-    const fileList = filesToUpload
-      .map(({ file }) => (file instanceof File ? file : null))
-      .filter((file): file is File => file !== null);
-
-    const formData = new FormData();
-
-    formData.append(
-      'userDocumentList',
-      new Blob([JSON.stringify(userDocumentList)], {
-        type: 'application/json',
-      }),
-    );
-
-    fileList.forEach((file) => {
-      formData.append('fileList', file);
-    });
-
     try {
+      const filesToUpload = [
+        { type: 'RESUME', file: uploadedFiles.resume },
+        { type: 'PORTFOLIO', file: uploadedFiles.portfolio },
+        { type: 'PERSONAL_STATEMENT', file: uploadedFiles.personal_statement },
+      ].filter((item) => item.file);
+
+      const documentRequests = [];
+
+      // 각 파일 업로드 처리
+      for (const { type, file } of filesToUpload) {
+        let fileUrl: string;
+        let fileName: string;
+        let fileNameWithApiUrl: string;
+
+        if (file instanceof File) {
+          // 1. Presigned URL 받아오기
+          fileNameWithApiUrl = `attendance/pool/${missionId}/${file.name}`;
+          const presignedUrl = await getPresignedUrl(type, fileNameWithApiUrl);
+
+          // 2. S3에 직접 업로드
+          await uploadToS3(presignedUrl, file);
+
+          // 3. 업로드된 파일의 URL과 이름 저장
+          fileUrl = presignedUrl.split('?')[0];
+          fileName = file.name;
+        } else {
+          // 이미 업로드된 파일 (string URL)
+          fileUrl = file as string;
+          fileName = fileUrl.substring(fileUrl.lastIndexOf('/') + 1);
+        }
+
+        documentRequests.push({
+          attendanceId: missionId,
+          documentType: type,
+          fileUrl,
+          fileName,
+          wishField: selectedField || '',
+          wishJob: selectedPositions.join(','),
+          wishIndustry: selectedIndustries.join(','),
+        });
+      }
+
+      // 서버에 메타데이터 전송
       await submitTalentPoolAttendance.mutateAsync({
         missionId,
-        req: formData,
+        req: documentRequests,
       });
+
       await refetchMissionData();
       await refetchSchedules?.();
       setShowToast(true);

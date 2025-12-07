@@ -54,7 +54,7 @@ export const userAdminType = z.object({
             'PORTFOLIO',
             'PERSONAL_STATEMENT',
           ]),
-          fileName: z.string(),
+          fileName: z.string().nullable(),
           fileUrl: z.string(),
         }),
       ),
