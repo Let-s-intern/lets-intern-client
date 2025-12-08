@@ -1,6 +1,7 @@
 import { usePostAdminCareerMutation } from '@/api/career';
 import { UserCareerType } from '@/api/careerSchema';
 import { UserAdminDetail } from '@/schema';
+import { getFileNameFromUrl } from '@/utils/getFileNameFromUrl';
 import CareerForm from '@components/common/mypage/career/CareerForm';
 import { DEFAULT_CAREER } from '@components/common/mypage/career/constants';
 import { Plus } from 'lucide-react';
@@ -108,7 +109,12 @@ const PersonalHistory = ({ data }: { data: UserAdminDetail }) => {
                         {getDocumentLabel(doc.userDocumentType)}
                       </span>
                       <span className="text-blue-700 underline">
-                        {doc.fileName}
+                        {doc.fileUrl
+                          ? getFileNameFromUrl(
+                              doc.userDocumentType,
+                              doc.fileUrl,
+                            )
+                          : '-'}
                       </span>
                     </a>
                   </li>

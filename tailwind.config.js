@@ -197,6 +197,10 @@ module.exports = {
           '0%': { transform: 'translateX(100%)' },
           '100%': { transform: 'translateX(0)' },
         },
+        'infinite-scroll': {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
       },
       animation: {
         'live-infinite-scroll-desktop':
@@ -206,6 +210,7 @@ module.exports = {
         'bounce-x': 'bounce-x 0.7s infinite',
         'fade-in': 'fade-in 0.2s ease-out',
         'slide-in-right': 'slide-in-right 0.2s ease-out',
+        'infinite-scroll': 'infinite-scroll 40s linear infinite',
       },
     },
     borderRadius: {

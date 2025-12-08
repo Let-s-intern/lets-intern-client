@@ -88,7 +88,7 @@ const CareerPlanBody = ({
   })();
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex h-[179px] flex-col gap-2">
       <PlanFieldItem label="희망 직군 / 직무" value={jobRoleText || '미설정'} />
       <PlanFieldItem
         label="희망 산업"

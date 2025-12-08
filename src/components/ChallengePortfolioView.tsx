@@ -22,6 +22,7 @@ import ChallengeInfoBottom from './challenge-view/ChallengeInfoBottom';
 import ChallengeIntroPortfolio from './challenge-view/ChallengeIntroPortfolio';
 import ChallengePricePlanSection from './challenge-view/ChallengePricePlanSection';
 import ChallengeResult from './challenge-view/ChallengeResult';
+import PortfolioFeedbackInfo from './challenge-view/PortfolioFeedbackInfo';
 import PortfolioIntroCheckList from './challenge-view/PortfolioIntroCheckList';
 import PortfolioOneOnOne from './challenge-view/PortfolioOneOnOne';
 import Portfolio다른프로그램추천 from './challenge-view/Portfolio다른프로그램추천';
@@ -532,6 +533,8 @@ const ChallengePortfolioView: React.FC<{
             challengeType={challenge.challengeType}
             deposit={challenge.priceInfo[0].refund ?? 0}
           />
+
+          <PortfolioFeedbackInfo />
 
           <ChallengeResult
             isResumeTemplate={isResumeTemplate}

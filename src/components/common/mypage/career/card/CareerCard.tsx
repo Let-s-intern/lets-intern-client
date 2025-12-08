@@ -72,7 +72,7 @@ const Empty = ({
   return (
     <div
       className={clsx(
-        'flex h-[179px] flex-col items-center justify-center gap-3',
+        'flex flex-col items-center justify-center gap-3',
         height && `h-[${height}px]`,
       )}
     >
