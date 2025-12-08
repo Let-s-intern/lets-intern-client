@@ -30,6 +30,7 @@ export const userAdminType = z.object({
         contactEmail: z.string().nullable(),
         university: z.string().nullable(),
         wishField: z.string().nullable(),
+        wishJob: z.string().nullable(),
         wishIndustry: z.string().nullable(),
         wishEmploymentType: z.string().nullable(),
         phoneNum: z.string(),
