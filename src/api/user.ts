@@ -37,7 +37,7 @@ export type UserAdminQueryParams = {
   name?: string | null;
   phoneNum?: string | null;
   university?: string | null;
-  wishField?: string | null;
+  wishJob?: string | null;
   wishIndustry?: string | null;
   wishEmploymentType?: string | null;
   programTitle?: string | null;
@@ -56,7 +56,7 @@ export const useUserAdminQuery = ({
   name,
   phoneNum,
   university,
-  wishField,
+  wishJob,
   wishIndustry,
   wishEmploymentType,
   programTitle,
@@ -73,7 +73,7 @@ export const useUserAdminQuery = ({
       name,
       phoneNum,
       university,
-      wishField,
+      wishJob,
       wishIndustry,
       wishEmploymentType,
       programTitle,
@@ -90,7 +90,7 @@ export const useUserAdminQuery = ({
           name,
           phoneNum,
           university,
-          wishField,
+          wishJob,
           wishIndustry,
           wishEmploymentType,
           programTitle,

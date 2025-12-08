@@ -271,7 +271,7 @@ const UserAdminTable = ({
       width: 100,
     },
     {
-      field: 'wishField',
+      field: 'wishJob',
       headerName: '희망 직무',
       width: 120,
     },
@@ -390,7 +390,7 @@ const UserAdminTable = ({
     phoneNum: user.userInfo.phoneNum,
     email: user.userInfo.email,
     university: user.userInfo.university,
-    wishField: user.userInfo.wishField,
+    wishJob: user.userInfo.wishJob,
     wishIndustry: user.userInfo.wishIndustry,
     wishEmploymentType: user.userInfo.wishEmploymentType,
     applicationInfos: user.applicationInfos,
