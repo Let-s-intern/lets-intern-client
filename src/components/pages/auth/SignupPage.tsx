@@ -446,7 +446,7 @@ const SignUp = () => {
                   <PrivacyLink
                     onClick={() =>
                       window.open(
-                        'https://letsintern.notion.site/a121a038f72f42d7bde747624ecc0943?pvs=4',
+                        'https://letsintern.notion.site/251208-2c35e77cbee1800bb2b5cfbd4c2f1525?pvs=21',
                         '_blank',
                       )
                     }
