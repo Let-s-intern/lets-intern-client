@@ -3,7 +3,7 @@ import { useGetUserDocumentListQuery } from '@/api/user';
 import { UserDocument } from '@/api/userSchema';
 import { getFileNameFromUrl } from '@/utils/getFileNameFromUrl';
 import { clsx } from 'clsx';
-import { Trash2, Upload } from 'lucide-react';
+import { RefreshCw, Trash2, Upload } from 'lucide-react';
 import { useRef, type RefObject } from 'react';
 import { UploadedFiles } from './MissionSubmitTalentPoolSection';
 
@@ -66,7 +66,9 @@ const DocumentFileItem = ({
 
   const isDocumentExists = userDocumentList?.some(
     (document: UserDocument) =>
-      document.userDocumentType === type.toUpperCase(),
+      document.userDocumentType === type.toUpperCase() &&
+      document.fileUrl &&
+      document.fileUrl.trim() !== '',
   );
 
   // 제출 완료된 경우, 저장된 서류를 찾아서 표시
@@ -128,7 +130,7 @@ const DocumentFileItem = ({
           </button>
 
           {/* 서류 불러오기 버튼*/}
-          {/* <button
+          <button
             type="button"
             onClick={() => onLoadDocument(type)}
             disabled={isSubmitted || isLoading || !isDocumentExists}
@@ -136,7 +138,7 @@ const DocumentFileItem = ({
           >
             <RefreshCw size={16} />
             서류 불러오기
-          </button> */}
+          </button>
         </div>
       )}
 
