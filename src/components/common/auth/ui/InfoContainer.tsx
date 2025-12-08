@@ -1,13 +1,16 @@
 import { useMutation } from '@tanstack/react-query';
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { FormEvent, useCallback, useMemo, useState } from 'react';
 
-import useAuthStore from '../../../../store/useAuthStore';
-import axios from '../../../../utils/axios';
+import CareerInfoForm, {
+  CareerInfoSelections,
+  CareerInfoValues,
+} from '@/components/common/mypage/career/CareerInfoForm';
+import useAuthStore from '@/store/useAuthStore';
+import axios from '@/utils/axios';
+import { GRADE_KOREAN_TO_ENUM } from '@/utils/constants';
+import SolidButton from '@components/ui/button/SolidButton';
 import AlertModal from '../../../ui/alert/AlertModal';
-import Input from '../../../ui/input/Input';
-import GradeDropdown from '../../mypage/privacy/form-control/GradeDropdown';
-import Button from '../../ui/button/Button';
 
 const InfoContainer = ({
   isSocial,
@@ -17,28 +20,10 @@ const InfoContainer = ({
   email: string;
 }) => {
   const router = useRouter();
-  const [buttonDisabled, setButtonDisabled] = useState(false);
-  const [value, setValue] = useState<{
-    inflow: string;
-    university: string;
-    grade: string;
-    major: string;
-    wishJob: string;
-    wishCompany: string;
-  }>({
-    inflow: '',
-    university: '',
-    grade: '',
-    major: '',
-    wishJob: '',
-    wishCompany: '',
-  });
-  const [error, setError] = useState<unknown>(null);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successModalOpen, setSuccessModalOpen] = useState(false);
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect');
   const { logout } = useAuthStore();
+
   let accessToken = '';
   try {
     accessToken = JSON.parse(String(searchParams.get('result'))).accessToken;
@@ -46,15 +31,47 @@ const InfoContainer = ({
     // empty
   }
 
+  const [value, setValue] = useState<CareerInfoValues>({
+    university: '',
+    grade: '',
+    major: '',
+    wishCompany: '',
+    wishEmploymentType: '',
+  });
+
+  const [selections, setSelections] = useState<CareerInfoSelections>({
+    selectedField: null,
+    selectedPositions: [],
+    selectedIndustries: [],
+  });
+
+  const [error, setError] = useState<unknown>(null);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
+
   const patchEmailUserInfo = useMutation({
     mutationFn: async () => {
+      // 한글 학년을 enum 값으로 변환
+      const enumGrade = value.grade
+        ? (GRADE_KOREAN_TO_ENUM[value.grade] ?? null)
+        : null;
+
       const res = await axios.patch(`/user/additional-info`, {
         email,
         university: value.university,
         major: value.major,
-        grade: value.grade,
-        wishJob: value.wishJob,
+        grade: enumGrade,
+        wishField: selections.selectedField,
+        wishJob:
+          selections.selectedPositions.length > 0
+            ? selections.selectedPositions.join(', ')
+            : null,
+        wishIndustry:
+          selections.selectedIndustries.length > 0
+            ? selections.selectedIndustries.join(', ')
+            : null,
         wishCompany: value.wishCompany,
+        wishEmploymentType: value.wishEmploymentType,
       });
       return res.data;
     },
@@ -62,25 +79,37 @@ const InfoContainer = ({
       setSuccessModalOpen(true);
       localStorage.removeItem('email');
     },
-    onError: (error) => {
-      // const axiosError = error as AxiosError;
-      setError(error);
+    onError: (err) => {
+      setError(err);
       setErrorMessage('추가 정보 입력에 실패했습니다.');
     },
   });
 
   const patchSocialUserInfo = useMutation({
     mutationFn: async () => {
+      // 한글 학년을 enum 값으로 변환
+      const enumGrade = value.grade
+        ? (GRADE_KOREAN_TO_ENUM[value.grade] ?? value.grade)
+        : null;
+
       const res = await axios({
         method: 'patch',
         url: '/user',
         data: {
-          inflowPath: value.inflow,
           university: value.university,
-          grade: value.grade,
+          grade: enumGrade,
           major: value.major,
-          wishJob: value.wishJob,
+          wishField: selections.selectedField,
+          wishJob:
+            selections.selectedPositions.length > 0
+              ? selections.selectedPositions.join(', ')
+              : null,
+          wishIndustry:
+            selections.selectedIndustries.length > 0
+              ? selections.selectedIndustries.join(', ')
+              : null,
           wishCompany: value.wishCompany,
+          wishEmploymentType: value.wishEmploymentType,
         },
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -92,35 +121,14 @@ const InfoContainer = ({
       logout();
       setSuccessModalOpen(true);
     },
-    onError: (error) => {
-      setError(error);
+    onError: (err) => {
+      setError(err);
       setErrorMessage('추가 정보 입력에 실패했습니다.');
     },
   });
 
-  const handleGradeChange = (grade: string) => {
-    setValue({ ...value, grade });
-  };
-
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (
-      !value.university ||
-      !value.major ||
-      !value.grade ||
-      !value.wishJob ||
-      !value.wishCompany
-    ) {
-      setError(true);
-      setErrorMessage('모든 항목을 입력해주세요.');
-      return;
-    }
-    if (!value.grade) {
-      setError(true);
-      setErrorMessage('학년을 선택해주세요.');
-      return;
-    }
-
     if (isSocial) {
       patchSocialUserInfo.mutate();
     } else {
@@ -128,98 +136,83 @@ const InfoContainer = ({
     }
   };
 
-  useEffect(() => {
-    if (
-      (isSocial && value.inflow === '') ||
-      value.university === '' ||
-      value.major === '' ||
-      value.grade === null ||
-      value.wishJob === '' ||
-      value.wishCompany === ''
-    ) {
-      setButtonDisabled(true);
-    } else {
-      setButtonDisabled(false);
-    }
-  }, [value, isSocial]);
+  const handleSkip = () => {
+    setSuccessModalOpen(true);
+  };
+
+  const handleSelectionsChange = useCallback(
+    (newSelections: CareerInfoSelections) => {
+      setSelections(newSelections);
+    },
+    [],
+  );
+
+  // 하나라도 입력했는지 확인
+  const hasAnyInput = useMemo(() => {
+    return (
+      value.university.trim() !== '' ||
+      value.grade.trim() !== '' ||
+      value.major.trim() !== '' ||
+      value.wishCompany.trim() !== '' ||
+      value.wishEmploymentType.trim() !== '' ||
+      selections.selectedField !== null ||
+      selections.selectedPositions.length > 0 ||
+      selections.selectedIndustries.length > 0
+    );
+  }, [value, selections]);
 
   return (
-    <div className="container mx-auto mt-8 p-5">
-      <div className="mx-auto mb-16 w-full sm:max-w-md">
-        <span className="mb-2 block font-bold">정보입력</span>
-        <h1 className="mb-10 pt-4 text-2xl">
-          빠르고 편리한 이용을 위해
-          <br />
-          상세 정보를 입력해주세요
-        </h1>
-        <form onSubmit={handleSubmit} className="flex flex-col space-y-3">
-          <div>
-            <Input
-              label="학교"
-              value={value.university}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setValue({ ...value, university: e.target.value })
-              }
-            />
-          </div>
-          <div>
-            <GradeDropdown
-              value={value.grade}
-              setValue={handleGradeChange}
-              type="SIGNUP"
-            />
-          </div>
-          <div>
-            <Input
-              label="전공"
-              value={value.major}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setValue({ ...value, major: e.target.value })
-              }
-            />
-          </div>
-          <div>
-            <Input
-              label="희망직무"
-              value={value.wishJob}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                setValue({ ...value, wishJob: e.target.value });
-              }}
-            />
-          </div>
-          <div>
-            <Input
-              label="희망기업"
-              value={value.wishCompany}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setValue({ ...value, wishCompany: e.target.value })
-              }
-            />
-          </div>
-          {error ? (
-            <span className="block text-center text-sm text-red-500">
-              {errorMessage ? errorMessage : ''}
+    <div className="w-full pt-9 md:mx-auto md:w-[448px] md:py-16">
+      <section className="mx-5 mb-[80px] md:mx-0 md:mb-[60px]">
+        <div className="mb-9">
+          <span className="mb-6 block text-xsmall16 font-normal text-neutral-30">
+            정보입력
+          </span>
+          <h1 className="text-medium22 font-semibold text-neutral-0">
+            <span className="block md:inline">
+              커리어 정보를 <br className="block md:hidden" />
+              입력해 주세요. (선택)
             </span>
+          </h1>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <CareerInfoForm
+            value={value}
+            onChange={setValue}
+            onSelectionsChange={handleSelectionsChange}
+          />
+
+          {/* 에러 메시지 */}
+          {error ? (
+            <p className="mt-4 text-center text-xsmall14 text-system-error">
+              {errorMessage}
+            </p>
           ) : null}
-          <div className="flex flex-col items-center">
-            <Button
-              type="submit"
-              className="mt-8 w-full"
-              {...(buttonDisabled && { disabled: true })}
-            >
-              회원가입 완료
-            </Button>
-            <div
-              className="mt-4 flex h-[50px] cursor-pointer items-center justify-center text-xs text-neutral-40"
-              onClick={() => {
-                setSuccessModalOpen(true);
-              }}
-            >
-              다음에 하기
-            </div>
-          </div>
+
+          {/* 입력 완료 버튼 */}
+          <SolidButton
+            type="submit"
+            className="mt-12 w-full"
+            disabled={!hasAnyInput}
+          >
+            입력 완료
+          </SolidButton>
         </form>
-      </div>
+
+        {/* 다음에 하기 */}
+        <div className="flex justify-center pb-3 pt-5">
+          <button
+            type="button"
+            className="text-xsmall16 font-normal text-neutral-40"
+            onClick={handleSkip}
+          >
+            다음에 하기
+          </button>
+        </div>
+      </section>
+
+      {/* 회원가입 완료 모달 */}
       {successModalOpen && (
         <AlertModal
           onConfirm={() => {

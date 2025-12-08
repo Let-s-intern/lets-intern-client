@@ -24,20 +24,49 @@ export const userAdminType = z.object({
     z.object({
       userInfo: z.object({
         id: z.number(),
+        careerType: z.enum(['QUALIFIED', 'NONE']).nullable(),
         name: z.string(),
         email: z.string(),
         contactEmail: z.string().nullable(),
+        university: z.string().nullable(),
+        wishField: z.string().nullable(),
+        wishIndustry: z.string().nullable(),
+        wishEmploymentType: z.string().nullable(),
         phoneNum: z.string(),
         createdDate: z.string().optional(),
         accountType: accountType.nullable().optional(),
         accountNum: z.string().nullable().optional(),
         marketingAgree: z.boolean().nullable(),
+        memo: z.string().nullable().optional(),
         isMentor: z.boolean().nullable().optional(),
       }),
       applicationInfos: z.array(
         z.object({
           programId: z.number().nullable(),
           programTitle: z.string(),
+        }),
+      ),
+      documentInfos: z.array(
+        z.object({
+          userDocumentId: z.number(),
+          userDocumentType: z.enum([
+            'RESUME',
+            'PORTFOLIO',
+            'PERSONAL_STATEMENT',
+          ]),
+          fileName: z.string().nullable(),
+          fileUrl: z.string(),
+        }),
+      ),
+      experienceInfos: z.array(
+        z.object({
+          title: z.string(),
+        }),
+      ),
+      careerInfos: z.array(
+        z.object({
+          company: z.string(),
+          job: z.string(),
         }),
       ),
     }),
@@ -86,7 +115,11 @@ export const userDocumentListSchema = z.object({
     z.object({
       userDocumentId: z.number(),
       userDocumentType: z.enum(['RESUME', 'PORTFOLIO', 'PERSONAL_STATEMENT']),
-      fileUrl: z.string(),
+      fileUrl: z.string().nullable(),
+      fileName: z.string().optional().nullable(),
+      wishField: z.string().optional(),
+      wishJob: z.string().optional(),
+      wishIndustry: z.string().optional(),
     }),
   ),
 });

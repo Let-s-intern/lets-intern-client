@@ -7,8 +7,10 @@ import channelService from '@/ChannelService';
 import { twMerge } from '@/lib/twMerge';
 import { usePathname } from 'next/navigation';
 
+interface ChannelTalkBtnProps extends React.ComponentProps<'button'> {}
+
 const programDetailPathRegex = /^\/program\/(live|challenge|vod)\/\d+/; // 프로그램 상세페이지
-const ChannelTalkBtn = () => {
+const ChannelTalkBtn = (props: ChannelTalkBtnProps) => {
   const pathname = usePathname() ?? '';
   const isUpTo991 = useMediaQuery('(max-width: 991px)');
   const isUpTo1280 = useMediaQuery('(max-width: 1280px)');
@@ -55,6 +57,7 @@ const ChannelTalkBtn = () => {
           ? 'bottom-32'
           : 'bottom-20',
         (isHidden || hiddenByPathname) && 'hidden',
+        props.className,
       )}
       onClick={() => channelService.showMessenger()}
     >

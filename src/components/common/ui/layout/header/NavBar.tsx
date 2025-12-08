@@ -36,7 +36,11 @@ export const getBottomNavBarClassNameByPath = (pathname: string) => {
   return hideMobileBottomNavBar(pathname) && 'hidden md:flex';
 };
 
-const NavBar = () => {
+interface NavBarProps extends React.ComponentProps<'header'> {
+  isLoginPage?: boolean;
+}
+
+const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
   const pathname = usePathname();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -71,7 +75,7 @@ const NavBar = () => {
   useControlScroll(isOpen);
 
   return (
-    <header>
+    <header className={props.className}>
       {/* 상단 네비게이션 바 */}
       <div
         className={twMerge(
@@ -85,6 +89,7 @@ const NavBar = () => {
         <GlobalNavTopBar
           loginRedirect={encodeURIComponent(pathname)}
           toggleMenu={toggleMenu}
+          isLoginPage={isLoginPage}
         />
         {/* 2단 */}
         <nav
@@ -171,7 +176,7 @@ const NavBar = () => {
 
       {/* 사이드 네비게이션 바 */}
       <SideNavContainer isOpen={isOpen} onClose={closeMenu}>
-        <SideNavItem href="/mypage/application">마이페이지</SideNavItem>
+        <SideNavItem href="/mypage/career/board">마이페이지</SideNavItem>
         <SideNavItem
           href="https://letscareer.oopy.io/1df5e77c-bee1-80b3-8199-e7d2cc9d64cd"
           target="_blank"

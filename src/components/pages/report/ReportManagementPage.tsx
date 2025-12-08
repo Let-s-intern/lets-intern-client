@@ -117,7 +117,7 @@ const CompanyBagIcon = () => (
 
 type ReportManagementButtonProps<T extends ElementType> = {
   as?: T;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   className?: string;
   disabled?: boolean;
   type?: 'button' | 'submit' | 'reset';
@@ -131,7 +131,7 @@ type ReportManageButtonComponent = {
 };
 
 export const ReportManagementButton: ReportManageButtonComponent = forwardRef(
-  <T extends ElementType = 'button'>(
+  (
     {
       as,
       children,
@@ -139,7 +139,7 @@ export const ReportManagementButton: ReportManageButtonComponent = forwardRef(
       disabled = false,
       type = 'button',
       ...props
-    }: ReportManagementButtonProps<T>,
+    }: ReportManagementButtonProps<any>,
     ref: React.Ref<Element>,
   ) => {
     const Component = (as || 'button') as JSX.ElementType;

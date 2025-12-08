@@ -38,6 +38,7 @@
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",
     "colorthief": "^2.6.0",
+    "date-fns": "^4.1.0",
     "dayjs": "^1.11.11",
     "es-hangul": "^2.2.3",
     "es-toolkit": "^1.40.0",
@@ -68,7 +69,7 @@
     "zustand": "^4.5.4"
   },
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",

@@ -1,6 +1,7 @@
 'use client';
 
 import { Sortable, UserExperienceType } from '@/api/experienceSchema';
+import { usePostUserExperienceMutation } from '@/api/user';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import drawerReducer from '@/reducers/drawerReducer';
 import ExperienceCreateButton from '@components/common/mypage/experience/ExperienceCreateButton';
@@ -91,26 +92,44 @@ const Experience = () => {
     [dispatchIsDrawerOpen],
   );
 
+  const handleCopy = useCallback(
+    (copiedExperience: UserExperienceType) => {
+      setSelectedExperience(copiedExperience); // 복제된 경험을 선택
+      dispatchIsDrawerOpen({ type: 'open' }); // 드로어 열기
+    },
+    [dispatchIsDrawerOpen],
+  );
+
+  const createMutation = usePostUserExperienceMutation();
+
   return (
     <>
       {isDrawerOpen && (
-        <div className="animate-fade-in fixed bottom-0 left-0 right-0 top-0 z-[100] bg-black/50">
-          <div className="animate-slide-in-right absolute bottom-0 right-0 top-0 max-w-[600px] bg-white">
+        <div
+          className="fixed bottom-0 left-0 right-0 top-0 z-[100] animate-fade-in bg-black/50"
+          onClick={handleDrawerClose}
+        >
+          <div
+            className="absolute bottom-0 right-0 top-0 max-w-[600px] animate-slide-in-right bg-white"
+            onClick={(e) => e.stopPropagation()}
+          >
             <ExperienceForm
               onClose={handleDrawerClose}
               initialData={selectedExperience}
+              isCopy={!!(selectedExperience && !selectedExperience.id)}
+              createMutation={createMutation}
             />
           </div>
         </div>
       )}
-      <div className="flex w-full flex-col gap-3 pb-20">
+      <div className="flex w-full min-w-0 flex-col gap-3">
         {/* 데스크탑 버전에서의 타이틀+버튼+필터 배치 */}
-        <section className="hidden w-full justify-between px-5 md:flex">
-          <h1 className="text-lg font-semibold">경험 정리 목록</h1>
+        <section className="hidden w-full justify-between md:flex">
+          <h1 className="text-small18 font-medium">경험 정리 목록</h1>
           <ExperienceCreateButton onClick={handleDrawerOpen} />
         </section>
 
-        <section className="hidden justify-between px-5 md:flex">
+        <section className="hidden justify-between md:flex">
           <ExperienceFilters
             filters={filters}
             onFiltersChange={handleFilterChange}
@@ -121,8 +140,8 @@ const Experience = () => {
         </section>
 
         {/* 모바일 버전에서의 타이틀+버튼+필터 배치 */}
-        <section className="w-full flex-col px-5 md:hidden">
-          <h1 className="text-lg font-semibold">경험 정리 목록</h1>
+        <section className="w-full flex-col md:hidden">
+          <h1 className="text-small18 font-medium">경험 정리 목록</h1>
 
           <div className="mb-2 mt-4 flex justify-between">
             <ExperienceCreateButton onClick={handleDrawerOpen} />
@@ -130,7 +149,7 @@ const Experience = () => {
           </div>
         </section>
 
-        <section className="flex justify-between border-b border-t border-neutral-85 bg-neutral-95 px-5 py-3 md:hidden">
+        <section className="-mx-5 flex justify-between border-b border-t border-neutral-85 bg-neutral-95 px-5 py-3 md:hidden">
           <ExperienceFilters
             filters={filters}
             onFiltersChange={handleFilterChange}
@@ -138,13 +157,14 @@ const Experience = () => {
           />
         </section>
 
-        <div className="px-5">
+        <div>
           <ExperienceDataTable
             sortBy={sortBy}
             filters={filters}
             onResetFilters={handleResetFilters}
             onRowClick={handleRowClick}
             onCreateClick={handleDrawerOpen}
+            onCopy={handleCopy}
           />
         </div>
       </div>

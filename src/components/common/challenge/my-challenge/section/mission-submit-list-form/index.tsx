@@ -133,6 +133,9 @@ export const MissionSubmitListForm = ({
         onClose={handleCloseModal}
         onSelectComplete={handleSelectComplete}
         missionStartDate={missionStartDate}
+        initialSelectedExperienceIds={selectedExperiences.map(
+          (exp) => exp.originalId,
+        )}
       />
     </div>
   );

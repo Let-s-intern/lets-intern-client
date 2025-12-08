@@ -32,31 +32,77 @@ export const useMentorListQuery = () => {
 
 export const UseUserAdminQueryKey = 'useUserListQueryKey';
 
-export const useUserAdminQuery = ({
-  email,
-  name,
-  phoneNum,
-  pageable,
-}: {
+export type UserAdminQueryParams = {
   email?: string | null;
   name?: string | null;
   phoneNum?: string | null;
+  university?: string | null;
+  wishField?: string | null;
+  wishIndustry?: string | null;
+  wishEmploymentType?: string | null;
+  programTitle?: string | null;
+  title?: string | null;
+  company?: string | null;
+  job?: string | null;
+  memo?: string | null;
   pageable?: {
     page: number;
     size: number;
   };
-} = {}) => {
+};
+
+export const useUserAdminQuery = ({
+  email,
+  name,
+  phoneNum,
+  university,
+  wishField,
+  wishIndustry,
+  wishEmploymentType,
+  programTitle,
+  title,
+  company,
+  job,
+  memo,
+  pageable,
+}: UserAdminQueryParams = {}) => {
   return useQuery({
-    queryKey: [UseUserAdminQueryKey, email, name, phoneNum, pageable],
+    queryKey: [
+      UseUserAdminQueryKey,
+      email,
+      name,
+      phoneNum,
+      university,
+      wishField,
+      wishIndustry,
+      wishEmploymentType,
+      programTitle,
+      title,
+      company,
+      job,
+      memo,
+      pageable,
+    ],
     queryFn: async () => {
-      const res = await axios.get('/user/admin', {
-        params: {
+      const params = Object.fromEntries(
+        Object.entries({
           email,
           name,
           phoneNum,
+          university,
+          wishField,
+          wishIndustry,
+          wishEmploymentType,
+          programTitle,
+          company,
+          job,
+          title,
+          memo,
           ...pageable,
-        },
-      });
+        }).filter(([_, v]) => v !== null && v !== undefined && v !== ''),
+      );
+
+      const res = await axiosV2.get('/admin/user', { params });
       return userAdminType.parse(res.data.data);
     },
   });
@@ -117,6 +163,8 @@ export type PatchUserType = {
   wishJob?: string | null;
   wishCompany?: string | null;
   isMentor?: boolean;
+  careerType?: string | null;
+  memo?: string | null;
 };
 
 export const usePatchUserAdminMutation = ({
@@ -149,24 +197,34 @@ export const usePatchUserAdminMutation = ({
 
 /** GET /api/v1/user */
 const userSchema = z.object({
+  userId: z.number(),
   id: z.string().nullable(),
   name: z.string().nullable(),
   email: z.string().nullable(),
   contactEmail: z.string().nullable(),
   phoneNum: z.string().nullable(),
   university: z.string().nullable(),
+  inflowPath: z.string().nullable(),
   grade: grade.nullable(),
   major: z.string().nullable(),
+  wishField: z.string().nullable(),
   wishJob: z.string().nullable(),
+  wishIndustry: z.string().nullable(),
+  wishEmploymentType: z.string().nullable(),
   wishCompany: z.string().nullable(),
   accountType: accountType.nullable(),
   accountNum: z.string().nullable(),
   marketingAgree: z.boolean().nullable(),
   authProvider: authProviderSchema.nullable(),
+  role: z.string().nullable(),
+  careerType: z.enum(['QUALIFIED', 'NONE']).nullable(),
+  memo: z.string().nullable(),
+  isPoolUp: z.boolean().nullable(),
 });
 
 export type User = z.infer<typeof userSchema>;
 
+/** GET /api/v1/user */
 export const useUserQueryKey = 'useUserQueryKey';
 
 export const useUserQuery = ({
@@ -206,8 +264,15 @@ export type PatchUserBody = {
   grade?: string | null;
   major?: string | null;
   wishJob?: string | null;
+  wishField?: string | null;
   wishCompany?: string | null;
+  wishIndustry?: string | null;
+  wishEmploymentType?: string | null;
   marketingAgree?: boolean;
+  accountType?: string | null;
+  accountNum?: string | null;
+  accountOwner?: string | null;
+  isPoolUp?: boolean;
 };
 
 export const usePatchUser = (
@@ -218,6 +283,32 @@ export const usePatchUser = (
   return useMutation({
     mutationFn: async (body: PatchUserBody) => {
       return await axios.patch('/user', body);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [useUserQueryKey] });
+      return successCallback && successCallback();
+    },
+    onError: (error: Error) => {
+      return errorCallback && errorCallback(error);
+    },
+  });
+};
+
+/** PATCH /api/v2/admin/user/{userId}/pool-up */
+export const usePatchUserPoolUpMutation = (
+  successCallback?: () => void,
+  errorCallback?: (error: Error) => void,
+) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      userId,
+      isPoolUp,
+    }: {
+      userId: number;
+      isPoolUp: boolean;
+    }) => {
+      return await axiosV2.patch(`/admin/user/${userId}/pool-up`, { isPoolUp });
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: [useUserQueryKey] });
@@ -289,6 +380,23 @@ export const useGetUserDocumentListQuery = () => {
     queryFn: async () => {
       const res = await axios.get('/user-document');
       return userDocumentListSchema.parse(res.data.data);
+    },
+  });
+};
+
+/** DELETE [유저] 서류(자소서, 포트폴리오 등) 삭제 /api/v1/user-document/{userDocumentId}*/
+export const useDeleteUserDocMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (userDocumentId: number) => {
+      const res = await axios.delete(`/user-document/${userDocumentId}`);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [UseGetUserDocumentListQueryKey],
+      });
     },
   });
 };
