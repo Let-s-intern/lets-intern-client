@@ -1,5 +1,7 @@
+import { DocumentType } from '@/api/missionSchema';
 import { usePatchUserAdminMutation } from '@/api/user';
 import { UserAdmin } from '@/api/userSchema';
+import { getFileNameFromUrl } from '@/utils/getFileNameFromUrl';
 import { Button, MenuItem, Select, TextField } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { Pencil } from 'lucide-react';
@@ -12,7 +14,7 @@ const DocumentLink = ({
   type,
 }: {
   documentInfos?: Array<{
-    userDocumentType: string;
+    userDocumentType: DocumentType;
     fileUrl: string;
     fileName: string;
   }>;
@@ -21,7 +23,6 @@ const DocumentLink = ({
   const doc = documentInfos?.find((doc) => doc.userDocumentType === type);
 
   if (!doc) return <>-</>;
-
   return (
     <a
       href={doc.fileUrl}
@@ -33,7 +34,9 @@ const DocumentLink = ({
         color: '#1976d2',
       }}
     >
-      {doc.fileName?.split('/')?.pop() || ''}
+      {doc.fileUrl !== ''
+        ? getFileNameFromUrl(doc.userDocumentType, doc.fileUrl)
+        : ''}
     </a>
   );
 };
