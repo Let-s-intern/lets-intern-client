@@ -34,10 +34,10 @@ function BottomLinkSection() {
         />
       </div>
       <div className="flex items-center gap-6 text-neutral-0/[.65]">
-        <DocumentLink href="https://www.notion.so/251208-2c35e77cbee1800bb2b5cfbd4c2f1525?pvs=21">
+        <DocumentLink href="https://letsintern.notion.site/251208-2c35e77cbee1800bb2b5cfbd4c2f1525?pvs=21">
           서비스 이용약관
         </DocumentLink>
-        <DocumentLink href="https://letsintern.notion.site/251208-2c35e77cbee1800bb2b5cfbd4c2f1525?source=copy_link">
+        <DocumentLink href="https://letsintern.notion.site/251208-2c35e77cbee18001a0edc3ceaf8982ba">
           개인정보처리방침
         </DocumentLink>
       </div>
