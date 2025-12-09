@@ -40,6 +40,7 @@ export const userAdminType = z.object({
         marketingAgree: z.boolean().nullable(),
         memo: z.string().nullable().optional(),
         isMentor: z.boolean().nullable().optional(),
+        isPoolUp: z.boolean().nullable().optional(),
       }),
       applicationInfos: z.array(
         z.object({

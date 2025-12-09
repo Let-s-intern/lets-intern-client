@@ -169,6 +169,7 @@ export type PatchUserType = {
   wishCompany?: string | null;
   isMentor?: boolean;
   careerType?: string | null;
+  isPoolUp?: boolean;
   memo?: string | null;
 };
 
