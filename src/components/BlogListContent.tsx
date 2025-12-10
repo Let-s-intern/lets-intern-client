@@ -17,7 +17,7 @@ import { useMediaQuery } from '@mui/material';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Fragment, ReactNode, Suspense, useMemo, useState } from 'react';
-import BlogCard from './common/blog/BlogCard';
+import BlogCard from '../domain/blog/card/BlogCard';
 import FilterDropdown from './common/FilterDropdown';
 import MuiPagination from './common/program/pagination/MuiPagination';
 import BaseButton from './common/ui/button/BaseButton';

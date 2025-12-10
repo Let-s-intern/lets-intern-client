@@ -7,8 +7,8 @@ import { blogCategory } from '@/utils/convert';
 import getDominantColor from '@/utils/dominantColor';
 import Image from 'next/image';
 import { useEffect } from 'react';
+import BlogLinkShareBtn from '../button/BlogLilnkShareBtn';
 import Heading2 from './BlogHeading2';
-import BlogLinkShareBtn from './BlogLilnkShareBtn';
 import LexicalContent from './LexicalContent';
 
 interface Props {

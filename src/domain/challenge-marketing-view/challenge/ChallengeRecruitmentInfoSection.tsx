@@ -3,7 +3,7 @@ import { ChallengeIdPrimitive } from '@/schema';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import getChallengeSchedule from '@/utils/getChallengeSchedule';
 import { Fragment, ReactNode, useMemo } from 'react';
-import MainTitle from './MainTitle';
+import MainTitle from '../ui/MainTitle';
 
 interface PriceInfo {
   title: string;

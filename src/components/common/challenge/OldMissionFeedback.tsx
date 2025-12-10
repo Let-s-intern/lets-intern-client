@@ -3,7 +3,7 @@ import {
   useChallengeMissionFeedbackQuery,
 } from '@/api/challenge';
 import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
-import LexicalContent from '@components/common/blog/LexicalContent';
+import LexicalContent from '@/domain/blog/ui/LexicalContent';
 import { useParams, useRouter } from 'next/navigation';
 
 export default function OldMissionFeedback() {

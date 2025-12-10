@@ -1,10 +1,10 @@
 import { ReactNode } from 'react';
+import MainTitle from '../ui/MainTitle';
 import {
   MarketingTool,
   PortfolioChange,
   ProfessionalsList,
 } from './Differentiators';
-import MainTitle from './MainTitle';
 
 const differentiators = [
   {

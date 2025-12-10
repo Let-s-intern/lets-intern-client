@@ -7,7 +7,7 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import { FreeMode, Mousewheel, Scrollbar } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { maskingName } from '../program/program-detail/review/ProgramDetailReviewItem';
+import { maskingName } from '../../../components/common/program/program-detail/review/ProgramDetailReviewItem';
 
 interface ReviewItem {
   name: string;

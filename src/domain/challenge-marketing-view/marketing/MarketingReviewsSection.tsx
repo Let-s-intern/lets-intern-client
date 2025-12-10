@@ -2,7 +2,7 @@ import { ChallengeIdPrimitive } from '@/schema';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
-import MainTitle from './MainTitle';
+import MainTitle from '../ui/MainTitle';
 import TestimonialCarousel from './TestimonialCarousel';
 
 interface Props {
