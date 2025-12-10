@@ -107,22 +107,23 @@ const EditableCareerTypeCell = ({
   initialValue,
 }: {
   userId: number;
-  initialValue: string;
+  initialValue: boolean;
 }) => {
-  const [value, setValue] = useState(initialValue || 'NONE');
+  const [value, setValue] = useState(initialValue);
   const { mutate: patchUser } = usePatchUserAdminMutation({ userId });
 
   const handleChange = (newValue: string) => {
-    setValue(newValue);
+    const boolValue = newValue === 'QUALIFIED';
+    setValue(boolValue);
     patchUser({
       id: userId,
-      careerType: newValue,
+      isPoolUp: boolValue,
     });
   };
 
   return (
     <Select
-      value={value}
+      value={value ? 'QUALIFIED' : 'NONE'}
       onChange={(e) => handleChange(e.target.value)}
       size="small"
       variant="standard"
@@ -240,7 +241,7 @@ const UserAdminTable = ({
 
   const columns: GridColDef[] = [
     {
-      field: 'careerType',
+      field: 'isPoolUp',
       headerName: '분류',
       width: 80,
       renderCell: (params: GridRenderCellParams) => (
@@ -397,6 +398,7 @@ const UserAdminTable = ({
     experienceInfos: user.experienceInfos,
     careerInfos: user.careerInfos,
     documentInfos: user.documentInfos,
+    isPoolUp: user.userInfo.isPoolUp,
     memo: user.userInfo.memo,
   }));
 

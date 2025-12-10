@@ -1,6 +1,11 @@
 import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { z } from 'zod';
 import {
   accountType,
@@ -101,10 +106,10 @@ export const useUserAdminQuery = ({
           ...pageable,
         }).filter(([_, v]) => v !== null && v !== undefined && v !== ''),
       );
-
       const res = await axiosV2.get('/admin/user', { params });
       return userAdminType.parse(res.data.data);
     },
+    placeholderData: keepPreviousData,
   });
 };
 
@@ -164,6 +169,7 @@ export type PatchUserType = {
   wishCompany?: string | null;
   isMentor?: boolean;
   careerType?: string | null;
+  isPoolUp?: boolean;
   memo?: string | null;
 };
 
