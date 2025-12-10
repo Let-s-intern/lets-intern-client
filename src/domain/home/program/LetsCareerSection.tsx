@@ -3,9 +3,9 @@
 import { useGetUserProgramQuery, useGetVodListQuery } from '@/api/program';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useEffect, useMemo, useState } from 'react';
-import ProgramContainer from '../ProgramContainer';
-import { ProgramItemProps } from '../ProgramItem';
-import { getBadgeText, getDuration } from './MainCurationSection';
+import { getBadgeText, getDuration } from '../banner/MainCurationSection';
+import ProgramContainer from './ProgramContainer';
+import { ProgramItemProps } from './ProgramItem';
 
 const NAV_ITEMS = ['전체', 'LIVE 클래스', '취업 가이드북', 'VOD'];
 const MAX_PROGRAMS_PER_CATEGORY = 5;
