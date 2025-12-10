@@ -3,8 +3,8 @@ import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import SectionHeader from '@components/ui/SectionHeader';
 import SectionSubHeader from '@components/ui/SectionSubHeader';
 import * as React from 'react';
-import PriceSummary from '../ui/PriceSummary';
-import MainTitle from './MainTitle';
+import PriceSummary from '../../../components/common/ui/PriceSummary';
+import MainTitle from '../ui/MainTitle';
 
 const PriceBox = ({
   title,

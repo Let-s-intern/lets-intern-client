@@ -1,8 +1,8 @@
 import SectionHeader from '@components/ui/SectionHeader';
 import SectionSubHeader from '@components/ui/SectionSubHeader';
 import React from 'react';
+import MainTitle from '../ui/MainTitle';
 import Curriculums from './Curriculums';
-import MainTitle from './MainTitle';
 
 const MarketingCurriculumSection: React.FC = () => {
   return (

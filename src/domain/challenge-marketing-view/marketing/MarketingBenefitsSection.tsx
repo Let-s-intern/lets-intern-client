@@ -1,6 +1,6 @@
 import { twMerge } from '@/lib/twMerge';
 import Image from 'next/image';
-import MainTitle from './MainTitle';
+import MainTitle from '../ui/MainTitle';
 
 const sparkleClassName = {
   before:

@@ -1,8 +1,8 @@
 import { useChallengeMissionFeedbackQuery } from '@/api/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import LexicalContent from '@/domain/blog/ui/LexicalContent';
 import { useMissionStore } from '@/store/useMissionStore';
 import { BONUS_MISSION_TH } from '@/utils/constants';
-import LexicalContent from '@components/common/blog/LexicalContent';
 import { useParams } from 'next/navigation';
 
 interface Props {

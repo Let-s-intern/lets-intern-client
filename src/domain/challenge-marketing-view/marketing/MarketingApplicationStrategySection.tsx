@@ -1,6 +1,6 @@
 import SectionHeader from '@components/ui/SectionHeader';
 import Image from 'next/image';
-import MainTitle from './MainTitle';
+import MainTitle from '../ui/MainTitle';
 const strategyCards = [
   {
     step: 'STEP 1 | 경험 분석 & 컨셉 잡기',

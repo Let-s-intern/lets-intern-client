@@ -18,12 +18,12 @@ import { uploadFile } from '@/api/file';
 import TagSelector from '@/components/admin/blog/TagSelector';
 import TextFieldLimit from '@/components/admin/blog/TextFieldLimit';
 import ImageUpload from '@/components/admin/program/ui/form/ImageUpload';
+import Heading2 from '@/domain/blog/ui/BlogHeading2';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import useBlogMenuItems from '@/hooks/useBlogMenuItems';
 import useProgramMenuItems from '@/hooks/useProgramMenuItems';
 import dayjs from '@/lib/dayjs';
 import { blogCategory } from '@/utils/convert';
-import Heading2 from '@components/common/blog/BlogHeading2';
 import {
   Button,
   FormControl,

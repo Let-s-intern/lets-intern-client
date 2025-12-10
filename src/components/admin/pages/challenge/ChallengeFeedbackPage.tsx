@@ -10,12 +10,12 @@ import {
   ChallengeMissionFeedbackList,
   FeedbackStatusEnum,
 } from '@/api/challengeSchema';
+import LexicalContent from '@/domain/blog/ui/LexicalContent';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import useBeforeUnloadWarning from '@/hooks/useBeforeUnloadWarning';
 import useInvalidateQueries from '@/hooks/useInvalidateQueries';
 import EditorApp from '@components/admin/lexical/EditorApp';
 import Heading2 from '@components/admin/ui/heading/Heading2';
-import LexicalContent from '@components/common/blog/LexicalContent';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { Button } from '@mui/material';
 import Link from 'next/link';

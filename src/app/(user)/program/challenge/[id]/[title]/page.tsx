@@ -1,4 +1,5 @@
 import { fetchChallengeData } from '@/api/challenge';
+import ChallengeMarketingView from '@/domain/challenge-marketing-view/ChallengeMarketingView';
 import dayjs from '@/lib/dayjs';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import {
@@ -7,7 +8,6 @@ import {
   getProgramPathname,
 } from '@/utils/url';
 import ChallengeCTAButtons from '@components/ChallengeCTAButtons';
-import ChallengeMarketingView from '@components/ChallengeMarketingView';
 import ChallengePortfolioView from '@components/ChallengePortfolioView';
 import ChallengeView from '@components/ChallengeView';
 import { Metadata } from 'next';

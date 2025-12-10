@@ -1,7 +1,7 @@
 import { twMerge } from '@/lib/twMerge';
 import SectionHeader from '@components/ui/SectionHeader';
 import { ReactNode } from 'react';
-import MainTitle from './MainTitle';
+import MainTitle from '../ui/MainTitle';
 
 const IntroBubble = ({
   children,

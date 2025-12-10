@@ -1,5 +1,5 @@
 import React from 'react';
-import MainTitle from './MainTitle';
+import MainTitle from '../ui/MainTitle';
 
 const summaryItems = [
   {

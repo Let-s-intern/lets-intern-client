@@ -1,7 +1,7 @@
 // src/domain/home/components/HomeScreenSection.tsx
 
-import TopBanner from '@/domain/home/new/banner/TopBanner';
-import Popup from '@/domain/home/new/ui/Popup';
+import TopBanner from '@/domain/home/banner/TopBanner';
+import Popup from '@/domain/home/ui/Popup';
 
 import BottomBannerSection from '@/domain/home/banner/BottomBannerSection';
 import LogoPlaySection from '@/domain/home/banner/LogoPlaySection';

@@ -1,5 +1,5 @@
+import MainTitle from '@/domain/challenge-marketing-view/ui/MainTitle';
 import { ChallengeType } from '@/schema';
-import MainTitle from '@components/common/challenge-marketing-view/MainTitle';
 
 interface ChallengeResultProps {
   challengeType: ChallengeType;
