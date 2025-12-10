@@ -99,7 +99,7 @@ export const MissionSubmitExperienceList = ({
   const emptyStateText = getEmptyStateText();
 
   const handleExperienceWriteClick = () => {
-    window.open('/mypage/experience', '_blank');
+    window.open('/mypage/career/experience', '_blank');
   };
 
   return (
