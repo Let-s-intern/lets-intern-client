@@ -3,12 +3,12 @@
 import { useGetUserProgramQuery } from '@/api/program';
 import dayjs from '@/lib/dayjs';
 import { useMemo } from 'react';
-import ProgramContainer from '../ProgramContainer';
 import {
   getBadgeText,
   getDuration,
   getProgramUrl,
-} from './MainCurationSection';
+} from '../banner/MainCurationSection';
+import ProgramContainer from './ProgramContainer';
 
 const ActiveProgramSection = () => {
   const { data } = useGetUserProgramQuery({

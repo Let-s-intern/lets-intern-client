@@ -1,7 +1,6 @@
 'use client';
 
 import { useGetUserCuration } from '@/api/curation';
-import ProgramContainer from '../ProgramContainer';
 import {
   getBadgeText,
   getCategory,
@@ -10,30 +9,30 @@ import {
   getIsDeadline,
   getProgramThumbnail,
   getProgramUrl,
-} from './MainCurationSection';
+} from '../banner/MainCurationSection';
+import ProgramContainer from '../program/ProgramContainer';
 
-const ReviewCurationSection = () => {
+const BlogCurationSection = () => {
   const { data } = useGetUserCuration({
-    locationType: 'UNDER_REVIEW',
+    locationType: 'UNDER_BLOG',
   });
 
-  const reviewCurationList = data?.curationList.slice(0, 4);
+  const blogCurationList = data?.curationList.slice(0, 4);
 
   if (
-    !reviewCurationList ||
-    reviewCurationList.length === 0 ||
-    reviewCurationList.every((r) => r.curationItemList.length === 0)
+    !blogCurationList ||
+    blogCurationList.length === 0 ||
+    blogCurationList.every((b) => b.curationItemList.length === 0)
   )
     return null;
-
   return (
     <>
-      <section className="mt-16 flex w-full max-w-[1120px] flex-col gap-y-16 md:mt-28 md:gap-y-21">
-        {reviewCurationList.map((curation, index) => (
+      <section className="mt-16 flex w-full max-w-[1120px] flex-col gap-y-16 md:mt-24 md:gap-y-21">
+        {blogCurationList.map((curation, index) => (
           <ProgramContainer
             gaItem="curation_card"
             gaTitle={curation.curationInfo.title}
-            key={'reviewCuration' + index}
+            key={'blogCuration' + index}
             title={curation.curationInfo.title}
             subTitle={curation.curationInfo.subTitle ?? undefined}
             moreUrl={curation.curationInfo.moreUrl ?? undefined}
@@ -79,4 +78,4 @@ const ReviewCurationSection = () => {
   );
 };
 
-export default ReviewCurationSection;
+export default BlogCurationSection;

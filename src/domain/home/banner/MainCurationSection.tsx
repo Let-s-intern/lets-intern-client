@@ -6,7 +6,7 @@ import { MMDD, YY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { blogCategory } from '@/utils/convert';
 import { getReportThumbnail } from '@components/common/mypage/credit/CreditListItem';
-import ProgramContainer from '../ProgramContainer';
+import ProgramContainer from '../program/ProgramContainer';
 
 export const getProgramThumbnail = ({
   type,

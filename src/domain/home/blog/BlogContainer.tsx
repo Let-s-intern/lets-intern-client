@@ -1,6 +1,6 @@
 import { Fragment, ReactNode } from 'react';
-import EmptyContainer from '../ui/EmptyContainer';
-import MoreHeader from '../ui/MoreHeader';
+import EmptyContainer from '../../../components/common/ui/EmptyContainer';
+import MoreHeader from '../../../components/common/ui/MoreHeader';
 import BlogItem, { BlogItemProps } from './BlogItem';
 
 interface BlogContainerProps {
