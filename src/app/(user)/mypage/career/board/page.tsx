@@ -1,7 +1,7 @@
 'use client';
 
-import CareerBoard from '@components/career-board';
-import { CareerDataStatusProvider } from '@components/career-board/contexts/CareerDataStatusContext';
+import CareerBoard from '@/domain/career-board';
+import { CareerDataStatusProvider } from '@/domain/career-board/contexts/CareerDataStatusContext';
 
 export default function Page() {
   return (

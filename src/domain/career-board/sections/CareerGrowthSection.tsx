@@ -12,7 +12,7 @@ import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { Dayjs } from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
-import CareerCard from '../../common/mypage/career/card/CareerCard';
+import CareerCard from '../../../components/common/mypage/career/card/CareerCard';
 import { useCareerDataStatus } from '../contexts/CareerDataStatusContext';
 
 const CareerGrowthSection = () => {

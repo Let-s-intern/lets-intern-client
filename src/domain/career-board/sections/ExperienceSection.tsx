@@ -1,9 +1,9 @@
 import { useGetAllUserExperienceQuery } from '@/api/experience';
 import LoadingContainer from '@/components/common/ui/loading/LoadingContainer';
-import { getTopCoreCompetencies } from '@components/career-board/utils/experienceSummary';
+import { getTopCoreCompetencies } from '@/domain/career-board/utils/experienceSummary';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import CareerCard from '../../common/mypage/career/card/CareerCard';
+import CareerCard from '../../../components/common/mypage/career/card/CareerCard';
 import { useCareerDataStatus } from '../contexts/CareerDataStatusContext';
 
 const ExperienceSection = () => {

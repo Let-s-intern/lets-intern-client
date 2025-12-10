@@ -4,7 +4,7 @@ import { getFileNameFromUrl } from '@/utils/getFileNameFromUrl';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import CareerCard from '../../common/mypage/career/card/CareerCard';
+import CareerCard from '../../../components/common/mypage/career/card/CareerCard';
 import { useCareerDataStatus } from '../contexts/CareerDataStatusContext';
 
 // 문서 타입을 한국어로 매핑
