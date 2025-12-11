@@ -1,4 +1,5 @@
 import { fetchLiveData } from '@/api/program';
+import LiveView from '@/domain/live-view/LiveView';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import {
   getBaseUrlFromServer,
@@ -6,7 +7,6 @@ import {
   getProgramPathname,
 } from '@/utils/url';
 import LiveCTAButtons from '@components/LiveCTAButtons';
-import LiveView from '@components/LiveView';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 

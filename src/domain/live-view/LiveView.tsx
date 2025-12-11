@@ -7,25 +7,25 @@ import { LiveIdPrimitive, LiveIdSchema } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
-import LexicalContent from '../domain/blog/ui/LexicalContent';
-import MoreReviewButton from './common/review/MoreReviewButton';
-import BackHeader from './common/ui/BackHeader';
-import LiveBasicInfo from './live-view/LiveBasicInfo';
-import LiveCurriculum from './live-view/LiveCurriculum';
-import LiveFaq from './live-view/LiveFaq';
-import LiveInfoBottom from './live-view/LiveInfoBottom';
-import LiveInformation from './live-view/LiveInformation';
-import LiveIntro from './live-view/LiveIntro';
-import LiveMentor from './live-view/LiveMentor';
-import LiveVod from './live-view/LiveVod';
-import ProgramBestReviewSection from './ProgramBestReviewSection';
-import ProgramDetailBlogReviewSection from './ProgramDetailBlogReviewSection';
+import MoreReviewButton from '../../components/common/review/MoreReviewButton';
+import BackHeader from '../../components/common/ui/BackHeader';
+import ProgramBestReviewSection from '../../components/ProgramBestReviewSection';
+import ProgramDetailBlogReviewSection from '../../components/ProgramDetailBlogReviewSection';
 import ProgramDetailNavigation, {
   LIVE_CURRICULUM_ID,
   LIVE_MENTOR_INTRO_ID,
   LIVE_PROGRAM_INTRO_ID,
   LIVE_REVIEW_ID,
-} from './ProgramDetailNavigation';
+} from '../../components/ProgramDetailNavigation';
+import LexicalContent from '../blog/ui/LexicalContent';
+import LiveBasicInfo from './ui/LiveBasicInfo';
+import LiveCurriculum from './ui/LiveCurriculum';
+import LiveFaq from './ui/LiveFaq';
+import LiveInfoBottom from './ui/LiveInfoBottom';
+import LiveInformation from './ui/LiveInformation';
+import LiveIntro from './ui/LiveIntro';
+import LiveMentor from './ui/LiveMentor';
+import LiveVod from './ui/LiveVod';
 
 const LiveView: React.FC<{ live: LiveIdPrimitive; isPreview?: boolean }> = ({
   live,
