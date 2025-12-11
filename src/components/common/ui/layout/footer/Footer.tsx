@@ -8,7 +8,7 @@ import BusinessInfo from './BusinessInfo';
 import CustomerSupport from './CustomerSupport';
 import MainLink from './MainLink';
 
-interface FooterProps extends React.ComponentProps<'footer'> {}
+type FooterProps = React.ComponentProps<'footer'>;
 
 const Footer = (props: FooterProps) => {
   const { hasActiveResume, hasActivePortfolio, hasActivePersonalStatement } =
