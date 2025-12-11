@@ -60,7 +60,7 @@ export function useFirstB2CChallenge(type: ChallengeType) {
             setFirstB2CChallenge({
               id: challenge.id,
               title: challenge.title ?? null,
-              href: `/program/challenge/${challenge.id}/${encodeURIComponent(challenge.title ?? '')}`,
+              href: `/program/challenge/${challenge.id}`,
             });
             return; // 첫 번째 B2C를 찾으면 중단
           }

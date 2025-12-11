@@ -47,6 +47,7 @@ export function getBlogPathname({
   id?: string | number | null;
   title?: string | null;
 }): string {
+  // eslint-disable-next-line no-restricted-globals
   return `/blog/${id}/${encodeURIComponent(title?.replace(/[ /]/g, '-') || '')}`;
 }
 
@@ -59,6 +60,7 @@ export function getProgramPathname({
   title?: string | null;
   id?: string | number | null;
 }) {
+  // eslint-disable-next-line no-restricted-globals
   return `/program/${programType}/${id}/${encodeURIComponent(title?.replace(/[ /]/g, '-') || '')}`;
 }
 

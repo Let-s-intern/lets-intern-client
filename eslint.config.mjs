@@ -24,6 +24,14 @@ const eslintConfig = [
       'no-useless-rename': 'warn',
       'react/jsx-key': ['warn', { checkFragmentShorthand: true }],
       'react/prop-types': 'off',
+      'no-restricted-globals': [
+        'warn',
+        {
+          name: 'encodeURIComponent',
+          message:
+            '블로그나 프로그램 상세 페이지로 넘어갈 때 title까지 직접 지정하지 마세요. getProgramPathname 또는 getBlogPathname 함수를 사용하거나 id까지만 넘기고 제목은 알아서 처리되도록 해주세요.',
+        },
+      ],
       // TODO: 추후 제거하여 최적화해보도록 한다.
       '@next/next/no-img-element': 'off',
 
