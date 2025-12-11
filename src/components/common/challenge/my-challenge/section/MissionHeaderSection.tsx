@@ -89,7 +89,7 @@ const MissionHeaderSection = ({
           </h2>
         </div>
         {!missionStartDate ||
-          (isBeforeMissionStart && (
+          (selectedMissionTh !== 0 && isBeforeMissionStart && (
             <p
               className={clsx(
                 'flex flex-row items-end text-xsmall14 font-medium md:text-xsmall16',
