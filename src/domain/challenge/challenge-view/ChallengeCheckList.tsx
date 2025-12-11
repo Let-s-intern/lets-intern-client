@@ -2,7 +2,7 @@ import { useMediaQuery } from '@mui/material';
 import { CSSProperties, ReactNode, useMemo } from 'react';
 import { RxCheckbox } from 'react-icons/rx';
 
-import { challengeColors } from '@/domain/challenge/challenge-view/ChallengeView';
+import { challengeColors } from '@/domain/challenge/ChallengeView';
 import { ChallengeIdSchema, challengeTypeSchema } from '@/schema';
 import Box from '@components/common/program/program-detail/Box';
 import Description from '@components/common/program/program-detail/Description';

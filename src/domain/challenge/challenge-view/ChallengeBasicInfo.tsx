@@ -1,8 +1,7 @@
 import Announcement from '@/assets/icons/announcement.svg?react';
 import ClockIcon from '@/assets/icons/clock.svg?react';
 import Pin from '@/assets/icons/pin.svg';
-import ChallengePriceInfoContent from '@/domain/challenge/challenge-view/ChallengePriceInfoContent';
-import { challengeColors } from '@/domain/challenge/challenge-view/ChallengeView';
+import { challengeColors } from '@/domain/challenge/ChallengeView';
 import dayjs from '@/lib/dayjs';
 import {
   ActiveChallengeType,
@@ -20,6 +19,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { CSSProperties, useMemo } from 'react';
 import { LuCalendarDays } from 'react-icons/lu';
+import ChallengePriceInfoContent from './ChallengePriceInfoContent';
 import RadioButton from './RadioButton';
 
 const {

@@ -5,7 +5,7 @@ import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ProgramType } from '@/types/common';
 import { useEffect, useMemo, useState } from 'react';
-import { challengeColors } from './ChallengeView';
+import { challengeColors } from '../domain/challenge/ChallengeView';
 
 const { CAREER_START, PORTFOLIO, EXPERIENCE_SUMMARY, ETC } =
   challengeTypeSchema.enum;

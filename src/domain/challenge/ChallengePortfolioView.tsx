@@ -1,6 +1,8 @@
 'use client';
 
 import { useGetActiveChallenge, useGetChallengeFaq } from '@/api/challenge';
+import ChallengeCurriculum from '@/domain/challenge/challenge-view/ChallengeCurriculum';
+import ChallengeFaq from '@/domain/challenge/challenge-view/ChallengeFaq';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import {
@@ -10,37 +12,35 @@ import {
 } from '@/schema';
 import useProgramStore from '@/store/useProgramStore';
 import { ChallengeContent } from '@/types/interface';
-import ChallengeCurriculum from '@components/challenge-view/ChallengeCurriculum';
-import ChallengeFaq from '@components/challenge-view/ChallengeFaq';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
-import LexicalContent from '../domain/blog/ui/LexicalContent';
-import MainTitle from '../domain/challenge-marketing-view/ui/MainTitle';
-import { Break } from './Break';
+import { Break } from '../../components/Break';
+import Description from '../../components/common/program/program-detail/Description';
+import Heading2 from '../../components/common/report/Heading2';
+import ProgramBestReviewSection from '../../components/ProgramBestReviewSection';
+import {
+  PROGRAM_CURRICULUM_ID,
+  PROGRAM_INTRO_ID,
+  PROGRAM_REVIEW_ID,
+} from '../../components/ProgramDetailNavigation';
+import SectionSubHeader from '../../components/ui/SectionSubHeader';
+import LexicalContent from '../blog/ui/LexicalContent';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
 import ChallengeBrand from './challenge-view/ChallengeBrand';
 import ChallengeInfoBottom from './challenge-view/ChallengeInfoBottom';
 import ChallengeIntroPortfolio from './challenge-view/ChallengeIntroPortfolio';
 import ChallengePricePlanSection from './challenge-view/ChallengePricePlanSection';
 import ChallengeResult from './challenge-view/ChallengeResult';
-import PortfolioFeedbackInfo from './challenge-view/PortfolioFeedbackInfo';
-import PortfolioIntroCheckList from './challenge-view/PortfolioIntroCheckList';
-import PortfolioOneOnOne from './challenge-view/PortfolioOneOnOne';
-import Portfolio다른프로그램추천 from './challenge-view/Portfolio다른프로그램추천';
-import Description from './common/program/program-detail/Description';
-import Heading2 from './common/report/Heading2';
-import ProgramBestReviewSection from './ProgramBestReviewSection';
-import ProgramChallengePortfolioDetailBlogReviewSection from './ProgramChallengePortfolioDetailBlogReviewSection';
+import PortfolioFeedbackInfo from './portfolio-view/PortfolioFeedbackInfo';
+import PortfolioIntroCheckList from './portfolio-view/PortfolioIntroCheckList';
+import PortfolioOneOnOne from './portfolio-view/PortfolioOneOnOne';
+import Portfolio다른프로그램추천 from './portfolio-view/Portfolio다른프로그램추천';
+import ProgramChallengePortfolioDetailBlogReviewSection from './portfolio-view/ProgramChallengePortfolioDetailBlogReviewSection';
 import ProgramChallengePortfolioDetailNavigation, {
   CHALLENGE_PRICE_ID,
-} from './ProgramChallengePortfolioDetailNavigation';
-import {
-  PROGRAM_CURRICULUM_ID,
-  PROGRAM_INTRO_ID,
-  PROGRAM_REVIEW_ID,
-} from './ProgramDetailNavigation';
-import SectionSubHeader from './ui/SectionSubHeader';
+} from './portfolio-view/ProgramChallengePortfolioDetailNavigation';
+import MainTitle from './ui/MainTitle';
 
 const {
   CAREER_START,

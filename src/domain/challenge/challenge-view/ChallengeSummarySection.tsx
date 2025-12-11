@@ -1,5 +1,5 @@
-import MainTitle from '@/domain/challenge/ui/MainTitle';
 import { ChallengeType } from '@/schema';
+import MainTitle from '../ui/MainTitle';
 
 interface ChallengeResultProps {
   challengeType: ChallengeType;

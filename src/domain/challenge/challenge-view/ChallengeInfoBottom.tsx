@@ -2,7 +2,7 @@ import Announcement from '@/assets/icons/announcement.svg?react';
 import ChevronDown from '@/assets/icons/chevron-down.svg?react';
 import ClockIcon from '@/assets/icons/clock.svg?react';
 import LaptopIcon from '@/assets/icons/laptop.svg?react';
-import { challengeColors } from '@/domain/challenge/challenge-view/ChallengeView';
+import { challengeColors } from '@/domain/challenge/ChallengeView';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { ChallengeIdSchema, challengeTypeSchema } from '@/schema';
 import { MOBILE_MEDIA_QUERY } from '@/utils/constants';

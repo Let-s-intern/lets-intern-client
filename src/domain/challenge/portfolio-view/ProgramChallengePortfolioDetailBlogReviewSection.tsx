@@ -2,9 +2,9 @@ import { ProgramType } from '@/types/common';
 import { ProgramBlogReview } from '@/types/interface';
 import Link from 'next/link';
 import { MdChevronRight } from 'react-icons/md';
-import { Break } from './Break';
-import Description from './common/program/program-detail/Description';
-import Heading2 from './common/ui/Heading2';
+import { Break } from '../../../components/Break';
+import Description from '../../../components/common/program/program-detail/Description';
+import Heading2 from '../../../components/common/ui/Heading2';
 
 const ProgramChallengePortfolioDetailBlogReviewSection = ({
   review,
