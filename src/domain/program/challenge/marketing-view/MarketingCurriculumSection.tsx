@@ -1,5 +1,5 @@
-import SectionHeader from '@components/ui/SectionHeader';
-import SectionSubHeader from '@components/ui/SectionSubHeader';
+import SectionHeader from '@/common/SectionHeader';
+import SectionSubHeader from '@/common/SectionSubHeader';
 import React from 'react';
 import MainTitle from '../ui/MainTitle';
 import Curriculums from './Curriculums';

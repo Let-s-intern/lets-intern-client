@@ -1,5 +1,5 @@
+import SectionHeader from '@/common/SectionHeader';
 import { twMerge } from '@/lib/twMerge';
-import SectionHeader from '@components/ui/SectionHeader';
 import { ReactNode } from 'react';
 import MainTitle from '../ui/MainTitle';
 

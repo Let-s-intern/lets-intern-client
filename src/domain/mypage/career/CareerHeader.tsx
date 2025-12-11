@@ -1,4 +1,4 @@
-import SolidButton from '@components/ui/button/SolidButton';
+import SolidButton from '@/common/button/SolidButton';
 import { Plus } from 'lucide-react';
 
 interface CareerHeaderProps {

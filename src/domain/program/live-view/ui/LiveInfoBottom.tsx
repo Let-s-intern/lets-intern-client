@@ -3,6 +3,7 @@ import ClockIcon from '@/assets/icons/clock.svg?react';
 import WalletIcon from '@/assets/icons/credit-card.svg?react';
 import LaptopIcon from '@/assets/icons/laptop.svg?react';
 import MentorIcon from '@/assets/icons/mentor.svg?react';
+import Heading2 from '@/common/ui/Heading2';
 import BasicInfoRow from '@/domain/program/program-detail/basicInfo/BasicInfoRow';
 import { LiveIdSchema } from '@/schema';
 import {
@@ -10,7 +11,6 @@ import {
   formatFullDateTime,
   formatTime,
 } from '@/utils/formatDateString';
-import Heading2 from '@components/common/ui/Heading2';
 
 export const getDiscountPercent = (
   originalPrice: number,

@@ -17,10 +17,10 @@ import { useMediaQuery } from '@mui/material';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Fragment, ReactNode, Suspense, useMemo, useState } from 'react';
-import FilterDropdown from '../../components/common/FilterDropdown';
-import BaseButton from '../../components/common/ui/button/BaseButton';
-import EmptyContainer from '../../components/common/ui/EmptyContainer';
-import LoadingContainer from '../../components/common/ui/loading/LoadingContainer';
+import FilterDropdown from '../../common/FilterDropdown';
+import BaseButton from '../../common/ui/button/BaseButton';
+import EmptyContainer from '../../common/ui/EmptyContainer';
+import LoadingContainer from '../../common/ui/loading/LoadingContainer';
 import MuiPagination from '../program/pagination/MuiPagination';
 import BlogCard from './card/BlogCard';
 

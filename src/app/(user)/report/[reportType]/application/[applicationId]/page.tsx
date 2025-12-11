@@ -9,21 +9,21 @@ import {
   ReportType,
   usePatchMyApplication,
 } from '@/api/report';
+import HorizontalRule from '@/common/HorizontalRule';
+import ReportSubmitModal from '@/common/ReportSubmitModal';
+import BackHeader from '@/common/ui/BackHeader';
+import BottomSheet from '@/common/ui/BottomSheeet';
+import BaseButton from '@/common/ui/button/BaseButton';
 import {
   AdditionalInfoSection,
   CallOut,
   DocumentSection,
   PremiumSection,
   ScheduleSection,
-} from '@/components/pages/report/ReportApplyPage';
+} from '@/domain/report/ReportApplyPage';
 import { ReportTypePathnameEnum } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
-import BackHeader from '@components/common/ui/BackHeader';
-import BottomSheet from '@components/common/ui/BottomSheeet';
-import BaseButton from '@components/common/ui/button/BaseButton';
-import HorizontalRule from '@components/ui/HorizontalRule';
-import ReportSubmitModal from '@components/ui/ReportSubmitModal';
 
 const ReportApplicationPage = () => {
   const router = useRouter();

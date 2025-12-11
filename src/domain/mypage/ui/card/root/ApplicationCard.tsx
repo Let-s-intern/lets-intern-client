@@ -1,9 +1,9 @@
 import { MypageApplication } from '@/api/application';
+import HybridLink from '@/common/ui/HybridLink';
 import { getReportThumbnail } from '@/domain/mypage/credit/CreditListItem';
 import dayjs from '@/lib/dayjs';
 import { ChallengePricePlan } from '@/schema';
 import { challengePricePlanToText } from '@/utils/convert';
-import HybridLink from '@components/common/ui/HybridLink';
 import clsx from 'clsx';
 import { useState } from 'react';
 import LinkButton from '../../button/LinkButton';

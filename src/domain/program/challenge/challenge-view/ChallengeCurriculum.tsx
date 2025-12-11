@@ -1,10 +1,10 @@
+import Heading2 from '@/common/ui/Heading2';
 import { challengeColors } from '@/domain/program/challenge/ChallengeView';
 import SuperTitle from '@/domain/program/program-detail/SuperTitle';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ChallengeCurriculum as ChallengeCurriculumType } from '@/types/interface';
-import Heading2 from '@components/common/ui/Heading2';
 import { useMediaQuery } from '@mui/material';
 import { CSSProperties, useMemo, useState } from 'react';
 import { IoIosArrowDown } from 'react-icons/io';

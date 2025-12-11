@@ -1,6 +1,6 @@
 'use client';
 
-import MoreHeader from '@components/common/ui/MoreHeader';
+import MoreHeader from '@/common/ui/MoreHeader';
 import clsx from 'clsx';
 import { Autoplay } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';

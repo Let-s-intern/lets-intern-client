@@ -1,13 +1,13 @@
 'use client';
 
 import { useUserQuery } from '@/api/user';
-import Input from '@/components/common/ui/input/Input';
+import Input from '@/common/ui/input/Input';
 import ReportCreditSubRow from '@/domain/mypage/credit/ReportCreditSubRow';
 import MoreButton from '@/domain/mypage/ui/button/MoreButton';
+import OrderProgramInfo from '@/domain/program/OrderProgramInfo';
 import PaymentInfoRow from '@/domain/program/paymentSuccess/PaymentInfoRow';
 import useCredit from '@/hooks/useCredit';
 import dayjs from '@/lib/dayjs';
-import OrderProgramInfo from '@components/OrderProgramInfo';
 import { useParams, useRouter } from 'next/navigation';
 
 const convertDateFormat = (date: string) => {

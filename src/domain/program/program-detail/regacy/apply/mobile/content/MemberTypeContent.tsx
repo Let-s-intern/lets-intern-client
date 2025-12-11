@@ -1,7 +1,7 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import AlertModal from '../../../../../../../components/ui/alert/AlertModal';
+import AlertModal from '../../../../../../../common/alert/AlertModal';
 import ListItem from '../ui/ListItem';
 
 interface MemberTypeContentProps {

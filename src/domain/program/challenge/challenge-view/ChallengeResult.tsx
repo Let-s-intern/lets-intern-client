@@ -2,13 +2,13 @@ import { useMediaQuery } from '@mui/material';
 import { CSSProperties, ReactNode, useMemo } from 'react';
 import { FaCheck } from 'react-icons/fa6';
 
+import { Break } from '@/common/Break';
+import Heading2 from '@/common/ui/Heading2';
 import { challengeColors } from '@/domain/program/challenge/ChallengeView';
 import Box from '@/domain/program/program-detail/Box';
 import SuperTitle from '@/domain/program/program-detail/SuperTitle';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
-import { Break } from '@components/common/Break';
-import Heading2 from '@components/common/ui/Heading2';
 
 const superTitle = '이 모든 고민을 한번에 해결!';
 

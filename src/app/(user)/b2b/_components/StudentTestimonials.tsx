@@ -1,6 +1,6 @@
 'use client';
 
-import { Break } from '@components/common/Break';
+import { Break } from '@/common/Break';
 import { motion } from 'motion/react';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';

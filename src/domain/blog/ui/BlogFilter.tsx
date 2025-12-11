@@ -2,9 +2,9 @@
 
 import CheckboxActive from '@/assets/icons/checkbox-active.svg?react';
 import CheckboxInActive from '@/assets/icons/checkbox-inactive.svg?react';
+import BaseBottomSheet from '@/common/BaseBottomSheet';
 import { twMerge } from '@/lib/twMerge';
 import { FilterItem } from '@/types/common';
-import BaseBottomSheet from '@components/ui/BaseBottomSheet';
 import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
 import { ChevronDown } from 'lucide-react';

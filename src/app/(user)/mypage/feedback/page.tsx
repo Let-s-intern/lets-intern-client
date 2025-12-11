@@ -1,7 +1,7 @@
 'use client';
 
 import { useMentorChallengeListQuery, useUserQuery } from '@/api/user';
-import MobileCarousel from '@/components/common/ui/carousel/MobileCarousel';
+import MobileCarousel from '@/common/ui/carousel/MobileCarousel';
 import FeedbackCard from '@/domain/mypage/ui/card/FeedbackCard';
 import useAuthStore from '@/store/useAuthStore';
 

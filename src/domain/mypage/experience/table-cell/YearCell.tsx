@@ -1,4 +1,4 @@
-import { TableData } from '@components/common/table/DataTable';
+import { TableData } from '@/common/table/DataTable';
 
 interface YearCellProps {
   row: TableData;

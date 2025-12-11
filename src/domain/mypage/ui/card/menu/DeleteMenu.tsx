@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { FiMinusCircle } from 'react-icons/fi';
 import { MdMoreVert } from 'react-icons/md';
 import { MypageApplication } from '../../../../../api/application';
-import AlertModal from '../../../../../components/ui/alert/AlertModal';
+import AlertModal from '../../../../../common/alert/AlertModal';
 import axios from '../../../../../utils/axios';
 
 interface DeleteMenuProps {

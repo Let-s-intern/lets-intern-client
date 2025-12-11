@@ -1,8 +1,8 @@
+import ChannelTalkBtn from '@/common/ui/layout/channel/ChannelTalkBtn';
+import Footer from '@/common/ui/layout/footer/Footer';
+import LogoLink from '@/common/ui/layout/header/LogoLink';
+import NavBar from '@/common/ui/layout/header/NavBar';
 import Providers from '@/context/Providers';
-import ChannelTalkBtn from '@components/common/ui/layout/channel/ChannelTalkBtn';
-import Footer from '@components/common/ui/layout/footer/Footer';
-import LogoLink from '@components/common/ui/layout/header/LogoLink';
-import NavBar from '@components/common/ui/layout/header/NavBar';
 import { Metadata } from 'next';
 import React from 'react';
 

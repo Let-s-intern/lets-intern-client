@@ -10,12 +10,12 @@ import { Suspense } from 'react';
 import { useGetReportTitle } from '@/api/report';
 import { useGetProgramReviewDetail } from '@/api/review';
 import { useUserQuery } from '@/api/user';
-import GoalOrConcernsBox from '@components/common/review/GoalOrConcernsBox';
-import ReviewInstruction from '@components/common/review/ReviewInstruction';
-import ReviewModal from '@components/common/review/ReviewModal';
-import ReviewQuestion from '@components/common/review/ReviewQuestion';
-import ReviewTextarea from '@components/common/review/ReviewTextarea';
-import TenScore from '@components/common/review/score/TenScore';
+import GoalOrConcernsBox from '@/common/review/GoalOrConcernsBox';
+import ReviewInstruction from '@/common/review/ReviewInstruction';
+import ReviewModal from '@/common/review/ReviewModal';
+import ReviewQuestion from '@/common/review/ReviewQuestion';
+import ReviewTextarea from '@/common/review/ReviewTextarea';
+import TenScore from '@/common/review/score/TenScore';
 
 const ReportReviewPageContent = () => {
   const params = useParams<{ reportId: string }>();

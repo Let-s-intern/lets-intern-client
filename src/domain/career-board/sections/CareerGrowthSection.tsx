@@ -2,13 +2,13 @@ import {
   MypageApplication,
   useMypageApplicationsQuery,
 } from '@/api/application';
+import LoadingContainer from '@/common/ui/loading/LoadingContainer';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import {
   challengePricePlanToText,
   newProgramTypeToText,
 } from '@/utils/convert';
-import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { Dayjs } from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';

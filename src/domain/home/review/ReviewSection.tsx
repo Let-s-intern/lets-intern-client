@@ -9,10 +9,10 @@ import {
   useGetProgramReview,
   useGetReviewCount,
 } from '@/api/review';
+import Button from '@/common/ui/button/Button';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { questionTypeToText } from '@/utils/convert';
-import Button from '@components/common/ui/button/Button';
 import { useEffect, useRef, useState } from 'react';
 import { Autoplay } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';

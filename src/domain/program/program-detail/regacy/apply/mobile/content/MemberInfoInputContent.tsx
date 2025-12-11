@@ -1,6 +1,6 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
-import Input from '../../../../../../../components/ui/input/Input';
+import Input from '../../../../../../../common/input/Input';
 import {
   bankTypeToText,
   wishJobToText,

@@ -2,7 +2,7 @@ import {
   useDeleteUserExperienceMutation,
   UserExperienceFiltersQueryKey,
 } from '@/api/experience';
-import BaseModal from '@components/ui/BaseModal';
+import BaseModal from '@/common/BaseModal';
 import { useQueryClient } from '@tanstack/react-query';
 import { Trash2 } from 'lucide-react';
 import { useState } from 'react';

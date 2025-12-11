@@ -1,11 +1,11 @@
 'use client';
 
-import SocialLogin from '@/components/common/auth/ui/SocialLogin';
-import Button from '@/components/common/ui/button/Button';
-import Input from '@/components/ui/input/Input';
+import Input from '@/common/input/Input';
+import Button from '@/common/ui/button/Button';
+import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import SocialLogin from '@/domain/auth/ui/SocialLogin';
 import useAuthStore from '@/store/useAuthStore';
 import axios from '@/utils/axios';
-import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import Link from 'next/link';

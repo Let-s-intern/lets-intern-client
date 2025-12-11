@@ -1,6 +1,6 @@
 import { useDeleteUserCareerMutation } from '@/api/career';
 import { CareerFormType } from '@/api/careerSchema';
-import BaseModal from '@components/ui/BaseModal';
+import BaseModal from '@/common/BaseModal';
 import { useState } from 'react';
 
 interface CareerCardProps {

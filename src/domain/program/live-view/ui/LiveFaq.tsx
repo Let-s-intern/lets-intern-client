@@ -1,7 +1,7 @@
+import FaqDropdown from '@/common/ui/FaqDropdown';
+import Heading2 from '@/common/ui/Heading2';
 import SuperTitle from '@/domain/program/program-detail/SuperTitle';
 import { faqSchemaType } from '@/schema';
-import FaqDropdown from '@components/common/ui/FaqDropdown';
-import Heading2 from '@components/common/ui/Heading2';
 import { LIVE_FAQ_ID } from '../../ProgramDetailNavigation';
 
 const superTitle = '자주 묻는 질문';

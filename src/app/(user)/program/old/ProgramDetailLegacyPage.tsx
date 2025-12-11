@@ -2,7 +2,7 @@
 
 import { useProgramApplicationQuery } from '@/api/application';
 import { useProgramQuery } from '@/api/program';
-import BackHeader from '@/components/common/ui/BackHeader';
+import BackHeader from '@/common/ui/BackHeader';
 import FilledButton from '@/domain/program/program-detail/button/FilledButton';
 import NotiButton from '@/domain/program/program-detail/button/NotiButton';
 import ApplySection from '@/domain/program/program-detail/section/ApplySection';

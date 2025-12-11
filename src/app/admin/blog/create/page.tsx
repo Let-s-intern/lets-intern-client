@@ -1,5 +1,5 @@
 'use client';
 
-import BlogCreatePage from '@/components/admin/pages/blog/BlogCreatePage';
+import BlogCreatePage from '@/domain/admin/pages/blog/BlogCreatePage';
 
 export default BlogCreatePage;

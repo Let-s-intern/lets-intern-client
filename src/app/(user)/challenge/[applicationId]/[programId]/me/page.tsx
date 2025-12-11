@@ -1,15 +1,15 @@
 'use client';
 
+import MissionCalendarSection from '@/common/challenge/my-challenge/section/MissionCalendarSection';
+import MissionGuideSection from '@/common/challenge/my-challenge/section/MissionGuideSection';
+import MissionMentorCommentSection from '@/common/challenge/my-challenge/section/MissionMentorCommentSection';
+import MissionSubmitSection from '@/common/challenge/my-challenge/section/MissionSubmitSection';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { useChallengeProgram } from '@/hooks/useChallengeProgram';
 import { useExperienceLevel } from '@/hooks/useExperienceLevel';
 import { useFilteredSchedules } from '@/hooks/useFilteredSchedules';
 import { useMissionSelection } from '@/hooks/useMissionSelection';
 import { useMissionStore } from '@/store/useMissionStore';
-import MissionCalendarSection from '@components/common/challenge/my-challenge/section/MissionCalendarSection';
-import MissionGuideSection from '@components/common/challenge/my-challenge/section/MissionGuideSection';
-import MissionMentorCommentSection from '@components/common/challenge/my-challenge/section/MissionMentorCommentSection';
-import MissionSubmitSection from '@components/common/challenge/my-challenge/section/MissionSubmitSection';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 

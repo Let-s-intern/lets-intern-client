@@ -2,9 +2,9 @@
 
 import { ApplicationResult } from '@/api/paymentSchema';
 import { convertReportPriceType, useGetReportDetailQuery } from '@/api/report';
-import Heading1 from '@/components/common/report/Heading1';
-import Heading2 from '@/components/common/report/Heading2';
-import Card from '@/components/common/report/ProgramCard';
+import Heading1 from '@/common/report/Heading1';
+import Heading2 from '@/common/report/Heading2';
+import Card from '@/common/report/ProgramCard';
 import {
   getPaymentMethodLabel,
   paymentResultSearchParamsSchema,

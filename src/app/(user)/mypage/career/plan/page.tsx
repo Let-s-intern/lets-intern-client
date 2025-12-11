@@ -1,6 +1,9 @@
 'use client';
 
 import { usePatchUser, useUserQuery } from '@/api/user';
+import OutlinedButton from '@/common/button/OutlinedButton';
+import SolidButton from '@/common/button/SolidButton';
+import LoadingContainer from '@/common/ui/loading/LoadingContainer';
 import CareerInfoForm, {
   CareerInfoValues,
 } from '@/domain/mypage/career/CareerInfoForm';
@@ -8,9 +11,6 @@ import CareerPlanForm from '@/domain/mypage/career/CareerPlanForm';
 import { useCareerModals } from '@/hooks/useCareerModals';
 import { useChangeDetection } from '@/hooks/useChangeDetectionHook';
 import { GRADE_ENUM_TO_KOREAN, GRADE_KOREAN_TO_ENUM } from '@/utils/constants';
-import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import OutlinedButton from '@components/ui/button/OutlinedButton';
-import SolidButton from '@components/ui/button/SolidButton';
 import { useEffect, useState } from 'react';
 
 interface CareerPlanValues {

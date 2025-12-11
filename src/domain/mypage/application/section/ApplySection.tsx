@@ -1,7 +1,7 @@
 import { MypageApplication } from '@/api/application';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import HybridLink from '../../../../components/common/ui/HybridLink';
+import HybridLink from '../../../../common/ui/HybridLink';
 import MoreButton from '../../ui/button/MoreButton';
 import ApplicationCard from '../../ui/card/root/ApplicationCard';
 

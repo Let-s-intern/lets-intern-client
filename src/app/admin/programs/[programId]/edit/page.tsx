@@ -1,5 +1,5 @@
 'use client';
 
-import ProgramEdit from '@/components/admin/pages/program/ProgramEdit';
+import ProgramEdit from '@/domain/admin/pages/program/ProgramEdit';
 
 export default ProgramEdit;
