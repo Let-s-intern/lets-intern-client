@@ -1,10 +1,10 @@
 'use client';
 
 import { useBlogListQuery } from '@/api/blog';
+import LoadingContainer from '@/common/ui/loading/LoadingContainer';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { blogCategory } from '@/utils/convert';
-import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import BlogContainer from './BlogContainer';
 
 const CurrentBlogSection = () => {

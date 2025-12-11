@@ -1,6 +1,6 @@
 'use client';
 
-import { Break } from '@components/common/Break';
+import { Break } from '@/common/Break';
 import { motion } from 'motion/react';
 import finalCtaBg from '../_images/final-cta-bg.png';
 import { contactLink } from './const';

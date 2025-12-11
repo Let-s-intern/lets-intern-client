@@ -1,11 +1,11 @@
+import FaqChat from '@/common/ui/FaqChat';
+import FaqDropdown from '@/common/ui/FaqDropdown';
+import Heading2 from '@/common/ui/Heading2';
 import { challengeColors } from '@/domain/program/challenge/ChallengeView';
 import SuperTitle from '@/domain/program/program-detail/SuperTitle';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema, faqSchemaType } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
-import FaqChat from '@components/common/ui/FaqChat';
-import FaqDropdown from '@components/common/ui/FaqDropdown';
-import Heading2 from '@components/common/ui/Heading2';
 import { CSSProperties, ReactNode, useMemo, useState } from 'react';
 import { PROGRAM_FAQ_ID } from '../../ProgramDetailNavigation';
 

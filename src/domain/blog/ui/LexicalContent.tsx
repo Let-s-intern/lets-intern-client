@@ -15,15 +15,15 @@ import {
   SerializedRootNode,
   SerializedTextNode,
 } from 'lexical';
-import { SerializedCodeHighlightNode } from '../../../components/admin/lexical/nodes/CodeHighlightNode';
-import { SerializedCollapsibleContainerNode } from '../../../components/admin/lexical/nodes/CollapsibleContainerNode';
-import { SerializedCollapsibleContentNode } from '../../../components/admin/lexical/nodes/CollapsibleContentNode';
-import { SerializedCollapsibleTitleNode } from '../../../components/admin/lexical/nodes/CollapsibleTitleNode';
-import { SerializedEmojiNode } from '../../../components/admin/lexical/nodes/EmojiNode';
-import { SerializedImageNode } from '../../../components/admin/lexical/nodes/ImageNode';
-import { SerializedLayoutContainerNode } from '../../../components/admin/lexical/nodes/LayoutContainerNode';
-import { SerializedLayoutItemNode } from '../../../components/admin/lexical/nodes/LayoutItemNode';
-import { SerializedYouTubeNode } from '../../../components/admin/lexical/nodes/YouTubeNode';
+import { SerializedCodeHighlightNode } from '../../admin/lexical/nodes/CodeHighlightNode';
+import { SerializedCollapsibleContainerNode } from '../../admin/lexical/nodes/CollapsibleContainerNode';
+import { SerializedCollapsibleContentNode } from '../../admin/lexical/nodes/CollapsibleContentNode';
+import { SerializedCollapsibleTitleNode } from '../../admin/lexical/nodes/CollapsibleTitleNode';
+import { SerializedEmojiNode } from '../../admin/lexical/nodes/EmojiNode';
+import { SerializedImageNode } from '../../admin/lexical/nodes/ImageNode';
+import { SerializedLayoutContainerNode } from '../../admin/lexical/nodes/LayoutContainerNode';
+import { SerializedLayoutItemNode } from '../../admin/lexical/nodes/LayoutItemNode';
+import { SerializedYouTubeNode } from '../../admin/lexical/nodes/YouTubeNode';
 
 const parseStyle = (styleString: string) =>
   styleString

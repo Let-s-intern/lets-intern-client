@@ -3,6 +3,9 @@
 import { useProgramQuery } from '@/api/program';
 import { usePatchUser } from '@/api/user';
 import CreditCardIcon from '@/assets/icons/credit-card.svg?react';
+import { Duration } from '@/common/Duration';
+import BackHeader from '@/common/ui/BackHeader';
+import LoadingContainer from '@/common/ui/loading/LoadingContainer';
 import CouponSection, {
   CouponSectionProps,
 } from '@/domain/program/program-detail/apply/section/CouponSection';
@@ -19,13 +22,10 @@ import useProgramStore, {
   setProgramApplicationForm,
 } from '@/store/useProgramStore';
 import { isValidEmail } from '@/utils/valid';
-import { Duration } from '@components/common/Duration';
-import BackHeader from '@components/common/ui/BackHeader';
-import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import OrderProgramInfo from '../../../components/OrderProgramInfo';
+import OrderProgramInfo from '../../../domain/program/OrderProgramInfo';
 
 function calculateTotalPrice({
   regularPrice = 0,

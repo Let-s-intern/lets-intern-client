@@ -16,7 +16,7 @@ import useProgramStore from '@/store/useProgramStore';
 import { ChallengeContent } from '@/types/interface';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
-import MoreReviewButton from '../../../components/common/review/MoreReviewButton';
+import MoreReviewButton from '../../../common/review/MoreReviewButton';
 import LexicalContent from '../../blog/ui/LexicalContent';
 import ProgramDetailBlogReviewSection from '../../program/ProgramDetailBlogReviewSection';
 import ProgramDetailNavigation, {

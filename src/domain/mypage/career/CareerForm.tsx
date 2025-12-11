@@ -6,12 +6,12 @@ import {
   EmployeeType,
   UserCareerType,
 } from '@/api/careerSchema';
+import WarningModal from '@/common/alert/WarningModal';
+import OutlinedButton from '@/common/button/OutlinedButton';
+import SolidButton from '@/common/button/SolidButton';
 import { EmployeeTypeModal } from '@/domain/mypage/career/EmployeeTypeModal';
+import { PeriodSelectModal } from '@/domain/mypage/mypage/experience/components/PeriodSelectModal';
 import { convertCareerUiToApiFormat } from '@/utils/career';
-import { PeriodSelectModal } from '@components/pages/mypage/experience/components/PeriodSelectModal';
-import WarningModal from '@components/ui/alert/WarningModal';
-import OutlinedButton from '@components/ui/button/OutlinedButton';
-import SolidButton from '@components/ui/button/SolidButton';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronRight } from 'lucide-react';
 import { useState } from 'react';

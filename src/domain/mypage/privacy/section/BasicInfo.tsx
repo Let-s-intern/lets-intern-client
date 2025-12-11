@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { useUserQuery, useUserQueryKey } from '@/api/user';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import Input from '../../../../components/common/ui/input/Input';
+import Input from '../../../../common/ui/input/Input';
 import axios from '../../../../utils/axios';
 import Button from '../../ui/button/Button';
 

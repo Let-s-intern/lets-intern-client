@@ -1,5 +1,8 @@
 import { useGetAllUserExperienceQuery } from '@/api/experience';
 import { Sortable } from '@/api/experienceSchema';
+import OutlinedButton from '@/common/button/OutlinedButton';
+import DataTable, { TableData, TableHeader } from '@/common/table/DataTable';
+import LoadingContainer from '@/common/ui/loading/LoadingContainer';
 import { Filters } from '@/domain/mypage/experience/ExperienceFilters';
 import ActivityTypeCell from '@/domain/mypage/experience/table-cell/ActivityTypeCell';
 import CategoryCell from '@/domain/mypage/experience/table-cell/CategoryCell';
@@ -13,12 +16,6 @@ import {
   getExperienceRowHeight,
   isAllFilters,
 } from '@/utils/experience';
-import DataTable, {
-  TableData,
-  TableHeader,
-} from '@components/common/table/DataTable';
-import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import OutlinedButton from '@components/ui/button/OutlinedButton';
 import { useEffect, useMemo, useState } from 'react';
 import CopyCell from './table-cell/CopyCell';
 

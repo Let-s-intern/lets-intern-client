@@ -1,5 +1,5 @@
 'use client';
 
-import VodCreate from '@/components/admin/pages/VodCreate';
+import VodCreate from '@/domain/admin/pages/VodCreate';
 
 export default VodCreate;

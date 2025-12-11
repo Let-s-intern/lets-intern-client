@@ -1,5 +1,5 @@
 'use client';
 
-import CouponEdit from '@/components/admin/pages/coupon/CouponEdit';
+import CouponEdit from '@/domain/admin/pages/coupon/CouponEdit';
 
 export default CouponEdit;

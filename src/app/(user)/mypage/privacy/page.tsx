@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import MyPageKakaoChannel from '@/domain/mypage/privacy/section/MyPageKakaoChannel';
-import AlertModal from '../../../../components/ui/alert/AlertModal';
+import AlertModal from '../../../../common/alert/AlertModal';
 import BasicInfo from '../../../../domain/mypage/privacy/section/BasicInfo';
 import ChangePassword from '../../../../domain/mypage/privacy/section/ChangePassword';
 import MarketingAgree from '../../../../domain/mypage/privacy/section/MarketingAgree';

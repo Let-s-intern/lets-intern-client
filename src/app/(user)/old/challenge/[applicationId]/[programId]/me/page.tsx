@@ -1,5 +1,5 @@
 'use client';
 
-import OldMyChallengeDashboard from '@components/common/challenge/OldMyChallengeDashboard';
+import OldMyChallengeDashboard from '@/common/challenge/OldMyChallengeDashboard';
 
 export default OldMyChallengeDashboard;

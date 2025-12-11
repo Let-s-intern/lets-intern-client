@@ -5,8 +5,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 
 import { useIsMentorQuery } from '@/api/user';
-import Banner from '@/components/common/ui/banner/Banner';
-import { Profile } from '@/components/pages/mypage/profile/Profile';
+import Banner from '@/common/ui/banner/Banner';
+import { Profile } from '@/domain/mypage/mypage/profile/Profile';
 import useAuthStore from '@/store/useAuthStore';
 
 interface MyPageLayoutProps {

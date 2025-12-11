@@ -9,7 +9,7 @@ import {
   isUserExperienceComplete,
   labelToActivityType,
   labelToExperienceCategory,
-} from '@/components/common/challenge/my-challenge/section/mission-submit-list-form/data';
+} from '@/common/challenge/my-challenge/section/mission-submit-list-form/data';
 import dayjs from '@/lib/dayjs';
 import { Dayjs } from 'dayjs';
 import { useCallback, useEffect, useMemo, useState } from 'react';

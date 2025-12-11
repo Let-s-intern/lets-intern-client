@@ -1,5 +1,5 @@
 'use client';
 
-import Coupons from '@/components/admin/pages/coupon/Coupons';
+import Coupons from '@/domain/admin/pages/coupon/Coupons';
 
 export default Coupons;

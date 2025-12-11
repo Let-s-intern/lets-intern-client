@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-import ProgramsPage from '@/components/pages/program/ProgramsPage';
+import ProgramsPage from '@/domain/program/ProgramsPage';
 import type { Metadata } from 'next';
 
 const title = '프로그램 목록 | 렛츠커리어';

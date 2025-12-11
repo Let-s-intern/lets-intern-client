@@ -1,5 +1,5 @@
 'use client';
 
-import AdminMentorPage from '@components/admin/pages/user/AdminMentorPage';
+import AdminMentorPage from '@/domain/admin/pages/user/AdminMentorPage';
 
 export default AdminMentorPage;

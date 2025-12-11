@@ -1,5 +1,5 @@
 'use client';
 
-import MainBannerEdit from '@/components/admin/pages/home/main-banner/MainBannerEdit';
+import MainBannerEdit from '@/domain/admin/pages/home/main-banner/MainBannerEdit';
 
 export default MainBannerEdit;

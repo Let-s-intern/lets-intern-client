@@ -2,7 +2,7 @@
 
 import { Suspense } from 'react';
 
-import ChallengeGuidePage from '@components/pages/challenge/ChallengeGuidePage';
+import ChallengeGuidePage from '@/domain/program/challenge/ChallengeGuidePage';
 
 const ChallengeGuidePageWithSuspense = () => (
   <Suspense fallback={null}>

@@ -3,9 +3,9 @@ import { twMerge } from '@/lib/twMerge';
 import { useMediaQuery } from '@mui/material';
 import { Fragment, ReactNode } from 'react';
 
+import Heading2 from '@/common/ui/Heading2';
 import Description from '@/domain/program/program-detail/Description';
 import OutlinedBox from '@/domain/program/program-detail/OutlineBox';
-import Heading2 from '@components/common/ui/Heading2';
 
 const TITLE1 = [
   '인사담당자가 서류를 보는 시간,',

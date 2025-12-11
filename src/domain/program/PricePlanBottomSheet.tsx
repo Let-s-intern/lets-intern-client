@@ -1,4 +1,5 @@
 import { useProgramApplicationQuery } from '@/api/application';
+import BaseBottomSheet from '@/common/BaseBottomSheet';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import {
   ChallengeIdPrimitive,
@@ -7,14 +8,13 @@ import {
 } from '@/schema';
 import useProgramStore from '@/store/useProgramStore';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
-import BaseBottomSheet from '@components/ui/BaseBottomSheet';
 import { RadioGroup } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
-import BaseButton from '../../components/common/ui/button/BaseButton';
-import { OptionFormRadioControlLabel } from '../../components/common/ui/ControlLabel';
-import OptionDropdown from '../../components/common/ui/OptionDropdown';
-import PriceView from '../../components/common/ui/PriceView';
+import BaseButton from '../../common/ui/button/BaseButton';
+import { OptionFormRadioControlLabel } from '../../common/ui/ControlLabel';
+import OptionDropdown from '../../common/ui/OptionDropdown';
+import PriceView from '../../common/ui/PriceView';
 
 const { STANDARD, PREMIUM, BASIC } = ChallengePricePlanEnum.enum;
 

@@ -1,7 +1,7 @@
 import useAuthStore from '@/store/useAuthStore';
 import cn from 'classnames';
 import { useState } from 'react';
-import AlertModal from '../../../../../../../components/ui/alert/AlertModal';
+import AlertModal from '../../../../../../../common/alert/AlertModal';
 import CautionContent from '../content/CautionContent';
 import InputContent from '../content/InputContent';
 import MemberSelect from '../content/MemberSelect';

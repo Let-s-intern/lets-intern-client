@@ -1,5 +1,5 @@
 import { useUserQuery } from '@/api/user';
-import LoadingContainer from '@/components/common/ui/loading/LoadingContainer';
+import LoadingContainer from '@/common/ui/loading/LoadingContainer';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import CareerCard from '../../mypage/career/card/CareerCard';

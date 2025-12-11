@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import Input from '../../../../components/common/ui/input/Input';
+import Input from '../../../../common/ui/input/Input';
 import axios from '../../../../utils/axios';
 import Button from '../../ui/button/Button';
 import BankDropdown from '../form-control/BankDropdown';

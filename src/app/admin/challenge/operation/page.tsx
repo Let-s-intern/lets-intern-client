@@ -1,5 +1,5 @@
 'use client';
 
-import ChallengeOperationOnboarding from '@/components/admin/pages/challenge/ChallengeOperationOnboarding';
+import ChallengeOperationOnboarding from '@/domain/admin/pages/challenge/ChallengeOperationOnboarding';
 
 export default ChallengeOperationOnboarding;

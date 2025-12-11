@@ -1,8 +1,8 @@
+import { SelectButton } from '@/common/ui/button/SelectButton';
+import CheckBox from '@/common/ui/CheckBox';
+import LineInput from '@/common/ui/input/LineInput';
 import { useCareerModals } from '@/hooks/useCareerModals';
 import { JOB_CONDITIONS } from '@/utils/constants';
-import { SelectButton } from '@components/common/ui/button/SelectButton';
-import CheckBox from '@components/common/ui/CheckBox';
-import LineInput from '@components/common/ui/input/LineInput';
 import { useEffect } from 'react';
 import CareerModals from './CareerModal';
 

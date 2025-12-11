@@ -8,9 +8,9 @@ import ExperienceFilters, {
   Filters,
 } from '@/domain/mypage/experience/ExperienceFilters';
 import SortFilterDropdown from '@/domain/mypage/experience/SortFilterDropdown';
+import { ExperienceForm } from '@/domain/mypage/mypage/experience/ExperienceForm';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import drawerReducer from '@/reducers/drawerReducer';
-import { ExperienceForm } from '@components/pages/mypage/experience/ExperienceForm';
 import { useCallback, useReducer, useState } from 'react';
 
 const DEFAULT_FILTERS: Filters = {

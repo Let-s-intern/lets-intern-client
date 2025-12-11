@@ -2,7 +2,7 @@ import cn from 'classnames';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import AlertModal from '../../../../../../../components/ui/alert/AlertModal';
+import AlertModal from '../../../../../../../common/alert/AlertModal';
 
 import classes from './MemberSelect.module.scss';
 

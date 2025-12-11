@@ -1,4 +1,4 @@
-import OutlinedButton from '@components/ui/button/OutlinedButton';
+import OutlinedButton from '@/common/button/OutlinedButton';
 
 const NoCareerView = ({ handleCreateNew }: { handleCreateNew: () => void }) => {
   return (

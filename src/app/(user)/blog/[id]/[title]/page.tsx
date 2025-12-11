@@ -1,6 +1,8 @@
 import { fetchBlogData, fetchRecommendBlogData } from '@/api/blog';
 import { BlogContent, ProgramRecommendItem } from '@/api/blogSchema';
 import { fetchProgramRecommend } from '@/api/program';
+import HorizontalRule from '@/common/HorizontalRule';
+import MoreHeader from '@/common/ui/MoreHeader';
 import BlogKakaoShareBtn from '@/domain/blog/button/BlogKakaoShareBtn';
 import BlogLikeBtn from '@/domain/blog/button/BlogLikeBtn';
 import BlogLinkShareBtn from '@/domain/blog/button/BlogLilnkShareBtn';
@@ -15,8 +17,6 @@ import {
   getBlogPathname,
   getBlogTitle,
 } from '@/utils/url';
-import MoreHeader from '@components/common/ui/MoreHeader';
-import HorizontalRule from '@components/ui/HorizontalRule';
 import { CircleChevronRight } from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';

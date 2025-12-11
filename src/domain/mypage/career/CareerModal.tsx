@@ -1,6 +1,6 @@
+import { CheckboxItem } from '@/common/challenge/my-challenge/talent-pool/WishJobCheckBox';
+import { WishJobModal } from '@/common/challenge/my-challenge/talent-pool/WishJobModal';
 import { DESIRED_INDUSTRY, JOB_FIELD_ROLES } from '@/utils/constants';
-import { CheckboxItem } from '@components/common/challenge/my-challenge/talent-pool/WishJobCheckBox';
-import { WishJobModal } from '@components/common/challenge/my-challenge/talent-pool/WishJobModal';
 import { useEffect, useMemo, useState } from 'react';
 
 type ModalStep = 'grade' | 'field' | 'position' | 'industry' | null;

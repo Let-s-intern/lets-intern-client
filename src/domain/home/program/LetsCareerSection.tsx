@@ -1,7 +1,7 @@
 'use client';
 
 import { useGetUserProgramQuery, useGetVodListQuery } from '@/api/program';
-import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
+import LoadingContainer from '@/common/ui/loading/LoadingContainer';
 import { useEffect, useMemo, useState } from 'react';
 import { getBadgeText, getDuration } from '../banner/MainCurationSection';
 import ProgramContainer from './ProgramContainer';

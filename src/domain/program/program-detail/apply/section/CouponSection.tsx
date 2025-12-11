@@ -2,7 +2,7 @@ import { ICouponForm } from '@/types/interface';
 import axios from '@/utils/axios';
 import { isAxiosError } from 'axios';
 import { useState } from 'react';
-import Input from '../../../../../components/common/ui/input/Input';
+import Input from '../../../../../common/ui/input/Input';
 
 export interface CouponSectionProps {
   setCoupon: (
