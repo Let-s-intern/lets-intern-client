@@ -1,3 +1,3 @@
-import ReportApplyPage from '@/components/pages/report/ReportApplyPage';
+import ReportApplyPage from '@/domain/report/ReportApplyPage';
 
 export default ReportApplyPage;

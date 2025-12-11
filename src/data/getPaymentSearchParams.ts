@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PayInfo } from '../components/common/program/program-detail/section/ApplySection';
+import { PayInfo } from '../domain/program/program-detail/section/ApplySection';
 import { ICouponForm } from '../types/interface';
 
 export const getPaymentSearchParams = ({

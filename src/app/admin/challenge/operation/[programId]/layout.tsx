@@ -1,5 +1,5 @@
 import { CurrentAdminChallengeProvider } from '@/context/CurrentAdminChallengeProvider';
-import ChallengeAdminLayout from '@components/admin/challenge/ui/ChallengeOperationAdminLayout';
+import ChallengeAdminLayout from '@/domain/admin/challenge/ui/ChallengeOperationAdminLayout';
 
 export default function ChallengeOperationLayout({
   children,

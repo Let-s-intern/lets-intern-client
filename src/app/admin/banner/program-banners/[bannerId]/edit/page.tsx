@@ -1,5 +1,5 @@
 'use client';
 
-import ProgramBannerEdit from '@/components/admin/pages/banner/program-banner/ProgramBannerEdit';
+import ProgramBannerEdit from '@/domain/admin/pages/banner/program-banner/ProgramBannerEdit';
 
 export default ProgramBannerEdit;

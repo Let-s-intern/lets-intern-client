@@ -1,5 +1,5 @@
 'use client';
 
-import ChallengeCreate from '@/components/admin/pages/ChallengeCreate';
+import ChallengeCreate from '@/domain/admin/pages/ChallengeCreate';
 
 export default ChallengeCreate;

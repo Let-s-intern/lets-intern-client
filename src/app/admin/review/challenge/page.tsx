@@ -1,5 +1,5 @@
 'use client';
 
-import AdminChallengeReviewListPage from '@/components/admin/pages/review/AdminChallengeReviewListPage';
+import AdminChallengeReviewListPage from '@/domain/admin/pages/review/AdminChallengeReviewListPage';
 
 export default AdminChallengeReviewListPage;

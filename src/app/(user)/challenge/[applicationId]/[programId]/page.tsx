@@ -1,12 +1,13 @@
 'use client';
 
 import { useUserQuery } from '@/api/user';
-import DailyMissionSection from '@/components/common/challenge/dashboard/section/DailyMissionSection';
-import GuideSection from '@/components/common/challenge/dashboard/section/GuideSection';
-import NoticeSection from '@/components/common/challenge/dashboard/section/NoticeSection';
-import ScoreSection from '@/components/common/challenge/dashboard/section/ScoreSection';
-import MissionCalendar from '@/components/common/challenge/my-challenge/mission-calendar/MissionCalendar';
-import MissionTooltipQuestion from '@/components/common/challenge/ui/tooltip-question/MissionTooltipQuestion';
+import DailyMissionSection from '@/common/challenge/dashboard/section/DailyMissionSection';
+import GuideSection from '@/common/challenge/dashboard/section/GuideSection';
+import NoticeSection from '@/common/challenge/dashboard/section/NoticeSection';
+import ScoreSection from '@/common/challenge/dashboard/section/ScoreSection';
+import MissionEndSection from '@/common/challenge/MissionEndSection';
+import MissionCalendar from '@/common/challenge/my-challenge/mission-calendar/MissionCalendar';
+import MissionTooltipQuestion from '@/common/challenge/ui/tooltip-question/MissionTooltipQuestion';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { useExperienceLevel } from '@/hooks/useExperienceLevel';
 import { useFilteredSchedules } from '@/hooks/useFilteredSchedules';
@@ -14,7 +15,6 @@ import { useMissionCalculation } from '@/hooks/useMissionCalculation';
 import dayjs from '@/lib/dayjs';
 import { challengeGuides, challengeNotices, challengeScore } from '@/schema';
 import axios from '@/utils/axios';
-import MissionEndSection from '@components/common/challenge/MissionEndSection';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 

@@ -1,4 +1,4 @@
-import BlogReviewWrapper from '@components/common/review/BlogReviewWrapper';
+import BlogReviewWrapper from '@/common/review/BlogReviewWrapper';
 
 export default async function Page() {
   return (

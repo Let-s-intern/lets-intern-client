@@ -5,13 +5,13 @@ import {
   PostApplicationResult,
 } from '@/api/application';
 import { useProgramQuery } from '@/api/program';
-import DescriptionBox from '@/components/common/program/paymentSuccess/DescriptionBox';
-import PaymentInfoRow from '@/components/common/program/paymentSuccess/PaymentInfoRow';
-import ProgramCard from '@/components/common/program/ProgramCard';
 import {
   getPaymentMethodLabel,
   paymentResultSearchParamsSchema,
 } from '@/data/getPaymentSearchParams';
+import DescriptionBox from '@/domain/program/paymentSuccess/DescriptionBox';
+import PaymentInfoRow from '@/domain/program/paymentSuccess/PaymentInfoRow';
+import ProgramCard from '@/domain/program/ProgramCard';
 import dayjs from '@/lib/dayjs';
 import useProgramStore from '@/store/useProgramStore';
 import axios from '@/utils/axios';

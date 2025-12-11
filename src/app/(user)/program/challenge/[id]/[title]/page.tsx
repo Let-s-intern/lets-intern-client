@@ -1,4 +1,8 @@
 import { fetchChallengeData } from '@/api/challenge';
+import ChallengeCTAButtons from '@/domain/program/challenge/ChallengeCTAButtons';
+import ChallengeMarketingView from '@/domain/program/challenge/ChallengeMarketingView';
+import ChallengePortfolioView from '@/domain/program/challenge/ChallengePortfolioView';
+import ChallengeView from '@/domain/program/challenge/ChallengeView';
 import dayjs from '@/lib/dayjs';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import {
@@ -6,10 +10,6 @@ import {
   getChallengeTitle,
   getProgramPathname,
 } from '@/utils/url';
-import ChallengeCTAButtons from '@components/ChallengeCTAButtons';
-import ChallengeMarketingView from '@components/ChallengeMarketingView';
-import ChallengePortfolioView from '@components/ChallengePortfolioView';
-import ChallengeView from '@components/ChallengeView';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 

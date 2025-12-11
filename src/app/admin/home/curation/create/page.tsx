@@ -1,5 +1,5 @@
 'use client';
 
-import HomeCurationCreatePage from '@/components/admin/pages/home/curation/HomeCurationCreatePage';
+import HomeCurationCreatePage from '@/domain/admin/pages/home/curation/HomeCurationCreatePage';
 
 export default HomeCurationCreatePage;

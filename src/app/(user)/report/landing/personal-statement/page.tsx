@@ -1,7 +1,7 @@
 import { fetchReport } from '@/api/report';
 import { personalStatementReportDescription } from '@/data/description';
+import ReportPersonalStatementPage from '@/domain/report/ReportPersonalStatementPage';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
-import ReportPersonalStatementPage from '@components/page/ReportPersonalStatementPage';
 import { Metadata } from 'next';
 
 // SSR 메타데이터 생성

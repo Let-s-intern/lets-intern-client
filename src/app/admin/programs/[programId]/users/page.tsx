@@ -1,5 +1,5 @@
 'use client';
 
-import ProgramUsers from '@/components/admin/pages/program/ProgramUsers';
+import ProgramUsers from '@/domain/admin/pages/program/ProgramUsers';
 
 export default ProgramUsers;
