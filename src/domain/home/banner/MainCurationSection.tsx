@@ -3,9 +3,9 @@
 import { CurationType, useGetUserCuration } from '@/api/curation';
 import { convertReportTypeToLandingPath, ReportType } from '@/api/report';
 import { MMDD, YY_MM_DD } from '@/data/dayjsFormat';
+import { getReportThumbnail } from '@/domain/mypage/credit/CreditListItem';
 import dayjs from '@/lib/dayjs';
 import { blogCategory } from '@/utils/convert';
-import { getReportThumbnail } from '@components/common/mypage/credit/CreditListItem';
 import ProgramContainer from '../program/ProgramContainer';
 
 export const getProgramThumbnail = ({

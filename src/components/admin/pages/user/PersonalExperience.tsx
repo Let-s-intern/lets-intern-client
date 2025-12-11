@@ -1,11 +1,11 @@
 import { usePostAdminExperienceMutation } from '@/api/career';
+import ActivityTypeCell from '@/domain/mypage/experience/table-cell/ActivityTypeCell';
+import CategoryCell from '@/domain/mypage/experience/table-cell/CategoryCell';
+import CoreCompetencyCell from '@/domain/mypage/experience/table-cell/CoreCompetencyCell';
+import PeriodCell from '@/domain/mypage/experience/table-cell/PeriodCell';
+import YearCell from '@/domain/mypage/experience/table-cell/YearCell';
 import { UserAdminDetail } from '@/schema';
 import { getExperienceRowHeight } from '@/utils/experience';
-import ActivityTypeCell from '@components/common/mypage/experience/table-cell/ActivityTypeCell';
-import CategoryCell from '@components/common/mypage/experience/table-cell/CategoryCell';
-import CoreCompetencyCell from '@components/common/mypage/experience/table-cell/CoreCompetencyCell';
-import PeriodCell from '@components/common/mypage/experience/table-cell/PeriodCell';
-import YearCell from '@components/common/mypage/experience/table-cell/YearCell';
 import DataTable, { TableHeader } from '@components/common/table/DataTable';
 import { ExperienceForm } from '@components/pages/mypage/experience/ExperienceForm';
 import { Plus } from 'lucide-react';

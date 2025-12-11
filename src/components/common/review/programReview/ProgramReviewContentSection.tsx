@@ -7,9 +7,9 @@ import {
   ReviewType,
   useGetProgramReview,
 } from '@/api/review';
+import MuiPagination from '@/domain/program/pagination/MuiPagination';
 import ReviewCard from '@/domain/review/ReviewCard';
 import { ActiveChallengeType, ChallengeType, PageInfo } from '@/schema';
-import MuiPagination from '@components/common/program/pagination/MuiPagination';
 import EmptyContainer from '@components/common/ui/EmptyContainer';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useSearchParams } from 'next/navigation';

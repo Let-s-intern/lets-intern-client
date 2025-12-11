@@ -1,9 +1,9 @@
 import { challengeColors } from '@/domain/program/challenge/ChallengeView';
+import SuperTitle from '@/domain/program/program-detail/SuperTitle';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ChallengeCurriculum as ChallengeCurriculumType } from '@/types/interface';
-import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import Heading2 from '@components/common/ui/Heading2';
 import { useMediaQuery } from '@mui/material';
 import { CSSProperties, useMemo, useState } from 'react';

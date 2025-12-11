@@ -18,10 +18,10 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Fragment, ReactNode, Suspense, useMemo, useState } from 'react';
 import FilterDropdown from '../../components/common/FilterDropdown';
-import MuiPagination from '../../components/common/program/pagination/MuiPagination';
 import BaseButton from '../../components/common/ui/button/BaseButton';
 import EmptyContainer from '../../components/common/ui/EmptyContainer';
 import LoadingContainer from '../../components/common/ui/loading/LoadingContainer';
+import MuiPagination from '../program/pagination/MuiPagination';
 import BlogCard from './card/BlogCard';
 
 const filterList = Object.entries(blogCategory).map(([key, value]) => ({

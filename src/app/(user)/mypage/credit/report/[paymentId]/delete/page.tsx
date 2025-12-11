@@ -10,8 +10,10 @@ import {
   useDeleteReportApplication,
   useGetReportPaymentDetailQuery,
 } from '@/api/report';
-import DescriptionBox from '@/components/common/program/paymentSuccess/DescriptionBox';
-import PaymentInfoRow from '@/components/common/program/paymentSuccess/PaymentInfoRow';
+import ReportCreditRow from '@/domain/mypage/credit/ReportCreditRow';
+import ReportCreditSubRow from '@/domain/mypage/credit/ReportCreditSubRow';
+import DescriptionBox from '@/domain/program/paymentSuccess/DescriptionBox';
+import PaymentInfoRow from '@/domain/program/paymentSuccess/PaymentInfoRow';
 import {
   getCouponDiscountPrice,
   getFeedbackDiscountedPrice,
@@ -21,8 +23,6 @@ import {
   getTotalRefund,
   nearestTen,
 } from '@/lib/refund';
-import ReportCreditRow from '@components/common/mypage/credit/ReportCreditRow';
-import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
 
 const convertDateFormat = (date: string) => {
   return dayjs(date).format('YYYY.MM.DD');

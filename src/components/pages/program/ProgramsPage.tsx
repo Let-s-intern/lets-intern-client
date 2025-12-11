@@ -12,13 +12,13 @@ import {
 } from 'react';
 
 import { useUserProgramQuery } from '@/api/program';
-import FilterItem from '@/components/common/program/filter/FilterItem';
-import FilterSideBar from '@/components/common/program/filter/FilterSideBar';
-import MuiPagination from '@/components/common/program/pagination/MuiPagination';
-import EmptyCardList from '@/components/common/program/programs/card/EmptyCardList';
-import ProgramCard from '@/components/common/program/programs/card/ProgramCard';
 import Banner from '@/components/common/ui/banner/Banner';
 import LoadingContainer from '@/components/common/ui/loading/LoadingContainer';
+import FilterItem from '@/domain/program/filter/FilterItem';
+import FilterSideBar from '@/domain/program/filter/FilterSideBar';
+import MuiPagination from '@/domain/program/pagination/MuiPagination';
+import EmptyCardList from '@/domain/program/programs/card/EmptyCardList';
+import ProgramCard from '@/domain/program/programs/card/ProgramCard';
 import {
   FilterCheckedAction,
   filterClassificationReducer,
@@ -79,12 +79,16 @@ const FilterBar = ({
     params.delete(PROGRAM_QUERY_KEY.CLASSIFICATION);
     params.delete(PROGRAM_QUERY_KEY.TYPE);
     params.delete(PROGRAM_QUERY_KEY.STATUS);
-    window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
+    window.history.replaceState(
+      {},
+      '',
+      `${window.location.pathname}?${params}`,
+    );
   };
 
   const cancelFilter = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    
+
     // 파라미터 하나만 삭제
     const deleteParam = (target: string, key: string) => {
       const checkedList = params.getAll(key);
@@ -115,7 +119,11 @@ const FilterBar = ({
       }
     }
     resetPageable();
-    window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
+    window.history.replaceState(
+      {},
+      '',
+      `${window.location.pathname}?${params}`,
+    );
   };
 
   useEffect(() => {
@@ -347,7 +355,7 @@ const Programs = () => {
   const handleClickCheckbox = useCallback(
     (programType: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString());
-      
+
       // 파라미터 하나 삭제
       const deleteParam = (target: string, key: string) => {
         const checkedList = params.getAll(key);
@@ -405,14 +413,13 @@ const Programs = () => {
         }
       }
       resetPageable();
-      window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
+      window.history.replaceState(
+        {},
+        '',
+        `${window.location.pathname}?${params}`,
+      );
     },
-    [
-      filterClassification,
-      filterStatus,
-      filterType,
-      searchParams,
-    ],
+    [filterClassification, filterStatus, filterType, searchParams],
   );
 
   useEffect(() => {

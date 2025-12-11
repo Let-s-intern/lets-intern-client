@@ -3,6 +3,8 @@ import ChevronDown from '@/assets/icons/chevron-down.svg?react';
 import ClockIcon from '@/assets/icons/clock.svg?react';
 import LaptopIcon from '@/assets/icons/laptop.svg?react';
 import { challengeColors } from '@/domain/program/challenge/ChallengeView';
+import BasicInfoBottomRow from '@/domain/program/program-detail/basicInfo/BasicInfoBottomRow';
+import BasicInfoRow from '@/domain/program/program-detail/basicInfo/BasicInfoRow';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { ChallengeIdSchema, challengeTypeSchema } from '@/schema';
 import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
@@ -10,8 +12,6 @@ import {
   formatFullDateTime,
   formatFullDateTimeWithOutYear,
 } from '@/utils/formatDateString';
-import BasicInfoBottomRow from '@components/common/program/program-detail/basicInfo/BasicInfoBottomRow';
-import BasicInfoRow from '@components/common/program/program-detail/basicInfo/BasicInfoRow';
 import Heading2 from '@components/common/ui/Heading2';
 import { useMediaQuery } from '@mui/material';
 import { useMemo } from 'react';

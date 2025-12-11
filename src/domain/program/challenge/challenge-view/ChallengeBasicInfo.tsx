@@ -2,6 +2,7 @@ import Announcement from '@/assets/icons/announcement.svg?react';
 import ClockIcon from '@/assets/icons/clock.svg?react';
 import Pin from '@/assets/icons/pin.svg';
 import { challengeColors } from '@/domain/program/challenge/ChallengeView';
+import BasicInfoRow from '@/domain/program/program-detail/basicInfo/BasicInfoRow';
 import dayjs from '@/lib/dayjs';
 import {
   ActiveChallengeType,
@@ -14,7 +15,6 @@ import {
   formatFullDateTimeWithOutYear,
 } from '@/utils/formatDateString';
 import { getProgramPathname } from '@/utils/url';
-import BasicInfoRow from '@components/common/program/program-detail/basicInfo/BasicInfoRow';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { CSSProperties, useMemo } from 'react';

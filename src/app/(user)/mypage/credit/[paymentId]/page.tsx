@@ -1,12 +1,12 @@
 'use client';
 
 import { useUserQuery } from '@/api/user';
-import MoreButton from '@/components/common/mypage/ui/button/MoreButton';
-import PaymentInfoRow from '@/components/common/program/paymentSuccess/PaymentInfoRow';
 import Input from '@/components/common/ui/input/Input';
+import ReportCreditSubRow from '@/domain/mypage/credit/ReportCreditSubRow';
+import MoreButton from '@/domain/mypage/ui/button/MoreButton';
+import PaymentInfoRow from '@/domain/program/paymentSuccess/PaymentInfoRow';
 import useCredit from '@/hooks/useCredit';
 import dayjs from '@/lib/dayjs';
-import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
 import OrderProgramInfo from '@components/OrderProgramInfo';
 import { useParams, useRouter } from 'next/navigation';
 

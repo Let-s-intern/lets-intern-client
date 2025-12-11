@@ -6,14 +6,11 @@ import {
   usePostUserCareerMutation,
 } from '@/api/career';
 import { UserCareerType } from '@/api/careerSchema';
-import CareerHeader from '@components/common/mypage/career/CareerHeader';
-import CareerItem from '@components/common/mypage/career/CareerItem';
-import CareerList from '@components/common/mypage/career/CareerList';
-import {
-  DEFAULT_CAREER,
-  PAGE_SIZE,
-} from '@components/common/mypage/career/constants';
-import NoCareerView from '@components/common/mypage/career/NoCareerView';
+import CareerHeader from '@/domain/mypage/career/CareerHeader';
+import CareerItem from '@/domain/mypage/career/CareerItem';
+import CareerList from '@/domain/mypage/career/CareerList';
+import { DEFAULT_CAREER, PAGE_SIZE } from '@/domain/mypage/career/constants';
+import NoCareerView from '@/domain/mypage/career/NoCareerView';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { useState } from 'react';
 

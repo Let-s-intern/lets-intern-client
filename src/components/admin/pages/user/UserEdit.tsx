@@ -6,8 +6,8 @@ import {
   useUserDetailAdminQuery,
 } from '@/api/user';
 import ActionButton from '@/components/admin/ui/button/ActionButton';
-import GradeDropdown from '@/components/common/mypage/privacy/form-control/GradeDropdown';
 import Input from '@/components/ui/input/Input';
+import GradeDropdown from '@/domain/mypage/privacy/form-control/GradeDropdown';
 import { isValidEmail, isValidPhoneNumber } from '@/utils/valid';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';

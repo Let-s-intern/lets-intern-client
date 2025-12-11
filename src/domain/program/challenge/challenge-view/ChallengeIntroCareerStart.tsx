@@ -1,8 +1,8 @@
 import { challengeColors } from '@/domain/program/challenge/ChallengeView';
+import Description from '@/domain/program/program-detail/Description';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ChallengePoint } from '@/types/interface';
-import Description from '@components/common/program/program-detail/Description';
 import CircularBox from '@components/common/ui/CircularBox';
 import Heading2 from '@components/common/ui/Heading2';
 import { ReactNode, useMemo } from 'react';

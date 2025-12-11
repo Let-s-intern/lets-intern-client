@@ -1,11 +1,11 @@
 'use client';
 
+import GradientButton from '@/domain/program/program-detail/button/GradientButton';
+import NotiButton from '@/domain/program/program-detail/button/NotiButton';
 import useInstagramAlert from '@/hooks/useInstagramAlert';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { Duration } from '@components/common/Duration';
-import GradientButton from '@components/common/program/program-detail/button/GradientButton';
-import NotiButton from '@components/common/program/program-detail/button/NotiButton';
 import { Dayjs } from 'dayjs';
 import { memo, ReactNode } from 'react';
 import PaymentErrorNotification from './PaymentErrorNotification';

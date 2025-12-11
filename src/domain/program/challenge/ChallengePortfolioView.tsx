@@ -16,7 +16,6 @@ import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import { Break } from '../../../components/common/Break';
-import Description from '../../../components/common/program/program-detail/Description';
 import Heading2 from '../../../components/common/report/Heading2';
 import SectionSubHeader from '../../../components/ui/SectionSubHeader';
 import LexicalContent from '../../blog/ui/LexicalContent';
@@ -25,6 +24,7 @@ import {
   PROGRAM_INTRO_ID,
   PROGRAM_REVIEW_ID,
 } from '../../program/ProgramDetailNavigation';
+import Description from '../program-detail/Description';
 import ProgramBestReviewSection from '../ProgramBestReviewSection';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
 import ChallengeBrand from './challenge-view/ChallengeBrand';

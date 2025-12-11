@@ -3,6 +3,12 @@
 import { useProgramQuery } from '@/api/program';
 import { usePatchUser } from '@/api/user';
 import CreditCardIcon from '@/assets/icons/credit-card.svg?react';
+import CouponSection, {
+  CouponSectionProps,
+} from '@/domain/program/program-detail/apply/section/CouponSection';
+import MotiveAnswerSection from '@/domain/program/program-detail/apply/section/MotiveAnswerSection';
+import PriceSection from '@/domain/program/program-detail/apply/section/PriceSection';
+import UserInputSection from '@/domain/program/program-detail/apply/section/UserInputSection';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { UserInfo } from '@/lib/order';
 import { ChallengePriceInfo } from '@/schema';
@@ -14,12 +20,6 @@ import useProgramStore, {
 } from '@/store/useProgramStore';
 import { isValidEmail } from '@/utils/valid';
 import { Duration } from '@components/common/Duration';
-import CouponSection, {
-  CouponSectionProps,
-} from '@components/common/program/program-detail/apply/section/CouponSection';
-import MotiveAnswerSection from '@components/common/program/program-detail/apply/section/MotiveAnswerSection';
-import PriceSection from '@components/common/program/program-detail/apply/section/PriceSection';
-import UserInputSection from '@components/common/program/program-detail/apply/section/UserInputSection';
 import BackHeader from '@components/common/ui/BackHeader';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { AxiosError } from 'axios';

@@ -1,5 +1,5 @@
+import Description from '@/domain/program/program-detail/Description';
 import { Break } from '@components/common/Break';
-import Description from '@components/common/program/program-detail/Description';
 import MoreReviewButton from '@components/common/review/MoreReviewButton';
 import Heading2 from '@components/common/ui/Heading2';
 import Image from 'next/image';

@@ -12,8 +12,8 @@ import {
   usePatchBlogMutation,
 } from '../../../api/blog';
 import { BlogThumbnail, PatchBlogReqBody } from '../../../api/blogSchema';
+import MuiPagination from '../../../domain/program/pagination/MuiPagination';
 import { blogCategory } from '../../../utils/convert';
-import MuiPagination from '../../common/program/pagination/MuiPagination';
 
 const blogColumnWidth = {
   id: 'w-20',

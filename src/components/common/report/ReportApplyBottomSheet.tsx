@@ -27,9 +27,9 @@ import ModalOverlay from '@components/ui/ModalOverlay';
 import RequiredStar from '@components/ui/RequiredStar';
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
+import GradientButton from '../../../domain/program/program-detail/button/GradientButton';
 import { DesktopCTA, MobileCTA } from '../ApplyCTA';
 import PaymentErrorNotification from '../PaymentErrorNotification';
-import GradientButton from '../program/program-detail/button/GradientButton';
 import { default as BaseButton } from '../ui/button/BaseButton';
 import {
   OptionFormCheckboxControlLabel,

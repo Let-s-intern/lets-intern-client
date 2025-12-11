@@ -4,11 +4,11 @@ import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import MyPageKakaoChannel from '@components/common/mypage/privacy/section/MyPageKakaoChannel';
-import BasicInfo from '../../../../components/common/mypage/privacy/section/BasicInfo';
-import ChangePassword from '../../../../components/common/mypage/privacy/section/ChangePassword';
-import MarketingAgree from '../../../../components/common/mypage/privacy/section/MarketingAgree';
+import MyPageKakaoChannel from '@/domain/mypage/privacy/section/MyPageKakaoChannel';
 import AlertModal from '../../../../components/ui/alert/AlertModal';
+import BasicInfo from '../../../../domain/mypage/privacy/section/BasicInfo';
+import ChangePassword from '../../../../domain/mypage/privacy/section/ChangePassword';
+import MarketingAgree from '../../../../domain/mypage/privacy/section/MarketingAgree';
 import useAuthStore from '../../../../store/useAuthStore';
 import axios from '../../../../utils/axios';
 
