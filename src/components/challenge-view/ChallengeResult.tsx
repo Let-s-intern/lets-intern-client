@@ -285,7 +285,9 @@ function ChallengeResult({
             ) : (
               <>
                 {/* TODO: receivedContent.challengePoint.weekText? */}
-                2주 뒤에 포트폴리오 완성하고
+                2주 뒤에{' '}
+                {challengeType === PORTFOLIO ? '포트폴리오' : '자기소개서'}{' '}
+                완성하고
                 <Break />
                 서류 합격률을 <span className="text-[#FFCE5B]">300%</span>
                 <img
