@@ -3,7 +3,7 @@ import { Asterisk } from 'lucide-react';
 import { ComponentProps } from 'react';
 import { FieldValues, Path, useForm } from 'react-hook-form';
 
-interface FieldSectionRootProps extends ComponentProps<'div'> {}
+type FieldSectionRootProps = ComponentProps<'div'>;
 
 const FieldSectionRoot = (props: FieldSectionRootProps) => (
   <div {...props} className={cn('relative', props.className)}>
@@ -32,7 +32,7 @@ const FieldSectionLabel = (props: FieldSectionLabelProps) => (
   </label>
 );
 
-interface FieldSectionDescriptionProps extends ComponentProps<'p'> {}
+type FieldSectionDescriptionProps = ComponentProps<'p'>;
 
 const FieldSectionDescription = (props: FieldSectionDescriptionProps) => (
   <p
