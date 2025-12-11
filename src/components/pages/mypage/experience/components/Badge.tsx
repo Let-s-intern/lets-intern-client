@@ -1,7 +1,7 @@
 import { cn } from '@/utils/cn';
 import { ComponentProps } from 'react';
 
-interface BadgeProps extends ComponentProps<'span'> {}
+type BadgeProps = ComponentProps<'span'>;
 
 export const Badge = (props: BadgeProps) => (
   <span

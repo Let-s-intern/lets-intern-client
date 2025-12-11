@@ -7,7 +7,7 @@ import channelService from '@/ChannelService';
 import { twMerge } from '@/lib/twMerge';
 import { usePathname } from 'next/navigation';
 
-interface ChannelTalkBtnProps extends React.ComponentProps<'button'> {}
+type ChannelTalkBtnProps = React.ComponentProps<'button'>;
 
 const programDetailPathRegex = /^\/program\/(live|challenge|vod)\/\d+/; // 프로그램 상세페이지
 const ChannelTalkBtn = (props: ChannelTalkBtnProps) => {
