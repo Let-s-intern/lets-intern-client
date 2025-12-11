@@ -1,12 +1,12 @@
 'use client';
 
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
+import ReviewBadge, {
+  getBadgeTypeFromProgramType,
+} from '@/domain/review/ReviewBadge';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { ProgramTypeUpperCase } from '@/schema';
-import ReviewBadge, {
-  getBadgeTypeFromProgramType,
-} from '@components/ReviewBadge';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ComponentProps } from 'react';

@@ -2,10 +2,10 @@
 
 import { BlogReview } from '@/api/review';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
-import dayjs from '@/lib/dayjs';
 import ReviewBadge, {
   getBadgeTypeFromProgramType,
-} from '@components/ReviewBadge';
+} from '@/domain/review/ReviewBadge';
+import dayjs from '@/lib/dayjs';
 import clsx from 'clsx';
 import Image from 'next/image';
 import Link from 'next/link';

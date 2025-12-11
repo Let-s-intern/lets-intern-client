@@ -7,11 +7,11 @@ import {
   ReviewType,
   useGetProgramReview,
 } from '@/api/review';
+import ReviewCard from '@/domain/review/ReviewCard';
 import { ActiveChallengeType, ChallengeType, PageInfo } from '@/schema';
 import MuiPagination from '@components/common/program/pagination/MuiPagination';
 import EmptyContainer from '@components/common/ui/EmptyContainer';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import ReviewCard from '@components/ReviewCard';
 import { useSearchParams } from 'next/navigation';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 

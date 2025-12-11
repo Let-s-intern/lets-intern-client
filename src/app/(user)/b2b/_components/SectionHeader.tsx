@@ -1,7 +1,7 @@
 'use client';
 
-import { Break } from '@/components/Break';
 import { twMerge } from '@/lib/twMerge';
+import { Break } from '@components/common/Break';
 import { motion } from 'motion/react';
 
 type Props = {

@@ -1,8 +1,8 @@
 import { GetReview } from '@/api/review';
+import ReviewCard from '@/domain/review/ReviewCard';
 import ReviewSection from '@components/common/about/section/ReviewSection';
 import FilterDropdown from '@components/common/FilterDropdown';
 import MoreHeader from '@components/common/ui/MoreHeader';
-import ReviewCard from '@components/ReviewCard';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import { Suspense } from 'react';
