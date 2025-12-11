@@ -15,7 +15,7 @@ const AdminUsersPage = () => {
     email: string;
     phoneNum: string;
     university: string;
-    wishField: string;
+    wishJob: string;
     wishIndustry: string;
     wishEmploymentType: string;
     programTitle: string;
@@ -28,7 +28,7 @@ const AdminUsersPage = () => {
     email: '',
     phoneNum: '',
     university: '',
-    wishField: '',
+    wishJob: '',
     wishIndustry: '',
     wishEmploymentType: '',
     programTitle: '',
@@ -43,7 +43,7 @@ const AdminUsersPage = () => {
     name: searchValues.name,
     phoneNum: searchValues.phoneNum,
     university: searchValues.university,
-    wishField: searchValues.wishField,
+    wishJob: searchValues.wishJob,
     wishIndustry: searchValues.wishIndustry,
     wishEmploymentType: searchValues.wishEmploymentType,
     programTitle: searchValues.programTitle,

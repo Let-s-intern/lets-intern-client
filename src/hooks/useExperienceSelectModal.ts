@@ -2,7 +2,6 @@ import {
   useSearchUserExperiencesQuery,
   useUserExperienceFiltersQuery,
 } from '@/api/userExperience';
-import { UserExperience } from '@/api/userExperienceSchema';
 import {
   convertUserExperienceToExperienceData,
   ExperienceData,
@@ -10,7 +9,6 @@ import {
   labelToActivityType,
   labelToExperienceCategory,
 } from '@/components/common/challenge/my-challenge/section/mission-submit-list-form/data';
-import { Dayjs } from 'dayjs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 interface Filters {
@@ -23,7 +21,6 @@ interface Filters {
 interface UseExperienceSelectModalOptions {
   isOpen: boolean;
   pageSize?: number;
-  missionStartDate?: Dayjs | null;
   initialSelectedExperienceIds?: number[];
 }
 
@@ -66,7 +63,6 @@ const DEFAULT_PAGE_SIZE = 5;
 export const useExperienceSelectModal = ({
   isOpen,
   pageSize = DEFAULT_PAGE_SIZE,
-  missionStartDate: _missionStartDate, // eslint-disable-line @typescript-eslint/no-unused-vars
   initialSelectedExperienceIds,
 }: UseExperienceSelectModalOptions): UseExperienceSelectModalReturn => {
   const [filters, setFilters] = useState<Filters>(INITIAL_FILTERS);
@@ -127,22 +123,14 @@ export const useExperienceSelectModal = ({
     isOpen,
   );
 
-  // 필터링 로직: 운영자 추가 경험 제외 및 경험정리 필드 완성 여부만 체크
-  const shouldIncludeExperience = (exp: UserExperience): boolean => {
-    // 운영자 추가 경험 제외
-    if (exp.isAddedByAdmin) return false;
-    // 경험정리 필드 모두 채운 경험만
-    return isUserExperienceComplete(exp);
-  };
-
   // 필터링된 모든 경험 데이터 (클라이언트 필터링 적용)
   const allFilteredExperiences = useMemo(() => {
     if (!allSearchResponse?.userExperiences) {
       return [];
     }
 
-    const filtered = allSearchResponse.userExperiences.filter((exp) =>
-      shouldIncludeExperience(exp),
+    const filtered = allSearchResponse.userExperiences.filter(
+      isUserExperienceComplete,
     );
 
     return filtered.map(convertUserExperienceToExperienceData);

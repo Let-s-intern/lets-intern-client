@@ -1,6 +1,5 @@
 import { useSearchUserExperiencesQuery } from '@/api/userExperience';
 import { If } from '@/components/common/If';
-import { Dayjs } from 'dayjs';
 import { useMemo } from 'react';
 import { ExperienceData, isUserExperienceComplete } from '../data';
 import { EmptyState } from './EmptyState';
@@ -13,7 +12,6 @@ interface MissionSubmitExperienceListProps {
   onOpenModal: () => void;
   onDeleteExperience?: (experienceId: number) => void;
   level: ExperienceLevel;
-  missionStartDate?: Dayjs | null;
   isSubmitted?: boolean;
   isEditing?: boolean;
 }
@@ -23,7 +21,6 @@ export const MissionSubmitExperienceList = ({
   onOpenModal,
   onDeleteExperience,
   level,
-  missionStartDate: _missionStartDate, // eslint-disable-line @typescript-eslint/no-unused-vars
   isSubmitted,
   isEditing,
 }: MissionSubmitExperienceListProps) => {
@@ -36,9 +33,10 @@ export const MissionSubmitExperienceList = ({
     page: 1,
     size: 100,
   });
-  // 제출 가능한 경험 필터링: 경험정리 필드 모두 채운 경험만
+  // 제출 가능한 경험 필터링: 모든 레벨 동일하게 경험정리 필드가 모두 채워진 경험만
   const submitableExperiences = useMemo(() => {
     if (!data?.userExperiences) return [];
+
     return data.userExperiences.filter(isUserExperienceComplete);
   }, [data]);
 
@@ -74,7 +72,7 @@ export const MissionSubmitExperienceList = ({
   const emptyStateText = getEmptyStateText();
 
   const handleExperienceWriteClick = () => {
-    window.open('/mypage/experience', '_blank');
+    window.open('/mypage/career/experience', '_blank');
   };
 
   return (

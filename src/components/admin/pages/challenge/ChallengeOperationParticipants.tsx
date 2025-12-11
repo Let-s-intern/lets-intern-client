@@ -83,6 +83,7 @@ const columns: GridColDef<ChallengeApplication['application']>[] = [
     valueFormatter: (value) =>
       typeof value === 'boolean' ? (value ? 'Y' : 'N') : '',
   },
+  { field: 'challengePricePlanType', headerName: '결제 상품', width: 100 },
   { field: 'inflowPath', headerName: '유입경로', width: 150 },
   { field: 'university', headerName: '학교', width: 150 },
   {

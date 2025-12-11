@@ -30,6 +30,7 @@ export const userAdminType = z.object({
         contactEmail: z.string().nullable(),
         university: z.string().nullable(),
         wishField: z.string().nullable(),
+        wishJob: z.string().nullable(),
         wishIndustry: z.string().nullable(),
         wishEmploymentType: z.string().nullable(),
         phoneNum: z.string(),
@@ -39,6 +40,7 @@ export const userAdminType = z.object({
         marketingAgree: z.boolean().nullable(),
         memo: z.string().nullable().optional(),
         isMentor: z.boolean().nullable().optional(),
+        isPoolUp: z.boolean().nullable().optional(),
       }),
       applicationInfos: z.array(
         z.object({
