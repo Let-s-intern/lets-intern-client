@@ -59,6 +59,7 @@ const Page = async ({
   const { id } = await params;
 
   const [challenge] = await Promise.all([fetchChallengeData(id)]);
+  // TODO: params로 넘어온 title과 getProgramPathname 결과가 다르면 그쪽으로 리다이렉트 처리
 
   const isDeprecated = isDeprecatedProgram(challenge);
 

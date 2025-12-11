@@ -22,6 +22,7 @@ export async function generateMetadata({
     getBaseUrlFromServer() +
     getProgramPathname({ id, programType: 'live', title: program.title });
   const title = getLiveTitle(program);
+  // TODO: params로 넘어온 title과 getProgramPathname 결과가 다르면 그쪽으로 리다이렉트 처리
 
   return {
     title,

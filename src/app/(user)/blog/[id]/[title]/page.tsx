@@ -55,11 +55,12 @@ export async function generateMetadata({
 const BlogDetailPage = async ({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string; title: string }>;
 }) => {
-  const { id } = await params;
+  const { id, title: _title } = await params;
 
   const blog = await fetchBlogData(id);
+  // TODO: params로 넘어온 title과 getBlogTitle 결과가 다르면 그쪽으로 리다이렉트 처리
 
   const blogInfo = blog.blogDetailInfo;
   const contentJson: BlogContent = JSON.parse(
