@@ -5,14 +5,14 @@ import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ProgramType } from '@/types/common';
 import { useEffect, useMemo, useState } from 'react';
-import { challengeColors } from './ChallengeView';
 import {
   NavItem,
   PROGRAM_CURRICULUM_ID,
   PROGRAM_FAQ_ID,
   PROGRAM_INTRO_ID,
   PROGRAM_REVIEW_ID,
-} from './ProgramDetailNavigation';
+} from '../../../components/ProgramDetailNavigation';
+import { challengeColors } from '../ChallengeView';
 
 const { CAREER_START, PORTFOLIO, EXPERIENCE_SUMMARY, ETC } =
   challengeTypeSchema.enum;

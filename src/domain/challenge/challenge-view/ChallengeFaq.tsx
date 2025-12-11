@@ -1,4 +1,4 @@
-import { challengeColors } from '@/domain/challenge/challenge-view/ChallengeView';
+import { challengeColors } from '@/domain/challenge/ChallengeView';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema, faqSchemaType } from '@/schema';
 import { ChallengeContent } from '@/types/interface';

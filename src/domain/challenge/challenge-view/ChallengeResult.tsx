@@ -2,7 +2,7 @@ import { useMediaQuery } from '@mui/material';
 import { CSSProperties, ReactNode, useMemo } from 'react';
 import { FaCheck } from 'react-icons/fa6';
 
-import { challengeColors } from '@/domain/challenge/challenge-view/ChallengeView';
+import { challengeColors } from '@/domain/challenge/ChallengeView';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { Break } from '@components/Break';
@@ -285,7 +285,9 @@ function ChallengeResult({
             ) : (
               <>
                 {/* TODO: receivedContent.challengePoint.weekText? */}
-                2주 뒤에 포트폴리오 완성하고
+                2주 뒤에{' '}
+                {challengeType === PORTFOLIO ? '포트폴리오' : '자기소개서'}{' '}
+                완성하고
                 <Break />
                 서류 합격률을 <span className="text-[#FFCE5B]">300%</span>
                 <img

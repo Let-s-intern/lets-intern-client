@@ -1,6 +1,10 @@
 'use client';
 
 import { useGetActiveChallenge, useGetChallengeFaq } from '@/api/challenge';
+import ChallengeCheckList from '@/domain/challenge/challenge-view/ChallengeCheckList';
+import ChallengeCurriculum from '@/domain/challenge/challenge-view/ChallengeCurriculum';
+import ChallengeFaq from '@/domain/challenge/challenge-view/ChallengeFaq';
+import ChallengeResult from '@/domain/challenge/challenge-view/ChallengeResult';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import {
@@ -10,13 +14,18 @@ import {
 } from '@/schema';
 import useProgramStore from '@/store/useProgramStore';
 import { ChallengeContent } from '@/types/interface';
-import ChallengeCheckList from '@components/challenge-view/ChallengeCheckList';
-import ChallengeCurriculum from '@components/challenge-view/ChallengeCurriculum';
-import ChallengeFaq from '@components/challenge-view/ChallengeFaq';
-import ChallengeResult from '@components/challenge-view/ChallengeResult';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
-import LexicalContent from '../domain/blog/ui/LexicalContent';
+import MoreReviewButton from '../../components/common/review/MoreReviewButton';
+import ProgramBestReviewSection from '../../components/ProgramBestReviewSection';
+import ProgramDetailBlogReviewSection from '../../components/ProgramDetailBlogReviewSection';
+import ProgramDetailNavigation, {
+  CHALLENGE_DIFFERENT_ID,
+  PROGRAM_CURRICULUM_ID,
+  PROGRAM_INTRO_ID,
+  PROGRAM_REVIEW_ID,
+} from '../../components/ProgramDetailNavigation';
+import LexicalContent from '../blog/ui/LexicalContent';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
 import ChallengeBrand from './challenge-view/ChallengeBrand';
 import ChallengeDifferent from './challenge-view/ChallengeDifferent';
@@ -29,15 +38,6 @@ import ChallengeIntroPortfolio from './challenge-view/ChallengeIntroPortfolio';
 import ChallengePointView from './challenge-view/ChallengePointView';
 import ChallengePricePlanSection from './challenge-view/ChallengePricePlanSection';
 import ChallengeSummarySection from './challenge-view/ChallengeSummarySection';
-import MoreReviewButton from './common/review/MoreReviewButton';
-import ProgramBestReviewSection from './ProgramBestReviewSection';
-import ProgramDetailBlogReviewSection from './ProgramDetailBlogReviewSection';
-import ProgramDetailNavigation, {
-  CHALLENGE_DIFFERENT_ID,
-  PROGRAM_CURRICULUM_ID,
-  PROGRAM_INTRO_ID,
-  PROGRAM_REVIEW_ID,
-} from './ProgramDetailNavigation';
 
 const {
   CAREER_START,

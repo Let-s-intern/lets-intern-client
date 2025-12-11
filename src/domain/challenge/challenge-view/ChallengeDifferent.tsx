@@ -1,7 +1,7 @@
 import benefitImg1 from '@/assets/benefit1.jpg';
 import benefitImg2 from '@/assets/benefit2.jpg';
 import benefitImg3 from '@/assets/benefit3.jpg';
-import { challengeColors } from '@/domain/challenge/challenge-view/ChallengeView';
+import { challengeColors } from '@/domain/challenge/ChallengeView';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
 import BenefitCard from '@components/common/program/program-detail/different/BenefitCard';
 import DifferentCard, {

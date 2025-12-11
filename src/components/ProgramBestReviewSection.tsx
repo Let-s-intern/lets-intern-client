@@ -2,7 +2,7 @@ import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ContentReviewType } from '@/types/interface';
 import ProgramDetailReviewItem from '@components/common/program/program-detail/review/ProgramDetailReviewItem';
 import { useMemo } from 'react';
-import { challengeColors } from './ChallengeView';
+import { challengeColors } from '../domain/challenge/ChallengeView';
 
 const {
   PORTFOLIO,

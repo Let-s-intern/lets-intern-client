@@ -1,14 +1,66 @@
 import benefitImg1 from '@/assets/benefit1.jpg';
 import benefitImg2 from '@/assets/benefit2.jpg';
 import benefitImg3 from '@/assets/benefit3.jpg';
+import { challengeColors } from '@/domain/challenge/ChallengeView';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
-import { challengeColors } from '@components/ChallengeView';
-import BenefitCard from '@components/common/program/program-detail/different/BenefitCard';
-import DifferentCard, {
-  DifferentCardProps,
-} from '@components/common/program/program-detail/different/DifferentCard';
+import { Break } from '@components/Break';
 import SuperTitle from '@components/common/program/program-detail/SuperTitle';
-import { useMemo } from 'react';
+import { useMediaQuery } from '@mui/material';
+import { ReactNode, useMemo } from 'react';
+
+export interface CardProps {
+  order: number;
+  title: ReactNode;
+  description: ReactNode;
+  imageUrl?: {
+    desktop: string;
+    mobile: string;
+  };
+  styles: {
+    primaryColor: string;
+    primaryLightColor: string;
+    borderColor: string;
+  };
+}
+
+const Card = ({ order, title, description, imageUrl, styles }: CardProps) => {
+  const isDesktop = useMediaQuery('(min-width: 991px)');
+
+  return (
+    <div
+      className="mx-auto flex w-full max-w-[1000px] flex-col gap-x-[50px] gap-y-6 rounded-md border p-4 pb-[26px] text-black md:flex-row md:items-center md:px-10 md:pt-6"
+      style={{
+        backgroundColor: styles.primaryLightColor,
+        borderColor: styles.borderColor,
+      }}
+    >
+      {imageUrl && (
+        <img
+          src={isDesktop ? imageUrl.desktop : imageUrl.mobile}
+          alt="1:1 멘토링 이미지"
+          className="w-full flex-none rounded-t-md md:w-[288px] md:rounded-md lg:w-[464px] lg:translate-y-[26px] lg:rounded-b-none"
+          style={{ width: isDesktop ? '464px' : '288px' }}
+        />
+      )}
+      <div className="flex w-full flex-col gap-y-3">
+        {order && (
+          <p
+            className="flex w-fit rounded-md px-[14px] py-1.5 text-xsmall14 font-semibold text-white lg:text-small18"
+            style={{
+              backgroundColor: styles.primaryColor,
+            }}
+          >{`Point ${order}`}</p>
+        )}
+        <div className="flex w-full flex-col gap-y-4">
+          <h4 className="whitespace-pre-line text-small18 font-bold lg:text-medium22">
+            {title}
+          </h4>
+          <div className="flex w-full flex-col md:gap-y-1">{description}</div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const {
   PORTFOLIO,
@@ -51,7 +103,7 @@ export const tripleBenefits = [
   },
 ];
 
-const ChallengeDifferent = ({
+const PortfolioOneOnOne = ({
   challengeType,
   challengeTitle,
   deposit,
@@ -104,96 +156,46 @@ const ChallengeDifferent = ({
     }
   }, [challengeType]);
 
-  const differentList: DifferentCardProps[] = isResumeTemplate
-    ? [
-        {
-          order: 1,
-          title: `취업 준비가 더 이상 막막하지 않도록\nA부터 Z까지 알려주는 학습 콘텐츠`,
-          options: [
-            '초보 취준생도 따라갈 수 있는 친절한 길라잡이',
-            '합격자 예시를 포함하여 서류 작성 스킬 UP',
-            '2025년 주요 기업/직무 합격 자료로 파악하는 채용 트렌드',
-          ],
-          imageUrl: {
-            desktop: '/challenge-detail/different/desktop/contents_desktop.gif',
-            mobile: '/challenge-detail/different/mobile/contents_mobile.gif',
-          },
-          styles,
-        },
-        {
-          order: 2,
-          title: `서류와 면접의 기초 베이스가 되어줄\n미션 템플릿으로 나만의 이력서 완성`,
-          options: [
-            '하루 30분, 경험 정리부터 이력서까지 완성하는 실습',
-            '누구나 쉽게 채울 수 있는 노션 템플릿',
-            '수료 후에도 자산으로 남는 경험 회고록',
-          ],
-          imageUrl: {
-            desktop: '/challenge-detail/different/desktop/template_desktop.gif',
-            mobile: '/challenge-detail/different/mobile/template_mobile.gif',
-          },
-          styles,
-        },
-        {
-          order: 3,
-          title: `함께라서 할 수 있어요.\n챌린지 참여자들과 함께 동기부여!`,
-          options: [
-            '취업 여정의 동료들과 함께 지치지 않고 완성해요.',
-            '자유로운 커뮤니티를 통해 스터디 함께할 수 있어요.',
-            '서류 작성을 통해 커리어 고민 함께 나눠요.',
-          ],
-          imageUrl: {
-            desktop:
-              '/challenge-detail/different/desktop/community_desktop.gif',
-            mobile: '/challenge-detail/different/mobile/community_mobile.gif',
-          },
-          styles,
-        },
-      ]
-    : [
-        {
-          order: 1,
-          title: `취업 준비가 더 이상 막막하지 않도록\nA부터 Z까지 알려주는 학습 콘텐츠`,
-          options: [
-            '초보 취준생도 따라갈 수 있는 친절한 길라잡이',
-            '합격자 예시를 포함하여 콘텐츠 이해도 UP',
-            'PDF 30페이지 분량의 추가 콘텐츠 제공',
-          ],
-          imageUrl: {
-            desktop: '/challenge-detail/different/desktop/contents_desktop.gif',
-            mobile: '/challenge-detail/different/mobile/contents_mobile.gif',
-          },
-          styles,
-        },
-        {
-          order: 2,
-          title: `서류와 면접의 기초 베이스가 되어줄\n미션 템플릿으로 나만의 취업 가이드북 완성`,
-          options: [
-            '하루 30분, 서류를 완성하는 실습',
-            '누구나 쉽게 채울 수 있는 노션 템플릿',
-            '수료 후에도 자산으로 남는 취업 가이드북',
-          ],
-          imageUrl: {
-            desktop: '/challenge-detail/different/desktop/template_desktop.gif',
-            mobile: '/challenge-detail/different/mobile/template_mobile.gif',
-          },
-          styles,
-        },
-        {
-          order: 3,
-          title: `시간은 어느새 흐르고,\n혼자 하기 어렵다면 사람들과\n함께 공유하며 성장하는 동기부여 시스템`,
-          options: [
-            `사람들과 함께 공유하며 성장하는\n오픈 카톡 커뮤니티`,
-            '미션 80점 이상 완료 시, 수료증 지급',
-          ],
-          imageUrl: {
-            desktop:
-              '/challenge-detail/different/desktop/community_desktop.gif',
-            mobile: '/challenge-detail/different/mobile/community_mobile.gif',
-          },
-          styles,
-        },
-      ];
+  const list: CardProps[] = [
+    {
+      order: 1,
+      title: (
+        <>
+          포폴 만들면서 궁금했던 점<Break />
+          멘토님과 바로 해결할 수 있어요!
+        </>
+      ),
+      description: (
+        <>
+          기존 포폴에 대한 코멘트와 딱 맞춘
+          <Break />
+          개선 방안까지 멘토링에서 가져갈 수 있어요.
+        </>
+      ),
+
+      imageUrl: {
+        desktop: '/images/포폴-피드백-388-210.gif',
+        mobile: '/images/포폴-피드백-388-210.gif',
+      },
+      styles,
+    },
+    {
+      order: 2,
+      title: '실제 합격 자료 예시도 함께 해요!',
+      description: (
+        <>
+          내 포폴 상황에서 참고할 수 있는
+          <Break />
+          실제 합격 자료도 함께 다뤄요.
+        </>
+      ),
+      imageUrl: {
+        desktop: '/images/포폴-피드백(합격자료)-666-352.gif',
+        mobile: '/images/포폴-피드백(합격자료)-666-352.gif',
+      },
+      styles,
+    },
+  ];
 
   const paypackImgSrc = (() => {
     if (isResumeTemplate) return '/images/payback-career-start157.png';
@@ -233,58 +235,35 @@ const ChallengeDifferent = ({
 
   return (
     <section
-      id="different"
-      className="flex w-full flex-col gap-y-[70px] py-16 md:gap-y-40 md:py-40"
+      id="portfolio-one-on-one"
+      className="flex w-full flex-col gap-y-[70px] px-5 py-16 md:gap-y-40 md:px-10 md:pb-40"
     >
       {/* 차별점 */}
       <div className="flex w-full flex-col gap-y-8 md:gap-y-20">
-        <div className="flex w-full flex-col gap-y-6 md:gap-y-12">
-          <SuperTitle style={{ color: styles.primaryColor }}>차별점</SuperTitle>
+        <div className="flex w-full flex-col gap-y-6">
+          <SuperTitle style={{ color: styles.primaryColor }}>
+            혼자 만들면서 겪었던 어려움과 고민
+          </SuperTitle>
           <div className="flex flex-col gap-y-3 md:items-center">
-            <p
-              className="text-xsmall16 font-bold md:text-small18"
-              style={{ color: styles.primaryColor }}
-            >
-              {isResumeTemplate
-                ? `${challengeTitle}에서 얻어갈 수 있는 것들`
-                : '비교 불가!'}
-            </p>
-            <div className="whitespace-pre text-[22px] font-bold text-black md:text-center md:text-xlarge28">
-              {isResumeTemplate ? (
-                <>
-                  <span>렛츠커리어 챌린지만의 차별점</span>
-                  <br />
-                </>
-              ) : (
-                <>
-                  <span>{challengeTitle}만의</span>
-                  <br />
-                </>
-              )}
-              <span>
-                {isResumeTemplate ? '이 모든걸 ' : '차별점, 이 모든걸 '}
-                <img
-                  className="inline-block h-auto w-8 md:w-10"
-                  src={`/icons/${iconName}`}
-                  alt=""
-                />{' '}
-                얻어가실 수 있어요!
-              </span>
+            <div className="break-keep text-[22px] font-bold text-black md:text-center md:text-xlarge28">
+              1:1 실시간 첨삭으로 <Break />
+              나에게 <span className="text-[#4A76FF]">딱 맞춘 피드백</span>{' '}
+              받고, 포폴 완성도 높이자!
             </div>
           </div>
         </div>
         <div className="flex w-full flex-col gap-y-6">
-          {differentList.map((different) => (
-            <DifferentCard
-              key={different.title}
-              order={different.order}
-              title={different.title}
-              options={different.options}
-              imageUrl={different.imageUrl}
+          {list.map((item, index) => (
+            <Card
+              key={index}
+              order={item.order}
+              description={item.description}
+              title={item.title}
+              imageUrl={item.imageUrl}
               styles={styles}
             />
           ))}
-          {deposit >= 10000 && (
+          {/* {deposit >= 10000 && (
             <div
               className="relative flex w-full gap-x-2 overflow-hidden rounded-md px-5 pb-10 pt-[30px] text-small18 font-bold md:px-10 md:py-[50px] md:text-medium22"
               style={{
@@ -304,12 +283,12 @@ const ChallengeDifferent = ({
                 alt={`페이백 ${deposit / 10000}만원`}
               />
             </div>
-          )}
+          )} */}
         </div>
       </div>
 
       {/* 혜택 */}
-      <div className="flex w-full flex-col gap-y-8 md:items-center md:gap-y-16">
+      {/* <div className="flex w-full flex-col gap-y-8 md:items-center md:gap-y-16">
         <p className="whitespace-pre-line text-small20 font-bold md:text-center md:text-xlarge28">
           여기서 끝이 아니죠
           <br />
@@ -347,9 +326,9 @@ const ChallengeDifferent = ({
             imgUrl={tripleBenefits[3].imgUrl.src}
           />
         </div>
-      </div>
+      </div> */}
     </section>
   );
 };
 
-export default ChallengeDifferent;
+export default PortfolioOneOnOne;

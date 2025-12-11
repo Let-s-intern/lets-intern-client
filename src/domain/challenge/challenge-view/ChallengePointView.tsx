@@ -2,7 +2,7 @@ import { getVod } from '@/api/program';
 import Check from '@/assets/icons/chevron-down.svg?react';
 import HoleIcon from '@/assets/icons/hole.svg?react';
 import { LOCALIZED_YYYY_MDdd_HHmm } from '@/data/dayjsFormat';
-import { challengeColors } from '@/domain/challenge/challenge-view/ChallengeView';
+import { challengeColors } from '@/domain/challenge/ChallengeView';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema, ProgramTypeEnum } from '@/schema';
 import { ChallengePoint, ProgramRecommend } from '@/types/interface';
