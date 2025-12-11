@@ -3,8 +3,8 @@ import { ProgramBlogReview } from '@/types/interface';
 import Link from 'next/link';
 import { MdChevronRight } from 'react-icons/md';
 import { Break } from '../../../../components/common/Break';
-import Description from '../../../../components/common/program/program-detail/Description';
 import Heading2 from '../../../../components/common/ui/Heading2';
+import Description from '../../program-detail/Description';
 
 const ProgramChallengePortfolioDetailBlogReviewSection = ({
   review,

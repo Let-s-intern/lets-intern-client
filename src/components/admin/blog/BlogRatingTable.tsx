@@ -5,8 +5,8 @@ import { useCallback, useState } from 'react';
 
 import dayjs from '@/lib/dayjs';
 import { useBlogRatingListQuery } from '../../../api/blog';
+import MuiPagination from '../../../domain/program/pagination/MuiPagination';
 import { blogCategory } from '../../../utils/convert';
-import MuiPagination from '../../common/program/pagination/MuiPagination';
 
 const ratingColumnWidth = {
   createdDate: 'w-32',
@@ -58,7 +58,7 @@ export default function BlogRatingTable() {
       </div>
 
       {/* TableBody */}
-      <div className="flex flex-col gap-2 mt-3 mb-16">
+      <div className="mb-16 mt-3 flex flex-col gap-2">
         {isLoading ? (
           <></>
         ) : data?.ratingInfos.length === 0 ? (
@@ -67,7 +67,7 @@ export default function BlogRatingTable() {
           data?.ratingInfos.map((rating) => (
             <div
               key={rating.id}
-              className="flex border rounded-md border-neutral-200"
+              className="flex rounded-md border border-neutral-200"
             >
               <TableBodyCell widthClassName={ratingColumnWidth.createdDate}>
                 {rating.createDate

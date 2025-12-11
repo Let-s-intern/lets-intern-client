@@ -2,11 +2,11 @@
 
 import { useProgramApplicationQuery } from '@/api/application';
 import { useProgramQuery } from '@/api/program';
-import FilledButton from '@/components/common/program/program-detail/button/FilledButton';
-import NotiButton from '@/components/common/program/program-detail/button/NotiButton';
-import ApplySection from '@/components/common/program/program-detail/section/ApplySection';
-import TabSection from '@/components/common/program/program-detail/section/TabSection';
 import BackHeader from '@/components/common/ui/BackHeader';
+import FilledButton from '@/domain/program/program-detail/button/FilledButton';
+import NotiButton from '@/domain/program/program-detail/button/NotiButton';
+import ApplySection from '@/domain/program/program-detail/section/ApplySection';
+import TabSection from '@/domain/program/program-detail/section/TabSection';
 import useRunOnce from '@/hooks/useRunOnce';
 import dayjs from '@/lib/dayjs';
 import { isNewProgram } from '@/lib/isDeprecatedProgram';

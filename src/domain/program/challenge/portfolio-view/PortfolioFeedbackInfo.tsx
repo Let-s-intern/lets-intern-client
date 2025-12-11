@@ -1,7 +1,7 @@
+import Description from '@/domain/program/program-detail/Description';
+import SuperTitle from '@/domain/program/program-detail/SuperTitle';
 import { twMerge } from '@/lib/twMerge';
 import { Break } from '@components/common/Break';
-import Description from '@components/common/program/program-detail/Description';
-import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import Heading2 from '@components/common/ui/Heading2';
 import { Check, Plus } from 'lucide-react';
 import Balancer from 'react-wrap-balancer';

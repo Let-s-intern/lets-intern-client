@@ -2,14 +2,14 @@
 
 import { Sortable, UserExperienceType } from '@/api/experienceSchema';
 import { usePostUserExperienceMutation } from '@/api/user';
-import { useControlScroll } from '@/hooks/useControlScroll';
-import drawerReducer from '@/reducers/drawerReducer';
-import ExperienceCreateButton from '@components/common/mypage/experience/ExperienceCreateButton';
-import ExperienceDataTable from '@components/common/mypage/experience/ExperienceDataTable';
+import ExperienceCreateButton from '@/domain/mypage/experience/ExperienceCreateButton';
+import ExperienceDataTable from '@/domain/mypage/experience/ExperienceDataTable';
 import ExperienceFilters, {
   Filters,
-} from '@components/common/mypage/experience/ExperienceFilters';
-import SortFilterDropdown from '@components/common/mypage/experience/SortFilterDropdown';
+} from '@/domain/mypage/experience/ExperienceFilters';
+import SortFilterDropdown from '@/domain/mypage/experience/SortFilterDropdown';
+import { useControlScroll } from '@/hooks/useControlScroll';
+import drawerReducer from '@/reducers/drawerReducer';
 import { ExperienceForm } from '@components/pages/mypage/experience/ExperienceForm';
 import { useCallback, useReducer, useState } from 'react';
 

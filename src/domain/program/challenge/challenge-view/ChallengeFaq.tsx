@@ -1,8 +1,8 @@
 import { challengeColors } from '@/domain/program/challenge/ChallengeView';
+import SuperTitle from '@/domain/program/program-detail/SuperTitle';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema, faqSchemaType } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
-import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import FaqChat from '@components/common/ui/FaqChat';
 import FaqDropdown from '@components/common/ui/FaqDropdown';
 import Heading2 from '@components/common/ui/Heading2';

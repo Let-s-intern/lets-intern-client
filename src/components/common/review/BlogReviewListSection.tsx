@@ -1,8 +1,8 @@
 'use client';
 
 import { useGetBlogReviewList } from '@/api/review';
+import MuiPagination from '@/domain/program/pagination/MuiPagination';
 import { ProgramTypeUpperCase } from '@/schema';
-import MuiPagination from '@components/common/program/pagination/MuiPagination';
 import BlogReviewCard from '@components/common/review/BlogReviewCard';
 import { useSearchParams } from 'next/navigation';
 import { Dispatch, SetStateAction } from 'react';

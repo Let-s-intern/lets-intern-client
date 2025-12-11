@@ -1,5 +1,5 @@
+import SuperTitle from '@/domain/program/program-detail/SuperTitle';
 import { faqSchemaType } from '@/schema';
-import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import FaqDropdown from '@components/common/ui/FaqDropdown';
 import Heading2 from '@components/common/ui/Heading2';
 import { LIVE_FAQ_ID } from '../../ProgramDetailNavigation';

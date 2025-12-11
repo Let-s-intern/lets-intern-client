@@ -2,9 +2,9 @@ import benefitImg1 from '@/assets/benefit1.jpg';
 import benefitImg2 from '@/assets/benefit2.jpg';
 import benefitImg3 from '@/assets/benefit3.jpg';
 import { challengeColors } from '@/domain/program/challenge/ChallengeView';
+import SuperTitle from '@/domain/program/program-detail/SuperTitle';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { Break } from '@components/common/Break';
-import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import { useMediaQuery } from '@mui/material';
 import { ReactNode, useMemo } from 'react';
 

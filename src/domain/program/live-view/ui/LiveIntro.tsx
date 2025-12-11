@@ -6,8 +6,8 @@ import kakaoImg from '@/assets/live-kakao.jpg';
 import longImg from '@/assets/live-long.png';
 import tossbankImg from '@/assets/live-tossbank.jpg';
 import universityImg from '@/assets/live-university.jpg';
-import SpeechBubble from '@components/common/program/program-detail/SpeechBubble';
-import SuperTitle from '@components/common/program/program-detail/SuperTitle';
+import SpeechBubble from '@/domain/program/program-detail/SpeechBubble';
+import SuperTitle from '@/domain/program/program-detail/SuperTitle';
 import Heading2 from '@components/common/ui/Heading2';
 
 const superTitle = [
@@ -90,12 +90,12 @@ function LiveIntro() {
       <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10">
         <SuperTitle className="mb-1 text-primary">{superTitle[0]}</SuperTitle>
         <Heading2>{title[0]}</Heading2>
-        <div className="flex flex-col items-center mt-10 md:mt-20">
+        <div className="mt-10 flex flex-col items-center md:mt-20">
           <SpeechBubble className="-translate-x-8 -rotate-6 md:-translate-x-16">
             {bubbles[0]}
           </SpeechBubble>
           <SpeechBubble
-            className="z-20 text-white translate-x-8 translate-y-2 rotate-3 md:translate-x-16 md:translate-y-4"
+            className="z-20 translate-x-8 translate-y-2 rotate-3 text-white md:translate-x-16 md:translate-y-4"
             tailHidden={true}
             bgColor="#4D55F5"
           >
@@ -120,7 +120,7 @@ function LiveIntro() {
       <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
         <SuperTitle className="mb-1 text-primary">{superTitle[1]}</SuperTitle>
         <Heading2>{title[1]}</Heading2>
-        <div className="flex flex-col gap-3 mt-8 md:mt-20 md:flex-row">
+        <div className="mt-8 flex flex-col gap-3 md:mt-20 md:flex-row">
           {points.map((point, index) => (
             <PointBox key={index} index={index} point={point} />
           ))}
@@ -130,7 +130,7 @@ function LiveIntro() {
       <div className="w-ful flex max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
         <SuperTitle className="mb-1 text-primary">{superTitle[2]}</SuperTitle>
         <Heading2>{title[2]}</Heading2>
-        <div className="w-full mt-8 overflow-x-hidden md:mt-20">
+        <div className="mt-8 w-full overflow-x-hidden md:mt-20">
           <div className="flex w-fit animate-live-infinite-scroll-mobile gap-1.5 md:animate-live-infinite-scroll-desktop">
             <ImageGroup />
             <ImageGroup />
@@ -156,19 +156,19 @@ function PointBox({ point, index }: { point: Point; index: number }) {
   return (
     <div
       key={index}
-      className="relative flex flex-col px-4 pt-6 overflow-hidden border rounded-md border-primary-20 bg-neutral-95 pb-9 md:h-72 md:w-full"
+      className="relative flex flex-col overflow-hidden rounded-md border border-primary-20 bg-neutral-95 px-4 pb-9 pt-6 md:h-72 md:w-full"
     >
       <div className="mb-2.5 w-fit rounded-full bg-primary-90 px-2 py-1 text-xxsmall12 font-semibold text-white lg:text-xsmall14">
         Point {index + 1}
       </div>
-      <span className="block mb-4 font-semibold whitespace-pre text-small18 lg:text-medium24">
+      <span className="mb-4 block whitespace-pre text-small18 font-semibold lg:text-medium24">
         {point.title}
       </span>
-      <span className="font-medium whitespace-pre break-keep text-xsmall14 text-neutral-30 lg:text-xsmall16">
+      <span className="whitespace-pre break-keep text-xsmall14 font-medium text-neutral-30 lg:text-xsmall16">
         {point.content}
       </span>
       <img
-        className="absolute right-0 w-32 h-auto -bottom-1 md:bottom-0 lg:w-36"
+        className="absolute -bottom-1 right-0 h-auto w-32 md:bottom-0 lg:w-36"
         src={point.src}
         alt={point.alt}
       />

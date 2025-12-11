@@ -2,8 +2,6 @@
 
 import { ApplicationResult } from '@/api/paymentSchema';
 import { convertReportPriceType, useGetReportDetailQuery } from '@/api/report';
-import DescriptionBox from '@/components/common/program/paymentSuccess/DescriptionBox';
-import PaymentInfoRow from '@/components/common/program/paymentSuccess/PaymentInfoRow';
 import Heading1 from '@/components/common/report/Heading1';
 import Heading2 from '@/components/common/report/Heading2';
 import Card from '@/components/common/report/ProgramCard';
@@ -11,14 +9,16 @@ import {
   getPaymentMethodLabel,
   paymentResultSearchParamsSchema,
 } from '@/data/getPaymentSearchParams';
+import ReportCreditRow from '@/domain/mypage/credit/ReportCreditRow';
+import ReportCreditSubRow from '@/domain/mypage/credit/ReportCreditSubRow';
+import DescriptionBox from '@/domain/program/paymentSuccess/DescriptionBox';
+import PaymentInfoRow from '@/domain/program/paymentSuccess/PaymentInfoRow';
 import useReportPayment from '@/hooks/useReportPayment';
 import useReportProgramInfo from '@/hooks/useReportProgramInfo';
 import dayjs from '@/lib/dayjs';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import axios from '@/utils/axios';
 import { searchParamsToObject } from '@/utils/network';
-import ReportCreditRow from '@components/common/mypage/credit/ReportCreditRow';
-import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';

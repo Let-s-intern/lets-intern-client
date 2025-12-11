@@ -1,5 +1,5 @@
 import { ReportReviewItem } from '@/types/interface';
-import { maskingName } from '../program/program-detail/review/ProgramDetailReviewItem';
+import { maskingName } from '../../../domain/program/program-detail/review/ProgramDetailReviewItem';
 
 interface ReportInterviewCardProps {
   interview: ReportReviewItem;

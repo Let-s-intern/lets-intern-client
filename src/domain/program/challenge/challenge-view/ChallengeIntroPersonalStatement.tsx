@@ -3,8 +3,8 @@ import { twMerge } from '@/lib/twMerge';
 import { useMediaQuery } from '@mui/material';
 import { Fragment, ReactNode } from 'react';
 
-import Description from '@components/common/program/program-detail/Description';
-import OutlinedBox from '@components/common/program/program-detail/OutlineBox';
+import Description from '@/domain/program/program-detail/Description';
+import OutlinedBox from '@/domain/program/program-detail/OutlineBox';
 import Heading2 from '@components/common/ui/Heading2';
 
 const TITLE1 = [

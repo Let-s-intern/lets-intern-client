@@ -1,9 +1,9 @@
 import { UserExperience } from '@/api/userExperienceSchema';
 import { TableHeader } from '@/components/common/table/DataTable';
+import ActivityTypeCell from '@/domain/mypage/experience/table-cell/ActivityTypeCell';
+import CategoryCell from '@/domain/mypage/experience/table-cell/CategoryCell';
+import CoreCompetencyCell from '@/domain/mypage/experience/table-cell/CoreCompetencyCell';
 import dayjs from '@/lib/dayjs';
-import ActivityTypeCell from '@components/common/mypage/experience/table-cell/ActivityTypeCell';
-import CategoryCell from '@components/common/mypage/experience/table-cell/CategoryCell';
-import CoreCompetencyCell from '@components/common/mypage/experience/table-cell/CoreCompetencyCell';
 
 // 경험 데이터 타입 정의 (이미지 참고)
 export interface ExperienceData {

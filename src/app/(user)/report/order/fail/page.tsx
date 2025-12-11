@@ -5,16 +5,16 @@ import Heading1 from '@/components/common/report/Heading1';
 import Heading2 from '@/components/common/report/Heading2';
 import Card from '@/components/common/report/ProgramCard';
 import { paymentFailSearchParamsSchema } from '@/data/getPaymentSearchParams';
+import ReportCreditRow from '@/domain/mypage/credit/ReportCreditRow';
+import ReportCreditSubRow from '@/domain/mypage/credit/ReportCreditSubRow';
 import useReportPayment from '@/hooks/useReportPayment';
 import useReportProgramInfo from '@/hooks/useReportProgramInfo';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { searchParamsToObject } from '@/utils/network';
-import ReportCreditRow from '@components/common/mypage/credit/ReportCreditRow';
-import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
 import { useMediaQuery } from '@mui/material';
-import { Suspense, useMemo } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { Suspense, useMemo } from 'react';
 
 /** 처음부터 결제 실패 케이스일 시 이 페이지로 옵니다. 검증 단계에서의 실패는 PaymentResult에서 진행함. */
 const ReportPaymentFailContent = () => {

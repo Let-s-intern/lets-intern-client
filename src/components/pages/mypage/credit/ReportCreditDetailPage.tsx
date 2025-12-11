@@ -8,9 +8,11 @@ import {
   useGetReportPaymentDetailQuery,
 } from '@/api/report';
 import { useUserQuery } from '@/api/user';
-import MoreButton from '@/components/common/mypage/ui/button/MoreButton';
-import PaymentInfoRow from '@/components/common/program/paymentSuccess/PaymentInfoRow';
 import Input from '@/components/common/ui/input/Input';
+import ReportCreditRow from '@/domain/mypage/credit/ReportCreditRow';
+import ReportCreditSubRow from '@/domain/mypage/credit/ReportCreditSubRow';
+import MoreButton from '@/domain/mypage/ui/button/MoreButton';
+import PaymentInfoRow from '@/domain/program/paymentSuccess/PaymentInfoRow';
 import {
   getCouponDiscountPrice,
   getFeedbackDiscountedPrice,
@@ -18,8 +20,6 @@ import {
   getReportDiscountedPrice,
   getReportPrice,
 } from '@/lib/refund';
-import ReportCreditRow from '@components/common/mypage/credit/ReportCreditRow';
-import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
 import { useMemo } from 'react';
 
 const convertDateFormat = (date: string) => {

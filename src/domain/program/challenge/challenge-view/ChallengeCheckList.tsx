@@ -3,11 +3,11 @@ import { CSSProperties, ReactNode, useMemo } from 'react';
 import { RxCheckbox } from 'react-icons/rx';
 
 import { challengeColors } from '@/domain/program/challenge/ChallengeView';
+import Box from '@/domain/program/program-detail/Box';
+import Description from '@/domain/program/program-detail/Description';
+import OutlinedBox from '@/domain/program/program-detail/OutlineBox';
+import SuperTitle from '@/domain/program/program-detail/SuperTitle';
 import { ChallengeIdSchema, challengeTypeSchema } from '@/schema';
-import Box from '@components/common/program/program-detail/Box';
-import Description from '@components/common/program/program-detail/Description';
-import OutlinedBox from '@components/common/program/program-detail/OutlineBox';
-import SuperTitle from '@components/common/program/program-detail/SuperTitle';
 import Heading2 from '@components/common/ui/Heading2';
 import { josa } from 'es-hangul';
 import { twMerge } from 'tailwind-merge';

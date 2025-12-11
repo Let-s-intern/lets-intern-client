@@ -5,7 +5,7 @@ import { FormEvent, useCallback, useMemo, useState } from 'react';
 import CareerInfoForm, {
   CareerInfoSelections,
   CareerInfoValues,
-} from '@/components/common/mypage/career/CareerInfoForm';
+} from '@/domain/mypage/career/CareerInfoForm';
 import useAuthStore from '@/store/useAuthStore';
 import axios from '@/utils/axios';
 import { GRADE_KOREAN_TO_ENUM } from '@/utils/constants';

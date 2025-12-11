@@ -10,7 +10,7 @@ import {
   DesktopApplyCTA,
   MobileApplyCTA,
 } from '../../../components/common/ApplyCTA';
-import PricePlanBottomSheet from '../../../components/common/program/PricePlanBottomSheet';
+import PricePlanBottomSheet from '../PricePlanBottomSheet';
 
 const ChallengeCTAButtons = ({
   challenge,

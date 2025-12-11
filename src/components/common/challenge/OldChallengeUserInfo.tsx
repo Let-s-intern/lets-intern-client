@@ -6,8 +6,8 @@ import {
 } from '@/api/challenge';
 import { useGetChallengeQuery } from '@/api/program';
 import { usePatchUser, useUserQuery } from '@/api/user';
-import GradeDropdown from '@/components/common/mypage/privacy/form-control/GradeDropdown';
 import Input from '@/components/common/ui/input/Input';
+import GradeDropdown from '@/domain/mypage/privacy/form-control/GradeDropdown';
 import { GOAL_DATE } from '@components/common/challenge/ui/layout/ChallengeLayout';
 import TextArea from '@components/common/ui/input/TextArea';
 import { useParams, useRouter } from 'next/navigation';

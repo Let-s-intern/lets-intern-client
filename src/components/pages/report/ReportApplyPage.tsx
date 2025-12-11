@@ -11,6 +11,7 @@ import {
   convertParamToReportType,
   convertReportTypeStatus,
 } from '@/api/report';
+import { getReportThumbnail } from '@/domain/mypage/credit/CreditListItem';
 import useMinDate from '@/hooks/useMinDate';
 import useReportProgramInfo from '@/hooks/useReportProgramInfo';
 import useValidateUrl from '@/hooks/useValidateUrl';
@@ -18,7 +19,6 @@ import { twMerge } from '@/lib/twMerge';
 import { ReportTypePathnameEnum } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
-import { getReportThumbnail } from '@components/common/mypage/credit/CreditListItem';
 import DateTimePicker from '@components/common/report/DateTimePicker';
 import FilledInput from '@components/common/report/FilledInput';
 import Heading2 from '@components/common/report/Heading2';

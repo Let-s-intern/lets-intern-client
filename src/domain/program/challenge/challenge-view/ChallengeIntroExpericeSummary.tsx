@@ -1,6 +1,6 @@
+import Description from '@/domain/program/program-detail/Description';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
-import Description from '@components/common/program/program-detail/Description';
 import CircularBox from '@components/common/ui/CircularBox';
 import Heading2 from '@components/common/ui/Heading2';
 import { ReactNode } from 'react';

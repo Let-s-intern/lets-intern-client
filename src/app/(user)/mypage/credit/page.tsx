@@ -1,6 +1,6 @@
 'use client';
 
-import CreditList from '@/components/common/mypage/credit/section/CreditList';
+import CreditList from '@/domain/mypage/credit/section/CreditList';
 
 const Credit = () => {
   return (
