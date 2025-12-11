@@ -44,22 +44,12 @@ const MissionSubmitRegularSection = ({
   const params = useParams<{ applicationId: string; programId: string }>();
 
   const { selectedMissionId, setSelectedMission } = useMissionStore();
-  const { schedules, refetchSchedules } = useCurrentChallenge();
+  const { schedules, refetchSchedules, currentChallenge } =
+    useCurrentChallenge();
 
-  // 현재 선택된 미션의 종료일 찾기
-  const currentMission = schedules.find(
-    (schedule) => schedule.missionInfo.th === selectedMissionTh,
-  );
-  const missionEndDate = currentMission?.missionInfo?.endDate;
-
-  // 미션 종료 + 2일 (미션 종료일 기준)
-  const isSubmitPeriodEnded = missionEndDate
-    ? dayjs(missionEndDate)
-        .tz('Asia/Seoul')
-        .add(2, 'day')
-        .isBefore(dayjs().tz('Asia/Seoul'))
-    : true;
-
+  // 챌린지 종료 + 2일 (챌린지 종료일 기준)
+  const isSubmitPeriodEnded =
+    dayjs(currentChallenge?.endDate).add(2, 'day').isBefore(dayjs()) ?? true;
   // 현재 선택된 미션의 startDate 찾기
   const currentSelectedMission = schedules.find(
     (schedule) => schedule.missionInfo.id === selectedMissionId,
