@@ -22,6 +22,7 @@ const MissionSubmitButton = ({
   onSaveEdit,
   disabled = false,
 }: MissionSubmitButtonProps) => {
+  const { selectedMissionTh } = useMissionStore();
   // 수정 모드일 때 두 개의 버튼 표시
   if (isEditing) {
     return (
@@ -50,7 +51,6 @@ const MissionSubmitButton = ({
       </div>
     );
   }
-  const { selectedMissionTh } = useMissionStore();
   // 기본 모드: 단일 버튼
   const buttonText = isSubmitted
     ? [0, 99, 100].includes(selectedMissionTh)

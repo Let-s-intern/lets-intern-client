@@ -54,8 +54,6 @@ const MissionSubmitRegularSection = ({
   const currentSelectedMission = schedules.find(
     (schedule) => schedule.missionInfo.id === selectedMissionId,
   );
-  const missionStartDate =
-    currentSelectedMission?.missionInfo.startDate ?? null;
   // missionTh를 기준으로 마지막 정규 미션 찾기 (보너스 미션 제외)
   const regularMissions = schedules.filter(
     (schedule) => schedule.missionInfo.th !== BONUS_MISSION_TH,
@@ -90,6 +88,9 @@ const MissionSubmitRegularSection = ({
   const bonusMission = schedules.find(
     (item) => item.missionInfo.th === BONUS_MISSION_TH,
   );
+  const missionTag =
+    (currentSelectedMission?.missionInfo as { missionTag?: string | null })
+      ?.missionTag ?? null;
 
   // attendanceInfo가 변경될 때마다 상태 업데이트 (다른 미션인 경우에만)
   useEffect(() => {
@@ -244,9 +245,9 @@ const MissionSubmitRegularSection = ({
           <MissionSubmitListForm
             onExperienceIdsChange={setSelectedExperienceIds}
             initialExperienceIds={attendanceInfo?.submittedUserExperienceIds}
-            missionStartDate={missionStartDate}
             isSubmitted={isSubmitted}
             isEditing={isEditing}
+            missionTag={missionTag}
           />
         )}
         {/* 미션 소감 */}
