@@ -13,6 +13,7 @@ import useProgramStore, {
   setProgramApplicationForm,
 } from '@/store/useProgramStore';
 import { isValidEmail } from '@/utils/valid';
+import { Duration } from '@components/common/Duration';
 import CouponSection, {
   CouponSectionProps,
 } from '@components/common/program/program-detail/apply/section/CouponSection';
@@ -21,7 +22,6 @@ import PriceSection from '@components/common/program/program-detail/apply/sectio
 import UserInputSection from '@components/common/program/program-detail/apply/section/UserInputSection';
 import BackHeader from '@components/common/ui/BackHeader';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import { Duration } from '@components/Duration';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';

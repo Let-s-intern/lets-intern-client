@@ -12,7 +12,7 @@ import CareerInfoForm, {
   CareerInfoValues,
 } from '@/components/common/mypage/career/CareerInfoForm';
 import Input from '@/components/common/ui/input/Input';
-import RadioButton from '@/domain/challenge/challenge-view/RadioButton';
+import RadioButton from '@/domain/program/challenge/challenge-view/RadioButton';
 import { GRADE_ENUM_TO_KOREAN, GRADE_KOREAN_TO_ENUM } from '@/utils/constants';
 import { DASHBOARD_FIRST_VISIT_GOAL } from '@components/common/challenge/my-challenge/section/MissionSubmitZeroSection';
 import { josa } from 'es-hangul';

@@ -1,9 +1,9 @@
 'use client';
 
 import { GetReview, useGetProgramReview } from '@/api/review';
+import ReviewCard from '@/domain/review/ReviewCard';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import MoreHeader from '@components/common/ui/MoreHeader';
-import ReviewCard from '@components/ReviewCard';
 import { useEffect, useState } from 'react';
 
 const ProgramReviewSection = () => {

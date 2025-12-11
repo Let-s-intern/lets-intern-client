@@ -1,5 +1,5 @@
 import { fetchLiveData } from '@/api/program';
-import LiveView from '@/domain/live-view/LiveView';
+import LiveView from '@/domain/program/live-view/LiveView';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import {
   getBaseUrlFromServer,

@@ -1,7 +1,7 @@
 'use client';
 
 import { twMerge } from '@/lib/twMerge';
-import { Break } from '@components/Break';
+import { Break } from '@components/common/Break';
 import { motion } from 'motion/react';
 import iconPortfolio from '../_images/icon-portfolio-32-32.svg';
 import iconResume from '../_images/icon-resume-32-32.svg';

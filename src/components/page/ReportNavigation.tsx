@@ -1,10 +1,10 @@
 'use client';
 
+import { NavItem } from '@/domain/program/ProgramDetailNavigation';
 import useActiveReports from '@/hooks/useActiveReports';
 import useScrollDirection from '@/hooks/useScrollDirection';
 import useSectionObserver from '@/hooks/useSectionObserver';
 import { twMerge } from '@/lib/twMerge';
-import { NavItem } from '@components/ProgramDetailNavigation';
 import { useEffect, useState } from 'react';
 
 export const REPORT_INTRO_ID = 'report-intro';

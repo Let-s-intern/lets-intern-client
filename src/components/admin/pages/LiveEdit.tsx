@@ -16,7 +16,6 @@ import LivePrice, {
 import ProgramBestReview from '@/components/admin/program/ProgramBestReview';
 import ProgramBlogReviewEditor from '@/components/admin/program/ProgramBlogReviewEditor';
 import FaqSection from '@/components/FaqSection';
-import ProgramRecommendEditor from '@/components/ProgramRecommendEditor';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import { ProgramTypeEnum, UpdateLiveReq } from '@/schema';
@@ -27,6 +26,7 @@ import ImageUpload from '@components/admin/program/ui/form/ImageUpload';
 import Header from '@components/admin/ui/header/Header';
 import Heading from '@components/admin/ui/heading/Heading';
 import Heading2 from '@components/admin/ui/heading/Heading2';
+import ProgramRecommendEditor from '@components/common/ProgramRecommendEditor';
 import { Button, Checkbox, FormControlLabel } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';

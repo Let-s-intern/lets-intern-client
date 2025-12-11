@@ -9,7 +9,7 @@ import {
   ProgramRecommend,
 } from '@/types/interface';
 import MoreButtonSection from '@components/admin/ui/section/MoreButtonSection';
-import ProgramRecommendEditor from '@components/ProgramRecommendEditor';
+import ProgramRecommendEditor from '@components/common/ProgramRecommendEditor';
 import { Button } from '@mui/material';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
