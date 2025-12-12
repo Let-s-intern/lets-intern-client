@@ -53,8 +53,9 @@ const MissionSubmitBonusSection = ({
   });
 
   //  각 미션 생성 시 설정한 개별 마감일 그대로 적용
-  const isSubmitPeriodEnded =
-    missionData?.missionInfo?.endDate.isBefore(dayjs()) ?? true;
+  const isSubmitPeriodEnded = missionData?.missionInfo?.endDate
+    ? missionData.missionInfo.endDate.isBefore(dayjs())
+    : true; // endDate가 없으면 마감된 것으로 처리
 
   // 재제출 불가
   const isResubmitBlocked =
