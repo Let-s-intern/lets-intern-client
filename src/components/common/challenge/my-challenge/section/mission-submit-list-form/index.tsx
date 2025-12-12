@@ -12,7 +12,7 @@ interface MissionSubmitListFormProps {
   initialExperienceIds?: number[] | null;
   isSubmitted?: boolean;
   isEditing?: boolean;
-  missionTag?: string | null;
+  missionType?: string | null;
 }
 
 export const MissionSubmitListForm = ({
@@ -20,7 +20,7 @@ export const MissionSubmitListForm = ({
   initialExperienceIds,
   isSubmitted,
   isEditing,
-  missionTag,
+  missionType,
 }: MissionSubmitListFormProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedExperiences, setSelectedExperiences] = useState<
@@ -41,7 +41,7 @@ export const MissionSubmitListForm = ({
     !!initialExperienceIds && initialExperienceIds.length > 0,
   );
 
-  const level: ExperienceLevel = missionTag?.includes('LV1') ? 'LV1' : 'LV2';
+  const level: ExperienceLevel = missionType === 'EXPERIENCE_1' ? 'LV1' : 'LV2';
   // initialExperienceIds가 변경되면 초기 선택 상태 설정
   useEffect(() => {
     if (!initialExperienceIds || initialExperienceIds.length === 0) {

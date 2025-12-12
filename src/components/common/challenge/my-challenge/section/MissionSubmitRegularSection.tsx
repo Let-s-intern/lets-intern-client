@@ -88,9 +88,7 @@ const MissionSubmitRegularSection = ({
   const bonusMission = schedules.find(
     (item) => item.missionInfo.th === BONUS_MISSION_TH,
   );
-  const missionTag =
-    (currentSelectedMission?.missionInfo as { missionTag?: string | null })
-      ?.missionTag ?? null;
+  const missionType = currentSelectedMission?.missionInfo?.missionType ?? null;
 
   // attendanceInfo가 변경될 때마다 상태 업데이트 (다른 미션인 경우에만)
   useEffect(() => {
@@ -247,7 +245,7 @@ const MissionSubmitRegularSection = ({
             initialExperienceIds={attendanceInfo?.submittedUserExperienceIds}
             isSubmitted={isSubmitted}
             isEditing={isEditing}
-            missionTag={missionTag}
+            missionType={missionType}
           />
         )}
         {/* 미션 소감 */}
