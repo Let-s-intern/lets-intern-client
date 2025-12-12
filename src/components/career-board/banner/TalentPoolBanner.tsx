@@ -60,7 +60,7 @@ const TalentPoolBanner = ({ hasCareerData = false }: TalentPoolBannerProps) => {
   };
 
   const message = isEnabled
-    ? '인재풀에 등록되어 있어요. 채용 제안을 받아보세요!'
+    ? '인재풀 등록 완료! 채용 제안 받을 준비가 끝났습니다.'
     : '인재풀 등록하고 채용 제안을 받아보세요!';
 
   const subMessage = isEnabled
