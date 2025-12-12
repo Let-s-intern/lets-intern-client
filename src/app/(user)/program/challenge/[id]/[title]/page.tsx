@@ -56,15 +56,32 @@ const Page = async ({
 }: {
   params: Promise<{ id: string; title: string }>;
 }) => {
-  const { id } = await params;
+  const { id, title: _title } = await params;
 
   const [challenge] = await Promise.all([fetchChallengeData(id)]);
-  // TODO: params로 넘어온 title과 getProgramPathname 결과가 다르면 그쪽으로 리다이렉트 처리
 
   const isDeprecated = isDeprecatedProgram(challenge);
 
   if (isDeprecated) {
     redirect(`/program/old/challenge/${id}`);
+  }
+
+  // 올바른 경로 생성
+  const correctPathname = getProgramPathname({
+    id,
+    programType: 'challenge',
+    title: challenge.title,
+  });
+
+  // 슬러그 비교 및 리디렉션
+  const correctSlug = (challenge.title?.replace(/[ /]/g, '-') || '').toLowerCase();
+  let currentSlug = _title || '';
+  try {
+    currentSlug = decodeURIComponent(currentSlug);
+  } catch {}
+  currentSlug = currentSlug.toLowerCase();
+  if (currentSlug !== correctSlug) {
+    redirect(correctPathname);
   }
 
   return (

@@ -20,6 +20,7 @@ import HorizontalRule from '@components/ui/HorizontalRule';
 import { CircleChevronRight } from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { ReactNode } from 'react';
 
 const { CHALLENGE } = ProgramTypeEnum.enum;
@@ -60,7 +61,23 @@ const BlogDetailPage = async ({
   const { id, title: _title } = await params;
 
   const blog = await fetchBlogData(id);
-  // TODO: params로 넘어온 title과 getBlogTitle 결과가 다르면 그쪽으로 리다이렉트 처리
+
+  // 올바른 경로 생성
+  const correctPathname = getBlogPathname({
+    id,
+    title: blog.blogDetailInfo.title,
+  });
+
+  // 슬러그 비교 및 리디렉션
+  const correctSlug = (blog.blogDetailInfo.title?.replace(/[ /]/g, '-') || '').toLowerCase();
+  let currentSlug = _title || '';
+  try {
+    currentSlug = decodeURIComponent(currentSlug);
+  } catch {}
+  currentSlug = currentSlug.toLowerCase();
+  if (currentSlug !== correctSlug) {
+    redirect(correctPathname);
+  }
 
   const blogInfo = blog.blogDetailInfo;
   const contentJson: BlogContent = JSON.parse(

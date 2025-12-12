@@ -22,7 +22,6 @@ export async function generateMetadata({
     getBaseUrlFromServer() +
     getProgramPathname({ id, programType: 'live', title: program.title });
   const title = getLiveTitle(program);
-  // TODO: params로 넘어온 title과 getProgramPathname 결과가 다르면 그쪽으로 리다이렉트 처리
 
   return {
     title,
@@ -48,7 +47,7 @@ const Page = async ({
 }: {
   params: Promise<{ id: string; title: string }>;
 }) => {
-  const { id } = await params;
+  const { id, title: _title } = await params;
 
   const [live] = await Promise.all([fetchLiveData(id)]);
 
@@ -56,6 +55,24 @@ const Page = async ({
 
   if (isDeprecated) {
     redirect(`/program/old/live/${id}`);
+  }
+
+  // 올바른 경로 생성
+  const correctPathname = getProgramPathname({
+    id,
+    programType: 'live',
+    title: live.title,
+  });
+
+  // 슬러그 비교 및 리디렉션
+  const correctSlug = (live.title?.replace(/[ /]/g, '-') || '').toLowerCase();
+  let currentSlug = _title || '';
+  try {
+    currentSlug = decodeURIComponent(currentSlug);
+  } catch {}
+  currentSlug = currentSlug.toLowerCase();
+  if (currentSlug !== correctSlug) {
+    redirect(correctPathname);
   }
 
   return (
