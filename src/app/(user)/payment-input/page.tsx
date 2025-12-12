@@ -22,8 +22,9 @@ import UserInputSection from '@components/common/program/program-detail/apply/se
 import BackHeader from '@components/common/ui/BackHeader';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
 import { Duration } from '@components/Duration';
+import { COUPON_DISABLED_CHALLENGE_TYPES } from '@components/pages/payment-input/constants';
 import { AxiosError } from 'axios';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import OrderProgramInfo from '../../../components/OrderProgramInfo';
 
@@ -42,6 +43,7 @@ function calculateTotalPrice({
 
 const PaymentInputPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [allowNavigation, setAllowNavigation] = useState(false);
   const [nextPath, setNextPath] = useState('');
@@ -83,6 +85,21 @@ const PaymentInputPage = () => {
         (challengeBasicPriceInfo?.refund ?? 0) -
         (challengeBasicPriceInfo?.discount ?? 0)
       : Infinity;
+
+  /**
+   * 쿠폰 섹션 노출 여부
+   * @note 챌린지 타입이 EXPERIENCE_SUMMARY 또는 CAREER_START인 경우 쿠폰 미노출
+   *       단, URL 쿼리 파라미터에 source=b2b가 있으면 노출
+   */
+  const hasB2BParam = searchParams.get('source') === 'b2b';
+  const challengeType = (() => {
+    if (programApplicationData.programType !== 'challenge') return '';
+    if (!program || !('challengeType' in program)) return '';
+    return program.challengeType;
+  })();
+  const isCouponDisabledType =
+    COUPON_DISABLED_CHALLENGE_TYPES.includes(challengeType);
+  const showCouponSection = !isCouponDisabledType || hasB2BParam;
 
   const setUserInfo = useCallback((info: UserInfo) => {
     const { contactEmail, email, name, phoneNumber, question } = info;
@@ -282,11 +299,13 @@ const PaymentInputPage = () => {
         <div className="mx-5 mb-10 flex flex-col gap-y-6">
           <div className="font-semibold text-neutral-0">결제 정보</div>
           <div className="flex flex-col gap-y-5">
-            <CouponSection
-              setCoupon={setCoupon}
-              programType={programApplicationData.programType ?? 'live'}
-              maxAmount={maxCouponAmount}
-            />
+            {showCouponSection && (
+              <CouponSection
+                setCoupon={setCoupon}
+                programType={programApplicationData.programType ?? 'live'}
+                maxAmount={maxCouponAmount}
+              />
+            )}
 
             <hr className="bg-neutral-85" />
 
