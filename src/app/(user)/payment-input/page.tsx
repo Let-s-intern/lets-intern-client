@@ -25,7 +25,7 @@ import useProgramStore, {
 import { isValidEmail } from '@/utils/valid';
 import { AxiosError } from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import OrderProgramInfo from '../../../domain/program/OrderProgramInfo';
 
 function calculateTotalPrice({
@@ -41,7 +41,7 @@ function calculateTotalPrice({
   return regularPrice <= totalDiscount ? 0 : regularPrice - totalDiscount;
 }
 
-const PaymentInputPage = () => {
+const PaymentInputContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -386,6 +386,14 @@ const PaymentInputPage = () => {
         </button>
       </div>
     </div>
+  );
+};
+
+const PaymentInputPage = () => {
+  return (
+    <Suspense fallback={<LoadingContainer />}>
+      <PaymentInputContent />
+    </Suspense>
   );
 };
 
