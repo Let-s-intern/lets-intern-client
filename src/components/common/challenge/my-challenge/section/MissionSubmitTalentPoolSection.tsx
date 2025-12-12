@@ -46,10 +46,9 @@ const MissionSubmitTalentPoolSection = ({
     });
   const userDocumentInfos = missionData?.userDocumentInfos;
 
-  // 챌린지 종료 + 2일
+  //  각 미션 생성 시 설정한 개별 마감일 그대로 적용
   const isSubmitPeriodEnded =
-    dayjs(currentChallenge?.endDate).add(2, 'day').isBefore(dayjs()) ?? true;
-
+    missionData?.missionInfo?.endDate.isBefore(dayjs()) ?? true;
   const [showToast, setShowToast] = useState(false);
   const [isAgreed, setIsAgreed] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFiles>({
