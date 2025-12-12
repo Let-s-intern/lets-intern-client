@@ -47,8 +47,9 @@ const MissionSubmitTalentPoolSection = ({
   const userDocumentInfos = missionData?.userDocumentInfos;
 
   //  각 미션 생성 시 설정한 개별 마감일 그대로 적용
-  const isSubmitPeriodEnded =
-    missionData?.missionInfo?.endDate.isBefore(dayjs()) ?? true;
+  const isSubmitPeriodEnded = missionData?.missionInfo?.endDate
+    ? missionData.missionInfo.endDate.isBefore(dayjs())
+    : true; // endDate가 없으면 마감된 것으로 처리
   const [showToast, setShowToast] = useState(false);
   const [isAgreed, setIsAgreed] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFiles>({

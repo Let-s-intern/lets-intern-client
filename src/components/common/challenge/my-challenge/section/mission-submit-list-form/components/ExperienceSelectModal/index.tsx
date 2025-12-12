@@ -6,7 +6,6 @@ import BaseModal from '@/components/ui/BaseModal';
 import { useExperienceSelectModal } from '@/hooks/useExperienceSelectModal';
 import { getExperienceRowHeight } from '@/utils/experience';
 import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import { Dayjs } from 'dayjs';
 import { ExperienceData, getExperienceHeaders } from '../../data';
 import { ExperienceSelectModalFilters } from './components/ExperienceSelectModalFilters';
 import { ExperienceSelectModalHeader } from './components/ExperienceSelectModalHeader';
@@ -15,7 +14,6 @@ interface ExperienceSelectModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectComplete: (selectedExperiences: ExperienceData[]) => void;
-  missionStartDate?: Dayjs | null;
   initialSelectedExperienceIds?: number[];
 }
 
@@ -25,14 +23,12 @@ export const ExperienceSelectModal = ({
   isOpen,
   onClose,
   onSelectComplete,
-  missionStartDate,
   initialSelectedExperienceIds,
 }: ExperienceSelectModalProps) => {
   const { filters, pagination, data, selection, handleComplete } =
     useExperienceSelectModal({
       isOpen,
       pageSize: PAGE_SIZE,
-      missionStartDate,
       initialSelectedExperienceIds,
     });
 
