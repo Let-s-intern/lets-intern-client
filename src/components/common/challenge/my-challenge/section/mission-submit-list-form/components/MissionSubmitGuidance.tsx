@@ -9,12 +9,6 @@ export const MissionSubmitGuidance = () => {
           <li className="flex items-start">
             <span className="mr-2 text-neutral-10">-</span>
             <span>
-              미션 시작일 이후 작성하거나 수정한 경험만 제출할 수 있어요.
-            </span>
-          </li>
-          <li className="flex items-start">
-            <span className="mr-2 text-neutral-10">-</span>
-            <span>
               아직 경험을 작성하지 않았거나 삭제, 수정이 필요하다면,{' '}
               <a
                 href="/mypage/career/experience"
