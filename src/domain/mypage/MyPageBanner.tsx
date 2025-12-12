@@ -1,6 +1,7 @@
 'use client';
 
-import { MouseEvent, useMemo } from 'react';
+import { useMemo, useRef, useState } from 'react';
+import type { Swiper as SwiperType } from 'swiper';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
@@ -16,6 +17,9 @@ interface MyPageBannerProps {
 
 const MyPageBanner = ({ className }: MyPageBannerProps) => {
   const { data, isLoading } = useGetBannerListForUser({ type: 'MAIN' });
+  const [isPlay, setIsPlay] = useState(true);
+  const [currentIndex, setCurrentIndex] = useState(1);
+  const swiperRef = useRef<SwiperType | null>(null);
 
   // mobileImgUrl이 있는 배너만 필터링
   const bannerList = useMemo(() => {
@@ -23,14 +27,15 @@ const MyPageBanner = ({ className }: MyPageBannerProps) => {
     return data.bannerList.filter((banner) => banner.mobileImgUrl);
   }, [data]);
 
-  const handleClickBanner = (e: MouseEvent<HTMLAnchorElement>) => {
-    const target = e.target as HTMLElement;
-    if (
-      target.closest('.swiper-button-prev') ||
-      target.closest('.swiper-button-next')
-    ) {
-      e.preventDefault();
+  const handleTogglePlay = () => {
+    if (!swiperRef.current) return;
+
+    if (isPlay) {
+      swiperRef.current.autoplay.stop();
+    } else {
+      swiperRef.current.autoplay.start();
     }
+    setIsPlay(!isPlay);
   };
 
   if (isLoading || bannerList.length === 0) return null;
@@ -38,23 +43,20 @@ const MyPageBanner = ({ className }: MyPageBannerProps) => {
   const hasMultipleSlides = bannerList.length > 1;
 
   return (
-    <section className={className}>
+    <section className={`relative ${className}`}>
       <Swiper
+        onSwiper={(swiper) => {
+          swiperRef.current = swiper;
+        }}
+        onSlideChange={(swiper) => {
+          setCurrentIndex(swiper.realIndex + 1);
+        }}
         autoplay={hasMultipleSlides ? { delay: 2500 } : false}
         modules={[Pagination, Autoplay, Navigation]}
         loop={hasMultipleSlides}
         navigation={hasMultipleSlides}
-        pagination={{
-          type: 'fraction',
-          renderFraction: (currentClass, totalClass) =>
-            `<div class="flex items-center justify-end px-2">
-              <div class="flex w-fit items-center justify-center bg-white/20 px-2 py-0.5 rounded-full text-xxsmall10 md:text-xxsmall12 text-white">
-              <span class="${currentClass}"></span> / <span class="${totalClass}"></span>
-              </div>
-            </div>`,
-        }}
         slidesPerView={1}
-        className="aspect-[3.2/1] h-full w-full"
+        className="mypage-banner-swiper aspect-[3.2/1] h-full w-full"
       >
         {bannerList.map((banner) => (
           <SwiperSlide key={banner.id}>
@@ -69,7 +71,6 @@ const MyPageBanner = ({ className }: MyPageBannerProps) => {
                   : '_blank'
               }
               rel="noreferrer"
-              onClick={handleClickBanner}
             >
               <img
                 src={banner.mobileImgUrl || ''}
@@ -80,6 +81,20 @@ const MyPageBanner = ({ className }: MyPageBannerProps) => {
           </SwiperSlide>
         ))}
       </Swiper>
+      {hasMultipleSlides && (
+        <div className="absolute bottom-4 left-5 z-10 flex items-center gap-1.5">
+          <img
+            onClick={handleTogglePlay}
+            className="h-5 w-5 cursor-pointer"
+            src="/icons/play.svg"
+            alt="배너 페이지네이션 재생 아이콘"
+          />
+          <span className="text-0.75-medium md:text-0.875-medium text-white">
+            {String(currentIndex).padStart(2, '0')} /{' '}
+            {String(bannerList.length).padStart(2, '0')}
+          </span>
+        </div>
+      )}
     </section>
   );
 };
