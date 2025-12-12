@@ -5,8 +5,8 @@ import {
   useChallengeMissionFeedbackQuery,
 } from '@/api/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
-import LexicalContent from '@components/common/blog/LexicalContent';
-import { useRouter, useParams } from 'next/navigation';
+import LexicalContent from '@/domain/blog/ui/LexicalContent';
+import { useParams, useRouter } from 'next/navigation';
 
 export default function MissionFeedback() {
   const router = useRouter();

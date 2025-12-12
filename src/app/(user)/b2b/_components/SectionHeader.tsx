@@ -1,6 +1,6 @@
 'use client';
 
-import { Break } from '@/components/Break';
+import { Break } from '@/common/Break';
 import { twMerge } from '@/lib/twMerge';
 import { motion } from 'motion/react';
 

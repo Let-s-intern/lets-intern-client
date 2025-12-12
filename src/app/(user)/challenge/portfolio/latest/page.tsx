@@ -1,6 +1,6 @@
 'use client';
 
-import LoadingContainer from '@/components/common/ui/loading/LoadingContainer';
+import LoadingContainer from '@/common/ui/loading/LoadingContainer';
 import { useLatestChallengeRedirect } from '@/hooks/useLatestChallengeRedirect';
 import { challengeTypeSchema } from '@/schema';
 

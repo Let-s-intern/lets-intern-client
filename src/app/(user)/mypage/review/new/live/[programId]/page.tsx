@@ -3,16 +3,16 @@
 // TODO: 질문 enum으로 관리
 
 import { josa } from 'es-hangul';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
-import { useRouter, useParams, useSearchParams } from 'next/navigation';
 
 import { useGetLiveTitle } from '@/api/program';
 import { usePostReviewMutation } from '@/api/review';
-import ReviewInstruction from '@components/common/review/ReviewInstruction';
-import ReviewModal from '@components/common/review/ReviewModal';
-import ReviewQuestion from '@components/common/review/ReviewQuestion';
-import ReviewTextarea from '@components/common/review/ReviewTextarea';
-import TenScore from '@components/common/review/score/TenScore';
+import ReviewInstruction from '@/common/review/ReviewInstruction';
+import ReviewModal from '@/common/review/ReviewModal';
+import ReviewQuestion from '@/common/review/ReviewQuestion';
+import ReviewTextarea from '@/common/review/ReviewTextarea';
+import TenScore from '@/common/review/score/TenScore';
 
 const LiveReviewCreatePageContent = () => {
   const router = useRouter();

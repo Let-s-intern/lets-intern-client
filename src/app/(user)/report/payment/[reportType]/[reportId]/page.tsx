@@ -1,23 +1,23 @@
 'use client';
 
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
 
 import { useGetParticipationInfo } from '@/api/application';
 import { convertReportPriceType, useGetReportPriceDetail } from '@/api/report';
 import { usePatchUser } from '@/api/user';
-import Heading2 from '@/components/common/report/Heading2';
-import ProgramCard from '@/components/common/report/ProgramCard';
-import BottomSheet from '@/components/common/ui/BottomSheeet';
+import Heading2 from '@/common/report/Heading2';
+import Label from '@/common/report/Label';
+import ProgramCard from '@/common/report/ProgramCard';
+import BackHeader from '@/common/ui/BackHeader';
+import BottomSheet from '@/common/ui/BottomSheeet';
+import BaseButton from '@/common/ui/button/BaseButton';
+import Input from '@/common/ui/input/Input';
 import useReportPayment from '@/hooks/useReportPayment';
 import useReportProgramInfo from '@/hooks/useReportProgramInfo';
 import { generateOrderId } from '@/lib/order';
 import { twMerge } from '@/lib/twMerge';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
-import Label from '@components/common/report/Label';
-import BackHeader from '@components/common/ui/BackHeader';
-import BaseButton from '@components/common/ui/button/BaseButton';
-import Input from '@components/common/ui/input/Input';
 
 const ReportPaymentPage = () => {
   const router = useRouter();
@@ -30,9 +30,7 @@ const ReportPaymentPage = () => {
 
   return (
     <div className="mx-auto max-w-[55rem] px-5 md:pt-5 lg:px-0">
-      <BackHeader
-        to={`/report/apply/${reportType}/${reportId}`}
-      >
+      <BackHeader to={`/report/apply/${reportType}/${reportId}`}>
         결제하기
       </BackHeader>
       <main className="mb-8 flex flex-col gap-10">

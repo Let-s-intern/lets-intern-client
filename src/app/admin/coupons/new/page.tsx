@@ -1,5 +1,5 @@
 'use client';
 
-import CouponCreate from '@/components/admin/pages/coupon/CouponCreate';
+import CouponCreate from '@/domain/admin/pages/coupon/CouponCreate';
 
 export default CouponCreate;

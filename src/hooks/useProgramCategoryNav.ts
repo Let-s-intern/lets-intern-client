@@ -1,5 +1,5 @@
 import { useGetActiveChallenge } from '@/api/challenge';
-import { SubNavItemProps } from '@/components/common/ui/layout/header/SubNavItem';
+import { SubNavItemProps } from '@/common/ui/layout/header/SubNavItem';
 import { ActiveChallengeResponse, challengeTypeSchema } from '@/schema';
 import { useNavB2CChallenges } from './useFirstB2CChallenge';
 
@@ -39,10 +39,9 @@ export default function useProgramCategoryNav() {
   ): string | undefined => {
     // 1. 활성 챌린지가 있는 경우
     const activeId = activeData?.challengeList?.[0]?.id;
-    const activeTitle = activeData?.challengeList?.[0]?.title ?? '';
 
     if (activeId !== undefined) {
-      return `/program/challenge/${activeId}/${encodeURIComponent(activeTitle)}`;
+      return `/program/challenge/${activeId}`;
     }
 
     // 2. 활성 챌린지가 없는 경우, 첫 번째 B2C 챌린지 사용

@@ -1,7 +1,7 @@
-// @ts-nocheck
+import tailwindScrollbarHide from 'tailwind-scrollbar-hide';
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+const config = {
   content: [
     './{pages,renderer,layouts,components,src}/**/*.{html,js,jsx,ts,tsx,vue}',
   ],
@@ -227,5 +227,7 @@ module.exports = {
     },
   },
 
-  plugins: [require('tailwind-scrollbar-hide')],
+  plugins: [tailwindScrollbarHide],
 };
+
+export default config;

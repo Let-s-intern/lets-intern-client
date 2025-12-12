@@ -1,6 +1,15 @@
 import { fetchBlogData, fetchRecommendBlogData } from '@/api/blog';
 import { BlogContent, ProgramRecommendItem } from '@/api/blogSchema';
 import { fetchProgramRecommend } from '@/api/program';
+import HorizontalRule from '@/common/HorizontalRule';
+import MoreHeader from '@/common/ui/MoreHeader';
+import BlogKakaoShareBtn from '@/domain/blog/button/BlogKakaoShareBtn';
+import BlogLikeBtn from '@/domain/blog/button/BlogLikeBtn';
+import BlogLinkShareBtn from '@/domain/blog/button/BlogLilnkShareBtn';
+import BlogRecommendCard from '@/domain/blog/card/BlogRecommendCard';
+import ProgramRecommendCard from '@/domain/blog/card/ProgramRecommendCard';
+import BlogArticle from '@/domain/blog/ui/BlogArticle';
+import Heading2 from '@/domain/blog/ui/BlogHeading2';
 import { twMerge } from '@/lib/twMerge';
 import { ProgramStatusEnum, ProgramTypeEnum } from '@/schema';
 import {
@@ -8,18 +17,10 @@ import {
   getBlogPathname,
   getBlogTitle,
 } from '@/utils/url';
-import BlogArticle from '@components/common/blog/BlogArticle';
-import Heading2 from '@components/common/blog/BlogHeading2';
-import BlogKakaoShareBtn from '@components/common/blog/BlogKakaoShareBtn';
-import BlogLikeBtn from '@components/common/blog/BlogLikeBtn';
-import BlogLinkShareBtn from '@components/common/blog/BlogLilnkShareBtn';
-import BlogRecommendCard from '@components/common/blog/BlogRecommendCard';
-import ProgramRecommendCard from '@components/common/blog/ProgramRecommendCard';
-import MoreHeader from '@components/common/ui/MoreHeader';
-import HorizontalRule from '@components/ui/HorizontalRule';
 import { CircleChevronRight } from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { ReactNode } from 'react';
 
 const { CHALLENGE } = ProgramTypeEnum.enum;
@@ -55,11 +56,28 @@ export async function generateMetadata({
 const BlogDetailPage = async ({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string; title: string }>;
 }) => {
-  const { id } = await params;
+  const { id, title: _title } = await params;
 
   const blog = await fetchBlogData(id);
+
+  // 올바른 경로 생성
+  const correctPathname = getBlogPathname({
+    id,
+    title: blog.blogDetailInfo.title,
+  });
+
+  // 슬러그 비교 및 리디렉션
+  const correctSlug = (blog.blogDetailInfo.title?.replace(/[ /]/g, '-') || '').toLowerCase();
+  let currentSlug = _title || '';
+  try {
+    currentSlug = decodeURIComponent(currentSlug);
+  } catch {}
+  currentSlug = currentSlug.toLowerCase();
+  if (currentSlug !== correctSlug) {
+    redirect(correctPathname);
+  }
 
   const blogInfo = blog.blogDetailInfo;
   const contentJson: BlogContent = JSON.parse(

@@ -1,7 +1,7 @@
 import { fetchReport } from '@/api/report';
 import { portfolioReportDescription } from '@/data/description';
+import ReportPortfolioPage from '@/domain/report/ReportPortfolioPage';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
-import ReportPortfolioPage from '@components/page/ReportPortfolioPage';
 import { Metadata } from 'next';
 import { z } from 'zod';
 

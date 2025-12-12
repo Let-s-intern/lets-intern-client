@@ -1,7 +1,7 @@
 import {
   FULL_NAVBAR_HEIGHT_OFFSET,
   SINGLE_ROW_NAVBAR_HEIGHT_OFFSET,
-} from '@/components/common/ui/layout/header/NavBar';
+} from '@/common/ui/layout/header/NavBar';
 import useScrollDirection from '@/hooks/useScrollDirection';
 import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
 import { useMediaQuery } from '@mui/material';

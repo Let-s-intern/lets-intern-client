@@ -1,5 +1,5 @@
 'use client';
 
-import AdminBlogReviewListPage from '@/components/admin/pages/review/AdminBlogReviewListPage';
+import AdminBlogReviewListPage from '@/domain/admin/pages/review/AdminBlogReviewListPage';
 
 export default AdminBlogReviewListPage;

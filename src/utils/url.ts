@@ -47,7 +47,8 @@ export function getBlogPathname({
   id?: string | number | null;
   title?: string | null;
 }): string {
-  return `/blog/${id}/${encodeURIComponent(title?.replace(/[ /]/g, '-') || '')}`;
+  const slug = (title?.replace(/[ /]/g, '-') || '').toLowerCase();
+  return `/blog/${id}/${encodeURIComponent(slug)}`;
 }
 
 export function getProgramPathname({
@@ -59,7 +60,8 @@ export function getProgramPathname({
   title?: string | null;
   id?: string | number | null;
 }) {
-  return `/program/${programType}/${id}/${encodeURIComponent(title?.replace(/[ /]/g, '-') || '')}`;
+  const slug = (title?.replace(/[ /]/g, '-') || '').toLowerCase();
+  return `/program/${programType}/${id}/${encodeURIComponent(slug)}`;
 }
 
 export function getBlogTitle({

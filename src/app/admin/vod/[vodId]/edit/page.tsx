@@ -1,5 +1,5 @@
 'use client';
 
-import VodEdit from '@/components/admin/pages/VodEdit';
+import VodEdit from '@/domain/admin/pages/VodEdit';
 
 export default VodEdit;

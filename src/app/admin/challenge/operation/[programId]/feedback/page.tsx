@@ -1,5 +1,5 @@
 'use client';
 
-import ChallengeOperationFeedbackPage from '@/components/admin/pages/challenge/ChallengeOperationFeedbackPage';
+import ChallengeOperationFeedbackPage from '@/domain/admin/pages/challenge/ChallengeOperationFeedbackPage';
 
 export default ChallengeOperationFeedbackPage;

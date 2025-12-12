@@ -3,6 +3,17 @@
 import { useProgramQuery } from '@/api/program';
 import { usePatchUser } from '@/api/user';
 import CreditCardIcon from '@/assets/icons/credit-card.svg?react';
+import { Duration } from '@/common/Duration';
+import BackHeader from '@/common/ui/BackHeader';
+import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import CouponSection, {
+  CouponSectionProps,
+} from '@/domain/program/program-detail/apply/section/CouponSection';
+import MotiveAnswerSection from '@/domain/program/program-detail/apply/section/MotiveAnswerSection';
+import PriceSection from '@/domain/program/program-detail/apply/section/PriceSection';
+import UserInputSection from '@/domain/program/program-detail/apply/section/UserInputSection';
+import { COUPON_DISABLED_CHALLENGE_TYPES } from '@/domain/program/payment-input/constants';
+import OrderProgramInfo from '@/domain/program/OrderProgramInfo';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { UserInfo } from '@/lib/order';
 import { ChallengePriceInfo } from '@/schema';
@@ -13,20 +24,9 @@ import useProgramStore, {
   setProgramApplicationForm,
 } from '@/store/useProgramStore';
 import { isValidEmail } from '@/utils/valid';
-import CouponSection, {
-  CouponSectionProps,
-} from '@components/common/program/program-detail/apply/section/CouponSection';
-import MotiveAnswerSection from '@components/common/program/program-detail/apply/section/MotiveAnswerSection';
-import PriceSection from '@components/common/program/program-detail/apply/section/PriceSection';
-import UserInputSection from '@components/common/program/program-detail/apply/section/UserInputSection';
-import BackHeader from '@components/common/ui/BackHeader';
-import LoadingContainer from '@components/common/ui/loading/LoadingContainer';
-import { Duration } from '@components/Duration';
-import { COUPON_DISABLED_CHALLENGE_TYPES } from '@components/pages/payment-input/constants';
 import { AxiosError } from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
-import OrderProgramInfo from '../../../components/OrderProgramInfo';
 
 function calculateTotalPrice({
   regularPrice = 0,
