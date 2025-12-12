@@ -32,6 +32,7 @@ const ChallengeCTAButtons = ({
   const handleOpen = () => {
     if (!isLoggedIn) {
       router.push(
+        // eslint-disable-next-line no-restricted-globals
         `/login?redirect=${encodeURIComponent(`/program/challenge/${challengeId}`)}`,
       );
 

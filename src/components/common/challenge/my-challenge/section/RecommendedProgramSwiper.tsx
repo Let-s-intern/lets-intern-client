@@ -73,7 +73,7 @@ function RecommendedProgramSwiper({ programs }: Props) {
       >
         {programs.map((item) => {
           const info = item.programInfo;
-          const baseUrl = `/program/${info.programType.toLocaleLowerCase()}/${info.id}/${encodeURIComponent(info.title ?? '')}`;
+          const baseUrl = `/program/${info.programType.toLocaleLowerCase()}/${info.id}`;
           const url =
             info.programType === PROGRAM_TYPE.VOD && vodLinks[info.id]
               ? vodLinks[info.id]
