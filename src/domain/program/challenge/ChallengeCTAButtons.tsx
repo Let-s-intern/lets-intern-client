@@ -4,7 +4,7 @@ import { useProgramApplicationQuery } from '@/api/application';
 import dayjs from '@/lib/dayjs';
 import { ChallengeIdPrimitive } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { DesktopApplyCTA, MobileApplyCTA } from '../../../common/ApplyCTA';
 import PricePlanBottomSheet from '../PricePlanBottomSheet';
@@ -18,6 +18,7 @@ const ChallengeCTAButtons = ({
 }) => {
   const { isLoggedIn } = useAuthStore();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -31,10 +32,15 @@ const ChallengeCTAButtons = ({
 
   const handleOpen = () => {
     if (!isLoggedIn) {
-      router.push(
-        // eslint-disable-next-line no-restricted-globals
-        `/login?redirect=${encodeURIComponent(`/program/challenge/${challengeId}`)}`,
-      );
+      // 현재 URL의 전체 경로와 쿼리 파라미터를 포함하여 로그인 후 리다이렉트 URL 생성
+      // window.location.pathname을 사용해야 title이 포함된 전체 경로를 가져올 수 있음
+      const currentPath = window.location.pathname;
+      const currentSearch = searchParams.toString();
+      const redirectUrl = currentSearch
+        ? `${currentPath}?${currentSearch}`
+        : currentPath;
+
+      router.push(`/login?redirect=${encodeURIComponent(redirectUrl)}`);
 
       return;
     }

@@ -6,7 +6,7 @@ import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import { LiveIdPrimitive } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import useProgramStore from '@/store/useProgramStore';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
 import { DesktopApplyCTA, MobileApplyCTA } from '../../../../common/ApplyCTA';
 
@@ -19,6 +19,7 @@ const LiveCTAButtons = ({
 }) => {
   const { isLoggedIn } = useAuthStore();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { data: application } = useProgramApplicationQuery(
     'live',
     Number(liveId),
@@ -31,10 +32,15 @@ const LiveCTAButtons = ({
 
   const onApplyClick = useCallback(() => {
     if (!isLoggedIn) {
-      router.push(
-        // eslint-disable-next-line no-restricted-globals
-        `/login?redirect=${encodeURIComponent(`/program/live/${liveId}`)}`,
-      );
+      // 현재 URL의 전체 경로와 쿼리 파라미터를 포함하여 로그인 후 리다이렉트 URL 생성
+      // window.location.pathname을 사용해야 title이 포함된 전체 경로를 가져올 수 있음
+      const currentPath = window.location.pathname;
+      const currentSearch = searchParams.toString();
+      const redirectUrl = currentSearch
+        ? `${currentPath}?${currentSearch}`
+        : currentPath;
+
+      router.push(`/login?redirect=${encodeURIComponent(redirectUrl)}`);
       return;
     }
 
@@ -96,6 +102,7 @@ const LiveCTAButtons = ({
     live.title,
     liveId,
     router,
+    searchParams,
   ]);
 
   return (
