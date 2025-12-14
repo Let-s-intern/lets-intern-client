@@ -2,12 +2,12 @@ import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { DailyMission, Schedule } from '@/schema';
 import { useMissionStore } from '@/store/useMissionStore';
-import { BONUS_MISSION_TH } from '@/utils/constants';
+import { BONUS_MISSION_TH, TALENT_POOL_MISSION_TH } from '@/utils/constants';
 import { isAxiosError } from 'axios';
 import clsx from 'clsx';
-import { useCallback } from 'react';
 import Link from 'next/link';
-import { useRouter, useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import { useCallback } from 'react';
 
 const DailyMissionSection = ({
   dailyMission,
@@ -25,15 +25,22 @@ const DailyMissionSection = ({
   const missionTh =
     dailyMission?.th === BONUS_MISSION_TH
       ? '보너스 미션'
-      : `${dailyMission?.th}회차`;
+      : dailyMission?.th === TALENT_POOL_MISSION_TH
+        ? '인재풀 미션'
+        : `${dailyMission?.th}회차`;
 
   const missionName =
-    dailyMission?.th === BONUS_MISSION_TH ? '' : dailyMission?.title;
+    dailyMission?.th === BONUS_MISSION_TH ||
+    dailyMission?.th === TALENT_POOL_MISSION_TH
+      ? ''
+      : dailyMission?.title;
 
   const missionDescription =
     dailyMission?.th === BONUS_MISSION_TH
       ? '안녕하세요, 커리어의 첫걸음을 함께하는 렛츠커리어입니다!\n렛츠커리어의 챌린지 프로그램을 믿고 따라와주셔서 감사드리며, 1만원을 100% 지급해드리는 후기 이벤트를 안내드립니다!'
-      : dailyMission?.description;
+      : dailyMission?.th === TALENT_POOL_MISSION_TH
+        ? '안녕하세요, 렛츠커리어입니다.\n챌린지를 끝까지 함께해 주신 여러분께 특별한 기회를 드려요! 🎉\n렛츠커리어는 “한 번의 등록으로 여러 기업에게 채용 제안”을 받을 수 있는 인재풀 서비스를 운영하고 있습니다.\n\n챌린지 기간 동안 완성한 이력서 / 포트폴리오/자기소개서를 제출하시면, 렛츠커리어가 대신 인재풀에 등록해드려요.'
+        : dailyMission?.description;
 
   const targetSchedule = schedules.find(
     (schedule) => schedule.missionInfo.id === dailyMission?.id,
