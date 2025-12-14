@@ -7,7 +7,7 @@ import { LiveIdPrimitive } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import useProgramStore from '@/store/useProgramStore';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { DesktopApplyCTA, MobileApplyCTA } from '../../../../common/ApplyCTA';
 
 const LiveCTAButtons = ({
@@ -20,12 +20,19 @@ const LiveCTAButtons = ({
   const { isLoggedIn } = useAuthStore();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { data: application } = useProgramApplicationQuery(
+  const { data: application, refetch } = useProgramApplicationQuery(
     'live',
     Number(liveId),
   );
 
   const { setProgramApplicationForm } = useProgramStore();
+
+  // 로그인 상태 변경 시 application 데이터 refetch
+  useEffect(() => {
+    if (isLoggedIn) {
+      refetch();
+    }
+  }, [isLoggedIn, refetch]);
 
   /** 이미 신청했는지 체크하는 정보 */
   const isAlreadyApplied = application?.applied ?? false;
