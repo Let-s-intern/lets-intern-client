@@ -8,7 +8,7 @@ interface MissionHeaderSectionProps {
   deadline: string;
   selectedMissionTh: number;
   isSubmitted?: boolean;
-  missionStartDate?: Dayjs;
+  missionStartDate?: Dayjs | null;
 }
 
 const MissionHeaderSection = ({
@@ -32,7 +32,7 @@ const MissionHeaderSection = ({
 
       // 현재 연도 추가해서 파싱
       const currentYear = dayjs().year();
-      let deadlineDate: any;
+      let deadlineDate: Dayjs | null = null;
 
       if (deadlineText.includes('월') && deadlineText.includes('일')) {
         // "8월3일 22:44" 형태

@@ -24,7 +24,7 @@ const MissionGuideZeroSection = ({
   }
 
   // endDate를 월일 시간 형식으로 변환
-  const formatDeadline = (endDate?: Dayjs) => {
+  const formatDeadline = (endDate?: Dayjs | null) => {
     if (!endDate) return '99.99 99:99';
 
     return endDate.format('MM.DD HH:mm');
