@@ -27,5 +27,8 @@
       "text": "한국어(Korean)로 작성",
       "file": ".copilot-commit-message-instructions.md"
     }
-  ]
+  ],
+  "yaml.schemas": {
+    "https://www.artillery.io/schema.json": []
+  }
 }

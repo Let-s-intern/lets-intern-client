@@ -1,4 +1,4 @@
-import ConditionalLayout from '@/components/common/ui/layout/ConditionalLayout';
+import ConditionalLayout from '@/common/ui/layout/ConditionalLayout';
 import Providers from '@/context/Providers';
 import { Metadata } from 'next';
 import React from 'react';

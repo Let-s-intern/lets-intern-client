@@ -1,5 +1,5 @@
 'use client';
 
-import AdminReportCreatePage from '@/components/admin/pages/report/AdminReportCreatePage';
+import AdminReportCreatePage from '@/domain/admin/pages/report/AdminReportCreatePage';
 
 export default AdminReportCreatePage;

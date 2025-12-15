@@ -1,9 +1,9 @@
 'use client';
 
-import { Break } from '@components/Break';
+import { Break } from '@/common/Break';
 import { motion } from 'motion/react';
-import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
+import { useEffect, useRef, useState } from 'react';
 import { LOGO } from '../_images/logos';
 import SectionHeader from './SectionHeader';
 

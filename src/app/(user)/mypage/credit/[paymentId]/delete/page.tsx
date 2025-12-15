@@ -1,12 +1,12 @@
 'use client';
 
 import { useCancelApplicationMutation } from '@/api/application';
-import DescriptionBox from '@/components/common/program/paymentSuccess/DescriptionBox';
-import PaymentInfoRow from '@/components/common/program/paymentSuccess/PaymentInfoRow';
+import ReportCreditSubRow from '@/domain/mypage/credit/ReportCreditSubRow';
+import OrderProgramInfo from '@/domain/program/OrderProgramInfo';
+import DescriptionBox from '@/domain/program/paymentSuccess/DescriptionBox';
+import PaymentInfoRow from '@/domain/program/paymentSuccess/PaymentInfoRow';
 import useCredit from '@/hooks/useCredit';
 import dayjs from '@/lib/dayjs';
-import OrderProgramInfo from '@components/OrderProgramInfo';
-import ReportCreditSubRow from '@components/common/mypage/credit/ReportCreditSubRow';
 import { AxiosError } from 'axios';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';

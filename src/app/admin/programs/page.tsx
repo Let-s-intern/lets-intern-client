@@ -1,5 +1,5 @@
 'use client';
 
-import AdminPrograms from '@/components/admin/pages/program/Programs';
+import AdminPrograms from '@/domain/admin/pages/program/Programs';
 
 export default AdminPrograms;

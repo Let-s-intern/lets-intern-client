@@ -1,5 +1,5 @@
 'use client';
 
-import ChallengeOperationParticipants from '@/components/admin/pages/challenge/ChallengeOperationParticipants';
+import ChallengeOperationParticipants from '@/domain/admin/pages/challenge/ChallengeOperationParticipants';
 
 export default ChallengeOperationParticipants;

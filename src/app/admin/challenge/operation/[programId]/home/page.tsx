@@ -1,5 +1,5 @@
 'use client';
 
-import ChallengeOperationHome from '@/components/admin/pages/challenge/ChallengeOperationHome';
+import ChallengeOperationHome from '@/domain/admin/pages/challenge/ChallengeOperationHome';
 
 export default ChallengeOperationHome;

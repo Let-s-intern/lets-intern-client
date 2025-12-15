@@ -1,5 +1,5 @@
 'use client';
 
-import AdminReportEditPage from '@/components/admin/pages/report/AdminReportEditPage';
+import AdminReportEditPage from '@/domain/admin/pages/report/AdminReportEditPage';
 
 export default AdminReportEditPage;

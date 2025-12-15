@@ -4,7 +4,7 @@ import {
   ExperienceFiltersRes,
   UserExperienceType,
 } from '@/api/experienceSchema';
-import { Filters } from '@components/common/mypage/experience/ExperienceFilters';
+import { Filters } from '@/domain/mypage/experience/ExperienceFilters';
 
 /**
  * ✅ API 응답 데이터를 UI 드롭다운 옵션 형식으로 변환

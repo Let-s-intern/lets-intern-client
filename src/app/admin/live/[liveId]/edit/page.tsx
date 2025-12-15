@@ -1,5 +1,5 @@
 'use client';
 
-import LiveEdit from '@/components/admin/pages/LiveEdit';
+import LiveEdit from '@/domain/admin/pages/LiveEdit';
 
 export default LiveEdit;

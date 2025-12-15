@@ -1,5 +1,5 @@
 'use client';
 
-import ChallengeEdit from '@/components/admin/pages/ChallengeEdit';
+import ChallengeEdit from '@/domain/admin/pages/ChallengeEdit';
 
 export default ChallengeEdit;

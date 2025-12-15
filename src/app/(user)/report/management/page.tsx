@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-import ReportManagementPage from '@/components/pages/report/ReportManagementPage';
+import ReportManagementPage from '@/domain/report/ReportManagementPage';
 
 const ReportManagementPageWithSuspense = () => (
   <Suspense fallback={null}>

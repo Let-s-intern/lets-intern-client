@@ -1,5 +1,5 @@
 'use client';
 
-import BottomBanners from '@/components/admin/pages/home/bottom-banner/BottomBanners';
+import BottomBanners from '@/domain/admin/pages/home/bottom-banner/BottomBanners';
 
 export default BottomBanners;
