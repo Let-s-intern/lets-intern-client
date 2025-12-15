@@ -2,7 +2,6 @@ import {
   useSearchUserExperiencesQuery,
   useUserExperienceFiltersQuery,
 } from '@/api/userExperience';
-import { UserExperience } from '@/api/userExperienceSchema';
 import {
   convertUserExperienceToExperienceData,
   ExperienceData,
@@ -10,8 +9,6 @@ import {
   labelToActivityType,
   labelToExperienceCategory,
 } from '@/common/challenge/my-challenge/section/mission-submit-list-form/data';
-import dayjs from '@/lib/dayjs';
-import { Dayjs } from 'dayjs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 interface Filters {
@@ -24,7 +21,6 @@ interface Filters {
 interface UseExperienceSelectModalOptions {
   isOpen: boolean;
   pageSize?: number;
-  missionStartDate?: Dayjs | null;
   initialSelectedExperienceIds?: number[];
 }
 
@@ -67,7 +63,6 @@ const DEFAULT_PAGE_SIZE = 5;
 export const useExperienceSelectModal = ({
   isOpen,
   pageSize = DEFAULT_PAGE_SIZE,
-  missionStartDate,
   initialSelectedExperienceIds,
 }: UseExperienceSelectModalOptions): UseExperienceSelectModalReturn => {
   const [filters, setFilters] = useState<Filters>(INITIAL_FILTERS);
@@ -128,52 +123,18 @@ export const useExperienceSelectModal = ({
     isOpen,
   );
 
-  // 필터링 로직: 미션 시작일 이후 추가/수정된 경험만 표시
-  const shouldIncludeExperience = (
-    exp: UserExperience,
-    missionStart: Dayjs | null,
-  ): boolean => {
-    // missionStartDate가 없으면 필터링하지 않음
-    if (!missionStart) return true;
-
-    // 운영자 추가 경험 제외
-    if (exp.isAddedByAdmin) return false;
-
-    // 미션 시작일 이후 추가/수정 확인 (시작일 포함)
-    const createDate = dayjs(exp.createDate).startOf('day');
-    const lastModifiedDate = dayjs(exp.lastModifiedDate).startOf('day');
-    const missionStartDay = missionStart.startOf('day');
-
-    const isCreatedAfterMissionStart = !createDate.isBefore(
-      missionStartDay,
-      'day',
-    );
-    const isModifiedAfterMissionStart = !lastModifiedDate.isBefore(
-      missionStartDay,
-      'day',
-    );
-
-    // 미션 시작일 이전에 추가되고 수정되지 않은 경험 제외
-    if (!isCreatedAfterMissionStart && !isModifiedAfterMissionStart) {
-      return false;
-    }
-
-    // 경험정리 필드 모두 채운 경험만
-    return isUserExperienceComplete(exp);
-  };
-
   // 필터링된 모든 경험 데이터 (클라이언트 필터링 적용)
   const allFilteredExperiences = useMemo(() => {
     if (!allSearchResponse?.userExperiences) {
       return [];
     }
 
-    const filtered = allSearchResponse.userExperiences.filter((exp) =>
-      shouldIncludeExperience(exp, missionStartDate || null),
+    const filtered = allSearchResponse.userExperiences.filter(
+      isUserExperienceComplete,
     );
 
     return filtered.map(convertUserExperienceToExperienceData);
-  }, [allSearchResponse, missionStartDate]);
+  }, [allSearchResponse]);
 
   // 필터링된 결과를 페이지네이션하여 현재 페이지의 데이터만 추출
   const experiences = useMemo(() => {

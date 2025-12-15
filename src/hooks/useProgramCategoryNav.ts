@@ -5,6 +5,7 @@ import { useNavB2CChallenges } from './useFirstB2CChallenge';
 
 const {
   EXPERIENCE_SUMMARY,
+  CAREER_START,
   PERSONAL_STATEMENT,
   PERSONAL_STATEMENT_LARGE_CORP,
   PORTFOLIO,
@@ -21,10 +22,11 @@ export default function useProgramCategoryNav() {
   const { data: activePortfolio } = useGetActiveChallenge(PORTFOLIO);
   const { data: activeExperienceSummary } =
     useGetActiveChallenge(EXPERIENCE_SUMMARY);
-
+  const { data: activeResume } = useGetActiveChallenge(CAREER_START);
   // 새로운 훅을 사용하여 각 타입별 첫 번째 B2C 챌린지 가져오기
   const {
     experienceSummary,
+    resume,
     personalStatement,
     personalStatementLargeCorp,
     portfolio,
@@ -37,10 +39,9 @@ export default function useProgramCategoryNav() {
   ): string | undefined => {
     // 1. 활성 챌린지가 있는 경우
     const activeId = activeData?.challengeList?.[0]?.id;
-    const activeTitle = activeData?.challengeList?.[0]?.title ?? '';
 
     if (activeId !== undefined) {
-      return `/program/challenge/${activeId}/${encodeURIComponent(activeTitle)}`;
+      return `/program/challenge/${activeId}`;
     }
 
     // 2. 활성 챌린지가 없는 경우, 첫 번째 B2C 챌린지 사용
@@ -55,6 +56,10 @@ export default function useProgramCategoryNav() {
     {
       children: '경험정리 챌린지',
       href: getProgramHref(activeExperienceSummary, experienceSummary),
+    },
+    {
+      children: '이력서 완성 챌린지',
+      href: getProgramHref(activeResume, resume),
     },
     {
       children: '자기소개서 완성 챌린지',

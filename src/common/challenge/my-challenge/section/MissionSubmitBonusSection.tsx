@@ -1,4 +1,5 @@
 import { usePatchAttendance } from '@/api/attendance';
+import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
 import { useSubmitMissionBlogBonus } from '@/api/mission';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
@@ -45,10 +46,16 @@ const MissionSubmitBonusSection = ({
   attendanceInfo,
 }: MissionSubmitBonusSectionProps) => {
   const { currentChallenge, refetchSchedules } = useCurrentChallenge();
+  const { data: missionData } = useChallengeMissionAttendanceInfoQuery({
+    challengeId: currentChallenge?.id,
+    missionId,
+    enabled: !!currentChallenge?.id && !!missionId,
+  });
 
-  // 챌린지 종료 + 2일
-  const isSubmitPeriodEnded =
-    dayjs(currentChallenge?.endDate).add(2, 'day').isBefore(dayjs()) ?? true;
+  //  각 미션 생성 시 설정한 개별 마감일 그대로 적용
+  const isSubmitPeriodEnded = missionData?.missionInfo?.endDate
+    ? missionData.missionInfo.endDate.isBefore(dayjs())
+    : true; // endDate가 없으면 마감된 것으로 처리
 
   // 재제출 불가
   const isResubmitBlocked =

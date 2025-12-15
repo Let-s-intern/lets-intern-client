@@ -227,7 +227,7 @@ function BlogList({
                 href={
                   willBePublished(blogThumbnailInfo.displayDate ?? '')
                     ? 'https://forms.gle/HshjtnqqXWPQJ5DH6'
-                    : `/blog/${blogThumbnailInfo.id}/${encodeURIComponent(blogThumbnailInfo.title ?? '')}`
+                    : `/blog/${blogThumbnailInfo.id}`
                 }
                 key={`blog-${blogThumbnailInfo.id}`}
                 data-url={`/blog/${blogThumbnailInfo.id}`}

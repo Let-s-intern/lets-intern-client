@@ -87,6 +87,7 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
       >
         {/* 1단 */}
         <GlobalNavTopBar
+          // eslint-disable-next-line no-restricted-globals
           loginRedirect={encodeURIComponent(pathname)}
           toggleMenu={toggleMenu}
           isLoginPage={isLoginPage}

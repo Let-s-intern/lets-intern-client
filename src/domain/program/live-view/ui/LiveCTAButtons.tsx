@@ -32,6 +32,7 @@ const LiveCTAButtons = ({
   const onApplyClick = useCallback(() => {
     if (!isLoggedIn) {
       router.push(
+        // eslint-disable-next-line no-restricted-globals
         `/login?redirect=${encodeURIComponent(`/program/live/${liveId}`)}`,
       );
       return;

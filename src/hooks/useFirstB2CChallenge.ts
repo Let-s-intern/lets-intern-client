@@ -9,6 +9,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 const {
   EXPERIENCE_SUMMARY,
+  CAREER_START,
   PERSONAL_STATEMENT,
   PERSONAL_STATEMENT_LARGE_CORP,
   PORTFOLIO,
@@ -60,7 +61,7 @@ export function useFirstB2CChallenge(type: ChallengeType) {
             setFirstB2CChallenge({
               id: challenge.id,
               title: challenge.title ?? null,
-              href: `/program/challenge/${challenge.id}/${encodeURIComponent(challenge.title ?? '')}`,
+              href: `/program/challenge/${challenge.id}`,
             });
             return; // 첫 번째 B2C를 찾으면 중단
           }
@@ -85,6 +86,7 @@ export function useFirstB2CChallenge(type: ChallengeType) {
  */
 export function useIntroSectionB2CChallenges() {
   const experienceSummary = useFirstB2CChallenge(EXPERIENCE_SUMMARY);
+  const resume = useFirstB2CChallenge(CAREER_START);
   const personalStatement = useFirstB2CChallenge(PERSONAL_STATEMENT);
   const personalStatementLargeCorp = useFirstB2CChallenge(
     PERSONAL_STATEMENT_LARGE_CORP,
@@ -93,6 +95,7 @@ export function useIntroSectionB2CChallenges() {
 
   return {
     experienceSummary,
+    resume,
     personalStatement,
     personalStatementLargeCorp,
     portfolio,
@@ -105,6 +108,7 @@ export function useIntroSectionB2CChallenges() {
  */
 export function useNavB2CChallenges() {
   const experienceSummary = useFirstB2CChallenge(EXPERIENCE_SUMMARY);
+  const resume = useFirstB2CChallenge(CAREER_START);
   const personalStatement = useFirstB2CChallenge(PERSONAL_STATEMENT);
   const personalStatementLargeCorp = useFirstB2CChallenge(
     PERSONAL_STATEMENT_LARGE_CORP,
@@ -114,6 +118,7 @@ export function useNavB2CChallenges() {
 
   return {
     experienceSummary,
+    resume,
     personalStatement,
     personalStatementLargeCorp,
     portfolio,

@@ -1232,8 +1232,12 @@ export const userChallengeMissionDetail = z
     return {
       missionInfo: {
         ...data.missionInfo,
-        startDate: dayjs(data.missionInfo.startDate),
-        endDate: dayjs(data.missionInfo.endDate),
+        startDate: data.missionInfo.startDate
+          ? dayjs(data.missionInfo.startDate)
+          : null,
+        endDate: data.missionInfo.endDate
+          ? dayjs(data.missionInfo.endDate)
+          : null,
       },
     };
   });
@@ -1304,8 +1308,12 @@ export const userChallengeMissionWithAttendance = z
     return {
       missionInfo: {
         ...data.missionInfo,
-        startDate: dayjs(data.missionInfo.startDate),
-        endDate: dayjs(data.missionInfo.endDate),
+        startDate: data.missionInfo.startDate
+          ? dayjs(data.missionInfo.startDate)
+          : null,
+        endDate: data.missionInfo.endDate
+          ? dayjs(data.missionInfo.endDate)
+          : null,
       },
       attendanceInfo: data.attendanceInfo,
       userDocumentInfos: data.userDocumentInfos,
