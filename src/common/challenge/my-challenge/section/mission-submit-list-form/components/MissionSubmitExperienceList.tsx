@@ -1,0 +1,119 @@
+import { useSearchUserExperiencesQuery } from '@/api/userExperience';
+import { If } from '@/common/If';
+import { useMemo } from 'react';
+import { ExperienceData, isUserExperienceComplete } from '../data';
+import { EmptyState } from './EmptyState';
+import { ExperienceList } from './ExperienceList';
+
+type ExperienceLevel = 'LV1' | 'LV2';
+
+interface MissionSubmitExperienceListProps {
+  selectedExperiences: ExperienceData[];
+  onOpenModal: () => void;
+  onDeleteExperience?: (experienceId: number) => void;
+  level: ExperienceLevel;
+  isSubmitted?: boolean;
+  isEditing?: boolean;
+}
+
+export const MissionSubmitExperienceList = ({
+  selectedExperiences,
+  onOpenModal,
+  onDeleteExperience,
+  level,
+  isSubmitted,
+  isEditing,
+}: MissionSubmitExperienceListProps) => {
+  const { data } = useSearchUserExperiencesQuery({
+    experienceCategories: [],
+    activityTypes: [],
+    years: [],
+    coreCompetencies: [],
+    sortType: 'LATEST' as const,
+    page: 1,
+    size: 100,
+  });
+  // 제출 가능한 경험 필터링: 모든 레벨 동일하게 경험정리 필드가 모두 채워진 경험만
+  const submitableExperiences = useMemo(() => {
+    if (!data?.userExperiences) return [];
+
+    return data.userExperiences.filter(isUserExperienceComplete);
+  }, [data]);
+
+  const experienceCount = submitableExperiences.length;
+
+  // 버튼 비활성화 조건:
+  // 1. 제출 가능한 경험 수가 3개 미만이면 disabled
+  // 2. 제출되어 있고 수정 모드가 아니면 disabled
+  // 3. 그 외 (경험 수 3개 이상이고, (제출 안 됨 OR 수정 모드임)) → enabled
+  // 선택된 경험 수는 제출 시점에 체크하므로 여기서는 체크하지 않음
+  const isButtonDisabled =
+    experienceCount < 3 || (isSubmitted === true && isEditing !== true);
+
+  // EmptyState 텍스트 결정
+  const getEmptyStateText = () => {
+    if (experienceCount === 0) {
+      if (level === 'LV1') {
+        return '작성된 경험이 없습니다.\n미션을 제출하려면 최소 3개의 경험이 필요해요.';
+      }
+      return '제출 가능한 경험이 없습니다.\n새로운 경험을 추가하거나 기존 경험을 수정해주세요.';
+    }
+
+    if (experienceCount > 0 && experienceCount < 3) {
+      if (level === 'LV1') {
+        return '제출 가능한 경험이 3개 미만입니다.\n미션을 제출하려면 최소 3개의 경험이 필요해요.';
+      }
+      return '제출 가능한 경험이 3개 미만입니다.\n새로운 경험을 추가하거나 기존 경험을 수정해주세요.';
+    }
+
+    return null;
+  };
+
+  const emptyStateText = getEmptyStateText();
+
+  const handleExperienceWriteClick = () => {
+    window.open('/mypage/career/experience', '_blank');
+  };
+
+  return (
+    <section>
+      <div className="mb-3 flex items-center justify-between">
+        <h3 className="text-small18 font-semibold text-neutral-0">
+          제출할 경험 목록
+        </h3>
+        <button
+          type="button"
+          onClick={onOpenModal}
+          disabled={isButtonDisabled}
+          className={`rounded-xxs border border-neutral-80 bg-white px-3 py-2 text-xsmall14 font-medium hover:bg-neutral-100 disabled:cursor-not-allowed ${
+            isButtonDisabled ? 'text-neutral-50' : 'text-primary'
+          }`}
+        >
+          작성한 경험 불러오기
+        </button>
+      </div>
+
+      {/* 작성된 경험 불러오는 컴포넌트 */}
+      <div className="flex min-h-[200px] items-center justify-center rounded-xxs border border-neutral-80 bg-white">
+        <div className="flex w-full flex-col items-center justify-center space-y-4">
+          <If condition={emptyStateText !== null}>
+            <EmptyState
+              text={emptyStateText ?? ''}
+              buttonText="경험 작성하기"
+              onButtonClick={handleExperienceWriteClick}
+            />
+          </If>
+
+          <If condition={experienceCount >= 3}>
+            <ExperienceList
+              experiences={selectedExperiences}
+              onDeleteExperience={onDeleteExperience}
+              isSubmitted={isSubmitted}
+              isEditing={isEditing}
+            />
+          </If>
+        </div>
+      </div>
+    </section>
+  );
+};

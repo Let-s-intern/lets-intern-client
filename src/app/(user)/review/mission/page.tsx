@@ -1,4 +1,4 @@
-import MissionReview from '@components/common/review/missionReview/MissionReview';
+import MissionReview from '@/common/review/missionReview/MissionReview';
 import { Suspense } from 'react';
 
 const Page = () => {

@@ -1,6 +1,15 @@
 import { fetchBlogData, fetchRecommendBlogData } from '@/api/blog';
 import { BlogContent, ProgramRecommendItem } from '@/api/blogSchema';
 import { fetchProgramRecommend } from '@/api/program';
+import HorizontalRule from '@/common/HorizontalRule';
+import MoreHeader from '@/common/ui/MoreHeader';
+import BlogKakaoShareBtn from '@/domain/blog/button/BlogKakaoShareBtn';
+import BlogLikeBtn from '@/domain/blog/button/BlogLikeBtn';
+import BlogLinkShareBtn from '@/domain/blog/button/BlogLilnkShareBtn';
+import BlogRecommendCard from '@/domain/blog/card/BlogRecommendCard';
+import ProgramRecommendCard from '@/domain/blog/card/ProgramRecommendCard';
+import BlogArticle from '@/domain/blog/ui/BlogArticle';
+import Heading2 from '@/domain/blog/ui/BlogHeading2';
 import { twMerge } from '@/lib/twMerge';
 import { ProgramStatusEnum, ProgramTypeEnum } from '@/schema';
 import {
@@ -8,15 +17,6 @@ import {
   getBlogPathname,
   getBlogTitle,
 } from '@/utils/url';
-import BlogArticle from '@components/common/blog/BlogArticle';
-import Heading2 from '@components/common/blog/BlogHeading2';
-import BlogKakaoShareBtn from '@components/common/blog/BlogKakaoShareBtn';
-import BlogLikeBtn from '@components/common/blog/BlogLikeBtn';
-import BlogLinkShareBtn from '@components/common/blog/BlogLilnkShareBtn';
-import BlogRecommendCard from '@components/common/blog/BlogRecommendCard';
-import ProgramRecommendCard from '@components/common/blog/ProgramRecommendCard';
-import MoreHeader from '@components/common/ui/MoreHeader';
-import HorizontalRule from '@components/ui/HorizontalRule';
 import { CircleChevronRight } from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';

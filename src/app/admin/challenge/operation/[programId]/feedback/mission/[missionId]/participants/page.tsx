@@ -1,5 +1,5 @@
 'use client';
 
-import FeedbackParticipantPage from '@/components/admin/pages/challenge/FeedbackParticipantPage';
+import FeedbackParticipantPage from '@/domain/admin/pages/challenge/FeedbackParticipantPage';
 
 export default FeedbackParticipantPage;

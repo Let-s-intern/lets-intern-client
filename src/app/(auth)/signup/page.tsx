@@ -2,7 +2,7 @@
 
 import { Suspense } from 'react';
 
-import SignupPage from '@/components/pages/auth/SignupPage';
+import SignupPage from '@/domain/auth/SignupPage';
 
 const SignupPageWithSuspense = () => (
   <Suspense fallback={null}>

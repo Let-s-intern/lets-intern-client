@@ -1,7 +1,7 @@
 import { fetchReport } from '@/api/report';
 import { resumeReportDescription } from '@/data/description';
+import ReportResumePage from '@/domain/report/ReportResumePage';
 import { getBaseUrlFromServer, getReportLandingTitle } from '@/utils/url';
-import ReportResumePage from '@components/page/ReportResumePage';
 import { Metadata } from 'next';
 
 // SSR 메타데이터 생성

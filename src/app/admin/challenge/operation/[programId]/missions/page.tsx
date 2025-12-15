@@ -1,5 +1,5 @@
 'use client';
 
-import ChallengeMissionManagement from '@/components/admin/pages/challenge/ChallengeMissionManagement';
+import ChallengeMissionManagement from '@/domain/admin/pages/challenge/ChallengeMissionManagement';
 
 export default ChallengeMissionManagement;

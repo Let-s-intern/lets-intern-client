@@ -2,11 +2,11 @@
 
 import { twMerge } from '@/lib/twMerge';
 import { isAxiosError } from 'axios';
-import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
 
-import Button from '../../../components/common/ui/button/Button';
-import Input from '../../../components/ui/input/Input';
+import Input from '../../../common/input/Input';
+import Button from '../../../common/ui/button/Button';
 import useAuthStore from '../../../store/useAuthStore';
 import axios from '../../../utils/axios';
 

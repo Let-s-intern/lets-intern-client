@@ -1,5 +1,5 @@
 'use client';
 
-import BlogEditPage from '@/components/admin/pages/blog/BlogEditPage';
+import BlogEditPage from '@/domain/admin/pages/blog/BlogEditPage';
 
 export default BlogEditPage;

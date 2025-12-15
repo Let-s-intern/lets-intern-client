@@ -1,5 +1,5 @@
 'use client';
 
-import PopUpBannerCreate from '@/components/admin/pages/banner/pop-up-banner/PopUpBannerCreate';
+import PopUpBannerCreate from '@/domain/admin/pages/banner/pop-up-banner/PopUpBannerCreate';
 
 export default PopUpBannerCreate;
