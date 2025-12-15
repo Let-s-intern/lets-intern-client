@@ -34,14 +34,13 @@ export const userAdminType = z.object({
         wishIndustry: z.string().nullable(),
         wishEmploymentType: z.string().nullable(),
         phoneNum: z.string(),
-        createdDate: z.string().optional(),
         accountType: accountType.nullable().optional(),
         accountNum: z.string().nullable().optional(),
         marketingAgree: z.boolean().nullable(),
         memo: z.string().nullable().optional(),
         isMentor: z.boolean().nullable().optional(),
         isPoolUp: z.boolean().nullable().optional(),
-        createDate: z.string().optional().nullable(),
+        createDate: z.string().nullable().optional(),
       }),
       applicationInfos: z.array(
         z.object({
