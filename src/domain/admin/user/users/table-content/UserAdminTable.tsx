@@ -1,6 +1,7 @@
 import { DocumentType } from '@/api/missionSchema';
 import { usePatchUserAdminMutation } from '@/api/user';
 import { UserAdmin } from '@/api/userSchema';
+import dayjs from '@/lib/dayjs';
 import { getFileNameFromUrl } from '@/utils/getFileNameFromUrl';
 import { Button, MenuItem, Select, TextField } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
@@ -252,6 +253,15 @@ const UserAdminTable = ({
       ),
     },
     {
+      field: 'createDate',
+      headerName: '가입일자',
+      width: 180,
+      renderCell: (params: GridRenderCellParams) => {
+        if (!params.value) return '-';
+        return dayjs(params.value).format('YYYY-MM-DD HH:mm:ss');
+      },
+    },
+    {
       field: 'name',
       headerName: '사용자 명',
       width: 120,
@@ -387,6 +397,7 @@ const UserAdminTable = ({
   const rows = userList.map((user) => ({
     id: user.userInfo.id,
     careerType: user.userInfo.careerType,
+    createDate: user.userInfo.createDate,
     name: user.userInfo.name,
     phoneNum: user.userInfo.phoneNum,
     email: user.userInfo.email,
