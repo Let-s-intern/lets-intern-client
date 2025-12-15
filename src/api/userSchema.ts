@@ -41,6 +41,7 @@ export const userAdminType = z.object({
         memo: z.string().nullable().optional(),
         isMentor: z.boolean().nullable().optional(),
         isPoolUp: z.boolean().nullable().optional(),
+        createDate: z.string().optional().nullable(),
       }),
       applicationInfos: z.array(
         z.object({

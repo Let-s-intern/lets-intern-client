@@ -11,6 +11,7 @@ const AdminUsersPage = () => {
   const [pageNum, setPageNum] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
   const [searchValues, setSearchValues] = useState<{
+    createDate: string;
     name: string;
     email: string;
     phoneNum: string;
@@ -24,6 +25,7 @@ const AdminUsersPage = () => {
     job: string;
     memo: string;
   }>({
+    createDate: '',
     name: '',
     email: '',
     phoneNum: '',
