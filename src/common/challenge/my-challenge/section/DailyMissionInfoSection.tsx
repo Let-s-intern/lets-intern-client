@@ -138,9 +138,11 @@ const DailyMissionInfoSection = ({ missionDetail }: Props) => {
     <>
       <div className="flex items-end gap-2">
         <h3 className="text-small20 font-bold">{missionTitle}</h3>
-        <span className="text-xsmall16 font-medium text-primary">
-          마감 {missionDetail.endDate.format('MM/DD(ddd) HH:mm')}까지
-        </span>
+        {missionDetail.endDate && (
+          <span className="text-xsmall16 font-medium text-primary">
+            마감 {missionDetail.endDate.format('MM/DD(ddd) HH:mm')}까지
+          </span>
+        )}
       </div>
       {isBonusMission ? (
         <BonusMissionInfo />
