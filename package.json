@@ -25,6 +25,7 @@
     "@mui/material": "^6.4.0",
     "@mui/x-data-grid": "^7.24.0",
     "@mui/x-date-pickers": "^7.24.0",
+    "@sentry/nextjs": "^10.19.0",
     "@svgr/webpack": "^8.1.0",
     "@tanstack/react-query": "^5.49.2",
     "@tanstack/react-query-devtools": "^5.49.2",
@@ -69,8 +70,10 @@
     "zustand": "^4.5.4"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
+    "dev:sentry": "next dev",
     "build": "next build",
+    "build:sentry": "node --max-old-space-size=4096 ./node_modules/.bin/next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
