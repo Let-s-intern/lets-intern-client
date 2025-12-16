@@ -28,3 +28,4 @@ jobs:
         run: npm run build
         env:
           NEXT_PUBLIC_SERVER_API: ${{ secrets.NEXT_PUBLIC_SERVER_API || 'https://api.example.com' }}
+          NEXT_PUBLIC_API_BASE_PATH: ${{ secrets.NEXT_PUBLIC_API_BASE_PATH || '/api' }}
