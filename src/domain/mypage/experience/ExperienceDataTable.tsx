@@ -1,5 +1,6 @@
 import { useGetAllUserExperienceQuery } from '@/api/experience';
 import { Sortable } from '@/api/experienceSchema';
+import BaseModal from '@/common/BaseModal';
 import OutlinedButton from '@/common/button/OutlinedButton';
 import DataTable, { TableData, TableHeader } from '@/common/table/DataTable';
 import LoadingContainer from '@/common/ui/loading/LoadingContainer';
@@ -16,6 +17,7 @@ import {
   getExperienceRowHeight,
   isAllFilters,
 } from '@/utils/experience';
+import { Maximize2Icon, XIcon } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import CopyCell from './table-cell/CopyCell';
 
@@ -129,6 +131,8 @@ const ExperienceDataTable = ({
     [onResetFilters, onCopy],
   );
 
+  const [expandModalOpen, setExpandModalOpen] = useState(false);
+
   if (isLoading) {
     return <ExperienceDataTableLoading />;
   }
@@ -144,7 +148,36 @@ const ExperienceDataTable = ({
   }
 
   return (
-    <section>
+    <section className="group relative">
+      <button
+        onClick={() => setExpandModalOpen(true)}
+        className="absolute right-1.5 top-1.5 z-50 flex items-center gap-1 rounded-xxs border border-neutral-80 bg-white px-1.5 py-1 text-sm text-primary-90 opacity-0 shadow-03 transition-opacity group-hover:opacity-100"
+      >
+        <Maximize2Icon size={20} />
+        <span>전체 화면</span>
+      </button>
+
+      <BaseModal
+        isOpen={expandModalOpen}
+        onClose={() => setExpandModalOpen(false)}
+        className="max-h-[82%] w-[86%] px-10 pb-8 pt-2"
+      >
+        <div className="flex items-end justify-end py-2">
+          <XIcon
+            onClick={() => setExpandModalOpen(false)}
+            className="cursor-pointer"
+          />
+        </div>
+
+        <DataTable
+          headers={experienceTableHeaders}
+          data={userExperiences}
+          onRowClick={onRowClick}
+          getRowHeight={getExperienceRowHeight}
+          className="rounded-xs border border-neutral-80"
+        />
+      </BaseModal>
+
       <DataTable
         headers={experienceTableHeaders}
         data={userExperiences}
