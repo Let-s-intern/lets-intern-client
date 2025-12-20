@@ -160,7 +160,7 @@ const ExperienceDataTable = ({
       <BaseModal
         isOpen={expandModalOpen}
         onClose={() => setExpandModalOpen(false)}
-        className="max-h-[82%] w-[86%] px-10 pb-8 pt-2"
+        className="max-h-[92vh] w-[90%] px-10 pb-8 pt-2"
       >
         <div className="flex items-end justify-end py-2">
           <XIcon
@@ -174,6 +174,7 @@ const ExperienceDataTable = ({
           data={userExperiences}
           onRowClick={onRowClick}
           getRowHeight={getExperienceRowHeight}
+          maxHeight="calc(92vh - 12rem)"
           className="rounded-xs border border-neutral-80"
         />
       </BaseModal>

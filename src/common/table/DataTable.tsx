@@ -3,7 +3,7 @@
 import ExpandableCell from '@/common/table/ExpandableCell';
 import CheckBox from '@/common/ui/CheckBox';
 import { twMerge } from '@/lib/twMerge';
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useMemo, useRef, useState } from 'react';
 
 export interface TableHeader {
   key: string;
@@ -28,6 +28,7 @@ export interface DataTableProps {
   onSelectionChange?: (selectedIds: Set<number>) => void;
   onRowClick?: (row: TableData) => void;
   getRowHeight?: (row: TableData) => string;
+  maxHeight?: string;
   className?: string;
 }
 
@@ -38,10 +39,15 @@ const DataTable = ({
   onSelectionChange,
   onRowClick,
   getRowHeight,
+  maxHeight,
   className = '',
 }: DataTableProps) => {
   // 확장된 행의 ID를 관리
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
+
+  // 스크롤 동기화를 위한 ref
+  const headerScrollRef = useRef<HTMLDivElement>(null);
+  const bodyScrollRef = useRef<HTMLDivElement>(null);
 
   // 특정 행의 확장 상태를 토글
   const toggleExpandRow = (id: number) => {
@@ -90,6 +96,135 @@ const DataTable = ({
 
     onSelectionChange(newSet);
   };
+
+  // tbody 내부에서만 스크롤되도록 하기 위함
+  if (maxHeight) {
+    const handleBodyScroll = (e: React.UIEvent<HTMLDivElement>) => {
+      if (headerScrollRef.current) {
+        headerScrollRef.current.scrollLeft = e.currentTarget.scrollLeft;
+      }
+    };
+
+    return (
+      <div className={twMerge('flex flex-col overflow-hidden', className)}>
+        {/* 헤더 테이블 */}
+        <div
+          ref={headerScrollRef}
+          className="overflow-x-auto border-b border-neutral-80 bg-neutral-95 pr-5 scrollbar-hide"
+        >
+          <table className="w-full min-w-max table-fixed border-collapse">
+            <thead>
+              <tr>
+                {selectedRowIds && (
+                  <th className="sticky left-0 z-10 w-10 p-2 first:rounded-tl-xs">
+                    <CheckBox
+                      checked={allCurrentPageSelected}
+                      onClick={toggleAllSelection}
+                    />
+                  </th>
+                )}
+                {headers.map((header, index) => (
+                  <th
+                    key={header.key}
+                    className={twMerge(
+                      'px-2 py-2.5 text-left text-sm font-medium text-neutral-10',
+                      header.align?.horizontal === 'center'
+                        ? 'text-center'
+                        : header.align?.horizontal === 'right'
+                          ? 'text-right'
+                          : 'text-left',
+                      !selectedRowIds && index === 0 && 'rounded-tl-xs',
+                      index === headers.length - 1 && 'rounded-tr-xs',
+                    )}
+                    style={{ width: header.width }}
+                  >
+                    {header.label}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+          </table>
+        </div>
+
+        {/* 바디 테이블 - 스크롤 가능 */}
+        <div
+          ref={bodyScrollRef}
+          className="overflow-x-auto overflow-y-auto"
+          style={{ maxHeight }}
+          onScroll={handleBodyScroll}
+        >
+          <table className="w-full min-w-max table-fixed border-collapse">
+            <tbody>
+              {data.map((row) => {
+                const isSelected = selectedRowIds?.has(row.id);
+                const isExpanded = expandedRows.has(row.id);
+                const rowHeight = getRowHeight?.(row);
+                const isDisabled = row.isDisabled === true;
+
+                return (
+                  <tr
+                    key={row.id}
+                    className={twMerge(
+                      'group border-b border-neutral-80 hover:bg-neutral-95',
+                      onRowClick && 'cursor-pointer',
+                    )}
+                    onClick={() => onRowClick?.(row)}
+                  >
+                    {selectedRowIds && (
+                      <td
+                        className="sticky left-0 z-10 w-10 content-start bg-white p-2 group-hover:bg-neutral-95"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <CheckBox
+                          checked={!!isSelected}
+                          onClick={() => toggleRowSelection(row.id, isDisabled)}
+                          disabled={isDisabled}
+                        />
+                      </td>
+                    )}
+                    {headers.map((header) => {
+                      const cellContent = header.cellRenderer
+                        ? header.cellRenderer(row[header.key], row)
+                        : row[header.key];
+
+                      return (
+                        <td
+                          key={header.key}
+                          className={
+                            header.align?.vertical === 'top'
+                              ? 'align-top'
+                              : header.align?.vertical === 'middle'
+                                ? 'align-middle'
+                                : header.align?.vertical === 'bottom'
+                                  ? 'align-bottom'
+                                  : 'align-top'
+                          }
+                          style={{ width: header.width }}
+                          onClick={(e) => {
+                            if (header.key === 'deleteAction') {
+                              e.stopPropagation();
+                            }
+                          }}
+                        >
+                          <ExpandableCell
+                            content={cellContent}
+                            isRowExpanded={isExpanded}
+                            onToggleExpand={() => toggleExpandRow(row.id)}
+                            align={header.align?.horizontal}
+                            height={rowHeight}
+                          />
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={twMerge('overflow-x-auto', className)}>
