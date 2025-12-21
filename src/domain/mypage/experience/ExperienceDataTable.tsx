@@ -16,7 +16,9 @@ import {
   getExperienceRowHeight,
   isAllFilters,
 } from '@/utils/experience';
+import { Maximize2Icon } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import ExperienceExpandModal from './ExperienceDataTableExpandModal';
 import CopyCell from './table-cell/CopyCell';
 
 const PAGE_SIZE = 10;
@@ -37,6 +39,7 @@ const ExperienceDataTable = ({
   onCopy: (copiedExperience: TableData) => void;
 }) => {
   const [page, setPage] = useState(1);
+  const [isExpandModalOpen, setIsExpandModalOpen] = useState(false);
 
   const { data, isLoading } = useGetAllUserExperienceQuery(
     convertFilterUiToApiFormat(filters),
@@ -144,7 +147,15 @@ const ExperienceDataTable = ({
   }
 
   return (
-    <section>
+    <section className="group relative">
+      <button
+        onClick={() => setIsExpandModalOpen(true)}
+        className="absolute right-1.5 top-1.5 z-50 flex items-center gap-1 rounded-xxs border border-neutral-80 bg-white px-1.5 py-1 text-sm text-primary-90 opacity-0 shadow-03 transition-opacity group-hover:opacity-100"
+      >
+        <Maximize2Icon size={20} />
+        <span>전체 화면</span>
+      </button>
+
       <DataTable
         headers={experienceTableHeaders}
         data={userExperiences}
@@ -167,6 +178,20 @@ const ExperienceDataTable = ({
           />
         </div>
       )}
+
+      <ExperienceExpandModal
+        isOpen={isExpandModalOpen}
+        onClose={() => setIsExpandModalOpen(false)}
+      >
+        <DataTable
+          headers={experienceTableHeaders}
+          data={userExperiences}
+          onRowClick={onRowClick}
+          getRowHeight={getExperienceRowHeight}
+          maxHeight="calc(92vh - 12rem)"
+          className="rounded-xs border border-neutral-80"
+        />
+      </ExperienceExpandModal>
     </section>
   );
 };
