@@ -364,6 +364,11 @@ input[type='number'] {
   transition-timing-function: linear;
 }
 
+.mypage-banner-swiper .swiper-button-prev,
+.mypage-banner-swiper .swiper-button-next {
+  @apply hidden !important;
+}
+
 .speech-bubble {
   position: relative;
   border-radius: 0.4em;
@@ -385,8 +390,9 @@ input[type='number'] {
 
 /* MUI Snackbar 메시지 스타일 */
 .MuiSnackbarContent-message {
-  font-family: 'Pretendard Variable', '-apple-system', 'BlinkMacSystemFont',
-    'system-ui', 'Roboto', 'sans-serif';
+  font-family:
+    'Pretendard Variable', '-apple-system', 'BlinkMacSystemFont', 'system-ui',
+    'Roboto', 'sans-serif';
 }
 
 .required-star::after {

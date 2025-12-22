@@ -12,8 +12,8 @@ import {
 } from 'react';
 
 import { useUserProgramQuery } from '@/api/program';
-import Banner from '@/common/ui/banner/Banner';
 import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import Banner from '@/domain/program/Banner';
 import FilterItem from '@/domain/program/filter/FilterItem';
 import FilterSideBar from '@/domain/program/filter/FilterSideBar';
 import MuiPagination from '@/domain/program/pagination/MuiPagination';
