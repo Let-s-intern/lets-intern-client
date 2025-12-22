@@ -10,6 +10,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 import { useGetBannerListForUser } from '@/api/banner';
+import HybridLink from '@/common/ui/HybridLink';
 
 interface MyPageBannerProps {
   className?: string;
@@ -60,7 +61,7 @@ const MyPageBanner = ({ className }: MyPageBannerProps) => {
       >
         {bannerList.map((banner) => (
           <SwiperSlide key={banner.id}>
-            <a
+            <HybridLink
               href={banner.link || '#'}
               className="mypage_banner select-none"
               data-url={banner.link}
@@ -77,7 +78,7 @@ const MyPageBanner = ({ className }: MyPageBannerProps) => {
                 alt={'mypage-banner' + banner.id}
                 className="h-full w-full object-cover"
               />
-            </a>
+            </HybridLink>
           </SwiperSlide>
         ))}
       </Swiper>
