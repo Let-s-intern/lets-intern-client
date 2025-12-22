@@ -6,8 +6,8 @@ import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import { LiveIdPrimitive } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import useProgramStore from '@/store/useProgramStore';
-import { useRouter } from 'next/navigation';
-import { useCallback } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useEffect } from 'react';
 import { DesktopApplyCTA, MobileApplyCTA } from '../../../../common/ApplyCTA';
 
 const LiveCTAButtons = ({
@@ -19,22 +19,35 @@ const LiveCTAButtons = ({
 }) => {
   const { isLoggedIn } = useAuthStore();
   const router = useRouter();
-  const { data: application } = useProgramApplicationQuery(
+  const searchParams = useSearchParams();
+  const { data: application, refetch } = useProgramApplicationQuery(
     'live',
     Number(liveId),
   );
 
   const { setProgramApplicationForm } = useProgramStore();
 
+  // 로그인 상태 변경 시 application 데이터 refetch
+  useEffect(() => {
+    if (isLoggedIn) {
+      refetch();
+    }
+  }, [isLoggedIn, refetch]);
+
   /** 이미 신청했는지 체크하는 정보 */
   const isAlreadyApplied = application?.applied ?? false;
 
   const onApplyClick = useCallback(() => {
     if (!isLoggedIn) {
-      router.push(
-        // eslint-disable-next-line no-restricted-globals
-        `/login?redirect=${encodeURIComponent(`/program/live/${liveId}`)}`,
-      );
+      // 현재 URL의 전체 경로와 쿼리 파라미터를 포함하여 로그인 후 리다이렉트 URL 생성
+      // window.location.pathname을 사용해야 title이 포함된 전체 경로를 가져올 수 있음
+      const currentPath = window.location.pathname;
+      const currentSearch = searchParams.toString();
+      const redirectUrl = currentSearch
+        ? `${currentPath}?${currentSearch}`
+        : currentPath;
+
+      router.push(`/login?redirect=${encodeURIComponent(redirectUrl)}`);
       return;
     }
 
@@ -96,6 +109,7 @@ const LiveCTAButtons = ({
     live.title,
     liveId,
     router,
+    searchParams,
   ]);
 
   return (

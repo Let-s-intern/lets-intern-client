@@ -11,15 +11,17 @@ const SocialLogin = ({ type }: SocialLoginProps) => {
   const redirect = searchParams.get('redirect') || '/';
 
   const getSocialLink = (socialType: 'KAKAO' | 'NAVER') => {
-    const redirectPath = `${getUniversalBaseUrl()}/${type === 'LOGIN' ? 'login' : 'signup'}?redirect=${redirect}`;
+    // redirect 값을 인코딩하여 쿼리 파라미터가 올바르게 전달되도록 함
+    const redirectPath = `${getUniversalBaseUrl()}/${type === 'LOGIN' ? 'login' : 'signup'}?redirect=${encodeURIComponent(redirect)}`;
     const basePath = process.env.NEXT_PUBLIC_API_BASE_PATH;
     if (!basePath) {
       alert('No base path.\n잠시 후 다시 로그인 해주세요.');
       return;
     }
+    // OAuth redirect_uri도 인코딩해야 전체 URL이 올바르게 전달됨
     const path = `${basePath}/oauth2/authorize/${
       socialType === 'KAKAO' ? 'kakao' : 'naver'
-    }?redirect_uri=${redirectPath}`;
+    }?redirect_uri=${encodeURIComponent(redirectPath)}`;
 
     return path;
   };

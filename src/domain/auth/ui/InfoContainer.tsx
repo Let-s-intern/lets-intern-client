@@ -216,7 +216,11 @@ const InfoContainer = ({
       {successModalOpen && (
         <AlertModal
           onConfirm={() => {
-            router.push(redirect ? `/login?redirect=${redirect}` : '/login');
+            router.push(
+              redirect
+                ? `/login?redirect=${encodeURIComponent(redirect)}`
+                : '/login',
+            );
           }}
           title="회원가입 완료"
           showCancel={false}
