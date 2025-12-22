@@ -1,37 +1,11 @@
 'use client';
 
+import HybridLink from '@/common/ui/HybridLink';
 import { useEffect, useRef, useState } from 'react';
-import HybridLink from '../HybridLink';
 
 import { useGetUserProgramBannerListQuery } from '@/api/program';
 
-interface BannerProps {
-  variant?: 'program' | 'mypage-mobile' | 'mypage-desktop';
-}
-
-const VARIANT_STYLES = {
-  program: {
-    container:
-      'relative flex h-40 w-full max-w-[59rem] items-center overflow-hidden rounded-sm bg-static-0 text-static-100 md:h-44 lg:h-56 xl:h-72',
-    controls:
-      'absolute bottom-4 left-5 flex items-center gap-1.5 md:bottom-6 md:left-8',
-    pagination: 'text-0.75-medium md:text-0.875-medium',
-  },
-  'mypage-mobile': {
-    container:
-      'relative flex h-[100px] w-full items-center overflow-hidden bg-static-0 text-static-100 md:hidden',
-    controls: 'absolute bottom-3 left-4 flex items-center gap-1.5',
-    pagination: 'text-0.75-medium',
-  },
-  'mypage-desktop': {
-    container:
-      'relative hidden h-[120px] w-full items-center overflow-hidden rounded-xs bg-static-0 text-static-100 md:flex',
-    controls: 'absolute bottom-3 left-4 flex items-center gap-1.5',
-    pagination: 'text-0.75-medium',
-  },
-} as const;
-
-const Banner = ({ variant = 'program' }: BannerProps) => {
+const Banner = () => {
   const imgRef = useRef<HTMLImageElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
 
@@ -78,10 +52,8 @@ const Banner = ({ variant = 'program' }: BannerProps) => {
 
   if (isLoading || !data || data.bannerList.length === 0) return null;
 
-  const styles = VARIANT_STYLES[variant];
-
   return (
-    <div className={styles.container}>
+    <div className="relative flex h-40 w-full max-w-[59rem] items-center overflow-hidden rounded-sm bg-static-0 text-static-100 md:h-44 lg:h-56 xl:h-72">
       <div
         ref={innerRef}
         className="flex flex-nowrap items-center transition-transform duration-300 ease-in-out"
@@ -104,14 +76,14 @@ const Banner = ({ variant = 'program' }: BannerProps) => {
           </HybridLink>
         ))}
       </div>
-      <div className={styles.controls}>
+      <div className="absolute bottom-4 left-5 flex items-center gap-1.5 md:bottom-6 md:left-8">
         <img
           onClick={() => setIsPlay(!isPlay)}
           className="w-5 cursor-pointer"
           src="/icons/play.svg"
           alt="배너 페이지네이션 재생 아이콘"
         />
-        <span className={styles.pagination}>
+        <span className="text-0.75-medium md:text-0.875-medium">
           {bannerIndex + 1 < 10 ? `0${bannerIndex + 1}` : bannerIndex + 1} /{' '}
           {data.bannerList.length < 10
             ? `0${data.bannerList.length}`
