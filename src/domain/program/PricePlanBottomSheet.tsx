@@ -1,5 +1,6 @@
 import { useProgramApplicationQuery } from '@/api/application';
 import BaseBottomSheet from '@/common/BaseBottomSheet';
+import { COUPON_DISABLED_CHALLENGE_TYPES } from '@/domain/program/program-detail/apply/constants';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import {
   ChallengeIdPrimitive,
@@ -9,7 +10,7 @@ import {
 import useProgramStore from '@/store/useProgramStore';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { RadioGroup } from '@mui/material';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 import BaseButton from '../../common/ui/button/BaseButton';
 import { OptionFormRadioControlLabel } from '../../common/ui/ControlLabel';
@@ -46,6 +47,20 @@ function PricePlanBottomSheet({
   onClose: () => void;
 }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  /**
+   * B2B 파라미터 전달 여부 결정
+   * @note 챌린지 타입이 CAREER_START 또는 EXPERIENCE_SUMMARY인 경우에만 source=b2b 파라미터를 전달
+   *       - 해당 타입들은 B2B 전용으로, 쿠폰 노출 여부를 결정하기 위해 파라미터 필요
+   *       - 유저가 URL에 임의로 source=b2b를 붙여도 챌린지 타입이 맞지 않으면 무시됨
+   */
+  const isCouponDisabledType = COUPON_DISABLED_CHALLENGE_TYPES.includes(
+    challenge.challengeType,
+  );
+  const hasB2BParam = searchParams.get('source') === 'b2b';
+  const shouldPassB2BParam = isCouponDisabledType && hasB2BParam;
+
   const basicPriceInfo =
     challenge.priceInfo.find((item) => item.challengePricePlanType === BASIC) ??
     challenge.priceInfo[0];
@@ -164,7 +179,9 @@ function PricePlanBottomSheet({
       deposit: challenge.priceInfo[0].refund ?? 0,
     });
 
-    router.push('/payment-input');
+    router.push(
+      shouldPassB2BParam ? '/payment-input?source=b2b' : '/payment-input',
+    );
   }, [
     application,
     pricePlan,
@@ -175,6 +192,7 @@ function PricePlanBottomSheet({
     challenge.priceInfo,
     challengeId,
     router,
+    shouldPassB2BParam,
   ]);
 
   return (
