@@ -16,6 +16,8 @@ interface MyPageBannerProps {
   className?: string;
 }
 
+const BANNER_AUTOPLAY_DELAY_MS = 2500;
+
 const MyPageBanner = ({ className }: MyPageBannerProps) => {
   const { data, isLoading } = useGetBannerListForUser({ type: 'MAIN' });
   const [isPlay, setIsPlay] = useState(true);
@@ -52,7 +54,9 @@ const MyPageBanner = ({ className }: MyPageBannerProps) => {
         onSlideChange={(swiper) => {
           setCurrentIndex(swiper.realIndex + 1);
         }}
-        autoplay={hasMultipleSlides ? { delay: 2500 } : false}
+        autoplay={
+          hasMultipleSlides ? { delay: BANNER_AUTOPLAY_DELAY_MS } : false
+        }
         modules={[Pagination, Autoplay, Navigation]}
         loop={hasMultipleSlides}
         navigation={hasMultipleSlides}
