@@ -79,8 +79,8 @@ const navData = [
         url: '/admin/banner/top-bar-banners',
       },
       {
-        name: '프로그램 배너 관리',
-        url: '/admin/banner/program-banners',
+        name: '통합 배너 관리',
+        url: '/admin/banner/integrated-banners',
       },
       {
         name: '팝업 관리',

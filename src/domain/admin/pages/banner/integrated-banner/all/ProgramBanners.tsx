@@ -99,7 +99,7 @@ const PopUpBanners = () => {
   return (
     <>
       <TableTemplate<ProgramBannersTableKey>
-        title="프로그램 배너 관리"
+        title="전체 배너 관리"
         headerButton={{
           label: '등록',
           href: '/admin/banner/program-banners/new',
