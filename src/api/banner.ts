@@ -19,11 +19,6 @@ export const bannerAdminListItemSchema = z.object({
 
 export type BannerAdminListItemType = z.infer<typeof bannerAdminListItemSchema>;
 
-export type BannerWithPositionType = BannerAdminListItemType & {
-  position: string;
-  isFirstInGroup: boolean;
-};
-
 export type BannerItemType = {
   title?: string | null;
   link?: string | null;
@@ -247,4 +242,16 @@ export const useGetBannerListForUser = ({ type }: { type: bannerType }) => {
       return bannerUserListSchema.parse(res.data.data);
     },
   });
+};
+
+export type AdminBannerWithPositionType = BannerAdminListItemType & {
+  type: bannerType;
+  position: string;
+  isFirstInGroup?: boolean;
+};
+
+export type UserBannerWithPositionType = BannerUserListItemType & {
+  type: bannerType;
+  position: string;
+  isFirstInGroup?: boolean;
 };

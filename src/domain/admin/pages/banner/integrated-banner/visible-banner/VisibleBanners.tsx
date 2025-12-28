@@ -1,4 +1,7 @@
-import { BannerWithPositionType, useGetBannerListForUser } from '@/api/banner';
+import {
+  useGetBannerListForUser,
+  UserBannerWithPositionType,
+} from '@/api/banner';
 import WarningModal from '@/common/alert/WarningModal';
 import EmptyContainer from '@/common/ui/EmptyContainer';
 import LoadingContainer from '@/common/ui/loading/LoadingContainer';
@@ -27,12 +30,13 @@ const VisibleBanners = () => {
 
   // 모든 배너를 1차원 배열로 합치기
   const allBanners = useMemo(() => {
-    const banners = [];
+    const banners: UserBannerWithPositionType[] = [];
 
     if (topBanners?.bannerList) {
       banners.push(
         ...topBanners.bannerList.map((banner, index) => ({
           ...banner,
+          type: 'MAIN' as const,
           position: '홈 상단',
           isFirstInGroup: index === 0,
         })),
@@ -43,6 +47,7 @@ const VisibleBanners = () => {
       banners.push(
         ...bottomBanners.bannerList.map((banner, index) => ({
           ...banner,
+          type: 'MAIN_BOTTOM' as const,
           position: '홈 하단',
           isFirstInGroup: index === 0,
         })),
@@ -53,6 +58,7 @@ const VisibleBanners = () => {
       banners.push(
         ...programBanners.bannerList.map((banner, index) => ({
           ...banner,
+          type: 'PROGRAM' as const,
           position: '프로그램',
           isFirstInGroup: index === 0,
         })),
@@ -70,7 +76,7 @@ const VisibleBanners = () => {
     setIsDeleteModalShown(true);
   };
 
-  const columns = useMemo<GridColDef<BannerWithPositionType>[]>(
+  const columns = useMemo<GridColDef<UserBannerWithPositionType>[]>(
     () => [
       {
         field: 'position',
@@ -131,7 +137,7 @@ const VisibleBanners = () => {
         type: 'actions',
         headerName: '관리',
         width: 150,
-        getActions: (params: GridRowParams<BannerWithPositionType>) => {
+        getActions: (params: GridRowParams<UserBannerWithPositionType>) => {
           const id = params.id;
 
           return [
