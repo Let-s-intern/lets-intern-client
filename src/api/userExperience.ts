@@ -41,5 +41,7 @@ export const useSearchUserExperiencesQuery = (
     queryKey: ['userExperienceSearch', request],
     queryFn: () => searchUserExperiences(request),
     enabled,
+    refetchOnWindowFocus: true,
+    staleTime: 0,
   });
 };
