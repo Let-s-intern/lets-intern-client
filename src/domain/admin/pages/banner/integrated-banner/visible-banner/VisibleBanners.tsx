@@ -4,7 +4,7 @@ import EmptyContainer from '@/common/ui/EmptyContainer';
 import LoadingContainer from '@/common/ui/loading/LoadingContainer';
 import dayjs from '@/lib/dayjs';
 import { DataGrid, GridColDef, GridRowParams } from '@mui/x-data-grid';
-import { PenIcon, Trash } from 'lucide-react';
+import { Pencil, Trash } from 'lucide-react';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 
@@ -75,7 +75,7 @@ const VisibleBanners = () => {
       {
         field: 'position',
         headerName: '배너 위치',
-        flex: 1,
+        width: 150,
         renderCell: (params) => {
           if (params.row.isFirstInGroup) {
             return params.row.position || '-';
@@ -98,21 +98,32 @@ const VisibleBanners = () => {
       {
         field: 'link',
         headerName: '랜딩 URL',
-        width: 250,
-        valueGetter: (value) => value || '-',
+        flex: 2,
+        renderCell: (params) => {
+          const url = params.value;
+          if (!url) return '-';
+          return (
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline"
+            >
+              {url}
+            </a>
+          );
+        },
       },
       {
         field: 'startDate',
         headerName: '노출 시작일',
         width: 150,
-
         valueGetter: (value) => dayjs(value).format('YYYY-MM-DD'),
       },
       {
         field: 'endDate',
         headerName: '노출 종료일',
         width: 150,
-
         valueGetter: (value) => dayjs(value).format('YYYY-MM-DD'),
       },
       {
@@ -125,11 +136,12 @@ const VisibleBanners = () => {
 
           return [
             <Link href={`/admin/banner/pop-up/${id}/edit`} key={'edit' + id}>
-              <PenIcon className="cursor-pointer" />
+              <Pencil size="20" className="cursor-pointer" />
             </Link>,
             <Trash
               key={'delete' + id}
               className="className='cursor-pointer' ml-4 cursor-pointer"
+              size="20"
               color="red"
               onClick={() => handleDeleteButtonClicked(Number(id))}
             />,
