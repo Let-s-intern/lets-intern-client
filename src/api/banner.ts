@@ -19,6 +19,11 @@ export const bannerAdminListItemSchema = z.object({
 
 export type BannerAdminListItemType = z.infer<typeof bannerAdminListItemSchema>;
 
+export type BannerWithPositionType = BannerAdminListItemType & {
+  position: string;
+  isFirstInGroup: boolean;
+};
+
 export type BannerItemType = {
   title?: string | null;
   link?: string | null;
@@ -41,7 +46,7 @@ export const bannerAdminListSchema = z.object({
 
 export type bannerType = 'MAIN' | 'PROGRAM' | 'LINE' | 'POPUP' | 'MAIN_BOTTOM';
 
-export const getBnnerListForAdminQueryKey = (type: bannerType) => [
+export const getBannerListForAdminQueryKey = (type: bannerType) => [
   'banner',
   'admin',
   type,
@@ -49,7 +54,7 @@ export const getBnnerListForAdminQueryKey = (type: bannerType) => [
 
 export const useGetBannerListForAdmin = ({ type }: { type: bannerType }) => {
   return useQuery({
-    queryKey: getBnnerListForAdminQueryKey(type),
+    queryKey: getBannerListForAdminQueryKey(type),
     queryFn: async () => {
       const res = await axios('/banner/admin', {
         params: {
@@ -119,7 +124,7 @@ export const usePostBannerForAdmin = ({
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: getBnnerListForAdminQueryKey(data.type),
+        queryKey: getBannerListForAdminQueryKey(data.type),
       });
       successCallback?.();
     },
@@ -159,7 +164,7 @@ export const useEditBannerForAdmin = ({
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: getBnnerListForAdminQueryKey(data.type),
+        queryKey: getBannerListForAdminQueryKey(data.type),
       });
       queryClient.invalidateQueries({
         queryKey: getBannerDetailForAdminQueryKey(data.bannerId, data.type),
@@ -197,7 +202,7 @@ export const useDeleteBannerForAdmin = ({
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: getBnnerListForAdminQueryKey(data.type),
+        queryKey: getBannerListForAdminQueryKey(data.type),
       });
       queryClient.invalidateQueries({
         queryKey: getBannerDetailForAdminQueryKey(data.bannerId, data.type),
