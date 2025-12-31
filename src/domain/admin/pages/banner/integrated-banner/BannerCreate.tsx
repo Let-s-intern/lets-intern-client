@@ -9,6 +9,7 @@ import {
 } from '@/api/banner';
 import MainBannerInputContent from '@/domain/admin/home/main-banner/MainBannerInputContent';
 import EditorTemplate from '@/domain/admin/program/ui/editor/EditorTemplate';
+import { useRouter } from 'next/navigation';
 
 const BannerCreate = () => {
   const [value, setValue] = useState<BannerItemType>({
@@ -25,6 +26,8 @@ const BannerCreate = () => {
     programImgUrl: '',
     programMobileImgUrl: '',
   });
+
+  const route = useRouter();
 
   const { mutate: addBanner } = usePostBannerForAdmin({
     errorCallback: (error) => {
@@ -128,6 +131,7 @@ const BannerCreate = () => {
       }
 
       addBanner({ type, formData });
+      route.replace('/admin/banner/integrated-banners');
     });
   };
 

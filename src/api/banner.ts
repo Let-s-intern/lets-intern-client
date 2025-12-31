@@ -46,8 +46,13 @@ export const bannerAdminListSchema = z.object({
 
 export type bannerType = 'MAIN' | 'PROGRAM' | 'LINE' | 'POPUP' | 'MAIN_BOTTOM';
 
-export const getBannerListForAdminQueryKey = (type: bannerType) => [
+export const getBannerListForUserQueryKey = (type: bannerType) => [
   'banner',
+  type,
+];
+
+export const getBannerListForAdminQueryKey = (type: bannerType) => [
+  'bannerAdmin',
   type,
 ];
 
@@ -72,7 +77,7 @@ export const bannerAdminDetailSchema = z.object({
 export const getBannerDetailForAdminQueryKey = (
   bannerId: number,
   type: bannerType,
-) => ['banner', 'detail', bannerId, type];
+) => ['bannerAdmin', 'detail', bannerId, type];
 
 export const useGetBannerDetailForAdmin = ({
   bannerId,
@@ -123,6 +128,9 @@ export const usePostBannerForAdmin = ({
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({
+        queryKey: getBannerListForUserQueryKey(data.type),
+      });
+      queryClient.invalidateQueries({
         queryKey: getBannerListForAdminQueryKey(data.type),
       });
       successCallback?.();
@@ -163,6 +171,9 @@ export const useEditBannerForAdmin = ({
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({
+        queryKey: getBannerListForUserQueryKey(data.type),
+      });
+      queryClient.invalidateQueries({
         queryKey: getBannerListForAdminQueryKey(data.type),
       });
       queryClient.invalidateQueries({
@@ -201,6 +212,9 @@ export const useDeleteBannerForAdmin = ({
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({
+        queryKey: getBannerListForUserQueryKey(data.type),
+      });
+      queryClient.invalidateQueries({
         queryKey: getBannerListForAdminQueryKey(data.type),
       });
       queryClient.invalidateQueries({
@@ -236,7 +250,7 @@ export const bannerUserListSchema = z.object({
 
 export const useGetBannerListForUser = ({ type }: { type: bannerType }) => {
   return useQuery({
-    queryKey: getBannerListForAdminQueryKey(type),
+    queryKey: getBannerListForUserQueryKey(type),
     queryFn: async () => {
       const res = await axios('/banner', {
         params: {
