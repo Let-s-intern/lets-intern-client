@@ -1,5 +1,5 @@
 'use client';
 
-import ProgramBannerCreate from '@/domain/admin/pages/banner/integrated-banner/program-banner/ProgramBannerCreate';
+import BannerCreate from '@/domain/admin/pages/banner/integrated-banner/BannerCreate';
 
-export default ProgramBannerCreate;
+export default BannerCreate;

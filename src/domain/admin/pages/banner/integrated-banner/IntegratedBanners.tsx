@@ -1,5 +1,6 @@
 import OutlinedButton from '@/common/button/OutlinedButton';
 import { twMerge } from '@/lib/twMerge';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import AllBanners from './all-banner/AllBanners';
 import VisibleBanners from './visible-banner/VisibleBanners';
@@ -13,6 +14,7 @@ type TabType = (typeof TAB_TYPE)[keyof typeof TAB_TYPE];
 
 const IntegratedBanners = () => {
   const [tab, setTab] = useState<TabType>(TAB_TYPE.VISIBLE);
+  const router = useRouter();
 
   return (
     <section className="flex flex-col gap-4 p-14">
@@ -40,7 +42,10 @@ const IntegratedBanners = () => {
           </button>
         </div>
 
-        <OutlinedButton onClick={() => {}} size="xs">
+        <OutlinedButton
+          onClick={() => router.push('/admin/banner/integrated-banners/new')}
+          size="xs"
+        >
           등록
         </OutlinedButton>
       </div>

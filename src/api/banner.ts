@@ -20,6 +20,7 @@ export const bannerAdminListItemSchema = z.object({
 export type BannerAdminListItemType = z.infer<typeof bannerAdminListItemSchema>;
 
 export type BannerItemType = {
+  type?: bannerType[];
   title?: string | null;
   link?: string | null;
   startDate?: string | null;
@@ -28,11 +29,15 @@ export type BannerItemType = {
   isVisible?: boolean | null;
   imgUrl?: string | null;
   mobileImgUrl?: string | null;
+  programImgUrl?: string | null;
+  programMobileImgUrl?: string | null;
   contents?: string | null;
   colorCode?: string | null;
   textColorCode?: string | null;
   file?: File | null;
   mobileFile?: File | null;
+  programFile?: File | null;
+  programMobileFile?: File | null;
 };
 
 export const bannerAdminListSchema = z.object({
