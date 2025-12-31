@@ -1,5 +1,6 @@
 import {
   AdminBannerWithPositionType,
+  useDeleteBannerForAdmin,
   useGetBannerListForAdmin,
 } from '@/api/banner';
 import WarningModal from '@/common/alert/WarningModal';
@@ -14,7 +15,8 @@ import { useMemo, useState } from 'react';
 
 const AllBanners = () => {
   const [isDeleteModalShown, setIsDeleteModalShown] = useState<boolean>(false);
-  const [bannerIdForDeleting, setBannerIdForDeleting] = useState<number>();
+  const [bannerForDeleting, setBannerForDeleting] =
+    useState<AdminBannerWithPositionType>();
 
   const { data: topBanners, isLoading: isTopBannerLoading } =
     useGetBannerListForAdmin({ type: 'MAIN' });
@@ -22,6 +24,12 @@ const AllBanners = () => {
     useGetBannerListForAdmin({ type: 'MAIN_BOTTOM' });
   const { data: programBanners, isLoading: isProgramBannerLoading } =
     useGetBannerListForAdmin({ type: 'PROGRAM' });
+
+  const { mutate: deleteBanner } = useDeleteBannerForAdmin({
+    successCallback: async () => {
+      setIsDeleteModalShown(false);
+    },
+  });
 
   // 모든 배너를 1차원 배열로 합치기
   const allBanners = useMemo(() => {
@@ -63,8 +71,10 @@ const AllBanners = () => {
   const isLoading =
     isTopBannerLoading || isBottomBannerLoading || isProgramBannerLoading;
 
-  const handleDeleteButtonClicked = async (bannerId: number) => {
-    setBannerIdForDeleting(bannerId);
+  const handleDeleteButtonClicked = async (
+    banner: AdminBannerWithPositionType,
+  ) => {
+    setBannerForDeleting(banner);
     setIsDeleteModalShown(true);
   };
 
@@ -127,7 +137,7 @@ const AllBanners = () => {
               className="className='cursor-pointer' ml-4 cursor-pointer"
               size="20"
               color="red"
-              onClick={() => handleDeleteButtonClicked(Number(id))}
+              onClick={() => handleDeleteButtonClicked(params.row)}
             />,
           ];
         },
@@ -156,13 +166,12 @@ const AllBanners = () => {
         isOpen={isDeleteModalShown}
         title="배너 삭제"
         content="정말로 배너를 삭제하시겠습니까?"
-        onConfirm={
-          () => bannerIdForDeleting
-          // &&
-          // deletePopupBanner({
-          //   bannerId: popUpIdForDeleting,
-          //   type: 'POPUP',
-          // })
+        onConfirm={() =>
+          bannerForDeleting &&
+          deleteBanner({
+            bannerId: bannerForDeleting.id,
+            type: bannerForDeleting.type,
+          })
         }
         onCancel={() => setIsDeleteModalShown(false)}
         confirmText="삭제"

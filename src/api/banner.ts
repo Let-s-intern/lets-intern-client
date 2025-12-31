@@ -43,7 +43,6 @@ export type bannerType = 'MAIN' | 'PROGRAM' | 'LINE' | 'POPUP' | 'MAIN_BOTTOM';
 
 export const getBannerListForAdminQueryKey = (type: bannerType) => [
   'banner',
-  'admin',
   type,
 ];
 
@@ -68,7 +67,7 @@ export const bannerAdminDetailSchema = z.object({
 export const getBannerDetailForAdminQueryKey = (
   bannerId: number,
   type: bannerType,
-) => ['banner', 'admin', 'detail', bannerId, type];
+) => ['banner', 'detail', bannerId, type];
 
 export const useGetBannerDetailForAdmin = ({
   bannerId,
@@ -232,7 +231,7 @@ export const bannerUserListSchema = z.object({
 
 export const useGetBannerListForUser = ({ type }: { type: bannerType }) => {
   return useQuery({
-    queryKey: ['banner', type],
+    queryKey: getBannerListForAdminQueryKey(type),
     queryFn: async () => {
       const res = await axios('/banner', {
         params: {
