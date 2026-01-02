@@ -1,6 +1,7 @@
 'use client';
 
 import { useGetActiveChallenge, useGetChallengeFaq } from '@/api/challenge';
+import challengeDiscountImage from '@/assets/challenge-discount.png';
 import ChallengeCheckList from '@/domain/program/challenge/challenge-view/ChallengeCheckList';
 import ChallengeCurriculum from '@/domain/program/challenge/challenge-view/ChallengeCurriculum';
 import ChallengeFaq from '@/domain/program/challenge/challenge-view/ChallengeFaq';
@@ -14,6 +15,7 @@ import {
 } from '@/schema';
 import useProgramStore from '@/store/useProgramStore';
 import { ChallengeContent } from '@/types/interface';
+import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import MoreReviewButton from '../../../common/review/MoreReviewButton';
@@ -231,6 +233,14 @@ const ChallengeView: React.FC<{
             id={PROGRAM_INTRO_ID}
             className="challenge_program flex w-full flex-col items-center"
           >
+            {Number(id) === 179 && (
+              <Image
+                src={challengeDiscountImage}
+                alt="자기소개서 챌린지 할인 안내"
+                className="w-full max-w-[44rem]"
+                priority
+              />
+            )}
             <section className="flex w-full flex-col items-center pt-[70px] md:pt-40">
               <ChallengePointView
                 challengeType={challenge.challengeType}
