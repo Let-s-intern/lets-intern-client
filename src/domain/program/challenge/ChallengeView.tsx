@@ -237,7 +237,7 @@ const ChallengeView: React.FC<{
               <Image
                 src={challengeDiscountImage}
                 alt="자기소개서 챌린지 할인 안내"
-                className="w-full max-w-[44rem]"
+                className="mt-20 w-full max-w-[44rem]"
                 priority
               />
             )}
