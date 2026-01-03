@@ -71,6 +71,7 @@ const MissionSubmitBonusSection = ({
   const [selectedBank, setSelectedBank] = useState<string>('');
   const [accountNumber, setAccountNumber] = useState('');
   const [isAgreed, setIsAgreed] = useState(false);
+  const [isMarketingAgreed, setIsMarketingAgreed] = useState(false);
   const [linkValue, setLinkValue] = useState('');
   const [isLinkVerified, setIsLinkVerified] = useState(false);
   // 링크 변경 확인 모달 오픈 상태
@@ -171,6 +172,7 @@ const MissionSubmitBonusSection = ({
     setSelectedBank(attendanceInfo?.accountType ?? '');
     setAccountNumber(attendanceInfo?.accountNum ?? '');
     setIsAgreed(attendanceInfo?.submitted ?? false);
+    setIsMarketingAgreed(attendanceInfo?.submitted ?? false);
     setIsSubmitted(attendanceInfo?.submitted ?? false);
   }, [attendanceInfo]);
 
@@ -178,6 +180,7 @@ const MissionSubmitBonusSection = ({
   const cleanAccountNumber = accountNumber.replace(/[^0-9]/g, '');
   const canSubmit =
     isAgreed &&
+    isMarketingAgreed &&
     isLinkVerified &&
     selectedBank.trim().length > 0 &&
     cleanAccountNumber.length > 0;
@@ -245,8 +248,11 @@ const MissionSubmitBonusSection = ({
             [개인정보 보호법] 제15조 및 제17조에 따라 아래의 내용으로 개인정보를
             수집, 이용 및 제공하는데 동의합니다.
             <br /> □ 개인정보의 수집 및 이용에 관한 사항 <br />
-            ✓ 수집하는 개인정보 항목 : 성명, 전화번호, 계좌번호 <br />
-            ✓ 개인정보의 이용 목적 : 렛츠커리어 프로그램 후기 리워드 지급 <br />
+            ✓ 수집 항목 : 성명, 전화번호, 계좌번호 <br />
+            ✓ 수집 및 이용 목적 : 후기 이벤트 리워드 지급 및 지급 내역 확인
+            <br />
+            ✓ 보유 및 이용 기간 : 리워드 지급일로부터 1년
+            <br />
           </DescriptionBox>
           <div className="mt-2">
             <AgreementCheckbox
@@ -257,6 +263,36 @@ const MissionSubmitBonusSection = ({
           </div>
         </div>
 
+        {/* 마케팅 활용 동의 */}
+        <div className="mt-7 flex flex-col gap-1">
+          <span className="text-xsmall16 font-semibold text-neutral-0">
+            마케팅 활용 동의
+          </span>
+          <DescriptionBox>
+            □ 개인정보 및 저작물 활용에 관한 사항 <br />
+            ✓ 활용 개인정보 : 블로그에 공개적으로 표시된 닉네임, 프로필 이미지,
+            URL 주소 등 공개된 계정 정보 <br />
+            ✓ 활용 저작물 : 링크 입력을 통해 제출한 블로그 후기(텍스트, 이미지,
+            영상, 초상 등 일체)
+            <br />
+            ✓ 활용 목적 : 렛츠커리어 서비스 및 프로그램 홍보 및 광고, 마케팅
+            <br />
+            ✓ 활용 방법 및 범위 : <br /> - 2차 저작물 제작
+            <br />- 렛츠커리어 웹사이트, 홍보물·광고, SNS 등 마케팅 채널에 노출
+            <br />
+            ✓ 활용 기간 : 영구적 활용
+            <br />
+          </DescriptionBox>
+          <div className="mt-2">
+            <AgreementCheckbox
+              checked={isMarketingAgreed}
+              onCheckedChange={setIsMarketingAgreed}
+              disabled={isSubmitted}
+            >
+              마케팅 활용에 동의합니다.
+            </AgreementCheckbox>
+          </div>
+        </div>
         {!isSubmitPeriodEnded && (
           <MissionSubmitButton
             isSubmitted={isSubmitted}

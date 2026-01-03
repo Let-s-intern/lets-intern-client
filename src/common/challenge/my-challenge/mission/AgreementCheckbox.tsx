@@ -62,7 +62,7 @@ const AgreementCheckbox = ({
           disabled && 'cursor-not-allowed opacity-50',
         )}
       >
-        {children || '리워드 지급을 위한 개인정보 활용에 동의합니다.'}
+        {children || '현금 리워드 지급을 위한 개인정보 활용에 동의합니다.'}
       </span>
     </div>
   );
