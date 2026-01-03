@@ -4,8 +4,8 @@ import {
   RefetchOptions,
   useQuery,
 } from '@tanstack/react-query';
-import { createContext, useContext } from 'react';
 import { useParams } from 'next/navigation';
+import { createContext, useContext } from 'react';
 import { z } from 'zod';
 import {
   challengeSchedule,
@@ -20,7 +20,9 @@ import {
 import useAuthStore from '../store/useAuthStore';
 import axios from '../utils/axios';
 
-type CurrentChallenge = z.infer<typeof getChallengeIdSchema> & { id: number };
+export type CurrentChallenge = z.infer<typeof getChallengeIdSchema> & {
+  id: number;
+};
 
 type Refetch<Data, Error> = (
   options?: RefetchOptions,
