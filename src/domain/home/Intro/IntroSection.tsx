@@ -259,6 +259,16 @@ const IntroSection = () => {
 
   return (
     <>
+      <button
+        onClick={() => {
+          const error = new Error('test');
+          // Sentry로 에러 전송 (자동으로 webhook도 전송됨)
+          //Sentry.captureException(error);
+          throw error;
+        }}
+      >
+        test
+      </button>
       <section className="flex w-full max-w-[1120px] flex-col gap-[17px] overflow-x-hidden px-5 md:gap-12 xl:px-0">
         <div className="flex flex-col gap-1 text-center md:gap-2">
           {HOME_INTRO.description}
