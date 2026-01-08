@@ -162,6 +162,17 @@ function createSlackMessage(template: MessageTemplate) {
 
   // Tags가 있는 경우
   if (detailed.tags && Object.keys(detailed.tags).length > 0) {
+    const replayId = detailed.tags.replayId
+      ? String(detailed.tags.replayId)
+      : undefined;
+
+    // replayId가 있으면 Sentry Replay URL 생성
+    let replayUrl: string | undefined;
+    if (replayId) {
+      const projectId = '4510669498810369'; // Sentry 프로젝트 ID
+      replayUrl = `https://letscareer.sentry.io/explore/replays/${replayId}/?project=${projectId}&query=&referrer=replayList`;
+    }
+
     const tagsText = Object.entries(detailed.tags)
       .slice(0, 10) // 최대 10개만 (fields 제한)
       .map(([key, value]) => {
@@ -170,11 +181,15 @@ function createSlackMessage(template: MessageTemplate) {
       })
       .join('\n');
 
+    const tagsSectionText = replayUrl
+      ? `*Tags:*\n${tagsText}\n\n*🎬 Sentry Replay:* <${replayUrl}|Replay 보기>`
+      : `*Tags:*\n${tagsText}`;
+
     blocks.push({
       type: 'section' as const,
       text: {
         type: 'mrkdwn' as const,
-        text: truncateText(`*Tags:*\n${tagsText}`, 3000),
+        text: truncateText(tagsSectionText, 3000),
       },
     });
   }
