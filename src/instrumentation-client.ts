@@ -29,6 +29,11 @@ Sentry.init({
 
   // 에러를 Sentry로 보내기 전에 webhook으로도 전송
   beforeSend(event, hint) {
+    // 개발 환경에서는 webhook 전송하지 않음
+    if (process.env.NODE_ENV === 'development') {
+      return event;
+    }
+
     // 에러 객체가 있는 경우 webhook으로 전송 (클라이언트 사이드는 API 라우트를 통해)
     if (
       hint.originalException instanceof Error &&
