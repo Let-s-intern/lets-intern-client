@@ -1,6 +1,7 @@
 'use client';
 
 import { useGetActiveChallenge, useGetChallengeFaq } from '@/api/challenge';
+
 import ChallengeCheckList from '@/domain/program/challenge/challenge-view/ChallengeCheckList';
 import ChallengeCurriculum from '@/domain/program/challenge/challenge-view/ChallengeCurriculum';
 import ChallengeFaq from '@/domain/program/challenge/challenge-view/ChallengeFaq';
@@ -14,6 +15,7 @@ import {
 } from '@/schema';
 import useProgramStore from '@/store/useProgramStore';
 import { ChallengeContent } from '@/types/interface';
+
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import MoreReviewButton from '../../../common/review/MoreReviewButton';

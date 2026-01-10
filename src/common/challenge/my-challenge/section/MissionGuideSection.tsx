@@ -89,6 +89,7 @@ const MissionGuideSection = ({
           missionData={missionData}
           selectedMissionTh={selectedMissionTh}
           isLoading={isLoading}
+          currentChallenge={currentChallenge}
         />
       );
     }
