@@ -3,7 +3,7 @@
 import ExpandableCell from '@/common/table/ExpandableCell';
 import CheckBox from '@/common/ui/CheckBox';
 import { twMerge } from '@/lib/twMerge';
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 
 export interface TableHeader {
   key: string;
@@ -90,6 +90,11 @@ const DataTable = ({
 
     onSelectionChange(newSet);
   };
+
+  useEffect(() => {
+    // 해당 컴포넌트가 어디까지 영향을 미치는지 확인하기 위한 의존성 모듈 시각화 테스트
+    console.log('dependency cruiser test');
+  }, []);
 
   return (
     <div className={twMerge('overflow-x-auto', className)}>
