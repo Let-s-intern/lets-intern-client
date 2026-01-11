@@ -74,7 +74,8 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "analyze:impact": "node scripts/visualize-pr-impact.mjs"
   },
   "devDependencies": {
     "@builder.io/dev-tools": "^1.6.72",
@@ -86,6 +87,7 @@
     "@vercel/node": "^3.2.7",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.19",
+    "dependency-cruiser": "^17.3.6",
     "dotenv": "^16.4.5",
     "eslint": "^9",
     "eslint-config-next": "^15.5.7",

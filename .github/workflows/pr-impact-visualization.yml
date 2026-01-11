@@ -1,0 +1,92 @@
+name: PR Impact Visualization
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'src/**/*.ts'
+      - 'src/**/*.tsx'
+      - 'src/**/*.js'
+      - 'src/**/*.jsx'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  visualize-impact:
+    name: Visualize PR Impact
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch base branch
+        run: |
+          git fetch origin ${{ github.event.pull_request.base.ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Get changed files
+        id: changed-files
+        run: |
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }}...HEAD | grep -E '\.(ts|tsx|js|jsx)$' | grep '^src/' || true)
+          echo "files<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGED_FILES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+          CHANGED_COUNT=$(echo "$CHANGED_FILES" | grep -v '^$' | wc -l | tr -d ' ')
+          echo "count=$CHANGED_COUNT" >> $GITHUB_OUTPUT
+
+      - name: Run impact analysis
+        id: impact-analysis
+        if: steps.changed-files.outputs.count > 0
+        env:
+          BASE_BRANCH: ${{ github.event.pull_request.base.ref }}
+        run: |
+          node scripts/visualize-pr-impact.mjs
+
+      - name: Read impact report
+        id: read-report
+        if: steps.changed-files.outputs.count > 0
+        run: |
+          if [ -f pr-impact.md ]; then
+            {
+              echo 'report<<EOF'
+              cat pr-impact.md
+              echo 'EOF'
+            } >> $GITHUB_OUTPUT
+          fi
+
+      - name: Find existing comment
+        if: steps.changed-files.outputs.count > 0
+        uses: peter-evans/find-comment@v3
+        id: find-comment
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: 'PR Impact Visualization'
+
+      - name: Create or update comment
+        if: steps.changed-files.outputs.count > 0 && steps.read-report.outputs.report != ''
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          edit-mode: replace
+          body: ${{ steps.read-report.outputs.report }}
+
+      - name: No changes detected
+        if: steps.changed-files.outputs.count == 0
+        run: |
+          echo "No TypeScript/JavaScript files changed in src directory. Skipping impact analysis."
