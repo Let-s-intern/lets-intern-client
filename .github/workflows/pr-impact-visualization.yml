@@ -56,6 +56,14 @@ jobs:
         run: |
           node scripts/visualize-pr-impact.mjs
 
+      - name: Upload diagram image
+        if: steps.changed-files.outputs.count > 0
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-impact-diagram
+          path: pr-impact-diagram.png
+          if-no-files-found: ignore
+
       - name: Read impact report
         id: read-report
         if: steps.changed-files.outputs.count > 0

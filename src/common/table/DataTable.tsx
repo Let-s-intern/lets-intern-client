@@ -93,7 +93,7 @@ const DataTable = ({
 
   useEffect(() => {
     // 해당 컴포넌트가 어디까지 영향을 미치는지 확인하기 위한 의존성 모듈 시각화 테스트
-    console.log('의존성 모듈 시각화 테스트: DataTable 렌더링');
+    console.log('의존성 모듈 시각화 테스트: DataTable 렌더링!');
   }, []);
 
   return (

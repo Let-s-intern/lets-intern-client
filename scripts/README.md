@@ -27,9 +27,10 @@ npm run analyze:impact
 이 명령어는:
 1. 베이스 브랜치와 비교하여 변경된 파일 감지
 2. 프로젝트의 전체 의존성 그래프 생성
-3. 변경된 파일에 영향을 받는 파일들 추적
+3. 변경된 파일에 영향을 받는 파일들 추적 (depth 3까지)
 4. Mermaid 다이어그램으로 시각화
 5. `pr-impact.md` 파일로 결과 저장
+6. `pr-impact-diagram.png` 이미지 생성 (선택사항)
 
 ### GitHub Actions
 
@@ -45,6 +46,7 @@ Pull Request가 생성되거나 업데이트되면 자동으로 실행됩니다:
 - **Changed files**: 변경된 파일 수
 - **Impacted files**: 영향을 받는 파일 수
 - **Total affected files**: 총 영향 받는 파일 수
+- **Analysis depth**: 분석 깊이 (기본 3 레벨)
 
 ### Impact Graph
 Mermaid 다이어그램으로 의존성 관계를 시각화:
@@ -73,6 +75,8 @@ Mermaid 다이어그램으로 의존성 관계를 시각화:
 - 대규모 프로젝트에서는 실행 시간이 길어질 수 있습니다
 - `src/` 디렉토리의 TypeScript/JavaScript 파일만 분석합니다
 - `node_modules`, `.next`, `dist` 등은 자동으로 제외됩니다
+- 의존성 분석은 depth 3까지 추적합니다 (직접 의존성 + 2단계 간접 의존성)
+- PNG 이미지 생성은 선택사항이며, 실패해도 markdown 파일은 정상 생성됩니다
 
 ## 문제 해결
 
