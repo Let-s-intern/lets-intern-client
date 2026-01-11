@@ -45,3 +45,7 @@ next-env.d.ts
 
 # YoYo AI version control directory
 .yoyo/
+
+# PR impact visualization
+.dependency-graph.json
+pr-impact.md

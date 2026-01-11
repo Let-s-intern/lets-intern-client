@@ -53,11 +53,18 @@ async function getChangedFiles() {
 async function getDependencyGraph() {
   try {
     console.log('\nGenerating dependency graph...');
-    const { stdout } = await execAsync(
-      'npx depcruise --output-type json --config .dependency-cruiser.cjs src'
+
+    // Write to temp file to avoid maxBuffer issues
+    const tempFile = path.join(process.cwd(), '.dependency-graph.json');
+    await execAsync(
+      `npx depcruise --output-type json --config .dependency-cruiser.cjs src > ${tempFile}`,
+      { maxBuffer: 50 * 1024 * 1024 } // 50MB buffer
     );
 
-    return JSON.parse(stdout);
+    const content = await fs.readFile(tempFile, 'utf-8');
+    await fs.unlink(tempFile); // Clean up temp file
+
+    return JSON.parse(content);
   } catch (error) {
     console.error('Error generating dependency graph:', error.message);
     throw error;
@@ -69,11 +76,8 @@ async function getDependencyGraph() {
  */
 function findImpactedFiles(changedFiles, dependencyGraph) {
   const impactedFiles = new Set();
-  const normalizedChangedFiles = changedFiles.map(file =>
-    path.resolve(process.cwd(), file)
-  );
 
-  // Build reverse dependency map
+  // Build reverse dependency map (use relative paths like dependency-cruiser)
   const reverseDeps = new Map();
 
   dependencyGraph.modules.forEach(module => {
@@ -87,8 +91,8 @@ function findImpactedFiles(changedFiles, dependencyGraph) {
   });
 
   // Find all files impacted by changes (BFS)
-  const queue = [...normalizedChangedFiles];
-  const visited = new Set(normalizedChangedFiles);
+  const queue = [...changedFiles];
+  const visited = new Set(changedFiles);
 
   while (queue.length > 0) {
     const current = queue.shift();
@@ -112,9 +116,7 @@ function findImpactedFiles(changedFiles, dependencyGraph) {
  */
 function generateMermaidDiagram(changedFiles, impactedFiles, dependencyGraph) {
   const allFiles = [...changedFiles, ...impactedFiles];
-  const normalizedFiles = allFiles.map(file =>
-    path.resolve(process.cwd(), file)
-  );
+  const allFilesSet = new Set(allFiles);
 
   // Create file to ID mapping
   const fileToId = new Map();
@@ -127,41 +129,34 @@ function generateMermaidDiagram(changedFiles, impactedFiles, dependencyGraph) {
     return fileToId.get(file);
   };
 
-  const getFileLabel = (file) => {
-    return file.replace(process.cwd() + '/', '').replace(/\\/g, '/');
-  };
-
   let mermaid = 'graph TD\n';
 
   // Add nodes
   changedFiles.forEach(file => {
-    const fullPath = path.resolve(process.cwd(), file);
-    const id = getFileId(fullPath);
-    const label = getFileLabel(fullPath);
-    mermaid += `  ${id}["${label}"]:::changed\n`;
+    const id = getFileId(file);
+    mermaid += `  ${id}["${file}"]:::changed\n`;
   });
 
   impactedFiles.forEach(file => {
     const id = getFileId(file);
-    const label = getFileLabel(file);
-    mermaid += `  ${id}["${label}"]:::impacted\n`;
+    mermaid += `  ${id}["${file}"]:::impacted\n`;
   });
 
   // Add edges
   const addedEdges = new Set();
 
   dependencyGraph.modules.forEach(module => {
-    const moduleFullPath = module.source;
+    const moduleSource = module.source;
 
-    if (!normalizedFiles.includes(moduleFullPath)) return;
+    if (!allFilesSet.has(moduleSource)) return;
 
     module.dependencies.forEach(dep => {
-      const depFullPath = dep.resolved;
+      const depSource = dep.resolved;
 
-      if (!normalizedFiles.includes(depFullPath)) return;
+      if (!allFilesSet.has(depSource)) return;
 
-      const fromId = getFileId(depFullPath);
-      const toId = getFileId(moduleFullPath);
+      const fromId = getFileId(depSource);
+      const toId = getFileId(moduleSource);
       const edgeKey = `${fromId}->${toId}`;
 
       if (!addedEdges.has(edgeKey)) {
@@ -200,8 +195,7 @@ async function main() {
 
   console.log(`\nFound ${impactedFiles.length} impacted files:`);
   impactedFiles.slice(0, 10).forEach(file => {
-    const relativePath = file.replace(process.cwd() + '/', '');
-    console.log(`  - ${relativePath}`);
+    console.log(`  - ${file}`);
   });
 
   if (impactedFiles.length > 10) {
@@ -239,10 +233,7 @@ ${mermaidDiagram}
 ${changedFiles.map(file => `- \`${file}\``).join('\n')}
 
 ${impactedFiles.length > 0 ? `## Impacted Files
-${impactedFiles.map(file => {
-  const relativePath = file.replace(process.cwd() + '/', '');
-  return `- \`${relativePath}\``;
-}).join('\n')}` : ''}
+${impactedFiles.map(file => `- \`${file}\``).join('\n')}` : ''}
 `;
 
   await fs.writeFile(outputPath, output);
