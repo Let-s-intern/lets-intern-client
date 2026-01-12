@@ -13,7 +13,7 @@ export interface TableHeader {
     horizontal?: 'left' | 'center' | 'right';
     vertical?: 'top' | 'middle' | 'bottom';
   };
-  cellRenderer?: (value: any, row: TableData) => ReactNode;
+  cellRenderers?: (value: any, row: TableData) => ReactNode;
 }
 
 export interface TableData {
@@ -112,8 +112,7 @@ const DataTable = ({
                 className={twMerge(
                   'px-2 py-2.5 text-left text-sm font-medium text-neutral-10',
                   header.align?.horizontal === 'center'
-                    ? // 임시 변경
-                      'text-right'
+                    ? 'text-center'
                     : header.align?.horizontal === 'right'
                       ? 'text-right'
                       : 'text-left',
