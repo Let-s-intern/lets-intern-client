@@ -214,29 +214,29 @@ async function main() {
 
   // Save to file
   const outputPath = path.join(process.cwd(), 'pr-impact.md');
-  const output = `# PR Impact Visualization
+  const output = `# PR 영향 범위 분석
 
-## Summary
-- **Changed files**: ${changedFiles.length}
-- **Impacted files**: ${impactedFiles.length}
-- **Total affected files**: ${changedFiles.length + impactedFiles.length}
-- **Analysis depth**: 3 levels (direct + 2 indirect dependencies)
+## 요약
+- **변경된 파일**: ${changedFiles.length}개
+- **영향받는 파일**: ${impactedFiles.length}개
+- **총 영향 파일**: ${changedFiles.length + impactedFiles.length}개
+- **분석 깊이**: 3단계 (직접 의존성 + 2단계 간접 의존성)
 
-## Impact Graph
+## 영향 범위 그래프
 
 \`\`\`mermaid
 ${mermaidDiagram}
 \`\`\`
 
-### Legend
-- 🔴 Red nodes: Changed files in this PR
-- 🟡 Yellow nodes: Files impacted by the changes
-- Arrows show dependency direction (A → B means B depends on A)
+### 범례
+- 🔴 빨간색 노드: 이번 PR에서 변경된 파일
+- 🟡 노란색 노드: 변경에 영향을 받는 파일
+- 화살표: 의존성 방향 (A → B는 B가 A에 의존함을 의미)
 
-## Changed Files
+## 변경된 파일
 ${changedFiles.map(file => `- \`${file}\``).join('\n')}
 
-${impactedFiles.length > 0 ? `## Impacted Files
+${impactedFiles.length > 0 ? `## 영향받는 파일
 ${impactedFiles.map(file => `- \`${file}\``).join('\n')}` : ''}
 `;
 
