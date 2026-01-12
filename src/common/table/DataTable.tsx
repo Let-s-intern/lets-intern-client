@@ -3,14 +3,14 @@
 import ExpandableCell from '@/common/table/ExpandableCell';
 import CheckBox from '@/common/ui/CheckBox';
 import { twMerge } from '@/lib/twMerge';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 
 export interface TableHeader {
   key: string;
   label: string;
   width?: string;
   align?: {
-    horizontal?: 'left' | 'center' | 'right';
+    horizontal?: 'left' | 'center';
     vertical?: 'top' | 'middle' | 'bottom';
   };
   cellRenderer?: (value: any, row: TableData) => ReactNode;
@@ -90,12 +90,6 @@ const DataTable = ({
 
     onSelectionChange(newSet);
   };
-
-  const [cnt, setCnt] = useState(0);
-
-  useEffect(() => {
-    setCnt(cnt + 1);
-  }, []);
 
   return (
     <div className={twMerge('overflow-x-auto', className)}>
