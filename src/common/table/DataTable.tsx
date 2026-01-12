@@ -91,9 +91,10 @@ const DataTable = ({
     onSelectionChange(newSet);
   };
 
+  const [cnt, setCnt] = useState(0);
+
   useEffect(() => {
-    // 해당 컴포넌트가 어디까지 영향을 미치는지 확인하기 위한 의존성 모듈 시각화 테스트
-    console.log('의존성 모듈 시각화 테스트: DataTable 렌더링!');
+    setCnt(cnt + 1);
   }, []);
 
   return (

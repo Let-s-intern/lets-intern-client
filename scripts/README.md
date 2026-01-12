@@ -36,7 +36,8 @@ npm run analyze:impact
 Pull Request가 생성되거나 업데이트되면 자동으로 실행됩니다:
 - `.github/workflows/pr-impact-visualization.yml` 참조
 - PR 코멘트로 영향 범위 시각화 결과가 자동으로 게시됩니다
-- Gemini API를 통해 영향 범위 기반 AI 조언도 함께 제공됩니다 (선택사항)
+- PR 본문(description)에 영향 범위 정보가 자동으로 추가됩니다
+- Gemini Code Assist가 영향 범위 정보를 참고하여 더 정확한 코드 리뷰를 제공합니다
 
 ## 출력 예시
 
@@ -70,27 +71,17 @@ Mermaid 다이어그램으로 의존성 관계를 시각화:
 - 분석 대상 파일 패턴 변경
 - 추가 분석 단계 구성
 
-### AI 기반 조언 활성화 (선택사항)
+### Gemini Code Assist 통합
 
-영향 범위 분석 결과를 바탕으로 Gemini AI가 자동으로 조언을 제공합니다.
+영향 범위 분석 결과가 PR 본문에 자동으로 추가됩니다.
 
-1. **Gemini API 키 발급**
-   - [Google AI Studio](https://makersuite.google.com/app/apikey)에서 API 키 생성
+**작동 방식:**
+1. PR 생성/업데이트 시 영향 범위 자동 분석
+2. 분석 결과가 PR 본문에 추가됨
+3. Gemini Code Assist가 PR 본문의 영향 범위 정보를 읽고 코드 리뷰 시 참고
+4. 더 정확하고 맞춤화된 코드 리뷰 제공
 
-2. **GitHub Secrets 설정**
-   ```bash
-   # Repository Settings > Secrets and variables > Actions > New repository secret
-   # Name: GEMINI_API_KEY
-   # Value: 발급받은 API 키
-   ```
-
-3. **제공되는 조언 유형**
-   - 테스트 범위: 특히 주의깊게 테스트해야 할 영역
-   - 잠재적 위험: 변경이 미칠 수 있는 부작용
-   - 리팩토링 기회: 함께 개선할 수 있는 부분
-   - 문서화: 업데이트가 필요한 문서
-
-**참고**: API 키가 설정되지 않으면 AI 조언 없이 영향 범위 시각화만 제공됩니다.
+**별도 설정 불필요**: 이미 설치된 Gemini Code Assist가 자동으로 활용합니다.
 
 ## 주의사항
 
