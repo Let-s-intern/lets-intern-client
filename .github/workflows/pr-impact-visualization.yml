@@ -66,6 +66,81 @@ jobs:
               cat pr-impact.md
               echo 'EOF'
             } >> $GITHUB_OUTPUT
+
+            # Extract summary for AI review
+            CHANGED_COUNT="${{ steps.changed-files.outputs.count }}"
+            CHANGED_FILES=$(cat pr-impact.md | sed -n '/## 변경된 파일/,/## 영향받는 파일/p' | grep '^- `' | sed 's/^- `//;s/`$//')
+            IMPACTED_FILES=$(cat pr-impact.md | sed -n '/## 영향받는 파일/,$p' | grep '^- `' | sed 's/^- `//;s/`$//')
+            IMPACTED_COUNT=$(echo "$IMPACTED_FILES" | grep -v '^$' | wc -l | tr -d ' ')
+
+            {
+              echo 'impact_summary<<EOF'
+              echo "변경된 파일 수: ${CHANGED_COUNT}개"
+              echo "영향받는 파일 수: ${IMPACTED_COUNT}개"
+              echo ""
+              echo "변경된 파일:"
+              echo "$CHANGED_FILES"
+              echo ""
+              if [ ! -z "$IMPACTED_FILES" ]; then
+                echo "영향받는 파일:"
+                echo "$IMPACTED_FILES"
+              fi
+              echo 'EOF'
+            } >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate AI-powered impact analysis
+        if: steps.changed-files.outputs.count > 0 && steps.read-report.outputs.impact_summary != ''
+        id: ai-analysis
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          IMPACT_SUMMARY: ${{ steps.read-report.outputs.impact_summary }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if [ -z "$GEMINI_API_KEY" ]; then
+            echo "GEMINI_API_KEY not set, skipping AI analysis"
+            echo "ai_advice=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Create prompt for Gemini
+          cat > /tmp/gemini-prompt.json <<'PROMPT_EOF'
+          {
+            "contents": [{
+              "parts": [{
+                "text": "당신은 React/TypeScript 프로젝트의 시니어 개발자입니다.\n\n다음은 Pull Request의 영향 범위 분석 결과입니다:\n\n$IMPACT_SUMMARY\n\nPR 제목: $PR_TITLE\n\n위 분석 결과를 바탕으로 다음 관점에서 구체적인 조언을 제공해주세요:\n\n1. **테스트 범위**: 영향받는 파일들 중 특히 주의깊게 테스트해야 할 영역\n2. **잠재적 위험**: 변경이 미칠 수 있는 부작용이나 버그 가능성\n3. **리팩토링 기회**: 이번 변경과 함께 개선할 수 있는 부분\n4. **문서화**: 업데이트가 필요한 문서나 코멘트\n\n각 항목은 2-3문장으로 간결하게 작성하고, 구체적인 파일명과 함께 설명해주세요.\n마크다운 형식으로 작성하되, 헤더는 ### 로 시작해주세요."
+              }]
+            }],
+            "generationConfig": {
+              "temperature": 0.7,
+              "maxOutputTokens": 1024
+            }
+          }
+          PROMPT_EOF
+
+          # Replace placeholders
+          sed -i.bak "s|\$IMPACT_SUMMARY|${IMPACT_SUMMARY}|g" /tmp/gemini-prompt.json
+          sed -i.bak "s|\$PR_TITLE|${PR_TITLE}|g" /tmp/gemini-prompt.json
+
+          # Call Gemini API
+          RESPONSE=$(curl -s -X POST \
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}" \
+            -H 'Content-Type: application/json' \
+            -d @/tmp/gemini-prompt.json)
+
+          # Extract advice from response
+          ADVICE=$(echo "$RESPONSE" | python3 -c "import sys, json; data=json.load(sys.stdin); print(data['candidates'][0]['content']['parts'][0]['text'] if 'candidates' in data else '')" 2>/dev/null || echo "")
+
+          if [ -z "$ADVICE" ]; then
+            echo "Failed to get AI advice"
+            echo "ai_advice=" >> $GITHUB_OUTPUT
+          else
+            {
+              echo 'ai_advice<<EOF'
+              echo "$ADVICE"
+              echo 'EOF'
+            } >> $GITHUB_OUTPUT
           fi
 
       - name: Find existing comment
@@ -75,7 +150,7 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: 'github-actions[bot]'
-          body-includes: 'PR Impact Visualization'
+          body-includes: 'PR 영향 범위 분석'
 
       - name: Create or update comment
         if: steps.changed-files.outputs.count > 0 && steps.read-report.outputs.report != ''
@@ -84,7 +159,16 @@ jobs:
           comment-id: ${{ steps.find-comment.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
           edit-mode: replace
-          body: ${{ steps.read-report.outputs.report }}
+          body: |
+            ${{ steps.read-report.outputs.report }}
+
+            ${{ steps.ai-analysis.outputs.ai_advice != '' && format('---
+
+            ## 🤖 AI 기반 영향 분석 및 조언
+
+            {0}
+
+            *이 조언은 Gemini API를 통해 영향 범위 분석 결과를 바탕으로 자동 생성되었습니다.*', steps.ai-analysis.outputs.ai_advice) || '' }}
 
       - name: No changes detected
         if: steps.changed-files.outputs.count == 0
