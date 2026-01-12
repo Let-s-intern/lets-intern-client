@@ -243,34 +243,6 @@ ${impactedFiles.map(file => `- \`${file}\``).join('\n')}` : ''}
   await fs.writeFile(outputPath, output);
   console.log(`\nImpact visualization saved to: ${outputPath}`);
 
-  // Generate Mermaid diagram image
-  try {
-    console.log('\nGenerating diagram image...');
-    const mermaidFilePath = path.join(process.cwd(), '.pr-impact-diagram.mmd');
-    await fs.writeFile(mermaidFilePath, mermaidDiagram);
-
-    const imagePath = path.join(process.cwd(), 'pr-impact-diagram.png');
-
-    // Try to generate image (may fail if mermaid-cli not installed properly)
-    await execAsync(
-      `npx -y @mermaid-js/mermaid-cli@10.6.1 -i ${mermaidFilePath} -o ${imagePath}`,
-      { timeout: 45000 }
-    );
-
-    console.log(`Diagram image saved to: ${imagePath}`);
-
-    // Clean up temp mermaid file
-    await fs.unlink(mermaidFilePath);
-  } catch (error) {
-    console.log('\nNote: Could not generate diagram image.');
-    console.log('You can view the diagram in GitHub PR comment or pr-impact.md file.');
-
-    // Clean up temp file if it exists
-    try {
-      await fs.unlink(path.join(process.cwd(), '.pr-impact-diagram.mmd'));
-    } catch {}
-  }
-
   // Output for GitHub Actions
   const summary = `### PR Impact Analysis\n- **Changed files**: ${changedFiles.length}\n- **Impacted files**: ${impactedFiles.length}\n- **Total affected files**: ${changedFiles.length + impactedFiles.length}\n- **Analysis depth**: 3 levels`;
   console.log(`\n${summary}`);

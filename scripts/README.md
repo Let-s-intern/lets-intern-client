@@ -30,7 +30,6 @@ npm run analyze:impact
 3. 변경된 파일에 영향을 받는 파일들 추적 (depth 3까지)
 4. Mermaid 다이어그램으로 시각화
 5. `pr-impact.md` 파일로 결과 저장
-6. `pr-impact-diagram.png` 이미지 생성 (선택사항)
 
 ### GitHub Actions
 
@@ -76,7 +75,7 @@ Mermaid 다이어그램으로 의존성 관계를 시각화:
 - `src/` 디렉토리의 TypeScript/JavaScript 파일만 분석합니다
 - `node_modules`, `.next`, `dist` 등은 자동으로 제외됩니다
 - 의존성 분석은 depth 3까지 추적합니다 (직접 의존성 + 2단계 간접 의존성)
-- PNG 이미지 생성은 선택사항이며, 실패해도 markdown 파일은 정상 생성됩니다
+- GitHub PR 코멘트의 Mermaid 다이어그램은 자동으로 렌더링됩니다
 
 ## 문제 해결
 
