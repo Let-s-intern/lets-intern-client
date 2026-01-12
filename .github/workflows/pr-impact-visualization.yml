@@ -148,7 +148,7 @@ jobs:
               }
           }
 
-          url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={api_key}"
+          url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
           req = urllib.request.Request(url, json.dumps(data).encode('utf-8'), {'Content-Type': 'application/json'})
 
           try:
@@ -157,17 +157,26 @@ jobs:
                   if 'candidates' in result and len(result['candidates']) > 0:
                       print(result['candidates'][0]['content']['parts'][0]['text'])
                   else:
+                      print(f"DEBUG: No candidates in response: {json.dumps(result)}", file=os.sys.stderr)
                       print("")
+          except urllib.error.HTTPError as e:
+              error_body = e.read().decode('utf-8')
+              print(f"HTTP Error {e.code}: {error_body}", file=os.sys.stderr)
+              print("")
           except Exception as e:
-              print(f"Error: {e}", file=os.sys.stderr)
+              print(f"Error: {type(e).__name__}: {e}", file=os.sys.stderr)
               print("")
           PYTHON_SCRIPT
 
           # Run Python script
           ADVICE=$(python3 /tmp/call_gemini.py 2>&1)
 
-          if [ -z "$ADVICE" ] || [[ "$ADVICE" == Error:* ]]; then
-            echo "❌ AI 조언 생성 실패: $ADVICE"
+          echo "DEBUG: ADVICE output:"
+          echo "$ADVICE"
+
+          if [ -z "$ADVICE" ] || [[ "$ADVICE" == *"Error:"* ]] || [[ "$ADVICE" == *"HTTP Error"* ]]; then
+            echo "❌ AI 조언 생성 실패"
+            echo "에러 내용: $ADVICE"
             echo "ai_advice=" >> $GITHUB_OUTPUT
           else
             echo "✅ AI 조언 생성 성공"
