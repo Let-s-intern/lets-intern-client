@@ -10,7 +10,7 @@ export interface TableHeader {
   label: string;
   width?: string;
   align?: {
-    horizontal?: 'left' | 'center' | 'right';
+    horizontal: 'left' | 'center' | 'right';
     vertical?: 'top' | 'middle' | 'bottom';
   };
   cellRenderer?: (value: any, row: TableData) => ReactNode;

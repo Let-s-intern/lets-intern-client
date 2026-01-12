@@ -100,72 +100,74 @@ jobs:
           if [ -z "$GEMINI_API_KEY" ]; then
             echo "⚠️ GEMINI_API_KEY가 설정되지 않았습니다."
             echo "영향 범위 시각화만 제공됩니다."
-            echo "AI 조언을 받으려면 https://makersuite.google.com/app/apikey 에서 API 키를 발급받아"
-            echo "Repository Settings > Secrets > GEMINI_API_KEY 로 등록하세요."
             echo "ai_advice=" >> $GITHUB_OUTPUT
             exit 0
           fi
 
-          # Create prompt for Gemini
-          PROMPT="당신은 React/TypeScript 프로젝트의 시니어 개발자입니다.
+          # Create Python script for API call
+          cat > /tmp/call_gemini.py << 'PYTHON_SCRIPT'
+          import os
+          import json
+          import urllib.request
 
-다음은 Pull Request의 영향 범위 분석 결과입니다:
+          api_key = os.environ['GEMINI_API_KEY']
+          impact_summary = os.environ['IMPACT_SUMMARY']
+          pr_title = os.environ['PR_TITLE']
 
-$IMPACT_SUMMARY
+          prompt = f"""당신은 React/TypeScript 프로젝트의 시니어 개발자입니다.
 
-PR 제목: $PR_TITLE
+          다음은 Pull Request의 영향 범위 분석 결과입니다:
 
-위 분석 결과를 바탕으로 다음 관점에서 구체적인 조언을 한국어로 제공해주세요:
+          {impact_summary}
 
-### 🧪 테스트 범위
-영향받는 파일들 중 특히 주의깊게 테스트해야 할 영역을 구체적인 파일명과 함께 설명해주세요.
+          PR 제목: {pr_title}
 
-### ⚠️ 잠재적 위험
-변경이 미칠 수 있는 부작용이나 버그 가능성을 경고해주세요.
+          위 분석 결과를 바탕으로 다음 관점에서 구체적인 조언을 한국어로 제공해주세요:
 
-### 🔧 개선 제안
-이번 변경과 함께 개선할 수 있는 부분을 제안해주세요.
+          ### 🧪 테스트 범위
+          영향받는 파일들 중 특히 주의깊게 테스트해야 할 영역을 구체적인 파일명과 함께 설명해주세요.
 
-### 📝 문서화
-업데이트가 필요한 문서나 주석을 언급해주세요.
+          ### ⚠️ 잠재적 위험
+          변경이 미칠 수 있는 부작용이나 버그 가능성을 경고해주세요.
 
-각 항목은 2-3문장으로 간결하게 작성하고, 구체적인 파일명을 포함해주세요.
-마크다운 형식으로 작성하되, 헤더는 ### 로 시작해주세요."
+          ### 🔧 개선 제안
+          이번 변경과 함께 개선할 수 있는 부분을 제안해주세요.
 
-          # Escape JSON
-          PROMPT_ESCAPED=$(echo "$PROMPT" | python3 -c "import sys, json; print(json.dumps(sys.stdin.read()))")
+          ### 📝 문서화
+          업데이트가 필요한 문서나 주석을 언급해주세요.
 
-          # Call Gemini API
-          RESPONSE=$(curl -s -X POST \
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}" \
-            -H 'Content-Type: application/json' \
-            -d "{
-              \"contents\": [{
-                \"parts\": [{
-                  \"text\": $PROMPT_ESCAPED
-                }]
+          각 항목은 2-3문장으로 간결하게 작성하고, 구체적인 파일명을 포함해주세요."""
+
+          data = {
+              "contents": [{
+                  "parts": [{"text": prompt}]
               }],
-              \"generationConfig\": {
-                \"temperature\": 0.7,
-                \"maxOutputTokens\": 1024
+              "generationConfig": {
+                  "temperature": 0.7,
+                  "maxOutputTokens": 1024
               }
-            }")
+          }
 
-          # Extract advice from response
-          ADVICE=$(echo "$RESPONSE" | python3 -c "
-import sys, json
-try:
-    data = json.load(sys.stdin)
-    if 'candidates' in data and len(data['candidates']) > 0:
-        print(data['candidates'][0]['content']['parts'][0]['text'])
-    else:
-        print('')
-except:
-    print('')
-" 2>/dev/null || echo "")
+          url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={api_key}"
+          req = urllib.request.Request(url, json.dumps(data).encode('utf-8'), {'Content-Type': 'application/json'})
 
-          if [ -z "$ADVICE" ]; then
-            echo "❌ AI 조언 생성 실패"
+          try:
+              with urllib.request.urlopen(req) as response:
+                  result = json.loads(response.read().decode('utf-8'))
+                  if 'candidates' in result and len(result['candidates']) > 0:
+                      print(result['candidates'][0]['content']['parts'][0]['text'])
+                  else:
+                      print("")
+          except Exception as e:
+              print(f"Error: {e}", file=os.sys.stderr)
+              print("")
+          PYTHON_SCRIPT
+
+          # Run Python script
+          ADVICE=$(python3 /tmp/call_gemini.py 2>&1)
+
+          if [ -z "$ADVICE" ] || [[ "$ADVICE" == Error:* ]]; then
+            echo "❌ AI 조언 생성 실패: $ADVICE"
             echo "ai_advice=" >> $GITHUB_OUTPUT
           else
             echo "✅ AI 조언 생성 성공"
@@ -175,6 +177,8 @@ except:
               echo 'EOF'
             } >> $GITHUB_OUTPUT
           fi
+
+          rm -f /tmp/call_gemini.py
 
       - name: Find existing comment
         if: steps.changed-files.outputs.count > 0
