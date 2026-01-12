@@ -10,7 +10,7 @@ export interface TableHeader {
   label: string;
   width?: string;
   align?: {
-    horizontal: 'left' | 'center' | 'right';
+    horizontal?: 'left' | 'center' | 'right';
     vertical?: 'top' | 'middle' | 'bottom';
   };
   cellRenderer?: (value: any, row: TableData) => ReactNode;
@@ -91,6 +91,7 @@ const DataTable = ({
     onSelectionChange(newSet);
   };
 
+  // AI 조언 기능 테스트: 이 컴포넌트 변경이 다른 파일에 미치는 영향 확인
   return (
     <div className={twMerge('overflow-x-auto', className)}>
       <table className="w-full min-w-max table-fixed border-collapse">
@@ -111,7 +112,8 @@ const DataTable = ({
                 className={twMerge(
                   'px-2 py-2.5 text-left text-sm font-medium text-neutral-10',
                   header.align?.horizontal === 'center'
-                    ? 'text-center'
+                    ? // 임시 변경
+                      'text-right'
                     : header.align?.horizontal === 'right'
                       ? 'text-right'
                       : 'text-left',
