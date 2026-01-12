@@ -71,17 +71,28 @@ Mermaid 다이어그램으로 의존성 관계를 시각화:
 - 분석 대상 파일 패턴 변경
 - 추가 분석 단계 구성
 
-### Gemini Code Assist 통합
+### AI 기반 조언 활성화
 
-영향 범위 분석 결과가 PR 본문에 자동으로 추가됩니다.
+영향 범위 분석 결과를 바탕으로 Gemini AI가 한국어로 자동 조언을 제공합니다.
 
-**작동 방식:**
-1. PR 생성/업데이트 시 영향 범위 자동 분석
-2. 분석 결과가 PR 본문에 추가됨
-3. Gemini Code Assist가 PR 본문의 영향 범위 정보를 읽고 코드 리뷰 시 참고
-4. 더 정확하고 맞춤화된 코드 리뷰 제공
+**설정 방법:**
+1. **Gemini API 키 발급** (무료)
+   - https://makersuite.google.com/app/apikey 접속
+   - "Create API key" 클릭
+   - API 키 복사
 
-**별도 설정 불필요**: 이미 설치된 Gemini Code Assist가 자동으로 활용합니다.
+2. **GitHub Secrets 등록**
+   - Repository Settings > Secrets and variables > Actions
+   - "New repository secret" 클릭
+   - Name: `GEMINI_API_KEY`
+   - Value: 복사한 API 키
+   - "Add secret" 클릭
+
+3. **완료!**
+   - 다음 PR부터 한국어 AI 조언 자동 생성
+   - 테스트 범위, 잠재적 위험, 개선 제안, 문서화 조언
+
+**참고**: API 키 없이도 영향 범위 시각화는 정상 작동합니다.
 
 ## 주의사항
 
