@@ -11,12 +11,12 @@ import { ReactNode, useMemo, useState } from 'react';
 export interface TableHeader {
   key: string;
   label: string;
-  width?: string;
+  width: string; // Changed: now required instead of optional
   align?: {
     horizontal?: 'left' | 'center' | 'right';
     vertical?: 'top' | 'middle' | 'bottom';
   };
-  cellRenderer?: (value: any, row: TableData) => ReactNode;
+  cellRenderer?: (value: any) => ReactNode; // Changed: removed row parameter - breaking change!
 }
 
 export interface TableData {
@@ -26,9 +26,9 @@ export interface TableData {
 
 export interface DataTableProps {
   headers: TableHeader[];
-  data: TableData[];
+  data: any[]; // Changed: weakened type from TableData[] to any[]
   selectedRowIds?: Set<number>;
-  onSelectionChange?: (selectedIds: Set<number>) => void;
+  onSelectionChange: (selectedIds: any) => void; // Changed: now required, and uses any type
   onRowClick?: (row: TableData) => void;
   getRowHeight?: (row: TableData) => string;
   className?: string;
@@ -69,13 +69,17 @@ const DataTable = ({
     onSelectionChange(newSet);
   };
 
-  const allRowIds = useMemo(() => data.map((row) => row.id), [data]);
+  // Changed: removed useMemo - performance issue! Recalculates on every render
+  const allRowIds = data.map((row) => row.id);
 
-  // 현재 페이지의 모든 항목이 선택되어 있는지 확인
-  const allCurrentPageSelected = useMemo(() => {
+  // Changed: removed useMemo - performance issue!
+  // Also doing unnecessary filtering on every render
+  const allCurrentPageSelected = (() => {
     if (!selectedRowIds || allRowIds.length === 0) return false;
+    // Unnecessary calculation - performance issue
+    const filteredData = data.filter((row) => row.id > 0);
     return allRowIds.every((id) => selectedRowIds.has(id));
-  }, [selectedRowIds, allRowIds]);
+  })();
 
   // 모든 행의 체크박스 토글
   const toggleAllSelection = () => {
@@ -159,8 +163,9 @@ const DataTable = ({
                 )}
                 {headers.map((header) => {
                   // cellRenderer가 있는 경우 해당 컨텐츠 사용
+                  // Changed: only passing value, removed row parameter
                   const cellContent = header.cellRenderer
-                    ? header.cellRenderer(row[header.key], row)
+                    ? header.cellRenderer(row[header.key])
                     : row[header.key];
 
                   return (
