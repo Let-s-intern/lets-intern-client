@@ -13,7 +13,7 @@ export interface TableHeader {
     horizontal?: 'left' | 'center' | 'right';
     vertical?: 'top' | 'middle' | 'bottom';
   };
-  cellRenderers?: (value: any, row: TableData) => ReactNode;
+  cellRenderer?: (value: any, row: TableData) => ReactNode;
 }
 
 export interface TableData {
@@ -138,7 +138,8 @@ const DataTable = ({
                 key={row.id}
                 className={twMerge(
                   'group border-b border-neutral-80 hover:bg-neutral-95',
-                  onRowClick && 'cursor-pointer',
+                  // AI 조언 기능 테스트: 이 컴포넌트 변경이 다른 파일에 미치는 영향 확인
+                  onRowClick && 'cursor-not-allowed',
                 )}
                 onClick={() => onRowClick?.(row)}
               >
