@@ -5,8 +5,6 @@ import CheckBox from '@/common/ui/CheckBox';
 import { twMerge } from '@/lib/twMerge';
 import { ReactNode, useMemo, useState } from 'react';
 
-// Data table component with selection and expansion capabilities
-
 export interface TableHeader {
   key: string;
   label: string;
