@@ -91,7 +91,6 @@ const DataTable = ({
     onSelectionChange(newSet);
   };
 
-  // AI 조언 기능 테스트: 이 컴포넌트 변경이 다른 파일에 미치는 영향 확인
   return (
     <div className={twMerge('overflow-x-auto', className)}>
       <table className="w-full min-w-max table-fixed border-collapse">
