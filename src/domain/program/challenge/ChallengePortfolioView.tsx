@@ -17,13 +17,13 @@ import { useParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import { Break } from '../../../common/Break';
 import SectionSubHeader from '../../../common/header/SectionSubHeader';
-import Heading2 from '../../../common/report/Heading2';
 import LexicalContent from '../../blog/ui/LexicalContent';
 import {
   PROGRAM_CURRICULUM_ID,
   PROGRAM_INTRO_ID,
   PROGRAM_REVIEW_ID,
 } from '../../program/ProgramDetailNavigation';
+import Heading2 from '../../report/Heading2';
 import Description from '../program-detail/Description';
 import ProgramBestReviewSection from '../ProgramBestReviewSection';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';

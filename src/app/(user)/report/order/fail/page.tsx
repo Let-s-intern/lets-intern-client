@@ -1,12 +1,12 @@
 'use client';
 
 import { convertReportPriceType, useGetReportDetailQuery } from '@/api/report';
-import Heading1 from '@/common/report/Heading1';
-import Heading2 from '@/common/report/Heading2';
-import Card from '@/common/report/ProgramCard';
 import { paymentFailSearchParamsSchema } from '@/data/getPaymentSearchParams';
 import ReportCreditRow from '@/domain/mypage/credit/ReportCreditRow';
 import ReportCreditSubRow from '@/domain/mypage/credit/ReportCreditSubRow';
+import Heading1 from '@/domain/report/Heading1';
+import Heading2 from '@/domain/report/Heading2';
+import Card from '@/domain/report/ProgramCard';
 import useReportPayment from '@/hooks/useReportPayment';
 import useReportProgramInfo from '@/hooks/useReportProgramInfo';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
