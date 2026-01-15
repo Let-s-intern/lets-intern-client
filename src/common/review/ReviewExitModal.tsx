@@ -1,5 +1,5 @@
-import BaseModal from '@/common/BaseModal';
-import ModalButton from '@/common/ModalButton';
+import ModalButton from '@/common/button/ModalButton';
+import BaseModal from '@/common/modal/BaseModal';
 
 interface ReviewExitModalProps {
   isOpen: boolean;

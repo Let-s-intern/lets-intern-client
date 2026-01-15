@@ -8,7 +8,7 @@ import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { Dayjs } from 'dayjs';
 import { memo, ReactNode } from 'react';
-import PaymentErrorNotification from './PaymentErrorNotification';
+import PaymentErrorNotification from '../PaymentErrorNotification';
 
 function DisabledButton() {
   return (

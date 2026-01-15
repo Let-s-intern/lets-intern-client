@@ -1,6 +1,6 @@
 import { memo } from 'react';
 
-import TextArea, { TextAreaProps } from '../ui/input/TextArea';
+import TextArea, { TextAreaProps } from '../input/TextArea';
 
 function ReviewTextarea(props: TextAreaProps) {
   return (

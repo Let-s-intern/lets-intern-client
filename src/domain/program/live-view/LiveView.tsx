@@ -7,8 +7,8 @@ import { LiveIdPrimitive, LiveIdSchema } from '@/schema';
 import { LiveContent } from '@/types/interface';
 import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
+import BackHeader from '../../../common/header/BackHeader';
 import MoreReviewButton from '../../../common/review/MoreReviewButton';
-import BackHeader from '../../../common/ui/BackHeader';
 import LexicalContent from '../../blog/ui/LexicalContent';
 import ProgramDetailBlogReviewSection from '../../program/ProgramDetailBlogReviewSection';
 import ProgramDetailNavigation, {

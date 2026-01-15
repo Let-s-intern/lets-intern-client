@@ -1,4 +1,4 @@
-import { SubNavItemProps } from '@/common/ui/layout/header/SubNavItem';
+import { SubNavItemProps } from '@/common/layout/header/SubNavItem';
 import { useEffect, useState } from 'react';
 import useActiveReports from './useActiveReports';
 

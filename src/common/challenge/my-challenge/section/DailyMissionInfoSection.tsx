@@ -1,4 +1,4 @@
-import HybridLink from '@/common/ui/HybridLink';
+import HybridLink from '@/common/HybridLink';
 import { UserChallengeMissionDetail } from '@/schema';
 import { BONUS_MISSION_TH } from '@/utils/constants';
 import OtVideo from '../../OtVideo';

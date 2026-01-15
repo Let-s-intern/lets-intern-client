@@ -6,7 +6,10 @@ import { ChallengeIdPrimitive } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { DesktopApplyCTA, MobileApplyCTA } from '../../../common/ApplyCTA';
+import {
+  DesktopApplyCTA,
+  MobileApplyCTA,
+} from '../../../common/button/ApplyCTA';
 import PricePlanBottomSheet from '../PricePlanBottomSheet';
 
 const ChallengeCTAButtons = ({

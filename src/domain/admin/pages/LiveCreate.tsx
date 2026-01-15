@@ -2,8 +2,8 @@
 
 import { fileType, uploadFile } from '@/api/file';
 import { usePostLiveMutation } from '@/api/program';
-import FaqSection from '@/common/FaqSection';
-import ProgramRecommendEditor from '@/common/ProgramRecommendEditor';
+import FaqSection from '@/common/faq/FaqSection';
+import ProgramRecommendEditor from '@/common/program-recommend/ProgramRecommendEditor';
 import LivePreviewButton from '@/domain/admin/LivePreviewButton';
 import LiveBasic from '@/domain/admin/program/LiveBasic';
 import LiveCurriculum from '@/domain/admin/program/LiveCurriculum';

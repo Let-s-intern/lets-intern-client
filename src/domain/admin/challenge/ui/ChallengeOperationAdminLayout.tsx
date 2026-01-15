@@ -6,8 +6,8 @@ import {
   useGetChallengeList,
 } from '@/api/challenge';
 import { useIsAdminQuery } from '@/api/user';
-import BaseModal from '@/common/BaseModal';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import LoadingContainer from '@/common/loading/LoadingContainer';
+import BaseModal from '@/common/modal/BaseModal';
 import { useAdminCurrentChallenge } from '@/context/CurrentAdminChallengeProvider';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import useMentorAccessControl from '@/hooks/useMentorAccessControl';

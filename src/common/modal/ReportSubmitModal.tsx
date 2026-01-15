@@ -1,6 +1,6 @@
 import clsx from 'clsx';
+import ModalButton from '../button/ModalButton';
 import BaseModal from './BaseModal';
-import ModalButton from './ModalButton';
 
 interface ReportSubmitModalProps {
   isOpen: boolean;
@@ -33,7 +33,7 @@ const ReportSubmitModal = ({
           제출 후에는 수정이 어렵습니다. 그래도 제출하시겠어요?
         </p>
       </div>
-      <div className="flex items-center text-xsmall14 ">
+      <div className="flex items-center text-xsmall14">
         <ModalButton
           className="border-r border-neutral-80 font-medium"
           onClick={onClose}
@@ -41,7 +41,7 @@ const ReportSubmitModal = ({
           취소
         </ModalButton>
         <ModalButton
-          className={clsx('text-primary font-semibold', {
+          className={clsx('font-semibold text-primary', {
             'cursor-wait': isLoading,
           })}
           onClick={onClickConfirm}

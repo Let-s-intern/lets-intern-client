@@ -1,6 +1,6 @@
 import { useGetUserDocumentListQuery } from '@/api/user';
 import { UserDocument } from '@/api/userSchema';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import { getFileNameFromUrl } from '@/utils/getFileNameFromUrl';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';

@@ -6,7 +6,7 @@ import {
   useDeleteUserDocMutation,
   useGetUserDocumentListQuery,
 } from '@/api/user';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import { getFileNameFromUrl } from '@/utils/getFileNameFromUrl';
 import { clsx } from 'clsx';
 import { LoaderCircle, Trash2, Upload } from 'lucide-react';

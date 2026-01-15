@@ -1,5 +1,5 @@
 import { useGetActiveChallenge } from '@/api/challenge';
-import { SubNavItemProps } from '@/common/ui/layout/header/SubNavItem';
+import { SubNavItemProps } from '@/common/layout/header/SubNavItem';
 import { ActiveChallengeResponse, challengeTypeSchema } from '@/schema';
 import { useNavB2CChallenges } from './useFirstB2CChallenge';
 

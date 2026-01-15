@@ -1,5 +1,5 @@
 import { useChallengeQuery } from '@/api/challenge';
-import BaseButton from '@/common/ui/button/BaseButton';
+import BaseButton from '@/common/button/BaseButton';
 import useGoogleAnalytics from '@/hooks/useGoogleAnalytics';
 import { ChallengeContent } from '@/types/interface';
 import { useParams, usePathname, useRouter } from 'next/navigation';

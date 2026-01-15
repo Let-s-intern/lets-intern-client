@@ -16,8 +16,8 @@ import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import { Break } from '../../../common/Break';
+import SectionSubHeader from '../../../common/header/SectionSubHeader';
 import Heading2 from '../../../common/report/Heading2';
-import SectionSubHeader from '../../../common/SectionSubHeader';
 import LexicalContent from '../../blog/ui/LexicalContent';
 import {
   PROGRAM_CURRICULUM_ID,

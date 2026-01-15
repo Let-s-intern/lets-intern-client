@@ -1,6 +1,6 @@
 'use client';
 
-import BottomSheet from '@/common/ui/BottomSheeet';
+import BottomSheet from '@/common/sheet/BottomSheeet';
 import { Check, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';

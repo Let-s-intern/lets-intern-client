@@ -6,7 +6,7 @@ import MuiPagination from '@/domain/program/pagination/MuiPagination';
 import { ProgramTypeUpperCase } from '@/schema';
 import { useSearchParams } from 'next/navigation';
 import { Dispatch, SetStateAction } from 'react';
-import LoadingContainer from '../ui/loading/LoadingContainer';
+import LoadingContainer from '../loading/LoadingContainer';
 
 const PAGE_SIZE = 10;
 

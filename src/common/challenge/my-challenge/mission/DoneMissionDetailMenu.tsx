@@ -1,5 +1,5 @@
 import { useGetChallengeGoal } from '@/api/challenge';
-import HybridLink from '@/common/ui/HybridLink';
+import HybridLink from '@/common/HybridLink';
 import {
   MyChallengeMissionByType,
   Schedule,

@@ -2,8 +2,7 @@ import { twMerge } from '@/lib/twMerge';
 import { AnchorHTMLAttributes } from 'react';
 import HybridLink from '../../HybridLink';
 
-export interface SubNavItemProps
-  extends AnchorHTMLAttributes<HTMLAnchorElement> {
+export interface SubNavItemProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   align?: 'left' | 'right';
 }
 

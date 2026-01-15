@@ -28,16 +28,16 @@ import useReportApplicationStore from '@/store/useReportApplicationStore';
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import GradientButton from '../../domain/program/program-detail/button/GradientButton';
-import { DesktopCTA, MobileCTA } from '../ApplyCTA';
-import PaymentErrorNotification from '../PaymentErrorNotification';
-import { default as BaseButton } from '../ui/button/BaseButton';
+import { DesktopCTA, MobileCTA } from '../button/ApplyCTA';
+import { default as BaseButton } from '../button/BaseButton';
 import {
   OptionFormCheckboxControlLabel,
   OptionFormRadioControlLabel,
-} from '../ui/ControlLabel';
-import DrawerCloseBtn from '../ui/DrawerCloseBtn';
-import OptionDropdown from '../ui/OptionDropdown';
-import PriceView from '../ui/PriceView';
+} from '../ControlLabel';
+import DrawerCloseBtn from '../drawer/DrawerCloseBtn';
+import OptionDropdown from '../dropdown/OptionDropdown';
+import PaymentErrorNotification from '../PaymentErrorNotification';
+import PriceView from '../price/PriceView';
 
 const { BASIC, PREMIUM } = reportPriceTypeEnum.enum;
 const { PERSONAL_STATEMENT } = reportTypeSchema.enum;

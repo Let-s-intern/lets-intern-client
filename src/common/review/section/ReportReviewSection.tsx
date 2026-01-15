@@ -1,4 +1,4 @@
-import TextArea from '@/common/ui/input/TextArea';
+import TextArea from '@/common/input/TextArea';
 import { josa } from 'es-hangul';
 
 interface ReportReviewSectionProps {

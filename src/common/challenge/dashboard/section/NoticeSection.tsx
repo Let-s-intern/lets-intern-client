@@ -1,5 +1,5 @@
 import NoticeGuideLink from '@/common/challenge/NoticeGuideLink';
-import HybridLink from '@/common/ui/HybridLink';
+import HybridLink from '@/common/HybridLink';
 import { TabMenu } from '@/domain/program/challenge/ChallengeGuidePage';
 import { useReadNotices } from '@/hooks/useReadItems';
 import { ChallengeNotice } from '@/schema';

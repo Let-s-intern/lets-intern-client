@@ -13,8 +13,8 @@ import {
   useGetChallengeQueryKey,
   usePatchChallengeMutation,
 } from '@/api/program';
-import FaqSection from '@/common/FaqSection';
-import ProgramRecommendEditor from '@/common/ProgramRecommendEditor';
+import FaqSection from '@/common/faq/FaqSection';
+import ProgramRecommendEditor from '@/common/program-recommend/ProgramRecommendEditor';
 import ChallengePreviewButton from '@/domain/admin/ChallengePreviewButton';
 import EditorApp from '@/domain/admin/lexical/EditorApp';
 import ChallengeBasic from '@/domain/admin/program/ChallengeBasic';

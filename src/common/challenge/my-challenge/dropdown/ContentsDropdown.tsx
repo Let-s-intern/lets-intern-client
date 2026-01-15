@@ -1,7 +1,7 @@
 import { UserChallengeMissionDetail } from '@/schema';
 import { useState } from 'react';
 import { IoIosLink } from 'react-icons/io';
-import HybridLink from '../../../ui/HybridLink';
+import HybridLink from '../../../HybridLink';
 
 interface Props {
   missionDetail: UserChallengeMissionDetail;

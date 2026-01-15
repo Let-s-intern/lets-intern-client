@@ -1,8 +1,8 @@
 'use client';
 
 import { GetReview, useGetProgramReview } from '@/api/review';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
-import MoreHeader from '@/common/ui/MoreHeader';
+import MoreHeader from '@/common/header/MoreHeader';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import ReviewCard from '@/domain/review/ReviewCard';
 import { useEffect, useState } from 'react';
 

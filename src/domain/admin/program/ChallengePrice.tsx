@@ -1,5 +1,5 @@
 import { ChallengeOption } from '@/api/challengeOptionSchema';
-import Input from '@/common/input/Input';
+import Input from '@/common/input/v1/Input';
 import {
   ChallengeIdSchema,
   ChallengePricePlan,

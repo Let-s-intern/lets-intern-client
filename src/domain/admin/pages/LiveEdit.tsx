@@ -6,8 +6,8 @@ import {
   useGetLiveQueryKey,
   usePatchLiveMutation,
 } from '@/api/program';
-import FaqSection from '@/common/FaqSection';
-import ProgramRecommendEditor from '@/common/ProgramRecommendEditor';
+import FaqSection from '@/common/faq/FaqSection';
+import ProgramRecommendEditor from '@/common/program-recommend/ProgramRecommendEditor';
 import EditorApp from '@/domain/admin/lexical/EditorApp';
 import LivePreviewButton from '@/domain/admin/LivePreviewButton';
 import LiveBasic from '@/domain/admin/program/LiveBasic';

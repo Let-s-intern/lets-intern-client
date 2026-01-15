@@ -2,7 +2,7 @@ import {
   MypageApplication,
   useMypageApplicationsQuery,
 } from '@/api/application';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import {

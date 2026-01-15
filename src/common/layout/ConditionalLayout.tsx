@@ -1,9 +1,9 @@
 'use client';
 
-import BottomNavBarWithPathname from '@/common/ui/layout/BottomNavBarWithPathname';
-import ChannelTalkBtn from '@/common/ui/layout/channel/ChannelTalkBtn';
-import Footer from '@/common/ui/layout/footer/Footer';
-import NavBar from '@/common/ui/layout/header/NavBar';
+import BottomNavBarWithPathname from '@/common/layout/BottomNavBarWithPathname';
+import ChannelTalkBtn from '@/common/layout/channel/ChannelTalkBtn';
+import Footer from '@/common/layout/footer/Footer';
+import NavBar from '@/common/layout/header/NavBar';
 import { usePathname } from 'next/navigation';
 import React from 'react';
 

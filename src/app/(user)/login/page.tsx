@@ -1,8 +1,8 @@
 'use client';
 
-import Input from '@/common/input/Input';
-import Button from '@/common/ui/button/Button';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import Button from '@/common/button/Button';
+import Input from '@/common/input/v1/Input';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import SocialLogin from '@/domain/auth/ui/SocialLogin';
 import useAuthStore from '@/store/useAuthStore';
 import axios from '@/utils/axios';

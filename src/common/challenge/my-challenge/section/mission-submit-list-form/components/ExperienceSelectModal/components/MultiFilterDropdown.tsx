@@ -1,8 +1,8 @@
 'use client';
 
-import BottomSheet from '@/common/ui/BottomSheeet';
-import Button from '@/common/ui/button/Button';
-import CheckBox from '@/common/ui/CheckBox';
+import CheckBox from '@/common/box/CheckBox';
+import Button from '@/common/button/Button';
+import BottomSheet from '@/common/sheet/BottomSheeet';
 
 import { X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';

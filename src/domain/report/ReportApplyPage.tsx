@@ -11,6 +11,9 @@ import {
   convertParamToReportType,
   convertReportTypeStatus,
 } from '@/api/report';
+import BaseButton from '@/common/button/BaseButton';
+import { OptionFormRadioControlLabel } from '@/common/ControlLabel';
+import BackHeader from '@/common/header/BackHeader';
 import HorizontalRule from '@/common/HorizontalRule';
 import DateTimePicker from '@/common/report/DateTimePicker';
 import FilledInput from '@/common/report/FilledInput';
@@ -19,10 +22,7 @@ import Label from '@/common/report/Label';
 import ProgramCard from '@/common/report/ProgramCard';
 import Tooltip from '@/common/report/Tooltip';
 import RequiredStar from '@/common/RequiredStar';
-import BackHeader from '@/common/ui/BackHeader';
-import BottomSheet from '@/common/ui/BottomSheeet';
-import BaseButton from '@/common/ui/button/BaseButton';
-import { OptionFormRadioControlLabel } from '@/common/ui/ControlLabel';
+import BottomSheet from '@/common/sheet/BottomSheeet';
 import { getReportThumbnail } from '@/domain/mypage/credit/CreditListItem';
 import useMinDate from '@/hooks/useMinDate';
 import useReportProgramInfo from '@/hooks/useReportProgramInfo';

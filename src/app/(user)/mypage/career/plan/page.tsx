@@ -3,7 +3,7 @@
 import { usePatchUser, useUserQuery } from '@/api/user';
 import OutlinedButton from '@/common/button/OutlinedButton';
 import SolidButton from '@/common/button/SolidButton';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import CareerInfoForm, {
   CareerInfoValues,
 } from '@/domain/mypage/career/CareerInfoForm';

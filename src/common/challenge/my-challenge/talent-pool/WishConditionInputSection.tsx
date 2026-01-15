@@ -1,4 +1,4 @@
-import { SelectButton } from '@/common/ui/button/SelectButton';
+import { SelectButton } from '@/common/button/SelectButton';
 import { DESIRED_INDUSTRY, JOB_FIELD_ROLES } from '@/utils/constants';
 import { useEffect, useMemo, useState } from 'react';
 import { CheckboxItem } from './WishJobCheckBox';

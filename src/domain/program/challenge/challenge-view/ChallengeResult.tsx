@@ -3,7 +3,7 @@ import { CSSProperties, ReactNode, useMemo } from 'react';
 import { FaCheck } from 'react-icons/fa6';
 
 import { Break } from '@/common/Break';
-import Heading2 from '@/common/ui/Heading2';
+import Heading2 from '@/common/header/Heading2';
 import { challengeColors } from '@/domain/program/challenge/ChallengeView';
 import Box from '@/domain/program/program-detail/Box';
 import SuperTitle from '@/domain/program/program-detail/SuperTitle';

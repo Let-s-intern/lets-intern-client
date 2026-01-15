@@ -1,5 +1,5 @@
 import { useProgramApplicationQuery } from '@/api/application';
-import BaseBottomSheet from '@/common/BaseBottomSheet';
+import BaseBottomSheet from '@/common/sheet/BaseBottomSheet';
 import { COUPON_DISABLED_CHALLENGE_TYPES } from '@/domain/program/program-detail/apply/constants';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import {
@@ -12,10 +12,10 @@ import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { RadioGroup } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
-import BaseButton from '../../common/ui/button/BaseButton';
-import { OptionFormRadioControlLabel } from '../../common/ui/ControlLabel';
-import OptionDropdown from '../../common/ui/OptionDropdown';
-import PriceView from '../../common/ui/PriceView';
+import BaseButton from '../../common/button/BaseButton';
+import { OptionFormRadioControlLabel } from '../../common/ControlLabel';
+import OptionDropdown from '../../common/dropdown/OptionDropdown';
+import PriceView from '../../common/price/PriceView';
 
 const { STANDARD, PREMIUM, BASIC } = ChallengePricePlanEnum.enum;
 

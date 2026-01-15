@@ -6,7 +6,7 @@ import {
   ReportType,
   usePostReportMutation,
 } from '@/api/report';
-import FaqSection from '@/common/FaqSection';
+import FaqSection from '@/common/faq/FaqSection';
 import AdminReportFeedback from '@/domain/admin/report/AdminReportFeedback';
 import ReportProgramRecommendEditor from '@/domain/admin/report/ReportProgramRecommendEditor';
 import ReportReviewEditor from '@/domain/admin/report/ReportReviewEditor';

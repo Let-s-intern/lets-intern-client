@@ -1,4 +1,4 @@
-import SectionSubHeader from '@/common/SectionSubHeader';
+import SectionSubHeader from '@/common/header/SectionSubHeader';
 import React, { ReactNode } from 'react';
 import MainTitle from '../ui/MainTitle';
 

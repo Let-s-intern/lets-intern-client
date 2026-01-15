@@ -2,7 +2,7 @@ import { useMediaQuery } from '@mui/material';
 import { CSSProperties, ReactNode } from 'react';
 import { RxCheckbox } from 'react-icons/rx';
 
-import Heading2 from '@/common/ui/Heading2';
+import Heading2 from '@/common/header/Heading2';
 import { challengeColors } from '@/domain/program/challenge/ChallengeView';
 import Box from '@/domain/program/program-detail/Box';
 import Description from '@/domain/program/program-detail/Description';

@@ -8,7 +8,7 @@ import { usePatchChallengeGoal } from '@/api/challenge';
 import { useProgramQuery } from '@/api/program';
 import { usePatchUser, useUserQuery } from '@/api/user';
 import { DASHBOARD_FIRST_VISIT_GOAL } from '@/common/challenge/my-challenge/section/MissionSubmitZeroSection';
-import Input from '@/common/ui/input/Input';
+import Input from '@/common/input/v2/Input';
 import CareerInfoForm, {
   CareerInfoSelections,
   CareerInfoValues,

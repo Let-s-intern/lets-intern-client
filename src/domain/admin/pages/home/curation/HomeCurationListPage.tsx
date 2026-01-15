@@ -7,9 +7,9 @@ import {
   usePatchAdminCuration,
 } from '@/api/curation';
 import WarningModal from '@/common/alert/WarningModal';
-import EmptyContainer from '@/common/ui/EmptyContainer';
-import ErrorContainer from '@/common/ui/ErrorContainer';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import EmptyContainer from '@/common/container/EmptyContainer';
+import ErrorContainer from '@/common/container/ErrorContainer';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';

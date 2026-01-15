@@ -2,7 +2,7 @@ import Announcement from '@/assets/icons/announcement.svg?react';
 import ChevronDown from '@/assets/icons/chevron-down.svg?react';
 import ClockIcon from '@/assets/icons/clock.svg?react';
 import LaptopIcon from '@/assets/icons/laptop.svg?react';
-import Heading2 from '@/common/ui/Heading2';
+import Heading2 from '@/common/header/Heading2';
 import { challengeColors } from '@/domain/program/challenge/ChallengeView';
 import BasicInfoBottomRow from '@/domain/program/program-detail/basicInfo/BasicInfoBottomRow';
 import BasicInfoRow from '@/domain/program/program-detail/basicInfo/BasicInfoRow';

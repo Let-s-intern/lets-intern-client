@@ -1,8 +1,8 @@
 'use client';
 
-import BaseModal from '@/common/BaseModal';
+import LoadingContainer from '@/common/loading/LoadingContainer';
+import BaseModal from '@/common/modal/BaseModal';
 import DataTable from '@/common/table/DataTable';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
 import MuiPagination from '@/domain/program/pagination/MuiPagination';
 import { useExperienceSelectModal } from '@/hooks/useExperienceSelectModal';
 import { getExperienceRowHeight } from '@/utils/experience';

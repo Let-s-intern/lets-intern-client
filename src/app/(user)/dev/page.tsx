@@ -1,7 +1,7 @@
 import { GetReview } from '@/api/review';
 import ReviewSection from '@/common/about/section/ReviewSection';
-import FilterDropdown from '@/common/FilterDropdown';
-import MoreHeader from '@/common/ui/MoreHeader';
+import FilterDropdown from '@/common/dropdown/FilterDropdown';
+import MoreHeader from '@/common/header/MoreHeader';
 import ReviewCard from '@/domain/review/ReviewCard';
 import { Metadata } from 'next';
 import Image from 'next/image';
