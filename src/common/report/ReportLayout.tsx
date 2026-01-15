@@ -3,7 +3,7 @@ import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import NavBar from '../challenge/ui/layout/NavBar';
+import NavBar from '../../domain/challenge/ui/layout/NavBar';
 
 const ReportLayout = ({ children }: { children: React.ReactNode }) => {
   const params = useParams<{ programId: string }>();

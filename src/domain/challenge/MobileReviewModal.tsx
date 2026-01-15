@@ -6,12 +6,12 @@ import { useControlScroll } from '@/hooks/useControlScroll';
 import { josa } from 'es-hangul';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
-import BaseButton from '../button/BaseButton';
-import GoalOrConcernsBox from '../review/GoalOrConcernsBox';
-import ReviewInstruction from '../review/ReviewInstruction';
-import ReviewQuestion from '../review/ReviewQuestion';
-import ReviewTextarea from '../review/ReviewTextarea';
-import TenScore from '../review/score/TenScore';
+import BaseButton from '../../common/button/BaseButton';
+import GoalOrConcernsBox from '../../common/review/GoalOrConcernsBox';
+import ReviewInstruction from '../../common/review/ReviewInstruction';
+import ReviewQuestion from '../../common/review/ReviewQuestion';
+import ReviewTextarea from '../../common/review/ReviewTextarea';
+import TenScore from '../../common/review/score/TenScore';
 
 interface Props {
   isOpen: boolean;

@@ -7,7 +7,7 @@ import { ChevronRight } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import 'swiper/css';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import HybridLink from '../../../HybridLink';
+import HybridLink from '../../../../common/HybridLink';
 
 const TEXT_SHADOW_STYLE = {
   textShadow: '0 0 8.4px rgba(33, 33, 37, 0.40)',

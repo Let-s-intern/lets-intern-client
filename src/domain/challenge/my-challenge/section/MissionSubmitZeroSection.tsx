@@ -4,9 +4,9 @@ import {
   useGetChallengeGoal,
   useSubmitChallengeGoal,
 } from '@/api/challenge';
-import MissionSubmitButton from '@/common/challenge/my-challenge/mission/MissionSubmitButton';
-import MissionToast from '@/common/challenge/my-challenge/mission/MissionToast';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import MissionSubmitButton from '@/domain/challenge/my-challenge/mission/MissionSubmitButton';
+import MissionToast from '@/domain/challenge/my-challenge/mission/MissionToast';
 import dayjs from '@/lib/dayjs';
 import { useQueryClient } from '@tanstack/react-query';
 import { clsx } from 'clsx';

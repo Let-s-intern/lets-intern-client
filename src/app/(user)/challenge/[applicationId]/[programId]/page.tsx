@@ -1,14 +1,14 @@
 'use client';
 
 import { useUserQuery } from '@/api/user';
-import DailyMissionSection from '@/common/challenge/dashboard/section/DailyMissionSection';
-import GuideSection from '@/common/challenge/dashboard/section/GuideSection';
-import NoticeSection from '@/common/challenge/dashboard/section/NoticeSection';
-import ScoreSection from '@/common/challenge/dashboard/section/ScoreSection';
-import MissionEndSection from '@/common/challenge/MissionEndSection';
-import MissionCalendar from '@/common/challenge/my-challenge/mission-calendar/MissionCalendar';
-import MissionTooltipQuestion from '@/common/challenge/ui/tooltip-question/MissionTooltipQuestion';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import DailyMissionSection from '@/domain/challenge/dashboard/section/DailyMissionSection';
+import GuideSection from '@/domain/challenge/dashboard/section/GuideSection';
+import NoticeSection from '@/domain/challenge/dashboard/section/NoticeSection';
+import ScoreSection from '@/domain/challenge/dashboard/section/ScoreSection';
+import MissionEndSection from '@/domain/challenge/MissionEndSection';
+import MissionCalendar from '@/domain/challenge/my-challenge/mission-calendar/MissionCalendar';
+import MissionTooltipQuestion from '@/domain/challenge/ui/tooltip-question/MissionTooltipQuestion';
 import { useExperienceLevel } from '@/hooks/useExperienceLevel';
 import { useFilteredSchedules } from '@/hooks/useFilteredSchedules';
 import { useMissionCalculation } from '@/hooks/useMissionCalculation';

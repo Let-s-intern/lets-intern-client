@@ -1,10 +1,10 @@
 'use client';
 
-import MissionCalendarSection from '@/common/challenge/my-challenge/section/MissionCalendarSection';
-import MissionGuideSection from '@/common/challenge/my-challenge/section/MissionGuideSection';
-import MissionMentorCommentSection from '@/common/challenge/my-challenge/section/MissionMentorCommentSection';
-import MissionSubmitSection from '@/common/challenge/my-challenge/section/MissionSubmitSection';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import MissionCalendarSection from '@/domain/challenge/my-challenge/section/MissionCalendarSection';
+import MissionGuideSection from '@/domain/challenge/my-challenge/section/MissionGuideSection';
+import MissionMentorCommentSection from '@/domain/challenge/my-challenge/section/MissionMentorCommentSection';
+import MissionSubmitSection from '@/domain/challenge/my-challenge/section/MissionSubmitSection';
 import { useChallengeProgram } from '@/hooks/useChallengeProgram';
 import { useExperienceLevel } from '@/hooks/useExperienceLevel';
 import { useFilteredSchedules } from '@/hooks/useFilteredSchedules';
