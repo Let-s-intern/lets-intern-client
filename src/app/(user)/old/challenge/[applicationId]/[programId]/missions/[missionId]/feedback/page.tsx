@@ -1,5 +1,5 @@
 'use client';
 
-import OldMissionFeedback from '@/common/challenge/OldMissionFeedback';
+import OldMissionFeedback from '@/domain/challenge/OldMissionFeedback';
 
 export default OldMissionFeedback;

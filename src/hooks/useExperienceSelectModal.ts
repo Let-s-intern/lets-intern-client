@@ -8,7 +8,7 @@ import {
   isUserExperienceComplete,
   labelToActivityType,
   labelToExperienceCategory,
-} from '@/common/challenge/my-challenge/section/mission-submit-list-form/data';
+} from '@/domain/challenge/my-challenge/section/mission-submit-list-form/data';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 interface Filters {

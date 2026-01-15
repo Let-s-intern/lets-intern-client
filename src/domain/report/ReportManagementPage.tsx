@@ -21,8 +21,8 @@ import {
   MyReportInfoType,
   useGetMyReports,
 } from '@/api/report';
+import Badge from '@/common/badge/Badge';
 import Tooltip from '@/common/report/Tooltip';
-import Badge from '@/common/ui/Badge';
 import useActiveReports from '@/hooks/useActiveReports';
 import { download } from '@/lib/download';
 import { twMerge } from '@/lib/twMerge';

@@ -1,33 +1,33 @@
 import { UserChallengeMissionDetail } from '@/schema';
 import { useState } from 'react';
 import { IoIosLink } from 'react-icons/io';
-import HybridLink from '../../../HybridLink';
+import HybridLink from '../../../../common/HybridLink';
 
 interface Props {
   missionDetail: UserChallengeMissionDetail;
 }
 
-const MenuContentsDropdown = ({ missionDetail }: Props) => {
+const AbsentContentsDropdown = ({ missionDetail }: Props) => {
   const [isMenuShown, setIsMenuShown] = useState(false);
-
+  const additionalContentsLink =
+    missionDetail.additionalContentsList?.[0]?.link;
   const essentialContentsLink = missionDetail.essentialContentsList?.[0]?.link;
-  const isOtMission = missionDetail.th === 0;
 
   return (
-    <div className="relative">
-      <button
-        className="rounded w-full border border-[#BCBCBC] px-4 py-2 font-medium"
+    <div className="relative flex-1">
+      <div
+        className="rounded cursor-pointer border border-[#DCDCDC] bg-primary px-4 py-2 text-center font-semibold text-white shadow"
         onClick={() => setIsMenuShown(!isMenuShown)}
       >
-        {isOtMission ? 'OT 자료' : '학습 콘텐츠 확인하기'}
-      </button>
-      {isMenuShown && (
-        <ul className="rounded absolute -bottom-1 w-full translate-y-full border border-[#BCBCBC] bg-white">
+        학습 콘텐츠
+      </div>
+      {isMenuShown && (essentialContentsLink || additionalContentsLink) && (
+        <ul className="rounded absolute bottom-[-0.25rem] w-full translate-y-[100%] border border-[#DCDCDC] bg-white text-sm">
           {essentialContentsLink && (
             <li>
               <HybridLink
                 href={essentialContentsLink}
-                className="flex items-center justify-between px-5 py-3 text-center text-primary duration-200 hover:bg-gray-100"
+                className="flex flex-1 items-center justify-between px-4 py-3 text-primary duration-200 hover:bg-gray-200"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -61,4 +61,4 @@ const MenuContentsDropdown = ({ missionDetail }: Props) => {
   );
 };
 
-export default MenuContentsDropdown;
+export default AbsentContentsDropdown;

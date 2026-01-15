@@ -1,5 +1,5 @@
 import { EmployeeType } from '@/api/careerSchema';
-import { WishJobModal } from '@/common/challenge/my-challenge/talent-pool/WishJobModal';
+import { WishJobModal } from '@/domain/challenge/my-challenge/talent-pool/WishJobModal';
 
 const options: EmployeeType[] = [
   '정규직',

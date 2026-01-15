@@ -1,5 +1,5 @@
 'use client';
 
-import OldChallengeUserInfo from '@/common/challenge/OldChallengeUserInfo';
+import OldChallengeUserInfo from '@/domain/challenge/OldChallengeUserInfo';
 
 export default OldChallengeUserInfo;
