@@ -1,8 +1,8 @@
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import { twMerge } from '@/lib/twMerge';
-import ModalOverlay from './ModalOverlay';
-import ModalPortal from './ModalPortal';
+import ModalOverlay from '../ModalOverlay';
+import ModalPortal from '../ModalPortal';
 
 /**
  * 기본 모달 컴포넌트

@@ -1,6 +1,6 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
-import Input from '@/common/input/Input';
+import Input from '@/common/input/v1/Input';
 import { CreateLiveReq, LiveIdSchema, UpdateLiveReq } from '@/schema';
 import { newProgramFeeTypeToText } from '@/utils/convert';
 

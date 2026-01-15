@@ -8,7 +8,7 @@ import {
   useGetReportPaymentDetailQuery,
 } from '@/api/report';
 import { useUserQuery } from '@/api/user';
-import Input from '@/common/ui/input/Input';
+import Input from '@/common/input/v2/Input';
 import ReportCreditRow from '@/domain/mypage/credit/ReportCreditRow';
 import ReportCreditSubRow from '@/domain/mypage/credit/ReportCreditSubRow';
 import MoreButton from '@/domain/mypage/ui/button/MoreButton';

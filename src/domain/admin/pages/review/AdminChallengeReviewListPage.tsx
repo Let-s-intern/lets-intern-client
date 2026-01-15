@@ -2,7 +2,7 @@
 
 import { AdminProgramReview, useGetAdminProgramReview } from '@/api/review';
 import AdminReviewHeader from '@/app/admin/review/AdminReviewHeader';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import ChallengeTypeFilterInput from '@/domain/admin/review/ChallengeTypeFilterInput';
 import ReviewDetailModal from '@/domain/admin/review/ReviewDetailModal';
 import ReviewItemVisibilityToggle from '@/domain/admin/review/ReviewItemVisibilityToggle';

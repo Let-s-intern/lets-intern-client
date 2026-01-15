@@ -14,7 +14,7 @@ import {
   TagDetail,
 } from '@/api/blogSchema';
 import { uploadFile } from '@/api/file';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import TagSelector from '@/domain/admin/blog/TagSelector';
 import TextFieldLimit from '@/domain/admin/blog/TextFieldLimit';
 import EditorApp from '@/domain/admin/lexical/EditorApp';

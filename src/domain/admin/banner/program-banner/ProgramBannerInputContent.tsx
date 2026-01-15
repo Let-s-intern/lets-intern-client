@@ -1,5 +1,5 @@
 import { BannerItemType } from '@/api/banner';
-import Input from '../../../../common/input/Input';
+import Input from '../../../../common/input/v1/Input';
 import DateTimePicker from '../../program/ui/form/DateTimePicker';
 import ImageUpload from '../../program/ui/form/ImageUpload';
 

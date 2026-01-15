@@ -2,7 +2,7 @@
 
 /* eslint-disable no-console */
 import { useChallengeQuery, usePatchChallengeMutation } from '@/api/program';
-import ProgramRecommendEditor from '@/common/ProgramRecommendEditor';
+import ProgramRecommendEditor from '@/common/program-recommend/ProgramRecommendEditor';
 import MoreButtonSection from '@/domain/admin/ui/section/MoreButtonSection';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import {

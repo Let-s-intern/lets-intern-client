@@ -3,10 +3,10 @@ import { twMerge } from '@/lib/twMerge';
 import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
 import { josa } from 'es-hangul';
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import BackHeader from '../ui/BackHeader';
-import BaseButton from '../ui/button/BaseButton';
+import { useEffect, useState } from 'react';
+import BaseButton from '../button/BaseButton';
+import BackHeader from '../header/BackHeader';
 import ReviewExitModal from './ReviewExitModal';
 
 interface Props {

@@ -1,4 +1,4 @@
-import Input from '@/common/input/Input';
+import Input from '@/common/input/v1/Input';
 import { twMerge } from '@/lib/twMerge';
 import {
   ChallengeIdSchema,

@@ -1,4 +1,4 @@
-import HybridLink from '@/common/ui/HybridLink';
+import HybridLink from '@/common/HybridLink';
 import { memo } from 'react';
 
 import { twMerge } from '@/lib/twMerge';

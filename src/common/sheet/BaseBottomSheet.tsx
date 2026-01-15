@@ -1,7 +1,7 @@
 import { useControlScroll } from '@/hooks/useControlScroll';
 import { twMerge } from '@/lib/twMerge';
-import ModalOverlay from './ModalOverlay';
-import ModalPortal from './ModalPortal';
+import ModalOverlay from '../ModalOverlay';
+import ModalPortal from '../ModalPortal';
 
 /**
  * 기본 바텀시트 컴포넌트

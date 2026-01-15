@@ -1,6 +1,6 @@
 'use client';
 
-import FilterDropdown from '@/common/FilterDropdown';
+import FilterDropdown from '@/common/dropdown/FilterDropdown';
 import { ProgramTypeEnum } from '@/schema';
 import { Suspense, useState } from 'react';
 import BlogReviewListSection from './BlogReviewListSection';

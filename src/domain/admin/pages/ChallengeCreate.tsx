@@ -3,8 +3,8 @@
 
 import { fileType, uploadFile } from '@/api/file';
 import { usePostChallengeMutation } from '@/api/program';
-import FaqSection from '@/common/FaqSection';
-import ProgramRecommendEditor from '@/common/ProgramRecommendEditor';
+import FaqSection from '@/common/faq/FaqSection';
+import ProgramRecommendEditor from '@/common/program-recommend/ProgramRecommendEditor';
 import ChallengePreviewButton from '@/domain/admin/ChallengePreviewButton';
 import ChallengeBasic from '@/domain/admin/program/ChallengeBasic';
 import ChallengeCurriculum from '@/domain/admin/program/ChallengeCurriculum';

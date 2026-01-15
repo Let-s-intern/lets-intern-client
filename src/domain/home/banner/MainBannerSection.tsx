@@ -1,7 +1,7 @@
 'use client';
 
 import { useGetBannerListForUser } from '@/api/banner';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
 import { useMediaQuery } from '@mui/material';
 import { MouseEvent } from 'react';

@@ -4,7 +4,7 @@ import {
   useGetUserChallengeInfo,
 } from '@/api/challenge';
 import { useGetChallengeQuery } from '@/api/program';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import dayjs from '@/lib/dayjs';
 import useAuthStore from '@/store/useAuthStore';
 import { useParams, useRouter } from 'next/navigation';

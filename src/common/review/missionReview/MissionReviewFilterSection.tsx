@@ -1,7 +1,7 @@
 'use client';
 
 import useGetActiveMissionReviews from '@/hooks/useGetActiveMissionReviews';
-import FilterDropdown from '../../FilterDropdown';
+import FilterDropdown from '../../dropdown/FilterDropdown';
 
 interface Props {
   onChangeFilter: () => void;

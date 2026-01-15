@@ -1,4 +1,4 @@
-import TextArea from '../../ui/input/TextArea';
+import TextArea from '../../input/TextArea';
 
 interface TextAreaSectionProps {
   content: string;

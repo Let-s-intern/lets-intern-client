@@ -3,7 +3,7 @@
 import useGetActiveReviews from '@/hooks/useGetActiveReviews';
 import { FilterItem } from '@/types/common';
 import { useSearchParams } from 'next/navigation';
-import FilterDropdown from '../../FilterDropdown';
+import FilterDropdown from '../../dropdown/FilterDropdown';
 
 const programTypeFilterList: FilterItem[] = [
   { caption: '챌린지', value: 'CHALLENGE_REVIEW' },

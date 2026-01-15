@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import { MdDelete } from 'react-icons/md';
 
-import Input from '@/common/input/Input';
+import Input from '@/common/input/v1/Input';
 import { ReportContent, ReportReview } from '@/types/interface';
 import Heading2 from '../ui/heading/Heading2';
 

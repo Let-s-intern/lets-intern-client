@@ -1,7 +1,7 @@
 'use client';
 
 import { useUserQuery } from '@/api/user';
-import Input from '@/common/ui/input/Input';
+import Input from '@/common/input/v2/Input';
 import ReportCreditSubRow from '@/domain/mypage/credit/ReportCreditSubRow';
 import MoreButton from '@/domain/mypage/ui/button/MoreButton';
 import OrderProgramInfo from '@/domain/program/OrderProgramInfo';

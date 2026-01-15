@@ -2,7 +2,7 @@
 
 import CheckboxActive from '@/assets/icons/checkbox-active.svg?react';
 import CheckboxInActive from '@/assets/icons/checkbox-inactive.svg?react';
-import BaseBottomSheet from '@/common/BaseBottomSheet';
+import BaseBottomSheet from '@/common/sheet/BaseBottomSheet';
 import { twMerge } from '@/lib/twMerge';
 import { FilterItem } from '@/types/common';
 import { useMediaQuery } from '@mui/material';

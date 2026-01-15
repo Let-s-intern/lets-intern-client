@@ -20,7 +20,7 @@ import {
   usePatchApplicationStatus,
   usePatchReportApplicationSchedule,
 } from '@/api/report';
-import CheckBox from '@/common/ui/CheckBox';
+import CheckBox from '@/common/box/CheckBox';
 import DragDropModule from '@/domain/admin/report/DragDropModule';
 import ActionButton from '@/domain/admin/ui/button/ActionButton';
 import Header from '@/domain/admin/ui/header/Header';

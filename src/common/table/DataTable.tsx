@@ -1,7 +1,7 @@
 'use client';
 
+import CheckBox from '@/common/box/CheckBox';
 import ExpandableCell from '@/common/table/ExpandableCell';
-import CheckBox from '@/common/ui/CheckBox';
 import { twMerge } from '@/lib/twMerge';
 import { ReactNode, useMemo, useState } from 'react';
 

@@ -2,7 +2,7 @@
 
 import { useGetAdminProgramReview } from '@/api/review';
 import AdminReviewHeader from '@/app/admin/review/AdminReviewHeader';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import ReviewDetailModal from '@/domain/admin/review/ReviewDetailModal';
 import VisibilityToggle from '@/domain/admin/review/VisibilityToggle';
 import dayjs from '@/lib/dayjs';

@@ -7,8 +7,8 @@ import {
   ReviewType,
   useGetProgramReview,
 } from '@/api/review';
-import EmptyContainer from '@/common/ui/EmptyContainer';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import EmptyContainer from '@/common/container/EmptyContainer';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import MuiPagination from '@/domain/program/pagination/MuiPagination';
 import ReviewCard from '@/domain/review/ReviewCard';
 import { ActiveChallengeType, ChallengeType, PageInfo } from '@/schema';

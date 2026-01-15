@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { AxiosError } from 'axios';
-import Input from '../../../../common/ui/input/Input';
+import Input from '../../../../common/input/v2/Input';
 import axios from '../../../../utils/axios';
 import Button from '../../ui/button/Button';
 

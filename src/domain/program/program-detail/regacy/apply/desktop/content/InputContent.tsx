@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import cn from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 
-import Input from '../../../../../../../common/input/Input';
+import Input from '../../../../../../../common/input/v1/Input';
 import axios from '../../../../../../../utils/axios';
 import { typeToText } from '../../../../../../../utils/converTypeToText';
 import {

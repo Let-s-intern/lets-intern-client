@@ -5,8 +5,8 @@ import { isAxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
-import Input from '../../../common/input/Input';
-import Button from '../../../common/ui/button/Button';
+import Button from '../../../common/button/Button';
+import Input from '../../../common/input/v1/Input';
 import useAuthStore from '../../../store/useAuthStore';
 import axios from '../../../utils/axios';
 

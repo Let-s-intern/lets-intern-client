@@ -7,7 +7,7 @@ import { ReactNode } from 'react';
 
 import HorizontalRule from '@/common/HorizontalRule';
 import { twMerge } from '@/lib/twMerge';
-import { SINGLE_ROW_NAVBAR_HEIGHT_OFFSET } from '../ui/layout/header/NavBar';
+import { SINGLE_ROW_NAVBAR_HEIGHT_OFFSET } from '../layout/header/NavBar';
 
 function ReviewNavBar() {
   const pathname = usePathname();

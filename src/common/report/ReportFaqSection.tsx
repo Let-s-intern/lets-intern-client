@@ -1,8 +1,8 @@
 import { ReportType, useGetReportFaqs } from '@/api/report';
 import { personalStatementColors } from '@/domain/report/ReportPersonalStatementPage';
 import { resumeColors } from '@/domain/report/ReportResumePage';
-import FaqChat from '../ui/FaqChat';
-import FaqDropdown from '../ui/FaqDropdown';
+import FaqDropdown from '../dropdown/FaqDropdown';
+import FaqChat from '../faq/FaqChat';
 import MainHeader from './MainHeader';
 import SubHeader from './SubHeader';
 
@@ -38,7 +38,9 @@ const ReportFaqSection = ({ reportType, reportId }: ReportFaqSectionProps) => {
 
       <main className="mx-auto mt-10 md:mt-20">
         <div className="mx-auto mb-10 flex max-w-[800px] flex-col gap-3 md:mb-16">
-          {data?.faqList.map((faq) => <FaqDropdown key={faq.id} faq={faq} />)}
+          {data?.faqList.map((faq) => (
+            <FaqDropdown key={faq.id} faq={faq} />
+          ))}
         </div>
         <FaqChat />
       </main>

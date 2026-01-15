@@ -1,8 +1,8 @@
 'use client';
 
+import CheckBox from '@/common/box/CheckBox';
 import SolidButton from '@/common/button/SolidButton';
-import CheckBox from '@/common/ui/CheckBox';
-import LineInput from '@/common/ui/input/LineInput';
+import LineInput from '@/common/input/LineInput';
 import MarketingModal from '@/domain/auth/modal/MarketingModal';
 import PrivacyPolicyModal from '@/domain/auth/modal/PrivacyPolicyModal';
 import InfoContainer from '@/domain/auth/ui/InfoContainer';
