@@ -1,6 +1,6 @@
 import FaqDropdown from '@/common/dropdown/FaqDropdown';
-import FaqChat from '@/common/faq/FaqChat';
 import Heading2 from '@/common/header/Heading2';
+import FaqChat from '@/domain/faq/FaqChat';
 import { challengeColors } from '@/domain/program/challenge/ChallengeView';
 import SuperTitle from '@/domain/program/program-detail/SuperTitle';
 import { twMerge } from '@/lib/twMerge';

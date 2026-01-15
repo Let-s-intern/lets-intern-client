@@ -8,11 +8,11 @@ import { Suspense, useState } from 'react';
 
 import { useGetLiveTitle } from '@/api/program';
 import { usePostReviewMutation } from '@/api/review';
-import ReviewInstruction from '@/common/review/ReviewInstruction';
-import ReviewModal from '@/common/review/ReviewModal';
-import ReviewQuestion from '@/common/review/ReviewQuestion';
-import ReviewTextarea from '@/common/review/ReviewTextarea';
-import TenScore from '@/common/review/score/TenScore';
+import ReviewInstruction from '@/domain/review/ReviewInstruction';
+import ReviewModal from '@/domain/review/ReviewModal';
+import ReviewQuestion from '@/domain/review/ReviewQuestion';
+import ReviewTextarea from '@/domain/review/ReviewTextarea';
+import TenScore from '@/domain/review/score/TenScore';
 
 const LiveReviewCreatePageContent = () => {
   const router = useRouter();

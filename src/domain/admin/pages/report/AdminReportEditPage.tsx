@@ -9,12 +9,12 @@ import {
   useGetReportDetailAdminQuery,
   usePatchReportMutation,
 } from '@/api/report';
-import FaqSection from '@/common/faq/FaqSection';
 import EditorApp from '@/domain/admin/lexical/EditorApp';
 import AdminReportFeedback from '@/domain/admin/report/AdminReportFeedback';
 import ReportProgramRecommendEditor from '@/domain/admin/report/ReportProgramRecommendEditor';
 import ReportReviewEditor from '@/domain/admin/report/ReportReviewEditor';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
+import FaqSection from '@/domain/faq/FaqSection';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import dayjs from '@/lib/dayjs';
 import { ProgramTypeEnum } from '@/schema';
