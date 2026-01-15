@@ -1,4 +1,4 @@
-import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
+import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { useMissionStore } from '@/store/useMissionStore';
 import { TALENT_POOL_MISSION_TH } from '@/utils/constants';

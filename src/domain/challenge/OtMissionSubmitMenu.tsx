@@ -1,13 +1,13 @@
-import { usePatchAttendance } from '@/api/attendance';
+import { usePatchAttendance } from '@/api/attendance/attendance';
 import {
   useGetChallengeGoal,
   usePatchChallengeGoal,
   usePostChallengeAttendance,
-} from '@/api/challenge';
+} from '@/api/challenge/challenge';
 import { Schedule } from '@/schema';
 import clsx from 'clsx';
-import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import ParsedCommentBox from './my-challenge/ParsedCommentBox';
 
 interface Props {

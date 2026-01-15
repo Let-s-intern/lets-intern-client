@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetBlogReviewList } from '@/api/review';
+import { useGetBlogReviewList } from '@/api/review/review';
 import MoreHeader from '../../common/header/MoreHeader';
 import LoadingContainer from '../../common/loading/LoadingContainer';
 import ReviewLinkCard from './ReviewLinkCard';

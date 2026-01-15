@@ -5,7 +5,7 @@ import {
   blogTypeSchema,
   useBlogListQuery,
   useGetBlogBannerList,
-} from '@/api/blog';
+} from '@/api/blog/blog';
 import BellIcon from '@/assets/icons/Bell.svg';
 import LockKeyHoleIcon from '@/assets/icons/lock-keyhole.svg';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';

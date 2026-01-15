@@ -1,4 +1,4 @@
-import { useUserQuery } from '@/api/user';
+import { useUserQuery } from '@/api/user/user';
 import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import EndDailyMissionSection from '@/domain/challenge/dashboard/section/EndDailyMissionSection';
 import OldDailyMissionSection from '@/domain/challenge/OldDailyMissionSection';

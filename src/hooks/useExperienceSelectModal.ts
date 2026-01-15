@@ -1,7 +1,7 @@
 import {
   useSearchUserExperiencesQuery,
   useUserExperienceFiltersQuery,
-} from '@/api/userExperience';
+} from '@/api/user/userExperience';
 import {
   convertUserExperienceToExperienceData,
   ExperienceData,

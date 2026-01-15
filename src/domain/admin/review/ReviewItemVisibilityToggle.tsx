@@ -1,4 +1,7 @@
-import { ReviewType, useUpdateAdminProgramReviewItem } from '@/api/review';
+import {
+  ReviewType,
+  useUpdateAdminProgramReviewItem,
+} from '@/api/review/review';
 import { Row } from '@/domain/admin/pages/review/AdminChallengeReviewListPage';
 import { Switch } from '@mui/material';
 

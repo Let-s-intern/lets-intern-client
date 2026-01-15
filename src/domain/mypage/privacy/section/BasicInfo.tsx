@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { useUserQuery, useUserQueryKey } from '@/api/user';
+import { useUserQuery, useUserQueryKey } from '@/api/user/user';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Input from '../../../../common/input/v2/Input';
 import axios from '../../../../utils/axios';

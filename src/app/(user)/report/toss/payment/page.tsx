@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useGetParticipationInfo } from '@/api/application';
 import { useGetReportDetailQuery } from '@/api/report';
-import { useUserQuery } from '@/api/user';
+import { useUserQuery } from '@/api/user/user';
 import { PaymentMethodKey } from '@/data/getPaymentSearchParams';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 

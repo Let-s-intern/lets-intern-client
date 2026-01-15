@@ -7,7 +7,7 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
 
 import { useGetLiveTitle } from '@/api/program';
-import { usePostReviewMutation } from '@/api/review';
+import { usePostReviewMutation } from '@/api/review/review';
 import ReviewInstruction from '@/domain/review/ReviewInstruction';
 import ReviewModal from '@/domain/review/ReviewModal';
 import ReviewQuestion from '@/domain/review/ReviewQuestion';

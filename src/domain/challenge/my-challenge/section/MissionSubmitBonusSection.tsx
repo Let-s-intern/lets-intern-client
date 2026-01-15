@@ -1,6 +1,6 @@
-import { usePatchAttendance } from '@/api/attendance';
-import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
-import { useSubmitMissionBlogBonus } from '@/api/mission';
+import { usePatchAttendance } from '@/api/attendance/attendance';
+import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge/challenge';
+import { useSubmitMissionBlogBonus } from '@/api/mission/mission';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';

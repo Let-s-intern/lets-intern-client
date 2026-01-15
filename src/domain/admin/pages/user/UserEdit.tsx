@@ -4,7 +4,7 @@ import {
   PatchUserType,
   usePatchUserAdminMutation,
   useUserDetailAdminQuery,
-} from '@/api/user';
+} from '@/api/user/user';
 import Input from '@/common/input/v1/Input';
 import ActionButton from '@/domain/admin/ui/button/ActionButton';
 import GradeDropdown from '@/domain/mypage/privacy/form-control/GradeDropdown';

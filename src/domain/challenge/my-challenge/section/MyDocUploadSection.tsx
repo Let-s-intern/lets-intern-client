@@ -1,11 +1,11 @@
-import { usePostDocumentMutation } from '@/api/mission';
-import { DocumentType } from '@/api/missionSchema';
+import { usePostDocumentMutation } from '@/api/mission/mission';
+import { DocumentType } from '@/api/mission/missionSchema';
 import { getPresignedUrl, uploadToS3 } from '@/api/presignedUrl';
 import { convertReportTypeToPathname } from '@/api/report';
 import {
   useDeleteUserDocMutation,
   useGetUserDocumentListQuery,
-} from '@/api/user';
+} from '@/api/user/user';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { getFileNameFromUrl } from '@/utils/getFileNameFromUrl';
 import { clsx } from 'clsx';

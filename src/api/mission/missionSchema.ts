@@ -1,4 +1,4 @@
-import { MissionStatus } from './../schema';
+import { MissionStatus } from '@/schema';
 /** [어드민] 미션 수정 */
 export interface PatchMissionReq {
   missionId: number | string;

@@ -1,4 +1,4 @@
-import { useBlogListQuery } from '@/api/blog';
+import { useBlogListQuery } from '@/api/blog/blog';
 import { CurationType } from '@/api/curation';
 import { useGetProgramAdminQuery } from '@/api/program';
 import { useGetReportsForAdmin } from '@/api/report';

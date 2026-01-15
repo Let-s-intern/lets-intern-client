@@ -1,4 +1,4 @@
-import { GetReview } from '@/api/review';
+import { GetReview } from '@/api/review/review';
 import FilterDropdown from '@/common/dropdown/FilterDropdown';
 import MoreHeader from '@/common/header/MoreHeader';
 import ReviewSection from '@/domain/about/v1/section/ReviewSection';

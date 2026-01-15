@@ -1,4 +1,4 @@
-import { useUserQuery } from '@/api/user';
+import { useUserQuery } from '@/api/user/user';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';

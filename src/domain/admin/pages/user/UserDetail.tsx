@@ -1,6 +1,6 @@
 'use client';
 
-import { useUserDetailAdminQuery } from '@/api/user';
+import { useUserDetailAdminQuery } from '@/api/user/user';
 import ActionButton from '@/domain/admin/ui/button/ActionButton';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';

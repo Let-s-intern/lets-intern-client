@@ -6,8 +6,8 @@ import {
   useAdminChallengeMentorListQuery,
   useDeleteChallengeMentor,
   usePostAdminChallengeMentor,
-} from '@/api/mentor';
-import { ChallengeMentorList } from '@/api/mentorSchema';
+} from '@/api/mentor/mentor';
+import { ChallengeMentorList } from '@/api/mentor/mentorSchema';
 import {
   useGetChallengeQuery,
   useGetChallengeQueryKey,

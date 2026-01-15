@@ -11,8 +11,8 @@ import axiosV2 from '@/utils/axiosV2';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 
-import { mypageApplicationsSchema } from './application';
-import { getChallengeReviewStatusQueryKey } from './challenge';
+import { mypageApplicationsSchema } from '../application';
+import { getChallengeReviewStatusQueryKey } from '../challenge/challenge';
 import { blogBonusSchema, PostBlogBonusRequest } from './reviewSchema';
 
 export const getAllApplicationsForReviewQueryKey = ['applications', 'review'];

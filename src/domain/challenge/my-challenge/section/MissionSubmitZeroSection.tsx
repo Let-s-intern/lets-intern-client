@@ -1,9 +1,9 @@
-import { useSubmitMission } from '@/api/attendance';
+import { useSubmitMission } from '@/api/attendance/attendance';
 import {
   ChallengeMissionQueryKey,
   useGetChallengeGoal,
   useSubmitChallengeGoal,
-} from '@/api/challenge';
+} from '@/api/challenge/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import MissionSubmitButton from '@/domain/challenge/my-challenge/mission/MissionSubmitButton';
 import MissionToast from '@/domain/challenge/my-challenge/mission/MissionToast';

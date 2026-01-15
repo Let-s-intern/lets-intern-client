@@ -2,7 +2,7 @@ import {
   useGetChallengeGoal,
   useGetChallengeValideUser,
   useGetUserChallengeInfo,
-} from '@/api/challenge';
+} from '@/api/challenge/challenge';
 import { useGetChallengeQuery } from '@/api/program';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import dayjs from '@/lib/dayjs';

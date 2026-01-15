@@ -1,5 +1,5 @@
-import { usePostAdminCareerMutation } from '@/api/career';
-import { UserCareerType } from '@/api/careerSchema';
+import { usePostAdminCareerMutation } from '@/api/career/career';
+import { UserCareerType } from '@/api/career/careerSchema';
 import CareerForm from '@/domain/mypage/career/CareerForm';
 import { DEFAULT_CAREER } from '@/domain/mypage/career/constants';
 import { UserAdminDetail } from '@/schema';

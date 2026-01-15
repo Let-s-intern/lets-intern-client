@@ -1,4 +1,4 @@
-import { useGetChallengeTitle } from '@/api/challenge';
+import { useGetChallengeTitle } from '@/api/challenge/challenge';
 import { useGetVodLinks } from '@/api/program';
 import useGoogleAnalytics from '@/hooks/useGoogleAnalytics';
 import { ProgramRecommend } from '@/types/interface';

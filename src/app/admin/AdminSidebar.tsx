@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { ImExit } from 'react-icons/im';
 import { IoIosArrowDown } from 'react-icons/io';
 
-import { useIsAdminQuery } from '@/api/user';
+import { useIsAdminQuery } from '@/api/user/user';
 
 const navData = [
   {

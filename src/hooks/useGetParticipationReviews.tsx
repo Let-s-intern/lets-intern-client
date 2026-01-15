@@ -1,4 +1,4 @@
-import { BlogType, useBlogListQuery } from '@/api/blog';
+import { BlogType, useBlogListQuery } from '@/api/blog/blog';
 
 export default function useGetBlogParticipationReview(size: number) {
   const { data: programReviewsData } = useBlogListQuery({

@@ -1,4 +1,4 @@
-import { fetchChallengeData } from '@/api/challenge';
+import { fetchChallengeData } from '@/api/challenge/challenge';
 import ChallengeCTAButtons from '@/domain/program/challenge/ChallengeCTAButtons';
 import ChallengeMarketingView from '@/domain/program/challenge/ChallengeMarketingView';
 import ChallengePortfolioView from '@/domain/program/challenge/ChallengePortfolioView';
@@ -74,7 +74,9 @@ const Page = async ({
   });
 
   // 슬러그 비교 및 리디렉션
-  const correctSlug = (challenge.title?.replace(/[ /]/g, '-') || '').toLowerCase();
+  const correctSlug = (
+    challenge.title?.replace(/[ /]/g, '-') || ''
+  ).toLowerCase();
   let currentSlug = _title || '';
   try {
     currentSlug = decodeURIComponent(currentSlug);

@@ -1,4 +1,4 @@
-import { useChallengeMyDailyMission } from '@/api/challenge';
+import { useChallengeMyDailyMission } from '@/api/challenge/challenge';
 import {
   QueryObserverResult,
   RefetchOptions,

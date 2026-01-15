@@ -7,7 +7,7 @@ import {
   convertReportPriceType,
   useGetReportPaymentDetailQuery,
 } from '@/api/report';
-import { useUserQuery } from '@/api/user';
+import { useUserQuery } from '@/api/user/user';
 import Input from '@/common/input/v2/Input';
 import ReportCreditRow from '@/domain/mypage/credit/ReportCreditRow';
 import ReportCreditSubRow from '@/domain/mypage/credit/ReportCreditSubRow';

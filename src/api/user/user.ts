@@ -1,3 +1,9 @@
+import {
+  accountType,
+  authProviderSchema,
+  grade,
+  userAdminDetailType,
+} from '@/schema';
 import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
 import {
@@ -7,12 +13,6 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { z } from 'zod';
-import {
-  accountType,
-  authProviderSchema,
-  grade,
-  userAdminDetailType,
-} from '../schema';
 import {
   challengeMentorVoSchema,
   isAdminSchema,

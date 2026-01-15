@@ -1,7 +1,7 @@
 'use client';
 
 import { useProgramQuery } from '@/api/program';
-import { usePatchUser } from '@/api/user';
+import { usePatchUser } from '@/api/user/user';
 import CreditCardIcon from '@/assets/icons/credit-card.svg?react';
 import { Duration } from '@/common/Duration';
 import BackHeader from '@/common/header/BackHeader';

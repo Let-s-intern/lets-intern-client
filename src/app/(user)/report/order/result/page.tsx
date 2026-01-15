@@ -1,6 +1,6 @@
 'use client';
 
-import { ApplicationResult } from '@/api/paymentSchema';
+import { ApplicationResult } from '@/api/payment/paymentSchema';
 import { convertReportPriceType, useGetReportDetailQuery } from '@/api/report';
 import {
   getPaymentMethodLabel,

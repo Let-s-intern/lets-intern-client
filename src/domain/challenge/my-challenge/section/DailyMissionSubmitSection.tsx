@@ -1,8 +1,8 @@
-import { usePatchAttendance } from '@/api/attendance';
+import { usePatchAttendance } from '@/api/attendance/attendance';
 import {
   useGetChallengeReviewStatus,
   usePostChallengeAttendance,
-} from '@/api/challenge';
+} from '@/api/challenge/challenge';
 import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import { MyDailyMission, Schedule } from '@/schema';
 import { BONUS_MISSION_TH } from '@/utils/constants';

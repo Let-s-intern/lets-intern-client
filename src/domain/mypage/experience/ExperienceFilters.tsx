@@ -1,5 +1,5 @@
-import { useGetUserExperienceFiltersQuery } from '@/api/experience';
-import { ActivityType, CategoryType } from '@/api/experienceSchema';
+import { useGetUserExperienceFiltersQuery } from '@/api/experience/experience';
+import { ActivityType, CategoryType } from '@/api/experience/experienceSchema';
 import { FilterDropdown } from '@/domain/challenge/my-challenge/section/mission-submit-list-form/components/ExperienceSelectModal/components/FilterDropdown';
 import { MultiFilterDropdown } from '@/domain/challenge/my-challenge/section/mission-submit-list-form/components/ExperienceSelectModal/components/MultiFilterDropdown';
 import { convertFilterResToUiFormat } from '@/utils/experience';

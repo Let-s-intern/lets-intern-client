@@ -1,6 +1,6 @@
 'use client';
 
-import { usePatchBlogDislike, usePatchBlogLike } from '@/api/blog';
+import { usePatchBlogDislike, usePatchBlogLike } from '@/api/blog/blog';
 import { Heart } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';

@@ -1,7 +1,7 @@
 import { TextField } from '@mui/material';
 import { ChangeEventHandler, FormEventHandler } from 'react';
 
-import { TagDetail } from '../../../api/blogSchema';
+import { TagDetail } from '../../../api/blog/blogSchema';
 import Tag from './Tag';
 import TagDelete from './TagDelete';
 

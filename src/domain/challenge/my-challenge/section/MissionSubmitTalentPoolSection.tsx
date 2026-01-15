@@ -1,5 +1,5 @@
-import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
-import { usePostTalentPoolAttendanceMutation } from '@/api/mission';
+import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge/challenge';
+import { usePostTalentPoolAttendanceMutation } from '@/api/mission/mission';
 import { getPresignedUrl, uploadToS3 } from '@/api/presignedUrl';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';

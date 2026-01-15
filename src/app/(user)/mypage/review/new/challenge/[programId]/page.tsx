@@ -5,9 +5,12 @@ import { josa } from 'es-hangul';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
 
-import { useGetChallengeGoal, useGetChallengeTitle } from '@/api/challenge';
-import { usePostReviewMutation } from '@/api/review';
-import { useUserQuery } from '@/api/user';
+import {
+  useGetChallengeGoal,
+  useGetChallengeTitle,
+} from '@/api/challenge/challenge';
+import { usePostReviewMutation } from '@/api/review/review';
+import { useUserQuery } from '@/api/user/user';
 import GoalOrConcernsBox from '@/domain/review/GoalOrConcernsBox';
 import ReviewInstruction from '@/domain/review/ReviewInstruction';
 import ReviewModal from '@/domain/review/ReviewModal';

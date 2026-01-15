@@ -1,5 +1,5 @@
-import { usePatchAttendance } from '@/api/attendance';
-import { usePostBlogBonus } from '@/api/review';
+import { usePatchAttendance } from '@/api/attendance/attendance';
+import { usePostBlogBonus } from '@/api/review/review';
 import { Schedule } from '@/schema';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';

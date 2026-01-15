@@ -6,7 +6,7 @@ import { faqSchema, reportTypeSchema } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import { Dayjs } from 'dayjs';
 import axios from '../utils/axios';
-import { tossInfoType } from './paymentSchema';
+import { tossInfoType } from './payment/paymentSchema';
 
 // Common schemas
 const pageInfoSchema = z.object({

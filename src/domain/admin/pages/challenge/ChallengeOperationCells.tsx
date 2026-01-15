@@ -1,4 +1,4 @@
-import { useGetChallengeOptions } from '@/api/challengeOption';
+import { useGetChallengeOptions } from '@/api/challenge/challengeOption';
 import SelectFormControl from '@/domain/admin/program/SelectFormControl';
 import { useUpdateMissionOption } from '@/hooks/useUpdateMissionOption';
 import dayjs from '@/lib/dayjs';

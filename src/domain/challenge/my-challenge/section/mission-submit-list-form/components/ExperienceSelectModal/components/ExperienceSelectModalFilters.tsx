@@ -1,7 +1,10 @@
 'use client';
 
-import { CategoryType, EXPERIENCE_CATEGORY_KR } from '@/api/experienceSchema';
-import { UserExperienceFilters } from '@/api/userExperienceSchema';
+import {
+  CategoryType,
+  EXPERIENCE_CATEGORY_KR,
+} from '@/api/experience/experienceSchema';
+import { UserExperienceFilters } from '@/api/user/userExperienceSchema';
 import { useMemo } from 'react';
 import { activityTypeToLabel } from '../../../data';
 import { FilterDropdown } from './FilterDropdown';

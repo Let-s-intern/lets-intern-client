@@ -2,10 +2,10 @@ import {
   useGetChallengeGoal,
   usePatchChallengeGoal,
   usePostChallengeAttendance,
-} from '@/api/challenge';
+} from '@/api/challenge/challenge';
 import clsx from 'clsx';
-import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface Props {
   missionId: number;

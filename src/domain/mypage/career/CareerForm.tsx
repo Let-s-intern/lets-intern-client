@@ -5,7 +5,7 @@ import {
   CareerFormType,
   EmployeeType,
   UserCareerType,
-} from '@/api/careerSchema';
+} from '@/api/career/careerSchema';
 import WarningModal from '@/common/alert/WarningModal';
 import OutlinedButton from '@/common/button/OutlinedButton';
 import SolidButton from '@/common/button/SolidButton';

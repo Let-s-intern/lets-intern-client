@@ -1,4 +1,4 @@
-import { useGetUserCareerQuery } from '@/api/career';
+import { useGetUserCareerQuery } from '@/api/career/career';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { toCareerDateDot } from '@/utils/career';
 import { useRouter } from 'next/navigation';

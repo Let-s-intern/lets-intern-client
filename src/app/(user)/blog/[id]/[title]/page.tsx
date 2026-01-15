@@ -1,5 +1,5 @@
-import { fetchBlogData, fetchRecommendBlogData } from '@/api/blog';
-import { BlogContent, ProgramRecommendItem } from '@/api/blogSchema';
+import { fetchBlogData, fetchRecommendBlogData } from '@/api/blog/blog';
+import { BlogContent, ProgramRecommendItem } from '@/api/blog/blogSchema';
 import { fetchProgramRecommend } from '@/api/program';
 import HorizontalRule from '@/common/HorizontalRule';
 import MoreHeader from '@/common/header/MoreHeader';

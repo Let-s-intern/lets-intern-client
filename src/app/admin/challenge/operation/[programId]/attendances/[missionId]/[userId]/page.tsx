@@ -1,7 +1,7 @@
 'use client';
 
-import { useMissionAttendanceUserExperiencesQuery } from '@/api/challenge';
-import { UserAttendanceExperience } from '@/api/experienceSchema';
+import { useMissionAttendanceUserExperiencesQuery } from '@/api/challenge/challenge';
+import { UserAttendanceExperience } from '@/api/experience/experienceSchema';
 import DataTable, { TableHeader } from '@/common/table/DataTable';
 import ActivityTypeCell from '@/domain/mypage/experience/table-cell/ActivityTypeCell';
 import CategoryCell from '@/domain/mypage/experience/table-cell/CategoryCell';

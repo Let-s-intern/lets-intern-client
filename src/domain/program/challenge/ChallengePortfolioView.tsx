@@ -1,6 +1,9 @@
 'use client';
 
-import { useGetActiveChallenge, useGetChallengeFaq } from '@/api/challenge';
+import {
+  useGetActiveChallenge,
+  useGetChallengeFaq,
+} from '@/api/challenge/challenge';
 import ChallengeCurriculum from '@/domain/program/challenge/challenge-view/ChallengeCurriculum';
 import ChallengeFaq from '@/domain/program/challenge/challenge-view/ChallengeFaq';
 import dayjs from '@/lib/dayjs';

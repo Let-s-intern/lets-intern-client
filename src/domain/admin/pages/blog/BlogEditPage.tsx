@@ -6,13 +6,13 @@ import {
   useDeleteBlogTagMutation,
   usePatchBlogMutation,
   usePostBlogTagMutation,
-} from '@/api/blog';
+} from '@/api/blog/blog';
 import {
   BlogContent,
   PostTag,
   postTagSchema,
   TagDetail,
-} from '@/api/blogSchema';
+} from '@/api/blog/blogSchema';
 import { uploadFile } from '@/api/file';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import TagSelector from '@/domain/admin/blog/TagSelector';

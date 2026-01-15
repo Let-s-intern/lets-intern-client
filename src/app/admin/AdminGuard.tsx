@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-import { useIsAdminQuery, useIsMentorQuery } from '@/api/user';
+import { useIsAdminQuery, useIsMentorQuery } from '@/api/user/user';
 
 export const AdminGuard: React.FC<{
   children: React.ReactNode;

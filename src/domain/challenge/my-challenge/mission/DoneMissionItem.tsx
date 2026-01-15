@@ -1,11 +1,11 @@
-import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
+import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge/challenge';
 import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import { MyChallengeMissionByType } from '@/schema';
 import { BONUS_MISSION_TH } from '@/utils/constants';
 import { missionSubmitToBadge } from '@/utils/convert';
 import clsx from 'clsx';
-import { useEffect, useRef, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 import DoneMissionDetailMenu from './DoneMissionDetailMenu';
 
 interface Props {

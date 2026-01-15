@@ -1,6 +1,6 @@
 'use client';
 
-import { BlogReview } from '@/api/review';
+import { BlogReview } from '@/api/review/review';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import ReviewBadge, {
   getBadgeTypeFromProgramType,

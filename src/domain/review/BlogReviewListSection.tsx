@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetBlogReviewList } from '@/api/review';
+import { useGetBlogReviewList } from '@/api/review/review';
 import MuiPagination from '@/domain/program/pagination/MuiPagination';
 import BlogReviewCard from '@/domain/review/BlogReviewCard';
 import { ProgramTypeUpperCase } from '@/schema';

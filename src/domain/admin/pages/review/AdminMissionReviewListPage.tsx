@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetAdminProgramReview } from '@/api/review';
+import { useGetAdminProgramReview } from '@/api/review/review';
 import AdminReviewHeader from '@/app/admin/review/AdminReviewHeader';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import ReviewDetailModal from '@/domain/admin/review/ReviewDetailModal';

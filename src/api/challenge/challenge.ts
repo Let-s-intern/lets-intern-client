@@ -21,7 +21,8 @@ import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
-import { Pageable } from './../schema';
+import { Pageable } from '../../schema';
+import { userAttendanceExperienceSchema } from '../experience/experienceSchema';
 import {
   challengeApplicationSchema,
   challengeGoalSchema,
@@ -32,7 +33,6 @@ import {
   challengeValidUserSchema,
   feedbackAttendanceSchema,
 } from './challengeSchema';
-import { userAttendanceExperienceSchema } from './experienceSchema';
 
 const useChallengeQueryKey = 'useChallengeQueryKey';
 

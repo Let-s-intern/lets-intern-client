@@ -1,5 +1,9 @@
-import { Pageable, Sortable, userCareerListSchema } from '@/api/careerSchema';
-import { UserExperience } from '@/api/userSchema';
+import {
+  Pageable,
+  Sortable,
+  userCareerListSchema,
+} from '@/api/career/careerSchema';
+import { UserExperience } from '@/api/user/userSchema';
 import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 

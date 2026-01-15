@@ -1,4 +1,4 @@
-import { PaymentDetailType } from '@/api/paymentSchema';
+import { PaymentDetailType } from '@/api/payment/paymentSchema';
 import dayjs from '@/lib/dayjs';
 
 const convertDateFormat = (dateString: string) => {

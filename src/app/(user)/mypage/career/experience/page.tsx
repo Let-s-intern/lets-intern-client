@@ -1,7 +1,10 @@
 'use client';
 
-import { Sortable, UserExperienceType } from '@/api/experienceSchema';
-import { usePostUserExperienceMutation } from '@/api/user';
+import {
+  Sortable,
+  UserExperienceType,
+} from '@/api/experience/experienceSchema';
+import { usePostUserExperienceMutation } from '@/api/user/user';
 import ExperienceCreateButton from '@/domain/mypage/experience/ExperienceCreateButton';
 import ExperienceDataTable from '@/domain/mypage/experience/ExperienceDataTable';
 import ExperienceFilters, {

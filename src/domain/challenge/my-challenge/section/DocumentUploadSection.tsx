@@ -1,6 +1,6 @@
-import { DocumentType } from '@/api/missionSchema';
-import { useGetUserDocumentListQuery } from '@/api/user';
-import { UserDocument } from '@/api/userSchema';
+import { DocumentType } from '@/api/mission/missionSchema';
+import { useGetUserDocumentListQuery } from '@/api/user/user';
+import { UserDocument } from '@/api/user/userSchema';
 import { getFileNameFromUrl } from '@/utils/getFileNameFromUrl';
 import { clsx } from 'clsx';
 import { Trash2, Upload } from 'lucide-react';

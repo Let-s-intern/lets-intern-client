@@ -1,4 +1,4 @@
-import { UserExperience } from '@/api/userExperienceSchema';
+import { UserExperience } from '@/api/user/userExperienceSchema';
 import { TableHeader } from '@/common/table/DataTable';
 import ActivityTypeCell from '@/domain/mypage/experience/table-cell/ActivityTypeCell';
 import CategoryCell from '@/domain/mypage/experience/table-cell/CategoryCell';

@@ -1,4 +1,4 @@
-import { useGetAllUserExperienceQuery } from '@/api/experience';
+import { useGetAllUserExperienceQuery } from '@/api/experience/experience';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { getTopCoreCompetencies } from '@/domain/career-board/utils/experienceSummary';
 import { useRouter } from 'next/navigation';

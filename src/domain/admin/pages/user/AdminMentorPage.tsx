@@ -5,7 +5,7 @@ import {
   usePatchUserAdminMutation,
   useUserAdminQuery,
   UseUserAdminQueryKey,
-} from '@/api/user';
+} from '@/api/user/user';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { Button, Checkbox, TextField } from '@mui/material';

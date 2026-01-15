@@ -1,5 +1,5 @@
-import { usePaymentQuery } from '@/api/payment';
-import { PaymentType } from '@/api/paymentSchema';
+import { usePaymentQuery } from '@/api/payment/payment';
+import { PaymentType } from '@/api/payment/paymentSchema';
 import dayjs from '@/lib/dayjs';
 import Link from 'next/link';
 import CreditDateContainer from '../CreditDateContainer';
