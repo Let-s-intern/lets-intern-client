@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 
-import { useIsMentorQuery } from '@/api/user';
+import { useIsMentorQuery } from '@/api/user/user';
 import { Profile } from '@/domain/mypage/mypage/profile/Profile';
 import MyPageBanner from '@/domain/mypage/MyPageBanner';
 import useAuthStore from '@/store/useAuthStore';

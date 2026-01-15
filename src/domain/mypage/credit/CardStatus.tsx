@@ -1,4 +1,4 @@
-import { convertPaymentStatus } from '../../../api/paymentSchema';
+import { convertPaymentStatus } from '../../../api/payment/paymentSchema';
 
 const CardStatus = ({ status }: { status: string }) => {
   return (

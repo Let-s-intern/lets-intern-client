@@ -1,6 +1,6 @@
 'use client';
 
-import { GetReview, useGetProgramReview } from '@/api/review';
+import { GetReview, useGetProgramReview } from '@/api/review/review';
 import MoreHeader from '@/common/header/MoreHeader';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import ReviewCard from '@/domain/review/ReviewCard';

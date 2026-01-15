@@ -1,4 +1,7 @@
-import { usePatchAttendance, useSubmitMission } from '@/api/attendance';
+import {
+  usePatchAttendance,
+  useSubmitMission,
+} from '@/api/attendance/attendance';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import { AttendanceResult, AttendanceStatus } from '@/schema';

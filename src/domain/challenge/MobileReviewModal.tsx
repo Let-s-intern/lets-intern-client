@@ -1,6 +1,9 @@
-import { useGetChallengeGoal, useGetChallengeTitle } from '@/api/challenge';
-import { usePostReviewMutation } from '@/api/review';
-import { useUserQuery } from '@/api/user';
+import {
+  useGetChallengeGoal,
+  useGetChallengeTitle,
+} from '@/api/challenge/challenge';
+import { usePostReviewMutation } from '@/api/review/review';
+import { useUserQuery } from '@/api/user/user';
 import ModalPortal from '@/common/ModalPortal';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import { josa } from 'es-hangul';

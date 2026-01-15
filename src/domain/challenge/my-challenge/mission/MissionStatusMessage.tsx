@@ -1,4 +1,4 @@
-import { useChallengeApplicationQuery } from '@/api/challenge';
+import { useChallengeApplicationQuery } from '@/api/challenge/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import { clsx } from 'clsx';

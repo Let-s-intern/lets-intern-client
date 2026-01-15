@@ -1,4 +1,4 @@
-import { EmployeeType } from '@/api/careerSchema';
+import { EmployeeType } from '@/api/career/careerSchema';
 import { WishJobModal } from '@/domain/challenge/my-challenge/talent-pool/WishJobModal';
 
 const options: EmployeeType[] = [

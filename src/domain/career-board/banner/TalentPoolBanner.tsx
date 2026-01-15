@@ -1,6 +1,6 @@
 'use client';
 
-import { usePatchUser, useUserQuery } from '@/api/user';
+import { usePatchUser, useUserQuery } from '@/api/user/user';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 

@@ -1,5 +1,5 @@
-import { useDeleteUserCareerMutation } from '@/api/career';
-import { CareerFormType } from '@/api/careerSchema';
+import { useDeleteUserCareerMutation } from '@/api/career/career';
+import { CareerFormType } from '@/api/career/careerSchema';
 import BaseModal from '@/common/modal/BaseModal';
 import { useState } from 'react';
 

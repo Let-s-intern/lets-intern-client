@@ -4,8 +4,8 @@ import {
   ChallengeList,
   getClickCopy,
   useGetChallengeList,
-} from '@/api/challenge';
-import { useIsAdminQuery } from '@/api/user';
+} from '@/api/challenge/challenge';
+import { useIsAdminQuery } from '@/api/user/user';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import BaseModal from '@/common/modal/BaseModal';
 import { useAdminCurrentChallenge } from '@/context/CurrentAdminChallengeProvider';

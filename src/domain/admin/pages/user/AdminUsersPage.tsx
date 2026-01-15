@@ -1,6 +1,6 @@
 'use client';
 
-import { useUserAdminQuery } from '@/api/user';
+import { useUserAdminQuery } from '@/api/user/user';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import AdminUserFilter from '@/domain/admin/user/users/filter/AdminUserFilter';

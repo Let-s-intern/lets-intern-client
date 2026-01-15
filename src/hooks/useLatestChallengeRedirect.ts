@@ -1,4 +1,7 @@
-import { useGetActiveChallenge, useGetChallengeHome } from '@/api/challenge';
+import {
+  useGetActiveChallenge,
+  useGetChallengeHome,
+} from '@/api/challenge/challenge';
 import dayjs from '@/lib/dayjs';
 import { ChallengeType } from '@/schema';
 import { filterB2CChallenges } from '@/utils/challengeFilter';

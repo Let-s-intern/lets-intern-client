@@ -3,9 +3,9 @@ import {
   useGetChallengeTitle,
   useGetUserChallengeInfo,
   usePatchChallengeGoal,
-} from '@/api/challenge';
+} from '@/api/challenge/challenge';
 import { useGetChallengeQuery } from '@/api/program';
-import { usePatchUser, useUserQuery } from '@/api/user';
+import { usePatchUser, useUserQuery } from '@/api/user/user';
 import TextArea from '@/common/input/TextArea';
 import Input from '@/common/input/v2/Input';
 import { GOAL_DATE } from '@/domain/challenge/ui/layout/ChallengeLayout';

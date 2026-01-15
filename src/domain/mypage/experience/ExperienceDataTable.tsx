@@ -1,5 +1,5 @@
-import { useGetAllUserExperienceQuery } from '@/api/experience';
-import { Sortable } from '@/api/experienceSchema';
+import { useGetAllUserExperienceQuery } from '@/api/experience/experience';
+import { Sortable } from '@/api/experience/experienceSchema';
 import OutlinedButton from '@/common/button/OutlinedButton';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import DataTable, { TableData, TableHeader } from '@/common/table/DataTable';

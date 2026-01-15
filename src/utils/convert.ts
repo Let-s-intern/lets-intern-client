@@ -1,5 +1,5 @@
 import { CurationLocationType, CurationType } from '@/api/curation';
-import { QuestionType } from '@/api/review';
+import { QuestionType } from '@/api/review/review';
 import dayjs from '@/lib/dayjs';
 import { Dayjs } from 'dayjs';
 import {

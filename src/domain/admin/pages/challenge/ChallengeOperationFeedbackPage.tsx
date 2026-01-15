@@ -3,8 +3,8 @@
 import {
   useChallengeMissionFeedbackListQuery,
   useMentorMissionFeedbackListQuery,
-} from '@/api/challenge';
-import { useIsAdminQuery } from '@/api/user';
+} from '@/api/challenge/challenge';
+import { useIsAdminQuery } from '@/api/user/user';
 import { LOCALIZED_YYYY_MD_Hm } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';

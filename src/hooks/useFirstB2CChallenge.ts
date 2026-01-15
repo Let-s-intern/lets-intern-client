@@ -1,4 +1,4 @@
-import { useGetChallengeHome } from '@/api/challenge';
+import { useGetChallengeHome } from '@/api/challenge/challenge';
 import {
   ChallengeType,
   challengeTypeSchema,

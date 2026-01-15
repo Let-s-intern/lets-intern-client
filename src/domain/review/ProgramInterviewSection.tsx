@@ -1,6 +1,6 @@
 'use client';
 
-import { BlogType, useBlogListQuery } from '@/api/blog';
+import { BlogType, useBlogListQuery } from '@/api/blog/blog';
 import { getBlogPathname } from '@/utils/url';
 import MoreHeader from '../../common/header/MoreHeader';
 import LoadingContainer from '../../common/loading/LoadingContainer';

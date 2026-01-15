@@ -1,4 +1,4 @@
-import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
+import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import { DailyMission, Schedule } from '@/schema';
 import { useMissionStore } from '@/store/useMissionStore';

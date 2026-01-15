@@ -1,6 +1,6 @@
 // TODO: 모바일 반응형 스타일
 
-import { DisplayExperienceCategory } from '@/api/userSchema';
+import { DisplayExperienceCategory } from '@/api/user/userSchema';
 import { WishJobModal } from '@/domain/challenge/my-challenge/talent-pool/WishJobModal';
 
 interface ExperienceCategoryModalProps {

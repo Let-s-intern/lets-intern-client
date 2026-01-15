@@ -1,4 +1,4 @@
-import { useUserQuery } from '@/api/user';
+import { useUserQuery } from '@/api/user/user';
 import { twMerge } from '@/lib/twMerge';
 import useAuthStore from '@/store/useAuthStore';
 import { logoutAndRefreshPage } from '@/utils/auth';

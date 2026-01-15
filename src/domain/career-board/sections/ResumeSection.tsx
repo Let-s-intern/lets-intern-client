@@ -1,5 +1,5 @@
-import { useGetUserDocumentListQuery } from '@/api/user';
-import { UserDocument } from '@/api/userSchema';
+import { useGetUserDocumentListQuery } from '@/api/user/user';
+import { UserDocument } from '@/api/user/userSchema';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { getFileNameFromUrl } from '@/utils/getFileNameFromUrl';
 import { useRouter } from 'next/navigation';

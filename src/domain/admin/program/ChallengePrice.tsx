@@ -1,4 +1,4 @@
-import { ChallengeOption } from '@/api/challengeOptionSchema';
+import { ChallengeOption } from '@/api/challenge/challengeOptionSchema';
 import Input from '@/common/input/v1/Input';
 import {
   ChallengeIdSchema,

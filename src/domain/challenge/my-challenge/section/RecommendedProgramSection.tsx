@@ -1,4 +1,4 @@
-import { useChallengeQuery } from '@/api/challenge';
+import { useChallengeQuery } from '@/api/challenge/challenge';
 import BaseButton from '@/common/button/BaseButton';
 import useGoogleAnalytics from '@/hooks/useGoogleAnalytics';
 import { ChallengeContent } from '@/types/interface';

@@ -1,6 +1,6 @@
 'use client';
 
-import { useBlogListQuery } from '@/api/blog';
+import { useBlogListQuery } from '@/api/blog/blog';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';

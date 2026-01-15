@@ -5,7 +5,7 @@ import MissionIcon from './MissionIcon';
 import MissionNotStartedIcon from './MissionNotStartedIcon';
 import MissionTodayIcon from './MissionTodayIcon';
 
-import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge';
+import { useChallengeMissionAttendanceInfoQuery } from '@/api/challenge/challenge';
 import { useMissionStore } from '@/store/useMissionStore';
 import { BONUS_MISSION_TH, TALENT_POOL_MISSION_TH } from '@/utils/constants';
 import { isAxiosError } from 'axios';

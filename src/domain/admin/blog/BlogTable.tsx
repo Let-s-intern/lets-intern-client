@@ -10,8 +10,8 @@ import {
   useBlogListQuery,
   useDeleteBlogMutation,
   usePatchBlogMutation,
-} from '../../../api/blog';
-import { BlogThumbnail, PatchBlogReqBody } from '../../../api/blogSchema';
+} from '../../../api/blog/blog';
+import { BlogThumbnail, PatchBlogReqBody } from '../../../api/blog/blogSchema';
 import { blogCategory } from '../../../utils/convert';
 import MuiPagination from '../../program/pagination/MuiPagination';
 

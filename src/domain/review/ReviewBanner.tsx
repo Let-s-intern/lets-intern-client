@@ -1,7 +1,7 @@
 'use client';
 
-import { BlogType, useBlogListQuery } from '@/api/blog';
-import { useGetReviewCount } from '@/api/review';
+import { BlogType, useBlogListQuery } from '@/api/blog/blog';
+import { useGetReviewCount } from '@/api/review/review';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 

@@ -1,12 +1,12 @@
 'use client';
 
-import { useGetActiveChallenge } from '@/api/challenge';
+import { useGetActiveChallenge } from '@/api/challenge/challenge';
 import { convertReportTypeToLandingPath, ReportType } from '@/api/report';
 import {
   programReviewParam,
   ReviewType,
   useGetProgramReview,
-} from '@/api/review';
+} from '@/api/review/review';
 import EmptyContainer from '@/common/container/EmptyContainer';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import MuiPagination from '@/domain/program/pagination/MuiPagination';

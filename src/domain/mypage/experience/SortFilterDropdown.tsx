@@ -1,4 +1,4 @@
-import { Sortable } from '@/api/experienceSchema';
+import { Sortable } from '@/api/experience/experienceSchema';
 import { FilterDropdown } from '@/domain/challenge/my-challenge/section/mission-submit-list-form/components/ExperienceSelectModal/components/FilterDropdown';
 
 const options = [

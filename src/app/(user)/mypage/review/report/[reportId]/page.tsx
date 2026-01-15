@@ -8,8 +8,8 @@ import { useParams, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 
 import { useGetReportTitle } from '@/api/report';
-import { useGetProgramReviewDetail } from '@/api/review';
-import { useUserQuery } from '@/api/user';
+import { useGetProgramReviewDetail } from '@/api/review/review';
+import { useUserQuery } from '@/api/user/user';
 import GoalOrConcernsBox from '@/domain/review/GoalOrConcernsBox';
 import ReviewInstruction from '@/domain/review/ReviewInstruction';
 import ReviewModal from '@/domain/review/ReviewModal';

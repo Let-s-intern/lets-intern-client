@@ -1,4 +1,4 @@
-import { useSearchUserExperiencesQuery } from '@/api/userExperience';
+import { useSearchUserExperiencesQuery } from '@/api/user/userExperience';
 import { If } from '@/common/If';
 import { useMemo } from 'react';
 import { ExperienceData, isUserExperienceComplete } from '../data';

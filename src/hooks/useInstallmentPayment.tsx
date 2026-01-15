@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
-import { useGetTossCardPromotion } from '@/api/payment';
-import { convertCodeToCardKorName } from '@/api/paymentSchema';
+import { useGetTossCardPromotion } from '@/api/payment/payment';
+import { convertCodeToCardKorName } from '@/api/payment/paymentSchema';
 
 export function useInstallmentPayment() {
   const { data, isLoading } = useGetTossCardPromotion();

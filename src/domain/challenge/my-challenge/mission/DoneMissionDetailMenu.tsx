@@ -1,4 +1,4 @@
-import { useGetChallengeGoal } from '@/api/challenge';
+import { useGetChallengeGoal } from '@/api/challenge/challenge';
 import HybridLink from '@/common/HybridLink';
 import {
   MyChallengeMissionByType,

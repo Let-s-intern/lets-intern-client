@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { useGetParticipationInfo } from '@/api/application';
 import { convertReportPriceType, useGetReportPriceDetail } from '@/api/report';
-import { usePatchUser } from '@/api/user';
+import { usePatchUser } from '@/api/user/user';
 import BaseButton from '@/common/button/BaseButton';
 import BackHeader from '@/common/header/BackHeader';
 import Input from '@/common/input/v2/Input';

@@ -1,4 +1,4 @@
-import { useGetChallengeOptions } from '@/api/challengeOption';
+import { useGetChallengeOptions } from '@/api/challenge/challengeOption';
 import {
   ChallengeIdSchema,
   ChallengePricePlan,

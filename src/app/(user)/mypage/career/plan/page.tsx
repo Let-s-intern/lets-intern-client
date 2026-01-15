@@ -1,6 +1,6 @@
 'use client';
 
-import { usePatchUser, useUserQuery } from '@/api/user';
+import { usePatchUser, useUserQuery } from '@/api/user/user';
 import OutlinedButton from '@/common/button/OutlinedButton';
 import SolidButton from '@/common/button/SolidButton';
 import LoadingContainer from '@/common/loading/LoadingContainer';

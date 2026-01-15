@@ -1,4 +1,4 @@
-import { useGetChallengeReviewStatus } from '@/api/challenge';
+import { useGetChallengeReviewStatus } from '@/api/challenge/challenge';
 import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';

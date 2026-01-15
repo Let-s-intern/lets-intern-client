@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetUserAdmin } from '@/api/user';
+import { useGetUserAdmin } from '@/api/user/user';
 import useActiveLink from '@/hooks/useActiveLink';
 import useActiveReportNav from '@/hooks/useActiveReportNav';
 import { useControlScroll } from '@/hooks/useControlScroll';

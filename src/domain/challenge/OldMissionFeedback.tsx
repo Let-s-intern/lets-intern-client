@@ -1,7 +1,7 @@
 import {
   useChallengeMissionAttendanceInfoQuery,
   useChallengeMissionFeedbackQuery,
-} from '@/api/challenge';
+} from '@/api/challenge/challenge';
 import { useOldCurrentChallenge } from '@/context/OldCurrentChallengeProvider';
 import LexicalContent from '@/domain/blog/ui/LexicalContent';
 import { useParams, useRouter } from 'next/navigation';

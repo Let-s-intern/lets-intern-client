@@ -1,4 +1,4 @@
-import { useSearchUserExperiencesQuery } from '@/api/userExperience';
+import { useSearchUserExperiencesQuery } from '@/api/user/userExperience';
 import { useEffect, useState } from 'react';
 import { ExperienceSelectModal } from './components/ExperienceSelectModal';
 import { MissionSubmitExperienceList } from './components/MissionSubmitExperienceList';

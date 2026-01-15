@@ -1,5 +1,6 @@
+import dayjs from '@/lib/dayjs';
 import { z } from 'zod';
-import { pageInfo } from '../schema';
+import { pageInfo } from '../../schema';
 
 export interface PostBlogReqBody {
   title: string;
@@ -11,19 +12,6 @@ export interface PostBlogReqBody {
   ctaText: string;
   displayDate: string;
   tagList: number[];
-  isDisplayed: boolean;
-}
-
-export interface ProgramRecommendItem {
-  id: string | null; // VOD-1, CHALLENGE-1, LIVE-2 형태
-  ctaTitle?: string;
-  ctaLink?: string;
-}
-
-export interface BlogContent {
-  lexical?: string;
-  programRecommend?: ProgramRecommendItem[];
-  blogRecommend?: (number | null)[]; // 블로그 id 배열,
 }
 
 export interface PatchBlogReqBody {
@@ -45,7 +33,7 @@ export type PostTag = z.infer<typeof postTagSchema>;
 export type BlogThumbnail = z.infer<typeof blogThumbnailInfo>;
 export type BlogRating = z.infer<typeof blogRatingSchema>['ratingInfos'][0];
 
-export const blogThumbnailInfo = z.object({
+export const blogThumbnailInfoPrimitive = z.object({
   id: z.number(),
   title: z.string().nullable().optional(),
   category: z.string().nullable().optional(),
@@ -57,7 +45,20 @@ export const blogThumbnailInfo = z.object({
   lastModifiedDate: z.string().nullable().optional(),
 });
 
-export const blogDetailInfo = z.object({
+export const blogThumbnailInfo = blogThumbnailInfoPrimitive.transform(
+  (data) => {
+    return {
+      ...data,
+      displayDate: data.displayDate ? dayjs(data.displayDate) : null,
+      createDate: data.createDate ? dayjs(data.createDate) : null,
+      lastModifiedDate: data.lastModifiedDate
+        ? dayjs(data.lastModifiedDate)
+        : null,
+    };
+  },
+);
+
+export const blogDetailInfoPrimitive = z.object({
   id: z.number(),
   title: z.string().nullable().optional(),
   category: z.string().nullable().optional(),
@@ -70,10 +71,18 @@ export const blogDetailInfo = z.object({
   displayDate: z.string().nullable().optional(),
   createDate: z.string().nullable().optional(),
   lastModifiedDate: z.string().nullable().optional(),
-  likeCount: z.number().nonnegative().nullable().optional(),
 });
 
-export type BlogDetailInfo = z.infer<typeof blogDetailInfo>;
+export const blogDetailInfo = blogDetailInfoPrimitive.transform((data) => {
+  return {
+    ...data,
+    createDate: data.createDate ? dayjs(data.createDate) : null,
+    lastModifiedDate: data.lastModifiedDate
+      ? dayjs(data.lastModifiedDate)
+      : null,
+    displayDate: data.displayDate ? dayjs(data.displayDate) : null,
+  };
+});
 
 export const tagSchema = z.object({
   id: z.number(),
@@ -97,11 +106,23 @@ export const blogSchema = z.object({
 
 export type BlogSchema = z.infer<typeof blogSchema>;
 
+export const blogPrimitiveSchema = z.object({
+  blogDetailInfo: blogDetailInfoPrimitive,
+  tagDetailInfos,
+});
+
+export type BlogPrimitive = z.infer<typeof blogPrimitiveSchema>;
+
 export const blogInfoSchema = z.object({
   blogThumbnailInfo,
   tagDetailInfos,
 });
 export type BlogInfoSchema = z.infer<typeof blogInfoSchema>;
+
+export const blogInfoPrimitiveSchema = z.object({
+  blogThumbnailInfo: blogThumbnailInfoPrimitive,
+  tagDetailInfos,
+});
 
 export const blogListSchema = z.object({
   blogInfos: z.array(blogInfoSchema),
@@ -109,6 +130,11 @@ export const blogListSchema = z.object({
 });
 
 export type BlogList = z.infer<typeof blogListSchema>;
+
+export const blogListPrimitiveSchema = z.object({
+  blogInfos: z.array(blogThumbnailInfoPrimitive),
+  pageInfo,
+});
 
 export const blogTagSchema = z.object({
   tagDetailInfos,
@@ -123,72 +149,37 @@ export const ratingSchema = z.object({
   lastModifiedDate: z.string().nullable().optional(),
 });
 
-export const blogRatingSchema = z.object({
+export const blogRatingPrimitiveSchema = z.object({
   ratingInfos: z.array(ratingSchema),
 });
 
-export const blogRatingListSchema = z.object({
+export const blogRatingSchema = blogRatingPrimitiveSchema.transform((data) => {
+  return {
+    ratingInfos: data.ratingInfos.map((ratingInfo) => ({
+      ...ratingInfo,
+      createDate: ratingInfo.createDate ? dayjs(ratingInfo.createDate) : null,
+      lastModifiedDate: ratingInfo.lastModifiedDate
+        ? dayjs(ratingInfo.lastModifiedDate)
+        : null,
+    })),
+  };
+});
+
+export const blogRatingListPrimitiveSchema = z.object({
   ratingInfos: z.array(
     ratingSchema.extend({ category: z.string().nullable().optional() }),
   ),
   pageInfo,
 });
 
-// 블로그 배너
-const adminBlogBannerListItemScheam = z.object({
-  blogBannerId: z.number(),
-  title: z.string().optional().nullable(),
-  link: z.string().optional().nullable(),
-  startDate: z.string().optional().nullable(),
-  endDate: z.string().optional().nullable(),
-  isVisible: z.boolean(),
-});
-
-export type AdminBlogBannerListItem = z.infer<
-  typeof adminBlogBannerListItemScheam
->;
-
-export const adminBlogBannerListSchema = z.object({
-  blogBannerList: z.array(adminBlogBannerListItemScheam),
-});
-
-export interface PatchAdminBlogBannerReqBody {
-  blogBannerId: number;
-  title?: string;
-  link?: string;
-  isVisible?: boolean;
-  startDate?: string;
-  endDate?: string;
-  file?: string;
-}
-
-export interface PostAdminBlogBannerReqBody {
-  title?: string;
-  link?: string;
-  startDate?: string;
-  endDate?: string;
-  file: string | null;
-}
-
-const blogBannerSchema = z.object({
-  blogBannerId: z.number(),
-  title: z.string().optional().nullable(),
-  link: z.string().optional().nullable(),
-  file: z.string().optional().nullable(),
-  startDate: z.string().optional().nullable(),
-  endDate: z.string().optional().nullable(),
-  isVisible: z.boolean(),
-});
-
-export const adminBlogBannerSchema = z.object({
-  blogBannerInfo: blogBannerSchema,
-});
-
-export const blogBannerListSchema = z.object({
-  blogBannerList: z.array(blogBannerSchema),
-  pageInfo,
-});
-
-export const blogLikeSchema = z.object({
-  blogIds: z.array(z.number()),
-});
+export const blogRatingListSchema = blogRatingListPrimitiveSchema.transform(
+  (data) => {
+    return {
+      ratingInfos: data.ratingInfos.map((ratingInfo) => ({
+        ...ratingInfo,
+        createDate: ratingInfo.createDate ? dayjs(ratingInfo.createDate) : null,
+      })),
+      pageInfo: data.pageInfo,
+    };
+  },
+);

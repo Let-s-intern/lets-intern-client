@@ -1,4 +1,4 @@
-import { useChallengeMissionFeedbackQuery } from '@/api/challenge';
+import { useChallengeMissionFeedbackQuery } from '@/api/challenge/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import LexicalContent from '@/domain/blog/ui/LexicalContent';
 import { useMissionStore } from '@/store/useMissionStore';

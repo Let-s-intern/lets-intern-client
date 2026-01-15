@@ -1,11 +1,11 @@
-import { z } from 'zod';
 import {
   AttendanceResultEnum,
   AttendanceStatusEnum,
   challengePriceInfoSchema,
   ChallengePricePlanEnum,
   ProgramStatusEnum,
-} from './../schema';
+} from '@/schema';
+import { z } from 'zod';
 
 export const challengeGoalSchema = z.object({
   goal: z.string().nullable(),

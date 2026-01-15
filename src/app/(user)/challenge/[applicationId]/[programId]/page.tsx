@@ -1,6 +1,6 @@
 'use client';
 
-import { useUserQuery } from '@/api/user';
+import { useUserQuery } from '@/api/user/user';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import DailyMissionSection from '@/domain/challenge/dashboard/section/DailyMissionSection';
 import GuideSection from '@/domain/challenge/dashboard/section/GuideSection';
