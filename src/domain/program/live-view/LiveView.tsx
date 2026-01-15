@@ -8,7 +8,6 @@ import { LiveContent } from '@/types/interface';
 import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
 import BackHeader from '../../../common/header/BackHeader';
-import MoreReviewButton from '../../../common/review/MoreReviewButton';
 import LexicalContent from '../../blog/ui/LexicalContent';
 import ProgramDetailBlogReviewSection from '../../program/ProgramDetailBlogReviewSection';
 import ProgramDetailNavigation, {
@@ -17,6 +16,7 @@ import ProgramDetailNavigation, {
   LIVE_PROGRAM_INTRO_ID,
   LIVE_REVIEW_ID,
 } from '../../program/ProgramDetailNavigation';
+import MoreReviewButton from '../../review/MoreReviewButton';
 import ProgramBestReviewSection from '../ProgramBestReviewSection';
 import LiveBasicInfo from './ui/LiveBasicInfo';
 import LiveCurriculum from './ui/LiveCurriculum';

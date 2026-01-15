@@ -2,8 +2,6 @@
 
 import { fileType, uploadFile } from '@/api/file';
 import { usePostLiveMutation } from '@/api/program';
-import FaqSection from '@/common/faq/FaqSection';
-import ProgramRecommendEditor from '@/common/program-recommend/ProgramRecommendEditor';
 import LivePreviewButton from '@/domain/admin/LivePreviewButton';
 import LiveBasic from '@/domain/admin/program/LiveBasic';
 import LiveCurriculum from '@/domain/admin/program/LiveCurriculum';
@@ -15,6 +13,8 @@ import ImageUpload from '@/domain/admin/program/ui/form/ImageUpload';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
+import FaqSection from '@/domain/faq/FaqSection';
+import ProgramRecommendEditor from '@/domain/program-recommend/ProgramRecommendEditor';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { liveToCreateInput } from '@/hooks/useDuplicateProgram';
 import dayjs from '@/lib/dayjs';

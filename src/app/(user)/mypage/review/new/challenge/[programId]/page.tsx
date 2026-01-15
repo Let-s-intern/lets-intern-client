@@ -8,12 +8,12 @@ import { Suspense, useState } from 'react';
 import { useGetChallengeGoal, useGetChallengeTitle } from '@/api/challenge';
 import { usePostReviewMutation } from '@/api/review';
 import { useUserQuery } from '@/api/user';
-import GoalOrConcernsBox from '@/common/review/GoalOrConcernsBox';
-import ReviewInstruction from '@/common/review/ReviewInstruction';
-import ReviewModal from '@/common/review/ReviewModal';
-import ReviewQuestion from '@/common/review/ReviewQuestion';
-import ReviewTextarea from '@/common/review/ReviewTextarea';
-import TenScore from '@/common/review/score/TenScore';
+import GoalOrConcernsBox from '@/domain/review/GoalOrConcernsBox';
+import ReviewInstruction from '@/domain/review/ReviewInstruction';
+import ReviewModal from '@/domain/review/ReviewModal';
+import ReviewQuestion from '@/domain/review/ReviewQuestion';
+import ReviewTextarea from '@/domain/review/ReviewTextarea';
+import TenScore from '@/domain/review/score/TenScore';
 
 const ChallengeReviewCreatePageContent = () => {
   const params = useParams<{ programId: string }>();

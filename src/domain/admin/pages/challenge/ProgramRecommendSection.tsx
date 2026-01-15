@@ -2,8 +2,8 @@
 
 /* eslint-disable no-console */
 import { useChallengeQuery, usePatchChallengeMutation } from '@/api/program';
-import ProgramRecommendEditor from '@/common/program-recommend/ProgramRecommendEditor';
 import MoreButtonSection from '@/domain/admin/ui/section/MoreButtonSection';
+import ProgramRecommendEditor from '@/domain/program-recommend/ProgramRecommendEditor';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import {
   ChallengeContent,
