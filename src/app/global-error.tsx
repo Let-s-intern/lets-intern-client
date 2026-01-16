@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import * as Sentry from "@sentry/nextjs";
-import NextError from "next/error";
-import { useEffect } from "react";
-import { sendErrorToWebhook } from "@/utils/webhook";
+import { sendErrorToWebhook } from '@/utils/webhook';
+import * as Sentry from '@sentry/nextjs';
+import NextError from 'next/error';
+import { useEffect } from 'react';
 
 export default function GlobalError({
   error,
@@ -17,7 +17,8 @@ export default function GlobalError({
     // Webhook으로도 에러 전송 (이중 안전장치)
     sendErrorToWebhook(error, {
       url: typeof window !== 'undefined' ? window.location.href : undefined,
-      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
+      userAgent:
+        typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
       extra: {
         digest: error.digest,
       },
