@@ -1,6 +1,6 @@
+import { FeedbackStatus } from '@/api/challenge/challengeSchema';
 import { AttendanceResult, AttendanceStatus } from '@/schema';
 import { z } from 'zod';
-import { FeedbackStatus } from '../challenge/challengeSchema';
 
 /** [유저용] 출석 업데이트 PATCH /api/v1/attendance/{id} */
 export type PatchAttendanceReq = {
