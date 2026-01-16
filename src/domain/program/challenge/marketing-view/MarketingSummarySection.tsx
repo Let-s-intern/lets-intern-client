@@ -4,7 +4,7 @@ import MainTitle from '../ui/MainTitle';
 const summaryItems = [
   {
     title: '현직자 피드백과 함께\n마케팅 서류의 A-Z를 분석해요.',
-    description: '콘텐츠 마케터 / 그로스 마케터 /\nCRM 마케터 / AE',
+    description: '콘텐츠 마케터 / 그로스 마케터 /\n마케팅 전략 / AE',
     icon: '/images/marketing/summary-icon1.svg',
   },
   {
