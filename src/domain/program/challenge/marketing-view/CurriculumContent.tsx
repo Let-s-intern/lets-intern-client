@@ -24,7 +24,7 @@ export const curriculums = [
             className="bg-[#FFF3F2]"
             companyImg="corpuniv.png"
             role="대학내일 AE"
-            date="| 1/24 저녁 8시 (온라인)"
+            date="| 1/24 (온라인)"
             description={
               <>
                 대학내일ES, 이런 포트폴리오를 기다려요. <br />
@@ -86,7 +86,7 @@ export const curriculums = [
             className="bg-[#FFF0F4]"
             companyImg="nol.png"
             role="놀유니버스 마케팅 전략 담당"
-            date="| 1/31 저녁 8시 (온라인)"
+            date="| 1/31 (온라인)"
             description={
               <>
                 IT 스타트업 현직 마케터와 함께 <br />
@@ -111,14 +111,13 @@ export const curriculums = [
         content: (
           <Highlight
             description={
-              <div className="flex flex-col gap-2.5 md:gap-2">
+              <div className="flex flex-col gap-1.5">
                 <img
                   className="h-auto w-[68px] md:w-[84px]"
-                  src="/images/marketing/lets-career.svg"
-                  alt="렛츠커리어 로고"
+                  src="/images/marketing/meta.svg"
+                  alt="메타 로고"
                 />
-                렛츠커리어 CMO가 알려주는 <br />
-                2025 마케팅 합격 포트폴리오 트렌드
+                데이터 역량 쌓는 방법. 인스타그램 계정, 메타 광고 운영
               </div>
             }
           />
@@ -146,7 +145,7 @@ export const curriculums = [
           <Highlight
             companyImg="class101.png"
             role="Class 101 콘텐츠 마케터"
-            date="| 2/7 저녁 8시 (온라인) "
+            date="| 2/7 (온라인) "
             description={
               <>
                 현직 콘텐츠 마케터와 함께 <br className="hidden md:block" />
@@ -206,7 +205,7 @@ export const curriculums = [
             className="bg-[#E9F4FF] md:mt-0"
             companyImg="cashnote.png"
             role="캐시노트 그로스 마케터"
-            date="| 2/14 저녁 8시 (온라인)"
+            date="| 2/14 (온라인)"
             description={
               <>
                 현직 마케터가 들려주는 그로스 마케팅의 A-Z,
@@ -232,13 +231,14 @@ export const curriculums = [
         content: (
           <Highlight
             description={
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-2.5 md:gap-2">
                 <img
                   className="h-auto w-[68px] md:w-[84px]"
-                  src="/images/marketing/meta.svg"
-                  alt="메타 로고"
+                  src="/images/marketing/lets-career.svg"
+                  alt="렛츠커리어 로고"
                 />
-                데이터 역량 쌓는 방법. 인스타그램 계정, 메타 광고 운영
+                렛츠커리어 CMO가 알려주는 <br />
+                2025 마케팅 합격 포트폴리오 트렌드
               </div>
             }
           />
