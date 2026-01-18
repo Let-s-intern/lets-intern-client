@@ -2,6 +2,8 @@
  * 에러 정보를 webhook으로 전송하는 유틸리티 함수
  */
 
+import { shouldFilterError } from '@/utils/sentry';
+
 interface ErrorData {
   message: string;
   name?: string;
@@ -270,6 +272,12 @@ export async function sendErrorToWebhook(
     extra?: Record<string, unknown>;
   },
 ): Promise<void> {
+  // 불필요한 노이즈 에러 필터링 (Sentry는 모든 에러를 전송하지만, webhook은 필터링)
+  if (shouldFilterError(error, additionalInfo?.url)) {
+    // 필터링된 에러는 조용히 무시
+    return;
+  }
+
   // 클라이언트와 서버 모두에서 환경 변수 확인
   const webhookUrl =
     process.env.NEXT_PUBLIC_ERROR_WEBHOOK_URL || process.env.ERROR_WEBHOOK_URL;
