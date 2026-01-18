@@ -1,4 +1,4 @@
-import useScrollFade from '../../../../hooks/useScrollFade';
+import useScrollFade from '@/hooks/useScrollFade';
 
 const Caption = [
   '취업, 어디서부터 시작해야 할 지 모르겠어..',

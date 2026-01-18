@@ -1,3 +1,4 @@
+import { userAttendanceExperienceSchema } from '@/api/experience/experienceSchema';
 import {
   activeChallengeResponse,
   attendances,
@@ -12,6 +13,7 @@ import {
   getChallengeIdSchema,
   missionAdmin,
   myDailyMission as myDailyMissionSchema,
+  Pageable,
   ProgramClassification,
   ProgramStatus,
   reviewTotalSchema,
@@ -21,8 +23,7 @@ import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
-import { Pageable } from '../../schema';
-import { userAttendanceExperienceSchema } from '../experience/experienceSchema';
+
 import {
   challengeApplicationSchema,
   challengeGoalSchema,

@@ -58,32 +58,32 @@ export const MarketingTool = () => {
 /** 차별점 2 */
 const professionals = [
   {
+    logo: 'corpuniv.png',
+    profile: 'profile4.png',
+    week: '1월 4주차',
+    company: '대학내일',
+    role: 'AE마케터',
+  },
+  {
+    logo: 'nol.png',
+    profile: 'profile3.png',
+    week: '1월 5주차',
+    company: '놀유니버스',
+    role: '마케팅 전략',
+  },
+  {
     logo: 'class101.png',
     profile: 'profile2.png',
-    week: '11월 1주차',
+    week: '2월 1주차',
     company: '클래스 101',
     role: '콘텐츠 마케터',
   },
   {
     logo: 'cashnote.png',
-    profile: 'profile4.png',
-    week: '11월 2주차',
+    profile: 'profile5.png',
+    week: '2월 2주차',
     company: '캐시노트',
     role: '그로스 마케터',
-  },
-  {
-    logo: 'corpuniv.png',
-    profile: 'profile5.png',
-    week: '11월 3주차',
-    company: '대학내일',
-    role: 'AE마케터',
-  },
-  {
-    logo: 'yanolja.png',
-    profile: 'profile3.png',
-    week: '11월 4주차',
-    company: '야놀자',
-    role: 'CRM 마케터',
   },
 ];
 

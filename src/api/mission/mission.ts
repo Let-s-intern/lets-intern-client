@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
 
+import { TalentPoolDocumentReq } from '@/api/mentor/mentorSchema';
+import { PatchMissionReq, PostDocumentReq } from '@/api/mission/missionSchema';
 import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { TalentPoolDocumentReq } from '../mentor/mentorSchema';
-import { PatchMissionReq, PostDocumentReq } from './missionSchema';
 
 interface ErrorResponse {
   message: string;

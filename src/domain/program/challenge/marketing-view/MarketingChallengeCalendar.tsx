@@ -12,7 +12,23 @@ const ChallengeScheduleSection = ({ challenge }: Props) => {
       </h2>
 
       <div className="flex w-full flex-col-reverse items-center gap-4 md:h-[580px] md:w-fit md:flex-row md:gap-3">
-        {/* 왼쪽 박스 */}
+        {/* 왼쪽 달력 이미지 */}
+        <div className="relative aspect-[320/239] w-full md:h-[580px]">
+          <picture>
+            <source
+              srcSet="/images/marketing/calendar-january.png"
+              media="(orientation: portrait)"
+            />
+            <Image
+              src="/images/marketing/calendar-january.png"
+              alt="마케팅 챌린지 달력"
+              fill
+              unoptimized
+              className="absolute rounded-xxs object-cover shadow-lg md:rounded-sm"
+            />
+          </picture>
+        </div>
+        {/* 오른쪽 박스 */}
         <div className="relative grid h-full w-full grid-rows-2 gap-2 text-[#0C1737] shadow-lg">
           <ul className="flex min-w-[278px] flex-col gap-3 rounded-sm bg-white p-3 text-xsmall14 leading-[22px] md:p-5 md:pl-4">
             <li className="flex flex-col gap-1">
@@ -46,7 +62,7 @@ const ChallengeScheduleSection = ({ challenge }: Props) => {
               </div>
               <span>
                 현직자 마케터의 Live Q&A를 <br />
-                <strong>매주 토요일 저녁 8시</strong>에 진행합니다.
+                <strong>매주 토요일</strong>에 진행합니다.
               </span>
             </li>
           </ul>
@@ -71,28 +87,11 @@ const ChallengeScheduleSection = ({ challenge }: Props) => {
               <span className="text-[16px] font-bold">
                 + 1:1 피드백을 신청하신 경우
               </span>
-              경험 피드백은 2회차 미션 제출 후 진행합니다.
+              경험 피드백은 3회차 미션 제출 후 진행합니다.
               <br />
               서류 피드백은 8회차 미션 제출 후 진행합니다.
             </li>
           </ul>
-        </div>
-
-        {/* 오른쪽 달력 이미지 */}
-        <div className="relative aspect-[29/25] w-full md:h-[580px]">
-          <picture>
-            <source
-              srcSet="/images/marketing/calendar-november-mobile.png"
-              media="(orientation: portrait)"
-            />
-            <Image
-              src="/images/marketing/calendar-november.png"
-              alt="마케팅 챌린지 달력"
-              fill
-              unoptimized
-              className="absolute rounded-xxs object-cover shadow-lg md:rounded-sm"
-            />
-          </picture>
         </div>
       </div>
     </section>

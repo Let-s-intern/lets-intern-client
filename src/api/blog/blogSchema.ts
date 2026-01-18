@@ -1,5 +1,5 @@
+import { pageInfo } from '@/schema';
 import { z } from 'zod';
-import { pageInfo } from '../../schema';
 
 export interface PostBlogReqBody {
   title: string;

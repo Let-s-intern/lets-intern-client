@@ -2,7 +2,7 @@ import SectionSubHeader from '@/common/header/SectionSubHeader';
 import React, { ReactNode } from 'react';
 import MainTitle from '../ui/MainTitle';
 
-const badges = ['콘텐츠', 'CRM', '그로스', 'AE', '퍼포먼스'];
+const badges = ['콘텐츠', '마케팅 전략', '그로스', 'AE', '퍼포먼스'];
 
 const cards = [
   {
@@ -27,8 +27,8 @@ const cards = [
         확실하게 궁금증을 해결해요.
       </>
     ),
-    mobileImg: 'marketing-point2-mobile.png',
-    desktopImg: 'marketing-point2-desktop.png',
+    mobileImg: 'marketing-point2-mobile.svg',
+    desktopImg: 'marketing-point2-desktop.svg',
     alt: '현직자 회사 로고(대학내일, 야놀자, 클래스101 등) 이미지',
   },
   {

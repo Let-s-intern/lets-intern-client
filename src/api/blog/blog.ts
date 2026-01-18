@@ -1,3 +1,5 @@
+import { IPageable } from '@/types/interface';
+import axios from '@/utils/axios';
 import {
   useInfiniteQuery,
   useMutation,
@@ -6,8 +8,7 @@ import {
 } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { z } from 'zod';
-import { IPageable } from '../../types/interface';
-import axios from '../../utils/axios';
+
 import {
   adminBlogBannerListSchema,
   adminBlogBannerSchema,

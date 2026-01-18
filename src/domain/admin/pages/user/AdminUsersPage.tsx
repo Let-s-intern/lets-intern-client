@@ -5,11 +5,16 @@ import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import AdminUserFilter from '@/domain/admin/user/users/filter/AdminUserFilter';
 import UserAdminTable from '@/domain/admin/user/users/table-content/UserAdminTable';
+import { usePaginationModelWithSearchParams } from '@/hooks/usePaginationModelWithSearchParams';
 import { useState } from 'react';
 
 const AdminUsersPage = () => {
-  const [pageNum, setPageNum] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(10);
+  const { paginationModel, handlePaginationModelChange } =
+    usePaginationModelWithSearchParams({ defaultPage: 0, defaultPageSize: 10 });
+
+  // UserAdminTable은 pageNum이 1부터 시작하므로 변환 필요
+  const pageNum = paginationModel.page + 1;
+  const pageSize = paginationModel.pageSize;
   const [searchValues, setSearchValues] = useState<{
     createDate: string;
     name: string;
@@ -60,8 +65,8 @@ const AdminUsersPage = () => {
   });
 
   const handlePageChange = (page: number, size: number) => {
-    setPageNum(page);
-    setPageSize(size);
+    // UserAdminTable에서 받은 page는 1부터 시작하므로 0부터 시작하는 형식으로 변환
+    handlePaginationModelChange({ page: page - 1, pageSize: size });
   };
 
   return (
