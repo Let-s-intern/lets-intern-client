@@ -25,6 +25,7 @@
     "@mui/material": "^6.4.0",
     "@mui/x-data-grid": "^7.24.0",
     "@mui/x-date-pickers": "^7.24.0",
+    "@sentry/nextjs": "^10.32.1",
     "@svgr/webpack": "^8.1.0",
     "@tanstack/react-query": "^5.49.2",
     "@tanstack/react-query-devtools": "^5.49.2",
