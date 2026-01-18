@@ -4,6 +4,7 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from '@sentry/nextjs';
+import { normalizeSentryTags } from './src/utils/sentry';
 import { sendErrorToWebhook } from './src/utils/webhook';
 
 Sentry.init({
@@ -17,7 +18,7 @@ Sentry.init({
 
   // Enable sending user PII (Personally Identifiable Information)
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
-  sendDefaultPii: true,
+  sendDefaultPii: false,
 
   // 에러를 Sentry로 보내기 전에 webhook으로도 전송
   beforeSend(event, hint) {
@@ -30,14 +31,7 @@ Sentry.init({
     if (hint.originalException instanceof Error) {
       const error = hint.originalException;
       sendErrorToWebhook(error, {
-        tags: event.tags
-          ? (Object.fromEntries(
-              Object.entries(event.tags).map(([key, value]) => [
-                key,
-                value?.toString() ?? null,
-              ]),
-            ) as Record<string, string | number | boolean | null | undefined>)
-          : undefined,
+        tags: normalizeSentryTags(event.tags),
         extra: event.extra,
       }).catch(() => {
         // Webhook 전송 실패는 조용히 무시 (무한 루프 방지)

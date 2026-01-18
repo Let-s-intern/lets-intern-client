@@ -2,6 +2,8 @@
  * 에러 정보를 webhook으로 전송하는 유틸리티 함수
  */
 
+import { shouldFilterError } from '@/utils/sentry';
+
 interface ErrorData {
   message: string;
   name?: string;
@@ -37,19 +39,24 @@ interface MessageTemplate {
  * 에러 데이터를 Slack 메시지 형식으로 변환합니다.
  */
 function formatErrorForSlack(errorData: ErrorData): MessageTemplate {
+  // 에러 메시지와 스택 트레이스를 sanitize하여 멘션과 링크 공격 방지
+  const sanitizedMessage = escapeSlackText(
+    errorData.message || 'Unknown error',
+  );
+  const sanitizedName = escapeSlackText(errorData.name || 'Error');
   const stackTrace = errorData.stack
-    ? errorData.stack.split('\n').slice(0, 10).join('\n') // 최대 10줄만
+    ? escapeSlackText(errorData.stack.split('\n').slice(0, 10).join('\n')) // 최대 10줄만
     : '스택 트레이스 없음';
 
   return {
     basic: {
-      title: `🚨 ${errorData.name || 'Error'}`,
-      message: errorData.message || 'Unknown error',
+      title: `🚨 ${sanitizedName}`,
+      message: sanitizedMessage,
       stackTrace,
     },
     detailed: {
-      title: `🚨 ${errorData.name || 'Error'}`,
-      message: errorData.message || 'Unknown error',
+      title: `🚨 ${sanitizedName}`,
+      message: sanitizedMessage,
       stackTrace,
       url: errorData.url,
       userAgent: errorData.userAgent,
@@ -62,12 +69,22 @@ function formatErrorForSlack(errorData: ErrorData): MessageTemplate {
 
 /**
  * 텍스트를 Slack에서 안전하게 표시할 수 있도록 이스케이프합니다.
+ * 멘션(@channel, @here 등)과 링크를 중화시킵니다.
  */
 function escapeSlackText(text: string): string {
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+  return (
+    text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      // Slack 멘션 중화: @를 (at)로 변경
+      .replace(/@/g, '(at)')
+      // URL 패턴을 이스케이프 (http://, https://, www. 등으로 시작하는 링크)
+      .replace(/(https?:\/\/[^\s]+)/gi, (match) => {
+        // 링크를 이스케이프된 형태로 변환
+        return match.replace(/[<>]/g, ''); // 이미 < > 는 위에서 처리됨
+      })
+  );
 }
 
 /**
@@ -255,6 +272,12 @@ export async function sendErrorToWebhook(
     extra?: Record<string, unknown>;
   },
 ): Promise<void> {
+  // 불필요한 노이즈 에러 필터링 (Sentry는 모든 에러를 전송하지만, webhook은 필터링)
+  if (shouldFilterError(error, additionalInfo?.url)) {
+    // 필터링된 에러는 조용히 무시
+    return;
+  }
+
   // 클라이언트와 서버 모두에서 환경 변수 확인
   const webhookUrl =
     process.env.NEXT_PUBLIC_ERROR_WEBHOOK_URL || process.env.ERROR_WEBHOOK_URL;

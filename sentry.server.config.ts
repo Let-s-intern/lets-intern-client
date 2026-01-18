@@ -3,6 +3,7 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from '@sentry/nextjs';
+import { normalizeSentryTags } from './src/utils/sentry';
 import { sendErrorToWebhook } from './src/utils/webhook';
 
 Sentry.init({
@@ -16,7 +17,7 @@ Sentry.init({
 
   // Enable sending user PII (Personally Identifiable Information)
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
-  sendDefaultPii: true,
+  sendDefaultPii: false,
 
   // 에러를 Sentry로 보내기 전에 webhook으로도 전송
   beforeSend(event, hint) {
@@ -40,25 +41,10 @@ Sentry.init({
         (event.contexts?.request?.['user-agent'] as string | undefined) ||
         undefined;
 
-      console.log('[Sentry Server] 에러 감지, webhook 전송 시도:', {
-        errorName: error.name,
-        errorMessage: error.message,
-        requestUrl,
-        hasTags: !!event.tags,
-        hasExtra: !!event.extra,
-      });
-
       sendErrorToWebhook(error, {
         url: requestUrl,
         userAgent,
-        tags: event.tags
-          ? (Object.fromEntries(
-              Object.entries(event.tags).map(([key, value]) => [
-                key,
-                value?.toString() ?? null,
-              ]),
-            ) as Record<string, string | number | boolean | null | undefined>)
-          : undefined,
+        tags: normalizeSentryTags(event.tags),
         extra: {
           ...event.extra,
           // 추가 컨텍스트 정보

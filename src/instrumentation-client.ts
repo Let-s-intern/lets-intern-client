@@ -2,6 +2,7 @@
 // The added config here will be used whenever a users loads a page in their browser.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
+import { normalizeSentryTags } from '@/utils/sentry';
 import * as Sentry from '@sentry/nextjs';
 
 Sentry.init({
@@ -25,7 +26,7 @@ Sentry.init({
 
   // Enable sending user PII (Personally Identifiable Information)
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
-  sendDefaultPii: true,
+  sendDefaultPii: false,
 
   // 에러를 Sentry로 보내기 전에 webhook으로도 전송
   beforeSend(event, hint) {
@@ -55,14 +56,7 @@ Sentry.init({
           },
           url: window.location.href,
           userAgent: navigator.userAgent,
-          tags: event.tags
-            ? Object.fromEntries(
-                Object.entries(event.tags).map(([key, value]) => [
-                  key,
-                  value?.toString() ?? null,
-                ]),
-              )
-            : undefined,
+          tags: normalizeSentryTags(event.tags),
           extra: event.extra,
         }),
       }).catch(() => {
