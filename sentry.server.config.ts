@@ -3,6 +3,7 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from '@sentry/nextjs';
+import { normalizeSentryTags } from './src/utils/sentry';
 import { sendErrorToWebhook } from './src/utils/webhook';
 
 Sentry.init({
@@ -43,14 +44,7 @@ Sentry.init({
       sendErrorToWebhook(error, {
         url: requestUrl,
         userAgent,
-        tags: event.tags
-          ? (Object.fromEntries(
-              Object.entries(event.tags).map(([key, value]) => [
-                key,
-                value?.toString() ?? null,
-              ]),
-            ) as Record<string, string | number | boolean | null | undefined>)
-          : undefined,
+        tags: normalizeSentryTags(event.tags),
         extra: {
           ...event.extra,
           // 추가 컨텍스트 정보
