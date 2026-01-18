@@ -215,6 +215,16 @@ const IntroSection = () => {
     }
   };
 
+  const handleTestError = () => {
+    // throw만 해도 Sentry가 자동으로 캡처해야 함
+    throw new Error('테스트: Sentry 및 Webhook 에러 전송 테스트');
+  };
+
+  const handleTestFilteredError = () => {
+    // 필터링되어야 하는 에러 (네트워크 에러)
+    throw new Error('Failed to fetch');
+  };
+
   const filteredItems = HOME_INTRO.items.basic.filter((item, index) => {
     // 이력서 피드백 받기
     if (index === 4 && !hasActiveResume) return false;
@@ -264,6 +274,23 @@ const IntroSection = () => {
           {HOME_INTRO.description}
           {HOME_INTRO.title}
         </div>
+        {/* 개발 환경 테스트 버튼 */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="flex justify-center gap-2">
+            <button
+              onClick={handleTestError}
+              className="rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600"
+            >
+              테스트: 일반 에러 전송
+            </button>
+            <button
+              onClick={handleTestFilteredError}
+              className="rounded bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600"
+            >
+              테스트: 필터링 에러
+            </button>
+          </div>
+        )}
         <div className="h-full overflow-x-auto pt-2.5 md:mx-auto md:w-fit md:overflow-x-visible md:px-0 md:pt-0">
           <div
             className={twMerge(
