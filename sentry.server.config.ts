@@ -40,14 +40,6 @@ Sentry.init({
         (event.contexts?.request?.['user-agent'] as string | undefined) ||
         undefined;
 
-      console.log('[Sentry Server] 에러 감지, webhook 전송 시도:', {
-        errorName: error.name,
-        errorMessage: error.message,
-        requestUrl,
-        hasTags: !!event.tags,
-        hasExtra: !!event.extra,
-      });
-
       sendErrorToWebhook(error, {
         url: requestUrl,
         userAgent,

@@ -38,7 +38,9 @@ interface MessageTemplate {
  */
 function formatErrorForSlack(errorData: ErrorData): MessageTemplate {
   // 에러 메시지와 스택 트레이스를 sanitize하여 멘션과 링크 공격 방지
-  const sanitizedMessage = escapeSlackText(errorData.message || 'Unknown error');
+  const sanitizedMessage = escapeSlackText(
+    errorData.message || 'Unknown error',
+  );
   const sanitizedName = escapeSlackText(errorData.name || 'Error');
   const stackTrace = errorData.stack
     ? escapeSlackText(errorData.stack.split('\n').slice(0, 10).join('\n')) // 최대 10줄만
@@ -68,17 +70,19 @@ function formatErrorForSlack(errorData: ErrorData): MessageTemplate {
  * 멘션(@channel, @here 등)과 링크를 중화시킵니다.
  */
 function escapeSlackText(text: string): string {
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    // Slack 멘션 중화: @를 (at)로 변경
-    .replace(/@/g, '(at)')
-    // URL 패턴을 이스케이프 (http://, https://, www. 등으로 시작하는 링크)
-    .replace(/(https?:\/\/[^\s]+)/gi, (match) => {
-      // 링크를 이스케이프된 형태로 변환
-      return match.replace(/[<>]/g, ''); // 이미 < > 는 위에서 처리됨
-    });
+  return (
+    text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      // Slack 멘션 중화: @를 (at)로 변경
+      .replace(/@/g, '(at)')
+      // URL 패턴을 이스케이프 (http://, https://, www. 등으로 시작하는 링크)
+      .replace(/(https?:\/\/[^\s]+)/gi, (match) => {
+        // 링크를 이스케이프된 형태로 변환
+        return match.replace(/[<>]/g, ''); // 이미 < > 는 위에서 처리됨
+      })
+  );
 }
 
 /**
