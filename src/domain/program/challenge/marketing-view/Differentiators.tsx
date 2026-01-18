@@ -59,7 +59,7 @@ export const MarketingTool = () => {
 const professionals = [
   {
     logo: 'corpuniv.png',
-    profile: 'profile5.png',
+    profile: 'profile4.png',
     week: '1월 4주차',
     company: '대학내일',
     role: 'AE마케터',
@@ -69,7 +69,7 @@ const professionals = [
     profile: 'profile3.png',
     week: '1월 5주차',
     company: '놀유니버스',
-    role: '마케팅 전략 담당',
+    role: '마케팅 전략',
   },
   {
     logo: 'class101.png',
@@ -80,7 +80,7 @@ const professionals = [
   },
   {
     logo: 'cashnote.png',
-    profile: 'profile4.png',
+    profile: 'profile5.png',
     week: '2월 2주차',
     company: '캐시노트',
     role: '그로스 마케터',
