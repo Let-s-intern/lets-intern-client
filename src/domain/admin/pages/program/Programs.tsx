@@ -11,6 +11,7 @@ import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { useDeleteProgram } from '@/hooks/useDeleteProgram';
 import { useDuplicateProgram } from '@/hooks/useDuplicateProgram';
+import { usePaginationModelWithSearchParams } from '@/hooks/usePaginationModelWithSearchParams';
 import { usePatchVisibleProgram } from '@/hooks/usePatchVisibleProgram';
 import dayjs from '@/lib/dayjs';
 import {
@@ -61,6 +62,9 @@ const Programs = () => {
     page: 1,
     size: 1000,
   });
+
+  const { paginationModel, handlePaginationModelChange } =
+    usePaginationModelWithSearchParams({ defaultPage: 0, defaultPageSize: 20 });
 
   const deleteProgram = useDeleteProgram({
     successCallback: () => {
@@ -381,9 +385,8 @@ const Programs = () => {
               columns={columns}
               pagination
               pageSizeOptions={[10, 20, 50, 100]}
-              initialState={{
-                pagination: { paginationModel: { pageSize: 20 } },
-              }}
+              paginationModel={paginationModel}
+              onPaginationModelChange={handlePaginationModelChange}
             />
           </>
         )}

@@ -5,6 +5,7 @@ import AdminReviewHeader from '@/app/admin/review/AdminReviewHeader';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import ReviewDetailModal from '@/domain/admin/review/ReviewDetailModal';
 import VisibilityToggle from '@/domain/admin/review/VisibilityToggle';
+import { usePaginationModelWithSearchParams } from '@/hooks/usePaginationModelWithSearchParams';
 import dayjs from '@/lib/dayjs';
 import { ChallengeType } from '@/schema';
 import { challengeTypeToDisplay } from '@/utils/convert';
@@ -76,6 +77,9 @@ const columns: GridColDef<Row>[] = [
 const AdminMissionReviewListPage = () => {
   const [selectedRow, setSelectedRow] = useState<Row | null>(null);
 
+  const { paginationModel, handlePaginationModelChange } =
+    usePaginationModelWithSearchParams({ defaultPage: 0, defaultPageSize: 20 });
+
   const { data, isLoading } = useGetAdminProgramReview({
     type: 'MISSION_REVIEW',
   });
@@ -129,6 +133,10 @@ const AdminMissionReviewListPage = () => {
           disableRowSelectionOnClick
           disableColumnSelector
           disableDensitySelector
+          pagination
+          pageSizeOptions={[10, 20, 50, 100]}
+          paginationModel={paginationModel}
+          onPaginationModelChange={handlePaginationModelChange}
         />
       )}
       <ReviewDetailModal

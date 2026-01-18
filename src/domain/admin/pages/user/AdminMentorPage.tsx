@@ -8,6 +8,7 @@ import {
 } from '@/api/user/user';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import { usePaginationModelWithSearchParams } from '@/hooks/usePaginationModelWithSearchParams';
 import { Button, Checkbox, TextField } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useQueryClient } from '@tanstack/react-query';
@@ -175,10 +176,9 @@ const MentorFilter = () => {
 export default function AdminMentorPage() {
   const pageSizeRef = useRef(10);
 
-  const [paginationModel, setPaginationModel] = useState({
-    pageSize: 10,
-    page: 0,
-  });
+  const { paginationModel, handlePaginationModelChange } =
+    usePaginationModelWithSearchParams({ defaultPage: 0, defaultPageSize: 10 });
+
   const pageable = {
     page: paginationModel.page,
     size: paginationModel.pageSize,
@@ -204,7 +204,7 @@ export default function AdminMentorPage() {
         paginationMode="server"
         loading={isLoading}
         paginationModel={paginationModel}
-        onPaginationModelChange={setPaginationModel}
+        onPaginationModelChange={handlePaginationModelChange}
         pageSizeOptions={[pageSizeRef.current]}
       />
     </section>
