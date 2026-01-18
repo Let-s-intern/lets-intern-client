@@ -3,9 +3,10 @@
 import clsx from 'clsx';
 import { CiTrash } from 'react-icons/ci';
 
+import { usePageableWithSearchParams } from '@/hooks/usePageableWithSearchParams';
 import dayjs from '@/lib/dayjs';
 import Link from 'next/link';
-import { ChangeEvent, useCallback, useState } from 'react';
+import { ChangeEvent, useCallback } from 'react';
 import {
   useBlogListQuery,
   useDeleteBlogMutation,
@@ -24,7 +25,6 @@ const blogColumnWidth = {
   management: 'w-52',
   status: 'w-40',
 };
-const initialPageable = { page: 1, size: 10 };
 const initialPageInfo = {
   pageNum: 0,
   pageSize: 0,
@@ -33,7 +33,8 @@ const initialPageInfo = {
 };
 
 export default function BlogTable() {
-  const [pageable, setPageable] = useState(initialPageable);
+  const { pageable, handlePageChange: handlePageChangeBase } =
+    usePageableWithSearchParams({ defaultPage: 1, defaultSize: 10 });
 
   const { data, isLoading } = useBlogListQuery({
     pageable,
@@ -72,10 +73,10 @@ export default function BlogTable() {
 
   const handlePageChange = useCallback(
     (event: React.ChangeEvent<unknown>, page: number) => {
-      setPageable((prev) => ({ ...prev, page }));
+      handlePageChangeBase(event, page);
       window.scrollTo(0, 0);
     },
-    [],
+    [handlePageChangeBase],
   );
 
   return (
