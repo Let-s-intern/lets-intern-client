@@ -25,7 +25,7 @@ Sentry.init({
 
   // Enable sending user PII (Personally Identifiable Information)
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
-  sendDefaultPii: true,
+  sendDefaultPii: false,
 
   // 에러를 Sentry로 보내기 전에 webhook으로도 전송
   beforeSend(event, hint) {
