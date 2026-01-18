@@ -225,6 +225,15 @@ const IntroSection = () => {
     throw new Error('Failed to fetch');
   };
 
+  // NODE_ENV 값 확인용
+  if (typeof window !== 'undefined') {
+    console.log('NODE_ENV:', process.env.NODE_ENV);
+    console.log(
+      'NEXT_PUBLIC_ENABLE_TEST_BUTTONS:',
+      process.env.NEXT_PUBLIC_ENABLE_TEST_BUTTONS,
+    );
+  }
+
   const filteredItems = HOME_INTRO.items.basic.filter((item, index) => {
     // 이력서 피드백 받기
     if (index === 4 && !hasActiveResume) return false;
@@ -275,22 +284,20 @@ const IntroSection = () => {
           {HOME_INTRO.title}
         </div>
         {/* 개발 환경 테스트 버튼 */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="flex justify-center gap-2">
-            <button
-              onClick={handleTestError}
-              className="rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600"
-            >
-              테스트: 일반 에러 전송
-            </button>
-            <button
-              onClick={handleTestFilteredError}
-              className="rounded bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600"
-            >
-              테스트: 필터링 에러
-            </button>
-          </div>
-        )}
+        <div className="flex justify-center gap-2">
+          <button
+            onClick={handleTestError}
+            className="rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600"
+          >
+            테스트: 일반 에러 전송
+          </button>
+          <button
+            onClick={handleTestFilteredError}
+            className="rounded bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600"
+          >
+            테스트: 필터링 에러
+          </button>
+        </div>
         <div className="h-full overflow-x-auto pt-2.5 md:mx-auto md:w-fit md:overflow-x-visible md:px-0 md:pt-0">
           <div
             className={twMerge(
