@@ -9,8 +9,8 @@ import {
   useGetBannerListForAdmin,
 } from '@/api/banner';
 import WarningModal from '@/common/alert/WarningModal';
-import EmptyContainer from '@/common/ui/EmptyContainer';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import EmptyContainer from '@/common/container/EmptyContainer';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import BannerVisibilityToggle from '@/domain/admin/banner/BannerVisibilityToggle';
 import TableLayout from '@/domain/admin/ui/table/TableLayout';
 import { DataGrid, GridColDef, GridRowParams } from '@mui/x-data-grid';

@@ -6,10 +6,10 @@ import {
 } from '@/schema';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 
-import SectionHeader from '@/common/SectionHeader';
-import SectionMainHeader from '@/common/SectionMainHeader';
-import SectionSubHeader from '@/common/SectionSubHeader';
-import PriceSummary from '@/common/ui/PriceSummary';
+import SectionHeader from '@/common/header/SectionHeader';
+import SectionMainHeader from '@/common/header/SectionMainHeader';
+import SectionSubHeader from '@/common/header/SectionSubHeader';
+import PriceSummary from '@/common/price/PriceSummary';
 import { CSSProperties, memo, useMemo } from 'react';
 
 const {

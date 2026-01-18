@@ -1,6 +1,6 @@
 'use client';
 
-import { usePatchChallengePayback } from '@/api/challenge';
+import { usePatchChallengePayback } from '@/api/challenge/challenge';
 import { useAdminChallengeTitle } from '@/context/CurrentAdminChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import { getChallengeIdApplicationsPayback, UpdatePaybackReq } from '@/schema';

@@ -1,5 +1,5 @@
-import { UserExperienceType } from '@/api/experienceSchema';
-import BaseModal from '@/common/BaseModal';
+import { UserExperienceType } from '@/api/experience/experienceSchema';
+import BaseModal from '@/common/modal/BaseModal';
 import { Copy } from 'lucide-react';
 import { useState } from 'react';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useUserQuery } from '@/api/user';
+import { useUserQuery } from '@/api/user/user';
 import { useRouter } from 'next/navigation';
 
 function ProfileAvatar() {

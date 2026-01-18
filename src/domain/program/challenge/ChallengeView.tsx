@@ -1,6 +1,9 @@
 'use client';
 
-import { useGetActiveChallenge, useGetChallengeFaq } from '@/api/challenge';
+import {
+  useGetActiveChallenge,
+  useGetChallengeFaq,
+} from '@/api/challenge/challenge';
 
 import ChallengeCheckList from '@/domain/program/challenge/challenge-view/ChallengeCheckList';
 import ChallengeCurriculum from '@/domain/program/challenge/challenge-view/ChallengeCurriculum';
@@ -20,7 +23,6 @@ import challengeDiscountImage from '@/assets/challenge-discount.png';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
-import MoreReviewButton from '../../../common/review/MoreReviewButton';
 import LexicalContent from '../../blog/ui/LexicalContent';
 import ProgramDetailBlogReviewSection from '../../program/ProgramDetailBlogReviewSection';
 import ProgramDetailNavigation, {
@@ -29,6 +31,7 @@ import ProgramDetailNavigation, {
   PROGRAM_INTRO_ID,
   PROGRAM_REVIEW_ID,
 } from '../../program/ProgramDetailNavigation';
+import MoreReviewButton from '../../review/MoreReviewButton';
 import ProgramBestReviewSection from '../ProgramBestReviewSection';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
 import ChallengeBrand from './challenge-view/ChallengeBrand';

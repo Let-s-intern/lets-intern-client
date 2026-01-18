@@ -1,4 +1,4 @@
-import SectionHeader from '@/common/SectionHeader';
+import SectionHeader from '@/common/header/SectionHeader';
 import Image from 'next/image';
 import MainTitle from '../ui/MainTitle';
 const strategyCards = [

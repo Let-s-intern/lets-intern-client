@@ -1,4 +1,4 @@
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 
 export default function Loading() {
   return (

@@ -2,8 +2,8 @@ import type {
   DisplayExperienceCategory,
   ExperienceCategory,
   UserExperience,
-} from '@/api/userSchema';
-import { CATEGORY_PAIRS } from '@/api/userSchema';
+} from '@/api/user/userSchema';
+import { CATEGORY_PAIRS } from '@/api/user/userSchema';
 
 export const MAX_COMPETENCIES = 5;
 

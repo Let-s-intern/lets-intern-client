@@ -7,8 +7,8 @@ import {
   useGetAdminCurationDetail,
   usePatchAdminCuration,
 } from '@/api/curation';
-import ErrorContainer from '@/common/ui/ErrorContainer';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import ErrorContainer from '@/common/container/ErrorContainer';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import CurationInfoSection from '@/domain/admin/home/curation/section/CurationInfoSection';
 import CurationItemsSection from '@/domain/admin/home/curation/section/CurationItemsSection';
 import CurationVisibleSection from '@/domain/admin/home/curation/section/CurationVisibleSection';

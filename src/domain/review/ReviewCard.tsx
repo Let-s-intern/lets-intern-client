@@ -1,7 +1,7 @@
 'use client';
 
 import { ReportType } from '@/api/report';
-import { GetReview, QuestionType, ReviewType } from '@/api/review';
+import { GetReview, QuestionType, ReviewType } from '@/api/review/review';
 import Bubble from '@/assets/graphic/bubble.svg?react';
 import Heart from '@/assets/graphic/heart.svg?react';
 import Lightbulb from '@/assets/graphic/lightbulb.svg?react';

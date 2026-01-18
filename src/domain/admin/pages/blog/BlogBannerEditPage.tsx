@@ -1,9 +1,12 @@
 'use client';
 
-import { useGetAdminBlogBanner, usePatchAdminBlogBanner } from '@/api/blog';
-import { PatchAdminBlogBannerReqBody } from '@/api/blogSchema';
+import {
+  useGetAdminBlogBanner,
+  usePatchAdminBlogBanner,
+} from '@/api/blog/blog';
+import { PatchAdminBlogBannerReqBody } from '@/api/blog/blogSchema';
 import { fileType, uploadFile } from '@/api/file';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import { YYYY_MMDD_THHmmss } from '@/data/dayjsFormat';
 import ImageUpload from '@/domain/admin/program/ui/form/ImageUpload';
 import Heading from '@/domain/admin/ui/heading/Heading';

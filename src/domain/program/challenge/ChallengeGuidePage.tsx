@@ -1,4 +1,7 @@
-import { useGetChallengeGuides, useGetChallengeNotices } from '@/api/challenge';
+import {
+  useGetChallengeGuides,
+  useGetChallengeNotices,
+} from '@/api/challenge/challenge';
 import { useReadGuides, useReadNotices } from '@/hooks/useReadItems';
 import { twMerge } from '@/lib/twMerge';
 import Link from 'next/link';

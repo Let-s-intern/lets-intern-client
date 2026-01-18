@@ -1,4 +1,4 @@
-import { usePatchAdminAttendance } from '@/api/attendance';
+import { usePatchAdminAttendance } from '@/api/attendance/attendance';
 import { useControlScroll } from '@/hooks/useControlScroll';
 import { AttendanceItem } from '@/schema';
 import { challengeSubmitDetailCellWidthList } from '@/utils/tableCellWidthList';

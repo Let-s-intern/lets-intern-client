@@ -3,7 +3,7 @@
 import {
   useChallengeMissionAttendanceInfoQuery,
   useChallengeMissionFeedbackQuery,
-} from '@/api/challenge';
+} from '@/api/challenge/challenge';
 import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import LexicalContent from '@/domain/blog/ui/LexicalContent';
 import { useParams, useRouter } from 'next/navigation';

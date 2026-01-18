@@ -8,7 +8,10 @@ import useAuthStore from '@/store/useAuthStore';
 import useProgramStore from '@/store/useProgramStore';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect } from 'react';
-import { DesktopApplyCTA, MobileApplyCTA } from '../../../../common/ApplyCTA';
+import {
+  DesktopApplyCTA,
+  MobileApplyCTA,
+} from '../../../../common/button/ApplyCTA';
 
 const LiveCTAButtons = ({
   live,

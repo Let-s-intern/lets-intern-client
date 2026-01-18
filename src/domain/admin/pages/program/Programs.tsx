@@ -4,8 +4,8 @@ import {
   useGetProgramAdminQuery,
   useGetProgramAdminQueryKey,
 } from '@/api/program';
-import EmptyContainer from '@/common/ui/EmptyContainer';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import EmptyContainer from '@/common/container/EmptyContainer';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';

@@ -1,4 +1,4 @@
-import { ProgramRecommendItem } from '@/api/blogSchema';
+import { ProgramRecommendItem } from '@/api/blog/blogSchema';
 import {
   fetchChallenge,
   fetchLive,

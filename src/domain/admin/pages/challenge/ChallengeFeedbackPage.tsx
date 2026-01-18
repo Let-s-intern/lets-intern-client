@@ -1,16 +1,16 @@
 'use client';
 /** 참여자별 피드백 페이지 (피드백 작성 페이지) */
 
-import { usePatchAttendanceMentor } from '@/api/attendance';
+import { usePatchAttendanceMentor } from '@/api/attendance/attendance';
 import {
   FeedbackAttendanceQueryKey,
   useFeedbackAttendanceQuery,
-} from '@/api/challenge';
+} from '@/api/challenge/challenge';
 import {
   ChallengeMissionFeedbackList,
   FeedbackStatusEnum,
-} from '@/api/challengeSchema';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+} from '@/api/challenge/challengeSchema';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import EditorApp from '@/domain/admin/lexical/EditorApp';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
 import LexicalContent from '@/domain/blog/ui/LexicalContent';

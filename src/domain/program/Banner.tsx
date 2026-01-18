@@ -1,6 +1,6 @@
 'use client';
 
-import HybridLink from '@/common/ui/HybridLink';
+import HybridLink from '@/common/HybridLink';
 import { useEffect, useRef, useState } from 'react';
 
 import { useGetUserProgramBannerListQuery } from '@/api/program';

@@ -3,7 +3,7 @@
 import {
   useAdminChallengeMentorListQuery,
   useAdminUserMentorListQuery,
-} from '@/api/mentor';
+} from '@/api/mentor/mentor';
 import SelectFormControl from '@/domain/admin/program/SelectFormControl';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
 import {

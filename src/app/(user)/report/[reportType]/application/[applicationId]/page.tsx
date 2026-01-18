@@ -9,11 +9,11 @@ import {
   ReportType,
   usePatchMyApplication,
 } from '@/api/report';
+import BaseButton from '@/common/button/BaseButton';
+import BackHeader from '@/common/header/BackHeader';
 import HorizontalRule from '@/common/HorizontalRule';
-import ReportSubmitModal from '@/common/ReportSubmitModal';
-import BackHeader from '@/common/ui/BackHeader';
-import BottomSheet from '@/common/ui/BottomSheeet';
-import BaseButton from '@/common/ui/button/BaseButton';
+import ReportSubmitModal from '@/common/modal/ReportSubmitModal';
+import BottomSheet from '@/common/sheet/BottomSheeet';
 import {
   AdditionalInfoSection,
   CallOut,

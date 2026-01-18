@@ -4,7 +4,7 @@ import {
   employeeTypeSchema,
   UserCareerType,
   YearMonthType,
-} from '@/api/careerSchema';
+} from '@/api/career/careerSchema';
 
 /**
  * 특정 문자열이 EmployeeType enum에 속하는지 확인

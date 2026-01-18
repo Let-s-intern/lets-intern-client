@@ -1,6 +1,6 @@
 'use client';
 
-import { BlogType, useBlogListQuery } from '@/api/blog';
+import { BlogType, useBlogListQuery } from '@/api/blog/blog';
 import {
   GetReview,
   QuestionType,
@@ -8,8 +8,8 @@ import {
   reviewTypeSchema,
   useGetProgramReview,
   useGetReviewCount,
-} from '@/api/review';
-import Button from '@/common/ui/button/Button';
+} from '@/api/review/review';
+import Button from '@/common/button/Button';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { questionTypeToText } from '@/utils/convert';

@@ -1,9 +1,9 @@
-import SectionHeader from '@/common/SectionHeader';
-import SectionSubHeader from '@/common/SectionSubHeader';
+import SectionHeader from '@/common/header/SectionHeader';
+import SectionSubHeader from '@/common/header/SectionSubHeader';
 import { ChallengePriceInfo } from '@/schema';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import * as React from 'react';
-import PriceSummary from '../../../../common/ui/PriceSummary';
+import PriceSummary from '../../../../common/price/PriceSummary';
 import MainTitle from '../ui/MainTitle';
 
 const PriceBox = ({

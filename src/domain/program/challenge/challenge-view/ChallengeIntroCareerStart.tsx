@@ -1,5 +1,5 @@
-import CircularBox from '@/common/ui/CircularBox';
-import Heading2 from '@/common/ui/Heading2';
+import CircularBox from '@/common/box/CircularBox';
+import Heading2 from '@/common/header/Heading2';
 import { challengeColors } from '@/domain/program/challenge/ChallengeView';
 import Description from '@/domain/program/program-detail/Description';
 import { twMerge } from '@/lib/twMerge';

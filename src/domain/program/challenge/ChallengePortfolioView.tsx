@@ -1,6 +1,9 @@
 'use client';
 
-import { useGetActiveChallenge, useGetChallengeFaq } from '@/api/challenge';
+import {
+  useGetActiveChallenge,
+  useGetChallengeFaq,
+} from '@/api/challenge/challenge';
 import ChallengeCurriculum from '@/domain/program/challenge/challenge-view/ChallengeCurriculum';
 import ChallengeFaq from '@/domain/program/challenge/challenge-view/ChallengeFaq';
 import dayjs from '@/lib/dayjs';
@@ -16,14 +19,14 @@ import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import { Break } from '../../../common/Break';
-import Heading2 from '../../../common/report/Heading2';
-import SectionSubHeader from '../../../common/SectionSubHeader';
+import SectionSubHeader from '../../../common/header/SectionSubHeader';
 import LexicalContent from '../../blog/ui/LexicalContent';
 import {
   PROGRAM_CURRICULUM_ID,
   PROGRAM_INTRO_ID,
   PROGRAM_REVIEW_ID,
 } from '../../program/ProgramDetailNavigation';
+import Heading2 from '../../report/Heading2';
 import Description from '../program-detail/Description';
 import ProgramBestReviewSection from '../ProgramBestReviewSection';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';

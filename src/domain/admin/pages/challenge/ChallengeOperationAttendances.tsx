@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetChallengeAttendances } from '@/api/challenge';
+import { useGetChallengeAttendances } from '@/api/challenge/challenge';
 import {
   useAdminCurrentChallenge,
   useAdminMissionsOfCurrentChallenge,

@@ -1,7 +1,7 @@
 import { Button, IconButton } from '@mui/material';
 import { MdDelete } from 'react-icons/md';
 
-import Input from '@/common/input/Input';
+import Input from '@/common/input/v1/Input';
 import Heading3 from '@/domain/admin/ui/heading/Heading3';
 import { ChallengeContent, ChallengePoint } from '@/types/interface';
 import { generateRandomNumber } from '@/utils/random';

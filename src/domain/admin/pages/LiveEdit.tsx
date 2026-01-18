@@ -6,8 +6,6 @@ import {
   useGetLiveQueryKey,
   usePatchLiveMutation,
 } from '@/api/program';
-import FaqSection from '@/common/FaqSection';
-import ProgramRecommendEditor from '@/common/ProgramRecommendEditor';
 import EditorApp from '@/domain/admin/lexical/EditorApp';
 import LivePreviewButton from '@/domain/admin/LivePreviewButton';
 import LiveBasic from '@/domain/admin/program/LiveBasic';
@@ -21,6 +19,8 @@ import ImageUpload from '@/domain/admin/program/ui/form/ImageUpload';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
+import FaqSection from '@/domain/faq/FaqSection';
+import ProgramRecommendEditor from '@/domain/program-recommend/ProgramRecommendEditor';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import { ProgramTypeEnum, UpdateLiveReq } from '@/schema';

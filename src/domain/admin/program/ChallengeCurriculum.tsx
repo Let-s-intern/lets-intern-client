@@ -1,4 +1,4 @@
-import Input from '@/common/input/Input';
+import Input from '@/common/input/v1/Input';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
 import dayjs from '@/lib/dayjs';
 import { ChallengeContent, ChallengeCurriculum } from '@/types/interface';

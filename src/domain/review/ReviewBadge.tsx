@@ -1,4 +1,4 @@
-import { ReviewType } from '@/api/review';
+import { ReviewType } from '@/api/review/review';
 import { twMerge } from '@/lib/twMerge';
 import { ProgramTypeUpperCase } from '@/schema';
 

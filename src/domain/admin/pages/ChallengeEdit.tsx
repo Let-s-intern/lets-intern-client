@@ -6,15 +6,13 @@ import {
   useAdminChallengeMentorListQuery,
   useDeleteChallengeMentor,
   usePostAdminChallengeMentor,
-} from '@/api/mentor';
-import { ChallengeMentorList } from '@/api/mentorSchema';
+} from '@/api/mentor/mentor';
+import { ChallengeMentorList } from '@/api/mentor/mentorSchema';
 import {
   useGetChallengeQuery,
   useGetChallengeQueryKey,
   usePatchChallengeMutation,
 } from '@/api/program';
-import FaqSection from '@/common/FaqSection';
-import ProgramRecommendEditor from '@/common/ProgramRecommendEditor';
 import ChallengePreviewButton from '@/domain/admin/ChallengePreviewButton';
 import EditorApp from '@/domain/admin/lexical/EditorApp';
 import ChallengeBasic from '@/domain/admin/program/ChallengeBasic';
@@ -29,6 +27,8 @@ import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
 import Heading3 from '@/domain/admin/ui/heading/Heading3';
+import FaqSection from '@/domain/faq/FaqSection';
+import ProgramRecommendEditor from '@/domain/program-recommend/ProgramRecommendEditor';
 import useAdminChallenge from '@/hooks/useAdminChallenge';
 import useAdminChallengeOption from '@/hooks/useAdminChallengeOption';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';

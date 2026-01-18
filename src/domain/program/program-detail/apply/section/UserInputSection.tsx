@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { FaCheck } from 'react-icons/fa6';
 
 import { UserInfo } from '@/lib/order';
-import Input from '../../../../../common/ui/input/Input';
+import Input from '../../../../../common/input/v2/Input';
 
 interface UserInputSectionProps {
   userInfo: UserInfo;

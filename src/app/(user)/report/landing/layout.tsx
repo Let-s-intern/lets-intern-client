@@ -1,6 +1,6 @@
 'use client';
 
-import { FULL_NAVBAR_HEIGHT_OFFSET } from '@/common/ui/layout/header/NavBar';
+import { FULL_NAVBAR_HEIGHT_OFFSET } from '@/common/layout/header/NavBar';
 import useActiveReports from '@/hooks/useActiveReports';
 import useScrollDirection from '@/hooks/useScrollDirection';
 import { twMerge } from '@/lib/twMerge';

@@ -1,4 +1,4 @@
-import { useBlogListQuery } from '@/api/blog';
+import { useBlogListQuery } from '@/api/blog/blog';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
 import dayjs from '@/lib/dayjs';
 import { ProgramBlogReview } from '@/types/interface';

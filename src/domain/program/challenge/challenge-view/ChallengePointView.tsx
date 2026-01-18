@@ -1,9 +1,9 @@
 import { getVod } from '@/api/program';
 import Check from '@/assets/icons/chevron-down.svg?react';
 import HoleIcon from '@/assets/icons/hole.svg?react';
-import Heading2 from '@/common/ui/Heading2';
-import ProgramRecommendSlider from '@/common/ui/ProgramRecommendSlider';
+import Heading2 from '@/common/header/Heading2';
 import { LOCALIZED_YYYY_MDdd_HHmm } from '@/data/dayjsFormat';
+import ProgramRecommendSlider from '@/domain/program-recommend/ProgramRecommendSlider';
 import { challengeColors } from '@/domain/program/challenge/ChallengeView';
 import SuperTitle from '@/domain/program/program-detail/SuperTitle';
 import { twMerge } from '@/lib/twMerge';

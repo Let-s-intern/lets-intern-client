@@ -6,7 +6,7 @@ import kakaoImg from '@/assets/live-kakao.jpg';
 import longImg from '@/assets/live-long.png';
 import tossbankImg from '@/assets/live-tossbank.jpg';
 import universityImg from '@/assets/live-university.jpg';
-import Heading2 from '@/common/ui/Heading2';
+import Heading2 from '@/common/header/Heading2';
 import SpeechBubble from '@/domain/program/program-detail/SpeechBubble';
 import SuperTitle from '@/domain/program/program-detail/SuperTitle';
 

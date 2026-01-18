@@ -10,7 +10,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 import { useGetBannerListForUser } from '@/api/banner';
-import HybridLink from '@/common/ui/HybridLink';
+import HybridLink from '@/common/HybridLink';
 
 interface MyPageBannerProps {
   className?: string;

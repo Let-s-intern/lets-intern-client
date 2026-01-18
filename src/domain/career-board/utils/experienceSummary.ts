@@ -1,4 +1,4 @@
-import { UserExperienceType } from '@/api/experienceSchema';
+import { UserExperienceType } from '@/api/experience/experienceSchema';
 
 /**
  * 핵심 역량 빈도 계산 및 상위 3개 추출

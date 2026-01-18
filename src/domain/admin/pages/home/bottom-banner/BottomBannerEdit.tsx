@@ -8,8 +8,8 @@ import {
   useEditBannerForAdmin,
   useGetBannerDetailForAdmin,
 } from '@/api/banner';
-import EmptyContainer from '@/common/ui/EmptyContainer';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import EmptyContainer from '@/common/container/EmptyContainer';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import MainBannerInputContent from '@/domain/admin/home/main-banner/MainBannerInputContent';
 import EditorTemplate from '@/domain/admin/program/ui/editor/EditorTemplate';
 

@@ -1,7 +1,10 @@
 import dayjs from '@/lib/dayjs';
 import { z } from 'zod';
-import { challengeOptionSchema } from './api/challengeOptionSchema';
-import { activitySchema, categorySchema } from './api/experienceSchema';
+import { challengeOptionSchema } from './api/challenge/challengeOptionSchema';
+import {
+  activitySchema,
+  categorySchema,
+} from './api/experience/experienceSchema';
 
 export interface Pageable {
   page: number;

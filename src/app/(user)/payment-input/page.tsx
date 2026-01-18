@@ -1,11 +1,11 @@
 'use client';
 
 import { useProgramQuery } from '@/api/program';
-import { usePatchUser } from '@/api/user';
+import { usePatchUser } from '@/api/user/user';
 import CreditCardIcon from '@/assets/icons/credit-card.svg?react';
 import { Duration } from '@/common/Duration';
-import BackHeader from '@/common/ui/BackHeader';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import BackHeader from '@/common/header/BackHeader';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import { COUPON_DISABLED_CHALLENGE_TYPES } from '@/domain/program/program-detail/apply/constants';
 import CouponSection, {
   CouponSectionProps,

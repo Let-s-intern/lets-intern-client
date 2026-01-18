@@ -5,20 +5,20 @@
 import {
   usePatchAdminAttendance,
   usePatchAttendanceMentor,
-} from '@/api/attendance';
+} from '@/api/attendance/attendance';
 import {
   ChallengeMissionFeedbackAttendanceQueryKey,
   MentorMissionFeedbackAttendanceQueryKey,
   useChallengeMissionFeedbackAttendanceQuery,
   useMentorMissionFeedbackAttendanceQuery,
-} from '@/api/challenge';
+} from '@/api/challenge/challenge';
 import {
   FeedbackStatus,
   FeedbackStatusEnum,
   FeedbackStatusMapping,
-} from '@/api/challengeSchema';
-import { useAdminChallengeMentorListQuery } from '@/api/mentor';
-import { useIsAdminQuery } from '@/api/user';
+} from '@/api/challenge/challengeSchema';
+import { useAdminChallengeMentorListQuery } from '@/api/mentor/mentor';
+import { useIsAdminQuery } from '@/api/user/user';
 import SelectFormControl from '@/domain/admin/program/SelectFormControl';
 import useInvalidateQueries from '@/hooks/useInvalidateQueries';
 import { MenuItem, SelectChangeEvent } from '@mui/material';

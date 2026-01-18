@@ -1,4 +1,4 @@
-import { DocumentType } from '@/api/missionSchema';
+import { DocumentType } from '@/api/mission/missionSchema';
 
 // 타입에 따라 파일명에서 접두사 제거
 const removeTypePrefixFromFileName = (
