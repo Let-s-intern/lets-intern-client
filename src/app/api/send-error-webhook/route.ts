@@ -17,6 +17,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // React 에러 #418 (hydration 에러)는 webhook으로 전송하지 않음
+    if (error.message.includes('Minified React error #418')) {
+      return Response.json({ success: true, ignored: true });
+    }
+
     // Error 객체 재구성
     const errorObj = new Error(error.message);
     errorObj.name = error.name || 'Error';
