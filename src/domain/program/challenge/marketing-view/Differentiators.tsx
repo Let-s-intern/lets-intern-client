@@ -60,69 +60,113 @@ const professionals = [
   {
     logo: 'corpuniv.png',
     profile: 'profile4.png',
-    week: '1월 4주차',
+    week: '세미나(1월4주차) & 피드백',
     company: '대학내일',
     role: 'AE마케터',
   },
   {
     logo: 'nol.png',
     profile: 'profile3.png',
-    week: '1월 5주차',
+    week: '세미나(1월 5주차) & 피드백',
     company: '놀유니버스',
     role: '마케팅 전략',
   },
   {
     logo: 'class101.png',
     profile: 'profile2.png',
-    week: '2월 1주차',
+    week: '세미나(2월 1주차) & 피드백',
     company: '클래스 101',
     role: '콘텐츠 마케터',
   },
   {
     logo: 'cashnote.png',
     profile: 'profile5.png',
-    week: '2월 2주차',
+    week: '세미나(2월 2주차) & 피드백',
     company: '캐시노트',
     role: '그로스 마케터',
+  },
+  {
+    logo: 'innocean.png',
+    profile: 'profile1.png',
+    week: '피드백',
+    company: '이노션',
+    role: 'CRM 마케터',
   },
 ];
 
 export const ProfessionalsList = () => {
   return (
-    <div className="mt-6 grid max-w-[1000px] grid-cols-2 gap-1 md:mt-[50px] md:gap-3">
-      {professionals.map((item, index) => (
-        <div
-          key={index}
-          className="w-[104px] overflow-hidden rounded-xxs md:w-[280px] md:rounded-sm"
-        >
+    <div>
+      <div className="mt-6 grid max-w-[1000px] grid-cols-2 gap-1 justify-self-center md:mt-[50px] md:gap-3">
+        {professionals.slice(0, 2).map((item, index) => (
           <div
-            className="relative h-[59px] overflow-hidden bg-neutral-90 md:h-40"
-            role="presentation"
+            key={index}
+            className="w-[115px] overflow-hidden rounded-xxs md:w-[280px] md:rounded-sm"
           >
-            <img
-              src={`/images/marketing/${item.logo}`}
-              className="absolute left-1 top-1 h-10 w-10 md:left-3 md:top-3 md:h-[66px] md:w-[66px]"
-              alt=""
-            />
-            <img
-              className="absolute -bottom-0.5 right-1 h-full w-auto md:right-[20%]"
-              src={`/images/marketing/${item.profile}`}
-              alt=""
-            />
+            <div
+              className="relative h-[59px] overflow-hidden bg-neutral-90 md:h-40"
+              role="presentation"
+            >
+              <img
+                src={`/images/marketing/${item.logo}`}
+                className="absolute left-1 top-1 h-10 w-10 md:left-3 md:top-3 md:h-[66px] md:w-[66px]"
+                alt=""
+              />
+              <img
+                className="absolute -bottom-0.5 right-1 h-full w-auto md:right-[20%]"
+                src={`/images/marketing/${item.profile}`}
+                alt=""
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center bg-white px-2 py-3 md:p-5">
+              <div className="mb-0.5 rounded-[2px] bg-black px-1 py-0.5 text-center text-[0.5rem] font-medium text-white md:mb-2 md:rounded-xxs md:px-1.5 md:py-[3px] md:text-xsmall14">
+                {item.week}
+              </div>
+              <div className="text-base font-bold text-neutral-0 md:mb-1 md:text-medium24">
+                {item.company}
+              </div>
+              <div className="text-xxsmall12 text-neutral-0 md:text-small20">
+                {item.role}
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col items-center justify-center bg-white px-2 py-3 md:p-5">
-            <div className="mb-0.5 rounded-[2px] bg-black px-1 py-0.5 text-center text-[0.5rem] font-medium text-white md:mb-2 md:rounded-xxs md:px-1.5 md:py-[3px] md:text-xsmall14">
-              {item.week}
+        ))}
+      </div>
+      <div className="mt-6 grid max-w-[1000px] grid-cols-3 gap-1 md:mt-[50px] md:gap-3">
+        {professionals.slice(2, 5).map((item, index) => (
+          <div
+            key={index}
+            className="w-[113px] overflow-hidden rounded-xxs md:w-[280px] md:rounded-sm"
+          >
+            <div
+              className="relative h-[59px] overflow-hidden bg-neutral-90 md:h-40"
+              role="presentation"
+            >
+              <img
+                src={`/images/marketing/${item.logo}`}
+                className="absolute left-1 top-1 h-10 w-10 md:left-3 md:top-3 md:h-[66px] md:w-[66px]"
+                alt=""
+              />
+              <img
+                className="absolute -bottom-0.5 right-1 h-full w-auto md:right-[20%]"
+                src={`/images/marketing/${item.profile}`}
+                alt=""
+              />
             </div>
-            <div className="text-base font-bold text-neutral-0 md:mb-1 md:text-medium24">
-              {item.company}
-            </div>
-            <div className="text-xxsmall12 text-neutral-0 md:text-small20">
-              {item.role}
+            <div className="flex flex-col items-center justify-center bg-white px-2 py-3 md:p-5">
+              <div className="mb-0.5 rounded-[2px] bg-black px-1 py-0.5 text-center text-[0.5rem] font-medium text-white md:mb-2 md:rounded-xxs md:px-1.5 md:py-[3px] md:text-xsmall14">
+                {item.week}
+              </div>
+              <div className="text-base font-bold text-neutral-0 md:mb-1 md:text-medium24">
+                {item.company}
+              </div>
+              <div className="text-xxsmall12 text-neutral-0 md:text-small20">
+                {item.role}
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };
