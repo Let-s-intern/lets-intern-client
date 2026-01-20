@@ -1,8 +1,8 @@
-import { useChallengeMissionFeedbackQuery } from '@/api/challenge/challenge';
-import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
+import {
+  useChallengeMissionAttendanceInfoQuery,
+  useChallengeMissionFeedbackQuery,
+} from '@/api/challenge/challenge';
 import LexicalContent from '@/domain/blog/ui/LexicalContent';
-import { useMissionStore } from '@/store/useMissionStore';
-import { BONUS_MISSION_TH } from '@/utils/constants';
 import { useParams } from 'next/navigation';
 
 interface Props {
@@ -12,23 +12,19 @@ interface Props {
 const MissionMentorCommentSection = ({ missionId }: Props) => {
   const params = useParams<{ programId: string }>();
 
+  // 미션 상세 정보 (attendanceInfo 포함)
+  const { data: missionData } = useChallengeMissionAttendanceInfoQuery({
+    challengeId: params.programId ?? '',
+    missionId,
+  });
+
   // 피드백 데이터
   const { data: feedbackData } = useChallengeMissionFeedbackQuery({
     challengeId: params.programId ?? '',
     missionId,
   });
 
-  const { schedules } = useCurrentChallenge();
-  const { selectedMissionTh } = useMissionStore();
-
-  const startsFromZero = schedules[0]?.missionInfo?.th === 0; // 0회차 존재 여부
-
-  const getScheduleIndex = () => {
-    if (selectedMissionTh === BONUS_MISSION_TH) return schedules.length - 1;
-    return startsFromZero ? selectedMissionTh : selectedMissionTh - 1;
-  };
-  const scheduleIndex = getScheduleIndex();
-  const comment = schedules[scheduleIndex]?.attendanceInfo?.comments;
+  const comment = missionData?.attendanceInfo?.comments;
 
   const mentorFeedback = feedbackData?.attendanceInfo?.feedback
     ? JSON.parse(feedbackData.attendanceInfo.feedback)
