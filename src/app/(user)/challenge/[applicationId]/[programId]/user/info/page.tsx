@@ -21,7 +21,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const radioColor = '#5177FF';
 const awarenessOptions = [
-  '인스타그램',
+  '렛츠커리어 인스타그램',
+  '오늘의공고 인스타그램',
   '쥬디톡방',
   '문자/카카오톡 알림',
   '렛츠커리어 웹사이트(배너, 프로그램 리스트, 챌린지 대시보드등에서 확인) ',
@@ -42,7 +43,8 @@ const decisionPeriodOptions = [
 ];
 
 const entryPointOptions = [
-  '인스타그램 프로필 링크/스토리',
+  '렛츠커리어 인스타그램 프로필 링크/스토리',
+  '오늘의공고 인스타그램 프로필 링크/스토리',
   '쥬디톡방 링크',
   '문자/카카오톡 알림 링크',
   '네이버 블로그 후기내 링크',
