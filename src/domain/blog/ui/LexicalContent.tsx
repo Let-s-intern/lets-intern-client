@@ -38,7 +38,10 @@ const parseStyle = (styleString: string) =>
     }, {});
 
 const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
-  if (!node) return null;
+  // 안전 검증: node가 없거나 type이 없으면 null 반환
+  if (!node || typeof node !== 'object' || !('type' in node)) {
+    return null;
+  }
 
   switch (node.type) {
     case 'root': {
