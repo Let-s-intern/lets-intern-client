@@ -1,4 +1,5 @@
 import { twMerge } from '@/lib/twMerge';
+import { sanitizeUrl } from '@/utils/url';
 import { SerializedCodeNode } from '@lexical/code';
 import { SerializedLinkNode } from '@lexical/link';
 import { SerializedListItemNode, SerializedListNode } from '@lexical/list';
@@ -138,11 +139,13 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
     case 'link': {
       const _node = node as SerializedLinkNode;
       const origin = 'https://www.letscareer.co.kr'; // SSR으로 window 객체 사용 불가
+      // XSS 방지: URL을 안전한 프로토콜만 허용하도록 검증
+      const sanitizedUrl = sanitizeUrl(_node.url || '');
 
       return (
         <a
-          href={_node.url}
-          target={_node.url.includes(origin) ? '_self' : '_blank'}
+          href={sanitizedUrl}
+          target={sanitizedUrl.includes(origin) ? '_self' : '_blank'}
           rel="noreferrer"
           className="text-system-positive-blue hover:underline"
         >
