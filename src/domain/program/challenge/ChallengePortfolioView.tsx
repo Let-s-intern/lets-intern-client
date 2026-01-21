@@ -237,11 +237,15 @@ const ChallengePortfolioView: React.FC<{
           className="flex w-full flex-col items-center overflow-x-hidden"
         >
           {/* LEXICAL */}
-          {receivedContent.mainDescription?.root && (
-            <section className="flex w-full max-w-[1000px] flex-col px-5 pt-20 md:px-10 md:pt-40 lg:px-0">
-              <LexicalContent node={receivedContent.mainDescription?.root} />
-            </section>
-          )}
+          {receivedContent.mainDescription?.root &&
+            typeof receivedContent.mainDescription.root === 'object' &&
+            'type' in receivedContent.mainDescription.root && (
+              <section className="flex w-full max-w-[1000px] flex-col px-5 pt-20 md:px-10 md:pt-40 lg:px-0">
+                <LexicalContent
+                  node={receivedContent.mainDescription.root}
+                />
+              </section>
+            )}
 
           <div className="flex w-full flex-col items-center overflow-x-hidden bg-gradient-to-t from-[#F0F4FF] to-white">
             <section className="flex w-full max-w-[1000px] flex-col px-5 pt-20 md:px-10 md:pt-40 lg:px-0">
