@@ -45,7 +45,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       const _node = node as SerializedRootNode;
       return (
         <div className="w-full">
-          {_node.children.map((child, childIndex) => (
+          {(_node.children || []).map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
         </div>
@@ -60,7 +60,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
         <HeadingTag
           className={`mb-3 mt-6 font-bold ${HeadingTag === 'h1' ? 'text-xlarge28' : HeadingTag === 'h2' ? 'text-medium24' : 'text-small20'}`}
         >
-          {_node.children.map((child, childIndex) => (
+          {(_node.children || []).map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
         </HeadingTag>
@@ -70,7 +70,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       const _node = node as SerializedQuoteNode;
       return (
         <blockquote className="mb-4 border-l-2 border-neutral-80 pl-4 text-neutral-40">
-          {_node.children.map((child, childIndex) => (
+          {(_node.children || []).map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
         </blockquote>
@@ -90,12 +90,13 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
           textAlign = 'text-left';
           break;
       }
+      const children = _node.children || [];
       return (
         <div className={`mb-4 ${textAlign}`}>
-          {_node.children.length === 0 ? (
+          {children.length === 0 ? (
             <br />
           ) : (
-            _node.children.map((child, childIndex) => (
+            children.map((child, childIndex) => (
               <LexicalContent key={childIndex} node={child} />
             ))
           )}
@@ -113,7 +114,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
           className={_node.listType === 'bullet' ? 'list-disc' : 'list-decimal'}
           start={_node.start}
         >
-          {_node.children.map((child, childIndex) => (
+          {(_node.children || []).map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
         </ListTag>
@@ -121,10 +122,11 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
     }
     case 'listitem': {
       const _node = node as SerializedListItemNode;
-      const isNested = _node.children.some((child) => child.type === 'list');
+      const children = _node.children || [];
+      const isNested = children.some((child) => child.type === 'list');
       return (
         <li className={twMerge('ml-4', isNested && 'list-none')}>
-          {_node.children.map((child, childIndex) => (
+          {children.map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
         </li>
@@ -141,7 +143,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
           rel="noreferrer"
           className="text-system-positive-blue hover:underline"
         >
-          {_node.children.map((child, childIndex) => (
+          {(_node.children || []).map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
         </a>
@@ -152,7 +154,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       return (
         <div className="mb-4 mt-3 w-full bg-gray-100 p-4 font-mono">
           <code className="whitespace-pre-wrap break-keep">
-            {_node.children.map((child, childIndex) => (
+            {(_node.children || []).map((child, childIndex) => (
               <LexicalContent key={childIndex} node={child} />
             ))}
           </code>
@@ -200,7 +202,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
           className="grid grid-cols-1 gap-4"
           style={{ gridTemplateColumns: _node.templateColumns }}
         >
-          {_node.children.map((child, childIndex) => (
+          {(_node.children || []).map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
         </div>
@@ -210,7 +212,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       const _node = node as SerializedLayoutItemNode;
       return (
         <div className="w-full border border-dashed p-3">
-          {_node.children.map((child, childIndex) => (
+          {(_node.children || []).map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
         </div>
@@ -226,7 +228,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
             _node.open = !_node.open;
           }}
         >
-          {_node.children.map((child, childIndex) => (
+          {(_node.children || []).map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
         </details>
@@ -236,7 +238,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       const _node = node as SerializedCollapsibleTitleNode;
       return (
         <summary className="Collapsible__title py-2">
-          {_node.children.map((child, childIndex) => (
+          {(_node.children || []).map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
         </summary>
@@ -246,7 +248,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       const _node = node as SerializedCollapsibleContentNode;
       return (
         <div className="Collapsible__content">
-          {_node.children.map((child, childIndex) => (
+          {(_node.children || []).map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
         </div>
@@ -257,7 +259,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       return (
         <table className="my-4 w-full table-auto">
           <tbody>
-            {_node.children.map((child, childIndex) => (
+            {(_node.children || []).map((child, childIndex) => (
               <LexicalContent key={childIndex} node={child} />
             ))}
           </tbody>
@@ -268,7 +270,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       const _node = node as SerializedTableRowNode;
       return (
         <tr>
-          {_node.children.map((child, childIndex) => (
+          {(_node.children || []).map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
         </tr>
@@ -278,7 +280,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       const _node = node as SerializedTableCellNode;
       return (
         <td className="border border-neutral-80 p-2">
-          {_node.children.map((child, childIndex) => (
+          {(_node.children || []).map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
         </td>
@@ -353,6 +355,15 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
         });
       }
 
+      // caption 안전하게 처리
+      const captionNode =
+        _node.showCaption &&
+        _node.caption &&
+        _node.caption.editorState &&
+        _node.caption.editorState.root
+          ? _node.caption.editorState.root
+          : null;
+
       return (
         <span className="image">
           <div className="inline-block">
@@ -374,13 +385,13 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
                 style={{ width: _node.width === 0 ? 'auto' : _node.width }}
               />
             </picture>
-            {_node.showCaption ? (
+            {captionNode ? (
               <div className="image-caption-container mb-4 mt-3 w-full text-center text-xsmall14 text-neutral-50">
                 <div
                   role="textbox"
                   className="w-full whitespace-pre-wrap break-keep"
                 >
-                  <LexicalContent node={_node.caption.editorState.root} />
+                  <LexicalContent node={captionNode} />
                 </div>
               </div>
             ) : null}
