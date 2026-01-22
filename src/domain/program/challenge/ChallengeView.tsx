@@ -19,6 +19,8 @@ import {
 import useProgramStore from '@/store/useProgramStore';
 import { ChallengeContent } from '@/types/interface';
 
+import challengeDiscountImage from '@/assets/challenge-discount.png';
+import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import LexicalContent from '../../blog/ui/LexicalContent';
@@ -236,6 +238,14 @@ const ChallengeView: React.FC<{
             id={PROGRAM_INTRO_ID}
             className="challenge_program flex w-full flex-col items-center"
           >
+            {Number(id) === 192 && (
+              <Image
+                src={challengeDiscountImage}
+                alt="자기소개서 챌린지 할인 안내"
+                className="mt-20 w-full max-w-[44rem]"
+                priority
+              />
+            )}
             {/* 인트로 (최상단) */}
             {receivedContent.intro?.root &&
               typeof receivedContent.intro.root === 'object' &&
@@ -244,7 +254,6 @@ const ChallengeView: React.FC<{
                   <LexicalContent node={receivedContent.intro.root} />
                 </section>
               )}
-
             <section className="flex w-full flex-col items-center pt-[70px] md:pt-40">
               <ChallengePointView
                 challengeType={challenge.challengeType}
