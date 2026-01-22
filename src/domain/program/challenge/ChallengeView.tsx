@@ -254,7 +254,6 @@ const ChallengeView: React.FC<{
                   <LexicalContent node={receivedContent.intro.root} />
                 </section>
               )}
-
             <section className="flex w-full flex-col items-center pt-[70px] md:pt-40">
               <ChallengePointView
                 challengeType={challenge.challengeType}
