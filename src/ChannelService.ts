@@ -97,8 +97,12 @@ class ChannelService {
         s.async = true;
         s.src = 'https://cdn.channel.io/plugin/ch-plugin-web.js';
         const x = document.getElementsByTagName('script')[0];
-        if (x.parentNode) {
+        if (x?.parentNode) {
           x.parentNode.insertBefore(s, x);
+        } else if (document.head) {
+          document.head.appendChild(s);
+        } else if (document.body) {
+          document.body.appendChild(s);
         }
       }
       if (document.readyState === 'complete') {
