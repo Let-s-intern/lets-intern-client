@@ -340,7 +340,18 @@ const ChallengeCreate: React.FC = () => {
       </section>
 
       <Heading2>프로그램 소개</Heading2>
-      <section>
+
+      <section className="mt-6">
+        <Heading3>인트로</Heading3>
+        <EditorApp
+          onChangeSerializedEditorState={(json) =>
+            setContent((prev) => ({
+              ...prev,
+              inro: json,
+            }))
+          }
+        />
+
         <ChallengePoint
           challengePoint={content.challengePoint}
           setContent={setContent}

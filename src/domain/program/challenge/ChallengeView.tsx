@@ -246,6 +246,15 @@ const ChallengeView: React.FC<{
                 priority
               />
             )}
+            {/* 인트로 (최상단) */}
+            {receivedContent.intro?.root &&
+              typeof receivedContent.intro.root === 'object' &&
+              'type' in receivedContent.intro.root && (
+                <section className="flex w-full flex-col items-center">
+                  <LexicalContent node={receivedContent.intro.root} />
+                </section>
+              )}
+
             <section className="flex w-full flex-col items-center pt-[70px] md:pt-40">
               <ChallengePointView
                 challengeType={challenge.challengeType}
