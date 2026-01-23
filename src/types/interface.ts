@@ -67,6 +67,8 @@ export interface OperationRecommendMoreButton {
 export type ChallengeContent = {
   /** 초기화 여부 알려주는 것 */
   initialized: boolean;
+  /** 프로그램 최상단 배너 */
+  intro?: SerializedEditorState;
   /** 상세 설명*/
   mainDescription?: SerializedEditorState;
   /** 커리큘럼 */
