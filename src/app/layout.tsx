@@ -60,10 +60,8 @@ export default function RootLayout({
          j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
          if (f && f.parentNode) {
            f.parentNode.insertBefore(j, f);
-         } else if (d.head) {
-           d.head.appendChild(j);
-         } else if (d.body) {
-           d.body.appendChild(j);
+         } else {
+           (d.head || d.body).appendChild(j);
          }
        })(window, document, 'script', 'dataLayer', 'GTM-NX4BG8CV');`,
           }}
