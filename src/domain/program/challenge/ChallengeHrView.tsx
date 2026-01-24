@@ -4,6 +4,8 @@ import ChallengeTabNavigation from '@/domain/program/challenge/challenge-view/Ch
 import { getChallengeThemeColor } from '@/domain/program/challenge/utils/getChallengeThemeColor';
 import { ChallengeIdPrimitive } from '@/schema';
 import ChallengeBasicInfoSection from './challenge-view/ChallengeBasicInfoSection';
+import HrIntroFeaturesSection from './hr-view/HrIntroFeaturesSection';
+import HrIntroSection from './hr-view/HrIntroSection';
 
 interface Props {
   challenge: ChallengeIdPrimitive;
@@ -17,6 +19,9 @@ const ChallengeHrView = ({ challenge }: Props) => {
       <ChallengeBasicInfoSection challenge={challenge} />
       <ChallengeTabNavigation themeColor={themeColor} />
       <ChallengeIntroEditorContent challenge={challenge} />
+      <HrIntroSection />
+
+      <HrIntroFeaturesSection />
       <ChallengeRecruitmentInfoSection
         challenge={challenge}
         themeColor={themeColor}
