@@ -5,6 +5,7 @@ import { getChallengeThemeColor } from '@/domain/program/challenge/utils/getChal
 import { ChallengeIdPrimitive } from '@/schema';
 import ChallengeBasicInfoSection from './challenge-view/ChallengeBasicInfoSection';
 import HrCheckListSection from './hr-view/HrCheckListSection';
+import HrCurriculumPointsSection from './hr-view/HrCurriculumPointsSection';
 import HrIntroFeaturesSection from './hr-view/HrIntroFeaturesSection';
 import HrIntroSection from './hr-view/HrIntroSection';
 
@@ -23,6 +24,7 @@ const ChallengeHrView = ({ challenge }: Props) => {
       <HrIntroSection />
       <HrIntroFeaturesSection />
       <HrCheckListSection />
+      <HrCurriculumPointsSection challenge={challenge} />
       <ChallengeRecruitmentInfoSection
         challenge={challenge}
         themeColor={themeColor}
