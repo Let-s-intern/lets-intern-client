@@ -268,6 +268,7 @@ export const adminBlogReviewSchema = z
     description: z.string().optional().nullable(),
     url: z.string().optional().nullable(),
     thumbnail: z.string().optional().nullable(),
+    isConfirmed: z.boolean().optional().nullable(),
     isVisible: z.boolean().optional().nullable(),
     phoneNum: z.string().nullish(),
     accountType: z.string().nullish(),
@@ -327,6 +328,7 @@ interface AdminBlogReviewPatchReq {
   name?: string | null;
   url?: string | null;
   postDate?: string | null;
+  isConfirmed?: boolean;
   isVisible?: boolean;
   description?: string | null;
 }
