@@ -1,3 +1,4 @@
+import ChallengeIntroEditorContent from '@/domain/program/challenge/challenge-view/ChallengeIntroEditorContent';
 import ChallengeRecruitmentInfoSection from '@/domain/program/challenge/challenge-view/ChallengeRecruitmentInfoSection';
 import ChallengeTabNavigation from '@/domain/program/challenge/challenge-view/ChallengeTabNavigation';
 import { getChallengeThemeColor } from '@/domain/program/challenge/utils/getChallengeThemeColor';
@@ -15,6 +16,7 @@ const ChallengeHrView = ({ challenge }: Props) => {
     <div className="w-full">
       <ChallengeBasicInfoSection challenge={challenge} />
       <ChallengeTabNavigation themeColor={themeColor} />
+      <ChallengeIntroEditorContent challenge={challenge} />
       <ChallengeRecruitmentInfoSection
         challenge={challenge}
         themeColor={themeColor}
