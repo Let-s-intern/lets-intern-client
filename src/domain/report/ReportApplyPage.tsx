@@ -172,7 +172,7 @@ const ReportApplyPage = () => {
         </main>
       </div>
 
-      <BottomSheet className="mx-auto max-w-[55rem] md:hidden">
+      <BottomSheet variant="footer" className="mx-auto max-w-[55rem] md:hidden">
         <BaseButton
           className="w-full"
           onClick={async () => {

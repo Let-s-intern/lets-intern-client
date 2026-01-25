@@ -63,7 +63,7 @@ const ReportPaymentPage = () => {
       </main>
 
       {/* 모바일 바텀시트 */}
-      <BottomSheet className="mx-auto md:hidden">
+      <BottomSheet variant="footer" className="mx-auto md:hidden">
         <BaseButton
           className="complete_button_click w-full text-small18"
           onClick={() => {
