@@ -96,11 +96,17 @@ class ChannelService {
         s.type = 'text/javascript';
         s.async = true;
         s.src = 'https://cdn.channel.io/plugin/ch-plugin-web.js';
-        const x = document.getElementsByTagName('script')[0];
-        if (x?.parentNode) {
-          x.parentNode.insertBefore(s, x);
-        } else {
-          (document.head || document.body).appendChild(s);
+        const firstScript = document.getElementsByTagName('script')[0];
+        if (firstScript && firstScript.parentNode) {
+          firstScript.parentNode.insertBefore(s, firstScript);
+          return;
+        }
+        if (document.head) {
+          document.head.appendChild(s);
+          return;
+        }
+        if (document.body) {
+          document.body.appendChild(s);
         }
       }
       if (document.readyState === 'complete') {
