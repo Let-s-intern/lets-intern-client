@@ -87,7 +87,7 @@ const CurriculumSteps = ({
 
 const HrCurriculumStepsSection: React.FC = () => {
   return (
-    <section className="mb-[60px] flex w-full scroll-mt-[56px] flex-col items-center gap-[120px] px-5 md:mb-[120px] md:scroll-mt-[60px] md:px-0">
+    <section className="mb-[90px] flex w-full scroll-mt-[56px] flex-col items-center gap-[120px] px-5 md:mb-[120px] md:scroll-mt-[60px] md:px-0">
       {curriculumSteps.map((item, index) => (
         <article key={index} className="w-full max-w-[1440px]">
           <CurriculumSteps index={index + 1} {...item} />

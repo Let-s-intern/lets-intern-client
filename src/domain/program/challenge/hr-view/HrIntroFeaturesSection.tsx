@@ -120,14 +120,14 @@ const HrIntroFeaturesSection: React.FC = () => {
       className="flex scroll-mt-[56px] flex-col items-center pb-[70px] pt-[50px] text-center md:scroll-mt-[60px] md:pb-[82px] md:pt-[141px]"
     >
       <div className="flex flex-col">
-        <div className="text-small16 mb-5 text-neutral-35 md:mt-5 md:text-center md:text-small18">
+        {/* <div className="text-small16 mb-5 text-neutral-35 md:mt-5 md:text-center md:text-small18">
           HR 직무를 준비 하면서 어떤 고민들을 가지고 계셨나요?
         </div>
         <MainTitle className="mb-[180px] flex flex-col items-center gap-1">
           <span>HR/인사 직무 챌린지,</span>
           <span>이런 분들에게 추천드려요</span>
-        </MainTitle>
-        <SectionHeader className="mb-6 md:mb-[42px]">
+        </MainTitle> */}
+        <SectionHeader className="mb-6 w-full text-left md:mb-[42px] md:text-center">
           프로그램 소개
         </SectionHeader>
 
@@ -140,9 +140,9 @@ const HrIntroFeaturesSection: React.FC = () => {
             <span>자기소개서·포트폴리오까지 완성해요!</span>
           </div>
         </MainTitle>
-        <div className="text-small16 mt-3 text-neutral-0 md:mt-5 md:text-center md:text-small18">
-          막연한 HR 관심에서 끝나지 않도록, 직무 탐색부터 경험 정리, 결과물
-          완성까지 함께합니다.
+        <div className="text-small14 mt-3 text-neutral-0 md:mt-5 md:text-center md:text-small18">
+          막연한 HR 관심에서 끝나지 않도록, <br className="md:hidden" /> 직무
+          탐색부터 경험 정리, 결과물 완성까지 함께합니다.
         </div>
       </div>
 
