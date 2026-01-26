@@ -22,6 +22,15 @@ export async function POST(request: NextRequest) {
       return Response.json({ success: true, ignored: true });
     }
 
+    // GTM 스크립트 관련 에러 (Mobile Safari 구버전 캐시 이슈) 무시
+    if (
+      error.message.includes(
+        "null is not an object (evaluating 'b.parentNode')",
+      )
+    ) {
+      return Response.json({ success: true, ignored: true });
+    }
+
     // Error 객체 재구성
     const errorObj = new Error(error.message);
     errorObj.name = error.name || 'Error';
