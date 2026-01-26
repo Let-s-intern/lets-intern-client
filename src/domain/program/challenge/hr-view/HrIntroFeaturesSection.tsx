@@ -117,7 +117,7 @@ const HrIntroFeaturesSection: React.FC = () => {
   return (
     <section
       id="intro"
-      className="flex flex-col items-center pb-[70px] pt-[50px] text-center md:pb-[82px] md:pt-[141px]"
+      className="flex scroll-mt-[56px] flex-col items-center pb-[70px] pt-[50px] text-center md:scroll-mt-[60px] md:pb-[82px] md:pt-[141px]"
     >
       <div className="flex flex-col">
         <div className="text-small16 mb-5 text-neutral-35 md:mt-5 md:text-center md:text-small18">
