@@ -17,8 +17,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // React 에러 #418 (hydration 에러)는 webhook으로 전송하지 않음
-    if (error.message.includes('Minified React error #418')) {
+    // 무시할 에러 메시지 목록
+    const IGNORED_ERROR_MESSAGES = [
+      'Minified React error #418', // React hydration error
+      "null is not an object (evaluating 'b.parentNode')", // GTM script error in Mobile Safari
+    ];
+
+    if (IGNORED_ERROR_MESSAGES.some((msg) => error.message.includes(msg))) {
       return Response.json({ success: true, ignored: true });
     }
 
