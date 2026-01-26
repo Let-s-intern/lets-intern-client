@@ -73,6 +73,8 @@ export type ChallengeContent = {
   mainDescription?: SerializedEditorState;
   /** 커리큘럼 */
   curriculum?: ChallengeCurriculum[];
+  /** 커리큘럼 상세 일정 이미지 */
+  curriculumImage?: string;
   /** 챌린지 POINT */
   challengePoint: ChallengePoint;
   /** 블로그 후기 */

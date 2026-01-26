@@ -381,6 +381,7 @@ const ChallengeCreate: React.FC = () => {
       <ChallengeCurriculum
         curriculum={content.curriculum}
         setContent={setContent}
+        curriculumImage={content.curriculumImage}
       />
 
       <ProgramBestReview
