@@ -3,6 +3,7 @@ import { ChallengeIdPrimitive } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import { useMemo } from 'react';
 import MainTitle from '../ui/MainTitle';
+import HrCurriculumCalendar from './HrCurriculumCalendar';
 import HrCurriculums from './HrCurriculums';
 interface HrCurriculumSectionProps {
   challenge: ChallengeIdPrimitive;
@@ -47,6 +48,10 @@ const HrCurriculumSection: React.FC<HrCurriculumSectionProps> = ({
       <HrCurriculums
         curriculum={receivedContent.curriculum}
         content={receivedContent}
+      />
+      <HrCurriculumCalendar
+        challenge={challenge}
+        curriculumImage={receivedContent.curriculumImage}
       />
     </section>
   );
