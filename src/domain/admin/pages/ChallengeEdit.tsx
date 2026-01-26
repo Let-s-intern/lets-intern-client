@@ -488,6 +488,7 @@ const ChallengeEdit: React.FC = () => {
       <ChallengeCurriculumEditor
         curriculum={content.curriculum}
         setContent={setContent}
+        curriculumImage={content.curriculumImage}
       />
 
       <ProgramBestReview

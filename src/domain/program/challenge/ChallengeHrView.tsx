@@ -6,6 +6,7 @@ import { ChallengeIdPrimitive } from '@/schema';
 import ChallengeBasicInfoSection from './challenge-view/ChallengeBasicInfoSection';
 import HrCheckListSection from './hr-view/HrCheckListSection';
 import HrCurriculumPointsSection from './hr-view/HrCurriculumPointsSection';
+import HrCurriculumSection from './hr-view/HrCurriculumSection';
 import HrCurriculumStepsSection from './hr-view/HrCurriculumStepsSection';
 import HrIntroFeaturesSection from './hr-view/HrIntroFeaturesSection';
 import HrIntroSection from './hr-view/HrIntroSection';
@@ -26,6 +27,7 @@ const ChallengeHrView = ({ challenge }: Props) => {
       <HrCheckListSection />
       <HrCurriculumPointsSection challenge={challenge} />
       <HrCurriculumStepsSection />
+      <HrCurriculumSection />
       <ChallengeRecruitmentInfoSection
         challenge={challenge}
         themeColor={themeColor}
