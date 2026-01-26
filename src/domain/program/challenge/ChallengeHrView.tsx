@@ -27,7 +27,7 @@ const ChallengeHrView = ({ challenge }: Props) => {
       <HrCheckListSection />
       <HrCurriculumPointsSection challenge={challenge} />
       <HrCurriculumStepsSection />
-      <HrCurriculumSection />
+      <HrCurriculumSection challenge={challenge} />
       <ChallengeRecruitmentInfoSection
         challenge={challenge}
         themeColor={themeColor}
