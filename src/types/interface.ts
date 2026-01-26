@@ -28,11 +28,14 @@ export type ChallengePoint = {
 
 export type ChallengeCurriculum = {
   id: string;
+  week?: string; // 주차
   startDate: string;
   endDate: string;
   session: string; // 회차
   title: string;
   content: string; // 내용
+  contentImg?: string; // 로고 이미지
+  contentHighlightColor?: 'none' | 'gray' | 'accent'; // 내용 강조
 };
 
 export type ProgramBlogReview = {
@@ -77,6 +80,15 @@ export type ChallengeContent = {
   curriculumImage?: string;
   /** 챌린지 POINT */
   challengePoint: ChallengePoint;
+  /** 주차 설정 사용 여부 */
+  useWeekSettings?: boolean;
+  /** 주차별 제목 및 날짜 */
+  weekTitles?: {
+    week: string;
+    weekTitle: string;
+    startDate?: string;
+    endDate?: string;
+  }[];
   /** 블로그 후기 */
   blogReview?: ProgramBlogReview;
   /**  후기 */
