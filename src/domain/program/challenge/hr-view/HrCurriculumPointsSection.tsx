@@ -52,11 +52,11 @@ const CurriculumCard = ({
   index: number;
 }) => {
   return (
-    <div className="relative flex w-full min-w-[320px] flex-1 flex-col items-center justify-center rounded-xs bg-[#f3f3f3] p-4 md:rounded-sm md:px-[25px] md:py-8">
+    <div className="relative flex w-full min-w-[320px] flex-1 flex-col items-center justify-center gap-2 rounded-xs bg-[#f3f3f3] px-[25px] py-[27px] md:rounded-sm">
       <span className="w-full items-center justify-center text-center text-xsmall14 font-semibold text-[#FF5E00] md:-top-7 md:px-4 md:text-small18">
         Point {index}
       </span>
-      <div className="mt-0.5 flex flex-col items-center justify-center gap-10 text-neutral-0 md:gap-[47px]">
+      <div className="gap-[47px]text-neutral-0 flex flex-col items-center justify-center gap-10 md:gap-[47px]">
         <div className="text-small20 font-bold md:text-medium24">{title}</div>
         <div className="text-xsmall14 text-neutral-40 md:text-small18">
           {description}
@@ -86,17 +86,18 @@ const HrCurriculumPointsSection: React.FC<HrCurriculumPointsSectionProps> = ({
 
   return (
     <section className="flex flex-col items-center pb-[70px] pt-[50px] text-center md:pb-[82px] md:pt-[141px]">
-      <MainTitle className="flex flex-col items-center gap-1">
+      <MainTitle className="flex flex-col items-center">
         <span>누적 5,000건 이상의 피드백,</span>
         <span>100+회 챌린지 운영 노하우를 집약헤</span>
         <div>
           <span className="text-[#FF5E00]">단 {weekText} 만에 끝내는 </span>
+          <br className="md:hidden" />
           <span>실전형 커리큘럼을 설계했습니다.</span>
         </div>
       </MainTitle>
 
       {/* 카드 섹션 */}
-      <div className="mt-[54px] flex w-full max-w-[1090px] flex-col gap-7 px-5 md:mt-16 md:mt-8 md:flex-row md:gap-5 md:px-0">
+      <div className="mt-[54px] flex w-full max-w-[1090px] flex-col gap-7 px-5 md:flex-row md:gap-5 md:px-0">
         {curriculumCards.map((item, index) => (
           <CurriculumCard key={index} index={index + 1} {...item} />
         ))}
