@@ -12,6 +12,7 @@ import HrDifferentiatorsSection from './hr-view/HrDifferentiatorsSection';
 import HrIntroFeaturesSection from './hr-view/HrIntroFeaturesSection';
 import HrIntroSection from './hr-view/HrIntroSection';
 import HrOverviewSection from './hr-view/HrOverviewSection';
+import HrReviewSection from './hr-view/HrReviewSection';
 interface Props {
   challenge: ChallengeIdPrimitive;
 }
@@ -32,6 +33,7 @@ const ChallengeHrView = ({ challenge }: Props) => {
       <HrCurriculumSection challenge={challenge} />
       <HrOverviewSection />
       <HrDifferentiatorsSection />
+      <HrReviewSection challenge={challenge} />
       <ChallengeRecruitmentInfoSection
         challenge={challenge}
         themeColor={themeColor}
