@@ -1,5 +1,4 @@
 import ChallengeIntroEditorContent from '@/domain/program/challenge/challenge-view/ChallengeIntroEditorContent';
-import ChallengeRecruitmentInfoSection from '@/domain/program/challenge/challenge-view/ChallengeRecruitmentInfoSection';
 import ChallengeTabNavigation from '@/domain/program/challenge/challenge-view/ChallengeTabNavigation';
 import { getChallengeThemeColor } from '@/domain/program/challenge/utils/getChallengeThemeColor';
 import { ChallengeIdPrimitive } from '@/schema';
@@ -12,6 +11,7 @@ import HrDifferentiatorsSection from './hr-view/HrDifferentiatorsSection';
 import HrIntroFeaturesSection from './hr-view/HrIntroFeaturesSection';
 import HrIntroSection from './hr-view/HrIntroSection';
 import HrOverviewSection from './hr-view/HrOverviewSection';
+import HrRecruitmentInfoSection from './hr-view/HrRecruitmentInfoSection';
 import HrReviewSection from './hr-view/HrReviewSection';
 interface Props {
   challenge: ChallengeIdPrimitive;
@@ -33,11 +33,8 @@ const ChallengeHrView = ({ challenge }: Props) => {
       <HrCurriculumSection challenge={challenge} />
       <HrOverviewSection />
       <HrDifferentiatorsSection />
+      <HrRecruitmentInfoSection challenge={challenge} />
       <HrReviewSection challenge={challenge} />
-      <ChallengeRecruitmentInfoSection
-        challenge={challenge}
-        themeColor={themeColor}
-      />
     </div>
   );
 };
