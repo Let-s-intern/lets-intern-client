@@ -46,13 +46,15 @@ const CurriculumCard = ({
   title,
   description,
   index,
+  showArrow,
 }: {
   title: string;
   description: ReactNode;
   index: number;
+  showArrow: boolean;
 }) => {
   return (
-    <div className="relative flex w-full min-w-[320px] flex-1 flex-col items-center justify-center gap-2 rounded-xs bg-[#f3f3f3] px-[25px] py-[27px] md:rounded-sm">
+    <div className="relative flex w-full min-w-[320px] flex-1 flex-col items-center justify-center gap-2 rounded-md bg-[#f3f3f3] px-[25px] py-[27px] md:rounded-sm">
       <span className="w-full items-center justify-center text-center text-xsmall14 font-semibold text-[#FF5E00] md:-top-7 md:px-4 md:text-small18">
         Point {index}
       </span>
@@ -62,6 +64,14 @@ const CurriculumCard = ({
           {description}
         </div>
       </div>
+      {showArrow && (
+        <img
+          src="/images/hr-double-arrow.svg"
+          alt=""
+          aria-hidden="true"
+          className="absolute -right-10 z-10 hidden md:block md:h-[60px] md:w-[60px]"
+        />
+      )}
     </div>
   );
 };
@@ -79,7 +89,7 @@ const HrCurriculumPointsSection: React.FC<HrCurriculumPointsSectionProps> = ({
     <section className="flex flex-col items-center pb-[70px] pt-[50px] text-center md:pb-[82px] md:pt-[141px]">
       <MainTitle className="flex flex-col items-center">
         <span>누적 5,000건 이상의 피드백,</span>
-        <span>100+회 챌린지 운영 노하우를 집약헤</span>
+        <span>100+회 챌린지 운영 노하우를 집약해</span>
         <div>
           <span className="text-[#FF5E00]">단 {weekText} 만에 끝내는 </span>
           <br className="md:hidden" />
@@ -90,7 +100,12 @@ const HrCurriculumPointsSection: React.FC<HrCurriculumPointsSectionProps> = ({
       {/* 카드 섹션 */}
       <div className="mt-[54px] flex w-full max-w-[1090px] flex-col gap-7 px-5 md:flex-row md:gap-5 md:px-0">
         {curriculumCards.map((item, index) => (
-          <CurriculumCard key={index} index={index + 1} {...item} />
+          <CurriculumCard
+            key={index}
+            index={index + 1}
+            showArrow={index < curriculumCards.length - 1}
+            {...item}
+          />
         ))}
       </div>
     </section>

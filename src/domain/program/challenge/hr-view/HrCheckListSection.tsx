@@ -49,7 +49,7 @@ function Badge({
 }) {
   return (
     <span
-      className="absolute -top-5 left-6 z-10 -rotate-12 rounded-sm bg-[#FF7F27] px-4 py-1 text-xsmall14 font-semibold text-white md:px-4 md:text-small20"
+      className="absolute -top-5 left-4 z-10 -rotate-12 rounded-sm bg-[#FF7F27] px-4 py-1 text-xsmall14 font-semibold text-white md:left-6 md:px-4 md:text-small20"
       style={style}
     >
       {children}
@@ -65,18 +65,25 @@ function CheckList({
   className?: string;
 }) {
   return (
-    <div className={twMerge('flex w-full gap-4 md:items-center', className)}>
+    <div
+      className={twMerge(
+        'flex w-full gap-2 text-left md:items-center md:gap-4',
+        className,
+      )}
+    >
       <div className="shrink-0">
         <Image
           src="/images/hr-checkbox.svg"
           alt=""
           width={37}
           height={37}
-          className="h-6 w-6 md:h-[37px] md:w-[37px]"
+          className="h-5 w-5 md:h-[37px] md:w-[37px]"
           aria-hidden="true"
         />
       </div>
-      <div className="flex flex-col md:flex-row md:gap-1">{children}</div>
+      <div className="flex flex-col tracking-tight md:flex-row md:gap-1">
+        {children}
+      </div>
     </div>
   );
 }
@@ -87,7 +94,7 @@ const HrCheckListSection: React.FC = () => {
 
   return (
     <section className="flex flex-col items-center bg-[#FFFAF7] pb-[70px] pt-[50px] text-center md:pb-[142px] md:pt-[88px]">
-      <div className="flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
+      <div className="flex w-full max-w-[320px] flex-col md:max-w-[1000px] md:px-10 lg:px-0">
         <div className="flex w-full flex-col gap-16 md:gap-32 md:px-16">
           {checkList.map((item, index) => (
             <div
@@ -107,7 +114,7 @@ const HrCheckListSection: React.FC = () => {
                   </span>
                 ))}
               </Box>
-              <div className="flex w-fit flex-col gap-5 px-5 md:items-center md:px-0">
+              <div className="flex w-fit flex-col gap-5 px-0 md:items-center">
                 {item.content.map((group) => (
                   <CheckList
                     key={group[0]}
@@ -118,7 +125,7 @@ const HrCheckListSection: React.FC = () => {
                     {group.map((ele) => (
                       <span
                         key={ele}
-                        className="shrink-0 text-xsmall14 text-neutral-35 xs:text-xsmall16 md:text-small20"
+                        className="shrink-0 text-xsmall14 text-neutral-35 xs:text-xsmall14 md:text-small20"
                       >
                         {ele}
                       </span>

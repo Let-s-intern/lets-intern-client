@@ -50,7 +50,7 @@ const Label = ({
 }) => {
   return (
     <span
-      className="text-xsmall14 font-semibold md:text-xsmall16"
+      className="text-xsmall16 font-semibold md:text-xsmall16"
       style={{ color: themeColor }}
     >
       {children}
@@ -91,7 +91,7 @@ const PriceView = ({
     : null;
 
   return (
-    <div className="flex shrink-0 flex-col items-end text-right">
+    <div className="mt-5 flex shrink-0 flex-col text-left md:mt-0 md:items-end md:text-right">
       {hasDiscount && percent && (
         <span className="inline-flex gap-1 text-xsmall14">
           <span className="font-semibold text-system-error/90">{percent}%</span>
@@ -124,9 +124,7 @@ const PlanBenefits = ({
     <ul className="mt-3 space-y-1.5 text-left text-xsmall16 text-[#606060]">
       {lines.map((line) => (
         <li key={line} className="flex items-start gap-1.5">
-          <span
-            className={twMerge('text-xsmall14 text-[#606060] md:text-xsmall16')}
-          >
+          <span className={twMerge('text-[#606060] md:text-xsmall16')}>
             {isBasic ? '✓' : '+'}
           </span>
           <span className="whitespace-pre-line">{line}</span>
@@ -134,9 +132,7 @@ const PlanBenefits = ({
       ))}
       {!isBasic && (
         <li className="flex items-start gap-1.5">
-          <span className="text-xsmall14 text-[#606060] md:text-xsmall16">
-            +
-          </span>
+          <span className="text-[#606060] md:text-xsmall16">+</span>
           <span className="whitespace-pre-line">
             베이직에서 제공되는 모든 사항 포함
           </span>
