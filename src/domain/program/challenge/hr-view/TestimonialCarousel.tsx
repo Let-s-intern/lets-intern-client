@@ -78,7 +78,7 @@ const TestimonialCarousel: React.FC<Props> = ({ reviews }) => {
         spaceBetween={12}
         slidesPerView="auto"
         centeredSlides={isMobile ? true : false}
-        freeMode={true}
+        freeMode={false}
         initialSlide={0}
         mousewheel={true}
         scrollbar={true}
