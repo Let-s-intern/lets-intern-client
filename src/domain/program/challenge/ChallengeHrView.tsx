@@ -8,6 +8,7 @@ import HrCurriculumPointsSection from './hr-view/HrCurriculumPointsSection';
 import HrCurriculumSection from './hr-view/HrCurriculumSection';
 import HrCurriculumStepsSection from './hr-view/HrCurriculumStepsSection';
 import HrDifferentiatorsSection from './hr-view/HrDifferentiatorsSection';
+import HrFAQSection from './hr-view/HrFAQSection';
 import HrIntroFeaturesSection from './hr-view/HrIntroFeaturesSection';
 import HrIntroSection from './hr-view/HrIntroSection';
 import HrOverviewSection from './hr-view/HrOverviewSection';
@@ -35,6 +36,7 @@ const ChallengeHrView = ({ challenge }: Props) => {
       <HrDifferentiatorsSection />
       <HrRecruitmentInfoSection challenge={challenge} />
       <HrReviewSection challenge={challenge} />
+      <HrFAQSection challenge={challenge} />
     </div>
   );
 };
