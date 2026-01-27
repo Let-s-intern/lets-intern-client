@@ -99,8 +99,9 @@ export const Contents = () => {
             HR 직무 이해 미션
           </h3>
           <p className="text-xsmall14 text-neutral-85 md:text-small20">
-            HR 세부 직무를 중심으로 조직 안에서 HR이 맡는 역할과 업무 흐름을
-            단계적으로 학습해요
+            HR 세부 직무를 중심으로 조직 안에서 HR이{' '}
+            <br className="md:hidden" /> 맡는 역할과 업무 흐름을 단계적으로
+            학습해요
           </p>
         </div>
         <div className="hidden shrink-0 md:block">

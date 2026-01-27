@@ -92,7 +92,7 @@ const HrCurriculumCalendar = ({ challenge, curriculumImage }: Props) => {
   ];
 
   return (
-    <section className="flex w-full flex-col items-center bg-[#FFF7F2] pt-[60px] md:px-0 md:pb-[140px] md:pt-[100px]">
+    <section className="flex w-full flex-col items-center bg-[#FFF7F2] pt-[60px] md:px-0 md:pb-[104px] md:pt-[100px]">
       <h2 className="mb-5 text-center text-[14px] font-bold md:mb-[60px] md:text-medium24 md:font-semibold">
         한눈에 보는 {'['} {challenge.title ?? ''} {']'} 일정
       </h2>

@@ -213,7 +213,21 @@ function ChallengePriceInfoContent({
           >
             이번 챌린지로 모든걸 얻어갈 수 있어요!
           </span>
-          <p className="mt-1.5 whitespace-pre-line">{activeDescription}</p>
+          <div className="mt-1.5 flex flex-col gap-1.5">
+            {activeDescription
+              .split('\n')
+              .filter((line) => line.trim())
+              .map((line, index) => (
+                <div key={index} className="flex items-start gap-1.5">
+                  <span className="text-xsmall14 text-[#606060] md:text-xsmall16">
+                    ✓
+                  </span>
+                  <p className="text-xsmall14 md:text-xsmall16">
+                    {line.trim()}
+                  </p>
+                </div>
+              ))}
+          </div>
         </div>
       </div>
 
