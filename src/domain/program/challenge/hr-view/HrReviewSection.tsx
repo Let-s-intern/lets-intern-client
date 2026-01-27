@@ -1,5 +1,6 @@
 import SectionHeader from '@/common/header/SectionHeader';
 import { ChallengeIdPrimitive } from '@/schema';
+import { parseChallengeContent } from '@/domain/program/challenge/utils/parseChallengeContent';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
@@ -11,15 +12,8 @@ interface Props {
 }
 
 const HrReviewSection: React.FC<Props> = ({ challenge }) => {
-  const descParsed = (() => {
-    try {
-      return JSON.parse(challenge.desc || '{}');
-    } catch {
-      return {};
-    }
-  })();
-
-  const reviews = descParsed.challengeReview || [];
+  const content = parseChallengeContent(challenge.desc);
+  const reviews = content?.challengeReview || [];
 
   return (
     <section
@@ -50,7 +44,7 @@ const HrReviewSection: React.FC<Props> = ({ challenge }) => {
         </div>
         <button
           type="button"
-          className="z-1 relative flex w-[272px] items-center justify-center gap-2 rounded-sm bg-[#F55A00] px-5 py-4 text-center text-xsmall16 font-semibold text-white md:w-[320px] md:w-auto md:text-medium22"
+          className="z-1 relative flex w-[272px] items-center justify-center gap-2 rounded-sm bg-[#F55A00] px-5 py-4 text-center text-xsmall16 font-semibold text-white md:w-[320px] md:text-medium22"
         >
           더 다양한 후기 보러가기
           <div className="relative h-5 w-5 md:h-6 md:w-6">

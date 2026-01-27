@@ -1,5 +1,5 @@
+import { parseChallengeContent } from '@/domain/program/challenge/utils/parseChallengeContent';
 import { ChallengeIdPrimitive } from '@/schema';
-import { ChallengeContent } from '@/types/interface';
 import { ReactNode, useMemo } from 'react';
 import MainTitle from '../ui/MainTitle';
 interface HrCurriculumPointsSectionProps {
@@ -69,20 +69,11 @@ const CurriculumCard = ({
 const HrCurriculumPointsSection: React.FC<HrCurriculumPointsSectionProps> = ({
   challenge,
 }) => {
-  const receivedContent = useMemo<ChallengeContent>(() => {
-    if (!challenge?.desc) {
-      return { initialized: false };
-    }
-    try {
-      return JSON.parse(challenge.desc);
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(e);
-      return { initialized: false };
-    }
+  const receivedContent = useMemo(() => {
+    return parseChallengeContent(challenge.desc);
   }, [challenge.desc]);
 
-  const weekText = receivedContent.challengePoint?.weekText || '3주';
+  const weekText = receivedContent?.challengePoint?.weekText || '3주';
 
   return (
     <section className="flex flex-col items-center pb-[70px] pt-[50px] text-center md:pb-[82px] md:pt-[141px]">

@@ -1,6 +1,6 @@
 import SectionHeader from '@/common/header/SectionHeader';
 import { ChallengeIdPrimitive } from '@/schema';
-import { ChallengeContent } from '@/types/interface';
+import { parseChallengeContent } from '@/domain/program/challenge/utils/parseChallengeContent';
 import { useMemo } from 'react';
 import MainTitle from '../ui/MainTitle';
 import HrCurriculumCalendar from './HrCurriculumCalendar';
@@ -12,20 +12,15 @@ interface HrCurriculumSectionProps {
 const HrCurriculumSection: React.FC<HrCurriculumSectionProps> = ({
   challenge,
 }) => {
-  const receivedContent = useMemo<ChallengeContent>(() => {
-    if (!challenge?.desc) {
-      return { initialized: false };
-    }
-    try {
-      return JSON.parse(challenge.desc);
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(e);
-      return { initialized: false };
-    }
+  const receivedContent = useMemo(() => {
+    return parseChallengeContent(challenge.desc);
   }, [challenge.desc]);
 
-  if (!receivedContent.curriculum || receivedContent.curriculum.length === 0) {
+  if (
+    !receivedContent ||
+    !receivedContent.curriculum ||
+    receivedContent.curriculum.length === 0
+  ) {
     return null;
   }
 
