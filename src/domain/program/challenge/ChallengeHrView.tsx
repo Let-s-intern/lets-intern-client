@@ -8,8 +8,10 @@ import HrCheckListSection from './hr-view/HrCheckListSection';
 import HrCurriculumPointsSection from './hr-view/HrCurriculumPointsSection';
 import HrCurriculumSection from './hr-view/HrCurriculumSection';
 import HrCurriculumStepsSection from './hr-view/HrCurriculumStepsSection';
+import HrDifferentiatorsSection from './hr-view/HrDifferentiatorsSection';
 import HrIntroFeaturesSection from './hr-view/HrIntroFeaturesSection';
 import HrIntroSection from './hr-view/HrIntroSection';
+import HrOverviewSection from './hr-view/HrOverviewSection';
 interface Props {
   challenge: ChallengeIdPrimitive;
 }
@@ -28,6 +30,8 @@ const ChallengeHrView = ({ challenge }: Props) => {
       <HrCurriculumPointsSection challenge={challenge} />
       <HrCurriculumStepsSection />
       <HrCurriculumSection challenge={challenge} />
+      <HrOverviewSection />
+      <HrDifferentiatorsSection />
       <ChallengeRecruitmentInfoSection
         challenge={challenge}
         themeColor={themeColor}
