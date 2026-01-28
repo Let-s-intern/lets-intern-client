@@ -21,26 +21,15 @@ interface Props {
   reviews: ReviewItem[];
 }
 
-const HIGHLIGHT_KEYWORD = '내용';
-
 const TestimonialCard = ({
   title,
   content,
-  highlights = [],
   meta,
 }: {
   title: string;
   content: string;
-  highlights?: string[];
   meta: string;
 }) => {
-  const highlightedContent = highlights.reduce((acc, phrase) => {
-    return acc.replace(
-      phrase,
-      `<span class="text-[#F55A00] font-semibold">${phrase}</span>`,
-    );
-  }, content);
-
   return (
     <div className="min-h-[282px] w-[300px] rounded-xs bg-static-100 p-5 shadow-sm md:w-[371px] md:rounded-sm">
       <div className="mb-3 flex w-fit items-center rounded-xs bg-[#FEEEE5] px-2 py-1.5">
@@ -88,9 +77,6 @@ const TestimonialCarousel: React.FC<Props> = ({ reviews }) => {
         className="w-full"
       >
         {reviews.map((item, idx) => {
-          const highlights = item.content.includes(HIGHLIGHT_KEYWORD)
-            ? [HIGHLIGHT_KEYWORD]
-            : [];
           const meta = `${maskingName(item.name)} / ${item.passedState}`;
 
           return (
@@ -98,7 +84,6 @@ const TestimonialCarousel: React.FC<Props> = ({ reviews }) => {
               <TestimonialCard
                 title={item.title}
                 content={item.content}
-                highlights={highlights}
                 meta={meta}
               />
             </SwiperSlide>
