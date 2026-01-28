@@ -1,8 +1,20 @@
 import { ReactNode } from 'react';
+import { parseChallengeContent } from '@/domain/program/challenge/utils/parseChallengeContent';
+import { ChallengeIdPrimitive } from '@/schema';
 import MainTitle from '../ui/MainTitle';
 import { Contents, Portfolio, Seminar } from './CurriculumSteps';
 
-const curriculumSteps = [
+type HrCurriculumStepsSectionProps = {
+  challenge: ChallengeIdPrimitive;
+};
+
+const curriculumSteps = (lectures?: Array<{
+  topic: string;
+  mentorImage: string;
+  mentorName: string;
+  schedule: string;
+  companyLogo: string;
+}>) => [
   {
     title: 'HR 직무를 이해하는 학습 콘텐츠',
     description: (
@@ -27,7 +39,7 @@ const curriculumSteps = [
         HR 직무 준비의 완성도를 한 단계 올려보세요
       </>
     ),
-    visualExplanation: <Seminar />,
+    visualExplanation: <Seminar lectures={lectures} />,
   },
   {
     title: (
@@ -85,10 +97,15 @@ const CurriculumSteps = ({
   );
 };
 
-const HrCurriculumStepsSection: React.FC = () => {
+const HrCurriculumStepsSection: React.FC<HrCurriculumStepsSectionProps> = ({
+  challenge,
+}) => {
+  const content = parseChallengeContent(challenge.desc);
+  const lectures = content?.lectures;
+
   return (
     <section className="mb-[90px] flex w-full scroll-mt-[56px] flex-col items-center gap-[120px] px-5 md:mb-[120px] md:scroll-mt-[60px] md:px-0">
-      {curriculumSteps.map((item, index) => (
+      {curriculumSteps(lectures).map((item, index) => (
         <article key={index} className="w-full max-w-[1440px]">
           <CurriculumSteps index={index + 1} {...item} />
         </article>
