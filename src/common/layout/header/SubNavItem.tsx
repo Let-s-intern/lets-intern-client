@@ -21,7 +21,7 @@ function SubNavItem({
       className={twMerge(
         `h-[40px] w-[172px] whitespace-nowrap bg-white px-2.5 py-2.5 text-xsmall14 text-neutral-0 hover:bg-neutral-80 ${active ? 'font-semibold' : 'font-medium'}`,
         className,
-        align === 'right' ? 'w-[120px]' : 'w-[172px]',
+        align === 'right' ? 'w-[120px]' : 'w-[184px]',
       )}
       href={href}
       onClick={onClick}
