@@ -45,6 +45,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
+import ChallengeLecture from '../program/ChallengeLecture';
 import ChallengeFaqCategory from './program/ChallengeFaqCategory';
 import ChallengeMentorRegistrationSection from './program/ChallengeMentorRegistrationSection';
 import ProgramSchedule from './program/ProgramSchedule';
@@ -305,6 +306,16 @@ const ChallengeEdit: React.FC = () => {
       challengeMentorData?.mentorList.map((item) => item.userId) ?? [];
   }, [challengeMentorData]);
 
+  useEffect(() => {
+    // challengeType 초기값 설정
+    if (challenge?.challengeType && !input.challengeType) {
+      setInput((prev) => ({
+        ...prev,
+        challengeType: challenge.challengeType,
+      }));
+    }
+  }, [challenge?.challengeType]);
+
   if (!challenge || !content.initialized) {
     return <div>loading...</div>;
   }
@@ -462,6 +473,14 @@ const ChallengeEdit: React.FC = () => {
           challengePoint={content.challengePoint}
           setContent={setContent}
         />
+
+        {input.challengeType && (
+          <ChallengeLecture
+            challengeType={input.challengeType}
+            content={content}
+            setContent={setContent}
+          />
+        )}
 
         <Heading3>상세 설명 (특별 챌린지 및 합격자 후기)</Heading3>
         <EditorApp
