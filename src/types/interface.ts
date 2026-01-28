@@ -101,6 +101,14 @@ export type ChallengeContent = {
   operationRecommendProgram?: ProgramRecommend;
   /** 챌린지 운영: 더보기 버튼 정보 */
   operationRecommendMoreButton?: OperationRecommendMoreButton;
+  /** 강의 정보 (HR 챌린지 등) */
+  lectures?: {
+    topic: string; // 강의 주제 (정적값)
+    mentorImage: string; // 멘토 이미지 URL
+    mentorName: string; // 멘토명
+    schedule: string; // 강의 일정
+    companyLogo: string; // 소속 로고 이미지 URL
+  }[];
 };
 
 export type LiveContent = {

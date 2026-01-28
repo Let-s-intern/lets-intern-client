@@ -35,6 +35,7 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
+import ChallengeLecture from '../program/ChallengeLecture';
 import ChallengeFaqCategory from './program/ChallengeFaqCategory';
 import ChallengeMentorRegistrationSection from './program/ChallengeMentorRegistrationSection';
 import ProgramSchedule from './program/ProgramSchedule';
@@ -356,6 +357,14 @@ const ChallengeCreate: React.FC = () => {
           challengePoint={content.challengePoint}
           setContent={setContent}
         />
+
+        {input.challengeType && (
+          <ChallengeLecture
+            challengeType={input.challengeType}
+            content={content}
+            setContent={setContent}
+          />
+        )}
 
         <Heading3>상세 설명</Heading3>
         <EditorApp
