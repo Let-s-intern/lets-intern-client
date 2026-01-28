@@ -12,19 +12,21 @@ import { PROGRAM_FAQ_ID } from '../../ProgramDetailNavigation';
 const superTitle = '자주 묻는 질문';
 const title = '궁금한 점이 있으신가요?';
 
-const { PORTFOLIO, CAREER_START, ETC, EXPERIENCE_SUMMARY } =
+const { PORTFOLIO, CAREER_START, ETC, EXPERIENCE_SUMMARY, HR } =
   challengeTypeSchema.enum;
 
 interface ChallengeFaqProps {
   faqData?: faqSchemaType;
   faqCategory: ChallengeContent['faqCategory'];
   challengeType: ChallengeType;
+  headerColorOverride?: string;
 }
 
 function ChallengeFaq({
   faqData,
   faqCategory,
   challengeType,
+  headerColorOverride,
 }: ChallengeFaqProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -44,6 +46,12 @@ function ChallengeFaq({
           primaryColor: challengeColors._4A76FF,
           primaryLightColor: challengeColors.F0F4FF,
           borderColor: challengeColors.ADC3FF,
+        };
+      case HR:
+        return {
+          primaryColor: '#FF5E00',
+          primaryLightColor: '#FEEEE5',
+          borderColor: '#FF5E00',
         };
       case EXPERIENCE_SUMMARY:
         return {
@@ -67,6 +75,8 @@ function ChallengeFaq({
     }
   }, [challengeType]);
 
+  const headerColor = headerColorOverride ?? styles.primaryColor;
+
   if (!faqList) return <></>;
 
   return (
@@ -76,7 +86,7 @@ function ChallengeFaq({
     >
       <SuperTitle
         className="mb-6 text-neutral-45 md:mb-12"
-        style={{ color: styles.primaryColor }}
+        style={{ color: headerColor }}
       >
         FAQ
       </SuperTitle>
@@ -86,7 +96,7 @@ function ChallengeFaq({
       <Heading2 className="mb-10 md:mb-20">{title}</Heading2>
 
       {/* 카테고리 */}
-      <div className="mb-8 flex items-center gap-x-2.5 gap-y-3 md:mb-20">
+      <div className="mb-8 flex max-w-[900px] flex-wrap items-center justify-center gap-x-2.5 gap-y-3 md:mb-20">
         {categoryList?.map((category, index) => (
           <FaqCategory
             key={category}

@@ -24,7 +24,7 @@ export const curriculums = [
             className="bg-[#FFF3F2]"
             companyImg="corpuniv.png"
             role="대학내일 AE"
-            date="| 1/24 (온라인)"
+            date="| 1/24 오전 11시 (온라인)"
             description={
               <>
                 대학내일ES, 이런 포트폴리오를 기다려요. <br />
@@ -86,7 +86,7 @@ export const curriculums = [
             className="bg-[#FFF0F4]"
             companyImg="nol.png"
             role="놀유니버스 마케팅 전략 담당"
-            date="| 1/31 (온라인)"
+            date="| 1/31 오후 8시 (온라인)"
             description={
               <>
                 IT 스타트업 현직 마케터와 함께 <br />
@@ -145,7 +145,7 @@ export const curriculums = [
           <Highlight
             companyImg="class101.png"
             role="Class 101 콘텐츠 마케터"
-            date="| 2/7 (온라인) "
+            date="| 2/7 오전 11시 (온라인) "
             description={
               <>
                 현직 콘텐츠 마케터와 함께 <br className="hidden md:block" />
@@ -205,7 +205,7 @@ export const curriculums = [
             className="bg-[#E9F4FF] md:mt-0"
             companyImg="cashnote.png"
             role="캐시노트 그로스 마케터"
-            date="| 2/14 (온라인)"
+            date="| 2/14 오후 8시 (온라인)"
             description={
               <>
                 현직 마케터가 들려주는 그로스 마케팅의 A-Z,

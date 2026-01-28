@@ -126,6 +126,25 @@ export default function AdminBlogReviewListPage() {
       editable: true,
     },
     {
+      field: 'isConfirmed',
+      headerName: '운영진확인',
+      sortable: false,
+      width: 80,
+      type: 'boolean',
+      renderCell: (params: GridRenderCellParams<Row, boolean>) => (
+        <Checkbox
+          checked={params.value}
+          onChange={async () => {
+            const { blogReviewId } = params.row;
+            await patchReview.mutateAsync({
+              blogReviewId,
+              isConfirmed: !params.value,
+            });
+          }}
+        />
+      ),
+    },
+    {
       field: 'isVisible',
       headerName: '노출여부',
       sortable: false,

@@ -45,6 +45,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
+import ChallengeLecture from '../program/ChallengeLecture';
 import ChallengeFaqCategory from './program/ChallengeFaqCategory';
 import ChallengeMentorRegistrationSection from './program/ChallengeMentorRegistrationSection';
 import ProgramSchedule from './program/ProgramSchedule';
@@ -305,6 +306,16 @@ const ChallengeEdit: React.FC = () => {
       challengeMentorData?.mentorList.map((item) => item.userId) ?? [];
   }, [challengeMentorData]);
 
+  useEffect(() => {
+    // challengeType 초기값 설정
+    if (challenge?.challengeType && !input.challengeType) {
+      setInput((prev) => ({
+        ...prev,
+        challengeType: challenge.challengeType,
+      }));
+    }
+  }, [challenge?.challengeType]);
+
   if (!challenge || !content.initialized) {
     return <div>loading...</div>;
   }
@@ -446,11 +457,30 @@ const ChallengeEdit: React.FC = () => {
       </section>
 
       <Heading2>프로그램 소개</Heading2>
-      <section>
+      <section className="mt-6">
+        <Heading3>인트로</Heading3>
+        <EditorApp
+          initialEditorStateJsonString={JSON.stringify(content.intro)}
+          onChangeSerializedEditorState={(json) =>
+            setContent((prev) => ({
+              ...prev,
+              intro: json,
+            }))
+          }
+        />
+
         <ChallengePointEditor
           challengePoint={content.challengePoint}
           setContent={setContent}
         />
+
+        {input.challengeType && (
+          <ChallengeLecture
+            challengeType={input.challengeType}
+            content={content}
+            setContent={setContent}
+          />
+        )}
 
         <Heading3>상세 설명 (특별 챌린지 및 합격자 후기)</Heading3>
         <EditorApp
@@ -477,6 +507,9 @@ const ChallengeEdit: React.FC = () => {
       <ChallengeCurriculumEditor
         curriculum={content.curriculum}
         setContent={setContent}
+        curriculumImage={content.curriculumImage}
+        weekText={content.challengePoint?.weekText}
+        content={content}
       />
 
       <ProgramBestReview
