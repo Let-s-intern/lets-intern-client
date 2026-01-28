@@ -35,6 +35,7 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
+import ChallengeLecture from '../program/ChallengeLecture';
 import ChallengeFaqCategory from './program/ChallengeFaqCategory';
 import ChallengeMentorRegistrationSection from './program/ChallengeMentorRegistrationSection';
 import ProgramSchedule from './program/ProgramSchedule';
@@ -340,11 +341,30 @@ const ChallengeCreate: React.FC = () => {
       </section>
 
       <Heading2>프로그램 소개</Heading2>
-      <section>
+
+      <section className="mt-6">
+        <Heading3>인트로</Heading3>
+        <EditorApp
+          onChangeSerializedEditorState={(json) =>
+            setContent((prev) => ({
+              ...prev,
+              inro: json,
+            }))
+          }
+        />
+
         <ChallengePoint
           challengePoint={content.challengePoint}
           setContent={setContent}
         />
+
+        {input.challengeType && (
+          <ChallengeLecture
+            challengeType={input.challengeType}
+            content={content}
+            setContent={setContent}
+          />
+        )}
 
         <Heading3>상세 설명</Heading3>
         <EditorApp
@@ -370,6 +390,9 @@ const ChallengeCreate: React.FC = () => {
       <ChallengeCurriculum
         curriculum={content.curriculum}
         setContent={setContent}
+        curriculumImage={content.curriculumImage}
+        weekText={content.challengePoint?.weekText}
+        content={content}
       />
 
       <ProgramBestReview

@@ -9,6 +9,7 @@ import {
 } from '@/schema';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { useMemo, useState } from 'react';
+import { DEFAULT_COLOR } from '../utils/getChallengeThemeColor';
 
 type Plans = {
   [key in ChallengePricePlan]?: string;
@@ -42,9 +43,11 @@ const PlanButton = ({
 const FinalPriceInfo = ({
   finalPrice,
   sellingPrice,
+  themeColor = DEFAULT_COLOR,
 }: {
   finalPrice: number;
   sellingPrice: number;
+  themeColor?: string;
 }) => {
   const {
     isLoading,
@@ -79,7 +82,10 @@ const FinalPriceInfo = ({
           {showMonthlyPrice ? '' : '최종 결제 금액'}
         </span>
         <div className="flex flex-col items-end gap-0.5">
-          <strong className="text-medium24 font-bold text-[#4A76FF]">
+          <strong
+            className="text-medium24 font-bold"
+            style={{ color: themeColor }}
+          >
             {showMonthlyPrice
               ? `월 ${monthlyAmount.toLocaleString()}원`
               : `${finalPrice.toLocaleString()}원`}
@@ -97,9 +103,13 @@ const FinalPriceInfo = ({
 
 interface Props {
   priceInfoList: ChallengePriceInfo[] | ChallengeIdSchema['priceInfo'];
+  themeColor?: string;
 }
 
-function ChallengePriceInfoContent({ priceInfoList }: Props) {
+function ChallengePriceInfoContent({
+  priceInfoList,
+  themeColor = DEFAULT_COLOR,
+}: Props) {
   const [active, setActive] = useState<ChallengePricePlan>('BASIC');
 
   const basicPriceInfo = priceInfoList.find(
@@ -197,10 +207,27 @@ function ChallengePriceInfoContent({ priceInfoList }: Props) {
         )}
 
         <div className="min-h-[174px] whitespace-pre-line px-3 pb-5 pt-2.5">
-          <span className="text-xsmall14 font-semibold text-[#4A76FF]">
+          <span
+            className="text-xsmall14 font-semibold"
+            style={{ color: themeColor }}
+          >
             이번 챌린지로 모든걸 얻어갈 수 있어요!
           </span>
-          <p className="mt-1.5 whitespace-pre-line">{activeDescription}</p>
+          <div className="mt-1.5 flex flex-col gap-1.5">
+            {activeDescription
+              .split('\n')
+              .filter((line) => line.trim())
+              .map((line, index) => (
+                <div key={index} className="flex items-start gap-1.5">
+                  <span className="text-xsmall14 text-[#606060] md:text-xsmall16">
+                    ✓
+                  </span>
+                  <p className="text-xsmall14 md:text-xsmall16">
+                    {line.trim()}
+                  </p>
+                </div>
+              ))}
+          </div>
         </div>
       </div>
 
@@ -230,7 +257,11 @@ function ChallengePriceInfoContent({ priceInfoList }: Props) {
         </div>
 
         {/* 최종 결제 금액 */}
-        <FinalPriceInfo finalPrice={finalPrice} sellingPrice={sellingPrice} />
+        <FinalPriceInfo
+          finalPrice={finalPrice}
+          sellingPrice={sellingPrice}
+          themeColor={themeColor}
+        />
       </div>
     </div>
   );
