@@ -182,7 +182,8 @@ const IntroItem = ({
 };
 
 const IntroSection = () => {
-  const { hasActiveResume, hasActivePersonalStatement } = useActiveReports();
+  const { hasActiveResume, hasActivePersonalStatement, hasActivePortfolio } =
+    useActiveReports();
 
   // 새로운 훅을 사용하여 각 타입별 첫 번째 B2C 챌린지 가져오기
   const {
@@ -216,10 +217,12 @@ const IntroSection = () => {
   };
 
   const filteredItems = HOME_INTRO.items.basic.filter((item, index) => {
+    // 포트폴리오 준비하기
+    if (index === 4 && !hasActivePortfolio) return false;
     // 이력서 피드백 받기
-    if (index === 4 && !hasActiveResume) return false;
+    if (index === 5 && !hasActiveResume) return false;
     // 자소서 피드백 받기
-    if (index === 5 && !hasActivePersonalStatement) return false;
+    if (index === 6 && !hasActivePersonalStatement) return false;
     return true;
   });
 
