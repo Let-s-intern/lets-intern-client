@@ -1,6 +1,7 @@
-import { ReactNode } from 'react';
+import LexicalContent from '@/domain/blog/ui/LexicalContent';
 import { parseChallengeContent } from '@/domain/program/challenge/utils/parseChallengeContent';
 import { ChallengeIdPrimitive } from '@/schema';
+import { ReactNode } from 'react';
 import MainTitle from '../ui/MainTitle';
 import { Contents, Portfolio, Seminar } from './CurriculumSteps';
 
@@ -8,13 +9,15 @@ type HrCurriculumStepsSectionProps = {
   challenge: ChallengeIdPrimitive;
 };
 
-const curriculumSteps = (lectures?: Array<{
-  topic: string;
-  mentorImage: string;
-  mentorName: string;
-  schedule: string;
-  companyLogo: string;
-}>) => [
+const curriculumSteps = (
+  lectures?: Array<{
+    topic: string;
+    mentorImage: string;
+    mentorName: string;
+    schedule: string;
+    companyLogo: string;
+  }>,
+) => [
   {
     title: 'HR 직무를 이해하는 학습 콘텐츠',
     description: (
@@ -110,6 +113,14 @@ const HrCurriculumStepsSection: React.FC<HrCurriculumStepsSectionProps> = ({
           <CurriculumSteps index={index + 1} {...item} />
         </article>
       ))}
+      {/* 상세 설명 렉시컬 컨텐츠 */}
+      {content?.mainDescription?.root &&
+        typeof content.mainDescription.root === 'object' &&
+        'type' in content.mainDescription.root && (
+          <section className="flex w-full flex-col px-5 md:px-10 lg:px-0">
+            <LexicalContent node={content.mainDescription.root} />
+          </section>
+        )}
     </section>
   );
 };
