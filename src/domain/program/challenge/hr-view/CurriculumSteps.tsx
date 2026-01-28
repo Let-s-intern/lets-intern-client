@@ -14,11 +14,6 @@ type ContentCardProps = {
   items: ReactNode[];
 };
 
-type InstructorData = {
-  icon: string;
-  shadow: string;
-};
-
 type PortfolioBoxProps = {
   headerLabel: string;
   headerBgColor: string;
@@ -113,77 +108,67 @@ export const Contents = () => {
 };
 
 // Step 2
-const instructorData: InstructorData[] = [
-  {
-    icon: 'hr-hankooktire.png',
-    shadow: 'hr-woman-shadow1.png',
-  },
-  {
-    icon: 'hr-man.png',
-    shadow: 'hr-man-shadow1.png',
-  },
-  {
-    icon: 'hr-teamsparta.png',
-    shadow: 'hr-woman-shadow2.png',
-  },
-  {
-    icon: 'hr-kakao-logo.png',
-    shadow: 'hr-woman-shadow3.png',
-  },
-  {
-    icon: 'hr-letscareer.png',
-    shadow: 'hr-woman-shadow4.png',
-  },
-  {
-    icon: 'hr-letscareer.png',
-    shadow: 'hr-woman-shadow5.png',
-  },
-];
+type LectureData = {
+  topic: string;
+  mentorImage: string;
+  mentorName: string;
+  schedule: string;
+  companyLogo: string;
+};
 
-const InstructorCard = ({ instructor }: { instructor: InstructorData }) => (
+const InstructorCard = ({ lecture }: { lecture: LectureData }) => (
   <div
     className="relative flex h-[260px] w-full min-w-[320px] flex-col overflow-hidden rounded-xl p-0 lg:w-[340px]"
     style={{ background: GRADIENT_BG }}
   >
-    <div className="absolute right-0 top-0 z-0 pr-[19px] pt-[35px]">
+    <div className="absolute right-0 top-0 z-0 pr-[19px] pt-8">
       <img
-        src={`/images/${instructor.shadow}`}
-        alt=""
+        src={lecture.mentorImage}
+        alt={lecture.mentorName}
         className="h-32 w-auto md:h-[154px]"
-        aria-hidden="true"
       />
     </div>
 
-    <div className="relative z-10 pl-6 pt-[21px] md:mb-[82px]">
+    <div className="relative z-10 pl-4 pt-4 md:mb-[82px]">
       <img
-        src={`/images/${instructor.icon}`}
-        alt=""
+        src={lecture.companyLogo}
+        alt="소속로고"
         className="h-10 w-10 rounded-md md:h-12 md:w-12"
         aria-hidden="true"
       />
     </div>
 
-    <div className="relative z-10 mt-auto flex flex-col gap-2 rounded-b-md bg-gradient-to-b from-[rgba(254,238,229,0.0)] to-[#FEEEE5] pb-[21px] pl-6 pr-[54px] blur-[0px] backdrop-blur-[1px]">
+    <div className="relative z-10 mt-auto flex flex-col gap-2 rounded-b-md bg-gradient-to-b from-[rgba(254,238,229,0.0)] to-[#FEEEE5] px-4 pb-4 tracking-tight blur-[0px] backdrop-blur-[1.5px]">
       <div
         className="flex w-fit items-center justify-center rounded-xxs px-[6px] py-[3px]"
         style={{ backgroundColor: HrPrimaryColor }}
       >
         <span className="text-xsmall12 font-medium text-neutral-100 md:text-xsmall14">
-          1월-주차
+          {lecture.schedule}
         </span>
       </div>
 
-      <div className="flex flex-col gap-1">
-        <h4 className="text-xsmall14 font-bold text-neutral-0 md:text-small20">
-          제목
+      <div className="flex flex-1 flex-col gap-1">
+        <h4 className="text-xsmall18 font-bold text-neutral-0 md:text-small20">
+          {lecture.mentorName}
         </h4>
-        <p className="text-xxsmall12 text-neutral-30 md:text-small18">설명</p>
+        <p className="text-xxsmall14 text-neutral-30 md:text-small18">
+          {lecture.topic}
+        </p>
       </div>
     </div>
   </div>
 );
 
-export const Seminar = () => {
+type SeminarProps = {
+  lectures?: LectureData[];
+};
+
+export const Seminar = ({ lectures }: SeminarProps) => {
+  if (!lectures || lectures.length === 0) {
+    return null;
+  }
+
   return (
     <div className="flex w-full flex-col items-center justify-center gap-6 md:gap-8">
       <div className="mx-auto w-full max-w-[900px]">
@@ -195,8 +180,8 @@ export const Seminar = () => {
       </div>
 
       <div className="mx-auto grid w-full max-w-[1060px] grid-cols-1 place-items-center justify-center gap-5 md:gap-5 lg:grid-cols-3">
-        {instructorData.map((instructor, index) => (
-          <InstructorCard key={index} instructor={instructor} />
+        {lectures.map((lecture, index) => (
+          <InstructorCard key={index} lecture={lecture} />
         ))}
       </div>
     </div>
