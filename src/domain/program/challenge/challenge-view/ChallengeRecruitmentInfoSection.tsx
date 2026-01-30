@@ -4,6 +4,7 @@ import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import getChallengeSchedule from '@/utils/getChallengeSchedule';
 import { Fragment, ReactNode, useMemo } from 'react';
 import MainTitle from '../ui/MainTitle';
+import { DEFAULT_COLOR } from '../utils/getChallengeThemeColor';
 
 interface PriceInfo {
   title: string;
@@ -30,9 +31,18 @@ const Box = ({
   );
 };
 
-const Label = ({ children }: { children?: ReactNode }) => {
+const Label = ({
+  children,
+  themeColor = DEFAULT_COLOR,
+}: {
+  children?: ReactNode;
+  themeColor?: string;
+}) => {
   return (
-    <span className="text-xsmall14 font-semibold text-[#4A76FF] md:text-xsmall16">
+    <span
+      className="text-xsmall14 font-semibold md:text-xsmall16"
+      style={{ color: themeColor }}
+    >
       {children}
     </span>
   );
@@ -41,13 +51,15 @@ const Label = ({ children }: { children?: ReactNode }) => {
 const InfoWrapper = ({
   label,
   children,
+  themeColor = DEFAULT_COLOR,
 }: {
   label: string;
   children?: ReactNode;
+  themeColor?: string;
 }) => {
   return (
     <div className="flex flex-col gap-2">
-      <Label>{label}</Label>
+      <Label themeColor={themeColor}>{label}</Label>
       <p className="whitespace-pre-line text-xsmall14 font-medium text-neutral-0 md:text-xsmall16">
         {children}
       </p>
@@ -100,9 +112,13 @@ const PriceListItem = ({ priceInfo }: { priceInfo: PriceInfo }) => {
 
 interface Props {
   challenge: ChallengeIdPrimitive;
+  themeColor?: string;
 }
 
-export default function ChallengeRecruitmentInfoSection({ challenge }: Props) {
+export default function ChallengeRecruitmentInfoSection({
+  challenge,
+  themeColor = DEFAULT_COLOR,
+}: Props) {
   const { startDate, deadline, startDateWithTime, endDateWithTime } =
     getChallengeSchedule(challenge);
 
@@ -160,21 +176,27 @@ export default function ChallengeRecruitmentInfoSection({ challenge }: Props) {
 
       <div className="flex w-full max-w-[1000px] items-stretch max-md:flex-col md:flex-row md:gap-3">
         <Box className="rounded-b-none pb-0 md:rounded-sm md:pb-5">
-          <InfoWrapper label="시작 일자">{startDate}</InfoWrapper>
-          <InfoWrapper label="진행 기간">
+          <InfoWrapper label="시작 일자" themeColor={themeColor}>
+            {startDate}
+          </InfoWrapper>
+          <InfoWrapper label="진행 기간" themeColor={themeColor}>
             {startDateWithTime} -
             <br /> {endDateWithTime}
           </InfoWrapper>
         </Box>
         <Box className="mb-5 rounded-t-none md:mb-0 md:rounded-sm">
-          <InfoWrapper label="모집 마감">{deadline}</InfoWrapper>
-          <InfoWrapper label="OT 안내">
+          <InfoWrapper label="모집 마감" themeColor={themeColor}>
+            {deadline}
+          </InfoWrapper>
+          <InfoWrapper label="OT 안내" themeColor={themeColor}>
             챌린지 대시보드 입장 후 0회차 미션을 통해 OT 영상 시청 부탁드립니다.
           </InfoWrapper>
-          <InfoWrapper label="진행방식">100% 온라인</InfoWrapper>
+          <InfoWrapper label="진행방식" themeColor={themeColor}>
+            100% 온라인
+          </InfoWrapper>
         </Box>
         <Box>
-          <Label>가격</Label>
+          <Label themeColor={themeColor}>가격</Label>
           <div className="flex flex-col items-stretch">
             {priceList.map((item, index) => {
               return (

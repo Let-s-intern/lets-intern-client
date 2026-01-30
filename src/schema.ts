@@ -80,6 +80,7 @@ export const challengeTypeSchema = z.enum([
   'PERSONAL_STATEMENT_LARGE_CORP',
   'MARKETING',
   'EXPERIENCE_SUMMARY',
+  'HR',
 ]);
 
 export type ChallengeType = z.infer<typeof challengeTypeSchema>;
@@ -315,6 +316,7 @@ export type CreateChallengeReq = {
   participationCount: number;
   thumbnail: string;
   desktopThumbnail: string;
+  curriculumImage?: string;
   startDate: string; // "2024-10-12T06:24:10.873"
   endDate: string; // "2024-10-12T06:24:10.873"
   beginning: string; // "2024-10-12T06:24:10.873"
@@ -349,6 +351,7 @@ export type UpdateChallengeReq = {
   participationCount?: number;
   thumbnail?: string;
   desktopThumbnail?: string;
+  curriculumImage?: string;
   startDate?: string; // "2024-10-12T08:03:17.016Z"
   endDate?: string; // "2024-10-12T08:03:17.016Z"
   beginning?: string; // "2024-10-12T08:03:17.016Z"
