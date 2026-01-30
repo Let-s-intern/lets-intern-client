@@ -132,7 +132,7 @@ const PlanBenefits = ({
       ))}
       {!isBasic && (
         <li className="flex items-start gap-1.5">
-          <span className="text-[#606060] md:text-xsmall16">+</span>
+          <span className="text-[#606060] md:text-xsmall16">✓</span>
           <span className="whitespace-pre-line">
             베이직에서 제공되는 모든 사항 포함
           </span>

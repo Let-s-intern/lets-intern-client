@@ -100,6 +100,8 @@ export const challengeColors = {
   ADC3FF: '#ADC3FF',
   B8BBFB: '#B8BBFB',
   A8E6FF: '#A8E6FF',
+  FF5E00: '#FF5E00',
+  FEEEE5: '#FEEEE5',
 };
 
 export type ChallengeColor = {

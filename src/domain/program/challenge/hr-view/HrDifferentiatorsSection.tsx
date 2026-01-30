@@ -43,7 +43,7 @@ const HrDifferentiatorsSection: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex w-full min-w-[320px] max-w-[1130px] flex-col gap-8 md:gap-[60px]">
+      <div className="flex w-full min-w-[320px] flex-col gap-8 md:max-w-[1000px] md:gap-[60px]">
         {feedbackBenefits.map((benefit, index) => (
           <FeedbackBenefit key={index} {...benefit} />
         ))}

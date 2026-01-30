@@ -181,7 +181,7 @@ export const feedbackBenefits: FeedbackBenefitData[] = [
         현직 HR 담당자에게 나의 서류와 커리어 고민을{' '}
         <br className="md:hidden" />
         직접 공유하고, 직무 관점에서 구체적인 개선
-        <br />
+        <br className="md:hidden" />
         방향을 피드백받을 수 있어요!
         <br />
         (스탠다드 및 프리미엄 구매 시)
@@ -193,8 +193,7 @@ export const feedbackBenefits: FeedbackBenefitData[] = [
     description: (
       <span>
         라이브 세미나를 통해 실제 채용 기준과 사례를 바탕으로, 많은 지원자들이
-        놓치는
-        <br />
+        놓치는 <br className="md:hidden" />
         서류 포인트와 커리어 방향을 함께 점검해요!
         <br />
         (스탠다드 및 프리미엄 구매 시)
@@ -213,8 +212,8 @@ export const FeedbackBenefit = ({
   description,
 }: FeedbackBenefitProps) => {
   return (
-    <div className="flex flex-col gap-4 md:h-[186px] md:flex-row md:gap-[10px]">
-      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-md md:h-full md:w-[256px] md:flex-shrink-0">
+    <div className="flex flex-col gap-4 md:min-h-[186px] md:flex-row md:gap-[10px]">
+      <div className="relative aspect-[4/3] h-full w-full overflow-hidden rounded-md md:h-full md:w-[256px] md:flex-shrink-0">
         <Image
           src="/images/hr-feedback.png"
           alt={title}
@@ -223,7 +222,7 @@ export const FeedbackBenefit = ({
           unoptimized
         />
       </div>
-      <div className="flex flex-1 flex-col gap-4 bg-neutral-95 px-5 py-10 md:gap-6 md:p-[30px]">
+      <div className="flex flex-1 flex-col gap-4 rounded-md bg-neutral-95 px-5 py-10 md:min-w-[532px] md:gap-6 md:p-[30px]">
         <h4 className="text-small18 font-bold text-neutral-0 md:text-medium22">
           {title}
         </h4>
