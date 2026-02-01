@@ -47,7 +47,7 @@ interface CalendarListProps {
 
 const CalendarList = ({ children }: CalendarListProps) => {
   return (
-    <ul className="flex w-full flex-col gap-3 rounded-xs bg-white p-4 text-xsmall14 md:min-w-[288px] md:p-3">
+    <ul className="flex w-full min-w-0 flex-col gap-3 rounded-xs bg-white p-4 text-xsmall14 md:min-w-[288px] md:flex-shrink-0 md:p-3">
       {children}
     </ul>
   );
@@ -93,12 +93,12 @@ const HrCurriculumCalendar = ({ challenge, curriculumImage }: Props) => {
   ];
 
   return (
-    <section className="flex w-full flex-col items-center bg-[#FFF7F2] pt-[60px] md:px-0 md:pb-[104px] md:pt-[100px]">
+    <section className="flex w-full flex-col items-center bg-[#FFF7F2] pt-[60px] md:overflow-x-hidden md:px-0 md:pb-[104px] md:pt-[100px]">
       <h2 className="mb-5 text-center text-[14px] font-bold md:mb-[60px] md:text-medium24 md:font-semibold">
         한눈에 보는 {'['} {challenge.title ?? ''} {']'} 일정
       </h2>
 
-      <div className="flex w-full flex-col items-center gap-4 md:h-[524px] md:w-fit md:flex-row md:items-center md:justify-center md:gap-3">
+      <div className="flex w-full flex-col items-center gap-4 md:h-[524px] md:w-fit md:flex-row md:items-center md:justify-center md:gap-3 md:overflow-x-hidden">
         {/* 왼쪽 달력 이미지 */}
         {curriculumImage && (
           <div className="relative aspect-[320/239] w-full md:h-[522px]">
@@ -112,7 +112,7 @@ const HrCurriculumCalendar = ({ challenge, curriculumImage }: Props) => {
           </div>
         )}
         {/* 오른쪽 박스 */}
-        <div className="relative flex w-full flex-col gap-3 text-neutral-0 md:h-full md:justify-between">
+        <div className="relative flex w-full min-w-0 flex-col gap-3 text-neutral-0 md:h-full md:justify-between">
           <CalendarList>
             {calendarItems.map((item) => (
               <CalendarItem key={item.number} {...item} />

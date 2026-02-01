@@ -54,7 +54,7 @@ const CurriculumCard = ({
   showArrow: boolean;
 }) => {
   return (
-    <div className="relative flex w-full min-w-[320px] flex-1 flex-col items-center justify-center gap-2 rounded-md bg-[#f3f3f3] px-[25px] py-[27px] md:rounded-sm">
+    <div className="relative flex flex-shrink-0 flex-col items-center justify-center gap-2 rounded-md bg-[#f3f3f3] px-[25px] py-[27px] md:w-full md:flex-1 md:rounded-sm">
       <span className="w-full items-center justify-center text-center text-xsmall14 font-semibold text-[#FF5E00] md:-top-7 md:px-4 md:text-small18">
         Point {index}
       </span>
@@ -86,7 +86,7 @@ const HrCurriculumPointsSection: React.FC<HrCurriculumPointsSectionProps> = ({
   const weekText = receivedContent?.challengePoint?.weekText || '3주';
 
   return (
-    <section className="flex flex-col items-center pb-[70px] pt-[50px] text-center md:pb-[82px] md:pt-[141px]">
+    <section className="flex w-full flex-col items-center pb-[70px] pt-[50px] text-center md:overflow-x-hidden md:pb-[82px] md:pt-[141px]">
       <MainTitle className="flex flex-col items-center">
         <span>누적 5,000건 이상의 피드백,</span>
         <span>100+회 챌린지 운영 노하우를 집약해</span>
@@ -98,7 +98,7 @@ const HrCurriculumPointsSection: React.FC<HrCurriculumPointsSectionProps> = ({
       </MainTitle>
 
       {/* 카드 섹션 */}
-      <div className="mt-[54px] flex w-full max-w-[1090px] flex-col gap-7 px-5 md:flex-row md:gap-5 md:px-0">
+      <div className="mt-[54px] flex w-full max-w-[1090px] flex-col gap-7 px-5 md:flex-row md:gap-5 md:overflow-x-hidden md:px-0">
         {curriculumCards.map((item, index) => (
           <CurriculumCard
             key={index}

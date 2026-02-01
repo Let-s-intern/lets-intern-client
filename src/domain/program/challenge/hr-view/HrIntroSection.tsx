@@ -10,7 +10,7 @@ const IntroBubble = ({
   align?: 'left' | 'right' | 'center';
 }) => {
   const base =
-    'p-5 relative w-full rounded-xl bg-[#FEEFE6] text-center text-xsmall14 md:px-[60px] md:py-[30px] md:text-small20 md:text-left md:w-fit';
+    'p-5 relative w-full flex-shrink-0 rounded-xl bg-[#FEEFE6] text-center text-xsmall14 md:px-[60px] md:py-[30px] md:text-small20 md:text-left md:min-w-[300px] md:w-fit';
   const tailBase =
     'h-9 w-9 -bottom-5 absolute md:-bottom-9 md:h-[65px] md:w-[65px]';
 
@@ -35,7 +35,7 @@ const IntroBubble = ({
 
 function HrIntroSection() {
   return (
-    <section className="flex scroll-mt-[56px] flex-col items-center bg-[#FFFAF7] px-5 pb-10 pt-[60px] md:scroll-mt-[60px] md:pb-10 md:pt-[93px]">
+    <section className="flex w-full scroll-mt-[56px] flex-col items-center bg-[#FFFAF7] px-5 pb-10 pt-[60px] md:scroll-mt-[60px] md:overflow-x-hidden md:overflow-y-hidden md:pb-10 md:pt-[93px]">
       {/* Header */}
       <div>
         <MainTitle>
@@ -60,23 +60,23 @@ function HrIntroSection() {
       </div>
 
       {/* Body */}
-      <div className="gap-13 mt-5 flex flex-col items-center md:mt-[52px] md:gap-[18px]">
-        <div className="flex w-full flex-col items-center gap-7 md:w-[990px] md:gap-1">
-          <div className="w-full">
+      <div className="gap-13 mt-5 flex w-full flex-col items-center md:mt-[52px] md:gap-[18px] md:overflow-x-hidden md:overflow-y-hidden">
+        <div className="flex w-full flex-col items-center gap-7 md:w-[990px] md:gap-1 md:overflow-x-hidden md:overflow-y-hidden">
+          <div className="-mx-5 w-full flex-shrink-0 md:mx-0">
             <IntroBubble align="left">
               HRD랑 HRM, 차이는 알겠는데
               <br />
               그래서 나는 뭘 준비해야 할까요?
             </IntroBubble>
           </div>
-          <div className="w-full md:-mt-[90px]">
+          <div className="-mx-5 w-full flex-shrink-0 md:mx-0 md:-mt-[90px]">
             <IntroBubble align="right">
               채용 공고는 보는데
               <br />내 경험을 어떻게 연결해야 할지 모르겠어요
             </IntroBubble>
           </div>
 
-          <div className="md:mb-8 md:mt-5">
+          <div className="-mx-5 w-full flex-shrink-0 md:mx-0 md:mb-8 md:mt-5">
             <IntroBubble align="left">
               자기소개서랑 포트폴리오는
               <br />꼭 필요한 건지, 어디서부터 시작해야 할지 막막해요
