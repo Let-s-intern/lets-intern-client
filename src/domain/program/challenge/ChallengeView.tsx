@@ -100,6 +100,8 @@ export const challengeColors = {
   ADC3FF: '#ADC3FF',
   B8BBFB: '#B8BBFB',
   A8E6FF: '#A8E6FF',
+  FF5E00: '#FF5E00',
+  FEEEE5: '#FEEEE5',
 };
 
 export type ChallengeColor = {
@@ -236,6 +238,14 @@ const ChallengeView: React.FC<{
             id={PROGRAM_INTRO_ID}
             className="challenge_program flex w-full flex-col items-center"
           >
+            {/* 인트로 (최상단) */}
+            {receivedContent.intro?.root &&
+              typeof receivedContent.intro.root === 'object' &&
+              'type' in receivedContent.intro.root && (
+                <section className="flex w-full flex-col items-center">
+                  <LexicalContent node={receivedContent.intro.root} />
+                </section>
+              )}
             <section className="flex w-full flex-col items-center pt-[70px] md:pt-40">
               <ChallengePointView
                 challengeType={challenge.challengeType}
