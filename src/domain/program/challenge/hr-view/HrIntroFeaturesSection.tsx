@@ -128,7 +128,7 @@ const HrIntroFeaturesSection: React.FC = () => {
           <span>이런 분들에게 추천드려요</span>
         </MainTitle> */}
         <SectionHeader className="mb-6 w-full text-left md:mb-[42px] md:text-center">
-          프로그램 소개
+          챌린지 소개
         </SectionHeader>
 
         <MainTitle className="flex flex-col items-center gap-1">

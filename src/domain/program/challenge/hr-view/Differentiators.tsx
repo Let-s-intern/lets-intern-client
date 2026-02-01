@@ -212,33 +212,22 @@ export const FeedbackBenefit = ({
   description,
 }: FeedbackBenefitProps) => {
   return (
-    <div className="flex flex-col gap-4 md:min-h-[186px] md:flex-row md:gap-[10px]">
-      <div className="relative aspect-[4/3] h-full w-full overflow-hidden rounded-md md:h-full md:w-[256px] md:flex-shrink-0">
+    <div className="flex flex-1 flex-col gap-4 rounded-md bg-neutral-95 px-5 py-10 md:min-h-[186px] md:min-w-[532px] md:gap-6 md:px-[30px] md:py-10">
+      <h4 className="text-small18 font-bold text-neutral-0 md:text-medium22">
+        {title}
+      </h4>
+      <div className="flex items-start">
         <Image
-          src="/images/hr-feedback.png"
-          alt={title}
-          fill
-          className="object-cover"
+          src="/images/hr-check.svg"
+          alt="체크"
+          width={24}
+          height={24}
+          className="h-6 w-6 flex-shrink-0"
           unoptimized
         />
-      </div>
-      <div className="flex flex-1 flex-col gap-4 rounded-md bg-neutral-95 px-5 py-10 md:min-w-[532px] md:gap-6 md:p-[30px]">
-        <h4 className="text-small18 font-bold text-neutral-0 md:text-medium22">
-          {title}
-        </h4>
-        <div className="flex items-start">
-          <Image
-            src="/images/hr-check.svg"
-            alt="체크"
-            width={24}
-            height={24}
-            className="h-6 w-6 flex-shrink-0"
-            unoptimized
-          />
-          <span className="text-xsmall14 text-neutral-30 md:text-small18">
-            {description}
-          </span>
-        </div>
+        <span className="text-xsmall14 text-neutral-30 md:text-small18">
+          {description}
+        </span>
       </div>
     </div>
   );

@@ -91,12 +91,11 @@ export const Contents = () => {
       <div className="relative flex items-center rounded-xl bg-neutral-20 p-5 md:px-10 md:py-[30px]">
         <div className="flex-1">
           <h3 className="mb-2 text-small20 font-bold text-neutral-80 md:text-medium24">
-            HR 직무 이해 미션
+            HR 직무 맞춤형 서류 작성
           </h3>
           <p className="text-xsmall14 text-neutral-85 md:text-small20">
-            HR 세부 직무를 중심으로 조직 안에서 HR이{' '}
-            <br className="md:hidden" /> 맡는 역할과 업무 흐름을 단계적으로
-            학습해요
+            내가 희망하는 HR 세부 직무에 맞는 자기소개서와 포트폴리오를 완성해
+            나가요
           </p>
         </div>
         <div className="hidden shrink-0 md:block">
