@@ -49,9 +49,9 @@ function ChallengeFaq({
         };
       case HR:
         return {
-          primaryColor: '#FF5E00',
-          primaryLightColor: '#FEEEE5',
-          borderColor: '#FF5E00',
+          primaryColor: challengeColors.FF5E00,
+          primaryLightColor: challengeColors.FEEEE5,
+          borderColor: challengeColors.FF5E00,
         };
       case EXPERIENCE_SUMMARY:
         return {

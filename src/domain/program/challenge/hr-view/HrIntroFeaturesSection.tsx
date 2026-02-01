@@ -128,7 +128,7 @@ const HrIntroFeaturesSection: React.FC = () => {
           <span>이런 분들에게 추천드려요</span>
         </MainTitle> */}
         <SectionHeader className="mb-6 w-full text-left md:mb-[42px] md:text-center">
-          프로그램 소개
+          챌린지 소개
         </SectionHeader>
 
         <MainTitle className="flex flex-col items-center gap-1">
@@ -151,14 +151,6 @@ const HrIntroFeaturesSection: React.FC = () => {
         {cards.map((item, index) => (
           <Card key={index} index={index + 1} {...item} />
         ))}
-      </div>
-
-      <div className="md:text-small14 md:text-small16 text-center text-xxsmall12 text-neutral-40">
-        <p>본 프로그램은 서류 준비의 기초가 되는 경험정리를 다룹니다.</p>
-        <p>
-          이력서, 자기소개서, 포트폴리오 프로그램에 앞서{' '}
-          <br className="md:hidden" /> 수강하기를 권장드립니다.
-        </p>
       </div>
     </section>
   );

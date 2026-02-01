@@ -43,7 +43,14 @@ const HrDifferentiatorsSection: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex w-full min-w-[320px] max-w-[1130px] flex-col gap-8 md:gap-[60px]">
+      <div className="flex w-full min-w-[320px] flex-col gap-3.5 md:max-w-[1000px]">
+        <div className="mx-auto w-full min-w-[320px] max-w-[500px] overflow-hidden rounded-md md:h-[300px] md:w-[500px] md:flex-shrink-0">
+          <img
+            src="/images/hr-feedback.gif"
+            alt="HR 현직자에게 직접 피드백을 듣는 혜택"
+            className="h-full w-full object-cover object-center"
+          />
+        </div>
         {feedbackBenefits.map((benefit, index) => (
           <FeedbackBenefit key={index} {...benefit} />
         ))}
