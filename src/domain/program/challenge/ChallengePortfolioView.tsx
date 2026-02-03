@@ -20,7 +20,6 @@ import { useParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import { Break } from '../../../common/Break';
 import SectionSubHeader from '../../../common/header/SectionSubHeader';
-import LexicalContent from '../../blog/ui/LexicalContent';
 import {
   PROGRAM_CURRICULUM_ID,
   PROGRAM_INTRO_ID,
@@ -32,6 +31,7 @@ import ProgramBestReviewSection from '../ProgramBestReviewSection';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
 import ChallengeBrand from './challenge-view/ChallengeBrand';
 import ChallengeInfoBottom from './challenge-view/ChallengeInfoBottom';
+import ChallengeIntroEditorContent from './challenge-view/ChallengeIntroEditorContent';
 import ChallengeIntroPortfolio from './challenge-view/ChallengeIntroPortfolio';
 import ChallengePricePlanSection from './challenge-view/ChallengePricePlanSection';
 import ChallengeResult from './challenge-view/ChallengeResult';
@@ -237,15 +237,8 @@ const ChallengePortfolioView: React.FC<{
           className="flex w-full flex-col items-center overflow-x-hidden"
         >
           {/* LEXICAL */}
-          {receivedContent.mainDescription?.root &&
-            typeof receivedContent.mainDescription.root === 'object' &&
-            'type' in receivedContent.mainDescription.root && (
-              <section className="flex w-full max-w-[1000px] flex-col px-5 pt-20 md:px-10 md:pt-40 lg:px-0">
-                <LexicalContent
-                  node={receivedContent.mainDescription.root}
-                />
-              </section>
-            )}
+          {/* 상세설명 렉시컬에서 인트로 렉시컬로 변경 */}
+          <ChallengeIntroEditorContent challenge={challenge} />
 
           <div className="flex w-full flex-col items-center overflow-x-hidden bg-gradient-to-t from-[#F0F4FF] to-white">
             <section className="flex w-full max-w-[1000px] flex-col px-5 pt-20 md:px-10 md:pt-40 lg:px-0">

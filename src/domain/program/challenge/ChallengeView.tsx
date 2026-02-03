@@ -242,7 +242,7 @@ const ChallengeView: React.FC<{
             {receivedContent.intro?.root &&
               typeof receivedContent.intro.root === 'object' &&
               'type' in receivedContent.intro.root && (
-                <section className="flex w-full flex-col items-center">
+                <section className="mx-auto flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
                   <LexicalContent node={receivedContent.intro.root} />
                 </section>
               )}
