@@ -7,30 +7,23 @@ import Heading3 from '@/domain/admin/ui/heading/Heading3';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { ChallengeType } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
+import { Button } from '@mui/material';
 import { useEffect, useMemo } from 'react';
+import { FaTrashCan } from 'react-icons/fa6';
 
-/**
- * 챌린지 타입별 강의 주제 목록
- * 각 챌린지 타입에 맞는 강의 주제를 정의합니다.
- */
-const LECTURE_TOPICS_BY_CHALLENGE_TYPE: Partial<
-  Record<ChallengeType, string[]>
-> = {
-  HR: [
-    'HR 직무 뽀개기 + 자기소개서 작성법',
-    '주니어가 알아야 하는 People Analytics',
-    '채용 직무에서는 이런 사람 선호해요!',
-    'IT 대기업의 채용 업무는 이런 것!',
-    'IT/스타트업 HR 합격 서류 뽀개기',
-    '마케터에서 HR로 직무 전환한 이야기',
-  ],
-};
+const DEFAULT_LECTURE_COUNT = 3;
 
-function getLectureTopicsByChallengeType(
-  challengeType?: ChallengeType,
-): string[] | undefined {
-  if (!challengeType) return undefined;
-  return LECTURE_TOPICS_BY_CHALLENGE_TYPE[challengeType];
+/** 강의 정보 등록 섹션을 노출할 챌린지 타입 (추가 타입은 이 배열에만 넣으면 됨) */
+const CHALLENGE_TYPES_WITH_LECTURES: ChallengeType[] = ['HR'];
+
+function createEmptyLecture() {
+  return {
+    topic: '',
+    mentorImage: '',
+    mentorName: '',
+    schedule: '',
+    companyLogo: '',
+  };
 }
 
 interface ChallengeLectureProps {
@@ -45,69 +38,18 @@ function ChallengeLecture({
   setContent,
 }: ChallengeLectureProps) {
   const { snackbar } = useAdminSnackbar();
-  const lectureTopics = getLectureTopicsByChallengeType(challengeType);
+  const lectures = useMemo(() => content.lectures ?? [], [content.lectures]);
 
-  const lectures = useMemo(() => content.lectures || [], [content.lectures]);
-
-  // 강의 목록 초기화 (주제 개수만큼)
+  // 강의 목록 초기화: 강의 섹션을 쓰는 타입이고, lectures가 아직 없을 때만 첫 줄(3개) 생성
   useEffect(() => {
-    if (!lectureTopics || lectureTopics.length === 0) {
-      return;
-    }
-
-    if (lectures.length === 0) {
-      const initialLectures = lectureTopics.map((topic) => ({
-        topic,
-        mentorImage: '',
-        mentorName: '',
-        schedule: '',
-        companyLogo: '',
-      }));
-      setContent((prev) => ({ ...prev, lectures: initialLectures }));
-    } else if (lectures.length !== lectureTopics.length) {
-      // 주제 개수가 변경된 경우 재초기화
-      const initialLectures = lectureTopics.map((topic, index) => {
-        // 기존 데이터가 있으면 유지, 없으면 새로 생성
-        return (
-          lectures[index] || {
-            topic,
-            mentorImage: '',
-            mentorName: '',
-            schedule: '',
-            companyLogo: '',
-          }
-        );
-      });
-      setContent((prev) => ({ ...prev, lectures: initialLectures }));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lectureTopics?.length, lectures.length, setContent]);
-
-  const currentLectures = useMemo(() => {
-    if (!lectureTopics || lectureTopics.length === 0) {
-      return [];
-    }
-
-    if (lectures.length === lectureTopics.length) {
-      return lectures;
-    }
-    // 초기화 중이면 빈 배열 반환 (useEffect에서 처리됨)
-    return lectureTopics.map((topic, index) => {
-      return (
-        lectures[index] || {
-          topic,
-          mentorImage: '',
-          mentorName: '',
-          schedule: '',
-          companyLogo: '',
-        }
-      );
-    });
-  }, [lectures, lectureTopics]);
-
-  if (!lectureTopics || lectureTopics.length === 0) {
-    return null;
-  }
+    if (!CHALLENGE_TYPES_WITH_LECTURES.includes(challengeType)) return;
+    if (content.lectures != null) return;
+    const initialLectures = Array.from(
+      { length: DEFAULT_LECTURE_COUNT },
+      createEmptyLecture,
+    );
+    setContent((prev) => ({ ...prev, lectures: initialLectures }));
+  }, [challengeType, content.lectures, setContent]);
 
   const uploadImage = async (file: File) => {
     try {
@@ -127,7 +69,7 @@ function ChallengeLecture({
   ) => {
     if (!e.target.files) return;
     const url = await uploadImage(e.target.files[0]);
-    const updatedLectures = [...currentLectures];
+    const updatedLectures = [...lectures];
     updatedLectures[index] = {
       ...updatedLectures[index],
       mentorImage: url,
@@ -141,7 +83,7 @@ function ChallengeLecture({
   ) => {
     if (!e.target.files) return;
     const url = await uploadImage(e.target.files[0]);
-    const updatedLectures = [...currentLectures];
+    const updatedLectures = [...lectures];
     updatedLectures[index] = {
       ...updatedLectures[index],
       companyLogo: url,
@@ -151,10 +93,10 @@ function ChallengeLecture({
 
   const handleFieldChange = (
     index: number,
-    field: 'mentorName' | 'schedule',
+    field: 'topic' | 'mentorName' | 'schedule',
     value: string,
   ) => {
-    const updatedLectures = [...currentLectures];
+    const updatedLectures = [...lectures];
     updatedLectures[index] = {
       ...updatedLectures[index],
       [field]: value,
@@ -162,20 +104,37 @@ function ChallengeLecture({
     setContent((prev) => ({ ...prev, lectures: updatedLectures }));
   };
 
+  const handleAddLecture = () => {
+    setContent((prev) => ({
+      ...prev,
+      lectures: [...(prev.lectures ?? []), createEmptyLecture()],
+    }));
+  };
+
+  const handleRemoveLecture = (index: number) => {
+    const updatedLectures = lectures.filter((_, i) => i !== index);
+    setContent((prev) => ({ ...prev, lectures: updatedLectures }));
+  };
+
+  if (!CHALLENGE_TYPES_WITH_LECTURES.includes(challengeType)) {
+    return null;
+  }
+
   return (
     <section className="mb-6 flex flex-col gap-4">
-      <Heading3>강의 정보 등록</Heading3>
-      <div className="grid grid-cols-3 gap-3">
-        {lectureTopics.map((topic, index) => {
-          const lecture = currentLectures[index] || {
-            topic,
-            mentorImage: '',
-            mentorName: '',
-            schedule: '',
-            companyLogo: '',
-          };
-
-          return (
+      <div className="flex items-center justify-between">
+        <Heading3>강의 정보 등록</Heading3>
+        <Button variant="outlined" onClick={handleAddLecture}>
+          추가
+        </Button>
+      </div>
+      {lectures.length === 0 ? (
+        <p className="text-xsmall14 text-neutral-50">
+          추가 버튼을 눌러 강의 정보를 추가해주세요
+        </p>
+      ) : (
+        <div className="grid grid-cols-3 gap-3">
+          {lectures.map((lecture, index) => (
             <div
               key={index}
               className="flex flex-col gap-4 rounded-sm border border-neutral-200 p-2"
@@ -200,14 +159,17 @@ function ChallengeLecture({
 
                 {/* 오른쪽: 강의 정보 */}
                 <div className="flex flex-1 flex-col gap-3">
-                  {/* 강의 주제 (정적값, 읽기 전용) */}
-                  <div className="flex flex-col gap-1">
-                    <label className="text-xxsmall12 text-neutral-40">
-                      강의 주제
-                    </label>
-                    <div className="rounded-sm border border-neutral-200 bg-neutral-95 px-3 py-2 text-xsmall14 text-neutral-0">
-                      {topic}
-                    </div>
+                  {/* 강의 주제 (어드민 직접 입력) */}
+                  <div className="mt-5 flex flex-col gap-1">
+                    <Input
+                      label="강의 주제"
+                      type="text"
+                      size="small"
+                      value={lecture.topic}
+                      onChange={(e) =>
+                        handleFieldChange(index, 'topic', e.target.value)
+                      }
+                    />
                   </div>
 
                   {/* 로고 이미지 + 멘토명/강의일자 (같은 줄) */}
@@ -215,7 +177,7 @@ function ChallengeLecture({
                     {/* 로고 이미지 (왼쪽) */}
                     <div className="flex flex-col gap-1">
                       <label className="text-xxsmall12 text-neutral-40">
-                        소속 로고
+                        소속
                       </label>
                       <div className="h-[75px] w-[75px] flex-shrink-0 overflow-hidden rounded-sm border border-neutral-200">
                         <ImageUpload
@@ -253,10 +215,23 @@ function ChallengeLecture({
                   </div>
                 </div>
               </div>
+
+              {/* 삭제 (AdminReportCreatePage 옵션 삭제와 동일한 형태) */}
+              <div className="flex justify-end">
+                <Button
+                  variant="text"
+                  onClick={() => handleRemoveLecture(index)}
+                  className="min-w-0"
+                  style={{ minWidth: 0, padding: 12 }}
+                  color="error"
+                >
+                  <FaTrashCan />
+                </Button>
+              </div>
             </div>
-          );
-        })}
-      </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 }
