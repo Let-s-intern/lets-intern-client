@@ -37,7 +37,7 @@ function ChallengeIntroEditorContent({
   }
 
   return (
-    <section className="flex w-full flex-col items-center">
+    <section className="mx-auto flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
       <LexicalContent node={intro.root} />
     </section>
   );

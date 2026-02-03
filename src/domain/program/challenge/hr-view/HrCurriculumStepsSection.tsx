@@ -117,7 +117,7 @@ const HrCurriculumStepsSection: React.FC<HrCurriculumStepsSectionProps> = ({
       {content?.mainDescription?.root &&
         typeof content.mainDescription.root === 'object' &&
         'type' in content.mainDescription.root && (
-          <section className="flex w-full flex-col px-5 md:px-10 lg:px-0">
+          <section className="flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
             <LexicalContent node={content.mainDescription.root} />
           </section>
         )}
