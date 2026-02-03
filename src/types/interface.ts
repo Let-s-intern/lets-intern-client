@@ -103,7 +103,7 @@ export type ChallengeContent = {
   operationRecommendMoreButton?: OperationRecommendMoreButton;
   /** 강의 정보 (HR 챌린지 등) */
   lectures?: {
-    topic: string; // 강의 주제 (정적값)
+    topic: string; // 강의 주제
     mentorImage: string; // 멘토 이미지 URL
     mentorName: string; // 멘토명
     schedule: string; // 강의 일정

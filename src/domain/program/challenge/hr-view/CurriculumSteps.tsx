@@ -164,9 +164,7 @@ type SeminarProps = {
 };
 
 export const Seminar = ({ lectures }: SeminarProps) => {
-  if (!lectures || lectures.length === 0) {
-    return null;
-  }
+  const hasLectures = lectures && lectures.length > 0;
 
   return (
     <div className="flex w-full flex-col items-center justify-center gap-6 md:gap-8">
@@ -178,11 +176,13 @@ export const Seminar = ({ lectures }: SeminarProps) => {
         />
       </div>
 
-      <div className="mx-auto grid w-full max-w-[1060px] grid-cols-1 place-items-center justify-center gap-5 md:gap-5 lg:grid-cols-3">
-        {lectures.map((lecture, index) => (
-          <InstructorCard key={index} lecture={lecture} />
-        ))}
-      </div>
+      {hasLectures && (
+        <div className="mx-auto grid w-full max-w-[1060px] grid-cols-1 place-items-center justify-center gap-5 md:gap-5 lg:grid-cols-3">
+          {lectures!.map((lecture, index) => (
+            <InstructorCard key={index} lecture={lecture} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
