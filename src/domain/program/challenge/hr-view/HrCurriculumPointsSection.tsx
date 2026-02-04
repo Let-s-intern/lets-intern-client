@@ -1,9 +1,9 @@
-import { parseChallengeContent } from '@/domain/program/challenge/utils/parseChallengeContent';
-import { ChallengeIdPrimitive } from '@/schema';
-import { ReactNode, useMemo } from 'react';
+import { ChallengeContent } from '@/types/interface';
+import { ReactNode } from 'react';
 import MainTitle from '../ui/MainTitle';
+
 interface HrCurriculumPointsSectionProps {
-  challenge: ChallengeIdPrimitive;
+  content: ChallengeContent | null;
 }
 
 const curriculumCards = [
@@ -23,7 +23,7 @@ const curriculumCards = [
     title: '현직자의 LIVE 세미나',
     description: (
       <>
-        5명의 HR 현직자 선배들이
+        4명의 HR 현직자 선배들이
         <br />
         어떻게 HR 커리어를 시작했는지,
         <br />그 이야기를 직접 들려드릴게요
@@ -77,13 +77,9 @@ const CurriculumCard = ({
 };
 
 const HrCurriculumPointsSection: React.FC<HrCurriculumPointsSectionProps> = ({
-  challenge,
+  content,
 }) => {
-  const receivedContent = useMemo(() => {
-    return parseChallengeContent(challenge.desc);
-  }, [challenge.desc]);
-
-  const weekText = receivedContent?.challengePoint?.weekText || '3주';
+  const weekText = content?.challengePoint?.weekText ?? '3주';
 
   return (
     <section className="flex w-full flex-col items-center pb-[70px] pt-[50px] text-center md:overflow-x-hidden md:pb-[82px] md:pt-[141px]">

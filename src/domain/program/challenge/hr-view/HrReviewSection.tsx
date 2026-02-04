@@ -1,6 +1,5 @@
 import SectionHeader from '@/common/header/SectionHeader';
-import { ChallengeIdPrimitive } from '@/schema';
-import { parseChallengeContent } from '@/domain/program/challenge/utils/parseChallengeContent';
+import { ChallengeContent } from '@/types/interface';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
@@ -8,12 +7,11 @@ import MainTitle from '../ui/MainTitle';
 import TestimonialCarousel from './TestimonialCarousel';
 
 interface Props {
-  challenge: ChallengeIdPrimitive;
+  content: ChallengeContent | null;
 }
 
-const HrReviewSection: React.FC<Props> = ({ challenge }) => {
-  const content = parseChallengeContent(challenge.desc);
-  const reviews = content?.challengeReview || [];
+const HrReviewSection: React.FC<Props> = ({ content }) => {
+  const reviews = content?.challengeReview ?? [];
 
   return (
     <section

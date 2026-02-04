@@ -2,19 +2,19 @@
 
 import { useGetChallengeFaq } from '@/api/challenge/challenge';
 import ChallengeFaq from '@/domain/program/challenge/challenge-view/ChallengeFaq';
-import { parseChallengeContent } from '@/domain/program/challenge/utils/parseChallengeContent';
 import { ChallengeIdPrimitive } from '@/schema';
+import { ChallengeContent } from '@/types/interface';
 import { useParams } from 'next/navigation';
 
 interface Props {
   challenge: ChallengeIdPrimitive;
+  content: ChallengeContent | null;
 }
 
-const HrFAQSection = ({ challenge }: Props) => {
+const HrFAQSection = ({ challenge, content }: Props) => {
   const { id } = useParams<{ id: string }>();
   const { data: faqData } = useGetChallengeFaq(id ?? '');
 
-  const content = parseChallengeContent(challenge.desc);
   // 빈 문자열이나 undefined를 필터링하여 빈 카테고리 버튼이 나타나지 않도록 함
   const faqCategory =
     content?.faqCategory?.filter(

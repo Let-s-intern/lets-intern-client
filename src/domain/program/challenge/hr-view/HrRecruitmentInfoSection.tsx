@@ -120,14 +120,17 @@ const PlanBenefits = ({
     .map((line) => line.trim())
     .filter(Boolean);
 
+  const displayLine = (line: string) =>
+    !isBasic && line.startsWith('✓') ? line.slice(1).trimStart() : line;
+
   return (
     <ul className="mt-3 space-y-1.5 text-left text-xsmall16 text-[#606060]">
       {lines.map((line) => (
         <li key={line} className="flex items-start gap-1.5">
           <span className={twMerge('text-[#606060] md:text-xsmall16')}>
-            {isBasic ? '✓' : '+'}
+            {isBasic ? '' : '+'}
           </span>
-          <span className="whitespace-pre-line">{line}</span>
+          <span className="whitespace-pre-line">{displayLine(line)}</span>
         </li>
       ))}
       {!isBasic && (
