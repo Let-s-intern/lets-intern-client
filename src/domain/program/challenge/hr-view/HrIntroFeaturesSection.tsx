@@ -1,4 +1,5 @@
 import SectionHeader from '@/common/header/SectionHeader';
+import { ChallengeContent } from '@/types/interface';
 import React, { ReactNode } from 'react';
 import MainTitle from '../ui/MainTitle';
 
@@ -113,7 +114,15 @@ const Card = ({
   );
 };
 
-const HrIntroFeaturesSection: React.FC = () => {
+interface HrIntroFeaturesSectionProps {
+  content: ChallengeContent | null;
+}
+
+const HrIntroFeaturesSection: React.FC<HrIntroFeaturesSectionProps> = ({
+  content,
+}) => {
+  const weekText = content?.challengePoint?.weekText ?? '3주';
+
   return (
     <section
       id="intro"
@@ -133,7 +142,7 @@ const HrIntroFeaturesSection: React.FC = () => {
 
         <MainTitle className="flex flex-col items-center gap-1">
           <div>
-            <span className="text-[#FF5E00]">3주 만에</span>{' '}
+            <span className="text-[#FF5E00]">{weekText} 만에</span>{' '}
             <span>HR 직무 이해부터</span>
           </div>
           <div>

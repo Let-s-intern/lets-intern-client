@@ -1,7 +1,7 @@
 import ChallengeIntroEditorContent from '@/domain/program/challenge/challenge-view/ChallengeIntroEditorContent';
 import ChallengeTabNavigation from '@/domain/program/challenge/challenge-view/ChallengeTabNavigation';
-import { parseChallengeContent } from '@/domain/program/challenge/utils/parseChallengeContent';
 import { getChallengeThemeColor } from '@/domain/program/challenge/utils/getChallengeThemeColor';
+import { parseChallengeContent } from '@/domain/program/challenge/utils/parseChallengeContent';
 import { ChallengeIdPrimitive } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import { useMemo } from 'react';
@@ -35,7 +35,7 @@ const ChallengeHrView = ({ challenge }: Props) => {
       <ChallengeTabNavigation themeColor={themeColor} />
       <ChallengeIntroEditorContent challenge={challenge} />
       <HrIntroSection />
-      <HrIntroFeaturesSection />
+      <HrIntroFeaturesSection content={content} />
       <HrCheckListSection />
       <HrCurriculumPointsSection content={content} />
       <HrCurriculumStepsSection content={content} />
