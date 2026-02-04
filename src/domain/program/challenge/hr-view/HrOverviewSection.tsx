@@ -1,5 +1,4 @@
-import { parseChallengeContent } from '@/domain/program/challenge/utils/parseChallengeContent';
-import { ChallengeIdPrimitive } from '@/schema';
+import { ChallengeContent } from '@/types/interface';
 import Image from 'next/image';
 import { ReactNode } from 'react';
 
@@ -115,11 +114,10 @@ const StepCard = ({ step, title, description, src, index }: StepCardProps) => {
 };
 
 interface HrOverviewSectionProps {
-  challenge: ChallengeIdPrimitive;
+  content: ChallengeContent | null;
 }
 
-const HrOverviewSection: React.FC<HrOverviewSectionProps> = ({ challenge }) => {
-  const content = parseChallengeContent(challenge.desc);
+const HrOverviewSection: React.FC<HrOverviewSectionProps> = ({ content }) => {
   const weekText = content?.challengePoint?.weekText ?? '3주';
 
   return (

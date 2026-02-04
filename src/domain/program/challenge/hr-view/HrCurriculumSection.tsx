@@ -1,30 +1,28 @@
 import SectionHeader from '@/common/header/SectionHeader';
-import { parseChallengeContent } from '@/domain/program/challenge/utils/parseChallengeContent';
 import { ChallengeIdPrimitive } from '@/schema';
-import { useMemo } from 'react';
+import { ChallengeContent } from '@/types/interface';
 import MainTitle from '../ui/MainTitle';
 import HrCurriculumCalendar from './HrCurriculumCalendar';
 import HrCurriculums from './HrCurriculums';
+
 interface HrCurriculumSectionProps {
   challenge: ChallengeIdPrimitive;
+  content: ChallengeContent | null;
 }
 
 const HrCurriculumSection: React.FC<HrCurriculumSectionProps> = ({
   challenge,
+  content,
 }) => {
-  const receivedContent = useMemo(() => {
-    return parseChallengeContent(challenge.desc);
-  }, [challenge.desc]);
-
   if (
-    !receivedContent ||
-    !receivedContent.curriculum ||
-    receivedContent.curriculum.length === 0
+    !content ||
+    !content.curriculum ||
+    content.curriculum.length === 0
   ) {
     return null;
   }
 
-  const weekText = receivedContent?.challengePoint?.weekText || '3주';
+  const weekText = content?.challengePoint?.weekText ?? '3주';
 
   return (
     <section
@@ -45,12 +43,12 @@ const HrCurriculumSection: React.FC<HrCurriculumSectionProps> = ({
         완성까지 함께합니다.
       </div>
       <HrCurriculums
-        curriculum={receivedContent.curriculum}
-        content={receivedContent}
+        curriculum={content.curriculum}
+        content={content}
       />
       <HrCurriculumCalendar
         challenge={challenge}
-        curriculumImage={receivedContent.curriculumImage}
+        curriculumImage={content.curriculumImage}
       />
     </section>
   );
