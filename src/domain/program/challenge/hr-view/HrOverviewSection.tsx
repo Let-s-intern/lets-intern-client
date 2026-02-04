@@ -1,3 +1,5 @@
+import { parseChallengeContent } from '@/domain/program/challenge/utils/parseChallengeContent';
+import { ChallengeIdPrimitive } from '@/schema';
 import Image from 'next/image';
 import { ReactNode } from 'react';
 
@@ -90,7 +92,7 @@ const StepCard = ({ step, title, description, src, index }: StepCardProps) => {
     <div className="flex min-w-[424px] flex-col gap-3 md:gap-4">
       <div className="flex items-center justify-start gap-3">
         <span
-          className="rounded-full px-4 py-2 text-xsmall16 font-semibold text-[##212121] md:text-medium22"
+          className="rounded-full px-4 py-2 text-xsmall16 font-semibold text-[#212121] md:text-medium22"
           style={{ backgroundColor: '#FFBD96' }}
         >
           {step}
@@ -112,7 +114,14 @@ const StepCard = ({ step, title, description, src, index }: StepCardProps) => {
   );
 };
 
-const HrOverviewSection: React.FC = () => {
+interface HrOverviewSectionProps {
+  challenge: ChallengeIdPrimitive;
+}
+
+const HrOverviewSection: React.FC<HrOverviewSectionProps> = ({ challenge }) => {
+  const content = parseChallengeContent(challenge.desc);
+  const weekText = content?.challengePoint?.weekText ?? '3주';
+
   return (
     <section className="flex w-full flex-col items-center bg-[#290F00] px-5 pt-[60px] md:mb-16 md:px-10 md:pt-[120px] lg:px-0">
       <div className="mb-8 flex w-full max-w-[1000px] flex-col md:mb-16">
@@ -124,7 +133,7 @@ const HrOverviewSection: React.FC = () => {
             width={30}
             height={30}
           />
-          <span>2주 여정 한 번에 보기</span>
+          <span>{weekText} 여정 한 번에 보기</span>
         </p>
       </div>
       <div className="mb-16 w-screen md:mb-36">

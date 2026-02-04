@@ -70,7 +70,7 @@ const HrCurriculumCalendar = ({ challenge, curriculumImage }: Props) => {
     {
       number: 2,
       bgColor: 'bg-[#FB923C]',
-      title: '현직자 LIVE 세미나 5회',
+      title: '현직자 LIVE 세미나 4회',
       description: (
         <div className="leading-[20px] md:leading-[22px]">
           채용, 리크루팅, HRD, People Analytics 등 <br />

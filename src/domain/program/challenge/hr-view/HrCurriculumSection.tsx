@@ -1,6 +1,6 @@
 import SectionHeader from '@/common/header/SectionHeader';
-import { ChallengeIdPrimitive } from '@/schema';
 import { parseChallengeContent } from '@/domain/program/challenge/utils/parseChallengeContent';
+import { ChallengeIdPrimitive } from '@/schema';
 import { useMemo } from 'react';
 import MainTitle from '../ui/MainTitle';
 import HrCurriculumCalendar from './HrCurriculumCalendar';
@@ -24,6 +24,8 @@ const HrCurriculumSection: React.FC<HrCurriculumSectionProps> = ({
     return null;
   }
 
+  const weekText = receivedContent?.challengePoint?.weekText || '3주';
+
   return (
     <section
       id="curriculum"
@@ -34,9 +36,9 @@ const HrCurriculumSection: React.FC<HrCurriculumSectionProps> = ({
       </SectionHeader>
       <MainTitle className="flex flex-col items-center gap-1">
         <span>
-          6회의 미션 <br className="md:hidden" />+ 현직자 LIVE 세미나 5회와 함께
+          6회의 미션 <br className="md:hidden" />+ 현직자 LIVE 세미나 4회와 함께
         </span>
-        <span>만드는 밀도 있는 3주간의 여정</span>
+        <span>만드는 밀도 있는 {weekText}간의 여정</span>
       </MainTitle>
       <div className="text-small14 mb-[60px] mt-3 text-center text-neutral-0 md:mt-5 md:text-small18">
         막연한 HR 관심에서 끝나지 않도록, 직무 탐색부터 경험 정리, 결과물
