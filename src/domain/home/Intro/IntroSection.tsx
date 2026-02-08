@@ -5,6 +5,7 @@ import Intro1 from '@/assets/graphic/home/intro/1.svg?react';
 import Intro11 from '@/assets/graphic/home/intro/11.svg?react';
 import Intro2 from '@/assets/graphic/home/intro/2.svg?react';
 import Intro3 from '@/assets/graphic/home/intro/3.svg?react';
+import Intro4 from '@/assets/graphic/home/intro/4.svg?react';
 import Intro5 from '@/assets/graphic/home/intro/5.svg?react';
 import Intro6 from '@/assets/graphic/home/intro/6.svg?react';
 import Intro8 from '@/assets/graphic/home/intro/8.svg?react';
@@ -101,12 +102,24 @@ const HOME_INTRO = {
       {
         title: (
           <p>
-            이력서
+            포트폴리오
             <br />
             피드백 받기
           </p>
         ),
         icon: <Intro5 width={44} height={44} />,
+        href: convertReportTypeToLandingPath('PORTFOLIO'),
+        gaTitle: '포트폴리오 피드백 받기',
+      },
+      {
+        title: (
+          <p>
+            이력서
+            <br />
+            피드백 받기
+          </p>
+        ),
+        icon: <Intro4 width={44} height={44} />,
         href: convertReportTypeToLandingPath('RESUME'),
         gaTitle: '이력서 피드백 받기',
       },
@@ -218,8 +231,8 @@ const IntroSection = () => {
 
   const filteredItems = HOME_INTRO.items.basic.filter((item) => {
     // 포트폴리오 준비하기
-    if (item.href === `type=${PORTFOLIO}` && !hasActivePortfolio) {
-      return false;
+    if (item.href === convertReportTypeToLandingPath('PORTFOLIO')) {
+      return hasActivePortfolio;
     }
     // 이력서 피드백 받기
     if (item.href === convertReportTypeToLandingPath('RESUME')) {
