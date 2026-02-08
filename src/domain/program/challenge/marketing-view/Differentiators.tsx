@@ -85,13 +85,13 @@ const professionals = [
     company: '대학내일',
     role: 'AE마케터',
   },
-  {
-    logo: 'innocean.png',
-    profile: 'profile1.png',
-    week: '피드백',
-    company: '이노션',
-    role: 'CRM 마케터',
-  },
+  // {
+  //   logo: 'innocean.png',
+  //   profile: 'profile1.png',
+  //   week: '피드백',
+  //   company: '이노션',
+  //   role: 'CRM 마케터',
+  // },
 ];
 
 export const ProfessionalsList = () => {
@@ -132,8 +132,8 @@ export const ProfessionalsList = () => {
           </div>
         ))}
       </div>
-      <div className="mt-6 grid max-w-[1000px] grid-cols-3 gap-1 md:mt-[50px] md:gap-3">
-        {professionals.slice(2, 5).map((item, index) => (
+      <div className="mt-1 grid max-w-[1000px] grid-cols-2 gap-1 justify-self-center md:mt-3 md:gap-3">
+        {professionals.slice(2, 4).map((item, index) => (
           <div
             key={index}
             className="w-[113px] overflow-hidden rounded-xxs md:w-[280px] md:rounded-sm"
