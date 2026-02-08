@@ -58,40 +58,40 @@ export const MarketingTool = () => {
 /** 차별점 2 */
 const professionals = [
   {
-    logo: 'corpuniv.png',
-    profile: 'profile4.png',
-    week: '세미나(1월4주차) & 피드백',
-    company: '대학내일',
-    role: 'AE마케터',
-  },
-  {
-    logo: 'nol.png',
-    profile: 'profile3.png',
-    week: '세미나(1월 5주차) & 피드백',
-    company: '놀유니버스',
-    role: '마케팅 전략',
-  },
-  {
     logo: 'class101.png',
     profile: 'profile2.png',
-    week: '세미나(2월 1주차) & 피드백',
+    week: '세미나(2월 3주차) & 피드백',
     company: '클래스 101',
     role: '콘텐츠 마케터',
   },
   {
+    logo: 'nol.png',
+    profile: 'profile3.png',
+    week: '세미나(2월 4주차) & 피드백',
+    company: '놀유니버스',
+    role: '마케팅 전략',
+  },
+  {
     logo: 'cashnote.png',
     profile: 'profile5.png',
-    week: '세미나(2월 2주차) & 피드백',
+    week: '세미나(3월 1주차) & 피드백',
     company: '캐시노트',
     role: '그로스 마케터',
   },
   {
-    logo: 'innocean.png',
-    profile: 'profile1.png',
-    week: '피드백',
-    company: '이노션',
-    role: 'CRM 마케터',
+    logo: 'corpuniv.png',
+    profile: 'profile4.png',
+    week: '세미나(3월2주차) & 피드백',
+    company: '대학내일',
+    role: 'AE마케터',
   },
+  // {
+  //   logo: 'innocean.png',
+  //   profile: 'profile1.png',
+  //   week: '피드백',
+  //   company: '이노션',
+  //   role: 'CRM 마케터',
+  // },
 ];
 
 export const ProfessionalsList = () => {
@@ -132,8 +132,8 @@ export const ProfessionalsList = () => {
           </div>
         ))}
       </div>
-      <div className="mt-6 grid max-w-[1000px] grid-cols-3 gap-1 md:mt-[50px] md:gap-3">
-        {professionals.slice(2, 5).map((item, index) => (
+      <div className="mt-1 grid max-w-[1000px] grid-cols-2 gap-1 justify-self-center md:mt-3 md:gap-3">
+        {professionals.slice(2, 4).map((item, index) => (
           <div
             key={index}
             className="w-[113px] overflow-hidden rounded-xxs md:w-[280px] md:rounded-sm"

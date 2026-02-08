@@ -27,8 +27,8 @@ const cards = [
         확실하게 궁금증을 해결해요.
       </>
     ),
-    mobileImg: 'marketing-point2-mobile.svg',
-    desktopImg: 'marketing-point2-desktop.svg',
+    mobileImg: 'marketing-point2-mobile2.png',
+    desktopImg: 'marketing-point2-desktop2.png',
     alt: '현직자 회사 로고(대학내일, 야놀자, 클래스101 등) 이미지',
   },
   {
@@ -74,14 +74,14 @@ const Card = ({
       <div className="absolute -top-2.5 left-5 -rotate-12 rounded-xxs bg-[#2CB2FF] px-3 py-1.5 text-xsmall16 font-semibold text-white md:-top-7 md:px-4 md:py-2 md:text-small18">
         Point {index}
       </div>
-      <div className="h-fit w-full rounded-[4.5px] border border-neutral-80 bg-neutral-90">
-        <picture>
+      <div className="flex h-fit w-full items-center justify-center rounded-[4.5px] border border-neutral-80 bg-neutral-90 p-3">
+        <picture className="flex justify-center">
           <source
             srcSet={`/images/${mobileImg}`}
             media="(orientation: portrait)"
           />
           <img
-            className="object-cover"
+            className="mx-auto object-cover"
             src={`/images/${desktopImg}`}
             alt={alt}
           />

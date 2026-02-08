@@ -4,11 +4,11 @@ import { ReactNode } from 'react';
 
 export const curriculums = [
   {
-    date: '1/24-30',
-    title: '+ 대학내일 현직자 강연',
+    date: '2/14-20',
+    title: '+ 클래스 101 현직자 강연',
     detail: [
       {
-        date: '1/24-26',
+        date: '2/14-16',
         title: '1회차 직무 탐색',
         content: (
           <Description>
@@ -17,25 +17,24 @@ export const curriculums = [
         ),
       },
       {
-        date: '1/24',
+        date: '2/14',
         title: '현직자에게 듣는 합격하는 서류의 A-Z',
         content: (
           <Highlight
-            className="bg-[#FFF3F2]"
-            companyImg="corpuniv.png"
-            role="대학내일 AE"
-            date="| 1/24 오전 11시 (온라인)"
+            companyImg="class101.png"
+            role="Class 101 콘텐츠 마케터"
+            className="bg-[#FFF0F4]"
             description={
               <>
-                대학내일ES, 이런 포트폴리오를 기다려요. <br />
-                AE 취업을 위한 나만의 무기를 함께 찾아봅니다.
+                현직 콘텐츠 마케터와 함께 콘텐츠 마케터에게 <br />
+                가장 필요한 경험과 역량을 살펴봅니다.
               </>
             }
           />
         ),
       },
       {
-        date: '1/27-30',
+        date: '2/17-20',
         title: '2회차 경험 정리',
         content: (
           <Description>
@@ -44,7 +43,7 @@ export const curriculums = [
         ),
       },
       {
-        date: '1/28',
+        date: '2/18',
         title: '역량 더하기 | 렛츠커리어 LIVE 클래스',
         content: (
           <Highlight
@@ -64,11 +63,11 @@ export const curriculums = [
     ],
   },
   {
-    date: '1/31-2/6',
+    date: '2/21-27',
     title: '+ 놀유니버스 현직자 강연',
     detail: [
       {
-        date: '1/31-2/2',
+        date: '2/21-2/23',
         title: '3회차 경험 분석',
         content: (
           <Description>
@@ -79,14 +78,13 @@ export const curriculums = [
         ),
       },
       {
-        date: '1/31',
+        date: '2/21',
         title: '현직자에게 듣는 합격하는 서류의 A-Z',
         content: (
           <Highlight
             className="bg-[#FFF0F4]"
             companyImg="nol.png"
             role="놀유니버스 마케팅 전략 담당"
-            date="| 1/31 오후 8시 (온라인)"
             description={
               <>
                 IT 스타트업 현직 마케터와 함께 <br />
@@ -97,7 +95,7 @@ export const curriculums = [
         ),
       },
       {
-        date: '2/3-6',
+        date: '2/24-27',
         title: '4회차 컨셉 잡기',
         content: (
           <Description>
@@ -106,7 +104,7 @@ export const curriculums = [
         ),
       },
       {
-        date: '2/4',
+        date: '2/25',
         title: '역량 더하기 | 렛츠커리어 LIVE 클래스',
         content: (
           <Highlight
@@ -126,11 +124,11 @@ export const curriculums = [
     ],
   },
   {
-    date: '2/7-13',
-    title: '+ 클래스101 현직자 강연',
+    date: '2/28-3/6',
+    title: '+ 캐시노트 현직자 강연',
     detail: [
       {
-        date: '2/7-9',
+        date: '2/28-3/2',
         title: '5회차 이력서 작성',
         content: (
           <Description>
@@ -139,24 +137,25 @@ export const curriculums = [
         ),
       },
       {
-        date: '2/7',
+        date: '2/28',
         title: '현직자에게 듣는 합격하는 서류의 A-Z',
         content: (
           <Highlight
-            companyImg="class101.png"
-            role="Class 101 콘텐츠 마케터"
-            date="| 2/7 오전 11시 (온라인) "
+            className="bg-[#E9F4FF] md:mt-0"
+            companyImg="cashnote.png"
+            role="캐시노트 그로스 마케터"
             description={
               <>
-                현직 콘텐츠 마케터와 함께 <br className="hidden md:block" />
-                콘텐츠 마케터에게 가장 필요한 경험과 역량을 살펴봅니다.
+                현직 마케터가 들려주는 그로스 마케팅의 A-Z,
+                <br className="hidden md:block" /> 합격하는 서류의 공통점을
+                소개합니다.
               </>
             }
           />
         ),
       },
       {
-        date: '2/10-13',
+        date: '3/3-6',
         title: '6회차 자기소개서 작성',
         content: (
           <Description>
@@ -165,7 +164,7 @@ export const curriculums = [
         ),
       },
       {
-        date: '2/11',
+        date: '3/4',
         title: '역량 더하기 | 렛츠커리어 LIVE 클래스',
         content: (
           <Highlight
@@ -185,11 +184,11 @@ export const curriculums = [
     ],
   },
   {
-    date: '2/14-20',
-    title: '+ 야놀자 현직자 강연',
+    date: '3/7-13',
+    title: '+ 대학내일 현직자 강연',
     detail: [
       {
-        date: '2/14-16',
+        date: '3/7-9',
         title: '7회차 포트폴리오 기초',
         content: (
           <Description>
@@ -198,26 +197,25 @@ export const curriculums = [
         ),
       },
       {
-        date: '2/14',
+        date: '3/7',
         title: '현직자에게 듣는 합격하는 서류의 A-Z',
         content: (
           <Highlight
             className="bg-[#E9F4FF] md:mt-0"
-            companyImg="cashnote.png"
-            role="캐시노트 그로스 마케터"
-            date="| 2/14 오후 8시 (온라인)"
+            companyImg="corpuniv.png"
+            role="대학내일 AE"
             description={
               <>
-                현직 마케터가 들려주는 그로스 마케팅의 A-Z,
-                <br className="hidden md:block" /> 합격하는 서류의 공통점을
-                소개합니다.
+                대학내일ES, 이런 포트폴리오를 기다려요.
+                <br className="hidden md:block" />
+                AE 취업을 위한 나만의 무기를 함께 찾아봅니다.
               </>
             }
           />
         ),
       },
       {
-        date: '2/17-20',
+        date: '3/10-13',
         title: '8회차 포트폴리오 완성',
         content: (
           <Description>
@@ -226,7 +224,7 @@ export const curriculums = [
         ),
       },
       {
-        date: '2/18',
+        date: '3/11',
         title: '역량 더하기 | 렛츠커리어 LIVE 클래스',
         content: (
           <Highlight
