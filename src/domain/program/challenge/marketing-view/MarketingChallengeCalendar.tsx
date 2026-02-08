@@ -3,8 +3,10 @@ import Image from 'next/image';
 
 interface Props {
   challenge: ChallengeIdPrimitive;
+  curriculumImage?: string;
 }
-const ChallengeScheduleSection = ({ challenge }: Props) => {
+
+const ChallengeScheduleSection = ({ challenge, curriculumImage }: Props) => {
   return (
     <section className="flex w-full flex-col items-center bg-[#0C1737] px-5 pb-20 pt-[60px] text-white md:px-0 md:pb-[140px] md:pt-[100px]">
       <h2 className="mb-10 text-center text-[22px] font-bold md:text-xlarge28">
@@ -13,21 +15,17 @@ const ChallengeScheduleSection = ({ challenge }: Props) => {
 
       <div className="flex w-full flex-col-reverse items-center gap-4 md:h-[580px] md:w-fit md:flex-row md:gap-3">
         {/* 왼쪽 달력 이미지 */}
-        <div className="relative aspect-[320/239] w-full md:h-[580px]">
-          <picture>
-            <source
-              srcSet="/images/marketing/calendar-january.png"
-              media="(orientation: portrait)"
-            />
+        {curriculumImage && (
+          <div className="relative aspect-[320/239] w-full md:h-[580px]">
             <Image
-              src="/images/marketing/calendar-january.png"
+              src={curriculumImage}
               alt="마케팅 챌린지 달력"
               fill
               unoptimized
               className="absolute rounded-xxs object-cover shadow-lg md:rounded-sm"
             />
-          </picture>
-        </div>
+          </div>
+        )}
         {/* 오른쪽 박스 */}
         <div className="relative grid h-full w-full grid-rows-2 gap-2 text-[#0C1737] shadow-lg">
           <ul className="flex min-w-[278px] flex-col gap-3 rounded-sm bg-white p-3 text-xsmall14 leading-[22px] md:p-5 md:pl-4">
