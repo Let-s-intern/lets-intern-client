@@ -77,6 +77,18 @@ const HOME_INTRO = {
       {
         title: (
           <p>
+            포트폴리오
+            <br />
+            준비하기
+          </p>
+        ),
+        icon: <Intro3 width={44} height={44} />,
+        href: `type=${PORTFOLIO}`,
+        gaTitle: '포트폴리오 준비하기',
+      },
+      {
+        title: (
+          <p>
             대기업 자소서
             <br />
             준비하기
@@ -87,18 +99,7 @@ const HOME_INTRO = {
         href: `type=${PERSONAL_STATEMENT_LARGE_CORP}`,
         gaTitle: '대기업 자기소개서 준비하기',
       },
-      {
-        title: (
-          <p>
-            포트폴리오
-            <br />
-            준비하기
-          </p>
-        ),
-        icon: <Intro3 width={44} height={44} />,
-        href: `type=${PORTFOLIO}`,
-        gaTitle: '포트폴리오 준비하기',
-      },
+
       {
         title: (
           <p>
@@ -230,7 +231,7 @@ const IntroSection = () => {
   };
 
   const filteredItems = HOME_INTRO.items.basic.filter((item) => {
-    // 포트폴리오 준비하기
+    // 포트폴리오 피드백 받기
     if (item.href === convertReportTypeToLandingPath('PORTFOLIO')) {
       return hasActivePortfolio;
     }
