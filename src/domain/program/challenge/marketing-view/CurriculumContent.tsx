@@ -1,325 +1,161 @@
+import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
-import Image from 'next/image';
+import { ChallengeContent, ChallengeCurriculum } from '@/types/interface';
 import { ReactNode } from 'react';
 
-export const curriculums = [
-  {
-    date: '2/14-20',
-    title: '+ 클래스 101 현직자 강연',
-    detail: [
-      {
-        date: '2/14-16',
-        title: '1회차 직무 탐색',
-        content: (
-          <Description>
-            마케터 직무와 업무를 통해 지원서 작성 전략을 탐색합니다.
-          </Description>
-        ),
-      },
-      {
-        date: '2/14',
-        title: '현직자에게 듣는 합격하는 서류의 A-Z',
-        content: (
-          <Highlight
-            companyImg="class101.png"
-            role="Class 101 콘텐츠 마케터"
-            className="bg-[#FFF0F4]"
-            description={
-              <>
-                현직 콘텐츠 마케터와 함께 콘텐츠 마케터에게 <br />
-                가장 필요한 경험과 역량을 살펴봅니다.
-              </>
-            }
-          />
-        ),
-      },
-      {
-        date: '2/17-20',
-        title: '2회차 경험 정리',
-        content: (
-          <Description>
-            내 경험을 체계적으로 정리하여 장단점과 역량 키워드를 도출합니다.
-          </Description>
-        ),
-      },
-      {
-        date: '2/18',
-        title: '역량 더하기 | 렛츠커리어 LIVE 클래스',
-        content: (
-          <Highlight
-            description={
-              <div className="flex items-center gap-1.5">
-                <img
-                  className="h-5 w-5 md:h-8 md:w-7"
-                  src="/images/marketing/figma.svg"
-                  alt="Figma"
-                />
-                마케터 필수 Figma 사용 방법 A to Z
-              </div>
-            }
-          />
-        ),
-      },
-    ],
-  },
-  {
-    date: '2/21-27',
-    title: '+ 놀유니버스 현직자 강연',
-    detail: [
-      {
-        date: '2/21-2/23',
-        title: '3회차 경험 분석',
-        content: (
-          <Description>
-            합격의 Key가 될 수 있는 경험을 분석하고{' '}
-            <br className="hidden md:block" />
-            기업과 Fit한 요소를 파악합니다.
-          </Description>
-        ),
-      },
-      {
-        date: '2/21',
-        title: '현직자에게 듣는 합격하는 서류의 A-Z',
-        content: (
-          <Highlight
-            className="bg-[#FFF0F4]"
-            companyImg="nol.png"
-            role="놀유니버스 마케팅 전략 담당"
-            description={
-              <>
-                IT 스타트업 현직 마케터와 함께 <br />
-                CRM 마케터에게 가장 필수적인 경험과 역량을 살펴봅니다.
-              </>
-            }
-          />
-        ),
-      },
-      {
-        date: '2/24-27',
-        title: '4회차 컨셉 잡기',
-        content: (
-          <Description>
-            기업에 Fit한 나만의 컨셉을 확보하여 서류 요소의 기반을 완성합니다.
-          </Description>
-        ),
-      },
-      {
-        date: '2/25',
-        title: '역량 더하기 | 렛츠커리어 LIVE 클래스',
-        content: (
-          <Highlight
-            description={
-              <div className="flex flex-col gap-1.5">
-                <img
-                  className="h-auto w-[68px] md:w-[84px]"
-                  src="/images/marketing/meta.svg"
-                  alt="메타 로고"
-                />
-                데이터 역량 쌓는 방법. 인스타그램 계정, 메타 광고 운영
-              </div>
-            }
-          />
-        ),
-      },
-    ],
-  },
-  {
-    date: '2/28-3/6',
-    title: '+ 캐시노트 현직자 강연',
-    detail: [
-      {
-        date: '2/28-3/2',
-        title: '5회차 이력서 작성',
-        content: (
-          <Description>
-            정리된 경험과 역량에 기반하여 눈에 띄는 이력서를 작성합니다.
-          </Description>
-        ),
-      },
-      {
-        date: '2/28',
-        title: '현직자에게 듣는 합격하는 서류의 A-Z',
-        content: (
-          <Highlight
-            className="bg-[#E9F4FF] md:mt-0"
-            companyImg="cashnote.png"
-            role="캐시노트 그로스 마케터"
-            description={
-              <>
-                현직 마케터가 들려주는 그로스 마케팅의 A-Z,
-                <br className="hidden md:block" /> 합격하는 서류의 공통점을
-                소개합니다.
-              </>
-            }
-          />
-        ),
-      },
-      {
-        date: '3/3-6',
-        title: '6회차 자기소개서 작성',
-        content: (
-          <Description>
-            이력서 컨셉에 기반하여 자기소개서의 공통 문항들을 완성합니다.
-          </Description>
-        ),
-      },
-      {
-        date: '3/4',
-        title: '역량 더하기 | 렛츠커리어 LIVE 클래스',
-        content: (
-          <Highlight
-            description={
-              <div className="flex flex-col gap-2.5 md:flex-row md:items-center md:gap-1.5">
-                <img
-                  className="h-auto w-[66px]"
-                  src="/images/marketing/google-analytics.svg"
-                  alt="Google Analytics"
-                />
-                데이터 역량 쌓는 방법. Google Analytics 실습
-              </div>
-            }
-          />
-        ),
-      },
-    ],
-  },
-  {
-    date: '3/7-13',
-    title: '+ 대학내일 현직자 강연',
-    detail: [
-      {
-        date: '3/7-9',
-        title: '7회차 포트폴리오 기초',
-        content: (
-          <Description>
-            정리된 역량에 기반하여 포트폴리오 초안을 제작합니다.
-          </Description>
-        ),
-      },
-      {
-        date: '3/7',
-        title: '현직자에게 듣는 합격하는 서류의 A-Z',
-        content: (
-          <Highlight
-            className="bg-[#E9F4FF] md:mt-0"
-            companyImg="corpuniv.png"
-            role="대학내일 AE"
-            description={
-              <>
-                대학내일ES, 이런 포트폴리오를 기다려요.
-                <br className="hidden md:block" />
-                AE 취업을 위한 나만의 무기를 함께 찾아봅니다.
-              </>
-            }
-          />
-        ),
-      },
-      {
-        date: '3/10-13',
-        title: '8회차 포트폴리오 완성',
-        content: (
-          <Description>
-            채용 담당자의 시선을 멈추게 하는 합격하는 포트폴리오를 완성합니다.
-          </Description>
-        ),
-      },
-      {
-        date: '3/11',
-        title: '역량 더하기 | 렛츠커리어 LIVE 클래스',
-        content: (
-          <Highlight
-            description={
-              <div className="flex flex-col gap-2.5 md:gap-2">
-                <img
-                  className="h-auto w-[68px] md:w-[84px]"
-                  src="/images/marketing/lets-career.svg"
-                  alt="렛츠커리어 로고"
-                />
-                렛츠커리어 CMO가 알려주는 <br />
-                2025 마케팅 합격 포트폴리오 트렌드
-              </div>
-            }
-          />
-        ),
-      },
-    ],
-  },
-];
+export interface WeekGroup {
+  week: string;
+  weekTitle: string;
+  startDate?: string;
+  endDate?: string;
+  items: ChallengeCurriculum[];
+}
 
 function Description({ children }: { children: ReactNode }) {
   return (
-    <p className="whitespace-pre-line text-xxsmall12 text-neutral-0 md:text-xsmall16">
-      {children}
-    </p>
+    <div className="flex items-center">
+      <p className="whitespace-pre-line break-words text-xxsmall12 text-neutral-0 md:text-xsmall16">
+        {children}
+      </p>
+    </div>
   );
 }
 
 function Highlight({
-  companyImg,
-  role,
-  date,
+  contentImg,
+  contentHighlightColor,
   description,
   className,
 }: {
-  companyImg?: string;
-  role?: string;
-  date?: string;
+  contentImg?: string;
+  contentHighlightColor?: 'none' | 'gray' | 'accent';
   description: ReactNode;
   className?: string;
 }) {
+  const hasHighlightColor =
+    contentHighlightColor && contentHighlightColor !== 'none';
+
+  const bgColorClass =
+    contentHighlightColor === 'gray'
+      ? 'bg-neutral-90'
+      : contentHighlightColor === 'accent'
+        ? 'bg-[#FFF0F4]'
+        : 'bg-transparent';
+
+  const textStyle = hasHighlightColor
+    ? 'text-xsmall16 font-semibold md:text-small18'
+    : 'text-xxsmall12 text-neutral-0 md:text-xsmall16';
+
+  const paddingClass = hasHighlightColor ? 'px-3 py-2.5' : '';
+
   return (
     <div
       className={twMerge(
-        'flex w-full flex-col gap-2.5 rounded-xs bg-neutral-90 px-3 py-2.5 text-neutral-0 md:mt-2',
+        'flex w-full max-w-full flex-col gap-2.5 rounded-xs text-neutral-0 md:mt-2',
+        bgColorClass,
+        paddingClass,
         className,
       )}
     >
-      {role && (
-        <div className="flex items-center gap-1.5">
-          <Image
-            src={`/images/marketing/${companyImg}`}
+      <p
+        className={twMerge(
+          textStyle,
+          'min-w-0 whitespace-pre-line break-words',
+        )}
+      >
+        {contentImg && (
+          <img
+            src={contentImg}
             alt=""
-            unoptimized
-            width={28}
-            height={28}
-            className="h-5 w-5 md:h-7 md:w-7"
+            className="mb-1 mr-2 inline-block h-5 align-top md:h-7"
           />
-          <div className="flex items-center gap-1 text-nowrap text-xxsmall12 md:gap-1.5">
-            <span className="font-medium md:text-small18">{role}</span>
-            <span>{date}</span>
-          </div>
-        </div>
-      )}
-      <p className="text-xsmall16 font-semibold md:text-small18">
+        )}
         {description}
       </p>
     </div>
   );
 }
 
-const CurriculumContent = ({
-  curriculum,
-}: {
-  curriculum: (typeof curriculums)[0];
-}) => {
-  const isLastItem = (index: number) => index === curriculum.detail.length - 1;
+export const CurriculumContent = ({ weekGroup }: { weekGroup: WeekGroup }) => {
+  const isLastItem = (index: number) => index === weekGroup.items.length - 1;
 
   return (
-    <ul>
-      {curriculum.detail.map((item, index) => (
-        <li key={item.date} className="flex flex-col gap-1">
-          <div className="flex items-center gap-2 text-xsmall14 font-semibold text-neutral-0 md:text-small18">
-            <span>{item.date}</span>
-            <h4>{item.title}</h4>
-          </div>
-          {item.content}
-          {!isLastItem(index) && (
-            <hr className="my-2 border-t border-neutral-80 md:my-[14px]" />
-          )}
-        </li>
-      ))}
+    <ul className="w-full min-w-0">
+      {weekGroup.items.map((item, index) => {
+        const dateRange = `${dayjs(item.startDate).format('M/D')}-${dayjs(item.endDate).format('M/D')}`;
+        const hasHighlight =
+          item.contentHighlightColor && item.contentHighlightColor !== 'none';
+        const hasContentImg = !!item.contentImg;
+
+        return (
+          <li key={item.id} className="flex w-full min-w-0 flex-col gap-1">
+            <div className="flex min-w-0 items-center gap-2 text-xsmall14 font-semibold text-neutral-0 md:text-small18">
+              {dateRange && <span className="flex-shrink-0">{dateRange}</span>}
+              <h4 className="min-w-0 break-words">
+                {item.session} {item.title}
+              </h4>
+            </div>
+            {hasHighlight || hasContentImg ? (
+              <Highlight
+                contentImg={item.contentImg}
+                contentHighlightColor={item.contentHighlightColor}
+                description={item.content}
+              />
+            ) : (
+              <Description>{item.content}</Description>
+            )}
+            {!isLastItem(index) && (
+              <hr className="my-2 border-t border-neutral-80 md:my-[14px]" />
+            )}
+          </li>
+        );
+      })}
     </ul>
   );
 };
 
-export default CurriculumContent;
+export const getCurriculumGroupedByWeek = (
+  curriculum: ChallengeCurriculum[] | undefined,
+  content?: ChallengeContent,
+): WeekGroup[] => {
+  if (!curriculum || curriculum.length === 0) {
+    return [];
+  }
+
+  if (!content?.useWeekSettings || !content.weekTitles?.length) {
+    return [
+      {
+        week: '',
+        weekTitle: '',
+        startDate: '',
+        endDate: '',
+        items: curriculum,
+      },
+    ];
+  }
+
+  const weekMap = new Map<string, WeekGroup>();
+
+  content.weekTitles.forEach((weekTitle) => {
+    weekMap.set(weekTitle.week, {
+      week: weekTitle.week,
+      weekTitle: weekTitle.weekTitle,
+      startDate: weekTitle.startDate,
+      endDate: weekTitle.endDate,
+      items: [],
+    });
+  });
+
+  curriculum.forEach((item) => {
+    if (item.week && weekMap.has(item.week)) {
+      weekMap.get(item.week)!.items.push(item);
+    } else {
+      const firstWeek = Array.from(weekMap.values())[0];
+      if (firstWeek) {
+        firstWeek.items.push(item);
+      }
+    }
+  });
+
+  return Array.from(weekMap.values());
+};
