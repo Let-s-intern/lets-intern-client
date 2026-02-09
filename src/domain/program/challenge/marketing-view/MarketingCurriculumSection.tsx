@@ -1,10 +1,17 @@
 import SectionHeader from '@/common/header/SectionHeader';
 import SectionSubHeader from '@/common/header/SectionSubHeader';
+import { ChallengeContent } from '@/types/interface';
 import React from 'react';
 import MainTitle from '../ui/MainTitle';
 import Curriculums from './Curriculums';
 
-const MarketingCurriculumSection: React.FC = () => {
+interface MarketingCurriculumSectionProps {
+  content?: ChallengeContent | null;
+}
+
+const MarketingCurriculumSection: React.FC<MarketingCurriculumSectionProps> = ({
+  content,
+}) => {
   return (
     <section
       id="curriculum"
@@ -28,7 +35,7 @@ const MarketingCurriculumSection: React.FC = () => {
         </MainTitle>
       </div>
 
-      <Curriculums />
+      <Curriculums curriculum={content?.curriculum} content={content ?? undefined} />
     </section>
   );
 };
