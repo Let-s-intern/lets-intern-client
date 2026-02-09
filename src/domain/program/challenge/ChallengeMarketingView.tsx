@@ -1,6 +1,6 @@
+import ChallengeIntroEditorContent from '@/domain/program/challenge/challenge-view/ChallengeIntroEditorContent';
 import ChallengeRecruitmentInfoSection from '@/domain/program/challenge/challenge-view/ChallengeRecruitmentInfoSection';
 import ChallengeTabNavigation from '@/domain/program/challenge/challenge-view/ChallengeTabNavigation';
-import ChallengeIntroEditorContent from '@/domain/program/challenge/challenge-view/ChallengeIntroEditorContent';
 import MarketingCurriculumSection from '@/domain/program/challenge/marketing-view/MarketingCurriculumSection';
 import MarketingDifferentiatorsSection from '@/domain/program/challenge/marketing-view/MarketingDifferentiatorsSection';
 import MarketingPricingSection from '@/domain/program/challenge/marketing-view/MarketingPricingSection';
@@ -33,7 +33,7 @@ const ChallengeMarketingView = ({ challenge }: Props) => {
       <ChallengeIntroEditorContent challenge={challenge} />
       <MarketingIntroSection />
       <MarketingFeaturesSection />
-      <MarketingDifferentiatorsSection />
+      <MarketingDifferentiatorsSection lectures={content?.lectures} />
       <MarketingCurriculumSection />
       <MarketingChallengeCalendar
         challenge={challenge}

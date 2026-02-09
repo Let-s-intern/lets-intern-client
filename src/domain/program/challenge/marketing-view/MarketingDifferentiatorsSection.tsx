@@ -1,3 +1,4 @@
+import { ChallengeContent } from '@/types/interface';
 import { ReactNode } from 'react';
 import MainTitle from '../ui/MainTitle';
 import {
@@ -5,45 +6,6 @@ import {
   PortfolioChange,
   ProfessionalsList,
 } from './Differentiators';
-
-const differentiators = [
-  {
-    title: '마케팅 실무 역량 Class',
-    description: (
-      <>
-        신입 마케터가 가장 막히는 실무 툴, <br className="md:hidden" />단 3회
-        수업으로 한 번에 끝냅니다.
-      </>
-    ),
-    visualExplanation: <MarketingTool />,
-  },
-  {
-    title: (
-      <>
-        모든 마케터의 현직자 특강부터 <br className="md:hidden" />
-        실시간 피드백까지
-      </>
-    ),
-    description: (
-      <>
-        현직자와 직접 만나 질문하고, 피드백받고, 성장하는 4주 <br />
-        마케터가 되기 위해 필요한 경험, 역량, 프로젝트가
-        <br className="md:hidden" /> 무엇인지 현직자 시선에서 알아가세요.
-      </>
-    ),
-    visualExplanation: <ProfessionalsList />,
-  },
-  {
-    title: (
-      <>
-        4주 안에 서류 완성, <br className="md:hidden" />단 하나의 코스로 끝
-      </>
-    ),
-    description:
-      '4주 안에 경험 정리, 자소서, 포트폴리오까지\n마케팅 직무에 꼭 맞는 서류를 한 번에 완성하세요.',
-    visualExplanation: <PortfolioChange />,
-  },
-];
 
 const Badge = ({ index }: { index: number }) => {
   return (
@@ -80,7 +42,48 @@ const Differentiator = ({
   );
 };
 
-const MarketingDifferentiatorsSection: React.FC = () => {
+const MarketingDifferentiatorsSection: React.FC<{
+  lectures?: ChallengeContent['lectures'];
+}> = ({ lectures }) => {
+  const differentiators = [
+    {
+      title: '마케팅 실무 역량 Class',
+      description: (
+        <>
+          신입 마케터가 가장 막히는 실무 툴, <br className="md:hidden" />단 3회
+          수업으로 한 번에 끝냅니다.
+        </>
+      ),
+      visualExplanation: <MarketingTool />,
+    },
+    {
+      title: (
+        <>
+          모든 마케터의 현직자 특강부터 <br className="md:hidden" />
+          실시간 피드백까지
+        </>
+      ),
+      description: (
+        <>
+          현직자와 직접 만나 질문하고, 피드백받고, 성장하는 4주 <br />
+          마케터가 되기 위해 필요한 경험, 역량, 프로젝트가
+          <br className="md:hidden" /> 무엇인지 현직자 시선에서 알아가세요.
+        </>
+      ),
+      visualExplanation: <ProfessionalsList lectures={lectures} />,
+    },
+    {
+      title: (
+        <>
+          4주 안에 서류 완성, <br className="md:hidden" />단 하나의 코스로 끝
+        </>
+      ),
+      description:
+        '4주 안에 경험 정리, 자소서, 포트폴리오까지\n마케팅 직무에 꼭 맞는 서류를 한 번에 완성하세요.',
+      visualExplanation: <PortfolioChange />,
+    },
+  ];
+
   return (
     <section className="flex w-full scroll-mt-[56px] flex-col items-center gap-14 bg-gradient-to-b from-black to-[#132356] px-5 pb-[70px] md:scroll-mt-[60px] md:gap-[68px] md:px-0 md:pb-[140px]">
       {differentiators.map((item, index) => (
