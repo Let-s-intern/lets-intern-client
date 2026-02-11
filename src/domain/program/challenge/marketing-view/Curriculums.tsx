@@ -8,6 +8,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import { ReactNode, useMemo, useState } from 'react';
 import {
   CurriculumContent,
+  WeekGroup,
   getCurriculumGroupedByWeek,
 } from './CurriculumContent';
 
@@ -102,6 +103,51 @@ const SidebarButton = ({
   );
 };
 
+interface DesktopCurriculumsProps {
+  groupedByWeek: WeekGroup[];
+  sidebarList: {
+    date: string;
+    title: string;
+  }[];
+}
+
+function DesktopCurriculums({
+  groupedByWeek,
+  sidebarList,
+}: DesktopCurriculumsProps) {
+  const [active, setActive] = useState(0);
+
+  const safeActiveIndex =
+    active >= 0 && active < groupedByWeek.length ? active : 0;
+  const activeGroup = groupedByWeek[safeActiveIndex];
+
+  if (!activeGroup) {
+    return null;
+  }
+
+  return (
+    <div className="hidden w-full max-w-[920px] items-stretch overflow-hidden rounded-sm bg-white md:flex">
+      {/* Sidebar */}
+      <div className="flex min-w-fit max-w-[398px] flex-1 shrink-0 flex-col border-r border-neutral-80 px-8 py-[30px]">
+        {sidebarList.map((item, index) => (
+          <SidebarButton
+            key={`sidebar-button-${index}`}
+            index={index}
+            date={item.date}
+            title={item.title}
+            active={index === safeActiveIndex}
+            onClick={() => setActive(index)}
+          />
+        ))}
+      </div>
+      {/* Content */}
+      <div className="h-[634px] min-w-0 flex-1 shrink-0 flex-col gap-3 overflow-y-auto overflow-x-hidden px-8 pb-11 pt-10">
+        <CurriculumContent weekGroup={activeGroup} />
+      </div>
+    </div>
+  );
+}
+
 function Curriculums({ curriculum, content }: CurriculumsProps) {
   const isMobile = useMediaQuery('(max-width:768px)');
 
@@ -147,34 +193,12 @@ function Curriculums({ curriculum, content }: CurriculumsProps) {
     );
   }
 
-  const ContentWithSidebar = () => {
-    const [active, setActive] = useState(0);
-    const activeGroup = groupedByWeek[active];
-
-    return (
-      <div className="hidden w-full max-w-[920px] items-stretch overflow-hidden rounded-sm bg-white md:flex">
-        {/* Sidebar */}
-        <div className="flex min-w-fit max-w-[398px] flex-1 shrink-0 flex-col border-r border-neutral-80 px-8 py-[30px]">
-          {sidebarListFromAdmin.map((item, index) => (
-            <SidebarButton
-              key={`sidebar-button-${index}`}
-              index={index}
-              date={item.date}
-              title={item.title}
-              active={index === active}
-              onClick={() => setActive(index)}
-            />
-          ))}
-        </div>
-        {/* Content */}
-        <div className="h-[634px] min-w-0 flex-1 shrink-0 flex-col gap-3 overflow-y-auto overflow-x-hidden px-8 pb-11 pt-10">
-          <CurriculumContent weekGroup={activeGroup} />
-        </div>
-      </div>
-    );
-  };
-
-  return <ContentWithSidebar />;
+  return (
+    <DesktopCurriculums
+      groupedByWeek={groupedByWeek}
+      sidebarList={sidebarListFromAdmin}
+    />
+  );
 }
 
 export default Curriculums;
