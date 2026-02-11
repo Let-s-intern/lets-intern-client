@@ -1,5 +1,4 @@
 import { CurrentChallenge } from '@/context/CurrentChallengeProvider';
-import { useNavB2CChallenges } from '@/hooks/useFirstB2CChallenge';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { UserChallengeMissionWithAttendance } from '@/schema';
@@ -46,47 +45,26 @@ const MissionGuideBonusSection = ({
   isLoading = false,
   currentChallenge,
 }: MissionGuideBonusSectionProps) => {
-  // 챌린지별 latest utm
-  const {
-    experienceSummary,
-    resume,
-    personalStatement,
-    personalStatementLargeCorp,
-    portfolio,
-    marketing,
-    hr,
-  } = useNavB2CChallenges();
-
-  // 챌린지 타입에 따라 매칭되는 챌린지 객체를 반환하는 함수
-  const getMatchedChallenge = () => {
-    if (!currentChallenge?.challengeType) return null;
-
-    const challengeTypeMap: Record<string, any> = {
-      EXPERIENCE_SUMMARY: experienceSummary,
-      RESUME: resume,
-      CAREER_START: resume,
-      PERSONAL_STATEMENT: personalStatement,
-      PERSONAL_STATEMENT_LARGE_CORP: personalStatementLargeCorp,
-      PORTFOLIO: portfolio,
-      MARKETING: marketing,
-      HR: hr,
-    };
-
-    return challengeTypeMap[currentChallenge.challengeType] || null;
-  };
-
   // 챌린지 링크를 반환하는 함수
   const getChallengeLink = (): string => {
-    const challenge = getMatchedChallenge();
-    if (challenge?.href) return `${window.location.origin}${challenge.href}`;
+    if (!currentChallenge?.challengeType) {
+      return `${window.location.origin}/program/challenge`;
+    }
 
-    return `${window.location.origin}/program/challenge`;
-  };
-
-  // 챌린지 타입 이름을 반환하는 함수
-  const getChallengeTypeName = (): string => {
-    const challenge = getMatchedChallenge();
-    return challenge?.title || '렛츠커리어 챌린지';
+    const challengeLinkMap: Record<string, string> = {
+      RESUME: 'https://bit.ly/4nVRC2o',
+      CAREER_START: 'https://bit.ly/4nVRC2o',
+      EXPERIENCE_SUMMARY: 'https://bit.ly/42PM3uP',
+      PERSONAL_STATEMENT: 'https://bit.ly/4qkAPbG',
+      PERSONAL_STATEMENT_LARGE_CORP: 'https://bit.ly/4qkAPbG',
+      PORTFOLIO: 'https://bit.ly/43udmuR',
+      MARKETING: 'https://bit.ly/4p5985i',
+      HR: `${window.location.origin}/program/challenge`, // HR은 제공된 URL이 없어서 기본값 사용
+    };
+    return (
+      challengeLinkMap[currentChallenge.challengeType] ||
+      `${window.location.origin}/program/challenge`
+    );
   };
 
   // 로딩 중이거나 데이터가 없을 때 스켈레톤 표시
@@ -174,14 +152,14 @@ const MissionGuideBonusSection = ({
                     &quot;취준&quot; 3회 이상, 프로그램명 1회 이상.
                   </li>
                   <li className="mb-4">
-                    <b>필수 링크</b> <br />-
+                    <b>필수 링크</b> <br />-{' '}
                     <a
                       href={getChallengeLink()}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="break-all text-primary hover:underline"
                     >
-                      {getChallengeTypeName()}
+                      렛츠커리어 | 인턴/신입, 커리어의 첫 걸음을 함께 해요{' '}
                     </a>
                   </li>
                   <li className="mb-4">
