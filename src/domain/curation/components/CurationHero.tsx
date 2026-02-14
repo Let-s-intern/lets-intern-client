@@ -62,7 +62,7 @@ const CurationHero = ({
           )}
         </div>
         <motion.div
-          className="rounded-2xl relative mt-6 grid w-full max-w-sm grid-cols-2 gap-3 bg-white p-4 shadow-lg md:mt-0"
+          className="rounded-2xl relative mt-6 hidden w-full max-w-sm grid-cols-2 gap-3 bg-white p-4 shadow-lg md:mt-0 md:grid"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
