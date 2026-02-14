@@ -14,9 +14,33 @@ const MobileChallengeComparison = ({
   challenges,
   highlightedPrograms = { primary: null, secondary: [] },
 }: MobileChallengeComparisonProps) => {
+  // 카드 내부 섹션 펼치기/접기
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>(
     {},
   );
+  
+  // 전체 카드 펼치기/접기 (추천되지 않은 카드는 기본 접혀있음)
+  const [expandedChallenges, setExpandedChallenges] = useState<
+    Record<string, boolean>
+  >(() => {
+    const initial: Record<string, boolean> = {};
+    challenges.forEach((challenge) => {
+      const isPrimary = highlightedPrograms.primary === challenge.programId;
+      const isSecondary = highlightedPrograms.secondary.includes(
+        challenge.programId,
+      );
+      // 추천된 프로그램만 펼쳐져 있음
+      initial[challenge.programId] = isPrimary || isSecondary;
+    });
+    return initial;
+  });
+
+  const toggleChallenge = (programId: string) => {
+    setExpandedChallenges((prev) => ({
+      ...prev,
+      [programId]: !prev[programId],
+    }));
+  };
 
   const toggleCard = (programId: string, section: string) => {
     const key = `${programId}-${section}`;
@@ -25,6 +49,10 @@ const MobileChallengeComparison = ({
 
   const isExpanded = (programId: string, section: string) => {
     return expandedCards[`${programId}-${section}`] || false;
+  };
+
+  const isChallengeExpanded = (programId: string) => {
+    return expandedChallenges[programId] || false;
   };
 
   return (
@@ -36,11 +64,12 @@ const MobileChallengeComparison = ({
           challenge.programId,
         );
         const isHighlighted = isPrimary || isSecondary;
+        const isCardExpanded = isChallengeExpanded(challenge.programId);
 
         return (
           <div
             key={challenge.programId}
-            className={`flex w-full flex-col gap-3 rounded-lg border-2 p-4 shadow-md ${
+            className={`flex w-full flex-col overflow-hidden rounded-lg border-2 shadow-md transition-all ${
               isPrimary
                 ? 'border-primary/30 bg-primary-20'
                 : isSecondary
@@ -48,22 +77,41 @@ const MobileChallengeComparison = ({
                   : 'border-neutral-90 bg-white'
             }`}
           >
-            {/* 헤더 */}
-            <div className="flex flex-col gap-1">
-              {isHighlighted && (
-                <span className="w-fit rounded-full bg-primary px-2.5 py-0.5 text-[11px] font-bold text-white">
-                  {isPrimary ? '주요 추천' : '보완 추천'}
+            {/* 헤더 - 클릭하여 펼치기/접기 */}
+            <button
+              type="button"
+              onClick={() => toggleChallenge(challenge.programId)}
+              className="flex w-full flex-col gap-1 p-4 text-left transition-colors hover:bg-white/30"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex flex-col gap-1">
+                  {isHighlighted && (
+                    <span className="w-fit rounded-full bg-primary px-2.5 py-0.5 text-[11px] font-bold text-white">
+                      {isPrimary ? '주요 추천' : '보완 추천'}
+                    </span>
+                  )}
+                  <h4 className="text-medium18 font-black text-neutral-0">
+                    {program.title}
+                  </h4>
+                  <p className="text-xsmall13 font-medium text-neutral-40">
+                    {program.subtitle}
+                  </p>
+                </div>
+                <span
+                  className={`text-medium18 font-bold transition-transform ${
+                    isCardExpanded
+                      ? 'rotate-180 text-primary'
+                      : 'text-neutral-40'
+                  }`}
+                >
+                  ▼
                 </span>
-              )}
-              <h4 className="text-medium18 font-black text-neutral-0">
-                {program.title}
-              </h4>
-              <p className="text-xsmall13 font-medium text-neutral-40">
-                {program.subtitle}
-              </p>
-            </div>
+              </div>
+            </button>
 
-            {/* 핵심 정보 */}
+            {/* 펼쳐진 내용 */}
+            {isCardExpanded && (
+              <div className="flex flex-col gap-3 border-t border-neutral-85 p-4">{/* 핵심 정보 */}
             <div className="flex flex-col gap-2 rounded-md bg-white/80 p-3">
               <div className="flex flex-col gap-1">
                 <span className="text-xsmall12 font-bold text-neutral-40">
@@ -189,6 +237,8 @@ const MobileChallengeComparison = ({
                 </div>
               )}
             </div>
+              </div>
+            )}
           </div>
         );
       })}
