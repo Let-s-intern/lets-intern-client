@@ -32,7 +32,7 @@ const QuestionStep = ({ question, value, onChange, error }: QuestionStepProps) =
                   onChange(option.value);
                 }
               }}
-              className={`group relative flex h-full min-h-[130px] cursor-pointer flex-col items-center justify-center gap-y-2.5 overflow-hidden rounded-2xl border-2 bg-gradient-to-br p-5 text-center transition-all duration-300 ${
+              className={`group relative flex h-full min-h-[130px] cursor-pointer flex-col items-center justify-center gap-y-2.5 overflow-hidden rounded-md border-2 bg-gradient-to-br p-5 text-center transition-all duration-300 ${
                 isActive
                   ? 'border-primary from-primary-5 to-white shadow-xl shadow-primary/10 scale-[1.02]'
                   : 'border-neutral-85 from-white to-gray-50 shadow-sm hover:border-primary/40 hover:shadow-lg hover:scale-[1.01]'

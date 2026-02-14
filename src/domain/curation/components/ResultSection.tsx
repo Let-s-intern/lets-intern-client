@@ -13,7 +13,7 @@ const RecommendationCard = ({ recommendation }: { recommendation: ProgramRecomme
     program.plans.find((p) => p.id === recommendation.suggestedPlanId) ?? program.plans[0];
 
   return (
-    <div className="flex h-full flex-col gap-y-4 rounded-2xl border-2 border-neutral-90 bg-gradient-to-br from-white to-gray-50 p-6 shadow-lg transition-all hover:shadow-xl hover:scale-[1.02]">
+    <div className="flex h-full flex-col gap-y-4 rounded-lg border-2 border-neutral-90 bg-gradient-to-br from-white to-gray-50 p-6 shadow-lg transition-all hover:shadow-xl hover:scale-[1.02]">
       <div className="flex items-center gap-2">
         <span
           className={`rounded-full px-3 py-1.5 text-xsmall12 font-bold shadow-sm ${
@@ -37,11 +37,11 @@ const RecommendationCard = ({ recommendation }: { recommendation: ProgramRecomme
         <span className="rounded-lg bg-neutral-95 px-2.5 py-1.5">기간: {program.duration}</span>
         <span className="rounded-lg bg-neutral-95 px-2.5 py-1.5">피드백: {program.feedback}</span>
       </div>
-      <div className="rounded-xl bg-gradient-to-br from-primary-5 to-primary-10 border border-primary/20 px-4 py-3 text-small14">
+      <div className="rounded-md bg-gradient-to-br from-primary-5 to-primary-10 border border-primary/20 px-4 py-3 text-small14">
         <p className="font-bold text-primary">이 조합으로 진행하세요</p>
         <p className="pt-1.5 font-medium leading-relaxed text-neutral-20">{recommendation.reason}</p>
       </div>
-      <div className="flex flex-col gap-2 rounded-xl border border-neutral-90 bg-white px-4 py-3 shadow-sm">
+      <div className="flex flex-col gap-2 rounded-md border border-neutral-90 bg-white px-4 py-3 shadow-sm">
         <div className="text-xsmall13 font-semibold text-neutral-40">추천 플랜</div>
         <div className="text-medium18 font-black text-neutral-0">{plan.name}</div>
         <div className="text-small14 font-medium text-neutral-30">
@@ -87,7 +87,7 @@ const ResultSection = ({ result, onRestart }: ResultSectionProps) => {
 
         {result && (
           <div className="flex flex-col gap-8">
-            <div className="flex flex-col gap-3 rounded-2xl bg-gradient-to-br from-primary-5 to-white border-2 border-primary/20 p-6 shadow-lg text-center">
+            <div className="flex flex-col gap-3 rounded-lg bg-gradient-to-br from-primary-5 to-white border-2 border-primary/20 p-6 shadow-lg text-center">
               <p className="text-medium18 font-black text-primary">{result.headline}</p>
               <p className="text-small16 font-medium leading-relaxed text-neutral-30">
                 {result.summary}
@@ -101,7 +101,7 @@ const ResultSection = ({ result, onRestart }: ResultSectionProps) => {
                 />
               ))}
             </div>
-            <div className="rounded-2xl border-2 border-neutral-90 bg-gradient-to-br from-neutral-96 to-white px-6 py-5 shadow-sm">
+            <div className="rounded-lg border-2 border-neutral-90 bg-gradient-to-br from-neutral-96 to-white px-6 py-5 shadow-sm">
               <p className="text-small16 font-black text-neutral-0 mb-3">병행 수강 가이드</p>
               <ul className="list-disc space-y-2 pl-5 text-small15 text-neutral-0">
                 {GUIDE_STEPS.map((step) => (

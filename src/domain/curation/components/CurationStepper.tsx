@@ -9,7 +9,7 @@ interface CurationStepperProps {
 
 const CurationStepper = ({ currentStep, steps, onStepClick }: CurationStepperProps) => {
   return (
-    <div className="flex w-full items-center gap-6 rounded-3xl bg-gradient-to-r from-gray-50 to-white p-6 shadow-lg">
+    <div className="flex w-full items-center gap-6 rounded-lg bg-gradient-to-r from-gray-50 to-white p-6 shadow-lg">
       {steps.map((label, index) => {
         const isActive = index === currentStep;
         const isDone = index < currentStep;
