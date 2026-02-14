@@ -1,0 +1,121 @@
+---
+description: Domain-based folder structure rules - MUST follow when creating or moving files
+globs:
+alwaysApply: true
+---
+
+# 도메인 기반 폴더 구조 규칙 (최우선 적용)
+
+> 이 규칙은 파일 생성, 이동, 리팩토링 시 반드시 따라야 하는 최우선 규칙이다.
+
+## 프로젝트 구조
+
+```
+src/
+├── app/                    # Next.js App Router — 라우팅만 담당
+├── domain/                 # 도메인 기반 기능 모듈 (핵심 코드가 여기에 위치)
+│   ├── about/
+│   ├── admin/
+│   ├── auth/
+│   ├── blog/
+│   ├── career-board/
+│   ├── challenge/
+│   ├── faq/
+│   ├── home/
+│   ├── mypage/
+│   ├── program/
+│   ├── program-recommend/
+│   ├── report/
+│   └── review/
+├── common/                 # 3개 이상 도메인에서 사용하는 범용 UI 컴포넌트
+├── api/                    # API 클라이언트 (도메인별 하위 폴더)
+├── hooks/                  # 3개 이상 도메인에서 사용하는 공유 훅
+├── store/                  # Zustand 전역 스토어
+├── types/                  # 공유 타입 정의
+├── utils/                  # 3개 이상 도메인에서 사용하는 공유 유틸리티
+├── lib/                    # 라이브러리 설정
+├── context/                # React Context 프로바이더
+└── schema.ts               # 중앙 Zod 스키마
+```
+
+## 파일 배치 결정 규칙 (이 순서대로 판단)
+
+### 1. 단일 도메인 전용 → `domain/{도메인}/` 안에 배치
+
+컴포넌트, 훅, 유틸 모두 해당 도메인 폴더 안에 둔다.
+
+```
+domain/challenge/
+├── MyChallengeCard.tsx          # 컴포넌트
+├── hooks/useMissionSubmit.ts    # 도메인 전용 훅
+├── utils/calcMissionScore.ts    # 도메인 전용 유틸
+├── section/DailyMissionSection.tsx
+└── ui/MissionBadge.tsx
+```
+
+### 2. 인접 2~3개 도메인 공유 → 상위/핵심 도메인 폴더에 배치
+
+- `program`과 `challenge` 공유 → `domain/program/` (상위 개념)
+- `mypage`와 `review` 공유 → `domain/mypage/` (호스트 역할)
+- `home`과 `blog` 공유 → 더 핵심인 도메인에 배치
+
+### 3. 3개 이상 도메인에서 광범위하게 사용 → `common/`, `hooks/`, `utils/`
+
+완전히 범용적이고 특정 도메인에 속하지 않는 것만.
+
+```
+common/button/BaseButton.tsx    # 범용 UI
+hooks/useDebounce.ts            # 범용 훅
+utils/formatDate.ts             # 범용 유틸
+```
+
+## 절대 금지
+
+1. **도메인 간 직접 import 금지**
+   ```typescript
+   // BAD: domain/challenge/에서 domain/program/ 직접 참조
+   import { ProgramCard } from '@/domain/program/ProgramCard';
+
+   // GOOD: 공유가 필요하면 common으로 올리거나 상위 도메인에 배치
+   ```
+
+2. **타입별 flat 구조 금지** — 모든 컴포넌트를 `src/components/`에 넣지 않음
+
+3. **순환 의존 금지** — 도메인 A → B → A 형태 금지
+
+4. **기존 파일 불필요한 이동 금지** — 새 파일에만 규칙 적용. 기존 구조를 함부로 바꾸지 않음
+
+## 도메인 폴더 내부 패턴
+
+```
+domain/{기능}/
+├── {ComponentName}.tsx         # 루트 컴포넌트
+├── section/                    # 페이지 섹션별 분리
+│   ├── {Feature}Section.tsx
+│   └── {Feature}SkeletonSection.tsx
+├── ui/                         # 도메인 전용 UI (button, card, modal 등)
+├── hooks/                      # 도메인 전용 훅
+├── utils/                      # 도메인 전용 유틸리티
+├── modal/                      # 도메인 전용 모달
+└── {하위기능}/                  # 서브 기능별 폴더
+```
+
+## 삭제 용이성 원칙
+
+**도메인 폴더를 통째로 삭제해도 다른 도메인에 영향이 없어야 한다.**
+
+- 도메인 전용 코드는 반드시 해당 도메인 폴더에 위치
+- 공유 코드 생성 전 "정말 필요한가?" 확인
+- 성급한 추상화보다 적절한 중복이 낫다
+
+## 의존 방향
+
+```
+common / hooks / utils (공유 레이어)
+        ↑
+domain/{각 도메인} (비즈니스 로직)
+        ↑
+app/ (라우팅, 페이지 조립)
+```
+
+상위 레이어가 하위 레이어를 참조한다. 역방향 참조 금지.
