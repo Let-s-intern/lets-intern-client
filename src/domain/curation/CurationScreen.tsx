@@ -50,6 +50,11 @@ const CurationScreen = () => {
             .getElementById('curation-comparison')
             ?.scrollIntoView({ behavior: 'smooth' })
         }
+        onScrollToFaq={() =>
+          document
+            .getElementById('curation-faq')
+            ?.scrollIntoView({ behavior: 'smooth' })
+        }
       />
 
       {/* Curation Selection Section */}
