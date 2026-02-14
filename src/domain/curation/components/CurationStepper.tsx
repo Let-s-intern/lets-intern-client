@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import { motion } from 'motion/react';
+import { useEffect, useRef } from 'react';
 
 interface CurationStepperProps {
   currentStep: number;
@@ -12,8 +13,31 @@ const CurationStepper = ({
   steps,
   onStepClick,
 }: CurationStepperProps) => {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // 현재 스텝이 중앙에 오도록 스크롤
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    const activeStep = stepRefs.current[currentStep];
+
+    if (container && activeStep) {
+      const containerWidth = container.offsetWidth;
+      const stepLeft = activeStep.offsetLeft;
+      const stepWidth = activeStep.offsetWidth;
+
+      // 스텝을 중앙에 배치하기 위한 스크롤 위치 계산
+      const scrollPosition = stepLeft - containerWidth / 2 + stepWidth / 2;
+
+      container.scrollTo({
+        left: scrollPosition,
+        behavior: 'smooth',
+      });
+    }
+  }, [currentStep]);
+
   return (
-    <div className="w-full overflow-x-auto">
+    <div ref={scrollContainerRef} className="w-full overflow-x-auto">
       <div className="flex min-w-max items-center gap-4 rounded-lg bg-gradient-to-r from-gray-50 to-white p-4 shadow-lg md:min-w-0 md:gap-6 md:p-6">
         {steps.map((label, index) => {
           const isActive = index === currentStep;
@@ -21,6 +45,9 @@ const CurationStepper = ({
           return (
             <div
               key={label}
+              ref={(el) => {
+                stepRefs.current[index] = el;
+              }}
               className="flex flex-1 items-center gap-3 md:gap-6"
             >
               <button
