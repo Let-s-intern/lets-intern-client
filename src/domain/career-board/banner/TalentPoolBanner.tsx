@@ -64,7 +64,7 @@ const TalentPoolBanner = ({ hasCareerData = false }: TalentPoolBannerProps) => {
     : '인재풀 등록하고 채용 제안을 받아보세요!';
 
   const subMessage = isEnabled
-    ? '당신의 커리어에 꼭 맞는 기업을 추천해드려요.'
+    ? '곧 좋은 기회가 생기면 먼저 알려드릴게요.'
     : '당신의 커리어에 꼭 맞는 기업을 추천해드려요.';
 
   return (
