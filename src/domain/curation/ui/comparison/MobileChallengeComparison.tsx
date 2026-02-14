@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { PROGRAMS } from '../../constants';
-import type { ChallengeComparisonRow, ProgramId } from '../../types';
+import { PROGRAMS } from '../../data/constants';
+import type { ChallengeComparisonRow, ProgramId } from '../../types/types';
 
 interface MobileChallengeComparisonProps {
   challenges: ChallengeComparisonRow[];

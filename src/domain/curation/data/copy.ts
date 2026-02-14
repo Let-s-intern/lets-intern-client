@@ -1,4 +1,4 @@
-import { PersonaId } from './types';
+import { PersonaId } from '../types/types';
 
 export const heroCopy = {
   eyebrow: '나만의 챌린지 찾기',

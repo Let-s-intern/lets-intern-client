@@ -1,8 +1,8 @@
 'use client';
 
-import { FREQUENT_COMPARISON } from '../../constants';
+import { FREQUENT_COMPARISON } from '../../data/constants';
 import { useInfiniteCarousel } from '../../hooks/useInfiniteCarousel';
-import type { FrequentComparisonItem } from '../../types';
+import type { FrequentComparisonItem } from '../../types/types';
 
 const FrequentComparisonCarousel = () => {
   const {
@@ -113,8 +113,7 @@ const FrequentComparisonCarousel = () => {
                   style={{
                     opacity: itemStyle.opacity,
                     transform: `scale(${itemStyle.scale})`,
-                    pointerEvents:
-                      itemStyle.opacity < 0.2 ? 'none' : 'auto',
+                    pointerEvents: itemStyle.opacity < 0.2 ? 'none' : 'auto',
                   }}
                 >
                   {/* 비교 제목 */}

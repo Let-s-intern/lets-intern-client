@@ -1,17 +1,17 @@
 'use client';
 import { useMemo } from 'react';
-import ChallengeComparisonSection from './components/ChallengeComparisonSection';
-import CurationHero from './components/CurationHero';
-import CurationStepper from './components/CurationStepper';
-import CurationStickyNav from './components/CurationStickyNav';
-import FaqSection from './components/FaqSection';
-import FrequentComparisonSection from './components/FrequentComparisonSection';
-import PersonaSelector from './components/PersonaSelector';
-import QuestionStep from './components/QuestionStep';
-import ResultSection from './components/ResultSection';
-import { QUESTION_MAP } from './constants';
-import { defaultPersonaId, heroCopy, stepLabels } from './copy';
-import { useCurationFlow } from './hooks/useCurationFlow';
+import { QUESTION_MAP } from '../data/constants';
+import { defaultPersonaId, heroCopy, stepLabels } from '../data/copy';
+import { useCurationFlow } from '../hooks/useCurationFlow';
+import ChallengeComparisonSection from '../ui/ChallengeComparisonSection';
+import CurationHero from '../ui/CurationHero';
+import CurationStepper from '../ui/CurationStepper';
+import CurationStickyNav from '../ui/CurationStickyNav';
+import FaqSection from '../ui/FaqSection';
+import FrequentComparisonSection from '../ui/FrequentComparisonSection';
+import PersonaSelector from '../ui/PersonaSelector';
+import QuestionStep from '../ui/QuestionStep';
+import ResultSection from '../ui/ResultSection';
 
 const CurationScreen = () => {
   const {

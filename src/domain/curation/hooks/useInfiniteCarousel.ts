@@ -7,7 +7,7 @@ import {
   findClosestItemIndex,
   getContainerMetrics,
   getItemMetrics,
-} from '../services/carouselAnimation';
+} from '../model/carouselAnimation';
 
 interface UseInfiniteCarouselOptions<T> {
   items: T[];
@@ -26,12 +26,9 @@ export function useInfiniteCarousel<T>({
   const [activeIndex, setActiveIndex] = useState(0);
   const [, setScrollTrigger] = useState(0);
 
-  const setItemRef = useCallback(
-    (index: number, el: HTMLDivElement | null) => {
-      itemRefs.current[index] = el;
-    },
-    [],
-  );
+  const setItemRef = useCallback((index: number, el: HTMLDivElement | null) => {
+    itemRefs.current[index] = el;
+  }, []);
 
   const scrollToIndex = useCallback(
     (index: number, behavior: ScrollBehavior = 'smooth') => {
@@ -64,19 +61,16 @@ export function useInfiniteCarousel<T>({
     [scrollToIndex],
   );
 
-  const getItemStyle = useCallback(
-    (index: number): CarouselItemStyle => {
-      const container = scrollContainerRef.current;
-      const item = itemRefs.current[index];
-      if (!container || !item) return { opacity: 0, scale: 0.85 };
+  const getItemStyle = useCallback((index: number): CarouselItemStyle => {
+    const container = scrollContainerRef.current;
+    const item = itemRefs.current[index];
+    if (!container || !item) return { opacity: 0, scale: 0.85 };
 
-      return calculateItemStyle(
-        getContainerMetrics(container.getBoundingClientRect()),
-        getItemMetrics(item.getBoundingClientRect()),
-      );
-    },
-    [],
-  );
+    return calculateItemStyle(
+      getContainerMetrics(container.getBoundingClientRect()),
+      getItemMetrics(item.getBoundingClientRect()),
+    );
+  }, []);
 
   // 초기 중앙 위치로 스크롤
   useEffect(() => {

@@ -1,12 +1,12 @@
-import { PROGRAMS } from '../constants';
+import { PROGRAMS } from '../data/constants';
 import {
-    CurationResult,
-    FormValues,
-    PersonaId,
-    PlanId,
-    ProgramId,
-    ProgramRecommendation,
-} from '../types';
+  CurationResult,
+  FormValues,
+  PersonaId,
+  PlanId,
+  ProgramId,
+  ProgramRecommendation,
+} from '../types/types';
 
 const planPriorityByIntent: Record<string, PlanId[]> = {
   basic: ['basic', 'standard', 'premium'],
@@ -14,7 +14,10 @@ const planPriorityByIntent: Record<string, PlanId[]> = {
   intensive: ['premium', 'standard', 'basic'],
 };
 
-const pickPlan = (programId: ProgramId, intent: keyof typeof planPriorityByIntent) => {
+const pickPlan = (
+  programId: ProgramId,
+  intent: keyof typeof planPriorityByIntent,
+) => {
   const program = PROGRAMS[programId];
   const available = program.plans.map((plan) => plan.id);
   const priority = planPriorityByIntent[intent];
@@ -68,7 +71,10 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
               programId: 'resume',
               emphasis: 'primary',
               reason: '공고 대응을 위한 1주 완성 트랙',
-              suggestedPlanId: pickPlan('resume', step2 === 'need-feedback' ? 'feedback' : 'basic'),
+              suggestedPlanId: pickPlan(
+                'resume',
+                step2 === 'need-feedback' ? 'feedback' : 'basic',
+              ),
             },
             {
               programId: 'coverLetter',
@@ -91,13 +97,19 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
               programId: 'coverLetter',
               emphasis: 'primary',
               reason: '직무 분석과 지원동기를 빠르게 정리',
-              suggestedPlanId: pickPlan('coverLetter', step2 === 'need-feedback' ? 'feedback' : 'basic'),
+              suggestedPlanId: pickPlan(
+                'coverLetter',
+                step2 === 'need-feedback' ? 'feedback' : 'basic',
+              ),
             },
             {
               programId: 'portfolio',
               emphasis: 'secondary',
               reason: '직무 사례와 자료가 필요할 때 후속으로 연결',
-              suggestedPlanId: pickPlan('portfolio', step2 === 'need-portfolio' ? 'feedback' : 'basic'),
+              suggestedPlanId: pickPlan(
+                'portfolio',
+                step2 === 'need-portfolio' ? 'feedback' : 'basic',
+              ),
             },
           ],
         });
@@ -113,13 +125,19 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
             programId: 'experience',
             emphasis: 'primary',
             reason: '소재 발굴과 구조화를 위한 첫 단계',
-            suggestedPlanId: pickPlan('experience', step2 === 'need-feedback' ? 'feedback' : 'basic'),
+            suggestedPlanId: pickPlan(
+              'experience',
+              step2 === 'need-feedback' ? 'feedback' : 'basic',
+            ),
           },
           {
             programId: 'resume',
             emphasis: 'secondary',
             reason: '정리한 소재를 채용 관점으로 전환',
-            suggestedPlanId: pickPlan('resume', step2 === 'time-tight' ? 'basic' : 'feedback'),
+            suggestedPlanId: pickPlan(
+              'resume',
+              step2 === 'time-tight' ? 'basic' : 'feedback',
+            ),
           },
         ],
       });
@@ -136,7 +154,10 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
           programId: 'resume',
           emphasis: 'primary',
           reason: '지원 일정에 맞춘 1주 완성',
-          suggestedPlanId: pickPlan('resume', step2 === 'deadline-soon' ? 'basic' : 'feedback'),
+          suggestedPlanId: pickPlan(
+            'resume',
+            step2 === 'deadline-soon' ? 'basic' : 'feedback',
+          ),
         },
       ];
 
@@ -209,7 +230,10 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
           programId: 'portfolio',
           emphasis: 'secondary',
           reason: '직무 사례와 포트폴리오를 함께 준비',
-          suggestedPlanId: pickPlan('portfolio', step2 === 'needs-intensive' ? 'feedback' : 'basic'),
+          suggestedPlanId: pickPlan(
+            'portfolio',
+            step2 === 'needs-intensive' ? 'feedback' : 'basic',
+          ),
         });
       }
 
@@ -332,7 +356,7 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
             ],
           });
         }
-        
+
         if (step2 === 'lack-time') {
           return buildResult({
             personaId,

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { FAQS } from '../constants';
-import type { FAQCategory } from '../types';
+import { FAQS } from '../data/constants';
+import type { FAQCategory } from '../types/types';
 
 const FAQ_CATEGORIES: FAQCategory[] = [
   '프로그램 적합성',

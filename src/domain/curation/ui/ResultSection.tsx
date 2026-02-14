@@ -1,6 +1,6 @@
 import SolidButton from '@/common/button/SolidButton';
-import { GUIDE_STEPS, PROGRAMS } from '../constants';
-import { CurationResult, ProgramRecommendation } from '../types';
+import { GUIDE_STEPS, PROGRAMS } from '../data/constants';
+import { CurationResult, ProgramRecommendation } from '../types/types';
 import MobileRecommendationCard from './MobileRecommendationCard';
 
 interface ResultSectionProps {

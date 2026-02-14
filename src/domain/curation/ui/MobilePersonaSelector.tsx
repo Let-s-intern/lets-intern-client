@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
-import { PERSONAS } from '../constants';
-import { PersonaId } from '../types';
+import { PERSONAS } from '../data/constants';
+import { PersonaId } from '../types/types';
 
 interface MobilePersonaSelectorProps {
   selected?: PersonaId;

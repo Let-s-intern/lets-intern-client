@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { CurationQuestion } from '../types';
+import { CurationQuestion } from '../types/types';
 import MobileQuestionStep from './MobileQuestionStep';
 
 interface QuestionStepProps {

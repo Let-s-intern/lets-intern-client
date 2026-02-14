@@ -7,7 +7,7 @@ import {
   PersonaId,
   ProgramContent,
   ProgramId,
-} from './types';
+} from '../types/types';
 
 export const PERSONAS: Persona[] = [
   {

@@ -1,12 +1,10 @@
 'use client';
 
-import { CHALLENGE_COMPARISON } from '../constants';
+import { CHALLENGE_COMPARISON } from '../data/constants';
 import { useExpandableRows } from '../hooks/useExpandableRows';
-import type { ComparisonRowConfig, ProgramId } from '../types';
+import type { ComparisonRowConfig, ProgramId } from '../types/types';
 import ChallengeComparisonTable from './comparison/ChallengeComparisonTable';
-import FrequentComparisonCarousel from './comparison/FrequentComparisonCarousel';
 import MobileChallengeComparison from './comparison/MobileChallengeComparison';
-import MobileFrequentComparison from './comparison/MobileFrequentComparison';
 
 const COMPARISON_ROWS: ComparisonRowConfig[] = [
   { label: '추천 대상', key: 'target' },
@@ -28,20 +26,23 @@ const COMPARISON_ROWS: ComparisonRowConfig[] = [
   },
 ];
 
-interface ComparisonSectionProps {
+interface ChallengeComparisonSectionProps {
   highlightedPrograms?: {
     primary: ProgramId | null;
     secondary: ProgramId[];
   };
 }
 
-const ComparisonSection = ({
+const ChallengeComparisonSection = ({
   highlightedPrograms = { primary: null, secondary: [] },
-}: ComparisonSectionProps) => {
+}: ChallengeComparisonSectionProps) => {
   const { expandedRows, toggleRow } = useExpandableRows();
 
   return (
-    <section className="flex w-full flex-col gap-8" id="curation-comparison">
+    <section
+      className="flex w-full flex-col gap-8"
+      id="curation-challenge-comparison"
+    >
       <div className="flex flex-col gap-2">
         <h3 className="text-medium22 font-bold text-neutral-0">
           어떤 챌린지가 나에게 맞을까?
@@ -52,13 +53,16 @@ const ComparisonSection = ({
         </p>
       </div>
 
-      <ChallengeComparisonTable
-        challenges={CHALLENGE_COMPARISON}
-        rows={COMPARISON_ROWS}
-        expandedRows={expandedRows}
-        toggleRow={toggleRow}
-        highlightedPrograms={highlightedPrograms}
-      />
+      {/* 데스크탑 테이블 */}
+      <div className="hidden lg:block">
+        <ChallengeComparisonTable
+          challenges={CHALLENGE_COMPARISON}
+          rows={COMPARISON_ROWS}
+          expandedRows={expandedRows}
+          toggleRow={toggleRow}
+          highlightedPrograms={highlightedPrograms}
+        />
+      </div>
 
       {/* 모바일 비교표 */}
       <div className="lg:hidden">
@@ -67,18 +71,8 @@ const ComparisonSection = ({
           highlightedPrograms={highlightedPrograms}
         />
       </div>
-
-      {/* 데스크톱 캐러셀 */}
-      <div className="hidden lg:block">
-        <FrequentComparisonCarousel />
-      </div>
-
-      {/* 모바일 비교 */}
-      <div className="lg:hidden">
-        <MobileFrequentComparison />
-      </div>
     </section>
   );
 };
 
-export default ComparisonSection;
+export default ChallengeComparisonSection;
