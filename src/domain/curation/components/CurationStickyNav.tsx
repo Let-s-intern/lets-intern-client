@@ -42,7 +42,7 @@ const CurationStickyNav = ({
       },
       {
         root: null,
-        rootMargin: '-50% 0px -50% 0px',
+        rootMargin: '-80px 0px -50% 0px', // sticky nav 높이를 고려한 상단 마진
         threshold: 0,
       },
     );

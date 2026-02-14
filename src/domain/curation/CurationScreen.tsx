@@ -41,23 +41,31 @@ const CurationScreen = () => {
     requestAnimationFrame(() => scrollToForm());
   };
 
+  // Sticky nav 높이를 고려한 스크롤 함수
+  const scrollToSection = (sectionId: string) => {
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+
+    const navHeight = 60; // sticky nav 높이 (약 56-60px)
+    const offset = navHeight + 20; // 여유 공간 추가
+    const elementPosition = section.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.scrollY - offset;
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth',
+    });
+  };
+
   return (
     <main className="flex min-h-screen w-full flex-col">
       <CurationHero copy={heroCopy} />
 
       {/* Sticky Navigation Bar */}
       <CurationStickyNav
-        onScrollToForm={scrollToForm}
-        onScrollToComparison={() =>
-          document
-            .getElementById('curation-comparison')
-            ?.scrollIntoView({ behavior: 'smooth' })
-        }
-        onScrollToFaq={() =>
-          document
-            .getElementById('curation-faq')
-            ?.scrollIntoView({ behavior: 'smooth' })
-        }
+        onScrollToForm={() => scrollToSection('curation-form')}
+        onScrollToComparison={() => scrollToSection('curation-comparison')}
+        onScrollToFaq={() => scrollToSection('curation-faq')}
       />
 
       {/* Curation Selection Section */}

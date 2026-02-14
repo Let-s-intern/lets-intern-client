@@ -68,8 +68,19 @@ export const useCurationFlow = ({
     // currentStep is handled by goNext() to avoid double increment
   }, [personaId, setValue]);
 
-  const scrollToForm = () =>
-    formRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToForm = () => {
+    if (!formRef.current) return;
+
+    const navHeight = 60; // sticky nav 높이
+    const offset = navHeight + 20; // 여유 공간
+    const elementPosition = formRef.current.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.scrollY - offset;
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth',
+    });
+  };
 
   const onSubmit = (values: FormValues) => {
     const computed = computeCurationResult(values);
@@ -82,11 +93,15 @@ export const useCurationFlow = ({
       requestAnimationFrame(() => {
         const target = document.getElementById('curation-result');
         if (target) {
-          // 모바일에서는 start, 데스크톱에서는 center
           const isMobile = window.innerWidth < 768;
-          target.scrollIntoView({
+          const navHeight = 60; // sticky nav 높이
+          const offset = navHeight + (isMobile ? 20 : 40); // 모바일은 더 적은 여유
+          const elementPosition = target.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.scrollY - offset;
+
+          window.scrollTo({
+            top: offsetPosition,
             behavior: 'smooth',
-            block: isMobile ? 'start' : 'center',
           });
         }
       });
