@@ -117,7 +117,14 @@ export interface ComparisonRowConfig {
   defaultHidden?: boolean;
 }
 
+export type FAQCategory =
+  | '프로그램 적합성'
+  | '커리큘럼/자료'
+  | '참여 방법'
+  | '피드백/멘토링';
+
 export interface FAQItem {
   question: string;
   answer: string;
+  category: FAQCategory;
 }
