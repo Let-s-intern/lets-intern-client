@@ -42,7 +42,7 @@ const CurationScreen = () => {
       />
       
       {/* Curation Selection Section */}
-      <section className="w-full bg-white">
+      <section className="w-full bg-gradient-to-b from-white via-gray-50 to-white">
         <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-10 px-6 py-12" ref={formRef}>
           <div className="flex flex-col items-center gap-4 text-center">
             <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary-10 to-primary-5 px-4 py-2 text-small14 font-bold text-primary shadow-sm">
@@ -95,7 +95,11 @@ const CurationScreen = () => {
             </form>
           )}
 
-          {result && <ResultSection result={result} onRestart={handleRestartAndScroll} />}
+          {result && (
+            <div className="pt-8">
+              <ResultSection result={result} onRestart={handleRestartAndScroll} />
+            </div>
+          )}
         </div>
       </section>
 

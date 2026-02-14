@@ -72,7 +72,7 @@ export const useCurationFlow = ({
     if (result) {
       requestAnimationFrame(() => {
         const target = document.getElementById('curation-result');
-        target?.scrollIntoView({ behavior: 'smooth' });
+        target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       });
     }
   }, [result]);
