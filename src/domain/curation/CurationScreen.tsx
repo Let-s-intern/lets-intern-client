@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import ComparisonSection from './components/ComparisonSection';
 import CurationHero from './components/CurationHero';
 import CurationStepper from './components/CurationStepper';
+import CurationStickyNav from './components/CurationStickyNav';
 import FaqSection from './components/FaqSection';
 import PersonaSelector from './components/PersonaSelector';
 import QuestionStep from './components/QuestionStep';
@@ -42,9 +43,11 @@ const CurationScreen = () => {
 
   return (
     <main className="flex min-h-screen w-full flex-col">
-      <CurationHero
-        copy={heroCopy}
-        onStart={scrollToForm}
+      <CurationHero copy={heroCopy} />
+
+      {/* Sticky Navigation Bar */}
+      <CurationStickyNav
+        onScrollToForm={scrollToForm}
         onScrollToComparison={() =>
           document
             .getElementById('curation-comparison')
@@ -58,7 +61,10 @@ const CurationScreen = () => {
       />
 
       {/* Curation Selection Section */}
-      <section className="w-full bg-gradient-to-b from-white via-gray-50 to-white">
+      <section
+        className="w-full bg-gradient-to-b from-white via-gray-50 to-white"
+        id="curation-form"
+      >
         <div
           className="mx-auto flex w-full max-w-[1400px] flex-col gap-10 px-6 py-12"
           ref={formRef}

@@ -1,4 +1,3 @@
-import SolidButton from '@/common/button/SolidButton';
 import { motion } from 'motion/react';
 import Link from 'next/link';
 
@@ -6,24 +5,14 @@ interface HeroCopy {
   eyebrow: string;
   title: string;
   body: string;
-  primaryCta: string;
-  secondaryCta: string;
   homeCta?: string;
 }
 
 interface CurationHeroProps {
   copy: HeroCopy;
-  onStart?: () => void;
-  onScrollToComparison?: () => void;
-  onScrollToFaq?: () => void;
 }
 
-const CurationHero = ({
-  copy,
-  onStart,
-  onScrollToComparison,
-  onScrollToFaq,
-}: CurationHeroProps) => {
+const CurationHero = ({ copy }: CurationHeroProps) => {
   return (
     <section className="relative w-full overflow-hidden bg-gradient-to-br from-primary-10 via-white to-primary-5">
       <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-y-6 px-6 py-16 md:flex-row md:items-center md:justify-between md:py-24">
@@ -37,21 +26,6 @@ const CurationHero = ({
           <p className="text-xsmall16 text-neutral-30 md:text-small18">
             {copy.body}
           </p>
-          <div className="flex flex-wrap gap-3 pt-2">
-            <SolidButton onClick={onStart} size="xl">
-              {copy.primaryCta}
-            </SolidButton>
-            <SolidButton
-              variant="secondary"
-              size="xl"
-              onClick={onScrollToComparison}
-            >
-              {copy.secondaryCta}
-            </SolidButton>
-            <SolidButton variant="secondary" size="xl" onClick={onScrollToFaq}>
-              자주 묻는 질문
-            </SolidButton>
-          </div>
           {copy.homeCta && (
             <Link
               href="/"
