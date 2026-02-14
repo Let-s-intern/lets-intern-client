@@ -88,9 +88,10 @@ export interface ChallengeComparisonRow {
   target: string;
   duration: string;
   pricing: string;
-  feedback: string;
+  curriculum: string;
   deliverable: string;
-  features?: string[];
+  feedback: string;
+  features?: string;
 }
 
 export interface FrequentComparisonItem {
