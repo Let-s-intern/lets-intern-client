@@ -4,7 +4,12 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { PERSONA_IDS, QUESTION_MAP } from '../constants';
 import { computeCurationResult } from '../services/curationEngine';
-import { CurationQuestion, CurationResult, FormValues, PersonaId } from '../types';
+import {
+  CurationQuestion,
+  CurationResult,
+  FormValues,
+  PersonaId,
+} from '../types';
 
 interface UseCurationFlowParams {
   defaultPersonaId: PersonaId;
@@ -47,7 +52,10 @@ export const useCurationFlow = ({
   });
 
   const personaId = watch('personaId');
-  const questionSet = useMemo(() => personaId ? questionMap[personaId] : undefined, [personaId, questionMap]);
+  const questionSet = useMemo(
+    () => (personaId ? questionMap[personaId] : undefined),
+    [personaId, questionMap],
+  );
 
   useEffect(() => {
     if (!initializedRef.current) {
@@ -60,7 +68,8 @@ export const useCurationFlow = ({
     // currentStep is handled by goNext() to avoid double increment
   }, [personaId, setValue]);
 
-  const scrollToForm = () => formRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToForm = () =>
+    formRef.current?.scrollIntoView({ behavior: 'smooth' });
 
   const onSubmit = (values: FormValues) => {
     const computed = computeCurationResult(values);
@@ -72,7 +81,14 @@ export const useCurationFlow = ({
     if (result) {
       requestAnimationFrame(() => {
         const target = document.getElementById('curation-result');
-        target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (target) {
+          // 모바일에서는 start, 데스크톱에서는 center
+          const isMobile = window.innerWidth < 768;
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: isMobile ? 'start' : 'center',
+          });
+        }
       });
     }
   }, [result]);
