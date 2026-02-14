@@ -64,7 +64,7 @@ about, admin, auth, blog, career-board, challenge, faq, home, mypage, program, p
 - UPPER_SNAKE_CASE: 상수 (`ANIMATION_DELAY_MS`)
 - 함수형/선언적 프로그래밍, class 금지
 - `'use client'`, `useEffect`, `setState` 최소화 — RSC 우선
-- Prettier: 2 spaces, single quotes, width 80
+- Prettier: 2 spaces, semicolons, single quotes, width 80
 
 ## 코드 품질 (Toss Frontend Fundamentals)
 
