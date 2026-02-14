@@ -1,10 +1,11 @@
 'use client';
 import { useMemo } from 'react';
-import ComparisonSection from './components/ComparisonSection';
+import ChallengeComparisonSection from './components/ChallengeComparisonSection';
 import CurationHero from './components/CurationHero';
 import CurationStepper from './components/CurationStepper';
 import CurationStickyNav from './components/CurationStickyNav';
 import FaqSection from './components/FaqSection';
+import FrequentComparisonSection from './components/FrequentComparisonSection';
 import PersonaSelector from './components/PersonaSelector';
 import QuestionStep from './components/QuestionStep';
 import ResultSection from './components/ResultSection';
@@ -64,7 +65,12 @@ const CurationScreen = () => {
       {/* Sticky Navigation Bar */}
       <CurationStickyNav
         onScrollToForm={() => scrollToSection('curation-form')}
-        onScrollToComparison={() => scrollToSection('curation-comparison')}
+        onScrollToChallengeComparison={() =>
+          scrollToSection('curation-challenge-comparison')
+        }
+        onScrollToFrequentComparison={() =>
+          scrollToSection('curation-frequent-comparison')
+        }
         onScrollToFaq={() => scrollToSection('curation-faq')}
       />
 
@@ -146,8 +152,11 @@ const CurationScreen = () => {
 
       {/* Comparison & FAQ Section */}
       <section className="w-full bg-white">
-        <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-12 px-6 py-24">
-          <ComparisonSection highlightedPrograms={highlightedPrograms} />
+        <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-16 px-6 py-24">
+          <ChallengeComparisonSection
+            highlightedPrograms={highlightedPrograms}
+          />
+          <FrequentComparisonSection />
           <FaqSection />
         </div>
       </section>
