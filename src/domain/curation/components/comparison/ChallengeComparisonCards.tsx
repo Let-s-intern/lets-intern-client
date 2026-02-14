@@ -1,11 +1,16 @@
 import { PROGRAMS } from '../../constants';
-import type { ChallengeComparisonRow, ComparisonRowConfig } from '../../types';
+import type {
+  ChallengeComparisonRow,
+  ComparisonRowConfig,
+  ProgramId,
+} from '../../types';
 
 interface ChallengeComparisonCardsProps {
   challenges: ChallengeComparisonRow[];
   rows: ComparisonRowConfig[];
   expandedRows: Record<string, boolean>;
   toggleRow: (key: string) => void;
+  highlightedProgramIds?: ProgramId[];
 }
 
 const ChallengeComparisonCards = ({
@@ -13,17 +18,30 @@ const ChallengeComparisonCards = ({
   rows,
   expandedRows,
   toggleRow,
+  highlightedProgramIds = [],
 }: ChallengeComparisonCardsProps) => {
   return (
     <div className="flex flex-col gap-4 lg:hidden">
       {challenges.map((challenge) => {
         const program = PROGRAMS[challenge.programId];
+        const isHighlighted = highlightedProgramIds.includes(
+          challenge.programId,
+        );
         return (
           <div
             key={challenge.programId}
-            className="to-neutral-98 flex flex-col gap-2.5 rounded-lg border-2 border-neutral-90 bg-gradient-to-br from-white p-4 shadow-md transition-shadow hover:shadow-lg"
+            className={`flex flex-col gap-2.5 rounded-lg border-2 bg-gradient-to-br from-white to-neutral-98 p-4 shadow-md transition-shadow hover:shadow-lg ${
+              isHighlighted
+                ? 'border-primary-dark'
+                : 'border-neutral-90'
+            }`}
           >
-            <div className="flex flex-col gap-1 border-b-2 border-neutral-90 pb-2.5">
+            <div className="flex flex-col gap-1 rounded-md bg-primary-5 px-3 py-2.5">
+              {isHighlighted && (
+                <span className="mb-0.5 w-fit rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-white">
+                  추천
+                </span>
+              )}
               <span className="text-small16 font-black text-neutral-0">
                 {program.title}
               </span>

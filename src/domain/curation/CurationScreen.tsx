@@ -6,6 +6,7 @@ import FaqSection from './components/FaqSection';
 import PersonaSelector from './components/PersonaSelector';
 import QuestionStep from './components/QuestionStep';
 import ResultSection from './components/ResultSection';
+import { useMemo } from 'react';
 import { QUESTION_MAP } from './constants';
 import { defaultPersonaId, heroCopy, stepLabels } from './copy';
 import { useCurationFlow } from './hooks/useCurationFlow';
@@ -26,6 +27,11 @@ const CurationScreen = () => {
     scrollToForm,
   } = useCurationFlow({ defaultPersonaId, questionMap: QUESTION_MAP });
 
+  const recommendedProgramIds = useMemo(
+    () => result?.recommendations.map((r) => r.programId) ?? [],
+    [result],
+  );
+
   const handleRestartAndScroll = () => {
     handleRestart();
     requestAnimationFrame(() => scrollToForm());
@@ -45,14 +51,14 @@ const CurationScreen = () => {
       <section className="w-full bg-gradient-to-b from-white via-gray-50 to-white">
         <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-10 px-6 py-12" ref={formRef}>
           <div className="flex flex-col items-center gap-4 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary-10 to-primary-5 px-4 py-2 text-small14 font-bold text-primary shadow-sm">
-              <span className="text-medium18">✨</span>
+            <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary-10 to-primary-5 px-5 py-2.5 text-small16 font-bold text-primary shadow-sm">
+              <span className="text-medium22">✨</span>
               <span>3초 큐레이션</span>
             </div>
-            <h2 className="text-large32 font-black leading-tight text-neutral-0 md:text-large36">
+            <h2 className="text-large36 font-black leading-tight text-neutral-0 md:text-xlarge40">
               나에게 맞는 프로그램 찾기
             </h2>
-            <p className="text-medium18 font-medium text-neutral-40">
+            <p className="text-medium20 font-medium text-neutral-40">
               간단한 질문으로 맞춤 챌린지와 플랜을 추천받으세요
             </p>
           </div>
@@ -106,7 +112,7 @@ const CurationScreen = () => {
       {/* Comparison & FAQ Section */}
       <section className="w-full bg-white">
         <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-12 px-6 py-24">
-          <ComparisonSection />
+          <ComparisonSection highlightedProgramIds={recommendedProgramIds} />
           <FaqSection />
         </div>
       </section>

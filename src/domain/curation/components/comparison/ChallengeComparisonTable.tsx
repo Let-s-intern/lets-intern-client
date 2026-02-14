@@ -1,11 +1,16 @@
 import { PROGRAMS } from '../../constants';
-import type { ChallengeComparisonRow, ComparisonRowConfig } from '../../types';
+import type {
+  ChallengeComparisonRow,
+  ComparisonRowConfig,
+  ProgramId,
+} from '../../types';
 
 interface ChallengeComparisonTableProps {
   challenges: ChallengeComparisonRow[];
   rows: ComparisonRowConfig[];
   expandedRows: Record<string, boolean>;
   toggleRow: (key: string) => void;
+  highlightedProgramIds?: ProgramId[];
 }
 
 const ChallengeComparisonTable = ({
@@ -13,25 +18,38 @@ const ChallengeComparisonTable = ({
   rows,
   expandedRows,
   toggleRow,
+  highlightedProgramIds = [],
 }: ChallengeComparisonTableProps) => {
   return (
     <div className="hidden overflow-x-auto lg:block">
       <div className="min-w-full overflow-hidden rounded-lg border-2 border-neutral-90 bg-white shadow-md">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="bg-blue-50">
-              <th className="text-xsmall13 sticky left-0 z-10 w-[100px] min-w-[100px] border-r-2 border-neutral-90 bg-blue-50 px-3 py-3 text-left font-black text-neutral-0 shadow-[2px_0_10px_rgba(0,0,0,0.08)]">
+            <tr className="bg-primary-5">
+              <th className="text-xsmall13 sticky left-0 z-10 w-[100px] min-w-[100px] border-r-2 border-neutral-90 bg-primary-5 px-3 py-3 text-left font-black text-neutral-0 shadow-[2px_0_10px_rgba(0,0,0,0.08)]">
                 구분
               </th>
               {challenges.map((challenge) => {
                 const program = PROGRAMS[challenge.programId];
+                const isHighlighted = highlightedProgramIds.includes(
+                  challenge.programId,
+                );
                 return (
                   <th
                     key={challenge.programId}
-                    className="w-[155px] min-w-[155px] border-l border-neutral-90 px-2 py-2.5 text-center"
+                    className={`w-[155px] min-w-[155px] border-l border-neutral-90 px-2 py-3 text-center ${
+                      isHighlighted
+                        ? 'border-x-2 border-t-2 border-primary-dark bg-primary-10'
+                        : ''
+                    }`}
                   >
                     <div className="flex flex-col items-center gap-0.5">
-                      <span className="text-xsmall13 break-keep font-black leading-tight text-neutral-0">
+                      {isHighlighted && (
+                        <span className="mb-0.5 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-white">
+                          추천
+                        </span>
+                      )}
+                      <span className="text-xsmall14 break-keep font-black leading-tight text-neutral-0">
                         {program.title}
                       </span>
                       <span className="text-xsmall11 break-keep font-medium leading-snug text-neutral-40">
@@ -93,6 +111,9 @@ const ChallengeComparisonTable = ({
                   {challenges.map((challenge) => {
                     const value = challenge[row.key];
                     const displayValue = value || '-';
+                    const isHighlighted = highlightedProgramIds.includes(
+                      challenge.programId,
+                    );
 
                     let contentToShow = displayValue;
                     if (
@@ -107,7 +128,9 @@ const ChallengeComparisonTable = ({
                     return (
                       <td
                         key={`${challenge.programId}-${row.key}`}
-                        className="border-l border-neutral-90 px-2 py-2.5 text-center align-middle"
+                        className={`border-l border-neutral-90 px-2 py-2.5 text-center align-middle ${
+                          isHighlighted ? 'border-x-2 border-primary-dark bg-primary-5/30' : ''
+                        }`}
                       >
                         <div
                           className={`text-xsmall11 whitespace-pre-line break-keep font-medium leading-relaxed text-neutral-20 ${

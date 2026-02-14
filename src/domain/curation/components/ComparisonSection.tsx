@@ -2,7 +2,7 @@
 
 import { CHALLENGE_COMPARISON } from '../constants';
 import { useExpandableRows } from '../hooks/useExpandableRows';
-import type { ComparisonRowConfig } from '../types';
+import type { ComparisonRowConfig, ProgramId } from '../types';
 import ChallengeComparisonCards from './comparison/ChallengeComparisonCards';
 import ChallengeComparisonTable from './comparison/ChallengeComparisonTable';
 import FrequentComparisonCarousel from './comparison/FrequentComparisonCarousel';
@@ -27,17 +27,24 @@ const COMPARISON_ROWS: ComparisonRowConfig[] = [
   },
 ];
 
-const ComparisonSection = () => {
+interface ComparisonSectionProps {
+  highlightedProgramIds?: ProgramId[];
+}
+
+const ComparisonSection = ({
+  highlightedProgramIds = [],
+}: ComparisonSectionProps) => {
   const { expandedRows, toggleRow } = useExpandableRows();
 
   return (
     <section className="flex w-full flex-col gap-8" id="curation-comparison">
       <div className="flex flex-col gap-2">
         <h3 className="text-medium22 font-bold text-neutral-0">
-          챌린지별 비교 표
+          어떤 챌린지가 나에게 맞을까?
         </h3>
         <p className="text-xsmall15 text-neutral-40">
-          가격, 기간, 피드백, 주요 결과물을 한눈에 비교하세요.
+          가격부터 결과물까지, 한눈에 비교하고 나에게 딱 맞는 챌린지를
+          골라보세요.
         </p>
       </div>
 
@@ -46,6 +53,7 @@ const ComparisonSection = () => {
         rows={COMPARISON_ROWS}
         expandedRows={expandedRows}
         toggleRow={toggleRow}
+        highlightedProgramIds={highlightedProgramIds}
       />
 
       <ChallengeComparisonCards
@@ -53,6 +61,7 @@ const ComparisonSection = () => {
         rows={COMPARISON_ROWS}
         expandedRows={expandedRows}
         toggleRow={toggleRow}
+        highlightedProgramIds={highlightedProgramIds}
       />
 
       <FrequentComparisonCarousel />

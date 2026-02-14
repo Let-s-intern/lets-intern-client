@@ -1,13 +1,14 @@
 import SolidButton from '@/common/button/SolidButton';
+import Link from 'next/link';
 import { motion } from 'motion/react';
 
 interface HeroCopy {
   eyebrow: string;
   title: string;
   body: string;
-  badges?: string[];
   primaryCta: string;
   secondaryCta: string;
+  homeCta?: string;
 }
 
 interface CurationHeroProps {
@@ -28,15 +29,6 @@ const CurationHero = ({ copy, onStart, onScrollToComparison }: CurationHeroProps
             {copy.title}
           </h1>
           <p className="text-xsmall16 text-neutral-30 md:text-small18">{copy.body}</p>
-          {copy.badges && (
-            <div className="flex flex-wrap items-center gap-3 text-xsmall14 text-neutral-30">
-              {copy.badges.map((badge) => (
-                <span key={badge} className="rounded-md bg-white px-3 py-1 font-semibold text-primary">
-                  {badge}
-                </span>
-              ))}
-            </div>
-          )}
           <div className="flex flex-wrap gap-3 pt-2">
             <SolidButton onClick={onStart} size="xl">
               {copy.primaryCta}
@@ -45,6 +37,14 @@ const CurationHero = ({ copy, onStart, onScrollToComparison }: CurationHeroProps
               {copy.secondaryCta}
             </SolidButton>
           </div>
+          {copy.homeCta && (
+            <Link
+              href="/"
+              className="w-fit text-xsmall14 font-semibold text-neutral-40 underline underline-offset-2 transition-colors hover:text-primary"
+            >
+              {copy.homeCta}
+            </Link>
+          )}
         </div>
         <motion.div
           className="relative mt-6 grid w-full max-w-sm grid-cols-2 gap-3 rounded-2xl bg-white p-4 shadow-lg md:mt-0"
