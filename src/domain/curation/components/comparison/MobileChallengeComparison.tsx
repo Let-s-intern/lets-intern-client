@@ -65,15 +65,15 @@ const MobileChallengeComparison = ({
 
             {/* 핵심 정보 */}
             <div className="flex flex-col gap-2 rounded-md bg-white/80 p-3">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-1">
                 <span className="text-xsmall12 font-bold text-neutral-40">
                   추천 대상
                 </span>
-                <span className="text-xsmall13 font-semibold text-neutral-0">
+                <span className="text-xsmall13 font-medium leading-relaxed text-neutral-0">
                   {challenge.target}
                 </span>
               </div>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between border-t border-neutral-90 pt-2">
                 <span className="text-xsmall12 font-bold text-neutral-40">
                   기간
                 </span>

@@ -6,6 +6,7 @@ import type { ComparisonRowConfig, ProgramId } from '../types';
 import ChallengeComparisonTable from './comparison/ChallengeComparisonTable';
 import FrequentComparisonCarousel from './comparison/FrequentComparisonCarousel';
 import MobileChallengeComparison from './comparison/MobileChallengeComparison';
+import MobileFrequentComparison from './comparison/MobileFrequentComparison';
 
 const COMPARISON_ROWS: ComparisonRowConfig[] = [
   { label: '추천 대상', key: 'target' },
@@ -67,7 +68,15 @@ const ComparisonSection = ({
         />
       </div>
 
-      <FrequentComparisonCarousel />
+      {/* 데스크톱 캐러셀 */}
+      <div className="hidden lg:block">
+        <FrequentComparisonCarousel />
+      </div>
+
+      {/* 모바일 비교 */}
+      <div className="lg:hidden">
+        <MobileFrequentComparison />
+      </div>
     </section>
   );
 };
