@@ -260,6 +260,15 @@ body.non-scroll {
     max-width: 1180px;
     width: calc(100% - 40px);
   }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* 모바일 환경 */
