@@ -3,9 +3,9 @@
 import { CHALLENGE_COMPARISON } from '../constants';
 import { useExpandableRows } from '../hooks/useExpandableRows';
 import type { ComparisonRowConfig, ProgramId } from '../types';
-import ChallengeComparisonCards from './comparison/ChallengeComparisonCards';
 import ChallengeComparisonTable from './comparison/ChallengeComparisonTable';
 import FrequentComparisonCarousel from './comparison/FrequentComparisonCarousel';
+import MobileChallengeComparison from './comparison/MobileChallengeComparison';
 
 const COMPARISON_ROWS: ComparisonRowConfig[] = [
   { label: '추천 대상', key: 'target' },
@@ -59,13 +59,13 @@ const ComparisonSection = ({
         highlightedPrograms={highlightedPrograms}
       />
 
-      <ChallengeComparisonCards
-        challenges={CHALLENGE_COMPARISON}
-        rows={COMPARISON_ROWS}
-        expandedRows={expandedRows}
-        toggleRow={toggleRow}
-        highlightedPrograms={highlightedPrograms}
-      />
+      {/* 모바일 비교표 */}
+      <div className="lg:hidden">
+        <MobileChallengeComparison
+          challenges={CHALLENGE_COMPARISON}
+          highlightedPrograms={highlightedPrograms}
+        />
+      </div>
 
       <FrequentComparisonCarousel />
     </section>
