@@ -28,11 +28,14 @@ const COMPARISON_ROWS: ComparisonRowConfig[] = [
 ];
 
 interface ComparisonSectionProps {
-  highlightedProgramIds?: ProgramId[];
+  highlightedPrograms?: {
+    primary: ProgramId | null;
+    secondary: ProgramId[];
+  };
 }
 
 const ComparisonSection = ({
-  highlightedProgramIds = [],
+  highlightedPrograms = { primary: null, secondary: [] },
 }: ComparisonSectionProps) => {
   const { expandedRows, toggleRow } = useExpandableRows();
 
@@ -53,7 +56,7 @@ const ComparisonSection = ({
         rows={COMPARISON_ROWS}
         expandedRows={expandedRows}
         toggleRow={toggleRow}
-        highlightedProgramIds={highlightedProgramIds}
+        highlightedPrograms={highlightedPrograms}
       />
 
       <ChallengeComparisonCards
@@ -61,7 +64,7 @@ const ComparisonSection = ({
         rows={COMPARISON_ROWS}
         expandedRows={expandedRows}
         toggleRow={toggleRow}
-        highlightedProgramIds={highlightedProgramIds}
+        highlightedPrograms={highlightedPrograms}
       />
 
       <FrequentComparisonCarousel />

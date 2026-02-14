@@ -10,7 +10,10 @@ interface ChallengeComparisonCardsProps {
   rows: ComparisonRowConfig[];
   expandedRows: Record<string, boolean>;
   toggleRow: (key: string) => void;
-  highlightedProgramIds?: ProgramId[];
+  highlightedPrograms?: {
+    primary: ProgramId | null;
+    secondary: ProgramId[];
+  };
 }
 
 const ChallengeComparisonCards = ({
@@ -18,25 +21,29 @@ const ChallengeComparisonCards = ({
   rows,
   expandedRows,
   toggleRow,
-  highlightedProgramIds = [],
+  highlightedPrograms = { primary: null, secondary: [] },
 }: ChallengeComparisonCardsProps) => {
   return (
     <div className="flex flex-col gap-4 lg:hidden">
       {challenges.map((challenge) => {
         const program = PROGRAMS[challenge.programId];
-        const isHighlighted = highlightedProgramIds.includes(
+        const isPrimary = highlightedPrograms.primary === challenge.programId;
+        const isSecondary = highlightedPrograms.secondary.includes(
           challenge.programId,
         );
+        const isHighlighted = isPrimary || isSecondary;
         return (
           <div
             key={challenge.programId}
-            className={`flex flex-col gap-2.5 rounded-lg border-2 bg-gradient-to-br from-white to-neutral-98 p-4 shadow-md transition-shadow hover:shadow-lg ${
-              isHighlighted
-                ? 'border-primary-dark'
-                : 'border-neutral-90'
+            className={`flex flex-col gap-2.5 rounded-lg border-2 p-4 shadow-md transition-shadow hover:shadow-lg ${
+              isPrimary
+                ? 'border-primary-dark bg-primary-20'
+                : isSecondary
+                  ? 'border-primary bg-primary-10'
+                  : 'to-neutral-98 border-neutral-90 bg-gradient-to-br from-white'
             }`}
           >
-            <div className="flex flex-col gap-1 rounded-md bg-primary-5 px-3 py-2.5">
+            <div className="flex flex-col gap-1 rounded-md bg-white/50 px-3 py-2.5">
               {isHighlighted && (
                 <span className="mb-0.5 w-fit rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-white">
                   추천
@@ -90,18 +97,33 @@ const ChallengeComparisonCards = ({
                   </div>
                   <span
                     className={`text-xsmall12 whitespace-pre-line font-medium leading-relaxed text-neutral-10 ${
-                      isCollapsible &&
-                      !isExpanded &&
-                      row.key !== 'deliverable'
+                      isCollapsible && !isExpanded && row.key !== 'deliverable'
                         ? 'line-clamp-2'
                         : ''
                     }`}
                   >
-                    {row.key === 'deliverable' &&
-                    !isExpanded &&
-                    displayValue !== '-'
-                      ? displayValue.split('\n\n')[0]
-                      : displayValue}
+                    {row.key === 'pricing' ? (
+                      <>
+                        {displayValue.split('\n').map((line, i) => (
+                          <span key={i}>
+                            {line.includes('(환급금 없음)') ? (
+                              <span className="text-[9px] text-neutral-50">
+                                {line}
+                              </span>
+                            ) : (
+                              line
+                            )}
+                            {i < displayValue.split('\n').length - 1 && <br />}
+                          </span>
+                        ))}
+                      </>
+                    ) : row.key === 'deliverable' &&
+                      !isExpanded &&
+                      displayValue !== '-' ? (
+                      displayValue.split('\n\n')[0]
+                    ) : (
+                      displayValue
+                    )}
                   </span>
                 </div>
               );

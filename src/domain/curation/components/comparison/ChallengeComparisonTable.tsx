@@ -10,7 +10,10 @@ interface ChallengeComparisonTableProps {
   rows: ComparisonRowConfig[];
   expandedRows: Record<string, boolean>;
   toggleRow: (key: string) => void;
-  highlightedProgramIds?: ProgramId[];
+  highlightedPrograms?: {
+    primary: ProgramId | null;
+    secondary: ProgramId[];
+  };
 }
 
 const ChallengeComparisonTable = ({
@@ -18,7 +21,7 @@ const ChallengeComparisonTable = ({
   rows,
   expandedRows,
   toggleRow,
-  highlightedProgramIds = [],
+  highlightedPrograms = { primary: null, secondary: [] },
 }: ChallengeComparisonTableProps) => {
   return (
     <div className="hidden overflow-x-auto lg:block">
@@ -31,16 +34,21 @@ const ChallengeComparisonTable = ({
               </th>
               {challenges.map((challenge) => {
                 const program = PROGRAMS[challenge.programId];
-                const isHighlighted = highlightedProgramIds.includes(
+                const isPrimary =
+                  highlightedPrograms.primary === challenge.programId;
+                const isSecondary = highlightedPrograms.secondary.includes(
                   challenge.programId,
                 );
+                const isHighlighted = isPrimary || isSecondary;
                 return (
                   <th
                     key={challenge.programId}
                     className={`w-[155px] min-w-[155px] border-l border-neutral-90 px-2 py-3 text-center ${
-                      isHighlighted
-                        ? 'border-x-2 border-t-2 border-primary-dark bg-primary-10'
-                        : ''
+                      isPrimary
+                        ? 'bg-primary-20'
+                        : isSecondary
+                          ? 'bg-primary-10'
+                          : ''
                     }`}
                   >
                     <div className="flex flex-col items-center gap-0.5">
@@ -49,7 +57,7 @@ const ChallengeComparisonTable = ({
                           추천
                         </span>
                       )}
-                      <span className="text-xsmall14 break-keep font-black leading-tight text-neutral-0">
+                      <span className="break-keep text-xsmall14 font-black leading-tight text-neutral-0">
                         {program.title}
                       </span>
                       <span className="text-xsmall11 break-keep font-medium leading-snug text-neutral-40">
@@ -111,7 +119,9 @@ const ChallengeComparisonTable = ({
                   {challenges.map((challenge) => {
                     const value = challenge[row.key];
                     const displayValue = value || '-';
-                    const isHighlighted = highlightedProgramIds.includes(
+                    const isPrimary =
+                      highlightedPrograms.primary === challenge.programId;
+                    const isSecondary = highlightedPrograms.secondary.includes(
                       challenge.programId,
                     );
 
@@ -129,7 +139,11 @@ const ChallengeComparisonTable = ({
                       <td
                         key={`${challenge.programId}-${row.key}`}
                         className={`border-l border-neutral-90 px-2 py-2.5 text-center align-middle ${
-                          isHighlighted ? 'border-x-2 border-primary-dark bg-primary-5/30' : ''
+                          isPrimary
+                            ? 'bg-primary-20'
+                            : isSecondary
+                              ? 'bg-primary-10'
+                              : ''
                         }`}
                       >
                         <div
@@ -141,7 +155,26 @@ const ChallengeComparisonTable = ({
                               : ''
                           }`}
                         >
-                          {contentToShow}
+                          {row.key === 'pricing' ? (
+                            <>
+                              {contentToShow.split('\n').map((line, i) => (
+                                <span key={i}>
+                                  {line.includes('(환급금 없음)') ? (
+                                    <span className="text-[9px] text-neutral-50">
+                                      {line}
+                                    </span>
+                                  ) : (
+                                    line
+                                  )}
+                                  {i < contentToShow.split('\n').length - 1 && (
+                                    <br />
+                                  )}
+                                </span>
+                              ))}
+                            </>
+                          ) : (
+                            contentToShow
+                          )}
                         </div>
                       </td>
                     );
