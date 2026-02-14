@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.robinwieruch.de)",
+      "WebFetch(domain:frontend-fundamentals.com)",
+      "WebFetch(domain:toss.tech)"
+    ]
+  }
+}
