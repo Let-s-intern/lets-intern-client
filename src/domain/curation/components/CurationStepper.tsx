@@ -24,7 +24,7 @@ const CurationStepper = ({ currentStep, steps, onStepClick }: CurationStepperPro
                 className={clsx(
                   'flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full text-medium18 font-black shadow-lg transition-all duration-300',
                   isActive && 'bg-gradient-to-br from-primary to-primary-80 text-white shadow-primary/30 ring-4 ring-primary/10',
-                  isDone && 'bg-gradient-to-br from-primary-10 to-primary-5 text-primary shadow-primary/10',
+                  isDone && 'bg-gradient-to-br from-primary to-primary-80 text-white shadow-primary/20',
                   !isActive && !isDone && 'bg-gradient-to-br from-neutral-90 to-neutral-85 text-neutral-50 group-hover:from-neutral-85 group-hover:to-neutral-80',
                 )}
               >
@@ -33,7 +33,7 @@ const CurationStepper = ({ currentStep, steps, onStepClick }: CurationStepperPro
               <span
                 className={clsx(
                   'text-small17 font-bold transition-colors',
-                  isActive ? 'text-neutral-0' : 'text-neutral-40 group-hover:text-neutral-20',
+                  isActive ? 'text-neutral-0' : isDone ? 'text-primary' : 'text-neutral-40 group-hover:text-neutral-20',
                 )}
               >
                 {label}
