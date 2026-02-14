@@ -101,6 +101,22 @@ export interface FrequentComparisonItem {
   rows: { label: string; left: string; right: string }[];
 }
 
+export interface ComparisonRowConfig {
+  label: string;
+  key: keyof Pick<
+    ChallengeComparisonRow,
+    | 'target'
+    | 'duration'
+    | 'pricing'
+    | 'feedback'
+    | 'deliverable'
+    | 'curriculum'
+    | 'features'
+  >;
+  collapsible?: boolean;
+  defaultHidden?: boolean;
+}
+
 export interface FAQItem {
   question: string;
   answer: string;
