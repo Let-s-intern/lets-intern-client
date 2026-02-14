@@ -18,7 +18,6 @@ interface UseCurationFlowParams {
 }
 
 export const useCurationFlow = ({
-  defaultPersonaId,
   questionMap = QUESTION_MAP,
   personaIds = PERSONA_IDS,
 }: UseCurationFlowParams) => {
@@ -34,6 +33,8 @@ export const useCurationFlow = ({
     step2: z.string().min(1, '옵션을 선택해주세요.'),
   });
 
+  type CurationFormValues = FormValues & { personaId?: PersonaId };
+
   const {
     setValue,
     watch,
@@ -41,7 +42,7 @@ export const useCurationFlow = ({
     handleSubmit,
     trigger,
     formState: { errors },
-  } = useForm<FormValues & { personaId?: PersonaId }>({
+  } = useForm<CurationFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       personaId: undefined,
@@ -108,7 +109,7 @@ export const useCurationFlow = ({
     }
   }, [result]);
 
-  const requiredFieldsByStep: Array<(keyof FormValues | 'personaId')[]> = [
+  const requiredFieldsByStep: (keyof CurationFormValues)[][] = [
     ['personaId'],
     ['personaId', 'step1'],
     ['personaId', 'step1', 'step2'],
@@ -116,7 +117,7 @@ export const useCurationFlow = ({
 
   const goNext = async () => {
     const fields = requiredFieldsByStep[Math.min(currentStep, 2)];
-    const valid = await trigger(fields as any);
+    const valid = await trigger(fields);
     if (!valid) return;
     if (currentStep >= 2) {
       handleSubmit(onSubmit)();

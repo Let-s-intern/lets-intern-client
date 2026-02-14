@@ -99,7 +99,9 @@ describe('findClosestItemIndex', () => {
 
     const items: (HTMLElement | null)[] = [
       null,
-      { getBoundingClientRect: () => ({ left: 450, width: 100 }) } as HTMLElement,
+      {
+        getBoundingClientRect: () => ({ left: 450, width: 100 }),
+      } as HTMLElement,
       null,
     ];
 
