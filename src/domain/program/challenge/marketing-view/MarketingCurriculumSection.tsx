@@ -9,9 +9,13 @@ interface MarketingCurriculumSectionProps {
   content?: ChallengeContent | null;
 }
 
+const DEFAULT_LECTURE_COUNT = 4;
+
 const MarketingCurriculumSection: React.FC<MarketingCurriculumSectionProps> = ({
   content,
 }) => {
+  const lectureCount = content?.lectures?.length ?? DEFAULT_LECTURE_COUNT;
+
   return (
     <section
       id="curriculum"
@@ -25,8 +29,8 @@ const MarketingCurriculumSection: React.FC<MarketingCurriculumSectionProps> = ({
         </SectionSubHeader>
         <MainTitle className="flex flex-col gap-3 md:gap-0">
           <span>
-            실무 역량 Class 4회 <br className="md:hidden" />+ 현직자 세미나
-            4회와 함께
+            실무 역량 Class 4회 <br className="md:hidden" />+ 현직자 세미나{' '}
+            {lectureCount}회와 함께
           </span>
           <span>
             8회의 미션으로 만드는 <br className="md:hidden" />
@@ -35,7 +39,10 @@ const MarketingCurriculumSection: React.FC<MarketingCurriculumSectionProps> = ({
         </MainTitle>
       </div>
 
-      <Curriculums curriculum={content?.curriculum} content={content ?? undefined} />
+      <Curriculums
+        curriculum={content?.curriculum}
+        content={content ?? undefined}
+      />
     </section>
   );
 };
