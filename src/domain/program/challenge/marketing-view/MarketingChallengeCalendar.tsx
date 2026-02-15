@@ -4,9 +4,16 @@ import Image from 'next/image';
 interface Props {
   challenge: ChallengeIdPrimitive;
   curriculumImage?: string;
+  lectureCount?: number;
 }
 
-const ChallengeScheduleSection = ({ challenge, curriculumImage }: Props) => {
+const DEFAULT_LECTURE_COUNT = 4;
+
+const ChallengeScheduleSection = ({
+  challenge,
+  curriculumImage,
+  lectureCount = DEFAULT_LECTURE_COUNT,
+}: Props) => {
   return (
     <section className="flex w-full flex-col items-center bg-[#0C1737] px-5 pb-20 pt-[60px] text-white md:px-0 md:pb-[140px] md:pt-[100px]">
       <h2 className="mb-10 text-center text-[22px] font-bold md:text-xlarge28">
@@ -56,7 +63,9 @@ const ChallengeScheduleSection = ({ challenge, curriculumImage }: Props) => {
                 <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#65C065] text-[12px] font-semibold text-white md:h-5 md:w-5 md:text-[14px]">
                   3
                 </span>
-                <span className="font-semibold">현직자 세미나 4회</span>
+                <span className="font-semibold">
+                  현직자 세미나 {lectureCount}회
+                </span>
               </div>
               <span>
                 현직자 마케터의 세미나를 <br />

@@ -107,6 +107,51 @@ const SidebarButton = ({
   );
 };
 
+interface DesktopHrCurriculumsProps {
+  groupedByWeek: WeekGroup[];
+  sidebarList: {
+    date: string;
+    title: string;
+  }[];
+}
+
+function DesktopHrCurriculums({
+  groupedByWeek,
+  sidebarList,
+}: DesktopHrCurriculumsProps) {
+  const [active, setActive] = useState(0);
+
+  const safeActiveIndex =
+    active >= 0 && active < groupedByWeek.length ? active : 0;
+  const activeGroup = groupedByWeek[safeActiveIndex];
+
+  if (!activeGroup) {
+    return null;
+  }
+
+  return (
+    <div className="hidden w-full max-w-[1262px] items-stretch overflow-hidden rounded-sm bg-white md:flex">
+      {/* Sidebar */}
+      <div className="flex min-w-fit max-w-[413px] flex-1 shrink-0 flex-col gap-[10px] border-r border-neutral-80 px-8 py-[30px]">
+        {sidebarList.map((item, index) => (
+          <SidebarButton
+            key={`sidebar-button-${index}`}
+            index={index}
+            date={item.date}
+            title={item.title}
+            active={index === safeActiveIndex}
+            onClick={() => setActive(index)}
+          />
+        ))}
+      </div>
+      {/* Content */}
+      <div className="h-[634px] min-w-0 flex-1 shrink-0 flex-col gap-3 overflow-y-auto overflow-x-hidden px-8 pb-11 pt-10">
+        <HrCurriculumContent weekGroup={activeGroup} />
+      </div>
+    </div>
+  );
+}
+
 function HrCurriculums({ curriculum, content }: HrCurriculumsProps) {
   const isMobile = useMediaQuery('(max-width:768px)');
 
@@ -162,33 +207,6 @@ function HrCurriculums({ curriculum, content }: HrCurriculumsProps) {
     title: group.weekTitle,
   }));
 
-  const ContentWithSidebar = () => {
-    const [active, setActive] = useState(0);
-    const activeGroup = groupedByWeek[active];
-
-    return (
-      <div className="hidden w-full max-w-[1262px] items-stretch overflow-hidden rounded-sm bg-white md:flex">
-        {/* Sidebar */}
-        <div className="flex min-w-fit max-w-[413px] flex-1 shrink-0 flex-col gap-[10px] border-r border-neutral-80 px-8 py-[30px]">
-          {sidebarList.map((item, index) => (
-            <SidebarButton
-              key={`sidebar-button-${index}`}
-              index={index}
-              date={item.date}
-              title={item.title}
-              active={index === active}
-              onClick={() => setActive(index)}
-            />
-          ))}
-        </div>
-        {/* Content */}
-        <div className="h-[634px] min-w-0 flex-1 shrink-0 flex-col gap-3 overflow-y-auto overflow-x-hidden px-8 pb-11 pt-10">
-          <HrCurriculumContent weekGroup={activeGroup} />
-        </div>
-      </div>
-    );
-  };
-
   if (isMobile) {
     return (
       <div className="flex w-full min-w-[320px] max-w-full flex-col items-stretch gap-3 overflow-x-hidden md:hidden">
@@ -212,7 +230,12 @@ function HrCurriculums({ curriculum, content }: HrCurriculumsProps) {
     );
   }
 
-  return <ContentWithSidebar />;
+  return (
+    <DesktopHrCurriculums
+      groupedByWeek={groupedByWeek}
+      sidebarList={sidebarList}
+    />
+  );
 }
 
 export default HrCurriculums;

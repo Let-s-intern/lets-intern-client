@@ -14,7 +14,7 @@ import { FaTrashCan } from 'react-icons/fa6';
 const DEFAULT_LECTURE_COUNT = 3;
 
 /** 강의 정보 등록 섹션을 노출할 챌린지 타입 (추가 타입은 이 배열에만 넣으면 됨) */
-const CHALLENGE_TYPES_WITH_LECTURES: ChallengeType[] = ['HR'];
+const CHALLENGE_TYPES_WITH_LECTURES: ChallengeType[] = ['HR', 'MARKETING'];
 
 function createEmptyLecture() {
   return {
