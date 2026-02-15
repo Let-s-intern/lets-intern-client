@@ -5,6 +5,7 @@ import { ReactNode } from 'react';
 interface Props {
   challenge: ChallengeIdPrimitive;
   curriculumImage?: string;
+  lectureCount?: number;
 }
 
 interface CalendarItemProps {
@@ -53,7 +54,13 @@ const CalendarList = ({ children }: CalendarListProps) => {
   );
 };
 
-const HrCurriculumCalendar = ({ challenge, curriculumImage }: Props) => {
+const DEFAULT_LECTURE_COUNT = 4;
+
+const HrCurriculumCalendar = ({
+  challenge,
+  curriculumImage,
+  lectureCount = DEFAULT_LECTURE_COUNT,
+}: Props) => {
   const calendarItems = [
     {
       number: 1,
@@ -70,7 +77,7 @@ const HrCurriculumCalendar = ({ challenge, curriculumImage }: Props) => {
     {
       number: 2,
       bgColor: 'bg-[#FB923C]',
-      title: '현직자 LIVE 세미나 4회',
+      title: `현직자 LIVE 세미나 ${lectureCount}회`,
       description: (
         <div className="leading-[20px] md:leading-[22px]">
           채용, 리크루팅, HRD, People Analytics 등 <br />

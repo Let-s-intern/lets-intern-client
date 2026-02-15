@@ -14,15 +14,12 @@ const HrCurriculumSection: React.FC<HrCurriculumSectionProps> = ({
   challenge,
   content,
 }) => {
-  if (
-    !content ||
-    !content.curriculum ||
-    content.curriculum.length === 0
-  ) {
+  if (!content || !content.curriculum || content.curriculum.length === 0) {
     return null;
   }
 
   const weekText = content?.challengePoint?.weekText ?? '3주';
+  const lectureCount = content?.lectures?.length ?? 5;
 
   return (
     <section
@@ -34,7 +31,8 @@ const HrCurriculumSection: React.FC<HrCurriculumSectionProps> = ({
       </SectionHeader>
       <MainTitle className="flex flex-col items-center gap-1">
         <span>
-          6회의 미션 <br className="md:hidden" />+ 현직자 LIVE 세미나 4회와 함께
+          6회의 미션 <br className="md:hidden" />+ 현직자 LIVE 세미나{' '}
+          {lectureCount}회와 함께
         </span>
         <span>만드는 밀도 있는 {weekText}간의 여정</span>
       </MainTitle>
@@ -42,13 +40,11 @@ const HrCurriculumSection: React.FC<HrCurriculumSectionProps> = ({
         막연한 HR 관심에서 끝나지 않도록, 직무 탐색부터 경험 정리, 결과물
         완성까지 함께합니다.
       </div>
-      <HrCurriculums
-        curriculum={content.curriculum}
-        content={content}
-      />
+      <HrCurriculums curriculum={content.curriculum} content={content} />
       <HrCurriculumCalendar
         challenge={challenge}
         curriculumImage={content.curriculumImage}
+        lectureCount={lectureCount}
       />
     </section>
   );

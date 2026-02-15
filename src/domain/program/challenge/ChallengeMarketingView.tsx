@@ -38,6 +38,7 @@ const ChallengeMarketingView = ({ challenge }: Props) => {
       <MarketingChallengeCalendar
         challenge={challenge}
         curriculumImage={content?.curriculumImage}
+        lectureCount={content?.lectures?.length}
       />
       <MarketingSummarySection />
       <MarketingApplicationStrategySection />
