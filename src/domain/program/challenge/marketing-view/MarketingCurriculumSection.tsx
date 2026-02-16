@@ -18,8 +18,8 @@ const MarketingCurriculumSection: React.FC = () => {
         </SectionSubHeader>
         <MainTitle className="flex flex-col gap-3 md:gap-0">
           <span>
-            실무 역량 Class 4회 <br className="md:hidden" />+ 현직자 Q&A 4회와
-            함께
+            실무 역량 Class 4회 <br className="md:hidden" />+ 현직자 세미나
+            4회와 함께
           </span>
           <span>
             8회의 미션으로 만드는 <br className="md:hidden" />

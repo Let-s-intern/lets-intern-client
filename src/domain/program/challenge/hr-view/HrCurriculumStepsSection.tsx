@@ -1,12 +1,11 @@
 import LexicalContent from '@/domain/blog/ui/LexicalContent';
-import { parseChallengeContent } from '@/domain/program/challenge/utils/parseChallengeContent';
-import { ChallengeIdPrimitive } from '@/schema';
+import { ChallengeContent } from '@/types/interface';
 import { ReactNode } from 'react';
 import MainTitle from '../ui/MainTitle';
 import { Contents, Portfolio, Seminar } from './CurriculumSteps';
 
 type HrCurriculumStepsSectionProps = {
-  challenge: ChallengeIdPrimitive;
+  content: ChallengeContent | null;
 };
 
 const curriculumSteps = (
@@ -101,9 +100,8 @@ const CurriculumSteps = ({
 };
 
 const HrCurriculumStepsSection: React.FC<HrCurriculumStepsSectionProps> = ({
-  challenge,
+  content,
 }) => {
-  const content = parseChallengeContent(challenge.desc);
   const lectures = content?.lectures;
 
   return (

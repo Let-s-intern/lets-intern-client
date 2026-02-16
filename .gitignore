@@ -48,3 +48,7 @@ next-env.d.ts
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+# 개인 폴더
+docs
+.history
