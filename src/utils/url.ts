@@ -82,6 +82,10 @@ export function getLiveTitle({ title }: { title?: string | null }) {
   return `${title} | LIVE 클래스 - 렛츠커리어`;
 }
 
+export function getGuidebookTitle({ title }: { title?: string | null }) {
+  return `${title} | 가이드북 - 렛츠커리어`;
+}
+
 export function getReportLandingTitle(title: string) {
   return `${title} | 서류 진단 - 렛츠커리어`;
 }
