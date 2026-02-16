@@ -113,9 +113,13 @@ const FaqSection = () => {
                 <div>{parseMarkdown(item.answer)}</div>
                 {item.image && (
                   <img
-                    src={typeof item.image === 'string' ? item.image : item.image}
+                    src={
+                      typeof item.image === 'string'
+                        ? item.image
+                        : item.image.src || item.image.default || item.image
+                    }
                     alt={item.question}
-                    className="mt-3 rounded-lg border border-neutral-90"
+                    className="mt-3 w-full rounded-lg border border-neutral-90"
                   />
                 )}
               </div>

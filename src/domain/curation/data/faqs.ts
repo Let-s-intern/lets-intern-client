@@ -1,5 +1,4 @@
 import { FAQItem } from '../types/types';
-import feedbackProcessImage from '../assets/feedback-process.png';
 
 export const FAQS: FAQItem[] = [
   {
@@ -109,7 +108,7 @@ export const FAQS: FAQItem[] = [
     answer:
       '각 챌린지별 피드백 진행 방식은 다음과 같습니다.\n\n**(모든 챌린지의 베이직 플랜은 피드백이 포함되지 않습니다.)**',
     category: '피드백/멘토링',
-    image: feedbackProcessImage, // 피드백 프로세스 비교 이미지
+    image: '/images/curation/feedback-process.png', // 피드백 프로세스 비교 이미지
   },
   {
     question: '스탠다드/프리미엄 플랜을 신청하면 피드백은 어떻게 진행되나요?',
