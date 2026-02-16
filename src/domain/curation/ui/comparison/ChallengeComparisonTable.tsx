@@ -95,10 +95,119 @@ const ChallengeComparisonTable = ({
                 );
               }
 
+              // 커리큘럼 행은 2개의 실제 행으로 분리
+              if (row.key === 'curriculum') {
+                return (
+                  <>
+                    {/* 단계 행 */}
+                    <tr
+                      key={`${row.label}-steps`}
+                      className={`border-t border-neutral-90 transition-all hover:bg-primary-5 ${idx % 2 === 0 ? 'bg-white' : 'from-neutral-98 bg-gradient-to-r to-white'}`}
+                    >
+                      <td
+                        rowSpan={2}
+                        className={`text-xsmall12 sticky left-0 z-10 whitespace-pre-line border-r-2 border-neutral-90 px-3 py-2.5 font-bold text-neutral-0 ${idx % 2 === 0 ? 'bg-white' : 'from-neutral-98 bg-gradient-to-r to-white'} shadow-[2px_0_8px_rgba(0,0,0,0.05)] transition-all hover:bg-primary-5`}
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <span>{row.label}</span>
+                          {isCollapsible && (
+                            <button
+                              onClick={() => toggleRow(row.key)}
+                              className="text-xsmall11 font-bold text-primary-dark transition-colors hover:text-primary"
+                              type="button"
+                            >
+                              {isExpanded ? '−' : '+'}
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                      {challenges.map((challenge) => {
+                        const value = challenge[row.key];
+                        const displayValue = value || '-';
+                        const isPrimary =
+                          highlightedPrograms.primary === challenge.programId;
+                        const isSecondary = highlightedPrograms.secondary.includes(
+                          challenge.programId,
+                        );
+
+                        let contentToShow = displayValue;
+                        let techniquesSection = '';
+
+                        if (displayValue !== '-') {
+                          const parts = displayValue.split('\n\n');
+                          contentToShow = parts[0]; // 단계 부분
+                          if (parts[1]) {
+                            techniquesSection = parts[1]; // 사용기법/템플릿/특별미션 부분
+                          }
+                        }
+
+                        return (
+                          <td
+                            key={`${challenge.programId}-${row.key}-steps`}
+                            className={`border-l border-t border-neutral-90 px-3 py-3.5 text-left align-top ${
+                              isPrimary
+                                ? 'bg-primary-20'
+                                : isSecondary
+                                  ? 'bg-primary-10'
+                                  : ''
+                            }`}
+                          >
+                            <div className="text-xsmall12 whitespace-pre-line break-keep font-medium leading-relaxed text-neutral-20">
+                              {contentToShow}
+                            </div>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                    {/* 사용기법 행 */}
+                    <tr
+                      key={`${row.label}-techniques`}
+                      className={`transition-all hover:bg-primary-5 ${idx % 2 === 0 ? 'bg-white' : 'from-neutral-98 bg-gradient-to-r to-white'}`}
+                    >
+                      {challenges.map((challenge) => {
+                        const value = challenge[row.key];
+                        const displayValue = value || '-';
+                        const isPrimary =
+                          highlightedPrograms.primary === challenge.programId;
+                        const isSecondary = highlightedPrograms.secondary.includes(
+                          challenge.programId,
+                        );
+
+                        let techniquesSection = '';
+
+                        if (displayValue !== '-') {
+                          const parts = displayValue.split('\n\n');
+                          if (parts[1]) {
+                            techniquesSection = parts[1];
+                          }
+                        }
+
+                        return (
+                          <td
+                            key={`${challenge.programId}-${row.key}-techniques`}
+                            className={`border-l border-t border-neutral-90 px-3 py-3.5 text-left align-top ${
+                              isPrimary
+                                ? 'bg-primary-20'
+                                : isSecondary
+                                  ? 'bg-primary-10'
+                                  : ''
+                            }`}
+                          >
+                            <div className="text-xsmall12 whitespace-pre-line break-keep font-medium leading-relaxed text-neutral-20">
+                              {techniquesSection || '\u00A0'}
+                            </div>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  </>
+                );
+              }
+
               return (
                 <tr
                   key={row.label}
-                  className={`transition-all hover:bg-primary-5 ${idx % 2 === 0 ? 'bg-white' : 'from-neutral-98 bg-gradient-to-r to-white'}`}
+                  className={`border-t border-neutral-90 transition-all hover:bg-primary-5 ${idx % 2 === 0 ? 'bg-white' : 'from-neutral-98 bg-gradient-to-r to-white'}`}
                 >
                   <td
                     className={`text-xsmall12 sticky left-0 z-10 whitespace-pre-line border-r-2 border-neutral-90 px-3 py-2.5 font-bold text-neutral-0 ${idx % 2 === 0 ? 'bg-white' : 'from-neutral-98 bg-gradient-to-r to-white'} shadow-[2px_0_8px_rgba(0,0,0,0.05)] transition-all hover:bg-primary-5`}
@@ -126,6 +235,7 @@ const ChallengeComparisonTable = ({
                     );
 
                     let contentToShow = displayValue;
+
                     if (
                       row.key === 'deliverable' &&
                       !isExpanded &&
@@ -138,7 +248,7 @@ const ChallengeComparisonTable = ({
                     return (
                       <td
                         key={`${challenge.programId}-${row.key}`}
-                        className={`border-l border-neutral-90 px-2 py-2.5 text-center align-middle ${
+                        className={`border-l border-t border-neutral-90 px-3 py-3.5 text-left align-top ${
                           isPrimary
                             ? 'bg-primary-20'
                             : isSecondary
@@ -147,7 +257,7 @@ const ChallengeComparisonTable = ({
                         }`}
                       >
                         <div
-                          className={`text-xsmall11 whitespace-pre-line break-keep font-medium leading-relaxed text-neutral-20 ${
+                          className={`text-xsmall12 whitespace-pre-line break-keep font-medium leading-relaxed text-neutral-20 ${
                             isCollapsible &&
                             !isExpanded &&
                             row.key !== 'deliverable'
