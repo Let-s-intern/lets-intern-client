@@ -127,6 +127,15 @@ export const challengeListItemSchema = z.object({
   beginning: z.string().nullable().optional(),
   deadline: z.string().nullable().optional(),
   createDate: z.string(),
+  adminClassificationInfo: z
+    .array(
+      z.object({
+        programAdminClassification: ProgramAdminClassificationEnum,
+      }),
+    )
+    .nullable()
+    .optional(),
+  isB2B: z.boolean().nullable().optional(),
 });
 
 export const challengeListSchema = z.object({

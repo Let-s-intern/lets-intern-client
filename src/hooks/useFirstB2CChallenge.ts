@@ -1,11 +1,7 @@
 import { useGetChallengeHome } from '@/api/challenge/challenge';
-import {
-  ChallengeType,
-  challengeTypeSchema,
-  getChallengeIdSchema,
-} from '@/schema';
-import axios from '@/utils/axios';
-import { useEffect, useMemo, useState } from 'react';
+import { ChallengeType, challengeTypeSchema } from '@/schema';
+import { isB2BChallengeFromList } from '@/utils/challengeFilter';
+import { useMemo } from 'react';
 
 const {
   EXPERIENCE_SUMMARY,
@@ -24,59 +20,23 @@ const {
  */
 export function useFirstB2CChallenge(type: ChallengeType) {
   const { data: challengeData } = useGetChallengeHome({ type });
-  const [firstB2CChallenge, setFirstB2CChallenge] = useState<
-    | {
-        id: number;
-        title: string | null;
-        href: string;
-      }
-    | undefined
-  >(undefined);
 
-  const challengeList = useMemo(
-    () => challengeData?.programList ?? [],
-    [challengeData?.programList],
-  );
+  const firstB2CChallenge = useMemo(() => {
+    const challengeList = challengeData?.programList ?? [];
+    const firstChallenge = challengeList.find(
+      (challenge) => !isB2BChallengeFromList(challenge),
+    );
 
-  // 순차적으로 B2C 챌린지 찾기
-  useEffect(() => {
-    if (challengeList.length === 0) {
-      setFirstB2CChallenge(undefined);
-      return;
+    if (!firstChallenge) {
+      return undefined;
     }
 
-    const findFirstB2C = async () => {
-      for (const challenge of challengeList) {
-        try {
-          const res = await axios.get(`/challenge/${challenge.id}`);
-          const challengeData = getChallengeIdSchema.parse(res.data.data);
-
-          const adminList = challengeData.adminClassificationInfo;
-          const isB2B =
-            adminList &&
-            adminList.length > 0 &&
-            adminList.some((info) => info.programAdminClassification === 'B2B');
-
-          // B2C인 경우 해당 챌린지 반환
-          if (!isB2B) {
-            setFirstB2CChallenge({
-              id: challenge.id,
-              title: challenge.title ?? null,
-              href: `/program/challenge/${challenge.id}`,
-            });
-            return; // 첫 번째 B2C를 찾으면 중단
-          }
-        } catch {
-          // 에러가 발생해도 다음 챌린지 확인 계속
-        }
-      }
-
-      // 모든 챌린지가 B2B인 경우
-      setFirstB2CChallenge(undefined);
+    return {
+      id: firstChallenge.id,
+      title: firstChallenge.title ?? null,
+      href: `/program/challenge/${firstChallenge.id}`,
     };
-
-    findFirstB2C();
-  }, [challengeList]);
+  }, [challengeData?.programList]);
 
   return firstB2CChallenge;
 }

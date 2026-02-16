@@ -54,6 +54,7 @@ const MissionGuideBonusSection = ({
     personalStatementLargeCorp,
     portfolio,
     marketing,
+    hr,
   } = useNavB2CChallenges();
 
   // 챌린지 타입에 따라 매칭되는 챌린지 객체를 반환하는 함수
@@ -63,10 +64,12 @@ const MissionGuideBonusSection = ({
     const challengeTypeMap: Record<string, any> = {
       EXPERIENCE_SUMMARY: experienceSummary,
       RESUME: resume,
+      CAREER_START: resume,
       PERSONAL_STATEMENT: personalStatement,
       PERSONAL_STATEMENT_LARGE_CORP: personalStatementLargeCorp,
       PORTFOLIO: portfolio,
       MARKETING: marketing,
+      HR: hr,
     };
 
     return challengeTypeMap[currentChallenge.challengeType] || null;
@@ -151,19 +154,27 @@ const MissionGuideBonusSection = ({
 
           {/* 후기 작성 가이드라인 섹션 */}
           <section className="flex flex-col gap-4">
-            <Heading3>2️⃣ 블로그 후기 가이드라인을 안내드려요</Heading3>
+            <Heading3>
+              2️⃣ 여러분의 소중한 후기가 리워드 대상에서 제외되지 않도록!
+              <br /> 제출 전 아래의 점검 리스트 꼭 확인해주세요!
+            </Heading3>
             <div className="flex flex-col gap-2 rounded-xxs bg-primary-5 p-3">
+              ✅ 필수 항목 점검 ✅
               <div className="flex items-start gap-2">
                 <ol className="list-inside list-decimal text-xsmall14 font-medium leading-8 text-neutral-0 md:text-xsmall16">
                   <li className="mb-4">
-                    <b>이미지</b> <br />- 활동 인증 이미지 3장 이상 필수 첨부
+                    <b>제목</b> <br />- &quot;렛츠 커리어&quot;,
+                    &quot;취준&quot;, &quot;프로그램명&quot; 모두 포함
                   </li>
                   <li className="mb-4">
-                    <b>필수 키워드</b> <br />- 블로그 본문 내 필수 키워드 포함:
-                    렛츠커리어, 취준, 프로그램명
+                    <b>이미지</b> <br />- 활동 인증 이미지 3장 이상 첨부
                   </li>
                   <li className="mb-4">
-                    <b>필수 링크</b> <br />- 블로그 본문 내 필수 링크 포함:{' '}
+                    <b>필수 키워드</b> <br />- 본문 내 &quot;렛츠 커리어&quot;,
+                    &quot;취준&quot; 3회 이상, 프로그램명 1회 이상.
+                  </li>
+                  <li className="mb-4">
+                    <b>필수 링크</b> <br />-
                     <a
                       href={getChallengeLink()}
                       target="_blank"
@@ -174,22 +185,18 @@ const MissionGuideBonusSection = ({
                     </a>
                   </li>
                   <li className="mb-4">
-                    <b>작성기준</b>: 위의 키워드 중 제목, 본문, #태그에 아래와
-                    같이 키워드를 기재해 주세요. <br />
-                    - 제목: 필수 키워드 3개를 포함하여 자유롭게 작성 <br />-
-                    본문: ‘렛츠커리어’, ‘취준’ 키워드를 본문에 3회 이상 언급{' '}
-                    <br />- #해시태그: 제시된 키워드 모두 기재해
-                    주세요.(*키워드가 지켜지지 않으면 수정요청이 있을 수
-                    있어요.)
-                    <br />- [추천·보증 등에 관한 표시·광고 심사지침]에 따라 후기
-                    내에 &quot;후기 작성의 대가로 현금 리워드를
-                    받았습니다&quot;와 같은 문구를 표시해야 합니다!
-                    <br />- 후기는 제 3자의 저작권, 초상권 및 기타 권리를
-                    침해하지 않도록 작성해주세요.
+                    <b>해시태그</b> <br />- #렛츠커리어 #취준 #프로그램명
                   </li>
                   <li className="mb-4">
-                    <b>공개설정</b> <br />- 최소 1년 간 전체 공개 (해당 기간
-                    내에 삭제 시 리워드가 환수될 수 있습니다)
+                    <b>리워드에 대한 언급</b>
+                    <br />
+                    - [추천·보증 등에 관한 표시·광고 심사 지침]에 따른 필수 기재
+                    사항. <br />- 예시: &quot;후기 작성의 대가로 현금 리워드를
+                    받았습니다.&quot;
+                  </li>
+                  <li className="mb-4">
+                    <b>공개설정</b> <br />- 최소 1년간 전체 공개 (해당 기간 내
+                    삭제 시 리워드가 환수될 수 있습니다.)
                   </li>
                 </ol>
               </div>
@@ -202,14 +209,33 @@ const MissionGuideBonusSection = ({
               3️⃣ 후기 작성 예시가 궁금하다면? 👉 아래 링크 참고
             </Heading3>
             <div className="flex flex-col gap-2">
-              <a
-                href="https://www.letscareer.co.kr/review/blog"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="break-all text-xsmall14 text-primary hover:underline md:text-xsmall16"
-              >
-                후기 모음 보기: https://www.letscareer.co.kr/review/blog
-              </a>
+              <ol className="list-inside list-disc space-y-2">
+                <li>
+                  후기 모음 보기 :
+                  <a
+                    href="https://www.letscareer.co.kr/review/blog"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="break-all text-xsmall14 text-primary hover:underline md:text-xsmall16"
+                  >
+                    https://www.letscareer.co.kr/review/blog
+                  </a>
+                </li>
+                <li>
+                  후기 작성 Tip! 👀
+                  <div className="ml-5 mt-1 space-y-1">
+                    미션 수행 때마다 작성한 여러분만의 미션 소감을 활용해보세요!
+                    <br />
+                    생생한 소감을 잘 다듬기만 해도 블로그 글 70%가 완성됩니다!
+                    <br /> 리워드는 덤이고, 이번 챌린지에서 내가 챙겨가고 싶은
+                    것이 무엇인지 정리하는 시간이 되실 거예요!
+                  </div>
+                </li>
+                <li>
+                  후기는 제 3자의 저작권, 초상권 및 기타 권리를 침해하지 않도록
+                  작성해주세요.
+                </li>
+              </ol>
             </div>
           </section>
 
@@ -220,10 +246,18 @@ const MissionGuideBonusSection = ({
               문의는 챌린지 오픈 채팅방으로 부탁드립니다!
             </div>
           </section>
-
-          <p className="text-xsmall14 font-semibold text-neutral-0 md:text-xsmall16">
-            챌린지 이후 좋은 소식들만 가득하세요! 솔직하고 생생한 후기
-            기대하겠습니다
+          <hr className="border-neutral-80" />
+          <p className="text-xsmall14 text-neutral-0 md:text-xsmall16">
+            렛츠 커리어는 오늘도 “지금” 여러분께 필요한 프로그램을 개발
+            중입니다!
+            <br /> 여러분의 후기는 서비스 개선 및 새로운 프로그램 기획에 가장
+            중요한 목소리고요!
+            <br /> 렛츠 커리어가 여러분과 더 오래 함께 달릴 수 있도록 솔직하고
+            생생한 후기 부탁드립니다!
+            <br /> 여러분의 성장 과정을 렛츠 커리어와 함께 해주셔서 다시 한번
+            감사합니다.
+            <br />
+            <br /> 렛츠 커리어 드림 ☺️
           </p>
         </section>
       </div>
