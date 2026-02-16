@@ -1,4 +1,5 @@
 import { fetchGuidebookData } from '@/api/guidebook/guidebook';
+import GuidebookCTAButtons from '@/domain/program/guidebook/GuidebookCTAButtons';
 import GuidebookView from '@/domain/program/guidebook/GuidebookView';
 import {
   getBaseUrlFromServer,
@@ -73,7 +74,12 @@ const Page = async ({
     redirect(correctPathname);
   }
 
-  return <GuidebookView guidebook={guidebook} id={id} />;
+  return (
+    <>
+      <GuidebookView guidebook={guidebook} id={id} />
+      <GuidebookCTAButtons title={guidebook.title} />
+    </>
+  );
 };
 
 export default Page;

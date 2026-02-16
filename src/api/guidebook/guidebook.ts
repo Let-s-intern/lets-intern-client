@@ -1,7 +1,9 @@
+import type { GuidebookData } from './guidebookSchema';
+
 // UI 개발용
-export async function fetchGuidebookData(id: string) {
+export async function fetchGuidebookData(id: string): Promise<GuidebookData> {
   return {
-    id,
+    guidebook_id: Number(id),
     title: '가이드북 제목',
     description: '가이드북 설명',
     thumbnailDesktop: null,
@@ -12,6 +14,8 @@ export async function fetchGuidebookData(id: string) {
     isVisible: null,
     priceInfo: [
       {
+        priceId: 1,
+        priceType: null,
         price: 10000,
         discount: 1000,
       },
