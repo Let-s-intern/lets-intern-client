@@ -11,6 +11,38 @@ const FAQ_CATEGORIES: FAQCategory[] = [
   '피드백/멘토링',
 ];
 
+// 마크다운 볼드(**텍스트**)를 연한 파란색 볼드로 렌더링하는 함수
+const parseMarkdown = (text: string) => {
+  // 줄바꿈으로 분리
+  const lines = text.split('\n');
+
+  return lines.map((line, lineIndex) => {
+    // 각 줄에서 **텍스트** 파싱
+    const parts = line.split(/(\*\*.*?\*\*)/g);
+
+    const parsedLine = parts.map((part, partIndex) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        const content = part.slice(2, -2);
+        return (
+          <span
+            key={`${lineIndex}-${partIndex}`}
+            className="font-bold text-blue-500"
+          >
+            {content}
+          </span>
+        );
+      }
+      return <span key={`${lineIndex}-${partIndex}`}>{part}</span>;
+    });
+
+    return (
+      <div key={lineIndex} className={lineIndex > 0 ? 'mt-2' : ''}>
+        {parsedLine}
+      </div>
+    );
+  });
+};
+
 const FaqSection = () => {
   const [selectedCategory, setSelectedCategory] = useState<FAQCategory | 'all'>(
     'all',
@@ -77,9 +109,16 @@ const FaqSection = () => {
                   <span className="hidden group-open:inline">−</span>
                 </span>
               </summary>
-              <p className="mt-2 border-l-2 border-primary-20 pl-3 text-xsmall14 leading-relaxed text-neutral-40">
-                {item.answer}
-              </p>
+              <div className="mt-2 border-l-2 border-primary-20 pl-3 text-xsmall14 leading-relaxed text-neutral-40">
+                <div>{parseMarkdown(item.answer)}</div>
+                {item.image && (
+                  <img
+                    src={typeof item.image === 'string' ? item.image : item.image}
+                    alt={item.question}
+                    className="mt-3 rounded-lg border border-neutral-90"
+                  />
+                )}
+              </div>
             </details>
           ))
         ) : (
