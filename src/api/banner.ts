@@ -39,12 +39,77 @@ export const bannerAdminListSchema = z.object({
   bannerList: z.array(bannerAdminListItemSchema),
 });
 
-export type bannerType = 'MAIN' | 'PROGRAM' | 'LINE' | 'POPUP' | 'MAIN_BOTTOM';
+// 공통 배너 타입 정의
+export type CommonBannerType =
+  | 'HOME_TOP'
+  | 'HOME_BOTTOM'
+  | 'PROGRAM'
+  | 'MY_PAGE';
+
+// 공통 배너 아이템 스키마 (노출 중 - type 필수)
+export const commonBannerAdminListItemSchema = z.object({
+  type: z.enum(['HOME_TOP', 'HOME_BOTTOM', 'PROGRAM', 'MY_PAGE']),
+  commonBannerId: z.number(),
+  title: z.string().nullable().optional(),
+  landingUrl: z.string().nullable().optional(),
+  startDate: z.string().nullable().optional(),
+  endDate: z.string().nullable().optional(),
+  isVisible: z.boolean().nullable().optional(),
+});
+
+// 공통 배너 아이템 스키마 (전체 - type optional)
+export const commonBannerAdminAllItemSchema = z.object({
+  commonBannerId: z.number(),
+  title: z.string().nullable().optional(),
+  landingUrl: z.string().nullable().optional(),
+  startDate: z.string().nullable().optional(),
+  endDate: z.string().nullable().optional(),
+  isVisible: z.boolean().nullable().optional(),
+});
+
+// 공통 배너 리스트 스키마 - 타입별로 그룹화된 객체 (노출 중)
+export const commonBannerAdminListSchema = z.object({
+  commonBannerList: z.record(z.array(commonBannerAdminListItemSchema)),
+});
+
+// 공통 배너 리스트 스키마 - 배열 형식 (전체)
+export const commonBannerAdminArrayListSchema = z.object({
+  commonBannerList: z.array(commonBannerAdminAllItemSchema),
+});
+
+export type CommonBannerAdminListItemType = z.infer<
+  typeof commonBannerAdminListItemSchema
+>;
+
+export type CommonBannerAdminAllItemType = z.infer<
+  typeof commonBannerAdminAllItemSchema
+>;
+
+export type bannerType =
+  | 'MAIN'
+  | 'PROGRAM'
+  | 'LINE'
+  | 'POPUP'
+  | 'MAIN_BOTTOM'
+  | 'COMMON';
 
 export const getBnnerListForAdminQueryKey = (type: bannerType) => [
   'banner',
   'admin',
   type,
+];
+
+export const getCommonBannerForAdminQueryKey = () => [
+  'banner',
+  'admin',
+  'common',
+];
+
+export const getActiveBannersForAdminQueryKey = () => [
+  'banner',
+  'admin',
+  'common',
+  'active',
 ];
 
 export const useGetBannerListForAdmin = ({ type }: { type: bannerType }) => {
@@ -58,6 +123,34 @@ export const useGetBannerListForAdmin = ({ type }: { type: bannerType }) => {
       });
       return bannerAdminListSchema.parse(res.data.data);
     },
+  });
+};
+
+// 전체 공통 배너 조회
+export const useGetCommonBannerForAdmin = ({
+  enabled,
+}: { enabled?: boolean } = {}) => {
+  return useQuery({
+    queryKey: getCommonBannerForAdminQueryKey(),
+    queryFn: async () => {
+      const res = await axios('/admin/common-banner', {});
+      return commonBannerAdminArrayListSchema.parse(res.data.data);
+    },
+    enabled,
+  });
+};
+
+// 노출 중인 공통 배너만 조회
+export const useGetActiveBannersForAdmin = ({
+  enabled,
+}: { enabled?: boolean } = {}) => {
+  return useQuery({
+    queryKey: getActiveBannersForAdminQueryKey(),
+    queryFn: async () => {
+      const res = await axios('/admin/common-banner/visible', {});
+      return commonBannerAdminListSchema.parse(res.data.data);
+    },
+    enabled,
   });
 };
 
@@ -202,6 +295,14 @@ export const useDeleteBannerForAdmin = ({
       queryClient.invalidateQueries({
         queryKey: getBannerDetailForAdminQueryKey(data.bannerId, data.type),
       });
+      if (data.type === 'COMMON') {
+        queryClient.invalidateQueries({
+          queryKey: getCommonBannerForAdminQueryKey(),
+        });
+        queryClient.invalidateQueries({
+          queryKey: getActiveBannersForAdminQueryKey(),
+        });
+      }
       successCallback?.();
     },
     onError: (error) => {
