@@ -36,6 +36,12 @@ export const LIVE_CURRICULUM_ID = 'live-curriculum';
 export const LIVE_REVIEW_ID = 'live-review';
 export const LIVE_FAQ_ID = 'live-faq';
 
+export const GUIDEBOOK_INTRO_ID = 'guidebook-intro';
+export const GUIDEBOOK_CURRICULUM_ID = 'guidebook-curriculum';
+export const GUIDEBOOK_DIFFERENT_ID = 'guidebook-different';
+export const GUIDEBOOK_REVIEW_ID = 'guidebook-review';
+export const GUIDEBOOK_FAQ_ID = 'guidebook-faq';
+
 export const challengeNavigateItems: NavItem[] = [
   { title: '프로그램 소개', to: PROGRAM_INTRO_ID },
   { title: '커리큘럼', to: PROGRAM_CURRICULUM_ID },
@@ -52,6 +58,13 @@ export const liveNavigateItems: NavItem[] = [
   { title: 'FAQ', to: LIVE_FAQ_ID },
 ];
 
+export const guidebookNavigateItems: NavItem[] = [
+  { title: '가이드북 소개', to: GUIDEBOOK_INTRO_ID },
+  { title: '커리큘럼', to: GUIDEBOOK_CURRICULUM_ID },
+  { title: '차별점', to: GUIDEBOOK_DIFFERENT_ID },
+  { title: '후기', to: GUIDEBOOK_REVIEW_ID },
+  { title: 'FAQ', to: GUIDEBOOK_FAQ_ID },
+];
 const ProgramDetailNavigation = ({
   programType,
   className,
@@ -59,10 +72,19 @@ const ProgramDetailNavigation = ({
   challengeType,
 }: ProgramDetailNavigationProps) => {
   const isLive = programType === 'live';
-  const navItems = isLive ? liveNavigateItems : challengeNavigateItems;
+  const isGuidebook = programType === 'guidebook';
+  const navItems = isLive
+    ? liveNavigateItems
+    : isGuidebook
+      ? guidebookNavigateItems
+      : challengeNavigateItems;
 
   const [activeSection, setActiveSection] = useState<string>(
-    isLive ? liveNavigateItems[0].to : challengeNavigateItems[0].to,
+    isLive
+      ? liveNavigateItems[0].to
+      : isGuidebook
+        ? guidebookNavigateItems[0].to
+        : challengeNavigateItems[0].to,
   );
 
   const scrollStyleClassName = useProgramScrollDirectionStyle();
@@ -135,6 +157,7 @@ const ProgramDetailNavigation = ({
         'sticky z-20 flex w-full justify-center gap-x-1 border-b-2 border-neutral-80 bg-white px-6 transition-all md:gap-x-[100px]',
         programType === 'challenge' && 'challenge_navigation',
         programType === 'live' && 'live_navigation',
+        programType === 'guidebook' && 'guidebook_navigation',
         scrollStyleClassName,
         className,
       )}
@@ -147,13 +170,13 @@ const ProgramDetailNavigation = ({
             style={{
               borderBottomColor:
                 navItem.to === activeSection
-                  ? isLive
+                  ? isLive || isGuidebook
                     ? '#4d55f5'
                     : primaryColor
                   : 'transparent',
               color:
                 navItem.to === activeSection
-                  ? isLive
+                  ? isLive || isGuidebook
                     ? '#4d55f5'
                     : primaryColor
                   : '#989ba2',
