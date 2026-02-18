@@ -31,8 +31,10 @@ export interface PayInfo {
   livePriceType: string | undefined;
 }
 
+type LegacyProgramType = Exclude<ProgramType, 'guidebook'>;
+
 interface ApplySectionProps {
-  programType: ProgramType;
+  programType: LegacyProgramType;
   programId: number;
   programTitle: string;
 }
