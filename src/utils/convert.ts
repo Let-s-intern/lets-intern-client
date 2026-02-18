@@ -408,6 +408,8 @@ export const convertCurationTypeToText = (type: CurationType | null) => {
       return '서류 진단';
     case 'BLOG':
       return '블로그';
+    case 'RESOURCE':
+      return '자료집';
     case 'ETC':
       return '기타';
     default:
