@@ -20,8 +20,10 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect, useReducer, useState } from 'react';
 
+type LegacyProgramType = Exclude<ProgramType, 'guidebook'>;
+
 interface ProgramDetailProps {
-  programType: ProgramType;
+  programType: LegacyProgramType;
   programId: number;
 }
 
