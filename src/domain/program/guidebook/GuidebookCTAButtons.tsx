@@ -2,16 +2,34 @@
 
 import { DesktopCTA, MobileCTA } from '@/common/button/ApplyCTA';
 import GradientButton from '@/domain/program/program-detail/button/GradientButton';
+import useAuthStore from '@/store/useAuthStore';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface GuidebookCTAButtonsProps {
   title?: string | null;
 }
 
 const GuidebookCTAButtons = ({ title }: GuidebookCTAButtonsProps) => {
+  const { isLoggedIn } = useAuthStore();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const guidebookTitle = title ?? '';
 
   const handleApplyClick = () => {
-    // TODO: 결제 페이지 연동
+    if (!isLoggedIn) {
+      const currentPath = window.location.pathname;
+      const currentSearch = searchParams.toString();
+      const redirectUrl = currentSearch
+        ? `${currentPath}?${currentSearch}`
+        : currentPath;
+
+      router.push(`/login?redirect=${encodeURIComponent(redirectUrl)}`);
+      return;
+    }
+
+    // TODO: 결제 데이터 세팅 후에도 이 경로는 유지됩니다.
+    router.push('/payment-input');
   };
 
   return (
