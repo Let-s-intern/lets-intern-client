@@ -3,7 +3,6 @@ import type { GuidebookData } from './guidebookSchema';
 // UI 개발용
 export async function fetchGuidebookData(id: string): Promise<GuidebookData> {
   return {
-    guidebook_id: Number(id),
     title: '가이드북 제목',
     description: '가이드북 설명',
     thumbnailDesktop: null,

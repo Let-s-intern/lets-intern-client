@@ -14,7 +14,6 @@ export const guidebookPriceSchema = z.object({
 export type GuidebookPrice = z.infer<typeof guidebookPriceSchema>;
 
 export const guidebookDataSchema = z.object({
-  guidebook_id: z.number(),
   title: z.string(),
   /** 썸네일(모바일) */
   thumbnailMobile: z.string().nullable().optional(),
