@@ -15,53 +15,22 @@ import {
 } from '@/api/blog/blogSchema';
 import { uploadFile } from '@/api/file';
 import LoadingContainer from '@/common/loading/LoadingContainer';
-import TagSelector from '@/domain/admin/blog/TagSelector';
-import TextFieldLimit from '@/domain/admin/blog/TextFieldLimit';
+import BlogActionButtons from '@/domain/admin/blog/section/BlogActionButtons';
+import BlogBasicInfoSection from '@/domain/admin/blog/section/BlogBasicInfoSection';
+import BlogProgramRecommendSection from '@/domain/admin/blog/section/BlogProgramRecommendSection';
+import BlogPublishDateSection from '@/domain/admin/blog/section/BlogPublishDateSection';
+import BlogRecommendSection from '@/domain/admin/blog/section/BlogRecommendSection';
+import BlogTagSection from '@/domain/admin/blog/section/BlogTagSection';
 import EditorApp from '@/domain/admin/lexical/EditorApp';
-import ImageUpload from '@/domain/admin/program/ui/form/ImageUpload';
-import Heading2 from '@/domain/blog/ui/BlogHeading2';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import useBlogMenuItems from '@/hooks/useBlogMenuItems';
 import useProgramMenuItems from '@/hooks/useProgramMenuItems';
 import dayjs from '@/lib/dayjs';
-import { blogCategory } from '@/utils/convert';
-import {
-  Button,
-  FormControl,
-  FormHelperText,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  TextField,
-} from '@mui/material';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { SelectChangeEvent } from '@mui/material';
 import { isAxiosError } from 'axios';
 import { Dayjs } from 'dayjs';
 import { useParams, useRouter } from 'next/navigation';
-import {
-  ChangeEvent,
-  FormEvent,
-  MouseEvent,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
-
-// const maxCtaTextLength = 23;
-const maxTitleLength = 49;
-const maxDescriptionLength = 100;
-const initialBlog = {
-  title: '',
-  category: '',
-  thumbnail: '',
-  description: '',
-  ctaLink: '',
-  ctaText: '',
-  displayDate: null,
-  isDisplayed: '',
-  tagList: [],
-};
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from 'react';
 
 interface EditBlog {
   title: string;
@@ -74,6 +43,18 @@ interface EditBlog {
   displayDate: Dayjs | null;
   tagList: TagDetail[];
 }
+
+const initialBlog = {
+  title: '',
+  category: '',
+  thumbnail: '',
+  description: '',
+  ctaLink: '',
+  ctaText: '',
+  displayDate: null,
+  isDisplayed: '',
+  tagList: [],
+};
 
 const BlogEditPage = () => {
   const router = useRouter();
@@ -173,14 +154,12 @@ const BlogEditPage = () => {
     setContent((prev) => ({ ...prev, lexical: jsonString }));
   };
 
-  const patchBlog = async (event: MouseEvent<HTMLButtonElement>) => {
-    const { name } = event.target as HTMLButtonElement;
-
+  const patchBlog = async (isPublish: boolean) => {
     await patchBlogMutation.mutateAsync({
       ...editingValue,
       content: JSON.stringify(content),
       id: Number(id),
-      isDisplayed: name === 'publish',
+      isDisplayed: isPublish,
       tagList: editingValue.tagList.map((tag) => tag.id),
       displayDate: dateTime?.format('YYYY-MM-DDTHH:mm'),
     });
@@ -209,8 +188,6 @@ const BlogEditPage = () => {
         delete item.ctaTitle;
       }
 
-      console.log(item);
-
       return {
         ...prev,
         programRecommend: [
@@ -235,6 +212,16 @@ const BlogEditPage = () => {
         blogRecommend: list,
       };
     });
+  };
+
+  const handleChangeThumbnail = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.item(0);
+    if (!file) {
+      setSnackbar('파일이 없습니다.');
+      return;
+    }
+    const url = await uploadFile({ file, type: 'BLOG' });
+    setEditingValue((prev) => ({ ...prev, thumbnail: url }));
   };
 
   useEffect(() => {
@@ -263,273 +250,71 @@ const BlogEditPage = () => {
       <header>
         <h1 className="text-2xl font-semibold">블로그 수정</h1>
       </header>
-      {isLoading ? (
-        <span>로딩 중...</span>
-      ) : blogData ? (
+      {blogData ? (
         <main className="max-w-screen-xl">
           <div className="mt-4 flex flex-col gap-4">
-            <div className="flex-no-wrap flex items-center gap-4">
-              <FormControl size="small" required>
-                <InputLabel id="category-label">카테고리</InputLabel>
-                <Select
-                  className="w-60"
-                  id="category"
-                  size="small"
-                  label="카테고리"
-                  name="category"
-                  value={editingValue.category}
-                  onChange={(e) => {
-                    setEditingValue({
-                      ...editingValue,
-                      category: e.target.value,
-                    });
-                  }}
-                >
-                  {Object.entries(blogCategory).map(([key, value]) => (
-                    <MenuItem key={key} value={key}>
-                      {value}
-                    </MenuItem>
-                  ))}
-                </Select>
-                <FormHelperText>
-                  카테고리는 하나만 설정할 수 있습니다.
-                </FormHelperText>
-              </FormControl>
-            </div>
-
-            <TextFieldLimit
-              type="text"
-              label="제목"
-              placeholder="제목"
-              name="title"
-              required
-              value={editingValue.title}
-              onChange={onChange}
-              autoComplete="off"
-              fullWidth
-              maxLength={maxTitleLength}
-              autoFocus={true}
-            />
-            <TextFieldLimit
-              type="text"
-              label="메타 디스크립션"
-              placeholder="설명"
-              name="description"
-              value={editingValue.description}
-              onChange={onChange}
-              multiline
-              minRows={3}
-              autoComplete="off"
-              fullWidth
-              maxLength={maxDescriptionLength}
+            <BlogBasicInfoSection
+              category={editingValue.category}
+              title={editingValue.title}
+              description={editingValue.description}
+              thumbnail={editingValue.thumbnail}
+              onChangeCategory={(category) =>
+                setEditingValue((prev) => ({ ...prev, category }))
+              }
+              onChangeField={onChange}
+              onChangeThumbnail={handleChangeThumbnail}
             />
 
-            <div className="flex gap-4">
-              <div className="w-72">
-                <ImageUpload
-                  label="블로그 썸네일"
-                  id="file"
-                  image={editingValue.thumbnail}
-                  onChange={async (e) => {
-                    const file = e.target.files?.item(0);
-                    if (!file) {
-                      setSnackbar('파일이 없습니다.');
-                      return;
-                    }
-                    const url = await uploadFile({ file, type: 'BLOG' });
-
-                    setEditingValue({ ...editingValue, thumbnail: url });
-                  }}
-                />
-              </div>
-              {/* [삭제하지 마세요] CTA 임시로 사용 중지 */}
-              {/* <div className="flex-1">
-                <div className="mb-5">
-                  <TextField
-                    type="text"
-                    label="CTA 링크"
-                    placeholder="CTA 링크"
-                    size="small"
-                    name="ctaLink"
-                    value={editingValue.ctaLink}
-                    onChange={onChange}
-                    fullWidth
-                    autoComplete="off"
-                  />
-                  <span className="text-0.875 text-neutral-35">
-                    {
-                      '*latest:{text}으로 설정하면, 텍스트를 제목에 포함하는 챌린지 상세페이지로 이동합니다. (예시) latest:인턴'
-                    }
-                  </span>
-                </div>
-                <TextFieldLimit
-                  type="text"
-                  label="CTA 텍스트"
-                  placeholder="CTA 텍스트"
-                  size="small"
-                  name="ctaText"
-                  value={editingValue.ctaText}
-                  onChange={onChange}
-                  autoComplete="off"
-                  fullWidth
-                  maxLength={maxCtaTextLength}
-                />
-              </div> */}
-            </div>
-
-            <div className="border px-6 py-10">
-              <h2 className="mb-4">태그 설정</h2>
-              <TagSelector
-                selectedTagList={editingValue.tagList}
-                tagList={tags}
-                value={newTag}
-                deleteSelectedTag={(id) => {
-                  setEditingValue((prev) => ({
-                    ...prev,
-                    tagList: prev.tagList.filter((tag) => tag.id !== id),
-                  }));
-                }}
-                deleteTag={async (tagId) => {
-                  const res = await deleteBlogTagMutation.mutateAsync(tagId);
-                  if (res?.status === 200) {
-                    setSnackbar('태그를 삭제했습니다.');
-                  }
-                }}
-                selectTag={selectTag}
-                onChange={onChangeTag}
-                onSubmit={onSubmitTag}
-              />
-            </div>
+            <BlogTagSection
+              selectedTagList={editingValue.tagList}
+              tags={tags}
+              newTag={newTag}
+              onChangeTag={onChangeTag}
+              onSubmitTag={onSubmitTag}
+              onSelectTag={selectTag}
+              onDeleteSelectedTag={(tagId) => {
+                setEditingValue((prev) => ({
+                  ...prev,
+                  tagList: prev.tagList.filter((tag) => tag.id !== tagId),
+                }));
+              }}
+              onDeleteTag={async (tagId) => {
+                const res = await deleteBlogTagMutation.mutateAsync(tagId);
+                if (res?.status === 200) {
+                  setSnackbar('태그를 삭제했습니다.');
+                }
+              }}
+            />
 
             <div className="flex gap-5">
-              <div className="flex-1">
-                <div className="mb-3 flex items-center gap-2">
-                  <Heading2>프로그램 추천</Heading2>
-                  <span className="text-xsmall14 text-neutral-40">
-                    *노출된 프로그램 중 모집중, 모집예정인 프로그램만
-                    불러옵니다.
-                  </span>
-                </div>
-                <div className="flex flex-col gap-5">
-                  {content.programRecommend?.map((item, index) => (
-                    <div key={index} className="flex flex-col gap-3">
-                      <FormControl size="small">
-                        <InputLabel>프로그램 선택</InputLabel>
-                        <Select
-                          name="id"
-                          value={item.id ?? 'null'}
-                          fullWidth
-                          size="small"
-                          label="프로그램 선택"
-                          onChange={(e) =>
-                            handleChangeProgramRecommend(e, index)
-                          }
-                        >
-                          {programMenuItems}
-                        </Select>
-                      </FormControl>
-                      <TextField
-                        size="small"
-                        value={item.ctaTitle ?? ''}
-                        label={'CTA 소제목' + (index + 1)}
-                        placeholder={'CTA 소제목' + (index + 1)}
-                        name="ctaTitle"
-                        fullWidth
-                        onChange={(e) => handleChangeProgramRecommend(e, index)}
-                      />
-
-                      {!content.programRecommend![index].id && (
-                        <TextField
-                          size="small"
-                          value={item.ctaLink ?? ''}
-                          label={'CTA 링크' + (index + 1)}
-                          placeholder={'CTA 링크' + (index + 1)}
-                          name="ctaLink"
-                          fullWidth
-                          onChange={(e) =>
-                            handleChangeProgramRecommend(e, index)
-                          }
-                        />
-                      )}
-                    </div>
-                  ))}
-                  <span className="text-0.875 text-neutral-35">
-                    {
-                      "*CTA링크: 'latest:{text}'으로 설정하면, text를 제목에 포함하는 챌린지 상세페이지로 이동합니다. (예시) latest:인턴"
-                    }
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex-1">
-                <Heading2 className="mb-3">블로그 추천</Heading2>
-                <div className="flex flex-col gap-3">
-                  {content.blogRecommend?.map((id, index) => (
-                    <FormControl key={index} size="small">
-                      <InputLabel>블로그 ID {index + 1}</InputLabel>
-                      <Select
-                        value={id ?? 'null'}
-                        fullWidth
-                        size="small"
-                        label={'블로그 ID' + (index + 1)}
-                        onChange={(e) => handleChangeBlogRecommend(e, index)}
-                      >
-                        {blogMenuItems}
-                      </Select>
-                    </FormControl>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="border px-6 py-10">
-              <h2 className="mb-2">게시 일자</h2>
-              <DateTimePicker
-                label="게시 일자"
-                value={dateTime}
-                onChange={setDateTime}
+              <BlogProgramRecommendSection
+                programRecommend={content.programRecommend!}
+                programMenuItems={programMenuItems}
+                onChange={handleChangeProgramRecommend}
+              />
+              <BlogRecommendSection
+                blogRecommend={content.blogRecommend!}
+                blogMenuItems={blogMenuItems}
+                onChange={handleChangeBlogRecommend}
               />
             </div>
+
+            <BlogPublishDateSection
+              dateTime={dateTime}
+              onChange={setDateTime}
+            />
 
             <h2 className="mt-10">콘텐츠 편집</h2>
             <EditorApp
               initialEditorStateJsonString={initialEditorStateJsonString}
               onChange={onChangeEditor}
             />
-            <div className="text-right">
-              <div className="mb-1 flex items-center justify-end gap-4">
-                <Button
-                  variant="outlined"
-                  type="button"
-                  onClick={() => {
-                    router.push('/admin/blog/list');
-                  }}
-                >
-                  취소 (리스트로 돌아가기)
-                </Button>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  type="button"
-                  name="save_temp"
-                  onClick={patchBlog}
-                >
-                  임시 저장
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  type="button"
-                  name="publish"
-                  onClick={patchBlog}
-                >
-                  발행
-                </Button>
-              </div>
-              <span className="text-0.875 text-neutral-35">
-                *임시 저장: 블로그가 숨겨집니다.
-              </span>
-            </div>
+
+            <BlogActionButtons
+              onCancel={() => router.push('/admin/blog/list')}
+              onSaveTemp={() => patchBlog(false)}
+              onPublish={() => patchBlog(true)}
+            />
           </div>
         </main>
       ) : (
