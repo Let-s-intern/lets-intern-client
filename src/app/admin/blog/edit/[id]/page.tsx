@@ -1,5 +1,5 @@
 import { fetchBlogData } from '@/api/blog/blog';
-import BlogEditPage from '@/domain/admin/pages/blog/BlogEditPage';
+import BlogEditPage from '@/domain/admin/blog/BlogEditPage';
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
