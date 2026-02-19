@@ -14,9 +14,11 @@ import {
   faqSchema,
   getChallengeIdPrimitiveSchema,
   getChallengeIdSchema,
+  getGuidebookIdSchema,
   getLiveIdPrimitiveSchema,
   getLiveIdSchema,
   getVodIdSchema,
+  GuidebookIdSchema,
   LiveIdPrimitive,
   LiveIdSchema,
   liveListResponseSchema,
@@ -359,6 +361,66 @@ export const useGetLiveFaq = (liveId: number | string) => {
       return faqSchema.parse(res.data.data);
     },
   });
+};
+
+export const useGetGuidebookQueryKey = 'useGetGuidebookQueryKey';
+
+export const useGetGuidebookQuery = ({
+  guidebookId,
+  enabled,
+}: {
+  guidebookId: number;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    enabled,
+    queryKey: [useGetGuidebookQueryKey, guidebookId],
+    queryFn: async () => {
+      const res = await axios.get(`/guidebook/${guidebookId}`);
+      return getGuidebookIdSchema.parse(res.data.data);
+    },
+  });
+};
+
+/** 개발용 목 데이터 (API 연동 후 제거) */
+const getGuidebookMockData = (): GuidebookIdSchema =>
+  getGuidebookIdSchema.parse({
+    title: '가이드북 제목',
+    desc: '가이드북 설명',
+    thumbnail: null,
+    desktopThumbnail: null,
+    contentStructure: '자료 구성 내용',
+    accessMethod: '가이드북 열람 방식',
+    recommendedFor: '가이드북 추천 대상',
+    isVisible: null,
+    priceInfo: {
+      priceId: 1,
+      priceType: null,
+      price: 10000,
+      discount: 1000,
+    },
+  });
+
+/** RSC/페이지용 가이드북 상세 조회 (fetch 사용) */
+export const fetchGuidebookData = async (
+  guidebookId: string,
+): Promise<GuidebookIdSchema> => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_API}/guidebook/${guidebookId}`,
+  );
+
+  if (!res.ok) {
+    return getGuidebookMockData();
+  }
+
+  const data = await res.json();
+  return getGuidebookIdSchema.parse(data.data);
+};
+
+/** 1회용으로 사용하기 위한 함수 */
+export const getGuidebook = async (guidebookId: number) => {
+  const res = await axios.get(`/guidebook/${guidebookId}`);
+  return getGuidebookIdSchema.parse(res.data.data);
 };
 
 export const useGetVodQueryKey = 'useGetVodQueryKey';
