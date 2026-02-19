@@ -1,6 +1,6 @@
 'use client';
 
-import type { GuidebookData } from '@/api/guidebook/guidebookSchema';
+import type { GuidebookData } from '@/schema';
 import CardIcon from '@/assets/icons/credit-card.svg?react';
 import FileIcon from '@/assets/icons/file.svg?react';
 import FolderIcon from '@/assets/icons/folder.svg?react';
@@ -25,7 +25,7 @@ const GuidebookBasicInfoSection = ({
 }: GuidebookBasicInfoSectionProps) => {
   const thumbnail =
     guidebook.thumbnailDesktop ?? guidebook.thumbnailMobile ?? null;
-  const priceInfo = guidebook.priceInfo?.[0];
+  const priceInfo = guidebook.priceInfo;
   const price = priceInfo?.price ?? 0;
   const discount = priceInfo?.discount ?? 0;
 
