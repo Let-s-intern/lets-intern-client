@@ -1,5 +1,5 @@
 'use client';
 
-import BlogBannerEditPage from '@/domain/admin/pages/blog/BlogBannerEditPage';
+import BlogBannerEditPage from '@/domain/admin/blog/BlogBannerEditPage';
 
 export default BlogBannerEditPage;
