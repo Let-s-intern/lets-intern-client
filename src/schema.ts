@@ -579,14 +579,14 @@ export type UpdateLiveReq = {
 };
 
 /** GET /api/v1/guidebook/{id} 가이드북 상세 조회 */
-export const guidebookDataSchema = z.object({
+export const getGuidebookIdSchema = z.object({
   title: z.string(),
-  thumbnailMobile: z.string().nullable().optional(),
-  thumbnailDesktop: z.string().nullable().optional(),
+  thumbnail: z.string().nullable().optional(),
+  desktopThumbnail: z.string().nullable().optional(),
   contentStructure: z.string().nullable().optional(),
   accessMethod: z.string().nullable().optional(),
   recommendedFor: z.string().nullable().optional(),
-  description: z.string().nullable().optional(),
+  desc: z.string().nullable().optional(),
   isVisible: z.boolean().nullable().optional(),
   priceInfo: z
     .object({
@@ -601,7 +601,7 @@ export const guidebookDataSchema = z.object({
     .optional(),
 });
 
-export type GuidebookData = z.infer<typeof guidebookDataSchema>;
+export type GuidebookIdSchema = z.infer<typeof getGuidebookIdSchema>;
 
 // ADMIN LIVE 클래스 및 VOD 클래스 직무
 export const liveAndVodJob = z.enum([

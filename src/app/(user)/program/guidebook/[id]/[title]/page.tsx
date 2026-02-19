@@ -1,4 +1,4 @@
-import { fetchGuidebookData } from '@/api/guidebook/guidebook';
+import { fetchGuidebookData } from '@/api/program';
 import GuidebookCTAButtons from '@/domain/program/guidebook/GuidebookCTAButtons';
 import GuidebookView from '@/domain/program/guidebook/GuidebookView';
 import {
@@ -28,14 +28,14 @@ export async function generateMetadata({
 
   return {
     title,
-    description: program.description ?? undefined,
+    description: program.desc,
     openGraph: {
       title,
-      description: program.description ?? undefined,
+      description: program.desc ?? undefined,
       url,
       images: [
         {
-          url: program.thumbnailDesktop ?? program.thumbnailMobile ?? '',
+          url: program.thumbnail ?? '',
         },
       ],
     },

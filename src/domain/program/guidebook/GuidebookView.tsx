@@ -1,11 +1,11 @@
 'use client';
 
-import type { GuidebookData } from '@/schema';
+import type { GuidebookIdSchema } from '@/schema';
 import ProgramDetailNavigation from '../ProgramDetailNavigation';
 import GuidebookBasicInfoSection from './ui/GuidebookBasicInfoSection';
 
 const GuidebookView: React.FC<{
-  guidebook: GuidebookData;
+  guidebook: GuidebookIdSchema;
   id: string;
 }> = ({ guidebook }) => {
   return (

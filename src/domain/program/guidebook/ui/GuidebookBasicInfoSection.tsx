@@ -1,6 +1,6 @@
 'use client';
 
-import type { GuidebookData } from '@/schema';
+import type { GuidebookIdSchema } from '@/schema';
 import CardIcon from '@/assets/icons/credit-card.svg?react';
 import FileIcon from '@/assets/icons/file.svg?react';
 import FolderIcon from '@/assets/icons/folder.svg?react';
@@ -9,7 +9,7 @@ import BackHeader from '@/common/header/BackHeader';
 import BasicInfoRow from '../../program-detail/basicInfo/BasicInfoRow';
 
 interface GuidebookBasicInfoSectionProps {
-  guidebook: GuidebookData;
+  guidebook: GuidebookIdSchema;
 }
 
 export const getDiscountPercent = (
@@ -24,7 +24,7 @@ const GuidebookBasicInfoSection = ({
   guidebook,
 }: GuidebookBasicInfoSectionProps) => {
   const thumbnail =
-    guidebook.thumbnailDesktop ?? guidebook.thumbnailMobile ?? null;
+    guidebook.thumbnail ?? guidebook.desktopThumbnail ?? null;
   const priceInfo = guidebook.priceInfo;
   const price = priceInfo?.price ?? 0;
   const discount = priceInfo?.discount ?? 0;

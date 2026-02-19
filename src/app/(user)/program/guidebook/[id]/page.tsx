@@ -1,4 +1,4 @@
-import { fetchGuidebookData } from '@/api/guidebook/guidebook';
+import { fetchGuidebookData } from '@/api/program';
 import { getProgramPathname } from '@/utils/url';
 import { redirect } from 'next/navigation';
 
