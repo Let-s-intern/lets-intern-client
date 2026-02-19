@@ -103,6 +103,10 @@ const navData = [
         name: '블로그 광고 배너',
         url: '/admin/blog/banner',
       },
+      {
+        name: '마그넷 관리/등록',
+        url: '/admin/blog/magnet/list',
+      },
     ],
   },
   {
