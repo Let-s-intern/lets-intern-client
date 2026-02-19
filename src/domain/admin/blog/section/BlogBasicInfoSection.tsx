@@ -1,5 +1,7 @@
+import { uploadFile } from '@/api/file';
 import TextFieldLimit from '@/domain/admin/blog/TextFieldLimit';
 import ImageUpload from '@/domain/admin/program/ui/form/ImageUpload';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { blogCategory } from '@/utils/convert';
 import {
   FormControl,
@@ -20,7 +22,7 @@ interface BlogBasicInfoSectionProps {
   thumbnail: string;
   onChangeCategory: (category: string) => void;
   onChangeField: (e: ChangeEvent<HTMLInputElement>) => void;
-  onChangeThumbnail: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChangeThumbnail: (url: string) => void;
 }
 
 const BlogBasicInfoSection = ({
@@ -32,6 +34,18 @@ const BlogBasicInfoSection = ({
   onChangeField,
   onChangeThumbnail,
 }: BlogBasicInfoSectionProps) => {
+  const { snackbar: setSnackbar } = useAdminSnackbar();
+
+  const handleChangeThumbnail = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.item(0);
+    if (!file) {
+      setSnackbar('파일이 없습니다.');
+      return;
+    }
+    const url = await uploadFile({ file, type: 'BLOG' });
+    onChangeThumbnail(url);
+  };
+
   return (
     <>
       <div className="flex-no-wrap flex items-center gap-4">
@@ -91,7 +105,7 @@ const BlogBasicInfoSection = ({
             label="블로그 썸네일"
             id="file"
             image={thumbnail}
-            onChange={onChangeThumbnail}
+            onChange={handleChangeThumbnail}
           />
         </div>
         {/* [삭제하지 마세요] CTA 임시로 사용 중지 */}

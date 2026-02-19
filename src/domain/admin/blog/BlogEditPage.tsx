@@ -20,26 +20,18 @@ const BlogEditPage = ({ blogId, initialBlogData }: BlogEditPageProps) => {
   const router = useRouter();
   const {
     editingValue,
-    newTag,
     dateTime,
     content,
     initialEditorStateJsonString,
-    tags,
-    programMenuItems,
-    blogMenuItems,
-    onChange,
+    onChangeField,
     onChangeCategory,
-    onChangeTag,
-    onSubmitTag,
-    selectTag,
-    deleteSelectedTag,
-    deleteTag,
+    onChangeThumbnail,
+    onChangeTagList,
+    onChangeProgramRecommend,
+    onChangeBlogRecommend,
     onChangeEditor,
     setDateTime,
     patchBlog,
-    handleChangeProgramRecommend,
-    handleChangeBlogRecommend,
-    handleChangeThumbnail,
   } = useBlogEditForm({ blogId, initialBlogData });
 
   return (
@@ -55,31 +47,23 @@ const BlogEditPage = ({ blogId, initialBlogData }: BlogEditPageProps) => {
             description={editingValue.description}
             thumbnail={editingValue.thumbnail}
             onChangeCategory={onChangeCategory}
-            onChangeField={onChange}
-            onChangeThumbnail={handleChangeThumbnail}
+            onChangeField={onChangeField}
+            onChangeThumbnail={onChangeThumbnail}
           />
 
           <BlogTagSection
-            selectedTagList={editingValue.tagList}
-            tags={tags}
-            newTag={newTag}
-            onChangeTag={onChangeTag}
-            onSubmitTag={onSubmitTag}
-            onSelectTag={selectTag}
-            onDeleteSelectedTag={deleteSelectedTag}
-            onDeleteTag={deleteTag}
+            tagList={editingValue.tagList}
+            onChangeTagList={onChangeTagList}
           />
 
           <div className="flex gap-5">
             <BlogProgramRecommendSection
               programRecommend={content.programRecommend!}
-              programMenuItems={programMenuItems}
-              onChange={handleChangeProgramRecommend}
+              onChangeProgramRecommend={onChangeProgramRecommend}
             />
             <BlogRecommendSection
               blogRecommend={content.blogRecommend!}
-              blogMenuItems={blogMenuItems}
-              onChange={handleChangeBlogRecommend}
+              onChangeBlogRecommend={onChangeBlogRecommend}
             />
           </div>
 

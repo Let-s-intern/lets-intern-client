@@ -1,18 +1,32 @@
 import Heading2 from '@/domain/blog/ui/BlogHeading2';
-import { FormControl, InputLabel, Select, SelectChangeEvent } from '@mui/material';
-import { ReactNode } from 'react';
+import useBlogMenuItems from '@/hooks/useBlogMenuItems';
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  SelectChangeEvent,
+} from '@mui/material';
 
 interface BlogRecommendSectionProps {
   blogRecommend: (number | null)[];
-  blogMenuItems: ReactNode;
-  onChange: (e: SelectChangeEvent<number | 'null'>, index: number) => void;
+  onChangeBlogRecommend: (items: (number | null)[]) => void;
 }
 
 const BlogRecommendSection = ({
   blogRecommend,
-  blogMenuItems,
-  onChange,
+  onChangeBlogRecommend,
 }: BlogRecommendSectionProps) => {
+  const blogMenuItems = useBlogMenuItems();
+
+  const handleChange = (
+    e: SelectChangeEvent<number | 'null'>,
+    index: number,
+  ) => {
+    const list = [...blogRecommend];
+    list[index] = Number(e.target.value);
+    onChangeBlogRecommend(list);
+  };
+
   return (
     <div className="flex-1">
       <Heading2 className="mb-3">블로그 추천</Heading2>
@@ -25,7 +39,7 @@ const BlogRecommendSection = ({
               fullWidth
               size="small"
               label={'블로그 ID' + (index + 1)}
-              onChange={(e) => onChange(e, index)}
+              onChange={(e) => handleChange(e, index)}
             >
               {blogMenuItems}
             </Select>

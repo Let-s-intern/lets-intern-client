@@ -1,25 +1,14 @@
-import {
-  useBlogTagQuery,
-  useDeleteBlogTagMutation,
-  usePatchBlogMutation,
-  usePostBlogTagMutation,
-} from '@/api/blog/blog';
+import { usePatchBlogMutation } from '@/api/blog/blog';
 import {
   BlogContent,
   BlogSchema,
-  PostTag,
-  postTagSchema,
+  ProgramRecommendItem,
   TagDetail,
 } from '@/api/blog/blogSchema';
-import { uploadFile } from '@/api/file';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import useBlogMenuItems from '@/hooks/useBlogMenuItems';
-import useProgramMenuItems from '@/hooks/useProgramMenuItems';
 import dayjs from '@/lib/dayjs';
-import { SelectChangeEvent } from '@mui/material';
-import { isAxiosError } from 'axios';
 import { Dayjs } from 'dayjs';
-import { ChangeEvent, FormEvent, useMemo, useState } from 'react';
+import { ChangeEvent, useMemo, useState } from 'react';
 
 interface EditBlog {
   title: string;
@@ -92,19 +81,9 @@ export const useBlogEditForm = ({
   initialBlogData,
 }: UseBlogEditFormParams) => {
   const { snackbar: setSnackbar } = useAdminSnackbar();
-
-  const { data: tags = [] } = useBlogTagQuery();
-  const createBlogTagMutation = usePostBlogTagMutation();
   const patchBlogMutation = usePatchBlogMutation();
-  const deleteBlogTagMutation = useDeleteBlogTagMutation({
-    onError: (error) => {
-      if (isAxiosError(error) && error.response?.status === 400) {
-        setSnackbar('블로그에 연결된 태그는 삭제할 수 없습니다.');
-      }
-    },
-  });
 
-  // 초기 상태 계산 (useEffect 대신 직접 초기화)
+  // 초기 상태 계산
   const initialContent = useMemo(
     () => parseInitialContent(initialBlogData),
     [initialBlogData],
@@ -114,75 +93,39 @@ export const useBlogEditForm = ({
     [initialBlogData],
   );
 
-  const initialEditorStateJsonString = initialContent.lexical;
-
   // 폼 상태
   const [editingValue, setEditingValue] = useState(initialEditingValue);
-  const [newTag, setNewTag] = useState('');
   const [dateTime, setDateTime] = useState<Dayjs | null>(
     initialEditingValue.displayDate,
   );
   const [content, setContent] = useState<BlogContent>(initialContent);
 
-  // 메뉴 아이템 훅
-  const programMenuItems = useProgramMenuItems();
-  const blogMenuItems = useBlogMenuItems();
-
-  // 핸들러
-  const onChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setEditingValue({
-      ...editingValue,
+  // 공통 핸들러
+  const onChangeField = (event: ChangeEvent<HTMLInputElement>) => {
+    setEditingValue((prev) => ({
+      ...prev,
       [event.target.name]: event.target.value,
-    });
+    }));
   };
 
   const onChangeCategory = (category: string) => {
     setEditingValue((prev) => ({ ...prev, category }));
   };
 
-  const onChangeTag = (event: ChangeEvent<HTMLInputElement>) => {
-    setNewTag(event.target.value);
+  const onChangeThumbnail = (url: string) => {
+    setEditingValue((prev) => ({ ...prev, thumbnail: url }));
   };
 
-  const selectTag = (tag: TagDetail | PostTag) => {
-    const isExist = editingValue.tagList.some((item) => item.id === tag.id);
-    if (isExist) return;
-
-    setEditingValue((prev) => ({
-      ...prev,
-      tagList: [...editingValue.tagList, tag],
-    }));
+  const onChangeTagList = (tagList: TagDetail[]) => {
+    setEditingValue((prev) => ({ ...prev, tagList }));
   };
 
-  const onSubmitTag = async (event: FormEvent) => {
-    event.preventDefault();
-    if (newTag.trim() === '') return;
-
-    const isExist = tags?.some((tag) => tag.title === newTag);
-    if (isExist) {
-      setSnackbar('이미 존재하는 태그입니다.');
-      return;
-    }
-
-    const res = await createBlogTagMutation.mutateAsync(newTag);
-    const createdTag = postTagSchema.parse(res.data.data);
-    selectTag(createdTag);
-    setNewTag('');
-    setSnackbar(`태그가 생성되었습니다: ${newTag}`);
+  const onChangeProgramRecommend = (items: ProgramRecommendItem[]) => {
+    setContent((prev) => ({ ...prev, programRecommend: items }));
   };
 
-  const deleteSelectedTag = (tagId: number) => {
-    setEditingValue((prev) => ({
-      ...prev,
-      tagList: prev.tagList.filter((tag) => tag.id !== tagId),
-    }));
-  };
-
-  const deleteTag = async (tagId: number) => {
-    const res = await deleteBlogTagMutation.mutateAsync(tagId);
-    if (res?.status === 200) {
-      setSnackbar('태그를 삭제했습니다.');
-    }
+  const onChangeBlogRecommend = (items: (number | null)[]) => {
+    setContent((prev) => ({ ...prev, blogRecommend: items }));
   };
 
   const onChangeEditor = (jsonString: string) => {
@@ -202,84 +145,19 @@ export const useBlogEditForm = ({
     setSnackbar('블로그가 수정되었습니다.');
   };
 
-  const handleChangeProgramRecommend = (
-    e:
-      | SelectChangeEvent<string | null>
-      | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    index: number,
-  ) => {
-    setContent((prev) => {
-      const list = [...prev.programRecommend!];
-      const item = {
-        ...list[index],
-        [e.target.name]: e.target.value,
-      };
-      const notSelectProgram = e.target.value === 'null';
-
-      // 프로그램이 '선택 안 함'이면 CTA 초기화
-      if (e.target.name === 'id' && notSelectProgram) {
-        item.id = null;
-        delete item.ctaLink;
-        delete item.ctaTitle;
-      }
-
-      return {
-        ...prev,
-        programRecommend: [
-          ...list.slice(0, index),
-          item,
-          ...list.slice(index + 1),
-        ],
-      };
-    });
-  };
-
-  const handleChangeBlogRecommend = (
-    e: SelectChangeEvent<number | 'null'>,
-    index: number,
-  ) => {
-    setContent((prev) => {
-      const list = [...prev.blogRecommend!];
-      list[index] = Number(e.target.value);
-
-      return {
-        ...prev,
-        blogRecommend: list,
-      };
-    });
-  };
-
-  const handleChangeThumbnail = async (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.item(0);
-    if (!file) {
-      setSnackbar('파일이 없습니다.');
-      return;
-    }
-    const url = await uploadFile({ file, type: 'BLOG' });
-    setEditingValue((prev) => ({ ...prev, thumbnail: url }));
-  };
-
   return {
     editingValue,
-    newTag,
     dateTime,
     content,
-    initialEditorStateJsonString,
-    tags,
-    programMenuItems,
-    blogMenuItems,
-    onChange,
+    initialEditorStateJsonString: initialContent.lexical,
+    onChangeField,
     onChangeCategory,
-    onChangeTag,
-    onSubmitTag,
-    selectTag,
-    deleteSelectedTag,
-    deleteTag,
+    onChangeThumbnail,
+    onChangeTagList,
+    onChangeProgramRecommend,
+    onChangeBlogRecommend,
     onChangeEditor,
     setDateTime,
     patchBlog,
-    handleChangeProgramRecommend,
-    handleChangeBlogRecommend,
-    handleChangeThumbnail,
   };
 };
