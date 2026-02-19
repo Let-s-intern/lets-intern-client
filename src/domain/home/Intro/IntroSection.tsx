@@ -146,7 +146,7 @@ const HOME_INTRO = {
           </p>
         ),
         icon: <Intro9 width={44} height={44} />,
-        href: '#',
+        href: '/library/list',
         gaTitle: '무료 자료집 받기',
       },
     ],
