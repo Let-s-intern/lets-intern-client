@@ -233,7 +233,7 @@ const PORTFOLIO_DATA = [
     headerLabel: 'Before',
     headerBgColor: '#d8d8d8',
     headerTextColor: '#7A7D84',
-    imageUrl: '/images/hr-before.png',
+    imageUrl: '/images/hr-portfolio-before.png',
     description: (
       <>
         캡쳐된 이미지로 경험이 나열된
@@ -248,7 +248,7 @@ const PORTFOLIO_DATA = [
     headerLabel: 'After',
     headerBgColor: HrPrimaryColor,
     headerTextColor: '#FFFFFF',
-    imageUrl: '/images/hr-after.png',
+    imageUrl: '/images/hr-portfolio-after.png',
     description: (
       <>
         문제와 해결 전략, 성과까지
