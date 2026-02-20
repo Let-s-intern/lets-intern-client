@@ -578,6 +578,31 @@ export type UpdateLiveReq = {
   }[];
 };
 
+/** GET /api/v1/guidebook/{id} 가이드북 상세 조회 */
+export const getGuidebookIdSchema = z.object({
+  title: z.string(),
+  thumbnail: z.string().nullable().optional(),
+  desktopThumbnail: z.string().nullable().optional(),
+  contentStructure: z.string().nullable().optional(),
+  accessMethod: z.string().nullable().optional(),
+  recommendedFor: z.string().nullable().optional(),
+  desc: z.string().nullable().optional(),
+  isVisible: z.boolean().nullable().optional(),
+  priceInfo: z
+    .object({
+      priceId: z.number(),
+      price: z.number().optional().nullable(),
+      discount: z.number().optional().nullable(),
+      accountNumber: z.string().optional().nullable(),
+      deadline: z.string().optional().nullable(),
+      accountType: accountType.optional().nullable(),
+      priceType: challengePriceType.optional().nullable(),
+    })
+    .optional(),
+});
+
+export type GuidebookIdSchema = z.infer<typeof getGuidebookIdSchema>;
+
 // ADMIN LIVE 클래스 및 VOD 클래스 직무
 export const liveAndVodJob = z.enum([
   '대기업 준비',

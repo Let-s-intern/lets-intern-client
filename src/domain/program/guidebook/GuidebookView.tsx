@@ -1,15 +1,13 @@
 'use client';
 
-import type { GuidebookData } from '@/api/guidebook/guidebookSchema';
+import type { GuidebookIdSchema } from '@/schema';
 import ProgramDetailNavigation from '../ProgramDetailNavigation';
 import GuidebookBasicInfoSection from './ui/GuidebookBasicInfoSection';
 
-interface GuidebookViewProps {
-  guidebook: GuidebookData;
+const GuidebookView: React.FC<{
+  guidebook: GuidebookIdSchema;
   id: string;
-}
-
-const GuidebookView = ({ guidebook }: GuidebookViewProps) => {
+}> = ({ guidebook }) => {
   return (
     <div className="w-full">
       <GuidebookBasicInfoSection guidebook={guidebook} />
