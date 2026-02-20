@@ -45,3 +45,46 @@ export interface MagnetFilterValues {
   type: string;
   titleKeyword: string;
 }
+
+// --- 마그넷 글 관리 (포스트) ---
+
+/** 프로그램 추천 슬롯 */
+export interface MagnetProgramRecommendItem {
+  id: string | null;
+  ctaTitle?: string;
+  ctaLink?: string;
+}
+
+/** 마그넷 콘텐츠 (JSON으로 직렬화하여 저장) */
+export interface MagnetPostContent {
+  programRecommend: MagnetProgramRecommendItem[];
+  magnetRecommend: (number | null)[];
+  lexicalBefore?: string;
+  lexicalAfter?: string;
+}
+
+/** 마그넷 포스트 상세 (단건 조회) */
+export interface MagnetPostDetail {
+  magnetId: number;
+  type: MagnetTypeKey;
+  title: string;
+  metaDescription: string;
+  thumbnail: string;
+  displayDate: string | null;
+  endDate: string | null;
+  hasCommonForm: boolean;
+  content: string;
+  isVisible: boolean;
+}
+
+/** 마그넷 포스트 저장 요청 */
+export interface MagnetPostReqBody {
+  magnetId: number;
+  metaDescription: string;
+  thumbnail: string;
+  displayDate: string | null;
+  endDate: string | null;
+  hasCommonForm: boolean;
+  content: string;
+  isVisible: boolean;
+}
