@@ -975,15 +975,20 @@ i.page-break,
   text-align: center;
 }
 
-.editor-shell .editor-image .image-caption-button {
-  display: block;
+.editor-shell .editor-image .image-action-buttons {
+  display: flex;
+  gap: 8px;
   position: absolute;
   bottom: 20px;
   left: 0;
   right: 0;
-  width: 30%;
+  justify-content: center;
+}
+
+.editor-shell .editor-image .image-caption-button,
+.editor-shell .editor-image .image-link-button {
+  display: block;
   padding: 10px;
-  margin: 0 auto;
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 5px;
   background-color: rgba(0, 0, 0, 0.5);
@@ -993,7 +998,8 @@ i.page-break,
   user-select: none;
 }
 
-.editor-shell .editor-image .image-caption-button:hover {
+.editor-shell .editor-image .image-caption-button:hover,
+.editor-shell .editor-image .image-link-button:hover {
   background-color: rgba(60, 132, 244, 0.5);
 }
 
