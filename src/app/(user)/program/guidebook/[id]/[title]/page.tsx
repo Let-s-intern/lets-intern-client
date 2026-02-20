@@ -28,7 +28,7 @@ export async function generateMetadata({
 
   return {
     title,
-    description: program.desc,
+    description: program.desc ?? undefined,
     openGraph: {
       title,
       description: program.desc ?? undefined,
