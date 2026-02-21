@@ -615,6 +615,38 @@ export const getGuidebookIdSchema = z.object({
 
 export type GuidebookIdSchema = z.infer<typeof getGuidebookIdSchema>;
 
+/**
+ * POST /api/v1/admin/guidebook 가이드북 생성
+ * 백엔드 확정 후 필수/이름 수정 예정
+ */
+export type CreateGuidebookReq = {
+  programTypeInfo?: {
+    classificationInfo: { programClassification: ProgramClassification };
+  }[];
+  adminProgramTypeInfo?: {
+    classificationInfo: {
+      programAdminClassification: ProgramAdminClassification;
+    };
+  }[];
+  job?: string;
+  title: string;
+  shortDesc?: string;
+  contentStructure?: string;
+  accessMethod?: string;
+  recommendedFor?: string;
+  priceInfo?: {
+    priceType?: string;
+    price?: number;
+    discount?: number;
+    accountNumber?: string;
+    accountType?: string;
+  };
+  materialUrl?: string;
+  thumbnail?: string;
+  desktopThumbnail?: string;
+  desc?: string;
+};
+
 // ADMIN LIVE 클래스 및 VOD 클래스 직무
 export const liveAndVodJob = z.enum([
   '대기업 준비',
