@@ -1,20 +1,7 @@
 'use client';
 
-import { CommonBannerType } from '@/api/banner';
+import { CommonBannerFormValue, CommonBannerType } from '@/api/banner';
 import { useRef } from 'react';
-
-export type CommonBannerFormValue = {
-  title: string;
-  landingUrl: string;
-  isVisible: boolean;
-  startDate: string;
-  endDate: string;
-  types: Record<CommonBannerType, boolean>;
-  homePcFile: File | null;
-  homeMobileFile: File | null;
-  programPcFile: File | null;
-  programMobileFile: File | null;
-};
 
 interface Props {
   value: CommonBannerFormValue;
@@ -230,13 +217,15 @@ const CommonBannerInputContent = ({ value, onChange }: Props) => {
                 <ImageUploadBox
                   label="홈 배너 (PC)"
                   file={value.homePcFile}
-                  onChange={(f) => set({ homePcFile: f })}
+                  previewUrl={value.homePcFileUrl}
+                  onChange={(f) => set({ homePcFile: f, homePcFileUrl: null })}
                 />
               )}
               <ImageUploadBox
                 label="홈 배너 (모바일)"
                 file={value.homeMobileFile}
-                onChange={(f) => set({ homeMobileFile: f })}
+                previewUrl={value.homeMobileFileUrl}
+                onChange={(f) => set({ homeMobileFile: f, homeMobileFileUrl: null })}
               />
             </div>
           )}
@@ -248,13 +237,15 @@ const CommonBannerInputContent = ({ value, onChange }: Props) => {
                 <ImageUploadBox
                   label="프로그램 배너 (PC)"
                   file={value.programPcFile}
-                  onChange={(f) => set({ programPcFile: f })}
+                  previewUrl={value.programPcFileUrl}
+                  onChange={(f) => set({ programPcFile: f, programPcFileUrl: null })}
                 />
               )}
               <ImageUploadBox
                 label="프로그램 배너 (모바일)"
                 file={value.programMobileFile}
-                onChange={(f) => set({ programMobileFile: f })}
+                previewUrl={value.programMobileFileUrl}
+                onChange={(f) => set({ programMobileFile: f, programMobileFileUrl: null })}
               />
             </div>
           )}

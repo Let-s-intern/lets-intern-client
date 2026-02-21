@@ -91,7 +91,7 @@ const ActiveBannerTable = ({
 
           return banners.map((banner, index) => (
             <tr
-              key={`${type}-${banner.commonBannerId}`}
+              key={`${type}-${banner.commonBannerId}-${index}`}
               className="border-b border-gray-100"
             >
               {/* 첫 번째 행에만 위치명 표시 */}
@@ -351,7 +351,7 @@ const CommonBanners = () => {
           </div>
         }
       >
-        {renderContent()}
+        <div className="pb-24">{renderContent()}</div>
       </TableLayout>
       <WarningModal
         isOpen={isDeleteModalShown}
