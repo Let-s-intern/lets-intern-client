@@ -366,6 +366,14 @@ const Programs = () => {
           >
             VOD 클래스 등록
           </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<FaPlus size={12} />}
+            onClick={() => router.push(`/admin/guidebook/create`)}
+          >
+            가이드북 등록
+          </Button>
         </div>
       </Header>
       <main>
