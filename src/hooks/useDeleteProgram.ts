@@ -34,6 +34,7 @@ export const useDeleteProgram = ({
           return deleteLive.mutateAsync(arg.id);
         case 'VOD':
           return deleteVod.mutateAsync(arg.id);
+        case 'GUIDEBOOK':
         case 'REPORT':
           throw new Error('Not implemented');
       }

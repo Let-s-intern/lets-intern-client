@@ -178,6 +178,7 @@ export const useDuplicateProgram = ({
           });
           return;
         }
+        case 'GUIDEBOOK':
         case 'REPORT':
           throw new Error('Not implemented');
       }
