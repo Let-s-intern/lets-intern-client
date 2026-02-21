@@ -38,6 +38,7 @@ import {
   ProgramTypeEnum,
   ProgramTypeUpperCase,
   UpdateChallengeReq,
+  UpdateGuidebookReq,
   UpdateLiveReq,
   UpdateVodReq,
   VodIdSchema,
@@ -393,12 +394,11 @@ const getGuidebookMockData = (): GuidebookIdSchema =>
     contentStructure: '자료 구성 내용',
     accessMethod: '가이드북 열람 방식',
     recommendedFor: '가이드북 추천 대상',
-    isVisible: null,
     priceInfo: {
       priceId: 1,
-      priceType: null,
       price: 10000,
       discount: 1000,
+      guidebookPriceType: 'CHARGE',
     },
   });
 
@@ -434,6 +434,42 @@ export const usePostGuidebookMutation = ({
   return useMutation({
     mutationFn: async (data: CreateGuidebookReq) => {
       const res = await axios.post(`/admin/guidebook`, data);
+      return res.data as unknown;
+    },
+    onSuccess: successCallback,
+    onError: errorCallback,
+  });
+};
+
+export const usePatchGuidebookMutation = ({
+  errorCallback,
+  successCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  return useMutation({
+    mutationFn: async (data: UpdateGuidebookReq & { guidebookId: number }) => {
+      const { guidebookId, ...rest } = data;
+      const res = await axios.patch(`/admin/guidebook/${guidebookId}`, rest);
+      return res.data as unknown;
+    },
+    onSuccess: successCallback,
+    onError: errorCallback,
+  });
+};
+
+/** DELETE /admin/guidebook/{id} 가이드북 삭제 */
+export const useDeleteGuidebookMutation = ({
+  errorCallback,
+  successCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  return useMutation({
+    mutationFn: async (guidebookId: number) => {
+      const res = await axios.delete(`/admin/guidebook/${guidebookId}`);
       return res.data as unknown;
     },
     onSuccess: successCallback,

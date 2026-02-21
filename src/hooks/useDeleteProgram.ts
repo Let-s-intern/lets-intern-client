@@ -1,5 +1,6 @@
 import {
   useDeleteChallengeMutation,
+  useDeleteGuidebookMutation,
   useDeleteLiveMutation,
   useDeleteVodMutation,
 } from '@/api/program';
@@ -25,6 +26,10 @@ export const useDeleteProgram = ({
     successCallback,
     errorCallback,
   });
+  const deleteGuidebook = useDeleteGuidebookMutation({
+    successCallback,
+    errorCallback,
+  });
   return useCallback(
     (arg: { type: ProgramTypeUpperCase; id: number }) => {
       switch (arg.type) {
@@ -35,10 +40,11 @@ export const useDeleteProgram = ({
         case 'VOD':
           return deleteVod.mutateAsync(arg.id);
         case 'GUIDEBOOK':
+          return deleteGuidebook.mutateAsync(arg.id);
         case 'REPORT':
           throw new Error('Not implemented');
       }
     },
-    [deleteChallenge, deleteLive, deleteVod],
+    [deleteChallenge, deleteLive, deleteVod, deleteGuidebook],
   );
 };
