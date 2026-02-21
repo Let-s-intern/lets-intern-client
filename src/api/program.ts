@@ -9,6 +9,7 @@ import { client } from '@/utils/client';
 import {
   ChallengeIdSchema,
   CreateChallengeReq,
+  CreateGuidebookReq,
   CreateLiveReq,
   CreateVodReq,
   faqSchema,
@@ -421,6 +422,23 @@ export const fetchGuidebookData = async (
 export const getGuidebook = async (guidebookId: number) => {
   const res = await axios.get(`/guidebook/${guidebookId}`);
   return getGuidebookIdSchema.parse(res.data.data);
+};
+
+export const usePostGuidebookMutation = ({
+  errorCallback,
+  successCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  return useMutation({
+    mutationFn: async (data: CreateGuidebookReq) => {
+      const res = await axios.post(`/admin/guidebook`, data);
+      return res.data as unknown;
+    },
+    onSuccess: successCallback,
+    onError: errorCallback,
+  });
 };
 
 export const useGetVodQueryKey = 'useGetVodQueryKey';
