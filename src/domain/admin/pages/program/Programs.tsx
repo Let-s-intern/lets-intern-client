@@ -150,8 +150,7 @@ const Programs = () => {
         headerName: '신청인원',
         width: 100,
         valueGetter: (_, row) =>
-          row.programInfo.programType === 'VOD' ||
-          row.programInfo.programType === 'GUIDEBOOK'
+          ['VOD', 'GUIDEBOOK'].includes(row.programInfo.programType)
             ? '온라인'
             : `${row.programInfo.currentCount} / ${row.programInfo.participationCount}`,
       },
@@ -161,8 +160,7 @@ const Programs = () => {
         type: 'dateTime',
         width: 200,
         valueGetter: (_, row) =>
-          row.programInfo.programType === 'VOD' ||
-          row.programInfo.programType === 'GUIDEBOOK'
+          ['VOD', 'GUIDEBOOK'].includes(row.programInfo.programType)
             ? null
             : dayjs(row.programInfo.deadline).toDate(),
         valueFormatter: (value) =>
@@ -174,8 +172,7 @@ const Programs = () => {
         type: 'dateTime',
         width: 200,
         valueGetter: (_, row) =>
-          row.programInfo.programType === 'VOD' ||
-          row.programInfo.programType === 'GUIDEBOOK'
+          ['VOD', 'GUIDEBOOK'].includes(row.programInfo.programType)
             ? null
             : dayjs(row.programInfo.startDate).toDate(),
         valueFormatter: (value) =>
