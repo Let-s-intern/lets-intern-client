@@ -407,6 +407,8 @@ export const convertCurationTypeToText = (type: CurationType | null) => {
       return 'VOD';
     case 'REPORT':
       return '서류 진단';
+    case 'GUIDEBOOK':
+      return '가이드북';
     case 'BLOG':
       return '블로그';
     case 'RESOURCE':
