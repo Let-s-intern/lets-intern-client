@@ -18,8 +18,6 @@ export const getBadgeTypeFromProgramType = (
       return 'REPORT_REVIEW';
     case 'GUIDEBOOK':
       return null;
-    default:
-      return 'CHALLENGE_SIMPLE';
   }
 };
 
