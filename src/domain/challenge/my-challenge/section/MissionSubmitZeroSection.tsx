@@ -51,35 +51,40 @@ const MissionSubmitZeroSection = ({
     setTextareaValue(e.target.value);
   };
 
+  const isMissionReady = !!programId && !!missionId;
+
   const handleSubmit = async () => {
-    if (isSubmitted || !programId || !missionId) {
+    if (isSubmitted) {
       setIsSubmitted(false);
-    } else {
-      try {
-        await Promise.all([
-          submitChallengeGoal.mutateAsync({
-            challengeId: programId,
-            goal: textareaValue,
-          }),
-          // 단순 출석 체크용
-          submitAttendance.mutateAsync({
-            missionId,
-            link: 'https://example.com',
-            review: textareaValue,
-          }),
-        ]);
-        await Promise.all([
-          refetchSchedules?.(),
-          // 모든 미션 정보 invalidate
-          queryClient.invalidateQueries({
-            queryKey: [ChallengeMissionQueryKey],
-          }),
-        ]);
-        setIsSubmitted(true);
-        setShowToast(true);
-      } catch (error) {
-        console.error('제출 실패:', error);
-      }
+      return;
+    }
+
+    if (!isMissionReady) return;
+
+    try {
+      await Promise.all([
+        submitChallengeGoal.mutateAsync({
+          challengeId: programId,
+          goal: textareaValue,
+        }),
+        // 단순 출석 체크용
+        submitAttendance.mutateAsync({
+          missionId,
+          link: 'https://example.com',
+          review: textareaValue,
+        }),
+      ]);
+      await Promise.all([
+        refetchSchedules?.(),
+        // 모든 미션 정보 invalidate
+        queryClient.invalidateQueries({
+          queryKey: [ChallengeMissionQueryKey],
+        }),
+      ]);
+      setIsSubmitted(true);
+      setShowToast(true);
+    } catch (error) {
+      console.error('제출 실패:', error);
     }
   };
 
@@ -132,7 +137,7 @@ const MissionSubmitZeroSection = ({
           isSubmitted={isSubmitted}
           hasContent={textareaValue.trim().length > 0}
           onButtonClick={handleSubmit}
-          disabled={isSubmitted}
+          disabled={isSubmitted || !isMissionReady}
         />
       )}
 
