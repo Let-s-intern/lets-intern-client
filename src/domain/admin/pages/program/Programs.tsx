@@ -138,7 +138,10 @@ const Programs = () => {
         field: 'programStatusType',
         headerName: '모집상태',
         width: 150,
-        valueGetter: (_, row) => row.programInfo.programStatusType,
+        valueGetter: (_, row) =>
+          row.programInfo.programType === 'GUIDEBOOK'
+            ? 'PROCEEDING'
+            : row.programInfo.programStatusType,
         valueFormatter: (value: ProgramStatus) => programStatusToText[value],
         filterOperators: programStatusTypeOperators,
       },
@@ -147,7 +150,8 @@ const Programs = () => {
         headerName: '신청인원',
         width: 100,
         valueGetter: (_, row) =>
-          row.programInfo.programType === 'VOD'
+          row.programInfo.programType === 'VOD' ||
+          row.programInfo.programType === 'GUIDEBOOK'
             ? '온라인'
             : `${row.programInfo.currentCount} / ${row.programInfo.participationCount}`,
       },
@@ -157,7 +161,8 @@ const Programs = () => {
         type: 'dateTime',
         width: 200,
         valueGetter: (_, row) =>
-          row.programInfo.programType === 'VOD'
+          row.programInfo.programType === 'VOD' ||
+          row.programInfo.programType === 'GUIDEBOOK'
             ? null
             : dayjs(row.programInfo.deadline).toDate(),
         valueFormatter: (value) =>
@@ -169,7 +174,8 @@ const Programs = () => {
         type: 'dateTime',
         width: 200,
         valueGetter: (_, row) =>
-          row.programInfo.programType === 'VOD'
+          row.programInfo.programType === 'VOD' ||
+          row.programInfo.programType === 'GUIDEBOOK'
             ? null
             : dayjs(row.programInfo.startDate).toDate(),
         valueFormatter: (value) =>
@@ -199,6 +205,9 @@ const Programs = () => {
                     break;
                   case 'VOD':
                     router.push(`/admin/vod/${id}/edit`);
+                    break;
+                  case 'GUIDEBOOK':
+                    router.push(`/admin/guidebook/${id}/edit`);
                     break;
                   case 'REPORT':
                     throw new Error("Don't use this page");

@@ -44,6 +44,7 @@ export const usePatchVisibleProgram = ({
             vodId: arg.id,
             isVisible: arg.isVisible,
           });
+        case 'GUIDEBOOK':
         case 'REPORT':
           throw new Error('Not implemented');
       }
