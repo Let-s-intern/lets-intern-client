@@ -114,9 +114,9 @@ const ActiveBannerTable = ({
                 {dayjs(banner.endDate).format('YYYY-MM-DD\nHH:mm:ss')}
               </td>
               <td className="px-4 py-4">
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-3">
                   <Link
-                    href={`/admin/home/common-banners/${banner.commonBannerId}/edit`}
+                    href={`/admin/banner/common-banners/${banner.commonBannerId}/edit`}
                   >
                     <Pencil
                       size={16}
@@ -263,7 +263,7 @@ const CommonBanners = () => {
 
           return [
             <Link
-              href={`/admin/home/common-banners/${id}/edit`}
+              href={`/admin/banner/common-banners/${id}/edit`}
               key={'edit' + id}
             >
               <Pencil />
@@ -327,7 +327,7 @@ const CommonBanners = () => {
         title="통합 배너 관리"
         headerButton={{
           label: '등록',
-          href: '/admin/home/common-banners/new',
+          href: '/admin/banner/common-banners/new',
         }}
         tabs={
           <div className="flex items-center gap-3 text-sm">

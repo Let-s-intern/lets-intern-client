@@ -80,7 +80,7 @@ const navData = [
       },
       {
         name: '통합 배너 관리',
-        url: '/admin/banner/integrated-banners',
+        url: '/admin/banner/common-banners',
       },
       {
         name: '프로그램 배너 관리',

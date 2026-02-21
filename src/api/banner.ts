@@ -1,6 +1,7 @@
 import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
+import { uploadFileForId } from './file';
 
 export const bannerAdminListItemSchema = z.object({
   id: z.number(),
@@ -330,6 +331,132 @@ export type BannerUserListItemType = z.infer<typeof bannerUserListItemSchema>;
 export const bannerUserListSchema = z.object({
   bannerList: z.array(bannerUserListItemSchema),
 });
+
+const maybeUploadCommonBanner = (file: File | null): Promise<number | null> =>
+  file ? uploadFileForId({ file, type: 'COMMON_BANNER' }) : Promise.resolve(null);
+
+export type CommonBannerFormValue = {
+  title: string;
+  landingUrl: string;
+  isVisible: boolean;
+  startDate: string;
+  endDate: string;
+  types: Record<CommonBannerType, boolean>;
+  homePcFile: File | null;
+  homeMobileFile: File | null;
+  programPcFile: File | null;
+  programMobileFile: File | null;
+};
+
+export const usePostCommonBannerForAdmin = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (form: CommonBannerFormValue) => {
+      const { types } = form;
+      const needsHome = types.HOME_TOP || types.HOME_BOTTOM;
+      const needsProgram = types.PROGRAM;
+      const needsMyPage = types.MY_PAGE;
+
+      // 필수 이미지 유효성 검사
+      if (needsMyPage && !form.homeMobileFile) {
+        throw new Error(
+          '마이페이지 선택 시 홈 배너 (모바일) 이미지는 필수입니다.',
+        );
+      }
+      if (needsMyPage && !form.programMobileFile) {
+        throw new Error(
+          '마이페이지 선택 시 프로그램 배너 (모바일) 이미지는 필수입니다.',
+        );
+      }
+
+      // 필요한 파일만 병렬 업로드
+      const [
+        homePcFileId,
+        homeMobileFileId,
+        programPcFileId,
+        programMobileFileId,
+      ] = await Promise.all([
+        needsHome ? maybeUploadCommonBanner(form.homePcFile) : Promise.resolve(null),
+        needsHome || needsMyPage
+          ? maybeUploadCommonBanner(form.homeMobileFile)
+          : Promise.resolve(null),
+        needsProgram ? maybeUploadCommonBanner(form.programPcFile) : Promise.resolve(null),
+        needsProgram || needsMyPage
+          ? maybeUploadCommonBanner(form.programMobileFile)
+          : Promise.resolve(null),
+      ]);
+
+      // 선택된 위치별 PC/MOBILE 항목 생성
+      const commonBannerDetailInfoList: {
+        type: string;
+        agentType: 'PC' | 'MOBILE';
+        fileId: number;
+      }[] = [];
+
+      if (types.HOME_TOP) {
+        if (homePcFileId)
+          commonBannerDetailInfoList.push({ type: 'HOME_TOP', agentType: 'PC', fileId: homePcFileId });
+        if (homeMobileFileId)
+          commonBannerDetailInfoList.push({ type: 'HOME_TOP', agentType: 'MOBILE', fileId: homeMobileFileId });
+      }
+
+      if (types.HOME_BOTTOM) {
+        if (homePcFileId)
+          commonBannerDetailInfoList.push({ type: 'HOME_BOTTOM', agentType: 'PC', fileId: homePcFileId });
+        if (homeMobileFileId)
+          commonBannerDetailInfoList.push({ type: 'HOME_BOTTOM', agentType: 'MOBILE', fileId: homeMobileFileId });
+      }
+
+      if (types.PROGRAM) {
+        if (programPcFileId)
+          commonBannerDetailInfoList.push({ type: 'PROGRAM', agentType: 'PC', fileId: programPcFileId });
+        if (programMobileFileId)
+          commonBannerDetailInfoList.push({ type: 'PROGRAM', agentType: 'MOBILE', fileId: programMobileFileId });
+      }
+
+      if (types.MY_PAGE) {
+        if (programMobileFileId)
+          commonBannerDetailInfoList.push({ type: 'MY_PAGE', agentType: 'PC', fileId: programMobileFileId });
+        if (homeMobileFileId)
+          commonBannerDetailInfoList.push({ type: 'MY_PAGE', agentType: 'MOBILE', fileId: homeMobileFileId });
+      }
+
+      // 통합 배너 생성
+      const res = await axios.post('/admin/common-banner', {
+        commonBannerInfo: {
+          title: form.title,
+          landingUrl: form.landingUrl,
+          startDate: form.startDate
+            ? new Date(form.startDate).toISOString()
+            : null,
+          endDate: form.endDate ? new Date(form.endDate).toISOString() : null,
+          isVisible: form.isVisible,
+        },
+        commonBannerDetailInfoList,
+      });
+
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: getCommonBannerForAdminQueryKey(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: getActiveBannersForAdminQueryKey(),
+      });
+      successCallback?.();
+    },
+    onError: (error: Error) => {
+      errorCallback?.(error);
+    },
+  });
+};
 
 export const useGetBannerListForUser = ({ type }: { type: bannerType }) => {
   return useQuery({
