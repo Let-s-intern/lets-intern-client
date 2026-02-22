@@ -22,11 +22,11 @@ const EditorTemplate = ({
   children,
 }: EditorTemplateProps) => {
   return (
-    <main className="mx-auto mb-24 mt-12 w-[36rem]">
+    <main className="mx-auto mb-24 mt-12 w-[45rem]">
       <header>
         <h1 className="text-2xl font-semibold">{title}</h1>
       </header>
-      <form className="mt-4" onSubmit={onSubmit}>
+      <form className="mt-10" onSubmit={onSubmit}>
         <div className="flex flex-col gap-4">{children}</div>
         <div className="mt-8 flex justify-end gap-2">
           <ActionButton type="submit">{submitButton.text}</ActionButton>
