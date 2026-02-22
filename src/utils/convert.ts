@@ -17,6 +17,7 @@ export const newProgramTypeToText: Record<string, string> = {
   LIVE: 'LIVE 클래스',
   VOD: 'VOD 클래스',
   REPORT: '서류 진단',
+  GUIDEBOOK: '가이드북',
 };
 export const newProgramFeeTypeToText: Record<string, string> = {
   FREE: '무료',
@@ -406,6 +407,8 @@ export const convertCurationTypeToText = (type: CurationType | null) => {
       return 'VOD';
     case 'REPORT':
       return '서류 진단';
+    case 'GUIDEBOOK':
+      return '가이드북';
     case 'BLOG':
       return '블로그';
     case 'RESOURCE':
