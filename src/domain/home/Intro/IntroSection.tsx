@@ -230,7 +230,6 @@ const IntroSection = () => {
     }
   };
 
-<<<<<<< HEAD
   const handleTestError = () => {
     // throw만 해도 Sentry가 자동으로 캡처해야 함
     throw new Error('테스트: Sentry 및 Webhook 에러 전송 테스트');
@@ -250,14 +249,11 @@ const IntroSection = () => {
     );
   }
 
-  const filteredItems = HOME_INTRO.items.basic.filter((item, index) => {
-=======
   const filteredItems = HOME_INTRO.items.basic.filter((item) => {
     // 포트폴리오 피드백 받기
     if (item.href === convertReportTypeToLandingPath('PORTFOLIO')) {
       return hasActivePortfolio;
     }
->>>>>>> 7db012480ef593a442cd33ef78ca06b2d1bf614d
     // 이력서 피드백 받기
     if (item.href === convertReportTypeToLandingPath('RESUME')) {
       return hasActiveResume;
