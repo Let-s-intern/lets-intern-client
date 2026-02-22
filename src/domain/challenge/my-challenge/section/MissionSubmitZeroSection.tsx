@@ -54,29 +54,25 @@ const MissionSubmitZeroSection = ({
   const isMissionReady = !!programId && !!missionId;
 
   const handleSubmit = async () => {
-    if (isSubmitted) {
-      setIsSubmitted(false);
-      return;
-    }
-
     if (!isMissionReady) return;
 
     try {
-      await Promise.all([
-        submitChallengeGoal.mutateAsync({
-          challengeId: programId,
-          goal: textareaValue,
-        }),
-        // 단순 출석 체크용
-        submitAttendance.mutateAsync({
-          missionId,
-          link: 'https://example.com',
-          review: textareaValue,
-        }),
-      ]);
+      // 1. 출석 체크 먼저 (어드민 확인용 핵심 데이터)
+      await submitAttendance.mutateAsync({
+        missionId,
+        link: 'https://example.com',
+        review: textareaValue,
+      });
+
+      // 2. 출석 성공 후 목표 저장
+      await submitChallengeGoal.mutateAsync({
+        challengeId: programId,
+        goal: textareaValue,
+      });
+
+      // 3. 후처리
       await Promise.all([
         refetchSchedules?.(),
-        // 모든 미션 정보 invalidate
         queryClient.invalidateQueries({
           queryKey: [ChallengeMissionQueryKey],
         }),
