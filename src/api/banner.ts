@@ -707,3 +707,61 @@ export const useGetBannerListForUser = ({ type }: { type: bannerType }) => {
     },
   });
 };
+
+// 유저단 공통 배너 API
+const commonBannerUserItemRawSchema = z.object({
+  type: z.string(),
+  agentType: z.enum(['PC', 'MOBILE']),
+  title: z.string().nullable().optional(),
+  landingUrl: z.string().nullable().optional(),
+  fileUrl: z.string().nullable().optional(),
+});
+
+const commonBannerUserListRawSchema = z.object({
+  commonBannerList: z.array(commonBannerUserItemRawSchema),
+});
+
+export type CommonBannerUserItem = {
+  title: string | null | undefined;
+  landingUrl: string | null | undefined;
+  imgUrl: string | null | undefined;
+  mobileImgUrl: string | null | undefined;
+};
+
+export const useGetCommonBannerListForUser = ({
+  type,
+}: {
+  type: CommonBannerType;
+}) => {
+  return useQuery({
+    queryKey: ['common-banner', type],
+    queryFn: async () => {
+      const res = await axios('/common-banner', {
+        params: { type },
+      });
+      const parsed = commonBannerUserListRawSchema.parse(res.data.data);
+
+      // PC/MOBILE 아이템을 같은 title+landingUrl 기준으로 그룹핑
+      const groupMap = new Map<string, CommonBannerUserItem>();
+      for (const item of parsed.commonBannerList) {
+        const key = `${item.title ?? ''}::${item.landingUrl ?? ''}`;
+        if (!groupMap.has(key)) {
+          groupMap.set(key, {
+            title: item.title,
+            landingUrl: item.landingUrl,
+            imgUrl: null,
+            mobileImgUrl: null,
+          });
+        }
+        const group = groupMap.get(key)!;
+        if (item.agentType === 'PC') {
+          group.imgUrl = item.fileUrl;
+        } else {
+          group.mobileImgUrl = item.fileUrl;
+        }
+      }
+
+      return Array.from(groupMap.values());
+    },
+  });
+};

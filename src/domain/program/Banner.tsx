@@ -3,7 +3,7 @@
 import HybridLink from '@/common/HybridLink';
 import { useEffect, useRef, useState } from 'react';
 
-import { useGetUserProgramBannerListQuery } from '@/api/program';
+import { useGetCommonBannerListForUser } from '@/api/banner';
 
 const Banner = () => {
   const imgRef = useRef<HTMLImageElement>(null);
@@ -27,16 +27,16 @@ const Banner = () => {
     };
   }, []);
 
-  const { data, isLoading } = useGetUserProgramBannerListQuery();
+  const { data: bannerList, isLoading } = useGetCommonBannerListForUser({ type: 'PROGRAM' });
 
   useEffect(() => {
     if (!isPlay) return;
     // 배너 슬라이드 애니메이션
     const timer = setInterval(() => {
-      if (!data) return;
+      if (!bannerList) return;
 
       const distance = imgRef.current?.offsetWidth;
-      const nextIndex = (bannerIndex + 1) % data.bannerList.length;
+      const nextIndex = (bannerIndex + 1) % bannerList.length;
 
       setBannerIndex(nextIndex);
       innerRef.current?.style.setProperty(
@@ -48,9 +48,9 @@ const Banner = () => {
     return () => {
       clearInterval(timer);
     };
-  }, [bannerIndex, data, isPlay]);
+  }, [bannerIndex, bannerList, isPlay]);
 
-  if (isLoading || !data || data.bannerList.length === 0) return null;
+  if (isLoading || !bannerList || bannerList.length === 0) return null;
 
   return (
     <div className="relative flex h-40 w-full max-w-[59rem] items-center overflow-hidden rounded-sm bg-static-0 text-static-100 md:h-44 lg:h-56 xl:h-72">
@@ -58,19 +58,19 @@ const Banner = () => {
         ref={innerRef}
         className="flex flex-nowrap items-center transition-transform duration-300 ease-in-out"
       >
-        {data.bannerList.map((banner) => (
+        {bannerList.map((banner, index) => (
           <HybridLink
-            href={banner.link}
-            key={banner.id}
+            href={banner.landingUrl || '#'}
+            key={index}
             className="program_banner w-full shrink-0"
             target={
-              banner.link.includes(window.location.origin) ? '_self' : '_blank'
+              banner.landingUrl?.includes(window.location.origin) ? '_self' : '_blank'
             }
           >
             <img
               ref={imgRef}
               className="w-full shrink-0 object-cover"
-              src={isMobile ? banner.mobileImgUrl : banner.imgUrl}
+              src={isMobile ? banner.mobileImgUrl || '' : banner.imgUrl || ''}
               alt="배너 이미지"
             />
           </HybridLink>
@@ -85,9 +85,9 @@ const Banner = () => {
         />
         <span className="text-0.75-medium md:text-0.875-medium">
           {bannerIndex + 1 < 10 ? `0${bannerIndex + 1}` : bannerIndex + 1} /{' '}
-          {data.bannerList.length < 10
-            ? `0${data.bannerList.length}`
-            : data.bannerList.length}
+          {bannerList.length < 10
+            ? `0${bannerList.length}`
+            : bannerList.length}
         </span>
       </div>
     </div>
