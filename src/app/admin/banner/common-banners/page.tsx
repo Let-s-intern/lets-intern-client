@@ -6,7 +6,7 @@ import {
   CommonBannerAdminAllItemType,
   CommonBannerAdminListItemType,
   CommonBannerType,
-  useDeleteBannerForAdmin,
+  useDeleteCommonBannerForAdmin,
   useGetActiveBannersForAdmin,
   useGetCommonBannerForAdmin,
 } from '@/api/banner';
@@ -160,8 +160,8 @@ const CommonBanners = () => {
   const isLoading = activeTab === 'active' ? isActiveLoading : isAllLoading;
   const error = activeTab === 'active' ? activeError : allError;
 
-  const { mutate: deleteBanner } = useDeleteBannerForAdmin({
-    successCallback: async () => {
+  const { mutate: deleteCommonBanner } = useDeleteCommonBannerForAdmin({
+    successCallback: () => {
       setIsDeleteModalShown(false);
     },
   });
@@ -358,11 +358,7 @@ const CommonBanners = () => {
         title="배너 삭제"
         content="정말로 배너를 삭제하시겠습니까?"
         onConfirm={() =>
-          bannerIdForDeleting &&
-          deleteBanner({
-            bannerId: bannerIdForDeleting,
-            type: 'COMMON',
-          })
+          bannerIdForDeleting && deleteCommonBanner(bannerIdForDeleting)
         }
         onCancel={() => setIsDeleteModalShown(false)}
         confirmText="삭제"

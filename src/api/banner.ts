@@ -422,56 +422,61 @@ export const usePostCommonBannerForAdmin = ({
           : Promise.resolve(null),
       ]);
 
-      // 선택된 위치별 PC/MOBILE 항목 생성
-      const commonBannerDetailInfoList: {
+      // 타입별 detail 리스트 생성
+      const requestsByType: {
         type: string;
-        agentType: 'PC' | 'MOBILE';
-        fileId: number;
+        details: { type: string; agentType: 'PC' | 'MOBILE'; fileId: number }[];
       }[] = [];
 
       if (types.HOME_TOP) {
-        if (homePcFileId)
-          commonBannerDetailInfoList.push({ type: 'HOME_TOP', agentType: 'PC', fileId: homePcFileId });
-        if (homeMobileFileId)
-          commonBannerDetailInfoList.push({ type: 'HOME_TOP', agentType: 'MOBILE', fileId: homeMobileFileId });
+        const details: { type: string; agentType: 'PC' | 'MOBILE'; fileId: number }[] = [];
+        if (homePcFileId) details.push({ type: 'HOME_TOP', agentType: 'PC', fileId: homePcFileId });
+        if (homeMobileFileId) details.push({ type: 'HOME_TOP', agentType: 'MOBILE', fileId: homeMobileFileId });
+        if (details.length > 0) requestsByType.push({ type: 'HOME_TOP', details });
       }
 
       if (types.HOME_BOTTOM) {
-        if (homePcFileId)
-          commonBannerDetailInfoList.push({ type: 'HOME_BOTTOM', agentType: 'PC', fileId: homePcFileId });
-        if (homeMobileFileId)
-          commonBannerDetailInfoList.push({ type: 'HOME_BOTTOM', agentType: 'MOBILE', fileId: homeMobileFileId });
+        const details: { type: string; agentType: 'PC' | 'MOBILE'; fileId: number }[] = [];
+        if (homePcFileId) details.push({ type: 'HOME_BOTTOM', agentType: 'PC', fileId: homePcFileId });
+        if (homeMobileFileId) details.push({ type: 'HOME_BOTTOM', agentType: 'MOBILE', fileId: homeMobileFileId });
+        if (details.length > 0) requestsByType.push({ type: 'HOME_BOTTOM', details });
       }
 
       if (types.PROGRAM) {
-        if (programPcFileId)
-          commonBannerDetailInfoList.push({ type: 'PROGRAM', agentType: 'PC', fileId: programPcFileId });
-        if (programMobileFileId)
-          commonBannerDetailInfoList.push({ type: 'PROGRAM', agentType: 'MOBILE', fileId: programMobileFileId });
+        const details: { type: string; agentType: 'PC' | 'MOBILE'; fileId: number }[] = [];
+        if (programPcFileId) details.push({ type: 'PROGRAM', agentType: 'PC', fileId: programPcFileId });
+        if (programMobileFileId) details.push({ type: 'PROGRAM', agentType: 'MOBILE', fileId: programMobileFileId });
+        if (details.length > 0) requestsByType.push({ type: 'PROGRAM', details });
       }
 
       if (types.MY_PAGE) {
-        if (programMobileFileId)
-          commonBannerDetailInfoList.push({ type: 'MY_PAGE', agentType: 'PC', fileId: programMobileFileId });
-        if (homeMobileFileId)
-          commonBannerDetailInfoList.push({ type: 'MY_PAGE', agentType: 'MOBILE', fileId: homeMobileFileId });
+        const details: { type: string; agentType: 'PC' | 'MOBILE'; fileId: number }[] = [];
+        if (programMobileFileId) details.push({ type: 'MY_PAGE', agentType: 'PC', fileId: programMobileFileId });
+        if (homeMobileFileId) details.push({ type: 'MY_PAGE', agentType: 'MOBILE', fileId: homeMobileFileId });
+        if (details.length > 0) requestsByType.push({ type: 'MY_PAGE', details });
       }
 
-      // 통합 배너 생성
-      const res = await axios.post('/admin/common-banner', {
-        commonBannerInfo: {
-          title: form.title,
-          landingUrl: form.landingUrl,
-          startDate: form.startDate
-            ? new Date(form.startDate).toISOString()
-            : null,
-          endDate: form.endDate ? new Date(form.endDate).toISOString() : null,
-          isVisible: form.isVisible,
-        },
-        commonBannerDetailInfoList,
-      });
+      const commonBannerInfo = {
+        title: form.title,
+        landingUrl: form.landingUrl,
+        startDate: form.startDate
+          ? new Date(form.startDate).toISOString()
+          : null,
+        endDate: form.endDate ? new Date(form.endDate).toISOString() : null,
+        isVisible: form.isVisible,
+      };
 
-      return res.data;
+      // 타입별로 개별 POST 요청
+      const results = await Promise.all(
+        requestsByType.map((req) =>
+          axios.post('/admin/common-banner', {
+            commonBannerInfo,
+            commonBannerDetailInfoList: req.details,
+          }),
+        ),
+      );
+
+      return results.map((res) => res.data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -594,6 +599,37 @@ export const useEditCommonBannerForAdmin = ({
         commonBannerDetailInfoList,
       });
 
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: getCommonBannerForAdminQueryKey(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: getActiveBannersForAdminQueryKey(),
+      });
+      successCallback?.();
+    },
+    onError: (error: Error) => {
+      errorCallback?.(error);
+    },
+  });
+};
+
+// 통합 배너 삭제
+export const useDeleteCommonBannerForAdmin = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (commonBannerId: number) => {
+      const res = await axios.delete(
+        `/admin/common-banner/${commonBannerId}`,
+      );
       return res.data;
     },
     onSuccess: () => {
