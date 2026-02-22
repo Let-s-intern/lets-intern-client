@@ -55,18 +55,14 @@ const FaqSection = () => {
 
   return (
     <section className="flex w-full flex-col items-center gap-6" id="curation-faq">
-      <div className="inline-flex flex-col items-center justify-start gap-5 self-stretch py-14">
-        <div className="flex w-[1000px] flex-col items-center justify-start gap-10">
+      <div className="flex flex-col items-center gap-5 self-stretch py-14">
+        <div className="flex w-[62.5rem] flex-col items-center gap-10">
           <p className="self-stretch text-center text-lg font-semibold leading-6 text-indigo-500">
             FAQ
           </p>
-          <div className="flex flex-col items-start justify-start gap-0.5 self-stretch">
-            <div className="inline-flex items-center justify-center gap-1.5 self-stretch">
-              <h3 className="text-center text-3xl font-bold leading-10 text-neutral-0">
-                자주 묻는 질문
-              </h3>
-            </div>
-          </div>
+          <h3 className="text-center text-3xl font-bold leading-10 text-neutral-0">
+            자주 묻는 질문
+          </h3>
         </div>
         <p className="self-stretch text-center text-lg font-semibold leading-6 text-zinc-600">
           챌린지 수강 전 궁금한 점을 모았어요

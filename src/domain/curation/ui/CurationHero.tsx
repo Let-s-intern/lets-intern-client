@@ -19,7 +19,7 @@ const CurationHero = ({ copy }: CurationHeroProps) => {
         {/* 좌측: 텍스트 영역 */}
         <div className="flex flex-col items-start justify-center gap-6 self-stretch">
           {/* 뱃지 */}
-          <div className="inline-flex items-center justify-center gap-2 rounded-[40px] bg-white/60 px-3 py-1.5">
+          <div className="inline-flex items-center justify-center gap-2 rounded-[2.5rem] bg-[#DBDDFD] px-3 py-1.5">
             <Image
               src="/images/curation/quration_search.svg"
               alt=""

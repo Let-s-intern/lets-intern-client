@@ -83,20 +83,14 @@ const CurationScreen = () => {
           className="flex w-full flex-col gap-10 px-[120px] py-14"
           ref={formRef}
         >
-          <div className="inline-flex flex-col items-center justify-start gap-5 self-stretch py-14">
-            <div className="flex w-[62.5rem] flex-col items-center justify-start gap-10">
-              <p className="self-stretch text-center text-lg font-semibold leading-6 text-indigo-500">
-                3초 큐레이션
-              </p>
-              <div className="flex flex-col items-start justify-start gap-0.5 self-stretch">
-                <div className="inline-flex items-center justify-center gap-1.5 self-stretch">
-                  <h2 className="text-center text-3xl font-bold leading-10 text-neutral-0">
-                    나에게 맞는 프로그램 찾기
-                  </h2>
-                </div>
-              </div>
-            </div>
-            <p className="self-stretch text-center text-lg font-semibold leading-6 text-zinc-600">
+          <div className="flex flex-col items-center gap-5 self-stretch py-[3.75rem]">
+            <p className="text-center text-lg font-semibold leading-6 text-indigo-500">
+              3초 큐레이션
+            </p>
+            <h2 className="text-center text-3xl font-bold leading-10 text-neutral-0">
+              나에게 맞는 프로그램 찾기
+            </h2>
+            <p className="text-center text-lg font-semibold leading-6 text-zinc-600">
               간단한 질문으로 맞춤 챌린지와 플랜을 추천받아 보세요
             </p>
           </div>
