@@ -41,6 +41,46 @@ const CommonBannerCreate = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // 노출 기간 검증
+    if (!value.startDate || !value.endDate) {
+      alert('노출 시작일과 종료일을 모두 입력해주세요.');
+      return;
+    }
+    if (new Date(value.startDate) >= new Date(value.endDate)) {
+      alert('노출 종료일은 시작일보다 이후여야 합니다.');
+      return;
+    }
+
+    // 노출 위치 선택 여부
+    const { types } = value;
+    if (!types.HOME_TOP && !types.HOME_BOTTOM && !types.PROGRAM && !types.MY_PAGE) {
+      alert('노출 위치를 하나 이상 선택해주세요.');
+      return;
+    }
+
+    // 필수 이미지 검증
+    const needsHome = types.HOME_TOP || types.HOME_BOTTOM;
+    const needsProgram = types.PROGRAM;
+    const needsMyPage = types.MY_PAGE;
+
+    if (needsHome && !value.homePcFile) {
+      alert('홈 배너 (PC) 이미지를 업로드해주세요.');
+      return;
+    }
+    if ((needsHome || needsMyPage) && !value.homeMobileFile) {
+      alert('홈 배너 (모바일) 이미지를 업로드해주세요.');
+      return;
+    }
+    if (needsProgram && !value.programPcFile) {
+      alert('프로그램 배너 (PC) 이미지를 업로드해주세요.');
+      return;
+    }
+    if ((needsProgram || needsMyPage) && !value.programMobileFile) {
+      alert('프로그램 배너 (모바일) 이미지를 업로드해주세요.');
+      return;
+    }
+
     tryCreateCommonBanner(value);
   };
 

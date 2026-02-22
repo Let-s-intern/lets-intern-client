@@ -393,18 +393,6 @@ export const usePostCommonBannerForAdmin = ({
       const needsProgram = types.PROGRAM;
       const needsMyPage = types.MY_PAGE;
 
-      // 필수 이미지 유효성 검사
-      if (needsMyPage && !form.homeMobileFile) {
-        throw new Error(
-          '마이페이지 선택 시 홈 배너 (모바일) 이미지는 필수입니다.',
-        );
-      }
-      if (needsMyPage && !form.programMobileFile) {
-        throw new Error(
-          '마이페이지 선택 시 프로그램 배너 (모바일) 이미지는 필수입니다.',
-        );
-      }
-
       // 필요한 파일만 병렬 업로드
       const [
         homePcFileId,
