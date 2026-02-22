@@ -9,13 +9,14 @@ import {
   useDeleteCommonBannerForAdmin,
   useGetActiveBannersForAdmin,
   useGetCommonBannerForAdmin,
+  useToggleCommonBannerVisibility,
 } from '@/api/banner';
 import WarningModal from '@/common/alert/WarningModal';
 import EmptyContainer from '@/common/container/EmptyContainer';
 import LoadingContainer from '@/common/loading/LoadingContainer';
-import BannerVisibilityToggle from '@/domain/admin/banner/BannerVisibilityToggle';
 import TableLayout from '@/domain/admin/ui/table/TableLayout';
 import dayjs from '@/lib/dayjs';
+import { Switch } from '@mui/material';
 import { DataGrid, GridColDef, GridRowParams } from '@mui/x-data-grid';
 import { Pencil, Trash } from 'lucide-react';
 import Link from 'next/link';
@@ -138,6 +139,27 @@ const ActiveBannerTable = ({
   );
 };
 
+const CommonBannerVisibilityToggle = ({
+  commonBannerId,
+  isVisible,
+}: {
+  commonBannerId: number;
+  isVisible: boolean;
+}) => {
+  const { mutate } = useToggleCommonBannerVisibility({
+    errorCallback: (error) => {
+      alert(error);
+    },
+  });
+
+  return (
+    <Switch
+      checked={isVisible}
+      onChange={() => mutate({ commonBannerId, isVisible: !isVisible })}
+    />
+  );
+};
+
 const CommonBanners = () => {
   const [activeTab, setActiveTab] = useState<TabType>('active');
   const [isDeleteModalShown, setIsDeleteModalShown] = useState<boolean>(false);
@@ -234,9 +256,9 @@ const CommonBanners = () => {
         headerName: '노출 여부',
         width: 150,
         renderCell: ({ row }) => (
-          <BannerVisibilityToggle
-            type="COMMON"
-            row={{ ...row, id: row.commonBannerId }}
+          <CommonBannerVisibilityToggle
+            commonBannerId={row.commonBannerId}
+            isVisible={row.isVisible ?? false}
           />
         ),
       },

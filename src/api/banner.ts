@@ -616,6 +616,53 @@ export const useEditCommonBannerForAdmin = ({
   });
 };
 
+// 통합 배너 노출 여부 토글
+export const useToggleCommonBannerVisibility = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      commonBannerId,
+      isVisible,
+    }: {
+      commonBannerId: number;
+      isVisible: boolean;
+    }) => {
+      const detailRes = await axios(`/admin/common-banner/${commonBannerId}`);
+      const detail = detailRes.data.data as CommonBannerDetailResponse;
+
+      const res = await axios.patch(`/admin/common-banner/${commonBannerId}`, {
+        commonBannerInfo: {
+          title: detail.commonBanner.title,
+          landingUrl: detail.commonBanner.landingUrl,
+          startDate: detail.commonBanner.startDate,
+          endDate: detail.commonBanner.endDate,
+          isVisible,
+        },
+        commonBannerDetailInfoList: detail.commonBannerDetailList,
+      });
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: getCommonBannerForAdminQueryKey(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: getActiveBannersForAdminQueryKey(),
+      });
+      successCallback?.();
+    },
+    onError: (error: Error) => {
+      errorCallback?.(error);
+    },
+  });
+};
+
 // 통합 배너 삭제
 export const useDeleteCommonBannerForAdmin = ({
   successCallback,
