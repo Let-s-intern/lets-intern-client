@@ -100,6 +100,8 @@ export const challengeColors = {
   ADC3FF: '#ADC3FF',
   B8BBFB: '#B8BBFB',
   A8E6FF: '#A8E6FF',
+  FF5E00: '#FF5E00',
+  FEEEE5: '#FEEEE5',
 };
 
 export type ChallengeColor = {
@@ -236,6 +238,14 @@ const ChallengeView: React.FC<{
             id={PROGRAM_INTRO_ID}
             className="challenge_program flex w-full flex-col items-center"
           >
+            {/* 인트로 (최상단) */}
+            {receivedContent.intro?.root &&
+              typeof receivedContent.intro.root === 'object' &&
+              'type' in receivedContent.intro.root && (
+                <section className="mx-auto flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
+                  <LexicalContent node={receivedContent.intro.root} />
+                </section>
+              )}
             <section className="flex w-full flex-col items-center pt-[70px] md:pt-40">
               <ChallengePointView
                 challengeType={challenge.challengeType}
@@ -256,11 +266,13 @@ const ChallengeView: React.FC<{
             )}
 
             {/* 특별 챌린지, 합격자 후기 */}
-            {receivedContent.mainDescription?.root && (
-              <section className="flex w-full max-w-[1000px] flex-col px-5 pt-20 md:px-10 md:pt-40 lg:px-0">
-                <LexicalContent node={receivedContent.mainDescription?.root} />
-              </section>
-            )}
+            {receivedContent.mainDescription?.root &&
+              typeof receivedContent.mainDescription.root === 'object' &&
+              'type' in receivedContent.mainDescription.root && (
+                <section className="flex w-full max-w-[1000px] flex-col px-5 pt-20 md:px-10 md:pt-40 lg:px-0">
+                  <LexicalContent node={receivedContent.mainDescription.root} />
+                </section>
+              )}
 
             <section className="flex w-full flex-col md:items-center">
               {challenge.challengeType === PORTFOLIO ? (

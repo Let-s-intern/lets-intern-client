@@ -119,8 +119,6 @@ const BlogDetailPage = async ({
       list.push(...targets);
     }
 
-    console.log('programRecommendList >>', list);
-
     return list;
   }
 

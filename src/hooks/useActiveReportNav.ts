@@ -35,20 +35,25 @@ export default function useActiveReportNav() {
         children: 'MY 진단서 보기',
         href: '/report/management',
       },
+      {
+        children: '이력서&자기소개서 진단 받기',
+        href: 'https://litt.ly/letscareer/sale/qF8qv32',
+      },
     ];
 
     const navList: SubNavItemProps[] = [];
 
-    if (hasActiveResume) {
-      navList.push(reportNavList[0]);
-    }
-    if (hasActivePersonalStatement) {
-      navList.push(reportNavList[1]);
-    }
-    if (hasActivePortfolio) {
-      navList.push(reportNavList[2]);
-    }
-    navList.push(reportNavList[3]);
+    // if (hasActiveResume) {
+    //   navList.push(reportNavList[0]);
+    // }
+    // if (hasActivePersonalStatement) {
+    //   navList.push(reportNavList[1]);
+    // }
+    // if (hasActivePortfolio) {
+    //   navList.push(reportNavList[2]);
+    // }
+    // navList.push(reportNavList[3]);
+    navList.push(reportNavList[4]);
     setReportNavList(navList);
   }, [hasActiveResume, hasActivePortfolio, hasActivePersonalStatement]);
 

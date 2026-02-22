@@ -6,7 +6,7 @@ import dayjs from '@/lib/dayjs';
 import { blogCategory } from '@/utils/convert';
 import getDominantColor from '@/utils/dominantColor';
 import Image from 'next/image';
-import { useEffect } from 'react';
+import { useRef } from 'react';
 import BlogLinkShareBtn from '../button/BlogLilnkShareBtn';
 import Heading2 from './BlogHeading2';
 import LexicalContent from './LexicalContent';
@@ -20,26 +20,46 @@ export default function BlogArticle({ blogInfo, lexical }: Props) {
   // 공개 예정 여부
   const willBePublished = dayjs(blogInfo.displayDate).isAfter(dayjs());
 
-  useEffect(() => {
-    const img = document.getElementById('blogThumbnail');
+  const thumbnailDivRef = useRef<HTMLDivElement>(null);
 
-    if (img && blogInfo.thumbnail) {
-      const [r, g, b] = getDominantColor(img as HTMLImageElement);
-      const isDefault = r === 249 && g === 249 && b === 248;
-      const thumbnailDiv = document.getElementById('thumbnailDiv');
-      thumbnailDiv!.style.backgroundColor = `rgb(${r} ${g} ${b} / ${isDefault ? 100 : 10}%)`;
+  const handleImageLoad = () => {
+    const thumbnailDiv = thumbnailDivRef.current;
+
+    if (!thumbnailDiv || !blogInfo.thumbnail) {
+      return;
     }
-  }, [blogInfo.thumbnail]);
+
+    // Next.js Image 컴포넌트 내부의 img 요소 찾기
+    const img = thumbnailDiv.querySelector('img') as HTMLImageElement | null;
+
+    if (!img) {
+      return;
+    }
+
+    // 이미지가 완전히 로드되고 DOM에 마운트되었는지 확인
+    if (!img.complete || !img.naturalWidth) {
+      return;
+    }
+
+    try {
+      const [r, g, b] = getDominantColor(img);
+      const isDefault = r === 249 && g === 249 && b === 248;
+      thumbnailDiv.style.backgroundColor = `rgb(${r} ${g} ${b} / ${isDefault ? 100 : 10}%)`;
+    } catch (error) {
+      // 에러 발생 시 기본 배경색 유지
+      // eslint-disable-next-line no-console
+      console.error('Failed to get dominant color:', error);
+    }
+  };
 
   return (
     <article>
       {/* 썸네일 */}
       <div
-        id="thumbnailDiv"
+        ref={thumbnailDivRef}
         className="relative mb-8 h-[16rem] overflow-hidden rounded-md bg-neutral-95 md:h-[25.5rem]"
       >
         <Image
-          id="blogThumbnail"
           className="object-contain"
           priority
           unoptimized
@@ -47,6 +67,7 @@ export default function BlogArticle({ blogInfo, lexical }: Props) {
           src={blogInfo.thumbnail ?? ''}
           alt="블로그 썸네일"
           sizes="(max-width: 768px) 100vw, 26rem"
+          onLoad={handleImageLoad}
         />
       </div>
 
