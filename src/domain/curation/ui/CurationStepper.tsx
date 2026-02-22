@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { motion } from 'motion/react';
+import Image from 'next/image';
 import { useEffect, useRef } from 'react';
 
 interface CurationStepperProps {
@@ -16,21 +16,15 @@ const CurationStepper = ({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  // 현재 스텝이 중앙에 오도록 스크롤
   useEffect(() => {
     const container = scrollContainerRef.current;
     const activeStep = stepRefs.current[currentStep];
-
     if (container && activeStep) {
       const containerWidth = container.offsetWidth;
       const stepLeft = activeStep.offsetLeft;
       const stepWidth = activeStep.offsetWidth;
-
-      // 스텝을 중앙에 배치하기 위한 스크롤 위치 계산
-      const scrollPosition = stepLeft - containerWidth / 2 + stepWidth / 2;
-
       container.scrollTo({
-        left: scrollPosition,
+        left: stepLeft - containerWidth / 2 + stepWidth / 2,
         behavior: 'smooth',
       });
     }
@@ -38,63 +32,64 @@ const CurationStepper = ({
 
   return (
     <div ref={scrollContainerRef} className="w-full overflow-x-auto">
-      <div className="flex min-w-max items-center gap-4 rounded-lg bg-gradient-to-r from-gray-50 to-white p-4 shadow-lg md:min-w-0 md:gap-6 md:p-6">
+      <div className="mx-auto flex w-[1100px] items-center justify-between">
         {steps.map((label, index) => {
           const isActive = index === currentStep;
           const isDone = index < currentStep;
+          const isLast = index === steps.length - 1;
+
           return (
             <div
               key={label}
               ref={(el) => {
                 stepRefs.current[index] = el;
               }}
-              className="flex flex-1 items-center gap-3 md:gap-6"
+              className="flex items-center gap-36"
             >
               <button
                 type="button"
                 onClick={() => onStepClick?.(index)}
-                className="group flex flex-1 items-center gap-3 text-left transition-all hover:scale-105 md:gap-5"
+                className="flex items-center gap-5"
               >
+                {/* 번호 박스 */}
                 <div
                   className={clsx(
-                    'text-small16 md:text-medium18 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full font-black shadow-lg transition-all duration-300 md:h-12 md:w-12',
-                    isActive &&
-                      'bg-gradient-to-br from-primary to-primary-80 text-white shadow-primary/30 ring-4 ring-primary/10',
-                    isDone &&
-                      'bg-gradient-to-br from-primary to-primary-80 text-white shadow-primary/20',
-                    !isActive &&
-                      !isDone &&
-                      'bg-gradient-to-br from-neutral-90 to-neutral-85 text-neutral-50 group-hover:from-neutral-85 group-hover:to-neutral-80',
+                    'inline-flex h-12 w-12 flex-col items-center justify-center rounded-lg',
+                    isActive || isDone ? 'bg-violet-200' : 'bg-neutral-200',
                   )}
                 >
-                  {isDone ? '✓' : index + 1}
+                  <span
+                    className={clsx(
+                      'text-lg font-bold leading-6',
+                      isActive || isDone ? 'text-indigo-600' : 'text-zinc-500',
+                    )}
+                  >
+                    {isDone ? '✓' : index + 1}
+                  </span>
                 </div>
+                {/* 레이블 */}
                 <span
                   className={clsx(
-                    'md:text-small17 whitespace-nowrap text-xsmall14 font-bold transition-colors',
+                    'text-base leading-6',
                     isActive
-                      ? 'text-neutral-0'
+                      ? 'font-bold text-indigo-600'
                       : isDone
-                        ? 'text-primary'
-                        : 'text-neutral-40 group-hover:text-neutral-20',
+                        ? 'font-bold text-indigo-600'
+                        : 'font-medium text-zinc-500',
                   )}
                 >
                   {label}
                 </span>
               </button>
-              {index !== steps.length - 1 && (
-                <motion.div
-                  className="relative h-1 w-12 overflow-hidden rounded-full bg-neutral-90 md:w-20"
-                  initial={{ scaleX: 1 }}
-                  animate={{ scaleX: 1 }}
-                >
-                  <motion.div
-                    className="absolute inset-0 origin-left rounded-full bg-gradient-to-r from-primary to-primary-80"
-                    initial={{ scaleX: isDone ? 1 : 0 }}
-                    animate={{ scaleX: isDone ? 1 : isActive ? 0.5 : 0 }}
-                    transition={{ duration: 0.5, ease: 'easeOut' }}
-                  />
-                </motion.div>
+
+              {/* 화살표 */}
+              {!isLast && (
+                <Image
+                  src="/images/curation/tabler_arrow-up.svg"
+                  alt=""
+                  width={24}
+                  height={24}
+                />
               )}
             </div>
           );

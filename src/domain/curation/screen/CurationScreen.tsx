@@ -76,23 +76,28 @@ const CurationScreen = () => {
 
       {/* Curation Selection Section */}
       <section
-        className="w-full bg-gradient-to-b from-white via-gray-50 to-white"
+        className="w-full"
         id="curation-form"
       >
         <div
-          className="mx-auto flex w-full max-w-[1400px] flex-col gap-10 px-6 py-12"
+          className="flex w-full flex-col gap-10 px-[120px] py-14"
           ref={formRef}
         >
-          <div className="flex flex-col items-center gap-4 text-center">
-            <div className="text-small16 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary-10 to-primary-5 px-5 py-2.5 font-bold text-primary shadow-sm">
-              <span className="text-medium22">✨</span>
-              <span>3초 큐레이션</span>
+          <div className="inline-flex flex-col items-center justify-start gap-5 self-stretch py-14">
+            <div className="flex w-[62.5rem] flex-col items-center justify-start gap-10">
+              <p className="self-stretch text-center text-lg font-semibold leading-6 text-indigo-500">
+                3초 큐레이션
+              </p>
+              <div className="flex flex-col items-start justify-start gap-0.5 self-stretch">
+                <div className="inline-flex items-center justify-center gap-1.5 self-stretch">
+                  <h2 className="text-center text-3xl font-bold leading-10 text-neutral-0">
+                    나에게 맞는 프로그램 찾기
+                  </h2>
+                </div>
+              </div>
             </div>
-            <h2 className="text-large36 md:text-xlarge40 font-black leading-tight text-neutral-0">
-              나에게 맞는 프로그램 찾기
-            </h2>
-            <p className="text-medium20 font-medium text-neutral-40">
-              간단한 질문으로 맞춤 챌린지와 플랜을 추천받으세요
+            <p className="self-stretch text-center text-lg font-semibold leading-6 text-zinc-600">
+              간단한 질문으로 맞춤 챌린지와 플랜을 추천받아 보세요
             </p>
           </div>
           <CurationStepper
@@ -152,7 +157,7 @@ const CurationScreen = () => {
 
       {/* Comparison & FAQ Section */}
       <section className="w-full bg-white">
-        <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-16 px-6 py-24">
+        <div className="flex w-full flex-col gap-16 px-[120px] py-24">
           <ChallengeComparisonSection
             highlightedPrograms={highlightedPrograms}
           />

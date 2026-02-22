@@ -1,4 +1,3 @@
-import { motion } from 'motion/react';
 import { CurationQuestion } from '../types/types';
 import MobileQuestionStep from './MobileQuestionStep';
 
@@ -44,59 +43,32 @@ const QuestionStep = ({
             {question.options.map((option) => {
               const isActive = value === option.value;
               return (
-                <motion.div
+                <button
                   key={option.value}
+                  type="button"
                   onClick={() => onChange(option.value)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                      event.preventDefault();
-                      onChange(option.value);
-                    }
-                  }}
-                  className={`group relative flex h-full min-h-[130px] w-full cursor-pointer flex-col items-center justify-center gap-y-2.5 overflow-hidden rounded-md border-2 bg-gradient-to-br p-5 text-center transition-all duration-300 ${
+                  className={`inline-flex h-28 w-full flex-col items-start justify-center gap-2.5 rounded-xl px-6 py-4 outline outline-1 -outline-offset-1 transition-all ${
                     isActive
-                      ? 'scale-[1.02] border-primary from-primary-5 to-white shadow-xl shadow-primary/10'
-                      : 'border-neutral-85 from-white to-gray-50 shadow-sm hover:scale-[1.01] hover:border-primary/40 hover:shadow-lg'
+                      ? 'bg-white outline-indigo-300'
+                      : 'bg-stone-50 outline-stone-300 hover:bg-white hover:outline-indigo-300'
                   }`}
-                  whileHover={{ y: -3 }}
-                  whileTap={{ scale: 0.98 }}
                 >
-                  {isActive && (
-                    <motion.div
-                      className="absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white shadow-lg"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{
-                        type: 'spring',
-                        stiffness: 500,
-                        damping: 30,
-                      }}
-                    >
-                      <span className="text-small14">✓</span>
-                    </motion.div>
-                  )}
-                  <span
-                    className={`text-medium18 font-bold transition-colors ${
-                      isActive
-                        ? 'text-primary'
-                        : 'text-neutral-0 group-hover:text-primary'
-                    }`}
-                  >
-                    {option.title}
-                  </span>
-                  {option.description && (
-                    <span className="text-small14 font-medium leading-relaxed text-neutral-45">
-                      {option.description}
+                  <div className="flex flex-col items-start justify-start gap-3 self-stretch">
+                    <span className="self-stretch text-left text-lg font-bold leading-6 text-zinc-800">
+                      {option.title}
                     </span>
-                  )}
-                  {option.accent && (
-                    <span className="text-xsmall12 mt-auto rounded-full bg-gradient-to-r from-primary-10 to-primary-5 px-2.5 py-1 font-bold text-primary shadow-sm">
-                      {option.accent}
-                    </span>
-                  )}
-                </motion.div>
+                    {option.description && (
+                      <span className="text-left text-base font-semibold leading-6 text-zinc-500">
+                        {option.description}
+                      </span>
+                    )}
+                    {option.accent && (
+                      <span className="text-left text-sm font-semibold leading-5 text-indigo-500">
+                        {option.accent}
+                      </span>
+                    )}
+                  </div>
+                </button>
               );
             })}
           </div>

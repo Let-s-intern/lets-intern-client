@@ -19,11 +19,11 @@ const FrequentComparisonCarousel = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2">
-        <h4 className="text-small18 font-semibold text-neutral-0">
+      <div className="flex flex-col gap-0.5">
+        <h4 className="text-3xl font-bold leading-10 text-neutral-0">
           고민되는 챌린지, 비교해보세요
         </h4>
-        <p className="text-xsmall14 text-neutral-40">
+        <p className="text-lg font-semibold leading-6 text-zinc-600">
           많은 분들이 궁금해하는 챌린지 간 차이를 한눈에 확인하세요.
         </p>
       </div>

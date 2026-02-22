@@ -1,4 +1,4 @@
-import { motion } from 'motion/react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 interface HeroCopy {
@@ -14,50 +14,62 @@ interface CurationHeroProps {
 
 const CurationHero = ({ copy }: CurationHeroProps) => {
   return (
-    <section className="relative w-full overflow-hidden bg-gradient-to-br from-primary-10 via-white to-primary-5">
-      <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-y-6 px-6 py-16 md:flex-row md:items-center md:justify-between md:py-24">
-        <div className="flex max-w-xl flex-col gap-y-4">
-          <p className="inline-flex w-fit items-center gap-2 rounded-full bg-primary-15 px-3 py-1 text-xs font-semibold text-primary">
-            {copy.eyebrow}
-          </p>
-          <h1 className="md:text-medium28 text-medium24 font-bold leading-tight text-neutral-0">
-            {copy.title}
-          </h1>
-          <p className="text-xsmall16 text-neutral-30 md:text-small18">
-            {copy.body}
-          </p>
+    <section className="w-full bg-primary-5">
+      <div className="relative flex h-[22rem] w-full flex-row items-center justify-between overflow-hidden px-[120px]">
+        {/* 좌측: 텍스트 영역 */}
+        <div className="flex flex-col items-start justify-center gap-6 self-stretch">
+          {/* 뱃지 */}
+          <div className="inline-flex items-center justify-center gap-2 rounded-[40px] bg-white/60 px-3 py-1.5">
+            <Image
+              src="/images/curation/quration_search.svg"
+              alt=""
+              width={12}
+              height={12}
+            />
+            <span className="text-xs font-bold leading-4 text-indigo-500">
+              {copy.eyebrow}
+            </span>
+          </div>
+
+          {/* 타이틀 + 서브텍스트 */}
+          <div className="flex flex-col items-start gap-2">
+            <h1 className="text-3xl font-bold leading-9 text-zinc-800">
+              {copy.title}
+            </h1>
+            <p className="whitespace-pre-line text-sm font-normal leading-5 text-zinc-500">
+              {copy.body}
+            </p>
+          </div>
+
+          {/* 홈 바로가기 버튼 */}
           {copy.homeCta && (
             <Link
               href="/"
-              className="w-fit text-xsmall14 font-semibold text-neutral-40 underline underline-offset-2 transition-colors hover:text-primary"
+              className="inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-white/70 px-3 py-0.5 outline outline-1 -outline-offset-1 outline-indigo-200 transition-colors hover:bg-white"
             >
-              {copy.homeCta}
+              <Image
+                src="/logo/logo-gradient.svg"
+                alt="렛츠커리어 로고"
+                width={16}
+                height={16}
+              />
+              <span className="text-sm font-semibold leading-5 text-indigo-500">
+                {copy.homeCta}
+              </span>
             </Link>
           )}
         </div>
-        <motion.div
-          className="rounded-2xl relative mt-6 hidden w-full max-w-sm grid-cols-2 gap-3 bg-white p-4 shadow-lg md:mt-0 md:grid"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
-        >
-          {['경험정리 2주', '이력서 1주', '자소서 2주', '포트폴리오 2주'].map(
-            (item) => (
-              <div
-                key={item}
-                className="rounded-lg border border-primary-20 bg-primary-5 px-3 py-4 text-center text-xsmall14 font-semibold text-neutral-10"
-              >
-                {item}
-              </div>
-            ),
-          )}
-          <div className="col-span-2 flex items-center justify-between rounded-lg bg-gradient-to-r from-primary to-primary-80 px-4 py-3 text-white">
-            <div className="text-left text-small18 font-semibold">
-              특화 트랙
-            </div>
-            <div className="text-right text-xsmall14">대기업 · 마케팅 · HR</div>
-          </div>
-        </motion.div>
+
+        {/* 우측: 일러스트 */}
+        <div className="hidden shrink-0 md:block">
+          <Image
+            src="/images/curation/hero-illustration.png"
+            alt="큐레이션 히어로 일러스트"
+            width={280}
+            height={280}
+            priority
+          />
+        </div>
       </div>
     </section>
   );

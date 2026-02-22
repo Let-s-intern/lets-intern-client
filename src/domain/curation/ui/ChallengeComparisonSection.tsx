@@ -43,13 +43,12 @@ const ChallengeComparisonSection = ({
       className="flex w-full flex-col gap-8"
       id="curation-challenge-comparison"
     >
-      <div className="flex flex-col gap-2">
-        <h3 className="text-medium22 font-bold text-neutral-0">
+      <div className="flex flex-col gap-0.5">
+        <h3 className="text-3xl font-bold leading-10 text-neutral-0">
           어떤 챌린지가 나에게 맞을까?
         </h3>
-        <p className="text-xsmall15 text-neutral-40">
-          가격부터 결과물까지, 한눈에 비교하고 나에게 딱 맞는 챌린지를
-          골라보세요.
+        <p className="text-lg font-semibold leading-6 text-zinc-600">
+          가격부터 결과물까지, 한눈에 비교하고 나에게 딱 맞는 챌린지를 골라보세요.
         </p>
       </div>
 
