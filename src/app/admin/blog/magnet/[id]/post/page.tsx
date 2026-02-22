@@ -1,4 +1,11 @@
-// TODO: 마그넷 글 관리 페이지 구현 예정
-export default function MagnetPostPage() {
-  return <div>글 관리 (준비 중)</div>;
-}
+import { fetchMagnetPost } from '@/domain/admin/blog/magnet/mock';
+import MagnetPostPage from '@/domain/admin/blog/magnet/MagnetPostPage';
+
+const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
+  const initialData = await fetchMagnetPost(Number(id));
+
+  return <MagnetPostPage magnetId={id} initialData={initialData} />;
+};
+
+export default Page;
