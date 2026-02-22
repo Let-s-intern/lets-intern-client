@@ -13,8 +13,10 @@ import PayContent from '../apply/content/PayContent';
 import PaymentInputContent from '../apply/content/PaymentInputContent';
 import ScheduleContent from '../apply/content/ScheduleContent';
 
+type LegacyProgramType = Exclude<ProgramType, 'guidebook'>;
+
 interface MobileApplySectionProps {
-  programType: ProgramType;
+  programType: LegacyProgramType;
   programId: number;
   programTitle: string;
   toggleDrawer: () => void;

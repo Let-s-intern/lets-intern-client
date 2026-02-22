@@ -9,14 +9,17 @@ import { client } from '@/utils/client';
 import {
   ChallengeIdSchema,
   CreateChallengeReq,
+  CreateGuidebookReq,
   CreateLiveReq,
   CreateVodReq,
   faqSchema,
   getChallengeIdPrimitiveSchema,
   getChallengeIdSchema,
+  getGuidebookIdSchema,
   getLiveIdPrimitiveSchema,
   getLiveIdSchema,
   getVodIdSchema,
+  GuidebookIdSchema,
   LiveIdPrimitive,
   LiveIdSchema,
   liveListResponseSchema,
@@ -35,6 +38,7 @@ import {
   ProgramTypeEnum,
   ProgramTypeUpperCase,
   UpdateChallengeReq,
+  UpdateGuidebookReq,
   UpdateLiveReq,
   UpdateVodReq,
   VodIdSchema,
@@ -358,6 +362,118 @@ export const useGetLiveFaq = (liveId: number | string) => {
       const res = await axios.get(`/live/${liveId}/faqs`);
       return faqSchema.parse(res.data.data);
     },
+  });
+};
+
+export const useGetGuidebookQueryKey = 'useGetGuidebookQueryKey';
+
+export const useGetGuidebookQuery = ({
+  guidebookId,
+  enabled,
+}: {
+  guidebookId: number;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    enabled,
+    queryKey: [useGetGuidebookQueryKey, guidebookId],
+    queryFn: async () => {
+      const res = await axios.get(`/guidebook/${guidebookId}`);
+      return getGuidebookIdSchema.parse(res.data.data);
+    },
+  });
+};
+
+/** 개발용 목 데이터 (API 연동 후 제거) */
+const getGuidebookMockData = (): GuidebookIdSchema =>
+  getGuidebookIdSchema.parse({
+    title: '가이드북 제목',
+    desc: '가이드북 설명',
+    thumbnail: null,
+    desktopThumbnail: null,
+    contentStructure: '자료 구성 내용',
+    accessMethod: '가이드북 열람 방식',
+    recommendedFor: '가이드북 추천 대상',
+    priceInfo: {
+      priceId: 1,
+      price: 10000,
+      discount: 1000,
+      guidebookPriceType: 'CHARGE',
+    },
+  });
+
+/** RSC/페이지용 가이드북 상세 조회 (fetch 사용) */
+export const fetchGuidebookData = async (
+  guidebookId: string,
+): Promise<GuidebookIdSchema> => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_API}/guidebook/${guidebookId}`,
+  );
+
+  if (!res.ok) {
+    return getGuidebookMockData();
+  }
+
+  const data = await res.json();
+  return getGuidebookIdSchema.parse(data.data);
+};
+
+/** 1회용으로 사용하기 위한 함수 */
+export const getGuidebook = async (guidebookId: number) => {
+  const res = await axios.get(`/guidebook/${guidebookId}`);
+  return getGuidebookIdSchema.parse(res.data.data);
+};
+
+export const usePostGuidebookMutation = ({
+  errorCallback,
+  successCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  return useMutation({
+    mutationFn: async (data: CreateGuidebookReq) => {
+      const res = await axios.post(`/admin/guidebook`, data);
+      return res.data as unknown;
+    },
+    onSuccess: successCallback,
+    onError: errorCallback,
+  });
+};
+
+export const usePatchGuidebookMutation = ({
+  errorCallback,
+  successCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  return useMutation({
+    mutationFn: async (data: UpdateGuidebookReq & { guidebookId: number }) => {
+      const { guidebookId, ...rest } = data;
+      const res = await axios.patch(`/admin/guidebook/${guidebookId}`, rest);
+      return res.data as unknown;
+    },
+    onSuccess: successCallback,
+    onError: errorCallback,
+  });
+};
+
+/** DELETE /admin/guidebook/{id} 가이드북 삭제 */
+export const useDeleteGuidebookMutation = ({
+  errorCallback,
+  successCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  return useMutation({
+    mutationFn: async (guidebookId: number) => {
+      const res = await axios.delete(`/admin/guidebook/${guidebookId}`);
+      return res.data as unknown;
+    },
+    onSuccess: successCallback,
+    onError: errorCallback,
   });
 };
 
