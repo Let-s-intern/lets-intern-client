@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetBannerListForUser } from '@/api/banner';
+import { useGetCommonBannerListForUser } from '@/api/banner';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
 import { useMediaQuery } from '@mui/material';
@@ -11,7 +11,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 const BottomBannerSection = () => {
   const isMobile = useMediaQuery(MOBILE_MEDIA_QUERY);
 
-  const { data, isLoading } = useGetBannerListForUser({ type: 'MAIN_BOTTOM' });
+  const { data: bannerList, isLoading } = useGetCommonBannerListForUser({ type: 'HOME_BOTTOM' });
 
   const handleClickBanner = (e: MouseEvent<HTMLAnchorElement>) => {
     const target = e.target as HTMLElement;
@@ -29,13 +29,13 @@ const BottomBannerSection = () => {
         <div className="mt-16 w-full max-w-[1120px] px-5 md:mt-22.5 xl:px-0">
           <LoadingContainer />
         </div>
-      ) : !data || !data.bannerList || data.bannerList.length === 0 ? null : (
+      ) : !bannerList || bannerList.length === 0 ? null : (
         <section className="mt-16 w-full max-w-[1120px] px-5 md:mt-22.5 xl:px-0">
           <Swiper
-            autoplay={data.bannerList.length > 1 ? { delay: 2500 } : false}
+            autoplay={bannerList.length > 1 ? { delay: 2500 } : false}
             modules={[Pagination, Autoplay, Navigation]}
-            loop={data.bannerList.length > 1}
-            navigation={data.bannerList.length > 1}
+            loop={bannerList.length > 1}
+            navigation={bannerList.length > 1}
             pagination={{
               type: 'fraction',
               renderFraction: (currentClass, totalClass) =>
@@ -48,18 +48,18 @@ const BottomBannerSection = () => {
             slidesPerView={1}
             className="aspect-[3.2/1] rounded-sm md:aspect-[6.4/1]"
           >
-            {data.bannerList.map((banner) => (
-              <SwiperSlide key={banner.id}>
+            {bannerList.map((banner, index) => (
+              <SwiperSlide key={index}>
                 <a
-                  href={banner.link || '#'}
+                  href={banner.landingUrl || '#'}
                   target={
-                    banner.link?.includes('letscareer.co.kr') ||
-                    banner.link?.includes('lets-intern-client-test.vercel.app')
+                    banner.landingUrl?.includes('letscareer.co.kr') ||
+                    banner.landingUrl?.includes('lets-intern-client-test.vercel.app')
                       ? '_self'
                       : '_blank'
                   }
                   rel="noreferrer"
-                  data-url={banner.link}
+                  data-url={banner.landingUrl}
                   className="bottom_banner select-none"
                   onClick={handleClickBanner}
                 >
@@ -67,7 +67,7 @@ const BottomBannerSection = () => {
                     src={
                       isMobile ? banner.mobileImgUrl || '' : banner.imgUrl || ''
                     }
-                    alt={'main-banner' + banner.id}
+                    alt={'main-banner-' + index}
                     className="h-full w-full rounded-sm object-cover"
                   />
                 </a>
