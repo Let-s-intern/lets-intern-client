@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { PROGRAMS } from '../data/constants';
+import { PROGRAMS } from '../shared/programs';
 import { computeCurationResult } from './curationEngine';
 
 describe('computeCurationResult', () => {

@@ -1,7 +1,7 @@
 'use client';
 
-import FrequentComparisonCarousel from './comparison/FrequentComparisonCarousel';
-import MobileFrequentComparison from './comparison/MobileFrequentComparison';
+import FrequentComparisonCarousel from './FrequentComparisonCarousel';
+import MobileFrequentComparison from './MobileFrequentComparison';
 
 const FrequentComparisonSection = () => {
   return (

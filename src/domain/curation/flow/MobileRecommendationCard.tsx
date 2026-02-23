@@ -1,5 +1,5 @@
-import { PROGRAMS } from '../data/constants';
-import { ProgramRecommendation } from '../types/types';
+import { PROGRAMS } from '../shared/programs';
+import { ProgramRecommendation } from '../types';
 
 interface MobileRecommendationCardProps {
   recommendation: ProgramRecommendation;

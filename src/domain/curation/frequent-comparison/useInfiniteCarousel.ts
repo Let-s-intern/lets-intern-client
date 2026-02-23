@@ -7,7 +7,7 @@ import {
   findClosestItemIndex,
   getContainerMetrics,
   getItemMetrics,
-} from '../model/carouselAnimation';
+} from './carouselAnimation';
 
 interface UseInfiniteCarouselOptions<T> {
   items: T[];

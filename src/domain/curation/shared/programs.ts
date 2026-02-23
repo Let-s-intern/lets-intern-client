@@ -1,4 +1,4 @@
-import { ProgramContent, ProgramId } from '../types/types';
+import { ProgramContent, ProgramId } from '../types';
 
 export const PROGRAMS: Record<ProgramId, ProgramContent> = {
   experience: {

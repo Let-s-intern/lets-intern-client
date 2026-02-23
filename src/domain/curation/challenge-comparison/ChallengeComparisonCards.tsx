@@ -1,9 +1,9 @@
-import { PROGRAMS } from '../../data/constants';
+import { PROGRAMS } from '../shared/programs';
 import type {
   ChallengeComparisonRow,
   ComparisonRowConfig,
   ProgramId,
-} from '../../types/types';
+} from '../types';
 
 interface ChallengeComparisonCardsProps {
   challenges: ChallengeComparisonRow[];

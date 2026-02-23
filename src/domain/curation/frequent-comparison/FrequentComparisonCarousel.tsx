@@ -1,8 +1,8 @@
 'use client';
 
-import { FREQUENT_COMPARISON } from '../../data/constants';
-import { useInfiniteCarousel } from '../../hooks/useInfiniteCarousel';
-import type { FrequentComparisonItem } from '../../types/types';
+import { FREQUENT_COMPARISON } from '../shared/comparisons';
+import type { FrequentComparisonItem } from '../types';
+import { useInfiniteCarousel } from './useInfiniteCarousel';
 
 const FrequentComparisonCarousel = () => {
   const {

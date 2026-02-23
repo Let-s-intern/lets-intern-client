@@ -1,4 +1,4 @@
-import { CurationQuestion, PersonaId } from '../types/types';
+import { CurationQuestion, PersonaId } from '../types';
 
 export const QUESTION_MAP: Record<PersonaId, CurationQuestion[]> = {
   starter: [

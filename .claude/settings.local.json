@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(npx tsc:*)",
-      "Bash(xargs:*)"
+      "Bash(xargs:*)",
+      "Bash(git mv:*)",
+      "Bash(npx vitest:*)"
     ]
   }
 }

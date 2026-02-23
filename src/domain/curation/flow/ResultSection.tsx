@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { GUIDE_STEPS, PROGRAMS } from '../data/constants';
-import { CurationResult, ProgramRecommendation } from '../types/types';
+import { PROGRAMS } from '../shared/programs';
+import { CurationResult, ProgramRecommendation } from '../types';
+import { GUIDE_STEPS } from './guides';
 import MobileRecommendationCard from './MobileRecommendationCard';
 
 interface ResultSectionProps {

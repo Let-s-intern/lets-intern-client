@@ -1,10 +1,10 @@
 'use client';
 
-import { CHALLENGE_COMPARISON } from '../data/constants';
-import { useExpandableRows } from '../hooks/useExpandableRows';
-import type { ComparisonRowConfig, ProgramId } from '../types/types';
-import ChallengeComparisonTable from './comparison/ChallengeComparisonTable';
-import MobileChallengeComparison from './comparison/MobileChallengeComparison';
+import { CHALLENGE_COMPARISON } from '../shared/comparisons';
+import type { ComparisonRowConfig, ProgramId } from '../types';
+import ChallengeComparisonTable from './ChallengeComparisonTable';
+import MobileChallengeComparison from './MobileChallengeComparison';
+import { useExpandableRows } from './useExpandableRows';
 
 const COMPARISON_ROWS: ComparisonRowConfig[] = [
   { label: '추천 대상', key: 'target' },

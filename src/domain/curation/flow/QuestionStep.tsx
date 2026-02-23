@@ -1,4 +1,4 @@
-import { CurationQuestion } from '../types/types';
+import { CurationQuestion } from '../types';
 import MobileQuestionStep from './MobileQuestionStep';
 
 interface QuestionStepProps {

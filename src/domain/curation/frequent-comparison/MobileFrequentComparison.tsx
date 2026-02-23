@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { FREQUENT_COMPARISON } from '../../data/constants';
+import { FREQUENT_COMPARISON } from '../shared/comparisons';
 
 const MobileFrequentComparison = () => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(0);

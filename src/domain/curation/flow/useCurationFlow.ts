@@ -2,14 +2,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { PERSONA_IDS, QUESTION_MAP } from '../data/constants';
-import { computeCurationResult } from '../model/curationEngine';
 import {
-  CurationQuestion,
-  CurationResult,
-  FormValues,
+  type CurationQuestion,
+  type CurationResult,
+  type FormValues,
   PersonaId,
-} from '../types/types';
+} from '../types';
+import { computeCurationResult } from './curationEngine';
+import { PERSONA_IDS } from './personas';
+import { QUESTION_MAP } from './questions';
 
 interface UseCurationFlowParams {
   defaultPersonaId: PersonaId;

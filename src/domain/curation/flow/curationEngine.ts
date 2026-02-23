@@ -1,4 +1,4 @@
-import { PROGRAMS } from '../data/constants';
+import { PROGRAMS } from '../shared/programs';
 import {
   CurationResult,
   FormValues,
@@ -6,7 +6,7 @@ import {
   PlanId,
   ProgramId,
   ProgramRecommendation,
-} from '../types/types';
+} from '../types';
 
 const planPriorityByIntent: Record<string, PlanId[]> = {
   basic: ['basic', 'standard', 'premium'],

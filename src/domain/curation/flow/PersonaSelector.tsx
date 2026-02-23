@@ -1,5 +1,5 @@
-import { PERSONAS } from '../data/constants';
-import { PersonaId } from '../types/types';
+import { PersonaId } from '../types';
+import { PERSONAS } from './personas';
 import MobilePersonaSelector from './MobilePersonaSelector';
 
 interface PersonaSelectorProps {

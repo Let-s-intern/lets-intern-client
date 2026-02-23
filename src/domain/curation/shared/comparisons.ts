@@ -1,4 +1,4 @@
-import { ChallengeComparisonRow, FrequentComparisonItem } from '../types/types';
+import { ChallengeComparisonRow, FrequentComparisonItem } from '../types';
 
 export const CHALLENGE_COMPARISON: ChallengeComparisonRow[] = [
   {

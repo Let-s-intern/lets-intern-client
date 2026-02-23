@@ -1,17 +1,17 @@
 'use client';
 import { useMemo } from 'react';
-import { QUESTION_MAP } from '../data/constants';
-import { defaultPersonaId, heroCopy, stepLabels } from '../data/copy';
-import { useCurationFlow } from '../hooks/useCurationFlow';
-import ChallengeComparisonSection from '../ui/ChallengeComparisonSection';
-import CurationHero from '../ui/CurationHero';
-import CurationStepper from '../ui/CurationStepper';
-import CurationStickyNav from '../ui/CurationStickyNav';
-import FaqSection from '../ui/FaqSection';
-import FrequentComparisonSection from '../ui/FrequentComparisonSection';
-import PersonaSelector from '../ui/PersonaSelector';
-import QuestionStep from '../ui/QuestionStep';
-import ResultSection from '../ui/ResultSection';
+import ChallengeComparisonSection from '../challenge-comparison/ChallengeComparisonSection';
+import FaqSection from '../faq/FaqSection';
+import { defaultPersonaId, heroCopy, stepLabels } from '../flow/copy';
+import CurationStepper from '../flow/CurationStepper';
+import PersonaSelector from '../flow/PersonaSelector';
+import { QUESTION_MAP } from '../flow/questions';
+import QuestionStep from '../flow/QuestionStep';
+import ResultSection from '../flow/ResultSection';
+import { useCurationFlow } from '../flow/useCurationFlow';
+import FrequentComparisonSection from '../frequent-comparison/FrequentComparisonSection';
+import CurationHero from '../hero/CurationHero';
+import CurationStickyNav from '../nav/CurationStickyNav';
 
 const CurationScreen = () => {
   const {
