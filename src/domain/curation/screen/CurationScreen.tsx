@@ -1,6 +1,5 @@
 'use client';
-import { useMemo } from 'react';
-import ChallengeComparisonSection from '../challenge-comparison/ChallengeComparisonSection';
+import ChallengeCompareSection from '../challenge-comparison/ChallengeCompareSection';
 import FaqSection from '../faq/FaqSection';
 import { defaultPersonaId, heroCopy, stepLabels } from '../flow/copy';
 import CurationStepper from '../flow/CurationStepper';
@@ -9,7 +8,6 @@ import { QUESTION_MAP } from '../flow/questions';
 import QuestionStep from '../flow/QuestionStep';
 import ResultSection from '../flow/ResultSection';
 import { useCurationFlow } from '../flow/useCurationFlow';
-import FrequentComparisonSection from '../frequent-comparison/FrequentComparisonSection';
 import CurationHero from '../hero/CurationHero';
 import CurationStickyNav from '../nav/CurationStickyNav';
 
@@ -28,14 +26,6 @@ const CurationScreen = () => {
     result,
     scrollToForm,
   } = useCurationFlow({ defaultPersonaId, questionMap: QUESTION_MAP });
-
-  const highlightedPrograms = useMemo(() => {
-    if (!result?.recommendations) return { primary: null, secondary: [] };
-    const [primary, ...secondary] = result.recommendations.map(
-      (r) => r.programId,
-    );
-    return { primary, secondary };
-  }, [result]);
 
   const handleRestartAndScroll = () => {
     handleRestart();
@@ -68,15 +58,12 @@ const CurationScreen = () => {
         onScrollToChallengeComparison={() =>
           scrollToSection('curation-challenge-comparison')
         }
-        onScrollToFrequentComparison={() =>
-          scrollToSection('curation-frequent-comparison')
-        }
         onScrollToFaq={() => scrollToSection('curation-faq')}
       />
 
       {/* Curation Selection Section */}
       <section
-        className="w-full"
+        className="flex min-h-screen w-full items-start justify-center"
         id="curation-form"
       >
         <div
@@ -149,13 +136,22 @@ const CurationScreen = () => {
         </div>
       </section>
 
-      {/* Comparison & FAQ Section */}
+      {/* Section Divider */}
+      <div className="mx-[120px] border-t border-neutral-90" />
+
+      {/* Challenge Comparison Section */}
+      <section className="w-full bg-[#f9f9f8]">
+        <div className="flex w-full flex-col items-center pb-[120px] pt-10">
+          <ChallengeCompareSection />
+        </div>
+      </section>
+
+      {/* Section Divider */}
+      <div className="mx-[120px] border-t border-neutral-90" />
+
+      {/* FAQ Section */}
       <section className="w-full bg-white">
         <div className="flex w-full flex-col gap-16 px-[120px] py-24">
-          <ChallengeComparisonSection
-            highlightedPrograms={highlightedPrograms}
-          />
-          <FrequentComparisonSection />
           <FaqSection />
         </div>
       </section>

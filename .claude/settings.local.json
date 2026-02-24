@@ -4,7 +4,16 @@
       "Bash(npx tsc:*)",
       "Bash(xargs:*)",
       "Bash(git mv:*)",
-      "Bash(npx vitest:*)"
+      "Bash(npx vitest:*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(curl:*)",
+      "WebFetch(domain:www.figma.com)",
+      "WebFetch(domain:api.figma.com)",
+      "Bash(python3:*)",
+      "Bash(python:*)",
+      "Bash(where:*)",
+      "Bash(node -e:*)",
+      "Bash(node:*)"
     ]
   }
 }
