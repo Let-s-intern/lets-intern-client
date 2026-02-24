@@ -50,5 +50,5 @@ next-env.d.ts
 .env.sentry-build-plugin
 
 # 개인 폴더
-docs
+
 .history

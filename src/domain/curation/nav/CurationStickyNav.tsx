@@ -10,14 +10,12 @@ interface NavItem {
 interface CurationStickyNavProps {
   onScrollToForm: () => void;
   onScrollToChallengeComparison: () => void;
-  onScrollToFrequentComparison: () => void;
   onScrollToFaq: () => void;
 }
 
 const CurationStickyNav = ({
   onScrollToForm,
   onScrollToChallengeComparison,
-  onScrollToFrequentComparison,
   onScrollToFaq,
 }: CurationStickyNavProps) => {
   const [activeSection, setActiveSection] = useState<string>('form');
@@ -25,7 +23,6 @@ const CurationStickyNav = ({
   const navItems: NavItem[] = [
     { title: '맞춤 추천', onClick: onScrollToForm },
     { title: '챌린지 비교', onClick: onScrollToChallengeComparison },
-    { title: '챌린지 차이점', onClick: onScrollToFrequentComparison },
     { title: 'FAQ', onClick: onScrollToFaq },
   ];
 
@@ -39,8 +36,6 @@ const CurationStickyNav = ({
             if (id === 'curation-form') setActiveSection('form');
             else if (id === 'curation-challenge-comparison')
               setActiveSection('challenge-comparison');
-            else if (id === 'curation-frequent-comparison')
-              setActiveSection('frequent-comparison');
             else if (id === 'curation-faq') setActiveSection('faq');
           }
         });
@@ -56,23 +51,17 @@ const CurationStickyNav = ({
     const challengeComparisonSection = document.getElementById(
       'curation-challenge-comparison',
     );
-    const frequentComparisonSection = document.getElementById(
-      'curation-frequent-comparison',
-    );
     const faqSection = document.getElementById('curation-faq');
 
     if (formSection) observer.observe(formSection);
     if (challengeComparisonSection)
       observer.observe(challengeComparisonSection);
-    if (frequentComparisonSection) observer.observe(frequentComparisonSection);
     if (faqSection) observer.observe(faqSection);
 
     return () => {
       if (formSection) observer.unobserve(formSection);
       if (challengeComparisonSection)
         observer.unobserve(challengeComparisonSection);
-      if (frequentComparisonSection)
-        observer.unobserve(frequentComparisonSection);
       if (faqSection) observer.unobserve(faqSection);
     };
   }, []);
@@ -84,8 +73,7 @@ const CurationStickyNav = ({
           const isActive =
             (index === 0 && activeSection === 'form') ||
             (index === 1 && activeSection === 'challenge-comparison') ||
-            (index === 2 && activeSection === 'frequent-comparison') ||
-            (index === 3 && activeSection === 'faq');
+            (index === 2 && activeSection === 'faq');
 
           return (
             <button
