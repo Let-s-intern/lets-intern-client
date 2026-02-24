@@ -17,7 +17,9 @@
       "Bash(where:*)",
       "Bash(node -e:*)",
       "Bash(node:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(head:*)",
+      "Bash(ls:*)"
     ]
   }
 }
