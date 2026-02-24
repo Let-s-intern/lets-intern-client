@@ -101,22 +101,6 @@ export interface FrequentComparisonItem {
   rows: { label: string; left: string; right: string }[];
 }
 
-export interface ComparisonRowConfig {
-  label: string;
-  key: keyof Pick<
-    ChallengeComparisonRow,
-    | 'target'
-    | 'duration'
-    | 'pricing'
-    | 'feedback'
-    | 'deliverable'
-    | 'curriculum'
-    | 'features'
-  >;
-  collapsible?: boolean;
-  defaultHidden?: boolean;
-}
-
 export type FAQCategory =
   | '프로그램 적합성'
   | '커리큘럼/자료'

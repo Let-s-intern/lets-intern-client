@@ -1,6 +1,4 @@
 'use client';
-import { useMemo } from 'react';
-import ChallengeComparisonSection from '../challenge-comparison/ChallengeComparisonSection';
 import FaqSection from '../faq/FaqSection';
 import { defaultPersonaId, heroCopy, stepLabels } from '../flow/copy';
 import CurationStepper from '../flow/CurationStepper';
@@ -9,7 +7,6 @@ import { QUESTION_MAP } from '../flow/questions';
 import QuestionStep from '../flow/QuestionStep';
 import ResultSection from '../flow/ResultSection';
 import { useCurationFlow } from '../flow/useCurationFlow';
-import FrequentComparisonSection from '../frequent-comparison/FrequentComparisonSection';
 import CurationHero from '../hero/CurationHero';
 import CurationStickyNav from '../nav/CurationStickyNav';
 
@@ -28,14 +25,6 @@ const CurationScreen = () => {
     result,
     scrollToForm,
   } = useCurationFlow({ defaultPersonaId, questionMap: QUESTION_MAP });
-
-  const highlightedPrograms = useMemo(() => {
-    if (!result?.recommendations) return { primary: null, secondary: [] };
-    const [primary, ...secondary] = result.recommendations.map(
-      (r) => r.programId,
-    );
-    return { primary, secondary };
-  }, [result]);
 
   const handleRestartAndScroll = () => {
     handleRestart();
@@ -67,9 +56,6 @@ const CurationScreen = () => {
         onScrollToForm={() => scrollToSection('curation-form')}
         onScrollToChallengeComparison={() =>
           scrollToSection('curation-challenge-comparison')
-        }
-        onScrollToFrequentComparison={() =>
-          scrollToSection('curation-frequent-comparison')
         }
         onScrollToFaq={() => scrollToSection('curation-faq')}
       />
@@ -149,13 +135,19 @@ const CurationScreen = () => {
         </div>
       </section>
 
-      {/* Comparison & FAQ Section */}
+      {/* Challenge Comparison Section (placeholder) */}
+      <section
+        className="w-full bg-white"
+        id="curation-challenge-comparison"
+      >
+        <div className="flex w-full flex-col gap-16 px-[120px] py-24">
+          {/* ChallengeCompareSection will be added in task 2.0 */}
+        </div>
+      </section>
+
+      {/* FAQ Section */}
       <section className="w-full bg-white">
         <div className="flex w-full flex-col gap-16 px-[120px] py-24">
-          <ChallengeComparisonSection
-            highlightedPrograms={highlightedPrograms}
-          />
-          <FrequentComparisonSection />
           <FaqSection />
         </div>
       </section>

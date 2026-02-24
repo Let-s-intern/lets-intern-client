@@ -4,7 +4,9 @@
       "Bash(npx tsc:*)",
       "Bash(xargs:*)",
       "Bash(git mv:*)",
-      "Bash(npx vitest:*)"
+      "Bash(npx vitest:*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(curl:*)"
     ]
   }
 }
