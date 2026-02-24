@@ -122,13 +122,17 @@ export const guidebookToCreateInput = (
   guidebook: GuidebookIdSchema,
 ): CreateGuidebookReq => ({
   title: (guidebook.title ?? '') + ' - 사본',
+  shortDesc: guidebook.shortDesc ?? '',
   thumbnail: guidebook.thumbnail ?? '',
   desktopThumbnail: guidebook.desktopThumbnail ?? '',
-  contentStructure: guidebook.contentStructure ?? '',
+  contentComposition: guidebook.contentComposition ?? '',
   accessMethod: guidebook.accessMethod ?? '',
   recommendedFor: guidebook.recommendedFor ?? '',
-  desc: guidebook.desc ?? '',
-  programTypeInfo: (guidebook.classificationInfo ?? []).map((value) => ({
+  description: guidebook.description ?? '',
+  job: guidebook.job ?? '',
+  contentUrl: guidebook.contentUrl ?? '',
+  contentFileUrl: guidebook.contentFileUrl ?? '',
+  programTypeInfo: (guidebook.programTypeInfo ?? []).map((value) => ({
     classificationInfo: {
       programClassification: value.programClassification ?? 'PASS',
     },
@@ -141,10 +145,10 @@ export const guidebookToCreateInput = (
       }))
     : [],
   priceInfo: {
-    guidebookPriceType: guidebook.priceInfo?.guidebookPriceType ?? 'CHARGE',
+    guidebookPriceType: guidebook.guidebookPriceType ?? 'CHARGE',
     priceInfo: {
-      price: guidebook.priceInfo?.price ?? 0,
-      discount: guidebook.priceInfo?.discount ?? 0,
+      price: guidebook.price ?? 0,
+      discount: guidebook.discount ?? 0,
     },
   },
 });

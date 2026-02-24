@@ -25,9 +25,8 @@ const GuidebookBasicInfoSection = ({
 }: GuidebookBasicInfoSectionProps) => {
   const thumbnail =
     guidebook.thumbnail ?? guidebook.desktopThumbnail ?? null;
-  const priceInfo = guidebook.priceInfo;
-  const price = priceInfo?.price ?? 0;
-  const discount = priceInfo?.discount ?? 0;
+  const price = guidebook.price ?? 0;
+  const discount = guidebook.discount ?? 0;
 
   return (
     <div className="mx-auto w-full max-w-[1000px] px-5 pb-10 md:px-0 md:pb-20">
@@ -47,7 +46,7 @@ const GuidebookBasicInfoSection = ({
               <BasicInfoRow
                 icon={<FolderIcon />}
                 title="자료 구성"
-                content={guidebook.contentStructure}
+                content={guidebook.contentComposition}
               />
               <BasicInfoRow
                 icon={<FileIcon />}

@@ -28,10 +28,10 @@ export async function generateMetadata({
 
   return {
     title,
-    description: program.desc ?? undefined,
+    description: program.shortDesc,
     openGraph: {
       title,
-      description: program.desc ?? undefined,
+      description: program.shortDesc || undefined,
       url,
       images: [
         {
