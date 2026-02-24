@@ -88,28 +88,45 @@ const ChallengeCompareSection = () => {
         </p>
       </div>
 
-      {/* 메인 컨텐츠 영역 */}
+      {/* 메인 컨텐츠 영역 — 1180px 외부, 1032px 내부 (Figma: x=74 offset) */}
       <div className="flex w-full max-w-[73.75rem] flex-col gap-10 px-6 md:px-10 lg:px-0">
-        {/* 추천 비교 조합 (카드 위에 배치) */}
-        <div className="flex justify-center">
+        {/* 1032px 내부 컨테이너: 추천 버튼 + 카드 그리드 좌측 정렬 기준 */}
+        <div className="mx-auto w-full max-w-[64.5rem]">
+          {/* 추천 비교 조합 — 카드 그리드 좌측과 맞춤 */}
           <RecommendedComparisons
             activeIndex={recommendedIndex}
             onSelect={handleRecommendedSelect}
           />
-        </div>
 
-        {/* 챌린지 카드 — flex-wrap, 가운데 정렬 */}
-        <div className="flex flex-wrap justify-center gap-6 py-5">
-          {CHALLENGE_COMPARISON.map((challenge) => (
-            <ChallengeCard
-              key={challenge.programId}
-              challenge={challenge}
-              inCart={isInCart(challenge.programId)}
-              isFull={isFull}
-              onToggle={toggleCartItem}
-              onRemove={removeFromCart}
-            />
-          ))}
+          {/* 챌린지 카드 — 데스크톱 4+3, 소형 화면 flex-wrap */}
+          <div className="flex flex-col gap-0">
+            {/* Row 1: 4 cards */}
+            <div className="flex flex-wrap justify-center gap-6 py-5 lg:flex-nowrap lg:justify-start">
+              {CHALLENGE_COMPARISON.slice(0, 4).map((challenge) => (
+                <ChallengeCard
+                  key={challenge.programId}
+                  challenge={challenge}
+                  inCart={isInCart(challenge.programId)}
+                  isFull={isFull}
+                  onToggle={toggleCartItem}
+                  onRemove={removeFromCart}
+                />
+              ))}
+            </div>
+            {/* Row 2: 3 cards — center */}
+            <div className="flex flex-wrap justify-center gap-6 py-5">
+              {CHALLENGE_COMPARISON.slice(4).map((challenge) => (
+                <ChallengeCard
+                  key={challenge.programId}
+                  challenge={challenge}
+                  inCart={isInCart(challenge.programId)}
+                  isFull={isFull}
+                  onToggle={toggleCartItem}
+                  onRemove={removeFromCart}
+                />
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* 비교하기 바 */}
