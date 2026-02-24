@@ -98,8 +98,8 @@ const FaqSection = () => {
         ))}
       </div>
 
-      {/* FAQ 리스트 */}
-      <div className="flex w-[50rem] flex-col gap-3">
+      {/* FAQ 리스트 — min-h로 카테고리 전환 시 높이 점핑 방지 */}
+      <div className="flex min-h-[600px] w-[50rem] flex-col gap-3">
         {filteredFaqs.length > 0 ? (
           filteredFaqs.map((item) => (
             <details

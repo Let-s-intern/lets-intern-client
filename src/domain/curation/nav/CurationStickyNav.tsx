@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 
 interface NavItem {
   title: string;
+  sectionId: string;
   onClick: () => void;
 }
 
@@ -21,9 +22,13 @@ const CurationStickyNav = ({
   const [activeSection, setActiveSection] = useState<string>('form');
 
   const navItems: NavItem[] = [
-    { title: '맞춤 추천', onClick: onScrollToForm },
-    { title: '챌린지 비교', onClick: onScrollToChallengeComparison },
-    { title: 'FAQ', onClick: onScrollToFaq },
+    { title: '맞춤 추천', sectionId: 'form', onClick: onScrollToForm },
+    {
+      title: '챌린지 비교',
+      sectionId: 'challenge-comparison',
+      onClick: onScrollToChallengeComparison,
+    },
+    { title: 'FAQ', sectionId: 'faq', onClick: onScrollToFaq },
   ];
 
   // 섹션 감지
@@ -42,7 +47,7 @@ const CurationStickyNav = ({
       },
       {
         root: null,
-        rootMargin: '-80px 0px -50% 0px', // sticky nav 높이를 고려한 상단 마진
+        rootMargin: '-80px 0px -50% 0px',
         threshold: 0,
       },
     );
@@ -69,11 +74,8 @@ const CurationStickyNav = ({
   return (
     <nav className="sticky top-0 z-40 flex w-full justify-center border-b-2 border-neutral-80 bg-white shadow-sm">
       <div className="flex w-full max-w-[1000px] items-center justify-between px-6">
-        {navItems.map((navItem, index) => {
-          const isActive =
-            (index === 0 && activeSection === 'form') ||
-            (index === 1 && activeSection === 'challenge-comparison') ||
-            (index === 2 && activeSection === 'faq');
+        {navItems.map((navItem) => {
+          const isActive = activeSection === navItem.sectionId;
 
           return (
             <button

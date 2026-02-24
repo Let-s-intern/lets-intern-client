@@ -7,7 +7,17 @@
       "Bash(npx vitest:*)",
       "mcp__plugin_figma_figma-desktop__get_design_context",
       "mcp__plugin_figma_figma-desktop__get_screenshot",
-      "mcp__plugin_figma_figma-desktop__get_metadata"
+      "mcp__plugin_figma_figma-desktop__get_metadata",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(curl:*)",
+      "WebFetch(domain:www.figma.com)",
+      "WebFetch(domain:api.figma.com)",
+      "Bash(python3:*)",
+      "Bash(python:*)",
+      "Bash(where:*)",
+      "Bash(node -e:*)",
+      "Bash(node:*)",
+      "Bash(git add:*)"
     ]
   }
 }
