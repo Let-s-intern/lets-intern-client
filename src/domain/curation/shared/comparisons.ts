@@ -96,7 +96,7 @@ export const FREQUENT_COMPARISON: FrequentComparisonItem[] = [
   {
     title: '자소서 vs 대기업 자소서',
     left: '자기소개서 2주 완성 챌린지',
-    right: '대기업 자기소개서 완성 챌린지',
+    right: '대기업 자기소개서완성 챌린지',
     rows: [
       {
         label: '추천 대상',

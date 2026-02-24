@@ -67,7 +67,7 @@ const CurationScreen = () => {
         id="curation-form"
       >
         <div
-          className="flex w-full flex-col gap-10 px-[120px] py-14"
+          className="flex w-full flex-col gap-10 px-6 py-14 md:px-10 lg:px-[7.5rem]"
           ref={formRef}
         >
           <div className="flex flex-col items-center gap-5 self-stretch py-[3.75rem]">
@@ -137,7 +137,7 @@ const CurationScreen = () => {
       </section>
 
       {/* Section Divider */}
-      <div className="mx-[120px] border-t border-neutral-90" />
+      <div className="mx-6 border-t border-neutral-90 md:mx-10 lg:mx-[7.5rem]" />
 
       {/* Challenge Comparison Section */}
       <section className="w-full bg-[#f9f9f8]">
@@ -147,11 +147,11 @@ const CurationScreen = () => {
       </section>
 
       {/* Section Divider */}
-      <div className="mx-[120px] border-t border-neutral-90" />
+      <div className="mx-6 border-t border-neutral-90 md:mx-10 lg:mx-[7.5rem]" />
 
       {/* FAQ Section */}
       <section className="w-full bg-white">
-        <div className="flex w-full flex-col gap-16 px-[120px] py-24">
+        <div className="flex w-full flex-col gap-16 px-6 py-24 md:px-10 lg:px-[7.5rem]">
           <FaqSection />
         </div>
       </section>

@@ -33,7 +33,7 @@ const InfoRow = ({
     </div>
     <div className="flex flex-1 gap-10">
       {values.map((value, i) => (
-        <div key={i} className="w-[300px]">
+        <div key={i} className="flex-1 min-w-0">
           <span className="whitespace-pre-line text-sm leading-[22px] text-black">
             {value}
           </span>
@@ -81,9 +81,9 @@ const CompareResultCard = ({ programIds, onClose }: CompareResultCardProps) => {
       {/* 프로그램 썸네일 헤더 */}
       <div className="flex items-end gap-10 pl-[120px]">
         {programs.map((program) => (
-          <div key={program.id} className="flex w-[300px] flex-col gap-1">
+          <div key={program.id} className="flex flex-1 flex-col gap-1">
             <div
-              className="flex h-[150px] w-[200px] items-end overflow-hidden rounded-[5px] p-3"
+              className="flex h-[9.375rem] w-full max-w-[12.5rem] items-end overflow-hidden rounded-[5px] p-3"
               style={{ backgroundColor: CARD_COLORS[program.id as ProgramId] }}
             >
               <span className="text-sm font-bold text-white">
@@ -132,12 +132,12 @@ const CompareResultCard = ({ programIds, onClose }: CompareResultCardProps) => {
       </div>
 
       {/* CTA 버튼들 */}
-      <div className="flex justify-end gap-[50px] px-2.5">
+      <div className="flex gap-10 pl-[7.5rem]">
         {programs.map((program) => (
           <a
             key={program.id}
             href={`/program/challenge/${program.id}`}
-            className="flex h-[46px] w-[300px] items-center justify-center rounded-lg bg-[#f3f3f3] transition-colors hover:bg-[#e7e7e7]"
+            className="flex h-[2.875rem] flex-1 items-center justify-center rounded-lg bg-[#f3f3f3] transition-colors hover:bg-[#e7e7e7]"
           >
             <span className="text-center text-xs font-bold leading-4 text-[#4c4f56]">
               [{program.title}] 바로가기
