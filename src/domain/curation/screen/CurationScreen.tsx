@@ -1,4 +1,5 @@
 'use client';
+import ChallengeCompareSection from '../challenge-comparison/ChallengeCompareSection';
 import FaqSection from '../faq/FaqSection';
 import { defaultPersonaId, heroCopy, stepLabels } from '../flow/copy';
 import CurationStepper from '../flow/CurationStepper';
@@ -135,13 +136,10 @@ const CurationScreen = () => {
         </div>
       </section>
 
-      {/* Challenge Comparison Section (placeholder) */}
-      <section
-        className="w-full bg-white"
-        id="curation-challenge-comparison"
-      >
-        <div className="flex w-full flex-col gap-16 px-[120px] py-24">
-          {/* ChallengeCompareSection will be added in task 2.0 */}
+      {/* Challenge Comparison Section */}
+      <section className="w-full bg-white">
+        <div className="flex w-full flex-col px-[120px] py-24">
+          <ChallengeCompareSection />
         </div>
       </section>
 
