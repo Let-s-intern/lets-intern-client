@@ -63,7 +63,7 @@ const CurationScreen = () => {
 
       {/* Curation Selection Section */}
       <section
-        className="w-full"
+        className="flex min-h-screen w-full items-start justify-center"
         id="curation-form"
       >
         <div
@@ -136,12 +136,18 @@ const CurationScreen = () => {
         </div>
       </section>
 
+      {/* Section Divider */}
+      <div className="mx-[120px] border-t border-neutral-90" />
+
       {/* Challenge Comparison Section */}
       <section className="w-full bg-white">
         <div className="flex w-full flex-col px-[120px] py-24">
           <ChallengeCompareSection />
         </div>
       </section>
+
+      {/* Section Divider */}
+      <div className="mx-[120px] border-t border-neutral-90" />
 
       {/* FAQ Section */}
       <section className="w-full bg-white">
