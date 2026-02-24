@@ -4,6 +4,17 @@ import { PROGRAMS } from '../shared/programs';
 import { CHALLENGE_COMPARISON } from '../shared/comparisons';
 import type { ProgramId } from '../types';
 
+/** Figma 기반 카드별 썸네일 배경 색상 */
+const CARD_COLORS: Record<ProgramId, string> = {
+  experience: '#ff8165',
+  resume: '#4d55f5',
+  coverLetter: '#14bcff',
+  portfolio: '#14bcff',
+  enterpriseCover: '#6cdb3f',
+  marketingAllInOne: '#161c2f',
+  hrAllInOne: '#161c2f',
+};
+
 interface CompareResultCardProps {
   programIds: ProgramId[];
   onClose: () => void;
@@ -16,18 +27,19 @@ const InfoRow = ({
   label: string;
   values: string[];
 }) => (
-  <div className="flex border-b border-neutral-90">
-    <div className="flex w-[140px] shrink-0 items-center bg-neutral-95 px-4 py-3 text-sm font-semibold text-neutral-20">
+  <div className="flex items-start gap-10 border-b border-[#e6e6e6] py-4">
+    <div className="w-20 shrink-0 text-sm font-semibold leading-5 text-black">
       {label}
     </div>
-    {values.map((value, i) => (
-      <div
-        key={i}
-        className="flex flex-1 items-center px-4 py-3 text-sm leading-5 text-neutral-30"
-      >
-        <span className="whitespace-pre-line">{value}</span>
-      </div>
-    ))}
+    <div className="flex flex-1 gap-10">
+      {values.map((value, i) => (
+        <div key={i} className="w-[300px]">
+          <span className="whitespace-pre-line text-sm leading-[22px] text-black">
+            {value}
+          </span>
+        </div>
+      ))}
+    </div>
   </div>
 );
 
@@ -37,41 +49,56 @@ const CompareResultCard = ({ programIds, onClose }: CompareResultCardProps) => {
     (id) => CHALLENGE_COMPARISON.find((c) => c.programId === id)!,
   );
 
+  // 비교 결과 제목 생성
+  const titleParts = programs.map((p) => {
+    if (p.title.includes('경험정리')) return '경험정리';
+    if (p.title.includes('이력서')) return '이력서';
+    if (p.title.includes('대기업')) return '대기업 자소서';
+    if (p.title.includes('자기소개서')) return '자소서';
+    if (p.title.includes('포트폴리오')) return '포트폴리오';
+    if (p.title.includes('마케팅')) return '마케팅';
+    if (p.title.includes('HR')) return 'HR';
+    return p.title;
+  });
+  const compareTitle = titleParts.join(' vs ');
+
   return (
-    <div className="flex w-full flex-col gap-6">
+    <div className="flex w-full flex-col gap-5 rounded-[20px] bg-white px-10 py-5">
       {/* 헤더 */}
-      <div className="flex items-center justify-between">
-        <h4 className="text-xl font-bold text-neutral-0">비교 결과</h4>
+      <div className="flex items-center justify-between gap-5">
+        <h4 className="text-base font-bold leading-6 text-black">
+          {compareTitle}
+        </h4>
         <button
           type="button"
           onClick={onClose}
-          className="rounded-lg bg-zinc-100 px-4 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-200"
+          className="rounded-lg px-3 py-1.5 text-xs font-medium text-[#7a7d84] transition-colors hover:bg-[#f3f3f3]"
         >
           닫기
         </button>
       </div>
 
-      {/* 비교 테이블 */}
-      <div className="overflow-hidden rounded-xl border border-neutral-90 bg-white shadow-md">
-        {/* 프로그램 헤더 */}
-        <div className="flex border-b border-neutral-90">
-          <div className="w-[140px] shrink-0 bg-neutral-95" />
-          {programs.map((program) => (
+      {/* 프로그램 썸네일 헤더 */}
+      <div className="flex items-end gap-10 pl-[120px]">
+        {programs.map((program) => (
+          <div key={program.id} className="flex w-[300px] flex-col gap-1">
             <div
-              key={program.id}
-              className="flex flex-1 flex-col gap-1 border-l border-neutral-90 px-4 py-4"
+              className="flex h-[150px] w-[200px] items-end overflow-hidden rounded-[5px] p-3"
+              style={{ backgroundColor: CARD_COLORS[program.id as ProgramId] }}
             >
-              <span className="text-base font-bold text-neutral-0">
+              <span className="text-sm font-bold text-white">
                 {program.title}
               </span>
-              <span className="text-xs text-neutral-50">
-                {program.subtitle}
-              </span>
             </div>
-          ))}
-        </div>
+            <span className="text-sm font-semibold leading-5 text-[#27272d]">
+              {program.title}
+            </span>
+          </div>
+        ))}
+      </div>
 
-        {/* 비교 항목 */}
+      {/* 비교 항목 */}
+      <div className="flex flex-col">
         <InfoRow
           label="추천 대상"
           values={comparisons.map((c) => c.target)}
@@ -105,14 +132,16 @@ const CompareResultCard = ({ programIds, onClose }: CompareResultCardProps) => {
       </div>
 
       {/* CTA 버튼들 */}
-      <div className="flex gap-3">
+      <div className="flex justify-end gap-[50px] px-2.5">
         {programs.map((program) => (
           <a
             key={program.id}
             href={`/program/challenge/${program.id}`}
-            className="flex flex-1 items-center justify-center rounded-lg bg-indigo-500 py-3 text-sm font-bold text-white transition-opacity hover:opacity-90"
+            className="flex h-[46px] w-[300px] items-center justify-center rounded-lg bg-[#f3f3f3] transition-colors hover:bg-[#e7e7e7]"
           >
-            [{program.title}] 바로가기
+            <span className="text-center text-xs font-bold leading-4 text-[#4c4f56]">
+              [{program.title}] 바로가기
+            </span>
           </a>
         ))}
       </div>

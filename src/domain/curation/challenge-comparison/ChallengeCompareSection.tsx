@@ -11,15 +11,15 @@ import CompareResultCard from './CompareResultCard';
 import RecommendedComparisons from './RecommendedComparisons';
 import { useCompareCart } from './useCompareCart';
 
-/** 카드별 그라데이션 색상 */
-const CARD_GRADIENTS: Record<ProgramId, string> = {
-  experience: 'from-blue-100 to-indigo-200',
-  resume: 'from-violet-100 to-purple-200',
-  coverLetter: 'from-indigo-100 to-blue-200',
-  portfolio: 'from-cyan-100 to-teal-200',
-  enterpriseCover: 'from-blue-200 to-indigo-300',
-  marketingAllInOne: 'from-purple-100 to-violet-200',
-  hrAllInOne: 'from-teal-100 to-cyan-200',
+/** Figma 기반 카드별 썸네일 배경 색상 */
+const CARD_COLORS: Record<ProgramId, string> = {
+  experience: '#ff8165',
+  resume: '#4d55f5',
+  coverLetter: '#14bcff',
+  portfolio: '#14bcff',
+  enterpriseCover: '#6cdb3f',
+  marketingAllInOne: '#161c2f',
+  hrAllInOne: '#161c2f',
 };
 
 /** 추천 비교 조합의 프로그램명 → ProgramId 매핑 */
@@ -28,11 +28,41 @@ const findProgramIdByLabel = (label: string): ProgramId | null => {
   return match?.programId ?? null;
 };
 
+/** 체크 아이콘 SVG */
+const CheckIcon = ({ className }: { className?: string }) => (
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 14 14"
+    fill="none"
+    className={className}
+  >
+    <path
+      d="M2.5 7L5.5 10L11.5 4"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+/** X 아이콘 SVG */
+const CloseIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+    <path
+      d="M3 3L9 9M9 3L3 9"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
 const ChallengeCompareSection = () => {
   const {
     cartItems,
     toggleCartItem,
-    clearCart,
     isInCart,
     isFull,
     canCompare,
@@ -49,7 +79,7 @@ const ChallengeCompareSection = () => {
     });
   }, []);
 
-  /** 비교하기 버튼 클릭 */
+  /** 비교하기 바 클릭 */
   const handleCompare = useCallback(() => {
     if (!canCompare) return;
     setCompareTargets([...cartItems]);
@@ -81,142 +111,176 @@ const ChallengeCompareSection = () => {
   }, []);
 
   const allPrograms = CHALLENGE_COMPARISON;
+  const row1 = allPrograms.slice(0, 4);
+  const row2 = allPrograms.slice(4);
+
+  const renderCard = (challenge: (typeof allPrograms)[number]) => {
+    const program = PROGRAMS[challenge.programId];
+    const inCart = isInCart(challenge.programId);
+    const bgColor = CARD_COLORS[challenge.programId];
+    const isDark = bgColor === '#161c2f';
+
+    return (
+      <div key={challenge.programId} className="flex w-[240px] flex-col">
+        {/* 카드 본체 */}
+        <div className="flex flex-col gap-3">
+          {/* 썸네일 영역 */}
+          <div
+            className="flex h-[180px] w-[240px] items-end overflow-hidden rounded-[7px] p-4"
+            style={{ backgroundColor: bgColor }}
+          >
+            <div className="flex flex-col gap-0.5">
+              <span
+                className={`text-xs font-medium ${isDark ? 'text-white/70' : 'text-white/80'}`}
+              >
+                {program.subtitle}
+              </span>
+              <span className="text-base font-bold text-white">
+                {program.title}
+              </span>
+            </div>
+          </div>
+
+          {/* 텍스트 영역 */}
+          <div className="flex flex-col gap-3 px-1">
+            <span className="line-clamp-2 text-lg font-bold leading-[26px] text-[#27272d]">
+              {program.title}
+            </span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[11px] font-medium leading-[14px] text-[#27272d]">
+                진행기간
+              </span>
+              <span className="text-[11px] font-medium leading-[14px] text-[#4138a3]">
+                {program.duration}
+              </span>
+            </div>
+            <div className="flex items-start gap-1.5">
+              <CheckIcon className="mt-1 shrink-0 text-[#7a7d84]" />
+              <span className="line-clamp-2 text-sm leading-[22px] text-[#27272d]">
+                {program.target}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* 비교함 담기 버튼 */}
+        <div className="mt-5 flex gap-1">
+          {inCart ? (
+            <>
+              <button
+                type="button"
+                onClick={() => toggleCartItem(challenge.programId)}
+                className="flex flex-1 items-center justify-center gap-1 rounded-lg bg-[#dbddfd] px-2 py-2.5"
+              >
+                <CheckIcon className="text-[#5f66f6]" />
+                <span className="text-xs font-semibold leading-4 text-[#5f66f6]">
+                  비교함 담기
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeFromCart(challenge.programId);
+                }}
+                className="flex w-[46px] items-center justify-center rounded-lg bg-[#e7e7e7]"
+              >
+                <CloseIcon />
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={() => toggleCartItem(challenge.programId)}
+              disabled={isFull}
+              className={`flex w-full items-center justify-center rounded-lg px-2 py-2.5 transition-colors ${
+                isFull
+                  ? 'cursor-not-allowed bg-[#e7e7e7] opacity-50'
+                  : 'bg-[#e7e7e7] hover:bg-[#dbddfd] hover:text-[#5f66f6]'
+              }`}
+            >
+              <span className="text-xs font-semibold leading-4 text-[#5c5f66]">
+                비교함 담기
+              </span>
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <section
-      className="flex w-full flex-col gap-10"
+      className="flex w-full flex-col items-center"
       id="curation-challenge-comparison"
     >
       {/* 섹션 헤더 */}
-      <div className="flex flex-col items-center gap-5 py-10">
-        <p className="text-center text-lg font-semibold leading-6 text-indigo-500">
-          챌린지 비교
-        </p>
-        <h3 className="text-center text-3xl font-bold leading-10 text-neutral-0">
-          고민되는 챌린지, 비교해보세요
-        </h3>
-        <p className="text-center text-lg font-semibold leading-6 text-zinc-600">
-          궁금한 챌린지를 골라보세요. 최대 3개까지 비교할 수 있어요.
+      <div className="flex w-full flex-col items-center gap-3 pb-10 pt-[60px]">
+        <div className="flex w-[1000px] flex-col items-center gap-5">
+          <p className="text-center text-lg font-semibold leading-[26px] text-[#7177f7]">
+            챌린지 비교
+          </p>
+          <h3 className="text-center text-[30px] font-bold leading-[42px] text-[#27272d]">
+            고민되는 챌린지, 비교해보세요
+          </h3>
+        </div>
+        <p className="text-center text-lg font-semibold leading-[26px] text-[#5c5f66]">
+          많은 분들이 궁금해하는 챌린지 간 차이를 한눈에 확인하세요
         </p>
       </div>
 
-      {/* 챌린지 카드 그리드 — 4+3 2열 고정 레이아웃 */}
-      <div className="grid w-full grid-cols-4 gap-5">
-        {allPrograms.map((challenge) => {
-          const program = PROGRAMS[challenge.programId];
-          const inCart = isInCart(challenge.programId);
-          const gradient = CARD_GRADIENTS[challenge.programId];
+      {/* 메인 컨텐츠 영역 (1180px) */}
+      <div className="flex w-[1180px] flex-col gap-10">
+        {/* 추천 비교 조합 (카드 위에 배치) */}
+        <RecommendedComparisons
+          activeIndex={recommendedIndex}
+          onSelect={handleRecommendedSelect}
+        />
 
-          return (
-            <button
-              key={challenge.programId}
-              type="button"
-              onClick={() => toggleCartItem(challenge.programId)}
-              disabled={!inCart && isFull}
-              className={`group relative flex flex-col overflow-hidden rounded-xl border-2 bg-white transition-all ${
-                inCart
-                  ? 'border-indigo-500 shadow-lg ring-1 ring-indigo-500/20'
-                  : isFull
-                    ? 'cursor-not-allowed border-neutral-90 opacity-50'
-                    : 'border-transparent shadow-sm hover:border-indigo-300 hover:shadow-md'
-              }`}
-            >
-              {/* 썸네일 영역 */}
-              <div
-                className={`flex aspect-[5/3] items-center justify-center bg-gradient-to-br ${gradient} p-4`}
-              >
-                <span className="text-center text-xs font-medium text-neutral-40">
-                  {program.subtitle}
-                </span>
-              </div>
-
-              {/* 정보 */}
-              <div className="flex flex-col gap-1.5 px-4 py-3">
-                <span className="text-left text-sm font-bold leading-5 text-neutral-0">
-                  {program.title}
-                </span>
-                <span className="text-left text-xs text-neutral-50">
-                  {program.duration} · {program.plans[0]?.price}
-                </span>
-              </div>
-
-              {/* 선택 표시 */}
-              {inCart && (
-                <div className="absolute right-2.5 top-2.5 flex h-6 w-6 items-center justify-center rounded-full bg-indigo-500 text-xs font-bold text-white shadow-sm">
-                  ✓
-                </div>
-              )}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* 비교함 바 */}
-      {cartItems.length > 0 && (
-        <div className="flex items-center justify-between rounded-xl border border-neutral-80 bg-neutral-95 px-6 py-4">
-          <div className="flex items-center gap-3">
-            <span className="text-sm font-semibold text-neutral-30">
-              비교함 ({cartItems.length}/3)
-            </span>
-            <div className="flex gap-2">
-              {cartItems.map((id) => (
-                <div
-                  key={id}
-                  className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-medium text-neutral-30 shadow-sm"
-                >
-                  <span>{PROGRAMS[id].title}</span>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeFromCart(id);
-                    }}
-                    className="ml-0.5 text-neutral-50 hover:text-red-500"
-                  >
-                    ✕
-                  </button>
-                </div>
-              ))}
-            </div>
+        {/* 챌린지 카드 — 4+3 2열 */}
+        <div className="flex flex-col gap-1">
+          {/* Row 1: 4 cards */}
+          <div className="flex gap-6 py-5">
+            {row1.map((challenge) => renderCard(challenge))}
           </div>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={clearCart}
-              className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-neutral-50 transition-colors hover:bg-neutral-80"
-            >
-              초기화
-            </button>
-            <button
-              type="button"
-              onClick={handleCompare}
-              disabled={!canCompare}
-              className={`rounded-lg px-6 py-2 text-sm font-bold transition-all ${
-                canCompare
-                  ? 'bg-indigo-500 text-white hover:bg-indigo-600'
-                  : 'cursor-not-allowed bg-neutral-80 text-neutral-50'
-              }`}
-            >
-              {canCompare ? '비교하기' : '1개 더 담아주세요'}
-            </button>
+          {/* Row 2: 3 cards */}
+          <div className="flex gap-6 py-5">
+            {row2.map((challenge) => renderCard(challenge))}
           </div>
         </div>
-      )}
 
-      {/* 추천 비교 조합 */}
-      <RecommendedComparisons
-        activeIndex={recommendedIndex}
-        onSelect={handleRecommendedSelect}
-      />
+        {/* 비교하기 바 */}
+        <div className="flex flex-col items-center">
+          <button
+            type="button"
+            onClick={handleCompare}
+            disabled={!canCompare}
+            className={`flex w-full items-center justify-center rounded-lg px-2 py-5 transition-colors ${
+              canCompare
+                ? 'cursor-pointer bg-[#5f66f6] hover:bg-[#4d55f5]'
+                : 'bg-[#acafb6]'
+            }`}
+          >
+            <span className="text-base font-semibold leading-6 text-[#fafbfd]">
+              {canCompare
+                ? `프로그램 ${cartItems.length}개 비교하기`
+                : '비교할 프로그램을 선택해주세요'}
+            </span>
+          </button>
+          <p className="py-5 text-center text-xs leading-5 text-[#7a7d84]">
+            비교할 프로그램 2개 이상을 선택하면 비교 결과를 볼 수 있어요
+          </p>
+        </div>
 
-      {/* 비교 결과 */}
-      <div ref={resultRef}>
-        {compareTargets.length >= 2 && (
-          <CompareResultCard
-            programIds={compareTargets}
-            onClose={handleCloseResult}
-          />
-        )}
+        {/* 비교 결과 */}
+        <div ref={resultRef}>
+          {compareTargets.length >= 2 && (
+            <CompareResultCard
+              programIds={compareTargets}
+              onClose={handleCloseResult}
+            />
+          )}
+        </div>
       </div>
     </section>
   );

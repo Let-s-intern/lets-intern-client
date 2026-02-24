@@ -140,8 +140,8 @@ const CurationScreen = () => {
       <div className="mx-[120px] border-t border-neutral-90" />
 
       {/* Challenge Comparison Section */}
-      <section className="w-full bg-white">
-        <div className="flex w-full flex-col px-[120px] py-24">
+      <section className="w-full bg-[#f9f9f8]">
+        <div className="flex w-full flex-col items-center pb-[120px] pt-10">
           <ChallengeCompareSection />
         </div>
       </section>
