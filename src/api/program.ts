@@ -387,19 +387,22 @@ export const useGetGuidebookQuery = ({
 /** 개발용 목 데이터 (API 연동 후 제거) */
 const getGuidebookMockData = (): GuidebookIdSchema =>
   getGuidebookIdSchema.parse({
+    id: 0,
     title: '가이드북 제목',
-    desc: '가이드북 설명',
+    shortDesc: '가이드북 짧은 설명',
     thumbnail: null,
     desktopThumbnail: null,
-    contentStructure: '자료 구성 내용',
+    contentComposition: '자료 구성 내용',
     accessMethod: '가이드북 열람 방식',
     recommendedFor: '가이드북 추천 대상',
-    priceInfo: {
-      priceId: 1,
-      price: 10000,
-      discount: 1000,
-      guidebookPriceType: 'CHARGE',
-    },
+    description: '가이드북 설명',
+    isVisible: true,
+    job: null,
+    contentUrl: null,
+    contentFileUrl: null,
+    price: 10000,
+    discount: 1000,
+    programTypeInfo: [],
   });
 
 /** RSC/페이지용 가이드북 상세 조회 (fetch 사용) */
@@ -433,7 +436,7 @@ export const usePostGuidebookMutation = ({
 } = {}) => {
   return useMutation({
     mutationFn: async (data: CreateGuidebookReq) => {
-      const res = await axios.post(`/admin/guidebook`, data);
+      const res = await axios.post(`/guidebook`, data);
       return res.data as unknown;
     },
     onSuccess: successCallback,
@@ -451,7 +454,7 @@ export const usePatchGuidebookMutation = ({
   return useMutation({
     mutationFn: async (data: UpdateGuidebookReq & { guidebookId: number }) => {
       const { guidebookId, ...rest } = data;
-      const res = await axios.patch(`/admin/guidebook/${guidebookId}`, rest);
+      const res = await axios.patch(`/guidebook/${guidebookId}`, rest);
       return res.data as unknown;
     },
     onSuccess: successCallback,
@@ -459,7 +462,7 @@ export const usePatchGuidebookMutation = ({
   });
 };
 
-/** DELETE /admin/guidebook/{id} 가이드북 삭제 */
+/** DELETE /guidebook/{id} 가이드북 삭제 */
 export const useDeleteGuidebookMutation = ({
   errorCallback,
   successCallback,
@@ -469,7 +472,7 @@ export const useDeleteGuidebookMutation = ({
 } = {}) => {
   return useMutation({
     mutationFn: async (guidebookId: number) => {
-      const res = await axios.delete(`/admin/guidebook/${guidebookId}`);
+      const res = await axios.delete(`/guidebook/${guidebookId}`);
       return res.data as unknown;
     },
     onSuccess: successCallback,

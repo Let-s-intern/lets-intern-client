@@ -597,32 +597,30 @@ export type UpdateLiveReq = {
   }[];
 };
 
-/** GET /api/v1/guidebook/{id} 가이드북 상세 조회 */
+/** GET /api/v1/guidebook/{guidebookId} 가이드북 상세 조회 */
 export const getGuidebookIdSchema = z.object({
-  title: z.string(),
-  desc: z.string().nullable().optional(),
+  id: z.number(),
+  title: z.string().nullable().optional(),
+  shortDesc: z.string().nullable().optional(),
   thumbnail: z.string().nullable().optional(),
   desktopThumbnail: z.string().nullable().optional(),
-  contentStructure: z.string().nullable().optional(),
+  contentComposition: z.string().nullable().optional(),
   accessMethod: z.string().nullable().optional(),
   recommendedFor: z.string().nullable().optional(),
-  materialUrl: z.string().nullable().optional(),
-  priceInfo: z
-    .object({
-      priceId: z.number(),
-      price: z.number().optional().nullable(),
-      discount: z.number().optional().nullable(),
-      accountNumber: z.string().optional().nullable(),
-      accountType: accountType.optional().nullable(),
-      guidebookPriceType: guidebookPriceTypeSchema.optional().nullable(),
-    })
-    .optional(),
-  classificationInfo: z
+  description: z.string().nullable().optional(),
+  job: z.string().nullable().optional(),
+  contentUrl: z.string().nullable().optional(),
+  contentFileUrl: z.string().nullable().optional(),
+  price: z.number().nullable().optional(),
+  discount: z.number().nullable().optional(),
+  guidebookPriceType: guidebookPriceTypeSchema.nullable().optional(),
+  programTypeInfo: z
     .array(
       z.object({
         programClassification: ProgramClassificationEnum.nullable().optional(),
       }),
     )
+    .nullable()
     .optional(),
   adminClassificationInfo: z
     .array(
@@ -636,12 +634,30 @@ export const getGuidebookIdSchema = z.object({
 
 export type GuidebookIdSchema = z.infer<typeof getGuidebookIdSchema>;
 
-/**
- * POST /api/v1/admin/guidebook 가이드북 생성
- * 백엔드 확정 후 필수/이름 수정 예정
- */
+/** POST /api/v1/guidebook 가이드북 생성 */
 export type CreateGuidebookReq = {
-  programTypeInfo?: {
+  title: string;
+  shortDesc: string;
+  thumbnail: string;
+  desktopThumbnail?: string;
+  contentComposition: string;
+  accessMethod: string;
+  recommendedFor: string;
+  description: string;
+  job: string;
+  contentUrl?: string;
+  contentFileUrl?: string;
+  priceInfo: {
+    priceInfo: {
+      price: number;
+      discount: number;
+      accountNumber?: string;
+      deadline?: string;
+      accountType?: AccountType;
+    };
+    guidebookPriceType?: GuidebookPriceType;
+  };
+  programTypeInfo: {
     classificationInfo: { programClassification: ProgramClassification };
   }[];
   adminProgramTypeInfo?: {
@@ -649,29 +665,32 @@ export type CreateGuidebookReq = {
       programAdminClassification: ProgramAdminClassification;
     };
   }[];
-  job?: string;
-  title: string;
-  shortDesc?: string;
-  contentStructure?: string;
-  accessMethod?: string;
-  recommendedFor?: string;
-  priceInfo?: {
-    priceInfo: {
-      price: number;
-      discount: number;
-      accountNumber?: string;
-      accountType?: string;
-    };
-    guidebookPriceType: GuidebookPriceType;
-  };
-  materialUrl?: string;
-  thumbnail?: string;
-  desktopThumbnail?: string;
-  desc?: string;
 };
 
-/** PATCH /api/v1/admin/guidebook/{id} 가이드북 수정 */
+/** PATCH /api/v1/guidebook/{guidebookId} 가이드북 수정 */
 export type UpdateGuidebookReq = {
+  title?: string;
+  shortDesc?: string;
+  thumbnail?: string;
+  desktopThumbnail?: string;
+  contentComposition?: string;
+  accessMethod?: string;
+  recommendedFor?: string;
+  description?: string;
+  isVisible?: boolean;
+  job?: string;
+  contentUrl?: string;
+  contentFileUrl?: string;
+  priceInfo?: {
+    priceInfo: {
+      price: number;
+      discount: number;
+      accountNumber?: string;
+      deadline?: string;
+      accountType?: AccountType;
+    };
+    guidebookPriceType: GuidebookPriceType;
+  };
   programTypeInfo?: {
     classificationInfo: { programClassification: ProgramClassification };
   }[];
@@ -680,26 +699,6 @@ export type UpdateGuidebookReq = {
       programAdminClassification: ProgramAdminClassification;
     };
   }[];
-  job?: string;
-  title?: string;
-  shortDesc?: string;
-  contentStructure?: string;
-  accessMethod?: string;
-  recommendedFor?: string;
-  priceInfo?: {
-    priceInfo: {
-      price: number;
-      discount: number;
-      accountNumber?: string;
-      accountType?: string;
-    };
-    guidebookPriceType: GuidebookPriceType;
-  };
-  materialUrl?: string;
-  thumbnail?: string;
-  desktopThumbnail?: string;
-  desc?: string;
-  isVisible?: boolean;
 };
 
 // ADMIN LIVE 클래스 및 VOD 클래스 직무
