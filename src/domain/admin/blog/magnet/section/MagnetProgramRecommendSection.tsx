@@ -16,6 +16,7 @@ import {
 import { ChangeEvent, useMemo } from 'react';
 
 const { PROCEEDING, PREV } = ProgramStatusEnum.enum;
+const MAX_PROGRAM_FETCH_SIZE = 10000;
 
 // TODO: 백엔드에서 challengeType 필드가 admin program API에 추가되면 제목 추론 대신 직접 사용
 const CTA_SUBTITLE_MAP: Record<string, string> = {
@@ -45,7 +46,7 @@ const MagnetProgramRecommendSection = ({
 }: MagnetProgramRecommendSectionProps) => {
   const { data } = useGetProgramAdminQuery({
     page: 1,
-    size: 10000,
+    size: MAX_PROGRAM_FETCH_SIZE,
     type: 'CHALLENGE',
     status: [PROCEEDING, PREV],
   });
@@ -116,7 +117,7 @@ const MagnetProgramRecommendSection = ({
       </div>
       <div className="flex flex-col gap-5">
         {programRecommend.map((item, index) => (
-          <div key={index} className="flex flex-col gap-3">
+          <div key={`program-recommend-${index}`} className="flex flex-col gap-3">
             <FormControl size="small">
               <InputLabel>프로그램 선택</InputLabel>
               <Select

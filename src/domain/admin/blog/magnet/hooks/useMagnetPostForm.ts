@@ -112,7 +112,7 @@ export const useMagnetPostForm = ({
   };
 
   const savePost = async () => {
-    saveMagnetPost({
+    await saveMagnetPost({
       magnetId: Number(magnetId),
       metaDescription: formState.metaDescription,
       thumbnail: formState.thumbnail,

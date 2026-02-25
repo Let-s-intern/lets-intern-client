@@ -51,7 +51,7 @@ const MagnetRecommendSection = ({
       <Heading2 className="mb-3">마그넷 추천</Heading2>
       <div className="flex flex-col gap-3">
         {magnetRecommend.map((id, index) => (
-          <FormControl key={index} size="small">
+          <FormControl key={`magnet-recommend-${index}`} size="small">
             <InputLabel>자료집 ID {index + 1}</InputLabel>
             <Select
               value={id ?? 'null'}
