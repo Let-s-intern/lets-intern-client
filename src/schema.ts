@@ -618,7 +618,7 @@ export const getGuidebookIdSchema = z.object({
   contentFileUrl: z.string().nullable().optional(),
   price: z.number().nullable().optional(),
   discount: z.number().nullable().optional(),
-  guidebookPriceType: guidebookPriceTypeSchema.nullable().optional(),
+  guideBookPriceType: guidebookPriceTypeSchema.nullable().optional(),
   programTypeInfo: z
     .array(
       z.object({
@@ -660,7 +660,7 @@ export type CreateGuidebookReq = {
       deadline?: string;
       accountType?: AccountType;
     };
-    guidebookPriceType?: GuidebookPriceType;
+    guideBookPriceType?: GuidebookPriceType;
   };
   programTypeInfo: {
     classificationInfo: { programClassification: ProgramClassification };
@@ -694,7 +694,7 @@ export type UpdateGuidebookReq = {
       deadline?: string;
       accountType?: AccountType;
     };
-    guidebookPriceType: GuidebookPriceType;
+    guideBookPriceType: GuidebookPriceType;
   };
   programTypeInfo?: {
     classificationInfo: { programClassification: ProgramClassification };
