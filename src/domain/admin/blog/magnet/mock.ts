@@ -2,10 +2,13 @@
 import { IPageInfo } from '@/types/interface';
 import {
   MANAGEABLE_MAGNET_TYPES,
+  MagnetFormData,
+  MagnetFormReqBody,
   MagnetListItem,
   MagnetPostDetail,
   MagnetPostReqBody,
   MagnetTypeKey,
+  MagnetWithFormSummary,
 } from './types';
 
 const MOCK_MAGNETS: MagnetListItem[] = [
@@ -209,4 +212,81 @@ export function fetchManageableMagnets(): MagnetListItem[] {
   return MOCK_MAGNETS.filter((m) =>
     MANAGEABLE_MAGNET_TYPES.includes(m.type),
   );
+}
+
+// --- 마그넷 신청폼 관리 ---
+
+const MOCK_MAGNET_FORMS: Record<number, MagnetFormData> = {
+  5: {
+    magnetId: 5,
+    questions: [
+      {
+        questionId: 'q1',
+        questionType: 'SUBJECTIVE',
+        isRequired: 'REQUIRED',
+        question: '이름을 입력해주세요',
+        description: '',
+        selectionMethod: 'SINGLE',
+        items: [],
+      },
+      {
+        questionId: 'q2',
+        questionType: 'OBJECTIVE',
+        isRequired: 'REQUIRED',
+        question: '관심 직무를 선택해주세요',
+        description: '복수 선택이 가능합니다',
+        selectionMethod: 'MULTIPLE',
+        items: [
+          { itemId: 'i1', value: '마케팅', isOther: false },
+          { itemId: 'i2', value: '기획', isOther: false },
+          { itemId: 'i3', value: '개발', isOther: false },
+          { itemId: 'i4', value: '디자인', isOther: false },
+          { itemId: 'i5', value: '기타(직접입력)', isOther: true },
+        ],
+      },
+      {
+        questionId: 'q3',
+        questionType: 'SUBJECTIVE',
+        isRequired: 'OPTIONAL',
+        question: '자료집을 알게 된 경로를 알려주세요',
+        description: '선택사항입니다',
+        selectionMethod: 'SINGLE',
+        items: [],
+      },
+    ],
+  },
+};
+
+function buildDefaultForm(magnetId: number): MagnetFormData {
+  return { magnetId, questions: [] };
+}
+
+// TODO: API 준비 후 server-side fetch로 교체
+export async function fetchMagnetForm(
+  magnetId: number,
+): Promise<MagnetFormData> {
+  return MOCK_MAGNET_FORMS[magnetId] ?? buildDefaultForm(magnetId);
+}
+
+// TODO: API 준비 후 useSaveMagnetFormMutation React Query 훅으로 교체
+export async function saveMagnetForm(
+  body: MagnetFormReqBody,
+): Promise<void> {
+  MOCK_MAGNET_FORMS[body.magnetId] = {
+    magnetId: body.magnetId,
+    questions: body.questions,
+  };
+}
+
+// TODO: API 준비 후 React Query 훅으로 교체
+export function fetchMagnetsWithForm(): MagnetWithFormSummary[] {
+  return Object.entries(MOCK_MAGNET_FORMS).map(([id, data]) => {
+    const magnet = MOCK_MAGNETS.find((m) => m.id === Number(id));
+    return {
+      id: Number(id),
+      title: magnet?.title ?? `마그넷 ${id}`,
+      type: magnet?.type ?? 'RESOURCE',
+      questionCount: data.questions.length,
+    };
+  });
 }
