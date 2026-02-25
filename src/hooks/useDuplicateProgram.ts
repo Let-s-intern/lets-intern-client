@@ -145,7 +145,7 @@ export const guidebookToCreateInput = (
       }))
     : [],
   priceInfo: {
-    guidebookPriceType: guidebook.guidebookPriceType ?? 'CHARGE',
+    guideBookPriceType: guidebook.guideBookPriceType ?? 'CHARGE',
     priceInfo: {
       price: guidebook.price ?? 0,
       discount: guidebook.discount ?? 0,
