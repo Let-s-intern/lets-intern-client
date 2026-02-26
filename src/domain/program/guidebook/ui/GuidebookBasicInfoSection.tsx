@@ -1,11 +1,11 @@
 'use client';
 
-import type { GuidebookIdSchema } from '@/schema';
 import CardIcon from '@/assets/icons/credit-card.svg?react';
 import FileIcon from '@/assets/icons/file.svg?react';
 import FolderIcon from '@/assets/icons/folder.svg?react';
 import UserIcon from '@/assets/icons/mentor.svg?react';
 import BackHeader from '@/common/header/BackHeader';
+import type { GuidebookIdSchema } from '@/schema';
 import BasicInfoRow from '../../program-detail/basicInfo/BasicInfoRow';
 
 interface GuidebookBasicInfoSectionProps {
@@ -23,19 +23,20 @@ export const getDiscountPercent = (
 const GuidebookBasicInfoSection = ({
   guidebook,
 }: GuidebookBasicInfoSectionProps) => {
-  const thumbnail =
-    guidebook.thumbnail ?? guidebook.desktopThumbnail ?? null;
+  const thumbnail = guidebook.thumbnail ?? guidebook.desktopThumbnail ?? null;
   const price = guidebook.price ?? 0;
   const discount = guidebook.discount ?? 0;
 
   return (
-    <div className="mx-auto w-full max-w-[1000px] px-5 pb-10 md:px-0 md:pb-20">
+    <div className="mx-auto w-full max-w-[1000px] px-5 pb-10 md:px-10 md:pb-20 md:pt-[60px] lg:px-0">
       <div>
-        <BackHeader to="/program">{guidebook.title ?? ''}</BackHeader>
+        <BackHeader className="md:hidden" to="/program">
+          {guidebook.title ?? ''}
+        </BackHeader>
       </div>
-      <div className="flex flex-col items-stretch gap-3 md:flex-row md:gap-6">
+      <div className="flex flex-col items-stretch gap-6 md:flex-row">
         {/* 썸네일 */}
-        <div className="w-full rounded-md bg-neutral-95 object-contain md:w-3/5">
+        <div className="flex w-full items-center justify-center overflow-hidden rounded-md bg-neutral-95 md:w-3/5">
           <img src={thumbnail ?? undefined} alt="가이드북 썸네일" />
         </div>
 
