@@ -147,7 +147,7 @@ const GuidebookCreate: React.FC = () => {
         </FormSection>
       </div>
       <FormSection title="상세페이지 콘텐츠">
-        <GuidebookDetailContentSection />
+        <GuidebookDetailContentSection input={input} setInput={setInput} />
       </FormSection>
 
       <footer className="mt-8 flex items-center justify-end gap-3">

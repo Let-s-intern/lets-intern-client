@@ -17,7 +17,7 @@ const GuidebookThumbnailSection: React.FC<GuidebookThumbnailSectionProps> = ({
 
     const url = await uploadFile({
       file: e.target.files[0],
-      type: fileType.enum.LIVE, // TODO: 백엔드 타입 추가 후 수정 예정
+      type: fileType.enum.GUIDEBOOK,
     });
 
     setInput((prev) => ({
