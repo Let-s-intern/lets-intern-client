@@ -151,7 +151,7 @@ export const useGetTotalReview = ({
   programTitle,
   createdDate,
 }: {
-  type: 'CHALLENGE' | 'LIVE' | 'VOD' | 'REPORT';
+  type: 'CHALLENGE' | 'LIVE' | 'VOD' | 'REPORT' | 'GUIDEBOOK';
   programTitle?: string | null;
   createdDate?: string | null;
 }) => {

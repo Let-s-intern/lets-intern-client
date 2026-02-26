@@ -17,6 +17,7 @@ export const newProgramTypeToText: Record<string, string> = {
   LIVE: 'LIVE 클래스',
   VOD: 'VOD 클래스',
   REPORT: '서류 진단',
+  GUIDEBOOK: '가이드북',
 };
 export const newProgramFeeTypeToText: Record<string, string> = {
   FREE: '무료',
