@@ -338,7 +338,7 @@ export const useGetUserChallengeInfo = () => {
   return useQuery({
     queryKey: ['user', 'challenge-info'],
     queryFn: async () => {
-      const res = await axios.get('/user/challenge-info');
+      const res = await axiosV2.get('/user/challenge-info');
       return challengeUserInfoSchema.parse(res.data.data);
     },
   });
