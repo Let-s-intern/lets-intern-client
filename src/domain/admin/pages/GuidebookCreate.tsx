@@ -6,69 +6,35 @@ import GuidebookDetailContentSection from '@/domain/admin/program/guidebook/Guid
 import GuidebookPriceSection from '@/domain/admin/program/guidebook/GuidebookPriceSection';
 import GuidebookResourceSection from '@/domain/admin/program/guidebook/GuidebookResourceSection';
 import GuidebookThumbnailSection from '@/domain/admin/program/guidebook/GuidebookThumbnailSection';
+import { useGuidebookForm } from '@/domain/admin/program/guidebook/hooks/useGuidebookForm';
+import FormSection from '@/domain/admin/program/guidebook/ui/FormSection';
+import { buildCreateGuidebookReq } from '@/domain/admin/program/guidebook/utils/guidebookMapping';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
-import Heading2 from '@/domain/admin/ui/heading/Heading2';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { guidebookToCreateInput } from '@/hooks/useDuplicateProgram';
-import { CreateGuidebookReq, getGuidebookIdSchema } from '@/schema';
+import { getGuidebookIdSchema } from '@/schema';
 import { Button, TextField } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 
-const initialGuidebookInput: CreateGuidebookReq = {
-  title: '',
-  shortDesc: '',
-  thumbnail: '',
-  desktopThumbnail: '',
-  contentComposition: '',
-  accessMethod: '',
-  recommendedFor: '',
-  description: '',
-  job: '',
-  contentUrl: undefined,
-  contentFileUrl: undefined,
-  priceInfo: {
-    priceInfo: {
-      price: 0,
-      discount: 0,
-      accountNumber: '',
-      deadline: undefined,
-      accountType: 'KB',
-    },
-    guideBookPriceType: 'CHARGE',
-  },
-  programTypeInfo: [],
-  adminProgramTypeInfo: [],
-};
-
-interface FormSectionProps {
-  title: string;
-  children: React.ReactNode;
-}
-
-const FormSection: React.FC<FormSectionProps> = ({ title, children }) => (
-  <section className="flex flex-col gap-3">
-    <Heading2>{title}</Heading2>
-    {children}
-  </section>
-);
-
 const GuidebookCreate: React.FC = () => {
   const router = useRouter();
-  const [input, setInput] = useState<CreateGuidebookReq>(initialGuidebookInput);
-  const [resourceSource, setResourceSource] = useState<'url' | 'file'>('url');
   const [importJsonString, setImportJsonString] = useState('');
   const [importProcessing, setImportProcessing] = useState(false);
   const [loading, setLoading] = useState(false);
   const { snackbar } = useAdminSnackbar();
   const { mutateAsync: postGuidebook } = usePostGuidebookMutation();
 
+  const { input, setInput, resourceSource, setResourceSource } =
+    useGuidebookForm({ mode: 'create' });
+
   const onClickSave = useCallback(async () => {
     setLoading(true);
     try {
-      await postGuidebook(input);
+      const req = buildCreateGuidebookReq(input);
+      await postGuidebook(req);
       snackbar('가이드북이 생성되었습니다.');
       router.push('/admin/programs');
     } finally {

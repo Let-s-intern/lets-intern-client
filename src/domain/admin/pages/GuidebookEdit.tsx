@@ -6,28 +6,17 @@ import GuidebookDetailContentSection from '@/domain/admin/program/guidebook/Guid
 import GuidebookPriceSection from '@/domain/admin/program/guidebook/GuidebookPriceSection';
 import GuidebookResourceSection from '@/domain/admin/program/guidebook/GuidebookResourceSection';
 import GuidebookThumbnailSection from '@/domain/admin/program/guidebook/GuidebookThumbnailSection';
+import { useGuidebookForm } from '@/domain/admin/program/guidebook/hooks/useGuidebookForm';
+import FormSection from '@/domain/admin/program/guidebook/ui/FormSection';
+import { buildUpdateGuidebookReq } from '@/domain/admin/program/guidebook/utils/guidebookMapping';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
-import Heading2 from '@/domain/admin/ui/heading/Heading2';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import type { CreateGuidebookReq, GuidebookPriceType } from '@/schema';
 import { Button } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 import { FaSave } from 'react-icons/fa';
-
-interface FormSectionProps {
-  title: string;
-  children: React.ReactNode;
-}
-
-const FormSection: React.FC<FormSectionProps> = ({ title, children }) => (
-  <section className="flex flex-col gap-3">
-    <Heading2>{title}</Heading2>
-    {children}
-  </section>
-);
 
 const GuidebookEdit: React.FC = () => {
   const router = useRouter();
@@ -43,53 +32,12 @@ const GuidebookEdit: React.FC = () => {
 
   const { mutateAsync: patchGuidebook } = usePatchGuidebookMutation();
 
-  const [input, setInput] = useState<CreateGuidebookReq | null>(null);
-  const [resourceSource, setResourceSource] = useState<'url' | 'file'>('url');
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (!guidebook) return;
-
-    setInput({
-      title: guidebook.title ?? '',
-      shortDesc: guidebook.shortDesc ?? '',
-      thumbnail: guidebook.thumbnail ?? '',
-      desktopThumbnail: guidebook.desktopThumbnail ?? '',
-      contentComposition: guidebook.contentComposition ?? '',
-      accessMethod: guidebook.accessMethod ?? '',
-      recommendedFor: guidebook.recommendedFor ?? '',
-      description: guidebook.description ?? '',
-      job: guidebook.job ?? '',
-      contentUrl: guidebook.contentUrl ?? undefined,
-      contentFileUrl: guidebook.contentFileUrl ?? undefined,
-      priceInfo: {
-        priceInfo: {
-          price: guidebook.price ?? 0,
-          discount: guidebook.discount ?? 0,
-          accountNumber: '',
-          deadline: undefined,
-          accountType: 'KB',
-        },
-        guideBookPriceType: guidebook.guideBookPriceType ?? 'CHARGE',
-      },
-      programTypeInfo:
-        guidebook.programTypeInfo?.map((value) => ({
-          classificationInfo: {
-            programClassification: value.programClassification ?? 'PASS',
-          },
-        })) ?? [],
-      adminProgramTypeInfo:
-        guidebook.adminClassificationInfo?.map((value) => ({
-          classificationInfo: {
-            programAdminClassification: value.programAdminClassification,
-          },
-        })) ?? [],
+  const { input, setInput, resourceSource, setResourceSource, isReady } =
+    useGuidebookForm({
+      mode: 'edit',
+      initialGuidebook: guidebook,
     });
-
-    setResourceSource(
-      guidebook.contentFileUrl && !guidebook.contentUrl ? 'file' : 'url',
-    );
-  }, [guidebook]);
+  const [loading, setLoading] = React.useState(false);
 
   const handleClickExport = useCallback(async () => {
     if (!guidebook) return;
@@ -103,45 +51,16 @@ const GuidebookEdit: React.FC = () => {
   }, [guidebook, snackbar]);
 
   const handleClickSave = useCallback(async () => {
-    if (!guidebookIdString || !input) {
+    if (!guidebookIdString) {
       return;
     }
 
     setLoading(true);
     try {
-      const req = {
-        ...(input as CreateGuidebookReq),
-        guidebookId: Number(guidebookIdString),
-      } as {
-        guidebookId: number;
-        title: string;
-        shortDesc: string;
-        thumbnail: string;
-        desktopThumbnail?: string;
-        contentComposition: string;
-        accessMethod: string;
-        recommendedFor: string;
-        description: string;
-        isVisible?: boolean;
-        job: string;
-        contentUrl?: string;
-        contentFileUrl?: string;
-        priceInfo: {
-          priceInfo: {
-            price: number;
-            discount: number;
-            accountNumber?: string;
-            deadline?: string;
-            accountType?: CreateGuidebookReq['priceInfo']['priceInfo']['accountType'];
-          };
-          guideBookPriceType: GuidebookPriceType;
-        };
-        programTypeInfo: CreateGuidebookReq['programTypeInfo'];
-        adminProgramTypeInfo?: CreateGuidebookReq['adminProgramTypeInfo'];
-      };
+      const req = buildUpdateGuidebookReq(Number(guidebookIdString), input);
 
       await patchGuidebook(req);
-      client.invalidateQueries();
+      await client.invalidateQueries();
 
       snackbar('저장되었습니다.');
       router.push('/admin/programs');
@@ -150,7 +69,7 @@ const GuidebookEdit: React.FC = () => {
     }
   }, [client, guidebookIdString, input, patchGuidebook, router, snackbar]);
 
-  if (!guidebook || !input) {
+  if (!guidebook || !isReady) {
     return <div>loading...</div>;
   }
 
@@ -167,34 +86,16 @@ const GuidebookEdit: React.FC = () => {
 
       <div className="mb-6 mt-3 grid w-full grid-cols-2 gap-3">
         <FormSection title="기본 정보">
-          <GuidebookBasicSection
-            input={input as CreateGuidebookReq}
-            setInput={
-              setInput as React.Dispatch<
-                React.SetStateAction<CreateGuidebookReq>
-              >
-            }
-          />
+          <GuidebookBasicSection input={input} setInput={setInput} />
         </FormSection>
         <div className="flex flex-col gap-4">
           <FormSection title="가격 정보">
-            <GuidebookPriceSection
-              input={input as CreateGuidebookReq}
-              setInput={
-                setInput as React.Dispatch<
-                  React.SetStateAction<CreateGuidebookReq>
-                >
-              }
-            />
+            <GuidebookPriceSection input={input} setInput={setInput} />
           </FormSection>
           <FormSection title="자료 정보">
             <GuidebookResourceSection
-              input={input as CreateGuidebookReq}
-              setInput={
-                setInput as React.Dispatch<
-                  React.SetStateAction<CreateGuidebookReq>
-                >
-              }
+              input={input}
+              setInput={setInput}
               source={resourceSource}
               onChangeSource={setResourceSource}
             />
@@ -204,24 +105,12 @@ const GuidebookEdit: React.FC = () => {
 
       <div className="mb-6">
         <FormSection title="썸네일">
-          <GuidebookThumbnailSection
-            input={input as CreateGuidebookReq}
-            setInput={
-              setInput as React.Dispatch<
-                React.SetStateAction<CreateGuidebookReq>
-              >
-            }
-          />
+          <GuidebookThumbnailSection input={input} setInput={setInput} />
         </FormSection>
       </div>
 
       <FormSection title="상세페이지 콘텐츠">
-        <GuidebookDetailContentSection
-          input={input as CreateGuidebookReq}
-          setInput={
-            setInput as React.Dispatch<React.SetStateAction<CreateGuidebookReq>>
-          }
-        />
+        <GuidebookDetailContentSection input={input} setInput={setInput} />
       </FormSection>
 
       <footer className="mt-8 flex items-center justify-end gap-3">
