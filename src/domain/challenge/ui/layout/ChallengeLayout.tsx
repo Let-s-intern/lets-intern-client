@@ -78,7 +78,7 @@ const ChallengeLayout = ({ children }: { children: React.ReactNode }) => {
       return;
     }
 
-    if (!isValidUserInfo && !hasChallengeGoal) {
+    if (!isValidUserInfo || !hasChallengeGoal) {
       router.push(`/challenge/${applicationId}/${programId}/user/info`);
       return;
     }
