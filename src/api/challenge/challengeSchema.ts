@@ -9,6 +9,7 @@ import { z } from 'zod';
 
 export const challengeGoalSchema = z.object({
   goal: z.string().nullable(),
+  isFeedbackApplied: z.boolean(),
 });
 
 export const challengeUserInfoSchema = z.object({

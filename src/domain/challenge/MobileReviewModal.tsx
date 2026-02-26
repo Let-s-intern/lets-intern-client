@@ -39,16 +39,28 @@ function MobileReviewModal({ isOpen, onClose }: Props) {
       },
     });
 
+  const isFeedbackApplied = challengeGoal?.isFeedbackApplied ?? false;
+
   const [score, setScore] = useState<number | null>(null); // 만족도
   const [npsScore, setNpsScore] = useState<number | null>(null);
   const [goodPoint, setGoodPoint] = useState<string>('');
   const [badPoint, setBadPoint] = useState<string>('');
   const [goalResult, setGoalResult] = useState<string>('');
+  const [feedbackMentorNickname, setFeedbackMentorNickname] =
+    useState<string>('');
+  const [feedbackGoodPoint, setFeedbackGoodPoint] = useState<string>('');
+  const [feedbackBadPoint, setFeedbackBadPoint] = useState<string>('');
 
   useControlScroll(isOpen); // body 스크롤 막기
 
   const isDisabled =
-    !score || !npsScore || !goodPoint || !badPoint || !goalResult;
+    !score ||
+    !npsScore ||
+    !goodPoint ||
+    !badPoint ||
+    !goalResult ||
+    (isFeedbackApplied &&
+      (!feedbackMentorNickname || !feedbackGoodPoint || !feedbackBadPoint));
 
   const handleSubmit = async () => {
     if (postReviewIsPending) return;
@@ -78,6 +90,22 @@ function MobileReviewModal({ isOpen, onClose }: Props) {
               questionType: 'GOAL_RESULT',
               answer: goalResult,
             },
+            ...(isFeedbackApplied
+              ? [
+                  {
+                    questionType: 'FEEDBACK_MENTOR_NICKNAME' as const,
+                    answer: feedbackMentorNickname,
+                  },
+                  {
+                    questionType: 'FEEDBACK_GOOD_POINT' as const,
+                    answer: feedbackGoodPoint,
+                  },
+                  {
+                    questionType: 'FEEDBACK_BAD_POINT' as const,
+                    answer: feedbackBadPoint,
+                  },
+                ]
+              : []),
           ],
         },
       });
@@ -172,6 +200,46 @@ function MobileReviewModal({ isOpen, onClose }: Props) {
             placeholder="참여하면서 아쉬웠던 점이나 추가되었으면 좋겠는 내용이 있다면 자유롭게 작성해주세요."
           />
         </section>
+
+        {isFeedbackApplied && (
+          <>
+            {/* 피드백 멘토 닉네임 */}
+            <section>
+              <ReviewQuestion required className="mb-5">
+                6. test
+              </ReviewQuestion>
+              <ReviewTextarea
+                value={feedbackMentorNickname}
+                onChange={(e) => setFeedbackMentorNickname(e.target.value)}
+                placeholder="test"
+              />
+            </section>
+
+            {/* 피드백 만족했던 점 */}
+            <section>
+              <ReviewQuestion required className="mb-5">
+                7. test
+              </ReviewQuestion>
+              <ReviewTextarea
+                value={feedbackGoodPoint}
+                onChange={(e) => setFeedbackGoodPoint(e.target.value)}
+                placeholder="test"
+              />
+            </section>
+
+            {/* 피드백 아쉬웠던 점 */}
+            <section>
+              <ReviewQuestion required className="mb-5">
+                8. test
+              </ReviewQuestion>
+              <ReviewTextarea
+                value={feedbackBadPoint}
+                onChange={(e) => setFeedbackBadPoint(e.target.value)}
+                placeholder="test"
+              />
+            </section>
+          </>
+        )}
 
         <div className="flex flex-col gap-4">
           <BaseButton

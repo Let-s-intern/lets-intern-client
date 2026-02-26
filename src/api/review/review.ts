@@ -45,6 +45,9 @@ export const questionTypeSchema = z.enum([
   'GOAL_RESULT',
   'WORRY',
   'WORRY_RESULT',
+  'FEEDBACK_MENTOR_NICKNAME',
+  'FEEDBACK_GOOD_POINT',
+  'FEEDBACK_BAD_POINT',
 ]);
 
 export type ReviewType = z.infer<typeof reviewTypeSchema>;
