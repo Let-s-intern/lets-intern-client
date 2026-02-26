@@ -1,17 +1,15 @@
 'use client';
-import { useMemo } from 'react';
-import { QUESTION_MAP } from '../data/constants';
-import { defaultPersonaId, heroCopy, stepLabels } from '../data/copy';
-import { useCurationFlow } from '../hooks/useCurationFlow';
-import ChallengeComparisonSection from '../ui/ChallengeComparisonSection';
-import CurationHero from '../ui/CurationHero';
-import CurationStepper from '../ui/CurationStepper';
-import CurationStickyNav from '../ui/CurationStickyNav';
-import FaqSection from '../ui/FaqSection';
-import FrequentComparisonSection from '../ui/FrequentComparisonSection';
-import PersonaSelector from '../ui/PersonaSelector';
-import QuestionStep from '../ui/QuestionStep';
-import ResultSection from '../ui/ResultSection';
+import ChallengeCompareSection from '../challenge-comparison/ChallengeCompareSection';
+import FaqSection from '../faq/FaqSection';
+import { defaultPersonaId, heroCopy, stepLabels } from '../flow/copy';
+import CurationStepper from '../flow/CurationStepper';
+import PersonaSelector from '../flow/PersonaSelector';
+import { QUESTION_MAP } from '../flow/questions';
+import QuestionStep from '../flow/QuestionStep';
+import ResultSection from '../flow/ResultSection';
+import { useCurationFlow } from '../flow/useCurationFlow';
+import CurationHero from '../hero/CurationHero';
+import CurationStickyNav from '../nav/CurationStickyNav';
 
 const CurationScreen = () => {
   const {
@@ -28,14 +26,6 @@ const CurationScreen = () => {
     result,
     scrollToForm,
   } = useCurationFlow({ defaultPersonaId, questionMap: QUESTION_MAP });
-
-  const highlightedPrograms = useMemo(() => {
-    if (!result?.recommendations) return { primary: null, secondary: [] };
-    const [primary, ...secondary] = result.recommendations.map(
-      (r) => r.programId,
-    );
-    return { primary, secondary };
-  }, [result]);
 
   const handleRestartAndScroll = () => {
     handleRestart();
@@ -68,31 +58,27 @@ const CurationScreen = () => {
         onScrollToChallengeComparison={() =>
           scrollToSection('curation-challenge-comparison')
         }
-        onScrollToFrequentComparison={() =>
-          scrollToSection('curation-frequent-comparison')
-        }
         onScrollToFaq={() => scrollToSection('curation-faq')}
       />
 
       {/* Curation Selection Section */}
       <section
-        className="w-full bg-gradient-to-b from-white via-gray-50 to-white"
+        className="flex min-h-screen w-full items-start justify-center"
         id="curation-form"
       >
         <div
-          className="mx-auto flex w-full max-w-[1400px] flex-col gap-10 px-6 py-12"
+          className="flex w-full flex-col gap-10 px-6 py-14 md:px-10 lg:px-[7.5rem]"
           ref={formRef}
         >
-          <div className="flex flex-col items-center gap-4 text-center">
-            <div className="text-small16 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary-10 to-primary-5 px-5 py-2.5 font-bold text-primary shadow-sm">
-              <span className="text-medium22">✨</span>
-              <span>3초 큐레이션</span>
-            </div>
-            <h2 className="text-large36 md:text-xlarge40 font-black leading-tight text-neutral-0">
+          <div className="flex flex-col items-center gap-5 self-stretch py-[3.75rem]">
+            <p className="text-center text-lg font-semibold leading-6 text-indigo-500">
+              3초 큐레이션
+            </p>
+            <h2 className="text-center text-3xl font-bold leading-10 text-neutral-0">
               나에게 맞는 프로그램 찾기
             </h2>
-            <p className="text-medium20 font-medium text-neutral-40">
-              간단한 질문으로 맞춤 챌린지와 플랜을 추천받으세요
+            <p className="text-center text-lg font-semibold leading-6 text-zinc-600">
+              간단한 질문으로 맞춤 챌린지와 플랜을 추천받아 보세요
             </p>
           </div>
           <CurationStepper
@@ -150,13 +136,22 @@ const CurationScreen = () => {
         </div>
       </section>
 
-      {/* Comparison & FAQ Section */}
+      {/* Section Divider */}
+      <div className="mx-6 border-t border-neutral-90 md:mx-10 lg:mx-[7.5rem]" />
+
+      {/* Challenge Comparison Section */}
+      <section className="w-full bg-[#f9f9f8]">
+        <div className="flex w-full flex-col items-center pb-[120px] pt-10">
+          <ChallengeCompareSection />
+        </div>
+      </section>
+
+      {/* Section Divider */}
+      <div className="mx-6 border-t border-neutral-90 md:mx-10 lg:mx-[7.5rem]" />
+
+      {/* FAQ Section */}
       <section className="w-full bg-white">
-        <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-16 px-6 py-24">
-          <ChallengeComparisonSection
-            highlightedPrograms={highlightedPrograms}
-          />
-          <FrequentComparisonSection />
+        <div className="flex w-full flex-col gap-16 px-6 py-24 md:px-10 lg:px-[7.5rem]">
           <FaqSection />
         </div>
       </section>
