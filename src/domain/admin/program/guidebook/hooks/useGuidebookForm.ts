@@ -18,6 +18,7 @@ export const useGuidebookForm = ({
   mode,
   initialGuidebook,
 }: UseGuidebookFormOptions) => {
+  const [isReady, setIsReady] = useState(mode === 'create');
   const [input, setInput] = useState<CreateGuidebookReq>(() => {
     if (mode === 'create') {
       return initialGuidebookInput;
@@ -51,9 +52,8 @@ export const useGuidebookForm = ({
         ? 'file'
         : 'url',
     );
+    setIsReady(true);
   }, [mode, initialGuidebook]);
-
-  const isReady = mode === 'create' || Boolean(initialGuidebook);
 
   return {
     input,
