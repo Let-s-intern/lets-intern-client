@@ -19,7 +19,7 @@ import TableLayout from '@/domain/admin/ui/table/TableLayout';
 import dayjs from '@/lib/dayjs';
 import { Switch } from '@mui/material';
 import { DataGrid, GridColDef, GridRowParams } from '@mui/x-data-grid';
-import { Pencil, Trash } from 'lucide-react';
+import { Pencil, RefreshCw, Trash } from 'lucide-react';
 import Link from 'next/link';
 
 type TabType = 'active' | 'all';
@@ -384,10 +384,14 @@ const CommonBanners = () => {
               </button>
             </div>
             <button
-              className="rounded-xxs border border-primary bg-white px-4 py-0.5 text-xsmall14 text-primary duration-200 hover:bg-primary-20 hover:font-semibold disabled:opacity-50"
+              className="flex items-center gap-1 rounded-xxs border border-primary bg-white px-4 py-0.5 text-xsmall14 text-primary duration-200 hover:bg-primary-20 hover:font-semibold disabled:opacity-50"
               disabled={isUpdatingExpired}
               onClick={() => updateExpiredBanners()}
             >
+              <RefreshCw
+                size={14}
+                className={isUpdatingExpired ? 'animate-spin' : ''}
+              />
               {isUpdatingExpired ? '업데이트 중...' : '업데이트'}
             </button>
           </div>
