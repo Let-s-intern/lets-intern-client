@@ -10,6 +10,7 @@ import {
   useGetActiveBannersForAdmin,
   useGetCommonBannerForAdmin,
   useToggleCommonBannerVisibility,
+  useUpdateExpiredCommonBanners,
 } from '@/api/banner';
 import WarningModal from '@/common/alert/WarningModal';
 import EmptyContainer from '@/common/container/EmptyContainer';
@@ -188,6 +189,16 @@ const CommonBanners = () => {
     },
   });
 
+  const { mutate: updateExpiredBanners, isPending: isUpdatingExpired } =
+    useUpdateExpiredCommonBanners({
+      successCallback: () => {
+        alert('만료된 배너가 업데이트되었습니다.');
+      },
+      errorCallback: (error) => {
+        alert('업데이트에 실패했습니다: ' + error.message);
+      },
+    });
+
   const handleDeleteButtonClicked = (bannerId: number) => {
     setBannerIdForDeleting(bannerId);
     setIsDeleteModalShown(true);
@@ -352,23 +363,32 @@ const CommonBanners = () => {
           href: '/admin/banner/common-banners/new',
         }}
         tabs={
-          <div className="flex items-center gap-3 text-sm">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3 text-sm">
+              <button
+                className={
+                  activeTab === 'active' ? 'text-primary' : 'text-neutral-40'
+                }
+                onClick={() => setActiveTab('active')}
+              >
+                노출 중
+              </button>
+              <span className="text-gray-300">|</span>
+              <button
+                className={
+                  activeTab === 'all' ? 'text-primary' : 'text-neutral-40'
+                }
+                onClick={() => setActiveTab('all')}
+              >
+                전체
+              </button>
+            </div>
             <button
-              className={
-                activeTab === 'active' ? 'text-primary' : 'text-neutral-40'
-              }
-              onClick={() => setActiveTab('active')}
+              className="rounded-xxs border border-primary bg-white px-4 py-0.5 text-xsmall14 text-primary duration-200 hover:bg-primary-20 hover:font-semibold disabled:opacity-50"
+              disabled={isUpdatingExpired}
+              onClick={() => updateExpiredBanners()}
             >
-              노출 중
-            </button>
-            <span className="text-gray-300">|</span>
-            <button
-              className={
-                activeTab === 'all' ? 'text-primary' : 'text-neutral-40'
-              }
-              onClick={() => setActiveTab('all')}
-            >
-              전체
+              {isUpdatingExpired ? '업데이트 중...' : '업데이트'}
             </button>
           </div>
         }

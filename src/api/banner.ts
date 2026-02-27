@@ -651,6 +651,35 @@ export const useToggleCommonBannerVisibility = ({
   });
 };
 
+// 만료된 통합 배너 일괄 업데이트
+export const useUpdateExpiredCommonBanners = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      const res = await axios.patch('/admin/common-banner/expired');
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: getCommonBannerForAdminQueryKey(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: getActiveBannersForAdminQueryKey(),
+      });
+      successCallback?.();
+    },
+    onError: (error: Error) => {
+      errorCallback?.(error);
+    },
+  });
+};
+
 // 통합 배너 삭제
 export const useDeleteCommonBannerForAdmin = ({
   successCallback,
