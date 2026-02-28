@@ -8,6 +8,7 @@ import {
 import type { ProgramId } from '../types';
 import ChallengeCard from './ChallengeCard';
 import CompareResultCard from './CompareResultCard';
+import MobileChallengeCard from './MobileChallengeCard';
 import RecommendedComparisons from './RecommendedComparisons';
 import { useCompareCart } from './useCompareCart';
 
@@ -70,7 +71,7 @@ const ChallengeCompareSection = () => {
 
   return (
     <section
-      className="flex w-full flex-col items-center"
+      className="flex w-full flex-col items-center pb-24 md:pb-0"
       id="curation-challenge-comparison"
     >
       {/* 섹션 헤더 */}
@@ -98,8 +99,8 @@ const ChallengeCompareSection = () => {
             onSelect={handleRecommendedSelect}
           />
 
-          {/* 챌린지 카드 — 데스크톱 4+3, 소형 화면 flex-wrap */}
-          <div className="flex flex-col gap-0">
+          {/* 챌린지 카드 — 데스크톱 4+3 */}
+          <div className="hidden flex-col gap-0 md:flex">
             {/* Row 1: 4 cards */}
             <div className="flex flex-wrap justify-center gap-6 py-5 lg:flex-nowrap lg:justify-start">
               {CHALLENGE_COMPARISON.slice(0, 4).map((challenge) => (
@@ -127,10 +128,24 @@ const ChallengeCompareSection = () => {
               ))}
             </div>
           </div>
+
+          {/* 챌린지 카드 — 모바일 세로 리스트 */}
+          <div className="flex flex-col gap-4 py-5 md:hidden">
+            {CHALLENGE_COMPARISON.map((challenge) => (
+              <MobileChallengeCard
+                key={challenge.programId}
+                challenge={challenge}
+                inCart={isInCart(challenge.programId)}
+                isFull={isFull}
+                onToggle={toggleCartItem}
+                onRemove={removeFromCart}
+              />
+            ))}
+          </div>
         </div>
 
-        {/* 비교하기 바 */}
-        <div className="flex flex-col items-center">
+        {/* 비교하기 바 — 데스크톱 전용 */}
+        <div className="hidden flex-col items-center md:flex">
           <button
             type="button"
             onClick={handleCompare}
@@ -161,6 +176,26 @@ const ChallengeCompareSection = () => {
             />
           )}
         </div>
+      </div>
+
+      {/* 모바일 전용 플로팅 비교하기 버튼 */}
+      <div className="fixed bottom-0 left-0 right-0 z-10 bg-white px-5 py-4 md:hidden">
+        <button
+          type="button"
+          onClick={handleCompare}
+          disabled={!canCompare}
+          className={`flex w-full items-center justify-center rounded-lg px-2 py-4 transition-colors ${
+            canCompare
+              ? 'cursor-pointer bg-[#5f66f6] hover:bg-[#4d55f5]'
+              : 'bg-[#acafb6]'
+          }`}
+        >
+          <span className="text-base font-semibold leading-6 text-[#fafbfd]">
+            {canCompare
+              ? `프로그램 ${cartItems.length}개 비교하기`
+              : '비교할 프로그램을 선택해주세요'}
+          </span>
+        </button>
       </div>
     </section>
   );
