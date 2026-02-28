@@ -20,7 +20,7 @@ const MobileRecommendationCard = ({
     program.plans[0];
 
   return (
-    <div className="flex w-full flex-col items-start justify-start gap-2.5 overflow-hidden rounded-[20px] border border-[#CFCFCF] bg-[#FAFAFA] px-5 py-6">
+    <div className="flex w-full flex-col items-start justify-start gap-2.5 overflow-hidden rounded-[20px] border border-[#CFCFCF] bg-white px-5 py-6">
       <div className="flex flex-1 flex-col items-start justify-start gap-5 self-stretch">
         {/* 프로그램명 + 뱃지 + 서브타이틀 */}
         <div className="flex flex-col items-start justify-start gap-1 self-stretch">
@@ -80,7 +80,7 @@ const MobileRecommendationCard = ({
               {recommendation.reason}
             </span>
           </div>
-          <div className="flex flex-col items-start justify-start gap-2.5 self-stretch rounded-lg bg-white p-3">
+          <div className="flex flex-col items-start justify-start gap-2.5 self-stretch rounded-lg bg-[#FAFAFA] p-3">
             <span className="text-xs font-bold leading-4 text-zinc-400">
               추천 플랜
             </span>
