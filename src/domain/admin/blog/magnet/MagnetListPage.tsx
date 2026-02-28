@@ -4,16 +4,15 @@ import {
   useCreateMagnetMutation,
   useDeleteMagnetMutation,
   useGetMagnetListQuery,
+  usePatchMagnetVisibilityMutation,
 } from '@/api/magnet/magnet';
 import ActionButton from '@/domain/admin/ui/button/ActionButton';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
-import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import MagnetCreateModal from './MagnetCreateModal';
 import MagnetFilter from './MagnetFilter';
 import MagnetTable from './MagnetTable';
-import { toggleMagnetVisibility } from './mock';
 import { CreateMagnetReqBody, MagnetFilterValues, MagnetTypeKey } from './types';
 
 const INITIAL_FILTER: MagnetFilterValues = {
@@ -28,9 +27,9 @@ const MagnetListPage = () => {
   const [appliedFilter, setAppliedFilter] =
     useState<MagnetFilterValues>(INITIAL_FILTER);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const queryClient = useQueryClient();
   const { mutate: createMagnetMutate } = useCreateMagnetMutation();
   const { mutate: deleteMagnet } = useDeleteMagnetMutation();
+  const { mutate: patchVisibility } = usePatchMagnetVisibilityMutation();
 
   // React Query로 마그넷 목록 조회 (타입/키워드 필터는 서버에서 처리)
   const { data: queryData } = useGetMagnetListQuery({
@@ -66,10 +65,6 @@ const MagnetListPage = () => {
     setAppliedFilter(INITIAL_FILTER);
   };
 
-  const invalidateMagnetList = useCallback(() => {
-    queryClient.invalidateQueries({ queryKey: ['MagnetListQueryKey'] });
-  }, [queryClient]);
-
   const handleCreate = (body: CreateMagnetReqBody) => {
     createMagnetMutate(body);
     setIsCreateModalOpen(false);
@@ -77,11 +72,9 @@ const MagnetListPage = () => {
 
   const handleToggleVisibility = useCallback(
     (id: number, isVisible: boolean) => {
-      // TODO: API 준비 후 mutation으로 교체
-      toggleMagnetVisibility(id, isVisible);
-      invalidateMagnetList();
+      patchVisibility({ magnetId: id, isVisible });
     },
-    [invalidateMagnetList],
+    [patchVisibility],
   );
 
   const handleDelete = useCallback(

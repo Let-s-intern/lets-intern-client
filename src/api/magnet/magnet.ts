@@ -55,6 +55,38 @@ export const useDeleteMagnetMutation = ({
   });
 };
 
+export const usePatchMagnetVisibilityMutation = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: () => void;
+} = {}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      magnetId,
+      isVisible,
+    }: {
+      magnetId: number;
+      isVisible: boolean;
+    }) => {
+      const res = await axios.patch(`/admin/magnet/${magnetId}`, {
+        isVisible,
+      });
+      return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [magnetListQueryKey] });
+      successCallback?.();
+    },
+    onError: (error) => {
+      console.error(error);
+      errorCallback?.();
+    },
+  });
+};
+
 export const useCreateMagnetMutation = ({
   successCallback,
   errorCallback,
