@@ -1,18 +1,31 @@
 'use client';
 
+import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
+import { ChallengeContent, ChallengeCurriculum } from '@/types/interface';
 import { useMediaQuery } from '@mui/material';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import { ReactNode, useState } from 'react';
-import CurriculumContent, { curriculums } from './CurriculumContent';
+import { ReactNode, useMemo, useState } from 'react';
+import {
+  CurriculumContent,
+  WeekGroup,
+  getCurriculumGroupedByWeek,
+} from './CurriculumContent';
+
+interface CurriculumsProps {
+  curriculum?: ChallengeCurriculum[];
+  content?: ChallengeContent;
+}
 
 const Dropdown = ({
   index,
   title,
+  date,
   children,
 }: {
   index: number;
   title: string;
+  date?: string;
   children: ReactNode;
 }) => {
   const [isOpen, setIsOpen] = useState(
@@ -27,7 +40,7 @@ const Dropdown = ({
       >
         <div className="flex items-center gap-2.5 text-small18 font-semibold text-[#4A76FF]">
           <span>WEEK {index + 1}</span>
-          <span>{title}</span>
+          {date ? <span>{date}</span> : <span>{title}</span>}
         </div>
         {isOpen ? (
           <ChevronUp className="h-6 w-6 text-neutral-50" />
@@ -77,70 +90,115 @@ const SidebarButton = ({
         <span>WEEK {index + 1}</span>
         <span>{date}</span>
       </div>
-      <h3
-        className={
-          active ? 'text-xsmall16 font-semibold' : 'text-small18 font-normal'
-        }
-      >
-        {title}
-      </h3>
+      {title && (
+        <h3
+          className={
+            active ? 'text-xsmall16 font-semibold' : 'text-small18 font-normal'
+          }
+        >
+          {title}
+        </h3>
+      )}
     </button>
   );
 };
 
-const sidebarList = curriculums.map((item) => ({
-  date: item.date,
-  title: item.title,
-}));
+interface DesktopCurriculumsProps {
+  groupedByWeek: WeekGroup[];
+  sidebarList: {
+    date: string;
+    title: string;
+  }[];
+}
 
-const ContentWithSidebar = () => {
+function DesktopCurriculums({
+  groupedByWeek,
+  sidebarList,
+}: DesktopCurriculumsProps) {
   const [active, setActive] = useState(0);
 
-  const activeContent = curriculums[active];
+  const safeActiveIndex =
+    active >= 0 && active < groupedByWeek.length ? active : 0;
+  const activeGroup = groupedByWeek[safeActiveIndex];
+
+  if (!activeGroup) {
+    return null;
+  }
 
   return (
-    <div className="hidden w-full max-w-[898px] items-stretch overflow-hidden rounded-sm bg-white md:flex">
+    <div className="hidden w-full max-w-[920px] items-stretch overflow-hidden rounded-sm bg-white md:flex">
       {/* Sidebar */}
       <div className="flex min-w-fit max-w-[398px] flex-1 shrink-0 flex-col border-r border-neutral-80 px-8 py-[30px]">
         {sidebarList.map((item, index) => (
           <SidebarButton
-            key={`sidebar-button-${item.date}`}
+            key={`sidebar-button-${index}`}
             index={index}
             date={item.date}
             title={item.title}
-            active={index === active}
+            active={index === safeActiveIndex}
             onClick={() => setActive(index)}
           />
         ))}
       </div>
       {/* Content */}
-      <div className="h-[634px] w-full min-w-fit flex-1 shrink-0 px-8 pb-11 pt-10">
-        <CurriculumContent curriculum={activeContent} />
+      <div className="h-[634px] min-w-0 flex-1 shrink-0 flex-col gap-3 overflow-y-auto overflow-x-hidden px-8 pb-11 pt-10">
+        <CurriculumContent weekGroup={activeGroup} />
       </div>
     </div>
   );
-};
+}
 
-function Curriculums() {
+function Curriculums({ curriculum, content }: CurriculumsProps) {
   const isMobile = useMediaQuery('(max-width:768px)');
+
+  const groupedByWeek = useMemo(
+    () => getCurriculumGroupedByWeek(curriculum, content),
+    [curriculum, content],
+  );
+
+  const sidebarListFromAdmin = groupedByWeek.map((group) => ({
+    date:
+      group.startDate && group.endDate
+        ? `${dayjs(group.startDate).format('M/D')}-${dayjs(group.endDate).format('M/D')}`
+        : '',
+    title: group.weekTitle,
+  }));
+
+  // 어드민 커리큘럼이 없으면 아무것도 렌더링하지 않음
+  if (groupedByWeek.length === 0) {
+    return null;
+  }
 
   if (isMobile) {
     return (
-      <div className="flex w-full flex-col items-stretch gap-3 md:hidden">
-        {curriculums.map((item, index) => (
-          <Dropdown
-            key={`dropdown-${item.date}`}
-            title={item.date}
-            index={index}
-          >
-            <CurriculumContent curriculum={item} />
-          </Dropdown>
-        ))}
+      <div className="flex w-full min-w-[320px] max-w-full flex-col items-stretch gap-3 overflow-x-hidden md:hidden">
+        {groupedByWeek.map((group, index) => {
+          const dateRange =
+            group.startDate && group.endDate
+              ? `${dayjs(group.startDate).format('M/D')}-${dayjs(group.endDate).format('M/D')}`
+              : '';
+
+          return (
+            <Dropdown
+              key={`dropdown-${group.week || index}`}
+              title={group.weekTitle}
+              date={dateRange}
+              index={index}
+            >
+              <CurriculumContent weekGroup={group} />
+            </Dropdown>
+          );
+        })}
       </div>
     );
   }
 
-  return <ContentWithSidebar />;
+  return (
+    <DesktopCurriculums
+      groupedByWeek={groupedByWeek}
+      sidebarList={sidebarListFromAdmin}
+    />
+  );
 }
 
 export default Curriculums;

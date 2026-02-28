@@ -1,7 +1,6 @@
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeCurriculum } from '@/types/interface';
-import Image from 'next/image';
 import { ReactNode } from 'react';
 
 interface WeekGroup {
@@ -63,26 +62,21 @@ function Highlight({
         className,
       )}
     >
-      <div className="flex min-w-0 items-center gap-1.5">
+      <p
+        className={twMerge(
+          textStyle,
+          'min-w-0 whitespace-pre-line break-words',
+        )}
+      >
         {contentImg && (
-          <Image
+          <img
             src={contentImg}
             alt=""
-            unoptimized
-            width={28}
-            height={28}
-            className="h-5 w-5 flex-shrink-0 md:h-7 md:w-7"
+            className="mb-1 mr-2 inline-block h-5 align-top md:h-7"
           />
         )}
-        <p
-          className={twMerge(
-            textStyle,
-            'min-w-0 flex-1 whitespace-pre-line break-words',
-          )}
-        >
-          {description}
-        </p>
-      </div>
+        {description}
+      </p>
     </div>
   );
 }

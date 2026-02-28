@@ -6,41 +6,45 @@ interface HrCurriculumPointsSectionProps {
   content: ChallengeContent | null;
 }
 
-const curriculumCards = [
-  {
-    title: 'HR 실무 역량 Class',
-    description: (
-      <>
-        HR 직무에서 수행해야 하는 사전 과제,
-        <br />
-        HR 관련 뉴스기사, 아티클 등 수집하는
-        <br />
-        스터디까지 지원해드려요
-      </>
-    ),
-  },
-  {
-    title: '현직자의 LIVE 세미나',
-    description: (
-      <>
-        4명의 HR 현직자 선배들이
-        <br />
-        어떻게 HR 커리어를 시작했는지,
-        <br />그 이야기를 직접 들려드릴게요
-      </>
-    ),
-  },
-  {
-    title: '챌린지를 통한 서류 완성',
-    description: (
-      <>
-        채용 공고에 바로 지원이 가능하도록,
-        <br />
-        수준급의 서류를 무조건 완성해요
-      </>
-    ),
-  },
-];
+const DEFAULT_LECTURE_COUNT = 5;
+
+function getCurriculumCards(lectureCount: number) {
+  return [
+    {
+      title: 'HR 실무 역량 Class',
+      description: (
+        <>
+          HR 직무에서 수행해야 하는 사전 과제,
+          <br />
+          HR 관련 뉴스기사, 아티클 등 수집하는
+          <br />
+          스터디까지 지원해드려요
+        </>
+      ),
+    },
+    {
+      title: '현직자의 LIVE 세미나',
+      description: (
+        <>
+          {lectureCount}명의 HR 현직자 선배들이
+          <br />
+          어떻게 HR 커리어를 시작했는지,
+          <br />그 이야기를 직접 들려드릴게요
+        </>
+      ),
+    },
+    {
+      title: '챌린지를 통한 서류 완성',
+      description: (
+        <>
+          채용 공고에 바로 지원이 가능하도록,
+          <br />
+          수준급의 서류를 무조건 완성해요
+        </>
+      ),
+    },
+  ];
+}
 
 const CurriculumCard = ({
   title,
@@ -80,6 +84,8 @@ const HrCurriculumPointsSection: React.FC<HrCurriculumPointsSectionProps> = ({
   content,
 }) => {
   const weekText = content?.challengePoint?.weekText ?? '3주';
+  const lectureCount = content?.lectures?.length ?? DEFAULT_LECTURE_COUNT;
+  const curriculumCards = getCurriculumCards(lectureCount);
 
   return (
     <section className="flex w-full flex-col items-center pb-[70px] pt-[50px] text-center md:overflow-x-hidden md:pb-[82px] md:pt-[141px]">
