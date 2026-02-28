@@ -88,3 +88,64 @@ export interface MagnetPostReqBody {
   content: string;
   isVisible: boolean;
 }
+
+// --- 마그넷 신청폼 관리 ---
+
+/** 질문 유형 */
+export type FormQuestionType = 'SUBJECTIVE' | 'OBJECTIVE';
+
+/** 응답 설정 */
+export type FormResponseRequired = 'REQUIRED' | 'OPTIONAL';
+
+/** 객관식 선택 방식 */
+export type FormSelectionMethod = 'SINGLE' | 'MULTIPLE';
+
+/** 객관식 항목 */
+export interface FormQuestionItem {
+  itemId: string;
+  value: string;
+  isOther: boolean;
+}
+
+/** 질문 */
+export interface FormQuestion {
+  questionId: string;
+  questionType: FormQuestionType;
+  isRequired: FormResponseRequired;
+  question: string;
+  description: string;
+  selectionMethod: FormSelectionMethod;
+  items: FormQuestionItem[];
+}
+
+/** 마그넷 신청폼 전체 데이터 */
+export interface MagnetFormData {
+  magnetId: number;
+  questions: FormQuestion[];
+}
+
+/** 마그넷 신청폼 저장 요청 */
+export interface MagnetFormReqBody {
+  magnetId: number;
+  questions: FormQuestion[];
+}
+
+/** 복제 가능한 마그넷 요약 (폼이 있는 마그넷 목록) */
+export interface MagnetWithFormSummary {
+  id: number;
+  title: string;
+  type: MagnetTypeKey;
+  questionCount: number;
+}
+
+// --- 공통 신청폼 관리 ---
+
+/** 공통 신청폼 전체 데이터 (마그넷 독립) */
+export interface CommonFormData {
+  questions: FormQuestion[];
+}
+
+/** 공통 신청폼 저장 요청 */
+export interface CommonFormReqBody {
+  questions: FormQuestion[];
+}
