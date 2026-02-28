@@ -48,9 +48,9 @@ const mapDetailToFormValue = (
       if (item.agentType === 'PC') { programPcFileId = item.fileId; programPcFileUrl = item.fileUrl ?? null; }
       if (item.agentType === 'MOBILE') { programMobileFileId = item.fileId; programMobileFileUrl = item.fileUrl ?? null; }
     } else if (item.type === 'MY_PAGE') {
-      // MY_PAGE PC = 프로그램 모바일, MY_PAGE MOBILE = 홈 모바일
-      if (item.agentType === 'PC') { programMobileFileId = item.fileId; programMobileFileUrl = item.fileUrl ?? null; }
+      // MY_PAGE PC, MOBILE 모두 홈 배너 (모바일) 이미지 사용
       if (item.agentType === 'MOBILE') { homeMobileFileId = item.fileId; homeMobileFileUrl = item.fileUrl ?? null; }
+      if (item.agentType === 'PC' && !homeMobileFileId) { homeMobileFileId = item.fileId; homeMobileFileUrl = item.fileUrl ?? null; }
     }
   }
 
@@ -147,7 +147,7 @@ const CommonBannerEdit = () => {
       alert('프로그램 배너 (PC) 이미지를 업로드해주세요.');
       return;
     }
-    if ((needsProgram || needsMyPage) && !value.programMobileFile && !value.programMobileFileId) {
+    if (needsProgram && !value.programMobileFile && !value.programMobileFileId) {
       alert('프로그램 배너 (모바일) 이미지를 업로드해주세요.');
       return;
     }
