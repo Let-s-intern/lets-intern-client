@@ -54,7 +54,10 @@ const FaqSection = () => {
       : FAQS.filter((faq) => faq.category === selectedCategory);
 
   return (
-    <section className="flex w-full flex-col items-center gap-6" id="curation-faq">
+    <section
+      className="flex w-full flex-col items-center gap-6"
+      id="curation-faq"
+    >
       <div className="flex flex-col items-center gap-5 self-stretch py-8 md:py-14">
         <div className="flex w-full max-w-[62.5rem] flex-col items-center gap-5 px-6 md:gap-10 md:px-10 lg:px-0">
           <p className="self-stretch text-center text-lg font-semibold leading-6 text-indigo-500">
@@ -70,7 +73,7 @@ const FaqSection = () => {
       </div>
 
       {/* 카테고리 필터 버튼 */}
-      <div className="flex flex-wrap justify-center gap-2 px-6 md:px-0">
+      <div className="flex flex-wrap justify-center gap-2 md:px-0">
         <button
           onClick={() => setSelectedCategory('all')}
           className={`rounded-full px-3 py-1.5 text-sm font-bold leading-5 transition-all md:px-4 md:text-base md:leading-6 ${
@@ -99,7 +102,7 @@ const FaqSection = () => {
       </div>
 
       {/* FAQ 리스트 — md:min-h로 카테고리 전환 시 높이 점핑 방지 */}
-      <div className="flex w-full max-w-[50rem] flex-col gap-3 px-6 md:min-h-[600px] md:px-0">
+      <div className="flex w-full max-w-[50rem] flex-col gap-3 md:min-h-[600px] md:px-0">
         {filteredFaqs.length > 0 ? (
           filteredFaqs.map((item) => (
             <details
