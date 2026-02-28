@@ -205,8 +205,8 @@ const ChallengeReviewCreatePageContent = () => {
           {/* 피드백 멘토 닉네임 */}
           <section>
             <ReviewQuestion required className="mb-5">
-              6. 포트폴리오 2주 완성 챌린지 25기 1:1 피드백을 진행해 주신
-              멘토님의 닉네임을 작성해 주세요!
+              6. {josa(programTitle?.title ?? '', '을/를')} 진행해 주신 멘토님의
+              닉네임을 작성해 주세요!
             </ReviewQuestion>
             <ReviewTextarea
               value={feedbackMentorNickname}
