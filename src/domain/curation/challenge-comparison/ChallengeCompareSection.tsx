@@ -9,6 +9,7 @@ import type { ProgramId } from '../types';
 import ChallengeCard from './ChallengeCard';
 import CompareResultCard from './CompareResultCard';
 import MobileChallengeCard from './MobileChallengeCard';
+import MobileCompareView from './MobileCompareView';
 import RecommendedComparisons from './RecommendedComparisons';
 import { useCompareCart } from './useCompareCart';
 
@@ -30,6 +31,7 @@ const ChallengeCompareSection = () => {
 
   const [compareTargets, setCompareTargets] = useState<ProgramId[]>([]);
   const [recommendedIndex, setRecommendedIndex] = useState<number | null>(null);
+  const [isMobileViewOpen, setIsMobileViewOpen] = useState(false);
   const resultRef = useRef<HTMLDivElement>(null);
 
   const scrollToResult = useCallback(() => {
@@ -68,6 +70,14 @@ const ChallengeCompareSection = () => {
     setCompareTargets([]);
     setRecommendedIndex(null);
   }, []);
+
+  /** 모바일 플로팅 버튼 — 비교 결과 전체화면 뷰 열기 */
+  const handleMobileCompare = useCallback(() => {
+    if (!canCompare) return;
+    setCompareTargets([...cartItems]);
+    setRecommendedIndex(null);
+    setIsMobileViewOpen(true);
+  }, [canCompare, cartItems]);
 
   return (
     <section
@@ -182,7 +192,7 @@ const ChallengeCompareSection = () => {
       <div className="fixed bottom-0 left-0 right-0 z-10 bg-white px-5 py-4 md:hidden">
         <button
           type="button"
-          onClick={handleCompare}
+          onClick={handleMobileCompare}
           disabled={!canCompare}
           className={`flex w-full items-center justify-center rounded-lg px-2 py-4 transition-colors ${
             canCompare
@@ -197,6 +207,14 @@ const ChallengeCompareSection = () => {
           </span>
         </button>
       </div>
+
+      {/* 모바일 비교 결과 전체화면 뷰 */}
+      {isMobileViewOpen && compareTargets.length >= 2 && (
+        <MobileCompareView
+          programIds={compareTargets}
+          onClose={() => setIsMobileViewOpen(false)}
+        />
+      )}
     </section>
   );
 };
