@@ -70,14 +70,14 @@ const CurationScreen = () => {
           className="flex w-full flex-col gap-10 px-6 py-14 md:px-10 lg:px-[7.5rem]"
           ref={formRef}
         >
-          <div className="flex flex-col items-center gap-5 self-stretch py-[3.75rem]">
+          <div className="flex flex-col items-center gap-5 self-stretch py-8 md:py-[3.75rem]">
             <p className="text-center text-lg font-semibold leading-6 text-indigo-500">
               3초 큐레이션
             </p>
-            <h2 className="text-center text-3xl font-bold leading-10 text-neutral-0">
+            <h2 className="text-center text-2xl font-bold leading-tight text-neutral-0 md:text-3xl md:leading-10">
               나에게 맞는 프로그램 찾기
             </h2>
-            <p className="text-center text-lg font-semibold leading-6 text-zinc-600">
+            <p className="text-center text-base font-semibold leading-6 text-zinc-600 md:text-lg">
               간단한 질문으로 맞춤 챌린지와 플랜을 추천받아 보세요
             </p>
           </div>
