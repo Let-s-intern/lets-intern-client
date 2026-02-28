@@ -1,6 +1,6 @@
 /** 마그넷 타입 상수 */
 export const MAGNET_TYPE = {
-  RESOURCE: '자료집',
+  MATERIAL: '자료집',
   VOD: 'VOD',
   FREE_TEMPLATE: '무료 템플릿',
   LAUNCH_ALERT: '출시알림',
@@ -12,7 +12,7 @@ export type MagnetTypeLabel = (typeof MAGNET_TYPE)[MagnetTypeKey];
 
 /** 자료집/VOD/무료 템플릿 — 노출여부, 신청자 관리, 관리 버튼을 보여주는 타입 */
 export const MANAGEABLE_MAGNET_TYPES: MagnetTypeKey[] = [
-  'RESOURCE',
+  'MATERIAL',
   'VOD',
   'FREE_TEMPLATE',
 ];
@@ -20,17 +20,15 @@ export const MANAGEABLE_MAGNET_TYPES: MagnetTypeKey[] = [
 export const isMagnetManageable = (type: MagnetTypeKey): boolean =>
   MANAGEABLE_MAGNET_TYPES.includes(type);
 
-/** 마그넷 목록 아이템 */
+/** 마그넷 목록 아이템 — API 응답 필드와 일치 */
 export interface MagnetListItem {
-  id: number;
+  magnetId: number;
   type: MagnetTypeKey;
   title: string;
-  programType: string | null;
-  challengeType: string | null;
-  displayDate: string | null;
+  startDate: string | null;
   endDate: string | null;
   isVisible: boolean;
-  applicantCount: number;
+  applicationCount: number;
 }
 
 /** 마그넷 등록 요청 바디 */
