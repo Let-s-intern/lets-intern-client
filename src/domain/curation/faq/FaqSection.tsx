@@ -108,7 +108,8 @@ const FaqSection = () => {
             <details
               key={`${selectedCategory}-${item.question}`}
               className="group overflow-hidden rounded-lg border border-neutral-90 bg-white"
-              defaultOpen={selectedCategory !== 'all'}
+              open={selectedCategory !== 'all' || undefined}
+              suppressHydrationWarning
             >
               <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 text-base font-semibold leading-6 text-neutral-0 md:text-lg">
                 <span>{item.question}</span>
