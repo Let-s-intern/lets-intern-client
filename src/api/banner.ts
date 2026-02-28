@@ -405,7 +405,7 @@ export const usePostCommonBannerForAdmin = ({
           ? maybeUploadCommonBanner(form.homeMobileFile)
           : Promise.resolve(null),
         needsProgram ? maybeUploadCommonBanner(form.programPcFile) : Promise.resolve(null),
-        needsProgram || needsMyPage
+        needsProgram
           ? maybeUploadCommonBanner(form.programMobileFile)
           : Promise.resolve(null),
       ]);
@@ -434,8 +434,8 @@ export const usePostCommonBannerForAdmin = ({
       }
 
       if (types.MY_PAGE) {
-        if (programMobileFileId)
-          commonBannerDetailInfoList.push({ type: 'MY_PAGE', agentType: 'PC', fileId: programMobileFileId });
+        if (homeMobileFileId)
+          commonBannerDetailInfoList.push({ type: 'MY_PAGE', agentType: 'PC', fileId: homeMobileFileId });
         if (homeMobileFileId)
           commonBannerDetailInfoList.push({ type: 'MY_PAGE', agentType: 'MOBILE', fileId: homeMobileFileId });
       }
@@ -528,7 +528,7 @@ export const useEditCommonBannerForAdmin = ({
         needsProgram && form.programPcFile
           ? maybeUploadCommonBanner(form.programPcFile)
           : Promise.resolve(form.programPcFileId ?? null),
-        (needsProgram || needsMyPage) && form.programMobileFile
+        needsProgram && form.programMobileFile
           ? maybeUploadCommonBanner(form.programMobileFile)
           : Promise.resolve(form.programMobileFileId ?? null),
       ]);
@@ -557,8 +557,8 @@ export const useEditCommonBannerForAdmin = ({
       }
 
       if (types.MY_PAGE) {
-        if (programMobileFileId)
-          commonBannerDetailInfoList.push({ type: 'MY_PAGE', agentType: 'PC', fileId: programMobileFileId });
+        if (homeMobileFileId)
+          commonBannerDetailInfoList.push({ type: 'MY_PAGE', agentType: 'PC', fileId: homeMobileFileId });
         if (homeMobileFileId)
           commonBannerDetailInfoList.push({ type: 'MY_PAGE', agentType: 'MOBILE', fileId: homeMobileFileId });
       }

@@ -76,7 +76,7 @@ const CommonBannerCreate = () => {
       alert('프로그램 배너 (PC) 이미지를 업로드해주세요.');
       return;
     }
-    if ((needsProgram || needsMyPage) && !value.programMobileFile) {
+    if (needsProgram && !value.programMobileFile) {
       alert('프로그램 배너 (모바일) 이미지를 업로드해주세요.');
       return;
     }

@@ -114,7 +114,7 @@ const CommonBannerInputContent = ({ value, onChange }: Props) => {
 
   // 이미지 섹션 표시 여부
   const showHomeImages = hasHome || hasMyPage;
-  const showProgramImages = hasProgram || hasMyPage;
+  const showProgramImages = hasProgram;
 
   return (
     <div className="flex flex-col gap-6">
@@ -225,7 +225,9 @@ const CommonBannerInputContent = ({ value, onChange }: Props) => {
                 label="홈 배너 (모바일)"
                 file={value.homeMobileFile}
                 previewUrl={value.homeMobileFileUrl}
-                onChange={(f) => set({ homeMobileFile: f, homeMobileFileUrl: null })}
+                onChange={(f) =>
+                  set({ homeMobileFile: f, homeMobileFileUrl: null })
+                }
               />
             </div>
           )}
@@ -238,14 +240,18 @@ const CommonBannerInputContent = ({ value, onChange }: Props) => {
                   label="프로그램 배너 (PC)"
                   file={value.programPcFile}
                   previewUrl={value.programPcFileUrl}
-                  onChange={(f) => set({ programPcFile: f, programPcFileUrl: null })}
+                  onChange={(f) =>
+                    set({ programPcFile: f, programPcFileUrl: null })
+                  }
                 />
               )}
               <ImageUploadBox
                 label="프로그램 배너 (모바일)"
                 file={value.programMobileFile}
                 previewUrl={value.programMobileFileUrl}
-                onChange={(f) => set({ programMobileFile: f, programMobileFileUrl: null })}
+                onChange={(f) =>
+                  set({ programMobileFile: f, programMobileFileUrl: null })
+                }
               />
             </div>
           )}
@@ -262,9 +268,8 @@ const CommonBannerInputContent = ({ value, onChange }: Props) => {
             <div className="text-xs leading-relaxed text-gray-500">
               <p>※ 마이페이지 배너는 별도 이미지를 사용하지 않습니다.</p>
               <p>
-                - 마이페이지 PC : 프로그램 배너 (모바일) 이미지가 노출됩니다.
+                - 마이페이지 PC, 모바일 : 홈 배너 (모바일) 이미지가 노출됩니다.
               </p>
-              <p>- 마이페이지 모바일 : 홈 배너 (모바일) 이미지가 노출됩니다.</p>
             </div>
           )}
         </div>
