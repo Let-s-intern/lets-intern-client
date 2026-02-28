@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  useCreateMagnetMutation,
   useDeleteMagnetMutation,
   useGetMagnetListQuery,
 } from '@/api/magnet/magnet';
@@ -12,10 +13,7 @@ import { useCallback, useMemo, useState } from 'react';
 import MagnetCreateModal from './MagnetCreateModal';
 import MagnetFilter from './MagnetFilter';
 import MagnetTable from './MagnetTable';
-import {
-  createMagnet,
-  toggleMagnetVisibility,
-} from './mock';
+import { toggleMagnetVisibility } from './mock';
 import { CreateMagnetReqBody, MagnetFilterValues, MagnetTypeKey } from './types';
 
 const INITIAL_FILTER: MagnetFilterValues = {
@@ -31,6 +29,7 @@ const MagnetListPage = () => {
     useState<MagnetFilterValues>(INITIAL_FILTER);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const queryClient = useQueryClient();
+  const { mutate: createMagnetMutate } = useCreateMagnetMutation();
   const { mutate: deleteMagnet } = useDeleteMagnetMutation();
 
   // React Query로 마그넷 목록 조회 (타입/키워드 필터는 서버에서 처리)
@@ -72,10 +71,8 @@ const MagnetListPage = () => {
   }, [queryClient]);
 
   const handleCreate = (body: CreateMagnetReqBody) => {
-    // TODO: API 준비 후 useCreateMagnetMutation으로 교체
-    createMagnet(body);
+    createMagnetMutate(body);
     setIsCreateModalOpen(false);
-    invalidateMagnetList();
   };
 
   const handleToggleVisibility = useCallback(
