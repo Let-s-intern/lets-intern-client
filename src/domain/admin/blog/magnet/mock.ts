@@ -1,6 +1,8 @@
 // TODO: API 준비 후 src/api/magnet/ 폴더로 이동하고 실제 API 호출로 교체
 import { IPageInfo } from '@/types/interface';
 import {
+  CommonFormData,
+  CommonFormReqBody,
   MANAGEABLE_MAGNET_TYPES,
   MagnetFormData,
   MagnetFormReqBody,
@@ -289,4 +291,47 @@ export function fetchMagnetsWithForm(): MagnetWithFormSummary[] {
       questionCount: data.questions.length,
     };
   });
+}
+
+// --- 공통 신청폼 관리 ---
+
+let MOCK_COMMON_FORM: CommonFormData = {
+  questions: [
+    {
+      questionId: 'common-q1',
+      questionType: 'OBJECTIVE',
+      isRequired: 'REQUIRED',
+      question: '관심 직무를 선택해주세요',
+      description: '복수 선택이 가능합니다',
+      selectionMethod: 'MULTIPLE',
+      items: [
+        { itemId: 'common-i1', value: '마케팅', isOther: false },
+        { itemId: 'common-i2', value: '기획', isOther: false },
+        { itemId: 'common-i3', value: '개발', isOther: false },
+        { itemId: 'common-i4', value: '디자인', isOther: false },
+        { itemId: 'common-i5', value: '기타(직접입력)', isOther: true },
+      ],
+    },
+    {
+      questionId: 'common-q2',
+      questionType: 'SUBJECTIVE',
+      isRequired: 'OPTIONAL',
+      question: '이름을 입력해주세요',
+      description: '',
+      selectionMethod: 'SINGLE',
+      items: [],
+    },
+  ],
+};
+
+// TODO: API 준비 후 server-side fetch로 교체
+export async function fetchCommonForm(): Promise<CommonFormData> {
+  return MOCK_COMMON_FORM;
+}
+
+// TODO: API 준비 후 useSaveCommonFormMutation React Query 훅으로 교체
+export async function saveCommonForm(
+  body: CommonFormReqBody,
+): Promise<void> {
+  MOCK_COMMON_FORM = { questions: body.questions };
 }

@@ -137,3 +137,15 @@ export interface MagnetWithFormSummary {
   type: MagnetTypeKey;
   questionCount: number;
 }
+
+// --- 공통 신청폼 관리 ---
+
+/** 공통 신청폼 전체 데이터 (마그넷 독립) */
+export interface CommonFormData {
+  questions: FormQuestion[];
+}
+
+/** 공통 신청폼 저장 요청 */
+export interface CommonFormReqBody {
+  questions: FormQuestion[];
+}
