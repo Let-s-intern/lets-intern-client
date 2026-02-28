@@ -23,10 +23,10 @@ const MobileChallengeCard = ({
   const bgColor = CARD_COLORS[challenge.programId];
 
   return (
-    <div className="flex w-full items-center gap-3">
+    <div className="flex w-full items-center gap-4 rounded-lg border border-neutral-200 p-4">
       {/* 썸네일 */}
       <div
-        className="flex h-[4.5rem] w-[4.5rem] shrink-0 items-end overflow-hidden rounded-lg p-2"
+        className="h-[4.5rem] w-[4.5rem] shrink-0 rounded-[7px] p-2"
         style={{ backgroundColor: bgColor }}
       >
         <span className="line-clamp-2 text-xs font-bold leading-tight text-white">
@@ -68,7 +68,7 @@ const MobileChallengeCard = ({
                   e.stopPropagation();
                   onRemove(challenge.programId);
                 }}
-                className="flex w-8 items-center justify-center rounded-lg bg-[#e7e7e7]"
+                className="flex w-10 items-center justify-center rounded-lg bg-[#e7e7e7]"
               >
                 <CloseIcon />
               </button>

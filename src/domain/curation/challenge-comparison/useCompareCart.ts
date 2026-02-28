@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import type { ProgramId } from '../types';
 
-const MAX_COMPARE_ITEMS = 3;
+const MAX_COMPARE_ITEMS = 2;
 
 export const useCompareCart = () => {
   const [cartItems, setCartItems] = useState<ProgramId[]>([]);

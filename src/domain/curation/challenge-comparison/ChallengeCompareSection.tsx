@@ -177,8 +177,8 @@ const ChallengeCompareSection = () => {
           </p>
         </div>
 
-        {/* 비교 결과 */}
-        <div ref={resultRef}>
+        {/* 비교 결과 — 데스크톱 전용 */}
+        <div ref={resultRef} className="hidden md:block">
           {compareTargets.length >= 2 && (
             <CompareResultCard
               programIds={compareTargets}
@@ -188,25 +188,22 @@ const ChallengeCompareSection = () => {
         </div>
       </div>
 
-      {/* 모바일 전용 플로팅 비교하기 버튼 */}
-      <div className="fixed bottom-0 left-0 right-0 z-10 bg-white px-5 py-4 md:hidden">
-        <button
-          type="button"
-          onClick={handleMobileCompare}
-          disabled={!canCompare}
-          className={`flex w-full items-center justify-center rounded-lg px-2 py-4 transition-colors ${
-            canCompare
-              ? 'cursor-pointer bg-[#5f66f6] hover:bg-[#4d55f5]'
-              : 'bg-[#acafb6]'
-          }`}
-        >
-          <span className="text-base font-semibold leading-6 text-[#fafbfd]">
-            {canCompare
-              ? `프로그램 ${cartItems.length}개 비교하기`
-              : '비교할 프로그램을 선택해주세요'}
-          </span>
-        </button>
-      </div>
+      {/* 모바일 전용 플로팅 비교하기 버튼 — canCompare 시에만 노출 */}
+      {canCompare && (
+        <div className="fixed bottom-0 left-0 right-0 z-40 px-4 pb-6 md:hidden">
+          <div className="pb-4 backdrop-blur-sm">
+            <button
+              type="button"
+              onClick={handleMobileCompare}
+              className="flex w-full items-center justify-center rounded-lg bg-[#5f66f6] py-4 transition-colors hover:bg-[#4d55f5]"
+            >
+              <span className="text-base font-semibold leading-6 text-white">
+                프로그램 {cartItems.length}개 비교하기
+              </span>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 모바일 비교 결과 전체화면 뷰 */}
       {isMobileViewOpen && compareTargets.length >= 2 && (

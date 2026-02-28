@@ -55,28 +55,28 @@ const FaqSection = () => {
 
   return (
     <section className="flex w-full flex-col items-center gap-6" id="curation-faq">
-      <div className="flex flex-col items-center gap-5 self-stretch py-14">
-        <div className="flex w-[62.5rem] flex-col items-center gap-10">
+      <div className="flex flex-col items-center gap-5 self-stretch py-8 md:py-14">
+        <div className="flex w-full max-w-[62.5rem] flex-col items-center gap-5 px-6 md:gap-10 md:px-10 lg:px-0">
           <p className="self-stretch text-center text-lg font-semibold leading-6 text-indigo-500">
             FAQ
           </p>
-          <h3 className="text-center text-3xl font-bold leading-10 text-neutral-0">
+          <h3 className="text-center text-2xl font-bold leading-tight text-neutral-0 md:text-3xl md:leading-10">
             자주 묻는 질문
           </h3>
         </div>
-        <p className="self-stretch text-center text-lg font-semibold leading-6 text-zinc-600">
+        <p className="self-stretch text-center text-base font-semibold leading-6 text-zinc-600 md:text-lg">
           챌린지 수강 전 궁금한 점을 모았어요
         </p>
       </div>
 
       {/* 카테고리 필터 버튼 */}
-      <div className="flex flex-wrap justify-center gap-2">
+      <div className="flex flex-wrap justify-center gap-2 px-5 md:px-0">
         <button
           onClick={() => setSelectedCategory('all')}
-          className={`rounded-full px-4 py-1.5 text-base font-bold leading-6 transition-all ${
+          className={`rounded-full px-3 py-1.5 text-sm font-bold leading-5 transition-all md:px-4 md:text-base md:leading-6 ${
             selectedCategory === 'all'
               ? 'bg-indigo-500 text-gray-50'
-              : 'bg-zinc-100 text-neutral-600 font-medium hover:bg-zinc-200'
+              : 'bg-zinc-100 font-medium text-neutral-600 hover:bg-zinc-200'
           }`}
           type="button"
         >
@@ -86,10 +86,10 @@ const FaqSection = () => {
           <button
             key={category}
             onClick={() => setSelectedCategory(category)}
-            className={`rounded-full px-4 py-1.5 text-base font-bold leading-6 transition-all ${
+            className={`rounded-full px-3 py-1.5 text-sm font-bold leading-5 transition-all md:px-4 md:text-base md:leading-6 ${
               selectedCategory === category
                 ? 'bg-indigo-500 text-gray-50'
-                : 'bg-zinc-100 text-neutral-600 font-medium hover:bg-zinc-200'
+                : 'bg-zinc-100 font-medium text-neutral-600 hover:bg-zinc-200'
             }`}
             type="button"
           >
@@ -98,8 +98,8 @@ const FaqSection = () => {
         ))}
       </div>
 
-      {/* FAQ 리스트 — min-h로 카테고리 전환 시 높이 점핑 방지 */}
-      <div className="flex min-h-[600px] w-[50rem] flex-col gap-3">
+      {/* FAQ 리스트 — md:min-h로 카테고리 전환 시 높이 점핑 방지 */}
+      <div className="flex w-full max-w-[50rem] flex-col gap-3 px-5 md:min-h-[600px] md:px-0">
         {filteredFaqs.length > 0 ? (
           filteredFaqs.map((item) => (
             <details
@@ -107,14 +107,14 @@ const FaqSection = () => {
               className="group overflow-hidden rounded-lg border border-neutral-90 bg-white"
               open={selectedCategory !== 'all'}
             >
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 text-lg font-semibold leading-6 text-neutral-0">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 text-base font-semibold leading-6 text-neutral-0 md:text-lg">
                 <span>{item.question}</span>
                 <span className="shrink-0 text-neutral-40 transition-transform">
                   <span className="group-open:hidden">＋</span>
                   <span className="hidden group-open:inline">−</span>
                 </span>
               </summary>
-              <div className="border-t border-neutral-90 px-5 py-5 text-base font-normal leading-6 text-neutral-35">
+              <div className="border-t border-neutral-90 px-5 py-5 text-sm font-normal leading-6 text-neutral-35 md:text-base">
                 <div>{parseMarkdown(item.answer)}</div>
                 {item.image && (
                   <img
@@ -131,7 +131,7 @@ const FaqSection = () => {
             </details>
           ))
         ) : (
-          <div className="rounded-lg border border-neutral-90 bg-white px-5 py-8 text-center text-base text-neutral-40">
+          <div className="rounded-lg border border-neutral-90 bg-white px-5 py-8 text-center text-sm text-neutral-40 md:text-base">
             해당 카테고리에 질문이 없습니다.
           </div>
         )}
