@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import Image from 'next/image';
 import { useEffect, useRef } from 'react';
 
 interface CurationStepperProps {
@@ -82,14 +81,25 @@ const CurationStepper = ({
                 </span>
               </button>
 
-              {/* 화살표 */}
+              {/* 화살표 — 오른쪽 방향 */}
               {!isLast && (
-                <Image
-                  src="/images/curation/tabler_arrow-up.svg"
-                  alt=""
-                  width={24}
-                  height={24}
-                />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                  className="shrink-0 text-neutral-300"
+                >
+                  <path
+                    d="M9 18l6-6-6-6"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
               )}
             </div>
           );

@@ -70,7 +70,7 @@ const FaqSection = () => {
       </div>
 
       {/* 카테고리 필터 버튼 */}
-      <div className="flex flex-wrap justify-center gap-2 px-5 md:px-0">
+      <div className="flex flex-wrap justify-center gap-2 px-6 md:px-0">
         <button
           onClick={() => setSelectedCategory('all')}
           className={`rounded-full px-3 py-1.5 text-sm font-bold leading-5 transition-all md:px-4 md:text-base md:leading-6 ${
@@ -99,7 +99,7 @@ const FaqSection = () => {
       </div>
 
       {/* FAQ 리스트 — md:min-h로 카테고리 전환 시 높이 점핑 방지 */}
-      <div className="flex w-full max-w-[50rem] flex-col gap-3 px-5 md:min-h-[600px] md:px-0">
+      <div className="flex w-full max-w-[50rem] flex-col gap-3 px-6 md:min-h-[600px] md:px-0">
         {filteredFaqs.length > 0 ? (
           filteredFaqs.map((item) => (
             <details

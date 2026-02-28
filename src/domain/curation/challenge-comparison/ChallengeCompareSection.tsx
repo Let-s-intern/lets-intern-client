@@ -123,7 +123,7 @@ const ChallengeCompareSection = () => {
             고민되는 챌린지, 비교해보세요
           </h3>
         </div>
-        <p className="self-stretch text-center text-base font-semibold leading-6 text-[#5c5f66] md:text-lg">
+        <p className="self-stretch px-6 text-center text-base font-semibold leading-6 text-[#5c5f66] md:px-0 md:text-lg">
           많은 분들이 궁금해하는 챌린지 간 차이를 한눈에 확인하세요
         </p>
       </div>
@@ -241,6 +241,7 @@ const ChallengeCompareSection = () => {
             programIds={compareTargets}
             onClose={() => {
               setIsMobileViewOpen(false);
+              setRecommendedIndex(null);
               clearCart();
             }}
           />

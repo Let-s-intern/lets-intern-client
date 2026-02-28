@@ -94,7 +94,7 @@ const MobileCompareView = ({ programIds, onClose }: MobileCompareViewProps) => {
                   {program.title}
                 </span>
               </div>
-              <span className="line-clamp-2 text-sm font-bold text-[#27272d]">
+              <span className="line-clamp-2 min-h-[2.5rem] text-sm font-bold leading-5 text-[#27272d]">
                 {program.title}
               </span>
               <a
