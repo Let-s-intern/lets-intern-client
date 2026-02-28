@@ -87,7 +87,6 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
       >
         {/* 1단 */}
         <GlobalNavTopBar
-          // eslint-disable-next-line no-restricted-globals
           loginRedirect={encodeURIComponent(pathname)}
           toggleMenu={toggleMenu}
           isLoginPage={isLoginPage}
@@ -160,11 +159,12 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
               aria-hidden="true"
             />
             <GlobalNavItem
-              className="hidden text-xsmall16 md:inline"
-              href="/about"
-              active={activeLink === 'ABOUT'}
+              className="hidden text-xsmall16 md:flex"
+              isNew
+              href="/library/list"
+              active={activeLink === 'LIBRARY'}
             >
-              렛츠커리어 스토리
+              무료 자료집
             </GlobalNavItem>
           </div>
 
