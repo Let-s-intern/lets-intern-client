@@ -24,14 +24,11 @@ export default function LibraryCard({
   className,
 }: LibraryCardProps) {
   return (
-    <Link
-      href={href}
-      className={twMerge('flex flex-col gap-2.5', className)}
-    >
+    <div className={twMerge('group relative flex flex-col gap-2.5', className)}>
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-neutral-90">
         {thumbnail && (
           <img
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover group-has-[a:hover]:opacity-80"
             src={thumbnail}
             alt={title}
           />
@@ -45,7 +42,10 @@ export default function LibraryCard({
 
         <div className="flex flex-col gap-2">
           <h3 className="line-clamp-2 text-xsmall16 font-semibold text-neutral-0">
-            {title}
+            <Link href={href}>
+              {title}
+              <span className="absolute inset-0" />
+            </Link>
           </h3>
 
           {date && (
@@ -65,10 +65,8 @@ export default function LibraryCard({
               {status === 'upcoming' && (
                 <button
                   type="button"
-                  className="flex items-center gap-1 rounded-xs bg-point p-2.5 text-xxsmall12 font-medium text-neutral-20"
-                  onClick={(e) => {
-                    e.preventDefault();
-                  }}
+                  className="relative z-10 flex items-center gap-1 rounded-xs bg-point p-2.5 text-xxsmall12 font-medium text-neutral-20"
+                  onClick={() => {}}
                 >
                   <BellIcon width={16} height={16} />
                   <span>알림 설정</span>
@@ -78,10 +76,8 @@ export default function LibraryCard({
               {status === 'notified' && (
                 <button
                   type="button"
-                  className="flex items-center gap-1 rounded-xs bg-neutral-70 p-2.5 text-xxsmall12 font-medium text-white"
-                  onClick={(e) => {
-                    e.preventDefault();
-                  }}
+                  className="relative z-10 flex items-center gap-1 rounded-xs bg-neutral-70 p-2.5 text-xxsmall12 font-medium text-white"
+                  onClick={() => {}}
                 >
                   <BellIcon width={16} height={16} />
                   <span>알림 설정 완료</span>
@@ -91,6 +87,6 @@ export default function LibraryCard({
           )}
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
