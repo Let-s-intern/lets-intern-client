@@ -8,7 +8,7 @@ export default function LibraryListPage() {
     <div className="flex flex-col items-center">
       <LibraryBanner />
 
-      <main className="mx-auto mb-12 w-full max-w-[1100px] px-5 pt-11 md:mb-20 md:px-0">
+      <main className="mx-auto mb-12 w-full max-w-[1100px] px-5 pt-8 md:mb-20 md:px-0 md:pt-11">
         <LibraryListContent />
       </main>
     </div>

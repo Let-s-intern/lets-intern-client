@@ -34,7 +34,7 @@ function Content() {
   return (
     <div className="flex flex-col gap-8">
       {/* 탭 + 필터 */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
         <LibraryTabNav
           tabs={TABS}
           activeTab={activeTab}
@@ -58,7 +58,12 @@ function Content() {
       <MuiPagination
         className="flex justify-center"
         page={page}
-        pageInfo={{ totalPages: 4, totalElements: 16, pageNum: 1, pageSize: 16 }}
+        pageInfo={{
+          totalPages: 4,
+          totalElements: 16,
+          pageNum: 1,
+          pageSize: 16,
+        }}
         onChange={(_, newPage) => {
           setPage(newPage);
           window.scrollTo({ top: 0, behavior: 'smooth' });
