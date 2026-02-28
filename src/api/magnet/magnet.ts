@@ -1,6 +1,6 @@
 import { MagnetTypeKey } from '@/domain/admin/blog/magnet/types';
 import axios from '@/utils/axios';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   MagnetListResponse,
   magnetListResponseSchema,
@@ -24,6 +24,30 @@ export const useGetMagnetListQuery = (params: MagnetListQueryParams = {}) => {
         },
       });
       return magnetListResponseSchema.parse(res.data.data);
+    },
+  });
+};
+
+export const useDeleteMagnetMutation = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: () => void;
+} = {}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (magnetId: number) => {
+      const res = await axios.delete(`/admin/magnet/${magnetId}`);
+      return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [magnetListQueryKey] });
+      successCallback?.();
+    },
+    onError: (error) => {
+      console.error(error);
+      errorCallback?.();
     },
   });
 };

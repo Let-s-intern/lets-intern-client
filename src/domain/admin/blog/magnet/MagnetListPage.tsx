@@ -1,6 +1,9 @@
 'use client';
 
-import { useGetMagnetListQuery } from '@/api/magnet/magnet';
+import {
+  useDeleteMagnetMutation,
+  useGetMagnetListQuery,
+} from '@/api/magnet/magnet';
 import ActionButton from '@/domain/admin/ui/button/ActionButton';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
@@ -11,7 +14,6 @@ import MagnetFilter from './MagnetFilter';
 import MagnetTable from './MagnetTable';
 import {
   createMagnet,
-  deleteMagnet,
   toggleMagnetVisibility,
 } from './mock';
 import { CreateMagnetReqBody, MagnetFilterValues, MagnetTypeKey } from './types';
@@ -29,6 +31,7 @@ const MagnetListPage = () => {
     useState<MagnetFilterValues>(INITIAL_FILTER);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const queryClient = useQueryClient();
+  const { mutate: deleteMagnet } = useDeleteMagnetMutation();
 
   // React Query로 마그넷 목록 조회 (타입/키워드 필터는 서버에서 처리)
   const { data: queryData } = useGetMagnetListQuery({
@@ -88,11 +91,9 @@ const MagnetListPage = () => {
     (id: number) => {
       const confirmed = window.confirm('정말로 삭제하시겠습니까?');
       if (!confirmed) return;
-      // TODO: API 준비 후 mutation으로 교체
       deleteMagnet(id);
-      invalidateMagnetList();
     },
-    [invalidateMagnetList],
+    [deleteMagnet],
   );
 
   return (
