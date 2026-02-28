@@ -6,9 +6,6 @@ import {
   MagnetFormData,
   MagnetFormReqBody,
   MagnetListItem,
-  MagnetPostDetail,
-  MagnetPostReqBody,
-  MagnetTypeKey,
   MagnetWithFormSummary,
 } from './types';
 
@@ -59,87 +56,6 @@ const MOCK_MAGNETS: MagnetListItem[] = [
     applicationCount: 0,
   },
 ];
-
-// TODO: API 준비 후 useCreateMagnetMutation React Query 훅으로 교체
-export function createMagnet(body: {
-  type: MagnetTypeKey;
-  title: string;
-}): MagnetListItem {
-  const maxId = MOCK_MAGNETS.reduce(
-    (max, m) => Math.max(max, m.magnetId),
-    0,
-  );
-  const newMagnet: MagnetListItem = {
-    magnetId: maxId + 1,
-    type: body.type,
-    title: body.title,
-    startDate: new Date().toISOString(),
-    endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-    isVisible: false,
-    applicationCount: 0,
-  };
-  MOCK_MAGNETS.unshift(newMagnet);
-  return newMagnet;
-}
-
-// TODO: API 준비 후 useToggleMagnetVisibilityMutation React Query 훅으로 교체
-export function toggleMagnetVisibility(
-  id: number,
-  isVisible: boolean,
-): void {
-  const magnet = MOCK_MAGNETS.find((m) => m.magnetId === id);
-  if (magnet) magnet.isVisible = isVisible;
-}
-
-// TODO: API 준비 후 useDeleteMagnetMutation React Query 훅으로 교체
-export function deleteMagnet(id: number): void {
-  const index = MOCK_MAGNETS.findIndex((m) => m.magnetId === id);
-  if (index !== -1) MOCK_MAGNETS.splice(index, 1);
-}
-
-// --- 마그넷 글 관리 (포스트) ---
-
-const MOCK_MAGNET_POSTS: Record<number, MagnetPostDetail> = {};
-
-function buildDefaultPost(magnetId: number): MagnetPostDetail {
-  const magnet = MOCK_MAGNETS.find((m) => m.magnetId === magnetId);
-  return {
-    magnetId,
-    type: magnet?.type ?? 'MATERIAL',
-    title: magnet?.title ?? '',
-    metaDescription: '',
-    thumbnail: '',
-    displayDate: magnet?.startDate ?? null,
-    endDate: magnet?.endDate ?? null,
-    hasCommonForm: false,
-    content: '',
-    isVisible: false,
-  };
-}
-
-// TODO: API 준비 후 server-side fetch로 교체
-export async function fetchMagnetPost(
-  magnetId: number,
-): Promise<MagnetPostDetail> {
-  return MOCK_MAGNET_POSTS[magnetId] ?? buildDefaultPost(magnetId);
-}
-
-// TODO: API 준비 후 useSaveMagnetPostMutation React Query 훅으로 교체
-export function saveMagnetPost(body: MagnetPostReqBody): void {
-  const magnet = MOCK_MAGNETS.find((m) => m.magnetId === body.magnetId);
-  MOCK_MAGNET_POSTS[body.magnetId] = {
-    magnetId: body.magnetId,
-    type: magnet?.type ?? 'MATERIAL',
-    title: magnet?.title ?? '',
-    metaDescription: body.metaDescription,
-    thumbnail: body.thumbnail,
-    displayDate: body.displayDate,
-    endDate: body.endDate,
-    hasCommonForm: body.hasCommonForm,
-    content: body.content,
-    isVisible: body.isVisible,
-  };
-}
 
 // TODO: API 준비 후 React Query 훅으로 교체
 export function fetchManageableMagnets(): MagnetListItem[] {
