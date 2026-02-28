@@ -91,11 +91,11 @@ export const useMagnetFormBuilder = ({
       return;
     }
 
-    const invalidObjective = questions.find(
-      (q) =>
-        q.questionType === 'OBJECTIVE' &&
-        q.items.filter((i) => !i.isOther).length === 0,
-    );
+    const invalidObjective = questions.find((q) => {
+      const hasNoSelectableItems =
+        q.items.filter((i) => !i.isOther).length === 0;
+      return q.questionType === 'OBJECTIVE' && hasNoSelectableItems;
+    });
     if (invalidObjective) {
       setSnackbar('객관식 질문에는 최소 1개의 항목이 필요합니다.');
       return;
