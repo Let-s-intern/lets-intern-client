@@ -28,8 +28,8 @@ const MagnetRecommendSection = ({
         선택 안 함
       </MenuItem>,
       ...fetchManageableMagnets().map((m) => (
-        <MenuItem key={m.id} value={m.id}>
-          {`[${m.id}] ${MAGNET_TYPE[m.type]} - ${m.title}`}
+        <MenuItem key={m.magnetId} value={m.magnetId}>
+          {`[${m.magnetId}] ${MAGNET_TYPE[m.type]} - ${m.title}`}
         </MenuItem>
       )),
     ],

@@ -1,5 +1,4 @@
-// TODO: API 준비 후 src/api/magnet/ 폴더로 이동하고 실제 API 호출로 교체
-import { IPageInfo } from '@/types/interface';
+// TODO: 각 함수별 API 준비 후 src/api/magnet/ 폴더로 이동하고 실제 API 호출로 교체
 import {
   CommonFormData,
   CommonFormReqBody,
@@ -15,136 +14,69 @@ import {
 
 const MOCK_MAGNETS: MagnetListItem[] = [
   {
-    id: 5,
-    type: 'RESOURCE',
+    magnetId: 5,
+    type: 'MATERIAL',
     title: 'HR 직무 자료집',
-    programType: null,
-    challengeType: null,
-    displayDate: '2026-01-15T00:00:00',
+    startDate: '2026-01-15T00:00:00',
     endDate: '2026-06-30T23:59:59',
     isVisible: false,
-    applicantCount: 9,
+    applicationCount: 9,
   },
   {
-    id: 4,
+    magnetId: 4,
     type: 'VOD',
     title: '취준생이 모르면 안되는 AI 역량 VOD',
-    programType: null,
-    challengeType: null,
-    displayDate: '2026-01-10T00:00:00',
+    startDate: '2026-01-10T00:00:00',
     endDate: '2026-07-31T23:59:59',
     isVisible: true,
-    applicantCount: 99,
+    applicationCount: 99,
   },
   {
-    id: 3,
+    magnetId: 3,
     type: 'FREE_TEMPLATE',
     title: '자유양식 이력서 템플릿',
-    programType: null,
-    challengeType: null,
-    displayDate: '2026-01-05T00:00:00',
+    startDate: '2026-01-05T00:00:00',
     endDate: '2026-12-31T23:59:59',
     isVisible: true,
-    applicantCount: 999,
+    applicationCount: 999,
   },
   {
-    id: 2,
+    magnetId: 2,
     type: 'LAUNCH_ALERT',
     title: '리틀리 프로그램',
-    programType: null,
-    challengeType: null,
-    displayDate: null,
+    startDate: null,
     endDate: null,
     isVisible: false,
-    applicantCount: 0,
+    applicationCount: 0,
   },
   {
-    id: 1,
+    magnetId: 1,
     type: 'EVENT',
     title: '리틀리 프로그램',
-    programType: null,
-    challengeType: null,
-    displayDate: null,
+    startDate: null,
     endDate: null,
     isVisible: false,
-    applicantCount: 0,
+    applicationCount: 0,
   },
 ];
-
-export interface MagnetListResponse {
-  magnetList: MagnetListItem[];
-  pageInfo: IPageInfo;
-}
-
-export interface MagnetFilterParams {
-  magnetId?: string;
-  type?: string;
-  titleKeyword?: string;
-}
-
-// TODO: API 준비 후 실제 server-side API fetch로 교체 (ISR/SSR 대응)
-export async function fetchMagnetList(
-  params: MagnetFilterParams,
-): Promise<MagnetListResponse> {
-  return filterMagnetData(MOCK_MAGNETS, params);
-}
-
-/** 클라이언트 사이드 필터링 (동기) — 서버에서 받은 데이터를 클라이언트에서 재필터링할 때 사용 */
-export function filterMagnetData(
-  items: MagnetListItem[],
-  params: MagnetFilterParams,
-): MagnetListResponse {
-  let filtered = [...items];
-
-  if (params.magnetId) {
-    const ids = params.magnetId
-      .split(/[,\n]/)
-      .map((s) => s.trim())
-      .filter(Boolean);
-    filtered = filtered.filter((m) => ids.includes(String(m.id)));
-  }
-
-  if (params.type) {
-    filtered = filtered.filter((m) => m.type === params.type);
-  }
-
-  if (params.titleKeyword) {
-    const keywords = params.titleKeyword
-      .split(/[,\n]/)
-      .map((s) => s.trim())
-      .filter(Boolean);
-    filtered = filtered.filter((m) =>
-      keywords.some((kw) => m.title.includes(kw)),
-    );
-  }
-
-  return {
-    magnetList: filtered,
-    pageInfo: {
-      pageNum: 0,
-      pageSize: filtered.length,
-      totalElements: filtered.length,
-      totalPages: 1,
-    },
-  };
-}
 
 // TODO: API 준비 후 useCreateMagnetMutation React Query 훅으로 교체
 export function createMagnet(body: {
   type: MagnetTypeKey;
   title: string;
 }): MagnetListItem {
-  const maxId = MOCK_MAGNETS.reduce((max, m) => Math.max(max, m.id), 0);
+  const maxId = MOCK_MAGNETS.reduce(
+    (max, m) => Math.max(max, m.magnetId),
+    0,
+  );
   const newMagnet: MagnetListItem = {
-    id: maxId + 1,
+    magnetId: maxId + 1,
     type: body.type,
     title: body.title,
-    programType: null,
-    challengeType: null,
-    displayDate: new Date().toISOString(),
+    startDate: new Date().toISOString(),
     endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
     isVisible: false,
-    applicantCount: 0,
+    applicationCount: 0,
   };
   MOCK_MAGNETS.unshift(newMagnet);
   return newMagnet;
@@ -155,13 +87,13 @@ export function toggleMagnetVisibility(
   id: number,
   isVisible: boolean,
 ): void {
-  const magnet = MOCK_MAGNETS.find((m) => m.id === id);
+  const magnet = MOCK_MAGNETS.find((m) => m.magnetId === id);
   if (magnet) magnet.isVisible = isVisible;
 }
 
 // TODO: API 준비 후 useDeleteMagnetMutation React Query 훅으로 교체
 export function deleteMagnet(id: number): void {
-  const index = MOCK_MAGNETS.findIndex((m) => m.id === id);
+  const index = MOCK_MAGNETS.findIndex((m) => m.magnetId === id);
   if (index !== -1) MOCK_MAGNETS.splice(index, 1);
 }
 
@@ -170,14 +102,14 @@ export function deleteMagnet(id: number): void {
 const MOCK_MAGNET_POSTS: Record<number, MagnetPostDetail> = {};
 
 function buildDefaultPost(magnetId: number): MagnetPostDetail {
-  const magnet = MOCK_MAGNETS.find((m) => m.id === magnetId);
+  const magnet = MOCK_MAGNETS.find((m) => m.magnetId === magnetId);
   return {
     magnetId,
-    type: magnet?.type ?? 'RESOURCE',
+    type: magnet?.type ?? 'MATERIAL',
     title: magnet?.title ?? '',
     metaDescription: '',
     thumbnail: '',
-    displayDate: magnet?.displayDate ?? null,
+    displayDate: magnet?.startDate ?? null,
     endDate: magnet?.endDate ?? null,
     hasCommonForm: false,
     content: '',
@@ -194,10 +126,10 @@ export async function fetchMagnetPost(
 
 // TODO: API 준비 후 useSaveMagnetPostMutation React Query 훅으로 교체
 export function saveMagnetPost(body: MagnetPostReqBody): void {
-  const magnet = MOCK_MAGNETS.find((m) => m.id === body.magnetId);
+  const magnet = MOCK_MAGNETS.find((m) => m.magnetId === body.magnetId);
   MOCK_MAGNET_POSTS[body.magnetId] = {
     magnetId: body.magnetId,
-    type: magnet?.type ?? 'RESOURCE',
+    type: magnet?.type ?? 'MATERIAL',
     title: magnet?.title ?? '',
     metaDescription: body.metaDescription,
     thumbnail: body.thumbnail,
@@ -283,11 +215,11 @@ export async function saveMagnetForm(
 // TODO: API 준비 후 React Query 훅으로 교체
 export function fetchMagnetsWithForm(): MagnetWithFormSummary[] {
   return Object.entries(MOCK_MAGNET_FORMS).map(([id, data]) => {
-    const magnet = MOCK_MAGNETS.find((m) => m.id === Number(id));
+    const magnet = MOCK_MAGNETS.find((m) => m.magnetId === Number(id));
     return {
       id: Number(id),
       title: magnet?.title ?? `마그넷 ${id}`,
-      type: magnet?.type ?? 'RESOURCE',
+      type: magnet?.type ?? 'MATERIAL',
       questionCount: data.questions.length,
     };
   });

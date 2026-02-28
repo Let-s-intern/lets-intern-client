@@ -1,11 +1,11 @@
 'use client';
 
+import { MagnetListResponse } from '@/api/magnet/magnetSchema';
 import dayjs from '@/lib/dayjs';
 import { Button, Checkbox } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Link from 'next/link';
 import { useMemo } from 'react';
-import { MagnetListResponse } from './mock';
 import {
   isMagnetManageable,
   MAGNET_TYPE,
@@ -28,7 +28,7 @@ const MagnetTable = ({
   const columns = useMemo<GridColDef<Row>[]>(
     () => [
       {
-        field: 'id',
+        field: 'magnetId',
         headerName: '마그넷 ID',
         width: 100,
       },
@@ -45,26 +45,12 @@ const MagnetTable = ({
         minWidth: 200,
       },
       {
-        field: 'programType',
-        headerName: '프로그램 타입',
-        width: 120,
-        valueGetter: (_, row) =>
-          isMagnetManageable(row.type) ? '-' : (row.programType ?? '-'),
-      },
-      {
-        field: 'challengeType',
-        headerName: '챌린지 타입',
-        width: 120,
-        valueGetter: (_, row) =>
-          isMagnetManageable(row.type) ? '-' : (row.challengeType ?? '-'),
-      },
-      {
-        field: 'displayDate',
+        field: 'startDate',
         headerName: '노출 시작일',
         width: 130,
         valueGetter: (_, row) =>
-          row.displayDate
-            ? dayjs(row.displayDate).format('YYYY-MM-DD')
+          row.startDate
+            ? dayjs(row.startDate).format('YYYY-MM-DD')
             : '-',
       },
       {
@@ -82,17 +68,19 @@ const MagnetTable = ({
           isMagnetManageable(row.type) ? (
             <Checkbox
               checked={row.isVisible}
-              onChange={(e) => onToggleVisibility(row.id, e.target.checked)}
+              onChange={(e) =>
+                onToggleVisibility(row.magnetId, e.target.checked)
+              }
               size="small"
             />
           ) : null,
       },
       {
-        field: 'applicantCount',
+        field: 'applicationCount',
         headerName: '신청자 수',
         width: 90,
         renderCell: ({ row }) =>
-          isMagnetManageable(row.type) ? row.applicantCount : null,
+          isMagnetManageable(row.type) ? row.applicationCount : null,
       },
       {
         field: 'applicantManage',
@@ -101,7 +89,7 @@ const MagnetTable = ({
         sortable: false,
         renderCell: ({ row }) =>
           isMagnetManageable(row.type) ? (
-            <Link href={`/admin/blog/magnet/${row.id}/form`}>
+            <Link href={`/admin/blog/magnet/${row.magnetId}/form`}>
               <Button variant="outlined" color="primary" size="small">
                 신청자 정보
               </Button>
@@ -116,12 +104,12 @@ const MagnetTable = ({
         renderCell: ({ row }) =>
           isMagnetManageable(row.type) ? (
             <div className="inline-flex items-center gap-2">
-              <Link href={`/admin/blog/magnet/${row.id}/post`}>
+              <Link href={`/admin/blog/magnet/${row.magnetId}/post`}>
                 <Button variant="outlined" color="primary" size="small">
                   글 관리
                 </Button>
               </Link>
-              <Link href={`/admin/blog/magnet/${row.id}/form`}>
+              <Link href={`/admin/blog/magnet/${row.magnetId}/form`}>
                 <Button variant="outlined" color="info" size="small">
                   신청 폼 관리
                 </Button>
@@ -130,7 +118,7 @@ const MagnetTable = ({
                 variant="outlined"
                 color="error"
                 size="small"
-                onClick={() => onDelete(row.id)}
+                onClick={() => onDelete(row.magnetId)}
               >
                 삭제
               </Button>
@@ -145,6 +133,7 @@ const MagnetTable = ({
     <DataGrid
       rows={data.magnetList}
       columns={columns}
+      getRowId={(row) => row.magnetId}
       hideFooter
       disableColumnSorting
       disableColumnFilter

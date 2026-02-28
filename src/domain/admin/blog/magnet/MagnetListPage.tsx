@@ -1,5 +1,11 @@
 'use client';
 
+import {
+  useCreateMagnetMutation,
+  useDeleteMagnetMutation,
+  useGetMagnetListQuery,
+  usePatchMagnetVisibilityMutation,
+} from '@/api/magnet/magnet';
 import ActionButton from '@/domain/admin/ui/button/ActionButton';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
@@ -7,14 +13,7 @@ import { useCallback, useMemo, useState } from 'react';
 import MagnetCreateModal from './MagnetCreateModal';
 import MagnetFilter from './MagnetFilter';
 import MagnetTable from './MagnetTable';
-import {
-  createMagnet,
-  deleteMagnet,
-  filterMagnetData,
-  MagnetListResponse,
-  toggleMagnetVisibility,
-} from './mock';
-import { CreateMagnetReqBody, MagnetFilterValues } from './types';
+import { CreateMagnetReqBody, MagnetFilterValues, MagnetTypeKey } from './types';
 
 const INITIAL_FILTER: MagnetFilterValues = {
   magnetId: '',
@@ -22,35 +21,40 @@ const INITIAL_FILTER: MagnetFilterValues = {
   titleKeyword: '',
 };
 
-interface MagnetListPageProps {
-  initialData: MagnetListResponse;
-}
-
-const MagnetListPage = ({ initialData }: MagnetListPageProps) => {
+const MagnetListPage = () => {
   const [filterValues, setFilterValues] =
     useState<MagnetFilterValues>(INITIAL_FILTER);
   const [appliedFilter, setAppliedFilter] =
     useState<MagnetFilterValues>(INITIAL_FILTER);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const { mutate: createMagnetMutate } = useCreateMagnetMutation();
+  const { mutate: deleteMagnet } = useDeleteMagnetMutation();
+  const { mutate: patchVisibility } = usePatchMagnetVisibilityMutation();
 
-  // TODO: refreshKey는 목 데이터용. React Query 전환 시 invalidateQueries로 교체
-  const [refreshKey, setRefreshKey] = useState(0);
+  // React Query로 마그넷 목록 조회 (타입/키워드 필터는 서버에서 처리)
+  const { data: queryData } = useGetMagnetListQuery({
+    typeList: appliedFilter.type
+      ? [appliedFilter.type as MagnetTypeKey]
+      : undefined,
+    keyword: appliedFilter.titleKeyword || undefined,
+  });
 
-  // TODO: API 준비 후 React Query로 교체. 필터 없으면 서버 데이터(initialData) 사용
+  // magnetId 필터는 API 미지원 → 클라이언트 사이드 필터링
   const data = useMemo(() => {
-    const isFilterActive =
-      appliedFilter.magnetId ||
-      appliedFilter.type ||
-      appliedFilter.titleKeyword;
+    if (!queryData) return { magnetList: [] };
+    if (!appliedFilter.magnetId) return queryData;
 
-    if (!isFilterActive && refreshKey === 0) return initialData;
+    const ids = appliedFilter.magnetId
+      .split(/[,\n]/)
+      .map((s) => s.trim())
+      .filter(Boolean);
 
-    return filterMagnetData(initialData.magnetList, {
-      magnetId: appliedFilter.magnetId,
-      type: appliedFilter.type,
-      titleKeyword: appliedFilter.titleKeyword,
-    });
-  }, [initialData, appliedFilter, refreshKey]);
+    return {
+      magnetList: queryData.magnetList.filter((m) =>
+        ids.includes(String(m.magnetId)),
+      ),
+    };
+  }, [queryData, appliedFilter.magnetId]);
 
   const handleSearch = () => {
     setAppliedFilter(filterValues);
@@ -62,26 +66,25 @@ const MagnetListPage = ({ initialData }: MagnetListPageProps) => {
   };
 
   const handleCreate = (body: CreateMagnetReqBody) => {
-    // TODO: API 준비 후 useCreateMagnetMutation으로 교체
-    createMagnet(body);
+    createMagnetMutate(body);
     setIsCreateModalOpen(false);
-    setRefreshKey((k) => k + 1);
   };
 
   const handleToggleVisibility = useCallback(
     (id: number, isVisible: boolean) => {
-      toggleMagnetVisibility(id, isVisible);
-      setRefreshKey((k) => k + 1);
+      patchVisibility({ magnetId: id, isVisible });
     },
-    [],
+    [patchVisibility],
   );
 
-  const handleDelete = useCallback((id: number) => {
-    const confirmed = window.confirm('정말로 삭제하시겠습니까?');
-    if (!confirmed) return;
-    deleteMagnet(id);
-    setRefreshKey((k) => k + 1);
-  }, []);
+  const handleDelete = useCallback(
+    (id: number) => {
+      const confirmed = window.confirm('정말로 삭제하시겠습니까?');
+      if (!confirmed) return;
+      deleteMagnet(id);
+    },
+    [deleteMagnet],
+  );
 
   return (
     <>
