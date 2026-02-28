@@ -31,7 +31,7 @@ function BlogLinkShareBtn({
       onClick={async () => {
         try {
           await navigator.clipboard.writeText(
-            window.location.origin + location.pathname,
+            window.location.origin + decodeURIComponent(location.pathname),
           );
           snackbar('클립보드에 복사되었습니다.');
         } catch (err) {

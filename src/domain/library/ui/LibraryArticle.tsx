@@ -1,4 +1,5 @@
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
+import BlogLinkShareBtn from '@/domain/blog/button/BlogLilnkShareBtn';
 import dayjs from '@/lib/dayjs';
 import Image from 'next/image';
 import { LibraryDetailInfo } from '../data/mockLibraryData';
@@ -36,22 +37,26 @@ export default function LibraryArticle({ libraryInfo }: Props) {
           </h1>
         </div>
 
-        <div className="flex items-center gap-3 md:gap-4">
-          <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 justify-center overflow-hidden rounded-full">
-              <img
-                className="h-5 w-5"
-                src="/logo/logo-gradient.svg"
-                alt="렛츠커리어 프로필 사진"
-              />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3 md:gap-4">
+            <div className="flex items-center gap-2">
+              <div className="flex h-7 w-7 justify-center overflow-hidden rounded-full">
+                <img
+                  className="h-5 w-5"
+                  src="/logo/logo-gradient.svg"
+                  alt="렛츠커리어 프로필 사진"
+                />
+              </div>
+              <span className="text-xsmall14 font-semibold text-neutral-0">
+                렛츠커리어
+              </span>
             </div>
-            <span className="text-xsmall14 font-semibold text-neutral-0">
-              렛츠커리어
-            </span>
+            <p className="text-xsmall14 text-neutral-35 md:text-xsmall16">
+              {dayjs(libraryInfo.displayDate).format(YYYY_MM_DD)} 작성
+            </p>
           </div>
-          <p className="text-xsmall14 text-neutral-35 md:text-xsmall16">
-            {dayjs(libraryInfo.displayDate).format(YYYY_MM_DD)} 작성
-          </p>
+          {/* 공유 버튼 */}
+          <BlogLinkShareBtn />
         </div>
       </div>
 

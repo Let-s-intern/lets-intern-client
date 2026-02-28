@@ -1,8 +1,9 @@
 import { ProgramRecommendItem } from '@/api/blog/blogSchema';
 import { fetchProgramRecommend } from '@/api/program';
+import LikeButton from '@/common/button/LikeButton';
 import ContentCard from '@/common/card/ContentCard';
-import HorizontalRule from '@/common/HorizontalRule';
 import MoreHeader from '@/common/header/MoreHeader';
+import HorizontalRule from '@/common/HorizontalRule';
 import BlogKakaoShareBtn from '@/domain/blog/button/BlogKakaoShareBtn';
 import BlogLinkShareBtn from '@/domain/blog/button/BlogLilnkShareBtn';
 import ProgramRecommendCard from '@/domain/blog/card/ProgramRecommendCard';
@@ -90,13 +91,19 @@ export default async function LibraryDetailPage({
   }
 
   return (
-    <main className="mx-auto w-full max-w-[1100px] pb-12 pt-6 md:pb-[7.5rem]">
+    <main className="mx-auto w-full max-w-[1100px] pb-12 pt-[60px] md:pb-[7.5rem]">
       <div className="flex flex-col items-center md:flex-row md:items-start md:gap-20">
         {/* 본문 */}
         <section className="w-full px-5 md:px-0">
           <LibraryArticle libraryInfo={libraryInfo} />
 
-          <section className="mb-9 mt-10 flex items-center justify-end md:mb-6">
+          <section className="mb-9 mt-10 flex items-center justify-between md:mb-6">
+            {/* 좋아요 */}
+            <LikeButton
+              id={id}
+              likeCount={0}
+              storageKey="library_like"
+            />
             {/* 공유하기 */}
             <div className="flex items-center">
               <span className="mr-1.5 hidden text-xsmall14 font-medium text-neutral-35 md:block">
@@ -127,9 +134,7 @@ export default async function LibraryDetailPage({
             className="flex w-full items-center justify-center gap-2 py-5 md:rounded-xs md:bg-neutral-95"
           >
             <p className="text-xsmall14 font-semibold text-neutral-0 md:text-xsmall16 md:font-medium">
-              <span className="font-semibold text-primary">
-                무료 자료집 홈
-              </span>{' '}
+              <span className="font-semibold text-primary">자료집 홈</span>{' '}
               바로가기
             </p>
             <CircleChevronRight
