@@ -92,7 +92,7 @@ const GuidebookCreate: React.FC = () => {
         <FormSection title="기본 정보">
           <GuidebookBasicSection input={input} setInput={setInput} />
         </FormSection>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col justify-between">
           <FormSection title="가격 정보">
             <GuidebookPriceSection input={input} setInput={setInput} />
           </FormSection>
