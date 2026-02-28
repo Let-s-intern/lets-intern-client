@@ -133,13 +133,13 @@ const ChallengeReviewPageContent = () => {
       {feedbackMentorNickname && (
         <section>
           <ReviewQuestion required className="mb-5">
-            6. 포트폴리오 2주 완성 챌린지 25기 1:1 피드백을 진행해 주신 멘토님의
+            6. {josa(programTitle?.title ?? '', '을/를')} 진행해 주신 멘토님의
             닉네임을 작성해 주세요!
           </ReviewQuestion>
           <ReviewTextarea
             value={feedbackMentorNickname ?? '-'}
             readOnly
-            placeholder="test"
+            placeholder=""
           />
         </section>
       )}
@@ -153,7 +153,7 @@ const ChallengeReviewPageContent = () => {
           <ReviewTextarea
             value={feedbackGoodPoint ?? '-'}
             readOnly
-            placeholder="test"
+            placeholder=""
           />
         </section>
       )}
@@ -166,7 +166,7 @@ const ChallengeReviewPageContent = () => {
           <ReviewTextarea
             value={feedbackBadPoint ?? '-'}
             readOnly
-            placeholder="test"
+            placeholder=""
           />
         </section>
       )}

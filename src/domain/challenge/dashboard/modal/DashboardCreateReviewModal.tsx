@@ -214,36 +214,37 @@ const DashboardCreateReviewModal = ({
           {/* 피드백 멘토 닉네임 */}
           <section>
             <ReviewQuestion required className="mb-5">
-              6. test
+              6. {josa(programTitle?.title ?? '', '을/를')} 진행해 주신 멘토님의
+              닉네임을 작성해 주세요!
             </ReviewQuestion>
             <ReviewTextarea
               value={feedbackMentorNickname}
               onChange={(e) => setFeedbackMentorNickname(e.target.value)}
-              placeholder="test"
             />
           </section>
 
           {/* 피드백 만족했던 점 */}
           <section>
             <ReviewQuestion required className="mb-5">
-              7. test
+              7. 1:1 피드백에서 가장 도움이 되었거나 유익했던 점, 멘토님께
+              감사한 점 등을 남겨주세요!
             </ReviewQuestion>
             <ReviewTextarea
               value={feedbackGoodPoint}
               onChange={(e) => setFeedbackGoodPoint(e.target.value)}
-              placeholder="test"
+              placeholder=""
             />
           </section>
 
           {/* 피드백 아쉬웠던 점 */}
           <section>
             <ReviewQuestion required className="mb-5">
-              8. test
+              8. 1:1 피드백에서 개선이 필요하다고 생각하는 점을 남겨주세요!
             </ReviewQuestion>
             <ReviewTextarea
               value={feedbackBadPoint}
               onChange={(e) => setFeedbackBadPoint(e.target.value)}
-              placeholder="test"
+              placeholder=""
             />
           </section>
         </>
