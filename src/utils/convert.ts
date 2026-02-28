@@ -40,6 +40,9 @@ export const questionTypeToText: Record<QuestionType, string> = {
   GOAL_RESULT: '목표 달성 여부',
   WORRY: '서류 작성 고민', // report
   WORRY_RESULT: '고민 해결 여부', // report
+  FEEDBACK_MENTOR_NICKNAME: '피드백 멘토 닉네임',
+  FEEDBACK_GOOD_POINT: '피드백 만족했던 점',
+  FEEDBACK_BAD_POINT: '피드백 아쉬웠던 점',
 };
 
 export const programClassificationToText: Record<

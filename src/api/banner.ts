@@ -410,61 +410,50 @@ export const usePostCommonBannerForAdmin = ({
           : Promise.resolve(null),
       ]);
 
-      // 타입별 detail 리스트 생성
-      const requestsByType: {
-        type: string;
-        details: { type: string; agentType: 'PC' | 'MOBILE'; fileId: number }[];
-      }[] = [];
+      const commonBannerDetailInfoList: CommonBannerDetailInfo[] = [];
 
       if (types.HOME_TOP) {
-        const details: { type: string; agentType: 'PC' | 'MOBILE'; fileId: number }[] = [];
-        if (homePcFileId) details.push({ type: 'HOME_TOP', agentType: 'PC', fileId: homePcFileId });
-        if (homeMobileFileId) details.push({ type: 'HOME_TOP', agentType: 'MOBILE', fileId: homeMobileFileId });
-        if (details.length > 0) requestsByType.push({ type: 'HOME_TOP', details });
+        if (homePcFileId)
+          commonBannerDetailInfoList.push({ type: 'HOME_TOP', agentType: 'PC', fileId: homePcFileId });
+        if (homeMobileFileId)
+          commonBannerDetailInfoList.push({ type: 'HOME_TOP', agentType: 'MOBILE', fileId: homeMobileFileId });
       }
 
       if (types.HOME_BOTTOM) {
-        const details: { type: string; agentType: 'PC' | 'MOBILE'; fileId: number }[] = [];
-        if (homePcFileId) details.push({ type: 'HOME_BOTTOM', agentType: 'PC', fileId: homePcFileId });
-        if (homeMobileFileId) details.push({ type: 'HOME_BOTTOM', agentType: 'MOBILE', fileId: homeMobileFileId });
-        if (details.length > 0) requestsByType.push({ type: 'HOME_BOTTOM', details });
+        if (homePcFileId)
+          commonBannerDetailInfoList.push({ type: 'HOME_BOTTOM', agentType: 'PC', fileId: homePcFileId });
+        if (homeMobileFileId)
+          commonBannerDetailInfoList.push({ type: 'HOME_BOTTOM', agentType: 'MOBILE', fileId: homeMobileFileId });
       }
 
       if (types.PROGRAM) {
-        const details: { type: string; agentType: 'PC' | 'MOBILE'; fileId: number }[] = [];
-        if (programPcFileId) details.push({ type: 'PROGRAM', agentType: 'PC', fileId: programPcFileId });
-        if (programMobileFileId) details.push({ type: 'PROGRAM', agentType: 'MOBILE', fileId: programMobileFileId });
-        if (details.length > 0) requestsByType.push({ type: 'PROGRAM', details });
+        if (programPcFileId)
+          commonBannerDetailInfoList.push({ type: 'PROGRAM', agentType: 'PC', fileId: programPcFileId });
+        if (programMobileFileId)
+          commonBannerDetailInfoList.push({ type: 'PROGRAM', agentType: 'MOBILE', fileId: programMobileFileId });
       }
 
       if (types.MY_PAGE) {
-        const details: { type: string; agentType: 'PC' | 'MOBILE'; fileId: number }[] = [];
-        if (programMobileFileId) details.push({ type: 'MY_PAGE', agentType: 'PC', fileId: programMobileFileId });
-        if (homeMobileFileId) details.push({ type: 'MY_PAGE', agentType: 'MOBILE', fileId: homeMobileFileId });
-        if (details.length > 0) requestsByType.push({ type: 'MY_PAGE', details });
+        if (programMobileFileId)
+          commonBannerDetailInfoList.push({ type: 'MY_PAGE', agentType: 'PC', fileId: programMobileFileId });
+        if (homeMobileFileId)
+          commonBannerDetailInfoList.push({ type: 'MY_PAGE', agentType: 'MOBILE', fileId: homeMobileFileId });
       }
 
-      const commonBannerInfo = {
-        title: form.title,
-        landingUrl: form.landingUrl,
-        startDate: form.startDate
-          ? new Date(form.startDate).toISOString()
-          : null,
-        endDate: form.endDate ? new Date(form.endDate).toISOString() : null,
-        isVisible: form.isVisible,
-      };
+      const res = await axios.post('/admin/common-banner', {
+        commonBannerInfo: {
+          title: form.title,
+          landingUrl: form.landingUrl,
+          startDate: form.startDate
+            ? new Date(form.startDate).toISOString()
+            : null,
+          endDate: form.endDate ? new Date(form.endDate).toISOString() : null,
+          isVisible: form.isVisible,
+        },
+        commonBannerDetailInfoList,
+      });
 
-      // 타입별로 개별 POST 요청
-      const results = await Promise.all(
-        requestsByType.map((req) =>
-          axios.post('/admin/common-banner', {
-            commonBannerInfo,
-            commonBannerDetailInfoList: req.details,
-          }),
-        ),
-      );
-
-      return results.map((res) => res.data);
+      return res.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({

@@ -46,6 +46,7 @@ const MissionSubmitZeroSection = ({
   const [textareaValue, setTextareaValue] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(true);
   const [showToast, setShowToast] = useState(false);
+  const [showErrorToast, setShowErrorToast] = useState(false);
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTextareaValue(e.target.value);
@@ -78,9 +79,12 @@ const MissionSubmitZeroSection = ({
         }),
       ]);
       setIsSubmitted(true);
+      setShowErrorToast(false);
       setShowToast(true);
     } catch (error) {
       console.error('제출 실패:', error);
+      setShowToast(false);
+      setShowErrorToast(true);
     }
   };
 
@@ -138,6 +142,11 @@ const MissionSubmitZeroSection = ({
       )}
 
       <MissionToast isVisible={showToast} onClose={() => setShowToast(false)} />
+      <MissionToast
+        isVisible={showErrorToast}
+        onClose={() => setShowErrorToast(false)}
+        message="제출에 실패했습니다. 다시 시도해주세요."
+      />
     </section>
   );
 };

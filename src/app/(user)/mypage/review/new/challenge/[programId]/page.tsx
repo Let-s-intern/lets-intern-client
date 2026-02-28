@@ -44,14 +44,26 @@ const ChallengeReviewCreatePageContent = () => {
       },
     });
 
+  const isFeedbackApplied = challengeGoal?.isFeedbackApplied ?? false;
+
   const [score, setScore] = useState<number | null>(null); // 만족도
   const [npsScore, setNpsScore] = useState<number | null>(null);
   const [goodPoint, setGoodPoint] = useState<string>('');
   const [badPoint, setBadPoint] = useState<string>('');
   const [goalResult, setGoalResult] = useState<string>('');
+  const [feedbackMentorNickname, setFeedbackMentorNickname] =
+    useState<string>('');
+  const [feedbackGoodPoint, setFeedbackGoodPoint] = useState<string>('');
+  const [feedbackBadPoint, setFeedbackBadPoint] = useState<string>('');
 
   const isDisabled =
-    !score || !npsScore || !goodPoint || !badPoint || !goalResult;
+    !score ||
+    !npsScore ||
+    !goodPoint ||
+    !badPoint ||
+    !goalResult ||
+    (isFeedbackApplied &&
+      (!feedbackMentorNickname || !feedbackGoodPoint || !feedbackBadPoint));
 
   const onClickSubmit = async () => {
     if (postReviewwIsPending) return;
@@ -81,6 +93,22 @@ const ChallengeReviewCreatePageContent = () => {
               questionType: 'GOAL_RESULT',
               answer: goalResult,
             },
+            ...(isFeedbackApplied
+              ? [
+                  {
+                    questionType: 'FEEDBACK_MENTOR_NICKNAME' as const,
+                    answer: feedbackMentorNickname,
+                  },
+                  {
+                    questionType: 'FEEDBACK_GOOD_POINT' as const,
+                    answer: feedbackGoodPoint,
+                  },
+                  {
+                    questionType: 'FEEDBACK_BAD_POINT' as const,
+                    answer: feedbackBadPoint,
+                  },
+                ]
+              : []),
           ],
         },
       });
@@ -171,6 +199,45 @@ const ChallengeReviewCreatePageContent = () => {
           placeholder="참여하면서 아쉬웠던 점이나 추가되었으면 좋겠는 내용이 있다면 자유롭게 작성해주세요."
         />
       </section>
+
+      {isFeedbackApplied && (
+        <>
+          {/* 피드백 멘토 닉네임 */}
+          <section>
+            <ReviewQuestion required className="mb-5">
+              6. 포트폴리오 2주 완성 챌린지 25기 1:1 피드백을 진행해 주신
+              멘토님의 닉네임을 작성해 주세요!
+            </ReviewQuestion>
+            <ReviewTextarea
+              value={feedbackMentorNickname}
+              onChange={(e) => setFeedbackMentorNickname(e.target.value)}
+            />
+          </section>
+
+          {/* 피드백 만족했던 점 */}
+          <section>
+            <ReviewQuestion required className="mb-5">
+              7. 1:1 피드백에서 가장 도움이 되었거나 유익했던 점, 멘토님께
+              감사한 점 등을 남겨주세요!
+            </ReviewQuestion>
+            <ReviewTextarea
+              value={feedbackGoodPoint}
+              onChange={(e) => setFeedbackGoodPoint(e.target.value)}
+            />
+          </section>
+
+          {/* 피드백 아쉬웠던 점 */}
+          <section>
+            <ReviewQuestion required className="mb-5">
+              8. 1:1 피드백에서 개선이 필요하다고 생각하는 점을 남겨주세요!
+            </ReviewQuestion>
+            <ReviewTextarea
+              value={feedbackBadPoint}
+              onChange={(e) => setFeedbackBadPoint(e.target.value)}
+            />
+          </section>
+        </>
+      )}
     </ReviewModal>
   );
 };
