@@ -7,12 +7,12 @@ import {
   useEditCommonBannerForAdmin,
   useGetCommonBannerDetailForAdmin,
 } from '@/api/banner';
+import dayjs from '@/lib/dayjs';
 import { useParams, useRouter } from 'next/navigation';
 
 const toDatetimeLocal = (iso: string) => {
-  const date = new Date(iso);
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  if (!iso) return '';
+  return dayjs(iso).format('YYYY-MM-DDTHH:mm');
 };
 
 const mapDetailToFormValue = (
@@ -77,9 +77,7 @@ const mapDetailToFormValue = (
     startDate: commonBanner.startDate
       ? toDatetimeLocal(commonBanner.startDate)
       : '',
-    endDate: commonBanner.endDate
-      ? toDatetimeLocal(commonBanner.endDate)
-      : '',
+    endDate: commonBanner.endDate ? toDatetimeLocal(commonBanner.endDate) : '',
     types,
     homePcFile: null,
     homeMobileFile: null,

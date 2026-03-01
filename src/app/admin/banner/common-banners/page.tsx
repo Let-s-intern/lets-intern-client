@@ -65,9 +65,7 @@ const CommonBannersPage = () => {
         headerName: '노출 기간',
         width: 250,
         valueGetter: (_, row) =>
-          `${dayjs(row.startDate).format('YYYY-MM-DD')} ~ ${dayjs(
-            row.endDate,
-          ).format('YYYY-MM-DD')}`,
+          `${row.startDate ? dayjs(row.startDate).format('YYYY-MM-DD') : '미지정'} ~ ${row.endDate ? dayjs(row.endDate).format('YYYY-MM-DD') : '미지정'}`,
       },
       {
         field: 'management',

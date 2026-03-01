@@ -218,7 +218,7 @@ const CommonBannerInputContent = ({ value, onChange }: Props) => {
                   label="홈 배너 (PC)"
                   file={value.homePcFile}
                   previewUrl={value.homePcFileUrl}
-                  onChange={(f) => set({ homePcFile: f, homePcFileUrl: null })}
+                  onChange={(f) => set({ homePcFile: f, homePcFileUrl: null, homePcFileId: f ? value.homePcFileId : null })}
                 />
               )}
               <ImageUploadBox
@@ -226,7 +226,7 @@ const CommonBannerInputContent = ({ value, onChange }: Props) => {
                 file={value.homeMobileFile}
                 previewUrl={value.homeMobileFileUrl}
                 onChange={(f) =>
-                  set({ homeMobileFile: f, homeMobileFileUrl: null })
+                  set({ homeMobileFile: f, homeMobileFileUrl: null, homeMobileFileId: f ? value.homeMobileFileId : null })
                 }
               />
             </div>
@@ -241,7 +241,7 @@ const CommonBannerInputContent = ({ value, onChange }: Props) => {
                   file={value.programPcFile}
                   previewUrl={value.programPcFileUrl}
                   onChange={(f) =>
-                    set({ programPcFile: f, programPcFileUrl: null })
+                    set({ programPcFile: f, programPcFileUrl: null, programPcFileId: f ? value.programPcFileId : null })
                   }
                 />
               )}
@@ -250,7 +250,7 @@ const CommonBannerInputContent = ({ value, onChange }: Props) => {
                 file={value.programMobileFile}
                 previewUrl={value.programMobileFileUrl}
                 onChange={(f) =>
-                  set({ programMobileFile: f, programMobileFileUrl: null })
+                  set({ programMobileFile: f, programMobileFileUrl: null, programMobileFileId: f ? value.programMobileFileId : null })
                 }
               />
             </div>
