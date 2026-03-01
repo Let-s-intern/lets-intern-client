@@ -333,7 +333,9 @@ export const bannerUserListSchema = z.object({
 });
 
 const maybeUploadCommonBanner = (file: File | null): Promise<number | null> =>
-  file ? uploadFileForId({ file, type: 'COMMON_BANNER' }) : Promise.resolve(null);
+  file
+    ? uploadFileForId({ file, type: 'COMMON_BANNER' })
+    : Promise.resolve(null);
 
 export type CommonBannerDetailInfo = {
   type: CommonBannerType;
@@ -400,11 +402,15 @@ export const usePostCommonBannerForAdmin = ({
         programPcFileId,
         programMobileFileId,
       ] = await Promise.all([
-        needsHome ? maybeUploadCommonBanner(form.homePcFile) : Promise.resolve(null),
+        needsHome
+          ? maybeUploadCommonBanner(form.homePcFile)
+          : Promise.resolve(null),
         needsHome || needsMyPage
           ? maybeUploadCommonBanner(form.homeMobileFile)
           : Promise.resolve(null),
-        needsProgram ? maybeUploadCommonBanner(form.programPcFile) : Promise.resolve(null),
+        needsProgram
+          ? maybeUploadCommonBanner(form.programPcFile)
+          : Promise.resolve(null),
         needsProgram
           ? maybeUploadCommonBanner(form.programMobileFile)
           : Promise.resolve(null),
@@ -414,30 +420,62 @@ export const usePostCommonBannerForAdmin = ({
 
       if (types.HOME_TOP) {
         if (homePcFileId)
-          commonBannerDetailInfoList.push({ type: 'HOME_TOP', agentType: 'PC', fileId: homePcFileId });
+          commonBannerDetailInfoList.push({
+            type: 'HOME_TOP',
+            agentType: 'PC',
+            fileId: homePcFileId,
+          });
         if (homeMobileFileId)
-          commonBannerDetailInfoList.push({ type: 'HOME_TOP', agentType: 'MOBILE', fileId: homeMobileFileId });
+          commonBannerDetailInfoList.push({
+            type: 'HOME_TOP',
+            agentType: 'MOBILE',
+            fileId: homeMobileFileId,
+          });
       }
 
       if (types.HOME_BOTTOM) {
         if (homePcFileId)
-          commonBannerDetailInfoList.push({ type: 'HOME_BOTTOM', agentType: 'PC', fileId: homePcFileId });
+          commonBannerDetailInfoList.push({
+            type: 'HOME_BOTTOM',
+            agentType: 'PC',
+            fileId: homePcFileId,
+          });
         if (homeMobileFileId)
-          commonBannerDetailInfoList.push({ type: 'HOME_BOTTOM', agentType: 'MOBILE', fileId: homeMobileFileId });
+          commonBannerDetailInfoList.push({
+            type: 'HOME_BOTTOM',
+            agentType: 'MOBILE',
+            fileId: homeMobileFileId,
+          });
       }
 
       if (types.PROGRAM) {
         if (programPcFileId)
-          commonBannerDetailInfoList.push({ type: 'PROGRAM', agentType: 'PC', fileId: programPcFileId });
+          commonBannerDetailInfoList.push({
+            type: 'PROGRAM',
+            agentType: 'PC',
+            fileId: programPcFileId,
+          });
         if (programMobileFileId)
-          commonBannerDetailInfoList.push({ type: 'PROGRAM', agentType: 'MOBILE', fileId: programMobileFileId });
+          commonBannerDetailInfoList.push({
+            type: 'PROGRAM',
+            agentType: 'MOBILE',
+            fileId: programMobileFileId,
+          });
       }
 
       if (types.MY_PAGE) {
         if (homeMobileFileId)
-          commonBannerDetailInfoList.push({ type: 'MY_PAGE', agentType: 'PC', fileId: homeMobileFileId });
+          commonBannerDetailInfoList.push({
+            type: 'MY_PAGE',
+            agentType: 'PC',
+            fileId: homeMobileFileId,
+          });
         if (homeMobileFileId)
-          commonBannerDetailInfoList.push({ type: 'MY_PAGE', agentType: 'MOBILE', fileId: homeMobileFileId });
+          commonBannerDetailInfoList.push({
+            type: 'MY_PAGE',
+            agentType: 'MOBILE',
+            fileId: homeMobileFileId,
+          });
       }
 
       const res = await axios.post('/admin/common-banner', {
@@ -537,30 +575,62 @@ export const useEditCommonBannerForAdmin = ({
 
       if (types.HOME_TOP) {
         if (homePcFileId)
-          commonBannerDetailInfoList.push({ type: 'HOME_TOP', agentType: 'PC', fileId: homePcFileId });
+          commonBannerDetailInfoList.push({
+            type: 'HOME_TOP',
+            agentType: 'PC',
+            fileId: homePcFileId,
+          });
         if (homeMobileFileId)
-          commonBannerDetailInfoList.push({ type: 'HOME_TOP', agentType: 'MOBILE', fileId: homeMobileFileId });
+          commonBannerDetailInfoList.push({
+            type: 'HOME_TOP',
+            agentType: 'MOBILE',
+            fileId: homeMobileFileId,
+          });
       }
 
       if (types.HOME_BOTTOM) {
         if (homePcFileId)
-          commonBannerDetailInfoList.push({ type: 'HOME_BOTTOM', agentType: 'PC', fileId: homePcFileId });
+          commonBannerDetailInfoList.push({
+            type: 'HOME_BOTTOM',
+            agentType: 'PC',
+            fileId: homePcFileId,
+          });
         if (homeMobileFileId)
-          commonBannerDetailInfoList.push({ type: 'HOME_BOTTOM', agentType: 'MOBILE', fileId: homeMobileFileId });
+          commonBannerDetailInfoList.push({
+            type: 'HOME_BOTTOM',
+            agentType: 'MOBILE',
+            fileId: homeMobileFileId,
+          });
       }
 
       if (types.PROGRAM) {
         if (programPcFileId)
-          commonBannerDetailInfoList.push({ type: 'PROGRAM', agentType: 'PC', fileId: programPcFileId });
+          commonBannerDetailInfoList.push({
+            type: 'PROGRAM',
+            agentType: 'PC',
+            fileId: programPcFileId,
+          });
         if (programMobileFileId)
-          commonBannerDetailInfoList.push({ type: 'PROGRAM', agentType: 'MOBILE', fileId: programMobileFileId });
+          commonBannerDetailInfoList.push({
+            type: 'PROGRAM',
+            agentType: 'MOBILE',
+            fileId: programMobileFileId,
+          });
       }
 
       if (types.MY_PAGE) {
         if (homeMobileFileId)
-          commonBannerDetailInfoList.push({ type: 'MY_PAGE', agentType: 'PC', fileId: homeMobileFileId });
+          commonBannerDetailInfoList.push({
+            type: 'MY_PAGE',
+            agentType: 'PC',
+            fileId: homeMobileFileId,
+          });
         if (homeMobileFileId)
-          commonBannerDetailInfoList.push({ type: 'MY_PAGE', agentType: 'MOBILE', fileId: homeMobileFileId });
+          commonBannerDetailInfoList.push({
+            type: 'MY_PAGE',
+            agentType: 'MOBILE',
+            fileId: homeMobileFileId,
+          });
       }
 
       const res = await axios.patch(`/admin/common-banner/${commonBannerId}`, {
@@ -610,18 +680,8 @@ export const useToggleCommonBannerVisibility = ({
       commonBannerId: number;
       isVisible: boolean;
     }) => {
-      const detailRes = await axios(`/admin/common-banner/${commonBannerId}`);
-      const detail = detailRes.data.data as CommonBannerDetailResponse;
-
       const res = await axios.patch(`/admin/common-banner/${commonBannerId}`, {
-        commonBannerInfo: {
-          title: detail.commonBanner.title,
-          landingUrl: detail.commonBanner.landingUrl,
-          startDate: detail.commonBanner.startDate,
-          endDate: detail.commonBanner.endDate,
-          isVisible,
-        },
-        commonBannerDetailInfoList: detail.commonBannerDetailList,
+        commonBannerInfo: { isVisible },
       });
       return res.data;
     },
@@ -680,9 +740,7 @@ export const useDeleteCommonBannerForAdmin = ({
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (commonBannerId: number) => {
-      const res = await axios.delete(
-        `/admin/common-banner/${commonBannerId}`,
-      );
+      const res = await axios.delete(`/admin/common-banner/${commonBannerId}`);
       return res.data;
     },
     onSuccess: () => {
