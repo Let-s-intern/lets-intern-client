@@ -70,6 +70,10 @@ export interface OperationRecommendMoreButton {
 export type ChallengeContent = {
   /** 초기화 여부 알려주는 것 */
   initialized: boolean;
+  /** 자유 템플릿 여부 */
+  isFreeTemplate?: boolean;
+  /** 자유 템플릿 전용 본문 */
+  freeContent?: SerializedEditorState;
   /** 프로그램 최상단 배너 */
   intro?: SerializedEditorState;
   /** 상세 설명*/
