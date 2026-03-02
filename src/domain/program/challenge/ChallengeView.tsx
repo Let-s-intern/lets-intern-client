@@ -218,8 +218,8 @@ const ChallengeView: React.FC<{
 
   if (receivedContent.isFreeTemplate) {
     return (
-      <FreeTemplateLayout
-        header={
+      <div className="flex w-full flex-col">
+        <div className="flex w-full flex-col items-center">
           <div className="flex w-full max-w-[1000px] flex-col px-5 pb-10 pt-6 md:gap-y-5 md:px-10 md:py-[60px] lg:px-0">
             <ChallengeBasicInfo
               challengeId={id}
@@ -227,9 +227,11 @@ const ChallengeView: React.FC<{
               activeChallengeList={activeChallengeList?.challengeList}
             />
           </div>
-        }
-        freeContent={receivedContent.freeContent}
-      />
+          <div className="flex w-full flex-col items-center overflow-x-hidden">
+            <FreeTemplateLayout freeContent={receivedContent.freeContent} />
+          </div>
+        </div>
+      </div>
     );
   }
 

@@ -27,34 +27,31 @@ const ChallengeMarketingView = ({ challenge }: Props) => {
     [challenge.desc],
   );
 
-  if (content?.isFreeTemplate) {
-    return (
-      <FreeTemplateLayout
-        header={<ChallengeBasicInfoSection challenge={challenge} />}
-        freeContent={content.freeContent}
-      />
-    );
-  }
-
   return (
     <div className="w-full">
       <ChallengeBasicInfoSection challenge={challenge} />
-      <ChallengeTabNavigation />
-      <ChallengeIntroEditorContent challenge={challenge} />
-      <MarketingIntroSection />
-      <MarketingFeaturesSection />
-      <MarketingDifferentiatorsSection />
-      <MarketingCurriculumSection />
-      <MarketingChallengeCalendar
-        challenge={challenge}
-        curriculumImage={content?.curriculumImage}
-      />
-      <MarketingSummarySection />
-      <MarketingApplicationStrategySection />
-      <MarketingPricingSection priceInfoList={challenge.priceInfo} />
-      <MarketingReviewsSection challenge={challenge} />
-      <MarketingFAQSection faqInfo={challenge.faqInfo} />
-      <ChallengeRecruitmentInfoSection challenge={challenge} />
+      {content?.isFreeTemplate ? (
+        <FreeTemplateLayout freeContent={content.freeContent} />
+      ) : (
+        <>
+          <ChallengeTabNavigation />
+          <ChallengeIntroEditorContent challenge={challenge} />
+          <MarketingIntroSection />
+          <MarketingFeaturesSection />
+          <MarketingDifferentiatorsSection />
+          <MarketingCurriculumSection />
+          <MarketingChallengeCalendar
+            challenge={challenge}
+            curriculumImage={content?.curriculumImage}
+          />
+          <MarketingSummarySection />
+          <MarketingApplicationStrategySection />
+          <MarketingPricingSection priceInfoList={challenge.priceInfo} />
+          <MarketingReviewsSection challenge={challenge} />
+          <MarketingFAQSection faqInfo={challenge.faqInfo} />
+          <ChallengeRecruitmentInfoSection challenge={challenge} />
+        </>
+      )}
     </div>
   );
 };

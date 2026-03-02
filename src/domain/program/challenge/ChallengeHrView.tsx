@@ -30,31 +30,28 @@ const ChallengeHrView = ({ challenge }: Props) => {
     [challenge.desc],
   );
 
-  if (content?.isFreeTemplate) {
-    return (
-      <FreeTemplateLayout
-        header={<ChallengeBasicInfoSection challenge={challenge} />}
-        freeContent={content.freeContent}
-      />
-    );
-  }
-
   return (
     <div className="w-full">
       <ChallengeBasicInfoSection challenge={challenge} />
-      <ChallengeTabNavigation themeColor={themeColor} />
-      <ChallengeIntroEditorContent challenge={challenge} />
-      <HrIntroSection />
-      <HrIntroFeaturesSection content={content} />
-      <HrCheckListSection />
-      <HrCurriculumPointsSection content={content} />
-      <HrCurriculumStepsSection content={content} />
-      <HrCurriculumSection challenge={challenge} content={content} />
-      <HrOverviewSection content={content} />
-      <HrDifferentiatorsSection />
-      <HrRecruitmentInfoSection challenge={challenge} />
-      <HrReviewSection content={content} />
-      <HrFAQSection challenge={challenge} content={content} />
+      {content?.isFreeTemplate ? (
+        <FreeTemplateLayout freeContent={content.freeContent} />
+      ) : (
+        <>
+          <ChallengeTabNavigation themeColor={themeColor} />
+          <ChallengeIntroEditorContent challenge={challenge} />
+          <HrIntroSection />
+          <HrIntroFeaturesSection content={content} />
+          <HrCheckListSection />
+          <HrCurriculumPointsSection content={content} />
+          <HrCurriculumStepsSection content={content} />
+          <HrCurriculumSection challenge={challenge} content={content} />
+          <HrOverviewSection content={content} />
+          <HrDifferentiatorsSection />
+          <HrRecruitmentInfoSection challenge={challenge} />
+          <HrReviewSection content={content} />
+          <HrFAQSection challenge={challenge} content={content} />
+        </>
+      )}
     </div>
   );
 };
