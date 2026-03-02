@@ -33,15 +33,30 @@ export default function ContentCard({
     <div
       {...containerProps}
       className={twMerge(
-        'group relative flex flex-col gap-2.5',
+        'group relative flex',
+        variant === 'library'
+          ? 'items-center justify-between gap-4 md:flex-col md:items-stretch md:justify-start md:gap-2.5'
+          : 'flex-col gap-2.5',
         className,
       )}
     >
-      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-neutral-90">
+      <div
+        className={twMerge(
+          'relative overflow-hidden rounded-sm bg-neutral-90',
+          variant === 'library'
+            ? 'order-2 h-[3.375rem] w-[4.5rem] shrink-0 rounded-xxs md:order-none md:aspect-[4/3] md:h-auto md:w-full md:rounded-sm'
+            : 'aspect-[4/3] w-full',
+        )}
+      >
         {thumbnail}
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div
+        className={twMerge(
+          'flex flex-col gap-1',
+          variant === 'library' && 'order-1 flex-1 md:order-none',
+        )}
+      >
         <span
           className={twMerge(
             'text-xsmall14 font-semibold text-primary',
@@ -57,7 +72,7 @@ export default function ContentCard({
               'font-semibold text-neutral-0',
               variant === 'blog'
                 ? 'line-clamp-3 text-small18 md:text-xsmall16'
-                : 'line-clamp-2 text-xsmall16',
+                : 'line-clamp-3 text-xsmall16 md:line-clamp-2',
             )}
           >
             <Link href={href} target={target}>

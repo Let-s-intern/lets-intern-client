@@ -66,7 +66,7 @@ export default async function LibraryDetailPage({
   const programRecommendList = await getProgramRecommendList();
   const recommendLibraries = MOCK_LIBRARY_RECOMMENDS.filter(
     (item) => item.id !== libraryInfo.id,
-  ).slice(0, 4);
+  ).slice(0, 5);
 
   async function getProgramRecommendList() {
     const data = await fetchProgramRecommend();
@@ -91,7 +91,7 @@ export default async function LibraryDetailPage({
   }
 
   return (
-    <main className="mx-auto w-full max-w-[1100px] pb-12 pt-[60px] md:pb-[7.5rem]">
+    <main className="mx-auto w-full max-w-[1100px] pb-12 pt-6 md:pb-[7.5rem] md:pt-[60px]">
       <div className="flex flex-col items-center md:flex-row md:items-start md:gap-20">
         {/* 본문 */}
         <section className="w-full px-5 md:px-0">
@@ -99,11 +99,7 @@ export default async function LibraryDetailPage({
 
           <section className="mb-9 mt-10 flex items-center justify-between md:mb-6">
             {/* 좋아요 */}
-            <LikeButton
-              id={id}
-              likeCount={0}
-              storageKey="library_like"
-            />
+            <LikeButton id={id} likeCount={0} storageKey="library_like" />
             {/* 공유하기 */}
             <div className="flex items-center">
               <span className="mr-1.5 hidden text-xsmall14 font-medium text-neutral-35 md:block">
@@ -133,7 +129,7 @@ export default async function LibraryDetailPage({
             href="/library/list"
             className="flex w-full items-center justify-center gap-2 py-5 md:rounded-xs md:bg-neutral-95"
           >
-            <p className="text-xsmall14 font-semibold text-neutral-0 md:text-xsmall16 md:font-medium">
+            <p className="text-xsmall16 font-semibold text-neutral-0 md:font-medium">
               <span className="font-semibold text-primary">자료집 홈</span>{' '}
               바로가기
             </p>
@@ -179,7 +175,7 @@ export default async function LibraryDetailPage({
           >
             다른 취준생들이 함께 찾은 콘텐츠
           </MoreHeader>
-          <div className="mb-6 mt-5 grid grid-cols-1 gap-6 md:mt-6 md:grid-cols-4 md:items-start md:gap-5">
+          <div className="mb-6 mt-5 flex flex-col gap-5 md:mt-6 md:grid md:grid-cols-4 md:items-start md:gap-5">
             {recommendLibraries.map((lib) => (
               <ContentCard
                 key={lib.id}
