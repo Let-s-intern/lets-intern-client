@@ -179,6 +179,7 @@ export const useMagnetPostForm = (magnetId: number) => {
       mobileThumbnail: formState.thumbnail,
       startDate: displayDate?.format('YYYY-MM-DDTHH:mm') ?? null,
       endDate: endDate?.format('YYYY-MM-DDTHH:mm') ?? null,
+      isVisible: false,
     });
   };
 
