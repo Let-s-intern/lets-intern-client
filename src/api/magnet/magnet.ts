@@ -5,11 +5,14 @@ import {
 import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  MagnetDetailResponse,
   MagnetListResponse,
+  magnetDetailResponseSchema,
   magnetListResponseSchema,
 } from './magnetSchema';
 
 const magnetListQueryKey = 'MagnetListQueryKey';
+const magnetDetailQueryKey = 'MagnetDetailQueryKey';
 
 export interface MagnetListQueryParams {
   typeList?: MagnetTypeKey[];
@@ -78,6 +81,60 @@ export const usePatchMagnetVisibilityMutation = ({
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: [magnetListQueryKey] });
+      successCallback?.();
+    },
+    onError: (error) => {
+      console.error(error);
+      errorCallback?.();
+    },
+  });
+};
+
+export const useGetMagnetDetailQuery = (magnetId: number) => {
+  return useQuery({
+    queryKey: [magnetDetailQueryKey, magnetId],
+    queryFn: async (): Promise<MagnetDetailResponse> => {
+      const res = await axios.get(`/admin/magnet/${magnetId}`);
+      return magnetDetailResponseSchema.parse(res.data.data);
+    },
+  });
+};
+
+export interface PatchMagnetReqBody {
+  magnetId: number;
+  type?: string;
+  title?: string;
+  description?: string;
+  previewContents?: string;
+  mainContents?: string;
+  desktopThumbnail?: string;
+  mobileThumbnail?: string;
+  startDate?: string | null;
+  endDate?: string | null;
+  isVisible?: boolean;
+  magnetQuestionList?: unknown[];
+}
+
+export const usePatchMagnetMutation = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: () => void;
+} = {}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ magnetId, ...body }: PatchMagnetReqBody) => {
+      const res = await axios.patch(`/admin/magnet/${magnetId}`, body);
+      return res.data;
+    },
+    onSuccess: async (_data, variables) => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: [magnetDetailQueryKey, variables.magnetId],
+        }),
+        queryClient.invalidateQueries({ queryKey: [magnetListQueryKey] }),
+      ]);
       successCallback?.();
     },
     onError: (error) => {

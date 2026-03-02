@@ -61,29 +61,18 @@ export interface MagnetPostContent {
   lexicalAfter?: string;
 }
 
-/** 마그넷 포스트 상세 (단건 조회) */
+/** 마그넷 상세 — API 응답 magnetInfo 필드와 일치 */
 export interface MagnetPostDetail {
   magnetId: number;
   type: MagnetTypeKey;
   title: string;
-  metaDescription: string;
-  thumbnail: string;
-  displayDate: string | null;
+  description: string | null;
+  previewContents: string | null;
+  mainContents: string | null;
+  desktopThumbnail: string | null;
+  mobileThumbnail: string | null;
+  startDate: string | null;
   endDate: string | null;
-  hasCommonForm: boolean;
-  content: string;
-  isVisible: boolean;
-}
-
-/** 마그넷 포스트 저장 요청 */
-export interface MagnetPostReqBody {
-  magnetId: number;
-  metaDescription: string;
-  thumbnail: string;
-  displayDate: string | null;
-  endDate: string | null;
-  hasCommonForm: boolean;
-  content: string;
   isVisible: boolean;
 }
 

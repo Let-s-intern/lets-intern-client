@@ -1,8 +1,10 @@
 import { uploadFile } from '@/api/file';
-import { saveMagnetPost } from '@/domain/admin/blog/magnet/mock';
+import {
+  useGetMagnetDetailQuery,
+  usePatchMagnetMutation,
+} from '@/api/magnet/magnet';
 import {
   MagnetPostContent,
-  MagnetPostDetail,
   MagnetProgramRecommendItem,
 } from '@/domain/admin/blog/magnet/types';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
@@ -22,12 +24,35 @@ function createEmptyContent(): MagnetPostContent {
   };
 }
 
-function parseInitialContent(data: MagnetPostDetail): MagnetPostContent {
-  if (!data.content || data.content === '') return createEmptyContent();
+/** description JSON에서 metaDescription, programRecommend, magnetRecommend 추출 */
+interface DescriptionPayload {
+  metaDescription: string;
+  programRecommend: MagnetProgramRecommendItem[];
+  magnetRecommend: (number | null)[];
+}
+
+function parseDescription(raw: string | null): DescriptionPayload {
+  const empty = createEmptyContent();
+  if (!raw) {
+    return {
+      metaDescription: '',
+      programRecommend: empty.programRecommend,
+      magnetRecommend: empty.magnetRecommend,
+    };
+  }
   try {
-    return JSON.parse(data.content);
+    const parsed = JSON.parse(raw);
+    return {
+      metaDescription: parsed.metaDescription ?? '',
+      programRecommend: parsed.programRecommend ?? empty.programRecommend,
+      magnetRecommend: parsed.magnetRecommend ?? empty.magnetRecommend,
+    };
   } catch {
-    return createEmptyContent();
+    return {
+      metaDescription: raw,
+      programRecommend: empty.programRecommend,
+      magnetRecommend: empty.magnetRecommend,
+    };
   }
 }
 
@@ -37,43 +62,70 @@ interface FormState {
   hasCommonForm: boolean;
 }
 
-function buildInitialFormState(data: MagnetPostDetail): FormState {
-  return {
-    metaDescription: data.metaDescription ?? '',
-    thumbnail: data.thumbnail ?? '',
-    hasCommonForm: data.hasCommonForm ?? false,
-  };
-}
-
-interface UseMagnetPostFormParams {
-  magnetId: string;
-  initialData: MagnetPostDetail;
-}
-
-export const useMagnetPostForm = ({
-  magnetId,
-  initialData,
-}: UseMagnetPostFormParams) => {
+export const useMagnetPostForm = (magnetId: number) => {
   const router = useRouter();
   const { snackbar: setSnackbar } = useAdminSnackbar();
 
-  const initialContent = useMemo(
-    () => parseInitialContent(initialData),
-    [initialData],
-  );
-  const initialFormState = useMemo(
-    () => buildInitialFormState(initialData),
-    [initialData],
+  const { data: detailData, isLoading } = useGetMagnetDetailQuery(magnetId);
+  const { mutate: patchMagnet } = usePatchMagnetMutation({
+    successCallback: () => {
+      setSnackbar('마그넷 글이 저장되었습니다.');
+    },
+  });
+
+  const magnetInfo = detailData?.magnetInfo;
+
+  const descPayload = useMemo(
+    () => parseDescription(magnetInfo?.description ?? null),
+    [magnetInfo?.description],
   );
 
-  const [formState, setFormState] = useState<FormState>(initialFormState);
-  const [displayDate, setDisplayDate] = useState<Dayjs | null>(
-    initialData.displayDate ? dayjs(initialData.displayDate) : null,
+  const initialContent = useMemo<MagnetPostContent>(
+    () => ({
+      programRecommend: descPayload.programRecommend,
+      magnetRecommend: descPayload.magnetRecommend,
+      lexicalBefore: magnetInfo?.previewContents || undefined,
+      lexicalAfter: magnetInfo?.mainContents || undefined,
+    }),
+    [descPayload, magnetInfo?.previewContents, magnetInfo?.mainContents],
   );
-  const [endDate, setEndDate] = useState<Dayjs | null>(
-    initialData.endDate ? dayjs(initialData.endDate) : null,
+
+  const [formState, setFormState] = useState<FormState>({
+    metaDescription: '',
+    thumbnail: '',
+    hasCommonForm: false,
+  });
+  const [formInitialized, setFormInitialized] = useState(false);
+
+  // detailData가 로드되면 폼 상태 초기화
+  if (magnetInfo && !formInitialized) {
+    setFormState({
+      metaDescription: descPayload.metaDescription,
+      thumbnail: magnetInfo.desktopThumbnail ?? '',
+      hasCommonForm: false,
+    });
+    setFormInitialized(true);
+  }
+
+  const [displayDate, setDisplayDate] = useState<Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<Dayjs | null>(null);
+  const [dateInitialized, setDateInitialized] = useState(false);
+
+  if (magnetInfo && !dateInitialized) {
+    setDisplayDate(magnetInfo.startDate ? dayjs(magnetInfo.startDate) : null);
+    setEndDate(magnetInfo.endDate ? dayjs(magnetInfo.endDate) : null);
+    setDateInitialized(true);
+  }
+
+  const [content, setContent] = useState<MagnetPostContent>(
+    createEmptyContent(),
   );
-  const [content, setContent] = useState<MagnetPostContent>(initialContent);
+  const [contentInitialized, setContentInitialized] = useState(false);
+
+  if (magnetInfo && !contentInitialized) {
+    setContent(initialContent);
+    setContentInitialized(true);
+  }
 
   const onChangeMetaDescription = (e: ChangeEvent<HTMLInputElement>) => {
     setFormState((prev) => ({ ...prev, metaDescription: e.target.value }));
@@ -111,18 +163,23 @@ export const useMagnetPostForm = ({
     setContent((prev) => ({ ...prev, lexicalAfter: jsonString }));
   };
 
-  const savePost = async () => {
-    await saveMagnetPost({
-      magnetId: Number(magnetId),
+  const savePost = () => {
+    const description = JSON.stringify({
       metaDescription: formState.metaDescription,
-      thumbnail: formState.thumbnail,
-      displayDate: displayDate?.format('YYYY-MM-DDTHH:mm') ?? null,
-      endDate: endDate?.format('YYYY-MM-DDTHH:mm') ?? null,
-      hasCommonForm: formState.hasCommonForm,
-      content: JSON.stringify(content),
-      isVisible: false,
+      programRecommend: content.programRecommend,
+      magnetRecommend: content.magnetRecommend,
     });
-    setSnackbar('마그넷 글이 저장되었습니다.');
+
+    patchMagnet({
+      magnetId,
+      description,
+      previewContents: content.lexicalBefore ?? '',
+      mainContents: content.lexicalAfter ?? '',
+      desktopThumbnail: formState.thumbnail,
+      mobileThumbnail: formState.thumbnail,
+      startDate: displayDate?.format('YYYY-MM-DDTHH:mm') ?? null,
+      endDate: endDate?.format('YYYY-MM-DDTHH:mm') ?? null,
+    });
   };
 
   const navigateToList = () => {
@@ -130,8 +187,9 @@ export const useMagnetPostForm = ({
   };
 
   return {
-    type: initialData.type,
-    title: initialData.title,
+    isLoading,
+    type: magnetInfo?.type,
+    title: magnetInfo?.title,
     formState,
     displayDate,
     endDate,

@@ -4,11 +4,11 @@ import TextFieldLimit from '@/domain/admin/blog/TextFieldLimit';
 import { useMagnetPostForm } from '@/domain/admin/blog/magnet/hooks/useMagnetPostForm';
 import MagnetProgramRecommendSection from '@/domain/admin/blog/magnet/section/MagnetProgramRecommendSection';
 import MagnetRecommendSection from '@/domain/admin/blog/magnet/section/MagnetRecommendSection';
-import { MAGNET_TYPE, MagnetPostDetail } from '@/domain/admin/blog/magnet/types';
+import { MAGNET_TYPE, MagnetTypeKey } from '@/domain/admin/blog/magnet/types';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
 import ImageUpload from '@/domain/admin/program/ui/form/ImageUpload';
-import { Button, Checkbox, FormControlLabel } from '@mui/material';
+import { Button, Checkbox, CircularProgress, FormControlLabel } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import dynamic from 'next/dynamic';
 
@@ -21,11 +21,11 @@ const MAX_META_DESCRIPTION_LENGTH = 100;
 
 interface MagnetPostPageProps {
   magnetId: string;
-  initialData: MagnetPostDetail;
 }
 
-const MagnetPostPage = ({ magnetId, initialData }: MagnetPostPageProps) => {
+const MagnetPostPage = ({ magnetId }: MagnetPostPageProps) => {
   const {
+    isLoading,
     type,
     title,
     formState,
@@ -45,7 +45,15 @@ const MagnetPostPage = ({ magnetId, initialData }: MagnetPostPageProps) => {
     setEndDate,
     savePost,
     navigateToList,
-  } = useMagnetPostForm({ magnetId, initialData });
+  } = useMagnetPostForm(Number(magnetId));
+
+  if (isLoading || !type) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <CircularProgress />
+      </div>
+    );
+  }
 
   return (
     <div className="mx-6 mb-40 mt-6">
@@ -56,7 +64,7 @@ const MagnetPostPage = ({ magnetId, initialData }: MagnetPostPageProps) => {
         <div className="flex flex-col gap-6">
           {/* 4.1 타입 */}
           <p className="text-lg font-medium">
-            타입: &nbsp;{MAGNET_TYPE[type]}
+            타입: &nbsp;{MAGNET_TYPE[type as MagnetTypeKey]}
           </p>
 
           {/* 4.2 제목 */}
