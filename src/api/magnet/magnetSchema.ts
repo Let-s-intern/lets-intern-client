@@ -38,32 +38,7 @@ const magnetInfoSchema = z.object({
   isVisible: z.boolean(),
 });
 
-const magnetQuestionItemSchema = z.object({
-  itemId: z.number(),
-  value: z.string(),
-  isOther: z.boolean(),
-});
-
 const magnetQuestionSchema = z.object({
-  questionId: z.number(),
-  questionType: z.string(),
-  isRequired: z.string(),
-  question: z.string(),
-  description: z.string().nullable(),
-  selectionMethod: z.string(),
-  items: z.array(magnetQuestionItemSchema),
-});
-
-export const magnetDetailResponseSchema = z.object({
-  magnetInfo: magnetInfoSchema,
-  magnetQuestionInfo: z.array(magnetQuestionSchema),
-});
-
-export type MagnetDetailResponse = z.infer<typeof magnetDetailResponseSchema>;
-
-// --- Magnet Question API schemas ---
-
-const magnetQuestionApiSchema = z.object({
   magnetQuestionId: z.number(),
   type: z.string(),
   question: z.string(),
@@ -74,11 +49,10 @@ const magnetQuestionApiSchema = z.object({
   options: z.string().nullable(),
 });
 
-export const magnetQuestionListResponseSchema = z.object({
-  magnetQuestionList: z.array(magnetQuestionApiSchema),
+export const magnetDetailResponseSchema = z.object({
+  magnetInfo: magnetInfoSchema,
+  magnetQuestionInfo: z.array(magnetQuestionSchema),
 });
 
-export type MagnetQuestionApi = z.infer<typeof magnetQuestionApiSchema>;
-export type MagnetQuestionListResponse = z.infer<
-  typeof magnetQuestionListResponseSchema
->;
+export type MagnetDetailResponse = z.infer<typeof magnetDetailResponseSchema>;
+export type MagnetDetailQuestion = z.infer<typeof magnetQuestionSchema>;

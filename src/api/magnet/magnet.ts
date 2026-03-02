@@ -7,15 +7,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   MagnetDetailResponse,
   MagnetListResponse,
-  MagnetQuestionListResponse,
   magnetDetailResponseSchema,
   magnetListResponseSchema,
-  magnetQuestionListResponseSchema,
 } from './magnetSchema';
 
 const magnetListQueryKey = 'MagnetListQueryKey';
 const magnetDetailQueryKey = 'MagnetDetailQueryKey';
-const magnetQuestionListQueryKey = 'MagnetQuestionListQueryKey';
 
 export interface MagnetListQueryParams {
   typeList?: MagnetTypeKey[];
@@ -149,16 +146,6 @@ export const usePatchMagnetMutation = ({
 
 // --- Magnet Question API ---
 
-export const useGetMagnetQuestionsQuery = (magnetId: number) => {
-  return useQuery({
-    queryKey: [magnetQuestionListQueryKey, magnetId],
-    queryFn: async (): Promise<MagnetQuestionListResponse> => {
-      const res = await axios.get(`/magnet/${magnetId}/questions`);
-      return magnetQuestionListResponseSchema.parse(res.data.data);
-    },
-  });
-};
-
 export interface MagnetQuestionReqBody {
   type: string;
   question: string;
@@ -168,69 +155,6 @@ export interface MagnetQuestionReqBody {
   choiceType: 'SINGLE' | 'MULTIPLE';
   options: string | null;
 }
-
-export const usePatchMagnetQuestionMutation = ({
-  successCallback,
-  errorCallback,
-}: {
-  successCallback?: () => void;
-  errorCallback?: () => void;
-} = {}) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({
-      magnetQuestionId,
-      body,
-    }: {
-      magnetQuestionId: number;
-      body: MagnetQuestionReqBody;
-    }) => {
-      const res = await axios.patch(
-        `/admin/magnet-question/${magnetQuestionId}`,
-        body,
-      );
-      return res.data;
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: [magnetQuestionListQueryKey],
-      });
-      successCallback?.();
-    },
-    onError: (error) => {
-      console.error(error);
-      errorCallback?.();
-    },
-  });
-};
-
-export const useDeleteMagnetQuestionMutation = ({
-  successCallback,
-  errorCallback,
-}: {
-  successCallback?: () => void;
-  errorCallback?: () => void;
-} = {}) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (magnetQuestionId: number) => {
-      const res = await axios.delete(
-        `/admin/magnet-question/${magnetQuestionId}`,
-      );
-      return res.data;
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: [magnetQuestionListQueryKey],
-      });
-      successCallback?.();
-    },
-    onError: (error) => {
-      console.error(error);
-      errorCallback?.();
-    },
-  });
-};
 
 export const useCreateMagnetMutation = ({
   successCallback,
