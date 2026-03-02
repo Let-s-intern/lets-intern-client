@@ -14,6 +14,16 @@ interface CurationStickyNavProps {
   onScrollToFaq: () => void;
 }
 
+/** 역순(하단→상단)으로 순회하여 뷰포트 상단을 가장 최근에 지난 섹션 감지 */
+const SECTIONS_REVERSE = [
+  { id: 'curation-faq', sectionId: 'faq' },
+  { id: 'curation-challenge-comparison', sectionId: 'challenge-comparison' },
+  { id: 'curation-form', sectionId: 'form' },
+];
+
+/** sticky nav 높이(60px) + 여유 */
+const TRIGGER_TOP = 100;
+
 const CurationStickyNav = ({
   onScrollToForm,
   onScrollToChallengeComparison,
@@ -31,44 +41,32 @@ const CurationStickyNav = ({
     { title: 'FAQ', sectionId: 'faq', onClick: onScrollToFaq },
   ];
 
-  // 섹션 감지
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const id = entry.target.id;
-            if (id === 'curation-form') setActiveSection('form');
-            else if (id === 'curation-challenge-comparison')
-              setActiveSection('challenge-comparison');
-            else if (id === 'curation-faq') setActiveSection('faq');
-          }
-        });
-      },
-      {
-        root: null,
-        rootMargin: '-80px 0px -50% 0px',
-        threshold: 0,
-      },
-    );
+    let ticking = false;
 
-    const formSection = document.querySelector('#curation-form');
-    const challengeComparisonSection = document.getElementById(
-      'curation-challenge-comparison',
-    );
-    const faqSection = document.getElementById('curation-faq');
-
-    if (formSection) observer.observe(formSection);
-    if (challengeComparisonSection)
-      observer.observe(challengeComparisonSection);
-    if (faqSection) observer.observe(faqSection);
-
-    return () => {
-      if (formSection) observer.unobserve(formSection);
-      if (challengeComparisonSection)
-        observer.unobserve(challengeComparisonSection);
-      if (faqSection) observer.unobserve(faqSection);
+    const detectActive = () => {
+      for (const { id, sectionId } of SECTIONS_REVERSE) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        if (el.getBoundingClientRect().top <= TRIGGER_TOP) {
+          setActiveSection(sectionId);
+          return;
+        }
+      }
     };
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        detectActive();
+        ticking = false;
+      });
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    detectActive();
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
@@ -85,7 +83,10 @@ const CurationStickyNav = ({
                 borderBottomColor: isActive ? '#4D55F5' : 'transparent',
                 color: isActive ? '#4D55F5' : '#989ba2',
               }}
-              onClick={navItem.onClick}
+              onClick={() => {
+                setActiveSection(navItem.sectionId);
+                navItem.onClick();
+              }}
               type="button"
             >
               {navItem.title}

@@ -62,7 +62,11 @@ const ResultSection = ({ result, onRestart }: ResultSectionProps) => {
               {/* 모바일 */}
               <div className="flex flex-col gap-4 md:hidden">
                 {primaryCard && (
-                  <MobileRecommendationCard recommendation={primaryCard} />
+                  <MobileRecommendationCard
+                    recommendation={primaryCard}
+                    showExtraButton={!showSecondary && secondary.length > 0}
+                    onExtraClick={() => setShowSecondary(true)}
+                  />
                 )}
                 {showSecondary &&
                   secondary.map((rec) => (

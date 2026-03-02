@@ -12,8 +12,8 @@ const RecommendedComparisons = ({
   onSelect,
 }: RecommendedComparisonsProps) => {
   return (
-    <div className="flex items-center gap-3">
-      <p className="text-xs font-bold leading-4 text-[#3e4148]">
+    <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-3">
+      <p className="whitespace-nowrap text-xs font-bold leading-4 text-[#3e4148]">
         추천 비교 조합
       </p>
       <div className="flex flex-wrap gap-2">

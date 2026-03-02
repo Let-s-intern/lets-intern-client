@@ -4,17 +4,6 @@ import { PROGRAMS } from '../shared/programs';
 import { CHALLENGE_COMPARISON } from '../shared/comparisons';
 import type { ProgramId } from '../types';
 
-/** Figma 기반 카드별 썸네일 배경 색상 */
-const CARD_COLORS: Record<ProgramId, string> = {
-  experience: '#ff8165',
-  resume: '#4d55f5',
-  coverLetter: '#14bcff',
-  portfolio: '#14bcff',
-  enterpriseCover: '#6cdb3f',
-  marketingAllInOne: '#161c2f',
-  hrAllInOne: '#161c2f',
-};
-
 interface CompareResultCardProps {
   programIds: ProgramId[];
   onClose: () => void;
@@ -82,13 +71,12 @@ const CompareResultCard = ({ programIds, onClose }: CompareResultCardProps) => {
       <div className="flex items-end gap-10 pl-[120px]">
         {programs.map((program) => (
           <div key={program.id} className="flex flex-1 flex-col gap-1">
-            <div
-              className="flex h-[9.375rem] w-full max-w-[12.5rem] items-end overflow-hidden rounded-[5px] p-3"
-              style={{ backgroundColor: CARD_COLORS[program.id as ProgramId] }}
-            >
-              <span className="text-sm font-bold text-white">
-                {program.title}
-              </span>
+            <div className="h-[9.375rem] w-full max-w-[12.5rem] overflow-hidden rounded-[5px]">
+              <img
+                src={program.thumbnail}
+                alt={program.title}
+                className="h-full w-full object-cover"
+              />
             </div>
             <span className="text-sm font-semibold leading-5 text-[#27272d]">
               {program.title}
@@ -136,7 +124,7 @@ const CompareResultCard = ({ programIds, onClose }: CompareResultCardProps) => {
         {programs.map((program) => (
           <a
             key={program.id}
-            href={`/program/challenge/${program.id}`}
+            href={program.link}
             className="flex h-[2.875rem] flex-1 items-center justify-center rounded-lg bg-[#f3f3f3] transition-colors hover:bg-[#e7e7e7]"
           >
             <span className="text-center text-xs font-bold leading-4 text-[#4c4f56]">

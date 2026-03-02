@@ -130,6 +130,7 @@ export const useCurationFlow = ({
   const goToStep = (targetStep: number) => {
     if (targetStep >= currentStep) return; // only allow back navigation
     const clamped = Math.max(0, Math.min(targetStep, 3));
+    setResult(null);
     setCurrentStep(clamped);
   };
 

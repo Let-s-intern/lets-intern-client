@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import Image from 'next/image';
 import { useEffect, useRef } from 'react';
 
 interface CurationStepperProps {
@@ -32,7 +31,8 @@ const CurationStepper = ({
 
   return (
     <div ref={scrollContainerRef} className="w-full overflow-x-auto">
-      <div className="mx-auto flex w-[1100px] items-center justify-between">
+      {/* 데스크탑: 1100px 고정폭 / 모바일: w-full로 4개 스텝 한 화면에 표시 */}
+      <div className="mx-auto flex w-full items-center justify-between md:w-[1100px]">
         {steps.map((label, index) => {
           const isActive = index === currentStep;
           const isDone = index < currentStep;
@@ -44,23 +44,23 @@ const CurationStepper = ({
               ref={(el) => {
                 stepRefs.current[index] = el;
               }}
-              className="flex items-center gap-36"
+              className="flex items-center gap-1 md:gap-36"
             >
               <button
                 type="button"
                 onClick={() => onStepClick?.(index)}
-                className="flex items-center gap-5"
+                className="flex flex-col items-center gap-1 md:flex-row md:gap-5"
               >
                 {/* 번호 박스 */}
                 <div
                   className={clsx(
-                    'inline-flex h-12 w-12 flex-col items-center justify-center rounded-lg',
+                    'inline-flex h-8 w-8 flex-col items-center justify-center rounded-lg md:h-12 md:w-12',
                     isActive || isDone ? 'bg-violet-200' : 'bg-neutral-200',
                   )}
                 >
                   <span
                     className={clsx(
-                      'text-lg font-bold leading-6',
+                      'text-sm font-bold leading-none md:text-lg md:leading-6',
                       isActive || isDone ? 'text-indigo-600' : 'text-zinc-500',
                     )}
                   >
@@ -70,7 +70,7 @@ const CurationStepper = ({
                 {/* 레이블 */}
                 <span
                   className={clsx(
-                    'text-base leading-6',
+                    'text-center text-[9px] leading-tight md:text-base md:leading-6',
                     isActive
                       ? 'font-bold text-indigo-600'
                       : isDone
@@ -82,14 +82,25 @@ const CurationStepper = ({
                 </span>
               </button>
 
-              {/* 화살표 */}
+              {/* 화살표 — 오른쪽 방향 */}
               {!isLast && (
-                <Image
-                  src="/images/curation/tabler_arrow-up.svg"
-                  alt=""
-                  width={24}
-                  height={24}
-                />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                  className="shrink-0 text-neutral-300 md:h-6 md:w-6"
+                >
+                  <path
+                    d="M9 18l6-6-6-6"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
               )}
             </div>
           );
