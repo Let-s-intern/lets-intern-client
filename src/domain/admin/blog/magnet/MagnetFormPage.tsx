@@ -3,28 +3,33 @@
 import CloneFormDropdown from '@/domain/admin/blog/magnet/form/CloneFormDropdown';
 import FormBuilderSection from '@/domain/admin/blog/magnet/form/FormBuilderSection';
 import { useMagnetFormBuilder } from '@/domain/admin/blog/magnet/hooks/useMagnetFormBuilder';
-import { MagnetFormData } from '@/domain/admin/blog/magnet/types';
 import Heading from '@/domain/admin/ui/heading/Heading';
-import { Button } from '@mui/material';
+import { Button, CircularProgress } from '@mui/material';
 
 interface MagnetFormPageProps {
   magnetId: string;
-  initialData: MagnetFormData;
 }
 
-const MagnetFormPage = ({
-  magnetId,
-  initialData,
-}: MagnetFormPageProps) => {
+const MagnetFormPage = ({ magnetId }: MagnetFormPageProps) => {
   const {
     questions,
+    isLoading,
+    isSaving,
     addQuestion,
     removeQuestion,
     updateQuestion,
     cloneFromMagnet,
     saveForm,
     navigateToList,
-  } = useMagnetFormBuilder({ magnetId, initialData });
+  } = useMagnetFormBuilder({ magnetId });
+
+  if (isLoading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <CircularProgress />
+      </div>
+    );
+  }
 
   return (
     <div className="mx-6 mb-40 mt-6">
@@ -58,8 +63,9 @@ const MagnetFormPage = ({
             color="primary"
             type="button"
             onClick={saveForm}
+            disabled={isSaving}
           >
-            저장하기
+            {isSaving ? '저장 중...' : '저장하기'}
           </Button>
         </div>
       </main>
