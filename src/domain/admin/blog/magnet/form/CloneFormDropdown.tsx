@@ -1,11 +1,13 @@
 'use client';
 
-import { useGetMagnetListQuery } from '@/api/magnet/magnet';
-import { magnetDetailResponseSchema } from '@/api/magnet/magnetSchema';
+import {
+  magnetDetailQueryOptions,
+  useGetMagnetListQuery,
+} from '@/api/magnet/magnet';
 import { FormQuestion } from '@/domain/admin/blog/magnet/types';
 import { detailQuestionToFormQuestion } from '@/domain/admin/blog/magnet/utils/questionMapper';
-import axios from '@/utils/axios';
 import { Button, Menu, MenuItem } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
 import { Copy } from 'lucide-react';
 import { MouseEvent, useState } from 'react';
 
@@ -20,6 +22,7 @@ const CloneFormDropdown = ({
   hasExistingQuestions,
   onClone,
 }: CloneFormDropdownProps) => {
+  const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const { data: magnetListData } = useGetMagnetListQuery();
@@ -45,9 +48,10 @@ const CloneFormDropdown = ({
       if (!confirmed) return;
     }
 
-    const res = await axios.get(`/admin/magnet/${magnetId}`);
-    const parsed = magnetDetailResponseSchema.parse(res.data.data);
-    const questions = parsed.magnetQuestionInfo
+    const data = await queryClient.fetchQuery(
+      magnetDetailQueryOptions(magnetId),
+    );
+    const questions = data.magnetQuestionInfo
       .filter((q) => q.type === 'ADDITIONAL')
       .map(detailQuestionToFormQuestion);
     onClone(questions);

@@ -90,14 +90,16 @@ export const usePatchMagnetVisibilityMutation = ({
   });
 };
 
+export const magnetDetailQueryOptions = (magnetId: number) => ({
+  queryKey: [magnetDetailQueryKey, magnetId],
+  queryFn: async (): Promise<MagnetDetailResponse> => {
+    const res = await axios.get(`/admin/magnet/${magnetId}`);
+    return magnetDetailResponseSchema.parse(res.data.data);
+  },
+});
+
 export const useGetMagnetDetailQuery = (magnetId: number) => {
-  return useQuery({
-    queryKey: [magnetDetailQueryKey, magnetId],
-    queryFn: async (): Promise<MagnetDetailResponse> => {
-      const res = await axios.get(`/admin/magnet/${magnetId}`);
-      return magnetDetailResponseSchema.parse(res.data.data);
-    },
-  });
+  return useQuery(magnetDetailQueryOptions(magnetId));
 };
 
 export interface PatchMagnetReqBody {
@@ -128,13 +130,8 @@ export const usePatchMagnetMutation = ({
       const res = await axios.patch(`/admin/magnet/${magnetId}`, body);
       return res.data;
     },
-    onSuccess: async (_data, variables) => {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: [magnetDetailQueryKey, variables.magnetId],
-        }),
-        queryClient.invalidateQueries({ queryKey: [magnetListQueryKey] }),
-      ]);
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [magnetListQueryKey] });
       successCallback?.();
     },
     onError: (error) => {
