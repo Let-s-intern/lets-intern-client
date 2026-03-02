@@ -348,7 +348,7 @@ const ChallengeCreate: React.FC = () => {
           onChangeSerializedEditorState={(json) =>
             setContent((prev) => ({
               ...prev,
-              inro: json,
+              intro: json,
             }))
           }
         />
