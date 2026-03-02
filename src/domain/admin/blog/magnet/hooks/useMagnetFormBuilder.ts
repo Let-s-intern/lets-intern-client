@@ -1,5 +1,5 @@
 import {
-  useGetMagnetQuestionsQuery,
+  useGetMagnetDetailQuery,
   usePatchMagnetMutation,
 } from '@/api/magnet/magnet';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
@@ -8,7 +8,8 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FormQuestion, FormQuestionItem } from '../types';
 import {
-  apiQuestionToFormQuestion,
+  detailQuestionToApiBody,
+  detailQuestionToFormQuestion,
   formQuestionToApiBody,
 } from '../utils/questionMapper';
 
@@ -47,9 +48,9 @@ export const useMagnetFormBuilder = ({
   const { snackbar: setSnackbar } = useAdminSnackbar();
   const numericMagnetId = Number(magnetId);
 
-  // --- 데이터 페칭 ---
-  const { data, isLoading, refetch } =
-    useGetMagnetQuestionsQuery(numericMagnetId);
+  // --- 데이터 페칭 (상세 조회 API) ---
+  const { data: detailData, isLoading, refetch } =
+    useGetMagnetDetailQuery(numericMagnetId);
 
   // --- Mutations ---
   const { mutateAsync: patchMagnet } = usePatchMagnetMutation();
@@ -59,16 +60,16 @@ export const useMagnetFormBuilder = ({
   const [initialized, setInitialized] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // API 데이터로 초기화
+  // API 데이터로 초기화 (ADDITIONAL 질문만 표시)
   useEffect(() => {
-    if (!data || initialized) return;
+    if (!detailData || initialized) return;
 
-    const mapped = data.magnetQuestionList.map(
-      apiQuestionToFormQuestion,
-    );
-    setQuestions(mapped);
+    const additionalQuestions = detailData.magnetQuestionInfo
+      .filter((q) => q.type === 'ADDITIONAL')
+      .map(detailQuestionToFormQuestion);
+    setQuestions(additionalQuestions);
     setInitialized(true);
-  }, [data, initialized]);
+  }, [detailData, initialized]);
 
   const addQuestion = () => {
     setQuestions((prev) => [...prev, createEmptyQuestion()]);
@@ -125,18 +126,25 @@ export const useMagnetFormBuilder = ({
     setIsSaving(true);
 
     try {
-      // 백엔드: 기존 MagnetQuestion 전체 삭제 후 reqDto 기반 재생성
+      // 기존 BASE 질문 유지 + ADDITIONAL 질문 전체 교체
+      const baseQuestions = (detailData?.magnetQuestionInfo ?? [])
+        .filter((q) => q.type === 'BASE')
+        .map(detailQuestionToApiBody);
+
       await patchMagnet({
         magnetId: numericMagnetId,
-        magnetQuestionList: questions.map(formQuestionToApiBody),
+        magnetQuestionList: [
+          ...baseQuestions,
+          ...questions.map(formQuestionToApiBody),
+        ],
       });
 
       // 서버 재조회하여 서버가 부여한 ID 반영
       const { data: freshData } = await refetch();
       if (freshData) {
-        const mapped = freshData.magnetQuestionList.map(
-          apiQuestionToFormQuestion,
-        );
+        const mapped = freshData.magnetQuestionInfo
+          .filter((q) => q.type === 'ADDITIONAL')
+          .map(detailQuestionToFormQuestion);
         setQuestions(mapped);
       }
 

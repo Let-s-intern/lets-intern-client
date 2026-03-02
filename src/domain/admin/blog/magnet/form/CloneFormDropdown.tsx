@@ -1,9 +1,9 @@
 'use client';
 
 import { useGetMagnetListQuery } from '@/api/magnet/magnet';
-import { magnetQuestionListResponseSchema } from '@/api/magnet/magnetSchema';
+import { magnetDetailResponseSchema } from '@/api/magnet/magnetSchema';
 import { FormQuestion } from '@/domain/admin/blog/magnet/types';
-import { apiQuestionToFormQuestion } from '@/domain/admin/blog/magnet/utils/questionMapper';
+import { detailQuestionToFormQuestion } from '@/domain/admin/blog/magnet/utils/questionMapper';
 import axios from '@/utils/axios';
 import { Button, Menu, MenuItem } from '@mui/material';
 import { Copy } from 'lucide-react';
@@ -45,13 +45,11 @@ const CloneFormDropdown = ({
       if (!confirmed) return;
     }
 
-    const res = await axios.get(`/magnet/${magnetId}/questions`);
-    const parsed = magnetQuestionListResponseSchema.parse(
-      res.data.data,
-    );
-    const questions = parsed.magnetQuestionList.map(
-      apiQuestionToFormQuestion,
-    );
+    const res = await axios.get(`/admin/magnet/${magnetId}`);
+    const parsed = magnetDetailResponseSchema.parse(res.data.data);
+    const questions = parsed.magnetQuestionInfo
+      .filter((q) => q.type === 'ADDITIONAL')
+      .map(detailQuestionToFormQuestion);
     onClone(questions);
   };
 
