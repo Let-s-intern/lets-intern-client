@@ -2,7 +2,7 @@
 
 import { PROGRAMS } from '../shared/programs';
 import type { ChallengeComparisonRow, ProgramId } from '../types';
-import { CARD_COLORS, CheckIcon, CloseIcon } from './ChallengeCard';
+import { CheckIcon, CloseIcon } from './ChallengeCard';
 
 interface MobileChallengeCardProps {
   challenge: ChallengeComparisonRow;
@@ -20,18 +20,16 @@ const MobileChallengeCard = ({
   onRemove,
 }: MobileChallengeCardProps) => {
   const program = PROGRAMS[challenge.programId];
-  const bgColor = CARD_COLORS[challenge.programId];
 
   return (
     <div className="flex w-full items-center gap-4 rounded-lg border border-neutral-200 p-4">
       {/* 썸네일 */}
-      <div
-        className="h-[4.5rem] w-[4.5rem] shrink-0 rounded-[7px] p-2"
-        style={{ backgroundColor: bgColor }}
-      >
-        <span className="line-clamp-2 text-xs font-bold leading-tight text-white">
-          {program.title}
-        </span>
+      <div className="h-[4.5rem] w-[4.5rem] shrink-0 overflow-hidden rounded-[7px]">
+        <img
+          src={program.thumbnail}
+          alt={program.title}
+          className="h-full w-full object-cover"
+        />
       </div>
 
       {/* 텍스트 + 버튼 */}

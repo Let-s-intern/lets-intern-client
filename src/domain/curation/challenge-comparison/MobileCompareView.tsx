@@ -4,7 +4,6 @@ import { MdOutlineArrowBack } from 'react-icons/md';
 import { CHALLENGE_COMPARISON } from '../shared/comparisons';
 import { PROGRAMS } from '../shared/programs';
 import type { ProgramId } from '../types';
-import { CARD_COLORS } from './ChallengeCard';
 
 interface MobileCompareViewProps {
   programIds: ProgramId[];
@@ -86,19 +85,18 @@ const MobileCompareView = ({ programIds, onClose }: MobileCompareViewProps) => {
         <div className="flex gap-3 px-5 pb-6">
           {programs.map((program) => (
             <div key={program.id} className="flex flex-1 flex-col gap-3">
-              <div
-                className="aspect-video w-full rounded-[7px] p-3"
-                style={{ backgroundColor: CARD_COLORS[program.id as ProgramId] }}
-              >
-                <span className="text-sm font-bold text-white">
-                  {program.title}
-                </span>
+              <div className="aspect-video w-full overflow-hidden rounded-[7px]">
+                <img
+                  src={program.thumbnail}
+                  alt={program.title}
+                  className="h-full w-full object-cover"
+                />
               </div>
               <span className="line-clamp-2 min-h-[2.5rem] text-sm font-bold leading-5 text-[#27272d]">
                 {program.title}
               </span>
               <a
-                href={`/program/challenge/${program.id}`}
+                href={program.link}
                 className="flex items-center justify-center rounded-lg bg-[#f3f3f3] py-2.5 transition-colors hover:bg-[#e7e7e7]"
               >
                 <span className="text-xs font-semibold text-[#5c5f66]">

@@ -108,7 +108,7 @@ const MobileRecommendationCard = ({
         {/* CTA 버튼 + 추가 추천 받기 */}
         <div className="flex flex-col gap-3 self-stretch">
           <a
-            href={`/program/challenge/${program.id}`}
+            href={program.link}
             className="inline-flex h-11 items-center justify-center gap-1 self-stretch overflow-hidden rounded-lg bg-indigo-500 px-2 py-5 transition-opacity hover:opacity-90"
           >
             <span className="text-center text-sm font-bold leading-5 text-indigo-50">

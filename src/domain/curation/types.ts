@@ -59,6 +59,8 @@ export interface ProgramContent {
   curriculum: string[];
   features?: string[];
   plans: ProgramPlan[];
+  thumbnail: string;
+  link: string;
 }
 
 export interface FormValues {

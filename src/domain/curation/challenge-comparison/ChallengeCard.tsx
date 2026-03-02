@@ -3,17 +3,6 @@
 import { PROGRAMS } from '../shared/programs';
 import type { ChallengeComparisonRow, ProgramId } from '../types';
 
-/** Figma 기반 카드별 썸네일 배경 색상 */
-export const CARD_COLORS: Record<ProgramId, string> = {
-  experience: '#ff8165',
-  resume: '#4d55f5',
-  coverLetter: '#14bcff',
-  portfolio: '#14bcff',
-  enterpriseCover: '#6cdb3f',
-  marketingAllInOne: '#161c2f',
-  hrAllInOne: '#161c2f',
-};
-
 /** 체크 아이콘 SVG */
 export const CheckIcon = ({ className }: { className?: string }) => (
   <svg
@@ -61,28 +50,18 @@ const ChallengeCard = ({
   onRemove,
 }: ChallengeCardProps) => {
   const program = PROGRAMS[challenge.programId];
-  const bgColor = CARD_COLORS[challenge.programId];
-  const isDark = bgColor === '#161c2f';
 
   return (
     <div className="flex w-[15rem] flex-col">
       {/* 카드 본체 */}
       <div className="flex flex-1 flex-col gap-3">
         {/* 썸네일 영역 */}
-        <div
-          className="flex h-[11.25rem] w-full items-end overflow-hidden rounded-[7px] p-4"
-          style={{ backgroundColor: bgColor }}
-        >
-          <div className="flex flex-col gap-0.5">
-            <span
-              className={`text-xs font-medium ${isDark ? 'text-white/70' : 'text-white/80'}`}
-            >
-              {program.subtitle}
-            </span>
-            <span className="text-base font-bold text-white">
-              {program.title}
-            </span>
-          </div>
+        <div className="h-[11.25rem] w-full overflow-hidden rounded-[7px]">
+          <img
+            src={program.thumbnail}
+            alt={program.title}
+            className="h-full w-full object-cover"
+          />
         </div>
 
         {/* 텍스트 영역 */}
