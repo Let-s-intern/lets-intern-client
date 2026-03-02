@@ -52,3 +52,9 @@ next-env.d.ts
 # 개인 폴더
 
 .history
+
+# Claude Code tasks (완료된 작업 기록)
+.claude/tasks/done/*
+!.claude/tasks/done/.gitkeep
+!.claude/tasks/done/**/task*
+!.claude/tasks/done/**/task*/
