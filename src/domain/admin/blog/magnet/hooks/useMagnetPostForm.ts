@@ -97,10 +97,15 @@ export const useMagnetPostForm = (magnetId: number) => {
     thumbnail: '',
     hasCommonForm: false,
   });
-  const [formInitialized, setFormInitialized] = useState(false);
+  const [displayDate, setDisplayDate] = useState<Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<Dayjs | null>(null);
+  const [content, setContent] = useState<MagnetPostContent>(
+    createEmptyContent(),
+  );
+  const [initialized, setInitialized] = useState(false);
 
-  // detailData가 로드되면 폼 상태 초기화
-  if (detailData && magnetInfo && !formInitialized) {
+  // detailData가 로드되면 모든 폼 상태 초기화
+  if (detailData && magnetInfo && !initialized) {
     const hasBaseQuestions = detailData.magnetQuestionInfo.some(
       (q) => q.type === 'BASE',
     );
@@ -109,27 +114,10 @@ export const useMagnetPostForm = (magnetId: number) => {
       thumbnail: magnetInfo.desktopThumbnail ?? '',
       hasCommonForm: hasBaseQuestions,
     });
-    setFormInitialized(true);
-  }
-
-  const [displayDate, setDisplayDate] = useState<Dayjs | null>(null);
-  const [endDate, setEndDate] = useState<Dayjs | null>(null);
-  const [dateInitialized, setDateInitialized] = useState(false);
-
-  if (magnetInfo && !dateInitialized) {
     setDisplayDate(magnetInfo.startDate ? dayjs(magnetInfo.startDate) : null);
     setEndDate(magnetInfo.endDate ? dayjs(magnetInfo.endDate) : null);
-    setDateInitialized(true);
-  }
-
-  const [content, setContent] = useState<MagnetPostContent>(
-    createEmptyContent(),
-  );
-  const [contentInitialized, setContentInitialized] = useState(false);
-
-  if (magnetInfo && !contentInitialized) {
     setContent(initialContent);
-    setContentInitialized(true);
+    setInitialized(true);
   }
 
   const onChangeMetaDescription = (e: ChangeEvent<HTMLInputElement>) => {

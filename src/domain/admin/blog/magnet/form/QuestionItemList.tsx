@@ -1,10 +1,19 @@
-import {
-  createEmptyItem,
-  createOtherItem,
-} from '@/domain/admin/blog/magnet/hooks/useMagnetFormBuilder';
 import { FormQuestionItem } from '@/domain/admin/blog/magnet/types';
+import { generateUUID } from '@/utils/random';
 import { Button, Chip, IconButton, TextField } from '@mui/material';
 import { Plus, X } from 'lucide-react';
+
+function createEmptyItem(): FormQuestionItem {
+  return { itemId: generateUUID(), value: '', isOther: false };
+}
+
+function createOtherItem(): FormQuestionItem {
+  return {
+    itemId: generateUUID(),
+    value: '기타(직접입력)',
+    isOther: true,
+  };
+}
 
 interface QuestionItemListProps {
   items: FormQuestionItem[];

@@ -6,7 +6,7 @@ import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { generateUUID } from '@/utils/random';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { FormQuestion, FormQuestionItem } from '../types';
+import { FormQuestion } from '../types';
 import {
   detailQuestionToApiBody,
   detailQuestionToFormQuestion,
@@ -22,18 +22,6 @@ function createEmptyQuestion(): FormQuestion {
     description: '',
     selectionMethod: 'SINGLE',
     items: [],
-  };
-}
-
-export function createEmptyItem(): FormQuestionItem {
-  return { itemId: generateUUID(), value: '', isOther: false };
-}
-
-export function createOtherItem(): FormQuestionItem {
-  return {
-    itemId: generateUUID(),
-    value: '기타(직접입력)',
-    isOther: true,
   };
 }
 
