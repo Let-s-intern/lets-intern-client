@@ -7,6 +7,8 @@ import {
   MagnetPostContent,
   MagnetProgramRecommendItem,
 } from '@/domain/admin/blog/magnet/types';
+import { COMMON_FORM_QUESTIONS } from '@/domain/admin/blog/magnet/constants/commonFormQuestions';
+import { detailQuestionToApiBody } from '@/domain/admin/blog/magnet/utils/questionMapper';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import dayjs from '@/lib/dayjs';
 import { Dayjs } from 'dayjs';
@@ -98,11 +100,14 @@ export const useMagnetPostForm = (magnetId: number) => {
   const [formInitialized, setFormInitialized] = useState(false);
 
   // detailData가 로드되면 폼 상태 초기화
-  if (magnetInfo && !formInitialized) {
+  if (detailData && magnetInfo && !formInitialized) {
+    const hasBaseQuestions = detailData.magnetQuestionInfo.some(
+      (q) => q.type === 'BASE',
+    );
     setFormState({
       metaDescription: descPayload.metaDescription,
       thumbnail: magnetInfo.desktopThumbnail ?? '',
-      hasCommonForm: false,
+      hasCommonForm: hasBaseQuestions,
     });
     setFormInitialized(true);
   }
@@ -170,6 +175,16 @@ export const useMagnetPostForm = (magnetId: number) => {
       magnetRecommend: content.magnetRecommend,
     });
 
+    // 기존 ADDITIONAL 질문을 API 요청 형태로 변환
+    const additionalQuestions = (detailData?.magnetQuestionInfo ?? [])
+      .filter((q) => q.type === 'ADDITIONAL')
+      .map(detailQuestionToApiBody);
+
+    // hasCommonForm ON → BASE + ADDITIONAL, OFF → ADDITIONAL만
+    const magnetQuestionList = formState.hasCommonForm
+      ? [...COMMON_FORM_QUESTIONS, ...additionalQuestions]
+      : [...additionalQuestions];
+
     patchMagnet({
       magnetId,
       description,
@@ -180,6 +195,7 @@ export const useMagnetPostForm = (magnetId: number) => {
       startDate: displayDate?.format('YYYY-MM-DDTHH:mm') ?? null,
       endDate: endDate?.format('YYYY-MM-DDTHH:mm') ?? null,
       isVisible: false,
+      magnetQuestionList,
     });
   };
 
