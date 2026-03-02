@@ -1,10 +1,11 @@
 'use client';
 
+import BellIcon from '@/assets/icons/Bell.svg';
+import ContentCard from '@/common/card/ContentCard';
 import FilterDropdown from '@/common/dropdown/FilterDropdown';
 import MuiPagination from '@/domain/program/pagination/MuiPagination';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
-import LibraryCard from './card/LibraryCard';
 import LibraryTabNav from './ui/LibraryTabNav';
 
 const TABS = [
@@ -77,35 +78,54 @@ function Content() {
 function LibraryGrid() {
   return (
     <div className="grid grid-cols-1 gap-y-[54px] md:grid-cols-4 md:gap-x-5">
-      <LibraryCard
-        href="/library/1"
-        thumbnail={undefined}
+      <ContentCard
+        variant="library"
+        href="/library/1/제목이-한줄-일때"
         category="카테고리 분류"
         title="제목이 한줄 일때"
-        date="2025. 01. 30"
-        status="upcoming"
+        date="2025. 01. 30 공개 예정"
+        dateClassName="text-primary"
+        actionButton={
+          <button
+            type="button"
+            className="relative z-10 flex items-center gap-1 rounded-xs bg-point p-2.5 text-xxsmall12 font-medium text-neutral-20"
+            onClick={() => {}}
+          >
+            <BellIcon width={16} height={16} />
+            <span>알림 설정</span>
+          </button>
+        }
       />
-      <LibraryCard
-        href="/library/2"
-        thumbnail={undefined}
+      <ContentCard
+        variant="library"
+        href="/library/2/제목이-들어갑니다-제목이-들어갑니다-제목이-들어갑니다-제목이-들어갑니다-제목"
         category="카테고리 분류"
         title="제목이 들어갑니다 제목이 들어갑니다 제목이 들어갑니다 제목이 들어갑니다 제목"
-        date="2025. 01. 30"
-        status="notified"
+        date="2025. 01. 30 공개 예정"
+        dateClassName="text-primary"
+        actionButton={
+          <button
+            type="button"
+            className="relative z-10 flex items-center gap-1 rounded-xs bg-neutral-70 p-2.5 text-xxsmall12 font-medium text-white"
+            onClick={() => {}}
+          >
+            <BellIcon width={16} height={16} />
+            <span>알림 설정 완료</span>
+          </button>
+        }
       />
-      <LibraryCard
-        href="/library/3"
-        thumbnail={undefined}
+      <ContentCard
+        variant="library"
+        href="/library/3/나의-경험을-200%-활용하여-제작하는-자기소개서-2주-완성-챌린지"
         category="카테고리 분류"
         title="나의 경험을 200% 활용하여 제작하는 자기소개서 2주 완성 챌린지"
       />
-      <LibraryCard
-        href="/library/4"
-        thumbnail={undefined}
+      <ContentCard
+        variant="library"
+        href="/library/4/제목이-들어갑니다-제목이-들어갑니다-제목이-들어갑니다-제목이-들어갑니다-제목"
         category="카테고리 분류"
         title="제목이 들어갑니다 제목이 들어갑니다 제목이 들어갑니다 제목이 들어갑니다 제목"
-        date="2025. 01. 30"
-        status="published"
+        date="2025. 01. 30 작성"
       />
     </div>
   );
