@@ -107,7 +107,7 @@ grep -r "특정 UI 텍스트" src/
    - 레이아웃 조정
    - 조건부 렌더링 수정
 3. 공통 컴포넌트 확인
-   - .claude/docs/common-components/README.md 참조
+   - .claude/docs/letscareer/common/components.md 참조
    - 재사용 가능한 컴포넌트 활용
 ```
 

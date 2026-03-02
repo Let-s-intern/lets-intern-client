@@ -56,7 +56,7 @@ coordinator로부터:
    - 사용할 라이브러리 버전 및 컨벤션 확인
 
 4. 공통 컴포넌트 확인
-   - .claude/docs/common-components/README.md 참조
+   - .claude/docs/letscareer/common/components.md 참조
    - 재사용 가능한 UI 컴포넌트 파악
 
 5. Vercel 베스트 프랙티스 확인
