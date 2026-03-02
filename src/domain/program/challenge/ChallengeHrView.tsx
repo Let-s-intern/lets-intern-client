@@ -6,6 +6,7 @@ import { ChallengeIdPrimitive } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import { useMemo } from 'react';
 import ChallengeBasicInfoSection from './challenge-view/ChallengeBasicInfoSection';
+import FreeTemplateLayout from './challenge-view/FreeTemplateLayout';
 import HrCheckListSection from './hr-view/HrCheckListSection';
 import HrCurriculumPointsSection from './hr-view/HrCurriculumPointsSection';
 import HrCurriculumSection from './hr-view/HrCurriculumSection';
@@ -28,6 +29,15 @@ const ChallengeHrView = ({ challenge }: Props) => {
     () => parseChallengeContent(challenge.desc),
     [challenge.desc],
   );
+
+  if (content?.isFreeTemplate) {
+    return (
+      <FreeTemplateLayout
+        header={<ChallengeBasicInfoSection challenge={challenge} />}
+        freeContent={content.freeContent}
+      />
+    );
+  }
 
   return (
     <div className="w-full">

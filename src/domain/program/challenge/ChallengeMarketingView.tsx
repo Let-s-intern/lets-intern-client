@@ -1,6 +1,6 @@
+import ChallengeIntroEditorContent from '@/domain/program/challenge/challenge-view/ChallengeIntroEditorContent';
 import ChallengeRecruitmentInfoSection from '@/domain/program/challenge/challenge-view/ChallengeRecruitmentInfoSection';
 import ChallengeTabNavigation from '@/domain/program/challenge/challenge-view/ChallengeTabNavigation';
-import ChallengeIntroEditorContent from '@/domain/program/challenge/challenge-view/ChallengeIntroEditorContent';
 import MarketingCurriculumSection from '@/domain/program/challenge/marketing-view/MarketingCurriculumSection';
 import MarketingDifferentiatorsSection from '@/domain/program/challenge/marketing-view/MarketingDifferentiatorsSection';
 import MarketingPricingSection from '@/domain/program/challenge/marketing-view/MarketingPricingSection';
@@ -9,6 +9,7 @@ import { parseChallengeContent } from '@/domain/program/challenge/utils/parseCha
 import { ChallengeIdPrimitive } from '@/schema';
 import { useMemo } from 'react';
 import ChallengeBasicInfoSection from './challenge-view/ChallengeBasicInfoSection';
+import FreeTemplateLayout from './challenge-view/FreeTemplateLayout';
 import MarketingApplicationStrategySection from './marketing-view/MarketingApplicationStrategySection';
 import MarketingChallengeCalendar from './marketing-view/MarketingChallengeCalendar';
 import MarketingFAQSection from './marketing-view/MarketingFAQSection';
@@ -25,6 +26,15 @@ const ChallengeMarketingView = ({ challenge }: Props) => {
     () => parseChallengeContent(challenge.desc),
     [challenge.desc],
   );
+
+  if (content?.isFreeTemplate) {
+    return (
+      <FreeTemplateLayout
+        header={<ChallengeBasicInfoSection challenge={challenge} />}
+        freeContent={content.freeContent}
+      />
+    );
+  }
 
   return (
     <div className="w-full">
