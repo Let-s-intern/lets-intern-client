@@ -14,15 +14,9 @@
 ## 1. 라우트 구조
 
 ### 사용자 페이지
+
 ```
 /curation                               -> src/app/(user)/curation/page.tsx
-```
-
-### 관리자 페이지
-```
-/admin/home/curation                    -> src/app/admin/home/curation/page.tsx
-/admin/home/curation/create             -> src/app/admin/home/curation/create/page.tsx
-/admin/home/curation/[id]/edit          -> src/app/admin/home/curation/[id]/edit/page.tsx
 ```
 
 ---
@@ -76,22 +70,6 @@ src/domain/curation/
     └── comparisons.ts                    # 챌린지 비교 데이터
 ```
 
-### 관리자 도메인
-```
-src/domain/admin/
-├── pages/home/curation/
-│   ├── HomeCurationListPage.tsx          # 목록 페이지 (DataGrid)
-│   ├── HomeCurationCreatePage.tsx        # 생성 페이지
-│   └── HomeCurationEditPage.tsx          # 수정 페이지
-└── home/curation/
-    ├── CurationItem.tsx                  # 개별 큐레이션 아이템
-    ├── CurationSelectModal.tsx           # 아이템 선택 모달
-    └── section/
-        ├── CurationInfoSection.tsx       # 기본 정보 입력
-        ├── CurationItemsSection.tsx      # 아이템 목록 관리
-        └── CurationVisibleSection.tsx    # 노출 설정
-```
-
 ---
 
 ## 3. 핵심 훅
@@ -102,22 +80,23 @@ src/domain/admin/
 
 ```typescript
 const {
-  formRef,           // 폼 영역 ref (스크롤)
-  currentStep,       // 현재 단계 (0~3)
-  personaId,         // 선택된 페르소나
-  questionSet,       // 페르소나별 질문 세트
-  errors,            // 폼 검증 에러
-  watch,             // 폼 값 감시
-  setValue,          // 폼 값 설정
-  goNext,            // 다음 단계
-  goToStep,          // 특정 단계로 이동 (뒤로가기만)
-  handleRestart,     // 처음부터 다시
-  result,            // 최종 추천 결과 (CurationResult)
-  scrollToForm,      // 폼 영역으로 스크롤
-} = useCurationFlow()
+  formRef, // 폼 영역 ref (스크롤)
+  currentStep, // 현재 단계 (0~3)
+  personaId, // 선택된 페르소나
+  questionSet, // 페르소나별 질문 세트
+  errors, // 폼 검증 에러
+  watch, // 폼 값 감시
+  setValue, // 폼 값 설정
+  goNext, // 다음 단계
+  goToStep, // 특정 단계로 이동 (뒤로가기만)
+  handleRestart, // 처음부터 다시
+  result, // 최종 추천 결과 (CurationResult)
+  scrollToForm, // 폼 영역으로 스크롤
+} = useCurationFlow();
 ```
 
 **플로우:**
+
 1. Step 0: 페르소나 선택 (6가지)
 2. Step 1: 질문 1 (상황별 과제)
 3. Step 2: 질문 2 (시간/피드백 필요도)
@@ -129,15 +108,15 @@ const {
 
 ```typescript
 const {
-  cartItems,         // 선택된 프로그램 ID 배열
-  addToCart,         // 프로그램 추가 (최대 3개)
-  removeFromCart,    // 프로그램 제거
-  toggleCartItem,    // 토글
-  clearCart,         // 초기화
-  isInCart,          // 특정 프로그램 선택 여부
-  isFull,            // 최대 선택 도달 여부
-  canCompare,        // 비교 가능 여부 (2개 이상)
-} = useCompareCart()
+  cartItems, // 선택된 프로그램 ID 배열
+  addToCart, // 프로그램 추가 (최대 3개)
+  removeFromCart, // 프로그램 제거
+  toggleCartItem, // 토글
+  clearCart, // 초기화
+  isInCart, // 특정 프로그램 선택 여부
+  isFull, // 최대 선택 도달 여부
+  canCompare, // 비교 가능 여부 (2개 이상)
+} = useCompareCart();
 ```
 
 ---
@@ -157,124 +136,97 @@ const {
 
 ### 7개 프로그램
 
-| ID | 프로그램명 |
-|----|-----------|
-| experience | 기필코 경험정리 챌린지 |
-| resume | 이력서 1주 완성 |
-| coverLetter | 자기소개서 2주 완성 |
-| portfolio | 포트폴리오 2주 완성 |
-| enterpriseCover | 대기업 자기소개서 |
-| marketingAllInOne | 마케팅 올인원 |
-| hrAllInOne | HR 올인원 |
+| ID                | 프로그램명             |
+| ----------------- | ---------------------- |
+| experience        | 기필코 경험정리 챌린지 |
+| resume            | 이력서 1주 완성        |
+| coverLetter       | 자기소개서 2주 완성    |
+| portfolio         | 포트폴리오 2주 완성    |
+| enterpriseCover   | 대기업 자기소개서      |
+| marketingAllInOne | 마케팅 올인원          |
+| hrAllInOne        | HR 올인원              |
 
 ### 6가지 페르소나
 
-| ID | 타이틀 |
-|----|--------|
-| starter | 취준 입문 / 경험 정리가 먼저 |
-| resume | 이력서부터 빠르게 완성 |
-| coverLetter | 자기소개서/지원동기 강화 |
-| portfolio | 포트폴리오/직무 자료 준비 |
+| ID          | 타이틀                       |
+| ----------- | ---------------------------- |
+| starter     | 취준 입문 / 경험 정리가 먼저 |
+| resume      | 이력서부터 빠르게 완성       |
+| coverLetter | 자기소개서/지원동기 강화     |
+| portfolio   | 포트폴리오/직무 자료 준비    |
 | specialized | 특화 트랙 (대기업/마케팅/HR) |
-| dontKnow | 잘 모르겠어요 |
+| dontKnow    | 잘 모르겠어요                |
 
 ---
 
 ## 5. 타입 시스템
 
 ### 폼 관련
+
 ```typescript
-type PersonaId = 'starter' | 'resume' | 'coverLetter' | 'portfolio' | 'specialized' | 'dontKnow'
-type PlanId = 'basic' | 'standard' | 'premium'
-type ProgramId = 'experience' | 'resume' | 'coverLetter' | 'portfolio' | 'enterpriseCover' | 'marketingAllInOne' | 'hrAllInOne'
+type PersonaId =
+  | 'starter'
+  | 'resume'
+  | 'coverLetter'
+  | 'portfolio'
+  | 'specialized'
+  | 'dontKnow';
+type PlanId = 'basic' | 'standard' | 'premium';
+type ProgramId =
+  | 'experience'
+  | 'resume'
+  | 'coverLetter'
+  | 'portfolio'
+  | 'enterpriseCover'
+  | 'marketingAllInOne'
+  | 'hrAllInOne';
 
 interface FormValues {
-  personaId?: PersonaId
-  step1: string
-  step2: string
+  personaId?: PersonaId;
+  step1: string;
+  step2: string;
 }
 ```
 
 ### 결과 관련
+
 ```typescript
 interface CurationResult {
-  personaId: PersonaId
-  headline: string
-  summary: string
-  recommendations: ProgramRecommendation[]
-  emphasisNotes?: string[]
+  personaId: PersonaId;
+  headline: string;
+  summary: string;
+  recommendations: ProgramRecommendation[];
+  emphasisNotes?: string[];
 }
 
 interface ProgramRecommendation {
-  programId: ProgramId
-  emphasis: 'primary' | 'secondary'
-  reason: string
-  suggestedPlanId?: PlanId
+  programId: ProgramId;
+  emphasis: 'primary' | 'secondary';
+  reason: string;
+  suggestedPlanId?: PlanId;
 }
 ```
 
 ### 비교 관련
+
 ```typescript
 interface ChallengeComparisonRow {
-  programId: string
-  label: string
-  target: string
-  duration: string
-  pricing: string
-  curriculum: string
-  deliverable: string
-  feedback: string
-  features?: string
+  programId: string;
+  label: string;
+  target: string;
+  duration: string;
+  pricing: string;
+  curriculum: string;
+  deliverable: string;
+  feedback: string;
+  features?: string;
 }
 
 interface FrequentComparisonItem {
-  title: string          // e.g., "자소서 vs 대기업 자소서"
-  left: string
-  right: string
-  rows: { label: string; left: string; right: string }[]
-}
-```
-
----
-
-## 6. API
-
-### 파일 위치: `src/api/curation.ts`
-
-#### 관리자 API
-| 훅 | 메서드 | 용도 |
-|----|--------|------|
-| useGetAdminCurationList | GET | 큐레이션 목록 조회 |
-| useGetAdminCurationDetail | GET | 큐레이션 상세 조회 |
-| usePostAdminCuration | POST | 큐레이션 생성 |
-| usePatchAdminCuration | PATCH | 큐레이션 수정 |
-| useDeleteAdminCuration | DELETE | 큐레이션 삭제 |
-
-#### 사용자 API
-| 훅 | 메서드 | 용도 |
-|----|--------|------|
-| useGetUserCuration | GET | 홈 큐레이션 데이터 조회 (위치별) |
-
-### 관리자 데이터 스키마
-```typescript
-interface CurationListItemType {
-  curationId: number
-  locationType: 'UNDER_BANNER' | 'UNDER_REVIEW' | 'UNDER_BLOG'
-  title: string
-  startDate: string
-  endDate: string
-  isVisible: boolean
-}
-
-interface CurationItemType {
-  id: number
-  programType: 'CHALLENGE' | 'LIVE' | 'VOD' | 'REPORT' | 'BLOG' | 'ETC'
-  programId?: number
-  reportType?: string
-  tag?: string
-  title?: string
-  url?: string
-  thumbnail?: string
+  title: string; // e.g., "자소서 vs 대기업 자소서"
+  left: string;
+  right: string;
+  rows: { label: string; left: string; right: string }[];
 }
 ```
 
@@ -302,16 +254,6 @@ CurationScreen
 │
 └── FaqSection                 # FAQ 섹션 (4개 카테고리)
 ```
-
----
-
-## 8. 관리자 화면 기능
-
-| 페이지 | 기능 |
-|--------|------|
-| **List** | 생성된 큐레이션 목록 (위치/제목/기간/노출여부), 개별 노출 토글, 수정/삭제 |
-| **Create** | 위치 선택 (BANNER/REVIEW/BLOG), 기본정보, 아이템 추가, 노출설정 |
-| **Edit** | 기존 큐레이션 수정 (Create와 동일 구조) |
 
 ---
 
