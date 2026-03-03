@@ -21,7 +21,7 @@ export const mapPublicGuidebook = (
   const finalPrice = data.priceInfo?.finalPrice ?? 0;
 
   const hasValidPrice =
-    originalPrice > 0 && finalPrice > 0 && finalPrice <= originalPrice;
+    originalPrice > 0 && finalPrice >= 0 && finalPrice <= originalPrice;
 
   const discountPrice = hasValidPrice ? originalPrice - finalPrice : 0;
 
