@@ -1,13 +1,13 @@
 'use client';
 
-import type { GuidebookIdSchema } from '@/schema';
 import type { SerializedEditorState } from 'lexical';
 import { useMemo } from 'react';
 import GuidebookBasicInfoSection from './ui/GuidebookBasicInfoSection';
 import GuidebookDescriptionSection from './ui/GuidebookDescriptionSection';
+import type { GuidebookPublicViewModel } from './utils/publicGuidebookMapping';
 
 const GuidebookView: React.FC<{
-  guidebook: GuidebookIdSchema;
+  guidebook: GuidebookPublicViewModel;
   id: string;
 }> = ({ guidebook }) => {
   const editorState = useMemo<SerializedEditorState | null>(() => {

@@ -5,11 +5,11 @@ import FileIcon from '@/assets/icons/file.svg?react';
 import FolderIcon from '@/assets/icons/folder.svg?react';
 import UserIcon from '@/assets/icons/mentor.svg?react';
 import BackHeader from '@/common/header/BackHeader';
-import type { GuidebookIdSchema } from '@/schema';
+import type { GuidebookPublicViewModel } from '../utils/publicGuidebookMapping';
 import BasicInfoRow from '../../program-detail/basicInfo/BasicInfoRow';
 
 interface GuidebookBasicInfoSectionProps {
-  guidebook: GuidebookIdSchema;
+  guidebook: GuidebookPublicViewModel;
 }
 
 export const getDiscountPercent = (

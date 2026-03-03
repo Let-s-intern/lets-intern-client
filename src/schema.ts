@@ -634,6 +634,30 @@ export const getGuidebookIdSchema = z.object({
 
 export type GuidebookIdSchema = z.infer<typeof getGuidebookIdSchema>;
 
+/** GET /api/v1/guidebooks/{guidebookId} 가이드북 상세 조회 (사용자) */
+export const getPublicGuidebookSchema = z.object({
+  id: z.number(),
+  title: z.string().nullable().optional(),
+  thumbnail: z.string().nullable().optional(),
+  desktopThumbnail: z.string().nullable().optional(),
+  contentComposition: z.string().nullable().optional(),
+  accessMethod: z.string().nullable().optional(),
+  recommendedFor: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
+  shortDesc: z.string().nullable().optional(),
+  priceInfo: z
+    .object({
+      priceId: z.number(),
+      originalPrice: z.number(),
+      discountRate: z.number(),
+      finalPrice: z.number(),
+    })
+    .nullable()
+    .optional(),
+});
+
+export type PublicGuidebookSchema = z.infer<typeof getPublicGuidebookSchema>;
+
 /** POST /api/v1/guidebook 가이드북 생성 */
 export type CreateGuidebookReq = {
   title: string;
