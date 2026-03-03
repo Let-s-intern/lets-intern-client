@@ -40,7 +40,7 @@ import {
   UpdateChallengeReq,
 } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
-import { Button } from '@mui/material';
+import { Button, FormControlLabel, Switch } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -124,6 +124,7 @@ const ChallengeEdit: React.FC = () => {
     challengeReview: [],
     faqCategory: [],
   });
+  const [isFreeTemplate, setIsFreeTemplate] = useState(false);
 
   const defaultBasicPriceInfo = useMemo(() => {
     const basic: ChallengePriceReq = {
@@ -190,6 +191,14 @@ const ChallengeEdit: React.FC = () => {
       [e.target.name]: url,
     }));
   };
+
+  const handleChangeIsFreeTemplate = useCallback((checked: boolean) => {
+    setIsFreeTemplate(checked);
+    setContent((prev) => ({
+      ...prev,
+      isFreeTemplate: checked,
+    }));
+  }, []);
 
   const onClickSave = useCallback(async () => {
     if (!challengeIdString) {
@@ -281,6 +290,7 @@ const ChallengeEdit: React.FC = () => {
     setContent((prev) => ({
       ...(prev.initialized ? prev : { ...receivedContent, initialized: true }),
     }));
+    setIsFreeTemplate(Boolean(receivedContent.isFreeTemplate));
   }, [receivedContent]);
 
   useEffect(() => {
@@ -323,7 +333,21 @@ const ChallengeEdit: React.FC = () => {
   return (
     <div className="mx-3 mb-40 mt-3">
       <Header>
-        <Heading>챌린지 수정</Heading>
+        <div className="flex items-center gap-4">
+          <Heading>챌린지 수정</Heading>
+          <FormControlLabel
+            control={
+              <Switch
+                color="primary"
+                checked={isFreeTemplate}
+                onChange={(event) =>
+                  handleChangeIsFreeTemplate(event.target.checked)
+                }
+              />
+            }
+            label="자유 템플릿"
+          />
+        </div>
         <div className="flex items-center gap-3">
           <Button
             variant="outlined"
@@ -456,101 +480,127 @@ const ChallengeEdit: React.FC = () => {
         />
       </section>
 
-      <Heading2>프로그램 소개</Heading2>
-      <section className="mt-6">
-        <Heading3>인트로</Heading3>
-        <EditorApp
-          initialEditorStateJsonString={JSON.stringify(content.intro)}
-          onChangeSerializedEditorState={(json) =>
-            setContent((prev) => ({
-              ...prev,
-              intro: json,
-            }))
-          }
-        />
+      {isFreeTemplate ? (
+        <>
+          <Heading2>프로그램 설명 (자유 템플릿 전용)</Heading2>
+          <section className="mt-6">
+            <EditorApp
+              initialEditorStateJsonString={
+                content.freeContent
+                  ? JSON.stringify(content.freeContent)
+                  : undefined
+              }
+              onChangeSerializedEditorState={(json) =>
+                setContent((prev) => ({
+                  ...prev,
+                  isFreeTemplate: true,
+                  freeContent: json,
+                }))
+              }
+            />
+          </section>
+        </>
+      ) : (
+        <>
+          <Heading2>프로그램 소개</Heading2>
+          <section className="mt-6">
+            <Heading3>인트로</Heading3>
+            <EditorApp
+              initialEditorStateJsonString={JSON.stringify(content.intro)}
+              onChangeSerializedEditorState={(json) =>
+                setContent((prev) => ({
+                  ...prev,
+                  intro: json,
+                }))
+              }
+            />
 
-        <ChallengePointEditor
-          challengePoint={content.challengePoint}
-          setContent={setContent}
-        />
+            <ChallengePointEditor
+              challengePoint={content.challengePoint}
+              setContent={setContent}
+            />
 
-        {input.challengeType && (
-          <ChallengeLecture
-            challengeType={input.challengeType}
-            content={content}
+            {input.challengeType && (
+              <ChallengeLecture
+                challengeType={input.challengeType}
+                content={content}
+                setContent={setContent}
+              />
+            )}
+
+            <Heading3>상세 설명 (특별 챌린지 및 합격자 후기)</Heading3>
+            <EditorApp
+              initialEditorStateJsonString={JSON.stringify(
+                content.mainDescription,
+              )}
+              onChangeSerializedEditorState={(json) =>
+                setContent((prev) => ({
+                  ...prev,
+                  mainDescription: json,
+                }))
+              }
+            />
+          </section>
+
+          {/* 프로그램 추천 */}
+          <section className="mb-6">
+            <ProgramRecommendEditor
+              programRecommend={content.programRecommend ?? { list: [] }}
+              setProgramRecommend={(programRecommend) =>
+                setContent((prev) => ({ ...prev, programRecommend }))
+              }
+            />
+          </section>
+
+          <ChallengeCurriculumEditor
+            curriculum={content.curriculum}
             setContent={setContent}
+            curriculumImage={content.curriculumImage}
+            weekText={content.challengePoint?.weekText}
+            content={content}
           />
-        )}
 
-        <Heading3>상세 설명 (특별 챌린지 및 합격자 후기)</Heading3>
-        <EditorApp
-          initialEditorStateJsonString={JSON.stringify(content.mainDescription)}
-          onChangeSerializedEditorState={(json) =>
-            setContent((prev) => ({
-              ...prev,
-              mainDescription: json,
-            }))
-          }
-        />
-      </section>
-
-      {/* 프로그램 추천 */}
-      <section className="mb-6">
-        <ProgramRecommendEditor
-          programRecommend={content.programRecommend ?? { list: [] }}
-          setProgramRecommend={(programRecommend) =>
-            setContent((prev) => ({ ...prev, programRecommend }))
-          }
-        />
-      </section>
-
-      <ChallengeCurriculumEditor
-        curriculum={content.curriculum}
-        setContent={setContent}
-        curriculumImage={content.curriculumImage}
-        weekText={content.challengePoint?.weekText}
-        content={content}
-      />
-
-      <ProgramBestReview
-        reviewFields={content.challengeReview ?? []}
-        setReviewFields={(reviewFields) =>
-          setContent((prev) => ({ ...prev, challengeReview: reviewFields }))
-        }
-      />
-
-      <ProgramBlogReviewEditor
-        blogReview={content.blogReview ?? { list: [] }}
-        setBlogReview={(blogReview) =>
-          setContent((prev) => ({ ...prev, blogReview }))
-        }
-      />
-
-      <div className="my-6">
-        <div className="mb-6">
-          <ChallengeFaqCategory
-            faqCategory={content.faqCategory}
-            onChange={(e) => {
-              setContent((prev) => ({
-                ...prev,
-                faqCategory: e.target.value
-                  .split(',')
-                  .map((item) => item.trim()),
-              }));
-            }}
+          <ProgramBestReview
+            reviewFields={content.challengeReview ?? []}
+            setReviewFields={(reviewFields) =>
+              setContent((prev) => ({ ...prev, challengeReview: reviewFields }))
+            }
           />
-        </div>
-        <FaqSection
-          programType={ProgramTypeEnum.enum.CHALLENGE}
-          faqInfo={
-            input.faqInfo ??
-            challenge.faqInfo.map((info) => ({ faqId: info.id }))
-          }
-          setFaqInfo={(faqInfo) =>
-            setInput((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))
-          }
-        />
-      </div>
+
+          <ProgramBlogReviewEditor
+            blogReview={content.blogReview ?? { list: [] }}
+            setBlogReview={(blogReview) =>
+              setContent((prev) => ({ ...prev, blogReview }))
+            }
+          />
+
+          <div className="my-6">
+            <div className="mb-6">
+              <ChallengeFaqCategory
+                faqCategory={content.faqCategory}
+                onChange={(e) => {
+                  setContent((prev) => ({
+                    ...prev,
+                    faqCategory: e.target.value
+                      .split(',')
+                      .map((item) => item.trim()),
+                  }));
+                }}
+              />
+            </div>
+            <FaqSection
+              programType={ProgramTypeEnum.enum.CHALLENGE}
+              faqInfo={
+                input.faqInfo ??
+                challenge.faqInfo.map((info) => ({ faqId: info.id }))
+              }
+              setFaqInfo={(faqInfo) =>
+                setInput((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))
+              }
+            />
+          </div>
+        </>
+      )}
 
       <footer className="flex items-center justify-end gap-3">
         <ChallengePreviewButton

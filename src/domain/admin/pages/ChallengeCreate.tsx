@@ -30,7 +30,7 @@ import {
   ProgramTypeEnum,
 } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
-import { Button, TextField } from '@mui/material';
+import { Button, FormControlLabel, Switch, TextField } from '@mui/material';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
@@ -98,6 +98,7 @@ const ChallengeCreate: React.FC = () => {
     faqCategory: [],
     programRecommend: { list: [] },
   });
+  const [isFreeTemplate, setIsFreeTemplate] = useState(false);
 
   const [input, setInput] = useState(initialInput);
   const [loading, setLoading] = useState(false);
@@ -132,6 +133,14 @@ const ChallengeCreate: React.FC = () => {
       [e.target.name]: url,
     }));
   };
+
+  const handleChangeIsFreeTemplate = useCallback((checked: boolean) => {
+    setIsFreeTemplate(checked);
+    setContent((prev) => ({
+      ...prev,
+      isFreeTemplate: checked,
+    }));
+  }, []);
 
   const onClickSave = useCallback(async () => {
     setLoading(true);
@@ -197,7 +206,21 @@ const ChallengeCreate: React.FC = () => {
   return (
     <div className="mx-3 mb-40 mt-3">
       <Header>
-        <Heading>챌린지 생성</Heading>
+        <div className="flex items-center gap-4">
+          <Heading>챌린지 생성</Heading>
+          <FormControlLabel
+            control={
+              <Switch
+                color="primary"
+                checked={isFreeTemplate}
+                onChange={(event) =>
+                  handleChangeIsFreeTemplate(event.target.checked)
+                }
+              />
+            }
+            label="자유 템플릿"
+          />
+        </div>
         <div className="flex items-center gap-3">
           <TextField
             size="small"
@@ -213,9 +236,11 @@ const ChallengeCreate: React.FC = () => {
                 const challenge = getChallengeIdSchema.parse(
                   JSON.parse(importJsonString),
                 );
+                const parsedContent = JSON.parse(challenge?.desc ?? '{}');
                 setImportProcessing(true);
                 setInput(challengeToCreateInput(challenge));
-                setContent(JSON.parse(challenge?.desc ?? '{}'));
+                setContent(parsedContent);
+                setIsFreeTemplate(Boolean(parsedContent.isFreeTemplate));
                 setTimeout(() => {
                   snackbar('Import 성공!');
                   setImportJsonString('');
@@ -339,99 +364,120 @@ const ChallengeCreate: React.FC = () => {
           options={challengeOptions?.challengeOptionList ?? []}
         />
       </section>
+      {isFreeTemplate ? (
+        <>
+          <Heading2>프로그램 설명 (자유 템플릿 전용)</Heading2>
+          <section className="mt-6">
+            <EditorApp
+              onChangeSerializedEditorState={(json) =>
+                setContent((prev) => ({
+                  ...prev,
+                  isFreeTemplate: true,
+                  freeContent: json,
+                }))
+              }
+            />
+          </section>
+        </>
+      ) : (
+        <>
+          <Heading2>프로그램 소개</Heading2>
 
-      <Heading2>프로그램 소개</Heading2>
+          <section className="mt-6">
+            <Heading3>인트로</Heading3>
+            <EditorApp
+              onChangeSerializedEditorState={(json) =>
+                setContent((prev) => ({
+                  ...prev,
+                  intro: json,
+                }))
+              }
+            />
 
-      <section className="mt-6">
-        <Heading3>인트로</Heading3>
-        <EditorApp
-          onChangeSerializedEditorState={(json) =>
-            setContent((prev) => ({
-              ...prev,
-              inro: json,
-            }))
-          }
-        />
+            <ChallengePoint
+              challengePoint={content.challengePoint}
+              setContent={setContent}
+            />
 
-        <ChallengePoint
-          challengePoint={content.challengePoint}
-          setContent={setContent}
-        />
+            {input.challengeType && (
+              <ChallengeLecture
+                challengeType={input.challengeType}
+                content={content}
+                setContent={setContent}
+              />
+            )}
 
-        {input.challengeType && (
-          <ChallengeLecture
-            challengeType={input.challengeType}
-            content={content}
+            <Heading3>상세 설명</Heading3>
+            <EditorApp
+              onChangeSerializedEditorState={(json) =>
+                setContent((prev) => ({
+                  ...prev,
+                  mainDescription: json,
+                }))
+              }
+            />
+          </section>
+
+          {/* 프로그램 추천 */}
+          <section className="mb-6">
+            <ProgramRecommendEditor
+              programRecommend={content.programRecommend ?? { list: [] }}
+              setProgramRecommend={(programRecommend) =>
+                setContent((prev) => ({ ...prev, programRecommend }))
+              }
+            />
+          </section>
+
+          <ChallengeCurriculum
+            curriculum={content.curriculum}
             setContent={setContent}
+            curriculumImage={content.curriculumImage}
+            weekText={content.challengePoint?.weekText}
+            content={content}
           />
-        )}
 
-        <Heading3>상세 설명</Heading3>
-        <EditorApp
-          onChangeSerializedEditorState={(json) =>
-            setContent((prev) => ({
-              ...prev,
-              mainDescription: json,
-            }))
-          }
-        />
-      </section>
-
-      {/* 프로그램 추천 */}
-      <section className="mb-6">
-        <ProgramRecommendEditor
-          programRecommend={content.programRecommend ?? { list: [] }}
-          setProgramRecommend={(programRecommend) =>
-            setContent((prev) => ({ ...prev, programRecommend }))
-          }
-        />
-      </section>
-
-      <ChallengeCurriculum
-        curriculum={content.curriculum}
-        setContent={setContent}
-        curriculumImage={content.curriculumImage}
-        weekText={content.challengePoint?.weekText}
-        content={content}
-      />
-
-      <ProgramBestReview
-        reviewFields={content.challengeReview ?? []}
-        setReviewFields={(reviewFields) =>
-          setContent((prev) => ({ ...prev, challengeReview: reviewFields }))
-        }
-      />
-
-      <ProgramBlogReviewEditor
-        blogReview={content.blogReview || { list: [] }}
-        setBlogReview={(blogReview) =>
-          setContent((prev) => ({ ...prev, blogReview }))
-        }
-      />
-
-      <section className="my-6">
-        <div className="mb-6">
-          <ChallengeFaqCategory
-            faqCategory={content.faqCategory}
-            onChange={(e) => {
+          <ProgramBestReview
+            reviewFields={content.challengeReview ?? []}
+            setReviewFields={(reviewFields) =>
               setContent((prev) => ({
                 ...prev,
-                faqCategory: e.target.value
-                  .split(',')
-                  .map((item) => item.trim()),
-              }));
-            }}
+                challengeReview: reviewFields,
+              }))
+            }
           />
-        </div>
-        <FaqSection
-          programType={ProgramTypeEnum.enum.CHALLENGE}
-          faqInfo={input.faqInfo}
-          setFaqInfo={(faqInfo) =>
-            setInput((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))
-          }
-          isCreate
-        />
-      </section>
+
+          <ProgramBlogReviewEditor
+            blogReview={content.blogReview || { list: [] }}
+            setBlogReview={(blogReview) =>
+              setContent((prev) => ({ ...prev, blogReview }))
+            }
+          />
+
+          <section className="my-6">
+            <div className="mb-6">
+              <ChallengeFaqCategory
+                faqCategory={content.faqCategory}
+                onChange={(e) => {
+                  setContent((prev) => ({
+                    ...prev,
+                    faqCategory: e.target.value
+                      .split(',')
+                      .map((item) => item.trim()),
+                  }));
+                }}
+              />
+            </div>
+            <FaqSection
+              programType={ProgramTypeEnum.enum.CHALLENGE}
+              faqInfo={input.faqInfo}
+              setFaqInfo={(faqInfo) =>
+                setInput((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))
+              }
+              isCreate
+            />
+          </section>
+        </>
+      )}
 
       <footer className="flex items-center justify-end gap-3">
         <ChallengePreviewButton
