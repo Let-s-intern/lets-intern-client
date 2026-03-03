@@ -15,6 +15,7 @@ export const PROGRAM_TYPE = {
   CHALLENGE: 'CHALLENGE',
   LIVE: 'LIVE',
   VOD: 'VOD',
+  GUIDEBOOK: 'GUIDEBOOK',
 } as const;
 
 export const PROGRAM_FILTER_STATUS = {
@@ -34,12 +35,14 @@ export const PROGRAM_FILTER_TYPE = {
   CHALLENGE: '챌린지',
   LIVE: 'LIVE 클래스',
   VOD: 'VOD 클래스',
+  GUIDEBOOK: '가이드북',
 };
 
 export const PROGRAM_TYPE_KEY = {
   CHALLENGE: 'CHALLENGE',
   LIVE: 'LIVE',
   VOD: 'VOD',
+  GUIDEBOOK: 'GUIDEBOOK',
 };
 
 export const PROGRAM_CLASSIFICATION_KEY = {
