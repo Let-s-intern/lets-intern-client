@@ -18,8 +18,8 @@ import {
   getGuidebookIdSchema,
   getLiveIdPrimitiveSchema,
   getLiveIdSchema,
+  getPublicGuidebookSchema,
   getVodIdSchema,
-  GuidebookIdSchema,
   LiveIdPrimitive,
   LiveIdSchema,
   liveListResponseSchema,
@@ -37,6 +37,7 @@ import {
   ProgramStatusEnum,
   ProgramTypeEnum,
   ProgramTypeUpperCase,
+  PublicGuidebookSchema,
   UpdateChallengeReq,
   UpdateGuidebookReq,
   UpdateLiveReq,
@@ -384,41 +385,20 @@ export const useGetGuidebookQuery = ({
   });
 };
 
-/** 개발용 목 데이터 (API 연동 후 제거) */
-const getGuidebookMockData = (): GuidebookIdSchema =>
-  getGuidebookIdSchema.parse({
-    id: 0,
-    title: '가이드북 제목',
-    shortDesc: '가이드북 짧은 설명',
-    thumbnail: null,
-    desktopThumbnail: null,
-    contentComposition: '자료 구성 내용',
-    accessMethod: '가이드북 열람 방식',
-    recommendedFor: '가이드북 추천 대상',
-    description: '가이드북 설명',
-    isVisible: true,
-    job: null,
-    contentUrl: null,
-    contentFileUrl: null,
-    price: 10000,
-    discount: 1000,
-    programTypeInfo: [],
-  });
-
-/** RSC/페이지용 가이드북 상세 조회 (fetch 사용) */
-export const fetchGuidebookData = async (
+/** GET /api/v1/guidebooks/{guidebookId} 가이드북 상세 조회 (유저용: 자료정보 X) */
+export const fetchPublicGuidebookData = async (
   guidebookId: string,
-): Promise<GuidebookIdSchema> => {
+): Promise<PublicGuidebookSchema> => {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_API}/guidebook/${guidebookId}`,
+    `${process.env.NEXT_PUBLIC_SERVER_API}/guidebooks/${guidebookId}`,
   );
 
   if (!res.ok) {
-    return getGuidebookMockData();
+    throw new Error('가이드북 상세 조회에 실패했습니다.');
   }
 
   const data = await res.json();
-  return getGuidebookIdSchema.parse(data.data);
+  return getPublicGuidebookSchema.parse(data.data);
 };
 
 /** 1회용으로 사용하기 위한 함수 */

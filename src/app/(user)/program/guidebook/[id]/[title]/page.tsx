@@ -1,6 +1,7 @@
-import { fetchGuidebookData } from '@/api/program';
+import { fetchPublicGuidebookData } from '@/api/program';
 import GuidebookCTAButtons from '@/domain/program/guidebook/GuidebookCTAButtons';
 import GuidebookView from '@/domain/program/guidebook/GuidebookView';
+import { mapPublicGuidebook } from '@/domain/program/guidebook/utils/publicGuidebookMapping';
 import {
   getBaseUrlFromServer,
   getGuidebookTitle,
@@ -16,7 +17,8 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const program = await fetchGuidebookData(id);
+  const apiData = await fetchPublicGuidebookData(id);
+  const program = mapPublicGuidebook(apiData);
   const url =
     getBaseUrlFromServer() +
     getProgramPathname({
@@ -52,7 +54,8 @@ const Page = async ({
 }) => {
   const { id, title: _title } = await params;
 
-  const [guidebook] = await Promise.all([fetchGuidebookData(id)]);
+  const apiData = await fetchPublicGuidebookData(id);
+  const guidebook = mapPublicGuidebook(apiData);
 
   // 올바른 경로 생성
   const correctPathname = getProgramPathname({
