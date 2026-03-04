@@ -36,12 +36,14 @@ const handleCouponPrice = ({
 const PriceSection = ({
   payInfo,
   coupon,
+  showCouponDiscount = true,
 }: {
   payInfo: {
     price: number;
     discount: number;
   };
   coupon: ICouponForm;
+  showCouponDiscount?: boolean;
 }) => {
   const discountInfo = handleCouponPrice({ payInfo, coupon });
   return (
@@ -54,12 +56,14 @@ const PriceSection = ({
         <span>{Math.round(discountInfo.discountPer)}% 할인</span>
         <span>-{payInfo.discount.toLocaleString()}원</span>
       </div>
-      <div className="flex h-10 items-center justify-between px-3 text-primary">
-        <span>쿠폰할인</span>
-        <span className="font-bold">
-          -{discountInfo.couponDiscount.toLocaleString()}원
-        </span>
-      </div>
+      {showCouponDiscount && (
+        <div className="flex h-10 items-center justify-between px-3 text-primary">
+          <span>쿠폰할인</span>
+          <span className="font-bold">
+            -{discountInfo.couponDiscount.toLocaleString()}원
+          </span>
+        </div>
+      )}
     </div>
   );
 };
