@@ -15,7 +15,7 @@ const ProgramCard = ({
   progressType,
   thumbnailLinkClassName,
 }: {
-  type: 'challenge' | 'live';
+  type: 'challenge' | 'live' | 'guidebook';
   id: number;
   title: string;
   thumbnail: string;
