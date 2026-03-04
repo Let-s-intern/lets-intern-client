@@ -28,10 +28,35 @@ const PaymentFailContent = () => {
     return result.data;
   }, [searchParams]);
 
-  const program = useProgramQuery({
+  const programQuery = useProgramQuery({
     programId: programApplicationData.programId ?? 0,
     type: programApplicationData.programType ?? 'live',
   });
+
+  let programTitle = '';
+  let programThumbnail = '';
+  let programStartDate: import('dayjs').Dayjs | null = null;
+  let programEndDate: import('dayjs').Dayjs | null = null;
+  let programAccessMethod = '';
+
+  if (programQuery.type === 'live') {
+    const data = programQuery.query.data;
+    programTitle = data?.title ?? '';
+    programThumbnail = data?.thumbnail ?? '';
+    programStartDate = data?.startDate ?? null;
+    programEndDate = data?.endDate ?? null;
+  } else if (programQuery.type === 'challenge') {
+    const data = programQuery.query.data;
+    programTitle = data?.title ?? '';
+    programThumbnail = data?.thumbnail ?? '';
+    programStartDate = data?.startDate ?? null;
+    programEndDate = data?.endDate ?? null;
+  } else if (programQuery.type === 'guidebook') {
+    const data = programQuery.query.data;
+    programTitle = data?.title ?? '';
+    programThumbnail = data?.thumbnail ?? '';
+    programAccessMethod = data?.accessMethod ?? '';
+  }
 
   const returnLink = useMemo(() => {
     const base = `/program/${programApplicationData.programType}/${programApplicationData.programId}`;
@@ -44,10 +69,7 @@ const PaymentFailContent = () => {
   }, [params, programApplicationData]);
 
   return (
-    <div
-      className="mx-auto max-w-5xl px-5"
-      data-program-text={program.query.data?.title}
-    >
+    <div className="mx-auto max-w-5xl px-5" data-program-text={programTitle}>
       <div className="flex w-full items-center justify-start py-6 text-small20 font-bold text-neutral-0">
         결제 확인하기
       </div>
@@ -67,10 +89,11 @@ const PaymentFailContent = () => {
               <ProgramCard
                 type={programApplicationData.programType || 'live'}
                 id={programApplicationData.programId || 0}
-                title={program.query.data?.title ?? ''}
-                thumbnail={program.query.data?.thumbnail ?? ''}
-                startDate={program.query.data?.startDate}
-                endDate={program.query.data?.endDate}
+                title={programTitle}
+                thumbnail={programThumbnail}
+                startDate={programStartDate}
+                endDate={programEndDate}
+                accessMethod={programAccessMethod}
                 thumbnailLinkClassName="max-w-32"
                 progressType={programApplicationData.progressType ?? 'none'}
                 showType={programApplicationData.programType === 'live'}

@@ -59,6 +59,8 @@ export function MobileApplyCTA({
     onApplyClick();
   };
 
+  const hasDeadline = program?.deadline != null;
+
   return (
     <MobileCTA
       className="flex flex-col items-center lg:hidden"
@@ -73,16 +75,16 @@ export function MobileApplyCTA({
         <NotiButton text={'출시알림신청'} className="early_button" />
       ) : isAlreadyApplied ? (
         <DisabledButton />
-      ) : (
+      ) : hasDeadline ? (
         <>
           <div>
             <span className="mb-1 block text-xsmall14 font-medium">
-              {program?.deadline?.format('M월 D일 (dd)')} 마감까지 🚀
+              {program.deadline!.format('M월 D일 (dd)')} 마감까지 🚀
             </span>
             <div className="flex items-center gap-2">
               <Duration
                 disabled={isAlreadyApplied || isOutOfDate}
-                deadline={program?.deadline ?? dayjs()}
+                deadline={program.deadline ?? dayjs()}
               />
               <span className="text-xxsmall12 text-neutral-80">남음</span>
             </div>
@@ -91,6 +93,13 @@ export function MobileApplyCTA({
             지금 바로 신청
           </GradientButton>
         </>
+      ) : (
+        <GradientButton
+          onClick={handleApplyClick}
+          className="apply_button w-full"
+        >
+          지금 바로 신청
+        </GradientButton>
       )}
     </MobileCTA>
   );
@@ -137,25 +146,29 @@ export function DesktopApplyCTA({
       ? dayjs().isBefore(program.beginning) || dayjs().isAfter(program.deadline)
       : false;
 
+  const hasDeadline = program?.deadline != null;
+
   return (
     <DesktopCTA className="hidden items-center justify-between lg:flex">
       <div className="flex flex-col gap-1">
         <span className="font-bold text-neutral-100">{program?.title}</span>
-        <span className="text-xsmall14 font-medium text-neutral-80">
-          {program?.deadline?.format?.('M월 D일 (dd)')} 마감까지 🚀
-        </span>
+        {hasDeadline && program.deadline && (
+          <span className="text-xsmall14 font-medium text-neutral-80">
+            {program.deadline.format('M월 D일 (dd)')} 마감까지 🚀
+          </span>
+        )}
       </div>
-      <div className="flex min-w-80 max-w-[60rem] items-center gap-8">
+      <div className="flex min-w-80 max-w-[60rem] items-center justify-end gap-8">
         {isOutOfDate ? (
           <NotiButton text={'출시알림신청'} className="early_button" />
         ) : isAlreadyApplied ? (
           <DisabledButton />
-        ) : (
+        ) : hasDeadline && program.deadline ? (
           <>
             <div className="flex items-center gap-2">
               <Duration
                 disabled={isAlreadyApplied || isOutOfDate}
-                deadline={program?.deadline ?? dayjs()}
+                deadline={program.deadline ?? dayjs()}
               />
               <span className="text-xxsmall12 text-neutral-80">남음</span>
             </div>
@@ -163,6 +176,10 @@ export function DesktopApplyCTA({
               지금 바로 신청
             </GradientButton>
           </>
+        ) : (
+          <GradientButton onClick={onApplyClick} className="apply_button">
+            지금 바로 신청
+          </GradientButton>
         )}
       </div>
     </DesktopCTA>

@@ -14,14 +14,18 @@ const OrderProgramInfo = ({
   thumbnail,
   title,
   programType,
+  accessMethod,
 }: {
   thumbnail?: ProgramInfo['thumbnail'];
   title?: ProgramInfo['title'];
   startDate?: ProgramInfo['startDate'];
   endDate?: ProgramInfo['endDate'];
   progressType?: ProgramInfo['progressType'];
-  programType?: ProgramInfo['programType'];
+  programType?: ProgramInfo['programType'] | string | null;
+  accessMethod?: string | null;
 }) => {
+  const isGuidebook = programType === 'guidebook';
+
   return (
     <div className="flex w-full flex-col items-start justify-center gap-y-6">
       <div className="font-semibold text-neutral-0">프로그램 정보</div>
@@ -34,21 +38,30 @@ const OrderProgramInfo = ({
         <div className="flex grow flex-col items-start justify-center gap-y-3">
           <div className="font-semibold">{title}</div>
           <div className="flex w-full flex-col gap-y-1">
-            <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
-              <div className="shrink-0 text-neutral-30">진행 일정</div>
-              <div className="text-primary-dark">{`${convertDateFormat(startDate || '')} - ${convertDateFormat(endDate || '')}`}</div>
-            </div>
-            {progressType !== 'none' && programType !== 'CHALLENGE' && (
+            {isGuidebook ? (
               <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
-                <div className="shrink-0 text-neutral-30">진행 방식</div>
-                <div className="text-primary-dark">{`${
-                  progressType === 'ALL'
-                    ? '온라인/오프라인'
-                    : progressType === 'ONLINE'
-                      ? '온라인'
-                      : '오프라인'
-                }`}</div>
+                <div className="shrink-0 text-neutral-30">열람 방식</div>
+                <div className="text-primary-dark">{accessMethod || '-'}</div>
               </div>
+            ) : (
+              <>
+                <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
+                  <div className="shrink-0 text-neutral-30">진행 일정</div>
+                  <div className="text-primary-dark">{`${convertDateFormat(startDate || '')} - ${convertDateFormat(endDate || '')}`}</div>
+                </div>
+                {progressType !== 'none' && programType !== 'CHALLENGE' && (
+                  <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
+                    <div className="shrink-0 text-neutral-30">진행 방식</div>
+                    <div className="text-primary-dark">{`${
+                      progressType === 'ALL'
+                        ? '온라인/오프라인'
+                        : progressType === 'ONLINE'
+                          ? '온라인'
+                          : '오프라인'
+                    }`}</div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

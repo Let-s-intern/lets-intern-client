@@ -1,6 +1,6 @@
 import { fetchPublicGuidebookData } from '@/api/program';
-import GuidebookCTAButtons from '@/domain/program/guidebook/GuidebookCTAButtons';
 import GuidebookView from '@/domain/program/guidebook/GuidebookView';
+import GuidebookCTAButtons from '@/domain/program/guidebook/ui/GuidebookCTAButtons';
 import { mapPublicGuidebook } from '@/domain/program/guidebook/utils/publicGuidebookMapping';
 import {
   getBaseUrlFromServer,
@@ -80,7 +80,7 @@ const Page = async ({
   return (
     <>
       <GuidebookView guidebook={guidebook} id={id} />
-      <GuidebookCTAButtons title={guidebook.title} />
+      <GuidebookCTAButtons guidebookId={id} title={guidebook.title} />
     </>
   );
 };

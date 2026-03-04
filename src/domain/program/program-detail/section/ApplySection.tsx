@@ -2,7 +2,7 @@ import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import { Dayjs } from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
 import { useProgramApplicationQuery } from '../../../../api/application';
-import { useProgramQuery } from '../../../../api/program';
+import { useLegacyProgramQuery } from '../../../../api/program';
 import useRunOnce from '../../../../hooks/useRunOnce';
 import { AccountType } from '../../../../schema';
 import useProgramStore from '../../../../store/useProgramStore';
@@ -156,25 +156,30 @@ const ApplySection = ({
 
   const orderId = generateOrderId();
 
-  const program = useProgramQuery({ programId, type: programType });
+  const program = useLegacyProgramQuery({ programId, type: programType });
+  const programData = program?.query.data as {
+    beginning: Dayjs | null;
+    deadline: Dayjs | null;
+    startDate: Dayjs | null;
+    endDate: Dayjs | null;
+    progressType?: string | null;
+  } | null;
 
   const programDate =
-    program && program.query.data
+    program && programData
       ? {
-          beginning: program.query.data.beginning,
-          deadline: program.query.data.deadline,
-          startDate: program.query.data.startDate,
-          endDate: program.query.data.endDate,
+          beginning: programData.beginning,
+          deadline: programData.deadline,
+          startDate: programData.startDate,
+          endDate: programData.endDate,
         }
       : null;
 
   const payInfo = application ? getPayInfo(application) : null;
 
   const progressType =
-    program.query.data &&
-    'progressType' in program.query.data &&
-    program.query.data.progressType
-      ? program.query.data.progressType
+    programData && 'progressType' in programData && programData.progressType
+      ? programData.progressType
       : 'none';
 
   const totalPrice = useMemo(() => {

@@ -52,7 +52,7 @@ export const useProgramQuery = ({
   programId,
   type,
 }: {
-  type: 'live' | 'vod' | 'challenge';
+  type: 'live' | 'vod' | 'challenge' | 'guidebook';
   programId: number;
 }) => {
   const liveQuery = useGetLiveQuery({
@@ -63,6 +63,11 @@ export const useProgramQuery = ({
   const challengeQuery = useGetChallengeQuery({
     challengeId: programId,
     enabled: type === 'challenge' && programId !== -1,
+  });
+
+  const guidebookQuery = useGetGuidebookQuery({
+    guidebookId: programId,
+    enabled: type === 'guidebook' && programId !== -1,
   });
 
   switch (type) {
@@ -78,10 +83,23 @@ export const useProgramQuery = ({
         type: 'challenge' as const,
         query: challengeQuery,
       };
+    case 'guidebook':
+      return {
+        type: 'guidebook' as const,
+        query: guidebookQuery,
+      };
   }
 };
 
 export type ProgramQuery = ReturnType<typeof useProgramQuery>;
+
+// 레거시(챌린지/라이브) 전용 프로그램 조회 훅
+export const useLegacyProgramQuery = (args: {
+  type: 'live' | 'challenge';
+  programId: number;
+}) => {
+  return useProgramQuery(args);
+};
 
 export const useUserProgramQuery = ({
   pageable,
