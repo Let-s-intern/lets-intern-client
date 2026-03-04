@@ -37,6 +37,13 @@ function getBadgeStyle(
   }
 }
 
+// DEV mock – 목 챌린지(9999)용
+const MOCK_ATTENDANCE_LIST = [
+  { id: 88801, name: '김테스트', status: 'PRESENT' as const, feedbackStatus: 'WAITING' as const },
+  { id: 88802, name: '이테스트', status: 'PRESENT' as const, feedbackStatus: 'IN_PROGRESS' as const },
+  { id: 88803, name: '박미제출', status: 'ABSENT' as const, feedbackStatus: null },
+];
+
 const MenteeList = ({
   challengeId,
   missionId,
@@ -45,13 +52,16 @@ const MenteeList = ({
   selectedAttendanceId,
   onSelectMentee,
 }: MenteeListProps) => {
+  const isMock = challengeId === 9999;
   const { data, isLoading } = useMentorMissionFeedbackAttendanceQuery({
     challengeId,
     missionId,
-    enabled: !!challengeId && !!missionId,
+    enabled: !!challengeId && !!missionId && !isMock,
   });
 
-  const attendanceList = data?.attendanceList ?? [];
+  const attendanceList = isMock
+    ? MOCK_ATTENDANCE_LIST
+    : (data?.attendanceList ?? []);
 
   return (
     <div className="flex h-full flex-col overflow-y-auto border-r border-gray-200">
