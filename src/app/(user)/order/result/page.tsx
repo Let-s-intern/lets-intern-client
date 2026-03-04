@@ -125,13 +125,33 @@ const PaymentResultContent = () => {
     programId: programApplicationData.programId ?? -1,
     type: programApplicationData.programType ?? 'live',
   });
-  const programData = programQuery.query.data as {
-    title?: string | null;
-    thumbnail?: string | null;
-    startDate?: import('dayjs').Dayjs | null;
-    endDate?: import('dayjs').Dayjs | null;
-    progressType?: string | null;
-  } | null;
+
+  let programTitle = '';
+  let programThumbnail = '';
+  let programStartDate: import('dayjs').Dayjs | null = null;
+  let programEndDate: import('dayjs').Dayjs | null = null;
+  let programProgressType = programApplicationData.progressType ?? 'none';
+  let programAccessMethod = '';
+
+  if (programQuery.type === 'live') {
+    const data = programQuery.query.data;
+    programTitle = data?.title ?? '';
+    programThumbnail = data?.thumbnail ?? '';
+    programStartDate = data?.startDate ?? null;
+    programEndDate = data?.endDate ?? null;
+    programProgressType = data?.progressType ?? 'none';
+  } else if (programQuery.type === 'challenge') {
+    const data = programQuery.query.data;
+    programTitle = data?.title ?? '';
+    programThumbnail = data?.thumbnail ?? '';
+    programStartDate = data?.startDate ?? null;
+    programEndDate = data?.endDate ?? null;
+  } else if (programQuery.type === 'guidebook') {
+    const data = programQuery.query.data;
+    programTitle = data?.title ?? '';
+    programThumbnail = data?.thumbnail ?? '';
+    programAccessMethod = data?.accessMethod ?? '';
+  }
 
   const isSuccess = typeof result === 'object' && result !== null;
 
@@ -145,10 +165,7 @@ const PaymentResultContent = () => {
   }, [params, searchParams]);
 
   return (
-    <div
-      className="w-full px-5 py-10"
-      data-program-text={programData?.title}
-    >
+    <div className="w-full px-5 py-10" data-program-text={programTitle}>
       <div className="mx-auto max-w-5xl">
         <div className="flex w-full items-center justify-start py-6 text-small20 font-bold text-neutral-0">
           결제 확인하기
@@ -168,16 +185,13 @@ const PaymentResultContent = () => {
                     <ProgramCard
                       type={programApplicationData.programType || 'live'}
                       id={programApplicationData.programId || 0}
-                      title={programData?.title ?? ''}
-                      thumbnail={programData?.thumbnail ?? ''}
-                      startDate={programData?.startDate}
-                      endDate={programData?.endDate}
+                      title={programTitle}
+                      thumbnail={programThumbnail}
+                      startDate={programStartDate}
+                      endDate={programEndDate}
                       thumbnailLinkClassName="max-w-32"
-                      progressType={
-                        programData && programData.progressType
-                          ? programData.progressType
-                          : 'none'
-                      }
+                      progressType={programProgressType}
+                      accessMethod={programAccessMethod}
                       showType={programApplicationData.programType === 'live'}
                     />
                   ) : null}
