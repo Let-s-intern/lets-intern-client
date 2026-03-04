@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "mcp__plugin_figma_figma-desktop__get_design_context",
+      "mcp__plugin_figma_figma-desktop__get_screenshot",
+      "mcp__plugin_figma_figma-desktop__get_metadata",
+      "mcp__Claude_Preview__preview_start",
+      "WebFetch(domain:www.figma.com)",
+      "WebFetch(domain:api.figma.com)",
+      "mcp__ide__getDiagnostics"
+    ]
+  }
+}
