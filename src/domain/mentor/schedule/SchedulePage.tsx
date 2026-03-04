@@ -20,6 +20,7 @@ import WeeklySummary from './WeeklySummary';
 import WeekNavigation from './WeekNavigation';
 import ChallengeFilter from './ChallengeFilter';
 import WeeklyCalendar from './WeeklyCalendar';
+import FeedbackModal from '../feedback/FeedbackModal';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -165,6 +166,15 @@ const SchedulePage = () => {
     null,
   );
 
+  // Feedback modal state
+  const [feedbackModal, setFeedbackModal] = useState<{
+    isOpen: boolean;
+    challengeId: number;
+    missionId: number;
+    challengeTitle?: string;
+    missionTh?: number;
+  }>({ isOpen: false, challengeId: 0, missionId: 0 });
+
   // Mentor challenge list
   const { data: challengeListData } = useMentorChallengeListQuery();
   const challenges = challengeListData?.myChallengeMentorVoList ?? [];
@@ -230,8 +240,16 @@ const SchedulePage = () => {
   }, [allBars, weekStartDate]);
 
   const handleBarClick = (challengeId: number, missionId: number) => {
-    // Navigate to the feedback detail page (placeholder for now)
-    window.location.href = `/mentor/feedback/${challengeId}/${missionId}`;
+    const bar = allBars.find(
+      (b) => b.challengeId === challengeId && b.missionId === missionId,
+    );
+    setFeedbackModal({
+      isOpen: true,
+      challengeId,
+      missionId,
+      challengeTitle: bar?.challengeTitle,
+      missionTh: bar?.th,
+    });
   };
 
   const challengeFilterItems = challenges.map((c) => ({
@@ -274,6 +292,18 @@ const SchedulePage = () => {
           onData={handleData}
         />
       ))}
+
+      {/* Feedback modal */}
+      <FeedbackModal
+        isOpen={feedbackModal.isOpen}
+        onClose={() =>
+          setFeedbackModal((prev) => ({ ...prev, isOpen: false }))
+        }
+        challengeId={feedbackModal.challengeId}
+        missionId={feedbackModal.missionId}
+        challengeTitle={feedbackModal.challengeTitle}
+        missionTh={feedbackModal.missionTh}
+      />
     </div>
   );
 };
