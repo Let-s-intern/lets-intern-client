@@ -11,11 +11,12 @@ interface MobileCompareViewProps {
 }
 
 const COMPARE_ROWS: { label: string; key: keyof (typeof CHALLENGE_COMPARISON)[0] }[] = [
+  { label: '설명', key: 'description' },
   { label: '추천 대상', key: 'target' },
   { label: '기간', key: 'duration' },
   { label: '플랜별 가격', key: 'pricing' },
-  { label: '피드백 횟수', key: 'feedback' },
-  { label: '결과물', key: 'deliverable' },
+  { label: '피드백 및 특강', key: 'feedback' },
+  { label: '혜택', key: 'deliverable' },
   { label: '커리큘럼', key: 'curriculum' },
 ];
 
@@ -57,6 +58,7 @@ const MobileCompareView = ({ programIds, onClose }: MobileCompareViewProps) => {
     if (p.title.includes('대기업')) return '대기업 자소서';
     if (p.title.includes('자기소개서')) return '자소서';
     if (p.title.includes('포트폴리오')) return '포트폴리오';
+    if (p.title.includes('면접')) return '면접';
     if (p.title.includes('마케팅')) return '마케팅';
     if (p.title.includes('HR')) return 'HR';
     return p.title;
@@ -116,12 +118,6 @@ const MobileCompareView = ({ programIds, onClose }: MobileCompareViewProps) => {
               values={comparisons.map((c) => String(c[key] ?? '-'))}
             />
           ))}
-          {comparisons.some((c) => c.features) && (
-            <MobileInfoRow
-              label="주요 특징"
-              values={comparisons.map((c) => c.features ?? '-')}
-            />
-          )}
         </div>
       </div>
     </div>

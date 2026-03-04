@@ -34,6 +34,7 @@ export type ProgramId =
   | 'resume'
   | 'coverLetter'
   | 'portfolio'
+  | 'interview'
   | 'enterpriseCover'
   | 'marketingAllInOne'
   | 'hrAllInOne';
@@ -87,13 +88,13 @@ export interface CurationResult {
 export interface ChallengeComparisonRow {
   programId: ProgramId;
   label: string;
+  description: string;
   target: string;
   duration: string;
   pricing: string;
   curriculum: string;
   deliverable: string;
   feedback: string;
-  features?: string;
 }
 
 export interface FrequentComparisonItem {
