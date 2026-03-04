@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   addDays,
   isSameDay,
@@ -155,6 +155,56 @@ const ChallengeDataFetcher = ({ challenge, onData }: ChallengeDataProps) => {
 };
 
 // ---------------------------------------------------------------------------
+// DEV mock data – API가 빈 데이터를 반환할 때 UI 테스트용
+// ---------------------------------------------------------------------------
+
+const today = new Date();
+const todayStr = today.toISOString().slice(0, 10);
+const nextWeekStr = addDays(today, 7).toISOString().slice(0, 10);
+const lastWeekStr = addDays(today, -3).toISOString().slice(0, 10);
+
+const MOCK_CHALLENGES: ChallengeMentorVo[] = [
+  {
+    challengeId: 9999,
+    programStatusType: 'PROCEEDING',
+    title: '[테스트] 프론트엔드 챌린지',
+    shortDesc: '목데이터 챌린지입니다',
+    thumbnail: '',
+    startDate: lastWeekStr,
+    endDate: nextWeekStr,
+  },
+];
+
+const MOCK_BARS: PeriodBarData[] = [
+  {
+    challengeId: 9999,
+    missionId: 99991,
+    challengeTitle: '[테스트] 프론트엔드 챌린지',
+    th: 1,
+    startDate: lastWeekStr,
+    endDate: todayStr,
+    submittedCount: 3,
+    notSubmittedCount: 1,
+    waitingCount: 2,
+    inProgressCount: 1,
+    completedCount: 0,
+  },
+  {
+    challengeId: 9999,
+    missionId: 99992,
+    challengeTitle: '[테스트] 프론트엔드 챌린지',
+    th: 2,
+    startDate: todayStr,
+    endDate: nextWeekStr,
+    submittedCount: 2,
+    notSubmittedCount: 2,
+    waitingCount: 2,
+    inProgressCount: 0,
+    completedCount: 0,
+  },
+];
+
+// ---------------------------------------------------------------------------
 // SchedulePage
 // ---------------------------------------------------------------------------
 
@@ -175,9 +225,18 @@ const SchedulePage = () => {
     missionTh?: number;
   }>({ isOpen: false, challengeId: 0, missionId: 0 });
 
-  // Mentor challenge list
-  const { data: challengeListData } = useMentorChallengeListQuery();
-  const challenges = challengeListData?.myChallengeMentorVoList ?? [];
+  // Mentor challenge list (fallback to mock when empty)
+  const { data: challengeListData, isLoading: isChallengeLoading } =
+    useMentorChallengeListQuery();
+
+  // DEBUG: API 응답 확인용 (브라우저 콘솔에서 확인)
+  useEffect(() => {
+    console.log('[SchedulePage] challengeListData:', challengeListData);
+  }, [challengeListData]);
+
+  const apiChallenges = challengeListData?.myChallengeMentorVoList ?? [];
+  const useMock = !isChallengeLoading && apiChallenges.length === 0;
+  const challenges = useMock ? MOCK_CHALLENGES : apiChallenges;
 
   // Bars collected from child data fetchers
   const [barsMap, setBarsMap] = useState<Map<number, PeriodBarData[]>>(
@@ -196,7 +255,9 @@ const SchedulePage = () => {
   );
 
   // Aggregate all bars, optionally filtered by selected challenge
+  // When using mock data, use MOCK_BARS directly
   const allBars = useMemo(() => {
+    if (useMock) return MOCK_BARS;
     const result: PeriodBarData[] = [];
     barsMap.forEach((bars, challengeId) => {
       if (selectedChallengeId === null || selectedChallengeId === challengeId) {
@@ -204,7 +265,7 @@ const SchedulePage = () => {
       }
     });
     return result;
-  }, [barsMap, selectedChallengeId]);
+  }, [barsMap, selectedChallengeId, useMock]);
 
   // Weekly summary calculations
   const { totalCount, todayDueCount, incompleteCount } = useMemo(() => {
@@ -284,14 +345,15 @@ const SchedulePage = () => {
         onBarClick={handleBarClick}
       />
 
-      {/* Invisible data fetchers for each challenge */}
-      {challenges.map((c) => (
-        <ChallengeDataFetcher
-          key={c.challengeId}
-          challenge={c}
-          onData={handleData}
-        />
-      ))}
+      {/* Invisible data fetchers for each challenge (skip when using mock) */}
+      {!useMock &&
+        challenges.map((c) => (
+          <ChallengeDataFetcher
+            key={c.challengeId}
+            challenge={c}
+            onData={handleData}
+          />
+        ))}
 
       {/* Feedback modal */}
       <FeedbackModal

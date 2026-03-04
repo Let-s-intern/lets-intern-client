@@ -11,11 +11,62 @@ import {
   FeedbackAttendanceQueryKey,
 } from '@/api/challenge/challenge';
 
+import { emptyEditorState } from '@/domain/admin/lexical/EditorApp';
+
 import StatusIndicator from './StatusIndicator';
 import MenteeList from './MenteeList';
 import MenteeInfo from './MenteeInfo';
 import FeedbackEditor from './FeedbackEditor';
 import FeedbackActions from './FeedbackActions';
+
+// DEV mock – 목 챌린지(9999)에서 에디터 테스트용
+const MOCK_ATTENDANCE_LIST = [
+  {
+    id: 88801,
+    userId: 1,
+    mentorId: 1,
+    mentorName: '테스트멘토',
+    name: '김테스트',
+    major: '컴퓨터공학',
+    wishJob: '프론트엔드 개발자',
+    wishCompany: null,
+    link: 'https://www.notion.so/mock-submission',
+    status: 'PRESENT' as const,
+    result: 'WAITING' as const,
+    challengePricePlanType: 'BASIC' as const,
+    feedbackStatus: 'WAITING' as const,
+  },
+  {
+    id: 88802,
+    userId: 2,
+    mentorId: 1,
+    mentorName: '테스트멘토',
+    name: '이테스트',
+    major: '디자인학과',
+    wishJob: 'UX 디자이너',
+    wishCompany: null,
+    link: null,
+    status: 'PRESENT' as const,
+    result: 'WAITING' as const,
+    challengePricePlanType: 'BASIC' as const,
+    feedbackStatus: 'IN_PROGRESS' as const,
+  },
+  {
+    id: 88803,
+    userId: 3,
+    mentorId: 1,
+    mentorName: '테스트멘토',
+    name: '박미제출',
+    major: null,
+    wishJob: null,
+    wishCompany: null,
+    link: null,
+    status: 'ABSENT' as const,
+    result: 'WAITING' as const,
+    challengePricePlanType: 'BASIC' as const,
+    feedbackStatus: null,
+  },
+];
 
 interface FeedbackModalProps {
   isOpen: boolean;
@@ -39,23 +90,29 @@ const FeedbackModal = ({
   const [selectedAttendanceId, setSelectedAttendanceId] = useState<
     number | null
   >(null);
-  const [editorContent, setEditorContent] = useState('');
-  const [serverContent, setServerContent] = useState('');
+  const [editorContent, setEditorContent] = useState(emptyEditorState);
+  const [serverContent, setServerContent] = useState(emptyEditorState);
 
   const isDirty = editorContent !== serverContent;
+  const isMock = challengeId === 9999;
 
   // Fetch attendance list for auto-select
-  const { data: attendanceData } = useMentorMissionFeedbackAttendanceQuery({
-    challengeId,
-    missionId,
-    enabled: isOpen && !!challengeId && !!missionId,
-  });
+  const { data: attendanceDataReal } =
+    useMentorMissionFeedbackAttendanceQuery({
+      challengeId,
+      missionId,
+      enabled: isOpen && !!challengeId && !!missionId && !isMock,
+    });
+
+  const attendanceData = isMock
+    ? { attendanceList: MOCK_ATTENDANCE_LIST }
+    : attendanceDataReal;
 
   // Fetch selected mentee detail
   const { data: feedbackData } = useFeedbackAttendanceQuery({
     challengeId,
     missionId,
-    attendanceId: selectedAttendanceId ?? undefined,
+    attendanceId: isMock ? undefined : (selectedAttendanceId ?? undefined),
   });
 
   // Current mentee from list
@@ -76,7 +133,8 @@ const FeedbackModal = ({
 
   // Sync editor content when feedbackData changes
   useEffect(() => {
-    const content = feedbackData?.attendanceDetailVo?.feedback ?? '';
+    const content =
+      feedbackData?.attendanceDetailVo?.feedback || emptyEditorState;
     setEditorContent(content);
     setServerContent(content);
   }, [feedbackData]);
@@ -85,8 +143,8 @@ const FeedbackModal = ({
   useEffect(() => {
     if (!isOpen) {
       setSelectedAttendanceId(null);
-      setEditorContent('');
-      setServerContent('');
+      setEditorContent(emptyEditorState);
+      setServerContent(emptyEditorState);
     }
   }, [isOpen]);
 
@@ -192,11 +250,12 @@ const FeedbackModal = ({
             missionId={missionId}
             attendanceId={selectedAttendanceId}
             challengeTitle={challengeTitle}
+            missionLink={currentMentee?.link}
           />
 
           {/* Feedback editor */}
           <FeedbackEditor
-            initialContent={editorContent}
+            initialEditorStateJsonString={editorContent}
             onChange={setEditorContent}
             readOnly={isReadOnly}
           />
