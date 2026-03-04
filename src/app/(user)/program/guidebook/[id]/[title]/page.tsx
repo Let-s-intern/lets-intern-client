@@ -80,7 +80,7 @@ const Page = async ({
   return (
     <>
       <GuidebookView guidebook={guidebook} id={id} />
-      <GuidebookCTAButtons title={guidebook.title} />
+      <GuidebookCTAButtons guidebookId={id} title={guidebook.title} />
     </>
   );
 };
