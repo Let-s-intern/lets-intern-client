@@ -144,7 +144,7 @@ const ChallengeDataFetcher = ({ challenge, onData }: ChallengeDataProps) => {
   }, [attendanceData, missions]);
 
   // Report bars upward whenever data changes
-  useMemo(() => {
+  useEffect(() => {
     if (missions.length > 0) {
       const bars = buildBars(challenge, missions, attendanceMap);
       onData(challenge.challengeId, bars);
