@@ -28,10 +28,16 @@ const PaymentFailContent = () => {
     return result.data;
   }, [searchParams]);
 
-  const program = useProgramQuery({
+  const programQuery = useProgramQuery({
     programId: programApplicationData.programId ?? 0,
     type: programApplicationData.programType ?? 'live',
   });
+  const programData = programQuery.query.data as {
+    title?: string | null;
+    thumbnail?: string | null;
+    startDate?: import('dayjs').Dayjs | null;
+    endDate?: import('dayjs').Dayjs | null;
+  } | null;
 
   const returnLink = useMemo(() => {
     const base = `/program/${programApplicationData.programType}/${programApplicationData.programId}`;
@@ -46,7 +52,7 @@ const PaymentFailContent = () => {
   return (
     <div
       className="mx-auto max-w-5xl px-5"
-      data-program-text={program.query.data?.title}
+        data-program-text={programData?.title}
     >
       <div className="flex w-full items-center justify-start py-6 text-small20 font-bold text-neutral-0">
         결제 확인하기
@@ -67,10 +73,10 @@ const PaymentFailContent = () => {
               <ProgramCard
                 type={programApplicationData.programType || 'live'}
                 id={programApplicationData.programId || 0}
-                title={program.query.data?.title ?? ''}
-                thumbnail={program.query.data?.thumbnail ?? ''}
-                startDate={program.query.data?.startDate}
-                endDate={program.query.data?.endDate}
+                title={programData?.title ?? ''}
+                thumbnail={programData?.thumbnail ?? ''}
+                startDate={programData?.startDate}
+                endDate={programData?.endDate}
                 thumbnailLinkClassName="max-w-32"
                 progressType={programApplicationData.progressType ?? 'none'}
                 showType={programApplicationData.programType === 'live'}

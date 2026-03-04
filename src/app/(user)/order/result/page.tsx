@@ -121,10 +121,17 @@ const PaymentResultContent = () => {
       });
   }, [_hasHydrated, params, programApplicationData, router, searchParams]);
 
-  const program = useProgramQuery({
+  const programQuery = useProgramQuery({
     programId: programApplicationData.programId ?? -1,
     type: programApplicationData.programType ?? 'live',
   });
+  const programData = programQuery.query.data as {
+    title?: string | null;
+    thumbnail?: string | null;
+    startDate?: import('dayjs').Dayjs | null;
+    endDate?: import('dayjs').Dayjs | null;
+    progressType?: string | null;
+  } | null;
 
   const isSuccess = typeof result === 'object' && result !== null;
 
@@ -140,7 +147,7 @@ const PaymentResultContent = () => {
   return (
     <div
       className="w-full px-5 py-10"
-      data-program-text={program.query.data?.title}
+      data-program-text={programData?.title}
     >
       <div className="mx-auto max-w-5xl">
         <div className="flex w-full items-center justify-start py-6 text-small20 font-bold text-neutral-0">
@@ -161,16 +168,14 @@ const PaymentResultContent = () => {
                     <ProgramCard
                       type={programApplicationData.programType || 'live'}
                       id={programApplicationData.programId || 0}
-                      title={program.query.data?.title ?? ''}
-                      thumbnail={program.query.data?.thumbnail ?? ''}
-                      startDate={program.query.data?.startDate}
-                      endDate={program.query.data?.endDate}
+                      title={programData?.title ?? ''}
+                      thumbnail={programData?.thumbnail ?? ''}
+                      startDate={programData?.startDate}
+                      endDate={programData?.endDate}
                       thumbnailLinkClassName="max-w-32"
                       progressType={
-                        program.query.data &&
-                        'progressType' in program.query.data &&
-                        program.query.data.progressType
-                          ? program.query.data.progressType
+                        programData && programData.progressType
+                          ? programData.progressType
                           : 'none'
                       }
                       showType={programApplicationData.programType === 'live'}
