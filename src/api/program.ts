@@ -93,6 +93,14 @@ export const useProgramQuery = ({
 
 export type ProgramQuery = ReturnType<typeof useProgramQuery>;
 
+// 레거시(챌린지/라이브) 전용 프로그램 조회 훅
+export const useLegacyProgramQuery = (args: {
+  type: 'live' | 'challenge';
+  programId: number;
+}) => {
+  return useProgramQuery(args);
+};
+
 export const useUserProgramQuery = ({
   pageable,
   searchParams,
