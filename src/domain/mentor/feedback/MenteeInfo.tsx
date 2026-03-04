@@ -9,21 +9,33 @@ interface MenteeInfoProps {
   missionId: number;
   attendanceId: number | null;
   challengeTitle?: string;
+  missionLink?: string | null;
 }
+
+// DEV mock – 목 챌린지(9999)용
+const MOCK_MENTEE_MAP: Record<number, { name: string; wishJob: string | null; wishCompany: string | null }> = {
+  88801: { name: '김테스트', wishJob: '프론트엔드 개발자', wishCompany: '렛츠커리어' },
+  88802: { name: '이테스트', wishJob: 'UX 디자이너', wishCompany: null },
+  88803: { name: '박미제출', wishJob: null, wishCompany: null },
+};
 
 const MenteeInfo = ({
   challengeId,
   missionId,
   attendanceId,
   challengeTitle,
+  missionLink,
 }: MenteeInfoProps) => {
+  const isMock = challengeId === 9999;
   const { data } = useMentorMissionFeedbackAttendanceQuery({
     challengeId,
     missionId,
-    enabled: !!challengeId && !!missionId,
+    enabled: !!challengeId && !!missionId && !isMock,
   });
 
-  const mentee = data?.attendanceList?.find((a) => a.id === attendanceId);
+  const mentee = isMock && attendanceId
+    ? MOCK_MENTEE_MAP[attendanceId]
+    : data?.attendanceList?.find((a) => a.id === attendanceId);
 
   if (!mentee) {
     return (
@@ -58,6 +70,18 @@ const MenteeInfo = ({
           </div>
         )}
       </div>
+
+      {/* Mission submission link */}
+      {missionLink && (
+        <a
+          href={missionLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+        >
+          미션 제출물 보기 →
+        </a>
+      )}
     </div>
   );
 };
