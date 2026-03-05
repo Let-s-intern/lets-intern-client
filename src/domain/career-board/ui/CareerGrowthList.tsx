@@ -10,12 +10,17 @@ interface CareerGrowthListProps {
   applications: MypageApplication[];
 }
 
-const CareerGrowthList = ({
-  programs,
-  applications,
-}: CareerGrowthListProps) => {
+const CareerGrowthList = ({ programs, applications }: CareerGrowthListProps) => {
+  const applicationMap = applications.reduce<
+    Record<number, MypageApplication>
+  >((acc, application) => {
+    if (application.id == null) return acc;
+    acc[application.id] = application;
+    return acc;
+  }, {});
+
   const getApplication = (programId: number) => {
-    return applications.find((app) => app.id === programId);
+    return applicationMap[programId];
   };
 
   return (

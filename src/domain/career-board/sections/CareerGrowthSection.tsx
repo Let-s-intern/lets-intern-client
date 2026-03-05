@@ -116,14 +116,16 @@ const CareerGrowthSection = () => {
               applications={applications ?? []}
             />
           ) : (
-            <CareerCard.Empty
-              description={EMPTY_CONFIG_BY_CATEGORY[category].description}
-              buttonText={EMPTY_CONFIG_BY_CATEGORY[category].buttonText}
-              buttonHref={EMPTY_CONFIG_BY_CATEGORY[category].href}
-              onClick={() =>
-                router.push(EMPTY_CONFIG_BY_CATEGORY[category].href)
-              }
-            />
+            <div className="pb-6">
+              <CareerCard.Empty
+                description={EMPTY_CONFIG_BY_CATEGORY[category].description}
+                buttonText={EMPTY_CONFIG_BY_CATEGORY[category].buttonText}
+                buttonHref={EMPTY_CONFIG_BY_CATEGORY[category].href}
+                onClick={() =>
+                  router.push(EMPTY_CONFIG_BY_CATEGORY[category].href)
+                }
+              />
+            </div>
           )}
         </div>
       }

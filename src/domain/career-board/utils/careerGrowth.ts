@@ -1,6 +1,4 @@
-import {
-  MypageApplication,
-} from '@/api/application';
+import { MypageApplication } from '@/api/application';
 import {
   challengePricePlanToText,
   newProgramTypeToText,
@@ -87,15 +85,16 @@ export const toCareerGrowthPrograms = (
     return dateA.isBefore(dateB) ? -1 : 1;
   };
 
-  if (proceedingPrograms.length > 1) {
-    proceedingPrograms.sort(sortByStartDate);
-  }
-  if (upcomingPrograms.length > 1) {
-    upcomingPrograms.sort(sortByStartDate);
-  }
+  const sortPrograms = (programs: MypageApplication[]) => {
+    if (programs.length > 1) {
+      programs.sort(sortByStartDate);
+    }
+  };
+
+  sortPrograms(proceedingPrograms);
+  sortPrograms(upcomingPrograms);
 
   const targetPrograms = [...proceedingPrograms, ...upcomingPrograms];
 
   return targetPrograms.map((app) => convertApplicationToProgram(app));
 };
-
