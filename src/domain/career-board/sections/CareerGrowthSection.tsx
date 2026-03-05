@@ -15,6 +15,27 @@ import {
   toCareerGrowthPrograms,
 } from '../utils/careerGrowth';
 
+const EMPTY_CONFIG_BY_CATEGORY: Record<
+  ApplicationCategory,
+  { description: string; href: string; buttonText: string }
+> = {
+  PROGRAM: {
+    description: '참여 중인 프로그램이 없어요.',
+    href: '/program',
+    buttonText: '프로그램 둘러보기',
+  },
+  LIBRARY: {
+    description: '보유 중인 무료 자료집이 없어요.',
+    href: '/library/list',
+    buttonText: '무료 자료집 둘러보기',
+  },
+  GUIDEBOOK: {
+    description: '보유 중인 가이드북이 없어요.',
+    href: '/program?type=GUIDEBOOK',
+    buttonText: '가이드북 둘러보기',
+  },
+};
+
 const CareerGrowthSection = () => {
   const router = useRouter();
   const {
@@ -30,8 +51,22 @@ const CareerGrowthSection = () => {
     [applications],
   );
 
-  // 데이터 존재 여부 확인
+  const visiblePrograms: CareerGrowthProgram[] = useMemo(() => {
+    if (category === 'GUIDEBOOK') {
+      return programs.filter(
+        (program) => program.programTypeKey === 'GUIDEBOOK',
+      );
+    }
+    // 무료자료집 탭
+    if (category === 'LIBRARY') {
+      return [];
+    }
+    return programs.filter((program) => program.programTypeKey !== 'GUIDEBOOK');
+  }, [category, programs]);
+
+  // 데이터 존재 여부 확인 (전체 프로그램 기준)
   const hasData = programs.length > 0;
+  const hasVisibleData = visiblePrograms.length > 0;
 
   useEffect(() => {
     if (hasData) {
@@ -69,26 +104,28 @@ const CareerGrowthSection = () => {
       title="커리어 성장"
       labelOnClick={() => router.push('/mypage/application')}
       body={
-        hasData ? (
-          <div className="flex flex-col gap-6 pt-1">
-            <CategoryChips
-              options={APPLICATION_CATEGORY_OPTIONS}
-              selected={category}
-              onChange={setCategory}
-            />
+        <div className="flex flex-col gap-6 pt-1">
+          <CategoryChips
+            options={APPLICATION_CATEGORY_OPTIONS}
+            selected={category}
+            onChange={setCategory}
+          />
+          {hasVisibleData ? (
             <CareerGrowthList
-              programs={programs}
+              programs={visiblePrograms}
               applications={applications ?? []}
             />
-          </div>
-        ) : (
-          <CareerCard.Empty
-            description="참여 중인 프로그램이 없어요."
-            buttonText="프로그램 둘러보기"
-            buttonHref="/program"
-            onClick={() => router.push('/program')}
-          />
-        )
+          ) : (
+            <CareerCard.Empty
+              description={EMPTY_CONFIG_BY_CATEGORY[category].description}
+              buttonText={EMPTY_CONFIG_BY_CATEGORY[category].buttonText}
+              buttonHref={EMPTY_CONFIG_BY_CATEGORY[category].href}
+              onClick={() =>
+                router.push(EMPTY_CONFIG_BY_CATEGORY[category].href)
+              }
+            />
+          )}
+        </div>
       }
     />
   );
