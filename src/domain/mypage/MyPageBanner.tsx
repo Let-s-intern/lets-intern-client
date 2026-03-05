@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import type { Swiper as SwiperType } from 'swiper';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -9,8 +9,10 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
-import { useGetBannerListForUser } from '@/api/banner';
+import { useGetCommonBannerListForUser } from '@/api/banner';
 import HybridLink from '@/common/HybridLink';
+import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
+import { useMediaQuery } from '@mui/material';
 
 interface MyPageBannerProps {
   className?: string;
@@ -19,16 +21,13 @@ interface MyPageBannerProps {
 const BANNER_AUTOPLAY_DELAY_MS = 2500;
 
 const MyPageBanner = ({ className }: MyPageBannerProps) => {
-  const { data, isLoading } = useGetBannerListForUser({ type: 'MAIN' });
+  const isMobile = useMediaQuery(MOBILE_MEDIA_QUERY);
+  const { data: bannerList = [], isLoading } = useGetCommonBannerListForUser({
+    type: 'MY_PAGE',
+  });
   const [isPlay, setIsPlay] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(1);
   const swiperRef = useRef<SwiperType | null>(null);
-
-  // mobileImgUrl이 있는 배너만 필터링
-  const bannerList = useMemo(() => {
-    if (!data?.bannerList) return [];
-    return data.bannerList.filter((banner) => banner.mobileImgUrl);
-  }, [data]);
 
   const handleTogglePlay = () => {
     if (!swiperRef.current) return;
@@ -63,23 +62,25 @@ const MyPageBanner = ({ className }: MyPageBannerProps) => {
         slidesPerView={1}
         className="mypage-banner-swiper aspect-[3.2/1] h-full w-full"
       >
-        {bannerList.map((banner) => (
-          <SwiperSlide key={banner.id}>
+        {bannerList.map((banner, index) => (
+          <SwiperSlide key={index}>
             <HybridLink
-              href={banner.link || '#'}
+              href={banner.landingUrl || '#'}
               className="mypage_banner select-none"
-              data-url={banner.link}
+              data-url={banner.landingUrl}
               target={
-                banner.link?.includes('letscareer.co.kr') ||
-                banner.link?.includes('lets-intern-client-test.vercel.app')
+                banner.landingUrl?.includes('letscareer.co.kr') ||
+                banner.landingUrl?.includes(
+                  'lets-intern-client-test.vercel.app',
+                )
                   ? '_self'
                   : '_blank'
               }
               rel="noreferrer"
             >
               <img
-                src={banner.mobileImgUrl || ''}
-                alt={'mypage-banner' + banner.id}
+                src={isMobile ? banner.mobileImgUrl || '' : banner.imgUrl || ''}
+                alt={'mypage-banner-' + index}
                 className="h-full w-full object-cover"
               />
             </HybridLink>
