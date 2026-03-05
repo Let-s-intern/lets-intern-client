@@ -7,6 +7,7 @@ import {
 } from '@/domain/mypage/application/constants';
 import ApplySection from '@/domain/mypage/application/section/ApplySection';
 import CompleteSection from '@/domain/mypage/application/section/CompleteSection';
+import GuidebookSection from '@/domain/mypage/application/section/GuidebookSection';
 import ParticipateSection from '@/domain/mypage/application/section/ParticipateSection';
 import CategoryChips from '@/domain/mypage/ui/button/CategoryChips';
 import { useState } from 'react';
@@ -19,18 +20,24 @@ const Application = () => {
   } = useMypageApplicationsQuery();
   const [category, setCategory] = useState<ApplicationCategory>('PROGRAM');
 
-  const waitingApplicationList =
+  const programApplications =
     applications?.filter(
-      (application) => application.programStatusType === 'PREV',
-    ) || [];
-  const inProgressApplicationList =
+      (application) => application.programType !== 'GUIDEBOOK',
+    ) ?? [];
+  const programWaitingList = programApplications.filter(
+    (application) => application.programStatusType === 'PREV',
+  );
+  const programInProgressList = programApplications.filter(
+    (application) => application.programStatusType === 'PROCEEDING',
+  );
+  const programCompletedList = programApplications.filter(
+    (application) => application.programStatusType === 'POST',
+  );
+
+  const guidebookApplicationList =
     applications?.filter(
-      (application) => application.programStatusType === 'PROCEEDING',
-    ) || [];
-  const completedApplicationList =
-    applications?.filter(
-      (application) => application.programStatusType === 'POST',
-    ) || [];
+      (application) => application.programType === 'GUIDEBOOK',
+    ) ?? [];
 
   if (isLoading) return <></>;
 
@@ -44,12 +51,22 @@ const Application = () => {
         />
       </div>
       <div className="flex w-full flex-col gap-16">
-        <ApplySection
-          applicationList={waitingApplicationList}
-          refetch={() => refetch()}
-        />
-        <ParticipateSection applicationList={inProgressApplicationList} />
-        <CompleteSection applicationList={completedApplicationList} />
+        {category === 'PROGRAM' && (
+          <>
+            <ApplySection
+              applicationList={programWaitingList}
+              refetch={() => refetch()}
+            />
+            <ParticipateSection applicationList={programInProgressList} />
+            <CompleteSection applicationList={programCompletedList} />
+          </>
+        )}
+
+        {/* LIBRARY 탭 */}
+
+        {category === 'GUIDEBOOK' && (
+          <GuidebookSection applicationList={guidebookApplicationList} />
+        )}
       </div>
     </main>
   );
