@@ -10,10 +10,8 @@ import { useEffect, useMemo, useState } from 'react';
 import CareerCard from '../../mypage/career/card/CareerCard';
 import { useCareerDataStatus } from '../contexts/CareerDataStatusContext';
 import CareerGrowthList from '../ui/CareerGrowthList';
-import {
-  CareerGrowthProgram,
-  toCareerGrowthPrograms,
-} from '../utils/careerGrowth';
+import { toCareerGrowthItems } from '../utils/careerGrowth';
+import { toCareerGrowthCardConfigs } from '../utils/careerGrowthCard';
 
 const EMPTY_CONFIG_BY_CATEGORY: Record<
   ApplicationCategory,
@@ -46,14 +44,14 @@ const CareerGrowthSection = () => {
   const { setHasCareerData } = useCareerDataStatus();
   const [category, setCategory] = useState<ApplicationCategory>('PROGRAM');
 
-  const programs: CareerGrowthProgram[] = useMemo(
-    () => toCareerGrowthPrograms(applications ?? []),
+  const items = useMemo(
+    () => toCareerGrowthItems(applications ?? []),
     [applications],
   );
 
-  const visiblePrograms: CareerGrowthProgram[] = useMemo(() => {
+  const visibleItems = useMemo(() => {
     if (category === 'GUIDEBOOK') {
-      return programs.filter(
+      return items.filter(
         (program) => program.programTypeKey === 'GUIDEBOOK',
       );
     }
@@ -61,12 +59,17 @@ const CareerGrowthSection = () => {
     if (category === 'LIBRARY') {
       return [];
     }
-    return programs.filter((program) => program.programTypeKey !== 'GUIDEBOOK');
-  }, [category, programs]);
+    return items.filter((program) => program.programTypeKey !== 'GUIDEBOOK');
+  }, [category, items]);
+
+  const cardConfigs = useMemo(
+    () => toCareerGrowthCardConfigs(visibleItems, category),
+    [visibleItems, category],
+  );
 
   // 데이터 존재 여부 확인 (전체 프로그램 기준)
-  const hasData = programs.length > 0;
-  const hasVisibleData = visiblePrograms.length > 0;
+  const hasData = items.length > 0;
+  const hasVisibleData = cardConfigs.length > 0;
 
   useEffect(() => {
     if (hasData) {
@@ -111,10 +114,7 @@ const CareerGrowthSection = () => {
             onChange={setCategory}
           />
           {hasVisibleData ? (
-            <CareerGrowthList
-              programs={visiblePrograms}
-              applications={applications ?? []}
-            />
+            <CareerGrowthList items={cardConfigs} />
           ) : (
             <div className="pb-6">
               <CareerCard.Empty
