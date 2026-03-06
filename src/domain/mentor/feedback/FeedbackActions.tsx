@@ -5,7 +5,6 @@ import { usePatchAttendanceMentorMutation } from '@/api/mentor/mentor';
 interface FeedbackActionsProps {
   attendanceId: number | null;
   editorContent: string;
-  missionLink: string | null;
   feedbackStatus: string | null;
   onSaveSuccess: () => void;
   onSubmitSuccess: () => void;
@@ -14,7 +13,6 @@ interface FeedbackActionsProps {
 const FeedbackActions = ({
   attendanceId,
   editorContent,
-  missionLink,
   feedbackStatus,
   onSaveSuccess,
   onSubmitSuccess,
@@ -70,30 +68,13 @@ const FeedbackActions = ({
   };
 
   return (
-    <div className="flex items-center justify-between border-t border-gray-200 pt-4">
-      {/* Left: mission link */}
-      <div>
-        {missionLink ? (
-          <a
-            href={missionLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-          >
-            미션 제출물 (노션 링크) &rarr;
-          </a>
-        ) : (
-          <span className="text-sm text-gray-400">제출물 없음</span>
-        )}
-      </div>
-
-      {/* Right: action buttons */}
-      <div className="flex items-center gap-3">
+    <div className="flex justify-end border-t pt-2.5">
+      <div className="flex w-72 items-center gap-5">
         <button
           type="button"
           onClick={handleSave}
           disabled={isPending || !attendanceId || isCompleted}
-          className="rounded-md border border-primary px-6 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary-5 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex-1 rounded border border-primary px-3 py-2 text-base font-medium text-primary transition-colors hover:bg-primary-5 disabled:cursor-not-allowed disabled:opacity-50"
         >
           임시저장
         </button>
@@ -101,7 +82,7 @@ const FeedbackActions = ({
           type="button"
           onClick={handleSubmit}
           disabled={isPending || !attendanceId || isCompleted}
-          className="rounded-md bg-primary px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex-1 rounded-md bg-primary px-4 py-2 text-base font-medium text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
         >
           피드백 제출
         </button>

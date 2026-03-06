@@ -20,13 +20,13 @@ const FeedbackEditor = ({
     try {
       const parsed = JSON.parse(initialEditorStateJsonString);
       return (
-        <div className="flex flex-1 flex-col overflow-auto rounded-md border border-gray-200 bg-gray-50 p-4">
+        <div className="flex flex-1 flex-col overflow-auto rounded-lg border border-neutral-300 bg-white p-7">
           <LexicalContent node={parsed.root} />
         </div>
       );
     } catch {
       return (
-        <div className="flex flex-1 flex-col overflow-auto rounded-md border border-gray-200 bg-gray-50 p-4 text-sm text-gray-500">
+        <div className="flex flex-1 flex-col overflow-auto rounded-lg border border-neutral-300 bg-white p-7 text-sm text-neutral-500">
           피드백 내용을 표시할 수 없습니다.
         </div>
       );

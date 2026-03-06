@@ -88,10 +88,6 @@ const ChallengeDataFetcher = ({ challenge, onData }: ChallengeDataProps) => {
 
   const missions = missionData?.missionList ?? [];
 
-  // We fetch attendance for the first mission only as a summary source.
-  // In a full implementation each mission would have its own attendance query,
-  // but to avoid a dynamic number of hooks we aggregate from the list query.
-  // For now we fetch the first mission's attendance to populate counts.
   const firstMissionId = missions.length > 0 ? missions[0].id : undefined;
 
   const { data: attendanceData } = useMentorMissionFeedbackAttendanceQuery({
@@ -115,8 +111,6 @@ const ChallengeDataFetcher = ({ challenge, onData }: ChallengeDataProps) => {
 
     if (!attendanceData?.attendanceList) return map;
 
-    // For now, map the first mission's attendance to all missions
-    // (the API gives per-mission attendance when called individually)
     const list = attendanceData.attendanceList;
     const submitted = list.filter((a) => a.status === 'PRESENT').length;
     const notSubmitted = list.filter((a) => a.status === 'ABSENT').length;
@@ -260,32 +254,48 @@ const SchedulePage = () => {
   }));
 
   return (
-    <div className="flex flex-col gap-6 p-8">
+    <div className="flex flex-col gap-10">
+      <div className="flex items-center gap-2.5">
+        <h1 className="text-xl font-semibold leading-8 text-neutral-900">
+          프로그램 일정
+        </h1>
+      </div>
+
       <WelcomeMessage />
 
-      <WeeklySummary
-        totalCount={totalCount}
-        todayDueCount={todayDueCount}
-        incompleteCount={incompleteCount}
-        completedCount={completedCount}
-      />
+      <div className="flex flex-col gap-14">
+        {/* Summary cards */}
+        <div className="flex flex-col gap-6">
+          <WeeklySummary
+            totalCount={totalCount}
+            todayDueCount={todayDueCount}
+            incompleteCount={incompleteCount}
+            completedCount={completedCount}
+          />
 
-      <WeekNavigation
-        weekStartDate={weekStartDate}
-        onWeekChange={setWeekStartDate}
-      />
+          {/* Calendar section */}
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4">
+              <WeekNavigation
+                weekStartDate={weekStartDate}
+                onWeekChange={setWeekStartDate}
+              />
 
-      <ChallengeFilter
-        challenges={challengeFilterItems}
-        selectedChallengeId={selectedChallengeId}
-        onSelect={setSelectedChallengeId}
-      />
+              <ChallengeFilter
+                challenges={challengeFilterItems}
+                selectedChallengeId={selectedChallengeId}
+                onSelect={setSelectedChallengeId}
+              />
+            </div>
 
-      <WeeklyCalendar
-        weekStartDate={weekStartDate}
-        bars={allBars}
-        onBarClick={handleBarClick}
-      />
+            <WeeklyCalendar
+              weekStartDate={weekStartDate}
+              bars={allBars}
+              onBarClick={handleBarClick}
+            />
+          </div>
+        </div>
+      </div>
 
       {/* Invisible data fetchers for each challenge */}
       {challenges.map((c) => (
