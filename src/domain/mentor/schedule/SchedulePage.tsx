@@ -205,7 +205,7 @@ const SchedulePage = () => {
   }, [barsMap, selectedChallengeId]);
 
   // Weekly summary calculations
-  const { totalCount, todayDueCount, incompleteCount } = useMemo(() => {
+  const { totalCount, todayDueCount, incompleteCount, completedCount } = useMemo(() => {
     const weekStart = startOfWeek(weekStartDate, { weekStartsOn: 1 });
     const weekEnd = addDays(weekStart, 6);
     const today = new Date();
@@ -213,6 +213,7 @@ const SchedulePage = () => {
     let total = 0;
     let todayDue = 0;
     let incomplete = 0;
+    let completed = 0;
 
     for (const bar of allBars) {
       const barStart = new Date(bar.startDate);
@@ -231,10 +232,13 @@ const SchedulePage = () => {
 
         // Incomplete: waiting + in progress
         incomplete += bar.waitingCount + bar.inProgressCount;
+
+        // Completed
+        completed += bar.completedCount;
       }
     }
 
-    return { totalCount: total, todayDueCount: todayDue, incompleteCount: incomplete };
+    return { totalCount: total, todayDueCount: todayDue, incompleteCount: incomplete, completedCount: completed };
   }, [allBars, weekStartDate]);
 
   const handleBarClick = (challengeId: number, missionId: number) => {
@@ -263,6 +267,7 @@ const SchedulePage = () => {
         totalCount={totalCount}
         todayDueCount={todayDueCount}
         incompleteCount={incompleteCount}
+        completedCount={completedCount}
       />
 
       <WeekNavigation
