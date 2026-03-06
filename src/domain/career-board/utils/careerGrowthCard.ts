@@ -1,4 +1,5 @@
 import { ApplicationCategory } from '@/domain/mypage/application/constants';
+import { PROGRAM_TYPE } from '@/utils/programConst';
 import type { CareerGrowthItem } from './careerGrowth';
 
 /** 탭(프로그램/가이드북/자료집) 공통 레이아웃용 카드 뷰모델 */
@@ -12,9 +13,8 @@ export interface CareerGrowthCardConfig {
   categoryLabel: string;
   dateLabel: string;
   dateText: string;
-  showPurchasePlan: boolean;
   purchasePlanText?: string;
-  actionButton: {
+  actionButton?: {
     label: string;
     disabled?: boolean;
     href?: string;
@@ -26,6 +26,7 @@ export interface CareerGrowthCardConfig {
 export const toProgramCardConfig = (
   item: CareerGrowthItem,
 ): CareerGrowthCardConfig => {
+  const isChallenge = item.programTypeKey === PROGRAM_TYPE.CHALLENGE;
   const period = `${item.startDate} ~ ${item.endDate}`;
   const isDashboardDisabled = item.programStatusType === 'PREV';
 
@@ -39,13 +40,14 @@ export const toProgramCardConfig = (
     categoryLabel: item.programType,
     dateLabel: '진행기간',
     dateText: period,
-    showPurchasePlan: true,
-    purchasePlanText: item.purchasePlan,
-    actionButton: {
-      label: '대시보드 입장',
-      disabled: isDashboardDisabled,
-      href: `/challenge/${item.id}/${item.programId}`,
-    },
+    purchasePlanText: isChallenge && item.purchasePlan ? item.purchasePlan : undefined,
+    actionButton: isChallenge
+      ? {
+          label: '대시보드 입장',
+          disabled: isDashboardDisabled,
+          href: `/challenge/${item.id}/${item.programId}`,
+        }
+      : undefined,
   };
 };
 
@@ -65,7 +67,6 @@ export const toGuidebookCardConfig = (
     categoryLabel: item.programType,
     dateLabel: '구매일자',
     dateText: purchaseDateText,
-    showPurchasePlan: false,
     actionButton: {
       label: 'PDF 다운로드',
       href: undefined,

@@ -27,9 +27,10 @@ interface CareerGrowthItemCardProps {
 const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
   const router = useRouter();
   const { actionButton } = config;
+  const showActionButton = !!actionButton;
 
   const handleActionClick = () => {
-    if (actionButton.disabled) return;
+    if (!actionButton || actionButton.disabled) return;
     if (actionButton.href) {
       router.push(actionButton.href);
       return;
@@ -82,15 +83,17 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
                 {config.description}
               </p>
             </div>
-            <ActionButton
-              label={actionButton.label}
-              disabled={actionButton.disabled}
-              onClick={handleActionClick}
-              variant="desktop"
-            />
+            {showActionButton && (
+              <ActionButton
+                label={actionButton.label}
+                disabled={actionButton.disabled}
+                onClick={handleActionClick}
+                variant="desktop"
+              />
+            )}
           </div>
 
-          {config.showPurchasePlan && config.purchasePlanText && (
+          {config.purchasePlanText && (
             <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
               <span className="flex flex-row gap-1 text-xxsmall12 text-neutral-0">
                 구매플랜
@@ -102,12 +105,14 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
           )}
         </div>
       </div>
-      <ActionButton
-        label={actionButton.label}
-        disabled={actionButton.disabled}
-        onClick={handleActionClick}
-        variant="mobile"
-      />
+      {showActionButton && (
+        <ActionButton
+          label={actionButton.label}
+          disabled={actionButton.disabled}
+          onClick={handleActionClick}
+          variant="mobile"
+        />
+      )}
     </div>
   );
 };
