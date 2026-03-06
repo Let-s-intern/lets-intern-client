@@ -1,7 +1,9 @@
 'use client';
 
+import AlertModal from '@/common/alert/AlertModal';
 import { twMerge } from '@/lib/twMerge';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import type { CareerGrowthCardConfig } from '../utils/careerGrowthCard';
 
 interface CareerGrowthListProps {
@@ -28,13 +30,22 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
   const router = useRouter();
   const { actionButton } = config;
   const showActionButton = !!actionButton;
+  const [showConfirm, setShowConfirm] = useState(false);
+  const hasConfirm = !!actionButton?.confirm;
 
   const handleActionClick = () => {
     if (!actionButton || actionButton.disabled) return;
+
+    if (hasConfirm) {
+      setShowConfirm(true);
+      return;
+    }
+
     if (actionButton.href) {
       router.push(actionButton.href);
       return;
     }
+
     actionButton.onClick?.();
   };
 
@@ -112,6 +123,21 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
           onClick={handleActionClick}
           variant="mobile"
         />
+      )}
+
+      {hasConfirm && showConfirm && actionButton && (
+        <AlertModal
+          title={actionButton.confirm?.title ?? '확인'}
+          confirmText={actionButton.confirm?.confirmText ?? '확인'}
+          cancelText={actionButton.confirm?.cancelText ?? '취소'}
+          onConfirm={() => {
+            setShowConfirm(false);
+            actionButton.onClick?.();
+          }}
+          onCancel={() => setShowConfirm(false)}
+        >
+          {actionButton.confirm?.description}
+        </AlertModal>
       )}
     </div>
   );

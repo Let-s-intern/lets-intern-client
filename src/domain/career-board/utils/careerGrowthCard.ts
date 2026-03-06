@@ -20,6 +20,12 @@ export interface CareerGrowthCardConfig {
     disabled?: boolean;
     href?: string;
     onClick?: () => void;
+    confirm?: {
+      title: string;
+      description: string;
+      confirmText?: string;
+      cancelText?: string;
+    };
   };
 }
 
@@ -71,6 +77,13 @@ export const toGuidebookCardConfig = (
     dateText: purchaseDateText,
     actionButton: {
       label: 'PDF 다운로드',
+      confirm: {
+        title: '가이드북을 다운로드하시겠습니까?',
+        description:
+          '디지털 콘텐츠 특성상 다운로드 이후에는 단순 변심으로 인한 취소 및 환불이 불가능합니다.',
+        confirmText: '다운로드',
+        cancelText: '닫기',
+      },
       onClick: () => downloadGuidebookAndTrack(item.id, item.programId),
     },
   };
