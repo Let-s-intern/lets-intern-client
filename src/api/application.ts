@@ -124,6 +124,18 @@ export const postApplicationResultSchema = z.object({
 
 export type PostApplicationResult = z.infer<typeof postApplicationResultSchema>;
 
+export const patchApplicationDownload = async ({
+  applicationId,
+  type,
+}: {
+  applicationId: number;
+  type: 'GUIDEBOOK' | 'CHALLENGE' | 'LIVE' | 'VOD' | 'REPORT';
+}) => {
+  await axios.patch(`/application/${applicationId}/download`, null, {
+    params: { type },
+  });
+};
+
 export const useCancelApplicationMutation = ({
   applicationId,
   successCallback,

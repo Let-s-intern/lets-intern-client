@@ -1,6 +1,7 @@
 import { ApplicationCategory } from '@/domain/mypage/application/constants';
 import { PROGRAM_TYPE } from '@/utils/programConst';
 import type { CareerGrowthItem } from './careerGrowth';
+import { downloadGuidebookAndTrack } from './guidebookDownload';
 
 /** 탭(프로그램/가이드북/자료집) 공통 레이아웃용 카드 뷰모델 */
 export interface CareerGrowthCardConfig {
@@ -40,7 +41,8 @@ export const toProgramCardConfig = (
     categoryLabel: item.programType,
     dateLabel: '진행기간',
     dateText: period,
-    purchasePlanText: isChallenge && item.purchasePlan ? item.purchasePlan : undefined,
+    purchasePlanText:
+      isChallenge && item.purchasePlan ? item.purchasePlan : undefined,
     actionButton: isChallenge
       ? {
           label: '대시보드 입장',
@@ -69,8 +71,7 @@ export const toGuidebookCardConfig = (
     dateText: purchaseDateText,
     actionButton: {
       label: 'PDF 다운로드',
-      href: undefined,
-      onClick: undefined,
+      onClick: () => downloadGuidebookAndTrack(item.id, item.programId),
     },
   };
 };
