@@ -12,13 +12,6 @@ interface MenteeInfoProps {
   missionLink?: string | null;
 }
 
-// DEV mock – 목 챌린지(9999)용
-const MOCK_MENTEE_MAP: Record<number, { name: string; wishJob: string | null; wishCompany: string | null }> = {
-  88801: { name: '김테스트', wishJob: '프론트엔드 개발자', wishCompany: '렛츠커리어' },
-  88802: { name: '이테스트', wishJob: 'UX 디자이너', wishCompany: null },
-  88803: { name: '박미제출', wishJob: null, wishCompany: null },
-};
-
 const MenteeInfo = ({
   challengeId,
   missionId,
@@ -26,16 +19,13 @@ const MenteeInfo = ({
   challengeTitle,
   missionLink,
 }: MenteeInfoProps) => {
-  const isMock = challengeId === 9999;
   const { data } = useMentorMissionFeedbackAttendanceQuery({
     challengeId,
     missionId,
-    enabled: !!challengeId && !!missionId && !isMock,
+    enabled: !!challengeId && !!missionId,
   });
 
-  const mentee = isMock && attendanceId
-    ? MOCK_MENTEE_MAP[attendanceId]
-    : data?.attendanceList?.find((a) => a.id === attendanceId);
+  const mentee = data?.attendanceList?.find((a) => a.id === attendanceId);
 
   if (!mentee) {
     return (

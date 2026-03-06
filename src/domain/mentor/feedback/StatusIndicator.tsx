@@ -4,7 +4,7 @@ import { twMerge } from '@/lib/twMerge';
 import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
 
 interface StatusIndicatorProps {
-  feedbackStatus: string | null;
+  feedbackStatus: FeedbackStatus | null;
 }
 
 const STEPS = [
@@ -13,7 +13,7 @@ const STEPS = [
   { key: 'COMPLETED', label: '완료' },
 ] as const;
 
-function getActiveStep(status: string | null): number {
+function getActiveStep(status: FeedbackStatus | null): number {
   if (status === 'COMPLETED' || status === 'CONFIRMED') return 2;
   if (status === 'IN_PROGRESS') return 1;
   return 0;
