@@ -175,30 +175,46 @@ const FeedbackModal = ({
     >
       {/* Header bar */}
       <div className="flex items-center justify-between border-b border-gray-200 px-6 py-3">
-        <span className="text-sm font-semibold text-gray-800">
+        {/* Left */}
+        <div className="w-1/3 text-sm font-semibold text-gray-800">
           {challengeTitle ?? '챌린지'} · {missionTh ?? ''}차 피드백
-        </span>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-sm">
-            <span className="font-medium text-gray-700">
-              총 {attendanceData?.attendanceList?.length ?? 0}명
-            </span>
+        </div>
+        
+        {/* Center */}
+        <div className="flex w-1/3 justify-center items-center gap-3 text-sm">
+          <span className="font-medium text-gray-700">
+            총 {attendanceData?.attendanceList?.length ?? 0}명
+          </span>
+          <span className="text-neutral-300">|</span>
+          <div className="flex items-center gap-2">
             <span className="text-red-500">
               시작 전 {attendanceData?.attendanceList?.filter((a) => a.feedbackStatus === 'WAITING' || !a.feedbackStatus).length ?? 0}
             </span>
             <span className="text-neutral-300">·</span>
             <span className="text-amber-500">
-              진행중 {attendanceData?.attendanceList?.filter((a) => a.feedbackStatus === 'IN_PROGRESS').length ?? 0}
+              진행 중 {attendanceData?.attendanceList?.filter((a) => a.feedbackStatus === 'IN_PROGRESS').length ?? 0}
             </span>
             <span className="text-neutral-300">·</span>
             <span className="text-green-600">
               완료 {attendanceData?.attendanceList?.filter((a) => a.feedbackStatus === 'COMPLETED' || a.feedbackStatus === 'CONFIRMED').length ?? 0}
             </span>
           </div>
+        </div>
+
+        {/* Right */}
+        <div className="flex w-1/3 justify-end items-center gap-6">
+          <a
+            href="https://letsintern.notion.site/3c6c138f7aeb4a6ebec397cf1e29e9cb" // Example guide link, could be passed or empty for now
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-medium text-gray-500 underline hover:text-gray-700"
+          >
+            피드백 가이드 라인
+          </a>
           <button
             type="button"
             onClick={handleClose}
-            className="text-xl font-bold text-gray-500 hover:text-gray-800"
+            className="text-xl font-bold text-gray-400 hover:text-gray-600"
             aria-label="닫기"
           >
             X

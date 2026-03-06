@@ -79,6 +79,12 @@ const MenteeInfo = ({
             <p className="font-medium text-gray-800">{mentee.wishJob}</p>
           </div>
         )}
+        {(mentee as any).wishIndustry && (
+          <div>
+            <p className="text-xs text-gray-400">희망 산업</p>
+            <p className="font-medium text-gray-800">{(mentee as any).wishIndustry}</p>
+          </div>
+        )}
         {mentee.wishCompany && (
           <div>
             <p className="text-xs text-gray-400">희망 기업</p>

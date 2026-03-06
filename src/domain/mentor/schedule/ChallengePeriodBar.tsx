@@ -12,6 +12,7 @@ export interface PeriodBarData {
   waitingCount: number;
   inProgressCount: number;
   completedCount: number;
+  colorIndex?: number;
 }
 
 interface ChallengePeriodBarProps {
@@ -20,20 +21,30 @@ interface ChallengePeriodBarProps {
   onBarClick: (challengeId: number, missionId: number) => void;
 }
 
+const COLORS = [
+  { borderTop: 'border-t-orange-400', badge: 'bg-orange-400', bg: 'bg-orange-50/30', border: 'border-orange-200' },
+  { borderTop: 'border-t-blue-400', badge: 'bg-blue-400', bg: 'bg-blue-50/30', border: 'border-blue-200' },
+  { borderTop: 'border-t-green-400', badge: 'bg-green-400', bg: 'bg-green-50/30', border: 'border-green-200' },
+  { borderTop: 'border-t-purple-400', badge: 'bg-purple-400', bg: 'bg-purple-50/30', border: 'border-purple-200' },
+];
+
 const ChallengePeriodBar = ({
   bar,
   style,
   onBarClick,
 }: ChallengePeriodBarProps) => {
+  const color = COLORS[(bar.colorIndex ?? 0) % COLORS.length];
+
   return (
     <button
       type="button"
       onClick={() => onBarClick(bar.challengeId, bar.missionId)}
       style={style}
-      className="flex w-full flex-col gap-1 rounded-md border border-orange-200 bg-orange-50 px-3 py-2 text-left transition-opacity hover:opacity-80"
+      className={`flex w-full flex-col gap-1.5 rounded-md border text-left transition-opacity hover:opacity-80 border-t-[3px] ${color.borderTop} ${color.border} ${color.bg} px-3 py-2 border-l border-r border-b`}
     >
-      {/* Top: Nth feedback + status counts */}
-      <div className="flex items-center gap-2 text-[11px]">
+      {/* Top: Doc icon + Nth feedback + status counts */}
+      <div className="flex w-full items-center gap-1.5 text-[11px]">
+        <span className="text-lg leading-none">📄</span>
         <span className="font-semibold text-neutral-700">
           [{bar.th}차 피드백]
         </span>
@@ -45,8 +56,8 @@ const ChallengePeriodBar = ({
       </div>
 
       {/* Middle: challenge title badge + submission counts */}
-      <div className="flex items-center justify-between">
-        <span className="rounded bg-orange-400 px-2 py-0.5 text-[11px] font-medium text-white">
+      <div className="mt-0.5 flex w-full items-center justify-between">
+        <span className={`rounded px-2 py-0.5 text-[11px] font-medium text-white ${color.badge}`}>
           {bar.challengeTitle}
         </span>
         <span className="text-[11px] text-neutral-500">

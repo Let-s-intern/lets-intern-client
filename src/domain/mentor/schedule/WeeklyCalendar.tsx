@@ -87,7 +87,9 @@ const WeeklyCalendar = ({
                 className={`mt-1 flex h-9 w-9 items-center justify-center rounded-full text-lg font-bold ${
                   isToday
                     ? 'bg-blue-500 text-white'
-                    : 'text-neutral-900'
+                    : i === 6
+                      ? 'text-red-500'
+                      : 'text-neutral-900'
                 }`}
               >
                 {format(day, 'd', { locale: ko })}

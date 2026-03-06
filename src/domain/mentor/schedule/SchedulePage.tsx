@@ -45,6 +45,7 @@ function buildBars(
       completedCount: number;
     }
   >,
+  colorIndex: number
 ): PeriodBarData[] {
   return missions.map((m) => {
     const att = attendanceMap.get(m.id) ?? {
@@ -62,6 +63,7 @@ function buildBars(
       th: m.th,
       startDate: m.startDate,
       endDate: m.endDate,
+      colorIndex,
       ...att,
     };
   });
@@ -73,6 +75,7 @@ function buildBars(
 
 interface ChallengeDataProps {
   challenge: ChallengeMentorVo;
+  colorIndex: number;
   onData: (challengeId: number, bars: PeriodBarData[]) => void;
 }
 
@@ -80,7 +83,7 @@ interface ChallengeDataProps {
  * Invisible component that fetches missions + attendance for a single challenge
  * and reports the computed bars upward via onData callback.
  */
-const ChallengeDataFetcher = ({ challenge, onData }: ChallengeDataProps) => {
+const ChallengeDataFetcher = ({ challenge, colorIndex, onData }: ChallengeDataProps) => {
   const { data: missionData } = useMentorMissionFeedbackListQuery(
     challenge.challengeId,
     { enabled: true },
@@ -145,10 +148,10 @@ const ChallengeDataFetcher = ({ challenge, onData }: ChallengeDataProps) => {
   // Report bars upward whenever data changes
   useEffect(() => {
     if (missions.length > 0) {
-      const bars = buildBars(challenge, missions, attendanceMap);
+      const bars = buildBars(challenge, missions, attendanceMap, colorIndex);
       onData(challenge.challengeId, bars);
     }
-  }, [challenge, missions, attendanceMap, onData]);
+  }, [challenge, missions, attendanceMap, colorIndex, onData]);
 
   return null;
 };
@@ -288,10 +291,11 @@ const SchedulePage = () => {
       />
 
       {/* Invisible data fetchers for each challenge */}
-      {challenges.map((c) => (
+      {challenges.map((c, i) => (
           <ChallengeDataFetcher
             key={c.challengeId}
             challenge={c}
+            colorIndex={i}
             onData={handleData}
           />
         ))}
