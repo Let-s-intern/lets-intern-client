@@ -32,6 +32,9 @@ export const userCareerSchema = z.object({
   endDate: yearMonthSchema // "2025-08"
     .nullable()
     .optional(),
+  field: z.string().nullable().optional(),
+  position: z.string().nullable().optional(),
+  department: z.string().nullable().optional(),
 });
 
 export const userCareerListSchema = z.object({
