@@ -70,6 +70,14 @@ const FeedbackModal = ({
     [attendanceData, selectedAttendanceId],
   );
 
+  const currentMenteeIndex = useMemo(
+    () =>
+      attendanceData?.attendanceList?.findIndex(
+        (a) => a.id === selectedAttendanceId,
+      ) ?? -1,
+    [attendanceData, selectedAttendanceId],
+  );
+
   // Auto-select first mentee when modal opens
   useEffect(() => {
     if (isOpen && attendanceData?.attendanceList?.length && !selectedAttendanceId) {
@@ -117,6 +125,19 @@ const FeedbackModal = ({
     [selectedAttendanceId, confirmIfDirty],
   );
 
+  const handlePrevMentee = useMemo(() => {
+    if (currentMenteeIndex <= 0) return undefined;
+    const prevId = attendanceData?.attendanceList?.[currentMenteeIndex - 1]?.id;
+    return prevId ? () => handleSelectMentee(prevId) : undefined;
+  }, [currentMenteeIndex, attendanceData, handleSelectMentee]);
+
+  const handleNextMentee = useMemo(() => {
+    const list = attendanceData?.attendanceList;
+    if (!list || currentMenteeIndex >= list.length - 1) return undefined;
+    const nextId = list[currentMenteeIndex + 1]?.id;
+    return nextId ? () => handleSelectMentee(nextId) : undefined;
+  }, [currentMenteeIndex, attendanceData, handleSelectMentee]);
+
   const handleClose = useCallback(() => {
     if (
       !confirmIfDirty(
@@ -152,17 +173,40 @@ const FeedbackModal = ({
       onClose={handleClose}
       className="mx-4 h-[700px] w-[1060px] max-w-full"
     >
-      {/* Close button */}
-      <button
-        type="button"
-        onClick={handleClose}
-        className="absolute right-4 top-4 z-10 text-xl font-bold text-gray-500 hover:text-gray-800"
-        aria-label="닫기"
-      >
-        X
-      </button>
+      {/* Header bar */}
+      <div className="flex items-center justify-between border-b border-gray-200 px-6 py-3">
+        <span className="text-sm font-semibold text-gray-800">
+          {challengeTitle ?? '챌린지'} · {missionTh ?? ''}차 피드백
+        </span>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 text-sm">
+            <span className="font-medium text-gray-700">
+              총 {attendanceData?.attendanceList?.length ?? 0}명
+            </span>
+            <span className="text-red-500">
+              시작 전 {attendanceData?.attendanceList?.filter((a) => a.feedbackStatus === 'WAITING' || !a.feedbackStatus).length ?? 0}
+            </span>
+            <span className="text-neutral-300">·</span>
+            <span className="text-amber-500">
+              진행중 {attendanceData?.attendanceList?.filter((a) => a.feedbackStatus === 'IN_PROGRESS').length ?? 0}
+            </span>
+            <span className="text-neutral-300">·</span>
+            <span className="text-green-600">
+              완료 {attendanceData?.attendanceList?.filter((a) => a.feedbackStatus === 'COMPLETED' || a.feedbackStatus === 'CONFIRMED').length ?? 0}
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={handleClose}
+            className="text-xl font-bold text-gray-500 hover:text-gray-800"
+            aria-label="닫기"
+          >
+            X
+          </button>
+        </div>
+      </div>
 
-      <div className="flex h-full">
+      <div className="flex" style={{ height: 'calc(100% - 49px)' }}>
         {/* Left panel: 30% mentee list */}
         <div className="w-[30%] shrink-0">
           <MenteeList
@@ -189,6 +233,8 @@ const FeedbackModal = ({
             attendanceId={selectedAttendanceId}
             challengeTitle={challengeTitle}
             missionLink={currentMentee?.link}
+            onPrevMentee={handlePrevMentee}
+            onNextMentee={handleNextMentee}
           />
 
           {/* Feedback editor */}
