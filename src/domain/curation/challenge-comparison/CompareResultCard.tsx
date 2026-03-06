@@ -1,0 +1,140 @@
+'use client';
+
+import { PROGRAMS } from '../shared/programs';
+import { CHALLENGE_COMPARISON } from '../shared/comparisons';
+import type { ProgramId } from '../types';
+
+interface CompareResultCardProps {
+  programIds: ProgramId[];
+  onClose: () => void;
+}
+
+const InfoRow = ({
+  label,
+  values,
+}: {
+  label: string;
+  values: string[];
+}) => (
+  <div className="flex items-start gap-10 border-b border-[#e6e6e6] py-4">
+    <div className="w-20 shrink-0 text-sm font-semibold leading-5 text-black">
+      {label}
+    </div>
+    <div className="flex flex-1 gap-10">
+      {values.map((value, i) => (
+        <div key={i} className="flex-1 min-w-0">
+          <span className="whitespace-pre-line text-sm leading-[22px] text-black">
+            {value}
+          </span>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const CompareResultCard = ({ programIds, onClose }: CompareResultCardProps) => {
+  const programs = programIds.map((id) => PROGRAMS[id]);
+  const comparisons = programIds.map(
+    (id) => CHALLENGE_COMPARISON.find((c) => c.programId === id)!,
+  );
+
+  // 비교 결과 제목 생성
+  const titleParts = programs.map((p) => {
+    if (p.title.includes('경험정리')) return '경험정리';
+    if (p.title.includes('이력서')) return '이력서';
+    if (p.title.includes('대기업')) return '대기업 자소서';
+    if (p.title.includes('자기소개서')) return '자소서';
+    if (p.title.includes('포트폴리오')) return '포트폴리오';
+    if (p.title.includes('마케팅')) return '마케팅';
+    if (p.title.includes('HR')) return 'HR';
+    return p.title;
+  });
+  const compareTitle = titleParts.join(' vs ');
+
+  return (
+    <div className="flex w-full flex-col gap-5 rounded-[20px] bg-white px-10 py-5">
+      {/* 헤더 */}
+      <div className="flex items-center justify-between gap-5">
+        <h4 className="text-base font-bold leading-6 text-black">
+          {compareTitle}
+        </h4>
+        <button
+          type="button"
+          onClick={onClose}
+          className="rounded-lg px-3 py-1.5 text-xs font-medium text-[#7a7d84] transition-colors hover:bg-[#f3f3f3]"
+        >
+          닫기
+        </button>
+      </div>
+
+      {/* 프로그램 썸네일 헤더 */}
+      <div className="flex items-end gap-10 pl-[120px]">
+        {programs.map((program) => (
+          <div key={program.id} className="flex flex-1 flex-col gap-1">
+            <div className="h-[9.375rem] w-full max-w-[12.5rem] overflow-hidden rounded-[5px]">
+              <img
+                src={program.thumbnail}
+                alt={program.title}
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <span className="text-sm font-semibold leading-5 text-[#27272d]">
+              {program.title}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* 비교 항목 */}
+      <div className="flex flex-col">
+        <InfoRow
+          label="추천 대상"
+          values={comparisons.map((c) => c.target)}
+        />
+        <InfoRow
+          label="기간"
+          values={comparisons.map((c) => c.duration)}
+        />
+        <InfoRow
+          label="플랜별 가격"
+          values={comparisons.map((c) => c.pricing)}
+        />
+        <InfoRow
+          label="피드백 횟수"
+          values={comparisons.map((c) => c.feedback)}
+        />
+        <InfoRow
+          label="결과물"
+          values={comparisons.map((c) => c.deliverable)}
+        />
+        <InfoRow
+          label="커리큘럼"
+          values={comparisons.map((c) => c.curriculum)}
+        />
+        {comparisons.some((c) => c.features) && (
+          <InfoRow
+            label="주요 특징"
+            values={comparisons.map((c) => c.features ?? '-')}
+          />
+        )}
+      </div>
+
+      {/* CTA 버튼들 */}
+      <div className="flex gap-10 pl-[7.5rem]">
+        {programs.map((program) => (
+          <a
+            key={program.id}
+            href={program.link}
+            className="flex h-[2.875rem] flex-1 items-center justify-center rounded-lg bg-[#f3f3f3] transition-colors hover:bg-[#e7e7e7]"
+          >
+            <span className="text-center text-xs font-bold leading-4 text-[#4c4f56]">
+              [{program.title}] 바로가기
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default CompareResultCard;

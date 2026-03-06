@@ -149,7 +149,7 @@ export default function RootLayout({
           href="/favicon-16x16.png"
         />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         {/*  Google Tag Manager (noscript) --> */}
         <noscript>
           <iframe

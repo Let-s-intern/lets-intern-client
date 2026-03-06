@@ -16,6 +16,8 @@ export const getBadgeTypeFromProgramType = (
       return 'VOD_REVIEW';
     case 'REPORT':
       return 'REPORT_REVIEW';
+    default:
+      return 'CHALLENGE_SIMPLE';
   }
 };
 

@@ -78,7 +78,8 @@ const ChallengeLayout = ({ children }: { children: React.ReactNode }) => {
       return;
     }
 
-    if (!isValidUserInfo || !hasChallengeGoal) {
+    const isOnUserInfoPage = pathname?.endsWith('/user/info');
+    if ((!isValidUserInfo || !hasChallengeGoal) && !isOnUserInfoPage) {
       router.push(`/challenge/${applicationId}/${programId}/user/info`);
       return;
     }

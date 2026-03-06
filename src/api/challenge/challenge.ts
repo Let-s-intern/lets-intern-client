@@ -23,6 +23,7 @@ import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
+
 import {
   challengeApplicationSchema,
   challengeGoalSchema,
@@ -150,7 +151,7 @@ export const useGetTotalReview = ({
   programTitle,
   createdDate,
 }: {
-  type: 'CHALLENGE' | 'LIVE' | 'VOD' | 'REPORT';
+  type: 'CHALLENGE' | 'LIVE' | 'VOD' | 'REPORT' | 'GUIDEBOOK';
   programTitle?: string | null;
   createdDate?: string | null;
 }) => {
