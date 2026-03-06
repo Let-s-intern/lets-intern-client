@@ -24,38 +24,66 @@ export interface CareerGrowthCardConfig {
 
 /** 프로그램 탭용 카드 */
 export const toProgramCardConfig = (
-  program: CareerGrowthItem,
+  item: CareerGrowthItem,
 ): CareerGrowthCardConfig => {
-  const period = `${program.startDate} ~ ${program.endDate}`;
-  const isDashboardDisabled = program.programStatusType === 'PREV';
+  const period = `${item.startDate} ~ ${item.endDate}`;
+  const isDashboardDisabled = item.programStatusType === 'PREV';
 
   return {
-    id: program.id,
-    programId: program.programId,
-    thumbnail: program.thumbnail,
-    title: program.title,
-    description: program.description,
-    statusLabel: program.status,
-    categoryLabel: program.programType,
+    id: item.id,
+    programId: item.programId,
+    thumbnail: item.thumbnail,
+    title: item.title,
+    description: item.description,
+    statusLabel: item.status,
+    categoryLabel: item.programType,
     dateLabel: '진행기간',
     dateText: period,
     showPurchasePlan: true,
-    purchasePlanText: program.purchasePlan,
+    purchasePlanText: item.purchasePlan,
     actionButton: {
       label: '대시보드 입장',
       disabled: isDashboardDisabled,
-      href: `/challenge/${program.id}/${program.programId}`,
+      href: `/challenge/${item.id}/${item.programId}`,
+    },
+  };
+};
+
+/** 가이드북 탭용 카드 */
+export const toGuidebookCardConfig = (
+  item: CareerGrowthItem,
+): CareerGrowthCardConfig => {
+  const purchaseDateText = item.createDate || item.startDate;
+
+  return {
+    id: item.id,
+    programId: item.programId,
+    thumbnail: item.thumbnail,
+    title: item.title,
+    description: item.description,
+    statusLabel: '구매 완료',
+    categoryLabel: item.programType,
+    dateLabel: '구매일자',
+    dateText: purchaseDateText,
+    showPurchasePlan: false,
+    actionButton: {
+      label: 'PDF 다운로드',
+      href: undefined,
+      onClick: undefined,
     },
   };
 };
 
 /** 탭별 카드 설정 매핑 */
 export const toCareerGrowthCardConfigs = (
-  programs: CareerGrowthItem[],
+  items: CareerGrowthItem[],
   category: ApplicationCategory,
 ): CareerGrowthCardConfig[] => {
   if (category === 'PROGRAM') {
-    return programs.map((p) => toProgramCardConfig(p));
+    return items.map((p) => toProgramCardConfig(p));
+  }
+  if (category === 'GUIDEBOOK') {
+    return items.map((p) => toGuidebookCardConfig(p));
   }
   return [];
 };
