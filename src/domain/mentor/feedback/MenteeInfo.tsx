@@ -10,6 +10,8 @@ interface MenteeInfoProps {
   attendanceId: number | null;
   challengeTitle?: string;
   missionLink?: string | null;
+  onPrevMentee?: () => void;
+  onNextMentee?: () => void;
 }
 
 const MenteeInfo = ({
@@ -18,6 +20,8 @@ const MenteeInfo = ({
   attendanceId,
   challengeTitle,
   missionLink,
+  onPrevMentee,
+  onNextMentee,
 }: MenteeInfoProps) => {
   const { data } = useMentorMissionFeedbackAttendanceQuery({
     challengeId,
@@ -37,6 +41,28 @@ const MenteeInfo = ({
 
   return (
     <div className="space-y-3 py-4">
+      {/* Navigation */}
+      {(onPrevMentee || onNextMentee) && (
+        <div className="flex items-center justify-between">
+          <button
+            type="button"
+            onClick={onPrevMentee}
+            disabled={!onPrevMentee}
+            className="text-sm text-gray-500 hover:text-gray-800 disabled:invisible"
+          >
+            &lt; 이전 멘티
+          </button>
+          <button
+            type="button"
+            onClick={onNextMentee}
+            disabled={!onNextMentee}
+            className="text-sm text-gray-500 hover:text-gray-800 disabled:invisible"
+          >
+            다음 멘티 &gt;
+          </button>
+        </div>
+      )}
+
       {/* Name & challenge */}
       <div>
         <h3 className="text-lg font-bold text-gray-900">{mentee.name}</h3>

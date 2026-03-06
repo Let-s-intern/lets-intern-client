@@ -13,7 +13,7 @@ import { useMemo } from 'react';
 
 import ChallengePeriodBar, { type PeriodBarData } from './ChallengePeriodBar';
 
-const DAY_LABELS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+const DAY_LABELS = ['월', '화', '수', '목', '금', '토', '일'];
 
 interface WeeklyCalendarProps {
   weekStartDate: Date;
@@ -80,7 +80,7 @@ const WeeklyCalendar = ({
               key={i}
               className="flex flex-col items-center border-r border-neutral-100 px-2 py-3 last:border-r-0"
             >
-              <span className="text-xs font-medium text-neutral-500">
+              <span className={`text-xs font-medium ${i === 6 ? 'text-red-500' : 'text-neutral-500'}`}>
                 {DAY_LABELS[i]}
               </span>
               <span
