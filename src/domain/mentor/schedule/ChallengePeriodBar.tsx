@@ -62,84 +62,65 @@ const ChallengePeriodBar = ({
       style={style}
       className="flex w-full flex-col overflow-hidden text-left transition-opacity hover:opacity-80"
     >
-      {/* Top row: icon + nth feedback + status counts + colored line */}
-      <div className="flex h-6 items-center gap-2">
-        <div className="flex items-center">
+      {/* Top row: nth feedback + status counts + colored line */}
+      <div className="flex h-6 items-center gap-2 overflow-hidden">
+        <div className="flex shrink-0 items-center gap-0.5">
           <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            viewBox="0 0 18 18"
             fill="none"
             className="shrink-0"
           >
-            <circle cx="7" cy="7" r="1.5" stroke="#1A1A1A" strokeWidth="0.8" />
-            <rect
-              x="9"
-              y="5"
-              width="10"
-              height="12"
-              rx="1"
+            <path
+              d="M5.25 3H12.75C13.1642 3 13.5 3.33579 13.5 3.75V14.25C13.5 14.6642 13.1642 15 12.75 15H5.25C4.83579 15 4.5 14.6642 4.5 14.25V3.75C4.5 3.33579 4.83579 3 5.25 3Z"
               stroke="#1A1A1A"
-              strokeWidth="0.8"
+              strokeWidth="1"
             />
+            <path d="M7 6.5H11M7 9H11M7 11.5H9.5" stroke="#1A1A1A" strokeWidth="0.8" strokeLinecap="round" />
           </svg>
           <span className="whitespace-nowrap text-xs font-medium leading-4 text-neutral-800">
             [ {bar.th}차 피드백 ]
           </span>
         </div>
-        <div className="flex items-center gap-1">
-          <span className="text-xs font-medium leading-4 text-red-500">
-            시작 전
-          </span>
+        <div className="flex shrink-0 items-center gap-1 whitespace-nowrap">
           <span className="text-xs font-medium leading-4 text-red-500">
             {bar.waitingCount}
           </span>
-          <span className="text-xs font-medium leading-4 text-neutral-800">
-            ·
-          </span>
-          <span className="text-xs font-medium leading-4 text-neutral-800">
-            진행 중
-          </span>
+          <span className="text-xs font-medium leading-4 text-neutral-800">·</span>
           <span className="text-xs font-medium leading-4 text-neutral-800">
             {bar.inProgressCount}
           </span>
-          <span className="text-xs font-medium leading-4 text-neutral-800">
-            ·
-          </span>
-          <span className="text-xs font-medium leading-4 text-neutral-800">
-            완료
-          </span>
+          <span className="text-xs font-medium leading-4 text-neutral-800">·</span>
           <span className="text-xs font-medium leading-4 text-neutral-800">
             {bar.completedCount}
           </span>
         </div>
         {/* Colored line */}
         <div
-          className={`flex h-3 flex-1 flex-col items-center justify-center border-r-2 ${color.border}`}
+          className={`flex h-3 min-w-0 flex-1 items-center border-r-2 ${color.border}`}
         >
           <div className={`h-0.5 w-full ${color.line}`} />
         </div>
       </div>
 
       {/* Bottom row: challenge badge + submission counts */}
-      <div className={`flex items-center justify-between p-2 ${color.body}`}>
-        <div className="flex items-center gap-2">
-          <span
-            className={`rounded-[3px] border px-2 py-1 text-xs font-medium leading-4 text-white ${color.badge}`}
-          >
-            {bar.challengeTitle}
-          </span>
-        </div>
-        <div className="flex items-center gap-1 px-1">
+      <div
+        className={`flex items-center justify-between gap-2 overflow-hidden p-2 ${color.body}`}
+      >
+        <span
+          className={`shrink-0 whitespace-nowrap rounded-[3px] px-2 py-1 text-xs font-medium leading-4 text-white ${color.badge}`}
+        >
+          {bar.challengeTitle}
+        </span>
+        <div className="flex shrink-0 items-center gap-1 whitespace-nowrap px-1">
           <span className="text-xs font-medium leading-4 text-neutral-500">
             미제출
           </span>
           <span className="text-xs font-medium leading-4 text-neutral-500">
             {bar.notSubmittedCount}
           </span>
-          <span className="text-xs font-medium leading-4 text-neutral-800">
-            ·
-          </span>
+          <span className="text-xs font-medium leading-4 text-neutral-800">·</span>
           <span className="text-xs font-medium leading-4 text-neutral-800">
             제출
           </span>
