@@ -1,5 +1,7 @@
 'use client';
 
+import { twMerge } from '@/lib/twMerge';
+
 interface ChallengeFilterProps {
   challenges: { challengeId: number; title: string }[];
   selectedChallengeId: number | null;
@@ -11,21 +13,17 @@ const ChallengeFilter = ({
   selectedChallengeId,
   onSelect,
 }: ChallengeFilterProps) => {
-  const baseClass =
-    'rounded-full border px-4 py-1.5 text-sm font-medium transition-colors';
-  const activeClass = 'border-orange-400 bg-orange-50 text-orange-700';
-  const inactiveClass =
-    'border-neutral-300 bg-white text-neutral-600 hover:bg-neutral-50';
-
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <span className="text-sm font-medium text-neutral-700">
-        참여중인 챌린지
-      </span>
+    <div className="inline-flex items-center gap-4">
       <button
         type="button"
         onClick={() => onSelect(null)}
-        className={`${baseClass} ${selectedChallengeId === null ? activeClass : inactiveClass}`}
+        className={twMerge(
+          'rounded-md border border-neutral-200 bg-white px-3 py-[5px] text-sm leading-5',
+          selectedChallengeId === null
+            ? 'font-normal text-primary-dark'
+            : 'font-normal text-neutral-500',
+        )}
       >
         전체
       </button>
@@ -34,7 +32,12 @@ const ChallengeFilter = ({
           key={c.challengeId}
           type="button"
           onClick={() => onSelect(c.challengeId)}
-          className={`${baseClass} ${selectedChallengeId === c.challengeId ? activeClass : inactiveClass}`}
+          className={twMerge(
+            'rounded-md border border-neutral-200 bg-white px-3 py-[5px] text-sm leading-5',
+            selectedChallengeId === c.challengeId
+              ? 'font-normal text-primary-dark'
+              : 'font-normal text-neutral-500',
+          )}
         >
           {c.title}
         </button>

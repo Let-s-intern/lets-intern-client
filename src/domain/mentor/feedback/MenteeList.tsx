@@ -3,45 +3,44 @@
 import { twMerge } from '@/lib/twMerge';
 import {
   useMentorMissionFeedbackAttendanceQuery,
-  MentorMissionFeedbackAttendanceQueryKey,
 } from '@/api/challenge/challenge';
 import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
 
 interface MenteeListProps {
   challengeId: number;
   missionId: number;
-  challengeTitle?: string;
-  missionTh?: number;
   selectedAttendanceId: number | null;
   onSelectMentee: (attendanceId: number) => void;
 }
 
-function getBadgeStyle(
-  feedbackStatus: FeedbackStatus | null,
-  status: string,
-): { label: string; className: string } {
-  // status === 'ABSENT' means not submitted
-  if (status === 'ABSENT') {
-    return { label: '제출전', className: 'bg-red-500 text-white' };
-  }
-
+function getFeedbackBadge(feedbackStatus: FeedbackStatus | null): {
+  label: string;
+  className: string;
+} {
   switch (feedbackStatus) {
     case 'COMPLETED':
     case 'CONFIRMED':
-      return { label: '완료', className: 'bg-green-600 text-white' };
+      return {
+        label: '완료',
+        className: 'border border-neutral-300 text-neutral-700',
+      };
     case 'IN_PROGRESS':
-      return { label: '진행 중', className: 'bg-yellow-400 text-black' };
+      return {
+        label: '진행 중',
+        className: 'text-blue-500',
+      };
     case 'WAITING':
     default:
-      return { label: '시작전', className: 'bg-gray-300 text-gray-700' };
+      return {
+        label: '시작 전',
+        className: 'border border-red-400 text-red-500',
+      };
   }
 }
 
 const MenteeList = ({
   challengeId,
   missionId,
-  challengeTitle,
-  missionTh,
   selectedAttendanceId,
   onSelectMentee,
 }: MenteeListProps) => {
@@ -54,53 +53,64 @@ const MenteeList = ({
   const attendanceList = data?.attendanceList ?? [];
 
   return (
-    <div className="flex h-full flex-col overflow-y-auto border-r border-gray-200">
-      {/* Group header */}
-      <div className="border-b border-gray-200 bg-gray-50 px-4 py-3">
-        <span className="text-sm font-semibold text-gray-800">
-          {challengeTitle ?? '챌린지'} {missionTh ?? ''}차 피드백
-        </span>
-      </div>
+    <div className="flex h-full flex-col py-1 pl-1">
+      <div className="flex flex-1 gap-2 overflow-hidden">
+        <div className="flex flex-1 flex-col">
+          {isLoading ? (
+            <div className="flex flex-1 items-center justify-center text-sm text-neutral-400">
+              로딩중...
+            </div>
+          ) : attendanceList.length === 0 ? (
+            <div className="flex flex-1 items-center justify-center text-sm text-neutral-400">
+              멘티가 없습니다
+            </div>
+          ) : (
+            <div className="flex-1 overflow-y-auto">
+              {attendanceList.map((mentee) => {
+                const isSelected = mentee.id === selectedAttendanceId;
+                const feedbackBadge = getFeedbackBadge(mentee.feedbackStatus);
+                const isAbsent = mentee.status === 'ABSENT';
 
-      {isLoading ? (
-        <div className="flex flex-1 items-center justify-center text-sm text-gray-400">
-          로딩중...
-        </div>
-      ) : attendanceList.length === 0 ? (
-        <div className="flex flex-1 items-center justify-center text-sm text-gray-400">
-          멘티가 없습니다
-        </div>
-      ) : (
-        <ul className="flex-1 overflow-y-auto">
-          {attendanceList.map((mentee) => {
-            const badge = getBadgeStyle(mentee.feedbackStatus, mentee.status);
-            const isSelected = mentee.id === selectedAttendanceId;
-
-            return (
-              <li key={mentee.id}>
-                <button
-                  type="button"
-                  onClick={() => onSelectMentee(mentee.id)}
-                  className={twMerge(
-                    'flex w-full items-center justify-between px-4 py-3 text-left text-sm transition-colors hover:bg-gray-50',
-                    isSelected && 'bg-gray-100 font-medium',
-                  )}
-                >
-                  <span className="truncate">{mentee.name}</span>
-                  <span
+                return (
+                  <button
+                    key={mentee.id}
+                    type="button"
+                    onClick={() => onSelectMentee(mentee.id)}
                     className={twMerge(
-                      'ml-2 shrink-0 rounded px-2 py-0.5 text-xs font-medium',
-                      badge.className,
+                      'flex w-full items-center justify-between border-b border-neutral-200 px-4 py-2 text-left transition-colors',
+                      isSelected
+                        ? 'rounded-md border-b-0 bg-neutral-300'
+                        : 'hover:bg-neutral-50',
                     )}
                   >
-                    {badge.label}
-                  </span>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+                    <div className="flex items-center gap-0.5">
+                      <span className="text-sm text-neutral-900 line-clamp-1">
+                        {mentee.name}
+                      </span>
+                      {isAbsent && (
+                        <span className="ml-1 shrink-0 rounded border border-neutral-300 px-2 py-1 text-xs font-medium text-neutral-500">
+                          (미제출)
+                        </span>
+                      )}
+                    </div>
+                    <span
+                      className={twMerge(
+                        'ml-2 shrink-0 rounded px-2 py-1 text-xs font-medium',
+                        feedbackBadge.className,
+                      )}
+                    >
+                      {feedbackBadge.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Custom scrollbar track */}
+        <div className="w-2 shrink-0 rounded-full bg-neutral-100" />
+      </div>
     </div>
   );
 };
