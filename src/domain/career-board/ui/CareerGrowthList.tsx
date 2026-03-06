@@ -1,72 +1,63 @@
-import { MypageApplication } from '@/api/application';
-import dayjs from '@/lib/dayjs';
+'use client';
+
+import AlertModal from '@/common/alert/AlertModal';
 import { twMerge } from '@/lib/twMerge';
-import { Dayjs } from 'dayjs';
 import { useRouter } from 'next/navigation';
-import type { CareerGrowthProgram } from '../utils/careerGrowth';
+import { useState } from 'react';
+import type { CareerGrowthCardConfig } from '../utils/careerGrowthCard';
 
 interface CareerGrowthListProps {
-  programs: CareerGrowthProgram[];
-  applications: MypageApplication[];
+  items: CareerGrowthCardConfig[];
 }
 
-const CareerGrowthList = ({ programs, applications }: CareerGrowthListProps) => {
-  const applicationMap = applications.reduce<
-    Record<number, MypageApplication>
-  >((acc, application) => {
-    if (application.id == null) return acc;
-    acc[application.id] = application;
-    return acc;
-  }, {});
-
-  const getApplication = (programId: number) => {
-    return applicationMap[programId];
-  };
-
+const CareerGrowthList = ({ items }: CareerGrowthListProps) => {
   return (
     <div className="flex flex-col gap-4">
-      {programs.map((program) => {
-        const application = getApplication(program.id);
-        return (
-          <ProgramCard
-            key={program.id}
-            program={program}
-            programStartDate={application?.programStartDate ?? null}
-            programStatusType={application?.programStatusType ?? null}
-          />
-        );
-      })}
+      {items.map((config) => (
+        <CareerGrowthItemCard key={config.id} config={config} />
+      ))}
     </div>
   );
 };
 
 export default CareerGrowthList;
 
-interface ProgramCardProps {
-  program: CareerGrowthProgram;
-  programStartDate: Dayjs | null;
-  programStatusType: 'PROCEEDING' | 'PREV' | 'POST' | null;
+interface CareerGrowthItemCardProps {
+  config: CareerGrowthCardConfig;
 }
 
-const ProgramCard = ({
-  program,
-  programStartDate,
-  programStatusType,
-}: ProgramCardProps) => {
-  const period = `${program.startDate} ~ ${program.endDate}`;
+const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
+  const router = useRouter();
+  const { actionButton } = config;
+  const showActionButton = !!actionButton;
+  const [showConfirm, setShowConfirm] = useState(false);
+  const hasConfirm = !!actionButton?.confirm;
 
-  const isDashboardDisabled =
-    programStatusType === 'PREV' &&
-    programStartDate !== null &&
-    dayjs().isBefore(programStartDate);
+  const handleActionClick = () => {
+    if (!actionButton || actionButton.disabled) return;
+
+    if (hasConfirm) {
+      setShowConfirm(true);
+      return;
+    }
+
+    if (actionButton.href) {
+      router.push(actionButton.href);
+      return;
+    }
+
+    actionButton.onClick?.();
+  };
+
+  const isUpcoming = config.statusLabel === '참여예정';
 
   return (
     <div className="flex flex-col gap-5 md:flex-row md:gap-4">
       <div className="flex w-full gap-3 md:flex-row md:gap-4">
-        {program.thumbnail ? (
+        {config.thumbnail ? (
           <img
-            src={program.thumbnail}
-            alt={program.title}
+            src={config.thumbnail}
+            alt={config.title}
             className="h-[85px] w-[113px] shrink-0 rounded-xs object-cover md:h-[119px] md:w-[158px]"
           />
         ) : (
@@ -78,90 +69,105 @@ const ProgramCard = ({
             <span
               className={twMerge(
                 'rounded-xxs px-2 py-0.5 text-xxsmall12 font-normal',
-                program.status === '참여예정'
+                isUpcoming
                   ? 'border border-neutral-80 text-primary'
                   : 'bg-primary-10 text-primary',
               )}
             >
-              {program.status}
+              {config.statusLabel}
             </span>
             <span className="text-xxsmall12 font-normal text-neutral-40">
-              {program.programType}
+              {config.categoryLabel}
             </span>
             <div className="hidden h-4 w-px bg-neutral-80 md:block" />
             <span className="text-xxsmall12 font-normal text-neutral-40">
-              진행기간 {period}
+              {config.dateLabel} {config.dateText}
             </span>
           </div>
 
           <div className="flex flex-col gap-1 md:flex-row md:items-start md:gap-12">
             <div className="flex flex-1 flex-col gap-1">
               <h3 className="text-xsmall16 font-semibold text-neutral-0">
-                {program.title}
+                {config.title}
               </h3>
               <p className="text-xsmall14 text-neutral-20 md:line-clamp-2">
-                {program.description}
+                {config.description}
               </p>
             </div>
-            <DashboardButton
-              programId={program.programId}
-              applicationId={program.id}
-              variant="desktop"
-              disabled={isDashboardDisabled}
-            />
+            {showActionButton && (
+              <ActionButton
+                label={actionButton.label}
+                disabled={actionButton.disabled}
+                onClick={handleActionClick}
+                variant="desktop"
+              />
+            )}
           </div>
 
-          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-            <span className="flex flex-row gap-1 text-xxsmall12 text-neutral-0">
-              구매플랜
-              <p className="text-xxsmall12 text-primary">
-                {program.purchasePlan}
-              </p>
-            </span>
-          </div>
+          {config.purchasePlanText && (
+            <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+              <span className="flex flex-row gap-1 text-xxsmall12 text-neutral-0">
+                구매플랜
+                <p className="text-xxsmall12 text-primary">
+                  {config.purchasePlanText}
+                </p>
+              </span>
+            </div>
+          )}
         </div>
       </div>
-      <DashboardButton
-        programId={program.programId}
-        variant="mobile"
-        applicationId={program.id}
-        disabled={isDashboardDisabled}
-      />
+      {showActionButton && (
+        <ActionButton
+          label={actionButton.label}
+          disabled={actionButton.disabled}
+          onClick={handleActionClick}
+          variant="mobile"
+        />
+      )}
+
+      {hasConfirm && showConfirm && actionButton && (
+        <AlertModal
+          title={actionButton.confirm?.title ?? '확인'}
+          confirmText={actionButton.confirm?.confirmText ?? '확인'}
+          cancelText={actionButton.confirm?.cancelText ?? '취소'}
+          onConfirm={() => {
+            setShowConfirm(false);
+            actionButton.onClick?.();
+          }}
+          onCancel={() => setShowConfirm(false)}
+        >
+          {actionButton.confirm?.description}
+        </AlertModal>
+      )}
     </div>
   );
 };
 
-interface DashboardButtonProps {
-  programId: number;
-  applicationId: number;
-  variant: 'mobile' | 'desktop';
+interface ActionButtonProps {
+  label: string;
   disabled?: boolean;
+  onClick: () => void;
+  variant: 'mobile' | 'desktop';
 }
 
-const DashboardButton = ({
-  programId,
-  applicationId,
-  variant,
+const ActionButton = ({
+  label,
   disabled = false,
-}: DashboardButtonProps) => {
-  const router = useRouter();
-
-  return (
-    <button
-      type="button"
-      onClick={() =>
-        !disabled && router.push(`/challenge/${applicationId}/${programId}`)
-      }
-      disabled={disabled}
-      className={twMerge(
-        'rounded-xxs border px-3 py-1.5 text-xsmall14 font-normal transition-colors',
-        disabled
-          ? 'cursor-not-allowed border-neutral-60 bg-neutral-90 text-neutral-40'
-          : 'border-primary text-primary hover:bg-primary/5',
-        variant === 'mobile' ? 'w-full md:hidden' : 'hidden shrink-0 md:block',
-      )}
-    >
-      대시보드 입장
-    </button>
-  );
-};
+  onClick,
+  variant,
+}: ActionButtonProps) => (
+  <button
+    type="button"
+    onClick={onClick}
+    disabled={disabled}
+    className={twMerge(
+      'rounded-xxs border px-3 py-1.5 text-xsmall14 font-normal transition-colors',
+      disabled
+        ? 'cursor-not-allowed border-neutral-60 bg-neutral-90 text-neutral-40'
+        : 'border-primary text-primary hover:bg-primary/5',
+      variant === 'mobile' ? 'w-full md:hidden' : 'hidden shrink-0 md:block',
+    )}
+  >
+    {label}
+  </button>
+);
