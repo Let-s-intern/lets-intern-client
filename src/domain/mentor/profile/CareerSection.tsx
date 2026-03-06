@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
   useGetUserCareerQuery,
@@ -165,6 +165,10 @@ function CareerCard({
   onDelete: (career: LocalCareer) => void;
 }) {
   const [career, setCareer] = useState(initialCareer);
+
+  useEffect(() => {
+    setCareer(initialCareer);
+  }, [initialCareer.id]);
 
   const handleChange = (key: keyof LocalCareer, value: string) => {
     setCareer((prev) => ({ ...prev, [key]: value }));

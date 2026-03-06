@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { usePatchUser, useUserQuery } from '@/api/user/user';
-import { useGetUserCareerQuery } from '@/api/career/career';
 import BasicInfo, { type BasicInfoFormData } from './BasicInfo';
 import CareerSection from './CareerSection';
 import Introduction from './Introduction';
@@ -19,7 +18,6 @@ const INITIAL_FORM_DATA: BasicInfoFormData = {
 
 export default function ProfilePage() {
   const { data: user } = useUserQuery();
-  const { data: careerData } = useGetUserCareerQuery({ page: 0, size: 100 });
 
   const [formData, setFormData] = useState<BasicInfoFormData>(INITIAL_FORM_DATA);
   const [introduction, setIntroduction] = useState('');

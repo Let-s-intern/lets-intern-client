@@ -22,10 +22,30 @@ interface ChallengePeriodBarProps {
 }
 
 const COLORS = [
-  { borderTop: 'border-t-orange-400', badge: 'bg-orange-400', bg: 'bg-orange-50/30', border: 'border-orange-200' },
-  { borderTop: 'border-t-blue-400', badge: 'bg-blue-400', bg: 'bg-blue-50/30', border: 'border-blue-200' },
-  { borderTop: 'border-t-green-400', badge: 'bg-green-400', bg: 'bg-green-50/30', border: 'border-green-200' },
-  { borderTop: 'border-t-purple-400', badge: 'bg-purple-400', bg: 'bg-purple-50/30', border: 'border-purple-200' },
+  {
+    border: 'border-amber-500',
+    line: 'bg-amber-500',
+    badge: 'bg-amber-500',
+    body: 'bg-orange-100',
+  },
+  {
+    border: 'border-cyan-400',
+    line: 'bg-cyan-400',
+    badge: 'bg-cyan-400',
+    body: 'bg-sky-50',
+  },
+  {
+    border: 'border-green-400',
+    line: 'bg-green-400',
+    badge: 'bg-green-400',
+    body: 'bg-green-50',
+  },
+  {
+    border: 'border-purple-400',
+    line: 'bg-purple-400',
+    badge: 'bg-purple-400',
+    body: 'bg-purple-50',
+  },
 ];
 
 const ChallengePeriodBar = ({
@@ -40,29 +60,93 @@ const ChallengePeriodBar = ({
       type="button"
       onClick={() => onBarClick(bar.challengeId, bar.missionId)}
       style={style}
-      className={`flex w-full flex-col gap-1.5 rounded-md border text-left transition-opacity hover:opacity-80 border-t-[3px] ${color.borderTop} ${color.border} ${color.bg} px-3 py-2 border-l border-r border-b`}
+      className="flex w-full flex-col overflow-hidden text-left transition-opacity hover:opacity-80"
     >
-      {/* Top: Doc icon + Nth feedback + status counts */}
-      <div className="flex w-full items-center gap-1.5 text-[11px]">
-        <span className="text-lg leading-none">📄</span>
-        <span className="font-semibold text-neutral-700">
-          [{bar.th}차 피드백]
-        </span>
-        <span className="text-red-500">시작 전 {bar.waitingCount}</span>
-        <span className="text-neutral-300">·</span>
-        <span className="text-amber-500">진행 중 {bar.inProgressCount}</span>
-        <span className="text-neutral-300">·</span>
-        <span className="text-green-600">완료 {bar.completedCount}</span>
+      {/* Top row: icon + nth feedback + status counts + colored line */}
+      <div className="flex h-6 items-center gap-2">
+        <div className="flex items-center">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            className="shrink-0"
+          >
+            <circle cx="7" cy="7" r="1.5" stroke="#1A1A1A" strokeWidth="0.8" />
+            <rect
+              x="9"
+              y="5"
+              width="10"
+              height="12"
+              rx="1"
+              stroke="#1A1A1A"
+              strokeWidth="0.8"
+            />
+          </svg>
+          <span className="whitespace-nowrap text-xs font-medium leading-4 text-neutral-800">
+            [ {bar.th}차 피드백 ]
+          </span>
+        </div>
+        <div className="flex items-center gap-1">
+          <span className="text-xs font-medium leading-4 text-red-500">
+            시작 전
+          </span>
+          <span className="text-xs font-medium leading-4 text-red-500">
+            {bar.waitingCount}
+          </span>
+          <span className="text-xs font-medium leading-4 text-neutral-800">
+            ·
+          </span>
+          <span className="text-xs font-medium leading-4 text-neutral-800">
+            진행 중
+          </span>
+          <span className="text-xs font-medium leading-4 text-neutral-800">
+            {bar.inProgressCount}
+          </span>
+          <span className="text-xs font-medium leading-4 text-neutral-800">
+            ·
+          </span>
+          <span className="text-xs font-medium leading-4 text-neutral-800">
+            완료
+          </span>
+          <span className="text-xs font-medium leading-4 text-neutral-800">
+            {bar.completedCount}
+          </span>
+        </div>
+        {/* Colored line */}
+        <div
+          className={`flex h-3 flex-1 flex-col items-center justify-center border-r-2 ${color.border}`}
+        >
+          <div className={`h-0.5 w-full ${color.line}`} />
+        </div>
       </div>
 
-      {/* Middle: challenge title badge + submission counts */}
-      <div className="mt-0.5 flex w-full items-center justify-between">
-        <span className={`rounded px-2 py-0.5 text-[11px] font-medium text-white ${color.badge}`}>
-          {bar.challengeTitle}
-        </span>
-        <span className="text-[11px] text-neutral-500">
-          미제출 {bar.notSubmittedCount} · 제출 {bar.submittedCount}
-        </span>
+      {/* Bottom row: challenge badge + submission counts */}
+      <div className={`flex items-center justify-between p-2 ${color.body}`}>
+        <div className="flex items-center gap-2">
+          <span
+            className={`rounded-[3px] border px-2 py-1 text-xs font-medium leading-4 text-white ${color.badge}`}
+          >
+            {bar.challengeTitle}
+          </span>
+        </div>
+        <div className="flex items-center gap-1 px-1">
+          <span className="text-xs font-medium leading-4 text-neutral-500">
+            미제출
+          </span>
+          <span className="text-xs font-medium leading-4 text-neutral-500">
+            {bar.notSubmittedCount}
+          </span>
+          <span className="text-xs font-medium leading-4 text-neutral-800">
+            ·
+          </span>
+          <span className="text-xs font-medium leading-4 text-neutral-800">
+            제출
+          </span>
+          <span className="text-xs font-medium leading-4 text-neutral-800">
+            {bar.submittedCount}
+          </span>
+        </div>
       </div>
     </button>
   );
