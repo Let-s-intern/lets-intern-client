@@ -93,17 +93,17 @@ const FeedbackActions = ({
           type="button"
           onClick={handleSave}
           disabled={isPending || !attendanceId || isCompleted}
-          className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-md border border-primary px-6 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary-5 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          임시 저장
+          임시저장
         </button>
         <button
           type="button"
           onClick={handleSubmit}
           disabled={isPending || !attendanceId || isCompleted}
-          className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-md bg-primary px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
         >
-          최종 제출
+          피드백 제출
         </button>
       </div>
     </div>

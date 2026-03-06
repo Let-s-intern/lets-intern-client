@@ -30,25 +30,28 @@ const ChallengePeriodBar = ({
       type="button"
       onClick={() => onBarClick(bar.challengeId, bar.missionId)}
       style={style}
-      className="flex w-full flex-col gap-0.5 rounded border border-orange-200 bg-orange-50 px-2 py-1 text-left transition-opacity hover:opacity-80"
+      className="flex w-full flex-col gap-1 rounded-md border border-orange-200 bg-orange-50 px-3 py-2 text-left transition-opacity hover:opacity-80"
     >
-      <div className="flex items-center gap-1">
-        <span className="rounded bg-orange-200 px-1 py-0.5 text-[10px] font-semibold text-orange-800">
-          서면
+      {/* Top: Nth feedback + status counts */}
+      <div className="flex items-center gap-2 text-[11px]">
+        <span className="font-semibold text-neutral-700">
+          [{bar.th}차 피드백]
         </span>
-        <span className="truncate text-xs font-medium text-neutral-800">
-          {bar.challengeTitle} {bar.th}회차
-        </span>
+        <span className="text-red-500">시작 전 {bar.waitingCount}</span>
+        <span className="text-neutral-300">·</span>
+        <span className="text-amber-500">진행 중 {bar.inProgressCount}</span>
+        <span className="text-neutral-300">·</span>
+        <span className="text-green-600">완료 {bar.completedCount}</span>
       </div>
-      <div className="flex flex-wrap gap-x-2 text-[10px] text-neutral-600">
-        <span>미제출 {bar.notSubmittedCount}</span>
-        <span>/</span>
-        <span>제출 {bar.submittedCount}</span>
-        <span className="ml-2">시작전 {bar.waitingCount}</span>
-        <span>/</span>
-        <span>진행 중 {bar.inProgressCount}</span>
-        <span>/</span>
-        <span>완료 {bar.completedCount}</span>
+
+      {/* Middle: challenge title badge + submission counts */}
+      <div className="flex items-center justify-between">
+        <span className="rounded bg-orange-400 px-2 py-0.5 text-[11px] font-medium text-white">
+          {bar.challengeTitle}
+        </span>
+        <span className="text-[11px] text-neutral-500">
+          미제출 {bar.notSubmittedCount} · 제출 {bar.submittedCount}
+        </span>
       </div>
     </button>
   );
