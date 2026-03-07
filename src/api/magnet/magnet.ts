@@ -98,8 +98,14 @@ export const magnetDetailQueryOptions = (magnetId: number) => ({
   },
 });
 
-export const useGetMagnetDetailQuery = (magnetId: number) => {
-  return useQuery(magnetDetailQueryOptions(magnetId));
+export const useGetMagnetDetailQuery = (
+  magnetId: number,
+  options?: { enabled?: boolean },
+) => {
+  return useQuery({
+    ...magnetDetailQueryOptions(magnetId),
+    enabled: options?.enabled,
+  });
 };
 
 export interface PatchMagnetReqBody {

@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  useCreateMagnetMutation,
   useDeleteMagnetMutation,
   useGetMagnetListQuery,
   usePatchMagnetVisibilityMutation,
@@ -10,10 +9,9 @@ import ActionButton from '@/domain/admin/ui/button/ActionButton';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useCallback, useMemo, useState } from 'react';
-import MagnetCreateModal from './MagnetCreateModal';
 import MagnetFilter from './MagnetFilter';
 import MagnetTable from './MagnetTable';
-import { CreateMagnetReqBody, MagnetFilterValues, MagnetTypeKey } from './types';
+import { MagnetFilterValues, MagnetTypeKey } from './types';
 
 const INITIAL_FILTER: MagnetFilterValues = {
   magnetId: '',
@@ -26,8 +24,6 @@ const MagnetListPage = () => {
     useState<MagnetFilterValues>(INITIAL_FILTER);
   const [appliedFilter, setAppliedFilter] =
     useState<MagnetFilterValues>(INITIAL_FILTER);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const { mutate: createMagnetMutate } = useCreateMagnetMutation();
   const { mutate: deleteMagnet } = useDeleteMagnetMutation();
   const { mutate: patchVisibility } = usePatchMagnetVisibilityMutation();
 
@@ -63,11 +59,6 @@ const MagnetListPage = () => {
   const handleShowAll = () => {
     setFilterValues(INITIAL_FILTER);
     setAppliedFilter(INITIAL_FILTER);
-  };
-
-  const handleCreate = (body: CreateMagnetReqBody) => {
-    createMagnetMutate(body);
-    setIsCreateModalOpen(false);
   };
 
   const handleToggleVisibility = useCallback(
@@ -113,7 +104,7 @@ const MagnetListPage = () => {
             type="button"
             bgColor="blue"
             width="6rem"
-            onClick={() => setIsCreateModalOpen(true)}
+            to="/admin/blog/magnet/new/post"
           >
             마그넷 등록
           </ActionButton>
@@ -128,11 +119,6 @@ const MagnetListPage = () => {
         </main>
       </div>
 
-      <MagnetCreateModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onSubmit={handleCreate}
-      />
     </>
   );
 };
