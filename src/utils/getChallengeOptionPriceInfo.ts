@@ -11,9 +11,9 @@ interface ChallengeOptionPriceInfo {
 
 /** 플랜 별 모든 가격 정보
  * @description
- * 베이직: 기본 챌린지 금액
- * 스탠다드: 베이직에 스탠다드 옵션 금액을 더함
- * 프리미엄: 베이직에 프리미엄 옵션 금액을 더함
+ * 베이직: 이용료 + 보증금 + 베이직 옵션 금액
+ * 스탠다드: 베이직 + 스탠다드 옵션 금액
+ * 프리미엄: 베이직 + 프리미엄 옵션
  * @returns ChallengeOptionPriceInfo
  */
 
@@ -30,10 +30,16 @@ export default function getChallengeOptionPriceInfo(
     (info) => info.challengePricePlanType === 'PREMIUM',
   );
 
-  // 베이직
+  const basicOptionList = basicPriceInfo.challengeOptionList ?? [];
+
+  // 베이직: 기본(이용료+보증금) + 베이직 옵션 정가/할인
   const basicRegularPrice =
-    (basicPriceInfo.price ?? 0) + (basicPriceInfo.refund ?? 0); // 정가 = 이용료 + 보증금
-  const basicDiscountAmount = basicPriceInfo?.discount ?? 0;
+    (basicPriceInfo.price ?? 0) +
+    (basicPriceInfo.refund ?? 0) +
+    basicOptionList.reduce((acc, curr) => acc + (curr.price ?? 0), 0);
+  const basicDiscountAmount =
+    (basicPriceInfo?.discount ?? 0) +
+    basicOptionList.reduce((acc, curr) => acc + (curr.discountPrice ?? 0), 0);
 
   // 스탠다드
   const standardRegularPrice = standardPriceInfo
