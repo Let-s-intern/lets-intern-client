@@ -1,9 +1,12 @@
 import NoticeDetailPage from '@/domain/mentor/notice/NoticeDetailPage';
 
-export default function Page({
+const Page = async ({
   params,
 }: {
-  params: { noticeId: string };
-}) {
-  return <NoticeDetailPage noticeId={params.noticeId} />;
-}
+  params: Promise<{ noticeId: string }>;
+}) => {
+  const { noticeId } = await params;
+  return <NoticeDetailPage noticeId={noticeId} />;
+};
+
+export default Page;
