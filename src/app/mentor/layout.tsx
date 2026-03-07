@@ -14,7 +14,7 @@ export default function MentorLayout({
       <MentorGuard>
         <div className="flex">
           <MentorSidebar />
-          <section className="relative min-h-screen flex-1">
+          <section className="relative min-h-screen flex-1 p-[60px]">
             {children}
           </section>
         </div>
