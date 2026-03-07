@@ -52,6 +52,10 @@ const navData = [
         name: '멘토 관리',
         url: '/admin/mentors',
       },
+      {
+        name: '리드 관리',
+        url: '/admin/leads/managements',
+      },
     ],
   },
   {
