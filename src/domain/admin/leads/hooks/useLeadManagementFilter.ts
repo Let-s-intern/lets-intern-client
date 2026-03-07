@@ -141,8 +141,12 @@ const serializeFilterTree = (root: FilterGroupNode): string | undefined => {
 
 const deserializeFilterTree = (raw: string | null): FilterGroupNode => {
   if (!raw) return createGroupNode();
-  const parsed = JSON.parse(raw) as StoredFilterGroupNode;
-  return fromStoredGroupNode(parsed);
+  try {
+    const parsed = JSON.parse(raw) as StoredFilterGroupNode;
+    return fromStoredGroupNode(parsed);
+  } catch {
+    return createGroupNode();
+  }
 };
 
 const getFilterTreeSignature = (root: FilterGroupNode) =>

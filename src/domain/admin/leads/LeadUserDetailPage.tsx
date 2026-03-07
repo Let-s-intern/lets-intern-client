@@ -13,15 +13,7 @@ import TableTemplate, {
 import dayjs from '@/lib/dayjs';
 import { Button } from '@mui/material';
 import { useParams } from 'next/navigation';
-
-// --- CSV Utils ---
-
-const escapeCsvValue = (value: unknown) => {
-  if (value === null || value === undefined) return '';
-  const stringValue = typeof value === 'string' ? value : String(value);
-  if (!/[",\n]/.test(stringValue)) return stringValue;
-  return `"${stringValue.replace(/"/g, '""')}"`;
-};
+import { downloadCsv } from './utils/csv';
 
 // --- Table Column Key ---
 
@@ -86,24 +78,22 @@ const LeadUserDetailPage = () => {
       return;
     }
 
-    const headers = [
-      '신청일자',
-      '이름',
-      '전화번호',
-      '학년',
-      '희망직군',
-      '희망직무',
-      '희망산업',
-      '희망기업',
-      '기본 질문',
-      '선택 질문',
-      '마케팅 동의 여부',
-    ];
-
-    const headerRow = headers.map(escapeCsvValue).join(',');
-
-    const rows = applications.map((row) =>
+    downloadCsv(
+      `lead-user-${userId}`,
       [
+        '신청일자',
+        '이름',
+        '전화번호',
+        '학년',
+        '희망직군',
+        '희망직무',
+        '희망산업',
+        '희망기업',
+        '기본 질문',
+        '선택 질문',
+        '마케팅 동의 여부',
+      ],
+      applications.map((row) => [
         row.applicationDate
           ? dayjs(row.applicationDate).format('YYYY.MM.DD')
           : '',
@@ -117,26 +107,8 @@ const LeadUserDetailPage = () => {
         formatQuestions(row.defaultQuestions),
         formatQuestions(row.selectQuestions),
         row.marketingAgree ? '동의' : '미동의',
-      ]
-        .map(escapeCsvValue)
-        .join(','),
+      ]),
     );
-
-    const csvBody = [headerRow, ...rows].join('\n');
-    const blob = new Blob([`\uFEFF${csvBody}`], {
-      type: 'text/csv;charset=utf-8;',
-    });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute(
-      'download',
-      `lead-user-${userId}_${dayjs().format('YYYYMMDD_HHmmss')}.csv`,
-    );
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
   };
 
   const renderRow = (row: MagnetApplication) => (

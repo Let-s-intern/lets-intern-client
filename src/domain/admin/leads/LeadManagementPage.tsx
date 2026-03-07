@@ -2,7 +2,6 @@
 
 import { useLeadManagementListQuery } from '@/api/leadManagement';
 import TableTemplate from '@/domain/admin/ui/table/new/TableTemplate';
-import dayjs from '@/lib/dayjs';
 import { Button, Typography } from '@mui/material';
 import { useLeadManagementFilter } from './hooks/useLeadManagementFilter';
 import FilterGroupEditor from './ui/LeadFilterEditor';
@@ -10,15 +9,7 @@ import LeadUserRow, {
   TABLE_MIN_WIDTH,
   tableColumnMetaData,
 } from './ui/LeadUserRow';
-
-// --- CSV Utils ---
-
-const escapeCsvValue = (value: unknown) => {
-  if (value === null || value === undefined) return '';
-  const stringValue = typeof value === 'string' ? value : String(value);
-  if (!/[",\n]/.test(stringValue)) return stringValue;
-  return `"${stringValue.replace(/"/g, '""')}"`;
-};
+import { downloadCsv } from './utils/csv';
 
 // --- Main Page ---
 
@@ -47,22 +38,21 @@ const LeadManagementPage = () => {
       return;
     }
 
-    const headers = [
-      '이름',
-      '전화번호',
-      '학년',
-      '희망직군',
-      '희망직무',
-      '희망산업',
-      '희망기업',
-      '프로그램 참여 이력',
-      '마그넷 신청 이력',
-      '마케팅 동의 여부',
-    ];
-
-    const headerRow = headers.map(escapeCsvValue).join(',');
-    const rows = filteredUsers.map((user) =>
+    downloadCsv(
+      'lead-management',
       [
+        '이름',
+        '전화번호',
+        '학년',
+        '희망직군',
+        '희망직무',
+        '희망산업',
+        '희망기업',
+        '프로그램 참여 이력',
+        '마그넷 신청 이력',
+        '마케팅 동의 여부',
+      ],
+      filteredUsers.map((user) => [
         user.name,
         user.phoneNum,
         user.grade,
@@ -73,26 +63,8 @@ const LeadManagementPage = () => {
         user.programHistory.map((p) => `${p.title}(${p.id})`).join(' · '),
         user.magnetHistory.map((m) => `${m.title}(${m.id})`).join(' · '),
         user.marketingAgree ? '동의' : '미동의',
-      ]
-        .map(escapeCsvValue)
-        .join(','),
+      ]),
     );
-
-    const csvBody = [headerRow, ...rows].join('\n');
-    const blob = new Blob([`\uFEFF${csvBody}`], {
-      type: 'text/csv;charset=utf-8;',
-    });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute(
-      'download',
-      `lead-management_${dayjs().format('YYYYMMDD_HHmmss')}.csv`,
-    );
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
   };
 
   const rootHasChildren = filterTree.children.length > 0;
