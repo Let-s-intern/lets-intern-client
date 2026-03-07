@@ -20,7 +20,7 @@ const TABS = [
 
 const CATEGORY_FILTER_LIST = [
   { caption: '자료집', value: 'MATERIAL' },
-  { caption: 'VOD', value: 'VOD' },
+  { caption: '무료 VOD', value: 'VOD' },
   { caption: '무료 템플릿', value: 'FREE_TEMPLATE' },
   { caption: '출시 알림', value: 'LAUNCH_ALERT' },
   { caption: '이벤트', value: 'EVENT' },
