@@ -43,6 +43,7 @@ import { InsertEquationDialog } from '../EquationsPlugin';
 import { INSERT_IMAGE_COMMAND, InsertImageDialog } from '../ImagesPlugin';
 import InsertLayoutDialog from '../LayoutPlugin/InsertLayoutDialog';
 import { INSERT_PAGE_BREAK } from '../PageBreakPlugin';
+import { InsertPDFDialog } from '../PDFPlugin';
 import { InsertPollDialog } from '../PollPlugin';
 import { InsertTableDialog } from '../TablePlugin';
 
@@ -285,6 +286,14 @@ function getBaseOptions(editor: LexicalEditor, showModal: ShowModal) {
       onSelect: () =>
         showModal('Insert Image', (onClose) => (
           <InsertImageDialog activeEditor={editor} onClose={onClose} />
+        )),
+    }),
+    new ComponentPickerOption('PDF', {
+      icon: <i className="icon image" />,
+      keywords: ['pdf', 'document', 'file'],
+      onSelect: () =>
+        showModal('Insert PDF', (onClose) => (
+          <InsertPDFDialog activeEditor={editor} onClose={onClose} />
         )),
     }),
     new ComponentPickerOption('Collapsible', {

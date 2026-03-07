@@ -4,12 +4,14 @@ interface BlogActionButtonsProps {
   onCancel: () => void;
   onSaveTemp: () => void;
   onPublish: () => void;
+  helperText?: string;
 }
 
 const BlogActionButtons = ({
   onCancel,
   onSaveTemp,
   onPublish,
+  helperText = '*임시 저장: 블로그가 숨겨집니다.',
 }: BlogActionButtonsProps) => {
   return (
     <div className="text-right">
@@ -34,9 +36,7 @@ const BlogActionButtons = ({
           발행
         </Button>
       </div>
-      <span className="text-0.875 text-neutral-35">
-        *임시 저장: 블로그가 숨겨집니다.
-      </span>
+      <span className="text-0.875 text-neutral-35">{helperText}</span>
     </div>
   );
 };
