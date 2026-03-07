@@ -24,9 +24,9 @@ const formatDate = (dateStr: string) => {
 };
 
 const statusLabel: Record<string, { text: string; className: string }> = {
+  PREV: { text: '준비중', className: 'bg-yellow-100 text-yellow-700' },
   PROCEEDING: { text: '진행중', className: 'bg-green-100 text-green-700' },
-  DONE: { text: '완료', className: 'bg-gray-100 text-gray-500' },
-  READY: { text: '준비중', className: 'bg-yellow-100 text-yellow-700' },
+  POST: { text: '완료', className: 'bg-gray-100 text-gray-500' },
 };
 
 const MentorChallengeCard = ({
