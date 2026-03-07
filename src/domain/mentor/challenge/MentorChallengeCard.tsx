@@ -23,11 +23,21 @@ const formatDate = (dateStr: string) => {
     .replace(/\s/g, '');
 };
 
-const statusLabel: Record<string, { text: string; className: string }> = {
+const statusConfig = {
+  PREV: { text: '준비중', className: 'bg-yellow-100 text-yellow-700' },
   PROCEEDING: { text: '진행중', className: 'bg-green-100 text-green-700' },
-  DONE: { text: '완료', className: 'bg-gray-100 text-gray-500' },
-  READY: { text: '준비중', className: 'bg-yellow-100 text-yellow-700' },
-};
+  POST: { text: '완료', className: 'bg-gray-100 text-gray-500' },
+} as const;
+
+function getStatusFromDates(startDate: string, endDate: string): keyof typeof statusConfig {
+  const now = new Date();
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  if (now < start) return 'PREV';
+  if (now > end) return 'POST';
+  return 'PROCEEDING';
+}
 
 const MentorChallengeCard = ({
   challengeId,
@@ -38,7 +48,10 @@ const MentorChallengeCard = ({
   endDate,
   programStatusType,
 }: MentorChallengeCardProps) => {
-  const status = statusLabel[programStatusType];
+  const statusKey = (programStatusType in statusConfig)
+    ? programStatusType as keyof typeof statusConfig
+    : getStatusFromDates(startDate, endDate);
+  const status = statusConfig[statusKey];
 
   return (
     <Link

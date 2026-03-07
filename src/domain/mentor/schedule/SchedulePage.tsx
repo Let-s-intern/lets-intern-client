@@ -22,67 +22,65 @@ import WeeklyCalendar from './WeeklyCalendar';
 import FeedbackModal from '../feedback/FeedbackModal';
 
 // ---------------------------------------------------------------------------
-// Helpers
+// Per-mission attendance fetcher (each mission needs its own API call)
 // ---------------------------------------------------------------------------
 
-/** Build PeriodBarData from missions + attendance data */
-function buildBars(
-  challenge: ChallengeMentorVo,
-  missions: {
-    id: number;
-    title?: string | null;
-    th: number;
-    startDate: string;
-    endDate: string;
-  }[],
-  attendanceMap: Map<
-    number,
-    {
-      submittedCount: number;
-      notSubmittedCount: number;
-      waitingCount: number;
-      inProgressCount: number;
-      completedCount: number;
-    }
-  >,
-  colorIndex: number
-): PeriodBarData[] {
-  return missions.map((m) => {
-    const att = attendanceMap.get(m.id) ?? {
-      submittedCount: 0,
-      notSubmittedCount: 0,
-      waitingCount: 0,
-      inProgressCount: 0,
-      completedCount: 0,
-    };
-
-    return {
-      challengeId: challenge.challengeId,
-      missionId: m.id,
-      challengeTitle: challenge.title,
-      th: m.th,
-      startDate: m.startDate,
-      endDate: m.endDate,
-      colorIndex,
-      ...att,
-    };
+const MissionAttendanceFetcher = ({
+  challenge,
+  mission,
+  colorIndex,
+  onData,
+}: {
+  challenge: ChallengeMentorVo;
+  mission: { id: number; title?: string | null; th: number; startDate: string; endDate: string };
+  colorIndex: number;
+  onData: (key: string, bar: PeriodBarData) => void;
+}) => {
+  const { data: attendanceData } = useMentorMissionFeedbackAttendanceQuery({
+    challengeId: challenge.challengeId,
+    missionId: mission.id,
+    enabled: true,
   });
-}
+
+  useEffect(() => {
+    const list = attendanceData?.attendanceList ?? [];
+    const submitted = list.filter((a) => a.status !== 'ABSENT');
+    const notSubmitted = list.filter((a) => a.status === 'ABSENT');
+
+    const bar: PeriodBarData = {
+      challengeId: challenge.challengeId,
+      missionId: mission.id,
+      challengeTitle: challenge.title,
+      th: mission.th,
+      startDate: mission.startDate,
+      endDate: mission.endDate,
+      colorIndex,
+      submittedCount: submitted.length,
+      notSubmittedCount: notSubmitted.length,
+      // Only count feedback status for submitted attendees
+      waitingCount: submitted.filter((a) => a.feedbackStatus === 'WAITING').length,
+      inProgressCount: submitted.filter((a) => a.feedbackStatus === 'IN_PROGRESS').length,
+      completedCount: submitted.filter(
+        (a) => a.feedbackStatus === 'COMPLETED' || a.feedbackStatus === 'CONFIRMED',
+      ).length,
+    };
+
+    onData(`${challenge.challengeId}-${mission.id}`, bar);
+  }, [attendanceData, challenge, mission, colorIndex, onData]);
+
+  return null;
+};
 
 // ---------------------------------------------------------------------------
-// Per-challenge data fetcher component (hook rules require stable call count)
+// Per-challenge data fetcher (fetches mission list, delegates attendance to per-mission)
 // ---------------------------------------------------------------------------
 
 interface ChallengeDataProps {
   challenge: ChallengeMentorVo;
   colorIndex: number;
-  onData: (challengeId: number, bars: PeriodBarData[]) => void;
+  onData: (key: string, bar: PeriodBarData) => void;
 }
 
-/**
- * Invisible component that fetches missions + attendance for a single challenge
- * and reports the computed bars upward via onData callback.
- */
 const ChallengeDataFetcher = ({ challenge, colorIndex, onData }: ChallengeDataProps) => {
   const { data: missionData } = useMentorMissionFeedbackListQuery(
     challenge.challengeId,
@@ -91,63 +89,19 @@ const ChallengeDataFetcher = ({ challenge, colorIndex, onData }: ChallengeDataPr
 
   const missions = missionData?.missionList ?? [];
 
-  const firstMissionId = missions.length > 0 ? missions[0].id : undefined;
-
-  const { data: attendanceData } = useMentorMissionFeedbackAttendanceQuery({
-    challengeId: challenge.challengeId,
-    missionId: firstMissionId,
-    enabled: !!firstMissionId,
-  });
-
-  // Build attendance summary from the attendance list
-  const attendanceMap = useMemo(() => {
-    const map = new Map<
-      number,
-      {
-        submittedCount: number;
-        notSubmittedCount: number;
-        waitingCount: number;
-        inProgressCount: number;
-        completedCount: number;
-      }
-    >();
-
-    if (!attendanceData?.attendanceList) return map;
-
-    const list = attendanceData.attendanceList;
-    const submitted = list.filter((a) => a.status === 'PRESENT').length;
-    const notSubmitted = list.filter((a) => a.status === 'ABSENT').length;
-    const waiting = list.filter((a) => a.feedbackStatus === 'WAITING').length;
-    const inProgress = list.filter(
-      (a) => a.feedbackStatus === 'IN_PROGRESS',
-    ).length;
-    const completed = list.filter(
-      (a) =>
-        a.feedbackStatus === 'COMPLETED' || a.feedbackStatus === 'CONFIRMED',
-    ).length;
-
-    for (const m of missions) {
-      map.set(m.id, {
-        submittedCount: submitted,
-        notSubmittedCount: notSubmitted,
-        waitingCount: waiting,
-        inProgressCount: inProgress,
-        completedCount: completed,
-      });
-    }
-
-    return map;
-  }, [attendanceData, missions]);
-
-  // Report bars upward whenever data changes
-  useEffect(() => {
-    if (missions.length > 0) {
-      const bars = buildBars(challenge, missions, attendanceMap, colorIndex);
-      onData(challenge.challengeId, bars);
-    }
-  }, [challenge, missions, attendanceMap, colorIndex, onData]);
-
-  return null;
+  return (
+    <>
+      {missions.map((m) => (
+        <MissionAttendanceFetcher
+          key={m.id}
+          challenge={challenge}
+          mission={m}
+          colorIndex={colorIndex}
+          onData={onData}
+        />
+      ))}
+    </>
+  );
 };
 
 // ---------------------------------------------------------------------------
@@ -174,16 +128,16 @@ const SchedulePage = () => {
   const { data: challengeListData } = useMentorChallengeListQuery();
   const challenges = challengeListData?.myChallengeMentorVoList ?? [];
 
-  // Bars collected from child data fetchers
-  const [barsMap, setBarsMap] = useState<Map<number, PeriodBarData[]>>(
+  // Bars collected from child data fetchers (keyed by "challengeId-missionId")
+  const [barsMap, setBarsMap] = useState<Map<string, PeriodBarData>>(
     new Map(),
   );
 
   const handleData = useCallback(
-    (challengeId: number, bars: PeriodBarData[]) => {
+    (key: string, bar: PeriodBarData) => {
       setBarsMap((prev) => {
         const next = new Map(prev);
-        next.set(challengeId, bars);
+        next.set(key, bar);
         return next;
       });
     },
@@ -193,9 +147,9 @@ const SchedulePage = () => {
   // Aggregate all bars, optionally filtered by selected challenge
   const allBars = useMemo(() => {
     const result: PeriodBarData[] = [];
-    barsMap.forEach((bars, challengeId) => {
-      if (selectedChallengeId === null || selectedChallengeId === challengeId) {
-        result.push(...bars);
+    barsMap.forEach((bar) => {
+      if (selectedChallengeId === null || selectedChallengeId === bar.challengeId) {
+        result.push(bar);
       }
     });
     return result;
