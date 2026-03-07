@@ -169,12 +169,15 @@ const ChallengeEdit: React.FC = () => {
   const {
     pricePlan,
     data: challengeOptions,
+    basicOptIds,
     standardOptIds,
     premiumOptIds,
+    basicInfo,
     standardInfo,
     premiumInfo,
     handleChangeInfo,
     handleChangePricePlan,
+    setBasicOptIds,
     setStandardOptIds,
     setPremiumOptIds,
   } = useAdminChallengeOption(challenge);
@@ -220,7 +223,13 @@ const ChallengeEdit: React.FC = () => {
       };
     }
 
-    const newPriceInfo = [basicPriceInfo];
+    const newPriceInfo = [
+      {
+        ...basicPriceInfo,
+        ...basicInfo,
+        challengeOptionIdList: basicOptIds,
+      },
+    ];
 
     if (pricePlan.current !== BASIC) {
       newPriceInfo.push({
@@ -395,12 +404,15 @@ const ChallengeEdit: React.FC = () => {
             defaultValue={challenge.priceInfo}
             setInput={setInput}
             options={challengeOptions?.challengeOptionList ?? []}
+            basicOptIds={basicOptIds}
             standardOptIds={standardOptIds}
             premiumOptIds={premiumOptIds}
+            basicInfo={basicInfo}
             standardInfo={standardInfo}
             premiumInfo={premiumInfo}
             pricePlan={pricePlan.current}
             onChangePricePlanInfo={handleChangeInfo}
+            onChangeBasicOptIds={(ids) => setBasicOptIds(ids)}
             onChangePremiumOptIds={(ids) => setPremiumOptIds(ids)}
             onChangeStandardOptIds={(ids) => setStandardOptIds(ids)}
             onChangePricePlan={handleChangePricePlan}

@@ -12,6 +12,9 @@ export default function useAdminChallengeOption(challenge?: ChallengeIdSchema) {
   /** 가격 플랜 */
   const pricePlan = useRef<ChallengePricePlan>(BASIC);
 
+  const basicPriceInfo = challenge?.priceInfo.find(
+    (item) => item.challengePricePlanType === BASIC,
+  );
   const standardPriceInfo = challenge?.priceInfo.find(
     (item) => item.challengePricePlanType === STANDARD,
   );
@@ -22,8 +25,13 @@ export default function useAdminChallengeOption(challenge?: ChallengeIdSchema) {
   /** 옵션 관련 상태 */
   const { data } = useGetChallengeOptions();
 
+  const [basicOptIds, setBasicOptIds] = useState<number[]>([]);
   const [standardOptIds, setStandardOptIds] = useState<number[]>([]);
   const [premiumOptIds, setPremiumOptIds] = useState<number[]>([]);
+  const [basicInfo, setBasicInfo] = useState({
+    title: '',
+    description: '',
+  });
   const [standardInfo, setStandardInfo] = useState({
     title: '',
     description: '',
@@ -39,7 +47,12 @@ export default function useAdminChallengeOption(challenge?: ChallengeIdSchema) {
       pricePlan: ChallengePricePlan,
       e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
-      if (pricePlan === 'PREMIUM') {
+      if (pricePlan === 'BASIC') {
+        setBasicInfo((prev) => ({
+          ...prev,
+          [e.target.name]: e.target.value,
+        }));
+      } else if (pricePlan === 'PREMIUM') {
         setPremiumInfo((prev) => ({
           ...prev,
           [e.target.name]: e.target.value,
@@ -58,58 +71,77 @@ export default function useAdminChallengeOption(challenge?: ChallengeIdSchema) {
     pricePlan.current = value;
     if (value === PREMIUM) return;
 
-    // 프리미엄 초기화
     setPremiumOptIds([]);
     setPremiumInfo({ title: '', description: '' });
 
     if (value === STANDARD) return;
 
-    // 스탠다드 초기화
     setStandardOptIds([]);
     setStandardInfo({ title: '', description: '' });
   }, []);
 
   useEffect(() => {
-    // 스탠다드 옵션 정보를 상태에 저장
-    if (!standardPriceInfo) return;
-    pricePlan.current = STANDARD;
-    const initialStandardOptIds = standardPriceInfo.challengeOptionList.map(
-      (item) => item.challengeOptionId,
-    );
-    setStandardOptIds(initialStandardOptIds);
-    setStandardInfo({
-      title: standardPriceInfo.title ?? '',
-      description: standardPriceInfo.description ?? '',
-    });
+    if (basicPriceInfo) {
+      setBasicOptIds(
+        basicPriceInfo.challengeOptionList?.map(
+          (item) => item.challengeOptionId,
+        ) ?? [],
+      );
+      setBasicInfo({
+        title: basicPriceInfo.title ?? '',
+        description: basicPriceInfo.description ?? '',
+      });
+    }
 
-    // 프리미엄 옵션 정보를 상태에 저장
-    if (!premiumPriceInfo) return;
-    pricePlan.current = PREMIUM;
-    const optIds = premiumPriceInfo.challengeOptionList.map(
-      (item) => item.challengeOptionId,
-    );
-    setPremiumOptIds(
-      optIds.filter((id) => !initialStandardOptIds.includes(id)),
-    );
-    setPremiumInfo({
-      title: premiumPriceInfo.title ?? '',
-      description: premiumPriceInfo.description ?? '',
-    });
-  }, [standardPriceInfo, premiumPriceInfo]);
+    if (standardPriceInfo) {
+      pricePlan.current = STANDARD;
+      const initialStandardOptIds = standardPriceInfo.challengeOptionList.map(
+        (item) => item.challengeOptionId,
+      );
+      setStandardOptIds(initialStandardOptIds);
+      setStandardInfo({
+        title: standardPriceInfo.title ?? '',
+        description: standardPriceInfo.description ?? '',
+      });
+    }
+
+    if (premiumPriceInfo) {
+      pricePlan.current = PREMIUM;
+      const initialStandardOptIds =
+        standardPriceInfo?.challengeOptionList.map(
+          (item) => item.challengeOptionId,
+        ) ?? [];
+      const optIds = premiumPriceInfo.challengeOptionList.map(
+        (item) => item.challengeOptionId,
+      );
+      setPremiumOptIds(
+        optIds.filter((id) => !initialStandardOptIds.includes(id)),
+      );
+      setPremiumInfo({
+        title: premiumPriceInfo.title ?? '',
+        description: premiumPriceInfo.description ?? '',
+      });
+    }
+  }, [basicPriceInfo, standardPriceInfo, premiumPriceInfo]);
 
   return {
     pricePlan,
+    basicPriceInfo,
     standardPriceInfo,
     premiumPriceInfo,
     data,
+    basicOptIds,
     standardOptIds,
     premiumOptIds,
+    basicInfo,
     standardInfo,
     premiumInfo,
     handleChangeInfo,
     handleChangePricePlan,
+    setBasicOptIds,
     setStandardOptIds,
     setPremiumOptIds,
+    setBasicInfo,
     setStandardInfo,
     setPremiumInfo,
   };
