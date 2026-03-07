@@ -59,7 +59,7 @@ export default function CareerSection() {
     page: 0,
     size: 100,
   });
-  const { mutate: postCareer } = usePostUserCareerMutation();
+  const { mutate: postCareer, isPending: isPosting } = usePostUserCareerMutation();
   const { mutate: patchCareer } = usePatchUserCareerMutation();
   const { mutate: deleteCareer } = useDeleteUserCareerMutation();
 
@@ -78,15 +78,18 @@ export default function CareerSection() {
 
   const handleAdd = () => {
     const fd = buildFormData({
-      company: '새 경력',
-      job: '',
+      company: '회사명',
+      job: '직무',
       employmentType: '정규직',
       startDate: new Date().toISOString().slice(0, 7),
+      endDate: null,
       field: null,
       position: null,
       department: null,
     });
-    postCareer(fd);
+    postCareer(fd, {
+      onError: () => alert('경력 추가에 실패했습니다.'),
+    });
   };
 
   const handleDelete = (career: LocalCareer) => {
@@ -126,7 +129,8 @@ export default function CareerSection() {
         <button
           type="button"
           onClick={handleAdd}
-          className="rounded border border-gray-300 px-3 py-1 text-sm text-gray-700 hover:bg-gray-50"
+          disabled={isPosting}
+          className="rounded border border-gray-300 px-3 py-1 text-sm text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
         >
           경력 추가하기 +
         </button>
