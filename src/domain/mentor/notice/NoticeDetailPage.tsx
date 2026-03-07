@@ -103,7 +103,7 @@ export default function NoticeDetailPage({
           뒤로 가기
         </Link>
 
-        <div className="flex flex-col gap-8 rounded-[16px] border border-neutral-80 p-10">
+        <div className="flex flex-col gap-6 rounded-[16px] border border-neutral-80 p-6 md:gap-8 md:p-10">
           <h2 className="text-medium24 font-bold text-neutral-0">
             {notice.title}
           </h2>

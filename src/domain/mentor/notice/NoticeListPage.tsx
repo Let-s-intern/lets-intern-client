@@ -68,7 +68,7 @@ export default function NoticeListPage() {
   const additionalNotices = notices.filter((n) => n.type === 'ADDITIONAL');
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-6 md:gap-10">
       <h1 className="text-medium22 font-semibold text-neutral-0">공지사항</h1>
 
       {/* 중요 */}
