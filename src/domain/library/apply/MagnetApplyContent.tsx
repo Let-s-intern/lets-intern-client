@@ -1,0 +1,258 @@
+'use client';
+
+import MarketingConsentSection from '@/common/form/MarketingConsentSection';
+import { usePatchUser, useUserQuery } from '@/api/user/user';
+import CareerInfoForm, {
+  CareerInfoSelections,
+  CareerInfoValues,
+} from '@/domain/mypage/career/CareerInfoForm';
+import { GRADE_ENUM_TO_KOREAN, GRADE_KOREAN_TO_ENUM } from '@/utils/constants';
+import { ChevronLeft } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import MagnetApplyInfoCard from './MagnetApplyInfoCard';
+import MagnetSurveySection, {
+  MagnetQuestion,
+  MagnetSurveyAnswer,
+} from './MagnetSurveySection';
+
+interface MagnetApplyContentProps {
+  magnetId: number;
+  title: string;
+  thumbnail: string | null;
+  questions: MagnetQuestion[];
+  /** 'apply' = 자료집 신청하기, 'launch-alert' = 출시 알림 신청하기 */
+  variant: 'apply' | 'launch-alert';
+}
+
+const MagnetApplyContent = ({
+  magnetId,
+  title,
+  thumbnail,
+  questions,
+  variant,
+}: MagnetApplyContentProps) => {
+  const router = useRouter();
+  const { data: userData } = useUserQuery();
+
+  const [value, setValue] = useState<CareerInfoValues>({
+    university: '',
+    grade: '',
+    major: '',
+    wishCompany: '',
+    wishEmploymentType: '',
+  });
+
+  const [selections, setSelections] = useState<CareerInfoSelections>({
+    selectedField: null,
+    selectedPositions: [],
+    selectedIndustries: [],
+  });
+
+  const [initialSelections, setInitialSelections] = useState<{
+    field?: string | null;
+    positions?: string[];
+    industries?: string[];
+  }>({});
+
+  const [surveyAnswers, setSurveyAnswers] = useState<MagnetSurveyAnswer[]>([]);
+  const [isMarketingAgreed, setIsMarketingAgreed] = useState(false);
+
+  const { mutateAsync: tryPatchUser, isPending: patchUserIsPending } =
+    usePatchUser();
+
+  useEffect(() => {
+    if (userData) {
+      const koreanGrade = userData.grade
+        ? GRADE_ENUM_TO_KOREAN[userData.grade] || userData.grade
+        : '';
+
+      setValue({
+        university: userData?.university ?? '',
+        grade: koreanGrade,
+        major: userData?.major ?? '',
+        wishCompany: userData?.wishCompany ?? '',
+        wishEmploymentType: userData?.wishEmploymentType ?? '',
+      });
+
+      setInitialSelections({
+        field: userData.wishField || null,
+        positions: userData.wishJob
+          ? userData.wishJob.split(',').map((s) => s.trim())
+          : [],
+        industries: userData.wishIndustry
+          ? userData.wishIndustry.split(',').map((s) => s.trim())
+          : [],
+      });
+    }
+  }, [userData]);
+
+  const handleSelectionsChange = useCallback(
+    (newSelections: CareerInfoSelections) => {
+      setSelections(newSelections);
+    },
+    [],
+  );
+
+  const handleSurveyAnswerChange = useCallback(
+    (questionId: number, answer: MagnetSurveyAnswer) => {
+      setSurveyAnswers((prev) => {
+        const exists = prev.find((a) => a.questionId === questionId);
+        if (exists) {
+          return prev.map((a) => (a.questionId === questionId ? answer : a));
+        }
+        return [...prev, answer];
+      });
+    },
+    [],
+  );
+
+  const isSubmitDisabled = useMemo(() => {
+    if (
+      !value.university ||
+      !value.grade ||
+      !value.major ||
+      !value.wishEmploymentType ||
+      !value.wishCompany
+    ) {
+      return true;
+    }
+
+    if (
+      !selections.selectedField ||
+      selections.selectedPositions.length === 0 ||
+      selections.selectedIndustries.length === 0
+    ) {
+      return true;
+    }
+
+    if (!isMarketingAgreed) return true;
+
+    // Validate required survey questions
+    for (const question of questions) {
+      if (question.isRequired !== 'REQUIRED') continue;
+      const answer = surveyAnswers.find(
+        (a) => a.questionId === question.questionId,
+      );
+
+      if (!answer) return true;
+
+      if (question.questionType === 'SUBJECTIVE') {
+        if (!answer.subjectiveText.trim()) return true;
+      } else {
+        if (answer.selectedItemIds.length === 0) return true;
+        // Check if "other" item is selected but no text provided
+        const selectedOther = question.items.find(
+          (item) =>
+            item.isOther && answer.selectedItemIds.includes(item.itemId),
+        );
+        if (selectedOther && !answer.otherText.trim()) return true;
+      }
+    }
+
+    return false;
+  }, [value, selections, isMarketingAgreed, surveyAnswers, questions]);
+
+  const handleSubmit = async () => {
+    if (patchUserIsPending) return;
+
+    try {
+      const enumGrade = value.grade
+        ? (GRADE_KOREAN_TO_ENUM[value.grade] ?? null)
+        : null;
+
+      await tryPatchUser({
+        university: value.university,
+        grade: enumGrade,
+        major: value.major,
+        wishField: selections.selectedField,
+        wishJob:
+          selections.selectedPositions.length > 0
+            ? selections.selectedPositions.join(', ')
+            : null,
+        wishIndustry:
+          selections.selectedIndustries.length > 0
+            ? selections.selectedIndustries.join(', ')
+            : null,
+        wishCompany: value.wishCompany,
+        wishEmploymentType: value.wishEmploymentType,
+      });
+
+      // TODO: API 연동 - 마그넷 신청 API 호출
+      // await postMagnetApplication({
+      //   magnetId,
+      //   surveyAnswers,
+      //   isMarketingAgreed,
+      // });
+
+      alert('신청이 완료되었습니다.');
+      router.back();
+    } catch (error) {
+      console.error(error);
+      alert(`신청에 실패했습니다. 다시 시도해주세요.\n${error}`);
+    }
+  };
+
+  const pageTitle =
+    variant === 'launch-alert' ? '출시 알림 신청하기' : '신청하기';
+
+  return (
+    <main className="mx-auto flex max-w-[37.5rem] flex-col gap-9 px-5 pb-16 pt-12 md:px-0 md:pb-24 md:pt-10">
+      {/* 헤더 */}
+      <button
+        type="button"
+        onClick={() => router.back()}
+        className="flex items-center gap-1 text-xsmall16 font-medium text-neutral-0 md:text-small18"
+      >
+        <ChevronLeft className="h-5 w-5" />
+        {pageTitle}
+      </button>
+
+      {/* 신청 자료집 정보 */}
+      <MagnetApplyInfoCard title={title} thumbnail={thumbnail} />
+
+      {/* 기본 정보 */}
+      <section>
+        <CareerInfoForm
+          value={value}
+          onChange={setValue}
+          initialSelections={initialSelections}
+          onSelectionsChange={handleSelectionsChange}
+        />
+      </section>
+
+      {/* 추가 정보 (서베이) */}
+      {questions.length > 0 && (
+        <section>
+          <h2 className="mb-6 text-xsmall16 font-semibold text-neutral-0 md:text-small18">
+            추가 정보
+          </h2>
+          <MagnetSurveySection
+            questions={questions}
+            answers={surveyAnswers}
+            onAnswerChange={handleSurveyAnswerChange}
+          />
+        </section>
+      )}
+
+      {/* 마케팅 활용 동의 */}
+      <section>
+        <MarketingConsentSection
+          checked={isMarketingAgreed}
+          onCheckedChange={setIsMarketingAgreed}
+        />
+      </section>
+
+      {/* 신청하기 버튼 */}
+      <button
+        className="rounded-xs bg-primary px-4 py-3 text-xsmall14 font-medium text-white disabled:bg-neutral-70 md:text-xsmall16"
+        onClick={handleSubmit}
+        disabled={isSubmitDisabled}
+      >
+        신청하기
+      </button>
+    </main>
+  );
+};
+
+export default MagnetApplyContent;
