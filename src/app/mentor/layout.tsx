@@ -15,12 +15,12 @@ export default function MentorLayout({
   return (
     <MentorProviders>
       <MentorGuard>
-        <div className="flex">
+        <div className="flex h-screen overflow-hidden">
           <MentorSidebar
             isOpen={sidebarOpen}
             onClose={() => setSidebarOpen(false)}
           />
-          <section className="relative min-h-screen flex-1 p-6 md:p-10 lg:p-[60px]">
+          <section className="relative flex-1 overflow-y-auto p-6 md:p-10 lg:p-[60px]">
             {/* Mobile header */}
             <div className="mb-4 flex items-center lg:hidden">
               <button
