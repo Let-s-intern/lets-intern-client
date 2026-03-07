@@ -70,17 +70,18 @@ const WeeklyCalendar = ({
             (1000 * 60 * 60 * 24),
         ) + 2; // exclusive end
 
-      return { bar, startCol, endCol };
+      const colSpan = endCol - startCol;
+
+      return { bar, startCol, endCol, colSpan };
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visibleBars, weekStartTime]);
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-neutral-200">
-      {/* Day headers + grid body */}
-      <div className="relative flex flex-col">
+    <div className="overflow-x-auto rounded-[16px] border border-neutral-80">
+      <div className="relative flex min-w-[640px] flex-col">
         {/* Day header row */}
-        <div className="grid grid-cols-7 border-b border-neutral-200">
+        <div className="grid grid-cols-7 border-b border-neutral-80">
           {days.map((day, i) => {
             const isToday = isSameDay(day, today);
             const isSunday = i === 6;
@@ -88,27 +89,29 @@ const WeeklyCalendar = ({
             return (
               <div
                 key={i}
-                className="flex flex-col items-center justify-center gap-5 py-6"
+                className={`flex flex-col items-center justify-center ${
+                  isToday ? 'gap-3 pb-4 pt-6' : 'gap-5 py-6'
+                } ${isToday ? 'rounded-[12px]' : ''}`}
               >
                 <span
-                  className={`text-base font-semibold leading-6 ${
+                  className={`text-xsmall16 font-semibold ${
                     isSunday
-                      ? 'text-red-600'
+                      ? 'text-[#dd1900]'
                       : isToday
-                        ? 'text-neutral-500'
-                        : 'text-neutral-800'
+                        ? 'text-neutral-40'
+                        : 'text-neutral-10'
                   }`}
                 >
                   {DAY_LABELS[i]}
                 </span>
                 {isToday ? (
-                  <span className="flex items-center justify-center rounded-[400px] bg-primary p-2 text-2xl font-semibold leading-8 text-white">
+                  <span className="flex aspect-square items-center justify-center rounded-full bg-primary p-2 text-medium24 font-semibold text-white">
                     {format(day, 'd', { locale: ko })}
                   </span>
                 ) : (
                   <span
-                    className={`text-2xl font-semibold leading-8 ${
-                      isSunday ? 'text-red-600' : 'text-neutral-800'
+                    className={`text-medium24 font-semibold ${
+                      isSunday ? 'text-neutral-10' : 'text-neutral-10'
                     }`}
                   >
                     {format(day, 'd', { locale: ko })}
@@ -126,7 +129,7 @@ const WeeklyCalendar = ({
             {Array.from({ length: 7 }, (_, i) => (
               <div
                 key={i}
-                className={i < 6 ? 'border-r border-neutral-200' : ''}
+                className={i < 6 ? 'border-r border-neutral-80' : ''}
               />
             ))}
           </div>
@@ -134,18 +137,22 @@ const WeeklyCalendar = ({
           {/* Bars */}
           <div className="relative grid grid-cols-7 gap-y-1 py-7">
             {barLayouts.length === 0 && (
-              <div className="col-span-7 flex items-center justify-center py-8 text-sm text-neutral-400">
+              <div className="col-span-7 flex items-center justify-center py-8 text-xsmall14 text-neutral-40">
                 이번 주 예정된 피드백이 없습니다.
               </div>
             )}
-            {barLayouts.map(({ bar, startCol, endCol }, idx) => (
+            {barLayouts.map(({ bar, startCol, endCol, colSpan }, idx) => (
               <div
                 key={`${bar.challengeId}-${bar.missionId}-${idx}`}
                 style={{
                   gridColumn: `${startCol} / ${endCol}`,
                 }}
               >
-                <ChallengePeriodBar bar={bar} onBarClick={onBarClick} />
+                <ChallengePeriodBar
+                  bar={bar}
+                  colSpan={colSpan}
+                  onBarClick={onBarClick}
+                />
               </div>
             ))}
           </div>

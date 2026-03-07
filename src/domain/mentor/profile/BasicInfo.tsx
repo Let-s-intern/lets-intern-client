@@ -60,9 +60,9 @@ export default function BasicInfo({ formData, onChange }: BasicInfoProps) {
   return (
     <section>
       <h2 className="mb-4 text-lg font-semibold">기본 정보</h2>
-      <div className="flex gap-8">
+      <div className="flex flex-col gap-6 md:flex-row md:gap-8">
         {/* Profile Image */}
-        <div className="relative flex h-60 w-60 flex-shrink-0 items-center justify-center overflow-hidden rounded border border-gray-300 bg-gray-200">
+        <div className="relative mx-auto flex h-48 w-48 flex-shrink-0 items-center justify-center overflow-hidden rounded border border-gray-300 bg-gray-200 md:mx-0 md:h-60 md:w-60">
           {formData.profileImgUrl ? (
             <img
               src={formData.profileImgUrl}
@@ -113,7 +113,7 @@ export default function BasicInfo({ formData, onChange }: BasicInfoProps) {
         <div className="flex flex-1 flex-col justify-center gap-4">
           {FIELDS.map(({ key, label }) => (
             <div key={key} className="flex items-center gap-3">
-              <label className="w-20 flex-shrink-0 text-right text-sm font-medium text-gray-700">
+              <label className="w-16 flex-shrink-0 text-left text-sm font-medium text-gray-700 md:w-20 md:text-right">
                 {label}:
               </label>
               <input

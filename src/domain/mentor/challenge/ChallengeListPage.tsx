@@ -8,7 +8,7 @@ const ChallengeListPage = () => {
   const challenges = data?.myChallengeMentorVoList ?? [];
 
   return (
-    <div className="flex-1 p-8">
+    <div className="flex-1">
       <h1 className="mb-6 text-xl font-bold text-gray-900">
         참여중인 챌린지
       </h1>
