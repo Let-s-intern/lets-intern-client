@@ -1,25 +1,36 @@
+import { UserMagnetInfo } from '@/api/magnet/magnetSchema';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import BlogLinkShareBtn from '@/domain/blog/button/BlogLilnkShareBtn';
 import dayjs from '@/lib/dayjs';
 import Image from 'next/image';
-import { LibraryDetailInfo } from '../data/mockLibraryData';
+import Link from 'next/link';
+
+const MAGNET_TYPE_LABEL: Record<string, string> = {
+  MATERIAL: '자료집',
+  VOD: '무료 VOD',
+  FREE_TEMPLATE: '무료 템플릿',
+  LAUNCH_ALERT: '출시 알림',
+  EVENT: '이벤트',
+};
 
 interface Props {
-  libraryInfo: LibraryDetailInfo;
+  magnetInfo: UserMagnetInfo;
 }
 
-export default function LibraryArticle({ libraryInfo }: Props) {
+export default function LibraryArticle({ magnetInfo }: Props) {
+  const hasApplied = magnetInfo.mainContents !== null;
+
   return (
     <article>
       {/* 썸네일 */}
       <div className="relative mb-8 h-[16rem] overflow-hidden rounded-md bg-neutral-95 md:h-[25.5rem]">
-        {libraryInfo.thumbnail && (
+        {magnetInfo.desktopThumbnail && (
           <Image
             className="object-contain"
             priority
             unoptimized
             fill
-            src={libraryInfo.thumbnail}
+            src={magnetInfo.desktopThumbnail}
             alt="자료집 썸네일"
             sizes="(max-width: 768px) 100vw, 26rem"
           />
@@ -30,10 +41,10 @@ export default function LibraryArticle({ libraryInfo }: Props) {
       <div className="mb-7 flex flex-col gap-y-4">
         <div>
           <h2 className="mb-1.5 text-small20 font-semibold text-primary">
-            {libraryInfo.category}
+            {MAGNET_TYPE_LABEL[magnetInfo.type] ?? magnetInfo.type}
           </h2>
           <h1 className="line-clamp-3 text-xlarge28 font-bold text-neutral-0 md:line-clamp-2">
-            {libraryInfo.title}
+            {magnetInfo.title}
           </h1>
         </div>
 
@@ -51,20 +62,49 @@ export default function LibraryArticle({ libraryInfo }: Props) {
                 렛츠커리어
               </span>
             </div>
-            <p className="text-xsmall14 text-neutral-35 md:text-xsmall16">
-              {dayjs(libraryInfo.displayDate).format(YYYY_MM_DD)} 작성
-            </p>
+            {magnetInfo.startDate && (
+              <p className="text-xsmall14 text-neutral-35 md:text-xsmall16">
+                {dayjs(magnetInfo.startDate).format(YYYY_MM_DD)} 작성
+              </p>
+            )}
           </div>
-          {/* 공유 버튼 */}
           <BlogLinkShareBtn />
         </div>
       </div>
 
-      {/* 본문 */}
-      <div
-        className="w-full break-all text-xsmall16"
-        dangerouslySetInnerHTML={{ __html: libraryInfo.content }}
-      />
+      {/* 콘텐츠 편집 1 (신청 전 공개) */}
+      {magnetInfo.previewContents && (
+        <div
+          className="w-full break-all text-xsmall16"
+          dangerouslySetInnerHTML={{ __html: magnetInfo.previewContents }}
+        />
+      )}
+
+      {/* 콘텐츠 편집 2 (신청 후 공개) */}
+      {hasApplied ? (
+        <div
+          className="mt-8 w-full break-all text-xsmall16"
+          dangerouslySetInnerHTML={{ __html: magnetInfo.mainContents! }}
+        />
+      ) : (
+        <div className="mt-8 flex flex-col items-center rounded-md bg-primary-10 px-5 py-10">
+          <div className="mb-5 flex h-9 w-9 items-center justify-center rounded-xs border border-primary-15 bg-white">
+            <span className="text-2xl">📁</span>
+          </div>
+          <div className="mb-6 text-center text-small18 font-light text-neutral-20">
+            렛츠커리어만의 <span className="text-primary">취준 꿀팁</span>이
+            담긴 콘텐츠,
+            <br />
+            다음 내용이 궁금하다면?
+          </div>
+          <Link
+            href={`/library/${magnetInfo.magnetId}/${encodeURIComponent(magnetInfo.title.replace(/\s+/g, '-'))}/apply`}
+            className="w-full max-w-lg rounded-xs bg-primary px-6 py-4 text-center text-xsmall16 text-white"
+          >
+            자료집 신청하기
+          </Link>
+        </div>
+      )}
     </article>
   );
 }

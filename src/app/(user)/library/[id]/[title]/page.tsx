@@ -1,3 +1,4 @@
+import { userMagnetDetailQueryOptions } from '@/api/magnet/magnet';
 import { ProgramRecommendItem } from '@/api/blog/blogSchema';
 import { fetchProgramRecommend } from '@/api/program';
 import LikeButton from '@/common/button/LikeButton';
@@ -8,10 +9,6 @@ import BlogKakaoShareBtn from '@/domain/blog/button/BlogKakaoShareBtn';
 import BlogLinkShareBtn from '@/domain/blog/button/BlogLilnkShareBtn';
 import ProgramRecommendCard from '@/domain/blog/card/ProgramRecommendCard';
 import Heading2 from '@/domain/blog/ui/BlogHeading2';
-import {
-  findMockLibrary,
-  MOCK_LIBRARY_RECOMMENDS,
-} from '@/domain/library/data/mockLibraryData';
 import LibraryArticle from '@/domain/library/ui/LibraryArticle';
 import { twMerge } from '@/lib/twMerge';
 import { ProgramStatusEnum, ProgramTypeEnum } from '@/schema';
@@ -20,6 +17,7 @@ import {
   getLibraryPathname,
   getLibraryTitle,
 } from '@/utils/url';
+import { QueryClient } from '@tanstack/react-query';
 import { CircleChevronRight } from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';
@@ -28,27 +26,46 @@ import { ReactNode } from 'react';
 
 const { CHALLENGE } = ProgramTypeEnum.enum;
 
+async function getMagnetDetail(magnetId: number) {
+  const queryClient = new QueryClient();
+  try {
+    return await queryClient.fetchQuery(
+      userMagnetDetailQueryOptions(magnetId),
+    );
+  } catch {
+    return null;
+  }
+}
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const library = findMockLibrary(id);
+  const data = await getMagnetDetail(Number(id));
 
-  if (!library) return {};
+  if (!data) return {};
+
+  const { magnetInfo } = data;
 
   return {
-    title: getLibraryTitle(library),
-    description: library.description,
+    title: getLibraryTitle({ title: magnetInfo.title }),
+    description: magnetInfo.description,
     openGraph: {
-      title: library.title,
-      description: library.description,
-      url: getBaseUrlFromServer() + getLibraryPathname(library),
-      images: library.thumbnail ? [{ url: library.thumbnail }] : [],
+      title: magnetInfo.title,
+      description: magnetInfo.description ?? undefined,
+      url:
+        getBaseUrlFromServer() +
+        getLibraryPathname({ id: magnetInfo.magnetId, title: magnetInfo.title }),
+      images: magnetInfo.desktopThumbnail
+        ? [{ url: magnetInfo.desktopThumbnail }]
+        : [],
     },
     alternates: {
-      canonical: getBaseUrlFromServer() + getLibraryPathname(library),
+      canonical:
+        getBaseUrlFromServer() +
+        getLibraryPathname({ id: magnetInfo.magnetId, title: magnetInfo.title }),
     },
   };
 }
@@ -60,16 +77,14 @@ export default async function LibraryDetailPage({
 }) {
   const { id } = await params;
 
-  const libraryInfo = findMockLibrary(id);
-  if (!libraryInfo) notFound();
+  const data = await getMagnetDetail(Number(id));
+  if (!data) notFound();
 
+  const { magnetInfo } = data;
   const programRecommendList = await getProgramRecommendList();
-  const recommendLibraries = MOCK_LIBRARY_RECOMMENDS.filter(
-    (item) => item.id !== libraryInfo.id,
-  ).slice(0, 5);
 
   async function getProgramRecommendList() {
-    const data = await fetchProgramRecommend();
+    const fetchedData = await fetchProgramRecommend();
     const list: ProgramRecommendItem[] = [];
     const ctaTitles: Record<string, string> = {
       CAREER_START: '경험 정리부터 이력서 완성까지',
@@ -78,8 +93,8 @@ export default async function LibraryDetailPage({
       PERSONAL_STATEMENT_LARGE_CORP: '합격을 만드는 자소서 작성법',
     };
 
-    if (data.challengeList.length > 0) {
-      const targets = data.challengeList.slice(0, 3).map((item) => ({
+    if (fetchedData.challengeList.length > 0) {
+      const targets = fetchedData.challengeList.slice(0, 3).map((item) => ({
         id: `${CHALLENGE}-${item.id}`,
         ctaLink: `/program/${CHALLENGE.toLowerCase()}/${item.id}`,
         ctaTitle: ctaTitles[item.challengeType ?? 'CAREER_START'],
@@ -95,7 +110,7 @@ export default async function LibraryDetailPage({
       <div className="flex flex-col items-center md:flex-row md:items-start md:gap-20">
         {/* 본문 */}
         <section className="w-full px-5 md:px-0">
-          <LibraryArticle libraryInfo={libraryInfo} />
+          <LibraryArticle magnetInfo={magnetInfo} />
 
           <section className="mb-9 mt-10 flex items-center justify-between md:mb-6">
             {/* 좋아요 */}
@@ -113,10 +128,13 @@ export default async function LibraryDetailPage({
               />
               <BlogKakaoShareBtn
                 className="p-2"
-                title={libraryInfo.title}
-                description={libraryInfo.description}
-                thumbnail={libraryInfo.thumbnail ?? ''}
-                pathname={getLibraryPathname(libraryInfo)}
+                title={magnetInfo.title}
+                description={magnetInfo.description ?? ''}
+                thumbnail={magnetInfo.desktopThumbnail ?? ''}
+                pathname={getLibraryPathname({
+                  id: magnetInfo.magnetId,
+                  title: magnetInfo.title,
+                })}
               />
               <span className="text-xsmall14 font-medium text-neutral-35 md:hidden">
                 공유하기
@@ -166,31 +184,20 @@ export default async function LibraryDetailPage({
       <HorizontalRule className="h-3 md:hidden" />
 
       {/* 다른 자료집 추천 */}
-      {recommendLibraries.length > 0 && (
-        <section className="px-5 py-9 md:mt-[6.25rem] md:p-0">
-          <MoreHeader
-            href="/library/list"
-            gaText="다른 취준생들이 함께 찾은 콘텐츠"
-            hideMoreWhenMobile
-          >
-            다른 취준생들이 함께 찾은 콘텐츠
-          </MoreHeader>
-          <div className="mb-6 mt-5 flex flex-col gap-5 md:mt-6 md:grid md:grid-cols-4 md:items-start md:gap-5">
-            {recommendLibraries.map((lib) => (
-              <ContentCard
-                key={lib.id}
-                variant="library"
-                href={getLibraryPathname(lib)}
-                category={lib.category}
-                title={lib.title}
-              />
-            ))}
-          </div>
-          <MoreLink href="/library/list" className="md:hidden">
-            더 많은 자료집 보기
-          </MoreLink>
-        </section>
-      )}
+      <section className="px-5 py-9 md:mt-[6.25rem] md:p-0">
+        <MoreHeader
+          href="/library/list"
+          gaText="다른 취준생들이 함께 찾은 콘텐츠"
+          hideMoreWhenMobile
+        >
+          다른 취준생들이 함께 찾은 콘텐츠
+        </MoreHeader>
+        {/* TODO: 자료집 추천 리스트 API 연동 */}
+        <div className="mb-6 mt-5 flex flex-col gap-5 md:mt-6 md:grid md:grid-cols-4 md:items-start md:gap-5" />
+        <MoreLink href="/library/list" className="md:hidden">
+          더 많은 자료집 보기
+        </MoreLink>
+      </section>
     </main>
   );
 }

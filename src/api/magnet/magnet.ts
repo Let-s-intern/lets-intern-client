@@ -9,9 +9,11 @@ import {
   MagnetListResponse,
   MagnetType,
   ProgramType,
+  UserMagnetDetailResponse,
   UserMagnetListResponse,
   magnetDetailResponseSchema,
   magnetListResponseSchema,
+  userMagnetDetailResponseSchema,
   userMagnetListResponseSchema,
 } from './magnetSchema';
 
@@ -150,6 +152,27 @@ export const usePatchMagnetMutation = ({
       console.error(error);
       errorCallback?.();
     },
+  });
+};
+
+// 유저용 마그넷 상세 조회
+const userMagnetDetailQueryKey = 'UserMagnetDetailQueryKey';
+
+export const userMagnetDetailQueryOptions = (magnetId: number) => ({
+  queryKey: [userMagnetDetailQueryKey, magnetId],
+  queryFn: async (): Promise<UserMagnetDetailResponse> => {
+    const res = await axios.get(`/magnet/${magnetId}`);
+    return userMagnetDetailResponseSchema.parse(res.data.data);
+  },
+});
+
+export const useGetUserMagnetDetailQuery = (
+  magnetId: number,
+  options?: { enabled?: boolean },
+) => {
+  return useQuery({
+    ...userMagnetDetailQueryOptions(magnetId),
+    enabled: options?.enabled,
   });
 };
 
