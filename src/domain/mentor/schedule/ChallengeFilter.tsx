@@ -14,7 +14,7 @@ const ChallengeFilter = ({
   onSelect,
 }: ChallengeFilterProps) => {
   return (
-    <div className="inline-flex items-center gap-4">
+    <div className="flex flex-wrap items-center gap-2 md:gap-4">
       <button
         type="button"
         onClick={() => onSelect(null)}

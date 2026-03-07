@@ -78,8 +78,8 @@ const WeeklyCalendar = ({
   }, [visibleBars, weekStartTime]);
 
   return (
-    <div className="overflow-hidden rounded-[16px] border border-neutral-80">
-      <div className="relative flex flex-col">
+    <div className="overflow-x-auto rounded-[16px] border border-neutral-80">
+      <div className="relative flex min-w-[640px] flex-col">
         {/* Day header row */}
         <div className="grid grid-cols-7 border-b border-neutral-80">
           {days.map((day, i) => {

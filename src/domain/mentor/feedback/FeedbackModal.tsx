@@ -183,11 +183,11 @@ const FeedbackModal = ({
     <BaseModal
       isOpen={isOpen}
       onClose={handleClose}
-      className="mx-4 h-[720px] w-[960px] max-w-full rounded-3xl"
+      className="mx-2 h-[90vh] w-[960px] max-w-full rounded-2xl md:mx-4 md:h-[720px] md:rounded-3xl"
     >
       {/* Header bar */}
-      <div className="flex items-center gap-4 bg-sky-50 px-6 pb-3 pt-6">
-        <div className="flex flex-1 items-center justify-between">
+      <div className="flex items-center gap-2 bg-sky-50 px-4 pb-3 pt-4 md:gap-4 md:px-6 md:pt-6">
+        <div className="flex flex-1 flex-wrap items-center justify-between gap-2">
           {/* Left: title */}
           <div className="flex items-center gap-2">
             <span className="text-xs font-medium text-neutral-700">
@@ -196,7 +196,7 @@ const FeedbackModal = ({
           </div>
 
           {/* Center: stats */}
-          <div className="flex items-center gap-5">
+          <div className="hidden items-center gap-5 md:flex">
             <div className="flex items-center gap-1 px-1">
               <span className="text-xs font-medium text-neutral-700">총</span>
               <span className="text-xs font-medium text-neutral-700">
@@ -226,7 +226,7 @@ const FeedbackModal = ({
             href={mentorConfig.feedbackGuidelineUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700"
+            className="hidden rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 md:block"
           >
             피드백 가이드 라인
           </a>
@@ -257,9 +257,9 @@ const FeedbackModal = ({
       </div>
 
       {/* Body */}
-      <div className="flex flex-1 px-10 pb-10 pt-2.5" style={{ height: 'calc(100% - 72px)' }}>
+      <div className="flex flex-1 flex-col px-4 pb-4 pt-2.5 md:flex-row md:px-10 md:pb-10" style={{ height: 'calc(100% - 72px)' }}>
         {/* Left panel: mentee list */}
-        <div className="flex w-60 shrink-0 flex-col">
+        <div className="mb-3 flex max-h-40 shrink-0 flex-col md:mb-0 md:max-h-none md:w-60">
           <MenteeList
             challengeId={challengeId}
             missionId={missionId}
@@ -269,7 +269,7 @@ const FeedbackModal = ({
         </div>
 
         {/* Right panel */}
-        <div className="flex flex-1 flex-col gap-5 pl-5">
+        <div className="flex flex-1 flex-col gap-3 overflow-hidden md:gap-5 md:pl-5">
           {/* Navigation + Mentee info */}
           <div className="flex flex-col">
             {/* Navigation */}
