@@ -17,6 +17,7 @@ import MenteeList from './MenteeList';
 import MenteeInfo from './MenteeInfo';
 import FeedbackEditor from './FeedbackEditor';
 import FeedbackActions from './FeedbackActions';
+import mentorConfig from '@/domain/mentor/config.json';
 
 interface FeedbackModalProps {
   isOpen: boolean;
@@ -166,6 +167,7 @@ const FeedbackModal = ({
     currentMentee?.feedbackStatus === 'COMPLETED' ||
     currentMentee?.feedbackStatus === 'CONFIRMED';
 
+
   const attendanceList = attendanceData?.attendanceList ?? [];
   const waitingCount = attendanceList.filter(
     (a) => a.feedbackStatus === 'WAITING' || !a.feedbackStatus,
@@ -221,7 +223,7 @@ const FeedbackModal = ({
 
           {/* Right: guide button */}
           <a
-            href="https://letsintern.notion.site/3c6c138f7aeb4a6ebec397cf1e29e9cb"
+            href={mentorConfig.feedbackGuidelineUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700"
