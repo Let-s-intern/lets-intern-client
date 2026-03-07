@@ -9,7 +9,7 @@ import ApplySection from '@/domain/mypage/application/section/ApplySection';
 import CompleteSection from '@/domain/mypage/application/section/CompleteSection';
 import GuidebookSection from '@/domain/mypage/application/section/GuidebookSection';
 import ParticipateSection from '@/domain/mypage/application/section/ParticipateSection';
-import CategoryChips from '@/domain/mypage/ui/button/CategoryChips';
+import CategoryTabs from '@/domain/mypage/ui/nav/CategoryTabs';
 import { useState } from 'react';
 
 const Application = () => {
@@ -44,7 +44,7 @@ const Application = () => {
   return (
     <main className="flex w-full flex-col gap-10">
       <div className="md:pt-5">
-        <CategoryChips
+        <CategoryTabs
           options={APPLICATION_CATEGORY_OPTIONS}
           selected={category}
           onChange={setCategory}
