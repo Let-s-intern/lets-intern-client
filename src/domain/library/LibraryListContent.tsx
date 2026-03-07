@@ -18,23 +18,19 @@ const TABS = [
   { label: 'MY 자료집', value: 'my' },
 ];
 
-const CATEGORY_FILTER_LIST = [
-  { caption: '자료집', value: 'MATERIAL' },
-  { caption: '무료 VOD', value: 'VOD' },
-  { caption: '무료 템플릿', value: 'FREE_TEMPLATE' },
-  { caption: '출시 알림', value: 'LAUNCH_ALERT' },
-  { caption: '이벤트', value: 'EVENT' },
-];
-
-const PAGE_SIZE = 16;
-
 const MAGNET_TYPE_LABEL: Record<MagnetType, string> = {
   MATERIAL: '자료집',
-  VOD: 'VOD',
+  VOD: '무료 VOD',
   FREE_TEMPLATE: '무료 템플릿',
   LAUNCH_ALERT: '출시 알림',
   EVENT: '이벤트',
 };
+
+const CATEGORY_FILTER_LIST = Object.entries(MAGNET_TYPE_LABEL).map(
+  ([value, caption]) => ({ caption, value }),
+);
+
+const PAGE_SIZE = 16;
 
 function toUrlSlug(title: string) {
   return encodeURIComponent(title.replace(/\s+/g, '-'));
