@@ -56,7 +56,6 @@ const ChallengePeriodBar = ({
   onBarClick,
 }: ChallengePeriodBarProps) => {
   const color = COLORS[(bar.colorIndex ?? 0) % COLORS.length];
-  const showFullLabels = colSpan >= 5;
 
   return (
     <button
@@ -99,26 +98,14 @@ const ChallengePeriodBar = ({
           </span>
         </div>
         <div className="flex shrink-0 items-center gap-1 whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px]">
-          {showFullLabels ? (
-            <>
-              <span className="text-[#f64e39]">시작 전</span>
-              <span className="text-[#f64e39]">{bar.waitingCount}</span>
-              <span className="text-neutral-10">·</span>
-              <span className="text-neutral-10">진행 중</span>
-              <span className="text-neutral-10">{bar.inProgressCount}</span>
-              <span className="text-neutral-10">·</span>
-              <span className="text-neutral-10">완료</span>
-              <span className="text-neutral-10">{bar.completedCount}</span>
-            </>
-          ) : (
-            <>
-              <span className="text-[#f64e39]">{bar.waitingCount}</span>
-              <span className="text-neutral-10">·</span>
-              <span className="text-neutral-10">{bar.inProgressCount}</span>
-              <span className="text-neutral-10">·</span>
-              <span className="text-neutral-10">{bar.completedCount}</span>
-            </>
-          )}
+          <span className="text-[#f64e39]">시작 전</span>
+          <span className="text-[#f64e39]">{bar.waitingCount}</span>
+          <span className="text-neutral-10">·</span>
+          <span className="text-neutral-10">진행 중</span>
+          <span className="text-neutral-10">{bar.inProgressCount}</span>
+          <span className="text-neutral-10">·</span>
+          <span className="text-neutral-10">완료</span>
+          <span className="text-neutral-10">{bar.completedCount}</span>
         </div>
         {/* Colored line */}
         <div
