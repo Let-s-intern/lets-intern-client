@@ -27,6 +27,7 @@ import { EquationNode } from './EquationNode';
 // import { ExcalidrawNode } from './ExcalidrawNode';
 import { FigmaNode } from './FigmaNode';
 import { ImageNode } from './ImageNode';
+import { PDFNode } from './PDFNode';
 import { InlineImageNode } from './InlineImageNode/InlineImageNode';
 import { KeywordNode } from './KeywordNode';
 import { LayoutContainerNode } from './LayoutContainerNode';
@@ -66,6 +67,7 @@ const nodes: Array<Klass<LexicalNode>> = [
   TweetNode,
   YouTubeNode,
   FigmaNode,
+  PDFNode,
   MarkNode,
   CollapsibleContainerNode,
   CollapsibleContentNode,
