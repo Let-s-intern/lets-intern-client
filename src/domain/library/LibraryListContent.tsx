@@ -1,6 +1,9 @@
 'use client';
 
-import { useGetUserMagnetListQuery } from '@/api/magnet/magnet';
+import {
+  useGetMyMagnetListQuery,
+  useGetUserMagnetListQuery,
+} from '@/api/magnet/magnet';
 import { MagnetType, UserMagnetListItem } from '@/api/magnet/magnetSchema';
 import ContentCard from '@/common/card/ContentCard';
 import FilterDropdown from '@/common/dropdown/FilterDropdown';
@@ -48,10 +51,21 @@ function Content() {
     return category.toUpperCase().split(',') as MagnetType[];
   }, [searchParams]);
 
-  const { data, isLoading } = useGetUserMagnetListQuery({
+  const isMyTab = activeTab === 'my';
+
+  const contentsQuery = useGetUserMagnetListQuery({
     typeList,
     pageable: { page: page - 1, size: PAGE_SIZE },
+    enabled: !isMyTab,
   });
+
+  const myQuery = useGetMyMagnetListQuery({
+    typeList,
+    pageable: { page: page - 1, size: PAGE_SIZE },
+    enabled: isMyTab,
+  });
+
+  const { data, isLoading } = isMyTab ? myQuery : contentsQuery;
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);

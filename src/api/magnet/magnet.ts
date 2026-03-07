@@ -18,6 +18,7 @@ import {
 const magnetListQueryKey = 'MagnetListQueryKey';
 const magnetDetailQueryKey = 'MagnetDetailQueryKey';
 const userMagnetListQueryKey = 'UserMagnetListQueryKey';
+const myMagnetListQueryKey = 'MyMagnetListQueryKey';
 
 export interface MagnetListQueryParams {
   typeList?: MagnetTypeKey[];
@@ -177,6 +178,39 @@ export const useGetUserMagnetListQuery = ({
         params: {
           typeList,
           programTypeList,
+          page: pageable.page,
+          size: pageable.size,
+          sort: pageable.sort,
+        },
+      });
+      return userMagnetListResponseSchema.parse(res.data.data);
+    },
+    enabled,
+  });
+};
+
+// MY 마그넷 목록 조회
+export interface MyMagnetListQueryParams {
+  typeList?: MagnetType[];
+  pageable: {
+    page: number;
+    size: number;
+    sort?: string[];
+  };
+  enabled?: boolean;
+}
+
+export const useGetMyMagnetListQuery = ({
+  typeList,
+  pageable,
+  enabled,
+}: MyMagnetListQueryParams) => {
+  return useQuery({
+    queryKey: [myMagnetListQueryKey, typeList, pageable],
+    queryFn: async (): Promise<UserMagnetListResponse> => {
+      const res = await axios.get('/magnet/my', {
+        params: {
+          typeList,
           page: pageable.page,
           size: pageable.size,
           sort: pageable.sort,
