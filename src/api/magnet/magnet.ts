@@ -90,13 +90,21 @@ export const usePatchMagnetVisibilityMutation = ({
   });
 };
 
-export const useGetMagnetDetailQuery = (magnetId: number) => {
+export const magnetDetailQueryOptions = (magnetId: number) => ({
+  queryKey: [magnetDetailQueryKey, magnetId],
+  queryFn: async (): Promise<MagnetDetailResponse> => {
+    const res = await axios.get(`/admin/magnet/${magnetId}`);
+    return magnetDetailResponseSchema.parse(res.data.data);
+  },
+});
+
+export const useGetMagnetDetailQuery = (
+  magnetId: number,
+  options?: { enabled?: boolean },
+) => {
   return useQuery({
-    queryKey: [magnetDetailQueryKey, magnetId],
-    queryFn: async (): Promise<MagnetDetailResponse> => {
-      const res = await axios.get(`/admin/magnet/${magnetId}`);
-      return magnetDetailResponseSchema.parse(res.data.data);
-    },
+    ...magnetDetailQueryOptions(magnetId),
+    enabled: options?.enabled,
   });
 };
 
@@ -128,13 +136,8 @@ export const usePatchMagnetMutation = ({
       const res = await axios.patch(`/admin/magnet/${magnetId}`, body);
       return res.data;
     },
-    onSuccess: async (_data, variables) => {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: [magnetDetailQueryKey, variables.magnetId],
-        }),
-        queryClient.invalidateQueries({ queryKey: [magnetListQueryKey] }),
-      ]);
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [magnetListQueryKey] });
       successCallback?.();
     },
     onError: (error) => {
@@ -143,6 +146,18 @@ export const usePatchMagnetMutation = ({
     },
   });
 };
+
+// --- Magnet Question API ---
+
+export interface MagnetQuestionReqBody {
+  type: string;
+  question: string;
+  description: string;
+  isRequired: boolean;
+  answerType: 'CHOICE' | 'TEXT';
+  choiceType: 'SINGLE' | 'MULTIPLE';
+  options: string | null;
+}
 
 export const useCreateMagnetMutation = ({
   successCallback,

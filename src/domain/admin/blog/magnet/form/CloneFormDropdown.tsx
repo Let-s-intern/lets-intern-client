@@ -1,11 +1,15 @@
+'use client';
+
 import {
-  fetchMagnetForm,
-  fetchMagnetsWithForm,
-} from '@/domain/admin/blog/magnet/mock';
+  magnetDetailQueryOptions,
+  useGetMagnetListQuery,
+} from '@/api/magnet/magnet';
 import { FormQuestion } from '@/domain/admin/blog/magnet/types';
+import { detailQuestionToFormQuestion } from '@/domain/admin/blog/magnet/utils/questionMapper';
 import { Button, Menu, MenuItem } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
 import { Copy } from 'lucide-react';
-import { MouseEvent, useMemo, useState } from 'react';
+import { MouseEvent, useState } from 'react';
 
 interface CloneFormDropdownProps {
   currentMagnetId: number;
@@ -18,13 +22,13 @@ const CloneFormDropdown = ({
   hasExistingQuestions,
   onClone,
 }: CloneFormDropdownProps) => {
+  const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
-  const magnetsWithForm = useMemo(() => {
-    return fetchMagnetsWithForm().filter(
-      (m) => m.id !== currentMagnetId,
-    );
-  }, [currentMagnetId]);
+  const { data: magnetListData } = useGetMagnetListQuery();
+  const magnets = (magnetListData?.magnetList ?? []).filter(
+    (m) => m.magnetId !== currentMagnetId,
+  );
 
   const handleOpen = (e: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(e.currentTarget);
@@ -44,8 +48,13 @@ const CloneFormDropdown = ({
       if (!confirmed) return;
     }
 
-    const data = await fetchMagnetForm(magnetId);
-    onClone(data.questions);
+    const data = await queryClient.fetchQuery(
+      magnetDetailQueryOptions(magnetId),
+    );
+    const questions = data.magnetQuestionInfo
+      .filter((q) => q.type === 'ADDITIONAL')
+      .map(detailQuestionToFormQuestion);
+    onClone(questions);
   };
 
   return (
@@ -62,15 +71,15 @@ const CloneFormDropdown = ({
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        {magnetsWithForm.length === 0 ? (
+        {magnets.length === 0 ? (
           <MenuItem disabled>복제할 수 있는 폼이 없습니다</MenuItem>
         ) : (
-          magnetsWithForm.map((m) => (
+          magnets.map((m) => (
             <MenuItem
-              key={m.id}
-              onClick={() => handleClone(m.id)}
+              key={m.magnetId}
+              onClick={() => handleClone(m.magnetId)}
             >
-              [{m.id}] {m.title} ({m.questionCount}개 질문)
+              [{m.magnetId}] {m.title}
             </MenuItem>
           ))
         )}

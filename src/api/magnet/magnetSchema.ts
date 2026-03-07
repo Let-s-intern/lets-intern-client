@@ -38,20 +38,15 @@ const magnetInfoSchema = z.object({
   isVisible: z.boolean(),
 });
 
-const magnetQuestionItemSchema = z.object({
-  itemId: z.number(),
-  value: z.string(),
-  isOther: z.boolean(),
-});
-
 const magnetQuestionSchema = z.object({
-  questionId: z.number(),
-  questionType: z.string(),
-  isRequired: z.string(),
+  magnetQuestionId: z.number(),
+  type: z.string(),
   question: z.string(),
   description: z.string().nullable(),
-  selectionMethod: z.string(),
-  items: z.array(magnetQuestionItemSchema),
+  isRequired: z.boolean(),
+  answerType: z.enum(['TEXT', 'CHOICE']),
+  choiceType: z.enum(['SINGLE', 'MULTIPLE']),
+  options: z.string().nullable(),
 });
 
 export const magnetDetailResponseSchema = z.object({
@@ -60,3 +55,4 @@ export const magnetDetailResponseSchema = z.object({
 });
 
 export type MagnetDetailResponse = z.infer<typeof magnetDetailResponseSchema>;
+export type MagnetDetailQuestion = z.infer<typeof magnetQuestionSchema>;

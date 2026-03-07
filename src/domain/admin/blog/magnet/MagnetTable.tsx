@@ -89,11 +89,16 @@ const MagnetTable = ({
         sortable: false,
         renderCell: ({ row }) =>
           isMagnetManageable(row.type) ? (
-            <Link href={`/admin/blog/magnet/${row.magnetId}/form`}>
-              <Button variant="outlined" color="primary" size="small">
-                신청자 정보
-              </Button>
-            </Link>
+            <Button
+              variant="outlined"
+              color="primary"
+              size="small"
+              onClick={() =>
+                console.log('신청자 정보 클릭:', row.magnetId)
+              }
+            >
+              신청자 정보
+            </Button>
           ) : null,
       },
       {

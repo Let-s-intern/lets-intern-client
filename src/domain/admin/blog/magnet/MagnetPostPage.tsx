@@ -5,17 +5,26 @@ import { useMagnetPostForm } from '@/domain/admin/blog/magnet/hooks/useMagnetPos
 import MagnetProgramRecommendSection from '@/domain/admin/blog/magnet/section/MagnetProgramRecommendSection';
 import MagnetRecommendSection from '@/domain/admin/blog/magnet/section/MagnetRecommendSection';
 import { MAGNET_TYPE, MagnetTypeKey } from '@/domain/admin/blog/magnet/types';
+import ImageUpload from '@/domain/admin/program/ui/form/ImageUpload';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
-import ImageUpload from '@/domain/admin/program/ui/form/ImageUpload';
-import { Button, Checkbox, CircularProgress, FormControlLabel } from '@mui/material';
+import {
+  Button,
+  Checkbox,
+  CircularProgress,
+  FormControl,
+  FormControlLabel,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import dynamic from 'next/dynamic';
 
-const EditorApp = dynamic(
-  () => import('@/domain/admin/lexical/EditorApp'),
-  { ssr: false },
-);
+const EditorApp = dynamic(() => import('@/domain/admin/lexical/EditorApp'), {
+  ssr: false,
+});
 
 const MAX_META_DESCRIPTION_LENGTH = 100;
 
@@ -25,9 +34,14 @@ interface MagnetPostPageProps {
 
 const MagnetPostPage = ({ magnetId }: MagnetPostPageProps) => {
   const {
+    isCreateMode,
     isLoading,
     type,
     title,
+    createType,
+    createTitle,
+    setCreateType,
+    setCreateTitle,
     formState,
     displayDate,
     endDate,
@@ -37,6 +51,7 @@ const MagnetPostPage = ({ magnetId }: MagnetPostPageProps) => {
     onChangeMetaDescription,
     onChangeThumbnailFile,
     onChangeHasCommonForm,
+    onChangeHasReleaseNotificationButton,
     onChangeProgramRecommend,
     onChangeMagnetRecommend,
     onChangeEditorBefore,
@@ -45,9 +60,9 @@ const MagnetPostPage = ({ magnetId }: MagnetPostPageProps) => {
     setEndDate,
     savePost,
     navigateToList,
-  } = useMagnetPostForm(Number(magnetId));
+  } = useMagnetPostForm(magnetId);
 
-  if (isLoading || !type) {
+  if (isLoading || (!isCreateMode && !type)) {
     return (
       <div className="flex h-64 items-center justify-center">
         <CircularProgress />
@@ -58,19 +73,45 @@ const MagnetPostPage = ({ magnetId }: MagnetPostPageProps) => {
   return (
     <div className="mx-6 mb-40 mt-6">
       <header className="mb-4">
-        <Heading>마그넷 글 관리</Heading>
+        <Heading>{isCreateMode ? '마그넷 등록' : '마그넷 글 관리'}</Heading>
       </header>
       <main className="max-w-screen-xl">
         <div className="flex flex-col gap-6">
           {/* 4.1 타입 */}
-          <p className="text-lg font-medium">
-            타입: &nbsp;{MAGNET_TYPE[type as MagnetTypeKey]}
-          </p>
+          {isCreateMode ? (
+            <FormControl fullWidth size="small" sx={{ maxWidth: 300 }}>
+              <InputLabel>타입 선택 *</InputLabel>
+              <Select
+                value={createType}
+                label="타입 선택 *"
+                onChange={(e) => setCreateType(e.target.value as MagnetTypeKey)}
+              >
+                {Object.entries(MAGNET_TYPE).map(([key, label]) => (
+                  <MenuItem key={key} value={key}>
+                    {label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          ) : (
+            <p className="text-lg font-medium">
+              타입: &nbsp;{MAGNET_TYPE[type as MagnetTypeKey]}
+            </p>
+          )}
 
           {/* 4.2 제목 */}
-          <p className="text-lg font-medium">
-            제목: &nbsp;{title}
-          </p>
+          {isCreateMode ? (
+            <TextField
+              fullWidth
+              size="small"
+              label="제목 *"
+              value={createTitle}
+              onChange={(e) => setCreateTitle(e.target.value)}
+              sx={{ maxWidth: 500 }}
+            />
+          ) : (
+            <p className="text-lg font-medium">제목: &nbsp;{title}</p>
+          )}
 
           {/* 4.3 메타 디스크립션 */}
           <TextFieldLimit
@@ -129,16 +170,31 @@ const MagnetPostPage = ({ magnetId }: MagnetPostPageProps) => {
             </div>
           </div>
 
-          {/* 4.8 공통 신청폼 추가 */}
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={formState.hasCommonForm}
-                onChange={(e) => onChangeHasCommonForm(e.target.checked)}
-              />
-            }
-            label="공통 신청폼 추가"
-          />
+          <div className="flex gap-4">
+            {/* 4.8 공통 신청폼 추가 */}
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={formState.hasCommonForm}
+                  onChange={(e) => onChangeHasCommonForm(e.target.checked)}
+                />
+              }
+              label="공통 신청폼 추가"
+            />
+
+            {/* 4.8 출시 알림 버튼 추가 */}
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={formState.hasReleaseNotificationButton}
+                  onChange={(e) =>
+                    onChangeHasReleaseNotificationButton(e.target.checked)
+                  }
+                />
+              }
+              label="출시 알림 신청 버튼 추가"
+            />
+          </div>
 
           {/* 4.9 콘텐츠 편집1 (신청 전 공개) */}
           <div>
@@ -169,7 +225,7 @@ const MagnetPostPage = ({ magnetId }: MagnetPostPageProps) => {
               type="button"
               onClick={savePost}
             >
-              등록하기
+              {isCreateMode ? '등록하기' : '저장하기'}
             </Button>
           </div>
         </div>

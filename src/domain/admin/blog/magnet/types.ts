@@ -105,26 +105,6 @@ export interface FormQuestion {
   items: FormQuestionItem[];
 }
 
-/** 마그넷 신청폼 전체 데이터 */
-export interface MagnetFormData {
-  magnetId: number;
-  questions: FormQuestion[];
-}
-
-/** 마그넷 신청폼 저장 요청 */
-export interface MagnetFormReqBody {
-  magnetId: number;
-  questions: FormQuestion[];
-}
-
-/** 복제 가능한 마그넷 요약 (폼이 있는 마그넷 목록) */
-export interface MagnetWithFormSummary {
-  id: number;
-  title: string;
-  type: MagnetTypeKey;
-  questionCount: number;
-}
-
 // --- 공통 신청폼 관리 ---
 
 /** 공통 신청폼 전체 데이터 (마그넷 독립) */

@@ -1,12 +1,16 @@
 import { uploadFile } from '@/api/file';
 import {
+  useCreateMagnetMutation,
   useGetMagnetDetailQuery,
   usePatchMagnetMutation,
 } from '@/api/magnet/magnet';
+import { COMMON_FORM_QUESTIONS } from '@/domain/admin/blog/magnet/constants/commonFormQuestions';
 import {
   MagnetPostContent,
   MagnetProgramRecommendItem,
+  MagnetTypeKey,
 } from '@/domain/admin/blog/magnet/types';
+import { detailQuestionToApiBody } from '@/domain/admin/blog/magnet/utils/questionMapper';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import dayjs from '@/lib/dayjs';
 import { Dayjs } from 'dayjs';
@@ -60,18 +64,32 @@ interface FormState {
   metaDescription: string;
   thumbnail: string;
   hasCommonForm: boolean;
+  hasReleaseNotificationButton: boolean;
 }
 
-export const useMagnetPostForm = (magnetId: number) => {
+export const useMagnetPostForm = (magnetId: string) => {
   const router = useRouter();
   const { snackbar: setSnackbar } = useAdminSnackbar();
+  const isCreateMode = magnetId === 'new';
+  const numericId = isCreateMode ? 0 : Number(magnetId);
 
-  const { data: detailData, isLoading } = useGetMagnetDetailQuery(magnetId);
+  const { data: detailData, isLoading } = useGetMagnetDetailQuery(numericId, {
+    enabled: !isCreateMode,
+  });
   const { mutate: patchMagnet } = usePatchMagnetMutation({
     successCallback: () => {
       setSnackbar('마그넷 글이 저장되었습니다.');
     },
   });
+  const { mutate: createMagnet } = useCreateMagnetMutation({
+    successCallback: () => {
+      setSnackbar('마그넷이 등록되었습니다.');
+      router.push('/admin/blog/magnet/list');
+    },
+  });
+
+  const [createType, setCreateType] = useState<MagnetTypeKey | ''>('');
+  const [createTitle, setCreateTitle] = useState('');
 
   const magnetInfo = detailData?.magnetInfo;
 
@@ -94,46 +112,36 @@ export const useMagnetPostForm = (magnetId: number) => {
     metaDescription: '',
     thumbnail: '',
     hasCommonForm: false,
+    hasReleaseNotificationButton: false,
   });
-  const [formInitialized, setFormInitialized] = useState(false);
+  const [displayDate, setDisplayDate] = useState<Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<Dayjs | null>(null);
+  const [content, setContent] =
+    useState<MagnetPostContent>(createEmptyContent());
+  const [initialized, setInitialized] = useState(false);
 
-  // detailData가 로드되면 폼 상태 초기화
-  if (magnetInfo && !formInitialized) {
+  // detailData가 로드되면 모든 폼 상태 초기화
+  if (detailData && magnetInfo && !initialized) {
+    const hasBaseQuestions = detailData.magnetQuestionInfo.some(
+      (q) => q.type === 'BASE',
+    );
     setFormState({
       metaDescription: descPayload.metaDescription,
       thumbnail: magnetInfo.desktopThumbnail ?? '',
-      hasCommonForm: false,
+      hasCommonForm: hasBaseQuestions,
+      hasReleaseNotificationButton: false,
     });
-    setFormInitialized(true);
-  }
-
-  const [displayDate, setDisplayDate] = useState<Dayjs | null>(null);
-  const [endDate, setEndDate] = useState<Dayjs | null>(null);
-  const [dateInitialized, setDateInitialized] = useState(false);
-
-  if (magnetInfo && !dateInitialized) {
     setDisplayDate(magnetInfo.startDate ? dayjs(magnetInfo.startDate) : null);
     setEndDate(magnetInfo.endDate ? dayjs(magnetInfo.endDate) : null);
-    setDateInitialized(true);
-  }
-
-  const [content, setContent] = useState<MagnetPostContent>(
-    createEmptyContent(),
-  );
-  const [contentInitialized, setContentInitialized] = useState(false);
-
-  if (magnetInfo && !contentInitialized) {
     setContent(initialContent);
-    setContentInitialized(true);
+    setInitialized(true);
   }
 
   const onChangeMetaDescription = (e: ChangeEvent<HTMLInputElement>) => {
     setFormState((prev) => ({ ...prev, metaDescription: e.target.value }));
   };
 
-  const onChangeThumbnailFile = async (
-    e: ChangeEvent<HTMLInputElement>,
-  ) => {
+  const onChangeThumbnailFile = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.item(0);
     if (!file) {
       setSnackbar('파일이 없습니다.');
@@ -145,6 +153,13 @@ export const useMagnetPostForm = (magnetId: number) => {
 
   const onChangeHasCommonForm = (checked: boolean) => {
     setFormState((prev) => ({ ...prev, hasCommonForm: checked }));
+  };
+
+  const onChangeHasReleaseNotificationButton = (checked: boolean) => {
+    setFormState((prev) => ({
+      ...prev,
+      hasReleaseNotificationButton: checked,
+    }));
   };
 
   const onChangeProgramRecommend = (items: MagnetProgramRecommendItem[]) => {
@@ -164,14 +179,30 @@ export const useMagnetPostForm = (magnetId: number) => {
   };
 
   const savePost = () => {
+    if (isCreateMode) {
+      if (!createType || !createTitle.trim()) return;
+      createMagnet({ type: createType, title: createTitle.trim() });
+      return;
+    }
+
     const description = JSON.stringify({
       metaDescription: formState.metaDescription,
       programRecommend: content.programRecommend,
       magnetRecommend: content.magnetRecommend,
     });
 
+    // 기존 ADDITIONAL 질문을 API 요청 형태로 변환
+    const additionalQuestions = (detailData?.magnetQuestionInfo ?? [])
+      .filter((q) => q.type === 'ADDITIONAL')
+      .map(detailQuestionToApiBody);
+
+    // hasCommonForm ON → BASE + ADDITIONAL, OFF → ADDITIONAL만
+    const magnetQuestionList = formState.hasCommonForm
+      ? [...COMMON_FORM_QUESTIONS, ...additionalQuestions]
+      : [...additionalQuestions];
+
     patchMagnet({
-      magnetId,
+      magnetId: numericId,
       description,
       previewContents: content.lexicalBefore ?? '',
       mainContents: content.lexicalAfter ?? '',
@@ -179,6 +210,8 @@ export const useMagnetPostForm = (magnetId: number) => {
       mobileThumbnail: formState.thumbnail,
       startDate: displayDate?.format('YYYY-MM-DDTHH:mm') ?? null,
       endDate: endDate?.format('YYYY-MM-DDTHH:mm') ?? null,
+      isVisible: false,
+      magnetQuestionList,
     });
   };
 
@@ -187,9 +220,14 @@ export const useMagnetPostForm = (magnetId: number) => {
   };
 
   return {
-    isLoading,
-    type: magnetInfo?.type,
-    title: magnetInfo?.title,
+    isCreateMode,
+    isLoading: isCreateMode ? false : isLoading,
+    type: isCreateMode ? createType : magnetInfo?.type,
+    title: isCreateMode ? createTitle : magnetInfo?.title,
+    createType,
+    createTitle,
+    setCreateType,
+    setCreateTitle,
     formState,
     displayDate,
     endDate,
@@ -199,6 +237,7 @@ export const useMagnetPostForm = (magnetId: number) => {
     onChangeMetaDescription,
     onChangeThumbnailFile,
     onChangeHasCommonForm,
+    onChangeHasReleaseNotificationButton,
     onChangeProgramRecommend,
     onChangeMagnetRecommend,
     onChangeEditorBefore,

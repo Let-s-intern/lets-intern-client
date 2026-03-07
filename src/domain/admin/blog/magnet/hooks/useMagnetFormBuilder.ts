@@ -1,13 +1,17 @@
+import {
+  useGetMagnetDetailQuery,
+  usePatchMagnetMutation,
+} from '@/api/magnet/magnet';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { generateUUID } from '@/utils/random';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { saveMagnetForm } from '../mock';
+import { useEffect, useState } from 'react';
+import { FormQuestion } from '../types';
 import {
-  FormQuestion,
-  FormQuestionItem,
-  MagnetFormData,
-} from '../types';
+  detailQuestionToApiBody,
+  detailQuestionToFormQuestion,
+  formQuestionToApiBody,
+} from '../utils/questionMapper';
 
 function createEmptyQuestion(): FormQuestion {
   return {
@@ -21,33 +25,39 @@ function createEmptyQuestion(): FormQuestion {
   };
 }
 
-export function createEmptyItem(): FormQuestionItem {
-  return { itemId: generateUUID(), value: '', isOther: false };
-}
-
-export function createOtherItem(): FormQuestionItem {
-  return {
-    itemId: generateUUID(),
-    value: '기타(직접입력)',
-    isOther: true,
-  };
-}
-
 interface UseMagnetFormBuilderParams {
   magnetId: string;
-  initialData: MagnetFormData;
 }
 
 export const useMagnetFormBuilder = ({
   magnetId,
-  initialData,
 }: UseMagnetFormBuilderParams) => {
   const router = useRouter();
   const { snackbar: setSnackbar } = useAdminSnackbar();
+  const numericMagnetId = Number(magnetId);
 
-  const [questions, setQuestions] = useState<FormQuestion[]>(
-    initialData.questions,
-  );
+  // --- 데이터 페칭 (상세 조회 API) ---
+  const { data: detailData, isLoading, refetch } =
+    useGetMagnetDetailQuery(numericMagnetId);
+
+  // --- Mutations ---
+  const { mutateAsync: patchMagnet } = usePatchMagnetMutation();
+
+  // --- 로컬 상태 ---
+  const [questions, setQuestions] = useState<FormQuestion[]>([]);
+  const [initialized, setInitialized] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // API 데이터로 초기화 (ADDITIONAL 질문만 표시)
+  useEffect(() => {
+    if (!detailData || initialized) return;
+
+    const additionalQuestions = detailData.magnetQuestionInfo
+      .filter((q) => q.type === 'ADDITIONAL')
+      .map(detailQuestionToFormQuestion);
+    setQuestions(additionalQuestions);
+    setInitialized(true);
+  }, [detailData, initialized]);
 
   const addQuestion = () => {
     setQuestions((prev) => [...prev, createEmptyQuestion()]);
@@ -101,11 +111,38 @@ export const useMagnetFormBuilder = ({
       return;
     }
 
-    await saveMagnetForm({
-      magnetId: Number(magnetId),
-      questions,
-    });
-    setSnackbar('신청폼이 저장되었습니다.');
+    setIsSaving(true);
+
+    try {
+      // 기존 BASE 질문 유지 + ADDITIONAL 질문 전체 교체
+      const baseQuestions = (detailData?.magnetQuestionInfo ?? [])
+        .filter((q) => q.type === 'BASE')
+        .map(detailQuestionToApiBody);
+
+      await patchMagnet({
+        magnetId: numericMagnetId,
+        magnetQuestionList: [
+          ...baseQuestions,
+          ...questions.map(formQuestionToApiBody),
+        ],
+      });
+
+      // 서버 재조회하여 서버가 부여한 ID 반영
+      const { data: freshData } = await refetch();
+      if (freshData) {
+        const mapped = freshData.magnetQuestionInfo
+          .filter((q) => q.type === 'ADDITIONAL')
+          .map(detailQuestionToFormQuestion);
+        setQuestions(mapped);
+      }
+
+      setSnackbar('신청폼이 저장되었습니다.');
+    } catch (error) {
+      console.error(error);
+      setSnackbar('저장 중 오류가 발생했습니다.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const navigateToList = () => {
@@ -114,6 +151,8 @@ export const useMagnetFormBuilder = ({
 
   return {
     questions,
+    isLoading,
+    isSaving,
     addQuestion,
     removeQuestion,
     updateQuestion,
