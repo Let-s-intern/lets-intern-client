@@ -7,12 +7,17 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   MagnetDetailResponse,
   MagnetListResponse,
+  MagnetType,
+  ProgramType,
+  UserMagnetListResponse,
   magnetDetailResponseSchema,
   magnetListResponseSchema,
+  userMagnetListResponseSchema,
 } from './magnetSchema';
 
 const magnetListQueryKey = 'MagnetListQueryKey';
 const magnetDetailQueryKey = 'MagnetDetailQueryKey';
+const userMagnetListQueryKey = 'UserMagnetListQueryKey';
 
 export interface MagnetListQueryParams {
   typeList?: MagnetTypeKey[];
@@ -144,6 +149,42 @@ export const usePatchMagnetMutation = ({
       console.error(error);
       errorCallback?.();
     },
+  });
+};
+
+// 마그넷 목록 조회
+export interface UserMagnetListQueryParams {
+  typeList?: MagnetType[];
+  programTypeList?: ProgramType[];
+  pageable: {
+    page: number;
+    size: number;
+    sort?: string[];
+  };
+  enabled?: boolean;
+}
+
+export const useGetUserMagnetListQuery = ({
+  typeList,
+  programTypeList,
+  pageable,
+  enabled,
+}: UserMagnetListQueryParams) => {
+  return useQuery({
+    queryKey: [userMagnetListQueryKey, typeList, programTypeList, pageable],
+    queryFn: async (): Promise<UserMagnetListResponse> => {
+      const res = await axios.get('/magnet', {
+        params: {
+          typeList,
+          programTypeList,
+          page: pageable.page,
+          size: pageable.size,
+          sort: pageable.sort,
+        },
+      });
+      return userMagnetListResponseSchema.parse(res.data.data);
+    },
+    enabled,
   });
 };
 
