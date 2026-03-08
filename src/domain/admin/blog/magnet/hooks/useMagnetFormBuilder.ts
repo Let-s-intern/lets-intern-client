@@ -8,7 +8,6 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FormQuestion } from '../types';
 import {
-  detailQuestionToApiBody,
   detailQuestionToFormQuestion,
   formQuestionToApiBody,
 } from '../utils/questionMapper';
@@ -114,17 +113,10 @@ export const useMagnetFormBuilder = ({
     setIsSaving(true);
 
     try {
-      // 기존 BASE 질문 유지 + ADDITIONAL 질문 전체 교체
-      const baseQuestions = (detailData?.magnetQuestionInfo ?? [])
-        .filter((q) => q.type === 'BASE')
-        .map(detailQuestionToApiBody);
-
+      // ADDITIONAL 질문만 전송 (BASE는 서버가 useBaseQuestion 플래그로 자동 관리)
       await patchMagnet({
         magnetId: numericMagnetId,
-        magnetQuestionList: [
-          ...baseQuestions,
-          ...questions.map(formQuestionToApiBody),
-        ],
+        magnetQuestionList: questions.map(formQuestionToApiBody),
       });
 
       // 서버 재조회하여 서버가 부여한 ID 반영

@@ -2,24 +2,29 @@
 
 import FormBuilderSection from '@/domain/admin/blog/magnet/form/FormBuilderSection';
 import { useCommonFormBuilder } from '@/domain/admin/blog/magnet/hooks/useCommonFormBuilder';
-import { CommonFormData } from '@/domain/admin/blog/magnet/types';
 import Heading from '@/domain/admin/ui/heading/Heading';
-import { Button, IconButton } from '@mui/material';
+import { Button, CircularProgress, IconButton } from '@mui/material';
 import { ArrowLeft } from 'lucide-react';
 
-interface CommonFormPageProps {
-  initialData: CommonFormData;
-}
-
-const CommonFormPage = ({ initialData }: CommonFormPageProps) => {
+const CommonFormPage = () => {
   const {
     questions,
+    isLoading,
+    isSaving,
     addQuestion,
     removeQuestion,
     updateQuestion,
     saveForm,
     navigateToList,
-  } = useCommonFormBuilder({ initialData });
+  } = useCommonFormBuilder();
+
+  if (isLoading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <CircularProgress />
+      </div>
+    );
+  }
 
   return (
     <div className="mx-6 mb-40 mt-6">
@@ -51,8 +56,9 @@ const CommonFormPage = ({ initialData }: CommonFormPageProps) => {
             color="primary"
             type="button"
             onClick={saveForm}
+            disabled={isSaving}
           >
-            저장하기
+            {isSaving ? '저장 중...' : '저장하기'}
           </Button>
         </div>
       </main>

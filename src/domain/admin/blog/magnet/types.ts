@@ -24,6 +24,8 @@ export const isMagnetManageable = (type: MagnetTypeKey): boolean =>
 export interface MagnetListItem {
   magnetId: number;
   type: MagnetTypeKey;
+  programType: string | null;
+  challengeType: string | null;
   title: string;
   startDate: string | null;
   endDate: string | null;
@@ -34,6 +36,8 @@ export interface MagnetListItem {
 /** 마그넷 등록 요청 바디 */
 export interface CreateMagnetReqBody {
   type: MagnetTypeKey;
+  programType?: string;
+  challengeType?: string;
   title: string;
 }
 
@@ -65,12 +69,16 @@ export interface MagnetPostContent {
 export interface MagnetPostDetail {
   magnetId: number;
   type: MagnetTypeKey;
+  programType: string | null;
+  challengeType: string | null;
   title: string;
   description: string | null;
   previewContents: string | null;
   mainContents: string | null;
   desktopThumbnail: string | null;
   mobileThumbnail: string | null;
+  useBaseQuestion: boolean;
+  useLaunchAlert: boolean;
   startDate: string | null;
   endDate: string | null;
   isVisible: boolean;
@@ -105,14 +113,3 @@ export interface FormQuestion {
   items: FormQuestionItem[];
 }
 
-// --- 공통 신청폼 관리 ---
-
-/** 공통 신청폼 전체 데이터 (마그넷 독립) */
-export interface CommonFormData {
-  questions: FormQuestion[];
-}
-
-/** 공통 신청폼 저장 요청 */
-export interface CommonFormReqBody {
-  questions: FormQuestion[];
-}

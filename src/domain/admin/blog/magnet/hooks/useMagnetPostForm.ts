@@ -4,7 +4,6 @@ import {
   useGetMagnetDetailQuery,
   usePatchMagnetMutation,
 } from '@/api/magnet/magnet';
-import { COMMON_FORM_QUESTIONS } from '@/domain/admin/blog/magnet/constants/commonFormQuestions';
 import {
   MagnetPostContent,
   MagnetProgramRecommendItem,
@@ -63,8 +62,8 @@ function parseDescription(raw: string | null): DescriptionPayload {
 interface FormState {
   metaDescription: string;
   thumbnail: string;
-  hasCommonForm: boolean;
-  hasReleaseNotificationButton: boolean;
+  useBaseQuestion: boolean;
+  useLaunchAlert: boolean;
 }
 
 export const useMagnetPostForm = (magnetId: string) => {
@@ -90,6 +89,8 @@ export const useMagnetPostForm = (magnetId: string) => {
 
   const [createType, setCreateType] = useState<MagnetTypeKey | ''>('');
   const [createTitle, setCreateTitle] = useState('');
+  const [createProgramType, setCreateProgramType] = useState('');
+  const [createChallengeType, setCreateChallengeType] = useState('');
 
   const magnetInfo = detailData?.magnetInfo;
 
@@ -111,8 +112,8 @@ export const useMagnetPostForm = (magnetId: string) => {
   const [formState, setFormState] = useState<FormState>({
     metaDescription: '',
     thumbnail: '',
-    hasCommonForm: false,
-    hasReleaseNotificationButton: false,
+    useBaseQuestion: false,
+    useLaunchAlert: false,
   });
   const [displayDate, setDisplayDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
@@ -122,14 +123,11 @@ export const useMagnetPostForm = (magnetId: string) => {
 
   // detailData가 로드되면 모든 폼 상태 초기화
   if (detailData && magnetInfo && !initialized) {
-    const hasBaseQuestions = detailData.magnetQuestionInfo.some(
-      (q) => q.type === 'BASE',
-    );
     setFormState({
       metaDescription: descPayload.metaDescription,
       thumbnail: magnetInfo.desktopThumbnail ?? '',
-      hasCommonForm: hasBaseQuestions,
-      hasReleaseNotificationButton: false,
+      useBaseQuestion: magnetInfo.useBaseQuestion,
+      useLaunchAlert: magnetInfo.useLaunchAlert,
     });
     setDisplayDate(magnetInfo.startDate ? dayjs(magnetInfo.startDate) : null);
     setEndDate(magnetInfo.endDate ? dayjs(magnetInfo.endDate) : null);
@@ -151,15 +149,12 @@ export const useMagnetPostForm = (magnetId: string) => {
     setFormState((prev) => ({ ...prev, thumbnail: url }));
   };
 
-  const onChangeHasCommonForm = (checked: boolean) => {
-    setFormState((prev) => ({ ...prev, hasCommonForm: checked }));
+  const onChangeUseBaseQuestion = (checked: boolean) => {
+    setFormState((prev) => ({ ...prev, useBaseQuestion: checked }));
   };
 
-  const onChangeHasReleaseNotificationButton = (checked: boolean) => {
-    setFormState((prev) => ({
-      ...prev,
-      hasReleaseNotificationButton: checked,
-    }));
+  const onChangeUseLaunchAlert = (checked: boolean) => {
+    setFormState((prev) => ({ ...prev, useLaunchAlert: checked }));
   };
 
   const onChangeProgramRecommend = (items: MagnetProgramRecommendItem[]) => {
@@ -181,7 +176,12 @@ export const useMagnetPostForm = (magnetId: string) => {
   const savePost = () => {
     if (isCreateMode) {
       if (!createType || !createTitle.trim()) return;
-      createMagnet({ type: createType, title: createTitle.trim() });
+      createMagnet({
+        type: createType,
+        programType: createProgramType || undefined,
+        challengeType: createChallengeType || undefined,
+        title: createTitle.trim(),
+      });
       return;
     }
 
@@ -191,15 +191,10 @@ export const useMagnetPostForm = (magnetId: string) => {
       magnetRecommend: content.magnetRecommend,
     });
 
-    // 기존 ADDITIONAL 질문을 API 요청 형태로 변환
+    // ADDITIONAL 질문만 전송 (BASE는 서버가 useBaseQuestion 플래그로 자동 관리)
     const additionalQuestions = (detailData?.magnetQuestionInfo ?? [])
       .filter((q) => q.type === 'ADDITIONAL')
       .map(detailQuestionToApiBody);
-
-    // hasCommonForm ON → BASE + ADDITIONAL, OFF → ADDITIONAL만
-    const magnetQuestionList = formState.hasCommonForm
-      ? [...COMMON_FORM_QUESTIONS, ...additionalQuestions]
-      : [...additionalQuestions];
 
     patchMagnet({
       magnetId: numericId,
@@ -208,10 +203,11 @@ export const useMagnetPostForm = (magnetId: string) => {
       mainContents: content.lexicalAfter ?? '',
       desktopThumbnail: formState.thumbnail,
       mobileThumbnail: formState.thumbnail,
+      useBaseQuestion: formState.useBaseQuestion,
+      useLaunchAlert: formState.useLaunchAlert,
       startDate: displayDate?.format('YYYY-MM-DDTHH:mm') ?? null,
       endDate: endDate?.format('YYYY-MM-DDTHH:mm') ?? null,
-      isVisible: false,
-      magnetQuestionList,
+      magnetQuestionList: additionalQuestions,
     });
   };
 
@@ -226,8 +222,12 @@ export const useMagnetPostForm = (magnetId: string) => {
     title: isCreateMode ? createTitle : magnetInfo?.title,
     createType,
     createTitle,
+    createProgramType,
+    createChallengeType,
     setCreateType,
     setCreateTitle,
+    setCreateProgramType,
+    setCreateChallengeType,
     formState,
     displayDate,
     endDate,
@@ -236,8 +236,8 @@ export const useMagnetPostForm = (magnetId: string) => {
     initialEditorStateAfter: initialContent.lexicalAfter,
     onChangeMetaDescription,
     onChangeThumbnailFile,
-    onChangeHasCommonForm,
-    onChangeHasReleaseNotificationButton,
+    onChangeUseBaseQuestion,
+    onChangeUseLaunchAlert,
     onChangeProgramRecommend,
     onChangeMagnetRecommend,
     onChangeEditorBefore,
