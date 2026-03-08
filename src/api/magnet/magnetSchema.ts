@@ -8,6 +8,14 @@ const magnetTypeSchema = z.enum([
   'EVENT',
 ]);
 
+const programTypeSchema = z.enum([
+  'CHALLENGE',
+  'LIVE',
+  'VOD',
+  'REPORT',
+  'GUIDEBOOK',
+]);
+
 
 const magnetListItemSchema = z.object({
   magnetId: z.number(),
@@ -85,3 +93,4 @@ export type UserMagnetListResponse = z.infer<
 >;
 export type UserMagnetListItem = z.infer<typeof userMagnetListItemSchema>;
 export type MagnetType = z.infer<typeof magnetTypeSchema>;
+export type ProgramType = z.infer<typeof programTypeSchema>;
