@@ -76,26 +76,27 @@ export default function LibraryArticle({ magnetInfo }: Props) {
       {/* 콘텐츠 편집 1 (신청 전 공개) */}
       {magnetInfo.previewContents && (
         <div className="w-full break-all text-xsmall16">
-          <LexicalContent
-            node={JSON.parse(magnetInfo.previewContents).root}
-          />
+          <LexicalContent node={JSON.parse(magnetInfo.previewContents).root} />
         </div>
       )}
 
       {/* 콘텐츠 편집 2 (신청 후 공개) */}
       {hasApplied ? (
         <div className="mt-8 w-full break-all text-xsmall16">
-          <LexicalContent
-            node={JSON.parse(magnetInfo.mainContents!).root}
-          />
+          <LexicalContent node={JSON.parse(magnetInfo.mainContents!).root} />
         </div>
       ) : (
         <div className="mt-8 flex flex-col items-center rounded-md bg-primary-10 px-5 py-10">
           <div className="mb-5 flex h-9 w-9 items-center justify-center rounded-xs border border-primary-15 bg-white">
-            <span className="text-2xl">📁</span>
+            <img
+              src="/icons/magnet-folder.svg"
+              className="size-5"
+              alt="folder"
+            />
           </div>
           <div className="mb-6 text-center text-small18 font-light text-neutral-20">
             렛츠커리어만의 <span className="text-primary">취준 꿀팁</span>이
+            <br className="block md:hidden" />
             담긴 콘텐츠,
             <br />
             다음 내용이 궁금하다면?
