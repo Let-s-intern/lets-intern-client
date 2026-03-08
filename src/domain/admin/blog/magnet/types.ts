@@ -1,7 +1,7 @@
 /** 마그넷 타입 상수 */
 export const MAGNET_TYPE = {
   MATERIAL: '자료집',
-  VOD: 'VOD',
+  VOD: '무료 VOD',
   FREE_TEMPLATE: '무료 템플릿',
   LAUNCH_ALERT: '출시알림',
   EVENT: '이벤트',

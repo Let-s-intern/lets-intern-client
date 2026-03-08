@@ -11,7 +11,7 @@ interface ContentCardProps {
   date?: string;
   dateClassName?: string;
   actionButton?: ReactNode;
-  variant?: 'blog' | 'library';
+  variant?: 'blog' | 'library' | 'library-card';
   className?: string;
   containerProps?: Record<string, unknown>;
 }
@@ -59,8 +59,8 @@ export default function ContentCard({
       >
         <span
           className={twMerge(
-            'text-xsmall14 font-semibold text-primary',
-            variant === 'library' && 'truncate',
+            'text-xsmall16 font-semibold text-primary md:text-xsmall14',
+            (variant === 'library' || variant === 'library-card') && 'truncate',
           )}
         >
           {category}
@@ -72,7 +72,9 @@ export default function ContentCard({
               'font-semibold text-neutral-0',
               variant === 'blog'
                 ? 'line-clamp-3 text-small18 md:text-xsmall16'
-                : 'line-clamp-3 text-xsmall16 md:line-clamp-2',
+                : variant === 'library'
+                  ? 'line-clamp-3 text-xsmall16 md:line-clamp-2'
+                  : 'line-clamp-2 text-small18 md:text-xsmall16',
             )}
           >
             <Link href={href} target={target}>
