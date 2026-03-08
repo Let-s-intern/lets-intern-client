@@ -7,7 +7,10 @@ import {
 import { MagnetType, UserMagnetListItem } from '@/api/magnet/magnetSchema';
 import ContentCard from '@/common/card/ContentCard';
 import FilterDropdown from '@/common/dropdown/FilterDropdown';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import MuiPagination from '@/domain/program/pagination/MuiPagination';
+import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
+import { useMediaQuery } from '@mui/material';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useMemo, useState } from 'react';
@@ -30,7 +33,8 @@ const CATEGORY_FILTER_LIST = Object.entries(MAGNET_TYPE_LABEL).map(
   ([value, caption]) => ({ caption, value }),
 );
 
-const PAGE_SIZE = 16;
+const PC_PAGE_SIZE = 16;
+const MOBILE_PAGE_SIZE = 8;
 
 function toUrlSlug(title: string) {
   return encodeURIComponent(title.replace(/\s+/g, '-'));
@@ -38,8 +42,11 @@ function toUrlSlug(title: string) {
 
 function Content() {
   const searchParams = useSearchParams();
+  const isMobile = useMediaQuery(MOBILE_MEDIA_QUERY);
   const [activeTab, setActiveTab] = useState('contents');
   const [page, setPage] = useState(1);
+
+  const pageSize = isMobile ? MOBILE_PAGE_SIZE : PC_PAGE_SIZE;
 
   const typeList = useMemo(() => {
     const category = searchParams.get('category');
@@ -51,13 +58,13 @@ function Content() {
 
   const contentsQuery = useGetUserMagnetListQuery({
     typeList,
-    pageable: { page: page - 1, size: PAGE_SIZE },
+    pageable: { page: page - 1, size: pageSize },
     enabled: !isMyTab,
   });
 
   const myQuery = useGetMyMagnetListQuery({
     typeList,
-    pageable: { page: page - 1, size: PAGE_SIZE },
+    pageable: { page: page - 1, size: pageSize },
     enabled: isMyTab,
   });
 
@@ -69,7 +76,7 @@ function Content() {
   };
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6 md:gap-8">
       {/* 탭 + 필터 */}
       <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
         <LibraryTabNav
@@ -90,7 +97,7 @@ function Content() {
       {/* 카드 그리드 */}
       {isLoading ? (
         <div className="flex min-h-[200px] items-center justify-center text-neutral-40">
-          불러오는 중...
+          <LoadingContainer />
         </div>
       ) : data && data.magnetList.length > 0 ? (
         <LibraryGrid magnetList={data.magnetList} />
@@ -118,11 +125,12 @@ function Content() {
 
 function LibraryGrid({ magnetList }: { magnetList: UserMagnetListItem[] }) {
   return (
-    <div className="grid grid-cols-1 gap-y-[54px] md:grid-cols-4 md:gap-x-5">
+    <div className="grid grid-cols-1 gap-y-7 md:grid-cols-4 md:gap-x-5">
       {magnetList.map((magnet) => (
         <ContentCard
           key={magnet.magnetId}
-          variant="library"
+          variant="library-card"
+          className="min-w-0"
           href={`/library/${magnet.magnetId}/${toUrlSlug(magnet.title)}`}
           thumbnail={
             magnet.desktopThumbnail ? (
