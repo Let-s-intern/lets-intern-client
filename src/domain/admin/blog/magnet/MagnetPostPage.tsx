@@ -28,6 +28,19 @@ const EditorApp = dynamic(() => import('@/domain/admin/lexical/EditorApp'), {
 
 const MAX_META_DESCRIPTION_LENGTH = 100;
 
+const PROGRAM_TYPE_OPTIONS = [
+  { value: 'CHALLENGE', label: '챌린지' },
+  { value: 'LIVE', label: '라이브' },
+  { value: 'VOD', label: 'VOD' },
+] as const;
+
+const CHALLENGE_TYPE_OPTIONS = [
+  { value: 'CAREER_START', label: '커리어 시작' },
+  { value: 'DOCUMENT_PREPARATION', label: '서류 준비' },
+  { value: 'MEETING_PREPARATION', label: '면접 준비' },
+  { value: 'ETC', label: '기타' },
+] as const;
+
 interface MagnetPostPageProps {
   magnetId: string;
 }
@@ -40,8 +53,12 @@ const MagnetPostPage = ({ magnetId }: MagnetPostPageProps) => {
     title,
     createType,
     createTitle,
+    createProgramType,
+    createChallengeType,
     setCreateType,
     setCreateTitle,
+    setCreateProgramType,
+    setCreateChallengeType,
     formState,
     displayDate,
     endDate,
@@ -50,8 +67,8 @@ const MagnetPostPage = ({ magnetId }: MagnetPostPageProps) => {
     initialEditorStateAfter,
     onChangeMetaDescription,
     onChangeThumbnailFile,
-    onChangeHasCommonForm,
-    onChangeHasReleaseNotificationButton,
+    onChangeUseBaseQuestion,
+    onChangeUseLaunchAlert,
     onChangeProgramRecommend,
     onChangeMagnetRecommend,
     onChangeEditorBefore,
@@ -97,6 +114,48 @@ const MagnetPostPage = ({ magnetId }: MagnetPostPageProps) => {
             <p className="text-lg font-medium">
               타입: &nbsp;{MAGNET_TYPE[type as MagnetTypeKey]}
             </p>
+          )}
+
+          {/* 4.1.1 프로그램 타입 / 챌린지 타입 (생성 모드) */}
+          {isCreateMode && (
+            <div className="flex gap-4">
+              <FormControl size="small" sx={{ minWidth: 200 }}>
+                <InputLabel>프로그램 타입</InputLabel>
+                <Select
+                  value={createProgramType}
+                  label="프로그램 타입"
+                  onChange={(e) => setCreateProgramType(e.target.value)}
+                >
+                  <MenuItem value="">
+                    <em>없음</em>
+                  </MenuItem>
+                  {PROGRAM_TYPE_OPTIONS.map((opt) => (
+                    <MenuItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              {createProgramType === 'CHALLENGE' && (
+                <FormControl size="small" sx={{ minWidth: 200 }}>
+                  <InputLabel>챌린지 타입</InputLabel>
+                  <Select
+                    value={createChallengeType}
+                    label="챌린지 타입"
+                    onChange={(e) => setCreateChallengeType(e.target.value)}
+                  >
+                    <MenuItem value="">
+                      <em>없음</em>
+                    </MenuItem>
+                    {CHALLENGE_TYPE_OPTIONS.map((opt) => (
+                      <MenuItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+            </div>
           )}
 
           {/* 4.2 제목 */}
@@ -171,25 +230,23 @@ const MagnetPostPage = ({ magnetId }: MagnetPostPageProps) => {
           </div>
 
           <div className="flex gap-4">
-            {/* 4.8 공통 신청폼 추가 */}
+            {/* 4.8 공통 신청폼 사용 */}
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={formState.hasCommonForm}
-                  onChange={(e) => onChangeHasCommonForm(e.target.checked)}
+                  checked={formState.useBaseQuestion}
+                  onChange={(e) => onChangeUseBaseQuestion(e.target.checked)}
                 />
               }
               label="공통 신청폼 추가"
             />
 
-            {/* 4.8 출시 알림 버튼 추가 */}
+            {/* 4.8 출시 알림 사용 */}
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={formState.hasReleaseNotificationButton}
-                  onChange={(e) =>
-                    onChangeHasReleaseNotificationButton(e.target.checked)
-                  }
+                  checked={formState.useLaunchAlert}
+                  onChange={(e) => onChangeUseLaunchAlert(e.target.checked)}
                 />
               }
               label="출시 알림 신청 버튼 추가"
