@@ -75,13 +75,22 @@ const CurationSelectModal = ({
       enabled: type === 'RESOURCE',
     });
 
+  const { data: guidebookData, isLoading: guidebookDataIsLoading } =
+    useGetProgramAdminQuery({
+      type: 'GUIDEBOOK',
+      page: 1,
+      size: 100,
+      enabled: type === 'GUIDEBOOK',
+    });
+
   const isLoading =
     challengeDataIsLoading ||
     liveDataIsLoading ||
     vodDataIsLoading ||
     reportDataIsLoading ||
     blogDataIsLoading ||
-    magnetDataIsLoading;
+    magnetDataIsLoading ||
+    guidebookDataIsLoading;
 
   const data = (): CurationSelectItemType[] => {
     switch (type) {
@@ -144,6 +153,15 @@ const CurationSelectModal = ({
             visibleDate: magnet.startDate
               ? dayjs(magnet.startDate).format(YY_MM_DD)
               : '-',
+          })) || []
+        );
+      case 'GUIDEBOOK':
+        return (
+          guidebookData?.programList.map((program) => ({
+            id: program.programInfo.id || 0,
+            title: program.programInfo.title || '',
+            thumbnail: program.programInfo.thumbnail || '',
+            isVisible: program.programInfo.isVisible || false,
           })) || []
         );
       default:
