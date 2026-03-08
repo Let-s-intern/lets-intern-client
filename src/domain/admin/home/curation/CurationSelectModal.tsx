@@ -1,5 +1,6 @@
 import { useBlogListQuery } from '@/api/blog/blog';
 import { CurationType } from '@/api/curation';
+import { useGetUserMagnetListQuery } from '@/api/magnet/magnet';
 import { useGetProgramAdminQuery } from '@/api/program';
 import { useGetReportsForAdmin } from '@/api/report';
 import EmptyContainer from '@/common/container/EmptyContainer';
@@ -65,15 +66,22 @@ const CurationSelectModal = ({
       page: 1,
       size: 100,
     },
-    enabled: type === 'BLOG' || type === 'RESOURCE',
+    enabled: type === 'BLOG',
   });
+
+  const { data: magnetData, isLoading: magnetDataIsLoading } =
+    useGetUserMagnetListQuery({
+      pageable: { page: 1, size: 100 },
+      enabled: type === 'RESOURCE',
+    });
 
   const isLoading =
     challengeDataIsLoading ||
     liveDataIsLoading ||
     vodDataIsLoading ||
     reportDataIsLoading ||
-    blogDataIsLoading;
+    blogDataIsLoading ||
+    magnetDataIsLoading;
 
   const data = (): CurationSelectItemType[] => {
     switch (type) {
@@ -128,15 +136,14 @@ const CurationSelectModal = ({
           })) || []
         );
       case 'RESOURCE':
-        // TODO: 자료집 API 완성 후 교체 예정 (현재 블로그 데이터로 mock)
         return (
-          blogData?.blogInfos.map((blog) => ({
-            id: blog.blogThumbnailInfo.id || 0,
-            title: blog.blogThumbnailInfo.title || '',
-            thumbnail: blog.blogThumbnailInfo.thumbnail || '',
-            isVisible: blog.blogThumbnailInfo.isDisplayed || false,
-            visibleDate:
-              dayjs(blog.blogThumbnailInfo.displayDate).format(YY_MM_DD) || '-',
+          magnetData?.magnetList.map((magnet) => ({
+            id: magnet.magnetId,
+            title: magnet.title,
+            thumbnail: magnet.desktopThumbnail || magnet.mobileThumbnail || '',
+            visibleDate: magnet.startDate
+              ? dayjs(magnet.startDate).format(YY_MM_DD)
+              : '-',
           })) || []
         );
       default:
