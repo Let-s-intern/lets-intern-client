@@ -48,13 +48,17 @@ const CloneFormDropdown = ({
       if (!confirmed) return;
     }
 
-    const data = await queryClient.fetchQuery(
-      magnetDetailQueryOptions(magnetId),
-    );
-    const questions = data.magnetQuestionInfo
-      .filter((q) => q.type === 'ADDITIONAL')
-      .map(detailQuestionToFormQuestion);
-    onClone(questions);
+    try {
+      const data = await queryClient.fetchQuery(
+        magnetDetailQueryOptions(magnetId),
+      );
+      const questions = data.magnetQuestionInfo
+        .filter((q) => q.type === 'ADDITIONAL')
+        .map(detailQuestionToFormQuestion);
+      onClone(questions);
+    } catch {
+      alert('신청폼을 불러오는 데 실패했습니다.');
+    }
   };
 
   return (
