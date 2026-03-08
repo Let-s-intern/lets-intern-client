@@ -11,6 +11,7 @@ import { GRADE_ENUM_TO_KOREAN, GRADE_KOREAN_TO_ENUM } from '@/utils/constants';
 import { ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { getLibraryPathname } from '@/utils/url';
 import MagnetApplyInfoCard from './MagnetApplyInfoCard';
 import MagnetSurveySection, {
   MagnetQuestion,
@@ -208,7 +209,8 @@ const MagnetApplyContent = ({
       });
 
       alert('신청이 완료되었습니다.');
-      router.back();
+      router.push(getLibraryPathname({ id: magnetId, title }));
+      router.refresh();
     } catch (error) {
       console.error(error);
       alert(`신청에 실패했습니다. 다시 시도해주세요.\n${error}`);

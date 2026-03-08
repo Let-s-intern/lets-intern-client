@@ -4,7 +4,7 @@ import BlogLinkShareBtn from '@/domain/blog/button/BlogLilnkShareBtn';
 import LexicalContent from '@/domain/blog/ui/LexicalContent';
 import dayjs from '@/lib/dayjs';
 import Image from 'next/image';
-import Link from 'next/link';
+import LibraryMainContent from './LibraryMainContent';
 
 const MAGNET_TYPE_LABEL: Record<string, string> = {
   MATERIAL: '자료집',
@@ -27,12 +27,8 @@ const parseLexicalRoot = (json: string) => {
 };
 
 export default function LibraryArticle({ magnetInfo }: Props) {
-  const hasApplied = magnetInfo.mainContents !== null;
   const previewRoot = magnetInfo.previewContents
     ? parseLexicalRoot(magnetInfo.previewContents)
-    : null;
-  const mainRoot = magnetInfo.mainContents
-    ? parseLexicalRoot(magnetInfo.mainContents)
     : null;
 
   return (
@@ -94,35 +90,8 @@ export default function LibraryArticle({ magnetInfo }: Props) {
         </div>
       )}
 
-      {/* 콘텐츠 편집 2 (신청 후 공개) */}
-      {hasApplied && mainRoot ? (
-        <div className="mt-8 w-full break-all text-xsmall16">
-          <LexicalContent node={mainRoot} />
-        </div>
-      ) : (
-        <div className="mt-8 flex flex-col items-center rounded-md bg-primary-10 px-5 py-10">
-          <div className="mb-5 flex h-9 w-9 items-center justify-center rounded-xs border border-primary-15 bg-white">
-            <img
-              src="/icons/magnet-folder.svg"
-              className="size-5"
-              alt="folder"
-            />
-          </div>
-          <div className="mb-6 text-center text-small18 font-light text-neutral-20">
-            렛츠커리어만의 <span className="text-primary">취준 꿀팁</span>이
-            <br className="block md:hidden" />
-            담긴 콘텐츠,
-            <br />
-            다음 내용이 궁금하다면?
-          </div>
-          <Link
-            href={`/library/${magnetInfo.magnetId}/apply`}
-            className="w-full max-w-lg rounded-xs bg-primary px-6 py-4 text-center text-xsmall16 text-white"
-          >
-            자료집 신청하기
-          </Link>
-        </div>
-      )}
+      {/* 콘텐츠 편집 2 (신청 후 공개) — 클라이언트에서 인증 후 조회 */}
+      <LibraryMainContent magnetId={magnetInfo.magnetId} />
     </article>
   );
 }
