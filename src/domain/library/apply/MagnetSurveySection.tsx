@@ -232,7 +232,7 @@ function QuestionLabel({
     <div className="flex flex-col gap-1">
       <label className="text-xsmall14 md:text-xsmall16">
         {question}
-        {isRequired && <span className="pl-1 text-requirement">*</span>}
+        {isRequired && <span className="pl-1 text-primary">*</span>}
       </label>
       {description && (
         <p className="break-keep text-xsmall14 text-neutral-40 md:text-xsmall16">

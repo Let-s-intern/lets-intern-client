@@ -1,7 +1,7 @@
 'use client';
 
-import MarketingConsentSection from '@/common/form/MarketingConsentSection';
 import { usePatchUser, useUserQuery } from '@/api/user/user';
+import MarketingConsentSection from '@/common/form/MarketingConsentSection';
 import CareerInfoForm, {
   CareerInfoSelections,
   CareerInfoValues,
@@ -218,6 +218,7 @@ const MagnetApplyContent = ({
           onChange={setValue}
           initialSelections={initialSelections}
           onSelectionsChange={handleSelectionsChange}
+          showRequired={true}
         />
       </section>
 
