@@ -1,6 +1,7 @@
 import { UserMagnetInfo } from '@/api/magnet/magnetSchema';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import BlogLinkShareBtn from '@/domain/blog/button/BlogLilnkShareBtn';
+import LexicalContent from '@/domain/blog/ui/LexicalContent';
 import dayjs from '@/lib/dayjs';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -74,18 +75,20 @@ export default function LibraryArticle({ magnetInfo }: Props) {
 
       {/* 콘텐츠 편집 1 (신청 전 공개) */}
       {magnetInfo.previewContents && (
-        <div
-          className="w-full break-all text-xsmall16"
-          dangerouslySetInnerHTML={{ __html: magnetInfo.previewContents }}
-        />
+        <div className="w-full break-all text-xsmall16">
+          <LexicalContent
+            node={JSON.parse(magnetInfo.previewContents).root}
+          />
+        </div>
       )}
 
       {/* 콘텐츠 편집 2 (신청 후 공개) */}
       {hasApplied ? (
-        <div
-          className="mt-8 w-full break-all text-xsmall16"
-          dangerouslySetInnerHTML={{ __html: magnetInfo.mainContents! }}
-        />
+        <div className="mt-8 w-full break-all text-xsmall16">
+          <LexicalContent
+            node={JSON.parse(magnetInfo.mainContents!).root}
+          />
+        </div>
       ) : (
         <div className="mt-8 flex flex-col items-center rounded-md bg-primary-10 px-5 py-10">
           <div className="mb-5 flex h-9 w-9 items-center justify-center rounded-xs border border-primary-15 bg-white">
