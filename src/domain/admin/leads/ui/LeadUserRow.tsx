@@ -2,7 +2,6 @@ import { LeadManagementUser } from '@/api/leadManagement';
 import TableCell from '@/domain/admin/ui/table/new/TableCell';
 import TableRow from '@/domain/admin/ui/table/new/TableRow';
 import { TableTemplateProps } from '@/domain/admin/ui/table/new/TableTemplate';
-import Link from 'next/link';
 
 // --- Table Column Key ---
 
@@ -37,12 +36,7 @@ export const TABLE_MIN_WIDTH = '80rem';
 const LeadUserRow = ({ user }: { user: LeadManagementUser }) => (
   <TableRow minWidth={TABLE_MIN_WIDTH}>
     <TableCell cellWidth={tableColumnMetaData.name.cellWidth}>
-      <Link
-        href={`/admin/leads/managements/${user.id}`}
-        className="text-blue-600 underline hover:text-blue-800"
-      >
-        {user.name}
-      </Link>
+      {user.name}
     </TableCell>
     <TableCell cellWidth={tableColumnMetaData.phoneNum.cellWidth}>
       {user.phoneNum || '-'}
