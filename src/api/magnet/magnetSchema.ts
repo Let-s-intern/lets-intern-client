@@ -34,6 +34,13 @@ export const magnetListResponseSchema = z.object({
 
 export type MagnetListResponse = z.infer<typeof magnetListResponseSchema>;
 
+const challengeTypeSchema = z.enum([
+  'CAREER_START',
+  'PERSONAL_STATEMENT',
+  'PORTFOLIO',
+  'PERSONAL_STATEMENT_LARGE_CORP',
+]);
+
 const magnetInfoSchema = z.object({
   magnetId: z.number(),
   type: magnetTypeSchema,
@@ -75,6 +82,31 @@ export const baseQuestionListResponseSchema = z.object({
 
 export type MagnetDetailResponse = z.infer<typeof magnetDetailResponseSchema>;
 export type MagnetDetailQuestion = z.infer<typeof magnetQuestionSchema>;
+export type MagnetInfo = z.infer<typeof magnetInfoSchema>;
+
+// --- User-facing magnet detail ---
+
+const userMagnetInfoSchema = z.object({
+  magnetId: z.number(),
+  type: magnetTypeSchema,
+  title: z.string(),
+  description: z.string().nullable(),
+  previewContents: z.string().nullable(),
+  mainContents: z.string().nullable(),
+  desktopThumbnail: z.string().nullable(),
+  mobileThumbnail: z.string().nullable(),
+  startDate: z.string().nullable(),
+  endDate: z.string().nullable(),
+});
+
+export const userMagnetDetailResponseSchema = z.object({
+  magnetInfo: userMagnetInfoSchema,
+});
+
+export type UserMagnetDetailResponse = z.infer<
+  typeof userMagnetDetailResponseSchema
+>;
+export type UserMagnetInfo = z.infer<typeof userMagnetInfoSchema>;
 
 const userMagnetListItemSchema = z.object({
   magnetId: z.number(),
