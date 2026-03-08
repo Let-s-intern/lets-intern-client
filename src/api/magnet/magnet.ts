@@ -8,13 +8,19 @@ import {
   BaseQuestionListResponse,
   MagnetDetailResponse,
   MagnetListResponse,
+  MagnetType,
+  ProgramType,
+  UserMagnetListResponse,
   baseQuestionListResponseSchema,
   magnetDetailResponseSchema,
   magnetListResponseSchema,
+  userMagnetListResponseSchema,
 } from './magnetSchema';
 
 const magnetListQueryKey = 'MagnetListQueryKey';
 const magnetDetailQueryKey = 'MagnetDetailQueryKey';
+const userMagnetListQueryKey = 'UserMagnetListQueryKey';
+const myMagnetListQueryKey = 'MyMagnetListQueryKey';
 const baseQuestionQueryKey = 'BaseQuestionQueryKey';
 
 export interface MagnetListQueryParams {
@@ -151,6 +157,75 @@ export const usePatchMagnetMutation = ({
       console.error(error);
       errorCallback?.();
     },
+  });
+};
+
+// 마그넷 목록 조회
+export interface UserMagnetListQueryParams {
+  typeList?: MagnetType[];
+  programTypeList?: ProgramType[];
+  pageable: {
+    page: number;
+    size: number;
+    sort?: string[];
+  };
+  enabled?: boolean;
+}
+
+export const useGetUserMagnetListQuery = ({
+  typeList,
+  programTypeList,
+  pageable,
+  enabled,
+}: UserMagnetListQueryParams) => {
+  return useQuery({
+    queryKey: [userMagnetListQueryKey, typeList, programTypeList, pageable],
+    queryFn: async (): Promise<UserMagnetListResponse> => {
+      const res = await axios.get('/magnet', {
+        params: {
+          typeList,
+          programTypeList,
+          page: pageable.page,
+          size: pageable.size,
+          sort: pageable.sort,
+        },
+      });
+      return userMagnetListResponseSchema.parse(res.data.data);
+    },
+    enabled,
+  });
+};
+
+// MY 마그넷 목록 조회
+export interface MyMagnetListQueryParams {
+  typeList?: MagnetType[];
+  pageable: {
+    page: number;
+    size: number;
+    sort?: string[];
+  };
+  enabled?: boolean;
+}
+
+export const useGetMyMagnetListQuery = ({
+  typeList,
+  pageable,
+  enabled,
+}: MyMagnetListQueryParams) => {
+  return useQuery({
+    queryKey: [myMagnetListQueryKey, typeList, pageable],
+    queryFn: async (): Promise<UserMagnetListResponse> => {
+      const res = await axios.get('/magnet/my', {
+        params: {
+          typeList,
+          page: pageable.page,
+          size: pageable.size,
+          sort: pageable.sort,
+        },
+      });
+      return userMagnetListResponseSchema.parse(res.data.data);
+    },
+    enabled,
   });
 };
 

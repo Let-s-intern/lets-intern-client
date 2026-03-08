@@ -1,7 +1,6 @@
 'use client';
 
 import CheckboxActive from '@/assets/icons/checkbox-active.svg?react';
-import CheckboxInActive from '@/assets/icons/checkbox-inactive.svg?react';
 import BaseBottomSheet from '@/common/sheet/BaseBottomSheet';
 import { twMerge } from '@/lib/twMerge';
 import { FilterItem } from '@/types/common';
@@ -326,7 +325,11 @@ const FilterCaption = memo(function FilterCaption({
           {checked ? (
             <CheckboxActive className="h-6 w-6" />
           ) : (
-            <CheckboxInActive className="h-6 w-6" />
+            <img
+              className="h-6 w-6"
+              src="/icons/checkbox-unchecked-box2.svg"
+              alt="체크박스"
+            />
           )}
           {children}
         </div>

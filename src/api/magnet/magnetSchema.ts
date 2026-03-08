@@ -8,6 +8,14 @@ const magnetTypeSchema = z.enum([
   'EVENT',
 ]);
 
+const programTypeSchema = z.enum([
+  'CHALLENGE',
+  'LIVE',
+  'VOD',
+  'REPORT',
+  'GUIDEBOOK',
+]);
+
 const magnetListItemSchema = z.object({
   magnetId: z.number(),
   type: magnetTypeSchema,
@@ -67,6 +75,36 @@ export const baseQuestionListResponseSchema = z.object({
 
 export type MagnetDetailResponse = z.infer<typeof magnetDetailResponseSchema>;
 export type MagnetDetailQuestion = z.infer<typeof magnetQuestionSchema>;
+
+const userMagnetListItemSchema = z.object({
+  magnetId: z.number(),
+  type: magnetTypeSchema,
+  title: z.string(),
+  desktopThumbnail: z.string().nullable(),
+  mobileThumbnail: z.string().nullable(),
+  startDate: z.string().nullable(),
+  endDate: z.string().nullable(),
+});
+
+const pageInfoSchema = z.object({
+  pageNum: z.number(),
+  pageSize: z.number(),
+  totalElements: z.number(),
+  totalPages: z.number(),
+});
+
+export const userMagnetListResponseSchema = z.object({
+  magnetList: z.array(userMagnetListItemSchema),
+  pageInfo: pageInfoSchema,
+});
+
+export type UserMagnetListResponse = z.infer<
+  typeof userMagnetListResponseSchema
+>;
+export type UserMagnetListItem = z.infer<typeof userMagnetListItemSchema>;
+export type MagnetType = z.infer<typeof magnetTypeSchema>;
+export type ProgramType = z.infer<typeof programTypeSchema>;
+
 export type BaseQuestionListResponse = z.infer<
   typeof baseQuestionListResponseSchema
 >;
