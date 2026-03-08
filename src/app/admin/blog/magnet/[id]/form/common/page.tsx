@@ -1,10 +1,7 @@
 import CommonFormPage from '@/domain/admin/blog/magnet/CommonFormPage';
-import { fetchCommonForm } from '@/domain/admin/blog/magnet/mock';
 
-const Page = async () => {
-  const initialData = await fetchCommonForm();
-
-  return <CommonFormPage initialData={initialData} />;
+const Page = () => {
+  return <CommonFormPage />;
 };
 
 export default Page;
