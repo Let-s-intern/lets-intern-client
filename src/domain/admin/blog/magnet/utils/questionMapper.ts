@@ -1,5 +1,8 @@
 import { MagnetDetailQuestion } from '@/api/magnet/magnetSchema';
-import { MagnetQuestionReqBody } from '@/api/magnet/magnet';
+import {
+  MagnetQuestionReqBody,
+  PatchMagnetQuestionReqBody,
+} from '@/api/magnet/magnet';
 import { generateUUID } from '@/utils/random';
 import { FormQuestion, FormQuestionItem } from '../types';
 
@@ -50,12 +53,29 @@ export function detailQuestionToApiBody(
   };
 }
 
-/** 프론트엔드 FormQuestion → PATCH 요청용 MagnetQuestionReqBody */
+/** 프론트엔드 FormQuestion → PATCH 요청용 MagnetQuestionReqBody (ADDITIONAL) */
 export function formQuestionToApiBody(
   q: FormQuestion,
 ): MagnetQuestionReqBody {
   return {
     type: 'ADDITIONAL',
+    question: q.question,
+    description: q.description,
+    isRequired: q.isRequired === 'REQUIRED',
+    answerType: (q.questionType === 'OBJECTIVE' ? 'CHOICE' : 'TEXT') as
+      | 'CHOICE'
+      | 'TEXT',
+    choiceType: q.selectionMethod as 'SINGLE' | 'MULTIPLE',
+    options:
+      q.questionType === 'OBJECTIVE' ? serializeOptions(q.items) : null,
+  };
+}
+
+/** 프론트엔드 FormQuestion → 공통 신청폼 PATCH/POST 요청용 (type 제외) */
+export function formQuestionToBaseApiBody(
+  q: FormQuestion,
+): Omit<PatchMagnetQuestionReqBody, 'isVisible'> {
+  return {
     question: q.question,
     description: q.description,
     isRequired: q.isRequired === 'REQUIRED',
