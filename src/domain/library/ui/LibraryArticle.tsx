@@ -18,8 +18,22 @@ interface Props {
   magnetInfo: UserMagnetInfo;
 }
 
+const parseLexicalRoot = (json: string) => {
+  try {
+    return JSON.parse(json).root ?? null;
+  } catch {
+    return null;
+  }
+};
+
 export default function LibraryArticle({ magnetInfo }: Props) {
   const hasApplied = magnetInfo.mainContents !== null;
+  const previewRoot = magnetInfo.previewContents
+    ? parseLexicalRoot(magnetInfo.previewContents)
+    : null;
+  const mainRoot = magnetInfo.mainContents
+    ? parseLexicalRoot(magnetInfo.mainContents)
+    : null;
 
   return (
     <article>
@@ -74,16 +88,16 @@ export default function LibraryArticle({ magnetInfo }: Props) {
       </div>
 
       {/* 콘텐츠 편집 1 (신청 전 공개) */}
-      {magnetInfo.previewContents && (
+      {previewRoot && (
         <div className="w-full break-all text-xsmall16">
-          <LexicalContent node={JSON.parse(magnetInfo.previewContents).root} />
+          <LexicalContent node={previewRoot} />
         </div>
       )}
 
       {/* 콘텐츠 편집 2 (신청 후 공개) */}
-      {hasApplied ? (
+      {hasApplied && mainRoot ? (
         <div className="mt-8 w-full break-all text-xsmall16">
-          <LexicalContent node={JSON.parse(magnetInfo.mainContents!).root} />
+          <LexicalContent node={mainRoot} />
         </div>
       ) : (
         <div className="mt-8 flex flex-col items-center rounded-md bg-primary-10 px-5 py-10">
