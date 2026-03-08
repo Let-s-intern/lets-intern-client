@@ -5,6 +5,7 @@ import { z } from 'zod';
 import {
   challengeApplicationPriceType,
   ChallengePricePlanEnum,
+  guidebookApplicationPriceType,
   liveApplicationPriceType,
   ProgramStatusEnum,
   ProgramTypeEnum,
@@ -29,9 +30,12 @@ export const programApplicationSchema = z.object({
   startDate: z.string().nullable().optional(),
   endDate: z.string().nullable().optional(),
   deadline: z.string().nullable().optional(),
-  statusType: ProgramStatusEnum,
+  statusType: ProgramStatusEnum.optional(),
   priceList: z.array(challengeApplicationPriceType).nullable().optional(),
-  price: liveApplicationPriceType.nullable().optional(),
+  price: z
+    .union([liveApplicationPriceType, guidebookApplicationPriceType])
+    .nullable()
+    .optional(),
 });
 
 export type ProgramApplicationFormInfo = z.infer<
@@ -119,6 +123,18 @@ export const postApplicationResultSchema = z.object({
 });
 
 export type PostApplicationResult = z.infer<typeof postApplicationResultSchema>;
+
+export const patchApplicationDownload = async ({
+  applicationId,
+  type,
+}: {
+  applicationId: number;
+  type: 'GUIDEBOOK' | 'CHALLENGE' | 'LIVE' | 'VOD' | 'REPORT';
+}) => {
+  await axios.patch(`/application/${applicationId}/download`, null, {
+    params: { type },
+  });
+};
 
 export const useCancelApplicationMutation = ({
   applicationId,

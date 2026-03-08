@@ -6,7 +6,10 @@ import CreditCardIcon from '@/assets/icons/credit-card.svg?react';
 import { Duration } from '@/common/Duration';
 import BackHeader from '@/common/header/BackHeader';
 import LoadingContainer from '@/common/loading/LoadingContainer';
-import { COUPON_DISABLED_CHALLENGE_TYPES } from '@/domain/program/program-detail/apply/constants';
+import {
+  COUPON_DISABLED_CHALLENGE_TYPES,
+  COUPON_DISABLED_PROGRAM_TYPES,
+} from '@/domain/program/program-detail/apply/constants';
 import CouponSection, {
   CouponSectionProps,
 } from '@/domain/program/program-detail/apply/section/CouponSection';
@@ -69,11 +72,15 @@ const PaymentInputContent = () => {
     initialized: true,
   };
 
-  const challengeBasicPriceInfo = Array.isArray(program?.priceInfo)
-    ? (program?.priceInfo as ChallengePriceInfo[])?.find(
-        (info) => info.challengePricePlanType === 'BASIC',
-      )
-    : null;
+  const challengeBasicPriceInfo =
+    programApplicationData.programType === 'challenge' &&
+    program &&
+    'priceInfo' in program &&
+    Array.isArray(program.priceInfo)
+      ? (program.priceInfo as ChallengePriceInfo[])?.find(
+          (info) => info.challengePricePlanType === 'BASIC',
+        )
+      : null;
 
   /**
    * 최대 쿠폰 할인 금액
@@ -98,7 +105,11 @@ const PaymentInputContent = () => {
     return program.challengeType;
   })();
   const isCouponDisabledType =
-    COUPON_DISABLED_CHALLENGE_TYPES.includes(challengeType);
+    COUPON_DISABLED_CHALLENGE_TYPES.includes(challengeType) ||
+    COUPON_DISABLED_PROGRAM_TYPES.includes(
+      programApplicationData.programType ?? '',
+    );
+
   const showCouponSection = !isCouponDisabledType || hasB2BParam;
 
   const setUserInfo = useCallback((info: UserInfo) => {
@@ -254,24 +265,38 @@ const PaymentInputContent = () => {
 
       <div className="mx-5">
         <OrderProgramInfo
-          endDate={program?.endDate?.toISOString()}
           progressType={programApplicationData.progressType}
-          startDate={program?.startDate?.toISOString()}
           thumbnail={program?.thumbnail}
           title={program?.title}
+          programType={programApplicationData.programType}
+          endDate={
+            program && 'endDate' in program
+              ? program.endDate?.toISOString()
+              : undefined
+          }
+          startDate={
+            program && 'startDate' in program
+              ? program.startDate?.toISOString()
+              : undefined
+          }
+          accessMethod={
+            program && 'accessMethod' in program
+              ? program.accessMethod
+              : undefined
+          }
         />
-
-        <div className="-mx-5 mb-10 mt-8 flex items-center justify-center gap-2 bg-primary-10 px-2.5 py-5 text-xsmall14 lg:mx-0 lg:rounded-sm">
-          <span>마감까지</span>
-          {program?.deadline ? (
+        {program && 'deadline' in program && program.deadline ? (
+          <div className="-mx-5 mb-10 mt-8 flex items-center justify-center gap-2 bg-primary-10 px-2.5 py-5 text-xsmall14 lg:mx-0 lg:rounded-sm">
+            <span>마감까지</span>
             <Duration
               deadline={program.deadline}
               numberBoxClassName="text-xsmall14 bg-white text-primary"
             />
-          ) : null}
-          <span>남았어요!</span>
-        </div>
-
+            <span>남았어요!</span>
+          </div>
+        ) : (
+          <div className="mt-10"></div>
+        )}
         <p className="my-3 text-xsmall16 font-semibold text-neutral-0">
           신청 폼을 모두 입력해주세요.
         </p>
@@ -331,6 +356,7 @@ const PaymentInputContent = () => {
                   : null,
                 price: programApplicationData.couponPrice ?? 0,
               }}
+              showCouponDiscount={showCouponSection}
             />
             <hr className="bg-neutral-85" />
             <div className="flex h-10 items-center justify-between px-3 font-semibold text-neutral-0">

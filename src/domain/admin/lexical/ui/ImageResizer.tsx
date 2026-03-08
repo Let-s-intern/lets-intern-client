@@ -33,6 +33,7 @@ export default function ImageResizer({
   showCaption,
   setShowCaption,
   captionsEnabled,
+  onLinkClick,
 }: {
   editor: LexicalEditor;
   buttonRef: {current: null | HTMLButtonElement};
@@ -43,6 +44,7 @@ export default function ImageResizer({
   setShowCaption: (show: boolean) => void;
   showCaption: boolean;
   captionsEnabled: boolean;
+  onLinkClick?: () => void;
 }): JSX.Element {
   const controlWrapperRef = useRef<HTMLDivElement>(null);
   const userSelect = useRef({
@@ -253,16 +255,25 @@ export default function ImageResizer({
   };
   return (
     <div ref={controlWrapperRef}>
-      {!showCaption && captionsEnabled && (
-        <button
-          className="image-caption-button"
-          ref={buttonRef}
-          onClick={() => {
-            setShowCaption(!showCaption);
-          }}>
-          Add Caption
-        </button>
-      )}
+      <div className="image-action-buttons">
+        {!showCaption && captionsEnabled && (
+          <button
+            className="image-caption-button"
+            ref={buttonRef}
+            onClick={() => {
+              setShowCaption(!showCaption);
+            }}>
+            Add Caption
+          </button>
+        )}
+        {onLinkClick && (
+          <button
+            className="image-link-button"
+            onClick={onLinkClick}>
+            링크
+          </button>
+        )}
+      </div>
       <div
         className="image-resizer image-resizer-n"
         onPointerDown={(event) => {

@@ -1,10 +1,10 @@
 import dayjs from '@/lib/dayjs';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import { twMerge } from '@/lib/twMerge';
+import { Dayjs } from 'dayjs';
 import { useEffect, useMemo, useRef, useState } from 'react';
-
 import { useProgramApplicationQuery } from '../../../../api/application';
-import { useProgramQuery } from '../../../../api/program';
+import { useLegacyProgramQuery } from '../../../../api/program';
 import useRunOnce from '../../../../hooks/useRunOnce';
 import useProgramStore from '../../../../store/useProgramStore';
 import { ProgramType } from '../../../../types/common';
@@ -13,8 +13,10 @@ import PayContent from '../apply/content/PayContent';
 import PaymentInputContent from '../apply/content/PaymentInputContent';
 import ScheduleContent from '../apply/content/ScheduleContent';
 
+type LegacyProgramType = Exclude<ProgramType, 'guidebook'>;
+
 interface MobileApplySectionProps {
-  programType: ProgramType;
+  programType: LegacyProgramType;
   programId: number;
   programTitle: string;
   toggleDrawer: () => void;
@@ -148,30 +150,31 @@ const MobileApplySection = ({
 
   const orderId = generateOrderId();
 
-  const program = useProgramQuery({ programId, type: programType });
+  const program = useLegacyProgramQuery({ programId, type: programType });
+  const programData = program?.query.data as {
+    beginning: Dayjs | null;
+    deadline: Dayjs | null;
+    startDate: Dayjs | null;
+    endDate: Dayjs | null;
+    progressType?: string | null;
+  } | null;
 
   const progressType =
-    program.query.data &&
-    'progressType' in program.query.data &&
-    program.query.data.progressType
-      ? program.query.data.progressType
+    programData && 'progressType' in programData && programData.progressType
+      ? programData.progressType
       : 'none';
 
   const programDate =
-    program && program.query.data
+    program && programData
       ? {
-          beginning: program.query.data.beginning
-            ? dayjs(program.query.data.beginning)
+          beginning: programData.beginning
+            ? dayjs(programData.beginning)
             : null,
-          deadline: program.query.data.deadline
-            ? dayjs(program.query.data.deadline)
+          deadline: programData.deadline ? dayjs(programData.deadline) : null,
+          startDate: programData.startDate
+            ? dayjs(programData.startDate)
             : null,
-          startDate: program.query.data.startDate
-            ? dayjs(program.query.data.startDate)
-            : null,
-          endDate: program.query.data.endDate
-            ? dayjs(program.query.data.endDate)
-            : null,
+          endDate: programData.endDate ? dayjs(programData.endDate) : null,
         }
       : null;
 

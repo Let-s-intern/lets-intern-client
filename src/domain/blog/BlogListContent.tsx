@@ -8,6 +8,7 @@ import {
 } from '@/api/blog/blog';
 import BellIcon from '@/assets/icons/Bell.svg';
 import LockKeyHoleIcon from '@/assets/icons/lock-keyhole.svg';
+import ContentCard from '@/common/card/ContentCard';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
@@ -22,7 +23,6 @@ import EmptyContainer from '../../common/container/EmptyContainer';
 import FilterDropdown from '../../common/dropdown/FilterDropdown';
 import LoadingContainer from '../../common/loading/LoadingContainer';
 import MuiPagination from '../program/pagination/MuiPagination';
-import BlogCard from './card/BlogCard';
 
 const filterList = Object.entries(blogCategory).map(([key, value]) => ({
   caption: value,
@@ -158,19 +158,17 @@ function BlogList({
             ((isMobile && index === 3) || (!isMobile && index === 3))
           ) {
             blogBannerCard = (
-              <BlogCard
-                onClick={(e) => {
-                  e.preventDefault();
-                  router.push(blogBanners[0].link ?? '');
-                }}
-                href={blogBanners[0].link ?? ''}
-                data-url={blogBanners[0].link ?? ''}
-                data-text={blogBanners[0].title ?? ''}
-                className="blog_banner cursor-pointer"
+              <ContentCard
                 key={blogBanners[0].blogBannerId}
+                href={blogBanners[0].link ?? ''}
+                className="blog_banner cursor-pointer"
+                category="AD"
                 title={blogBanners[0].title ?? ''}
-                superTitle="AD"
-                thumbnailItem={
+                containerProps={{
+                  'data-url': blogBanners[0].link ?? '',
+                  'data-text': blogBanners[0].title ?? '',
+                }}
+                thumbnail={
                   <img
                     className="h-full w-full object-cover"
                     src={blogBanners[0].file ?? undefined}
@@ -186,19 +184,17 @@ function BlogList({
             const title = blogBanners[1].title ?? '';
 
             blogBannerCard = (
-              <BlogCard
-                onClick={(e) => {
-                  e.preventDefault();
-                  router.push(link);
-                }}
-                href={link}
-                data-url={link}
-                data-text={title}
-                className="blog_banner cursor-pointer"
+              <ContentCard
                 key={blogBanners[1].blogBannerId}
+                href={link}
+                className="blog_banner cursor-pointer"
+                category="AD"
                 title={title}
-                superTitle="AD"
-                thumbnailItem={
+                containerProps={{
+                  'data-url': link,
+                  'data-text': title,
+                }}
+                thumbnail={
                   <img
                     className="h-full w-full object-cover"
                     src={blogBanners[1].file ?? undefined}
@@ -209,44 +205,43 @@ function BlogList({
             );
           }
 
+          const isUpcoming = willBePublished(
+            blogThumbnailInfo.displayDate ?? '',
+          );
+
           return (
             <Fragment key={blogThumbnailInfo.id}>
               {blogBannerCard}
-              <BlogCard
+              <ContentCard
                 className={twMerge(
                   'cursor-pointer',
-                  willBePublished(blogThumbnailInfo.displayDate ?? '')
-                    ? 'blog_upcoming'
-                    : 'blog_item',
+                  isUpcoming ? 'blog_upcoming' : 'blog_item',
                 )}
-                target={
-                  willBePublished(blogThumbnailInfo.displayDate ?? '')
-                    ? '_blank'
-                    : '_self'
-                }
+                target={isUpcoming ? '_blank' : '_self'}
                 href={
-                  willBePublished(blogThumbnailInfo.displayDate ?? '')
+                  isUpcoming
                     ? 'https://forms.gle/HshjtnqqXWPQJ5DH6'
                     : `/blog/${blogThumbnailInfo.id}`
                 }
-                key={`blog-${blogThumbnailInfo.id}`}
-                data-url={`/blog/${blogThumbnailInfo.id}`}
-                data-text={blogThumbnailInfo.title}
-                title={blogThumbnailInfo.title ?? ''}
-                superTitle={
+                containerProps={{
+                  'data-url': `/blog/${blogThumbnailInfo.id}`,
+                  'data-text': blogThumbnailInfo.title,
+                }}
+                category={
                   blogThumbnailInfo.category
                     ? blogCategory[blogThumbnailInfo.category]
                     : '전체'
                 }
-                thumbnailItem={
+                title={blogThumbnailInfo.title ?? ''}
+                thumbnail={
                   <>
                     <img
                       className="h-full w-full object-cover"
                       src={blogThumbnailInfo.thumbnail ?? undefined}
                       alt={blogThumbnailInfo.title ?? undefined}
                     />
-                    {/* 공계 예정인 썸네일에만 적용 */}
-                    {willBePublished(blogThumbnailInfo.displayDate ?? '') && (
+                    {/* 공개 예정인 썸네일에만 적용 */}
+                    {isUpcoming && (
                       <div className="absolute inset-0 flex justify-end bg-black/30 p-3">
                         <div className="flex h-fit w-fit items-center rounded-full bg-white/50 py-1 pl-1 pr-1.5">
                           <LockKeyHoleIcon width={16} height={16} />
@@ -258,14 +253,14 @@ function BlogList({
                     )}
                   </>
                 }
-                displayDateItem={`${dayjs(blogThumbnailInfo.displayDate).format(
+                date={`${dayjs(blogThumbnailInfo.displayDate).format(
                   YYYY_MM_DD,
-                )} ${willBePublished(blogThumbnailInfo.displayDate ?? '') ? '예정' : '작성'}`}
-                buttonItem={
-                  willBePublished(blogThumbnailInfo.displayDate ?? '') ? (
+                )} ${isUpcoming ? '예정' : '작성'}`}
+                actionButton={
+                  isUpcoming ? (
                     <BaseButton
                       variant="point"
-                      className="flex items-center gap-1 rounded-xs p-2.5 text-xxsmall12 font-medium"
+                      className="relative z-10 flex items-center gap-1 rounded-xs p-2.5 text-xxsmall12 font-medium"
                     >
                       <BellIcon width={16} height={16} />
                       <span>알림신청</span>
@@ -296,7 +291,6 @@ function BlogRecommendList() {
   const { data, isLoading } = useBlogListQuery({
     pageable: { page: 1, size: 10 },
   });
-  const router = useRouter();
   // 공개된 블로그 중 최신 게시글 4개 추천
   const displayedBlogblogInfos = useMemo(
     () =>
@@ -315,30 +309,28 @@ function BlogRecommendList() {
   return (
     <div className="grid grid-cols-1 gap-8 md:grid-cols-4 md:gap-5">
       {displayedBlogblogInfos?.map(({ blogThumbnailInfo }) => (
-        <BlogCard
+        <ContentCard
           key={blogThumbnailInfo.id}
-          title={blogThumbnailInfo.title ?? ''}
-          superTitle={
+          href={`/blog/${blogThumbnailInfo.id}`}
+          className="blog_empty_recommended cursor-pointer"
+          containerProps={{
+            'data-url': `/blog/${blogThumbnailInfo.id}`,
+            'data-text': blogThumbnailInfo.title,
+          }}
+          category={
             blogThumbnailInfo.category
               ? blogCategory[blogThumbnailInfo.category]
               : '전체'
           }
-          href={`/blog/${blogThumbnailInfo.id}`}
-          onClick={(e) => {
-            e.preventDefault();
-            router.push(`/blog/${blogThumbnailInfo.id}`);
-          }}
-          data-url={`/blog/${blogThumbnailInfo.id}`}
-          data-text={blogThumbnailInfo.title}
-          className="blog_empty_recommended cursor-pointer"
-          thumbnailItem={
+          title={blogThumbnailInfo.title ?? ''}
+          thumbnail={
             <img
               className="h-full w-full object-cover"
               src={blogThumbnailInfo.thumbnail ?? undefined}
               alt={blogThumbnailInfo.title ?? undefined}
             />
           }
-          displayDateItem={
+          date={
             blogThumbnailInfo.displayDate
               ? dayjs(blogThumbnailInfo.displayDate).format(YYYY_MM_DD) +
                 ' 작성'

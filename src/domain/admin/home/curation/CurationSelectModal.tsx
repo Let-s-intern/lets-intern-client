@@ -65,7 +65,7 @@ const CurationSelectModal = ({
       page: 1,
       size: 100,
     },
-    enabled: type === 'BLOG',
+    enabled: type === 'BLOG' || type === 'RESOURCE',
   });
 
   const isLoading =
@@ -117,6 +117,18 @@ const CurationSelectModal = ({
           })) || []
         );
       case 'BLOG':
+        return (
+          blogData?.blogInfos.map((blog) => ({
+            id: blog.blogThumbnailInfo.id || 0,
+            title: blog.blogThumbnailInfo.title || '',
+            thumbnail: blog.blogThumbnailInfo.thumbnail || '',
+            isVisible: blog.blogThumbnailInfo.isDisplayed || false,
+            visibleDate:
+              dayjs(blog.blogThumbnailInfo.displayDate).format(YY_MM_DD) || '-',
+          })) || []
+        );
+      case 'RESOURCE':
+        // TODO: 자료집 API 완성 후 교체 예정 (현재 블로그 데이터로 mock)
         return (
           blogData?.blogInfos.map((blog) => ({
             id: blog.blogThumbnailInfo.id || 0,

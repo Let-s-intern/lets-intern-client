@@ -101,9 +101,10 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
         >
           {program.programInfo.shortDesc}
         </p>
-        {/* VOD 클래스 & 마감된 프로그램 - 진행기간, 모집기간 없음 */}
+        {/* VOD 클래스 & 가이드북 클래스 & 마감된 프로그램 - 진행기간, 모집기간 없음 */}
         {program.programInfo.programStatusType !== PROGRAM_STATUS_KEY.POST &&
-          program.programInfo.programType !== PROGRAM_TYPE.VOD && (
+          program.programInfo.programType !== PROGRAM_TYPE.VOD &&
+          program.programInfo.programType !== PROGRAM_TYPE.GUIDEBOOK && (
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="text-0.75-medium text-[0.69rem]">

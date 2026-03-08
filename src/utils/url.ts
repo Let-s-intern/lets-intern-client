@@ -82,12 +82,31 @@ export function getLiveTitle({ title }: { title?: string | null }) {
   return `${title} | LIVE 클래스 - 렛츠커리어`;
 }
 
+export function getGuidebookTitle({ title }: { title?: string | null }) {
+  return `${title} | 가이드북 - 렛츠커리어`;
+}
+
 export function getReportLandingTitle(title: string) {
   return `${title} | 서류 진단 - 렛츠커리어`;
 }
 
 export function getBaseUrlFromServer(): string {
   return process.env.BASE_URL || 'http://localhost:3000';
+}
+
+export function getLibraryPathname({
+  id,
+  title,
+}: {
+  id?: string | number | null;
+  title?: string | null;
+}): string {
+  const slug = (title?.replace(/[ /]/g, '-') || '').toLowerCase();
+  return `/library/${id}/${encodeURIComponent(slug)}`;
+}
+
+export function getLibraryTitle({ title }: { title?: string | null }) {
+  return `${title} | 무료 자료집 - 렛츠커리어`;
 }
 
 export function getUniversalBaseUrl(): string {
