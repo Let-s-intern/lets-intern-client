@@ -1,7 +1,7 @@
 'use client';
 
 import CheckBox from '@/common/box/CheckBox';
-import Input from '@/common/input/v2/Input';
+import LineInput from '@/common/input/LineInput';
 import RadioButton from '@/domain/program/challenge/challenge-view/RadioButton';
 
 const RADIO_COLOR = '#5177FF';
@@ -43,7 +43,7 @@ const MagnetSurveySection = ({
   if (questions.length === 0) return null;
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       {questions.map((question) => {
         const answer = answers.find(
           (a) => a.questionId === question.questionId,
@@ -81,15 +81,16 @@ function QuestionRenderer({
 
   if (question.questionType === 'SUBJECTIVE') {
     return (
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-[6px]">
         <QuestionLabel
           question={question.question}
           description={question.description}
           isRequired={isRequired}
         />
-        <Input
+        <LineInput
           id={`question-${question.questionId}`}
           name={`question-${question.questionId}`}
+          className="text-xsmall14 md:text-xsmall16"
           placeholder="답변을 입력해 주세요."
           value={currentAnswer.subjectiveText}
           onChange={(e) =>
@@ -105,7 +106,7 @@ function QuestionRenderer({
 
   if (question.selectionMethod === 'SINGLE') {
     return (
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
         <QuestionLabel
           question={question.question}
           description={question.description}
@@ -129,9 +130,10 @@ function QuestionRenderer({
               />
               {item.isOther &&
                 currentAnswer.selectedItemIds.includes(item.itemId) && (
-                  <Input
+                  <LineInput
                     id={`question-${question.questionId}-other`}
                     name={`question-${question.questionId}-other`}
+                    className="ml-7 mt-1 w-full max-w-sm text-xsmall14 md:text-xsmall16"
                     placeholder="기타 항목을 입력해 주세요."
                     value={currentAnswer.otherText}
                     onChange={(e) =>
@@ -140,7 +142,6 @@ function QuestionRenderer({
                         otherText: e.target.value,
                       })
                     }
-                    className="ml-7 mt-1 w-full max-w-sm"
                   />
                 )}
             </div>
@@ -152,7 +153,7 @@ function QuestionRenderer({
 
   // MULTIPLE selection
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-3">
       <QuestionLabel
         question={question.question}
         description={question.description}
@@ -196,9 +197,10 @@ function QuestionRenderer({
                 </span>
               </button>
               {item.isOther && isSelected && (
-                <Input
+                <LineInput
                   id={`question-${question.questionId}-other`}
                   name={`question-${question.questionId}-other`}
+                  className="ml-7 mt-1 w-full max-w-sm text-xsmall14 md:text-xsmall16"
                   placeholder="기타 항목을 입력해 주세요."
                   value={currentAnswer.otherText}
                   onChange={(e) =>
@@ -207,7 +209,6 @@ function QuestionRenderer({
                       otherText: e.target.value,
                     })
                   }
-                  className="ml-7 mt-1 w-full max-w-sm"
                 />
               )}
             </div>
@@ -229,10 +230,10 @@ function QuestionLabel({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-xsmall14 md:text-xsmall16">
+      <label className="text-xsmall14 md:text-xsmall16">
         {question}
         {isRequired && <span className="pl-1 text-requirement">*</span>}
-      </span>
+      </label>
       {description && (
         <p className="break-keep text-xsmall14 text-neutral-40 md:text-xsmall16">
           {description}

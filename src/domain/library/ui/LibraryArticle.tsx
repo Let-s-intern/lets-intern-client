@@ -116,7 +116,7 @@ export default function LibraryArticle({ magnetInfo }: Props) {
             다음 내용이 궁금하다면?
           </div>
           <Link
-            href={`/library/${magnetInfo.magnetId}/${encodeURIComponent(magnetInfo.title.replace(/\s+/g, '-'))}/apply`}
+            href={`/library/${magnetInfo.magnetId}/apply`}
             className="w-full max-w-lg rounded-xs bg-primary px-6 py-4 text-center text-xsmall16 text-white"
           >
             자료집 신청하기

@@ -12,11 +12,13 @@ import {
   ProgramType,
   UserMagnetDetailResponse,
   UserMagnetListResponse,
+  UserMagnetQuestionListResponse,
   baseQuestionListResponseSchema,
   magnetDetailResponseSchema,
   magnetListResponseSchema,
   userMagnetDetailResponseSchema,
   userMagnetListResponseSchema,
+  userMagnetQuestionListResponseSchema,
 } from './magnetSchema';
 
 const magnetListQueryKey = 'MagnetListQueryKey';
@@ -249,6 +251,23 @@ export const useGetMyMagnetListQuery = ({
       return userMagnetListResponseSchema.parse(res.data.data);
     },
     enabled,
+  });
+};
+
+// 마그넷 신청 폼 조회
+const userMagnetQuestionsQueryKey = 'UserMagnetQuestionsQueryKey';
+
+export const useGetUserMagnetQuestionsQuery = (
+  magnetId: number,
+  options?: { enabled?: boolean },
+) => {
+  return useQuery({
+    queryKey: [userMagnetQuestionsQueryKey, magnetId],
+    queryFn: async (): Promise<UserMagnetQuestionListResponse> => {
+      const res = await axios.get(`/magnet/${magnetId}/questions`);
+      return userMagnetQuestionListResponseSchema.parse(res.data.data);
+    },
+    enabled: options?.enabled,
   });
 };
 
