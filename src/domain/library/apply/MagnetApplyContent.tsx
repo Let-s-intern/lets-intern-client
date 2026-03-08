@@ -1,5 +1,6 @@
 'use client';
 
+import { usePostMagnetApplicationMutation } from '@/api/magnet/magnet';
 import { usePatchUser, useUserQuery } from '@/api/user/user';
 import MarketingConsentSection from '@/common/form/MarketingConsentSection';
 import CareerInfoForm, {
@@ -60,6 +61,10 @@ const MagnetApplyContent = ({
 
   const { mutateAsync: tryPatchUser, isPending: patchUserIsPending } =
     usePatchUser();
+  const {
+    mutateAsync: tryPostMagnetApplication,
+    isPending: postApplicationIsPending,
+  } = usePostMagnetApplicationMutation();
 
   useEffect(() => {
     if (userData) {
@@ -153,8 +158,10 @@ const MagnetApplyContent = ({
     return false;
   }, [value, selections, isMarketingAgreed, surveyAnswers, questions]);
 
+  const isSubmitting = patchUserIsPending || postApplicationIsPending;
+
   const handleSubmit = async () => {
-    if (patchUserIsPending) return;
+    if (isSubmitting) return;
 
     try {
       const enumGrade = value.grade
@@ -178,12 +185,27 @@ const MagnetApplyContent = ({
         wishEmploymentType: value.wishEmploymentType,
       });
 
-      // TODO: API 연동 - 마그넷 신청 API 호출
-      // await postMagnetApplication({
-      //   magnetId,
-      //   surveyAnswers,
-      //   isMarketingAgreed,
-      // });
+      const magnetAnswerList = surveyAnswers.map((a) => {
+        const question = questions.find(
+          (q) => q.questionId === a.questionId,
+        );
+        let answer = '';
+        if (question?.questionType === 'SUBJECTIVE') {
+          answer = a.subjectiveText;
+        } else {
+          const selectedValues = (question?.items ?? [])
+            .filter((item) => a.selectedItemIds.includes(item.itemId))
+            .map((item) => item.value);
+          if (a.otherText) selectedValues.push(a.otherText);
+          answer = selectedValues.join(',');
+        }
+        return { magnetQuestionId: a.questionId, answer };
+      });
+
+      await tryPostMagnetApplication({
+        magnetId,
+        body: { magnetAnswerList },
+      });
 
       alert('신청이 완료되었습니다.');
       router.back();

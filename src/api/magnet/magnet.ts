@@ -271,6 +271,32 @@ export const useGetUserMagnetQuestionsQuery = (
   });
 };
 
+// 마그넷 신청
+export interface MagnetApplicationReqBody {
+  magnetAnswerList: {
+    magnetQuestionId: number;
+    answer: string;
+  }[];
+}
+
+export const usePostMagnetApplicationMutation = () => {
+  return useMutation({
+    mutationFn: async ({
+      magnetId,
+      body,
+    }: {
+      magnetId: number;
+      body: MagnetApplicationReqBody;
+    }) => {
+      const res = await axios.post(
+        `/magnet-application/${magnetId}`,
+        body,
+      );
+      return res.data;
+    },
+  });
+};
+
 // --- Magnet Question API ---
 
 export interface MagnetQuestionReqBody {
