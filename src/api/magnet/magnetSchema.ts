@@ -16,10 +16,11 @@ const programTypeSchema = z.enum([
   'GUIDEBOOK',
 ]);
 
-
 const magnetListItemSchema = z.object({
   magnetId: z.number(),
   type: magnetTypeSchema,
+  programType: z.string().nullable(),
+  challengeType: z.string().nullable(),
   title: z.string(),
   startDate: z.string().nullable(),
   endDate: z.string().nullable(),
@@ -36,12 +37,16 @@ export type MagnetListResponse = z.infer<typeof magnetListResponseSchema>;
 const magnetInfoSchema = z.object({
   magnetId: z.number(),
   type: magnetTypeSchema,
+  programType: z.string().nullable(),
+  challengeType: z.string().nullable(),
   title: z.string(),
   description: z.string().nullable(),
   previewContents: z.string().nullable(),
   mainContents: z.string().nullable(),
   desktopThumbnail: z.string().nullable(),
   mobileThumbnail: z.string().nullable(),
+  useBaseQuestion: z.boolean(),
+  useLaunchAlert: z.boolean(),
   startDate: z.string().nullable(),
   endDate: z.string().nullable(),
   isVisible: z.boolean(),
@@ -56,10 +61,15 @@ const magnetQuestionSchema = z.object({
   answerType: z.enum(['TEXT', 'CHOICE']),
   choiceType: z.enum(['SINGLE', 'MULTIPLE']),
   options: z.string().nullable(),
+  isVisible: z.boolean().optional(),
 });
 
 export const magnetDetailResponseSchema = z.object({
   magnetInfo: magnetInfoSchema,
+  magnetQuestionInfo: z.array(magnetQuestionSchema),
+});
+
+export const baseQuestionListResponseSchema = z.object({
   magnetQuestionInfo: z.array(magnetQuestionSchema),
 });
 
@@ -94,3 +104,7 @@ export type UserMagnetListResponse = z.infer<
 export type UserMagnetListItem = z.infer<typeof userMagnetListItemSchema>;
 export type MagnetType = z.infer<typeof magnetTypeSchema>;
 export type ProgramType = z.infer<typeof programTypeSchema>;
+
+export type BaseQuestionListResponse = z.infer<
+  typeof baseQuestionListResponseSchema
+>;

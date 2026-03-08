@@ -5,11 +5,13 @@ import {
 import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  BaseQuestionListResponse,
   MagnetDetailResponse,
   MagnetListResponse,
   MagnetType,
   ProgramType,
   UserMagnetListResponse,
+  baseQuestionListResponseSchema,
   magnetDetailResponseSchema,
   magnetListResponseSchema,
   userMagnetListResponseSchema,
@@ -19,6 +21,7 @@ const magnetListQueryKey = 'MagnetListQueryKey';
 const magnetDetailQueryKey = 'MagnetDetailQueryKey';
 const userMagnetListQueryKey = 'UserMagnetListQueryKey';
 const myMagnetListQueryKey = 'MyMagnetListQueryKey';
+const baseQuestionQueryKey = 'BaseQuestionQueryKey';
 
 export interface MagnetListQueryParams {
   typeList?: MagnetTypeKey[];
@@ -117,12 +120,16 @@ export const useGetMagnetDetailQuery = (
 export interface PatchMagnetReqBody {
   magnetId: number;
   type?: string;
+  programType?: string | null;
+  challengeType?: string | null;
   title?: string;
   description?: string;
   previewContents?: string;
   mainContents?: string;
   desktopThumbnail?: string;
   mobileThumbnail?: string;
+  useBaseQuestion?: boolean;
+  useLaunchAlert?: boolean;
   startDate?: string | null;
   endDate?: string | null;
   isVisible?: boolean;
@@ -234,6 +241,16 @@ export interface MagnetQuestionReqBody {
   options: string | null;
 }
 
+export interface PatchMagnetQuestionReqBody {
+  question: string;
+  description: string;
+  isRequired: boolean;
+  answerType: 'CHOICE' | 'TEXT';
+  choiceType: 'SINGLE' | 'MULTIPLE';
+  options: string | null;
+  isVisible: boolean;
+}
+
 export const useCreateMagnetMutation = ({
   successCallback,
   errorCallback,
@@ -250,12 +267,16 @@ export const useCreateMagnetMutation = ({
       ).toISOString();
       const res = await axios.post('/admin/magnet', {
         type: body.type,
+        programType: body.programType ?? null,
+        challengeType: body.challengeType ?? null,
         title: body.title,
         description: '',
         previewContents: '',
         mainContents: '',
         desktopThumbnail: '',
         mobileThumbnail: '',
+        useBaseQuestion: false,
+        useLaunchAlert: false,
         startDate: now,
         endDate: oneMonthLater,
         magnetQuestionList: [],
@@ -264,6 +285,82 @@ export const useCreateMagnetMutation = ({
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: [magnetListQueryKey] });
+      successCallback?.();
+    },
+    onError: (error) => {
+      console.error(error);
+      errorCallback?.();
+    },
+  });
+};
+
+// --- Base (Common) Question API ---
+
+export const useGetBaseQuestionsQuery = (options?: { enabled?: boolean }) => {
+  return useQuery({
+    queryKey: [baseQuestionQueryKey],
+    queryFn: async (): Promise<BaseQuestionListResponse> => {
+      const res = await axios.get('/admin/magnet-question/base', {
+        params: { isVisible: true },
+      });
+      return baseQuestionListResponseSchema.parse(res.data.data);
+    },
+    enabled: options?.enabled,
+  });
+};
+
+export const useCreateBaseQuestionMutation = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: () => void;
+} = {}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: MagnetQuestionReqBody) => {
+      const res = await axios.post('/admin/magnet-question/base', {
+        ...body,
+        isVisible: true,
+      });
+      return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: [baseQuestionQueryKey],
+      });
+      successCallback?.();
+    },
+    onError: (error) => {
+      console.error(error);
+      errorCallback?.();
+    },
+  });
+};
+
+export const usePatchMagnetQuestionMutation = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: () => void;
+} = {}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      magnetQuestionId,
+      ...body
+    }: PatchMagnetQuestionReqBody & { magnetQuestionId: number }) => {
+      const res = await axios.patch(
+        `/admin/magnet-question/${magnetQuestionId}`,
+        body,
+      );
+      return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: [baseQuestionQueryKey],
+      });
       successCallback?.();
     },
     onError: (error) => {
