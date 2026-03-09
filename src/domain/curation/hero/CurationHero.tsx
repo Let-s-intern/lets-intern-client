@@ -44,7 +44,7 @@ const CurationHero = ({ copy }: CurationHeroProps) => {
           {/* 홈 바로가기 버튼 */}
           {copy.homeCta && (
             <Link
-              href="/"
+              href="https://www.letscareer.co.kr/program?type=CHALLENGE"
               className="inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-white/70 px-3 py-0.5 outline outline-1 -outline-offset-1 outline-indigo-200 transition-colors hover:bg-white"
             >
               <Image
@@ -58,6 +58,18 @@ const CurationHero = ({ copy }: CurationHeroProps) => {
               </span>
             </Link>
           )}
+
+          {/* 챌린지란? */}
+          <div className="flex flex-col gap-1">
+            <p className="text-xs font-semibold leading-4 text-zinc-500">
+              *챌린지란?
+            </p>
+            <p className="text-xs font-normal leading-4 text-zinc-400">
+              → 2주~4주간의 기간동안 렛츠커리어가 자체개발한 미션과 현직자
+              피드백을 통해 경험정리부터 서류 완성까지 할 수 있는
+              프로그램이에요!
+            </p>
+          </div>
         </div>
 
         {/* 우측: 일러스트 */}
