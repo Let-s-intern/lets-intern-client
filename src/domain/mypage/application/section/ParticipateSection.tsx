@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { MypageApplication } from '../../../../api/application';
-import MobileCarousel from '../../../../common/carousel/MobileCarousel';
 import MoreButton from '../../ui/button/MoreButton';
-import ApplicationCard from '../../ui/card/root/ApplicationCard';
+import NewApplicationCard from '../../ui/card/NewApplicationCard';
 
 interface ParticipateSectionProps {
   applicationList: MypageApplication[];
@@ -11,32 +10,30 @@ interface ParticipateSectionProps {
 const ParticipateSection = ({ applicationList }: ParticipateSectionProps) => {
   const [showMore, setShowMore] = useState(false);
 
-  const list = showMore ? applicationList : applicationList.slice(0, 3);
+  const list = showMore ? applicationList : applicationList.slice(0, 4);
 
   return (
     <section className="flex flex-col gap-6">
       <h1 className="text-lg font-semibold">참여 중</h1>
       {applicationList.length === 0 ? (
         <div className="flex w-full flex-col items-center gap-4 py-14">
-          <p className="text-neutral-0 text-opacity-[36%]">
+          <p className="text-xsmall14 font-normal text-neutral-20">
             참여 중인 프로그램이 아직 없어요.
           </p>
         </div>
       ) : (
         <>
-          <MobileCarousel<MypageApplication>
-            items={list}
-            renderItem={(application) => (
-              <ApplicationCard application={application} showChallengeButton />
-            )}
-            itemWidth="169px"
-            spaceBetween={16}
-            containerWidth="100%"
-            getItemKey={(application) => application.id || 0}
-          />
-          {applicationList.length > 3 && !showMore && (
+          <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:flex md:flex-col md:gap-y-5">
+            {list.map((application) => (
+              <NewApplicationCard
+                key={application.id}
+                application={application}
+              />
+            ))}
+          </div>
+          {applicationList.length > 4 && !showMore && (
             <MoreButton
-              className="md:flex"
+              className="border-neutral-80 !bg-transparent px-3 py-2 text-primary transition-colors hover:!bg-primary/5 md:flex md:p-3"
               onClick={() => {
                 setShowMore(true);
               }}
