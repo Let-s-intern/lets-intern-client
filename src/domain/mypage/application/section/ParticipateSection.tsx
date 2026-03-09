@@ -1,3 +1,4 @@
+import { useMediaQuery } from '@mui/material';
 import { useState } from 'react';
 import { MypageApplication } from '../../../../api/application';
 import MoreButton from '../../ui/button/MoreButton';
@@ -9,8 +10,10 @@ interface ParticipateSectionProps {
 
 const ParticipateSection = ({ applicationList }: ParticipateSectionProps) => {
   const [showMore, setShowMore] = useState(false);
+  const isDesktop = useMediaQuery('(min-width:768px)');
 
-  const list = showMore ? applicationList : applicationList.slice(0, 4);
+  const visibleCount = isDesktop ? 3 : 4;
+  const list = showMore ? applicationList : applicationList.slice(0, visibleCount);
 
   return (
     <section className="flex flex-col gap-6">
@@ -31,7 +34,7 @@ const ParticipateSection = ({ applicationList }: ParticipateSectionProps) => {
               />
             ))}
           </div>
-          {applicationList.length > 4 && !showMore && (
+          {applicationList.length > visibleCount && !showMore && (
             <MoreButton
               className="border-neutral-80 !bg-transparent px-3 py-2 text-primary transition-colors hover:!bg-primary/5 md:flex md:p-3"
               onClick={() => {
