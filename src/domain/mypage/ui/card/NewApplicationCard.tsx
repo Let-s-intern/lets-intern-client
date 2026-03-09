@@ -1,12 +1,16 @@
+'use client';
+
 import { MypageApplication, patchApplicationDownload } from '@/api/application';
 import { getGuidebook } from '@/api/program';
+import AlertModal from '@/common/alert/AlertModal';
 import HybridLink from '@/common/HybridLink';
-import { getReportThumbnail } from '@/domain/mypage/credit/CreditListItem';
-import { twMerge } from '@/lib/twMerge';
 import {
-  challengePricePlanToText,
-  newProgramTypeToText,
-} from '@/utils/convert';
+  MypageApplicationCardConfig,
+  toMypageApplicationCardConfig,
+} from '@/domain/mypage/application/utils/applicationCardConfig';
+import { twMerge } from '@/lib/twMerge';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import ActionButton from '../button/ActionButton';
 
 interface NewApplicationCardProps {
@@ -14,180 +18,177 @@ interface NewApplicationCardProps {
 }
 
 const NewApplicationCard = ({ application }: NewApplicationCardProps) => {
-  const {
-    id,
-    programStatusType,
-    programType,
-    programThumbnail,
-    reportType,
-    programTitle,
-    programShortDesc,
-    programStartDate,
-    programEndDate,
-    createDate,
-    pricePlanType,
-    programId,
-  } = application;
+  const config = toMypageApplicationCardConfig(application);
+  return <MypageApplicationCard config={config} />;
+};
 
-  const statusLabel =
-    programStatusType === 'PROCEEDING'
-      ? '참여중'
-      : programStatusType === 'PREV'
-        ? '참여예정'
-        : '참여완료';
+export default NewApplicationCard;
 
-  const isUpcoming = statusLabel === '참여예정';
-  const isCompleted = statusLabel === '참여완료';
+interface MypageApplicationCardProps {
+  config: MypageApplicationCardConfig;
+}
 
-  const isChallenge = programType === 'CHALLENGE';
-  const isLive = programType === 'LIVE';
-  const isGuidebook = programType === 'GUIDEBOOK';
+const MypageApplicationCard = ({ config }: MypageApplicationCardProps) => {
+  const router = useRouter();
+  const { actionButton } = config;
+  const showActionButton = !!actionButton;
+  const [showConfirm, setShowConfirm] = useState(false);
+  const hasConfirm = !!actionButton?.confirm;
+  const detailHref = getDetailHref(config);
 
-  const isDashboardEnabled =
-    (isChallenge || isLive) && programStatusType === 'PROCEEDING';
-  const programTypeKey = programType ?? '';
+  const handleActionClick = () => {
+    if (!actionButton || actionButton.disabled) return;
 
-  const categoryLabel = programTypeKey
-    ? newProgramTypeToText[programTypeKey] || programTypeKey
-    : '';
-
-  const isReport = programType === 'REPORT';
-  const dateLabel = isReport ? '신청일자' : '진행기간';
-
-  const dateText = isReport
-    ? (createDate?.format('YY.MM.DD') ?? '')
-    : programStartDate && programEndDate
-      ? `${programStartDate.format('YY.MM.DD')} ~ ${programEndDate.format('YY.MM.DD')}`
-      : '';
-
-  const purchasePlanText =
-    isChallenge && pricePlanType
-      ? challengePricePlanToText[pricePlanType] || pricePlanType
-      : undefined;
-
-  const thumbnail =
-    isReport && reportType
-      ? getReportThumbnail(reportType)
-      : (programThumbnail ?? '');
-
-  const programLink = isReport
-    ? '/report/management'
-    : `/program/${programType?.toLowerCase()}/${programId}`;
-
-  const actionLabel = isGuidebook
-    ? 'PDF 다운로드'
-    : isChallenge
-      ? '대시보드 입장'
-      : isLive
-        ? '클래스 입장'
-        : '';
-
-  const showActionButton = isChallenge || isLive || isGuidebook;
-  const isButtonDisabled = isGuidebook ? false : !isDashboardEnabled;
-
-  const handleActionClick = async (): Promise<void> => {
-    if (!programType || programId == null) {
+    if (hasConfirm) {
+      setShowConfirm(true);
       return;
     }
 
-    if (isGuidebook) {
-      if (id == null || programId == null) {
-        return;
-      }
-
-      const applicationId: number = id;
-      const guidebookId: number = programId;
-
-      await downloadGuidebookAndTrack(applicationId, guidebookId);
+    if (actionButton.href) {
+      router.push(actionButton.href);
       return;
     }
 
-    if (isChallenge || isLive) {
-      window.location.href = programLink;
-    }
+    actionButton.onClick?.();
   };
 
   return (
     <div className="flex flex-col justify-between gap-5 rounded-xs p-0 md:flex-row md:items-start md:justify-start md:gap-4 md:border md:border-neutral-85 md:p-4">
       <div className="flex w-full flex-col gap-4 md:flex-row md:gap-4">
         <CardThumbnail
-          programLink={programLink}
-          thumbnail={thumbnail}
-          title={programTitle ?? ''}
-          isCompleted={isCompleted}
+          href={detailHref}
+          thumbnail={config.thumbnail}
+          title={config.title}
+          isCompleted={config.isCompleted}
         />
 
         <div className="flex flex-1 flex-col justify-between">
           <div className="flex flex-col gap-2">
-            <CardMetaRow
-              statusLabel={statusLabel}
-              categoryLabel={categoryLabel}
-              dateLabel={dateLabel}
-              dateText={dateText}
-              isUpcoming={isUpcoming}
-            />
+            <div className="flex w-full flex-wrap items-center gap-2">
+              {config.statusLabel && (
+                <span
+                  className={twMerge(
+                    'rounded-xxs px-2 py-0.5 text-xxsmall12 font-normal',
+                    config.statusLabel === '참여예정' ||
+                      config.statusLabel === '참여완료'
+                      ? 'border border-neutral-80 text-primary'
+                      : 'bg-primary-10 text-primary',
+                  )}
+                >
+                  {config.statusLabel}
+                </span>
+              )}
 
-            <CardTitleSection
-              programLink={programLink}
-              title={programTitle ?? ''}
-              shortDesc={programShortDesc ?? ''}
-            />
+              {config.categoryLabel && (
+                <span className="text-xxsmall12 font-normal text-neutral-40">
+                  {config.categoryLabel}
+                </span>
+              )}
 
-            {dateText && (
+              {config.dateText && (
+                <>
+                  <div className="hidden h-4 w-px bg-neutral-80 md:block" />
+                  <span className="hidden text-xxsmall12 font-normal text-neutral-40 md:inline">
+                    {config.dateLabel} {config.dateText}
+                  </span>
+                </>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <h3 className="text-xsmall16 font-semibold text-neutral-0">
+                <HybridLink
+                  href={detailHref}
+                  className="line-clamp-2 hover:underline"
+                >
+                  {config.title}
+                </HybridLink>
+              </h3>
+              {config.description && (
+                <p className="line-clamp-2 text-xsmall14 text-neutral-20">
+                  {config.description}
+                </p>
+              )}
+            </div>
+
+            {config.dateText && (
               <p className="text-xxsmall12 font-normal text-neutral-40 md:hidden">
-                {dateLabel} {dateText}
+                {config.dateLabel} {config.dateText}
               </p>
             )}
           </div>
 
-          {purchasePlanText && (
-            <CardPurchasePlan purchasePlanText={purchasePlanText} />
+          {config.purchasePlanText && (
+            <div className="mt-2 flex flex-col gap-2 md:mt-0 md:flex-row md:items-center md:justify-between">
+              <span className="flex flex-row gap-1 text-xxsmall12 text-neutral-0">
+                구매플랜
+                <p className="text-xxsmall12 text-primary">
+                  {config.purchasePlanText}
+                </p>
+              </span>
+            </div>
           )}
         </div>
       </div>
 
-      {showActionButton && actionLabel && (
+      {showActionButton && actionButton && (
         <>
           <ActionButton
-            label={actionLabel}
-            disabled={isButtonDisabled}
+            label={actionButton.label}
+            disabled={actionButton.disabled}
             onClick={handleActionClick}
             variant="desktop"
           />
           <ActionButton
-            label={actionLabel}
-            disabled={isButtonDisabled}
+            label={actionButton.label}
+            disabled={actionButton.disabled}
             onClick={handleActionClick}
             variant="mobile"
           />
         </>
+      )}
+
+      {hasConfirm && showConfirm && actionButton && (
+        <AlertModal
+          title={actionButton.confirm?.title ?? '확인'}
+          confirmText={actionButton.confirm?.confirmText ?? '확인'}
+          cancelText={actionButton.confirm?.cancelText ?? '취소'}
+          onConfirm={async () => {
+            setShowConfirm(false);
+            // 가이드북만 confirm을 사용하므로 여기서 직접 다운로드 처리
+            await downloadGuidebookAndTrack(config.id, config.programId);
+          }}
+          onCancel={() => setShowConfirm(false)}
+        >
+          {actionButton.confirm?.description}
+        </AlertModal>
       )}
     </div>
   );
 };
 
 interface CardThumbnailProps {
-  programLink: string;
+  href?: string;
   thumbnail: string;
-  title: string | null;
+  title: string;
   isCompleted: boolean;
 }
 
 const CardThumbnail = ({
-  programLink,
+  href = '#',
   thumbnail,
   title,
   isCompleted,
 }: CardThumbnailProps) => (
   <HybridLink
-    href={programLink}
+    href={href}
     className="h-[180px] w-full shrink-0 md:h-[119px] md:w-[158px]"
   >
     {thumbnail ? (
       <div className="relative h-full w-full">
         <img
           src={thumbnail}
-          alt={title ?? '프로그램 썸네일'}
+          alt={title || '프로그램 썸네일'}
           className="h-[180px] w-full rounded-xs object-cover md:h-[119px] md:w-[158px]"
         />
         {isCompleted && (
@@ -199,90 +200,6 @@ const CardThumbnail = ({
     )}
   </HybridLink>
 );
-
-interface CardMetaRowProps {
-  statusLabel: string;
-  categoryLabel: string;
-  dateLabel: string;
-  dateText: string;
-  isUpcoming: boolean;
-}
-
-const CardMetaRow = ({
-  statusLabel,
-  categoryLabel,
-  dateLabel,
-  dateText,
-  isUpcoming,
-}: CardMetaRowProps) => (
-  <div className="flex w-full flex-wrap items-center gap-2">
-    {statusLabel && (
-      <span
-        className={twMerge(
-          'rounded-xxs px-2 py-0.5 text-xxsmall12 font-normal',
-          isUpcoming
-            ? 'border border-neutral-80 text-primary'
-            : 'bg-primary-10 text-primary',
-        )}
-      >
-        {statusLabel}
-      </span>
-    )}
-
-    {categoryLabel && (
-      <span className="text-xxsmall12 font-normal text-neutral-40">
-        {categoryLabel}
-      </span>
-    )}
-
-    {dateText && (
-      <>
-        <div className="hidden h-4 w-px bg-neutral-80 md:block" />
-        <span className="hidden text-xxsmall12 font-normal text-neutral-40 md:inline">
-          {dateLabel} {dateText}
-        </span>
-      </>
-    )}
-  </div>
-);
-
-interface CardTitleSectionProps {
-  programLink: string;
-  title: string | null;
-  shortDesc: string | null;
-}
-
-const CardTitleSection = ({
-  programLink,
-  title,
-  shortDesc,
-}: CardTitleSectionProps) => (
-  <div className="flex flex-col gap-1">
-    <h3 className="text-xsmall16 font-semibold text-neutral-0">
-      <HybridLink href={programLink} className="line-clamp-2 hover:underline">
-        {title}
-      </HybridLink>
-    </h3>
-    {shortDesc && (
-      <p className="line-clamp-2 text-xsmall14 text-neutral-20">{shortDesc}</p>
-    )}
-  </div>
-);
-
-interface CardPurchasePlanProps {
-  purchasePlanText: string;
-}
-
-const CardPurchasePlan = ({ purchasePlanText }: CardPurchasePlanProps) => (
-  <div className="mt-2 flex flex-col gap-2 md:mt-0 md:flex-row md:items-center md:justify-between">
-    <span className="flex flex-row gap-1 text-xxsmall12 text-neutral-0">
-      구매플랜
-      <p className="text-xxsmall12 text-primary">{purchasePlanText}</p>
-    </span>
-  </div>
-);
-
-export default NewApplicationCard;
 
 interface ErrorWithStatus {
   response?: {
@@ -319,4 +236,24 @@ const downloadGuidebookAndTrack = async (
       '가이드북 다운로드 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
     );
   }
+};
+
+const getDetailHref = (config: MypageApplicationCardConfig): string => {
+  const { programTypeKey, programId } = config;
+
+  if (!programId) return '#';
+
+  if (programTypeKey === 'CHALLENGE') {
+    return `/program/challenge/${programId}`;
+  }
+
+  if (programTypeKey === 'LIVE') {
+    return `/program/live/${programId}`;
+  }
+
+  if (programTypeKey === 'GUIDEBOOK') {
+    return `/program/guidebook/${programId}`;
+  }
+
+  return '#';
 };

@@ -1,4 +1,5 @@
 import { MypageApplication } from '@/api/application';
+import { useMediaQuery } from '@mui/material';
 import { useState } from 'react';
 import Button from '../../ui/button/Button';
 import NewApplicationCard from '../../ui/card/NewApplicationCard';
@@ -9,8 +10,12 @@ interface CompleteSectionProps {
 
 const CompleteSection = ({ applicationList }: CompleteSectionProps) => {
   const [showMore, setShowMore] = useState(false);
+  const isDesktop = useMediaQuery('(min-width:768px)');
 
-  const viewList = showMore ? applicationList : applicationList.slice(0, 4);
+  const visibleCount = isDesktop ? 3 : 4;
+  const viewList = showMore
+    ? applicationList
+    : applicationList.slice(0, visibleCount);
 
   return (
     <section className="flex flex-col gap-6">
@@ -31,7 +36,7 @@ const CompleteSection = ({ applicationList }: CompleteSectionProps) => {
               />
             ))}
           </div>
-          {applicationList.length > 4 && !showMore && (
+          {applicationList.length > visibleCount && !showMore && (
             <Button
               className="md:flex"
               onClick={() => {

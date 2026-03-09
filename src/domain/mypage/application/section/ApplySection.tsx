@@ -1,5 +1,6 @@
 import { MypageApplication } from '@/api/application';
 import HybridLink from '@/common/HybridLink';
+import { useMediaQuery } from '@mui/material';
 import { useState } from 'react';
 import MoreButton from '../../ui/button/MoreButton';
 import NewApplicationCard from '../../ui/card/NewApplicationCard';
@@ -10,8 +11,12 @@ interface ApplySectionProps {
 
 const ApplySection = ({ applicationList }: ApplySectionProps) => {
   const [showMore, setShowMore] = useState(false);
+  const isDesktop = useMediaQuery('(min-width:768px)');
 
-  const viewList = showMore ? applicationList : applicationList.slice(0, 3);
+  const visibleCount = isDesktop ? 3 : 4;
+  const viewList = showMore
+    ? applicationList
+    : applicationList.slice(0, visibleCount);
 
   return (
     <section className="flex flex-col gap-6">
@@ -38,7 +43,7 @@ const ApplySection = ({ applicationList }: ApplySectionProps) => {
           ))}
         </div>
       )}
-      {applicationList.length > 3 && !showMore && (
+      {applicationList.length > visibleCount && !showMore && (
         <MoreButton className="md:flex" onClick={() => setShowMore(true)}>
           더보기
         </MoreButton>
