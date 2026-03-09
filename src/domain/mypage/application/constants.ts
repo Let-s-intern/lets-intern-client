@@ -1,4 +1,5 @@
 export type ApplicationCategory = 'PROGRAM' | 'LIBRARY' | 'GUIDEBOOK';
+export type ApplicationProgress = 'ALL' | 'PROCEEDING' | 'PREV' | 'POST';
 
 export const APPLICATION_CATEGORY_OPTIONS: {
   value: ApplicationCategory;

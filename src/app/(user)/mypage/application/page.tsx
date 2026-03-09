@@ -7,17 +7,14 @@ import {
 } from '@/domain/mypage/application/constants';
 import ApplySection from '@/domain/mypage/application/section/ApplySection';
 import CompleteSection from '@/domain/mypage/application/section/CompleteSection';
+import EmptySection from '@/domain/mypage/application/section/EmptySection';
 import GuidebookSection from '@/domain/mypage/application/section/GuidebookSection';
 import ParticipateSection from '@/domain/mypage/application/section/ParticipateSection';
-import CategoryChips from '@/domain/mypage/ui/button/CategoryChips';
+import CategoryTabs from '@/domain/mypage/ui/nav/CategoryTabs';
 import { useState } from 'react';
 
 const Application = () => {
-  const {
-    data: applications,
-    isLoading,
-    refetch,
-  } = useMypageApplicationsQuery();
+  const { data: applications, isLoading } = useMypageApplicationsQuery();
   const [category, setCategory] = useState<ApplicationCategory>('PROGRAM');
 
   const programApplications =
@@ -41,10 +38,15 @@ const Application = () => {
 
   if (isLoading) return <></>;
 
+  const isProgramEmpty =
+    programWaitingList.length === 0 &&
+    programInProgressList.length === 0 &&
+    programCompletedList.length === 0;
+
   return (
     <main className="flex w-full flex-col gap-10">
       <div className="md:pt-5">
-        <CategoryChips
+        <CategoryTabs
           options={APPLICATION_CATEGORY_OPTIONS}
           selected={category}
           onChange={setCategory}
@@ -53,12 +55,19 @@ const Application = () => {
       <div className="flex w-full flex-col gap-16">
         {category === 'PROGRAM' && (
           <>
-            <ApplySection
-              applicationList={programWaitingList}
-              refetch={() => refetch()}
-            />
-            <ParticipateSection applicationList={programInProgressList} />
-            <CompleteSection applicationList={programCompletedList} />
+            {isProgramEmpty ? (
+              <EmptySection
+                text="아직 신청한 프로그램이 없어요"
+                href="/program"
+                buttonText="프로그램 둘러보기"
+              />
+            ) : (
+              <>
+                <ApplySection applicationList={programWaitingList} />
+                <ParticipateSection applicationList={programInProgressList} />
+                <CompleteSection applicationList={programCompletedList} />
+              </>
+            )}
           </>
         )}
 
