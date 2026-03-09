@@ -1,7 +1,7 @@
 'use client';
 
-import { PROGRAMS } from '../shared/programs';
 import { CHALLENGE_COMPARISON } from '../shared/comparisons';
+import { PROGRAMS } from '../shared/programs';
 import type { ProgramId } from '../types';
 
 interface CompareResultCardProps {
@@ -9,20 +9,14 @@ interface CompareResultCardProps {
   onClose: () => void;
 }
 
-const InfoRow = ({
-  label,
-  values,
-}: {
-  label: string;
-  values: string[];
-}) => (
+const InfoRow = ({ label, values }: { label: string; values: string[] }) => (
   <div className="flex items-start gap-10 border-b border-[#e6e6e6] py-4">
     <div className="w-20 shrink-0 text-sm font-semibold leading-5 text-black">
       {label}
     </div>
     <div className="flex flex-1 gap-10">
       {values.map((value, i) => (
-        <div key={i} className="flex-1 min-w-0">
+        <div key={i} className="min-w-0 flex-1">
           <span className="whitespace-pre-line text-sm leading-[22px] text-black">
             {value}
           </span>
@@ -88,18 +82,9 @@ const CompareResultCard = ({ programIds, onClose }: CompareResultCardProps) => {
 
       {/* 비교 항목 */}
       <div className="flex flex-col">
-        <InfoRow
-          label="설명"
-          values={comparisons.map((c) => c.description)}
-        />
-        <InfoRow
-          label="추천 대상"
-          values={comparisons.map((c) => c.target)}
-        />
-        <InfoRow
-          label="기간"
-          values={comparisons.map((c) => c.duration)}
-        />
+        <InfoRow label="설명" values={comparisons.map((c) => c.description)} />
+        <InfoRow label="추천 대상" values={comparisons.map((c) => c.target)} />
+        <InfoRow label="기간" values={comparisons.map((c) => c.duration)} />
         <InfoRow
           label="플랜별 가격"
           values={comparisons.map((c) => c.pricing)}
@@ -108,10 +93,7 @@ const CompareResultCard = ({ programIds, onClose }: CompareResultCardProps) => {
           label="피드백 및 특강"
           values={comparisons.map((c) => c.feedback)}
         />
-        <InfoRow
-          label="혜택"
-          values={comparisons.map((c) => c.deliverable)}
-        />
+        <InfoRow label="혜택" values={comparisons.map((c) => c.deliverable)} />
         <InfoRow
           label="커리큘럼"
           values={comparisons.map((c) => c.curriculum)}
@@ -124,9 +106,9 @@ const CompareResultCard = ({ programIds, onClose }: CompareResultCardProps) => {
           <a
             key={program.id}
             href={program.link}
-            className="flex h-[2.875rem] flex-1 items-center justify-center rounded-lg bg-[#f3f3f3] transition-colors hover:bg-[#e7e7e7]"
+            className="flex h-[2.875rem] flex-1 items-center justify-center rounded-lg bg-[#5f66f6] hover:bg-[#4d55f5]"
           >
-            <span className="text-center text-xs font-bold leading-4 text-[#4c4f56]">
+            <span className="text-center text-xs font-bold leading-4 text-white">
               [{program.title}] 바로가기
             </span>
           </a>
