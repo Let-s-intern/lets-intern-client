@@ -32,13 +32,13 @@ const CurationStickyNav = ({
   const [activeSection, setActiveSection] = useState<string>('form');
 
   const navItems: NavItem[] = [
-    { title: '맞춤 추천', sectionId: 'form', onClick: onScrollToForm },
+    { title: '3초 큐레이션', sectionId: 'form', onClick: onScrollToForm },
     {
-      title: '챌린지 비교',
+      title: '챌린지 비교표',
       sectionId: 'challenge-comparison',
       onClick: onScrollToChallengeComparison,
     },
-    { title: 'FAQ', sectionId: 'faq', onClick: onScrollToFaq },
+    { title: '자주 묻는 질문', sectionId: 'faq', onClick: onScrollToFaq },
   ];
 
   useEffect(() => {
