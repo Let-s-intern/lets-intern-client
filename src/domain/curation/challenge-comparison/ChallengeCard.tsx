@@ -69,11 +69,22 @@ const ChallengeCard = ({
           <span className="line-clamp-2 text-lg font-bold leading-[26px] text-[#27272d]">
             {program.title}
           </span>
-          <div className="flex items-start gap-0.5">
-            <CheckIcon className="mt-1 shrink-0 text-[#7a7d84]" />
-            <span className="line-clamp-2 text-sm leading-[22px] text-[#27272d]">
-              {challenge.target}
-            </span>
+          <div className="flex flex-col gap-1">
+            <div className="flex items-start gap-1">
+              <CheckIcon className="mt-1 shrink-0 text-[#7a7d84]" />
+              <span className="text-sm leading-[22px] text-[#27272d]">
+                {challenge.shortDescription}
+              </span>
+            </div>
+            <div className="flex items-start gap-1">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="mt-1 shrink-0 text-[#7a7d84]">
+                <circle cx="7" cy="4" r="2.5" stroke="currentColor" strokeWidth="1.5" />
+                <path d="M2.5 12.5C2.5 10 4.5 8 7 8s4.5 2 4.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+              <span className="text-sm leading-[22px] text-[#5c5f66]">
+                {challenge.shortTarget}
+              </span>
+            </div>
           </div>
         </div>
       </div>

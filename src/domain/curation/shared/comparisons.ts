@@ -6,6 +6,8 @@ export const CHALLENGE_COMPARISON: ChallengeComparisonRow[] = [
     label: '기필코 경험정리 챌린지',
     description:
       '취업 준비의 첫걸음! 나의 경험을 체계적으로 정리하고, 현직자 멘토의 피드백으로 직무별 핵심 경험을 발굴하는 2주 챌린지',
+    shortDescription: '마인드맵·STAR로 경험을 구조화',
+    shortTarget: '취준을 막 시작해서 경험 정리부터 필요한 분',
     target:
       '• 취업 준비를 막 시작했거나, 어디서부터 시작해야 할지 막막한 취준생\n• 대외활동·인턴 등 경험은 있지만, 직무와 연결하지 못하고 있는 분\n• 이력서·자소서 작성 전 경험을 탄탄히 정리하고 싶은 분',
     duration: '2주',
@@ -22,6 +24,8 @@ export const CHALLENGE_COMPARISON: ChallengeComparisonRow[] = [
     label: '이력서 1주 완성 챌린지',
     description:
       '단 1주일 만에 합격 이력서 완성! 경험 정리부터 역량 강조까지 단계별 미션으로 현직자 멘토 피드백을 받으며 이력서를 완성하는 챌린지',
+    shortDescription: '경험 정리 후 채용 관점 구조화',
+    shortTarget: '빠르게 이력서를 완성해야 하는 분',
     target:
       '• 이력서 작성 경험이 없거나, 기존 이력서를 전면 개편하고 싶은 취준생\n• 짧은 시간 안에 현직자 피드백을 받아 이력서를 완성하고 싶은 분\n• 합격 이력서 사례를 보며 자신의 이력서와 비교해보고 싶은 분',
     duration: '1주',
@@ -37,6 +41,8 @@ export const CHALLENGE_COMPARISON: ChallengeComparisonRow[] = [
     label: '자기소개서 2주 완성 챌린지',
     description:
       '직무 분석부터 1:1 자소서 첨삭까지! 현직자와 함께 채용공고 맞춤형 자기소개서를 2주 안에 완성하는 챌린지',
+    shortDescription: '직무 분석부터 마스터 자소서까지',
+    shortTarget: '자기소개서를 처음 만들거나 고도화하려는 분',
     target:
       '• 자기소개서를 처음 쓰거나, 계속 써봤지만 합격이 안 되는 취준생\n• 현직자 멘토와의 1:1 LIVE 피드백으로 자소서를 완성하고 싶은 분\n• 직무·채용공고 분석부터 체계적으로 자소서를 준비하고 싶은 분',
     duration: '2주',
@@ -53,6 +59,8 @@ export const CHALLENGE_COMPARISON: ChallengeComparisonRow[] = [
     label: '포트폴리오 2주 완성 챌린지',
     description:
       '경험 도식화부터 완성까지! 현직자 멘토의 1:1 멘토링과 직무별 합격 예시를 활용해 나만의 포트폴리오를 2주 안에 완성하는 챌린지',
+    shortDescription: '직무 맞춤 포트폴리오 설계·작성',
+    shortTarget: '지원 직무에 포트폴리오가 필요한 분',
     target:
       '• 포트폴리오가 필요한 직무(마케팅·디자인·기획 등)에 지원하는 취준생\n• 어떤 경험을 담아야 할지, 어떻게 구성해야 할지 막막한 분\n• 현직자 멘토의 1:1 피드백으로 완성도 높은 포트폴리오를 만들고 싶은 분',
     duration: '2주',
@@ -69,6 +77,8 @@ export const CHALLENGE_COMPARISON: ChallengeComparisonRow[] = [
     label: '면접 준비 끝장 챌린지',
     description:
       '실전 모의면접과 현직자 특강으로 완전 무장! 핵심 경험 정리부터 빈출 질문 대비까지 10일 만에 면접을 끝내는 챌린지',
+    shortDescription: '모의면접과 현직자 특강으로 면접 대비',
+    shortTarget: '서류는 통과하지만 면접 준비가 필요한 분',
     target:
       '• 서류는 통과하지만 면접에서 계속 떨어지는 취준생\n• 모의면접 경험이 없거나, 실전 감각을 키우고 싶은 분\n• 자기소개·지원동기·직무 관련 질문 등 면접 전반을 체계적으로 준비하고 싶은 분',
     duration: '10일',
@@ -86,6 +96,8 @@ export const CHALLENGE_COMPARISON: ChallengeComparisonRow[] = [
     label: '대기업 자기소개서 완성 챌린지',
     description:
       'SK·현대차·삼성전자 등 대기업 현직자 멘토와 함께! 기업·산업 분석부터 지원동기·직무역량 답변까지 3주 안에 대기업 자소서를 완성하는 챌린지',
+    shortDescription: '산업·기업 분석과 공채 문항 대비',
+    shortTarget: '대기업 맞춤형 경험정리, 자기소개서를 작성해보고 싶은 분',
     target:
       '• 삼성·현대·SK 등 대기업 공채를 준비하는 취준생\n• 대기업 자소서 항목(직무역량·지원동기·성장과정 등)을 어떻게 써야 할지 막막한 분\n• 대기업 현직자 멘토의 다회 첨삭으로 완성도 높은 자소서를 원하는 분',
     duration: '3주',
@@ -103,6 +115,8 @@ export const CHALLENGE_COMPARISON: ChallengeComparisonRow[] = [
     label: '마케팅 서류 완성 올인원 챌린지',
     description:
       '마케팅 취업의 모든 것을 한 번에! 현직자 특강 8회 + 이력서·자소서·포트폴리오를 4주 동안 완성하는 마케터 올인원 챌린지',
+    shortDescription: '현직자와 경험정리·자소서·포트폴리오 완성',
+    shortTarget: '마케팅 현직자와 함께 경험정리, 자소서, 포트폴리오까지 한 번에 완성하고 싶은 분',
     target:
       '• 마케팅 직무(그로스·퍼포먼스·콘텐츠·CRM)로 취업을 준비하는 취준생\n• 이력서·자소서·포트폴리오를 한 번에 완성하고 싶은 분\n• Figma·Meta·GA 등 마케팅 필수 실무 역량까지 함께 쌓고 싶은 분',
     duration: '4주',
@@ -120,6 +134,8 @@ export const CHALLENGE_COMPARISON: ChallengeComparisonRow[] = [
     label: 'HR 서류 완성 올인원 챌린지',
     description:
       'HR 취업을 위한 모든 서류를 한 번에! 현직자 멘토 특강 4회 + 이력서·자소서·포트폴리오를 4주 동안 완성하는 HR 올인원 챌린지',
+    shortDescription: 'HR 현직자와 경험정리·자소서·포트폴리오 완성',
+    shortTarget: 'HR 현직자와 함께 경험정리, 자소서, 포트폴리오까지 한 번에 완성하고 싶은 분',
     target:
       '• HR 직무(채용·조직문화·People·Analytics)로 취업을 준비하는 취준생\n• 이력서·자소서·포트폴리오를 한 번에 완성하고 싶은 분\n• HR 현직자 멘토 특강과 과제 전형 피드백까지 받고 싶은 분',
     duration: '4주',
