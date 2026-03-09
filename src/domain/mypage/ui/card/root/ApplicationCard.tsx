@@ -47,6 +47,8 @@ const ApplicationCard = ({
         return `${challengePricePlanToText[pricePlanType]} (피드백 2회)`;
       case 'STANDARD':
         return `${challengePricePlanToText[pricePlanType]} (피드백 1회)`;
+      case 'LIGHT':
+        return challengePricePlanToText[pricePlanType];
       default:
         return '베이직';
     }

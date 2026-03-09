@@ -43,7 +43,7 @@ const EditorApp = dynamic(() => import('@/domain/admin/lexical/EditorApp'), {
   ssr: false,
 });
 
-const { BASIC, STANDARD, PREMIUM } = ChallengePricePlanEnum.enum;
+const { BASIC, STANDARD, PREMIUM, LIGHT } = ChallengePricePlanEnum.enum;
 
 const initialInput: Omit<CreateChallengeReq, 'desc'> = {
   beginning: dayjs().format('YYYY-MM-DDTHH:mm'),
@@ -117,11 +117,15 @@ const ChallengeCreate: React.FC = () => {
     basicInfo,
     standardInfo,
     premiumInfo,
+    isLightEnabled,
+    lightInfo,
     handleChangeInfo,
     handleChangePricePlan,
+    handleChangeLightInfo,
     setBasicOptIds,
     setStandardOptIds,
     setPremiumOptIds,
+    setIsLightEnabled,
   } = useAdminChallengeOption();
 
   /** 챌린지 관련 함수 */
@@ -179,6 +183,26 @@ const ChallengeCreate: React.FC = () => {
       });
     }
 
+    if (isLightEnabled) {
+      newPriceInfo.push({
+        priceInfo: {
+          price: lightInfo.price,
+          discount: lightInfo.discount,
+          accountNumber: input.priceInfo[0].priceInfo?.accountNumber ?? null,
+          accountType: input.priceInfo[0].priceInfo?.accountType ?? null,
+          deadline: input.priceInfo[0].priceInfo?.deadline ?? null,
+        },
+        title: lightInfo.title,
+        description: lightInfo.description,
+        charge: lightInfo.price,
+        refund: 0,
+        challengePriceType: 'CHARGE',
+        challengeParticipationType: 'LIVE',
+        challengePricePlanType: LIGHT,
+        challengeOptionIdList: [],
+      });
+    }
+
     const req: CreateChallengeReq = {
       ...input,
       desc: JSON.stringify(content),
@@ -199,6 +223,8 @@ const ChallengeCreate: React.FC = () => {
     router,
     basicInfo,
     basicOptIds,
+    isLightEnabled,
+    lightInfo,
     premiumOptIds,
     pricePlan,
     premiumInfo,
@@ -337,6 +363,10 @@ const ChallengeCreate: React.FC = () => {
             onChangePremiumOptIds={(ids) => setPremiumOptIds(ids)}
             onChangeStandardOptIds={(ids) => setStandardOptIds(ids)}
             onChangePricePlan={handleChangePricePlan}
+            isLightEnabled={isLightEnabled}
+            lightInfo={lightInfo}
+            onLightEnabledChange={setIsLightEnabled}
+            onChangeLightInfo={handleChangeLightInfo}
           />
           <div className="flex flex-col gap-4">
             {/* 챌린지 일정 */}

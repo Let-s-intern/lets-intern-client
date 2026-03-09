@@ -50,7 +50,7 @@ import ChallengeFaqCategory from './program/ChallengeFaqCategory';
 import ChallengeMentorRegistrationSection from './program/ChallengeMentorRegistrationSection';
 import ProgramSchedule from './program/ProgramSchedule';
 
-const { BASIC, STANDARD, PREMIUM } = ChallengePricePlanEnum.enum;
+const { BASIC, STANDARD, PREMIUM, LIGHT } = ChallengePricePlanEnum.enum;
 
 /** 선택 해제된 멘토와 챌린지 연결 삭제 */
 const useDeleteDifferMentors = () => {
@@ -175,11 +175,15 @@ const ChallengeEdit: React.FC = () => {
     basicInfo,
     standardInfo,
     premiumInfo,
+    isLightEnabled,
+    lightInfo,
     handleChangeInfo,
     handleChangePricePlan,
+    handleChangeLightInfo,
     setBasicOptIds,
     setStandardOptIds,
     setPremiumOptIds,
+    setIsLightEnabled,
   } = useAdminChallengeOption(challenge);
 
   /** 챌린지 관련 함수 */
@@ -251,6 +255,26 @@ const ChallengeEdit: React.FC = () => {
       });
     }
 
+    if (isLightEnabled) {
+      newPriceInfo.push({
+        priceInfo: {
+          price: lightInfo.price,
+          discount: lightInfo.discount,
+          accountNumber: basicPriceInfo.priceInfo?.accountNumber ?? null,
+          accountType: basicPriceInfo.priceInfo?.accountType ?? null,
+          deadline: basicPriceInfo.priceInfo?.deadline ?? null,
+        },
+        title: lightInfo.title,
+        description: lightInfo.description,
+        charge: lightInfo.price,
+        refund: 0,
+        challengePriceType: 'CHARGE',
+        challengeParticipationType: 'LIVE',
+        challengePricePlanType: LIGHT,
+        challengeOptionIdList: [],
+      });
+    }
+
     const req: Parameters<typeof patchChallenge>[0] = {
       ...input,
       challengeId: Number(challengeIdString),
@@ -283,6 +307,10 @@ const ChallengeEdit: React.FC = () => {
     client,
     content,
     input,
+    basicInfo,
+    basicOptIds,
+    isLightEnabled,
+    lightInfo,
     premiumInfo,
     standardInfo,
     standardOptIds,
@@ -416,6 +444,10 @@ const ChallengeEdit: React.FC = () => {
             onChangePremiumOptIds={(ids) => setPremiumOptIds(ids)}
             onChangeStandardOptIds={(ids) => setStandardOptIds(ids)}
             onChangePricePlan={handleChangePricePlan}
+            isLightEnabled={isLightEnabled}
+            lightInfo={lightInfo}
+            onLightEnabledChange={setIsLightEnabled}
+            onChangeLightInfo={handleChangeLightInfo}
           />
           <div className="flex flex-col gap-4">
             {/* 일정 */}
