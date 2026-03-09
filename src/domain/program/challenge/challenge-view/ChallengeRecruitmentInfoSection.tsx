@@ -132,6 +132,9 @@ export default function ChallengeRecruitmentInfoSection({
     (item) => item.challengePricePlanType === 'PREMIUM',
   );
 
+  const lightPriceInfo = challenge.priceInfo.find(
+    (item) => item.challengePricePlanType === 'LIGHT',
+  );
   const {
     basicRegularPrice,
     basicDiscountAmount,
@@ -139,11 +142,20 @@ export default function ChallengeRecruitmentInfoSection({
     standardDiscountAmount,
     premiumRegularPrice,
     premiumDiscountAmount,
+    lightRegularPrice,
+    lightDiscountAmount,
   } = getChallengeOptionPriceInfo(challenge.priceInfo);
 
   const priceList: PriceInfo[] = useMemo(() => {
     const result = [];
 
+    if (lightRegularPrice !== 0) {
+      result.push({
+        title: lightPriceInfo?.title || '라이트',
+        originalPrice: lightRegularPrice,
+        discountAmount: lightDiscountAmount,
+      });
+    }
     if (premiumRegularPrice !== 0) {
       result.push({
         title: premiumPriceInfo?.title || '프리미엄',
