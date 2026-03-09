@@ -63,7 +63,11 @@ const Application = () => {
               />
             ) : (
               <>
-                <ApplySection applicationList={programWaitingList} />
+                <ApplySection
+                  applicationList={programWaitingList}
+                  hasInProgress={programInProgressList.length > 0}
+                  hasCompleted={programCompletedList.length > 0}
+                />
                 <ParticipateSection applicationList={programInProgressList} />
                 <CompleteSection applicationList={programCompletedList} />
               </>

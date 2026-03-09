@@ -7,9 +7,15 @@ import NewApplicationCard from '../../ui/card/NewApplicationCard';
 
 interface ApplySectionProps {
   applicationList: MypageApplication[];
+  hasInProgress: boolean;
+  hasCompleted: boolean;
 }
 
-const ApplySection = ({ applicationList }: ApplySectionProps) => {
+const ApplySection = ({
+  applicationList,
+  hasInProgress,
+  hasCompleted,
+}: ApplySectionProps) => {
   const [showMore, setShowMore] = useState(false);
   const isDesktop = useMediaQuery('(min-width:768px)');
 
@@ -26,12 +32,14 @@ const ApplySection = ({ applicationList }: ApplySectionProps) => {
           <p className="text-xsmall14 font-normal text-neutral-20">
             참여 예정인 프로그램이 없어요
           </p>
-          <HybridLink
-            href="/program"
-            className="other_program flex w-auto items-center justify-center rounded-xxs border border-primary bg-white px-3 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-primary/5"
-          >
-            프로그램 둘러보기
-          </HybridLink>
+          {!hasInProgress && hasCompleted && (
+            <HybridLink
+              href="/program"
+              className="other_program flex w-auto items-center justify-center rounded-xxs border border-primary bg-white px-3 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-primary/5"
+            >
+              프로그램 둘러보기
+            </HybridLink>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:flex md:flex-col md:gap-y-5">
