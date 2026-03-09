@@ -92,6 +92,8 @@ export interface ChallengeComparisonRow {
   programId: ProgramId;
   label: string;
   description: string;
+  shortDescription: string;
+  shortTarget: string;
   target: string;
   duration: string;
   pricing: string;

@@ -34,14 +34,23 @@ const MobileChallengeCard = ({
 
       {/* 텍스트 + 버튼 */}
       <div className="flex flex-1 flex-col gap-2">
-        <div className="flex flex-col gap-0.5">
+        <div className="flex flex-col gap-1">
           <span className="line-clamp-1 text-sm font-bold leading-5 text-[#27272d]">
             {program.title}
           </span>
-          <div className="flex items-start gap-0.5">
+          <div className="flex items-start gap-1">
             <CheckIcon className="mt-0.5 shrink-0 text-[#7a7d84]" />
-            <span className="line-clamp-1 text-xs leading-4 text-[#5c5f66]">
-              {challenge.target}
+            <span className="line-clamp-1 text-xs leading-4 text-[#27272d]">
+              {challenge.shortDescription}
+            </span>
+          </div>
+          <div className="flex items-start gap-1">
+            <svg width="12" height="12" viewBox="0 0 14 14" fill="none" className="mt-0.5 shrink-0 text-[#7a7d84]">
+              <circle cx="7" cy="4" r="2.5" stroke="currentColor" strokeWidth="1.5" />
+              <path d="M2.5 12.5C2.5 10 4.5 8 7 8s4.5 2 4.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+            <span className="text-xs leading-4 text-[#5c5f66]">
+              {challenge.shortTarget}
             </span>
           </div>
         </div>

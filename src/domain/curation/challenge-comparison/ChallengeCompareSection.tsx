@@ -64,7 +64,13 @@ const ChallengeCompareSection = () => {
 
   const scrollToResult = useCallback(() => {
     requestAnimationFrame(() => {
-      resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (!resultRef.current) return;
+      const navHeight = 80;
+      const top =
+        resultRef.current.getBoundingClientRect().top +
+        window.scrollY -
+        navHeight;
+      window.scrollTo({ top, behavior: 'smooth' });
     });
   }, []);
 
@@ -98,7 +104,14 @@ const ChallengeCompareSection = () => {
   const handleCloseResult = useCallback(() => {
     setCompareTargets([]);
     setRecommendedIndex(null);
-  }, []);
+    clearCart();
+    requestAnimationFrame(() => {
+      const section = document.getElementById('curation-challenge-comparison');
+      if (!section) return;
+      const top = section.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top, behavior: 'smooth' });
+    });
+  }, [clearCart]);
 
   /** 모바일 플로팅 버튼 — 비교 결과 전체화면 뷰 열기 */
   const handleMobileCompare = useCallback(() => {

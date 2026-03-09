@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { PROGRAMS } from '../shared/programs';
 import { CurationResult } from '../types';
-import { GUIDE_STEPS } from './guides';
 import DesktopRecommendationCard from './DesktopRecommendationCard';
 import MobileRecommendationCard from './MobileRecommendationCard';
 
@@ -116,26 +115,6 @@ const ResultSection = ({ result, onRestart }: ResultSectionProps) => {
               </button>
             </div>
 
-            {/* 병행 수강 가이드 */}
-            <div className="inline-flex items-start justify-center gap-2.5 self-stretch overflow-hidden rounded-xl bg-stone-50 px-2.5 py-5">
-              <div className="inline-flex flex-col items-start justify-center gap-2.5">
-                <span className="text-sm font-bold leading-5 text-zinc-600">
-                  병행 수강 가이드
-                </span>
-                <div className="flex flex-col gap-1.5">
-                  {GUIDE_STEPS.map((step) => (
-                    <span key={step} className="text-sm font-medium leading-5 text-zinc-500">
-                      {step}
-                    </span>
-                  ))}
-                  {result.emphasisNotes?.map((note) => (
-                    <span key={note} className="text-sm font-medium leading-5 text-zinc-500">
-                      {note}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
           </>
         )}
       </div>

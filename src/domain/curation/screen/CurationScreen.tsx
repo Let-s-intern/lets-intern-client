@@ -37,8 +37,7 @@ const CurationScreen = () => {
     const section = document.getElementById(sectionId);
     if (!section) return;
 
-    const navHeight = 60; // sticky nav 높이 (약 56-60px)
-    const offset = navHeight + 20; // 여유 공간 추가
+    const offset = 80; // sticky nav 높이 + 여유 공간
     const elementPosition = section.getBoundingClientRect().top;
     const offsetPosition = elementPosition + window.scrollY - offset;
 
