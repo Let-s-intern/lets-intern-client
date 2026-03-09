@@ -120,8 +120,8 @@ export const PROGRAMS: Record<ProgramId, ProgramContent> = {
       { id: 'standard', name: '스탠다드', price: '130,000원' },
       { id: 'premium', name: '프리미엄', price: '160,000원' },
     ],
-    thumbnail: '/images/curation/interview.svg',
-    link: '/challenge/interview/latest',
+    thumbnail: '/images/curation/interview.webp',
+    link: 'https://www.letscareer.co.kr/program/challenge/213/%EB%A9%B4%EC%A0%91-%EC%A4%80%EB%B9%84-%EB%81%9D%EC%9E%A5-%EC%B1%8C%EB%A6%B0%EC%A7%80-1%EA%B8%B0',
   },
   enterpriseCover: {
     id: 'enterpriseCover',

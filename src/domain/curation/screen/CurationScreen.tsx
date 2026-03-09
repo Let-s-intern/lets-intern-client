@@ -111,17 +111,27 @@ const CurationScreen = () => {
                 />
               )}
 
-              {currentStep === 2 && questionSet && (
-                <QuestionStep
-                  question={questionSet[1]}
-                  value={watch('step2')}
-                  onChange={(val) => {
-                    setValue('step2', val, { shouldValidate: true });
-                    goNext();
-                  }}
-                  error={errors.step2?.message}
-                />
-              )}
+              {currentStep === 2 && questionSet && (() => {
+                const step1Value = watch('step1');
+                const step2Question = questionSet[1];
+                const filtered = {
+                  ...step2Question,
+                  options: step2Question.options.filter(
+                    (opt) => !opt.group || opt.group === step1Value,
+                  ),
+                };
+                return (
+                  <QuestionStep
+                    question={filtered}
+                    value={watch('step2')}
+                    onChange={(val) => {
+                      setValue('step2', val, { shouldValidate: true });
+                      goNext();
+                    }}
+                    error={errors.step2?.message}
+                  />
+                );
+              })()}
             </form>
           )}
 

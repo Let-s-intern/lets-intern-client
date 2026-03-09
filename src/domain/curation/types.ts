@@ -4,6 +4,7 @@ export type PersonaId =
   | 'coverLetter'
   | 'portfolio'
   | 'specialized'
+  | 'interview'
   | 'dontKnow';
 
 export type PlanId = 'basic' | 'standard' | 'premium';
@@ -20,6 +21,8 @@ export interface QuestionOption {
   title: string;
   description?: string;
   accent?: string;
+  /** step1 value this option belongs to (for step2 filtering) */
+  group?: string;
 }
 
 export interface CurationQuestion {
