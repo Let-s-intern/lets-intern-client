@@ -17,7 +17,7 @@ import { OptionFormRadioControlLabel } from '../../common/ControlLabel';
 import OptionDropdown from '../../common/dropdown/OptionDropdown';
 import PriceView from '../../common/price/PriceView';
 
-const { STANDARD, PREMIUM, BASIC } = ChallengePricePlanEnum.enum;
+const { STANDARD, PREMIUM, BASIC, LIGHT } = ChallengePricePlanEnum.enum;
 
 function PricePlanLabel({
   title,
@@ -70,11 +70,16 @@ function PricePlanBottomSheet({
   const premiumPriceInfo = challenge.priceInfo.find(
     (item) => item.challengePricePlanType === PREMIUM,
   );
-  const defaultValue = premiumPriceInfo
-    ? PREMIUM
-    : standardPriceInfo
-      ? STANDARD
-      : BASIC;
+  const lightPriceInfo = challenge.priceInfo.find(
+    (item) => item.challengePricePlanType === LIGHT,
+  );
+  const defaultValue = lightPriceInfo
+    ? LIGHT
+    : premiumPriceInfo
+      ? PREMIUM
+      : standardPriceInfo
+        ? STANDARD
+        : BASIC;
 
   const [pricePlan, setPricePlan] = useState<ChallengePricePlan>(defaultValue);
 
@@ -85,10 +90,19 @@ function PricePlanBottomSheet({
     standardDiscountAmount,
     premiumRegularPrice,
     premiumDiscountAmount,
+    lightRegularPrice,
+    lightDiscountAmount,
   } = getChallengeOptionPriceInfo(challenge.priceInfo);
 
   /* 최종 정가 & 할인 금액 */
   const finalPriceInfo = useMemo(() => {
+    // 라이트 최종 금액
+    if (pricePlan === LIGHT) {
+      return {
+        regularPrice: lightRegularPrice,
+        discountPrice: lightDiscountAmount,
+      };
+    }
     // 베이직 최종 금액
     if (pricePlan === BASIC) {
       return {
@@ -116,6 +130,8 @@ function PricePlanBottomSheet({
     standardDiscountAmount,
     premiumRegularPrice,
     premiumDiscountAmount,
+    lightRegularPrice,
+    lightDiscountAmount,
   ]);
 
   // 챌린지 참여자 목록 조회
@@ -215,6 +231,25 @@ function PricePlanBottomSheet({
             defaultValue={defaultValue}
             onChange={(_, v) => setPricePlan(v as ChallengePricePlan)}
           >
+            {lightPriceInfo && (
+              <OptionFormRadioControlLabel
+                key={LIGHT}
+                label={
+                  <PricePlanLabel
+                    title={lightPriceInfo.title || '라이트 플랜'}
+                    description={lightPriceInfo.description ?? ''}
+                  />
+                }
+                value={LIGHT}
+                wrapperClassName="py-3 pl-2 pr-3 border-b border-neutral-80"
+                right={
+                  <PriceView
+                    price={lightRegularPrice}
+                    discount={lightDiscountAmount}
+                  />
+                }
+              />
+            )}
             {premiumPriceInfo && (
               <OptionFormRadioControlLabel
                 key={PREMIUM}

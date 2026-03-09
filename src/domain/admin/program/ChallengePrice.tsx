@@ -1,5 +1,6 @@
 import { ChallengeOption } from '@/api/challenge/challengeOptionSchema';
 import Input from '@/common/input/v1/Input';
+import type { LightInfo } from '@/hooks/useAdminChallengeOption';
 import {
   ChallengeIdSchema,
   ChallengePricePlan,
@@ -12,6 +13,7 @@ import { newProgramFeeTypeToText } from '@/utils/convert';
 import {
   Checkbox,
   FormControl,
+  FormControlLabel,
   InputLabel,
   MenuItem,
   Select,
@@ -34,16 +36,25 @@ interface IChallengePriceProps<
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
   options: ChallengeOption[];
   pricePlan: ChallengePricePlan;
+  basicInfo: PricePlanInfo;
   standardInfo: PricePlanInfo;
   premiumInfo: PricePlanInfo;
+  basicOptIds: number[];
   standardOptIds: number[];
   premiumOptIds: number[];
   challengePrice: number;
   onChangePricePlan?: (value: ChallengePricePlan) => void;
+  onChangeBasicOptIds: (value: number[]) => void;
   onChangeStandardOptIds: (value: number[]) => void;
   onChangePremiumOptIds: (value: number[]) => void;
   onChangePricePlanInfo: (
     plan: ChallengePricePlan,
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
+  isLightEnabled: boolean;
+  lightInfo: LightInfo;
+  onLightEnabledChange: (checked: boolean) => void;
+  onChangeLightInfo: (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
 }
@@ -82,15 +93,22 @@ export default function ChallengePrice<
   setInput,
   options,
   pricePlan,
+  basicInfo,
   standardInfo,
   premiumInfo,
+  basicOptIds,
   standardOptIds,
   premiumOptIds,
   challengePrice,
   onChangePricePlan,
+  onChangeBasicOptIds,
   onChangeStandardOptIds,
   onChangePremiumOptIds,
   onChangePricePlanInfo,
+  isLightEnabled,
+  lightInfo,
+  onLightEnabledChange,
+  onChangeLightInfo,
 }: IChallengePriceProps<T>) {
   const defaultPriceReq: ChallengePriceReq = {
     challengeParticipationType:
@@ -118,7 +136,7 @@ export default function ChallengePrice<
     },
     refund: defaultValue?.[0]?.refund ?? initialPrice.refund,
     challengeOptionIdList:
-      defaultValue?.[0]?.challengeOptionList.map(
+      defaultValue?.[0]?.challengeOptionList?.map(
         (item) => item.challengeOptionId,
       ) ?? initialPrice.challengeOptionIdList,
   };
@@ -132,6 +150,16 @@ export default function ChallengePrice<
     return result;
   }, [options]);
 
+  // 베이직 최종 금액
+  const basicFinalPrice = useMemo(() => {
+    const optPrice = basicOptIds.reduce((acc, currId) => {
+      const target = options.find((opt) => opt.challengeOptionId === currId);
+      if (!target) return acc;
+      return acc + (target.price ?? 0) - (target.discountPrice ?? 0);
+    }, 0);
+    return optPrice + challengePrice;
+  }, [challengePrice, basicOptIds, options]);
+
   // 스탠다드 최종 금액
   const standardFinalPrice = useMemo(() => {
     const optPrice = standardOptIds.reduce((acc, currId) => {
@@ -139,20 +167,18 @@ export default function ChallengePrice<
       if (!target) return acc;
       return acc + (target.price ?? 0) - (target.discountPrice ?? 0);
     }, 0);
-    return optPrice + challengePrice;
-  }, [challengePrice, standardOptIds, options]);
+    return optPrice + basicFinalPrice;
+  }, [basicFinalPrice, standardOptIds, options]);
 
   // 프리미엄 최종 금액
   const premiumFinalPrice = useMemo(() => {
-    const optPrice = standardOptIds
-      .concat(premiumOptIds)
-      .reduce((acc, currId) => {
-        const target = options.find((opt) => opt.challengeOptionId === currId);
-        if (!target) return acc;
-        return acc + (target.price ?? 0) - (target.discountPrice ?? 0);
-      }, 0);
-    return optPrice + challengePrice;
-  }, [options, premiumOptIds, standardOptIds, challengePrice]);
+    const optPrice = premiumOptIds.reduce((acc, currId) => {
+      const target = options.find((opt) => opt.challengeOptionId === currId);
+      if (!target) return acc;
+      return acc + (target.price ?? 0) - (target.discountPrice ?? 0);
+    }, 0);
+    return optPrice + standardFinalPrice;
+  }, [options, premiumOptIds, standardFinalPrice]);
 
   // 보증금 인풋 표시/숨김 용도
   const [isDeposit, setIsDeposit] = useState(
@@ -184,21 +210,76 @@ export default function ChallengePrice<
 
   return (
     <section className="flex flex-col gap-3">
-      {/* 가격 플랜 */}
-      <SelectControl
-        labelId="challengePricePlanLabel"
-        id="challengePricePlan"
-        name="challengePricePlan"
-        label="가격 플랜"
-        value={pricePlanValue}
-        menuList={pricePlanMenuList}
-        onChange={(e) => {
-          setPricePlanValue(e.target.value as ChallengePricePlan);
-          if (onChangePricePlan) {
-            onChangePricePlan(e.target.value as ChallengePricePlan);
+      {/* 가격 플랜 + 라이트 체크박스 */}
+      <div className="flex w-full items-center justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <SelectControl
+            labelId="challengePricePlanLabel"
+            id="challengePricePlan"
+            name="challengePricePlan"
+            label="가격 플랜"
+            value={pricePlanValue}
+            menuList={pricePlanMenuList}
+            onChange={(e) => {
+              const value = e.target.value as ChallengePricePlan;
+              if (value === 'LIGHT') return;
+              setPricePlanValue(value);
+              if (onChangePricePlan) onChangePricePlan(value);
+            }}
+          />
+        </div>
+
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={isLightEnabled}
+              onChange={(e) => onLightEnabledChange(e.target.checked)}
+              name="isLightEnabled"
+            />
           }
-        }}
-      />
+          label="라이트 플랜"
+        />
+      </div>
+
+      {/* 라이트 플랜 필드 (체크 시에만, 금액 유형 위) */}
+      {isLightEnabled && (
+        <div className="rounded flex flex-col gap-3 border border-neutral-80 bg-neutral-95 p-3">
+          <Input
+            label="라이트 금액"
+            name="price"
+            size="small"
+            type="number"
+            placeholder="라이트 금액을 입력해주세요"
+            value={lightInfo.price === 0 ? '' : String(lightInfo.price)}
+            onChange={onChangeLightInfo}
+          />
+          <Input
+            label="라이트 할인 금액"
+            name="discount"
+            size="small"
+            type="number"
+            placeholder="라이트 할인 금액을 입력해주세요"
+            value={lightInfo.discount === 0 ? '' : String(lightInfo.discount)}
+            onChange={onChangeLightInfo}
+          />
+          <Input
+            label="라이트 플랜명"
+            name="title"
+            size="small"
+            placeholder="라이트 플랜명을 입력해주세요"
+            maxLength={6}
+            value={lightInfo.title}
+            onChange={onChangeLightInfo}
+          />
+          <OutlinedTextarea
+            name="description"
+            value={lightInfo.description}
+            placeholder="라이트 플랜 설명을 입력해주세요"
+            onChange={onChangeLightInfo}
+          />
+        </div>
+      )}
+
       {/* 금액 유형 */}
       <SelectControl
         labelId="challengePriceTypeLabel"
@@ -304,6 +385,28 @@ export default function ChallengePrice<
           }));
         }}
       />
+      {/* 베이직 옵션 */}
+      <SelectControl
+        labelId="basicOptionsLabel"
+        id="challengeOptionIdList_basic"
+        name="challengeOptionIdList_basic"
+        label="베이직 옵션"
+        multiple
+        value={basicOptIds.map((item) => String(item))}
+        renderValue={() =>
+          basicOptIds
+            .map(
+              (id) =>
+                options.find((item) => item.challengeOptionId === id)?.title,
+            )
+            .join(', ')
+        }
+        menuList={optionMenuList}
+        onChange={(e) => {
+          const value = e.target.value as string[];
+          onChangeBasicOptIds(value.map((item) => Number(item)));
+        }}
+      />
       {/* 베이직 플랜명 */}
       <Input
         label="베이직 플랜명"
@@ -311,15 +414,15 @@ export default function ChallengePrice<
         size="small"
         placeholder="베이직 플랜명을 입력해주세요"
         maxLength={6}
-        defaultValue={defaultPriceReq.title ?? ''}
-        onChange={handleChange}
+        value={basicInfo.title}
+        onChange={(e) => onChangePricePlanInfo('BASIC', e)}
       />
       {/* 베이직 플랜 설명 */}
       <OutlinedTextarea
         name="description"
-        defaultValue={defaultPriceReq.description ?? ''}
+        value={basicInfo.description}
         placeholder="베이직 플랜 설명을 입력해주세요"
-        onChange={handleChange}
+        onChange={(e) => onChangePricePlanInfo('BASIC', e)}
       />
 
       {/* 스탠다드 옵션 */}
@@ -412,7 +515,7 @@ export default function ChallengePrice<
 
       <div>
         <p>
-          <b>베이직 금액</b>: {challengePrice.toLocaleString()}원
+          <b>베이직 금액</b>: {basicFinalPrice.toLocaleString()}원
         </p>
         {pricePlan !== 'BASIC' && (
           <p>

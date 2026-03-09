@@ -4,6 +4,7 @@
   },
   "teammateMode": "tmux",
 
+
   "hooks": {
     "PostToolUse": [
       {

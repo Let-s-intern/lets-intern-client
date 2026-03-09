@@ -8,7 +8,14 @@
       "mcp__Claude_Preview__preview_start",
       "WebFetch(domain:www.figma.com)",
       "WebFetch(domain:api.figma.com)",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "WebFetch(domain:letsintern.kr)",
+      "mcp__claude_ai_Figma__get_screenshot",
+      "mcp__claude_ai_Figma__get_design_context"
     ]
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "figma-dev"
+  ]
 }

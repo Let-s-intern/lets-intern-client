@@ -35,7 +35,12 @@ export const pageInfo = z.object({
 export type PageInfo = z.infer<typeof pageInfo>;
 
 // 챌린지 가격 플랜
-export const ChallengePricePlanEnum = z.enum(['BASIC', 'STANDARD', 'PREMIUM']);
+export const ChallengePricePlanEnum = z.enum([
+  'BASIC',
+  'STANDARD',
+  'PREMIUM',
+  'LIGHT',
+]);
 export type ChallengePricePlan = z.infer<typeof ChallengePricePlanEnum>;
 
 /** GET /api/v1/challenge */
@@ -173,11 +178,23 @@ const livePriceTypeSchema = z.union([z.literal('CHARGE'), z.literal('FREE')]);
 
 export type LivePriceType = z.infer<typeof livePriceTypeSchema>;
 
-export const ProgramTypeEnum = z.enum(['CHALLENGE', 'LIVE', 'VOD', 'REPORT']);
+export const ProgramTypeEnum = z.enum([
+  'CHALLENGE',
+  'LIVE',
+  'VOD',
+  'REPORT',
+  'GUIDEBOOK',
+]);
 
 export type ProgramTypeUpperCase = z.infer<typeof ProgramTypeEnum>;
 
-export const programTypeList = ['CHALLENGE', 'LIVE', 'VOD', 'REPORT'];
+export const programTypeList = [
+  'CHALLENGE',
+  'LIVE',
+  'VOD',
+  'REPORT',
+  'GUIDEBOOK',
+];
 
 export const accountType = z.union([
   z.literal('KB'),
