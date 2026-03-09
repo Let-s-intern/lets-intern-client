@@ -106,6 +106,7 @@ const ApplicationCard = ({
       </div>
       {application.programType === 'CHALLENGE' &&
         showChallengeButton &&
+        application.pricePlanType !== 'LIGHT' &&
         application.programStartDate?.isBefore(dayjs()) && (
           <LinkButton
             to={`/challenge/${application.id}/${application.programId}`}
