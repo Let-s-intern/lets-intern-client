@@ -52,6 +52,9 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
   const premiumPriceInfo = priceInfoList.find(
     (item) => item.challengePricePlanType === 'PREMIUM',
   );
+  const lightPriceInfo = priceInfoList.find(
+    (item) => item.challengePricePlanType === 'LIGHT',
+  );
 
   const {
     basicRegularPrice,
@@ -60,9 +63,22 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
     standardDiscountAmount,
     premiumRegularPrice,
     premiumDiscountAmount,
+    lightRegularPrice,
+    lightDiscountAmount,
   } = getChallengeOptionPriceInfo(priceInfoList);
 
   const pricingList = [
+    ...(lightPriceInfo
+      ? [
+          {
+            title: lightPriceInfo.title || '라이트',
+            label: '',
+            description: lightPriceInfo.description ?? '',
+            originalPrice: lightRegularPrice,
+            discountAmount: lightDiscountAmount,
+          },
+        ]
+      : []),
     {
       title: basicPriceInfo?.title || '기본',
       label: '대학생 추천',
