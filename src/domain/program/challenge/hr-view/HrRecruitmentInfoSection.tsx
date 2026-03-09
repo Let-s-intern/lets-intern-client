@@ -15,7 +15,7 @@ interface PriceInfo {
   originalPrice: number;
   discountAmount: number;
   description: string;
-  planType: 'BASIC' | 'STANDARD' | 'PREMIUM';
+  planType: 'BASIC' | 'STANDARD' | 'PREMIUM' | 'LIGHT';
 }
 
 interface Props {
@@ -111,9 +111,11 @@ const PriceView = ({
 const PlanBenefits = ({
   description,
   isBasic,
+  showBasicIncluded,
 }: {
   description: string;
   isBasic: boolean;
+  showBasicIncluded?: boolean;
 }) => {
   const lines = description
     .split('\n')
@@ -133,7 +135,7 @@ const PlanBenefits = ({
           <span className="whitespace-pre-line">{displayLine(line)}</span>
         </li>
       ))}
-      {!isBasic && (
+      {!isBasic && showBasicIncluded !== false && (
         <li className="flex items-start gap-1.5">
           <span className="text-[#606060] md:text-xsmall16">✓</span>
           <span className="whitespace-pre-line">
@@ -155,6 +157,7 @@ const PlanRow = ({ plan }: { plan: PriceInfo }) => {
         <PlanBenefits
           description={plan.description}
           isBasic={plan.planType === 'BASIC'}
+          showBasicIncluded={plan.planType !== 'LIGHT'}
         />
       </div>
       <PriceView
@@ -176,6 +179,8 @@ const HrRecruitmentInfoSection = ({ challenge }: Props) => {
     standardDiscountAmount,
     premiumRegularPrice,
     premiumDiscountAmount,
+    lightRegularPrice,
+    lightDiscountAmount,
   } = getChallengeOptionPriceInfo(challenge.priceInfo);
 
   const plans: PriceInfo[] = useMemo(() => {
@@ -199,7 +204,7 @@ const HrRecruitmentInfoSection = ({ challenge }: Props) => {
 
       const lines = splitLines(info.description);
 
-      if (planType === 'BASIC') {
+      if (planType === 'BASIC' || planType === 'LIGHT') {
         return lines.join('\n');
       }
 
@@ -246,10 +251,17 @@ const HrRecruitmentInfoSection = ({ challenge }: Props) => {
       premiumRegularPrice,
       premiumDiscountAmount,
     );
+    const lightPlan = createPlan(
+      'LIGHT',
+      '라이트',
+      lightRegularPrice,
+      lightDiscountAmount,
+    );
 
     if (basicPlan) result.push(basicPlan);
     if (standardPlan) result.push(standardPlan);
     if (premiumPlan) result.push(premiumPlan);
+    if (lightPlan) result.push(lightPlan);
 
     return result;
   }, [
@@ -259,6 +271,8 @@ const HrRecruitmentInfoSection = ({ challenge }: Props) => {
     standardDiscountAmount,
     premiumRegularPrice,
     premiumDiscountAmount,
+    lightRegularPrice,
+    lightDiscountAmount,
     challenge.priceInfo,
   ]);
 
