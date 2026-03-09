@@ -45,6 +45,7 @@ const CompareResultCard = ({ programIds, onClose }: CompareResultCardProps) => {
     if (p.title.includes('대기업')) return '대기업 자소서';
     if (p.title.includes('자기소개서')) return '자소서';
     if (p.title.includes('포트폴리오')) return '포트폴리오';
+    if (p.title.includes('면접')) return '면접';
     if (p.title.includes('마케팅')) return '마케팅';
     if (p.title.includes('HR')) return 'HR';
     return p.title;
@@ -88,6 +89,10 @@ const CompareResultCard = ({ programIds, onClose }: CompareResultCardProps) => {
       {/* 비교 항목 */}
       <div className="flex flex-col">
         <InfoRow
+          label="설명"
+          values={comparisons.map((c) => c.description)}
+        />
+        <InfoRow
           label="추천 대상"
           values={comparisons.map((c) => c.target)}
         />
@@ -100,23 +105,17 @@ const CompareResultCard = ({ programIds, onClose }: CompareResultCardProps) => {
           values={comparisons.map((c) => c.pricing)}
         />
         <InfoRow
-          label="피드백 횟수"
+          label="피드백 및 특강"
           values={comparisons.map((c) => c.feedback)}
         />
         <InfoRow
-          label="결과물"
+          label="혜택"
           values={comparisons.map((c) => c.deliverable)}
         />
         <InfoRow
           label="커리큘럼"
           values={comparisons.map((c) => c.curriculum)}
         />
-        {comparisons.some((c) => c.features) && (
-          <InfoRow
-            label="주요 특징"
-            values={comparisons.map((c) => c.features ?? '-')}
-          />
-        )}
       </div>
 
       {/* CTA 버튼들 */}

@@ -23,8 +23,13 @@ export const PERSONAS: Persona[] = [
   },
   {
     id: 'specialized',
-    title: '특화 트랙(대기업 · 마케팅 · HR)',
-    description: '현직자 특강과 심화 피드백을 원하는 분',
+    title: '실제 지원 전에 서류를 완성하고 싶어요',
+    description: '대기업·마케팅·HR 특화 트랙으로 서류를 완성하고 싶은 분',
+  },
+  {
+    id: 'interview',
+    title: '면접 준비가 필요해요',
+    description: '모의면접과 현직자 특강으로 면접을 준비하고 싶은 분',
   },
   {
     id: 'dontKnow',
