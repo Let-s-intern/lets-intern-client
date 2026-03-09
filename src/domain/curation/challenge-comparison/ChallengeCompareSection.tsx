@@ -64,7 +64,13 @@ const ChallengeCompareSection = () => {
 
   const scrollToResult = useCallback(() => {
     requestAnimationFrame(() => {
-      resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (!resultRef.current) return;
+      const navHeight = 80;
+      const top =
+        resultRef.current.getBoundingClientRect().top +
+        window.scrollY -
+        navHeight;
+      window.scrollTo({ top, behavior: 'smooth' });
     });
   }, []);
 
