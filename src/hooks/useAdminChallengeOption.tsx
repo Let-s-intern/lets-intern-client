@@ -6,10 +6,17 @@ import {
 } from '@/schema';
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 
-const { BASIC, STANDARD, PREMIUM } = ChallengePricePlanEnum.enum;
+const { BASIC, STANDARD, PREMIUM, LIGHT } = ChallengePricePlanEnum.enum;
+
+export interface LightInfo {
+  price: number;
+  discount: number;
+  title: string;
+  description: string;
+}
 
 export default function useAdminChallengeOption(challenge?: ChallengeIdSchema) {
-  /** 가격 플랜 */
+  /** 가격 플랜 (BASIC/STANDARD/PREMIUM만, LIGHT는 체크박스로 별도) */
   const pricePlan = useRef<ChallengePricePlan>(BASIC);
 
   const basicPriceInfo = challenge?.priceInfo.find(
@@ -21,9 +28,21 @@ export default function useAdminChallengeOption(challenge?: ChallengeIdSchema) {
   const premiumPriceInfo = challenge?.priceInfo.find(
     (item) => item.challengePricePlanType === PREMIUM,
   );
+  const lightPriceInfo = challenge?.priceInfo.find(
+    (item) => item.challengePricePlanType === LIGHT,
+  );
 
   /** 옵션 관련 상태 */
   const { data } = useGetChallengeOptions();
+
+  /** 라이트 플랜 (체크박스로 켜면 추가, 이용료/할인과 독립) */
+  const [isLightEnabled, setIsLightEnabled] = useState(false);
+  const [lightInfo, setLightInfo] = useState<LightInfo>({
+    price: 0,
+    discount: 0,
+    title: '',
+    description: '',
+  });
 
   const [basicOptIds, setBasicOptIds] = useState<number[]>([]);
   const [standardOptIds, setStandardOptIds] = useState<number[]>([]);
@@ -68,6 +87,7 @@ export default function useAdminChallengeOption(challenge?: ChallengeIdSchema) {
   );
 
   const handleChangePricePlan = useCallback((value: ChallengePricePlan) => {
+    if (value === LIGHT) return;
     pricePlan.current = value;
     if (value === PREMIUM) return;
 
@@ -79,6 +99,17 @@ export default function useAdminChallengeOption(challenge?: ChallengeIdSchema) {
     setStandardOptIds([]);
     setStandardInfo({ title: '', description: '' });
   }, []);
+
+  const handleChangeLightInfo = useCallback(
+    (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const { name, value, type } = e.target;
+      setLightInfo((prev) => ({
+        ...prev,
+        [name]: type === 'number' ? Number(value) : value,
+      }));
+    },
+    [],
+  );
 
   useEffect(() => {
     if (basicPriceInfo) {
@@ -122,13 +153,24 @@ export default function useAdminChallengeOption(challenge?: ChallengeIdSchema) {
         description: premiumPriceInfo.description ?? '',
       });
     }
-  }, [basicPriceInfo, standardPriceInfo, premiumPriceInfo]);
+
+    if (lightPriceInfo) {
+      setIsLightEnabled(true);
+      setLightInfo({
+        price: lightPriceInfo.price ?? 0,
+        discount: lightPriceInfo.discount ?? 0,
+        title: lightPriceInfo.title ?? '',
+        description: lightPriceInfo.description ?? '',
+      });
+    }
+  }, [basicPriceInfo, standardPriceInfo, premiumPriceInfo, lightPriceInfo]);
 
   return {
     pricePlan,
     basicPriceInfo,
     standardPriceInfo,
     premiumPriceInfo,
+    lightPriceInfo,
     data,
     basicOptIds,
     standardOptIds,
@@ -136,13 +178,18 @@ export default function useAdminChallengeOption(challenge?: ChallengeIdSchema) {
     basicInfo,
     standardInfo,
     premiumInfo,
+    isLightEnabled,
+    lightInfo,
     handleChangeInfo,
     handleChangePricePlan,
+    handleChangeLightInfo,
     setBasicOptIds,
     setStandardOptIds,
     setPremiumOptIds,
     setBasicInfo,
     setStandardInfo,
     setPremiumInfo,
+    setIsLightEnabled,
+    setLightInfo,
   };
 }

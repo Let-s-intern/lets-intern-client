@@ -1,5 +1,6 @@
 import { ChallengeOption } from '@/api/challenge/challengeOptionSchema';
 import Input from '@/common/input/v1/Input';
+import type { LightInfo } from '@/hooks/useAdminChallengeOption';
 import {
   ChallengeIdSchema,
   ChallengePricePlan,
@@ -12,6 +13,7 @@ import { newProgramFeeTypeToText } from '@/utils/convert';
 import {
   Checkbox,
   FormControl,
+  FormControlLabel,
   InputLabel,
   MenuItem,
   Select,
@@ -47,6 +49,12 @@ interface IChallengePriceProps<
   onChangePremiumOptIds: (value: number[]) => void;
   onChangePricePlanInfo: (
     plan: ChallengePricePlan,
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
+  isLightEnabled: boolean;
+  lightInfo: LightInfo;
+  onLightEnabledChange: (checked: boolean) => void;
+  onChangeLightInfo: (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
 }
@@ -97,6 +105,10 @@ export default function ChallengePrice<
   onChangeStandardOptIds,
   onChangePremiumOptIds,
   onChangePricePlanInfo,
+  isLightEnabled,
+  lightInfo,
+  onLightEnabledChange,
+  onChangeLightInfo,
 }: IChallengePriceProps<T>) {
   const defaultPriceReq: ChallengePriceReq = {
     challengeParticipationType:
@@ -198,21 +210,76 @@ export default function ChallengePrice<
 
   return (
     <section className="flex flex-col gap-3">
-      {/* 가격 플랜 */}
-      <SelectControl
-        labelId="challengePricePlanLabel"
-        id="challengePricePlan"
-        name="challengePricePlan"
-        label="가격 플랜"
-        value={pricePlanValue}
-        menuList={pricePlanMenuList}
-        onChange={(e) => {
-          setPricePlanValue(e.target.value as ChallengePricePlan);
-          if (onChangePricePlan) {
-            onChangePricePlan(e.target.value as ChallengePricePlan);
+      {/* 가격 플랜 + 라이트 체크박스 */}
+      <div className="flex w-full items-center justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <SelectControl
+            labelId="challengePricePlanLabel"
+            id="challengePricePlan"
+            name="challengePricePlan"
+            label="가격 플랜"
+            value={pricePlanValue}
+            menuList={pricePlanMenuList}
+            onChange={(e) => {
+              const value = e.target.value as ChallengePricePlan;
+              if (value === 'LIGHT') return;
+              setPricePlanValue(value);
+              if (onChangePricePlan) onChangePricePlan(value);
+            }}
+          />
+        </div>
+
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={isLightEnabled}
+              onChange={(e) => onLightEnabledChange(e.target.checked)}
+              name="isLightEnabled"
+            />
           }
-        }}
-      />
+          label="라이트 플랜"
+        />
+      </div>
+
+      {/* 라이트 플랜 필드 (체크 시에만, 금액 유형 위) */}
+      {isLightEnabled && (
+        <div className="rounded flex flex-col gap-3 border border-neutral-80 bg-neutral-95 p-3">
+          <Input
+            label="라이트 금액"
+            name="price"
+            size="small"
+            type="number"
+            placeholder="라이트 금액을 입력해주세요"
+            value={lightInfo.price === 0 ? '' : String(lightInfo.price)}
+            onChange={onChangeLightInfo}
+          />
+          <Input
+            label="라이트 할인 금액"
+            name="discount"
+            size="small"
+            type="number"
+            placeholder="라이트 할인 금액을 입력해주세요"
+            value={lightInfo.discount === 0 ? '' : String(lightInfo.discount)}
+            onChange={onChangeLightInfo}
+          />
+          <Input
+            label="라이트 플랜명"
+            name="title"
+            size="small"
+            placeholder="라이트 플랜명을 입력해주세요"
+            maxLength={6}
+            value={lightInfo.title}
+            onChange={onChangeLightInfo}
+          />
+          <OutlinedTextarea
+            name="description"
+            value={lightInfo.description}
+            placeholder="라이트 플랜 설명을 입력해주세요"
+            onChange={onChangeLightInfo}
+          />
+        </div>
+      )}
+
       {/* 금액 유형 */}
       <SelectControl
         labelId="challengePriceTypeLabel"
