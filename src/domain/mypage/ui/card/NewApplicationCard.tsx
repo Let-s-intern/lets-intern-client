@@ -69,11 +69,15 @@ const MypageApplicationCard = ({ config }: MypageApplicationCardProps) => {
                 <span
                   className={twMerge(
                     'rounded-xxs px-2 py-0.5 text-xxsmall12 font-normal',
-                    config.statusLabel === '참여예정'
-                      ? 'border border-neutral-80 text-primary'
-                      : config.statusLabel === '참여종료'
-                        ? 'bg-neutral-95 text-neutral-40'
-                        : 'bg-primary-10 text-primary',
+                    (() => {
+                      if (config.statusLabel === '참여예정') {
+                        return 'border border-neutral-80 text-primary';
+                      }
+                      if (config.statusLabel === '참여종료') {
+                        return 'bg-neutral-95 text-neutral-40';
+                      }
+                      return 'bg-primary-10 text-primary';
+                    })(),
                   )}
                 >
                   {config.statusLabel}
