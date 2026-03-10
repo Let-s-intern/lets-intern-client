@@ -69,10 +69,15 @@ const MypageApplicationCard = ({ config }: MypageApplicationCardProps) => {
                 <span
                   className={twMerge(
                     'rounded-xxs px-2 py-0.5 text-xxsmall12 font-normal',
-                    config.statusLabel === '참여예정' ||
-                      config.statusLabel === '참여완료'
-                      ? 'border border-neutral-80 text-primary'
-                      : 'bg-primary-10 text-primary',
+                    (() => {
+                      if (config.statusLabel === '참여예정') {
+                        return 'border border-neutral-80 text-primary';
+                      }
+                      if (config.statusLabel === '참여종료') {
+                        return 'bg-neutral-95 text-neutral-40';
+                      }
+                      return 'bg-primary-10 text-primary';
+                    })(),
                   )}
                 >
                   {config.statusLabel}
@@ -88,9 +93,9 @@ const MypageApplicationCard = ({ config }: MypageApplicationCardProps) => {
               {config.dateText && (
                 <>
                   <div className="hidden h-4 w-px bg-neutral-80 md:block" />
-                  <span className="hidden text-xxsmall12 font-normal text-neutral-40 md:inline">
+                  <p className="hidden text-xxsmall12 font-normal text-neutral-40 md:line-clamp-1 md:inline">
                     {config.dateLabel} {config.dateText}
-                  </span>
+                  </p>
                 </>
               )}
             </div>
@@ -112,7 +117,7 @@ const MypageApplicationCard = ({ config }: MypageApplicationCardProps) => {
             </div>
 
             {config.dateText && (
-              <p className="text-xxsmall12 font-normal text-neutral-40 md:hidden">
+              <p className="line-clamp-1 text-xxsmall12 font-normal text-neutral-40 md:hidden">
                 {config.dateLabel} {config.dateText}
               </p>
             )}
@@ -122,7 +127,7 @@ const MypageApplicationCard = ({ config }: MypageApplicationCardProps) => {
             <div className="mt-2 flex flex-col gap-2 md:mt-0 md:flex-row md:items-center md:justify-between">
               <span className="flex flex-row gap-1 text-xxsmall12 text-neutral-0">
                 구매플랜
-                <p className="text-xxsmall12 text-primary">
+                <p className="text-xxsmall12 text-primary-dark">
                   {config.purchasePlanText}
                 </p>
               </span>
@@ -155,7 +160,6 @@ const MypageApplicationCard = ({ config }: MypageApplicationCardProps) => {
           cancelText={actionButton.confirm?.cancelText ?? '취소'}
           onConfirm={async () => {
             setShowConfirm(false);
-            // 가이드북만 confirm을 사용하므로 여기서 직접 다운로드 처리
             await downloadGuidebookAndTrack(config.id, config.programId);
           }}
           onCancel={() => setShowConfirm(false)}
