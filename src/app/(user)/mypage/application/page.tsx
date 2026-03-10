@@ -44,7 +44,7 @@ const Application = () => {
     programCompletedList.length === 0;
 
   return (
-    <main className="flex w-full flex-col gap-10">
+    <main className="flex w-full flex-col gap-8 md:gap-10">
       <div className="md:pt-5">
         <CategoryTabs
           options={APPLICATION_CATEGORY_OPTIONS}

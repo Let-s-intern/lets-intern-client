@@ -59,9 +59,9 @@ const toProgramCardConfig = (
       ? '참여중'
       : programStatusType === 'PREV'
         ? '참여예정'
-        : '참여완료';
+        : '참여종료';
 
-  const isCompleted = statusLabel === '참여완료';
+  const isCompleted = statusLabel === '참여종료';
 
   const programTypeKey = programType ?? '';
   const categoryLabel = programTypeKey
@@ -151,7 +151,7 @@ const toGuidebookCardConfig = (
     thumbnail,
     title: programTitle ?? '',
     description: programShortDesc ?? '',
-    statusLabel: '구매 완료',
+    statusLabel: '구매완료',
     categoryLabel,
     dateLabel: '구매일자',
     dateText: purchaseDateText,
@@ -164,7 +164,6 @@ const toGuidebookCardConfig = (
         confirmText: '다운로드',
         cancelText: '닫기',
       },
-      // onClick은 카드 레이아웃(또는 상위)에서 주입
     },
     isCompleted: false,
   };
