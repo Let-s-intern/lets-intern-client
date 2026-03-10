@@ -24,7 +24,7 @@ const OrderProgramInfo = ({
   programType?: ProgramInfo['programType'] | string | null;
   accessMethod?: string | null;
 }) => {
-  const isGuidebook = programType === 'guidebook';
+  const isGuidebook = programType?.toString().toLowerCase() === 'guidebook';
 
   return (
     <div className="flex w-full flex-col items-start justify-center gap-y-6">
