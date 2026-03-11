@@ -15,6 +15,15 @@ function getRelativeDate(dateStr: string): string {
   return `${diffDays}일 전`;
 }
 
+function NoticeLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-6 md:gap-10">
+      <h1 className="text-medium22 font-semibold text-neutral-0">공지사항</h1>
+      {children}
+    </div>
+  );
+}
+
 function GuideRow({ guide }: { guide: ChallengeMentorGuideItem }) {
   return (
     <a
@@ -54,34 +63,26 @@ export default function NoticeListPage() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-6 md:gap-10">
-        <h1 className="text-medium22 font-semibold text-neutral-0">
-          공지사항
-        </h1>
+      <NoticeLayout>
         <div className="py-20 text-center text-xsmall14 text-neutral-40">
           불러오는 중...
         </div>
-      </div>
+      </NoticeLayout>
     );
   }
 
   if (challenges.length === 0) {
     return (
-      <div className="flex flex-col gap-6 md:gap-10">
-        <h1 className="text-medium22 font-semibold text-neutral-0">
-          공지사항
-        </h1>
+      <NoticeLayout>
         <div className="py-20 text-center text-xsmall14 text-neutral-40">
           참여 중인 챌린지가 없습니다.
         </div>
-      </div>
+      </NoticeLayout>
     );
   }
 
   return (
-    <div className="flex flex-col gap-6 md:gap-10">
-      <h1 className="text-medium22 font-semibold text-neutral-0">공지사항</h1>
-
+    <NoticeLayout>
       <section className="flex flex-col gap-4">
         <h2 className="text-small18 font-semibold text-neutral-0">
           프로그램 공지
@@ -95,6 +96,6 @@ export default function NoticeListPage() {
           ))}
         </div>
       </section>
-    </div>
+    </NoticeLayout>
   );
 }

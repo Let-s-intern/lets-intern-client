@@ -17,6 +17,9 @@ interface BasicInfoProps {
   onChange: (data: BasicInfoFormData) => void;
 }
 
+const MAX_FILE_SIZE_MB = 5;
+const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+
 const FIELDS: { key: keyof Omit<BasicInfoFormData, 'profileImgUrl'>; label: string }[] = [
   { key: 'name', label: '이름' },
   { key: 'nickname', label: '활동명' },
@@ -37,8 +40,8 @@ export default function BasicInfo({ formData, onChange }: BasicInfoProps) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert('파일 크기는 5MB 이하여야 합니다.');
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      alert(`파일 크기는 ${MAX_FILE_SIZE_MB}MB 이하여야 합니다.`);
       return;
     }
 

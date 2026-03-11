@@ -25,7 +25,7 @@ import { MenuItem, SelectChangeEvent } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 const NO_MENTOR_ID = 0;
 
@@ -173,37 +173,36 @@ const useRoleBasedAttendanceData = () => {
   };
 };
 
-const useFeedbackParticipantRows = () => {
+const useSelectedMission = () => {
+  return useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem('mission') || '{}');
+    } catch {
+      return {};
+    }
+  }, []);
+};
+
+const useFeedbackParticipantRows = (): AttendanceRow[] => {
   const { missionId, programId } = useParams();
+  const { data } = useRoleBasedAttendanceData();
+  const selectedMission = useSelectedMission();
 
-  const { data, isLoading } = useRoleBasedAttendanceData();
-  const [rows, setRows] = useState<AttendanceRow[]>([]);
-
-  const selectedMission = JSON.parse(localStorage.getItem('mission') || '{}');
-  const missionTitle = selectedMission.title;
-  const missionRound = selectedMission.th;
-
-  useEffect(() => {
-    if (isLoading) return;
-
-    setRows(
-      (data?.attendanceList ?? []).map((item) => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { status, result, challengePricePlanType, ...rest } = item;
-
-        return {
+  return useMemo(
+    () =>
+      (data?.attendanceList ?? []).map(
+        ({ status: _s, result: _r, challengePricePlanType: _c, ...rest }) => ({
           ...rest,
-          missionTitle,
-          missionRound,
+          missionTitle: selectedMission.title ?? '',
+          missionRound: selectedMission.th ?? '',
           feedbackStatus:
-            item.feedbackStatus ?? FeedbackStatusEnum.enum.WAITING,
-          feedbackPageLink: `/admin/challenge/operation/${programId}/mission/${missionId}/participant/${item.id}/feedback`,
-        };
-      }),
-    );
-  }, [isLoading, data, missionTitle, missionRound, programId, missionId]);
-
-  return rows;
+            (rest.feedbackStatus as string) ??
+            FeedbackStatusEnum.enum.WAITING,
+          feedbackPageLink: `/admin/challenge/operation/${programId}/mission/${missionId}/participant/${rest.id}/feedback`,
+        }),
+      ),
+    [data, selectedMission, programId, missionId],
+  );
 };
 
 export default function FeedbackParticipantPage() {
@@ -212,14 +211,7 @@ export default function FeedbackParticipantPage() {
     programId: string;
   }>();
   const rows = useFeedbackParticipantRows();
-
-  const selectedMission = useMemo(() => {
-    try {
-      return JSON.parse(localStorage.getItem('mission') || '{}');
-    } catch {
-      return {};
-    }
-  }, []);
+  const selectedMission = useSelectedMission();
 
   const columns: GridColDef<AttendanceRow>[] = useMemo(
     () => [
