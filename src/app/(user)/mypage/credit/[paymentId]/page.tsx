@@ -119,7 +119,10 @@ const CreditDetail = () => {
                 </section>
               )}
               {/* 주문 정보 */}
-              <OrderProgramInfo {...paymentDetail.programInfo} />
+              <OrderProgramInfo
+                {...paymentDetail.programInfo}
+                accessMethod={paymentDetail.accessMethod}
+              />
             </div>
 
             {/* 참여자 정보 */}
