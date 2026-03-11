@@ -244,6 +244,36 @@ function Breadcrumb({
   );
 }
 
+// ─── 제출 수 셀 ─────────────────────────────────────────────
+
+function SubmissionCountCell({ missionId }: { missionId: number | string }) {
+  const { programId } = useParams<{ programId: string }>();
+  const { data: isAdmin } = useIsAdminQuery();
+
+  const { data: dataForAdmin } = useChallengeMissionFeedbackAttendanceQuery({
+    challengeId: programId,
+    missionId: String(missionId),
+    enabled: !!programId && isAdmin,
+  });
+  const { data: dataForMentor } = useMentorMissionFeedbackAttendanceQuery({
+    challengeId: programId,
+    missionId: String(missionId),
+    enabled: !!programId && !isAdmin,
+  });
+
+  const data = isAdmin ? dataForAdmin : dataForMentor;
+  const total = data?.attendanceList?.length ?? 0;
+  const submitted = data?.attendanceList?.filter((a) => !!a.link)?.length ?? 0;
+
+  if (!data) return <span className="text-neutral-40">-</span>;
+
+  return (
+    <span>
+      {submitted} / {total}
+    </span>
+  );
+}
+
 // ─── 미션 목록 테이블 ───────────────────────────────────────
 
 function FeedbackMissionList({
@@ -278,6 +308,15 @@ function FeedbackMissionList({
         headerName: '피드백 옵션',
         sortable: false,
         width: 180,
+      },
+      {
+        field: 'submissionCount',
+        headerName: '제출 현황',
+        width: 100,
+        sortable: false,
+        renderCell: (params: GridRenderCellParams<MissionRow>) => (
+          <SubmissionCountCell missionId={params.row.id} />
+        ),
       },
       {
         field: 'feedbackPage',
