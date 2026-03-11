@@ -29,7 +29,6 @@ import {
   GridRenderCellParams,
 } from '@mui/x-data-grid';
 import { MenuItem, SelectChangeEvent } from '@mui/material';
-import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
@@ -119,17 +118,12 @@ function MentorCell({
 
   const patchAttendance = isAdmin ? patchAdminAttendance : patchAttendanceMentor;
 
-  const queryClient = useQueryClient();
   const handleChange = async (e: SelectChangeEvent<number>) => {
     await patchAttendance({
       attendanceId: row.id,
       mentorUserId: e.target.value as number,
     });
     await invalidate();
-    // 멘토/멘티 배정 탭과 동기화
-    queryClient.invalidateQueries({
-      queryKey: [ChallengeMissionFeedbackAttendanceQueryKey],
-    });
   };
 
   if (!isAdmin) return <span>{row.mentorName}</span>;
