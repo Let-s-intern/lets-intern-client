@@ -34,8 +34,11 @@ export default function FeedbackOperationPage() {
         ))}
       </nav>
 
-      {activeTab === 'notice' && <MentorNoticeManagement />}
-      {activeTab === 'ongoing' && <OngoingChallenges />}
+      {activeTab === 'notice' ? (
+        <MentorNoticeManagement />
+      ) : (
+        <OngoingChallenges />
+      )}
     </section>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   useAdminChallengeMentorGuideListQuery,
   usePostAdminChallengeMentorGuide,
@@ -36,6 +36,17 @@ type ModalState =
   | { open: true; mode: 'edit'; guideId: number };
 
 const INITIAL_FORM: NoticeForm = { title: '', link: '' };
+
+const DATA_GRID_LOCALE_TEXT = {
+  noRowsLabel: '등록된 공지가 없습니다.',
+} as const;
+
+const DATA_GRID_SX = {
+  '& .MuiDataGrid-cell': {
+    display: 'flex',
+    alignItems: 'center',
+  },
+} as const;
 
 /* ── 컬럼 정의 ── */
 
@@ -124,15 +135,15 @@ export default function MentorNoticeManagement() {
 
   /* 검색 */
   const [search, setSearch] = useState('');
-  const filteredGuides = search
-    ? guides.filter((g) => {
-        const term = search.toLowerCase();
-        return (
-          g.title?.toLowerCase().includes(term) ||
-          g.link?.toLowerCase().includes(term)
-        );
-      })
-    : guides;
+  const filteredGuides = useMemo(() => {
+    if (!search) return guides;
+    const term = search.toLowerCase();
+    return guides.filter(
+      (g) =>
+        g.title?.toLowerCase().includes(term) ||
+        g.link?.toLowerCase().includes(term),
+    );
+  }, [guides, search]);
 
   /* CRUD mutations */
   const postMutation = usePostAdminChallengeMentorGuide();
@@ -192,19 +203,31 @@ export default function MentorNoticeManagement() {
   };
 
   /* 파생 값 */
-  const selectedMentorName =
-    mentorData?.mentorList.find(
-      (m) => String(m.challengeMentorId) === selectedChallengeMentorId,
-    )?.name ?? '';
-
-  const selectedChallengeTitle =
-    challengeData?.programList.find(
-      (p) => String(p.id) === selectedChallengeId,
-    )?.title ?? '';
-
-  const columns = buildColumns(openEditModal, handleDelete);
-
   const isMentorSelected = !!selectedChallengeMentorId;
+  const isCreateMode = modalState.open && modalState.mode === 'create';
+  const isFormEmpty = !form.title && !form.link;
+
+  const selectedMentorName = useMemo(
+    () =>
+      mentorData?.mentorList.find(
+        (m) => String(m.challengeMentorId) === selectedChallengeMentorId,
+      )?.name ?? '',
+    [mentorData?.mentorList, selectedChallengeMentorId],
+  );
+
+  const selectedChallengeTitle = useMemo(
+    () =>
+      challengeData?.programList.find(
+        (p) => String(p.id) === selectedChallengeId,
+      )?.title ?? '',
+    [challengeData?.programList, selectedChallengeId],
+  );
+
+  const columns = useMemo(
+    () => buildColumns(openEditModal, handleDelete),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedChallengeMentorId],
+  );
 
   return (
     <>
@@ -302,13 +325,8 @@ export default function MentorNoticeManagement() {
             autoHeight
             hideFooter
             getRowId={(row) => row.challengeMentorGuideId}
-            localeText={{ noRowsLabel: '등록된 공지가 없습니다.' }}
-            sx={{
-              '& .MuiDataGrid-cell': {
-                display: 'flex',
-                alignItems: 'center',
-              },
-            }}
+            localeText={DATA_GRID_LOCALE_TEXT}
+            sx={DATA_GRID_SX}
           />
         ) : (
           <div className="py-16 text-center text-xsmall14 text-neutral-40">
@@ -321,11 +339,7 @@ export default function MentorNoticeManagement() {
 
       {/* 공지 작성 / 수정 모달 */}
       <Dialog open={modalState.open} onClose={closeModal} maxWidth="sm" fullWidth>
-        <DialogTitle>
-          {modalState.open && modalState.mode === 'create'
-            ? '공지 작성'
-            : '공지 수정'}
-        </DialogTitle>
+        <DialogTitle>{isCreateMode ? '공지 작성' : '공지 수정'}</DialogTitle>
         <DialogContent>
           <div className="mt-4 flex flex-col gap-4">
             <div>
@@ -361,9 +375,9 @@ export default function MentorNoticeManagement() {
           <Button
             onClick={handleSubmit}
             variant="contained"
-            disabled={!form.title && !form.link}
+            disabled={isFormEmpty}
           >
-            {modalState.open && modalState.mode === 'create' ? '등록' : '수정'}
+            {isCreateMode ? '등록' : '수정'}
           </Button>
         </DialogActions>
       </Dialog>
