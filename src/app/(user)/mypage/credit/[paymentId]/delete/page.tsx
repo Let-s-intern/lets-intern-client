@@ -64,7 +64,10 @@ const CreditDelete = () => {
           )
         ) : (
           <>
-            <OrderProgramInfo {...paymentDetail.programInfo} />
+            <OrderProgramInfo
+              {...paymentDetail.programInfo}
+              accessMethod={paymentDetail.accessMethod}
+            />
             <div className="flex w-full flex-col items-start justify-center gap-y-6">
               <div className="font-semibold text-neutral-0">환불 정보</div>
               <div className="flex w-full flex-col items-start justify-start gap-y-3">
