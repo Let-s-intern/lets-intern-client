@@ -171,6 +171,10 @@ export type PatchUserType = {
   careerType?: string | null;
   isPoolUp?: boolean;
   memo?: string | null;
+  nickname?: string | null;
+  introduction?: string | null;
+  profileImgUrl?: string | null;
+  sns?: string | null;
 };
 
 export const usePatchUserAdminMutation = ({

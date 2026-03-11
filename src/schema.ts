@@ -1668,6 +1668,10 @@ export const userAdminDetailType = z.object({
     accountNum: z.string().nullable(),
     marketingAgree: z.boolean().nullable(),
     authProvider: authProviderSchema.nullable(),
+    nickname: z.string().nullable().optional(),
+    introduction: z.string().nullable().optional(),
+    profileImgUrl: z.string().nullable().optional(),
+    sns: z.string().nullable().optional(),
   }),
   applicationInfo: z.array(
     z.object({
