@@ -69,6 +69,26 @@ export const useDeleteChallengeMentor = () => {
   });
 };
 
+/** POST 멘토-멘티 매칭 /api/v2/admin/challenge/{challengeId}/mentor/{challengeMentorId}/match/{applicationId} */
+export const usePostAdminChallengeMentorMatch = () => {
+  return useMutation({
+    mutationFn: async (data: {
+      challengeId: number;
+      challengeMentorId: number;
+      applicationId: number;
+    }) => {
+      const { challengeId, challengeMentorId, applicationId } = data;
+      await axiosV2.post(
+        `/admin/challenge/${challengeId}/mentor/${challengeMentorId}/match/${applicationId}`,
+      );
+    },
+    onError: (error) => {
+      console.error(error);
+      alert('매칭에 실패했습니다: ' + error);
+    },
+  });
+};
+
 /** PATCH 멘토 피드백 저장 /api/v1/attendance/{attendanceId}/mentor */
 export const usePatchAttendanceMentorMutation = () => {
   return useMutation({
