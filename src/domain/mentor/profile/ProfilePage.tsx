@@ -1,8 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { usePatchUser, useUserQuery } from '@/api/user/user';
+import { useUnsavedChangesWarning } from '@/hooks/useUnsavedChangesWarning';
+import mentorConfig from '../config.json';
 import BasicInfo, { type BasicInfoFormData } from './BasicInfo';
 import CareerSection from './CareerSection';
 import Introduction from './Introduction';
@@ -22,24 +24,55 @@ export default function ProfilePage() {
   const [formData, setFormData] = useState<BasicInfoFormData>(INITIAL_FORM_DATA);
   const [introduction, setIntroduction] = useState('');
 
+  // 서버에서 받아온 원본 데이터를 저장
+  const [savedFormData, setSavedFormData] =
+    useState<BasicInfoFormData>(INITIAL_FORM_DATA);
+  const [savedIntroduction, setSavedIntroduction] = useState('');
+
   const { mutate: patchUser, isPending } = usePatchUser(
-    () => alert('프로필이 저장되었습니다.'),
-    () => alert('저장에 실패했습니다.'),
+    () => {
+      // 저장 성공 시 원본 데이터 갱신
+      setSavedFormData(formData);
+      setSavedIntroduction(introduction);
+      alert(mentorConfig.profile.saveSuccess);
+    },
+    () => alert(mentorConfig.profile.saveFail),
   );
 
   useEffect(() => {
     if (!user) return;
-    setFormData((prev) => ({
-      ...prev,
+    const data: BasicInfoFormData = {
       name: user.name ?? '',
       nickname: user.nickname ?? '',
       email: user.email ?? '',
       phoneNum: user.phoneNum ?? '',
       sns: user.sns ?? '',
       profileImgUrl: user.profileImgUrl ?? '',
-    }));
-    setIntroduction(user.introduction ?? '');
+    };
+    setFormData(data);
+    setSavedFormData(data);
+
+    const intro = user.introduction ?? '';
+    setIntroduction(intro);
+    setSavedIntroduction(intro);
   }, [user]);
+
+  const hasUnsavedChanges = useMemo(() => {
+    const isFormChanged =
+      formData.name !== savedFormData.name ||
+      formData.nickname !== savedFormData.nickname ||
+      formData.phoneNum !== savedFormData.phoneNum ||
+      formData.sns !== savedFormData.sns ||
+      formData.email !== savedFormData.email ||
+      formData.profileImgUrl !== savedFormData.profileImgUrl;
+    const isIntroChanged = introduction !== savedIntroduction;
+    return isFormChanged || isIntroChanged;
+  }, [formData, savedFormData, introduction, savedIntroduction]);
+
+  useUnsavedChangesWarning(
+    hasUnsavedChanges,
+    mentorConfig.profile.unsavedWarning,
+  );
 
   const handleSave = useCallback(() => {
     patchUser({
@@ -68,8 +101,12 @@ export default function ProfilePage() {
         <button
           type="button"
           onClick={handleSave}
-          disabled={isPending}
-          className="rounded bg-gray-200 px-16 py-3 text-sm font-medium text-gray-700 hover:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={isPending || !hasUnsavedChanges}
+          className={`rounded px-16 py-3 text-sm font-medium transition-colors disabled:cursor-not-allowed ${
+            hasUnsavedChanges
+              ? 'bg-primary text-white hover:bg-primary-dark'
+              : 'bg-gray-200 text-gray-400'
+          }`}
         >
           {isPending ? '저장 중...' : '저장하기'}
         </button>

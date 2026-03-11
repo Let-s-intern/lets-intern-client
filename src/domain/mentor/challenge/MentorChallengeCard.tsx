@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import config from '../config.json';
 
 interface MentorChallengeCardProps {
   challengeId: number;
@@ -24,9 +25,9 @@ const formatDate = (dateStr: string) => {
 };
 
 const statusConfig = {
-  PREV: { text: '준비중', className: 'bg-yellow-100 text-yellow-700' },
-  PROCEEDING: { text: '진행중', className: 'bg-green-100 text-green-700' },
-  POST: { text: '완료', className: 'bg-gray-100 text-gray-500' },
+  PREV: { text: config.challengeStatus.PREV, className: 'bg-yellow-100 text-yellow-700' },
+  PROCEEDING: { text: config.challengeStatus.PROCEEDING, className: 'bg-green-100 text-green-700' },
+  POST: { text: config.challengeStatus.POST, className: 'bg-gray-100 text-gray-500' },
 } as const;
 
 type ProgramStatus = keyof typeof statusConfig;
