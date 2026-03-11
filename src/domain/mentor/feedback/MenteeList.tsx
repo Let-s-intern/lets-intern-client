@@ -84,14 +84,14 @@ const MenteeList = ({
                     )}
                   >
                     <div className="flex items-center gap-0.5">
-                      <span className="text-sm text-neutral-900 line-clamp-1">
+                      <span className="line-clamp-1 text-sm text-neutral-900">
                         {mentee.name}
                       </span>
-                      {isAbsent && (
+                      {isAbsent ? (
                         <span className="ml-1 shrink-0 rounded border border-neutral-300 px-2 py-1 text-xs font-medium text-neutral-500">
                           (미제출)
                         </span>
-                      )}
+                      ) : null}
                     </div>
                     <span
                       className={twMerge(

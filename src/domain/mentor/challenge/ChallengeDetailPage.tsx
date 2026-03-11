@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams } from 'next/navigation';
 
 import {
@@ -21,23 +21,30 @@ const formatDate = (dateStr: string) => {
   });
 };
 
+function getFeedbackBadgeStyle(status: FeedbackStatus): string {
+  const isCompleted = status === 'COMPLETED' || status === 'CONFIRMED';
+  if (isCompleted) return 'bg-green-100 text-green-700';
+  if (status === 'IN_PROGRESS') return 'bg-yellow-100 text-yellow-700';
+  return 'bg-gray-100 text-gray-500';
+}
+
+interface MissionRowMission {
+  id: number;
+  title?: string | null | undefined;
+  th: number;
+  startDate: string;
+  endDate: string;
+  challengeOptionTitle?: string | null;
+}
+
 /** Counts attendance statuses for a single mission */
 const MissionRow = ({
   mission,
   challengeId,
-  challengeTitle,
   onClickFeedback,
 }: {
-  mission: {
-    id: number;
-    title?: string | null | undefined;
-    th: number;
-    startDate: string;
-    endDate: string;
-    challengeOptionTitle?: string | null;
-  };
+  mission: MissionRowMission;
   challengeId: number;
-  challengeTitle: string;
   onClickFeedback: (missionId: number, missionTh: number) => void;
 }) => {
   const { data } = useMentorMissionFeedbackAttendanceQuery({
@@ -48,21 +55,22 @@ const MissionRow = ({
 
   const attendanceList = data?.attendanceList ?? [];
   const total = attendanceList.length;
-  const submitted = attendanceList.filter(
-    (a) => a.status !== 'ABSENT',
-  ).length;
 
-  const feedbackCounts = attendanceList.reduce(
-    (acc, a) => {
+  // Single-pass aggregation: submitted count + feedback counts
+  const { submittedCount, feedbackCounts, completedCount } = useMemo(() => {
+    let submitted = 0;
+    let completed = 0;
+    const counts: Record<string, number> = {};
+
+    for (const a of attendanceList) {
+      if (a.status !== 'ABSENT') submitted++;
       const status = a.feedbackStatus ?? 'WAITING';
-      acc[status] = (acc[status] || 0) + 1;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
+      counts[status] = (counts[status] || 0) + 1;
+      if (status === 'COMPLETED' || status === 'CONFIRMED') completed++;
+    }
 
-  const completedCount =
-    (feedbackCounts['COMPLETED'] ?? 0) + (feedbackCounts['CONFIRMED'] ?? 0);
+    return { submittedCount: submitted, feedbackCounts: counts, completedCount: completed };
+  }, [attendanceList]);
 
   return (
     <div className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50">
@@ -71,11 +79,11 @@ const MissionRow = ({
           <span className="rounded bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-700">
             {mission.th}회차
           </span>
-          {mission.challengeOptionTitle && (
+          {mission.challengeOptionTitle ? (
             <span className="text-xs text-gray-400">
               {mission.challengeOptionTitle}
             </span>
-          )}
+          ) : null}
         </div>
         <h3 className="font-medium text-gray-900">
           {mission.title || `${mission.th}회차 미션`}
@@ -89,7 +97,7 @@ const MissionRow = ({
         {/* Submission stats */}
         <div className="text-right text-xs text-gray-500">
           <p>
-            제출 <span className="font-semibold text-gray-700">{submitted}</span>{' '}
+            제출 <span className="font-semibold text-gray-700">{submittedCount}</span>{' '}
             / {total}
           </p>
           <p>
@@ -111,13 +119,7 @@ const MissionRow = ({
             return (
               <span
                 key={key}
-                className={`rounded-full px-2 py-0.5 text-xs ${
-                  key === 'COMPLETED' || key === 'CONFIRMED'
-                    ? 'bg-green-100 text-green-700'
-                    : key === 'IN_PROGRESS'
-                      ? 'bg-yellow-100 text-yellow-700'
-                      : 'bg-gray-100 text-gray-500'
-                }`}
+                className={`rounded-full px-2 py-0.5 text-xs ${getFeedbackBadgeStyle(key)}`}
               >
                 {label} {count}
               </span>
@@ -196,7 +198,6 @@ const ChallengeDetailPage = () => {
                 key={mission.id}
                 mission={mission}
                 challengeId={challengeId}
-                challengeTitle={challengeTitle}
                 onClickFeedback={handleClickFeedback}
               />
             ))}
