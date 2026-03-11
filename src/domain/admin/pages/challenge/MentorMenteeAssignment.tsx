@@ -8,15 +8,16 @@ import {
   useChallengeMissionFeedbackAttendanceQuery,
   useChallengeMissionFeedbackListQuery,
 } from '@/api/challenge/challenge';
-import { AdminUserCareerQueryKey } from '@/api/career/career';
-import { userCareerListSchema, userCareerSchema } from '@/api/career/careerSchema';
+import {
+  UseUserDetailAdminQueryKey,
+} from '@/api/user/user';
+import { userAdminDetailType } from '@/schema';
 import { usePatchAdminAttendance } from '@/api/attendance/attendance';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import axios from '@/utils/axios';
 import { useQueries, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
-import { z } from 'zod';
 
 /** 피드백 미션의 출석 데이터에서 참여자 목록 조회 */
 const useAttendanceParticipants = (challengeId: string) => {
@@ -40,32 +41,25 @@ const useAttendanceParticipants = (challengeId: string) => {
   return { attendanceList: attendanceData?.attendanceList ?? [], isLoading };
 };
 
-/** 멘토 목록의 경력 정보를 일괄 조회 */
-const useMentorCareerMap = (
-  mentors: { userId: number }[],
-) => {
+/** 멘토 목록의 경력 정보를 유저 상세 API에서 일괄 조회 */
+const useMentorCareerMap = (mentors: { userId: number }[]) => {
   const results = useQueries({
     queries: mentors.map((m) => ({
-      queryKey: [AdminUserCareerQueryKey, m.userId, 0, 1],
+      queryKey: [UseUserDetailAdminQueryKey, m.userId],
       queryFn: async () => {
-        const res = await axios.get(
-          `/admin/user-career/user/${m.userId}?page=0&size=1`,
-        );
-        const data = res.data.data;
-        const listResult = userCareerListSchema.safeParse(data);
-        if (listResult.success) return listResult.data;
-        const arrayResult = z.array(userCareerSchema).safeParse(data);
-        if (arrayResult.success) return { userCareers: arrayResult.data };
-        return { userCareers: [] };
+        const res = await axios.get(`/user/${m.userId}`);
+        return userAdminDetailType.parse(res.data.data);
       },
+      staleTime: 1000 * 60 * 10,
+      refetchOnWindowFocus: false,
     })),
   });
 
   return useMemo(() => {
     const map = new Map<number, { company: string; job: string }>();
     mentors.forEach((m, i) => {
-      const career = results[i]?.data?.userCareers?.[0];
-      if (career) {
+      const career = results[i]?.data?.careerInfos?.[0];
+      if (career?.company && career?.job) {
         map.set(m.userId, { company: career.company, job: career.job });
       }
     });
@@ -85,13 +79,31 @@ export default function MentorMenteeAssignment() {
   const patchAttendance = usePatchAdminAttendance();
 
   const [selectedMentors, setSelectedMentors] = useState<
-    Record<number, number>
+    Record<number, number | null>
   >({});
   const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
-  const [bulkMentorUserId, setBulkMentorUserId] = useState<number | ''>('');
+  const [bulkMentorUserId, setBulkMentorUserId] = useState<number | null | ''>('');
 
   const mentors = mentorData?.mentorList ?? [];
   const mentorCareerMap = useMentorCareerMap(mentors);
+
+  const MENTOR_COLORS = [
+    { bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200', ring: 'ring-red-300' },
+    { bg: 'bg-orange-50', text: 'text-orange-700', border: 'border-orange-200', ring: 'ring-orange-300' },
+    { bg: 'bg-yellow-50', text: 'text-yellow-700', border: 'border-yellow-200', ring: 'ring-yellow-300' },
+    { bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200', ring: 'ring-green-300' },
+    { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200', ring: 'ring-blue-300' },
+    { bg: 'bg-indigo-50', text: 'text-indigo-700', border: 'border-indigo-200', ring: 'ring-indigo-300' },
+    { bg: 'bg-violet-50', text: 'text-violet-700', border: 'border-violet-200', ring: 'ring-violet-300' },
+  ] as const;
+
+  const mentorColorMap = useMemo(() => {
+    const map = new Map<number, (typeof MENTOR_COLORS)[number]>();
+    mentors.forEach((m, i) => {
+      map.set(m.userId, MENTOR_COLORS[i % MENTOR_COLORS.length]);
+    });
+    return map;
+  }, [mentors]);
 
   const getMentorLabel = (m: { userId: number; name: string }) => {
     const career = mentorCareerMap.get(m.userId);
@@ -127,7 +139,7 @@ export default function MentorMenteeAssignment() {
 
   const handleMatch = async (attendanceId: number) => {
     const mentorUserId = selectedMentors[attendanceId];
-    if (!mentorUserId) {
+    if (mentorUserId === undefined) {
       snackbar('멘토를 선택해주세요.');
       return;
     }
@@ -137,7 +149,11 @@ export default function MentorMenteeAssignment() {
         attendanceId,
         mentorUserId,
       });
-      snackbar('매칭이 완료되었습니다.');
+      snackbar(
+        mentorUserId === null
+          ? '멘토 배정이 해제되었습니다.'
+          : '매칭이 완료되었습니다.',
+      );
       invalidateQueries();
     } catch {
       snackbar('매칭에 실패했습니다.');
@@ -145,7 +161,7 @@ export default function MentorMenteeAssignment() {
   };
 
   const handleBulkAssign = async () => {
-    if (!bulkMentorUserId) {
+    if (bulkMentorUserId === '') {
       snackbar('일괄 지정할 멘토를 선택해주세요.');
       return;
     }
@@ -163,7 +179,11 @@ export default function MentorMenteeAssignment() {
           }),
         ),
       );
-      snackbar(`${checkedIds.size}명에게 멘토를 지정했습니다.`);
+      snackbar(
+        bulkMentorUserId === null
+          ? `${checkedIds.size}명의 멘토 배정을 해제했습니다.`
+          : `${checkedIds.size}명에게 멘토를 지정했습니다.`,
+      );
       setCheckedIds(new Set());
       setBulkMentorUserId('');
       invalidateQueries();
@@ -182,18 +202,60 @@ export default function MentorMenteeAssignment() {
 
   return (
     <div>
+      {/* 멘토 목록 */}
+      <div className="mb-6">
+        <h3 className="mb-3 text-medium18 font-semibold">등록된 멘토</h3>
+        {mentors.length === 0 ? (
+          <p className="text-xsmall14 text-neutral-40">
+            등록된 멘토가 없습니다.
+          </p>
+        ) : (
+          <div className="flex flex-wrap gap-3">
+            {mentors.map((m) => {
+              const career = mentorCareerMap.get(m.userId);
+              const color = mentorColorMap.get(m.userId)!;
+              const assignedCount = attendanceList.filter(
+                (a) => a.mentorId === m.userId,
+              ).length;
+              return (
+                <div
+                  key={m.challengeMentorId}
+                  className={`rounded-lg border px-4 py-3 ${color.bg} ${color.border}`}
+                >
+                  <p className={`text-xsmall14 font-semibold ${color.text}`}>
+                    {m.name}
+                  </p>
+                  {career && (
+                    <p className={`mt-0.5 text-xxsmall12 ${color.text} opacity-70`}>
+                      {career.company} / {career.job}
+                    </p>
+                  )}
+                  <p className={`mt-1 text-xxsmall12 ${color.text} opacity-60`}>
+                    배정 멘티: {assignedCount}명
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-medium18 font-semibold">멘토 배정 현황</h3>
         {/* 일괄 지정 */}
         <div className="flex items-center gap-2">
           <select
             className="rounded border border-neutral-80 px-2 py-1.5 text-xsmall14 outline-none"
-            value={bulkMentorUserId}
-            onChange={(e) =>
-              setBulkMentorUserId(e.target.value ? Number(e.target.value) : '')
-            }
+            value={bulkMentorUserId ?? 'none'}
+            onChange={(e) => {
+              const v = e.target.value;
+              setBulkMentorUserId(
+                v === '' ? '' : v === 'none' ? null : Number(v),
+              );
+            }}
           >
             <option value="">멘토 선택</option>
+            <option value="none">없음 (배정 해제)</option>
             {mentors.map((m) => (
               <option key={m.challengeMentorId} value={m.userId}>
                 {getMentorLabel(m)}
@@ -204,7 +266,7 @@ export default function MentorMenteeAssignment() {
             type="button"
             className="rounded border border-neutral-80 px-4 py-1.5 text-xsmall14 hover:bg-neutral-95 disabled:opacity-50"
             disabled={
-              !bulkMentorUserId ||
+              bulkMentorUserId === '' ||
               checkedIds.size === 0 ||
               patchAttendance.isPending
             }
@@ -260,16 +322,23 @@ export default function MentorMenteeAssignment() {
                     {a.wishCompany ?? '-'} / {a.wishJob ?? '-'}
                   </td>
                   <td className="px-3 py-2">
-                    {a.mentorName ? (
-                      <span className="rounded bg-green-50 px-2 py-0.5 text-xxsmall12 font-medium text-green-700">
-                        {a.mentorName}
-                        {a.mentorId && mentorCareerMap.get(a.mentorId) && (
-                          <span className="ml-1 font-normal text-green-600">
-                            ({mentorCareerMap.get(a.mentorId)!.company}/
-                            {mentorCareerMap.get(a.mentorId)!.job})
+                    {a.mentorName && a.mentorId ? (
+                      (() => {
+                        const color = mentorColorMap.get(a.mentorId);
+                        const career = mentorCareerMap.get(a.mentorId);
+                        return (
+                          <span
+                            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xxsmall12 font-medium ${color?.bg ?? 'bg-neutral-90'} ${color?.text ?? 'text-neutral-40'}`}
+                          >
+                            {a.mentorName}
+                            {career && (
+                              <span className="ml-1 font-normal opacity-70">
+                                ({career.company}/{career.job})
+                              </span>
+                            )}
                           </span>
-                        )}
-                      </span>
+                        );
+                      })()
                     ) : (
                       <span className="text-neutral-40">미배정</span>
                     )}
@@ -277,15 +346,22 @@ export default function MentorMenteeAssignment() {
                   <td className="px-3 py-2">
                     <select
                       className="rounded border border-neutral-80 px-2 py-1 text-xsmall14 outline-none"
-                      value={selectedMentors[a.id] ?? ''}
-                      onChange={(e) =>
+                      value={
+                        selectedMentors[a.id] === null
+                          ? 'none'
+                          : (selectedMentors[a.id] ?? '')
+                      }
+                      onChange={(e) => {
+                        const v = e.target.value;
                         setSelectedMentors((prev) => ({
                           ...prev,
-                          [a.id]: Number(e.target.value),
-                        }))
-                      }
+                          [a.id]:
+                            v === '' ? undefined : v === 'none' ? null : Number(v),
+                        }));
+                      }}
                     >
                       <option value="">선택</option>
+                      <option value="none">없음 (배정 해제)</option>
                       {mentors.map((m) => (
                         <option key={m.challengeMentorId} value={m.userId}>
                           {getMentorLabel(m)}
@@ -298,7 +374,8 @@ export default function MentorMenteeAssignment() {
                       type="button"
                       className="rounded bg-primary px-3 py-1 text-xxsmall12 text-white hover:bg-primary-dark disabled:opacity-50"
                       disabled={
-                        !selectedMentors[a.id] || patchAttendance.isPending
+                        selectedMentors[a.id] === undefined ||
+                        patchAttendance.isPending
                       }
                       onClick={() => handleMatch(a.id)}
                     >

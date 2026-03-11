@@ -28,7 +28,7 @@ export type PatchAdminAttendanceReq = {
   comments?: string;
   review?: string;
   reviewIsVisible?: boolean;
-  mentorUserId?: number;
+  mentorUserId?: number | null;
   feedback?: string | null;
   feedbackStatus?: FeedbackStatus;
   accountType?: string;
