@@ -173,7 +173,7 @@ export default function ChallengeFeedbackPage() {
     userId,
   ]);
 
-  const { attendance } = useLocalStorageState();
+  const { mission, attendance } = useLocalStorageState();
 
   useBeforeUnloadWarning(hasUnsavedChanges);
 
@@ -207,6 +207,32 @@ export default function ChallengeFeedbackPage() {
 
   return (
     <div className="mt-5 px-5">
+      {/* 탭 버튼 (피드백 관리 페이지와 동일) */}
+      <div className="mb-4 flex items-center gap-2">
+        <Link
+          href={`/admin/challenge/operation/${programId}/feedback`}
+          className="rounded-md border border-neutral-80 bg-white px-4 py-2 text-xsmall14 font-medium text-neutral-0 hover:bg-neutral-95"
+        >
+          멘토/멘티 배정
+        </Link>
+        <Link
+          href={`/admin/challenge/operation/${programId}/feedback`}
+          className="rounded-md border border-neutral-80 bg-white px-4 py-2 text-xsmall14 font-medium text-neutral-0 hover:bg-neutral-95"
+        >
+          피드백 관리
+        </Link>
+        <button
+          type="button"
+          className="rounded-md border border-neutral-80 bg-white px-4 py-2 text-xsmall14 font-medium text-neutral-0 hover:bg-neutral-95"
+          onClick={handleBackToListWithConfirm}
+        >
+          {mission?.title ?? '미션'} {mission?.th ?? ''}회차 제출현황
+        </button>
+        <span className="rounded-md border border-neutral-0 bg-neutral-0 px-4 py-2 text-xsmall14 font-medium text-white">
+          {attendance?.name} 피드백
+        </span>
+      </div>
+
       <Heading2 className="mb-2">{attendance?.name} 피드백</Heading2>
       <AttendanceInfoList />
       {!isLoading && (
