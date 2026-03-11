@@ -3,8 +3,10 @@
 import {
   useMentorMissionFeedbackAttendanceQuery,
 } from '@/api/challenge/challenge';
-import { FeedbackStatusMapping } from '@/api/challenge/challengeSchema';
-import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
+import {
+  FeedbackStatusMapping,
+  type FeedbackStatus,
+} from '@/api/challenge/challengeSchema';
 
 interface MenteeInfoProps {
   challengeId: number;
@@ -14,17 +16,25 @@ interface MenteeInfoProps {
 }
 
 function getFeedbackStatusStyle(status: FeedbackStatus | null): string {
-  switch (status) {
-    case 'IN_PROGRESS':
-      return 'text-blue-500';
-    case 'COMPLETED':
-    case 'CONFIRMED':
-      return 'text-neutral-700';
-    case 'WAITING':
-    default:
-      return 'text-red-500';
-  }
+  const isCompleted = status === 'COMPLETED' || status === 'CONFIRMED';
+  if (isCompleted) return 'text-neutral-700';
+  if (status === 'IN_PROGRESS') return 'text-blue-500';
+  return 'text-red-500';
 }
+
+/** Reusable label-value row for mentee detail fields */
+const InfoRow = ({ label, value }: { label: string; value: string }) => (
+  <div className="flex items-start gap-2">
+    <span className="shrink-0 text-xs text-neutral-500">{label}</span>
+    <span className="flex-1 text-xs font-medium text-neutral-700">{value}</span>
+  </div>
+);
+
+const EMPTY_STATE = (
+  <div className="rounded-lg border border-neutral-300 p-7 text-sm text-neutral-400">
+    멘티를 선택해주세요.
+  </div>
+);
 
 const MenteeInfo = ({
   challengeId,
@@ -40,15 +50,10 @@ const MenteeInfo = ({
 
   const mentee = data?.attendanceList?.find((a) => a.id === attendanceId);
 
-  if (!mentee) {
-    return (
-      <div className="rounded-lg border border-neutral-300 p-7 text-sm text-neutral-400">
-        멘티를 선택해주세요.
-      </div>
-    );
-  }
+  if (!mentee) return EMPTY_STATE;
 
   const isSubmitted = mentee.status !== 'ABSENT';
+  const hasSubmissionLink = isSubmitted && !!mentee.link;
   const feedbackStatusLabel =
     FeedbackStatusMapping[mentee.feedbackStatus ?? 'WAITING'] ?? '진행전';
   const feedbackStatusStyle = getFeedbackStatusStyle(mentee.feedbackStatus);
@@ -60,7 +65,7 @@ const MenteeInfo = ({
         <div className="flex flex-1 flex-col gap-7">
           {/* Name + challenge */}
           <div className="flex items-center gap-2">
-            <h3 className="text-2xl font-semibold text-neutral-900 line-clamp-1">
+            <h3 className="line-clamp-1 text-2xl font-semibold text-neutral-900">
               {mentee.name}
             </h3>
             <span className="text-xs font-medium text-neutral-700">
@@ -70,15 +75,10 @@ const MenteeInfo = ({
 
           {/* Submission status + link */}
           <div className="flex flex-col gap-1.5">
-            <div className="flex items-start gap-2">
-              <span className="text-xs text-neutral-500">제출 상태</span>
-              <span className="text-xs font-medium text-neutral-700">
-                {isSubmitted ? '제출됨' : '미제출'}
-              </span>
-            </div>
-            {isSubmitted && mentee.link && (
+            <InfoRow label="제출 상태" value={isSubmitted ? '제출됨' : '미제출'} />
+            {hasSubmissionLink ? (
               <a
-                href={mentee.link}
+                href={mentee.link!}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex w-fit items-center gap-1 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
@@ -94,37 +94,16 @@ const MenteeInfo = ({
                 </svg>
                 제출물 보기
               </a>
-            )}
+            ) : null}
           </div>
         </div>
 
         {/* Right column */}
         <div className="flex flex-1 flex-col justify-between">
           <div className="flex flex-col gap-3">
-            {mentee.wishJob && (
-              <div className="flex items-start gap-2">
-                <span className="shrink-0 text-xs text-neutral-500">희망 직군</span>
-                <span className="flex-1 text-xs font-medium text-neutral-700">
-                  {mentee.wishJob}
-                </span>
-              </div>
-            )}
-            {mentee.wishIndustry && (
-              <div className="flex items-start gap-2">
-                <span className="shrink-0 text-xs text-neutral-500">희망 산업</span>
-                <span className="flex-1 text-xs font-medium text-neutral-700">
-                  {mentee.wishIndustry}
-                </span>
-              </div>
-            )}
-            {mentee.wishCompany && (
-              <div className="flex items-start gap-2">
-                <span className="shrink-0 text-xs text-neutral-500">희망 기업</span>
-                <span className="flex-1 text-xs font-medium text-neutral-700">
-                  {mentee.wishCompany}
-                </span>
-              </div>
-            )}
+            {mentee.wishJob ? <InfoRow label="희망 직군" value={mentee.wishJob} /> : null}
+            {mentee.wishIndustry ? <InfoRow label="희망 산업" value={mentee.wishIndustry} /> : null}
+            {mentee.wishCompany ? <InfoRow label="희망 기업" value={mentee.wishCompany} /> : null}
           </div>
           <div className="flex items-start gap-2">
             <span className="text-xs text-neutral-500">피드백 상태</span>
