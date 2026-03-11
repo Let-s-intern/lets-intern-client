@@ -22,6 +22,7 @@ export const adminUserMentorList = z.object({
       id: z.number(),
       name: z.string(),
       nickname: z.string().nullable().optional(),
+      email: z.string().nullable().optional(),
       phoneNum: z.string().nullable().optional(),
     }),
   ),
