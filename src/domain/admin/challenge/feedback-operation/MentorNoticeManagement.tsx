@@ -23,76 +23,143 @@ import {
 import { FaEdit } from 'react-icons/fa';
 import { FaTrashCan } from 'react-icons/fa6';
 
+/* ── 타입 ── */
+
 interface NoticeForm {
   title: string;
   link: string;
 }
 
-const initialForm: NoticeForm = { title: '', link: '' };
+type ModalState =
+  | { open: false }
+  | { open: true; mode: 'create' }
+  | { open: true; mode: 'edit'; guideId: number };
+
+const INITIAL_FORM: NoticeForm = { title: '', link: '' };
+
+/* ── 컬럼 정의 ── */
+
+function buildColumns(
+  onEdit: (guide: ChallengeMentorGuideItem) => void,
+  onDelete: (guideId: number) => void,
+): GridColDef<ChallengeMentorGuideItem>[] {
+  return [
+    {
+      field: 'title',
+      headerName: '제목',
+      flex: 1,
+      minWidth: 200,
+      valueGetter: (_, row) => row.title ?? '-',
+    },
+    {
+      field: 'link',
+      headerName: '링크',
+      flex: 2,
+      minWidth: 250,
+      renderCell: ({ row }) =>
+        row.link ? (
+          <a
+            href={row.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:underline"
+          >
+            {row.link}
+          </a>
+        ) : (
+          <span>-</span>
+        ),
+    },
+    {
+      field: 'createDate',
+      headerName: '등록일',
+      width: 140,
+      valueGetter: (_, row) => row.createDate ?? '-',
+    },
+    {
+      field: 'actions',
+      headerName: '',
+      width: 100,
+      sortable: false,
+      filterable: false,
+      renderCell: ({ row }) => (
+        <div className="flex items-center gap-1">
+          <IconButton size="small" onClick={() => onEdit(row)}>
+            <FaEdit size={14} />
+          </IconButton>
+          <IconButton
+            size="small"
+            color="error"
+            onClick={() => onDelete(row.challengeMentorGuideId)}
+          >
+            <FaTrashCan size={14} />
+          </IconButton>
+        </div>
+      ),
+    },
+  ];
+}
+
+/* ── 메인 컴포넌트 ── */
 
 export default function MentorNoticeManagement() {
-  /* ── 챌린지 & 멘토 선택 ── */
-  const [selectedChallengeId, setSelectedChallengeId] = useState<string>('');
+  /* 챌린지 & 멘토 선택 */
+  const [selectedChallengeId, setSelectedChallengeId] = useState('');
   const [selectedChallengeMentorId, setSelectedChallengeMentorId] =
-    useState<string>('');
+    useState('');
 
   const { data: challengeData } = useGetChallengeList({
     pageable: { size: 1000, page: 1 },
   });
-
   const { data: mentorData } = useAdminChallengeMentorListQuery(
     selectedChallengeId || undefined,
   );
 
-  /* ── 가이드 목록 ── */
+  /* 가이드 목록 */
   const { data: guideData, isLoading } =
     useAdminChallengeMentorGuideListQuery(
       selectedChallengeMentorId || undefined,
     );
-
   const guides = guideData?.challengeMentorGuideList ?? [];
 
-  /* ── 검색 ── */
+  /* 검색 */
   const [search, setSearch] = useState('');
+  const filteredGuides = search
+    ? guides.filter((g) => {
+        const term = search.toLowerCase();
+        return (
+          g.title?.toLowerCase().includes(term) ||
+          g.link?.toLowerCase().includes(term)
+        );
+      })
+    : guides;
 
-  const filteredGuides = guides.filter((guide) => {
-    if (!search) return true;
-    const term = search.toLowerCase();
-    return (
-      guide.title?.toLowerCase().includes(term) ||
-      guide.link?.toLowerCase().includes(term)
-    );
-  });
-
-  /* ── CRUD mutations ── */
+  /* CRUD mutations */
   const postMutation = usePostAdminChallengeMentorGuide();
   const patchMutation = usePatchAdminChallengeMentorGuide();
   const deleteMutation = useDeleteAdminChallengeMentorGuide();
 
-  /* ── 모달 상태 ── */
-  const [modalState, setModalState] = useState<
-    | { open: false }
-    | { open: true; mode: 'create' }
-    | { open: true; mode: 'edit'; guideId: number }
-  >({ open: false });
-  const [form, setForm] = useState<NoticeForm>(initialForm);
+  /* 모달 */
+  const [modalState, setModalState] = useState<ModalState>({ open: false });
+  const [form, setForm] = useState<NoticeForm>(INITIAL_FORM);
 
   const openCreateModal = () => {
-    setForm(initialForm);
+    setForm(INITIAL_FORM);
     setModalState({ open: true, mode: 'create' });
   };
 
   const openEditModal = (guide: ChallengeMentorGuideItem) => {
-    setForm({
-      title: guide.title ?? '',
-      link: guide.link ?? '',
+    setForm({ title: guide.title ?? '', link: guide.link ?? '' });
+    setModalState({
+      open: true,
+      mode: 'edit',
+      guideId: guide.challengeMentorGuideId,
     });
-    setModalState({ open: true, mode: 'edit', guideId: guide.challengeMentorGuideId });
   };
 
   const closeModal = () => {
     setModalState({ open: false });
-    setForm(initialForm);
+    setForm(INITIAL_FORM);
   };
 
   const handleSubmit = async () => {
@@ -124,77 +191,20 @@ export default function MentorNoticeManagement() {
     await deleteMutation.mutateAsync(guideId);
   };
 
-  /* ── 선택된 멘토 이름 ── */
+  /* 파생 값 */
   const selectedMentorName =
     mentorData?.mentorList.find(
       (m) => String(m.challengeMentorId) === selectedChallengeMentorId,
     )?.name ?? '';
 
-  /* ── 선택된 챌린지 이름 ── */
   const selectedChallengeTitle =
     challengeData?.programList.find(
       (p) => String(p.id) === selectedChallengeId,
     )?.title ?? '';
 
-  /* ── 테이블 컬럼 ── */
-  const columns: GridColDef<ChallengeMentorGuideItem>[] = [
-    {
-      field: 'title',
-      headerName: '제목',
-      flex: 1,
-      minWidth: 200,
-      valueGetter: (_, row) => row.title ?? '-',
-    },
-    {
-      field: 'link',
-      headerName: '링크',
-      flex: 2,
-      minWidth: 250,
-      renderCell: (params) => {
-        const guide = params.row;
-        if (guide.link) {
-          return (
-            <a
-              href={guide.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:underline"
-            >
-              {guide.link}
-            </a>
-          );
-        }
-        return <span>-</span>;
-      },
-    },
-    {
-      field: 'createDate',
-      headerName: '등록일',
-      width: 140,
-      valueGetter: (_, row) => row.createDate ?? '-',
-    },
-    {
-      field: 'actions',
-      headerName: '',
-      width: 100,
-      sortable: false,
-      filterable: false,
-      renderCell: (params) => (
-        <div className="flex items-center gap-1">
-          <IconButton size="small" onClick={() => openEditModal(params.row)}>
-            <FaEdit size={14} />
-          </IconButton>
-          <IconButton
-            size="small"
-            color="error"
-            onClick={() => handleDelete(params.row.challengeMentorGuideId)}
-          >
-            <FaTrashCan size={14} />
-          </IconButton>
-        </div>
-      ),
-    },
-  ];
+  const columns = buildColumns(openEditModal, handleDelete);
+
+  const isMentorSelected = !!selectedChallengeMentorId;
 
   return (
     <>
@@ -204,7 +214,7 @@ export default function MentorNoticeManagement() {
           <Button
             variant="contained"
             onClick={openCreateModal}
-            disabled={!selectedChallengeMentorId}
+            disabled={!isMentorSelected}
           >
             공지 작성
           </Button>
@@ -257,7 +267,7 @@ export default function MentorNoticeManagement() {
         </div>
 
         {/* 선택된 챌린지/멘토 정보 */}
-        {selectedChallengeMentorId && (
+        {isMentorSelected && (
           <div className="mb-4 text-xsmall14 text-neutral-30">
             <span className="font-medium">{selectedChallengeTitle}</span>
             {' > '}
@@ -267,7 +277,7 @@ export default function MentorNoticeManagement() {
         )}
 
         {/* 검색 */}
-        {selectedChallengeMentorId && (
+        {isMentorSelected && (
           <div className="mb-6 flex items-center gap-3">
             <label className="text-xsmall16 font-medium text-neutral-0">
               검색
@@ -283,7 +293,7 @@ export default function MentorNoticeManagement() {
         )}
 
         {/* 테이블 */}
-        {selectedChallengeMentorId ? (
+        {isMentorSelected ? (
           <DataGrid
             rows={filteredGuides}
             columns={columns}
@@ -292,9 +302,7 @@ export default function MentorNoticeManagement() {
             autoHeight
             hideFooter
             getRowId={(row) => row.challengeMentorGuideId}
-            localeText={{
-              noRowsLabel: '등록된 공지가 없습니다.',
-            }}
+            localeText={{ noRowsLabel: '등록된 공지가 없습니다.' }}
             sx={{
               '& .MuiDataGrid-cell': {
                 display: 'flex',
@@ -312,12 +320,7 @@ export default function MentorNoticeManagement() {
       </div>
 
       {/* 공지 작성 / 수정 모달 */}
-      <Dialog
-        open={modalState.open}
-        onClose={closeModal}
-        maxWidth="sm"
-        fullWidth
-      >
+      <Dialog open={modalState.open} onClose={closeModal} maxWidth="sm" fullWidth>
         <DialogTitle>
           {modalState.open && modalState.mode === 'create'
             ? '공지 작성'

@@ -3,82 +3,21 @@
 import Link from 'next/link';
 import { useChallengeMentorGuideListQuery } from '@/api/challenge-mentor-guide/challengeMentorGuide';
 import { useMentorChallengeListQuery } from '@/api/user/user';
+import type { ChallengeMentorGuideItem } from '@/api/challenge-mentor-guide/challengeMentorGuideSchema';
 
-export default function NoticeDetailPage({
-  noticeId,
-}: {
-  noticeId: string;
-}) {
-  const { data: challengeData, isLoading: challengeLoading } =
-    useMentorChallengeListQuery();
-
-  const challenges = challengeData?.myChallengeMentorVoList ?? [];
-
-  // 모든 챌린지의 가이드를 조회하여 noticeId에 해당하는 가이드를 찾음
-  return (
-    <NoticeDetailInner
-      noticeId={noticeId}
-      challenges={challenges}
-      isLoading={challengeLoading}
-    />
-  );
-}
-
-function NoticeDetailInner({
-  noticeId,
-  challenges,
-  isLoading,
-}: {
-  noticeId: string;
-  challenges: { challengeId: number }[];
-  isLoading: boolean;
-}) {
-  // 각 챌린지에서 가이드를 조회
-  const guideQueries = challenges.map((c) => c.challengeId);
-
-  if (isLoading) {
-    return (
-      <div className="flex flex-col gap-10">
-        <h1 className="text-medium22 font-semibold text-neutral-0">
-          공지사항
-        </h1>
-        <div className="py-20 text-center text-xsmall16 text-neutral-40">
-          불러오는 중...
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex flex-col gap-10">
-      <h1 className="text-medium22 font-semibold text-neutral-0">공지사항</h1>
-
-      {guideQueries.map((challengeId) => (
-        <GuideDetail
-          key={challengeId}
-          challengeId={challengeId}
-          noticeId={noticeId}
-        />
-      ))}
-    </div>
-  );
-}
-
-function GuideDetail({
-  challengeId,
-  noticeId,
-}: {
-  challengeId: number;
-  noticeId: string;
-}) {
-  const { data, isLoading } = useChallengeMentorGuideListQuery(challengeId);
+function GuideDetail({ challengeId, noticeId }: { challengeId: number; noticeId: string }) {
+  const { data } = useChallengeMentorGuideListQuery(challengeId);
 
   const guide = data?.challengeMentorGuideList.find(
     (g) => g.challengeMentorGuideId === Number(noticeId),
   );
 
-  if (isLoading || !guide) return null;
+  if (!guide) return null;
 
+  return <GuideContent guide={guide} />;
+}
+
+function GuideContent({ guide }: { guide: ChallengeMentorGuideItem }) {
   return (
     <div className="flex flex-col gap-4">
       <Link
@@ -118,6 +57,38 @@ function GuideDetail({
           </a>
         )}
       </div>
+    </div>
+  );
+}
+
+export default function NoticeDetailPage({ noticeId }: { noticeId: string }) {
+  const { data: challengeData, isLoading } = useMentorChallengeListQuery();
+  const challenges = challengeData?.myChallengeMentorVoList ?? [];
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-10">
+        <h1 className="text-medium22 font-semibold text-neutral-0">
+          공지사항
+        </h1>
+        <div className="py-20 text-center text-xsmall16 text-neutral-40">
+          불러오는 중...
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-10">
+      <h1 className="text-medium22 font-semibold text-neutral-0">공지사항</h1>
+
+      {challenges.map((c) => (
+        <GuideDetail
+          key={c.challengeId}
+          challengeId={c.challengeId}
+          noticeId={noticeId}
+        />
+      ))}
     </div>
   );
 }
