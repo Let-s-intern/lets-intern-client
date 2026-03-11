@@ -8,11 +8,15 @@ import {
   useChallengeMissionFeedbackAttendanceQuery,
   useChallengeMissionFeedbackListQuery,
 } from '@/api/challenge/challenge';
+import { AdminUserCareerQueryKey } from '@/api/career/career';
+import { userCareerListSchema, userCareerSchema } from '@/api/career/careerSchema';
 import { usePatchAdminAttendance } from '@/api/attendance/attendance';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import { useQueryClient } from '@tanstack/react-query';
+import axios from '@/utils/axios';
+import { useQueries, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
+import { z } from 'zod';
 
 /** 피드백 미션의 출석 데이터에서 참여자 목록 조회 */
 const useAttendanceParticipants = (challengeId: string) => {
@@ -36,6 +40,39 @@ const useAttendanceParticipants = (challengeId: string) => {
   return { attendanceList: attendanceData?.attendanceList ?? [], isLoading };
 };
 
+/** 멘토 목록의 경력 정보를 일괄 조회 */
+const useMentorCareerMap = (
+  mentors: { userId: number }[],
+) => {
+  const results = useQueries({
+    queries: mentors.map((m) => ({
+      queryKey: [AdminUserCareerQueryKey, m.userId, 0, 1],
+      queryFn: async () => {
+        const res = await axios.get(
+          `/admin/user-career/user/${m.userId}?page=0&size=1`,
+        );
+        const data = res.data.data;
+        const listResult = userCareerListSchema.safeParse(data);
+        if (listResult.success) return listResult.data;
+        const arrayResult = z.array(userCareerSchema).safeParse(data);
+        if (arrayResult.success) return { userCareers: arrayResult.data };
+        return { userCareers: [] };
+      },
+    })),
+  });
+
+  return useMemo(() => {
+    const map = new Map<number, { company: string; job: string }>();
+    mentors.forEach((m, i) => {
+      const career = results[i]?.data?.userCareers?.[0];
+      if (career) {
+        map.set(m.userId, { company: career.company, job: career.job });
+      }
+    });
+    return map;
+  }, [mentors, results]);
+};
+
 export default function MentorMenteeAssignment() {
   const { programId } = useParams<{ programId: string }>();
   const queryClient = useQueryClient();
@@ -54,6 +91,13 @@ export default function MentorMenteeAssignment() {
   const [bulkMentorUserId, setBulkMentorUserId] = useState<number | ''>('');
 
   const mentors = mentorData?.mentorList ?? [];
+  const mentorCareerMap = useMentorCareerMap(mentors);
+
+  const getMentorLabel = (m: { userId: number; name: string }) => {
+    const career = mentorCareerMap.get(m.userId);
+    if (!career) return m.name;
+    return `${m.name} (${career.company}/${career.job})`;
+  };
 
   const isAllChecked =
     attendanceList.length > 0 && checkedIds.size === attendanceList.length;
@@ -152,7 +196,7 @@ export default function MentorMenteeAssignment() {
             <option value="">멘토 선택</option>
             {mentors.map((m) => (
               <option key={m.challengeMentorId} value={m.userId}>
-                {m.name}
+                {getMentorLabel(m)}
               </option>
             ))}
           </select>
@@ -219,6 +263,12 @@ export default function MentorMenteeAssignment() {
                     {a.mentorName ? (
                       <span className="rounded bg-green-50 px-2 py-0.5 text-xxsmall12 font-medium text-green-700">
                         {a.mentorName}
+                        {a.mentorId && mentorCareerMap.get(a.mentorId) && (
+                          <span className="ml-1 font-normal text-green-600">
+                            ({mentorCareerMap.get(a.mentorId)!.company}/
+                            {mentorCareerMap.get(a.mentorId)!.job})
+                          </span>
+                        )}
                       </span>
                     ) : (
                       <span className="text-neutral-40">미배정</span>
@@ -238,7 +288,7 @@ export default function MentorMenteeAssignment() {
                       <option value="">선택</option>
                       {mentors.map((m) => (
                         <option key={m.challengeMentorId} value={m.userId}>
-                          {m.name}
+                          {getMentorLabel(m)}
                         </option>
                       ))}
                     </select>
