@@ -115,7 +115,7 @@ const FeedbackModal = ({
       if (attendanceId === selectedAttendanceId) return;
       if (
         !confirmIfDirty(
-          '저장하지 않은 변경사항이 있습니다. 다른 멘티로 이동하시겠습니까?',
+          mentorConfig.feedback.unsavedWarning,
         )
       ) {
         return;
@@ -125,23 +125,25 @@ const FeedbackModal = ({
     [selectedAttendanceId, confirmIfDirty],
   );
 
-  const handlePrevMentee = useMemo(() => {
-    if (currentMenteeIndex <= 0) return undefined;
+  const hasPrevMentee = currentMenteeIndex > 0;
+  const hasNextMentee =
+    attendanceData?.attendanceList != null &&
+    currentMenteeIndex < attendanceData.attendanceList.length - 1;
+
+  const handlePrevMentee = useCallback(() => {
     const prevId = attendanceData?.attendanceList?.[currentMenteeIndex - 1]?.id;
-    return prevId ? () => handleSelectMentee(prevId) : undefined;
+    if (prevId != null) handleSelectMentee(prevId);
   }, [currentMenteeIndex, attendanceData, handleSelectMentee]);
 
-  const handleNextMentee = useMemo(() => {
-    const list = attendanceData?.attendanceList;
-    if (!list || currentMenteeIndex >= list.length - 1) return undefined;
-    const nextId = list[currentMenteeIndex + 1]?.id;
-    return nextId ? () => handleSelectMentee(nextId) : undefined;
+  const handleNextMentee = useCallback(() => {
+    const nextId = attendanceData?.attendanceList?.[currentMenteeIndex + 1]?.id;
+    if (nextId != null) handleSelectMentee(nextId);
   }, [currentMenteeIndex, attendanceData, handleSelectMentee]);
 
   const handleClose = useCallback(() => {
     if (
       !confirmIfDirty(
-        '저장하지 않은 변경사항이 있습니다. 모달을 닫으시겠습니까?',
+        mentorConfig.feedback.closeWarning,
       )
     ) {
       return;
@@ -167,17 +169,27 @@ const FeedbackModal = ({
     currentMentee?.feedbackStatus === 'COMPLETED' ||
     currentMentee?.feedbackStatus === 'CONFIRMED';
 
-
   const attendanceList = attendanceData?.attendanceList ?? [];
-  const waitingCount = attendanceList.filter(
-    (a) => a.feedbackStatus === 'WAITING' || !a.feedbackStatus,
-  ).length;
-  const inProgressCount = attendanceList.filter(
-    (a) => a.feedbackStatus === 'IN_PROGRESS',
-  ).length;
-  const completedCount = attendanceList.filter(
-    (a) => a.feedbackStatus === 'COMPLETED' || a.feedbackStatus === 'CONFIRMED',
-  ).length;
+
+  // Single-pass aggregation of feedback status counts
+  const { waitingCount, inProgressCount, completedCount } = useMemo(() => {
+    let waiting = 0;
+    let inProgress = 0;
+    let completed = 0;
+
+    for (const a of attendanceList) {
+      const status = a.feedbackStatus;
+      if (status === 'COMPLETED' || status === 'CONFIRMED') {
+        completed++;
+      } else if (status === 'IN_PROGRESS') {
+        inProgress++;
+      } else {
+        waiting++;
+      }
+    }
+
+    return { waitingCount: waiting, inProgressCount: inProgress, completedCount: completed };
+  }, [attendanceList]);
 
   return (
     <BaseModal
@@ -277,7 +289,7 @@ const FeedbackModal = ({
               <button
                 type="button"
                 onClick={handlePrevMentee}
-                disabled={!handlePrevMentee}
+                disabled={!hasPrevMentee}
                 className="flex items-center gap-1 px-4 py-2 text-base font-medium text-neutral-900 disabled:invisible"
               >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -288,7 +300,7 @@ const FeedbackModal = ({
               <button
                 type="button"
                 onClick={handleNextMentee}
-                disabled={!handleNextMentee}
+                disabled={!hasNextMentee}
                 className="flex items-center gap-1 px-4 py-2 text-base font-medium text-neutral-900 disabled:invisible"
               >
                 다음 멘티
@@ -312,7 +324,7 @@ const FeedbackModal = ({
             <FeedbackEditor
               initialEditorStateJsonString={editorContent}
               onChange={setEditorContent}
-              readOnly={isReadOnly}
+              isReadOnly={isReadOnly}
             />
           </div>
 

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import config from '../config.json';
 
 interface MentorChallengeCardProps {
   challengeId: number;
@@ -24,18 +25,21 @@ const formatDate = (dateStr: string) => {
 };
 
 const statusConfig = {
-  PREV: { text: '준비중', className: 'bg-yellow-100 text-yellow-700' },
-  PROCEEDING: { text: '진행중', className: 'bg-green-100 text-green-700' },
-  POST: { text: '완료', className: 'bg-gray-100 text-gray-500' },
+  PREV: { text: config.challengeStatus.PREV, className: 'bg-yellow-100 text-yellow-700' },
+  PROCEEDING: { text: config.challengeStatus.PROCEEDING, className: 'bg-green-100 text-green-700' },
+  POST: { text: config.challengeStatus.POST, className: 'bg-gray-100 text-gray-500' },
 } as const;
 
-function getStatusFromDates(startDate: string, endDate: string): keyof typeof statusConfig {
-  const now = new Date();
-  const start = new Date(startDate);
-  const end = new Date(endDate);
+type ProgramStatus = keyof typeof statusConfig;
 
-  if (now < start) return 'PREV';
-  if (now > end) return 'POST';
+function isValidProgramStatus(value: string): value is ProgramStatus {
+  return value in statusConfig;
+}
+
+function getStatusFromDates(startDate: string, endDate: string): ProgramStatus {
+  const now = new Date();
+  if (now < new Date(startDate)) return 'PREV';
+  if (now > new Date(endDate)) return 'POST';
   return 'PROCEEDING';
 }
 
@@ -48,8 +52,8 @@ const MentorChallengeCard = ({
   endDate,
   programStatusType,
 }: MentorChallengeCardProps) => {
-  const statusKey = (programStatusType in statusConfig)
-    ? programStatusType as keyof typeof statusConfig
+  const statusKey = isValidProgramStatus(programStatusType)
+    ? programStatusType
     : getStatusFromDates(startDate, endDate);
   const status = statusConfig[statusKey];
 

@@ -1,0 +1,122 @@
+/* eslint-disable no-console */
+
+import axios from '@/utils/axios';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  challengeMentorGuideListSchema,
+  type CreateChallengeMentorGuideReq,
+  type UpdateChallengeMentorGuideReq,
+} from './challengeMentorGuideSchema';
+
+export const ChallengeMentorGuideQueryKey = 'challengeMentorGuideList';
+
+/** GET /api/v1/challenge-mentor-guide/{challengeId} 멘토용 가이드 목록 */
+export const useChallengeMentorGuideListQuery = (
+  challengeId?: number,
+) => {
+  return useQuery({
+    queryKey: [ChallengeMentorGuideQueryKey, challengeId],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/challenge-mentor-guide/${challengeId}`,
+      );
+      return challengeMentorGuideListSchema.parse(res.data.data);
+    },
+    enabled: !!challengeId,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const AdminChallengeMentorGuideQueryKey =
+  'adminChallengeMentorGuideList';
+
+/** GET /api/v1/admin/challenge-mentor-guide/{challengeMentorId} 어드민용 멘토 1명 가이드 목록 */
+export const useAdminChallengeMentorGuideListQuery = (
+  challengeMentorId?: string | number,
+) => {
+  return useQuery({
+    queryKey: [AdminChallengeMentorGuideQueryKey, challengeMentorId],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/admin/challenge-mentor-guide/${challengeMentorId}`,
+      );
+      return challengeMentorGuideListSchema.parse(res.data.data);
+    },
+    enabled: !!challengeMentorId,
+    refetchOnWindowFocus: false,
+  });
+};
+
+/** POST /api/v1/admin/challenge-mentor-guide/{challengeMentorId} 가이드 생성 */
+export const usePostAdminChallengeMentorGuide = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      challengeMentorId,
+      ...body
+    }: CreateChallengeMentorGuideReq & { challengeMentorId: number }) => {
+      const res = await axios.post(
+        `/admin/challenge-mentor-guide/${challengeMentorId}`,
+        body,
+      );
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [AdminChallengeMentorGuideQueryKey],
+      });
+    },
+    onError: (error) => {
+      console.error(error);
+      alert('문제가 발생했습니다: ' + error);
+    },
+  });
+};
+
+/** PATCH /api/v1/admin/challenge-mentor-guide/{challengeMentorGuideId} 가이드 수정 */
+export const usePatchAdminChallengeMentorGuide = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      challengeMentorGuideId,
+      ...body
+    }: UpdateChallengeMentorGuideReq & { challengeMentorGuideId: number }) => {
+      const res = await axios.patch(
+        `/admin/challenge-mentor-guide/${challengeMentorGuideId}`,
+        body,
+      );
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [AdminChallengeMentorGuideQueryKey],
+      });
+    },
+    onError: (error) => {
+      console.error(error);
+      alert('문제가 발생했습니다: ' + error);
+    },
+  });
+};
+
+/** DELETE /api/v1/admin/challenge-mentor-guide/{challengeMentorGuideId} 가이드 삭제 */
+export const useDeleteAdminChallengeMentorGuide = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (challengeMentorGuideId: number) => {
+      return axios.delete(
+        `/admin/challenge-mentor-guide/${challengeMentorGuideId}`,
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [AdminChallengeMentorGuideQueryKey],
+      });
+    },
+    onError: (error) => {
+      console.error(error);
+      alert('문제가 발생했습니다: ' + error);
+    },
+  });
+};

@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-
 import { IPageable } from '@/types/interface';
 import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
@@ -50,8 +48,9 @@ export const usePostAdminChallengeMentor = () => {
       await axiosV2.post(`/admin/challenge/${challengeId}/mentor`, body);
     },
     onError: (error) => {
+      // eslint-disable-next-line no-console
       console.error(error);
-      alert('문제가 발생했습니다: ' + error);
+      alert(`문제가 발생했습니다: ${error}`);
     },
   });
 };
@@ -63,8 +62,30 @@ export const useDeleteChallengeMentor = () => {
       return axios.delete(`/admin/challenge-mentor/${challengeMentorId}`);
     },
     onError: (error) => {
+      // eslint-disable-next-line no-console
       console.error(error);
-      alert('문제가 발생했습니다: ' + error);
+      alert(`문제가 발생했습니다: ${error}`);
+    },
+  });
+};
+
+/** POST 멘토-멘티 매칭 /api/v2/admin/challenge/{challengeId}/mentor/{challengeMentorId}/match/{applicationId} */
+export const usePostAdminChallengeMentorMatch = () => {
+  return useMutation({
+    mutationFn: async (data: {
+      challengeId: number;
+      challengeMentorId: number;
+      applicationId: number;
+    }) => {
+      const { challengeId, challengeMentorId, applicationId } = data;
+      await axiosV2.post(
+        `/admin/challenge/${challengeId}/mentor/${challengeMentorId}/match/${applicationId}`,
+      );
+    },
+    onError: (error) => {
+      // eslint-disable-next-line no-console
+      console.error(error);
+      alert(`매칭에 실패했습니다: ${error}`);
     },
   });
 };

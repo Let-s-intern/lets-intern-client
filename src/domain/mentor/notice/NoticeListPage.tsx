@@ -1,53 +1,8 @@
 'use client';
 
-import Link from 'next/link';
-
-// TODO: API 연동 시 교체
-interface Notice {
-  id: number;
-  type: 'ESSENTIAL' | 'ADDITIONAL';
-  title: string;
-  createDate: string;
-}
-
-const MOCK_NOTICES: Notice[] = [
-  {
-    id: 1,
-    type: 'ESSENTIAL',
-    title: '3월 활동비 정산 서류 제출 및 등록 안내 (~03.20)',
-    createDate: '2026-03-07',
-  },
-  {
-    id: 2,
-    type: 'ESSENTIAL',
-    title: '4월 챌린지 멘토 배정 확정 일정 공유',
-    createDate: '2026-03-06',
-  },
-  {
-    id: 3,
-    type: 'ADDITIONAL',
-    title: '딱 1분만 투자해 주세요! 설문 완료 시 기프티콘 도착 (~03.17)',
-    createDate: '2026-03-07',
-  },
-  {
-    id: 4,
-    type: 'ADDITIONAL',
-    title: '일부 멘토 피드백 전송 실패 현상 안내 (복구 완료)',
-    createDate: '2026-03-05',
-  },
-  {
-    id: 5,
-    type: 'ADDITIONAL',
-    title: '일부 멘토 피드백 전송 실패 현상 안내 (복구 중)',
-    createDate: '2026-03-04',
-  },
-  {
-    id: 6,
-    type: 'ADDITIONAL',
-    title: '서비스 안정화를 위한 정기 점검 안내 (2026.03.05 04:25 ~ 2026.03.05 05:25)',
-    createDate: '2026-03-02',
-  },
-];
+import { useChallengeMentorGuideListQuery } from '@/api/challenge-mentor-guide/challengeMentorGuide';
+import { useMentorChallengeListQuery } from '@/api/user/user';
+import type { ChallengeMentorGuideItem } from '@/api/challenge-mentor-guide/challengeMentorGuideSchema';
 
 function getRelativeDate(dateStr: string): string {
   const now = new Date();
@@ -60,75 +15,87 @@ function getRelativeDate(dateStr: string): string {
   return `${diffDays}일 전`;
 }
 
-export default function NoticeListPage() {
-  // TODO: API 연동 시 useQuery로 교체
-  const notices = MOCK_NOTICES;
-
-  const essentialNotices = notices.filter((n) => n.type === 'ESSENTIAL');
-  const additionalNotices = notices.filter((n) => n.type === 'ADDITIONAL');
-
+function NoticeLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-6 md:gap-10">
       <h1 className="text-medium22 font-semibold text-neutral-0">공지사항</h1>
+      {children}
+    </div>
+  );
+}
 
-      {/* 중요 */}
-      <section className="flex flex-col gap-4">
-        <h2 className="text-small18 font-semibold text-neutral-0">중요</h2>
-        <div className="flex flex-col rounded-[16px] border border-neutral-80">
-          {essentialNotices.length === 0 ? (
-            <div className="px-6 py-8 text-center text-xsmall14 text-neutral-40">
-              중요 공지사항이 없습니다.
-            </div>
-          ) : (
-            essentialNotices.map((notice, i) => (
-              <Link
-                key={notice.id}
-                href={`/mentor/notice/${notice.id}`}
-                className={`flex items-center px-6 py-4 text-xsmall16 text-neutral-10 transition-colors hover:bg-neutral-95 ${
-                  i < essentialNotices.length - 1
-                    ? 'border-b border-neutral-80'
-                    : ''
-                }`}
-              >
-                {notice.title}
-              </Link>
-            ))
-          )}
+function GuideRow({ guide }: { guide: ChallengeMentorGuideItem }) {
+  return (
+    <a
+      href={guide.link ?? '#'}
+      target={guide.link ? '_blank' : undefined}
+      rel={guide.link ? 'noopener noreferrer' : undefined}
+      className="flex items-center gap-4 border-b border-neutral-80 px-6 py-4 transition-colors last:border-b-0 hover:bg-neutral-95"
+    >
+      {guide.createDate && (
+        <span className="shrink-0 rounded border border-neutral-80 px-3 py-1 text-xxsmall12 text-neutral-40">
+          {getRelativeDate(guide.createDate)}
+        </span>
+      )}
+      <span className="text-xsmall16 text-neutral-10">{guide.title}</span>
+    </a>
+  );
+}
+
+function ChallengeGuideSection({ challengeId }: { challengeId: number }) {
+  const { data, isError } = useChallengeMentorGuideListQuery(challengeId);
+  const guides = data?.challengeMentorGuideList ?? [];
+
+  if (isError || guides.length === 0) return null;
+
+  return (
+    <>
+      {guides.map((guide) => (
+        <GuideRow key={guide.challengeMentorGuideId} guide={guide} />
+      ))}
+    </>
+  );
+}
+
+export default function NoticeListPage() {
+  const { data: challengeData, isLoading } = useMentorChallengeListQuery();
+  const challenges = challengeData?.myChallengeMentorVoList ?? [];
+
+  if (isLoading) {
+    return (
+      <NoticeLayout>
+        <div className="py-20 text-center text-xsmall14 text-neutral-40">
+          불러오는 중...
         </div>
-      </section>
+      </NoticeLayout>
+    );
+  }
 
-      {/* 실시간 공지 */}
+  if (challenges.length === 0) {
+    return (
+      <NoticeLayout>
+        <div className="py-20 text-center text-xsmall14 text-neutral-40">
+          참여 중인 챌린지가 없습니다.
+        </div>
+      </NoticeLayout>
+    );
+  }
+
+  return (
+    <NoticeLayout>
       <section className="flex flex-col gap-4">
         <h2 className="text-small18 font-semibold text-neutral-0">
-          실시간 공지
+          프로그램 공지
         </h2>
         <div className="flex flex-col rounded-[16px] border border-neutral-80">
-          {additionalNotices.length === 0 ? (
-            <div className="px-6 py-8 text-center text-xsmall14 text-neutral-40">
-              실시간 공지사항이 없습니다.
-            </div>
-          ) : (
-            additionalNotices.map((notice, i) => (
-              <Link
-                key={notice.id}
-                href={`/mentor/notice/${notice.id}`}
-                className={`flex items-center gap-4 px-6 py-4 transition-colors hover:bg-neutral-95 ${
-                  i < additionalNotices.length - 1
-                    ? 'border-b border-neutral-80'
-                    : ''
-                }`}
-              >
-                <span className="shrink-0 rounded border border-neutral-80 px-3 py-1 text-xxsmall12 text-neutral-40">
-                  {getRelativeDate(notice.createDate)}
-                </span>
-                <span className="text-xsmall16 text-neutral-10">
-                  {notice.title}
-                </span>
-              </Link>
-            ))
-          )}
+          {challenges.map((challenge) => (
+            <ChallengeGuideSection
+              key={challenge.challengeId}
+              challengeId={challenge.challengeId}
+            />
+          ))}
         </div>
       </section>
-    </div>
+    </NoticeLayout>
   );
 }
