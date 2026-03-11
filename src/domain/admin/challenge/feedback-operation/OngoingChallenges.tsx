@@ -54,15 +54,25 @@ function ChallengeRow({ item }: { item: ProgramAdminListItem }) {
 
   return (
     <tr className="border-b border-neutral-80 last:border-b-0">
-      <td className="px-4 py-3 text-xsmall14">{programInfo.title ?? '-'}</td>
-      <td className="px-4 py-3 text-center text-xsmall14">{feedbackTh}</td>
-      <td className="px-4 py-3 text-center text-xsmall14">
+      <td className="max-w-[300px] px-4 py-3 text-xsmall14">
+        {programInfo.title ?? '-'}
+      </td>
+      <td className="whitespace-nowrap px-4 py-3 text-center text-xsmall14">
+        {feedbackTh}
+      </td>
+      <td className="whitespace-nowrap px-4 py-3 text-center text-xsmall14">
         {formatDate(programInfo.startDate)} ~ {formatDate(programInfo.endDate)}
       </td>
-      <td className="px-4 py-3 text-center text-xsmall14">{feedbackPeriod}</td>
-      <td className="px-4 py-3 text-center text-xsmall14">{feedbackStatus}</td>
-      <td className="px-4 py-3 text-center text-xsmall14">{mentorNames}</td>
-      <td className="px-4 py-3 text-center text-xsmall14">
+      <td className="whitespace-nowrap px-4 py-3 text-center text-xsmall14">
+        {feedbackPeriod}
+      </td>
+      <td className="whitespace-nowrap px-4 py-3 text-center text-xsmall14">
+        {feedbackStatus}
+      </td>
+      <td className="whitespace-nowrap px-4 py-3 text-center text-xsmall14">
+        {mentorNames}
+      </td>
+      <td className="whitespace-nowrap px-4 py-3 text-center text-xsmall14">
         <Link
           href={`/admin/challenge/operation/${challengeId}/feedback`}
           className="text-blue-600 hover:underline"
@@ -100,28 +110,28 @@ export default function OngoingChallenges() {
         </div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[900px] border-collapse">
+          <table className="w-full border-collapse">
             <thead>
               <tr className="border-b-2 border-neutral-60 bg-neutral-95">
-                <th className="px-4 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
+                <th className="min-w-[200px] px-4 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
                   챌린지
                 </th>
-                <th className="px-4 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
+                <th className="whitespace-nowrap px-4 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
                   피드백 미션 회차
                 </th>
-                <th className="px-4 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
+                <th className="whitespace-nowrap px-4 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
                   챌린지 기간
                 </th>
-                <th className="px-4 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
+                <th className="whitespace-nowrap px-4 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
                   피드백 기간
                 </th>
-                <th className="px-4 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
+                <th className="whitespace-nowrap px-4 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
                   상태
                 </th>
-                <th className="px-4 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
+                <th className="whitespace-nowrap px-4 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
                   담당자
                 </th>
-                <th className="px-4 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
+                <th className="whitespace-nowrap px-4 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
                   바로가기
                 </th>
               </tr>
