@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import Link from 'next/link';
 import { useGetProgramAdminQuery } from '@/api/program';
 import { useChallengeMissionFeedbackListQuery } from '@/api/challenge/challenge';
@@ -7,47 +8,62 @@ import { useAdminChallengeMentorListQuery } from '@/api/mentor/mentor';
 import type { ProgramAdminListItem } from '@/schema';
 import Heading from '@/domain/admin/ui/heading/Heading';
 
-function formatDate(dateStr?: string | null) {
+/* ── 유틸 ── */
+
+function formatDate(dateStr?: string | null): string {
   if (!dateStr) return '-';
   return dateStr.slice(0, 10);
 }
+
+function computeFeedbackStatus(
+  startDate: string,
+  endDate: string,
+  now: Date,
+): string {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  if (now < start) return '피드백 진행전';
+  if (now <= end) return '피드백 진행중';
+  return '피드백 완료';
+}
+
+/* ── 행 컴포넌트 ── */
 
 function ChallengeRow({ item }: { item: ProgramAdminListItem }) {
   const { programInfo } = item;
   const challengeId = programInfo.id;
 
-  const { data: feedbackData } = useChallengeMissionFeedbackListQuery(
-    challengeId,
-    { enabled: true },
-  );
+  const { data: feedbackData } =
+    useChallengeMissionFeedbackListQuery(challengeId);
   const { data: mentorData } = useAdminChallengeMentorListQuery(challengeId);
 
   const missions = feedbackData?.missionList ?? [];
-  const now = new Date();
 
-  // 현재 진행중이거나 가장 가까운 미션 찾기
-  const currentMission =
-    missions.find((m) => {
-      const start = new Date(m.startDate);
-      const end = new Date(m.endDate);
-      return now >= start && now <= end;
-    }) ?? missions[missions.length - 1];
+  const { feedbackTh, feedbackPeriod, feedbackStatus } = useMemo(() => {
+    const now = new Date();
 
-  const feedbackTh = currentMission ? `${currentMission.th}회차` : '-';
+    // 현재 진행중이거나 가장 마지막 미션 찾기
+    const activeMission =
+      missions.find((m) => {
+        const start = new Date(m.startDate);
+        const end = new Date(m.endDate);
+        return now >= start && now <= end;
+      }) ?? missions[missions.length - 1];
 
-  const feedbackPeriod = currentMission
-    ? `${formatDate(currentMission.startDate)} ~ ${formatDate(currentMission.endDate)}`
-    : '-';
+    if (!activeMission) {
+      return { feedbackTh: '-', feedbackPeriod: '-', feedbackStatus: '-' };
+    }
 
-  // 피드백 상태 계산
-  let feedbackStatus = '-';
-  if (currentMission) {
-    const start = new Date(currentMission.startDate);
-    const end = new Date(currentMission.endDate);
-    if (now < start) feedbackStatus = '피드백 진행전';
-    else if (now <= end) feedbackStatus = '피드백 진행중';
-    else feedbackStatus = '피드백 완료';
-  }
+    return {
+      feedbackTh: `${activeMission.th}회차`,
+      feedbackPeriod: `${formatDate(activeMission.startDate)} ~ ${formatDate(activeMission.endDate)}`,
+      feedbackStatus: computeFeedbackStatus(
+        activeMission.startDate,
+        activeMission.endDate,
+        now,
+      ),
+    };
+  }, [missions]);
 
   const mentorNames =
     mentorData?.mentorList.map((m) => m.name).join(', ') || '-';
