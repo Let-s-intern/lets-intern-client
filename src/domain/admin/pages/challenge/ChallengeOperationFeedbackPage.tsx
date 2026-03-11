@@ -11,6 +11,9 @@ import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import MentorMenteeAssignment from './MentorMenteeAssignment';
+
+type SubTab = 'mentorMentee' | 'feedbackManage';
 
 interface Row {
   id: number | string;
@@ -74,6 +77,22 @@ const columns: GridColDef<Row>[] = [
       </Link>
     ),
   },
+  {
+    field: 'feedbackPeriod',
+    headerName: '피드백 기간',
+    width: 200,
+    sortable: false,
+    renderCell: (params: GridRenderCellParams<Row>) => {
+      const endDate = params.row.endDate;
+      if (!endDate) return '-';
+      const feedbackEnd = dayjs(endDate).add(3, 'day');
+      return (
+        <span className="font-semibold">
+          {dayjs(endDate).format(LOCALIZED_YYYY_MD_Hm)} ~ {feedbackEnd.format(LOCALIZED_YYYY_MD_Hm)}
+        </span>
+      );
+    },
+  },
 ];
 
 const useFeedbackMissionRows = () => {
@@ -107,7 +126,7 @@ const useFeedbackMissionRows = () => {
   return rows;
 };
 
-function ChallengeOperationFeedbackPage() {
+function FeedbackManageTable() {
   const rows = useFeedbackMissionRows();
 
   return (
@@ -117,6 +136,47 @@ function ChallengeOperationFeedbackPage() {
       disableRowSelectionOnClick
       hideFooter
     />
+  );
+}
+
+function ChallengeOperationFeedbackPage() {
+  const [activeTab, setActiveTab] = useState<SubTab>('feedbackManage');
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* 하위 탭 버튼 */}
+      <div className="flex gap-2">
+        <button
+          type="button"
+          className={`rounded-md border px-4 py-2 text-xsmall14 font-medium transition-colors ${
+            activeTab === 'mentorMentee'
+              ? 'border-neutral-0 bg-neutral-0 text-white'
+              : 'border-neutral-80 bg-white text-neutral-0 hover:bg-neutral-95'
+          }`}
+          onClick={() => setActiveTab('mentorMentee')}
+        >
+          멘토/멘티 배정
+        </button>
+        <button
+          type="button"
+          className={`rounded-md border px-4 py-2 text-xsmall14 font-medium transition-colors ${
+            activeTab === 'feedbackManage'
+              ? 'border-neutral-0 bg-neutral-0 text-white'
+              : 'border-neutral-80 bg-white text-neutral-0 hover:bg-neutral-95'
+          }`}
+          onClick={() => setActiveTab('feedbackManage')}
+        >
+          피드백 관리
+        </button>
+      </div>
+
+      {/* 하위 탭 컨텐츠 */}
+      {activeTab === 'mentorMentee' ? (
+        <MentorMenteeAssignment />
+      ) : (
+        <FeedbackManageTable />
+      )}
+    </div>
   );
 }
 
