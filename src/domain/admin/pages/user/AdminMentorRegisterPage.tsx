@@ -8,7 +8,7 @@ import {
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { usePaginationModelWithSearchParams } from '@/hooks/usePaginationModelWithSearchParams';
-import { Button, Checkbox, TextField } from '@mui/material';
+import { Button, Checkbox, Tab, Tabs, TextField } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -176,6 +176,7 @@ const MentorFilter = () => {
 };
 
 export default function AdminMentorRegisterPage() {
+  const router = useRouter();
   const pageSizeRef = useRef(10);
 
   const { paginationModel, handlePaginationModelChange } =
@@ -190,9 +191,21 @@ export default function AdminMentorRegisterPage() {
   const { rows, isLoading, pageInfo } = useMentorRows(pageable);
   const rowCount = pageInfo?.totalElements;
 
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
+    if (newValue === 0) {
+      router.push('/admin/mentors');
+    }
+  };
+
   return (
     <section className="p-5">
-      <Heading className="mb-4">멘토 등록</Heading>
+      <Heading className="mb-4">멘토 관리</Heading>
+
+      <Tabs value={1} onChange={handleTabChange} className="mb-4">
+        <Tab label="멘토 관리" />
+        <Tab label="멘토 등록" />
+      </Tabs>
+
       <MentorFilter />
       <span className="text-xsmall14 text-system-error">
         그리드에 내장된 필터, 정렬이 정상 동작하지 않습니다. 위의 검색 기능을

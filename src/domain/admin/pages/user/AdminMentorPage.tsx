@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useAdminUserMentorListQuery } from '@/api/mentor/mentor';
 import {
   usePatchUserAdminMutation,
@@ -8,10 +7,12 @@ import {
 } from '@/api/user/user';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import { Button } from '@mui/material';
+import { Button, Tab, Tabs } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
-export default function AdminMentorPage() {
+function MentorManagementTable() {
   const queryClient = useQueryClient();
   const { snackbar } = useAdminSnackbar();
   const { data, isLoading } = useAdminUserMentorListQuery();
@@ -37,71 +38,93 @@ export default function AdminMentorPage() {
   };
 
   return (
+    <div className="rounded-lg border border-neutral-80">
+      {isLoading ? (
+        <div className="py-16 text-center text-xsmall14 text-neutral-40">
+          불러오는 중...
+        </div>
+      ) : mentors.length === 0 ? (
+        <div className="py-16 text-center text-xsmall14 text-neutral-40">
+          등록된 멘토가 없습니다.
+        </div>
+      ) : (
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="border-b-2 border-neutral-60 bg-neutral-95">
+              <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
+                이름
+              </th>
+              <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
+                닉네임
+              </th>
+              <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
+                이메일
+              </th>
+              <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
+                전화번호
+              </th>
+              <th className="px-6 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
+                멘토 삭제
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {mentors.map((mentor) => (
+              <tr
+                key={mentor.id}
+                className="border-b border-neutral-80 last:border-b-0"
+              >
+                <td className="px-6 py-4 text-xsmall14">{mentor.name}</td>
+                <td className="px-6 py-4 text-xsmall14">
+                  {mentor.nickname ?? '-'}
+                </td>
+                <td className="px-6 py-4 text-xsmall14">
+                  {mentor.email ?? '-'}
+                </td>
+                <td className="px-6 py-4 text-xsmall14">
+                  {mentor.phoneNum ?? '-'}
+                </td>
+                <td className="px-6 py-4 text-center">
+                  <Button
+                    variant="text"
+                    color="error"
+                    size="small"
+                    onClick={() => handleDelete(mentor.id, mentor.name)}
+                  >
+                    삭제
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
+}
+
+export default function AdminMentorPage() {
+  const router = useRouter();
+  const [tab, setTab] = useState(0);
+
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
+    if (newValue === 1) {
+      router.push('/admin/mentors/register');
+    } else {
+      setTab(newValue);
+    }
+  };
+
+  return (
     <section className="p-5">
       <Heading className="mb-4">멘토 관리</Heading>
 
-      <div className="mb-4">
-        <Button variant="outlined" component={Link} href="/admin/mentors/register">
-          멘토 등록
-        </Button>
-      </div>
+      <Tabs value={tab} onChange={handleTabChange} className="mb-4">
+        <Tab label="멘토 관리" />
+        <Tab label="멘토 등록" />
+      </Tabs>
 
-      <div className="rounded-lg border border-neutral-80">
-        {isLoading ? (
-          <div className="py-16 text-center text-xsmall14 text-neutral-40">
-            불러오는 중...
-          </div>
-        ) : mentors.length === 0 ? (
-          <div className="py-16 text-center text-xsmall14 text-neutral-40">
-            등록된 멘토가 없습니다.
-          </div>
-        ) : (
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="border-b-2 border-neutral-60 bg-neutral-95">
-                <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
-                  이름
-                </th>
-                <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
-                  닉네임
-                </th>
-                <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
-                  전화번호
-                </th>
-                <th className="px-6 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
-                  멘토 삭제
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {mentors.map((mentor) => (
-                <tr
-                  key={mentor.id}
-                  className="border-b border-neutral-80 last:border-b-0"
-                >
-                  <td className="px-6 py-4 text-xsmall14">{mentor.name}</td>
-                  <td className="px-6 py-4 text-xsmall14">
-                    {mentor.nickname ?? '-'}
-                  </td>
-                  <td className="px-6 py-4 text-xsmall14">
-                    {mentor.phoneNum ?? '-'}
-                  </td>
-                  <td className="px-6 py-4 text-center">
-                    <Button
-                      variant="text"
-                      color="error"
-                      size="small"
-                      onClick={() => handleDelete(mentor.id, mentor.name)}
-                    >
-                      삭제
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      <MentorManagementTable />
     </section>
   );
 }
