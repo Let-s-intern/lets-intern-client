@@ -9,12 +9,6 @@ import {
   useUserDetailAdminQuery,
   UseUserDetailAdminQueryKey,
 } from '@/api/user/user';
-import {
-  useGetAdminUserCareerQuery,
-  usePostAdminCareerMutation,
-  AdminUserCareerQueryKey,
-} from '@/api/career/career';
-import type { UserCareerType } from '@/api/career/careerSchema';
 import { uploadFile } from '@/api/file';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
@@ -41,37 +35,11 @@ const INITIAL_FORM: BasicFormData = {
 };
 
 interface LocalCareer {
-  id?: number | null;
   company: string;
   job: string;
-  field: string;
-  position: string;
-  department: string;
+  employmentType: string;
   startDate: string;
   endDate: string;
-}
-
-function buildCareerFormData(career: Omit<UserCareerType, 'id'>): FormData {
-  const formData = new FormData();
-  formData.append(
-    'requestDto',
-    new Blob(
-      [
-        JSON.stringify({
-          company: career.company,
-          job: career.job,
-          employmentType: career.employmentType || '정규직',
-          startDate: career.startDate,
-          endDate: career.endDate || null,
-          field: career.field || null,
-          position: career.position || null,
-          department: career.department || null,
-        }),
-      ],
-      { type: 'application/json' },
-    ),
-  );
-  return formData;
 }
 
 export default function AdminMentorDetailPage() {
@@ -86,11 +54,6 @@ export default function AdminMentorDetailPage() {
     enabled: !!mentorId,
   });
 
-  const { data: careerData } = useGetAdminUserCareerQuery(mentorId, {
-    page: 0,
-    size: 100,
-  });
-
   const patchUser = usePatchUserAdminMutation({
     userId: mentorId,
     successCallback: () => {
@@ -101,8 +64,6 @@ export default function AdminMentorDetailPage() {
     },
     errorCallback: () => snackbar('저장에 실패했습니다.'),
   });
-
-  const postCareer = usePostAdminCareerMutation(mentorId);
 
   const [form, setForm] = useState<BasicFormData>(INITIAL_FORM);
 
@@ -120,14 +81,11 @@ export default function AdminMentorDetailPage() {
     });
   }, [userDetail]);
 
-  const careers: LocalCareer[] = (careerData?.userCareers ?? []).map((c) => ({
-    id: c.id,
-    company: c.company,
-    job: c.job,
-    field: c.field ?? '',
-    position: c.position ?? '',
-    department: c.department ?? '',
-    startDate: c.startDate,
+  const careers: LocalCareer[] = (userDetail?.careerInfos ?? []).map((c) => ({
+    company: c.company ?? '',
+    job: c.job ?? '',
+    employmentType: c.employmentType ?? '',
+    startDate: c.startDate ?? '',
     endDate: c.endDate ?? '',
   }));
 
@@ -142,23 +100,6 @@ export default function AdminMentorDetailPage() {
       introduction: form.introduction || null,
     });
   }, [form, patchUser]);
-
-  const handleAddCareer = () => {
-    const fd = buildCareerFormData({
-      company: '회사명',
-      job: '직무',
-      employmentType: '정규직',
-      startDate: new Date().toISOString().slice(0, 7),
-      endDate: null,
-      field: null,
-      position: null,
-      department: null,
-    });
-    postCareer.mutate(fd, {
-      onSuccess: () => snackbar('경력이 추가되었습니다.'),
-      onError: () => snackbar('경력 추가에 실패했습니다.'),
-    });
-  };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -284,17 +225,7 @@ export default function AdminMentorDetailPage() {
 
         {/* 경력 사항 */}
         <div className="rounded-lg border border-neutral-80 p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-medium18 font-semibold">경력사항</h2>
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={handleAddCareer}
-              disabled={postCareer.isPending}
-            >
-              경력 추가 +
-            </Button>
-          </div>
+          <h2 className="mb-4 text-medium18 font-semibold">경력사항</h2>
 
           {careers.length === 0 ? (
             <div className="py-8 text-center text-xsmall14 text-neutral-40">
@@ -304,7 +235,7 @@ export default function AdminMentorDetailPage() {
             <div className="flex flex-col gap-4">
               {careers.map((career, index) => (
                 <div
-                  key={career.id ?? index}
+                  key={index}
                   className="rounded border border-neutral-80 p-4"
                 >
                   <div className="mb-1 text-xsmall14 font-semibold">
@@ -313,27 +244,19 @@ export default function AdminMentorDetailPage() {
                   <div className="grid grid-cols-2 gap-2 text-xsmall14">
                     <div>
                       <span className="text-neutral-40">회사명: </span>
-                      {career.company}
+                      {career.company || '-'}
                     </div>
                     <div>
                       <span className="text-neutral-40">직무: </span>
-                      {career.job}
+                      {career.job || '-'}
                     </div>
                     <div>
-                      <span className="text-neutral-40">업무분야: </span>
-                      {career.field || '-'}
-                    </div>
-                    <div>
-                      <span className="text-neutral-40">직책: </span>
-                      {career.position || '-'}
-                    </div>
-                    <div>
-                      <span className="text-neutral-40">부서명: </span>
-                      {career.department || '-'}
+                      <span className="text-neutral-40">고용형태: </span>
+                      {career.employmentType || '-'}
                     </div>
                     <div>
                       <span className="text-neutral-40">재직 기간: </span>
-                      {career.startDate}
+                      {career.startDate || '-'}
                       {career.endDate ? ` ~ ${career.endDate}` : ' ~ 재직중'}
                     </div>
                   </div>
