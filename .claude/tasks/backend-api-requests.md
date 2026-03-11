@@ -1,55 +1,22 @@
 # 백엔드 API 요청사항
 
-> 멘토 관리 기능 구현 중 프론트엔드에서 확인된 백엔드 API 부재/수정 필요 사항
+## 신규 API
 
-## 요청 목록
+| # | 우선순위 | 요청 API | 도메인 위치 | 기능 | 현재 구현 | 서버에 원하는 것 |
+|---|---------|---------|------------|------|----------|----------------|
+| 1 | 높음 | `GET /mentor/schedule/dashboard` | 멘토 마이페이지 > 일정 (`schedule/SchedulePage.tsx`) | 주간 피드백 대시보드 | 챌린지 목록 → 미션 목록 → 멘티 목록 순차 호출 (28회+), 클라이언트에서 통계 계산 | 한 API에서 챌린지/미션/멘티/통계 모두 반환 |
+| 2 | 높음 | `PATCH /admin/attendance/bulk-assign` | 어드민 > 멘토멘티 배정 (`MentorMenteeAssignment.tsx`) | 멘티에 멘토 일괄 배정 | 선택된 멘티마다 개별 PATCH (20명이면 20회) | `{ mentorUserId, attendanceIds[] }` 배치 처리 |
+| 3 | 높음 | `DELETE /admin/user-career/user/{userId}/{careerId}` | 어드민 > 멘토 관리 | 어드민 추가 경력 삭제 | 프론트 mutation 구현 완료, 서버 API 없음 | API 추가 |
+| 4 | 중간 | `GET /admin/challenge/ongoing-feedback-summary` | 어드민 > 피드백 운영 > 진행중 챌린지 (`OngoingChallenges.tsx`) | 진행중 챌린지 + 피드백/멘토 현황 | 챌린지 행마다 피드백 미션 API + 멘토 API 호출 (N+1) | 한 API에서 챌린지별 현재 미션/멘토 포함 반환 |
+| 5 | 낮음 | `PATCH /admin/user-career/user/{userId}/{careerId}` | 어드민 > 멘토 관리 | 어드민 추가 경력 수정 | API 없어서 삭제 후 재등록 | API 추가 |
 
-| # | API 엔드포인트 | 메서드 | 현재 상태 | 필요한 이유 |
-|---|---------------|--------|----------|------------|
-| 1 | `/admin/user-career/user/{userId}/{careerId}` | `DELETE` | 없음 | 어드민이 추가한 경력을 삭제할 수 없음. 잘못 입력한 경력을 수정/삭제 못하면 관리 불가 |
-| 2 | `/admin/user-career/user/{userId}/{careerId}` | `PATCH` | 없음 | 어드민이 추가한 경력을 수정할 수 없음. 오타나 정보 변경 시 삭제 후 재등록해야 함 |
-| 3 | `/user-career/my` | `GET` 수정 | `isAddedByAdmin: true` 경력 미포함 | 어드민이 추가한 경력이 멘토 마이페이지에 안 보임. 외부 노출 시에도 누락됨 |
-| 4 | `/admin/user/mentor` | `GET` 수정 | `email`, `phoneNum`, `nickname` 미반환 | 멘토 관리 목록에서 이메일/전화번호가 안 보여서 유저 전체 목록 API로 우회 중 |
+## 기존 API 수정
 
-## 상세 설명
-
-### 1. 어드민 경력 삭제 API (DELETE)
-
-- **엔드포인트**: `DELETE /api/v1/admin/user-career/user/{userId}/{careerId}`
-- **현재 상태**: Swagger에 존재하지 않음
-- **필요한 이유**: 어드민이 멘토에게 경력을 추가할 수 있지만, 삭제할 수 없음. 잘못된 경력 추가 시 되돌릴 방법이 없음
-- **프론트 상태**: DELETE mutation 구현 완료 (`useDeleteAdminCareerMutation`). 백엔드 API 추가되면 즉시 연동 가능
-
-### 2. 어드민 경력 수정 API (PATCH)
-
-- **엔드포인트**: `PATCH /api/v1/admin/user-career/user/{userId}/{careerId}`
-- **현재 상태**: Swagger에 존재하지 않음
-- **필요한 이유**: 어드민이 추가한 경력 정보(회사명, 직무, 기간 등)에 오류가 있을 때 수정 불가. 삭제 후 재등록해야 함
-- **프론트 상태**: 미구현. 백엔드 API 추가 후 구현 예정
-
-### 3. 멘토 본인 경력 조회 시 어드민 추가 경력 포함 (GET 수정)
-
-- **엔드포인트**: `GET /api/v1/user-career/my`
-- **현재 상태**: `isAddedByAdmin: true`인 경력이 응답에 포함되지 않음
-- **필요한 이유**:
-  - 어드민이 추가한 경력이 멘토 마이페이지 프로필에 표시되지 않음
-  - 외부에 멘토 프로필을 노출할 때 어드민이 추가한 경력이 누락됨
-  - 어드민 상세페이지에서는 4개 경력이 보이지만, 멘토 마이페이지에서는 3개만 보이는 데이터 불일치 발생
-- **확인된 응답 예시**:
-  - `/admin/user-career/user/{userId}` → 4개 (isAddedByAdmin true/false 모두 포함)
-  - `/user-career/my` → 3개 (isAddedByAdmin: false만 포함)
-
-### 4. 멘토 목록 API 응답 필드 보강 (GET 수정)
-
-- **엔드포인트**: `GET /api/v2/admin/user/mentor`
-- **현재 상태**: `id`, `name`만 반환하는 것으로 추정. `email`, `phoneNum`, `nickname` 미포함
-- **필요한 이유**: 멘토 관리 테이블에서 이메일, 전화번호를 표시해야 하는데 데이터가 없음
-- **현재 우회 방법**: `GET /api/v2/admin/user`로 전체 유저를 조회한 뒤 `isMentor === true`로 필터링 (비효율적)
-- **권장 수정**: 응답에 `email`, `phoneNum`, `nickname` 필드 추가
-
-## 우선순위
-
-1. **높음**: #3 (멘토 본인 경력 조회 시 어드민 추가 경력 포함) — 데이터 불일치 및 외부 노출 이슈
-2. **높음**: #1 (어드민 경력 삭제) — 관리 기능 필수
-3. **중간**: #4 (멘토 목록 응답 보강) — 현재 우회 중이나 비효율적
-4. **낮음**: #2 (어드민 경력 수정) — 삭제 후 재등록으로 대체 가능
+| # | 우선순위 | 대상 API | 도메인 위치 | 기능 | 현재 문제 | 서버에 원하는 것 |
+|---|---------|---------|------------|------|----------|----------------|
+| 6 | 높음 | `GET /program/admin` | 어드민 > 피드백 운영 (`OngoingChallenges.tsx`) | 진행중 챌린지 목록 | `status=PROCEEDING`이 모집 마감 기준이라, 진행 중이지만 모집 마감된 챌린지가 안 보임 | `endDateAfter` 파라미터 추가 또는 "실제 진행중" 필터 지원 |
+| 7 | 높음 | `GET /user-career/my` | 멘토 마이페이지 > 프로필 (`CareerSection.tsx`) | 멘토 본인 경력 조회 | `isAddedByAdmin: true` 경력이 응답에서 누락 | 어드민 추가 경력도 포함 (읽기 전용 표시) |
+| 8 | 높음 | `GET /admin/challenge/{id}/mentor` | 어드민 > 멘토멘티 배정 (`MentorMenteeAssignment.tsx`) | 챌린지 멘토 목록 | 경력 정보 미포함 → 멘토마다 `/user/{id}` 개별 호출 (N+1) | 응답에 `careerInfos` (company, job) 포함 |
+| 9 | 중간 | `GET /admin/user/mentor` | 어드민 > 멘토 관리 | 멘토 목록 조회 | email, phoneNum 미반환 → 전체 유저 API로 우회 | 응답에 `email`, `phoneNum`, `nickname` 추가 |
+| 10 | 중간 | `GET /challenge/{id}/mission/{mid}/feedback/attendances` | 멘토 마이페이지 > 피드백 모달 (`FeedbackModal.tsx`) | 피드백 제출자 목록 | 피드백 내용 미포함 → 멘티 선택 시 상세 API 추가 호출 | 각 attendance에 `feedback` 필드 포함 |
+| 11 | 중간 | `GET /challenge/{id}/mission/feedback` | 멘토 마이페이지 > 챌린지 상세 (`ChallengeDetailPage.tsx`) | 피드백 미션 목록 | 통계 미포함 → 미션마다 attendance 전체 조회 후 클라이언트 집계 | 각 미션에 `stats` (제출수, 완료수 등) 포함 |
