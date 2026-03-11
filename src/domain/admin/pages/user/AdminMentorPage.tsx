@@ -1,212 +1,107 @@
 'use client';
 
-/** 멘토 관리 페이지 */
+import Link from 'next/link';
+import { useAdminUserMentorListQuery } from '@/api/mentor/mentor';
 import {
   usePatchUserAdminMutation,
-  useUserAdminQuery,
   UseUserAdminQueryKey,
 } from '@/api/user/user';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import { usePaginationModelWithSearchParams } from '@/hooks/usePaginationModelWithSearchParams';
-import { Button, Checkbox, TextField } from '@mui/material';
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { Button } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { ChangeEvent, FormEvent, useRef, useState } from 'react';
-
-interface Row {
-  id: number;
-  name: string;
-  email: string;
-  phoneNum: string;
-  isMentor: boolean;
-}
-
-const useMentorColumns = () => {
-  const client = useQueryClient();
-  const patchUser = usePatchUserAdminMutation();
-  const { snackbar } = useAdminSnackbar();
-
-  const columns: GridColDef<Row>[] = [
-    {
-      field: 'name',
-      headerName: '이름',
-      width: 100,
-    },
-    {
-      field: 'email',
-      headerName: '이메일',
-      width: 200,
-    },
-    {
-      field: 'phoneNum',
-      headerName: '전화번호',
-      width: 160,
-    },
-    {
-      field: 'isMentor',
-      headerName: '멘토 여부',
-      width: 100,
-      renderCell: (params: GridRenderCellParams<Row, boolean>) => {
-        const handleChange = async (
-          _: React.ChangeEvent<HTMLInputElement>,
-          checked: boolean,
-        ) => {
-          try {
-            await patchUser.mutateAsync({
-              id: params.row.id,
-              isMentor: checked,
-            });
-            client.invalidateQueries({
-              queryKey: [UseUserAdminQueryKey],
-            });
-            snackbar('멘토 설정이 완료되었습니다');
-          } catch (err) {
-            // eslint-disable-next-line no-console
-            console.error(err);
-            snackbar(`문제가 발생했습니다: ${err}`);
-          }
-        };
-        return (
-          <Checkbox checked={params.value ?? false} onChange={handleChange} />
-        );
-      },
-    },
-  ];
-
-  return columns;
-};
-
-const useMentorRows = ({ page, size }: { page: number; size: number }) => {
-  const pageable = {
-    page: page + 1,
-    size,
-  };
-
-  const searchParams = useSearchParams();
-  const filters = {
-    email: searchParams.get('email'),
-    name: searchParams.get('name'),
-    phoneNum: searchParams.get('phoneNum'),
-  };
-
-  const { data, isLoading } = useUserAdminQuery({ pageable, ...filters });
-  const rows = data?.userAdminList.map(({ userInfo }) => ({
-    id: userInfo.id,
-    name: userInfo.name,
-    email: userInfo.email,
-    phoneNum: userInfo.phoneNum,
-    isMentor: userInfo.isMentor ?? false,
-  }));
-
-  return { rows, isLoading, pageInfo: data?.pageInfo };
-};
-
-const MentorFilter = () => {
-  const defaultRef = useRef({
-    email: '',
-    name: '',
-    phoneNum: '',
-  });
-  const [inputs, setInputs] = useState(defaultRef.current);
-  const router = useRouter();
-  const pathname = usePathname();
-
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setInputs((prev) => ({ ...prev, [e.target.id]: e.target.value }));
-  };
-
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const newSearchParams = Object.fromEntries(
-      Object.entries(inputs).filter(([, value]) => value),
-    );
-    const params = new URLSearchParams(newSearchParams);
-    router.push(`${pathname}?${params.toString()}`);
-  };
-
-  const resetFilter = () => {
-    setInputs(defaultRef.current);
-    router.replace(window.location.pathname);
-  };
-
-  return (
-    <form
-      className="mb-4 flex items-center justify-between bg-neutral-90 p-4"
-      onSubmit={handleSubmit}
-    >
-      <div className="flex items-center gap-2">
-        <TextField
-          id="name"
-          label="이름"
-          variant="outlined"
-          value={inputs.name}
-          onChange={handleChange}
-        />
-        <TextField
-          id="email"
-          label="이메일"
-          variant="outlined"
-          value={inputs.email}
-          onChange={handleChange}
-        />
-        <TextField
-          id="phoneNum"
-          label="휴대폰 번호"
-          variant="outlined"
-          value={inputs.phoneNum}
-          onChange={handleChange}
-        />
-      </div>
-      <div className="flex items-center gap-2">
-        <Button type="submit" variant="contained">
-          검색
-        </Button>
-        <Button type="button" variant="outlined" onClick={resetFilter}>
-          전체보기
-        </Button>
-      </div>
-    </form>
-  );
-};
 
 export default function AdminMentorPage() {
-  const pageSizeRef = useRef(10);
+  const queryClient = useQueryClient();
+  const { snackbar } = useAdminSnackbar();
+  const { data, isLoading } = useAdminUserMentorListQuery();
+  const mentors = data?.mentorList ?? [];
 
-  const { paginationModel, handlePaginationModelChange } =
-    usePaginationModelWithSearchParams({ defaultPage: 0, defaultPageSize: 10 });
+  const patchUser = usePatchUserAdminMutation({});
 
-  const pageable = {
-    page: paginationModel.page,
-    size: paginationModel.pageSize,
+  const handleDelete = async (mentorId: number, mentorName: string) => {
+    if (!window.confirm(`${mentorName} 멘토를 삭제하시겠습니까?`)) return;
+
+    try {
+      await patchUser.mutateAsync({ id: mentorId, isMentor: false });
+      queryClient.invalidateQueries({
+        queryKey: ['useAdminUserMentorListQuery'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [UseUserAdminQueryKey],
+      });
+      snackbar('멘토가 삭제되었습니다.');
+    } catch (err) {
+      snackbar(`문제가 발생했습니다: ${err}`);
+    }
   };
-
-  const columns = useMentorColumns();
-  const { rows, isLoading, pageInfo } = useMentorRows(pageable);
-  const rowCount = pageInfo?.totalElements;
 
   return (
     <section className="p-5">
       <Heading className="mb-4">멘토 관리</Heading>
-      <MentorFilter />
-      <span className="text-xsmall14 text-system-error">
-        그리드에 내장된 필터, 정렬이 정상 동작하지 않습니다. 위의 검색 기능을
-        사용하세요.
-      </span>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        disableRowSelectionOnClick
-        rowCount={rowCount}
-        paginationMode="server"
-        loading={isLoading}
-        paginationModel={paginationModel}
-        onPaginationModelChange={handlePaginationModelChange}
-        pageSizeOptions={[pageSizeRef.current]}
-      />
+
+      <div className="mb-4">
+        <Button variant="outlined" component={Link} href="/admin/mentors/register">
+          멘토 등록
+        </Button>
+      </div>
+
+      <div className="rounded-lg border border-neutral-80">
+        {isLoading ? (
+          <div className="py-16 text-center text-xsmall14 text-neutral-40">
+            불러오는 중...
+          </div>
+        ) : mentors.length === 0 ? (
+          <div className="py-16 text-center text-xsmall14 text-neutral-40">
+            등록된 멘토가 없습니다.
+          </div>
+        ) : (
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="border-b-2 border-neutral-60 bg-neutral-95">
+                <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
+                  이름
+                </th>
+                <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
+                  닉네임
+                </th>
+                <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
+                  전화번호
+                </th>
+                <th className="px-6 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
+                  멘토 삭제
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {mentors.map((mentor) => (
+                <tr
+                  key={mentor.id}
+                  className="border-b border-neutral-80 last:border-b-0"
+                >
+                  <td className="px-6 py-4 text-xsmall14">{mentor.name}</td>
+                  <td className="px-6 py-4 text-xsmall14">
+                    {mentor.nickname ?? '-'}
+                  </td>
+                  <td className="px-6 py-4 text-xsmall14">
+                    {mentor.phoneNum ?? '-'}
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    <Button
+                      variant="text"
+                      color="error"
+                      size="small"
+                      onClick={() => handleDelete(mentor.id, mentor.name)}
+                    >
+                      삭제
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     </section>
   );
 }
