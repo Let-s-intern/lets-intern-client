@@ -84,6 +84,28 @@ export const usePatchUserCareerMutation = () => {
   });
 };
 
+export const AdminUserCareerQueryKey = 'adminUserCareerQueryKey';
+
+export const useGetAdminUserCareerQuery = (
+  userId: number,
+  pageable: Pageable,
+) => {
+  return useQuery({
+    queryKey: [AdminUserCareerQueryKey, userId, ...Object.values(pageable)],
+    queryFn: async () => {
+      const params = new URLSearchParams({
+        page: String(pageable.page),
+        size: String(pageable.size),
+      });
+      const res = await axios.get(
+        `/admin/user-career/user/${userId}?${params.toString()}`,
+      );
+      return userCareerListSchema.parse(res.data.data);
+    },
+    enabled: !!userId,
+  });
+};
+
 export const usePostAdminCareerMutation = (userId: number) => {
   const queryClient = useQueryClient();
 
@@ -97,6 +119,9 @@ export const usePostAdminCareerMutation = (userId: number) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [UserCareerQueryKey] });
+      queryClient.invalidateQueries({
+        queryKey: [AdminUserCareerQueryKey, userId],
+      });
       queryClient.invalidateQueries({
         queryKey: ['useUserDetailQueryKey', userId],
       });

@@ -1,8 +1,9 @@
 'use client';
 
-import { useAdminUserMentorListQuery } from '@/api/mentor/mentor';
+import Link from 'next/link';
 import {
   usePatchUserAdminMutation,
+  useUserAdminQuery,
   UseUserAdminQueryKey,
 } from '@/api/user/user';
 import Heading from '@/domain/admin/ui/heading/Heading';
@@ -10,24 +11,40 @@ import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { Button, Tab, Tabs } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 function MentorManagementTable() {
   const queryClient = useQueryClient();
   const { snackbar } = useAdminSnackbar();
-  const { data, isLoading } = useAdminUserMentorListQuery();
-  const mentors = data?.mentorList ?? [];
+  const { data, isLoading } = useUserAdminQuery({
+    pageable: { page: 0, size: 500 },
+  });
+  const mentors = useMemo(
+    () =>
+      (data?.userAdminList ?? [])
+        .filter((u) => u.userInfo.isMentor === true)
+        .map((u) => ({
+          id: u.userInfo.id,
+          name: u.userInfo.name,
+          email: u.userInfo.email,
+          phoneNum: u.userInfo.phoneNum,
+        })),
+    [data],
+  );
 
   const patchUser = usePatchUserAdminMutation({});
 
-  const handleDelete = async (mentorId: number, mentorName: string) => {
+  const handleDelete = async (
+    e: React.MouseEvent,
+    mentorId: number,
+    mentorName: string,
+  ) => {
+    e.stopPropagation();
+    e.preventDefault();
     if (!window.confirm(`${mentorName} 멘토를 삭제하시겠습니까?`)) return;
 
     try {
       await patchUser.mutateAsync({ id: mentorId, isMentor: false });
-      queryClient.invalidateQueries({
-        queryKey: ['useAdminUserMentorListQuery'],
-      });
       queryClient.invalidateQueries({
         queryKey: [UseUserAdminQueryKey],
       });
@@ -55,9 +72,6 @@ function MentorManagementTable() {
                 이름
               </th>
               <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
-                닉네임
-              </th>
-              <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
                 이메일
               </th>
               <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
@@ -72,11 +86,15 @@ function MentorManagementTable() {
             {mentors.map((mentor) => (
               <tr
                 key={mentor.id}
-                className="border-b border-neutral-80 last:border-b-0"
+                className="cursor-pointer border-b border-neutral-80 transition-colors hover:bg-neutral-95 last:border-b-0"
               >
-                <td className="px-6 py-4 text-xsmall14">{mentor.name}</td>
                 <td className="px-6 py-4 text-xsmall14">
-                  {mentor.nickname ?? '-'}
+                  <Link
+                    href={`/admin/mentors/${mentor.id}`}
+                    className="text-neutral-0 underline hover:text-primary-30"
+                  >
+                    {mentor.name}
+                  </Link>
                 </td>
                 <td className="px-6 py-4 text-xsmall14">
                   {mentor.email ?? '-'}
@@ -89,7 +107,7 @@ function MentorManagementTable() {
                     variant="text"
                     color="error"
                     size="small"
-                    onClick={() => handleDelete(mentor.id, mentor.name)}
+                    onClick={(e) => handleDelete(e, mentor.id, mentor.name)}
                   >
                     삭제
                   </Button>
