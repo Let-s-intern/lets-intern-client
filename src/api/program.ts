@@ -171,8 +171,9 @@ export const useGetProgramAdminQuery = (params: {
   return useQuery({
     queryKey: [useGetProgramAdminQueryKey, params],
     queryFn: async () => {
+      const { enabled: _enabled, ...apiParams } = params;
       const res = await axios.get(`/program/admin`, {
-        params: { ...params, status: params.status?.join(',') },
+        params: { ...apiParams, status: params.status?.join(',') },
       });
       return programAdminSchema.parse(res.data.data);
     },
