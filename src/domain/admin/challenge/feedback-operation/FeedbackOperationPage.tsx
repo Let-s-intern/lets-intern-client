@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { twMerge } from '@/lib/twMerge';
 import MentorNoticeManagement from './MentorNoticeManagement';
+import OngoingChallenges from './OngoingChallenges';
 
 type Tab = 'notice' | 'ongoing';
 
@@ -34,11 +35,7 @@ export default function FeedbackOperationPage() {
       </nav>
 
       {activeTab === 'notice' && <MentorNoticeManagement />}
-      {activeTab === 'ongoing' && (
-        <div className="py-20 text-center text-neutral-40">
-          진행중 챌린지 (준비중)
-        </div>
-      )}
+      {activeTab === 'ongoing' && <OngoingChallenges />}
     </section>
   );
 }
