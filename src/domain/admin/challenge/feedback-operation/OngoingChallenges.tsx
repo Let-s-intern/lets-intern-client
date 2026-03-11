@@ -2,11 +2,64 @@
 
 import { useMemo } from 'react';
 import Link from 'next/link';
-import { useGetProgramAdminQuery } from '@/api/program';
 import { useChallengeMissionFeedbackListQuery } from '@/api/challenge/challenge';
 import { useAdminChallengeMentorListQuery } from '@/api/mentor/mentor';
-import type { ProgramAdminListItem } from '@/schema';
 import Heading from '@/domain/admin/ui/heading/Heading';
+import axios from '@/utils/axios';
+import { useQuery } from '@tanstack/react-query';
+import { z } from 'zod';
+
+/* ── 진행중 챌린지 전용 스키마 (필요한 필드만) ── */
+
+const ongoingProgramInfoSchema = z.object({
+  id: z.number(),
+  title: z.string().nullable().optional(),
+  startDate: z.string().nullable().optional(),
+  endDate: z.string().nullable().optional(),
+});
+
+const ongoingChallengeSchema = z.object({
+  programList: z.array(
+    z.object({
+      programInfo: ongoingProgramInfoSchema,
+    }),
+  ),
+  pageInfo: z.object({
+    totalElements: z.number(),
+    totalPages: z.number(),
+    pageNum: z.number(),
+    pageSize: z.number(),
+  }),
+});
+
+type OngoingProgramInfo = z.infer<typeof ongoingProgramInfoSchema>;
+
+const useOngoingChallengesQuery = () => {
+  return useQuery({
+    queryKey: ['ongoingChallenges'],
+    queryFn: async () => {
+      const res = await axios.get('/program/admin', {
+        params: {
+          type: 'CHALLENGE',
+          status: 'PROCEEDING,POST',
+          page: 1,
+          size: 1000,
+        },
+      });
+      const parsed = ongoingChallengeSchema.parse(res.data.data);
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      return {
+        ...parsed,
+        programList: parsed.programList.filter((item) => {
+          const endDate = item.programInfo.endDate;
+          if (!endDate) return false;
+          return new Date(endDate) >= now;
+        }),
+      };
+    },
+  });
+};
 
 /* ── 유틸 ── */
 
@@ -29,20 +82,17 @@ function computeFeedbackStatus(
 
 /* ── 행 컴포넌트 ── */
 
-function ChallengeRow({ item }: { item: ProgramAdminListItem }) {
-  const { programInfo } = item;
+function ChallengeRow({ programInfo }: { programInfo: OngoingProgramInfo }) {
   const challengeId = programInfo.id;
 
   const { data: feedbackData } =
     useChallengeMissionFeedbackListQuery(challengeId);
   const { data: mentorData } = useAdminChallengeMentorListQuery(challengeId);
 
-  const missions = feedbackData?.missionList ?? [];
-
   const { feedbackTh, feedbackPeriod, feedbackStatus } = useMemo(() => {
+    const missions = feedbackData?.missionList ?? [];
     const now = new Date();
 
-    // 현재 진행중이거나 가장 마지막 미션 찾기
     const activeMission =
       missions.find((m) => {
         const start = new Date(m.startDate);
@@ -63,7 +113,7 @@ function ChallengeRow({ item }: { item: ProgramAdminListItem }) {
         now,
       ),
     };
-  }, [missions]);
+  }, [feedbackData]);
 
   const mentorNames =
     mentorData?.mentorList.map((m) => m.name).join(', ') || '-';
@@ -77,7 +127,8 @@ function ChallengeRow({ item }: { item: ProgramAdminListItem }) {
         {feedbackTh}
       </td>
       <td className="whitespace-nowrap px-4 py-3 text-center text-xsmall14">
-        {formatDate(programInfo.startDate)} ~ {formatDate(programInfo.endDate)}
+        {formatDate(programInfo.startDate)} ~{' '}
+        {formatDate(programInfo.endDate)}
       </td>
       <td className="whitespace-nowrap px-4 py-3 text-center text-xsmall14">
         {feedbackPeriod}
@@ -101,12 +152,7 @@ function ChallengeRow({ item }: { item: ProgramAdminListItem }) {
 }
 
 export default function OngoingChallenges() {
-  const { data, isLoading } = useGetProgramAdminQuery({
-    type: 'CHALLENGE',
-    status: ['PROCEEDING'],
-    page: 1,
-    size: 100,
-  });
+  const { data, isLoading } = useOngoingChallengesQuery();
 
   const challenges = data?.programList ?? [];
 
@@ -154,7 +200,10 @@ export default function OngoingChallenges() {
             </thead>
             <tbody>
               {challenges.map((item) => (
-                <ChallengeRow key={item.programInfo.id} item={item} />
+                <ChallengeRow
+                  key={item.programInfo.id}
+                  programInfo={item.programInfo}
+                />
               ))}
             </tbody>
           </table>
