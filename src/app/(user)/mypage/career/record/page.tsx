@@ -21,7 +21,7 @@ const Career = () => {
   const createCareerMutation = usePostUserCareerMutation();
   const patchCareerMutation = usePatchUserCareerMutation();
   const { data, isLoading } = useGetUserCareerQuery({
-    page: 1,
+    page: 0,
     size: PAGE_SIZE,
   });
 

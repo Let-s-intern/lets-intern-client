@@ -27,11 +27,9 @@ export const userCareerSchema = z.object({
   id: z.number().nullable().optional(),
   company: z.string(),
   job: z.string(),
-  employmentType: z.string(),
-  startDate: yearMonthSchema, // "2025-08"
-  endDate: yearMonthSchema // "2025-08"
-    .nullable()
-    .optional(),
+  employmentType: z.string().nullable().optional(),
+  startDate: z.string().nullable().optional(),
+  endDate: z.string().nullable().optional(),
   field: z.string().nullable().optional(),
   position: z.string().nullable().optional(),
   department: z.string().nullable().optional(),

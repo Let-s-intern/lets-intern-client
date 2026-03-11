@@ -45,7 +45,7 @@ const CareerRecordSection = () => {
             jobTitle={latestCareer.job || ''}
             companyName={latestCareer.company || ''}
             employmentType={latestCareer.employmentType || ''}
-            startDate={toCareerDateDot(latestCareer.startDate)}
+            startDate={latestCareer.startDate ? toCareerDateDot(latestCareer.startDate) : ''}
             endDate={
               latestCareer.endDate ? toCareerDateDot(latestCareer.endDate) : ''
             }

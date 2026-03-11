@@ -9,6 +9,7 @@ import {
   useUserDetailAdminQuery,
   UseUserDetailAdminQueryKey,
 } from '@/api/user/user';
+import { useGetAdminUserCareerQuery } from '@/api/career/career';
 import { uploadFile } from '@/api/file';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
@@ -40,6 +41,9 @@ interface LocalCareer {
   employmentType: string;
   startDate: string;
   endDate: string;
+  field: string;
+  position: string;
+  department: string;
 }
 
 export default function AdminMentorDetailPage() {
@@ -52,6 +56,11 @@ export default function AdminMentorDetailPage() {
   const { data: userDetail, isLoading } = useUserDetailAdminQuery({
     userId: mentorId,
     enabled: !!mentorId,
+  });
+
+  const { data: careerData } = useGetAdminUserCareerQuery(mentorId, {
+    page: 0,
+    size: 100,
   });
 
   const patchUser = usePatchUserAdminMutation({
@@ -81,12 +90,15 @@ export default function AdminMentorDetailPage() {
     });
   }, [userDetail]);
 
-  const careers: LocalCareer[] = (userDetail?.careerInfos ?? []).map((c) => ({
-    company: c.company ?? '',
-    job: c.job ?? '',
+  const careers: LocalCareer[] = (careerData?.userCareers ?? []).map((c) => ({
+    company: c.company,
+    job: c.job,
     employmentType: c.employmentType ?? '',
     startDate: c.startDate ?? '',
     endDate: c.endDate ?? '',
+    field: c.field ?? '',
+    position: c.position ?? '',
+    department: c.department ?? '',
   }));
 
   const handleSave = useCallback(() => {
@@ -255,6 +267,18 @@ export default function AdminMentorDetailPage() {
                       {career.employmentType || '-'}
                     </div>
                     <div>
+                      <span className="text-neutral-40">업무분야: </span>
+                      {career.field || '-'}
+                    </div>
+                    <div>
+                      <span className="text-neutral-40">직책: </span>
+                      {career.position || '-'}
+                    </div>
+                    <div>
+                      <span className="text-neutral-40">부서명: </span>
+                      {career.department || '-'}
+                    </div>
+                    <div className="col-span-2">
                       <span className="text-neutral-40">재직 기간: </span>
                       {career.startDate || '-'}
                       {career.endDate ? ` ~ ${career.endDate}` : ' ~ 재직중'}
