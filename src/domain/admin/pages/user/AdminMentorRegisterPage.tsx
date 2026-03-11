@@ -12,7 +12,9 @@ import { Button, Checkbox, Tab, Tabs, TextField } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { ChangeEvent, FormEvent, useRef, useState } from 'react';
+import { ChangeEvent, FormEvent, useMemo, useState } from 'react';
+
+const DEFAULT_PAGE_SIZE = 10;
 
 interface Row {
   id: number;
@@ -22,70 +24,67 @@ interface Row {
   isMentor: boolean;
 }
 
-const useMentorColumns = () => {
+const useMentorColumns = (): GridColDef<Row>[] => {
   const client = useQueryClient();
   const patchUser = usePatchUserAdminMutation({});
   const { snackbar } = useAdminSnackbar();
 
-  const columns: GridColDef<Row>[] = [
-    {
-      field: 'name',
-      headerName: '이름',
-      width: 100,
-    },
-    {
-      field: 'email',
-      headerName: '이메일',
-      width: 200,
-    },
-    {
-      field: 'phoneNum',
-      headerName: '전화번호',
-      width: 160,
-    },
-    {
-      field: 'isMentor',
-      headerName: '멘토 여부',
-      width: 100,
-      renderCell: (params: GridRenderCellParams<Row, boolean>) => {
-        const handleChange = async (
-          _: React.ChangeEvent<HTMLInputElement>,
-          checked: boolean,
-        ) => {
-          try {
-            await patchUser.mutateAsync({
-              id: params.row.id,
-              isMentor: checked,
-            });
-            client.invalidateQueries({
-              queryKey: [UseUserAdminQueryKey],
-            });
-            client.invalidateQueries({
-              queryKey: ['useAdminUserMentorListQuery'],
-            });
-            snackbar('멘토 설정이 완료되었습니다');
-          } catch (err) {
-            // eslint-disable-next-line no-console
-            console.error(err);
-            snackbar(`문제가 발생했습니다: ${err}`);
-          }
-        };
-        return (
-          <Checkbox checked={params.value ?? false} onChange={handleChange} />
-        );
+  return useMemo(
+    (): GridColDef<Row>[] => [
+      {
+        field: 'name',
+        headerName: '이름',
+        width: 100,
       },
-    },
-  ];
-
-  return columns;
+      {
+        field: 'email',
+        headerName: '이메일',
+        width: 200,
+      },
+      {
+        field: 'phoneNum',
+        headerName: '전화번호',
+        width: 160,
+      },
+      {
+        field: 'isMentor',
+        headerName: '멘토 여부',
+        width: 100,
+        renderCell: (params: GridRenderCellParams<Row, boolean>) => {
+          const handleToggleMentor = async (
+            _: React.ChangeEvent<HTMLInputElement>,
+            checked: boolean,
+          ) => {
+            try {
+              await patchUser.mutateAsync({
+                id: params.row.id,
+                isMentor: checked,
+              });
+              client.invalidateQueries({
+                queryKey: [UseUserAdminQueryKey],
+              });
+              client.invalidateQueries({
+                queryKey: ['useAdminUserMentorListQuery'],
+              });
+              snackbar('멘토 설정이 완료되었습니다');
+            } catch (err) {
+              snackbar(`문제가 발생했습니다: ${err}`);
+            }
+          };
+          return (
+            <Checkbox
+              checked={params.value ?? false}
+              onChange={handleToggleMentor}
+            />
+          );
+        },
+      },
+    ],
+    [client, patchUser, snackbar],
+  );
 };
 
 const useMentorRows = ({ page, size }: { page: number; size: number }) => {
-  const pageable = {
-    page: page + 1,
-    size,
-  };
-
   const searchParams = useSearchParams();
   const filters = {
     email: searchParams.get('email'),
@@ -93,25 +92,34 @@ const useMentorRows = ({ page, size }: { page: number; size: number }) => {
     phoneNum: searchParams.get('phoneNum'),
   };
 
-  const { data, isLoading } = useUserAdminQuery({ pageable, ...filters });
-  const rows = data?.userAdminList.map(({ userInfo }) => ({
-    id: userInfo.id,
-    name: userInfo.name,
-    email: userInfo.email,
-    phoneNum: userInfo.phoneNum,
-    isMentor: userInfo.isMentor ?? false,
-  }));
+  const { data, isLoading } = useUserAdminQuery({
+    pageable: { page: page + 1, size },
+    ...filters,
+  });
+
+  const rows = useMemo(
+    () =>
+      data?.userAdminList.map(({ userInfo }) => ({
+        id: userInfo.id,
+        name: userInfo.name,
+        email: userInfo.email,
+        phoneNum: userInfo.phoneNum,
+        isMentor: userInfo.isMentor ?? false,
+      })),
+    [data],
+  );
 
   return { rows, isLoading, pageInfo: data?.pageInfo };
 };
 
+const INITIAL_FILTER = {
+  email: '',
+  name: '',
+  phoneNum: '',
+};
+
 const MentorFilter = () => {
-  const defaultRef = useRef({
-    email: '',
-    name: '',
-    phoneNum: '',
-  });
-  const [inputs, setInputs] = useState(defaultRef.current);
+  const [inputs, setInputs] = useState(INITIAL_FILTER);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -131,7 +139,7 @@ const MentorFilter = () => {
   };
 
   const resetFilter = () => {
-    setInputs(defaultRef.current);
+    setInputs(INITIAL_FILTER);
     router.replace(window.location.pathname);
   };
 
@@ -177,18 +185,15 @@ const MentorFilter = () => {
 
 export default function AdminMentorRegisterPage() {
   const router = useRouter();
-  const pageSizeRef = useRef(10);
 
   const { paginationModel, handlePaginationModelChange } =
-    usePaginationModelWithSearchParams({ defaultPage: 0, defaultPageSize: 10 });
-
-  const pageable = {
-    page: paginationModel.page,
-    size: paginationModel.pageSize,
-  };
+    usePaginationModelWithSearchParams({ defaultPage: 0, defaultPageSize: DEFAULT_PAGE_SIZE });
 
   const columns = useMentorColumns();
-  const { rows, isLoading, pageInfo } = useMentorRows(pageable);
+  const { rows, isLoading, pageInfo } = useMentorRows({
+    page: paginationModel.page,
+    size: paginationModel.pageSize,
+  });
   const rowCount = pageInfo?.totalElements;
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
@@ -220,7 +225,7 @@ export default function AdminMentorRegisterPage() {
         loading={isLoading}
         paginationModel={paginationModel}
         onPaginationModelChange={handlePaginationModelChange}
-        pageSizeOptions={[pageSizeRef.current]}
+        pageSizeOptions={[DEFAULT_PAGE_SIZE]}
       />
     </section>
   );

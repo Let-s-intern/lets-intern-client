@@ -31,7 +31,7 @@ import {
 import { MenuItem, SelectChangeEvent } from '@mui/material';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import MentorMenteeAssignment from './MentorMenteeAssignment';
 
 type SubTab = 'mentorMentee' | 'feedbackManage';
@@ -69,33 +69,27 @@ interface AttendanceRow {
 
 // ─── Hooks ──────────────────────────────────────────────────
 
-const useFeedbackMissionRows = () => {
+const useFeedbackMissionRows = (): MissionRow[] => {
   const { programId } = useParams<{ programId: string }>();
   const { data: isAdmin } = useIsAdminQuery();
-  const { data: dataForAdmin, isLoading: isAdminLoading } =
+  const { data: dataForAdmin } =
     useChallengeMissionFeedbackListQuery(Number(programId), {
       enabled: !!programId && isAdmin,
     });
-  const { data: dataForMentor, isLoading: isMentorLoading } =
+  const { data: dataForMentor } =
     useMentorMissionFeedbackListQuery(Number(programId), {
       enabled: !!programId && !isAdmin,
     });
 
-  const isLoading = isAdminLoading || isMentorLoading;
-  const [rows, setRows] = useState<MissionRow[]>([]);
+  const data = isAdmin ? dataForAdmin : dataForMentor;
 
-  useEffect(() => {
-    if (isLoading || !dataForAdmin || !dataForMentor) return;
-    setRows(
-      (isAdmin ? dataForAdmin : dataForMentor).missionList
+  return useMemo(
+    () =>
+      (data?.missionList ?? [])
         .filter((item) => !!item.challengeOptionTitle)
-        .map((item) => ({
-          ...item,
-        })),
-    );
-  }, [dataForAdmin, isAdmin, isLoading, dataForMentor]);
-
-  return rows;
+        .map((item) => ({ ...item })),
+    [data],
+  );
 };
 
 const NO_MENTOR_ID = 0;
@@ -204,43 +198,6 @@ function FeedbackStatusCell({
         ),
       )}
     </SelectFormControl>
-  );
-}
-
-// ─── Breadcrumb ─────────────────────────────────────────────
-
-function Breadcrumb({
-  items,
-  onNavigate,
-}: {
-  items: { label: string; onClick?: () => void }[];
-  onNavigate?: () => void;
-}) {
-  return (
-    <nav className="flex items-center gap-1 text-xsmall14">
-      {items.map((item, i) => {
-        const isLast = i === items.length - 1;
-        return (
-          <span key={i} className="flex items-center gap-1">
-            {i > 0 && <span className="text-neutral-60">{'>'}</span>}
-            {isLast ? (
-              <span className="font-semibold text-neutral-0">{item.label}</span>
-            ) : (
-              <button
-                type="button"
-                className="text-neutral-40 hover:text-neutral-0 hover:underline"
-                onClick={() => {
-                  item.onClick?.();
-                  onNavigate?.();
-                }}
-              >
-                {item.label}
-              </button>
-            )}
-          </span>
-        );
-      })}
-    </nav>
   );
 }
 
@@ -393,17 +350,15 @@ function FeedbackAttendanceList({
 
   const rows: AttendanceRow[] = useMemo(
     () =>
-      (data?.attendanceList ?? []).map((item) => {
-        const { status, result, challengePricePlanType, ...rest } = item;
-        return {
+      (data?.attendanceList ?? []).map(
+        ({ status: _s, result: _r, challengePricePlanType: _c, ...rest }) => ({
           ...rest,
           missionTitle: mission.title ?? '',
           missionRound: mission.th,
-          feedbackStatus:
-            item.feedbackStatus ?? FeedbackStatusEnum.enum.WAITING,
-          feedbackPageLink: `/admin/challenge/operation/${programId}/mission/${missionId}/participant/${item.id}/feedback`,
-        };
-      }),
+          feedbackStatus: rest.feedbackStatus ?? FeedbackStatusEnum.enum.WAITING,
+          feedbackPageLink: `/admin/challenge/operation/${programId}/mission/${missionId}/participant/${rest.id}/feedback`,
+        }),
+      ),
     [data, mission, programId, missionId],
   );
 
@@ -497,10 +452,6 @@ function ChallengeOperationFeedbackPage() {
 
   const handleSelectMission = useCallback((mission: MissionRow) => {
     setSelectedMission(mission);
-  }, []);
-
-  const handleBackToMissionList = useCallback(() => {
-    setSelectedMission(null);
   }, []);
 
   return (

@@ -177,10 +177,6 @@ export default function ChallengeFeedbackPage() {
 
   useBeforeUnloadWarning(hasUnsavedChanges);
 
-  const handleChangeEditor = (jsonString: string) => {
-    setContent(jsonString);
-  };
-
   const handleSave = async () => {
     if (!userId) return;
     await patchAttendanceMentor({
@@ -238,7 +234,7 @@ export default function ChallengeFeedbackPage() {
       {!isLoading && (
         <FeedbackEditorApp
           initialEditorStateJsonString={content ?? defaultContent ?? undefined}
-          onChange={handleChangeEditor}
+          onChange={setContent}
         />
       )}
       <div className="flex items-center justify-end gap-4">

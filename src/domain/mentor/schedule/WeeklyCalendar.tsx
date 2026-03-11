@@ -109,11 +109,7 @@ const WeeklyCalendar = ({
                     {format(day, 'd', { locale: ko })}
                   </span>
                 ) : (
-                  <span
-                    className={`text-medium24 font-semibold ${
-                      isSunday ? 'text-neutral-10' : 'text-neutral-10'
-                    }`}
-                  >
+                  <span className="text-medium24 font-semibold text-neutral-10">
                     {format(day, 'd', { locale: ko })}
                   </span>
                 )}
