@@ -35,6 +35,10 @@ const navData = [
         name: '챌린지 운영',
         url: '/admin/challenge/operation',
       },
+      {
+        name: '피드백 운영',
+        url: '/admin/challenge/feedback-operation',
+      },
     ],
   },
   {
