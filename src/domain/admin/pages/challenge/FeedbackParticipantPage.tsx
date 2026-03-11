@@ -213,6 +213,14 @@ export default function FeedbackParticipantPage() {
   }>();
   const rows = useFeedbackParticipantRows();
 
+  const selectedMission = useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem('mission') || '{}');
+    } catch {
+      return {};
+    }
+  }, []);
+
   const columns: GridColDef<AttendanceRow>[] = useMemo(
     () => [
       {
@@ -297,11 +305,33 @@ export default function FeedbackParticipantPage() {
   );
 
   return (
-    <DataGrid
-      rows={rows}
-      columns={columns}
-      disableRowSelectionOnClick
-      hideFooter
-    />
+    <div className="flex flex-col gap-4">
+      {/* 퀵메뉴 탭 */}
+      <div className="flex items-center gap-2">
+        <Link
+          href={`/admin/challenge/operation/${programId}/feedback`}
+          className="rounded-md border border-neutral-80 bg-white px-4 py-2 text-xsmall14 font-medium text-neutral-0 hover:bg-neutral-95"
+        >
+          멘토/멘티 배정
+        </Link>
+        <Link
+          href={`/admin/challenge/operation/${programId}/feedback`}
+          className="rounded-md border border-neutral-80 bg-white px-4 py-2 text-xsmall14 font-medium text-neutral-0 hover:bg-neutral-95"
+        >
+          피드백 관리
+        </Link>
+        <span className="rounded-md border border-neutral-0 bg-neutral-0 px-4 py-2 text-xsmall14 font-medium text-white">
+          {selectedMission.title ?? '미션'} {selectedMission.th ?? ''}회차
+          제출현황
+        </span>
+      </div>
+
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        disableRowSelectionOnClick
+        hideFooter
+      />
+    </div>
   );
 }
