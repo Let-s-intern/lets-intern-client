@@ -1,6 +1,7 @@
 'use client';
 
 import { usePatchAttendanceMentorMutation } from '@/api/mentor/mentor';
+import config from '../config.json';
 
 interface FeedbackActionsProps {
   attendanceId: number | null;
@@ -45,15 +46,23 @@ const FeedbackActions = ({
   };
 
   const handleSave = () => {
-    submitFeedback('IN_PROGRESS', '임시 저장되었습니다.', '저장에 실패했습니다.', onSaveSuccess);
+    submitFeedback(
+      'IN_PROGRESS',
+      config.feedback.saveSuccess,
+      config.feedback.saveFail,
+      onSaveSuccess,
+    );
   };
 
   const handleSubmit = () => {
-    const isConfirmed = window.confirm(
-      '최종 제출하시겠습니까? 제출 후에는 수정할 수 없습니다.',
-    );
+    const isConfirmed = window.confirm(config.feedback.submitConfirm);
     if (!isConfirmed) return;
-    submitFeedback('COMPLETED', '최종 제출되었습니다.', '제출에 실패했습니다.', onSubmitSuccess);
+    submitFeedback(
+      'COMPLETED',
+      config.feedback.submitSuccess,
+      config.feedback.submitFail,
+      onSubmitSuccess,
+    );
   };
 
   return (

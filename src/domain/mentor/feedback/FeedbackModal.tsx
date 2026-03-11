@@ -115,7 +115,7 @@ const FeedbackModal = ({
       if (attendanceId === selectedAttendanceId) return;
       if (
         !confirmIfDirty(
-          '저장하지 않은 변경사항이 있습니다. 다른 멘티로 이동하시겠습니까?',
+          mentorConfig.feedback.unsavedWarning,
         )
       ) {
         return;
@@ -143,7 +143,7 @@ const FeedbackModal = ({
   const handleClose = useCallback(() => {
     if (
       !confirmIfDirty(
-        '저장하지 않은 변경사항이 있습니다. 모달을 닫으시겠습니까?',
+        mentorConfig.feedback.closeWarning,
       )
     ) {
       return;
