@@ -205,10 +205,14 @@ const SchedulePage = () => {
     });
   };
 
-  const challengeFilterItems = challenges.map((c) => ({
-    challengeId: c.challengeId,
-    title: c.title,
-  }));
+  const challengeFilterItems = useMemo(
+    () =>
+      challenges.map((c) => ({
+        challengeId: c.challengeId,
+        title: c.title,
+      })),
+    [challenges],
+  );
 
   return (
     <div className="flex flex-col gap-6 md:gap-10">

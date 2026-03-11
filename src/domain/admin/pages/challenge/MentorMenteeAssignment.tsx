@@ -9,7 +9,7 @@ import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import axios from '@/utils/axios';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 interface MenteeRow {
   applicationId: number;
@@ -50,24 +50,51 @@ export default function MentorMenteeAssignment() {
     Record<number, number>
   >({});
 
-  const mentees: MenteeRow[] = (menteeData?.applicationList ?? []).map(
-    (item) => ({
-      applicationId: item.application.id,
-      name: item.application.name ?? '-',
-      email: item.application.email ?? '-',
-      wishCompany: item.application.wishCompany ?? '-',
-      wishJob: item.application.wishJob ?? '-',
-      challengePricePlanType:
-        item.application.challengePricePlanType ?? 'BASIC',
-      selectedMentorId: null,
-    }),
+  const mentees: MenteeRow[] = useMemo(
+    () =>
+      (menteeData?.applicationList ?? []).map((item) => ({
+        applicationId: item.application.id,
+        name: item.application.name ?? '-',
+        email: item.application.email ?? '-',
+        wishCompany: item.application.wishCompany ?? '-',
+        wishJob: item.application.wishJob ?? '-',
+        challengePricePlanType:
+          item.application.challengePricePlanType ?? 'BASIC',
+        selectedMentorId: null,
+      })),
+    [menteeData],
   );
 
   const mentors = mentorData?.mentorList ?? [];
 
-  const handleMentorSelect = (applicationId: number, mentorId: number) => {
-    setSelectedMentors((prev) => ({ ...prev, [applicationId]: mentorId }));
-  };
+  const handleMentorSelect = useCallback(
+    (applicationId: number, mentorId: number) => {
+      setSelectedMentors((prev) => ({ ...prev, [applicationId]: mentorId }));
+    },
+    [],
+  );
+
+  const handleBulkMatch = useCallback(async () => {
+    const entries = Object.entries(selectedMentors);
+    if (entries.length === 0) {
+      snackbar('매칭할 멘토를 선택해주세요.');
+      return;
+    }
+    await Promise.all(
+      entries.map(([appId, mentorId]) =>
+        matchMutation.mutateAsync({
+          challengeId,
+          challengeMentorId: mentorId,
+          applicationId: Number(appId),
+        }),
+      ),
+    );
+    snackbar('일괄 매칭이 완료되었습니다.');
+    setSelectedMentors({});
+    queryClient.invalidateQueries({
+      queryKey: ['admin', 'challenge', challengeId, 'menteeApplications'],
+    });
+  }, [selectedMentors, challengeId, matchMutation, snackbar, queryClient]);
 
   const handleMatch = async (applicationId: number) => {
     const challengeMentorId = selectedMentors[applicationId];
@@ -108,34 +135,7 @@ export default function MentorMenteeAssignment() {
         <button
           type="button"
           className="rounded border border-neutral-80 px-4 py-2 text-xsmall14 hover:bg-neutral-95"
-          onClick={() => {
-            // 선택된 멘토가 있는 멘티들 일괄 매칭
-            const entries = Object.entries(selectedMentors);
-            if (entries.length === 0) {
-              snackbar('매칭할 멘토를 선택해주세요.');
-              return;
-            }
-            Promise.all(
-              entries.map(([appId, mentorId]) =>
-                matchMutation.mutateAsync({
-                  challengeId,
-                  challengeMentorId: mentorId,
-                  applicationId: Number(appId),
-                }),
-              ),
-            ).then(() => {
-              snackbar('일괄 매칭이 완료되었습니다.');
-              setSelectedMentors({});
-              queryClient.invalidateQueries({
-                queryKey: [
-                  'admin',
-                  'challenge',
-                  challengeId,
-                  'menteeApplications',
-                ],
-              });
-            });
-          }}
+          onClick={handleBulkMatch}
         >
           새로 만들기
         </button>

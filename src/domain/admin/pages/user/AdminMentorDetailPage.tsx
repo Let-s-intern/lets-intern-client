@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@mui/material';
 
@@ -13,7 +13,6 @@ import {
   useGetAdminUserCareerQuery,
   usePostAdminCareerMutation,
   useDeleteAdminCareerMutation,
-  AdminUserCareerQueryKey,
 } from '@/api/career/career';
 import { uploadFile } from '@/api/file';
 import Heading from '@/domain/admin/ui/heading/Heading';
@@ -39,6 +38,14 @@ const INITIAL_FORM: BasicFormData = {
   profileImgUrl: '',
   introduction: '',
 };
+
+const BASIC_FORM_FIELDS = [
+  { label: '이름', key: 'name' as const },
+  { label: '닉네임', key: 'nickname' as const },
+  { label: '이메일', key: 'email' as const },
+  { label: '전화번호', key: 'phoneNum' as const },
+  { label: 'SNS', key: 'sns' as const },
+] as const;
 
 interface LocalCareer {
   id: number | null;
@@ -100,22 +107,26 @@ export default function AdminMentorDetailPage() {
     });
   }, [userDetail]);
 
-  const careers: LocalCareer[] = (careerData?.userCareers ?? [])
-    .map((c) => ({
-      id: c.id ?? null,
-      company: c.company,
-      job: c.job,
-      employmentType: c.employmentType ?? '',
-      startDate: c.startDate ?? '',
-      endDate: c.endDate ?? '',
-      field: c.field ?? '',
-      position: c.position ?? '',
-      department: c.department ?? '',
-      isAddedByAdmin: c.isAddedByAdmin ?? false,
-    }))
-    .sort((a, b) => b.startDate.localeCompare(a.startDate));
+  const careers: LocalCareer[] = useMemo(
+    () =>
+      (careerData?.userCareers ?? [])
+        .map((c) => ({
+          id: c.id ?? null,
+          company: c.company,
+          job: c.job,
+          employmentType: c.employmentType ?? '',
+          startDate: c.startDate ?? '',
+          endDate: c.endDate ?? '',
+          field: c.field ?? '',
+          position: c.position ?? '',
+          department: c.department ?? '',
+          isAddedByAdmin: c.isAddedByAdmin ?? false,
+        }))
+        .sort((a, b) => b.startDate.localeCompare(a.startDate)),
+    [careerData],
+  );
 
-  const handleSave = useCallback(() => {
+  const handleSave = () => {
     patchUser.mutate({
       name: form.name || undefined,
       email: form.email || undefined,
@@ -125,7 +136,7 @@ export default function AdminMentorDetailPage() {
       profileImgUrl: form.profileImgUrl || null,
       introduction: form.introduction || null,
     });
-  }, [form, patchUser]);
+  };
 
   const handleAddCareer = () => {
     const formData = new FormData();
@@ -165,7 +176,8 @@ export default function AdminMentorDetailPage() {
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
+    const isFileTooLarge = file.size > 5 * 1024 * 1024;
+    if (isFileTooLarge) {
       snackbar('파일 크기는 5MB 이하여야 합니다.');
       return;
     }
@@ -235,13 +247,7 @@ export default function AdminMentorDetailPage() {
           </div>
 
           <div className="flex flex-col gap-4">
-            {[
-              { label: '이름', key: 'name' as const },
-              { label: '닉네임', key: 'nickname' as const },
-              { label: '이메일', key: 'email' as const },
-              { label: '전화번호', key: 'phoneNum' as const },
-              { label: 'SNS', key: 'sns' as const },
-            ].map(({ label, key }) => (
+            {BASIC_FORM_FIELDS.map(({ label, key }) => (
               <div key={key} className="flex items-center gap-3">
                 <label className="w-20 flex-shrink-0 text-xsmall14 font-medium text-neutral-30">
                   {label}
@@ -307,51 +313,62 @@ export default function AdminMentorDetailPage() {
             </div>
           ) : (
             <div className="flex flex-col gap-3">
-              {careers.map((career, index) => (
-                <div
-                  key={career.id ?? index}
-                  className="flex w-full flex-col gap-1 rounded border border-neutral-80 p-4"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="text-xsmall14 text-neutral-0">
-                      {career.job || '-'}
-                    </span>
-                    {career.isAddedByAdmin && career.id && (
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteCareer(career)}
-                        className="text-xxsmall12 text-red-500 hover:text-red-700"
-                      >
-                        삭제
-                      </button>
-                    )}
-                  </div>
-                  <div className="text-xsmall14 font-medium text-neutral-0">
-                    {career.company || '-'}
-                  </div>
-                  <div className="flex items-center gap-2 text-xsmall14 text-neutral-0">
-                    <span>{career.employmentType || '-'}</span>
-                    <span className="text-neutral-40">
-                      {career.startDate || '-'}
-                      {career.endDate ? ` - ${career.endDate}` : ' - 재직중'}
-                    </span>
-                  </div>
-                  {(career.field || career.position || career.department) && (
-                    <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xsmall14 text-neutral-35">
-                      {career.field && <span>업무분야: {career.field}</span>}
-                      {career.position && <span>직책: {career.position}</span>}
-                      {career.department && (
-                        <span>부서: {career.department}</span>
-                      )}
+              {careers.map((career, index) => {
+                const isDeletable = career.isAddedByAdmin && career.id;
+                const hasDetails =
+                  career.field || career.position || career.department;
+                return (
+                  <div
+                    key={career.id ?? index}
+                    className="flex w-full flex-col gap-1 rounded border border-neutral-80 p-4"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-xsmall14 text-neutral-0">
+                        {career.job || '-'}
+                      </span>
+                      {isDeletable ? (
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteCareer(career)}
+                          className="text-xxsmall12 text-red-500 hover:text-red-700"
+                        >
+                          삭제
+                        </button>
+                      ) : null}
                     </div>
-                  )}
-                  {!career.isAddedByAdmin && (
-                    <span className="mt-1 text-xxsmall12 text-neutral-50">
-                      멘토 등록
-                    </span>
-                  )}
-                </div>
-              ))}
+                    <div className="text-xsmall14 font-medium text-neutral-0">
+                      {career.company || '-'}
+                    </div>
+                    <div className="flex items-center gap-2 text-xsmall14 text-neutral-0">
+                      <span>{career.employmentType || '-'}</span>
+                      <span className="text-neutral-40">
+                        {career.startDate || '-'}
+                        {career.endDate
+                          ? ` - ${career.endDate}`
+                          : ' - 재직중'}
+                      </span>
+                    </div>
+                    {hasDetails ? (
+                      <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xsmall14 text-neutral-35">
+                        {career.field ? (
+                          <span>업무분야: {career.field}</span>
+                        ) : null}
+                        {career.position ? (
+                          <span>직책: {career.position}</span>
+                        ) : null}
+                        {career.department ? (
+                          <span>부서: {career.department}</span>
+                        ) : null}
+                      </div>
+                    ) : null}
+                    {!career.isAddedByAdmin ? (
+                      <span className="mt-1 text-xxsmall12 text-neutral-50">
+                        멘토 등록
+                      </span>
+                    ) : null}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
