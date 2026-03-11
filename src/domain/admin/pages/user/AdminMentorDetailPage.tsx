@@ -9,7 +9,12 @@ import {
   useUserDetailAdminQuery,
   UseUserDetailAdminQueryKey,
 } from '@/api/user/user';
-import { useGetAdminUserCareerQuery } from '@/api/career/career';
+import {
+  useGetAdminUserCareerQuery,
+  usePostAdminCareerMutation,
+  useDeleteAdminCareerMutation,
+  AdminUserCareerQueryKey,
+} from '@/api/career/career';
 import { uploadFile } from '@/api/file';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
@@ -36,6 +41,7 @@ const INITIAL_FORM: BasicFormData = {
 };
 
 interface LocalCareer {
+  id: number | null;
   company: string;
   job: string;
   employmentType: string;
@@ -44,6 +50,7 @@ interface LocalCareer {
   field: string;
   position: string;
   department: string;
+  isAddedByAdmin: boolean;
 }
 
 export default function AdminMentorDetailPage() {
@@ -74,6 +81,9 @@ export default function AdminMentorDetailPage() {
     errorCallback: () => snackbar('저장에 실패했습니다.'),
   });
 
+  const postCareer = usePostAdminCareerMutation(mentorId);
+  const deleteCareer = useDeleteAdminCareerMutation(mentorId);
+
   const [form, setForm] = useState<BasicFormData>(INITIAL_FORM);
 
   useEffect(() => {
@@ -90,16 +100,20 @@ export default function AdminMentorDetailPage() {
     });
   }, [userDetail]);
 
-  const careers: LocalCareer[] = (careerData?.userCareers ?? []).map((c) => ({
-    company: c.company,
-    job: c.job,
-    employmentType: c.employmentType ?? '',
-    startDate: c.startDate ?? '',
-    endDate: c.endDate ?? '',
-    field: c.field ?? '',
-    position: c.position ?? '',
-    department: c.department ?? '',
-  }));
+  const careers: LocalCareer[] = (careerData?.userCareers ?? [])
+    .map((c) => ({
+      id: c.id ?? null,
+      company: c.company,
+      job: c.job,
+      employmentType: c.employmentType ?? '',
+      startDate: c.startDate ?? '',
+      endDate: c.endDate ?? '',
+      field: c.field ?? '',
+      position: c.position ?? '',
+      department: c.department ?? '',
+      isAddedByAdmin: c.isAddedByAdmin ?? false,
+    }))
+    .sort((a, b) => b.startDate.localeCompare(a.startDate));
 
   const handleSave = useCallback(() => {
     patchUser.mutate({
@@ -112,6 +126,41 @@ export default function AdminMentorDetailPage() {
       introduction: form.introduction || null,
     });
   }, [form, patchUser]);
+
+  const handleAddCareer = () => {
+    const formData = new FormData();
+    formData.append(
+      'requestDto',
+      new Blob(
+        [
+          JSON.stringify({
+            company: '회사명',
+            job: '직무',
+            employmentType: '정규직',
+            startDate: new Date().toISOString().slice(0, 7),
+            endDate: null,
+            field: null,
+            position: null,
+            department: null,
+          }),
+        ],
+        { type: 'application/json' },
+      ),
+    );
+    postCareer.mutate(formData, {
+      onSuccess: () => snackbar('경력이 추가되었습니다.'),
+      onError: () => snackbar('경력 추가에 실패했습니다.'),
+    });
+  };
+
+  const handleDeleteCareer = (career: LocalCareer) => {
+    if (!career.id) return;
+    if (!window.confirm('이 경력을 삭제하시겠습니까?')) return;
+    deleteCareer.mutate(career.id, {
+      onSuccess: () => snackbar('경력이 삭제되었습니다.'),
+      onError: () => snackbar('경력 삭제에 실패했습니다.'),
+    });
+  };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -237,53 +286,70 @@ export default function AdminMentorDetailPage() {
 
         {/* 경력 사항 */}
         <div className="rounded-lg border border-neutral-80 p-6">
-          <h2 className="mb-4 text-medium18 font-semibold">경력사항</h2>
+          <div className="mb-2 flex items-center justify-between">
+            <h2 className="text-medium18 font-semibold">경력사항</h2>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={handleAddCareer}
+              disabled={postCareer.isPending}
+            >
+              경력 추가 +
+            </Button>
+          </div>
+          <p className="mb-4 text-xxsmall12 text-neutral-40">
+            멘토가 직접 등록한 경력은 수정/삭제할 수 없습니다.
+          </p>
 
           {careers.length === 0 ? (
             <div className="py-8 text-center text-xsmall14 text-neutral-40">
               등록된 경력이 없습니다.
             </div>
           ) : (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3">
               {careers.map((career, index) => (
                 <div
-                  key={index}
-                  className="rounded border border-neutral-80 p-4"
+                  key={career.id ?? index}
+                  className="flex w-full flex-col gap-1 rounded border border-neutral-80 p-4"
                 >
-                  <div className="mb-1 text-xsmall14 font-semibold">
-                    경력 {String(index + 1).padStart(2, '0')}
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 text-xsmall14">
-                    <div>
-                      <span className="text-neutral-40">회사명: </span>
-                      {career.company || '-'}
-                    </div>
-                    <div>
-                      <span className="text-neutral-40">직무: </span>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xsmall14 text-neutral-0">
                       {career.job || '-'}
-                    </div>
-                    <div>
-                      <span className="text-neutral-40">고용형태: </span>
-                      {career.employmentType || '-'}
-                    </div>
-                    <div>
-                      <span className="text-neutral-40">업무분야: </span>
-                      {career.field || '-'}
-                    </div>
-                    <div>
-                      <span className="text-neutral-40">직책: </span>
-                      {career.position || '-'}
-                    </div>
-                    <div>
-                      <span className="text-neutral-40">부서명: </span>
-                      {career.department || '-'}
-                    </div>
-                    <div className="col-span-2">
-                      <span className="text-neutral-40">재직 기간: </span>
-                      {career.startDate || '-'}
-                      {career.endDate ? ` ~ ${career.endDate}` : ' ~ 재직중'}
-                    </div>
+                    </span>
+                    {career.isAddedByAdmin && career.id && (
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteCareer(career)}
+                        className="text-xxsmall12 text-red-500 hover:text-red-700"
+                      >
+                        삭제
+                      </button>
+                    )}
                   </div>
+                  <div className="text-xsmall14 font-medium text-neutral-0">
+                    {career.company || '-'}
+                  </div>
+                  <div className="flex items-center gap-2 text-xsmall14 text-neutral-0">
+                    <span>{career.employmentType || '-'}</span>
+                    <span className="text-neutral-40">
+                      {career.startDate || '-'}
+                      {career.endDate ? ` - ${career.endDate}` : ' - 재직중'}
+                    </span>
+                  </div>
+                  {(career.field || career.position || career.department) && (
+                    <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xsmall14 text-neutral-35">
+                      {career.field && <span>업무분야: {career.field}</span>}
+                      {career.position && <span>직책: {career.position}</span>}
+                      {career.department && (
+                        <span>부서: {career.department}</span>
+                      )}
+                    </div>
+                  )}
+                  {!career.isAddedByAdmin && (
+                    <span className="mt-1 text-xxsmall12 text-neutral-50">
+                      멘토 등록
+                    </span>
+                  )}
                 </div>
               ))}
             </div>
