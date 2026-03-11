@@ -8,15 +8,15 @@ import LexicalContent from '@/domain/blog/ui/LexicalContent';
 interface FeedbackEditorProps {
   initialEditorStateJsonString?: string;
   onChange: (jsonString: string) => void;
-  readOnly: boolean;
+  isReadOnly: boolean;
 }
 
 const FeedbackEditor = ({
   initialEditorStateJsonString,
   onChange,
-  readOnly,
+  isReadOnly,
 }: FeedbackEditorProps) => {
-  if (readOnly && initialEditorStateJsonString) {
+  if (isReadOnly && initialEditorStateJsonString) {
     try {
       const parsed = JSON.parse(initialEditorStateJsonString);
       return (
