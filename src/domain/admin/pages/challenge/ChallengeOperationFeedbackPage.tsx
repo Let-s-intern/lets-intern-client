@@ -262,14 +262,16 @@ function SubmissionCountCell({ missionId }: { missionId: number | string }) {
   });
 
   const data = isAdmin ? dataForAdmin : dataForMentor;
-  const total = data?.attendanceList?.length ?? 0;
   const submitted = data?.attendanceList?.filter((a) => !!a.link)?.length ?? 0;
+  const confirmed =
+    data?.attendanceList?.filter((a) => a.feedbackStatus === 'CONFIRMED')
+      ?.length ?? 0;
 
   if (!data) return <span className="text-neutral-40">-</span>;
 
   return (
     <span>
-      {submitted} / {total}
+      {submitted} / {confirmed}
     </span>
   );
 }
@@ -311,8 +313,8 @@ function FeedbackMissionList({
       },
       {
         field: 'submissionCount',
-        headerName: '제출 현황',
-        width: 100,
+        headerName: '제출 / 확인완료',
+        width: 120,
         sortable: false,
         renderCell: (params: GridRenderCellParams<MissionRow>) => (
           <SubmissionCountCell missionId={params.row.id} />
