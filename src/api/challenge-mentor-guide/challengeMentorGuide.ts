@@ -4,21 +4,26 @@ import axios from '@/utils/axios';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   challengeMentorGuideListSchema,
-  adminChallengeMentorGuideListSchema,
   type CreateChallengeMentorGuideReq,
   type UpdateChallengeMentorGuideReq,
 } from './challengeMentorGuideSchema';
 
 export const ChallengeMentorGuideQueryKey = 'challengeMentorGuideList';
 
-/** GET /api/v1/challenge-mentor-guide 멘토용 가이드 목록 */
-export const useChallengeMentorGuideListQuery = () => {
+/** GET /api/v1/challenge-mentor-guide/{challengeId} 멘토용 가이드 목록 */
+export const useChallengeMentorGuideListQuery = (
+  challengeId?: number,
+) => {
   return useQuery({
-    queryKey: [ChallengeMentorGuideQueryKey],
+    queryKey: [ChallengeMentorGuideQueryKey, challengeId],
     queryFn: async () => {
-      const res = await axios.get('/challenge-mentor-guide');
+      const res = await axios.get(
+        `/challenge-mentor-guide/${challengeId}`,
+      );
       return challengeMentorGuideListSchema.parse(res.data.data);
     },
+    enabled: !!challengeId,
+    retry: false,
     refetchOnWindowFocus: false,
   });
 };
@@ -36,23 +41,23 @@ export const useAdminChallengeMentorGuideListQuery = (
       const res = await axios.get(
         `/admin/challenge-mentor-guide/${challengeMentorId}`,
       );
-      return adminChallengeMentorGuideListSchema.parse(res.data.data);
+      return challengeMentorGuideListSchema.parse(res.data.data);
     },
     enabled: !!challengeMentorId,
     refetchOnWindowFocus: false,
   });
 };
 
-/** POST /api/v1/admin/challenge-mentor-guide/{challengeMentorGuideId} 가이드 생성 */
+/** POST /api/v1/admin/challenge-mentor-guide/{challengeMentorId} 가이드 생성 */
 export const usePostAdminChallengeMentorGuide = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
-      challengeMentorGuideId,
+      challengeMentorId,
       ...body
-    }: CreateChallengeMentorGuideReq & { challengeMentorGuideId: number }) => {
+    }: CreateChallengeMentorGuideReq & { challengeMentorId: number }) => {
       const res = await axios.post(
-        `/admin/challenge-mentor-guide/${challengeMentorGuideId}`,
+        `/admin/challenge-mentor-guide/${challengeMentorId}`,
         body,
       );
       return res.data;

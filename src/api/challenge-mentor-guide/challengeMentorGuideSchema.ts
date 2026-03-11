@@ -2,10 +2,11 @@ import { z } from 'zod';
 
 /** 챌린지 멘토 가이드 항목 */
 export const challengeMentorGuideItemSchema = z.object({
-  id: z.number(),
+  challengeMentorGuideId: z.number(),
   title: z.string().nullable(),
   link: z.string().nullable(),
   createDate: z.string().nullable(),
+  lastModifiedDate: z.string().nullable(),
 });
 
 /** GET /api/v1/challenge-mentor-guide 멘토용 가이드 목록 응답 */
