@@ -28,7 +28,10 @@ const CareerList = ({
     size: PAGE_SIZE,
   });
 
-  const { userCareers, pageInfo } = data ?? {};
+  const { pageInfo } = data ?? {};
+  const userCareers = [...(data?.userCareers ?? [])].sort((a, b) =>
+    (b.startDate ?? '').localeCompare(a.startDate ?? ''),
+  );
 
   const {
     pageNum: currentPage,

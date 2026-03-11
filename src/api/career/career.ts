@@ -172,6 +172,22 @@ export const usePostAdminCareerMutation = (userId: number) => {
   });
 };
 
+export const useDeleteAdminCareerMutation = (userId: number) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (careerId: number) => {
+      await axios.delete(`/admin/user-career/user/${userId}/${careerId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [UserCareerQueryKey] });
+      queryClient.invalidateQueries({
+        queryKey: [AdminUserCareerQueryKey, userId],
+      });
+    },
+  });
+};
+
 export const usePostAdminExperienceMutation = (userId: number) => {
   const queryClient = useQueryClient();
 
