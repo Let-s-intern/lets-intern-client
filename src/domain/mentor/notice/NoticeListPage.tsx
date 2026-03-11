@@ -2,6 +2,7 @@
 
 import { useChallengeMentorGuideListQuery } from '@/api/challenge-mentor-guide/challengeMentorGuide';
 import { useMentorChallengeListQuery } from '@/api/user/user';
+import type { ChallengeMentorGuideItem } from '@/api/challenge-mentor-guide/challengeMentorGuideSchema';
 
 function getRelativeDate(dateStr: string): string {
   const now = new Date();
@@ -14,7 +15,24 @@ function getRelativeDate(dateStr: string): string {
   return `${diffDays}일 전`;
 }
 
-/** 챌린지 1개에 대한 가이드 목록을 가져와 렌더링하는 컴포넌트 */
+function GuideRow({ guide }: { guide: ChallengeMentorGuideItem }) {
+  return (
+    <a
+      href={guide.link ?? '#'}
+      target={guide.link ? '_blank' : undefined}
+      rel={guide.link ? 'noopener noreferrer' : undefined}
+      className="flex items-center gap-4 border-b border-neutral-80 px-6 py-4 transition-colors last:border-b-0 hover:bg-neutral-95"
+    >
+      {guide.createDate && (
+        <span className="shrink-0 rounded border border-neutral-80 px-3 py-1 text-xxsmall12 text-neutral-40">
+          {getRelativeDate(guide.createDate)}
+        </span>
+      )}
+      <span className="text-xsmall16 text-neutral-10">{guide.title}</span>
+    </a>
+  );
+}
+
 function ChallengeGuideSection({ challengeId }: { challengeId: number }) {
   const { data, isError } = useChallengeMentorGuideListQuery(challengeId);
   const guides = data?.challengeMentorGuideList ?? [];
@@ -23,39 +41,18 @@ function ChallengeGuideSection({ challengeId }: { challengeId: number }) {
 
   return (
     <>
-      {guides.map((guide, i) => (
-        <a
-          key={guide.challengeMentorGuideId}
-          href={guide.link ?? '#'}
-          target={guide.link ? '_blank' : undefined}
-          rel={guide.link ? 'noopener noreferrer' : undefined}
-          className={`flex items-center gap-4 px-6 py-4 transition-colors hover:bg-neutral-95 ${
-            i < guides.length - 1
-              ? 'border-b border-neutral-80'
-              : ''
-          }`}
-        >
-          {guide.createDate && (
-            <span className="shrink-0 rounded border border-neutral-80 px-3 py-1 text-xxsmall12 text-neutral-40">
-              {getRelativeDate(guide.createDate)}
-            </span>
-          )}
-          <span className="text-xsmall16 text-neutral-10">
-            {guide.title}
-          </span>
-        </a>
+      {guides.map((guide) => (
+        <GuideRow key={guide.challengeMentorGuideId} guide={guide} />
       ))}
     </>
   );
 }
 
 export default function NoticeListPage() {
-  const { data: challengeData, isLoading: challengeLoading } =
-    useMentorChallengeListQuery();
-
+  const { data: challengeData, isLoading } = useMentorChallengeListQuery();
   const challenges = challengeData?.myChallengeMentorVoList ?? [];
 
-  if (challengeLoading) {
+  if (isLoading) {
     return (
       <div className="flex flex-col gap-6 md:gap-10">
         <h1 className="text-medium22 font-semibold text-neutral-0">
@@ -85,7 +82,6 @@ export default function NoticeListPage() {
     <div className="flex flex-col gap-6 md:gap-10">
       <h1 className="text-medium22 font-semibold text-neutral-0">공지사항</h1>
 
-      {/* 프로그램 공지 */}
       <section className="flex flex-col gap-4">
         <h2 className="text-small18 font-semibold text-neutral-0">
           프로그램 공지
