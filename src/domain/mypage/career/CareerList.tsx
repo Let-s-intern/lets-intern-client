@@ -21,7 +21,7 @@ const CareerList = ({
   handleSubmit,
   handleEdit,
 }: CareerListProps) => {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
 
   const { data } = useGetUserCareerQuery({
     page,
@@ -39,9 +39,9 @@ const CareerList = ({
 
   const handlePageChange = (
     _event: React.ChangeEvent<unknown>,
-    page: number,
+    uiPage: number,
   ) => {
-    setPage(page);
+    setPage(uiPage - 1);
   };
 
   return (

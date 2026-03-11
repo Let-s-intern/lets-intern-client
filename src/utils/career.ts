@@ -50,16 +50,17 @@ export const isEndDateAfterStartDate = (
 export const convertCareerApiToUiFormat = (
   career: UserCareerType,
 ): CareerFormType => {
-  const rawType = career.employmentType;
-
-  if (rawType == null) throw new Error('employmentType is null');
+  const rawType = career.employmentType ?? '';
 
   const employmentType: EmployeeType = isEmployeeType(rawType)
     ? rawType
-    : '기타(직접입력)';
+    : rawType
+      ? '기타(직접입력)'
+      : '정규직';
 
-  const employmentTypeOther = isEmployeeType(rawType) ? '' : rawType;
-  const startDate = toCareerDateDot(career.startDate);
+  const employmentTypeOther =
+    rawType && !isEmployeeType(rawType) ? rawType : '';
+  const startDate = career.startDate ? toCareerDateDot(career.startDate) : '';
   const endDate = career.endDate ? toCareerDateDot(career.endDate) : null;
 
   return {
@@ -70,6 +71,9 @@ export const convertCareerApiToUiFormat = (
     employmentTypeOther,
     startDate,
     ...(endDate ? { endDate } : { endDate: null }),
+    field: career.field ?? '',
+    position: career.position ?? '',
+    department: career.department ?? '',
   };
 };
 
@@ -84,7 +88,7 @@ export const convertCareerUiToApiFormat = (
   const apiEmploymentType =
     employmentType === '기타(직접입력)' ? employmentTypeOther : employmentType;
 
-  const startDate = toCareerDateDash(career.startDate!);
+  const startDate = career.startDate ? toCareerDateDash(career.startDate) : '';
   const endDate = career.endDate ? toCareerDateDash(career.endDate) : null;
   return {
     id: career.id,
@@ -93,5 +97,8 @@ export const convertCareerUiToApiFormat = (
     employmentType: apiEmploymentType!,
     startDate,
     endDate,
+    field: career.field || null,
+    position: career.position || null,
+    department: career.department || null,
   };
 };
