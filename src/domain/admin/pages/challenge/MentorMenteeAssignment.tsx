@@ -353,11 +353,15 @@ export default function MentorMenteeAssignment() {
                       }
                       onChange={(e) => {
                         const v = e.target.value;
-                        setSelectedMentors((prev) => ({
-                          ...prev,
-                          [a.id]:
-                            v === '' ? undefined : v === 'none' ? null : Number(v),
-                        }));
+                        setSelectedMentors((prev) => {
+                          const next = { ...prev };
+                          if (v === '') {
+                            delete next[a.id];
+                          } else {
+                            next[a.id] = v === 'none' ? null : Number(v);
+                          }
+                          return next;
+                        });
                       }}
                     >
                       <option value="">선택</option>
