@@ -109,7 +109,7 @@ export const usePostApplicationMutation = ({
         )
       ).data.data;
     },
-    onSuccess: (_) => {
+    onSuccess: () => {
       successCallback?.();
     },
     onError: (error) => {
@@ -135,6 +135,35 @@ export const patchApplicationDownload = async ({
     params: { type },
   });
 };
+
+const applicationDownloadResponseSchema = z.object({
+  isDownloaded: z.boolean(),
+  downloadedAt: z.string().nullable().optional(),
+});
+
+type ApplicationDownloadResponse = z.infer<
+  typeof applicationDownloadResponseSchema
+>;
+
+export const useApplicationDownloadQuery = ({
+  applicationId,
+  type,
+  enabled,
+}: {
+  applicationId: number | null | undefined;
+  type: 'GUIDEBOOK' | 'CHALLENGE' | 'LIVE' | 'VOD' | 'REPORT';
+  enabled: boolean;
+}) =>
+  useQuery<ApplicationDownloadResponse>({
+    queryKey: ['applicationDownload', applicationId, type],
+    queryFn: async () => {
+      const res = await axios.get(`/application/${applicationId}/download`, {
+        params: { type },
+      });
+      return applicationDownloadResponseSchema.parse(res.data.data);
+    },
+    enabled: enabled && typeof applicationId === 'number',
+  });
 
 export const useCancelApplicationMutation = ({
   applicationId,
