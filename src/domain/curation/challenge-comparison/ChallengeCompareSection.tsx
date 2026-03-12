@@ -15,6 +15,9 @@ import { SECTION_IDS } from '../shared/sectionIds';
 import { useCompareCart } from './useCompareCart';
 
 const NAV_HEIGHT = 80;
+const MOBILE_QUERY = '(max-width: 767px)';
+const isMobileViewport = () =>
+  typeof window !== 'undefined' && window.matchMedia(MOBILE_QUERY).matches;
 
 /** 추천 비교 조합의 프로그램명 → ProgramId 매핑 */
 const findProgramIdByLabel = (label: string): ProgramId | null => {
@@ -96,7 +99,9 @@ const ChallengeCompareSection = () => {
 
       setCompareTargets([leftId, rightId]);
       setRecommendedIndex(index);
-      setIsMobileViewOpen(true);
+      if (isMobileViewport()) {
+        setIsMobileViewOpen(true);
+      }
       scrollToResult();
     },
     [scrollToResult],
@@ -249,7 +254,7 @@ const ChallengeCompareSection = () => {
         </div>
       )}
 
-      {/* 모바일 비교 결과 전체화면 뷰 — md:hidden으로 데스크톱에서 마운트 방지 */}
+      {/* 모바일 비교 결과 전체화면 뷰 — isMobileViewOpen은 모바일에서만 true가 됨 */}
       <div className="md:hidden">
         {isMobileViewOpen && compareTargets.length >= 2 && (
           <MobileCompareView
