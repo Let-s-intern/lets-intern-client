@@ -120,5 +120,5 @@ export interface FAQItem {
   question: string;
   answer: string;
   category: FAQCategory;
-  image?: string | any; // 이미지 URL 또는 import된 이미지 (선택적)
+  image?: string;
 }
