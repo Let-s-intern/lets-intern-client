@@ -12,6 +12,11 @@ import { computeCurationResult } from './curationEngine';
 import { PERSONA_IDS } from './personas';
 import { QUESTION_MAP } from './questions';
 
+const MOBILE_BREAKPOINT = 768;
+const STICKY_NAV_HEIGHT = 60;
+const SCROLL_PADDING_MOBILE = 20;
+const SCROLL_PADDING_DESKTOP = 40;
+
 interface UseCurationFlowParams {
   defaultPersonaId: PersonaId;
   questionMap?: Record<PersonaId, CurationQuestion[]>;
@@ -73,8 +78,7 @@ export const useCurationFlow = ({
   const scrollToForm = () => {
     if (!formRef.current) return;
 
-    const navHeight = 60; // sticky nav 높이
-    const offset = navHeight + 20; // 여유 공간
+    const offset = STICKY_NAV_HEIGHT + SCROLL_PADDING_MOBILE;
     const elementPosition = formRef.current.getBoundingClientRect().top;
     const offsetPosition = elementPosition + window.scrollY - offset;
 
@@ -95,9 +99,8 @@ export const useCurationFlow = ({
       requestAnimationFrame(() => {
         const target = document.getElementById('curation-result');
         if (target) {
-          const isMobile = window.innerWidth < 768;
-          const navHeight = 60; // sticky nav 높이
-          const offset = navHeight + (isMobile ? 20 : 40); // 모바일은 더 적은 여유
+          const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
+          const offset = STICKY_NAV_HEIGHT + (isMobile ? SCROLL_PADDING_MOBILE : SCROLL_PADDING_DESKTOP);
           const elementPosition = target.getBoundingClientRect().top;
           const offsetPosition = elementPosition + window.scrollY - offset;
 
