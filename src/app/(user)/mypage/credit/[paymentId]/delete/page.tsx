@@ -33,6 +33,7 @@ const CreditDelete = () => {
 
   const { mutate: tryCancelPayment } = useCancelApplicationMutation({
     applicationId: paymentDetail?.programInfo.applicationId || 0,
+    paymentId,
     successCallback: () => {
       router.push(`/mypage/credit/${paymentId}`);
     },

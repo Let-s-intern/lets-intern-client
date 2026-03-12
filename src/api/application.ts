@@ -167,10 +167,12 @@ export const useApplicationDownloadQuery = ({
 
 export const useCancelApplicationMutation = ({
   applicationId,
+  paymentId,
   successCallback,
   errorCallback,
 }: {
   applicationId: number;
+  paymentId: string | number;
   successCallback?: () => void;
   errorCallback?: (error: Error) => void;
 }) => {
@@ -188,7 +190,10 @@ export const useCancelApplicationMutation = ({
         successCallback();
       }
       client.invalidateQueries({
-        queryKey: [UsePaymentQueryKey, UsePaymentDetailQueryKey, applicationId],
+        queryKey: [UsePaymentQueryKey],
+      });
+      client.invalidateQueries({
+        queryKey: [UsePaymentDetailQueryKey, paymentId],
       });
     },
     onError: (error) => {
