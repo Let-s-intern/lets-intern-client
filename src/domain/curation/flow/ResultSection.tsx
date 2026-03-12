@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { PROGRAMS } from '../shared/programs';
 import { CurationResult } from '../types';
 import DesktopRecommendationCard from './DesktopRecommendationCard';
 import MobileRecommendationCard from './MobileRecommendationCard';
