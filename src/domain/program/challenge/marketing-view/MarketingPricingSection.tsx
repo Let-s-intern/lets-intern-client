@@ -80,7 +80,7 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
       ? [
           {
             title: lightPriceInfo.title || '라이트',
-            label: '',
+            label: '직무 탐색 추천',
             description: lightPriceInfo.description ?? '',
             originalPrice: lightRegularPrice,
             discountAmount: lightDiscountAmount,
