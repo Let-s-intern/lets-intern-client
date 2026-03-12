@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { SECTION_IDS } from '../shared/sectionIds';
 import type { FAQCategory } from '../types';
 import { FAQS } from './faqs';
 
@@ -56,7 +57,7 @@ const FaqSection = () => {
   return (
     <section
       className="flex w-full flex-col items-center gap-6"
-      id="curation-faq"
+      id={SECTION_IDS.FAQ}
     >
       <div className="flex flex-col items-center gap-5 self-stretch py-8 md:py-14">
         <div className="flex w-full max-w-[62.5rem] flex-col items-center gap-5 px-6 md:gap-10 md:px-10 lg:px-0">

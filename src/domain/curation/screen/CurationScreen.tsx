@@ -10,6 +10,7 @@ import ResultSection from '../flow/ResultSection';
 import { useCurationFlow } from '../flow/useCurationFlow';
 import CurationHero from '../hero/CurationHero';
 import CurationStickyNav from '../nav/CurationStickyNav';
+import { SECTION_IDS } from '../shared/sectionIds';
 
 const CurationScreen = () => {
   const {
@@ -53,17 +54,17 @@ const CurationScreen = () => {
 
       {/* Sticky Navigation Bar */}
       <CurationStickyNav
-        onScrollToForm={() => scrollToSection('curation-form')}
+        onScrollToForm={() => scrollToSection(SECTION_IDS.FORM)}
         onScrollToChallengeComparison={() =>
-          scrollToSection('curation-challenge-comparison')
+          scrollToSection(SECTION_IDS.CHALLENGE_COMPARISON)
         }
-        onScrollToFaq={() => scrollToSection('curation-faq')}
+        onScrollToFaq={() => scrollToSection(SECTION_IDS.FAQ)}
       />
 
       {/* Curation Selection Section */}
       <section
         className="flex min-h-screen w-full items-start justify-center"
-        id="curation-form"
+        id={SECTION_IDS.FORM}
       >
         <div
           className="flex w-full flex-col gap-10 px-6 py-14 md:px-10 lg:px-[7.5rem]"

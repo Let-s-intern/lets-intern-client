@@ -11,6 +11,7 @@ import CompareResultCard from './CompareResultCard';
 import MobileChallengeCard from './MobileChallengeCard';
 import MobileCompareView from './MobileCompareView';
 import RecommendedComparisons from './RecommendedComparisons';
+import { SECTION_IDS } from '../shared/sectionIds';
 import { useCompareCart } from './useCompareCart';
 
 const NAV_HEIGHT = 80;
@@ -40,7 +41,7 @@ const ChallengeCompareSection = () => {
 
   /** FAQ 또는 큐레이션 폼 섹션이 보이면 플로팅 버튼 숨기기 */
   useEffect(() => {
-    const sectionIds = ['curation-faq', 'curation-form'];
+    const sectionIds = [SECTION_IDS.FAQ, SECTION_IDS.FORM];
     const visible = new Map<string, boolean>();
 
     const observer = new IntersectionObserver(
@@ -107,7 +108,7 @@ const ChallengeCompareSection = () => {
     setRecommendedIndex(null);
     clearCart();
     requestAnimationFrame(() => {
-      const section = document.getElementById('curation-challenge-comparison');
+      const section = document.getElementById(SECTION_IDS.CHALLENGE_COMPARISON);
       if (!section) return;
       const top = section.getBoundingClientRect().top + window.scrollY - NAV_HEIGHT;
       window.scrollTo({ top, behavior: 'smooth' });
@@ -125,7 +126,7 @@ const ChallengeCompareSection = () => {
   return (
     <section
       className="flex w-full flex-col items-center pb-24 md:pb-0"
-      id="curation-challenge-comparison"
+      id={SECTION_IDS.CHALLENGE_COMPARISON}
     >
       {/* 섹션 헤더 */}
       <div className="flex w-full flex-col items-center gap-5 py-8 md:py-14">
