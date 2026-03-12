@@ -11,7 +11,7 @@ export const CHALLENGE_COMPARISON: ChallengeComparisonRow[] = [
     target:
       '• 취업 준비를 막 시작했거나, 어디서부터 시작해야 할지 막막한 취준생\n• 대외활동·인턴 등 경험은 있지만, 직무와 연결하지 못하고 있는 분\n• 이력서·자소서 작성 전 경험을 탄탄히 정리하고 싶은 분',
     duration: '2주',
-    pricing: '1) 베이직\n2) 스탠다드\n3) 프리미엄',
+    pricing: '1) 베이직 = 33,000원\n2) 스탠다드 = 59,900원',
     feedback:
       '1) 스탠다드: 총 3회\n- 교내 경험정리 피드백\n- 교외 경험정리 피드백\n- 커리어 경험정리 피드백',
     deliverable:
@@ -29,7 +29,7 @@ export const CHALLENGE_COMPARISON: ChallengeComparisonRow[] = [
     target:
       '• 이력서 작성 경험이 없거나, 기존 이력서를 전면 개편하고 싶은 취준생\n• 짧은 시간 안에 현직자 피드백을 받아 이력서를 완성하고 싶은 분\n• 합격 이력서 사례를 보며 자신의 이력서와 비교해보고 싶은 분',
     duration: '1주',
-    pricing: '1) 베이직\n2) 스탠다드\n3) 프리미엄',
+    pricing: '1) 베이직 = 33,000원\n2) 스탠다드 = 59,900원',
     feedback: '1) 스탠다드: 총 1회(*서면 멘토링)',
     deliverable:
       '1. 미션 수행시 23,000원 환급!\n2. 현직자 멘토가 직접 이력서 피드백 제공\n*스탠다드 구매자 대상\n3. 주요 기업/직무 합격 이력서 10선 제공\n4. 미션 수행을 통한 루틴 회복과 오픈 채팅방을 통한 동기부여\n5. 챌린지 수료시 수료증 및 챌린지 할인 쿠폰 발급',
@@ -46,7 +46,8 @@ export const CHALLENGE_COMPARISON: ChallengeComparisonRow[] = [
     target:
       '• 자기소개서를 처음 쓰거나, 계속 써봤지만 합격이 안 되는 취준생\n• 현직자 멘토와의 1:1 LIVE 피드백으로 자소서를 완성하고 싶은 분\n• 직무·채용공고 분석부터 체계적으로 자소서를 준비하고 싶은 분',
     duration: '2주',
-    pricing: '1) 베이직\n2) 스탠다드\n3) 프리미엄',
+    pricing:
+      '1) 베이직 = 68,500원\n2) 스탠다드 = 94,000원\n3) 프리미엄 = 119,000원',
     feedback:
       '1) 스탠다드: 총 1회(*LIVE 멘토링)\n2) 프리미엄: 총 2회(*LIVE 멘토링)',
     deliverable:
@@ -64,7 +65,8 @@ export const CHALLENGE_COMPARISON: ChallengeComparisonRow[] = [
     target:
       '• 포트폴리오가 필요한 직무(마케팅·디자인·기획 등)에 지원하는 취준생\n• 어떤 경험을 담아야 할지, 어떻게 구성해야 할지 막막한 분\n• 현직자 멘토의 1:1 피드백으로 완성도 높은 포트폴리오를 만들고 싶은 분',
     duration: '2주',
-    pricing: '1) 베이직\n2) 스탠다드\n3) 프리미엄',
+    pricing:
+      '1) 베이직 = 78,500원\n2) 스탠다드 = 108,000원\n3) 프리미엄 = 128,500원',
     feedback:
       '1) 스탠다드: 총 1회(*LIVE 멘토링)\n2) 프리미엄: 총 2회(*LIVE 멘토링)',
     deliverable:
