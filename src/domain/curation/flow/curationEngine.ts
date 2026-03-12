@@ -8,16 +8,15 @@ import {
   ProgramRecommendation,
 } from '../types';
 
-const planPriorityByIntent: Record<string, PlanId[]> = {
+type Intent = 'basic' | 'feedback' | 'intensive';
+
+const planPriorityByIntent: Record<Intent, PlanId[]> = {
   basic: ['basic', 'standard', 'premium'],
   feedback: ['standard', 'premium', 'basic'],
   intensive: ['premium', 'standard', 'basic'],
 };
 
-const pickPlan = (
-  programId: ProgramId,
-  intent: keyof typeof planPriorityByIntent,
-) => {
+const pickPlan = (programId: ProgramId, intent: Intent) => {
   const program = PROGRAMS[programId];
   const available = program.plans.map((plan) => plan.id);
   const priority = planPriorityByIntent[intent];
@@ -485,7 +484,7 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
                 programId: 'coverLetter',
                 emphasis: 'primary',
                 reason: '자소서 최종 점검과 보완',
-                suggestedPlanId: pickPlan('coverLetter', 'standard'),
+                suggestedPlanId: pickPlan('coverLetter', 'feedback'),
               },
               {
                 programId: 'portfolio',
