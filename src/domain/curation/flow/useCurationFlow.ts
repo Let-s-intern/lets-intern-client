@@ -18,7 +18,6 @@ const SCROLL_PADDING_MOBILE = 20;
 const SCROLL_PADDING_DESKTOP = 40;
 
 interface UseCurationFlowParams {
-  defaultPersonaId: PersonaId;
   questionMap?: Record<PersonaId, CurationQuestion[]>;
   personaIds?: PersonaId[];
 }

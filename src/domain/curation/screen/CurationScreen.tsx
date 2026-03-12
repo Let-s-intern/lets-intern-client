@@ -1,7 +1,7 @@
 'use client';
 import ChallengeCompareSection from '../challenge-comparison/ChallengeCompareSection';
 import FaqSection from '../faq/FaqSection';
-import { defaultPersonaId, heroCopy, stepLabels } from '../flow/copy';
+import { heroCopy, stepLabels } from '../flow/copy';
 import CurationStepper from '../flow/CurationStepper';
 import PersonaSelector from '../flow/PersonaSelector';
 import { QUESTION_MAP } from '../flow/questions';
@@ -28,7 +28,7 @@ const CurationScreen = () => {
     handleRestart,
     result,
     scrollToForm,
-  } = useCurationFlow({ defaultPersonaId, questionMap: QUESTION_MAP });
+  } = useCurationFlow({ questionMap: QUESTION_MAP });
 
   const handleRestartAndScroll = () => {
     handleRestart();
