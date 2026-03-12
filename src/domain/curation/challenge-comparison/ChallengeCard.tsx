@@ -22,6 +22,14 @@ export const CheckIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+/** 사람 아이콘 SVG */
+export const PersonIcon = ({ size = 14, className }: { size?: number; className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 14 14" fill="none" className={className}>
+    <circle cx="7" cy="4" r="2.5" stroke="currentColor" strokeWidth="1.5" />
+    <path d="M2.5 12.5C2.5 10 4.5 8 7 8s4.5 2 4.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+  </svg>
+);
+
 /** X 아이콘 SVG */
 export const CloseIcon = () => (
   <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -77,10 +85,7 @@ const ChallengeCard = ({
               </span>
             </div>
             <div className="flex items-start gap-1">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="mt-1 shrink-0 text-[#7a7d84]">
-                <circle cx="7" cy="4" r="2.5" stroke="currentColor" strokeWidth="1.5" />
-                <path d="M2.5 12.5C2.5 10 4.5 8 7 8s4.5 2 4.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
+              <PersonIcon className="mt-1 shrink-0 text-[#7a7d84]" />
               <span className="text-sm leading-[22px] text-[#5c5f66]">
                 {challenge.shortTarget}
               </span>
