@@ -4,6 +4,7 @@ export const PROGRAMS: Record<ProgramId, ProgramContent> = {
   experience: {
     id: 'experience',
     title: '기필코 경험정리 챌린지',
+    shortTitle: '경험정리',
     subtitle: '마인드맵 · STAR로 경험을 구조화',
     target: '취준을 막 시작해 경험 정리부터 필요한 분',
     duration: '2주',
@@ -35,6 +36,7 @@ export const PROGRAMS: Record<ProgramId, ProgramContent> = {
   resume: {
     id: 'resume',
     title: '이력서 1주 완성 챌린지',
+    shortTitle: '이력서',
     subtitle: '경험 정리 후 채용 관점 구조화',
     target: '빠르게 이력서를 완성해야 하는 분',
     duration: '1주',
@@ -57,6 +59,7 @@ export const PROGRAMS: Record<ProgramId, ProgramContent> = {
   coverLetter: {
     id: 'coverLetter',
     title: '자기소개서 2주 완성 챌린지',
+    shortTitle: '자소서',
     subtitle: '직무 분석부터 마스터 자소서까지',
     target: '자기소개서를 처음 만들거나 고도화하려는 분',
     duration: '2주',
@@ -81,6 +84,7 @@ export const PROGRAMS: Record<ProgramId, ProgramContent> = {
   portfolio: {
     id: 'portfolio',
     title: '포트폴리오 2주 완성 챌린지',
+    shortTitle: '포트폴리오',
     subtitle: '직무 맞춤 포트폴리오 설계·작성',
     target: '지원 직무에 포트폴리오가 필요한 분',
     duration: '2주',
@@ -105,6 +109,7 @@ export const PROGRAMS: Record<ProgramId, ProgramContent> = {
   interview: {
     id: 'interview',
     title: '면접 준비 끝장 챌린지',
+    shortTitle: '면접',
     subtitle: '실전 모의면접과 현직자 특강으로 면접 완전 대비',
     target: '서류는 통과하지만 면접에서 계속 떨어지는 분',
     duration: '10일',
@@ -130,6 +135,7 @@ export const PROGRAMS: Record<ProgramId, ProgramContent> = {
   enterpriseCover: {
     id: 'enterpriseCover',
     title: '대기업 자기소개서 완성 챌린지',
+    shortTitle: '대기업 자소서',
     subtitle: '산업·기업 분석과 공채 문항 대비',
     badge: '환급금 없음',
     target: '대기업 맞춤 경험정리·자기소개서를 작성하고 싶은 분',
@@ -167,6 +173,7 @@ export const PROGRAMS: Record<ProgramId, ProgramContent> = {
   marketingAllInOne: {
     id: 'marketingAllInOne',
     title: '마케팅 서류 완성 올인원 챌린지',
+    shortTitle: '마케팅',
     subtitle: '현직자와 경험정리·자소서·포트폴리오 완성',
     badge: '환급금 없음',
     target: '마케팅 직무 서류를 한 번에 완성하고 싶은 분',
@@ -208,6 +215,7 @@ export const PROGRAMS: Record<ProgramId, ProgramContent> = {
   hrAllInOne: {
     id: 'hrAllInOne',
     title: 'HR 서류 완성 올인원 챌린지',
+    shortTitle: 'HR',
     subtitle: 'HR 현직자와 경험정리·자소서·포트폴리오 완성',
     badge: '환급금 없음',
     target: 'HR 직무 서류를 한 번에 완성하고 싶은 분',

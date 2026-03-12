@@ -13,6 +13,8 @@ import MobileCompareView from './MobileCompareView';
 import RecommendedComparisons from './RecommendedComparisons';
 import { useCompareCart } from './useCompareCart';
 
+const NAV_HEIGHT = 80;
+
 /** 추천 비교 조합의 프로그램명 → ProgramId 매핑 */
 const findProgramIdByLabel = (label: string): ProgramId | null => {
   const match = CHALLENGE_COMPARISON.find((c) => c.label === label);
@@ -65,11 +67,10 @@ const ChallengeCompareSection = () => {
   const scrollToResult = useCallback(() => {
     requestAnimationFrame(() => {
       if (!resultRef.current) return;
-      const navHeight = 80;
       const top =
         resultRef.current.getBoundingClientRect().top +
         window.scrollY -
-        navHeight;
+        NAV_HEIGHT;
       window.scrollTo({ top, behavior: 'smooth' });
     });
   }, []);
@@ -108,7 +109,7 @@ const ChallengeCompareSection = () => {
     requestAnimationFrame(() => {
       const section = document.getElementById('curation-challenge-comparison');
       if (!section) return;
-      const top = section.getBoundingClientRect().top + window.scrollY - 80;
+      const top = section.getBoundingClientRect().top + window.scrollY - NAV_HEIGHT;
       window.scrollTo({ top, behavior: 'smooth' });
     });
   }, [clearCart]);

@@ -53,6 +53,7 @@ export interface ProgramPlan {
 export interface ProgramContent {
   id: ProgramId;
   title: string;
+  shortTitle: string;
   subtitle: string;
   badge?: string;
   category?: string;
