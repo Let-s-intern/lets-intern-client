@@ -87,7 +87,16 @@ const HrCurriculumContent = ({ weekGroup }: HrCurriculumContentProps) => {
   return (
     <ul className="w-full min-w-0">
       {weekGroup.items.map((item, index) => {
-        const dateRange = `${dayjs(item.startDate).format('M/D')}-${dayjs(item.endDate).format('M/D')}`;
+        const start = dayjs(item.startDate);
+        const end = dayjs(item.endDate);
+        const formattedStart = start.isValid() ? start.format('M/D') : '';
+        const formattedEnd = end.isValid() ? end.format('M/D') : '';
+        const dateRange =
+          formattedStart && formattedEnd
+            ? formattedStart === formattedEnd
+              ? formattedStart
+              : `${formattedStart}-${formattedEnd}`
+            : formattedStart || formattedEnd;
         const hasHighlight =
           item.contentHighlightColor && item.contentHighlightColor !== 'none';
         const hasContentImg = !!item.contentImg;
@@ -97,7 +106,8 @@ const HrCurriculumContent = ({ weekGroup }: HrCurriculumContentProps) => {
             <div className="flex min-w-0 items-center gap-2 text-xsmall14 font-semibold text-neutral-0 md:text-small18">
               {dateRange && <span className="flex-shrink-0">{dateRange}</span>}
               <h4 className="min-w-0 break-words">
-                {item.session} {item.title}
+                {item.session && `${item.session}회차 `}
+                {item.title}
               </h4>
             </div>
             {hasHighlight || hasContentImg ? (
