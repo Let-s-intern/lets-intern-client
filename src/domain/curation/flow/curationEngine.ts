@@ -7,6 +7,18 @@ import {
   ProgramId,
   ProgramRecommendation,
 } from '../types';
+import {
+  STARTER_S1,
+  STARTER_S2,
+  RESUME_S1,
+  RESUME_S2,
+  COVER_S1,
+  COVER_S2,
+  PORTFOLIO_S1,
+  PORTFOLIO_S2,
+  DONT_KNOW_S1,
+  DONT_KNOW_S2,
+} from './optionIds';
 
 type Intent = 'basic' | 'feedback' | 'intensive';
 
@@ -59,7 +71,7 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
 
   switch (personaId) {
     case 'starter': {
-      if (step1 === 'needs-resume') {
+      if (step1 === STARTER_S1.NEEDS_RESUME) {
         return buildResult({
           personaId,
           headline: '이번 주 안에 제출해야 한다면, 이력서 → 자소서 순서로',
@@ -72,7 +84,7 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
               reason: '공고 대응을 위한 1주 완성 트랙',
               suggestedPlanId: pickPlan(
                 'resume',
-                step2 === 'need-feedback' ? 'feedback' : 'basic',
+                step2 === STARTER_S2.MENTOR_RESUME ? 'feedback' : 'basic',
               ),
             },
             {
@@ -85,7 +97,7 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
         });
       }
 
-      if (step1 === 'needs-bundle') {
+      if (step1 === STARTER_S1.NEEDS_BUNDLE) {
         return buildResult({
           personaId,
           headline: '서류 전체를 정비하고 싶다면 자소서 → 포트폴리오 순서로',
@@ -98,7 +110,7 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
               reason: '직무 분석과 지원동기를 빠르게 정리',
               suggestedPlanId: pickPlan(
                 'coverLetter',
-                step2 === 'need-feedback' ? 'feedback' : 'basic',
+                step2 === STARTER_S2.COVER_FEEDBACK ? 'feedback' : 'basic',
               ),
             },
             {
@@ -107,7 +119,7 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
               reason: '직무 사례와 자료가 필요할 때 후속으로 연결',
               suggestedPlanId: pickPlan(
                 'portfolio',
-                step2 === 'need-portfolio' ? 'feedback' : 'basic',
+                step2 === STARTER_S2.PORTFOLIO_FEEDBACK ? 'feedback' : 'basic',
               ),
             },
           ],
@@ -126,7 +138,7 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
             reason: '소재 발굴과 구조화를 위한 첫 단계',
             suggestedPlanId: pickPlan(
               'experience',
-              step2 === 'need-feedback' ? 'feedback' : 'basic',
+              step2 === STARTER_S2.WITH_FEEDBACK ? 'feedback' : 'basic',
             ),
           },
           {
@@ -135,7 +147,7 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
             reason: '정리한 소재를 채용 관점으로 전환',
             suggestedPlanId: pickPlan(
               'resume',
-              step2 === 'time-tight' ? 'basic' : 'feedback',
+              step2 === STARTER_S2.SELF_GUIDE ? 'basic' : 'feedback',
             ),
           },
         ],
@@ -143,10 +155,14 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
     }
 
     case 'resume': {
-      const headline =
-        step2 === 'deadline-soon'
-          ? '이번 주 안에 제출: 이력서 단일 집중'
-          : '여유가 있다면 경험정리 또는 자소서를 곁들이기';
+      const isFastTrack =
+        step2 === RESUME_S2.WEEK_DRAFT ||
+        step2 === RESUME_S2.FAST_FIX ||
+        step2 === RESUME_S2.SHIFT_FAST;
+
+      const headline = isFastTrack
+        ? '이번 주 안에 제출: 이력서 단일 집중'
+        : '여유가 있다면 경험정리 또는 자소서를 곁들이기';
 
       const recommendations: ProgramRecommendation[] = [
         {
@@ -155,12 +171,12 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
           reason: '지원 일정에 맞춘 1주 완성',
           suggestedPlanId: pickPlan(
             'resume',
-            step2 === 'deadline-soon' ? 'basic' : 'feedback',
+            isFastTrack ? 'basic' : 'feedback',
           ),
         },
       ];
 
-      if (step1 === 'first-resume') {
+      if (step1 === RESUME_S1.FIRST_RESUME) {
         recommendations.push({
           programId: 'experience',
           emphasis: 'secondary',
@@ -169,7 +185,7 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
         });
       }
 
-      if (step1 === 'career-shift') {
+      if (step1 === RESUME_S1.CAREER_SHIFT) {
         recommendations.push({
           programId: 'coverLetter',
           emphasis: 'secondary',
@@ -188,7 +204,7 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
     }
 
     case 'coverLetter': {
-      if (step1 === 'enterprise-cover') {
+      if (step1 === COVER_S1.ENTERPRISE_COVER) {
         return buildResult({
           personaId,
           headline: '공채 문항 대비는 대기업 자소서 트랙으로',
@@ -201,7 +217,11 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
               reason: '공채 문항·현직자 특강 포함',
               suggestedPlanId: pickPlan(
                 'enterpriseCover',
-                step2 === 'needs-intensive' ? 'intensive' : 'feedback',
+                step2 === COVER_S2.ENTERPRISE_INTENSIVE
+                  ? 'intensive'
+                  : step2 === COVER_S2.ENTERPRISE_SELF
+                    ? 'basic'
+                    : 'feedback',
               ),
             },
           ],
@@ -215,23 +235,23 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
           reason: '직무 역량/지원동기 핵심 정리',
           suggestedPlanId: pickPlan(
             'coverLetter',
-            step2 === 'needs-intensive'
+            step2 === COVER_S2.DEEP_FEEDBACK || step2 === COVER_S2.PORTFOLIO_BOTH
               ? 'intensive'
-              : step2 === 'needs-iteration'
+              : step2 === COVER_S2.LIVE_1 || step2 === COVER_S2.PORTFOLIO_MENTOR
                 ? 'feedback'
                 : 'basic',
           ),
         },
       ];
 
-      if (step1 === 'portfolio-linked') {
+      if (step1 === COVER_S1.PORTFOLIO_LINKED) {
         recommendations.push({
           programId: 'portfolio',
           emphasis: 'secondary',
           reason: '직무 사례와 포트폴리오를 함께 준비',
           suggestedPlanId: pickPlan(
             'portfolio',
-            step2 === 'needs-intensive' ? 'feedback' : 'basic',
+            step2 === COVER_S2.PORTFOLIO_BOTH ? 'feedback' : 'basic',
           ),
         });
       }
@@ -247,9 +267,9 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
 
     case 'portfolio': {
       const baseProgram =
-        step1 === 'marketing-track'
+        step1 === PORTFOLIO_S1.MARKETING_TRACK
           ? 'marketingAllInOne'
-          : step1 === 'hr-track'
+          : step1 === PORTFOLIO_S1.HR_TRACK
             ? 'hrAllInOne'
             : 'portfolio';
 
@@ -260,16 +280,16 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
           reason: '직무 맞춤 포트폴리오/서류 완성',
           suggestedPlanId: pickPlan(
             baseProgram,
-            step2 === 'need-feedback'
-              ? 'feedback'
-              : step2 === 'has-drafts'
-                ? 'basic'
+            step2 === PORTFOLIO_S2.HAS_DRAFT || step2 === PORTFOLIO_S2.MKT_GUIDE || step2 === PORTFOLIO_S2.HR_GUIDE
+              ? 'basic'
+              : step2 === PORTFOLIO_S2.MKT_PREMIUM || step2 === PORTFOLIO_S2.HR_PREMIUM
+                ? 'intensive'
                 : 'feedback',
           ),
         },
       ];
 
-      if (baseProgram === 'portfolio' && step2 === 'need-templates') {
+      if (baseProgram === 'portfolio' && step2 === PORTFOLIO_S2.NEED_EXAMPLE) {
         recommendations.push({
           programId: 'coverLetter',
           emphasis: 'secondary',
@@ -303,16 +323,16 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
           reason: '특화 트랙 중심 진행',
           suggestedPlanId: pickPlan(
             selectedTrack,
-            step2 === 'need-feedback'
+            step2?.endsWith('-intensive')
               ? 'intensive'
-              : step2 === 'ready-to-run'
+              : step2?.endsWith('-experience')
                 ? 'feedback'
                 : 'basic',
           ),
         },
       ];
 
-      if (step2 === 'need-experience') {
+      if (step2?.endsWith('-experience')) {
         recommendations.push({
           programId: 'experience',
           emphasis: 'secondary',
@@ -332,8 +352,8 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
 
     case 'dontKnow': {
       // 막 시작한 경우
-      if (step1 === 'just-started') {
-        if (step2 === 'dont-know-what') {
+      if (step1 === DONT_KNOW_S1.JUST_STARTED) {
+        if (step2 === DONT_KNOW_S2.START_SLOW) {
           return buildResult({
             personaId,
             headline: '경험정리부터 시작해서 흐름을 잡으세요',
@@ -356,7 +376,7 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
           });
         }
 
-        if (step2 === 'lack-time') {
+        if (step2 === DONT_KNOW_S2.START_FAST) {
           return buildResult({
             personaId,
             headline: '시간이 부족하다면 이력서 1주 완성부터',
@@ -402,8 +422,8 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
       }
 
       // 서류 작성 중인 경우
-      if (step1 === 'working-on-docs') {
-        if (step2 === 'lack-time') {
+      if (step1 === DONT_KNOW_S1.WORKING_ON_DOCS) {
+        if (step2 === DONT_KNOW_S2.FINISH_FAST) {
           return buildResult({
             personaId,
             headline: '시간이 부족하다면 이력서 집중 완성',
@@ -426,7 +446,7 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
           });
         }
 
-        if (step2 === 'quality-concern') {
+        if (step2 === DONT_KNOW_S2.MENTOR_QUALITY) {
           return buildResult({
             personaId,
             headline: '품질이 걱정되면 피드백 플랜을 선택하세요',
@@ -472,8 +492,8 @@ export const computeCurationResult = (values: FormValues): CurationResult => {
       }
 
       // 거의 완성한 경우
-      if (step1 === 'almost-ready') {
-        if (step2 === 'quality-concern') {
+      if (step1 === DONT_KNOW_S1.ALMOST_READY) {
+        if (step2 === DONT_KNOW_S2.FINAL_CHECK || step2 === DONT_KNOW_S2.FINAL_MENTOR) {
           return buildResult({
             personaId,
             headline: '마지막 점검은 피드백 리포트로',
