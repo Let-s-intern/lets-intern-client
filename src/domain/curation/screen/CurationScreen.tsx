@@ -12,6 +12,8 @@ import CurationHero from '../hero/CurationHero';
 import CurationStickyNav from '../nav/CurationStickyNav';
 import { SECTION_IDS } from '../shared/sectionIds';
 
+const STICKY_NAV_OFFSET = 80;
+
 const CurationScreen = () => {
   const {
     formRef,
@@ -38,7 +40,7 @@ const CurationScreen = () => {
     const section = document.getElementById(sectionId);
     if (!section) return;
 
-    const offset = 80; // sticky nav 높이 + 여유 공간
+    const offset = STICKY_NAV_OFFSET;
     const elementPosition = section.getBoundingClientRect().top;
     const offsetPosition = elementPosition + window.scrollY - offset;
 
