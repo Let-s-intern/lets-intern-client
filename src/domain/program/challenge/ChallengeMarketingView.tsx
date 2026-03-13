@@ -38,11 +38,12 @@ const ChallengeMarketingView = ({ challenge }: Props) => {
           <ChallengeIntroEditorContent challenge={challenge} />
           <MarketingIntroSection />
           <MarketingFeaturesSection />
-          <MarketingDifferentiatorsSection />
-          <MarketingCurriculumSection />
+          <MarketingDifferentiatorsSection lectures={content?.lectures} />
+          <MarketingCurriculumSection content={content} />
           <MarketingChallengeCalendar
             challenge={challenge}
             curriculumImage={content?.curriculumImage}
+            lectureCount={content?.lectures?.length}
           />
           <MarketingSummarySection />
           <MarketingApplicationStrategySection />
