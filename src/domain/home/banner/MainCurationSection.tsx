@@ -45,6 +45,8 @@ export const getProgramUrl = ({
       return reportType
         ? `${convertReportTypeToLandingPath(reportType)}${programId ? `/${programId}` : ''}`
         : '';
+    case 'GUIDEBOOK':
+      return `/program/guidebook/${programId}`;
     case 'BLOG':
       return `/blog/${programId}`;
     case 'ETC':

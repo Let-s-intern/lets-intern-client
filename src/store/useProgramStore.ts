@@ -16,7 +16,7 @@ interface ProgramApplicationFormStore extends HydrationStore {
     phone: string | null;
     name: string | null;
     programTitle: string | null;
-    programType: 'challenge' | 'live' | null;
+    programType: 'challenge' | 'live' | 'guidebook' | null;
     progressType: string | null;
     programId: number | null;
     programOrderId: string | null;

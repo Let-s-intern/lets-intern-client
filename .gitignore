@@ -33,7 +33,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
-
+/.omc
 # vercel
 .vercel
 
@@ -48,3 +48,5 @@ next-env.d.ts
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+/.claude/settings.local.json

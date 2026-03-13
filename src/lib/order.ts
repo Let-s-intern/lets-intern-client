@@ -27,6 +27,7 @@ export const getPayInfo = (
   accountType?: AccountType | null;
   challengePriceType: string | undefined;
   livePriceType: string | undefined;
+  guideBookPriceType: string | undefined;
   challengePricePlanType?: ChallengePricePlan;
 } => {
   const item = application.priceList?.find(
@@ -44,23 +45,53 @@ export const getPayInfo = (
       accountType: item.accountType ? item.accountType : null,
       challengePriceType: item.challengePriceType,
       livePriceType: undefined,
+      guideBookPriceType: undefined,
       challengePricePlanType: item.challengePricePlanType, // 챌린지만 가격 플랜 있음
     };
   }
 
   // 라이브
-  if (application.price) {
+  if (application.price && 'livePriceType' in application.price) {
+    const livePrice = application.price as {
+      priceId?: number | null;
+      price?: number | null;
+      discount?: number | null;
+      accountNumber?: string | null;
+      deadline?: string | null;
+      accountType?: AccountType | null;
+      livePriceType?: string;
+    };
     return {
-      priceId: application.price.priceId ? application.price.priceId : -1,
-      price: application.price.price ? application.price.price : 0,
-      discount: application.price.discount ? application.price.discount : 0,
-      accountNumber: application.price.accountNumber ?? '',
-      deadline: application.price.deadline ?? '',
-      accountType: application.price.accountType,
+      priceId: livePrice.priceId ?? -1,
+      price: livePrice.price ?? 0,
+      discount: livePrice.discount ?? 0,
+      accountNumber: livePrice.accountNumber ?? '',
+      deadline: livePrice.deadline ?? '',
+      accountType: livePrice.accountType,
       challengePriceType: undefined,
-      livePriceType: application.price.livePriceType,
+      guideBookPriceType: undefined,
+      livePriceType: livePrice.livePriceType,
     };
   }
 
+  // 가이드북
+  if (application.price && 'guideBookPriceType' in application.price) {
+    const guidebookPrice = application.price as {
+      priceId?: number | null;
+      price?: number | null;
+      discount?: number | null;
+      guideBookPriceType?: string;
+    };
+    return {
+      priceId: guidebookPrice.priceId ?? -1,
+      price: guidebookPrice.price ?? 0,
+      discount: guidebookPrice.discount ?? 0,
+      accountNumber: '',
+      deadline: '',
+      challengePriceType: undefined,
+      livePriceType: undefined,
+      guideBookPriceType: guidebookPrice.guideBookPriceType,
+    };
+  }
   return null;
 };

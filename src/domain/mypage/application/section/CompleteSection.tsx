@@ -1,8 +1,8 @@
 import { MypageApplication } from '@/api/application';
+import { useMediaQuery } from '@mui/material';
 import { useState } from 'react';
-import MobileCarousel from '../../../../common/carousel/MobileCarousel';
 import Button from '../../ui/button/Button';
-import ApplicationCard from '../../ui/card/root/ApplicationCard';
+import NewApplicationCard from '../../ui/card/NewApplicationCard';
 
 interface CompleteSectionProps {
   applicationList: MypageApplication[];
@@ -10,35 +10,33 @@ interface CompleteSectionProps {
 
 const CompleteSection = ({ applicationList }: CompleteSectionProps) => {
   const [showMore, setShowMore] = useState(false);
+  const isDesktop = useMediaQuery('(min-width:768px)');
 
-  const viewList = showMore ? applicationList : applicationList.slice(0, 3);
+  const visibleCount = isDesktop ? 3 : 4;
+  const viewList = showMore
+    ? applicationList
+    : applicationList.slice(0, visibleCount);
 
   return (
     <section className="flex flex-col gap-6">
       <h1 className="text-lg font-semibold">참여 완료</h1>
       {applicationList.length === 0 ? (
         <div className="flex w-full flex-col items-center gap-4 py-20">
-          <p className="text-neutral-0 text-opacity-[36%]">
+          <p className="text-xsmall14 font-normal text-neutral-20">
             참여 완료한 프로그램이 아직 없어요.
           </p>
         </div>
       ) : (
         <>
-          <MobileCarousel<MypageApplication>
-            items={viewList}
-            renderItem={(application) => (
-              <ApplicationCard
-                grayscale
+          <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:flex md:flex-col md:gap-y-5">
+            {viewList.map((application) => (
+              <NewApplicationCard
+                key={application.id}
                 application={application}
-                showChallengeButton
               />
-            )}
-            itemWidth="169px"
-            spaceBetween={16}
-            containerWidth="100%"
-            getItemKey={(application) => application.id || 0}
-          />
-          {applicationList.length > 3 && !showMore && (
+            ))}
+          </div>
+          {applicationList.length > visibleCount && !showMore && (
             <Button
               className="md:flex"
               onClick={() => {

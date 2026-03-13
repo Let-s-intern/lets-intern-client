@@ -1,15 +1,19 @@
 import {
   getChallenge,
+  getGuidebook,
   getLive,
   getVod,
   usePostChallengeMutation,
+  usePostGuidebookMutation,
   usePostLiveMutation,
   usePostVodMutation,
 } from '@/api/program';
 import {
   ChallengeIdSchema,
   CreateChallengeReq,
+  CreateGuidebookReq,
   CreateLiveReq,
+  GuidebookIdSchema,
   LiveIdSchema,
   ProgramAdminListItem,
 } from '@/schema';
@@ -114,6 +118,41 @@ export const liveToCreateInput = (live: LiveIdSchema): CreateLiveReq => {
   };
 };
 
+export const guidebookToCreateInput = (
+  guidebook: GuidebookIdSchema,
+): CreateGuidebookReq => ({
+  title: (guidebook.title ?? '') + ' - 사본',
+  shortDesc: guidebook.shortDesc ?? '',
+  thumbnail: guidebook.thumbnail ?? '',
+  desktopThumbnail: guidebook.desktopThumbnail ?? '',
+  contentComposition: guidebook.contentComposition ?? '',
+  accessMethod: guidebook.accessMethod ?? '',
+  recommendedFor: guidebook.recommendedFor ?? '',
+  description: guidebook.description ?? '',
+  job: guidebook.job ?? '',
+  contentUrl: guidebook.contentUrl ?? '',
+  contentFileUrl: guidebook.contentFileUrl ?? '',
+  programTypeInfo: (guidebook.programTypeInfo ?? []).map((value) => ({
+    classificationInfo: {
+      programClassification: value.programClassification ?? 'PASS',
+    },
+  })),
+  adminProgramTypeInfo: guidebook.adminClassificationInfo
+    ? guidebook.adminClassificationInfo.map((value) => ({
+        classificationInfo: {
+          programAdminClassification: value.programAdminClassification,
+        },
+      }))
+    : [],
+  priceInfo: {
+    guideBookPriceType: guidebook.guideBookPriceType ?? 'CHARGE',
+    priceInfo: {
+      price: guidebook.price ?? 0,
+      discount: guidebook.discount ?? 0,
+    },
+  },
+});
+
 export const useDuplicateProgram = ({
   errorCallback,
   successCallback,
@@ -132,6 +171,11 @@ export const useDuplicateProgram = ({
   });
 
   const postVod = usePostVodMutation({
+    successCallback,
+    errorCallback,
+  });
+
+  const postGuidebook = usePostGuidebookMutation({
     successCallback,
     errorCallback,
   });
@@ -178,10 +222,15 @@ export const useDuplicateProgram = ({
           });
           return;
         }
+        case 'GUIDEBOOK': {
+          const guidebook = await getGuidebook(id);
+          await postGuidebook.mutateAsync(guidebookToCreateInput(guidebook));
+          return;
+        }
         case 'REPORT':
           throw new Error('Not implemented');
       }
     },
-    [postChallenge, postLive, postVod],
+    [postChallenge, postLive, postVod, postGuidebook],
   );
 };

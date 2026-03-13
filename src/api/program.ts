@@ -9,13 +9,16 @@ import { client } from '@/utils/client';
 import {
   ChallengeIdSchema,
   CreateChallengeReq,
+  CreateGuidebookReq,
   CreateLiveReq,
   CreateVodReq,
   faqSchema,
   getChallengeIdPrimitiveSchema,
   getChallengeIdSchema,
+  getGuidebookIdSchema,
   getLiveIdPrimitiveSchema,
   getLiveIdSchema,
+  getPublicGuidebookSchema,
   getVodIdSchema,
   LiveIdPrimitive,
   LiveIdSchema,
@@ -34,7 +37,9 @@ import {
   ProgramStatusEnum,
   ProgramTypeEnum,
   ProgramTypeUpperCase,
+  PublicGuidebookSchema,
   UpdateChallengeReq,
+  UpdateGuidebookReq,
   UpdateLiveReq,
   UpdateVodReq,
   VodIdSchema,
@@ -47,7 +52,7 @@ export const useProgramQuery = ({
   programId,
   type,
 }: {
-  type: 'live' | 'vod' | 'challenge';
+  type: 'live' | 'vod' | 'challenge' | 'guidebook';
   programId: number;
 }) => {
   const liveQuery = useGetLiveQuery({
@@ -58,6 +63,11 @@ export const useProgramQuery = ({
   const challengeQuery = useGetChallengeQuery({
     challengeId: programId,
     enabled: type === 'challenge' && programId !== -1,
+  });
+
+  const guidebookQuery = useGetGuidebookQuery({
+    guidebookId: programId,
+    enabled: type === 'guidebook' && programId !== -1,
   });
 
   switch (type) {
@@ -73,10 +83,23 @@ export const useProgramQuery = ({
         type: 'challenge' as const,
         query: challengeQuery,
       };
+    case 'guidebook':
+      return {
+        type: 'guidebook' as const,
+        query: guidebookQuery,
+      };
   }
 };
 
 export type ProgramQuery = ReturnType<typeof useProgramQuery>;
+
+// 레거시(챌린지/라이브) 전용 프로그램 조회 훅
+export const useLegacyProgramQuery = (args: {
+  type: 'live' | 'challenge';
+  programId: number;
+}) => {
+  return useProgramQuery(args);
+};
 
 export const useUserProgramQuery = ({
   pageable,
@@ -358,6 +381,100 @@ export const useGetLiveFaq = (liveId: number | string) => {
       const res = await axios.get(`/live/${liveId}/faqs`);
       return faqSchema.parse(res.data.data);
     },
+  });
+};
+
+export const useGetGuidebookQueryKey = 'useGetGuidebookQueryKey';
+
+export const useGetGuidebookQuery = ({
+  guidebookId,
+  enabled,
+}: {
+  guidebookId: number;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    enabled,
+    queryKey: [useGetGuidebookQueryKey, guidebookId],
+    queryFn: async () => {
+      const res = await axios.get(`/guidebook/${guidebookId}`);
+      return getGuidebookIdSchema.parse(res.data.data);
+    },
+  });
+};
+
+/** GET /api/v1/guidebooks/{guidebookId} 가이드북 상세 조회 (유저용: 자료정보 X) */
+export const fetchPublicGuidebookData = async (
+  guidebookId: string,
+): Promise<PublicGuidebookSchema> => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_API}/guidebooks/${guidebookId}`,
+  );
+
+  if (!res.ok) {
+    throw new Error('가이드북 상세 조회에 실패했습니다.');
+  }
+
+  const data = await res.json();
+  return getPublicGuidebookSchema.parse(data.data);
+};
+
+/** 1회용으로 사용하기 위한 함수 */
+export const getGuidebook = async (guidebookId: number) => {
+  const res = await axios.get(`/guidebook/${guidebookId}`);
+  return getGuidebookIdSchema.parse(res.data.data);
+};
+
+export const usePostGuidebookMutation = ({
+  errorCallback,
+  successCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  return useMutation({
+    mutationFn: async (data: CreateGuidebookReq) => {
+      const res = await axios.post(`/guidebook`, data);
+      return res.data as unknown;
+    },
+    onSuccess: successCallback,
+    onError: errorCallback,
+  });
+};
+
+export const usePatchGuidebookMutation = ({
+  errorCallback,
+  successCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  return useMutation({
+    mutationFn: async (data: UpdateGuidebookReq & { guidebookId: number }) => {
+      const { guidebookId, ...rest } = data;
+      const res = await axios.patch(`/guidebook/${guidebookId}`, rest);
+      return res.data as unknown;
+    },
+    onSuccess: successCallback,
+    onError: errorCallback,
+  });
+};
+
+/** DELETE /guidebook/{id} 가이드북 삭제 */
+export const useDeleteGuidebookMutation = ({
+  errorCallback,
+  successCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: (error: Error) => void;
+} = {}) => {
+  return useMutation({
+    mutationFn: async (guidebookId: number) => {
+      const res = await axios.delete(`/guidebook/${guidebookId}`);
+      return res.data as unknown;
+    },
+    onSuccess: successCallback,
+    onError: errorCallback,
   });
 };
 

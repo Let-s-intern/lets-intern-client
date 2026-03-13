@@ -5,6 +5,7 @@ import { z } from 'zod';
 import {
   challengeApplicationPriceType,
   ChallengePricePlanEnum,
+  guidebookApplicationPriceType,
   liveApplicationPriceType,
   ProgramStatusEnum,
   ProgramTypeEnum,
@@ -29,9 +30,12 @@ export const programApplicationSchema = z.object({
   startDate: z.string().nullable().optional(),
   endDate: z.string().nullable().optional(),
   deadline: z.string().nullable().optional(),
-  statusType: ProgramStatusEnum,
+  statusType: ProgramStatusEnum.optional(),
   priceList: z.array(challengeApplicationPriceType).nullable().optional(),
-  price: liveApplicationPriceType.nullable().optional(),
+  price: z
+    .union([liveApplicationPriceType, guidebookApplicationPriceType])
+    .nullable()
+    .optional(),
 });
 
 export type ProgramApplicationFormInfo = z.infer<
@@ -105,7 +109,7 @@ export const usePostApplicationMutation = ({
         )
       ).data.data;
     },
-    onSuccess: (_) => {
+    onSuccess: () => {
       successCallback?.();
     },
     onError: (error) => {
@@ -120,12 +124,55 @@ export const postApplicationResultSchema = z.object({
 
 export type PostApplicationResult = z.infer<typeof postApplicationResultSchema>;
 
+export const patchApplicationDownload = async ({
+  applicationId,
+  type,
+}: {
+  applicationId: number;
+  type: 'GUIDEBOOK' | 'CHALLENGE' | 'LIVE' | 'VOD' | 'REPORT';
+}) => {
+  await axios.patch(`/application/${applicationId}/download`, null, {
+    params: { type },
+  });
+};
+
+const applicationDownloadResponseSchema = z.object({
+  isDownloaded: z.boolean(),
+  downloadedAt: z.string().nullable().optional(),
+});
+
+type ApplicationDownloadResponse = z.infer<
+  typeof applicationDownloadResponseSchema
+>;
+
+export const useApplicationDownloadQuery = ({
+  applicationId,
+  type,
+  enabled,
+}: {
+  applicationId: number | null | undefined;
+  type: 'GUIDEBOOK' | 'CHALLENGE' | 'LIVE' | 'VOD' | 'REPORT';
+  enabled: boolean;
+}) =>
+  useQuery<ApplicationDownloadResponse>({
+    queryKey: ['applicationDownload', applicationId, type],
+    queryFn: async () => {
+      const res = await axios.get(`/application/${applicationId}/download`, {
+        params: { type },
+      });
+      return applicationDownloadResponseSchema.parse(res.data.data);
+    },
+    enabled: enabled && typeof applicationId === 'number',
+  });
+
 export const useCancelApplicationMutation = ({
   applicationId,
+  paymentId,
   successCallback,
   errorCallback,
 }: {
   applicationId: number;
+  paymentId: string | number;
   successCallback?: () => void;
   errorCallback?: (error: Error) => void;
 }) => {
@@ -143,7 +190,10 @@ export const useCancelApplicationMutation = ({
         successCallback();
       }
       client.invalidateQueries({
-        queryKey: [UsePaymentQueryKey, UsePaymentDetailQueryKey, applicationId],
+        queryKey: [UsePaymentQueryKey],
+      });
+      client.invalidateQueries({
+        queryKey: [UsePaymentDetailQueryKey, paymentId],
       });
     },
     onError: (error) => {
