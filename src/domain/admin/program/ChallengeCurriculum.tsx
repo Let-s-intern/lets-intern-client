@@ -166,6 +166,12 @@ function ChallengeCurriculumEditor({
       | { target: { name: string; value: string } },
     target: ChallengeCurriculum,
   ) => {
+    if (e.target.name === 'session') {
+      const onlyNumber = e.target.value.replace(/\D/g, '');
+      updateCurriculum(target, { session: onlyNumber });
+      return;
+    }
+
     updateCurriculum(target, { [e.target.name]: e.target.value });
   };
 
@@ -349,7 +355,7 @@ function ChallengeCurriculumEditor({
             <Input
               label="회차"
               name="session"
-              placeholder="예:2회차"
+              placeholder="예: 2"
               value={item.session}
               onChange={(e) => onChange(e, item)}
               fullWidth={false}
