@@ -272,6 +272,7 @@ export const adminBlogReviewSchema = z
     url: z.string().optional().nullable(),
     thumbnail: z.string().optional().nullable(),
     isConfirmed: z.boolean().optional().nullable(),
+    isRemittanceConfirmed: z.boolean().optional().nullable(),
     isVisible: z.boolean().optional().nullable(),
     phoneNum: z.string().nullish(),
     accountType: z.string().nullish(),
@@ -332,6 +333,7 @@ interface AdminBlogReviewPatchReq {
   url?: string | null;
   postDate?: string | null;
   isConfirmed?: boolean;
+  isRemittanceConfirmed?: boolean;
   isVisible?: boolean;
   description?: string | null;
 }
