@@ -140,3 +140,24 @@ export type ProgramType = z.infer<typeof programTypeSchema>;
 export type BaseQuestionListResponse = z.infer<
   typeof baseQuestionListResponseSchema
 >;
+
+// --- Mypage magnet (신청현황) ---
+
+const mypageMagnetListItemSchema = z.object({
+  magnetId: z.number(),
+  type: magnetTypeSchema,
+  title: z.string(),
+  description: z.string().nullable(),
+  desktopThumbnail: z.string().nullable(),
+  mobileThumbnail: z.string().nullable(),
+  applicationCreateDate: z.string().nullable(),
+});
+
+export const mypageMagnetListResponseSchema = z.object({
+  magnetList: z.array(mypageMagnetListItemSchema),
+});
+
+export type MypageMagnetListItem = z.infer<typeof mypageMagnetListItemSchema>;
+export type MypageMagnetListResponse = z.infer<
+  typeof mypageMagnetListResponseSchema
+>;

@@ -90,9 +90,16 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
               <h3 className="text-xsmall16 font-semibold text-neutral-0">
                 {config.title}
               </h3>
-              <p className="text-xsmall14 text-neutral-20 md:line-clamp-2">
-                {config.description}
-              </p>
+              {config.isHtmlDescription ? (
+                <div
+                  className="line-clamp-2 text-xsmall14 text-neutral-20"
+                  dangerouslySetInnerHTML={{ __html: config.description }}
+                />
+              ) : (
+                <p className="text-xsmall14 text-neutral-20 md:line-clamp-2">
+                  {config.description}
+                </p>
+              )}
             </div>
             {showActionButton && (
               <ActionButton

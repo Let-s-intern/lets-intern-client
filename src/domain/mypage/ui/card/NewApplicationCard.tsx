@@ -28,7 +28,7 @@ interface MypageApplicationCardProps {
   config: MypageApplicationCardConfig;
 }
 
-const MypageApplicationCard = ({ config }: MypageApplicationCardProps) => {
+export const MypageApplicationCard = ({ config }: MypageApplicationCardProps) => {
   const router = useRouter();
   const { actionButton } = config;
   const showActionButton = !!actionButton;
@@ -109,11 +109,17 @@ const MypageApplicationCard = ({ config }: MypageApplicationCardProps) => {
                   {config.title}
                 </HybridLink>
               </h3>
-              {config.description && (
-                <p className="line-clamp-2 text-xsmall14 text-neutral-20">
-                  {config.description}
-                </p>
-              )}
+              {config.description &&
+                (config.isHtmlDescription ? (
+                  <div
+                    className="line-clamp-2 text-xsmall14 text-neutral-20"
+                    dangerouslySetInnerHTML={{ __html: config.description }}
+                  />
+                ) : (
+                  <p className="line-clamp-2 text-xsmall14 text-neutral-20">
+                    {config.description}
+                  </p>
+                ))}
             </div>
 
             {config.dateText && (

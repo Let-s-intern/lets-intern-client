@@ -16,6 +16,7 @@ export interface MypageApplicationCardConfig {
   categoryLabel: string;
   dateLabel: string;
   dateText: string;
+  isHtmlDescription?: boolean;
   purchasePlanText?: string;
   actionButton?: {
     label: string;
