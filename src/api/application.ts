@@ -124,12 +124,19 @@ export const postApplicationResultSchema = z.object({
 
 export type PostApplicationResult = z.infer<typeof postApplicationResultSchema>;
 
+export type ApplicationDownloadType =
+  | 'GUIDEBOOK'
+  | 'CHALLENGE'
+  | 'LIVE'
+  | 'VOD'
+  | 'REPORT';
+
 export const patchApplicationDownload = async ({
   applicationId,
   type,
 }: {
   applicationId: number;
-  type: 'GUIDEBOOK' | 'CHALLENGE' | 'LIVE' | 'VOD' | 'REPORT';
+  type: ApplicationDownloadType;
 }) => {
   await axios.patch(`/application/${applicationId}/download`, null, {
     params: { type },
@@ -151,7 +158,7 @@ export const useApplicationDownloadQuery = ({
   enabled,
 }: {
   applicationId: number | null | undefined;
-  type: 'GUIDEBOOK' | 'CHALLENGE' | 'LIVE' | 'VOD' | 'REPORT';
+  type: ApplicationDownloadType;
   enabled: boolean;
 }) =>
   useQuery<ApplicationDownloadResponse>({
