@@ -31,7 +31,7 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
   const { actionButton } = config;
   const showActionButton = !!actionButton;
   const hasConfirm = !!actionButton?.confirm;
-  const isDownloadButton = actionButton?.label === 'PDF 다운로드' && hasConfirm;
+  const isDownloadButton = actionButton?.isDownload === true;
 
   const downloadAction = useDownloadAction({
     applicationId: config.id,
