@@ -8,9 +8,9 @@ import {
   MypageApplicationCardConfig,
   toMypageApplicationCardConfig,
 } from '@/domain/mypage/application/utils/applicationCardConfig';
+import { useDownloadAction } from '@/hooks/useDownloadAction';
 import { twMerge } from '@/lib/twMerge';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import ActionButton from '../button/ActionButton';
 
 interface NewApplicationCardProps {
@@ -32,15 +32,23 @@ const MypageApplicationCard = ({ config }: MypageApplicationCardProps) => {
   const router = useRouter();
   const { actionButton } = config;
   const showActionButton = !!actionButton;
-  const [showConfirm, setShowConfirm] = useState(false);
   const hasConfirm = !!actionButton?.confirm;
+  const isDownloadButton = actionButton?.label === 'PDF 다운로드' && hasConfirm;
   const detailHref = getDetailHref(config);
+
+  const downloadAction = useDownloadAction({
+    applicationId: config.id,
+    type: 'GUIDEBOOK',
+    executeDownload: () =>
+      downloadGuidebookAndTrack(config.id, config.programId),
+    enabled: isDownloadButton,
+  });
 
   const handleActionClick = () => {
     if (!actionButton || actionButton.disabled) return;
 
-    if (hasConfirm) {
-      setShowConfirm(true);
+    if (isDownloadButton) {
+      downloadAction.handleClick();
       return;
     }
 
@@ -153,16 +161,13 @@ const MypageApplicationCard = ({ config }: MypageApplicationCardProps) => {
         </>
       )}
 
-      {hasConfirm && showConfirm && actionButton && (
+      {hasConfirm && downloadAction.showConfirm && actionButton && (
         <AlertModal
           title={actionButton.confirm?.title ?? '확인'}
           confirmText={actionButton.confirm?.confirmText ?? '확인'}
           cancelText={actionButton.confirm?.cancelText ?? '취소'}
-          onConfirm={async () => {
-            setShowConfirm(false);
-            await downloadGuidebookAndTrack(config.id, config.programId);
-          }}
-          onCancel={() => setShowConfirm(false)}
+          onConfirm={() => downloadAction.handleConfirm()}
+          onCancel={downloadAction.handleCancel}
         >
           {actionButton.confirm?.description}
         </AlertModal>
