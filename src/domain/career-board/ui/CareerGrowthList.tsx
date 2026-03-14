@@ -39,7 +39,6 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
     executeDownload: async () => {
       await actionButton?.onClick?.();
     },
-    enabled: isDownloadButton,
   });
 
   const handleActionClick = () => {

@@ -41,7 +41,6 @@ const MypageApplicationCard = ({ config }: MypageApplicationCardProps) => {
     type: 'GUIDEBOOK',
     executeDownload: () =>
       downloadGuidebookAndTrack(config.id, config.programId),
-    enabled: isDownloadButton,
   });
 
   const handleActionClick = () => {

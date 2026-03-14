@@ -148,9 +148,22 @@ const applicationDownloadResponseSchema = z.object({
   downloadedAt: z.string().nullable().optional(),
 });
 
-type ApplicationDownloadResponse = z.infer<
+export type ApplicationDownloadResponse = z.infer<
   typeof applicationDownloadResponseSchema
 >;
+
+export const getApplicationDownloadStatus = async ({
+  applicationId,
+  type,
+}: {
+  applicationId: number;
+  type: ApplicationDownloadType;
+}): Promise<ApplicationDownloadResponse> => {
+  const res = await axios.get(`/application/${applicationId}/download`, {
+    params: { type },
+  });
+  return applicationDownloadResponseSchema.parse(res.data.data);
+};
 
 export const useApplicationDownloadQuery = ({
   applicationId,
@@ -163,12 +176,8 @@ export const useApplicationDownloadQuery = ({
 }) =>
   useQuery<ApplicationDownloadResponse>({
     queryKey: ['applicationDownload', applicationId, type],
-    queryFn: async () => {
-      const res = await axios.get(`/application/${applicationId}/download`, {
-        params: { type },
-      });
-      return applicationDownloadResponseSchema.parse(res.data.data);
-    },
+    queryFn: () =>
+      getApplicationDownloadStatus({ applicationId: applicationId!, type }),
     enabled: enabled && typeof applicationId === 'number',
   });
 
