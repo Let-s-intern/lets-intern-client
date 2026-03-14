@@ -47,6 +47,8 @@ const ApplicationCard = ({
         return `${challengePricePlanToText[pricePlanType]} (피드백 2회)`;
       case 'STANDARD':
         return `${challengePricePlanToText[pricePlanType]} (피드백 1회)`;
+      case 'LIGHT':
+        return challengePricePlanToText[pricePlanType];
       default:
         return '베이직';
     }
@@ -104,6 +106,7 @@ const ApplicationCard = ({
       </div>
       {application.programType === 'CHALLENGE' &&
         showChallengeButton &&
+        application.pricePlanType !== 'LIGHT' &&
         application.programStartDate?.isBefore(dayjs()) && (
           <LinkButton
             to={`/challenge/${application.id}/${application.programId}`}

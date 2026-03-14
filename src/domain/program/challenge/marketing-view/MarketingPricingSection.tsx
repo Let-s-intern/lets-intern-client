@@ -20,19 +20,27 @@ const PriceBox = ({
   discountAmount: number;
 }) => {
   return (
-    <div className="relative flex flex-1 flex-col gap-6 rounded-sm bg-white px-5 py-7">
-      <div className="absolute right-3 top-0 rounded-b-xxs bg-[#4A76FF] px-2.5 py-1.5 text-xsmall16 font-medium text-white">
+    <div className="flex flex-1 flex-col gap-3.5 rounded-sm bg-white px-5 pb-6 pt-5">
+      <div
+        className={
+          label
+            ? 'w-fit rounded-xs bg-[#4A76FF] px-2.5 py-1.5 text-xsmall14 font-medium text-white'
+            : 'h-[32px]'
+        }
+      >
         {label}
       </div>
-      <span className="text-small20 font-bold">{title}</span>
-      <div className="flex h-full flex-col gap-6 md:justify-between">
-        <p className="whitespace-pre-line text-small18 font-medium text-neutral-0 md:mb-7 md:min-h-[78px]">
-          {children}
-        </p>
-        <PriceSummary
-          originalPrice={originalPrice}
-          discountPrice={discountAmount}
-        />
+      <div className="flex flex-col gap-6">
+        <span className="text-small20 font-bold">{title}</span>
+        <div className="flex h-full flex-col gap-6 md:justify-between">
+          <p className="whitespace-pre-line text-small18 font-medium text-neutral-0 md:mb-7 md:min-h-[78px]">
+            {children}
+          </p>
+          <PriceSummary
+            originalPrice={originalPrice}
+            discountPrice={discountAmount}
+          />
+        </div>
       </div>
     </div>
   );
@@ -52,6 +60,9 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
   const premiumPriceInfo = priceInfoList.find(
     (item) => item.challengePricePlanType === 'PREMIUM',
   );
+  const lightPriceInfo = priceInfoList.find(
+    (item) => item.challengePricePlanType === 'LIGHT',
+  );
 
   const {
     basicRegularPrice,
@@ -60,9 +71,22 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
     standardDiscountAmount,
     premiumRegularPrice,
     premiumDiscountAmount,
+    lightRegularPrice,
+    lightDiscountAmount,
   } = getChallengeOptionPriceInfo(priceInfoList);
 
   const pricingList = [
+    ...(lightPriceInfo
+      ? [
+          {
+            title: lightPriceInfo.title || '라이트',
+            label: '직무 탐색 추천',
+            description: lightPriceInfo.description ?? '',
+            originalPrice: lightRegularPrice,
+            discountAmount: lightDiscountAmount,
+          },
+        ]
+      : []),
     {
       title: basicPriceInfo?.title || '기본',
       label: '대학생 추천',
