@@ -1,9 +1,9 @@
 'use client';
 
 import AlertModal from '@/common/alert/AlertModal';
+import { useDownloadAction } from '@/hooks/useDownloadAction';
 import { twMerge } from '@/lib/twMerge';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import type { CareerGrowthCardConfig } from '../utils/careerGrowthCard';
 
 interface CareerGrowthListProps {
@@ -30,14 +30,22 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
   const router = useRouter();
   const { actionButton } = config;
   const showActionButton = !!actionButton;
-  const [showConfirm, setShowConfirm] = useState(false);
   const hasConfirm = !!actionButton?.confirm;
+  const isDownloadButton = actionButton?.isDownload === true;
+
+  const downloadAction = useDownloadAction({
+    applicationId: config.id,
+    type: 'GUIDEBOOK',
+    executeDownload: async () => {
+      await actionButton?.onClick?.();
+    },
+  });
 
   const handleActionClick = () => {
     if (!actionButton || actionButton.disabled) return;
 
-    if (hasConfirm) {
-      setShowConfirm(true);
+    if (isDownloadButton) {
+      downloadAction.handleClick();
       return;
     }
 
@@ -125,16 +133,13 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
         />
       )}
 
-      {hasConfirm && showConfirm && actionButton && (
+      {hasConfirm && downloadAction.showConfirm && actionButton && (
         <AlertModal
           title={actionButton.confirm?.title ?? '확인'}
           confirmText={actionButton.confirm?.confirmText ?? '확인'}
           cancelText={actionButton.confirm?.cancelText ?? '취소'}
-          onConfirm={() => {
-            setShowConfirm(false);
-            actionButton.onClick?.();
-          }}
-          onCancel={() => setShowConfirm(false)}
+          onConfirm={() => downloadAction.handleConfirm()}
+          onCancel={downloadAction.handleCancel}
         >
           {actionButton.confirm?.description}
         </AlertModal>

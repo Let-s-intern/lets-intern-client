@@ -124,12 +124,19 @@ export const postApplicationResultSchema = z.object({
 
 export type PostApplicationResult = z.infer<typeof postApplicationResultSchema>;
 
+export type ApplicationDownloadType =
+  | 'GUIDEBOOK'
+  | 'CHALLENGE'
+  | 'LIVE'
+  | 'VOD'
+  | 'REPORT';
+
 export const patchApplicationDownload = async ({
   applicationId,
   type,
 }: {
   applicationId: number;
-  type: 'GUIDEBOOK' | 'CHALLENGE' | 'LIVE' | 'VOD' | 'REPORT';
+  type: ApplicationDownloadType;
 }) => {
   await axios.patch(`/application/${applicationId}/download`, null, {
     params: { type },
@@ -141,9 +148,22 @@ const applicationDownloadResponseSchema = z.object({
   downloadedAt: z.string().nullable().optional(),
 });
 
-type ApplicationDownloadResponse = z.infer<
+export type ApplicationDownloadResponse = z.infer<
   typeof applicationDownloadResponseSchema
 >;
+
+export const getApplicationDownloadStatus = async ({
+  applicationId,
+  type,
+}: {
+  applicationId: number;
+  type: ApplicationDownloadType;
+}): Promise<ApplicationDownloadResponse> => {
+  const res = await axios.get(`/application/${applicationId}/download`, {
+    params: { type },
+  });
+  return applicationDownloadResponseSchema.parse(res.data.data);
+};
 
 export const useApplicationDownloadQuery = ({
   applicationId,
@@ -151,17 +171,13 @@ export const useApplicationDownloadQuery = ({
   enabled,
 }: {
   applicationId: number | null | undefined;
-  type: 'GUIDEBOOK' | 'CHALLENGE' | 'LIVE' | 'VOD' | 'REPORT';
+  type: ApplicationDownloadType;
   enabled: boolean;
 }) =>
   useQuery<ApplicationDownloadResponse>({
     queryKey: ['applicationDownload', applicationId, type],
-    queryFn: async () => {
-      const res = await axios.get(`/application/${applicationId}/download`, {
-        params: { type },
-      });
-      return applicationDownloadResponseSchema.parse(res.data.data);
-    },
+    queryFn: () =>
+      getApplicationDownloadStatus({ applicationId: applicationId!, type }),
     enabled: enabled && typeof applicationId === 'number',
   });
 

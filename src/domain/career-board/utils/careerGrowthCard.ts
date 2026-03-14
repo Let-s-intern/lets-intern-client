@@ -26,6 +26,7 @@ export interface CareerGrowthCardConfig {
       confirmText?: string;
       cancelText?: string;
     };
+    isDownload?: boolean;
   };
 }
 
@@ -77,6 +78,7 @@ export const toGuidebookCardConfig = (
     dateText: purchaseDateText,
     actionButton: {
       label: 'PDF 다운로드',
+      isDownload: true,
       confirm: {
         title: '가이드북을 다운로드하시겠습니까?',
         description:
