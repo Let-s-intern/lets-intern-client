@@ -1,5 +1,5 @@
 import {
-  useApplicationDownloadQuery,
+  getApplicationDownloadStatus,
   type ApplicationDownloadType,
 } from '@/api/application';
 import { useQueryClient } from '@tanstack/react-query';
@@ -9,32 +9,28 @@ type UseDownloadActionParams = {
   applicationId: number;
   type: ApplicationDownloadType;
   executeDownload: () => Promise<void>;
-  enabled: boolean;
 };
 
 export function useDownloadAction({
   applicationId,
   type,
   executeDownload,
-  enabled,
 }: UseDownloadActionParams) {
   const queryClient = useQueryClient();
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const { data: downloadInfo } = useApplicationDownloadQuery({
-    applicationId,
-    type,
-    enabled,
-  });
-
-  const hasDownloaded = downloadInfo?.isDownloaded === true;
-
   const handleClick = () => {
-    if (hasDownloaded) {
-      void executeDownload();
-      return;
-    }
-    setShowConfirm(true);
+    void (async () => {
+      const data = await queryClient.fetchQuery({
+        queryKey: ['applicationDownload', applicationId, type],
+        queryFn: () => getApplicationDownloadStatus({ applicationId, type }),
+      });
+      if (data.isDownloaded) {
+        await executeDownload();
+      } else {
+        setShowConfirm(true);
+      }
+    })();
   };
 
   const handleConfirm = async () => {
@@ -50,7 +46,6 @@ export function useDownloadAction({
   };
 
   return {
-    hasDownloaded,
     showConfirm,
     handleClick,
     handleConfirm,
