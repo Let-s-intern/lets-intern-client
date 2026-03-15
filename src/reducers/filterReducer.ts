@@ -13,14 +13,20 @@ export const initialFilterType = {
 };
 export const initialFilterClassification = {
   CAREER_SEARCH: false,
-  MEETING_PREPARATION: false,
+  EXPERIENCE: false,
   DOCUMENT_PREPARATION: false,
+  MEETING_PREPARATION: false,
   PASS: false,
 };
 export const initialFilterStatus = {
   PREV: false,
   PROCEEDING: false,
   POST: false,
+};
+export const initialFilterJob = {
+  MARKETING: false,
+  HR: false,
+  LARGE_COMPANY: false,
 };
 
 export function filterTypeReducer(
@@ -64,6 +70,38 @@ export function filterClassificationReducer(
   switch (action.type) {
     case 'init': {
       return { ...initialFilterClassification };
+    }
+
+    case 'check': {
+      _status[action.value!] = true;
+      return _status;
+    }
+
+    case 'uncheck': {
+      _status[action.value!] = false;
+      return _status;
+    }
+
+    case 'toggle': {
+      _status[action.value!] = !_status[action.value!];
+      return _status;
+    }
+
+    default: {
+      throw Error('Unknown action: ' + action.type);
+    }
+  }
+}
+
+export function filterJobReducer(
+  status: IFilter,
+  action: FilterCheckedAction,
+) {
+  const _status = { ...status };
+
+  switch (action.type) {
+    case 'init': {
+      return { ...initialFilterJob };
     }
 
     case 'check': {
