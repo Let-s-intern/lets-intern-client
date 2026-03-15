@@ -9,12 +9,14 @@ import {
   MagnetDetailResponse,
   MagnetListResponse,
   MagnetType,
+  MypageMagnetListResponse,
   ProgramType,
   UserMagnetDetailResponse,
   UserMagnetListResponse,
   baseQuestionListResponseSchema,
   magnetDetailResponseSchema,
   magnetListResponseSchema,
+  mypageMagnetListResponseSchema,
   userMagnetDetailResponseSchema,
   userMagnetListResponseSchema,
 } from './magnetSchema';
@@ -247,6 +249,28 @@ export const useGetMyMagnetListQuery = ({
         },
       });
       return userMagnetListResponseSchema.parse(res.data.data);
+    },
+    enabled,
+  });
+};
+
+// 마이페이지 MY 마그넷 신청현황 조회
+const mypageMagnetListQueryKey = 'MypageMagnetListQueryKey';
+
+export const useGetMypageMagnetListQuery = ({
+  typeList,
+  enabled,
+}: {
+  typeList?: MagnetType[];
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    queryKey: [mypageMagnetListQueryKey, typeList],
+    queryFn: async (): Promise<MypageMagnetListResponse> => {
+      const res = await axios.get('/magnet/mypage', {
+        params: { typeList },
+      });
+      return mypageMagnetListResponseSchema.parse(res.data.data);
     },
     enabled,
   });
