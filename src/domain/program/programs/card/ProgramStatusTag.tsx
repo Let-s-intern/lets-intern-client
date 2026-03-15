@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { PROGRAM_STATUS } from '../../../../utils/programConst';
 
 interface ProgramStatusTagProps {
-  status: (typeof PROGRAM_STATUS)[keyof typeof PROGRAM_STATUS];
+  status: (typeof PROGRAM_STATUS)[keyof typeof PROGRAM_STATUS] | '상시 판매';
 }
 
 const ProgramStatusTag = ({ status }: ProgramStatusTagProps) => {
@@ -17,8 +17,10 @@ const ProgramStatusTag = ({ status }: ProgramStatusTagProps) => {
             status === PROGRAM_STATUS.PREV,
           'border-neutral-45 bg-neutral-80 text-neutral-45':
             status === PROGRAM_STATUS.POST,
+          'border-[#9B7AE4] bg-[#F2ECFC] text-[#9B7AE4]':
+            status === '상시 판매',
         },
-        'text-0.75-medium md:text-0.875-medium rounded-xs border px-2.5 py-0.5',
+        'rounded-xs border px-2 py-0.5 text-xxsmall10 font-medium md:text-xxsmall12',
       )}
     >
       {status}
