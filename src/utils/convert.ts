@@ -419,6 +419,7 @@ export const convertCurationTypeToText = (type: CurationType | null) => {
 };
 
 export const challengePricePlanToText: Record<ChallengePricePlan, string> = {
+  LIGHT: '라이트',
   BASIC: '베이직',
   STANDARD: '스탠다드',
   PREMIUM: '프리미엄',
