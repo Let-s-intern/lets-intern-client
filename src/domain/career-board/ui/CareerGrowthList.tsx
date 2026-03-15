@@ -63,29 +63,27 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
         ) : (
           <div className="h-[85px] w-[113px] shrink-0 rounded-xs bg-neutral-80 md:h-[119px] md:w-[158px]" />
         )}
-
-        <div className="flex flex-1 flex-col gap-2">
-          <div className="flex w-full flex-wrap items-center gap-2">
-            <span
-              className={twMerge(
-                'rounded-xxs px-2 py-0.5 text-xxsmall12 font-normal',
-                isUpcoming
-                  ? 'border border-neutral-80 text-primary'
-                  : 'bg-primary-10 text-primary',
-              )}
-            >
-              {config.statusLabel}
-            </span>
-            <span className="text-xxsmall12 font-normal text-neutral-40">
-              {config.categoryLabel}
-            </span>
-            <div className="hidden h-4 w-px bg-neutral-80 md:block" />
-            <span className="text-xxsmall12 font-normal text-neutral-40">
-              {config.dateLabel} {config.dateText}
-            </span>
-          </div>
-
-          <div className="flex flex-col gap-1 md:flex-row md:items-start md:gap-12">
+        <div className="flex flex-1 flex-col gap-1 md:flex-row md:items-start md:gap-12">
+          <div className="flex flex-1 flex-col gap-2">
+            <div className="flex w-full flex-wrap items-center gap-2">
+              <span
+                className={twMerge(
+                  'rounded-xxs px-2 py-1 text-xxsmall12 font-normal',
+                  isUpcoming
+                    ? 'border border-neutral-80 text-primary'
+                    : 'bg-primary-10 text-primary',
+                )}
+              >
+                {config.statusLabel}
+              </span>
+              <span className="text-xxsmall12 font-normal text-neutral-40">
+                {config.categoryLabel}
+              </span>
+              <div className="hidden h-4 w-px bg-neutral-80 md:block" />
+              <span className="text-xxsmall12 font-normal text-neutral-40">
+                {config.dateLabel} {config.dateText}
+              </span>
+            </div>
             <div className="flex flex-1 flex-col gap-1">
               <h3 className="text-xsmall16 font-semibold text-neutral-0">
                 {config.title}
@@ -101,25 +99,24 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
                 </p>
               )}
             </div>
-            {showActionButton && (
-              <ActionButton
-                label={actionButton.label}
-                disabled={actionButton.disabled}
-                onClick={handleActionClick}
-                variant="desktop"
-              />
+            {config.purchasePlanText && (
+              <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                <span className="flex flex-row gap-1 text-xxsmall12 text-neutral-0">
+                  구매플랜
+                  <p className="text-xxsmall12 text-primary">
+                    {config.purchasePlanText}
+                  </p>
+                </span>
+              </div>
             )}
           </div>
-
-          {config.purchasePlanText && (
-            <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-              <span className="flex flex-row gap-1 text-xxsmall12 text-neutral-0">
-                구매플랜
-                <p className="text-xxsmall12 text-primary">
-                  {config.purchasePlanText}
-                </p>
-              </span>
-            </div>
+          {showActionButton && (
+            <ActionButton
+              label={actionButton.label}
+              disabled={actionButton.disabled}
+              onClick={handleActionClick}
+              variant="desktop"
+            />
           )}
         </div>
       </div>

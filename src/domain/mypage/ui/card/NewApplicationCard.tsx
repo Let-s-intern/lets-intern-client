@@ -28,7 +28,9 @@ interface MypageApplicationCardProps {
   config: MypageApplicationCardConfig;
 }
 
-export const MypageApplicationCard = ({ config }: MypageApplicationCardProps) => {
+export const MypageApplicationCard = ({
+  config,
+}: MypageApplicationCardProps) => {
   const router = useRouter();
   const { actionButton } = config;
   const showActionButton = !!actionButton;
@@ -68,7 +70,7 @@ export const MypageApplicationCard = ({ config }: MypageApplicationCardProps) =>
               {config.statusLabel && (
                 <span
                   className={twMerge(
-                    'rounded-xxs px-2 py-0.5 text-xxsmall12 font-normal',
+                    'rounded-xxs px-2 py-1 text-xxsmall12 font-normal',
                     (() => {
                       if (config.statusLabel === '참여예정') {
                         return 'border border-neutral-80 text-primary';
