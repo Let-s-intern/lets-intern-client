@@ -63,17 +63,9 @@
 | **vercel-react-best-practices** | Vercel React 최적화 규칙 (memo, 병렬 fetching 등) | developer |
 | **task-runner** | 작업 실행 워크플로우 | coordinator |
 | **task-maker** | 작업 생성 및 관리 | coordinator |
-| **task-cleaner** | 완료된 task/PRD/스크린샷을 브랜치명 폴더로 정리 | coordinator |
-
-### 공식 플러그인 스킬
-
-| 스킬 | 내용 | 사용법 |
-|-----|------|--------|
-| **code-review** | PR 코드리뷰 (프로젝트 가이드라인 기반) | `/code-review [PR번호]` |
-| **pr-review-toolkit** | 종합 PR 리뷰 (테스트·타입·코멘트·에러핸들링 전문 에이전트) | `/review-pr` |
 
 **자동 적용**: `developer` 역할은 vercel-react-best-practices, code-quality, folder-structure 자동 활성화
-**수동 활성화**: `/seo`, `/task-cleaner`, `/task-maker`
+**수동 활성화**: `/skill seo`
 
 ---
 
@@ -88,11 +80,8 @@ docs/letscareer/
 │   ├── components.md          # 75+ 공통 컴포넌트
 │   ├── hooks.md               # 40+ 커스텀 훅
 │   └── services.md            # API 서비스 & 유틸리티
-├── domain/                    # 도메인별 문서
-│   ├── challenge-feedback/    # 챌린지 피드백 멘토링
-│   │   └── README.md
-│   └── curation/              # 큐레이션
-│       └── README.md
+├── curation-domain/           # 큐레이션 도메인 아키텍처
+│   └── README.md
 ├── API_docs/                  # API 문서
 │   └── swagger_url.md
 └── tech-stack/                # 기술 스택
@@ -112,8 +101,7 @@ docs/letscareer/
 
 | 문서 | 내용 |
 |-----|------|
-| **domain/challenge-feedback/README.md** | 챌린지 피드백 멘토링 페이지 구조, URL, 데이터 관리, 섹션별 조건부 렌더링 |
-| **domain/curation/README.md** | 큐레이션 플로우 상태 관리, 추천 엔진, FAQ 시스템, 컴포넌트 구조 |
+| **curation-domain/README.md** | 큐레이션 플로우 상태 관리, 추천 엔진, FAQ 시스템, 컴포넌트 구조 |
 
 #### API 문서 (`API_docs/`)
 
@@ -175,31 +163,17 @@ Claude Code 사용법 공식 가이드
 
 ```
 tasks/
-├── todo/                              # 진행 중인 task 파일
-│   ├── prd-*.md
-│   └── tasks-*-push*.md
-├── done/                              # 완료된 작업 아카이브
-│   ├── {브랜치명 또는 기능명}/          # 기능 단위 폴더
-│   │   ├── prd.md
-│   │   ├── tasks-push1.md
-│   │   ├── result-push1.md
-│   │   ├── fix-notes.md
-│   │   └── screenshot.png
-│   └── {다른 기능}/
-└── (루트에는 현재 진행 중 파일만 임시 배치)
+└── done/                  # 완료된 작업 아카이브
+    ├── 260301/            # 날짜별 폴더
+    ├── 260302/
+    └── ...
 ```
 
-**정리 규칙**:
-- 완료된 task/PRD/스크린샷 등은 `done/{브랜치명 또는 기능명}/` 폴더로 정리
-- `/task-cleaner` 스킬로 자동 정리 가능 (브랜치명 자동 추출 또는 이름 지정)
-- `todo/`의 미완료 task(`[ ]` 남음)는 이동하지 않음
-
-**작업 파일 종류**:
+**작업 기록 예시**:
 - PRD (제품 요구사항 문서)
-- task 파일 (Push 단위 작업 목록)
-- result 파일 (완료 결과보고서)
-- fix 파일 (수정 사항 메모)
-- 디자인 에셋 (스크린샷, Figma 캡처 등)
+- TODO 목록
+- 변경사항 로그
+- 디자인 에셋 (Figma 캡처 등)
 
 ---
 
@@ -259,7 +233,7 @@ tasks/
 ### 문서 활용
 
 - **공통 컴포넌트**: `docs/letscareer/common/components.md` 참조
-- **도메인 아키텍처**: `docs/letscareer/domain/` 하위 도메인별 README 참조
+- **도메인 아키텍처**: `docs/letscareer/curation-domain/README.md` 참조
 - **기술 스택**: `docs/tech-stack/README.md` 참조
 
 ### 스킬 활용
@@ -300,4 +274,4 @@ tasks/
 
 ---
 
-**마지막 업데이트**: 2026-03-28
+**마지막 업데이트**: 2026-03-03

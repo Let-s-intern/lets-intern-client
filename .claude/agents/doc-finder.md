@@ -28,7 +28,7 @@ permissionMode: dontAsk
    - services.md — API 서비스 & 유틸리티
 
 2. **도메인 문서** (`.claude/docs/letscareer/`)
-   - domain/curation/README.md — 큐레이션 아키텍처
+   - curation-domain/README.md — 큐레이션 아키텍처
    - 기타 도메인 문서
 
 3. **기술 스택** (`.claude/docs/tech-stack/`)
@@ -189,7 +189,7 @@ interface Props { ... }
 ```
 요청: "큐레이션 플로우 구조 설명"
 
-1. Read .claude/docs/letscareer/domain/curation/README.md
+1. Read .claude/docs/letscareer/curation-domain/README.md
 2. 요약:
    - 플로우 단계 (persona → goals → programs → compare → recommend)
    - 상태 관리 (useCurationFlowStore)
@@ -243,7 +243,7 @@ interface Props { ... }
 
 검색한 위치:
 - .claude/docs/letscareer/common/
-- .claude/docs/letscareer/domain/curation/
+- .claude/docs/letscareer/curation-domain/
 - .claude/docs/tech-stack/
 
 대안:
@@ -374,7 +374,7 @@ interface ButtonProps {
 - React Query, Zustand, Tailwind, Next.js, TypeScript
 
 ### 도메인
-- domain/curation (플로우, 추천 엔진, FAQ)
+- curation-domain (플로우, 추천 엔진, FAQ)
 
 ## 효율성 원칙
 
@@ -403,7 +403,7 @@ developer: "Modal 컴포넌트 Props 뭐야?"
 coordinator: "큐레이션 플로우 단계가 어떻게 돼?"
 
 → doc-finder 호출
-→ domain/curation/README.md 읽기
+→ curation-domain/README.md 읽기
 → 플로우 단계 5개 추출
 → 각 단계별 컴포넌트 정리
 → coordinator가 작업 분배에 활용

@@ -2,8 +2,8 @@
 # SessionStart Hook (compact matcher): 컨텍스트 압축 후 task 상태 재주입
 # 컴팩션으로 잃어버린 task 진행 상황을 Claude에게 다시 알려줌
 
-# .claude/tasks/todo/ 에 진행 중인 task 파일이 있는지 확인
-TASK_FILES=$(ls .claude/tasks/todo/*.md 2>/dev/null)
+# todo/ 에 진행 중인 task 파일이 있는지 확인
+TASK_FILES=$(ls todo/*.md 2>/dev/null)
 
 if [ -z "$TASK_FILES" ]; then
   exit 0
@@ -13,10 +13,8 @@ echo "=== 컨텍스트 재주입: 진행 중인 Task ==="
 echo ""
 
 for FILE in $TASK_FILES; do
-  REMAINING=$(grep -c "\[ \]" "$FILE" 2>/dev/null | tail -1 || echo 0)
-  DONE=$(grep -c "\[x\]" "$FILE" 2>/dev/null | tail -1 || echo 0)
-  REMAINING=${REMAINING##*:}
-  DONE=${DONE##*:}
+  REMAINING=$(grep -c "\[ \]" "$FILE" 2>/dev/null || echo 0)
+  DONE=$(grep -c "\[x\]" "$FILE" 2>/dev/null || echo 0)
 
   if [ "$REMAINING" -gt 0 ]; then
     echo "📋 파일: $FILE"
