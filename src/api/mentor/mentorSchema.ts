@@ -16,6 +16,10 @@ export const adminChallengeMentorListSchema = z.object({
             field: z.string().nullable().optional(),
             position: z.string().nullable().optional(),
             department: z.string().nullable().optional(),
+            employmentType: z.string().nullable().optional(),
+            startDate: z.unknown().optional(),
+            endDate: z.unknown().optional(),
+            isAddedByAdmin: z.boolean().optional(),
           }),
         )
         .optional()

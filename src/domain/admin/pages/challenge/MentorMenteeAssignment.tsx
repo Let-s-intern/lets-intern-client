@@ -36,20 +36,18 @@ const useAttendanceParticipants = (challengeId: string) => {
   return { attendanceList: attendanceData?.attendanceList ?? [], isLoading };
 };
 
-/** 멘토 목록의 경력 정보를 응답 데이터에서 직접 추출 (challengeMentorId 기준) */
-const useMentorCareerMap = (
-  mentors: { challengeMentorId: number; userCareerList?: { company: string | null; job: string | null }[] }[],
-) => {
-  return useMemo(() => {
-    const map = new Map<number, { company: string; job: string }>();
-    for (const m of mentors) {
-      const career = m.userCareerList?.[0];
-      if (career?.company && career?.job) {
-        map.set(m.challengeMentorId, { company: career.company, job: career.job });
-      }
-    }
-    return map;
-  }, [mentors]);
+type MentorItem = { challengeMentorId: number; userId: number; name: string; userCareerList: { company: string | null; job: string | null }[] };
+
+/**
+ * attendance의 challengeMentorId에서 멘토를 찾는 헬퍼.
+ * API가 challengeMentorId(PK) 또는 mentorId(userId)를 반환할 수 있으므로 양쪽 매칭.
+ */
+const findMentor = (mentors: MentorItem[], challengeMentorId: number | null | undefined) => {
+  if (challengeMentorId == null) return undefined;
+  return (
+    mentors.find((m) => m.challengeMentorId === challengeMentorId) ??
+    mentors.find((m) => m.userId === challengeMentorId)
+  );
 };
 
 export default function MentorMenteeAssignment() {
@@ -70,7 +68,6 @@ export default function MentorMenteeAssignment() {
   const [bulkMentorUserId, setBulkMentorUserId] = useState<number | null | ''>('');
 
   const mentors = mentorData?.mentorList ?? [];
-  const mentorCareerMap = useMentorCareerMap(mentors);
 
   const MENTOR_COLORS = [
     { bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200', ring: 'ring-red-300' },
@@ -82,17 +79,12 @@ export default function MentorMenteeAssignment() {
     { bg: 'bg-violet-50', text: 'text-violet-700', border: 'border-violet-200', ring: 'ring-violet-300' },
   ] as const;
 
-  const mentorColorMap = useMemo(() => {
-    const map = new Map<number, (typeof MENTOR_COLORS)[number]>();
-    mentors.forEach((m, i) => {
-      map.set(m.challengeMentorId, MENTOR_COLORS[i % MENTOR_COLORS.length]);
-    });
-    return map;
-  }, [mentors]);
+  const getMentorColor = (mentorIndex: number) =>
+    MENTOR_COLORS[mentorIndex % MENTOR_COLORS.length];
 
-  const getMentorLabel = (m: { userId: number; name: string }) => {
-    const career = mentorCareerMap.get(m.userId);
-    if (!career) return m.name;
+  const getMentorLabel = (m: MentorItem) => {
+    const career = m.userCareerList?.[0];
+    if (!career?.company || !career?.job) return m.name;
     return `${m.name} (${career.company}/${career.job})`;
   };
 
@@ -196,11 +188,11 @@ export default function MentorMenteeAssignment() {
           </p>
         ) : (
           <div className="flex flex-wrap gap-3">
-            {mentors.map((m) => {
-              const career = mentorCareerMap.get(m.challengeMentorId);
-              const color = mentorColorMap.get(m.challengeMentorId)!;
+            {mentors.map((m, i) => {
+              const career = m.userCareerList?.[0];
+              const color = getMentorColor(i);
               const assignedCount = attendanceList.filter(
-                (a) => a.challengeMentorId === m.challengeMentorId,
+                (a) => findMentor(mentors, a.challengeMentorId)?.challengeMentorId === m.challengeMentorId,
               ).length;
               return (
                 <div
@@ -210,7 +202,7 @@ export default function MentorMenteeAssignment() {
                   <p className={`text-xsmall14 font-semibold ${color.text}`}>
                     {m.name}
                   </p>
-                  {career && (
+                  {career?.company && career?.job && (
                     <p className={`mt-0.5 text-xxsmall12 ${color.text} opacity-70`}>
                       {career.company} / {career.job}
                     </p>
@@ -309,14 +301,16 @@ export default function MentorMenteeAssignment() {
                   <td className="px-3 py-2">
                     {a.mentorName && a.challengeMentorId ? (
                       (() => {
-                        const color = mentorColorMap.get(a.challengeMentorId);
-                        const career = mentorCareerMap.get(a.challengeMentorId);
+                        const matched = findMentor(mentors, a.challengeMentorId);
+                        const idx = matched ? mentors.indexOf(matched) : -1;
+                        const color = idx >= 0 ? getMentorColor(idx) : null;
+                        const career = matched?.userCareerList?.[0];
                         return (
                           <span
                             className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xxsmall12 font-medium ${color?.bg ?? 'bg-neutral-90'} ${color?.text ?? 'text-neutral-40'}`}
                           >
                             {a.mentorName}
-                            {career && (
+                            {career?.company && career?.job && (
                               <span className="ml-1 font-normal opacity-70">
                                 ({career.company}/{career.job})
                               </span>
