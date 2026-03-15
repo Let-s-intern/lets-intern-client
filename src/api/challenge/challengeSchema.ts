@@ -75,6 +75,58 @@ export const challengeMissionFeedbackAttendanceListSchema = z.object({
   ),
 });
 
+/** [멘토용] 피드백 현황 조회 */
+export const mentorFeedbackManagementSchema = z.object({
+  challengeList: z.array(
+    z.object({
+      challengeId: z.number(),
+      title: z.string().nullable(),
+      startDate: z.string().nullable(),
+      endDate: z.string().nullable(),
+      missionList: z.array(
+        z.object({
+          id: z.number(),
+          title: z.string().nullish(),
+          th: z.number(),
+          startDate: z.string(),
+          endDate: z.string(),
+          submittedCount: z.number().default(0),
+          notSubmittedCount: z.number().default(0),
+          waitingCount: z.number().default(0),
+          inProgressCount: z.number().default(0),
+          completedCount: z.number().default(0),
+        }),
+      ),
+    }),
+  ),
+});
+
+export type MentorFeedbackManagement = z.infer<
+  typeof mentorFeedbackManagementSchema
+>;
+
+/** [멘토용] 나의 멘티 제출 내역 (미제출자는 id가 null) */
+export const mentorMenteeAttendanceListSchema = z.object({
+  attendanceList: z.array(
+    z.object({
+      id: z.number().nullable(),
+      userId: z.number().nullable(),
+      mentorId: z.number().nullable(),
+      mentorName: z.string().nullable(),
+      name: z.string(),
+      major: z.string().optional().nullable(),
+      wishJob: z.string().optional().nullable(),
+      wishCompany: z.string().optional().nullable(),
+      wishIndustry: z.string().optional().nullable(),
+      link: z.string().optional().nullable(),
+      status: AttendanceStatusEnum.default('ABSENT'),
+      result: AttendanceResultEnum.default('WAITING'),
+      challengePricePlanType: ChallengePricePlanEnum.default('BASIC'),
+      feedbackStatus: FeedbackStatusEnum.nullable().default('WAITING'),
+    }),
+  ),
+});
+
 /** 챌린지 나의 기록장 미션 피드백 */
 export const challengeMissionFeedbackSchema = z.object({
   missionInfo: z.object({

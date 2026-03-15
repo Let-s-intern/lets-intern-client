@@ -164,6 +164,7 @@ export const useGetProgramAdminQuery = (params: {
   status?: ProgramStatus[];
   startDate?: string;
   endDate?: string;
+  isActive?: boolean;
   page: number | string;
   size: number | string;
   enabled?: boolean;

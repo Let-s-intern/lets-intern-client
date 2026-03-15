@@ -8,14 +8,9 @@ import {
   useChallengeMissionFeedbackAttendanceQuery,
   useChallengeMissionFeedbackListQuery,
 } from '@/api/challenge/challenge';
-import {
-  UseUserDetailAdminQueryKey,
-} from '@/api/user/user';
-import { userAdminDetailType } from '@/schema';
 import { usePatchAdminAttendance } from '@/api/attendance/attendance';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import axios from '@/utils/axios';
-import { useQueries, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
 
@@ -41,30 +36,20 @@ const useAttendanceParticipants = (challengeId: string) => {
   return { attendanceList: attendanceData?.attendanceList ?? [], isLoading };
 };
 
-/** 멘토 목록의 경력 정보를 유저 상세 API에서 일괄 조회 */
-const useMentorCareerMap = (mentors: { userId: number }[]) => {
-  const results = useQueries({
-    queries: mentors.map((m) => ({
-      queryKey: [UseUserDetailAdminQueryKey, m.userId],
-      queryFn: async () => {
-        const res = await axios.get(`/user/${m.userId}`);
-        return userAdminDetailType.parse(res.data.data);
-      },
-      staleTime: 1000 * 60 * 10,
-      refetchOnWindowFocus: false,
-    })),
-  });
-
+/** 멘토 목록의 경력 정보를 응답 데이터에서 직접 추출 */
+const useMentorCareerMap = (
+  mentors: { userId: number; userCareerList?: { company: string | null; job: string | null }[] }[],
+) => {
   return useMemo(() => {
     const map = new Map<number, { company: string; job: string }>();
-    mentors.forEach((m, i) => {
-      const career = results[i]?.data?.careerInfos?.[0];
+    for (const m of mentors) {
+      const career = m.userCareerList?.[0];
       if (career?.company && career?.job) {
         map.set(m.userId, { company: career.company, job: career.job });
       }
-    });
+    }
     return map;
-  }, [mentors, results]);
+  }, [mentors]);
 };
 
 export default function MentorMenteeAssignment() {
