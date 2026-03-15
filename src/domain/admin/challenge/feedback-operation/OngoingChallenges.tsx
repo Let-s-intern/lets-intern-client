@@ -41,22 +41,12 @@ const useOngoingChallengesQuery = () => {
       const res = await axios.get('/program/admin', {
         params: {
           type: 'CHALLENGE',
-          status: 'PROCEEDING,POST',
+          isActive: true,
           page: 1,
           size: 1000,
         },
       });
-      const parsed = ongoingChallengeSchema.parse(res.data.data);
-      const now = new Date();
-      now.setHours(0, 0, 0, 0);
-      return {
-        ...parsed,
-        programList: parsed.programList.filter((item) => {
-          const endDate = item.programInfo.endDate;
-          if (!endDate) return false;
-          return new Date(endDate) >= now;
-        }),
-      };
+      return ongoingChallengeSchema.parse(res.data.data);
     },
   });
 };

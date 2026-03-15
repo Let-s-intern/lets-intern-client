@@ -7,6 +7,15 @@ export const adminChallengeMentorListSchema = z.object({
       challengeMentorId: z.number(),
       userId: z.number(),
       name: z.string(),
+      userCareerList: z
+        .array(
+          z.object({
+            company: z.string().nullable(),
+            job: z.string().nullable(),
+          }),
+        )
+        .optional()
+        .default([]),
     }),
   ),
 });
