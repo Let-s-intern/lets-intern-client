@@ -102,7 +102,6 @@ const MenteeInfo = ({
         <div className="flex flex-1 flex-col justify-between">
           <div className="flex flex-col gap-3">
             {mentee.wishJob ? <InfoRow label="희망 직군" value={mentee.wishJob} /> : null}
-            {mentee.wishIndustry ? <InfoRow label="희망 산업" value={mentee.wishIndustry} /> : null}
             {mentee.wishCompany ? <InfoRow label="희망 기업" value={mentee.wishCompany} /> : null}
           </div>
           <div className="flex items-start gap-2">

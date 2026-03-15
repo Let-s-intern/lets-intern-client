@@ -54,7 +54,7 @@ interface MissionRow {
 interface AttendanceRow {
   id: number | string;
   userId?: number | null;
-  mentorId: number | null;
+  challengeMentorId: number | null;
   mentorName: string | null;
   missionTitle: string;
   missionRound: number | string;
@@ -62,7 +62,6 @@ interface AttendanceRow {
   major?: string | null;
   wishJob?: string | null;
   wishCompany?: string | null;
-  wishIndustry?: string | null;
   link?: string | null;
   feedbackPageLink: string;
   feedbackStatus: string;
@@ -134,9 +133,14 @@ function MentorCell({
 
   if (!isAdmin) return <span>{row.mentorName}</span>;
 
+  // challengeMentorId → userId 변환 (PATCH API는 userId를 필요로 함)
+  const currentMentor = mentorData?.mentorList.find(
+    (item) => item.challengeMentorId === row.challengeMentorId,
+  );
+
   return (
     <SelectFormControl<number>
-      value={row.mentorId ?? NO_MENTOR_ID}
+      value={currentMentor?.userId ?? NO_MENTOR_ID}
       onChange={handleChange}
       renderValue={(selected) => {
         const target = mentorData?.mentorList.find(
@@ -371,7 +375,7 @@ function FeedbackAttendanceList({
   const attendanceColumns: GridColDef<AttendanceRow>[] = useMemo(
     () => [
       {
-        field: 'mentorId',
+        field: 'challengeMentorId',
         headerName: '담당 멘토',
         width: 130,
         renderCell: (params: GridRenderCellParams<AttendanceRow>) => (
