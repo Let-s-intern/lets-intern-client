@@ -75,12 +75,12 @@ export const usePostAdminChallengeMentorMatch = () => {
     mutationFn: async (data: {
       challengeId: number;
       challengeMentorId: number;
-      applicationIdList: number[];
+      challengeApplicationIdList: number[];
     }) => {
-      const { challengeId, challengeMentorId, applicationIdList } = data;
+      const { challengeId, challengeMentorId, challengeApplicationIdList } = data;
       await axiosV2.post(
         `/admin/challenge/${challengeId}/mentor/${challengeMentorId}/match`,
-        { applicationIdList },
+        { challengeApplicationIdList },
       );
     },
     onError: (error) => {

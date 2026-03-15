@@ -76,27 +76,29 @@ export const challengeMissionFeedbackAttendanceListSchema = z.object({
 });
 
 /** [멘토용] 피드백 현황 조회 */
+const feedbackStatusCountSchema = z.object({
+  feedbackStatus: FeedbackStatusEnum,
+  count: z.number(),
+});
+
+const mentorFeedbackMissionSummarySchema = z.object({
+  missionId: z.number(),
+  missionTitle: z.string().nullable(),
+  th: z.number(),
+  submittedCount: z.number().default(0),
+  notSubmittedCount: z.number().default(0),
+  feedbackStatusCounts: z.array(feedbackStatusCountSchema).default([]),
+});
+
 export const mentorFeedbackManagementSchema = z.object({
   challengeList: z.array(
     z.object({
       challengeId: z.number(),
       title: z.string().nullable(),
+      shortDesc: z.string().nullable(),
       startDate: z.string().nullable(),
       endDate: z.string().nullable(),
-      missionList: z.array(
-        z.object({
-          id: z.number(),
-          title: z.string().nullish(),
-          th: z.number(),
-          startDate: z.string(),
-          endDate: z.string(),
-          submittedCount: z.number().default(0),
-          notSubmittedCount: z.number().default(0),
-          waitingCount: z.number().default(0),
-          inProgressCount: z.number().default(0),
-          completedCount: z.number().default(0),
-        }),
-      ),
+      feedbackMissions: z.array(mentorFeedbackMissionSummarySchema).default([]),
     }),
   ),
 });
@@ -111,18 +113,18 @@ export const mentorMenteeAttendanceListSchema = z.object({
     z.object({
       id: z.number().nullable(),
       userId: z.number().nullable(),
-      mentorId: z.number().nullable(),
+      challengeMentorId: z.number().nullable(),
       mentorName: z.string().nullable(),
       name: z.string(),
       major: z.string().optional().nullable(),
       wishJob: z.string().optional().nullable(),
       wishCompany: z.string().optional().nullable(),
-      wishIndustry: z.string().optional().nullable(),
       link: z.string().optional().nullable(),
       status: AttendanceStatusEnum.default('ABSENT'),
       result: AttendanceResultEnum.default('WAITING'),
       challengePricePlanType: ChallengePricePlanEnum.default('BASIC'),
       feedbackStatus: FeedbackStatusEnum.nullable().default('WAITING'),
+      optionCode: z.string().optional().nullable(),
     }),
   ),
 });
