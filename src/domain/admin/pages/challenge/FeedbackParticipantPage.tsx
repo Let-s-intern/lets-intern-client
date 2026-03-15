@@ -89,9 +89,10 @@ const MentorRenderCell = (
   if (!isAdmin) return <span>{params.row.mentorName}</span>;
 
   // challengeMentorId → userId 변환 (PATCH API는 userId를 필요로 함)
-  const currentMentor = data?.mentorList.find(
-    (item) => item.challengeMentorId === params.value,
-  );
+  const currentMentor = params.value != null
+    ? (data?.mentorList.find((item) => item.challengeMentorId === params.value)
+      ?? data?.mentorList.find((item) => item.userId === params.value))
+    : undefined;
 
   return (
     <SelectFormControl<number>

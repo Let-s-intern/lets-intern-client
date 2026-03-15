@@ -16,6 +16,7 @@ import {
   Pageable,
   ProgramClassification,
   ProgramStatus,
+  challengeApplicationsSchema,
   reviewTotalSchema,
   userChallengeMissionWithAttendance,
 } from '@/schema';
@@ -746,7 +747,7 @@ export const useChallengeApplicationsQuery = ({
           ...(isCanceled !== undefined && { isCanceled }),
         },
       });
-      return res.data.data;
+      return challengeApplicationsSchema.parse(res.data.data);
     },
     enabled,
   });
