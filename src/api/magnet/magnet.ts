@@ -9,6 +9,7 @@ import {
   MagnetDetailResponse,
   MagnetListResponse,
   MagnetType,
+  MypageMagnetListResponse,
   ProgramType,
   UserMagnetDetailResponse,
   UserMagnetListResponse,
@@ -16,6 +17,7 @@ import {
   baseQuestionListResponseSchema,
   magnetDetailResponseSchema,
   magnetListResponseSchema,
+  mypageMagnetListResponseSchema,
   userMagnetDetailResponseSchema,
   userMagnetListResponseSchema,
   userMagnetQuestionListResponseSchema,
@@ -26,6 +28,8 @@ const magnetDetailQueryKey = 'MagnetDetailQueryKey';
 const userMagnetListQueryKey = 'UserMagnetListQueryKey';
 const myMagnetListQueryKey = 'MyMagnetListQueryKey';
 const baseQuestionQueryKey = 'BaseQuestionQueryKey';
+const mypageMagnetListQueryKey = 'MypageMagnetListQueryKey';
+const userMagnetDetailQueryKey = 'UserMagnetDetailQueryKey';
 
 export interface MagnetListQueryParams {
   typeList?: MagnetTypeKey[];
@@ -165,8 +169,6 @@ export const usePatchMagnetMutation = ({
 };
 
 // 유저용 마그넷 상세 조회
-const userMagnetDetailQueryKey = 'UserMagnetDetailQueryKey';
-
 export const userMagnetDetailQueryOptions = (magnetId: number) => ({
   queryKey: [userMagnetDetailQueryKey, magnetId],
   queryFn: async (): Promise<UserMagnetDetailResponse> => {
@@ -288,12 +290,29 @@ export const usePostMagnetApplicationMutation = () => {
       magnetId: number;
       body: MagnetApplicationReqBody;
     }) => {
-      const res = await axios.post(
-        `/magnet-application/${magnetId}`,
-        body,
-      );
+      const res = await axios.post(`/magnet-application/${magnetId}`, body);
       return res.data;
     },
+  });
+};
+
+// 마이페이지 MY 마그넷 신청현황 조회
+export const useGetMypageMagnetListQuery = ({
+  typeList,
+  enabled,
+}: {
+  typeList?: MagnetType[];
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    queryKey: [mypageMagnetListQueryKey, typeList],
+    queryFn: async (): Promise<MypageMagnetListResponse> => {
+      const res = await axios.get('/magnet/mypage', {
+        params: { typeList },
+      });
+      return mypageMagnetListResponseSchema.parse(res.data.data);
+    },
+    enabled,
   });
 };
 

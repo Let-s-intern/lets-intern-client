@@ -164,6 +164,9 @@ const PaymentResultContent = () => {
     return `${base}?${searchParams.toString()}`;
   }, [params, searchParams]);
 
+  const hideCouponDiscount =
+    programApplicationData.programType === 'guidebook';
+
   return (
     <div className="w-full px-5 py-10" data-program-text={programTitle}>
       <div className="mx-auto max-w-5xl">
@@ -231,10 +234,12 @@ const PaymentResultContent = () => {
                         '원'
                       }
                     />
-                    <PaymentInfoRow
-                      title={`쿠폰할인`}
-                      content={`-${(programApplicationData.couponPrice === -1 ? (programApplicationData.price || 0) - (programApplicationData.discount || 0) : programApplicationData.couponPrice)?.toLocaleString()}원`}
-                    />
+                    {!hideCouponDiscount && (
+                      <PaymentInfoRow
+                        title={`쿠폰할인`}
+                        content={`-${(programApplicationData.couponPrice === -1 ? (programApplicationData.price || 0) - (programApplicationData.discount || 0) : programApplicationData.couponPrice)?.toLocaleString()}원`}
+                      />
+                    )}
                   </div>
                   <hr className="border-neutral-85" />
                   <div className="flex w-full flex-col items-center justify-center">

@@ -1,10 +1,27 @@
+import { useApplicationDownloadQuery } from '@/api/application';
 import { usePaymentDetailQuery } from '@/api/payment/payment';
 import dayjs from '@/lib/dayjs';
 import { useMemo } from 'react';
 
 /** 프로그램 결제 내역 로직 */
 export default function useCredit(paymentId?: string | number) {
-  const { data, isLoading, isError } = usePaymentDetailQuery(String(paymentId));
+  const {
+    data,
+    isLoading: isPaymentDetailLoading,
+    isError,
+  } = usePaymentDetailQuery(String(paymentId));
+
+  const isGuidebook = data?.programInfo.programType === 'GUIDEBOOK';
+
+  const { data: downloadStatus, isLoading: isDownloadStatusLoading } =
+    useApplicationDownloadQuery({
+      applicationId: data?.programInfo?.applicationId ?? null,
+      type: 'GUIDEBOOK',
+      enabled: !!isGuidebook,
+    });
+
+  const isLoading =
+    isPaymentDetailLoading || (isGuidebook && isDownloadStatusLoading);
 
   // 결제 취소 가능한 프로그램이면 true 아니면 false
   const isCancelable = useMemo(() => {
@@ -14,6 +31,15 @@ export default function useCredit(paymentId?: string | number) {
       data.programInfo.isCanceled
     ) {
       return false;
+    }
+
+    // 가이드북: 결제 후 7일 이내 + 다운로드 이력 없을 때만 환불 가능 (호출처에서 다운로드 조회 완료 후에만 본문 렌더)
+    if (data.programInfo.programType === 'GUIDEBOOK') {
+      const within7Days = dayjs().isBefore(
+        dayjs(data.paymentInfo?.createDate).add(7, 'day'),
+      );
+      const hasDownloaded = downloadStatus?.isDownloaded === true;
+      return within7Days && !hasDownloaded;
     }
 
     if (data.programInfo.programType === 'CHALLENGE') {
@@ -28,7 +54,7 @@ export default function useCredit(paymentId?: string | number) {
     } else {
       return dayjs().isBefore(dayjs(data.programInfo.startDate));
     }
-  }, [data]);
+  }, [data, downloadStatus]);
 
   // 결제 취소된 내역이면 true
   const isCanceled =
