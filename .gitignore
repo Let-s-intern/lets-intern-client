@@ -49,11 +49,4 @@ next-env.d.ts
 # Sentry Config File
 .env.sentry-build-plugin
 
-# 개인 폴더
-
-.history
-
-# Claude Code tasks (완료된 작업 기록)
-# done 폴더 내부는 기본적으로 모두 무시하되, task가 포함된 파일만 추적
-.claude/tasks/done/**/*
-!.claude/tasks/done/**/*task*
+.history/

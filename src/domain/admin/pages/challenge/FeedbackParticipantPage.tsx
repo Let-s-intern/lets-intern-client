@@ -31,8 +31,8 @@ const NO_MENTOR_ID = 0;
 
 export interface AttendanceRow {
   id: number | string;
-  userId?: number | null; // userId 추가
-  mentorId: number | null;
+  userId?: number | null;
+  challengeMentorId: number | null;
   mentorName: string | null;
   missionTitle: string;
   missionRound: number | string;
@@ -88,9 +88,15 @@ const MentorRenderCell = (
 
   if (!isAdmin) return <span>{params.row.mentorName}</span>;
 
+  // challengeMentorId → userId 변환 (PATCH API는 userId를 필요로 함)
+  const currentMentor = params.value != null
+    ? (data?.mentorList.find((item) => item.challengeMentorId === params.value)
+      ?? data?.mentorList.find((item) => item.userId === params.value))
+    : undefined;
+
   return (
     <SelectFormControl<number>
-      value={params.value}
+      value={currentMentor?.userId ?? NO_MENTOR_ID}
       onChange={handleChange}
       renderValue={(selected) => {
         const target = data?.mentorList.find(
@@ -216,7 +222,7 @@ export default function FeedbackParticipantPage() {
   const columns: GridColDef<AttendanceRow>[] = useMemo(
     () => [
       {
-        field: 'mentorId',
+        field: 'challengeMentorId',
         headerName: '담당 멘토',
         type: 'number',
         width: 120,

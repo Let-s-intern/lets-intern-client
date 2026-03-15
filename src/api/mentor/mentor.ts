@@ -69,17 +69,18 @@ export const useDeleteChallengeMentor = () => {
   });
 };
 
-/** POST 멘토-멘티 매칭 /api/v2/admin/challenge/{challengeId}/mentor/{challengeMentorId}/match/{applicationId} */
+/** POST 멘토-멘티 매칭 (다건) /api/v2/admin/challenge/{challengeId}/mentor/{challengeMentorId}/match */
 export const usePostAdminChallengeMentorMatch = () => {
   return useMutation({
     mutationFn: async (data: {
       challengeId: number;
       challengeMentorId: number;
-      applicationId: number;
+      challengeApplicationIdList: number[];
     }) => {
-      const { challengeId, challengeMentorId, applicationId } = data;
+      const { challengeId, challengeMentorId, challengeApplicationIdList } = data;
       await axiosV2.post(
-        `/admin/challenge/${challengeId}/mentor/${challengeMentorId}/match/${applicationId}`,
+        `/admin/challenge/${challengeId}/mentor/${challengeMentorId}/match`,
+        { challengeApplicationIdList },
       );
     },
     onError: (error) => {

@@ -35,12 +35,7 @@ export const pageInfo = z.object({
 export type PageInfo = z.infer<typeof pageInfo>;
 
 // 챌린지 가격 플랜
-export const ChallengePricePlanEnum = z.enum([
-  'BASIC',
-  'STANDARD',
-  'PREMIUM',
-  'LIGHT',
-]);
+export const ChallengePricePlanEnum = z.enum(['LIGHT', 'BASIC', 'STANDARD', 'PREMIUM']);
 export type ChallengePricePlan = z.infer<typeof ChallengePricePlanEnum>;
 
 /** GET /api/v1/challenge */
@@ -1517,6 +1512,9 @@ export const challengeApplicationsSchema = z
           programPrice: z.number().nullable().optional(),
           refundPrice: z.number().nullable().optional(),
           challengePricePlanType: ChallengePricePlanEnum.nullable().optional(),
+          originalPrice: z.number().nullable().optional(),
+          challengeMentorId: z.number().nullable().optional(),
+          challengeMentorName: z.string().nullable().optional(),
         }),
         optionPriceSum: z.number().nullable().optional(),
         optionDiscountPriceSum: z.number().nullable().optional(),

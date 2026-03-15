@@ -54,24 +54,93 @@ export const FeedbackStatusMapping: Record<FeedbackStatus, string> = {
   CONFIRMED: '확인완료',
 };
 
+/** 피드백 미션 출석 항목 (mentorId / challengeMentorId 양쪽 호환) */
+const feedbackAttendanceItemSchema = z
+  .object({
+    id: z.number(),
+    userId: z.number().nullable(),
+    // API가 challengeMentorId 또는 mentorId 중 하나를 반환
+    challengeMentorId: z.number().nullable().optional(),
+    mentorId: z.number().nullable().optional(),
+    mentorName: z.string().nullable(),
+    name: z.string(),
+    major: z.string().optional().nullable(),
+    wishJob: z.string().optional().nullable(),
+    wishCompany: z.string().optional().nullable(),
+    link: z.string().optional().nullable(),
+    status: AttendanceStatusEnum.default('ABSENT'),
+    result: AttendanceResultEnum.default('WAITING'),
+    challengePricePlanType: ChallengePricePlanEnum.default('BASIC'),
+    feedbackStatus: FeedbackStatusEnum.nullable().default('WAITING'),
+    optionCode: z.string().optional().nullable(),
+  })
+  .transform((data) => ({
+    ...data,
+    // challengeMentorId로 통일 (fallback: mentorId)
+    challengeMentorId: data.challengeMentorId ?? data.mentorId ?? null,
+  }));
+
 export const challengeMissionFeedbackAttendanceListSchema = z.object({
-  attendanceList: z.array(
+  attendanceList: z.array(feedbackAttendanceItemSchema),
+});
+
+/** [멘토용] 피드백 현황 조회 */
+const feedbackStatusCountSchema = z.object({
+  feedbackStatus: FeedbackStatusEnum,
+  count: z.number(),
+});
+
+const mentorFeedbackMissionSummarySchema = z.object({
+  missionId: z.number(),
+  missionTitle: z.string().nullable(),
+  th: z.number(),
+  submittedCount: z.number().default(0),
+  notSubmittedCount: z.number().default(0),
+  feedbackStatusCounts: z.array(feedbackStatusCountSchema).default([]),
+});
+
+export const mentorFeedbackManagementSchema = z.object({
+  challengeList: z.array(
     z.object({
-      id: z.number(),
-      userId: z.number().nullable(),
-      mentorId: z.number().nullable(),
-      mentorName: z.string().nullable(),
-      name: z.string(),
-      major: z.string().optional().nullable(),
-      wishJob: z.string().optional().nullable(),
-      wishCompany: z.string().optional().nullable(),
-      wishIndustry: z.string().optional().nullable(),
-      link: z.string().optional().nullable(),
-      status: AttendanceStatusEnum.default('ABSENT'), // 제출현황: 미제출
-      result: AttendanceResultEnum.default('WAITING'), // 확인여부: 확인중
-      challengePricePlanType: ChallengePricePlanEnum.default('BASIC'),
-      feedbackStatus: FeedbackStatusEnum.nullable().default('WAITING'), // 피드백 진행 상태: 진행전
+      challengeId: z.number(),
+      title: z.string().nullable(),
+      shortDesc: z.string().nullable(),
+      startDate: z.string().nullable(),
+      endDate: z.string().nullable(),
+      feedbackMissions: z.array(mentorFeedbackMissionSummarySchema).default([]),
     }),
+  ),
+});
+
+export type MentorFeedbackManagement = z.infer<
+  typeof mentorFeedbackManagementSchema
+>;
+
+/** [멘토용] 나의 멘티 제출 내역 (미제출자는 id가 null) */
+export const mentorMenteeAttendanceListSchema = z.object({
+  attendanceList: z.array(
+    z
+      .object({
+        id: z.number().nullable(),
+        userId: z.number().nullable(),
+        challengeMentorId: z.number().nullable().optional(),
+        mentorId: z.number().nullable().optional(),
+        mentorName: z.string().nullable(),
+        name: z.string(),
+        major: z.string().optional().nullable(),
+        wishJob: z.string().optional().nullable(),
+        wishCompany: z.string().optional().nullable(),
+        link: z.string().optional().nullable(),
+        status: AttendanceStatusEnum.default('ABSENT'),
+        result: AttendanceResultEnum.default('WAITING'),
+        challengePricePlanType: ChallengePricePlanEnum.default('BASIC'),
+        feedbackStatus: FeedbackStatusEnum.nullable().default('WAITING'),
+        optionCode: z.string().optional().nullable(),
+      })
+      .transform((data) => ({
+        ...data,
+        challengeMentorId: data.challengeMentorId ?? data.mentorId ?? null,
+      })),
   ),
 });
 
