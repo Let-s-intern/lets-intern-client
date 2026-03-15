@@ -10,8 +10,12 @@ export const adminChallengeMentorListSchema = z.object({
       userCareerList: z
         .array(
           z.object({
+            id: z.number().optional(),
             company: z.string().nullable(),
             job: z.string().nullable(),
+            field: z.string().nullable().optional(),
+            position: z.string().nullable().optional(),
+            department: z.string().nullable().optional(),
           }),
         )
         .optional()
