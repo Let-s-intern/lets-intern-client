@@ -59,18 +59,18 @@ export const challengeMissionFeedbackAttendanceListSchema = z.object({
     z.object({
       id: z.number(),
       userId: z.number().nullable(),
-      mentorId: z.number().nullable(),
+      challengeMentorId: z.number().nullable(),
       mentorName: z.string().nullable(),
       name: z.string(),
       major: z.string().optional().nullable(),
       wishJob: z.string().optional().nullable(),
       wishCompany: z.string().optional().nullable(),
-      wishIndustry: z.string().optional().nullable(),
       link: z.string().optional().nullable(),
       status: AttendanceStatusEnum.default('ABSENT'), // 제출현황: 미제출
       result: AttendanceResultEnum.default('WAITING'), // 확인여부: 확인중
       challengePricePlanType: ChallengePricePlanEnum.default('BASIC'),
       feedbackStatus: FeedbackStatusEnum.nullable().default('WAITING'), // 피드백 진행 상태: 진행전
+      optionCode: z.string().optional().nullable(),
     }),
   ),
 });
