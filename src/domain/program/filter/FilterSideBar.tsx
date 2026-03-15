@@ -1,3 +1,4 @@
+import ChevronDownIcon from '@/assets/icons/chevron-down.svg?react';
 import clsx from 'clsx';
 import React, { useState } from 'react';
 
@@ -42,12 +43,10 @@ const AccordionSection = ({
         className="flex w-full items-center justify-between py-3 lg:hidden"
       >
         <h2 className="text-1.125-semibold text-neutral-10">{title}</h2>
-        <img
-          className={clsx('w-5 transition-transform', {
+        <ChevronDownIcon
+          className={clsx('h-5 w-5 text-neutral-40 transition-transform', {
             'rotate-180': isOpen,
           })}
-          src="/icons/chevron-down.svg"
-          alt="토글"
         />
       </button>
       {/* 데스크탑: 항상 열림 */}
