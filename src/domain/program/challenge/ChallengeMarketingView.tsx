@@ -14,9 +14,9 @@ import MarketingApplicationStrategySection from './marketing-view/MarketingAppli
 import MarketingChallengeCalendar from './marketing-view/MarketingChallengeCalendar';
 import MarketingFAQSection from './marketing-view/MarketingFAQSection';
 import MarketingFeaturesSection from './marketing-view/MarketingFeaturesSection';
+import MarketingIntroReviewSection from './marketing-view/MarketingIntroReviewSection';
 import MarketingIntroSection from './marketing-view/MarketingIntroSection';
 import MarketingReviewsSection from './marketing-view/MarketingReviewsSection';
-
 interface Props {
   challenge: ChallengeIdPrimitive;
 }
@@ -37,7 +37,8 @@ const ChallengeMarketingView = ({ challenge }: Props) => {
           <ChallengeTabNavigation />
           <ChallengeIntroEditorContent challenge={challenge} />
           <MarketingIntroSection />
-          <MarketingFeaturesSection />
+          <MarketingIntroReviewSection />
+          <MarketingFeaturesSection content={content} />
           <MarketingDifferentiatorsSection lectures={content?.lectures} />
           <MarketingCurriculumSection content={content} />
           <MarketingChallengeCalendar
