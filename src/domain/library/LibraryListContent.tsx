@@ -22,9 +22,9 @@ const TABS = [
 ];
 
 const MAGNET_TYPE_LABEL: Record<MagnetType, string> = {
-  MATERIAL: '자료집',
   VOD: '무료 VOD',
   FREE_TEMPLATE: '무료 템플릿',
+  MATERIAL: '직무 자료집',
   LAUNCH_ALERT: '출시 알림',
   EVENT: '이벤트',
 };
