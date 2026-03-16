@@ -31,6 +31,9 @@ export default function LibraryArticle({ magnetInfo }: Props) {
     ? parseLexicalRoot(magnetInfo.previewContents)
     : null;
 
+  const isUpcoming =
+    !!magnetInfo.startDate && dayjs().isBefore(dayjs(magnetInfo.startDate));
+
   return (
     <article>
       {/* 썸네일 */}
@@ -85,13 +88,19 @@ export default function LibraryArticle({ magnetInfo }: Props) {
 
       {/* 콘텐츠 편집 1 (신청 전 공개) */}
       {previewRoot && (
-        <div className="w-full break-all text-xsmall16">
+        <div className="relative w-full break-all text-xsmall16">
           <LexicalContent node={previewRoot} />
+          {isUpcoming && (
+            <div className="pointer-events-none absolute bottom-0 left-0 h-32 w-full bg-gradient-to-t from-white to-transparent" />
+          )}
         </div>
       )}
 
       {/* 콘텐츠 편집 2 (신청 후 공개) — 클라이언트에서 인증 후 조회 */}
-      <LibraryMainContent magnetId={magnetInfo.magnetId} />
+      <LibraryMainContent
+        magnetId={magnetInfo.magnetId}
+        isUpcoming={isUpcoming}
+      />
     </article>
   );
 }

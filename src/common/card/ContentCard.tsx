@@ -84,11 +84,11 @@ export default function ContentCard({
           </h3>
 
           {(date || actionButton) && (
-            <div className="flex items-center justify-between py-2">
+            <div className="flex items-center justify-between">
               {date && (
                 <span
                   className={twMerge(
-                    'text-xxsmall12 text-neutral-40',
+                    'text-xxsmall12 text-primary',
                     dateClassName,
                   )}
                 >

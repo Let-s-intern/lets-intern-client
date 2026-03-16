@@ -14,12 +14,38 @@ const parseLexicalRoot = (json: string) => {
 
 interface Props {
   magnetId: number;
+  isUpcoming?: boolean;
 }
 
-export default function LibraryMainContent({ magnetId }: Props) {
+export default function LibraryMainContent({ magnetId, isUpcoming }: Props) {
   const { data, isLoading } = useGetUserMagnetDetailQuery(magnetId);
 
   if (isLoading) return null;
+
+  if (isUpcoming) {
+    return (
+      <div className="mt-8 flex flex-col items-center rounded-md bg-primary-10 px-5 py-10">
+        <div className="mb-5 flex h-9 w-9 items-center justify-center rounded-xs border border-primary-15 bg-white">
+          <img
+            src="/icons/magnet-folder.svg"
+            className="size-5"
+            alt="megaphone"
+          />
+        </div>
+        <div className="mb-6 text-center text-small18 font-light text-neutral-20">
+          해당 콘텐츠가 발행되면{' '}
+          <span className="font-semibold text-primary">제일 먼저</span>{' '}
+          알려드려요!
+        </div>
+        <Link
+          href={`/library/${magnetId}/apply?type=launch-alert`}
+          className="w-full max-w-lg rounded-xs bg-primary px-6 py-4 text-center text-xsmall16 text-white"
+        >
+          알림 신청하기
+        </Link>
+      </div>
+    );
+  }
 
   const mainContents = data?.magnetInfo.mainContents ?? null;
   const mainRoot = mainContents ? parseLexicalRoot(mainContents) : null;

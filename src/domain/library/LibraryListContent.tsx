@@ -8,10 +8,14 @@ import { MagnetType, UserMagnetListItem } from '@/api/magnet/magnetSchema';
 import ContentCard from '@/common/card/ContentCard';
 import FilterDropdown from '@/common/dropdown/FilterDropdown';
 import LoadingContainer from '@/common/loading/LoadingContainer';
+import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import MuiPagination from '@/domain/program/pagination/MuiPagination';
+import dayjs from '@/lib/dayjs';
 import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
 import { useMediaQuery } from '@mui/material';
+import { Bell, LockKeyhole } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useMemo, useState } from 'react';
 import LibraryTabNav from './ui/LibraryTabNav';
@@ -124,28 +128,65 @@ function Content() {
 }
 
 function LibraryGrid({ magnetList }: { magnetList: UserMagnetListItem[] }) {
+  const now = dayjs();
+
   return (
     <div className="grid grid-cols-1 gap-y-7 md:grid-cols-4 md:gap-x-5">
-      {magnetList.map((magnet) => (
-        <ContentCard
-          key={magnet.magnetId}
-          variant="library-card"
-          className="min-w-0"
-          href={`/library/${magnet.magnetId}/${toUrlSlug(magnet.title)}`}
-          thumbnail={
-            magnet.desktopThumbnail ? (
-              <Image
-                src={magnet.desktopThumbnail}
-                alt={magnet.title}
-                fill
-                className="object-cover"
-              />
-            ) : undefined
-          }
-          category={MAGNET_TYPE_LABEL[magnet.type] ?? magnet.type}
-          title={magnet.title}
-        />
-      ))}
+      {magnetList.map((magnet) => {
+        const isUpcoming =
+          !!magnet.startDate && now.isBefore(dayjs(magnet.startDate));
+        const slug = toUrlSlug(magnet.title);
+
+        return (
+          <ContentCard
+            key={magnet.magnetId}
+            variant="library-card"
+            className="min-w-0"
+            href={`/library/${magnet.magnetId}/${slug}`}
+            thumbnail={
+              <>
+                {magnet.desktopThumbnail ? (
+                  <Image
+                    src={magnet.desktopThumbnail}
+                    alt={magnet.title}
+                    fill
+                    className="object-cover"
+                  />
+                ) : undefined}
+                {isUpcoming && (
+                  <>
+                    <div className="pointer-events-none absolute inset-0 z-[1] bg-black/20" />
+                    <div className="pointer-events-none absolute right-2 top-2 z-10 flex items-center gap-1 self-center rounded-full bg-white/60 px-2 py-1">
+                      <LockKeyhole size={12} color="#4C4F56" />
+                      <span className="text-xxsmall12 font-medium text-neutral-30">
+                        공개예정
+                      </span>
+                    </div>
+                  </>
+                )}
+              </>
+            }
+            category={MAGNET_TYPE_LABEL[magnet.type] ?? magnet.type}
+            title={magnet.title}
+            date={
+              isUpcoming && magnet.startDate
+                ? `${dayjs(magnet.startDate).format(YYYY_MM_DD)} 공개 예정`
+                : undefined
+            }
+            actionButton={
+              isUpcoming ? (
+                <Link
+                  href={`/library/${magnet.magnetId}/apply?type=launch-alert`}
+                  className="relative z-10 flex items-center gap-1 rounded-xs bg-point p-2.5 text-xxsmall12 text-neutral-0"
+                >
+                  <Bell size={15} />
+                  알림 설정
+                </Link>
+              ) : undefined
+            }
+          />
+        );
+      })}
     </div>
   );
 }
