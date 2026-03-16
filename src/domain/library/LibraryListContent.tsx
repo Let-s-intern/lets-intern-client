@@ -11,9 +11,10 @@ import LoadingContainer from '@/common/loading/LoadingContainer';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import MuiPagination from '@/domain/program/pagination/MuiPagination';
 import dayjs from '@/lib/dayjs';
+import useAuthStore from '@/store/useAuthStore';
 import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
 import { useMediaQuery } from '@mui/material';
-import { Bell, LockKeyhole } from 'lucide-react';
+import { Bell, LockKeyhole, Search } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -59,6 +60,7 @@ function Content() {
   }, [searchParams]);
 
   const isMyTab = activeTab === 'my';
+  const { isLoggedIn } = useAuthStore();
 
   const contentsQuery = useGetUserMagnetListQuery({
     typeList,
@@ -69,7 +71,7 @@ function Content() {
   const myQuery = useGetMyMagnetListQuery({
     typeList,
     pageable: { page, size: pageSize },
-    enabled: isMyTab,
+    enabled: isMyTab && isLoggedIn,
   });
 
   const { data, isLoading } = isMyTab ? myQuery : contentsQuery;
@@ -105,6 +107,34 @@ function Content() {
         </div>
       ) : data && data.magnetList.length > 0 ? (
         <LibraryGrid magnetList={data.magnetList} />
+      ) : isMyTab ? (
+        <div className="flex flex-col items-center gap-4 py-20">
+          <img
+            src="/icons/no-library.svg"
+            alt="신청한 자료집 없음"
+            className="h-40 w-40"
+          />
+          <div className="flex flex-col items-center gap-2">
+            <p className="text-small16 font-semibold text-neutral-30 md:text-small20">
+              아직 신청한 자료집이 없어요
+            </p>
+            <p className="text-center text-xsmall16 text-neutral-40">
+              이력서, 자소서, 직무 정보 등
+              <br className="md:hidden" />
+              다양한 무료 자료집을 확인하고
+              <br />
+              필요한 자료를 받아보세요.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => handleTabChange('contents')}
+            className="mt-6 flex items-center gap-1.5 rounded-xxs border border-primary px-4 py-2.5 text-xsmall14 font-medium text-primary transition-colors hover:bg-primary/5"
+          >
+            <Search size={16} />
+            무료 자료집 둘러보기
+          </button>
+        </div>
       ) : (
         <div className="flex min-h-[200px] items-center justify-center text-neutral-40">
           등록된 콘텐츠가 없습니다.
