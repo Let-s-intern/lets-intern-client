@@ -58,13 +58,13 @@ function Content() {
 
   const contentsQuery = useGetUserMagnetListQuery({
     typeList,
-    pageable: { page: page - 1, size: pageSize },
+    pageable: { page, size: pageSize },
     enabled: !isMyTab,
   });
 
   const myQuery = useGetMyMagnetListQuery({
     typeList,
-    pageable: { page: page - 1, size: pageSize },
+    pageable: { page, size: pageSize },
     enabled: isMyTab,
   });
 
