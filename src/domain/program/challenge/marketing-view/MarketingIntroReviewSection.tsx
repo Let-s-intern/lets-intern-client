@@ -60,7 +60,11 @@ const IntroReviewTail = () => {
   );
 };
 
-function MarketingIntroSection() {
+interface MarketingIntroReviewSectionProps {
+  weekText: string;
+}
+
+function MarketingIntroSection({ weekText }: MarketingIntroReviewSectionProps) {
   return (
     <section className="relative flex flex-col items-center bg-[linear-gradient(0deg,#F0F4FF_0%,#E3E5FB_105.65%)] px-5 pb-10 pt-[114px] md:pb-20 md:pt-[114px]">
       <IntroReviewTail />
@@ -71,7 +75,7 @@ function MarketingIntroSection() {
           <div className="mx-auto mb-3 flex w-fit flex-col gap-1 leading-8 md:mb-2 md:flex-row md:items-center md:leading-none">
             <div className="flex flex-col items-center gap-1 md:flex-row md:gap-1.5">
               <span>
-                4주 후, 김렛커의 서류는 <br className="md:hidden" />
+                {weekText} 후, 김렛커의 서류는 <br className="md:hidden" />
               </span>
               <div className="flex items-center gap-1.5">
                 <span>완전히 </span>

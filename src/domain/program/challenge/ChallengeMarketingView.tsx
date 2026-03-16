@@ -26,6 +26,7 @@ const ChallengeMarketingView = ({ challenge }: Props) => {
     () => parseChallengeContent(challenge.desc),
     [challenge.desc],
   );
+  const weekText = content?.challengePoint?.weekText ?? '4주';
 
   return (
     <div className="w-full">
@@ -37,17 +38,20 @@ const ChallengeMarketingView = ({ challenge }: Props) => {
           <ChallengeTabNavigation />
           <ChallengeIntroEditorContent challenge={challenge} />
           <MarketingIntroSection />
-          <MarketingIntroReviewSection />
-          <MarketingFeaturesSection content={content} />
-          <MarketingDifferentiatorsSection lectures={content?.lectures} />
-          <MarketingCurriculumSection content={content} />
+          <MarketingIntroReviewSection weekText={weekText} />
+          <MarketingFeaturesSection weekText={weekText} />
+          <MarketingDifferentiatorsSection
+            lectures={content?.lectures}
+            weekText={weekText}
+          />
+          <MarketingCurriculumSection content={content} weekText={weekText} />
           <MarketingChallengeCalendar
             challenge={challenge}
             curriculumImage={content?.curriculumImage}
             lectureCount={content?.lectures?.length}
           />
-          <MarketingSummarySection />
-          <MarketingApplicationStrategySection />
+          <MarketingSummarySection weekText={weekText} />
+          <MarketingApplicationStrategySection weekText={weekText} />
           <MarketingPricingSection priceInfoList={challenge.priceInfo} />
           <MarketingReviewsSection challenge={challenge} />
           <MarketingFAQSection faqInfo={challenge.faqInfo} />

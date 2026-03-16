@@ -1,5 +1,4 @@
 import SectionSubHeader from '@/common/header/SectionSubHeader';
-import { ChallengeContent } from '@/types/interface';
 import React, { ReactNode } from 'react';
 import MainTitle from '../ui/MainTitle';
 
@@ -97,14 +96,12 @@ const Card = ({
 };
 
 interface MarketingFeaturesSectionProps {
-  content?: ChallengeContent | null;
+  weekText: string;
 }
 
 const MarketingFeaturesSection: React.FC<MarketingFeaturesSectionProps> = ({
-  content,
+  weekText,
 }) => {
-  const weekText = content?.challengePoint?.weekText ?? '4주';
-
   return (
     <section className="flex flex-col items-center bg-black pb-[70px] pt-[50px] text-center md:pb-28 md:pt-32">
       <div className="flex flex-col">

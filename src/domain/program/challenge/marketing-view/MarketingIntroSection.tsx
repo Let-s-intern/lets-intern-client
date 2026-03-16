@@ -48,7 +48,7 @@ function MarketingIntroSection() {
           </div>
           <span>
             렛츠커리어는 실제 마케팅 <br className="md:hidden" />
-            취준생들의 질문에서 출발했습니다
+            취준생들의 질문에서 출발했습니다.
           </span>
         </MainTitle>
       </div>
@@ -82,11 +82,10 @@ function MarketingIntroSection() {
         <div className="h-[70px] w-[72px] bg-[url('/images/user-with-laptop.svg')] bg-cover bg-center bg-no-repeat md:h-[136px] md:w-[146px]" />
         <div className="md:mt-17 mt-[58px] flex w-full items-center justify-center">
           <span className="text-center text-medium22 font-semibold tracking-[-0.096px] md:text-xlarge30">
-            &quot;마케팅 취준생 김렛커의 고민들,
-            <br className="md:hidden" />
+            &quot;마케팅 취준생 김렛커의 고민들, <br className="md:hidden" />
             <span className="relative inline-block">
               <span className="relative z-10">해결되었을까?&quot;</span>
-              <span className="pointer-events-none absolute bottom-0 left-[-2px] right-[-2px] h-5 bg-indigo-100 md:h-8" />
+              <span className="pointer-events-none absolute bottom-0 left-[-4px] right-[-4px] h-5 bg-indigo-100 md:h-8" />
             </span>
           </span>
         </div>

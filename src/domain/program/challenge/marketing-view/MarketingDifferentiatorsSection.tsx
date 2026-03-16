@@ -44,7 +44,9 @@ const Differentiator = ({
 
 const MarketingDifferentiatorsSection: React.FC<{
   lectures?: ChallengeContent['lectures'];
-}> = ({ lectures }) => {
+  weekText: string;
+}> = ({ lectures, weekText }) => {
+
   const differentiators = [
     {
       title: '마케팅 실무 역량 Class',
@@ -65,7 +67,7 @@ const MarketingDifferentiatorsSection: React.FC<{
       ),
       description: (
         <>
-          현직자와 직접 만나 질문하고, 피드백받고, 성장하는 4주 <br />
+          현직자와 직접 만나 질문하고, 피드백받고, 성장하는 {weekText} <br />
           마케터가 되기 위해 필요한 경험, 역량, 프로젝트가
           <br className="md:hidden" /> 무엇인지 현직자 시선에서 알아가세요.
         </>
@@ -75,11 +77,11 @@ const MarketingDifferentiatorsSection: React.FC<{
     {
       title: (
         <>
-          4주 안에 서류 완성, <br className="md:hidden" />단 하나의 코스로 끝
+          {weekText} 안에 서류 완성, <br className="md:hidden" />단 하나의
+          코스로 끝
         </>
       ),
-      description:
-        '4주 안에 경험 정리, 자소서, 포트폴리오까지\n마케팅 직무에 꼭 맞는 서류를 한 번에 완성하세요.',
+      description: `${weekText} 안에 경험 정리, 자소서, 포트폴리오까지\n마케팅 직무에 꼭 맞는 서류를 한 번에 완성하세요.`,
       visualExplanation: <PortfolioChange />,
     },
   ];

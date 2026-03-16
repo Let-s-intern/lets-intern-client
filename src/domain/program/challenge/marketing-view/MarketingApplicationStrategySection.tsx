@@ -154,7 +154,13 @@ const StrategyCard = ({
   );
 };
 
-const MarketingApplicationStrategySection: React.FC = () => {
+interface MarketingApplicationStrategySectionProps {
+  weekText: string;
+}
+
+const MarketingApplicationStrategySection: React.FC<
+  MarketingApplicationStrategySectionProps
+> = ({ weekText }) => {
   return (
     <section
       id="differentiators"
@@ -169,7 +175,7 @@ const MarketingApplicationStrategySection: React.FC = () => {
       </span>
       <MainTitle className="text-center">
         반복적인 서류 지원은 멈추고 <br />
-        나만의 무기를 완성하는 4주의 시간
+        나만의 무기를 완성하는 {weekText}의 시간
       </MainTitle>
       <div className="mt-12 flex w-full max-w-[1000px] flex-col gap-6">
         {strategyCards.map((card, idx) => (
