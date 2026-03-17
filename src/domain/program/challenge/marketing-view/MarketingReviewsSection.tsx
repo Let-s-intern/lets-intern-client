@@ -3,22 +3,30 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import MainTitle from '../ui/MainTitle';
-import TestimonialCarousel from './TestimonialCarousel';
+import BlogReviewsCarousel from './BlogReviewsCarousel';
 
 interface Props {
   challenge: ChallengeIdPrimitive;
 }
 
 const MarketingReviewsSection: React.FC<Props> = ({ challenge }) => {
-  const descParsed = (() => {
-    try {
-      return JSON.parse(challenge.desc || '{}');
-    } catch {
-      return {};
-    }
-  })();
-
-  const reviews = descParsed.challengeReview || [];
+  const BLOG_REVIEWS = [
+    {
+      writer: 'happyse*** / 첫 취업준비생',
+      image: '/images/marketing/blog-review1.png',
+      url: 'https://blog.naver.com/happyseed3/223959922519',
+    },
+    {
+      writer: 'ysa0*** / 첫 마케팅 취업준비생',
+      image: '/images/marketing/blog-review2.png',
+      url: 'https://blog.naver.com/ysa0419/223809174754',
+    },
+    {
+      writer: 'wldu*** / 취업준비 n년차 / 현직자 피드백',
+      image: '/images/marketing/blog-review3.png',
+      url: 'https://blog.naver.com/wldusyi/224109699677',
+    },
+  ];
 
   return (
     <section
@@ -28,15 +36,15 @@ const MarketingReviewsSection: React.FC<Props> = ({ challenge }) => {
       <div className="mb-3 text-small20 font-bold text-[#4A76FF]">
         찐 후기 모음.zip
       </div>
-      <MainTitle className="mb-10 text-center">
+      <MainTitle className="mb-[50px] text-center">
         {challenge.title} <br />
-        참여자들의 따끈따끈한 후기
+        이전 기수 참여자들의 블로그 후기
       </MainTitle>
       <div className="flex w-full items-center justify-center overflow-x-hidden">
-        <TestimonialCarousel reviews={reviews} />
+        <BlogReviewsCarousel reviews={BLOG_REVIEWS} />
       </div>
 
-      <div className="relative mt-16 flex flex-col items-center">
+      <div className="relative mt-20 flex flex-col items-center">
         <div className="absolute -top-6 z-10 rounded-xs bg-[#24C1F0] px-2.5 py-1.5 text-[12px] font-medium text-white md:-top-7 md:text-[14px]">
           자세한 수강생들의 후기가 궁금하다면?
         </div>
@@ -56,8 +64,8 @@ const MarketingReviewsSection: React.FC<Props> = ({ challenge }) => {
           <Link
             className="absolute inset-0"
             href={{
-              pathname: '/review/program',
-              query: { program: 'challenge_review', challenge: 'marketing' },
+              pathname: '/review/blog',
+              query: { type: 'challenge' },
             }}
           />
         </button>
