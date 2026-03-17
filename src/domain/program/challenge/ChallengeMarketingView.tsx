@@ -16,7 +16,9 @@ import MarketingFAQSection from './marketing-view/MarketingFAQSection';
 import MarketingFeaturesSection from './marketing-view/MarketingFeaturesSection';
 import MarketingIntroReviewSection from './marketing-view/MarketingIntroReviewSection';
 import MarketingIntroSection from './marketing-view/MarketingIntroSection';
+import MarketingPlanSection from './marketing-view/MarketingPlanSection';
 import MarketingReviewsSection from './marketing-view/MarketingReviewsSection';
+import MarketingTimelineSection from './marketing-view/MarketingTimelineSection';
 interface Props {
   challenge: ChallengeIdPrimitive;
 }
@@ -44,16 +46,19 @@ const ChallengeMarketingView = ({ challenge }: Props) => {
             lectures={content?.lectures}
             weekText={weekText}
           />
-          <MarketingCurriculumSection content={content} weekText={weekText} />
           <MarketingChallengeCalendar
             challenge={challenge}
             curriculumImage={content?.curriculumImage}
             lectureCount={content?.lectures?.length}
           />
-          <MarketingSummarySection weekText={weekText} />
+          <MarketingCurriculumSection content={content} weekText={weekText} />
+          <MarketingPlanSection />
+          <MarketingTimelineSection />
+          <MarketingReviewsSection challenge={challenge} />
           <MarketingApplicationStrategySection weekText={weekText} />
           <MarketingPricingSection priceInfoList={challenge.priceInfo} />
-          <MarketingReviewsSection challenge={challenge} />
+          <MarketingSummarySection weekText={weekText} />
+          {/* 특별혜택 */}
           <MarketingFAQSection faqInfo={challenge.faqInfo} />
           <ChallengeRecruitmentInfoSection challenge={challenge} />
         </>
