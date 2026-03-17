@@ -54,7 +54,7 @@ function MarketingPlanSection() {
                     <span key={line}>{line}</span>
                   ))}
                 </Box>
-                <div className="text-small16 rounded-md bg-primary-90 px-10 pb-4 pt-3 font-bold text-white md:pb-6 md:pt-5 md:text-small20">
+                <div className="text-small16 rounded-md bg-primary-90 px-5 pb-4 pt-3 font-bold text-white md:pb-6 md:pt-5 md:text-small20">
                   {item.plan}
                 </div>
               </div>

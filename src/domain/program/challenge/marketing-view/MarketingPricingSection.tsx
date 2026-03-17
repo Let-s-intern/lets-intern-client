@@ -30,7 +30,7 @@ const PriceBox = ({
       >
         {label}
       </div>
-      <div className="flex flex-col gap-6">
+      <div className="flex h-full flex-col gap-6">
         <span className="text-small20 font-bold">{title}</span>
         <div className="flex h-full flex-col gap-6 md:justify-between">
           <p className="whitespace-pre-line text-small18 font-medium text-neutral-0 md:mb-7 md:min-h-[78px]">
@@ -110,6 +110,10 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
     },
   ];
 
+  const containerMaxWidthClass = lightPriceInfo
+    ? 'max-w-[1200px]'
+    : 'max-w-[1000px]';
+
   return (
     <section
       id="pricing"
@@ -126,7 +130,9 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
         </MainTitle>
       </div>
 
-      <div className="flex w-full max-w-[1000px] flex-col items-stretch gap-3 px-3 max-md:max-w-full md:flex-row md:px-0">
+      <div
+        className={`flex w-full ${containerMaxWidthClass} flex-col items-stretch gap-3 px-3 max-md:max-w-full md:flex-row md:px-0`}
+      >
         {pricingList.map((item) =>
           // 해당 플랜이 없으면 null 반환
           item.originalPrice === 0 ? null : (

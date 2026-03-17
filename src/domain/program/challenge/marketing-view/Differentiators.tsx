@@ -69,9 +69,9 @@ type Professional = {
 
 const ProfessionalCard = ({ item }: { item: Professional }) => {
   return (
-    <div className="w-[115px] overflow-hidden rounded-xxs md:w-[280px] md:rounded-sm">
+    <div className="flex h-full w-full flex-col overflow-hidden rounded-xxs md:w-[280px] md:rounded-sm">
       <div
-        className="relative h-[59px] overflow-hidden bg-neutral-90 md:h-40"
+        className="relative h-[80px] overflow-hidden bg-neutral-90 md:h-40"
         role="presentation"
       >
         <img
@@ -80,16 +80,16 @@ const ProfessionalCard = ({ item }: { item: Professional }) => {
           alt=""
         />
         <img
-          className="absolute -bottom-0.5 right-1 h-full w-auto md:right-[20%]"
+          className="absolute -bottom-0.5 left-1/2 h-full w-auto -translate-x-1/2 md:left-auto md:right-[20%] md:translate-x-0"
           src={item.profile}
           alt=""
         />
       </div>
-      <div className="flex flex-col items-center justify-center bg-white px-2 py-3 md:p-5">
+      <div className="flex flex-1 flex-col items-center justify-center bg-white px-2 py-3 md:p-5">
         <div className="mb-0.5 rounded-[2px] bg-black px-1 py-0.5 text-center text-[0.5rem] font-medium text-white md:mb-2 md:rounded-xxs md:px-1.5 md:py-[3px] md:text-xsmall14">
           {item.week}
         </div>
-        <div className="text-base font-bold text-neutral-0 md:mb-1 md:text-medium24">
+        <div className="text-center text-xsmall14 font-bold text-neutral-0 md:mb-1 md:text-medium24">
           {item.company}
         </div>
         <div className="text-xxsmall12 text-neutral-0 md:text-small20">
