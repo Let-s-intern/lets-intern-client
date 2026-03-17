@@ -282,6 +282,7 @@ export interface MagnetApplicationReqBody {
 }
 
 export const usePostMagnetApplicationMutation = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
       magnetId,
@@ -292,6 +293,11 @@ export const usePostMagnetApplicationMutation = () => {
     }) => {
       const res = await axios.post(`/magnet-application/${magnetId}`, body);
       return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: [userMagnetDetailQueryKey],
+      });
     },
   });
 };
