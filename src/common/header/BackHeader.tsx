@@ -30,7 +30,9 @@ const BackHeader = ({
   };
 
   return (
-    <header className={twMerge('flex items-center gap-3 py-6', className)}>
+    <header
+      className={twMerge('flex items-center gap-4 py-5 md:py-6', className)}
+    >
       {!hideBack && (
         <Link href={to ?? '#'} onClick={handleBackClick}>
           <MdOutlineArrowBack size={'1.5rem'} />

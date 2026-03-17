@@ -1,7 +1,7 @@
 'use client';
 
 import { useProgramApplicationQuery } from '@/api/application';
-import { useProgramQuery } from '@/api/program';
+import { useLegacyProgramQuery } from '@/api/program';
 import BackHeader from '@/common/header/BackHeader';
 import FilledButton from '@/domain/program/program-detail/button/FilledButton';
 import NotiButton from '@/domain/program/program-detail/button/NotiButton';
@@ -17,11 +17,14 @@ import { ProgramType } from '@/types/common';
 import axios from '@/utils/axios';
 import { useMediaQuery } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
+import { Dayjs } from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { useEffect, useReducer, useState } from 'react';
 
+type LegacyProgramType = Exclude<ProgramType, 'guidebook'>;
+
 interface ProgramDetailProps {
-  programType: ProgramType;
+  programType: LegacyProgramType;
   programId: number;
 }
 
@@ -64,26 +67,33 @@ const ProgramDetailLegacyPage = ({
     },
   });
 
-  const program = useProgramQuery({ programId, type: programType });
+  const program = useLegacyProgramQuery({ programId, type: programType });
+  const programData = program?.query.data as {
+    desc?: string | null;
+    beginning: Dayjs | null;
+    deadline: Dayjs | null;
+    startDate: Dayjs | null;
+    endDate: Dayjs | null;
+  } | null;
 
   // 프로그램이 새로운 버전일 경우 기존 링크로 이동
   useEffect(() => {
-    if (programType && program?.query.data) {
-      if (isNewProgram({ desc: program.query.data.desc })) {
+    if (programType && programData) {
+      if (isNewProgram({ desc: programData.desc })) {
         router.push(`/program/${programType}/${programId}`);
       } else {
         setIsNew(false);
       }
     }
-  }, [program.query.data, programId, programType, router]);
+  }, [programData, programId, programType, router]);
 
   const programDate =
-    program && program.query.data
+    program && programData
       ? {
-          beginning: program.query.data.beginning,
-          deadline: program.query.data.deadline,
-          startDate: program.query.data.startDate,
-          endDate: program.query.data.endDate,
+          beginning: programData.beginning,
+          deadline: programData.deadline,
+          startDate: programData.startDate,
+          endDate: programData.endDate,
         }
       : null;
 

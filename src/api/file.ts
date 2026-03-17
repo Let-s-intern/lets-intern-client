@@ -10,6 +10,7 @@ export const fileType = z.enum([
   'CHALLENGE',
   'LIVE',
   'VOD',
+  'GUIDEBOOK',
   'BLOG',
   'REPORT',
   'BLOG_BANNER',

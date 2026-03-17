@@ -95,6 +95,10 @@ export default function useProgramCategoryNav() {
       children: '취준위키 VOD',
       href: '/program?type=VOD',
     },
+    {
+      children: '가이드북',
+      href: '/program?type=GUIDEBOOK',
+    },
   ];
 
   return programCategoryLists;

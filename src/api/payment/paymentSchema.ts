@@ -236,6 +236,7 @@ export const paymentDetailType = z.object({
     createDate: z.string().nullable().optional(),
   }),
   tossInfo: tossInfoType.nullable().optional(),
+  accessMethod: z.string().nullable().optional(),
 });
 
 export type PaymentDetailType = z.infer<typeof paymentDetailType>;

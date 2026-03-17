@@ -1,4 +1,4 @@
-export type ProgramType = 'challenge' | 'live';
+export type ProgramType = 'challenge' | 'live' | 'guidebook';
 
 export interface FilterItem {
   caption: string;
