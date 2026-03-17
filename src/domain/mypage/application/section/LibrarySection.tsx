@@ -32,7 +32,14 @@ const toLibraryCardConfig = (
     programTypeKey: 'MAGNET',
     thumbnail: magnet.desktopThumbnail ?? '',
     title: magnet.title,
-    description: magnet.description ?? '',
+    description: (() => {
+      try {
+        const parsed = JSON.parse(magnet.description ?? '');
+        return parsed.metaDescription ?? '';
+      } catch {
+        return magnet.description ?? '';
+      }
+    })(),
     isHtmlDescription: true,
     statusLabel: '신청완료',
     categoryLabel: MAGNET_TYPE_LABEL[magnet.type] ?? magnet.type,
