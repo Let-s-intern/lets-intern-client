@@ -1,7 +1,11 @@
+'use client';
+
+import channelService from '@/ChannelService';
 import SectionSubHeader from '@/common/header/SectionSubHeader';
 import Box from '@/domain/program/program-detail/Box';
 import { ReactNode } from 'react';
 import MainTitle from '../ui/MainTitle';
+
 function Badge({ children }: { children?: ReactNode }) {
   return (
     <span className="absolute -top-5 left-4 z-10 -rotate-12 rounded-md bg-primary-90 px-4 py-1 text-medium22 text-white md:left-6">
@@ -68,6 +72,7 @@ function MarketingPlanSection() {
           <button
             type="button"
             className="flex items-center justify-center gap-1 rounded-xxs border border-primary bg-white px-3 py-2 text-xsmall14 text-primary"
+            onClick={() => channelService.showMessenger()}
           >
             <img src="/icons/kakao-circle.svg" alt="edit-icon" />
             렛츠커리어 채널톡 문의

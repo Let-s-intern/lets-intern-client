@@ -164,7 +164,7 @@ const MarketingApplicationStrategySection: React.FC<
   return (
     <section
       id="differentiators"
-      className="flex scroll-mt-[56px] flex-col items-center bg-static-100 px-5 py-[60px] md:scroll-mt-[60px] md:px-0 md:py-[100px]"
+      className="flex scroll-mt-[44px] flex-col items-center bg-static-100 px-5 py-[60px] md:scroll-mt-[60px] md:px-0 md:py-[100px]"
     >
       <SectionHeader className="mb-6 font-semibold text-neutral-45 md:mb-12">
         차별점
