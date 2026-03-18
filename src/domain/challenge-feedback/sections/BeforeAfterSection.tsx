@@ -11,8 +11,9 @@ const BeforeAfterSection = memo(function BeforeAfterSection({
 }: BeforeAfterSectionProps) {
   return (
     <section className="flex w-full flex-col items-center justify-center bg-[#13112a] py-12 md:py-16">
-      <h2 className="mb-10 text-center text-xl font-bold text-[#B49AFF] md:text-2xl">
-        열 번의 수정보다 한 번의 확실한 피드백
+      <h2 className="mb-10 text-center text-xl font-bold text-white md:text-2xl">
+        열 번의 수정보다{' '}
+        <span className="text-[#B49AFF]">한 번의 확실한 피드백</span>
       </h2>
       <div className="mx-auto flex max-w-[1200px] flex-col gap-8 px-6 md:flex-row md:gap-12">
         <BeforeAfterCard

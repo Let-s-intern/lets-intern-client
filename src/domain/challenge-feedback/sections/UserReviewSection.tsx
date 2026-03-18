@@ -6,8 +6,9 @@ const UserReviewSection = memo(function UserReviewSection() {
   return (
     <section className="flex w-full flex-col items-center justify-center bg-[#0f0d2e] py-12 md:py-16">
       <div className="mx-auto max-w-[1000px] px-6">
-        <h2 className="mb-10 text-center text-xl font-bold text-[#B49AFF] md:mb-14 md:text-2xl">
-          수강생의 피드백 솔직 후기
+        <h2 className="mb-10 text-center text-xl font-bold text-white md:mb-14 md:text-2xl">
+          수강생의 피드백{' '}
+          <span className="text-[#B49AFF]">솔직 후기</span>
         </h2>
 
         {/* 2x2 그리드 배치 */}
