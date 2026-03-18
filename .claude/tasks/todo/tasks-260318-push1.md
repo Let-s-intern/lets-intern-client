@@ -35,22 +35,22 @@
 
 ## 작업
 
-- [ ] 1.0 프로젝트 세팅 및 기본 구조 생성
-    - [ ] 1.1 타입 정의 (`src/domain/challenge-feedback/types.ts`)
+- [x] 1.0 프로젝트 세팅 및 기본 구조 생성
+    - [x] 1.1 타입 정의 (`src/domain/challenge-feedback/types.ts`)
         - ChallengeData, FeedbackOption, Mentor, BeforeAfter, LiveMentoring, SuccessStory, UserReview 타입
         - Mentor: { nickname, company, role, profileImage }
         - ChallengeData: { mentors, mentorDisplayCount?, mentorSectionTitle }
         - FeedbackOption: { tier(STANDARD|PREMIUM), feedbackCount, feedbackDetails[], method, mentorInfo }
         - [ ] 1.1.T1 테스트 코드 작성
         - [ ] 1.1.T2 테스트 실행 및 검증
-    - [ ] 1.2 에셋 파일 배치
+    - [x] 1.2 에셋 파일 배치
         - `.claude/tasks/asset/` → `public/images/challenge-feedback/` 복사
         - `before-after/` — before.png, after.png (마케팅 비포에프터)
         - `mentors/` — mentor-1.png ~ mentor-4.png (영문 rename)
         - `reviews/` — review-1.png ~ review-4.png (영문 rename)
         - [ ] 1.2.T1 이미지 파일 존재 확인 스크립트
         - [ ] 1.2.T2 테스트 실행 및 검증
-    - [ ] 1.3 정적 데이터 파일 (`src/domain/challenge-feedback/data/challenge-feedback-data.ts`)
+    - [x] 1.3 정적 데이터 파일 (`src/domain/challenge-feedback/data/challenge-feedback-data.ts`)
         - **이 파일 하나에서 모든 콘텐츠 수정 가능하게 설계**
         - 7개 챌린지 전체 실제 데이터 (`.claude/tasks/data.md` 참조):
           - 기필코 경험정리: STANDARD 3회(서면), 멘토(닉/삼성계열사)
@@ -66,18 +66,18 @@
         - 공통: 유저 후기 4개, 취업 성공 사례, 안내 문구
         - [ ] 1.3.T1 테스트 코드 작성
         - [ ] 1.3.T2 테스트 실행 및 검증
-    - [ ] 1.4 라우트 엔트리 (`src/app/(user)/challenge/feedback-mentoring/page.tsx`)
+    - [x] 1.4 라우트 엔트리 (`src/app/(user)/challenge/feedback-mentoring/page.tsx`)
         - URL 쿼리 파라미터 `?challenge=xxx` 처리
         - ChallengeFeedbackScreen import
         - generateMetadata로 SEO 메타데이터 설정
         - [ ] 1.4.T1 테스트 코드 작성
         - [ ] 1.4.T2 테스트 실행 및 검증
-    - [ ] 1.5 메인 화면 컨테이너 (`src/domain/challenge-feedback/ChallengeFeedbackScreen.tsx`)
+    - [x] 1.5 메인 화면 컨테이너 (`src/domain/challenge-feedback/ChallengeFeedbackScreen.tsx`)
         - 선택된 챌린지 상태 관리 (URL 쿼리 기반)
         - 각 섹션 조건부 렌더링 뼈대 (placeholder div)
         - 섹션 간 간격/마진 통일 레이아웃 (py-20, max-w-[1200px])
         - [ ] 1.5.T1 테스트 코드 작성
         - [ ] 1.5.T2 테스트 실행 및 검증
-    - [ ] 1.6 린트 및 타입 체크
+    - [x] 1.6 린트 및 타입 체크
         - ESLint + Prettier 전체 실행
         - `npx tsc --noEmit` 통과 확인

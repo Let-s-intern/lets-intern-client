@@ -2,7 +2,7 @@
 
 > PRD: `.claude/tasks/prd-260318.md`
 > Push 범위: UserReviewSection + SuccessStoriesSection + ApplyCtaSection (공통 섹션 + CTA)
-> 상태: 🔲 진행 중
+> 상태: ✅ 완료
 
 ---
 
@@ -34,22 +34,22 @@
 
 ## 작업
 
-- [ ] 5.0 공통 섹션 + CTA 구현
-    - [ ] 5.1 ReviewCard 컴포넌트
+- [x] 5.0 공통 섹션 + CTA 구현
+    - [x] 5.1 ReviewCard 컴포넌트
         - props: review (이미지, 텍스트)
         - 캡쳐 이미지 기반 후기 카드
         - blur 효과용 className prop 지원
         - 약간 기울어진 배치 가능 (rotate)
         - [ ] 5.1.T1 테스트 코드 작성
         - [ ] 5.1.T2 테스트 실행 및 검증
-    - [ ] 5.2 UserReviewSection (공통)
+    - [x] 5.2 UserReviewSection (공통)
         - 타이틀: "수강생의 피드백 솔직 후기"
         - 전면 2~3개 카드 선명, 뒤쪽 blur 처리
         - 카드 약간 기울여서 캐주얼 배치
         - 어두운 배경
         - [ ] 5.2.T1 테스트 코드 작성
         - [ ] 5.2.T2 테스트 실행 및 검증
-    - [ ] 5.3 SuccessStoriesSection (공통)
+    - [x] 5.3 SuccessStoriesSection (공통)
         - 타이틀: "렛츠커리어와 함께 취뽀한 주인공들을 소개합니다"
         - Swiper 롤링 카드 (Autoplay, 무한루프)
         - 클래스 참고: `swiper-horizontal slide-per-auto slide-rolling`
@@ -59,15 +59,15 @@
         - 반응형: 모바일/데스크톱 카드 크기 조정
         - [ ] 5.3.T1 테스트 코드 작성
         - [ ] 5.3.T2 테스트 실행 및 검증
-    - [ ] 5.4 ApplyCtaSection
+    - [x] 5.4 ApplyCtaSection
         - 버튼: "[챌린지명] 신청하러 가기"
         - 선택된 챌린지에 따라 텍스트 + 이동 경로 동적 변경
         - 큰 CTA 버튼 스타일 (중앙 정렬)
         - [ ] 5.4.T1 테스트 코드 작성
         - [ ] 5.4.T2 테스트 실행 및 검증
-    - [ ] 5.5 ChallengeFeedbackScreen 최종 연결
+    - [x] 5.5 ChallengeFeedbackScreen 최종 연결
         - UserReviewSection, SuccessStoriesSection, ApplyCtaSection 추가
         - 전체 섹션 순서 확인 (01~09)
-    - [ ] 5.6 린트 및 타입 체크
+    - [x] 5.6 린트 및 타입 체크
         - ESLint + Prettier 실행
         - `npx tsc --noEmit` 통과 확인

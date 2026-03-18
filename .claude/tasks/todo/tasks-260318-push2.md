@@ -2,7 +2,7 @@
 
 > PRD: `.claude/tasks/prd-260318.md`
 > Push 범위: HeroSection (별 애니메이션) + ChallengeMenuSection (챌린지 선택 메뉴)
-> 상태: 🔲 진행 중
+> 상태: ✅ 완료
 
 ---
 
@@ -34,14 +34,14 @@
 
 ## 작업
 
-- [ ] 2.0 HeroSection + ChallengeMenuSection 구현
-    - [ ] 2.1 StarAnimation 컴포넌트
+- [x] 2.0 HeroSection + ChallengeMenuSection 구현
+    - [x] 2.1 StarAnimation 컴포넌트
         - CSS keyframes: opacity(0.3↔1.0) + scale 변화
         - 랜덤 위치/크기/딜레이로 별(✦, ✧) 여러 개 배치
         - Tailwind + inline style 조합
         - [ ] 2.1.T1 테스트 코드 작성
         - [ ] 2.1.T2 테스트 실행 및 검증
-    - [ ] 2.2 HeroSection
+    - [x] 2.2 HeroSection
         - 어두운 남색/보라색 그라데이션 배경
         - 소제목: "렛츠커리어 현직자 멘토단과 함께하는"
         - 메인 카피: "혼자 준비하는 취업은 이제 그만, 현직자와 함께"
@@ -51,13 +51,13 @@
         - 반응형: 모바일/데스크톱 텍스트 크기 조정
         - [ ] 2.2.T1 테스트 코드 작성
         - [ ] 2.2.T2 테스트 실행 및 검증
-    - [ ] 2.3 ChallengeMenuItem 컴포넌트
+    - [x] 2.3 ChallengeMenuItem 컴포넌트
         - props: label, isActive, onClick
         - 호버: 텍스트 색상 변경 + 밑줄 (transition)
         - 클릭(활성): 보라색 하이라이트
         - [ ] 2.3.T1 테스트 코드 작성
         - [ ] 2.3.T2 테스트 실행 및 검증
-    - [ ] 2.4 ChallengeMenuSection
+    - [x] 2.4 ChallengeMenuSection
         - 타이틀: "어떤 챌린지의 피드백이 궁금하신가요?"
         - 7개 메뉴 2줄 flex 배치 (데스크톱)
         - 모바일: wrap 또는 가로 스크롤
@@ -65,9 +65,9 @@
         - 어두운 배경
         - [ ] 2.4.T1 테스트 코드 작성
         - [ ] 2.4.T2 테스트 실행 및 검증
-    - [ ] 2.5 ChallengeFeedbackScreen에 연결
+    - [x] 2.5 ChallengeFeedbackScreen에 연결
         - HeroSection, ChallengeMenuSection import 및 렌더링
         - 선택된 챌린지 state를 ChallengeMenuSection에 전달
-    - [ ] 2.6 린트 및 타입 체크
+    - [x] 2.6 린트 및 타입 체크
         - ESLint + Prettier 실행
         - `npx tsc --noEmit` 통과 확인
