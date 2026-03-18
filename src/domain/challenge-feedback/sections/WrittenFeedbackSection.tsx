@@ -44,7 +44,7 @@ const WrittenFeedbackSection = memo(function WrittenFeedbackSection({
             서면 피드백, 이렇게{' '}
             <span className="text-[#B49AFF]">꼼꼼하게</span> 봐드려요
           </h2>
-          <p className="mb-10 mt-4 text-center text-sm text-gray-300 md:text-base">
+          <p className="mb-10 mt-4 text-center text-base text-gray-300 md:text-lg">
             실제 피드백 예시를 확인해 보세요
           </p>
 

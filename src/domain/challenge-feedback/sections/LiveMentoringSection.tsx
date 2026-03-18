@@ -6,6 +6,29 @@ interface LiveMentoringSectionProps {
   liveDetails: FeedbackDetailWithTiers[];
 }
 
+function VideoEmbed({ videoUrl }: { videoUrl: string }) {
+  return videoUrl ? (
+    <div className="aspect-video w-full overflow-hidden rounded-lg">
+      <iframe
+        src={videoUrl}
+        title="1:1 LIVE 피드백 예시"
+        className="h-full w-full"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      />
+    </div>
+  ) : (
+    <div className="flex aspect-video w-full items-center justify-center rounded-lg bg-black/50">
+      <div className="text-center">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white/10">
+          <span className="text-2xl text-white/60">▶</span>
+        </div>
+        <p className="mt-3 text-sm text-gray-500">영상이 준비 중입니다</p>
+      </div>
+    </div>
+  );
+}
+
 const LiveMentoringSection = memo(function LiveMentoringSection({
   liveMentoring,
   liveDetails,
@@ -17,48 +40,19 @@ const LiveMentoringSection = memo(function LiveMentoringSection({
           <span className="text-[#B49AFF]">1:1 LIVE</span> 피드백, 영상으로
           미리 확인하세요!
         </h2>
-        <p className="mt-4 text-center text-sm text-gray-300 md:text-base">
+        <p className="mt-4 mb-10 text-center text-base text-gray-300 md:text-lg">
           {liveMentoring.subCopy1}
         </p>
       </div>
 
-      {/* 영상 임베딩 */}
-      <div className="mx-auto mt-8 w-full max-w-[900px] px-6">
-        {liveMentoring.videoUrl ? (
-          <div className="aspect-video w-full overflow-hidden rounded-lg">
-            <iframe
-              src={liveMentoring.videoUrl}
-              title="1:1 LIVE 피드백 예시"
-              className="h-full w-full"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
-        ) : (
-          <div className="flex aspect-video w-full items-center justify-center rounded-lg bg-black/50">
-            <div className="text-center">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white/10">
-                <span className="text-2xl text-white/60">▶</span>
-              </div>
-              <p className="mt-3 text-sm text-gray-500">
-                영상이 준비 중입니다
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {liveDetails.length > 0 && (
-        <div className="mx-auto mt-8 flex max-w-[900px] flex-wrap justify-center gap-3 px-6">
+      <div className="mx-auto w-full max-w-[1200px] px-6">
+        <div className="flex flex-col gap-10">
           {liveDetails.map((d) => (
-            <div
-              key={d.round}
-              className="rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-center"
-            >
-              <p className="text-sm font-semibold text-white">
-                {d.round}: {d.description}
-              </p>
-              <div className="mt-1 flex justify-center gap-1">
+            <div key={d.round}>
+              <div className="mb-4 flex items-center justify-center gap-2">
+                <h3 className="text-base font-semibold text-white md:text-lg">
+                  {d.round}: {d.description}
+                </h3>
                 {d.tiers.map((tier) => (
                   <span
                     key={tier}
@@ -68,12 +62,13 @@ const LiveMentoringSection = memo(function LiveMentoringSection({
                   </span>
                 ))}
               </div>
+              <VideoEmbed videoUrl={liveMentoring.videoUrl} />
             </div>
           ))}
         </div>
-      )}
+      </div>
 
-      <p className="mt-8 text-center text-sm text-gray-300 md:text-base">
+      <p className="mt-8 text-center text-base text-gray-300 md:text-lg">
         {liveMentoring.subCopy2}
       </p>
     </section>
