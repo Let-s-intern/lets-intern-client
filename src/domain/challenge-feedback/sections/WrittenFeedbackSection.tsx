@@ -51,7 +51,7 @@ const WrittenFeedbackSection = memo(function WrittenFeedbackSection({
           <div className="flex flex-col gap-10">
             {writtenDetails.map((detail) => (
               <div key={detail.round}>
-                <div className="mb-4 flex items-center gap-2">
+                <div className="mb-4 flex items-center justify-center gap-2">
                   <h3 className="text-base font-semibold text-white md:text-lg">
                     {detail.round}: {detail.description}
                   </h3>
@@ -65,7 +65,7 @@ const WrittenFeedbackSection = memo(function WrittenFeedbackSection({
                   ))}
                 </div>
 
-                <div className="scrollbar-hide flex gap-4 overflow-x-auto pb-2">
+                <div className="scrollbar-hide flex justify-center gap-4 overflow-x-auto pb-2">
                   {detail.exampleImages.map((src, i) => {
                     const alt = `${detail.round} ${detail.description} 피드백 예시 ${i + 1}`;
                     return (
