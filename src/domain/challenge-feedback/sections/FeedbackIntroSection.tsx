@@ -17,8 +17,8 @@ const FeedbackIntroSection = memo(function FeedbackIntroSection({
         {/* 모바일: 세로 스택 / 데스크톱: 좌 sticky + 우 스크롤 */}
         <div className="flex flex-col gap-10 lg:flex-row lg:items-start lg:gap-12">
           {/* 좌측: 리포트 카드 — sticky */}
-          <div className="lg:sticky lg:top-24 lg:w-5/12 lg:self-start">
-            <div className="mx-auto w-full max-w-[480px] rounded-lg border border-[#7C6BFF]/30 bg-gradient-to-br from-[#1a1145] to-[#0f0d2e] p-8 text-center shadow-[0_0_40px_rgba(124,107,255,0.15)]">
+          <div className="lg:sticky lg:top-24 lg:w-1/2 lg:self-start">
+            <div className="w-full rounded-lg border border-[#7C6BFF]/30 bg-gradient-to-br from-[#1a1145] to-[#0f0d2e] p-8 text-center shadow-[0_0_40px_rgba(124,107,255,0.15)]">
               <p className="text-xs text-gray-400">
                 서류완성의 시작과 끝은 진단에서부터
               </p>
@@ -42,7 +42,7 @@ const FeedbackIntroSection = memo(function FeedbackIntroSection({
           </div>
 
           {/* 우측: STANDARD / PREMIUM 옵션 카드 */}
-          <div className="flex flex-col gap-6 lg:w-7/12">
+          <div className="flex flex-col gap-6 lg:w-1/2">
             {challenge.feedbackOptions.map((option) => (
               <FeedbackOptionCard key={option.tier} option={option} />
             ))}

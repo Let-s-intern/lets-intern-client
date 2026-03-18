@@ -89,10 +89,10 @@ const ChallengeFeedbackScreen = ({
 
         {/* 08. 취업 성공 사례 — 공통 */}
         <SuccessStoriesSection />
-
-        {/* 09. CTA — 신청하기 */}
-        <ApplyCtaSection challenge={selectedChallenge} />
       </div>
+
+      {/* 플로팅 CTA */}
+      <ApplyCtaSection challenge={selectedChallenge} />
     </div>
   );
 };
