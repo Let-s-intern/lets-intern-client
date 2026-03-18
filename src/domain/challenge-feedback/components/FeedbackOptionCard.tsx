@@ -9,8 +9,18 @@ const FeedbackOptionCard = memo(function FeedbackOptionCard({
   option,
 }: FeedbackOptionCardProps) {
   return (
-    <div className="rounded-lg border border-white/10 bg-white/5 p-5 md:p-6">
-      <h3 className="mb-4 text-center text-lg font-bold text-white md:text-xl">
+    <div
+      className={`rounded-lg border p-5 md:p-6 ${
+        option.tier === 'PREMIUM'
+          ? 'border-[#7C6BFF]/50 bg-gradient-to-b from-[#7C6BFF]/10 to-transparent shadow-[0_0_24px_rgba(124,107,255,0.2)]'
+          : 'border-white/10 bg-white/5'
+      }`}
+    >
+      <h3
+        className={`mb-4 text-center text-lg font-bold md:text-xl ${
+          option.tier === 'PREMIUM' ? 'text-[#B49AFF]' : 'text-white'
+        }`}
+      >
         {option.tier}
       </h3>
 

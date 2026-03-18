@@ -38,7 +38,7 @@ const WrittenFeedbackSection = memo(function WrittenFeedbackSection({
 
   return (
     <>
-      <section className="flex w-full flex-col items-center bg-[#13112a] py-12 md:py-16">
+      <section className="flex w-full flex-col items-center bg-[#13112a] py-16 md:py-24">
         <div className="w-full max-w-[1200px] px-6">
           <h2 className="text-center text-xl font-bold text-white md:text-2xl">
             서면 피드백, 이렇게{' '}
@@ -58,7 +58,11 @@ const WrittenFeedbackSection = memo(function WrittenFeedbackSection({
                   {detail.tiers.map((tier) => (
                     <span
                       key={tier}
-                      className="rounded bg-white/10 px-2 py-0.5 text-xs font-medium text-gray-400"
+                      className={`rounded px-2 py-0.5 text-xs font-medium ${
+                        tier === 'PREMIUM'
+                          ? 'bg-[#7C6BFF]/15 text-[#B49AFF]'
+                          : 'bg-white/10 text-gray-300'
+                      }`}
                     >
                       {tier}
                     </span>
