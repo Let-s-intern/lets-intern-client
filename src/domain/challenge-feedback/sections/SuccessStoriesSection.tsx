@@ -93,7 +93,7 @@ const LogoPlayItem = ({ theme, img, company, job, name, pass }: LogoPlayItemProp
 
 const SuccessStoriesSection = memo(function SuccessStoriesSection() {
   return (
-    <section className="flex w-full flex-col items-center justify-center overflow-hidden bg-[#0C0A1D] py-20 md:min-h-[50vh] md:py-28">
+    <section className="flex w-full flex-col items-center justify-center overflow-hidden bg-[#0C0A1D] py-12 md:py-16">
       <div className="mx-auto max-w-[1200px] px-6">
         <h2 className="mb-10 text-center text-xl font-bold text-[#B49AFF] md:mb-14 md:text-2xl">
           렛츠커리어와 함께 취뽀한 주인공들을 소개합니다

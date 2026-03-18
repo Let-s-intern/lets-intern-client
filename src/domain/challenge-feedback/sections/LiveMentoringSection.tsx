@@ -9,7 +9,7 @@ const LiveMentoringSection = memo(function LiveMentoringSection({
   liveMentoring,
 }: LiveMentoringSectionProps) {
   return (
-    <section className="flex w-full min-h-screen flex-col items-center justify-center bg-[#0C0A1D] py-20 md:py-28">
+    <section className="flex w-full flex-col items-center justify-center bg-[#0C0A1D] py-12 md:py-16">
       <div className="mx-auto max-w-[1200px] px-6">
         <h2 className="text-center text-xl font-bold text-[#B49AFF] md:text-2xl">
           {liveMentoring.title}

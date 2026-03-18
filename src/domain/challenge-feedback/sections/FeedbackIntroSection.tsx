@@ -12,7 +12,7 @@ const FeedbackIntroSection = memo(function FeedbackIntroSection({
   if (challenge.feedbackOptions.length === 0) return null;
 
   return (
-    <section className="w-full bg-[#0C0A1D] py-20">
+    <section className="w-full bg-[#0C0A1D] py-12 md:py-16">
       <div className="mx-auto max-w-[1200px] px-6">
         {/* 모바일: 세로 스택 / 데스크톱: 좌 sticky + 우 스크롤 */}
         <div className="flex flex-col gap-10 lg:flex-row lg:items-start lg:gap-12">

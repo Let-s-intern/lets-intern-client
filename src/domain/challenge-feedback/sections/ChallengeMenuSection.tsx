@@ -33,7 +33,7 @@ const ChallengeMenuSection = memo(function ChallengeMenuSection({
   );
 
   return (
-    <section className="flex w-full min-h-[40vh] flex-col items-center justify-center bg-[#0C0A1D] py-12 md:py-16">
+    <section className="flex w-full flex-col items-center justify-center bg-[#0C0A1D] py-12 md:py-16">
       <div className="mx-auto max-w-[1200px] px-6">
         <h2 className="mb-8 text-center text-xl font-bold text-[#B49AFF] md:mb-12 md:text-2xl">
           어떤 챌린지의 피드백이 궁금하신가요?
