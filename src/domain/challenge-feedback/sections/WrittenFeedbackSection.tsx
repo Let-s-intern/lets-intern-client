@@ -40,11 +40,11 @@ const WrittenFeedbackSection = memo(function WrittenFeedbackSection({
     <>
       <section className="flex w-full flex-col items-center bg-[#13112a] py-12 md:py-16">
         <div className="w-full max-w-[1200px] px-6">
-          <h2 className="text-center text-xl font-bold text-white md:text-2xl">
+          <h2 className="text-center text-2xl font-bold text-white md:text-3xl">
             서면 피드백, 이렇게{' '}
             <span className="text-[#B49AFF]">꼼꼼하게</span> 봐드려요
           </h2>
-          <p className="mb-10 mt-4 text-center text-base text-gray-300 md:text-lg">
+          <p className="mb-10 mt-4 text-center text-base text-gray-400 md:text-lg">
             실제 피드백 예시를 확인해 보세요
           </p>
 
@@ -52,13 +52,13 @@ const WrittenFeedbackSection = memo(function WrittenFeedbackSection({
             {writtenDetails.map((detail) => (
               <div key={detail.round}>
                 <div className="mb-4 flex items-center justify-center gap-2">
-                  <h3 className="text-base font-semibold text-white md:text-lg">
+                  <h3 className="text-lg font-semibold text-white md:text-xl">
                     {detail.round}: {detail.description}
                   </h3>
                   {detail.tiers.map((tier) => (
                     <span
                       key={tier}
-                      className="rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-medium text-gray-400"
+                      className="rounded bg-white/10 px-2 py-0.5 text-xs font-medium text-gray-400"
                     >
                       {tier}
                     </span>
@@ -102,7 +102,7 @@ const WrittenFeedbackSection = memo(function WrittenFeedbackSection({
                             </svg>
                           </div>
                         </div>
-                        <span className="absolute bottom-3 left-1/2 -translate-x-1/2 text-xs text-white/70">
+                        <span className="absolute bottom-3 left-1/2 -translate-x-1/2 text-sm text-white/70">
                           클릭하여 전체 보기
                         </span>
                       </button>

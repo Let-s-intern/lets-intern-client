@@ -23,7 +23,7 @@ function VideoEmbed({ videoUrl }: { videoUrl: string }) {
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white/10">
           <span className="text-2xl text-white/60">▶</span>
         </div>
-        <p className="mt-3 text-sm text-gray-500">영상이 준비 중입니다</p>
+        <p className="mt-3 text-base text-gray-500">영상이 준비 중입니다</p>
       </div>
     </div>
   );
@@ -36,11 +36,11 @@ const LiveMentoringSection = memo(function LiveMentoringSection({
   return (
     <section className="flex w-full flex-col items-center justify-center bg-[#0C0A1D] py-12 md:py-16">
       <div className="mx-auto max-w-[1200px] px-6">
-        <h2 className="text-center text-xl font-bold text-white md:text-2xl">
+        <h2 className="text-center text-2xl font-bold text-white md:text-3xl">
           <span className="text-[#B49AFF]">1:1 LIVE</span> 피드백, 영상으로
           미리 확인하세요!
         </h2>
-        <p className="mt-4 mb-10 text-center text-base text-gray-300 md:text-lg">
+        <p className="mt-4 mb-10 text-center text-base text-gray-400 md:text-lg">
           {liveMentoring.subCopy1}
         </p>
       </div>
@@ -50,13 +50,13 @@ const LiveMentoringSection = memo(function LiveMentoringSection({
           {liveDetails.map((d) => (
             <div key={d.round}>
               <div className="mb-4 flex items-center justify-center gap-2">
-                <h3 className="text-base font-semibold text-white md:text-lg">
+                <h3 className="text-lg font-semibold text-white md:text-xl">
                   {d.round}: {d.description}
                 </h3>
                 {d.tiers.map((tier) => (
                   <span
                     key={tier}
-                    className="rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-medium text-gray-400"
+                    className="rounded bg-white/10 px-2 py-0.5 text-xs font-medium text-gray-400"
                   >
                     {tier}
                   </span>
@@ -68,7 +68,7 @@ const LiveMentoringSection = memo(function LiveMentoringSection({
         </div>
       </div>
 
-      <p className="mt-8 text-center text-base text-gray-300 md:text-lg">
+      <p className="mt-8 text-center text-base text-gray-400 md:text-lg">
         {liveMentoring.subCopy2}
       </p>
     </section>

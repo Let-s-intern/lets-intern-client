@@ -35,8 +35,9 @@ const ChallengeMenuSection = memo(function ChallengeMenuSection({
   return (
     <section className="flex w-full flex-col items-center justify-center bg-[#0C0A1D] py-12 md:py-16">
       <div className="mx-auto max-w-[1200px] px-6">
-        <h2 className="mb-8 text-center text-xl font-bold text-[#B49AFF] md:mb-12 md:text-2xl">
-          어떤 챌린지의 피드백이 궁금하신가요?
+        <h2 className="mb-8 text-center text-2xl font-bold text-white md:mb-12 md:text-3xl">
+          어떤 챌린지의 <span className="text-[#B49AFF]">피드백</span>이
+          궁금하신가요?
         </h2>
         {/* 데스크톱: 2줄 배치 / 모바일: wrap */}
         <div className="flex flex-col items-center gap-4 md:gap-6">
