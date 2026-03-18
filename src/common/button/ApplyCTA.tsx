@@ -14,7 +14,7 @@ function DisabledButton() {
   return (
     <button
       disabled
-      className="w-full rounded-sm bg-neutral-80 px-6 py-3 text-xsmall14 font-medium text-neutral-40"
+      className="w-full rounded-sm bg-neutral-80 px-6 py-3 text-xsmall16 font-medium text-neutral-40"
     >
       이미 신청이 완료되었습니다
     </button>
