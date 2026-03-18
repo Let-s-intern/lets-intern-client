@@ -3,7 +3,7 @@ name: task-maker
 description: "PRD나 요구사항을 기반으로 Git 워크플로우에 맞는 작업 목록을 생성합니다. 사용자가 'PRD 기반 작업 만들어줘', '작업 목록 생성', 'task 만들어줘', '기능 분해해줘' 등을 요청할 때 사용합니다."
 argument-hint: "[prd-file-path]"
 disable-model-invocation: true
-allowed-tools: Read, Write, Glob
+user-invocable: true
 ---
 
 # PRD 기반 작업 목록 생성
