@@ -10,7 +10,7 @@ const ApplyCtaSection = memo(function ApplyCtaSection({
   challenge,
 }: ApplyCtaSectionProps) {
   return (
-    <section className="w-full bg-[#0C0A1D] py-20">
+    <section className="flex w-full min-h-[50vh] flex-col items-center justify-center bg-[#0C0A1D] py-20">
       <div className="mx-auto max-w-[1200px] px-6 text-center">
         <Link
           href={challenge.detailUrl}

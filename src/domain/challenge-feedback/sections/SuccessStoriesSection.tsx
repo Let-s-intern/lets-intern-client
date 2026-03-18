@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { memo } from 'react';
 import { Autoplay } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
 
 // ─── 메인페이지 LogoPlaySection과 동일한 데이터 ─────────────────
 const LOGO_IMG = {
@@ -92,15 +93,15 @@ const LogoPlayItem = ({ theme, img, company, job, name, pass }: LogoPlayItemProp
 
 const SuccessStoriesSection = memo(function SuccessStoriesSection() {
   return (
-    <section className="w-full overflow-hidden bg-[#0C0A1D] py-16 md:py-20">
+    <section className="flex w-full flex-col items-center justify-center overflow-hidden bg-[#0C0A1D] py-20 md:min-h-[50vh] md:py-28">
       <div className="mx-auto max-w-[1200px] px-6">
-        <h2 className="mb-8 text-center text-xl font-bold text-[#B49AFF] md:mb-10 md:text-2xl">
+        <h2 className="mb-10 text-center text-xl font-bold text-[#B49AFF] md:mb-14 md:text-2xl">
           렛츠커리어와 함께 취뽀한 주인공들을 소개합니다
         </h2>
       </div>
 
       <Swiper
-        className="slide-per-auto slide-rolling"
+        className="slide-per-auto slide-rolling w-full"
         modules={[Autoplay]}
         allowTouchMove={false}
         loop

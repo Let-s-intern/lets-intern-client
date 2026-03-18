@@ -10,7 +10,7 @@ const BeforeAfterSection = memo(function BeforeAfterSection({
   beforeAfter,
 }: BeforeAfterSectionProps) {
   return (
-    <section className="w-full bg-[#13112a] py-20">
+    <section className="flex w-full min-h-screen flex-col items-center justify-center bg-[#13112a] py-20 md:py-28">
       <div className="mx-auto flex max-w-[1200px] flex-col gap-8 px-6 md:flex-row md:gap-12">
         <BeforeAfterCard
           type="before"

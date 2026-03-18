@@ -1,9 +1,42 @@
-import { memo } from 'react';
+'use client';
+
+import { memo, useCallback, useEffect, useRef } from 'react';
 import StarAnimation from '../components/StarAnimation';
 
-const HeroSection = memo(function HeroSection() {
+interface HeroSectionProps {
+  onScrollDown?: () => void;
+}
+
+const HeroSection = memo(function HeroSection({
+  onScrollDown,
+}: HeroSectionProps) {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // 히어로 영역에서 아래로 스크롤 시 챌린지 메뉴로 이동
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || !onScrollDown) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (e.deltaY > 0) {
+        onScrollDown();
+      }
+    };
+
+    section.addEventListener('wheel', handleWheel, { passive: true });
+    return () => section.removeEventListener('wheel', handleWheel);
+  }, [onScrollDown]);
+
+  const handleClick = useCallback(() => {
+    onScrollDown?.();
+  }, [onScrollDown]);
+
   return (
-    <section className="relative w-full overflow-hidden bg-gradient-to-b from-[#1a1145] via-[#0f0d2e] to-[#0C0A1D] py-20 md:py-28">
+    <section
+      ref={sectionRef}
+      onClick={handleClick}
+      className="relative flex h-screen w-full cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#1a1145] via-[#0f0d2e] to-[#0C0A1D]"
+    >
       <StarAnimation />
 
       {/* 좌우 서류 아이콘 장식 */}
@@ -30,6 +63,25 @@ const HeroSection = memo(function HeroSection() {
         <p className="mt-1 text-sm font-semibold text-gray-200 md:text-base">
           여러분의 서류를 직접 진단합니다
         </p>
+      </div>
+
+      {/* 스크롤 유도 */}
+      <div className="absolute bottom-10 flex flex-col items-center gap-2">
+        <span className="text-xs tracking-widest text-gray-400">
+          SCROLL
+        </span>
+        <div className="flex animate-bounce flex-col items-center text-gray-400">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path d="M7 10l5 5 5-5" />
+          </svg>
+        </div>
       </div>
     </section>
   );
