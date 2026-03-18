@@ -20,15 +20,7 @@ const ConditionalLayout = ({ children }: ConditionalLayoutProps) => {
     <div>
       <NavBar isLoginPage={isLoginPage} />
       <div className="min-h-[31rem] w-full">{children}</div>
-      {!isLoginPage && (
-        <Footer
-          className={
-            isDarkPage
-              ? 'border-white/10 bg-[#0C0A1D] text-gray-400'
-              : undefined
-          }
-        />
-      )}
+      {!isLoginPage && !isDarkPage && <Footer />}
       {!isLoginPage && <ChannelTalkBtn />}
       {!isLoginPage && <BottomNavBarWithPathname />}
     </div>
