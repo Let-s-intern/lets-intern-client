@@ -129,7 +129,7 @@ function MarketingIntroSection({ weekText }: MarketingIntroReviewSectionProps) {
               </p>
             </IntroBubble>
             <div
-              className="bubble-tail mx-auto h-0 w-0 border-l-[9px] border-r-[9px] border-t-[14px] border-l-transparent border-r-transparent border-t-[##4D55F5]"
+              className="bubble-tail mx-auto h-0 w-0 border-l-[9px] border-r-[9px] border-t-[14px] border-l-transparent border-r-transparent border-t-primary"
               aria-hidden="true"
             />
           </div>
