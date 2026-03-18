@@ -36,11 +36,11 @@ const LiveMentoringSection = memo(function LiveMentoringSection({
   return (
     <section className="flex w-full flex-col items-center justify-center bg-[#0C0A1D] py-12 md:py-16">
       <div className="mx-auto max-w-[1200px] px-6">
-        <h2 className="text-center text-2xl font-bold text-white md:text-3xl">
+        <h2 className="text-center text-xl font-bold text-white md:text-2xl">
           <span className="text-[#B49AFF]">1:1 LIVE</span> 피드백, 영상으로
           미리 확인하세요!
         </h2>
-        <p className="mt-4 mb-10 text-center text-base text-gray-400 md:text-lg">
+        <p className="mt-4 mb-10 text-center text-base text-gray-300 md:text-lg">
           {liveMentoring.subCopy1}
         </p>
       </div>
@@ -68,7 +68,7 @@ const LiveMentoringSection = memo(function LiveMentoringSection({
         </div>
       </div>
 
-      <p className="mt-8 text-center text-base text-gray-400 md:text-lg">
+      <p className="mt-8 text-center text-base text-gray-300 md:text-lg">
         {liveMentoring.subCopy2}
       </p>
     </section>

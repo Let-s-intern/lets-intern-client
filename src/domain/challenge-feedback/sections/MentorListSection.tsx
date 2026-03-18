@@ -21,7 +21,7 @@ const MentorListSection = memo(function MentorListSection({
   return (
     <section className="flex w-full flex-col items-center justify-center bg-[#0f0d2e] py-12 md:py-16">
       <div className="mx-auto max-w-[1200px] px-6">
-        <h2 className="text-center text-2xl font-bold text-white md:text-3xl">
+        <h2 className="text-center text-xl font-bold text-white md:text-2xl">
           {challenge.mentorSectionField},{' '}
           <span className="text-[#B49AFF]">현직자 {displayCount}명</span>이 다
           봐드립니다

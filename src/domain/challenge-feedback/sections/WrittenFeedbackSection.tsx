@@ -40,11 +40,11 @@ const WrittenFeedbackSection = memo(function WrittenFeedbackSection({
     <>
       <section className="flex w-full flex-col items-center bg-[#13112a] py-12 md:py-16">
         <div className="w-full max-w-[1200px] px-6">
-          <h2 className="text-center text-2xl font-bold text-white md:text-3xl">
+          <h2 className="text-center text-xl font-bold text-white md:text-2xl">
             서면 피드백, 이렇게{' '}
             <span className="text-[#B49AFF]">꼼꼼하게</span> 봐드려요
           </h2>
-          <p className="mb-10 mt-4 text-center text-base text-gray-400 md:text-lg">
+          <p className="mb-10 mt-4 text-center text-base text-gray-300 md:text-lg">
             실제 피드백 예시를 확인해 보세요
           </p>
 
