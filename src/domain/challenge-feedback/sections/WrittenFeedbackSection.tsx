@@ -65,7 +65,7 @@ const WrittenFeedbackSection = memo(function WrittenFeedbackSection({
                   ))}
                 </div>
 
-                <div className="scrollbar-hide flex justify-center gap-4 overflow-x-auto pb-2">
+                <div className="flex flex-col items-center gap-4">
                   {detail.exampleImages.map((src, i) => {
                     const alt = `${detail.round} ${detail.description} 피드백 예시 ${i + 1}`;
                     return (
@@ -73,16 +73,17 @@ const WrittenFeedbackSection = memo(function WrittenFeedbackSection({
                         key={i}
                         type="button"
                         onClick={() => openModal(src, alt)}
-                        className="group relative aspect-[3/4] w-[85vw] max-w-[520px] flex-shrink-0 cursor-zoom-in overflow-hidden rounded-lg md:w-[560px] md:max-w-none"
+                        className="group relative h-[300px] w-full cursor-zoom-in overflow-hidden rounded-lg md:h-[400px]"
                       >
                         <Image
                           src={src}
                           alt={alt}
                           fill
-                          className="object-cover transition-transform duration-300 group-hover:scale-105"
-                          sizes="(max-width: 768px) 85vw, 560px"
+                          className="object-cover object-top"
+                          sizes="(max-width: 768px) 100vw, 1200px"
                         />
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors duration-300 group-hover:bg-black/40">
+                        <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/60 to-transparent" />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors duration-300 group-hover:bg-black/30">
                           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20 opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100">
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -101,6 +102,9 @@ const WrittenFeedbackSection = memo(function WrittenFeedbackSection({
                             </svg>
                           </div>
                         </div>
+                        <span className="absolute bottom-3 left-1/2 -translate-x-1/2 text-xs text-white/70">
+                          클릭하여 전체 보기
+                        </span>
                       </button>
                     );
                   })}

@@ -48,10 +48,6 @@ const LiveMentoringSection = memo(function LiveMentoringSection({
         )}
       </div>
 
-      <p className="mt-8 text-center text-sm text-gray-300 md:text-base">
-        {liveMentoring.subCopy2}
-      </p>
-
       {liveDetails.length > 0 && (
         <div className="mx-auto mt-8 flex max-w-[900px] flex-wrap justify-center gap-3 px-6">
           {liveDetails.map((d) => (
@@ -76,6 +72,10 @@ const LiveMentoringSection = memo(function LiveMentoringSection({
           ))}
         </div>
       )}
+
+      <p className="mt-8 text-center text-sm text-gray-300 md:text-base">
+        {liveMentoring.subCopy2}
+      </p>
     </section>
   );
 });
