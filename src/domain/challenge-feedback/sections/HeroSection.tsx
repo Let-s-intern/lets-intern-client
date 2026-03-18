@@ -11,33 +11,42 @@ const HeroSection = memo(function HeroSection({
   onScrollDown,
 }: HeroSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
-  const isScrolling = useRef(false);
+  const passed = useRef(false);
 
-  // 히어로 영역에서 스크롤 시 기본 스크롤 차단 + snap 이동
+  // 히어로 최상단에 있을 때만 스크롤 가로채기
   useEffect(() => {
-    const section = sectionRef.current;
-    if (!section || !onScrollDown) return;
+    if (!onScrollDown) return;
 
     const handleWheel = (e: WheelEvent) => {
-      // 히어로가 뷰포트 안에 있을 때만 차단
-      const rect = section.getBoundingClientRect();
-      if (rect.bottom <= 0) return;
+      // 이미 히어로를 지났으면 일반 스크롤
+      if (passed.current) return;
 
-      if (e.deltaY > 0 && !isScrolling.current) {
+      // 페이지 최상단(히어로 영역)에 있을 때만 가로채기
+      if (window.scrollY > 10) {
+        passed.current = true;
+        return;
+      }
+
+      if (e.deltaY > 0) {
         e.preventDefault();
-        isScrolling.current = true;
+        passed.current = true;
         onScrollDown();
-        setTimeout(() => {
-          isScrolling.current = false;
-        }, 800);
-      } else if (e.deltaY > 0) {
-        e.preventDefault();
       }
     };
 
-    // passive: false로 해야 preventDefault 가능
+    const handleScroll = () => {
+      // 최상단으로 돌아오면 다시 snap 활성화
+      if (window.scrollY <= 10) {
+        passed.current = false;
+      }
+    };
+
     window.addEventListener('wheel', handleWheel, { passive: false });
-    return () => window.removeEventListener('wheel', handleWheel);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, [onScrollDown]);
 
   const handleClick = useCallback(() => {
