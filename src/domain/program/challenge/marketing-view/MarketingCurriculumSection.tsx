@@ -7,12 +7,14 @@ import Curriculums from './Curriculums';
 
 interface MarketingCurriculumSectionProps {
   content?: ChallengeContent | null;
+  weekText: string;
 }
 
 const DEFAULT_LECTURE_COUNT = 4;
 
 const MarketingCurriculumSection: React.FC<MarketingCurriculumSectionProps> = ({
   content,
+  weekText,
 }) => {
   const lectureCount = content?.lectures?.length ?? DEFAULT_LECTURE_COUNT;
 
@@ -34,7 +36,7 @@ const MarketingCurriculumSection: React.FC<MarketingCurriculumSectionProps> = ({
           </span>
           <span>
             8회의 미션으로 만드는 <br className="md:hidden" />
-            밀도 있는 4주간의 여정
+            밀도 있는 {weekText}간의 여정
           </span>
         </MainTitle>
       </div>

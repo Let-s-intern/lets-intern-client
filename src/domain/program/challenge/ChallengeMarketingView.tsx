@@ -14,9 +14,11 @@ import MarketingApplicationStrategySection from './marketing-view/MarketingAppli
 import MarketingChallengeCalendar from './marketing-view/MarketingChallengeCalendar';
 import MarketingFAQSection from './marketing-view/MarketingFAQSection';
 import MarketingFeaturesSection from './marketing-view/MarketingFeaturesSection';
+import MarketingIntroReviewSection from './marketing-view/MarketingIntroReviewSection';
 import MarketingIntroSection from './marketing-view/MarketingIntroSection';
+import MarketingPlanSection from './marketing-view/MarketingPlanSection';
 import MarketingReviewsSection from './marketing-view/MarketingReviewsSection';
-
+import MarketingTimelineSection from './marketing-view/MarketingTimelineSection';
 interface Props {
   challenge: ChallengeIdPrimitive;
 }
@@ -26,6 +28,7 @@ const ChallengeMarketingView = ({ challenge }: Props) => {
     () => parseChallengeContent(challenge.desc),
     [challenge.desc],
   );
+  const weekText = content?.challengePoint?.weekText ?? '4주';
 
   return (
     <div className="w-full">
@@ -37,18 +40,25 @@ const ChallengeMarketingView = ({ challenge }: Props) => {
           <ChallengeTabNavigation />
           <ChallengeIntroEditorContent challenge={challenge} />
           <MarketingIntroSection />
-          <MarketingFeaturesSection />
-          <MarketingDifferentiatorsSection lectures={content?.lectures} />
-          <MarketingCurriculumSection content={content} />
+          <MarketingIntroReviewSection weekText={weekText} />
+          <MarketingFeaturesSection weekText={weekText} />
+          <MarketingDifferentiatorsSection
+            lectures={content?.lectures}
+            weekText={weekText}
+          />
           <MarketingChallengeCalendar
             challenge={challenge}
             curriculumImage={content?.curriculumImage}
             lectureCount={content?.lectures?.length}
           />
-          <MarketingSummarySection />
-          <MarketingApplicationStrategySection />
-          <MarketingPricingSection priceInfoList={challenge.priceInfo} />
+          <MarketingCurriculumSection content={content} weekText={weekText} />
+          <MarketingPlanSection />
+          <MarketingTimelineSection />
           <MarketingReviewsSection challenge={challenge} />
+          <MarketingApplicationStrategySection weekText={weekText} />
+          <MarketingPricingSection priceInfoList={challenge.priceInfo} />
+          <MarketingSummarySection weekText={weekText} />
+          {/* 특별혜택 */}
           <MarketingFAQSection faqInfo={challenge.faqInfo} />
           <ChallengeRecruitmentInfoSection challenge={challenge} />
         </>
