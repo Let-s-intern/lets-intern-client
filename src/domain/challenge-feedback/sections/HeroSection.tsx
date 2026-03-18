@@ -11,20 +11,33 @@ const HeroSection = memo(function HeroSection({
   onScrollDown,
 }: HeroSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
+  const isScrolling = useRef(false);
 
-  // 히어로 영역에서 아래로 스크롤 시 챌린지 메뉴로 이동
+  // 히어로 영역에서 스크롤 시 기본 스크롤 차단 + snap 이동
   useEffect(() => {
     const section = sectionRef.current;
     if (!section || !onScrollDown) return;
 
     const handleWheel = (e: WheelEvent) => {
-      if (e.deltaY > 0) {
+      // 히어로가 뷰포트 안에 있을 때만 차단
+      const rect = section.getBoundingClientRect();
+      if (rect.bottom <= 0) return;
+
+      if (e.deltaY > 0 && !isScrolling.current) {
+        e.preventDefault();
+        isScrolling.current = true;
         onScrollDown();
+        setTimeout(() => {
+          isScrolling.current = false;
+        }, 800);
+      } else if (e.deltaY > 0) {
+        e.preventDefault();
       }
     };
 
-    section.addEventListener('wheel', handleWheel, { passive: true });
-    return () => section.removeEventListener('wheel', handleWheel);
+    // passive: false로 해야 preventDefault 가능
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    return () => window.removeEventListener('wheel', handleWheel);
   }, [onScrollDown]);
 
   const handleClick = useCallback(() => {

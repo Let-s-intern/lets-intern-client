@@ -29,7 +29,11 @@ const ChallengeFeedbackScreen = ({
   const contentRef = useRef<HTMLDivElement>(null);
 
   const scrollToContent = useCallback(() => {
-    contentRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const el = contentRef.current;
+    if (!el) return;
+    const headerH = window.innerWidth >= 768 ? 116 : 84;
+    const top = el.getBoundingClientRect().top + window.scrollY - headerH;
+    window.scrollTo({ top, behavior: 'smooth' });
   }, []);
 
   const selectedKey =
