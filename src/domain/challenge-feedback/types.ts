@@ -12,6 +12,10 @@ export interface FeedbackDetail {
   round: string;
   /** 회차 설명 (예: "경험 분석") */
   description: string;
+  /** 피드백 방식 */
+  method: '서면' | '라이브';
+  /** 서면 피드백 예시 이미지 (서면일 때만) */
+  exampleImages: string[];
 }
 
 export interface FeedbackOption {
@@ -61,6 +65,10 @@ export interface SuccessStory {
   role: string;
   name: string;
   year: string;
+}
+
+export interface FeedbackDetailWithTiers extends FeedbackDetail {
+  tiers: ('STANDARD' | 'PREMIUM')[];
 }
 
 export interface ChallengeData {

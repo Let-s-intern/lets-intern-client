@@ -1,12 +1,14 @@
 import { memo } from 'react';
-import type { LiveMentoring } from '../types';
+import type { FeedbackDetailWithTiers, LiveMentoring } from '../types';
 
 interface LiveMentoringSectionProps {
   liveMentoring: LiveMentoring;
+  liveDetails: FeedbackDetailWithTiers[];
 }
 
 const LiveMentoringSection = memo(function LiveMentoringSection({
   liveMentoring,
+  liveDetails,
 }: LiveMentoringSectionProps) {
   return (
     <section className="flex w-full flex-col items-center justify-center bg-[#0C0A1D] py-12 md:py-16">
@@ -48,6 +50,31 @@ const LiveMentoringSection = memo(function LiveMentoringSection({
       <p className="mt-8 text-center text-sm text-gray-300 md:text-base">
         {liveMentoring.subCopy2}
       </p>
+
+      {liveDetails.length > 0 && (
+        <div className="mx-auto mt-8 flex max-w-[900px] flex-wrap justify-center gap-3 px-6">
+          {liveDetails.map((d) => (
+            <div
+              key={d.round}
+              className="rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-center"
+            >
+              <p className="text-sm font-semibold text-white">
+                {d.round}: {d.description}
+              </p>
+              <div className="mt-1 flex justify-center gap-1">
+                {d.tiers.map((tier) => (
+                  <span
+                    key={tier}
+                    className="rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-medium text-gray-400"
+                  >
+                    {tier}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 });

@@ -17,6 +17,8 @@ const MENTOR_IMAGES = [
 const mentorImage = (index: number) =>
   MENTOR_IMAGES[index % MENTOR_IMAGES.length];
 
+const EXAMPLE_BASE = '/images/challenge-feedback/examples';
+
 // ─── 멘토 풀 ─────────────────────────────────────────────────────
 const MENTORS: Record<string, Mentor> = {
   nick: {
@@ -168,9 +170,30 @@ export const CHALLENGE_LIST: ChallengeData[] = [
         tier: 'STANDARD',
         feedbackCount: '3회',
         feedbackDetails: [
-          { round: '2회차', description: '대학 교내 활동(일상) 경험 정리' },
-          { round: '3회차', description: '교외 활동 경험 정리' },
-          { round: '4회차', description: '일상 및 커리어 경험 정리' },
+          {
+            round: '2회차',
+            description: '대학 교내 활동(일상) 경험 정리',
+            method: '서면',
+            exampleImages: [
+              `${EXAMPLE_BASE}/experience/round-2-1.png`,
+              `${EXAMPLE_BASE}/experience/round-2-2.png`,
+            ],
+          },
+          {
+            round: '3회차',
+            description: '교외 활동 경험 정리',
+            method: '서면',
+            exampleImages: [
+              `${EXAMPLE_BASE}/experience/round-3-1.png`,
+              `${EXAMPLE_BASE}/experience/round-3-2.png`,
+            ],
+          },
+          {
+            round: '4회차',
+            description: '일상 및 커리어 경험 정리',
+            method: '서면',
+            exampleImages: [`${EXAMPLE_BASE}/experience/round-4-1.png`],
+          },
         ],
         feedbackScope: '각 회차별 경험 3개씩',
         method: '서면 피드백',
@@ -193,7 +216,15 @@ export const CHALLENGE_LIST: ChallengeData[] = [
         tier: 'STANDARD',
         feedbackCount: '1회',
         feedbackDetails: [
-          { round: '4회차', description: '이력서 완성' },
+          {
+            round: '4회차',
+            description: '이력서 완성',
+            method: '서면',
+            exampleImages: [
+              `${EXAMPLE_BASE}/resume/round-4-1.png`,
+              `${EXAMPLE_BASE}/resume/round-4-2.png`,
+            ],
+          },
         ],
         feedbackScope: '이력서 1개',
         method: '서면 피드백',
@@ -216,7 +247,12 @@ export const CHALLENGE_LIST: ChallengeData[] = [
         tier: 'STANDARD',
         feedbackCount: '1회',
         feedbackDetails: [
-          { round: '5회차', description: '자기소개서 완성' },
+          {
+            round: '5회차',
+            description: '자기소개서 완성',
+            method: '라이브',
+            exampleImages: [],
+          },
         ],
         feedbackScope: '피드백 진행 시간 30분 내 문항 제한 없이 피드백',
         method: '1:1 Live',
@@ -227,8 +263,18 @@ export const CHALLENGE_LIST: ChallengeData[] = [
         tier: 'PREMIUM',
         feedbackCount: '2회',
         feedbackDetails: [
-          { round: '3회차', description: '자기소개서 기초' },
-          { round: '5회차', description: '자기소개서 완성' },
+          {
+            round: '3회차',
+            description: '자기소개서 기초',
+            method: '라이브',
+            exampleImages: [],
+          },
+          {
+            round: '5회차',
+            description: '자기소개서 완성',
+            method: '라이브',
+            exampleImages: [],
+          },
         ],
         feedbackScope:
           '3회차: 한 문항에 대해 30분 피드백 / 5회차: 피드백 진행 시간 30분 내 문항 제한 없이 피드백',
@@ -258,7 +304,12 @@ export const CHALLENGE_LIST: ChallengeData[] = [
         tier: 'STANDARD',
         feedbackCount: '1회',
         feedbackDetails: [
-          { round: '6회차', description: '포트폴리오 점검' },
+          {
+            round: '6회차',
+            description: '포트폴리오 점검',
+            method: '라이브',
+            exampleImages: [],
+          },
         ],
         feedbackScope: '피드백 진행 시간 30분 내 장수 제한 없이 피드백',
         method: '1:1 Live',
@@ -269,8 +320,18 @@ export const CHALLENGE_LIST: ChallengeData[] = [
         tier: 'PREMIUM',
         feedbackCount: '2회',
         feedbackDetails: [
-          { round: '4회차', description: '포트폴리오 발전' },
-          { round: '6회차', description: '포트폴리오 점검' },
+          {
+            round: '4회차',
+            description: '포트폴리오 발전',
+            method: '라이브',
+            exampleImages: [],
+          },
+          {
+            round: '6회차',
+            description: '포트폴리오 점검',
+            method: '라이브',
+            exampleImages: [],
+          },
         ],
         feedbackScope:
           '4회차: 한 경험에 대해 만들어오는 포폴 1-3페이지에 대해 30분 피드백 / 6회차: 피드백 진행 시간 30분 내 장수 제한 없이 피드백',
@@ -308,8 +369,21 @@ export const CHALLENGE_LIST: ChallengeData[] = [
         tier: 'STANDARD',
         feedbackCount: '2회',
         feedbackDetails: [
-          { round: '3회차', description: '경험 분석' },
-          { round: '6회차', description: '자기소개서 완성' },
+          {
+            round: '3회차',
+            description: '경험 분석',
+            method: '서면',
+            exampleImages: [
+              `${EXAMPLE_BASE}/large-corp/round-3-1.png`,
+              `${EXAMPLE_BASE}/large-corp/round-3-2.png`,
+            ],
+          },
+          {
+            round: '6회차',
+            description: '자기소개서 완성',
+            method: '라이브',
+            exampleImages: [],
+          },
         ],
         feedbackScope: '3회차: 서면 피드백 / 6회차: 1:1 Live',
         method: '서면 + 1:1 Live',
@@ -320,10 +394,33 @@ export const CHALLENGE_LIST: ChallengeData[] = [
         tier: 'PREMIUM',
         feedbackCount: '4회',
         feedbackDetails: [
-          { round: '3회차', description: '경험 분석' },
-          { round: '4회차', description: '직무 역량 답변' },
-          { round: '5회차', description: '지원동기 답변' },
-          { round: '6회차', description: '자기소개서 완성' },
+          {
+            round: '3회차',
+            description: '경험 분석',
+            method: '서면',
+            exampleImages: [
+              `${EXAMPLE_BASE}/large-corp/round-3-1.png`,
+              `${EXAMPLE_BASE}/large-corp/round-3-2.png`,
+            ],
+          },
+          {
+            round: '4회차',
+            description: '직무 역량 답변',
+            method: '서면',
+            exampleImages: [`${EXAMPLE_BASE}/large-corp/round-4-1.png`],
+          },
+          {
+            round: '5회차',
+            description: '지원동기 답변',
+            method: '서면',
+            exampleImages: [`${EXAMPLE_BASE}/large-corp/round-5-1.png`],
+          },
+          {
+            round: '6회차',
+            description: '자기소개서 완성',
+            method: '라이브',
+            exampleImages: [],
+          },
         ],
         feedbackScope:
           '3/4/5회차: 서면 피드백 / 6회차: 1:1 Live',
@@ -359,7 +456,12 @@ export const CHALLENGE_LIST: ChallengeData[] = [
         tier: 'STANDARD',
         feedbackCount: '1회',
         feedbackDetails: [
-          { round: '8회차', description: '포트폴리오 완성' },
+          {
+            round: '8회차',
+            description: '포트폴리오 완성',
+            method: '서면',
+            exampleImages: [`${EXAMPLE_BASE}/marketing/round-8-1.png`],
+          },
         ],
         feedbackScope: '원하는 서류 1종',
         method: '서면 피드백',
@@ -370,8 +472,18 @@ export const CHALLENGE_LIST: ChallengeData[] = [
         tier: 'PREMIUM',
         feedbackCount: '2회',
         feedbackDetails: [
-          { round: '3회차', description: '경험 분석' },
-          { round: '8회차', description: '포트폴리오 완성' },
+          {
+            round: '3회차',
+            description: '경험 분석',
+            method: '서면',
+            exampleImages: [`${EXAMPLE_BASE}/marketing/round-3-1.png`],
+          },
+          {
+            round: '8회차',
+            description: '포트폴리오 완성',
+            method: '서면',
+            exampleImages: [`${EXAMPLE_BASE}/marketing/round-8-1.png`],
+          },
         ],
         feedbackScope:
           '3회차: 경험 분석 / 8회차: 원하는 서류 1종',
@@ -406,6 +518,8 @@ export const CHALLENGE_LIST: ChallengeData[] = [
           {
             round: '6회차 이후',
             description: '자기소개서 및 포트폴리오 완성',
+            method: '라이브',
+            exampleImages: [],
           },
         ],
         feedbackScope: '',
@@ -420,6 +534,8 @@ export const CHALLENGE_LIST: ChallengeData[] = [
           {
             round: '6회차 이후',
             description: '자기소개서 및 포트폴리오 완성',
+            method: '라이브',
+            exampleImages: [],
           },
         ],
         feedbackScope: '',

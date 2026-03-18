@@ -1,6 +1,4 @@
-'use client';
-
-import { memo, useState } from 'react';
+import { memo } from 'react';
 import type { FeedbackOption } from '../types';
 
 interface FeedbackOptionCardProps {
@@ -10,8 +8,6 @@ interface FeedbackOptionCardProps {
 const FeedbackOptionCard = memo(function FeedbackOptionCard({
   option,
 }: FeedbackOptionCardProps) {
-  const [showDetail, setShowDetail] = useState(false);
-
   return (
     <div className="rounded-lg border border-white/10 bg-white/5 p-5 md:p-6">
       <h3 className="mb-4 text-center text-lg font-bold text-white md:text-xl">
@@ -67,19 +63,6 @@ const FeedbackOptionCard = memo(function FeedbackOptionCard({
           </tr>
         </tbody>
       </table>
-
-      <button
-        onClick={() => setShowDetail(!showDetail)}
-        className="mt-4 w-full text-center text-sm font-medium text-[#B49AFF] transition-colors hover:text-[#D4C4FF]"
-      >
-        피드백 자세히 보기 {showDetail ? '↑' : '→'}
-      </button>
-
-      {showDetail && (
-        <div className="mt-4 rounded-md bg-white/5 p-4 text-sm text-gray-300">
-          <p>서면 피드백 예시 이미지가 여기에 표시됩니다.</p>
-        </div>
-      )}
     </div>
   );
 });
