@@ -64,7 +64,9 @@ interface MarketingIntroReviewSectionProps {
   weekText: string;
 }
 
-function MarketingIntroSection({ weekText }: MarketingIntroReviewSectionProps) {
+function MarketingIntroReviewSection({
+  weekText,
+}: MarketingIntroReviewSectionProps) {
   return (
     <section className="relative flex flex-col items-center bg-[linear-gradient(0deg,#F0F4FF_0%,#E3E5FB_105.65%)] px-5 pb-10 pt-[114px] md:pb-20 md:pt-[114px]">
       <IntroReviewTail />
@@ -161,4 +163,4 @@ function MarketingIntroSection({ weekText }: MarketingIntroReviewSectionProps) {
   );
 }
 
-export default MarketingIntroSection;
+export default MarketingIntroReviewSection;
