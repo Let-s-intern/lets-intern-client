@@ -2,7 +2,8 @@
 
 import { useGetUserMagnetDetailQuery } from '@/api/magnet/magnet';
 import LexicalContent from '@/domain/blog/ui/LexicalContent';
-import Link from 'next/link';
+import useAuthStore from '@/store/useAuthStore';
+import { useRouter } from 'next/navigation';
 
 const parseLexicalRoot = (json: string) => {
   try {
@@ -19,6 +20,17 @@ interface Props {
 
 export default function LibraryMainContent({ magnetId, isUpcoming }: Props) {
   const { data, isLoading } = useGetUserMagnetDetailQuery(magnetId);
+  const { isLoggedIn } = useAuthStore();
+  const router = useRouter();
+
+  const handleApplyClick = (path: string) => {
+    if (!isLoggedIn) {
+      window.scrollTo(0, 0);
+      router.push(`/login?redirect=${encodeURIComponent(path)}`);
+      return;
+    }
+    router.push(path);
+  };
 
   if (isLoading) return null;
 
@@ -37,12 +49,15 @@ export default function LibraryMainContent({ magnetId, isUpcoming }: Props) {
           <span className="font-semibold text-primary">제일 먼저</span>{' '}
           알려드려요!
         </div>
-        <Link
-          href={`/library/${magnetId}/apply?type=launch-alert`}
+        <button
+          type="button"
+          onClick={() =>
+            handleApplyClick(`/library/${magnetId}/apply?type=launch-alert`)
+          }
           className="w-full max-w-lg rounded-xs bg-primary px-6 py-4 text-center text-xsmall16 text-white"
         >
           알림 신청하기
-        </Link>
+        </button>
       </div>
     );
   }
@@ -75,12 +90,13 @@ export default function LibraryMainContent({ magnetId, isUpcoming }: Props) {
         <br />
         다음 내용이 궁금하다면?
       </div>
-      <Link
-        href={`/library/${magnetId}/apply`}
+      <button
+        type="button"
+        onClick={() => handleApplyClick(`/library/${magnetId}/apply`)}
         className="w-full max-w-lg rounded-xs bg-primary px-6 py-4 text-center text-xsmall16 text-white"
       >
         자료집 신청하기
-      </Link>
+      </button>
     </div>
   );
 }
