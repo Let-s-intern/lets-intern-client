@@ -20,7 +20,21 @@ export async function downloadGuidebookAndTrack(
     return;
   }
 
-  window.open(urlToOpen, '_blank', 'noopener,noreferrer');
+  try {
+    const response = await fetch(urlToOpen);
+    const blob = await response.blob();
+    const blobUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = blobUrl;
+    link.download = urlToOpen.split('/').pop()?.split('?')[0] || '가이드북.pdf';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(blobUrl);
+  } catch {
+    // CORS 등으로 fetch 실패 시 새 탭으로 fallback
+    window.open(urlToOpen, '_blank', 'noopener,noreferrer');
+  }
 
   try {
     await patchApplicationDownload({
