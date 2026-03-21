@@ -16,7 +16,7 @@ const UserReviewSection = memo(function UserReviewSection() {
   const swiperRef = useRef<SwiperType | null>(null);
 
   return (
-    <section className="flex w-full flex-col items-center justify-center bg-[#131030] py-16 md:py-24">
+    <section className="flex w-full flex-col items-center justify-center bg-[#131030] py-20 md:py-28">
       <div className="mx-auto w-full max-w-[1100px] px-6">
         {/* Section Header */}
         <p className="text-center text-sm font-semibold text-[#B49AFF] md:text-base">

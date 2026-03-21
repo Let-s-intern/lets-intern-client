@@ -18,7 +18,7 @@ const MentorListSection = memo(function MentorListSection({
   );
 
   return (
-    <section className="flex w-full flex-col items-center justify-center bg-[#0f0d2e] py-16 md:py-24">
+    <section className="flex w-full flex-col items-center justify-center bg-[#0f0d2e] py-20 md:py-28">
       <div className="mx-auto max-w-[1200px] px-6">
         <p className="text-center text-sm font-semibold text-[#B49AFF] md:text-base">
           렛츠커리어 현직자 멘토단

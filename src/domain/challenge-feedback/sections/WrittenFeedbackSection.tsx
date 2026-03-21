@@ -38,7 +38,7 @@ const WrittenFeedbackSection = memo(function WrittenFeedbackSection({
 
   return (
     <>
-      <section className="flex w-full flex-col items-center bg-[#13112a] py-16 md:py-24">
+      <section className="flex w-full flex-col items-center bg-[#13112a] py-20 md:py-28">
         <div className="w-full max-w-[1200px] px-6">
           <p className="text-center text-sm font-semibold text-[#B49AFF] md:text-base">
             서면 피드백 예시
