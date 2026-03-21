@@ -11,11 +11,24 @@ const FeedbackIntroSection = memo(function FeedbackIntroSection({
 }: FeedbackIntroSectionProps) {
   if (challenge.feedbackOptions.length === 0) return null;
 
+  const isSingle = challenge.feedbackOptions.length === 1;
+
   return (
     <section className="w-full bg-[#0C0A1D] py-16 md:py-24">
       <div className="mx-auto max-w-[1200px] px-6">
-        {/* 모바일: 세로 스택 / 데스크톱: 나란히 배치 */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
+        {/* 챌린지 제목 */}
+        <h2 className="mb-10 text-center text-xl font-bold text-white md:mb-14 md:text-2xl">
+          {challenge.fullName}
+        </h2>
+
+        {/* 옵션 카드 */}
+        <div
+          className={
+            isSingle
+              ? 'mx-auto max-w-[600px]'
+              : 'grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8'
+          }
+        >
           {challenge.feedbackOptions.map((option) => (
             <FeedbackOptionCard key={option.tier} option={option} />
           ))}
