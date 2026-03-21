@@ -8,6 +8,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
+import './user-review-pagination.css';
 import ReviewCard from '../components/ReviewCard';
 import { USER_REVIEWS } from '../data/challenge-feedback-data';
 
@@ -15,15 +16,18 @@ const UserReviewSection = memo(function UserReviewSection() {
   const swiperRef = useRef<SwiperType | null>(null);
 
   return (
-    <section className="flex w-full flex-col items-center justify-center bg-neutral-50 py-16 md:py-24">
+    <section className="flex w-full flex-col items-center justify-center bg-[#131030] py-16 md:py-24">
       <div className="mx-auto w-full max-w-[1100px] px-6">
         {/* Section Header */}
-        <p className="text-center text-sm font-semibold text-primary md:text-base">
-          수강 후기
+        <p className="text-center text-sm font-semibold text-[#B49AFF] md:text-base">
+          피드백 후기
         </p>
-        <h2 className="mt-2 text-center text-xl font-bold text-neutral-900 md:text-2xl">
-          수료생들의 솔직한 후기 모음
+        <h2 className="mt-2 text-center text-xl font-bold text-white md:text-2xl">
+          렛츠커리어 수강생의 솔직한 피드백 후기
         </h2>
+        <p className="mt-4 text-center text-base text-gray-300 md:text-lg">
+          이미 피드백을 경험한 수강생분들의 솔직한 후기를 확인해보세요!
+        </p>
 
         {/* Swiper Carousel */}
         <div className="mt-10 md:mt-14">
@@ -59,7 +63,7 @@ const UserReviewSection = memo(function UserReviewSection() {
             <button
               type="button"
               aria-label="Previous slide"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-300 bg-white text-neutral-500 transition-colors hover:bg-neutral-100"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/5 text-gray-400 transition-colors hover:bg-white/10"
               onClick={() => swiperRef.current?.slidePrev()}
             >
               <svg
@@ -76,12 +80,12 @@ const UserReviewSection = memo(function UserReviewSection() {
               </svg>
             </button>
 
-            <div className="user-review-pagination flex items-center gap-1.5" />
+            <div className="user-review-pagination flex items-center justify-center gap-2.5" />
 
             <button
               type="button"
               aria-label="Next slide"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-300 bg-white text-neutral-500 transition-colors hover:bg-neutral-100"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/5 text-gray-400 transition-colors hover:bg-white/10"
               onClick={() => swiperRef.current?.slideNext()}
             >
               <svg
