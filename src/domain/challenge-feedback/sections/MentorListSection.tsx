@@ -32,7 +32,7 @@ const MentorListSection = memo(function MentorListSection({
           혼자 준비하느라 막막했다면, 이제는 현직자 멘토단이 도와드릴게요
         </p>
 
-        <div className="mt-10 flex gap-5 overflow-x-auto pb-4 md:flex-wrap md:justify-center md:overflow-visible">
+        <div className="mt-10 grid grid-cols-2 gap-3 md:flex md:flex-wrap md:justify-center md:gap-5">
           {visibleMentors.map((mentor, i) => (
             <MentorCard key={`${mentor.nickname}-${i}`} mentor={mentor} />
           ))}
