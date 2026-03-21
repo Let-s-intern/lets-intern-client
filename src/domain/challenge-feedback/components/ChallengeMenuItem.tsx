@@ -14,7 +14,7 @@ const ChallengeMenuItem = memo(function ChallengeMenuItem({
   return (
     <button
       onClick={onClick}
-      className={`w-full rounded-full border px-2 py-1.5 text-[11px] font-semibold leading-tight transition-all duration-300 md:w-auto md:whitespace-nowrap md:px-5 md:py-2.5 md:text-sm ${
+      className={`whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold transition-all duration-300 md:px-5 md:py-2.5 md:text-sm ${
         isActive
           ? 'border-[#7C6BFF] bg-gradient-to-r from-[#7C6BFF]/20 to-[#B49AFF]/20 text-white shadow-[0_0_16px_rgba(124,107,255,0.3)]'
           : 'border-white/10 bg-white/5 text-gray-300 hover:border-[#7C6BFF]/50 hover:bg-[#7C6BFF]/10 hover:text-white hover:shadow-[0_0_12px_rgba(124,107,255,0.15)]'

@@ -48,13 +48,13 @@ const ChallengeMenuSection = memo(function ChallengeMenuSection({
           어떤 챌린지의 <span className="text-[#B49AFF]">피드백</span>이
           궁금하신가요?
         </h2>
-        {/* 모바일: 그리드 균등 배치 / 데스크톱: flex 2줄 배치 */}
-        <div className="flex flex-col items-center gap-3 md:gap-6">
-          <div className="grid w-full grid-cols-3 gap-2 md:flex md:flex-wrap md:justify-center md:gap-4">
+        <div className="flex flex-col items-center gap-2 md:gap-4">
+          <div className="flex flex-wrap justify-center gap-2 md:gap-4">
             {renderRow(ROW1_KEYS)}
+            {renderRow(ROW2_KEYS.slice(0, 1))}
           </div>
-          <div className="grid w-full grid-cols-4 gap-2 md:flex md:flex-wrap md:justify-center md:gap-4">
-            {renderRow(ROW2_KEYS)}
+          <div className="flex flex-wrap justify-center gap-2 md:gap-4">
+            {renderRow(ROW2_KEYS.slice(1))}
           </div>
         </div>
       </div>
