@@ -10,8 +10,7 @@ interface MentorListSectionProps {
 const MentorListSection = memo(function MentorListSection({
   challenge,
 }: MentorListSectionProps) {
-  const displayCount =
-    challenge.mentorDisplayCount ?? challenge.mentors.length;
+  const displayCount = challenge.mentorDisplayCount ?? challenge.mentors.length;
 
   const visibleMentors = useMemo(
     () => challenge.mentors.slice(0, displayCount),
@@ -21,11 +20,17 @@ const MentorListSection = memo(function MentorListSection({
   return (
     <section className="flex w-full flex-col items-center justify-center bg-[#0f0d2e] py-16 md:py-24">
       <div className="mx-auto max-w-[1200px] px-6">
-        <h2 className="text-center text-xl font-bold text-white md:text-2xl">
-          {challenge.mentorSectionField},{' '}
-          <span className="text-[#B49AFF]">현직자 {displayCount}명</span>이 다
-          봐드립니다
+        <p className="text-center text-sm font-semibold text-[#B49AFF] md:text-base">
+          렛츠커리어 현직자 멘토단
+        </p>
+        <h2 className="mt-2 text-center text-xl font-bold text-white md:text-2xl">
+          서류의 완성도를 높여줄
+          <br />
+          현직자 멘토단
         </h2>
+        <p className="mt-4 text-center text-base text-gray-300 md:text-lg">
+          혼자 준비하느라 막막했다면, 이제는 현직자 멘토단이 도와드릴게요
+        </p>
 
         <div className="mt-10 flex gap-5 overflow-x-auto pb-4 md:flex-wrap md:justify-center md:overflow-visible">
           {visibleMentors.map((mentor, i) => (
