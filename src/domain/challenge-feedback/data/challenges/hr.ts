@@ -7,8 +7,14 @@ export const hr: ChallengeData = {
   fullName: 'HR 서류 완성 챌린지',
   detailUrl: '/challenge/hr',
   mentorSectionField: 'HR 서류',
-  mentors: [MENTORS.sunny, MENTORS.dukyang, MENTORS.taehoon, MENTORS.alex],
-  mentorDisplayCount: 4,
+  mentors: [
+    MENTORS.sunny,
+    MENTORS.dukyang,
+    MENTORS.taehoon,
+    MENTORS.alex,
+    MENTORS.gidae,
+  ],
+  mentorDisplayCount: 5,
   feedbackOptions: [
     {
       tier: 'STANDARD',
