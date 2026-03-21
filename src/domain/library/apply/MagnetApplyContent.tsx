@@ -1,7 +1,8 @@
 'use client';
 
-import MarketingConsentSection from '@/common/form/MarketingConsentSection';
+import { usePostMagnetApplicationMutation } from '@/api/magnet/magnet';
 import { usePatchUser, useUserQuery } from '@/api/user/user';
+import MarketingConsentSection from '@/common/form/MarketingConsentSection';
 import CareerInfoForm, {
   CareerInfoSelections,
   CareerInfoValues,
@@ -10,6 +11,8 @@ import { GRADE_ENUM_TO_KOREAN, GRADE_KOREAN_TO_ENUM } from '@/utils/constants';
 import { ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { getLibraryPathname } from '@/utils/url';
+import LaunchAlertProgramSection from './LaunchAlertProgramSection';
 import MagnetApplyInfoCard from './MagnetApplyInfoCard';
 import MagnetSurveySection, {
   MagnetQuestion,
@@ -58,8 +61,20 @@ const MagnetApplyContent = ({
   const [surveyAnswers, setSurveyAnswers] = useState<MagnetSurveyAnswer[]>([]);
   const [isMarketingAgreed, setIsMarketingAgreed] = useState(false);
 
+  // 출시 알림 전용 상태
+  const [selectedLaunchAlertIds, setSelectedLaunchAlertIds] = useState<
+    number[]
+  >([]);
+  const [wantNotification, setWantNotification] = useState<boolean | null>(
+    null,
+  );
+
   const { mutateAsync: tryPatchUser, isPending: patchUserIsPending } =
     usePatchUser();
+  const {
+    mutateAsync: tryPostMagnetApplication,
+    isPending: postApplicationIsPending,
+  } = usePostMagnetApplicationMutation();
 
   useEffect(() => {
     if (userData) {
@@ -153,8 +168,10 @@ const MagnetApplyContent = ({
     return false;
   }, [value, selections, isMarketingAgreed, surveyAnswers, questions]);
 
+  const isSubmitting = patchUserIsPending || postApplicationIsPending;
+
   const handleSubmit = async () => {
-    if (patchUserIsPending) return;
+    if (isSubmitting) return;
 
     try {
       const enumGrade = value.grade
@@ -178,15 +195,47 @@ const MagnetApplyContent = ({
         wishEmploymentType: value.wishEmploymentType,
       });
 
-      // TODO: API 연동 - 마그넷 신청 API 호출
-      // await postMagnetApplication({
-      //   magnetId,
-      //   surveyAnswers,
-      //   isMarketingAgreed,
-      // });
+      const magnetAnswerList = surveyAnswers.map((a) => {
+        const question = questions.find(
+          (q) => q.questionId === a.questionId,
+        );
+        let answer = '';
+        if (question?.questionType === 'SUBJECTIVE') {
+          answer = a.subjectiveText;
+        } else {
+          const selectedValues = (question?.items ?? [])
+            .filter((item) => a.selectedItemIds.includes(item.itemId))
+            .map((item) => item.value);
+          if (a.otherText) selectedValues.push(a.otherText);
+          answer = selectedValues.join(',');
+        }
+        return { magnetQuestionId: a.questionId, answer };
+      });
+
+      await tryPostMagnetApplication({
+        magnetId,
+        body: { magnetAnswerList },
+      });
+
+      // 출시 알림: 선택한 프로그램들에 대해 신청
+      if (
+        variant === 'launch-alert' &&
+        wantNotification &&
+        selectedLaunchAlertIds.length > 0
+      ) {
+        await Promise.all(
+          selectedLaunchAlertIds.map((id) =>
+            tryPostMagnetApplication({
+              magnetId: id,
+              body: { magnetAnswerList: [] },
+            }),
+          ),
+        );
+      }
 
       alert('신청이 완료되었습니다.');
-      router.back();
+      router.push(getLibraryPathname({ id: magnetId, title }));
+      router.refresh();
     } catch (error) {
       console.error(error);
       alert(`신청에 실패했습니다. 다시 시도해주세요.\n${error}`);
@@ -218,6 +267,7 @@ const MagnetApplyContent = ({
           onChange={setValue}
           initialSelections={initialSelections}
           onSelectionsChange={handleSelectionsChange}
+          showRequired={true}
         />
       </section>
 
@@ -231,6 +281,18 @@ const MagnetApplyContent = ({
             questions={questions}
             answers={surveyAnswers}
             onAnswerChange={handleSurveyAnswerChange}
+          />
+        </section>
+      )}
+
+      {/* 출시 알림 프로그램 선택 */}
+      {variant === 'launch-alert' && (
+        <section>
+          <LaunchAlertProgramSection
+            selectedMagnetIds={selectedLaunchAlertIds}
+            onSelectedMagnetIdsChange={setSelectedLaunchAlertIds}
+            wantNotification={wantNotification}
+            onWantNotificationChange={setWantNotification}
           />
         </section>
       )}

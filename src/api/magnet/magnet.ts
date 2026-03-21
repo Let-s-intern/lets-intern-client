@@ -13,12 +13,14 @@ import {
   ProgramType,
   UserMagnetDetailResponse,
   UserMagnetListResponse,
+  UserMagnetQuestionListResponse,
   baseQuestionListResponseSchema,
   magnetDetailResponseSchema,
   magnetListResponseSchema,
   mypageMagnetListResponseSchema,
   userMagnetDetailResponseSchema,
   userMagnetListResponseSchema,
+  userMagnetQuestionListResponseSchema,
 } from './magnetSchema';
 
 const magnetListQueryKey = 'MagnetListQueryKey';
@@ -26,6 +28,8 @@ const magnetDetailQueryKey = 'MagnetDetailQueryKey';
 const userMagnetListQueryKey = 'UserMagnetListQueryKey';
 const myMagnetListQueryKey = 'MyMagnetListQueryKey';
 const baseQuestionQueryKey = 'BaseQuestionQueryKey';
+const mypageMagnetListQueryKey = 'MypageMagnetListQueryKey';
+const userMagnetDetailQueryKey = 'UserMagnetDetailQueryKey';
 
 export interface MagnetListQueryParams {
   typeList?: MagnetTypeKey[];
@@ -165,8 +169,6 @@ export const usePatchMagnetMutation = ({
 };
 
 // 유저용 마그넷 상세 조회
-const userMagnetDetailQueryKey = 'UserMagnetDetailQueryKey';
-
 export const userMagnetDetailQueryOptions = (magnetId: number) => ({
   queryKey: [userMagnetDetailQueryKey, magnetId],
   queryFn: async (): Promise<UserMagnetDetailResponse> => {
@@ -254,9 +256,53 @@ export const useGetMyMagnetListQuery = ({
   });
 };
 
-// 마이페이지 MY 마그넷 신청현황 조회
-const mypageMagnetListQueryKey = 'MypageMagnetListQueryKey';
+// 마그넷 신청 폼 조회
+const userMagnetQuestionsQueryKey = 'UserMagnetQuestionsQueryKey';
 
+export const useGetUserMagnetQuestionsQuery = (
+  magnetId: number,
+  options?: { enabled?: boolean },
+) => {
+  return useQuery({
+    queryKey: [userMagnetQuestionsQueryKey, magnetId],
+    queryFn: async (): Promise<UserMagnetQuestionListResponse> => {
+      const res = await axios.get(`/magnet/${magnetId}/questions`);
+      return userMagnetQuestionListResponseSchema.parse(res.data.data);
+    },
+    enabled: options?.enabled,
+  });
+};
+
+// 마그넷 신청
+export interface MagnetApplicationReqBody {
+  magnetAnswerList: {
+    magnetQuestionId: number;
+    answer: string;
+  }[];
+}
+
+export const usePostMagnetApplicationMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      magnetId,
+      body,
+    }: {
+      magnetId: number;
+      body: MagnetApplicationReqBody;
+    }) => {
+      const res = await axios.post(`/magnet-application/${magnetId}`, body);
+      return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: [userMagnetDetailQueryKey],
+      });
+    },
+  });
+};
+
+// 마이페이지 MY 마그넷 신청현황 조회
 export const useGetMypageMagnetListQuery = ({
   typeList,
   enabled,

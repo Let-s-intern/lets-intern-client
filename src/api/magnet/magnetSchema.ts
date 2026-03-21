@@ -141,8 +141,30 @@ export type BaseQuestionListResponse = z.infer<
   typeof baseQuestionListResponseSchema
 >;
 
-// --- Mypage magnet (신청현황) ---
+// --- User-facing magnet questions ---
+const userMagnetQuestionItemSchema = z.object({
+  magnetQuestionId: z.number(),
+  type: z.string(),
+  question: z.string(),
+  description: z.string().nullable(),
+  isRequired: z.boolean(),
+  answerType: z.enum(['CHOICE', 'TEXT']),
+  choiceType: z.enum(['SINGLE', 'MULTIPLE']),
+  options: z.string().nullable(),
+});
 
+export const userMagnetQuestionListResponseSchema = z.object({
+  magnetQuestionList: z.array(userMagnetQuestionItemSchema),
+});
+
+export type UserMagnetQuestionListResponse = z.infer<
+  typeof userMagnetQuestionListResponseSchema
+>;
+export type UserMagnetQuestionItem = z.infer<
+  typeof userMagnetQuestionItemSchema
+>;
+
+// --- Mypage magnet (신청현황) ---
 const mypageMagnetListItemSchema = z.object({
   magnetId: z.number(),
   type: magnetTypeSchema,
