@@ -1,11 +1,12 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   CHALLENGE_LIST,
   findChallengeByKey,
 } from './data/challenge-feedback-data';
+import { REFERRER_KEYWORD_MAP } from './data/urls';
 import ApplyCtaSection from './sections/ApplyCtaSection';
 import BeforeAfterSection from './sections/BeforeAfterSection';
 import ChallengeMenuSection from './sections/ChallengeMenuSection';
@@ -17,6 +18,16 @@ import SuccessStoriesSection from './sections/SuccessStoriesSection';
 import UserReviewSection from './sections/UserReviewSection';
 import WrittenFeedbackSection from './sections/WrittenFeedbackSection';
 import type { ChallengeKey, FeedbackDetailWithTiers } from './types';
+
+function detectChallengeFromReferrer(): ChallengeKey | null {
+  if (typeof window === 'undefined') return null;
+  const referrer = decodeURIComponent(document.referrer);
+  if (!referrer.includes('/program/challenge/')) return null;
+  for (const { keyword, key } of REFERRER_KEYWORD_MAP) {
+    if (referrer.includes(keyword)) return key;
+  }
+  return null;
+}
 
 interface ChallengeFeedbackScreenProps {
   initialChallenge?: string;
@@ -36,6 +47,17 @@ const ChallengeFeedbackScreen = ({
     const top = el.getBoundingClientRect().top + window.scrollY - headerH;
     window.scrollTo({ top, behavior: 'smooth' });
   }, []);
+
+  // referrer에서 챌린지 자동 감지
+  useEffect(() => {
+    if (searchParams.get('challenge')) return;
+    const detected = detectChallengeFromReferrer();
+    if (detected) {
+      router.replace(`/challenge/feedback-mentoring?challenge=${detected}`, {
+        scroll: false,
+      });
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const selectedKey =
     (searchParams.get('challenge') as ChallengeKey) ??
@@ -63,7 +85,10 @@ const ChallengeFeedbackScreen = ({
   }, [selectedChallenge]);
 
   const writtenFeedbackDetails = useMemo(
-    () => detailsWithTiers.filter((d) => d.method === '서면' && d.exampleImages.length > 0),
+    () =>
+      detailsWithTiers.filter(
+        (d) => d.method === '서면' && d.exampleImages.length > 0,
+      ),
     [detailsWithTiers],
   );
 

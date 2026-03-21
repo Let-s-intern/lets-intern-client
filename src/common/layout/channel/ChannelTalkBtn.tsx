@@ -43,7 +43,9 @@ const ChannelTalkBtn = (props: ChannelTalkBtnProps) => {
     if (pathname.endsWith('payment')) setIsHidden(true);
   }, [pathname]);
 
-  const hiddenByPathname = pathname.startsWith('/b2b');
+  const hiddenByPathname =
+    pathname.startsWith('/b2b') ||
+    pathname.startsWith('/challenge/feedback-mentoring');
 
   return (
     <button

@@ -55,8 +55,8 @@ export interface LiveMentoring {
 }
 
 export interface UserReview {
-  image: string;
-  alt: string;
+  title: string;
+  content: string;
 }
 
 export interface SuccessStory {

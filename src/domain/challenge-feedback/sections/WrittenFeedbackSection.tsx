@@ -38,14 +38,19 @@ const WrittenFeedbackSection = memo(function WrittenFeedbackSection({
 
   return (
     <>
-      <section className="flex w-full flex-col items-center bg-[#13112a] py-16 md:py-24">
+      <section className="flex w-full flex-col items-center bg-[#13112a] py-20 md:py-28">
         <div className="w-full max-w-[1200px] px-6">
-          <h2 className="text-center text-xl font-bold text-white md:text-2xl">
-            서면 피드백, 이렇게{' '}
-            <span className="text-[#B49AFF]">꼼꼼하게</span> 봐드려요
+          <p className="text-center text-sm font-semibold text-[#B49AFF] md:text-base">
+            서면 피드백 예시
+          </p>
+          <h2 className="mt-2 text-center text-lg font-bold text-white md:text-2xl">
+            열 번의 수정보다 확실한
+            <br />한 번의 현직자 피드백
           </h2>
-          <p className="mb-10 mt-4 text-center text-base text-gray-300 md:text-lg">
-            실제 피드백 예시를 확인해 보세요
+          <p className="mb-10 mt-4 text-center text-sm text-gray-300 md:text-lg">
+            합격하는 서류의 디테일이 궁금하다면,
+            <br className="md:hidden" />
+            현직자의 시선에서 점검해보세요.
           </p>
 
           <div className="flex flex-col gap-10">

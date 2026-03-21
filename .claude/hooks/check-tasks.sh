@@ -9,12 +9,12 @@ INPUT=$(cat)
 [ ! -f ".claude/.task-running" ] && exit 0
 
 # 무한 루프 방지 (stop_hook_active가 true면 종료 허용)
-if [ "$(echo "$INPUT" | jq -r '.stop_hook_active')" = "true" ]; then
+if [ "$(echo "$INPUT" | jq -r '.stop_hook_active // empty')" = "true" ]; then
   exit 0
 fi
 
-# todo/ 에서 미완료 항목([ ])이 있는 파일 탐색
-REMAINING=$(ls todo/*.md 2>/dev/null | xargs -I{} sh -c 'grep -l "\[ \]" {} 2>/dev/null' 2>/dev/null | head -1)
+# .claude/tasks/todo/ 에서 미완료 항목([ ])이 있는 파일 탐색
+REMAINING=$(ls .claude/tasks/todo/*.md 2>/dev/null | xargs -I{} sh -c 'grep -l "\[ \]" {} 2>/dev/null' 2>/dev/null | head -1)
 
 if [ -n "$REMAINING" ]; then
   # 남은 작업 개수 파악

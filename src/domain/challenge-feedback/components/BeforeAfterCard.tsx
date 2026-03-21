@@ -20,29 +20,27 @@ const BeforeAfterCard = memo(function BeforeAfterCard({
   return (
     <div className="flex flex-1 flex-col items-center">
       {/* 라벨 */}
-      {isAfter && (
-        <div className="mb-4 rounded-md bg-[#7C6BFF] px-6 py-2 text-lg font-bold text-white md:text-xl">
-          After
-        </div>
-      )}
-      {!isAfter && (
-        <div className="mb-4 text-lg font-bold text-gray-300 md:text-xl">
-          Before
-        </div>
-      )}
+      <div
+        className={`mb-4 rounded-md px-6 py-2 text-lg font-bold md:text-xl ${
+          isAfter ? 'bg-[#7C6BFF] text-white' : 'bg-white/10 text-gray-300'
+        }`}
+      >
+        {isAfter ? 'After' : 'Before'}
+      </div>
 
       {/* 이미지 */}
       <button
         type="button"
         onClick={() => onImageClick(image, alt)}
-        className="group relative cursor-zoom-in overflow-hidden rounded-lg"
+        className="group relative w-full cursor-zoom-in overflow-hidden rounded-lg"
       >
         <Image
           src={image}
           alt={alt}
-          width={480}
-          height={360}
-          className="h-auto w-full object-contain transition-transform duration-300 group-hover:scale-105"
+          width={700}
+          height={0}
+          className="h-auto w-full transition-transform duration-300 group-hover:scale-105"
+          sizes="(max-width: 768px) 100vw, 700px"
         />
         <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors duration-300 group-hover:bg-black/30">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20 opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100">
