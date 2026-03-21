@@ -36,12 +36,15 @@ const LiveMentoringSection = memo(function LiveMentoringSection({
   return (
     <section className="flex w-full flex-col items-center justify-center bg-[#0e0c22] py-20 md:py-28">
       <div className="mx-auto max-w-[1200px] px-6">
-        <h2 className="text-center text-xl font-bold text-white md:text-2xl">
-          <span className="text-[#B49AFF]">1:1 LIVE</span> 피드백, 영상으로 미리
-          확인하세요!
+        <h2 className="text-center text-lg font-bold text-white md:text-2xl">
+          <span className="text-[#B49AFF]">1:1 LIVE</span> 피드백,
+          <br className="md:hidden" />
+          영상으로 미리 확인하세요!
         </h2>
-        <p className="mb-10 mt-4 text-center text-base text-gray-300 md:text-lg">
-          {liveMentoring.subCopy1}
+        <p className="mb-10 mt-4 text-center text-sm text-gray-300 md:text-lg">
+          혼자 막막했던 고민들,
+          <br className="md:hidden" />
+          멘토님과 실시간으로 해결하세요
         </p>
       </div>
 
@@ -49,8 +52,10 @@ const LiveMentoringSection = memo(function LiveMentoringSection({
         <VideoEmbed videoUrl={liveMentoring.videoUrl} />
       </div>
 
-      <p className="mt-8 text-center text-base text-gray-300 md:text-lg">
-        {liveMentoring.subCopy2}
+      <p className="mt-8 text-center text-sm text-gray-300 md:text-lg">
+        라이브로 주고 받는 맞춤형 피드백으로,
+        <br className="md:hidden" />
+        서류 완성도 UP!
       </p>
     </section>
   );
