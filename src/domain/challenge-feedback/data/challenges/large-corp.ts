@@ -83,10 +83,5 @@ export const largeCorp: ChallengeData = {
     },
   ],
   beforeAfter: null,
-  liveMentoring: {
-    title: '1:1 LIVE 피드백, 영상으로 미리 확인하세요!',
-    subCopy1: '혼자 막막했던 고민들, 멘토님과 실시간으로 해결하세요',
-    videoUrl: '',
-    subCopy2: '라이브로 주고 받는 맞춤형 피드백으로, 서류 완성도 UP!',
-  },
+  liveMentoring: null,
 };
