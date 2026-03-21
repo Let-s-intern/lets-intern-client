@@ -38,7 +38,7 @@ const MentorListSection = memo(function MentorListSection({
           {visibleMentors.map((mentor, i) => (
             <div
               key={`${mentor.nickname}-${i}`}
-              className="w-[calc(50%-6px)] md:w-[calc(25%-15px)]"
+              className="w-[calc(50%-6px)] md:w-[260px]"
             >
               <MentorCard mentor={mentor} />
             </div>
