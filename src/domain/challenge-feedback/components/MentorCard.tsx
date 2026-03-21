@@ -19,11 +19,17 @@ const MentorCard = memo(function MentorCard({ mentor }: MentorCardProps) {
           className="h-[140px] w-auto object-contain md:h-[220px]"
         />
       </div>
-      {/* 정보 */}
-      <div className="p-4">
-        <p className="text-sm font-bold text-gray-900">{mentor.company}</p>
-        <p className="mt-0.5 text-xs text-gray-500">{mentor.role}</p>
-      </div>
+      {/* 정보 — company/role이 있을 때만 표시 */}
+      {(mentor.company || mentor.role) && (
+        <div className="p-4">
+          {mentor.company && (
+            <p className="text-sm font-bold text-gray-900">{mentor.company}</p>
+          )}
+          {mentor.role && (
+            <p className="mt-0.5 text-xs text-gray-500">{mentor.role}</p>
+          )}
+        </div>
+      )}
     </div>
   );
 });

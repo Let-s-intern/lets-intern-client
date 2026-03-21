@@ -111,9 +111,9 @@ export const MENTORS: Record<string, Mentor> = {
   },
   sunny: {
     nickname: '써니 멘토',
-    company: '한국타이어',
-    role: '인사',
-    profileImage: '/images/challenge-feedback/mentors/mentor-1.png',
+    company: '',
+    role: '',
+    profileImage: '/images/challenge-feedback/mentors/sunny.png',
   },
   taehoon: {
     nickname: '허태훈 멘토',
