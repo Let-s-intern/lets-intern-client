@@ -59,11 +59,11 @@ const UserReviewSection = memo(function UserReviewSection() {
           </Swiper>
 
           {/* Custom Navigation + Pagination */}
-          <div className="mt-8 flex items-center justify-center gap-6">
+          <div className="mt-8 flex items-center justify-center gap-2 md:gap-3">
             <button
               type="button"
               aria-label="Previous slide"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/5 text-gray-400 transition-colors hover:bg-white/10"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/5 text-gray-400 transition-colors hover:bg-white/10 md:h-14 md:w-14"
               onClick={() => swiperRef.current?.slidePrev()}
             >
               <svg
@@ -85,7 +85,7 @@ const UserReviewSection = memo(function UserReviewSection() {
             <button
               type="button"
               aria-label="Next slide"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/5 text-gray-400 transition-colors hover:bg-white/10"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/5 text-gray-400 transition-colors hover:bg-white/10 md:h-14 md:w-14"
               onClick={() => swiperRef.current?.slideNext()}
             >
               <svg
