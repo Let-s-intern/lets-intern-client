@@ -1,34 +1,103 @@
-import Image from 'next/image';
-import { memo } from 'react';
+'use client';
+
+import { memo, useRef } from 'react';
+import { Navigation, Pagination } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import type { Swiper as SwiperType } from 'swiper';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+
+import ReviewCard from '../components/ReviewCard';
 import { USER_REVIEWS } from '../data/challenge-feedback-data';
 
 const UserReviewSection = memo(function UserReviewSection() {
-  return (
-    <section className="flex w-full flex-col items-center justify-center bg-[#0f0d2e] py-16 md:py-24">
-      <div className="mx-auto max-w-[1000px] px-6">
-        <p className="text-center text-sm font-semibold text-[#B49AFF] md:text-base">
-          피드백 후기
-        </p>
-        <h2 className="mt-2 text-center text-xl font-bold text-white md:text-2xl">
-          렛츠커리어 수강생의 솔직한 피드백 후기
-        </h2>
-        <p className="mb-10 mt-4 text-center text-base text-gray-300 md:mb-14 md:text-lg">
-          이미 피드백을 경험한 수강생분들의 솔직한 후기를 확인해보세요!
-        </p>
+  const swiperRef = useRef<SwiperType | null>(null);
 
-        {/* 2x2 그리드 배치 */}
-        <div className="grid grid-cols-2 gap-4 md:gap-6">
-          {USER_REVIEWS.map((review, i) => (
-            <div key={i} className="overflow-hidden rounded-lg shadow-lg">
-              <Image
-                src={review.image}
-                alt={review.alt}
-                width={480}
-                height={360}
-                className="h-auto w-full object-contain"
-              />
-            </div>
-          ))}
+  return (
+    <section className="flex w-full flex-col items-center justify-center bg-neutral-50 py-16 md:py-24">
+      <div className="mx-auto w-full max-w-[1100px] px-6">
+        {/* Section Header */}
+        <p className="text-center text-sm font-semibold text-primary md:text-base">
+          수강 후기
+        </p>
+        <h2 className="mt-2 text-center text-xl font-bold text-neutral-900 md:text-2xl">
+          수료생들의 솔직한 후기 모음
+        </h2>
+
+        {/* Swiper Carousel */}
+        <div className="mt-10 md:mt-14">
+          <Swiper
+            modules={[Navigation, Pagination]}
+            spaceBetween={20}
+            slidesPerView={1}
+            loop
+            pagination={{
+              clickable: true,
+              el: '.user-review-pagination',
+            }}
+            onSwiper={(swiper) => {
+              swiperRef.current = swiper;
+            }}
+            breakpoints={{
+              768: {
+                slidesPerView: 3,
+                spaceBetween: 24,
+              },
+            }}
+            className="pb-4"
+          >
+            {USER_REVIEWS.map((review, index) => (
+              <SwiperSlide key={index} className="!h-auto">
+                <ReviewCard review={review} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+
+          {/* Custom Navigation + Pagination */}
+          <div className="mt-8 flex items-center justify-center gap-6">
+            <button
+              type="button"
+              aria-label="Previous slide"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-300 bg-white text-neutral-500 transition-colors hover:bg-neutral-100"
+              onClick={() => swiperRef.current?.slidePrev()}
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
+
+            <div className="user-review-pagination flex items-center gap-1.5" />
+
+            <button
+              type="button"
+              aria-label="Next slide"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-300 bg-white text-neutral-500 transition-colors hover:bg-neutral-100"
+              onClick={() => swiperRef.current?.slideNext()}
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </section>
