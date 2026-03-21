@@ -1,12 +1,6 @@
 import { patchApplicationDownload } from '@/api/application';
 import { getGuidebook } from '@/api/program';
 
-interface ErrorWithStatus {
-  response?: {
-    status?: number;
-  };
-}
-
 function openInNewTab(url: string): void {
   const link = document.createElement('a');
   link.href = url;
@@ -28,6 +22,10 @@ function triggerFileDownload(url: string, fileName: string): void {
   link.remove();
 }
 
+function isIOS(): boolean {
+  return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
 async function downloadS3File(url: string): Promise<void> {
   const rawName = url.split('/').pop()?.split('?')[0] || '가이드북.pdf';
   let fileName: string;
@@ -35,6 +33,11 @@ async function downloadS3File(url: string): Promise<void> {
     fileName = decodeURIComponent(rawName);
   } catch {
     fileName = rawName;
+  }
+
+  if (isIOS()) {
+    openInNewTab(url);
+    return;
   }
 
   try {
@@ -71,13 +74,5 @@ export async function downloadGuidebookAndTrack(
       applicationId,
       type: 'GUIDEBOOK',
     });
-  } catch (error: unknown) {
-    const status = (error as ErrorWithStatus).response?.status;
-    if (status === 409) {
-      return;
-    }
-    alert(
-      '가이드북 다운로드 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
-    );
-  }
+  } catch {}
 }
