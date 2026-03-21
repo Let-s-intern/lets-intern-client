@@ -16,21 +16,47 @@
 - 파라미터 없으면 첫 번째 챌린지 기본 선택
 - referrer URL에서 챌린지 키워드 자동 감지 → 해당 챌린지 자동 선택
 
-### 유입 경로 (Referrer 자동 감지)
+### 챌린지 자동 선택 흐름
 
-챌린지 상세 페이지(`/program/challenge/{id}`)에서 진입 시, URL에 포함된 한글 키워드로 챌린지를 자동 매칭합니다.
+페이지 진입 시 아래 우선순위로 챌린지 메뉴가 자동 선택됩니다.
 
-| 키워드 | 챌린지 키 |
-|--------|-----------|
-| 경험정리 | `experience` |
-| 이력서 | `resume` |
-| 자기소개서 | `personal-statement` |
-| 포트폴리오 | `portfolio` |
-| 대기업 | `large-corp` |
-| 마케팅 | `marketing` |
-| HR | `hr` |
+```
+1. ?challenge= 쿼리 파라미터가 있으면 → 해당 챌린지 선택
+2. 쿼리 파라미터 없으면 → document.referrer 확인
+   2-1. referrer에 /program/challenge/ 경로가 포함되어 있으면
+        → URL 디코딩 후 한글 키워드 매칭 → 해당 챌린지로 router.replace
+   2-2. referrer가 없거나 매칭 실패 → 첫 번째 챌린지(경험정리) 기본 선택
+```
 
-설정 파일: `src/domain/challenge-feedback/data/urls.ts` → `REFERRER_KEYWORD_MAP`
+#### 동작 예시
+
+| 유입 경로 (referrer) | 결과 |
+|---------------------|------|
+| `/program/challenge/234/포트폴리오-2주-완성-챌린지-30기` | `?challenge=portfolio` 자동 설정 → 포트폴리오 메뉴 선택 |
+| `/program/challenge/211/이력서-1주-완성-챌린지-12기` | `?challenge=resume` 자동 설정 → 이력서 메뉴 선택 |
+| `/program/challenge/192/대기업-자기소개서-완성-챌린지-7기` | `?challenge=large-corp` 자동 설정 → 대기업 메뉴 선택 |
+| 직접 접속 (referrer 없음) | 기본값 → 경험정리 챌린지 선택 |
+| `?challenge=hr`로 직접 접속 | 쿼리 파라미터 우선 → HR 메뉴 선택 |
+
+#### Referrer 키워드 매핑
+
+| 키워드 | 챌린지 키 | 비고 |
+|--------|-----------|------|
+| 경험정리 | `experience` | |
+| 이력서 | `resume` | |
+| 자기소개서 | `personal-statement` | |
+| 포트폴리오 | `portfolio` | |
+| 대기업 | `large-corp` | |
+| 마케팅 | `marketing` | |
+| HR | `hr` | 대소문자 무시 비교 |
+
+- 키워드 매칭은 `toLowerCase()` 비교로 대소문자 무관
+- `decodeURIComponent` 실패 시 원문 referrer로 폴백
+- 설정 파일: `src/domain/challenge-feedback/data/urls.ts` → `REFERRER_KEYWORD_MAP`
+
+#### 메뉴 클릭 시
+
+사용자가 챌린지 메뉴를 클릭하면 `router.push`로 `?challenge={key}` 쿼리 파라미터가 업데이트되고, 해당 챌린지의 섹션들이 조건부 렌더링됩니다. 스크롤 위치는 유지됩니다(`scroll: false`).
 
 ### 신청 페이지 (나가는 URL)
 
