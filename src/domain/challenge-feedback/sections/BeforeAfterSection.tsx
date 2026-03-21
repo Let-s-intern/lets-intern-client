@@ -43,12 +43,12 @@ const BeforeAfterSection = memo(function BeforeAfterSection({
         <p className="text-center text-sm font-semibold text-[#B49AFF] md:text-base">
           피드백 비포&애프터
         </p>
-        <h2 className="mt-2 text-center text-xl font-bold text-white md:text-2xl">
+        <h2 className="mt-2 text-center text-lg font-bold text-white md:text-2xl">
           확실하게 업그레이드 된 서류!
           <br />
           Before & After
         </h2>
-        <p className="mb-10 mt-4 text-center text-base text-gray-300 md:text-lg">
+        <p className="mb-10 mt-4 text-center text-sm text-gray-300 md:text-lg">
           부족한 점은 채우고, 강조할 부분은 더 눈에 띄도록, 구조화된 서류로
           업그레이드 해보세요.
         </p>

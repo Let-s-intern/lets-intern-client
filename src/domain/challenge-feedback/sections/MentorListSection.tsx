@@ -23,12 +23,12 @@ const MentorListSection = memo(function MentorListSection({
         <p className="text-center text-sm font-semibold text-[#B49AFF] md:text-base">
           렛츠커리어 현직자 멘토단
         </p>
-        <h2 className="mt-2 text-center text-xl font-bold text-white md:text-2xl">
+        <h2 className="mt-2 text-center text-lg font-bold text-white md:text-2xl">
           서류의 완성도를 높여줄
           <br />
           현직자 멘토단
         </h2>
-        <p className="mt-4 text-center text-base text-gray-300 md:text-lg">
+        <p className="mt-4 text-center text-sm text-gray-300 md:text-lg">
           혼자 준비하느라 막막했다면, 이제는 현직자 멘토단이 도와드릴게요
         </p>
 

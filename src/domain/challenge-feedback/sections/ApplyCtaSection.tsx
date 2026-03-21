@@ -35,7 +35,7 @@ const ApplyCtaSection = memo(function ApplyCtaSection({
     >
       <Link
         href={APPLY_URLS[challenge.key] || challenge.detailUrl}
-        className="flex items-center gap-2 rounded-full border border-[#7C6BFF]/40 bg-[#7C6BFF] px-8 py-3.5 text-sm font-bold text-white shadow-[0_4px_24px_rgba(124,107,255,0.4)] transition-all hover:bg-[#6B5CE7] hover:shadow-[0_4px_32px_rgba(124,107,255,0.6)] md:px-10 md:py-4 md:text-base"
+        className="flex items-center gap-2 whitespace-nowrap rounded-full border border-[#7C6BFF]/40 bg-[#7C6BFF] px-6 py-3 text-xs font-bold text-white shadow-[0_4px_24px_rgba(124,107,255,0.4)] transition-all hover:bg-[#6B5CE7] hover:shadow-[0_4px_32px_rgba(124,107,255,0.6)] md:px-10 md:py-4 md:text-base"
       >
         {challenge.fullName} 신청하러 가기
         <svg

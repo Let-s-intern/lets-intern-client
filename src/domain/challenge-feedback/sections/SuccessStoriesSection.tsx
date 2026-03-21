@@ -242,7 +242,7 @@ const SuccessStoriesSection = memo(function SuccessStoriesSection() {
   return (
     <section className="flex w-full flex-col items-center justify-center overflow-hidden bg-[#0e0c22] py-20 pb-32 md:py-28 md:pb-40">
       <div className="mx-auto max-w-[1200px] px-6">
-        <h2 className="mb-10 text-center text-xl font-bold text-white md:mb-14 md:text-2xl">
+        <h2 className="mb-10 text-center text-lg font-bold text-white md:mb-14 md:text-2xl">
           렛츠커리어와 함께{' '}
           <span className="text-[#B49AFF]">취뽀한 주인공들</span>을 소개합니다
         </h2>
