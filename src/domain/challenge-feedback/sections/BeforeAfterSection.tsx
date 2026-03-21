@@ -52,7 +52,7 @@ const BeforeAfterSection = memo(function BeforeAfterSection({
           부족한 점은 채우고, 강조할 부분은 더 눈에 띄도록, 구조화된 서류로
           업그레이드 해보세요.
         </p>
-        <div className="mx-auto flex max-w-[1200px] flex-col gap-8 px-6 md:flex-row md:gap-12">
+        <div className="mx-auto flex max-w-[1200px] flex-col gap-8 px-6 md:flex-row md:items-start md:gap-12">
           <BeforeAfterCard
             type="before"
             image={beforeAfter.beforeImage}

@@ -32,9 +32,14 @@ export const largeCorp: ChallengeData = {
             `${EXAMPLE_BASE}/large-corp/round-3-2.png`,
           ],
         },
-        { round: '6회차', description: '자기소개서 완성', method: '라이브', exampleImages: [] },
+        {
+          round: '6회차',
+          description: '자기소개서 완성',
+          method: '라이브',
+          exampleImages: [],
+        },
       ],
-      feedbackScope: '3회차: 서면 피드백 / 6회차: 1:1 Live',
+      feedbackScope: '',
       method: '서면 + 1:1 Live',
       mentorInfo:
         '렛츠커리어 현직자 멘토단 · 헤일리 멘토 / 현대자동차 · 줄리아 멘토 / 현대자동차 · 쥬쌤 멘토 / SK하이닉스 외',
@@ -64,9 +69,14 @@ export const largeCorp: ChallengeData = {
           method: '서면',
           exampleImages: [`${EXAMPLE_BASE}/large-corp/round-5-1.png`],
         },
-        { round: '6회차', description: '자기소개서 완성', method: '라이브', exampleImages: [] },
+        {
+          round: '6회차',
+          description: '자기소개서 완성',
+          method: '라이브',
+          exampleImages: [],
+        },
       ],
-      feedbackScope: '3/4/5회차: 서면 피드백 / 6회차: 1:1 Live',
+      feedbackScope: '',
       method: '서면 + 1:1 Live',
       mentorInfo:
         '렛츠커리어 현직자 멘토단 · 헤일리 멘토 / 현대자동차 · 줄리아 멘토 / 현대자동차 · 쥬쌤 멘토 / SK하이닉스 외',
