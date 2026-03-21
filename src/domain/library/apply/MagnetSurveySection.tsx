@@ -19,13 +19,11 @@ export interface MagnetQuestion {
 export interface MagnetQuestionItem {
   itemId: number;
   value: string;
-  isOther: boolean;
 }
 
 export interface MagnetSurveyAnswer {
   questionId: number;
   selectedItemIds: number[];
-  otherText: string;
   subjectiveText: string;
 }
 
@@ -75,7 +73,6 @@ function QuestionRenderer({
   const currentAnswer: MagnetSurveyAnswer = answer ?? {
     questionId: question.questionId,
     selectedItemIds: [],
-    otherText: '',
     subjectiveText: '',
   };
 
@@ -114,37 +111,18 @@ function QuestionRenderer({
         />
         <div className="flex flex-col gap-2">
           {question.items.map((item) => (
-            <div key={item.itemId} className="flex flex-col gap-2">
-              <RadioButton
-                color={RADIO_COLOR}
-                checked={currentAnswer.selectedItemIds.includes(item.itemId)}
-                label={item.value}
-                onClick={() => {
-                  const newAnswer: MagnetSurveyAnswer = {
-                    ...currentAnswer,
-                    selectedItemIds: [item.itemId],
-                    otherText: item.isOther ? currentAnswer.otherText : '',
-                  };
-                  onAnswerChange(question.questionId, newAnswer);
-                }}
-              />
-              {item.isOther &&
-                currentAnswer.selectedItemIds.includes(item.itemId) && (
-                  <LineInput
-                    id={`question-${question.questionId}-other`}
-                    name={`question-${question.questionId}-other`}
-                    className="ml-7 mt-1 w-full max-w-sm text-xsmall14 md:text-xsmall16"
-                    placeholder="기타 항목을 입력해 주세요."
-                    value={currentAnswer.otherText}
-                    onChange={(e) =>
-                      onAnswerChange(question.questionId, {
-                        ...currentAnswer,
-                        otherText: e.target.value,
-                      })
-                    }
-                  />
-                )}
-            </div>
+            <RadioButton
+              key={item.itemId}
+              color={RADIO_COLOR}
+              checked={currentAnswer.selectedItemIds.includes(item.itemId)}
+              label={item.value}
+              onClick={() => {
+                onAnswerChange(question.questionId, {
+                  ...currentAnswer,
+                  selectedItemIds: [item.itemId],
+                });
+              }}
+            />
           ))}
         </div>
       </div>
@@ -165,53 +143,27 @@ function QuestionRenderer({
             item.itemId,
           );
           return (
-            <div key={item.itemId} className="flex flex-col gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  const newIds = isSelected
-                    ? currentAnswer.selectedItemIds.filter(
-                        (id) => id !== item.itemId,
-                      )
-                    : [...currentAnswer.selectedItemIds, item.itemId];
-                  onAnswerChange(question.questionId, {
-                    ...currentAnswer,
-                    selectedItemIds: newIds,
-                    otherText:
-                      item.isOther && !isSelected
-                        ? currentAnswer.otherText
-                        : item.isOther && isSelected
-                          ? ''
-                          : currentAnswer.otherText,
-                  });
-                }}
-                className="flex w-full items-center gap-1 text-xsmall14"
-              >
-                <CheckBox
-                  checked={isSelected}
-                  width="w-6"
-                  showCheckIcon
-                />
-                <span className="text-xsmall14 md:text-xsmall16">
-                  {item.value}
-                </span>
-              </button>
-              {item.isOther && isSelected && (
-                <LineInput
-                  id={`question-${question.questionId}-other`}
-                  name={`question-${question.questionId}-other`}
-                  className="ml-7 mt-1 w-full max-w-sm text-xsmall14 md:text-xsmall16"
-                  placeholder="기타 항목을 입력해 주세요."
-                  value={currentAnswer.otherText}
-                  onChange={(e) =>
-                    onAnswerChange(question.questionId, {
-                      ...currentAnswer,
-                      otherText: e.target.value,
-                    })
-                  }
-                />
-              )}
-            </div>
+            <button
+              key={item.itemId}
+              type="button"
+              onClick={() => {
+                const newIds = isSelected
+                  ? currentAnswer.selectedItemIds.filter(
+                      (id) => id !== item.itemId,
+                    )
+                  : [...currentAnswer.selectedItemIds, item.itemId];
+                onAnswerChange(question.questionId, {
+                  ...currentAnswer,
+                  selectedItemIds: newIds,
+                });
+              }}
+              className="flex w-full items-center gap-1 text-xsmall14"
+            >
+              <CheckBox checked={isSelected} width="w-6" showCheckIcon />
+              <span className="text-xsmall14 md:text-xsmall16">
+                {item.value}
+              </span>
+            </button>
           );
         })}
       </div>

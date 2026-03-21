@@ -25,7 +25,6 @@ function toMagnetQuestion(item: UserMagnetQuestionItem): MagnetQuestion {
     items: options.map((value, index) => ({
       itemId: index + 1,
       value,
-      isOther: false,
     })),
   };
 }

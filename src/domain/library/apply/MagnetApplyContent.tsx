@@ -156,12 +156,6 @@ const MagnetApplyContent = ({
         if (!answer.subjectiveText.trim()) return true;
       } else {
         if (answer.selectedItemIds.length === 0) return true;
-        // Check if "other" item is selected but no text provided
-        const selectedOther = question.items.find(
-          (item) =>
-            item.isOther && answer.selectedItemIds.includes(item.itemId),
-        );
-        if (selectedOther && !answer.otherText.trim()) return true;
       }
     }
 
@@ -206,7 +200,6 @@ const MagnetApplyContent = ({
           const selectedValues = (question?.items ?? [])
             .filter((item) => a.selectedItemIds.includes(item.itemId))
             .map((item) => item.value);
-          if (a.otherText) selectedValues.push(a.otherText);
           answer = selectedValues.join(',');
         }
         return { magnetQuestionId: a.questionId, answer };
