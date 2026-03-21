@@ -34,9 +34,14 @@ const MentorListSection = memo(function MentorListSection({
           이제는 현직자 멘토단이 도와드릴게요
         </p>
 
-        <div className="mt-10 grid grid-cols-2 gap-3 md:flex md:flex-wrap md:justify-center md:gap-5 [&>*:last-child:nth-child(odd)]:col-span-2 [&>*:last-child:nth-child(odd)]:mx-auto [&>*:last-child:nth-child(odd)]:max-w-[50%]">
+        <div className="mt-10 flex flex-wrap justify-center gap-3 md:gap-5">
           {visibleMentors.map((mentor, i) => (
-            <MentorCard key={`${mentor.nickname}-${i}`} mentor={mentor} />
+            <div
+              key={`${mentor.nickname}-${i}`}
+              className="w-[calc(50%-6px)] md:w-[260px]"
+            >
+              <MentorCard mentor={mentor} />
+            </div>
           ))}
         </div>
 
