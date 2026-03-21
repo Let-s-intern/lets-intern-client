@@ -3,11 +3,11 @@
 import { useGetMypageMagnetListQuery } from '@/api/magnet/magnet';
 import { MypageMagnetListItem } from '@/api/magnet/magnetSchema';
 import dayjs from '@/lib/dayjs';
-import { MypageApplicationCardConfig } from '../utils/applicationCardConfig';
-import { MypageApplicationCard } from '../../ui/card/NewApplicationCard';
-import MoreButton from '../../ui/button/MoreButton';
-import EmptySection from './EmptySection';
 import { useState } from 'react';
+import MoreButton from '../../ui/button/MoreButton';
+import { MypageApplicationCard } from '../../ui/card/NewApplicationCard';
+import { MypageApplicationCardConfig } from '../utils/applicationCardConfig';
+import EmptySection from './EmptySection';
 
 const MAGNET_TYPE_LABEL: Record<string, string> = {
   MATERIAL: '자료집',
@@ -54,8 +54,7 @@ const toLibraryCardConfig = (
 };
 
 const LibrarySection = () => {
-  const { data, isLoading } = useGetMypageMagnetListQuery({
-  });
+  const { data, isLoading } = useGetMypageMagnetListQuery({});
   const [showMore, setShowMore] = useState(false);
 
   if (isLoading) return <></>;

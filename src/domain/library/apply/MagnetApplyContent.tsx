@@ -12,6 +12,7 @@ import { ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getLibraryPathname } from '@/utils/url';
+import LaunchAlertProgramSection from './LaunchAlertProgramSection';
 import MagnetApplyInfoCard from './MagnetApplyInfoCard';
 import MagnetSurveySection, {
   MagnetQuestion,
@@ -59,6 +60,14 @@ const MagnetApplyContent = ({
 
   const [surveyAnswers, setSurveyAnswers] = useState<MagnetSurveyAnswer[]>([]);
   const [isMarketingAgreed, setIsMarketingAgreed] = useState(false);
+
+  // 출시 알림 전용 상태
+  const [selectedLaunchAlertIds, setSelectedLaunchAlertIds] = useState<
+    number[]
+  >([]);
+  const [wantNotification, setWantNotification] = useState<boolean | null>(
+    null,
+  );
 
   const { mutateAsync: tryPatchUser, isPending: patchUserIsPending } =
     usePatchUser();
@@ -208,6 +217,22 @@ const MagnetApplyContent = ({
         body: { magnetAnswerList },
       });
 
+      // 출시 알림: 선택한 프로그램들에 대해 신청
+      if (
+        variant === 'launch-alert' &&
+        wantNotification &&
+        selectedLaunchAlertIds.length > 0
+      ) {
+        await Promise.all(
+          selectedLaunchAlertIds.map((id) =>
+            tryPostMagnetApplication({
+              magnetId: id,
+              body: { magnetAnswerList: [] },
+            }),
+          ),
+        );
+      }
+
       alert('신청이 완료되었습니다.');
       router.push(getLibraryPathname({ id: magnetId, title }));
       router.refresh();
@@ -256,6 +281,18 @@ const MagnetApplyContent = ({
             questions={questions}
             answers={surveyAnswers}
             onAnswerChange={handleSurveyAnswerChange}
+          />
+        </section>
+      )}
+
+      {/* 출시 알림 프로그램 선택 */}
+      {variant === 'launch-alert' && (
+        <section>
+          <LaunchAlertProgramSection
+            selectedMagnetIds={selectedLaunchAlertIds}
+            onSelectedMagnetIdsChange={setSelectedLaunchAlertIds}
+            wantNotification={wantNotification}
+            onWantNotificationChange={setWantNotification}
           />
         </section>
       )}
