@@ -9,7 +9,6 @@ export const REFERRER_KEYWORD_MAP: { keyword: string; key: ChallengeKey }[] = [
   { keyword: '대기업', key: 'large-corp' },
   { keyword: '마케팅', key: 'marketing' },
   { keyword: 'HR', key: 'hr' },
-  { keyword: 'hr', key: 'hr' },
 ];
 
 /** 신청 페이지: 챌린지별 최신 기수 신청 URL */
