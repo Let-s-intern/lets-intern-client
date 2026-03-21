@@ -20,7 +20,7 @@ export const APPLY_URLS: Record<ChallengeKey, string> = {
   'personal-statement':
     'https://www.letscareer.co.kr/challenge/personal-statement/latest',
   portfolio: 'https://www.letscareer.co.kr/challenge/portfolio/latest',
-  'large-corp': '',
-  marketing: '',
-  hr: '',
+  'large-corp': 'https://www.letscareer.co.kr/challenge/large-corp/latest',
+  marketing: 'https://www.letscareer.co.kr/challenge/marketing/latest',
+  hr: 'https://www.letscareer.co.kr/challenge/hr/latest',
 };
