@@ -8,8 +8,17 @@ interface ChallengeMenuSectionProps {
   onSelect: (key: ChallengeKey) => void;
 }
 
-const ROW1_KEYS: ChallengeKey[] = ['experience', 'resume', 'personal-statement'];
-const ROW2_KEYS: ChallengeKey[] = ['portfolio', 'large-corp', 'marketing', 'hr'];
+const ROW1_KEYS: ChallengeKey[] = [
+  'experience',
+  'resume',
+  'personal-statement',
+];
+const ROW2_KEYS: ChallengeKey[] = [
+  'portfolio',
+  'large-corp',
+  'marketing',
+  'hr',
+];
 
 const ChallengeMenuSection = memo(function ChallengeMenuSection({
   selectedKey,
@@ -33,7 +42,7 @@ const ChallengeMenuSection = memo(function ChallengeMenuSection({
   );
 
   return (
-    <section className="flex w-full flex-col items-center justify-center bg-[#0C0A1D] py-16 md:py-24">
+    <section className="flex w-full flex-col items-center justify-center bg-[#110f28] py-16 md:py-24">
       <div className="mx-auto max-w-[1200px] px-6">
         <h2 className="mb-8 text-center text-2xl font-bold text-white md:mb-12 md:text-3xl">
           어떤 챌린지의 <span className="text-[#B49AFF]">피드백</span>이

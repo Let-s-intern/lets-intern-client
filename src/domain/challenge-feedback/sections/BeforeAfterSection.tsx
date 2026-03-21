@@ -39,7 +39,7 @@ const BeforeAfterSection = memo(function BeforeAfterSection({
 
   return (
     <>
-      <section className="flex w-full flex-col items-center justify-center bg-[#13112a] py-20 md:py-28">
+      <section className="flex w-full flex-col items-center justify-center bg-[#0e0c22] py-20 md:py-28">
         <p className="text-center text-sm font-semibold text-[#B49AFF] md:text-base">
           피드백 비포&애프터
         </p>

@@ -14,7 +14,7 @@ const FeedbackIntroSection = memo(function FeedbackIntroSection({
   const isSingle = challenge.feedbackOptions.length === 1;
 
   return (
-    <section className="w-full bg-[#0C0A1D] py-20 md:py-28">
+    <section className="w-full bg-[#0e0c22] py-20 md:py-28">
       <div className="mx-auto max-w-[1200px] px-6">
         {/* 챌린지 제목 */}
         <h2 className="mb-10 text-center text-xl font-bold text-white md:mb-14 md:text-2xl">
