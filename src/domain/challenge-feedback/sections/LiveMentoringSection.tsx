@@ -46,30 +46,7 @@ const LiveMentoringSection = memo(function LiveMentoringSection({
       </div>
 
       <div className="mx-auto w-full max-w-[1200px] px-6">
-        <div className="flex flex-col gap-10">
-          {liveDetails.map((d) => (
-            <div key={d.round}>
-              <div className="mb-4 flex items-center justify-center gap-2">
-                <h3 className="text-lg font-semibold text-white md:text-xl">
-                  {d.round}: {d.description}
-                </h3>
-                {d.tiers.map((tier) => (
-                  <span
-                    key={tier}
-                    className={`rounded px-2 py-0.5 text-xs font-medium ${
-                      tier === 'PREMIUM'
-                        ? 'bg-[#7C6BFF]/15 text-[#B49AFF]'
-                        : 'bg-white/10 text-gray-300'
-                    }`}
-                  >
-                    {tier}
-                  </span>
-                ))}
-              </div>
-              <VideoEmbed videoUrl={liveMentoring.videoUrl} />
-            </div>
-          ))}
-        </div>
+        <VideoEmbed videoUrl={liveMentoring.videoUrl} />
       </div>
 
       <p className="mt-8 text-center text-base text-gray-300 md:text-lg">
