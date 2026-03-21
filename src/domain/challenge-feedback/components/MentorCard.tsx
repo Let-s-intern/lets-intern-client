@@ -11,11 +11,6 @@ const MentorCard = memo(function MentorCard({ mentor }: MentorCardProps) {
     <div className="flex w-[220px] flex-shrink-0 flex-col overflow-hidden rounded-lg bg-white md:w-[260px]">
       {/* 프로필 이미지 */}
       <div className="relative flex items-end justify-center bg-gray-100 pt-4">
-        <div className="absolute left-3 top-3 rounded-md bg-white p-1 shadow-sm">
-          <span className="text-xs font-bold text-gray-700">
-            {mentor.company}
-          </span>
-        </div>
         <Image
           src={mentor.profileImage}
           alt={`${mentor.nickname} 프로필`}
