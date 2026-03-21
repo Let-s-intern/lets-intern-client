@@ -240,7 +240,7 @@ const LogoPlayItem = ({
 
 const SuccessStoriesSection = memo(function SuccessStoriesSection() {
   return (
-    <section className="flex w-full flex-col items-center justify-center overflow-hidden bg-[#0e0c22] py-20 pb-32 md:py-28 md:pb-40">
+    <section className="flex w-full flex-col items-center justify-center overflow-hidden bg-[#0e0c22] py-20 pb-40 md:py-28 md:pb-48">
       <div className="mx-auto max-w-[1200px] px-6">
         <h2 className="mb-10 text-center text-lg font-bold text-white md:mb-14 md:text-2xl">
           렛츠커리어와 함께{' '}
