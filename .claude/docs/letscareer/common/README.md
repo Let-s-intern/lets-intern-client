@@ -291,7 +291,7 @@ useEffect(() => {
 
 ## 관련 문서
 
-- [큐레이션 도메인](../curation-domain/README.md) - 큐레이션 기능 아키텍처
+- [큐레이션 도메인](../domain/curation/README.md) - 큐레이션 기능 아키텍처
 - [기술 스택](../../tech-stack/README.md) - 프로젝트 기술 스택
 - [Vercel 베스트 프랙티스](../../../skills/vercel-react-best-practices/) - React 최적화 가이드
 - [코드 품질](../../../skills/code-quality/) - 코드 품질 기준
