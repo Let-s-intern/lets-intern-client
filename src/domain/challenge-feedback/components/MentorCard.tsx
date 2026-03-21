@@ -8,7 +8,7 @@ interface MentorCardProps {
 
 const MentorCard = memo(function MentorCard({ mentor }: MentorCardProps) {
   return (
-    <div className="flex w-full flex-shrink-0 flex-col overflow-hidden rounded-lg bg-white md:w-[260px]">
+    <div className="flex w-full flex-col overflow-hidden rounded-lg bg-white">
       {/* 프로필 이미지 */}
       <div className="relative flex items-end justify-center bg-gray-100 pt-4">
         <Image
