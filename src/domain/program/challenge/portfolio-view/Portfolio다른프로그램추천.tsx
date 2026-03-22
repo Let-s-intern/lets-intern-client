@@ -188,6 +188,7 @@ const Portfolio다른프로그램추천 = ({
   isResumeTemplate: boolean;
 }) => {
   const router = useRouter();
+  const weekText = point.weekText ?? '2주';
 
   const progress = [
     { index: 1, title: '신청 완료' },
@@ -356,7 +357,7 @@ const Portfolio다른프로그램추천 = ({
           <IntroHeading
             challengeType={challengeType}
             challengeTitle={challengeTitle}
-            weekText={point.weekText}
+            weekText={weekText}
             isResumeTemplate={isResumeTemplate}
             introHeadingColor={styles.introHeadingColor}
           />
@@ -447,8 +448,7 @@ const Portfolio다른프로그램추천 = ({
               </p>
               <Heading2 className="py-3 pt-2 text-white md:pt-3">
                 {josa(challengeTitle, '은/는')}
-                <br className="md:hidden" /> {point.weekText}간 아래와 같이
-                진행돼요
+                <br className="md:hidden" /> {weekText}간 아래와 같이 진행돼요
               </Heading2>
               <span className="mb-10 text-xsmall14 text-neutral-50 md:mb-20">
                 {description}
@@ -459,7 +459,7 @@ const Portfolio다른프로그램추천 = ({
                 className="flex w-full items-center rounded-t-md px-4 py-2.5 text-xsmall14 font-semibold text-white md:justify-center md:px-2.5"
                 style={{ backgroundColor: styles.primaryColor }}
               >
-                {point.weekText} 과정
+                {weekText} 과정
               </div>
               <div className="flex flex-col gap-5 rounded-b-md bg-white px-4 py-[30px] md:flex-row md:justify-between md:gap-0 md:pb-[30px] md:pt-9 lg:px-7">
                 {progress.map((item) => (
@@ -518,7 +518,7 @@ const Portfolio다른프로그램추천 = ({
                 width={30}
                 height={30}
               />
-              <span>{point.weekText} 여정 한 번에 보기</span>
+              <span>{weekText} 여정 한 번에 보기</span>
             </p>
           </div>
           <div className="mb-16 w-screen md:mb-36">
