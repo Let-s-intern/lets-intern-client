@@ -69,7 +69,12 @@ const BeforeAfterCard = memo(function BeforeAfterCard({
           isAfter ? 'font-semibold text-[#B49AFF]' : 'text-gray-400'
         }`}
       >
-        {description}
+        {description.split('\n').map((line, i) => (
+          <span key={i}>
+            {i > 0 && <br />}
+            {line}
+          </span>
+        ))}
       </p>
     </div>
   );

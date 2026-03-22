@@ -29,8 +29,7 @@ const MentorListSection = memo(function MentorListSection({
           현직자 멘토단
         </h2>
         <p className="mt-4 text-center text-sm text-gray-300 md:text-lg">
-          혼자 준비하느라 막막했다면,
-          <br className="md:hidden" />
+          혼자 준비하느라 막막했다면, <br className="md:hidden" />
           이제는 현직자 멘토단이 도와드릴게요
         </p>
 
