@@ -12,6 +12,7 @@ import BeforeAfterSection from './sections/BeforeAfterSection';
 import ChallengeMenuSection from './sections/ChallengeMenuSection';
 import FeedbackIntroSection from './sections/FeedbackIntroSection';
 import HeroSection from './sections/HeroSection';
+import LiveFeedbackGuideSection from './sections/LiveFeedbackGuideSection';
 import LiveMentoringSection from './sections/LiveMentoringSection';
 import MentorListSection from './sections/MentorListSection';
 import SuccessStoriesSection from './sections/SuccessStoriesSection';
@@ -138,6 +139,13 @@ const ChallengeFeedbackScreen = ({
         {selectedChallenge.liveMentoring && (
           <LiveMentoringSection
             liveMentoring={selectedChallenge.liveMentoring}
+          />
+        )}
+
+        {/* 06-1. 라이브 피드백 이미지 안내 — 조건부 */}
+        {selectedChallenge.liveFeedbackGuide && (
+          <LiveFeedbackGuideSection
+            liveFeedbackGuide={selectedChallenge.liveFeedbackGuide}
           />
         )}
 

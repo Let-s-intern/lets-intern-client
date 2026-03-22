@@ -50,11 +50,10 @@ export const hr: ChallengeData = {
     },
   ],
   beforeAfter: null,
-  liveMentoring: {
-    title: '1:1 LIVE 피드백, 영상으로 미리 확인하세요!',
-    subCopy1: '혼자 막막했던 고민들, 멘토님과 실시간으로 해결하세요',
-    videoUrl:
-      'https://drive.google.com/file/d/1gy0W3n_iNBYd9oVrWuGQ5m-T8MhU2VQ4/preview',
-    subCopy2: '라이브로 주고 받는 맞춤형 피드백으로, 서류 완성도 UP!',
+  liveMentoring: null,
+  liveFeedbackGuide: {
+    title: '현직자와의 소중한 만남, 커피챗으로도 활용해보세요!',
+    subCopy: '실제로 아래와 같은 이야기를 멘토님과 대화해 볼 수 있어요!',
+    imageUrl: '/images/challenge-feedback/live-feedback-guide/hr.png',
   },
 };
