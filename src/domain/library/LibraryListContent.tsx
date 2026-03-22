@@ -161,7 +161,7 @@ function LibraryGrid({ magnetList }: { magnetList: UserMagnetListItem[] }) {
   const now = dayjs();
 
   return (
-    <div className="grid grid-cols-1 gap-y-7 md:grid-cols-4 md:gap-x-5">
+    <div className="grid grid-cols-1 gap-y-14 md:grid-cols-4 md:gap-x-5">
       {magnetList.map((magnet) => {
         const isUpcoming =
           !!magnet.startDate && now.isBefore(dayjs(magnet.startDate));
@@ -205,13 +205,20 @@ function LibraryGrid({ magnetList }: { magnetList: UserMagnetListItem[] }) {
             }
             actionButton={
               isUpcoming ? (
-                <Link
-                  href={`/library/${magnet.magnetId}/apply?type=launch-alert`}
-                  className="relative z-10 flex items-center gap-1 rounded-xs bg-point p-2.5 text-xxsmall12 text-neutral-0"
-                >
-                  <Bell size={15} />
-                  알림 설정
-                </Link>
+                magnet.appliedLaunchAlert ? (
+                  <div className="relative z-10 flex items-center gap-1 rounded-xs bg-neutral-70 p-2.5 text-xxsmall12 text-white">
+                    <Bell size={15} />
+                    알림 설정 완료
+                  </div>
+                ) : (
+                  <Link
+                    href={`/library/${magnet.magnetId}/apply?type=launch-alert`}
+                    className="relative z-10 flex items-center gap-1 rounded-xs bg-point p-2.5 text-xxsmall12 text-neutral-0"
+                  >
+                    <Bell size={15} />
+                    알림 설정
+                  </Link>
+                )
               ) : undefined
             }
           />

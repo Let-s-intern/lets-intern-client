@@ -1,6 +1,6 @@
 export default function LibraryBanner() {
   return (
-    <div className="w-full overflow-hidden bg-primary-5 px-5 py-9 md:px-0 md:py-6">
+    <div className="w-full overflow-hidden bg-primary-5 px-5 py-9 md:px-0 md:py-10">
       <div className="mx-auto flex w-full max-w-[1100px] justify-between">
         <div className="flex flex-col gap-3 self-center md:gap-5">
           <div className="flex flex-col gap-2.5">
@@ -16,14 +16,14 @@ export default function LibraryBanner() {
             </h1>
           </div>
           <p className="text-xsmall14 leading-[22px] text-neutral-40">
-            취업 준비부터 실무까지, 성공적인 커리어의 시작을 돕습니다.
-            <br className="hidden md:block" />
-            렛츠커리어의 독자적인 커리어 교육 콘텐츠를 확인해보세요.
+            막막한 취업 준비의 길잡이가 되어드립니다.
+            <br className="block" />
+            정성껏 준비한 커리어 가이드북을 지금 바로 소장해보세요.
           </p>
         </div>
         <img
           src="/icons/banner-folder.svg"
-          className="hidden size-[230px] opacity-50 md:block"
+          className="hidden size-[200px] md:block"
           alt=""
         />
       </div>
