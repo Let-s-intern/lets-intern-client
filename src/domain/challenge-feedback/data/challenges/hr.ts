@@ -21,8 +21,8 @@ export const hr: ChallengeData = {
       feedbackCount: '1회',
       feedbackDetails: [
         {
-          round: '6회차 이후',
-          description: '자기소개서 및 포트폴리오 완성',
+          round: '6회차 이후(멘토 1명)',
+          description: '서류 피드백 및 커피챗',
           method: '라이브',
           exampleImages: [],
         },
@@ -30,15 +30,15 @@ export const hr: ChallengeData = {
       feedbackScope: '',
       method: '1:1 Live',
       mentorInfo:
-        '렛츠커리어 현직자 멘토단 · 써니 멘토 / 한국타이어 · 덕양 멘토 / 시리즈B 스타트업 · 허태훈 멘토 / 공인노무사 · 알렉스 멘토 / 한화 계열사',
+        '렛츠커리어 현직자 멘토단 · 써니 멘토 / 한국타이어 · 덕양 멘토 / 시리즈B 스타트업 · 허태훈 멘토 / 공인노무사 · 알렉스 멘토 / 한화 계열사 · 기대 멘토 / 100대 외국계 기업',
     },
     {
       tier: 'PREMIUM',
       feedbackCount: '2회',
       feedbackDetails: [
         {
-          round: '6회차 이후',
-          description: '자기소개서 및 포트폴리오 완성',
+          round: '6회차 이후(멘토 2명)',
+          description: '서류 피드백 및 커피챗',
           method: '라이브',
           exampleImages: [],
         },
