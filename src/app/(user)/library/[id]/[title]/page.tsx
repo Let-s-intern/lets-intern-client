@@ -1,4 +1,8 @@
-import { userMagnetDetailQueryOptions } from '@/api/magnet/magnet';
+import {
+  fetchUserMagnetList,
+  userMagnetDetailQueryOptions,
+} from '@/api/magnet/magnet';
+import { MagnetType } from '@/api/magnet/magnetSchema';
 import { ProgramRecommendItem } from '@/api/blog/blogSchema';
 import { fetchProgramRecommend } from '@/api/program';
 import LikeButton from '@/common/button/LikeButton';
@@ -20,11 +24,24 @@ import {
 import { QueryClient } from '@tanstack/react-query';
 import { CircleChevronRight } from 'lucide-react';
 import { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ReactNode } from 'react';
 
 const { CHALLENGE } = ProgramTypeEnum.enum;
+
+const MAGNET_TYPE_LABEL: Record<MagnetType, string> = {
+  VOD: '무료 VOD',
+  FREE_TEMPLATE: '무료 템플릿',
+  MATERIAL: '직무 자료집',
+  LAUNCH_ALERT: '출시 알림',
+  EVENT: '이벤트',
+};
+
+function toUrlSlug(title: string) {
+  return encodeURIComponent(title.replace(/\s+/g, '-'));
+}
 
 async function getMagnetDetail(magnetId: number) {
   const queryClient = new QueryClient();
@@ -81,7 +98,10 @@ export default async function LibraryDetailPage({
   if (!data) notFound();
 
   const { magnetInfo } = data;
-  const programRecommendList = await getProgramRecommendList();
+  const [programRecommendList, recentMagnetList] = await Promise.all([
+    getProgramRecommendList(),
+    getRecentMagnetList(magnetInfo.magnetId),
+  ]);
 
   async function getProgramRecommendList() {
     const fetchedData = await fetchProgramRecommend();
@@ -103,6 +123,17 @@ export default async function LibraryDetailPage({
     }
 
     return list;
+  }
+
+  async function getRecentMagnetList(currentMagnetId: number) {
+    try {
+      const data = await fetchUserMagnetList({ page: 1, size: 5 });
+      return data.magnetList
+        .filter((m) => m.magnetId !== currentMagnetId)
+        .slice(0, 4);
+    } catch {
+      return [];
+    }
   }
 
   return (
@@ -192,8 +223,28 @@ export default async function LibraryDetailPage({
         >
           다른 취준생들이 함께 찾은 콘텐츠
         </MoreHeader>
-        {/* TODO: 자료집 추천 리스트 API 연동 */}
-        <div className="mb-6 mt-5 flex flex-col gap-5 md:mt-6 md:grid md:grid-cols-4 md:items-start md:gap-5" />
+        <div className="mb-6 mt-5 flex flex-col gap-5 md:mt-6 md:grid md:grid-cols-4 md:items-start md:gap-5">
+          {recentMagnetList.map((magnet) => (
+            <ContentCard
+              key={magnet.magnetId}
+              variant="library-card"
+              className="min-w-0"
+              href={`/library/${magnet.magnetId}/${toUrlSlug(magnet.title)}`}
+              thumbnail={
+                magnet.desktopThumbnail ? (
+                  <Image
+                    src={magnet.desktopThumbnail}
+                    alt={magnet.title}
+                    fill
+                    className="object-cover"
+                  />
+                ) : undefined
+              }
+              category={MAGNET_TYPE_LABEL[magnet.type] ?? magnet.type}
+              title={magnet.title}
+            />
+          ))}
+        </div>
         <MoreLink href="/library/list" className="md:hidden">
           더 많은 자료집 보기
         </MoreLink>

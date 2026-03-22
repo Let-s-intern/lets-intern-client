@@ -168,6 +168,20 @@ export const usePatchMagnetMutation = ({
   });
 };
 
+// 서버용 마그넷 목록 조회
+export async function fetchUserMagnetList(params?: {
+  page?: number;
+  size?: number;
+}) {
+  const res = await axios.get('/magnet', {
+    params: {
+      page: params?.page ?? 1,
+      size: params?.size ?? 10,
+    },
+  });
+  return userMagnetListResponseSchema.parse(res.data.data);
+}
+
 // 유저용 마그넷 상세 조회
 export const userMagnetDetailQueryOptions = (magnetId: number) => ({
   queryKey: [userMagnetDetailQueryKey, magnetId],
