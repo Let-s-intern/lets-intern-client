@@ -23,7 +23,7 @@ const LiveFeedbackGuideSection = memo(function LiveFeedbackGuideSection({
         </p>
       </div>
 
-      <div className="mx-auto w-full max-w-[1200px] px-6">
+      <div className="mx-auto w-full max-w-[1200px] px-6 md:px-24">
         <div className="w-full overflow-hidden rounded-lg">
           <Image
             src={liveFeedbackGuide.imageUrl}
