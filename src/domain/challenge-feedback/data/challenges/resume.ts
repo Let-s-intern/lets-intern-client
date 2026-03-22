@@ -27,7 +27,7 @@ export const resume: ChallengeData = {
       ],
       feedbackScope: '이력서 1개',
       method: '서면 피드백',
-      mentorInfo: '렛츠커리어 취업연구팀',
+      mentorInfo: '렛츠커리어 취업연구팀 · 렛츠커리어 취업 연구팀',
     },
   ],
   beforeAfter: null,

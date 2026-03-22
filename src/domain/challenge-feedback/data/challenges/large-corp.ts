@@ -25,7 +25,7 @@ export const largeCorp: ChallengeData = {
       feedbackDetails: [
         {
           round: '3회차',
-          description: '서면 피드백',
+          description: '경험 분석',
           method: '서면',
           exampleImages: [
             `${EXAMPLE_BASE}/large-corp/round-3-1.png`,
@@ -34,15 +34,15 @@ export const largeCorp: ChallengeData = {
         },
         {
           round: '6회차',
-          description: '1:1 Live 피드백',
+          description: '자기소개서 완성',
           method: '라이브',
           exampleImages: [],
         },
       ],
       feedbackScope: '',
-      method: '서면 피드백 + 1:1 Live 피드백',
+      method: '• 3회차: 서면 피드백\n• 6회차: 1:1 Live',
       mentorInfo:
-        '렛츠커리어 현직자 멘토단 · 헤일리 멘토 / 현대자동차 · 줄리아 멘토 / 현대자동차 · 쥬쌤 멘토 / SK하이닉스 외',
+        '렛츠커리어 현직자 멘토단 · 헤일리 멘토 / 현대자동차 · 줄리아 멘토 / 현대자동차 · 쥬쌤 멘토 / SK하이닉스 · 매튜 멘토 / 현대모비스 · 이프쌤 멘토 / SK이노베이션 계열사 · 도안 멘토 / 국내 은행 · 잭 멘토 / BGF 리테일',
     },
     {
       tier: 'PREMIUM',
@@ -50,7 +50,7 @@ export const largeCorp: ChallengeData = {
       feedbackDetails: [
         {
           round: '3회차',
-          description: '서면 피드백',
+          description: '경험 분석',
           method: '서면',
           exampleImages: [
             `${EXAMPLE_BASE}/large-corp/round-3-1.png`,
@@ -71,15 +71,15 @@ export const largeCorp: ChallengeData = {
         },
         {
           round: '6회차',
-          description: '1:1 Live 피드백',
+          description: '자기소개서 완성',
           method: '라이브',
           exampleImages: [],
         },
       ],
       feedbackScope: '',
-      method: '서면 피드백 + 1:1 Live 피드백',
+      method: '• 3/4/5회차: 서면 피드백\n• 6회차: 1:1 Live',
       mentorInfo:
-        '렛츠커리어 현직자 멘토단 · 헤일리 멘토 / 현대자동차 · 줄리아 멘토 / 현대자동차 · 쥬쌤 멘토 / SK하이닉스 외',
+        '렛츠커리어 현직자 멘토단 · 헤일리 멘토 / 현대자동차 · 줄리아 멘토 / 현대자동차 · 쥬쌤 멘토 / SK하이닉스 · 매튜 멘토 / 현대모비스 · 이프쌤 멘토 / SK이노베이션 계열사 · 도안 멘토 / 국내 은행 · 잭 멘토 / BGF 리테일',
     },
   ],
   beforeAfter: null,
