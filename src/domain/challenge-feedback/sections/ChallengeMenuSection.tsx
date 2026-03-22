@@ -12,13 +12,9 @@ const ROW1_KEYS: ChallengeKey[] = [
   'experience',
   'resume',
   'personal-statement',
-];
-const ROW2_KEYS: ChallengeKey[] = [
   'portfolio',
-  'large-corp',
-  'marketing',
-  'hr',
 ];
+const ROW2_KEYS: ChallengeKey[] = ['large-corp', 'marketing', 'hr'];
 
 const ChallengeMenuSection = memo(function ChallengeMenuSection({
   selectedKey,
@@ -51,10 +47,9 @@ const ChallengeMenuSection = memo(function ChallengeMenuSection({
         <div className="flex flex-col items-center gap-2 md:gap-4">
           <div className="flex flex-wrap justify-center gap-2 md:gap-4">
             {renderRow(ROW1_KEYS)}
-            {renderRow(ROW2_KEYS.slice(0, 1))}
           </div>
           <div className="flex flex-wrap justify-center gap-2 md:gap-4">
-            {renderRow(ROW2_KEYS.slice(1))}
+            {renderRow(ROW2_KEYS)}
           </div>
         </div>
       </div>
