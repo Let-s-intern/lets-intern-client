@@ -33,13 +33,13 @@ const ReviewCard = memo(function ReviewCard({
             />
           </svg>
         </div>
-        <h3 className="text-sm font-bold leading-snug text-white md:text-base">
+        <h3 className="break-keep text-sm font-bold leading-snug text-white md:text-base">
           {review.title}
         </h3>
       </div>
 
       {/* Content */}
-      <p className="text-xs leading-relaxed text-gray-300 md:text-sm">
+      <p className="break-keep text-xs leading-relaxed text-gray-300 md:text-sm">
         {review.content}
       </p>
     </div>

@@ -54,7 +54,8 @@ export const marketing: ChallengeData = {
     beforeImage: '/images/challenge-feedback/before-after/before.png',
     beforeDescription: '캡쳐된 이미지로 나열된 평범한 포트폴리오',
     afterImage: '/images/challenge-feedback/before-after/after.png',
-    afterDescription: '문제와 해결 전략, 성과까지 핵심 역량이 돋보이는 포트폴리오',
+    afterDescription:
+      '문제와 해결 전략, 성과까지 핵심 역량이 돋보이는\n포트폴리오',
   },
   liveMentoring: null,
 };

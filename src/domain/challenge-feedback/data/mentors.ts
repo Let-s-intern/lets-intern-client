@@ -12,7 +12,7 @@ export const MENTORS: Record<string, Mentor> = {
   letscareerTeam: {
     nickname: '렛츠커리어 취업연구팀',
     company: '렛츠커리어',
-    role: '취업 연구',
+    role: '취업 연구팀',
     profileImage: `${BASE}/common/mentor-1.png`,
   },
   teamtam: {

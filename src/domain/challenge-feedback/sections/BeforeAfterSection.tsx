@@ -48,11 +48,9 @@ const BeforeAfterSection = memo(function BeforeAfterSection({
           <br />
           Before & After
         </h2>
-        <p className="mb-10 mt-4 text-center text-sm text-gray-300 md:text-lg">
-          부족한 점은 채우고,
-          <br className="md:hidden" />
-          강조할 부분은 더 눈에 띄도록,
-          <br className="md:hidden" />
+        <p className="mb-10 mt-4 break-keep text-center text-sm text-gray-300 md:text-lg">
+          부족한 점은 채우고, <br className="md:hidden" />
+          강조할 부분은 더 눈에 띄도록, <br className="md:hidden" />
           구조화된 서류로 업그레이드 해보세요.
         </p>
         <div className="mx-auto flex max-w-[1400px] flex-col gap-8 px-6 md:flex-row md:items-stretch md:gap-8">
