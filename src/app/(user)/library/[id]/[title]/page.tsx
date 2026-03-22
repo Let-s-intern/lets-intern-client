@@ -4,7 +4,7 @@ import {
 } from '@/api/magnet/magnet';
 import { MagnetType } from '@/api/magnet/magnetSchema';
 import { ProgramRecommendItem } from '@/api/blog/blogSchema';
-import { fetchProgramRecommend } from '@/api/program';
+import { fetchProgramRecommend, getChallenge } from '@/api/program';
 import LikeButton from '@/common/button/LikeButton';
 import ContentCard from '@/common/card/ContentCard';
 import MoreHeader from '@/common/header/MoreHeader';
@@ -44,6 +44,23 @@ function toUrlSlug(title: string) {
   return encodeURIComponent(title.replace(/\s+/g, '-'));
 }
 
+interface MagnetDescription {
+  metaDescription?: string;
+  programRecommend?: { id: number | null }[];
+  magnetRecommend?: (number | null)[];
+}
+
+function parseMagnetDescription(
+  description: string | null,
+): MagnetDescription {
+  if (!description) return {};
+  try {
+    return JSON.parse(description);
+  } catch {
+    return {};
+  }
+}
+
 async function getMagnetDetail(magnetId: number) {
   const queryClient = new QueryClient();
   try {
@@ -66,13 +83,15 @@ export async function generateMetadata({
   if (!data) return {};
 
   const { magnetInfo } = data;
+  const parsed = parseMagnetDescription(magnetInfo.description);
+  const metaDescription = parsed.metaDescription ?? magnetInfo.description;
 
   return {
     title: getLibraryTitle({ title: magnetInfo.title }),
-    description: magnetInfo.description,
+    description: metaDescription,
     openGraph: {
       title: magnetInfo.title,
-      description: magnetInfo.description ?? undefined,
+      description: metaDescription ?? undefined,
       url:
         getBaseUrlFromServer() +
         getLibraryPathname({ id: magnetInfo.magnetId, title: magnetInfo.title }),
@@ -99,14 +118,22 @@ export default async function LibraryDetailPage({
   if (!data) notFound();
 
   const { magnetInfo } = data;
-  const [programRecommendList, recentMagnetList] = await Promise.all([
-    getProgramRecommendList(),
-    getRecentMagnetList(magnetInfo.magnetId),
+  const parsed = parseMagnetDescription(magnetInfo.description);
+
+  const programRecommendIds = (parsed.programRecommend ?? [])
+    .map((p) => p.id)
+    .filter((id): id is number => id !== null);
+
+  const magnetRecommendIds = (parsed.magnetRecommend ?? []).filter(
+    (id): id is number => id !== null,
+  );
+
+  const [programRecommendList, recommendedMagnetList] = await Promise.all([
+    getProgramRecommendList(programRecommendIds),
+    getRecommendedMagnetList(magnetInfo.magnetId, magnetRecommendIds),
   ]);
 
-  async function getProgramRecommendList() {
-    const fetchedData = await fetchProgramRecommend();
-    const list: ProgramRecommendItem[] = [];
+  async function getProgramRecommendList(challengeIds: number[]) {
     const ctaTitles: Record<string, string> = {
       CAREER_START: '경험 정리부터 이력서 완성까지',
       PERSONAL_STATEMENT: '합격을 만드는 자소서 작성법',
@@ -114,19 +141,74 @@ export default async function LibraryDetailPage({
       PERSONAL_STATEMENT_LARGE_CORP: '합격을 만드는 자소서 작성법',
     };
 
-    if (fetchedData.challengeList.length > 0) {
-      const targets = fetchedData.challengeList.slice(0, 3).map((item) => ({
-        id: `${CHALLENGE}-${item.id}`,
-        ctaLink: `/program/${CHALLENGE.toLowerCase()}/${item.id}`,
-        ctaTitle: ctaTitles[item.challengeType ?? 'CAREER_START'],
-      }));
-      list.push(...targets);
+    // description에 등록된 프로그램이 있으면 해당 프로그램 조회
+    if (challengeIds.length > 0) {
+      try {
+        const results = await Promise.all(
+          challengeIds.map((cId) =>
+            getChallenge(cId)
+              .then((data) => ({ id: cId, data }))
+              .catch(() => null),
+          ),
+        );
+        return results
+          .filter((r): r is NonNullable<typeof r> => r !== null)
+          .map((r) => ({
+            id: `${CHALLENGE}-${r.id}`,
+            ctaLink: `/program/${CHALLENGE.toLowerCase()}/${r.id}`,
+            ctaTitle: ctaTitles[r.data.challengeType ?? 'CAREER_START'],
+          }));
+      } catch {
+        // 실패 시 기본값 fallback
+      }
     }
 
-    return list;
+    // 기본값: 이력서, 자기소개서, 포트폴리오 챌린지 3종
+    try {
+      const fetchedData = await fetchProgramRecommend();
+      const list: ProgramRecommendItem[] = [];
+      if (fetchedData.challengeList.length > 0) {
+        const targets = fetchedData.challengeList
+          .slice(0, 3)
+          .map((item) => ({
+            id: `${CHALLENGE}-${item.id}`,
+            ctaLink: `/program/${CHALLENGE.toLowerCase()}/${item.id}`,
+            ctaTitle: ctaTitles[item.challengeType ?? 'CAREER_START'],
+          }));
+        list.push(...targets);
+      }
+      return list;
+    } catch {
+      return [];
+    }
   }
 
-  async function getRecentMagnetList(currentMagnetId: number) {
+  async function getRecommendedMagnetList(
+    currentMagnetId: number,
+    magnetIds: number[],
+  ) {
+    // description에 등록된 마그넷이 있으면 해당 마그넷 상세 조회
+    if (magnetIds.length > 0) {
+      try {
+        const queryClient = new QueryClient();
+        const magnets = await Promise.all(
+          magnetIds.map((id) =>
+            queryClient
+              .fetchQuery(userMagnetDetailQueryOptions(id))
+              .catch(() => null),
+          ),
+        );
+        return magnets
+          .filter(
+            (m): m is NonNullable<typeof m> => m !== null,
+          )
+          .map((m) => m.magnetInfo);
+      } catch {
+        // 실패 시 기본값 fallback
+      }
+    }
+
+    // 기본값: 현재 게시글 제외 최신 4개
     try {
       const data = await fetchUserMagnetList({ page: 1, size: 5 });
       return data.magnetList
@@ -161,7 +243,7 @@ export default async function LibraryDetailPage({
               <BlogKakaoShareBtn
                 className="p-2"
                 title={magnetInfo.title}
-                description={magnetInfo.description ?? ''}
+                description={parsed.metaDescription ?? magnetInfo.description ?? ''}
                 thumbnail={magnetInfo.desktopThumbnail ?? ''}
                 pathname={getLibraryPathname({
                   id: magnetInfo.magnetId,
@@ -225,7 +307,7 @@ export default async function LibraryDetailPage({
           다른 취준생들이 함께 찾은 콘텐츠
         </MoreHeader>
         <div className="mb-6 mt-5 flex flex-col gap-5 md:mt-6 md:grid md:grid-cols-4 md:items-start md:gap-5">
-          {recentMagnetList.map((magnet) => {
+          {recommendedMagnetList.map((magnet) => {
             const isUpcoming =
               !!magnet.startDate &&
               dayjs().isBefore(dayjs(magnet.startDate));
