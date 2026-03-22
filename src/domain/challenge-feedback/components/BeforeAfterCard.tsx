@@ -38,7 +38,7 @@ const BeforeAfterCard = memo(function BeforeAfterCard({
           src={image}
           alt={alt}
           width={700}
-          height={0}
+          height={525}
           className="h-auto w-full transition-transform duration-300 group-hover:scale-105"
           sizes="(max-width: 768px) 100vw, 700px"
         />

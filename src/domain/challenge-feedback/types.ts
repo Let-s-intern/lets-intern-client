@@ -92,4 +92,15 @@ export interface ChallengeData {
   beforeAfter: BeforeAfter | null;
   /** 라이브 멘토링 (없으면 null — 해당 섹션 숨김) */
   liveMentoring: LiveMentoring | null;
+  /** 라이브 피드백 이미지 안내 (없으면 해당 섹션 숨김) */
+  liveFeedbackGuide?: LiveFeedbackGuide | null;
+}
+
+export interface LiveFeedbackGuide {
+  /** 소제목 (1:1 LIVE 피드백 뒤에 표시) */
+  title: string;
+  /** 하단 설명 */
+  subCopy: string;
+  /** 안내 이미지 URL */
+  imageUrl: string;
 }

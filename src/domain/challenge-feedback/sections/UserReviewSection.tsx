@@ -1,11 +1,10 @@
 'use client';
 
 import { memo, useRef } from 'react';
-import { Navigation, Pagination } from 'swiper/modules';
+import { Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
 import 'swiper/css';
-import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 import './user-review-pagination.css';
@@ -34,7 +33,7 @@ const UserReviewSection = memo(function UserReviewSection() {
         {/* Swiper Carousel */}
         <div className="mt-10 md:mt-14">
           <Swiper
-            modules={[Navigation, Pagination]}
+            modules={[Pagination]}
             spaceBetween={20}
             slidesPerView={1}
             loop

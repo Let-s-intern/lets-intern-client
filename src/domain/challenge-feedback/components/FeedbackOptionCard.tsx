@@ -44,7 +44,13 @@ const FeedbackOptionCard = memo(function FeedbackOptionCard({
               <td className="whitespace-nowrap py-3 pr-4 font-medium text-gray-400">
                 피드백 개수
               </td>
-              <td className="py-3 text-white">{option.feedbackScope}</td>
+              <td className="py-3 text-white">
+                {option.feedbackScope.split('/').map((part, i) => (
+                  <p key={i} className={i > 0 ? 'mt-1' : ''}>
+                    {part.trim()}
+                  </p>
+                ))}
+              </td>
             </tr>
           )}
           <tr className="border-t border-white/10">

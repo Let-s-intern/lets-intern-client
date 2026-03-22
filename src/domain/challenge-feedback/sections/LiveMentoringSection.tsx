@@ -1,9 +1,8 @@
 import { memo } from 'react';
-import type { FeedbackDetailWithTiers, LiveMentoring } from '../types';
+import type { LiveMentoring } from '../types';
 
 interface LiveMentoringSectionProps {
   liveMentoring: LiveMentoring;
-  liveDetails: FeedbackDetailWithTiers[];
 }
 
 function VideoEmbed({ videoUrl }: { videoUrl: string }) {
@@ -29,9 +28,20 @@ function VideoEmbed({ videoUrl }: { videoUrl: string }) {
   );
 }
 
+function renderTextWithMobileBreak(text: string) {
+  const parts = text.split(', ');
+  if (parts.length <= 1) return text;
+  return parts.map((part, i) => (
+    <span key={i}>
+      {i > 0 && ', '}
+      {i > 0 && <br className="md:hidden" />}
+      {part}
+    </span>
+  ));
+}
+
 const LiveMentoringSection = memo(function LiveMentoringSection({
   liveMentoring,
-  liveDetails,
 }: LiveMentoringSectionProps) {
   return (
     <section className="flex w-full flex-col items-center justify-center bg-[#0e0c22] py-20 md:py-28">
@@ -42,9 +52,7 @@ const LiveMentoringSection = memo(function LiveMentoringSection({
           영상으로 미리 확인하세요!
         </h2>
         <p className="mb-10 mt-4 text-center text-sm text-gray-300 md:text-lg">
-          혼자 막막했던 고민들,
-          <br className="md:hidden" />
-          멘토님과 실시간으로 해결하세요
+          {renderTextWithMobileBreak(liveMentoring.subCopy1)}
         </p>
       </div>
 
@@ -53,9 +61,7 @@ const LiveMentoringSection = memo(function LiveMentoringSection({
       </div>
 
       <p className="mt-8 text-center text-sm text-gray-300 md:text-lg">
-        라이브로 주고 받는 맞춤형 피드백으로,
-        <br className="md:hidden" />
-        서류 완성도 UP!
+        {renderTextWithMobileBreak(liveMentoring.subCopy2)}
       </p>
     </section>
   );

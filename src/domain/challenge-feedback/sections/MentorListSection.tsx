@@ -35,9 +35,9 @@ const MentorListSection = memo(function MentorListSection({
         </p>
 
         <div className="mt-10 flex flex-wrap justify-center gap-3 md:gap-5">
-          {visibleMentors.map((mentor, i) => (
+          {visibleMentors.map((mentor) => (
             <div
-              key={`${mentor.nickname}-${i}`}
+              key={mentor.nickname}
               className="w-[calc(50%-6px)] md:w-[260px]"
             >
               <MentorCard mentor={mentor} />

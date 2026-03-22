@@ -12,6 +12,7 @@ import BeforeAfterSection from './sections/BeforeAfterSection';
 import ChallengeMenuSection from './sections/ChallengeMenuSection';
 import FeedbackIntroSection from './sections/FeedbackIntroSection';
 import HeroSection from './sections/HeroSection';
+import LiveFeedbackGuideSection from './sections/LiveFeedbackGuideSection';
 import LiveMentoringSection from './sections/LiveMentoringSection';
 import MentorListSection from './sections/MentorListSection';
 import SuccessStoriesSection from './sections/SuccessStoriesSection';
@@ -21,10 +22,19 @@ import type { ChallengeKey, FeedbackDetailWithTiers } from './types';
 
 function detectChallengeFromReferrer(): ChallengeKey | null {
   if (typeof window === 'undefined') return null;
-  const referrer = decodeURIComponent(document.referrer);
+  const rawReferrer = document.referrer;
+  if (!rawReferrer) return null;
+
+  let referrer: string;
+  try {
+    referrer = decodeURIComponent(rawReferrer);
+  } catch {
+    referrer = rawReferrer;
+  }
+
   if (!referrer.includes('/program/challenge/')) return null;
   for (const { keyword, key } of REFERRER_KEYWORD_MAP) {
-    if (referrer.includes(keyword)) return key;
+    if (referrer.toLowerCase().includes(keyword.toLowerCase())) return key;
   }
   return null;
 }
@@ -57,7 +67,7 @@ const ChallengeFeedbackScreen = ({
         scroll: false,
       });
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [router, searchParams]);
 
   const selectedKey =
     (searchParams.get('challenge') as ChallengeKey) ??
@@ -89,11 +99,6 @@ const ChallengeFeedbackScreen = ({
       detailsWithTiers.filter(
         (d) => d.method === '서면' && d.exampleImages.length > 0,
       ),
-    [detailsWithTiers],
-  );
-
-  const liveFeedbackDetails = useMemo(
-    () => detailsWithTiers.filter((d) => d.method === '라이브'),
     [detailsWithTiers],
   );
 
@@ -134,7 +139,13 @@ const ChallengeFeedbackScreen = ({
         {selectedChallenge.liveMentoring && (
           <LiveMentoringSection
             liveMentoring={selectedChallenge.liveMentoring}
-            liveDetails={liveFeedbackDetails}
+          />
+        )}
+
+        {/* 06-1. 라이브 피드백 이미지 안내 — 조건부 */}
+        {selectedChallenge.liveFeedbackGuide && (
+          <LiveFeedbackGuideSection
+            liveFeedbackGuide={selectedChallenge.liveFeedbackGuide}
           />
         )}
 
