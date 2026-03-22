@@ -55,6 +55,7 @@ export default function LibraryApplyPage() {
       thumbnail={magnetInfo.desktopThumbnail}
       questions={questions}
       variant={variant}
+      useLaunchAlert={magnetInfo.useLaunchAlert}
     />
   );
 }
