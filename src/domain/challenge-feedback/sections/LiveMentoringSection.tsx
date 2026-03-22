@@ -51,7 +51,7 @@ const LiveMentoringSection = memo(function LiveMentoringSection({
           <br className="md:hidden" />
           영상으로 미리 확인하세요!
         </h2>
-        <p className="mb-10 mt-4 text-center text-sm text-gray-300 md:text-lg">
+        <p className="mb-10 mt-4 break-keep text-center text-sm text-gray-300 md:text-lg">
           {renderTextWithMobileBreak(liveMentoring.subCopy1)}
         </p>
       </div>
@@ -60,7 +60,7 @@ const LiveMentoringSection = memo(function LiveMentoringSection({
         <VideoEmbed videoUrl={liveMentoring.videoUrl} />
       </div>
 
-      <p className="mt-8 text-center text-sm text-gray-300 md:text-lg">
+      <p className="mt-8 break-keep text-center text-sm text-gray-300 md:text-lg">
         {renderTextWithMobileBreak(liveMentoring.subCopy2)}
       </p>
     </section>

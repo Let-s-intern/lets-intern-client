@@ -24,7 +24,7 @@ const UserReviewSection = memo(function UserReviewSection() {
         <h2 className="mt-2 text-center text-lg font-bold text-white md:text-2xl">
           렛츠커리어 수강생의 솔직한 피드백 후기
         </h2>
-        <p className="mt-4 text-center text-sm text-gray-300 md:text-lg">
+        <p className="mt-4 break-keep text-center text-sm text-gray-300 md:text-lg">
           이미 피드백을 경험한 수강생분들의
           <br className="md:hidden" />
           솔직한 후기를 확인해보세요!

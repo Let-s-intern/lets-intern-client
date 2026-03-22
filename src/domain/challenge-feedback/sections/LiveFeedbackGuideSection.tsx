@@ -18,7 +18,7 @@ const LiveFeedbackGuideSection = memo(function LiveFeedbackGuideSection({
         <p className="mt-3 text-center text-base font-semibold text-white md:text-xl">
           {liveFeedbackGuide.title}
         </p>
-        <p className="mb-10 mt-4 text-center text-sm text-gray-300 md:text-lg">
+        <p className="mb-10 mt-4 break-keep text-center text-sm text-gray-300 md:text-lg">
           {liveFeedbackGuide.subCopy}
         </p>
       </div>

@@ -47,7 +47,7 @@ const WrittenFeedbackSection = memo(function WrittenFeedbackSection({
             열 번의 수정보다 확실한
             <br />한 번의 현직자 피드백
           </h2>
-          <p className="mb-10 mt-4 text-center text-sm text-gray-300 md:text-lg">
+          <p className="mb-10 mt-4 break-keep text-center text-sm text-gray-300 md:text-lg">
             합격하는 서류의 디테일이 궁금하다면, <br className="md:hidden" />
             현직자의 시선에서 점검해보세요.
           </p>
