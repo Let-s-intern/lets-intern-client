@@ -3,7 +3,9 @@
 import AlertModal from '@/common/alert/AlertModal';
 import { useDownloadAction } from '@/hooks/useDownloadAction';
 import { twMerge } from '@/lib/twMerge';
+import DownloadToast from '@/domain/mypage/ui/toast/DownloadToast';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import type { CareerGrowthCardConfig } from '../utils/careerGrowthCard';
 
 interface CareerGrowthListProps {
@@ -32,6 +34,7 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
   const showActionButton = !!actionButton;
   const hasConfirm = !!actionButton?.confirm;
   const isDownloadButton = actionButton?.isDownload === true;
+  const [showToast, setShowToast] = useState(false);
 
   const downloadAction = useDownloadAction({
     applicationId: config.id,
@@ -39,6 +42,7 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
     executeDownload: async () => {
       await actionButton?.onClick?.();
     },
+    onComplete: () => setShowToast(true),
   });
 
   const handleActionClick = () => {
@@ -144,6 +148,11 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
           {actionButton.confirm?.description}
         </AlertModal>
       )}
+
+      <DownloadToast
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
     </div>
   );
 };
