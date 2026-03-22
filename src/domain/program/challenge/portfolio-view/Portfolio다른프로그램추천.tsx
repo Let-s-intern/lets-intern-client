@@ -518,7 +518,7 @@ const Portfolio다른프로그램추천 = ({
                 width={30}
                 height={30}
               />
-              <span>2주 여정 한 번에 보기</span>
+              <span>{point.weekText} 여정 한 번에 보기</span>
             </p>
           </div>
           <div className="mb-16 w-screen md:mb-36">

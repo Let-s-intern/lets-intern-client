@@ -157,6 +157,8 @@ const ChallengeView: React.FC<{
     }
   }, [challenge.desc]);
 
+  const weekText = receivedContent.challengePoint?.weekText ?? '2주';
+
   const reviewExists =
     (receivedContent.challengeReview ?? []).length > 0 &&
     receivedContent.blogReview;
@@ -296,18 +298,19 @@ const ChallengeView: React.FC<{
 
             <section className="flex w-full flex-col md:items-center">
               {challenge.challengeType === PORTFOLIO ? (
-                <ChallengeIntroPortfolio />
+                <ChallengeIntroPortfolio weekText={weekText} />
               ) : challenge.challengeType === CAREER_START ? (
                 <ChallengeIntroCareerStart
                   isResumeTemplate={isResumeTemplate}
                   challengeType={challenge.challengeType}
                   challengeTitle={challenge.title ?? ''}
-                  weekText={receivedContent.challengePoint.weekText}
+                  weekText={weekText}
                 />
               ) : challenge.challengeType === EXPERIENCE_SUMMARY ||
                 challenge.challengeType === ETC ? (
                 <ChallengeIntroExpericeSummary
                   challengeType={challenge.challengeType}
+                  weekText={weekText}
                 />
               ) : (
                 <ChallengeIntroPersonalStatement />
@@ -319,17 +322,20 @@ const ChallengeView: React.FC<{
               isResumeTemplate={isResumeTemplate}
               challengeType={challenge.challengeType}
               challengeTitle={challenge.title ?? ''}
+              weekText={weekText}
             />
 
             <ChallengeResult
               isResumeTemplate={isResumeTemplate}
               challengeType={challenge.challengeType}
               challengeTitle={challenge.title ?? ''}
+              weekText={weekText}
             />
 
             <ChallengeSummarySection
               challengeType={challenge.challengeType}
               isResumeTemplate={isResumeTemplate}
+              weekText={weekText}
             />
           </div>
 

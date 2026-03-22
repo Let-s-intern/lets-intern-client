@@ -12,10 +12,6 @@ import { josa } from 'es-hangul';
 import { twMerge } from 'tailwind-merge';
 
 const superTitle = '프로그램 소개';
-const title = [
-  '포트폴리오 2주 완성 챌린지',
-  '바로 이런 분들을 위해 추천드려요',
-];
 
 const PORTFOLIO_CHECK_LIST = [
   {
@@ -86,13 +82,18 @@ interface PortfolioIntroCheckListProps {
   challengeTitle: string;
   isResumeTemplate: boolean;
   challengeId: number;
+  weekText: string;
 }
 
 function PortfolioIntroCheckList({
-  challengeType,
   challengeTitle,
   isResumeTemplate,
+  weekText,
 }: PortfolioIntroCheckListProps) {
+  const title = [
+    `포트폴리오 ${weekText} 완성 챌린지`,
+    '바로 이런 분들을 위해 추천드려요',
+  ];
   const description = [
     '취업 준비를 하면서 어떤 고민들을 가지고 계셨나요?',
     `아래 고민 중 1개라도 해당한다면 ${josa(challengeTitle, '을/를')} 추천해요!`,
@@ -108,7 +109,7 @@ function PortfolioIntroCheckList({
           style={styles.superTitleStyle}
         >
           {isResumeTemplate
-            ? '이력서 1주 완성 챌린지가 필요한 이유'
+            ? `이력서 ${weekText} 완성 챌린지가 필요한 이유`
             : superTitle}
         </SuperTitle>
         <Heading2>
@@ -118,7 +119,7 @@ function PortfolioIntroCheckList({
         </Heading2>
         <Description className="mt-3 md:mt-8 md:text-center">
           {isResumeTemplate
-            ? '가장 중요한 서류임에도 불구하고 자꾸 미뤄두셨다면\n이번 챌린지를 통해 함께 1주 만에 꼭 완성해요!'
+            ? `가장 중요한 서류임에도 불구하고 자꾸 미뤄두셨다면\n이번 챌린지를 통해 함께 ${weekText} 만에 꼭 완성해요!`
             : description.join('\n')}
         </Description>
       </div>
