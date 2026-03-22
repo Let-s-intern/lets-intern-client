@@ -39,7 +39,7 @@ const ReviewCard = memo(function ReviewCard({
       </div>
 
       {/* Content */}
-      <p className="text-xs leading-relaxed text-gray-300 md:text-sm">
+      <p className="break-keep text-xs leading-relaxed text-gray-300 md:text-sm">
         {review.content}
       </p>
     </div>
