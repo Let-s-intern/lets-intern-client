@@ -22,7 +22,8 @@ import {
   getLibraryTitle,
 } from '@/utils/url';
 import { QueryClient } from '@tanstack/react-query';
-import { CircleChevronRight } from 'lucide-react';
+import dayjs from '@/lib/dayjs';
+import { CircleChevronRight, LockKeyhole } from 'lucide-react';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -224,26 +225,44 @@ export default async function LibraryDetailPage({
           다른 취준생들이 함께 찾은 콘텐츠
         </MoreHeader>
         <div className="mb-6 mt-5 flex flex-col gap-5 md:mt-6 md:grid md:grid-cols-4 md:items-start md:gap-5">
-          {recentMagnetList.map((magnet) => (
-            <ContentCard
-              key={magnet.magnetId}
-              variant="library-card"
-              className="min-w-0"
-              href={`/library/${magnet.magnetId}/${toUrlSlug(magnet.title)}`}
-              thumbnail={
-                magnet.desktopThumbnail ? (
-                  <Image
-                    src={magnet.desktopThumbnail}
-                    alt={magnet.title}
-                    fill
-                    className="object-cover"
-                  />
-                ) : undefined
-              }
-              category={MAGNET_TYPE_LABEL[magnet.type] ?? magnet.type}
-              title={magnet.title}
-            />
-          ))}
+          {recentMagnetList.map((magnet) => {
+            const isUpcoming =
+              !!magnet.startDate &&
+              dayjs().isBefore(dayjs(magnet.startDate));
+            return (
+              <ContentCard
+                key={magnet.magnetId}
+                variant="library-card"
+                className="min-w-0"
+                href={`/library/${magnet.magnetId}/${toUrlSlug(magnet.title)}`}
+                thumbnail={
+                  <>
+                    {magnet.desktopThumbnail ? (
+                      <Image
+                        src={magnet.desktopThumbnail}
+                        alt={magnet.title}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : undefined}
+                    {isUpcoming && (
+                      <>
+                        <div className="pointer-events-none absolute inset-0 z-[1] bg-black/20" />
+                        <div className="pointer-events-none absolute right-2 top-2 z-10 flex items-center gap-1 self-center rounded-full bg-white/60 px-2 py-1">
+                          <LockKeyhole size={12} color="#4C4F56" />
+                          <span className="text-xxsmall12 font-medium text-neutral-30">
+                            공개예정
+                          </span>
+                        </div>
+                      </>
+                    )}
+                  </>
+                }
+                category={MAGNET_TYPE_LABEL[magnet.type] ?? magnet.type}
+                title={magnet.title}
+              />
+            );
+          })}
         </div>
         <MoreLink href="/library/list" className="md:hidden">
           더 많은 자료집 보기

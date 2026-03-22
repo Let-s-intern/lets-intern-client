@@ -3,6 +3,7 @@ import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import BlogLinkShareBtn from '@/domain/blog/button/BlogLilnkShareBtn';
 import LexicalContent from '@/domain/blog/ui/LexicalContent';
 import dayjs from '@/lib/dayjs';
+import { LockKeyhole } from 'lucide-react';
 import Image from 'next/image';
 import LibraryMainContent from './LibraryMainContent';
 
@@ -48,6 +49,17 @@ export default function LibraryArticle({ magnetInfo }: Props) {
             alt="자료집 썸네일"
             sizes="(max-width: 768px) 100vw, 26rem"
           />
+        )}
+        {isUpcoming && (
+          <>
+            <div className="pointer-events-none absolute inset-0 z-[1] bg-black/20" />
+            <div className="pointer-events-none absolute right-3 top-3 z-10 flex items-center gap-1 rounded-full bg-white/60 px-2.5 py-1.5">
+              <LockKeyhole size={14} color="#4C4F56" />
+              <span className="text-xsmall14 font-medium text-neutral-30">
+                공개예정
+              </span>
+            </div>
+          </>
         )}
       </div>
 
