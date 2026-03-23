@@ -233,7 +233,10 @@ const MagnetApplyContent = ({
       router.refresh();
     } catch (error) {
       console.error(error);
-      alert(`신청에 실패했습니다. 다시 시도해주세요.\n${error}`);
+      const message =
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message ?? '신청에 실패했습니다. 다시 시도해주세요.';
+      alert(message);
     }
   };
 
