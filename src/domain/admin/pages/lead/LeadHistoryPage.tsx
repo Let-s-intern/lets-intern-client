@@ -6,6 +6,7 @@ import {
   useCreateLeadHistoryMutation,
   useLeadHistoryListQuery,
 } from '@/api/lead';
+import { useGetMagnetListQuery } from '@/api/magnet/magnet';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import dayjs from '@/lib/dayjs';
@@ -842,6 +843,7 @@ const LeadHistoryPage = () => {
   );
 
   const { data: leadHistoryData = [], isLoading } = useLeadHistoryListQuery();
+  const { data: magnetListData } = useGetMagnetListQuery();
 
   const replaceFilterTree = useCallback(
     (nextTree: LeadHistoryFilterGroupNode) => {
@@ -929,17 +931,16 @@ const LeadHistoryPage = () => {
     });
   }, [leadHistoryData]);
 
-  const magnetOptions = useMemo(() => {
-    const unique = new Map<string, string>();
-    allRows.forEach((row) => {
-      if (row.magnetId !== null && row.magnetId !== undefined) {
-        unique.set(String(row.magnetId), row.title ?? `#${row.magnetId}`);
-      }
-    });
-    return Array.from(unique.entries())
-      .sort(([, a], [, b]) => a.localeCompare(b))
-      .map(([value, label]) => ({ value, label }));
-  }, [allRows]);
+  const magnetOptions = useMemo(
+    () =>
+      (magnetListData?.magnetList ?? [])
+        .map((m) => ({
+          value: String(m.magnetId),
+          label: m.title,
+        }))
+        .sort((a, b) => a.label.localeCompare(b.label)),
+    [magnetListData],
+  );
 
   const magnetLabelMap = useMemo(() => {
     const map = new Map<string, string>();
