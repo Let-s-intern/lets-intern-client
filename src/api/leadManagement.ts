@@ -53,13 +53,13 @@ const magnetApplicationSchema = z.object({
 
 const magnetApplicationByMagnetSchema = z.object({
   magnetApplicationId: z.number(),
-  name: z.string(),
-  phoneNum: z.string(),
-  grade: z.string(),
-  wishField: z.string(),
-  wishJob: z.string(),
-  wishIndustry: z.string(),
-  wishCompany: z.string(),
+  name: z.string().nullable(),
+  phoneNum: z.string().nullable(),
+  grade: z.string().nullable(),
+  wishField: z.string().nullable(),
+  wishJob: z.string().nullable(),
+  wishIndustry: z.string().nullable(),
+  wishCompany: z.string().nullable(),
   marketingAgree: z.boolean(),
   questionAnswerList: z.array(questionAnswerSchema),
 });
