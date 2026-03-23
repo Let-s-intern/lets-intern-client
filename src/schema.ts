@@ -35,7 +35,7 @@ export const pageInfo = z.object({
 export type PageInfo = z.infer<typeof pageInfo>;
 
 // 챌린지 가격 플랜
-export const ChallengePricePlanEnum = z.enum(['BASIC', 'STANDARD', 'PREMIUM']);
+export const ChallengePricePlanEnum = z.enum(['LIGHT', 'BASIC', 'STANDARD', 'PREMIUM']);
 export type ChallengePricePlan = z.infer<typeof ChallengePricePlanEnum>;
 
 /** GET /api/v1/challenge */
