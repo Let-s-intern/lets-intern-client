@@ -166,6 +166,8 @@ const MagnetTable = ({
           display: 'flex',
           alignItems: 'center',
           py: 1,
+          whiteSpace: 'normal',
+          wordBreak: 'break-word',
         },
       }}
     />
