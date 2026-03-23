@@ -1,8 +1,12 @@
 'use client';
 
-import { useGetUserMagnetDetailQuery } from '@/api/magnet/magnet';
+import {
+  useGetUserMagnetDetailQuery,
+  usePatchMagnetViewDateMutation,
+} from '@/api/magnet/magnet';
 import LexicalContent from '@/domain/blog/ui/LexicalContent';
 import useAuthStore from '@/store/useAuthStore';
+import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
 const parseLexicalRoot = (json: string) => {
@@ -22,6 +26,20 @@ export default function LibraryMainContent({ magnetId, isUpcoming }: Props) {
   const { data, isLoading } = useGetUserMagnetDetailQuery(magnetId);
   const { isLoggedIn } = useAuthStore();
   const router = useRouter();
+  const patchViewDate = usePatchMagnetViewDateMutation();
+  const hasSentViewDate = useRef(false);
+
+  const mainContents = data?.magnetInfo.mainContents ?? null;
+  const mainRoot = mainContents ? parseLexicalRoot(mainContents) : null;
+  const hasApplied = mainContents !== null && mainRoot !== null;
+  const viewDate = data?.viewDate;
+
+  useEffect(() => {
+    if (hasApplied && !viewDate && !hasSentViewDate.current) {
+      hasSentViewDate.current = true;
+      patchViewDate.mutate(magnetId);
+    }
+  }, [hasApplied, viewDate, magnetId]);
 
   const handleApplyClick = (path: string) => {
     if (!isLoggedIn) {
@@ -61,10 +79,6 @@ export default function LibraryMainContent({ magnetId, isUpcoming }: Props) {
       </div>
     );
   }
-
-  const mainContents = data?.magnetInfo.mainContents ?? null;
-  const mainRoot = mainContents ? parseLexicalRoot(mainContents) : null;
-  const hasApplied = mainContents !== null && mainRoot !== null;
 
   if (hasApplied) {
     return (

@@ -103,6 +103,7 @@ const userMagnetInfoSchema = z.object({
 
 export const userMagnetDetailResponseSchema = z.object({
   magnetInfo: userMagnetInfoSchema,
+  viewDate: z.string().nullable().optional(),
 });
 
 export type UserMagnetDetailResponse = z.infer<
