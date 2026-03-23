@@ -70,7 +70,7 @@ const BlogDetailPage = async ({
 
   // 슬러그 비교 및 리디렉션
   const correctSlug = (
-    blog.blogDetailInfo.title?.replace(/[ /]/g, '-') || ''
+    blog.blogDetailInfo.title?.replace(/[ /]/g, '-').replace(/[?#&]/g, '') || ''
   ).toLowerCase();
   let currentSlug = _title || '';
   try {

@@ -47,7 +47,9 @@ export function getBlogPathname({
   id?: string | number | null;
   title?: string | null;
 }): string {
-  const slug = (title?.replace(/[ /]/g, '-') || '').toLowerCase();
+  const slug = (
+    title?.replace(/[ /]/g, '-').replace(/[?#&]/g, '') || ''
+  ).toLowerCase();
   return `/blog/${id}/${encodeURIComponent(slug)}`;
 }
 
