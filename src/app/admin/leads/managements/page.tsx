@@ -1,5 +1,5 @@
 'use client';
 
-import LeadManagementPage from '@/domain/admin/leads/LeadManagementPage';
+import LeadHistoryPage from '@/domain/admin/pages/lead/LeadHistoryPage';
 
-export default LeadManagementPage;
+export default LeadHistoryPage;

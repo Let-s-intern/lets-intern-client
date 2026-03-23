@@ -2,10 +2,8 @@
 
 import {
   CreateLeadHistoryRequest,
-  LeadEvent,
   LeadHistoryEventType,
   useCreateLeadHistoryMutation,
-  useLeadEventListQuery,
   useLeadHistoryListQuery,
 } from '@/api/lead';
 import Heading from '@/domain/admin/ui/heading/Heading';
@@ -83,8 +81,8 @@ type LeadHistoryRow = {
   instagramId: string | null;
   marketingAgree: boolean | null;
   eventType?: LeadHistoryEventType;
-  leadEventId?: number | null;
-  leadEventType?: string | null;
+  magnetId?: number | null;
+  magnetType?: string | null;
   userId?: number | null;
   title?: string | null;
   finalPrice?: number | null;
@@ -94,9 +92,9 @@ type LeadHistoryRow = {
 const FILTER_QUERY_KEY = 'filters';
 
 type LeadHistoryFilterField =
-  | 'leadEvent'
+  | 'magnet'
   | 'program'
-  | 'leadEventType'
+  | 'magnetType'
   | 'marketingAgree'
   | 'membership';
 type LeadHistoryFilterOperator = 'include' | 'exclude';
@@ -139,8 +137,8 @@ type StoredLeadHistoryFilterNode =
   | StoredLeadHistoryFilterGroupNode;
 
 type LeadHistoryGroupSummary = {
-  leadEventIds: Set<string>;
-  leadEventTypes: Set<string>;
+  magnetIds: Set<string>;
+  magnetTypes: Set<string>;
   programTitles: Set<string>;
   hasSignedUp: boolean;
   hasMarketingAgreement: boolean;
@@ -150,9 +148,9 @@ const filterFieldDefinitions: Record<
   LeadHistoryFilterField,
   { label: string; valueLabel: string }
 > = {
-  leadEvent: { label: '리드 이벤트', valueLabel: '이벤트 선택' },
+  magnet: { label: '마그넷', valueLabel: '마그넷 선택' },
   program: { label: '프로그램', valueLabel: '프로그램 선택' },
-  leadEventType: { label: '리드 이벤트 타입', valueLabel: '타입 선택' },
+  magnetType: { label: '마그넷 타입', valueLabel: '타입 선택' },
   marketingAgree: {
     label: '마케팅 동의 여부',
     valueLabel: '마케팅 동의 여부 선택',
@@ -178,7 +176,7 @@ const createConditionNode = (
 ): LeadHistoryFilterConditionNode => ({
   id: nanoid(),
   type: 'condition',
-  field: overrides.field ?? 'leadEvent',
+  field: overrides.field ?? 'magnet',
   operator: overrides.operator ?? 'include',
   values: overrides.values ?? [],
 });
@@ -280,9 +278,9 @@ const evaluateConditionNode = (
   }
 
   switch (condition.field) {
-    case 'leadEvent': {
+    case 'magnet': {
       const hasAny = condition.values.some((value) =>
-        summary.leadEventIds.has(String(value)),
+        summary.magnetIds.has(String(value)),
       );
       return condition.operator === 'include' ? hasAny : !hasAny;
     }
@@ -292,9 +290,9 @@ const evaluateConditionNode = (
       );
       return condition.operator === 'include' ? hasAny : !hasAny;
     }
-    case 'leadEventType': {
+    case 'magnetType': {
       const hasAny = condition.values.some((value) =>
-        summary.leadEventTypes.has(String(value)),
+        summary.magnetTypes.has(String(value)),
       );
       return condition.operator === 'include' ? hasAny : !hasAny;
     }
@@ -637,18 +635,18 @@ const CreateLeadHistoryDialog = ({
   onClose,
   onSubmit,
   isSubmitting,
-  leadEvents,
+  magnetOptions,
 }: {
   open: boolean;
   onClose: () => void;
   onSubmit: (payload: CreateLeadHistoryRequest) => Promise<void>;
   isSubmitting: boolean;
-  leadEvents?: LeadEvent[];
+  magnetOptions: Array<{ value: string; label: string }>;
 }) => {
   const [form, setForm] = useState<
-    Record<keyof CreateLeadHistoryRequest | 'userId' | 'leadEventId', string>
+    Record<keyof CreateLeadHistoryRequest | 'userId', string>
   >({
-    leadEventId: '',
+    magnetId: '',
     userId: '',
     name: '',
     phoneNum: '',
@@ -673,7 +671,7 @@ const CreateLeadHistoryDialog = ({
 
   const handleClose = () => {
     setForm({
-      leadEventId: '',
+      magnetId: '',
       userId: '',
       name: '',
       phoneNum: '',
@@ -693,7 +691,7 @@ const CreateLeadHistoryDialog = ({
 
   const handleSubmit = async () => {
     const payload: CreateLeadHistoryRequest = {
-      leadEventId: Number(form.leadEventId),
+      magnetId: Number(form.magnetId),
       name: form.name || undefined,
       phoneNum: form.phoneNum || undefined,
       email: form.email || undefined,
@@ -721,15 +719,15 @@ const CreateLeadHistoryDialog = ({
         <TextField
           select
           required
-          label="리드 이벤트"
-          name="leadEventId"
-          value={form.leadEventId}
+          label="마그넷"
+          name="magnetId"
+          value={form.magnetId}
           onChange={handleChange}
-          helperText="리드가 소속될 이벤트를 선택하세요."
+          helperText="리드가 소속될 마그넷을 선택하세요."
         >
-          {leadEvents?.map((event) => (
-            <MenuItem key={event.leadEventId} value={event.leadEventId}>
-              {event.title ?? `#${event.leadEventId}`}
+          {magnetOptions.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
             </MenuItem>
           ))}
         </TextField>
@@ -845,14 +843,6 @@ const LeadHistoryPage = () => {
 
   const { data: leadHistoryData = [], isLoading } = useLeadHistoryListQuery();
 
-  const leadEventListParams = useMemo(
-    () => ({
-      pageable: { page: 1, size: 1000 },
-    }),
-    [],
-  );
-  const { data: leadEventData } = useLeadEventListQuery(leadEventListParams);
-
   const replaceFilterTree = useCallback(
     (nextTree: LeadHistoryFilterGroupNode) => {
       const currentSignature = getFilterTreeSignature(filterTree);
@@ -894,14 +884,6 @@ const LeadHistoryPage = () => {
     [filterTree, replaceFilterTree],
   );
 
-  const leadEventMap = useMemo(() => {
-    const map = new Map<number, string>();
-    leadEventData?.leadEventList.forEach((event) => {
-      map.set(event.leadEventId, event.title ?? '');
-    });
-    return map;
-  }, [leadEventData]);
-
   const allRows = useMemo<LeadHistoryRow[]>(() => {
     if (!leadHistoryData.length) return [];
 
@@ -913,15 +895,9 @@ const LeadHistoryPage = () => {
           ? `회원 #${item.userId}`
           : '미등록');
 
-      const leadEventTitle =
-        item.title ??
-        (item.leadEventId !== null && item.leadEventId !== undefined
-          ? (leadEventMap.get(item.leadEventId) ?? null)
-          : null);
-
       const rowId = [
         trimmedPhone ?? 'NO_PHONE',
-        item.leadEventId ?? 'NO_EVENT',
+        item.magnetId ?? 'NO_MAGNET',
         item.createDate ?? 'NO_DATE',
         index,
       ].join('_');
@@ -943,32 +919,35 @@ const LeadHistoryPage = () => {
         instagramId: item.instagramId ?? null,
         marketingAgree: item.marketingAgree ?? null,
         eventType: item.eventType,
-        leadEventId: item.leadEventId ?? null,
-        leadEventType: item.leadEventType ?? null,
+        magnetId: item.magnetId ?? null,
+        magnetType: item.magnetType ?? null,
         userId: item.userId ?? null,
-        title: leadEventTitle,
+        title: item.title ?? null,
         finalPrice: item.finalPrice ?? null,
         createDate: item.createDate ?? null,
       };
     });
-  }, [leadHistoryData, leadEventMap]);
+  }, [leadHistoryData]);
 
-  const leadEventOptions = useMemo(
-    () =>
-      (leadEventData?.leadEventList ?? []).map((event) => ({
-        value: String(event.leadEventId),
-        label: event.title ?? `#${event.leadEventId}`,
-      })),
-    [leadEventData],
-  );
+  const magnetOptions = useMemo(() => {
+    const unique = new Map<string, string>();
+    allRows.forEach((row) => {
+      if (row.magnetId !== null && row.magnetId !== undefined) {
+        unique.set(String(row.magnetId), row.title ?? `#${row.magnetId}`);
+      }
+    });
+    return Array.from(unique.entries())
+      .sort(([, a], [, b]) => a.localeCompare(b))
+      .map(([value, label]) => ({ value, label }));
+  }, [allRows]);
 
-  const leadEventLabelMap = useMemo(() => {
+  const magnetLabelMap = useMemo(() => {
     const map = new Map<string, string>();
-    leadEventOptions.forEach(({ value, label }) => {
+    magnetOptions.forEach(({ value, label }) => {
       map.set(value, label);
     });
     return map;
-  }, [leadEventOptions]);
+  }, [magnetOptions]);
 
   const programOptions = useMemo(() => {
     const unique = new Set<string>();
@@ -985,11 +964,11 @@ const LeadHistoryPage = () => {
       }));
   }, [allRows]);
 
-  const leadEventTypeOptions = useMemo(() => {
+  const magnetTypeOptions = useMemo(() => {
     const unique = new Set<string>();
     allRows.forEach((row) => {
-      if (row.leadEventType) {
-        unique.add(row.leadEventType);
+      if (row.magnetType) {
+        unique.add(row.magnetType);
       }
     });
     return Array.from(unique)
@@ -1000,32 +979,32 @@ const LeadHistoryPage = () => {
       }));
   }, [allRows]);
 
-  const leadEventTypeLabelMap = useMemo(() => {
+  const magnetTypeLabelMap = useMemo(() => {
     const map = new Map<string, string>();
-    leadEventTypeOptions.forEach(({ value, label }) => {
+    magnetTypeOptions.forEach(({ value, label }) => {
       map.set(value, label);
     });
     return map;
-  }, [leadEventTypeOptions]);
+  }, [magnetTypeOptions]);
 
   const groupSummaryMap = useMemo(() => {
     const map = new Map<string, LeadHistoryGroupSummary>();
     allRows.forEach((row) => {
       const key = row.displayPhoneNum;
       const summary = map.get(key) ?? {
-        leadEventIds: new Set<string>(),
-        leadEventTypes: new Set<string>(),
+        magnetIds: new Set<string>(),
+        magnetTypes: new Set<string>(),
         programTitles: new Set<string>(),
         hasSignedUp: false,
         hasMarketingAgreement: false,
       };
 
-      if (row.leadEventId !== null && row.leadEventId !== undefined) {
-        summary.leadEventIds.add(String(row.leadEventId));
+      if (row.magnetId !== null && row.magnetId !== undefined) {
+        summary.magnetIds.add(String(row.magnetId));
       }
 
-      if (row.leadEventType) {
-        summary.leadEventTypes.add(row.leadEventType);
+      if (row.magnetType) {
+        summary.magnetTypes.add(row.magnetType);
       }
 
       if (row.eventType === 'PROGRAM' && row.title) {
@@ -1217,14 +1196,14 @@ const LeadHistoryPage = () => {
 
   const getValueLabel = useCallback(
     (field: LeadHistoryFilterField, value: string) => {
-      if (field === 'leadEvent') {
-        return leadEventLabelMap.get(value) ?? value;
+      if (field === 'magnet') {
+        return magnetLabelMap.get(value) ?? value;
       }
       if (field === 'program') {
         return value;
       }
-      if (field === 'leadEventType') {
-        return leadEventTypeLabelMap.get(value) ?? value;
+      if (field === 'magnetType') {
+        return magnetTypeLabelMap.get(value) ?? value;
       }
       if (field === 'marketingAgree') {
         return marketingAgreeLabelMap.get(value) ?? value;
@@ -1235,19 +1214,19 @@ const LeadHistoryPage = () => {
       }
       return value;
     },
-    [leadEventLabelMap, leadEventTypeLabelMap],
+    [magnetLabelMap, magnetTypeLabelMap],
   );
 
   const getOptionsForField = useCallback(
     (field: LeadHistoryFilterField) => {
-      if (field === 'leadEvent') {
-        return leadEventOptions;
+      if (field === 'magnet') {
+        return magnetOptions;
       }
       if (field === 'program') {
         return programOptions;
       }
-      if (field === 'leadEventType') {
-        return leadEventTypeOptions;
+      if (field === 'magnetType') {
+        return magnetTypeOptions;
       }
       if (field === 'membership') {
         return membershipOptions;
@@ -1257,7 +1236,7 @@ const LeadHistoryPage = () => {
       }
       return [];
     },
-    [leadEventOptions, programOptions, leadEventTypeOptions],
+    [magnetOptions, programOptions, magnetTypeOptions],
   );
 
   const FilterConditionEditor = ({
@@ -1573,27 +1552,27 @@ const LeadHistoryPage = () => {
           ),
       },
       {
-        accessorKey: 'leadEventId',
-        header: '리드 이벤트 ID',
+        accessorKey: 'magnetId',
+        header: '마그넷 ID',
         meta: {
           headerClassName: 'min-w-[140px]',
           cellClassName: 'min-w-[140px]',
         },
         cell: ({ row }) =>
           renderGroupedLeaf(row, (original) =>
-            formatNullableText(original.leadEventId),
+            formatNullableText(original.magnetId),
           ),
       },
       {
-        accessorKey: 'leadEventType',
-        header: '리드 이벤트 타입',
+        accessorKey: 'magnetType',
+        header: '마그넷 타입',
         meta: {
           headerClassName: 'min-w-[160px]',
           cellClassName: 'min-w-[160px]',
         },
         cell: ({ row }) =>
           renderGroupedLeaf(row, (original) =>
-            formatNullableText(original.leadEventType),
+            formatNullableText(original.magnetType),
           ),
       },
       {
@@ -1800,7 +1779,7 @@ const LeadHistoryPage = () => {
     link.href = url;
     link.setAttribute(
       'download',
-      `lead-history_${dayjs().format('YYYYMMDD_HHmmss')}.csv`,
+      `lead-management_${dayjs().format('YYYYMMDD_HHmmss')}.csv`,
     );
     document.body.appendChild(link);
     link.click();
@@ -1824,12 +1803,12 @@ const LeadHistoryPage = () => {
 
   return (
     <section className="p-5">
-      <Heading className="mb-4">리드 히스토리 관리</Heading>
+      <Heading className="mb-4">리드 관리</Heading>
 
       <div className="rounded mb-4 border border-gray-200 bg-white p-4 shadow-sm">
         <div className="mb-2 flex flex-wrap items-center gap-2">
           <Typography className="text-xs text-gray-600">
-            AND/OR 트리를 구성해 특정 이벤트·프로그램 참여 이력 여부로 전화번호
+            AND/OR 트리를 구성해 특정 마그넷·프로그램 참여 이력 여부로 전화번호
             그룹을 필터링할 수 있습니다.
           </Typography>
           <div className="ml-auto flex gap-1">
@@ -1862,7 +1841,7 @@ const LeadHistoryPage = () => {
             CSV 다운로드
           </Button>
           <Button variant="contained" onClick={() => setIsCreateOpen(true)}>
-            리드 히스토리 등록
+            리드 등록
           </Button>
         </div>
       </div>
@@ -1878,7 +1857,7 @@ const LeadHistoryPage = () => {
         onClose={() => setIsCreateOpen(false)}
         onSubmit={handleCreate}
         isSubmitting={createLeadHistory.isPending}
-        leadEvents={leadEventData?.leadEventList}
+        magnetOptions={magnetOptions}
       />
     </section>
   );
