@@ -18,8 +18,16 @@ import { ChangeEvent, useMemo } from 'react';
 const { PROCEEDING, PREV } = ProgramStatusEnum.enum;
 const MAX_PROGRAM_FETCH_SIZE = 10000;
 
-// TODO: 백엔드에서 challengeType 필드가 admin program API에 추가되면 제목 추론 대신 직접 사용
-const CTA_SUBTITLE_MAP: Record<string, string> = {
+/** programClassification → CTA 소제목 기본값 */
+const CTA_BY_CLASSIFICATION: Record<string, string> = {
+  CAREER_SEARCH: '취업 서류 준비의 기초·필수 코어가 될',
+  DOCUMENT_PREPARATION: '매력적인 이력서를 완성하는 1주일',
+  MEETING_PREPARATION: '만능 답변으로 진짜 나를 드러내는',
+  PASS: '나의 경험을 200% 활용하여 제작하는',
+};
+
+/** 제목 키워드 → CTA 소제목 (classification 매핑 실패 시 fallback) */
+const CTA_BY_KEYWORD: Record<string, string> = {
   경험정리: '취업 서류 준비의 기초·필수 코어가 될',
   이력서: '매력적인 이력서를 완성하는 1주일',
   자기소개서: '만능 답변으로 진짜 나를 드러내는',
@@ -31,8 +39,14 @@ const CTA_SUBTITLE_MAP: Record<string, string> = {
 /** 미설정시 기본값으로 노출할 프로그램 (이력서/자소서/포트폴리오 3종) */
 const DEFAULT_PROGRAM_KEYWORDS = ['이력서', '자기소개서', '포트폴리오'] as const;
 
-function inferCtaSubtitle(title: string): string {
-  for (const [keyword, subtitle] of Object.entries(CTA_SUBTITLE_MAP)) {
+function inferCtaSubtitle(
+  classification: string | null | undefined,
+  title: string,
+): string {
+  if (classification && CTA_BY_CLASSIFICATION[classification]) {
+    return CTA_BY_CLASSIFICATION[classification];
+  }
+  for (const [keyword, subtitle] of Object.entries(CTA_BY_KEYWORD)) {
     if (title.includes(keyword)) return subtitle;
   }
   return '';
@@ -55,22 +69,32 @@ const MagnetProgramRecommendSection = ({
   });
 
   const challengeList = useMemo(
-    () => data?.programList.filter((p) => p.programInfo.isVisible) ?? [],
+    () =>
+      data?.programList.filter(
+        (p) =>
+          p.programInfo.isVisible &&
+          (p.programInfo.title ?? '').endsWith('챌린지'),
+      ) ?? [],
     [data],
   );
 
-  const { menuItems, titleByValue } = useMemo(() => {
+  const { menuItems, programInfoByValue } = useMemo(() => {
     const items: React.JSX.Element[] = [
       <MenuItem key="null" value="null">
         선택 안 함
       </MenuItem>,
     ];
-    const titleMap = new Map<string, string>();
+    const infoMap = new Map<
+      string,
+      { title: string; classification: string | null }
+    >();
 
     challengeList.forEach((p) => {
       const value = `CHALLENGE-${p.programInfo.id}`;
       const title = p.programInfo.title ?? '';
-      titleMap.set(value, title);
+      const classification =
+        p.classificationList?.[0]?.programClassification ?? null;
+      infoMap.set(value, { title, classification });
       items.push(
         <MenuItem key={value} value={value}>
           {`[챌린지/${programStatusToText[p.programInfo.programStatusType]}] ${title}`}
@@ -78,7 +102,7 @@ const MagnetProgramRecommendSection = ({
       );
     });
 
-    return { menuItems: items, titleByValue: titleMap };
+    return { menuItems: items, programInfoByValue: infoMap };
   }, [challengeList]);
 
   /** 미설정 슬롯에 노출될 기본 프로그램 (이력서/자소서/포트폴리오 키워드 매칭) */
@@ -88,9 +112,11 @@ const MagnetProgramRecommendSection = ({
         (p.programInfo.title ?? '').includes(keyword),
       );
       if (!match) return null;
+      const classification =
+        match.classificationList?.[0]?.programClassification ?? null;
       return {
         title: match.programInfo.title ?? '',
-        ctaTitle: CTA_SUBTITLE_MAP[keyword] ?? '',
+        ctaTitle: inferCtaSubtitle(classification, match.programInfo.title ?? ''),
         ctaLink: `latest:${keyword}`,
       };
     }).filter(Boolean);
@@ -113,8 +139,11 @@ const MagnetProgramRecommendSection = ({
     }
 
     if (e.target.name === 'id' && !notSelectProgram) {
-      const title = titleByValue.get(e.target.value as string) ?? '';
-      item.ctaTitle = inferCtaSubtitle(title);
+      const info = programInfoByValue.get(e.target.value as string);
+      item.ctaTitle = inferCtaSubtitle(
+        info?.classification,
+        info?.title ?? '',
+      );
     }
 
     onChangeProgramRecommend([
