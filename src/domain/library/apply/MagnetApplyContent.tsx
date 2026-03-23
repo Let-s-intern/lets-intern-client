@@ -26,6 +26,7 @@ interface MagnetApplyContentProps {
   questions: MagnetQuestion[];
   /** 'apply' = 자료집 신청하기, 'launch-alert' = 출시 알림 신청하기 */
   variant: 'apply' | 'launch-alert';
+  useLaunchAlert?: boolean;
 }
 
 const MagnetApplyContent = ({
@@ -34,6 +35,7 @@ const MagnetApplyContent = ({
   thumbnail,
   questions,
   variant,
+  useLaunchAlert = false,
 }: MagnetApplyContentProps) => {
   const router = useRouter();
   const { data: userData } = useUserQuery();
@@ -156,12 +158,6 @@ const MagnetApplyContent = ({
         if (!answer.subjectiveText.trim()) return true;
       } else {
         if (answer.selectedItemIds.length === 0) return true;
-        // Check if "other" item is selected but no text provided
-        const selectedOther = question.items.find(
-          (item) =>
-            item.isOther && answer.selectedItemIds.includes(item.itemId),
-        );
-        if (selectedOther && !answer.otherText.trim()) return true;
       }
     }
 
@@ -206,7 +202,6 @@ const MagnetApplyContent = ({
           const selectedValues = (question?.items ?? [])
             .filter((item) => a.selectedItemIds.includes(item.itemId))
             .map((item) => item.value);
-          if (a.otherText) selectedValues.push(a.otherText);
           answer = selectedValues.join(',');
         }
         return { magnetQuestionId: a.questionId, answer };
@@ -286,7 +281,7 @@ const MagnetApplyContent = ({
       )}
 
       {/* 출시 알림 프로그램 선택 */}
-      {variant === 'launch-alert' && (
+      {variant === 'launch-alert' && useLaunchAlert && (
         <section>
           <LaunchAlertProgramSection
             selectedMagnetIds={selectedLaunchAlertIds}

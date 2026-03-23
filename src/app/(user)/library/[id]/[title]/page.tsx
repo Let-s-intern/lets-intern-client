@@ -1,6 +1,10 @@
-import { userMagnetDetailQueryOptions } from '@/api/magnet/magnet';
+import {
+  fetchUserMagnetList,
+  userMagnetDetailQueryOptions,
+} from '@/api/magnet/magnet';
+import { MagnetType } from '@/api/magnet/magnetSchema';
 import { ProgramRecommendItem } from '@/api/blog/blogSchema';
-import { fetchProgramRecommend } from '@/api/program';
+import { fetchProgramRecommend, getChallenge } from '@/api/program';
 import LikeButton from '@/common/button/LikeButton';
 import ContentCard from '@/common/card/ContentCard';
 import MoreHeader from '@/common/header/MoreHeader';
@@ -18,13 +22,44 @@ import {
   getLibraryTitle,
 } from '@/utils/url';
 import { QueryClient } from '@tanstack/react-query';
-import { CircleChevronRight } from 'lucide-react';
+import dayjs from '@/lib/dayjs';
+import { CircleChevronRight, LockKeyhole } from 'lucide-react';
 import { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ReactNode } from 'react';
 
 const { CHALLENGE } = ProgramTypeEnum.enum;
+
+const MAGNET_TYPE_LABEL: Record<MagnetType, string> = {
+  VOD: '무료 VOD',
+  FREE_TEMPLATE: '무료 템플릿',
+  MATERIAL: '직무 자료집',
+  LAUNCH_ALERT: '출시 알림',
+  EVENT: '이벤트',
+};
+
+function toUrlSlug(title: string) {
+  return encodeURIComponent(title.replace(/\s+/g, '-'));
+}
+
+interface MagnetDescription {
+  metaDescription?: string;
+  programRecommend?: { id: number | null }[];
+  magnetRecommend?: (number | null)[];
+}
+
+function parseMagnetDescription(
+  description: string | null,
+): MagnetDescription {
+  if (!description) return {};
+  try {
+    return JSON.parse(description);
+  } catch {
+    return {};
+  }
+}
 
 async function getMagnetDetail(magnetId: number) {
   const queryClient = new QueryClient();
@@ -48,13 +83,15 @@ export async function generateMetadata({
   if (!data) return {};
 
   const { magnetInfo } = data;
+  const parsed = parseMagnetDescription(magnetInfo.description);
+  const metaDescription = parsed.metaDescription ?? magnetInfo.description;
 
   return {
     title: getLibraryTitle({ title: magnetInfo.title }),
-    description: magnetInfo.description,
+    description: metaDescription,
     openGraph: {
       title: magnetInfo.title,
-      description: magnetInfo.description ?? undefined,
+      description: metaDescription ?? undefined,
       url:
         getBaseUrlFromServer() +
         getLibraryPathname({ id: magnetInfo.magnetId, title: magnetInfo.title }),
@@ -81,11 +118,22 @@ export default async function LibraryDetailPage({
   if (!data) notFound();
 
   const { magnetInfo } = data;
-  const programRecommendList = await getProgramRecommendList();
+  const parsed = parseMagnetDescription(magnetInfo.description);
 
-  async function getProgramRecommendList() {
-    const fetchedData = await fetchProgramRecommend();
-    const list: ProgramRecommendItem[] = [];
+  const programRecommendIds = (parsed.programRecommend ?? [])
+    .map((p) => p.id)
+    .filter((id): id is number => id !== null);
+
+  const magnetRecommendIds = (parsed.magnetRecommend ?? []).filter(
+    (id): id is number => id !== null,
+  );
+
+  const [programRecommendList, recommendedMagnetList] = await Promise.all([
+    getProgramRecommendList(programRecommendIds),
+    getRecommendedMagnetList(magnetInfo.magnetId, magnetRecommendIds),
+  ]);
+
+  async function getProgramRecommendList(challengeIds: number[]) {
     const ctaTitles: Record<string, string> = {
       CAREER_START: '경험 정리부터 이력서 완성까지',
       PERSONAL_STATEMENT: '합격을 만드는 자소서 작성법',
@@ -93,16 +141,90 @@ export default async function LibraryDetailPage({
       PERSONAL_STATEMENT_LARGE_CORP: '합격을 만드는 자소서 작성법',
     };
 
-    if (fetchedData.challengeList.length > 0) {
-      const targets = fetchedData.challengeList.slice(0, 3).map((item) => ({
-        id: `${CHALLENGE}-${item.id}`,
-        ctaLink: `/program/${CHALLENGE.toLowerCase()}/${item.id}`,
-        ctaTitle: ctaTitles[item.challengeType ?? 'CAREER_START'],
-      }));
-      list.push(...targets);
+    // description에 등록된 프로그램이 있으면 해당 프로그램 조회
+    if (challengeIds.length > 0) {
+      try {
+        const results = await Promise.all(
+          challengeIds.map((cId) =>
+            getChallenge(cId)
+              .then((data) => ({ id: cId, data }))
+              .catch((error) => {
+                console.error('챌린지 조회 실패:', error);
+                return null;
+              }),
+          ),
+        );
+        return results
+          .filter((r): r is NonNullable<typeof r> => r !== null)
+          .map((r) => ({
+            id: `${CHALLENGE}-${r.id}`,
+            ctaLink: `/program/${CHALLENGE.toLowerCase()}/${r.id}`,
+            ctaTitle: ctaTitles[r.data.challengeType ?? 'CAREER_START'],
+          }));
+      } catch (error) {
+        console.error('프로그램 추천 목록 조회 실패:', error);
+      }
     }
 
-    return list;
+    // 기본값: 이력서, 자기소개서, 포트폴리오 챌린지 3종
+    try {
+      const fetchedData = await fetchProgramRecommend();
+      const list: ProgramRecommendItem[] = [];
+      if (fetchedData.challengeList.length > 0) {
+        const targets = fetchedData.challengeList
+          .slice(0, 3)
+          .map((item) => ({
+            id: `${CHALLENGE}-${item.id}`,
+            ctaLink: `/program/${CHALLENGE.toLowerCase()}/${item.id}`,
+            ctaTitle: ctaTitles[item.challengeType ?? 'CAREER_START'],
+          }));
+        list.push(...targets);
+      }
+      return list;
+    } catch (error) {
+      console.error('프로그램 추천 기본값 조회 실패:', error);
+      return [];
+    }
+  }
+
+  async function getRecommendedMagnetList(
+    currentMagnetId: number,
+    magnetIds: number[],
+  ) {
+    // description에 등록된 마그넷이 있으면 해당 마그넷 상세 조회
+    if (magnetIds.length > 0) {
+      try {
+        const queryClient = new QueryClient();
+        const magnets = await Promise.all(
+          magnetIds.map((id) =>
+            queryClient
+              .fetchQuery(userMagnetDetailQueryOptions(id))
+              .catch((error) => {
+                console.error('마그넷 상세 조회 실패:', error);
+                return null;
+              }),
+          ),
+        );
+        return magnets
+          .filter(
+            (m): m is NonNullable<typeof m> => m !== null,
+          )
+          .map((m) => m.magnetInfo);
+      } catch (error) {
+        console.error('마그넷 추천 목록 조회 실패:', error);
+      }
+    }
+
+    // 기본값: 현재 게시글 제외 최신 4개
+    try {
+      const data = await fetchUserMagnetList({ page: 1, size: 5 });
+      return data.magnetList
+        .filter((m) => m.magnetId !== currentMagnetId)
+        .slice(0, 4);
+    } catch (error) {
+      console.error('마그넷 기본 목록 조회 실패:', error);
+      return [];
+    }
   }
 
   return (
@@ -129,7 +251,7 @@ export default async function LibraryDetailPage({
               <BlogKakaoShareBtn
                 className="p-2"
                 title={magnetInfo.title}
-                description={magnetInfo.description ?? ''}
+                description={parsed.metaDescription ?? magnetInfo.description ?? ''}
                 thumbnail={magnetInfo.desktopThumbnail ?? ''}
                 pathname={getLibraryPathname({
                   id: magnetInfo.magnetId,
@@ -192,8 +314,46 @@ export default async function LibraryDetailPage({
         >
           다른 취준생들이 함께 찾은 콘텐츠
         </MoreHeader>
-        {/* TODO: 자료집 추천 리스트 API 연동 */}
-        <div className="mb-6 mt-5 flex flex-col gap-5 md:mt-6 md:grid md:grid-cols-4 md:items-start md:gap-5" />
+        <div className="mb-6 mt-5 flex flex-col gap-5 md:mt-6 md:grid md:grid-cols-4 md:items-start md:gap-5">
+          {recommendedMagnetList.map((magnet) => {
+            const isUpcoming =
+              !!magnet.startDate &&
+              dayjs().isBefore(dayjs(magnet.startDate));
+            return (
+              <ContentCard
+                key={magnet.magnetId}
+                variant="library-card"
+                className="min-w-0"
+                href={`/library/${magnet.magnetId}/${toUrlSlug(magnet.title)}`}
+                thumbnail={
+                  <>
+                    {magnet.desktopThumbnail ? (
+                      <Image
+                        src={magnet.desktopThumbnail}
+                        alt={magnet.title}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : undefined}
+                    {isUpcoming && (
+                      <>
+                        <div className="pointer-events-none absolute inset-0 z-[1] bg-black/20" />
+                        <div className="pointer-events-none absolute right-2 top-2 z-10 flex items-center gap-1 self-center rounded-full bg-white/60 px-2 py-1">
+                          <LockKeyhole size={12} color="#4C4F56" />
+                          <span className="text-xxsmall12 font-medium text-neutral-30">
+                            공개예정
+                          </span>
+                        </div>
+                      </>
+                    )}
+                  </>
+                }
+                category={MAGNET_TYPE_LABEL[magnet.type] ?? magnet.type}
+                title={magnet.title}
+              />
+            );
+          })}
+        </div>
         <MoreLink href="/library/list" className="md:hidden">
           더 많은 자료집 보기
         </MoreLink>

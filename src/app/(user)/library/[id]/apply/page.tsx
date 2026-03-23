@@ -25,7 +25,6 @@ function toMagnetQuestion(item: UserMagnetQuestionItem): MagnetQuestion {
     items: options.map((value, index) => ({
       itemId: index + 1,
       value,
-      isOther: false,
     })),
   };
 }
@@ -56,6 +55,7 @@ export default function LibraryApplyPage() {
       thumbnail={magnetInfo.desktopThumbnail}
       questions={questions}
       variant={variant}
+      useLaunchAlert={magnetInfo.useLaunchAlert}
     />
   );
 }

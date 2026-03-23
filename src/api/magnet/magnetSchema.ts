@@ -95,6 +95,7 @@ const userMagnetInfoSchema = z.object({
   mainContents: z.string().nullable(),
   desktopThumbnail: z.string().nullable(),
   mobileThumbnail: z.string().nullable(),
+  useLaunchAlert: z.boolean().optional().default(false),
   startDate: z.string().nullable(),
   endDate: z.string().nullable(),
 });
@@ -114,6 +115,7 @@ const userMagnetListItemSchema = z.object({
   title: z.string(),
   desktopThumbnail: z.string().nullable(),
   mobileThumbnail: z.string().nullable(),
+  appliedLaunchAlert: z.boolean().nullable().optional().default(null),
   startDate: z.string().nullable(),
   endDate: z.string().nullable(),
 });
