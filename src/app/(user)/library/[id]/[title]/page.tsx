@@ -148,7 +148,10 @@ export default async function LibraryDetailPage({
           challengeIds.map((cId) =>
             getChallenge(cId)
               .then((data) => ({ id: cId, data }))
-              .catch(() => null),
+              .catch((error) => {
+                console.error('챌린지 조회 실패:', error);
+                return null;
+              }),
           ),
         );
         return results
@@ -158,8 +161,8 @@ export default async function LibraryDetailPage({
             ctaLink: `/program/${CHALLENGE.toLowerCase()}/${r.id}`,
             ctaTitle: ctaTitles[r.data.challengeType ?? 'CAREER_START'],
           }));
-      } catch {
-        // 실패 시 기본값 fallback
+      } catch (error) {
+        console.error('프로그램 추천 목록 조회 실패:', error);
       }
     }
 
@@ -178,7 +181,8 @@ export default async function LibraryDetailPage({
         list.push(...targets);
       }
       return list;
-    } catch {
+    } catch (error) {
+      console.error('프로그램 추천 기본값 조회 실패:', error);
       return [];
     }
   }
@@ -195,7 +199,10 @@ export default async function LibraryDetailPage({
           magnetIds.map((id) =>
             queryClient
               .fetchQuery(userMagnetDetailQueryOptions(id))
-              .catch(() => null),
+              .catch((error) => {
+                console.error('마그넷 상세 조회 실패:', error);
+                return null;
+              }),
           ),
         );
         return magnets
@@ -203,8 +210,8 @@ export default async function LibraryDetailPage({
             (m): m is NonNullable<typeof m> => m !== null,
           )
           .map((m) => m.magnetInfo);
-      } catch {
-        // 실패 시 기본값 fallback
+      } catch (error) {
+        console.error('마그넷 추천 목록 조회 실패:', error);
       }
     }
 
@@ -214,7 +221,8 @@ export default async function LibraryDetailPage({
       return data.magnetList
         .filter((m) => m.magnetId !== currentMagnetId)
         .slice(0, 4);
-    } catch {
+    } catch (error) {
+      console.error('마그넷 기본 목록 조회 실패:', error);
       return [];
     }
   }
