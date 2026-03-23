@@ -55,12 +55,7 @@ const MagnetProgramRecommendSection = ({
   });
 
   const challengeList = useMemo(
-    () =>
-      data?.programList.filter(
-        (p) =>
-          p.programInfo.isVisible &&
-          (p.programInfo.title ?? '').endsWith('챌린지'),
-      ) ?? [],
+    () => data?.programList.filter((p) => p.programInfo.isVisible) ?? [],
     [data],
   );
 

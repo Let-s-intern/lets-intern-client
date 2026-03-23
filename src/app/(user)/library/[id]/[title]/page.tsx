@@ -46,7 +46,11 @@ function toUrlSlug(title: string) {
 
 interface MagnetDescription {
   metaDescription?: string;
-  programRecommend?: { id: number | null }[];
+  programRecommend?: {
+    id: string | null;
+    ctaTitle?: string;
+    ctaLink?: string;
+  }[];
   magnetRecommend?: (number | null)[];
 }
 
@@ -120,8 +124,18 @@ export default async function LibraryDetailPage({
   const { magnetInfo } = data;
   const parsed = parseMagnetDescription(magnetInfo.description);
 
-  const programRecommendIds = (parsed.programRecommend ?? [])
-    .map((p) => p.id)
+  const programRecommendItems = (parsed.programRecommend ?? []).filter(
+    (p) => p.id !== null,
+  );
+
+  /** "CHALLENGE-339" → 339 */
+  const extractNumericId = (id: string): number | null => {
+    const match = id.match(/\d+$/);
+    return match ? Number(match[0]) : null;
+  };
+
+  const programRecommendIds = programRecommendItems
+    .map((p) => extractNumericId(p.id!))
     .filter((id): id is number => id !== null);
 
   const magnetRecommendIds = (parsed.magnetRecommend ?? []).filter(
@@ -145,24 +159,23 @@ export default async function LibraryDetailPage({
     if (challengeIds.length > 0) {
       try {
         const results = await Promise.all(
-          challengeIds.map((cId) =>
+          challengeIds.map((cId, idx) =>
             getChallenge(cId)
-              .then((data) => ({ id: cId, data }))
-              .catch((error) => {
-                console.error('챌린지 조회 실패:', error);
-                return null;
-              }),
+              .then((data) => ({ id: cId, data, item: programRecommendItems[idx] }))
+              .catch(() => null),
           ),
         );
-        return results
+        const validResults = results
           .filter((r): r is NonNullable<typeof r> => r !== null)
           .map((r) => ({
             id: `${CHALLENGE}-${r.id}`,
-            ctaLink: `/program/${CHALLENGE.toLowerCase()}/${r.id}`,
-            ctaTitle: ctaTitles[r.data.challengeType ?? 'CAREER_START'],
+            ctaLink: r.item.ctaLink ?? `/program/${CHALLENGE.toLowerCase()}/${r.id}`,
+            ctaTitle: r.item.ctaTitle ?? ctaTitles[r.data.challengeType ?? 'CAREER_START'],
           }));
-      } catch (error) {
-        console.error('프로그램 추천 목록 조회 실패:', error);
+        if (validResults.length > 0) return validResults;
+        // 전부 실패하면 fallback으로 진행
+      } catch {
+        // fallback으로 진행
       }
     }
 
@@ -199,19 +212,16 @@ export default async function LibraryDetailPage({
           magnetIds.map((id) =>
             queryClient
               .fetchQuery(userMagnetDetailQueryOptions(id))
-              .catch((error) => {
-                console.error('마그넷 상세 조회 실패:', error);
-                return null;
-              }),
+              .catch(() => null),
           ),
         );
-        return magnets
-          .filter(
-            (m): m is NonNullable<typeof m> => m !== null,
-          )
+        const validMagnets = magnets
+          .filter((m): m is NonNullable<typeof m> => m !== null)
           .map((m) => m.magnetInfo);
-      } catch (error) {
-        console.error('마그넷 추천 목록 조회 실패:', error);
+        if (validMagnets.length > 0) return validMagnets;
+        // 전부 실패하면 fallback으로 진행
+      } catch {
+        // fallback으로 진행
       }
     }
 
