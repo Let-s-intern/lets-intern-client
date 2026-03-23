@@ -1,9 +1,9 @@
+import { ProgramRecommendItem } from '@/api/blog/blogSchema';
 import {
   fetchUserMagnetList,
   userMagnetDetailQueryOptions,
 } from '@/api/magnet/magnet';
 import { MagnetType } from '@/api/magnet/magnetSchema';
-import { ProgramRecommendItem } from '@/api/blog/blogSchema';
 import { fetchProgramRecommend, getChallenge } from '@/api/program';
 import LikeButton from '@/common/button/LikeButton';
 import ContentCard from '@/common/card/ContentCard';
@@ -14,6 +14,7 @@ import BlogLinkShareBtn from '@/domain/blog/button/BlogLilnkShareBtn';
 import ProgramRecommendCard from '@/domain/blog/card/ProgramRecommendCard';
 import Heading2 from '@/domain/blog/ui/BlogHeading2';
 import LibraryArticle from '@/domain/library/ui/LibraryArticle';
+import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { ProgramStatusEnum, ProgramTypeEnum } from '@/schema';
 import {
@@ -22,7 +23,6 @@ import {
   getLibraryTitle,
 } from '@/utils/url';
 import { QueryClient } from '@tanstack/react-query';
-import dayjs from '@/lib/dayjs';
 import { CircleChevronRight, LockKeyhole } from 'lucide-react';
 import { Metadata } from 'next';
 import Image from 'next/image';
@@ -54,9 +54,13 @@ interface MagnetDescription {
   magnetRecommend?: (number | null)[];
 }
 
-function parseMagnetDescription(
-  description: string | null,
-): MagnetDescription {
+/** "CHALLENGE-339" → 339 */
+const extractNumericId = (id: string): number | null => {
+  const match = id.match(/\d+$/);
+  return match ? Number(match[0]) : null;
+};
+
+function parseMagnetDescription(description: string | null): MagnetDescription {
   if (!description) return {};
   try {
     return JSON.parse(description);
@@ -68,9 +72,7 @@ function parseMagnetDescription(
 async function getMagnetDetail(magnetId: number) {
   const queryClient = new QueryClient();
   try {
-    return await queryClient.fetchQuery(
-      userMagnetDetailQueryOptions(magnetId),
-    );
+    return await queryClient.fetchQuery(userMagnetDetailQueryOptions(magnetId));
   } catch {
     return null;
   }
@@ -98,7 +100,10 @@ export async function generateMetadata({
       description: metaDescription ?? undefined,
       url:
         getBaseUrlFromServer() +
-        getLibraryPathname({ id: magnetInfo.magnetId, title: magnetInfo.title }),
+        getLibraryPathname({
+          id: magnetInfo.magnetId,
+          title: magnetInfo.title,
+        }),
       images: magnetInfo.desktopThumbnail
         ? [{ url: magnetInfo.desktopThumbnail }]
         : [],
@@ -106,7 +111,10 @@ export async function generateMetadata({
     alternates: {
       canonical:
         getBaseUrlFromServer() +
-        getLibraryPathname({ id: magnetInfo.magnetId, title: magnetInfo.title }),
+        getLibraryPathname({
+          id: magnetInfo.magnetId,
+          title: magnetInfo.title,
+        }),
     },
   };
 }
@@ -128,26 +136,16 @@ export default async function LibraryDetailPage({
     (p) => p.id !== null,
   );
 
-  /** "CHALLENGE-339" → 339 */
-  const extractNumericId = (id: string): number | null => {
-    const match = id.match(/\d+$/);
-    return match ? Number(match[0]) : null;
-  };
-
-  const programRecommendIds = programRecommendItems
-    .map((p) => extractNumericId(p.id!))
-    .filter((id): id is number => id !== null);
-
   const magnetRecommendIds = (parsed.magnetRecommend ?? []).filter(
     (id): id is number => id !== null,
   );
 
   const [programRecommendList, recommendedMagnetList] = await Promise.all([
-    getProgramRecommendList(programRecommendIds),
+    getProgramRecommendList(),
     getRecommendedMagnetList(magnetInfo.magnetId, magnetRecommendIds),
   ]);
 
-  async function getProgramRecommendList(challengeIds: number[]) {
+  async function getProgramRecommendList() {
     const ctaTitles: Record<string, string> = {
       CAREER_START: '경험 정리부터 이력서 완성까지',
       PERSONAL_STATEMENT: '합격을 만드는 자소서 작성법',
@@ -156,21 +154,29 @@ export default async function LibraryDetailPage({
     };
 
     // description에 등록된 프로그램이 있으면 해당 프로그램 조회
-    if (challengeIds.length > 0) {
+    if (programRecommendItems.length > 0) {
       try {
         const results = await Promise.all(
-          challengeIds.map((cId, idx) =>
-            getChallenge(cId)
-              .then((data) => ({ id: cId, data, item: programRecommendItems[idx] }))
-              .catch(() => null),
-          ),
+          programRecommendItems.map(async (item) => {
+            const numericId = extractNumericId(item.id!);
+            if (numericId === null) return null;
+            try {
+              const data = await getChallenge(numericId);
+              return { id: numericId, data, item };
+            } catch {
+              return null;
+            }
+          }),
         );
         const validResults = results
           .filter((r): r is NonNullable<typeof r> => r !== null)
           .map((r) => ({
             id: `${CHALLENGE}-${r.id}`,
-            ctaLink: r.item.ctaLink ?? `/program/${CHALLENGE.toLowerCase()}/${r.id}`,
-            ctaTitle: r.item.ctaTitle ?? ctaTitles[r.data.challengeType ?? 'CAREER_START'],
+            ctaLink:
+              r.item.ctaLink ?? `/program/${CHALLENGE.toLowerCase()}/${r.id}`,
+            ctaTitle:
+              r.item.ctaTitle ??
+              ctaTitles[r.data.challengeType ?? 'CAREER_START'],
           }));
         if (validResults.length > 0) return validResults;
         // 전부 실패하면 fallback으로 진행
@@ -184,13 +190,11 @@ export default async function LibraryDetailPage({
       const fetchedData = await fetchProgramRecommend();
       const list: ProgramRecommendItem[] = [];
       if (fetchedData.challengeList.length > 0) {
-        const targets = fetchedData.challengeList
-          .slice(0, 3)
-          .map((item) => ({
-            id: `${CHALLENGE}-${item.id}`,
-            ctaLink: `/program/${CHALLENGE.toLowerCase()}/${item.id}`,
-            ctaTitle: ctaTitles[item.challengeType ?? 'CAREER_START'],
-          }));
+        const targets = fetchedData.challengeList.slice(0, 3).map((item) => ({
+          id: `${CHALLENGE}-${item.id}`,
+          ctaLink: `/program/${CHALLENGE.toLowerCase()}/${item.id}`,
+          ctaTitle: ctaTitles[item.challengeType ?? 'CAREER_START'],
+        }));
         list.push(...targets);
       }
       return list;
@@ -227,7 +231,11 @@ export default async function LibraryDetailPage({
 
     // 기본값: 현재 게시글 제외 최신 마그넷(자료집/VOD/무료 템플릿) 4개
     try {
-      const MANAGEABLE_TYPES: MagnetType[] = ['MATERIAL', 'VOD', 'FREE_TEMPLATE'];
+      const MANAGEABLE_TYPES: MagnetType[] = [
+        'MATERIAL',
+        'VOD',
+        'FREE_TEMPLATE',
+      ];
       const data = await fetchUserMagnetList({
         page: 1,
         size: 5,
@@ -266,7 +274,9 @@ export default async function LibraryDetailPage({
               <BlogKakaoShareBtn
                 className="p-2"
                 title={magnetInfo.title}
-                description={parsed.metaDescription ?? magnetInfo.description ?? ''}
+                description={
+                  parsed.metaDescription ?? magnetInfo.description ?? ''
+                }
                 thumbnail={magnetInfo.desktopThumbnail ?? ''}
                 pathname={getLibraryPathname({
                   id: magnetInfo.magnetId,
@@ -332,8 +342,7 @@ export default async function LibraryDetailPage({
         <div className="mb-6 mt-5 flex flex-col gap-5 md:mt-6 md:grid md:grid-cols-4 md:items-start md:gap-5">
           {recommendedMagnetList.map((magnet) => {
             const isUpcoming =
-              !!magnet.startDate &&
-              dayjs().isBefore(dayjs(magnet.startDate));
+              !!magnet.startDate && dayjs().isBefore(dayjs(magnet.startDate));
             return (
               <ContentCard
                 key={magnet.magnetId}
