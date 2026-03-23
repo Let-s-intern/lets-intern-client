@@ -45,6 +45,20 @@ const MagnetTable = ({
         minWidth: 200,
       },
       {
+        field: 'programType',
+        headerName: '프로그램 타입',
+        width: 130,
+        valueGetter: (_, row) =>
+          isMagnetManageable(row.type) ? '-' : row.programType || '-',
+      },
+      {
+        field: 'challengeType',
+        headerName: '챌린지 타입',
+        width: 130,
+        valueGetter: (_, row) =>
+          isMagnetManageable(row.type) ? '-' : row.challengeType || '-',
+      },
+      {
         field: 'startDate',
         headerName: '노출 시작일',
         width: 130,
@@ -79,45 +93,48 @@ const MagnetTable = ({
         field: 'applicationCount',
         headerName: '신청자 수',
         width: 90,
-        renderCell: ({ row }) =>
-          isMagnetManageable(row.type) ? row.applicationCount : null,
+        renderCell: ({ row }) => row.applicationCount,
       },
       {
         field: 'applicantManage',
         headerName: '신청자 관리',
         width: 120,
         sortable: false,
-        renderCell: ({ row }) =>
-          isMagnetManageable(row.type) ? (
-            <Link href={`/admin/leads/managements/${row.magnetId}`}>
-              <Button
-                variant="outlined"
-                color="primary"
-                size="small"
-              >
-                신청자 정보
-              </Button>
-            </Link>
-          ) : null,
+        renderCell: ({ row }) => (
+          <Link href={`/admin/leads/managements/${row.magnetId}`}>
+            <Button variant="outlined" color="primary" size="small">
+              신청자 정보
+            </Button>
+          </Link>
+        ),
       },
       {
         field: 'actions',
         headerName: '관리',
         width: 280,
         sortable: false,
-        renderCell: ({ row }) =>
-          isMagnetManageable(row.type) ? (
+        renderCell: ({ row }) => {
+          const manageable = isMagnetManageable(row.type);
+          return (
             <div className="inline-flex items-center gap-2">
-              <Link href={`/admin/blog/magnet/${row.magnetId}/post`}>
-                <Button variant="outlined" color="primary" size="small">
-                  글 관리
-                </Button>
-              </Link>
-              <Link href={`/admin/blog/magnet/${row.magnetId}/form`}>
-                <Button variant="outlined" color="info" size="small">
-                  신청 폼 관리
-                </Button>
-              </Link>
+              {manageable && (
+                <>
+                  <Link href={`/admin/blog/magnet/${row.magnetId}/post`}>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      size="small"
+                    >
+                      글 관리
+                    </Button>
+                  </Link>
+                  <Link href={`/admin/blog/magnet/${row.magnetId}/form`}>
+                    <Button variant="outlined" color="info" size="small">
+                      신청 폼 관리
+                    </Button>
+                  </Link>
+                </>
+              )}
               <Button
                 variant="outlined"
                 color="error"
@@ -127,7 +144,8 @@ const MagnetTable = ({
                 삭제
               </Button>
             </div>
-          ) : null,
+          );
+        },
       },
     ],
     [onToggleVisibility, onDelete],
@@ -148,6 +166,8 @@ const MagnetTable = ({
           display: 'flex',
           alignItems: 'center',
           py: 1,
+          whiteSpace: 'normal',
+          wordBreak: 'break-word',
         },
       }}
     />
