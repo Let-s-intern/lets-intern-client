@@ -1,8 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 
-// TODO: API 연동 후 실제 엔드포인트로 교체
-// import axios from '@/utils/axios';
+import axios from '@/utils/axios';
 
 // --- Zod Schemas ---
 
@@ -52,10 +51,26 @@ const magnetApplicationSchema = z.object({
   marketingAgree: z.boolean(),
 });
 
+const magnetApplicationByMagnetSchema = z.object({
+  magnetApplicationId: z.number(),
+  name: z.string(),
+  phoneNum: z.string(),
+  grade: z.string(),
+  wishField: z.string(),
+  wishJob: z.string(),
+  wishIndustry: z.string(),
+  wishCompany: z.string(),
+  marketingAgree: z.boolean(),
+  questionAnswerList: z.array(questionAnswerSchema),
+});
+
 // --- Types ---
 
 export type LeadManagementUser = z.infer<typeof leadManagementUserSchema>;
 export type MagnetApplication = z.infer<typeof magnetApplicationSchema>;
+export type MagnetApplicationByMagnet = z.infer<
+  typeof magnetApplicationByMagnetSchema
+>;
 export type ProgramHistoryItem = z.infer<typeof programHistoryItemSchema>;
 export type MagnetHistoryItem = z.infer<typeof magnetHistoryItemSchema>;
 
@@ -161,6 +176,8 @@ export const leadManagementListQueryKey = 'leadManagementListQueryKey';
 export const leadManagementUserDetailQueryKey =
   'leadManagementUserDetailQueryKey';
 export const magnetApplicationListQueryKey = 'magnetApplicationListQueryKey';
+export const magnetApplicationByMagnetQueryKey =
+  'magnetApplicationByMagnetQueryKey';
 
 // --- Query Hooks ---
 
@@ -210,6 +227,25 @@ export const useMagnetApplicationListQuery = (
       // const res = await axios.get(`/admin/lead-management/${userId}/magnet-applications`);
       // return z.array(magnetApplicationSchema).parse(res.data.data);
       return MOCK_MAGNET_APPLICATIONS;
+    },
+  });
+};
+
+// GET /admin/magnet/{magnetId}/applications — 마그넷별 신청자 목록 조회
+export const useMagnetApplicationByMagnetIdQuery = (
+  magnetId: number,
+  options?: { enabled?: boolean },
+) => {
+  return useQuery({
+    queryKey: [magnetApplicationByMagnetQueryKey, magnetId],
+    enabled: options?.enabled ?? true,
+    queryFn: async (): Promise<MagnetApplicationByMagnet[]> => {
+      const res = await axios.get(
+        `/admin/magnet/${magnetId}/applications`,
+      );
+      return z
+        .array(magnetApplicationByMagnetSchema)
+        .parse(res.data.data.magnetApplicationList);
     },
   });
 };
