@@ -225,9 +225,14 @@ export default async function LibraryDetailPage({
       }
     }
 
-    // 기본값: 현재 게시글 제외 최신 4개
+    // 기본값: 현재 게시글 제외 최신 마그넷(자료집/VOD/무료 템플릿) 4개
     try {
-      const data = await fetchUserMagnetList({ page: 1, size: 5 });
+      const MANAGEABLE_TYPES: MagnetType[] = ['MATERIAL', 'VOD', 'FREE_TEMPLATE'];
+      const data = await fetchUserMagnetList({
+        page: 1,
+        size: 5,
+        typeList: MANAGEABLE_TYPES,
+      });
       return data.magnetList
         .filter((m) => m.magnetId !== currentMagnetId)
         .slice(0, 4);
