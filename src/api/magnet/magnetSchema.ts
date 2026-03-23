@@ -98,6 +98,7 @@ const userMagnetInfoSchema = z.object({
   useLaunchAlert: z.boolean().optional().default(false),
   startDate: z.string().nullable(),
   endDate: z.string().nullable(),
+  likes: z.number().nullable().optional(),
 });
 
 export const userMagnetDetailResponseSchema = z.object({

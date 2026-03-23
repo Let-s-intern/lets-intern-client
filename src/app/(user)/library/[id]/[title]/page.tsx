@@ -5,7 +5,7 @@ import {
 import { MagnetType } from '@/api/magnet/magnetSchema';
 import { ProgramRecommendItem } from '@/api/blog/blogSchema';
 import { fetchProgramRecommend, getChallenge } from '@/api/program';
-import LikeButton from '@/common/button/LikeButton';
+import LibraryLikeBtn from '@/domain/library/ui/LibraryLikeBtn';
 import ContentCard from '@/common/card/ContentCard';
 import MoreHeader from '@/common/header/MoreHeader';
 import HorizontalRule from '@/common/HorizontalRule';
@@ -236,7 +236,7 @@ export default async function LibraryDetailPage({
 
           <section className="mb-9 mt-10 flex items-center justify-between md:mb-6">
             {/* 좋아요 */}
-            <LikeButton id={id} likeCount={0} storageKey="library_like" />
+            <LibraryLikeBtn likeCount={magnetInfo.likes ?? 0} />
             {/* 공유하기 */}
             <div className="flex items-center">
               <span className="mr-1.5 hidden text-xsmall14 font-medium text-neutral-35 md:block">

@@ -287,6 +287,22 @@ export const useGetUserMagnetQuestionsQuery = (
   });
 };
 
+// 마그넷 좋아요
+export const useMagnetLikeMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (magnetId: number | string) => {
+      const res = await axios.get(`/magnet/${magnetId}/likes`);
+      return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: [userMagnetDetailQueryKey],
+      });
+    },
+  });
+};
+
 // 마그넷 신청
 export interface MagnetApplicationReqBody {
   magnetAnswerList: {
