@@ -1,7 +1,10 @@
 'use client';
 
-import { fetchManageableMagnets } from '@/domain/admin/blog/magnet/mock';
-import { MAGNET_TYPE } from '@/domain/admin/blog/magnet/types';
+import { useGetMagnetListQuery } from '@/api/magnet/magnet';
+import {
+  MAGNET_TYPE,
+  MANAGEABLE_MAGNET_TYPES,
+} from '@/domain/admin/blog/magnet/types';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
 import {
   FormControl,
@@ -23,17 +26,22 @@ const MagnetRecommendSection = ({
   onChangeMagnetRecommend,
   currentMagnetId,
 }: MagnetRecommendSectionProps) => {
-  // TODO: API 준비 후 React Query 훅으로 교체
+  const { data } = useGetMagnetListQuery({
+    typeList: MANAGEABLE_MAGNET_TYPES,
+  });
+
   const allMagnets = useMemo(
     () =>
-      fetchManageableMagnets().filter((m) => m.magnetId !== currentMagnetId),
-    [currentMagnetId],
+      (data?.magnetList ?? []).filter(
+        (m) => m.magnetId !== currentMagnetId,
+      ),
+    [data, currentMagnetId],
   );
 
   const magnetMenuItems = useMemo(
     () => [
       <MenuItem key="null" value="null">
-        선택 안 함 (기본값 자동 노출)
+        선택 안 함
       </MenuItem>,
       ...allMagnets.map((m) => (
         <MenuItem key={m.magnetId} value={m.magnetId}>
