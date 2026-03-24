@@ -8,11 +8,9 @@ import {
   MypageApplicationCardConfig,
   toMypageApplicationCardConfig,
 } from '@/domain/mypage/application/utils/applicationCardConfig';
-import DownloadToast from '@/domain/mypage/ui/toast/DownloadToast';
 import { useDownloadAction } from '@/hooks/useDownloadAction';
 import { twMerge } from '@/lib/twMerge';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import ActionButton from '../button/ActionButton';
 
 interface NewApplicationCardProps {
@@ -37,14 +35,11 @@ const MypageApplicationCard = ({ config }: MypageApplicationCardProps) => {
   const hasConfirm = !!actionButton?.confirm;
   const isDownloadButton = actionButton?.isDownload === true;
   const detailHref = getDetailHref(config);
-  const [showToast, setShowToast] = useState(false);
-
   const downloadAction = useDownloadAction({
     applicationId: config.id,
     type: 'GUIDEBOOK',
     executeDownload: () =>
       downloadGuidebookAndTrack(config.id, config.programId),
-    onComplete: () => setShowToast(true),
   });
 
   const handleActionClick = () => {
@@ -175,11 +170,6 @@ const MypageApplicationCard = ({ config }: MypageApplicationCardProps) => {
           {actionButton.confirm?.description}
         </AlertModal>
       )}
-
-      <DownloadToast
-        isVisible={showToast}
-        onClose={() => setShowToast(false)}
-      />
     </div>
   );
 };
