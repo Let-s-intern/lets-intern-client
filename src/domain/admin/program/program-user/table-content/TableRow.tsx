@@ -55,22 +55,9 @@ const TableRow = ({ applicationItem, programType }: Props) => {
     const { couponDiscount, isCanceled, finalPrice } = challengeApp.application;
     if (couponDiscount === -1) return finalPrice ?? 0;
     if (isCanceled) {
-      const deposit = challengeApp.application.refundPrice ?? 0; // 보증금
-      const optionSellingPrice =
-        (challengeApp.optionPriceSum ?? 0) -
-        (challengeApp.optionDiscountPriceSum ?? 0);
-      const programSellingPrice =
-        (challengeApp.application.programPrice ?? 0) -
-        (challengeApp.application.programDiscount ?? 0);
+      const originalPrice = challengeApp.application.originalPrice ?? 0;
       const refundedAmount = challengeApp.application.finalPrice ?? 0; // 사용자에게 환불해준 금액
-      const refundDeductionAmount =
-        programSellingPrice +
-        optionSellingPrice +
-        deposit -
-        refundedAmount -
-        (couponDiscount ?? 0); // 환불 차감 금액
-
-      return refundDeductionAmount;
+      return originalPrice - refundedAmount;
     }
 
     return finalPrice ?? 0;

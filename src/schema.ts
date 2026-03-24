@@ -1505,6 +1505,7 @@ export const challengeApplicationsSchema = z
           programPrice: z.number().nullable().optional(),
           refundPrice: z.number().nullable().optional(),
           challengePricePlanType: ChallengePricePlanEnum.nullable().optional(),
+          originalPrice: z.number().nullable().optional(),
         }),
         optionPriceSum: z.number().nullable().optional(),
         optionDiscountPriceSum: z.number().nullable().optional(),
