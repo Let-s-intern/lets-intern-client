@@ -13,11 +13,6 @@ export default function Client() {
       {/* Kakao Open Chat Section */}
       <KakaoSection />
 
-      {/* Section divider */}
-      <div className="mw-1180 px-4">
-        <hr className="border-t-2 border-dashed border-neutral-70" />
-      </div>
-
       {/* Instagram Section */}
       <InstagramSection />
     </main>

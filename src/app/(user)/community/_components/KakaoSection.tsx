@@ -1,8 +1,8 @@
 'use client';
 
 import { motion } from 'motion/react';
-import QnaChatCard from './QnaChatCard';
 import OgongoBlock from './OgongoBlock';
+import QnaChatCard from './QnaChatCard';
 import { kakaoRooms } from './const';
 
 const FADE_IN = {
@@ -15,26 +15,23 @@ const FADE_IN = {
 export default function KakaoSection() {
   return (
     <section className="w-full">
-      <div className="mw-1180 px-4 py-16 md:py-24">
-        {/* Section header */}
-        <motion.div
-          className="mb-5 flex items-center gap-2.5 border-b-2 border-neutral-10 pb-3 md:mb-6 md:gap-3 md:pb-4"
-          {...FADE_IN}
-        >
-          <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-xxs bg-neutral-90 text-sm md:h-8 md:w-8 md:text-base">
-            <span role="img" aria-label="chat">
-              💬
-            </span>
-          </div>
-          <h2 className="text-xsmall14 font-bold tracking-tight md:text-small18">
-            카카오 오픈톡방{' '}
-            <span className="ml-1 font-normal text-neutral-45">6개 채널</span>
+      <div className="mw-1180 py-16 md:py-32">
+        {/* Section header - B2B SectionHeader style */}
+        <motion.div className="mb-10 text-center md:mb-16" {...FADE_IN}>
+          <p className="text-xsmall16 font-medium text-primary-90">
+            카카오 오픈톡방
+          </p>
+          <h2 className="mt-4 break-keep text-[26px] font-bold leading-[1.35] text-static-0 md:mt-6 md:text-[40px]">
+            취준 고민, 혼자 안고 있지 마세요
           </h2>
+          <p className="mt-4 break-keep text-xsmall14 leading-[22px] text-neutral-40 md:text-small20">
+            렛츠커리어 커뮤니티에서 질문하고 정보 나누며 함께 취뽀해요.
+          </p>
         </motion.div>
 
         {/* QNA cards - 2col desktop, 1col mobile */}
         <motion.div
-          className="mb-4 grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-3.5"
+          className="mb-6 grid grid-cols-1 gap-4 px-4 md:grid-cols-2 md:gap-5"
           {...FADE_IN}
           transition={{ duration: 0.55, delay: 0.05 }}
         >
@@ -45,6 +42,7 @@ export default function KakaoSection() {
 
         {/* Ogonggo block */}
         <motion.div
+          className="px-4"
           {...FADE_IN}
           transition={{ duration: 0.55, delay: 0.1 }}
         >

@@ -48,7 +48,7 @@ export default function InstagramCard({ channel }: Props) {
   }, []);
 
   return (
-    <article className="flex flex-col overflow-hidden rounded-sm border border-neutral-80 bg-white">
+    <article className="flex flex-col overflow-hidden rounded-sm border border-neutral-80 bg-white shadow-sm">
       {/* Thumbnail area */}
       <div className="relative border-b border-neutral-80">
         {/* Desktop: 3x2 grid */}
@@ -66,7 +66,7 @@ export default function InstagramCard({ channel }: Props) {
         <div className="relative md:hidden">
           <div
             ref={scrollRef}
-            className="flex gap-1 overflow-x-auto px-3 py-2.5 scrollbar-hide"
+            className="flex gap-1.5 overflow-x-auto px-3 py-3 scrollbar-hide"
           >
             {Array.from({ length: THUMBNAIL_COUNT }).map((_, i) => (
               <div
@@ -84,29 +84,29 @@ export default function InstagramCard({ channel }: Props) {
       </div>
 
       {/* Profile + Follow */}
-      <div className="flex flex-col gap-2.5 p-3 md:gap-3 md:p-4">
-        <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-neutral-85 text-[10px] font-bold text-neutral-30 md:h-8 md:w-8">
+      <div className="flex flex-col gap-3 p-4 md:gap-3.5 md:p-5">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-primary-5 text-[10px] font-bold text-primary-90 md:h-10 md:w-10">
             IG
           </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-xsmall14 font-bold text-neutral-10">
+            <p className="truncate text-xsmall14 font-bold text-static-0 md:text-xsmall16">
               {channel.handle}
             </p>
-            <p className="text-xxsmall12 text-neutral-45">{channel.label}</p>
+            <p className="text-xxsmall12 text-neutral-40">{channel.label}</p>
           </div>
           <a
             href={channel.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-shrink-0 rounded-xxs border border-neutral-30 bg-white px-3 py-1.5 text-xxsmall12 font-bold text-neutral-10 transition-colors hover:bg-neutral-95"
+            className="flex-shrink-0 rounded-xs bg-primary-90 px-4 py-1.5 text-xxsmall12 font-bold text-white transition-colors hover:bg-primary-80 md:text-xsmall14"
           >
             팔로우
           </a>
         </div>
 
         {/* Description */}
-        <p className="break-keep border-t border-dashed border-neutral-80 pt-2.5 text-xxsmall12 leading-[1.65] text-neutral-40 md:text-xsmall14">
+        <p className="break-keep border-t border-neutral-80 pt-3 text-xsmall14 leading-[1.7] text-neutral-40">
           {channel.description}
         </p>
       </div>

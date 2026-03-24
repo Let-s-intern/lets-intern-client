@@ -1,21 +1,22 @@
+import ChatPreview from './ChatPreview';
 import JobCategoryCard from './JobCategoryCard';
-import { ogonggoJobs, OGONGGO_SITE_LINK } from './const';
+import { OGONGGO_SITE_LINK, ogonggoJobs } from './const';
 
 export default function OgongoBlock() {
   return (
-    <div className="rounded-sm bg-neutral-90 p-4 md:p-5">
+    <div className="rounded-sm bg-[#F7F9FF] p-5 md:p-6">
       {/* Header */}
-      <div className="mb-3 flex items-start justify-between gap-2 border-b border-neutral-70 pb-3 md:mb-4 md:pb-4">
+      <div className="mb-4 flex items-start justify-between gap-3 border-b border-neutral-80 pb-4 md:mb-5 md:pb-5">
         <div>
-          <div className="mb-1 flex flex-wrap items-center gap-2">
-            <h3 className="text-xsmall14 font-bold text-neutral-10 md:text-small18">
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <h3 className="text-xsmall16 font-bold text-static-0 md:text-small18">
               오공고 톡방
             </h3>
-            <span className="rounded-xxs border border-neutral-30 bg-white px-1.5 py-0.5 text-[10px] font-bold text-neutral-20 md:text-xxsmall12">
+            <span className="rounded-xxs bg-primary-5 px-2 py-0.5 text-xxsmall12 font-medium text-primary-90">
               채용공고 큐레이션
             </span>
           </div>
-          <p className="break-keep text-xxsmall12 leading-relaxed text-neutral-40 md:text-xsmall14">
+          <p className="break-keep text-xsmall14 leading-relaxed text-neutral-40">
             문과 취준생을 위해 렛츠커리어가 운영하는 채용공고 큐레이션
             채널이에요.
             <br className="hidden md:inline" />
@@ -26,19 +27,23 @@ export default function OgongoBlock() {
           href={OGONGGO_SITE_LINK}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex-shrink-0 whitespace-nowrap rounded-xxs border border-neutral-30 bg-white px-2.5 py-1.5 text-xxsmall12 text-neutral-10 transition-colors hover:bg-neutral-95"
+          className="flex-shrink-0 whitespace-nowrap rounded-xs bg-primary-90 px-4 py-2 text-xxsmall12 font-medium text-white shadow-sm transition-colors hover:bg-primary-80 md:text-xsmall14"
         >
           오공고 사이트 →
         </a>
       </div>
 
       {/* Free resources banner */}
-      <div className="mb-3 flex items-start gap-2 rounded-xxs border border-dashed border-neutral-30 bg-white px-3 py-2.5 md:mb-4">
-        <span className="flex-shrink-0 text-sm" role="img" aria-label="gift">
+      <div className="mb-4 flex items-start gap-2.5 rounded-xs border border-primary-20 bg-white px-4 py-3 md:mb-5">
+        <span
+          className="flex-shrink-0 text-xsmall16"
+          role="img"
+          aria-label="gift"
+        >
           🎁
         </span>
-        <p className="text-xxsmall12 leading-relaxed text-neutral-40 md:text-xsmall14">
-          <strong className="text-neutral-10">
+        <p className="text-xsmall14 leading-relaxed text-neutral-40">
+          <strong className="text-static-0">
             무료 취업 자료도 받아가세요.
           </strong>{' '}
           이력서·자소서 템플릿, 직무 자료집, 공채 준비 가이드북 등 렛츠커리어의
@@ -47,10 +52,18 @@ export default function OgongoBlock() {
       </div>
 
       {/* Job category cards grid */}
-      <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+      <div className="mb-5 grid grid-cols-2 gap-3 md:mb-6 md:grid-cols-4">
         {ogonggoJobs.map((job) => (
           <JobCategoryCard key={job.id} job={job} />
         ))}
+      </div>
+
+      {/* Chat preview screenshots */}
+      <div className="border-t border-neutral-80 pt-5 md:pt-6">
+        <p className="mb-3 text-xsmall14 font-bold text-static-0 md:mb-4 md:text-xsmall16">
+          톡방에서 매일 이런 정보가 공유돼요
+        </p>
+        <ChatPreview />
       </div>
     </div>
   );
