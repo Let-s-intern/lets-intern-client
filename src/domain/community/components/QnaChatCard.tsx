@@ -1,4 +1,4 @@
-import { type KakaoRoom } from '../data/const';
+import { type KakaoRoom } from '../data/kakao';
 
 type Props = {
   room: KakaoRoom;

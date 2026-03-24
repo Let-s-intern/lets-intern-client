@@ -3,7 +3,7 @@
 import { motion } from 'motion/react';
 import OgongoBlock from '../components/OgongoBlock';
 import QnaChatCard from '../components/QnaChatCard';
-import { kakaoRooms } from '../data/const';
+import { kakaoRooms } from '../data/kakao';
 
 const FADE_IN = {
   initial: { opacity: 0, y: 12 },

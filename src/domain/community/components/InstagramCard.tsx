@@ -1,9 +1,10 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
-import { type InstagramChannel } from '../data/const';
+import { type InstagramChannel } from '../data/instagram';
 
-const THUMBNAIL_COUNT = 6;
+const PLACEHOLDER_COUNT = 6;
 
 type Props = {
   channel: InstagramChannel;
@@ -14,6 +15,11 @@ export default function InstagramCard({ channel }: Props) {
   const [showRightFade, setShowRightFade] = useState(false);
   const ticking = useRef(false);
   const rafId = useRef<number | null>(null);
+
+  const hasThumbnails = channel.thumbnails.length > 0;
+  const thumbnailSlots = hasThumbnails
+    ? channel.thumbnails
+    : Array.from({ length: PLACEHOLDER_COUNT });
 
   const updateFade = () => {
     const el = scrollRef.current;
@@ -53,12 +59,18 @@ export default function InstagramCard({ channel }: Props) {
       <div className="relative border-b border-neutral-80">
         {/* Desktop: 3x2 grid */}
         <div className="hidden md:grid md:grid-cols-3 md:gap-px md:bg-neutral-80">
-          {Array.from({ length: THUMBNAIL_COUNT }).map((_, i) => (
-            <div
-              key={i}
-              className="aspect-square bg-neutral-90"
-              aria-hidden="true"
-            />
+          {thumbnailSlots.slice(0, PLACEHOLDER_COUNT).map((item, i) => (
+            <div key={i} className="aspect-square bg-neutral-90">
+              {hasThumbnails && 'src' in (item as object) && (
+                <Image
+                  src={(item as { src: string; alt: string }).src}
+                  alt={(item as { src: string; alt: string }).alt}
+                  width={200}
+                  height={200}
+                  className="h-full w-full object-cover"
+                />
+              )}
+            </div>
           ))}
         </div>
 
@@ -68,12 +80,21 @@ export default function InstagramCard({ channel }: Props) {
             ref={scrollRef}
             className="flex gap-1.5 overflow-x-auto px-3 py-3 scrollbar-hide"
           >
-            {Array.from({ length: THUMBNAIL_COUNT }).map((_, i) => (
+            {thumbnailSlots.slice(0, PLACEHOLDER_COUNT).map((item, i) => (
               <div
                 key={i}
-                className="aspect-square min-w-[68px] flex-shrink-0 rounded-xxs bg-neutral-90"
-                aria-hidden="true"
-              />
+                className="aspect-square min-w-[68px] flex-shrink-0 overflow-hidden rounded-xxs bg-neutral-90"
+              >
+                {hasThumbnails && 'src' in (item as object) && (
+                  <Image
+                    src={(item as { src: string; alt: string }).src}
+                    alt={(item as { src: string; alt: string }).alt}
+                    width={136}
+                    height={136}
+                    className="h-full w-full object-cover"
+                  />
+                )}
+              </div>
             ))}
           </div>
           {/* Right fade mask */}

@@ -2,7 +2,7 @@
 
 import { motion } from 'motion/react';
 import InstagramCard from '../components/InstagramCard';
-import { instagramChannels } from '../data/const';
+import { instagramChannels } from '../data/instagram';
 
 const FADE_IN = {
   initial: { opacity: 0, y: 12 },
