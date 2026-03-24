@@ -28,8 +28,8 @@ export default function LivePrice<T extends CreateLiveReq | UpdateLiveReq>({
     livePriceType:
       defaultValue?.livePriceType ?? initialLivePrice.livePriceType,
     priceInfo: {
-      discount: defaultValue?.discount ?? initialLivePrice.priceInfo.discount,
-      price: defaultValue?.price ?? initialLivePrice.priceInfo.price,
+      discount: defaultValue?.discount ?? 0,
+      price: defaultValue?.price ?? 0,
       deadline:
         defaultValue?.deadline?.format('YYYY-MM-DDTHH:mm') ??
         initialLivePrice.priceInfo.deadline,
