@@ -1,6 +1,6 @@
 import ChatPreview from './ChatPreview';
 import JobCategoryCard from './JobCategoryCard';
-import { OGONGGO_SITE_LINK, ogonggoJobs } from './const';
+import { OGONGGO_SITE_LINK, ogonggoJobs } from '../data/const';
 
 export default function OgongoBlock() {
   return (

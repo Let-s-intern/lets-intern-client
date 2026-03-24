@@ -3,10 +3,10 @@
 import { motion, AnimatePresence } from 'motion/react';
 import Image from 'next/image';
 import { useState, useCallback, useEffect } from 'react';
-import chatHr from '../_images/chat-hr.jpg';
-import chatInfo from '../_images/chat-info.jpg';
-import chatJob from '../_images/chat-job.jpg';
-import chatTip from '../_images/chat-tip.jpg';
+import chatHr from '../images/chat-hr.jpg';
+import chatInfo from '../images/chat-info.jpg';
+import chatJob from '../images/chat-job.jpg';
+import chatTip from '../images/chat-tip.jpg';
 
 const CHAT_PREVIEWS = [
   { src: chatTip, alt: '취준 꿀팁 공유', label: '취준 꿀팁' },

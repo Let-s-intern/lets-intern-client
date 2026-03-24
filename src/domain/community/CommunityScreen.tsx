@@ -1,14 +1,14 @@
 'use client';
 
-import Hero from './Hero';
-import InstagramSection from './InstagramSection';
-import KakaoSection from './KakaoSection';
+import HeroSection from './sections/HeroSection';
+import InstagramSection from './sections/InstagramSection';
+import KakaoSection from './sections/KakaoSection';
 
-export default function Client() {
+export default function CommunityScreen() {
   return (
     <main className="w-full text-neutral-900">
       {/* Hero */}
-      <Hero />
+      <HeroSection />
 
       {/* Kakao Open Chat Section */}
       <KakaoSection />

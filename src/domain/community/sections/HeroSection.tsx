@@ -2,7 +2,7 @@
 
 import { Break } from '@/common/Break';
 import { motion } from 'motion/react';
-import { heroChips } from './const';
+import { heroChips } from '../data/const';
 
 const FADE_IN_UP = {
   initial: { opacity: 0, y: 12 },

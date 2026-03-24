@@ -1,4 +1,4 @@
-import { type OgonggoJob } from './const';
+import { type OgonggoJob } from '../data/const';
 
 type Props = {
   job: OgonggoJob;

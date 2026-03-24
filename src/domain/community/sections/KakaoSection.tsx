@@ -1,9 +1,9 @@
 'use client';
 
 import { motion } from 'motion/react';
-import OgongoBlock from './OgongoBlock';
-import QnaChatCard from './QnaChatCard';
-import { kakaoRooms } from './const';
+import OgongoBlock from '../components/OgongoBlock';
+import QnaChatCard from '../components/QnaChatCard';
+import { kakaoRooms } from '../data/const';
 
 const FADE_IN = {
   initial: { opacity: 0, y: 12 },

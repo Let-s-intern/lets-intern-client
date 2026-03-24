@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import Client from './_components/Client';
+import CommunityScreen from '@/domain/community/CommunityScreen';
 
 export async function generateMetadata(): Promise<Metadata> {
   const isNoIndex = process.env.NO_INDEX === 'true';
@@ -31,5 +31,5 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function CommunityPage() {
-  return <Client />;
+  return <CommunityScreen />;
 }

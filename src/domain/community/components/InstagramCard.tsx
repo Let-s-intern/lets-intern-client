@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { type InstagramChannel } from './const';
+import { type InstagramChannel } from '../data/const';
 
 const THUMBNAIL_COUNT = 6;
 
