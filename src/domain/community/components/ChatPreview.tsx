@@ -12,7 +12,7 @@ const CHAT_PREVIEWS = [
   { src: chatTip, alt: '취준 꿀팁 공유', label: '취준 꿀팁' },
   { src: chatJob, alt: '채용공고 큐레이션', label: '채용공고 공유' },
   { src: chatHr, alt: 'HR 공고 추천', label: '공고 추천' },
-  { src: chatInfo, alt: '취준 정보 공유', label: '취준 정보' },
+  { src: chatInfo, alt: '취준 콘텐츠 추천', label: '취준 콘텐츠 추천' },
 ] as const;
 
 export default function ChatPreview() {
