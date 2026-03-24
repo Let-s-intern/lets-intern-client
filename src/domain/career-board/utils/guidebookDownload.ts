@@ -57,9 +57,14 @@ export async function downloadGuidebookAndTrack(
   const guidebook = await getGuidebook(guidebookId);
   const contentFileUrl = guidebook.contentFileUrl ?? undefined;
   const contentUrl = guidebook.contentUrl ?? undefined;
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
   if (contentFileUrl) {
-    await downloadS3File(contentFileUrl);
+    if (isIOS) {
+      openInNewTab(contentFileUrl);
+    } else {
+      await downloadS3File(contentFileUrl);
+    }
   } else if (contentUrl) {
     openInNewTab(contentUrl);
   } else {
@@ -77,8 +82,11 @@ export async function downloadGuidebookAndTrack(
       return;
     }
 
-    alert(
-      `${error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.'}`,
-    );
+    const statusText = status ? ` (${status})` : '';
+    const message =
+      error instanceof Error
+        ? error.message
+        : '알 수 없는 오류가 발생했습니다.';
+    alert(`${message}${statusText}`);
   }
 }
