@@ -172,11 +172,13 @@ export const usePatchMagnetMutation = ({
 export async function fetchUserMagnetList(params?: {
   page?: number;
   size?: number;
+  typeList?: MagnetType[];
 }) {
   const res = await axios.get('/magnet', {
     params: {
       page: params?.page ?? 1,
       size: params?.size ?? 10,
+      typeList: params?.typeList,
     },
   });
   return userMagnetListResponseSchema.parse(res.data.data);
