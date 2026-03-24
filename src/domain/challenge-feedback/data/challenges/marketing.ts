@@ -25,7 +25,7 @@ export const marketing: ChallengeData = {
       feedbackScope: '원하는 서류 1종',
       method: '서면 피드백',
       mentorInfo:
-        '렛츠커리어 현직자 멘토단 · 조앤 멘토 / 놀유니버스 · 모아 멘토 / 대학내일 · 로이 멘토 / 클래스101 외',
+        '렛츠커리어 현직자 멘토단 · 조앤 멘토 / 놀유니버스 · 모아 멘토 / 대학내일 · 로이 멘토 / 클래스101 · 이린 멘토 / 캐시노트 · 빈 멘토 / 토스',
     },
     {
       tier: 'PREMIUM',
@@ -47,7 +47,7 @@ export const marketing: ChallengeData = {
       feedbackScope: '3회차: 경험 분석 / 8회차: 원하는 서류 1종',
       method: '서면 피드백',
       mentorInfo:
-        '렛츠커리어 현직자 멘토단 · 조앤 멘토 / 놀유니버스 · 모아 멘토 / 대학내일 · 로이 멘토 / 클래스101 외',
+        '렛츠커리어 현직자 멘토단 · 조앤 멘토 / 놀유니버스 · 모아 멘토 / 대학내일 · 로이 멘토 / 클래스101 · 이린 멘토 / 캐시노트 · 빈 멘토 / 토스',
     },
   ],
   beforeAfter: {

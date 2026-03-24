@@ -59,6 +59,7 @@ const ChallengeFeedbackScreen = ({
   }, []);
 
   // referrer에서 챌린지 자동 감지
+  const searchParamsString = searchParams.toString();
   useEffect(() => {
     if (searchParams.get('challenge')) return;
     const detected = detectChallengeFromReferrer();
@@ -67,7 +68,7 @@ const ChallengeFeedbackScreen = ({
         scroll: false,
       });
     }
-  }, [router, searchParams]);
+  }, [router, searchParamsString]);
 
   const selectedKey =
     (searchParams.get('challenge') as ChallengeKey) ??

@@ -156,6 +156,8 @@ const ChallengePortfolioView: React.FC<{
     }
   }, [challenge.desc]);
 
+  const weekText = receivedContent.challengePoint?.weekText ?? '2주';
+
   const reviewExists =
     (receivedContent.challengeReview ?? []).length > 0 &&
     receivedContent.blogReview;
@@ -345,7 +347,7 @@ const ChallengePortfolioView: React.FC<{
                 </span>
                 하는
                 <Break />
-                렛츠커리어 포트폴리오 2주 완성 챌린지!
+                렛츠커리어 포트폴리오 {weekText} 완성 챌린지!
               </Heading2>
 
               <Description className="mt-3 break-keep md:mt-8 md:text-center">
@@ -417,6 +419,7 @@ const ChallengePortfolioView: React.FC<{
             isResumeTemplate={isResumeTemplate}
             challengeType={challenge.challengeType}
             challengeTitle={challenge.title ?? ''}
+            weekText={weekText}
           />
 
           <section className="flex w-full flex-col items-center pt-[70px] md:pt-40">
@@ -476,7 +479,7 @@ const ChallengePortfolioView: React.FC<{
               ) : (
                 <ChallengeIntroPersonalStatement />
               )} */}
-            <ChallengeIntroPortfolio />
+            <ChallengeIntroPortfolio weekText={weekText} />
           </section>
         </div>
 
@@ -558,6 +561,7 @@ const ChallengePortfolioView: React.FC<{
             isResumeTemplate={isResumeTemplate}
             challengeType={challenge.challengeType}
             challengeTitle={challenge.title ?? ''}
+            weekText={weekText}
           />
 
           {receivedContent.blogReview && (

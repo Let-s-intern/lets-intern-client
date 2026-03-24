@@ -25,8 +25,10 @@ const {
 
 const ChallengeIntroExpericeSummary = ({
   challengeType,
+  weekText,
 }: {
   challengeType: ChallengeType;
+  weekText: string;
 }) => {
   return (
     <section className="flex w-full flex-col md:items-center">
@@ -37,7 +39,7 @@ const ChallengeIntroExpericeSummary = ({
               200명의 합격자가 입을 모아 강조한 <br className="md:hidden" />
               경험 정리의 중요성!
               <br /> 기필코 경험 정리 챌린지로 <br className="md:hidden" />
-              <span className="text-[#F26646]">2주 안에 완성</span>해요
+              <span className="text-[#F26646]">{weekText} 안에 완성</span>해요
             </Heading2>
             <Description className="md:text-center">
               렛츠커리어의 체계적인 커리큘럼으로

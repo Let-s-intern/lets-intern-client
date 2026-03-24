@@ -57,7 +57,9 @@ const FeedbackOptionCard = memo(function FeedbackOptionCard({
             <td className="whitespace-nowrap py-3 pr-4 font-medium text-gray-400">
               진행 방식
             </td>
-            <td className="py-3 text-white">{option.method}</td>
+            <td className="whitespace-pre-line py-3 text-white">
+              {option.method}
+            </td>
           </tr>
           <tr className="border-t border-white/10">
             <td className="whitespace-nowrap py-3 pr-4 font-medium text-gray-400">

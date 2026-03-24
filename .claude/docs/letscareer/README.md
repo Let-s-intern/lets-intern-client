@@ -15,6 +15,8 @@
 └── domain/                      # 도메인별 문서
     ├── challenge-feedback/      # 챌린지 피드백 멘토링
     │   └── README.md
+    ├── community/               # 커뮤니티
+    │   └── README.md
     └── curation/                # 큐레이션
         ├── README.md
         └── flow-map.md
@@ -25,6 +27,7 @@
 | 도메인 | 경로 | 설명 |
 |--------|------|------|
 | [챌린지 피드백 멘토링](domain/challenge-feedback/README.md) | `/challenge/feedback-mentoring` | 피드백 멘토링 옵션 안내 랜딩페이지 |
+| [커뮤니티](domain/community/README.md) | `/community` | 카카오 오픈톡방 · 인스타그램 소개 랜딩페이지 |
 | [큐레이션](domain/curation/README.md) | — | 큐레이션 도메인 |
 
 ## 문서 작성 규칙

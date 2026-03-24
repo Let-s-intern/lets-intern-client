@@ -4,6 +4,7 @@ import MainTitle from '../ui/MainTitle';
 interface ChallengeResultProps {
   challengeType: ChallengeType;
   isResumeTemplate?: boolean;
+  weekText: string;
 }
 
 interface SummaryItemData {
@@ -77,6 +78,7 @@ const SummaryGrid = ({ items }: { items: SummaryItemData[] }) => {
 function ChallengeSummarySection({
   challengeType,
   isResumeTemplate = false,
+  weekText,
 }: ChallengeResultProps) {
   if (challengeType !== 'CAREER_START' || !isResumeTemplate) return null;
 
@@ -95,7 +97,7 @@ function ChallengeSummarySection({
         <br />
         기업/직무에 Fit한 이력서를{` `}
         <br className="md:hidden" />
-        작성하는 1주의 시간
+        작성하는 {weekText}의 시간
       </MainTitle>
 
       <div className="flex w-full max-w-[1000px] flex-col gap-2.5">

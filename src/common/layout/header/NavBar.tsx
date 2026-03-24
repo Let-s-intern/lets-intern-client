@@ -178,11 +178,7 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
       {/* 사이드 네비게이션 바 */}
       <SideNavContainer isOpen={isOpen} onClose={closeMenu}>
         <SideNavItem href="/mypage/career/board">마이페이지</SideNavItem>
-        <SideNavItem
-          href="https://letscareer.oopy.io/1df5e77c-bee1-80b3-8199-e7d2cc9d64cd"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <SideNavItem href="/community">
           커뮤니티
           <span className="flex items-center text-xxsmall12 font-normal">
             +현직자 멘토 참여중
