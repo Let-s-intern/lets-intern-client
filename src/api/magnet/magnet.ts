@@ -309,9 +309,14 @@ export const usePostMagnetApplicationMutation = () => {
       return res.data;
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: [userMagnetDetailQueryKey],
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: [userMagnetDetailQueryKey],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: [userMagnetListQueryKey],
+        }),
+      ]);
     },
   });
 };
