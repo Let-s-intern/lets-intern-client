@@ -63,11 +63,24 @@ export async function downloadGuidebookAndTrack(
   applicationId: number,
   guidebookId: number,
 ): Promise<void> {
+  // iOS Safari는 await 이후 window.open을 차단하므로 클릭 컨텍스트가 살아있는 지금 미리 열기
+  const iosTab = isIOS()
+    ? window.open('', '_blank', 'noopener,noreferrer')
+    : null;
+
   const guidebook = await getGuidebook(guidebookId);
   const contentFileUrl = guidebook.contentFileUrl ?? undefined;
   const contentUrl = guidebook.contentUrl ?? undefined;
 
-  if (contentFileUrl) {
+  if (isIOS()) {
+    const url = contentFileUrl || contentUrl;
+    if (iosTab && url) {
+      iosTab.location.href = url;
+    } else {
+      iosTab?.close();
+      return;
+    }
+  } else if (contentFileUrl) {
     await downloadS3File(contentFileUrl);
   } else if (contentUrl) {
     openInNewTab(contentUrl);
