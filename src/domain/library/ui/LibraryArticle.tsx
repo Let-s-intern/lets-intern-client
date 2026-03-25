@@ -1,7 +1,6 @@
 import { UserMagnetInfo } from '@/api/magnet/magnetSchema';
 import { YYYY_MM_DD } from '@/data/dayjsFormat';
 import BlogLinkShareBtn from '@/domain/blog/button/BlogLilnkShareBtn';
-import LexicalContent from '@/domain/blog/ui/LexicalContent';
 import dayjs from '@/lib/dayjs';
 import { LockKeyhole } from 'lucide-react';
 import Image from 'next/image';
@@ -98,20 +97,11 @@ export default function LibraryArticle({ magnetInfo }: Props) {
         </div>
       </div>
 
-      {/* 콘텐츠 편집 1 (신청 전 공개) */}
-      {previewRoot && (
-        <div className="relative w-full break-all text-xsmall16">
-          <LexicalContent node={previewRoot} />
-          {isUpcoming && (
-            <div className="pointer-events-none absolute bottom-0 left-0 h-32 w-full bg-gradient-to-t from-white to-transparent" />
-          )}
-        </div>
-      )}
-
-      {/* 콘텐츠 편집 2 (신청 후 공개) — 클라이언트에서 인증 후 조회 */}
+      {/* 콘텐츠 (클라이언트에서 인증 후 조건부 렌더링) */}
       <LibraryMainContent
         magnetId={magnetInfo.magnetId}
         isUpcoming={isUpcoming}
+        previewRoot={previewRoot}
       />
     </article>
   );
