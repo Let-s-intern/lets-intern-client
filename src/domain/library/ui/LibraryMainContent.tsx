@@ -119,7 +119,8 @@ export default function LibraryMainContent({
           <img src="/icons/magnet-folder.svg" className="size-5" alt="folder" />
         </div>
         <div className="mb-6 text-center text-small18 font-light text-neutral-20">
-          렛츠커리어만의 <span className="text-primary">취준 꿀팁</span>이
+          렛츠커리어만의{' '}
+          <span className="font-semibold text-primary">취준 꿀팁</span>이
           <br className="block md:hidden" />
           담긴 콘텐츠,
           <br />
