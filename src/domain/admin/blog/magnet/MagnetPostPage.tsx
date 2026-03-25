@@ -205,6 +205,7 @@ const MagnetPostPage = ({ magnetId }: MagnetPostPageProps) => {
             <MagnetRecommendSection
               magnetRecommend={content.magnetRecommend}
               onChangeMagnetRecommend={onChangeMagnetRecommend}
+              currentMagnetId={Number(magnetId)}
             />
           </div>
 
