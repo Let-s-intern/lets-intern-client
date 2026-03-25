@@ -45,38 +45,28 @@ const Programs = () => {
     null,
     () => {
       const initial = { ...initialFilterClassification };
-      searchParams
-        .getAll(PROGRAM_QUERY_KEY.CLASSIFICATION)
-        .forEach((item) => {
-          initial[item as filterClassificationkey] = true;
-        });
-      return initial;
-    },
-  );
-
-  const [filterType, typeDispatch] = useReducer(
-    filterTypeReducer,
-    null,
-    () => {
-      const initial = { ...initialFilterType };
-      searchParams.getAll(PROGRAM_QUERY_KEY.TYPE).forEach((item) => {
-        initial[item as filterTypekey] = true;
+      searchParams.getAll(PROGRAM_QUERY_KEY.CLASSIFICATION).forEach((item) => {
+        initial[item as filterClassificationkey] = true;
       });
       return initial;
     },
   );
 
-  const [filterJob, jobDispatch] = useReducer(
-    filterJobReducer,
-    null,
-    () => {
-      const initial = { ...initialFilterJob };
-      searchParams.getAll(PROGRAM_QUERY_KEY.JOB).forEach((item) => {
-        initial[item as filterJobkey] = true;
-      });
-      return initial;
-    },
-  );
+  const [filterType, typeDispatch] = useReducer(filterTypeReducer, null, () => {
+    const initial = { ...initialFilterType };
+    searchParams.getAll(PROGRAM_QUERY_KEY.TYPE).forEach((item) => {
+      initial[item as filterTypekey] = true;
+    });
+    return initial;
+  });
+
+  const [filterJob, jobDispatch] = useReducer(filterJobReducer, null, () => {
+    const initial = { ...initialFilterJob };
+    searchParams.getAll(PROGRAM_QUERY_KEY.JOB).forEach((item) => {
+      initial[item as filterJobkey] = true;
+    });
+    return initial;
+  });
 
   const resetPageable = () => {
     setPageable(initialPageable);
@@ -114,7 +104,7 @@ const Programs = () => {
 
   const handleClickCheckbox = useCallback(
     (programType: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(window.location.search);
 
       const deleteParam = (target: string, key: string) => {
         const checkedList = params.getAll(key);
@@ -126,10 +116,7 @@ const Programs = () => {
 
       switch (programType) {
         case PROGRAM_QUERY_KEY.CLASSIFICATION: {
-          const filterKey = getKeyByValue(
-            PROGRAM_FILTER_CLASSIFICATION,
-            value,
-          );
+          const filterKey = getKeyByValue(PROGRAM_FILTER_CLASSIFICATION, value);
           if (filterClassification[filterKey as filterClassificationkey]) {
             classificationDispatch({ type: 'uncheck', value: filterKey });
             deleteParam(filterKey as string, PROGRAM_QUERY_KEY.CLASSIFICATION);
@@ -176,7 +163,7 @@ const Programs = () => {
         `${window.location.pathname}?${params}`,
       );
     },
-    [filterClassification, filterType, filterJob, searchParams],
+    [filterClassification, filterType, filterJob],
   );
 
   useEffect(() => {
@@ -184,11 +171,9 @@ const Programs = () => {
     classificationDispatch({ type: 'init' });
     jobDispatch({ type: 'init' });
 
-    searchParams
-      .getAll(PROGRAM_QUERY_KEY.CLASSIFICATION)
-      .forEach((item) => {
-        classificationDispatch({ type: 'check', value: item });
-      });
+    searchParams.getAll(PROGRAM_QUERY_KEY.CLASSIFICATION).forEach((item) => {
+      classificationDispatch({ type: 'check', value: item });
+    });
     searchParams.getAll(PROGRAM_QUERY_KEY.TYPE).forEach((item) => {
       typeDispatch({ type: 'check', value: item });
     });
@@ -228,11 +213,7 @@ const Programs = () => {
               onClick={() => setIsOpen(true)}
               className="flex shrink-0 items-center justify-center p-1 lg:hidden"
             >
-              <img
-                className="w-5 md:w-6"
-                src="/icons/filter.svg"
-                alt="필터"
-              />
+              <img className="w-5 md:w-6" src="/icons/filter.svg" alt="필터" />
             </button>
           </div>
           <ProgramGrid
