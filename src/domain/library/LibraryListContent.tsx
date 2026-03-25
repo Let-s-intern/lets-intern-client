@@ -34,9 +34,11 @@ const MAGNET_TYPE_LABEL: Record<MagnetType, string> = {
   EVENT: '이벤트',
 };
 
-const CATEGORY_FILTER_LIST = Object.entries(MAGNET_TYPE_LABEL).map(
-  ([value, caption]) => ({ caption, value }),
-);
+const HIDDEN_TYPES_IN_LIST: MagnetType[] = ['LAUNCH_ALERT'];
+
+const CATEGORY_FILTER_LIST = Object.entries(MAGNET_TYPE_LABEL)
+  .filter(([value]) => !HIDDEN_TYPES_IN_LIST.includes(value as MagnetType))
+  .map(([value, caption]) => ({ caption, value }));
 
 const PC_PAGE_SIZE = 16;
 const MOBILE_PAGE_SIZE = 8;
@@ -55,8 +57,17 @@ function Content() {
 
   const typeList = useMemo(() => {
     const category = searchParams.get('category');
-    if (!category) return undefined;
-    return category.toUpperCase().split(',') as MagnetType[];
+    if (!category) {
+      return Object.keys(MAGNET_TYPE_LABEL).filter(
+        (type) => !HIDDEN_TYPES_IN_LIST.includes(type as MagnetType),
+      ) as MagnetType[];
+    }
+    return category
+      .toUpperCase()
+      .split(',')
+      .filter(
+        (type) => !HIDDEN_TYPES_IN_LIST.includes(type as MagnetType),
+      ) as MagnetType[];
   }, [searchParams]);
 
   const isMyTab = activeTab === 'my';
