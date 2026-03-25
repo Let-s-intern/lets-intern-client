@@ -2,7 +2,9 @@
 
 import { Break } from '@/common/Break';
 import { motion } from 'motion/react';
+import Image from 'next/image';
 import { heroChips } from '../data/hero';
+import communityStatsImg from '../images/community-stats.png';
 
 const FADE_IN_UP = {
   initial: { opacity: 0, y: 12 },
@@ -54,6 +56,19 @@ export default function Hero() {
               {chip}
             </span>
           ))}
+        </motion.div>
+
+        <motion.div
+          className="mt-12 md:mt-16"
+          {...FADE_IN_UP}
+          transition={{ duration: 0.55, delay: 0.15 }}
+        >
+          <Image
+            src={communityStatsImg}
+            alt="렛츠커리어 커뮤니티 현황 - 인스타그램 팔로워 4.6만명+, 월 방문자 2만명+, 톡방 참여자 7,000명+"
+            className="rounded-2xl mx-auto w-full max-w-[900px]"
+            placeholder="blur"
+          />
         </motion.div>
       </div>
 
