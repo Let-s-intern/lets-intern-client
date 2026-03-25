@@ -93,10 +93,7 @@ export function filterClassificationReducer(
   }
 }
 
-export function filterJobReducer(
-  status: IFilter,
-  action: FilterCheckedAction,
-) {
+export function filterJobReducer(status: IFilter, action: FilterCheckedAction) {
   const _status = { ...status };
 
   switch (action.type) {

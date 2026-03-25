@@ -4,6 +4,12 @@ export const PROGRAM_STATUS = {
   POST: '마감',
 } as const;
 
+export const PROGRAM_BADGE_STATUS = {
+  PREV: '모집 예정',
+  PROCEEDING: '모집 중',
+  POST: '모집 완료',
+} as const;
+
 export const PROGRAM_CLASSIFICATION = {
   CAREER_SEARCH: '탐색',
   EXPERIENCE: '경험',

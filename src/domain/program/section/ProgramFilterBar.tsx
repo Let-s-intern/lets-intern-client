@@ -1,14 +1,14 @@
 'use client';
 
-import { Dispatch, SetStateAction, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { Dispatch, SetStateAction, useEffect } from 'react';
 
 import FilterItem from '@/domain/program/filter/FilterItem';
 import { FilterCheckedAction } from '@/reducers/filterReducer';
 import {
   filterClassificationkey,
-  filterTypekey,
   filterJobkey,
+  filterTypekey,
   IPageable,
 } from '@/types/interface';
 import { getKeyByValue } from '@/utils/convert';
@@ -114,7 +114,7 @@ const ProgramFilterBar = ({
         >
           <img
             className="w-4 md:w-6"
-            src="/icons/filter.svg"
+            src="/icons/filter-round.svg"
             alt="필터 아이콘"
           />
           <h1 className="text-1.125-semibold md:text-1.25-semibold text-neutral-40">
@@ -132,9 +132,7 @@ const ProgramFilterBar = ({
               src="/icons/redo.svg"
               alt="필터 초기화 아이콘"
             />
-            <span className="text-0.75-medium w-9 text-neutral-40">
-              초기화
-            </span>
+            <span className="text-0.75-medium w-9 text-neutral-40">초기화</span>
           </div>
         )}
       </div>
@@ -152,30 +150,24 @@ const ProgramFilterBar = ({
             />
             <div className="text-0.875-semibold text-neutral-40">초기화</div>
           </div>
-          {searchParams
-            .getAll(PROGRAM_QUERY_KEY.JOB)
-            .map((item) => (
-              <FilterItem
-                programType={PROGRAM_QUERY_KEY.JOB}
-                handleClick={cancelFilter}
-                key={item}
-                caption={PROGRAM_FILTER_JOB[item as filterJobkey]}
-              />
-            ))}
-          {searchParams
-            .getAll(PROGRAM_QUERY_KEY.CLASSIFICATION)
-            .map((item) => (
-              <FilterItem
-                programType={PROGRAM_QUERY_KEY.CLASSIFICATION}
-                handleClick={cancelFilter}
-                key={item}
-                caption={
-                  PROGRAM_FILTER_CLASSIFICATION[
-                    item as filterClassificationkey
-                  ]
-                }
-              />
-            ))}
+          {searchParams.getAll(PROGRAM_QUERY_KEY.JOB).map((item) => (
+            <FilterItem
+              programType={PROGRAM_QUERY_KEY.JOB}
+              handleClick={cancelFilter}
+              key={item}
+              caption={PROGRAM_FILTER_JOB[item as filterJobkey]}
+            />
+          ))}
+          {searchParams.getAll(PROGRAM_QUERY_KEY.CLASSIFICATION).map((item) => (
+            <FilterItem
+              programType={PROGRAM_QUERY_KEY.CLASSIFICATION}
+              handleClick={cancelFilter}
+              key={item}
+              caption={
+                PROGRAM_FILTER_CLASSIFICATION[item as filterClassificationkey]
+              }
+            />
+          ))}
           {searchParams.getAll(PROGRAM_QUERY_KEY.TYPE).map((item) => (
             <FilterItem
               programType={PROGRAM_QUERY_KEY.TYPE}

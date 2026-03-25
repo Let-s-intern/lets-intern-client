@@ -53,7 +53,7 @@ const CategoryTabs = <Value extends string>({
     <nav
       ref={navRef}
       className={clsx(
-        'relative flex w-full border-b border-neutral-85 text-xsmall14 md:text-xsmall16',
+        'relative flex w-full border-b border-neutral-85 text-xsmall16 md:text-small20',
         className,
       )}
     >
@@ -73,7 +73,7 @@ const CategoryTabs = <Value extends string>({
             type="button"
             onClick={() => onChange(option.value)}
             className={clsx(
-              'mr-6 text-nowrap pb-3 transition-colors',
+              'mr-4 text-nowrap pb-2 transition-colors md:mr-6 md:pb-3',
               isActive
                 ? 'font-semibold text-neutral-10'
                 : 'font-medium text-neutral-45 hover:text-neutral-10',

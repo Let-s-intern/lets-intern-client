@@ -18,37 +18,16 @@ const FilterCheckbox = ({
     <div
       onClick={onClick}
       className={clsx(
-        'flex cursor-pointer items-center gap-3 py-2.5',
+        'my-1.5 flex cursor-pointer items-center gap-1 md:my-0 md:gap-3',
         className,
       )}
     >
-      <div
-        className={clsx(
-          'flex h-5 w-5 shrink-0 items-center justify-center rounded-[4px] border',
-          isChecked
-            ? 'border-primary bg-primary'
-            : 'border-neutral-70 bg-static-100',
-        )}
-      >
-        {isChecked && (
-          <svg
-            width="12"
-            height="9"
-            viewBox="0 0 12 9"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M1 4L4.5 7.5L11 1"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        )}
-      </div>
-      <span className="text-0.875 text-neutral-10">{caption}</span>
+      <img
+        className="w-6 shrink-0"
+        src={`/icons/${isChecked ? 'checkbox-fill.svg' : 'checkbox-fill-none.svg'}`}
+        alt="체크박스"
+      />
+      <span className="text-xsmall16 text-neutral-35">{caption}</span>
     </div>
   );
 };

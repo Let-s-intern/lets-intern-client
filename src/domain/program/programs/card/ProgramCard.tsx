@@ -2,11 +2,10 @@ import dayjs from '@/lib/dayjs';
 import { ProgramInfo } from '@/schema';
 import axios from '@/utils/axios';
 import {
-  PROGRAM_STATUS,
+  PROGRAM_BADGE_STATUS,
   PROGRAM_STATUS_KEY,
   PROGRAM_TYPE,
 } from '@/utils/programConst';
-import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { memo, useEffect, useState } from 'react';
 import DeadlineBadge from './DeadlineBadge';
@@ -59,62 +58,64 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
           router.push(link);
         }
       }}
-      className="program_card flex w-full cursor-pointer flex-col overflow-hidden"
+      className="program_card flex w-full cursor-pointer flex-col gap-3 overflow-hidden"
       data-program-text={programInfo.title}
     >
       {/* 썸네일 + 모집 종료 dim */}
       <div className="relative">
         <img
-          className="aspect-[540/421] h-auto w-full bg-neutral-80 object-cover md:rounded-xs"
+          className="aspect-[540/421] h-auto w-full rounded-sm bg-neutral-80 object-cover md:rounded-xs"
           src={programInfo.thumbnail || undefined}
           alt="프로그램 썸네일 배경"
         />
         {isPost && (
-          <div className="absolute inset-0 rounded-xs bg-neutral-0/40 md:rounded-xs" />
+          <div className="absolute inset-0 rounded-sm bg-neutral-0/40 md:rounded-xs" />
         )}
         {!isPost && !isAlwaysAvailable && (
           <DeadlineBadge deadline={programInfo.deadline ?? undefined} />
         )}
       </div>
-      <div className="flex flex-col gap-1.5 py-2">
-        <h2
-          className={clsx(
-            { 'text-neutral-40': isPost },
-            'text-1-semibold',
-          )}
-        >
+      <div className="flex flex-col gap-3">
+        <h2 className="text-1-semibold text-xsmall14 md:text-xsmall16">
           {programInfo.title}
         </h2>
-        {!isPost && !isAlwaysAvailable && (
-          <div className="flex flex-col gap-0.5">
-            <div className="flex items-center gap-1.5">
-              <span className="text-0.75-medium text-neutral-45">모집기간</span>
-              <span className="text-0.75-medium text-primary-dark">
-                {dayjs(programInfo.beginning).format('YY.MM.DD')} ~{' '}
-                {dayjs(programInfo.deadline).format('YY.MM.DD')}
-              </span>
+        <div className="flex flex-col gap-4">
+          {!isAlwaysAvailable && (
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-1 tracking-[-0.4px] md:gap-1.5">
+                <span className="text-xxsmall12 font-normal text-neutral-0">
+                  모집기간
+                </span>
+                <span className="text-0.75-medium text-primary-dark">
+                  {dayjs(programInfo.beginning).format('YY.MM.DD')} ~{' '}
+                  {dayjs(programInfo.deadline).format('YY.MM.DD')}
+                </span>
+              </div>
+              <div className="flex items-center gap-1 tracking-[-0.4px] md:gap-1.5">
+                <span className="text-xxsmall12 font-normal text-neutral-0">
+                  진행기간
+                </span>
+                <span className="text-0.75-medium text-primary-dark">
+                  {programInfo.programType === PROGRAM_TYPE.CHALLENGE
+                    ? `${dayjs(programInfo.startDate).format('YY.MM.DD')} ~ ${dayjs(programInfo.endDate).format('YY.MM.DD')}`
+                    : dayjs(programInfo.startDate).format('YY.MM.DD')}
+                </span>
+              </div>
             </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-0.75-medium text-neutral-45">
-                진행기간
-              </span>
-              <span className="text-0.75-medium text-primary-dark">
-                {programInfo.programType === PROGRAM_TYPE.CHALLENGE
-                  ? `${dayjs(programInfo.startDate).format('YY.MM.DD')} ~ ${dayjs(programInfo.endDate).format('YY.MM.DD')}`
-                  : dayjs(programInfo.startDate).format('YY.MM.DD')}
-              </span>
-            </div>
-          </div>
-        )}
-        <div className="mt-1 flex flex-wrap gap-1.5">
-          {isAlwaysAvailable ? (
-            <ProgramStatusTag status={ALWAYS_AVAILABLE_LABEL} />
-          ) : (
-            <ProgramStatusTag
-              status={PROGRAM_STATUS[programInfo.programStatusType]}
-            />
           )}
-          {!isPost && <NewBadge beginning={programInfo.beginning ?? undefined} />}
+
+          <div className="mt-1 flex flex-wrap gap-1.5">
+            {isAlwaysAvailable ? (
+              <ProgramStatusTag status={ALWAYS_AVAILABLE_LABEL} />
+            ) : (
+              <ProgramStatusTag
+                status={PROGRAM_BADGE_STATUS[programInfo.programStatusType]}
+              />
+            )}
+            {!isPost && (
+              <NewBadge beginning={programInfo.beginning ?? undefined} />
+            )}
+          </div>
         </div>
       </div>
     </div>

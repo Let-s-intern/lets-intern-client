@@ -1,7 +1,13 @@
 'use client';
 
-import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 
 import { useUserProgramQuery } from '@/api/program';
 import LoadingContainer from '@/common/loading/LoadingContainer';
@@ -22,14 +28,18 @@ const ERROR_MESSAGE =
   "프로그램 조회 중 오류가 발생했습니다.\n새로고침 후에도 문제가 지속되면 아래 '채팅문의'를 통해 문의해주세요.";
 
 const FIRST_SECTION_COUNT = 8;
-
+const FIRST_SECTION_COUNT_MOBILE = 6;
 interface ProgramGridProps {
   pageable: IPageable;
   setPageable: Dispatch<SetStateAction<IPageable>>;
   onResetFilter: () => void;
 }
 
-const ProgramGrid = ({ pageable, setPageable, onResetFilter }: ProgramGridProps) => {
+const ProgramGrid = ({
+  pageable,
+  setPageable,
+  onResetFilter,
+}: ProgramGridProps) => {
   const searchParams = useSearchParams();
 
   const [loading, setLoading] = useState(true);
@@ -82,8 +92,8 @@ const ProgramGrid = ({ pageable, setPageable, onResetFilter }: ProgramGridProps)
   const secondSection = programList.slice(FIRST_SECTION_COUNT);
 
   return (
-    <>
-      <section className="grid grid-cols-2 gap-x-4 gap-y-6 md:grid-cols-3 md:gap-5 xl:grid-cols-4">
+    <div className="flex flex-col gap-11">
+      <section className="grid grid-cols-2 grid-rows-3 gap-x-5 gap-y-8 md:grid-cols-4 md:grid-rows-2 md:gap-x-5 md:gap-y-11 xl:grid-cols-4">
         {firstSection.map((program) => (
           <ProgramCard
             key={program.programInfo.programType + program.programInfo.id}
@@ -95,7 +105,7 @@ const ProgramGrid = ({ pageable, setPageable, onResetFilter }: ProgramGridProps)
       {pageable.page === 1 && <FreeMagnetSection />}
 
       {secondSection.length > 0 && (
-        <section className="grid grid-cols-2 gap-x-4 gap-y-6 md:grid-cols-3 md:gap-5 xl:grid-cols-4">
+        <section className="grid grid-cols-2 gap-x-5 gap-y-8 md:grid-cols-4 md:gap-5">
           {secondSection.map((program) => (
             <ProgramCard
               key={program.programInfo.programType + program.programInfo.id}
@@ -110,7 +120,7 @@ const ProgramGrid = ({ pageable, setPageable, onResetFilter }: ProgramGridProps)
         pageInfo={pageInfo}
         onChange={handlePageChange}
       />
-    </>
+    </div>
   );
 };
 

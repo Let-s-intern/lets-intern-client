@@ -29,7 +29,7 @@ const ProgramBanner = () => {
             </div>`,
         }}
         slidesPerView={1}
-        className="aspect-[3.2/1] rounded-sm md:aspect-[6.4/1]"
+        className="aspect-[3.2/1] overflow-hidden rounded-sm md:aspect-[6.4/1]"
       >
         {data.bannerList.map((banner) => (
           <SwiperSlide key={banner.id}>
@@ -46,7 +46,7 @@ const ProgramBanner = () => {
               <img
                 src={isMobile ? banner.mobileImgUrl : banner.imgUrl}
                 alt="프로그램 배너"
-                className="h-full w-full rounded-sm object-cover"
+                className="h-full w-full rounded-sm object-cover object-center"
               />
             </a>
           </SwiperSlide>

@@ -13,7 +13,7 @@ const NewBadge = ({ beginning }: NewBadgeProps) => {
   if (!isNew) return null;
 
   return (
-    <div className="text-0.75-medium md:text-0.875-medium rounded-xs border border-point bg-[#FFF0E0] px-2.5 py-0.5 text-point">
+    <div className="flex items-center justify-center rounded-[3px] border border-neutral-80 px-2 py-1 text-center text-xxsmall10 font-normal text-primary md:text-xxsmall12">
       NEW
     </div>
   );

@@ -186,12 +186,12 @@ const Programs = () => {
   }, [searchParams]);
 
   return (
-    <div className="mx-auto w-full max-w-[1400px] px-5 py-8 md:px-10 lg:px-16">
-      <h1 className="text-1.5-bold mb-6 md:text-2xl md:font-bold lg:mb-8">
+    <div className="mw-1180 mx-auto w-full pb-[120px] pt-8 md:px-0 md:pt-12">
+      <h1 className="mb-8 text-medium24 font-bold md:mb-16 md:text-xlarge28">
         프로그램
       </h1>
 
-      <div className="flex gap-10">
+      <div className="flex gap-16">
         <FilterSideBar
           setIsOpen={setIsOpen}
           isOpen={isOpen}
@@ -202,8 +202,8 @@ const Programs = () => {
           onReset={resetAllFilters}
         />
 
-        <main className="flex min-w-0 flex-1 flex-col gap-6 md:gap-8">
-          <div className="flex w-full items-center gap-2">
+        <main className="flex min-w-0 flex-1 flex-col gap-5 md:gap-6">
+          <div className="flex w-full items-center">
             <ProgramStatusTabs
               selected={statusTab}
               onChange={handleStatusTabChange}
@@ -211,9 +211,13 @@ const Programs = () => {
             {/* 모바일: 필터 아이콘 */}
             <button
               onClick={() => setIsOpen(true)}
-              className="flex shrink-0 items-center justify-center p-1 lg:hidden"
+              className="flex shrink-0 items-center justify-center border-b border-neutral-85 p-1 pb-2 pl-2 lg:hidden"
             >
-              <img className="w-5 md:w-6" src="/icons/filter.svg" alt="필터" />
+              <img
+                className="w-5 md:w-6"
+                src="/icons/filter-round.svg"
+                alt="필터"
+              />
             </button>
           </div>
           <ProgramGrid

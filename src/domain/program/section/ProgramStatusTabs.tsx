@@ -15,7 +15,13 @@ interface ProgramStatusTabsProps {
 }
 
 const ProgramStatusTabs = ({ selected, onChange }: ProgramStatusTabsProps) => {
-  return <CategoryTabs options={[...STATUS_TAB_OPTIONS]} selected={selected} onChange={onChange} />;
+  return (
+    <CategoryTabs
+      options={[...STATUS_TAB_OPTIONS]}
+      selected={selected}
+      onChange={onChange}
+    />
+  );
 };
 
 export default ProgramStatusTabs;
