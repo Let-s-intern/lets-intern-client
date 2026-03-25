@@ -1,11 +1,10 @@
+import { ProgramRecommendItem } from '@/api/blog/blogSchema';
 import {
   fetchUserMagnetList,
   userMagnetDetailQueryOptions,
 } from '@/api/magnet/magnet';
 import { MagnetType } from '@/api/magnet/magnetSchema';
-import { ProgramRecommendItem } from '@/api/blog/blogSchema';
 import { fetchProgramRecommend, getChallenge } from '@/api/program';
-import LibraryLikeBtn from '@/domain/library/ui/LibraryLikeBtn';
 import ContentCard from '@/common/card/ContentCard';
 import MoreHeader from '@/common/header/MoreHeader';
 import HorizontalRule from '@/common/HorizontalRule';
@@ -14,6 +13,8 @@ import BlogLinkShareBtn from '@/domain/blog/button/BlogLilnkShareBtn';
 import ProgramRecommendCard from '@/domain/blog/card/ProgramRecommendCard';
 import Heading2 from '@/domain/blog/ui/BlogHeading2';
 import LibraryArticle from '@/domain/library/ui/LibraryArticle';
+import LibraryLikeBtn from '@/domain/library/ui/LibraryLikeBtn';
+import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { ProgramStatusEnum, ProgramTypeEnum } from '@/schema';
 import {
@@ -22,7 +23,6 @@ import {
   getLibraryTitle,
 } from '@/utils/url';
 import { QueryClient } from '@tanstack/react-query';
-import dayjs from '@/lib/dayjs';
 import { CircleChevronRight, LockKeyhole } from 'lucide-react';
 import { Metadata } from 'next';
 import Image from 'next/image';
@@ -50,9 +50,7 @@ interface MagnetDescription {
   magnetRecommend?: (number | null)[];
 }
 
-function parseMagnetDescription(
-  description: string | null,
-): MagnetDescription {
+function parseMagnetDescription(description: string | null): MagnetDescription {
   if (!description) return {};
   try {
     return JSON.parse(description);
@@ -64,9 +62,7 @@ function parseMagnetDescription(
 async function getMagnetDetail(magnetId: number) {
   const queryClient = new QueryClient();
   try {
-    return await queryClient.fetchQuery(
-      userMagnetDetailQueryOptions(magnetId),
-    );
+    return await queryClient.fetchQuery(userMagnetDetailQueryOptions(magnetId));
   } catch {
     return null;
   }
@@ -94,7 +90,10 @@ export async function generateMetadata({
       description: metaDescription ?? undefined,
       url:
         getBaseUrlFromServer() +
-        getLibraryPathname({ id: magnetInfo.magnetId, title: magnetInfo.title }),
+        getLibraryPathname({
+          id: magnetInfo.magnetId,
+          title: magnetInfo.title,
+        }),
       images: magnetInfo.desktopThumbnail
         ? [{ url: magnetInfo.desktopThumbnail }]
         : [],
@@ -102,7 +101,10 @@ export async function generateMetadata({
     alternates: {
       canonical:
         getBaseUrlFromServer() +
-        getLibraryPathname({ id: magnetInfo.magnetId, title: magnetInfo.title }),
+        getLibraryPathname({
+          id: magnetInfo.magnetId,
+          title: magnetInfo.title,
+        }),
     },
   };
 }
@@ -171,13 +173,11 @@ export default async function LibraryDetailPage({
       const fetchedData = await fetchProgramRecommend();
       const list: ProgramRecommendItem[] = [];
       if (fetchedData.challengeList.length > 0) {
-        const targets = fetchedData.challengeList
-          .slice(0, 3)
-          .map((item) => ({
-            id: `${CHALLENGE}-${item.id}`,
-            ctaLink: `/program/${CHALLENGE.toLowerCase()}/${item.id}`,
-            ctaTitle: ctaTitles[item.challengeType ?? 'CAREER_START'],
-          }));
+        const targets = fetchedData.challengeList.slice(0, 3).map((item) => ({
+          id: `${CHALLENGE}-${item.id}`,
+          ctaLink: `/program/${CHALLENGE.toLowerCase()}/${item.id}`,
+          ctaTitle: ctaTitles[item.challengeType ?? 'CAREER_START'],
+        }));
         list.push(...targets);
       }
       return list;
@@ -206,9 +206,7 @@ export default async function LibraryDetailPage({
           ),
         );
         return magnets
-          .filter(
-            (m): m is NonNullable<typeof m> => m !== null,
-          )
+          .filter((m): m is NonNullable<typeof m> => m !== null)
           .map((m) => m.magnetInfo);
       } catch (error) {
         console.error('마그넷 추천 목록 조회 실패:', error);
@@ -234,7 +232,7 @@ export default async function LibraryDetailPage({
         <section className="w-full px-5 md:px-0">
           <LibraryArticle magnetInfo={magnetInfo} />
 
-          <section className="mb-9 mt-10 flex items-center justify-between md:mb-6">
+          <section className="mb-9 mt-20 flex items-center justify-between md:mb-6">
             {/* 좋아요 */}
             <LibraryLikeBtn likeCount={magnetInfo.likes ?? 0} />
             {/* 공유하기 */}
@@ -251,7 +249,9 @@ export default async function LibraryDetailPage({
               <BlogKakaoShareBtn
                 className="p-2"
                 title={magnetInfo.title}
-                description={parsed.metaDescription ?? magnetInfo.description ?? ''}
+                description={
+                  parsed.metaDescription ?? magnetInfo.description ?? ''
+                }
                 thumbnail={magnetInfo.desktopThumbnail ?? ''}
                 pathname={getLibraryPathname({
                   id: magnetInfo.magnetId,
@@ -317,8 +317,7 @@ export default async function LibraryDetailPage({
         <div className="mb-6 mt-5 flex flex-col gap-5 md:mt-6 md:grid md:grid-cols-4 md:items-start md:gap-5">
           {recommendedMagnetList.map((magnet) => {
             const isUpcoming =
-              !!magnet.startDate &&
-              dayjs().isBefore(dayjs(magnet.startDate));
+              !!magnet.startDate && dayjs().isBefore(dayjs(magnet.startDate));
             return (
               <ContentCard
                 key={magnet.magnetId}

@@ -76,7 +76,7 @@ export default function LibraryArticle({ magnetInfo }: Props) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 md:gap-4">
             <div className="flex items-center gap-2">
-              <div className="flex h-7 w-7 justify-center overflow-hidden rounded-full">
+              <div className="flex h-7 w-7 items-center justify-center overflow-hidden rounded-full">
                 <img
                   className="h-5 w-5"
                   src="/logo/logo-gradient.svg"

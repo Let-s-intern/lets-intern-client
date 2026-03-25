@@ -7,8 +7,8 @@ import {
 import LexicalContent from '@/domain/blog/ui/LexicalContent';
 import useAuthStore from '@/store/useAuthStore';
 import { SerializedLexicalNode } from 'lexical';
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const parseLexicalRoot = (json: string) => {
   try {
@@ -70,15 +70,12 @@ export default function LibraryMainContent({
         )}
         <div className="mt-8 flex flex-col items-center rounded-md bg-primary-10 px-5 py-10">
           <div className="mb-5 flex h-9 w-9 items-center justify-center rounded-xs border border-primary-15 bg-white">
-            <img
-              src="/icons/magnet-folder.svg"
-              className="size-5"
-              alt="megaphone"
-            />
+            <img src="/icons/magnet-alarm.svg" className="size-5" alt="alarm" />
           </div>
           <div className="mb-6 text-center text-small18 font-light text-neutral-20">
             해당 콘텐츠가 발행되면{' '}
             <span className="font-semibold text-primary">제일 먼저</span>{' '}
+            <br className="md:hidden" />
             알려드려요!
           </div>
           <button
@@ -119,11 +116,7 @@ export default function LibraryMainContent({
       )}
       <div className="mt-8 flex flex-col items-center rounded-md bg-primary-10 px-5 py-10">
         <div className="mb-5 flex h-9 w-9 items-center justify-center rounded-xs border border-primary-15 bg-white">
-          <img
-            src="/icons/magnet-folder.svg"
-            className="size-5"
-            alt="folder"
-          />
+          <img src="/icons/magnet-folder.svg" className="size-5" alt="folder" />
         </div>
         <div className="mb-6 text-center text-small18 font-light text-neutral-20">
           렛츠커리어만의 <span className="text-primary">취준 꿀팁</span>이
@@ -162,10 +155,7 @@ function PreviewWithFade({ children }: { children: React.ReactNode }) {
   }, [measure]);
 
   return (
-    <div
-      ref={containerRef}
-      className="relative w-full break-all text-xsmall16"
-    >
+    <div ref={containerRef} className="relative w-full break-all text-xsmall16">
       {children}
       {fadeHeight > 0 && (
         <div
