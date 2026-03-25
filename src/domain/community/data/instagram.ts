@@ -16,6 +16,9 @@ import igQna3 from '../images/instagram-qna/3.jpg';
 import igQna4 from '../images/instagram-qna/4.jpg';
 import igQna5 from '../images/instagram-qna/5.jpg';
 import igQna6 from '../images/instagram-qna/6.jpg';
+import igJobProfile from '../images/instagram-job/profile.jpg';
+import igOfficialProfile from '../images/instagram-official/profile.jpg';
+import igQnaProfile from '../images/instagram-qna/profile.jpg';
 
 export type InstagramThumbnail = {
   src: string;
@@ -28,6 +31,7 @@ export type InstagramChannel = {
   label: string;
   description: string;
   link: string;
+  profileImage?: string;
   thumbnails: InstagramThumbnail[];
 };
 
@@ -47,6 +51,7 @@ export const instagramChannels: InstagramChannel[] = [
     description:
       '빠르고 트렌디한 취준 정보를 매일 오전 10시에 받아볼 수 있어요. 렛츠커리어의 모든 소식이 여기 담겨있어요.',
     link: INSTAGRAM_OFFICIAL_LINK,
+    profileImage: igOfficialProfile.src,
     thumbnails: [
       { src: igOfficial1.src, alt: '2026 자유양식 이력서 템플릿' },
       { src: igOfficial2.src, alt: '삼성·롯데 인적성 시작을 시작해' },
@@ -63,6 +68,7 @@ export const instagramChannels: InstagramChannel[] = [
     description:
       '문과 취준생을 위해 큐레이션된 채용공고와 직무 인사이트를 인스타그램으로 가장 빠르게 만나보세요.',
     link: INSTAGRAM_JOB_LINK,
+    profileImage: igJobProfile.src,
     thumbnails: [
       { src: igJob1.src, alt: '오공고 소개' },
       { src: igJob2.src, alt: '인턴 합격 후기' },
@@ -79,6 +85,7 @@ export const instagramChannels: InstagramChannel[] = [
     description:
       '현직자 멘토와 커리어 매니저에게 무제한 질의응답. 취업 고민을 편하게 올려두세요.',
     link: INSTAGRAM_QNA_LINK,
+    profileImage: igQnaProfile.src,
     thumbnails: [
       { src: igQna1.src, alt: '취준생의 현실 12시간 루틴' },
       { src: igQna2.src, alt: '인적성 면접 준비 가이드' },

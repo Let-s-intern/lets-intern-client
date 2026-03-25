@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
+import Image from 'next/image';
 import InstagramCard from '../components/InstagramCard';
 import { instagramChannels } from '../data/instagram';
 
@@ -17,7 +18,8 @@ export default function InstagramSection() {
       <div className="mw-1180 py-16 md:py-32">
         {/* Section header - B2B SectionHeader style */}
         <motion.div className="mb-10 text-center md:mb-16" {...FADE_IN}>
-          <p className="text-xsmall16 font-medium text-primary-90">
+          <p className="flex items-center justify-center gap-1.5 text-xsmall16 font-medium text-primary-90">
+            <Image src="/icons/instagram.svg" alt="" width={20} height={20} />
             인스타그램
           </p>
           <h2 className="mt-4 break-keep text-[26px] font-bold leading-[1.35] text-static-0 md:mt-6 md:text-[40px]">

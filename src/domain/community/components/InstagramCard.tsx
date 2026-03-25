@@ -107,9 +107,21 @@ export default function InstagramCard({ channel }: Props) {
       {/* Profile + Follow */}
       <div className="flex flex-col gap-3 p-4 md:gap-3.5 md:p-5">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-primary-5 text-[10px] font-bold text-primary-90 md:h-10 md:w-10">
-            IG
-          </div>
+          {channel.profileImage ? (
+            <div className="h-9 w-9 flex-shrink-0 overflow-hidden rounded-full md:h-10 md:w-10">
+              <Image
+                src={channel.profileImage}
+                alt={channel.handle}
+                width={40}
+                height={40}
+                className="h-full w-full scale-110 object-cover"
+              />
+            </div>
+          ) : (
+            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-primary-5 text-[10px] font-bold text-primary-90 md:h-10 md:w-10">
+              IG
+            </div>
+          )}
           <div className="min-w-0 flex-1">
             <p className="truncate text-xsmall14 font-bold text-static-0 md:text-xsmall16">
               {channel.handle}
