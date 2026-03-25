@@ -31,7 +31,11 @@ src/domain/community/
   │   ├── ogonggo.ts                   # OgonggoJob 타입 + ogonggoJobs
   │   └── instagram.ts                 # InstagramChannel 타입 + instagramChannels
   └── images/
-      └── chat-*.jpg                   # 오공고 톡방 채팅 캡쳐 (4장)
+      ├── community-stats.png          # 히어로 커뮤니티 현황 이미지
+      ├── chat-*.jpg                   # 오공고 톡방 채팅 캡쳐 (4장)
+      ├── instagram-official/          # 공식 인스타 썸네일 6장 + profile.jpg
+      ├── instagram-job/               # 오공고 인스타 썸네일 6장 + profile.jpg
+      └── instagram-qna/              # QNA 인스타 썸네일 6장 + profile.jpg
 ```
 
 ## 페이지 구성
@@ -40,9 +44,11 @@ src/domain/community/
 - kicker: "렛츠커리어 커뮤니티" (primary-90)
 - 제목: "막막하고 외로운 취준, 함께라면 달라집니다" (shine-text 강조)
 - 칩 3개 (rounded-full, 데스크탑 수평 / 모바일 수직)
+- 커뮤니티 현황 이미지 (4.6만명+ 팔로워, 월 2만명+ 방문자, 7,000명+ 톡방 참여)
 - 배경: `#F7F9FF`
 
 ### 카카오 섹션 (`KakaoSection`)
+- 섹션 kicker에 카카오톡 로고 (`kakao-circle.svg`) 표시
 - **QNA 톡방 카드** 2개 (데스크탑 2열, 모바일 1열)
   - 쥬디의 취업 QNA방
   - 레오 멘토의 하드스킬 QNA방
@@ -52,11 +58,11 @@ src/domain/community/
   - 채팅 캡쳐 미리보기 (`ChatPreview`) — 클릭 시 모달로 전체 이미지 표시
 
 ### 인스타그램 섹션 (`InstagramSection`)
+- 섹션 kicker에 인스타그램 로고 (`instagram.svg`) 표시
 - 배경: `#F7F9FF` (히어로와 교차)
 - 인스타그램 카드 3개 (데스크탑 3열, 모바일 1열)
   - 렛츠커리어 공식, 오공고, QNA
-  - 썸네일 6개 (데스크탑 3x2 그리드, 모바일 가로 스크롤)
-  - 썸네일은 `data/instagram.ts`의 `thumbnails` 배열로 설정 (빈 배열이면 placeholder)
+  - 각 채널별 프로필 이미지 + 썸네일 6개 (데스크탑 3x2 그리드, 모바일 가로 스크롤)
 
 ## 디자인 컨벤션
 
@@ -95,7 +101,10 @@ B2B 랜딩 페이지와 동일한 디자인 시스템 적용:
 
 ## TODO
 
-- [ ] 인스타그램 썸네일 실제 이미지로 교체 (`data/instagram.ts`의 `thumbnails`)
+- [x] ~~인스타그램 썸네일 실제 이미지로 교체~~
+- [x] ~~카카오톡 오픈채팅 링크 실제 URL로 교체~~
+- [x] ~~인스타그램 프로필 이미지 추가~~
+- [x] ~~섹션 헤더에 플랫폼 로고 추가~~
+- [x] ~~커뮤니티 현황 이미지 추가~~
 - [ ] SEO title/description 마케터 확인 후 확정
 - [ ] OG 이미지 (`opengraph-image.png`) 디자인 후 추가
-- [ ] 카카오톡 오픈채팅 링크 실제 URL로 교체 (일부 placeholder)

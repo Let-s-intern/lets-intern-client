@@ -42,7 +42,6 @@ const INSTAGRAM_JOB_LINK =
 const INSTAGRAM_QNA_LINK =
   'https://www.instagram.com/letscareer.qna?igsh=a24wYmdlNWM1amUy';
 
-// TODO: 실제 인스타그램 게시물 이미지 URL로 교체
 export const instagramChannels: InstagramChannel[] = [
   {
     id: 'official',
