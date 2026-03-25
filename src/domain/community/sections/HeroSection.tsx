@@ -59,14 +59,14 @@ export default function Hero() {
         </motion.div>
 
         <motion.div
-          className="mt-12 md:mt-16"
+          className="-mx-4 mt-12 md:mx-0 md:mt-16"
           {...FADE_IN_UP}
           transition={{ duration: 0.55, delay: 0.15 }}
         >
           <Image
             src={communityStatsImg}
             alt="렛츠커리어 커뮤니티 현황 - 인스타그램 팔로워 4.6만명+, 월 방문자 2만명+, 톡방 참여자 7,000명+"
-            className="rounded-2xl mx-auto w-full max-w-[900px]"
+            className="md:rounded-2xl mx-auto w-full max-w-[900px]"
             placeholder="blur"
           />
         </motion.div>
