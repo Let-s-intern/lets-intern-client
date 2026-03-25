@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { type InstagramChannel } from '../data/instagram';
 
-const PLACEHOLDER_COUNT = 6;
+const THUMBNAIL_COUNT = 6;
 
 type Props = {
   channel: InstagramChannel;
@@ -16,10 +16,7 @@ export default function InstagramCard({ channel }: Props) {
   const ticking = useRef(false);
   const rafId = useRef<number | null>(null);
 
-  const hasThumbnails = channel.thumbnails.length > 0;
-  const thumbnailSlots = hasThumbnails
-    ? channel.thumbnails
-    : Array.from({ length: PLACEHOLDER_COUNT });
+  const thumbnails = channel.thumbnails.slice(0, THUMBNAIL_COUNT);
 
   const updateFade = () => {
     const el = scrollRef.current;
@@ -59,17 +56,15 @@ export default function InstagramCard({ channel }: Props) {
       <div className="relative border-b border-neutral-80">
         {/* Desktop: 3x2 grid */}
         <div className="hidden md:grid md:grid-cols-3 md:gap-px md:bg-neutral-80">
-          {thumbnailSlots.slice(0, PLACEHOLDER_COUNT).map((item, i) => (
+          {thumbnails.map((thumb, i) => (
             <div key={i} className="aspect-square bg-neutral-90">
-              {hasThumbnails && 'src' in (item as object) && (
-                <Image
-                  src={(item as { src: string; alt: string }).src}
-                  alt={(item as { src: string; alt: string }).alt}
-                  width={200}
-                  height={200}
-                  className="h-full w-full object-cover"
-                />
-              )}
+              <Image
+                src={thumb.src}
+                alt={thumb.alt}
+                width={200}
+                height={200}
+                className="h-full w-full object-cover"
+              />
             </div>
           ))}
         </div>
@@ -80,20 +75,18 @@ export default function InstagramCard({ channel }: Props) {
             ref={scrollRef}
             className="flex gap-1.5 overflow-x-auto px-3 py-3 scrollbar-hide"
           >
-            {thumbnailSlots.slice(0, PLACEHOLDER_COUNT).map((item, i) => (
+            {thumbnails.map((thumb, i) => (
               <div
                 key={i}
                 className="aspect-square min-w-[68px] flex-shrink-0 overflow-hidden rounded-xxs bg-neutral-90"
               >
-                {hasThumbnails && 'src' in (item as object) && (
-                  <Image
-                    src={(item as { src: string; alt: string }).src}
-                    alt={(item as { src: string; alt: string }).alt}
-                    width={136}
-                    height={136}
-                    className="h-full w-full object-cover"
-                  />
-                )}
+                <Image
+                  src={thumb.src}
+                  alt={thumb.alt}
+                  width={136}
+                  height={136}
+                  className="h-full w-full object-cover"
+                />
               </div>
             ))}
           </div>
@@ -107,9 +100,21 @@ export default function InstagramCard({ channel }: Props) {
       {/* Profile + Follow */}
       <div className="flex flex-col gap-3 p-4 md:gap-3.5 md:p-5">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-primary-5 text-[10px] font-bold text-primary-90 md:h-10 md:w-10">
-            IG
-          </div>
+          {channel.profileImage ? (
+            <div className="h-9 w-9 flex-shrink-0 overflow-hidden rounded-full md:h-10 md:w-10">
+              <Image
+                src={channel.profileImage}
+                alt={channel.handle}
+                width={40}
+                height={40}
+                className="h-full w-full scale-110 object-cover"
+              />
+            </div>
+          ) : (
+            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-primary-5 text-[10px] font-bold text-primary-90 md:h-10 md:w-10">
+              IG
+            </div>
+          )}
           <div className="min-w-0 flex-1">
             <p className="truncate text-xsmall14 font-bold text-static-0 md:text-xsmall16">
               {channel.handle}

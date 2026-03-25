@@ -6,7 +6,7 @@ export default function OgongoBlock() {
   return (
     <div className="rounded-sm bg-[#F7F9FF] p-5 md:p-6">
       {/* Header */}
-      <div className="mb-4 flex items-start justify-between gap-3 border-b border-neutral-80 pb-4 md:mb-5 md:pb-5">
+      <div className="mb-4 flex flex-col gap-3 border-b border-neutral-80 pb-4 md:mb-5 md:flex-row md:items-start md:justify-between md:pb-5">
         <div>
           <div className="mb-2 flex flex-wrap items-center gap-2">
             <h3 className="text-xsmall16 font-bold text-static-0 md:text-small18">
@@ -27,7 +27,7 @@ export default function OgongoBlock() {
           href={OGONGGO_SITE_LINK}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex-shrink-0 whitespace-nowrap rounded-xs bg-primary-90 px-4 py-2 text-xxsmall12 font-medium text-white shadow-sm transition-colors hover:bg-primary-80 md:text-xsmall14"
+          className="w-fit flex-shrink-0 whitespace-nowrap rounded-xs bg-primary-90 px-4 py-2 text-xxsmall12 font-medium text-white shadow-sm transition-colors hover:bg-primary-80 md:text-xsmall14"
         >
           오공고 사이트 →
         </a>
