@@ -47,7 +47,7 @@ export default function LibraryMainContent({
       hasSentViewDate.current = true;
       patchViewDate.mutate(magnetId);
     }
-  }, [hasApplied, viewDate, magnetId]);
+  }, [hasApplied, viewDate, magnetId, patchViewDate]);
 
   const handleApplyClick = (path: string) => {
     if (!isLoggedIn) {
