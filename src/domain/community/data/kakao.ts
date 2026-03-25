@@ -9,8 +9,8 @@ export type KakaoRoom = {
   notice: string;
 };
 
-const KAKAO_JUDY_QNA_LINK = 'https://open.kakao.com/o/gKZolyag';
-const KAKAO_LEO_HARDSKILL_LINK = 'https://open.kakao.com/o/gHardSkill';
+const KAKAO_JUDY_QNA_LINK = 'https://open.kakao.com/o/gMl9i82g';
+const KAKAO_LEO_HARDSKILL_LINK = 'https://open.kakao.com/o/gn33Zw0h';
 
 export const kakaoRooms: KakaoRoom[] = [
   {

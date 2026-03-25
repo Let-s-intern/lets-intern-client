@@ -12,15 +12,18 @@ export type InstagramChannel = {
   thumbnails: InstagramThumbnail[];
 };
 
-const INSTAGRAM_OFFICIAL_LINK = 'https://www.instagram.com/letscareer_official';
-const INSTAGRAM_JOB_LINK = 'https://www.instagram.com/letscareer.job';
-const INSTAGRAM_QNA_LINK = 'https://www.instagram.com/letscareer_qna';
+const INSTAGRAM_OFFICIAL_LINK =
+  'https://www.instagram.com/letscareer.official?igsh=MTNkMDNxcWt5MG43bA==';
+const INSTAGRAM_JOB_LINK =
+  'https://www.instagram.com/letscareer.job?igsh=dXl4YmhvOWdsYXU1';
+const INSTAGRAM_QNA_LINK =
+  'https://www.instagram.com/letscareer.qna?igsh=a24wYmdlNWM1amUy';
 
 // TODO: 실제 인스타그램 게시물 이미지 URL로 교체
 export const instagramChannels: InstagramChannel[] = [
   {
     id: 'official',
-    handle: '@letscareer_official',
+    handle: '@letscareer.official',
     label: '렛츠커리어 공식',
     description:
       '빠르고 트렌디한 취준 정보를 매일 오전 10시에 받아볼 수 있어요. 렛츠커리어의 모든 소식이 여기 담겨있어요.',
@@ -38,7 +41,7 @@ export const instagramChannels: InstagramChannel[] = [
   },
   {
     id: 'qna',
-    handle: '@letscareer_qna',
+    handle: '@letscareer.qna',
     label: '렛츠커리어 QNA',
     description:
       '현직자 멘토와 커리어 매니저에게 무제한 질의응답. 취업 고민을 편하게 올려두세요.',

@@ -5,12 +5,12 @@ export type OgonggoJob = {
   link: string;
 };
 
-export const OGONGGO_SITE_LINK = 'https://letscareer.oopy.io';
+export const OGONGGO_SITE_LINK = 'https://letscareer-ogongo.vercel.app/';
 
-const OGONGGO_PLANNING_LINK = 'https://open.kakao.com/o/gPlanning';
-const OGONGGO_HR_LINK = 'https://open.kakao.com/o/gHR';
-const OGONGGO_SALES_LINK = 'https://open.kakao.com/o/gSales';
-const OGONGGO_MARKETING_LINK = 'https://open.kakao.com/o/gMarketing';
+const OGONGGO_PLANNING_LINK = 'https://open.kakao.com/o/gPDpSSFh';
+const OGONGGO_HR_LINK = 'https://open.kakao.com/o/ghzwTSFh';
+const OGONGGO_SALES_LINK = 'https://open.kakao.com/o/gZgMRSFh';
+const OGONGGO_MARKETING_LINK = 'https://open.kakao.com/o/g9JmRSFh';
 
 export const ogonggoJobs: OgonggoJob[] = [
   {
