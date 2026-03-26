@@ -31,6 +31,20 @@ import {
 
 const initialPageable = { page: 1, size: 12 };
 
+const createInitialFilterState = <T extends Record<string, boolean>>(
+  initialState: T,
+  queryKey: string,
+  searchParams: URLSearchParams,
+): T => {
+  const initial = { ...initialState };
+  searchParams.getAll(queryKey).forEach((item) => {
+    if (item in initial) {
+      (initial as Record<string, boolean>)[item] = true;
+    }
+  });
+  return initial;
+};
+
 const Programs = () => {
   const searchParams = useSearchParams();
 
@@ -43,30 +57,35 @@ const Programs = () => {
   const [filterClassification, classificationDispatch] = useReducer(
     filterClassificationReducer,
     null,
-    () => {
-      const initial = { ...initialFilterClassification };
-      searchParams.getAll(PROGRAM_QUERY_KEY.CLASSIFICATION).forEach((item) => {
-        initial[item as filterClassificationkey] = true;
-      });
-      return initial;
-    },
+    () =>
+      createInitialFilterState(
+        initialFilterClassification,
+        PROGRAM_QUERY_KEY.CLASSIFICATION,
+        searchParams,
+      ),
   );
 
-  const [filterType, typeDispatch] = useReducer(filterTypeReducer, null, () => {
-    const initial = { ...initialFilterType };
-    searchParams.getAll(PROGRAM_QUERY_KEY.TYPE).forEach((item) => {
-      initial[item as filterTypekey] = true;
-    });
-    return initial;
-  });
+  const [filterType, typeDispatch] = useReducer(
+    filterTypeReducer,
+    null,
+    () =>
+      createInitialFilterState(
+        initialFilterType,
+        PROGRAM_QUERY_KEY.TYPE,
+        searchParams,
+      ),
+  );
 
-  const [filterJob, jobDispatch] = useReducer(filterJobReducer, null, () => {
-    const initial = { ...initialFilterJob };
-    searchParams.getAll(PROGRAM_QUERY_KEY.JOB).forEach((item) => {
-      initial[item as filterJobkey] = true;
-    });
-    return initial;
-  });
+  const [filterJob, jobDispatch] = useReducer(
+    filterJobReducer,
+    null,
+    () =>
+      createInitialFilterState(
+        initialFilterJob,
+        PROGRAM_QUERY_KEY.JOB,
+        searchParams,
+      ),
+  );
 
   const resetPageable = () => {
     setPageable(initialPageable);

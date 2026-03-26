@@ -76,6 +76,41 @@ const AccordionSection = ({
   );
 };
 
+const getFilterSectionsConfig = (
+  filterJob: IFilter,
+  filterClassification: IFilter,
+  filterType: IFilter,
+  handleClick: (key: string, value: string) => void,
+) => [
+  {
+    title: '관심 직무',
+    defaultOpen: true,
+    items: Object.values(PROGRAM_FILTER_JOB),
+    getIsChecked: (value: string) =>
+      filterJob[getKeyByValue(PROGRAM_FILTER_JOB, value) as string],
+    onItemClick: (value: string) => handleClick(PROGRAM_QUERY_KEY.JOB, value),
+  },
+  {
+    title: '커리어 단계',
+    defaultOpen: false,
+    items: Object.values(PROGRAM_FILTER_CLASSIFICATION),
+    getIsChecked: (value: string) =>
+      filterClassification[
+        getKeyByValue(PROGRAM_FILTER_CLASSIFICATION, value) as string
+      ],
+    onItemClick: (value: string) =>
+      handleClick(PROGRAM_QUERY_KEY.CLASSIFICATION, value),
+  },
+  {
+    title: '프로그램 유형',
+    defaultOpen: false,
+    items: Object.values(PROGRAM_FILTER_TYPE),
+    getIsChecked: (value: string) =>
+      filterType[getKeyByValue(PROGRAM_FILTER_TYPE, value) as string],
+    onItemClick: (value: string) => handleClick(PROGRAM_QUERY_KEY.TYPE, value),
+  },
+];
+
 const FilterSideBar = ({
   isOpen,
   setIsOpen,
@@ -86,6 +121,13 @@ const FilterSideBar = ({
   onReset,
   onApply,
 }: FilterSideBarProps) => {
+  const sections = getFilterSectionsConfig(
+    filterJob,
+    filterClassification,
+    filterType,
+    handleClick,
+  );
+
   return (
     <>
       {/* 오버레이 배경 (모바일) */}
@@ -101,12 +143,26 @@ const FilterSideBar = ({
 
       {/* 데스크탑: 정적 사이드바 */}
       <aside className="hidden w-[161px] shrink-0 flex-col gap-5 lg:flex">
-        <FilterSections
-          filterJob={filterJob}
-          filterClassification={filterClassification}
-          filterType={filterType}
-          handleClick={handleClick}
-        />
+        {sections.map((section, index) => (
+          <React.Fragment key={section.title}>
+            <section>
+              <h2 className="text-1-semibold mb-5 text-neutral-0">
+                {section.title}
+              </h2>
+              <div className="flex flex-col gap-3">
+                {section.items.map((value) => (
+                  <FilterCheckbox
+                    key={value}
+                    caption={value}
+                    isChecked={section.getIsChecked(value)}
+                    onClick={() => section.onItemClick(value)}
+                  />
+                ))}
+              </div>
+            </section>
+            {index < sections.length - 1 && <hr className="border-[#EFEFEF]" />}
+          </React.Fragment>
+        ))}
       </aside>
 
       {/* 모바일: 바텀시트 */}
@@ -126,59 +182,24 @@ const FilterSideBar = ({
 
         {/* 바텀시트 콘텐츠 */}
         <div className="flex flex-1 flex-col gap-1.5 overflow-y-auto px-5 py-2">
-          <AccordionSection title="관심 직무" defaultOpen>
-            <div className="flex flex-col gap-1.5 pt-1.5">
-              {Object.values(PROGRAM_FILTER_JOB).map((value) => (
-                <FilterCheckbox
-                  key={value}
-                  caption={value}
-                  isChecked={
-                    filterJob[
-                      getKeyByValue(PROGRAM_FILTER_JOB, value) as string
-                    ]
-                  }
-                  onClick={() => handleClick(PROGRAM_QUERY_KEY.JOB, value)}
-                />
-              ))}
-            </div>
-          </AccordionSection>
-          <AccordionSection title="커리어 단계">
-            <div className="flex flex-col gap-1.5 pt-1.5">
-              {Object.values(PROGRAM_FILTER_CLASSIFICATION).map((value) => (
-                <FilterCheckbox
-                  key={value}
-                  caption={value}
-                  isChecked={
-                    filterClassification[
-                      getKeyByValue(
-                        PROGRAM_FILTER_CLASSIFICATION,
-                        value,
-                      ) as string
-                    ]
-                  }
-                  onClick={() =>
-                    handleClick(PROGRAM_QUERY_KEY.CLASSIFICATION, value)
-                  }
-                />
-              ))}
-            </div>
-          </AccordionSection>
-          <AccordionSection title="프로그램 유형">
-            <div className="flex flex-col gap-1.5 pt-1.5">
-              {Object.values(PROGRAM_FILTER_TYPE).map((value) => (
-                <FilterCheckbox
-                  key={value}
-                  caption={value}
-                  isChecked={
-                    filterType[
-                      getKeyByValue(PROGRAM_FILTER_TYPE, value) as string
-                    ]
-                  }
-                  onClick={() => handleClick(PROGRAM_QUERY_KEY.TYPE, value)}
-                />
-              ))}
-            </div>
-          </AccordionSection>
+          {sections.map((section) => (
+            <AccordionSection
+              key={section.title}
+              title={section.title}
+              defaultOpen={section.defaultOpen}
+            >
+              <div className="flex flex-col gap-1.5 pt-1.5">
+                {section.items.map((value) => (
+                  <FilterCheckbox
+                    key={value}
+                    caption={value}
+                    isChecked={section.getIsChecked(value)}
+                    onClick={() => section.onItemClick(value)}
+                  />
+                ))}
+              </div>
+            </AccordionSection>
+          ))}
         </div>
 
         {/* 바텀시트 하단 버튼 */}
@@ -203,70 +224,5 @@ const FilterSideBar = ({
     </>
   );
 };
-
-const FilterSections = ({
-  filterJob,
-  filterClassification,
-  filterType,
-  handleClick,
-}: {
-  filterJob: IFilter;
-  filterClassification: IFilter;
-  filterType: IFilter;
-  handleClick: (key: string, value: string) => void;
-}) => (
-  <>
-    <section>
-      <h2 className="text-1-semibold mb-5 text-neutral-0">관심 직무</h2>
-      <div className="flex flex-col gap-3">
-        {Object.values(PROGRAM_FILTER_JOB).map((value) => (
-          <FilterCheckbox
-            key={value}
-            caption={value}
-            isChecked={
-              filterJob[getKeyByValue(PROGRAM_FILTER_JOB, value) as string]
-            }
-            onClick={() => handleClick(PROGRAM_QUERY_KEY.JOB, value)}
-          />
-        ))}
-      </div>
-    </section>
-    <hr className="border-[#EFEFEF]" />
-    <section>
-      <h2 className="text-1-semibold mb-5 text-neutral-0">커리어 단계</h2>
-      <div className="flex flex-col gap-3">
-        {Object.values(PROGRAM_FILTER_CLASSIFICATION).map((value) => (
-          <FilterCheckbox
-            key={value}
-            caption={value}
-            isChecked={
-              filterClassification[
-                getKeyByValue(PROGRAM_FILTER_CLASSIFICATION, value) as string
-              ]
-            }
-            onClick={() => handleClick(PROGRAM_QUERY_KEY.CLASSIFICATION, value)}
-          />
-        ))}
-      </div>
-    </section>
-    <hr className="border-[#EFEFEF]" />
-    <section>
-      <h2 className="text-1-semibold mb-5 text-neutral-0">프로그램 유형</h2>
-      <div className="flex flex-col gap-3">
-        {Object.values(PROGRAM_FILTER_TYPE).map((value) => (
-          <FilterCheckbox
-            key={value}
-            caption={value}
-            isChecked={
-              filterType[getKeyByValue(PROGRAM_FILTER_TYPE, value) as string]
-            }
-            onClick={() => handleClick(PROGRAM_QUERY_KEY.TYPE, value)}
-          />
-        ))}
-      </div>
-    </section>
-    <hr className="border-[#EFEFEF]" />
-  </>
-);
 
 export default FilterSideBar;
