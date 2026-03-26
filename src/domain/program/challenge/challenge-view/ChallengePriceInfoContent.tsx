@@ -232,19 +232,23 @@ function ChallengePriceInfoContent({
             이번 챌린지로 모든걸 얻어갈 수 있어요!
           </span>
           <p className="mt-1.5 whitespace-pre-line">{activeDescription}</p>
-          {feedbackMentoringUrl && (
-            <a
-              href={feedbackMentoringUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-2 inline-block text-xsmall14 font-semibold underline"
-              style={{ color: themeColor }}
-            >
-              플랜별 설명확인하기
-            </a>
-          )}
         </div>
       </div>
+
+      {feedbackMentoringUrl && (
+        <a
+          href={feedbackMentoringUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center rounded-xxs border py-2 text-xsmall14 font-semibold transition-colors"
+          style={{
+            color: themeColor,
+            borderColor: themeColor,
+          }}
+        >
+          플랜별 설명확인하기
+        </a>
+      )}
 
       <div className="flex flex-col gap-1.5">
         <div className="text-xsmall16 text-neutral-20">
