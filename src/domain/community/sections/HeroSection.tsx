@@ -2,14 +2,8 @@
 
 import { Break } from '@/common/Break';
 import { motion } from 'motion/react';
+import { FADE_IN } from '../animations';
 import { heroChips } from '../data/hero';
-
-const FADE_IN_UP = {
-  initial: { opacity: 0, y: 12 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: '0px 0px -10% 0px' } as const,
-  transition: { duration: 0.55 },
-};
 
 export default function Hero() {
   return (
@@ -17,14 +11,14 @@ export default function Hero() {
       <div className="mw-1180 px-4 pb-16 pt-20 text-center md:pb-24 md:pt-32">
         <motion.p
           className="text-xsmall16 font-medium text-primary-90"
-          {...FADE_IN_UP}
+          {...FADE_IN()}
         >
           렛츠커리어 커뮤니티
         </motion.p>
 
         <motion.h1
           className="mx-auto mt-4 break-keep text-[30px] font-bold leading-[1.4] tracking-[-0.02em] md:mt-6 md:text-[3.5rem] md:font-extrabold md:leading-[1.15]"
-          {...FADE_IN_UP}
+          {...FADE_IN()}
         >
           막막하고 외로운 취준,
           <br className="hidden md:block" />{' '}
@@ -33,8 +27,7 @@ export default function Hero() {
 
         <motion.p
           className="mx-auto mt-6 w-[256px] break-keep text-xsmall14 leading-[22px] text-neutral-40 md:w-auto md:px-0 md:text-small20"
-          {...FADE_IN_UP}
-          transition={{ duration: 0.55, delay: 0.05 }}
+          {...FADE_IN(0.05)}
         >
           취준 고민과 질문을 자유롭게 공유하고, 렛츠커리어가
           <Break />
@@ -43,8 +36,7 @@ export default function Hero() {
 
         <motion.div
           className="mt-8 flex flex-col items-center gap-2.5 md:flex-row md:flex-wrap md:justify-center md:gap-3"
-          {...FADE_IN_UP}
-          transition={{ duration: 0.55, delay: 0.1 }}
+          {...FADE_IN(0.1)}
         >
           {heroChips.map((chip, i) => (
             <span

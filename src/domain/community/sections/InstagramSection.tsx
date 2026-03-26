@@ -2,22 +2,16 @@
 
 import { motion } from 'motion/react';
 import Image from 'next/image';
+import { FADE_IN } from '../animations';
 import InstagramCard from '../components/InstagramCard';
 import { instagramChannels } from '../data/instagram';
-
-const FADE_IN = {
-  initial: { opacity: 0, y: 12 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: '0px 0px -10% 0px' } as const,
-  transition: { duration: 0.55 },
-};
 
 export default function InstagramSection() {
   return (
     <section className="w-full bg-[#F7F9FF]">
       <div className="mw-1180 py-16 md:py-32">
         {/* Section header - B2B SectionHeader style */}
-        <motion.div className="mb-10 text-center md:mb-16" {...FADE_IN}>
+        <motion.div className="mb-10 text-center md:mb-16" {...FADE_IN()}>
           <p className="flex items-center justify-center gap-1.5 text-xsmall16 font-medium text-primary-90">
             <Image src="/icons/instagram.svg" alt="" width={20} height={20} />
             인스타그램
@@ -33,8 +27,7 @@ export default function InstagramSection() {
         {/* Instagram cards - 3col desktop, 1col mobile */}
         <motion.div
           className="grid grid-cols-1 gap-4 px-4 md:grid-cols-3 md:gap-5"
-          {...FADE_IN}
-          transition={{ duration: 0.55, delay: 0.05 }}
+          {...FADE_IN(0.05)}
         >
           {instagramChannels.map((channel) => (
             <InstagramCard key={channel.id} channel={channel} />
