@@ -3,7 +3,7 @@
 import { motion } from 'motion/react';
 import Image from 'next/image';
 import { FADE_IN } from '../animations';
-import OgongoBlock from '../components/OgongoBlock';
+import OgonggoBlock from '../components/OgonggoBlock';
 import QnaChatCard from '../components/QnaChatCard';
 import { kakaoRooms } from '../data/kakao';
 
@@ -42,7 +42,7 @@ export default function KakaoSection() {
 
         {/* Ogonggo block */}
         <motion.div className="px-4" {...FADE_IN(0.1)}>
-          <OgongoBlock />
+          <OgonggoBlock />
         </motion.div>
       </div>
     </section>

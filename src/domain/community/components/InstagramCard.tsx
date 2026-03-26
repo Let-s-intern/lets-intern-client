@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { type InstagramChannel } from '../data/instagram';
 
 const THUMBNAIL_COUNT = 6;
@@ -21,7 +21,7 @@ export default function InstagramCard({ channel }: Props) {
 
   const thumbnails = channel.thumbnails.slice(0, THUMBNAIL_COUNT);
 
-  const updateFade = () => {
+  const updateFade = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
     const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1;
@@ -29,29 +29,34 @@ export default function InstagramCard({ channel }: Props) {
       const next = !atEnd;
       return prev !== next ? next : prev;
     });
-  };
+  }, []);
 
-  const scheduleUpdate = () => {
+  const scheduleUpdate = useCallback(() => {
     if (ticking.current) return;
     ticking.current = true;
     rafId.current = window.requestAnimationFrame(() => {
       updateFade();
       ticking.current = false;
     });
-  };
+  }, [updateFade]);
 
   useEffect(() => {
     updateFade();
     const el = scrollRef.current;
     if (!el) return;
+
     el.addEventListener('scroll', scheduleUpdate, { passive: true });
-    window.addEventListener('resize', scheduleUpdate);
+    const resizeObserver = new ResizeObserver(() => {
+      scheduleUpdate();
+    });
+    resizeObserver.observe(el);
+
     return () => {
       el.removeEventListener('scroll', scheduleUpdate);
-      window.removeEventListener('resize', scheduleUpdate);
+      resizeObserver.disconnect();
       if (rafId.current) cancelAnimationFrame(rafId.current);
     };
-  }, []);
+  }, [updateFade, scheduleUpdate]);
 
   return (
     <article className="flex flex-col overflow-hidden rounded-sm border border-neutral-80 bg-white shadow-sm">

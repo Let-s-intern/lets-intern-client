@@ -2,7 +2,7 @@ import ChatPreview from './ChatPreview';
 import JobCategoryCard from './JobCategoryCard';
 import { OGONGGO_SITE_LINK, ogonggoJobs } from '../data/ogonggo';
 
-export default function OgongoBlock() {
+export default function OgonggoBlock() {
   return (
     <div className="rounded-sm bg-[#F7F9FF] p-5 md:p-6">
       {/* Header */}

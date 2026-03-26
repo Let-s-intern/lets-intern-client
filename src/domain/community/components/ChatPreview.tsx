@@ -25,10 +25,11 @@ export default function ChatPreview() {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeModal();
     };
+    const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     window.addEventListener('keydown', handleKey);
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', handleKey);
     };
   }, [modalIndex, closeModal]);
@@ -65,6 +66,9 @@ export default function ChatPreview() {
       <AnimatePresence>
         {modalIndex !== null && (
           <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-label={CHAT_PREVIEWS[modalIndex].alt}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
