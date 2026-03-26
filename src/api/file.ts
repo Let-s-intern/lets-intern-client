@@ -15,6 +15,7 @@ export const fileType = z.enum([
   'BLOG_BANNER',
   'CURATION_ITEM',
   'BANNER_MAIN_BOTTOM',
+  'COMMON_BANNER',
 ]);
 
 export type FileType = z.infer<typeof fileType>;
@@ -49,4 +50,24 @@ export async function uploadFile({
   );
 
   return fileUrl;
+}
+
+export async function uploadFileForId({
+  file,
+  type,
+}: {
+  file: File;
+  type: FileType;
+}) {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const res = await axios.post('/file', formData, {
+    params: { type },
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
+  return res.data.data.fileId as number;
 }
