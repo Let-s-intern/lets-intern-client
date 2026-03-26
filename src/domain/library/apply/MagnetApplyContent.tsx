@@ -216,7 +216,7 @@ const MagnetApplyContent = ({
         wantNotification &&
         selectedLaunchAlertIds.length > 0
       ) {
-        await Promise.all(
+        await Promise.allSettled(
           selectedLaunchAlertIds.map((id) =>
             tryPostMagnetApplication({
               magnetId: id,
