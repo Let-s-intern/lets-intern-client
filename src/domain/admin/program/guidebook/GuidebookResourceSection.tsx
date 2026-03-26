@@ -75,7 +75,9 @@ const GuidebookResourceSection: React.FC<GuidebookResourceSectionProps> = ({
       setPendingFile(null);
       setInput((prev) => ({
         ...prev,
-        ...(nextSource === 'url' ? { contentFileUrl: '' } : { contentUrl: '' }),
+        ...(nextSource === 'url'
+          ? { contentFileUrl: undefined }
+          : { contentUrl: undefined }),
       }));
     },
     [onChangeSource, setInput],

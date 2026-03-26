@@ -5,25 +5,13 @@ import type React from 'react';
 
 interface FormSectionProps {
   title: string;
-  required?: boolean;
   children: React.ReactNode;
 }
 
-const FormSection: React.FC<FormSectionProps> = ({
-  title,
-  required,
-  children,
-}) => {
+const FormSection: React.FC<FormSectionProps> = ({ title, children }) => {
   return (
     <section className="flex flex-col gap-3">
-      <Heading2>
-        {title}
-        {required && (
-          <>
-            <span className="ml-1 text-red-500">* </span>{' '}
-          </>
-        )}
-      </Heading2>
+      <Heading2>{title}</Heading2>
       {children}
     </section>
   );

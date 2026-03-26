@@ -1,4 +1,6 @@
+import { MypageMagnetListItem } from '@/api/magnet/magnetSchema';
 import { ApplicationCategory } from '@/domain/mypage/application/constants';
+import dayjs from '@/lib/dayjs';
 import { PROGRAM_TYPE } from '@/utils/programConst';
 import type { CareerGrowthItem } from './careerGrowth';
 import { downloadGuidebookAndTrack } from './guidebookDownload';
@@ -14,6 +16,7 @@ export interface CareerGrowthCardConfig {
   categoryLabel: string;
   dateLabel: string;
   dateText: string;
+  isHtmlDescription?: boolean;
   purchasePlanText?: string;
   actionButton?: {
     label: string;
@@ -89,6 +92,56 @@ export const toGuidebookCardConfig = (
       onClick: () => downloadGuidebookAndTrack(item.id, item.programId),
     },
   };
+};
+
+const MAGNET_TYPE_LABEL: Record<string, string> = {
+  MATERIAL: '자료집',
+  VOD: '무료 VOD',
+  FREE_TEMPLATE: '무료 템플릿',
+  LAUNCH_ALERT: '출시 알림',
+  EVENT: '이벤트',
+};
+
+/** 무료 자료집(마그넷) 카드 */
+const toLibraryCardConfig = (
+  magnet: MypageMagnetListItem,
+): CareerGrowthCardConfig => {
+  const dateText = magnet.applicationCreateDate
+    ? dayjs(magnet.applicationCreateDate).format('YY.MM.DD')
+    : '';
+
+  const slug = encodeURIComponent(magnet.title.replace(/\s+/g, '-'));
+
+  return {
+    id: magnet.magnetId,
+    programId: magnet.magnetId,
+    thumbnail: magnet.desktopThumbnail ?? '',
+    title: magnet.title,
+    description: (() => {
+      try {
+        const parsed = JSON.parse(magnet.description ?? '');
+        return parsed.metaDescription ?? '';
+      } catch {
+        return magnet.description ?? '';
+      }
+    })(),
+    statusLabel: '신청완료',
+    categoryLabel: MAGNET_TYPE_LABEL[magnet.type] ?? magnet.type,
+    dateLabel: '신청일자',
+    dateText,
+    isHtmlDescription: true,
+    actionButton: {
+      label: '확인하기',
+      href: `/library/${magnet.magnetId}/${slug}`,
+    },
+  };
+};
+
+/** 무료 자료집 목록 → 카드 설정 */
+export const toLibraryCardConfigs = (
+  magnetList: MypageMagnetListItem[],
+): CareerGrowthCardConfig[] => {
+  return magnetList.map(toLibraryCardConfig);
 };
 
 /** 탭별 카드 설정 매핑 */

@@ -1,9 +1,9 @@
 'use client';
 
-import { MypageApplication } from '@/api/application';
+import { MypageApplication, patchApplicationDownload } from '@/api/application';
+import { getGuidebook } from '@/api/program';
 import AlertModal from '@/common/alert/AlertModal';
 import HybridLink from '@/common/HybridLink';
-import { downloadGuidebookAndTrack } from '@/domain/career-board/utils/guidebookDownload';
 import {
   MypageApplicationCardConfig,
   toMypageApplicationCardConfig,
@@ -28,13 +28,16 @@ interface MypageApplicationCardProps {
   config: MypageApplicationCardConfig;
 }
 
-const MypageApplicationCard = ({ config }: MypageApplicationCardProps) => {
+export const MypageApplicationCard = ({
+  config,
+}: MypageApplicationCardProps) => {
   const router = useRouter();
   const { actionButton } = config;
   const showActionButton = !!actionButton;
   const hasConfirm = !!actionButton?.confirm;
   const isDownloadButton = actionButton?.isDownload === true;
   const detailHref = getDetailHref(config);
+
   const downloadAction = useDownloadAction({
     applicationId: config.id,
     type: 'GUIDEBOOK',
@@ -74,7 +77,7 @@ const MypageApplicationCard = ({ config }: MypageApplicationCardProps) => {
               {config.statusLabel && (
                 <span
                   className={twMerge(
-                    'rounded-xxs px-2 py-0.5 text-xxsmall12 font-normal',
+                    'rounded-xxs px-2 py-1 text-xxsmall12 font-normal',
                     (() => {
                       if (config.statusLabel === '참여예정') {
                         return 'border border-neutral-80 text-primary';
@@ -115,11 +118,17 @@ const MypageApplicationCard = ({ config }: MypageApplicationCardProps) => {
                   {config.title}
                 </HybridLink>
               </h3>
-              {config.description && (
-                <p className="line-clamp-2 text-xsmall14 text-neutral-20">
-                  {config.description}
-                </p>
-              )}
+              {config.description &&
+                (config.isHtmlDescription ? (
+                  <div
+                    className="line-clamp-2 text-xsmall14 text-neutral-20"
+                    dangerouslySetInnerHTML={{ __html: config.description }}
+                  />
+                ) : (
+                  <p className="line-clamp-2 text-xsmall14 text-neutral-20">
+                    {config.description}
+                  </p>
+                ))}
             </div>
 
             {config.dateText && (
@@ -207,6 +216,43 @@ const CardThumbnail = ({
     )}
   </HybridLink>
 );
+
+interface ErrorWithStatus {
+  response?: {
+    status?: number;
+  };
+}
+
+const downloadGuidebookAndTrack = async (
+  applicationId: number,
+  guidebookId: number,
+): Promise<void> => {
+  const guidebook = await getGuidebook(guidebookId);
+  const contentFileUrl = guidebook.contentFileUrl ?? undefined;
+  const contentUrl = guidebook.contentUrl ?? undefined;
+
+  const urlToOpen = contentFileUrl || contentUrl;
+  if (!urlToOpen) {
+    return;
+  }
+
+  window.open(urlToOpen, '_blank', 'noopener,noreferrer');
+
+  try {
+    await patchApplicationDownload({
+      applicationId,
+      type: 'GUIDEBOOK',
+    });
+  } catch (error: unknown) {
+    const status = (error as ErrorWithStatus).response?.status;
+    if (status === 409) {
+      return;
+    }
+    alert(
+      '가이드북 다운로드 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+    );
+  }
+};
 
 const getDetailHref = (config: MypageApplicationCardConfig): string => {
   const { programTypeKey, programId } = config;

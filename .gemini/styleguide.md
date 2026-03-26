@@ -1,14 +1,75 @@
 <!--
-  출처: 토스 프론트엔드 가이드라인 기반으로 만든 Cursor rule
-  https://gist.github.com/toy-crane/dde6258997519d954063a536fc72d055
+  출처: 토스 프론트엔드 가이드라인 + Vercel React Best Practices 기반
 -->
 
 # Frontend Design Guideline
 
-> **Gemini review language:** All code review feedback must be provided in korean.
+> **Gemini review language:** All code review feedback must be provided in Korean.
 
 This document summarizes key frontend design principles and rules, showcasing
-recommended patterns. Follow these guidelines when writing frontend code.
+recommended patterns. Follow these guidelines when writing and reviewing frontend code.
+
+---
+
+# 도메인 기반 폴더 구조 (최우선 리뷰 항목)
+
+> 파일이 올바른 위치에 있는지를 가장 먼저 확인한다.
+
+## 프로젝트 구조
+
+```
+src/
+├── app/                    # Next.js App Router — 라우팅만 담당
+├── domain/                 # 도메인 기반 기능 모듈 (핵심 코드)
+│   ├── about/     ├── admin/      ├── auth/
+│   ├── blog/      ├── career-board/ ├── challenge/
+│   ├── faq/       ├── home/       ├── mypage/
+│   ├── program/   ├── program-recommend/
+│   ├── report/    └── review/
+├── common/                 # 3개+ 도메인에서 사용하는 범용 UI
+├── api/                    # API 클라이언트 (도메인별 하위 폴더)
+├── hooks/                  # 3개+ 도메인에서 사용하는 공유 훅
+├── store/                  # Zustand 전역 스토어
+├── types/                  # 공유 타입
+├── utils/                  # 3개+ 도메인에서 사용하는 공유 유틸
+└── schema.ts               # 중앙 Zod 스키마
+```
+
+## 파일 배치 규칙 (리뷰 시 반드시 확인)
+
+### 1. 단일 도메인 전용 → `domain/{도메인}/` 안에 배치
+### 2. 인접 2~3개 도메인 공유 → 상위/핵심 도메인 폴더에 배치
+### 3. 3개+ 도메인에서 범용 사용 → `common/`, `hooks/`, `utils/`
+
+## 도메인 폴더 내부 구조
+
+```
+domain/{기능}/
+├── {ComponentName}.tsx         # 루트 컴포넌트
+├── section/                    # 페이지 섹션
+├── ui/                         # 도메인 전용 UI
+├── hooks/                      # 도메인 전용 훅
+├── utils/                      # 도메인 전용 유틸
+├── modal/                      # 도메인 전용 모달
+└── {하위기능}/                  # 서브 기능 폴더
+```
+
+## 리뷰 시 반드시 지적할 패턴
+
+1. **도메인 간 직접 import** — `domain/A/`에서 `domain/B/`를 import하는 코드
+2. **타입별 flat 구조** — 새 컴포넌트를 `src/components/`에 넣는 코드
+3. **순환 의존** — 도메인 A → B → A 형태
+4. **도메인 전용 코드가 common에 있는 경우** — 한 도메인에서만 쓰는데 common에 있으면 지적
+
+## 의존 방향
+
+```
+common / hooks / utils (공유)  ←  domain/{각 도메인} (비즈니스)  ←  app/ (라우팅)
+```
+
+역방향 참조 금지. 도메인 폴더를 통째로 삭제해도 다른 도메인에 영향이 없어야 한다.
+
+---
 
 # Readability
 
@@ -736,3 +797,13 @@ When reviewing React and Next.js code, also refer to the comprehensive performan
 - Minimize serialization at RSC boundaries
 
 Always consider both the design principles in this document AND the performance best practices from Vercel when providing code review feedback.
+
+## Other Detailed Rule References
+
+| File | Content |
+|---|---|
+| `.cursor/rules/full-stack-rule.mdc` | Full-stack development practices (RSC, error handling, optimization, testing) |
+| `.cursor/rules/domain-folder-structure.mdc` | Domain-based folder structure detailed rules |
+| `.cursor/rules/commit-convention.mdc` | Commit message convention (Korean, Conventional Commits) |
+
+**이 문서와 위 상세 파일이 충돌할 경우, 이 문서(styleguide.md)의 내용을 우선한다.**

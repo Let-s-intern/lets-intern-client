@@ -9,14 +9,12 @@ type UseDownloadActionParams = {
   applicationId: number;
   type: ApplicationDownloadType;
   executeDownload: () => Promise<void>;
-  onComplete?: () => void;
 };
 
 export function useDownloadAction({
   applicationId,
   type,
   executeDownload,
-  onComplete,
 }: UseDownloadActionParams) {
   const queryClient = useQueryClient();
   const [showConfirm, setShowConfirm] = useState(false);
@@ -29,7 +27,6 @@ export function useDownloadAction({
       });
       if (data.isDownloaded) {
         await executeDownload();
-        onComplete?.();
       } else {
         setShowConfirm(true);
       }
@@ -39,7 +36,6 @@ export function useDownloadAction({
   const handleConfirm = async () => {
     setShowConfirm(false);
     await executeDownload();
-    onComplete?.();
     await queryClient.invalidateQueries({
       queryKey: ['applicationDownload', applicationId, type],
     });

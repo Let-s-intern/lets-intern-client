@@ -56,6 +56,10 @@ const navData = [
         name: '멘토 관리',
         url: '/admin/mentors',
       },
+      {
+        name: '리드 관리',
+        url: '/admin/leads/managements',
+      },
     ],
   },
   {
@@ -99,15 +103,15 @@ const navData = [
         name: '블로그 광고 배너',
         url: '/admin/blog/banner',
       },
+      {
+        name: '마그넷 관리/등록',
+        url: '/admin/blog/magnet/list',
+      },
     ],
   },
   {
     title: '리드 관리',
     itemList: [
-      {
-        name: '리드 히스토리',
-        url: '/admin/leads/history',
-      },
       {
         name: '리드 이벤트',
         url: '/admin/leads/events',

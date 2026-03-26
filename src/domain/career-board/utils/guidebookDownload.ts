@@ -7,49 +7,6 @@ interface ErrorWithStatus {
   };
 }
 
-function openInNewTab(url: string): void {
-  const link = document.createElement('a');
-  link.href = url;
-  link.target = '_blank';
-  link.rel = 'noopener noreferrer';
-  link.style.display = 'none';
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-}
-
-function triggerFileDownload(url: string, fileName: string): void {
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = fileName;
-  link.style.display = 'none';
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-}
-
-async function downloadS3File(url: string): Promise<void> {
-  const rawName = url.split('/').pop()?.split('?')[0] || '가이드북.pdf';
-  let fileName: string;
-  try {
-    fileName = decodeURIComponent(rawName);
-  } catch {
-    fileName = rawName;
-  }
-
-  try {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    const blobUrl = window.URL.createObjectURL(blob);
-    triggerFileDownload(blobUrl, fileName);
-    // 인앱 브라우저에서 다운로드를 비동기 처리할 수 있으므로 즉시 해제하지 않음
-    setTimeout(() => window.URL.revokeObjectURL(blobUrl), 5000);
-  } catch {
-    // CORS 등으로 fetch 실패 시 <a download>로 직접 시도
-    triggerFileDownload(url, fileName);
-  }
-}
-
 export async function downloadGuidebookAndTrack(
   applicationId: number,
   guidebookId: number,
@@ -57,19 +14,13 @@ export async function downloadGuidebookAndTrack(
   const guidebook = await getGuidebook(guidebookId);
   const contentFileUrl = guidebook.contentFileUrl ?? undefined;
   const contentUrl = guidebook.contentUrl ?? undefined;
-  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-  if (contentFileUrl) {
-    if (isIOS) {
-      openInNewTab(contentFileUrl);
-    } else {
-      await downloadS3File(contentFileUrl);
-    }
-  } else if (contentUrl) {
-    openInNewTab(contentUrl);
-  } else {
+  const urlToOpen = contentFileUrl || contentUrl;
+  if (!urlToOpen) {
     return;
   }
+
+  window.open(urlToOpen, '_blank', 'noopener,noreferrer');
 
   try {
     await patchApplicationDownload({
@@ -81,5 +32,8 @@ export async function downloadGuidebookAndTrack(
     if (status === 409) {
       return;
     }
+    alert(
+      '가이드북 다운로드 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+    );
   }
 }
