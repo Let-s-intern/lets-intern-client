@@ -3,7 +3,6 @@ name: task-runner
 description: "todo/ 폴더의 task 파일을 읽고 task-executor 에이전트에 위임하여 자동 실행합니다. 사용자가 '작업 실행', '태스크 실행', '다음 작업', '작업 계속', '이어서 진행' 등을 요청할 때 사용합니다."
 argument-hint: '[task-file-path]'
 disable-model-invocation: true
-allowed-tools: Read, Write, Bash, Glob, Task
 ---
 
 # Task Runner — 오케스트레이터
