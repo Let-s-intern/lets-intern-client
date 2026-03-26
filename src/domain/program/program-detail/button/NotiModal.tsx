@@ -17,7 +17,7 @@ const NotiModal = ({ isOpen, onClose }: NotiModalProps) => {
   };
 
   return (
-    <BaseModal isOpen={isOpen} onClose={onClose} className="mx-5 max-w-[340px]">
+    <BaseModal isOpen={isOpen} onClose={onClose} className="mx-5 max-w-[350px]">
       <div className="flex flex-col gap-5 p-5">
         {/* 헤더 */}
         <div className="flex items-start justify-between">
