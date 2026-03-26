@@ -16,6 +16,7 @@ export const fileType = z.enum([
   'BLOG_BANNER',
   'CURATION_ITEM',
   'BANNER_MAIN_BOTTOM',
+  'COMMON_BANNER',
   'USER_PROFILE',
 ]);
 
