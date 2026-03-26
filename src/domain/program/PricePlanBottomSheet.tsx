@@ -8,6 +8,7 @@ import {
   ChallengePricePlanEnum,
 } from '@/schema';
 import useProgramStore from '@/store/useProgramStore';
+import { getFeedbackMentoringUrl } from '@/domain/program/challenge/feedback-mentoring-link';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { RadioGroup } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -60,6 +61,8 @@ function PricePlanBottomSheet({
   );
   const hasB2BParam = searchParams.get('source') === 'b2b';
   const shouldPassB2BParam = isCouponDisabledType && hasB2BParam;
+
+  const feedbackMentoringUrl = getFeedbackMentoringUrl(challenge.challengeType);
 
   const basicPriceInfo =
     challenge.priceInfo.find((item) => item.challengePricePlanType === BASIC) ??
@@ -262,10 +265,23 @@ function PricePlanBottomSheet({
                 value={PREMIUM}
                 wrapperClassName="py-3 pl-2 pr-3 border-b border-neutral-80"
                 right={
-                  <PriceView
-                    price={premiumRegularPrice}
-                    discount={premiumDiscountAmount}
-                  />
+                  <div className="flex flex-col items-end gap-0.5">
+                    <PriceView
+                      price={premiumRegularPrice}
+                      discount={premiumDiscountAmount}
+                    />
+                    {feedbackMentoringUrl && (
+                      <a
+                        href={feedbackMentoringUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-xxsmall12 text-primary underline"
+                      >
+                        피드백·멘토링 상세 안내
+                      </a>
+                    )}
+                  </div>
                 }
               />
             )}
@@ -281,10 +297,23 @@ function PricePlanBottomSheet({
                 value={STANDARD}
                 wrapperClassName="py-3 pl-2 pr-3 border-b border-neutral-80"
                 right={
-                  <PriceView
-                    price={standardRegularPrice}
-                    discount={standardDiscountAmount}
-                  />
+                  <div className="flex flex-col items-end gap-0.5">
+                    <PriceView
+                      price={standardRegularPrice}
+                      discount={standardDiscountAmount}
+                    />
+                    {feedbackMentoringUrl && (
+                      <a
+                        href={feedbackMentoringUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-xxsmall12 text-primary underline"
+                      >
+                        피드백·멘토링 상세 안내
+                      </a>
+                    )}
+                  </div>
                 }
               />
             )}
