@@ -1,37 +1,40 @@
 import dayjs from '@/lib/dayjs';
 import { ProgramInfo } from '@/schema';
-import { ProgramClassificationKey } from '@/types/interface';
 import axios from '@/utils/axios';
 import {
-  PROGRAM_CLASSIFICATION,
-  PROGRAM_STATUS,
+  PROGRAM_BADGE_STATUS,
   PROGRAM_STATUS_KEY,
   PROGRAM_TYPE,
 } from '@/utils/programConst';
-import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { memo, useEffect, useState } from 'react';
-import ProgramClassificationTag from './ProgramClassificationTag';
+import DeadlineBadge from './DeadlineBadge';
+import NewBadge from './NewBadge';
 import ProgramStatusTag from './ProgramStatusTag';
 
 interface ProgramCardProps {
   program: ProgramInfo;
 }
 
+const ALWAYS_AVAILABLE_LABEL = '상시 판매';
+
 const ProgramCard = ({ program }: ProgramCardProps) => {
   const router = useRouter();
+  const { programInfo } = program;
+  const isPost = programInfo.programStatusType === PROGRAM_STATUS_KEY.POST;
+  const isAlwaysAvailable =
+    programInfo.programType === PROGRAM_TYPE.VOD ||
+    programInfo.programType === PROGRAM_TYPE.GUIDEBOOK;
+
   const [link, setLink] = useState(
-    `/program/${program.programInfo.programType.toLowerCase()}/${
-      program.programInfo.id
-    }`,
+    `/program/${programInfo.programType.toLowerCase()}/${programInfo.id}`,
   );
 
   useEffect(() => {
     const getVodLink = async () => {
-      if (program.programInfo.programType !== PROGRAM_TYPE.VOD) return;
-      // VOD 상세 조회
+      if (programInfo.programType !== PROGRAM_TYPE.VOD) return;
       try {
-        const res = await axios.get(`/vod/${program.programInfo.id}`);
+        const res = await axios.get(`/vod/${programInfo.id}`);
         if (res.status === 200) {
           setLink(res.data.data.vodInfo.link);
           return res.data.data;
@@ -44,99 +47,79 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
     };
 
     (async () => await getVodLink())();
-  }, [program.programInfo.programType, program.programInfo.id]);
+  }, [programInfo.programType, programInfo.id]);
 
   return (
     <div
       onClick={() => {
-        if (program.programInfo.programType === PROGRAM_TYPE.VOD) {
+        if (programInfo.programType === PROGRAM_TYPE.VOD) {
           window.open(link);
         } else {
           router.push(link);
         }
       }}
-      className="program_card flex w-full cursor-pointer flex-col overflow-hidden rounded-xs md:gap-4 md:rounded-md md:border md:border-neutral-85 md:p-2.5"
-      data-program-text={program.programInfo.title}
+      className="program_card row-span-3 grid w-full cursor-pointer grid-rows-subgrid gap-3 overflow-hidden"
+      data-program-text={programInfo.title}
     >
-      <img
-        className="aspect-[540/421] h-auto w-full bg-neutral-80 object-cover md:rounded-xs"
-        src={program.programInfo.thumbnail || undefined}
-        alt="프로그램 썸네일 배경"
-      />
-      <div className="flex flex-col gap-2 py-2">
-        <div className="flex flex-wrap gap-2">
-          <ProgramStatusTag
-            status={PROGRAM_STATUS[program.programInfo.programStatusType]}
-          />
-          {program.classificationList.map((item) => (
-            <ProgramClassificationTag
-              key={item.programClassification}
-              classification={
-                PROGRAM_CLASSIFICATION[
-                  item.programClassification as ProgramClassificationKey
-                ]
-              }
-            />
-          ))}
-        </div>
-        <h2
-          className={clsx(
-            {
-              'text-neutral-40':
-                program.programInfo.programStatusType ===
-                PROGRAM_STATUS_KEY.POST,
-            },
-            'text-1-semibold',
-          )}
-        >
-          {program.programInfo.title}
-        </h2>
-        <p
-          className={clsx(
-            program.programInfo.programStatusType === PROGRAM_STATUS_KEY.POST
-              ? 'text-neutral-50'
-              : 'text-neutral-30',
-            'text-0.875 max-h-11 overflow-hidden',
-          )}
-        >
-          {program.programInfo.shortDesc}
-        </p>
-        {/* VOD 클래스 & 가이드북 클래스 & 마감된 프로그램 - 진행기간, 모집기간 없음 */}
-        {program.programInfo.programStatusType !== PROGRAM_STATUS_KEY.POST &&
-          program.programInfo.programType !== PROGRAM_TYPE.VOD &&
-          program.programInfo.programType !== PROGRAM_TYPE.GUIDEBOOK && (
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-0.75-medium text-[0.69rem]">
+      {/* 썸네일 + 모집 종료 dim */}
+      <div className="relative">
+        <img
+          className="aspect-[540/421] h-auto w-full rounded-sm bg-neutral-80 object-cover md:rounded-xs"
+          src={programInfo.thumbnail || undefined}
+          alt="프로그램 썸네일 배경"
+        />
+        {isPost && (
+          <div className="absolute inset-0 rounded-sm bg-neutral-0/40 md:rounded-xs" />
+        )}
+        {!isPost && !isAlwaysAvailable && (
+          <DeadlineBadge deadline={programInfo.deadline ?? undefined} />
+        )}
+      </div>
+      <h2 className="text-1-semibold text-xsmall14 md:text-xsmall16">
+        {programInfo.title}
+      </h2>
+      <div className="flex flex-col gap-4">
+          {!isAlwaysAvailable && (
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-1 tracking-[-0.4px] md:gap-1.5">
+                <span className="text-xxsmall12 font-normal text-neutral-0">
                   모집기간
                 </span>
-                <span className="text-0.75-medium text-[0.69rem] text-primary-dark">
-                  {dayjs(program.programInfo.beginning).format('YY.MM.DD')} ~{' '}
-                  {dayjs(program.programInfo.deadline).format('YY.MM.DD')}
+                <span className="text-0.75-medium text-primary-dark">
+                  {dayjs(programInfo.beginning).format('YY.MM.DD')} ~{' '}
+                  {dayjs(programInfo.deadline).format('YY.MM.DD')}
                 </span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-0.75-medium w-fit text-[0.69rem]">
-                  진행일정
+              <div className="flex items-center gap-1 tracking-[-0.4px] md:gap-1.5">
+                <span className="text-xxsmall12 font-normal text-neutral-0">
+                  진행기간
                 </span>
-                <span className="text-0.75-medium text-[0.69rem] text-primary-dark">
-                  {program.programInfo.programType === PROGRAM_TYPE.CHALLENGE
-                    ? `${dayjs(program.programInfo.startDate).format(
-                        'YY.MM.DD',
-                      )} ~ ${dayjs(program.programInfo.endDate).format(
-                        'YY.MM.DD',
-                      )}`
-                    : dayjs(program.programInfo.startDate).format('YY.MM.DD')}
+                <span className="text-0.75-medium text-primary-dark">
+                  {programInfo.programType === PROGRAM_TYPE.CHALLENGE
+                    ? `${dayjs(programInfo.startDate).format('YY.MM.DD')} ~ ${dayjs(programInfo.endDate).format('YY.MM.DD')}`
+                    : dayjs(programInfo.startDate).format('YY.MM.DD')}
                 </span>
               </div>
             </div>
           )}
+
+          <div className="mt-1 flex flex-wrap gap-1.5">
+            {isAlwaysAvailable ? (
+              <ProgramStatusTag status={ALWAYS_AVAILABLE_LABEL} />
+            ) : (
+              <ProgramStatusTag
+                status={PROGRAM_BADGE_STATUS[programInfo.programStatusType]}
+              />
+            )}
+            {!isPost && (
+              <NewBadge beginning={programInfo.beginning ?? undefined} />
+            )}
+          </div>
       </div>
     </div>
   );
 };
 
-// 프로그램 ID와 프로그램 타입이 같으면 true
 const isEqual = (prevProps: ProgramCardProps, nextProps: ProgramCardProps) =>
   prevProps.program.programInfo.id === nextProps.program.programInfo.id &&
   prevProps.program.programInfo.programType ===

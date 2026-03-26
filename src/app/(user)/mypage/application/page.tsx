@@ -11,7 +11,7 @@ import EmptySection from '@/domain/mypage/application/section/EmptySection';
 import GuidebookSection from '@/domain/mypage/application/section/GuidebookSection';
 import LibrarySection from '@/domain/mypage/application/section/LibrarySection';
 import ParticipateSection from '@/domain/mypage/application/section/ParticipateSection';
-import CategoryTabs from '@/domain/mypage/ui/nav/CategoryTabs';
+import CategoryTabs from '@/common/ui/CategoryTabs';
 import { useState } from 'react';
 
 const Application = () => {
