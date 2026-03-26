@@ -231,7 +231,7 @@ function PricePlanBottomSheet({
               href={feedbackMentoringUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-xxs border border-primary px-2.5 py-1 text-xxsmall12 font-semibold text-primary transition-colors"
+              className="rounded-xxs border border-primary px-2.5 py-1 text-xxsmall12 font-semibold text-primary transition-colors hover:bg-primary hover:text-white"
             >
               플랜별 상세 설명 확인하기
             </a>

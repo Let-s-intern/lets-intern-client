@@ -240,10 +240,18 @@ function ChallengePriceInfoContent({
           href={feedbackMentoringUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center rounded-xxs border py-2 text-xsmall14 font-semibold transition-colors"
+          className="flex items-center justify-center rounded-xxs border py-2 text-xsmall14 font-semibold transition-colors hover:text-white"
           style={{
             color: themeColor,
             borderColor: themeColor,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = themeColor;
+            e.currentTarget.style.color = '#fff';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.color = themeColor;
           }}
         >
           플랜별 설명확인하기
