@@ -1,10 +1,13 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { type InstagramChannel } from '../data/instagram';
 
 const THUMBNAIL_COUNT = 6;
+const DESKTOP_THUMBNAIL_SIZE = 200;
+const MOBILE_THUMBNAIL_SIZE = 136;
+const PROFILE_IMAGE_SIZE = 40;
 
 type Props = {
   channel: InstagramChannel;
@@ -18,7 +21,7 @@ export default function InstagramCard({ channel }: Props) {
 
   const thumbnails = channel.thumbnails.slice(0, THUMBNAIL_COUNT);
 
-  const updateFade = () => {
+  const updateFade = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
     const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1;
@@ -26,29 +29,34 @@ export default function InstagramCard({ channel }: Props) {
       const next = !atEnd;
       return prev !== next ? next : prev;
     });
-  };
+  }, []);
 
-  const scheduleUpdate = () => {
+  const scheduleUpdate = useCallback(() => {
     if (ticking.current) return;
     ticking.current = true;
     rafId.current = window.requestAnimationFrame(() => {
       updateFade();
       ticking.current = false;
     });
-  };
+  }, [updateFade]);
 
   useEffect(() => {
     updateFade();
     const el = scrollRef.current;
     if (!el) return;
+
     el.addEventListener('scroll', scheduleUpdate, { passive: true });
-    window.addEventListener('resize', scheduleUpdate);
+    const resizeObserver = new ResizeObserver(() => {
+      scheduleUpdate();
+    });
+    resizeObserver.observe(el);
+
     return () => {
       el.removeEventListener('scroll', scheduleUpdate);
-      window.removeEventListener('resize', scheduleUpdate);
+      resizeObserver.disconnect();
       if (rafId.current) cancelAnimationFrame(rafId.current);
     };
-  }, []);
+  }, [updateFade, scheduleUpdate]);
 
   return (
     <article className="flex flex-col overflow-hidden rounded-sm border border-neutral-80 bg-white shadow-sm">
@@ -61,8 +69,8 @@ export default function InstagramCard({ channel }: Props) {
               <Image
                 src={thumb.src}
                 alt={thumb.alt}
-                width={200}
-                height={200}
+                width={DESKTOP_THUMBNAIL_SIZE}
+                height={DESKTOP_THUMBNAIL_SIZE}
                 className="h-full w-full object-cover"
               />
             </div>
@@ -83,8 +91,8 @@ export default function InstagramCard({ channel }: Props) {
                 <Image
                   src={thumb.src}
                   alt={thumb.alt}
-                  width={136}
-                  height={136}
+                  width={MOBILE_THUMBNAIL_SIZE}
+                  height={MOBILE_THUMBNAIL_SIZE}
                   className="h-full w-full object-cover"
                 />
               </div>
@@ -105,8 +113,8 @@ export default function InstagramCard({ channel }: Props) {
               <Image
                 src={channel.profileImage}
                 alt={channel.handle}
-                width={40}
-                height={40}
+                width={PROFILE_IMAGE_SIZE}
+                height={PROFILE_IMAGE_SIZE}
                 className="h-full w-full scale-110 object-cover"
               />
             </div>

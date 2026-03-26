@@ -49,7 +49,6 @@ import MainTitle from './ui/MainTitle';
 const {
   CAREER_START,
   PORTFOLIO,
-  PERSONAL_STATEMENT,
   PERSONAL_STATEMENT_LARGE_CORP,
   EXPERIENCE_SUMMARY,
   ETC,

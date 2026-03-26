@@ -8,6 +8,7 @@ import {
   ChallengePricePlanEnum,
 } from '@/schema';
 import useProgramStore from '@/store/useProgramStore';
+import { getFeedbackMentoringUrl } from '@/domain/program/challenge/feedback-mentoring-link';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { RadioGroup } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -60,6 +61,8 @@ function PricePlanBottomSheet({
   );
   const hasB2BParam = searchParams.get('source') === 'b2b';
   const shouldPassB2BParam = isCouponDisabledType && hasB2BParam;
+
+  const feedbackMentoringUrl = getFeedbackMentoringUrl(challenge.challengeType);
 
   const basicPriceInfo =
     challenge.priceInfo.find((item) => item.challengePricePlanType === BASIC) ??
@@ -219,9 +222,21 @@ function PricePlanBottomSheet({
         className="mx-auto max-w-[1000px]"
       >
         {/* 챌린지 플랜 */}
-        <span className="required-star mb-4 mt-3 block text-xsmall14 font-semibold">
-          챌린지 플랜 선택 (필수)
-        </span>
+        <div className="mb-4 mt-3 flex items-center justify-between">
+          <span className="required-star text-xsmall14 font-semibold">
+            챌린지 플랜 선택 (필수)
+          </span>
+          {feedbackMentoringUrl && (
+            <a
+              href={feedbackMentoringUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-xxs border border-primary px-2.5 py-1 text-xxsmall12 font-semibold text-primary transition-colors hover:bg-primary hover:text-white"
+            >
+              플랜별 상세 설명 확인하기
+            </a>
+          )}
+        </div>
         <OptionDropdown
           label={`${challenge.title} 플랜`}
           wrapperClassName="w-full"

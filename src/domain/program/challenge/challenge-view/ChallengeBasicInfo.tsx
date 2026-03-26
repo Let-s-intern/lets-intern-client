@@ -19,6 +19,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { CSSProperties, useMemo } from 'react';
 import { LuCalendarDays } from 'react-icons/lu';
+import { getFeedbackMentoringUrl } from '../feedback-mentoring-link';
 import ChallengePriceInfoContent from './ChallengePriceInfoContent';
 import RadioButton from './RadioButton';
 
@@ -150,7 +151,12 @@ const ChallengeBasicInfo = ({
             {challenge.title}
           </h1>
 
-          <ChallengePriceInfoContent priceInfoList={challenge.priceInfo} />
+          <ChallengePriceInfoContent
+            priceInfoList={challenge.priceInfo}
+            feedbackMentoringUrl={getFeedbackMentoringUrl(
+              challenge.challengeType,
+            )}
+          />
         </div>
       </div>
       <div

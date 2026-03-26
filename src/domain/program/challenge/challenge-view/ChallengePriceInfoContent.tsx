@@ -104,11 +104,13 @@ const FinalPriceInfo = ({
 interface Props {
   priceInfoList: ChallengePriceInfo[] | ChallengeIdSchema['priceInfo'];
   themeColor?: string;
+  feedbackMentoringUrl?: string | null;
 }
 
 function ChallengePriceInfoContent({
   priceInfoList,
   themeColor = DEFAULT_COLOR,
+  feedbackMentoringUrl,
 }: Props) {
   const [active, setActive] = useState<ChallengePricePlan>('BASIC');
 
@@ -232,6 +234,29 @@ function ChallengePriceInfoContent({
           <p className="mt-1.5 whitespace-pre-line">{activeDescription}</p>
         </div>
       </div>
+
+      {feedbackMentoringUrl && (
+        <a
+          href={feedbackMentoringUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center rounded-xxs border py-2 text-xsmall14 font-semibold transition-colors hover:text-white"
+          style={{
+            color: themeColor,
+            borderColor: themeColor,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = themeColor;
+            e.currentTarget.style.color = '#fff';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.color = themeColor;
+          }}
+        >
+          플랜별 설명확인하기
+        </a>
+      )}
 
       <div className="flex flex-col gap-1.5">
         <div className="text-xsmall16 text-neutral-20">
