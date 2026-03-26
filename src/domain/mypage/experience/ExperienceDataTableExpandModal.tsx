@@ -1,4 +1,4 @@
-import BaseModal from '@/common/BaseModal';
+import BaseModal from '@/common/modal/BaseModal';
 import { XIcon } from 'lucide-react';
 import { ReactNode } from 'react';
 
