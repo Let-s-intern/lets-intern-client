@@ -6,18 +6,22 @@ import * as React from 'react';
 import PriceSummary from '../../../../common/price/PriceSummary';
 import MainTitle from '../ui/MainTitle';
 
+const FEEDBACK_MENTORING_LINK_TEXT = '피드백·멘토링 상세 안내 →';
+
 const PriceBox = ({
   title,
   children,
   label,
   originalPrice,
   discountAmount,
+  feedbackMentoringUrl,
 }: {
   title: string;
   children: React.ReactNode;
   label: string;
   originalPrice: number;
   discountAmount: number;
+  feedbackMentoringUrl?: string | null;
 }) => {
   return (
     <div className="flex flex-1 flex-col gap-3.5 rounded-sm bg-white px-5 pb-6 pt-5">
@@ -33,9 +37,21 @@ const PriceBox = ({
       <div className="flex h-full flex-col gap-6">
         <span className="text-small20 font-bold">{title}</span>
         <div className="flex h-full flex-col gap-6 md:justify-between">
-          <p className="whitespace-pre-line text-small18 font-medium text-neutral-0 md:mb-7 md:min-h-[78px]">
-            {children}
-          </p>
+          <div>
+            <p className="whitespace-pre-line text-small18 font-medium text-neutral-0 md:mb-7 md:min-h-[78px]">
+              {children}
+            </p>
+            {feedbackMentoringUrl && (
+              <a
+                href={feedbackMentoringUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 inline-block text-xsmall14 font-medium text-neutral-30 underline"
+              >
+                {FEEDBACK_MENTORING_LINK_TEXT}
+              </a>
+            )}
+          </div>
           <PriceSummary
             originalPrice={originalPrice}
             discountPrice={discountAmount}
@@ -48,9 +64,13 @@ const PriceBox = ({
 
 interface Props {
   priceInfoList: ChallengePriceInfo[];
+  feedbackMentoringUrl?: string | null;
 }
 
-const MarketingPricingSection = ({ priceInfoList }: Props) => {
+const MarketingPricingSection = ({
+  priceInfoList,
+  feedbackMentoringUrl,
+}: Props) => {
   const basicPriceInfo = priceInfoList.find(
     (item) => item.challengePricePlanType === 'BASIC',
   );
@@ -100,6 +120,7 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
       description: standardPriceInfo?.description ?? '',
       originalPrice: standardRegularPrice,
       discountAmount: standardDiscountAmount,
+      feedbackMentoringUrl,
     },
     {
       title: premiumPriceInfo?.title || '프리미엄',
@@ -107,6 +128,7 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
       description: premiumPriceInfo?.description ?? '',
       originalPrice: premiumRegularPrice,
       discountAmount: premiumDiscountAmount,
+      feedbackMentoringUrl,
     },
   ];
 
@@ -142,6 +164,7 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
               label={item.label}
               originalPrice={item.originalPrice}
               discountAmount={item.discountAmount}
+              feedbackMentoringUrl={item.feedbackMentoringUrl}
             >
               {item.description}
             </PriceBox>
