@@ -1,7 +1,7 @@
 'use client';
 
 import { useProgramQuery } from '@/api/program';
-import { useUserQuery } from '@/api/user';
+import { useUserQuery } from '@/api/user/user';
 import { PaymentMethodKey } from '@/data/getPaymentSearchParams';
 import useProgramStore from '@/store/useProgramStore';
 import {

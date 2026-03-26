@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 
-import { usePatchAdminAttendance } from '@/api/attendance';
-import { getChallengeAttendancesQueryKey } from '@/api/challenge';
-import { getAdminProgramReviewQueryKey } from '@/api/review';
+import { usePatchAdminAttendance } from '@/api/attendance/attendance';
+import { getChallengeAttendancesQueryKey } from '@/api/challenge/challenge';
+import { getAdminProgramReviewQueryKey } from '@/api/review/review';
 import { useAdminCurrentChallenge } from '@/context/CurrentAdminChallengeProvider';
 import { AttendanceItem, Mission } from '@/schema';
 import { challengeSubmitDetailCellWidthList } from '@/utils/tableCellWidthList';

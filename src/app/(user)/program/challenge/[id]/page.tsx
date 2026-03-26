@@ -1,4 +1,4 @@
-import { fetchChallengeData } from '@/api/challenge';
+import { fetchChallengeData } from '@/api/challenge/challenge';
 import { getProgramPathname } from '@/utils/url';
 import { redirect } from 'next/navigation';
 

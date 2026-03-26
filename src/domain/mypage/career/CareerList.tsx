@@ -1,5 +1,5 @@
-import { useGetUserCareerQuery } from '@/api/career';
-import { UserCareerType } from '@/api/careerSchema';
+import { useGetUserCareerQuery } from '@/api/career/career';
+import { UserCareerType } from '@/api/career/careerSchema';
 import CareerItem from '@/domain/mypage/career/CareerItem';
 import { DEFAULT_PAGE_INFO } from '@/domain/mypage/career/constants';
 import MuiPagination from '@/domain/program/pagination/MuiPagination';

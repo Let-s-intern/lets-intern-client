@@ -5,6 +5,7 @@ import Intro1 from '@/assets/graphic/home/intro/1.svg?react';
 import Intro11 from '@/assets/graphic/home/intro/11.svg?react';
 import Intro2 from '@/assets/graphic/home/intro/2.svg?react';
 import Intro3 from '@/assets/graphic/home/intro/3.svg?react';
+import Intro4 from '@/assets/graphic/home/intro/4.svg?react';
 import Intro5 from '@/assets/graphic/home/intro/5.svg?react';
 import Intro6 from '@/assets/graphic/home/intro/6.svg?react';
 import Intro8 from '@/assets/graphic/home/intro/8.svg?react';
@@ -76,19 +77,6 @@ const HOME_INTRO = {
       {
         title: (
           <p>
-            대기업 자소서
-            <br />
-            준비하기
-          </p>
-        ),
-        subTitle: '대기업',
-        icon: <Intro8 width={44} height={44} />,
-        href: `type=${PERSONAL_STATEMENT_LARGE_CORP}`,
-        gaTitle: '대기업 자기소개서 준비하기',
-      },
-      {
-        title: (
-          <p>
             포트폴리오
             <br />
             준비하기
@@ -101,12 +89,38 @@ const HOME_INTRO = {
       {
         title: (
           <p>
-            이력서
+            대기업 자소서
+            <br />
+            준비하기
+          </p>
+        ),
+        subTitle: '대기업',
+        icon: <Intro8 width={44} height={44} />,
+        href: `type=${PERSONAL_STATEMENT_LARGE_CORP}`,
+        gaTitle: '대기업 자기소개서 준비하기',
+      },
+
+      {
+        title: (
+          <p>
+            포트폴리오
             <br />
             피드백 받기
           </p>
         ),
         icon: <Intro5 width={44} height={44} />,
+        href: convertReportTypeToLandingPath('PORTFOLIO'),
+        gaTitle: '포트폴리오 피드백 받기',
+      },
+      {
+        title: (
+          <p>
+            이력서
+            <br />
+            피드백 받기
+          </p>
+        ),
+        icon: <Intro4 width={44} height={44} />,
         href: convertReportTypeToLandingPath('RESUME'),
         gaTitle: '이력서 피드백 받기',
       },
@@ -182,7 +196,8 @@ const IntroItem = ({
 };
 
 const IntroSection = () => {
-  const { hasActiveResume, hasActivePersonalStatement } = useActiveReports();
+  const { hasActiveResume, hasActivePersonalStatement, hasActivePortfolio } =
+    useActiveReports();
 
   // 새로운 훅을 사용하여 각 타입별 첫 번째 B2C 챌린지 가져오기
   const {
@@ -215,11 +230,19 @@ const IntroSection = () => {
     }
   };
 
-  const filteredItems = HOME_INTRO.items.basic.filter((item, index) => {
+  const filteredItems = HOME_INTRO.items.basic.filter((item) => {
+    // 포트폴리오 피드백 받기
+    if (item.href === convertReportTypeToLandingPath('PORTFOLIO')) {
+      return hasActivePortfolio;
+    }
     // 이력서 피드백 받기
-    if (index === 4 && !hasActiveResume) return false;
+    if (item.href === convertReportTypeToLandingPath('RESUME')) {
+      return hasActiveResume;
+    }
     // 자소서 피드백 받기
-    if (index === 5 && !hasActivePersonalStatement) return false;
+    if (item.href === convertReportTypeToLandingPath('PERSONAL_STATEMENT')) {
+      return hasActivePersonalStatement;
+    }
     return true;
   });
 
@@ -264,7 +287,7 @@ const IntroSection = () => {
           {HOME_INTRO.description}
           {HOME_INTRO.title}
         </div>
-        <div className="-mx-5 h-full w-screen overflow-x-auto pt-2.5 md:mx-auto md:w-fit md:overflow-x-visible md:px-0 md:pt-0">
+        <div className="h-full overflow-x-auto pt-2.5 md:mx-auto md:w-fit md:overflow-x-visible md:px-0 md:pt-0">
           <div
             className={twMerge(
               'gap-x-5 gap-y-5 md:mx-auto md:flex md:justify-center md:gap-10 md:px-0',

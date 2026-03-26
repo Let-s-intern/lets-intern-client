@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { useCallback, useState } from 'react';
 
 import dayjs from '@/lib/dayjs';
-import { useBlogRatingListQuery } from '../../../api/blog';
+import { useBlogRatingListQuery } from '../../../api/blog/blog';
 import { blogCategory } from '../../../utils/convert';
 import MuiPagination from '../../program/pagination/MuiPagination';
 

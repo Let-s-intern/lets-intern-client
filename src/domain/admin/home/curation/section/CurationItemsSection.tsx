@@ -1,5 +1,5 @@
 import { CurationItemType } from '@/api/curation';
-import EmptyContainer from '@/common/ui/EmptyContainer';
+import EmptyContainer from '@/common/container/EmptyContainer';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
 import dayjs from '@/lib/dayjs';
 import { Button } from '@mui/material';

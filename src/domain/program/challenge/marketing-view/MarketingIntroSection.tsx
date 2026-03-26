@@ -1,4 +1,4 @@
-import SectionHeader from '@/common/SectionHeader';
+import SectionHeader from '@/common/header/SectionHeader';
 import { twMerge } from '@/lib/twMerge';
 import { ReactNode } from 'react';
 import MainTitle from '../ui/MainTitle';
@@ -33,19 +33,22 @@ function MarketingIntroSection() {
         <SectionHeader className="mb-6 md:mb-[42px]">챌린지 소개</SectionHeader>
         <MainTitle>
           <div className="mx-auto mb-3 flex w-fit flex-col gap-1 leading-8 md:mb-2 md:flex-row md:items-center md:leading-none">
-            <div className="flex w-full flex-col items-center justify-center">
+            <div className="flex w-full flex-col items-center justify-center md:flex-row">
               <div className="flex items-center gap-1 md:gap-1.5">
                 <div className="-rotate-6 bg-[#4A76FF] p-1.5 text-small20 leading-none text-neutral-100 md:px-2.5 md:py-0.5 md:text-xlarge30">
                   마케터
                 </div>
-                <span>를 준비하며</span>
+                <span>를 준비하는</span>
               </div>
+              <span className="md:ml-1">
+                김렛커의 고민들,
+                <br className="md:hidden" /> 우리가 해결해보자!
+              </span>
             </div>
-            <span className="text-nowrap">누구나 한 번쯤 겪는 고민들..</span>
           </div>
           <span>
             렛츠커리어는 실제 마케팅 <br className="md:hidden" />
-            취준생들의 질문에서 출발했습니다
+            취준생들의 질문에서 출발했습니다.
           </span>
         </MainTitle>
       </div>
@@ -77,6 +80,15 @@ function MarketingIntroSection() {
           </div>
         </div>
         <div className="h-[70px] w-[72px] bg-[url('/images/user-with-laptop.svg')] bg-cover bg-center bg-no-repeat md:h-[136px] md:w-[146px]" />
+        <div className="md:mt-17 mt-[58px] flex w-full items-center justify-center">
+          <span className="text-center text-medium22 font-semibold tracking-[-0.096px] md:text-xlarge30">
+            &quot;마케팅 취준생 김렛커의 고민들, <br className="md:hidden" />
+            <span className="relative inline-block">
+              <span className="relative z-10">해결되었을까?&quot;</span>
+              <span className="pointer-events-none absolute bottom-0 left-[-4px] right-[-4px] h-5 bg-indigo-100 md:h-8" />
+            </span>
+          </span>
+        </div>
       </div>
     </section>
   );

@@ -1,7 +1,7 @@
 import { Break } from '@/common/Break';
-import MoreReviewButton from '@/common/review/MoreReviewButton';
-import Heading2 from '@/common/ui/Heading2';
+import Heading2 from '@/common/header/Heading2';
 import Description from '@/domain/program/program-detail/Description';
+import MoreReviewButton from '@/domain/review/MoreReviewButton';
 import Image from 'next/image';
 import { FaCheck } from 'react-icons/fa6';
 
@@ -50,7 +50,7 @@ type Template = {
   }[];
 };
 
-function ChallengeIntroPortfolio() {
+function ChallengeIntroPortfolio({ weekText }: { weekText: string }) {
   return (
     <section className="w-full bg-[#F3F7FF] px-5 py-20 md:px-10 md:py-32 lg:px-0">
       <div className="mb-20 md:mb-52">
@@ -96,7 +96,7 @@ function ChallengeIntroPortfolio() {
         <Description className="mb-10 md:mb-20 md:text-center">
           사람들과 함께 매 미션이 끝날 때마다 느낀 점을 공유하고 질문하며
           <Break />
-          성장하는 오픈 카톡 커뮤니티를 활용하기 때문에 2주 동안 힘내서 달릴 수
+          성장하는 오픈 카톡 커뮤니티를 활용하기 때문에 {weekText} 동안 힘내서 달릴 수
           있어요
         </Description>
         <Image
@@ -116,7 +116,7 @@ function ChallengeIntroPortfolio() {
 
         <div className="mx-auto flex max-w-[876px] flex-col items-start gap-[30px] font-medium">
           <p className="relative mb-[30px] w-fit rounded-xl bg-[#1A2A5D] px-5 py-3 text-xxsmall12 text-white md:px-10 md:py-6 md:text-small20">
-            2주간의 포트폴리오 챌린지, 어떠셨나요?
+            {weekText}간의 포트폴리오 챌린지, 어떠셨나요?
             <Image
               src="/images/말꼬리표-남-18-18.svg"
               alt="말꼬리표 아이콘"

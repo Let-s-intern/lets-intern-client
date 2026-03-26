@@ -1,8 +1,8 @@
-import { fetchBlogData, fetchRecommendBlogData } from '@/api/blog';
-import { BlogContent, ProgramRecommendItem } from '@/api/blogSchema';
+import { fetchBlogData, fetchRecommendBlogData } from '@/api/blog/blog';
+import { BlogContent, ProgramRecommendItem } from '@/api/blog/blogSchema';
 import { fetchProgramRecommend } from '@/api/program';
 import HorizontalRule from '@/common/HorizontalRule';
-import MoreHeader from '@/common/ui/MoreHeader';
+import MoreHeader from '@/common/header/MoreHeader';
 import BlogKakaoShareBtn from '@/domain/blog/button/BlogKakaoShareBtn';
 import BlogLikeBtn from '@/domain/blog/button/BlogLikeBtn';
 import BlogLinkShareBtn from '@/domain/blog/button/BlogLilnkShareBtn';
@@ -15,6 +15,7 @@ import { ProgramStatusEnum, ProgramTypeEnum } from '@/schema';
 import {
   getBaseUrlFromServer,
   getBlogPathname,
+  getBlogSlug,
   getBlogTitle,
 } from '@/utils/url';
 import { CircleChevronRight } from 'lucide-react';
@@ -69,7 +70,7 @@ const BlogDetailPage = async ({
   });
 
   // 슬러그 비교 및 리디렉션
-  const correctSlug = (blog.blogDetailInfo.title?.replace(/[ /]/g, '-') || '').toLowerCase();
+  const correctSlug = getBlogSlug(blog.blogDetailInfo.title);
   let currentSlug = _title || '';
   try {
     currentSlug = decodeURIComponent(currentSlug);
@@ -116,8 +117,6 @@ const BlogDetailPage = async ({
       }));
       list.push(...targets);
     }
-
-    console.log('programRecommendList >>', list);
 
     return list;
   }

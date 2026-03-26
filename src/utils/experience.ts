@@ -3,7 +3,7 @@ import {
   EXPERIENCE_CATEGORY_KR,
   ExperienceFiltersRes,
   UserExperienceType,
-} from '@/api/experienceSchema';
+} from '@/api/experience/experienceSchema';
 import { Filters } from '@/domain/mypage/experience/ExperienceFilters';
 
 /**

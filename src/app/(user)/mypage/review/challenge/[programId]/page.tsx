@@ -5,15 +5,15 @@ import { josa } from 'es-hangul';
 import { useParams, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 
-import { useGetChallengeTitle } from '@/api/challenge';
-import { useGetProgramReviewDetail } from '@/api/review';
-import { useUserQuery } from '@/api/user';
-import GoalOrConcernsBox from '@/common/review/GoalOrConcernsBox';
-import ReviewInstruction from '@/common/review/ReviewInstruction';
-import ReviewModal from '@/common/review/ReviewModal';
-import ReviewQuestion from '@/common/review/ReviewQuestion';
-import ReviewTextarea from '@/common/review/ReviewTextarea';
-import TenScore from '@/common/review/score/TenScore';
+import { useGetChallengeTitle } from '@/api/challenge/challenge';
+import { useGetProgramReviewDetail } from '@/api/review/review';
+import { useUserQuery } from '@/api/user/user';
+import GoalOrConcernsBox from '@/domain/review/GoalOrConcernsBox';
+import ReviewInstruction from '@/domain/review/ReviewInstruction';
+import ReviewModal from '@/domain/review/ReviewModal';
+import ReviewQuestion from '@/domain/review/ReviewQuestion';
+import ReviewTextarea from '@/domain/review/ReviewTextarea';
+import TenScore from '@/domain/review/score/TenScore';
 
 const ChallengeReviewPageContent = () => {
   const params = useParams<{ programId: string }>();
@@ -42,6 +42,15 @@ const ChallengeReviewPageContent = () => {
   )?.answer;
   const badPoint = review?.reviewItemList?.find(
     (r) => r.questionType === 'BAD_POINT',
+  )?.answer;
+  const feedbackMentorNickname = review?.reviewItemList?.find(
+    (r) => r.questionType === 'FEEDBACK_MENTOR_NICKNAME',
+  )?.answer;
+  const feedbackGoodPoint = review?.reviewItemList?.find(
+    (r) => r.questionType === 'FEEDBACK_GOOD_POINT',
+  )?.answer;
+  const feedbackBadPoint = review?.reviewItemList?.find(
+    (r) => r.questionType === 'FEEDBACK_BAD_POINT',
   )?.answer;
 
   return (
@@ -120,6 +129,47 @@ const ChallengeReviewPageContent = () => {
           placeholder="참여하면서 아쉬웠던 점이나 추가되었으면 좋겠는 내용이 있다면 자유롭게 작성해주세요."
         />
       </section>
+
+      {feedbackMentorNickname && (
+        <section>
+          <ReviewQuestion required className="mb-5">
+            6. {josa(programTitle?.title ?? '', '을/를')} 진행해 주신 멘토님의
+            닉네임을 작성해 주세요!
+          </ReviewQuestion>
+          <ReviewTextarea
+            value={feedbackMentorNickname ?? '-'}
+            readOnly
+            placeholder=""
+          />
+        </section>
+      )}
+
+      {feedbackGoodPoint && (
+        <section>
+          <ReviewQuestion required className="mb-5">
+            7. 1:1 피드백에서 가장 도움이 되었거나 유익했던 점, 멘토님께 감사한
+            점 등을 남겨주세요!
+          </ReviewQuestion>
+          <ReviewTextarea
+            value={feedbackGoodPoint ?? '-'}
+            readOnly
+            placeholder=""
+          />
+        </section>
+      )}
+
+      {feedbackBadPoint && (
+        <section>
+          <ReviewQuestion required className="mb-5">
+            8. 1:1 피드백에서 개선이 필요하다고 생각하는 점을 남겨주세요!
+          </ReviewQuestion>
+          <ReviewTextarea
+            value={feedbackBadPoint ?? '-'}
+            readOnly
+            placeholder=""
+          />
+        </section>
+      )}
     </ReviewModal>
   );
 };

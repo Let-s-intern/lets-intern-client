@@ -1,6 +1,6 @@
-import { DocumentType } from '@/api/missionSchema';
-import { usePatchUserAdminMutation } from '@/api/user';
-import { UserAdmin } from '@/api/userSchema';
+import { DocumentType } from '@/api/mission/missionSchema';
+import { usePatchUserAdminMutation } from '@/api/user/user';
+import { UserAdmin } from '@/api/user/userSchema';
 import dayjs from '@/lib/dayjs';
 import { getFileNameFromUrl } from '@/utils/getFileNameFromUrl';
 import { Button, MenuItem, Select, TextField } from '@mui/material';

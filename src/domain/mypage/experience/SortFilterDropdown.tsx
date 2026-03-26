@@ -1,5 +1,5 @@
-import { Sortable } from '@/api/experienceSchema';
-import { FilterDropdown } from '@/common/challenge/my-challenge/section/mission-submit-list-form/components/ExperienceSelectModal/components/FilterDropdown';
+import { Sortable } from '@/api/experience/experienceSchema';
+import { FilterDropdown } from '@/domain/challenge/my-challenge/section/mission-submit-list-form/components/ExperienceSelectModal/components/FilterDropdown';
 
 const options = [
   { value: 'LATEST', label: '최신 순' },

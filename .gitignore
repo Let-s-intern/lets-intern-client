@@ -45,3 +45,10 @@ next-env.d.ts
 
 # YoYo AI version control directory
 .yoyo/
+
+# Sentry Config File
+.env.sentry-build-plugin
+
+
+.history
+.claude/tasks/

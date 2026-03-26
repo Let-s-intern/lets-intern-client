@@ -2,7 +2,7 @@ import {
   MypageApplication,
   useMypageApplicationsQuery,
 } from '@/api/application';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import {
@@ -180,6 +180,8 @@ const ProgramCard = ({
 }: ProgramCardProps) => {
   const period = `${program.startDate} ~ ${program.endDate}`;
 
+  const isLightPlan = program.purchasePlan === challengePricePlanToText.LIGHT;
+
   // 진행 예정 프로그램의 경우, 시작일 이전이면 버튼 비활성화
   const isDashboardDisabled =
     programStatusType === 'PREV' &&
@@ -233,12 +235,14 @@ const ProgramCard = ({
                 {program.description}
               </p>
             </div>
-            <DashboardButton
-              programId={program.programId}
-              applicationId={program.id}
-              variant="desktop"
-              disabled={isDashboardDisabled}
-            />
+            {!isLightPlan && (
+              <DashboardButton
+                programId={program.programId}
+                applicationId={program.id}
+                variant="desktop"
+                disabled={isDashboardDisabled}
+              />
+            )}
           </div>
 
           {/* 하단: 구매플랜 */}
@@ -252,12 +256,14 @@ const ProgramCard = ({
           </div>
         </div>
       </div>
-      <DashboardButton
-        programId={program.programId}
-        variant="mobile"
-        applicationId={program.id}
-        disabled={isDashboardDisabled}
-      />
+      {!isLightPlan && (
+        <DashboardButton
+          programId={program.programId}
+          variant="mobile"
+          applicationId={program.id}
+          disabled={isDashboardDisabled}
+        />
+      )}
     </div>
   );
 };

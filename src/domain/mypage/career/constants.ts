@@ -1,4 +1,4 @@
-import { CareerFormType } from '@/api/careerSchema';
+import { CareerFormType } from '@/api/career/careerSchema';
 
 export const DEFAULT_CAREER: CareerFormType = {
   company: '',

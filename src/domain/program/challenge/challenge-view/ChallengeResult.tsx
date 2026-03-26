@@ -3,7 +3,7 @@ import { CSSProperties, ReactNode, useMemo } from 'react';
 import { FaCheck } from 'react-icons/fa6';
 
 import { Break } from '@/common/Break';
-import Heading2 from '@/common/ui/Heading2';
+import Heading2 from '@/common/header/Heading2';
 import { challengeColors } from '@/domain/program/challenge/ChallengeView';
 import Box from '@/domain/program/program-detail/Box';
 import SuperTitle from '@/domain/program/program-detail/SuperTitle';
@@ -117,12 +117,14 @@ interface ChallengeResultProps {
   challengeType: ChallengeType;
   challengeTitle: string;
   isResumeTemplate: boolean;
+  weekText: string;
 }
 
 function ChallengeResult({
   challengeType,
   challengeTitle,
   isResumeTemplate,
+  weekText,
 }: ChallengeResultProps) {
   const isDesktop = useMediaQuery('(min-width: 991px)');
 
@@ -284,8 +286,7 @@ function ChallengeResult({
               </>
             ) : (
               <>
-                {/* TODO: receivedContent.challengePoint.weekText? */}
-                2주 뒤에{' '}
+                {weekText} 뒤에{' '}
                 {challengeType === PORTFOLIO ? '포트폴리오' : '자기소개서'}{' '}
                 완성하고
                 <Break />

@@ -3,7 +3,7 @@ import {
   CurationEditBodyType,
   CurationInfoType,
 } from '@/api/curation';
-import Input from '@/common/input/Input';
+import Input from '@/common/input/v1/Input';
 import Heading3 from '@/domain/admin/ui/heading/Heading3';
 import dayjs from '@/lib/dayjs';
 import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';

@@ -4,7 +4,7 @@ import {
   CurationTypeValues,
 } from '@/api/curation';
 import { fileType, uploadFile } from '@/api/file';
-import Input from '@/common/input/Input';
+import Input from '@/common/input/v1/Input';
 import ImageUpload from '@/domain/admin/program/ui/form/ImageUpload';
 import { convertCurationTypeToText } from '@/utils/convert';
 import {

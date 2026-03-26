@@ -2,7 +2,7 @@ import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import AlertModal from '../../../../../common/alert/AlertModal';
-import Input from '../../../../../common/input/Input';
+import Input from '../../../../../common/input/v1/Input';
 import ActionButton from '../../../ui/button/ActionButton';
 
 interface FilterProps {

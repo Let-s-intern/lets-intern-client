@@ -1,7 +1,7 @@
 'use client';
 
-import { usePostAdminBlogBanner } from '@/api/blog';
-import { PostAdminBlogBannerReqBody } from '@/api/blogSchema';
+import { usePostAdminBlogBanner } from '@/api/blog/blog';
+import { PostAdminBlogBannerReqBody } from '@/api/blog/blogSchema';
 import { fileType, uploadFile } from '@/api/file';
 import { YYYY_MMDD_THHmmss } from '@/data/dayjsFormat';
 import ImageUpload from '@/domain/admin/program/ui/form/ImageUpload';

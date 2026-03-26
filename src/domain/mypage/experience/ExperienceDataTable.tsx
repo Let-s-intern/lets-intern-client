@@ -1,8 +1,8 @@
-import { useGetAllUserExperienceQuery } from '@/api/experience';
-import { Sortable } from '@/api/experienceSchema';
+import { useGetAllUserExperienceQuery } from '@/api/experience/experience';
+import { Sortable } from '@/api/experience/experienceSchema';
 import OutlinedButton from '@/common/button/OutlinedButton';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import DataTable, { TableData, TableHeader } from '@/common/table/DataTable';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
 import { Filters } from '@/domain/mypage/experience/ExperienceFilters';
 import ActivityTypeCell from '@/domain/mypage/experience/table-cell/ActivityTypeCell';
 import CategoryCell from '@/domain/mypage/experience/table-cell/CategoryCell';

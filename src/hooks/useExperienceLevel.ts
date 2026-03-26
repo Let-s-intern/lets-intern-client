@@ -1,4 +1,4 @@
-import { useSearchUserExperiencesQuery } from '@/api/userExperience';
+import { useSearchUserExperiencesQuery } from '@/api/user/userExperience';
 import dayjs from '@/lib/dayjs';
 import { Schedule } from '@/schema';
 import { useEffect, useMemo, useState } from 'react';

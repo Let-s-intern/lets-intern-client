@@ -1,7 +1,10 @@
 'use client';
 
-import { useGetAdminBlogBannerList, usePatchAdminBlogBanner } from '@/api/blog';
-import { AdminBlogBannerListItem } from '@/api/blogSchema';
+import {
+  useGetAdminBlogBannerList,
+  usePatchAdminBlogBanner,
+} from '@/api/blog/blog';
+import { AdminBlogBannerListItem } from '@/api/blog/blogSchema';
 import { LOCALIZED_YYYY_MDdd_HHmm } from '@/data/dayjsFormat';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import dayjs from '@/lib/dayjs';

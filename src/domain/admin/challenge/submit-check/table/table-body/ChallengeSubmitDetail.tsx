@@ -34,6 +34,7 @@ const ChallengeSubmitDetail = ({
     mutationFn: async (status: string) => {
       const res = await axios.patch(`/mission/${mission.id}`, {
         status,
+        missionType: mission.missionType,
       });
       return res.data;
     },

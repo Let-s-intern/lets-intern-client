@@ -1,4 +1,4 @@
-import { useGetProgramReview } from '@/api/review';
+import { useGetProgramReview } from '@/api/review/review';
 import { FilterItem } from '@/types/common';
 import { challengeTypes, challengeTypeToDisplay } from '@/utils/convert';
 import { useEffect, useState } from 'react';

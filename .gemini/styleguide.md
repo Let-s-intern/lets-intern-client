@@ -693,3 +693,46 @@ function ItemEditModal({ open, items, recommendedItems, onConfirm, onClose }) {
 
 // The intermediate ItemEditBody component is eliminated, reducing coupling.
 ```
+
+---
+
+# Additional References
+
+## Vercel React Best Practices
+
+When reviewing React and Next.js code, also refer to the comprehensive performance optimization guidelines:
+
+**Location:** `.github/skills/vercel-react-best-practices/`
+
+**Key Documents:**
+
+- `AGENTS.md` - Complete guide with 40+ performance rules across 8 categories
+- `SKILL.md` - Quick reference and rule index
+
+**Priority Categories:**
+
+1. **CRITICAL:** Eliminating Waterfalls, Bundle Size Optimization
+2. **HIGH:** Server-Side Performance
+3. **MEDIUM-HIGH:** Client-Side Data Fetching
+4. **MEDIUM:** Re-render Optimization, Rendering Performance
+5. **LOW-MEDIUM:** JavaScript Performance
+6. **LOW:** Advanced Patterns
+
+**When to Apply:**
+
+- Writing new React components or Next.js pages
+- Implementing data fetching (client or server-side)
+- Reviewing code for performance issues
+- Refactoring existing React/Next.js code
+- Optimizing bundle size or load times
+
+**Key Rules to Check:**
+
+- Use `Promise.all()` for independent operations (avoid waterfalls)
+- Avoid barrel file imports for better tree-shaking
+- Use `React.cache()` for per-request deduplication
+- Defer non-critical third-party libraries
+- Use dynamic imports for heavy components
+- Minimize serialization at RSC boundaries
+
+Always consider both the design principles in this document AND the performance best practices from Vercel when providing code review feedback.

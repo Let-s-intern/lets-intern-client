@@ -12,9 +12,12 @@ import {
 } from '../schema';
 import { ProgramType } from '../types/common';
 import axios from '../utils/axios';
-import { UsePaymentDetailQueryKey, UsePaymentQueryKey } from './payment';
-import { tossInfoType } from './paymentSchema';
-import { useUserQueryKey } from './user';
+import {
+  UsePaymentDetailQueryKey,
+  UsePaymentQueryKey,
+} from './payment/payment';
+import { tossInfoType } from './payment/paymentSchema';
+import { useUserQueryKey } from './user/user';
 
 export const programApplicationSchema = z.object({
   applied: z.boolean().nullable().optional(),

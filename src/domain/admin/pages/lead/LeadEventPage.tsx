@@ -10,6 +10,7 @@ import {
 } from '@/api/lead';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import { usePaginationModelWithSearchParams } from '@/hooks/usePaginationModelWithSearchParams';
 import dayjs from '@/lib/dayjs';
 import {
   Button,
@@ -126,10 +127,8 @@ const LeadEventPage = () => {
   const [appliedFilters, setAppliedFilters] = useState<
     Partial<Omit<LeadEventListParams, 'pageable'>>
   >({});
-  const [paginationModel, setPaginationModel] = useState({
-    pageSize: 20,
-    page: 0,
-  });
+  const { paginationModel, setPaginationModel, handlePaginationModelChange } =
+    usePaginationModelWithSearchParams({ defaultPage: 0, defaultPageSize: 20 });
   const { snackbar } = useAdminSnackbar();
 
   const queryParams = useMemo<LeadEventListParams>(
@@ -321,7 +320,7 @@ const LeadEventPage = () => {
         rowCount={data?.pageInfo.totalElements ?? 0}
         paginationMode="server"
         paginationModel={paginationModel}
-        onPaginationModelChange={setPaginationModel}
+        onPaginationModelChange={handlePaginationModelChange}
         pageSizeOptions={[20, 50, 100]}
         autoHeight
       />

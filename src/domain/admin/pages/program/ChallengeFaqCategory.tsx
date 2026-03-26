@@ -1,6 +1,6 @@
 'use client';
 
-import Input from '@/common/input/Input';
+import Input from '@/common/input/v1/Input';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
 import { ChallengeContent } from '@/types/interface';
 

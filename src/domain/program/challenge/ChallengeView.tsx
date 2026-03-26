@@ -1,6 +1,10 @@
 'use client';
 
-import { useGetActiveChallenge, useGetChallengeFaq } from '@/api/challenge';
+import {
+  useGetActiveChallenge,
+  useGetChallengeFaq,
+} from '@/api/challenge/challenge';
+
 import ChallengeCheckList from '@/domain/program/challenge/challenge-view/ChallengeCheckList';
 import ChallengeCurriculum from '@/domain/program/challenge/challenge-view/ChallengeCurriculum';
 import ChallengeFaq from '@/domain/program/challenge/challenge-view/ChallengeFaq';
@@ -14,9 +18,9 @@ import {
 } from '@/schema';
 import useProgramStore from '@/store/useProgramStore';
 import { ChallengeContent } from '@/types/interface';
+
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
-import MoreReviewButton from '../../../common/review/MoreReviewButton';
 import LexicalContent from '../../blog/ui/LexicalContent';
 import ProgramDetailBlogReviewSection from '../../program/ProgramDetailBlogReviewSection';
 import ProgramDetailNavigation, {
@@ -25,6 +29,7 @@ import ProgramDetailNavigation, {
   PROGRAM_INTRO_ID,
   PROGRAM_REVIEW_ID,
 } from '../../program/ProgramDetailNavigation';
+import MoreReviewButton from '../../review/MoreReviewButton';
 import ProgramBestReviewSection from '../ProgramBestReviewSection';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
 import ChallengeBrand from './challenge-view/ChallengeBrand';
@@ -38,6 +43,7 @@ import ChallengeIntroPortfolio from './challenge-view/ChallengeIntroPortfolio';
 import ChallengePointView from './challenge-view/ChallengePointView';
 import ChallengePricePlanSection from './challenge-view/ChallengePricePlanSection';
 import ChallengeSummarySection from './challenge-view/ChallengeSummarySection';
+import FreeTemplateLayout from './challenge-view/FreeTemplateLayout';
 
 const {
   CAREER_START,
@@ -95,6 +101,8 @@ export const challengeColors = {
   ADC3FF: '#ADC3FF',
   B8BBFB: '#B8BBFB',
   A8E6FF: '#A8E6FF',
+  FF5E00: '#FF5E00',
+  FEEEE5: '#FEEEE5',
 };
 
 export type ChallengeColor = {
@@ -148,6 +156,8 @@ const ChallengeView: React.FC<{
       return { initialized: false };
     }
   }, [challenge.desc]);
+
+  const weekText = receivedContent.challengePoint?.weekText ?? '2주';
 
   const reviewExists =
     (receivedContent.challengeReview ?? []).length > 0 &&
@@ -208,6 +218,25 @@ const ChallengeView: React.FC<{
     }
   }, [challenge.challengeType]);
 
+  if (receivedContent.isFreeTemplate) {
+    return (
+      <div className="flex w-full flex-col">
+        <div className="flex w-full flex-col items-center">
+          <div className="flex w-full max-w-[1000px] flex-col px-5 pb-10 pt-6 md:gap-y-5 md:px-10 md:py-[60px] lg:px-0">
+            <ChallengeBasicInfo
+              challengeId={id}
+              challenge={challengeTransformed}
+              activeChallengeList={activeChallengeList?.challengeList}
+            />
+          </div>
+          <div className="flex w-full flex-col items-center overflow-x-hidden">
+            <FreeTemplateLayout freeContent={receivedContent.freeContent} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex w-full flex-col">
       <div className="flex w-full flex-col items-center">
@@ -231,6 +260,14 @@ const ChallengeView: React.FC<{
             id={PROGRAM_INTRO_ID}
             className="challenge_program flex w-full flex-col items-center"
           >
+            {/* 인트로 (최상단) */}
+            {receivedContent.intro?.root &&
+              typeof receivedContent.intro.root === 'object' &&
+              'type' in receivedContent.intro.root && (
+                <section className="mx-auto flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
+                  <LexicalContent node={receivedContent.intro.root} />
+                </section>
+              )}
             <section className="flex w-full flex-col items-center pt-[70px] md:pt-40">
               <ChallengePointView
                 challengeType={challenge.challengeType}
@@ -251,26 +288,29 @@ const ChallengeView: React.FC<{
             )}
 
             {/* 특별 챌린지, 합격자 후기 */}
-            {receivedContent.mainDescription?.root && (
-              <section className="flex w-full max-w-[1000px] flex-col px-5 pt-20 md:px-10 md:pt-40 lg:px-0">
-                <LexicalContent node={receivedContent.mainDescription?.root} />
-              </section>
-            )}
+            {receivedContent.mainDescription?.root &&
+              typeof receivedContent.mainDescription.root === 'object' &&
+              'type' in receivedContent.mainDescription.root && (
+                <section className="flex w-full max-w-[1000px] flex-col px-5 pt-20 md:px-10 md:pt-40 lg:px-0">
+                  <LexicalContent node={receivedContent.mainDescription.root} />
+                </section>
+              )}
 
             <section className="flex w-full flex-col md:items-center">
               {challenge.challengeType === PORTFOLIO ? (
-                <ChallengeIntroPortfolio />
+                <ChallengeIntroPortfolio weekText={weekText} />
               ) : challenge.challengeType === CAREER_START ? (
                 <ChallengeIntroCareerStart
                   isResumeTemplate={isResumeTemplate}
                   challengeType={challenge.challengeType}
                   challengeTitle={challenge.title ?? ''}
-                  weekText={receivedContent.challengePoint.weekText}
+                  weekText={weekText}
                 />
               ) : challenge.challengeType === EXPERIENCE_SUMMARY ||
                 challenge.challengeType === ETC ? (
                 <ChallengeIntroExpericeSummary
                   challengeType={challenge.challengeType}
+                  weekText={weekText}
                 />
               ) : (
                 <ChallengeIntroPersonalStatement />
@@ -282,17 +322,20 @@ const ChallengeView: React.FC<{
               isResumeTemplate={isResumeTemplate}
               challengeType={challenge.challengeType}
               challengeTitle={challenge.title ?? ''}
+              weekText={weekText}
             />
 
             <ChallengeResult
               isResumeTemplate={isResumeTemplate}
               challengeType={challenge.challengeType}
               challengeTitle={challenge.title ?? ''}
+              weekText={weekText}
             />
 
             <ChallengeSummarySection
               challengeType={challenge.challengeType}
               isResumeTemplate={isResumeTemplate}
+              weekText={weekText}
             />
           </div>
 

@@ -1,6 +1,9 @@
 'use client';
 
-import { useGetActiveChallenge, useGetChallengeFaq } from '@/api/challenge';
+import {
+  useGetActiveChallenge,
+  useGetChallengeFaq,
+} from '@/api/challenge/challenge';
 import ChallengeCurriculum from '@/domain/program/challenge/challenge-view/ChallengeCurriculum';
 import ChallengeFaq from '@/domain/program/challenge/challenge-view/ChallengeFaq';
 import dayjs from '@/lib/dayjs';
@@ -16,22 +19,23 @@ import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import { Break } from '../../../common/Break';
-import Heading2 from '../../../common/report/Heading2';
-import SectionSubHeader from '../../../common/SectionSubHeader';
-import LexicalContent from '../../blog/ui/LexicalContent';
+import SectionSubHeader from '../../../common/header/SectionSubHeader';
 import {
   PROGRAM_CURRICULUM_ID,
   PROGRAM_INTRO_ID,
   PROGRAM_REVIEW_ID,
 } from '../../program/ProgramDetailNavigation';
+import Heading2 from '../../report/Heading2';
 import Description from '../program-detail/Description';
 import ProgramBestReviewSection from '../ProgramBestReviewSection';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
 import ChallengeBrand from './challenge-view/ChallengeBrand';
 import ChallengeInfoBottom from './challenge-view/ChallengeInfoBottom';
+import ChallengeIntroEditorContent from './challenge-view/ChallengeIntroEditorContent';
 import ChallengeIntroPortfolio from './challenge-view/ChallengeIntroPortfolio';
 import ChallengePricePlanSection from './challenge-view/ChallengePricePlanSection';
 import ChallengeResult from './challenge-view/ChallengeResult';
+import FreeTemplateLayout from './challenge-view/FreeTemplateLayout';
 import PortfolioFeedbackInfo from './portfolio-view/PortfolioFeedbackInfo';
 import PortfolioIntroCheckList from './portfolio-view/PortfolioIntroCheckList';
 import PortfolioOneOnOne from './portfolio-view/PortfolioOneOnOne';
@@ -152,6 +156,8 @@ const ChallengePortfolioView: React.FC<{
     }
   }, [challenge.desc]);
 
+  const weekText = receivedContent.challengePoint?.weekText ?? '2주';
+
   const reviewExists =
     (receivedContent.challengeReview ?? []).length > 0 &&
     receivedContent.blogReview;
@@ -211,6 +217,23 @@ const ChallengePortfolioView: React.FC<{
     }
   }, [challenge.challengeType]);
 
+  if (receivedContent.isFreeTemplate) {
+    return (
+      <div className="flex w-full flex-col">
+        <div className="flex w-full flex-col items-center">
+          <div className="flex w-full max-w-[1000px] flex-col px-5 pb-10 pt-6 md:gap-y-5 md:px-10 md:py-[60px] lg:px-0">
+            <ChallengeBasicInfo
+              challengeId={id}
+              challenge={challengeTransformed}
+              activeChallengeList={activeChallengeList?.challengeList}
+            />
+          </div>
+          <FreeTemplateLayout freeContent={receivedContent.freeContent} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex w-full flex-col">
       <div className="flex w-full flex-col items-center">
@@ -234,11 +257,8 @@ const ChallengePortfolioView: React.FC<{
           className="flex w-full flex-col items-center overflow-x-hidden"
         >
           {/* LEXICAL */}
-          {receivedContent.mainDescription?.root && (
-            <section className="flex w-full max-w-[1000px] flex-col px-5 pt-20 md:px-10 md:pt-40 lg:px-0">
-              <LexicalContent node={receivedContent.mainDescription?.root} />
-            </section>
-          )}
+          {/* 상세설명 렉시컬에서 인트로 렉시컬로 변경 */}
+          <ChallengeIntroEditorContent challenge={challenge} />
 
           <div className="flex w-full flex-col items-center overflow-x-hidden bg-gradient-to-t from-[#F0F4FF] to-white">
             <section className="flex w-full max-w-[1000px] flex-col px-5 pt-20 md:px-10 md:pt-40 lg:px-0">
@@ -327,7 +347,7 @@ const ChallengePortfolioView: React.FC<{
                 </span>
                 하는
                 <Break />
-                렛츠커리어 포트폴리오 2주 완성 챌린지!
+                렛츠커리어 포트폴리오 {weekText} 완성 챌린지!
               </Heading2>
 
               <Description className="mt-3 break-keep md:mt-8 md:text-center">
@@ -399,6 +419,7 @@ const ChallengePortfolioView: React.FC<{
             isResumeTemplate={isResumeTemplate}
             challengeType={challenge.challengeType}
             challengeTitle={challenge.title ?? ''}
+            weekText={weekText}
           />
 
           <section className="flex w-full flex-col items-center pt-[70px] md:pt-40">
@@ -458,7 +479,7 @@ const ChallengePortfolioView: React.FC<{
               ) : (
                 <ChallengeIntroPersonalStatement />
               )} */}
-            <ChallengeIntroPortfolio />
+            <ChallengeIntroPortfolio weekText={weekText} />
           </section>
         </div>
 
@@ -540,6 +561,7 @@ const ChallengePortfolioView: React.FC<{
             isResumeTemplate={isResumeTemplate}
             challengeType={challenge.challengeType}
             challengeTitle={challenge.title ?? ''}
+            weekText={weekText}
           />
 
           {receivedContent.blogReview && (

@@ -5,7 +5,7 @@ import {
   useDeleteBlogTagMutation,
   usePostBlogMutation,
   usePostBlogTagMutation,
-} from '@/api/blog';
+} from '@/api/blog/blog';
 import {
   BlogContent,
   PostBlogReqBody,
@@ -13,7 +13,7 @@ import {
   postTagSchema,
   ProgramRecommendItem,
   TagDetail,
-} from '@/api/blogSchema';
+} from '@/api/blog/blogSchema';
 import { uploadFile } from '@/api/file';
 import TagSelector from '@/domain/admin/blog/TagSelector';
 import TextFieldLimit from '@/domain/admin/blog/TextFieldLimit';

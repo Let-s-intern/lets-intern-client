@@ -6,21 +6,21 @@ import {
   useGetLiveQueryKey,
   usePatchLiveMutation,
 } from '@/api/program';
-import FaqSection from '@/common/FaqSection';
-import ProgramRecommendEditor from '@/common/ProgramRecommendEditor';
 import EditorApp from '@/domain/admin/lexical/EditorApp';
 import LivePreviewButton from '@/domain/admin/LivePreviewButton';
 import LiveBasic from '@/domain/admin/program/LiveBasic';
 import LiveCurriculum from '@/domain/admin/program/LiveCurriculum';
 import LiveInformation from '@/domain/admin/program/LiveInformation';
 import LiveMentor from '@/domain/admin/program/LiveMentor';
-import LivePrice, { initialLivePrice } from '@/domain/admin/program/LivePrice';
+import LivePrice from '@/domain/admin/program/LivePrice';
 import ProgramBestReview from '@/domain/admin/program/ProgramBestReview';
 import ProgramBlogReviewEditor from '@/domain/admin/program/ProgramBlogReviewEditor';
 import ImageUpload from '@/domain/admin/program/ui/form/ImageUpload';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
+import FaqSection from '@/domain/faq/FaqSection';
+import ProgramRecommendEditor from '@/domain/program-recommend/ProgramRecommendEditor';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import { ProgramTypeEnum, UpdateLiveReq } from '@/schema';
@@ -160,18 +160,32 @@ const LiveEdit: React.FC = () => {
                 return;
               }
 
-              setInput((prev) => ({
-                ...prev,
-                priceInfo: {
-                  ...initialLivePrice,
-                  ...prev.priceInfo,
+              setInput((prev) => {
+                const prevPriceInfo = prev.priceInfo?.priceInfo;
+                return {
+                  ...prev,
                   priceInfo: {
-                    ...initialLivePrice.priceInfo,
-                    ...prev.priceInfo?.priceInfo,
-                    deadline: value.format('YYYY-MM-DDTHH:mm'),
+                    livePriceType:
+                      prev.priceInfo?.livePriceType ??
+                      live.priceInfo.livePriceType ??
+                      'CHARGE',
+                    priceInfo: {
+                      price: prevPriceInfo?.price ?? live.priceInfo.price ?? 0,
+                      discount:
+                        prevPriceInfo?.discount ?? live.priceInfo.discount ?? 0,
+                      accountNumber:
+                        prevPriceInfo?.accountNumber ??
+                        live.priceInfo.accountNumber ??
+                        '',
+                      accountType:
+                        prevPriceInfo?.accountType ??
+                        live.priceInfo.accountType ??
+                        'HANA',
+                      deadline: value.format('YYYY-MM-DDTHH:mm'),
+                    },
                   },
-                },
-              }));
+                };
+              });
             }}
           />
           <FormControlLabel

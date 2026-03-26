@@ -6,15 +6,13 @@ import {
   useAdminChallengeMentorListQuery,
   useDeleteChallengeMentor,
   usePostAdminChallengeMentor,
-} from '@/api/mentor';
-import { ChallengeMentorList } from '@/api/mentorSchema';
+} from '@/api/mentor/mentor';
+import { ChallengeMentorList } from '@/api/mentor/mentorSchema';
 import {
   useGetChallengeQuery,
   useGetChallengeQueryKey,
   usePatchChallengeMutation,
 } from '@/api/program';
-import FaqSection from '@/common/FaqSection';
-import ProgramRecommendEditor from '@/common/ProgramRecommendEditor';
 import ChallengePreviewButton from '@/domain/admin/ChallengePreviewButton';
 import EditorApp from '@/domain/admin/lexical/EditorApp';
 import ChallengeBasic from '@/domain/admin/program/ChallengeBasic';
@@ -29,6 +27,8 @@ import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
 import Heading3 from '@/domain/admin/ui/heading/Heading3';
+import FaqSection from '@/domain/faq/FaqSection';
+import ProgramRecommendEditor from '@/domain/program-recommend/ProgramRecommendEditor';
 import useAdminChallenge from '@/hooks/useAdminChallenge';
 import useAdminChallengeOption from '@/hooks/useAdminChallengeOption';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
@@ -40,16 +40,17 @@ import {
   UpdateChallengeReq,
 } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
-import { Button } from '@mui/material';
+import { Button, FormControlLabel, Switch } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
+import ChallengeLecture from '../program/ChallengeLecture';
 import ChallengeFaqCategory from './program/ChallengeFaqCategory';
 import ChallengeMentorRegistrationSection from './program/ChallengeMentorRegistrationSection';
 import ProgramSchedule from './program/ProgramSchedule';
 
-const { BASIC, STANDARD, PREMIUM } = ChallengePricePlanEnum.enum;
+const { BASIC, STANDARD, PREMIUM, LIGHT } = ChallengePricePlanEnum.enum;
 
 /** 선택 해제된 멘토와 챌린지 연결 삭제 */
 const useDeleteDifferMentors = () => {
@@ -123,6 +124,7 @@ const ChallengeEdit: React.FC = () => {
     challengeReview: [],
     faqCategory: [],
   });
+  const [isFreeTemplate, setIsFreeTemplate] = useState(false);
 
   const defaultBasicPriceInfo = useMemo(() => {
     const basic: ChallengePriceReq = {
@@ -167,14 +169,21 @@ const ChallengeEdit: React.FC = () => {
   const {
     pricePlan,
     data: challengeOptions,
+    basicOptIds,
     standardOptIds,
     premiumOptIds,
+    basicInfo,
     standardInfo,
     premiumInfo,
+    isLightEnabled,
+    lightInfo,
     handleChangeInfo,
     handleChangePricePlan,
+    handleChangeLightInfo,
+    setBasicOptIds,
     setStandardOptIds,
     setPremiumOptIds,
+    setIsLightEnabled,
   } = useAdminChallengeOption(challenge);
 
   /** 챌린지 관련 함수 */
@@ -189,6 +198,14 @@ const ChallengeEdit: React.FC = () => {
       [e.target.name]: url,
     }));
   };
+
+  const handleChangeIsFreeTemplate = useCallback((checked: boolean) => {
+    setIsFreeTemplate(checked);
+    setContent((prev) => ({
+      ...prev,
+      isFreeTemplate: checked,
+    }));
+  }, []);
 
   const onClickSave = useCallback(async () => {
     if (!challengeIdString) {
@@ -210,7 +227,13 @@ const ChallengeEdit: React.FC = () => {
       };
     }
 
-    const newPriceInfo = [basicPriceInfo];
+    const newPriceInfo = [
+      {
+        ...basicPriceInfo,
+        ...basicInfo,
+        challengeOptionIdList: basicOptIds,
+      },
+    ];
 
     if (pricePlan.current !== BASIC) {
       newPriceInfo.push({
@@ -229,6 +252,26 @@ const ChallengeEdit: React.FC = () => {
         challengeOptionIdList: [
           ...new Set(standardOptIds.concat(premiumOptIds)),
         ],
+      });
+    }
+
+    if (isLightEnabled) {
+      newPriceInfo.push({
+        priceInfo: {
+          price: lightInfo.price,
+          discount: lightInfo.discount,
+          accountNumber: basicPriceInfo.priceInfo?.accountNumber ?? null,
+          accountType: basicPriceInfo.priceInfo?.accountType ?? null,
+          deadline: basicPriceInfo.priceInfo?.deadline ?? null,
+        },
+        title: lightInfo.title,
+        description: lightInfo.description,
+        charge: lightInfo.price,
+        refund: 0,
+        challengePriceType: 'CHARGE',
+        challengeParticipationType: 'LIVE',
+        challengePricePlanType: LIGHT,
+        challengeOptionIdList: [],
       });
     }
 
@@ -264,6 +307,10 @@ const ChallengeEdit: React.FC = () => {
     client,
     content,
     input,
+    basicInfo,
+    basicOptIds,
+    isLightEnabled,
+    lightInfo,
     premiumInfo,
     standardInfo,
     standardOptIds,
@@ -280,6 +327,7 @@ const ChallengeEdit: React.FC = () => {
     setContent((prev) => ({
       ...(prev.initialized ? prev : { ...receivedContent, initialized: true }),
     }));
+    setIsFreeTemplate(Boolean(receivedContent.isFreeTemplate));
   }, [receivedContent]);
 
   useEffect(() => {
@@ -305,6 +353,16 @@ const ChallengeEdit: React.FC = () => {
       challengeMentorData?.mentorList.map((item) => item.userId) ?? [];
   }, [challengeMentorData]);
 
+  useEffect(() => {
+    // challengeType 초기값 설정
+    if (challenge?.challengeType && !input.challengeType) {
+      setInput((prev) => ({
+        ...prev,
+        challengeType: challenge.challengeType,
+      }));
+    }
+  }, [challenge?.challengeType]);
+
   if (!challenge || !content.initialized) {
     return <div>loading...</div>;
   }
@@ -312,7 +370,21 @@ const ChallengeEdit: React.FC = () => {
   return (
     <div className="mx-3 mb-40 mt-3">
       <Header>
-        <Heading>챌린지 수정</Heading>
+        <div className="flex items-center gap-4">
+          <Heading>챌린지 수정</Heading>
+          <FormControlLabel
+            control={
+              <Switch
+                color="primary"
+                checked={isFreeTemplate}
+                onChange={(event) =>
+                  handleChangeIsFreeTemplate(event.target.checked)
+                }
+              />
+            }
+            label="자유 템플릿"
+          />
+        </div>
         <div className="flex items-center gap-3">
           <Button
             variant="outlined"
@@ -360,15 +432,22 @@ const ChallengeEdit: React.FC = () => {
             defaultValue={challenge.priceInfo}
             setInput={setInput}
             options={challengeOptions?.challengeOptionList ?? []}
+            basicOptIds={basicOptIds}
             standardOptIds={standardOptIds}
             premiumOptIds={premiumOptIds}
+            basicInfo={basicInfo}
             standardInfo={standardInfo}
             premiumInfo={premiumInfo}
             pricePlan={pricePlan.current}
             onChangePricePlanInfo={handleChangeInfo}
+            onChangeBasicOptIds={(ids) => setBasicOptIds(ids)}
             onChangePremiumOptIds={(ids) => setPremiumOptIds(ids)}
             onChangeStandardOptIds={(ids) => setStandardOptIds(ids)}
             onChangePricePlan={handleChangePricePlan}
+            isLightEnabled={isLightEnabled}
+            lightInfo={lightInfo}
+            onLightEnabledChange={setIsLightEnabled}
+            onChangeLightInfo={handleChangeLightInfo}
           />
           <div className="flex flex-col gap-4">
             {/* 일정 */}
@@ -445,79 +524,127 @@ const ChallengeEdit: React.FC = () => {
         />
       </section>
 
-      <Heading2>프로그램 소개</Heading2>
-      <section>
-        <ChallengePointEditor
-          challengePoint={content.challengePoint}
-          setContent={setContent}
-        />
+      {isFreeTemplate ? (
+        <>
+          <Heading2>프로그램 설명 (자유 템플릿 전용)</Heading2>
+          <section className="mt-6">
+            <EditorApp
+              initialEditorStateJsonString={
+                content.freeContent
+                  ? JSON.stringify(content.freeContent)
+                  : undefined
+              }
+              onChangeSerializedEditorState={(json) =>
+                setContent((prev) => ({
+                  ...prev,
+                  isFreeTemplate: true,
+                  freeContent: json,
+                }))
+              }
+            />
+          </section>
+        </>
+      ) : (
+        <>
+          <Heading2>프로그램 소개</Heading2>
+          <section className="mt-6">
+            <Heading3>인트로</Heading3>
+            <EditorApp
+              initialEditorStateJsonString={JSON.stringify(content.intro)}
+              onChangeSerializedEditorState={(json) =>
+                setContent((prev) => ({
+                  ...prev,
+                  intro: json,
+                }))
+              }
+            />
 
-        <Heading3>상세 설명 (특별 챌린지 및 합격자 후기)</Heading3>
-        <EditorApp
-          initialEditorStateJsonString={JSON.stringify(content.mainDescription)}
-          onChangeSerializedEditorState={(json) =>
-            setContent((prev) => ({
-              ...prev,
-              mainDescription: json,
-            }))
-          }
-        />
-      </section>
+            <ChallengePointEditor
+              challengePoint={content.challengePoint}
+              setContent={setContent}
+            />
 
-      {/* 프로그램 추천 */}
-      <section className="mb-6">
-        <ProgramRecommendEditor
-          programRecommend={content.programRecommend ?? { list: [] }}
-          setProgramRecommend={(programRecommend) =>
-            setContent((prev) => ({ ...prev, programRecommend }))
-          }
-        />
-      </section>
+            {input.challengeType && (
+              <ChallengeLecture
+                challengeType={input.challengeType}
+                content={content}
+                setContent={setContent}
+              />
+            )}
 
-      <ChallengeCurriculumEditor
-        curriculum={content.curriculum}
-        setContent={setContent}
-      />
+            <Heading3>상세 설명 (특별 챌린지 및 합격자 후기)</Heading3>
+            <EditorApp
+              initialEditorStateJsonString={JSON.stringify(
+                content.mainDescription,
+              )}
+              onChangeSerializedEditorState={(json) =>
+                setContent((prev) => ({
+                  ...prev,
+                  mainDescription: json,
+                }))
+              }
+            />
+          </section>
 
-      <ProgramBestReview
-        reviewFields={content.challengeReview ?? []}
-        setReviewFields={(reviewFields) =>
-          setContent((prev) => ({ ...prev, challengeReview: reviewFields }))
-        }
-      />
+          {/* 프로그램 추천 */}
+          <section className="mb-6">
+            <ProgramRecommendEditor
+              programRecommend={content.programRecommend ?? { list: [] }}
+              setProgramRecommend={(programRecommend) =>
+                setContent((prev) => ({ ...prev, programRecommend }))
+              }
+            />
+          </section>
 
-      <ProgramBlogReviewEditor
-        blogReview={content.blogReview ?? { list: [] }}
-        setBlogReview={(blogReview) =>
-          setContent((prev) => ({ ...prev, blogReview }))
-        }
-      />
-
-      <div className="my-6">
-        <div className="mb-6">
-          <ChallengeFaqCategory
-            faqCategory={content.faqCategory}
-            onChange={(e) => {
-              setContent((prev) => ({
-                ...prev,
-                faqCategory: e.target.value
-                  .split(',')
-                  .map((item) => item.trim()),
-              }));
-            }}
+          <ChallengeCurriculumEditor
+            curriculum={content.curriculum}
+            setContent={setContent}
+            curriculumImage={content.curriculumImage}
+            weekText={content.challengePoint?.weekText}
+            content={content}
           />
-        </div>
-        <FaqSection
-          programType={ProgramTypeEnum.enum.CHALLENGE}
-          faqInfo={
-            input.faqInfo ??
-            challenge.faqInfo.map((info) => ({ faqId: info.id }))
-          }
-          setFaqInfo={(faqInfo) =>
-            setInput((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))
-          }
-        />
-      </div>
+
+          <ProgramBestReview
+            reviewFields={content.challengeReview ?? []}
+            setReviewFields={(reviewFields) =>
+              setContent((prev) => ({ ...prev, challengeReview: reviewFields }))
+            }
+          />
+
+          <ProgramBlogReviewEditor
+            blogReview={content.blogReview ?? { list: [] }}
+            setBlogReview={(blogReview) =>
+              setContent((prev) => ({ ...prev, blogReview }))
+            }
+          />
+
+          <div className="my-6">
+            <div className="mb-6">
+              <ChallengeFaqCategory
+                faqCategory={content.faqCategory}
+                onChange={(e) => {
+                  setContent((prev) => ({
+                    ...prev,
+                    faqCategory: e.target.value
+                      .split(',')
+                      .map((item) => item.trim()),
+                  }));
+                }}
+              />
+            </div>
+            <FaqSection
+              programType={ProgramTypeEnum.enum.CHALLENGE}
+              faqInfo={
+                input.faqInfo ??
+                challenge.faqInfo.map((info) => ({ faqId: info.id }))
+              }
+              setFaqInfo={(faqInfo) =>
+                setInput((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))
+              }
+            />
+          </div>
+        </>
+      )}
 
       <footer className="flex items-center justify-end gap-3">
         <ChallengePreviewButton

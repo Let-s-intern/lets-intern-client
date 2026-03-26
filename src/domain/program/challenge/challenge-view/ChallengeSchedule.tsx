@@ -6,6 +6,7 @@ import { ChallengeIdPrimitive } from '@/schema';
 import getChallengeSchedule from '@/utils/getChallengeSchedule';
 import { ReactNode } from 'react';
 import { LuCalendarDays } from 'react-icons/lu';
+import { DEFAULT_COLOR } from '../utils/getChallengeThemeColor';
 
 const IconTitle = ({
   icon,
@@ -69,9 +70,10 @@ const ScheduleDescription = ({
 
 interface Props {
   challenge: ChallengeIdPrimitive;
+  themeColor?: string;
 }
 
-function ChallengeSchedule({ challenge }: Props) {
+function ChallengeSchedule({ challenge, themeColor = DEFAULT_COLOR }: Props) {
   const {
     startDate,
     deadline,
@@ -86,14 +88,14 @@ function ChallengeSchedule({ challenge }: Props) {
     <>
       <ScheduleBox className="rounded-b-none pb-0 md:rounded-xs md:pb-5">
         <ScheduleWrapper className="hidden md:block">
-          <IconTitle icon={<Pin color="#4A76FF" width={20} height={20} />}>
+          <IconTitle icon={<Pin color={themeColor} width={20} height={20} />}>
             시작 일자
           </IconTitle>
           <ScheduleDescription>{startDate}</ScheduleDescription>
         </ScheduleWrapper>
         <ScheduleWrapper>
           <IconTitle
-            icon={<Announcement color="#4A76FF" width={20} height={20} />}
+            icon={<Announcement color={themeColor} width={20} height={20} />}
           >
             진행 기간
           </IconTitle>
@@ -106,7 +108,7 @@ function ChallengeSchedule({ challenge }: Props) {
       <ScheduleBox className="rounded-t-none md:rounded-xs">
         <ScheduleWrapper>
           <IconTitle
-            icon={<ClockIcon color="#4A76FF" width={20} height={20} />}
+            icon={<ClockIcon color={themeColor} width={20} height={20} />}
           >
             모집 마감
           </IconTitle>
@@ -114,7 +116,7 @@ function ChallengeSchedule({ challenge }: Props) {
         </ScheduleWrapper>
         <ScheduleWrapper>
           <IconTitle
-            icon={<LuCalendarDays color="#4A76FF" className="h-5 w-5" />}
+            icon={<LuCalendarDays color={themeColor} className="h-5 w-5" />}
           >
             <span className="inline-block">OT 안내</span>
           </IconTitle>

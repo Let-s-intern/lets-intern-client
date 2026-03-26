@@ -1,4 +1,4 @@
-import SectionHeader from '@/common/SectionHeader';
+import SectionHeader from '@/common/header/SectionHeader';
 import Image from 'next/image';
 import MainTitle from '../ui/MainTitle';
 const strategyCards = [
@@ -154,11 +154,17 @@ const StrategyCard = ({
   );
 };
 
-const MarketingApplicationStrategySection: React.FC = () => {
+interface MarketingApplicationStrategySectionProps {
+  weekText: string;
+}
+
+const MarketingApplicationStrategySection: React.FC<
+  MarketingApplicationStrategySectionProps
+> = ({ weekText }) => {
   return (
     <section
       id="differentiators"
-      className="flex scroll-mt-[56px] flex-col items-center bg-static-100 px-5 py-[60px] md:scroll-mt-[60px] md:px-0 md:py-[100px]"
+      className="flex scroll-mt-[44px] flex-col items-center bg-static-100 px-5 py-[60px] md:scroll-mt-[60px] md:px-0 md:py-[100px]"
     >
       <SectionHeader className="mb-6 font-semibold text-neutral-45 md:mb-12">
         차별점
@@ -169,7 +175,7 @@ const MarketingApplicationStrategySection: React.FC = () => {
       </span>
       <MainTitle className="text-center">
         반복적인 서류 지원은 멈추고 <br />
-        나만의 무기를 완성하는 4주의 시간
+        나만의 무기를 완성하는 {weekText}의 시간
       </MainTitle>
       <div className="mt-12 flex w-full max-w-[1000px] flex-col gap-6">
         {strategyCards.map((card, idx) => (

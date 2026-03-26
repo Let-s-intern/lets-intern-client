@@ -1,6 +1,5 @@
 import benefitImg1 from '@/assets/benefit1.jpg';
 import benefitImg2 from '@/assets/benefit2.jpg';
-import benefitImg3 from '@/assets/benefit3.jpg';
 import { challengeColors } from '@/domain/program/challenge/ChallengeView';
 import BenefitCard from '@/domain/program/program-detail/different/BenefitCard';
 import DifferentCard, {
@@ -23,7 +22,7 @@ export const tripleBenefits = [
   {
     title: '챌린지 수료시, 챌린지 3종 할인 쿠폰 제공',
     options: [
-      '미션 80점 이상 완료 시 이력서, 자기소개서, 포트폴리오 완성 챌린지 할인 쿠폰 발급!\n(챌린지 3종 중 1회 적용 가능)',
+      '미션 80점 이상 완료 시 자기소개서, 포트폴리오 완성, 면접 챌린지 등 할인 쿠폰 발급!\n(챌린지 3종 중 1회 적용 가능)',
     ],
     imgUrl: { src: '/images/benefit0.svg' },
   },
@@ -41,13 +40,6 @@ export const tripleBenefits = [
       `프로그램 종료 시, 참여자분들께 렛츠커리어에서 인증하는 참여 수료증을 발급해드립니다.`,
     ],
     imgUrl: benefitImg2,
-  },
-  {
-    title: '네트워킹 파티',
-    options: [
-      `주니어 PM, 제조업 대기업 재직자 등이 포함된 커리어 선배들과의 온/오프라인 네트워킹 파티에 초대합니다.`,
-    ],
-    imgUrl: benefitImg3,
   },
 ];
 
@@ -341,11 +333,6 @@ const ChallengeDifferent = ({
               imgUrl={tripleBenefits[2].imgUrl.src}
             />
           )}
-          <BenefitCard
-            title={tripleBenefits[3].title}
-            options={tripleBenefits[3].options}
-            imgUrl={tripleBenefits[3].imgUrl.src}
-          />
         </div>
       </div>
     </section>

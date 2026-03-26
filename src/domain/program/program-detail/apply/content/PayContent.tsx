@@ -3,7 +3,7 @@ import { twMerge } from '@/lib/twMerge';
 import { useRef } from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { ProgramQuery } from '../../../../../api/program';
-import Input from '../../../../../common/ui/input/Input';
+import Input from '../../../../../common/input/v2/Input';
 import { ICouponForm } from '../../../../../types/interface';
 import ProgramCard from '../../../ProgramCard';
 import { PayInfo, ProgramDate } from '../../section/ApplySection';

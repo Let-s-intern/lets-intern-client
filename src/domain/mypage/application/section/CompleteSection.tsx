@@ -1,6 +1,6 @@
 import { MypageApplication } from '@/api/application';
 import { useState } from 'react';
-import MobileCarousel from '../../../../common/ui/carousel/MobileCarousel';
+import MobileCarousel from '../../../../common/carousel/MobileCarousel';
 import Button from '../../ui/button/Button';
 import ApplicationCard from '../../ui/card/root/ApplicationCard';
 

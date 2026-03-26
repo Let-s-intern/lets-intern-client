@@ -1,6 +1,6 @@
 'use client';
 
-import { usePatchChallengePayback } from '@/api/challenge';
+import { usePatchChallengePayback } from '@/api/challenge/challenge';
 import { useAdminChallengeTitle } from '@/context/CurrentAdminChallengeProvider';
 import dayjs from '@/lib/dayjs';
 import { getChallengeIdApplicationsPayback, UpdatePaybackReq } from '@/schema';
@@ -81,7 +81,7 @@ function createColumns(ths: number[]): GridColDef<Row>[] {
       },
     },
     ...ths
-      .filter((th) => th !== 99)
+      .filter((th) => th !== 99 && th !== 999)
       .map((th): GridColDef<Row> => {
         return {
           field: `th${th}`,
@@ -104,7 +104,7 @@ function createColumns(ths: number[]): GridColDef<Row>[] {
       editable: true,
       cellClassName: 'p-0',
       valueGetter(_, row) {
-        const score = row.scores.find((s) => s.th === 99);
+        const score = row.scores.find((s) => s.th === 999);
         return score?.score ?? '0';
       },
     },

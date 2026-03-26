@@ -1,5 +1,5 @@
 import { CurationLocationType, CurationType } from '@/api/curation';
-import { QuestionType } from '@/api/review';
+import { QuestionType } from '@/api/review/review';
 import dayjs from '@/lib/dayjs';
 import { Dayjs } from 'dayjs';
 import {
@@ -39,6 +39,9 @@ export const questionTypeToText: Record<QuestionType, string> = {
   GOAL_RESULT: '목표 달성 여부',
   WORRY: '서류 작성 고민', // report
   WORRY_RESULT: '고민 해결 여부', // report
+  FEEDBACK_MENTOR_NICKNAME: '피드백 멘토 닉네임',
+  FEEDBACK_GOOD_POINT: '피드백 만족했던 점',
+  FEEDBACK_BAD_POINT: '피드백 아쉬웠던 점',
 };
 
 export const programClassificationToText: Record<
@@ -61,6 +64,7 @@ export const challengeTypeToText: Record<ChallengeType, string> = {
   PERSONAL_STATEMENT_LARGE_CORP: '대기업 자소서',
   MARKETING: '마케팅',
   EXPERIENCE_SUMMARY: '경험 정리',
+  HR: 'HR',
 };
 
 export const challengeTypeToDisplay: Record<ChallengeType, string> = {
@@ -73,6 +77,7 @@ export const challengeTypeToDisplay: Record<ChallengeType, string> = {
   PERSONAL_STATEMENT_LARGE_CORP: '대기업 공채 자소서 완성 챌린지',
   MARKETING: '마케팅',
   EXPERIENCE_SUMMARY: '경험 정리 챌린지',
+  HR: 'HR',
 };
 
 export const challengeTypes: ChallengeType[] = [
@@ -85,6 +90,7 @@ export const challengeTypes: ChallengeType[] = [
   'PERSONAL_STATEMENT_LARGE_CORP',
   'MARKETING',
   'EXPERIENCE_SUMMARY',
+  'HR',
 ];
 
 export const programStatusToText: Record<string, string> = {
@@ -416,4 +422,5 @@ export const challengePricePlanToText: Record<ChallengePricePlan, string> = {
   BASIC: '베이직',
   STANDARD: '스탠다드',
   PREMIUM: '프리미엄',
+  LIGHT: '라이트',
 };

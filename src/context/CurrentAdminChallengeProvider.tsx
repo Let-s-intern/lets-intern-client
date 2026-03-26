@@ -1,6 +1,6 @@
 'use client';
 
-import { useChallengeMissionListQuery } from '@/api/challenge';
+import { useChallengeMissionListQuery } from '@/api/challenge/challenge';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { createContext, useContext } from 'react';

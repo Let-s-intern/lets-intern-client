@@ -1,6 +1,6 @@
 'use client';
 
-import { usePostBlogRatingMutation } from '@/api/blog';
+import { usePostBlogRatingMutation } from '@/api/blog/blog';
 import { useState } from 'react';
 
 interface BlogRatingProps {

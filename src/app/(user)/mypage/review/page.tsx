@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 
-import { useGetAllApplicationsForReviewQuery } from '@/api/review';
+import { useGetAllApplicationsForReviewQuery } from '@/api/review/review';
 import DoneSection from '@/domain/mypage/review/section/DoneSection';
 import WaitingSection from '@/domain/mypage/review/section/WaitingSection';
 

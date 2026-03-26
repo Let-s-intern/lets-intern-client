@@ -1,4 +1,4 @@
-import { useGetProgramReview } from '@/api/review';
+import { useGetProgramReview } from '@/api/review/review';
 import { liveJobList } from '@/schema';
 import { FilterItem } from '@/types/common';
 import { challengeTypes, challengeTypeToDisplay } from '@/utils/convert';

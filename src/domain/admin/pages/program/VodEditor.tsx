@@ -1,7 +1,7 @@
 'use client';
 
 import { fileType, uploadFile } from '@/api/file';
-import Input from '@/common/input/Input';
+import Input from '@/common/input/v1/Input';
 import SelectFormControl from '@/domain/admin/program/SelectFormControl';
 import ImageUpload from '@/domain/admin/program/ui/form/ImageUpload';
 import {

@@ -1,6 +1,6 @@
 'use client';
 
-import { WishJobModal } from '@/common/challenge/my-challenge/talent-pool/WishJobModal';
+import { WishJobModal } from '@/domain/challenge/my-challenge/talent-pool/WishJobModal';
 import { ComponentProps, useEffect, useRef, useState } from 'react';
 
 const CURRENT_YEAR = new Date().getFullYear();

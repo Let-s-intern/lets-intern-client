@@ -10,7 +10,7 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useRouter } from 'next/navigation';
 import { useMemo, useRef } from 'react';
 import styled from 'styled-components';
-import Input from '../../../../../common/input/Input';
+import Input from '../../../../../common/input/v1/Input';
 import storage from '../../../../../Firebase';
 import {
   challengeTypes,

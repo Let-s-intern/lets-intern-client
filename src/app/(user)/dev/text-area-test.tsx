@@ -1,6 +1,6 @@
 'use client';
 
-import TextArea from '@/common/ui/input/TextArea';
+import TextArea from '@/common/input/TextArea';
 import { useState } from 'react';
 
 export default function TextAreaTest() {

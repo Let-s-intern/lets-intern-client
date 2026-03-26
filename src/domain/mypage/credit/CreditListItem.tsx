@@ -1,4 +1,4 @@
-import { PaymentType } from '@/api/paymentSchema';
+import { PaymentType } from '@/api/payment/paymentSchema';
 import { ReportType } from '@/api/report';
 import { twMerge } from '@/lib/twMerge';
 import Link from 'next/link';

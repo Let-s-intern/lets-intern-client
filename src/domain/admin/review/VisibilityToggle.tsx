@@ -1,5 +1,5 @@
-import { usePatchAdminAttendance } from '@/api/attendance';
-import { ReviewType, useUpdateAdminProgramReview } from '@/api/review';
+import { usePatchAdminAttendance } from '@/api/attendance/attendance';
+import { ReviewType, useUpdateAdminProgramReview } from '@/api/review/review';
 import { Row } from '@/domain/admin/pages/review/AdminChallengeReviewListPage';
 import { Switch } from '@mui/material';
 

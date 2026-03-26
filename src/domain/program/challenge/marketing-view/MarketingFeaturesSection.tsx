@@ -1,8 +1,8 @@
-import SectionSubHeader from '@/common/SectionSubHeader';
+import SectionSubHeader from '@/common/header/SectionSubHeader';
 import React, { ReactNode } from 'react';
 import MainTitle from '../ui/MainTitle';
 
-const badges = ['콘텐츠', 'CRM', '그로스', 'AE', '퍼포먼스'];
+const badges = ['콘텐츠', '마케팅 전략', '그로스', 'AE'];
 
 const cards = [
   {
@@ -27,12 +27,12 @@ const cards = [
         확실하게 궁금증을 해결해요.
       </>
     ),
-    mobileImg: 'marketing-point2-mobile.png',
-    desktopImg: 'marketing-point2-desktop.png',
+    mobileImg: 'marketing-point2-mobile2.png',
+    desktopImg: 'marketing-point2-desktop2.png',
     alt: '현직자 회사 로고(대학내일, 야놀자, 클래스101 등) 이미지',
   },
   {
-    title: '챌린지를 통한 서류 완성',
+    title: '3종 서류 완성',
     description: (
       <>
         채용 공고에 바로 지원이 <br />
@@ -74,14 +74,14 @@ const Card = ({
       <div className="absolute -top-2.5 left-5 -rotate-12 rounded-xxs bg-[#2CB2FF] px-3 py-1.5 text-xsmall16 font-semibold text-white md:-top-7 md:px-4 md:py-2 md:text-small18">
         Point {index}
       </div>
-      <div className="h-fit w-full rounded-[4.5px] border border-neutral-80 bg-neutral-90">
-        <picture>
+      <div className="flex h-fit w-full items-center justify-center rounded-[4.5px] border border-neutral-80 bg-neutral-90 p-3">
+        <picture className="flex justify-center">
           <source
             srcSet={`/images/${mobileImg}`}
             media="(orientation: portrait)"
           />
           <img
-            className="object-cover"
+            className="mx-auto object-cover"
             src={`/images/${desktopImg}`}
             alt={alt}
           />
@@ -95,7 +95,13 @@ const Card = ({
   );
 };
 
-const MarketingFeaturesSection: React.FC = () => {
+interface MarketingFeaturesSectionProps {
+  weekText: string;
+}
+
+const MarketingFeaturesSection: React.FC<MarketingFeaturesSectionProps> = ({
+  weekText,
+}) => {
   return (
     <section className="flex flex-col items-center bg-black pb-[70px] pt-[50px] text-center md:pb-28 md:pt-32">
       <div className="flex flex-col">
@@ -108,7 +114,7 @@ const MarketingFeaturesSection: React.FC = () => {
             수차례의 챌린지 운영 노하우를 집약해
           </span>
           <span className="gradient-text bg-gradient-to-r from-[#7FDDFF] to-[#7395FF]">
-            단 4주 만에 끝내는 <br className="md:hidden" />
+            단 {weekText} 만에 끝내는 <br className="md:hidden" />
             실전형 커리큘럼을 설계했습니다.
           </span>
         </MainTitle>

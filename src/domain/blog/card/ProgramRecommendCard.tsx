@@ -1,4 +1,4 @@
-import { ProgramRecommendItem } from '@/api/blogSchema';
+import { ProgramRecommendItem } from '@/api/blog/blogSchema';
 import {
   fetchChallenge,
   fetchLive,
@@ -16,7 +16,6 @@ interface Props {
 }
 
 async function ProgramRecommendCard({ program }: Props) {
-  console.log('programRecommend >>', program);
   const { title, thumbnail, ctaLink } = await getProgramInfo();
 
   const isProgramAvailable = title && thumbnail !== '' && ctaLink !== '';

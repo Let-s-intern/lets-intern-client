@@ -129,6 +129,30 @@ const ReviewDetailModal = ({
                 </Typography>
               </>
             )}
+            {selectedRow.reviewItemList?.find(
+              (item) => item.questionType === 'FEEDBACK_MENTOR_NICKNAME',
+            )?.answer && (
+              <>
+                <Typography variant="body1">
+                  <strong>피드백 멘토 닉네임:</strong>{' '}
+                  {selectedRow.reviewItemList?.find(
+                    (item) => item.questionType === 'FEEDBACK_MENTOR_NICKNAME',
+                  )?.answer || '-'}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>피드백 만족했던 점:</strong>{' '}
+                  {selectedRow.reviewItemList?.find(
+                    (item) => item.questionType === 'FEEDBACK_GOOD_POINT',
+                  )?.answer || '-'}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>피드백 아쉬웠던 점:</strong>{' '}
+                  {selectedRow.reviewItemList?.find(
+                    (item) => item.questionType === 'FEEDBACK_BAD_POINT',
+                  )?.answer || '-'}
+                </Typography>
+              </>
+            )}
           </Box>
         ) : (
           <Typography>데이터를 불러오는 중...</Typography>

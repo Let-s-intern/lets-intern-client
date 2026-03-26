@@ -1,7 +1,7 @@
 import Roadmap1 from '@/assets/graphic/home/roadmap/1.svg?react';
 import Roadmap2 from '@/assets/graphic/home/roadmap/2.svg?react';
 import Roadmap3 from '@/assets/graphic/home/roadmap/3.svg?react';
-import MoreHeader from '@/common/ui/MoreHeader';
+import MoreHeader from '@/common/header/MoreHeader';
 import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
 import { useMediaQuery } from '@mui/material';
 import clsx from 'clsx';

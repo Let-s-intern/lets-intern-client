@@ -1,4 +1,4 @@
-import Heading2 from '@/common/ui/Heading2';
+import Heading2 from '@/common/header/Heading2';
 import Description from '@/domain/program/program-detail/Description';
 import { ProgramType } from '@/types/common';
 import { ProgramBlogReview } from '@/types/interface';

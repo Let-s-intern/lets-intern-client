@@ -1,5 +1,5 @@
-import { usePatchChallengeOption } from '@/api/challengeOption';
-import { usePatchMission } from '@/api/mission';
+import { usePatchChallengeOption } from '@/api/challenge/challengeOption';
+import { usePatchMission } from '@/api/mission/mission';
 import { useMissionsOfCurrentChallengeRefetch } from '@/context/CurrentAdminChallengeProvider';
 import { NO_OPTION_ID } from '@/utils/constants';
 import { useCallback } from 'react';

@@ -1,7 +1,10 @@
 import dayjs from '@/lib/dayjs';
 import { z } from 'zod';
-import { challengeOptionSchema } from './api/challengeOptionSchema';
-import { activitySchema, categorySchema } from './api/experienceSchema';
+import { challengeOptionSchema } from './api/challenge/challengeOptionSchema';
+import {
+  activitySchema,
+  categorySchema,
+} from './api/experience/experienceSchema';
 
 export interface Pageable {
   page: number;
@@ -32,7 +35,12 @@ export const pageInfo = z.object({
 export type PageInfo = z.infer<typeof pageInfo>;
 
 // 챌린지 가격 플랜
-export const ChallengePricePlanEnum = z.enum(['BASIC', 'STANDARD', 'PREMIUM']);
+export const ChallengePricePlanEnum = z.enum([
+  'BASIC',
+  'STANDARD',
+  'PREMIUM',
+  'LIGHT',
+]);
 export type ChallengePricePlan = z.infer<typeof ChallengePricePlanEnum>;
 
 /** GET /api/v1/challenge */
@@ -77,6 +85,7 @@ export const challengeTypeSchema = z.enum([
   'PERSONAL_STATEMENT_LARGE_CORP',
   'MARKETING',
   'EXPERIENCE_SUMMARY',
+  'HR',
 ]);
 
 export type ChallengeType = z.infer<typeof challengeTypeSchema>;
@@ -123,6 +132,15 @@ export const challengeListItemSchema = z.object({
   beginning: z.string().nullable().optional(),
   deadline: z.string().nullable().optional(),
   createDate: z.string(),
+  adminClassificationInfo: z
+    .array(
+      z.object({
+        programAdminClassification: ProgramAdminClassificationEnum,
+      }),
+    )
+    .nullable()
+    .optional(),
+  isB2B: z.boolean().nullable().optional(),
 });
 
 export const challengeListSchema = z.object({
@@ -312,6 +330,7 @@ export type CreateChallengeReq = {
   participationCount: number;
   thumbnail: string;
   desktopThumbnail: string;
+  curriculumImage?: string;
   startDate: string; // "2024-10-12T06:24:10.873"
   endDate: string; // "2024-10-12T06:24:10.873"
   beginning: string; // "2024-10-12T06:24:10.873"
@@ -346,6 +365,7 @@ export type UpdateChallengeReq = {
   participationCount?: number;
   thumbnail?: string;
   desktopThumbnail?: string;
+  curriculumImage?: string;
   startDate?: string; // "2024-10-12T08:03:17.016Z"
   endDate?: string; // "2024-10-12T08:03:17.016Z"
   beginning?: string; // "2024-10-12T08:03:17.016Z"

@@ -1,7 +1,7 @@
 'use client';
 
-import ChallengeLayout from '@/common/challenge/ui/layout/ChallengeLayout';
 import { CurrentChallengeProvider } from '@/context/CurrentChallengeProvider';
+import ChallengeLayout from '@/domain/challenge/ui/layout/ChallengeLayout';
 
 export default function ChallengeProgramLayout({
   children,

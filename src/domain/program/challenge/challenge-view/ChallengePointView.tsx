@@ -1,9 +1,9 @@
 import { getVod } from '@/api/program';
 import Check from '@/assets/icons/chevron-down.svg?react';
 import HoleIcon from '@/assets/icons/hole.svg?react';
-import Heading2 from '@/common/ui/Heading2';
-import ProgramRecommendSlider from '@/common/ui/ProgramRecommendSlider';
+import Heading2 from '@/common/header/Heading2';
 import { LOCALIZED_YYYY_MDdd_HHmm } from '@/data/dayjsFormat';
+import ProgramRecommendSlider from '@/domain/program-recommend/ProgramRecommendSlider';
 import { challengeColors } from '@/domain/program/challenge/ChallengeView';
 import SuperTitle from '@/domain/program/program-detail/SuperTitle';
 import { twMerge } from '@/lib/twMerge';
@@ -361,6 +361,8 @@ const ChallengePointView = ({
     }
   }, [challengeType]);
 
+  const weekText = point?.weekText ?? '2주';
+
   return (
     <div className="flex w-full flex-col items-center">
       {/* 프로그램 소개 */}
@@ -378,7 +380,7 @@ const ChallengePointView = ({
           <IntroHeading
             challengeType={challengeType}
             challengeTitle={challengeTitle}
-            weekText={point.weekText}
+            weekText={weekText}
             isResumeTemplate={isResumeTemplate}
             introHeadingColor={styles.introHeadingColor}
           />
@@ -469,8 +471,7 @@ const ChallengePointView = ({
               </p>
               <Heading2 className="py-3 pt-2 text-white md:pt-3">
                 {josa(challengeTitle, '은/는')}
-                <br className="md:hidden" /> {point.weekText}간 아래와 같이
-                진행돼요
+                <br className="md:hidden" /> {weekText}간 아래와 같이 진행돼요
               </Heading2>
               <span className="mb-10 text-xsmall14 text-neutral-50 md:mb-20">
                 {description}
@@ -481,7 +482,7 @@ const ChallengePointView = ({
                 className="flex w-full items-center rounded-t-md px-4 py-2.5 text-xsmall14 font-semibold text-white md:justify-center md:px-2.5"
                 style={{ backgroundColor: styles.primaryColor }}
               >
-                {point.weekText} 과정
+                {weekText} 과정
               </div>
               <div className="flex flex-col gap-5 rounded-b-md bg-white px-4 py-[30px] md:flex-row md:justify-between md:gap-0 md:pb-[30px] md:pt-9 lg:px-7">
                 {progress.map((item) => (

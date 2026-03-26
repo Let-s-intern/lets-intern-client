@@ -1,4 +1,4 @@
-import { usePaymentDetailQuery } from '@/api/payment';
+import { usePaymentDetailQuery } from '@/api/payment/payment';
 import dayjs from '@/lib/dayjs';
 import { useMemo } from 'react';
 

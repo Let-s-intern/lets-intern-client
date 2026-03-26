@@ -1,4 +1,7 @@
-import { CategoryType, EXPERIENCE_CATEGORY_KR } from '@/api/experienceSchema';
+import {
+  CategoryType,
+  EXPERIENCE_CATEGORY_KR,
+} from '@/api/experience/experienceSchema';
 
 const CategoryCell = ({ value }: { value: string }) => {
   return (

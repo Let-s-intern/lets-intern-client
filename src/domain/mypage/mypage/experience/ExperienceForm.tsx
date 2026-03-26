@@ -14,15 +14,18 @@ import {
 import {
   UserExperienceFiltersQueryKey,
   UserExperienceQueryKey,
-} from '@/api/experience';
-import { UserExperienceType } from '@/api/experienceSchema';
-import { useGetUserAdmin, usePatchUserExperienceMutation } from '@/api/user';
+} from '@/api/experience/experience';
+import { UserExperienceType } from '@/api/experience/experienceSchema';
+import {
+  useGetUserAdmin,
+  usePatchUserExperienceMutation,
+} from '@/api/user/user';
 import {
   CATEGORY_PAIRS,
   userExperienceSchema,
   type DisplayExperienceCategory,
   type UserExperience,
-} from '@/api/userSchema';
+} from '@/api/user/userSchema';
 import { useUnsavedChangesWarning } from '@/hooks/useUnsavedChangesWarning';
 import { UseMutationResult, useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';

@@ -6,10 +6,10 @@ import {
 } from '@/schema';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 
-import SectionHeader from '@/common/SectionHeader';
-import SectionMainHeader from '@/common/SectionMainHeader';
-import SectionSubHeader from '@/common/SectionSubHeader';
-import PriceSummary from '@/common/ui/PriceSummary';
+import SectionHeader from '@/common/header/SectionHeader';
+import SectionMainHeader from '@/common/header/SectionMainHeader';
+import SectionSubHeader from '@/common/header/SectionSubHeader';
+import PriceSummary from '@/common/price/PriceSummary';
 import { CSSProperties, memo, useMemo } from 'react';
 
 const {
@@ -100,6 +100,9 @@ function ChallengePricePlanSection({ challengeType, priceInfoList }: Props) {
   const premiumPriceInfo = priceInfoList.find(
     (item) => item.challengePricePlanType === 'PREMIUM',
   );
+  const lightPriceInfo = priceInfoList.find(
+    (item) => item.challengePricePlanType === 'LIGHT',
+  );
 
   const {
     basicRegularPrice,
@@ -108,6 +111,8 @@ function ChallengePricePlanSection({ challengeType, priceInfoList }: Props) {
     standardDiscountAmount,
     premiumRegularPrice,
     premiumDiscountAmount,
+    lightRegularPrice,
+    lightDiscountAmount,
   } = getChallengeOptionPriceInfo(priceInfoList);
 
   return (
@@ -123,6 +128,15 @@ function ChallengePricePlanSection({ challengeType, priceInfoList }: Props) {
       {/* 좌우 슬라이드 */}
       <div className="-mx-5 overflow-x-auto px-5 md:max-w-[1000px] lg:mx-auto lg:px-0">
         <div className="flex min-w-fit items-center gap-3">
+          {lightPriceInfo && (
+            <PricePlanCard
+              paragraphStyle={paragraphStyle}
+              title={lightPriceInfo.title ?? ''}
+              description={lightPriceInfo.description ?? ''}
+              originalPrice={lightRegularPrice}
+              discountAmount={lightDiscountAmount}
+            />
+          )}
           <PricePlanCard
             paragraphStyle={paragraphStyle}
             title={basicePriceInfo?.title ?? ''}

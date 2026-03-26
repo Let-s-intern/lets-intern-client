@@ -1,4 +1,4 @@
-import { CareerFormType, UserCareerType } from '@/api/careerSchema';
+import { CareerFormType, UserCareerType } from '@/api/career/careerSchema';
 import CareerCard from '@/domain/mypage/career/CareerCard';
 import CareerForm from '@/domain/mypage/career/CareerForm';
 

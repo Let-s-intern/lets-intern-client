@@ -5,8 +5,8 @@ import { useMediaQuery } from '@mui/material';
 import { Fragment, ReactNode } from 'react';
 import { Grid } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import EmptyContainer from '../../../common/ui/EmptyContainer';
-import MoreHeader from '../../../common/ui/MoreHeader';
+import EmptyContainer from '../../../common/container/EmptyContainer';
+import MoreHeader from '../../../common/header/MoreHeader';
 import ProgramItem, { ProgramItemProps } from './ProgramItem';
 
 interface ProgramContainerProps {

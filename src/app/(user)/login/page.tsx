@@ -1,8 +1,8 @@
 'use client';
 
-import Input from '@/common/input/Input';
-import Button from '@/common/ui/button/Button';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import Button from '@/common/button/Button';
+import Input from '@/common/input/v1/Input';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import SocialLogin from '@/domain/auth/ui/SocialLogin';
 import useAuthStore from '@/store/useAuthStore';
 import axios from '@/utils/axios';
@@ -94,7 +94,7 @@ const LoginContent = () => {
     const handleLoginSuccess = (token: Token) => {
       if (token.isNew) {
         router.push(
-          `/signup?result=${JSON.stringify(token)}&redirect=${redirect}`,
+          `/signup?result=${encodeURIComponent(JSON.stringify(token))}&redirect=${encodeURIComponent(redirect)}`,
         );
       } else {
         login(token.accessToken, token.refreshToken);
@@ -164,7 +164,9 @@ const LoginContent = () => {
         </form>
         <SocialLogin type="LOGIN" />
         <div className="mt-8 flex justify-center gap-8">
-          <TextLink to={`/signup?redirect=${redirect}`}>회원가입</TextLink>
+          <TextLink to={`/signup?redirect=${encodeURIComponent(redirect)}`}>
+            회원가입
+          </TextLink>
           <TextLink to="/find-password" dark>
             비밀번호 찾기
           </TextLink>

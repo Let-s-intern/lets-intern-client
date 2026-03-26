@@ -1,10 +1,7 @@
 'use client';
 
-import { ApplicationResult } from '@/api/paymentSchema';
+import { ApplicationResult } from '@/api/payment/paymentSchema';
 import { convertReportPriceType, useGetReportDetailQuery } from '@/api/report';
-import Heading1 from '@/common/report/Heading1';
-import Heading2 from '@/common/report/Heading2';
-import Card from '@/common/report/ProgramCard';
 import {
   getPaymentMethodLabel,
   paymentResultSearchParamsSchema,
@@ -13,6 +10,9 @@ import ReportCreditRow from '@/domain/mypage/credit/ReportCreditRow';
 import ReportCreditSubRow from '@/domain/mypage/credit/ReportCreditSubRow';
 import DescriptionBox from '@/domain/program/paymentSuccess/DescriptionBox';
 import PaymentInfoRow from '@/domain/program/paymentSuccess/PaymentInfoRow';
+import Heading1 from '@/domain/report/Heading1';
+import Heading2 from '@/domain/report/Heading2';
+import Card from '@/domain/report/ProgramCard';
 import useReportPayment from '@/hooks/useReportPayment';
 import useReportProgramInfo from '@/hooks/useReportProgramInfo';
 import dayjs from '@/lib/dayjs';

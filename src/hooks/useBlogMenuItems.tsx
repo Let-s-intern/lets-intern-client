@@ -1,4 +1,4 @@
-import { useBlogListQuery } from '@/api/blog';
+import { useBlogListQuery } from '@/api/blog/blog';
 import { MenuItem } from '@mui/material';
 import { useMemo } from 'react';
 

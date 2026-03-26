@@ -1,4 +1,5 @@
 import { twMerge } from '@/lib/twMerge';
+import { ChallengeContent } from '@/types/interface';
 import Image from 'next/image';
 
 /* 차별점 1 */
@@ -55,73 +56,106 @@ export const MarketingTool = () => {
   );
 };
 
-/** 차별점 2 */
-const professionals = [
-  {
-    logo: 'class101.png',
-    profile: 'profile2.png',
-    week: '11월 1주차',
-    company: '클래스 101',
-    role: '콘텐츠 마케터',
-  },
-  {
-    logo: 'cashnote.png',
-    profile: 'profile4.png',
-    week: '11월 2주차',
-    company: '캐시노트',
-    role: '그로스 마케터',
-  },
-  {
-    logo: 'corpuniv.png',
-    profile: 'profile5.png',
-    week: '11월 3주차',
-    company: '대학내일',
-    role: 'AE마케터',
-  },
-  {
-    logo: 'yanolja.png',
-    profile: 'profile3.png',
-    week: '11월 4주차',
-    company: '야놀자',
-    role: 'CRM 마케터',
-  },
-];
+/* 차별점 2 */
+type Lecture = NonNullable<ChallengeContent['lectures']>[number];
 
-export const ProfessionalsList = () => {
+type Professional = {
+  logo: string;
+  profile: string;
+  week: string;
+  company: string;
+  role: string;
+};
+
+const ProfessionalCard = ({ item }: { item: Professional }) => {
   return (
-    <div className="mt-6 grid max-w-[1000px] grid-cols-2 gap-1 md:mt-[50px] md:gap-3">
-      {professionals.map((item, index) => (
-        <div
-          key={index}
-          className="w-[104px] overflow-hidden rounded-xxs md:w-[280px] md:rounded-sm"
-        >
-          <div
-            className="relative h-[59px] overflow-hidden bg-neutral-90 md:h-40"
-            role="presentation"
-          >
-            <img
-              src={`/images/marketing/${item.logo}`}
-              className="absolute left-1 top-1 h-10 w-10 md:left-3 md:top-3 md:h-[66px] md:w-[66px]"
-              alt=""
-            />
-            <img
-              className="absolute -bottom-0.5 right-1 h-full w-auto md:right-[20%]"
-              src={`/images/marketing/${item.profile}`}
-              alt=""
-            />
-          </div>
-          <div className="flex flex-col items-center justify-center bg-white px-2 py-3 md:p-5">
-            <div className="mb-0.5 rounded-[2px] bg-black px-1 py-0.5 text-center text-[0.5rem] font-medium text-white md:mb-2 md:rounded-xxs md:px-1.5 md:py-[3px] md:text-xsmall14">
-              {item.week}
-            </div>
-            <div className="text-base font-bold text-neutral-0 md:mb-1 md:text-medium24">
-              {item.company}
-            </div>
-            <div className="text-xxsmall12 text-neutral-0 md:text-small20">
-              {item.role}
-            </div>
-          </div>
+    <div className="flex h-full w-full flex-col overflow-hidden rounded-xxs md:w-[280px] md:rounded-sm">
+      <div
+        className="relative h-[80px] overflow-hidden bg-neutral-90 md:h-40"
+        role="presentation"
+      >
+        <img
+          src={item.logo}
+          className="absolute left-1 top-1 h-10 w-10 md:left-3 md:top-3 md:h-[66px] md:w-[66px]"
+          alt=""
+        />
+        <img
+          className="absolute -bottom-0.5 left-1/2 h-full w-auto -translate-x-1/2 md:left-auto md:right-[20%] md:translate-x-0"
+          src={item.profile}
+          alt=""
+        />
+      </div>
+      <div className="flex flex-1 flex-col items-center justify-center bg-white px-2 py-3 md:p-5">
+        <div className="mb-0.5 rounded-[2px] bg-black px-1 py-0.5 text-center text-[0.5rem] font-medium text-white md:mb-2 md:rounded-xxs md:px-1.5 md:py-[3px] md:text-xsmall14">
+          {item.week}
         </div>
+        <div className="text-center text-xsmall14 font-bold text-neutral-0 md:mb-1 md:text-medium24">
+          {item.company}
+        </div>
+        <div className="text-xxsmall12 text-neutral-0 md:text-small20">
+          {item.role}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const mapLecturesToProfessionals = (
+  lectures?: ChallengeContent['lectures'],
+): Professional[] => {
+  if (!lectures || lectures.length === 0) {
+    return [];
+  }
+
+  // 강의 정보가 있는 경우, 강의 데이터를 우선 사용한다.
+  return lectures.map((lecture: Lecture) => ({
+    logo: lecture.companyLogo,
+    profile: lecture.mentorImage,
+    week: lecture.schedule,
+    // UI 구조상 회사명/역할 자리에 들어갈 텍스트가 필요하므로,
+    // 강의 주제를 회사명 자리, 멘토명을 역할 자리에 매핑한다.
+    company: lecture.topic || lecture.mentorName,
+    role: lecture.mentorName,
+  }));
+};
+
+export const ProfessionalsList = ({
+  lectures,
+}: {
+  lectures?: ChallengeContent['lectures'];
+}) => {
+  const professionals = mapLecturesToProfessionals(lectures);
+  const isThreeColumnLayout = professionals.length >= 5;
+
+  if (professionals.length === 0) {
+    return null;
+  }
+
+  if (isThreeColumnLayout) {
+    // 5개 이상
+    const rows: Professional[][] = [];
+    for (let i = 0; i < professionals.length; i += 3) {
+      rows.push(professionals.slice(i, i + 3));
+    }
+
+    return (
+      <div className="mt-6 flex max-w-[1000px] flex-col gap-1 md:mt-[50px] md:gap-3">
+        {rows.map((row, rowIndex) => (
+          <div key={rowIndex} className="flex justify-center gap-1 md:gap-3">
+            {row.map((item, index) => (
+              <ProfessionalCard key={`${rowIndex}-${index}`} item={item} />
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // 4개 이하
+  return (
+    <div className="mt-6 grid max-w-[1000px] grid-cols-2 gap-1 justify-self-center md:mt-[50px] md:gap-3">
+      {professionals.map((item, index) => (
+        <ProfessionalCard key={index} item={item} />
       ))}
     </div>
   );

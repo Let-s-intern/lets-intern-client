@@ -3,6 +3,7 @@
 import useProgramScrollDirectionStyle from '@/hooks/useProgramScrollDirectionStyle';
 import { twMerge } from '@/lib/twMerge';
 import { ReactNode, useEffect, useState } from 'react';
+import { DEFAULT_COLOR } from '../utils/getChallengeThemeColor';
 
 interface TabItem {
   id: string;
@@ -21,20 +22,25 @@ const Tab = ({
   active = false,
   onClick,
   children,
+  themeColor = DEFAULT_COLOR,
 }: {
   active?: boolean;
   children?: ReactNode;
   onClick?: () => void;
+  themeColor?: string;
 }) => {
   return (
     <button
       type="button"
       className={twMerge(
         'w-fit translate-y-0.5 gap-2.5 text-nowrap border-b-2 px-2.5 py-4 md:w-[88px]',
-        active
-          ? 'border-b-[#4A76FF] text-[#4A76FF]'
-          : 'border-transparent text-neutral-45',
+        active ? 'border-b-2' : 'border-transparent text-neutral-45',
       )}
+      style={
+        active
+          ? { borderBottomColor: themeColor, color: themeColor }
+          : undefined
+      }
       onClick={onClick}
     >
       {children}
@@ -42,7 +48,13 @@ const Tab = ({
   );
 };
 
-export default function ChallengeTabNavigation() {
+interface Props {
+  themeColor?: string;
+}
+
+export default function ChallengeTabNavigation({
+  themeColor = DEFAULT_COLOR,
+}: Props) {
   const [active, setActive] = useState('intro');
 
   const scrollStyleClassName = useProgramScrollDirectionStyle();
@@ -91,6 +103,7 @@ export default function ChallengeTabNavigation() {
           key={tab.id}
           active={active === tab.id}
           onClick={() => handleClick(tab.id)}
+          themeColor={themeColor}
         >
           {tab.label}
         </Tab>

@@ -2,7 +2,7 @@ import { Button, IconButton } from '@mui/material';
 import { IoMdCloseCircleOutline } from 'react-icons/io';
 
 import { fileType, uploadFile } from '@/api/file';
-import Input from '@/common/input/Input';
+import Input from '@/common/input/v1/Input';
 import { ReportExample } from '@/types/interface';
 import ImageUpload from '../program/ui/form/ImageUpload';
 import Heading2 from '../ui/heading/Heading2';

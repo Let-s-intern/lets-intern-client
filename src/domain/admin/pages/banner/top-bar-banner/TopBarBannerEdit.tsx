@@ -5,8 +5,8 @@ import {
   useEditBannerForAdmin,
   useGetBannerDetailForAdmin,
 } from '@/api/banner';
-import EmptyContainer from '@/common/ui/EmptyContainer';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+import EmptyContainer from '@/common/container/EmptyContainer';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import TopBarBannerInputContent from '@/domain/admin/banner/top-bar-banner/TopBarBannerInputContent';
 import EditorTemplate from '@/domain/admin/program/ui/editor/EditorTemplate';
 import { useParams, useRouter } from 'next/navigation';

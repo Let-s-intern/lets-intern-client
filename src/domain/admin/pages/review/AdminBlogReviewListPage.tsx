@@ -6,7 +6,8 @@ import {
   useGetAdminBlogReviewList,
   usePatchAdminBlogReview,
   usePostAdminBlogReview,
-} from '@/api/review';
+} from '@/api/review/review';
+import AdminReviewHeader from '@/app/admin/review/AdminReviewHeader';
 import { YYYY_MMDD_THHmmss } from '@/data/dayjsFormat';
 import { PaymentMethodKey } from '@/data/getPaymentSearchParams';
 import dayjs from '@/lib/dayjs';
@@ -31,7 +32,6 @@ import {
 } from '@mui/x-data-grid';
 import { Check, Pencil, Trash, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import AdminReviewHeader from '@/app/admin/review/AdminReviewHeader';
 
 function CustomToolbar() {
   const csvOptions = {
@@ -124,6 +124,44 @@ export default function AdminBlogReviewListPage() {
       sortable: false,
       width: 160,
       editable: true,
+    },
+    {
+      field: 'isConfirmed',
+      headerName: '운영진확인',
+      sortable: false,
+      width: 80,
+      type: 'boolean',
+      renderCell: (params: GridRenderCellParams<Row, boolean>) => (
+        <Checkbox
+          checked={params.value}
+          onChange={async () => {
+            const { blogReviewId } = params.row;
+            await patchReview.mutateAsync({
+              blogReviewId,
+              isConfirmed: !params.value,
+            });
+          }}
+        />
+      ),
+    },
+    {
+      field: 'isRemittanceConfirmed',
+      headerName: '송금확인',
+      sortable: false,
+      width: 80,
+      type: 'boolean',
+      renderCell: (params: GridRenderCellParams<Row, boolean>) => (
+        <Checkbox
+          checked={params.value}
+          onChange={async () => {
+            const { blogReviewId } = params.row;
+            await patchReview.mutateAsync({
+              blogReviewId,
+              isRemittanceConfirmed: !params.value,
+            });
+          }}
+        />
+      ),
     },
     {
       field: 'isVisible',

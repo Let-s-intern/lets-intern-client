@@ -12,7 +12,7 @@ import { AxiosError } from 'axios';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import Input from '../../../common/input/Input';
+import Input from '../../../common/input/v1/Input';
 import axios from '../../../utils/axios';
 import { couponTypeToText, newProgramTypeToText } from '../../../utils/convert';
 import ActionButton from '../ui/button/ActionButton';

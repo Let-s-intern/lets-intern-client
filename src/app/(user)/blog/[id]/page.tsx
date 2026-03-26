@@ -1,4 +1,4 @@
-import { fetchBlogData } from '@/api/blog';
+import { fetchBlogData } from '@/api/blog/blog';
 import { getBlogPathname } from '@/utils/url';
 import { redirect } from 'next/navigation';
 

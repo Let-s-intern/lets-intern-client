@@ -3,8 +3,6 @@
 
 import { fileType, uploadFile } from '@/api/file';
 import { usePostChallengeMutation } from '@/api/program';
-import FaqSection from '@/common/FaqSection';
-import ProgramRecommendEditor from '@/common/ProgramRecommendEditor';
 import ChallengePreviewButton from '@/domain/admin/ChallengePreviewButton';
 import ChallengeBasic from '@/domain/admin/program/ChallengeBasic';
 import ChallengeCurriculum from '@/domain/admin/program/ChallengeCurriculum';
@@ -18,6 +16,8 @@ import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
 import Heading3 from '@/domain/admin/ui/heading/Heading3';
+import FaqSection from '@/domain/faq/FaqSection';
+import ProgramRecommendEditor from '@/domain/program-recommend/ProgramRecommendEditor';
 import useAdminChallenge from '@/hooks/useAdminChallenge';
 import useAdminChallengeOption from '@/hooks/useAdminChallengeOption';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
@@ -30,11 +30,12 @@ import {
   ProgramTypeEnum,
 } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
-import { Button, TextField } from '@mui/material';
+import { Button, FormControlLabel, Switch, TextField } from '@mui/material';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
+import ChallengeLecture from '../program/ChallengeLecture';
 import ChallengeFaqCategory from './program/ChallengeFaqCategory';
 import ChallengeMentorRegistrationSection from './program/ChallengeMentorRegistrationSection';
 import ProgramSchedule from './program/ProgramSchedule';
@@ -42,7 +43,7 @@ const EditorApp = dynamic(() => import('@/domain/admin/lexical/EditorApp'), {
   ssr: false,
 });
 
-const { BASIC, STANDARD, PREMIUM } = ChallengePricePlanEnum.enum;
+const { BASIC, STANDARD, PREMIUM, LIGHT } = ChallengePricePlanEnum.enum;
 
 const initialInput: Omit<CreateChallengeReq, 'desc'> = {
   beginning: dayjs().format('YYYY-MM-DDTHH:mm'),
@@ -97,6 +98,7 @@ const ChallengeCreate: React.FC = () => {
     faqCategory: [],
     programRecommend: { list: [] },
   });
+  const [isFreeTemplate, setIsFreeTemplate] = useState(false);
 
   const [input, setInput] = useState(initialInput);
   const [loading, setLoading] = useState(false);
@@ -109,14 +111,21 @@ const ChallengeCreate: React.FC = () => {
   const {
     pricePlan,
     data: challengeOptions,
+    basicOptIds,
     standardOptIds,
     premiumOptIds,
+    basicInfo,
     standardInfo,
     premiumInfo,
+    isLightEnabled,
+    lightInfo,
     handleChangeInfo,
     handleChangePricePlan,
+    handleChangeLightInfo,
+    setBasicOptIds,
     setStandardOptIds,
     setPremiumOptIds,
+    setIsLightEnabled,
   } = useAdminChallengeOption();
 
   /** 챌린지 관련 함수 */
@@ -132,14 +141,24 @@ const ChallengeCreate: React.FC = () => {
     }));
   };
 
+  const handleChangeIsFreeTemplate = useCallback((checked: boolean) => {
+    setIsFreeTemplate(checked);
+    setContent((prev) => ({
+      ...prev,
+      isFreeTemplate: checked,
+    }));
+  }, []);
+
   const onClickSave = useCallback(async () => {
     setLoading(true);
 
     const basicPriceInfo = {
       ...input.priceInfo[0],
+      ...basicInfo,
       priceInfo: {
         ...input.priceInfo[0].priceInfo,
       },
+      challengeOptionIdList: basicOptIds,
     };
 
     const newPriceInfo = [basicPriceInfo];
@@ -164,6 +183,26 @@ const ChallengeCreate: React.FC = () => {
       });
     }
 
+    if (isLightEnabled) {
+      newPriceInfo.push({
+        priceInfo: {
+          price: lightInfo.price,
+          discount: lightInfo.discount,
+          accountNumber: input.priceInfo[0].priceInfo?.accountNumber ?? null,
+          accountType: input.priceInfo[0].priceInfo?.accountType ?? null,
+          deadline: input.priceInfo[0].priceInfo?.deadline ?? null,
+        },
+        title: lightInfo.title,
+        description: lightInfo.description,
+        charge: lightInfo.price,
+        refund: 0,
+        challengePriceType: 'CHARGE',
+        challengeParticipationType: 'LIVE',
+        challengePricePlanType: LIGHT,
+        challengeOptionIdList: [],
+      });
+    }
+
     const req: CreateChallengeReq = {
       ...input,
       desc: JSON.stringify(content),
@@ -182,6 +221,10 @@ const ChallengeCreate: React.FC = () => {
     postChallenge,
     snackbar,
     router,
+    basicInfo,
+    basicOptIds,
+    isLightEnabled,
+    lightInfo,
     premiumOptIds,
     pricePlan,
     premiumInfo,
@@ -196,7 +239,21 @@ const ChallengeCreate: React.FC = () => {
   return (
     <div className="mx-3 mb-40 mt-3">
       <Header>
-        <Heading>챌린지 생성</Heading>
+        <div className="flex items-center gap-4">
+          <Heading>챌린지 생성</Heading>
+          <FormControlLabel
+            control={
+              <Switch
+                color="primary"
+                checked={isFreeTemplate}
+                onChange={(event) =>
+                  handleChangeIsFreeTemplate(event.target.checked)
+                }
+              />
+            }
+            label="자유 템플릿"
+          />
+        </div>
         <div className="flex items-center gap-3">
           <TextField
             size="small"
@@ -212,9 +269,11 @@ const ChallengeCreate: React.FC = () => {
                 const challenge = getChallengeIdSchema.parse(
                   JSON.parse(importJsonString),
                 );
+                const parsedContent = JSON.parse(challenge?.desc ?? '{}');
                 setImportProcessing(true);
                 setInput(challengeToCreateInput(challenge));
-                setContent(JSON.parse(challenge?.desc ?? '{}'));
+                setContent(parsedContent);
+                setIsFreeTemplate(Boolean(parsedContent.isFreeTemplate));
                 setTimeout(() => {
                   snackbar('Import 성공!');
                   setImportJsonString('');
@@ -292,15 +351,22 @@ const ChallengeCreate: React.FC = () => {
             ]}
             setInput={setInput}
             options={challengeOptions?.challengeOptionList ?? []}
+            basicOptIds={basicOptIds}
             standardOptIds={standardOptIds}
             premiumOptIds={premiumOptIds}
+            basicInfo={basicInfo}
             standardInfo={standardInfo}
             premiumInfo={premiumInfo}
             pricePlan={pricePlan.current}
             onChangePricePlanInfo={handleChangeInfo}
+            onChangeBasicOptIds={(ids) => setBasicOptIds(ids)}
             onChangePremiumOptIds={(ids) => setPremiumOptIds(ids)}
             onChangeStandardOptIds={(ids) => setStandardOptIds(ids)}
             onChangePricePlan={handleChangePricePlan}
+            isLightEnabled={isLightEnabled}
+            lightInfo={lightInfo}
+            onLightEnabledChange={setIsLightEnabled}
+            onChangeLightInfo={handleChangeLightInfo}
           />
           <div className="flex flex-col gap-4">
             {/* 챌린지 일정 */}
@@ -338,77 +404,120 @@ const ChallengeCreate: React.FC = () => {
           options={challengeOptions?.challengeOptionList ?? []}
         />
       </section>
+      {isFreeTemplate ? (
+        <>
+          <Heading2>프로그램 설명 (자유 템플릿 전용)</Heading2>
+          <section className="mt-6">
+            <EditorApp
+              onChangeSerializedEditorState={(json) =>
+                setContent((prev) => ({
+                  ...prev,
+                  isFreeTemplate: true,
+                  freeContent: json,
+                }))
+              }
+            />
+          </section>
+        </>
+      ) : (
+        <>
+          <Heading2>프로그램 소개</Heading2>
 
-      <Heading2>프로그램 소개</Heading2>
-      <section>
-        <ChallengePoint
-          challengePoint={content.challengePoint}
-          setContent={setContent}
-        />
+          <section className="mt-6">
+            <Heading3>인트로</Heading3>
+            <EditorApp
+              onChangeSerializedEditorState={(json) =>
+                setContent((prev) => ({
+                  ...prev,
+                  intro: json,
+                }))
+              }
+            />
 
-        <Heading3>상세 설명</Heading3>
-        <EditorApp
-          onChangeSerializedEditorState={(json) =>
-            setContent((prev) => ({
-              ...prev,
-              mainDescription: json,
-            }))
-          }
-        />
-      </section>
+            <ChallengePoint
+              challengePoint={content.challengePoint}
+              setContent={setContent}
+            />
 
-      {/* 프로그램 추천 */}
-      <section className="mb-6">
-        <ProgramRecommendEditor
-          programRecommend={content.programRecommend ?? { list: [] }}
-          setProgramRecommend={(programRecommend) =>
-            setContent((prev) => ({ ...prev, programRecommend }))
-          }
-        />
-      </section>
+            {input.challengeType && (
+              <ChallengeLecture
+                challengeType={input.challengeType}
+                content={content}
+                setContent={setContent}
+              />
+            )}
 
-      <ChallengeCurriculum
-        curriculum={content.curriculum}
-        setContent={setContent}
-      />
+            <Heading3>상세 설명</Heading3>
+            <EditorApp
+              onChangeSerializedEditorState={(json) =>
+                setContent((prev) => ({
+                  ...prev,
+                  mainDescription: json,
+                }))
+              }
+            />
+          </section>
 
-      <ProgramBestReview
-        reviewFields={content.challengeReview ?? []}
-        setReviewFields={(reviewFields) =>
-          setContent((prev) => ({ ...prev, challengeReview: reviewFields }))
-        }
-      />
+          {/* 프로그램 추천 */}
+          <section className="mb-6">
+            <ProgramRecommendEditor
+              programRecommend={content.programRecommend ?? { list: [] }}
+              setProgramRecommend={(programRecommend) =>
+                setContent((prev) => ({ ...prev, programRecommend }))
+              }
+            />
+          </section>
 
-      <ProgramBlogReviewEditor
-        blogReview={content.blogReview || { list: [] }}
-        setBlogReview={(blogReview) =>
-          setContent((prev) => ({ ...prev, blogReview }))
-        }
-      />
+          <ChallengeCurriculum
+            curriculum={content.curriculum}
+            setContent={setContent}
+            curriculumImage={content.curriculumImage}
+            weekText={content.challengePoint?.weekText}
+            content={content}
+          />
 
-      <section className="my-6">
-        <div className="mb-6">
-          <ChallengeFaqCategory
-            faqCategory={content.faqCategory}
-            onChange={(e) => {
+          <ProgramBestReview
+            reviewFields={content.challengeReview ?? []}
+            setReviewFields={(reviewFields) =>
               setContent((prev) => ({
                 ...prev,
-                faqCategory: e.target.value
-                  .split(',')
-                  .map((item) => item.trim()),
-              }));
-            }}
+                challengeReview: reviewFields,
+              }))
+            }
           />
-        </div>
-        <FaqSection
-          programType={ProgramTypeEnum.enum.CHALLENGE}
-          faqInfo={input.faqInfo}
-          setFaqInfo={(faqInfo) =>
-            setInput((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))
-          }
-          isCreate
-        />
-      </section>
+
+          <ProgramBlogReviewEditor
+            blogReview={content.blogReview || { list: [] }}
+            setBlogReview={(blogReview) =>
+              setContent((prev) => ({ ...prev, blogReview }))
+            }
+          />
+
+          <section className="my-6">
+            <div className="mb-6">
+              <ChallengeFaqCategory
+                faqCategory={content.faqCategory}
+                onChange={(e) => {
+                  setContent((prev) => ({
+                    ...prev,
+                    faqCategory: e.target.value
+                      .split(',')
+                      .map((item) => item.trim()),
+                  }));
+                }}
+              />
+            </div>
+            <FaqSection
+              programType={ProgramTypeEnum.enum.CHALLENGE}
+              faqInfo={input.faqInfo}
+              setFaqInfo={(faqInfo) =>
+                setInput((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))
+              }
+              isCreate
+            />
+          </section>
+        </>
+      )}
 
       <footer className="flex items-center justify-end gap-3">
         <ChallengePreviewButton

@@ -9,6 +9,7 @@ import {
 } from '@/schema';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { useMemo, useState } from 'react';
+import { DEFAULT_COLOR } from '../utils/getChallengeThemeColor';
 
 type Plans = {
   [key in ChallengePricePlan]?: string;
@@ -42,9 +43,11 @@ const PlanButton = ({
 const FinalPriceInfo = ({
   finalPrice,
   sellingPrice,
+  themeColor = DEFAULT_COLOR,
 }: {
   finalPrice: number;
   sellingPrice: number;
+  themeColor?: string;
 }) => {
   const {
     isLoading,
@@ -79,7 +82,10 @@ const FinalPriceInfo = ({
           {showMonthlyPrice ? '' : '최종 결제 금액'}
         </span>
         <div className="flex flex-col items-end gap-0.5">
-          <strong className="text-medium24 font-bold text-[#4A76FF]">
+          <strong
+            className="text-medium24 font-bold"
+            style={{ color: themeColor }}
+          >
             {showMonthlyPrice
               ? `월 ${monthlyAmount.toLocaleString()}원`
               : `${finalPrice.toLocaleString()}원`}
@@ -97,16 +103,20 @@ const FinalPriceInfo = ({
 
 interface Props {
   priceInfoList: ChallengePriceInfo[] | ChallengeIdSchema['priceInfo'];
+  themeColor?: string;
 }
 
-function ChallengePriceInfoContent({ priceInfoList }: Props) {
+function ChallengePriceInfoContent({
+  priceInfoList,
+  themeColor = DEFAULT_COLOR,
+}: Props) {
   const [active, setActive] = useState<ChallengePricePlan>('BASIC');
 
   const basicPriceInfo = priceInfoList.find(
     (item) => item.challengePricePlanType === 'BASIC',
   );
 
-  const deposit = basicPriceInfo?.refund ?? 0; // 환급 (보증금)
+  const deposit = active === 'LIGHT' ? 0 : (basicPriceInfo?.refund ?? 0); // 환급 (보증금) 라이트는 보증금 없음
   const activeDescription =
     priceInfoList.find((item) => item.challengePricePlanType === active)
       ?.description ?? '';
@@ -118,10 +128,18 @@ function ChallengePriceInfoContent({ priceInfoList }: Props) {
     standardDiscountAmount,
     premiumRegularPrice,
     premiumDiscountAmount,
+    lightRegularPrice,
+    lightDiscountAmount,
   } = getChallengeOptionPriceInfo(priceInfoList);
 
   const { regularPrice, discountAmount, sellingPrice } = useMemo(() => {
     switch (active) {
+      case 'LIGHT':
+        return {
+          regularPrice: lightRegularPrice,
+          discountAmount: lightDiscountAmount,
+          sellingPrice: lightRegularPrice - lightDiscountAmount,
+        };
       case 'STANDARD':
         return {
           regularPrice: standardRegularPrice,
@@ -150,6 +168,8 @@ function ChallengePriceInfoContent({ priceInfoList }: Props) {
     standardDiscountAmount,
     premiumRegularPrice,
     premiumDiscountAmount,
+    lightRegularPrice,
+    lightDiscountAmount,
   ]);
 
   const discountPercentage = Math.round((discountAmount / regularPrice) * 100);
@@ -162,16 +182,22 @@ function ChallengePriceInfoContent({ priceInfoList }: Props) {
     const premiumPriceInfo = priceInfoList.find(
       (item) => item.challengePricePlanType === 'PREMIUM',
     );
+    const lightPriceInfo = priceInfoList.find(
+      (item) => item.challengePricePlanType === 'LIGHT',
+    );
 
-    const plans: Plans = {
-      BASIC: basicPriceInfo?.title || '베이직',
-    };
+    const plans: Plans = {};
+    if (lightPriceInfo) {
+      plans.LIGHT = lightPriceInfo.title || '라이트';
+    }
+
+    plans.BASIC = basicPriceInfo?.title || '베이직';
 
     if (standardPriceInfo) {
-      plans['STANDARD'] = standardPriceInfo.title || '스탠다드';
+      plans.STANDARD = standardPriceInfo.title || '스탠다드';
     }
     if (premiumPriceInfo) {
-      plans['PREMIUM'] = premiumPriceInfo.title || '프리미엄';
+      plans.PREMIUM = premiumPriceInfo.title || '프리미엄';
     }
 
     return plans;
@@ -197,7 +223,10 @@ function ChallengePriceInfoContent({ priceInfoList }: Props) {
         )}
 
         <div className="min-h-[174px] whitespace-pre-line px-3 pb-5 pt-2.5">
-          <span className="text-xsmall14 font-semibold text-[#4A76FF]">
+          <span
+            className="text-xsmall14 font-semibold"
+            style={{ color: themeColor }}
+          >
             이번 챌린지로 모든걸 얻어갈 수 있어요!
           </span>
           <p className="mt-1.5 whitespace-pre-line">{activeDescription}</p>
@@ -230,7 +259,11 @@ function ChallengePriceInfoContent({ priceInfoList }: Props) {
         </div>
 
         {/* 최종 결제 금액 */}
-        <FinalPriceInfo finalPrice={finalPrice} sellingPrice={sellingPrice} />
+        <FinalPriceInfo
+          finalPrice={finalPrice}
+          sellingPrice={sellingPrice}
+          themeColor={themeColor}
+        />
       </div>
     </div>
   );

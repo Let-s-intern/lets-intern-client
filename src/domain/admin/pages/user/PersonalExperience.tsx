@@ -1,4 +1,4 @@
-import { usePostAdminExperienceMutation } from '@/api/career';
+import { usePostAdminExperienceMutation } from '@/api/career/career';
 import DataTable, { TableHeader } from '@/common/table/DataTable';
 import ActivityTypeCell from '@/domain/mypage/experience/table-cell/ActivityTypeCell';
 import CategoryCell from '@/domain/mypage/experience/table-cell/CategoryCell';

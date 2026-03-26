@@ -1,6 +1,6 @@
-import { useIsAdminQuery, useMentorChallengeListQuery } from '@/api/user';
+import { useIsAdminQuery, useMentorChallengeListQuery } from '@/api/user/user';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
 
 export default function useMentorAccessControl() {
   const { programId } = useParams<{ programId: string }>();

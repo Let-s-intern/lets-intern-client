@@ -1,16 +1,16 @@
 'use client';
 
 import { ReportDetail, useGetReportPriceDetail } from '@/api/report';
-import PromoSection from '@/common/report/PromoSection';
-import ReportApplyBottomSheet from '@/common/report/ReportApplyBottomSheet';
-import ReportBasicInfo from '@/common/report/ReportBasicInfo';
-import ReportExampleSection from '@/common/report/ReportExampleSection';
-import ReportFaqSection from '@/common/report/ReportFaqSection';
-import ReportIntroSection from '@/common/report/ReportIntroSection';
-import ReportPlanSection from '@/common/report/ReportPlanSection';
-import ReportProgramRecommendSlider from '@/common/report/ReportProgramRecommendSlider';
-import ReportReviewSection from '@/common/report/ReportReviewSection';
-import ServiceProcessSection from '@/common/report/ServiceProcessSection';
+import PromoSection from '@/domain/report/PromoSection';
+import ReportApplyBottomSheet from '@/domain/report/ReportApplyBottomSheet';
+import ReportBasicInfo from '@/domain/report/ReportBasicInfo';
+import ReportExampleSection from '@/domain/report/ReportExampleSection';
+import ReportFaqSection from '@/domain/report/ReportFaqSection';
+import ReportIntroSection from '@/domain/report/ReportIntroSection';
+import ReportPlanSection from '@/domain/report/ReportPlanSection';
+import ReportProgramRecommendSlider from '@/domain/report/ReportProgramRecommendSlider';
+import ReportReviewSection from '@/domain/report/ReportReviewSection';
+import ServiceProcessSection from '@/domain/report/ServiceProcessSection';
 import useReportApplicationStore from '@/store/useReportApplicationStore';
 import { ReportContent } from '@/types/interface';
 import { useEffect } from 'react';

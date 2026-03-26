@@ -1,5 +1,6 @@
-import { fetchChallengeData } from '@/api/challenge';
+import { fetchChallengeData } from '@/api/challenge/challenge';
 import ChallengeCTAButtons from '@/domain/program/challenge/ChallengeCTAButtons';
+import ChallengeHrView from '@/domain/program/challenge/ChallengeHrView';
 import ChallengeMarketingView from '@/domain/program/challenge/ChallengeMarketingView';
 import ChallengePortfolioView from '@/domain/program/challenge/ChallengePortfolioView';
 import ChallengeView from '@/domain/program/challenge/ChallengeView';
@@ -74,7 +75,9 @@ const Page = async ({
   });
 
   // 슬러그 비교 및 리디렉션
-  const correctSlug = (challenge.title?.replace(/[ /]/g, '-') || '').toLowerCase();
+  const correctSlug = (
+    challenge.title?.replace(/[ /]/g, '-') || ''
+  ).toLowerCase();
   let currentSlug = _title || '';
   try {
     currentSlug = decodeURIComponent(currentSlug);
@@ -94,6 +97,8 @@ const Page = async ({
         // 포폴 상페 개선 https://letscareer-team.atlassian.net/browse/LC-2737
         dayjs(challenge.startDate).isAfter(dayjs('2025-12-02')) ? (
         <ChallengePortfolioView challenge={challenge} />
+      ) : challenge.challengeType === 'HR' ? (
+        <ChallengeHrView challenge={challenge} />
       ) : (
         <ChallengeView challenge={challenge} />
       )}

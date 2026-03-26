@@ -4,9 +4,9 @@ import {
   useGetUserCareerQuery,
   usePatchUserCareerMutation,
   usePostUserCareerMutation,
-} from '@/api/career';
-import { UserCareerType } from '@/api/careerSchema';
-import LoadingContainer from '@/common/ui/loading/LoadingContainer';
+} from '@/api/career/career';
+import { UserCareerType } from '@/api/career/careerSchema';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import CareerHeader from '@/domain/mypage/career/CareerHeader';
 import CareerItem from '@/domain/mypage/career/CareerItem';
 import CareerList from '@/domain/mypage/career/CareerList';

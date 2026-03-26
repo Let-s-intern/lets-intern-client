@@ -4,7 +4,7 @@ import MainTitle from '../ui/MainTitle';
 const summaryItems = [
   {
     title: '현직자 피드백과 함께\n마케팅 서류의 A-Z를 분석해요.',
-    description: '콘텐츠 마케터 / 그로스 마케터 /\nCRM 마케터 / AE',
+    description: '콘텐츠 마케터 / 그로스 마케터 /\n마케팅 전략 / AE',
     icon: '/images/marketing/summary-icon1.svg',
   },
   {
@@ -21,7 +21,7 @@ const summaryItems = [
   },
   {
     title: '현직자 상주 커뮤니티에서\n무엇이든 물어보세요!',
-    description: '단 4주간 제공되는,\n무제한 질의응답 커뮤니티',
+    description: '단 {WEEK_TEXT}간 제공되는,\n무제한 질의응답 커뮤니티',
     icon: '/images/marketing/summary-icon4.svg',
   },
 ];
@@ -56,7 +56,18 @@ const SummaryItem = ({
   );
 };
 
-const MarketingSummarySection: React.FC = () => {
+interface MarketingSummarySectionProps {
+  weekText: string;
+}
+
+const MarketingSummarySection: React.FC<MarketingSummarySectionProps> = ({
+  weekText,
+}) => {
+  const replacedSummaryItems = summaryItems.map((item) => ({
+    ...item,
+    description: item.description.replace('{WEEK_TEXT}', weekText),
+  }));
+
   return (
     <section className="flex flex-col items-center bg-[#F1F4FF] px-5 pb-12 pt-[60px] text-center md:px-0 md:pb-[120px] md:pt-[100px]">
       <div className="mb-2 text-xsmall16 font-bold text-[#4A76FF] md:mb-3 md:text-small20">
@@ -69,21 +80,21 @@ const MarketingSummarySection: React.FC = () => {
         </span>
         까지 함께합니다.
         <br className="md:hidden" />
-        <br />단 4주의 챌린지로{` `}
+        <br />단 {weekText}의 챌린지로{` `}
         <br className="md:hidden" />
         서류는 정말 끝내봐요!
       </MainTitle>
 
       {/* 위 2개 (2열) */}
       <div className="mb-2.5 grid w-full max-w-[1000px] grid-cols-1 gap-2.5 md:grid-cols-2">
-        {summaryItems.slice(0, 2).map((item, idx) => (
+        {replacedSummaryItems.slice(0, 2).map((item, idx) => (
           <SummaryItem key={idx} {...item} />
         ))}
       </div>
 
       {/* 아래 3개 (3열) */}
       <div className="grid w-full max-w-[1000px] grid-cols-1 gap-2.5 md:grid-cols-2">
-        {summaryItems.slice(2).map((item, idx) => (
+        {replacedSummaryItems.slice(2).map((item, idx) => (
           <SummaryItem key={idx + 2} {...item} />
         ))}
       </div>

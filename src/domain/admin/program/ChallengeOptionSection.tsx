@@ -2,8 +2,8 @@ import {
   useDeleteChallengeOption,
   usePatchChallengeOption,
   usePostChallengeOption,
-} from '@/api/challengeOption';
-import { ChallengeOption } from '@/api/challengeOptionSchema';
+} from '@/api/challenge/challengeOption';
+import { ChallengeOption } from '@/api/challenge/challengeOptionSchema';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { Button, TextField, TextFieldProps } from '@mui/material';
 import { ChangeEvent, memo, useEffect, useState } from 'react';

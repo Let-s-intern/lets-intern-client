@@ -58,7 +58,11 @@ export default function RootLayout({
            dl = l != 'dataLayer' ? '&l=' + l : '';
          j.async = true;
          j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-         f.parentNode.insertBefore(j, f);
+         if (f && f.parentNode) {
+           f.parentNode.insertBefore(j, f);
+         } else {
+           (d.head || d.body).appendChild(j);
+         }
        })(window, document, 'script', 'dataLayer', 'GTM-NX4BG8CV');`,
           }}
         ></script>

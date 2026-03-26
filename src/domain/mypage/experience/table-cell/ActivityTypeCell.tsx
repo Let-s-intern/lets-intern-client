@@ -1,4 +1,7 @@
-import { ACTIVITY_TYPE_KR, ActivityType } from '@/api/experienceSchema';
+import {
+  ACTIVITY_TYPE_KR,
+  ActivityType,
+} from '@/api/experience/experienceSchema';
 
 const ActivityTypeCell = ({ value }: { value: string }) => {
   return (

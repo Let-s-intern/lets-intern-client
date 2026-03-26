@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import Input from '@/common/input/Input';
+import Input from '@/common/input/v1/Input';
 import OutlinedTextarea from '@/domain/admin/OutlinedTextarea';
 import { CreateLiveReq, LiveIdSchema, UpdateLiveReq } from '@/schema';
 
