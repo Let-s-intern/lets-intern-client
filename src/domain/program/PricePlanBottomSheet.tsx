@@ -222,9 +222,21 @@ function PricePlanBottomSheet({
         className="mx-auto max-w-[1000px]"
       >
         {/* 챌린지 플랜 */}
-        <span className="required-star mb-4 mt-3 block text-xsmall14 font-semibold">
-          챌린지 플랜 선택 (필수)
-        </span>
+        <div className="mb-4 mt-3 flex items-center justify-between">
+          <span className="required-star text-xsmall14 font-semibold">
+            챌린지 플랜 선택 (필수)
+          </span>
+          {feedbackMentoringUrl && (
+            <a
+              href={feedbackMentoringUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xxsmall12 font-medium text-primary underline"
+            >
+              플랜별 상세 설명 확인하기
+            </a>
+          )}
+        </div>
         <OptionDropdown
           label={`${challenge.title} 플랜`}
           wrapperClassName="w-full"
@@ -265,23 +277,10 @@ function PricePlanBottomSheet({
                 value={PREMIUM}
                 wrapperClassName="py-3 pl-2 pr-3 border-b border-neutral-80"
                 right={
-                  <div className="flex flex-col items-end gap-0.5">
-                    <PriceView
-                      price={premiumRegularPrice}
-                      discount={premiumDiscountAmount}
-                    />
-                    {feedbackMentoringUrl && (
-                      <a
-                        href={feedbackMentoringUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="text-xxsmall12 text-primary underline"
-                      >
-                        피드백·멘토링 상세 안내
-                      </a>
-                    )}
-                  </div>
+                  <PriceView
+                    price={premiumRegularPrice}
+                    discount={premiumDiscountAmount}
+                  />
                 }
               />
             )}
@@ -297,23 +296,10 @@ function PricePlanBottomSheet({
                 value={STANDARD}
                 wrapperClassName="py-3 pl-2 pr-3 border-b border-neutral-80"
                 right={
-                  <div className="flex flex-col items-end gap-0.5">
-                    <PriceView
-                      price={standardRegularPrice}
-                      discount={standardDiscountAmount}
-                    />
-                    {feedbackMentoringUrl && (
-                      <a
-                        href={feedbackMentoringUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="text-xxsmall12 text-primary underline"
-                      >
-                        피드백·멘토링 상세 안내
-                      </a>
-                    )}
-                  </div>
+                  <PriceView
+                    price={standardRegularPrice}
+                    discount={standardDiscountAmount}
+                  />
                 }
               />
             )}

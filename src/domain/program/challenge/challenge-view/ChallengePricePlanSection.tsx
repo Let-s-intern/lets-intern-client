@@ -19,16 +19,12 @@ const {
   EXPERIENCE_SUMMARY,
 } = challengeTypeSchema.enum;
 
-const FEEDBACK_MENTORING_LINK_TEXT = '피드백·멘토링 상세 안내 →';
-
 interface CardProps {
   title: string;
   description: string;
   originalPrice: number;
   discountAmount: number;
   paragraphStyle?: CSSProperties;
-  feedbackMentoringUrl?: string | null;
-  planType?: string;
 }
 
 const PricePlanCard = memo(function PricePlanCard({
@@ -37,33 +33,16 @@ const PricePlanCard = memo(function PricePlanCard({
   originalPrice,
   discountAmount,
   paragraphStyle,
-  feedbackMentoringUrl,
-  planType,
 }: CardProps) {
-  const showFeedbackLink =
-    feedbackMentoringUrl && (planType === 'STANDARD' || planType === 'PREMIUM');
-
   return (
     <div className="w-72 rounded-sm bg-white px-5 py-7 text-left text-neutral-0 md:flex-1">
       <h4 className="mb-6 text-xsmall16 font-bold md:text-small20">{title}</h4>
       <p
         style={paragraphStyle}
-        className="min-h-28 whitespace-pre-line rounded-xxs bg-[#F1F4FF] px-3 py-5 text-xsmall14 font-medium md:text-small18"
+        className="mb-[52px] min-h-28 whitespace-pre-line rounded-xxs bg-[#F1F4FF] px-3 py-5 text-xsmall14 font-medium md:text-small18"
       >
         {description}
       </p>
-      {showFeedbackLink ? (
-        <a
-          href={feedbackMentoringUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mb-[52px] mt-3 inline-block text-xsmall14 font-medium text-neutral-30 underline"
-        >
-          {FEEDBACK_MENTORING_LINK_TEXT}
-        </a>
-      ) : (
-        <div className="mb-[52px]" />
-      )}
       <PriceSummary
         originalPrice={originalPrice}
         discountPrice={discountAmount}
@@ -75,14 +54,9 @@ const PricePlanCard = memo(function PricePlanCard({
 interface Props {
   challengeType: ChallengeType;
   priceInfoList: ChallengePriceInfo[];
-  feedbackMentoringUrl?: string | null;
 }
 
-function ChallengePricePlanSection({
-  challengeType,
-  priceInfoList,
-  feedbackMentoringUrl,
-}: Props) {
+function ChallengePricePlanSection({ challengeType, priceInfoList }: Props) {
   const styles = useMemo(() => {
     switch (challengeType) {
       case CAREER_START:
@@ -177,8 +151,6 @@ function ChallengePricePlanSection({
               description={standardPriceInfo?.description ?? ''}
               originalPrice={standardRegularPrice}
               discountAmount={standardDiscountAmount}
-              feedbackMentoringUrl={feedbackMentoringUrl}
-              planType="STANDARD"
             />
           )}
           {premiumPriceInfo && (
@@ -188,8 +160,6 @@ function ChallengePricePlanSection({
               description={premiumPriceInfo?.description ?? ''}
               originalPrice={premiumRegularPrice}
               discountAmount={premiumDiscountAmount}
-              feedbackMentoringUrl={feedbackMentoringUrl}
-              planType="PREMIUM"
             />
           )}
         </div>

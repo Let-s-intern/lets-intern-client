@@ -1,6 +1,7 @@
 import { ChallengeIdPrimitive } from '@/schema';
 import Image from 'next/image';
 import React from 'react';
+import { getFeedbackMentoringUrl } from '../feedback-mentoring-link';
 import { getChallengeThemeColor } from '../utils/getChallengeThemeColor';
 import ChallengePriceInfoContent from './ChallengePriceInfoContent';
 import ChallengeSchedule from './ChallengeSchedule';
@@ -36,6 +37,9 @@ const ChallengeBasicInfoSection: React.FC<Props> = ({ challenge }) => {
           <ChallengePriceInfoContent
             priceInfoList={challenge.priceInfo}
             themeColor={themeColor}
+            feedbackMentoringUrl={getFeedbackMentoringUrl(
+              challenge.challengeType,
+            )}
           />
         </div>
       </div>

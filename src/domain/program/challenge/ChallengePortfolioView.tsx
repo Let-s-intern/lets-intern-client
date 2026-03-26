@@ -18,7 +18,6 @@ import { ChallengeContent } from '@/types/interface';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
-import { getFeedbackMentoringUrl } from './feedback-mentoring-link';
 import { Break } from '../../../common/Break';
 import SectionSubHeader from '../../../common/header/SectionSubHeader';
 import {
@@ -492,9 +491,6 @@ const ChallengePortfolioView: React.FC<{
             <ChallengePricePlanSection
               challengeType={challenge.challengeType}
               priceInfoList={challenge.priceInfo}
-              feedbackMentoringUrl={getFeedbackMentoringUrl(
-                challenge.challengeType,
-              )}
             />
           )}
 

@@ -8,7 +8,6 @@ import MarketingSummarySection from '@/domain/program/challenge/marketing-view/M
 import { parseChallengeContent } from '@/domain/program/challenge/utils/parseChallengeContent';
 import { ChallengeIdPrimitive } from '@/schema';
 import { useMemo } from 'react';
-import { getFeedbackMentoringUrl } from './feedback-mentoring-link';
 import ChallengeBasicInfoSection from './challenge-view/ChallengeBasicInfoSection';
 import FreeTemplateLayout from './challenge-view/FreeTemplateLayout';
 import MarketingApplicationStrategySection from './marketing-view/MarketingApplicationStrategySection';
@@ -57,12 +56,7 @@ const ChallengeMarketingView = ({ challenge }: Props) => {
           <MarketingTimelineSection />
           <MarketingReviewsSection challenge={challenge} />
           <MarketingApplicationStrategySection weekText={weekText} />
-          <MarketingPricingSection
-            priceInfoList={challenge.priceInfo}
-            feedbackMentoringUrl={getFeedbackMentoringUrl(
-              challenge.challengeType,
-            )}
-          />
+          <MarketingPricingSection priceInfoList={challenge.priceInfo} />
           <MarketingSummarySection weekText={weekText} />
           {/* 특별혜택 */}
           <MarketingFAQSection faqInfo={challenge.faqInfo} />
