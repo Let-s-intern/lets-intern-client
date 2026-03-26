@@ -4,7 +4,7 @@ import { useGetUserMagnetListQuery } from '@/api/magnet/magnet';
 import CheckBox from '@/common/box/CheckBox';
 import RadioButton from '@/domain/program/challenge/challenge-view/RadioButton';
 
-const RADIO_COLOR = '#5177FF';
+const RADIO_COLOR = '#5F66F6';
 
 interface LaunchAlertProgramSectionProps {
   selectedMagnetIds: number[];
@@ -30,12 +30,12 @@ const LaunchAlertProgramSection = ({
   if (magnetList.length === 0) return null;
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-10">
       {/* 프로그램 선택 (중복 선택 가능) */}
       <div className="flex flex-col gap-3">
-        <label className="text-xsmall14 md:text-xsmall16">
+        <span className="mt-4 text-xsmall14 md:text-xsmall16">
           현재 취준을 준비하며 가장 필요하다고 느끼는 프로그램은 무엇인가요?
-        </label>
+        </span>
         <div className="flex flex-col gap-2">
           {magnetList.map((magnet) => {
             const isSelected = selectedMagnetIds.includes(magnet.magnetId);
@@ -51,11 +51,7 @@ const LaunchAlertProgramSection = ({
                 }}
                 className="flex w-full items-center gap-1 text-xsmall14"
               >
-                <CheckBox
-                  checked={isSelected}
-                  width="w-6"
-                  showCheckIcon
-                />
+                <CheckBox checked={isSelected} width="w-6" showCheckIcon />
                 <span className="text-xsmall14 md:text-xsmall16">
                   {magnet.title}
                 </span>
