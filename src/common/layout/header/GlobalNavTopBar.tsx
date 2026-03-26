@@ -68,10 +68,11 @@ function GlobalNavTopBar({ loginRedirect, toggleMenu, isLoginPage }: Props) {
           기업/학교 취업 교육 문의
         </GlobalNavItem>
         <GlobalNavItem
-          className="hidden items-center justify-center gap-1 border-b-[1.5px] border-transparent md:flex"
-          href="https://letscareer.oopy.io/1df5e77c-bee1-80b3-8199-e7d2cc9d64cd"
-          target="_blank"
-          rel="noopener noreferrer"
+          className={twMerge(
+            'hidden items-center justify-center gap-1 border-b-[1.5px] border-transparent md:flex',
+            pathname.startsWith('/community') && 'border-neutral-0',
+          )}
+          href="/community"
         >
           커뮤니티
           <span className="flex h-auto items-center text-xxsmall12 font-normal">
