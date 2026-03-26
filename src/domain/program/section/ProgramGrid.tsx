@@ -93,7 +93,7 @@ const ProgramGrid = ({
 
   return (
     <div className="flex flex-col gap-11">
-      <section className="grid grid-cols-2 grid-rows-3 gap-x-5 gap-y-8 md:grid-cols-4 md:grid-rows-2 md:gap-x-5 md:gap-y-11 xl:grid-cols-4">
+      <section className="grid grid-cols-2 gap-x-5 gap-y-8 md:grid-cols-4 md:gap-x-5 md:gap-y-11 xl:grid-cols-4">
         {firstSection.map((program) => (
           <ProgramCard
             key={program.programInfo.programType + program.programInfo.id}

@@ -58,7 +58,7 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
           router.push(link);
         }
       }}
-      className="program_card flex w-full cursor-pointer flex-col gap-3 overflow-hidden"
+      className="program_card row-span-3 grid w-full cursor-pointer grid-rows-subgrid gap-3 overflow-hidden"
       data-program-text={programInfo.title}
     >
       {/* 썸네일 + 모집 종료 dim */}
@@ -75,11 +75,10 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
           <DeadlineBadge deadline={programInfo.deadline ?? undefined} />
         )}
       </div>
-      <div className="flex flex-col gap-3">
-        <h2 className="text-1-semibold text-xsmall14 md:text-xsmall16">
-          {programInfo.title}
-        </h2>
-        <div className="flex flex-col gap-4">
+      <h2 className="text-1-semibold text-xsmall14 md:text-xsmall16">
+        {programInfo.title}
+      </h2>
+      <div className="flex flex-col gap-4">
           {!isAlwaysAvailable && (
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-1 tracking-[-0.4px] md:gap-1.5">
@@ -116,7 +115,6 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
               <NewBadge beginning={programInfo.beginning ?? undefined} />
             )}
           </div>
-        </div>
       </div>
     </div>
   );
