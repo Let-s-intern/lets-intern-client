@@ -8,10 +8,10 @@ import CareerInfoForm, {
   CareerInfoValues,
 } from '@/domain/mypage/career/CareerInfoForm';
 import { GRADE_ENUM_TO_KOREAN, GRADE_KOREAN_TO_ENUM } from '@/utils/constants';
-import { ChevronLeft } from 'lucide-react';
+import { getLibraryPathname } from '@/utils/url';
+import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { getLibraryPathname } from '@/utils/url';
 import LaunchAlertProgramSection from './LaunchAlertProgramSection';
 import MagnetApplyInfoCard from './MagnetApplyInfoCard';
 import MagnetSurveySection, {
@@ -192,9 +192,7 @@ const MagnetApplyContent = ({
       });
 
       const magnetAnswerList = surveyAnswers.map((a) => {
-        const question = questions.find(
-          (q) => q.questionId === a.questionId,
-        );
+        const question = questions.find((q) => q.questionId === a.questionId);
         let answer = '';
         if (question?.questionType === 'SUBJECTIVE') {
           answer = a.subjectiveText;
@@ -244,14 +242,14 @@ const MagnetApplyContent = ({
     variant === 'launch-alert' ? '출시 알림 신청하기' : '신청하기';
 
   return (
-    <main className="mx-auto flex max-w-[37.5rem] flex-col gap-9 px-5 pb-16 pt-12 md:px-0 md:pb-24 md:pt-10">
+    <main className="mx-auto flex max-w-[37.5rem] flex-col gap-6 px-5 pb-16 pt-6 md:px-0 md:pb-24 md:pt-16">
       {/* 헤더 */}
       <button
         type="button"
         onClick={() => router.back()}
-        className="flex items-center gap-1 text-xsmall16 font-medium text-neutral-0 md:text-small18"
+        className="flex items-center gap-2 text-small18 font-medium text-neutral-0"
       >
-        <ChevronLeft className="h-5 w-5" />
+        <ArrowLeft className="h-5 w-5" />
         {pageTitle}
       </button>
 
@@ -259,7 +257,7 @@ const MagnetApplyContent = ({
       <MagnetApplyInfoCard title={title} thumbnail={thumbnail} />
 
       {/* 기본 정보 */}
-      <section>
+      <section className="mt-4">
         <CareerInfoForm
           value={value}
           onChange={setValue}
@@ -272,7 +270,7 @@ const MagnetApplyContent = ({
       {/* 추가 정보 (서베이) */}
       {questions.length > 0 && (
         <section>
-          <h2 className="mb-6 text-xsmall16 font-semibold text-neutral-0 md:text-small18">
+          <h2 className="mb-6 mt-4 text-xsmall16 font-semibold text-neutral-0 md:text-small18">
             추가 정보
           </h2>
           <MagnetSurveySection
@@ -296,7 +294,7 @@ const MagnetApplyContent = ({
       )}
 
       {/* 마케팅 활용 동의 */}
-      <section>
+      <section className="mt-6">
         <MarketingConsentSection
           checked={isMarketingAgreed}
           onCheckedChange={setIsMarketingAgreed}
@@ -305,7 +303,7 @@ const MagnetApplyContent = ({
 
       {/* 신청하기 버튼 */}
       <button
-        className="rounded-xs bg-primary px-4 py-3 text-xsmall14 font-medium text-white disabled:bg-neutral-70 md:text-xsmall16"
+        className="mt-6 rounded-xs bg-primary px-4 py-3 text-xsmall14 font-medium text-white disabled:bg-neutral-70 md:text-xsmall16"
         onClick={handleSubmit}
         disabled={isSubmitDisabled}
       >

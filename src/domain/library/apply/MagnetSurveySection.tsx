@@ -4,7 +4,7 @@ import CheckBox from '@/common/box/CheckBox';
 import LineInput from '@/common/input/LineInput';
 import RadioButton from '@/domain/program/challenge/challenge-view/RadioButton';
 
-const RADIO_COLOR = '#5177FF';
+const RADIO_COLOR = '#5F66F6';
 
 export interface MagnetQuestion {
   questionId: number;
@@ -41,7 +41,7 @@ const MagnetSurveySection = ({
   if (questions.length === 0) return null;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-10">
       {questions.map((question) => {
         const answer = answers.find(
           (a) => a.questionId === question.questionId,
@@ -181,11 +181,11 @@ function QuestionLabel({
   isRequired: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-1">
-      <label className="text-xsmall14 md:text-xsmall16">
+    <div className="flex flex-col gap-0.5">
+      <span className="text-xsmall14 md:text-xsmall16">
         {question}
         {isRequired && <span className="pl-1 text-primary">*</span>}
-      </label>
+      </span>
       {description && (
         <p className="break-keep text-xsmall14 text-neutral-40 md:text-xsmall16">
           {description}
