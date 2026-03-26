@@ -1,7 +1,7 @@
 ---
 name: task-runner
 description: "todo/ 폴더의 task 파일을 읽고 task-executor 에이전트에 위임하여 자동 실행합니다. 사용자가 '작업 실행', '태스크 실행', '다음 작업', '작업 계속', '이어서 진행' 등을 요청할 때 사용합니다."
-argument-hint: "[task-file-path]"
+argument-hint: '[task-file-path]'
 disable-model-invocation: true
 allowed-tools: Read, Write, Bash, Glob, Task
 ---
@@ -76,8 +76,10 @@ task 파일을 에이전트에 넘기기 전, 아래 항목을 확인한다.
    - `.claude/skills/vercel-react-best-practices/SKILL.md`
 3. **참조 이미지 누락** → PRD에 이미지 경로가 있으면 task에 추가
 4. **실행 환경 누락** → 아래 기본 블록 삽입:
+
    ```markdown
    ### 실행 환경
+
    - **사용 가능 도구:** Read, Write, Edit, Bash, Glob, Grep, Task
    - **사용 불가 도구:** Skill, Agent
    - **이미지 읽기:** Read 도구로 .png/.jpg 파일 직접 열람 가능
@@ -120,6 +122,7 @@ mv todo/tasks-[name]-pushN.md done/
 ```
 
 결과보고서 형식:
+
 ```markdown
 # 결과보고서: [파일명]
 
@@ -128,9 +131,9 @@ mv todo/tasks-[name]-pushN.md done/
 
 ## 구현 요약
 
-| 작업 | 상태 | 커밋 |
-|---|---|---|
-| 1.1 [작업명] | ✅ | `해시` |
+| 작업         | 상태 | 커밋   |
+| ------------ | ---- | ------ |
+| 1.1 [작업명] | ✅   | `해시` |
 
 ## 생성/수정 파일
 
