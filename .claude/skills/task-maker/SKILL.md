@@ -118,7 +118,48 @@ PRD에 스크린샷/와이어프레임이 있으면:
 - 조건부 렌더링: 불필요한 DOM 최소화
 ```
 
-#### 5-4. 서브에이전트 제약사항 안내
+#### 5-4. 에이전트 팀 구성
+
+프로젝트에 에이전트 팀이 설정되어 있으면 (`.claude/roles/` 참조), Push 작업의 규모와 성격에 따라 팀 구성을 지정한다.
+
+**사용 가능한 역할** (`.claude/roles/`):
+
+| 역할 | 파일 | 담당 | 모델 |
+|------|------|------|------|
+| coordinator | `coordinator.md` | 작업 분배, 방향 조정, 진행 관리 | inherit |
+| developer | `developer.md` | 코드 구현, 커밋 | inherit |
+| tester | `tester.md` | 타입 체크, 린트, 테스트 실행, UI 수정 | haiku |
+
+**팀 구성 판단 기준:**
+
+| Push 규모 | 팀 구성 | 이유 |
+|-----------|---------|------|
+| 파일 1~2개 수정, 단순 작업 | developer 단독 | 오버헤드 불필요 |
+| 파일 3개+ 수정, 여러 컴포넌트 연동 | coordinator → developer + tester | 구현과 검증 분리 |
+| 새 기능 + 기존 코드 수정 혼합 | coordinator → developer(구현) + tester(검증+수정) | 병렬 가능 |
+
+**task 파일에 포함할 팀 구성 블록:**
+
+```markdown
+### 에이전트 팀 구성
+
+**팀 구성:** coordinator → developer + tester
+**이유:** 여러 파일 수정 + 기존 컴포넌트 연동 필요
+
+#### 실행 순서
+1. **coordinator**: task 파일 읽고 작업 분배
+2. **developer**: 코드 구현 작업 실행 → 커밋
+3. **tester**: 타입 체크 + 빌드 검증 → 결과 보고
+4. **coordinator**: 결과 취합 → 다음 작업 또는 완료 처리
+
+#### 역할별 지시사항
+- **developer**: "참조 문서/이미지를 먼저 읽고, 적용 규칙을 준수하여 구현. 커밋 후 보고."
+- **tester**: "developer 완료 후 `npx tsc --noEmit` + `npm run build` 실행. 실패 시 원인 분석 보고."
+```
+
+#### 5-5. 서브에이전트 제약사항 안내 (팀 미사용 시)
+
+에이전트 팀 대신 task-executor 서브에이전트로 실행하는 경우:
 
 ```markdown
 ### 실행 환경
@@ -150,7 +191,20 @@ Push 파일들과 별도로 `task-[날짜].md` 마스터 인덱스 파일을 생
 
 ---
 
-### 실행 환경
+### 에이전트 팀 구성
+
+**팀 구성:** [coordinator → developer + tester] 또는 [developer 단독]
+**이유:** [판단 근거]
+
+#### 실행 순서
+1. [역할]: [지시 요약]
+2. ...
+
+#### 역할별 지시사항
+- **developer**: "[구체적 지시]"
+- **tester**: "[구체적 지시]"
+
+### 실행 환경 (팀 미사용 시)
 
 - **사용 가능 도구:** Read, Write, Edit, Bash, Glob, Grep, Task
 - **사용 불가 도구:** Skill, Agent
