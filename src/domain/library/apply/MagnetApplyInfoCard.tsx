@@ -13,12 +13,12 @@ const MagnetApplyInfoCard = ({
   accessDescription = '신청 즉시 자료 제공 / 항상 소장',
 }: MagnetApplyInfoCardProps) => {
   return (
-    <div className="flex flex-col gap-3">
-      <h2 className="text-xsmall16 font-semibold text-neutral-0 md:text-small18">
+    <div className="flex flex-col gap-6">
+      <h2 className="text-xsmall16 font-semibold text-neutral-0">
         신청 자료집
       </h2>
       <div className="flex items-start gap-4">
-        <div className="relative h-[72px] w-[72px] flex-shrink-0 overflow-hidden rounded-xxs bg-neutral-90">
+        <div className="relative h-[97px] w-[137px] flex-shrink-0 overflow-hidden rounded-xxs bg-neutral-90">
           {thumbnail && (
             <Image
               src={thumbnail}
@@ -29,14 +29,24 @@ const MagnetApplyInfoCard = ({
             />
           )}
         </div>
-        <div className="flex flex-col gap-1">
-          <span className="text-xsmall14 font-semibold text-neutral-0 md:text-xsmall16">
+        <div className="flex flex-col gap-3">
+          <span className="text-xsmall16 font-semibold text-neutral-0">
             {title}
           </span>
-          <div className="flex items-center gap-1 text-xxsmall12 text-neutral-40 md:text-xsmall14">
+          <div className="flex gap-4 text-xxsmall12 text-neutral-40 md:items-center">
             <span>열람 방식</span>
-            <span className="font-medium text-primary">
-              {accessDescription}
+            <span className="font-medium text-primary-dark">
+              {accessDescription.split('/').map((text, i, arr) => (
+                <span key={i}>
+                  {text.trim()}
+                  {i < arr.length - 1 && (
+                    <>
+                      <span className="md:inline"> / </span>
+                      <br className="md:hidden" />
+                    </>
+                  )}
+                </span>
+              ))}
             </span>
           </div>
         </div>
