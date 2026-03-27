@@ -61,6 +61,14 @@ const navData = [
         name: '홈 큐레이션 관리',
         url: '/admin/home/curation',
       },
+      {
+        name: '홈 상단 배너 관리',
+        url: '/admin/home/main-banners',
+      },
+      {
+        name: '홈 하단 배너 관리',
+        url: '/admin/home/bottom-banners',
+      },
     ],
   },
   {
@@ -71,8 +79,8 @@ const navData = [
         url: '/admin/banner/top-bar-banners',
       },
       {
-        name: '통합 배너 관리',
-        url: '/admin/banner/common-banners',
+        name: '프로그램 배너 관리',
+        url: '/admin/banner/program-banners',
       },
       {
         name: '팝업 관리',
