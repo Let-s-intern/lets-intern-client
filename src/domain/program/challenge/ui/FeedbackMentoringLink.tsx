@@ -38,7 +38,7 @@ function FeedbackMentoringLink({
         } as CSSProperties
       }
     >
-      플랜별 설명확인하기
+      플랜별 상세 설명 확인하기
     </a>
   );
 }
