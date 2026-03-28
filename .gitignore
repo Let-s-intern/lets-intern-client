@@ -53,3 +53,4 @@ next-env.d.ts
 .history
 .claude/tasks/
 .claude/settings.local.json
+.remember/
