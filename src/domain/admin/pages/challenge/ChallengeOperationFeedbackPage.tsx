@@ -85,9 +85,7 @@ const useFeedbackMissionRows = (): MissionRow[] => {
 
   return useMemo(
     () =>
-      (data?.missionList ?? [])
-        .filter((item) => !!item.challengeOptionTitle)
-        .map((item) => ({ ...item })),
+      (data?.missionList ?? []).map((item) => ({ ...item })),
     [data],
   );
 };
