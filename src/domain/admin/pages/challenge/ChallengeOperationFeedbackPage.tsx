@@ -74,11 +74,11 @@ const useFeedbackMissionRows = (): MissionRow[] => {
   const { data: isAdmin } = useIsAdminQuery();
   const { data: dataForAdmin } =
     useChallengeMissionFeedbackListQuery(Number(programId), {
-      enabled: !!programId && isAdmin,
+      enabled: !!programId && isAdmin === true,
     });
   const { data: dataForMentor } =
     useMentorMissionFeedbackListQuery(Number(programId), {
-      enabled: !!programId && !isAdmin,
+      enabled: !!programId && isAdmin === false,
     });
 
   const data = isAdmin ? dataForAdmin : dataForMentor;
@@ -219,12 +219,12 @@ function SubmissionCountCell({ missionId }: { missionId: number | string }) {
   const { data: dataForAdmin } = useChallengeMissionFeedbackAttendanceQuery({
     challengeId: programId,
     missionId: String(missionId),
-    enabled: !!programId && isAdmin,
+    enabled: !!programId && isAdmin === true,
   });
   const { data: dataForMentor } = useMentorMissionFeedbackAttendanceQuery({
     challengeId: programId,
     missionId: String(missionId),
-    enabled: !!programId && !isAdmin,
+    enabled: !!programId && isAdmin === false,
   });
 
   const data = isAdmin ? dataForAdmin : dataForMentor;
@@ -347,12 +347,12 @@ function FeedbackAttendanceList({
   const { data: dataForAdmin } = useChallengeMissionFeedbackAttendanceQuery({
     challengeId: programId,
     missionId,
-    enabled: !!programId && !!missionId && isAdmin,
+    enabled: !!programId && !!missionId && isAdmin === true,
   });
   const { data: dataForMentor } = useMentorMissionFeedbackAttendanceQuery({
     challengeId: programId,
     missionId,
-    enabled: !!programId && !!missionId && !isAdmin,
+    enabled: !!programId && !!missionId && isAdmin === false,
   });
 
   const data = isAdmin ? dataForAdmin : dataForMentor;
