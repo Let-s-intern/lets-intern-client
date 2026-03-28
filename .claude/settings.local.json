@@ -11,11 +11,14 @@
       "mcp__ide__getDiagnostics",
       "WebFetch(domain:letsintern.kr)",
       "mcp__claude_ai_Figma__get_screenshot",
-      "mcp__claude_ai_Figma__get_design_context"
-    ]
+      "mcp__claude_ai_Figma__get_design_context",
+      "Skill(update-config)",
+      "WebFetch(domain:claude.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebSearch"
+    ],
+    "defaultMode": "auto"
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": [
-    "figma-dev"
-  ]
+  "enabledMcpjsonServers": ["figma-dev"]
 }
