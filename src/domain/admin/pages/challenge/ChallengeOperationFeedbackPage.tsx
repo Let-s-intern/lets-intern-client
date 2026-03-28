@@ -11,8 +11,10 @@ import dayjs from '@/lib/dayjs';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import MentorMenteeAssignment from './MentorMenteeAssignment';
+
+type SubTab = 'mentorMentee' | 'feedbackManage';
 
 interface Row {
   id: number | string;
@@ -75,9 +77,9 @@ const useFeedbackMissionRows = (): Row[] => {
   );
 };
 
-// ─── 메인 페이지 ────────────────────────────────────────────
+// ─── 미션 목록 테이블 ───────────────────────────────────────
 
-function ChallengeOperationFeedbackPage() {
+function FeedbackMissionList() {
   const rows = useFeedbackMissionRows();
 
   const columns: GridColDef<Row>[] = useMemo(
@@ -152,24 +154,55 @@ function ChallengeOperationFeedbackPage() {
   );
 
   return (
+    <DataGrid
+      rows={rows}
+      columns={columns}
+      disableRowSelectionOnClick
+      hideFooter
+      sx={{ '& .MuiDataGrid-cell': { overflow: 'visible' } }}
+    />
+  );
+}
+
+// ─── 메인 페이지 ────────────────────────────────────────────
+
+function ChallengeOperationFeedbackPage() {
+  const [activeTab, setActiveTab] = useState<SubTab>('feedbackManage');
+
+  return (
     <div className="flex flex-col gap-4">
-      {/* 탭 */}
+      {/* 하위 탭 버튼 */}
       <div className="flex items-center gap-2">
-        <span className="rounded-md border border-neutral-0 bg-neutral-0 px-4 py-2 text-xsmall14 font-medium text-white">
+        <button
+          type="button"
+          className={`rounded-md border px-4 py-2 text-xsmall14 font-medium transition-colors ${
+            activeTab === 'mentorMentee'
+              ? 'border-neutral-0 bg-neutral-0 text-white'
+              : 'border-neutral-80 bg-white text-neutral-0 hover:bg-neutral-95'
+          }`}
+          onClick={() => setActiveTab('mentorMentee')}
+        >
+          멘토/멘티 배정
+        </button>
+        <button
+          type="button"
+          className={`rounded-md border px-4 py-2 text-xsmall14 font-medium transition-colors ${
+            activeTab === 'feedbackManage'
+              ? 'border-neutral-0 bg-neutral-0 text-white'
+              : 'border-neutral-80 bg-white text-neutral-0 hover:bg-neutral-95'
+          }`}
+          onClick={() => setActiveTab('feedbackManage')}
+        >
           피드백 관리
-        </span>
+        </button>
       </div>
 
-      <MentorMenteeAssignment />
-
-      <h3 className="mt-4 text-medium18 font-semibold">피드백 미션</h3>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        disableRowSelectionOnClick
-        hideFooter
-        sx={{ '& .MuiDataGrid-cell': { overflow: 'visible' } }}
-      />
+      {/* 하위 탭 컨텐츠 */}
+      {activeTab === 'mentorMentee' ? (
+        <MentorMenteeAssignment />
+      ) : (
+        <FeedbackMissionList />
+      )}
     </div>
   );
 }
