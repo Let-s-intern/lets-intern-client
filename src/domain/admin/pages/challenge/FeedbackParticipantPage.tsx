@@ -22,6 +22,7 @@ import { useAdminChallengeMentorListQuery } from '@/api/mentor/mentor';
 import { useIsAdminQuery } from '@/api/user/user';
 import SelectFormControl from '@/domain/admin/program/SelectFormControl';
 import useInvalidateQueries from '@/hooks/useInvalidateQueries';
+import { useQueryClient } from '@tanstack/react-query';
 import { MenuItem, SelectChangeEvent } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import Link from 'next/link';
@@ -61,7 +62,14 @@ const useAttendanceHandler = () => {
 
   const { mutateAsync: patchAdminAttendance } = usePatchAdminAttendance();
   const { mutateAsync: patchAttendanceMentor } = usePatchAttendanceMentor();
-  const invalidateAttendance = useInvalidateQueries(queryKey);
+  const invalidateFeedback = useInvalidateQueries(queryKey);
+  const queryClient = useQueryClient();
+
+  const invalidateAttendance = async () => {
+    await invalidateFeedback();
+    // 일반 attendances 쿼리도 무효화 (fallback → 원본 전환을 위해)
+    await queryClient.invalidateQueries({ queryKey: ['admin', 'challenge', Number(programId), 'attendances', Number(missionId)] });
+  };
 
   return {
     patchAttendance: isAdmin ? patchAdminAttendance : patchAttendanceMentor,
