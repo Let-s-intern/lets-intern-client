@@ -377,6 +377,7 @@ export default function FeedbackParticipantPage() {
         columns={columns}
         disableRowSelectionOnClick
         hideFooter
+        sx={{ '& .MuiDataGrid-cell': { overflow: 'visible' } }}
       />
     </div>
   );
