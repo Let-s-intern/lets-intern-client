@@ -8,6 +8,8 @@ import {
   ChallengePricePlanEnum,
 } from '@/schema';
 import useProgramStore from '@/store/useProgramStore';
+import FeedbackMentoringLink from '@/domain/program/challenge/ui/FeedbackMentoringLink';
+import { getChallengeThemeColor } from '@/domain/program/challenge/utils/getChallengeThemeColor';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { RadioGroup } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -219,9 +221,16 @@ function PricePlanBottomSheet({
         className="mx-auto max-w-[1000px]"
       >
         {/* 챌린지 플랜 */}
-        <span className="required-star mb-4 mt-3 block text-xsmall14 font-semibold">
-          챌린지 플랜 선택 (필수)
-        </span>
+        <div className="mb-4 mt-3 flex items-center justify-between">
+          <span className="required-star text-xsmall14 font-semibold">
+            챌린지 플랜 선택 (필수)
+          </span>
+          <FeedbackMentoringLink
+            challengeType={challenge.challengeType}
+            themeColor={getChallengeThemeColor(challenge.challengeType)}
+            className="px-2.5 py-1 text-xxsmall12"
+          />
+        </div>
         <OptionDropdown
           label={`${challenge.title} 플랜`}
           wrapperClassName="w-full"

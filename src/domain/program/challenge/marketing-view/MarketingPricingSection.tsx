@@ -1,9 +1,10 @@
 import SectionHeader from '@/common/header/SectionHeader';
 import SectionSubHeader from '@/common/header/SectionSubHeader';
-import { ChallengePriceInfo } from '@/schema';
+import { ChallengePriceInfo, ChallengeType } from '@/schema';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import * as React from 'react';
 import PriceSummary from '../../../../common/price/PriceSummary';
+import FeedbackMentoringLink from '../ui/FeedbackMentoringLink';
 import MainTitle from '../ui/MainTitle';
 
 const PriceBox = ({
@@ -48,9 +49,10 @@ const PriceBox = ({
 
 interface Props {
   priceInfoList: ChallengePriceInfo[];
+  challengeType: ChallengeType;
 }
 
-const MarketingPricingSection = ({ priceInfoList }: Props) => {
+const MarketingPricingSection = ({ priceInfoList, challengeType }: Props) => {
   const basicPriceInfo = priceInfoList.find(
     (item) => item.challengePricePlanType === 'BASIC',
   );
@@ -148,6 +150,12 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
           ),
         )}
       </div>
+
+      <FeedbackMentoringLink
+        challengeType={challengeType}
+        themeColor="#4A76FF"
+        className="mt-8 text-xsmall16"
+      />
     </section>
   );
 };

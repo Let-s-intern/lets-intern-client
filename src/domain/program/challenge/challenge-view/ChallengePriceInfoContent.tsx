@@ -6,9 +6,11 @@ import {
   ChallengeIdSchema,
   ChallengePriceInfo,
   ChallengePricePlan,
+  ChallengeType,
 } from '@/schema';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { useMemo, useState } from 'react';
+import FeedbackMentoringLink from '../ui/FeedbackMentoringLink';
 import { DEFAULT_COLOR } from '../utils/getChallengeThemeColor';
 
 type Plans = {
@@ -104,11 +106,13 @@ const FinalPriceInfo = ({
 interface Props {
   priceInfoList: ChallengePriceInfo[] | ChallengeIdSchema['priceInfo'];
   themeColor?: string;
+  challengeType?: ChallengeType;
 }
 
 function ChallengePriceInfoContent({
   priceInfoList,
   themeColor = DEFAULT_COLOR,
+  challengeType,
 }: Props) {
   const [active, setActive] = useState<ChallengePricePlan>('BASIC');
 
@@ -232,6 +236,14 @@ function ChallengePriceInfoContent({
           <p className="mt-1.5 whitespace-pre-line">{activeDescription}</p>
         </div>
       </div>
+
+      {challengeType && (
+        <FeedbackMentoringLink
+          challengeType={challengeType}
+          themeColor={themeColor}
+          className="w-full py-2"
+        />
+      )}
 
       <div className="flex flex-col gap-1.5">
         <div className="text-xsmall16 text-neutral-20">

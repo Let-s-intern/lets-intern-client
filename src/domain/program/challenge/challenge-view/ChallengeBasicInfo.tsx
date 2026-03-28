@@ -150,7 +150,10 @@ const ChallengeBasicInfo = ({
             {challenge.title}
           </h1>
 
-          <ChallengePriceInfoContent priceInfoList={challenge.priceInfo} />
+          <ChallengePriceInfoContent
+            priceInfoList={challenge.priceInfo}
+            challengeType={challenge.challengeType}
+          />
         </div>
       </div>
       <div

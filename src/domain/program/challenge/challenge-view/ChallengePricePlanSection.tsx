@@ -10,6 +10,7 @@ import SectionHeader from '@/common/header/SectionHeader';
 import SectionMainHeader from '@/common/header/SectionMainHeader';
 import SectionSubHeader from '@/common/header/SectionSubHeader';
 import PriceSummary from '@/common/price/PriceSummary';
+import FeedbackMentoringLink from '../ui/FeedbackMentoringLink';
 import { CSSProperties, memo, useMemo } from 'react';
 
 const {
@@ -164,6 +165,12 @@ function ChallengePricePlanSection({ challengeType, priceInfoList }: Props) {
           )}
         </div>
       </div>
+
+      <FeedbackMentoringLink
+        challengeType={challengeType}
+        themeColor={styles.primaryColor}
+        className="mx-auto mt-8 px-10 py-3 text-xsmall16"
+      />
     </section>
   );
 }
