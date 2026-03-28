@@ -5,7 +5,7 @@ import {
   FeedbackStatusEnum,
   FeedbackStatusMapping,
 } from '@/api/challenge/challengeSchema';
-import { usePatchAttendanceMentorMutation } from '@/api/mentor/mentor';
+import { usePatchAttendanceMentor } from '@/api/attendance/attendance';
 import { useIsAdminQuery } from '@/api/user/user';
 import SelectFormControl from '@/domain/admin/program/SelectFormControl';
 import { MenuItem, SelectChangeEvent } from '@mui/material';
@@ -21,7 +21,9 @@ const FeedbackStatusRenderCell = (
 ) => {
   const { data: isAdmin } = useIsAdminQuery();
   const { invalidateAttendance } = useAttendanceHandler();
-  const { mutateAsync: patchMentor } = usePatchAttendanceMentorMutation();
+  // v1 /attendance/{id}/mentor 엔드포인트 직접 사용
+  // feedbackStatus만 전송 (feedback 필드 미포함 → 기존 피드백 내용 보존)
+  const { mutateAsync: patchStatus } = usePatchAttendanceMentor();
 
   const serverValue = params.value || FeedbackStatusEnum.enum.WAITING;
 
@@ -35,12 +37,8 @@ const FeedbackStatusRenderCell = (
     const newValue = e.target.value as FeedbackStatus;
     setLocalValue(newValue);
     try {
-      const attendanceId = params.row.id as number;
-      // v1 /attendance/{id}/mentor 엔드포인트는 feedback 필드가 필수
-      // 기존 feedback 내용을 유지하면서 feedbackStatus만 변경
-      await patchMentor({
-        attendanceId,
-        feedback: params.row.feedback ?? '',
+      await patchStatus({
+        attendanceId: params.row.id,
         feedbackStatus: newValue,
       });
       await invalidateAttendance();
