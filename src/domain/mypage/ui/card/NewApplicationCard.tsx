@@ -39,10 +39,13 @@ export const MypageApplicationCard = ({
   const detailHref = getDetailHref(config);
 
   const downloadAction = useDownloadAction({
-    applicationId: config.id,
-    type: 'GUIDEBOOK',
+    isDownloaded: config.isDownloaded ?? false,
     executeDownload: () =>
-      downloadGuidebookAndTrack(config.id, config.programId),
+      downloadGuidebookAndTrack({
+        applicationId: config.id,
+        contentFileUrl: config.contentFileUrl,
+        contentUrl: config.contentUrl,
+      }),
   });
 
   const handleActionClick = () => {
