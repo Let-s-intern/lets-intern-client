@@ -24,7 +24,6 @@ export default function MentorMenteeAssignment() {
     useChallengeApplicationsQuery({
       challengeId: programId,
       isCanceled: false,
-      isMentee: true,
       enabled: Boolean(programId),
     });
   const { data: mentorData, isLoading: isMentorLoading } =
