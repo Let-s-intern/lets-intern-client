@@ -5,6 +5,7 @@ import {
   FeedbackStatusEnum,
   FeedbackStatusMapping,
 } from '@/api/challenge/challengeSchema';
+import { usePatchAttendanceMentorMutation } from '@/api/mentor/mentor';
 import { useIsAdminQuery } from '@/api/user/user';
 import SelectFormControl from '@/domain/admin/program/SelectFormControl';
 import { MenuItem, SelectChangeEvent } from '@mui/material';
@@ -19,11 +20,11 @@ const FeedbackStatusRenderCell = (
   params: GridRenderCellParams<AttendanceRow, FeedbackStatus>,
 ) => {
   const { data: isAdmin } = useIsAdminQuery();
-  const { patchAttendance, invalidateAttendance } = useAttendanceHandler();
+  const { invalidateAttendance } = useAttendanceHandler();
+  const { mutateAsync: patchMentor } = usePatchAttendanceMentorMutation();
 
   const serverValue = params.value || FeedbackStatusEnum.enum.WAITING;
 
-  // Optimistic local state: 드롭다운 선택 즉시 UI에 반영
   const [localValue, setLocalValue] = useState(serverValue);
 
   useEffect(() => {
@@ -34,9 +35,12 @@ const FeedbackStatusRenderCell = (
     const newValue = e.target.value as FeedbackStatus;
     setLocalValue(newValue);
     try {
-      const attendanceId = params.row.id;
-      await patchAttendance({
+      const attendanceId = params.row.id as number;
+      // v1 /attendance/{id}/mentor 엔드포인트는 feedback 필드가 필수
+      // 기존 feedback 내용을 유지하면서 feedbackStatus만 변경
+      await patchMentor({
         attendanceId,
+        feedback: params.row.feedback ?? '',
         feedbackStatus: newValue,
       });
       await invalidateAttendance();

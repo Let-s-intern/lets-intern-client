@@ -71,6 +71,7 @@ const feedbackAttendanceItemSchema = z
     status: AttendanceStatusEnum.default('ABSENT'),
     result: AttendanceResultEnum.default('WAITING'),
     challengePricePlanType: ChallengePricePlanEnum.default('BASIC'),
+    feedback: z.string().optional().nullable(),
     feedbackStatus: FeedbackStatusEnum.nullable().default('WAITING'),
     optionCode: z.string().optional().nullable(),
   })
@@ -131,6 +132,7 @@ export const mentorMenteeAttendanceListSchema = z.object({
         wishJob: z.string().optional().nullable(),
         wishCompany: z.string().optional().nullable(),
         link: z.string().optional().nullable(),
+        feedback: z.string().optional().nullable(),
         status: AttendanceStatusEnum.default('ABSENT'),
         result: AttendanceResultEnum.default('WAITING'),
         challengePricePlanType: ChallengePricePlanEnum.default('BASIC'),

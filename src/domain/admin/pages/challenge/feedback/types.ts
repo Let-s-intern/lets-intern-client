@@ -10,6 +10,7 @@ export interface AttendanceRow {
   wishJob?: string | null;
   wishCompany?: string | null;
   link?: string | null;
+  feedback?: string | null;
   feedbackPageLink: string;
   feedbackStatus: string;
 }
