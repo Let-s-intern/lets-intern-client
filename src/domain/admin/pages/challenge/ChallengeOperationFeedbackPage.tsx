@@ -1,12 +1,12 @@
 'use client';
 
 import {
-  ChallengeMissionFeedbackAttendanceQueryKey,
   MentorMissionFeedbackAttendanceQueryKey,
-  useChallengeMissionFeedbackAttendanceQuery,
   useChallengeMissionFeedbackListQuery,
   useMentorMissionFeedbackAttendanceQuery,
   useMentorMissionFeedbackListQuery,
+  useGetChallengeAttendances,
+  getChallengeAttendancesQueryKey,
 } from '@/api/challenge/challenge';
 import {
   FeedbackStatus,
@@ -29,7 +29,6 @@ import {
   GridRenderCellParams,
 } from '@mui/x-data-grid';
 import { MenuItem, SelectChangeEvent } from '@mui/material';
-import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
@@ -110,23 +109,18 @@ function MentorCell({
   const { mutateAsync: patchAttendanceMentor } = usePatchAttendanceMentor();
 
   const queryKey = isAdmin
-    ? [ChallengeMissionFeedbackAttendanceQueryKey, programId, missionId]
+    ? getChallengeAttendancesQueryKey(Number(programId), Number(missionId))
     : [MentorMissionFeedbackAttendanceQueryKey, programId, missionId];
   const invalidate = useInvalidateQueries(queryKey);
 
   const patchAttendance = isAdmin ? patchAdminAttendance : patchAttendanceMentor;
 
-  const queryClient = useQueryClient();
   const handleChange = async (e: SelectChangeEvent<number>) => {
     await patchAttendance({
       attendanceId: row.id,
       mentorUserId: e.target.value as number,
     });
     await invalidate();
-    // 멘토/멘티 배정 탭과 동기화
-    queryClient.invalidateQueries({
-      queryKey: [ChallengeMissionFeedbackAttendanceQueryKey],
-    });
   };
 
   if (!isAdmin) return <span>{row.mentorName}</span>;
@@ -173,7 +167,7 @@ function FeedbackStatusCell({
   const { mutateAsync: patchAttendanceMentor } = usePatchAttendanceMentor();
 
   const queryKey = isAdmin
-    ? [ChallengeMissionFeedbackAttendanceQueryKey, programId, missionId]
+    ? getChallengeAttendancesQueryKey(Number(programId), Number(missionId))
     : [MentorMissionFeedbackAttendanceQueryKey, programId, missionId];
   const invalidate = useInvalidateQueries(queryKey);
 
@@ -216,24 +210,31 @@ function SubmissionCountCell({ missionId }: { missionId: number | string }) {
   const { programId } = useParams<{ programId: string }>();
   const { data: isAdmin } = useIsAdminQuery();
 
-  const { data: dataForAdmin } = useChallengeMissionFeedbackAttendanceQuery({
-    challengeId: programId,
-    missionId: String(missionId),
-    enabled: !!programId && (isAdmin === true),
+  // 어드민: 일반 출석 API (데이터가 실제로 반환됨)
+  const { data: adminAttendances } = useGetChallengeAttendances({
+    challengeId: isAdmin === true ? Number(programId) : undefined,
+    detailedMissionId: isAdmin === true ? Number(missionId) : undefined,
   });
+  // 멘토: 피드백 출석 API
   const { data: dataForMentor } = useMentorMissionFeedbackAttendanceQuery({
     challengeId: programId,
     missionId: String(missionId),
     enabled: !!programId && (isAdmin === false),
   });
 
-  const data = isAdmin ? dataForAdmin : dataForMentor;
-  const submitted = data?.attendanceList?.filter((a) => !!a.link)?.length ?? 0;
-  const confirmed =
-    data?.attendanceList?.filter((a) => a.feedbackStatus === 'CONFIRMED')
-      ?.length ?? 0;
+  if (isAdmin) {
+    const list = adminAttendances ?? [];
+    const submitted = list.filter((a) => !!a.attendance.link).length;
+    return <span>{submitted} / {list.length}</span>;
+  }
 
-  if (!data) return <span className="text-neutral-40">-</span>;
+  const mentorList = dataForMentor?.attendanceList ?? [];
+  const submitted = mentorList.filter((a) => !!a.link).length;
+  const confirmed = mentorList.filter(
+    (a) => a.feedbackStatus === 'CONFIRMED',
+  ).length;
+
+  if (!dataForMentor) return <span className="text-neutral-40">-</span>;
 
   return (
     <span>
@@ -344,32 +345,46 @@ function FeedbackAttendanceList({
 
   const { data: isAdmin } = useIsAdminQuery();
 
-  const { data: dataForAdmin } = useChallengeMissionFeedbackAttendanceQuery({
-    challengeId: programId,
-    missionId,
-    enabled: !!programId && !!missionId && isAdmin === true,
+  // 어드민: 일반 출석 API (feedback/attendances가 빈 배열 반환하므로)
+  const { data: adminAttendances } = useGetChallengeAttendances({
+    challengeId: isAdmin === true ? Number(programId) : undefined,
+    detailedMissionId: isAdmin === true ? Number(missionId) : undefined,
   });
+  // 멘토: 피드백 출석 API
   const { data: dataForMentor } = useMentorMissionFeedbackAttendanceQuery({
     challengeId: programId,
     missionId,
     enabled: !!programId && !!missionId && (isAdmin === false),
   });
 
-  const data = isAdmin ? dataForAdmin : dataForMentor;
-
-  const rows: AttendanceRow[] = useMemo(
-    () =>
-      (data?.attendanceList ?? []).map(
-        ({ status: _s, result: _r, challengePricePlanType: _c, ...rest }) => ({
-          ...rest,
-          missionTitle: mission.title ?? '',
-          missionRound: mission.th,
-          feedbackStatus: rest.feedbackStatus ?? FeedbackStatusEnum.enum.WAITING,
-          feedbackPageLink: `/admin/challenge/operation/${programId}/mission/${missionId}/participant/${rest.id}/feedback`,
-        }),
-      ),
-    [data, mission, programId, missionId],
-  );
+  const rows: AttendanceRow[] = useMemo(() => {
+    if (isAdmin) {
+      return (adminAttendances ?? []).map((item) => ({
+        id: item.attendance.id,
+        userId: item.attendance.userId ?? null,
+        challengeMentorId: null,
+        mentorName: null,
+        name: item.attendance.name ?? '',
+        major: null,
+        wishJob: null,
+        wishCompany: null,
+        link: item.attendance.link ?? null,
+        missionTitle: mission.title ?? '',
+        missionRound: mission.th,
+        feedbackStatus: FeedbackStatusEnum.enum.WAITING,
+        feedbackPageLink: `/admin/challenge/operation/${programId}/mission/${missionId}/participant/${item.attendance.id}/feedback`,
+      }));
+    }
+    return (dataForMentor?.attendanceList ?? []).map(
+      ({ status: _s, result: _r, challengePricePlanType: _c, ...rest }) => ({
+        ...rest,
+        missionTitle: mission.title ?? '',
+        missionRound: mission.th,
+        feedbackStatus: rest.feedbackStatus ?? FeedbackStatusEnum.enum.WAITING,
+        feedbackPageLink: `/admin/challenge/operation/${programId}/mission/${missionId}/participant/${rest.id}/feedback`,
+      }),
+    );
+  }, [adminAttendances, dataForMentor, isAdmin, mission, programId, missionId]);
 
   const attendanceColumns: GridColDef<AttendanceRow>[] = useMemo(
     () => [
