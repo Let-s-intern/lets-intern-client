@@ -10,6 +10,7 @@ import SectionHeader from '@/common/header/SectionHeader';
 import SectionMainHeader from '@/common/header/SectionMainHeader';
 import SectionSubHeader from '@/common/header/SectionSubHeader';
 import PriceSummary from '@/common/price/PriceSummary';
+import { getFeedbackMentoringUrl } from '../feedback-mentoring-link';
 import { CSSProperties, memo, useMemo } from 'react';
 
 const {
@@ -164,6 +165,29 @@ function ChallengePricePlanSection({ challengeType, priceInfoList }: Props) {
           )}
         </div>
       </div>
+
+      {getFeedbackMentoringUrl(challengeType) && (
+        <a
+          href={getFeedbackMentoringUrl(challengeType)!}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mx-auto mt-8 inline-flex items-center justify-center rounded-xxs border px-6 py-2.5 text-xsmall16 font-semibold transition-colors"
+          style={{
+            color: styles.primaryColor,
+            borderColor: styles.primaryColor,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = styles.primaryColor;
+            e.currentTarget.style.color = '#fff';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.color = styles.primaryColor;
+          }}
+        >
+          플랜별 설명확인하기
+        </a>
+      )}
     </section>
   );
 }

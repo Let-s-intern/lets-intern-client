@@ -1,9 +1,10 @@
 import SectionHeader from '@/common/header/SectionHeader';
 import SectionSubHeader from '@/common/header/SectionSubHeader';
-import { ChallengePriceInfo } from '@/schema';
+import { ChallengePriceInfo, ChallengeType } from '@/schema';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import * as React from 'react';
 import PriceSummary from '../../../../common/price/PriceSummary';
+import { getFeedbackMentoringUrl } from '../feedback-mentoring-link';
 import MainTitle from '../ui/MainTitle';
 
 const PriceBox = ({
@@ -48,9 +49,10 @@ const PriceBox = ({
 
 interface Props {
   priceInfoList: ChallengePriceInfo[];
+  challengeType: ChallengeType;
 }
 
-const MarketingPricingSection = ({ priceInfoList }: Props) => {
+const MarketingPricingSection = ({ priceInfoList, challengeType }: Props) => {
   const basicPriceInfo = priceInfoList.find(
     (item) => item.challengePricePlanType === 'BASIC',
   );
@@ -148,6 +150,17 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
           ),
         )}
       </div>
+
+      {getFeedbackMentoringUrl(challengeType) && (
+        <a
+          href={getFeedbackMentoringUrl(challengeType)!}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-8 inline-flex items-center justify-center rounded-xxs border border-[#4A76FF] px-6 py-2.5 text-xsmall16 font-semibold text-[#4A76FF] transition-colors hover:bg-[#4A76FF] hover:text-white"
+        >
+          플랜별 설명확인하기
+        </a>
+      )}
     </section>
   );
 };
