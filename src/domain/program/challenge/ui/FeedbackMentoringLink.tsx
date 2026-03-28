@@ -1,7 +1,6 @@
-'use client';
-
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeType } from '@/schema';
+import { CSSProperties } from 'react';
 import { getFeedbackMentoringUrl } from '../feedback-mentoring-link';
 
 interface Props {
@@ -28,21 +27,16 @@ function FeedbackMentoringLink({
       target="_blank"
       rel="noopener noreferrer"
       className={twMerge(
-        'inline-flex items-center justify-center rounded-xxs border px-6 py-2.5 text-xsmall14 font-semibold transition-colors',
+        'inline-flex items-center justify-center rounded-xxs border px-6 py-2.5 text-xsmall14 font-semibold transition-colors hover:bg-[var(--theme-color)] hover:text-white',
         className,
       )}
-      style={{
-        color: themeColor,
-        borderColor: themeColor,
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.backgroundColor = themeColor;
-        e.currentTarget.style.color = '#fff';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.backgroundColor = 'transparent';
-        e.currentTarget.style.color = themeColor;
-      }}
+      style={
+        {
+          color: themeColor,
+          borderColor: themeColor,
+          '--theme-color': themeColor,
+        } as CSSProperties
+      }
     >
       플랜별 설명확인하기
     </a>
