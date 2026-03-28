@@ -56,7 +56,10 @@ const ChallengeMarketingView = ({ challenge }: Props) => {
           <MarketingTimelineSection />
           <MarketingReviewsSection challenge={challenge} />
           <MarketingApplicationStrategySection weekText={weekText} />
-          <MarketingPricingSection priceInfoList={challenge.priceInfo} />
+          <MarketingPricingSection
+            priceInfoList={challenge.priceInfo}
+            challengeType={challenge.challengeType}
+          />
           <MarketingSummarySection weekText={weekText} />
           {/* 특별혜택 */}
           <MarketingFAQSection faqInfo={challenge.faqInfo} />
