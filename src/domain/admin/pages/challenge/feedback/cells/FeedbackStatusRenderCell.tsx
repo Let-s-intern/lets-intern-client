@@ -9,6 +9,7 @@ import { useIsAdminQuery } from '@/api/user/user';
 import SelectFormControl from '@/domain/admin/program/SelectFormControl';
 import { MenuItem, SelectChangeEvent } from '@mui/material';
 import { GridRenderCellParams } from '@mui/x-data-grid';
+import { useEffect, useState } from 'react';
 import type { AttendanceRow } from '../types';
 import useAttendanceHandler from '../hooks/useAttendanceHandler';
 
@@ -20,14 +21,28 @@ const FeedbackStatusRenderCell = (
   const { data: isAdmin } = useIsAdminQuery();
   const { patchAttendance, invalidateAttendance } = useAttendanceHandler();
 
-  const handleChange = async (e: SelectChangeEvent<FeedbackStatus>) => {
-    const attendanceId = params.row.id;
+  const serverValue = params.value || FeedbackStatusEnum.enum.WAITING;
 
-    await patchAttendance({
-      attendanceId,
-      feedbackStatus: e.target.value as FeedbackStatus,
-    });
-    await invalidateAttendance();
+  // Optimistic local state: 드롭다운 선택 즉시 UI에 반영
+  const [localValue, setLocalValue] = useState(serverValue);
+
+  useEffect(() => {
+    setLocalValue(serverValue);
+  }, [serverValue]);
+
+  const handleChange = async (e: SelectChangeEvent<FeedbackStatus>) => {
+    const newValue = e.target.value as FeedbackStatus;
+    setLocalValue(newValue);
+    try {
+      const attendanceId = params.row.id;
+      await patchAttendance({
+        attendanceId,
+        feedbackStatus: newValue,
+      });
+      await invalidateAttendance();
+    } catch {
+      setLocalValue(serverValue);
+    }
   };
 
   if (!isAdmin && params.value === FeedbackStatusEnum.enum.CONFIRMED) {
@@ -36,14 +51,15 @@ const FeedbackStatusRenderCell = (
 
   return (
     <SelectFormControl<FeedbackStatus>
-      value={params.value || FeedbackStatusEnum.enum.WAITING}
+      value={localValue}
       renderValue={(selected) => FeedbackStatusMapping[selected]}
       onChange={handleChange}
+      sx={{ '& .MuiSelect-select': { fontSize: '12px' } }}
     >
       {(isAdmin ? FeedbackStatusEnum : FeedbackStatusEnumForMentor).options.map(
         (item) => (
-          <MenuItem key={item} value={item}>
-            {FeedbackStatusMapping[item]}{' '}
+          <MenuItem key={item} value={item} sx={{ fontSize: '12px' }}>
+            {FeedbackStatusMapping[item]}
           </MenuItem>
         ),
       )}

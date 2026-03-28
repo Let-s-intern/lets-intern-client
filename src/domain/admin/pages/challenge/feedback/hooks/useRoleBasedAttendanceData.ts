@@ -4,6 +4,7 @@ import {
   useChallengeMissionFeedbackAttendanceQuery,
   useMentorMissionFeedbackAttendanceQuery,
   useGetChallengeAttendances,
+  useChallengeApplicationsQuery,
 } from '@/api/challenge/challenge';
 import { useIsAdminQuery } from '@/api/user/user';
 import { useParams } from 'next/navigation';
@@ -20,7 +21,7 @@ const useRoleBasedAttendanceData = () => {
   const { data: dataForAdmin } = useChallengeMissionFeedbackAttendanceQuery({
     challengeId: programId,
     missionId,
-    enabled: !!programId && !!missionId && (isAdmin === true),
+    enabled: !!programId && !!missionId && isAdmin === true,
   });
 
   // feedback/attendances가 빈 배열이면 일반 attendances fallback
@@ -34,54 +35,72 @@ const useRoleBasedAttendanceData = () => {
     detailedMissionId: feedbackEmpty ? Number(missionId) : undefined,
   });
 
+  // fallback 시 applications에서 멘토 배정 정보를 가져옴
+  const { data: applicationsData } = useChallengeApplicationsQuery({
+    challengeId: feedbackEmpty ? programId : undefined,
+    enabled: feedbackEmpty,
+  });
+
   const adminData = useMemo(() => {
     if (dataForAdmin && dataForAdmin.attendanceList.length > 0)
       return dataForAdmin;
     if (fallbackData && fallbackData.length > 0) {
       return {
-        attendanceList: fallbackData.map((item) => ({
-          id: item.attendance.id,
-          userId: item.attendance.userId ?? null,
-          challengeMentorId: null as number | null,
-          mentorId: null as number | null,
-          mentorName: null as string | null,
-          name: item.attendance.name ?? '',
-          major: null as string | null,
-          wishJob: null as string | null,
-          wishCompany: null as string | null,
-          link: item.attendance.link ?? null,
-          status: (item.attendance.status ?? 'ABSENT') as
-            | 'PRESENT'
-            | 'UPDATED'
-            | 'LATE'
-            | 'ABSENT',
-          result: (item.attendance.result ?? 'WAITING') as
-            | 'WAITING'
-            | 'PASS'
-            | 'WRONG'
-            | 'FINAL_WRONG',
-          challengePricePlanType: 'BASIC' as
-            | 'LIGHT'
-            | 'BASIC'
-            | 'STANDARD'
-            | 'PREMIUM',
-          feedbackStatus: 'WAITING' as
-            | 'WAITING'
-            | 'IN_PROGRESS'
-            | 'COMPLETED'
-            | 'CONFIRMED'
-            | null,
-          optionCode: null as string | null,
-        })),
+        attendanceList: fallbackData.map((item) => {
+          // applications 데이터에서 이름으로 멘토 배정 정보 매핑
+          const matchedApp = applicationsData?.applicationList.find(
+            (a) => a.application.name === item.attendance.name,
+          );
+          return {
+            id: item.attendance.id,
+            userId: item.attendance.userId ?? null,
+            challengeMentorId:
+              (item.attendance.challengeMentorId as number | null) ??
+              (matchedApp?.application.challengeMentorId as number | null) ??
+              null,
+            mentorId: null as number | null,
+            mentorName:
+              (item.attendance.mentorName as string | null) ??
+              (matchedApp?.application.challengeMentorName as string | null) ??
+              null,
+            name: item.attendance.name ?? '',
+            major: null as string | null,
+            wishJob: null as string | null,
+            wishCompany: null as string | null,
+            link: item.attendance.link ?? null,
+            status: (item.attendance.status ?? 'ABSENT') as
+              | 'PRESENT'
+              | 'UPDATED'
+              | 'LATE'
+              | 'ABSENT',
+            result: (item.attendance.result ?? 'WAITING') as
+              | 'WAITING'
+              | 'PASS'
+              | 'WRONG'
+              | 'FINAL_WRONG',
+            challengePricePlanType: 'BASIC' as
+              | 'LIGHT'
+              | 'BASIC'
+              | 'STANDARD'
+              | 'PREMIUM',
+            feedbackStatus: (item.attendance.feedbackStatus ?? 'WAITING') as
+              | 'WAITING'
+              | 'IN_PROGRESS'
+              | 'COMPLETED'
+              | 'CONFIRMED'
+              | null,
+            optionCode: null as string | null,
+          };
+        }),
       };
     }
     return dataForAdmin;
-  }, [dataForAdmin, fallbackData]);
+  }, [dataForAdmin, fallbackData, applicationsData]);
 
   const { data: dataForMentor } = useMentorMissionFeedbackAttendanceQuery({
     challengeId: programId,
     missionId,
-    enabled: !!programId && !!missionId && (isAdmin === false),
+    enabled: !!programId && !!missionId && isAdmin === false,
   });
 
   return {

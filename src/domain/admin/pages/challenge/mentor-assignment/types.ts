@@ -4,3 +4,11 @@ export type MentorItem = {
   name: string;
   userCareerList: { company: string | null; job: string | null }[];
 };
+
+export interface MentorAssignmentRow {
+  id: number;
+  name: string;
+  email: string;
+  phoneNum: string;
+  matchedMentorId: number | null;
+}

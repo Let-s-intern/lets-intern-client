@@ -5,6 +5,7 @@ import {
   usePatchAttendanceMentor,
 } from '@/api/attendance/attendance';
 import {
+  ChallengeApplicationsQueryKey,
   ChallengeMissionFeedbackAttendanceQueryKey,
   MentorMissionFeedbackAttendanceQueryKey,
 } from '@/api/challenge/challenge';
@@ -33,6 +34,9 @@ const useAttendanceHandler = () => {
     await invalidateFeedback();
     await queryClient.invalidateQueries({
       queryKey: ['admin', 'challenge', Number(programId), 'attendances', Number(missionId)],
+    });
+    await queryClient.invalidateQueries({
+      queryKey: [ChallengeApplicationsQueryKey, programId],
     });
   };
 
