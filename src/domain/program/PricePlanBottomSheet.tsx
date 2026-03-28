@@ -9,6 +9,7 @@ import {
 } from '@/schema';
 import useProgramStore from '@/store/useProgramStore';
 import FeedbackMentoringLink from '@/domain/program/challenge/ui/FeedbackMentoringLink';
+import { getChallengeThemeColor } from '@/domain/program/challenge/utils/getChallengeThemeColor';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { RadioGroup } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -226,7 +227,7 @@ function PricePlanBottomSheet({
           </span>
           <FeedbackMentoringLink
             challengeType={challenge.challengeType}
-            themeColor="#4A76FF"
+            themeColor={getChallengeThemeColor(challenge.challengeType)}
             className="px-2.5 py-1 text-xxsmall12"
           />
         </div>
