@@ -1,6 +1,7 @@
 'use client';
 
 import AlertModal from '@/common/alert/AlertModal';
+import { downloadGuidebookAndTrack } from '@/domain/career-board/utils/guidebookDownload';
 import { useDownloadAction } from '@/hooks/useDownloadAction';
 import { twMerge } from '@/lib/twMerge';
 import { useRouter } from 'next/navigation';
@@ -33,11 +34,13 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
   const hasConfirm = !!actionButton?.confirm;
   const isDownloadButton = actionButton?.isDownload === true;
   const downloadAction = useDownloadAction({
-    applicationId: config.id,
-    type: 'GUIDEBOOK',
-    executeDownload: async () => {
-      await actionButton?.onClick?.();
-    },
+    isDownloaded: config.isDownloaded ?? false,
+    executeDownload: () =>
+      downloadGuidebookAndTrack({
+        applicationId: config.id,
+        contentFileUrl: config.contentFileUrl,
+        contentUrl: config.contentUrl,
+      }),
   });
 
   const handleActionClick = () => {
