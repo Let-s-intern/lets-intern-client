@@ -1,3 +1,5 @@
+'use client';
+
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeType } from '@/schema';
 import { getFeedbackMentoringUrl } from '../feedback-mentoring-link';
