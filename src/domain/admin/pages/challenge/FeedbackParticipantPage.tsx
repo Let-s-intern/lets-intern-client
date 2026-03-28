@@ -11,8 +11,6 @@ import {
   MentorMissionFeedbackAttendanceQueryKey,
   useChallengeMissionFeedbackAttendanceQuery,
   useMentorMissionFeedbackAttendanceQuery,
-  useGetChallengeAttendances,
-  getChallengeAttendancesQueryKey,
 } from '@/api/challenge/challenge';
 import {
   FeedbackStatus,
@@ -56,9 +54,8 @@ const useAttendanceHandler = () => {
   }>();
   const { data: isAdmin } = useIsAdminQuery();
 
-  // 어드민은 feedback + 일반 출석 둘 다 무효화
   const queryKey = isAdmin
-    ? getChallengeAttendancesQueryKey(Number(programId), Number(missionId))
+    ? [ChallengeMissionFeedbackAttendanceQueryKey, programId, missionId]
     : [MentorMissionFeedbackAttendanceQueryKey, programId, missionId];
 
   const { mutateAsync: patchAdminAttendance } = usePatchAdminAttendance();
@@ -92,10 +89,13 @@ const MentorRenderCell = (
   if (!isAdmin) return <span>{params.row.mentorName}</span>;
 
   // challengeMentorId → userId 변환 (PATCH API는 userId를 필요로 함)
-  const currentMentor = params.value != null
-    ? (data?.mentorList.find((item) => item.challengeMentorId === params.value)
-      ?? data?.mentorList.find((item) => item.userId === params.value))
-    : undefined;
+  const currentMentor =
+    params.value != null
+      ? (data?.mentorList.find(
+          (item) => item.challengeMentorId === params.value,
+        ) ??
+        data?.mentorList.find((item) => item.userId === params.value))
+      : undefined;
 
   return (
     <SelectFormControl<number>
@@ -164,22 +164,10 @@ const useRoleBasedAttendanceData = () => {
 
   const { data: isAdmin, isLoading: isAdminLoading } = useIsAdminQuery();
 
-  // 어드민: feedback/attendances 시도
   const { data: dataForAdmin } = useChallengeMissionFeedbackAttendanceQuery({
     challengeId: programId,
     missionId,
     enabled: !!programId && !!missionId && (isAdmin === true),
-  });
-
-  // 어드민: feedback/attendances가 빈 배열이면 일반 attendances로 fallback
-  const feedbackEmpty =
-    isAdmin === true &&
-    dataForAdmin != null &&
-    dataForAdmin.attendanceList.length === 0;
-
-  const { data: fallbackAttendances } = useGetChallengeAttendances({
-    challengeId: feedbackEmpty ? Number(programId) : undefined,
-    detailedMissionId: feedbackEmpty ? Number(missionId) : undefined,
   });
 
   const { data: dataForMentor } = useMentorMissionFeedbackAttendanceQuery({
@@ -188,38 +176,9 @@ const useRoleBasedAttendanceData = () => {
     enabled: !!programId && !!missionId && (isAdmin === false),
   });
 
-  // fallback 데이터를 feedback 형식으로 변환
-  const adminData = useMemo(() => {
-    if (dataForAdmin && dataForAdmin.attendanceList.length > 0) {
-      return dataForAdmin;
-    }
-    if (fallbackAttendances && fallbackAttendances.length > 0) {
-      return {
-        attendanceList: fallbackAttendances.map((item) => ({
-          id: item.attendance.id,
-          userId: item.attendance.userId ?? null,
-          challengeMentorId: null as number | null,
-          mentorId: null as number | null,
-          mentorName: null as string | null,
-          name: item.attendance.name ?? '',
-          major: null as string | null,
-          wishJob: null as string | null,
-          wishCompany: null as string | null,
-          link: item.attendance.link ?? null,
-          status: item.attendance.status ?? 'ABSENT' as const,
-          result: item.attendance.result ?? 'WAITING' as const,
-          challengePricePlanType: (item.attendance as Record<string, unknown>).challengePricePlanType as string ?? 'BASIC' as const,
-          feedbackStatus: 'WAITING' as const,
-          optionCode: null as string | null,
-        })),
-      };
-    }
-    return dataForAdmin;
-  }, [dataForAdmin, fallbackAttendances]);
-
   return {
     isLoading: isAdminLoading,
-    data: isAdmin ? adminData : dataForMentor,
+    data: isAdmin ? dataForAdmin : dataForMentor,
   };
 };
 
@@ -329,7 +288,7 @@ export default function FeedbackParticipantPage() {
             href={params.value || '#'}
             className="text-primary underline"
             onClick={() => {
-              localStorage.setItem('attendance', JSON.stringify(params.row)); // 선택한 행 정보 저장
+              localStorage.setItem('attendance', JSON.stringify(params.row));
             }}
           >
             바로가기
