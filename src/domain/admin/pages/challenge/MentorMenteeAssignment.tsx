@@ -2,41 +2,67 @@
 
 import {
   useAdminChallengeMentorListQuery,
-  usePostAdminChallengeMentorMatch,
 } from '@/api/mentor/mentor';
 import {
-  ChallengeApplicationsQueryKey,
-  useChallengeApplicationsQuery,
+  ChallengeMissionFeedbackAttendanceQueryKey,
+  useChallengeMissionFeedbackAttendanceQuery,
+  useChallengeMissionFeedbackListQuery,
 } from '@/api/challenge/challenge';
+import { usePatchAdminAttendance } from '@/api/attendance/attendance';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+
+/** 피드백 미션의 출석 데이터에서 참여자 목록 조회 */
+const useAttendanceParticipants = (challengeId: string) => {
+  const { data: missionData } = useChallengeMissionFeedbackListQuery(
+    Number(challengeId),
+    { enabled: Boolean(challengeId) },
+  );
+
+  const firstMission = useMemo(
+    () => missionData?.missionList?.[0],
+    [missionData],
+  );
+
+  const { data: attendanceData, isLoading } =
+    useChallengeMissionFeedbackAttendanceQuery({
+      challengeId,
+      missionId: firstMission ? String(firstMission.id) : '',
+      enabled: Boolean(challengeId) && !!firstMission,
+    });
+
+  return { attendanceList: attendanceData?.attendanceList ?? [], isLoading };
+};
 
 type MentorItem = { challengeMentorId: number; userId: number; name: string; userCareerList: { company: string | null; job: string | null }[] };
+
+const findMentor = (mentors: MentorItem[], challengeMentorId: number | null | undefined) => {
+  if (challengeMentorId == null) return undefined;
+  return (
+    mentors.find((m) => m.challengeMentorId === challengeMentorId) ??
+    mentors.find((m) => m.userId === challengeMentorId)
+  );
+};
 
 export default function MentorMenteeAssignment() {
   const { programId } = useParams<{ programId: string }>();
   const queryClient = useQueryClient();
   const { snackbar } = useAdminSnackbar();
 
-  const { data: applicationsData, isLoading: isApplicationsLoading } =
-    useChallengeApplicationsQuery({
-      challengeId: programId,
-      isCanceled: false,
-      enabled: Boolean(programId),
-    });
+  const { attendanceList, isLoading: isAttendanceLoading } =
+    useAttendanceParticipants(programId);
   const { data: mentorData, isLoading: isMentorLoading } =
     useAdminChallengeMentorListQuery(programId);
-  const matchMutation = usePostAdminChallengeMentorMatch();
+  const patchAttendance = usePatchAdminAttendance();
 
   const [selectedMentors, setSelectedMentors] = useState<
     Record<number, number | null>
   >({});
   const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
-  const [bulkMentorId, setBulkMentorId] = useState<number | null | ''>('');
+  const [bulkMentorUserId, setBulkMentorUserId] = useState<number | null | ''>('');
 
-  const applicationList = applicationsData?.applicationList ?? [];
   const mentors = mentorData?.mentorList ?? [];
 
   const MENTOR_COLORS = [
@@ -59,13 +85,13 @@ export default function MentorMenteeAssignment() {
   };
 
   const isAllChecked =
-    applicationList.length > 0 && checkedIds.size === applicationList.length;
+    attendanceList.length > 0 && checkedIds.size === attendanceList.length;
 
   const handleToggleAll = () => {
     if (isAllChecked) {
       setCheckedIds(new Set());
     } else {
-      setCheckedIds(new Set(applicationList.map((a) => a.application.id)));
+      setCheckedIds(new Set(attendanceList.map((a) => a.id)));
     }
   };
 
@@ -80,30 +106,27 @@ export default function MentorMenteeAssignment() {
 
   const invalidateQueries = () => {
     queryClient.invalidateQueries({
-      queryKey: [ChallengeApplicationsQueryKey],
+      queryKey: [ChallengeMissionFeedbackAttendanceQueryKey],
     });
   };
 
-  const handleMatch = async (applicationId: number) => {
-    const challengeMentorId = selectedMentors[applicationId];
-    if (challengeMentorId === undefined) {
+  const handleMatch = async (attendanceId: number) => {
+    const mentorUserId = selectedMentors[attendanceId];
+    if (mentorUserId === undefined) {
       snackbar('멘토를 선택해주세요.');
       return;
     }
 
-    if (challengeMentorId === null) {
-      // match API does not support unassignment; show info message
-      snackbar('배정 해제는 현재 지원되지 않습니다.');
-      return;
-    }
-
     try {
-      await matchMutation.mutateAsync({
-        challengeId: Number(programId),
-        challengeMentorId,
-        challengeApplicationIdList: [applicationId],
+      await patchAttendance.mutateAsync({
+        attendanceId,
+        mentorUserId,
       });
-      snackbar('매칭이 완료되었습니다.');
+      snackbar(
+        mentorUserId === null
+          ? '멘토 배정이 해제되었습니다.'
+          : '매칭이 완료되었습니다.',
+      );
       invalidateQueries();
     } catch {
       snackbar('매칭에 실패했습니다.');
@@ -111,7 +134,7 @@ export default function MentorMenteeAssignment() {
   };
 
   const handleBulkAssign = async () => {
-    if (bulkMentorId === '') {
+    if (bulkMentorUserId === '') {
       snackbar('일괄 지정할 멘토를 선택해주세요.');
       return;
     }
@@ -120,27 +143,29 @@ export default function MentorMenteeAssignment() {
       return;
     }
 
-    if (bulkMentorId === null) {
-      snackbar('배정 해제는 현재 지원되지 않습니다.');
-      return;
-    }
-
     try {
-      await matchMutation.mutateAsync({
-        challengeId: Number(programId),
-        challengeMentorId: bulkMentorId,
-        challengeApplicationIdList: [...checkedIds],
-      });
-      snackbar(`${checkedIds.size}명에게 멘토를 지정했습니다.`);
+      await Promise.all(
+        [...checkedIds].map((attendanceId) =>
+          patchAttendance.mutateAsync({
+            attendanceId,
+            mentorUserId: bulkMentorUserId,
+          }),
+        ),
+      );
+      snackbar(
+        bulkMentorUserId === null
+          ? `${checkedIds.size}명의 멘토 배정을 해제했습니다.`
+          : `${checkedIds.size}명에게 멘토를 지정했습니다.`,
+      );
       setCheckedIds(new Set());
-      setBulkMentorId('');
+      setBulkMentorUserId('');
       invalidateQueries();
     } catch {
       snackbar('일괄 지정에 실패했습니다.');
     }
   };
 
-  if (isApplicationsLoading || isMentorLoading) {
+  if (isAttendanceLoading || isMentorLoading) {
     return (
       <div className="py-16 text-center text-xsmall14 text-neutral-40">
         불러오는 중...
@@ -162,8 +187,8 @@ export default function MentorMenteeAssignment() {
             {mentors.map((m, i) => {
               const career = m.userCareerList?.[0];
               const color = getMentorColor(i);
-              const assignedCount = applicationList.filter(
-                (a) => a.application.challengeMentorId === m.challengeMentorId,
+              const assignedCount = attendanceList.filter(
+                (a) => findMentor(mentors, a.challengeMentorId)?.challengeMentorId === m.challengeMentorId,
               ).length;
               return (
                 <div
@@ -194,10 +219,10 @@ export default function MentorMenteeAssignment() {
         <div className="flex items-center gap-2">
           <select
             className="rounded border border-neutral-80 px-2 py-1.5 text-xsmall14 outline-none"
-            value={bulkMentorId ?? 'none'}
+            value={bulkMentorUserId ?? 'none'}
             onChange={(e) => {
               const v = e.target.value;
-              setBulkMentorId(
+              setBulkMentorUserId(
                 v === '' ? '' : v === 'none' ? null : Number(v),
               );
             }}
@@ -205,7 +230,7 @@ export default function MentorMenteeAssignment() {
             <option value="">멘토 선택</option>
             <option value="none">없음 (배정 해제)</option>
             {mentors.map((m) => (
-              <option key={m.challengeMentorId} value={m.challengeMentorId}>
+              <option key={m.challengeMentorId} value={m.userId}>
                 {getMentorLabel(m)}
               </option>
             ))}
@@ -214,9 +239,9 @@ export default function MentorMenteeAssignment() {
             type="button"
             className="rounded border border-neutral-80 px-4 py-1.5 text-xsmall14 hover:bg-neutral-95 disabled:opacity-50"
             disabled={
-              bulkMentorId === '' ||
+              bulkMentorUserId === '' ||
               checkedIds.size === 0 ||
-              matchMutation.isPending
+              patchAttendance.isPending
             }
             onClick={handleBulkAssign}
           >
@@ -246,35 +271,33 @@ export default function MentorMenteeAssignment() {
             </tr>
           </thead>
           <tbody>
-            {applicationList.length === 0 ? (
+            {attendanceList.length === 0 ? (
               <tr>
                 <td colSpan={6} className="py-8 text-center text-neutral-40">
                   참여자가 없습니다.
                 </td>
               </tr>
             ) : (
-              applicationList.map((a) => (
+              attendanceList.map((a) => (
                 <tr
-                  key={a.application.id}
+                  key={a.id}
                   className="border-b border-neutral-90 hover:bg-neutral-95/50"
                 >
                   <td className="px-3 py-2 text-center">
                     <input
                       type="checkbox"
-                      checked={checkedIds.has(a.application.id)}
-                      onChange={() => handleToggle(a.application.id)}
+                      checked={checkedIds.has(a.id)}
+                      onChange={() => handleToggle(a.id)}
                     />
                   </td>
-                  <td className="px-3 py-2">{a.application.name ?? '-'}</td>
+                  <td className="px-3 py-2">{a.name ?? '-'}</td>
                   <td className="px-3 py-2 text-neutral-30">
-                    {a.application.wishCompany ?? '-'} / {a.application.wishJob ?? '-'}
+                    {a.wishCompany ?? '-'} / {a.wishJob ?? '-'}
                   </td>
                   <td className="px-3 py-2">
-                    {a.application.challengeMentorName && a.application.challengeMentorId ? (
+                    {a.mentorName && a.challengeMentorId ? (
                       (() => {
-                        const matched = mentors.find(
-                          (m) => m.challengeMentorId === a.application.challengeMentorId,
-                        );
+                        const matched = findMentor(mentors, a.challengeMentorId);
                         const idx = matched ? mentors.indexOf(matched) : -1;
                         const color = idx >= 0 ? getMentorColor(idx) : null;
                         const career = matched?.userCareerList?.[0];
@@ -282,7 +305,7 @@ export default function MentorMenteeAssignment() {
                           <span
                             className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xxsmall12 font-medium ${color?.bg ?? 'bg-neutral-90'} ${color?.text ?? 'text-neutral-40'}`}
                           >
-                            {a.application.challengeMentorName}
+                            {a.mentorName}
                             {career?.company && career?.job && (
                               <span className="ml-1 font-normal opacity-70">
                                 ({career.company}/{career.job})
@@ -299,18 +322,18 @@ export default function MentorMenteeAssignment() {
                     <select
                       className="rounded border border-neutral-80 px-2 py-1 text-xsmall14 outline-none"
                       value={
-                        selectedMentors[a.application.id] === null
+                        selectedMentors[a.id] === null
                           ? 'none'
-                          : (selectedMentors[a.application.id] ?? '')
+                          : (selectedMentors[a.id] ?? '')
                       }
                       onChange={(e) => {
                         const v = e.target.value;
                         setSelectedMentors((prev) => {
                           const next = { ...prev };
                           if (v === '') {
-                            delete next[a.application.id];
+                            delete next[a.id];
                           } else {
-                            next[a.application.id] = v === 'none' ? null : Number(v);
+                            next[a.id] = v === 'none' ? null : Number(v);
                           }
                           return next;
                         });
@@ -319,7 +342,7 @@ export default function MentorMenteeAssignment() {
                       <option value="">선택</option>
                       <option value="none">없음 (배정 해제)</option>
                       {mentors.map((m) => (
-                        <option key={m.challengeMentorId} value={m.challengeMentorId}>
+                        <option key={m.challengeMentorId} value={m.userId}>
                           {getMentorLabel(m)}
                         </option>
                       ))}
@@ -330,10 +353,10 @@ export default function MentorMenteeAssignment() {
                       type="button"
                       className="rounded bg-primary px-3 py-1 text-xxsmall12 text-white hover:bg-primary-dark disabled:opacity-50"
                       disabled={
-                        selectedMentors[a.application.id] === undefined ||
-                        matchMutation.isPending
+                        selectedMentors[a.id] === undefined ||
+                        patchAttendance.isPending
                       }
-                      onClick={() => handleMatch(a.application.id)}
+                      onClick={() => handleMatch(a.id)}
                     >
                       매칭
                     </button>
