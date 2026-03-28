@@ -48,6 +48,9 @@ export default function MentorMenteeAssignment() {
   const [selectedMentors, setSelectedMentors] = useState<
     Record<number, number | null>
   >({});
+  const [matchedMentors, setMatchedMentors] = useState<
+    Record<number, number>
+  >({});
   const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
   const [bulkMentorId, setBulkMentorId] = useState<number | null | ''>('');
 
@@ -115,6 +118,7 @@ export default function MentorMenteeAssignment() {
         challengeMentorId,
         challengeApplicationIdList: [applicationId],
       });
+      setMatchedMentors((prev) => ({ ...prev, [applicationId]: challengeMentorId }));
       snackbar('매칭이 완료되었습니다.');
       invalidateQueries();
     } catch {
@@ -141,6 +145,11 @@ export default function MentorMenteeAssignment() {
         challengeId: Number(programId),
         challengeMentorId: bulkMentorId,
         challengeApplicationIdList: [...checkedIds],
+      });
+      setMatchedMentors((prev) => {
+        const next = { ...prev };
+        checkedIds.forEach((id) => { next[id] = bulkMentorId; });
+        return next;
       });
       snackbar(`${checkedIds.size}명에게 멘토를 지정했습니다.`);
       setCheckedIds(new Set());
@@ -241,6 +250,7 @@ export default function MentorMenteeAssignment() {
               <th className="px-3 py-2 text-left font-medium">이름</th>
               <th className="px-3 py-2 text-left font-medium">이메일</th>
               <th className="px-3 py-2 text-left font-medium">전화번호</th>
+              <th className="px-3 py-2 text-left font-medium">배정 멘토</th>
               <th className="px-3 py-2 text-left font-medium">멘토 선택</th>
               <th className="px-3 py-2 text-center font-medium">매칭</th>
             </tr>
@@ -248,7 +258,7 @@ export default function MentorMenteeAssignment() {
           <tbody>
             {participants.length === 0 ? (
               <tr>
-                <td colSpan={6} className="py-8 text-center text-neutral-40">
+                <td colSpan={7} className="py-8 text-center text-neutral-40">
                   참여자가 없습니다.
                 </td>
               </tr>
@@ -268,6 +278,26 @@ export default function MentorMenteeAssignment() {
                   <td className="px-3 py-2">{p.name ?? '-'}</td>
                   <td className="px-3 py-2 text-neutral-30">{p.email ?? '-'}</td>
                   <td className="px-3 py-2 text-neutral-30">{p.phoneNum ?? '-'}</td>
+                  <td className="px-3 py-2">
+                    {matchedMentors[p.applicationId] ? (
+                      (() => {
+                        const m = mentors.find(
+                          (mt) => mt.challengeMentorId === matchedMentors[p.applicationId],
+                        );
+                        const idx = m ? mentors.indexOf(m) : -1;
+                        const color = idx >= 0 ? getMentorColor(idx) : null;
+                        return (
+                          <span
+                            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xxsmall12 font-medium ${color?.bg ?? 'bg-neutral-90'} ${color?.text ?? 'text-neutral-40'}`}
+                          >
+                            {m?.name ?? '멘토'}
+                          </span>
+                        );
+                      })()
+                    ) : (
+                      <span className="text-neutral-40">미배정</span>
+                    )}
+                  </td>
                   <td className="px-3 py-2">
                     <select
                       className="rounded border border-neutral-80 px-2 py-1 text-xsmall14 outline-none"
