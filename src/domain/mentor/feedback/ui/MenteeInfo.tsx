@@ -13,6 +13,7 @@ interface MenteeInfoProps {
   missionId: number;
   attendanceId: number | null;
   challengeTitle?: string;
+  collapsed?: boolean;
 }
 
 function getFeedbackStatusStyle(status: FeedbackStatus | null): string {
@@ -41,6 +42,7 @@ const MenteeInfo = ({
   missionId,
   attendanceId,
   challengeTitle,
+  collapsed = false,
 }: MenteeInfoProps) => {
   const { data } = useMentorMissionFeedbackAttendanceQuery({
     challengeId,
@@ -57,6 +59,30 @@ const MenteeInfo = ({
   const feedbackStatusLabel =
     FeedbackStatusMapping[mentee.feedbackStatus ?? 'WAITING'] ?? '진행전';
   const feedbackStatusStyle = getFeedbackStatusStyle(mentee.feedbackStatus);
+
+  // 최소화 모드: 이름, 희망 직군, 희망 기업만 한 줄로 표시
+  if (collapsed) {
+    return (
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-lg border border-gray-200 px-4 py-2.5">
+        <span className="text-sm font-semibold text-neutral-900">
+          {mentee.name}
+        </span>
+        {mentee.wishJob && (
+          <span className="text-xs text-neutral-500">
+            희망 직군: <span className="font-medium text-neutral-700">{mentee.wishJob}</span>
+          </span>
+        )}
+        {mentee.wishCompany && (
+          <span className="text-xs text-neutral-500">
+            희망 기업: <span className="font-medium text-neutral-700">{mentee.wishCompany}</span>
+          </span>
+        )}
+        <span className={`text-xs font-medium ${feedbackStatusStyle}`}>
+          {feedbackStatusLabel}
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4 rounded-xl border border-gray-200 p-4 md:gap-5 md:p-5">

@@ -5,8 +5,8 @@ interface FeedbackLayoutProps {
   sidebar: ReactNode;
   /** Navigation buttons (prev/next mentee) */
   navigation: ReactNode;
-  /** Mentee info card */
-  menteeInfo: ReactNode;
+  /** Mentee info card - receives (collapsed: boolean) => ReactNode */
+  menteeInfo: (collapsed: boolean) => ReactNode;
   /** Feedback editor */
   editor: ReactNode;
   /** Action buttons */
@@ -61,7 +61,7 @@ const FeedbackLayout = ({
               />
             </svg>
           </button>
-          {isMenteeInfoOpen && menteeInfo}
+          {menteeInfo(!isMenteeInfoOpen)}
         </div>
 
         {/* Feedback editor - flex-1 to fill remaining height */}

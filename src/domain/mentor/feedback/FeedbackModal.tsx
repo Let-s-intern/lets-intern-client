@@ -84,7 +84,7 @@ const FeedbackModal = ({
               type="button"
               onClick={handlePrevMentee}
               disabled={!hasPrevMentee}
-              className="flex items-center gap-1 px-4 py-2 text-base font-medium text-neutral-900 disabled:invisible"
+              className="flex items-center gap-1 px-4 py-2 text-base font-medium text-neutral-900 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path
@@ -101,7 +101,7 @@ const FeedbackModal = ({
               type="button"
               onClick={handleNextMentee}
               disabled={!hasNextMentee}
-              className="flex items-center gap-1 px-4 py-2 text-base font-medium text-neutral-900 disabled:invisible"
+              className="flex items-center gap-1 px-4 py-2 text-base font-medium text-neutral-900 disabled:cursor-not-allowed disabled:opacity-40"
             >
               다음 멘티
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -116,14 +116,15 @@ const FeedbackModal = ({
             </button>
           </div>
         }
-        menteeInfo={
+        menteeInfo={(collapsed) => (
           <MenteeInfo
             challengeId={challengeId}
             missionId={missionId}
             attendanceId={selectedAttendanceId}
             challengeTitle={challengeTitle}
+            collapsed={collapsed}
           />
-        }
+        )}
         editor={
           <FeedbackEditor
             key={editorKey}
