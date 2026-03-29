@@ -1,44 +1,17 @@
 'use client';
 
-import { useState } from 'react';
-
-import { useMentorFeedbackManagementQuery } from '@/api/challenge/challenge';
-import type { MentorFeedbackManagement } from '@/api/challenge/challengeSchema';
 import FeedbackModal from '@/domain/mentor/feedback/FeedbackModal';
-
 import ChallengeFeedbackCard from './ui/ChallengeFeedbackCard';
-
-type Challenge = MentorFeedbackManagement['challengeList'][number];
+import { useFeedbackManagement } from './hooks/useFeedbackManagement';
 
 const FeedbackManagementPage = () => {
-  const { data, isLoading } = useMentorFeedbackManagementQuery();
-  const challengeList = data?.challengeList ?? [];
-
-  const [feedbackModal, setFeedbackModal] = useState<{
-    isOpen: boolean;
-    challengeId: number;
-    missionId: number;
-    challengeTitle?: string;
-    missionTh?: number;
-  }>({ isOpen: false, challengeId: 0, missionId: 0 });
-
-  const handleMissionClick = (
-    challenge: Challenge,
-    missionId: number,
-    missionTh: number,
-  ) => {
-    setFeedbackModal({
-      isOpen: true,
-      challengeId: challenge.challengeId,
-      missionId,
-      challengeTitle: challenge.title ?? undefined,
-      missionTh,
-    });
-  };
-
-  const handleCloseModal = () => {
-    setFeedbackModal((prev) => ({ ...prev, isOpen: false }));
-  };
+  const {
+    challengeList,
+    isLoading,
+    feedbackModal,
+    handleMissionClick,
+    handleCloseModal,
+  } = useFeedbackManagement();
 
   return (
     <div className="flex flex-col gap-6">

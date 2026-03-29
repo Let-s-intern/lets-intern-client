@@ -9,6 +9,7 @@ import {
   FeedbackStatusMapping,
   type FeedbackStatus,
 } from '@/api/challenge/challengeSchema';
+import StatusBadge from '@/domain/mentor/ui/StatusBadge';
 
 const formatDate = (dateStr: string) => {
   return new Date(dateStr).toLocaleDateString('ko-KR', {
@@ -16,13 +17,6 @@ const formatDate = (dateStr: string) => {
     day: 'numeric',
   });
 };
-
-function getFeedbackBadgeStyle(status: FeedbackStatus): string {
-  const isCompleted = status === 'COMPLETED' || status === 'CONFIRMED';
-  if (isCompleted) return 'bg-green-100 text-green-700';
-  if (status === 'IN_PROGRESS') return 'bg-yellow-100 text-yellow-700';
-  return 'bg-gray-100 text-gray-500';
-}
 
 interface MissionRowMission {
   id: number;
@@ -115,19 +109,14 @@ const MissionRow = ({
         {/* Feedback status badges */}
         <div className="flex gap-1">
           {(
-            Object.entries(FeedbackStatusMapping) as [FeedbackStatus, string][]
-          ).map(([key, label]) => {
-            const count = feedbackCounts[key] ?? 0;
-            if (count === 0) return null;
-            return (
-              <span
-                key={key}
-                className={`rounded-full px-2 py-0.5 text-xs ${getFeedbackBadgeStyle(key)}`}
-              >
-                {label} {count}
-              </span>
-            );
-          })}
+            Object.keys(FeedbackStatusMapping) as FeedbackStatus[]
+          ).map((key) => (
+            <StatusBadge
+              key={key}
+              status={key}
+              count={feedbackCounts[key] ?? 0}
+            />
+          ))}
         </div>
 
         <button

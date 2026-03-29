@@ -7,6 +7,7 @@ import {
   FeedbackStatusMapping,
   type FeedbackStatus,
 } from '@/api/challenge/challengeSchema';
+import StatusBadge from '@/domain/mentor/ui/StatusBadge';
 
 type Challenge = MentorFeedbackManagement['challengeList'][number];
 type Mission = Challenge['feedbackMissions'][number];
@@ -20,12 +21,6 @@ const formatDate = (dateStr: string | null) => {
   });
 };
 
-const FEEDBACK_BADGE_STYLES: Record<string, string> = {
-  WAITING: 'bg-gray-100 text-gray-500',
-  IN_PROGRESS: 'bg-yellow-100 text-yellow-700',
-  COMPLETED: 'bg-green-100 text-green-700',
-  CONFIRMED: 'bg-blue-100 text-blue-700',
-};
 
 interface MissionRowProps {
   mission: Mission;
@@ -81,19 +76,14 @@ const MissionRow = ({ mission, onClickFeedback }: MissionRowProps) => {
         {/* Feedback status badges */}
         <div className="flex gap-1">
           {(
-            Object.entries(FeedbackStatusMapping) as [FeedbackStatus, string][]
-          ).map(([key, label]) => {
-            const count = feedbackCountMap.get(key) ?? 0;
-            if (count === 0) return null;
-            return (
-              <span
-                key={key}
-                className={`rounded-full px-2 py-0.5 text-xs ${FEEDBACK_BADGE_STYLES[key] ?? 'bg-gray-100 text-gray-500'}`}
-              >
-                {label} {count}
-              </span>
-            );
-          })}
+            Object.keys(FeedbackStatusMapping) as FeedbackStatus[]
+          ).map((key) => (
+            <StatusBadge
+              key={key}
+              status={key}
+              count={feedbackCountMap.get(key) ?? 0}
+            />
+          ))}
         </div>
 
         <button
