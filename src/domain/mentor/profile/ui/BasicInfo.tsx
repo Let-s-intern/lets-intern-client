@@ -61,8 +61,8 @@ export default function BasicInfo({ formData, onChange }: BasicInfoProps) {
   };
 
   return (
-    <section>
-      <h2 className="mb-4 text-lg font-semibold">기본 정보</h2>
+    <section className="rounded-xl border border-gray-200 bg-white p-5 md:p-6">
+      <h2 className="mb-5 text-base font-semibold text-gray-900">기본 정보</h2>
       <div className="flex flex-col gap-6 md:flex-row md:gap-8">
         {/* Profile Image */}
         <div className="relative mx-auto flex h-48 w-48 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-gray-200 bg-gray-100 md:mx-0 md:h-60 md:w-60">

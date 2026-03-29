@@ -7,8 +7,8 @@ interface IntroductionProps {
 
 export default function Introduction({ value, onChange }: IntroductionProps) {
   return (
-    <section>
-      <h2 className="mb-2 text-lg font-semibold">한줄 소개</h2>
+    <section className="rounded-xl border border-gray-200 bg-white p-5 md:p-6">
+      <h2 className="mb-4 text-base font-semibold text-gray-900">한줄 소개</h2>
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}

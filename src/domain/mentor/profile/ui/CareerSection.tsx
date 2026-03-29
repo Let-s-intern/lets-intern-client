@@ -65,19 +65,19 @@ export default function CareerSection() {
 
   if (isLoading) {
     return (
-      <section>
-        <h2 className="text-lg font-semibold">경력사항</h2>
+      <section className="rounded-xl border border-gray-200 bg-white p-5 md:p-6">
+        <h2 className="text-base font-semibold text-gray-900">경력사항</h2>
         <div className="py-4 text-sm text-gray-400">로딩 중...</div>
       </section>
     );
   }
 
   return (
-    <>
+    <section className="rounded-xl border border-gray-200 bg-white p-5 md:p-6">
       {isEmpty && !createMode ? (
         <NoCareerView handleCreateNew={handleCreateBtnClick} />
       ) : (
-        <section className="flex w-full flex-col gap-3">
+        <div className="flex w-full flex-col gap-3">
           <CareerHeader
             showCreateButton={editingId === null && !createMode}
             handleCreateBtnClick={handleCreateBtnClick}
@@ -99,8 +99,8 @@ export default function CareerSection() {
             handleSubmit={handleSubmitForm}
             handleEdit={handleEditBtnClick}
           />
-        </section>
+        </div>
       )}
-    </>
+    </section>
   );
 }

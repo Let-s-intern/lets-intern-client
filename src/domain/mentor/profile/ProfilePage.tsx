@@ -88,10 +88,10 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto max-w-3xl px-0 py-4 md:px-8 md:py-8">
-      <h1 className="mb-1 text-2xl font-bold">프로필</h1>
-      <hr className="mb-8 border-gray-200" />
+      <h1 className="mb-1 text-xl font-bold">프로필</h1>
+      <hr className="mb-6 border-gray-200" />
 
-      <div className="flex flex-col gap-10">
+      <div className="flex flex-col gap-6 pb-20">
         <BasicInfo formData={formData} onChange={setFormData} />
         <Introduction value={introduction} onChange={setIntroduction} />
         <CareerSection />
