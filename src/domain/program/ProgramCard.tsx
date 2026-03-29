@@ -14,8 +14,9 @@ const ProgramCard = ({
   thumbnailClassName,
   progressType,
   thumbnailLinkClassName,
+  accessMethod,
 }: {
-  type: 'challenge' | 'live';
+  type: 'challenge' | 'live' | 'guidebook';
   id: number;
   title: string;
   thumbnail: string;
@@ -28,6 +29,7 @@ const ProgramCard = ({
   progressType: string;
   thumbnailClassName?: string;
   thumbnailLinkClassName?: string;
+  accessMethod?: string;
 }) => {
   const programLink = `/program/${type.toLowerCase()}/${id}`;
 
@@ -73,6 +75,15 @@ const ProgramCard = ({
                     endDate ? endDate.format('YY.MM.DD') : ''
                   }`
                 : startDate.format('YY.MM.DD')}
+            </span>
+          </div>
+        ) : null}
+
+        {accessMethod ? (
+          <div className="mb-1 flex items-center gap-1.5">
+            <span className="shrink-0 text-xs text-neutral-0">열람 방식</span>
+            <span className="text-xs font-medium text-primary-dark">
+              {accessMethod}
             </span>
           </div>
         ) : null}

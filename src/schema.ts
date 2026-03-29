@@ -178,11 +178,30 @@ const livePriceTypeSchema = z.union([z.literal('CHARGE'), z.literal('FREE')]);
 
 export type LivePriceType = z.infer<typeof livePriceTypeSchema>;
 
-export const ProgramTypeEnum = z.enum(['CHALLENGE', 'LIVE', 'VOD', 'REPORT']);
+const guidebookPriceTypeSchema = z.union([
+  z.literal('CHARGE'),
+  z.literal('FREE'),
+]);
+
+export type GuidebookPriceType = z.infer<typeof guidebookPriceTypeSchema>;
+
+export const ProgramTypeEnum = z.enum([
+  'CHALLENGE',
+  'LIVE',
+  'VOD',
+  'REPORT',
+  'GUIDEBOOK',
+]);
 
 export type ProgramTypeUpperCase = z.infer<typeof ProgramTypeEnum>;
 
-export const programTypeList = ['CHALLENGE', 'LIVE', 'VOD', 'REPORT'];
+export const programTypeList = [
+  'CHALLENGE',
+  'LIVE',
+  'VOD',
+  'REPORT',
+  'GUIDEBOOK',
+];
 
 export const accountType = z.union([
   z.literal('KB'),
@@ -580,6 +599,134 @@ export type UpdateLiveReq = {
   };
   faqInfo?: {
     faqId: number;
+  }[];
+};
+
+/** GET /api/v1/guidebook/{guidebookId} 가이드북 상세 조회 */
+export const getGuidebookIdSchema = z.object({
+  id: z.number(),
+  title: z.string().nullable().optional(),
+  shortDesc: z.string().nullable().optional(),
+  thumbnail: z.string().nullable().optional(),
+  desktopThumbnail: z.string().nullable().optional(),
+  contentComposition: z.string().nullable().optional(),
+  accessMethod: z.string().nullable().optional(),
+  recommendedFor: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
+  job: z.string().nullable().optional(),
+  contentUrl: z.string().nullable().optional(),
+  contentFileUrl: z.string().nullable().optional(),
+  price: z.number().nullable().optional(),
+  discount: z.number().nullable().optional(),
+  guideBookPriceType: guidebookPriceTypeSchema.nullable().optional(),
+  programTypeInfo: z
+    .array(
+      z.object({
+        programClassification: ProgramClassificationEnum.nullable().optional(),
+      }),
+    )
+    .nullable()
+    .optional(),
+  adminClassificationInfo: z
+    .array(
+      z.object({
+        programAdminClassification: ProgramAdminClassificationEnum,
+      }),
+    )
+    .nullable()
+    .optional(),
+});
+
+export type GuidebookIdSchema = z.infer<typeof getGuidebookIdSchema>;
+
+/** GET /api/v1/guidebooks/{guidebookId} 가이드북 상세 조회 (사용자) */
+export const getPublicGuidebookSchema = z.object({
+  id: z.number(),
+  title: z.string().nullable().optional(),
+  thumbnail: z.string().nullable().optional(),
+  desktopThumbnail: z.string().nullable().optional(),
+  contentComposition: z.string().nullable().optional(),
+  accessMethod: z.string().nullable().optional(),
+  recommendedFor: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
+  shortDesc: z.string().nullable().optional(),
+  priceInfo: z
+    .object({
+      priceId: z.number(),
+      originalPrice: z.number(),
+      discountRate: z.number(),
+      finalPrice: z.number(),
+    })
+    .nullable()
+    .optional(),
+});
+
+export type PublicGuidebookSchema = z.infer<typeof getPublicGuidebookSchema>;
+
+/** POST /api/v1/guidebook 가이드북 생성 */
+export type CreateGuidebookReq = {
+  title: string;
+  shortDesc: string;
+  thumbnail: string;
+  desktopThumbnail?: string;
+  contentComposition: string;
+  accessMethod: string;
+  recommendedFor: string;
+  description: string;
+  job: string;
+  contentUrl?: string;
+  contentFileUrl?: string;
+  priceInfo: {
+    priceInfo: {
+      price: number;
+      discount: number;
+      accountNumber?: string;
+      deadline?: string;
+      accountType?: AccountType;
+    };
+    guideBookPriceType?: GuidebookPriceType;
+  };
+  programTypeInfo: {
+    classificationInfo: { programClassification: ProgramClassification };
+  }[];
+  adminProgramTypeInfo?: {
+    classificationInfo: {
+      programAdminClassification: ProgramAdminClassification;
+    };
+  }[];
+};
+
+/** PATCH /api/v1/guidebook/{guidebookId} 가이드북 수정 */
+export type UpdateGuidebookReq = {
+  title?: string;
+  shortDesc?: string;
+  thumbnail?: string;
+  desktopThumbnail?: string;
+  contentComposition?: string;
+  accessMethod?: string;
+  recommendedFor?: string;
+  description?: string;
+  isVisible?: boolean;
+  job?: string;
+  contentUrl?: string;
+  contentFileUrl?: string;
+  priceInfo?: {
+    priceInfo: {
+      price: number;
+      discount: number;
+      accountNumber?: string;
+      deadline?: string;
+      accountType?: AccountType;
+    };
+    guideBookPriceType: GuidebookPriceType;
+  };
+  programTypeInfo?: {
+    classificationInfo: { programClassification: ProgramClassification };
+  }[];
+  adminProgramTypeInfo?: {
+    classificationInfo: {
+      programAdminClassification: ProgramAdminClassification;
+    };
   }[];
 };
 
@@ -1652,6 +1799,13 @@ export const liveApplicationPriceType = z.object({
   deadline: z.string().nullable().optional(),
   accountType: accountType.nullable().optional(),
   livePriceType: livePriceTypeSchema,
+});
+
+export const guidebookApplicationPriceType = z.object({
+  priceId: z.number().nullable().optional(),
+  price: z.number().nullable().optional(),
+  discount: z.number().nullable().optional(),
+  guideBookPriceType: guidebookPriceTypeSchema,
 });
 
 export const userAdminDetailType = z.object({

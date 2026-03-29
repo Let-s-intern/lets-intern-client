@@ -6,7 +6,7 @@ export type ReviewBadgeType = ReviewType | 'CHALLENGE_SIMPLE';
 
 export const getBadgeTypeFromProgramType = (
   programType: ProgramTypeUpperCase,
-): ReviewBadgeType => {
+): ReviewBadgeType | null => {
   switch (programType) {
     case 'CHALLENGE':
       return 'CHALLENGE_SIMPLE';
@@ -16,6 +16,8 @@ export const getBadgeTypeFromProgramType = (
       return 'VOD_REVIEW';
     case 'REPORT':
       return 'REPORT_REVIEW';
+    case 'GUIDEBOOK':
+      return null;
   }
 };
 

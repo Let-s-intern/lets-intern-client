@@ -16,7 +16,7 @@ const LetsCareerSection = () => {
 
   const { data: liveData, isLoading: liveIsLoading } = useGetUserProgramQuery({
     pageable: {
-      size: 5,
+      size: MAX_PROGRAMS_PER_CATEGORY,
       page: 1,
     },
     searchParams: {
@@ -31,6 +31,18 @@ const LetsCareerSection = () => {
       page: 1,
     },
   });
+
+  const { data: guidebookData, isLoading: guidebookIsLoading } =
+    useGetUserProgramQuery({
+      pageable: {
+        size: MAX_PROGRAMS_PER_CATEGORY,
+        page: 1,
+      },
+      searchParams: {
+        type: 'GUIDEBOOK',
+        status: ['PROCEEDING'],
+      },
+    });
 
   const navigation = useMemo(
     () =>
@@ -82,22 +94,19 @@ const LetsCareerSection = () => {
 
   const guideBookPrograms = useMemo(
     () =>
-      vodData?.programList
-        .filter((vod) => vod.title && vod.title.includes('가이드북'))
-        .map((vod) => ({
-          thumbnail: vod.thumbnail ?? '',
-          title: vod.title ?? '',
-          url: vod.link ?? '',
-          duration: undefined,
-          badge: {
-            text: '평생 소장 가능',
-          },
-        }))
-        .slice(0, MAX_PROGRAMS_PER_CATEGORY) ?? [],
-    [vodData],
+      guidebookData?.programList.map((program) => ({
+        thumbnail: program.programInfo.thumbnail ?? '',
+        title: program.programInfo.title ?? '',
+        url: `/program/guidebook/${program.programInfo.id}`,
+        duration: undefined,
+        badge: {
+          text: '평생 소장 가능',
+        },
+      })) ?? [],
+    [guidebookData],
   );
 
-  const isLoading = liveIsLoading || vodIsLoading;
+  const isLoading = liveIsLoading || vodIsLoading || guidebookIsLoading;
 
   useEffect(() => {
     if (isLoading || !livePrograms) return;
@@ -134,7 +143,7 @@ const LetsCareerSection = () => {
                 렛츠커리어의 독보적 콘텐츠 🚀
               </>
             }
-            moreUrl="/program?type=LIVE&type=VOD"
+            moreUrl="/program?type=LIVE&type=VOD&type=GUIDEBOOK"
             isDeadline={false}
             totalPrograms={
               [...livePrograms, ...guideBookPrograms, ...vodPrograms].length

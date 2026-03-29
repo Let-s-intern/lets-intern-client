@@ -1,5 +1,6 @@
 import {
   usePatchChallengeMutation,
+  usePatchGuidebookMutation,
   usePatchLiveMutation,
   usePatchVodMutation,
 } from '@/api/program';
@@ -25,6 +26,10 @@ export const usePatchVisibleProgram = ({
     successCallback,
     errorCallback,
   });
+  const patchGuidebook = usePatchGuidebookMutation({
+    successCallback,
+    errorCallback,
+  });
 
   return useCallback(
     (arg: { type: ProgramTypeUpperCase; id: number; isVisible: boolean }) => {
@@ -44,10 +49,15 @@ export const usePatchVisibleProgram = ({
             vodId: arg.id,
             isVisible: arg.isVisible,
           });
+        case 'GUIDEBOOK':
+          return patchGuidebook.mutateAsync({
+            guidebookId: arg.id,
+            isVisible: arg.isVisible,
+          });
         case 'REPORT':
           throw new Error('Not implemented');
       }
     },
-    [patchChallenge, patchLive, patchVod],
+    [patchChallenge, patchLive, patchVod, patchGuidebook],
   );
 };
