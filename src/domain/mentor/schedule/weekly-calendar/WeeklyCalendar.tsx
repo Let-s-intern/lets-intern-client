@@ -17,6 +17,7 @@ import ChallengePeriodBar, {
 import MonthDivider from './ui/MonthDivider';
 import TodayButton from './ui/TodayButton';
 import { useInfiniteWeekScroll } from './hooks/useInfiniteWeekScroll';
+import { useCalendarLayout } from './hooks/useCalendarLayout';
 
 const DAY_LABELS = ['월', '화', '수', '목', '금', '토', '일'];
 
@@ -100,6 +101,8 @@ const WeeklyCalendar = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visibleBars, weekStartTime]);
 
+  const { bodyMinHeight } = useCalendarLayout(barLayouts.length);
+
   const containerStyle = useMemo(
     () =>
       isDragging
@@ -156,7 +159,7 @@ const WeeklyCalendar = ({
         </div>
 
         {/* Grid body with column dividers and bars */}
-        <div className="relative" style={{ minHeight: '120px' }}>
+        <div className="relative" style={{ minHeight: `${bodyMinHeight}px` }}>
           {/* Column dividers */}
           <div className="absolute inset-0 grid grid-cols-7">
             {Array.from({ length: 7 }, (_, i) => (
