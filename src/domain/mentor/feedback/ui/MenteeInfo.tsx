@@ -31,7 +31,7 @@ const InfoRow = ({ label, value }: { label: string; value: string }) => (
 );
 
 const EMPTY_STATE = (
-  <div className="rounded-lg border border-neutral-300 p-7 text-sm text-neutral-400">
+  <div className="rounded-xl border border-gray-200 p-6 text-sm text-neutral-400">
     멘티를 선택해주세요.
   </div>
 );
@@ -59,7 +59,7 @@ const MenteeInfo = ({
   const feedbackStatusStyle = getFeedbackStatusStyle(mentee.feedbackStatus);
 
   return (
-    <div className="flex flex-col gap-7 rounded-lg border border-neutral-300 p-7">
+    <div className="flex flex-col gap-5 rounded-xl border border-gray-200 p-5">
       <div className="flex gap-7">
         {/* Left column */}
         <div className="flex flex-1 flex-col gap-7">
