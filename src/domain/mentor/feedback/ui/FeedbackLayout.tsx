@@ -32,7 +32,7 @@ const FeedbackLayout = ({
           ? 'gap-1 px-2 pb-2 pt-1 md:gap-2 md:px-3 md:pb-3'
           : 'gap-4 px-4 pb-4 pt-2 md:gap-6 md:px-6 md:pb-6'
       }`}
-      style={{ height: 'calc(100% - 72px)' }}
+      style={{ height: 'calc(100% - 80px)' }}
     >
       {/* Left panel: mentee list */}
       <div
