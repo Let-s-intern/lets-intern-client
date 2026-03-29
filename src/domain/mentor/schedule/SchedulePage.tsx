@@ -1,121 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-
-import type { ChallengeMentorVo } from '@/api/user/user';
-import {
-  useMentorMissionFeedbackListQuery,
-  useMentorMissionFeedbackAttendanceQuery,
-} from '@/api/challenge/challenge';
-import type { PeriodBarData } from './challenge-period/ChallengePeriodBar';
+import { useState } from 'react';
 
 import WelcomeMessage from './ui/WelcomeMessage';
 import WeeklySummary from './ui/WeeklySummary';
 import ChallengeFilter from './ui/ChallengeFilter';
+import ChallengeDataFetcher from './ui/ChallengeDataFetcher';
 import WeeklyCalendar from './weekly-calendar/WeeklyCalendar';
 import FeedbackModal from '../feedback/FeedbackModal';
 
 import { useWeeklySummary } from './hooks/useWeeklySummary';
 import { useScheduleData } from './hooks/useScheduleData';
-
-// ---------------------------------------------------------------------------
-// Per-mission attendance fetcher (each mission needs its own API call)
-// ---------------------------------------------------------------------------
-
-const MissionAttendanceFetcher = ({
-  challenge,
-  mission,
-  colorIndex,
-  onData,
-}: {
-  challenge: ChallengeMentorVo;
-  mission: {
-    id: number;
-    title?: string | null;
-    th: number;
-    startDate: string;
-    endDate: string;
-  };
-  colorIndex: number;
-  onData: (key: string, bar: PeriodBarData) => void;
-}) => {
-  const { data: attendanceData } = useMentorMissionFeedbackAttendanceQuery({
-    challengeId: challenge.challengeId,
-    missionId: mission.id,
-    enabled: true,
-  });
-
-  useEffect(() => {
-    const list = attendanceData?.attendanceList ?? [];
-    const submitted = list.filter((a) => a.status !== 'ABSENT');
-    const notSubmitted = list.filter((a) => a.status === 'ABSENT');
-
-    const bar: PeriodBarData = {
-      challengeId: challenge.challengeId,
-      missionId: mission.id,
-      challengeTitle: challenge.title,
-      th: mission.th,
-      startDate: mission.startDate,
-      endDate: mission.endDate,
-      colorIndex,
-      submittedCount: submitted.length,
-      notSubmittedCount: notSubmitted.length,
-      waitingCount: submitted.filter(
-        (a) => a.feedbackStatus === 'WAITING',
-      ).length,
-      inProgressCount: submitted.filter(
-        (a) => a.feedbackStatus === 'IN_PROGRESS',
-      ).length,
-      completedCount: submitted.filter(
-        (a) =>
-          a.feedbackStatus === 'COMPLETED' || a.feedbackStatus === 'CONFIRMED',
-      ).length,
-    };
-
-    onData(`${challenge.challengeId}-${mission.id}`, bar);
-  }, [attendanceData, challenge, mission, colorIndex, onData]);
-
-  return null;
-};
-
-// ---------------------------------------------------------------------------
-// Per-challenge data fetcher
-// ---------------------------------------------------------------------------
-
-const ChallengeDataFetcher = ({
-  challenge,
-  colorIndex,
-  onData,
-}: {
-  challenge: ChallengeMentorVo;
-  colorIndex: number;
-  onData: (key: string, bar: PeriodBarData) => void;
-}) => {
-  const { data: missionData } = useMentorMissionFeedbackListQuery(
-    challenge.challengeId,
-    { enabled: true },
-  );
-
-  const missions = missionData?.missionList ?? [];
-
-  return (
-    <>
-      {missions.map((m) => (
-        <MissionAttendanceFetcher
-          key={m.id}
-          challenge={challenge}
-          mission={m}
-          colorIndex={colorIndex}
-          onData={onData}
-        />
-      ))}
-    </>
-  );
-};
-
-// ---------------------------------------------------------------------------
-// SchedulePage
-// ---------------------------------------------------------------------------
 
 const SchedulePage = () => {
   const {
@@ -129,14 +24,11 @@ const SchedulePage = () => {
     findNearestDate,
   } = useScheduleData();
 
-  // WeeklySummary uses ALL bars — tag click doesn't affect
   const { totalCount, todayDueCount, incompleteCount, completedCount } =
     useWeeklySummary(allBarsUnfiltered);
 
-  // Scroll target for tag click
   const [targetScrollDate, setTargetScrollDate] = useState<Date | null>(null);
 
-  // Challenge tag click: filter + smooth scroll to nearest feedback date
   const handleChallengeSelect = (challengeId: number | null) => {
     if (challengeId === null || challengeId === selectedChallengeId) {
       setSelectedChallengeId(null);
@@ -150,7 +42,6 @@ const SchedulePage = () => {
     }
   };
 
-  // Feedback modal state
   const [feedbackModal, setFeedbackModal] = useState<{
     isOpen: boolean;
     challengeId: number;
