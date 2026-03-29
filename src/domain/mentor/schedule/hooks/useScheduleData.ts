@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useState } from 'react';
-import { startOfWeek } from 'date-fns';
 
 import { useMentorChallengeListQuery } from '@/api/user/user';
 import type { PeriodBarData } from '../challenge-period/ChallengePeriodBar';
@@ -62,11 +61,10 @@ export function useScheduleData() {
   );
 
   /**
-   * Find the nearest feedback week for a given challenge.
-   * Returns the Monday of the week containing the closest bar (by startDate)
-   * to today. If no bars, returns null.
+   * Find the nearest feedback date for a given challenge.
+   * Returns the startDate of the closest bar to today.
    */
-  const findNearestWeek = useCallback(
+  const findNearestDate = useCallback(
     (challengeId: number): Date | null => {
       const now = Date.now();
       let closest: PeriodBarData | null = null;
@@ -82,7 +80,7 @@ export function useScheduleData() {
       }
 
       if (!closest) return null;
-      return startOfWeek(new Date(closest.startDate), { weekStartsOn: 1 });
+      return new Date(closest.startDate);
     },
     [allBarsUnfiltered],
   );
@@ -95,6 +93,6 @@ export function useScheduleData() {
     filteredBars,
     handleData,
     challengeFilterItems,
-    findNearestWeek,
+    findNearestDate,
   };
 }

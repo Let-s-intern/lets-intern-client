@@ -1,135 +1,131 @@
 'use client';
 
 import {
-  addDays,
+  differenceInCalendarDays,
   format,
+  getMonth,
   isSameDay,
-  max,
-  min,
-  startOfWeek,
 } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import ChallengePeriodBar, {
   type PeriodBarData,
 } from '../challenge-period/ChallengePeriodBar';
 import { CompactFeedbackCard } from '../challenge-period/FeedbackCard';
-import MonthDivider from './ui/MonthDivider';
 import TodayButton from './ui/TodayButton';
-import { useInfiniteWeekScroll } from './hooks/useInfiniteWeekScroll';
-import { useCalendarLayout } from './hooks/useCalendarLayout';
+import { useTimelineScroll } from './hooks/useInfiniteWeekScroll';
 
-const DAY_LABELS = ['월', '화', '수', '목', '금', '토', '일'];
-
-// ---------------------------------------------------------------------------
-// Utility: compute bar grid layouts for a given week
-// ---------------------------------------------------------------------------
-
-const computeBarLayouts = (bars: PeriodBarData[], weekStart: Date) => {
-  const weekEnd = addDays(weekStart, 6);
-  const visible = bars.filter((bar) => {
-    const barStart = new Date(bar.startDate);
-    const barEnd = new Date(bar.endDate);
-    return barStart <= weekEnd && barEnd >= weekStart;
-  });
-
-  return visible.map((bar) => {
-    const barStart = new Date(bar.startDate);
-    const barEnd = new Date(bar.endDate);
-    const clampedStart = max([barStart, weekStart]);
-    const clampedEnd = min([barEnd, weekEnd]);
-
-    const startCol =
-      Math.round(
-        (clampedStart.getTime() - weekStart.getTime()) /
-          (1000 * 60 * 60 * 24),
-      ) + 1;
-    const endCol =
-      Math.round(
-        (clampedEnd.getTime() - weekStart.getTime()) / (1000 * 60 * 60 * 24),
-      ) + 2;
-
-    return { bar, startCol, endCol, colSpan: endCol - startCol };
-  });
-};
-
-// ---------------------------------------------------------------------------
-// WeeklyCalendar — single panel with slide animation
-// ---------------------------------------------------------------------------
+const DAY_LABELS_SHORT = ['일', '월', '화', '수', '목', '금', '토'];
 
 interface WeeklyCalendarProps {
-  weekStartDate: Date;
-  /** Filtered bars — only the selected challenge (or all if no filter) */
   bars: PeriodBarData[];
-  /** All bars (unfiltered) — used for consistent height calculation */
   allBars: PeriodBarData[];
   onBarClick: (challengeId: number, missionId: number) => void;
-  onWeekChange: (date: Date) => void;
+  targetScrollDate?: Date | null;
 }
 
 const WeeklyCalendar = ({
-  weekStartDate,
   bars,
   allBars,
   onBarClick,
-  onWeekChange,
+  targetScrollDate,
 }: WeeklyCalendarProps) => {
-  const weekStart = startOfWeek(weekStartDate, { weekStartsOn: 1 });
-  const weekStartTime = weekStart.getTime();
+  const {
+    containerRef,
+    timelineStart,
+    totalDays,
+    days,
+    scrollToDate,
+    scrollToToday,
+  } = useTimelineScroll({ allBars });
 
-  const { containerRef, goToCurrentWeek, slideStyle } =
-    useInfiniteWeekScroll({ weekStartDate, onWeekChange });
+  const today = useMemo(() => new Date(), []);
+  const todayColRef = useRef<HTMLDivElement>(null);
+  const [isTodayVisible, setIsTodayVisible] = useState(true);
 
-  const days = useMemo(
-    () => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [weekStartTime],
-  );
-  const today = new Date();
+  // Observe today column visibility within the scroll container
+  useEffect(() => {
+    const el = todayColRef.current;
+    const root = containerRef.current;
+    if (!el || !root) return;
 
-  const isTodayVisible = useMemo(() => {
-    const weekEnd = addDays(weekStart, 6);
-    return today >= weekStart && today <= weekEnd;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [weekStartTime]);
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsTodayVisible(entry.isIntersecting),
+      { root, threshold: 0 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [containerRef, days]);
 
-  // Filtered bar layouts for rendering
+  // External scroll request (tag click) — center the target date
+  useEffect(() => {
+    if (targetScrollDate) {
+      scrollToDate(targetScrollDate);
+    }
+  }, [targetScrollDate, scrollToDate]);
+
+  // Bar layouts relative to the timeline
   const barLayouts = useMemo(() => {
-    return computeBarLayouts(bars, weekStart);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bars, weekStartTime]);
+    return bars
+      .map((bar) => {
+        const startCol =
+          differenceInCalendarDays(new Date(bar.startDate), timelineStart) + 1;
+        const endCol =
+          differenceInCalendarDays(new Date(bar.endDate), timelineStart) + 2;
+        return { bar, startCol, endCol, colSpan: endCol - startCol };
+      })
+      .filter((l) => l.endCol >= 1 && l.startCol <= totalDays);
+  }, [bars, timelineStart, totalDays]);
 
-  // All bar count for consistent height (unfiltered)
-  const allBarCount = useMemo(() => {
-    const weekEnd = addDays(weekStart, 6);
-    return allBars.filter((bar) => {
-      const s = new Date(bar.startDate);
-      const e = new Date(bar.endDate);
-      return s <= weekEnd && e >= weekStart;
-    }).length;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allBars, weekStartTime]);
+  // Fixed body height based on ALL bars (unfiltered) so filtering doesn't shrink calendar
+  const bodyMinHeight = useMemo(() => {
+    const ROW_HEIGHT = 70;
+    const MIN_ROWS = 3;
+    const PADDING = 24; // py-3 = 12*2
+    const rows = Math.max(allBars.length, MIN_ROWS);
+    return rows * ROW_HEIGHT + PADDING;
+  }, [allBars.length]);
 
-  const { bodyMinHeight } = useCalendarLayout(allBarCount);
+  const innerWidthPercent = (totalDays / 7) * 100;
+  const gridCols = `repeat(${totalDays}, 1fr)`;
 
   return (
     <div className="relative">
       <div
         ref={containerRef}
-        className="touch-pan-y overflow-hidden rounded-2xl border border-neutral-80 select-none"
+        className="overflow-x-auto rounded-2xl border border-neutral-80"
       >
-        <div className="relative flex min-w-[640px] flex-col" style={slideStyle}>
+        <div
+          style={{
+            width: `${innerWidthPercent}%`,
+            minWidth: `${totalDays * 92}px`,
+          }}
+        >
           {/* Day header */}
-          <div className="relative grid grid-cols-7 border-b border-neutral-80">
+          <div
+            className="border-b border-neutral-80"
+            style={{ display: 'grid', gridTemplateColumns: gridCols }}
+          >
             {days.map((day, i) => {
               const isToday = isSameDay(day, today);
-              const isSunday = i === 6;
+              const isSunday = day.getDay() === 0;
+              const isMonthStart =
+                i > 0 && getMonth(day) !== getMonth(days[i - 1]);
+
               return (
                 <div
                   key={i}
-                  className={`flex flex-col items-center justify-center gap-1 py-2 ${isToday ? 'rounded-lg' : ''}`}
+                  ref={isToday ? todayColRef : undefined}
+                  className={`flex flex-col items-center justify-center gap-1 py-2 ${
+                    isMonthStart ? 'border-l-2 border-primary-20' : ''
+                  }`}
                 >
+                  {isMonthStart && (
+                    <span className="rounded-full bg-primary-10 px-1.5 py-0.5 text-[10px] font-semibold text-primary-dark">
+                      {format(day, 'M월', { locale: ko })}
+                    </span>
+                  )}
                   <span
                     className={`text-xsmall14 font-medium ${
                       isSunday
@@ -139,7 +135,7 @@ const WeeklyCalendar = ({
                           : 'text-neutral-10'
                     }`}
                   >
-                    {DAY_LABELS[i]}
+                    {DAY_LABELS_SHORT[day.getDay()]}
                   </span>
                   {isToday ? (
                     <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-xsmall14 font-semibold text-white">
@@ -153,28 +149,44 @@ const WeeklyCalendar = ({
                 </div>
               );
             })}
-            <MonthDivider days={days} />
           </div>
 
-          {/* Grid body */}
+          {/* Body */}
           <div className="relative" style={{ minHeight: `${bodyMinHeight}px` }}>
             {/* Column dividers */}
-            <div className="absolute inset-0 grid grid-cols-7">
-              {Array.from({ length: 7 }, (_, i) => (
-                <div
-                  key={i}
-                  className={i < 6 ? 'border-r border-neutral-80' : ''}
-                />
-              ))}
+            <div
+              className="absolute inset-0"
+              style={{ display: 'grid', gridTemplateColumns: gridCols }}
+            >
+              {days.map((day, i) => {
+                const isMonthStart =
+                  i > 0 && getMonth(day) !== getMonth(days[i - 1]);
+                return (
+                  <div
+                    key={i}
+                    className={
+                      isMonthStart
+                        ? 'border-l-2 border-primary-20'
+                        : i > 0
+                          ? 'border-l border-neutral-90'
+                          : ''
+                    }
+                  />
+                );
+              })}
             </div>
 
-            <MonthDivider days={days} />
-
             {/* Bars */}
-            <div className="relative grid grid-cols-7 gap-y-1 py-7">
+            <div
+              className="relative gap-y-1 py-3"
+              style={{ display: 'grid', gridTemplateColumns: gridCols }}
+            >
               {barLayouts.length === 0 && (
-                <div className="col-span-7 flex items-center justify-center py-8 text-xsmall14 text-neutral-40">
-                  이번 주 예정된 피드백이 없습니다.
+                <div
+                  className="flex items-center justify-center py-8 text-xsmall14 text-neutral-40"
+                  style={{ gridColumn: '1 / -1' }}
+                >
+                  예정된 피드백이 없습니다.
                 </div>
               )}
               {barLayouts.map(({ bar, startCol, endCol, colSpan }, idx) => (
@@ -197,10 +209,7 @@ const WeeklyCalendar = ({
           </div>
         </div>
       </div>
-      <TodayButton
-        isTodayVisible={isTodayVisible}
-        onGoToToday={goToCurrentWeek}
-      />
+      <TodayButton isTodayVisible={isTodayVisible} onGoToToday={scrollToToday} />
     </div>
   );
 };

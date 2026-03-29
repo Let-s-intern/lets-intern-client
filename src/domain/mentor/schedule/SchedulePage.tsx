@@ -15,7 +15,6 @@ import ChallengeFilter from './ui/ChallengeFilter';
 import WeeklyCalendar from './weekly-calendar/WeeklyCalendar';
 import FeedbackModal from '../feedback/FeedbackModal';
 
-import { useWeekNavigation } from './hooks/useWeekNavigation';
 import { useWeeklySummary } from './hooks/useWeeklySummary';
 import { useScheduleData } from './hooks/useScheduleData';
 
@@ -119,7 +118,6 @@ const ChallengeDataFetcher = ({
 // ---------------------------------------------------------------------------
 
 const SchedulePage = () => {
-  const { weekStartDate, setWeekStartDate } = useWeekNavigation();
   const {
     challenges,
     selectedChallengeId,
@@ -128,23 +126,27 @@ const SchedulePage = () => {
     filteredBars,
     handleData,
     challengeFilterItems,
-    findNearestWeek,
+    findNearestDate,
   } = useScheduleData();
-  // WeeklySummary uses ALL bars (unfiltered, no week filtering) — tag click doesn't affect
+
+  // WeeklySummary uses ALL bars — tag click doesn't affect
   const { totalCount, todayDueCount, incompleteCount, completedCount } =
     useWeeklySummary(allBarsUnfiltered);
 
-  // Challenge tag click: filter + scroll to nearest feedback week
+  // Scroll target for tag click
+  const [targetScrollDate, setTargetScrollDate] = useState<Date | null>(null);
+
+  // Challenge tag click: filter + smooth scroll to nearest feedback date
   const handleChallengeSelect = (challengeId: number | null) => {
     if (challengeId === null || challengeId === selectedChallengeId) {
-      // Deselect — show all, stay on current week
       setSelectedChallengeId(null);
+      setTargetScrollDate(null);
       return;
     }
     setSelectedChallengeId(challengeId);
-    const nearestWeek = findNearestWeek(challengeId);
-    if (nearestWeek) {
-      setWeekStartDate(nearestWeek);
+    const nearest = findNearestDate(challengeId);
+    if (nearest) {
+      setTargetScrollDate(nearest);
     }
   };
 
@@ -190,20 +192,17 @@ const SchedulePage = () => {
           />
 
           <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-4">
-              <ChallengeFilter
-                challenges={challengeFilterItems}
-                selectedChallengeId={selectedChallengeId}
-                onSelect={handleChallengeSelect}
-              />
-            </div>
+            <ChallengeFilter
+              challenges={challengeFilterItems}
+              selectedChallengeId={selectedChallengeId}
+              onSelect={handleChallengeSelect}
+            />
 
             <WeeklyCalendar
-              weekStartDate={weekStartDate}
               bars={filteredBars}
               allBars={allBarsUnfiltered}
               onBarClick={handleBarClick}
-              onWeekChange={setWeekStartDate}
+              targetScrollDate={targetScrollDate}
             />
           </div>
         </div>
