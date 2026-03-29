@@ -191,6 +191,7 @@ const SchedulePage = () => {
               weekStartDate={weekStartDate}
               bars={allBars}
               onBarClick={handleBarClick}
+              onWeekChange={setWeekStartDate}
             />
           </div>
         </div>

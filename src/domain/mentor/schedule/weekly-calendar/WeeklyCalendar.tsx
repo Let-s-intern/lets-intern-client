@@ -11,7 +11,11 @@ import {
 import { ko } from 'date-fns/locale';
 import { useMemo } from 'react';
 
-import ChallengePeriodBar, { type PeriodBarData } from '../challenge-period/ChallengePeriodBar';
+import ChallengePeriodBar, {
+  type PeriodBarData,
+} from '../challenge-period/ChallengePeriodBar';
+import MonthDivider from './ui/MonthDivider';
+import { useInfiniteWeekScroll } from './hooks/useInfiniteWeekScroll';
 
 const DAY_LABELS = ['월', '화', '수', '목', '금', '토', '일'];
 
@@ -19,15 +23,25 @@ interface WeeklyCalendarProps {
   weekStartDate: Date;
   bars: PeriodBarData[];
   onBarClick: (challengeId: number, missionId: number) => void;
+  onWeekChange: (date: Date) => void;
 }
 
 const WeeklyCalendar = ({
   weekStartDate,
   bars,
   onBarClick,
+  onWeekChange,
 }: WeeklyCalendarProps) => {
   const weekStart = startOfWeek(weekStartDate, { weekStartsOn: 1 });
   const weekStartTime = weekStart.getTime();
+
+  const {
+    containerRef,
+    dragOffset,
+    isDragging,
+    handlers,
+  } = useInfiniteWeekScroll({ weekStartDate, onWeekChange });
+
   const days = useMemo(
     () => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -77,11 +91,23 @@ const WeeklyCalendar = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visibleBars, weekStartTime]);
 
+  const containerStyle = useMemo(
+    () =>
+      isDragging
+        ? { transform: `translateX(${dragOffset}px)`, transition: 'none' }
+        : { transform: 'translateX(0)', transition: 'transform 0.2s ease-out' },
+    [isDragging, dragOffset],
+  );
+
   return (
-    <div className="overflow-x-auto rounded-[16px] border border-neutral-80">
-      <div className="relative flex min-w-[640px] flex-col">
+    <div
+      ref={containerRef}
+      className="touch-pan-y overflow-x-auto rounded-[16px] border border-neutral-80 select-none"
+      {...handlers}
+    >
+      <div className="relative flex min-w-[640px] flex-col" style={containerStyle}>
         {/* Day header row */}
-        <div className="grid grid-cols-7 border-b border-neutral-80">
+        <div className="relative grid grid-cols-7 border-b border-neutral-80">
           {days.map((day, i) => {
             const isToday = isSameDay(day, today);
             const isSunday = i === 6;
@@ -116,6 +142,7 @@ const WeeklyCalendar = ({
               </div>
             );
           })}
+          <MonthDivider days={days} />
         </div>
 
         {/* Grid body with column dividers and bars */}
@@ -129,6 +156,9 @@ const WeeklyCalendar = ({
               />
             ))}
           </div>
+
+          {/* Month divider in body */}
+          <MonthDivider days={days} />
 
           {/* Bars */}
           <div className="relative grid grid-cols-7 gap-y-1 py-7">
