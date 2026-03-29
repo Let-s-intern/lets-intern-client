@@ -65,7 +65,7 @@ export default function BasicInfo({ formData, onChange }: BasicInfoProps) {
       <h2 className="mb-4 text-lg font-semibold">기본 정보</h2>
       <div className="flex flex-col gap-6 md:flex-row md:gap-8">
         {/* Profile Image */}
-        <div className="relative mx-auto flex h-48 w-48 flex-shrink-0 items-center justify-center overflow-hidden rounded border border-gray-300 bg-gray-200 md:mx-0 md:h-60 md:w-60">
+        <div className="relative mx-auto flex h-48 w-48 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-gray-200 bg-gray-100 md:mx-0 md:h-60 md:w-60">
           {formData.profileImgUrl ? (
             <img
               src={formData.profileImgUrl}
@@ -82,7 +82,7 @@ export default function BasicInfo({ formData, onChange }: BasicInfoProps) {
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading}
-              className="rounded bg-white/90 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-white disabled:opacity-50"
+              className="rounded-lg bg-white/90 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-white disabled:opacity-50"
             >
               {isUploading ? '업로드 중...' : '업로드'}
             </button>
@@ -90,7 +90,7 @@ export default function BasicInfo({ formData, onChange }: BasicInfoProps) {
               <button
                 type="button"
                 onClick={handleImageDelete}
-                className="rounded bg-white/90 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-white"
+                className="rounded-lg bg-white/90 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-white"
               >
                 삭제
               </button>
@@ -123,7 +123,7 @@ export default function BasicInfo({ formData, onChange }: BasicInfoProps) {
                 type="text"
                 value={formData[key]}
                 onChange={(e) => handleChange(key, e.target.value)}
-                className="flex-1 rounded border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-gray-500"
+                className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none transition-colors focus:border-primary"
               />
             </div>
           ))}
