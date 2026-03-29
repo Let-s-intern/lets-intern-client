@@ -54,7 +54,7 @@ const MissionRow = ({ mission, onClickFeedback }: MissionRowProps) => {
     <div className="flex flex-col gap-3 rounded-lg border border-gray-200 p-3 transition-colors hover:bg-gray-50 md:flex-row md:items-center md:justify-between md:p-4">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <span className="flex min-h-[44px] shrink-0 items-center justify-center rounded-full bg-primary-10 px-3 py-1.5 text-xs font-medium text-primary-dark md:min-h-0 md:px-2.5 md:py-1">
+          <span className="shrink-0 rounded-lg bg-primary-10 px-2.5 py-1 text-xs font-medium text-primary-dark">
             {mission.th}회차
           </span>
           <h3 className="text-sm font-medium text-gray-900 md:text-base">
