@@ -59,16 +59,16 @@ const MenteeInfo = ({
   const feedbackStatusStyle = getFeedbackStatusStyle(mentee.feedbackStatus);
 
   return (
-    <div className="flex flex-col gap-5 rounded-xl border border-gray-200 p-5">
-      <div className="flex gap-7">
+    <div className="flex flex-col gap-4 rounded-xl border border-gray-200 p-4 md:gap-5 md:p-5">
+      <div className="flex flex-col gap-4 md:flex-row md:gap-7">
         {/* Left column */}
         <div className="flex flex-1 flex-col gap-7">
           {/* Name + challenge */}
-          <div className="flex items-center gap-2">
-            <h3 className="line-clamp-1 text-2xl font-semibold text-neutral-900">
+          <div className="flex flex-wrap items-baseline gap-2">
+            <h3 className="text-lg font-semibold text-neutral-900 md:text-2xl">
               {mentee.name}
             </h3>
-            <span className="text-xs font-medium text-neutral-700">
+            <span className="text-xs font-medium text-neutral-500">
               {challengeTitle ?? ''}
             </span>
           </div>
