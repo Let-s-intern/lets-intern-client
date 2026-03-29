@@ -80,23 +80,29 @@ const FeedbackLayout = ({
           <button
             type="button"
             onClick={() => setIsExpanded((prev) => !prev)}
-            className="flex items-center gap-1 text-sm font-medium text-gray-500 transition-colors hover:text-gray-700"
+            className="flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors hover:border-gray-400 hover:bg-gray-50 hover:text-gray-800"
           >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              className="transition-transform duration-300"
-            >
-              <path
-                d={isExpanded ? 'M3 10L8 5L13 10' : 'M3 6L8 11L13 6'}
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            {isExpanded ? (
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M10 2.5L13.5 2.5L13.5 6M6 13.5L2.5 13.5L2.5 10"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            ) : (
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M2.5 6L2.5 2.5L6 2.5M13.5 10L13.5 13.5L10 13.5"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            )}
             {isExpanded ? '작게 보기' : '크게 보기'}
           </button>
 
