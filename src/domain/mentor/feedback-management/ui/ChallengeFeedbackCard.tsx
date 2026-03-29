@@ -56,6 +56,19 @@ const MissionRow = ({ mission, onClickFeedback }: MissionRowProps) => {
         </div>
       </div>
 
+      {/* Feedback status badges */}
+      <div className="flex flex-wrap gap-1">
+        {(
+          Object.keys(FeedbackStatusMapping) as FeedbackStatus[]
+        ).map((key) => (
+          <StatusBadge
+            key={key}
+            status={key}
+            count={feedbackCountMap.get(key) ?? 0}
+          />
+        ))}
+      </div>
+
       <div className="flex flex-wrap items-center gap-3 md:gap-4">
         {/* Submission stats */}
         <div className="text-xs text-gray-500 md:text-right">
@@ -73,19 +86,6 @@ const MissionRow = ({ mission, onClickFeedback }: MissionRowProps) => {
             </span>{' '}
             / {mission.submittedCount}
           </p>
-        </div>
-
-        {/* Feedback status badges */}
-        <div className="flex flex-wrap gap-1">
-          {(
-            Object.keys(FeedbackStatusMapping) as FeedbackStatus[]
-          ).map((key) => (
-            <StatusBadge
-              key={key}
-              status={key}
-              count={feedbackCountMap.get(key) ?? 0}
-            />
-          ))}
         </div>
 
         <button
