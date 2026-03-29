@@ -33,10 +33,10 @@ const ChallengeTag = ({
     <button
       type="button"
       onClick={() => onToggle(challengeId)}
-      className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+      className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
         isSelected
-          ? `${color.bg} ${color.border} text-white`
-          : `${color.lightBg} ${color.border} ${color.text}`
+          ? `${color.bg} text-white`
+          : `${color.lightBg} ${color.text}`
       }`}
     >
       {title}
