@@ -5,19 +5,16 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
-  getExpandedRowModel,
-  getGroupedRowModel,
-  GroupingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { useMemo, useState } from 'react';
-import type { LeadHistoryRow } from '../types';
+import { useMemo } from 'react';
+import type { AggregatedLeadRow } from '../types';
 
-const VISIBLE_GROUP_LIMIT = 10;
+const VISIBLE_ROW_LIMIT = 100;
 
 interface LeadHistoryTableProps {
-  data: LeadHistoryRow[];
-  columns: ColumnDef<LeadHistoryRow>[];
+  data: AggregatedLeadRow[];
+  columns: ColumnDef<AggregatedLeadRow>[];
   isLoading: boolean;
 }
 
@@ -26,45 +23,19 @@ const LeadHistoryTable = ({
   columns,
   isLoading,
 }: LeadHistoryTableProps) => {
-  const [grouping] = useState<GroupingState>(['displayPhoneNum']);
   const table = useReactTable({
     data,
     columns,
-    state: { grouping, expanded: true },
     getCoreRowModel: getCoreRowModel(),
-    getGroupedRowModel: getGroupedRowModel(),
-    getExpandedRowModel: getExpandedRowModel(),
-    autoResetExpanded: false,
     getRowId: (row) => row.id,
   });
 
-  const groupedRowModel = table.getGroupedRowModel();
-  const totalGroupCount = groupedRowModel.rows.length;
-  const displayedGroupCount =
-    totalGroupCount === 0
-      ? 0
-      : Math.min(totalGroupCount, VISIBLE_GROUP_LIMIT);
-  const remainingGroupCount = Math.max(
-    totalGroupCount - displayedGroupCount,
-    0,
-  );
   const allRows = table.getRowModel().rows;
   const rowsToRender = useMemo(() => {
-    if (!allRows.length) return allRows;
-    const result: typeof allRows = [];
-    let groupsSeen = 0;
-
-    for (const row of allRows) {
-      if (row.depth === 0) {
-        groupsSeen += 1;
-        if (groupsSeen > VISIBLE_GROUP_LIMIT) break;
-      }
-      result.push(row);
-    }
-
-    return result;
+    return allRows.slice(0, VISIBLE_ROW_LIMIT);
   }, [allRows]);
 
+  const remainingCount = Math.max(allRows.length - VISIBLE_ROW_LIMIT, 0);
   const columnCount = table.getAllLeafColumns().length || columns.length || 1;
 
   return (
@@ -122,14 +93,7 @@ const LeadHistoryTable = ({
               </tr>
             ) : (
               rowsToRender.map((row) => (
-                <tr
-                  key={row.id}
-                  className={twMerge(
-                    'border-t border-gray-100',
-                    !row.getIsGrouped() && 'bg-slate-50',
-                    row.getIsGrouped() && 'font-medium',
-                  )}
-                >
+                <tr key={row.id} className="border-t border-gray-100">
                   {row.getVisibleCells().map((cell, i) => {
                     const cellClassName =
                       cell.column.columnDef.meta?.cellClassName ?? '';
@@ -139,8 +103,7 @@ const LeadHistoryTable = ({
                         className={twMerge(
                           'border-b px-3 py-2 align-top text-gray-900',
                           cellClassName,
-                          i === 0 && 'z-1 sticky left-0 bg-slate-50',
-                          row.getIsGrouped() && 'bg-white',
+                          i === 0 && 'z-1 sticky left-0 bg-white',
                         )}
                       >
                         {flexRender(
@@ -156,15 +119,15 @@ const LeadHistoryTable = ({
           </tbody>
         </table>
       </div>
-      {!isLoading && remainingGroupCount > 0 && (
+      {!isLoading && remainingCount > 0 && (
         <div className="border-t border-gray-200 bg-gray-50 px-3 py-2 text-center text-[12px] text-gray-500">
-          상위 {displayedGroupCount}개 전화번호 그룹만 표시됩니다. 외{' '}
-          {remainingGroupCount}개는 CSV 다운로드로 확인하세요.
+          상위 {VISIBLE_ROW_LIMIT}건만 표시됩니다. 외 {remainingCount}건은
+          CSV 다운로드로 확인하세요.
         </div>
       )}
-      {!isLoading && remainingGroupCount === 0 && totalGroupCount > 0 && (
+      {!isLoading && remainingCount === 0 && allRows.length > 0 && (
         <div className="border-t border-gray-200 bg-gray-50 px-3 py-2 text-center text-[12px] text-gray-500">
-          전화번호 그룹 {totalGroupCount}개를 모두 보여주고 있습니다.
+          총 {allRows.length}건을 모두 보여주고 있습니다.
         </div>
       )}
     </div>

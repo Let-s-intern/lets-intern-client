@@ -3,7 +3,9 @@
 import { useLeadHistoryListQuery } from '@/api/lead';
 import { useGetMagnetListQuery } from '@/api/magnet/magnet';
 import { useMemo } from 'react';
+import dayjs from '@/lib/dayjs';
 import type {
+  AggregatedLeadRow,
   LeadHistoryGroupSummary,
   LeadHistoryRow,
   SelectOption,
@@ -120,8 +122,58 @@ const useLeadHistoryData = () => {
     return map;
   }, [allRows]);
 
+  /** 전화번호별 1행으로 집계 */
+  const aggregatedRows = useMemo<AggregatedLeadRow[]>(() => {
+    if (!allRows.length) return [];
+
+    const grouped = new Map<string, LeadHistoryRow[]>();
+    allRows.forEach((row) => {
+      const key = row.displayPhoneNum;
+      if (!grouped.has(key)) grouped.set(key, []);
+      grouped.get(key)!.push(row);
+    });
+
+    const firstNonNull = (rows: LeadHistoryRow[], key: keyof LeadHistoryRow) =>
+      rows.find((r) => r[key] != null)?.[key] as string | null;
+
+    const formatDate = (date: string | null | undefined) =>
+      date ? dayjs(date).format('YYMMDD') : '';
+
+    return Array.from(grouped.entries()).map(([phone, rows]) => {
+      const programs = rows
+        .filter((r) => r.eventType === 'PROGRAM' && r.title)
+        .map((r) => `${r.title}(${formatDate(r.createDate)})`)
+        .join('\n');
+
+      const magnets = rows
+        .filter((r) => r.eventType === 'MAGNET' && r.title)
+        .map((r) => `${r.title}(${formatDate(r.createDate)})`)
+        .join('\n');
+
+      const hasMarketingAgree = rows.some((r) => r.marketingAgree === true);
+      const anyMarketingValue = rows.find(
+        (r) => r.marketingAgree !== null,
+      )?.marketingAgree;
+
+      return {
+        id: phone,
+        displayPhoneNum: phone,
+        name: firstNonNull(rows, 'name') ?? '-',
+        grade: '-',
+        wishField: firstNonNull(rows, 'wishField') ?? '-',
+        wishJob: firstNonNull(rows, 'wishJob') ?? '-',
+        wishIndustry: firstNonNull(rows, 'wishIndustry') ?? '-',
+        wishCompany: firstNonNull(rows, 'wishCompany') ?? '-',
+        programHistory: programs || '-',
+        magnetHistory: magnets || '-',
+        marketingAgree: hasMarketingAgree ? true : (anyMarketingValue ?? null),
+      };
+    });
+  }, [allRows]);
+
   return {
     allRows,
+    aggregatedRows,
     isLoading,
     magnetOptions,
     magnetLabelMap,

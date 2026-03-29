@@ -4,6 +4,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
 import type { FilterEditorCallbacks } from '../section/FilterEditor';
 import type {
+  AggregatedLeadRow,
   LeadHistoryFilterCombinator,
   LeadHistoryFilterConditionNode,
   LeadHistoryFilterField,
@@ -34,6 +35,7 @@ import { compareLeadHistoryRowsByName } from '../utils/rowUtils';
 
 interface UseLeadHistoryFilterParams {
   allRows: LeadHistoryRow[];
+  aggregatedRows: AggregatedLeadRow[];
   groupSummaryMap: Map<string, LeadHistoryGroupSummary>;
   magnetOptions: SelectOption[];
   magnetLabelMap: Map<string, string>;
@@ -44,6 +46,7 @@ interface UseLeadHistoryFilterParams {
 
 const useLeadHistoryFilter = ({
   allRows,
+  aggregatedRows,
   groupSummaryMap,
   magnetOptions,
   magnetLabelMap,
@@ -101,29 +104,36 @@ const useLeadHistoryFilter = ({
     [filterTree],
   );
 
+  /** 필터 통과한 전화번호 집합 */
+  const allowedPhones = useMemo(() => {
+    if (!hasActiveFilter) return null;
+    const allowed = new Set<string>();
+    groupSummaryMap.forEach((summary, key) => {
+      if (evaluateFilterNode(summary, filterTree)) allowed.add(key);
+    });
+    return allowed;
+  }, [filterTree, groupSummaryMap, hasActiveFilter]);
+
+  /** raw rows 기반 필터 결과 (필터 옵션 추출 등에 필요) */
   const filteredRows = useMemo(() => {
     if (!allRows.length) return [];
-    let rowsToSort: LeadHistoryRow[] = allRows;
+    if (!allowedPhones) return [...allRows].sort(compareLeadHistoryRowsByName);
+    if (!allowedPhones.size) return [];
+    return allRows
+      .filter((row) => allowedPhones.has(row.displayPhoneNum))
+      .sort(compareLeadHistoryRowsByName);
+  }, [allRows, allowedPhones]);
 
-    if (hasActiveFilter) {
-      const allowed = new Set<string>();
-      groupSummaryMap.forEach((summary, key) => {
-        if (evaluateFilterNode(summary, filterTree)) allowed.add(key);
-      });
-      if (!allowed.size) return [];
-      rowsToSort = allRows.filter((row) =>
-        allowed.has(row.displayPhoneNum),
-      );
-    }
+  /** 집계된 행 기반 필터 결과 (테이블 표시용) */
+  const filteredAggregatedRows = useMemo(() => {
+    if (!aggregatedRows.length) return [];
+    if (!allowedPhones) return aggregatedRows;
+    return aggregatedRows.filter((row) =>
+      allowedPhones.has(row.displayPhoneNum),
+    );
+  }, [aggregatedRows, allowedPhones]);
 
-    return [...rowsToSort].sort(compareLeadHistoryRowsByName);
-  }, [allRows, filterTree, groupSummaryMap, hasActiveFilter]);
-
-  const filteredGroupCount = useMemo(() => {
-    const groups = new Set<string>();
-    filteredRows.forEach((row) => groups.add(row.displayPhoneNum));
-    return groups.size;
-  }, [filteredRows]);
+  const filteredGroupCount = filteredAggregatedRows.length;
 
   const totalGroupCount = groupSummaryMap.size;
 
@@ -285,6 +295,7 @@ const useLeadHistoryFilter = ({
   return {
     filterTree,
     filteredRows,
+    filteredAggregatedRows,
     filteredGroupCount,
     totalGroupCount,
     rootHasChildren: filterTree.children.length > 0,

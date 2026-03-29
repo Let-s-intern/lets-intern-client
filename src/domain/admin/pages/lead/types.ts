@@ -86,6 +86,21 @@ export type LeadHistoryGroupSummary = {
   hasMarketingAgreement: boolean;
 };
 
+/** 전화번호별 1행으로 사전 집계된 테이블 행 */
+export type AggregatedLeadRow = {
+  id: string;
+  displayPhoneNum: string;
+  name: string;
+  grade: string;
+  wishField: string;
+  wishJob: string;
+  wishIndustry: string;
+  wishCompany: string;
+  programHistory: string;
+  magnetHistory: string;
+  marketingAgree: boolean | null;
+};
+
 export type SelectOption = { value: string; label: string };
 
 export const FILTER_QUERY_KEY = 'filters';

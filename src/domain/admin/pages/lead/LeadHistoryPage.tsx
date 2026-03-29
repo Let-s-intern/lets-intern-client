@@ -22,6 +22,7 @@ const LeadHistoryPage = () => {
 
   const {
     allRows,
+    aggregatedRows,
     isLoading,
     magnetOptions,
     magnetLabelMap,
@@ -33,7 +34,7 @@ const LeadHistoryPage = () => {
 
   const {
     filterTree,
-    filteredRows,
+    filteredAggregatedRows,
     filteredGroupCount,
     totalGroupCount,
     rootHasChildren,
@@ -41,6 +42,7 @@ const LeadHistoryPage = () => {
     resetFilters,
   } = useLeadHistoryFilter({
     allRows,
+    aggregatedRows,
     groupSummaryMap,
     magnetOptions,
     magnetLabelMap,
@@ -52,8 +54,8 @@ const LeadHistoryPage = () => {
   const columns = useLeadHistoryColumns();
 
   const handleDownloadCsv = useCallback(() => {
-    downloadLeadHistoryCsv(columns, filteredRows);
-  }, [columns, filteredRows]);
+    downloadLeadHistoryCsv(columns, filteredAggregatedRows);
+  }, [columns, filteredAggregatedRows]);
 
   const createLeadHistory = useCreateLeadHistoryMutation();
 
@@ -95,7 +97,7 @@ const LeadHistoryPage = () => {
 
         <div className="mt-2 text-right text-[12px] text-gray-500">
           조건에 맞는 전화번호 그룹 {filteredGroupCount}/{totalGroupCount}개 ·
-          리드 {filteredRows.length}/{allRows.length}건
+          리드 {filteredAggregatedRows.length}/{allRows.length}건
         </div>
       </div>
 
@@ -104,7 +106,7 @@ const LeadHistoryPage = () => {
           <Button
             variant="outlined"
             onClick={handleDownloadCsv}
-            disabled={!filteredRows.length}
+            disabled={!filteredAggregatedRows.length}
           >
             CSV 다운로드
           </Button>
@@ -115,7 +117,7 @@ const LeadHistoryPage = () => {
       </div>
 
       <LeadHistoryTable
-        data={filteredRows}
+        data={filteredAggregatedRows}
         columns={columns}
         isLoading={isLoading}
       />

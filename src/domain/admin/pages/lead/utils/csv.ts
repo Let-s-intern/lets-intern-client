@@ -1,7 +1,6 @@
 import dayjs from '@/lib/dayjs';
 import type { AccessorKeyColumnDef } from '@tanstack/react-table';
-import type { LeadHistoryRow } from '../types';
-import { groupRowsByPhonePreservingOrder } from './rowUtils';
+import type { AggregatedLeadRow } from '../types';
 
 const escapeCsvValue = (value: unknown) => {
   if (value === null || value === undefined) return '';
@@ -11,23 +10,20 @@ const escapeCsvValue = (value: unknown) => {
 };
 
 const resolveHeaderLabel = (
-  column: AccessorKeyColumnDef<LeadHistoryRow>,
+  column: AccessorKeyColumnDef<AggregatedLeadRow>,
 ) => {
   const headerProp = column.header;
   if (typeof headerProp === 'string' || typeof headerProp === 'number') {
     return String(headerProp);
   }
-  if (typeof headerProp === 'function') {
-    return column.id ?? column.accessorKey ?? '';
-  }
   return column.id ?? column.accessorKey ?? '';
 };
 
 export const downloadLeadHistoryCsv = (
-  columns: AccessorKeyColumnDef<LeadHistoryRow>[],
-  filteredRows: LeadHistoryRow[],
+  columns: AccessorKeyColumnDef<AggregatedLeadRow>[],
+  rows: AggregatedLeadRow[],
 ) => {
-  if (!filteredRows.length) {
+  if (!rows.length) {
     window.alert('다운로드할 리드 히스토리가 없습니다.');
     return;
   }
@@ -36,31 +32,22 @@ export const downloadLeadHistoryCsv = (
     .map((column) => escapeCsvValue(resolveHeaderLabel(column)))
     .join(',');
 
-  const groupedRowsForCsv = groupRowsByPhonePreservingOrder(filteredRows);
-
-  const formattedRows = groupedRowsForCsv.map((row) => {
-    return columns.map((column) => {
-      const key = column.accessorKey as keyof LeadHistoryRow;
-      switch (key) {
-        case 'createDate':
-          return row.createDate
-            ? dayjs(row.createDate).format('YYYY.MM.DD.')
-            : '';
-        case 'finalPrice':
-          return row.finalPrice !== null && row.finalPrice !== undefined
-            ? new Intl.NumberFormat('ko-KR').format(row.finalPrice)
-            : '';
-        default:
-          return row[key] ?? '';
-      }
-    });
-  });
-
-  const rows = formattedRows.map((row) =>
-    row.map((value) => escapeCsvValue(value)).join(','),
+  const dataRows = rows.map((row) =>
+    columns
+      .map((column) => {
+        const key = column.accessorKey as keyof AggregatedLeadRow;
+        const value = row[key];
+        if (key === 'marketingAgree') {
+          if (value === true) return '동의';
+          if (value === false) return '미동의';
+          return '';
+        }
+        return escapeCsvValue(value ?? '');
+      })
+      .join(','),
   );
 
-  const csvBody = [headerRow, ...rows].join('\n');
+  const csvBody = [headerRow, ...dataRows].join('\n');
   const blob = new Blob([`\uFEFF${csvBody}`], {
     type: 'text/csv;charset=utf-8;',
   });
