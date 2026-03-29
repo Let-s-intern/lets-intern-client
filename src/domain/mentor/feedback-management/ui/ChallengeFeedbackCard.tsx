@@ -45,13 +45,15 @@ const MissionRow = ({ mission, onClickFeedback }: MissionRowProps) => {
 
   return (
     <div className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50">
-      <div className="flex flex-col gap-1">
-        <span className="rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-700">
-          {mission.th}회차
+      <div className="flex items-center gap-3">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-100 text-xs font-medium text-orange-700">
+          {mission.th}
         </span>
-        <h3 className="font-medium text-gray-900">
-          {mission.missionTitle || `${mission.th}회차 미션`}
-        </h3>
+        <div className="flex flex-col gap-0.5">
+          <h3 className="font-medium text-gray-900">
+            {mission.missionTitle || `${mission.th}회차 미션`}
+          </h3>
+        </div>
       </div>
 
       <div className="flex items-center gap-4">

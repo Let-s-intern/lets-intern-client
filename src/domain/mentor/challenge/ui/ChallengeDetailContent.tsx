@@ -68,23 +68,23 @@ const MissionRow = ({
 
   return (
     <div className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50">
-      <div className="flex flex-col gap-1">
-        <div className="flex items-center gap-2">
-          <span className="rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-700">
-            {mission.th}회차
-          </span>
+      <div className="flex items-center gap-3">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-100 text-xs font-medium text-orange-700">
+          {mission.th}
+        </span>
+        <div className="flex flex-col gap-0.5">
           {mission.challengeOptionTitle ? (
             <span className="text-xs text-gray-400">
               {mission.challengeOptionTitle}
             </span>
           ) : null}
+          <h3 className="font-medium text-gray-900">
+            {mission.title || `${mission.th}회차 미션`}
+          </h3>
+          <p className="text-xs text-gray-400">
+            {formatDate(mission.startDate)} ~ {formatDate(mission.endDate)}
+          </p>
         </div>
-        <h3 className="font-medium text-gray-900">
-          {mission.title || `${mission.th}회차 미션`}
-        </h3>
-        <p className="text-xs text-gray-400">
-          {formatDate(mission.startDate)} ~ {formatDate(mission.endDate)}
-        </p>
       </div>
 
       <div className="flex items-center gap-4">
