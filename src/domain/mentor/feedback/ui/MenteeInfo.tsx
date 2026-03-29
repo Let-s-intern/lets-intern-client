@@ -60,26 +60,47 @@ const MenteeInfo = ({
     FeedbackStatusMapping[mentee.feedbackStatus ?? 'WAITING'] ?? '진행전';
   const feedbackStatusStyle = getFeedbackStatusStyle(mentee.feedbackStatus);
 
-  // 최소화 모드: 이름, 희망 직군, 희망 기업만 한 줄로 표시
+  // 최소화 모드: 이름, 희망 직군, 희망 기업, 제출물 보기
   if (collapsed) {
     return (
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-lg border border-gray-200 px-4 py-2.5">
-        <span className="text-sm font-semibold text-neutral-900">
-          {mentee.name}
-        </span>
-        {mentee.wishJob && (
-          <span className="text-xs text-neutral-500">
-            희망 직군: <span className="font-medium text-neutral-700">{mentee.wishJob}</span>
+      <div className="flex items-center gap-x-4 gap-y-1 rounded-lg border border-gray-200 px-4 py-2.5">
+        <div className="flex flex-1 flex-wrap items-center gap-x-4 gap-y-1">
+          <span className="text-sm font-semibold text-neutral-900">
+            {mentee.name}
           </span>
-        )}
-        {mentee.wishCompany && (
-          <span className="text-xs text-neutral-500">
-            희망 기업: <span className="font-medium text-neutral-700">{mentee.wishCompany}</span>
+          {mentee.wishJob && (
+            <span className="text-xs text-neutral-500">
+              희망 직군: <span className="font-medium text-neutral-700">{mentee.wishJob}</span>
+            </span>
+          )}
+          {mentee.wishCompany && (
+            <span className="text-xs text-neutral-500">
+              희망 기업: <span className="font-medium text-neutral-700">{mentee.wishCompany}</span>
+            </span>
+          )}
+          <span className={`text-xs font-medium ${feedbackStatusStyle}`}>
+            {feedbackStatusLabel}
           </span>
+        </div>
+        {hasSubmissionLink && (
+          <a
+            href={mentee.link!}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex shrink-0 items-center gap-1 rounded border border-neutral-300 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
+          >
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <path
+                d="M6 3.5H3.5V12.5H12.5V10M9.5 3.5H12.5V6.5M12.5 3.5L7 9"
+                stroke="#4D55F5"
+                strokeWidth="1.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            제출물 보기
+          </a>
         )}
-        <span className={`text-xs font-medium ${feedbackStatusStyle}`}>
-          {feedbackStatusLabel}
-        </span>
       </div>
     );
   }
