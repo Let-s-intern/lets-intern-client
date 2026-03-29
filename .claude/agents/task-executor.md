@@ -1,11 +1,13 @@
 ---
 name: task-executor
 description: Autonomous task execution agent for lets-intern-client. Implements features, writes tests, commits code, and fixes errors. Delegates from task-runner skill. Use proactively for all coding implementation tasks.
-tools: Read, Write, Edit, Bash, Glob, Grep, Task
+tools: Read, Write, Edit, Bash, Glob, Grep, Task, Agent
 model: inherit
 permissionMode: dontAsk
 skills:
   - vercel-react-best-practices
+  - folder-structure
+  - code-quality
 hooks:
   PostToolUse:
     - matcher: 'Edit|Write'

@@ -1,6 +1,6 @@
 ---
 name: task-runner
-description: "todo/ 폴더의 task 파일을 읽고 task-executor 에이전트에 위임하여 자동 실행합니다. 사용자가 '작업 실행', '태스크 실행', '다음 작업', '작업 계속', '이어서 진행' 등을 요청할 때 사용합니다."
+description: "todo/ 폴더의 task 파일을 읽고 에이전트 팀에 위임하여 자동 실행합니다. 사용자가 '작업 실행', '태스크 실행', '다음 작업', '작업 계속', '이어서 진행' 등을 요청할 때 사용합니다."
 argument-hint: "[task-file-path]"
 disable-model-invocation: true
 allowed-tools: Read, Write, Bash, Glob, Task
@@ -8,8 +8,8 @@ allowed-tools: Read, Write, Bash, Glob, Task
 
 # Task Runner — 오케스트레이터
 
-`todo/` 의 task 파일을 읽고 `task-executor` 에이전트에 실행을 위임합니다.
-실제 코드 작성/테스트/커밋은 에이전트가 담당합니다.
+`todo/` 의 task 파일을 읽고 에이전트 팀에 실행을 위임합니다.
+실제 코드 작성/테스트/커밋은 팀 리드와 서브에이전트가 담당합니다.
 
 ---
 
@@ -28,27 +28,63 @@ mkdir -p done
 
 ---
 
-## 실행 루프
+## 실행 모드 선택
+
+### 모드 A: 팀 기반 병렬 실행 (권장)
+
+작업 유형이 다양하거나 병렬 가능한 작업이 있을 때:
 
 ```
-todo/ 에서 미완료 task 파일 로드
-  ↓
-task-executor 에이전트에 위임 (전체 파일 내용 + 지시사항 전달)
-  ↓
-에이전트 완료 보고 수신
-  ↓
-Push 파일 완료 확인 → done/ 이동 + 결과보고서 작성
-  ↓
-다음 todo/ 파일 있으면 → 자동으로 계속 (질문 금지)
-  ↓
-모든 파일 완료 → sentinel 삭제 → 최종 보고
+push-lead 에이전트에 위임 → 팀 생성 → 서브에이전트 병렬 스폰
+```
+
+**push-lead가 스폰하는 서브에이전트 유형:**
+
+| 작업 유형 | 에이전트 | 적용 Push |
+|-----------|----------|-----------|
+| 리팩터링 (파일 분리, 훅 추출) | `refactor-worker` | Push 2 |
+| 디자인/스타일링 | `design-worker` | Push 3, 5 |
+| 기능 구현 | `feature-worker` | Push 4, 6, 7 |
+| 문서화 | `doc-worker` | Push 8 |
+
+### 모드 B: 단일 에이전트 실행
+
+작업이 순차적이거나 단순할 때:
+
+```
+task-executor 에이전트에 직접 위임
 ```
 
 ---
 
 ## 에이전트 위임 방법
 
-각 Push 파일마다 `task-executor` 에이전트에 위임:
+### 팀 기반 위임 (push-lead)
+
+```
+push-lead 에이전트를 사용하여 다음 task 파일을 실행하세요:
+
+파일: todo/tasks-[name]-push[N].md
+내용: [파일 전체 내용]
+
+지시사항:
+- 팀을 생성하고 작업 특성에 맞는 서브에이전트를 스폰
+- 독립적인 작업은 병렬로, 의존 작업은 순차로 실행
+- 서브에이전트에게 반드시 참조 문서 경로를 전달
+- 각 하위 작업 완료 시 즉시 커밋
+- 완료된 항목은 [x]로 체크
+- git push 금지 (사용자에게 보고 후 대기)
+- 오류 시 T3 수정 작업 추가 후 자동 해결
+
+참조 문서:
+- `.claude/skills/folder-structure/SKILL.md` — DDD + 프랙탈 아키텍처
+- `.claude/skills/code-quality/SKILL.md` — 코드 품질
+- `.claude/skills/vercel-react-best-practices/AGENTS.md` — Vercel 규칙
+- `.claude/skills/code-review/SKILL.md` — 코드 리뷰
+- `.claude/tasks/prd260330.md` — PRD
+```
+
+### 단일 에이전트 위임 (task-executor)
 
 ```
 task-executor 에이전트를 사용하여 다음 task 파일을 실행하세요:
@@ -59,7 +95,6 @@ task-executor 에이전트를 사용하여 다음 task 파일을 실행하세요
 지시사항:
 - 모든 미완료([ ]) 작업을 순서대로 실행
 - 각 하위 작업 완료 시 즉시 커밋
-- 모든 작업 완료 시 git push 수행
 - 완료된 항목은 [x] 로 체크
 - 오류 시 T3 수정 작업 추가 후 자동 해결
 ```
@@ -71,7 +106,7 @@ task-executor 에이전트를 사용하여 다음 task 파일을 실행하세요
 모든 항목이 [x] 된 후:
 
 ```bash
-# 파일을 done/ 으로 이동
+# 파일를 done/ 으로 이동
 mv todo/tasks-[name]-pushN.md done/
 
 # 결과보고서 생성 (done/result-[name]-pushN.md)
