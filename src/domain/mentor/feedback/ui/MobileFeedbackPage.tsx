@@ -92,33 +92,46 @@ const MobileFeedbackPage = ({
           />
         </div>
 
-        {/* Bottom bar: 작게보기 | 이전/다음 멘티 | 저장/제출 */}
-        <div className="flex items-center border-t border-gray-200 px-4 py-3"
+        {/* Bottom bar */}
+        <div
+          className="flex flex-col gap-3 border-t border-gray-200 px-4 py-3"
           style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
         >
-          <button
-            type="button"
-            onClick={() => setIsExpanded(false)}
-            className="flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path
-                d="M10 2.5L13.5 2.5L13.5 6M6 13.5L2.5 13.5L2.5 10"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            작게 보기
-          </button>
+          {/* 상단: 작게보기 + 저장/제출 */}
+          <div className="flex items-center">
+            <button
+              type="button"
+              onClick={() => setIsExpanded(false)}
+              className="flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M10 2.5L13.5 2.5L13.5 6M6 13.5L2.5 13.5L2.5 10"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              작게 보기
+            </button>
+            <div className="flex-1" />
+            <FeedbackActions
+              attendanceId={selectedAttendanceId}
+              editorContent={editorContent}
+              feedbackStatus={currentMentee?.feedbackStatus ?? null}
+              onSaveSuccess={handleMutationSuccess}
+              onSubmitSuccess={handleMutationSuccess}
+            />
+          </div>
 
-          <div className="flex flex-1 items-center justify-center gap-1">
+          {/* 하단: 이전/다음 멘티 */}
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={handlePrevMentee}
               disabled={!hasPrevMentee}
-              className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-500 disabled:cursor-not-allowed disabled:opacity-30"
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-gray-200 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path d="M14 9L10 13L14 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -129,7 +142,7 @@ const MobileFeedbackPage = ({
               type="button"
               onClick={handleNextMentee}
               disabled={!hasNextMentee}
-              className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-500 disabled:cursor-not-allowed disabled:opacity-30"
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-gray-200 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30"
             >
               다음 멘티
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -137,14 +150,6 @@ const MobileFeedbackPage = ({
               </svg>
             </button>
           </div>
-
-          <FeedbackActions
-            attendanceId={selectedAttendanceId}
-            editorContent={editorContent}
-            feedbackStatus={currentMentee?.feedbackStatus ?? null}
-            onSaveSuccess={handleMutationSuccess}
-            onSubmitSuccess={handleMutationSuccess}
-          />
         </div>
       </div>
     );
