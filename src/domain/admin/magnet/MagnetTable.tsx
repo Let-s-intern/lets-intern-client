@@ -119,7 +119,7 @@ const MagnetTable = ({
             <div className="inline-flex items-center gap-2">
               {manageable && (
                 <>
-                  <Link href={`/admin/blog/magnet/${row.magnetId}/post`}>
+                  <Link href={`/admin/magnet/${row.magnetId}/post`}>
                     <Button
                       variant="outlined"
                       color="primary"
@@ -128,7 +128,7 @@ const MagnetTable = ({
                       글 관리
                     </Button>
                   </Link>
-                  <Link href={`/admin/blog/magnet/${row.magnetId}/form`}>
+                  <Link href={`/admin/magnet/${row.magnetId}/form`}>
                     <Button variant="outlined" color="info" size="small">
                       신청 폼 관리
                     </Button>

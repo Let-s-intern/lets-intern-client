@@ -4,8 +4,8 @@ import {
   magnetDetailQueryOptions,
   useGetMagnetListQuery,
 } from '@/api/magnet/magnet';
-import { FormQuestion } from '@/domain/admin/blog/magnet/types';
-import { detailQuestionToFormQuestion } from '@/domain/admin/blog/magnet/utils/questionMapper';
+import { FormQuestion } from '@/domain/admin/magnet/types';
+import { detailQuestionToFormQuestion } from '@/domain/admin/magnet/utils/questionMapper';
 import { Button, Menu, MenuItem } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 import { Copy } from 'lucide-react';

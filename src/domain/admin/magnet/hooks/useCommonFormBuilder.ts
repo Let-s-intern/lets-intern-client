@@ -164,7 +164,7 @@ export const useCommonFormBuilder = () => {
   };
 
   const navigateToList = () => {
-    router.push('/admin/blog/magnet/list');
+    router.push('/admin/magnet/list');
   };
 
   return {

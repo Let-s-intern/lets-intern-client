@@ -8,8 +8,8 @@ import {
   MagnetPostContent,
   MagnetProgramRecommendItem,
   MagnetTypeKey,
-} from '@/domain/admin/blog/magnet/types';
-import { detailQuestionToApiBody } from '@/domain/admin/blog/magnet/utils/questionMapper';
+} from '@/domain/admin/magnet/types';
+import { detailQuestionToApiBody } from '@/domain/admin/magnet/utils/questionMapper';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import dayjs from '@/lib/dayjs';
 import { Dayjs } from 'dayjs';
@@ -83,7 +83,7 @@ export const useMagnetPostForm = (magnetId: string) => {
   const { mutate: createMagnet } = useCreateMagnetMutation({
     successCallback: () => {
       setSnackbar('마그넷이 등록되었습니다.');
-      router.push('/admin/blog/magnet/list');
+      router.push('/admin/magnet/list');
     },
   });
 
@@ -212,7 +212,7 @@ export const useMagnetPostForm = (magnetId: string) => {
   };
 
   const navigateToList = () => {
-    router.push('/admin/blog/magnet/list');
+    router.push('/admin/magnet/list');
   };
 
   return {
