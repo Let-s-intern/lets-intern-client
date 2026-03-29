@@ -65,7 +65,7 @@ const ChallengePeriodBar = ({
       className="flex w-full flex-col overflow-hidden text-left transition-opacity hover:opacity-80"
     >
       {/* Top row: nth feedback + status counts + colored line */}
-      <div className="flex h-6 items-center gap-2 overflow-hidden">
+      <div className="flex h-6 min-w-0 items-center gap-2 overflow-hidden">
         <div className="flex shrink-0 items-center">
           <svg
             width="24"
@@ -117,10 +117,10 @@ const ChallengePeriodBar = ({
 
       {/* Bottom row: challenge badge + submission counts */}
       <div
-        className={`flex items-center justify-between p-2 ${color.body}`}
+        className={`flex min-w-0 items-center justify-between p-2 ${color.body}`}
       >
         <span
-          className={`shrink-0 whitespace-nowrap rounded-[3px] px-2 py-1 text-xxsmall12 font-medium tracking-[-0.3px] text-white ${color.badge}`}
+          className={`min-w-0 truncate rounded-[3px] px-2 py-1 text-xxsmall12 font-medium tracking-[-0.3px] text-white ${color.badge}`}
         >
           {bar.challengeTitle}
         </span>
