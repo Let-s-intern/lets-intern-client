@@ -3,8 +3,10 @@ import { useState, type ReactNode } from 'react';
 interface FeedbackLayoutProps {
   /** Left panel (mentee list) */
   sidebar: ReactNode;
-  /** Prev/next mentee navigation */
+  /** Prev/next mentee navigation (large) - shown in normal mode top */
   navigation: ReactNode;
+  /** Compact prev/next navigation - shown in expanded mode bottom */
+  navigationCompact: ReactNode;
   /** Mentee info card - receives (collapsed: boolean) => ReactNode */
   menteeInfo: (collapsed: boolean) => ReactNode;
   /** Feedback editor */
@@ -16,6 +18,7 @@ interface FeedbackLayoutProps {
 const FeedbackLayout = ({
   sidebar,
   navigation,
+  navigationCompact,
   menteeInfo,
   editor,
   actions,
@@ -42,47 +45,25 @@ const FeedbackLayout = ({
         {sidebar}
       </div>
 
-      {/* Right panel: editor area */}
+      {/* Right panel */}
       <div
         className={`flex min-w-0 flex-1 flex-col overflow-hidden transition-all duration-300 ease-in-out ${
           isExpanded ? 'gap-1' : 'gap-3'
         }`}
       >
-        {/* 크게 보기 시 상단 바: 축소 버튼 + 네비게이션 */}
-        <div
-          className={`flex shrink-0 items-center overflow-hidden transition-all duration-300 ease-in-out ${
-            isExpanded
-              ? 'max-h-12 opacity-100'
-              : 'max-h-0 opacity-0'
-          }`}
-        >
-          <button
-            type="button"
-            onClick={() => setIsExpanded(false)}
-            className="flex items-center gap-1 text-xs font-medium text-gray-500 transition-colors hover:text-gray-700"
-          >
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-              <path
-                d="M3 10L8 5L13 10"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            축소
-          </button>
-          <div className="flex flex-1 items-center justify-center">
-            {navigation}
-          </div>
-        </div>
-
-        {/* Mentee info - collapsible with animation */}
+        {/* 상단 네비게이션 (기본 모드에서만) */}
         <div
           className={`shrink-0 overflow-hidden transition-all duration-300 ease-in-out ${
-            isExpanded
-              ? 'max-h-14 opacity-100'
-              : 'max-h-[500px] opacity-100'
+            isExpanded ? 'max-h-0 opacity-0' : 'max-h-16 opacity-100'
+          }`}
+        >
+          {navigation}
+        </div>
+
+        {/* Mentee info */}
+        <div
+          className={`shrink-0 overflow-hidden transition-all duration-300 ease-in-out ${
+            isExpanded ? 'max-h-14' : 'max-h-[500px]'
           }`}
         >
           {menteeInfo(isExpanded)}
@@ -95,42 +76,43 @@ const FeedbackLayout = ({
 
         {/* Bottom bar */}
         <div className="flex shrink-0 items-center border-t border-gray-200 pt-3">
-          {/* 크게 보기 버튼 (기본 상태에서만) */}
-          <div
-            className={`transition-all duration-300 ease-in-out ${
-              isExpanded
-                ? 'w-0 overflow-hidden opacity-0'
-                : 'opacity-100'
-            }`}
+          {/* 왼쪽: 크게 보기 / 작게 보기 (항상 같은 위치) */}
+          <button
+            type="button"
+            onClick={() => setIsExpanded((prev) => !prev)}
+            className="flex items-center gap-1 text-sm font-medium text-gray-500 transition-colors hover:text-gray-700"
           >
-            <button
-              type="button"
-              onClick={() => setIsExpanded(true)}
-              className="flex items-center gap-1 whitespace-nowrap text-sm font-medium text-gray-500 transition-colors hover:text-gray-700"
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              className="transition-transform duration-300"
             >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path
-                  d="M3 6L8 11L13 6"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              크게 보기
-            </button>
-          </div>
+              <path
+                d={isExpanded ? 'M3 10L8 5L13 10' : 'M3 6L8 11L13 6'}
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            {isExpanded ? '작게 보기' : '크게 보기'}
+          </button>
 
-          {/* 네비게이션 (기본 상태에서만) */}
+          {/* 가운데: 크게 보기 시 작은 네비게이션 */}
           <div
-            className={`flex flex-1 items-center justify-center transition-all duration-300 ease-in-out ${
-              isExpanded ? 'opacity-0' : 'opacity-100'
+            className={`flex flex-1 items-center justify-center overflow-hidden transition-all duration-300 ease-in-out ${
+              isExpanded ? 'max-h-10 opacity-100' : 'max-h-0 opacity-0'
             }`}
           >
-            {isExpanded ? null : navigation}
+            {navigationCompact}
           </div>
 
-          {/* 임시저장/제출 */}
+          {/* 기본 모드에서는 빈 공간 */}
+          {!isExpanded && <div className="flex-1" />}
+
+          {/* 오른쪽: 임시저장/제출 */}
           <div className="flex items-center">{actions}</div>
         </div>
       </div>

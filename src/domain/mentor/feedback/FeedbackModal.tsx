@@ -79,6 +79,44 @@ const FeedbackModal = ({
           />
         }
         navigation={
+          <div className="flex items-center justify-between py-2">
+            <button
+              type="button"
+              onClick={handlePrevMentee}
+              disabled={!hasPrevMentee}
+              className="flex items-center gap-1 px-4 py-2 text-base font-medium text-neutral-900 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M14 9L10 13L14 17"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              이전 멘티
+            </button>
+            <button
+              type="button"
+              onClick={handleNextMentee}
+              disabled={!hasNextMentee}
+              className="flex items-center gap-1 px-4 py-2 text-base font-medium text-neutral-900 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              다음 멘티
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M10 9L14 13L10 17"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+        }
+        navigationCompact={
           <div className="flex items-center gap-1">
             <button
               type="button"
