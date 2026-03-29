@@ -1,5 +1,3 @@
-import type { Row } from '@tanstack/react-table';
-import type { ReactNode } from 'react';
 import type { LeadHistoryRow } from '../types';
 
 const koreanNameCollator = new Intl.Collator('ko-KR', {
@@ -32,38 +30,3 @@ export const compareLeadHistoryRowsByName = (
   return (a.createDate ?? '').localeCompare(b.createDate ?? '');
 };
 
-export const groupRowsByPhonePreservingOrder = (rows: LeadHistoryRow[]) => {
-  const phoneOrder: string[] = [];
-  const grouped = new Map<string, LeadHistoryRow[]>();
-
-  rows.forEach((row) => {
-    const phoneKey = row.displayPhoneNum;
-    if (!grouped.has(phoneKey)) {
-      grouped.set(phoneKey, []);
-      phoneOrder.push(phoneKey);
-    }
-    grouped.get(phoneKey)?.push(row);
-  });
-
-  return phoneOrder.flatMap((phone) => grouped.get(phone) ?? []);
-};
-
-export const renderGroupedLeaf = (
-  row: Row<LeadHistoryRow>,
-  render: (original: LeadHistoryRow) => ReactNode,
-) => {
-  if (row.getIsGrouped()) {
-    return null;
-  }
-  return render(row.original);
-};
-
-export const formatNullableText = (value: unknown) => {
-  if (typeof value === 'string') {
-    return value.trim().length ? value : '-';
-  }
-  if (typeof value === 'number') {
-    return String(value);
-  }
-  return '-';
-};
