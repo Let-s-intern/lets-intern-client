@@ -14,6 +14,11 @@ interface BulkAssignmentBarProps {
   onSelectUnassigned: () => void;
 }
 
+const ACTIVE =
+  'rounded border border-neutral-0 bg-neutral-0 px-4 py-1.5 text-xsmall14 font-medium text-white hover:opacity-90';
+const DISABLED =
+  'rounded border border-neutral-80 bg-neutral-95 px-4 py-1.5 text-xsmall14 font-medium text-neutral-40 cursor-not-allowed';
+
 export default function BulkAssignmentBar({
   mentors,
   bulkMentorId,
@@ -24,6 +29,11 @@ export default function BulkAssignmentBar({
   onAssign,
   onSelectUnassigned,
 }: BulkAssignmentBarProps) {
+  const isUnassignedActive = unassignedCount > 0;
+  const isSelectActive = selectedCount > 0;
+  const isAssignActive =
+    bulkMentorId !== '' && selectedCount > 0 && !isPending;
+
   return (
     <div className="mb-4 flex flex-col gap-2">
       <h3 className="text-medium18 font-semibold">멘토 배정 현황</h3>
@@ -31,18 +41,18 @@ export default function BulkAssignmentBar({
         <button
           type="button"
           onClick={onSelectUnassigned}
-          disabled={unassignedCount === 0}
-          className="rounded border border-neutral-80 px-4 py-1.5 text-xsmall14 hover:bg-neutral-95 disabled:opacity-50"
+          disabled={!isUnassignedActive}
+          className={isUnassignedActive ? ACTIVE : DISABLED}
         >
           미배정 멘티 일괄 선택 ({unassignedCount}명)
         </button>
         <div className="flex items-center gap-2">
           <select
-            disabled={selectedCount === 0}
-            className={`rounded border px-2 py-1.5 text-xsmall14 outline-none ${
-              selectedCount > 0
-                ? 'border-neutral-0 text-neutral-0'
-                : 'border-neutral-80 text-neutral-40 opacity-50'
+            disabled={!isSelectActive}
+            className={`rounded border px-4 py-1.5 text-xsmall14 font-medium outline-none ${
+              isSelectActive
+                ? 'border-neutral-0 bg-white text-neutral-0'
+                : 'border-neutral-80 bg-neutral-95 text-neutral-40 cursor-not-allowed'
             }`}
             value={bulkMentorId}
             onChange={(e) => {
@@ -59,8 +69,8 @@ export default function BulkAssignmentBar({
           </select>
           <button
             type="button"
-            className="rounded border border-neutral-80 px-4 py-1.5 text-xsmall14 hover:bg-neutral-95 disabled:opacity-50"
-            disabled={bulkMentorId === '' || selectedCount === 0 || isPending}
+            disabled={!isAssignActive}
+            className={isAssignActive ? ACTIVE : DISABLED}
             onClick={onAssign}
           >
             일괄 지정 ({selectedCount}명)
