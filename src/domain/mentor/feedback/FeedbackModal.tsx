@@ -125,6 +125,7 @@ const FeedbackModal = ({
         }
         editor={
           <FeedbackEditor
+            key={`${selectedAttendanceId}-${editorContent}`}
             initialEditorStateJsonString={editorContent}
             onChange={setEditorContent}
             isReadOnly={isReadOnly}
