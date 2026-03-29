@@ -83,13 +83,14 @@ const useLeadHistoryColumns = () => {
         accessorKey: 'marketingAgree',
         header: '마케팅 동의 여부',
         meta: {
-          headerClassName: 'min-w-[100px]',
-          cellClassName: 'min-w-[100px]',
+          headerClassName: 'min-w-[150px]',
+          cellClassName: 'min-w-[150px]',
         },
         cell: ({ getValue }) => {
           const value = getValue<boolean | null>();
           if (value === true) return '동의';
-          if (value === false) return <span className="text-gray-400">미동의</span>;
+          if (value === false)
+            return <span className="text-gray-400">미동의</span>;
           return '-';
         },
       },
