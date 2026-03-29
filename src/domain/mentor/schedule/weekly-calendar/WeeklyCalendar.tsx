@@ -129,6 +129,7 @@ const WeeklyCalendar = ({
               {barLayouts.map(({ bar, startCol, endCol, colSpan }, idx) => (
                 <div
                   key={`${bar.challengeId}-${bar.missionId}-${idx}`}
+                  className="px-px"
                   style={{ gridColumn: `${startCol} / ${endCol}` }}
                 >
                   {colSpan <= 1 ? (
