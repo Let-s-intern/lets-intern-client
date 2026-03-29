@@ -7,7 +7,6 @@ import {
 } from '@/api/challenge/challengeSchema';
 import { usePatchAdminAttendance } from '@/api/attendance/attendance';
 import {
-  ChallengeApplicationsQueryKey,
   ChallengeMissionFeedbackAttendanceQueryKey,
   MentorMissionFeedbackAttendanceQueryKey,
 } from '@/api/challenge/challenge';
@@ -18,7 +17,7 @@ import { MenuItem, SelectChangeEvent } from '@mui/material';
 import { GridRenderCellParams } from '@mui/x-data-grid';
 import { useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { AttendanceRow } from '../types';
 import axios from '@/utils/axios';
 
@@ -36,9 +35,13 @@ const FeedbackStatusRenderCell = (
   const { mutateAsync: patchMentor } = usePatchAttendanceMentorMutation();
   const queryClient = useQueryClient();
 
-  const [localValue, setLocalValue] = useState<FeedbackStatus>(
-    params.value || FeedbackStatusEnum.enum.WAITING,
-  );
+  const serverValue = params.value || FeedbackStatusEnum.enum.WAITING;
+  const [localValue, setLocalValue] = useState<FeedbackStatus>(serverValue);
+
+  // query invalidation으로 서버 데이터가 갱신되면 localValue를 동기화
+  useEffect(() => {
+    setLocalValue(serverValue);
+  }, [serverValue]);
 
   const invalidateFeedbackQueries = async () => {
     const feedbackQueryKey = isAdmin
