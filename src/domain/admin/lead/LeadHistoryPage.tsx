@@ -108,10 +108,7 @@ const LeadHistoryPage = () => {
             onClick={handleDownloadCsv}
             disabled={!filteredAggregatedRows.length}
           >
-            CSV 다운로드
-          </Button>
-          <Button variant="contained" onClick={() => setIsCreateOpen(true)}>
-            리드 등록
+            CSV 내보내기
           </Button>
         </div>
       </div>
