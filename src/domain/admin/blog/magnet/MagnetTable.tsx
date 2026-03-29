@@ -63,16 +63,22 @@ const MagnetTable = ({
         headerName: '노출 시작일',
         width: 130,
         valueGetter: (_, row) =>
-          row.startDate
-            ? dayjs(row.startDate).format('YYYY-MM-DD')
-            : '-',
+          !isMagnetManageable(row.type)
+            ? '-'
+            : row.startDate
+              ? dayjs(row.startDate).format('YYYY-MM-DD')
+              : '-',
       },
       {
         field: 'endDate',
         headerName: '노출 종료일',
         width: 130,
         valueGetter: (_, row) =>
-          row.endDate ? dayjs(row.endDate).format('YYYY-MM-DD') : '-',
+          !isMagnetManageable(row.type)
+            ? '-'
+            : row.endDate
+              ? dayjs(row.endDate).format('YYYY-MM-DD')
+              : '-',
       },
       {
         field: 'isVisible',
@@ -87,7 +93,9 @@ const MagnetTable = ({
               }
               size="small"
             />
-          ) : null,
+          ) : (
+            '-'
+          ),
       },
       {
         field: 'applicationCount',
