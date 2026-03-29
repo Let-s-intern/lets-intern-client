@@ -132,7 +132,15 @@ export default function FeedbackParticipantPage() {
         columns={columns}
         disableRowSelectionOnClick
         hideFooter
-        sx={{ '& .MuiDataGrid-cell': { overflow: 'visible' } }}
+        getRowHeight={() => 'auto'}
+        sx={{
+          '& .MuiDataGrid-cell': {
+            overflow: 'visible',
+            whiteSpace: 'normal',
+            lineHeight: '1.4',
+            py: 1,
+          },
+        }}
       />
     </div>
   );
