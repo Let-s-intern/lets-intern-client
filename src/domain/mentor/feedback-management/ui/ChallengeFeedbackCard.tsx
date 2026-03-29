@@ -7,6 +7,7 @@ import {
   FeedbackStatusMapping,
   type FeedbackStatus,
 } from '@/api/challenge/challengeSchema';
+import StatusBadge from '@/domain/mentor/ui/StatusBadge';
 
 type Challenge = MentorFeedbackManagement['challengeList'][number];
 type Mission = Challenge['feedbackMissions'][number];
@@ -20,137 +21,80 @@ const formatDate = (dateStr: string | null) => {
   });
 };
 
-/** 피드백 전체 완료 여부 판단 */
-function isMissionFeedbackComplete(mission: Mission): boolean {
-  const totalSubmitted = mission.submittedCount;
-  if (totalSubmitted === 0) return false;
-
-  let completedCount = 0;
-  for (const item of mission.feedbackStatusCounts) {
-    if (item.feedbackStatus === 'COMPLETED' || item.feedbackStatus === 'CONFIRMED') {
-      completedCount += item.count;
-    }
-  }
-  return completedCount >= totalSubmitted;
-}
 
 interface MissionRowProps {
   mission: Mission;
-  challengeStartDate: string | null;
-  challengeEndDate: string | null;
   onClickFeedback: (missionId: number, missionTh: number) => void;
 }
 
-const MissionRow = ({
-  mission,
-  challengeStartDate,
-  challengeEndDate,
-  onClickFeedback,
-}: MissionRowProps) => {
+const MissionRow = ({ mission, onClickFeedback }: MissionRowProps) => {
   const totalCount = mission.submittedCount + mission.notSubmittedCount;
 
-  const completedCount = useMemo(() => {
-    let count = 0;
+  // Build feedback status counts from the array
+  const feedbackCountMap = useMemo(() => {
+    const map = new Map<string, number>();
     for (const item of mission.feedbackStatusCounts) {
-      if (
-        item.feedbackStatus === 'COMPLETED' ||
-        item.feedbackStatus === 'CONFIRMED'
-      ) {
-        count += item.count;
-      }
+      map.set(item.feedbackStatus, item.count);
     }
-    return count;
+    return map;
   }, [mission.feedbackStatusCounts]);
 
-  const isComplete = isMissionFeedbackComplete(mission);
+  const completedCount =
+    (feedbackCountMap.get('COMPLETED') ?? 0) +
+    (feedbackCountMap.get('CONFIRMED') ?? 0);
 
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-4 transition-colors hover:border-gray-300 md:p-5">
-      {/* 상단: 회차 뱃지 + 미션 제목 + 완료 상태 */}
-      <div className="flex items-center gap-2.5">
-        <span className="shrink-0 rounded-md border border-primary/30 bg-primary-10 px-2.5 py-1 text-xs font-semibold text-primary-dark">
+    <div className="flex flex-col gap-3 rounded-lg border border-gray-200 p-3 transition-colors hover:bg-gray-50 md:flex-row md:items-center md:justify-between md:p-4">
+      <div className="flex items-center gap-3">
+        <span className="flex min-h-[44px] shrink-0 items-center justify-center rounded-full bg-primary-10 px-3 py-1.5 text-xs font-medium text-primary-dark md:min-h-0 md:px-2.5 md:py-1">
           {mission.th}회차
         </span>
-        <span className="text-sm font-medium text-gray-900 md:text-base">
-          {mission.missionTitle || `${mission.th}회차 미션`}
-        </span>
-        {isComplete && (
-          <span className="flex items-center gap-1 rounded-full border border-gray-200 px-2.5 py-0.5 text-xs font-medium text-gray-500">
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 12 12"
-              fill="none"
-              className="text-gray-400"
-            >
-              <path
-                d="M2.5 6L5 8.5L9.5 4"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            완료
-          </span>
-        )}
+        <div className="flex flex-col gap-0.5">
+          <h3 className="text-sm font-medium text-gray-900 md:text-base">
+            {mission.missionTitle || `${mission.th}회차 미션`}
+          </h3>
+        </div>
       </div>
 
-      {/* 하단: 미션 정보 + 통계 + 버튼 */}
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        {/* 좌측: 날짜 정보 */}
-        <div className="flex flex-col gap-0.5">
-          <p className="text-sm font-semibold text-gray-900 md:text-base">
-            미션 제목 텍스트
+      <div className="flex flex-wrap items-center gap-3 md:gap-4">
+        {/* Submission stats */}
+        <div className="text-xs text-gray-500 md:text-right">
+          <p>
+            제출{' '}
+            <span className="font-semibold text-gray-700">
+              {mission.submittedCount}
+            </span>{' '}
+            / {totalCount}
           </p>
-          <p className="text-xs text-gray-400">
-            {formatDate(challengeStartDate)} ~{formatDate(challengeEndDate)}
+          <p>
+            피드백 완료{' '}
+            <span className="font-semibold text-green-600">
+              {completedCount}
+            </span>{' '}
+            / {mission.submittedCount}
           </p>
         </div>
 
-        {/* 우측: 통계 + 버튼 */}
-        <div className="flex items-center gap-4 md:gap-6">
-          {/* 제출/피드백 완료 카운트 */}
-          <div className="flex flex-col gap-0.5 text-right text-xs text-gray-500 md:text-sm">
-            <p>
-              제출{' '}
-              <span className="font-bold text-gray-900">
-                {mission.submittedCount}
-              </span>{' '}
-              / {totalCount}
-            </p>
-            <p>
-              피드백 완료{' '}
-              <span className="font-bold text-primary">
-                {completedCount}
-              </span>{' '}
-              / {totalCount}
-            </p>
-          </div>
-
-          {/* 피드백 작성 버튼 */}
-          <button
-            type="button"
-            onClick={() => onClickFeedback(mission.missionId, mission.th)}
-            className="flex min-h-[44px] items-center gap-1.5 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-hover md:min-h-0 md:px-6 md:py-3"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              className="shrink-0"
-            >
-              <path
-                d="M8 3.5V12.5M3.5 8H12.5"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
-            피드백 작성
-          </button>
+        {/* Feedback status badges */}
+        <div className="flex flex-wrap gap-1">
+          {(
+            Object.keys(FeedbackStatusMapping) as FeedbackStatus[]
+          ).map((key) => (
+            <StatusBadge
+              key={key}
+              status={key}
+              count={feedbackCountMap.get(key) ?? 0}
+            />
+          ))}
         </div>
+
+        <button
+          type="button"
+          onClick={() => onClickFeedback(mission.missionId, mission.th)}
+          className="min-h-[44px] w-full rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-hover md:min-h-0 md:w-auto"
+        >
+          피드백 작성
+        </button>
       </div>
     </div>
   );
@@ -174,15 +118,18 @@ const ChallengeFeedbackCard = ({
   };
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="rounded-xl border border-gray-200 bg-white p-3 md:p-6">
       {/* Challenge header */}
-      <div className="flex flex-col gap-1">
+      <div className="mb-3 flex flex-col gap-1 md:mb-4">
         <h2 className="text-base font-bold text-gray-900 md:text-lg">
           {challenge.title ?? '챌린지'}
         </h2>
         {challenge.shortDesc ? (
           <p className="text-sm text-gray-500">{challenge.shortDesc}</p>
         ) : null}
+        <p className="text-xs text-gray-400">
+          {formatDate(challenge.startDate)} ~ {formatDate(challenge.endDate)}
+        </p>
       </div>
 
       {/* Mission list */}
@@ -191,13 +138,11 @@ const ChallengeFeedbackCard = ({
           등록된 피드백 미션이 없습니다.
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {challenge.feedbackMissions.map((mission) => (
             <MissionRow
               key={mission.missionId}
               mission={mission}
-              challengeStartDate={challenge.startDate}
-              challengeEndDate={challenge.endDate}
               onClickFeedback={handleClickFeedback}
             />
           ))}
