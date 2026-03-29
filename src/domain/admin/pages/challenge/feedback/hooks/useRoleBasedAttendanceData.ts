@@ -2,7 +2,7 @@
 
 import {
   useChallengeMissionFeedbackAttendanceQuery,
-  useMentorMissionFeedbackAttendanceQuery,
+  useMentorMenteeAttendanceQuery,
   useGetChallengeAttendances,
   useChallengeApplicationsQuery,
   ChallengeMissionFeedbackAttendanceQueryKey,
@@ -115,15 +115,28 @@ const useRoleBasedAttendanceData = () => {
     return dataForAdmin;
   }, [dataForAdmin, fallbackData, applicationsData, queryClient, programId, missionId]);
 
-  const { data: dataForMentor } = useMentorMissionFeedbackAttendanceQuery({
+  const { data: dataForMentor } = useMentorMenteeAttendanceQuery({
     challengeId: programId,
     missionId,
     enabled: !!programId && !!missionId && isAdmin === false,
   });
 
+  // mentee API returns id=null for non-submitters — assign synthetic negative IDs
+  // so DataGrid (which requires unique row IDs) can render them.
+  const mentorData = useMemo(() => {
+    if (!dataForMentor) return dataForMentor;
+    let syntheticIdCounter = -1;
+    return {
+      attendanceList: dataForMentor.attendanceList.map((item) => ({
+        ...item,
+        id: item.id ?? syntheticIdCounter--,
+      })),
+    };
+  }, [dataForMentor]);
+
   return {
     isLoading: isAdminLoading,
-    data: isAdmin ? adminData : dataForMentor,
+    data: isAdmin ? adminData : mentorData,
   };
 };
 
