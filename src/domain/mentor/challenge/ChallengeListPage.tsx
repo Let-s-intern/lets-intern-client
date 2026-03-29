@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { useMentorChallengeListQuery, type ChallengeMentorVo } from '@/api/user/user';
-import MentorChallengeCard from './MentorChallengeCard';
+import MentorChallengeCard from './ui/MentorChallengeCard';
 
 function ChallengeGrid({ challenges }: { challenges: ChallengeMentorVo[] }) {
   return (

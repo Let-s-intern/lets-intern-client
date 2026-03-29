@@ -7,8 +7,8 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
 
-import MentorRenderCell from './cells/MentorRenderCell';
-import FeedbackStatusRenderCell from './cells/FeedbackStatusRenderCell';
+import MentorRenderCell from './ui/MentorRenderCell';
+import FeedbackStatusRenderCell from './ui/FeedbackStatusRenderCell';
 import useFeedbackParticipantRows, {
   useSelectedMission,
 } from './hooks/useFeedbackParticipantRows';
@@ -132,7 +132,15 @@ export default function FeedbackParticipantPage() {
         columns={columns}
         disableRowSelectionOnClick
         hideFooter
-        sx={{ '& .MuiDataGrid-cell': { overflow: 'visible' } }}
+        getRowHeight={() => 'auto'}
+        sx={{
+          '& .MuiDataGrid-cell': {
+            overflow: 'visible',
+            whiteSpace: 'normal',
+            lineHeight: '1.4',
+            py: 1,
+          },
+        }}
       />
     </div>
   );

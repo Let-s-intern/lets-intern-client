@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import MentorMenteeAssignment from '../mentor-assignment/MentorMenteeAssignment';
-import FeedbackMissionList from './FeedbackMissionList';
+import FeedbackMissionList from './ui/FeedbackMissionList';
 import type { SubTab } from './types';
 
 function ChallengeOperationFeedbackPage() {
