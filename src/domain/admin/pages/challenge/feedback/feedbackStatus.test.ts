@@ -292,7 +292,72 @@ describe('진행상태 변경 알림 (snackbar)', () => {
   });
 });
 
-// ── 6) 결론 & 디버깅 가이드 ─────────────────────────────────────
+// ── 6) 제출확인전 상태 표시 테스트 ───────────────────────────────
+
+describe('제출확인전 상태 (ABSENT → 확인전)', () => {
+  it('status가 ABSENT이면 확인전으로 판단한다', () => {
+    const row = { status: 'ABSENT', feedbackStatus: 'WAITING' };
+    const isBeforeCheck = row.status === 'ABSENT';
+    expect(isBeforeCheck).toBe(true);
+  });
+
+  it('status가 PRESENT이면 확인전이 아니다', () => {
+    const row = { status: 'PRESENT', feedbackStatus: 'WAITING' };
+    const isBeforeCheck = row.status === 'ABSENT';
+    expect(isBeforeCheck).toBe(false);
+  });
+
+  it('status가 UPDATED/LATE여도 확인전이 아니다', () => {
+    expect('UPDATED' === 'ABSENT').toBe(false);
+    expect('LATE' === 'ABSENT').toBe(false);
+  });
+});
+
+// ── 7) 피드백 카운트 계산 테스트 ─────────────────────────────────
+
+describe('피드백 관리 제출/완료/전체 카운트', () => {
+  it('제출 수: link가 있는 항목 수', () => {
+    const list = [
+      { attendance: { link: 'http://...', feedbackStatus: 'WAITING' } },
+      { attendance: { link: null, feedbackStatus: 'WAITING' } },
+      { attendance: { link: 'http://...', feedbackStatus: 'COMPLETED' } },
+    ];
+    const submitted = list.filter((a) => !!a.attendance.link).length;
+    expect(submitted).toBe(2);
+  });
+
+  it('완료 수: feedbackStatus가 COMPLETED 또는 CONFIRMED인 항목 수', () => {
+    const list = [
+      { attendance: { feedbackStatus: 'WAITING' } },
+      { attendance: { feedbackStatus: 'IN_PROGRESS' } },
+      { attendance: { feedbackStatus: 'COMPLETED' } },
+      { attendance: { feedbackStatus: 'CONFIRMED' } },
+      { attendance: { feedbackStatus: 'WAITING' } },
+    ];
+    const completed = list.filter((a) => {
+      const fs = a.attendance.feedbackStatus;
+      return fs === 'COMPLETED' || fs === 'CONFIRMED';
+    }).length;
+    expect(completed).toBe(2);
+  });
+
+  it('전체 수: 리스트 길이', () => {
+    const list = [
+      { attendance: { link: 'a', feedbackStatus: 'WAITING' } },
+      { attendance: { link: null, feedbackStatus: 'COMPLETED' } },
+      { attendance: { link: 'b', feedbackStatus: 'CONFIRMED' } },
+    ];
+    expect(list.length).toBe(3);
+  });
+
+  it('표시 형식: 제출/완료/전체', () => {
+    const submitted = 3, completed = 2, total = 5;
+    const display = `${submitted} / ${completed} / ${total}`;
+    expect(display).toBe('3 / 2 / 5');
+  });
+});
+
+// ── 8) 결론 & 디버깅 가이드 ─────────────────────────────────────
 
 describe('디버깅 가이드', () => {
   it('네트워크 탭에서 확인해야 할 것들', () => {
