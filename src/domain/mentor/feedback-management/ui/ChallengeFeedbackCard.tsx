@@ -45,28 +45,28 @@ const MissionRow = ({ mission, onClickFeedback }: MissionRowProps) => {
 
   return (
     <div className="flex flex-col gap-3 rounded-lg border border-gray-200 p-3 transition-colors hover:bg-gray-50 md:flex-row md:items-center md:justify-between md:p-4">
-      <div className="flex items-center gap-3">
-        <span className="flex min-h-[44px] shrink-0 items-center justify-center rounded-full bg-primary-10 px-3 py-1.5 text-xs font-medium text-primary-dark md:min-h-0 md:px-2.5 md:py-1">
-          {mission.th}회차
-        </span>
-        <div className="flex flex-col gap-0.5">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <span className="flex min-h-[44px] shrink-0 items-center justify-center rounded-full bg-primary-10 px-3 py-1.5 text-xs font-medium text-primary-dark md:min-h-0 md:px-2.5 md:py-1">
+            {mission.th}회차
+          </span>
           <h3 className="text-sm font-medium text-gray-900 md:text-base">
             {mission.missionTitle || `${mission.th}회차 미션`}
           </h3>
         </div>
-      </div>
 
-      {/* Feedback status badges */}
-      <div className="flex flex-wrap gap-1">
-        {(
-          Object.keys(FeedbackStatusMapping) as FeedbackStatus[]
-        ).map((key) => (
-          <StatusBadge
-            key={key}
-            status={key}
-            count={feedbackCountMap.get(key) ?? 0}
-          />
-        ))}
+        {/* Feedback status badges */}
+        <div className="flex shrink-0 flex-wrap gap-1">
+          {(
+            Object.keys(FeedbackStatusMapping) as FeedbackStatus[]
+          ).map((key) => (
+            <StatusBadge
+              key={key}
+              status={key}
+              count={feedbackCountMap.get(key) ?? 0}
+            />
+          ))}
+        </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-3 md:gap-4">
