@@ -22,29 +22,29 @@ const FeedbackLayout = ({
 }: FeedbackLayoutProps) => {
   return (
     <div
-      className="flex flex-1 flex-col px-4 pb-4 pt-2.5 md:flex-row md:px-10 md:pb-10"
+      className="flex flex-1 flex-col gap-4 px-4 pb-4 pt-2 md:flex-row md:gap-6 md:px-6 md:pb-6"
       style={{ height: 'calc(100% - 72px)' }}
     >
       {/* Left panel: mentee list */}
-      <div className="mb-3 flex max-h-40 shrink-0 flex-col md:mb-0 md:max-h-none md:w-60">
+      <div className="flex max-h-40 shrink-0 flex-col md:max-h-none md:w-56">
         {sidebar}
       </div>
 
-      {/* Right panel */}
-      <div className="flex flex-1 flex-col gap-3 overflow-hidden md:gap-5 md:pl-5">
+      {/* Right panel: editor area - takes remaining space */}
+      <div className="flex min-w-0 flex-1 flex-col gap-4 overflow-hidden">
         {/* Navigation + Mentee info */}
-        <div className="flex flex-col">
+        <div className="flex shrink-0 flex-col">
           {navigation}
           {menteeInfo}
         </div>
 
-        {/* Feedback editor */}
-        <div className="flex flex-1 flex-col gap-1.5 overflow-hidden">
+        {/* Feedback editor - flex-1 to fill remaining height */}
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
           {editor}
         </div>
 
         {/* Actions */}
-        {actions}
+        <div className="shrink-0">{actions}</div>
       </div>
     </div>
   );
