@@ -37,8 +37,9 @@ const MissionRow = ({ mission, onClickFeedback }: MissionRowProps) => {
       }
     }
 
+    const hasFeedbackDone = completed > 0 || hasInProgress;
     const isAllComplete = mission.submittedCount > 0 && completed >= mission.submittedCount;
-    const status: 'completed' | 'inProgress' | 'waiting' = isAllComplete ? 'completed' : hasInProgress ? 'inProgress' : 'waiting';
+    const status: 'completed' | 'inProgress' | 'waiting' = isAllComplete ? 'completed' : hasFeedbackDone ? 'inProgress' : 'waiting';
     return { completedCount: completed, missionStatus: status };
   }, [mission.feedbackStatusCounts, mission.submittedCount]);
 
