@@ -29,32 +29,20 @@ const FeedbackHeader = ({
           </span>
         </div>
 
-        {/* Center: stats */}
-        <div className="hidden items-center gap-5 md:flex">
-          <div className="flex items-center gap-1 px-1">
-            <span className="text-xs font-medium text-neutral-700">총</span>
-            <span className="text-xs font-medium text-neutral-700">
-              {totalCount}명
-            </span>
-          </div>
-          <div className="flex items-center gap-1">
-            <span className="text-xs font-medium text-red-500">시작 전</span>
-            <span className="text-xs font-medium text-red-500">
-              {waitingCount}
-            </span>
-            <span className="text-xs font-medium text-neutral-700">·</span>
-            <span className="text-xs font-medium text-neutral-700">
-              진행 중
-            </span>
-            <span className="text-xs font-medium text-neutral-700">
-              {inProgressCount}
-            </span>
-            <span className="text-xs font-medium text-neutral-700">·</span>
-            <span className="text-xs font-medium text-neutral-700">완료</span>
-            <span className="text-xs font-medium text-neutral-700">
-              {completedCount}
-            </span>
-          </div>
+        {/* Center: stats badges */}
+        <div className="hidden items-center gap-2 md:flex">
+          <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-500">
+            총 {totalCount}명
+          </span>
+          <span className="rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-medium text-red-500">
+            시작 전 {waitingCount}
+          </span>
+          <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600">
+            진행 중 {inProgressCount}
+          </span>
+          <span className="rounded-full bg-green-50 px-2.5 py-0.5 text-xs font-medium text-green-700">
+            완료 {completedCount}
+          </span>
         </div>
 
         {/* Right: guide button */}

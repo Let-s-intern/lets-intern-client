@@ -19,17 +19,17 @@ function getActiveStep(status: FeedbackStatus | null): number {
   return 0;
 }
 
-const STEP_ACTIVE_COLORS = [
-  'text-gray-500',
-  'text-yellow-500',
-  'text-green-600',
+const STEP_ACTIVE_STYLES = [
+  'bg-gray-100 text-gray-500',
+  'bg-blue-50 text-blue-600',
+  'bg-green-50 text-green-700',
 ] as const;
 
-function getStepColor(idx: number, activeStep: number): string {
+function getStepStyle(idx: number, activeStep: number): string {
   const isCurrentStep = idx === activeStep;
-  if (isCurrentStep) return STEP_ACTIVE_COLORS[idx];
+  if (isCurrentStep) return STEP_ACTIVE_STYLES[idx];
   const isPastStep = idx < activeStep;
-  return isPastStep ? 'text-gray-700' : 'text-gray-400';
+  return isPastStep ? 'bg-gray-50 text-gray-700' : 'bg-gray-50 text-gray-400';
 }
 
 const StatusIndicator = ({ feedbackStatus }: StatusIndicatorProps) => {
@@ -41,7 +41,10 @@ const StatusIndicator = ({ feedbackStatus }: StatusIndicatorProps) => {
         <div key={step.key} className="flex items-center gap-2">
           {idx > 0 ? <span className="text-gray-400">&rarr;</span> : null}
           <span
-            className={twMerge('font-medium', getStepColor(idx, activeStep))}
+            className={twMerge(
+              'rounded-full px-2.5 py-0.5 text-xs font-medium',
+              getStepStyle(idx, activeStep),
+            )}
           >
             {step.label}
           </span>
