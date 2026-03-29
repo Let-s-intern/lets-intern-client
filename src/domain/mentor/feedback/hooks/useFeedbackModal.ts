@@ -41,8 +41,8 @@ export function useFeedbackModal({
       enabled: isOpen && !!challengeId && !!missionId,
     });
 
-  // Fetch selected mentee detail
-  const { data: feedbackData } = useFeedbackAttendanceQuery({
+  // Fetch selected mentee detail — staleTime: 0 ensures refetch on re-open
+  const { data: feedbackData, dataUpdatedAt } = useFeedbackAttendanceQuery({
     challengeId,
     missionId,
     attendanceId: selectedAttendanceId ?? undefined,
@@ -69,13 +69,14 @@ export function useFeedbackModal({
   }, [isOpen, attendanceData, selectedAttendanceId]);
 
   // Sync editor content when selected mentee or feedbackData changes
+  // dataUpdatedAt ensures we pick up refetched data even if the object reference is stable
   useEffect(() => {
     if (!selectedAttendanceId) return;
     const content =
       feedbackData?.attendanceDetailVo?.feedback || emptyEditorState;
     setEditorContent(content);
     setServerContent(content);
-  }, [feedbackData, selectedAttendanceId]);
+  }, [feedbackData, selectedAttendanceId, dataUpdatedAt]);
 
   // Reset state when modal closes
   useEffect(() => {

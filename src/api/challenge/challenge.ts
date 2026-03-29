@@ -680,6 +680,7 @@ export const useFeedbackAttendanceQuery = ({
       return feedbackAttendanceSchema.parse(res.data.data);
     },
     enabled: !!challengeId && !!missionId && !!attendanceId,
+    staleTime: 0,
   });
 };
 
