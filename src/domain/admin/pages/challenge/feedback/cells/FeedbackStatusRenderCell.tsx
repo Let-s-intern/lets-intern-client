@@ -20,8 +20,19 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import type { AttendanceRow } from '../types';
 import axios from '@/utils/axios';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 
 const FeedbackStatusEnumForMentor = FeedbackStatusEnum.exclude(['CONFIRMED']);
+
+const FEEDBACK_STATUS_COLORS: Record<
+  FeedbackStatus,
+  { bg: string; text: string }
+> = {
+  WAITING: { bg: 'bg-neutral-90', text: 'text-neutral-30' },
+  IN_PROGRESS: { bg: 'bg-blue-50', text: 'text-blue-700' },
+  COMPLETED: { bg: 'bg-green-50', text: 'text-green-700' },
+  CONFIRMED: { bg: 'bg-violet-50', text: 'text-violet-700' },
+};
 
 const FeedbackStatusRenderCell = (
   params: GridRenderCellParams<AttendanceRow, FeedbackStatus>,
@@ -34,6 +45,7 @@ const FeedbackStatusRenderCell = (
   const { mutateAsync: patchAdmin } = usePatchAdminAttendance();
   const { mutateAsync: patchMentor } = usePatchAttendanceMentorMutation();
   const queryClient = useQueryClient();
+  const { snackbar } = useAdminSnackbar();
 
   const serverValue = params.value || FeedbackStatusEnum.enum.WAITING;
   const [localValue, setLocalValue] = useState<FeedbackStatus>(serverValue);
@@ -87,28 +99,53 @@ const FeedbackStatusRenderCell = (
       }
       // PATCH 성공 → query invalidation으로 서버 데이터 재조회
       await invalidateFeedbackQueries();
+      snackbar('진행상태가 변경되었습니다.');
     } catch (error) {
       setLocalValue(prevValue);
       console.error('feedbackStatus 변경 실패:', error);
+      snackbar('진행상태 변경에 실패했습니다.');
     }
   };
 
   if (!isAdmin && localValue === FeedbackStatusEnum.enum.CONFIRMED) {
-    return <span>{FeedbackStatusMapping[localValue]}</span>;
+    const color = FEEDBACK_STATUS_COLORS[localValue];
+    return (
+      <span
+        className={`inline-flex items-center rounded-full px-2 py-0.5 text-xxsmall12 font-medium ${color.bg} ${color.text}`}
+      >
+        {FeedbackStatusMapping[localValue]}
+      </span>
+    );
   }
 
   return (
     <SelectFormControl<FeedbackStatus>
       value={localValue}
-      renderValue={(selected) => FeedbackStatusMapping[selected]}
+      renderValue={(selected) => {
+        const color = FEEDBACK_STATUS_COLORS[selected];
+        return (
+          <span
+            className={`inline-flex items-center rounded-full px-2 py-0.5 text-xxsmall12 font-medium ${color.bg} ${color.text}`}
+          >
+            {FeedbackStatusMapping[selected]}
+          </span>
+        );
+      }}
       onChange={handleChange}
+      sx={{ '& .MuiSelect-select': { fontSize: '12px' } }}
     >
       {(isAdmin ? FeedbackStatusEnum : FeedbackStatusEnumForMentor).options.map(
-        (item) => (
-          <MenuItem key={item} value={item}>
-            {FeedbackStatusMapping[item]}
-          </MenuItem>
-        ),
+        (item) => {
+          const color = FEEDBACK_STATUS_COLORS[item];
+          return (
+            <MenuItem key={item} value={item} sx={{ fontSize: '12px' }}>
+              <span
+                className={`mr-2 inline-block h-2.5 w-2.5 rounded-full ${color.bg}`}
+              />
+              {FeedbackStatusMapping[item]}
+            </MenuItem>
+          );
+        },
       )}
     </SelectFormControl>
   );

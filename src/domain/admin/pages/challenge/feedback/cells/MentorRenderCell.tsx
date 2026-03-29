@@ -9,6 +9,7 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import type { AttendanceRow } from '../types';
 import useFeedbackMentorAssignment from '../hooks/useFeedbackMentorAssignment';
+import { getMentorColor } from '../../mentor-colors';
 
 const NO_MENTOR_ID = 0;
 
@@ -46,7 +47,16 @@ const MentorRenderCell = (
     }
   };
 
+  const mentorList = data?.mentorList ?? [];
+
+  const getMentorColorByIdFromList = (id: number) => {
+    const idx = mentorList.findIndex((m) => m.challengeMentorId === id);
+    return idx >= 0 ? getMentorColor(idx) : null;
+  };
+
   if (!isAdmin) return <span>{params.row.mentorName}</span>;
+
+  const selectedColor = getMentorColorByIdFromList(localValue);
 
   return (
     <SelectFormControl<number>
@@ -54,22 +64,37 @@ const MentorRenderCell = (
       onChange={handleChange}
       sx={{ '& .MuiSelect-select': { fontSize: '12px' } }}
       renderValue={(selected) => {
-        const target = data?.mentorList.find(
+        const target = mentorList.find(
           (item) => item.challengeMentorId === selected,
         );
-        return target?.name || '없음';
+        if (!target) return '없음';
+        return (
+          <span
+            className={`inline-flex items-center rounded-full px-2 py-0.5 text-xxsmall12 font-medium ${selectedColor?.bg ?? 'bg-neutral-90'} ${selectedColor?.text ?? 'text-neutral-40'}`}
+          >
+            {target.name}
+          </span>
+        );
       }}
     >
       <MenuItem value={NO_MENTOR_ID} sx={{ fontSize: '12px' }}>
         없음
       </MenuItem>
-      {(data?.mentorList ?? []).map((item) => (
-        <MenuItem
-          key={`mentor-${item.challengeMentorId}`}
-          value={item.challengeMentorId}
-          sx={{ fontSize: '12px' }}
-        >{`[${item.userId}] ${item.name}`}</MenuItem>
-      ))}
+      {mentorList.map((item, idx) => {
+        const color = getMentorColor(idx);
+        return (
+          <MenuItem
+            key={`mentor-${item.challengeMentorId}`}
+            value={item.challengeMentorId}
+            sx={{ fontSize: '12px' }}
+          >
+            <span
+              className={`mr-2 inline-block h-2.5 w-2.5 rounded-full ${color.bg}`}
+            />
+            {`[${item.userId}] ${item.name}`}
+          </MenuItem>
+        );
+      })}
     </SelectFormControl>
   );
 };

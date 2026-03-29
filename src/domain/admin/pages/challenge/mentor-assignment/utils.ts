@@ -1,4 +1,4 @@
-import { MENTOR_COLORS } from './constants';
+export { getMentorColor } from '../mentor-colors';
 import type { MentorItem } from './types';
 
 export const getMentorLabel = (m: MentorItem) => {
@@ -6,6 +6,3 @@ export const getMentorLabel = (m: MentorItem) => {
   if (!c?.company || !c?.job) return m.name;
   return `${m.name} (${c.company}/${c.job})`;
 };
-
-export const getMentorColor = (i: number) =>
-  MENTOR_COLORS[i % MENTOR_COLORS.length];
