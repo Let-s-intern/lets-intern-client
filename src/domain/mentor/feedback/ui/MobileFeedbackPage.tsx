@@ -133,8 +133,8 @@ const MobileFeedbackPage = ({
               disabled={!hasPrevMentee}
               className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-200 py-3.5 text-base font-medium text-gray-600 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M14 9L10 13L14 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <path d="M14 8L9 13L14 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               이전 멘티
             </button>
@@ -145,8 +145,8 @@ const MobileFeedbackPage = ({
               className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-200 py-3.5 text-base font-medium text-gray-600 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30"
             >
               다음 멘티
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M10 9L14 13L10 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <path d="M10 8L15 13L10 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
           </div>
