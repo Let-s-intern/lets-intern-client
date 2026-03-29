@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 
 const navItems = [
   { name: '프로그램 일정', url: '/mentor' },
+  { name: '피드백 현황', url: '/mentor/feedback-management' },
   { name: '참여중인 챌린지', url: '/mentor/challenges' },
   { name: '프로필', url: '/mentor/profile' },
   { name: '공지사항', url: '/mentor/notice' },
