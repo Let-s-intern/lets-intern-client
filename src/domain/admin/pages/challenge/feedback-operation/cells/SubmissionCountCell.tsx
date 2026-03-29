@@ -16,14 +16,21 @@ function SubmissionCountCell({ missionId }: { missionId: number | string }) {
   if (isAdmin) {
     const list = adminAttendances ?? [];
     const total = list.length;
+    // 멘티제출: link가 있는 항목
     const submitted = list.filter((a) => !!a.attendance.link).length;
-    const completed = list.filter((a) => {
+    // 진행전: 제출확인 완료(status !== ABSENT) + 피드백 아직 진행 전
+    const waiting = list.filter((a) => {
+      const s = a.attendance.status;
       const fs = a.attendance.feedbackStatus;
-      return fs === 'COMPLETED' || fs === 'CONFIRMED';
+      return s !== 'ABSENT' && s != null && fs === 'WAITING';
     }).length;
+    // 확인완료: 미션 완전히 완료
+    const confirmed = list.filter(
+      (a) => a.attendance.feedbackStatus === 'CONFIRMED',
+    ).length;
     return (
       <span>
-        {submitted} / {completed} / {total}
+        {submitted} / {waiting} / {confirmed} / {total}
       </span>
     );
   }
