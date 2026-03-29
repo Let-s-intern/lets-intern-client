@@ -5,9 +5,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { usePatchUser, useUserQuery } from '@/api/user/user';
 import { useUnsavedChangesWarning } from '@/hooks/useUnsavedChangesWarning';
 import mentorConfig from '../config.json';
-import BasicInfo, { type BasicInfoFormData } from './BasicInfo';
-import CareerSection from './CareerSection';
-import Introduction from './Introduction';
+import BasicInfo, { type BasicInfoFormData } from './ui/BasicInfo';
+import CareerSection from './ui/CareerSection';
+import Introduction from './ui/Introduction';
 
 const INITIAL_FORM_DATA: BasicInfoFormData = {
   name: '',
