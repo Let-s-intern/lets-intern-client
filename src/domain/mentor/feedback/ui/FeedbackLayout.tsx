@@ -48,7 +48,7 @@ const FeedbackLayout = ({
       {/* Right panel */}
       <div
         className={`flex min-w-0 flex-1 flex-col overflow-hidden transition-all duration-300 ease-in-out ${
-          isExpanded ? 'gap-1' : 'gap-3'
+          isExpanded ? 'gap-0' : 'gap-3'
         }`}
       >
         {/* 상단 네비게이션 (기본 모드에서만) */}
