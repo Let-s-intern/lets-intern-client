@@ -1,10 +1,10 @@
 'use client';
 
 import TextFieldLimit from '@/domain/admin/blog/TextFieldLimit';
-import { useMagnetPostForm } from '@/domain/admin/blog/magnet/hooks/useMagnetPostForm';
-import MagnetProgramRecommendSection from '@/domain/admin/blog/magnet/section/MagnetProgramRecommendSection';
-import MagnetRecommendSection from '@/domain/admin/blog/magnet/section/MagnetRecommendSection';
-import { MAGNET_TYPE, MagnetTypeKey } from '@/domain/admin/blog/magnet/types';
+import { useMagnetPostForm } from '@/domain/admin/magnet/hooks/useMagnetPostForm';
+import MagnetProgramRecommendSection from '@/domain/admin/magnet/section/MagnetProgramRecommendSection';
+import MagnetRecommendSection from '@/domain/admin/magnet/section/MagnetRecommendSection';
+import { MAGNET_TYPE, MagnetTypeKey } from '@/domain/admin/magnet/types';
 import ImageUpload from '@/domain/admin/program/ui/form/ImageUpload';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';

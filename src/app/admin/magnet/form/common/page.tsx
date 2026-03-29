@@ -1,4 +1,4 @@
-import CommonFormPage from '@/domain/admin/blog/magnet/CommonFormPage';
+import CommonFormPage from '@/domain/admin/magnet/CommonFormPage';
 
 const Page = () => {
   return <CommonFormPage />;

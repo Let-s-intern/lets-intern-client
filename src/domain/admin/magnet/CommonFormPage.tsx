@@ -1,16 +1,12 @@
 'use client';
 
-import CloneFormDropdown from '@/domain/admin/blog/magnet/form/CloneFormDropdown';
-import FormBuilderSection from '@/domain/admin/blog/magnet/form/FormBuilderSection';
-import { useMagnetFormBuilder } from '@/domain/admin/blog/magnet/hooks/useMagnetFormBuilder';
+import FormBuilderSection from '@/domain/admin/magnet/form/FormBuilderSection';
+import { useCommonFormBuilder } from '@/domain/admin/magnet/hooks/useCommonFormBuilder';
 import Heading from '@/domain/admin/ui/heading/Heading';
-import { Button, CircularProgress } from '@mui/material';
+import { Button, CircularProgress, IconButton } from '@mui/material';
+import { ArrowLeft } from 'lucide-react';
 
-interface MagnetFormPageProps {
-  magnetId: string;
-}
-
-const MagnetFormPage = ({ magnetId }: MagnetFormPageProps) => {
+const CommonFormPage = () => {
   const {
     questions,
     isLoading,
@@ -18,10 +14,9 @@ const MagnetFormPage = ({ magnetId }: MagnetFormPageProps) => {
     addQuestion,
     removeQuestion,
     updateQuestion,
-    cloneFromMagnet,
     saveForm,
     navigateToList,
-  } = useMagnetFormBuilder({ magnetId });
+  } = useCommonFormBuilder();
 
   if (isLoading) {
     return (
@@ -33,13 +28,11 @@ const MagnetFormPage = ({ magnetId }: MagnetFormPageProps) => {
 
   return (
     <div className="mx-6 mb-40 mt-6">
-      <header className="mb-6 flex items-center justify-between">
-        <Heading>신청폼 관리</Heading>
-        <CloneFormDropdown
-          currentMagnetId={Number(magnetId)}
-          hasExistingQuestions={questions.length > 0}
-          onClone={cloneFromMagnet}
-        />
+      <header className="mb-6 flex items-center gap-2">
+        <IconButton size="small" onClick={navigateToList}>
+          <ArrowLeft size={20} />
+        </IconButton>
+        <Heading>공통 신청폼 관리</Heading>
       </header>
 
       <main className="max-w-screen-xl">
@@ -73,4 +66,4 @@ const MagnetFormPage = ({ magnetId }: MagnetFormPageProps) => {
   );
 };
 
-export default MagnetFormPage;
+export default CommonFormPage;

@@ -1,5 +1,5 @@
-import QuestionCard from '@/domain/admin/blog/magnet/form/QuestionCard';
-import { FormQuestion } from '@/domain/admin/blog/magnet/types';
+import QuestionCard from '@/domain/admin/magnet/form/QuestionCard';
+import { FormQuestion } from '@/domain/admin/magnet/types';
 import { Button } from '@mui/material';
 import { Plus } from 'lucide-react';
 

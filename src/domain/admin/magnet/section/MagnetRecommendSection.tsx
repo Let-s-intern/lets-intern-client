@@ -4,7 +4,7 @@ import { useGetMagnetListQuery } from '@/api/magnet/magnet';
 import {
   MAGNET_TYPE,
   MANAGEABLE_MAGNET_TYPES,
-} from '@/domain/admin/blog/magnet/types';
+} from '@/domain/admin/magnet/types';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
 import {
   FormControl,

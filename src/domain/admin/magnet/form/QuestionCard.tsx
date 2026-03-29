@@ -1,11 +1,11 @@
-import QuestionItemList from '@/domain/admin/blog/magnet/form/QuestionItemList';
+import QuestionItemList from '@/domain/admin/magnet/form/QuestionItemList';
 import {
   FormQuestion,
   FormQuestionItem,
   FormQuestionType,
   FormResponseRequired,
   FormSelectionMethod,
-} from '@/domain/admin/blog/magnet/types';
+} from '@/domain/admin/magnet/types';
 import {
   FormControlLabel,
   IconButton,

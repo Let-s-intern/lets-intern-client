@@ -1,7 +1,7 @@
 'use client';
 
 import { useGetProgramAdminQuery } from '@/api/program';
-import { MagnetProgramRecommendItem } from '@/domain/admin/blog/magnet/types';
+import { MagnetProgramRecommendItem } from '@/domain/admin/magnet/types';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
 import { ProgramStatusEnum } from '@/schema';
 import { programStatusToText } from '@/utils/convert';

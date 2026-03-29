@@ -1,4 +1,4 @@
-import { FormQuestionItem } from '@/domain/admin/blog/magnet/types';
+import { FormQuestionItem } from '@/domain/admin/magnet/types';
 import { generateUUID } from '@/utils/random';
 import { Button, Chip, IconButton, TextField } from '@mui/material';
 import { Plus, X } from 'lucide-react';

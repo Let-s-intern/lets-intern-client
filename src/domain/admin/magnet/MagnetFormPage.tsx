@@ -1,12 +1,16 @@
 'use client';
 
-import FormBuilderSection from '@/domain/admin/blog/magnet/form/FormBuilderSection';
-import { useCommonFormBuilder } from '@/domain/admin/blog/magnet/hooks/useCommonFormBuilder';
+import CloneFormDropdown from '@/domain/admin/magnet/form/CloneFormDropdown';
+import FormBuilderSection from '@/domain/admin/magnet/form/FormBuilderSection';
+import { useMagnetFormBuilder } from '@/domain/admin/magnet/hooks/useMagnetFormBuilder';
 import Heading from '@/domain/admin/ui/heading/Heading';
-import { Button, CircularProgress, IconButton } from '@mui/material';
-import { ArrowLeft } from 'lucide-react';
+import { Button, CircularProgress } from '@mui/material';
 
-const CommonFormPage = () => {
+interface MagnetFormPageProps {
+  magnetId: string;
+}
+
+const MagnetFormPage = ({ magnetId }: MagnetFormPageProps) => {
   const {
     questions,
     isLoading,
@@ -14,9 +18,10 @@ const CommonFormPage = () => {
     addQuestion,
     removeQuestion,
     updateQuestion,
+    cloneFromMagnet,
     saveForm,
     navigateToList,
-  } = useCommonFormBuilder();
+  } = useMagnetFormBuilder({ magnetId });
 
   if (isLoading) {
     return (
@@ -28,11 +33,13 @@ const CommonFormPage = () => {
 
   return (
     <div className="mx-6 mb-40 mt-6">
-      <header className="mb-6 flex items-center gap-2">
-        <IconButton size="small" onClick={navigateToList}>
-          <ArrowLeft size={20} />
-        </IconButton>
-        <Heading>공통 신청폼 관리</Heading>
+      <header className="mb-6 flex items-center justify-between">
+        <Heading>신청폼 관리</Heading>
+        <CloneFormDropdown
+          currentMagnetId={Number(magnetId)}
+          hasExistingQuestions={questions.length > 0}
+          onClone={cloneFromMagnet}
+        />
       </header>
 
       <main className="max-w-screen-xl">
@@ -66,4 +73,4 @@ const CommonFormPage = () => {
   );
 };
 
-export default CommonFormPage;
+export default MagnetFormPage;
