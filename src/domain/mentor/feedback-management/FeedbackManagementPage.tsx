@@ -19,7 +19,7 @@ const FeedbackManagementPage = () => {
   const isMobile = useMediaQuery('(max-width: 767px)');
 
   return (
-    <div className="flex flex-col gap-4 md:gap-6">
+    <div className="flex flex-col gap-4 pb-20 md:gap-6 md:pb-0">
       <h1 className="text-lg font-semibold leading-7 text-neutral-900 md:text-xl md:leading-8">
         피드백 현황
       </h1>
