@@ -92,23 +92,15 @@ export default function MentorMenteeAssignment() {
       <div>
         <MentorList mentors={mentors} matchCounts={matchCounts} />
 
-        <div className="mb-3 flex items-center gap-2">
-          <BulkAssignmentBar
-            mentors={mentors}
-            bulkMentorId={bulkMentorId}
-            onBulkMentorChange={setBulkMentorId}
-            selectedCount={(selectionModel as number[]).length}
-            isPending={isPending}
-            onAssign={handleBulkAssign}
-          />
-          <button
-            type="button"
-            onClick={handleSelectUnassigned}
-            className="whitespace-nowrap rounded-md border border-neutral-80 bg-white px-3 py-1.5 text-xsmall14 font-medium text-neutral-0 hover:bg-neutral-95"
-          >
-            미배정 멘티 선택
-          </button>
-        </div>
+        <BulkAssignmentBar
+          mentors={mentors}
+          bulkMentorId={bulkMentorId}
+          onBulkMentorChange={setBulkMentorId}
+          selectedCount={(selectionModel as number[]).length}
+          isPending={isPending}
+          onAssign={handleBulkAssign}
+          onSelectUnassigned={handleSelectUnassigned}
+        />
 
         <DataGrid
           rows={rows}
