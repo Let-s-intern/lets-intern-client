@@ -44,21 +44,21 @@ const MissionRow = ({ mission, onClickFeedback }: MissionRowProps) => {
     (feedbackCountMap.get('CONFIRMED') ?? 0);
 
   return (
-    <div className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50">
+    <div className="flex flex-col gap-3 rounded-lg border border-gray-200 p-3 transition-colors hover:bg-gray-50 md:flex-row md:items-center md:justify-between md:p-4">
       <div className="flex items-center gap-3">
-        <span className="flex shrink-0 items-center justify-center rounded-full bg-primary-10 px-2.5 py-1 text-xs font-medium text-primary-dark">
+        <span className="flex min-h-[44px] shrink-0 items-center justify-center rounded-full bg-primary-10 px-3 py-1.5 text-xs font-medium text-primary-dark md:min-h-0 md:px-2.5 md:py-1">
           {mission.th}회차
         </span>
         <div className="flex flex-col gap-0.5">
-          <h3 className="font-medium text-gray-900">
+          <h3 className="text-sm font-medium text-gray-900 md:text-base">
             {mission.missionTitle || `${mission.th}회차 미션`}
           </h3>
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex flex-wrap items-center gap-3 md:gap-4">
         {/* Submission stats */}
-        <div className="text-right text-xs text-gray-500">
+        <div className="text-xs text-gray-500 md:text-right">
           <p>
             제출{' '}
             <span className="font-semibold text-gray-700">
@@ -76,7 +76,7 @@ const MissionRow = ({ mission, onClickFeedback }: MissionRowProps) => {
         </div>
 
         {/* Feedback status badges */}
-        <div className="flex gap-1">
+        <div className="flex flex-wrap gap-1">
           {(
             Object.keys(FeedbackStatusMapping) as FeedbackStatus[]
           ).map((key) => (
@@ -91,7 +91,7 @@ const MissionRow = ({ mission, onClickFeedback }: MissionRowProps) => {
         <button
           type="button"
           onClick={() => onClickFeedback(mission.missionId, mission.th)}
-          className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-hover"
+          className="min-h-[44px] w-full rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-hover md:min-h-0 md:w-auto"
         >
           피드백 작성
         </button>
@@ -118,10 +118,10 @@ const ChallengeFeedbackCard = ({
   };
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-6">
+    <div className="rounded-xl border border-gray-200 bg-white p-3 md:p-6">
       {/* Challenge header */}
-      <div className="mb-4 flex flex-col gap-1">
-        <h2 className="text-lg font-bold text-gray-900">
+      <div className="mb-3 flex flex-col gap-1 md:mb-4">
+        <h2 className="text-base font-bold text-gray-900 md:text-lg">
           {challenge.title ?? '챌린지'}
         </h2>
         {challenge.shortDesc ? (
