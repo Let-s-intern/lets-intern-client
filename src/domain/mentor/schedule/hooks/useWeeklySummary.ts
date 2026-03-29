@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { addDays, isSameDay, startOfWeek } from 'date-fns';
+import { isSameDay } from 'date-fns';
 
 import type { PeriodBarData } from '../challenge-period/ChallengePeriodBar';
 
@@ -11,16 +11,12 @@ interface WeeklySummaryCounts {
 }
 
 /**
- * Computes weekly summary counts from period bars.
- * Filters bars that overlap with the given week and aggregates counts.
+ * Computes summary counts from ALL bars (no week filtering).
+ * Aggregates across all participating in-progress challenges.
+ * Tag filtering does NOT affect these counts — always pass unfiltered bars.
  */
-export function useWeeklySummary(
-  bars: PeriodBarData[],
-  weekStartDate: Date,
-): WeeklySummaryCounts {
+export function useWeeklySummary(bars: PeriodBarData[]): WeeklySummaryCounts {
   return useMemo(() => {
-    const weekStart = startOfWeek(weekStartDate, { weekStartsOn: 1 });
-    const weekEnd = addDays(weekStart, 6);
     const today = new Date();
 
     let total = 0;
@@ -29,25 +25,19 @@ export function useWeeklySummary(
     let completed = 0;
 
     for (const bar of bars) {
-      const barStart = new Date(bar.startDate);
-      const barEnd = new Date(bar.endDate);
+      const barTotal = bar.submittedCount + bar.notSubmittedCount;
+      total += barTotal;
 
-      // Check if the bar overlaps with the current week
-      if (barStart <= weekEnd && barEnd >= weekStart) {
-        const barTotal = bar.submittedCount + bar.notSubmittedCount;
-        total += barTotal;
-
-        // Today due: endDate is today
-        if (isSameDay(barEnd, today)) {
-          todayDue += barTotal;
-        }
-
-        // Incomplete: waiting + in progress
-        incomplete += bar.waitingCount + bar.inProgressCount;
-
-        // Completed
-        completed += bar.completedCount;
+      // Today due: endDate is today
+      if (isSameDay(new Date(bar.endDate), today)) {
+        todayDue += barTotal;
       }
+
+      // Incomplete: waiting + in progress
+      incomplete += bar.waitingCount + bar.inProgressCount;
+
+      // Completed
+      completed += bar.completedCount;
     }
 
     return {
@@ -56,5 +46,5 @@ export function useWeeklySummary(
       incompleteCount: incomplete,
       completedCount: completed,
     };
-  }, [bars, weekStartDate]);
+  }, [bars]);
 }

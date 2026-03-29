@@ -1,7 +1,6 @@
 'use client';
 
-import { addWeeks, endOfWeek, format, startOfWeek, subWeeks } from 'date-fns';
-import { ko } from 'date-fns/locale';
+import { addWeeks, startOfWeek, subWeeks } from 'date-fns';
 
 interface WeekNavigationProps {
   weekStartDate: Date;
@@ -13,7 +12,6 @@ const WeekNavigation = ({
   onWeekChange,
 }: WeekNavigationProps) => {
   const weekStart = startOfWeek(weekStartDate, { weekStartsOn: 1 });
-  const weekEnd = endOfWeek(weekStartDate, { weekStartsOn: 1 });
 
   const handlePrev = () => {
     onWeekChange(subWeeks(weekStart, 1));
@@ -22,8 +20,6 @@ const WeekNavigation = ({
   const handleNext = () => {
     onWeekChange(addWeeks(weekStart, 1));
   };
-
-  const formatDate = (date: Date) => format(date, 'MM.dd', { locale: ko });
 
   return (
     <div className="inline-flex items-start gap-2">
@@ -49,9 +45,6 @@ const WeekNavigation = ({
           />
         </svg>
       </button>
-      <span className="text-base font-semibold leading-6 text-neutral-900">
-        {formatDate(weekStart)} – {formatDate(weekEnd)}
-      </span>
       <button
         type="button"
         onClick={handleNext}

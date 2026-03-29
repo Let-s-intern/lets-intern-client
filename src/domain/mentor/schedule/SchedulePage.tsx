@@ -11,7 +11,6 @@ import type { PeriodBarData } from './challenge-period/ChallengePeriodBar';
 
 import WelcomeMessage from './ui/WelcomeMessage';
 import WeeklySummary from './ui/WeeklySummary';
-import WeekNavigation from './ui/WeekNavigation';
 import ChallengeFilter from './ui/ChallengeFilter';
 import WeeklyCalendar from './weekly-calendar/WeeklyCalendar';
 import FeedbackModal from '../feedback/FeedbackModal';
@@ -129,10 +128,25 @@ const SchedulePage = () => {
     filteredBars,
     handleData,
     challengeFilterItems,
+    findNearestWeek,
   } = useScheduleData();
-  // WeeklySummary always uses unfiltered bars (all challenges)
+  // WeeklySummary uses ALL bars (unfiltered, no week filtering) — tag click doesn't affect
   const { totalCount, todayDueCount, incompleteCount, completedCount } =
-    useWeeklySummary(allBarsUnfiltered, weekStartDate);
+    useWeeklySummary(allBarsUnfiltered);
+
+  // Challenge tag click: filter + scroll to nearest feedback week
+  const handleChallengeSelect = (challengeId: number | null) => {
+    if (challengeId === null || challengeId === selectedChallengeId) {
+      // Deselect — show all, stay on current week
+      setSelectedChallengeId(null);
+      return;
+    }
+    setSelectedChallengeId(challengeId);
+    const nearestWeek = findNearestWeek(challengeId);
+    if (nearestWeek) {
+      setWeekStartDate(nearestWeek);
+    }
+  };
 
   // Feedback modal state
   const [feedbackModal, setFeedbackModal] = useState<{
@@ -177,21 +191,17 @@ const SchedulePage = () => {
 
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-4">
-              <WeekNavigation
-                weekStartDate={weekStartDate}
-                onWeekChange={setWeekStartDate}
-              />
-
               <ChallengeFilter
                 challenges={challengeFilterItems}
                 selectedChallengeId={selectedChallengeId}
-                onSelect={setSelectedChallengeId}
+                onSelect={handleChallengeSelect}
               />
             </div>
 
             <WeeklyCalendar
               weekStartDate={weekStartDate}
               bars={filteredBars}
+              allBars={allBarsUnfiltered}
               onBarClick={handleBarClick}
               onWeekChange={setWeekStartDate}
             />

@@ -44,13 +44,13 @@ const WeeklySummary = ({
 
   return (
     <div className="grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-4">
-      <SummaryCard label="이번주 전체">
+      <SummaryCard label="전체">
         <p className="text-medium24 font-semibold text-neutral-30">
           {totalCount}
         </p>
       </SummaryCard>
       <SummaryCard
-        label="오늘 마감"
+        label="오늘마감"
         labelClassName="text-[13px] font-semibold leading-4 text-primary"
       >
         <p className="text-medium24 font-semibold text-neutral-30">
@@ -66,7 +66,7 @@ const WeeklySummary = ({
         </p>
       </SummaryCard>
       <SummaryCard
-        label="진행률"
+        label="진행상황"
         labelClassName="text-[13px] font-semibold leading-4 text-neutral-30"
       >
         <div className="flex flex-col items-start justify-center gap-1">

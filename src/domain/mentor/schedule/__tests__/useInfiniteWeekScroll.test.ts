@@ -8,27 +8,18 @@ import { addDays, startOfWeek } from 'date-fns';
 
 // ── Pure logic extracted from useInfiniteWeekScroll ──────────────────
 
-const SWIPE_THRESHOLD = 50;
-
-function computeSwipeResult(
+/** Simulates scroll-snap panel detection: panel 0 = prev, 1 = stay, 2 = next */
+function computeScrollResult(
   weekStartDate: Date,
-  dragDelta: number,
+  panelIndex: number,
 ): { direction: 'prev' | 'next' | 'none'; newWeekStart: Date } {
-  if (Math.abs(dragDelta) < SWIPE_THRESHOLD) {
-    return { direction: 'none', newWeekStart: weekStartDate };
+  if (panelIndex === 0) {
+    return { direction: 'prev', newWeekStart: addDays(weekStartDate, -7) };
   }
-
-  if (dragDelta > 0) {
-    return {
-      direction: 'prev',
-      newWeekStart: addDays(weekStartDate, -7),
-    };
+  if (panelIndex === 2) {
+    return { direction: 'next', newWeekStart: addDays(weekStartDate, 7) };
   }
-
-  return {
-    direction: 'next',
-    newWeekStart: addDays(weekStartDate, 7),
-  };
+  return { direction: 'none', newWeekStart: weekStartDate };
 }
 
 function computeGoToCurrentWeek(): Date {
@@ -37,36 +28,24 @@ function computeGoToCurrentWeek(): Date {
 
 // ── Tests ────────────────────────────────────────────────────────────
 
-describe('useInfiniteWeekScroll (pure logic)', () => {
+describe('useInfiniteWeekScroll (scroll-snap logic)', () => {
   const monday = new Date('2026-03-23'); // Monday
 
-  describe('swipe threshold detection', () => {
-    it('does not navigate if drag is below threshold', () => {
-      const result = computeSwipeResult(monday, 30);
+  describe('panel detection', () => {
+    it('center panel (1) does not navigate', () => {
+      const result = computeScrollResult(monday, 1);
       expect(result.direction).toBe('none');
       expect(result.newWeekStart.getTime()).toBe(monday.getTime());
     });
 
-    it('does not navigate if drag is exactly at threshold - 1', () => {
-      const result = computeSwipeResult(monday, 49);
-      expect(result.direction).toBe('none');
-    });
-
-    it('navigates at exactly the threshold', () => {
-      const result = computeSwipeResult(monday, 50);
-      expect(result.direction).toBe('prev');
-    });
-  });
-
-  describe('swipe direction', () => {
-    it('swipe right (positive delta) goes to previous week', () => {
-      const result = computeSwipeResult(monday, 100);
+    it('left panel (0) navigates to previous week', () => {
+      const result = computeScrollResult(monday, 0);
       expect(result.direction).toBe('prev');
       expect(result.newWeekStart.toISOString().slice(0, 10)).toBe('2026-03-16');
     });
 
-    it('swipe left (negative delta) goes to next week', () => {
-      const result = computeSwipeResult(monday, -100);
+    it('right panel (2) navigates to next week', () => {
+      const result = computeScrollResult(monday, 2);
       expect(result.direction).toBe('next');
       expect(result.newWeekStart.toISOString().slice(0, 10)).toBe('2026-03-30');
     });
@@ -89,7 +68,7 @@ describe('useInfiniteWeekScroll (pure logic)', () => {
     it('consecutive prev navigations go back by 7 days each', () => {
       let current = monday;
       for (let i = 0; i < 3; i++) {
-        const result = computeSwipeResult(current, 100);
+        const result = computeScrollResult(current, 0);
         current = result.newWeekStart;
       }
       // 3 weeks back from March 23 = March 2
@@ -97,8 +76,8 @@ describe('useInfiniteWeekScroll (pure logic)', () => {
     });
 
     it('prev then next returns to original week', () => {
-      const afterPrev = computeSwipeResult(monday, 100).newWeekStart;
-      const afterNext = computeSwipeResult(afterPrev, -100).newWeekStart;
+      const afterPrev = computeScrollResult(monday, 0).newWeekStart;
+      const afterNext = computeScrollResult(afterPrev, 2).newWeekStart;
       expect(afterNext.getTime()).toBe(monday.getTime());
     });
   });

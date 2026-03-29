@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
+import { startOfWeek } from 'date-fns';
 
 import { useMentorChallengeListQuery } from '@/api/user/user';
 import type { PeriodBarData } from '../challenge-period/ChallengePeriodBar';
@@ -15,7 +16,12 @@ export function useScheduleData() {
   );
 
   const { data: challengeListData } = useMentorChallengeListQuery();
-  const challenges = challengeListData?.myChallengeMentorVoList ?? [];
+  const allChallenges = challengeListData?.myChallengeMentorVoList ?? [];
+  // Only show in-progress challenges in the schedule
+  const challenges = useMemo(
+    () => allChallenges.filter((c) => c.programStatusType === 'PROCEEDING'),
+    [allChallenges],
+  );
 
   // Bars collected from child data fetchers (keyed by "challengeId-missionId")
   const [barsMap, setBarsMap] = useState<Map<string, PeriodBarData>>(
@@ -30,7 +36,7 @@ export function useScheduleData() {
     });
   }, []);
 
-  // All bars without any filter — used by WeeklySummary
+  // All bars without any filter — used by WeeklySummary & height calculation
   const allBarsUnfiltered = useMemo(() => {
     const result: PeriodBarData[] = [];
     barsMap.forEach((bar) => result.push(bar));
@@ -55,6 +61,32 @@ export function useScheduleData() {
     [challenges],
   );
 
+  /**
+   * Find the nearest feedback week for a given challenge.
+   * Returns the Monday of the week containing the closest bar (by startDate)
+   * to today. If no bars, returns null.
+   */
+  const findNearestWeek = useCallback(
+    (challengeId: number): Date | null => {
+      const now = Date.now();
+      let closest: PeriodBarData | null = null;
+      let closestDist = Infinity;
+
+      for (const bar of allBarsUnfiltered) {
+        if (bar.challengeId !== challengeId) continue;
+        const dist = Math.abs(new Date(bar.startDate).getTime() - now);
+        if (dist < closestDist) {
+          closestDist = dist;
+          closest = bar;
+        }
+      }
+
+      if (!closest) return null;
+      return startOfWeek(new Date(closest.startDate), { weekStartsOn: 1 });
+    },
+    [allBarsUnfiltered],
+  );
+
   return {
     challenges,
     selectedChallengeId,
@@ -63,5 +95,6 @@ export function useScheduleData() {
     filteredBars,
     handleData,
     challengeFilterItems,
+    findNearestWeek,
   };
 }
