@@ -10,5 +10,8 @@ export interface MentorAssignmentRow {
   name: string;
   email: string;
   phoneNum: string;
+  major: string;
+  wishJob: string;
+  wishCompany: string;
   matchedMentorId: number | null;
 }

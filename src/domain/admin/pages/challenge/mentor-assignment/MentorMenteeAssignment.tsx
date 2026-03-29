@@ -13,6 +13,9 @@ import { getMentorColor } from './utils';
 
 const columns: GridColDef<MentorAssignmentRow>[] = [
   { field: 'name', headerName: '이름', width: 120 },
+  { field: 'major', headerName: '전공', width: 150 },
+  { field: 'wishCompany', headerName: '희망 기업', width: 120 },
+  { field: 'wishJob', headerName: '희망 직무', width: 150 },
   { field: 'email', headerName: '이메일', width: 200 },
   { field: 'phoneNum', headerName: '전화번호', width: 140 },
   {
@@ -30,6 +33,7 @@ export default function MentorMenteeAssignment() {
     rows,
     mentors,
     effectiveMentors,
+    matchCounts,
     isLoading,
     isPending,
     handleSingleMatch,
@@ -73,7 +77,7 @@ export default function MentorMenteeAssignment() {
   return (
     <MentorMatchContext.Provider value={contextValue}>
       <div>
-        <MentorList mentors={mentors} />
+        <MentorList mentors={mentors} matchCounts={matchCounts} />
 
         <BulkAssignmentBar
           mentors={mentors}

@@ -36,6 +36,22 @@ const useMentorAssignmentData = (programId: string) => {
     [mentorData],
   );
 
+  // applications에서 멘티 상세 정보 맵 생성
+  const applicationDetailsMap = useMemo(() => {
+    const map: Record<
+      number,
+      { major: string; wishJob: string; wishCompany: string }
+    > = {};
+    applicationsData?.applicationList.forEach((a) => {
+      map[a.application.id] = {
+        major: a.application.major ?? '-',
+        wishJob: a.application.wishJob ?? '-',
+        wishCompany: a.application.wishCompany ?? '-',
+      };
+    });
+    return map;
+  }, [applicationsData]);
+
   // 서버 데이터에서 멘토 배정 정보 (applications → challengeMentorId)
   const serverMentorMap = useMemo(() => {
     const map: Record<number, number> = {};
@@ -55,6 +71,15 @@ const useMentorAssignmentData = (programId: string) => {
     () => ({ ...serverMentorMap, ...optimisticMentors }),
     [serverMentorMap, optimisticMentors],
   );
+
+  // 멘토별 매칭 인원 수 계산
+  const matchCounts = useMemo(() => {
+    const counts: Record<number, number> = {};
+    Object.values(effectiveMentors).forEach((mentorId) => {
+      counts[mentorId] = (counts[mentorId] ?? 0) + 1;
+    });
+    return counts;
+  }, [effectiveMentors]);
 
   const invalidateAll = useCallback(async () => {
     await queryClient.invalidateQueries({
@@ -119,20 +144,27 @@ const useMentorAssignmentData = (programId: string) => {
 
   const rows: MentorAssignmentRow[] = useMemo(
     () =>
-      participants.map((p) => ({
-        id: p.applicationId,
-        name: p.name ?? '-',
-        email: p.email ?? '-',
-        phoneNum: p.phoneNum ?? '-',
-        matchedMentorId: effectiveMentors[p.applicationId] ?? null,
-      })),
-    [participants, effectiveMentors],
+      participants.map((p) => {
+        const details = applicationDetailsMap[p.applicationId];
+        return {
+          id: p.applicationId,
+          name: p.name ?? '-',
+          email: p.email ?? '-',
+          phoneNum: p.phoneNum ?? '-',
+          major: details?.major ?? '-',
+          wishJob: details?.wishJob ?? '-',
+          wishCompany: details?.wishCompany ?? '-',
+          matchedMentorId: effectiveMentors[p.applicationId] ?? null,
+        };
+      }),
+    [participants, effectiveMentors, applicationDetailsMap],
   );
 
   return {
     rows,
     mentors,
     effectiveMentors,
+    matchCounts,
     isLoading: isParticipantsLoading || isMentorLoading,
     isPending,
     handleSingleMatch,
