@@ -7,8 +7,8 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
 
-import MentorRenderCell from './cells/MentorRenderCell';
-import FeedbackStatusRenderCell from './cells/FeedbackStatusRenderCell';
+import MentorRenderCell from './ui/MentorRenderCell';
+import FeedbackStatusRenderCell from './ui/FeedbackStatusRenderCell';
 import useFeedbackParticipantRows, {
   useSelectedMission,
 } from './hooks/useFeedbackParticipantRows';

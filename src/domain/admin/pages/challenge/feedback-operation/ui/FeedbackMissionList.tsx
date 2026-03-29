@@ -5,9 +5,9 @@ import dayjs from '@/lib/dayjs';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import Link from 'next/link';
 import { useMemo } from 'react';
-import SubmissionCountCell from './cells/SubmissionCountCell';
-import useFeedbackMissionRows from './hooks/useFeedbackMissionRows';
-import type { Row } from './types';
+import SubmissionCountCell from './SubmissionCountCell';
+import useFeedbackMissionRows from '../hooks/useFeedbackMissionRows';
+import type { Row } from '../types';
 
 function FeedbackMissionList() {
   const rows = useFeedbackMissionRows();
