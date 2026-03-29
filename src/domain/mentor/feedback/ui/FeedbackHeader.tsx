@@ -31,16 +31,28 @@ const FeedbackHeader = ({
 
         {/* Center: stats badges */}
         <div className="hidden items-center gap-2 md:flex">
-          <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-500">
+          <span className="rounded-full px-2.5 py-0.5 text-xs font-medium text-gray-500">
             총 {totalCount}명
           </span>
-          <span className="rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-medium text-red-500">
+          <span
+            className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
+              waitingCount > 0 ? 'bg-red-50 text-red-500' : 'text-gray-400'
+            }`}
+          >
             시작 전 {waitingCount}
           </span>
-          <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600">
+          <span
+            className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
+              inProgressCount > 0 ? 'bg-blue-50 text-blue-600' : 'text-gray-400'
+            }`}
+          >
             진행 중 {inProgressCount}
           </span>
-          <span className="rounded-full bg-green-50 px-2.5 py-0.5 text-xs font-medium text-green-700">
+          <span
+            className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
+              completedCount > 0 ? 'bg-green-50 text-green-700' : 'text-gray-400'
+            }`}
+          >
             완료 {completedCount}
           </span>
         </div>
