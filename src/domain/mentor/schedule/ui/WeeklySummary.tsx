@@ -17,7 +17,7 @@ function SummaryCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex rounded-[16px] border border-neutral-80 bg-white p-4 md:p-6">
+    <div className="flex rounded-xl border border-neutral-80 bg-white p-4 md:p-6">
       <div className="flex flex-1 flex-col gap-3">
         <p
           className={

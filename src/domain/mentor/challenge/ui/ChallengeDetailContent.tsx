@@ -70,7 +70,7 @@ const MissionRow = ({
     <div className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50">
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2">
-          <span className="rounded bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-700">
+          <span className="rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-700">
             {mission.th}회차
           </span>
           {mission.challengeOptionTitle ? (
@@ -122,7 +122,7 @@ const MissionRow = ({
         <button
           type="button"
           onClick={() => onClickFeedback(mission.id, mission.th)}
-          className="rounded-md bg-orange-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-orange-600"
+          className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-orange-600"
         >
           피드백 작성
         </button>

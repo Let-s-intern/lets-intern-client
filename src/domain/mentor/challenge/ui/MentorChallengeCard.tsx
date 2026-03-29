@@ -60,7 +60,7 @@ const MentorChallengeCard = ({
   return (
     <Link
       href={`/mentor/challenges/${challengeId}`}
-      className="flex flex-col overflow-hidden rounded-lg border border-gray-200 transition-shadow hover:shadow-md"
+      className="flex flex-col overflow-hidden rounded-xl border border-gray-200 transition-shadow hover:shadow-md"
     >
       <img
         src={thumbnail || '/images/community1.png'}

@@ -102,7 +102,7 @@ export default function ProfilePage() {
           type="button"
           onClick={handleSave}
           disabled={isPending || !hasUnsavedChanges}
-          className={`rounded px-16 py-3 text-sm font-medium transition-colors disabled:cursor-not-allowed ${
+          className={`rounded-lg px-16 py-3 text-sm font-medium transition-colors disabled:cursor-not-allowed ${
             hasUnsavedChanges
               ? 'bg-primary text-white hover:bg-primary-dark'
               : 'bg-gray-200 text-gray-400'

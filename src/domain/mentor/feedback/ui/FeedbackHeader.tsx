@@ -62,7 +62,7 @@ const FeedbackHeader = ({
           href={mentorConfig.feedbackGuidelineUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="hidden rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 md:block"
+          className="hidden rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 md:block"
         >
           피드백 가이드 라인
         </a>
