@@ -1,17 +1,12 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  addDays,
-  isSameDay,
-  startOfWeek,
-} from 'date-fns';
+import { useEffect, useState } from 'react';
 
+import type { ChallengeMentorVo } from '@/api/user/user';
 import {
-  useMentorChallengeListQuery,
-  type ChallengeMentorVo,
-} from '@/api/user/user';
-import { useMentorMissionFeedbackListQuery, useMentorMissionFeedbackAttendanceQuery } from '@/api/challenge/challenge';
+  useMentorMissionFeedbackListQuery,
+  useMentorMissionFeedbackAttendanceQuery,
+} from '@/api/challenge/challenge';
 import type { PeriodBarData } from './challenge-period/ChallengePeriodBar';
 
 import WelcomeMessage from './ui/WelcomeMessage';
@@ -20,6 +15,10 @@ import WeekNavigation from './ui/WeekNavigation';
 import ChallengeFilter from './ui/ChallengeFilter';
 import WeeklyCalendar from './weekly-calendar/WeeklyCalendar';
 import FeedbackModal from '../feedback/FeedbackModal';
+
+import { useWeekNavigation } from './hooks/useWeekNavigation';
+import { useWeeklySummary } from './hooks/useWeeklySummary';
+import { useScheduleData } from './hooks/useScheduleData';
 
 // ---------------------------------------------------------------------------
 // Per-mission attendance fetcher (each mission needs its own API call)
@@ -32,7 +31,13 @@ const MissionAttendanceFetcher = ({
   onData,
 }: {
   challenge: ChallengeMentorVo;
-  mission: { id: number; title?: string | null; th: number; startDate: string; endDate: string };
+  mission: {
+    id: number;
+    title?: string | null;
+    th: number;
+    startDate: string;
+    endDate: string;
+  };
   colorIndex: number;
   onData: (key: string, bar: PeriodBarData) => void;
 }) => {
@@ -57,11 +62,15 @@ const MissionAttendanceFetcher = ({
       colorIndex,
       submittedCount: submitted.length,
       notSubmittedCount: notSubmitted.length,
-      // Only count feedback status for submitted attendees
-      waitingCount: submitted.filter((a) => a.feedbackStatus === 'WAITING').length,
-      inProgressCount: submitted.filter((a) => a.feedbackStatus === 'IN_PROGRESS').length,
+      waitingCount: submitted.filter(
+        (a) => a.feedbackStatus === 'WAITING',
+      ).length,
+      inProgressCount: submitted.filter(
+        (a) => a.feedbackStatus === 'IN_PROGRESS',
+      ).length,
       completedCount: submitted.filter(
-        (a) => a.feedbackStatus === 'COMPLETED' || a.feedbackStatus === 'CONFIRMED',
+        (a) =>
+          a.feedbackStatus === 'COMPLETED' || a.feedbackStatus === 'CONFIRMED',
       ).length,
     };
 
@@ -72,16 +81,18 @@ const MissionAttendanceFetcher = ({
 };
 
 // ---------------------------------------------------------------------------
-// Per-challenge data fetcher (fetches mission list, delegates attendance to per-mission)
+// Per-challenge data fetcher
 // ---------------------------------------------------------------------------
 
-interface ChallengeDataProps {
+const ChallengeDataFetcher = ({
+  challenge,
+  colorIndex,
+  onData,
+}: {
   challenge: ChallengeMentorVo;
   colorIndex: number;
   onData: (key: string, bar: PeriodBarData) => void;
-}
-
-const ChallengeDataFetcher = ({ challenge, colorIndex, onData }: ChallengeDataProps) => {
+}) => {
   const { data: missionData } = useMentorMissionFeedbackListQuery(
     challenge.challengeId,
     { enabled: true },
@@ -109,12 +120,17 @@ const ChallengeDataFetcher = ({ challenge, colorIndex, onData }: ChallengeDataPr
 // ---------------------------------------------------------------------------
 
 const SchedulePage = () => {
-  const [weekStartDate, setWeekStartDate] = useState<Date>(
-    startOfWeek(new Date(), { weekStartsOn: 1 }),
-  );
-  const [selectedChallengeId, setSelectedChallengeId] = useState<number | null>(
-    null,
-  );
+  const { weekStartDate, setWeekStartDate } = useWeekNavigation();
+  const {
+    challenges,
+    selectedChallengeId,
+    setSelectedChallengeId,
+    allBars,
+    handleData,
+    challengeFilterItems,
+  } = useScheduleData();
+  const { totalCount, todayDueCount, incompleteCount, completedCount } =
+    useWeeklySummary(allBars, weekStartDate);
 
   // Feedback modal state
   const [feedbackModal, setFeedbackModal] = useState<{
@@ -124,73 +140,6 @@ const SchedulePage = () => {
     challengeTitle?: string;
     missionTh?: number;
   }>({ isOpen: false, challengeId: 0, missionId: 0 });
-
-  const { data: challengeListData } = useMentorChallengeListQuery();
-  const challenges = challengeListData?.myChallengeMentorVoList ?? [];
-
-  // Bars collected from child data fetchers (keyed by "challengeId-missionId")
-  const [barsMap, setBarsMap] = useState<Map<string, PeriodBarData>>(
-    new Map(),
-  );
-
-  const handleData = useCallback(
-    (key: string, bar: PeriodBarData) => {
-      setBarsMap((prev) => {
-        const next = new Map(prev);
-        next.set(key, bar);
-        return next;
-      });
-    },
-    [],
-  );
-
-  // Aggregate all bars, optionally filtered by selected challenge
-  const allBars = useMemo(() => {
-    const result: PeriodBarData[] = [];
-    barsMap.forEach((bar) => {
-      if (selectedChallengeId === null || selectedChallengeId === bar.challengeId) {
-        result.push(bar);
-      }
-    });
-    return result;
-  }, [barsMap, selectedChallengeId]);
-
-  // Weekly summary calculations
-  const { totalCount, todayDueCount, incompleteCount, completedCount } = useMemo(() => {
-    const weekStart = startOfWeek(weekStartDate, { weekStartsOn: 1 });
-    const weekEnd = addDays(weekStart, 6);
-    const today = new Date();
-
-    let total = 0;
-    let todayDue = 0;
-    let incomplete = 0;
-    let completed = 0;
-
-    for (const bar of allBars) {
-      const barStart = new Date(bar.startDate);
-      const barEnd = new Date(bar.endDate);
-
-      // Check if the bar overlaps with the current week
-      if (barStart <= weekEnd && barEnd >= weekStart) {
-        const barTotal =
-          bar.submittedCount + bar.notSubmittedCount;
-        total += barTotal;
-
-        // Today due: endDate is today
-        if (isSameDay(barEnd, today)) {
-          todayDue += barTotal;
-        }
-
-        // Incomplete: waiting + in progress
-        incomplete += bar.waitingCount + bar.inProgressCount;
-
-        // Completed
-        completed += bar.completedCount;
-      }
-    }
-
-    return { totalCount: total, todayDueCount: todayDue, incompleteCount: incomplete, completedCount: completed };
-  }, [allBars, weekStartDate]);
 
   const handleBarClick = (challengeId: number, missionId: number) => {
     const bar = allBars.find(
@@ -205,15 +154,6 @@ const SchedulePage = () => {
     });
   };
 
-  const challengeFilterItems = useMemo(
-    () =>
-      challenges.map((c) => ({
-        challengeId: c.challengeId,
-        title: c.title,
-      })),
-    [challenges],
-  );
-
   return (
     <div className="flex flex-col gap-6 md:gap-10">
       <div className="flex items-center gap-2.5">
@@ -225,7 +165,6 @@ const SchedulePage = () => {
       <WelcomeMessage />
 
       <div className="flex flex-col gap-14">
-        {/* Summary cards */}
         <div className="flex flex-col gap-6">
           <WeeklySummary
             totalCount={totalCount}
@@ -234,7 +173,6 @@ const SchedulePage = () => {
             completedCount={completedCount}
           />
 
-          {/* Calendar section */}
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-4">
               <WeekNavigation
@@ -258,17 +196,15 @@ const SchedulePage = () => {
         </div>
       </div>
 
-      {/* Invisible data fetchers for each challenge */}
       {challenges.map((c, i) => (
-          <ChallengeDataFetcher
-            key={c.challengeId}
-            challenge={c}
-            colorIndex={i}
-            onData={handleData}
-          />
-        ))}
+        <ChallengeDataFetcher
+          key={c.challengeId}
+          challenge={c}
+          colorIndex={i}
+          onData={handleData}
+        />
+      ))}
 
-      {/* Feedback modal */}
       <FeedbackModal
         isOpen={feedbackModal.isOpen}
         onClose={() =>

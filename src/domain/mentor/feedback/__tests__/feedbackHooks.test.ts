@@ -7,8 +7,7 @@
  * making it better suited for integration tests.
  */
 
-import { describe, expect, it, vi } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
 
 // ── useFeedbackStatus ────────────────────────────────────────────────
 
