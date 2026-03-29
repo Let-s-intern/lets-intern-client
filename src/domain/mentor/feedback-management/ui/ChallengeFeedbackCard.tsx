@@ -37,8 +37,9 @@ const MissionRow = ({ mission, onClickFeedback }: MissionRowProps) => {
       }
     }
 
-    const isAllComplete = mission.submittedCount > 0 && completed >= mission.submittedCount;
-    const status: 'completed' | 'inProgress' | 'waiting' = isAllComplete ? 'completed' : feedbackStarted > 0 ? 'inProgress' : 'waiting';
+    const hasSubmission = mission.submittedCount > 0;
+    const isAllComplete = hasSubmission && completed >= mission.submittedCount;
+    const status: 'completed' | 'inProgress' | 'waiting' | 'none' = !hasSubmission ? 'none' : isAllComplete ? 'completed' : feedbackStarted > 0 ? 'inProgress' : 'waiting';
     return { completedCount: completed, missionStatus: status };
   }, [mission.feedbackStatusCounts, mission.submittedCount]);
 
@@ -46,6 +47,7 @@ const MissionRow = ({ mission, onClickFeedback }: MissionRowProps) => {
     completed: { label: '완료', className: 'bg-green-100 text-green-700' },
     inProgress: { label: '진행중', className: 'bg-yellow-100 text-yellow-700' },
     waiting: { label: '진행전', className: 'bg-gray-100 text-gray-500' },
+    none: null,
   } as const;
 
   return (
@@ -61,11 +63,13 @@ const MissionRow = ({ mission, onClickFeedback }: MissionRowProps) => {
         </div>
 
         {/* Mission status badge */}
-        <span
-          className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${statusConfig[missionStatus].className}`}
-        >
-          {statusConfig[missionStatus].label}
-        </span>
+        {statusConfig[missionStatus] && (
+          <span
+            className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${statusConfig[missionStatus].className}`}
+          >
+            {statusConfig[missionStatus].label}
+          </span>
+        )}
       </div>
 
       <div className="flex flex-wrap items-center gap-3 md:gap-4">
