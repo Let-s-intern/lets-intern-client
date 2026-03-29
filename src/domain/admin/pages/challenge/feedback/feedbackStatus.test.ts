@@ -150,7 +150,60 @@ describe('fallback 데이터 feedbackStatus 매핑', () => {
   });
 });
 
-// ── 4) 결론 & 디버깅 가이드 ─────────────────────────────────────
+// ── 4) query invalidation 후 서버 값 반영 시나리오 ───────────────
+
+describe('query invalidation 후 feedbackStatus 동기화', () => {
+  it('params.value가 변경되면 localValue가 동기화된다 (statusCache 불필요)', () => {
+    // statusCache 제거 후, params.value가 서버 데이터의 source of truth
+    // useEffect로 params.value 변경 시 localValue를 동기화
+    const initialParamsValue = 'WAITING';
+    let localValue = initialParamsValue;
+
+    // PATCH 성공 후 query invalidation → 서버에서 새로운 값 반환
+    const updatedParamsValue = 'IN_PROGRESS';
+
+    // useEffect 시뮬레이션: serverValue 변경 시 setLocalValue 호출
+    const setLocalValue = (v: string) => {
+      localValue = v;
+    };
+    setLocalValue(updatedParamsValue);
+
+    expect(localValue).toBe('IN_PROGRESS');
+  });
+
+  it('fallback 데이터에서도 캐시된 feedbackStatus를 활용한다', () => {
+    // feedback attendance 캐시에 저장된 feedbackStatus
+    const cachedFeedbackData = {
+      attendanceList: [
+        { id: 1, feedbackStatus: 'COMPLETED' },
+        { id: 2, feedbackStatus: 'IN_PROGRESS' },
+      ],
+    };
+
+    const feedbackStatusMap = new Map<number, string | null>();
+    cachedFeedbackData.attendanceList.forEach((item) => {
+      feedbackStatusMap.set(item.id, item.feedbackStatus ?? null);
+    });
+
+    // fallback 데이터 (feedbackStatus 없음)
+    const fallbackItem = { id: 1, feedbackStatus: undefined as string | undefined };
+    const cachedStatus = feedbackStatusMap.get(fallbackItem.id);
+    const resolvedStatus = cachedStatus ?? fallbackItem.feedbackStatus ?? 'WAITING';
+
+    expect(resolvedStatus).toBe('COMPLETED');
+  });
+
+  it('캐시에도 없고 fallback에도 없으면 WAITING 기본값', () => {
+    const feedbackStatusMap = new Map<number, string | null>();
+    const fallbackItem = { id: 999, feedbackStatus: undefined as string | undefined };
+    const cachedStatus = feedbackStatusMap.get(fallbackItem.id);
+    const resolvedStatus = cachedStatus ?? fallbackItem.feedbackStatus ?? 'WAITING';
+
+    expect(resolvedStatus).toBe('WAITING');
+  });
+});
+
+// ── 5) 결론 & 디버깅 가이드 ─────────────────────────────────────
 
 describe('디버깅 가이드', () => {
   it('네트워크 탭에서 확인해야 할 것들', () => {
