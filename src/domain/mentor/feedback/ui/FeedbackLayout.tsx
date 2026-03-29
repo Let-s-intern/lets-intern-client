@@ -63,7 +63,7 @@ const FeedbackLayout = ({
         {/* Mentee info */}
         <div
           className={`shrink-0 overflow-hidden transition-all duration-300 ease-in-out ${
-            isExpanded ? 'max-h-14' : 'max-h-[500px]'
+            isExpanded ? 'max-h-14 mb-0' : 'max-h-[500px] mb-2'
           }`}
         >
           {menteeInfo(isExpanded)}
