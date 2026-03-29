@@ -16,12 +16,14 @@ const MentorInfoCell = (
   if (!mentor) return <span className="text-neutral-40">-</span>;
 
   const career = mentor.userCareerList?.[0];
-  if (!career?.company && !career?.job) return <span className="text-neutral-40">-</span>;
+  if (!career?.company && !career?.job)
+    return <span className="text-neutral-40">-</span>;
 
   return (
-    <span className="text-xxsmall12 text-neutral-30">
-      {[career.company, career.job].filter(Boolean).join(' / ')}
-    </span>
+    <div className="flex flex-col py-1 text-xxsmall12">
+      <span className="text-neutral-30">{career.company ?? '-'}</span>
+      <span className="text-neutral-40">{career.job ?? '-'}</span>
+    </div>
   );
 };
 

@@ -12,11 +12,48 @@ import MentorList from './components/MentorList';
 import type { MentorAssignmentRow } from './types';
 import { getMentorColor } from './utils';
 
+const PLAN_COLORS: Record<string, { bg: string; text: string }> = {
+  LIGHT: { bg: 'bg-neutral-90', text: 'text-neutral-30' },
+  BASIC: { bg: 'bg-blue-50', text: 'text-blue-700' },
+  STANDARD: { bg: 'bg-violet-50', text: 'text-violet-700' },
+  PREMIUM: { bg: 'bg-amber-50', text: 'text-amber-700' },
+};
+
 const columns: GridColDef<MentorAssignmentRow>[] = [
-  { field: 'pricePlanType', headerName: '결제 상품', width: 100 },
+  {
+    field: 'pricePlanType',
+    headerName: '결제 상품',
+    width: 100,
+    renderCell: (params) => {
+      const plan = params.value as string;
+      const color = PLAN_COLORS[plan] ?? PLAN_COLORS.BASIC;
+      return (
+        <span
+          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xxsmall12 font-medium ${color.bg} ${color.text}`}
+        >
+          {plan}
+        </span>
+      );
+    },
+  },
   { field: 'name', headerName: '이름', width: 100 },
-  { field: 'wishCompany', headerName: '희망 기업', width: 120 },
-  { field: 'wishJob', headerName: '희망 직무', width: 150 },
+  {
+    field: 'menteeInfo',
+    headerName: '멘티 정보',
+    width: 160,
+    sortable: false,
+    renderCell: (params) => {
+      const { wishCompany, wishJob } = params.row;
+      if (wishCompany === '-' && wishJob === '-')
+        return <span className="text-neutral-40">-</span>;
+      return (
+        <div className="flex flex-col py-1 text-xxsmall12">
+          <span className="text-neutral-30">{wishCompany}</span>
+          <span className="text-neutral-40">{wishJob}</span>
+        </div>
+      );
+    },
+  },
   {
     field: 'matchedMentorId',
     headerName: '담당 멘토',
@@ -26,7 +63,7 @@ const columns: GridColDef<MentorAssignmentRow>[] = [
   {
     field: 'mentorInfo',
     headerName: '멘토 정보',
-    width: 180,
+    width: 160,
     sortable: false,
     renderCell: MentorInfoCell,
   },
