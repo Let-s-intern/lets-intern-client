@@ -27,19 +27,18 @@ const MissionRow = ({ mission, onClickFeedback }: MissionRowProps) => {
 
   const { completedCount, missionStatus } = useMemo(() => {
     let completed = 0;
-    let hasInProgress = false;
+    let feedbackStarted = 0;
     for (const item of mission.feedbackStatusCounts) {
       if (item.feedbackStatus === 'COMPLETED' || item.feedbackStatus === 'CONFIRMED') {
         completed += item.count;
       }
-      if (item.feedbackStatus === 'IN_PROGRESS') {
-        hasInProgress = item.count > 0;
+      if (item.feedbackStatus !== 'WAITING') {
+        feedbackStarted += item.count;
       }
     }
 
-    const hasFeedbackDone = completed > 0 || hasInProgress;
     const isAllComplete = mission.submittedCount > 0 && completed >= mission.submittedCount;
-    const status: 'completed' | 'inProgress' | 'waiting' = isAllComplete ? 'completed' : hasFeedbackDone ? 'inProgress' : 'waiting';
+    const status: 'completed' | 'inProgress' | 'waiting' = isAllComplete ? 'completed' : feedbackStarted > 0 ? 'inProgress' : 'waiting';
     return { completedCount: completed, missionStatus: status };
   }, [mission.feedbackStatusCounts, mission.submittedCount]);
 
