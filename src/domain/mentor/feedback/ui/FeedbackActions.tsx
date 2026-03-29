@@ -66,7 +66,7 @@ const FeedbackActions = ({
   };
 
   return (
-    <div className="flex justify-end border-t border-gray-200 pt-3 md:border-t">
+    <div className="flex justify-end">
       <div className="flex w-full items-center gap-3 md:w-auto">
         <button
           type="button"

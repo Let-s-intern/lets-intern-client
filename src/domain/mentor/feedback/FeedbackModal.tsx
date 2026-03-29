@@ -79,14 +79,14 @@ const FeedbackModal = ({
           />
         }
         navigation={
-          <div className="flex items-center justify-between py-2">
+          <div className="flex items-center gap-1">
             <button
               type="button"
               onClick={handlePrevMentee}
               disabled={!hasPrevMentee}
-              className="flex items-center gap-1 px-4 py-2 text-base font-medium text-neutral-900 disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex items-center gap-0.5 px-2 py-1 text-xs font-medium text-gray-500 transition-colors hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-30"
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M14 9L10 13L14 17"
                   stroke="currentColor"
@@ -95,16 +95,16 @@ const FeedbackModal = ({
                   strokeLinejoin="round"
                 />
               </svg>
-              이전 멘티
+              이전
             </button>
             <button
               type="button"
               onClick={handleNextMentee}
               disabled={!hasNextMentee}
-              className="flex items-center gap-1 px-4 py-2 text-base font-medium text-neutral-900 disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex items-center gap-0.5 px-2 py-1 text-xs font-medium text-gray-500 transition-colors hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-30"
             >
-              다음 멘티
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              다음
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M10 9L14 13L10 17"
                   stroke="currentColor"

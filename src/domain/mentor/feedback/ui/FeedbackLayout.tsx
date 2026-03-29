@@ -3,7 +3,7 @@ import { useState, type ReactNode } from 'react';
 interface FeedbackLayoutProps {
   /** Left panel (mentee list) */
   sidebar: ReactNode;
-  /** Navigation buttons (prev/next mentee) */
+  /** Prev/next mentee navigation - compact version for bottom bar */
   navigation: ReactNode;
   /** Mentee info card - receives (collapsed: boolean) => ReactNode */
   menteeInfo: (collapsed: boolean) => ReactNode;
@@ -20,7 +20,7 @@ const FeedbackLayout = ({
   editor,
   actions,
 }: FeedbackLayoutProps) => {
-  const [isMenteeInfoOpen, setIsMenteeInfoOpen] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
     <div
@@ -34,34 +34,9 @@ const FeedbackLayout = ({
 
       {/* Right panel: editor area - takes remaining space */}
       <div className="flex min-w-0 flex-1 flex-col gap-3 overflow-hidden">
-        {/* Navigation */}
-        <div className="shrink-0">{navigation}</div>
-
         {/* Mentee info - collapsible */}
         <div className="shrink-0">
-          <button
-            type="button"
-            onClick={() => setIsMenteeInfoOpen((prev) => !prev)}
-            className="mb-1 flex items-center gap-1 text-xs font-medium text-gray-500 transition-colors hover:text-gray-700"
-          >
-            멘티 정보
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 14 14"
-              fill="none"
-              className={`transition-transform ${isMenteeInfoOpen ? 'rotate-180' : ''}`}
-            >
-              <path
-                d="M3.5 5.25L7 8.75L10.5 5.25"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-          {menteeInfo(!isMenteeInfoOpen)}
+          {menteeInfo(isCollapsed)}
         </div>
 
         {/* Feedback editor - flex-1 to fill remaining height */}
@@ -69,8 +44,42 @@ const FeedbackLayout = ({
           {editor}
         </div>
 
-        {/* Actions */}
-        <div className="shrink-0">{actions}</div>
+        {/* Bottom bar: 크게보기 | 이전/다음 멘티 | 임시저장/제출 */}
+        <div className="flex shrink-0 items-center border-t border-gray-200 pt-3">
+          {/* 왼쪽: 크게 보기 */}
+          <button
+            type="button"
+            onClick={() => setIsCollapsed((prev) => !prev)}
+            className="flex items-center gap-1 text-sm font-medium text-gray-500 transition-colors hover:text-gray-700"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              className={isCollapsed ? 'rotate-180' : ''}
+            >
+              <path
+                d={isCollapsed
+                  ? 'M3 10L8 5L13 10'
+                  : 'M3 6L8 11L13 6'}
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            {isCollapsed ? '멘티 정보 보기' : '크게 보기'}
+          </button>
+
+          {/* 가운데: 이전/다음 멘티 */}
+          <div className="flex flex-1 items-center justify-center">
+            {navigation}
+          </div>
+
+          {/* 오른쪽: 임시저장/제출 */}
+          <div className="flex items-center">{actions}</div>
+        </div>
       </div>
     </div>
   );
