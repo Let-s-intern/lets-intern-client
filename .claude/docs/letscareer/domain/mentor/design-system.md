@@ -6,13 +6,23 @@
 
 ## 1. Color System
 
-### Primary Colors (Violet)
+### Primary Colors (프로젝트 커스텀 토큰)
+
+> **중요**: Tailwind 기본 색상(violet, indigo 등)을 사용하지 않는다. 반드시 프로젝트 커스텀 primary 토큰을 사용한다.
 
 | Token | Tailwind Class | Hex | Usage |
 |-------|---------------|-----|-------|
-| Primary | `violet-600` | #7c3aed | 주요 버튼 배경, 강조 텍스트 |
-| Primary Light | `violet-100` ~ `violet-200` | #ede9fe ~ #ddd6fe | 강조 배경, 호버 배경, 선택 상태 |
-| Primary Hover | `violet-700` | #6d28d9 | 버튼 호버 상태 |
+| Primary | `primary` | #4D55F5 | 주요 버튼 배경, 강조 텍스트 |
+| Primary Hover | `primary-hover` | #474EE8 | 버튼 호버 상태 |
+| Primary Dark | `primary-dark` | #4138A3 | 진한 강조 텍스트 |
+| Primary Light | `primary-light` | #757BFF | 밝은 강조 |
+| Primary XLight | `primary-xlight` | #A9C1FF | 매우 밝은 강조 |
+| Primary 5 | `primary-5` | #F5F6FF | 연한 배경 (헤더 등) |
+| Primary 10 | `primary-10` | #EDEEFE | 강조 배경, 뱃지 배경 |
+| Primary 15 | `primary-15` | #E3E5FB | 선택 상태 배경 |
+| Primary 20 | `primary-20` | #DBDDFD | 호버 배경 |
+| Primary 80 | `primary-80` | #7177F7 | 중간 강조 |
+| Primary 90 | `primary-90` | #5F66F6 | 중간 강조 |
 
 ### Neutral Colors
 
@@ -44,7 +54,7 @@
 
 | Element | Background | Text |
 |---------|-----------|------|
-| 회차 뱃지 | `violet-100` | `violet-700` |
+| 회차 뱃지 | `primary-10` | `primary-dark` |
 
 ---
 
@@ -97,19 +107,19 @@
 
 ### Primary Button
 ```
-bg-violet-600 text-white rounded-lg hover:bg-violet-700
+bg-primary text-white rounded-lg hover:bg-primary-hover
 disabled:cursor-not-allowed disabled:opacity-50
 ```
 
 ### Secondary / Outline Button
 ```
-border border-violet-600 text-violet-600 rounded-lg hover:bg-violet-50
+border border-primary text-primary rounded-lg hover:bg-primary-5
 disabled:cursor-not-allowed disabled:opacity-50
 ```
 
 ### Accent Action Button (e.g., "피드백 작성")
 ```
-bg-violet-600 text-white rounded-lg hover:bg-violet-700
+bg-primary text-white rounded-lg hover:bg-primary-hover
 ```
 
 ---
