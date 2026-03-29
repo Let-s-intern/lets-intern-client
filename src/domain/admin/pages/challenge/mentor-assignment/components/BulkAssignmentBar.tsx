@@ -38,7 +38,12 @@ export default function BulkAssignmentBar({
         </button>
         <div className="flex items-center gap-2">
           <select
-            className="rounded border border-neutral-80 px-2 py-1.5 text-xsmall14 outline-none"
+            disabled={selectedCount === 0}
+            className={`rounded border px-2 py-1.5 text-xsmall14 outline-none ${
+              selectedCount > 0
+                ? 'border-neutral-0 text-neutral-0'
+                : 'border-neutral-80 text-neutral-40 opacity-50'
+            }`}
             value={bulkMentorId}
             onChange={(e) => {
               const v = e.target.value;
