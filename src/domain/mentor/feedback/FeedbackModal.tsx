@@ -122,9 +122,9 @@ const FeedbackModal = ({
               type="button"
               onClick={handlePrevMentee}
               disabled={!hasPrevMentee}
-              className="flex items-center gap-0.5 px-2 py-1 text-xs font-medium text-gray-500 transition-colors hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-30"
+              className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-30"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M14 9L10 13L14 17"
                   stroke="currentColor"
@@ -133,16 +133,16 @@ const FeedbackModal = ({
                   strokeLinejoin="round"
                 />
               </svg>
-              이전
+              이전 멘티
             </button>
             <button
               type="button"
               onClick={handleNextMentee}
               disabled={!hasNextMentee}
-              className="flex items-center gap-0.5 px-2 py-1 text-xs font-medium text-gray-500 transition-colors hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-30"
+              className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-30"
             >
-              다음
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              다음 멘티
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M10 9L14 13L10 17"
                   stroke="currentColor"
