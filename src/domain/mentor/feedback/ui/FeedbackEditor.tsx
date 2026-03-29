@@ -34,14 +34,12 @@ const FeedbackEditor = ({
   }
 
   return (
-    <div className="flex flex-1 flex-col overflow-auto rounded-xl border border-gray-200 bg-white">
-      <EditorApp
-        initialEditorStateJsonString={
-          initialEditorStateJsonString || emptyEditorState
-        }
-        onChange={onChange}
-      />
-    </div>
+    <EditorApp
+      initialEditorStateJsonString={
+        initialEditorStateJsonString || emptyEditorState
+      }
+      onChange={onChange}
+    />
   );
 };
 
