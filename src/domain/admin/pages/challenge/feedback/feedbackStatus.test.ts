@@ -328,19 +328,34 @@ describe('피드백 관리 제출/완료/전체 카운트', () => {
     expect(submitted).toBe(2);
   });
 
-  it('완료 수: feedbackStatus가 COMPLETED 또는 CONFIRMED인 항목 수', () => {
+  it('진행전 수: 제출확인 완료 + feedbackStatus가 WAITING인 항목 수', () => {
+    const list = [
+      { attendance: { status: 'PRESENT', feedbackStatus: 'WAITING' } },
+      { attendance: { status: 'ABSENT', feedbackStatus: 'WAITING' } }, // 확인전 → 제외
+      { attendance: { status: 'UPDATED', feedbackStatus: 'WAITING' } },
+      { attendance: { status: 'PRESENT', feedbackStatus: 'IN_PROGRESS' } }, // 진행중 → 제외
+      { attendance: { status: 'LATE', feedbackStatus: 'WAITING' } },
+    ];
+    const waiting = list.filter((a) => {
+      const s = a.attendance.status;
+      const fs = a.attendance.feedbackStatus;
+      return s !== 'ABSENT' && s != null && fs === 'WAITING';
+    }).length;
+    expect(waiting).toBe(3);
+  });
+
+  it('확인완료 수: feedbackStatus가 CONFIRMED인 항목 수', () => {
     const list = [
       { attendance: { feedbackStatus: 'WAITING' } },
       { attendance: { feedbackStatus: 'IN_PROGRESS' } },
       { attendance: { feedbackStatus: 'COMPLETED' } },
       { attendance: { feedbackStatus: 'CONFIRMED' } },
-      { attendance: { feedbackStatus: 'WAITING' } },
+      { attendance: { feedbackStatus: 'CONFIRMED' } },
     ];
-    const completed = list.filter((a) => {
-      const fs = a.attendance.feedbackStatus;
-      return fs === 'COMPLETED' || fs === 'CONFIRMED';
-    }).length;
-    expect(completed).toBe(2);
+    const confirmed = list.filter(
+      (a) => a.attendance.feedbackStatus === 'CONFIRMED',
+    ).length;
+    expect(confirmed).toBe(2);
   });
 
   it('전체 수: 리스트 길이', () => {
@@ -352,10 +367,10 @@ describe('피드백 관리 제출/완료/전체 카운트', () => {
     expect(list.length).toBe(3);
   });
 
-  it('표시 형식: 제출/완료/전체', () => {
-    const submitted = 3, completed = 2, total = 5;
-    const display = `${submitted} / ${completed} / ${total}`;
-    expect(display).toBe('3 / 2 / 5');
+  it('표시 형식: 멘티제출/진행전/확인완료/전체', () => {
+    const submitted = 3, waiting = 2, confirmed = 1, total = 5;
+    const display = `${submitted} / ${waiting} / ${confirmed} / ${total}`;
+    expect(display).toBe('3 / 2 / 1 / 5');
   });
 });
 

@@ -1,48 +1,26 @@
 'use client';
 
-import { useState } from 'react';
+import { useMediaQuery } from '@mui/material';
 
-import { useMentorFeedbackManagementQuery } from '@/api/challenge/challenge';
-import type { MentorFeedbackManagement } from '@/api/challenge/challengeSchema';
 import FeedbackModal from '@/domain/mentor/feedback/FeedbackModal';
-
-import ChallengeFeedbackCard from './ChallengeFeedbackCard';
-
-type Challenge = MentorFeedbackManagement['challengeList'][number];
+import MobileFeedbackPage from '@/domain/mentor/feedback/ui/MobileFeedbackPage';
+import ChallengeFeedbackCard from './ui/ChallengeFeedbackCard';
+import { useFeedbackManagement } from './hooks/useFeedbackManagement';
 
 const FeedbackManagementPage = () => {
-  const { data, isLoading } = useMentorFeedbackManagementQuery();
-  const challengeList = data?.challengeList ?? [];
+  const {
+    challengeList,
+    isLoading,
+    feedbackModal,
+    handleMissionClick,
+    handleCloseModal,
+  } = useFeedbackManagement();
 
-  const [feedbackModal, setFeedbackModal] = useState<{
-    isOpen: boolean;
-    challengeId: number;
-    missionId: number;
-    challengeTitle?: string;
-    missionTh?: number;
-  }>({ isOpen: false, challengeId: 0, missionId: 0 });
-
-  const handleMissionClick = (
-    challenge: Challenge,
-    missionId: number,
-    missionTh: number,
-  ) => {
-    setFeedbackModal({
-      isOpen: true,
-      challengeId: challenge.challengeId,
-      missionId,
-      challengeTitle: challenge.title ?? undefined,
-      missionTh,
-    });
-  };
-
-  const handleCloseModal = () => {
-    setFeedbackModal((prev) => ({ ...prev, isOpen: false }));
-  };
+  const isMobile = useMediaQuery('(max-width: 767px)');
 
   return (
-    <div className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold leading-8 text-neutral-900">
+    <div className="flex flex-col gap-4 pb-20 md:gap-6 md:pb-0">
+      <h1 className="text-lg font-semibold leading-7 text-neutral-900 md:text-xl md:leading-8">
         피드백 현황
       </h1>
 
@@ -53,7 +31,7 @@ const FeedbackManagementPage = () => {
           참여 중인 챌린지가 없습니다.
         </div>
       ) : (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4 md:gap-6">
           {challengeList.map((challenge) => (
             <ChallengeFeedbackCard
               key={challenge.challengeId}
@@ -64,14 +42,26 @@ const FeedbackManagementPage = () => {
         </div>
       )}
 
-      <FeedbackModal
-        isOpen={feedbackModal.isOpen}
-        onClose={handleCloseModal}
-        challengeId={feedbackModal.challengeId}
-        missionId={feedbackModal.missionId}
-        challengeTitle={feedbackModal.challengeTitle}
-        missionTh={feedbackModal.missionTh}
-      />
+      {/* Mobile: full-page editor / Desktop: modal */}
+      {isMobile ? (
+        <MobileFeedbackPage
+          isOpen={feedbackModal.isOpen}
+          onClose={handleCloseModal}
+          challengeId={feedbackModal.challengeId}
+          missionId={feedbackModal.missionId}
+          challengeTitle={feedbackModal.challengeTitle}
+          missionTh={feedbackModal.missionTh}
+        />
+      ) : (
+        <FeedbackModal
+          isOpen={feedbackModal.isOpen}
+          onClose={handleCloseModal}
+          challengeId={feedbackModal.challengeId}
+          missionId={feedbackModal.missionId}
+          challengeTitle={feedbackModal.challengeTitle}
+          missionTh={feedbackModal.missionTh}
+        />
+      )}
     </div>
   );
 };

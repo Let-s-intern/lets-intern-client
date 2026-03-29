@@ -4,10 +4,10 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { usePatchUser, useUserQuery } from '@/api/user/user';
 import { useUnsavedChangesWarning } from '@/hooks/useUnsavedChangesWarning';
-import mentorConfig from '../config.json';
-import BasicInfo, { type BasicInfoFormData } from './BasicInfo';
-import CareerSection from './CareerSection';
-import Introduction from './Introduction';
+import mentorConfig from '../constants/config';
+import BasicInfo, { type BasicInfoFormData } from './ui/BasicInfo';
+import CareerSection from './ui/CareerSection';
+import Introduction from './ui/Introduction';
 
 const INITIAL_FORM_DATA: BasicInfoFormData = {
   name: '',
@@ -88,27 +88,30 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto max-w-3xl px-0 py-4 md:px-8 md:py-8">
-      <h1 className="mb-1 text-2xl font-bold">프로필</h1>
-      <hr className="mb-8 border-gray-300" />
+      <h1 className="mb-1 text-xl font-bold">프로필</h1>
+      <hr className="mb-6 border-gray-200" />
 
-      <div className="flex flex-col gap-10">
+      <div className="flex flex-col gap-6 pb-20">
         <BasicInfo formData={formData} onChange={setFormData} />
         <Introduction value={introduction} onChange={setIntroduction} />
         <CareerSection />
       </div>
 
-      <div className="mt-10 flex justify-center">
+      {/* Floating save button */}
+      <div
+        className={`fixed bottom-6 left-1/2 z-50 -translate-x-1/2 transition-all duration-300 ${
+          hasUnsavedChanges
+            ? 'translate-y-0 opacity-100'
+            : 'pointer-events-none translate-y-4 opacity-0'
+        }`}
+      >
         <button
           type="button"
           onClick={handleSave}
-          disabled={isPending || !hasUnsavedChanges}
-          className={`rounded px-16 py-3 text-sm font-medium transition-colors disabled:cursor-not-allowed ${
-            hasUnsavedChanges
-              ? 'bg-primary text-white hover:bg-primary-dark'
-              : 'bg-gray-200 text-gray-400'
-          }`}
+          disabled={isPending}
+          className="rounded-lg bg-primary px-16 py-3 text-sm font-medium text-white shadow-lg transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {isPending ? '저장 중...' : '저장하기'}
+          {isPending ? '저장 중...' : '변경사항 저장'}
         </button>
       </div>
     </div>

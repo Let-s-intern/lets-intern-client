@@ -13,5 +13,6 @@ export interface MentorAssignmentRow {
   major: string;
   wishJob: string;
   wishCompany: string;
+  pricePlanType: string;
   matchedMentorId: number | null;
 }

@@ -30,14 +30,14 @@ function GuideRow({ guide }: { guide: ChallengeMentorGuideItem }) {
       href={guide.link ?? '#'}
       target={guide.link ? '_blank' : undefined}
       rel={guide.link ? 'noopener noreferrer' : undefined}
-      className="flex items-center gap-4 border-b border-neutral-80 px-6 py-4 transition-colors last:border-b-0 hover:bg-neutral-95"
+      className="flex flex-col gap-2 border-b border-neutral-80 px-4 py-3 transition-colors last:border-b-0 hover:bg-neutral-95 md:flex-row md:items-center md:gap-4 md:px-6 md:py-4"
     >
       {guide.createDate && (
-        <span className="shrink-0 rounded border border-neutral-80 px-3 py-1 text-xxsmall12 text-neutral-40">
+        <span className="w-fit shrink-0 rounded border border-neutral-80 px-2.5 py-0.5 text-xxsmall12 text-neutral-40 md:px-3 md:py-1">
           {getRelativeDate(guide.createDate)}
         </span>
       )}
-      <span className="text-xsmall16 text-neutral-10">{guide.title}</span>
+      <span className="break-words text-xsmall14 text-neutral-10 md:text-xsmall16">{guide.title}</span>
     </a>
   );
 }
