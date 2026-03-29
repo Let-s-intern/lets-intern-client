@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 
 interface FeedbackLayoutProps {
   /** Left panel (mentee list) */
@@ -20,6 +20,8 @@ const FeedbackLayout = ({
   editor,
   actions,
 }: FeedbackLayoutProps) => {
+  const [isMenteeInfoOpen, setIsMenteeInfoOpen] = useState(true);
+
   return (
     <div
       className="flex flex-1 flex-col gap-4 px-4 pb-4 pt-2 md:flex-row md:gap-6 md:px-6 md:pb-6"
@@ -31,11 +33,35 @@ const FeedbackLayout = ({
       </div>
 
       {/* Right panel: editor area - takes remaining space */}
-      <div className="flex min-w-0 flex-1 flex-col gap-4 overflow-hidden">
-        {/* Navigation + Mentee info */}
-        <div className="flex shrink-0 flex-col">
-          {navigation}
-          {menteeInfo}
+      <div className="flex min-w-0 flex-1 flex-col gap-3 overflow-hidden">
+        {/* Navigation */}
+        <div className="shrink-0">{navigation}</div>
+
+        {/* Mentee info - collapsible */}
+        <div className="shrink-0">
+          <button
+            type="button"
+            onClick={() => setIsMenteeInfoOpen((prev) => !prev)}
+            className="mb-1 flex items-center gap-1 text-xs font-medium text-gray-500 transition-colors hover:text-gray-700"
+          >
+            멘티 정보
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 14 14"
+              fill="none"
+              className={`transition-transform ${isMenteeInfoOpen ? 'rotate-180' : ''}`}
+            >
+              <path
+                d="M3.5 5.25L7 8.75L10.5 5.25"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+          {isMenteeInfoOpen && menteeInfo}
         </div>
 
         {/* Feedback editor - flex-1 to fill remaining height */}
