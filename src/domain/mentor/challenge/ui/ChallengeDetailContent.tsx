@@ -92,6 +92,15 @@ const MissionRow = ({
             {formatDate(mission.startDate)} ~ {formatDate(mission.endDate)}
           </p>
         </div>
+
+        {/* Mission status badge */}
+        {statusConfig[missionStatus] && (
+          <span
+            className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${statusConfig[missionStatus].className}`}
+          >
+            {statusConfig[missionStatus].label}
+          </span>
+        )}
       </div>
 
       <div className="flex items-center gap-4">
@@ -112,15 +121,6 @@ const MissionRow = ({
             / {total}
           </p>
         </div>
-
-        {/* Mission status badge */}
-        {statusConfig[missionStatus] && (
-          <span
-            className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${statusConfig[missionStatus].className}`}
-          >
-            {statusConfig[missionStatus].label}
-          </span>
-        )}
 
         <button
           type="button"
