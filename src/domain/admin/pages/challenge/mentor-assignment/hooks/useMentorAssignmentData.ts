@@ -40,13 +40,14 @@ const useMentorAssignmentData = (programId: string) => {
   const applicationDetailsMap = useMemo(() => {
     const map: Record<
       number,
-      { major: string; wishJob: string; wishCompany: string }
+      { major: string; wishJob: string; wishCompany: string; pricePlanType: string }
     > = {};
     applicationsData?.applicationList.forEach((a) => {
       map[a.application.id] = {
         major: a.application.major ?? '-',
         wishJob: a.application.wishJob ?? '-',
         wishCompany: a.application.wishCompany ?? '-',
+        pricePlanType: a.application.challengePricePlanType ?? '-',
       };
     });
     return map;
@@ -154,6 +155,7 @@ const useMentorAssignmentData = (programId: string) => {
           major: details?.major ?? '-',
           wishJob: details?.wishJob ?? '-',
           wishCompany: details?.wishCompany ?? '-',
+          pricePlanType: details?.pricePlanType ?? '-',
           matchedMentorId: effectiveMentors[p.applicationId] ?? null,
         };
       }),

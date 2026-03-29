@@ -2,9 +2,10 @@
 
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import { useParams } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import BulkAssignmentBar from './components/BulkAssignmentBar';
 import MentorSelectCell from './cells/MentorSelectCell';
+import MentorInfoCell from './cells/MentorInfoCell';
 import useMentorAssignmentData from './hooks/useMentorAssignmentData';
 import { MentorMatchContext } from './MentorMatchContext';
 import MentorList from './components/MentorList';
@@ -12,17 +13,22 @@ import type { MentorAssignmentRow } from './types';
 import { getMentorColor } from './utils';
 
 const columns: GridColDef<MentorAssignmentRow>[] = [
-  { field: 'name', headerName: '이름', width: 120 },
-  { field: 'major', headerName: '전공', width: 150 },
+  { field: 'pricePlanType', headerName: '결제 상품', width: 100 },
+  { field: 'name', headerName: '이름', width: 100 },
   { field: 'wishCompany', headerName: '희망 기업', width: 120 },
   { field: 'wishJob', headerName: '희망 직무', width: 150 },
-  { field: 'email', headerName: '이메일', width: 200 },
-  { field: 'phoneNum', headerName: '전화번호', width: 140 },
   {
     field: 'matchedMentorId',
-    headerName: '멘토 배정',
-    width: 180,
+    headerName: '담당 멘토',
+    width: 160,
     renderCell: MentorSelectCell,
+  },
+  {
+    field: 'mentorInfo',
+    headerName: '멘토 정보',
+    width: 180,
+    sortable: false,
+    renderCell: MentorInfoCell,
   },
 ];
 
@@ -55,6 +61,13 @@ export default function MentorMenteeAssignment() {
     setBulkMentorId('');
   };
 
+  const handleSelectUnassigned = useCallback(() => {
+    const unassignedIds = rows
+      .filter((r) => r.matchedMentorId === null)
+      .map((r) => r.id);
+    setSelectionModel(unassignedIds);
+  }, [rows]);
+
   const contextValue = useMemo(
     () => ({
       matchedMentors: effectiveMentors,
@@ -79,14 +92,23 @@ export default function MentorMenteeAssignment() {
       <div>
         <MentorList mentors={mentors} matchCounts={matchCounts} />
 
-        <BulkAssignmentBar
-          mentors={mentors}
-          bulkMentorId={bulkMentorId}
-          onBulkMentorChange={setBulkMentorId}
-          selectedCount={(selectionModel as number[]).length}
-          isPending={isPending}
-          onAssign={handleBulkAssign}
-        />
+        <div className="mb-3 flex items-center gap-2">
+          <BulkAssignmentBar
+            mentors={mentors}
+            bulkMentorId={bulkMentorId}
+            onBulkMentorChange={setBulkMentorId}
+            selectedCount={(selectionModel as number[]).length}
+            isPending={isPending}
+            onAssign={handleBulkAssign}
+          />
+          <button
+            type="button"
+            onClick={handleSelectUnassigned}
+            className="whitespace-nowrap rounded-md border border-neutral-80 bg-white px-3 py-1.5 text-xsmall14 font-medium text-neutral-0 hover:bg-neutral-95"
+          >
+            미배정 멘티 선택
+          </button>
+        </div>
 
         <DataGrid
           rows={rows}
