@@ -98,12 +98,14 @@ export default function MentorMenteeAssignment() {
     setBulkMentorId('');
   };
 
+  const unassignedRows = useMemo(
+    () => rows.filter((r) => r.matchedMentorId === null),
+    [rows],
+  );
+
   const handleSelectUnassigned = useCallback(() => {
-    const unassignedIds = rows
-      .filter((r) => r.matchedMentorId === null)
-      .map((r) => r.id);
-    setSelectionModel(unassignedIds);
-  }, [rows]);
+    setSelectionModel(unassignedRows.map((r) => r.id));
+  }, [unassignedRows]);
 
   const contextValue = useMemo(
     () => ({
@@ -136,6 +138,7 @@ export default function MentorMenteeAssignment() {
           selectedCount={(selectionModel as number[]).length}
           isPending={isPending}
           onAssign={handleBulkAssign}
+          unassignedCount={unassignedRows.length}
           onSelectUnassigned={handleSelectUnassigned}
         />
 

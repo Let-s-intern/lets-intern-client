@@ -8,6 +8,7 @@ interface BulkAssignmentBarProps {
   bulkMentorId: number | '';
   onBulkMentorChange: (value: number | '') => void;
   selectedCount: number;
+  unassignedCount: number;
   isPending: boolean;
   onAssign: () => void;
   onSelectUnassigned: () => void;
@@ -18,6 +19,7 @@ export default function BulkAssignmentBar({
   bulkMentorId,
   onBulkMentorChange,
   selectedCount,
+  unassignedCount,
   isPending,
   onAssign,
   onSelectUnassigned,
@@ -29,9 +31,10 @@ export default function BulkAssignmentBar({
         <button
           type="button"
           onClick={onSelectUnassigned}
-          className="rounded-md border border-neutral-80 bg-white px-3 py-1.5 text-xsmall14 font-medium text-neutral-0 hover:bg-neutral-95"
+          disabled={unassignedCount === 0}
+          className="rounded border border-neutral-80 px-4 py-1.5 text-xsmall14 hover:bg-neutral-95 disabled:opacity-50"
         >
-          미배정 멘티 일괄 선택
+          미배정 멘티 일괄 선택 ({unassignedCount}명)
         </button>
         <div className="flex items-center gap-2">
           <select
