@@ -69,8 +69,8 @@ const MissionRow = ({
   return (
     <div className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50">
       <div className="flex items-center gap-3">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-10 text-xs font-medium text-primary-dark">
-          {mission.th}
+        <span className="flex shrink-0 items-center justify-center rounded-full bg-primary-10 px-2.5 py-1 text-xs font-medium text-primary-dark">
+          {mission.th}회차
         </span>
         <div className="flex flex-col gap-0.5">
           {mission.challengeOptionTitle ? (
