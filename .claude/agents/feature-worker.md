@@ -32,7 +32,6 @@ hooks:
 
 | 문서 | 경로 | 용도 |
 |------|------|------|
-| PRD | `.claude/tasks/prd260330.md` | 전체 요구사항 |
 | 폴더 구조 | `.claude/skills/folder-structure/SKILL.md` | 파일 배치 규칙 |
 | 도메인 우선 | `.claude/skills/folder-structure/references/domain-first.md` | 도메인 구조 |
 | 레이어 규칙 | `.claude/skills/folder-structure/references/layer-conventions.md` | 레이어 네이밍 |
@@ -87,12 +86,12 @@ hooks:
 
 ```
 git add [관련 파일]
-git commit -m "feat(mentor/[도메인]): [작업 내용]
+git commit -m "feat([도메인]): [작업 내용]
 
 Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>"
 ```
 
-## 모바일 대응 가이드 (Push 7 전용)
+## 모바일 대응 가이드
 
 - 터치 타겟: 최소 44px
 - 반응형 breakpoint: `md:` (768px) 기준

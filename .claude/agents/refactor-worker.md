@@ -95,7 +95,7 @@ hooks:
 ## 커밋 메시지
 
 ```
-refactor(mentor/[도메인]): [작업 내용]
+refactor([도메인]): [작업 내용]
 
 Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
 ```

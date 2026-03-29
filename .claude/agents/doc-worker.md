@@ -24,7 +24,6 @@ skills:
 
 | 문서 | 경로 | 용도 |
 |------|------|------|
-| PRD | `.claude/tasks/prd260330.md` | Phase 9 문서화 요구사항 |
 | 폴더 구조 | `.claude/skills/folder-structure/SKILL.md` | 아키텍처 규칙 (문서에 반영) |
 | 도메인 우선 | `.claude/skills/folder-structure/references/domain-first.md` | 도메인 구조 설명 참조 |
 | 프랙탈 재귀 | `.claude/skills/folder-structure/references/fractal-recursion.md` | 분리 기준 설명 참조 |
@@ -36,9 +35,9 @@ skills:
 ### 1. 현재 코드 구조 분석
 
 ```
-1. 대상 도메인 폴더 구조 탐색 (Glob: src/domain/mentor/**/*)
+1. 대상 도메인 폴더 구조 탐색 (Glob: src/domain/{도메인}/**/*)
 2. 파일별 역할 파악 (Read)
-3. 라우트 매핑 확인 (src/app/mentor/)
+3. 라우트 매핑 확인 (src/app/{도메인}/)
 4. API 호출 패턴 분석 (Grep: useQuery, useMutation, axios, fetch)
 ```
 
@@ -79,7 +78,7 @@ skills:
 ## 커밋 메시지
 
 ```
-docs(mentor): [작업 내용]
+docs([도메인]): [작업 내용]
 
 Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
 ```
