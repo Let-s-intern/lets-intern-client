@@ -169,7 +169,7 @@ function ChallengePricePlanSection({ challengeType, priceInfoList }: Props) {
       <FeedbackMentoringLink
         challengeType={challengeType}
         themeColor={styles.primaryColor}
-        className="mx-auto mt-8 text-xsmall16"
+        className="mx-auto mt-8 px-10 py-3 text-xsmall16"
       />
     </section>
   );

@@ -29,7 +29,7 @@ permissionMode: dontAsk
 
 ### 2. 도메인 문서 (.claude/docs/letscareer/)
 
-- **domain/curation/** — 큐레이션 도메인 아키텍처
+- **curation-domain/** — 큐레이션 도메인 아키텍처
 - **기타 도메인/** — 추가 도메인 문서
 
 ### 3. 기술 문서 (.claude/docs/)

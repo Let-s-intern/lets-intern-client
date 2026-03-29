@@ -8,16 +8,11 @@ import LineTableBodyRow, {
 } from '@/domain/admin/challenge/ui/lineTable/LineTableBodyRow';
 import LineTableHead from '@/domain/admin/challenge/ui/lineTable/LineTableHead';
 import dayjs from '@/lib/dayjs';
-import {
-  ContentsResItem,
-  CreateContentsReq,
-  getContentsAdmin,
-  UpdateContentsReq,
-} from '@/schema';
-import axios from '@/utils/axios';
+import { ContentsResItem } from '@/schema';
 import { TABLE_CONTENT, TABLE_STATUS } from '@/utils/convert';
-import { useMutation, useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
+import useContentsQuery from './contents/hooks/useContentsQuery';
+import useContentsMutations from './contents/hooks/useContentsMutations';
 
 const cellWidthList = [
   'w-[200px]',
@@ -32,13 +27,9 @@ const colNames = ['생성일자', 'id', '콘텐츠구분', '콘텐츠명', '콘�
 type Row = ContentsResItem & ItemWithStatus;
 
 const ChallengeContents = () => {
-  const { data, refetch } = useQuery({
-    queryKey: ['contents', 'admin'],
-    queryFn: async () => {
-      const res = await axios.get('/contents/admin?size=1000');
-      return getContentsAdmin.parse(res.data.data);
-    },
-  });
+  const { data, refetch } = useContentsQuery();
+  const { createMutation, updateMutation, deleteMutation } =
+    useContentsMutations();
 
   const [insertingContents, setInsertingContents] = useState<Row | null>(null);
 
@@ -58,34 +49,6 @@ const ChallengeContents = () => {
     return list;
   }, [data?.contentsAdminList, insertingContents]);
 
-  const createMutation = useMutation({
-    mutationFn: async (req: CreateContentsReq) => {
-      const res = await axios.post('/contents', req);
-      if (res.status !== 200) {
-        console.warn(res);
-      }
-    },
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: async (req: UpdateContentsReq & { id: number }) => {
-      const { id, ...payload } = req;
-      const res = await axios.patch(`/contents/${id}`, payload);
-      if (res.status !== 200) {
-        console.warn(res);
-      }
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: async (id: number) => {
-      const res = await axios.delete(`/contents/${id}`);
-      if (res.status !== 200) {
-        console.warn(res);
-      }
-    },
-  });
-
   return (
     <div className="px-12 pt-6">
       <div className="flex items-center justify-between px-3">
@@ -93,9 +56,9 @@ const ChallengeContents = () => {
         <Button
           onClick={() => {
             setInsertingContents({
-              id: 0, // 임시 id
+              id: 0,
               title: '',
-              createDate: dayjs(), // 임시 생성일자
+              createDate: dayjs(),
               link: '',
               type: 'ADDITIONAL',
               rowStatus: TABLE_STATUS.INSERT,

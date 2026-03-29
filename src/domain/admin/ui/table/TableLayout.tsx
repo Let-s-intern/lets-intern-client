@@ -8,15 +8,9 @@ interface TableLayoutProps {
     href: string;
   };
   children: React.ReactNode;
-  tabs?: React.ReactNode;
 }
 
-const TableLayout = ({
-  title,
-  headerButton,
-  children,
-  tabs,
-}: TableLayoutProps) => {
+const TableLayout = ({ title, headerButton, children }: TableLayoutProps) => {
   return (
     <div className="px-12 pt-6">
       <header className="flex items-center justify-between px-3">
@@ -30,7 +24,6 @@ const TableLayout = ({
           </Link>
         )}
       </header>
-      {tabs && <div className="mt-3 px-3">{tabs}</div>}
       <main className="mt-4 flex flex-col gap-2">{children}</main>
     </div>
   );

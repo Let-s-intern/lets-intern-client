@@ -44,7 +44,7 @@ coordinator로부터:
 ```
 1. 도메인 문서 확인 (필수)
    - .claude/docs/letscareer/ 내 관련 도메인 문서 읽기
-   - 기존 아키텍처 패턴 파악 (예: domain/curation/README.md)
+   - 기존 아키텍처 패턴 파악 (예: curation-domain/README.md)
    - 도메인별 폴더 구조, 타입 시스템, API 사용 패턴 확인
 
 2. 관련 파일 탐색 (Glob/Grep)
