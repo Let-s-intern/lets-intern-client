@@ -56,7 +56,7 @@ const FeedbackModal = ({
     <BaseModal
       isOpen={isOpen}
       onClose={handleClose}
-      className="mx-2 h-[90vh] w-[1200px] max-w-full rounded-2xl md:mx-4 md:h-[760px] md:rounded-3xl"
+      className="mx-2 h-[85vh] w-[1200px] max-w-full overflow-hidden rounded-2xl md:mx-4 md:h-[680px] md:rounded-3xl"
     >
       <FeedbackHeader
         challengeTitle={challengeTitle}
