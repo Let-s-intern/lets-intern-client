@@ -40,8 +40,8 @@ function FeedbackMissionList() {
       },
       {
         field: 'submissionCount',
-        headerName: '멘티제출 / 진행전 / 확인완료 / 전체',
-        width: 260,
+        headerName: '제출 / 전체',
+        width: 120,
         sortable: false,
         renderCell: (params: GridRenderCellParams<Row>) => (
           <SubmissionCountCell missionId={params.row.id} />
