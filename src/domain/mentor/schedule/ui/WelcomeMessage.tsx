@@ -1,7 +1,7 @@
 'use client';
 
 import { useUserQuery } from '@/api/user/user';
-import config from '../config.json';
+import config from '../../config.json';
 
 const WelcomeMessage = () => {
   const { data: user } = useUserQuery();

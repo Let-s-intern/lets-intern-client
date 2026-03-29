@@ -12,13 +12,13 @@ import {
   type ChallengeMentorVo,
 } from '@/api/user/user';
 import { useMentorMissionFeedbackListQuery, useMentorMissionFeedbackAttendanceQuery } from '@/api/challenge/challenge';
-import type { PeriodBarData } from './ChallengePeriodBar';
+import type { PeriodBarData } from './challenge-period/ChallengePeriodBar';
 
-import WelcomeMessage from './WelcomeMessage';
-import WeeklySummary from './WeeklySummary';
-import WeekNavigation from './WeekNavigation';
-import ChallengeFilter from './ChallengeFilter';
-import WeeklyCalendar from './WeeklyCalendar';
+import WelcomeMessage from './ui/WelcomeMessage';
+import WeeklySummary from './ui/WeeklySummary';
+import WeekNavigation from './ui/WeekNavigation';
+import ChallengeFilter from './ui/ChallengeFilter';
+import WeeklyCalendar from './weekly-calendar/WeeklyCalendar';
 import FeedbackModal from '../feedback/FeedbackModal';
 
 // ---------------------------------------------------------------------------

@@ -11,7 +11,7 @@ import {
 import { ko } from 'date-fns/locale';
 import { useMemo } from 'react';
 
-import ChallengePeriodBar, { type PeriodBarData } from './ChallengePeriodBar';
+import ChallengePeriodBar, { type PeriodBarData } from '../challenge-period/ChallengePeriodBar';
 
 const DAY_LABELS = ['월', '화', '수', '목', '금', '토', '일'];
 
