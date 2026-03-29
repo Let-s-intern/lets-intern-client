@@ -39,7 +39,7 @@ const FeedbackLayout = ({
         </div>
 
         {/* Feedback editor - flex-1 to fill remaining height */}
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        <div className="flex min-h-0 flex-1 flex-col overflow-auto">
           {editor}
         </div>
 
