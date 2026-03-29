@@ -93,7 +93,7 @@ const WeeklyCalendar = ({
         <div
           style={{
             width: `${innerWidthPercent}%`,
-            minWidth: `${totalDays * 92}px`,
+            minWidth: `${totalDays * 120}px`,
           }}
         >
           {/* Day header */}
