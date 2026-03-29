@@ -67,11 +67,6 @@ const MobileMenteeSelector = ({
           );
         })}
       </select>
-      {selectedMentee && (
-        <span className="px-1 text-xs text-gray-400">
-          {selectedIndex + 1} / {attendanceList.length}명
-        </span>
-      )}
     </div>
   );
 };
