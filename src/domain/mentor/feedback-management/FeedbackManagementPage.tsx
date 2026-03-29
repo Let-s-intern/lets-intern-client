@@ -1,6 +1,9 @@
 'use client';
 
+import { useMediaQuery } from '@mui/material';
+
 import FeedbackModal from '@/domain/mentor/feedback/FeedbackModal';
+import MobileFeedbackPage from '@/domain/mentor/feedback/ui/MobileFeedbackPage';
 import ChallengeFeedbackCard from './ui/ChallengeFeedbackCard';
 import { useFeedbackManagement } from './hooks/useFeedbackManagement';
 
@@ -12,6 +15,8 @@ const FeedbackManagementPage = () => {
     handleMissionClick,
     handleCloseModal,
   } = useFeedbackManagement();
+
+  const isMobile = useMediaQuery('(max-width: 767px)');
 
   return (
     <div className="flex flex-col gap-4 md:gap-6">
@@ -37,14 +42,26 @@ const FeedbackManagementPage = () => {
         </div>
       )}
 
-      <FeedbackModal
-        isOpen={feedbackModal.isOpen}
-        onClose={handleCloseModal}
-        challengeId={feedbackModal.challengeId}
-        missionId={feedbackModal.missionId}
-        challengeTitle={feedbackModal.challengeTitle}
-        missionTh={feedbackModal.missionTh}
-      />
+      {/* Mobile: full-page editor / Desktop: modal */}
+      {isMobile ? (
+        <MobileFeedbackPage
+          isOpen={feedbackModal.isOpen}
+          onClose={handleCloseModal}
+          challengeId={feedbackModal.challengeId}
+          missionId={feedbackModal.missionId}
+          challengeTitle={feedbackModal.challengeTitle}
+          missionTh={feedbackModal.missionTh}
+        />
+      ) : (
+        <FeedbackModal
+          isOpen={feedbackModal.isOpen}
+          onClose={handleCloseModal}
+          challengeId={feedbackModal.challengeId}
+          missionId={feedbackModal.missionId}
+          challengeTitle={feedbackModal.challengeTitle}
+          missionTh={feedbackModal.missionTh}
+        />
+      )}
     </div>
   );
 };
