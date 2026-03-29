@@ -66,13 +66,13 @@ const FeedbackActions = ({
   };
 
   return (
-    <div className="flex justify-end border-t border-gray-200 pt-3">
-      <div className="flex items-center gap-3">
+    <div className="flex justify-end border-t border-gray-200 pt-3 md:border-t">
+      <div className="flex w-full items-center gap-3 md:w-auto">
         <button
           type="button"
           onClick={handleSave}
           disabled={isDisabled}
-          className="rounded-lg border border-primary px-5 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary-5 disabled:cursor-not-allowed disabled:opacity-50"
+          className="min-h-[44px] flex-1 rounded-lg border border-primary px-5 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary-5 disabled:cursor-not-allowed disabled:opacity-50 md:flex-none"
         >
           임시저장
         </button>
@@ -80,7 +80,7 @@ const FeedbackActions = ({
           type="button"
           onClick={handleSubmit}
           disabled={isDisabled}
-          className="rounded-lg bg-primary px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+          className="min-h-[44px] flex-1 rounded-lg bg-primary px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50 md:flex-none"
         >
           피드백 제출
         </button>

@@ -114,9 +114,9 @@ const MobileFeedbackPage = ({
         </div>
       </div>
 
-      {/* Sticky bottom actions */}
+      {/* Sticky bottom actions with safe-area-inset */}
       <div
-        className="shrink-0 border-t border-gray-200 bg-white px-4 pt-3"
+        className="shrink-0 bg-white px-4"
         style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
       >
         <FeedbackActions
