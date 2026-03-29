@@ -5,11 +5,7 @@ import { useMemo } from 'react';
 import {
   useMentorMissionFeedbackAttendanceQuery,
 } from '@/api/challenge/challenge';
-import {
-  FeedbackStatusMapping,
-  type FeedbackStatus,
-} from '@/api/challenge/challengeSchema';
-import StatusBadge from '@/domain/mentor/ui/StatusBadge';
+import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
 
 const formatDate = (dateStr: string) => {
   return new Date(dateStr).toLocaleDateString('ko-KR', {
@@ -46,25 +42,36 @@ const MissionRow = ({
   const attendanceList = data?.attendanceList ?? [];
   const total = attendanceList.length;
 
-  // Single-pass aggregation: submitted count + feedback counts
-  const { submittedCount, feedbackCounts, completedCount } = useMemo(() => {
+  // Single-pass aggregation: submitted count + feedback status
+  const { submittedCount, completedCount, missionStatus } = useMemo(() => {
     let submitted = 0;
     let completed = 0;
-    const counts: Record<string, number> = {};
+    let feedbackStarted = 0;
 
     for (const a of attendanceList) {
       if (a.status !== 'ABSENT') submitted++;
       const status = a.feedbackStatus ?? 'WAITING';
-      counts[status] = (counts[status] || 0) + 1;
       if (status === 'COMPLETED' || status === 'CONFIRMED') completed++;
+      if (status !== 'WAITING') feedbackStarted++;
     }
+
+    const hasSubmission = submitted > 0;
+    const isAllComplete = hasSubmission && completed >= submitted;
+    const s: 'completed' | 'inProgress' | 'waiting' | 'none' = !hasSubmission ? 'none' : isAllComplete ? 'completed' : feedbackStarted > 0 ? 'inProgress' : 'waiting';
 
     return {
       submittedCount: submitted,
-      feedbackCounts: counts,
       completedCount: completed,
+      missionStatus: s,
     };
   }, [attendanceList]);
+
+  const statusConfig = {
+    completed: { label: '완료', className: 'bg-green-100 text-green-700' },
+    inProgress: { label: '진행중', className: 'bg-yellow-100 text-yellow-700' },
+    waiting: { label: '진행전', className: 'bg-gray-100 text-gray-500' },
+    none: null,
+  } as const;
 
   return (
     <div className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50">
@@ -106,18 +113,14 @@ const MissionRow = ({
           </p>
         </div>
 
-        {/* Feedback status badges */}
-        <div className="flex gap-1">
-          {(
-            Object.keys(FeedbackStatusMapping) as FeedbackStatus[]
-          ).map((key) => (
-            <StatusBadge
-              key={key}
-              status={key}
-              count={feedbackCounts[key] ?? 0}
-            />
-          ))}
-        </div>
+        {/* Mission status badge */}
+        {statusConfig[missionStatus] && (
+          <span
+            className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${statusConfig[missionStatus].className}`}
+          >
+            {statusConfig[missionStatus].label}
+          </span>
+        )}
 
         <button
           type="button"
