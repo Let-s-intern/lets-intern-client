@@ -7,7 +7,7 @@ import {
   isSameDay,
 } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import ChallengePeriodBar, {
   type PeriodBarData,
@@ -181,14 +181,6 @@ const WeeklyCalendar = ({
               className="relative gap-y-1 py-3"
               style={{ display: 'grid', gridTemplateColumns: gridCols }}
             >
-              {barLayouts.length === 0 && (
-                <div
-                  className="flex items-center justify-center py-8 text-xsmall14 text-neutral-40"
-                  style={{ gridColumn: '1 / -1' }}
-                >
-                  예정된 피드백이 없습니다.
-                </div>
-              )}
               {barLayouts.map(({ bar, startCol, endCol, colSpan }, idx) => (
                 <div
                   key={`${bar.challengeId}-${bar.missionId}-${idx}`}
@@ -209,6 +201,16 @@ const WeeklyCalendar = ({
           </div>
         </div>
       </div>
+      {/* Empty state — overlay centered on visible calendar area */}
+      {barLayouts.length === 0 && (
+        <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-white/60">
+          <div className="pointer-events-auto rounded-xl border border-neutral-80 bg-white px-8 py-6 shadow-lg">
+            <p className="text-center text-xsmall16 font-medium text-neutral-30">
+              진행 예정인 피드백 일정이 없습니다.
+            </p>
+          </div>
+        </div>
+      )}
       <TodayButton isTodayVisible={isTodayVisible} onGoToToday={scrollToToday} />
     </div>
   );

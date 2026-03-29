@@ -22,18 +22,18 @@ function getFeedbackBadge(feedbackStatus: FeedbackStatus | null): {
     case 'CONFIRMED':
       return {
         label: '완료',
-        className: 'border border-neutral-300 text-neutral-700',
+        className: 'border border-green-200 bg-green-50 text-green-700',
       };
     case 'IN_PROGRESS':
       return {
         label: '진행 중',
-        className: 'text-blue-500',
+        className: 'border border-blue-200 bg-blue-50 text-blue-600',
       };
     case 'WAITING':
     default:
       return {
         label: '시작 전',
-        className: 'border border-red-400 text-red-500',
+        className: 'border border-red-200 bg-red-50 text-red-500',
       };
   }
 }
@@ -79,7 +79,7 @@ const MenteeList = ({
                     className={twMerge(
                       'flex w-full items-center justify-between border-b border-neutral-200 px-4 py-2 text-left transition-colors',
                       isSelected
-                        ? 'rounded-md border-b-0 bg-neutral-300'
+                        ? 'rounded-md border-b-0 bg-primary-5'
                         : 'hover:bg-neutral-50',
                     )}
                   >
@@ -95,7 +95,7 @@ const MenteeList = ({
                     </div>
                     <span
                       className={twMerge(
-                        'ml-2 shrink-0 rounded px-2 py-1 text-xs font-medium',
+                        'ml-2 shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-medium',
                         feedbackBadge.className,
                       )}
                     >

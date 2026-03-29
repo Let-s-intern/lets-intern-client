@@ -61,26 +61,37 @@ export function useScheduleData() {
   );
 
   /**
-   * Find the nearest feedback date for a given challenge.
-   * Returns the startDate of the closest bar to today.
+   * Find the farthest incomplete feedback date for a given challenge.
+   * Returns the startDate of the bar that is not fully completed
+   * and has the latest startDate. Falls back to the latest bar if all complete.
    */
   const findNearestDate = useCallback(
     (challengeId: number): Date | null => {
-      const now = Date.now();
-      let closest: PeriodBarData | null = null;
-      let closestDist = Infinity;
+      let farthestIncomplete: PeriodBarData | null = null;
+      let farthestAny: PeriodBarData | null = null;
 
       for (const bar of allBarsUnfiltered) {
         if (bar.challengeId !== challengeId) continue;
-        const dist = Math.abs(new Date(bar.startDate).getTime() - now);
-        if (dist < closestDist) {
-          closestDist = dist;
-          closest = bar;
+
+        const barStart = new Date(bar.startDate).getTime();
+
+        // Track farthest bar overall (fallback)
+        if (!farthestAny || barStart > new Date(farthestAny.startDate).getTime()) {
+          farthestAny = bar;
+        }
+
+        // Track farthest incomplete bar (waiting or in-progress > 0)
+        const isIncomplete = bar.waitingCount > 0 || bar.inProgressCount > 0;
+        if (isIncomplete) {
+          if (!farthestIncomplete || barStart > new Date(farthestIncomplete.startDate).getTime()) {
+            farthestIncomplete = bar;
+          }
         }
       }
 
-      if (!closest) return null;
-      return new Date(closest.startDate);
+      const target = farthestIncomplete ?? farthestAny;
+      if (!target) return null;
+      return new Date(target.startDate);
     },
     [allBarsUnfiltered],
   );
