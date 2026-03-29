@@ -13,4 +13,5 @@ export interface AttendanceRow {
   feedback?: string | null;
   feedbackPageLink: string;
   feedbackStatus: string;
+  status: string;
 }

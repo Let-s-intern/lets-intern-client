@@ -26,8 +26,9 @@ const useFeedbackParticipantRows = (): AttendanceRow[] => {
   return useMemo(
     () =>
       (data?.attendanceList ?? []).map(
-        ({ status: _s, result: _r, challengePricePlanType: _c, ...rest }) => ({
+        ({ result: _r, challengePricePlanType: _c, ...rest }) => ({
           ...rest,
+          status: rest.status ?? 'ABSENT',
           missionTitle: selectedMission.title ?? '',
           missionRound: selectedMission.th ?? '',
           feedbackStatus:

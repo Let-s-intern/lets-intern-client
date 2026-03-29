@@ -15,10 +15,15 @@ function SubmissionCountCell({ missionId }: { missionId: number | string }) {
 
   if (isAdmin) {
     const list = adminAttendances ?? [];
+    const total = list.length;
     const submitted = list.filter((a) => !!a.attendance.link).length;
+    const completed = list.filter((a) => {
+      const fs = a.attendance.feedbackStatus;
+      return fs === 'COMPLETED' || fs === 'CONFIRMED';
+    }).length;
     return (
       <span>
-        {submitted} / {list.length}
+        {submitted} / {completed} / {total}
       </span>
     );
   }

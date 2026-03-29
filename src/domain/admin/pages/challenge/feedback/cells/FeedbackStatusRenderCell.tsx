@@ -107,6 +107,15 @@ const FeedbackStatusRenderCell = (
     }
   };
 
+  // 제출확인 전이면 드롭다운 비활성화
+  if (params.row.status === 'ABSENT') {
+    return (
+      <span className="inline-flex items-center rounded-full bg-neutral-95 px-2 py-0.5 text-xxsmall12 font-medium text-neutral-40">
+        확인전
+      </span>
+    );
+  }
+
   if (!isAdmin && localValue === FeedbackStatusEnum.enum.CONFIRMED) {
     const color = FEEDBACK_STATUS_COLORS[localValue];
     return (

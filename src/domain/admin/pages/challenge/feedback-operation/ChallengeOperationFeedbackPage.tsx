@@ -1,12 +1,32 @@
 'use client';
 
-import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { useParams } from 'next/navigation';
+import { useCallback, useState } from 'react';
 import MentorMenteeAssignment from '../mentor-assignment/MentorMenteeAssignment';
 import FeedbackMissionList from './FeedbackMissionList';
 import type { SubTab } from './types';
 
 function ChallengeOperationFeedbackPage() {
   const [activeTab, setActiveTab] = useState<SubTab>('feedbackManage');
+  const queryClient = useQueryClient();
+  const { programId } = useParams<{ programId: string }>();
+
+  const handleTabChange = useCallback(
+    (tab: SubTab) => {
+      // 멘토 배정 탭에서 다른 탭으로 전환 시 관련 쿼리 무효화
+      if (activeTab === 'mentorMentee' && tab !== 'mentorMentee') {
+        queryClient.invalidateQueries({
+          queryKey: ['admin', 'challenge'],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['useChallengeApplicationsQuery', programId],
+        });
+      }
+      setActiveTab(tab);
+    },
+    [activeTab, queryClient, programId],
+  );
 
   return (
     <div className="flex flex-col gap-4">
@@ -19,7 +39,7 @@ function ChallengeOperationFeedbackPage() {
               ? 'border-neutral-0 bg-neutral-0 text-white'
               : 'border-neutral-80 bg-white text-neutral-0 hover:bg-neutral-95'
           }`}
-          onClick={() => setActiveTab('mentorMentee')}
+          onClick={() => handleTabChange('mentorMentee')}
         >
           멘토/멘티 배정
         </button>
@@ -30,7 +50,7 @@ function ChallengeOperationFeedbackPage() {
               ? 'border-neutral-0 bg-neutral-0 text-white'
               : 'border-neutral-80 bg-white text-neutral-0 hover:bg-neutral-95'
           }`}
-          onClick={() => setActiveTab('feedbackManage')}
+          onClick={() => handleTabChange('feedbackManage')}
         >
           피드백 관리
         </button>
