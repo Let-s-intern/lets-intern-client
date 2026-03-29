@@ -94,7 +94,7 @@ const WeeklyCalendar = ({
     <div className="relative">
       <div
         ref={containerRef}
-        className="overflow-x-auto rounded-2xl border border-neutral-80"
+        className="overflow-x-auto overflow-y-hidden rounded-2xl border border-neutral-80"
       >
         <div
           style={{
