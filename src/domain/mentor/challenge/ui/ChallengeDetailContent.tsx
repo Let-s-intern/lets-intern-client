@@ -74,29 +74,40 @@ const MissionRow = ({
   } as const;
 
   return (
-    <div className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50">
-      <div className="flex items-center gap-3">
-        <span className="flex shrink-0 items-center justify-center rounded-full bg-primary-10 px-2.5 py-1 text-xs font-medium text-primary-dark">
-          {mission.th}회차
-        </span>
-        <div className="flex flex-col gap-0.5">
-          {mission.challengeOptionTitle ? (
-            <span className="text-xs text-gray-400">
-              {mission.challengeOptionTitle}
-            </span>
-          ) : null}
-          <h3 className="font-medium text-gray-900">
-            {mission.title || `${mission.th}회차 미션`}
-          </h3>
-          <p className="text-xs text-gray-400">
-            {formatDate(mission.startDate)} ~ {formatDate(mission.endDate)}
-          </p>
+    <div className="flex flex-col gap-3 rounded-lg border border-gray-200 p-3 transition-colors hover:bg-gray-50 md:p-4">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <span className="flex shrink-0 items-center justify-center rounded-full bg-primary-10 px-2.5 py-1 text-xs font-medium text-primary-dark">
+            {mission.th}회차
+          </span>
+          <div className="flex flex-col gap-0.5">
+            {mission.challengeOptionTitle ? (
+              <span className="text-xs text-gray-400">
+                {mission.challengeOptionTitle}
+              </span>
+            ) : null}
+            <h3 className="text-sm font-medium text-gray-900 md:text-base">
+              {mission.title || `${mission.th}회차 미션`}
+            </h3>
+            <p className="text-xs text-gray-400">
+              {formatDate(mission.startDate)} ~ {formatDate(mission.endDate)}
+            </p>
+          </div>
         </div>
+
+        {/* Mission status badge */}
+        {statusConfig[missionStatus] && (
+          <span
+            className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${statusConfig[missionStatus].className}`}
+          >
+            {statusConfig[missionStatus].label}
+          </span>
+        )}
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex flex-wrap items-center gap-3 md:gap-4">
         {/* Submission stats */}
-        <div className="text-right text-xs text-gray-500">
+        <div className="text-xs text-gray-500 md:text-right">
           <p>
             제출{' '}
             <span className="font-semibold text-gray-700">
@@ -113,19 +124,10 @@ const MissionRow = ({
           </p>
         </div>
 
-        {/* Mission status badge */}
-        {statusConfig[missionStatus] && (
-          <span
-            className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${statusConfig[missionStatus].className}`}
-          >
-            {statusConfig[missionStatus].label}
-          </span>
-        )}
-
         <button
           type="button"
           onClick={() => onClickFeedback(mission.id, mission.th)}
-          className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-hover"
+          className="min-h-[44px] w-full rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-hover md:min-h-0 md:w-auto"
         >
           피드백 작성
         </button>
