@@ -6,7 +6,7 @@ import { useMentorFeedbackManagementQuery } from '@/api/challenge/challenge';
 import type { MentorFeedbackManagement } from '@/api/challenge/challengeSchema';
 import FeedbackModal from '@/domain/mentor/feedback/FeedbackModal';
 
-import ChallengeFeedbackCard from './ChallengeFeedbackCard';
+import ChallengeFeedbackCard from './ui/ChallengeFeedbackCard';
 
 type Challenge = MentorFeedbackManagement['challengeList'][number];
 
