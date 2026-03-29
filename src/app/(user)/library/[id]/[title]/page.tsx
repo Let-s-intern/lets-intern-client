@@ -90,7 +90,9 @@ export async function generateMetadata({
 
   const { magnetInfo } = data;
   const parsed = parseMagnetDescription(magnetInfo.description);
-  const metaDescription = parsed.metaDescription ?? magnetInfo.description;
+  const metaDescription =
+    parsed.metaDescription ||
+    `${magnetInfo.title} | 렛츠커리어 무료 자료집`;
 
   return {
     title: getLibraryTitle({ title: magnetInfo.title }),

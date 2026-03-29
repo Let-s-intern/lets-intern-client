@@ -189,6 +189,7 @@ const MagnetApplyContent = ({
             : null,
         wishCompany: value.wishCompany,
         wishEmploymentType: value.wishEmploymentType,
+        marketingAgree: isMarketingAgreed,
       });
 
       const magnetAnswerList = surveyAnswers.map((a) => {
