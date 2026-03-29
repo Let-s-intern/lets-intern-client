@@ -308,8 +308,10 @@ describe('제출확인전 상태 (ABSENT → 확인전)', () => {
   });
 
   it('status가 UPDATED/LATE여도 확인전이 아니다', () => {
-    expect('UPDATED' === 'ABSENT').toBe(false);
-    expect('LATE' === 'ABSENT').toBe(false);
+    const updated: string = 'UPDATED';
+    const late: string = 'LATE';
+    expect(updated === 'ABSENT').toBe(false);
+    expect(late === 'ABSENT').toBe(false);
   });
 });
 
