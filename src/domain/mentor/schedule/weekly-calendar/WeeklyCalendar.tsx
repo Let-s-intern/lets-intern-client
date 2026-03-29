@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  differenceInCalendarDays,
-  format,
-  getMonth,
-  isSameDay,
-} from 'date-fns';
-import { ko } from 'date-fns/locale';
+import { differenceInCalendarDays, getMonth, isSameDay } from 'date-fns';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import ChallengePeriodBar, {
@@ -14,9 +8,9 @@ import ChallengePeriodBar, {
 } from '../challenge-period/ChallengePeriodBar';
 import { CompactFeedbackCard } from '../challenge-period/FeedbackCard';
 import TodayButton from './ui/TodayButton';
+import DayHeaderCell from './ui/DayHeaderCell';
+import ColumnDividers from './ui/ColumnDividers';
 import { useTimelineScroll } from './hooks/useInfiniteWeekScroll';
-
-const DAY_LABELS_SHORT = ['일', '월', '화', '수', '목', '금', '토'];
 
 interface WeeklyCalendarProps {
   bars: PeriodBarData[];
@@ -58,7 +52,7 @@ const WeeklyCalendar = ({
     return () => observer.disconnect();
   }, [containerRef, days]);
 
-  // External scroll request (tag click) — center the target date
+  // External scroll request (tag click)
   useEffect(() => {
     if (targetScrollDate) {
       scrollToDate(targetScrollDate);
@@ -78,11 +72,11 @@ const WeeklyCalendar = ({
       .filter((l) => l.endCol >= 1 && l.startCol <= totalDays);
   }, [bars, timelineStart, totalDays]);
 
-  // Fixed body height based on ALL bars (unfiltered) so filtering doesn't shrink calendar
+  // Fixed body height based on ALL bars so filtering doesn't shrink calendar
   const bodyMinHeight = useMemo(() => {
     const ROW_HEIGHT = 70;
     const MIN_ROWS = 3;
-    const PADDING = 24; // py-3 = 12*2
+    const PADDING = 24;
     const rows = Math.max(allBars.length, MIN_ROWS);
     return rows * ROW_HEIGHT + PADDING;
   }, [allBars.length]);
@@ -107,74 +101,25 @@ const WeeklyCalendar = ({
             className="border-b border-neutral-80"
             style={{ display: 'grid', gridTemplateColumns: gridCols }}
           >
-            {days.map((day, i) => {
-              const isToday = isSameDay(day, today);
-              const isSunday = day.getDay() === 0;
-              const isMonthStart =
-                i > 0 && getMonth(day) !== getMonth(days[i - 1]);
-
-              return (
-                <div
-                  key={i}
-                  ref={isToday ? todayColRef : undefined}
-                  className={`flex flex-col items-center justify-center gap-1 py-2 ${
-                    isMonthStart ? 'border-l-2 border-primary-20' : ''
-                  }`}
-                >
-                  {isMonthStart && (
-                    <span className="rounded-full bg-primary-10 px-1.5 py-0.5 text-[10px] font-semibold text-primary-dark">
-                      {format(day, 'M월', { locale: ko })}
-                    </span>
-                  )}
-                  <span
-                    className={`text-xsmall14 font-medium ${
-                      isSunday
-                        ? 'text-[#dd1900]'
-                        : isToday
-                          ? 'text-neutral-40'
-                          : 'text-neutral-10'
-                    }`}
-                  >
-                    {DAY_LABELS_SHORT[day.getDay()]}
-                  </span>
-                  {isToday ? (
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-xsmall14 font-semibold text-white">
-                      {format(day, 'd', { locale: ko })}
-                    </span>
-                  ) : (
-                    <span className="text-xsmall16 font-semibold text-neutral-10">
-                      {format(day, 'd', { locale: ko })}
-                    </span>
-                  )}
-                </div>
-              );
-            })}
+            {days.map((day, i) => (
+              <DayHeaderCell
+                key={i}
+                ref={isSameDay(day, today) ? todayColRef : undefined}
+                day={day}
+                today={today}
+                isMonthStart={
+                  i > 0 && getMonth(day) !== getMonth(days[i - 1])
+                }
+              />
+            ))}
           </div>
 
           {/* Body */}
-          <div className="relative" style={{ minHeight: `${bodyMinHeight}px` }}>
-            {/* Column dividers */}
-            <div
-              className="absolute inset-0"
-              style={{ display: 'grid', gridTemplateColumns: gridCols }}
-            >
-              {days.map((day, i) => {
-                const isMonthStart =
-                  i > 0 && getMonth(day) !== getMonth(days[i - 1]);
-                return (
-                  <div
-                    key={i}
-                    className={
-                      isMonthStart
-                        ? 'border-l-2 border-primary-20'
-                        : i > 0
-                          ? 'border-l border-neutral-90'
-                          : ''
-                    }
-                  />
-                );
-              })}
-            </div>
+          <div
+            className="relative"
+            style={{ minHeight: `${bodyMinHeight}px` }}
+          >
+            <ColumnDividers days={days} gridCols={gridCols} />
 
             {/* Bars */}
             <div
@@ -201,7 +146,8 @@ const WeeklyCalendar = ({
           </div>
         </div>
       </div>
-      {/* Empty state — overlay centered on visible calendar area */}
+
+      {/* Empty state overlay */}
       {barLayouts.length === 0 && (
         <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-white/60">
           <div className="pointer-events-auto rounded-xl border border-neutral-80 bg-white px-8 py-6 shadow-lg">
@@ -211,7 +157,11 @@ const WeeklyCalendar = ({
           </div>
         </div>
       )}
-      <TodayButton isTodayVisible={isTodayVisible} onGoToToday={scrollToToday} />
+
+      <TodayButton
+        isTodayVisible={isTodayVisible}
+        onGoToToday={scrollToToday}
+      />
     </div>
   );
 };
