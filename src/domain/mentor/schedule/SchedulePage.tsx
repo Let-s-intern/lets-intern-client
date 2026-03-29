@@ -2,12 +2,15 @@
 
 import { useState } from 'react';
 
+import { useMediaQuery } from '@mui/material';
+
 import WelcomeMessage from './ui/WelcomeMessage';
 import WeeklySummary from './ui/WeeklySummary';
 import ChallengeFilter from './ui/ChallengeFilter';
 import ChallengeDataFetcher from './ui/ChallengeDataFetcher';
 import WeeklyCalendar from './weekly-calendar/WeeklyCalendar';
 import FeedbackModal from '../feedback/FeedbackModal';
+import MobileFeedbackPage from '../feedback/ui/MobileFeedbackPage';
 
 import { useWeeklySummary } from './hooks/useWeeklySummary';
 import { useScheduleData } from './hooks/useScheduleData';
@@ -41,6 +44,8 @@ const SchedulePage = () => {
       setTargetScrollDate(nearest);
     }
   };
+
+  const isMobile = useMediaQuery('(max-width: 767px)');
 
   const [feedbackModal, setFeedbackModal] = useState<{
     isOpen: boolean;
@@ -108,16 +113,29 @@ const SchedulePage = () => {
         />
       ))}
 
-      <FeedbackModal
-        isOpen={feedbackModal.isOpen}
-        onClose={() =>
-          setFeedbackModal((prev) => ({ ...prev, isOpen: false }))
-        }
-        challengeId={feedbackModal.challengeId}
-        missionId={feedbackModal.missionId}
-        challengeTitle={feedbackModal.challengeTitle}
-        missionTh={feedbackModal.missionTh}
-      />
+      {isMobile ? (
+        <MobileFeedbackPage
+          isOpen={feedbackModal.isOpen}
+          onClose={() =>
+            setFeedbackModal((prev) => ({ ...prev, isOpen: false }))
+          }
+          challengeId={feedbackModal.challengeId}
+          missionId={feedbackModal.missionId}
+          challengeTitle={feedbackModal.challengeTitle}
+          missionTh={feedbackModal.missionTh}
+        />
+      ) : (
+        <FeedbackModal
+          isOpen={feedbackModal.isOpen}
+          onClose={() =>
+            setFeedbackModal((prev) => ({ ...prev, isOpen: false }))
+          }
+          challengeId={feedbackModal.challengeId}
+          missionId={feedbackModal.missionId}
+          challengeTitle={feedbackModal.challengeTitle}
+          missionTh={feedbackModal.missionTh}
+        />
+      )}
     </div>
   );
 };
