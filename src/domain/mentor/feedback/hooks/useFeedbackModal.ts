@@ -68,13 +68,14 @@ export function useFeedbackModal({
     }
   }, [isOpen, attendanceData, selectedAttendanceId]);
 
-  // Sync editor content when feedbackData changes
+  // Sync editor content when selected mentee or feedbackData changes
   useEffect(() => {
+    if (!selectedAttendanceId) return;
     const content =
       feedbackData?.attendanceDetailVo?.feedback || emptyEditorState;
     setEditorContent(content);
     setServerContent(content);
-  }, [feedbackData]);
+  }, [feedbackData, selectedAttendanceId]);
 
   // Reset state when modal closes
   useEffect(() => {
