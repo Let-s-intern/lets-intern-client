@@ -15,12 +15,6 @@ interface MobileMenteeSelectorProps {
   onSelectMentee: (attendanceId: number) => void;
 }
 
-function getStatusDot(status: FeedbackStatus | null): string {
-  if (status === 'COMPLETED' || status === 'CONFIRMED') return '🟢';
-  if (status === 'IN_PROGRESS') return '🟡';
-  return '⚪';
-}
-
 function getFeedbackLabel(status: FeedbackStatus | null): string {
   if (status === 'COMPLETED' || status === 'CONFIRMED') return '완료';
   if (status === 'IN_PROGRESS') return '진행중';
@@ -63,13 +57,12 @@ const MobileMenteeSelector = ({
           </option>
         ) : null}
         {attendanceList.map((mentee, i) => {
-          const dot = getStatusDot(mentee.feedbackStatus);
           const label = getFeedbackLabel(mentee.feedbackStatus);
           const absentMark = mentee.status === 'ABSENT' ? ' (미제출)' : '';
 
           return (
             <option key={mentee.id} value={mentee.id}>
-              {dot} {mentee.name}{absentMark} · {label}
+              {mentee.name}{absentMark} · {label}
             </option>
           );
         })}
