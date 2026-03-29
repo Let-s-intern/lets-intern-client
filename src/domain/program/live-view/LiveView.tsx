@@ -9,15 +9,15 @@ import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
 import BackHeader from '../../../common/header/BackHeader';
 import LexicalContent from '../../blog/ui/LexicalContent';
-import ProgramDetailBlogReviewSection from '../../program/ProgramDetailBlogReviewSection';
+import ProgramDetailBlogReviewSection from '../program-detail/ProgramDetailBlogReviewSection';
 import ProgramDetailNavigation, {
   LIVE_CURRICULUM_ID,
   LIVE_MENTOR_INTRO_ID,
   LIVE_PROGRAM_INTRO_ID,
   LIVE_REVIEW_ID,
-} from '../../program/ProgramDetailNavigation';
+} from '../program-detail/ProgramDetailNavigation';
 import MoreReviewButton from '../../review/MoreReviewButton';
-import ProgramBestReviewSection from '../ProgramBestReviewSection';
+import ProgramBestReviewSection from '../program-detail/ProgramBestReviewSection';
 import LiveBasicInfo from './ui/LiveBasicInfo';
 import LiveCurriculum from './ui/LiveCurriculum';
 import LiveFaq from './ui/LiveFaq';

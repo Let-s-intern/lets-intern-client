@@ -12,10 +12,10 @@ import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { RadioGroup } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
-import BaseButton from '../../common/button/BaseButton';
-import { OptionFormRadioControlLabel } from '../../common/ControlLabel';
-import OptionDropdown from '../../common/dropdown/OptionDropdown';
-import PriceView from '../../common/price/PriceView';
+import BaseButton from '../../../common/button/BaseButton';
+import { OptionFormRadioControlLabel } from '../../../common/ControlLabel';
+import OptionDropdown from '../../../common/dropdown/OptionDropdown';
+import PriceView from '../../../common/price/PriceView';
 
 const { STANDARD, PREMIUM, BASIC } = ChallengePricePlanEnum.enum;
 

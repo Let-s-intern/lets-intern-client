@@ -2,7 +2,7 @@ import FaqDropdown from '@/common/dropdown/FaqDropdown';
 import Heading2 from '@/common/header/Heading2';
 import SuperTitle from '@/domain/program/program-detail/SuperTitle';
 import { faqSchemaType } from '@/schema';
-import { LIVE_FAQ_ID } from '../../ProgramDetailNavigation';
+import { LIVE_FAQ_ID } from '../../program-detail/ProgramDetailNavigation';
 
 const superTitle = '자주 묻는 질문';
 const title = '궁금한 점이 있으신가요?';

@@ -11,7 +11,7 @@ import {
   PROGRAM_FAQ_ID,
   PROGRAM_INTRO_ID,
   PROGRAM_REVIEW_ID,
-} from '../../../program/ProgramDetailNavigation';
+} from '../../program-detail/ProgramDetailNavigation';
 import { challengeColors } from '../ChallengeView';
 
 const { CAREER_START, PORTFOLIO, EXPERIENCE_SUMMARY, ETC } =

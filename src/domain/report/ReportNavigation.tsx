@@ -1,6 +1,6 @@
 'use client';
 
-import { NavItem } from '@/domain/program/ProgramDetailNavigation';
+import { NavItem } from '@/domain/program/program-detail/ProgramDetailNavigation';
 import useActiveReports from '@/hooks/useActiveReports';
 import useScrollDirection from '@/hooks/useScrollDirection';
 import useSectionObserver from '@/hooks/useSectionObserver';

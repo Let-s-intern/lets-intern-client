@@ -11,7 +11,7 @@ import {
   MobileApplyCTA,
 } from '../../../common/button/ApplyCTA';
 import NotiModal from '@/domain/program/program-detail/button/NotiModal';
-import PricePlanBottomSheet from '../PricePlanBottomSheet';
+import PricePlanBottomSheet from './PricePlanBottomSheet';
 
 const ChallengeCTAButtons = ({
   challenge,

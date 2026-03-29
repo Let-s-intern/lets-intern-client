@@ -24,10 +24,10 @@ import {
   PROGRAM_CURRICULUM_ID,
   PROGRAM_INTRO_ID,
   PROGRAM_REVIEW_ID,
-} from '../../program/ProgramDetailNavigation';
+} from '../program-detail/ProgramDetailNavigation';
 import Heading2 from '../../report/Heading2';
 import Description from '../program-detail/Description';
-import ProgramBestReviewSection from '../ProgramBestReviewSection';
+import ProgramBestReviewSection from '../program-detail/ProgramBestReviewSection';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
 import ChallengeBrand from './challenge-view/ChallengeBrand';
 import ChallengeInfoBottom from './challenge-view/ChallengeInfoBottom';

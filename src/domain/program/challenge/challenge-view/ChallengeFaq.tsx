@@ -7,7 +7,7 @@ import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema, faqSchemaType } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import { CSSProperties, ReactNode, useMemo, useState } from 'react';
-import { PROGRAM_FAQ_ID } from '../../ProgramDetailNavigation';
+import { PROGRAM_FAQ_ID } from '../../program-detail/ProgramDetailNavigation';
 
 const superTitle = '자주 묻는 질문';
 const title = '궁금한 점이 있으신가요?';

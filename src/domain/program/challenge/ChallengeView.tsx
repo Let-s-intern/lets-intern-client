@@ -22,15 +22,15 @@ import { ChallengeContent } from '@/types/interface';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import LexicalContent from '../../blog/ui/LexicalContent';
-import ProgramDetailBlogReviewSection from '../../program/ProgramDetailBlogReviewSection';
+import ProgramDetailBlogReviewSection from '../program-detail/ProgramDetailBlogReviewSection';
 import ProgramDetailNavigation, {
   CHALLENGE_DIFFERENT_ID,
   PROGRAM_CURRICULUM_ID,
   PROGRAM_INTRO_ID,
   PROGRAM_REVIEW_ID,
-} from '../../program/ProgramDetailNavigation';
+} from '../program-detail/ProgramDetailNavigation';
 import MoreReviewButton from '../../review/MoreReviewButton';
-import ProgramBestReviewSection from '../ProgramBestReviewSection';
+import ProgramBestReviewSection from '../program-detail/ProgramBestReviewSection';
 import ChallengeBasicInfo from './challenge-view/ChallengeBasicInfo';
 import ChallengeBrand from './challenge-view/ChallengeBrand';
 import ChallengeDifferent from './challenge-view/ChallengeDifferent';
