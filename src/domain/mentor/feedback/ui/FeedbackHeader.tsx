@@ -20,7 +20,7 @@ const FeedbackHeader = ({
   onClose,
 }: FeedbackHeaderProps) => {
   return (
-    <div className="flex items-center gap-2 bg-sky-50 px-4 pb-3 pt-4 md:gap-4 md:px-6 md:pt-6">
+    <div className="flex items-center gap-2 bg-violet-50 px-4 pb-3 pt-4 md:gap-4 md:px-6 md:pt-6">
       <div className="flex flex-1 flex-wrap items-center justify-between gap-2">
         {/* Left: title */}
         <div className="flex items-center gap-2">

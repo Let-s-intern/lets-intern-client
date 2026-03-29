@@ -69,7 +69,7 @@ const MissionRow = ({
   return (
     <div className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50">
       <div className="flex items-center gap-3">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-100 text-xs font-medium text-orange-700">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-100 text-xs font-medium text-violet-700">
           {mission.th}
         </span>
         <div className="flex flex-col gap-0.5">
@@ -122,7 +122,7 @@ const MissionRow = ({
         <button
           type="button"
           onClick={() => onClickFeedback(mission.id, mission.th)}
-          className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-orange-600"
+          className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-violet-700"
         >
           피드백 작성
         </button>

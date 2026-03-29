@@ -104,7 +104,7 @@ export default function ProfilePage() {
           disabled={isPending || !hasUnsavedChanges}
           className={`rounded-lg px-16 py-3 text-sm font-medium transition-colors disabled:cursor-not-allowed ${
             hasUnsavedChanges
-              ? 'bg-primary text-white hover:bg-primary-dark'
+              ? 'bg-violet-600 text-white hover:bg-violet-700'
               : 'bg-gray-200 text-gray-400'
           }`}
         >
