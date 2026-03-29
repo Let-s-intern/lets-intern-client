@@ -80,11 +80,8 @@ docs/letscareer/
 │   ├── components.md          # 75+ 공통 컴포넌트
 │   ├── hooks.md               # 40+ 커스텀 훅
 │   └── services.md            # API 서비스 & 유틸리티
-├── domain/                    # 도메인별 문서
-│   ├── challenge-feedback/    # 챌린지 피드백 멘토링
-│   │   └── README.md
-│   └── curation/              # 큐레이션
-│       └── README.md
+├── curation-domain/           # 큐레이션 도메인 아키텍처
+│   └── README.md
 ├── API_docs/                  # API 문서
 │   └── swagger_url.md
 └── tech-stack/                # 기술 스택
@@ -104,8 +101,7 @@ docs/letscareer/
 
 | 문서 | 내용 |
 |-----|------|
-| **domain/challenge-feedback/README.md** | 챌린지 피드백 멘토링 페이지 구조, URL, 데이터 관리, 섹션별 조건부 렌더링 |
-| **domain/curation/README.md** | 큐레이션 플로우 상태 관리, 추천 엔진, FAQ 시스템, 컴포넌트 구조 |
+| **curation-domain/README.md** | 큐레이션 플로우 상태 관리, 추천 엔진, FAQ 시스템, 컴포넌트 구조 |
 
 #### API 문서 (`API_docs/`)
 
@@ -237,7 +233,7 @@ tasks/
 ### 문서 활용
 
 - **공통 컴포넌트**: `docs/letscareer/common/components.md` 참조
-- **도메인 아키텍처**: `docs/letscareer/domain/` 하위 도메인별 README 참조
+- **도메인 아키텍처**: `docs/letscareer/curation-domain/README.md` 참조
 - **기술 스택**: `docs/tech-stack/README.md` 참조
 
 ### 스킬 활용

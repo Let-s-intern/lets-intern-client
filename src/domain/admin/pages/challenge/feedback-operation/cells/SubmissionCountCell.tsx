@@ -1,0 +1,34 @@
+'use client';
+
+import { useGetChallengeAttendances } from '@/api/challenge/challenge';
+import { useIsAdminQuery } from '@/api/user/user';
+import { useParams } from 'next/navigation';
+
+function SubmissionCountCell({ missionId }: { missionId: number | string }) {
+  const { programId } = useParams<{ programId: string }>();
+  const { data: isAdmin } = useIsAdminQuery();
+
+  const { data: adminAttendances } = useGetChallengeAttendances({
+    challengeId: isAdmin === true ? Number(programId) : undefined,
+    detailedMissionId: isAdmin === true ? Number(missionId) : undefined,
+  });
+
+  if (isAdmin) {
+    const list = adminAttendances ?? [];
+    const total = list.length;
+    const submitted = list.filter((a) => !!a.attendance.link).length;
+    const completed = list.filter((a) => {
+      const fs = a.attendance.feedbackStatus;
+      return fs === 'COMPLETED' || fs === 'CONFIRMED';
+    }).length;
+    return (
+      <span>
+        {submitted} / {completed} / {total}
+      </span>
+    );
+  }
+
+  return <span className="text-neutral-40">-</span>;
+}
+
+export default SubmissionCountCell;

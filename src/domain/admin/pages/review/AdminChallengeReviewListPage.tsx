@@ -13,6 +13,7 @@ import VisibilityToggle from '@/domain/admin/review/VisibilityToggle';
 import dayjs from '@/lib/dayjs';
 import { ChallengeType } from '@/schema';
 import { challengeTypeToDisplay } from '@/utils/convert';
+import { usePaginationModelWithSearchParams } from '@/hooks/usePaginationModelWithSearchParams';
 import {
   DataGrid,
   GridColDef,
@@ -209,6 +210,9 @@ const columnGroupingModel: GridColumnGroupingModel = [
 const AdminChallengeReviewListPage = () => {
   const [selectedRow, setSelectedRow] = useState<Row | null>(null);
 
+  const { paginationModel, handlePaginationModelChange } =
+    usePaginationModelWithSearchParams({ defaultPage: 0, defaultPageSize: 20 });
+
   const { data, isLoading } = useGetAdminProgramReview({
     type: 'CHALLENGE_REVIEW',
   });
@@ -263,7 +267,10 @@ const AdminChallengeReviewListPage = () => {
           disableRowSelectionOnClick
           disableColumnSelector
           disableDensitySelector
-          hideFooter
+          pagination
+          pageSizeOptions={[10, 20, 50, 100]}
+          paginationModel={paginationModel}
+          onPaginationModelChange={handlePaginationModelChange}
         />
       )}
       <ReviewDetailModal onClose={handleClose} selectedRow={selectedRow} goal />

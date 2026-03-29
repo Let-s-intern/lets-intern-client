@@ -49,7 +49,7 @@ next-env.d.ts
 # Sentry Config File
 .env.sentry-build-plugin
 
-/.claude/settings.local.json
-
-.history
+.history/
 .claude/tasks/
+.claude/settings.local.json
+.remember/

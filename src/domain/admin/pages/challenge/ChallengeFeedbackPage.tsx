@@ -2,154 +2,20 @@
 /** 참여자별 피드백 페이지 (피드백 작성 페이지) */
 
 import { usePatchAttendanceMentor } from '@/api/attendance/attendance';
-import {
-  FeedbackAttendanceQueryKey,
-  useFeedbackAttendanceQuery,
-} from '@/api/challenge/challenge';
-import {
-  ChallengeMissionFeedbackList,
-  FeedbackStatusEnum,
-} from '@/api/challenge/challengeSchema';
+import { FeedbackAttendanceQueryKey } from '@/api/challenge/challenge';
 import LoadingContainer from '@/common/loading/LoadingContainer';
-import EditorApp from '@/domain/admin/lexical/EditorApp';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
-import LexicalContent from '@/domain/blog/ui/LexicalContent';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import useBeforeUnloadWarning from '@/hooks/useBeforeUnloadWarning';
 import useInvalidateQueries from '@/hooks/useInvalidateQueries';
 import { Button } from '@mui/material';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { memo, useEffect, useState } from 'react';
-import { AttendanceRow } from './FeedbackParticipantPage';
-
-const useLocalStorageState = () => {
-  const [mission, setMission] =
-    useState<ChallengeMissionFeedbackList['missionList'][0]>();
-  const [attendance, setAttendance] = useState<AttendanceRow>();
-
-  useEffect(() => {
-    const attendance = JSON.parse(localStorage.getItem('attendance') || '{}');
-    setAttendance(attendance);
-    const mission = JSON.parse(localStorage.getItem('mission') || '{}');
-    setMission(mission);
-  }, []);
-
-  return { mission, attendance };
-};
-
-const AttendanceInfoList = memo(function AttendanceInfoList() {
-  const { mission, attendance } = useLocalStorageState();
-  const list = [
-    `${attendance?.missionTitle} / ${attendance?.missionRound}회차`,
-    `피드백 유형: ${mission?.challengeOptionTitle}`,
-    `참여자 정보: ${attendance?.major} / ${attendance?.wishCompany} / ${attendance?.wishJob}`,
-    <Link
-      key={attendance?.link}
-      href={
-        attendance?.link ||
-        `/admin/challenge/operation/${attendance?.id}/attendances/${mission?.id}/${attendance?.userId}`
-      }
-      className="text-primary underline"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      미션 제출 링크
-    </Link>,
-  ];
-
-  return (
-    <ul className="list-inside list-disc">
-      {list.map((item, index) => (
-        <li key={index}>{item}</li>
-      ))}
-    </ul>
-  );
-});
-
-const useAttendanceFeedback = () => {
-  const { programId, missionId, userId } = useParams<{
-    programId: string;
-    missionId: string;
-    userId: string;
-  }>();
-
-  const { data, isLoading } = useFeedbackAttendanceQuery({
-    challengeId: programId,
-    missionId,
-    attendanceId: userId,
-  });
-
-  const [content, setContent] = useState<string>();
-
-  const hasUnsavedChanges = content !== data?.attendanceDetailVo.feedback;
-  const defaultContent = data?.attendanceDetailVo.feedback;
-
-  useEffect(() => {
-    if (isLoading || !data) return;
-    setContent(data.attendanceDetailVo.feedback ?? undefined);
-  }, [isLoading, data]);
-
-  return {
-    defaultContent,
-    content,
-    setContent,
-    isLoading: isLoading || !data,
-    hasUnsavedChanges,
-  };
-};
-
-const { COMPLETED, CONFIRMED } = FeedbackStatusEnum.enum;
-
-const useIsCompleted = () => {
-  const [isCompleted, setIsCompleted] = useState<boolean>();
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const attendance: AttendanceRow = JSON.parse(
-      localStorage.getItem('attendance') ?? '{}',
-    );
-
-    if (
-      attendance.feedbackStatus === COMPLETED ||
-      attendance.feedbackStatus === CONFIRMED
-    ) {
-      setIsCompleted(true);
-    } else {
-      setIsCompleted(false);
-    }
-    setIsLoading(false);
-  }, []);
-
-  return { isCompleted, isLoading };
-};
-
-const FeedbackEditorApp = ({
-  initialEditorStateJsonString,
-  onChange,
-}: {
-  initialEditorStateJsonString?: string;
-  onChange?: (jsonString: string) => void;
-}) => {
-  const { isCompleted, isLoading } = useIsCompleted();
-
-  if (isLoading) return null;
-
-  if (isCompleted && initialEditorStateJsonString) {
-    return (
-      <div className="my-4 bg-neutral-90 p-5">
-        <LexicalContent node={JSON.parse(initialEditorStateJsonString).root} />
-      </div>
-    );
-  }
-
-  return (
-    <EditorApp
-      initialEditorStateJsonString={initialEditorStateJsonString}
-      onChange={onChange}
-    />
-  );
-};
+import AttendanceInfoList from './feedback/components/AttendanceInfoList';
+import FeedbackEditorApp from './feedback/components/FeedbackEditorApp';
+import useAttendanceFeedback from './feedback/hooks/useAttendanceFeedback';
+import useIsCompleted from './feedback/hooks/useIsCompleted';
+import useLocalStorageState from './feedback/hooks/useLocalStorageState';
 
 export default function ChallengeFeedbackPage() {
   const router = useRouter();
@@ -203,7 +69,7 @@ export default function ChallengeFeedbackPage() {
 
   return (
     <div className="mt-5 px-5">
-      {/* 탭 버튼 (피드백 관리 페이지와 동일) */}
+      {/* 탭 버튼 */}
       <div className="mb-4 flex items-center gap-2">
         <Link
           href={`/admin/challenge/operation/${programId}/feedback`}
@@ -233,7 +99,7 @@ export default function ChallengeFeedbackPage() {
       <AttendanceInfoList />
       {!isLoading && (
         <FeedbackEditorApp
-          initialEditorStateJsonString={content ?? defaultContent ?? undefined}
+          initialEditorStateJsonString={content || defaultContent || undefined}
           onChange={setContent}
         />
       )}
