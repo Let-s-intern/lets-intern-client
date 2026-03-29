@@ -14,6 +14,7 @@ import { useMemo } from 'react';
 import ChallengePeriodBar, {
   type PeriodBarData,
 } from '../challenge-period/ChallengePeriodBar';
+import { CompactFeedbackCard } from '../challenge-period/FeedbackCard';
 import MonthDivider from './ui/MonthDivider';
 import TodayButton from './ui/TodayButton';
 import { useInfiniteWeekScroll } from './hooks/useInfiniteWeekScroll';
@@ -187,11 +188,18 @@ const WeeklyCalendar = ({
                   gridColumn: `${startCol} / ${endCol}`,
                 }}
               >
-                <ChallengePeriodBar
-                  bar={bar}
-                  colSpan={colSpan}
-                  onBarClick={onBarClick}
-                />
+                {colSpan <= 1 ? (
+                  <CompactFeedbackCard
+                    bar={bar}
+                    onBarClick={onBarClick}
+                  />
+                ) : (
+                  <ChallengePeriodBar
+                    bar={bar}
+                    colSpan={colSpan}
+                    onBarClick={onBarClick}
+                  />
+                )}
               </div>
             ))}
           </div>
