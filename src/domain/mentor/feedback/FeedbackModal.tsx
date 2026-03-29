@@ -13,10 +13,10 @@ import {
 
 import { emptyEditorState } from '@/domain/admin/lexical/EditorApp';
 
-import MenteeList from './MenteeList';
-import MenteeInfo from './MenteeInfo';
-import FeedbackEditor from './FeedbackEditor';
-import FeedbackActions from './FeedbackActions';
+import MenteeList from './ui/MenteeList';
+import MenteeInfo from './ui/MenteeInfo';
+import FeedbackEditor from './ui/FeedbackEditor';
+import FeedbackActions from './ui/FeedbackActions';
 import mentorConfig from '@/domain/mentor/config.json';
 
 interface FeedbackModalProps {
