@@ -97,18 +97,21 @@ export default function ProfilePage() {
         <CareerSection />
       </div>
 
-      <div className="mt-10 flex justify-center">
+      {/* Floating save button */}
+      <div
+        className={`fixed bottom-6 left-1/2 z-50 -translate-x-1/2 transition-all duration-300 ${
+          hasUnsavedChanges
+            ? 'translate-y-0 opacity-100'
+            : 'pointer-events-none translate-y-4 opacity-0'
+        }`}
+      >
         <button
           type="button"
           onClick={handleSave}
-          disabled={isPending || !hasUnsavedChanges}
-          className={`rounded-lg px-16 py-3 text-sm font-medium transition-colors disabled:cursor-not-allowed ${
-            hasUnsavedChanges
-              ? 'bg-primary text-white hover:bg-primary-hover'
-              : 'bg-gray-200 text-gray-400'
-          }`}
+          disabled={isPending}
+          className="rounded-lg bg-primary px-16 py-3 text-sm font-medium text-white shadow-lg transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {isPending ? '저장 중...' : '저장하기'}
+          {isPending ? '저장 중...' : '변경사항 저장'}
         </button>
       </div>
     </div>
