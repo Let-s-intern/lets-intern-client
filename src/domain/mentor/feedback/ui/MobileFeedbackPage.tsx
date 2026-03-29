@@ -39,6 +39,7 @@ const MobileFeedbackPage = ({
     handleSelectMentee,
     handleClose,
     handleMutationSuccess,
+    editorKey,
   } = useFeedbackModal({ isOpen, onClose, challengeId, missionId });
 
   const { hasPrevMentee, hasNextMentee, handlePrevMentee, handleNextMentee } =
@@ -103,7 +104,7 @@ const MobileFeedbackPage = ({
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-4 py-3">
         <div className="flex min-h-[240px] flex-1 flex-col">
           <FeedbackEditor
-            key={`${selectedAttendanceId}-${editorContent}`}
+            key={editorKey}
             initialEditorStateJsonString={editorContent}
             onChange={setEditorContent}
             isReadOnly={isReadOnly}

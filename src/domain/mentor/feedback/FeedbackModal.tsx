@@ -40,6 +40,7 @@ const FeedbackModal = ({
     handleSelectMentee,
     handleClose,
     handleMutationSuccess,
+    editorKey,
   } = useFeedbackModal({ isOpen, onClose, challengeId, missionId });
 
   const { hasPrevMentee, hasNextMentee, handlePrevMentee, handleNextMentee } =
@@ -125,7 +126,7 @@ const FeedbackModal = ({
         }
         editor={
           <FeedbackEditor
-            key={`${selectedAttendanceId}-${editorContent}`}
+            key={editorKey}
             initialEditorStateJsonString={editorContent}
             onChange={setEditorContent}
             isReadOnly={isReadOnly}

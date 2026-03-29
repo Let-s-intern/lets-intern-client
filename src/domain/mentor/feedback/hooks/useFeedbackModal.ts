@@ -147,5 +147,6 @@ export function useFeedbackModal({
     handleSelectMentee,
     handleClose,
     handleMutationSuccess,
+    editorKey: `${selectedAttendanceId}-${dataUpdatedAt}`,
   };
 }
