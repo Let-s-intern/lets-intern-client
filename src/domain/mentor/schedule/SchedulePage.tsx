@@ -125,12 +125,14 @@ const SchedulePage = () => {
     challenges,
     selectedChallengeId,
     setSelectedChallengeId,
-    allBars,
+    allBarsUnfiltered,
+    filteredBars,
     handleData,
     challengeFilterItems,
   } = useScheduleData();
+  // WeeklySummary always uses unfiltered bars (all challenges)
   const { totalCount, todayDueCount, incompleteCount, completedCount } =
-    useWeeklySummary(allBars, weekStartDate);
+    useWeeklySummary(allBarsUnfiltered, weekStartDate);
 
   // Feedback modal state
   const [feedbackModal, setFeedbackModal] = useState<{
@@ -142,7 +144,7 @@ const SchedulePage = () => {
   }>({ isOpen: false, challengeId: 0, missionId: 0 });
 
   const handleBarClick = (challengeId: number, missionId: number) => {
-    const bar = allBars.find(
+    const bar = allBarsUnfiltered.find(
       (b) => b.challengeId === challengeId && b.missionId === missionId,
     );
     setFeedbackModal({
@@ -189,7 +191,7 @@ const SchedulePage = () => {
 
             <WeeklyCalendar
               weekStartDate={weekStartDate}
-              bars={allBars}
+              bars={filteredBars}
               onBarClick={handleBarClick}
               onWeekChange={setWeekStartDate}
             />

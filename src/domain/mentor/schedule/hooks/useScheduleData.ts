@@ -3,23 +3,11 @@ import { useCallback, useMemo, useState } from 'react';
 import { useMentorChallengeListQuery } from '@/api/user/user';
 import type { PeriodBarData } from '../challenge-period/ChallengePeriodBar';
 
-interface UseScheduleDataReturn {
-  challenges: ReturnType<typeof useMentorChallengeListQuery>['data'] extends
-    | { myChallengeMentorVoList: infer T }
-    | undefined
-    ? T extends (infer U)[]
-      ? U[]
-      : never
-    : never;
-  selectedChallengeId: number | null;
-  setSelectedChallengeId: (id: number | null) => void;
-  allBars: PeriodBarData[];
-  handleData: (key: string, bar: PeriodBarData) => void;
-  challengeFilterItems: { challengeId: number; title: string }[];
-}
-
 /**
  * Manages challenge data, bar aggregation, and challenge filtering for the schedule page.
+ *
+ * Key design: WeeklySummary uses `allBarsUnfiltered` (no filter applied),
+ * while WeeklyCalendar uses `filteredBars` (respects selectedChallengeId).
  */
 export function useScheduleData() {
   const [selectedChallengeId, setSelectedChallengeId] = useState<number | null>(
@@ -42,25 +30,27 @@ export function useScheduleData() {
     });
   }, []);
 
-  // Aggregate all bars, optionally filtered by selected challenge
-  const allBars = useMemo(() => {
+  // All bars without any filter — used by WeeklySummary
+  const allBarsUnfiltered = useMemo(() => {
     const result: PeriodBarData[] = [];
-    barsMap.forEach((bar) => {
-      if (
-        selectedChallengeId === null ||
-        selectedChallengeId === bar.challengeId
-      ) {
-        result.push(bar);
-      }
-    });
+    barsMap.forEach((bar) => result.push(bar));
     return result;
-  }, [barsMap, selectedChallengeId]);
+  }, [barsMap]);
+
+  // Filtered bars — used by WeeklyCalendar
+  const filteredBars = useMemo(() => {
+    if (selectedChallengeId === null) return allBarsUnfiltered;
+    return allBarsUnfiltered.filter(
+      (bar) => bar.challengeId === selectedChallengeId,
+    );
+  }, [allBarsUnfiltered, selectedChallengeId]);
 
   const challengeFilterItems = useMemo(
     () =>
-      challenges.map((c) => ({
+      challenges.map((c, index) => ({
         challengeId: c.challengeId,
         title: c.title,
+        colorIndex: index,
       })),
     [challenges],
   );
@@ -69,7 +59,8 @@ export function useScheduleData() {
     challenges,
     selectedChallengeId,
     setSelectedChallengeId,
-    allBars,
+    allBarsUnfiltered,
+    filteredBars,
     handleData,
     challengeFilterItems,
   };

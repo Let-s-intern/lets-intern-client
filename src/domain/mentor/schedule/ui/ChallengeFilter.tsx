@@ -1,9 +1,16 @@
 'use client';
 
 import { twMerge } from '@/lib/twMerge';
+import ChallengeTag from '../weekly-calendar/ui/ChallengeTag';
+
+interface ChallengeFilterItem {
+  challengeId: number;
+  title: string;
+  colorIndex: number;
+}
 
 interface ChallengeFilterProps {
-  challenges: { challengeId: number; title: string }[];
+  challenges: ChallengeFilterItem[];
   selectedChallengeId: number | null;
   onSelect: (challengeId: number | null) => void;
 }
@@ -13,34 +20,34 @@ const ChallengeFilter = ({
   selectedChallengeId,
   onSelect,
 }: ChallengeFilterProps) => {
+  const handleToggle = (challengeId: number) => {
+    // Toggle: if already selected, deselect (show all); otherwise select
+    onSelect(selectedChallengeId === challengeId ? null : challengeId);
+  };
+
   return (
-    <div className="flex flex-wrap items-center gap-2 md:gap-4">
+    <div className="flex flex-wrap items-center gap-2 md:gap-3">
       <button
         type="button"
         onClick={() => onSelect(null)}
         className={twMerge(
-          'rounded-md border border-neutral-200 bg-white px-3 py-[5px] text-sm leading-5',
+          'rounded-full border border-neutral-200 bg-white px-3 py-1 text-xs font-medium leading-5 transition-colors',
           selectedChallengeId === null
-            ? 'font-normal text-primary-dark'
-            : 'font-normal text-neutral-500',
+            ? 'border-primary bg-primary text-white'
+            : 'text-neutral-500 hover:bg-neutral-50',
         )}
       >
         전체
       </button>
       {challenges.map((c) => (
-        <button
+        <ChallengeTag
           key={c.challengeId}
-          type="button"
-          onClick={() => onSelect(c.challengeId)}
-          className={twMerge(
-            'rounded-md border border-neutral-200 bg-white px-3 py-[5px] text-sm leading-5',
-            selectedChallengeId === c.challengeId
-              ? 'font-normal text-primary-dark'
-              : 'font-normal text-neutral-500',
-          )}
-        >
-          {c.title}
-        </button>
+          challengeId={c.challengeId}
+          title={c.title}
+          colorIndex={c.colorIndex}
+          isSelected={selectedChallengeId === c.challengeId}
+          onToggle={handleToggle}
+        />
       ))}
     </div>
   );
