@@ -6,21 +6,23 @@ import {
   FeedbackStatusMapping,
 } from '@/api/challenge/challengeSchema';
 import { usePatchAdminAttendance } from '@/api/attendance/attendance';
+import {
+  ChallengeApplicationsQueryKey,
+  ChallengeMissionFeedbackAttendanceQueryKey,
+  MentorMissionFeedbackAttendanceQueryKey,
+} from '@/api/challenge/challenge';
 import { usePatchAttendanceMentorMutation } from '@/api/mentor/mentor';
 import { useIsAdminQuery } from '@/api/user/user';
 import SelectFormControl from '@/domain/admin/program/SelectFormControl';
 import { MenuItem, SelectChangeEvent } from '@mui/material';
 import { GridRenderCellParams } from '@mui/x-data-grid';
+import { useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import type { AttendanceRow } from '../types';
 import axios from '@/utils/axios';
 
 const FeedbackStatusEnumForMentor = FeedbackStatusEnum.exclude(['CONFIRMED']);
-
-// fallback 엔드포인트가 feedbackStatus를 반환하지 않으므로
-// PATCH 성공 값을 모듈 레벨에서 캐시하여 페이지 이동 후에도 유지
-const statusCache = new Map<number | string, FeedbackStatus>();
 
 const FeedbackStatusRenderCell = (
   params: GridRenderCellParams<AttendanceRow, FeedbackStatus>,
@@ -32,20 +34,36 @@ const FeedbackStatusRenderCell = (
   const { data: isAdmin } = useIsAdminQuery();
   const { mutateAsync: patchAdmin } = usePatchAdminAttendance();
   const { mutateAsync: patchMentor } = usePatchAttendanceMentorMutation();
+  const queryClient = useQueryClient();
 
-  // 초기값: 캐시 → 서버값 → WAITING 순으로 결정
-  const initialValue =
-    statusCache.get(params.row.id) ||
-    params.value ||
-    FeedbackStatusEnum.enum.WAITING;
+  const [localValue, setLocalValue] = useState<FeedbackStatus>(
+    params.value || FeedbackStatusEnum.enum.WAITING,
+  );
 
-  const [localValue, setLocalValue] = useState<FeedbackStatus>(initialValue);
+  const invalidateFeedbackQueries = async () => {
+    const feedbackQueryKey = isAdmin
+      ? [ChallengeMissionFeedbackAttendanceQueryKey, programId, missionId]
+      : [MentorMissionFeedbackAttendanceQueryKey, programId, missionId];
+
+    await queryClient.invalidateQueries({ queryKey: feedbackQueryKey });
+    // fallback 경로의 캐시도 invalidate하여 stale 데이터 방지
+    await queryClient.invalidateQueries({
+      queryKey: [
+        'admin',
+        'challenge',
+        Number(programId),
+        'attendances',
+        Number(missionId),
+      ],
+    });
+  };
 
   const handleChange = async (e: SelectChangeEvent<FeedbackStatus>) => {
     const newValue = e.target.value as FeedbackStatus;
     const prevValue = localValue;
     const attendanceId = params.row.id as number;
 
+    // Optimistic update
     setLocalValue(newValue);
 
     try {
@@ -64,8 +82,8 @@ const FeedbackStatusRenderCell = (
           feedbackStatus: newValue,
         });
       }
-      // PATCH 성공 → 캐시에 저장 (re-mount 시에도 유지)
-      statusCache.set(params.row.id, newValue);
+      // PATCH 성공 → query invalidation으로 서버 데이터 재조회
+      await invalidateFeedbackQueries();
     } catch (error) {
       setLocalValue(prevValue);
       console.error('feedbackStatus 변경 실패:', error);
