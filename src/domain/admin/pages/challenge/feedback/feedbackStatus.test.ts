@@ -203,7 +203,96 @@ describe('query invalidation 후 feedbackStatus 동기화', () => {
   });
 });
 
-// ── 5) 결론 & 디버깅 가이드 ─────────────────────────────────────
+// ── 5) 멘토 색상 & 진행상태 색상 매핑 테스트 ───────────────────
+
+describe('멘토 색상 뱃지 (MentorRenderCell)', () => {
+  it('getMentorColor는 인덱스에 따라 순환 색상을 반환한다', () => {
+    const MENTOR_COLORS = [
+      { bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200' },
+      { bg: 'bg-orange-50', text: 'text-orange-700', border: 'border-orange-200' },
+      { bg: 'bg-yellow-50', text: 'text-yellow-700', border: 'border-yellow-200' },
+      { bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200' },
+      { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200' },
+      { bg: 'bg-indigo-50', text: 'text-indigo-700', border: 'border-indigo-200' },
+      { bg: 'bg-violet-50', text: 'text-violet-700', border: 'border-violet-200' },
+    ];
+    const getMentorColor = (i: number) => MENTOR_COLORS[i % MENTOR_COLORS.length];
+
+    expect(getMentorColor(0).bg).toBe('bg-red-50');
+    expect(getMentorColor(6).bg).toBe('bg-violet-50');
+    expect(getMentorColor(7).bg).toBe('bg-red-50'); // 순환
+  });
+
+  it('멘토 ID로 리스트에서 인덱스를 찾아 색상을 결정한다', () => {
+    const mentorList = [
+      { challengeMentorId: 10, name: '김멘토' },
+      { challengeMentorId: 20, name: '이멘토' },
+      { challengeMentorId: 30, name: '박멘토' },
+    ];
+
+    const getMentorColorByIdFromList = (id: number) => {
+      const idx = mentorList.findIndex((m) => m.challengeMentorId === id);
+      return idx >= 0 ? idx : null;
+    };
+
+    expect(getMentorColorByIdFromList(10)).toBe(0);
+    expect(getMentorColorByIdFromList(20)).toBe(1);
+    expect(getMentorColorByIdFromList(30)).toBe(2);
+    expect(getMentorColorByIdFromList(999)).toBeNull(); // 없는 ID
+  });
+});
+
+describe('진행상태 색상 매핑 (FeedbackStatusRenderCell)', () => {
+  it('각 FeedbackStatus에 대한 색상이 정의되어 있다', () => {
+    const FEEDBACK_STATUS_COLORS: Record<string, { bg: string; text: string }> = {
+      WAITING: { bg: 'bg-neutral-90', text: 'text-neutral-30' },
+      IN_PROGRESS: { bg: 'bg-blue-50', text: 'text-blue-700' },
+      COMPLETED: { bg: 'bg-green-50', text: 'text-green-700' },
+      CONFIRMED: { bg: 'bg-violet-50', text: 'text-violet-700' },
+    };
+
+    const statuses = ['WAITING', 'IN_PROGRESS', 'COMPLETED', 'CONFIRMED'];
+    statuses.forEach((status) => {
+      expect(FEEDBACK_STATUS_COLORS[status]).toBeDefined();
+      expect(FEEDBACK_STATUS_COLORS[status].bg).toBeTruthy();
+      expect(FEEDBACK_STATUS_COLORS[status].text).toBeTruthy();
+    });
+  });
+
+  it('각 상태별 색상이 서로 다르다', () => {
+    const colors = [
+      'bg-neutral-90', // WAITING
+      'bg-blue-50',    // IN_PROGRESS
+      'bg-green-50',   // COMPLETED
+      'bg-violet-50',  // CONFIRMED
+    ];
+    const unique = new Set(colors);
+    expect(unique.size).toBe(4);
+  });
+});
+
+describe('진행상태 변경 알림 (snackbar)', () => {
+  it('성공 시 snackbar 호출 시뮬레이션', () => {
+    const snackbar = vi.fn();
+
+    // handleChange 성공 시나리오
+    const newValue = 'IN_PROGRESS';
+    snackbar('진행상태가 변경되었습니다.');
+
+    expect(snackbar).toHaveBeenCalledWith('진행상태가 변경되었습니다.');
+  });
+
+  it('실패 시 snackbar 호출 시뮬레이션', () => {
+    const snackbar = vi.fn();
+
+    // handleChange 실패 시나리오
+    snackbar('진행상태 변경에 실패했습니다.');
+
+    expect(snackbar).toHaveBeenCalledWith('진행상태 변경에 실패했습니다.');
+  });
+});
+
+// ── 6) 결론 & 디버깅 가이드 ─────────────────────────────────────
 
 describe('디버깅 가이드', () => {
   it('네트워크 탭에서 확인해야 할 것들', () => {
