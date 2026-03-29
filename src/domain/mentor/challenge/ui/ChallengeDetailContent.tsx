@@ -74,8 +74,7 @@ const MissionRow = ({
   } as const;
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-gray-200 p-3 transition-colors hover:bg-gray-50 md:p-4">
-      {/* 상단: 회차 + 미션 제목 + 상태 뱃지 */}
+    <div className="flex flex-col gap-3 rounded-lg border border-gray-200 p-3 transition-colors hover:bg-gray-50 md:flex-row md:items-center md:justify-between md:p-4">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <span className="shrink-0 rounded-lg bg-primary-10 px-2.5 py-1 text-xs font-medium text-primary-dark">
@@ -106,7 +105,6 @@ const MissionRow = ({
         )}
       </div>
 
-      {/* 하단: 통계 + 버튼 */}
       <div className="flex flex-wrap items-center gap-3 md:gap-4">
         {/* Submission stats */}
         <div className="text-xs text-gray-500 md:text-right">
