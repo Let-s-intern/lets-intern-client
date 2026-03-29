@@ -15,6 +15,7 @@ import ChallengePeriodBar, {
   type PeriodBarData,
 } from '../challenge-period/ChallengePeriodBar';
 import MonthDivider from './ui/MonthDivider';
+import TodayButton from './ui/TodayButton';
 import { useInfiniteWeekScroll } from './hooks/useInfiniteWeekScroll';
 
 const DAY_LABELS = ['월', '화', '수', '목', '금', '토', '일'];
@@ -40,6 +41,7 @@ const WeeklyCalendar = ({
     dragOffset,
     isDragging,
     handlers,
+    goToCurrentWeek,
   } = useInfiniteWeekScroll({ weekStartDate, onWeekChange });
 
   const days = useMemo(
@@ -48,6 +50,13 @@ const WeeklyCalendar = ({
     [weekStartTime],
   );
   const today = new Date();
+
+  // Check if today falls within the current displayed week
+  const isTodayVisible = useMemo(() => {
+    const weekEnd = addDays(weekStart, 6);
+    return today >= weekStart && today <= weekEnd;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weekStartTime]);
 
   // Filter bars that overlap with the current week
   const visibleBars = useMemo(() => {
@@ -100,6 +109,7 @@ const WeeklyCalendar = ({
   );
 
   return (
+    <div className="relative">
     <div
       ref={containerRef}
       className="touch-pan-y overflow-x-auto rounded-[16px] border border-neutral-80 select-none"
@@ -184,6 +194,8 @@ const WeeklyCalendar = ({
           </div>
         </div>
       </div>
+    </div>
+    <TodayButton isTodayVisible={isTodayVisible} onGoToToday={goToCurrentWeek} />
     </div>
   );
 };
