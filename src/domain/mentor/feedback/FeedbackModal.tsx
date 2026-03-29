@@ -17,7 +17,7 @@ import MenteeList from './ui/MenteeList';
 import MenteeInfo from './ui/MenteeInfo';
 import FeedbackEditor from './ui/FeedbackEditor';
 import FeedbackActions from './ui/FeedbackActions';
-import mentorConfig from '@/domain/mentor/config.json';
+import mentorConfig from '@/domain/mentor/constants/config';
 
 interface FeedbackModalProps {
   isOpen: boolean;

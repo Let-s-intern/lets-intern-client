@@ -1,7 +1,7 @@
 'use client';
 
 import { usePatchAttendanceMentorMutation } from '@/api/mentor/mentor';
-import config from '../../config.json';
+import config from '../../constants/config';
 
 interface FeedbackActionsProps {
   attendanceId: number | null;

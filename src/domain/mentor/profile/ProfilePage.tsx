@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { usePatchUser, useUserQuery } from '@/api/user/user';
 import { useUnsavedChangesWarning } from '@/hooks/useUnsavedChangesWarning';
-import mentorConfig from '../config.json';
+import mentorConfig from '../constants/config';
 import BasicInfo, { type BasicInfoFormData } from './ui/BasicInfo';
 import CareerSection from './ui/CareerSection';
 import Introduction from './ui/Introduction';

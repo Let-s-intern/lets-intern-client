@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import config from '../../config.json';
+import config from '../../constants/config';
 
 interface MentorChallengeCardProps {
   challengeId: number;
