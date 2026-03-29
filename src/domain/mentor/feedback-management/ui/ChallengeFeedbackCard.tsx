@@ -36,7 +36,6 @@ function isMissionFeedbackComplete(mission: Mission): boolean {
 
 interface MissionRowProps {
   mission: Mission;
-  challengeTitle: string | null;
   challengeStartDate: string | null;
   challengeEndDate: string | null;
   onClickFeedback: (missionId: number, missionTh: number) => void;
@@ -44,7 +43,6 @@ interface MissionRowProps {
 
 const MissionRow = ({
   mission,
-  challengeTitle,
   challengeStartDate,
   challengeEndDate,
   onClickFeedback,
@@ -103,7 +101,7 @@ const MissionRow = ({
         {/* 좌측: 날짜 정보 */}
         <div className="flex flex-col gap-0.5">
           <p className="text-sm font-semibold text-gray-900 md:text-base">
-            {challengeTitle ?? '챌린지'}
+            미션 제목 텍스트
           </p>
           <p className="text-xs text-gray-400">
             {formatDate(challengeStartDate)} ~{formatDate(challengeEndDate)}
@@ -198,7 +196,6 @@ const ChallengeFeedbackCard = ({
             <MissionRow
               key={mission.missionId}
               mission={mission}
-              challengeTitle={challenge.title}
               challengeStartDate={challenge.startDate}
               challengeEndDate={challenge.endDate}
               onClickFeedback={handleClickFeedback}
