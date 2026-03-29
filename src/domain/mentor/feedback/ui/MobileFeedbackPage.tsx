@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 
 import MenteeInfo from './MenteeInfo';
 import FeedbackEditor from './FeedbackEditor';
@@ -91,16 +91,21 @@ const MobileFeedbackPage = ({
 
       {/* Scrollable content area */}
       <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4 py-3">
-        {/* Mentee info (collapsible on mobile) */}
-        <MenteeInfo
-          challengeId={challengeId}
-          missionId={missionId}
-          attendanceId={selectedAttendanceId}
-          challengeTitle={challengeTitle}
-        />
+        {/* Mentee info - collapsible to maximize editor space */}
+        <CollapsibleSection
+          label="멘티 정보"
+          defaultOpen={false}
+        >
+          <MenteeInfo
+            challengeId={challengeId}
+            missionId={missionId}
+            attendanceId={selectedAttendanceId}
+            challengeTitle={challengeTitle}
+          />
+        </CollapsibleSection>
 
-        {/* Editor */}
-        <div className="flex min-h-[200px] flex-1 flex-col">
+        {/* Editor - takes maximum remaining space */}
+        <div className="flex min-h-[240px] flex-1 flex-col">
           <FeedbackEditor
             initialEditorStateJsonString={editorContent}
             onChange={setEditorContent}
@@ -156,6 +161,47 @@ const NavButton = ({
         />
       </svg>
     </button>
+  );
+};
+
+/** Collapsible section for mobile layout */
+const CollapsibleSection = ({
+  label,
+  defaultOpen,
+  children,
+}: {
+  label: string;
+  defaultOpen: boolean;
+  children: ReactNode;
+}) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  return (
+    <div className="shrink-0">
+      <button
+        type="button"
+        onClick={() => setIsOpen((prev) => !prev)}
+        className="flex w-full items-center justify-between rounded-lg bg-gray-50 px-3 py-2 text-sm font-medium text-neutral-700"
+      >
+        {label}
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          className={`transition-transform ${isOpen ? 'rotate-180' : ''}`}
+        >
+          <path
+            d="M4 6L8 10L12 6"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </button>
+      {isOpen ? <div className="mt-2">{children}</div> : null}
+    </div>
   );
 };
 
