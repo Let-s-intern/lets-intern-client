@@ -32,6 +32,7 @@
 | **doc-updater** | 문서 업데이트 | 코드 변경 시 자동 문서화 |
 | **test-runner** | 테스트 실행 | 구현 완료 후 자동 테스트 |
 | **task-executor** | 작업 실행 | 복잡한 구현 작업 위임 |
+| **refactorer** | 리팩터링 실행 | DDD + 프랙탈 아키텍처 기반 구조 개선, 코드 리뷰 후 자율 리팩터링 |
 
 ### 2. 에이전트 팀 (`roles/`)
 
@@ -58,9 +59,10 @@
 | 스킬 | 내용 | 적용 대상 |
 |-----|------|----------|
 | **code-quality** | 코드 품질 기준 (가독성, 예측성, 응집도, 결합도) | developer |
-| **folder-structure** | 프로젝트 폴더 구조 규칙 | developer |
+| **code-review** | 코드 리뷰 (PR/diff/경로 기반, PR 없이도 동작) | developer, refactorer |
+| **folder-structure** | DDD + 프랙탈 아키텍처 폴더 구조 규칙 | developer, refactorer |
 | **seo** | SEO 최적화 가이드 (메타데이터, sitemap 등) | developer |
-| **vercel-react-best-practices** | Vercel React 최적화 규칙 (memo, 병렬 fetching 등) | developer |
+| **vercel-react-best-practices** | Vercel React 최적화 규칙 (memo, 병렬 fetching 등) | developer, refactorer |
 | **task-runner** | 작업 실행 워크플로우 | coordinator |
 | **task-maker** | 작업 생성 및 관리 | coordinator |
 
