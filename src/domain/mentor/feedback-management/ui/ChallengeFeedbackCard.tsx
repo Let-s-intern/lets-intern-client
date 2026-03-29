@@ -3,11 +3,6 @@
 import { useMemo } from 'react';
 
 import type { MentorFeedbackManagement } from '@/api/challenge/challengeSchema';
-import {
-  FeedbackStatusMapping,
-  type FeedbackStatus,
-} from '@/api/challenge/challengeSchema';
-import StatusBadge from '@/domain/mentor/ui/StatusBadge';
 
 type Challenge = MentorFeedbackManagement['challengeList'][number];
 type Mission = Challenge['feedbackMissions'][number];
@@ -30,18 +25,28 @@ interface MissionRowProps {
 const MissionRow = ({ mission, onClickFeedback }: MissionRowProps) => {
   const totalCount = mission.submittedCount + mission.notSubmittedCount;
 
-  // Build feedback status counts from the array
-  const feedbackCountMap = useMemo(() => {
-    const map = new Map<string, number>();
+  const { completedCount, missionStatus } = useMemo(() => {
+    let completed = 0;
+    let hasInProgress = false;
     for (const item of mission.feedbackStatusCounts) {
-      map.set(item.feedbackStatus, item.count);
+      if (item.feedbackStatus === 'COMPLETED' || item.feedbackStatus === 'CONFIRMED') {
+        completed += item.count;
+      }
+      if (item.feedbackStatus === 'IN_PROGRESS') {
+        hasInProgress = item.count > 0;
+      }
     }
-    return map;
-  }, [mission.feedbackStatusCounts]);
 
-  const completedCount =
-    (feedbackCountMap.get('COMPLETED') ?? 0) +
-    (feedbackCountMap.get('CONFIRMED') ?? 0);
+    const isAllComplete = mission.submittedCount > 0 && completed >= mission.submittedCount;
+    const status: 'completed' | 'inProgress' | 'waiting' = isAllComplete ? 'completed' : hasInProgress ? 'inProgress' : 'waiting';
+    return { completedCount: completed, missionStatus: status };
+  }, [mission.feedbackStatusCounts, mission.submittedCount]);
+
+  const statusConfig = {
+    completed: { label: '완료', className: 'bg-green-100 text-green-700' },
+    inProgress: { label: '진행중', className: 'bg-yellow-100 text-yellow-700' },
+    waiting: { label: '진행전', className: 'bg-gray-100 text-gray-500' },
+  } as const;
 
   return (
     <div className="flex flex-col gap-3 rounded-lg border border-gray-200 p-3 transition-colors hover:bg-gray-50 md:flex-row md:items-center md:justify-between md:p-4">
@@ -55,18 +60,12 @@ const MissionRow = ({ mission, onClickFeedback }: MissionRowProps) => {
           </h3>
         </div>
 
-        {/* Feedback status badges */}
-        <div className="flex shrink-0 flex-wrap gap-1">
-          {(
-            Object.keys(FeedbackStatusMapping) as FeedbackStatus[]
-          ).map((key) => (
-            <StatusBadge
-              key={key}
-              status={key}
-              count={feedbackCountMap.get(key) ?? 0}
-            />
-          ))}
-        </div>
+        {/* Mission status badge */}
+        <span
+          className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${statusConfig[missionStatus].className}`}
+        >
+          {statusConfig[missionStatus].label}
+        </span>
       </div>
 
       <div className="flex flex-wrap items-center gap-3 md:gap-4">
