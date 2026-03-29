@@ -14,8 +14,8 @@ const FeedbackManagementPage = () => {
   } = useFeedbackManagement();
 
   return (
-    <div className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold leading-8 text-neutral-900">
+    <div className="flex flex-col gap-4 md:gap-6">
+      <h1 className="text-lg font-semibold leading-7 text-neutral-900 md:text-xl md:leading-8">
         피드백 현황
       </h1>
 
@@ -26,7 +26,7 @@ const FeedbackManagementPage = () => {
           참여 중인 챌린지가 없습니다.
         </div>
       ) : (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4 md:gap-6">
           {challengeList.map((challenge) => (
             <ChallengeFeedbackCard
               key={challenge.challengeId}
