@@ -265,11 +265,9 @@ const MagnetApplyContent = ({
           onSelectionsChange={handleSelectionsChange}
           showRequired={true}
           beforeConditions={
-            questions.length > 0 ? (
-              <h2 className="mb-6 mt-4 text-xsmall16 font-semibold text-neutral-0 md:text-small18">
-                추가 정보
-              </h2>
-            ) : undefined
+            <h2 className="mb-6 mt-4 text-xsmall16 font-semibold text-neutral-0 md:text-small18">
+              추가 정보
+            </h2>
           }
         />
       </section>
