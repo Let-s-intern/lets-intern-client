@@ -184,7 +184,6 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
                 isNew
                 href="/library/list"
                 active={activeLink === 'LIBRARY'}
-                target="_blank"
                 rel="noopener noreferrer"
               >
                 무료 자료집
