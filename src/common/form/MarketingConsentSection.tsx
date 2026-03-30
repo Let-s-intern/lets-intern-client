@@ -27,7 +27,7 @@ const MarketingConsentSection = ({
         onClick={() => onCheckedChange(!checked)}
         className="mt-2 flex items-center gap-1"
       >
-        <CheckBox checked={checked} width="w-5" showCheckIcon />
+        <CheckBox checked={checked} width="w-6" showCheckIcon />
         <span className="text-xsmall14 text-neutral-0">
           마케팅 활용에 동의합니다.
         </span>
