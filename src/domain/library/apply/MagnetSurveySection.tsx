@@ -78,7 +78,7 @@ function QuestionRenderer({
 
   if (question.questionType === 'SUBJECTIVE') {
     return (
-      <div className="flex flex-col gap-[6px]">
+      <div className="flex flex-col gap-3">
         <QuestionLabel
           question={question.question}
           description={question.description}

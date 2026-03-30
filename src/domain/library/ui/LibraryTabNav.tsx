@@ -27,10 +27,10 @@ export default function LibraryTabNav({
             key={tab.value}
             type="button"
             className={twMerge(
-              'pb-3 text-small20 font-semibold',
+              'border-b-[1.6px] pb-3 font-semibold md:text-small20',
               isActive
-                ? 'border-b-[1.6px] border-neutral-10 text-neutral-10'
-                : 'text-neutral-45',
+                ? 'border-neutral-10 text-neutral-10'
+                : 'border-transparent text-neutral-45',
             )}
             onClick={() => onTabChange(tab.value)}
           >

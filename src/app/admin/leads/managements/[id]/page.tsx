@@ -1,5 +1,5 @@
 'use client';
 
-import LeadUserDetailPage from '@/domain/admin/leads/LeadUserDetailPage';
+import LeadUserDetailPage from '@/domain/admin/lead/LeadUserDetailPage';
 
 export default LeadUserDetailPage;
