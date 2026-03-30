@@ -1429,6 +1429,14 @@ button.action-button:disabled {
   position: sticky;
   top: 0;
   z-index: 2;
+  overflow-x: auto;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.toolbar::-webkit-scrollbar {
+  display: none;
 }
 
 button.toolbar-item {

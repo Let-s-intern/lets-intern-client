@@ -6,9 +6,11 @@ import {
   ChallengeIdSchema,
   ChallengePriceInfo,
   ChallengePricePlan,
+  ChallengeType,
 } from '@/schema';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { useMemo, useState } from 'react';
+import FeedbackMentoringLink from '../ui/FeedbackMentoringLink';
 import { DEFAULT_COLOR } from '../utils/getChallengeThemeColor';
 
 type Plans = {
@@ -104,13 +106,13 @@ const FinalPriceInfo = ({
 interface Props {
   priceInfoList: ChallengePriceInfo[] | ChallengeIdSchema['priceInfo'];
   themeColor?: string;
-  feedbackMentoringUrl?: string | null;
+  challengeType?: ChallengeType;
 }
 
 function ChallengePriceInfoContent({
   priceInfoList,
   themeColor = DEFAULT_COLOR,
-  feedbackMentoringUrl,
+  challengeType,
 }: Props) {
   const [active, setActive] = useState<ChallengePricePlan>('BASIC');
 
@@ -235,27 +237,12 @@ function ChallengePriceInfoContent({
         </div>
       </div>
 
-      {feedbackMentoringUrl && (
-        <a
-          href={feedbackMentoringUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center rounded-xxs border py-2 text-xsmall14 font-semibold transition-colors hover:text-white"
-          style={{
-            color: themeColor,
-            borderColor: themeColor,
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = themeColor;
-            e.currentTarget.style.color = '#fff';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.color = themeColor;
-          }}
-        >
-          플랜별 설명확인하기
-        </a>
+      {challengeType && (
+        <FeedbackMentoringLink
+          challengeType={challengeType}
+          themeColor={themeColor}
+          className="w-full py-2"
+        />
       )}
 
       <div className="flex flex-col gap-1.5">

@@ -29,6 +29,7 @@ export type PatchAdminAttendanceReq = {
   review?: string;
   reviewIsVisible?: boolean;
   mentorUserId?: number | null;
+  challengeMentorId?: number | null;
   feedback?: string | null;
   feedbackStatus?: FeedbackStatus;
   accountType?: string;

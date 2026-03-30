@@ -1,11 +1,4 @@
 import { patchApplicationDownload } from '@/api/application';
-import { getGuidebook } from '@/api/program';
-
-interface ErrorWithStatus {
-  response?: {
-    status?: number;
-  };
-}
 
 function openInNewTab(url: string): void {
   const link = document.createElement('a');
@@ -28,7 +21,7 @@ function triggerFileDownload(url: string, fileName: string): void {
   link.remove();
 }
 
-async function downloadS3File(url: string): Promise<void> {
+function downloadS3File(url: string): void {
   const rawName = url.split('/').pop()?.split('?')[0] || '가이드북.pdf';
   let fileName: string;
   try {
@@ -37,49 +30,48 @@ async function downloadS3File(url: string): Promise<void> {
     fileName = rawName;
   }
 
-  try {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    const blobUrl = window.URL.createObjectURL(blob);
-    triggerFileDownload(blobUrl, fileName);
-    // 인앱 브라우저에서 다운로드를 비동기 처리할 수 있으므로 즉시 해제하지 않음
-    setTimeout(() => window.URL.revokeObjectURL(blobUrl), 5000);
-  } catch {
-    // CORS 등으로 fetch 실패 시 <a download>로 직접 시도
-    triggerFileDownload(url, fileName);
-  }
-}
-
-export async function downloadGuidebookAndTrack(
-  applicationId: number,
-  guidebookId: number,
-): Promise<void> {
-  const guidebook = await getGuidebook(guidebookId);
-  const contentFileUrl = guidebook.contentFileUrl ?? undefined;
-  const contentUrl = guidebook.contentUrl ?? undefined;
   const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-  if (contentFileUrl) {
-    if (isIOS) {
-      openInNewTab(contentFileUrl);
-    } else {
-      await downloadS3File(contentFileUrl);
-    }
-  } else if (contentUrl) {
-    openInNewTab(contentUrl);
-  } else {
+  if (isIOS) {
+    openInNewTab(url);
     return;
   }
 
-  try {
-    await patchApplicationDownload({
-      applicationId,
-      type: 'GUIDEBOOK',
+  fetch(url)
+    .then((response) => response.blob())
+    .then((blob) => {
+      const blobUrl = window.URL.createObjectURL(blob);
+      triggerFileDownload(blobUrl, fileName);
+      setTimeout(() => window.URL.revokeObjectURL(blobUrl), 5000);
+    })
+    .catch(() => {
+      // CORS 등으로 fetch 실패 시 <a download>로 직접 시도
+      triggerFileDownload(url, fileName);
     });
-  } catch (error: unknown) {
-    const status = (error as ErrorWithStatus).response?.status;
-    if (status === 409) {
-      return;
-    }
+}
+
+interface DownloadGuidebookParams {
+  applicationId: number;
+  contentFileUrl?: string;
+  contentUrl?: string;
+}
+
+/** 가이드북 다운로드 실행 + 다운로드 기록 PATCH (동기적으로 다운로드 시작, PATCH promise 반환) */
+export function downloadGuidebookAndTrack({
+  applicationId,
+  contentFileUrl,
+  contentUrl,
+}: DownloadGuidebookParams): Promise<void> {
+  if (contentFileUrl) {
+    downloadS3File(contentFileUrl);
+  } else if (contentUrl) {
+    openInNewTab(contentUrl);
+  } else {
+    return Promise.resolve();
   }
+
+  return patchApplicationDownload({
+    applicationId,
+    type: 'GUIDEBOOK',
+  }).catch(() => {});
 }

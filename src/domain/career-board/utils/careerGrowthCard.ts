@@ -3,7 +3,6 @@ import { ApplicationCategory } from '@/domain/mypage/application/constants';
 import dayjs from '@/lib/dayjs';
 import { PROGRAM_TYPE } from '@/utils/programConst';
 import type { CareerGrowthItem } from './careerGrowth';
-import { downloadGuidebookAndTrack } from './guidebookDownload';
 
 /** 탭(프로그램/가이드북/자료집) 공통 레이아웃용 카드 뷰모델 */
 export interface CareerGrowthCardConfig {
@@ -18,6 +17,9 @@ export interface CareerGrowthCardConfig {
   dateText: string;
   isHtmlDescription?: boolean;
   purchasePlanText?: string;
+  contentUrl?: string;
+  contentFileUrl?: string;
+  isDownloaded?: boolean;
   actionButton?: {
     label: string;
     disabled?: boolean;
@@ -79,6 +81,9 @@ export const toGuidebookCardConfig = (
     categoryLabel: item.programType,
     dateLabel: '구매일자',
     dateText: purchaseDateText,
+    contentUrl: item.contentUrl,
+    contentFileUrl: item.contentFileUrl,
+    isDownloaded: item.isDownloaded,
     actionButton: {
       label: 'PDF 다운로드',
       isDownload: true,
@@ -89,7 +94,6 @@ export const toGuidebookCardConfig = (
         confirmText: '다운로드',
         cancelText: '닫기',
       },
-      onClick: () => downloadGuidebookAndTrack(item.id, item.programId),
     },
   };
 };

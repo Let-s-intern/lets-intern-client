@@ -18,6 +18,9 @@ export interface MypageApplicationCardConfig {
   dateText: string;
   isHtmlDescription?: boolean;
   purchasePlanText?: string;
+  contentUrl?: string;
+  contentFileUrl?: string;
+  isDownloaded?: boolean;
   actionButton?: {
     label: string;
     disabled?: boolean;
@@ -134,6 +137,9 @@ const toGuidebookCardConfig = (
     programType,
     createDate,
     programStartDate,
+    contentUrl,
+    contentFileUrl,
+    isDownloaded,
   } = application;
 
   const purchaseDateText =
@@ -157,6 +163,9 @@ const toGuidebookCardConfig = (
     categoryLabel,
     dateLabel: '구매일자',
     dateText: purchaseDateText,
+    contentUrl: contentUrl ?? undefined,
+    contentFileUrl: contentFileUrl ?? undefined,
+    isDownloaded: isDownloaded ?? false,
     actionButton: {
       label: 'PDF 다운로드',
       isDownload: true,
