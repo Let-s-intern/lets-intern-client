@@ -95,10 +95,9 @@ const toProgramCardConfig = (
       ? getReportThumbnail(reportType)
       : (programThumbnail ?? '');
 
-  const isDashboardVisible =
-    isChallenge
-      ? pricePlanType !== 'LIGHT' && programStartDate?.isBefore(dayjs())
-      : isLive;
+  const isChallengeDashboardVisible =
+    pricePlanType !== 'LIGHT' && programStartDate?.isBefore(dayjs());
+  const isDashboardVisible = isChallenge ? isChallengeDashboardVisible : isLive;
 
   const actionButton =
     isDashboardVisible && programType && programId != null && id != null
