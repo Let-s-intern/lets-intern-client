@@ -69,8 +69,8 @@ export default function LibraryMainContent({
           </PreviewWithFade>
         )}
         <div className="mt-8 flex flex-col items-center rounded-md bg-primary-10 px-5 py-10">
-          <div className="mb-5 flex h-9 w-9 items-center justify-center rounded-xs border border-primary-15 bg-white">
-            <img src="/icons/magnet-alarm.svg" className="size-5" alt="alarm" />
+          <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-sm border border-primary-15 bg-white">
+            <img src="/icons/magnet-alarm.svg" className="size-6" alt="alarm" />
           </div>
           <div className="mb-6 text-center text-small18 font-light text-neutral-20">
             해당 콘텐츠가 발행되면{' '}
@@ -115,8 +115,8 @@ export default function LibraryMainContent({
         </PreviewWithFade>
       )}
       <div className="mt-8 flex flex-col items-center rounded-md bg-primary-10 px-5 py-10">
-        <div className="mb-5 flex h-9 w-9 items-center justify-center rounded-xs border border-primary-15 bg-white">
-          <img src="/icons/magnet-folder.svg" className="size-5" alt="folder" />
+        <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-sm border border-primary-15 bg-white">
+          <img src="/icons/magnet-folder.svg" className="size-6" alt="folder" />
         </div>
         <div className="mb-6 text-center text-small18 font-light text-neutral-20">
           렛츠커리어만의{' '}
