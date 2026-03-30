@@ -94,7 +94,7 @@ const toProgramCardConfig = (
       ? getReportThumbnail(reportType)
       : (programThumbnail ?? '');
 
-  const isDashboardDisabled = programStatusType !== 'PROCEEDING';
+  const isDashboardDisabled = programStatusType === 'PREV';
 
   const actionButton =
     (isChallenge || isLive) && programType && programId != null && id != null
