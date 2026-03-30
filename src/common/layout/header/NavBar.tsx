@@ -139,7 +139,7 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
                   className="text-xsmall14"
                   isNew
                   href="/library/list"
-                  target="_blank"
+                  active={activeLink === 'LIBRARY'}
                   rel="noopener noreferrer"
                 >
                   무료 자료집
@@ -183,6 +183,7 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
                 className="text-xsmall16"
                 isNew
                 href="/library/list"
+                active={activeLink === 'LIBRARY'}
                 target="_blank"
                 rel="noopener noreferrer"
               >
