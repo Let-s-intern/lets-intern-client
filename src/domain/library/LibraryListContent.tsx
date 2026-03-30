@@ -31,7 +31,7 @@ const MAGNET_TYPE_LABEL: Record<MagnetType, string> = {
   FREE_TEMPLATE: '무료 템플릿',
   MATERIAL: '직무 자료집',
   LAUNCH_ALERT: '출시 알림',
-  EVENT: '이벤트',
+  EVENT: '기타',
 };
 
 const HIDDEN_TYPES_IN_LIST: MagnetType[] = ['LAUNCH_ALERT'];

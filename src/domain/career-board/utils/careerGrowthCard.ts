@@ -95,11 +95,11 @@ export const toGuidebookCardConfig = (
 };
 
 const MAGNET_TYPE_LABEL: Record<string, string> = {
-  MATERIAL: '자료집',
+  MATERIAL: '직무 자료집',
   VOD: '무료 VOD',
   FREE_TEMPLATE: '무료 템플릿',
   LAUNCH_ALERT: '출시 알림',
-  EVENT: '이벤트',
+  EVENT: '기타',
 };
 
 /** 무료 자료집(마그넷) 카드 */
