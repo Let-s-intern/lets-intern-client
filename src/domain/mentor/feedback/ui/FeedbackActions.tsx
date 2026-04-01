@@ -74,7 +74,7 @@ const FeedbackActions = ({
           disabled={isDisabled}
           className="whitespace-nowrap rounded-lg border border-primary px-3 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-primary-5 disabled:cursor-not-allowed disabled:opacity-50 md:px-5 md:py-2"
         >
-          임시저장
+          저장
         </button>
         <button
           type="button"

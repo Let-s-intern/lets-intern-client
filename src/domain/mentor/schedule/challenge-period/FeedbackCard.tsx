@@ -32,7 +32,7 @@ const COLORS = [
 /**
  * Single-day feedback card — vertical stack:
  *
- *   📄 [ N차 피드백 ]
+ *   📄 [ N회차 ]
  *   시작 전 0 · 진행 중 0 · 완료 0
  *   ├────────┤
  *   [챌린지명]
@@ -53,7 +53,7 @@ const CompactFeedbackCard = ({
       onClick={() => onBarClick(bar.challengeId, bar.missionId)}
       className="flex w-full flex-col overflow-hidden text-left transition-opacity hover:opacity-80"
     >
-      {/* Row 1: 📄 [ N차 피드백 ] */}
+      {/* Row 1: 📄 [ N회차 ] */}
       <div className="flex h-6 items-center">
         <svg
           width="24"
@@ -82,7 +82,7 @@ const CompactFeedbackCard = ({
           </defs>
         </svg>
         <span className="whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px] text-neutral-10">
-          [ {bar.th}차 피드백 ]
+          [ {bar.th}회차 ]
         </span>
       </div>
 
