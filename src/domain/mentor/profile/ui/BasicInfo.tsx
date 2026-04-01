@@ -120,7 +120,7 @@ export default function BasicInfo({ formData, onChange, showAlert }: BasicInfoPr
         </div>
 
         {/* Input Fields */}
-        <div className="flex flex-1 flex-col justify-center gap-4">
+        <div className="flex min-w-0 flex-1 flex-col justify-center gap-4">
           {FIELDS.map(({ key, label }) => (
             <div key={key} className="flex items-center gap-3">
               <label className="w-16 flex-shrink-0 text-left text-sm font-medium text-gray-700 md:w-20 md:text-right">
@@ -130,7 +130,7 @@ export default function BasicInfo({ formData, onChange, showAlert }: BasicInfoPr
                 type="text"
                 value={formData[key]}
                 onChange={(e) => handleChange(key, e.target.value)}
-                className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none transition-colors focus:border-primary"
+                className="min-w-0 flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none transition-colors focus:border-primary"
               />
             </div>
           ))}
