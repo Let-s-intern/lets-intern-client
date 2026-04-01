@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
 import {
@@ -25,11 +25,16 @@ export function useFeedbackModal({
 }: UseFeedbackModalParams) {
   const queryClient = useQueryClient();
 
-  const [selectedAttendanceId, setSelectedAttendanceId] = useState<
-    number | null
-  >(null);
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [editorContent, setEditorContent] = useState(emptyEditorState);
   const [serverContent, setServerContent] = useState(emptyEditorState);
+
+  // Promise-based confirm for dirty check
+  const confirmResolveRef = useRef<((v: boolean) => void) | null>(null);
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean;
+    message: string;
+  }>({ isOpen: false, message: '' });
 
   const isDirty = editorContent !== serverContent;
 
@@ -41,78 +46,82 @@ export function useFeedbackModal({
       enabled: isOpen && !!challengeId && !!missionId,
     });
 
-  // Fetch selected mentee detail — staleTime: 0 ensures refetch on re-open
+  const attendanceList = attendanceData?.attendanceList ?? [];
+
+  // Current mentee from list
+  const currentMentee = attendanceList[selectedIndex] ?? null;
+  const selectedAttendanceId = currentMentee?.id ?? null;
+
+  // Fetch selected mentee detail — only when mentee has submitted (id exists)
   const { data: feedbackData, dataUpdatedAt } = useFeedbackAttendanceQuery({
     challengeId,
     missionId,
     attendanceId: selectedAttendanceId ?? undefined,
   });
 
-  // Current mentee from list
-  const currentMentee = useMemo(
-    () =>
-      attendanceData?.attendanceList?.find(
-        (a) => a.id === selectedAttendanceId,
-      ),
-    [attendanceData, selectedAttendanceId],
-  );
-
-  // Auto-select first mentee with a valid attendance when modal opens
+  // Auto-select first mentee when modal opens
   useEffect(() => {
-    if (
-      isOpen &&
-      attendanceData?.attendanceList?.length &&
-      !selectedAttendanceId
-    ) {
-      const first = attendanceData.attendanceList.find((a) => a.id != null);
-      if (first?.id != null) setSelectedAttendanceId(first.id);
+    if (isOpen && attendanceList.length > 0 && selectedIndex === -1) {
+      setSelectedIndex(0);
     }
-  }, [isOpen, attendanceData, selectedAttendanceId]);
+  }, [isOpen, attendanceList.length, selectedIndex]);
 
   // Sync editor content when selected mentee or feedbackData changes
-  // dataUpdatedAt ensures we pick up refetched data even if the object reference is stable
   useEffect(() => {
-    if (!selectedAttendanceId) return;
+    if (selectedIndex < 0) return;
+    if (!selectedAttendanceId) {
+      // 미제출자: 에디터 초기화
+      setEditorContent(emptyEditorState);
+      setServerContent(emptyEditorState);
+      return;
+    }
     const content =
       feedbackData?.attendanceDetailVo?.feedback || emptyEditorState;
     setEditorContent(content);
     setServerContent(content);
-  }, [feedbackData, selectedAttendanceId, dataUpdatedAt]);
+  }, [feedbackData, selectedIndex, selectedAttendanceId, dataUpdatedAt]);
 
   // Reset state when modal closes
   useEffect(() => {
     if (!isOpen) {
-      setSelectedAttendanceId(null);
+      setSelectedIndex(-1);
       setEditorContent(emptyEditorState);
       setServerContent(emptyEditorState);
     }
   }, [isOpen]);
 
-  const confirmIfDirty = useCallback(
-    (message: string): boolean => {
-      if (!isDirty) return true;
-      return window.confirm(message);
+  const requestConfirm = useCallback(
+    (message: string): Promise<boolean> => {
+      if (!isDirty) return Promise.resolve(true);
+      return new Promise((resolve) => {
+        confirmResolveRef.current = resolve;
+        setConfirmModal({ isOpen: true, message });
+      });
     },
     [isDirty],
   );
 
-  const handleSelectMentee = useCallback(
-    (attendanceId: number) => {
-      if (attendanceId === selectedAttendanceId) return;
-      if (!confirmIfDirty(mentorConfig.feedback.unsavedWarning)) {
-        return;
-      }
-      setSelectedAttendanceId(attendanceId);
+  const handleConfirmResult = useCallback((result: boolean) => {
+    confirmResolveRef.current?.(result);
+    confirmResolveRef.current = null;
+    setConfirmModal({ isOpen: false, message: '' });
+  }, []);
+
+  const handleSelectByIndex = useCallback(
+    async (index: number) => {
+      if (index === selectedIndex) return;
+      const ok = await requestConfirm(mentorConfig.feedback.unsavedWarning);
+      if (!ok) return;
+      setSelectedIndex(index);
     },
-    [selectedAttendanceId, confirmIfDirty],
+    [selectedIndex, requestConfirm],
   );
 
-  const handleClose = useCallback(() => {
-    if (!confirmIfDirty(mentorConfig.feedback.closeWarning)) {
-      return;
-    }
+  const handleClose = useCallback(async () => {
+    const ok = await requestConfirm(mentorConfig.feedback.closeWarning);
+    if (!ok) return;
     onClose();
-  }, [confirmIfDirty, onClose]);
+  }, [requestConfirm, onClose]);
 
   const handleMutationSuccess = useCallback(() => {
     queryClient.invalidateQueries({
@@ -136,18 +145,22 @@ export function useFeedbackModal({
     currentMentee?.feedbackStatus === 'COMPLETED' ||
     currentMentee?.feedbackStatus === 'CONFIRMED';
 
-  const attendanceList = attendanceData?.attendanceList ?? [];
+  const isAbsent = currentMentee?.status === 'ABSENT' || currentMentee?.id == null;
 
   return {
+    selectedIndex,
     selectedAttendanceId,
     editorContent,
     setEditorContent,
     currentMentee,
     isReadOnly,
+    isAbsent,
     attendanceList,
-    handleSelectMentee,
+    handleSelectByIndex,
     handleClose,
     handleMutationSuccess,
-    editorKey: `${selectedAttendanceId}-${dataUpdatedAt}`,
+    editorKey: `${selectedIndex}-${dataUpdatedAt}`,
+    confirmModal,
+    handleConfirmResult,
   };
 }

@@ -1,6 +1,8 @@
 'use client';
 
 import BaseModal from '@/common/modal/BaseModal';
+import MentorAlertModal from '../ui/MentorAlertModal';
+import { useMentorAlert } from '../hooks/useMentorAlert';
 
 import MenteeList from './ui/MenteeList';
 import MenteeInfo from './ui/MenteeInfo';
@@ -31,27 +33,33 @@ const FeedbackModal = ({
   missionTh,
 }: FeedbackModalProps) => {
   const {
+    selectedIndex,
     selectedAttendanceId,
     editorContent,
     setEditorContent,
     currentMentee,
     isReadOnly,
+    isAbsent,
     attendanceList,
-    handleSelectMentee,
+    handleSelectByIndex,
     handleClose,
     handleMutationSuccess,
     editorKey,
+    confirmModal,
+    handleConfirmResult,
   } = useFeedbackModal({ isOpen, onClose, challengeId, missionId });
 
   const { hasPrevMentee, hasNextMentee, handlePrevMentee, handleNextMentee } =
     useMenteeNavigation({
-      attendanceList,
-      selectedAttendanceId,
-      onSelectMentee: handleSelectMentee,
+      listLength: attendanceList.length,
+      selectedIndex,
+      onSelectByIndex: handleSelectByIndex,
     });
 
   const { waitingCount, inProgressCount, completedCount } =
     useFeedbackStatus(attendanceList);
+
+  const { alertProps, showAlert, showConfirm } = useMentorAlert();
 
   return (
     <BaseModal
@@ -72,10 +80,9 @@ const FeedbackModal = ({
       <FeedbackLayout
         sidebar={
           <MenteeList
-            challengeId={challengeId}
-            missionId={missionId}
-            selectedAttendanceId={selectedAttendanceId}
-            onSelectMentee={handleSelectMentee}
+            attendanceList={attendanceList}
+            selectedIndex={selectedIndex}
+            onSelectByIndex={handleSelectByIndex}
           />
         }
         navigation={
@@ -156,9 +163,7 @@ const FeedbackModal = ({
         }
         menteeInfo={(collapsed) => (
           <MenteeInfo
-            challengeId={challengeId}
-            missionId={missionId}
-            attendanceId={selectedAttendanceId}
+            mentee={currentMentee}
             challengeTitle={challengeTitle}
             collapsed={collapsed}
           />
@@ -169,6 +174,7 @@ const FeedbackModal = ({
             initialEditorStateJsonString={editorContent}
             onChange={setEditorContent}
             isReadOnly={isReadOnly}
+            isAbsent={isAbsent}
           />
         }
         actions={
@@ -176,11 +182,35 @@ const FeedbackModal = ({
             attendanceId={selectedAttendanceId}
             editorContent={editorContent}
             feedbackStatus={currentMentee?.feedbackStatus ?? null}
+            isAbsent={isAbsent}
             onSaveSuccess={handleMutationSuccess}
             onSubmitSuccess={handleMutationSuccess}
+            onAlert={(opts) => showAlert({ title: opts.title, variant: opts.variant })}
+            onConfirm={(opts) =>
+              showConfirm({
+                title: opts.title,
+                description: opts.description,
+                onConfirm: opts.onConfirm,
+              })
+            }
           />
         }
       />
+
+      {/* Dirty-check confirm modal */}
+      <MentorAlertModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => handleConfirmResult(false)}
+        onConfirm={() => handleConfirmResult(true)}
+        title="변경사항이 저장되지 않았습니다"
+        description={confirmModal.message}
+        confirmText="이동"
+        cancelText="취소"
+        variant="confirm"
+      />
+
+      {/* Alert/Confirm modal for save/submit */}
+      <MentorAlertModal {...alertProps} />
     </BaseModal>
   );
 };

@@ -1,17 +1,12 @@
 import { useCallback, useMemo } from 'react';
 
-interface AttendanceItem {
-  id: number | null;
-}
-
 interface UseMenteeNavigationParams {
-  attendanceList: AttendanceItem[];
-  selectedAttendanceId: number | null;
-  onSelectMentee: (attendanceId: number) => void;
+  listLength: number;
+  selectedIndex: number;
+  onSelectByIndex: (index: number) => void;
 }
 
 interface UseMenteeNavigationReturn {
-  currentMenteeIndex: number;
   hasPrevMentee: boolean;
   hasNextMentee: boolean;
   handlePrevMentee: () => void;
@@ -19,35 +14,25 @@ interface UseMenteeNavigationReturn {
 }
 
 /**
- * Handles prev/next mentee navigation within an attendance list.
+ * Handles prev/next mentee navigation by index.
  */
 export function useMenteeNavigation({
-  attendanceList,
-  selectedAttendanceId,
-  onSelectMentee,
+  listLength,
+  selectedIndex,
+  onSelectByIndex,
 }: UseMenteeNavigationParams): UseMenteeNavigationReturn {
-  const currentMenteeIndex = useMemo(
-    () => attendanceList.findIndex((a) => a.id === selectedAttendanceId),
-    [attendanceList, selectedAttendanceId],
-  );
-
-  const hasPrevMentee = currentMenteeIndex > 0;
-  const hasNextMentee =
-    currentMenteeIndex >= 0 &&
-    currentMenteeIndex < attendanceList.length - 1;
+  const hasPrevMentee = selectedIndex > 0;
+  const hasNextMentee = selectedIndex >= 0 && selectedIndex < listLength - 1;
 
   const handlePrevMentee = useCallback(() => {
-    const prevId = attendanceList[currentMenteeIndex - 1]?.id;
-    if (prevId != null) onSelectMentee(prevId);
-  }, [currentMenteeIndex, attendanceList, onSelectMentee]);
+    if (hasPrevMentee) onSelectByIndex(selectedIndex - 1);
+  }, [hasPrevMentee, selectedIndex, onSelectByIndex]);
 
   const handleNextMentee = useCallback(() => {
-    const nextId = attendanceList[currentMenteeIndex + 1]?.id;
-    if (nextId != null) onSelectMentee(nextId);
-  }, [currentMenteeIndex, attendanceList, onSelectMentee]);
+    if (hasNextMentee) onSelectByIndex(selectedIndex + 1);
+  }, [hasNextMentee, selectedIndex, onSelectByIndex]);
 
   return {
-    currentMenteeIndex,
     hasPrevMentee,
     hasNextMentee,
     handlePrevMentee,
