@@ -1,9 +1,32 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import MentorProviders from '@/context/MentorProviders';
 import { MentorGuard } from './MentorGuard';
 import { MentorSidebar } from './MentorSidebar';
+
+/** 멘토 전용 manifest를 <head>에 주입 (다른 라우트에 영향 없음) */
+function useMentorManifest() {
+  useEffect(() => {
+    const link = document.createElement('link');
+    link.rel = 'manifest';
+    link.href = '/mentor-manifest.json';
+    link.id = 'mentor-manifest';
+    document.head.appendChild(link);
+
+    // apple-mobile-web-app 메타
+    const meta = document.createElement('meta');
+    meta.name = 'apple-mobile-web-app-capable';
+    meta.content = 'yes';
+    meta.id = 'mentor-apple-pwa';
+    document.head.appendChild(meta);
+
+    return () => {
+      document.getElementById('mentor-manifest')?.remove();
+      document.getElementById('mentor-apple-pwa')?.remove();
+    };
+  }, []);
+}
 
 export default function MentorLayout({
   children,
@@ -11,6 +34,7 @@ export default function MentorLayout({
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  useMentorManifest();
 
   return (
     <MentorProviders>

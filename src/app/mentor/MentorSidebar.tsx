@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -18,6 +19,11 @@ interface MentorSidebarProps {
 
 export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
   const pathname = usePathname();
+  const [isPwa, setIsPwa] = useState(false);
+
+  useEffect(() => {
+    setIsPwa(window.matchMedia('(display-mode: standalone)').matches);
+  }, []);
 
   return (
     <>
@@ -116,47 +122,49 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
               })}
             </ul>
           </div>
-          <Link
-            href="/"
-            className="flex items-center gap-1 rounded px-3 py-2.5"
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="shrink-0"
+          {!isPwa && (
+            <Link
+              href="/"
+              className="flex items-center gap-1 rounded px-3 py-2.5"
             >
-              <path
-                d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
-                stroke="#7A7D84"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <polyline
-                points="15 3 21 3 21 9"
-                stroke="#7A7D84"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <line
-                x1="10"
-                y1="14"
-                x2="21"
-                y2="3"
-                stroke="#7A7D84"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <span className="text-xsmall16 font-medium tracking-[-0.6px] text-neutral-40">
-              홈페이지로 이동
-            </span>
-          </Link>
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="shrink-0"
+              >
+                <path
+                  d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                  stroke="#7A7D84"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <polyline
+                  points="15 3 21 3 21 9"
+                  stroke="#7A7D84"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <line
+                  x1="10"
+                  y1="14"
+                  x2="21"
+                  y2="3"
+                  stroke="#7A7D84"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <span className="text-xsmall16 font-medium tracking-[-0.6px] text-neutral-40">
+                홈페이지로 이동
+              </span>
+            </Link>
+          )}
         </nav>
       </aside>
     </>
