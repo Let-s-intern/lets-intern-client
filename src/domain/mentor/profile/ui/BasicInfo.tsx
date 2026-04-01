@@ -15,6 +15,7 @@ export interface BasicInfoFormData {
 interface BasicInfoProps {
   formData: BasicInfoFormData;
   onChange: (data: BasicInfoFormData) => void;
+  showAlert: (opts: { title: string; variant?: 'info' | 'success' | 'error' | 'confirm' }) => void;
 }
 
 const MAX_FILE_SIZE_MB = 5;
@@ -28,7 +29,7 @@ const FIELDS: { key: keyof Omit<BasicInfoFormData, 'profileImgUrl'>; label: stri
   { key: 'email', label: 'e-mail' },
 ];
 
-export default function BasicInfo({ formData, onChange }: BasicInfoProps) {
+export default function BasicInfo({ formData, onChange, showAlert }: BasicInfoProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -41,7 +42,10 @@ export default function BasicInfo({ formData, onChange }: BasicInfoProps) {
     if (!file) return;
 
     if (file.size > MAX_FILE_SIZE_BYTES) {
-      alert(`파일 크기는 ${MAX_FILE_SIZE_MB}MB 이하여야 합니다.`);
+      showAlert({
+        title: `파일 크기는 ${MAX_FILE_SIZE_MB}MB 이하여야 합니다.`,
+        variant: 'error',
+      });
       return;
     }
 
@@ -50,7 +54,10 @@ export default function BasicInfo({ formData, onChange }: BasicInfoProps) {
       const fileUrl = await uploadFile({ file, type: 'USER_PROFILE' });
       onChange({ ...formData, profileImgUrl: fileUrl });
     } catch {
-      alert('이미지 업로드에 실패했습니다.');
+      showAlert({
+        title: '이미지 업로드에 실패했습니다.',
+        variant: 'error',
+      });
     } finally {
       setIsUploading(false);
     }

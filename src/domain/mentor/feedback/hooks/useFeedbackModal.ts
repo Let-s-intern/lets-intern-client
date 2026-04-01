@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
 import {
@@ -30,6 +30,13 @@ export function useFeedbackModal({
   >(null);
   const [editorContent, setEditorContent] = useState(emptyEditorState);
   const [serverContent, setServerContent] = useState(emptyEditorState);
+
+  // Promise-based confirm for dirty check
+  const confirmResolveRef = useRef<((v: boolean) => void) | null>(null);
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean;
+    message: string;
+  }>({ isOpen: false, message: '' });
 
   const isDirty = editorContent !== serverContent;
 
@@ -88,31 +95,38 @@ export function useFeedbackModal({
     }
   }, [isOpen]);
 
-  const confirmIfDirty = useCallback(
-    (message: string): boolean => {
-      if (!isDirty) return true;
-      return window.confirm(message);
+  const requestConfirm = useCallback(
+    (message: string): Promise<boolean> => {
+      if (!isDirty) return Promise.resolve(true);
+      return new Promise((resolve) => {
+        confirmResolveRef.current = resolve;
+        setConfirmModal({ isOpen: true, message });
+      });
     },
     [isDirty],
   );
 
+  const handleConfirmResult = useCallback((result: boolean) => {
+    confirmResolveRef.current?.(result);
+    confirmResolveRef.current = null;
+    setConfirmModal({ isOpen: false, message: '' });
+  }, []);
+
   const handleSelectMentee = useCallback(
-    (attendanceId: number) => {
+    async (attendanceId: number) => {
       if (attendanceId === selectedAttendanceId) return;
-      if (!confirmIfDirty(mentorConfig.feedback.unsavedWarning)) {
-        return;
-      }
+      const ok = await requestConfirm(mentorConfig.feedback.unsavedWarning);
+      if (!ok) return;
       setSelectedAttendanceId(attendanceId);
     },
-    [selectedAttendanceId, confirmIfDirty],
+    [selectedAttendanceId, requestConfirm],
   );
 
-  const handleClose = useCallback(() => {
-    if (!confirmIfDirty(mentorConfig.feedback.closeWarning)) {
-      return;
-    }
+  const handleClose = useCallback(async () => {
+    const ok = await requestConfirm(mentorConfig.feedback.closeWarning);
+    if (!ok) return;
     onClose();
-  }, [confirmIfDirty, onClose]);
+  }, [requestConfirm, onClose]);
 
   const handleMutationSuccess = useCallback(() => {
     queryClient.invalidateQueries({
@@ -136,6 +150,8 @@ export function useFeedbackModal({
     currentMentee?.feedbackStatus === 'COMPLETED' ||
     currentMentee?.feedbackStatus === 'CONFIRMED';
 
+  const isAbsent = currentMentee?.status === 'ABSENT';
+
   const attendanceList = attendanceData?.attendanceList ?? [];
 
   return {
@@ -144,10 +160,13 @@ export function useFeedbackModal({
     setEditorContent,
     currentMentee,
     isReadOnly,
+    isAbsent,
     attendanceList,
     handleSelectMentee,
     handleClose,
     handleMutationSuccess,
     editorKey: `${selectedAttendanceId}-${dataUpdatedAt}`,
+    confirmModal,
+    handleConfirmResult,
   };
 }
