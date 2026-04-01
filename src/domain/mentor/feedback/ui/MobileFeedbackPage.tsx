@@ -2,6 +2,9 @@
 
 import { useState, type ReactNode } from 'react';
 
+import MentorAlertModal from '../../ui/MentorAlertModal';
+import { useMentorAlert } from '../../hooks/useMentorAlert';
+
 import MenteeInfo from './MenteeInfo';
 import FeedbackEditor from './FeedbackEditor';
 import FeedbackActions from './FeedbackActions';
@@ -30,37 +33,87 @@ const MobileFeedbackPage = ({
   missionTh,
 }: MobileFeedbackPageProps) => {
   const {
+    selectedIndex,
     selectedAttendanceId,
     editorContent,
     setEditorContent,
     currentMentee,
     isReadOnly,
+    isAbsent,
     attendanceList,
-    handleSelectMentee,
+    handleSelectByIndex,
     handleClose,
     handleMutationSuccess,
     editorKey,
+    confirmModal,
+    handleConfirmResult,
   } = useFeedbackModal({ isOpen, onClose, challengeId, missionId });
 
   const { hasPrevMentee, hasNextMentee, handlePrevMentee, handleNextMentee } =
     useMenteeNavigation({
-      attendanceList,
-      selectedAttendanceId,
-      onSelectMentee: handleSelectMentee,
+      listLength: attendanceList.length,
+      selectedIndex,
+      onSelectByIndex: handleSelectByIndex,
     });
 
   const { waitingCount, inProgressCount, completedCount } =
     useFeedbackStatus(attendanceList);
 
+  const { alertProps, showAlert, showConfirm } = useMentorAlert();
+
   const [isExpanded, setIsExpanded] = useState(false);
 
   if (!isOpen) return null;
+
+  const editorBlock = (
+    <FeedbackEditor
+      key={editorKey}
+      initialEditorStateJsonString={editorContent}
+      onChange={setEditorContent}
+      isReadOnly={isReadOnly}
+      isAbsent={isAbsent}
+    />
+  );
+
+  const actionsBlock = (
+    <FeedbackActions
+      attendanceId={selectedAttendanceId}
+      editorContent={editorContent}
+      feedbackStatus={currentMentee?.feedbackStatus ?? null}
+      isAbsent={isAbsent}
+      onSaveSuccess={handleMutationSuccess}
+      onSubmitSuccess={handleMutationSuccess}
+      onAlert={(opts) => showAlert({ title: opts.title, variant: opts.variant })}
+      onConfirm={(opts) =>
+        showConfirm({
+          title: opts.title,
+          description: opts.description,
+          onConfirm: opts.onConfirm,
+        })
+      }
+    />
+  );
+
+  const modals = (
+    <>
+      <MentorAlertModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => handleConfirmResult(false)}
+        onConfirm={() => handleConfirmResult(true)}
+        title="변경사항이 저장되지 않았습니다"
+        description={confirmModal.message}
+        confirmText="이동"
+        cancelText="취소"
+        variant="confirm"
+      />
+      <MentorAlertModal {...alertProps} />
+    </>
+  );
 
   // 크게 보기: 전체 스크롤, 고정 없음
   if (isExpanded) {
     return (
       <div className="fixed inset-0 z-50 overflow-y-auto bg-white">
-        {/* Header */}
         <FeedbackHeader
           challengeTitle={challengeTitle}
           missionTh={missionTh}
@@ -71,33 +124,22 @@ const MobileFeedbackPage = ({
           onClose={handleClose}
         />
 
-        {/* Mentee info - collapsed */}
         <div className="border-b border-gray-100 px-4 py-2">
           <MenteeInfo
-            challengeId={challengeId}
-            missionId={missionId}
-            attendanceId={selectedAttendanceId}
+            mentee={currentMentee}
             challengeTitle={challengeTitle}
             collapsed
           />
         </div>
 
-        {/* Editor - grows naturally, no scroll constraint */}
         <div className="px-4 py-3">
-          <FeedbackEditor
-            key={editorKey}
-            initialEditorStateJsonString={editorContent}
-            onChange={setEditorContent}
-            isReadOnly={isReadOnly}
-          />
+          {editorBlock}
         </div>
 
-        {/* Bottom bar */}
         <div
           className="flex flex-col gap-3 border-t border-gray-200 px-4 py-3"
           style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
         >
-          {/* 상단: 작게보기 + 저장/제출 */}
           <div className="flex items-center">
             <button
               type="button"
@@ -116,16 +158,9 @@ const MobileFeedbackPage = ({
               작게 보기
             </button>
             <div className="flex-1" />
-            <FeedbackActions
-              attendanceId={selectedAttendanceId}
-              editorContent={editorContent}
-              feedbackStatus={currentMentee?.feedbackStatus ?? null}
-              onSaveSuccess={handleMutationSuccess}
-              onSubmitSuccess={handleMutationSuccess}
-            />
+            {actionsBlock}
           </div>
 
-          {/* 하단: 이전/다음 멘티 */}
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -151,14 +186,15 @@ const MobileFeedbackPage = ({
             </button>
           </div>
         </div>
+
+        {modals}
       </div>
     );
   }
 
-  // 기본 모드: 기존 레이아웃
+  // 기본 모드
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-white" style={{ height: '100dvh' }}>
-      {/* Header */}
       <FeedbackHeader
         challengeTitle={challengeTitle}
         missionTh={missionTh}
@@ -169,7 +205,6 @@ const MobileFeedbackPage = ({
         onClose={handleClose}
       />
 
-      {/* Mentee selector + navigation */}
       <div className="shrink-0 border-b border-gray-200 px-4 py-2">
         <div className="flex items-center gap-2">
           <NavButton
@@ -180,8 +215,8 @@ const MobileFeedbackPage = ({
           <div className="flex-1">
             <MobileMenteeSelector
               attendanceList={attendanceList}
-              selectedAttendanceId={selectedAttendanceId}
-              onSelectMentee={handleSelectMentee}
+              selectedIndex={selectedIndex}
+              onSelectByIndex={handleSelectByIndex}
             />
           </div>
           <NavButton
@@ -192,29 +227,19 @@ const MobileFeedbackPage = ({
         </div>
       </div>
 
-      {/* Mentee info - full */}
       <div className="shrink-0 border-b border-gray-100 px-4 py-3">
         <MenteeInfo
-          challengeId={challengeId}
-          missionId={missionId}
-          attendanceId={selectedAttendanceId}
+          mentee={currentMentee}
           challengeTitle={challengeTitle}
         />
       </div>
 
-      {/* Scrollable editor area */}
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-4 py-3">
         <div className="flex min-h-[240px] flex-1 flex-col">
-          <FeedbackEditor
-            key={editorKey}
-            initialEditorStateJsonString={editorContent}
-            onChange={setEditorContent}
-            isReadOnly={isReadOnly}
-          />
+          {editorBlock}
         </div>
       </div>
 
-      {/* Bottom: 크게보기 + 저장/제출 */}
       <div
         className="flex shrink-0 items-center border-t border-gray-200 px-4 py-3"
         style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
@@ -236,14 +261,10 @@ const MobileFeedbackPage = ({
           크게 보기
         </button>
         <div className="flex-1" />
-        <FeedbackActions
-          attendanceId={selectedAttendanceId}
-          editorContent={editorContent}
-          feedbackStatus={currentMentee?.feedbackStatus ?? null}
-          onSaveSuccess={handleMutationSuccess}
-          onSubmitSuccess={handleMutationSuccess}
-        />
+        {actionsBlock}
       </div>
+
+      {modals}
     </div>
   );
 };

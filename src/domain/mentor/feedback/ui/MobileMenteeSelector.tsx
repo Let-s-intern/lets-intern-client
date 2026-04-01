@@ -3,7 +3,7 @@
 import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
 
 interface AttendanceItem {
-  id: number;
+  id: number | null;
   name: string;
   feedbackStatus: FeedbackStatus | null;
   status?: string | null;
@@ -11,8 +11,8 @@ interface AttendanceItem {
 
 interface MobileMenteeSelectorProps {
   attendanceList: AttendanceItem[];
-  selectedAttendanceId: number | null;
-  onSelectMentee: (attendanceId: number) => void;
+  selectedIndex: number;
+  onSelectByIndex: (index: number) => void;
 }
 
 function getFeedbackLabel(status: FeedbackStatus | null): string {
@@ -23,24 +23,19 @@ function getFeedbackLabel(status: FeedbackStatus | null): string {
 
 const MobileMenteeSelector = ({
   attendanceList,
-  selectedAttendanceId,
-  onSelectMentee,
+  selectedIndex,
+  onSelectByIndex,
 }: MobileMenteeSelectorProps) => {
-  const selectedMentee = attendanceList.find(
-    (a) => a.id === selectedAttendanceId,
-  );
-  const selectedIndex = attendanceList.findIndex(
-    (a) => a.id === selectedAttendanceId,
-  );
+  const selectedMentee = attendanceList[selectedIndex];
 
   return (
     <div className="flex flex-col gap-1">
       <select
-        value={selectedAttendanceId ?? ''}
+        value={selectedIndex}
         onChange={(e) => {
-          const id = Number(e.target.value);
-          if (!Number.isNaN(id) && id > 0) {
-            onSelectMentee(id);
+          const idx = Number(e.target.value);
+          if (!Number.isNaN(idx) && idx >= 0) {
+            onSelectByIndex(idx);
           }
         }}
         className="w-full appearance-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 pr-10 text-sm font-semibold text-neutral-900 focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary"
@@ -57,12 +52,12 @@ const MobileMenteeSelector = ({
           </option>
         ) : null}
         {attendanceList.map((mentee, i) => {
-          const label = getFeedbackLabel(mentee.feedbackStatus);
-          const absentMark = mentee.status === 'ABSENT' ? ' (미제출)' : '';
+          const isAbsent = mentee.status === 'ABSENT' || mentee.id == null;
+          const label = isAbsent ? '미제출' : getFeedbackLabel(mentee.feedbackStatus);
 
           return (
-            <option key={mentee.id} value={mentee.id}>
-              {mentee.name}{absentMark} · {label}
+            <option key={mentee.id ?? `idx-${i}`} value={i}>
+              {mentee.name} · {label}
             </option>
           );
         })}

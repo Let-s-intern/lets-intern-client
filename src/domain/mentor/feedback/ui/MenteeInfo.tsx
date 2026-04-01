@@ -1,17 +1,22 @@
 'use client';
 
 import {
-  useMentorMissionFeedbackAttendanceQuery,
-} from '@/api/challenge/challenge';
-import {
   FeedbackStatusMapping,
   type FeedbackStatus,
 } from '@/api/challenge/challengeSchema';
 
+interface MenteeData {
+  id: number | null;
+  name: string;
+  status: string | null;
+  feedbackStatus: FeedbackStatus | null;
+  link?: string | null;
+  wishJob?: string | null;
+  wishCompany?: string | null;
+}
+
 interface MenteeInfoProps {
-  challengeId: number;
-  missionId: number;
-  attendanceId: number | null;
+  mentee: MenteeData | null;
   challengeTitle?: string;
   collapsed?: boolean;
 }
@@ -38,27 +43,21 @@ const EMPTY_STATE = (
 );
 
 const MenteeInfo = ({
-  challengeId,
-  missionId,
-  attendanceId,
+  mentee,
   challengeTitle,
   collapsed = false,
 }: MenteeInfoProps) => {
-  const { data } = useMentorMissionFeedbackAttendanceQuery({
-    challengeId,
-    missionId,
-    enabled: !!challengeId && !!missionId,
-  });
-
-  const mentee = data?.attendanceList?.find((a) => a.id === attendanceId);
-
   if (!mentee) return EMPTY_STATE;
 
-  const isSubmitted = mentee.status !== 'ABSENT';
+  const isAbsent = mentee.status === 'ABSENT' || mentee.id == null;
+  const isSubmitted = !isAbsent;
   const hasSubmissionLink = isSubmitted && !!mentee.link;
-  const feedbackStatusLabel =
-    FeedbackStatusMapping[mentee.feedbackStatus ?? 'WAITING'] ?? '진행전';
-  const feedbackStatusStyle = getFeedbackStatusStyle(mentee.feedbackStatus);
+  const feedbackStatusLabel = isAbsent
+    ? '미제출'
+    : (FeedbackStatusMapping[mentee.feedbackStatus ?? 'WAITING'] ?? '진행전');
+  const feedbackStatusStyle = isAbsent
+    ? 'text-orange-500'
+    : getFeedbackStatusStyle(mentee.feedbackStatus);
 
   // 최소화 모드: 이름, 희망 직군, 희망 기업, 제출물 보기
   if (collapsed) {
