@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
 import {
-  useMentorMissionFeedbackAttendanceQuery,
-  MentorMissionFeedbackAttendanceQueryKey,
+  useMentorMenteeAttendanceQuery,
+  MentorMenteeAttendanceQueryKey,
   useFeedbackAttendanceQuery,
   FeedbackAttendanceQueryKey,
 } from '@/api/challenge/challenge';
@@ -33,9 +33,9 @@ export function useFeedbackModal({
 
   const isDirty = editorContent !== serverContent;
 
-  // Fetch attendance list
+  // Fetch attendance list — /mentee endpoint filters by ChallengeApplication.challengeMentor
   const { data: attendanceData } =
-    useMentorMissionFeedbackAttendanceQuery({
+    useMentorMenteeAttendanceQuery({
       challengeId,
       missionId,
       enabled: isOpen && !!challengeId && !!missionId,
@@ -57,14 +57,15 @@ export function useFeedbackModal({
     [attendanceData, selectedAttendanceId],
   );
 
-  // Auto-select first mentee when modal opens
+  // Auto-select first mentee with a valid attendance when modal opens
   useEffect(() => {
     if (
       isOpen &&
       attendanceData?.attendanceList?.length &&
       !selectedAttendanceId
     ) {
-      setSelectedAttendanceId(attendanceData.attendanceList[0].id);
+      const first = attendanceData.attendanceList.find((a) => a.id != null);
+      if (first?.id != null) setSelectedAttendanceId(first.id);
     }
   }, [isOpen, attendanceData, selectedAttendanceId]);
 
@@ -116,7 +117,7 @@ export function useFeedbackModal({
   const handleMutationSuccess = useCallback(() => {
     queryClient.invalidateQueries({
       queryKey: [
-        MentorMissionFeedbackAttendanceQueryKey,
+        MentorMenteeAttendanceQueryKey,
         challengeId,
         missionId,
       ],

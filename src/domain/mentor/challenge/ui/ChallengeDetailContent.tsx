@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 
 import {
-  useMentorMissionFeedbackAttendanceQuery,
+  useMentorMenteeAttendanceQuery,
 } from '@/api/challenge/challenge';
 import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
 
@@ -33,7 +33,7 @@ const MissionRow = ({
   challengeId: number;
   onClickFeedback: (missionId: number, missionTh: number) => void;
 }) => {
-  const { data } = useMentorMissionFeedbackAttendanceQuery({
+  const { data } = useMentorMenteeAttendanceQuery({
     challengeId,
     missionId: mission.id,
     enabled: !!challengeId && !!mission.id,

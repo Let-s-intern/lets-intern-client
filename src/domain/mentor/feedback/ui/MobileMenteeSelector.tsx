@@ -3,7 +3,7 @@
 import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
 
 interface AttendanceItem {
-  id: number;
+  id: number | null;
   name: string;
   feedbackStatus: FeedbackStatus | null;
   status?: string | null;
@@ -57,6 +57,7 @@ const MobileMenteeSelector = ({
           </option>
         ) : null}
         {attendanceList.map((mentee, i) => {
+          if (mentee.id == null) return null;
           const label = getFeedbackLabel(mentee.feedbackStatus);
           const absentMark = mentee.status === 'ABSENT' ? ' (미제출)' : '';
 
