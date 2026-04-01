@@ -12,6 +12,7 @@ interface CategoryTabsProps<Value extends string> {
   options: TabOption<Value>[];
   selected: Value;
   onChange: (value: Value) => void;
+  size?: 'large' | 'small';
   className?: string;
 }
 
@@ -21,6 +22,7 @@ const CategoryTabs = <Value extends string>({
   options,
   selected,
   onChange,
+  size = 'small',
   className,
 }: CategoryTabsProps<Value>) => {
   const navRef = useRef<HTMLElement>(null);
@@ -29,11 +31,9 @@ const CategoryTabs = <Value extends string>({
 
   const updateIndicator = () => {
     if (!navRef.current || !activeRef.current) return;
-    const navRect = navRef.current.getBoundingClientRect();
-    const btnRect = activeRef.current.getBoundingClientRect();
     setIndicator({
-      left: btnRect.left - navRect.left,
-      width: btnRect.width,
+      left: activeRef.current.offsetLeft,
+      width: activeRef.current.offsetWidth,
     });
   };
 
@@ -53,7 +53,10 @@ const CategoryTabs = <Value extends string>({
     <nav
       ref={navRef}
       className={clsx(
-        'relative flex w-full border-b border-neutral-85 text-xsmall16 md:text-small20',
+        'relative flex w-full flex-nowrap overflow-x-auto border-b border-neutral-85 pl-5 scrollbar-hide md:pl-0',
+        size === 'large'
+          ? 'text-xsmall16 md:text-small20'
+          : 'text-xsmall14 md:text-xsmall16',
         className,
       )}
     >
@@ -73,7 +76,9 @@ const CategoryTabs = <Value extends string>({
             type="button"
             onClick={() => onChange(option.value)}
             className={clsx(
-              'mr-4 text-nowrap pb-2 transition-colors md:mr-6 md:pb-3',
+              size === 'large'
+                ? 'mr-4 text-nowrap pb-2 transition-colors md:mr-6 md:pb-3'
+                : 'mr-6 text-nowrap pb-3 transition-colors',
               isActive
                 ? 'font-semibold text-neutral-10'
                 : 'font-medium text-neutral-45 hover:text-neutral-10',
@@ -85,10 +90,11 @@ const CategoryTabs = <Value extends string>({
       })}
       <span
         aria-hidden
-        className="absolute bottom-0 left-0 h-0.5 w-px origin-left bg-neutral-0"
+        className="absolute bottom-0 h-0.5 bg-neutral-0"
         style={{
-          transform: `translateX(${indicator.left}px) scaleX(${indicator.width})`,
-          transition: `transform ${INDICATOR_TRANSITION_MS}ms ease-out`,
+          left: indicator.left,
+          width: indicator.width,
+          transition: `left ${INDICATOR_TRANSITION_MS}ms ease-out, width ${INDICATOR_TRANSITION_MS}ms ease-out`,
         }}
       />
     </nav>

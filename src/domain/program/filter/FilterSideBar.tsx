@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { IFilter } from '../../../types/interface';
 import { getKeyByValue } from '../../../utils/convert';
@@ -121,6 +121,24 @@ const FilterSideBar = ({
   onReset,
   onApply,
 }: FilterSideBarProps) => {
+  useEffect(() => {
+    if (!isOpen) return;
+
+    document.body.style.overflow = 'hidden';
+
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        document.body.style.overflow = '';
+      }
+    };
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [isOpen]);
+
   const sections = getFilterSectionsConfig(
     filterJob,
     filterClassification,
@@ -168,12 +186,12 @@ const FilterSideBar = ({
       {/* 모바일: 바텀시트 */}
       <div
         className={clsx(
-          'fixed inset-x-0 bottom-0 z-50 flex max-h-[85vh] flex-col rounded-t-xl bg-static-100 transition-transform duration-300 ease-in-out lg:hidden',
+          'fixed inset-x-0 bottom-0 z-50 flex max-h-[62vh] flex-col rounded-t-xl bg-static-100 transition-transform duration-300 ease-in-out lg:hidden',
           isOpen ? 'translate-y-0' : 'translate-y-full',
         )}
       >
         {/* 바텀시트 헤더 */}
-        <div className="flex items-center justify-between py-4 pl-5 pr-4">
+        <div className="flex shrink-0 items-center justify-between py-4 pl-5 pr-4">
           <h2 className="text-small18 font-semibold text-neutral-0">필터</h2>
           <button onClick={() => setIsOpen(false)}>
             <img src="/icons/filter-close.svg" alt="닫기" />
@@ -203,7 +221,7 @@ const FilterSideBar = ({
         </div>
 
         {/* 바텀시트 하단 버튼 */}
-        <div className="flex gap-2 px-5 py-4">
+        <div className="flex shrink-0 gap-2 px-5 py-4">
           <button
             onClick={onReset}
             className="flex-1 rounded-xs border border-neutral-80 p-3 text-xsmall16 font-medium text-primary"
