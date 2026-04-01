@@ -92,7 +92,7 @@ const FeedbackHeader = ({
       </div>
 
       {/* 2줄 (모바일만: 통계 뱃지) */}
-      <div className="flex items-center gap-1.5 md:hidden">
+      <div className="flex items-center justify-center gap-1.5 md:hidden">
         <span className="rounded-full px-2 py-0.5 text-xs font-medium text-gray-500">
           총 {totalCount}명
         </span>

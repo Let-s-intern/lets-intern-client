@@ -85,24 +85,23 @@ const MenteeList = ({
                         : 'hover:bg-neutral-50',
                     )}
                   >
-                    <div className="flex items-center gap-0.5">
-                      <span className="line-clamp-1 text-sm text-neutral-900">
-                        {mentee.name}
-                      </span>
-                      {isAbsent ? (
-                        <span className="ml-1.5 shrink-0 rounded-full border border-orange-200 bg-orange-50 px-2 py-0.5 text-[11px] font-medium text-orange-600">
-                          미제출
-                        </span>
-                      ) : null}
-                    </div>
-                    <span
-                      className={twMerge(
-                        'ml-2 shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-medium',
-                        feedbackBadge.className,
-                      )}
-                    >
-                      {feedbackBadge.label}
+                    <span className="line-clamp-1 text-sm text-neutral-900">
+                      {mentee.name}
                     </span>
+                    {isAbsent ? (
+                      <span className="ml-2 shrink-0 rounded-full border border-orange-200 bg-orange-50 px-2.5 py-0.5 text-[11px] font-medium text-orange-600">
+                        미제출
+                      </span>
+                    ) : (
+                      <span
+                        className={twMerge(
+                          'ml-2 shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-medium',
+                          feedbackBadge.className,
+                        )}
+                      >
+                        {feedbackBadge.label}
+                      </span>
+                    )}
                   </button>
                 );
               })}
