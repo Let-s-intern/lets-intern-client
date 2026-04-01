@@ -94,7 +94,7 @@ const ChallengePeriodBar = ({
             </defs>
           </svg>
           <span className="whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px] text-neutral-10">
-            [ {bar.th}차 피드백 ]
+            [ {bar.th}회차 ]
           </span>
         </div>
         <div className="flex shrink-0 items-center gap-1 whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px]">

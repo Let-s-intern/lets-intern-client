@@ -1,16 +1,20 @@
 'use client';
 
 import { twMerge } from '@/lib/twMerge';
-import {
-  useMentorMenteeAttendanceQuery,
-} from '@/api/challenge/challenge';
 import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
 
+interface MenteeItem {
+  id: number | null;
+  name: string;
+  feedbackStatus: FeedbackStatus | null;
+  status: string | null;
+}
+
 interface MenteeListProps {
-  challengeId: number;
-  missionId: number;
-  selectedAttendanceId: number | null;
-  onSelectMentee: (attendanceId: number) => void;
+  attendanceList: MenteeItem[];
+  selectedIndex: number;
+  onSelectByIndex: (index: number) => void;
+  isLoading?: boolean;
 }
 
 function getFeedbackBadge(feedbackStatus: FeedbackStatus | null): {
@@ -39,19 +43,11 @@ function getFeedbackBadge(feedbackStatus: FeedbackStatus | null): {
 }
 
 const MenteeList = ({
-  challengeId,
-  missionId,
-  selectedAttendanceId,
-  onSelectMentee,
+  attendanceList,
+  selectedIndex,
+  onSelectByIndex,
+  isLoading = false,
 }: MenteeListProps) => {
-  const { data, isLoading } = useMentorMenteeAttendanceQuery({
-    challengeId,
-    missionId,
-    enabled: !!challengeId && !!missionId,
-  });
-
-  const attendanceList = data?.attendanceList ?? [];
-
   return (
     <div className="flex h-full flex-col py-1 pl-1">
       <div className="flex flex-1 gap-2 overflow-hidden">
@@ -67,17 +63,15 @@ const MenteeList = ({
           ) : (
             <div className="flex-1 overflow-y-auto">
               {attendanceList.map((mentee, idx) => {
-                const hasAttendance = mentee.id != null;
-                const isSelected = hasAttendance && mentee.id === selectedAttendanceId;
+                const isSelected = idx === selectedIndex;
                 const feedbackBadge = getFeedbackBadge(mentee.feedbackStatus);
-                const isAbsent = mentee.status === 'ABSENT';
+                const isAbsent = mentee.status === 'ABSENT' || mentee.id == null;
 
                 return (
                   <button
                     key={mentee.id ?? `no-attendance-${idx}`}
                     type="button"
-                    disabled={!hasAttendance}
-                    onClick={() => hasAttendance && onSelectMentee(mentee.id!)}
+                    onClick={() => onSelectByIndex(idx)}
                     className={twMerge(
                       'flex w-full items-center justify-between border-b border-neutral-200 px-4 py-2 text-left transition-colors',
                       isSelected
@@ -85,24 +79,23 @@ const MenteeList = ({
                         : 'hover:bg-neutral-50',
                     )}
                   >
-                    <div className="flex items-center gap-0.5">
-                      <span className="line-clamp-1 text-sm text-neutral-900">
-                        {mentee.name}
-                      </span>
-                      {isAbsent ? (
-                        <span className="ml-1 shrink-0 rounded border border-neutral-300 px-2 py-1 text-xs font-medium text-neutral-500">
-                          (미제출)
-                        </span>
-                      ) : null}
-                    </div>
-                    <span
-                      className={twMerge(
-                        'ml-2 shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-medium',
-                        feedbackBadge.className,
-                      )}
-                    >
-                      {feedbackBadge.label}
+                    <span className="line-clamp-1 text-sm text-neutral-900">
+                      {mentee.name}
                     </span>
+                    {isAbsent ? (
+                      <span className="ml-2 shrink-0 rounded-full border border-orange-200 bg-orange-50 px-2.5 py-0.5 text-[11px] font-medium text-orange-600">
+                        미제출
+                      </span>
+                    ) : (
+                      <span
+                        className={twMerge(
+                          'ml-2 shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-medium',
+                          feedbackBadge.className,
+                        )}
+                      >
+                        {feedbackBadge.label}
+                      </span>
+                    )}
                   </button>
                 );
               })}
