@@ -33,6 +33,7 @@ const MobileFeedbackPage = ({
   missionTh,
 }: MobileFeedbackPageProps) => {
   const {
+    selectedIndex,
     selectedAttendanceId,
     editorContent,
     setEditorContent,
@@ -40,7 +41,7 @@ const MobileFeedbackPage = ({
     isReadOnly,
     isAbsent,
     attendanceList,
-    handleSelectMentee,
+    handleSelectByIndex,
     handleClose,
     handleMutationSuccess,
     editorKey,
@@ -50,9 +51,9 @@ const MobileFeedbackPage = ({
 
   const { hasPrevMentee, hasNextMentee, handlePrevMentee, handleNextMentee } =
     useMenteeNavigation({
-      attendanceList,
-      selectedAttendanceId,
-      onSelectMentee: handleSelectMentee,
+      listLength: attendanceList.length,
+      selectedIndex,
+      onSelectByIndex: handleSelectByIndex,
     });
 
   const { waitingCount, inProgressCount, completedCount } =
@@ -125,9 +126,7 @@ const MobileFeedbackPage = ({
 
         <div className="border-b border-gray-100 px-4 py-2">
           <MenteeInfo
-            challengeId={challengeId}
-            missionId={missionId}
-            attendanceId={selectedAttendanceId}
+            mentee={currentMentee}
             challengeTitle={challengeTitle}
             collapsed
           />
@@ -216,8 +215,8 @@ const MobileFeedbackPage = ({
           <div className="flex-1">
             <MobileMenteeSelector
               attendanceList={attendanceList}
-              selectedAttendanceId={selectedAttendanceId}
-              onSelectMentee={handleSelectMentee}
+              selectedIndex={selectedIndex}
+              onSelectByIndex={handleSelectByIndex}
             />
           </div>
           <NavButton
@@ -230,9 +229,7 @@ const MobileFeedbackPage = ({
 
       <div className="shrink-0 border-b border-gray-100 px-4 py-3">
         <MenteeInfo
-          challengeId={challengeId}
-          missionId={missionId}
-          attendanceId={selectedAttendanceId}
+          mentee={currentMentee}
           challengeTitle={challengeTitle}
         />
       </div>

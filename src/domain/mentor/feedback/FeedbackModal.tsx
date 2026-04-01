@@ -33,6 +33,7 @@ const FeedbackModal = ({
   missionTh,
 }: FeedbackModalProps) => {
   const {
+    selectedIndex,
     selectedAttendanceId,
     editorContent,
     setEditorContent,
@@ -40,7 +41,7 @@ const FeedbackModal = ({
     isReadOnly,
     isAbsent,
     attendanceList,
-    handleSelectMentee,
+    handleSelectByIndex,
     handleClose,
     handleMutationSuccess,
     editorKey,
@@ -50,9 +51,9 @@ const FeedbackModal = ({
 
   const { hasPrevMentee, hasNextMentee, handlePrevMentee, handleNextMentee } =
     useMenteeNavigation({
-      attendanceList,
-      selectedAttendanceId,
-      onSelectMentee: handleSelectMentee,
+      listLength: attendanceList.length,
+      selectedIndex,
+      onSelectByIndex: handleSelectByIndex,
     });
 
   const { waitingCount, inProgressCount, completedCount } =
@@ -79,10 +80,9 @@ const FeedbackModal = ({
       <FeedbackLayout
         sidebar={
           <MenteeList
-            challengeId={challengeId}
-            missionId={missionId}
-            selectedAttendanceId={selectedAttendanceId}
-            onSelectMentee={handleSelectMentee}
+            attendanceList={attendanceList}
+            selectedIndex={selectedIndex}
+            onSelectByIndex={handleSelectByIndex}
           />
         }
         navigation={
@@ -163,9 +163,7 @@ const FeedbackModal = ({
         }
         menteeInfo={(collapsed) => (
           <MenteeInfo
-            challengeId={challengeId}
-            missionId={missionId}
-            attendanceId={selectedAttendanceId}
+            mentee={currentMentee}
             challengeTitle={challengeTitle}
             collapsed={collapsed}
           />

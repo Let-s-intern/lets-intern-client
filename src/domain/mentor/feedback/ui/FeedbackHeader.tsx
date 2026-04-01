@@ -28,7 +28,7 @@ const FeedbackHeader = ({
         </span>
 
         {/* 데스크탑: 통계 뱃지 */}
-        <div className="hidden items-center gap-1.5 md:flex">
+        <div className="hidden flex-1 items-center justify-center gap-1.5 md:flex">
           <span className="rounded-full px-2 py-0.5 text-xs font-medium text-gray-500">
             총 {totalCount}명
           </span>
@@ -55,7 +55,8 @@ const FeedbackHeader = ({
           </span>
         </div>
 
-        <div className="flex-1" />
+        {/* 모바일에서만 spacer */}
+        <div className="flex-1 md:hidden" />
 
         {/* 데스크탑: 가이드 버튼 */}
         <a
