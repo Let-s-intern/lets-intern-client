@@ -90,10 +90,11 @@ const CategoryTabs = <Value extends string>({
       })}
       <span
         aria-hidden
-        className="absolute bottom-0 left-0 h-0.5 w-px origin-left bg-neutral-0"
+        className="absolute bottom-0 h-0.5 bg-neutral-0"
         style={{
-          transform: `translateX(${indicator.left}px) scaleX(${indicator.width})`,
-          transition: `transform ${INDICATOR_TRANSITION_MS}ms ease-out`,
+          left: indicator.left,
+          width: indicator.width,
+          transition: `left ${INDICATOR_TRANSITION_MS}ms ease-out, width ${INDICATOR_TRANSITION_MS}ms ease-out`,
         }}
       />
     </nav>
