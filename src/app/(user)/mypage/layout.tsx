@@ -62,6 +62,15 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
     ];
   }, [pathname]);
 
+  const careerSubTabsProps = {
+    options: careerSubTabs.map((tab) => ({ value: tab.id, label: tab.label })),
+    selected: careerSubTabs.find((tab) => tab.active)?.id ?? careerSubTabs[0].id,
+    onChange: (id: string) => {
+      const tab = careerSubTabs.find((t) => t.id === id);
+      if (tab) router.push(tab.path);
+    },
+  };
+
   // 사이드바 메뉴 아이템
   const sidebarItems = useMemo(() => {
     const baseItems = [
@@ -148,15 +157,7 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
       {/* 서브 탭 네비게이션 (모바일, 커리어 관리에서만 표시) */}
       {showCareerSubTabs && (
         <CategoryTabs
-          options={careerSubTabs.map((tab) => ({
-            value: tab.id,
-            label: tab.label,
-          }))}
-          selected={careerSubTabs.find((tab) => tab.active)?.id ?? 'board'}
-          onChange={(id) => {
-            const tab = careerSubTabs.find((t) => t.id === id);
-            if (tab) router.push(tab.path);
-          }}
+          {...careerSubTabsProps}
           className="pt-[14px] md:hidden md:pt-0"
         />
       )}
@@ -209,17 +210,7 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
             {/* 서브 탭 네비게이션 (데스크톱) */}
             {showCareerSubTabs && (
               <CategoryTabs
-                options={careerSubTabs.map((tab) => ({
-                  value: tab.id,
-                  label: tab.label,
-                }))}
-                selected={
-                  careerSubTabs.find((tab) => tab.active)?.id ?? 'board'
-                }
-                onChange={(id) => {
-                  const tab = careerSubTabs.find((t) => t.id === id);
-                  if (tab) router.push(tab.path);
-                }}
+                {...careerSubTabsProps}
                 className="mb-10 hidden px-0 md:flex"
               />
             )}
