@@ -20,6 +20,8 @@ const ProgramStatusTabs = ({ selected, onChange }: ProgramStatusTabsProps) => {
       options={[...STATUS_TAB_OPTIONS]}
       selected={selected}
       onChange={onChange}
+      size="large"
+      className="-mx-5 md:pl-5 lg:-mx-0 lg:p-0"
     />
   );
 };

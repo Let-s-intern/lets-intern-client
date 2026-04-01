@@ -65,26 +65,20 @@ const Programs = () => {
       ),
   );
 
-  const [filterType, typeDispatch] = useReducer(
-    filterTypeReducer,
-    null,
-    () =>
-      createInitialFilterState(
-        initialFilterType,
-        PROGRAM_QUERY_KEY.TYPE,
-        searchParams,
-      ),
+  const [filterType, typeDispatch] = useReducer(filterTypeReducer, null, () =>
+    createInitialFilterState(
+      initialFilterType,
+      PROGRAM_QUERY_KEY.TYPE,
+      searchParams,
+    ),
   );
 
-  const [filterJob, jobDispatch] = useReducer(
-    filterJobReducer,
-    null,
-    () =>
-      createInitialFilterState(
-        initialFilterJob,
-        PROGRAM_QUERY_KEY.JOB,
-        searchParams,
-      ),
+  const [filterJob, jobDispatch] = useReducer(filterJobReducer, null, () =>
+    createInitialFilterState(
+      initialFilterJob,
+      PROGRAM_QUERY_KEY.JOB,
+      searchParams,
+    ),
   );
 
   const resetPageable = () => {
