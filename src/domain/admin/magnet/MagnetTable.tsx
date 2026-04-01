@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { useMemo } from 'react';
 import {
   isMagnetManageable,
+  isMagnetVisibilityManageable,
   MAGNET_TYPE,
   MagnetListItem,
 } from './types';
@@ -63,7 +64,7 @@ const MagnetTable = ({
         headerName: '노출 시작일',
         width: 130,
         valueGetter: (_, row) =>
-          !isMagnetManageable(row.type)
+          !isMagnetVisibilityManageable(row.type)
             ? '-'
             : row.startDate
               ? dayjs(row.startDate).format('YYYY-MM-DD')
@@ -74,7 +75,7 @@ const MagnetTable = ({
         headerName: '노출 종료일',
         width: 130,
         valueGetter: (_, row) =>
-          !isMagnetManageable(row.type)
+          !isMagnetVisibilityManageable(row.type)
             ? '-'
             : row.endDate
               ? dayjs(row.endDate).format('YYYY-MM-DD')
@@ -85,7 +86,7 @@ const MagnetTable = ({
         headerName: '노출여부',
         width: 90,
         renderCell: ({ row }) =>
-          isMagnetManageable(row.type) ? (
+          isMagnetVisibilityManageable(row.type) ? (
             <Checkbox
               checked={row.isVisible}
               onChange={(e) =>
