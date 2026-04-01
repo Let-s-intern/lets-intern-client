@@ -65,26 +65,20 @@ const Programs = () => {
       ),
   );
 
-  const [filterType, typeDispatch] = useReducer(
-    filterTypeReducer,
-    null,
-    () =>
-      createInitialFilterState(
-        initialFilterType,
-        PROGRAM_QUERY_KEY.TYPE,
-        searchParams,
-      ),
+  const [filterType, typeDispatch] = useReducer(filterTypeReducer, null, () =>
+    createInitialFilterState(
+      initialFilterType,
+      PROGRAM_QUERY_KEY.TYPE,
+      searchParams,
+    ),
   );
 
-  const [filterJob, jobDispatch] = useReducer(
-    filterJobReducer,
-    null,
-    () =>
-      createInitialFilterState(
-        initialFilterJob,
-        PROGRAM_QUERY_KEY.JOB,
-        searchParams,
-      ),
+  const [filterJob, jobDispatch] = useReducer(filterJobReducer, null, () =>
+    createInitialFilterState(
+      initialFilterJob,
+      PROGRAM_QUERY_KEY.JOB,
+      searchParams,
+    ),
   );
 
   const resetPageable = () => {
@@ -230,7 +224,7 @@ const Programs = () => {
             {/* 모바일: 필터 아이콘 */}
             <button
               onClick={() => setIsOpen(true)}
-              className="flex shrink-0 items-center justify-center border-b border-neutral-85 p-1 pb-2 pl-2 lg:hidden"
+              className="relative z-10 -mr-5 flex shrink-0 items-center justify-center border-b border-neutral-85 p-1 pb-2 pr-5 lg:hidden"
             >
               <img
                 className="w-5 md:w-6"

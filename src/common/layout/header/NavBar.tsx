@@ -218,10 +218,6 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
                 블로그
               </GlobalNavItem>
             </div>
-            <div
-              className="hidden h-[18px] w-[1px] bg-[#D9D9D9] md:block"
-              aria-hidden="true"
-            />
           </div>
 
           <ExternalNavList isLoggedIn={isLoggedIn} isAdmin={isAdmin} />

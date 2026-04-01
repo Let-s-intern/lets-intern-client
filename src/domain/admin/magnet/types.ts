@@ -20,6 +20,15 @@ export const MANAGEABLE_MAGNET_TYPES: MagnetTypeKey[] = [
 export const isMagnetManageable = (type: MagnetTypeKey): boolean =>
   MANAGEABLE_MAGNET_TYPES.includes(type);
 
+/** 노출시작일/종료일/노출여부를 관리할 수 있는 타입 (manageable + 출시알림) */
+const VISIBILITY_MANAGEABLE_TYPES: MagnetTypeKey[] = [
+  ...MANAGEABLE_MAGNET_TYPES,
+  'LAUNCH_ALERT',
+];
+
+export const isMagnetVisibilityManageable = (type: MagnetTypeKey): boolean =>
+  VISIBILITY_MANAGEABLE_TYPES.includes(type);
+
 /** 마그넷 목록 아이템 — API 응답 필드와 일치 */
 export interface MagnetListItem {
   magnetId: number;
