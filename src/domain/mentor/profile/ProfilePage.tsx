@@ -181,21 +181,21 @@ export default function ProfilePage() {
             : 'pointer-events-none translate-y-4 opacity-0'
         }`}
       >
-        <div className="flex items-center gap-2 rounded-xl bg-white p-1.5 shadow-lg ring-1 ring-black/5">
+        <div className="flex items-center gap-2 whitespace-nowrap rounded-xl bg-white p-1.5 shadow-lg ring-1 ring-black/5">
           <button
             type="button"
             onClick={handleSave}
             disabled={isPending}
-            className="rounded-lg bg-primary px-10 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg bg-primary px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50 md:px-10"
           >
-            {isPending ? '저장 중...' : '변경사항 저장'}
+            {isPending ? '저장 중...' : '저장'}
           </button>
           <button
             type="button"
             onClick={handleDiscard}
-            className="rounded-lg px-4 py-2.5 text-sm font-medium text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-700"
+            className="rounded-lg px-3 py-2.5 text-sm font-medium text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-700 md:px-4"
           >
-            변경 취소
+            취소
           </button>
         </div>
       </div>
