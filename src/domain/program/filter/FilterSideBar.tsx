@@ -122,9 +122,20 @@ const FilterSideBar = ({
   onApply,
 }: FilterSideBarProps) => {
   useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : '';
+    if (!isOpen) return;
+
+    document.body.style.overflow = 'hidden';
+
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        document.body.style.overflow = '';
+      }
+    };
+    window.addEventListener('resize', handleResize);
+
     return () => {
       document.body.style.overflow = '';
+      window.removeEventListener('resize', handleResize);
     };
   }, [isOpen]);
 
