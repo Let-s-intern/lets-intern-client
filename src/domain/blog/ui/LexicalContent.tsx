@@ -109,12 +109,16 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
     }
     case 'list': {
       const _node = node as SerializedListNode;
-      const children = (_node.children || []).map((child) =>
-        _node.listType === 'check' &&
-        (child as SerializedListItemNode).checked === undefined
-          ? { ...child, checked: false }
-          : child,
-      );
+      const originalChildren = _node.children || [];
+      const children =
+        _node.listType === 'check'
+          ? originalChildren.map((child) => {
+              const listItem = child as SerializedListItemNode;
+              return listItem.checked === undefined
+                ? { ...child, checked: false }
+                : child;
+            })
+          : originalChildren;
       const ListTag =
         _node.listType === 'number'
           ? 'ol'
@@ -154,7 +158,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
                   ? '/icons/checkbox-checked.svg'
                   : '/icons/checkbox-unchecked-box3.svg'
               }
-              alt={_node.checked ? 'checked' : 'unchecked'}
+              alt={_node.checked ? '체크' : '체크 안 함'}
               className="mt-[2px] h-5 w-5 shrink-0"
             />
           )}
