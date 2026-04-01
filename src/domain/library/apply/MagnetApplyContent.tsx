@@ -243,7 +243,7 @@ const MagnetApplyContent = ({
     variant === 'launch-alert' ? '출시 알림 신청하기' : '신청하기';
 
   return (
-    <main className="mx-auto flex max-w-[37.5rem] flex-col gap-6 px-5 pb-16 pt-6 md:px-0 md:pb-24 md:pt-16">
+    <main className="mx-auto flex max-w-[37.5rem] flex-col gap-10 px-5 pb-16 pt-6 md:px-0 md:pb-24 md:pt-16">
       {/* 헤더 */}
       <button
         type="button"

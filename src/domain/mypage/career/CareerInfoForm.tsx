@@ -221,7 +221,7 @@ const CareerInfoForm = ({
         </div>
       </div>
 
-      <div className="mb-8 flex flex-col gap-4">
+      <div className="mb-10 flex flex-col gap-4">
         {/* 희망 직군 */}
         <SelectButton
           className="text-xsmall14 md:text-xsmall16"
