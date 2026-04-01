@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import type { ChallengeMentorVo } from '@/api/user/user';
 import {
   useMentorMissionFeedbackListQuery,
-  useMentorMissionFeedbackAttendanceQuery,
+  useMentorMenteeAttendanceQuery,
 } from '@/api/challenge/challenge';
 import type { PeriodBarData } from '../challenge-period/ChallengePeriodBar';
 
@@ -30,7 +30,7 @@ const MissionAttendanceFetcher = ({
   colorIndex: number;
   onData: (key: string, bar: PeriodBarData) => void;
 }) => {
-  const { data: attendanceData } = useMentorMissionFeedbackAttendanceQuery({
+  const { data: attendanceData } = useMentorMenteeAttendanceQuery({
     challengeId: challenge.challengeId,
     missionId: mission.id,
     enabled: true,

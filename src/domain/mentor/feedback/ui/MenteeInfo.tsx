@@ -1,7 +1,7 @@
 'use client';
 
 import {
-  useMentorMissionFeedbackAttendanceQuery,
+  useMentorMenteeAttendanceQuery,
 } from '@/api/challenge/challenge';
 import {
   FeedbackStatusMapping,
@@ -44,7 +44,7 @@ const MenteeInfo = ({
   challengeTitle,
   collapsed = false,
 }: MenteeInfoProps) => {
-  const { data } = useMentorMissionFeedbackAttendanceQuery({
+  const { data } = useMentorMenteeAttendanceQuery({
     challengeId,
     missionId,
     enabled: !!challengeId && !!missionId,

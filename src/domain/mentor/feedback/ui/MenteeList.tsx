@@ -2,7 +2,7 @@
 
 import { twMerge } from '@/lib/twMerge';
 import {
-  useMentorMissionFeedbackAttendanceQuery,
+  useMentorMenteeAttendanceQuery,
 } from '@/api/challenge/challenge';
 import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
 
@@ -44,7 +44,7 @@ const MenteeList = ({
   selectedAttendanceId,
   onSelectMentee,
 }: MenteeListProps) => {
-  const { data, isLoading } = useMentorMissionFeedbackAttendanceQuery({
+  const { data, isLoading } = useMentorMenteeAttendanceQuery({
     challengeId,
     missionId,
     enabled: !!challengeId && !!missionId,
@@ -66,16 +66,18 @@ const MenteeList = ({
             </div>
           ) : (
             <div className="flex-1 overflow-y-auto">
-              {attendanceList.map((mentee) => {
-                const isSelected = mentee.id === selectedAttendanceId;
+              {attendanceList.map((mentee, idx) => {
+                const hasAttendance = mentee.id != null;
+                const isSelected = hasAttendance && mentee.id === selectedAttendanceId;
                 const feedbackBadge = getFeedbackBadge(mentee.feedbackStatus);
                 const isAbsent = mentee.status === 'ABSENT';
 
                 return (
                   <button
-                    key={mentee.id}
+                    key={mentee.id ?? `no-attendance-${idx}`}
                     type="button"
-                    onClick={() => onSelectMentee(mentee.id)}
+                    disabled={!hasAttendance}
+                    onClick={() => hasAttendance && onSelectMentee(mentee.id!)}
                     className={twMerge(
                       'flex w-full items-center justify-between border-b border-neutral-200 px-4 py-2 text-left transition-colors',
                       isSelected
