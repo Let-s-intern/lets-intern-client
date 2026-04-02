@@ -189,6 +189,7 @@ const MagnetApplyContent = ({
             : null,
         wishCompany: value.wishCompany,
         wishEmploymentType: value.wishEmploymentType,
+        marketingAgree: isMarketingAgreed,
       });
 
       const magnetAnswerList = surveyAnswers.map((a) => {
@@ -242,7 +243,7 @@ const MagnetApplyContent = ({
     variant === 'launch-alert' ? '출시 알림 신청하기' : '신청하기';
 
   return (
-    <main className="mx-auto flex max-w-[37.5rem] flex-col gap-6 px-5 pb-16 pt-6 md:px-0 md:pb-24 md:pt-16">
+    <main className="mx-auto flex max-w-[37.5rem] flex-col gap-10 px-5 pb-16 pt-6 md:px-0 md:pb-24 md:pt-16">
       {/* 헤더 */}
       <button
         type="button"
@@ -264,15 +265,17 @@ const MagnetApplyContent = ({
           initialSelections={initialSelections}
           onSelectionsChange={handleSelectionsChange}
           showRequired={true}
+          beforeConditions={
+            <h2 className="mb-6 mt-4 text-xsmall16 font-semibold text-neutral-0 md:text-small18">
+              추가 정보
+            </h2>
+          }
         />
       </section>
 
       {/* 추가 정보 (서베이) */}
       {questions.length > 0 && (
         <section>
-          <h2 className="mb-6 mt-4 text-xsmall16 font-semibold text-neutral-0 md:text-small18">
-            추가 정보
-          </h2>
           <MagnetSurveySection
             questions={questions}
             answers={surveyAnswers}

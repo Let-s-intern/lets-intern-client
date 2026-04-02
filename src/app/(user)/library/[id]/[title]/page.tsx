@@ -23,9 +23,8 @@ import {
   getLibraryTitle,
 } from '@/utils/url';
 import { QueryClient } from '@tanstack/react-query';
-import { CircleChevronRight, LockKeyhole } from 'lucide-react';
+import { CircleChevronRight } from 'lucide-react';
 import { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ReactNode } from 'react';
@@ -37,7 +36,7 @@ const MAGNET_TYPE_LABEL: Record<MagnetType, string> = {
   FREE_TEMPLATE: '무료 템플릿',
   MATERIAL: '직무 자료집',
   LAUNCH_ALERT: '출시 알림',
-  EVENT: '이벤트',
+  EVENT: '기타',
 };
 
 function toUrlSlug(title: string) {
@@ -90,7 +89,9 @@ export async function generateMetadata({
 
   const { magnetInfo } = data;
   const parsed = parseMagnetDescription(magnetInfo.description);
-  const metaDescription = parsed.metaDescription ?? magnetInfo.description;
+  const metaDescription =
+    parsed.metaDescription ||
+    `${magnetInfo.title} | 렛츠커리어 무료 자료집`;
 
   return {
     title: getLibraryTitle({ title: magnetInfo.title }),

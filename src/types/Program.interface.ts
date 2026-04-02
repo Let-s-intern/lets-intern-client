@@ -1,6 +1,7 @@
 import {
   PROGRAM_CLASSIFICATION,
   PROGRAM_FILTER_CLASSIFICATION,
+  PROGRAM_FILTER_JOB,
   PROGRAM_FILTER_STATUS,
   PROGRAM_FILTER_TYPE,
   PROGRAM_STATUS_KEY,
@@ -67,4 +68,5 @@ export type filterStatuskey = keyof typeof PROGRAM_FILTER_STATUS;
 export type filterClassificationkey =
   keyof typeof PROGRAM_FILTER_CLASSIFICATION;
 export type filterTypekey = keyof typeof PROGRAM_FILTER_TYPE;
+export type filterJobkey = keyof typeof PROGRAM_FILTER_JOB;
 export type ProgramClassificationKey = keyof typeof PROGRAM_CLASSIFICATION;

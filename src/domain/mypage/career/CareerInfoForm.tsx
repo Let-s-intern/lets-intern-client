@@ -70,6 +70,8 @@ interface CareerInfoFormProps {
   sectionTitle?: string;
   /** 필수 표시 여부 */
   showRequired?: boolean;
+  /** 희망 구직 조건 위에 삽입할 콘텐츠 */
+  beforeConditions?: React.ReactNode;
 }
 
 /**
@@ -91,6 +93,7 @@ const CareerInfoForm = ({
   showSectionTitle = true,
   sectionTitle = '기본 정보',
   showRequired = false,
+  beforeConditions,
 }: CareerInfoFormProps) => {
   // 내부 모달 컨트롤 (외부 컨트롤이 없을 때만 사용)
   const internalModalControls = useCareerModals();
@@ -129,6 +132,9 @@ const CareerInfoForm = ({
     initialSelections?.field,
     initialSelections?.positions,
     initialSelections?.industries,
+    setSelectedField,
+    setSelectedPositions,
+    setSelectedIndustries,
   ]);
 
   // 선택 값 변경 시 부모 컴포넌트에 알림 (내부 모드일 때만)
@@ -215,7 +221,7 @@ const CareerInfoForm = ({
         </div>
       </div>
 
-      <div className="mb-8 flex flex-col gap-4">
+      <div className="mb-10 flex flex-col gap-4">
         {/* 희망 직군 */}
         <SelectButton
           className="text-xsmall14 md:text-xsmall16"
@@ -255,7 +261,8 @@ const CareerInfoForm = ({
         {/* 희망 기업 */}
         <div className="flex flex-col gap-[6px]">
           <label className="text-xsmall14 md:text-xsmall16">
-            희망 기업{showRequired && <span className="pl-1 text-primary">*</span>}
+            희망 기업
+            {showRequired && <span className="pl-1 text-primary">*</span>}
           </label>
           <LineInput
             className="text-xsmall14 md:text-xsmall16"
@@ -268,10 +275,13 @@ const CareerInfoForm = ({
         </div>
       </div>
 
+      {beforeConditions}
+
       {/* 희망 구직 조건 */}
       <div className="flex flex-col gap-3">
         <span className="text-xsmall14 md:text-xsmall16">
-          희망 구직 조건{showRequired && <span className="pl-1 text-primary">*</span>}
+          희망 구직 조건
+          {showRequired && <span className="pl-1 text-primary">*</span>}
         </span>
         <ConditionList
           selected={(value.wishEmploymentType ?? '')

@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 
 import { useIsMentorQuery } from '@/api/user/user';
+import CategoryTabs from '@/common/ui/CategoryTabs';
 import { Profile } from '@/domain/mypage/mypage/profile/Profile';
 import MyPageBanner from '@/domain/mypage/MyPageBanner';
 import useAuthStore from '@/store/useAuthStore';
@@ -60,6 +61,15 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
       },
     ];
   }, [pathname]);
+
+  const careerSubTabsProps = {
+    options: careerSubTabs.map((tab) => ({ value: tab.id, label: tab.label })),
+    selected: careerSubTabs.find((tab) => tab.active)?.id ?? careerSubTabs[0].id,
+    onChange: (id: string) => {
+      const tab = careerSubTabs.find((t) => t.id === id);
+      if (tab) router.push(tab.path);
+    },
+  };
 
   // 사이드바 메뉴 아이템
   const sidebarItems = useMemo(() => {
@@ -146,20 +156,10 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
 
       {/* 서브 탭 네비게이션 (모바일, 커리어 관리에서만 표시) */}
       {showCareerSubTabs && (
-        <nav className="flex w-full gap-5 overflow-x-auto border-b border-neutral-85 px-5 pt-3 scrollbar-hide md:hidden">
-          {careerSubTabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => router.push(tab.path)}
-              className={clsx(
-                'flex-shrink-0 whitespace-nowrap pb-3 text-xsmall14',
-                tab.active ? 'font-semibold' : 'font-medium text-neutral-40',
-              )}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </nav>
+        <CategoryTabs
+          {...careerSubTabsProps}
+          className="pt-[14px] md:hidden md:pt-0"
+        />
       )}
 
       {/* 메인 컨텐츠 영역 */}
@@ -209,22 +209,10 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
           <div>
             {/* 서브 탭 네비게이션 (데스크톱) */}
             {showCareerSubTabs && (
-              <nav className="mb-10 hidden border-b border-neutral-85 md:flex md:gap-6">
-                {careerSubTabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => router.push(tab.path)}
-                    className={clsx(
-                      'pb-3 text-xsmall16 font-medium',
-                      tab.active
-                        ? '-mb-[1.6px] border-b-[1.6px] border-neutral-10 font-semibold text-neutral-10'
-                        : 'text-neutral-45 hover:bg-white/50',
-                    )}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </nav>
+              <CategoryTabs
+                {...careerSubTabsProps}
+                className="mb-10 hidden px-0 md:flex"
+              />
             )}
 
             {/* 페이지 컨텐츠 */}

@@ -1,5 +1,5 @@
 'use client';
 
-import LeadHistoryPage from '@/domain/admin/pages/lead/LeadHistoryPage';
+import LeadHistoryPage from '@/domain/admin/lead/LeadHistoryPage';
 
 export default LeadHistoryPage;

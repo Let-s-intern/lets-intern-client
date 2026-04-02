@@ -1,7 +1,7 @@
 import {
   CreateMagnetReqBody,
   MagnetTypeKey,
-} from '@/domain/admin/blog/magnet/types';
+} from '@/domain/admin/magnet/types';
 import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {

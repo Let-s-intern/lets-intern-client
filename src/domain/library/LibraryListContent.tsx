@@ -16,8 +16,7 @@ import { MOBILE_MEDIA_QUERY } from '@/utils/constants';
 import { useMediaQuery } from '@mui/material';
 import { Bell, LockKeyhole, Search } from 'lucide-react';
 import Image from 'next/image';
-import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useMemo, useState } from 'react';
 import LibraryTabNav from './ui/LibraryTabNav';
 
@@ -31,7 +30,7 @@ const MAGNET_TYPE_LABEL: Record<MagnetType, string> = {
   FREE_TEMPLATE: '무료 템플릿',
   MATERIAL: '직무 자료집',
   LAUNCH_ALERT: '출시 알림',
-  EVENT: '이벤트',
+  EVENT: '기타',
 };
 
 const HIDDEN_TYPES_IN_LIST: MagnetType[] = ['LAUNCH_ALERT'];
@@ -170,6 +169,8 @@ function Content() {
 
 function LibraryGrid({ magnetList }: { magnetList: UserMagnetListItem[] }) {
   const now = dayjs();
+  const { isLoggedIn } = useAuthStore();
+  const router = useRouter();
 
   return (
     <div className="grid grid-cols-1 gap-y-14 md:grid-cols-4 md:gap-x-5">
@@ -222,13 +223,26 @@ function LibraryGrid({ magnetList }: { magnetList: UserMagnetListItem[] }) {
                     알림 설정 완료
                   </div>
                 ) : (
-                  <Link
-                    href={`/library/${magnet.magnetId}/apply?type=launch-alert`}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (!isLoggedIn) {
+                        const redirectUrl = `${window.location.pathname}${window.location.search}`;
+                        router.push(
+                          `/login?redirect=${encodeURIComponent(redirectUrl)}`,
+                        );
+                        return;
+                      }
+                      router.push(
+                        `/library/${magnet.magnetId}/apply?type=launch-alert`,
+                      );
+                    }}
                     className="relative z-10 flex items-center gap-1 rounded-xs bg-point p-2.5 text-xxsmall12 text-neutral-0"
                   >
                     <Bell size={15} />
                     알림 설정
-                  </Link>
+                  </button>
                 )
               ) : undefined
             }
