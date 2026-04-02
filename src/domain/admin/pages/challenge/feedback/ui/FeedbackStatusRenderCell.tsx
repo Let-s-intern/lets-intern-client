@@ -71,7 +71,7 @@ const FeedbackStatusRenderCell = (
     setLocalValue(newValue);
 
     try {
-      if (isAdmin) {
+      if (isAdmin === true) {
         await patchAdmin({ attendanceId, feedbackStatus: newValue });
       } else {
         await patchMentor({

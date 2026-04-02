@@ -62,11 +62,15 @@ export interface TalentPoolDocumentReq {
   wishIndustry: string;
 }
 
-/** PATCH /api/v1/attendance/{aId}/mentor 요청 */
-export const patchAttendanceMentorReqSchema = z.object({
-  feedback: z.string().optional(),
-  feedbackStatus: z.string().optional(),
-});
+/** PATCH /api/v1/attendance/{aId}/mentor 요청 — 최소 1개 필드 필수 */
+export const patchAttendanceMentorReqSchema = z
+  .object({
+    feedback: z.string().optional(),
+    feedbackStatus: z.string().optional(),
+  })
+  .refine((data) => data.feedback !== undefined || data.feedbackStatus !== undefined, {
+    message: 'feedback 또는 feedbackStatus 중 하나는 필수입니다',
+  });
 
 export type PatchAttendanceMentorReq = z.infer<
   typeof patchAttendanceMentorReqSchema
