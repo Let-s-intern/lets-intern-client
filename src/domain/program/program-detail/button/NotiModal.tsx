@@ -58,7 +58,7 @@ const NotiModal = ({
   };
 
   return (
-    <BaseModal isOpen={isOpen} onClose={onClose} className="mx-5 max-w-[340px]">
+    <BaseModal isOpen={isOpen} onClose={onClose} className="mx-5 max-w-[350px]">
       <div className="flex flex-col gap-5 p-5">
         {/* 헤더 */}
         <div className="flex items-start justify-between">
@@ -114,14 +114,14 @@ const NotiModal = ({
 
         {/* 안내 문구 */}
         <p className="text-xxsmall12 text-neutral-40">
-          *출시 알림 신청 시 마케팅 정보 수신에 동의한 것으로 간주됩니다.{' '}
+          *출시 알림 신청 시 마케팅 정보 수신에 동의한 것으로 간주됩니다.
         </p>
 
         {/* 신청 버튼 */}
         <button
           onClick={handleSubmit}
           disabled={isDisabled}
-          className={`w-full rounded-xs py-3 text-xsmall14 font-medium ${
+          className={`w-full rounded-xs py-3 text-xsmall16 ${
             isAlreadyApplied
               ? 'cursor-not-allowed bg-neutral-80 text-neutral-40'
               : 'bg-primary text-white'

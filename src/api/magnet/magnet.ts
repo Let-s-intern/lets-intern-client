@@ -383,6 +383,9 @@ export const usePostMagnetApplicationMutation = () => {
         queryClient.invalidateQueries({
           queryKey: [userMagnetListQueryKey],
         }),
+        queryClient.invalidateQueries({
+          queryKey: [launchAlertQueryKey],
+        }),
       ]);
     },
   });

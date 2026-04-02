@@ -4,9 +4,9 @@ import { useProgramApplicationQuery } from '@/api/application';
 import dayjs from '@/lib/dayjs';
 import { ChallengeIdPrimitive } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
-import MissionToast from '@/domain/challenge/my-challenge/mission/MissionToast';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import NotiToast from './NotiToast';
 import {
   DesktopApplyCTA,
   MobileApplyCTA,
@@ -105,10 +105,9 @@ const ChallengeCTAButtons = ({
           challenge.challengeType ? [challenge.challengeType] : undefined
         }
       />
-      <MissionToast
+      <NotiToast
         isVisible={showToast}
         onClose={() => setShowToast(false)}
-        message="다음 기수 알림이 신청되었습니다."
       />
       {/* 가격 플랜 선택 바텀 시트 */}
       <PricePlanBottomSheet
