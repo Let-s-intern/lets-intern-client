@@ -134,16 +134,14 @@ const ChallengeCompareSection = () => {
       id={SECTION_IDS.CHALLENGE_COMPARISON}
     >
       {/* 섹션 헤더 */}
-      <div className="flex w-full flex-col items-center gap-5 py-8 md:py-14">
-        <div className="flex w-full max-w-[62.5rem] flex-col items-center gap-5 px-6 md:gap-10 md:px-10 lg:px-0">
-          <p className="text-center text-lg font-semibold leading-6 text-[#7177f7]">
-            챌린지 비교
-          </p>
-          <h3 className="text-center text-2xl font-bold leading-tight text-[#27272d] md:text-3xl md:leading-[2.625rem]">
-            고민되는 챌린지, 비교해보세요
-          </h3>
-        </div>
-        <p className="self-stretch px-6 text-center text-base font-semibold leading-6 text-[#5c5f66] md:px-0 md:text-lg">
+      <div className="flex w-full flex-col items-center py-8 md:py-14">
+        <p className="mb-16 text-center text-lg font-semibold leading-6 text-indigo-500">
+          챌린지 비교
+        </p>
+        <h3 className="mb-4 text-center text-2xl font-bold leading-tight text-neutral-0 md:text-3xl md:leading-10">
+          고민되는 챌린지, 비교해보세요
+        </h3>
+        <p className="text-center text-base font-semibold leading-6 text-zinc-600 md:text-lg">
           많은 분들이 궁금해하는 챌린지 간 차이를 한눈에 확인하세요
         </p>
       </div>

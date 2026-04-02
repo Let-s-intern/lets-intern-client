@@ -17,7 +17,7 @@ const MobileQuestionStep = ({
   return (
     <div className="flex w-full flex-col gap-y-6">
       <div className="flex flex-col gap-y-2 text-center">
-        <h3 className="text-medium18 font-bold text-neutral-0">
+        <h3 className="text-base font-bold text-neutral-0">
           {question.title}
         </h3>
         {question.helper && (

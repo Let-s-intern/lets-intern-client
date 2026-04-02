@@ -59,16 +59,14 @@ const FaqSection = () => {
       className="flex w-full flex-col items-center gap-6"
       id={SECTION_IDS.FAQ}
     >
-      <div className="flex flex-col items-center gap-5 self-stretch py-8 md:py-14">
-        <div className="flex w-full max-w-[62.5rem] flex-col items-center gap-5 px-6 md:gap-10 md:px-10 lg:px-0">
-          <p className="self-stretch text-center text-lg font-semibold leading-6 text-indigo-500">
-            FAQ
-          </p>
-          <h3 className="text-center text-2xl font-bold leading-tight text-neutral-0 md:text-3xl md:leading-10">
-            자주 묻는 질문
-          </h3>
-        </div>
-        <p className="self-stretch text-center text-base font-semibold leading-6 text-zinc-600 md:text-lg">
+      <div className="flex w-full flex-col items-center py-8 md:py-14">
+        <p className="mb-16 text-center text-lg font-semibold leading-6 text-indigo-500">
+          FAQ
+        </p>
+        <h3 className="mb-4 text-center text-2xl font-bold leading-tight text-neutral-0 md:text-3xl md:leading-10">
+          자주 묻는 질문
+        </h3>
+        <p className="text-center text-base font-semibold leading-6 text-zinc-600 md:text-lg">
           챌린지 수강 전 궁금한 점을 모았어요
         </p>
       </div>

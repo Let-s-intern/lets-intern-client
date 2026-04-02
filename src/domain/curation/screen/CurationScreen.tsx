@@ -69,14 +69,14 @@ const CurationScreen = () => {
         id={SECTION_IDS.FORM}
       >
         <div
-          className="mx-auto flex w-full max-w-[73.75rem] flex-col gap-10 px-6 py-14 md:px-10"
+          className="mx-auto flex w-full max-w-[73.75rem] flex-col gap-4 px-6 py-14 md:px-10"
           ref={formRef}
         >
-          <div className="flex flex-col items-center gap-5 self-stretch py-8 md:py-[3.75rem]">
-            <p className="text-center text-lg font-semibold leading-6 text-indigo-500">
+          <div className="flex flex-col items-center self-stretch py-8 md:py-[3.75rem]">
+            <p className="mb-16 text-center text-lg font-semibold leading-6 text-indigo-500">
               3초 큐레이션
             </p>
-            <h2 className="text-center text-2xl font-bold leading-tight text-neutral-0 md:text-3xl md:leading-10">
+            <h2 className="mb-4 text-center text-2xl font-bold leading-tight text-neutral-0 md:text-3xl md:leading-10">
               나에게 맞는 프로그램 찾기
             </h2>
             <p className="text-center text-base font-semibold leading-6 text-zinc-600 md:text-lg">
@@ -90,7 +90,7 @@ const CurationScreen = () => {
           />
 
           {!result && (
-            <form className="flex flex-col gap-8">
+            <form className="mt-8 flex flex-col gap-8">
               {currentStep === 0 && (
                 <PersonaSelector
                   selected={personaId}

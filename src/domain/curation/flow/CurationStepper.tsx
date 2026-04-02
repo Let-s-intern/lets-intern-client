@@ -44,7 +44,7 @@ const CurationStepper = ({
               ref={(el) => {
                 stepRefs.current[index] = el;
               }}
-              className="flex items-center gap-1 md:gap-36"
+              className="flex items-center gap-1 md:gap-16"
             >
               <button
                 type="button"
