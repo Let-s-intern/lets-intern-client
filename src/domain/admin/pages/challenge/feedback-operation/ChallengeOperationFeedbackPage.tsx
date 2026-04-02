@@ -1,5 +1,6 @@
 'use client';
 
+import { ChallengeMissionFeedbackAttendanceQueryKey } from '@/api/challenge/challenge';
 import { useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { useCallback, useState } from 'react';
@@ -21,6 +22,9 @@ function ChallengeOperationFeedbackPage() {
         });
         queryClient.invalidateQueries({
           queryKey: ['useChallengeApplicationsQuery', programId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [ChallengeMissionFeedbackAttendanceQueryKey],
         });
       }
       setActiveTab(tab);
