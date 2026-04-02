@@ -64,8 +64,8 @@ export interface TalentPoolDocumentReq {
 
 /** PATCH /api/v1/attendance/{aId}/mentor 요청 */
 export const patchAttendanceMentorReqSchema = z.object({
-  feedback: z.string(),
-  feedbackStatus: z.string(),
+  feedback: z.string().optional(),
+  feedbackStatus: z.string().optional(),
 });
 
 export type PatchAttendanceMentorReq = z.infer<

@@ -19,7 +19,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import type { AttendanceRow } from '../types';
-import axios from '@/utils/axios';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 
 const FeedbackStatusEnumForMentor = FeedbackStatusEnum.exclude(['CONFIRMED']);
@@ -61,16 +60,6 @@ const FeedbackStatusRenderCell = (
       : [MentorMissionFeedbackAttendanceQueryKey, programId, missionId];
 
     await queryClient.invalidateQueries({ queryKey: feedbackQueryKey });
-    // fallback 경로의 캐시도 invalidate하여 stale 데이터 방지
-    await queryClient.invalidateQueries({
-      queryKey: [
-        'admin',
-        'challenge',
-        Number(programId),
-        'attendances',
-        Number(missionId),
-      ],
-    });
   };
 
   const handleChange = async (e: SelectChangeEvent<FeedbackStatus>) => {
@@ -85,15 +74,8 @@ const FeedbackStatusRenderCell = (
       if (isAdmin) {
         await patchAdmin({ attendanceId, feedbackStatus: newValue });
       } else {
-        const res = await axios.get(
-          `/challenge/${programId}/mission/${missionId}/feedback/attendances/${attendanceId}`,
-        );
-        const currentFeedback =
-          res.data.data?.attendanceDetailVo?.feedback ?? '';
-
         await patchMentor({
           attendanceId,
-          feedback: currentFeedback,
           feedbackStatus: newValue,
         });
       }
