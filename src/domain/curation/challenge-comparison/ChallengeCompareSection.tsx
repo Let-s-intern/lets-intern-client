@@ -11,7 +11,11 @@ import CompareResultCard from './CompareResultCard';
 import MobileChallengeCard from './MobileChallengeCard';
 import MobileCompareView from './MobileCompareView';
 import RecommendedComparisons from './RecommendedComparisons';
+import { SECTION_IDS, STICKY_NAV_HEIGHT } from '../shared/sectionIds';
 import { useCompareCart } from './useCompareCart';
+const MOBILE_QUERY = '(max-width: 767px)';
+const isMobileViewport = () =>
+  typeof window !== 'undefined' && window.matchMedia(MOBILE_QUERY).matches;
 
 /** 추천 비교 조합의 프로그램명 → ProgramId 매핑 */
 const findProgramIdByLabel = (label: string): ProgramId | null => {
@@ -38,7 +42,7 @@ const ChallengeCompareSection = () => {
 
   /** FAQ 또는 큐레이션 폼 섹션이 보이면 플로팅 버튼 숨기기 */
   useEffect(() => {
-    const sectionIds = ['curation-faq', 'curation-form'];
+    const sectionIds = [SECTION_IDS.FAQ, SECTION_IDS.FORM];
     const visible = new Map<string, boolean>();
 
     const observer = new IntersectionObserver(
@@ -65,11 +69,10 @@ const ChallengeCompareSection = () => {
   const scrollToResult = useCallback(() => {
     requestAnimationFrame(() => {
       if (!resultRef.current) return;
-      const navHeight = 80;
       const top =
         resultRef.current.getBoundingClientRect().top +
         window.scrollY -
-        navHeight;
+        STICKY_NAV_HEIGHT;
       window.scrollTo({ top, behavior: 'smooth' });
     });
   }, []);
@@ -94,7 +97,9 @@ const ChallengeCompareSection = () => {
 
       setCompareTargets([leftId, rightId]);
       setRecommendedIndex(index);
-      setIsMobileViewOpen(true);
+      if (isMobileViewport()) {
+        setIsMobileViewOpen(true);
+      }
       scrollToResult();
     },
     [scrollToResult],
@@ -106,9 +111,9 @@ const ChallengeCompareSection = () => {
     setRecommendedIndex(null);
     clearCart();
     requestAnimationFrame(() => {
-      const section = document.getElementById('curation-challenge-comparison');
+      const section = document.getElementById(SECTION_IDS.CHALLENGE_COMPARISON);
       if (!section) return;
-      const top = section.getBoundingClientRect().top + window.scrollY - 80;
+      const top = section.getBoundingClientRect().top + window.scrollY - STICKY_NAV_HEIGHT;
       window.scrollTo({ top, behavior: 'smooth' });
     });
   }, [clearCart]);
@@ -124,19 +129,17 @@ const ChallengeCompareSection = () => {
   return (
     <section
       className="flex w-full flex-col items-center pb-24 md:pb-0"
-      id="curation-challenge-comparison"
+      id={SECTION_IDS.CHALLENGE_COMPARISON}
     >
       {/* 섹션 헤더 */}
-      <div className="flex w-full flex-col items-center gap-5 py-8 md:py-14">
-        <div className="flex w-full max-w-[62.5rem] flex-col items-center gap-5 px-6 md:gap-10 md:px-10 lg:px-0">
-          <p className="text-center text-lg font-semibold leading-6 text-[#7177f7]">
-            챌린지 비교
-          </p>
-          <h3 className="text-center text-2xl font-bold leading-tight text-[#27272d] md:text-3xl md:leading-[2.625rem]">
-            고민되는 챌린지, 비교해보세요
-          </h3>
-        </div>
-        <p className="self-stretch px-6 text-center text-base font-semibold leading-6 text-[#5c5f66] md:px-0 md:text-lg">
+      <div className="flex w-full flex-col items-center py-8 md:py-14">
+        <p className="mb-16 text-center text-lg font-semibold leading-6 text-indigo-500">
+          챌린지 비교
+        </p>
+        <h3 className="mb-4 text-center text-2xl font-semibold leading-tight text-neutral-0 md:text-3xl md:leading-10">
+          고민되는 챌린지, 비교해보세요
+        </h3>
+        <p className="text-center text-base font-semibold leading-6 text-zinc-600 md:text-lg">
           많은 분들이 궁금해하는 챌린지 간 차이를 한눈에 확인하세요
         </p>
       </div>
@@ -247,7 +250,7 @@ const ChallengeCompareSection = () => {
         </div>
       )}
 
-      {/* 모바일 비교 결과 전체화면 뷰 — md:hidden으로 데스크톱에서 마운트 방지 */}
+      {/* 모바일 비교 결과 전체화면 뷰 — isMobileViewOpen은 모바일에서만 true가 됨 */}
       <div className="md:hidden">
         {isMobileViewOpen && compareTargets.length >= 2 && (
           <MobileCompareView

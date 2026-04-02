@@ -51,19 +51,7 @@ const MobileCompareView = ({ programIds, onClose }: MobileCompareViewProps) => {
     (id) => CHALLENGE_COMPARISON.find((c) => c.programId === id)!,
   );
 
-  // 동적 제목 생성
-  const titleParts = programs.map((p) => {
-    if (p.title.includes('경험정리')) return '경험정리';
-    if (p.title.includes('이력서')) return '이력서';
-    if (p.title.includes('대기업')) return '대기업 자소서';
-    if (p.title.includes('자기소개서')) return '자소서';
-    if (p.title.includes('포트폴리오')) return '포트폴리오';
-    if (p.title.includes('면접')) return '면접';
-    if (p.title.includes('마케팅')) return '마케팅';
-    if (p.title.includes('HR')) return 'HR';
-    return p.title;
-  });
-  const compareTitle = titleParts.join(' vs ');
+  const compareTitle = programs.map((p) => p.shortTitle).join(' vs ');
 
   return (
     // 전체화면 오버레이

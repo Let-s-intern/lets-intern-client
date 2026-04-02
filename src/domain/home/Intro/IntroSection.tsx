@@ -10,6 +10,7 @@ import Intro5 from '@/assets/graphic/home/intro/5.svg?react';
 import Intro6 from '@/assets/graphic/home/intro/6.svg?react';
 import Intro8 from '@/assets/graphic/home/intro/8.svg?react';
 import Intro9 from '@/assets/graphic/home/intro/9.svg?react';
+import IntroCuration from '@/assets/graphic/home/intro/curation.svg?react';
 import useActiveReports from '@/hooks/useActiveReports';
 import { useIntroSectionB2CChallenges } from '@/hooks/useFirstB2CChallenge';
 import { twMerge } from '@/lib/twMerge';
@@ -148,6 +149,18 @@ const HOME_INTRO = {
         icon: <Intro9 width={44} height={44} />,
         href: '/library/list',
         gaTitle: '무료 자료집 받기',
+      },
+      {
+        title: (
+          <p>
+            맞춤 프로그램
+            <br />
+            추천받기
+          </p>
+        ),
+        icon: <IntroCuration width={44} height={44} />,
+        href: '/curation',
+        gaTitle: '맞춤프로그램 추천받기',
       },
     ],
   },

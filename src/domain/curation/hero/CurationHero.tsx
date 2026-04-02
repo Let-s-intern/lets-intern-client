@@ -15,7 +15,7 @@ interface CurationHeroProps {
 const CurationHero = ({ copy }: CurationHeroProps) => {
   return (
     <section className="w-full bg-primary-5">
-      <div className="relative flex h-[22rem] w-full flex-row items-center justify-between overflow-hidden px-6 md:px-10 lg:px-[120px]">
+      <div className="relative mx-auto flex h-[22rem] w-full max-w-[73.75rem] flex-row items-center justify-between overflow-hidden px-6 md:px-10">
         {/* 좌측: 텍스트 영역 */}
         <div className="flex flex-col items-start justify-center gap-6 self-stretch">
           {/* 뱃지 */}
@@ -33,8 +33,16 @@ const CurationHero = ({ copy }: CurationHeroProps) => {
 
           {/* 타이틀 + 서브텍스트 */}
           <div className="flex flex-col items-start gap-2">
-            <h1 className="text-3xl font-bold leading-9 text-zinc-800">
-              {copy.title}
+            <h1 className="text-3xl font-semibold leading-9 text-zinc-800">
+              {copy.title.includes('챌린지,') ? (
+                <>
+                  {copy.title.split('챌린지,')[0]}챌린지,
+                  <br className="md:hidden" />
+                  {copy.title.split('챌린지,')[1]}
+                </>
+              ) : (
+                copy.title
+              )}
             </h1>
             <p className="whitespace-pre-line text-sm font-normal leading-5 text-zinc-500">
               {copy.body}

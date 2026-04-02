@@ -14,19 +14,16 @@ interface ConditionalLayoutProps {
 const ConditionalLayout = ({ children }: ConditionalLayoutProps) => {
   const pathname = usePathname();
   const isLoginPage = pathname === '/login';
-  const isCurationPage = pathname === '/curation';
+  const isCurationPage = pathname.startsWith('/curation');
   const isDarkPage = pathname.startsWith('/challenge/feedback-mentoring');
-  const hideLayout = isLoginPage || isCurationPage;
 
   return (
     <div>
       {!isCurationPage && <NavBar isLoginPage={isLoginPage} />}
-      <div className={hideLayout ? '' : 'min-h-[31rem] w-full'}>
-        {children}
-      </div>
-      {!hideLayout && !isDarkPage && <Footer />}
-      {!hideLayout && <ChannelTalkBtn />}
-      {!hideLayout && <BottomNavBarWithPathname />}
+      <div className="min-h-[31rem] w-full">{children}</div>
+      {!isLoginPage && !isDarkPage && !isCurationPage && <Footer />}
+      {!isLoginPage && !isCurationPage && <ChannelTalkBtn />}
+      {!isLoginPage && !isCurationPage && <BottomNavBarWithPathname />}
     </div>
   );
 };
