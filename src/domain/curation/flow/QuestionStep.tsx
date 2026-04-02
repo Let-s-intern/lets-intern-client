@@ -54,11 +54,11 @@ const QuestionStep = ({
                   }`}
                 >
                   <div className="flex flex-col items-start justify-start gap-3 self-stretch">
-                    <span className="self-stretch text-left text-base font-semibold leading-6 text-zinc-800">
+                    <span className="self-stretch truncate text-left text-sm font-semibold leading-6 text-zinc-800">
                       {option.title}
                     </span>
                     {option.description && (
-                      <span className="text-left text-base font-semibold leading-6 text-zinc-500">
+                      <span className="truncate text-left text-xs font-semibold leading-5 text-zinc-500">
                         {option.description}
                       </span>
                     )}

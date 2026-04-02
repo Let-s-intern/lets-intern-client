@@ -32,7 +32,7 @@ const PersonaSelector = ({ selected, onSelect }: PersonaSelectorProps) => {
                 }`}
               >
                 <div className="flex flex-col items-start justify-start gap-3 self-stretch">
-                  <span className="self-stretch text-left text-base font-semibold leading-6 text-zinc-800">
+                  <span className="self-stretch truncate text-left text-sm font-semibold leading-6 text-zinc-800">
                     {persona.title}
                   </span>
                 </div>

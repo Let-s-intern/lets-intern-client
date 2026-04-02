@@ -39,7 +39,7 @@ const MobilePersonaSelector = ({
               </motion.div>
             )}
             <span
-              className={`text-sm font-semibold ${
+              className={`truncate text-xs font-semibold ${
                 isActive ? 'text-primary' : 'text-neutral-0'
               }`}
             >

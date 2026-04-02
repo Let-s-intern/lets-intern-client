@@ -31,7 +31,7 @@ export const PROGRAMS: Record<ProgramId, ProgramContent> = {
       },
     ],
     thumbnail: '/images/curation/experience.svg',
-    link: '/challenge/experience-summary/latest',
+    link: 'https://www.letscareer.co.kr/challenge/experience-summary/latest',
   },
   resume: {
     id: 'resume',
@@ -54,7 +54,7 @@ export const PROGRAMS: Record<ProgramId, ProgramContent> = {
       { id: 'standard', name: '스탠다드', price: '59,900원' },
     ],
     thumbnail: '/images/curation/resume.svg',
-    link: '/challenge/resume/latest',
+    link: 'https://www.letscareer.co.kr/challenge/resume/latest',
   },
   coverLetter: {
     id: 'coverLetter',
@@ -79,7 +79,7 @@ export const PROGRAMS: Record<ProgramId, ProgramContent> = {
       { id: 'premium', name: '프리미엄', price: '119,000원' },
     ],
     thumbnail: '/images/curation/cover-letter.svg',
-    link: '/challenge/personal-statement/latest',
+    link: 'https://www.letscareer.co.kr/challenge/personal-statement/latest',
   },
   portfolio: {
     id: 'portfolio',
@@ -104,7 +104,7 @@ export const PROGRAMS: Record<ProgramId, ProgramContent> = {
       { id: 'premium', name: '프리미엄', price: '128,500원' },
     ],
     thumbnail: '/images/curation/portfolio.svg',
-    link: '/challenge/portfolio/latest',
+    link: 'https://www.letscareer.co.kr/challenge/portfolio/latest',
   },
   interview: {
     id: 'interview',
@@ -168,7 +168,7 @@ export const PROGRAMS: Record<ProgramId, ProgramContent> = {
       },
     ],
     thumbnail: '/images/curation/enterprise-cover.svg',
-    link: '/challenge/personal-statement/latest',
+    link: 'https://www.letscareer.co.kr/challenge/personal-statement/latest',
   },
   marketingAllInOne: {
     id: 'marketingAllInOne',
@@ -210,7 +210,7 @@ export const PROGRAMS: Record<ProgramId, ProgramContent> = {
       },
     ],
     thumbnail: '/images/curation/marketing.svg',
-    link: '/challenge/marketing/latest',
+    link: 'https://www.letscareer.co.kr/challenge/marketing/latest',
   },
   hrAllInOne: {
     id: 'hrAllInOne',
@@ -250,6 +250,6 @@ export const PROGRAMS: Record<ProgramId, ProgramContent> = {
       },
     ],
     thumbnail: '/images/curation/hr.svg',
-    link: '/challenge/hr/latest',
+    link: 'https://www.letscareer.co.kr/challenge/hr/latest',
   },
 };
