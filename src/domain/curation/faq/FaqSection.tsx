@@ -1,6 +1,62 @@
 'use client';
 
 import { useState } from 'react';
+import { SECTION_IDS } from '../shared/sectionIds';
+import type { FAQCategory } from '../types';
+import { FAQS } from './faqs';
+
+const FAQ_CATEGORIES: FAQCategory[] = [
+  '프로그램 적합성',
+  '커리큘럼/자료',
+  '참여 방법',
+  '피드백/멘토링',
+];
+
+// 마크다운 볼드(**텍스트**)를 연한 파란색 볼드로 렌더링하는 함수
+const parseMarkdown = (text: string) => {
+  // 줄바꿈으로 분리
+  const lines = text.split('\n');
+
+  return lines.map((line, lineIndex) => {
+    // 각 줄에서 **텍스트** 파싱
+    const parts = line.split(/(\*\*.*?\*\*)/g);
+
+    const parsedLine = parts.map((part, partIndex) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        const content = part.slice(2, -2);
+        return (
+          <span
+            key={`${lineIndex}-${partIndex}`}
+            className="font-bold text-blue-500"
+          >
+            {content}
+          </span>
+        );
+      }
+      return <span key={`${lineIndex}-${partIndex}`}>{part}</span>;
+    });
+
+    return (
+      <div key={lineIndex} className={lineIndex > 0 ? 'mt-2' : ''}>
+        {parsedLine}
+      </div>
+    );
+  });
+};
+
+const FaqSection = () => {
+  const [selectedCategory, setSelectedCategory] = useState<FAQCategory | 'all'>(
+    'all',
+  );
+
+  const filteredFaqs =
+    selectedCategory === 'all'
+      ? FAQS
+      : FAQS.filter((faq) => faq.category === selectedCategory);
+
+  return (
+    <section
+      className="flex w-full flex-col items-center gap-6"
       id={SECTION_IDS.FAQ}
     >
       <div className="flex w-full flex-col items-center py-8 md:py-14">

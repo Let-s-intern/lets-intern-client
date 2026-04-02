@@ -1,6 +1,22 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { SECTION_IDS } from '../shared/sectionIds';
+
+interface NavItem {
+  title: string;
+  sectionId: string;
+  onClick: () => void;
+}
+
+interface CurationStickyNavProps {
+  onScrollToForm: () => void;
+  onScrollToChallengeComparison: () => void;
+  onScrollToFaq: () => void;
+}
+
+/** 역순(하단→상단)으로 순회하여 뷰포트 상단을 가장 최근에 지난 섹션 감지 */
+const SECTIONS_REVERSE = [
   { id: SECTION_IDS.FAQ, sectionId: 'faq' },
   { id: SECTION_IDS.CHALLENGE_COMPARISON, sectionId: 'challenge-comparison' },
   { id: SECTION_IDS.FORM, sectionId: 'form' },

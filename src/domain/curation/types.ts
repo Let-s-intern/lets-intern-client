@@ -53,5 +53,72 @@ export interface ProgramPlan {
 export interface ProgramContent {
   id: ProgramId;
   title: string;
+  shortTitle: string;
+  subtitle: string;
+  badge?: string;
+  category?: string;
+  target: string;
+  duration: string;
+  deliverable: string;
+  feedback: string;
+  curriculum: string[];
+  features?: string[];
+  plans: ProgramPlan[];
+  thumbnail: string;
+  link: string;
+}
+
+export interface FormValues {
+  personaId?: PersonaId;
+  step1: string;
+  step2: string;
+}
+
+export interface ProgramRecommendation {
+  programId: ProgramId;
+  emphasis: 'primary' | 'secondary';
+  reason: string;
+  suggestedPlanId?: PlanId;
+}
+
+export interface CurationResult {
+  personaId: PersonaId;
+  headline: string;
+  summary: string;
+  recommendations: ProgramRecommendation[];
+  emphasisNotes?: string[];
+}
+
+export interface ChallengeComparisonRow {
+  programId: ProgramId;
+  label: string;
+  description: string;
+  shortDescription: string;
+  shortTarget: string;
+  target: string;
+  duration: string;
+  pricing: string;
+  curriculum: string;
+  deliverable: string;
+  feedback: string;
+}
+
+export interface FrequentComparisonItem {
+  title: string;
+  left: string;
+  right: string;
+  rows: { label: string; left: string; right: string }[];
+}
+
+export type FAQCategory =
+  | '프로그램 적합성'
+  | '커리큘럼/자료'
+  | '참여 방법'
+  | '피드백/멘토링';
+
+export interface FAQItem {
+  question: string;
+  answer: string;
+  category: FAQCategory;
   image?: string;
 }
