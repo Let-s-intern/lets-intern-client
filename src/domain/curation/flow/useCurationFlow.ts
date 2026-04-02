@@ -11,11 +11,19 @@ import {
 import { computeCurationResult } from './curationEngine';
 import { PERSONA_IDS } from './personas';
 import { QUESTION_MAP } from './questions';
+import { STICKY_NAV_HEIGHT } from '../shared/sectionIds';
 
 const MOBILE_BREAKPOINT = 768;
-const STICKY_NAV_HEIGHT = 60;
 const SCROLL_PADDING_MOBILE = 20;
 const SCROLL_PADDING_DESKTOP = 40;
+
+type CurationFormValues = FormValues & { personaId?: PersonaId };
+
+const formSchema = z.object({
+  personaId: z.string().optional(),
+  step1: z.string().min(1, '옵션을 선택해주세요.'),
+  step2: z.string().min(1, '옵션을 선택해주세요.'),
+});
 
 interface UseCurationFlowParams {
   questionMap?: Record<PersonaId, CurationQuestion[]>;
@@ -30,15 +38,6 @@ export const useCurationFlow = ({
   const [result, setResult] = useState<CurationResult | null>(null);
   const formRef = useRef<HTMLDivElement | null>(null);
   const initializedRef = useRef(false);
-
-  const personaEnum = z.enum(personaIds as [PersonaId, ...PersonaId[]]);
-  const formSchema = z.object({
-    personaId: personaEnum.optional(),
-    step1: z.string().min(1, '옵션을 선택해주세요.'),
-    step2: z.string().min(1, '옵션을 선택해주세요.'),
-  });
-
-  type CurationFormValues = FormValues & { personaId?: PersonaId };
 
   const {
     setValue,

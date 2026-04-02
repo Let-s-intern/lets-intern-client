@@ -11,10 +11,8 @@ import CompareResultCard from './CompareResultCard';
 import MobileChallengeCard from './MobileChallengeCard';
 import MobileCompareView from './MobileCompareView';
 import RecommendedComparisons from './RecommendedComparisons';
-import { SECTION_IDS } from '../shared/sectionIds';
+import { SECTION_IDS, STICKY_NAV_HEIGHT } from '../shared/sectionIds';
 import { useCompareCart } from './useCompareCart';
-
-const NAV_HEIGHT = 80;
 const MOBILE_QUERY = '(max-width: 767px)';
 const isMobileViewport = () =>
   typeof window !== 'undefined' && window.matchMedia(MOBILE_QUERY).matches;
@@ -74,7 +72,7 @@ const ChallengeCompareSection = () => {
       const top =
         resultRef.current.getBoundingClientRect().top +
         window.scrollY -
-        NAV_HEIGHT;
+        STICKY_NAV_HEIGHT;
       window.scrollTo({ top, behavior: 'smooth' });
     });
   }, []);
@@ -115,7 +113,7 @@ const ChallengeCompareSection = () => {
     requestAnimationFrame(() => {
       const section = document.getElementById(SECTION_IDS.CHALLENGE_COMPARISON);
       if (!section) return;
-      const top = section.getBoundingClientRect().top + window.scrollY - NAV_HEIGHT;
+      const top = section.getBoundingClientRect().top + window.scrollY - STICKY_NAV_HEIGHT;
       window.scrollTo({ top, behavior: 'smooth' });
     });
   }, [clearCart]);

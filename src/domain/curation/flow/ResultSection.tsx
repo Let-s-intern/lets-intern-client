@@ -6,15 +6,15 @@ import DesktopRecommendationCard from './DesktopRecommendationCard';
 import MobileRecommendationCard from './MobileRecommendationCard';
 
 interface ResultSectionProps {
-  result: CurationResult | null;
+  result: CurationResult;
   onRestart: () => void;
 }
 
 const ResultSection = ({ result, onRestart }: ResultSectionProps) => {
   const [showSecondary, setShowSecondary] = useState(false);
 
-  const primary = result?.recommendations.filter((r) => r.emphasis === 'primary') ?? [];
-  const secondary = result?.recommendations.filter((r) => r.emphasis === 'secondary') ?? [];
+  const primary = result.recommendations.filter((r) => r.emphasis === 'primary');
+  const secondary = result.recommendations.filter((r) => r.emphasis === 'secondary');
 
   // primary 중 첫 번째 1개만 표시
   const primaryCard = primary[0] ?? null;
@@ -32,17 +32,7 @@ const ResultSection = ({ result, onRestart }: ResultSectionProps) => {
           </span>
         </div>
 
-        {!result && (
-          <div className="rounded-xl border border-dashed border-neutral-200 bg-white px-4 py-8 text-center">
-            <p className="text-sm font-semibold text-zinc-800">아직 결과가 없어요.</p>
-            <p className="text-xs text-zinc-400">
-              준비 상태와 질문 2개를 완료하면 맞춤 추천을 보여드릴게요.
-            </p>
-          </div>
-        )}
-
-        {result && (
-          <>
+        <>
             {/* 요약 박스 */}
             <div className="inline-flex items-start justify-center gap-2.5 self-stretch overflow-hidden rounded-xl bg-indigo-50 px-2.5 py-5">
               <div className="inline-flex flex-col items-center justify-center gap-2.5">
@@ -114,8 +104,7 @@ const ResultSection = ({ result, onRestart }: ResultSectionProps) => {
               </button>
             </div>
 
-          </>
-        )}
+        </>
       </div>
     </section>
   );

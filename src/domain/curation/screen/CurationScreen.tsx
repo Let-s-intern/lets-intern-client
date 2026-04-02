@@ -10,9 +10,68 @@ import ResultSection from '../flow/ResultSection';
 import { useCurationFlow } from '../flow/useCurationFlow';
 import CurationHero from '../hero/CurationHero';
 import CurationStickyNav from '../nav/CurationStickyNav';
-import { SECTION_IDS } from '../shared/sectionIds';
+import { SECTION_IDS, STICKY_NAV_HEIGHT } from '../shared/sectionIds';
+import type { CurationQuestion, PersonaId } from '../types';
 
-const STICKY_NAV_OFFSET = 80;
+interface CurationFormProps {
+  currentStep: number;
+  personaId?: PersonaId;
+  questionSet?: CurationQuestion[];
+  step1Value: string;
+  step2Value: string;
+  step1Error?: string;
+  step2Error?: string;
+  onSelectPersona: (id: PersonaId) => void;
+  onSelectStep1: (val: string) => void;
+  onSelectStep2: (val: string) => void;
+}
+
+const CurationForm = ({
+  currentStep,
+  personaId,
+  questionSet,
+  step1Value,
+  step2Value,
+  step1Error,
+  step2Error,
+  onSelectPersona,
+  onSelectStep1,
+  onSelectStep2,
+}: CurationFormProps) => {
+  const step2Question = questionSet?.[1];
+  const step2Filtered = step2Question
+    ? {
+        ...step2Question,
+        options: step2Question.options.filter(
+          (opt) => !opt.group || opt.group === step1Value,
+        ),
+      }
+    : undefined;
+
+  return (
+    <form className="mt-8 flex flex-col gap-8">
+      {currentStep === 0 && (
+        <PersonaSelector selected={personaId} onSelect={onSelectPersona} />
+      )}
+      {currentStep === 1 && questionSet && (
+        <QuestionStep
+          question={questionSet[0]}
+          value={step1Value}
+          onChange={onSelectStep1}
+          error={step1Error}
+        />
+      )}
+      {currentStep === 2 && step2Filtered && (
+        <QuestionStep
+          question={step2Filtered}
+          value={step2Value}
+          onChange={onSelectStep2}
+          error={step2Error}
+        />
+      )}
+    </form>
+  );
+};
 
 const CurationScreen = () => {
   const {
@@ -40,14 +99,10 @@ const CurationScreen = () => {
     const section = document.getElementById(sectionId);
     if (!section) return;
 
-    const offset = STICKY_NAV_OFFSET;
-    const elementPosition = section.getBoundingClientRect().top;
-    const offsetPosition = elementPosition + window.scrollY - offset;
+    const offsetPosition =
+      section.getBoundingClientRect().top + window.scrollY - STICKY_NAV_HEIGHT;
 
-    window.scrollTo({
-      top: offsetPosition,
-      behavior: 'smooth',
-    });
+    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
   };
 
   return (
@@ -90,51 +145,27 @@ const CurationScreen = () => {
           />
 
           {!result && (
-            <form className="mt-8 flex flex-col gap-8">
-              {currentStep === 0 && (
-                <PersonaSelector
-                  selected={personaId}
-                  onSelect={(id) => {
-                    setValue('personaId', id, { shouldValidate: true });
-                    goNext();
-                  }}
-                />
-              )}
-
-              {currentStep === 1 && questionSet && (
-                <QuestionStep
-                  question={questionSet[0]}
-                  value={watch('step1')}
-                  onChange={(val) => {
-                    setValue('step1', val, { shouldValidate: true });
-                    goNext();
-                  }}
-                  error={errors.step1?.message}
-                />
-              )}
-
-              {currentStep === 2 && questionSet && (() => {
-                const step1Value = watch('step1');
-                const step2Question = questionSet[1];
-                const filtered = {
-                  ...step2Question,
-                  options: step2Question.options.filter(
-                    (opt) => !opt.group || opt.group === step1Value,
-                  ),
-                };
-                return (
-                  <QuestionStep
-                    question={filtered}
-                    value={watch('step2')}
-                    onChange={(val) => {
-                      setValue('step2', val, { shouldValidate: true });
-                      goNext();
-                    }}
-                    error={errors.step2?.message}
-                  />
-                );
-              })()}
-            </form>
+            <CurationForm
+              currentStep={currentStep}
+              personaId={personaId}
+              questionSet={questionSet}
+              step1Value={watch('step1')}
+              step2Value={watch('step2')}
+              step1Error={errors.step1?.message}
+              step2Error={errors.step2?.message}
+              onSelectPersona={(id) => {
+                setValue('personaId', id, { shouldValidate: true });
+                goNext();
+              }}
+              onSelectStep1={(val) => {
+                setValue('step1', val, { shouldValidate: true });
+                goNext();
+              }}
+              onSelectStep2={(val) => {
+                setValue('step2', val, { shouldValidate: true });
+                goNext();
+              }}
+            />
           )}
 
           {result && (
