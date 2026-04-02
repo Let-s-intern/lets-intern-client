@@ -146,7 +146,7 @@ const HOME_INTRO = {
           </p>
         ),
         icon: <IntroCuration width={44} height={44} />,
-        href: 'https://www.letscareer.co.kr/curation',
+        href: '/curation',
         gaTitle: '맞춤프로그램 추천받기',
       },
     ],
