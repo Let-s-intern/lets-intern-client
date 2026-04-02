@@ -6,6 +6,7 @@ import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   BaseQuestionListResponse,
+  LaunchAlertResponse,
   MagnetDetailResponse,
   MagnetListResponse,
   MagnetType,
@@ -15,6 +16,7 @@ import {
   UserMagnetListResponse,
   UserMagnetQuestionListResponse,
   baseQuestionListResponseSchema,
+  launchAlertResponseSchema,
   magnetDetailResponseSchema,
   magnetListResponseSchema,
   mypageMagnetListResponseSchema,
@@ -30,6 +32,7 @@ const myMagnetListQueryKey = 'MyMagnetListQueryKey';
 const baseQuestionQueryKey = 'BaseQuestionQueryKey';
 const mypageMagnetListQueryKey = 'MypageMagnetListQueryKey';
 const userMagnetDetailQueryKey = 'UserMagnetDetailQueryKey';
+const launchAlertQueryKey = 'LaunchAlertQueryKey';
 
 export interface MagnetListQueryParams {
   typeList?: MagnetTypeKey[];
@@ -165,6 +168,34 @@ export const usePatchMagnetMutation = ({
       console.error(error);
       errorCallback?.();
     },
+  });
+};
+
+// 출시알림 마그넷 조회
+export interface LaunchAlertQueryParams {
+  programTypeList?: string[];
+  challengeTypeList?: string[];
+  enabled?: boolean;
+}
+
+export const useGetLaunchAlertQuery = ({
+  programTypeList,
+  challengeTypeList,
+  enabled,
+}: LaunchAlertQueryParams) => {
+  return useQuery({
+    queryKey: [launchAlertQueryKey, programTypeList, challengeTypeList],
+    queryFn: async (): Promise<LaunchAlertResponse> => {
+      const res = await axios.get('/magnet/launch-alert', {
+        params: {
+          programTypeList,
+          challengeTypeList,
+        },
+      });
+      return launchAlertResponseSchema.parse(res.data.data);
+    },
+    enabled,
+    retry: false,
   });
 };
 

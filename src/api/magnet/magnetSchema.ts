@@ -187,3 +187,11 @@ export type MypageMagnetListItem = z.infer<typeof mypageMagnetListItemSchema>;
 export type MypageMagnetListResponse = z.infer<
   typeof mypageMagnetListResponseSchema
 >;
+
+// --- Launch Alert ---
+export const launchAlertResponseSchema = z.object({
+  magnetId: z.number(),
+  appliedLaunchAlert: z.boolean(),
+});
+
+export type LaunchAlertResponse = z.infer<typeof launchAlertResponseSchema>;

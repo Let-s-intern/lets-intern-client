@@ -1,23 +1,64 @@
 'use client';
 
+import {
+  useGetLaunchAlertQuery,
+  usePostMagnetApplicationMutation,
+} from '@/api/magnet/magnet';
 import { useUserQuery } from '@/api/user/user';
 import BaseModal from '@/common/modal/BaseModal';
 
 interface NotiModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
+  programTypeList?: string[];
+  challengeTypeList?: string[];
 }
 
-const NotiModal = ({ isOpen, onClose }: NotiModalProps) => {
+const NotiModal = ({
+  isOpen,
+  onClose,
+  onSuccess,
+  programTypeList,
+  challengeTypeList,
+}: NotiModalProps) => {
   const { data: user } = useUserQuery({ enabled: isOpen });
 
+  const { data: launchAlert, isError: isQueryError } = useGetLaunchAlertQuery({
+    programTypeList,
+    challengeTypeList,
+    enabled: isOpen,
+  });
+
+  const {
+    mutate: applyLaunchAlert,
+    isPending,
+    isError: isMutationError,
+  } = usePostMagnetApplicationMutation();
+
+  const isAlreadyApplied = launchAlert?.appliedLaunchAlert ?? false;
+  const isDisabled =
+    isAlreadyApplied || isPending || isQueryError || isMutationError;
+
   const handleSubmit = () => {
-    // TODO: 알림 신청 API 연결
-    onClose();
+    if (!launchAlert?.magnetId || isDisabled) return;
+
+    applyLaunchAlert(
+      {
+        magnetId: launchAlert.magnetId,
+        body: { magnetAnswerList: [] },
+      },
+      {
+        onSuccess: () => {
+          onClose();
+          onSuccess?.();
+        },
+      },
+    );
   };
 
   return (
-    <BaseModal isOpen={isOpen} onClose={onClose} className="mx-5 max-w-[350px]">
+    <BaseModal isOpen={isOpen} onClose={onClose} className="mx-5 max-w-[340px]">
       <div className="flex flex-col gap-5 p-5">
         {/* 헤더 */}
         <div className="flex items-start justify-between">
@@ -48,14 +89,14 @@ const NotiModal = ({ isOpen, onClose }: NotiModalProps) => {
 
         {/* 회원 정보 */}
         <div className="flex flex-col rounded-sm bg-primary-5 p-3">
-          <div className="flex flex-col gap-3">
-            <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
               <span className="text-xsmall14 text-neutral-35">이름</span>
               <span className="text-xsmall16 font-normal">
                 {user?.name ?? '-'}
               </span>
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-2">
               <span className="text-xsmall14 text-neutral-35">연락처</span>
               <span className="text-xsmall16 font-normal">
                 {user?.phoneNum ?? '-'}
@@ -64,7 +105,7 @@ const NotiModal = ({ isOpen, onClose }: NotiModalProps) => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1.5">
           <span className="text-xsmall16 text-neutral-20">이메일</span>
           <span className="text-xsmall16 font-normal">
             {user?.contactEmail ?? user?.email ?? '-'}
@@ -79,9 +120,14 @@ const NotiModal = ({ isOpen, onClose }: NotiModalProps) => {
         {/* 신청 버튼 */}
         <button
           onClick={handleSubmit}
-          className="w-full rounded-xs bg-primary py-3 text-xsmall14 font-medium text-white"
+          disabled={isDisabled}
+          className={`w-full rounded-xs py-3 text-xsmall14 font-medium ${
+            isAlreadyApplied
+              ? 'cursor-not-allowed bg-neutral-80 text-neutral-40'
+              : 'bg-primary text-white'
+          }`}
         >
-          알림 신청하기
+          {isAlreadyApplied ? '이미 신청 완료' : '알림 신청하기'}
         </button>
       </div>
     </BaseModal>
