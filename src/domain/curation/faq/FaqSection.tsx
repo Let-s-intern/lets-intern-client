@@ -63,7 +63,7 @@ const FaqSection = () => {
         <p className="mb-16 text-center text-lg font-semibold leading-6 text-indigo-500">
           FAQ
         </p>
-        <h3 className="mb-4 text-center text-2xl font-bold leading-tight text-neutral-0 md:text-3xl md:leading-10">
+        <h3 className="mb-4 text-center text-2xl font-semibold leading-tight text-neutral-0 md:text-3xl md:leading-10">
           자주 묻는 질문
         </h3>
         <p className="text-center text-base font-semibold leading-6 text-zinc-600 md:text-lg">

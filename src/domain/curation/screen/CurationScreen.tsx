@@ -76,7 +76,7 @@ const CurationScreen = () => {
             <p className="mb-16 text-center text-lg font-semibold leading-6 text-indigo-500">
               3초 큐레이션
             </p>
-            <h2 className="mb-4 text-center text-2xl font-bold leading-tight text-neutral-0 md:text-3xl md:leading-10">
+            <h2 className="mb-4 text-center text-2xl font-semibold leading-tight text-neutral-0 md:text-3xl md:leading-10">
               나에게 맞는 프로그램 찾기
             </h2>
             <p className="text-center text-base font-semibold leading-6 text-zinc-600 md:text-lg">

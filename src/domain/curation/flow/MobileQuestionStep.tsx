@@ -34,7 +34,7 @@ const MobileQuestionStep = ({
               key={option.value}
               type="button"
               onClick={() => onChange(option.value)}
-              className={`relative flex w-full cursor-pointer flex-col items-center justify-center gap-y-2 overflow-hidden rounded-md border-2 bg-gradient-to-br px-5 py-4 text-center transition-all duration-300 ${
+              className={`relative flex w-full cursor-pointer flex-col items-center justify-center gap-y-1.5 overflow-hidden rounded-md border-2 bg-gradient-to-br px-4 py-3 text-center transition-all duration-300 ${
                 isActive
                   ? 'border-primary from-primary-5 to-white shadow-lg shadow-primary/10'
                   : 'border-neutral-85 from-white to-gray-50 shadow-sm active:scale-[0.98]'
@@ -52,7 +52,7 @@ const MobileQuestionStep = ({
                 </motion.div>
               )}
               <span
-                className={`text-medium16 font-bold ${
+                className={`text-sm font-semibold ${
                   isActive ? 'text-primary' : 'text-neutral-0'
                 }`}
               >

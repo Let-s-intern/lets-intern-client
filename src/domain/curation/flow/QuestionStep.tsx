@@ -47,14 +47,14 @@ const QuestionStep = ({
                   key={option.value}
                   type="button"
                   onClick={() => onChange(option.value)}
-                  className={`inline-flex h-28 w-full flex-col items-start justify-center gap-2.5 rounded-xl px-6 py-4 outline outline-1 -outline-offset-1 transition-all ${
+                  className={`inline-flex h-20 w-full flex-col items-start justify-center gap-2 rounded-xl px-5 py-3 outline outline-1 -outline-offset-1 transition-all ${
                     isActive
                       ? 'bg-white outline-indigo-300'
                       : 'bg-stone-50 outline-stone-300 hover:bg-white hover:outline-indigo-300'
                   }`}
                 >
                   <div className="flex flex-col items-start justify-start gap-3 self-stretch">
-                    <span className="self-stretch text-left text-lg font-bold leading-6 text-zinc-800">
+                    <span className="self-stretch text-left text-base font-semibold leading-6 text-zinc-800">
                       {option.title}
                     </span>
                     {option.description && (
