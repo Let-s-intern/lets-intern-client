@@ -30,6 +30,8 @@ export const challengeMissionFeedbackListSchema = z.object({
       endDate: z.string().datetime({ local: true }),
       challengeOptionCode: z.string().nullish(),
       challengeOptionTitle: z.string().nullish(),
+      submittedCount: z.number().default(0),
+      totalCount: z.number().default(0),
     }),
   ),
 });

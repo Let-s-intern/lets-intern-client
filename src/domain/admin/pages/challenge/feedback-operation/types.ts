@@ -8,5 +8,7 @@ export interface Row {
   endDate: string;
   challengeOptionCode?: string | null;
   challengeOptionTitle?: string | null;
+  submittedCount: number;
+  totalCount: number;
   url: string;
 }
