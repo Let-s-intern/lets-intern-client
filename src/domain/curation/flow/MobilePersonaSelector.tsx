@@ -13,7 +13,7 @@ const MobilePersonaSelector = ({
 }: MobilePersonaSelectorProps) => {
   return (
     <div className="flex w-full flex-col gap-3">
-      {PERSONAS.map((persona) => {
+      {PERSONAS.filter((p) => p.id !== 'dontKnow').map((persona) => {
         const isActive = selected === persona.id;
         return (
           <motion.button
@@ -48,6 +48,26 @@ const MobilePersonaSelector = ({
           </motion.button>
         );
       })}
+      {(() => {
+        const dontKnow = PERSONAS.find((p) => p.id === 'dontKnow');
+        if (!dontKnow) return null;
+        const isActive = selected === dontKnow.id;
+        return (
+          <div className="flex justify-center pt-8">
+            <button
+              type="button"
+              onClick={() => onSelect(dontKnow.id)}
+              className={`text-medium16 underline underline-offset-4 transition-colors ${
+                isActive
+                  ? 'font-bold text-primary'
+                  : 'font-normal text-neutral-35 active:text-neutral-0'
+              }`}
+            >
+              {dontKnow.title}
+            </button>
+          </div>
+        );
+      })()}
     </div>
   );
 };

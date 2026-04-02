@@ -45,19 +45,17 @@ const PersonaSelector = ({ selected, onSelect }: PersonaSelectorProps) => {
           if (!dontKnow) return null;
           const isActive = selected === dontKnow.id;
           return (
-            <div className="flex justify-center">
+            <div className="flex justify-center pt-8">
               <button
                 type="button"
                 onClick={() => onSelect(dontKnow.id)}
-                className={`inline-flex items-center justify-center rounded-xl px-40 py-3 outline outline-1 -outline-offset-1 transition-all ${
+                className={`text-base leading-6 underline underline-offset-4 transition-colors ${
                   isActive
-                    ? 'bg-white outline-indigo-300'
-                    : 'bg-stone-50 outline-stone-300 hover:bg-white hover:outline-indigo-300'
+                    ? 'font-bold text-indigo-500'
+                    : 'font-normal text-zinc-500 hover:text-zinc-800'
                 }`}
               >
-                <span className="text-center text-base font-bold leading-6 text-zinc-800">
-                  {dontKnow.title}
-                </span>
+                {dontKnow.title}
               </button>
             </div>
           );

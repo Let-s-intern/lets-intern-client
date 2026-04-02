@@ -79,7 +79,7 @@ const ResultSection = ({ result, onRestart }: ResultSectionProps) => {
               <div className="hidden w-full flex-col items-center gap-5 md:flex">
                 {/* primary 카드 1개: secondary 없으면 중앙 고정 너비, 있으면 전체 너비 */}
                 {primaryCard && !showSecondary && (
-                  <div className="flex w-full max-w-[37.5rem] flex-row gap-5">
+                  <div className="flex w-full max-w-[52rem] flex-row gap-5">
                     <DesktopRecommendationCard
                       recommendation={primaryCard}
                       showExtraButton={secondary.length > 0}

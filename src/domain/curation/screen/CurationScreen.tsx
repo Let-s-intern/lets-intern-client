@@ -69,7 +69,7 @@ const CurationScreen = () => {
         id={SECTION_IDS.FORM}
       >
         <div
-          className="flex w-full flex-col gap-10 px-6 py-14 md:px-10 lg:px-[7.5rem]"
+          className="mx-auto flex w-full max-w-[73.75rem] flex-col gap-10 px-6 py-14 md:px-10"
           ref={formRef}
         >
           <div className="flex flex-col items-center gap-5 self-stretch py-8 md:py-[3.75rem]">
