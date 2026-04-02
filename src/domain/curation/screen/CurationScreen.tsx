@@ -106,7 +106,7 @@ const CurationScreen = () => {
   };
 
   return (
-    <main className="flex min-h-screen w-full flex-col">
+    <main className="flex min-h-screen w-full flex-col break-keep">
       <CurationHero copy={heroCopy} />
 
       {/* Sticky Navigation Bar */}
