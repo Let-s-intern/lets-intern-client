@@ -4,8 +4,9 @@ import {
   useGetLaunchAlertQuery,
   usePostMagnetApplicationMutation,
 } from '@/api/magnet/magnet';
-import { useUserQuery } from '@/api/user/user';
+import { usePatchUser, useUserQuery } from '@/api/user/user';
 import BaseModal from '@/common/modal/BaseModal';
+import { useEffect, useState } from 'react';
 
 interface NotiModalProps {
   isOpen: boolean;
@@ -24,24 +25,37 @@ const NotiModal = ({
 }: NotiModalProps) => {
   const { data: user } = useUserQuery({ enabled: isOpen });
 
+  const [contactEmail, setContactEmail] = useState('');
+
+  useEffect(() => {
+    if (user && isOpen) {
+      setContactEmail(user.contactEmail ?? user.email ?? '');
+    }
+  }, [user, isOpen]);
+
   const { data: launchAlert, isError: isQueryError } = useGetLaunchAlertQuery({
     programTypeList,
     challengeTypeList,
     enabled: isOpen,
   });
 
-  const {
-    mutate: applyLaunchAlert,
-    isPending,
-    isError: isMutationError,
-  } = usePostMagnetApplicationMutation();
+  const { mutate: applyLaunchAlert, isPending } =
+    usePostMagnetApplicationMutation();
+
+  const { mutate: patchUser } = usePatchUser();
 
   const isAlreadyApplied = launchAlert?.appliedLaunchAlert ?? false;
-  const isDisabled =
-    isAlreadyApplied || isPending || isQueryError || isMutationError;
+  const isDisabled = isAlreadyApplied || isPending || isQueryError;
 
   const handleSubmit = () => {
     if (!launchAlert?.magnetId || isDisabled) return;
+
+    const hasEmailChanged =
+      contactEmail !== (user?.contactEmail ?? user?.email ?? '');
+
+    if (hasEmailChanged) {
+      patchUser({ contactEmail });
+    }
 
     applyLaunchAlert(
       {
@@ -106,10 +120,18 @@ const NotiModal = ({
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <span className="text-xsmall16 text-neutral-20">이메일</span>
-          <span className="text-xsmall16 font-normal">
-            {user?.contactEmail ?? user?.email ?? '-'}
-          </span>
+          <span className="text-xsmall14 text-neutral-35">이메일</span>
+          <input
+            type="email"
+            value={contactEmail}
+            onChange={(e) => setContactEmail(e.target.value)}
+            disabled={isAlreadyApplied}
+            className={`rounded-xxs border border-neutral-80 px-3 py-[9px] text-xsmall16 outline-none ${
+              isAlreadyApplied
+                ? 'cursor-not-allowed bg-neutral-90 text-neutral-40'
+                : 'focus:border-primary'
+            }`}
+          />
         </div>
 
         {/* 안내 문구 */}
