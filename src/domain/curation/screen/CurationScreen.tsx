@@ -163,7 +163,7 @@ const CurationScreen = () => {
 
       {/* FAQ Section */}
       <section className="w-full bg-white">
-        <div className="flex w-full flex-col gap-16 px-6 py-24 md:px-10 lg:px-[7.5rem]">
+        <div className="mx-auto flex w-full max-w-[73.75rem] flex-col gap-16 px-6 py-24 md:px-10">
           <FaqSection />
         </div>
       </section>

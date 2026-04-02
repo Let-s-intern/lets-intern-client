@@ -15,7 +15,7 @@ interface CurationHeroProps {
 const CurationHero = ({ copy }: CurationHeroProps) => {
   return (
     <section className="w-full bg-primary-5">
-      <div className="relative flex h-[22rem] w-full flex-row items-center justify-between overflow-hidden px-6 md:px-10 lg:px-[120px]">
+      <div className="relative mx-auto flex h-[22rem] w-full max-w-[73.75rem] flex-row items-center justify-between overflow-hidden px-6 md:px-10">
         {/* 좌측: 텍스트 영역 */}
         <div className="flex flex-col items-start justify-center gap-6 self-stretch">
           {/* 뱃지 */}
