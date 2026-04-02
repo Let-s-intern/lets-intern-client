@@ -1,6 +1,6 @@
 import { PersonaId } from '../types';
 import MobilePersonaSelector from './MobilePersonaSelector';
-import { PERSONAS } from './personas';
+import { PERSONAS } from './data/personas';
 
 interface PersonaSelectorProps {
   selected?: PersonaId;

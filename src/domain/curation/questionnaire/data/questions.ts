@@ -1,4 +1,4 @@
-import { CurationQuestion, PersonaId } from '../types';
+import { CurationQuestion, PersonaId } from '../../types';
 import {
   STARTER_S1,
   STARTER_S2,

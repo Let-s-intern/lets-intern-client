@@ -1,4 +1,4 @@
-import { Persona, PersonaId } from '../types';
+import { Persona, PersonaId } from '../../types';
 
 export const PERSONAS: Persona[] = [
   {

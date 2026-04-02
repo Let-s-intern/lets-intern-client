@@ -18,7 +18,7 @@ import {
   PORTFOLIO_S2,
   DONT_KNOW_S1,
   DONT_KNOW_S2,
-} from './optionIds';
+} from './data/optionIds';
 
 type Intent = 'basic' | 'feedback' | 'intensive';
 

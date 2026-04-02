@@ -9,8 +9,8 @@ import {
   PersonaId,
 } from '../types';
 import { computeCurationResult } from './curationEngine';
-import { PERSONA_IDS } from './personas';
-import { QUESTION_MAP } from './questions';
+import { PERSONA_IDS } from './data/personas';
+import { QUESTION_MAP } from './data/questions';
 import { STICKY_NAV_HEIGHT } from '../shared/sectionIds';
 
 const MOBILE_BREAKPOINT = 768;
