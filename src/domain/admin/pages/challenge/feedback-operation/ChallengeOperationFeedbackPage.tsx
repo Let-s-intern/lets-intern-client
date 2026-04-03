@@ -1,5 +1,7 @@
 'use client';
 
+import { ChallengeMissionFeedbackAttendanceQueryKey } from '@/api/challenge/challenge';
+import { useIsAdminQuery } from '@/api/user/user';
 import { useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { useCallback, useState } from 'react';
@@ -11,6 +13,7 @@ function ChallengeOperationFeedbackPage() {
   const [activeTab, setActiveTab] = useState<SubTab>('feedbackManage');
   const queryClient = useQueryClient();
   const { programId } = useParams<{ programId: string }>();
+  const { data: isAdmin } = useIsAdminQuery();
 
   const handleTabChange = useCallback(
     (tab: SubTab) => {
@@ -22,6 +25,9 @@ function ChallengeOperationFeedbackPage() {
         queryClient.invalidateQueries({
           queryKey: ['useChallengeApplicationsQuery', programId],
         });
+        queryClient.invalidateQueries({
+          queryKey: [ChallengeMissionFeedbackAttendanceQueryKey],
+        });
       }
       setActiveTab(tab);
     },
@@ -32,17 +38,19 @@ function ChallengeOperationFeedbackPage() {
     <div className="flex flex-col gap-4">
       {/* 하위 탭 버튼 */}
       <div className="flex items-center gap-2">
-        <button
-          type="button"
-          className={`rounded-md border px-4 py-2 text-xsmall14 font-medium transition-colors ${
-            activeTab === 'mentorMentee'
-              ? 'border-neutral-0 bg-neutral-0 text-white'
-              : 'border-neutral-80 bg-white text-neutral-0 hover:bg-neutral-95'
-          }`}
-          onClick={() => handleTabChange('mentorMentee')}
-        >
-          멘토/멘티 배정
-        </button>
+        {isAdmin && (
+          <button
+            type="button"
+            className={`rounded-md border px-4 py-2 text-xsmall14 font-medium transition-colors ${
+              activeTab === 'mentorMentee'
+                ? 'border-neutral-0 bg-neutral-0 text-white'
+                : 'border-neutral-80 bg-white text-neutral-0 hover:bg-neutral-95'
+            }`}
+            onClick={() => handleTabChange('mentorMentee')}
+          >
+            멘토/멘티 배정
+          </button>
+        )}
         <button
           type="button"
           className={`rounded-md border px-4 py-2 text-xsmall14 font-medium transition-colors ${
@@ -57,7 +65,7 @@ function ChallengeOperationFeedbackPage() {
       </div>
 
       {/* 하위 탭 컨텐츠 */}
-      {activeTab === 'mentorMentee' ? (
+      {activeTab === 'mentorMentee' && isAdmin ? (
         <MentorMenteeAssignment />
       ) : (
         <FeedbackMissionList />

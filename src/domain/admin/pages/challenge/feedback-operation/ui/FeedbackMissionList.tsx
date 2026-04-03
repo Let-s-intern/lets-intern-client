@@ -5,7 +5,6 @@ import dayjs from '@/lib/dayjs';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import Link from 'next/link';
 import { useMemo } from 'react';
-import SubmissionCountCell from './SubmissionCountCell';
 import useFeedbackMissionRows from '../hooks/useFeedbackMissionRows';
 import type { Row } from '../types';
 
@@ -39,12 +38,14 @@ function FeedbackMissionList() {
         width: 180,
       },
       {
-        field: 'submissionCount',
+        field: 'submittedCount',
         headerName: '제출 / 전체',
         width: 120,
         sortable: false,
         renderCell: (params: GridRenderCellParams<Row>) => (
-          <SubmissionCountCell missionId={params.row.id} />
+          <span>
+            {params.row.submittedCount} / {params.row.totalCount}
+          </span>
         ),
       },
       {

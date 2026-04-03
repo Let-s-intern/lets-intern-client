@@ -5,13 +5,11 @@ import {
   usePatchAttendanceMentor,
 } from '@/api/attendance/attendance';
 import {
-  ChallengeApplicationsQueryKey,
   ChallengeMissionFeedbackAttendanceQueryKey,
   MentorMissionFeedbackAttendanceQueryKey,
 } from '@/api/challenge/challenge';
 import { useIsAdminQuery } from '@/api/user/user';
 import useInvalidateQueries from '@/hooks/useInvalidateQueries';
-import { useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 
 const useAttendanceHandler = () => {
@@ -28,21 +26,10 @@ const useAttendanceHandler = () => {
   const { mutateAsync: patchAdminAttendance } = usePatchAdminAttendance();
   const { mutateAsync: patchAttendanceMentor } = usePatchAttendanceMentor();
   const invalidateFeedback = useInvalidateQueries(queryKey);
-  const queryClient = useQueryClient();
-
-  const invalidateAttendance = async () => {
-    await invalidateFeedback();
-    await queryClient.invalidateQueries({
-      queryKey: ['admin', 'challenge', Number(programId), 'attendances', Number(missionId)],
-    });
-    await queryClient.invalidateQueries({
-      queryKey: [ChallengeApplicationsQueryKey, programId],
-    });
-  };
 
   return {
-    patchAttendance: isAdmin ? patchAdminAttendance : patchAttendanceMentor,
-    invalidateAttendance,
+    patchAttendance: isAdmin === true ? patchAdminAttendance : patchAttendanceMentor,
+    invalidateAttendance: invalidateFeedback,
   };
 };
 

@@ -2,100 +2,55 @@
 
 import { useAdminChallengeMentorListQuery } from '@/api/mentor/mentor';
 import { useIsAdminQuery } from '@/api/user/user';
-import SelectFormControl from '@/domain/admin/program/SelectFormControl';
-import { MenuItem, SelectChangeEvent } from '@mui/material';
 import { GridRenderCellParams } from '@mui/x-data-grid';
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import type { AttendanceRow } from '../types';
-import useFeedbackMentorAssignment from '../hooks/useFeedbackMentorAssignment';
 import { getMentorColor } from '../../mentor-colors';
 
-const NO_MENTOR_ID = 0;
-
+/** 제출현황에서 담당 멘토를 읽기 전용으로 표시합니다. */
 const MentorRenderCell = (
   params: GridRenderCellParams<AttendanceRow, number>,
 ) => {
   const { programId } = useParams<{ programId: string }>();
-
-  const { assignMentor } = useFeedbackMentorAssignment();
-
   const { data: isAdmin } = useIsAdminQuery();
-  const { data } = useAdminChallengeMentorListQuery(programId);
+  const { data } = useAdminChallengeMentorListQuery(
+    isAdmin === true ? programId : undefined,
+  );
 
-  const serverValue = params.value ?? NO_MENTOR_ID;
-
-  // Optimistic local state: 드롭다운 선택 즉시 UI에 반영
-  const [localValue, setLocalValue] = useState(serverValue);
-
-  useEffect(() => {
-    setLocalValue(serverValue);
-  }, [serverValue]);
-
-  const handleChange = async (e: SelectChangeEvent<number>) => {
-    const selectedChallengeMentorId = e.target.value as number;
-    if (selectedChallengeMentorId === NO_MENTOR_ID) return;
-
-    setLocalValue(selectedChallengeMentorId);
-    try {
-      await assignMentor({
-        participantName: params.row.name,
-        challengeMentorId: selectedChallengeMentorId,
-      });
-    } catch {
-      setLocalValue(serverValue);
+  // 멘토(비어드민)는 admin API를 호출하지 않고 row 데이터의 mentorName을 표시
+  if (isAdmin !== true) {
+    const name = params.row.mentorName;
+    if (!name) {
+      return <span className="text-xxsmall12 text-neutral-40">미배정</span>;
     }
-  };
+    return (
+      <span className="inline-flex items-center rounded-full bg-neutral-90 px-2 py-0.5 text-xxsmall12 font-medium text-neutral-40">
+        {name}
+      </span>
+    );
+  }
 
   const mentorList = data?.mentorList ?? [];
+  const challengeMentorId = params.value;
 
-  const getMentorColorByIdFromList = (id: number) => {
-    const idx = mentorList.findIndex((m) => m.challengeMentorId === id);
-    return idx >= 0 ? getMentorColor(idx) : null;
-  };
+  const idx = mentorList.findIndex(
+    (m) => m.challengeMentorId === challengeMentorId,
+  );
+  const mentor = idx >= 0 ? mentorList[idx] : null;
+  const color = idx >= 0 ? getMentorColor(idx) : null;
 
-  if (!isAdmin) return <span>{params.row.mentorName}</span>;
-
-  const selectedColor = getMentorColorByIdFromList(localValue);
+  if (!mentor) {
+    return (
+      <span className="text-xxsmall12 text-neutral-40">미배정</span>
+    );
+  }
 
   return (
-    <SelectFormControl<number>
-      value={localValue}
-      onChange={handleChange}
-      sx={{ '& .MuiSelect-select': { fontSize: '12px' } }}
-      renderValue={(selected) => {
-        const target = mentorList.find(
-          (item) => item.challengeMentorId === selected,
-        );
-        if (!target) return '없음';
-        return (
-          <span
-            className={`inline-flex items-center rounded-full px-2 py-0.5 text-xxsmall12 font-medium ${selectedColor?.bg ?? 'bg-neutral-90'} ${selectedColor?.text ?? 'text-neutral-40'}`}
-          >
-            {target.name}
-          </span>
-        );
-      }}
+    <span
+      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xxsmall12 font-medium ${color?.bg ?? 'bg-neutral-90'} ${color?.text ?? 'text-neutral-40'}`}
     >
-      <MenuItem value={NO_MENTOR_ID} sx={{ fontSize: '12px' }}>
-        없음
-      </MenuItem>
-      {mentorList.map((item, idx) => {
-        const color = getMentorColor(idx);
-        return (
-          <MenuItem
-            key={`mentor-${item.challengeMentorId}`}
-            value={item.challengeMentorId}
-            sx={{ fontSize: '12px' }}
-          >
-            <span
-              className={`mr-2 inline-block h-2.5 w-2.5 rounded-full ${color.bg}`}
-            />
-            {`[${item.userId}] ${item.name}`}
-          </MenuItem>
-        );
-      })}
-    </SelectFormControl>
+      {mentor.name}
+    </span>
   );
 };
 

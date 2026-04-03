@@ -1,6 +1,7 @@
 'use client';
 
 import { usePostAdminChallengeMentorMatch } from '@/api/mentor/mentor';
+import { ChallengeMissionFeedbackAttendanceQueryKey } from '@/api/challenge/challenge';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { useQueryClient } from '@tanstack/react-query';
 import { PaybackParticipantsQueryKey } from './usePaybackParticipants';
@@ -21,6 +22,9 @@ const useMentorMatchHandler = (programId: string) => {
     });
     queryClient.invalidateQueries({
       queryKey: [PaybackParticipantsQueryKey],
+    });
+    queryClient.invalidateQueries({
+      queryKey: [ChallengeMissionFeedbackAttendanceQueryKey],
     });
   };
 
