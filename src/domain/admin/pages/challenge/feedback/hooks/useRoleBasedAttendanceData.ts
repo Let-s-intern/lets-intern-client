@@ -43,7 +43,7 @@ const useRoleBasedAttendanceData = () => {
 
   return {
     isLoading: isAdminLoading,
-    data: isAdmin ? dataForAdmin : mentorData,
+    data: isAdmin === true ? dataForAdmin : mentorData,
   };
 };
 
