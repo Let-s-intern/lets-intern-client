@@ -9,6 +9,7 @@ export interface PeriodBarData {
   th: number;
   startDate: string;
   endDate: string;
+  feedbackStartDate: string;
   feedbackDeadline: string;
   submittedCount: number;
   notSubmittedCount: number;
@@ -32,24 +33,32 @@ const COLORS = [
     line: 'bg-[#fdad00]',
     badge: 'bg-[#fdad00]',
     body: 'bg-[#fff3d9]',
+    bodyLight: 'bg-[#fffaef]',
+    textLight: 'text-[#b8860b]',
   },
   {
     border: 'border-[#14bcff]',
     line: 'bg-[#14bcff]',
     badge: 'bg-[#14bcff]',
     body: 'bg-[#eefaff]',
+    bodyLight: 'bg-[#f4fbff]',
+    textLight: 'text-[#0b7faa]',
   },
   {
     border: 'border-green-400',
     line: 'bg-green-400',
     badge: 'bg-green-400',
     body: 'bg-green-50',
+    bodyLight: 'bg-[#f4fbf4]',
+    textLight: 'text-green-700',
   },
   {
     border: 'border-purple-400',
     line: 'bg-purple-400',
     badge: 'bg-purple-400',
     body: 'bg-purple-50',
+    bodyLight: 'bg-[#f7f4fb]',
+    textLight: 'text-purple-700',
   },
 ];
 
@@ -61,78 +70,98 @@ const ChallengePeriodBar = ({
   onBarClick,
 }: ChallengePeriodBarProps) => {
   const color = COLORS[(bar.colorIndex ?? 0) % COLORS.length];
+  // 미션+검수 = 앞(연하게), 피드백 = 뒤(진하게) — 기존 레이아웃 유지
+  const feedbackPercent = colSpan > 0 ? ((colSpan - missionColSpan) / colSpan) * 100 : 0;
   const missionPercent = colSpan > 0 ? (missionColSpan / colSpan) * 100 : 100;
+  // 미션 구간 내에서 검수 1일 비율
+  const reviewDayPercent = missionColSpan > 0 ? (1 / missionColSpan) * 100 : 0;
 
   return (
     <button
       type="button"
       onClick={() => onBarClick(bar.challengeId, bar.missionId)}
       style={style}
-      className="flex w-full flex-col overflow-hidden text-left transition-opacity hover:opacity-80"
+      className="relative z-10 flex w-full flex-col overflow-hidden text-left transition-opacity hover:opacity-80"
     >
-      {/* Top row: nth feedback + status counts + colored line */}
-      <div className="flex h-6 min-w-0 items-center gap-2 overflow-hidden">
-        <div className="flex shrink-0 items-center">
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            className="shrink-0"
+      {/* Top row: 피드백 구간부터 회차+카운트+라인 인라인 */}
+      <div className="flex h-6 min-w-0 items-center overflow-hidden">
+        {/* 미션+검수 구간: 빈 공간 */}
+        <div style={{ width: `${missionPercent}%` }} />
+        {/* 피드백 구간: 회차+카운트+라인 인라인 */}
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          <div className="flex shrink-0 items-center">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              className="shrink-0"
+            >
+              <g clipPath="url(#clip)">
+                <path
+                  d="M7 4H17C17.5523 4 18 4.44772 18 5V19C18 19.5523 17.5523 20 17 20H7C6.44772 20 6 19.5523 6 19V5C6 4.44772 6.44772 4 7 4Z"
+                  stroke="#2A2D34"
+                  strokeWidth="1.2"
+                />
+                <path
+                  d="M9.5 8.5H14.5M9.5 12H14.5M9.5 15.5H12.5"
+                  stroke="#2A2D34"
+                  strokeWidth="0.8"
+                  strokeLinecap="round"
+                />
+              </g>
+              <defs>
+                <clipPath id="clip">
+                  <rect x="3" y="2" width="18" height="16" rx="0" fill="white" />
+                </clipPath>
+              </defs>
+            </svg>
+            <span className="whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px] text-neutral-10">
+              [ {bar.th}회차 ]
+            </span>
+          </div>
+          <div className="flex shrink-0 items-center gap-1 whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px]">
+            <span className="text-[#f64e39]">시작 전</span>
+            <span className="text-[#f64e39]">{bar.waitingCount}</span>
+            <span className="text-neutral-10">·</span>
+            <span className="text-neutral-10">진행 중</span>
+            <span className="text-neutral-10">{bar.inProgressCount}</span>
+            <span className="text-neutral-10">·</span>
+            <span className="text-neutral-10">완료</span>
+            <span className="text-neutral-10">{bar.completedCount}</span>
+          </div>
+          <div
+            className={`flex h-3 min-w-0 flex-1 items-center border-r-2 ${color.border}`}
           >
-            <g clipPath="url(#clip)">
-              <path
-                d="M7 4H17C17.5523 4 18 4.44772 18 5V19C18 19.5523 17.5523 20 17 20H7C6.44772 20 6 19.5523 6 19V5C6 4.44772 6.44772 4 7 4Z"
-                stroke="#2A2D34"
-                strokeWidth="1.2"
-              />
-              <path
-                d="M9.5 8.5H14.5M9.5 12H14.5M9.5 15.5H12.5"
-                stroke="#2A2D34"
-                strokeWidth="0.8"
-                strokeLinecap="round"
-              />
-            </g>
-            <defs>
-              <clipPath id="clip">
-                <rect x="3" y="2" width="18" height="16" rx="0" fill="white" />
-              </clipPath>
-            </defs>
-          </svg>
-          <span className="whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px] text-neutral-10">
-            [ {bar.th}회차 ]
-          </span>
-        </div>
-        <div className="flex shrink-0 items-center gap-1 whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px]">
-          <span className="text-[#f64e39]">시작 전</span>
-          <span className="text-[#f64e39]">{bar.waitingCount}</span>
-          <span className="text-neutral-10">·</span>
-          <span className="text-neutral-10">진행 중</span>
-          <span className="text-neutral-10">{bar.inProgressCount}</span>
-          <span className="text-neutral-10">·</span>
-          <span className="text-neutral-10">완료</span>
-          <span className="text-neutral-10">{bar.completedCount}</span>
-        </div>
-        {/* Colored line: solid for mission, faded for feedback period */}
-        <div
-          className={`flex h-3 min-w-0 flex-1 items-center border-r-2 ${color.border}`}
-        >
-          <div
-            className={`h-0.5 ${color.line}`}
-            style={{ width: `${missionPercent}%` }}
-          />
-          <div
-            className={`h-0.5 ${color.line} opacity-40`}
-            style={{ width: `${100 - missionPercent}%` }}
-          />
+            <div className={`h-0.5 w-full ${color.line}`} />
+          </div>
         </div>
       </div>
 
-      {/* Bottom row: challenge badge + submission counts */}
+      {/* Bottom row */}
       <div className="flex min-w-0 overflow-hidden">
+        {/* 멘티 미션제출기간 (연하게, 테두리) */}
+        <div
+          className={`flex min-w-0 items-center border border-neutral-80 px-2 py-2 ${color.bodyLight}`}
+          style={{ width: `${missionPercent * (1 - reviewDayPercent / 100)}%` }}
+        >
+          <span className={`truncate whitespace-nowrap text-[10px] font-medium tracking-[-0.3px] ${color.textLight}`}>
+            멘티 미션제출기간
+          </span>
+        </div>
+        {/* 제출확인 기간 (연하게, 테두리) */}
+        <div
+          className={`flex items-center justify-center border border-neutral-80 px-0.5 py-2 ${color.bodyLight}`}
+          style={{ width: `${missionPercent * (reviewDayPercent / 100)}%` }}
+        >
+          <span className={`whitespace-nowrap text-[9px] font-medium ${color.textLight}`}>
+            제출확인 기간
+          </span>
+        </div>
+        {/* 뒤: 피드백 제출기간 (진하게) — 기존 모양 그대로 */}
         <div
           className={`flex min-w-0 items-center justify-between p-2 ${color.body}`}
-          style={{ width: `${missionPercent}%` }}
+          style={{ width: `${feedbackPercent}%` }}
         >
           <span
             className={`min-w-0 truncate rounded-[3px] px-2 py-1 text-xxsmall12 font-medium tracking-[-0.3px] text-white ${color.badge}`}
@@ -146,14 +175,6 @@ const ChallengePeriodBar = ({
             <span className="text-neutral-10">제출</span>
             <span className="text-neutral-10">{bar.submittedCount}</span>
           </div>
-        </div>
-        <div
-          className={`flex items-center justify-end ${color.body} opacity-40 px-1`}
-          style={{ width: `${100 - missionPercent}%` }}
-        >
-          <span className="whitespace-nowrap text-[10px] font-medium tracking-[-0.3px] text-neutral-30">
-            피드백 마감 {format(new Date(bar.feedbackDeadline), 'M.d')}
-          </span>
         </div>
       </div>
     </button>
