@@ -1,7 +1,7 @@
 'use client';
 
-import type { PeriodBarData } from '../types';
-import { getColor } from '../constants/colors';
+import type { PeriodBarData } from '../../types';
+import { getColor } from '../../constants/colors';
 
 /**
  * Single-day feedback card — vertical stack:

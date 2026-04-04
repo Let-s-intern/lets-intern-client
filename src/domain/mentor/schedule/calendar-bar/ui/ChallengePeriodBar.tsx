@@ -1,11 +1,11 @@
 'use client';
 
-import { getColor } from '../constants/colors';
+import { getColor } from '../../constants/colors';
 import {
   WRITTEN_FEEDBACK_CONFIG,
   computeSegmentPercents,
-} from '../constants/scheduleConfig';
-import type { PeriodBarData } from '../types';
+} from '../../constants/scheduleConfig';
+import type { PeriodBarData } from '../../types';
 
 interface ChallengePeriodBarProps {
   bar: PeriodBarData;
