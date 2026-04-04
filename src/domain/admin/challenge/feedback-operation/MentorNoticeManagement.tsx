@@ -29,6 +29,7 @@ import {
 } from '@mui/material';
 import { FaEdit } from 'react-icons/fa';
 import { FaTrashCan } from 'react-icons/fa6';
+import EditorApp from '@/domain/admin/lexical/EditorApp';
 
 /* ── 타입 ── */
 
@@ -320,7 +321,7 @@ export default function MentorNoticeManagement() {
       <Dialog
         open={modalState.open}
         onClose={closeModal}
-        maxWidth="sm"
+        maxWidth="md"
         fullWidth
       >
         <DialogTitle>{isCreateMode ? '공지 작성' : '공지 수정'}</DialogTitle>
@@ -467,7 +468,7 @@ export default function MentorNoticeManagement() {
                 }
               >
                 <MenuItem value="URL">URL 링크</MenuItem>
-                <MenuItem value="TEXT">텍스트 (마크다운)</MenuItem>
+                <MenuItem value="TEXT">텍스트 (에디터)</MenuItem>
               </Select>
             </div>
 
@@ -487,19 +488,16 @@ export default function MentorNoticeManagement() {
               </div>
             )}
 
-            {/* 마크다운 텍스트 입력 */}
+            {/* 리치 텍스트 입력 (Lexical 에디터) */}
             {form.contentType === 'TEXT' && (
               <div>
                 <label className="mb-1 block text-sm font-medium">
-                  내용 (마크다운)
+                  내용
                 </label>
-                <textarea
-                  className="w-full rounded border border-neutral-80 px-3 py-2 font-mono text-sm"
-                  rows={10}
-                  placeholder="마크다운 형식으로 입력하세요"
-                  value={form.contents}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, contents: e.target.value }))
+                <EditorApp
+                  initialEditorStateJsonString={form.contents || undefined}
+                  onChange={(jsonString) =>
+                    setForm((prev) => ({ ...prev, contents: jsonString }))
                   }
                 />
               </div>

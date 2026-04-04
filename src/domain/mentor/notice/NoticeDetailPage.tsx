@@ -1,8 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import Markdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import LexicalContent from '@/domain/blog/ui/LexicalContent';
 import { useMentorGuideListQuery } from '@/api/challenge-mentor-guide/challengeMentorGuide';
 
 export default function NoticeDetailPage({ noticeId }: { noticeId: string }) {
@@ -70,11 +69,23 @@ export default function NoticeDetailPage({ noticeId }: { noticeId: string }) {
             {guide.title}
           </h2>
 
-          {guide.contents && (
-            <div className="prose prose-neutral max-w-none text-xsmall16 leading-relaxed">
-              <Markdown remarkPlugins={[remarkGfm]}>{guide.contents}</Markdown>
-            </div>
-          )}
+          {guide.contents && (() => {
+            try {
+              const parsed = JSON.parse(guide.contents);
+              return (
+                <div className="text-xsmall16 leading-relaxed">
+                  <LexicalContent node={parsed.root} />
+                </div>
+              );
+            } catch {
+              // JSON이 아니면 일반 텍스트로 표시
+              return (
+                <p className="whitespace-pre-wrap text-xsmall16 leading-relaxed text-neutral-10">
+                  {guide.contents}
+                </p>
+              );
+            }
+          })()}
 
           {guide.link && (
             <a
