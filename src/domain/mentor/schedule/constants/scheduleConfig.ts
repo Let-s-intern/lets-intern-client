@@ -56,29 +56,20 @@ export function computeDatesFromConfig(
   };
 }
 
-/** 전체 구간의 colSpan 비율 계산 (캘린더 grid 기준) */
-export function computeSegmentPercents(
+/** 각 구간이 차지하는 grid 칸 수 계산 */
+export function computeSegmentColSpans(
   config: ScheduleTypeConfig,
-  totalColSpan: number,
   missionStartDate: string,
   missionEndDate: string,
 ) {
   const start = new Date(missionStartDate).getTime();
   const end = new Date(missionEndDate).getTime();
-  // endDate 포함이므로 +1
   const missionDays = Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1;
 
   return config.segments.map((seg) => {
-    let segDays: number;
-    if (seg.startOffset === -Infinity) {
-      // 미션 startDate ~ endDate
-      segDays = missionDays;
-    } else {
-      segDays = seg.endOffset - seg.startOffset;
-    }
-    return {
-      segment: seg,
-      percent: totalColSpan > 0 ? (segDays / totalColSpan) * 100 : 0,
-    };
+    const cols = seg.startOffset === -Infinity
+      ? missionDays
+      : seg.endOffset - seg.startOffset;
+    return { segment: seg, cols };
   });
 }

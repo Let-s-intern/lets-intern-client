@@ -1,9 +1,7 @@
 'use client';
 
 import { getColor } from '../../constants/colors';
-import {
-  computeSegmentPercents,
-} from '../../constants/scheduleConfig';
+import { computeSegmentColSpans } from '../../constants/scheduleConfig';
 import { WRITTEN_FEEDBACK_CONFIG } from '../../challenge-content/writtenFeedback';
 import type { PeriodBarData } from '../../types';
 
@@ -17,24 +15,28 @@ interface ChallengePeriodBarProps {
 
 const ChallengePeriodBar = ({
   bar,
-  colSpan,
+  colSpan: _colSpan,
   missionColSpan: _missionColSpan,
   style,
   onBarClick,
 }: ChallengePeriodBarProps) => {
   const color = getColor(bar.colorIndex ?? 0);
-  const config = WRITTEN_FEEDBACK_CONFIG;
-  const segmentPercents = computeSegmentPercents(
-    config,
-    colSpan,
+  const segmentColSpans = computeSegmentColSpans(
+    WRITTEN_FEEDBACK_CONFIG,
     bar.startDate,
     bar.endDate,
   );
 
-  // 액션 구간 앞의 비액션 구간 합산 (빈 공간 비율)
-  const preActionPercent = segmentPercents
+  // 구간별 grid 칸 → "Nfr Mfr ..." 형태의 grid-template-columns
+  const gridCols = segmentColSpans.map(({ cols }) => `${cols}fr`).join(' ');
+
+  // 액션 구간 앞 칸 수 / 액션 구간 칸 수
+  const preActionCols = segmentColSpans
     .filter(({ segment }) => !segment.isActionSegment)
-    .reduce((sum, { percent }) => sum + percent, 0);
+    .reduce((sum, { cols }) => sum + cols, 0);
+  const actionCols = segmentColSpans
+    .filter(({ segment }) => segment.isActionSegment)
+    .reduce((sum, { cols }) => sum + cols, 0);
 
   return (
     <button
@@ -44,9 +46,15 @@ const ChallengePeriodBar = ({
       className="relative z-10 flex w-full flex-col overflow-hidden text-left transition-opacity hover:opacity-80"
     >
       {/* 1행: 액션 구간 위치에 회차+카운트+라인 */}
-      <div className="flex h-6 min-w-0 items-center overflow-hidden">
-        <div style={{ width: `${preActionPercent}%` }} />
-        <div className="flex min-w-0 flex-1 items-center gap-2">
+      <div
+        className="h-6 min-w-0 items-center overflow-hidden"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: `${preActionCols}fr ${actionCols}fr`,
+        }}
+      >
+        <div />
+        <div className="flex min-w-0 items-center gap-2">
           <div className="flex shrink-0 items-center">
             <svg
               width="24"
@@ -96,16 +104,17 @@ const ChallengePeriodBar = ({
         </div>
       </div>
 
-      {/* 2행: 구간별 카드 */}
-      <div className="relative z-10 flex min-w-0 overflow-hidden">
-        {segmentPercents.map(({ segment, percent }) => {
+      {/* 2행: 구간별 카드 — 동일한 grid로 날짜 칸에 정확히 맞춤 */}
+      <div
+        className="relative z-10 min-w-0 overflow-hidden"
+        style={{ display: 'grid', gridTemplateColumns: gridCols }}
+      >
+        {segmentColSpans.map(({ segment }) => {
           if (segment.isActionSegment) {
-            // 멘토 액션 구간 (진하게) — 챌린지 태그 + 카운트
             return (
               <div
                 key={segment.id}
                 className={`flex min-w-0 items-center justify-between ${segment.showBorder ? 'border-r border-neutral-80' : ''} p-2 ${color.body}`}
-                style={{ width: `${percent}%` }}
               >
                 <span
                   className={`min-w-0 truncate rounded-[3px] px-2 py-1 text-xxsmall12 font-medium tracking-[-0.3px] text-white ${color.badge}`}
@@ -122,14 +131,14 @@ const ChallengePeriodBar = ({
               </div>
             );
           }
-          // 보조 구간 (연하게) — 라벨만
           return (
             <div
               key={segment.id}
               className={`flex min-w-0 items-center justify-center ${segment.showBorder ? 'border-r border-neutral-80' : ''} px-1 py-2 ${color.bodyLight}`}
-              style={{ width: `${percent}%` }}
             >
-              <span className={`truncate whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px] ${color.text}`}>
+              <span
+                className={`truncate whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px] ${color.text}`}
+              >
                 {segment.label}
               </span>
             </div>

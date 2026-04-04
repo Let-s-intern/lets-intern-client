@@ -14,7 +14,7 @@ export const WRITTEN_FEEDBACK_CONFIG: ScheduleTypeConfig = {
       endOffset: 0,
       lineStyle: 'faded',
       cardStyle: 'light',
-      showBorder: false,
+      showBorder: true,
       isActionSegment: false,
       scrollTarget: false,
     },
