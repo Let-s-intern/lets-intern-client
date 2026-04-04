@@ -6,6 +6,9 @@ interface NotiToastProps {
   onClose: () => void;
 }
 
+const TOAST_DISPLAY_DURATION_MS = 3000;
+const TOAST_ANIMATION_DURATION_MS = 300;
+
 const NotiToast = ({ isVisible, onClose }: NotiToastProps) => {
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -14,10 +17,12 @@ const NotiToast = ({ isVisible, onClose }: NotiToastProps) => {
       setIsAnimating(true);
       const timer = setTimeout(() => {
         setIsAnimating(false);
-        setTimeout(onClose, 300);
-      }, 3000);
+        setTimeout(onClose, TOAST_ANIMATION_DURATION_MS);
+      }, TOAST_DISPLAY_DURATION_MS);
 
       return () => clearTimeout(timer);
+    } else {
+      setIsAnimating(false);
     }
   }, [isVisible, onClose]);
 

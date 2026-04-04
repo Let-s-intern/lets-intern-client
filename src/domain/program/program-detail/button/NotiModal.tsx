@@ -45,7 +45,9 @@ const NotiModal = ({
   const { mutate: patchUser } = usePatchUser();
 
   const isAlreadyApplied = launchAlert?.appliedLaunchAlert ?? false;
-  const isDisabled = isAlreadyApplied || isPending || isQueryError;
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail);
+  const isDisabled =
+    isAlreadyApplied || isPending || isQueryError || !isEmailValid;
 
   const handleSubmit = () => {
     if (!launchAlert?.magnetId || isDisabled) return;
