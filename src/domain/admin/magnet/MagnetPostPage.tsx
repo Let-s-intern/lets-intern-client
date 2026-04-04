@@ -5,6 +5,7 @@ import { useMagnetPostForm } from '@/domain/admin/magnet/hooks/useMagnetPostForm
 import MagnetProgramRecommendSection from '@/domain/admin/magnet/section/MagnetProgramRecommendSection';
 import MagnetRecommendSection from '@/domain/admin/magnet/section/MagnetRecommendSection';
 import { MAGNET_TYPE, MagnetTypeKey } from '@/domain/admin/magnet/types';
+import { challengeTypeToText } from '@/utils/convert';
 import ImageUpload from '@/domain/admin/program/ui/form/ImageUpload';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
@@ -34,12 +35,9 @@ const PROGRAM_TYPE_OPTIONS = [
   { value: 'VOD', label: 'VOD' },
 ] as const;
 
-const CHALLENGE_TYPE_OPTIONS = [
-  { value: 'CAREER_START', label: '커리어 시작' },
-  { value: 'DOCUMENT_PREPARATION', label: '서류 준비' },
-  { value: 'MEETING_PREPARATION', label: '면접 준비' },
-  { value: 'ETC', label: '기타' },
-] as const;
+const CHALLENGE_TYPE_OPTIONS = Object.entries(challengeTypeToText).map(
+  ([value, label]) => ({ value, label }),
+);
 
 interface MagnetPostPageProps {
   magnetId: string;
