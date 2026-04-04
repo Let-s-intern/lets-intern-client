@@ -67,7 +67,7 @@ function toLexicalJson(text: string | undefined): string | undefined {
 
 /* ── 용량 표시 ── */
 
-const DB_LIMIT = 255; // VARCHAR(255) 기준 — 백엔드에서 TEXT로 변경 시 65535로 수정
+const DB_LIMIT = 65535; // TEXT 컬럼 기준
 
 function ContentSizeIndicator({ content }: { content: string }) {
   const bytes = new TextEncoder().encode(content).length;
@@ -552,7 +552,8 @@ export default function MentorNoticeManagement() {
                 }
               >
                 <MenuItem value="URL">URL 링크</MenuItem>
-                <MenuItem value="MARKDOWN">텍스트</MenuItem>
+                <MenuItem value="EDITOR">에디터 (리치 텍스트)</MenuItem>
+                <MenuItem value="MARKDOWN">마크다운 (텍스트)</MenuItem>
               </Select>
             </div>
 
