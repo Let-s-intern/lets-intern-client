@@ -75,14 +75,14 @@ export default function NoticeDetailPage({ noticeId }: { noticeId: string }) {
             try {
               const parsed = JSON.parse(guide.contents);
               return (
-                <div className="text-xsmall16 leading-relaxed">
+                <div className="w-full break-all text-xsmall16">
                   <LexicalContent node={parsed.root} />
                 </div>
               );
             } catch {
               // JSON이 아니면 마크다운으로 렌더링
               return (
-                <div className="prose prose-neutral max-w-none text-xsmall16 leading-relaxed">
+                <div className="prose prose-neutral max-w-none leading-relaxed">
                   <Markdown remarkPlugins={[remarkGfm]}>{guide.contents}</Markdown>
                 </div>
               );
