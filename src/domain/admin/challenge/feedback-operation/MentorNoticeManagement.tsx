@@ -72,12 +72,28 @@ const DB_LIMIT = 65535; // TEXT 컬럼 기준 (VARCHAR(255)면 255)
 function ContentSizeIndicator({ content }: { content: string }) {
   const bytes = new TextEncoder().encode(content).length;
   const kb = (bytes / 1024).toFixed(1);
+  const percent = Math.min((bytes / DB_LIMIT) * 100, 100);
   const isOver = bytes > DB_LIMIT;
+  const isWarning = percent > 80;
+
+  const barColor = isOver
+    ? 'bg-red-500'
+    : isWarning
+      ? 'bg-amber-400'
+      : 'bg-primary';
 
   return (
-    <div className={`mt-1 text-right text-xs ${isOver ? 'text-red-500 font-medium' : 'text-neutral-40'}`}>
-      {kb} KB ({bytes.toLocaleString()} bytes)
-      {isOver && ' — 용량 초과! 내용을 줄여주세요'}
+    <div className="mt-2 flex flex-col gap-1">
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-neutral-90">
+        <div
+          className={`h-full rounded-full transition-all ${barColor}`}
+          style={{ width: `${percent}%` }}
+        />
+      </div>
+      <div className={`text-right text-xs ${isOver ? 'font-medium text-red-500' : 'text-neutral-40'}`}>
+        {kb} KB / {(DB_LIMIT / 1024).toFixed(0)} KB ({percent.toFixed(1)}%)
+        {isOver && ' — 용량 초과!'}
+      </div>
     </div>
   );
 }
