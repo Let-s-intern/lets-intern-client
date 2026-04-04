@@ -43,9 +43,13 @@ const MissionAttendanceFetcher = ({
     const submitted = list.filter((a) => a.status !== 'ABSENT');
     const notSubmitted = list.filter((a) => a.status === 'ABSENT');
 
+    const feedbackStartDate = addDays(
+      new Date(mission.endDate),
+      1,
+    ).toISOString();
     const feedbackDeadline = addDays(
       new Date(mission.endDate),
-      3,
+      4,
     ).toISOString();
 
     const bar: PeriodBarData = {
@@ -55,6 +59,7 @@ const MissionAttendanceFetcher = ({
       th: mission.th,
       startDate: mission.startDate,
       endDate: mission.endDate,
+      feedbackStartDate,
       feedbackDeadline,
       colorIndex,
       submittedCount: submitted.length,

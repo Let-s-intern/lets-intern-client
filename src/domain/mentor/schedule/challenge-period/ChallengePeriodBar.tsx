@@ -9,6 +9,7 @@ export interface PeriodBarData {
   th: number;
   startDate: string;
   endDate: string;
+  feedbackStartDate: string;
   feedbackDeadline: string;
   submittedCount: number;
   notSubmittedCount: number;
@@ -22,6 +23,7 @@ interface ChallengePeriodBarProps {
   bar: PeriodBarData;
   colSpan: number;
   missionColSpan: number;
+  reviewColSpan: number;
   style?: React.CSSProperties;
   onBarClick: (challengeId: number, missionId: number) => void;
 }
@@ -57,11 +59,14 @@ const ChallengePeriodBar = ({
   bar,
   colSpan,
   missionColSpan,
+  reviewColSpan,
   style,
   onBarClick,
 }: ChallengePeriodBarProps) => {
   const color = COLORS[(bar.colorIndex ?? 0) % COLORS.length];
   const missionPercent = colSpan > 0 ? (missionColSpan / colSpan) * 100 : 100;
+  const reviewPercent = colSpan > 0 ? ((reviewColSpan - missionColSpan) / colSpan) * 100 : 0;
+  const feedbackPercent = 100 - missionPercent - reviewPercent;
 
   return (
     <button
@@ -113,25 +118,30 @@ const ChallengePeriodBar = ({
           <span className="text-neutral-10">완료</span>
           <span className="text-neutral-10">{bar.completedCount}</span>
         </div>
-        {/* Colored line: solid for mission, faded for feedback period */}
+        {/* Colored line: faded=미션제출, dotted=운영진확인, solid=피드백 */}
         <div
           className={`flex h-3 min-w-0 flex-1 items-center border-r-2 ${color.border}`}
         >
           <div
-            className={`h-0.5 ${color.line}`}
+            className={`h-0.5 ${color.line} opacity-40`}
             style={{ width: `${missionPercent}%` }}
           />
           <div
-            className={`h-0.5 ${color.line} opacity-40`}
-            style={{ width: `${100 - missionPercent}%` }}
+            className="h-0.5 bg-neutral-60"
+            style={{ width: `${reviewPercent}%` }}
+          />
+          <div
+            className={`h-0.5 ${color.line}`}
+            style={{ width: `${feedbackPercent}%` }}
           />
         </div>
       </div>
 
-      {/* Bottom row: challenge badge + submission counts */}
+      {/* Bottom row: 미션제출(연) | 운영진확인(1일) | 피드백제출(진) */}
       <div className="flex min-w-0 overflow-hidden">
+        {/* 미션 제출 기간 (연하게) */}
         <div
-          className={`flex min-w-0 items-center justify-between p-2 ${color.body}`}
+          className={`flex min-w-0 items-center justify-between p-2 ${color.body} opacity-50`}
           style={{ width: `${missionPercent}%` }}
         >
           <span
@@ -147,11 +157,21 @@ const ChallengePeriodBar = ({
             <span className="text-neutral-10">{bar.submittedCount}</span>
           </div>
         </div>
+        {/* 운영진 확인 기간 (1일) */}
         <div
-          className={`flex items-center justify-end ${color.body} opacity-40 px-1`}
-          style={{ width: `${100 - missionPercent}%` }}
+          className="flex items-center justify-center bg-neutral-90 px-0.5"
+          style={{ width: `${reviewPercent}%` }}
         >
-          <span className="whitespace-nowrap text-[10px] font-medium tracking-[-0.3px] text-neutral-30">
+          <span className="whitespace-nowrap text-[9px] font-medium text-neutral-40">
+            확인
+          </span>
+        </div>
+        {/* 피드백 제출 기간 (진하게) */}
+        <div
+          className={`flex items-center justify-end p-2 ${color.body}`}
+          style={{ width: `${feedbackPercent}%` }}
+        >
+          <span className="whitespace-nowrap text-[10px] font-medium tracking-[-0.3px] text-neutral-10">
             피드백 마감 {format(new Date(bar.feedbackDeadline), 'M.d')}
           </span>
         </div>

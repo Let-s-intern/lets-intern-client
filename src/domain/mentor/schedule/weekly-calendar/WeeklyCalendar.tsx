@@ -70,11 +70,16 @@ const WeeklyCalendar = ({
             new Date(bar.feedbackDeadline),
             timelineStart,
           ) + 2;
+        // 미션 제출 구간: startDate ~ endDate
         const missionEndCol =
           differenceInCalendarDays(new Date(bar.endDate), timelineStart) + 2;
+        // 운영진 확인 구간: endDate+1 (1일)
+        const reviewEndCol =
+          differenceInCalendarDays(new Date(bar.feedbackStartDate), timelineStart) + 2;
         const colSpan = endCol - startCol;
         const missionColSpan = missionEndCol - startCol;
-        return { bar, startCol, endCol, colSpan, missionColSpan };
+        const reviewColSpan = reviewEndCol - startCol;
+        return { bar, startCol, endCol, colSpan, missionColSpan, reviewColSpan };
       })
       .filter((l) => l.endCol >= 1 && l.startCol <= totalDays);
   }, [bars, timelineStart, totalDays]);
@@ -134,7 +139,7 @@ const WeeklyCalendar = ({
               style={{ display: 'grid', gridTemplateColumns: gridCols }}
             >
               {barLayouts.map(
-                ({ bar, startCol, endCol, colSpan, missionColSpan }, idx) => (
+                ({ bar, startCol, endCol, colSpan, missionColSpan, reviewColSpan }, idx) => (
                   <div
                     key={`${bar.challengeId}-${bar.missionId}-${idx}`}
                     className="px-px"
@@ -150,6 +155,7 @@ const WeeklyCalendar = ({
                         bar={bar}
                         colSpan={colSpan}
                         missionColSpan={missionColSpan}
+                        reviewColSpan={reviewColSpan}
                         onBarClick={onBarClick}
                       />
                     )}
