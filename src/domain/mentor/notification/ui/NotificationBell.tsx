@@ -20,7 +20,7 @@ export default function NotificationBell() {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { data } = useMentorGuideListQuery();
+  const { data } = useMentorGuideListQuery({ refetchInterval: 30000 }); // 30초마다 폴링
   const guides = data?.challengeMentorGuideList ?? [];
   const { readIds, markAsRead, isRead } = useNotificationState();
 
@@ -35,17 +35,33 @@ export default function NotificationBell() {
     [guides],
   );
 
-  // 오늘 안 읽은 수
-  const unreadCount = useMemo(
+  // 오늘 안 읽은 공지
+  const unreadGuides = useMemo(
     () =>
       sortedGuides.filter(
         (g: ChallengeMentorGuideItem) =>
           g.createDate &&
           isToday(g.createDate) &&
           !readIds.includes(g.challengeMentorGuideId),
-      ).length,
+      ),
     [sortedGuides, readIds],
   );
+  const unreadCount = unreadGuides.length;
+
+  // 새 공지 감지 → 브라우저 알림
+  const prevGuideCountRef = useRef(guides.length);
+  useEffect(() => {
+    if (guides.length > prevGuideCountRef.current && unreadGuides.length > 0) {
+      const latest = unreadGuides[0];
+      if (Notification.permission === 'granted' && latest?.title) {
+        new Notification('새 공지가 도착했습니다', {
+          body: latest.title,
+          icon: '/logo/logo-symbol.svg',
+        });
+      }
+    }
+    prevGuideCountRef.current = guides.length;
+  }, [guides.length, unreadGuides]);
 
   // PWA 앱 배지
   useEffect(() => {

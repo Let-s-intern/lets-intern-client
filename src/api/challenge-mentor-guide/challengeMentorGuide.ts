@@ -11,7 +11,9 @@ import {
 export const ChallengeMentorGuideQueryKey = 'challengeMentorGuideList';
 
 /** GET /api/v1/challenge-mentor-guide 멘토용 가이드 목록 (파라미터 없음) */
-export const useMentorGuideListQuery = () => {
+export const useMentorGuideListQuery = (
+  options?: { refetchInterval?: number },
+) => {
   return useQuery({
     queryKey: [ChallengeMentorGuideQueryKey],
     queryFn: async () => {
@@ -19,6 +21,7 @@ export const useMentorGuideListQuery = () => {
       return challengeMentorGuideListSchema.parse(res.data.data);
     },
     refetchOnWindowFocus: false,
+    ...options,
   });
 };
 
