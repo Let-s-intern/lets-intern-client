@@ -6,6 +6,7 @@ export const CHALLENGE_COLORS = [
     badge: 'bg-[#fdad00]',
     text: 'text-[#fdad00]',
     body: 'bg-[#fff3d9]',
+    bodyMid: 'bg-[#fff6e3]',
     bodyLight: 'bg-[#fffaef]',
   },
   {
@@ -14,6 +15,7 @@ export const CHALLENGE_COLORS = [
     badge: 'bg-[#14bcff]',
     text: 'text-[#14bcff]',
     body: 'bg-[#eefaff]',
+    bodyMid: 'bg-[#f2fcff]',
     bodyLight: 'bg-[#f4fbff]',
   },
   {
@@ -22,6 +24,7 @@ export const CHALLENGE_COLORS = [
     badge: 'bg-green-400',
     text: 'text-green-400',
     body: 'bg-green-50',
+    bodyMid: 'bg-[#edfaed]',
     bodyLight: 'bg-[#f4fbf4]',
   },
   {
@@ -30,6 +33,7 @@ export const CHALLENGE_COLORS = [
     badge: 'bg-purple-400',
     text: 'text-purple-400',
     body: 'bg-purple-50',
+    bodyMid: 'bg-[#f0edf7]',
     bodyLight: 'bg-[#f7f4fb]',
   },
 ];

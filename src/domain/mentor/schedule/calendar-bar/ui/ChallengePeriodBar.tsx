@@ -1,9 +1,28 @@
 'use client';
 
 import { getColor } from '../../constants/colors';
-import { computeSegmentColSpans } from '../../constants/scheduleConfig';
+import {
+  computeSegmentColSpans,
+  type BarSegment,
+} from '../../constants/scheduleConfig';
 import { WRITTEN_FEEDBACK_CONFIG } from '../../challenge-content/writtenFeedback';
 import type { PeriodBarData } from '../../types';
+
+/**
+ * 보조 구간 배경색: 액션에 가까울수록 연하게, 멀수록 진하게
+ * 멀(bodyMid) → 가까움(bodyLight) → [액션(body)] → 가까움(bodyLight) → 멀(bodyMid)
+ */
+function segmentBg(
+  segment: BarSegment,
+  allSegments: { segment: BarSegment; cols: number }[],
+  color: ReturnType<typeof getColor>,
+) {
+  const actionIdx = allSegments.findIndex((s) => s.segment.isActionSegment);
+  const myIdx = allSegments.findIndex((s) => s.segment.id === segment.id);
+  const distFromAction = Math.abs(myIdx - actionIdx);
+  // 거리 1 = 바로 옆 = bodyLight, 거리 2+ = bodyMid
+  return distFromAction <= 1 ? color.bodyLight : color.bodyMid;
+}
 
 interface ChallengePeriodBarProps {
   bar: PeriodBarData;
@@ -106,7 +125,7 @@ const ChallengePeriodBar = ({
 
       {/* 2행: 구간별 카드 — 동일한 grid로 날짜 칸에 정확히 맞춤 */}
       <div
-        className="relative z-10 min-w-0 overflow-hidden"
+        className="relative min-w-0 overflow-hidden"
         style={{ display: 'grid', gridTemplateColumns: gridCols }}
       >
         {segmentColSpans.map(({ segment }) => {
@@ -114,7 +133,7 @@ const ChallengePeriodBar = ({
             return (
               <div
                 key={segment.id}
-                className={`flex min-w-0 items-center justify-between ${segment.showBorder ? 'border-r border-neutral-80' : ''} p-2 ${color.body}`}
+                className={`flex min-w-0 items-center justify-between p-2 ${color.body}`}
               >
                 <span
                   className={`min-w-0 truncate rounded-[3px] px-2 py-1 text-xxsmall12 font-medium tracking-[-0.3px] text-white ${color.badge}`}
@@ -134,7 +153,7 @@ const ChallengePeriodBar = ({
           return (
             <div
               key={segment.id}
-              className={`flex min-w-0 items-center justify-center ${segment.showBorder ? 'border-r border-neutral-80' : ''} px-1 py-2 ${color.bodyLight}`}
+              className={`flex min-w-0 items-center justify-center px-1 py-2 ${segmentBg(segment, segmentColSpans, color)}`}
             >
               <span
                 className={`truncate whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px] ${color.text}`}
