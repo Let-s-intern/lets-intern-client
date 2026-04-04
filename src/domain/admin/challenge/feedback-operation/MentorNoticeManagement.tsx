@@ -621,7 +621,6 @@ export default function MentorNoticeManagement() {
                     setForm((prev) => ({ ...prev, contents: jsonString }))
                   }
                 />
-                <ContentSizeIndicator content={form.contents} />
               </div>
             )}
 
@@ -640,22 +639,26 @@ export default function MentorNoticeManagement() {
                     setForm((prev) => ({ ...prev, contents: e.target.value }))
                   }
                 />
-                <ContentSizeIndicator content={form.contents} />
               </div>
             )}
           </div>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={closeModal} color="inherit">
-            취소
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            variant="contained"
-            disabled={isFormEmpty}
-          >
-            {isCreateMode ? '등록' : '수정'}
-          </Button>
+        <DialogActions sx={{ flexDirection: 'column', alignItems: 'stretch', gap: 1, px: 3, pb: 2 }}>
+          {form.contentType !== 'URL' && (
+            <ContentSizeIndicator content={form.contents} />
+          )}
+          <div className="flex justify-end gap-2">
+            <Button onClick={closeModal} color="inherit">
+              취소
+            </Button>
+            <Button
+              onClick={handleSubmit}
+              variant="contained"
+              disabled={isFormEmpty}
+            >
+              {isCreateMode ? '등록' : '수정'}
+            </Button>
+          </div>
         </DialogActions>
       </Dialog>
     </>
