@@ -1,6 +1,7 @@
 'use client';
 
 import { format } from 'date-fns';
+import { getColor } from './colors';
 
 export interface PeriodBarData {
   challengeId: number;
@@ -27,41 +28,6 @@ interface ChallengePeriodBarProps {
   onBarClick: (challengeId: number, missionId: number) => void;
 }
 
-const COLORS = [
-  {
-    border: 'border-[#fdad00]',
-    line: 'bg-[#fdad00]',
-    badge: 'bg-[#fdad00]',
-    body: 'bg-[#fff3d9]',
-    bodyLight: 'bg-[#fffaef]',
-    textLight: 'text-[#b8860b]',
-  },
-  {
-    border: 'border-[#14bcff]',
-    line: 'bg-[#14bcff]',
-    badge: 'bg-[#14bcff]',
-    body: 'bg-[#eefaff]',
-    bodyLight: 'bg-[#f4fbff]',
-    textLight: 'text-[#0b7faa]',
-  },
-  {
-    border: 'border-green-400',
-    line: 'bg-green-400',
-    badge: 'bg-green-400',
-    body: 'bg-green-50',
-    bodyLight: 'bg-[#f4fbf4]',
-    textLight: 'text-green-700',
-  },
-  {
-    border: 'border-purple-400',
-    line: 'bg-purple-400',
-    badge: 'bg-purple-400',
-    body: 'bg-purple-50',
-    bodyLight: 'bg-[#f7f4fb]',
-    textLight: 'text-purple-700',
-  },
-];
-
 const ChallengePeriodBar = ({
   bar,
   colSpan,
@@ -69,7 +35,7 @@ const ChallengePeriodBar = ({
   style,
   onBarClick,
 }: ChallengePeriodBarProps) => {
-  const color = COLORS[(bar.colorIndex ?? 0) % COLORS.length];
+  const color = getColor(bar.colorIndex ?? 0);
   // 미션+검수 = 앞(연하게), 피드백 = 뒤(진하게) — 기존 레이아웃 유지
   const feedbackPercent = colSpan > 0 ? ((colSpan - missionColSpan) / colSpan) * 100 : 0;
   const missionPercent = colSpan > 0 ? (missionColSpan / colSpan) * 100 : 100;
@@ -145,7 +111,7 @@ const ChallengePeriodBar = ({
           className={`flex min-w-0 items-center border border-neutral-80 px-2 py-2 ${color.bodyLight}`}
           style={{ width: `${missionPercent * (1 - reviewDayPercent / 100)}%` }}
         >
-          <span className={`truncate whitespace-nowrap text-[10px] font-medium tracking-[-0.3px] ${color.textLight}`}>
+          <span className={`truncate whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px] ${color.text}`}>
             멘티 미션제출기간
           </span>
         </div>
@@ -154,7 +120,7 @@ const ChallengePeriodBar = ({
           className={`flex items-center justify-center border border-neutral-80 px-0.5 py-2 ${color.bodyLight}`}
           style={{ width: `${missionPercent * (reviewDayPercent / 100)}%` }}
         >
-          <span className={`whitespace-nowrap text-[9px] font-medium ${color.textLight}`}>
+          <span className={`whitespace-nowrap text-xxsmall12 font-medium ${color.text}`}>
             제출확인 기간
           </span>
         </div>

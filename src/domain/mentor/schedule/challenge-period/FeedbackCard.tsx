@@ -1,33 +1,7 @@
 'use client';
 
 import type { PeriodBarData } from './ChallengePeriodBar';
-
-const COLORS = [
-  {
-    line: 'bg-[#fdad00]',
-    border: 'border-[#fdad00]',
-    badge: 'bg-[#fdad00]',
-    body: 'bg-[#fff3d9]',
-  },
-  {
-    line: 'bg-[#14bcff]',
-    border: 'border-[#14bcff]',
-    badge: 'bg-[#14bcff]',
-    body: 'bg-[#eefaff]',
-  },
-  {
-    line: 'bg-green-400',
-    border: 'border-green-400',
-    badge: 'bg-green-400',
-    body: 'bg-green-50',
-  },
-  {
-    line: 'bg-purple-400',
-    border: 'border-purple-400',
-    badge: 'bg-purple-400',
-    body: 'bg-purple-50',
-  },
-];
+import { getColor } from './colors';
 
 /**
  * Single-day feedback card — vertical stack:
@@ -45,7 +19,7 @@ const CompactFeedbackCard = ({
   bar: PeriodBarData;
   onBarClick: (challengeId: number, missionId: number) => void;
 }) => {
-  const color = COLORS[(bar.colorIndex ?? 0) % COLORS.length];
+  const color = getColor(bar.colorIndex ?? 0);
 
   return (
     <button
