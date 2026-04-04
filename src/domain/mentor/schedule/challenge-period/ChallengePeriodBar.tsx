@@ -105,28 +105,28 @@ const ChallengePeriodBar = ({
       </div>
 
       {/* Bottom row */}
-      <div className="flex min-w-0 overflow-hidden">
-        {/* 멘티 미션제출기간 (연하게, 테두리) */}
+      <div className="relative z-10 flex min-w-0 overflow-hidden">
+        {/* 멘티 미션제출기간 (연하게) */}
         <div
-          className={`flex min-w-0 items-center border border-neutral-80 px-2 py-2 ${color.bodyLight}`}
+          className={`flex min-w-0 items-center justify-center px-2 py-2 ${color.bodyLight}`}
           style={{ width: `${missionPercent * (1 - reviewDayPercent / 100)}%` }}
         >
           <span className={`truncate whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px] ${color.text}`}>
             멘티 미션제출기간
           </span>
         </div>
-        {/* 제출확인 기간 (연하게, 테두리) */}
+        {/* 구분선 + 제출확인 기간 (연하게) */}
         <div
-          className={`flex items-center justify-center border border-neutral-80 px-0.5 py-2 ${color.bodyLight}`}
+          className={`flex items-center justify-center border-l border-r border-neutral-80 px-0.5 py-2 ${color.bodyLight}`}
           style={{ width: `${missionPercent * (reviewDayPercent / 100)}%` }}
         >
           <span className={`whitespace-nowrap text-xxsmall12 font-medium ${color.text}`}>
             제출확인 기간
           </span>
         </div>
-        {/* 뒤: 피드백 제출기간 (진하게) — 기존 모양 그대로 */}
+        {/* 피드백 제출기간 (진하게) — 앞뒤 구분선 */}
         <div
-          className={`flex min-w-0 items-center justify-between p-2 ${color.body}`}
+          className={`flex min-w-0 items-center justify-between border-l border-r border-neutral-80 p-2 ${color.body}`}
           style={{ width: `${feedbackPercent}%` }}
         >
           <span
