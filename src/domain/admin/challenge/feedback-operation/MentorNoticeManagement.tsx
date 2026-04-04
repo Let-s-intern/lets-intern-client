@@ -67,7 +67,7 @@ function toLexicalJson(text: string | undefined): string | undefined {
 
 /* ── 타입 ── */
 
-type ContentType = 'URL' | 'TEXT';
+type ContentType = 'URL' | 'EDITOR' | 'MARKDOWN';
 
 interface NoticeForm {
   title: string;
@@ -128,7 +128,15 @@ function buildColumns(
       field: 'contentType',
       headerName: '유형',
       width: 80,
-      valueGetter: (_, row) => (row.contents ? '텍스트' : 'URL'),
+      valueGetter: (_, row) => {
+        if (!row.contents) return 'URL';
+        try {
+          const parsed = JSON.parse(row.contents);
+          return parsed?.root ? '에디터' : 'MD';
+        } catch {
+          return 'MD';
+        }
+      },
     },
     {
       field: 'challengeScopeType',
@@ -241,11 +249,20 @@ export default function MentorNoticeManagement() {
 
   const openEditModal = (guide: ChallengeMentorGuideItem) => {
     const hasContents = !!guide.contents;
+    let contentType: ContentType = 'URL';
+    if (hasContents) {
+      try {
+        const parsed = JSON.parse(guide.contents!);
+        contentType = parsed?.root ? 'EDITOR' : 'MARKDOWN';
+      } catch {
+        contentType = 'MARKDOWN';
+      }
+    }
     setForm({
       title: guide.title ?? '',
       link: guide.link ?? '',
       contents: guide.contents ?? '',
-      contentType: hasContents ? 'TEXT' : 'URL',
+      contentType,
       challengeScopeType: (guide.challengeScopeType ?? 'ALL') as ChallengeScopeType,
       mentorScopeType: (guide.mentorScopeType ?? 'ALL_MENTOR') as MentorScopeType,
       challengeId: guide.challengeId ? String(guide.challengeId) : '',
@@ -274,7 +291,7 @@ export default function MentorNoticeManagement() {
     const body = {
       title: form.title,
       link: form.contentType === 'URL' ? form.link : undefined,
-      contents: form.contentType === 'TEXT' ? form.contents : undefined,
+      contents: form.contentType !== 'URL' ? form.contents : undefined,
       challengeScopeType: form.challengeScopeType,
       mentorScopeType: form.mentorScopeType,
       challengeId:
@@ -502,7 +519,8 @@ export default function MentorNoticeManagement() {
                 }
               >
                 <MenuItem value="URL">URL 링크</MenuItem>
-                <MenuItem value="TEXT">텍스트 (에디터)</MenuItem>
+                <MenuItem value="EDITOR">에디터 (리치 텍스트)</MenuItem>
+                <MenuItem value="MARKDOWN">마크다운 (텍스트)</MenuItem>
               </Select>
             </div>
 
@@ -523,15 +541,33 @@ export default function MentorNoticeManagement() {
             )}
 
             {/* 리치 텍스트 입력 (Lexical 에디터) */}
-            {form.contentType === 'TEXT' && (
+            {form.contentType === 'EDITOR' && (
               <div>
                 <label className="mb-1 block text-sm font-medium">
-                  내용
+                  내용 (에디터)
                 </label>
                 <EditorApp
                   initialEditorStateJsonString={toLexicalJson(form.contents) || undefined}
                   onChange={(jsonString) =>
                     setForm((prev) => ({ ...prev, contents: jsonString }))
+                  }
+                />
+              </div>
+            )}
+
+            {/* 마크다운 텍스트 입력 */}
+            {form.contentType === 'MARKDOWN' && (
+              <div>
+                <label className="mb-1 block text-sm font-medium">
+                  내용 (마크다운)
+                </label>
+                <textarea
+                  className="w-full rounded border border-neutral-80 px-3 py-2 font-mono text-sm"
+                  rows={10}
+                  placeholder="마크다운 형식으로 입력하세요"
+                  value={form.contents}
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, contents: e.target.value }))
                   }
                 />
               </div>

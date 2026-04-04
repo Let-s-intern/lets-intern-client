@@ -1,6 +1,8 @@
 'use client';
 
 import Link from 'next/link';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import LexicalContent from '@/domain/blog/ui/LexicalContent';
 import { useMentorGuideListQuery } from '@/api/challenge-mentor-guide/challengeMentorGuide';
 
@@ -78,11 +80,11 @@ export default function NoticeDetailPage({ noticeId }: { noticeId: string }) {
                 </div>
               );
             } catch {
-              // JSON이 아니면 일반 텍스트로 표시
+              // JSON이 아니면 마크다운으로 렌더링
               return (
-                <p className="whitespace-pre-wrap text-xsmall16 leading-relaxed text-neutral-10">
-                  {guide.contents}
-                </p>
+                <div className="prose prose-neutral max-w-none text-xsmall16 leading-relaxed">
+                  <Markdown remarkPlugins={[remarkGfm]}>{guide.contents}</Markdown>
+                </div>
               );
             }
           })()}
