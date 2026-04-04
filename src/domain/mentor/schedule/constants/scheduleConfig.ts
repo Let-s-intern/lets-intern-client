@@ -41,52 +41,6 @@ export interface ScheduleTypeConfig {
 }
 
 // ---------------------------------------------------------------------------
-// 서면 피드백 설정
-// ---------------------------------------------------------------------------
-
-export const WRITTEN_FEEDBACK_CONFIG: ScheduleTypeConfig = {
-  type: 'written-feedback',
-  barStartOffset: 0,
-  barEndOffset: 3,
-  scrollTargetOffset: 1,
-  segments: [
-    {
-      id: 'mission-submit',
-      label: '멘티 미션제출기간',
-      startOffset: -Infinity, // 미션 startDate부터
-      endOffset: 0,           // 미션 endDate까지
-      lineStyle: 'faded',
-      cardStyle: 'light',
-      showBorder: false,
-      isActionSegment: false,
-      scrollTarget: false,
-    },
-    {
-      id: 'review',
-      label: '제출확인 기간',
-      startOffset: 0,  // endDate+0 (endDate 다음날 = +1일째)
-      endOffset: 1,     // endDate+1
-      lineStyle: 'muted',
-      cardStyle: 'light',
-      showBorder: true,
-      isActionSegment: false,
-      scrollTarget: false,
-    },
-    {
-      id: 'feedback-submit',
-      label: '피드백 제출기간',
-      startOffset: 1,  // endDate+1
-      endOffset: 3,    // endDate+3
-      lineStyle: 'solid',
-      cardStyle: 'primary',
-      showBorder: true,
-      isActionSegment: true,
-      scrollTarget: true,
-    },
-  ],
-};
-
-// ---------------------------------------------------------------------------
 // 헬퍼: 설정에서 날짜 계산
 // ---------------------------------------------------------------------------
 

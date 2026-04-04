@@ -9,9 +9,9 @@ import {
 } from '@/api/challenge/challenge';
 import type { PeriodBarData } from '../types';
 import {
-  WRITTEN_FEEDBACK_CONFIG,
   computeDatesFromConfig,
 } from '../constants/scheduleConfig';
+import { WRITTEN_FEEDBACK_CONFIG } from '../challenge-content/writtenFeedback';
 
 // ---------------------------------------------------------------------------
 // Per-mission attendance fetcher (each mission needs its own API call)

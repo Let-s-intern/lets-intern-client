@@ -2,9 +2,9 @@
 
 import { getColor } from '../../constants/colors';
 import {
-  WRITTEN_FEEDBACK_CONFIG,
   computeSegmentPercents,
 } from '../../constants/scheduleConfig';
+import { WRITTEN_FEEDBACK_CONFIG } from '../../challenge-content/writtenFeedback';
 import type { PeriodBarData } from '../../types';
 
 interface ChallengePeriodBarProps {
