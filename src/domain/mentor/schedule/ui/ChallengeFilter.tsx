@@ -21,8 +21,7 @@ const ChallengeFilter = ({
   onSelect,
 }: ChallengeFilterProps) => {
   const handleToggle = (challengeId: number) => {
-    // Toggle: if already selected, deselect (show all); otherwise select
-    onSelect(selectedChallengeId === challengeId ? null : challengeId);
+    onSelect(challengeId);
   };
 
   return (

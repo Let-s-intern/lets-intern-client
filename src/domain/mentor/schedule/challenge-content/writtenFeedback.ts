@@ -4,8 +4,8 @@ import type { ScheduleTypeConfig } from '../constants/scheduleConfig';
 export const WRITTEN_FEEDBACK_CONFIG: ScheduleTypeConfig = {
   type: 'written-feedback',
   barStartOffset: 0,
-  barEndOffset: 3,
-  scrollTargetOffset: 1,
+  barEndOffset: 4,
+  scrollTargetOffset: 2,
   segments: [
     {
       id: 'mission-submit',
@@ -33,7 +33,7 @@ export const WRITTEN_FEEDBACK_CONFIG: ScheduleTypeConfig = {
       id: 'feedback-submit',
       label: '피드백 제출기간',
       startOffset: 1,
-      endOffset: 3,
+      endOffset: 4,
       lineStyle: 'solid',
       cardStyle: 'primary',
       showBorder: true,
