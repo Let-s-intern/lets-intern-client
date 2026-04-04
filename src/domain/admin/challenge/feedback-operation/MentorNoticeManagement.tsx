@@ -2,11 +2,13 @@
 
 import { useMemo, useState } from 'react';
 import {
+  AdminChallengeMentorGuideQueryKey,
   useAdminChallengeMentorGuideAllQuery,
   usePostAdminChallengeMentorGuide,
   usePatchAdminChallengeMentorGuide,
   useDeleteAdminChallengeMentorGuide,
 } from '@/api/challenge-mentor-guide/challengeMentorGuide';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAdminChallengeMentorListQuery } from '@/api/mentor/mentor';
 import { useGetChallengeList } from '@/api/challenge/challenge';
 import type {
@@ -301,6 +303,8 @@ function buildColumns(
 /* ── 메인 컴포넌트 ── */
 
 export default function MentorNoticeManagement() {
+  const queryClient = useQueryClient();
+
   /* 전체 가이드 목록 */
   const { data: guideData, isLoading } =
     useAdminChallengeMentorGuideAllQuery();
@@ -429,6 +433,11 @@ export default function MentorNoticeManagement() {
     await patchMutation.mutateAsync({
       challengeMentorGuideId: guideId,
       isVisible,
+    });
+    // patchMutation의 onSuccess가 AdminChallengeMentorGuideQueryKey를 invalidate하지만
+    // AllQuery 키도 invalidate 필요
+    queryClient.invalidateQueries({
+      queryKey: [AdminChallengeMentorGuideQueryKey],
     });
   };
 
