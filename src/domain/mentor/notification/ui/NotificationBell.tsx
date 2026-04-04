@@ -1,8 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useChallengeMentorGuideListQuery } from '@/api/challenge-mentor-guide/challengeMentorGuide';
-import { useMentorChallengeListQuery } from '@/api/user/user';
+import { useMentorGuideListQuery } from '@/api/challenge-mentor-guide/challengeMentorGuide';
 import type { ChallengeMentorGuideItem } from '@/api/challenge-mentor-guide/challengeMentorGuideSchema';
 import { useNotificationState } from '../hooks/useNotificationState';
 import NotificationDropdown from './NotificationDropdown';
@@ -17,64 +16,35 @@ function isToday(dateStr: string): boolean {
   );
 }
 
-/** 단일 챌린지의 공지를 가져오는 훅 — 안전하게 빈 배열 반환 */
-function useChallengeGuides(challengeId: number) {
-  const { data } = useChallengeMentorGuideListQuery(challengeId);
-  return data?.challengeMentorGuideList ?? [];
-}
-
-/**
- * 최대 10개 챌린지까지 지원하는 공지 수집 훅.
- * 훅은 조건부 호출이 불가하므로 고정 슬롯으로 처리.
- */
-function useAllGuides(challengeIds: number[]) {
-  const g0 = useChallengeGuides(challengeIds[0] ?? 0);
-  const g1 = useChallengeGuides(challengeIds[1] ?? 0);
-  const g2 = useChallengeGuides(challengeIds[2] ?? 0);
-  const g3 = useChallengeGuides(challengeIds[3] ?? 0);
-  const g4 = useChallengeGuides(challengeIds[4] ?? 0);
-  const g5 = useChallengeGuides(challengeIds[5] ?? 0);
-  const g6 = useChallengeGuides(challengeIds[6] ?? 0);
-  const g7 = useChallengeGuides(challengeIds[7] ?? 0);
-  const g8 = useChallengeGuides(challengeIds[8] ?? 0);
-  const g9 = useChallengeGuides(challengeIds[9] ?? 0);
-
-  return useMemo(() => {
-    const all = [g0, g1, g2, g3, g4, g5, g6, g7, g8, g9];
-    return all
-      .slice(0, challengeIds.length)
-      .flat()
-      .sort(
-        (a, b) =>
-          new Date(b.createDate ?? 0).getTime() -
-          new Date(a.createDate ?? 0).getTime(),
-      );
-  }, [g0, g1, g2, g3, g4, g5, g6, g7, g8, g9, challengeIds.length]);
-}
-
 export default function NotificationBell() {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { data: challengeData } = useMentorChallengeListQuery();
-  const challengeIds = useMemo(
-    () => (challengeData?.myChallengeMentorVoList ?? []).map((c) => c.challengeId),
-    [challengeData],
-  );
+  const { data } = useMentorGuideListQuery();
+  const guides = data?.challengeMentorGuideList ?? [];
   const { readIds, markAsRead, isRead } = useNotificationState();
 
-  const flatGuides = useAllGuides(challengeIds);
+  // 최신순 정렬
+  const sortedGuides = useMemo(
+    () =>
+      [...guides].sort(
+        (a, b) =>
+          new Date(b.createDate ?? 0).getTime() -
+          new Date(a.createDate ?? 0).getTime(),
+      ),
+    [guides],
+  );
 
   // 오늘 안 읽은 수
   const unreadCount = useMemo(
     () =>
-      flatGuides.filter(
+      sortedGuides.filter(
         (g: ChallengeMentorGuideItem) =>
           g.createDate &&
           isToday(g.createDate) &&
           !readIds.includes(g.challengeMentorGuideId),
       ).length,
-    [flatGuides, readIds],
+    [sortedGuides, readIds],
   );
 
   // PWA 앱 배지
@@ -145,7 +115,7 @@ export default function NotificationBell() {
 
       {isOpen && (
         <NotificationDropdown
-          guides={flatGuides}
+          guides={sortedGuides}
           isRead={isRead}
           onMarkRead={markAsRead}
           onClose={() => setIsOpen(false)}

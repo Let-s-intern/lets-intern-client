@@ -10,25 +10,14 @@ import {
 
 export const ChallengeMentorGuideQueryKey = 'challengeMentorGuideList';
 
-/** GET /api/v1/challenge-mentor-guide/{challengeId} 멘토용 가이드 목록 */
-export const useChallengeMentorGuideListQuery = (
-  challengeId?: number,
-) => {
+/** GET /api/v1/challenge-mentor-guide 멘토용 가이드 목록 (파라미터 없음) */
+export const useMentorGuideListQuery = () => {
   return useQuery({
-    queryKey: [ChallengeMentorGuideQueryKey, challengeId],
+    queryKey: [ChallengeMentorGuideQueryKey],
     queryFn: async () => {
-      try {
-        const res = await axios.get(
-          `/challenge-mentor-guide/${challengeId}`,
-        );
-        return challengeMentorGuideListSchema.parse(res.data.data);
-      } catch {
-        // 서버 500 등 에러 시 빈 목록 반환
-        return { challengeMentorGuideList: [] };
-      }
+      const res = await axios.get('/challenge-mentor-guide');
+      return challengeMentorGuideListSchema.parse(res.data.data);
     },
-    enabled: !!challengeId,
-    retry: false,
     refetchOnWindowFocus: false,
   });
 };

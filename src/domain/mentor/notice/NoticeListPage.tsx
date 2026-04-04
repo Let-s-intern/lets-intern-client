@@ -1,8 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useChallengeMentorGuideListQuery } from '@/api/challenge-mentor-guide/challengeMentorGuide';
-import { useMentorChallengeListQuery } from '@/api/user/user';
+import { useMentorGuideListQuery } from '@/api/challenge-mentor-guide/challengeMentorGuide';
 import type { ChallengeMentorGuideItem } from '@/api/challenge-mentor-guide/challengeMentorGuideSchema';
 
 function getRelativeDate(dateStr: string): string {
@@ -29,7 +28,6 @@ function GuideRow({ guide }: { guide: ChallengeMentorGuideItem }) {
   const hasContents = !!guide.contents;
   const hasLink = !!guide.link;
 
-  // contents가 있으면 상세 페이지로, link만 있으면 새 탭
   if (hasContents) {
     return (
       <Link
@@ -79,24 +77,9 @@ function GuideRow({ guide }: { guide: ChallengeMentorGuideItem }) {
   );
 }
 
-function ChallengeGuideSection({ challengeId }: { challengeId: number }) {
-  const { data, isError } = useChallengeMentorGuideListQuery(challengeId);
-  const guides = data?.challengeMentorGuideList ?? [];
-
-  if (isError || guides.length === 0) return null;
-
-  return (
-    <>
-      {guides.map((guide) => (
-        <GuideRow key={guide.challengeMentorGuideId} guide={guide} />
-      ))}
-    </>
-  );
-}
-
 export default function NoticeListPage() {
-  const { data: challengeData, isLoading } = useMentorChallengeListQuery();
-  const challenges = challengeData?.myChallengeMentorVoList ?? [];
+  const { data, isLoading } = useMentorGuideListQuery();
+  const guides = data?.challengeMentorGuideList ?? [];
 
   if (isLoading) {
     return (
@@ -108,11 +91,11 @@ export default function NoticeListPage() {
     );
   }
 
-  if (challenges.length === 0) {
+  if (guides.length === 0) {
     return (
       <NoticeLayout>
         <div className="py-20 text-center text-xsmall14 text-neutral-40">
-          참여 중인 챌린지가 없습니다.
+          등록된 공지가 없습니다.
         </div>
       </NoticeLayout>
     );
@@ -125,11 +108,8 @@ export default function NoticeListPage() {
           프로그램 공지
         </h2>
         <div className="flex flex-col rounded-[16px] border border-neutral-80">
-          {challenges.map((challenge) => (
-            <ChallengeGuideSection
-              key={challenge.challengeId}
-              challengeId={challenge.challengeId}
-            />
+          {guides.map((guide) => (
+            <GuideRow key={guide.challengeMentorGuideId} guide={guide} />
           ))}
         </div>
       </section>
