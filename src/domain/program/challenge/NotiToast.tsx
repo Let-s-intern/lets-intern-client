@@ -1,21 +1,15 @@
 import { clsx } from 'clsx';
 import { useEffect, useState } from 'react';
 
-interface MissionToastProps {
+interface NotiToastProps {
   isVisible: boolean;
   onClose: () => void;
-  message?: string;
-  duration?: number;
 }
 
+const TOAST_DISPLAY_DURATION_MS = 3000;
 const TOAST_ANIMATION_DURATION_MS = 300;
 
-const MissionToast = ({
-  isVisible,
-  onClose,
-  message = '미션 제출이 완료되었습니다.',
-  duration = 3000,
-}: MissionToastProps) => {
+const NotiToast = ({ isVisible, onClose }: NotiToastProps) => {
   const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
@@ -23,39 +17,38 @@ const MissionToast = ({
       setIsAnimating(true);
       const timer = setTimeout(() => {
         setIsAnimating(false);
-        setTimeout(onClose, TOAST_ANIMATION_DURATION_MS); // 애니메이션 완료 후 닫기
-      }, duration);
+        setTimeout(onClose, TOAST_ANIMATION_DURATION_MS);
+      }, TOAST_DISPLAY_DURATION_MS);
 
       return () => clearTimeout(timer);
     } else {
       setIsAnimating(false);
     }
-  }, [isVisible, duration, onClose]);
+  }, [isVisible, onClose]);
 
   if (!isVisible && !isAnimating) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center p-10">
+    <div className="fixed left-0 right-0 top-0 z-50 flex justify-center p-10">
       <div
         className={clsx(
           'flex items-center gap-1.5 rounded-xxs bg-neutral-0 bg-opacity-85 px-3 py-2.5 shadow-lg transition-all duration-300',
           isAnimating
             ? 'translate-y-0 opacity-100'
-            : 'translate-y-full opacity-0',
+            : '-translate-y-full opacity-0',
         )}
       >
-        {/* 체크 아이콘 */}
         <img
           src="/icons/check-circle.svg"
           alt="check icon"
-          className="h-6 w-6 brightness-0 invert" // 파란색을 흰색으로 변경
+          className="h-6 w-6 brightness-0 invert"
         />
-
-        {/* 메시지 */}
-        <span className="text-xsmall16 text-white">{message}</span>
+        <span className="text-xsmall16 text-white">
+          다음 기수 알림이 신청되었습니다.
+        </span>
       </div>
     </div>
   );
 };
 
-export default MissionToast;
+export default NotiToast;
