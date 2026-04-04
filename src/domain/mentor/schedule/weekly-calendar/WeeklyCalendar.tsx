@@ -71,7 +71,7 @@ const WeeklyCalendar = ({
             timelineStart,
           ) + 2;
         const missionEndCol =
-          differenceInCalendarDays(new Date(bar.endDate), timelineStart) + 2;
+          differenceInCalendarDays(new Date(bar.feedbackStartDate), timelineStart) + 1;
         const colSpan = endCol - startCol;
         const missionColSpan = missionEndCol - startCol;
         return { bar, startCol, endCol, colSpan, missionColSpan };
