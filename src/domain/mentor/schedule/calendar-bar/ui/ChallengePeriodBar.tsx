@@ -26,16 +26,12 @@ function segmentBg(
 
 interface ChallengePeriodBarProps {
   bar: PeriodBarData;
-  colSpan: number;
-  missionColSpan: number;
   style?: React.CSSProperties;
   onBarClick: (challengeId: number, missionId: number) => void;
 }
 
 const ChallengePeriodBar = ({
   bar,
-  colSpan: _colSpan,
-  missionColSpan: _missionColSpan,
   style,
   onBarClick,
 }: ChallengePeriodBarProps) => {

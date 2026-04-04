@@ -69,11 +69,8 @@ const WeeklyCalendar = ({
             new Date(bar.feedbackDeadline),
             timelineStart,
           ) + 2;
-        const missionEndCol =
-          differenceInCalendarDays(new Date(bar.feedbackStartDate), timelineStart) + 1;
         const colSpan = endCol - startCol;
-        const missionColSpan = missionEndCol - startCol;
-        return { bar, startCol, endCol, colSpan, missionColSpan };
+        return { bar, startCol, endCol, colSpan };
       })
       .filter((l) => l.endCol >= 1 && l.startCol <= totalDays);
   }, [bars, timelineStart, totalDays]);
@@ -133,7 +130,7 @@ const WeeklyCalendar = ({
               style={{ display: 'grid', gridTemplateColumns: gridCols }}
             >
               {barLayouts.map(
-                ({ bar, startCol, endCol, colSpan, missionColSpan }, idx) => (
+                ({ bar, startCol, endCol, colSpan }, idx) => (
                   <div
                     key={`${bar.challengeId}-${bar.missionId}-${idx}`}
                     className="px-px"
@@ -147,8 +144,6 @@ const WeeklyCalendar = ({
                     ) : (
                       <ChallengePeriodBar
                         bar={bar}
-                        colSpan={colSpan}
-                        missionColSpan={missionColSpan}
                         onBarClick={onBarClick}
                       />
                     )}
