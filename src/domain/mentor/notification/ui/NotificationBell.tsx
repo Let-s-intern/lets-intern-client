@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useChallengeMentorGuideListQuery } from '@/api/challenge-mentor-guide/challengeMentorGuide';
 import { useMentorChallengeListQuery } from '@/api/user/user';
 import type { ChallengeMentorGuideItem } from '@/api/challenge-mentor-guide/challengeMentorGuideSchema';
@@ -48,16 +48,16 @@ export default function NotificationBell() {
     Map<number, ChallengeMentorGuideItem[]>
   >(new Map());
 
-  const handleData = (
-    challengeId: number,
-    guides: ChallengeMentorGuideItem[],
-  ) => {
-    setAllGuides((prev) => {
-      const next = new Map(prev);
-      next.set(challengeId, guides);
-      return next;
-    });
-  };
+  const handleData = useCallback(
+    (challengeId: number, guides: ChallengeMentorGuideItem[]) => {
+      setAllGuides((prev) => {
+        const next = new Map(prev);
+        next.set(challengeId, guides);
+        return next;
+      });
+    },
+    [],
+  );
 
   // 전체 공지 평탄화 + 최신순 정렬
   const flatGuides = Array.from(allGuides.values())
