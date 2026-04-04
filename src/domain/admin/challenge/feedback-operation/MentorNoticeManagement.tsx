@@ -37,6 +37,29 @@ import { FaEdit } from 'react-icons/fa';
 import { FaTrashCan } from 'react-icons/fa6';
 import EditorApp, { emptyEditorState } from '@/domain/admin/lexical/EditorApp';
 
+/** 노출 토글 — 로컬 state로 즉시 반영 */
+function VisibleToggle({
+  guideId,
+  initialValue,
+  onToggle,
+}: {
+  guideId: number;
+  initialValue: boolean;
+  onToggle: (guideId: number, isVisible: boolean) => void;
+}) {
+  const [checked, setChecked] = useState(initialValue);
+  return (
+    <Switch
+      size="small"
+      checked={checked}
+      onChange={(_, v) => {
+        setChecked(v);
+        onToggle(guideId, v);
+      }}
+    />
+  );
+}
+
 /** 문자열이 Lexical JSON인지 확인. 아니면 Lexical JSON으로 감싸서 반환 */
 function toLexicalJson(text: string | undefined): string | undefined {
   if (!text) return undefined;
@@ -260,12 +283,10 @@ function buildColumns(
       headerName: '노출',
       width: 80,
       renderCell: ({ row }) => (
-        <Switch
-          size="small"
-          checked={row.isVisible ?? false}
-          onChange={(_, checked) =>
-            onToggleVisible(row.challengeMentorGuideId, checked)
-          }
+        <VisibleToggle
+          guideId={row.challengeMentorGuideId}
+          initialValue={row.isVisible ?? false}
+          onToggle={onToggleVisible}
         />
       ),
     },
