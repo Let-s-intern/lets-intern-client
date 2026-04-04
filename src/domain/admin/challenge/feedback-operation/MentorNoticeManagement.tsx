@@ -13,6 +13,7 @@ import type {
   ChallengeMentorGuideItem,
   ChallengeScopeType,
   MentorScopeType,
+  DateType,
 } from '@/api/challenge-mentor-guide/challengeMentorGuideSchema';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
@@ -22,9 +23,12 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Checkbox,
+  FormControlLabel,
   IconButton,
   MenuItem,
   Select,
+  Switch,
   type SelectChangeEvent,
 } from '@mui/material';
 import { FaEdit } from 'react-icons/fa';
@@ -111,6 +115,10 @@ interface NoticeForm {
   mentorScopeType: MentorScopeType;
   challengeId: string;
   challengeMentorId: string;
+  dateType: DateType;
+  startDate: string;
+  endDate: string;
+  isFixed: boolean;
 }
 
 type ModalState =
@@ -127,6 +135,10 @@ const INITIAL_FORM: NoticeForm = {
   mentorScopeType: 'ALL_MENTOR',
   challengeId: '',
   challengeMentorId: '',
+  dateType: 'INFINITE',
+  startDate: '',
+  endDate: '',
+  isFixed: false,
 };
 
 const DATA_GRID_LOCALE_TEXT = {
@@ -148,6 +160,7 @@ const MENTOR_SCOPE_LABELS: Record<string, string> = {
 function buildColumns(
   onEdit: (guide: ChallengeMentorGuideItem) => void,
   onDelete: (guideId: number) => void,
+  onToggleVisible: (guideId: number, isVisible: boolean) => void,
   challengeMap: Map<number, string>,
   mentorMap: Map<number, string>,
 ): GridColDef<ChallengeMentorGuideItem>[] {
@@ -218,6 +231,41 @@ function buildColumns(
         ) : (
           <span className="text-neutral-40">-</span>
         ),
+    },
+    {
+      field: 'dateType',
+      headerName: '노출 기간',
+      width: 140,
+      valueGetter: (_, row) => {
+        if (row.dateType === 'CHALLENGE') return '챌린지 기간';
+        if (row.dateType === 'CUSTOM') {
+          const s = row.startDate ? new Date(row.startDate).toLocaleDateString() : '?';
+          const e = row.endDate ? new Date(row.endDate).toLocaleDateString() : '?';
+          return `${s} ~ ${e}`;
+        }
+        return '무기한';
+      },
+    },
+    {
+      field: 'isFixed',
+      headerName: '고정',
+      width: 60,
+      renderCell: ({ row }) =>
+        row.isFixed ? <span title="고정 공지">📌</span> : <span className="text-neutral-40">-</span>,
+    },
+    {
+      field: 'isVisible',
+      headerName: '노출',
+      width: 80,
+      renderCell: ({ row }) => (
+        <Switch
+          size="small"
+          checked={row.isVisible ?? false}
+          onChange={(_, checked) =>
+            onToggleVisible(row.challengeMentorGuideId, checked)
+          }
+        />
+      ),
     },
     {
       field: 'createDate',
@@ -317,6 +365,10 @@ export default function MentorNoticeManagement() {
       challengeMentorId: guide.challengeMentorId
         ? String(guide.challengeMentorId)
         : '',
+      dateType: (guide.dateType as DateType) ?? 'INFINITE',
+      startDate: guide.startDate ?? '',
+      endDate: guide.endDate ?? '',
+      isFixed: guide.isFixed ?? false,
     });
     if (guide.challengeId) {
       setFormChallengeId(String(guide.challengeId));
@@ -350,6 +402,10 @@ export default function MentorNoticeManagement() {
         form.mentorScopeType === 'SPECIFIC_MENTOR' && form.challengeMentorId
           ? Number(form.challengeMentorId)
           : undefined,
+      dateType: form.dateType,
+      startDate: form.dateType === 'CUSTOM' && form.startDate ? form.startDate : undefined,
+      endDate: form.dateType === 'CUSTOM' && form.endDate ? form.endDate : undefined,
+      isFixed: form.isFixed,
     };
 
     if (modalState.mode === 'create') {
@@ -367,6 +423,13 @@ export default function MentorNoticeManagement() {
   const handleDelete = async (guideId: number) => {
     if (!window.confirm('공지를 삭제하시겠습니까?')) return;
     await deleteMutation.mutateAsync(guideId);
+  };
+
+  const handleToggleVisible = async (guideId: number, isVisible: boolean) => {
+    await patchMutation.mutateAsync({
+      challengeMentorGuideId: guideId,
+      isVisible,
+    });
   };
 
   /* 파생 값 */
@@ -391,7 +454,7 @@ export default function MentorNoticeManagement() {
   }, [mentorData]);
 
   const columns = useMemo(
-    () => buildColumns(openEditModal, handleDelete, challengeMap, mentorMap),
+    () => buildColumns(openEditModal, handleDelete, handleToggleVisible, challengeMap, mentorMap),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [challengeMap, mentorMap],
   );
@@ -592,6 +655,71 @@ export default function MentorNoticeManagement() {
                 <MenuItem value="MARKDOWN">마크다운 (텍스트)</MenuItem>
               </Select>
             </div>
+
+            {/* 노출 기간 */}
+            <div>
+              <label className="mb-1 block text-sm font-medium">
+                노출 기간
+              </label>
+              <Select
+                size="small"
+                fullWidth
+                value={form.dateType}
+                onChange={(e: SelectChangeEvent) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    dateType: e.target.value as DateType,
+                    startDate: '',
+                    endDate: '',
+                  }))
+                }
+              >
+                <MenuItem value="INFINITE">무기한</MenuItem>
+                <MenuItem value="CHALLENGE">챌린지 기간</MenuItem>
+                <MenuItem value="CUSTOM">기간 지정</MenuItem>
+              </Select>
+            </div>
+
+            {/* 기간 지정 (CUSTOM) */}
+            {form.dateType === 'CUSTOM' && (
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <label className="mb-1 block text-sm font-medium">시작일</label>
+                  <input
+                    type="datetime-local"
+                    className="w-full rounded border border-neutral-80 px-3 py-2 text-sm"
+                    value={form.startDate}
+                    onChange={(e) =>
+                      setForm((prev) => ({ ...prev, startDate: e.target.value }))
+                    }
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="mb-1 block text-sm font-medium">종료일</label>
+                  <input
+                    type="datetime-local"
+                    className="w-full rounded border border-neutral-80 px-3 py-2 text-sm"
+                    value={form.endDate}
+                    onChange={(e) =>
+                      setForm((prev) => ({ ...prev, endDate: e.target.value }))
+                    }
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* 중요 고정 */}
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={form.isFixed}
+                  onChange={(_, checked) =>
+                    setForm((prev) => ({ ...prev, isFixed: checked }))
+                  }
+                />
+              }
+              label="중요 공지로 고정"
+            />
 
             {/* URL 입력 */}
             {form.contentType === 'URL' && (

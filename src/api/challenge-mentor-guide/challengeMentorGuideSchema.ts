@@ -8,6 +8,9 @@ export type ChallengeScopeType = z.infer<typeof ChallengeScopeTypeEnum>;
 export const MentorScopeTypeEnum = z.enum(['ALL_MENTOR', 'SPECIFIC_MENTOR']);
 export type MentorScopeType = z.infer<typeof MentorScopeTypeEnum>;
 
+/** 노출 기간 유형 */
+export type DateType = 'INFINITE' | 'CHALLENGE' | 'CUSTOM';
+
 /** 챌린지 멘토 가이드 항목 */
 export const challengeMentorGuideItemSchema = z.object({
   challengeMentorGuideId: z.number(),
@@ -18,11 +21,16 @@ export const challengeMentorGuideItemSchema = z.object({
   mentorScopeType: z.string().nullable().optional().default('ALL_MENTOR'),
   challengeId: z.number().nullable().optional(),
   challengeMentorId: z.number().nullable().optional(),
+  dateType: z.string().nullable().optional(),
+  startDate: z.string().nullable().optional(),
+  endDate: z.string().nullable().optional(),
+  isFixed: z.boolean().nullable().optional().default(false),
+  isVisible: z.boolean().nullable().optional().default(false),
   createDate: z.string().nullable(),
   lastModifiedDate: z.string().nullable(),
 });
 
-/** GET /api/v1/challenge-mentor-guide/{challengeId} 가이드 목록 응답 */
+/** GET 가이드 목록 응답 */
 export const challengeMentorGuideListSchema = z.object({
   challengeMentorGuideList: z.array(challengeMentorGuideItemSchema),
 });
@@ -43,6 +51,10 @@ export interface CreateChallengeMentorGuideReq {
   mentorScopeType?: MentorScopeType;
   challengeId?: number | null;
   challengeMentorId?: number | null;
+  dateType: DateType;
+  startDate?: string | null;
+  endDate?: string | null;
+  isFixed?: boolean;
 }
 
 /** PATCH 요청 바디 */
@@ -54,4 +66,9 @@ export interface UpdateChallengeMentorGuideReq {
   mentorScopeType?: MentorScopeType;
   challengeId?: number | null;
   challengeMentorId?: number | null;
+  dateType?: DateType;
+  startDate?: string | null;
+  endDate?: string | null;
+  isFixed?: boolean;
+  isVisible?: boolean;
 }

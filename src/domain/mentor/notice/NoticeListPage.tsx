@@ -28,9 +28,11 @@ function NoticeLayout({ children }: { children: React.ReactNode }) {
 
 function GuideRow({
   guide,
+  isFixed,
   challengeName,
 }: {
   guide: ChallengeMentorGuideItem;
+  isFixed: boolean;
   challengeName?: string;
 }) {
   const hasContents = !!guide.contents;
@@ -38,6 +40,9 @@ function GuideRow({
 
   const badges = (
     <div className="flex items-center gap-2">
+      {isFixed && (
+        <span className="shrink-0 text-sm" title="고정 공지">📌</span>
+      )}
       {guide.createDate && (
         <span className="w-fit shrink-0 rounded border border-neutral-80 px-2.5 py-0.5 text-xxsmall12 text-neutral-40 md:px-3 md:py-1">
           {getRelativeDate(guide.createDate)}
@@ -57,8 +62,7 @@ function GuideRow({
     </span>
   );
 
-  const rowClass =
-    'flex flex-col gap-2 border-b border-neutral-80 px-4 py-3 transition-colors last:border-b-0 hover:bg-neutral-95 md:flex-row md:items-center md:gap-4 md:px-6 md:py-4';
+  const rowClass = `flex flex-col gap-2 border-b border-neutral-80 px-4 py-3 transition-colors last:border-b-0 hover:bg-neutral-95 md:flex-row md:items-center md:gap-4 md:px-6 md:py-4 ${isFixed ? 'bg-amber-50/50' : ''}`;
 
   if (hasContents) {
     return (
@@ -109,7 +113,26 @@ export default function NoticeListPage() {
     );
   }
 
-  if (guides.length === 0) {
+  // 노출 가능한 공지만 필터 + 고정 공지 상단 정렬
+  const visibleGuides = useMemo(() => {
+    const now = new Date();
+    return guides
+      .filter((g) => {
+        if (g.isVisible === false) return false;
+        if (g.dateType === 'CUSTOM') {
+          if (g.startDate && new Date(g.startDate) > now) return false;
+          if (g.endDate && new Date(g.endDate) < now) return false;
+        }
+        return true;
+      })
+      .sort((a, b) => {
+        if (a.isFixed && !b.isFixed) return -1;
+        if (!a.isFixed && b.isFixed) return 1;
+        return 0;
+      });
+  }, [guides]);
+
+  if (visibleGuides.length === 0) {
     return (
       <NoticeLayout>
         <div className="py-20 text-center text-xsmall14 text-neutral-40">
@@ -126,10 +149,11 @@ export default function NoticeListPage() {
           프로그램 공지
         </h2>
         <div className="flex flex-col rounded-[16px] border border-neutral-80">
-          {guides.map((guide) => (
+          {visibleGuides.map((guide) => (
             <GuideRow
               key={guide.challengeMentorGuideId}
               guide={guide}
+              isFixed={guide.isFixed ?? false}
               challengeName={
                 guide.challengeId
                   ? challengeNameMap.get(guide.challengeId)
