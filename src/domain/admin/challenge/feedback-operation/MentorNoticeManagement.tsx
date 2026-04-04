@@ -439,6 +439,14 @@ export default function MentorNoticeManagement() {
         onClose={closeModal}
         maxWidth="md"
         fullWidth
+        sx={{
+          '& .MuiDialog-paper': { overflow: 'visible' },
+          '& .MuiDialogContent-root': { overflow: 'visible' },
+          '& .editor-shell': { position: 'relative', zIndex: 1400 },
+          '& .dropdown': { zIndex: 1500 },
+          '& .color-picker-wrapper': { zIndex: 1500 },
+          '& .toolbar-popup': { zIndex: 1500 },
+        }}
       >
         <DialogTitle>{isCreateMode ? '공지 작성' : '공지 수정'}</DialogTitle>
         <DialogContent>
