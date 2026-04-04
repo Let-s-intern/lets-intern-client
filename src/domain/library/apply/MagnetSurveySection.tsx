@@ -187,7 +187,7 @@ function QuestionLabel({
         {isRequired && <span className="pl-1 text-primary">*</span>}
       </span>
       {description && (
-        <p className="break-keep text-xsmall14 text-neutral-40 md:text-xsmall16">
+        <p className="break-words text-xsmall14 text-neutral-40 md:text-xsmall16">
           {description}
         </p>
       )}
