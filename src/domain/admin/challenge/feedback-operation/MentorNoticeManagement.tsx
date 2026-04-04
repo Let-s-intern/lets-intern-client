@@ -182,12 +182,14 @@ const MENTOR_SCOPE_LABELS: Record<string, string> = {
 
 /* ── 컬럼 정의 ── */
 
+const EMPTY_MAP = new Map<number, string>();
+
 function buildColumns(
   onEdit: (guide: ChallengeMentorGuideItem) => void,
   onDelete: (guideId: number) => void,
   onToggleVisible: (guideId: number, isVisible: boolean) => void,
-  challengeMap: Map<number, string>,
-  mentorMap: Map<number, string>,
+  challengeMap: Map<number, string> = EMPTY_MAP,
+  mentorMap: Map<number, string> = EMPTY_MAP,
 ): GridColDef<ChallengeMentorGuideItem>[] {
   return [
     {
