@@ -220,7 +220,7 @@ function buildColumns(
         if (scope === 'ALL') return '전체 챌린지';
         if (scope === 'IN_PROGRESS') return '진행중 챌린지';
         if (row.challengeId) {
-          return challengeMap.get(row.challengeId) ?? `챌린지 #${row.challengeId}`;
+          return challengeMap?.get(row.challengeId) ?? `챌린지 #${row.challengeId}`;
         }
         return '특정 챌린지';
       },
@@ -233,7 +233,7 @@ function buildColumns(
         const scope = row.mentorScopeType ?? 'ALL_MENTOR';
         if (scope === 'ALL_MENTOR') return '모든 멘토';
         if (row.challengeMentorId) {
-          return mentorMap.get(row.challengeMentorId) ?? `멘토 #${row.challengeMentorId}`;
+          return mentorMap?.get(row.challengeMentorId) ?? `멘토 #${row.challengeMentorId}`;
         }
         return '특정 멘토';
       },

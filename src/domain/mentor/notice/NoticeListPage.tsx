@@ -103,17 +103,7 @@ export default function NoticeListPage() {
     return map;
   }, [challengeData]);
 
-  if (isLoading) {
-    return (
-      <NoticeLayout>
-        <div className="py-20 text-center text-xsmall14 text-neutral-40">
-          불러오는 중...
-        </div>
-      </NoticeLayout>
-    );
-  }
-
-  // 노출 가능한 공지만 필터 + 고정 공지 상단 정렬
+  // 노출 가능한 공지만 필터 + 고정 공지 상단 정렬 (훅은 조건부 return 전에)
   const visibleGuides = useMemo(() => {
     const now = new Date();
     return guides
@@ -131,6 +121,16 @@ export default function NoticeListPage() {
         return 0;
       });
   }, [guides]);
+
+  if (isLoading) {
+    return (
+      <NoticeLayout>
+        <div className="py-20 text-center text-xsmall14 text-neutral-40">
+          불러오는 중...
+        </div>
+      </NoticeLayout>
+    );
+  }
 
   if (visibleGuides.length === 0) {
     return (
