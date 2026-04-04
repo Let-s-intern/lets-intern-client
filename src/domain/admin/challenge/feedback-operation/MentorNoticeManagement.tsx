@@ -148,6 +148,8 @@ const MENTOR_SCOPE_LABELS: Record<string, string> = {
 function buildColumns(
   onEdit: (guide: ChallengeMentorGuideItem) => void,
   onDelete: (guideId: number) => void,
+  challengeMap: Map<number, string>,
+  mentorMap: Map<number, string>,
 ): GridColDef<ChallengeMentorGuideItem>[] {
   return [
     {
@@ -173,17 +175,30 @@ function buildColumns(
     },
     {
       field: 'challengeScopeType',
-      headerName: '범위',
-      width: 110,
-      valueGetter: (_, row) =>
-        SCOPE_LABELS[row.challengeScopeType ?? 'ALL'] ?? '-',
+      headerName: '챌린지',
+      width: 160,
+      valueGetter: (_, row) => {
+        const scope = row.challengeScopeType ?? 'ALL';
+        if (scope === 'ALL') return '전체 챌린지';
+        if (scope === 'IN_PROGRESS') return '진행중 챌린지';
+        if (row.challengeId) {
+          return challengeMap.get(row.challengeId) ?? `챌린지 #${row.challengeId}`;
+        }
+        return '특정 챌린지';
+      },
     },
     {
       field: 'mentorScopeType',
-      headerName: '대상',
-      width: 110,
-      valueGetter: (_, row) =>
-        MENTOR_SCOPE_LABELS[row.mentorScopeType ?? 'ALL_MENTOR'] ?? '-',
+      headerName: '멘토',
+      width: 140,
+      valueGetter: (_, row) => {
+        const scope = row.mentorScopeType ?? 'ALL_MENTOR';
+        if (scope === 'ALL_MENTOR') return '모든 멘토';
+        if (row.challengeMentorId) {
+          return mentorMap.get(row.challengeMentorId) ?? `멘토 #${row.challengeMentorId}`;
+        }
+        return '특정 멘토';
+      },
     },
     {
       field: 'link',
@@ -358,10 +373,27 @@ export default function MentorNoticeManagement() {
   const isCreateMode = modalState.open && modalState.mode === 'create';
   const isFormEmpty = !form.title;
 
+  // 챌린지 ID → 이름, 멘토 ID → 이름 매핑
+  const challengeMap = useMemo(() => {
+    const map = new Map<number, string>();
+    for (const p of challengeData?.programList ?? []) {
+      map.set(p.id, p.title ?? '');
+    }
+    return map;
+  }, [challengeData]);
+
+  const mentorMap = useMemo(() => {
+    const map = new Map<number, string>();
+    for (const m of mentorData?.mentorList ?? []) {
+      map.set(m.challengeMentorId, m.name);
+    }
+    return map;
+  }, [mentorData]);
+
   const columns = useMemo(
-    () => buildColumns(openEditModal, handleDelete),
+    () => buildColumns(openEditModal, handleDelete, challengeMap, mentorMap),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [challengeMap, mentorMap],
   );
 
   return (
