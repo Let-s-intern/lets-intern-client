@@ -1,7 +1,10 @@
 'use client';
 
-import { format } from 'date-fns';
 import { getColor } from './colors';
+import {
+  WRITTEN_FEEDBACK_CONFIG,
+  computeSegmentPercents,
+} from './scheduleConfig';
 
 export interface PeriodBarData {
   challengeId: number;
@@ -31,16 +34,23 @@ interface ChallengePeriodBarProps {
 const ChallengePeriodBar = ({
   bar,
   colSpan,
-  missionColSpan,
+  missionColSpan: _missionColSpan,
   style,
   onBarClick,
 }: ChallengePeriodBarProps) => {
   const color = getColor(bar.colorIndex ?? 0);
-  // 미션+검수 = 앞(연하게), 피드백 = 뒤(진하게) — 기존 레이아웃 유지
-  const feedbackPercent = colSpan > 0 ? ((colSpan - missionColSpan) / colSpan) * 100 : 0;
-  const missionPercent = colSpan > 0 ? (missionColSpan / colSpan) * 100 : 100;
-  // 미션 구간 내에서 검수 1일 비율
-  const reviewDayPercent = missionColSpan > 0 ? (1 / missionColSpan) * 100 : 0;
+  const config = WRITTEN_FEEDBACK_CONFIG;
+  const segmentPercents = computeSegmentPercents(
+    config,
+    colSpan,
+    bar.startDate,
+    bar.endDate,
+  );
+
+  // 액션 구간 앞의 비액션 구간 합산 (빈 공간 비율)
+  const preActionPercent = segmentPercents
+    .filter(({ segment }) => !segment.isActionSegment)
+    .reduce((sum, { percent }) => sum + percent, 0);
 
   return (
     <button
@@ -49,11 +59,9 @@ const ChallengePeriodBar = ({
       style={style}
       className="relative z-10 flex w-full flex-col overflow-hidden text-left transition-opacity hover:opacity-80"
     >
-      {/* Top row: 피드백 구간부터 회차+카운트+라인 인라인 */}
+      {/* 1행: 액션 구간 위치에 회차+카운트+라인 */}
       <div className="flex h-6 min-w-0 items-center overflow-hidden">
-        {/* 미션+검수 구간: 빈 공간 */}
-        <div style={{ width: `${missionPercent}%` }} />
-        {/* 피드백 구간: 회차+카운트+라인 인라인 */}
+        <div style={{ width: `${preActionPercent}%` }} />
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <div className="flex shrink-0 items-center">
             <svg
@@ -104,44 +112,45 @@ const ChallengePeriodBar = ({
         </div>
       </div>
 
-      {/* Bottom row */}
+      {/* 2행: 구간별 카드 */}
       <div className="relative z-10 flex min-w-0 overflow-hidden">
-        {/* 멘티 미션제출기간 (연하게) */}
-        <div
-          className={`flex min-w-0 items-center justify-center px-2 py-2 ${color.bodyLight}`}
-          style={{ width: `${missionPercent * (1 - reviewDayPercent / 100)}%` }}
-        >
-          <span className={`truncate whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px] ${color.text}`}>
-            멘티 미션제출기간
-          </span>
-        </div>
-        {/* 구분선 + 제출확인 기간 (연하게) */}
-        <div
-          className={`flex items-center justify-center border-l border-r border-neutral-80 px-0.5 py-2 ${color.bodyLight}`}
-          style={{ width: `${missionPercent * (reviewDayPercent / 100)}%` }}
-        >
-          <span className={`whitespace-nowrap text-xxsmall12 font-medium ${color.text}`}>
-            제출확인 기간
-          </span>
-        </div>
-        {/* 피드백 제출기간 (진하게) — 앞뒤 구분선 */}
-        <div
-          className={`flex min-w-0 items-center justify-between border-l border-r border-neutral-80 p-2 ${color.body}`}
-          style={{ width: `${feedbackPercent}%` }}
-        >
-          <span
-            className={`min-w-0 truncate rounded-[3px] px-2 py-1 text-xxsmall12 font-medium tracking-[-0.3px] text-white ${color.badge}`}
-          >
-            {bar.challengeTitle}
-          </span>
-          <div className="flex shrink-0 items-center gap-1 whitespace-nowrap px-1 text-xxsmall12 font-medium tracking-[-0.3px]">
-            <span className="text-neutral-40">미제출</span>
-            <span className="text-neutral-40">{bar.notSubmittedCount}</span>
-            <span className="text-neutral-10">·</span>
-            <span className="text-neutral-10">제출</span>
-            <span className="text-neutral-10">{bar.submittedCount}</span>
-          </div>
-        </div>
+        {segmentPercents.map(({ segment, percent }) => {
+          if (segment.isActionSegment) {
+            // 멘토 액션 구간 (진하게) — 챌린지 태그 + 카운트
+            return (
+              <div
+                key={segment.id}
+                className={`flex min-w-0 items-center justify-between ${segment.showBorder ? 'border-l border-r border-neutral-80' : ''} p-2 ${color.body}`}
+                style={{ width: `${percent}%` }}
+              >
+                <span
+                  className={`min-w-0 truncate rounded-[3px] px-2 py-1 text-xxsmall12 font-medium tracking-[-0.3px] text-white ${color.badge}`}
+                >
+                  {bar.challengeTitle}
+                </span>
+                <div className="flex shrink-0 items-center gap-1 whitespace-nowrap px-1 text-xxsmall12 font-medium tracking-[-0.3px]">
+                  <span className="text-neutral-40">미제출</span>
+                  <span className="text-neutral-40">{bar.notSubmittedCount}</span>
+                  <span className="text-neutral-10">·</span>
+                  <span className="text-neutral-10">제출</span>
+                  <span className="text-neutral-10">{bar.submittedCount}</span>
+                </div>
+              </div>
+            );
+          }
+          // 보조 구간 (연하게) — 라벨만
+          return (
+            <div
+              key={segment.id}
+              className={`flex min-w-0 items-center justify-center ${segment.showBorder ? 'border-l border-r border-neutral-80' : ''} px-1 py-2 ${color.bodyLight}`}
+              style={{ width: `${percent}%` }}
+            >
+              <span className={`truncate whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px] ${color.text}`}>
+                {segment.label}
+              </span>
+            </div>
+          );
+        })}
       </div>
     </button>
   );
