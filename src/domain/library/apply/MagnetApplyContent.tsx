@@ -285,7 +285,7 @@ const MagnetApplyContent = ({
       )}
 
       {/* 출시 알림 프로그램 선택 */}
-      {variant === 'launch-alert' && useLaunchAlert && (
+      {useLaunchAlert && (
         <section>
           <LaunchAlertProgramSection
             selectedMagnetIds={selectedLaunchAlertIds}
