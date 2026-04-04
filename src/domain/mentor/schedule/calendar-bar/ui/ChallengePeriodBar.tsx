@@ -104,7 +104,7 @@ const ChallengePeriodBar = ({
             return (
               <div
                 key={segment.id}
-                className={`flex min-w-0 items-center justify-between ${segment.showBorder ? 'border-l border-r border-neutral-80' : ''} p-2 ${color.body}`}
+                className={`flex min-w-0 items-center justify-between ${segment.showBorder ? 'border-r border-neutral-80' : ''} p-2 ${color.body}`}
                 style={{ width: `${percent}%` }}
               >
                 <span
@@ -126,7 +126,7 @@ const ChallengePeriodBar = ({
           return (
             <div
               key={segment.id}
-              className={`flex min-w-0 items-center justify-center ${segment.showBorder ? 'border-l border-r border-neutral-80' : ''} px-1 py-2 ${color.bodyLight}`}
+              className={`flex min-w-0 items-center justify-center ${segment.showBorder ? 'border-r border-neutral-80' : ''} px-1 py-2 ${color.bodyLight}`}
               style={{ width: `${percent}%` }}
             >
               <span className={`truncate whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px] ${color.text}`}>

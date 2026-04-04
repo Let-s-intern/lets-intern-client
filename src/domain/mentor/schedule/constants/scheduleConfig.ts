@@ -18,7 +18,7 @@ export interface BarSegment {
   lineStyle: 'solid' | 'faded' | 'muted';
   /** 카드 배경 스타일: 'primary' = 진한색, 'light' = 연한색 */
   cardStyle: 'primary' | 'light';
-  /** 카드 양쪽 구분선 표시 여부 */
+  /** 카드 오른쪽 구분선 표시 여부 */
   showBorder: boolean;
   /** 이 구간이 멘토의 주요 액션 구간인지 (회차/카운트/라인 표시 위치) */
   isActionSegment: boolean;
@@ -56,25 +56,29 @@ export function computeDatesFromConfig(
   };
 }
 
-/** 전체 구간의 colSpan 비율 계산 */
+/** 전체 구간의 colSpan 비율 계산 (캘린더 grid 기준) */
 export function computeSegmentPercents(
   config: ScheduleTypeConfig,
-  _totalColSpan: number,
+  totalColSpan: number,
   missionStartDate: string,
   missionEndDate: string,
 ) {
   const start = new Date(missionStartDate).getTime();
   const end = new Date(missionEndDate).getTime();
-  const missionDays = Math.round((end - start) / (1000 * 60 * 60 * 24));
-  const totalDays = missionDays + config.barEndOffset;
+  // endDate 포함이므로 +1
+  const missionDays = Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1;
 
   return config.segments.map((seg) => {
-    const segStart = seg.startOffset === -Infinity ? 0 : missionDays + seg.startOffset;
-    const segEnd = missionDays + seg.endOffset;
-    const segDays = segEnd - segStart;
+    let segDays: number;
+    if (seg.startOffset === -Infinity) {
+      // 미션 startDate ~ endDate
+      segDays = missionDays;
+    } else {
+      segDays = seg.endOffset - seg.startOffset;
+    }
     return {
       segment: seg,
-      percent: totalDays > 0 ? (segDays / totalDays) * 100 : 0,
+      percent: totalColSpan > 0 ? (segDays / totalColSpan) * 100 : 0,
     };
   });
 }
