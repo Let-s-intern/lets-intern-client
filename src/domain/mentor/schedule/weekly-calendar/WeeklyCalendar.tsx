@@ -66,8 +66,15 @@ const WeeklyCalendar = ({
         const startCol =
           differenceInCalendarDays(new Date(bar.startDate), timelineStart) + 1;
         const endCol =
+          differenceInCalendarDays(
+            new Date(bar.feedbackDeadline),
+            timelineStart,
+          ) + 2;
+        const missionEndCol =
           differenceInCalendarDays(new Date(bar.endDate), timelineStart) + 2;
-        return { bar, startCol, endCol, colSpan: endCol - startCol };
+        const colSpan = endCol - startCol;
+        const missionColSpan = missionEndCol - startCol;
+        return { bar, startCol, endCol, colSpan, missionColSpan };
       })
       .filter((l) => l.endCol >= 1 && l.startCol <= totalDays);
   }, [bars, timelineStart, totalDays]);
@@ -126,23 +133,29 @@ const WeeklyCalendar = ({
               className="relative gap-y-1 py-3"
               style={{ display: 'grid', gridTemplateColumns: gridCols }}
             >
-              {barLayouts.map(({ bar, startCol, endCol, colSpan }, idx) => (
-                <div
-                  key={`${bar.challengeId}-${bar.missionId}-${idx}`}
-                  className="px-px"
-                  style={{ gridColumn: `${startCol} / ${endCol}` }}
-                >
-                  {colSpan <= 1 ? (
-                    <CompactFeedbackCard bar={bar} onBarClick={onBarClick} />
-                  ) : (
-                    <ChallengePeriodBar
-                      bar={bar}
-                      colSpan={colSpan}
-                      onBarClick={onBarClick}
-                    />
-                  )}
-                </div>
-              ))}
+              {barLayouts.map(
+                ({ bar, startCol, endCol, colSpan, missionColSpan }, idx) => (
+                  <div
+                    key={`${bar.challengeId}-${bar.missionId}-${idx}`}
+                    className="px-px"
+                    style={{ gridColumn: `${startCol} / ${endCol}` }}
+                  >
+                    {colSpan <= 1 ? (
+                      <CompactFeedbackCard
+                        bar={bar}
+                        onBarClick={onBarClick}
+                      />
+                    ) : (
+                      <ChallengePeriodBar
+                        bar={bar}
+                        colSpan={colSpan}
+                        missionColSpan={missionColSpan}
+                        onBarClick={onBarClick}
+                      />
+                    )}
+                  </div>
+                ),
+              )}
             </div>
           </div>
         </div>

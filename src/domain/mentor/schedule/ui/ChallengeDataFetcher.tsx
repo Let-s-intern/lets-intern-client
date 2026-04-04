@@ -2,6 +2,8 @@
 
 import { useEffect } from 'react';
 
+import { addDays } from 'date-fns';
+
 import type { ChallengeMentorVo } from '@/api/user/user';
 import {
   useMentorMissionFeedbackListQuery,
@@ -41,6 +43,11 @@ const MissionAttendanceFetcher = ({
     const submitted = list.filter((a) => a.status !== 'ABSENT');
     const notSubmitted = list.filter((a) => a.status === 'ABSENT');
 
+    const feedbackDeadline = addDays(
+      new Date(mission.endDate),
+      3,
+    ).toISOString();
+
     const bar: PeriodBarData = {
       challengeId: challenge.challengeId,
       missionId: mission.id,
@@ -48,6 +55,7 @@ const MissionAttendanceFetcher = ({
       th: mission.th,
       startDate: mission.startDate,
       endDate: mission.endDate,
+      feedbackDeadline,
       colorIndex,
       submittedCount: submitted.length,
       notSubmittedCount: notSubmitted.length,

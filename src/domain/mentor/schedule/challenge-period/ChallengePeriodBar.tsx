@@ -1,5 +1,7 @@
 'use client';
 
+import { format } from 'date-fns';
+
 export interface PeriodBarData {
   challengeId: number;
   missionId: number;
@@ -7,6 +9,7 @@ export interface PeriodBarData {
   th: number;
   startDate: string;
   endDate: string;
+  feedbackDeadline: string;
   submittedCount: number;
   notSubmittedCount: number;
   waitingCount: number;
@@ -18,6 +21,7 @@ export interface PeriodBarData {
 interface ChallengePeriodBarProps {
   bar: PeriodBarData;
   colSpan: number;
+  missionColSpan: number;
   style?: React.CSSProperties;
   onBarClick: (challengeId: number, missionId: number) => void;
 }
@@ -52,10 +56,12 @@ const COLORS = [
 const ChallengePeriodBar = ({
   bar,
   colSpan,
+  missionColSpan,
   style,
   onBarClick,
 }: ChallengePeriodBarProps) => {
   const color = COLORS[(bar.colorIndex ?? 0) % COLORS.length];
+  const missionPercent = colSpan > 0 ? (missionColSpan / colSpan) * 100 : 100;
 
   return (
     <button
@@ -107,29 +113,47 @@ const ChallengePeriodBar = ({
           <span className="text-neutral-10">완료</span>
           <span className="text-neutral-10">{bar.completedCount}</span>
         </div>
-        {/* Colored line */}
+        {/* Colored line: solid for mission, faded for feedback period */}
         <div
           className={`flex h-3 min-w-0 flex-1 items-center border-r-2 ${color.border}`}
         >
-          <div className={`h-0.5 w-full ${color.line}`} />
+          <div
+            className={`h-0.5 ${color.line}`}
+            style={{ width: `${missionPercent}%` }}
+          />
+          <div
+            className={`h-0.5 ${color.line} opacity-40`}
+            style={{ width: `${100 - missionPercent}%` }}
+          />
         </div>
       </div>
 
       {/* Bottom row: challenge badge + submission counts */}
-      <div
-        className={`flex min-w-0 items-center justify-between p-2 ${color.body}`}
-      >
-        <span
-          className={`min-w-0 truncate rounded-[3px] px-2 py-1 text-xxsmall12 font-medium tracking-[-0.3px] text-white ${color.badge}`}
+      <div className="flex min-w-0 overflow-hidden">
+        <div
+          className={`flex min-w-0 items-center justify-between p-2 ${color.body}`}
+          style={{ width: `${missionPercent}%` }}
         >
-          {bar.challengeTitle}
-        </span>
-        <div className="flex shrink-0 items-center gap-1 whitespace-nowrap px-1 text-xxsmall12 font-medium tracking-[-0.3px]">
-          <span className="text-neutral-40">미제출</span>
-          <span className="text-neutral-40">{bar.notSubmittedCount}</span>
-          <span className="text-neutral-10">·</span>
-          <span className="text-neutral-10">제출</span>
-          <span className="text-neutral-10">{bar.submittedCount}</span>
+          <span
+            className={`min-w-0 truncate rounded-[3px] px-2 py-1 text-xxsmall12 font-medium tracking-[-0.3px] text-white ${color.badge}`}
+          >
+            {bar.challengeTitle}
+          </span>
+          <div className="flex shrink-0 items-center gap-1 whitespace-nowrap px-1 text-xxsmall12 font-medium tracking-[-0.3px]">
+            <span className="text-neutral-40">미제출</span>
+            <span className="text-neutral-40">{bar.notSubmittedCount}</span>
+            <span className="text-neutral-10">·</span>
+            <span className="text-neutral-10">제출</span>
+            <span className="text-neutral-10">{bar.submittedCount}</span>
+          </div>
+        </div>
+        <div
+          className={`flex items-center justify-end ${color.body} opacity-40 px-1`}
+          style={{ width: `${100 - missionPercent}%` }}
+        >
+          <span className="whitespace-nowrap text-[10px] font-medium tracking-[-0.3px] text-neutral-30">
+            피드백 마감 {format(new Date(bar.feedbackDeadline), 'M.d')}
+          </span>
         </div>
       </div>
     </button>
