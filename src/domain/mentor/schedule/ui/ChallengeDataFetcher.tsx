@@ -7,11 +7,11 @@ import {
   useMentorMissionFeedbackListQuery,
   useMentorMenteeAttendanceQuery,
 } from '@/api/challenge/challenge';
-import type { PeriodBarData } from '../challenge-period/ChallengePeriodBar';
+import type { PeriodBarData } from '../types';
 import {
   WRITTEN_FEEDBACK_CONFIG,
   computeDatesFromConfig,
-} from '../challenge-period/scheduleConfig';
+} from '../constants/scheduleConfig';
 
 // ---------------------------------------------------------------------------
 // Per-mission attendance fetcher (each mission needs its own API call)

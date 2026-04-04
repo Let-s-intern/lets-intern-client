@@ -3,10 +3,9 @@
 import { differenceInCalendarDays, getMonth, isSameDay } from 'date-fns';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import ChallengePeriodBar, {
-  type PeriodBarData,
-} from '../challenge-period/ChallengePeriodBar';
-import { CompactFeedbackCard } from '../challenge-period/FeedbackCard';
+import ChallengePeriodBar from '../calendar-bar/ChallengePeriodBar';
+import type { PeriodBarData } from '../types';
+import { CompactFeedbackCard } from '../calendar-bar/FeedbackCard';
 import TodayButton from './ui/TodayButton';
 import DayHeaderCell from './ui/DayHeaderCell';
 import ColumnDividers from './ui/ColumnDividers';

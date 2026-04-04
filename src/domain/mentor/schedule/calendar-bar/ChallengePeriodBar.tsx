@@ -1,27 +1,11 @@
 'use client';
 
-import { getColor } from './colors';
+import { getColor } from '../constants/colors';
 import {
   WRITTEN_FEEDBACK_CONFIG,
   computeSegmentPercents,
-} from './scheduleConfig';
-
-export interface PeriodBarData {
-  challengeId: number;
-  missionId: number;
-  challengeTitle: string;
-  th: number;
-  startDate: string;
-  endDate: string;
-  feedbackStartDate: string;
-  feedbackDeadline: string;
-  submittedCount: number;
-  notSubmittedCount: number;
-  waitingCount: number;
-  inProgressCount: number;
-  completedCount: number;
-  colorIndex?: number;
-}
+} from '../constants/scheduleConfig';
+import type { PeriodBarData } from '../types';
 
 interface ChallengePeriodBarProps {
   bar: PeriodBarData;

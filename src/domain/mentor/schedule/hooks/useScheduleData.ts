@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { useMentorChallengeListQuery } from '@/api/user/user';
-import type { PeriodBarData } from '../challenge-period/ChallengePeriodBar';
+import type { PeriodBarData } from '../types';
 
 /**
  * Manages challenge data, bar aggregation, and challenge filtering for the schedule page.
