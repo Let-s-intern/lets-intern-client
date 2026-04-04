@@ -211,8 +211,8 @@ export default function MentorNoticeManagement() {
       link: guide.link ?? '',
       contents: guide.contents ?? '',
       contentType: hasContents ? 'TEXT' : 'URL',
-      challengeScopeType: guide.challengeScopeType ?? 'ALL',
-      mentorScopeType: guide.mentorScopeType ?? 'ALL_MENTOR',
+      challengeScopeType: (guide.challengeScopeType ?? 'ALL') as ChallengeScopeType,
+      mentorScopeType: (guide.mentorScopeType ?? 'ALL_MENTOR') as MentorScopeType,
       challengeId: guide.challengeId ? String(guide.challengeId) : '',
       challengeMentorId: guide.challengeMentorId
         ? String(guide.challengeMentorId)
