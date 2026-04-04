@@ -1,11 +1,19 @@
 'use client';
 
 import Link from 'next/link';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { useChallengeMentorGuideListQuery } from '@/api/challenge-mentor-guide/challengeMentorGuide';
 import { useMentorChallengeListQuery } from '@/api/user/user';
 import type { ChallengeMentorGuideItem } from '@/api/challenge-mentor-guide/challengeMentorGuideSchema';
 
-function GuideDetail({ challengeId, noticeId }: { challengeId: number; noticeId: string }) {
+function GuideDetail({
+  challengeId,
+  noticeId,
+}: {
+  challengeId: number;
+  noticeId: string;
+}) {
   const { data } = useChallengeMentorGuideListQuery(challengeId);
 
   const guide = data?.challengeMentorGuideList.find(
@@ -46,14 +54,38 @@ function GuideContent({ guide }: { guide: ChallengeMentorGuideItem }) {
         <h2 className="text-medium24 font-bold text-neutral-0">
           {guide.title}
         </h2>
+
+        {/* 마크다운 본문 */}
+        {guide.contents && (
+          <div className="prose prose-neutral max-w-none text-xsmall16 leading-relaxed">
+            <Markdown remarkPlugins={[remarkGfm]}>{guide.contents}</Markdown>
+          </div>
+        )}
+
+        {/* 링크 */}
         {guide.link && (
           <a
             href={guide.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xsmall16 text-primary hover:underline"
+            className="inline-flex items-center gap-1 text-xsmall16 text-primary hover:underline"
           >
             링크 바로가기
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              className="shrink-0"
+            >
+              <path
+                d="M6 4L10 8L6 12"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </a>
         )}
       </div>
