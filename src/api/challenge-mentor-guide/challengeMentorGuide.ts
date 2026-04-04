@@ -17,10 +17,15 @@ export const useChallengeMentorGuideListQuery = (
   return useQuery({
     queryKey: [ChallengeMentorGuideQueryKey, challengeId],
     queryFn: async () => {
-      const res = await axios.get(
-        `/challenge-mentor-guide/${challengeId}`,
-      );
-      return challengeMentorGuideListSchema.parse(res.data.data);
+      try {
+        const res = await axios.get(
+          `/challenge-mentor-guide/${challengeId}`,
+        );
+        return challengeMentorGuideListSchema.parse(res.data.data);
+      } catch {
+        // 서버 500 등 에러 시 빈 목록 반환
+        return { challengeMentorGuideList: [] };
+      }
     },
     enabled: !!challengeId,
     retry: false,
