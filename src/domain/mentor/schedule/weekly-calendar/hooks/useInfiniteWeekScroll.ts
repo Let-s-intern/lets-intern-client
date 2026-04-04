@@ -35,10 +35,10 @@ export function useTimelineScroll({ allBars }: UseTimelineScrollOptions) {
     }
 
     let minDate = new Date(allBars[0].startDate);
-    let maxDate = new Date(allBars[0].endDate);
+    let maxDate = new Date(allBars[0].feedbackDeadline);
     for (const bar of allBars) {
       const s = new Date(bar.startDate);
-      const e = new Date(bar.endDate);
+      const e = new Date(bar.feedbackDeadline);
       if (s < minDate) minDate = s;
       if (e > maxDate) maxDate = e;
     }
