@@ -75,7 +75,7 @@ export default function NoticeDetailPage({ noticeId }: { noticeId: string }) {
             try {
               const parsed = JSON.parse(guide.contents);
               return (
-                <div className="w-full break-all text-xsmall16">
+                <div className="flex w-full flex-col gap-1 break-words text-xsmall16">
                   <LexicalContent node={parsed.root} />
                 </div>
               );
