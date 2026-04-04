@@ -51,7 +51,7 @@ export interface CreateChallengeMentorGuideReq {
   mentorScopeType?: MentorScopeType;
   challengeId?: number | null;
   challengeMentorId?: number | null;
-  dateType: DateType;
+  dateType?: DateType; // TODO: 서버 배포 후 필수로 변경
   startDate?: string | null;
   endDate?: string | null;
   isFixed?: boolean;
