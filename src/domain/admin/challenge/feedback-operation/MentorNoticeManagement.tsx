@@ -65,6 +65,23 @@ function toLexicalJson(text: string | undefined): string | undefined {
   return text;
 }
 
+/* ── 용량 표시 ── */
+
+const DB_LIMIT = 65535; // TEXT 컬럼 기준 (VARCHAR(255)면 255)
+
+function ContentSizeIndicator({ content }: { content: string }) {
+  const bytes = new TextEncoder().encode(content).length;
+  const kb = (bytes / 1024).toFixed(1);
+  const isOver = bytes > DB_LIMIT;
+
+  return (
+    <div className={`mt-1 text-right text-xs ${isOver ? 'text-red-500 font-medium' : 'text-neutral-40'}`}>
+      {kb} KB ({bytes.toLocaleString()} bytes)
+      {isOver && ' — 용량 초과! 내용을 줄여주세요'}
+    </div>
+  );
+}
+
 /* ── 타입 ── */
 
 type ContentType = 'URL' | 'EDITOR' | 'MARKDOWN';
@@ -552,6 +569,7 @@ export default function MentorNoticeManagement() {
                     setForm((prev) => ({ ...prev, contents: jsonString }))
                   }
                 />
+                <ContentSizeIndicator content={form.contents} />
               </div>
             )}
 
@@ -570,6 +588,7 @@ export default function MentorNoticeManagement() {
                     setForm((prev) => ({ ...prev, contents: e.target.value }))
                   }
                 />
+                <ContentSizeIndicator content={form.contents} />
               </div>
             )}
           </div>
