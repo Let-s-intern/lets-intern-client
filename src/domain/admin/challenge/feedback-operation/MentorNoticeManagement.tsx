@@ -440,12 +440,8 @@ export default function MentorNoticeManagement() {
         maxWidth="md"
         fullWidth
         sx={{
-          '& .MuiDialog-paper': { overflow: 'visible' },
-          '& .MuiDialogContent-root': { overflow: 'visible' },
-          '& .editor-shell': { position: 'relative', zIndex: 1400 },
-          '& .dropdown': { zIndex: 1500 },
-          '& .color-picker-wrapper': { zIndex: 1500 },
-          '& .toolbar-popup': { zIndex: 1500 },
+          '& .dropdown': { zIndex: 1500, position: 'fixed' },
+          '& .color-picker-wrapper': { zIndex: 1500, position: 'fixed' },
         }}
       >
         <DialogTitle>{isCreateMode ? '공지 작성' : '공지 수정'}</DialogTitle>
