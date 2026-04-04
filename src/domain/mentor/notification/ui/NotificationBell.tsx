@@ -20,8 +20,11 @@ export default function NotificationBell() {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { data } = useMentorGuideListQuery({ refetchInterval: 30000 }); // 30초마다 폴링
-  const guides = data?.challengeMentorGuideList ?? [];
+  const { data } = useMentorGuideListQuery();
+  const guides = useMemo(
+    () => data?.challengeMentorGuideList ?? [],
+    [data],
+  );
   const { readIds, markAsRead, isRead } = useNotificationState();
 
   // 최신순 정렬
