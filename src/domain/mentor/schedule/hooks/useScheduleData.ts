@@ -61,28 +61,52 @@ export function useScheduleData() {
   );
 
   /**
-   * Find the farthest incomplete feedback date for a given challenge.
+   * 해당 챌린지의 피드백 일정 목록을 feedbackStartDate 순으로 반환.
+   */
+  const getFeedbackDates = useCallback(
+    (challengeId: number): Date[] => {
+      return allBarsUnfiltered
+        .filter((bar) => bar.challengeId === challengeId)
+        .map((bar) => new Date(bar.feedbackStartDate))
+        .sort((a, b) => a.getTime() - b.getTime());
+    },
+    [allBarsUnfiltered],
+  );
+
+  /**
    * 오늘에서 가장 가까운 피드백 기간의 feedbackStartDate를 반환.
    */
   const findNearestDate = useCallback(
     (challengeId: number): Date | null => {
+      const dates = getFeedbackDates(challengeId);
+      if (dates.length === 0) return null;
+
       const now = Date.now();
-      let nearest: PeriodBarData | null = null;
-
-      for (const bar of allBarsUnfiltered) {
-        if (bar.challengeId !== challengeId) continue;
-
-        const dist = Math.abs(new Date(bar.feedbackStartDate).getTime() - now);
-
-        if (!nearest || dist < Math.abs(new Date(nearest.feedbackStartDate).getTime() - now)) {
-          nearest = bar;
+      let nearest = dates[0];
+      for (const d of dates) {
+        if (Math.abs(d.getTime() - now) < Math.abs(nearest.getTime() - now)) {
+          nearest = d;
         }
       }
-
-      if (!nearest) return null;
-      return new Date(nearest.feedbackStartDate);
+      return nearest;
     },
-    [allBarsUnfiltered],
+    [getFeedbackDates],
+  );
+
+  /**
+   * 현재 날짜의 다음 피드백 일정을 반환. 마지막이면 처음으로 순환.
+   */
+  const findNextDate = useCallback(
+    (challengeId: number, currentDate: Date): Date | null => {
+      const dates = getFeedbackDates(challengeId);
+      if (dates.length === 0) return null;
+
+      const currentTime = currentDate.getTime();
+      const nextIdx = dates.findIndex((d) => d.getTime() > currentTime);
+      // 다음이 있으면 다음, 없으면 처음으로 순환
+      return dates[nextIdx >= 0 ? nextIdx : 0];
+    },
+    [getFeedbackDates],
   );
 
   return {
@@ -94,5 +118,6 @@ export function useScheduleData() {
     handleData,
     challengeFilterItems,
     findNearestDate,
+    findNextDate,
   };
 }

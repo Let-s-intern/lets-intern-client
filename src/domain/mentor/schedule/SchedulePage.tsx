@@ -25,6 +25,7 @@ const SchedulePage = () => {
     handleData,
     challengeFilterItems,
     findNearestDate,
+    findNextDate,
   } = useScheduleData();
 
   const { totalCount, todayDueCount, incompleteCount, completedCount } =
@@ -33,9 +34,17 @@ const SchedulePage = () => {
   const [targetScrollDate, setTargetScrollDate] = useState<Date | null>(null);
 
   const handleChallengeSelect = (challengeId: number | null) => {
-    if (challengeId === null || challengeId === selectedChallengeId) {
+    if (challengeId === null) {
       setSelectedChallengeId(null);
       setTargetScrollDate(null);
+      return;
+    }
+    if (challengeId === selectedChallengeId && targetScrollDate) {
+      // 같은 태그 재클릭 → 다음 피드백 일정으로 이동
+      const next = findNextDate(challengeId, targetScrollDate);
+      if (next) {
+        setTargetScrollDate(next);
+      }
       return;
     }
     setSelectedChallengeId(challengeId);
