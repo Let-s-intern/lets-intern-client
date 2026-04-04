@@ -250,7 +250,7 @@ const MagnetPostPage = ({ magnetId }: MagnetPostPageProps) => {
                   onChange={(e) => onChangeUseLaunchAlert(e.target.checked)}
                 />
               }
-              label="출시 알림 신청 버튼 추가"
+              label="출시 알림 신청 문항 추가"
             />
           </div>
 
