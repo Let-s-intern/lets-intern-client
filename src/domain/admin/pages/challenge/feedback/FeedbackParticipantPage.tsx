@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
 
+import { useIsAdminQuery } from '@/api/user/user';
 import MentorRenderCell from './ui/MentorRenderCell';
 import FeedbackStatusRenderCell from './ui/FeedbackStatusRenderCell';
 import useFeedbackParticipantRows, {
@@ -21,6 +22,7 @@ export default function FeedbackParticipantPage() {
   }>();
   const rows = useFeedbackParticipantRows();
   const selectedMission = useSelectedMission();
+  const { data: isAdmin } = useIsAdminQuery();
 
   const columns: GridColDef<AttendanceRow>[] = useMemo(
     () => [
@@ -109,12 +111,14 @@ export default function FeedbackParticipantPage() {
     <div className="flex flex-col gap-4">
       {/* 퀵메뉴 탭 */}
       <div className="flex items-center gap-2">
-        <Link
-          href={`/admin/challenge/operation/${programId}/feedback`}
-          className="rounded-md border border-neutral-80 bg-white px-4 py-2 text-xsmall14 font-medium text-neutral-0 hover:bg-neutral-95"
-        >
-          멘토/멘티 배정
-        </Link>
+        {isAdmin && (
+          <Link
+            href={`/admin/challenge/operation/${programId}/feedback`}
+            className="rounded-md border border-neutral-80 bg-white px-4 py-2 text-xsmall14 font-medium text-neutral-0 hover:bg-neutral-95"
+          >
+            멘토/멘티 배정
+          </Link>
+        )}
         <Link
           href={`/admin/challenge/operation/${programId}/feedback`}
           className="rounded-md border border-neutral-80 bg-white px-4 py-2 text-xsmall14 font-medium text-neutral-0 hover:bg-neutral-95"

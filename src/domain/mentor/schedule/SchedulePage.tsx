@@ -25,6 +25,7 @@ const SchedulePage = () => {
     handleData,
     challengeFilterItems,
     findNearestDate,
+    findNextDate,
   } = useScheduleData();
 
   const { totalCount, todayDueCount, incompleteCount, completedCount } =
@@ -33,9 +34,17 @@ const SchedulePage = () => {
   const [targetScrollDate, setTargetScrollDate] = useState<Date | null>(null);
 
   const handleChallengeSelect = (challengeId: number | null) => {
-    if (challengeId === null || challengeId === selectedChallengeId) {
+    if (challengeId === null) {
       setSelectedChallengeId(null);
       setTargetScrollDate(null);
+      return;
+    }
+    if (challengeId === selectedChallengeId && targetScrollDate) {
+      // 같은 태그 재클릭 → 다음 피드백 일정으로 이동
+      const next = findNextDate(challengeId, targetScrollDate);
+      if (next) {
+        setTargetScrollDate(next);
+      }
       return;
     }
     setSelectedChallengeId(challengeId);
@@ -69,7 +78,7 @@ const SchedulePage = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6 md:gap-10">
+    <div className="flex flex-col gap-6 pb-20 md:gap-10">
       <div className="flex items-center gap-2.5">
         <h1 className="text-xl font-semibold leading-8 text-neutral-900">
           프로그램 일정

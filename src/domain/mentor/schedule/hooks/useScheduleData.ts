@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { useMentorChallengeListQuery } from '@/api/user/user';
-import type { PeriodBarData } from '../challenge-period/ChallengePeriodBar';
+import type { PeriodBarData } from '../types';
 
 /**
  * Manages challenge data, bar aggregation, and challenge filtering for the schedule page.
@@ -61,39 +61,52 @@ export function useScheduleData() {
   );
 
   /**
-   * Find the farthest incomplete feedback date for a given challenge.
-   * Returns the startDate of the bar that is not fully completed
-   * and has the latest startDate. Falls back to the latest bar if all complete.
+   * 해당 챌린지의 피드백 일정 목록을 feedbackStartDate 순으로 반환.
+   */
+  const getFeedbackDates = useCallback(
+    (challengeId: number): Date[] => {
+      return allBarsUnfiltered
+        .filter((bar) => bar.challengeId === challengeId)
+        .map((bar) => new Date(bar.feedbackStartDate))
+        .sort((a, b) => a.getTime() - b.getTime());
+    },
+    [allBarsUnfiltered],
+  );
+
+  /**
+   * 오늘에서 가장 가까운 피드백 기간의 feedbackStartDate를 반환.
    */
   const findNearestDate = useCallback(
     (challengeId: number): Date | null => {
-      let farthestIncomplete: PeriodBarData | null = null;
-      let farthestAny: PeriodBarData | null = null;
+      const dates = getFeedbackDates(challengeId);
+      if (dates.length === 0) return null;
 
-      for (const bar of allBarsUnfiltered) {
-        if (bar.challengeId !== challengeId) continue;
-
-        const barStart = new Date(bar.startDate).getTime();
-
-        // Track farthest bar overall (fallback)
-        if (!farthestAny || barStart > new Date(farthestAny.startDate).getTime()) {
-          farthestAny = bar;
-        }
-
-        // Track farthest incomplete bar (waiting or in-progress > 0)
-        const isIncomplete = bar.waitingCount > 0 || bar.inProgressCount > 0;
-        if (isIncomplete) {
-          if (!farthestIncomplete || barStart > new Date(farthestIncomplete.startDate).getTime()) {
-            farthestIncomplete = bar;
-          }
+      const now = Date.now();
+      let nearest = dates[0];
+      for (const d of dates) {
+        if (Math.abs(d.getTime() - now) < Math.abs(nearest.getTime() - now)) {
+          nearest = d;
         }
       }
-
-      const target = farthestIncomplete ?? farthestAny;
-      if (!target) return null;
-      return new Date(target.startDate);
+      return nearest;
     },
-    [allBarsUnfiltered],
+    [getFeedbackDates],
+  );
+
+  /**
+   * 현재 날짜의 다음 피드백 일정을 반환. 마지막이면 처음으로 순환.
+   */
+  const findNextDate = useCallback(
+    (challengeId: number, currentDate: Date): Date | null => {
+      const dates = getFeedbackDates(challengeId);
+      if (dates.length === 0) return null;
+
+      const currentTime = currentDate.getTime();
+      const nextIdx = dates.findIndex((d) => d.getTime() > currentTime);
+      // 다음이 있으면 다음, 없으면 처음으로 순환
+      return dates[nextIdx >= 0 ? nextIdx : 0];
+    },
+    [getFeedbackDates],
   );
 
   return {
@@ -105,5 +118,6 @@ export function useScheduleData() {
     handleData,
     challengeFilterItems,
     findNearestDate,
+    findNextDate,
   };
 }
