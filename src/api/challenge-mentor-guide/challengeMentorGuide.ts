@@ -10,28 +10,37 @@ import {
 
 export const ChallengeMentorGuideQueryKey = 'challengeMentorGuideList';
 
-/** GET /api/v1/challenge-mentor-guide/{challengeId} 멘토용 가이드 목록 */
-export const useChallengeMentorGuideListQuery = (
-  challengeId?: number,
+/** GET /api/v1/challenge-mentor-guide 멘토용 가이드 목록 (파라미터 없음) */
+export const useMentorGuideListQuery = (
+  options?: { refetchInterval?: number },
 ) => {
   return useQuery({
-    queryKey: [ChallengeMentorGuideQueryKey, challengeId],
+    queryKey: [ChallengeMentorGuideQueryKey],
     queryFn: async () => {
-      const res = await axios.get(
-        `/challenge-mentor-guide/${challengeId}`,
-      );
+      const res = await axios.get('/challenge-mentor-guide');
       return challengeMentorGuideListSchema.parse(res.data.data);
     },
-    enabled: !!challengeId,
-    retry: false,
     refetchOnWindowFocus: false,
+    ...options,
   });
 };
 
 export const AdminChallengeMentorGuideQueryKey =
   'adminChallengeMentorGuideList';
 
-/** GET /api/v1/admin/challenge-mentor-guide/{challengeMentorId} 어드민용 멘토 1명 가이드 목록 */
+/** GET /api/v1/admin/challenge-mentor-guide 어드민용 전체 가이드 목록 */
+export const useAdminChallengeMentorGuideAllQuery = () => {
+  return useQuery({
+    queryKey: [AdminChallengeMentorGuideQueryKey],
+    queryFn: async () => {
+      const res = await axios.get('/admin/challenge-mentor-guide');
+      return challengeMentorGuideListSchema.parse(res.data.data);
+    },
+    refetchOnWindowFocus: false,
+  });
+};
+
+/** @deprecated Push 2에서 useAdminChallengeMentorGuideAllQuery로 교체 예정 */
 export const useAdminChallengeMentorGuideListQuery = (
   challengeMentorId?: string | number,
 ) => {
@@ -48,18 +57,14 @@ export const useAdminChallengeMentorGuideListQuery = (
   });
 };
 
-/** POST /api/v1/admin/challenge-mentor-guide/{challengeMentorId} 가이드 생성 */
+/** POST /api/v1/admin/challenge-mentor-guide 가이드 생성 */
 export const usePostAdminChallengeMentorGuide = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({
-      challengeMentorId,
-      ...body
-    }: CreateChallengeMentorGuideReq & { challengeMentorId: number }) => {
-      const res = await axios.post(
-        `/admin/challenge-mentor-guide/${challengeMentorId}`,
-        body,
-      );
+    mutationFn: async (
+      body: CreateChallengeMentorGuideReq & { challengeMentorId?: number },
+    ) => {
+      const res = await axios.post('/admin/challenge-mentor-guide', body);
       return res.data;
     },
     onSuccess: () => {
@@ -69,7 +74,7 @@ export const usePostAdminChallengeMentorGuide = () => {
     },
     onError: (error) => {
       console.error(error);
-      alert('문제가 발생했습니다: ' + error);
+      alert(`문제가 발생했습니다: ${error}`);
     },
   });
 };
@@ -95,7 +100,7 @@ export const usePatchAdminChallengeMentorGuide = () => {
     },
     onError: (error) => {
       console.error(error);
-      alert('문제가 발생했습니다: ' + error);
+      alert(`문제가 발생했습니다: ${error}`);
     },
   });
 };
@@ -116,7 +121,7 @@ export const useDeleteAdminChallengeMentorGuide = () => {
     },
     onError: (error) => {
       console.error(error);
-      alert('문제가 발생했습니다: ' + error);
+      alert(`문제가 발생했습니다: ${error}`);
     },
   });
 };

@@ -3,10 +3,9 @@
 import { differenceInCalendarDays, getMonth, isSameDay } from 'date-fns';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import ChallengePeriodBar, {
-  type PeriodBarData,
-} from '../challenge-period/ChallengePeriodBar';
-import { CompactFeedbackCard } from '../challenge-period/FeedbackCard';
+import ChallengePeriodBar from '../calendar-bar/ui/ChallengePeriodBar';
+import type { PeriodBarData } from '../types';
+import { CompactFeedbackCard } from '../calendar-bar/ui/FeedbackCard';
 import TodayButton from './ui/TodayButton';
 import DayHeaderCell from './ui/DayHeaderCell';
 import ColumnDividers from './ui/ColumnDividers';
@@ -70,11 +69,8 @@ const WeeklyCalendar = ({
             new Date(bar.feedbackDeadline),
             timelineStart,
           ) + 2;
-        const missionEndCol =
-          differenceInCalendarDays(new Date(bar.endDate), timelineStart) + 2;
         const colSpan = endCol - startCol;
-        const missionColSpan = missionEndCol - startCol;
-        return { bar, startCol, endCol, colSpan, missionColSpan };
+        return { bar, startCol, endCol, colSpan };
       })
       .filter((l) => l.endCol >= 1 && l.startCol <= totalDays);
   }, [bars, timelineStart, totalDays]);
@@ -134,7 +130,7 @@ const WeeklyCalendar = ({
               style={{ display: 'grid', gridTemplateColumns: gridCols }}
             >
               {barLayouts.map(
-                ({ bar, startCol, endCol, colSpan, missionColSpan }, idx) => (
+                ({ bar, startCol, endCol, colSpan }, idx) => (
                   <div
                     key={`${bar.challengeId}-${bar.missionId}-${idx}`}
                     className="px-px"
@@ -148,8 +144,6 @@ const WeeklyCalendar = ({
                     ) : (
                       <ChallengePeriodBar
                         bar={bar}
-                        colSpan={colSpan}
-                        missionColSpan={missionColSpan}
                         onBarClick={onBarClick}
                       />
                     )}

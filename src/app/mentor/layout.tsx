@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import MentorProviders from '@/context/MentorProviders';
 import { MentorGuard } from './MentorGuard';
 import { MentorSidebar } from './MentorSidebar';
+import { usePushNotification } from '@/domain/mentor/notification/hooks/usePushNotification';
 
 /** 멘토 전용 manifest를 <head>에 주입 (다른 라우트에 영향 없음) */
 function useMentorManifest() {
@@ -35,6 +36,7 @@ export default function MentorLayout({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   useMentorManifest();
+  usePushNotification();
 
   return (
     <MentorProviders>

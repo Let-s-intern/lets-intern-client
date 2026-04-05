@@ -2,13 +2,19 @@
 /** 참여자별 피드백 페이지 (피드백 작성 페이지) */
 
 import { usePatchAttendanceMentor } from '@/api/attendance/attendance';
-import { FeedbackAttendanceQueryKey } from '@/api/challenge/challenge';
+import {
+  ChallengeMissionFeedbackAttendanceQueryKey,
+  FeedbackAttendanceQueryKey,
+  MentorMenteeAttendanceQueryKey,
+} from '@/api/challenge/challenge';
+import { useIsAdminQuery } from '@/api/user/user';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import useBeforeUnloadWarning from '@/hooks/useBeforeUnloadWarning';
 import useInvalidateQueries from '@/hooks/useInvalidateQueries';
 import { Button } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import AttendanceInfoList from './ui/AttendanceInfoList';
@@ -26,6 +32,8 @@ export default function ChallengeFeedbackPage() {
   }>();
 
   const { snackbar } = useAdminSnackbar();
+  const { data: isAdmin } = useIsAdminQuery();
+  const queryClient = useQueryClient();
   const { mutateAsync: patchAttendanceMentor } = usePatchAttendanceMentor();
 
   const { content, setContent, isLoading, hasUnsavedChanges, defaultContent } =
@@ -50,6 +58,21 @@ export default function ChallengeFeedbackPage() {
       feedback: content,
     });
     await invalidateFeedbackQueries();
+    // 목록 쿼리도 invalidate하여 뒤로 갔을 때 상태 반영
+    await queryClient.invalidateQueries({
+      queryKey: [ChallengeMissionFeedbackAttendanceQueryKey, programId, missionId],
+    });
+    await queryClient.invalidateQueries({
+      queryKey: [MentorMenteeAttendanceQueryKey, programId, missionId],
+    });
+    // localStorage 갱신 (useIsCompleted용)
+    try {
+      const stored = JSON.parse(localStorage.getItem('attendance') ?? '{}');
+      if (stored.feedbackStatus === 'WAITING') {
+        stored.feedbackStatus = 'IN_PROGRESS';
+        localStorage.setItem('attendance', JSON.stringify(stored));
+      }
+    } catch { /* ignore */ }
     snackbar('저장되었습니다.');
   };
 
@@ -71,12 +94,14 @@ export default function ChallengeFeedbackPage() {
     <div className="mt-5 px-5">
       {/* 탭 버튼 */}
       <div className="mb-4 flex items-center gap-2">
-        <Link
-          href={`/admin/challenge/operation/${programId}/feedback`}
-          className="rounded-md border border-neutral-80 bg-white px-4 py-2 text-xsmall14 font-medium text-neutral-0 hover:bg-neutral-95"
-        >
-          멘토/멘티 배정
-        </Link>
+        {isAdmin && (
+          <Link
+            href={`/admin/challenge/operation/${programId}/feedback`}
+            className="rounded-md border border-neutral-80 bg-white px-4 py-2 text-xsmall14 font-medium text-neutral-0 hover:bg-neutral-95"
+          >
+            멘토/멘티 배정
+          </Link>
+        )}
         <Link
           href={`/admin/challenge/operation/${programId}/feedback`}
           className="rounded-md border border-neutral-80 bg-white px-4 py-2 text-xsmall14 font-medium text-neutral-0 hover:bg-neutral-95"
