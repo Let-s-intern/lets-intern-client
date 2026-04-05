@@ -28,11 +28,9 @@ function NoticeLayout({ children }: { children: React.ReactNode }) {
 
 function GuideRow({
   guide,
-  isFixed,
   challengeName,
 }: {
   guide: ChallengeMentorGuideItem;
-  isFixed: boolean;
   challengeName?: string;
 }) {
   const hasContents = !!guide.contents;
@@ -40,9 +38,6 @@ function GuideRow({
 
   const badges = (
     <div className="flex items-center gap-2">
-      {isFixed && (
-        <span className="shrink-0 text-sm" title="고정 공지">📌</span>
-      )}
       {guide.createDate && (
         <span className="w-fit shrink-0 rounded border border-neutral-80 px-2.5 py-0.5 text-xxsmall12 text-neutral-40 md:px-3 md:py-1">
           {getRelativeDate(guide.createDate)}
@@ -62,7 +57,8 @@ function GuideRow({
     </span>
   );
 
-  const rowClass = `flex flex-col gap-2 border-b border-neutral-80 px-4 py-3 transition-colors last:border-b-0 hover:bg-neutral-95 md:flex-row md:items-center md:gap-4 md:px-6 md:py-4 ${isFixed ? 'bg-amber-50/50' : ''}`;
+  const rowClass =
+    'flex flex-col gap-2 border-b border-neutral-80 px-4 py-3 transition-colors last:border-b-0 hover:bg-neutral-95 md:flex-row md:items-center md:gap-4 md:px-6 md:py-4';
 
   if (hasContents) {
     return (
@@ -103,24 +99,27 @@ export default function NoticeListPage() {
     return map;
   }, [challengeData]);
 
-  // 노출 가능한 공지만 필터 + 고정 공지 상단 정렬 (훅은 조건부 return 전에)
+  // 노출 가능한 공지만 필터 → 고정/일반 분리
   const visibleGuides = useMemo(() => {
     const now = new Date();
-    return guides
-      .filter((g) => {
-        if (g.isVisible === false) return false;
-        if (g.dateType === 'CUSTOM') {
-          if (g.startDate && new Date(g.startDate) > now) return false;
-          if (g.endDate && new Date(g.endDate) < now) return false;
-        }
-        return true;
-      })
-      .sort((a, b) => {
-        if (a.isFixed && !b.isFixed) return -1;
-        if (!a.isFixed && b.isFixed) return 1;
-        return 0;
-      });
+    return guides.filter((g) => {
+      if (g.isVisible === false) return false;
+      if (g.dateType === 'CUSTOM') {
+        if (g.startDate && new Date(g.startDate) > now) return false;
+        if (g.endDate && new Date(g.endDate) < now) return false;
+      }
+      return true;
+    });
   }, [guides]);
+
+  const fixedGuides = useMemo(
+    () => visibleGuides.filter((g) => g.isFixed),
+    [visibleGuides],
+  );
+  const normalGuides = useMemo(
+    () => visibleGuides.filter((g) => !g.isFixed),
+    [visibleGuides],
+  );
 
   if (isLoading) {
     return (
@@ -144,24 +143,50 @@ export default function NoticeListPage() {
 
   return (
     <NoticeLayout>
+      {fixedGuides.length > 0 && (
+        <section className="flex flex-col gap-4">
+          <h2 className="text-small18 font-semibold text-neutral-0">
+            중요 공지
+          </h2>
+          <div className="flex flex-col rounded-[16px] border border-neutral-80">
+            {fixedGuides.map((guide) => (
+              <GuideRow
+                key={guide.challengeMentorGuideId}
+                guide={guide}
+                challengeName={
+                  guide.challengeId
+                    ? challengeNameMap.get(guide.challengeId)
+                    : undefined
+                }
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
       <section className="flex flex-col gap-4">
         <h2 className="text-small18 font-semibold text-neutral-0">
           프로그램 공지
         </h2>
-        <div className="flex flex-col rounded-[16px] border border-neutral-80">
-          {visibleGuides.map((guide) => (
-            <GuideRow
-              key={guide.challengeMentorGuideId}
-              guide={guide}
-              isFixed={guide.isFixed ?? false}
-              challengeName={
-                guide.challengeId
-                  ? challengeNameMap.get(guide.challengeId)
-                  : undefined
-              }
-            />
-          ))}
-        </div>
+        {normalGuides.length > 0 ? (
+          <div className="flex flex-col rounded-[16px] border border-neutral-80">
+            {normalGuides.map((guide) => (
+              <GuideRow
+                key={guide.challengeMentorGuideId}
+                guide={guide}
+                challengeName={
+                  guide.challengeId
+                    ? challengeNameMap.get(guide.challengeId)
+                    : undefined
+                }
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="py-10 text-center text-xsmall14 text-neutral-40">
+            등록된 프로그램 공지가 없습니다.
+          </div>
+        )}
       </section>
     </NoticeLayout>
   );

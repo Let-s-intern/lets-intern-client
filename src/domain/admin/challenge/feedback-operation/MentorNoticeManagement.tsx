@@ -429,11 +429,10 @@ export default function MentorNoticeManagement() {
         form.mentorScopeType === 'SPECIFIC_MENTOR' && form.challengeMentorId
           ? Number(form.challengeMentorId)
           : undefined,
-      // TODO: 서버 배포 완료 후 주석 해제
-      // dateType: form.dateType,
-      // startDate: form.dateType === 'CUSTOM' && form.startDate ? form.startDate : undefined,
-      // endDate: form.dateType === 'CUSTOM' && form.endDate ? form.endDate : undefined,
-      // isFixed: form.isFixed,
+      dateType: form.dateType,
+      startDate: form.dateType === 'CUSTOM' && form.startDate ? form.startDate : undefined,
+      endDate: form.dateType === 'CUSTOM' && form.endDate ? form.endDate : undefined,
+      isFixed: form.isFixed,
     };
 
     if (modalState.mode === 'create') {
