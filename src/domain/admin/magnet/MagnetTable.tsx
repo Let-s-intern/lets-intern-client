@@ -124,25 +124,22 @@ const MagnetTable = ({
         sortable: false,
         renderCell: ({ row }) => {
           const manageable = isMagnetManageable(row.type);
+          const postEditable = manageable || row.type === 'LAUNCH_ALERT';
           return (
             <div className="inline-flex items-center gap-2">
+              {postEditable && (
+                <Link href={`/admin/magnet/${row.magnetId}/post`}>
+                  <Button variant="outlined" color="primary" size="small">
+                    글 관리
+                  </Button>
+                </Link>
+              )}
               {manageable && (
-                <>
-                  <Link href={`/admin/magnet/${row.magnetId}/post`}>
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      size="small"
-                    >
-                      글 관리
-                    </Button>
-                  </Link>
-                  <Link href={`/admin/magnet/${row.magnetId}/form`}>
-                    <Button variant="outlined" color="info" size="small">
-                      신청 폼 관리
-                    </Button>
-                  </Link>
-                </>
+                <Link href={`/admin/magnet/${row.magnetId}/form`}>
+                  <Button variant="outlined" color="info" size="small">
+                    신청 폼 관리
+                  </Button>
+                </Link>
               )}
               <Button
                 variant="outlined"
