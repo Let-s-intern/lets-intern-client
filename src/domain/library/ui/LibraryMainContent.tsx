@@ -2,6 +2,7 @@
 
 import {
   useGetUserMagnetDetailQuery,
+  useGetUserMagnetListQuery,
   usePatchMagnetViewDateMutation,
 } from '@/api/magnet/magnet';
 import LexicalContent from '@/domain/blog/ui/LexicalContent';
@@ -37,10 +38,18 @@ export default function LibraryMainContent({
   const patchViewDate = usePatchMagnetViewDateMutation();
   const hasSentViewDate = useRef(false);
 
+  const { data: magnetListData } = useGetUserMagnetListQuery({
+    pageable: { page: 1, size: 100 },
+    enabled: isUpcoming && isLoggedIn,
+  });
+
   const mainContents = data?.magnetInfo.mainContents ?? null;
   const mainRoot = mainContents ? parseLexicalRoot(mainContents) : null;
   const hasApplied = mainContents !== null && mainRoot !== null;
   const viewDate = data?.viewDate;
+  const appliedLaunchAlert =
+    magnetListData?.magnetList.find((m) => m.magnetId === magnetId)
+      ?.appliedLaunchAlert ?? false;
 
   useEffect(() => {
     if (hasApplied && !viewDate && !hasSentViewDate.current) {
@@ -80,12 +89,17 @@ export default function LibraryMainContent({
           </div>
           <button
             type="button"
+            disabled={appliedLaunchAlert}
             onClick={() =>
               handleApplyClick(`/library/${magnetId}/apply?type=launch-alert`)
             }
-            className="w-full max-w-lg rounded-xs bg-primary px-6 py-4 text-center text-xsmall16 text-white"
+            className={`w-full max-w-lg rounded-xs px-6 py-4 text-center text-xsmall16 text-white ${
+              appliedLaunchAlert
+                ? 'cursor-not-allowed bg-neutral-70'
+                : 'bg-primary'
+            }`}
           >
-            알림 신청하기
+            {appliedLaunchAlert ? '알림 설정 완료' : '알림 신청하기'}
           </button>
         </div>
       </>
