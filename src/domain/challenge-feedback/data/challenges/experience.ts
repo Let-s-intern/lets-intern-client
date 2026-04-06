@@ -22,7 +22,7 @@ export const experience: ChallengeData = {
           exampleImages: [
             `${EXAMPLE_BASE}/experience/round-2-1.png`,
             `${EXAMPLE_BASE}/experience/round-2-2.png`,
-            `${EXAMPLE_BASE}/experience/round-3-1.png`,
+            // `${EXAMPLE_BASE}/experience/round-3-1.png`,
             `${EXAMPLE_BASE}/experience/round-3-2.png`,
             `${EXAMPLE_BASE}/experience/round-4-1.png`,
           ],
