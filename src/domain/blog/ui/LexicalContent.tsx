@@ -17,6 +17,7 @@ import {
   SerializedTextNode,
 } from 'lexical';
 import { SerializedCodeHighlightNode } from '../../admin/lexical/nodes/CodeHighlightNode';
+import CheckBox from './CheckBox';
 import { SerializedCollapsibleContainerNode } from '../../admin/lexical/nodes/CollapsibleContainerNode';
 import { SerializedCollapsibleContentNode } from '../../admin/lexical/nodes/CollapsibleContentNode';
 import { SerializedCollapsibleTitleNode } from '../../admin/lexical/nodes/CollapsibleTitleNode';
@@ -142,26 +143,19 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       const _node = node as SerializedListItemNode;
       const children = _node.children || [];
       const isNested = children.some((child) => child.type === 'list');
+
+      if (_node.checked !== undefined) {
+        return (
+          <CheckBox initialChecked={_node.checked}>
+            {children.map((child, childIndex) => (
+              <LexicalContent key={childIndex} node={child} />
+            ))}
+          </CheckBox>
+        );
+      }
+
       return (
-        <li
-          className={twMerge(
-            'ml-4',
-            isNested && 'list-none',
-            _node.checked !== undefined &&
-              'ml-0 flex list-none items-start gap-2',
-          )}
-        >
-          {_node.checked !== undefined && (
-            <img
-              src={
-                _node.checked
-                  ? '/icons/checkbox-checked.svg'
-                  : '/icons/checkbox-unchecked-box3.svg'
-              }
-              alt={_node.checked ? '체크' : '체크 안 함'}
-              className="mt-[2px] h-5 w-5 shrink-0"
-            />
-          )}
+        <li className={twMerge('ml-4', isNested && 'list-none')}>
           {children.map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
