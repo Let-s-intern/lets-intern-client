@@ -38,6 +38,7 @@
   },
   "enabledPlugins": {
     "code-review@claude-plugins-official": true,
+    "andrej-karpathy-skills@karpathy-skills": true,
     "typescript-lsp@claude-plugins-official": true,
     "playwright@claude-plugins-official": true,
     "commit-commands@claude-plugins-official": true,

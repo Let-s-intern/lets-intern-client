@@ -1,5 +1,5 @@
 'use client';
 
-import LeadEventPage from '@/domain/admin/pages/lead/LeadEventPage';
+import LeadEventPage from '@/domain/admin/lead/LeadEventPage';
 
 export default LeadEventPage;

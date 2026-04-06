@@ -25,7 +25,7 @@ const TableTemplate = <T extends string>({
   children,
 }: TableTemplateProps<T>) => {
   return (
-    <div className="px-12 pt-12">
+    <div className="px-12 pt-6">
       <header className="flex items-center justify-between px-3">
         <h1 className="text-2xl font-semibold">{title}</h1>
         {headerButton && (

@@ -19,6 +19,7 @@ export const curationTypeSchema = z.enum([
   'REPORT',
   'GUIDEBOOK',
   'BLOG',
+  'RESOURCE',
   'ETC',
 ]);
 export type CurationType = z.infer<typeof curationTypeSchema>;

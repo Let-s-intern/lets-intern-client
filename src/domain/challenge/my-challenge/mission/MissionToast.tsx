@@ -8,6 +8,8 @@ interface MissionToastProps {
   duration?: number;
 }
 
+const TOAST_ANIMATION_DURATION_MS = 300;
+
 const MissionToast = ({
   isVisible,
   onClose,
@@ -21,10 +23,12 @@ const MissionToast = ({
       setIsAnimating(true);
       const timer = setTimeout(() => {
         setIsAnimating(false);
-        setTimeout(onClose, 300); // 애니메이션 완료 후 닫기
+        setTimeout(onClose, TOAST_ANIMATION_DURATION_MS); // 애니메이션 완료 후 닫기
       }, duration);
 
       return () => clearTimeout(timer);
+    } else {
+      setIsAnimating(false);
     }
   }, [isVisible, duration, onClose]);
 

@@ -127,13 +127,17 @@ export const useInfiniteBlogListQuery = ({
   });
 };
 
-export const useBlogQuery = (blogId: string) => {
+export const useBlogQuery = (
+  blogId: string,
+  options?: { initialData?: BlogSchema },
+) => {
   return useQuery({
     queryKey: [blogQueryKey, blogId],
     queryFn: async () => {
       const res = await axios.get(`/blog/${blogId}`);
       return blogSchema.parse(res.data.data);
     },
+    initialData: options?.initialData,
   });
 };
 
