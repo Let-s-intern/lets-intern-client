@@ -16,6 +16,7 @@ import {
   Pageable,
   ProgramClassification,
   ProgramStatus,
+  challengeApplicationsSchema,
   reviewTotalSchema,
   userChallengeMissionWithAttendance,
 } from '@/schema';
@@ -23,6 +24,7 @@ import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
+
 import {
   challengeApplicationSchema,
   challengeGoalSchema,
@@ -32,6 +34,8 @@ import {
   challengeUserInfoSchema,
   challengeValidUserSchema,
   feedbackAttendanceSchema,
+  mentorFeedbackManagementSchema,
+  mentorMenteeAttendanceListSchema,
 } from './challengeSchema';
 
 const useChallengeQueryKey = 'useChallengeQueryKey';
@@ -150,7 +154,7 @@ export const useGetTotalReview = ({
   programTitle,
   createdDate,
 }: {
-  type: 'CHALLENGE' | 'LIVE' | 'VOD' | 'REPORT';
+  type: 'CHALLENGE' | 'LIVE' | 'VOD' | 'REPORT' | 'GUIDEBOOK';
   programTitle?: string | null;
   createdDate?: string | null;
 }) => {
@@ -677,6 +681,77 @@ export const useFeedbackAttendanceQuery = ({
       return feedbackAttendanceSchema.parse(res.data.data);
     },
     enabled: !!challengeId && !!missionId && !!attendanceId,
+    staleTime: 0,
+  });
+};
+
+/** [멘토용] 참여중인 챌린지별 피드백 현황 조회 /api/v1/challenge/mentor/feedback-management */
+export const MentorFeedbackManagementQueryKey =
+  'useMentorFeedbackManagementQuery';
+
+export const useMentorFeedbackManagementQuery = ({
+  enabled = true,
+}: { enabled?: boolean } = {}) => {
+  return useQuery({
+    queryKey: [MentorFeedbackManagementQueryKey],
+    queryFn: async () => {
+      const res = await axios.get('/challenge/mentor/feedback-management');
+      return mentorFeedbackManagementSchema.parse(res.data.data);
+    },
+    enabled,
+  });
+};
+
+/** [멘토용] 나의 멘티 제출 내역 조회 /api/v1/challenge/{challengeId}/mission/{missionId}/feedback/attendances/mentee */
+export const MentorMenteeAttendanceQueryKey = 'useMentorMenteeAttendanceQuery';
+
+export const useMentorMenteeAttendanceQuery = ({
+  challengeId,
+  missionId,
+  enabled,
+}: {
+  challengeId?: number | string;
+  missionId?: number | string;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    queryKey: [MentorMenteeAttendanceQueryKey, challengeId, missionId],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/challenge/${challengeId}/mission/${missionId}/feedback/attendances/mentee`,
+      );
+      return mentorMenteeAttendanceListSchema.parse(res.data.data);
+    },
+    enabled,
+  });
+};
+
+/** [어드민용] 챌린지 신청자 조회 /api/v1/challenge/{challengeId}/applications */
+export const ChallengeApplicationsQueryKey = 'useChallengeApplicationsQuery';
+
+export const useChallengeApplicationsQuery = ({
+  challengeId,
+  isMentee,
+  isCanceled,
+  enabled,
+}: {
+  challengeId?: number | string;
+  isMentee?: boolean;
+  isCanceled?: boolean;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    queryKey: [ChallengeApplicationsQueryKey, challengeId, isMentee, isCanceled],
+    queryFn: async () => {
+      const res = await axios.get(`/challenge/${challengeId}/applications`, {
+        params: {
+          ...(isMentee !== undefined && { isMentee }),
+          ...(isCanceled !== undefined && { isCanceled }),
+        },
+      });
+      return challengeApplicationsSchema.parse(res.data.data);
+    },
+    enabled,
   });
 };
 

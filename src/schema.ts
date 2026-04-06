@@ -36,10 +36,10 @@ export type PageInfo = z.infer<typeof pageInfo>;
 
 // 챌린지 가격 플랜
 export const ChallengePricePlanEnum = z.enum([
+  'LIGHT',
   'BASIC',
   'STANDARD',
   'PREMIUM',
-  'LIGHT',
 ]);
 export type ChallengePricePlan = z.infer<typeof ChallengePricePlanEnum>;
 
@@ -944,6 +944,9 @@ export const attendances = z
           comments: z.string().nullable().optional(),
           createDate: z.string().nullable(),
           lastModifiedDate: z.string().nullable().optional(),
+          feedbackStatus: AttendanceFeedbackStatusEnum.nullable().optional(),
+          challengeMentorId: z.number().nullable().optional(),
+          mentorName: z.string().nullable().optional(),
         }),
         optionCodes: z.array(z.string()),
       }),
@@ -1652,6 +1655,9 @@ export const challengeApplicationsSchema = z
           programPrice: z.number().nullable().optional(),
           refundPrice: z.number().nullable().optional(),
           challengePricePlanType: ChallengePricePlanEnum.nullable().optional(),
+          originalPrice: z.number().nullable().optional(),
+          challengeMentorId: z.number().nullable().optional(),
+          challengeMentorName: z.string().nullable().optional(),
         }),
         optionPriceSum: z.number().nullable().optional(),
         optionDiscountPriceSum: z.number().nullable().optional(),
@@ -1827,6 +1833,10 @@ export const userAdminDetailType = z.object({
     accountNum: z.string().nullable(),
     marketingAgree: z.boolean().nullable(),
     authProvider: authProviderSchema.nullable(),
+    nickname: z.string().nullable().optional(),
+    introduction: z.string().nullable().optional(),
+    profileImgUrl: z.string().nullable().optional(),
+    sns: z.string().nullable().optional(),
   }),
   applicationInfo: z.array(
     z.object({

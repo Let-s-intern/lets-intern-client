@@ -179,6 +179,57 @@ const CareerForm = ({
           <ErrorMsg msg={errors.employmentTypeOther?.message} />
         </fieldset>
 
+        {/* 업무분야 */}
+        <fieldset className="flex flex-col gap-1.5">
+          <label
+            htmlFor="career-field"
+            className="font-medium text-neutral-20"
+          >
+            업무분야
+          </label>
+          <input
+            id="career-field"
+            {...register('field')}
+            type="text"
+            placeholder="예) 개발, PM, 디자인"
+            className="w-full rounded-xxs border border-neutral-80 px-3 py-2 text-neutral-0 placeholder:text-neutral-50 focus:border-primary focus:outline-none"
+          />
+        </fieldset>
+
+        {/* 직책 */}
+        <fieldset className="flex flex-col gap-1.5">
+          <label
+            htmlFor="career-position"
+            className="font-medium text-neutral-20"
+          >
+            직책
+          </label>
+          <input
+            id="career-position"
+            {...register('position')}
+            type="text"
+            placeholder="예) 팀장"
+            className="w-full rounded-xxs border border-neutral-80 px-3 py-2 text-neutral-0 placeholder:text-neutral-50 focus:border-primary focus:outline-none"
+          />
+        </fieldset>
+
+        {/* 부서명 */}
+        <fieldset className="flex flex-col gap-1.5">
+          <label
+            htmlFor="career-department"
+            className="font-medium text-neutral-20"
+          >
+            부서명
+          </label>
+          <input
+            id="career-department"
+            {...register('department')}
+            type="text"
+            placeholder="예) 개발팀"
+            className="w-full rounded-xxs border border-neutral-80 px-3 py-2 text-neutral-0 placeholder:text-neutral-50 focus:border-primary focus:outline-none"
+          />
+        </fieldset>
+
         {/* 근무 기간 */}
         <fieldset className="flex flex-col gap-1.5">
           <div className="flex flex-col items-baseline gap-1 md:flex-row md:gap-2">

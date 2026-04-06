@@ -9,6 +9,8 @@ import Intro4 from '@/assets/graphic/home/intro/4.svg?react';
 import Intro5 from '@/assets/graphic/home/intro/5.svg?react';
 import Intro6 from '@/assets/graphic/home/intro/6.svg?react';
 import Intro8 from '@/assets/graphic/home/intro/8.svg?react';
+import Intro9 from '@/assets/graphic/home/intro/9.svg?react';
+import IntroCuration from '@/assets/graphic/home/intro/curation.svg?react';
 import useActiveReports from '@/hooks/useActiveReports';
 import { useIntroSectionB2CChallenges } from '@/hooks/useFirstB2CChallenge';
 import { twMerge } from '@/lib/twMerge';
@@ -136,6 +138,30 @@ const HOME_INTRO = {
         href: convertReportTypeToLandingPath('PERSONAL_STATEMENT'),
         gaTitle: '자기소개서 피드백 받기',
       },
+      {
+        title: (
+          <p>
+            무료
+            <br />
+            자료집 받기
+          </p>
+        ),
+        icon: <Intro9 width={44} height={44} />,
+        href: '/library/list',
+        gaTitle: '무료 자료집 받기',
+      },
+      {
+        title: (
+          <p>
+            맞춤 프로그램
+            <br />
+            추천받기
+          </p>
+        ),
+        icon: <IntroCuration width={44} height={44} />,
+        href: '/curation',
+        gaTitle: '맞춤프로그램 추천받기',
+      },
     ],
   },
 };
@@ -230,6 +256,25 @@ const IntroSection = () => {
     }
   };
 
+  const handleTestError = () => {
+    // throw만 해도 Sentry가 자동으로 캡처해야 함
+    throw new Error('테스트: Sentry 및 Webhook 에러 전송 테스트');
+  };
+
+  const handleTestFilteredError = () => {
+    // 필터링되어야 하는 에러 (네트워크 에러)
+    throw new Error('Failed to fetch');
+  };
+
+  // NODE_ENV 값 확인용
+  if (typeof window !== 'undefined') {
+    console.log('NODE_ENV:', process.env.NODE_ENV);
+    console.log(
+      'NEXT_PUBLIC_ENABLE_TEST_BUTTONS:',
+      process.env.NEXT_PUBLIC_ENABLE_TEST_BUTTONS,
+    );
+  }
+
   const filteredItems = HOME_INTRO.items.basic.filter((item) => {
     // 포트폴리오 피드백 받기
     if (item.href === convertReportTypeToLandingPath('PORTFOLIO')) {
@@ -286,6 +331,21 @@ const IntroSection = () => {
         <div className="flex flex-col gap-1 text-center md:gap-2">
           {HOME_INTRO.description}
           {HOME_INTRO.title}
+        </div>
+        {/* 개발 환경 테스트 버튼 */}
+        <div className="flex justify-center gap-2">
+          <button
+            onClick={handleTestError}
+            className="rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600"
+          >
+            테스트: 일반 에러 전송
+          </button>
+          <button
+            onClick={handleTestFilteredError}
+            className="rounded bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600"
+          >
+            테스트: 필터링 에러
+          </button>
         </div>
         <div className="h-full overflow-x-auto pt-2.5 md:mx-auto md:w-fit md:overflow-x-visible md:px-0 md:pt-0">
           <div

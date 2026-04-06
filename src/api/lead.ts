@@ -4,14 +4,14 @@ import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 
-const leadHistoryEventTypeSchema = z.enum(['SIGN_UP', 'PROGRAM', 'LEAD_EVENT']);
+const leadHistoryEventTypeSchema = z.enum(['PROGRAM', 'MAGNET']);
 
 export type LeadHistoryEventType = z.infer<typeof leadHistoryEventTypeSchema>;
 
 const leadHistoryItemSchema = z.object({
   eventType: leadHistoryEventTypeSchema.optional(),
-  leadEventId: z.number().nullable().optional(),
-  leadEventType: z.string().nullable().optional(),
+  magnetId: z.number().nullable().optional(),
+  magnetType: z.string().nullable().optional(),
   userId: z.number().nullable().optional(),
   title: z.string().nullable().optional(),
   name: z.string().nullable().optional(),
@@ -61,8 +61,8 @@ export const leadEventListQueryKey = 'leadEventListQueryKey';
 
 export type LeadHistoryFilters = {
   eventTypeList?: LeadHistoryEventType[];
-  leadEventIdList?: number[];
-  leadEventTypeList?: string[];
+  magnetIdList?: number[];
+  magnetTypeList?: string[];
   nameList?: string[];
   phoneNumList?: string[];
 };
@@ -91,8 +91,8 @@ export const useLeadHistoryListQuery = (
             page,
             size: pageSize,
             eventTypeList: joinParam(rest.eventTypeList),
-            leadEventIdList: joinParam(rest.leadEventIdList),
-            leadEventTypeList: joinParam(rest.leadEventTypeList),
+            magnetIdList: joinParam(rest.magnetIdList),
+            magnetTypeList: joinParam(rest.magnetTypeList),
             nameList: joinParam(rest.nameList),
             phoneNumList: joinParam(rest.phoneNumList),
           },
@@ -115,7 +115,7 @@ export const useLeadHistoryListQuery = (
 };
 
 export type CreateLeadHistoryRequest = {
-  leadEventId: number;
+  magnetId: number;
   userId?: number;
   name?: string;
   phoneNum?: string;

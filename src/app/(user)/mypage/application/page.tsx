@@ -1,6 +1,7 @@
 'use client';
 
 import { useMypageApplicationsQuery } from '@/api/application';
+import CategoryTabs from '@/common/ui/CategoryTabs';
 import {
   APPLICATION_CATEGORY_OPTIONS,
   ApplicationCategory,
@@ -9,8 +10,8 @@ import ApplySection from '@/domain/mypage/application/section/ApplySection';
 import CompleteSection from '@/domain/mypage/application/section/CompleteSection';
 import EmptySection from '@/domain/mypage/application/section/EmptySection';
 import GuidebookSection from '@/domain/mypage/application/section/GuidebookSection';
+import LibrarySection from '@/domain/mypage/application/section/LibrarySection';
 import ParticipateSection from '@/domain/mypage/application/section/ParticipateSection';
-import CategoryTabs from '@/domain/mypage/ui/nav/CategoryTabs';
 import { useState } from 'react';
 
 const Application = () => {
@@ -45,11 +46,12 @@ const Application = () => {
 
   return (
     <main className="flex w-full flex-col gap-8 md:gap-10">
-      <div className="md:pt-5">
+      <div>
         <CategoryTabs
           options={APPLICATION_CATEGORY_OPTIONS}
           selected={category}
           onChange={setCategory}
+          className="-mx-5 -mt-[18px] md:-mx-0 md:-mt-0"
         />
       </div>
       <div className="flex w-full flex-col gap-16">
@@ -75,7 +77,7 @@ const Application = () => {
           </>
         )}
 
-        {/* LIBRARY 탭 */}
+        {category === 'LIBRARY' && <LibrarySection />}
 
         {category === 'GUIDEBOOK' && (
           <GuidebookSection applicationList={guidebookApplicationList} />

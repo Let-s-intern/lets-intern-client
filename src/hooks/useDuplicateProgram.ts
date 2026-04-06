@@ -130,8 +130,8 @@ export const guidebookToCreateInput = (
   recommendedFor: guidebook.recommendedFor ?? '',
   description: guidebook.description ?? '',
   job: guidebook.job ?? '',
-  contentUrl: '',
-  contentFileUrl: '',
+  contentUrl: guidebook.contentUrl ?? '',
+  contentFileUrl: guidebook.contentFileUrl ?? '',
   programTypeInfo: (guidebook.programTypeInfo ?? []).map((value) => ({
     classificationInfo: {
       programClassification: value.programClassification ?? 'PASS',

@@ -35,6 +35,10 @@ const navData = [
         name: '챌린지 운영',
         url: '/admin/challenge/operation',
       },
+      {
+        name: '피드백 운영',
+        url: '/admin/challenge/feedback-operation',
+      },
     ],
   },
   {
@@ -51,6 +55,10 @@ const navData = [
       {
         name: '멘토 관리',
         url: '/admin/mentors',
+      },
+      {
+        name: '리드 관리',
+        url: '/admin/leads/managements',
       },
     ],
   },
@@ -98,12 +106,17 @@ const navData = [
     ],
   },
   {
-    title: '리드 관리',
+    title: '마그넷',
     itemList: [
       {
-        name: '리드 히스토리',
-        url: '/admin/leads/history',
+        name: '마그넷 관리/등록',
+        url: '/admin/magnet/list',
       },
+    ],
+  },
+  {
+    title: '리드 관리',
+    itemList: [
       {
         name: '리드 이벤트',
         url: '/admin/leads/events',

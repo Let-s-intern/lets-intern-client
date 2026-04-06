@@ -6,8 +6,8 @@ export type EmployeeType = z.infer<typeof employeeTypeSchema>;
 export type UserCareerType = z.infer<typeof userCareerSchema>;
 export type CareerFormType = z.infer<typeof careerFormSchema>;
 
-// "2025-08" or "2025.08"
-export const yearMonthSchema = z.string().regex(/^\d{4}[-\.]\d{2}$/);
+// "2025-08", "2025.08", or "2025-08-01"
+export const yearMonthSchema = z.string().regex(/^\d{4}[-\.]\d{2}(-\d{2})?$/);
 
 export const employeeTypeSchema = z.enum([
   '정규직',
@@ -27,11 +27,13 @@ export const userCareerSchema = z.object({
   id: z.number().nullable().optional(),
   company: z.string(),
   job: z.string(),
-  employmentType: z.string(),
-  startDate: yearMonthSchema, // "2025-08"
-  endDate: yearMonthSchema // "2025-08"
-    .nullable()
-    .optional(),
+  employmentType: z.string().nullable().optional(),
+  startDate: z.string().nullable().optional(),
+  endDate: z.string().nullable().optional(),
+  field: z.string().nullable().optional(),
+  position: z.string().nullable().optional(),
+  department: z.string().nullable().optional(),
+  isAddedByAdmin: z.boolean().nullable().optional(),
 });
 
 export const userCareerListSchema = z.object({

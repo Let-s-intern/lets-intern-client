@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-
 import { IPageable } from '@/types/interface';
 import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
@@ -7,6 +5,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   adminChallengeMentorListSchema,
   adminUserMentorList,
+  type PatchAttendanceMentorReq,
   PostAdminChallengeMentorReq,
 } from './mentorSchema';
 
@@ -49,8 +48,9 @@ export const usePostAdminChallengeMentor = () => {
       await axiosV2.post(`/admin/challenge/${challengeId}/mentor`, body);
     },
     onError: (error) => {
+      // eslint-disable-next-line no-console
       console.error(error);
-      alert('문제가 발생했습니다: ' + error);
+      alert(`문제가 발생했습니다: ${error}`);
     },
   });
 };
@@ -62,8 +62,43 @@ export const useDeleteChallengeMentor = () => {
       return axios.delete(`/admin/challenge-mentor/${challengeMentorId}`);
     },
     onError: (error) => {
+      // eslint-disable-next-line no-console
       console.error(error);
-      alert('문제가 발생했습니다: ' + error);
+      alert(`문제가 발생했습니다: ${error}`);
+    },
+  });
+};
+
+/** POST 멘토-멘티 매칭 (다건) /api/v2/admin/challenge/{challengeId}/mentor/{challengeMentorId}/match */
+export const usePostAdminChallengeMentorMatch = () => {
+  return useMutation({
+    mutationFn: async (data: {
+      challengeId: number;
+      challengeMentorId: number;
+      challengeApplicationIdList: number[];
+    }) => {
+      const { challengeId, challengeMentorId, challengeApplicationIdList } = data;
+      await axiosV2.post(
+        `/admin/challenge/${challengeId}/mentor/${challengeMentorId}/match`,
+        { challengeApplicationIdList },
+      );
+    },
+    onError: (error) => {
+      // eslint-disable-next-line no-console
+      console.error(error);
+      alert(`매칭에 실패했습니다: ${error}`);
+    },
+  });
+};
+
+/** PATCH 멘토 피드백 저장 /api/v1/attendance/{attendanceId}/mentor */
+export const usePatchAttendanceMentorMutation = () => {
+  return useMutation({
+    mutationFn: async (
+      data: PatchAttendanceMentorReq & { attendanceId: number },
+    ) => {
+      const { attendanceId, ...body } = data;
+      return axios.patch(`/attendance/${attendanceId}/mentor`, body);
     },
   });
 };

@@ -96,7 +96,7 @@ const GuidebookCreate: React.FC = () => {
           <FormSection title="가격 정보">
             <GuidebookPriceSection input={input} setInput={setInput} />
           </FormSection>
-          <FormSection title="자료 정보" required>
+          <FormSection title="자료 정보">
             <GuidebookResourceSection
               input={input}
               setInput={setInput}
@@ -120,12 +120,7 @@ const GuidebookCreate: React.FC = () => {
         <Button
           variant="contained"
           color="primary"
-          disabled={
-            loading ||
-            (resourceSource === 'url'
-              ? !input.contentUrl
-              : !input.contentFileUrl)
-          }
+          disabled={loading}
           startIcon={<FaSave size={12} />}
           onClick={onClickSave}
         >

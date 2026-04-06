@@ -1,5 +1,6 @@
 import { useBlogListQuery } from '@/api/blog/blog';
 import { CurationType } from '@/api/curation';
+import { useGetUserMagnetListQuery } from '@/api/magnet/magnet';
 import { useGetProgramAdminQuery } from '@/api/program';
 import { useGetReportsForAdmin } from '@/api/report';
 import EmptyContainer from '@/common/container/EmptyContainer';
@@ -68,12 +69,28 @@ const CurationSelectModal = ({
     enabled: type === 'BLOG',
   });
 
+  const { data: magnetData, isLoading: magnetDataIsLoading } =
+    useGetUserMagnetListQuery({
+      pageable: { page: 1, size: 100 },
+      enabled: type === 'RESOURCE',
+    });
+
+  const { data: guidebookData, isLoading: guidebookDataIsLoading } =
+    useGetProgramAdminQuery({
+      type: 'GUIDEBOOK',
+      page: 1,
+      size: 100,
+      enabled: type === 'GUIDEBOOK',
+    });
+
   const isLoading =
     challengeDataIsLoading ||
     liveDataIsLoading ||
     vodDataIsLoading ||
     reportDataIsLoading ||
-    blogDataIsLoading;
+    blogDataIsLoading ||
+    magnetDataIsLoading ||
+    guidebookDataIsLoading;
 
   const data = (): CurationSelectItemType[] => {
     switch (type) {
@@ -125,6 +142,26 @@ const CurationSelectModal = ({
             isVisible: blog.blogThumbnailInfo.isDisplayed || false,
             visibleDate:
               dayjs(blog.blogThumbnailInfo.displayDate).format(YY_MM_DD) || '-',
+          })) || []
+        );
+      case 'RESOURCE':
+        return (
+          magnetData?.magnetList.map((magnet) => ({
+            id: magnet.magnetId,
+            title: magnet.title,
+            thumbnail: magnet.desktopThumbnail || magnet.mobileThumbnail || '',
+            visibleDate: magnet.startDate
+              ? dayjs(magnet.startDate).format(YY_MM_DD)
+              : '-',
+          })) || []
+        );
+      case 'GUIDEBOOK':
+        return (
+          guidebookData?.programList.map((program) => ({
+            id: program.programInfo.id || 0,
+            title: program.programInfo.title || '',
+            thumbnail: program.programInfo.thumbnail || '',
+            isVisible: program.programInfo.isVisible || false,
           })) || []
         );
       default:

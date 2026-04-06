@@ -49,6 +49,8 @@ export const getProgramUrl = ({
       return `/program/guidebook/${programId}`;
     case 'BLOG':
       return `/blog/${programId}`;
+    case 'GUIDEBOOK':
+      return url ?? '';
     case 'ETC':
       return url ?? '';
     default:
