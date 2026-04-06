@@ -227,7 +227,7 @@ const config = {
     },
   },
 
-  plugins: [tailwindScrollbarHide],
+  plugins: [tailwindScrollbarHide, require('@tailwindcss/typography')],
 };
 
 export default config;

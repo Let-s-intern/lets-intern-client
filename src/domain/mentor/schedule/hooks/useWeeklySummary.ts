@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { isSameDay } from 'date-fns';
 
-import type { PeriodBarData } from '../challenge-period/ChallengePeriodBar';
+import type { PeriodBarData } from '../types';
 
 interface WeeklySummaryCounts {
   totalCount: number;

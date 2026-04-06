@@ -2,14 +2,16 @@
 
 import { useEffect } from 'react';
 
-import { addDays } from 'date-fns';
-
 import type { ChallengeMentorVo } from '@/api/user/user';
 import {
   useMentorMissionFeedbackListQuery,
   useMentorMenteeAttendanceQuery,
 } from '@/api/challenge/challenge';
-import type { PeriodBarData } from '../challenge-period/ChallengePeriodBar';
+import type { PeriodBarData } from '../types';
+import {
+  computeDatesFromConfig,
+} from '../constants/scheduleConfig';
+import { WRITTEN_FEEDBACK_CONFIG } from '../challenge-content/writtenFeedback';
 
 // ---------------------------------------------------------------------------
 // Per-mission attendance fetcher (each mission needs its own API call)
@@ -43,10 +45,10 @@ const MissionAttendanceFetcher = ({
     const submitted = list.filter((a) => a.status !== 'ABSENT');
     const notSubmitted = list.filter((a) => a.status === 'ABSENT');
 
-    const feedbackDeadline = addDays(
-      new Date(mission.endDate),
-      3,
-    ).toISOString();
+    const { feedbackStartDate, feedbackDeadline } = computeDatesFromConfig(
+      WRITTEN_FEEDBACK_CONFIG,
+      mission.endDate,
+    );
 
     const bar: PeriodBarData = {
       challengeId: challenge.challengeId,
@@ -55,6 +57,7 @@ const MissionAttendanceFetcher = ({
       th: mission.th,
       startDate: mission.startDate,
       endDate: mission.endDate,
+      feedbackStartDate,
       feedbackDeadline,
       colorIndex,
       submittedCount: submitted.length,

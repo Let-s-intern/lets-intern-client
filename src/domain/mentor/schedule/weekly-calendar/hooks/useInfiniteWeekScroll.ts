@@ -6,7 +6,7 @@ import {
   startOfWeek,
 } from 'date-fns';
 
-import type { PeriodBarData } from '../../challenge-period/ChallengePeriodBar';
+import type { PeriodBarData } from '../../types';
 
 interface UseTimelineScrollOptions {
   allBars: PeriodBarData[];
