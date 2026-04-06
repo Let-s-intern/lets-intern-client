@@ -338,7 +338,7 @@ export const useGetUserChallengeInfo = () => {
   return useQuery({
     queryKey: ['user', 'challenge-info'],
     queryFn: async () => {
-      const res = await axios.get('/user/challenge-info');
+      const res = await axiosV2.get('/user/challenge-info');
       return challengeUserInfoSchema.parse(res.data.data);
     },
   });
@@ -465,6 +465,7 @@ export const useMentorMissionFeedbackListQuery = (
 
 /** 챌린지 목표 제출 /api/v1/challenge/{challengeId}/goal */
 export const useSubmitChallengeGoal = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
       challengeId,
@@ -474,7 +475,12 @@ export const useSubmitChallengeGoal = () => {
       goal: string;
     }) => {
       const res = await axios.patch(`/challenge/${challengeId}/goal`, { goal });
-      return res.data;
+      return { data: res.data, challengeId: String(challengeId) };
+    },
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({
+        queryKey: getChallengeGoalQueryKey(data.challengeId),
+      });
     },
   });
 };

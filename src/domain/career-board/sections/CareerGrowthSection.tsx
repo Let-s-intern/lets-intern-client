@@ -50,12 +50,10 @@ const CareerGrowthSection = () => {
 
   const isLibraryTab = category === 'LIBRARY';
 
-  const {
-    data: magnetData,
-    isLoading: isMagnetLoading,
-  } = useGetMypageMagnetListQuery({
-    enabled: isLibraryTab,
-  });
+  const { data: magnetData, isLoading: isMagnetLoading } =
+    useGetMypageMagnetListQuery({
+      enabled: isLibraryTab,
+    });
 
   const items = useMemo(
     () => toCareerGrowthItems(applications ?? []),
@@ -64,9 +62,7 @@ const CareerGrowthSection = () => {
 
   const visibleItems = useMemo(() => {
     if (category === 'GUIDEBOOK') {
-      return items.filter(
-        (program) => program.programTypeKey === 'GUIDEBOOK',
-      );
+      return items.filter((program) => program.programTypeKey === 'GUIDEBOOK');
     }
     if (category === 'LIBRARY') {
       return [];

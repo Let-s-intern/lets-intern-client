@@ -40,6 +40,12 @@ export function validateUrl(url: string): boolean {
   return url === 'https://' || urlRegExp.test(url);
 }
 
+export function getBlogSlug(title?: string | null): string {
+  return (
+    title?.replace(/[ /]/g, '-').replace(/[?#&]/g, '') || ''
+  ).toLowerCase();
+}
+
 export function getBlogPathname({
   id,
   title,
@@ -47,8 +53,7 @@ export function getBlogPathname({
   id?: string | number | null;
   title?: string | null;
 }): string {
-  const slug = (title?.replace(/[ /]/g, '-') || '').toLowerCase();
-  return `/blog/${id}/${encodeURIComponent(slug)}`;
+  return `/blog/${id}/${encodeURIComponent(getBlogSlug(title))}`;
 }
 
 export function getProgramPathname({

@@ -15,6 +15,7 @@ import { ProgramStatusEnum, ProgramTypeEnum } from '@/schema';
 import {
   getBaseUrlFromServer,
   getBlogPathname,
+  getBlogSlug,
   getBlogTitle,
 } from '@/utils/url';
 import { CircleChevronRight } from 'lucide-react';
@@ -69,9 +70,7 @@ const BlogDetailPage = async ({
   });
 
   // 슬러그 비교 및 리디렉션
-  const correctSlug = (
-    blog.blogDetailInfo.title?.replace(/[ /]/g, '-') || ''
-  ).toLowerCase();
+  const correctSlug = getBlogSlug(blog.blogDetailInfo.title);
   let currentSlug = _title || '';
   try {
     currentSlug = decodeURIComponent(currentSlug);

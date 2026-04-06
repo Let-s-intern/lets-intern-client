@@ -117,12 +117,14 @@ interface ChallengeResultProps {
   challengeType: ChallengeType;
   challengeTitle: string;
   isResumeTemplate: boolean;
+  weekText: string;
 }
 
 function ChallengeResult({
   challengeType,
   challengeTitle,
   isResumeTemplate,
+  weekText,
 }: ChallengeResultProps) {
   const isDesktop = useMediaQuery('(min-width: 991px)');
 
@@ -284,8 +286,7 @@ function ChallengeResult({
               </>
             ) : (
               <>
-                {/* TODO: receivedContent.challengePoint.weekText? */}
-                2주 뒤에{' '}
+                {weekText} 뒤에{' '}
                 {challengeType === PORTFOLIO ? '포트폴리오' : '자기소개서'}{' '}
                 완성하고
                 <Break />

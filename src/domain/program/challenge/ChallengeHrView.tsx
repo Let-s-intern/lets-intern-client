@@ -6,6 +6,7 @@ import { ChallengeIdPrimitive } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import { useMemo } from 'react';
 import ChallengeBasicInfoSection from './challenge-view/ChallengeBasicInfoSection';
+import FreeTemplateLayout from './challenge-view/FreeTemplateLayout';
 import HrCheckListSection from './hr-view/HrCheckListSection';
 import HrCurriculumPointsSection from './hr-view/HrCurriculumPointsSection';
 import HrCurriculumSection from './hr-view/HrCurriculumSection';
@@ -32,19 +33,25 @@ const ChallengeHrView = ({ challenge }: Props) => {
   return (
     <div className="w-full">
       <ChallengeBasicInfoSection challenge={challenge} />
-      <ChallengeTabNavigation themeColor={themeColor} />
-      <ChallengeIntroEditorContent challenge={challenge} />
-      <HrIntroSection />
-      <HrIntroFeaturesSection content={content} />
-      <HrCheckListSection />
-      <HrCurriculumPointsSection content={content} />
-      <HrCurriculumStepsSection content={content} />
-      <HrCurriculumSection challenge={challenge} content={content} />
-      <HrOverviewSection content={content} />
-      <HrDifferentiatorsSection />
-      <HrRecruitmentInfoSection challenge={challenge} />
-      <HrReviewSection content={content} />
-      <HrFAQSection challenge={challenge} content={content} />
+      {content?.isFreeTemplate ? (
+        <FreeTemplateLayout freeContent={content.freeContent} />
+      ) : (
+        <>
+          <ChallengeTabNavigation themeColor={themeColor} />
+          <ChallengeIntroEditorContent challenge={challenge} />
+          <HrIntroSection />
+          <HrIntroFeaturesSection content={content} />
+          <HrCheckListSection />
+          <HrCurriculumPointsSection content={content} />
+          <HrCurriculumStepsSection content={content} />
+          <HrCurriculumSection challenge={challenge} content={content} />
+          <HrOverviewSection content={content} />
+          <HrDifferentiatorsSection />
+          <HrRecruitmentInfoSection challenge={challenge} />
+          <HrReviewSection content={content} />
+          <HrFAQSection challenge={challenge} content={content} />
+        </>
+      )}
     </div>
   );
 };

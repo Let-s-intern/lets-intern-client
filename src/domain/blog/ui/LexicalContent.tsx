@@ -17,6 +17,7 @@ import {
   SerializedTextNode,
 } from 'lexical';
 import { SerializedCodeHighlightNode } from '../../admin/lexical/nodes/CodeHighlightNode';
+import CheckBox from './CheckBox';
 import { SerializedCollapsibleContainerNode } from '../../admin/lexical/nodes/CollapsibleContainerNode';
 import { SerializedCollapsibleContentNode } from '../../admin/lexical/nodes/CollapsibleContentNode';
 import { SerializedCollapsibleTitleNode } from '../../admin/lexical/nodes/CollapsibleTitleNode';
@@ -111,16 +112,30 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
     }
     case 'list': {
       const _node = node as SerializedListNode;
+      const originalChildren = _node.children || [];
+      const children =
+        _node.listType === 'check'
+          ? originalChildren.map((child) => {
+              const listItem = child as SerializedListItemNode;
+              return listItem.checked === undefined
+                ? { ...child, checked: false }
+                : child;
+            })
+          : originalChildren;
       const ListTag =
-        _node.listType === 'bullet'
-          ? 'ul'
-          : ('ol' as keyof JSX.IntrinsicElements);
+        _node.listType === 'number'
+          ? 'ol'
+          : ('ul' as keyof JSX.IntrinsicElements);
       return (
         <ListTag
-          className={_node.listType === 'bullet' ? 'list-disc' : 'list-decimal'}
+          className={clsx({
+            'list-disc': _node.listType === 'bullet',
+            'list-decimal': _node.listType === 'number',
+            'list-none': _node.listType === 'check',
+          })}
           start={_node.start}
         >
-          {(_node.children || []).map((child, childIndex) => (
+          {children.map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
         </ListTag>
@@ -130,6 +145,17 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       const _node = node as SerializedListItemNode;
       const children = _node.children || [];
       const isNested = children.some((child) => child.type === 'list');
+
+      if (_node.checked !== undefined) {
+        return (
+          <CheckBox initialChecked={_node.checked}>
+            {children.map((child, childIndex) => (
+              <LexicalContent key={childIndex} node={child} />
+            ))}
+          </CheckBox>
+        );
+      }
+
       return (
         <li className={twMerge('ml-4', isNested && 'list-none')}>
           {children.map((child, childIndex) => (

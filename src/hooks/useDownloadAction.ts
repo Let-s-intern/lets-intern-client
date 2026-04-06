@@ -1,43 +1,38 @@
-import {
-  getApplicationDownloadStatus,
-  type ApplicationDownloadType,
-} from '@/api/application';
+import { useMypageApplicationsQueryKey } from '@/api/application';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 type UseDownloadActionParams = {
-  applicationId: number;
-  type: ApplicationDownloadType;
-  executeDownload: () => Promise<void>;
+  isDownloaded: boolean;
+  executeDownload: () => void | Promise<void>;
+  onComplete?: () => void;
 };
 
 export function useDownloadAction({
-  applicationId,
-  type,
+  isDownloaded: initialIsDownloaded,
   executeDownload,
+  onComplete,
 }: UseDownloadActionParams) {
   const queryClient = useQueryClient();
   const [showConfirm, setShowConfirm] = useState(false);
-
   const handleClick = () => {
-    void (async () => {
-      const data = await queryClient.fetchQuery({
-        queryKey: ['applicationDownload', applicationId, type],
-        queryFn: () => getApplicationDownloadStatus({ applicationId, type }),
-      });
-      if (data.isDownloaded) {
-        await executeDownload();
-      } else {
-        setShowConfirm(true);
-      }
-    })();
+    if (initialIsDownloaded) {
+      executeDownload();
+      onComplete?.();
+    } else {
+      setShowConfirm(true);
+    }
   };
 
-  const handleConfirm = async () => {
+  const handleConfirm = () => {
     setShowConfirm(false);
-    await executeDownload();
-    await queryClient.invalidateQueries({
-      queryKey: ['applicationDownload', applicationId, type],
+    const result = executeDownload();
+    onComplete?.();
+    // 첫 다운로드 시에만 PATCH 완료 후 목록 갱신 (다른 페이지 이동 시 최신 상태 반영)
+    Promise.resolve(result).then(() => {
+      queryClient.invalidateQueries({
+        queryKey: [useMypageApplicationsQueryKey],
+      });
     });
   };
 

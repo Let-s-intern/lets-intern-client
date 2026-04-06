@@ -14,6 +14,7 @@ import dayjs from '@/lib/dayjs';
 import { ProgramTypeEnum } from '@/schema';
 import { bankTypeToText } from '@/utils/convert';
 import { generateUUID } from '@/utils/random';
+import { usePaginationModelWithSearchParams } from '@/hooks/usePaginationModelWithSearchParams';
 import { Button, Checkbox } from '@mui/material';
 import {
   DataGrid,
@@ -145,6 +146,25 @@ export default function AdminBlogReviewListPage() {
       ),
     },
     {
+      field: 'isRemittanceConfirmed',
+      headerName: '송금확인',
+      sortable: false,
+      width: 80,
+      type: 'boolean',
+      renderCell: (params: GridRenderCellParams<Row, boolean>) => (
+        <Checkbox
+          checked={params.value}
+          onChange={async () => {
+            const { blogReviewId } = params.row;
+            await patchReview.mutateAsync({
+              blogReviewId,
+              isRemittanceConfirmed: !params.value,
+            });
+          }}
+        />
+      ),
+    },
+    {
       field: 'isVisible',
       headerName: '노출여부',
       sortable: false,
@@ -206,6 +226,9 @@ export default function AdminBlogReviewListPage() {
       },
     },
   ];
+
+  const { paginationModel, handlePaginationModelChange } =
+    usePaginationModelWithSearchParams({ defaultPage: 0, defaultPageSize: 20 });
 
   const [rows, setRows] = useState<Row[]>([]);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
@@ -378,7 +401,10 @@ export default function AdminBlogReviewListPage() {
         processRowUpdate={processRowUpdate}
         onProcessRowUpdateError={(error) => console.error(error)}
         disableRowSelectionOnClick
-        hideFooter
+        pagination
+        pageSizeOptions={[10, 20, 50, 100]}
+        paginationModel={paginationModel}
+        onPaginationModelChange={handlePaginationModelChange}
         slots={{ toolbar: CustomToolbar }}
       />
     </div>

@@ -6,9 +6,11 @@ import {
   ChallengeIdSchema,
   ChallengePriceInfo,
   ChallengePricePlan,
+  ChallengeType,
 } from '@/schema';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { useMemo, useState } from 'react';
+import FeedbackMentoringLink from '../ui/FeedbackMentoringLink';
 import { DEFAULT_COLOR } from '../utils/getChallengeThemeColor';
 
 type Plans = {
@@ -104,11 +106,13 @@ const FinalPriceInfo = ({
 interface Props {
   priceInfoList: ChallengePriceInfo[] | ChallengeIdSchema['priceInfo'];
   themeColor?: string;
+  challengeType?: ChallengeType;
 }
 
 function ChallengePriceInfoContent({
   priceInfoList,
   themeColor = DEFAULT_COLOR,
+  challengeType,
 }: Props) {
   const [active, setActive] = useState<ChallengePricePlan>('BASIC');
 
@@ -116,7 +120,7 @@ function ChallengePriceInfoContent({
     (item) => item.challengePricePlanType === 'BASIC',
   );
 
-  const deposit = basicPriceInfo?.refund ?? 0; // 환급 (보증금)
+  const deposit = active === 'LIGHT' ? 0 : (basicPriceInfo?.refund ?? 0); // 환급 (보증금) 라이트는 보증금 없음
   const activeDescription =
     priceInfoList.find((item) => item.challengePricePlanType === active)
       ?.description ?? '';
@@ -128,10 +132,18 @@ function ChallengePriceInfoContent({
     standardDiscountAmount,
     premiumRegularPrice,
     premiumDiscountAmount,
+    lightRegularPrice,
+    lightDiscountAmount,
   } = getChallengeOptionPriceInfo(priceInfoList);
 
   const { regularPrice, discountAmount, sellingPrice } = useMemo(() => {
     switch (active) {
+      case 'LIGHT':
+        return {
+          regularPrice: lightRegularPrice,
+          discountAmount: lightDiscountAmount,
+          sellingPrice: lightRegularPrice - lightDiscountAmount,
+        };
       case 'STANDARD':
         return {
           regularPrice: standardRegularPrice,
@@ -160,6 +172,8 @@ function ChallengePriceInfoContent({
     standardDiscountAmount,
     premiumRegularPrice,
     premiumDiscountAmount,
+    lightRegularPrice,
+    lightDiscountAmount,
   ]);
 
   const discountPercentage = Math.round((discountAmount / regularPrice) * 100);
@@ -172,16 +186,22 @@ function ChallengePriceInfoContent({
     const premiumPriceInfo = priceInfoList.find(
       (item) => item.challengePricePlanType === 'PREMIUM',
     );
+    const lightPriceInfo = priceInfoList.find(
+      (item) => item.challengePricePlanType === 'LIGHT',
+    );
 
-    const plans: Plans = {
-      BASIC: basicPriceInfo?.title || '베이직',
-    };
+    const plans: Plans = {};
+    if (lightPriceInfo) {
+      plans.LIGHT = lightPriceInfo.title || '라이트';
+    }
+
+    plans.BASIC = basicPriceInfo?.title || '베이직';
 
     if (standardPriceInfo) {
-      plans['STANDARD'] = standardPriceInfo.title || '스탠다드';
+      plans.STANDARD = standardPriceInfo.title || '스탠다드';
     }
     if (premiumPriceInfo) {
-      plans['PREMIUM'] = premiumPriceInfo.title || '프리미엄';
+      plans.PREMIUM = premiumPriceInfo.title || '프리미엄';
     }
 
     return plans;
@@ -216,6 +236,14 @@ function ChallengePriceInfoContent({
           <p className="mt-1.5 whitespace-pre-line">{activeDescription}</p>
         </div>
       </div>
+
+      {challengeType && (
+        <FeedbackMentoringLink
+          challengeType={challengeType}
+          themeColor={themeColor}
+          className="w-full py-2"
+        />
+      )}
 
       <div className="flex flex-col gap-1.5">
         <div className="text-xsmall16 text-neutral-20">

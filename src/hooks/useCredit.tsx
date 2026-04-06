@@ -150,6 +150,11 @@ export default function useCredit(paymentId?: string | number) {
       return 0;
     }
 
+    // 가이드북: 차감 없이 전액 환불
+    if (data.programInfo.programType === 'GUIDEBOOK') {
+      return data.paymentInfo.finalPrice ?? 0;
+    }
+
     const challengeBasicSellingPrice =
       (data.priceInfo.price ?? 0) +
       (data.priceInfo.refund ?? 0) -

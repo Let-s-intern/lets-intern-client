@@ -7,7 +7,7 @@ import { useGetChallengeQuery } from '@/api/program';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import dayjs from '@/lib/dayjs';
 import useAuthStore from '@/store/useAuthStore';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import RecommendedProgramSection from '../../my-challenge/section/RecommendedProgramSection';
 import NavBar from './NavBar';
@@ -18,6 +18,7 @@ const CHALLENGE_DASHBOARD_ID_THRESHOLD =
 
 const ChallengeLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
+  const pathname = usePathname();
   const params = useParams<{ programId: string; applicationId: string }>();
   const { isLoggedIn, isInitialized } = useAuthStore();
 
@@ -87,6 +88,7 @@ const ChallengeLayout = ({ children }: { children: React.ReactNode }) => {
     isLoggedIn,
     isValidUserInfo,
     router,
+    pathname,
     programId,
     applicationId,
     accessibleData,

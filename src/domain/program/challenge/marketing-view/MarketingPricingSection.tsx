@@ -1,9 +1,10 @@
 import SectionHeader from '@/common/header/SectionHeader';
 import SectionSubHeader from '@/common/header/SectionSubHeader';
-import { ChallengePriceInfo } from '@/schema';
+import { ChallengePriceInfo, ChallengeType } from '@/schema';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import * as React from 'react';
 import PriceSummary from '../../../../common/price/PriceSummary';
+import FeedbackMentoringLink from '../ui/FeedbackMentoringLink';
 import MainTitle from '../ui/MainTitle';
 
 const PriceBox = ({
@@ -20,19 +21,27 @@ const PriceBox = ({
   discountAmount: number;
 }) => {
   return (
-    <div className="relative flex flex-1 flex-col gap-6 rounded-sm bg-white px-5 py-7">
-      <div className="absolute right-3 top-0 rounded-b-xxs bg-[#4A76FF] px-2.5 py-1.5 text-xsmall16 font-medium text-white">
+    <div className="flex flex-1 flex-col gap-3.5 rounded-sm bg-white px-5 pb-6 pt-5">
+      <div
+        className={
+          label
+            ? 'w-fit rounded-xs bg-[#4A76FF] px-2.5 py-1.5 text-xsmall14 font-medium text-white'
+            : 'h-[32px]'
+        }
+      >
         {label}
       </div>
-      <span className="text-small20 font-bold">{title}</span>
-      <div className="flex h-full flex-col gap-6 md:justify-between">
-        <p className="whitespace-pre-line text-small18 font-medium text-neutral-0 md:mb-7 md:min-h-[78px]">
-          {children}
-        </p>
-        <PriceSummary
-          originalPrice={originalPrice}
-          discountPrice={discountAmount}
-        />
+      <div className="flex h-full flex-col gap-6">
+        <span className="text-small20 font-bold">{title}</span>
+        <div className="flex h-full flex-col gap-6 md:justify-between">
+          <p className="whitespace-pre-line text-small18 font-medium text-neutral-0 md:mb-7 md:min-h-[78px]">
+            {children}
+          </p>
+          <PriceSummary
+            originalPrice={originalPrice}
+            discountPrice={discountAmount}
+          />
+        </div>
       </div>
     </div>
   );
@@ -40,9 +49,10 @@ const PriceBox = ({
 
 interface Props {
   priceInfoList: ChallengePriceInfo[];
+  challengeType: ChallengeType;
 }
 
-const MarketingPricingSection = ({ priceInfoList }: Props) => {
+const MarketingPricingSection = ({ priceInfoList, challengeType }: Props) => {
   const basicPriceInfo = priceInfoList.find(
     (item) => item.challengePricePlanType === 'BASIC',
   );
@@ -52,6 +62,9 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
   const premiumPriceInfo = priceInfoList.find(
     (item) => item.challengePricePlanType === 'PREMIUM',
   );
+  const lightPriceInfo = priceInfoList.find(
+    (item) => item.challengePricePlanType === 'LIGHT',
+  );
 
   const {
     basicRegularPrice,
@@ -60,9 +73,22 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
     standardDiscountAmount,
     premiumRegularPrice,
     premiumDiscountAmount,
+    lightRegularPrice,
+    lightDiscountAmount,
   } = getChallengeOptionPriceInfo(priceInfoList);
 
   const pricingList = [
+    ...(lightPriceInfo
+      ? [
+          {
+            title: lightPriceInfo.title || '라이트',
+            label: '직무 탐색 추천',
+            description: lightPriceInfo.description ?? '',
+            originalPrice: lightRegularPrice,
+            discountAmount: lightDiscountAmount,
+          },
+        ]
+      : []),
     {
       title: basicPriceInfo?.title || '기본',
       label: '대학생 추천',
@@ -86,6 +112,10 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
     },
   ];
 
+  const containerMaxWidthClass = lightPriceInfo
+    ? 'max-w-[1200px]'
+    : 'max-w-[1000px]';
+
   return (
     <section
       id="pricing"
@@ -102,7 +132,9 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
         </MainTitle>
       </div>
 
-      <div className="flex w-full max-w-[1000px] flex-col items-stretch gap-3 px-3 max-md:max-w-full md:flex-row md:px-0">
+      <div
+        className={`flex w-full ${containerMaxWidthClass} flex-col items-stretch gap-3 px-3 max-md:max-w-full md:flex-row md:px-0`}
+      >
         {pricingList.map((item) =>
           // 해당 플랜이 없으면 null 반환
           item.originalPrice === 0 ? null : (
@@ -118,6 +150,12 @@ const MarketingPricingSection = ({ priceInfoList }: Props) => {
           ),
         )}
       </div>
+
+      <FeedbackMentoringLink
+        challengeType={challengeType}
+        themeColor="#4A76FF"
+        className="mt-8 text-xsmall16"
+      />
     </section>
   );
 };

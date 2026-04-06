@@ -304,6 +304,9 @@ export const mypageApplicationsSchema = z
           .array(z.string())
           .nullable()
           .default(() => []),
+        contentUrl: z.string().nullable().optional(),
+        contentFileUrl: z.string().nullable().optional(),
+        isDownloaded: z.boolean().nullable().optional(),
       }),
     ),
   })
@@ -328,7 +331,7 @@ export type MypageApplication = z.infer<
   typeof mypageApplicationsSchema
 >['applicationList'][0];
 
-const useMypageApplicationsQueryKey = 'useMypageApplicationsQueryKey';
+export const useMypageApplicationsQueryKey = 'useMypageApplicationsQueryKey';
 
 export const useMypageApplicationsQuery = () => {
   return useQuery({

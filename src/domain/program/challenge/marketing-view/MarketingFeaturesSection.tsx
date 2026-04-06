@@ -32,7 +32,7 @@ const cards = [
     alt: '현직자 회사 로고(대학내일, 야놀자, 클래스101 등) 이미지',
   },
   {
-    title: '챌린지를 통한 서류 완성',
+    title: '3종 서류 완성',
     description: (
       <>
         채용 공고에 바로 지원이 <br />
@@ -95,7 +95,13 @@ const Card = ({
   );
 };
 
-const MarketingFeaturesSection: React.FC = () => {
+interface MarketingFeaturesSectionProps {
+  weekText: string;
+}
+
+const MarketingFeaturesSection: React.FC<MarketingFeaturesSectionProps> = ({
+  weekText,
+}) => {
   return (
     <section className="flex flex-col items-center bg-black pb-[70px] pt-[50px] text-center md:pb-28 md:pt-32">
       <div className="flex flex-col">
@@ -108,7 +114,7 @@ const MarketingFeaturesSection: React.FC = () => {
             수차례의 챌린지 운영 노하우를 집약해
           </span>
           <span className="gradient-text bg-gradient-to-r from-[#7FDDFF] to-[#7395FF]">
-            단 4주 만에 끝내는 <br className="md:hidden" />
+            단 {weekText} 만에 끝내는 <br className="md:hidden" />
             실전형 커리큘럼을 설계했습니다.
           </span>
         </MainTitle>

@@ -43,6 +43,7 @@ import ChallengeIntroPortfolio from './challenge-view/ChallengeIntroPortfolio';
 import ChallengePointView from './challenge-view/ChallengePointView';
 import ChallengePricePlanSection from './challenge-view/ChallengePricePlanSection';
 import ChallengeSummarySection from './challenge-view/ChallengeSummarySection';
+import FreeTemplateLayout from './challenge-view/FreeTemplateLayout';
 
 const {
   CAREER_START,
@@ -156,6 +157,8 @@ const ChallengeView: React.FC<{
     }
   }, [challenge.desc]);
 
+  const weekText = receivedContent.challengePoint?.weekText ?? '2주';
+
   const reviewExists =
     (receivedContent.challengeReview ?? []).length > 0 &&
     receivedContent.blogReview;
@@ -214,6 +217,25 @@ const ChallengeView: React.FC<{
         };
     }
   }, [challenge.challengeType]);
+
+  if (receivedContent.isFreeTemplate) {
+    return (
+      <div className="flex w-full flex-col">
+        <div className="flex w-full flex-col items-center">
+          <div className="flex w-full max-w-[1000px] flex-col px-5 pb-10 pt-6 md:gap-y-5 md:px-10 md:py-[60px] lg:px-0">
+            <ChallengeBasicInfo
+              challengeId={id}
+              challenge={challengeTransformed}
+              activeChallengeList={activeChallengeList?.challengeList}
+            />
+          </div>
+          <div className="flex w-full flex-col items-center overflow-x-hidden">
+            <FreeTemplateLayout freeContent={receivedContent.freeContent} />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex w-full flex-col">
@@ -276,18 +298,19 @@ const ChallengeView: React.FC<{
 
             <section className="flex w-full flex-col md:items-center">
               {challenge.challengeType === PORTFOLIO ? (
-                <ChallengeIntroPortfolio />
+                <ChallengeIntroPortfolio weekText={weekText} />
               ) : challenge.challengeType === CAREER_START ? (
                 <ChallengeIntroCareerStart
                   isResumeTemplate={isResumeTemplate}
                   challengeType={challenge.challengeType}
                   challengeTitle={challenge.title ?? ''}
-                  weekText={receivedContent.challengePoint.weekText}
+                  weekText={weekText}
                 />
               ) : challenge.challengeType === EXPERIENCE_SUMMARY ||
                 challenge.challengeType === ETC ? (
                 <ChallengeIntroExpericeSummary
                   challengeType={challenge.challengeType}
+                  weekText={weekText}
                 />
               ) : (
                 <ChallengeIntroPersonalStatement />
@@ -299,17 +322,20 @@ const ChallengeView: React.FC<{
               isResumeTemplate={isResumeTemplate}
               challengeType={challenge.challengeType}
               challengeTitle={challenge.title ?? ''}
+              weekText={weekText}
             />
 
             <ChallengeResult
               isResumeTemplate={isResumeTemplate}
               challengeType={challenge.challengeType}
               challengeTitle={challenge.title ?? ''}
+              weekText={weekText}
             />
 
             <ChallengeSummarySection
               challengeType={challenge.challengeType}
               isResumeTemplate={isResumeTemplate}
+              weekText={weekText}
             />
           </div>
 

@@ -79,42 +79,42 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
         {programInfo.title}
       </h2>
       <div className="flex flex-col gap-4">
-          {!isAlwaysAvailable && (
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center gap-1 tracking-[-0.4px] md:gap-1.5">
-                <span className="text-xxsmall12 font-normal text-neutral-0">
-                  모집기간
-                </span>
-                <span className="text-0.75-medium text-primary-dark">
-                  {dayjs(programInfo.beginning).format('YY.MM.DD')} ~{' '}
-                  {dayjs(programInfo.deadline).format('YY.MM.DD')}
-                </span>
-              </div>
-              <div className="flex items-center gap-1 tracking-[-0.4px] md:gap-1.5">
-                <span className="text-xxsmall12 font-normal text-neutral-0">
-                  진행기간
-                </span>
-                <span className="text-0.75-medium text-primary-dark">
-                  {programInfo.programType === PROGRAM_TYPE.CHALLENGE
-                    ? `${dayjs(programInfo.startDate).format('YY.MM.DD')} ~ ${dayjs(programInfo.endDate).format('YY.MM.DD')}`
-                    : dayjs(programInfo.startDate).format('YY.MM.DD')}
-                </span>
-              </div>
+        {!isAlwaysAvailable && (
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-1 tracking-[-0.4px] md:gap-1.5">
+              <span className="text-xxsmall12 font-normal text-neutral-0">
+                모집기간
+              </span>
+              <span className="text-0.75-medium text-primary-dark">
+                {dayjs(programInfo.beginning).format('YY.MM.DD')} ~{' '}
+                {dayjs(programInfo.deadline).format('YY.MM.DD')}
+              </span>
             </div>
-          )}
-
-          <div className="mt-1 flex flex-wrap gap-1.5">
-            {isAlwaysAvailable ? (
-              <ProgramStatusTag status={ALWAYS_AVAILABLE_LABEL} />
-            ) : (
-              <ProgramStatusTag
-                status={PROGRAM_BADGE_STATUS[programInfo.programStatusType]}
-              />
-            )}
-            {!isPost && (
-              <NewBadge beginning={programInfo.beginning ?? undefined} />
-            )}
+            <div className="flex items-center gap-1 tracking-[-0.4px] md:gap-1.5">
+              <span className="text-xxsmall12 font-normal text-neutral-0">
+                진행기간
+              </span>
+              <span className="text-0.75-medium text-primary-dark">
+                {programInfo.programType === PROGRAM_TYPE.CHALLENGE
+                  ? `${dayjs(programInfo.startDate).format('YY.MM.DD')} ~ ${dayjs(programInfo.endDate).format('YY.MM.DD')}`
+                  : dayjs(programInfo.startDate).format('YY.MM.DD')}
+              </span>
+            </div>
           </div>
+        )}
+
+        <div className="mt-1 flex flex-wrap gap-1.5">
+          {isAlwaysAvailable ? (
+            <ProgramStatusTag status={ALWAYS_AVAILABLE_LABEL} />
+          ) : (
+            <ProgramStatusTag
+              status={PROGRAM_BADGE_STATUS[programInfo.programStatusType]}
+            />
+          )}
+          {!isPost && (
+            <NewBadge beginning={programInfo.beginning ?? undefined} />
+          )}
+        </div>
       </div>
     </div>
   );

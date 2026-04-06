@@ -35,6 +35,7 @@ import ChallengeIntroEditorContent from './challenge-view/ChallengeIntroEditorCo
 import ChallengeIntroPortfolio from './challenge-view/ChallengeIntroPortfolio';
 import ChallengePricePlanSection from './challenge-view/ChallengePricePlanSection';
 import ChallengeResult from './challenge-view/ChallengeResult';
+import FreeTemplateLayout from './challenge-view/FreeTemplateLayout';
 import PortfolioFeedbackInfo from './portfolio-view/PortfolioFeedbackInfo';
 import PortfolioIntroCheckList from './portfolio-view/PortfolioIntroCheckList';
 import PortfolioOneOnOne from './portfolio-view/PortfolioOneOnOne';
@@ -48,7 +49,6 @@ import MainTitle from './ui/MainTitle';
 const {
   CAREER_START,
   PORTFOLIO,
-  PERSONAL_STATEMENT,
   PERSONAL_STATEMENT_LARGE_CORP,
   EXPERIENCE_SUMMARY,
   ETC,
@@ -155,6 +155,8 @@ const ChallengePortfolioView: React.FC<{
     }
   }, [challenge.desc]);
 
+  const weekText = receivedContent.challengePoint?.weekText ?? '2주';
+
   const reviewExists =
     (receivedContent.challengeReview ?? []).length > 0 &&
     receivedContent.blogReview;
@@ -213,6 +215,23 @@ const ChallengePortfolioView: React.FC<{
         };
     }
   }, [challenge.challengeType]);
+
+  if (receivedContent.isFreeTemplate) {
+    return (
+      <div className="flex w-full flex-col">
+        <div className="flex w-full flex-col items-center">
+          <div className="flex w-full max-w-[1000px] flex-col px-5 pb-10 pt-6 md:gap-y-5 md:px-10 md:py-[60px] lg:px-0">
+            <ChallengeBasicInfo
+              challengeId={id}
+              challenge={challengeTransformed}
+              activeChallengeList={activeChallengeList?.challengeList}
+            />
+          </div>
+          <FreeTemplateLayout freeContent={receivedContent.freeContent} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex w-full flex-col">
@@ -327,7 +346,7 @@ const ChallengePortfolioView: React.FC<{
                 </span>
                 하는
                 <Break />
-                렛츠커리어 포트폴리오 2주 완성 챌린지!
+                렛츠커리어 포트폴리오 {weekText} 완성 챌린지!
               </Heading2>
 
               <Description className="mt-3 break-keep md:mt-8 md:text-center">
@@ -399,6 +418,7 @@ const ChallengePortfolioView: React.FC<{
             isResumeTemplate={isResumeTemplate}
             challengeType={challenge.challengeType}
             challengeTitle={challenge.title ?? ''}
+            weekText={weekText}
           />
 
           <section className="flex w-full flex-col items-center pt-[70px] md:pt-40">
@@ -458,7 +478,7 @@ const ChallengePortfolioView: React.FC<{
               ) : (
                 <ChallengeIntroPersonalStatement />
               )} */}
-            <ChallengeIntroPortfolio />
+            <ChallengeIntroPortfolio weekText={weekText} />
           </section>
         </div>
 
@@ -540,6 +560,7 @@ const ChallengePortfolioView: React.FC<{
             isResumeTemplate={isResumeTemplate}
             challengeType={challenge.challengeType}
             challengeTitle={challenge.title ?? ''}
+            weekText={weekText}
           />
 
           {receivedContent.blogReview && (

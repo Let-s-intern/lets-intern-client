@@ -14,7 +14,7 @@ function DisabledButton() {
   return (
     <button
       disabled
-      className="w-full rounded-sm bg-neutral-80 px-6 py-3 text-xsmall14 font-medium text-neutral-40"
+      className="w-full rounded-sm bg-neutral-80 px-6 py-3 text-xsmall16 font-medium text-neutral-40"
     >
       이미 신청이 완료되었습니다
     </button>
@@ -78,7 +78,11 @@ export function MobileApplyCTA({
       }
     >
       {isOutOfDate ? (
-        <NotiButton text={'출시알림신청'} className="early_button" onClick={onNotiClick} />
+        <NotiButton
+          text={'출시알림신청'}
+          className="early_button"
+          onClick={onNotiClick}
+        />
       ) : isAlreadyApplied ? (
         <DisabledButton />
       ) : hasDeadline ? (
@@ -171,7 +175,11 @@ export function DesktopApplyCTA({
       </div>
       <div className="flex min-w-80 max-w-[60rem] items-center justify-end gap-8">
         {isOutOfDate ? (
-          <NotiButton text={'출시알림신청'} className="early_button" onClick={onNotiClick} />
+          <NotiButton
+            text={'출시알림신청'}
+            className="early_button"
+            onClick={onNotiClick}
+          />
         ) : isAlreadyApplied ? (
           <DisabledButton />
         ) : hasDeadline && program.deadline ? (

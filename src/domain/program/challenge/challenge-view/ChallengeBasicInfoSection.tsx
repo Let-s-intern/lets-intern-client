@@ -36,6 +36,7 @@ const ChallengeBasicInfoSection: React.FC<Props> = ({ challenge }) => {
           <ChallengePriceInfoContent
             priceInfoList={challenge.priceInfo}
             themeColor={themeColor}
+            challengeType={challenge.challengeType}
           />
         </div>
       </div>
