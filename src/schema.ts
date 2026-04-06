@@ -36,10 +36,10 @@ export type PageInfo = z.infer<typeof pageInfo>;
 
 // 챌린지 가격 플랜
 export const ChallengePricePlanEnum = z.enum([
-  'LIGHT',
   'BASIC',
   'STANDARD',
   'PREMIUM',
+  'LIGHT',
 ]);
 export type ChallengePricePlan = z.infer<typeof ChallengePricePlanEnum>;
 
