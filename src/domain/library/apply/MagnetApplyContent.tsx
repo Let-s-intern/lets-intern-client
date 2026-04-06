@@ -212,11 +212,7 @@ const MagnetApplyContent = ({
       });
 
       // 출시 알림: 선택한 프로그램들에 대해 신청
-      if (
-        variant === 'launch-alert' &&
-        wantNotification &&
-        selectedLaunchAlertIds.length > 0
-      ) {
+      if (wantNotification && selectedLaunchAlertIds.length > 0) {
         await Promise.allSettled(
           selectedLaunchAlertIds.map((id) =>
             tryPostMagnetApplication({
