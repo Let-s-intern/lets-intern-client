@@ -32,7 +32,7 @@ const NO_MENTOR_ID = 0;
 export interface AttendanceRow {
   id: number | string;
   userId?: number | null; // userId 추가
-  mentorId: number | null;
+  mentorId?: number | null;
   mentorName: string | null;
   missionTitle: string;
   missionRound: number | string;
