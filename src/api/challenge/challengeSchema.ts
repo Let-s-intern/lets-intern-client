@@ -59,7 +59,7 @@ export const challengeMissionFeedbackAttendanceListSchema = z.object({
     z.object({
       id: z.number(),
       userId: z.number().nullable(),
-      mentorId: z.number().nullable(),
+      mentorId: z.number().nullable().optional(),
       mentorName: z.string().nullable(),
       name: z.string(),
       major: z.string().optional().nullable(),

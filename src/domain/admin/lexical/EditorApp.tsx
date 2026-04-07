@@ -197,7 +197,7 @@ function App({
   } = useSettings();
 
   const initialConfig: InitialConfigType = {
-    editorState: initialEditorStateJsonString,
+    editorState: initialEditorStateJsonString || undefined,
     namespace: 'LetsCareerBlog',
     nodes: [...nodes],
     onError: (error: Error) => {
