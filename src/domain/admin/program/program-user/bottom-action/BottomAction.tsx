@@ -1,9 +1,17 @@
-import { ChallengeApplication, LiveApplication } from '@/schema';
+import {
+  ChallengeApplication,
+  GuidebookApplication,
+  LiveApplication,
+} from '@/schema';
 import ChallengeActionDropdown from './ChallengeActionDropdown';
 import GeneralActionDropdown from './GeneralActionDropdown';
 
 interface Props {
-  applications: (ChallengeApplication['application'] | LiveApplication)[];
+  applications: (
+    | ChallengeApplication['application']
+    | LiveApplication
+    | GuidebookApplication
+  )[];
   programType: string;
   programTitle: string;
 }
