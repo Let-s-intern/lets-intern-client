@@ -10,6 +10,8 @@ import {
   adminMentorInfoSchema,
   ChallengeApplication,
   challengeApplicationsSchema,
+  GuidebookApplication,
+  guidebookApplicationsSchema,
   LiveApplication,
   liveApplicationsSchema,
   ProgramTypeEnum,
@@ -21,7 +23,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
-const { CHALLENGE, LIVE, VOD } = ProgramTypeEnum.enum;
+const { CHALLENGE, LIVE, VOD, GUIDEBOOK } = ProgramTypeEnum.enum;
 
 const ProgramUsers = () => {
   const searchParams = useSearchParams();
@@ -73,8 +75,26 @@ const ProgramUsers = () => {
       },
     });
 
+  const {
+    data: guidebookApplications = [],
+    refetch: refetchGuidebookApplications,
+  } = useQuery({
+    enabled: programType === GUIDEBOOK,
+    queryKey: ['guidebook', programId, 'applications'],
+    queryFn: async () => {
+      const res = await axios.get(`/guidebook/${programId}/applications`);
+      const list = guidebookApplicationsSchema.parse(
+        res.data.data,
+      ).applicationList;
+      list.sort((a, b) => {
+        return a.isCanceled === b.isCanceled ? 0 : a.isCanceled ? -1 : 1;
+      });
+      return list;
+    },
+  });
+
   const applicationList = useMemo<
-    (ChallengeApplication | LiveApplication)[]
+    (ChallengeApplication | LiveApplication | GuidebookApplication)[]
   >(() => {
     if (programType === CHALLENGE) {
       return challengeApplications;
@@ -82,8 +102,16 @@ const ProgramUsers = () => {
     if (programType === LIVE) {
       return liveApplications;
     }
+    if (programType === GUIDEBOOK) {
+      return guidebookApplications;
+    }
     return [];
-  }, [challengeApplications, liveApplications, programType]);
+  }, [
+    challengeApplications,
+    guidebookApplications,
+    liveApplications,
+    programType,
+  ]);
 
   const filteredApplicationList = useMemo(() => {
     const result = applicationList;
@@ -138,7 +166,7 @@ const ProgramUsers = () => {
       ? (filteredApplicationList as ChallengeApplication[]).map(
           (item) => item.application,
         )
-      : (filteredApplicationList as LiveApplication[]);
+      : (filteredApplicationList as (LiveApplication | GuidebookApplication)[]);
 
   const { data: programTitleData } = useQuery({
     queryKey: [programType.toLowerCase(), programId, 'title'],
@@ -165,7 +193,13 @@ const ProgramUsers = () => {
   useEffect(() => {
     refetchChallengeApplications();
     refetchLiveApplications();
-  }, [filter, refetchChallengeApplications, refetchLiveApplications]);
+    refetchGuidebookApplications();
+  }, [
+    filter,
+    refetchChallengeApplications,
+    refetchLiveApplications,
+    refetchGuidebookApplications,
+  ]);
 
   return (
     <div className="p-8">
