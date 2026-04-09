@@ -150,9 +150,9 @@ const Programs = () => {
         headerName: '신청인원',
         width: 100,
         valueGetter: (_, row) =>
-          ['VOD', 'GUIDEBOOK'].includes(row.programInfo.programType)
+          row.programInfo.programType === 'VOD'
             ? '온라인'
-            : `${row.programInfo.currentCount} / ${row.programInfo.participationCount}`,
+            : `${row.programInfo.currentCount ?? 0} / ${row.programInfo.participationCount ?? '∞'}`,
       },
       {
         field: 'deadline',

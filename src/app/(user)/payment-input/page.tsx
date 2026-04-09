@@ -6,10 +6,7 @@ import CreditCardIcon from '@/assets/icons/credit-card.svg?react';
 import { Duration } from '@/common/Duration';
 import BackHeader from '@/common/header/BackHeader';
 import LoadingContainer from '@/common/loading/LoadingContainer';
-import {
-  COUPON_DISABLED_CHALLENGE_TYPES,
-  COUPON_DISABLED_PROGRAM_TYPES,
-} from '@/domain/program/program-detail/apply/constants';
+import { COUPON_DISABLED_CHALLENGE_TYPES } from '@/domain/program/program-detail/apply/constants';
 import CouponSection, {
   CouponSectionProps,
 } from '@/domain/program/program-detail/apply/section/CouponSection';
@@ -105,11 +102,7 @@ const PaymentInputContent = () => {
     return program.challengeType;
   })();
   const isCouponDisabledType =
-    COUPON_DISABLED_CHALLENGE_TYPES.includes(challengeType) ||
-    COUPON_DISABLED_PROGRAM_TYPES.includes(
-      programApplicationData.programType ?? '',
-    );
-
+    COUPON_DISABLED_CHALLENGE_TYPES.includes(challengeType);
   const showCouponSection = !isCouponDisabledType || hasB2BParam;
 
   const setUserInfo = useCallback((info: UserInfo) => {

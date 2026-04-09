@@ -8,12 +8,12 @@ import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
 
 import { useIsAdminQuery } from '@/api/user/user';
-import MentorRenderCell from './ui/MentorRenderCell';
-import FeedbackStatusRenderCell from './ui/FeedbackStatusRenderCell';
 import useFeedbackParticipantRows, {
   useSelectedMission,
 } from './hooks/useFeedbackParticipantRows';
 import type { AttendanceRow } from './types';
+import FeedbackStatusRenderCell from './ui/FeedbackStatusRenderCell';
+import MentorRenderCell from './ui/MentorRenderCell';
 
 export default function FeedbackParticipantPage() {
   const { missionId, programId } = useParams<{

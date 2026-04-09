@@ -28,7 +28,7 @@ export const experience: ChallengeData = {
           ],
         },
       ],
-      feedbackScope: '각 회차별 경험 3개씩',
+      feedbackScope: '',
       method: '서면 피드백',
       mentorInfo: '렛츠커리어 현직자 멘토단 · 닉 멘토 / 삼성 계열사',
     },

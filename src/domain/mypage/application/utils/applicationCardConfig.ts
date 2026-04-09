@@ -18,10 +18,10 @@ export interface MypageApplicationCardConfig {
   dateLabel: string;
   dateText: string;
   isHtmlDescription?: boolean;
-  purchasePlanText?: string;
+  isDownloaded?: boolean;
   contentUrl?: string;
   contentFileUrl?: string;
-  isDownloaded?: boolean;
+  purchasePlanText?: string;
   actionButton?: {
     label: string;
     disabled?: boolean;

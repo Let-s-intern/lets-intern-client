@@ -1,12 +1,17 @@
 import {
   ChallengeApplication,
+  GuidebookApplication,
   LiveApplication,
   ProgramTypeUpperCase,
 } from '@/schema';
 import TableRow from './TableRow';
 
 interface UserTableBodyProps {
-  applications: (ChallengeApplication | LiveApplication)[];
+  applications: (
+    | ChallengeApplication
+    | LiveApplication
+    | GuidebookApplication
+  )[];
   programType: ProgramTypeUpperCase;
 }
 
