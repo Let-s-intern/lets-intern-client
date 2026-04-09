@@ -105,9 +105,7 @@ const TableRow = ({ applicationItem, programType }: Props) => {
         </>
       )}
       {/* 결제 상품 */}
-      {programType !== 'GUIDEBOOK' && (
-        <TD>{applicationInfo.couponName ?? '없음'}</TD>
-      )}
+      <TD>{applicationInfo.couponName ?? '없음'}</TD>
       {programType === CHALLENGE && (
         <TD>
           {challengeApp.application.challengePricePlanType ??
