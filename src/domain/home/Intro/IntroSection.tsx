@@ -7,7 +7,7 @@ import Intro2 from '@/assets/graphic/home/intro/2.svg?react';
 import Intro3 from '@/assets/graphic/home/intro/3.svg?react';
 import Intro4 from '@/assets/graphic/home/intro/4.svg?react';
 import Intro5 from '@/assets/graphic/home/intro/5.svg?react';
-import Intro6 from '@/assets/graphic/home/intro/6.svg?react';
+// import Intro6 from '@/assets/graphic/home/intro/6.svg?react'; // 임시 비노출
 import Intro8 from '@/assets/graphic/home/intro/8.svg?react';
 import Intro9 from '@/assets/graphic/home/intro/9.svg?react';
 import useActiveReports from '@/hooks/useActiveReports';
@@ -125,18 +125,19 @@ const HOME_INTRO = {
         href: convertReportTypeToLandingPath('RESUME'),
         gaTitle: '이력서 피드백 받기',
       },
-      {
-        title: (
-          <p>
-            자소서
-            <br />
-            피드백 받기
-          </p>
-        ),
-        icon: <Intro6 width={44} height={44} />,
-        href: convertReportTypeToLandingPath('PERSONAL_STATEMENT'),
-        gaTitle: '자기소개서 피드백 받기',
-      },
+      // 임시 비노출: 자소서 피드백 받기
+      // {
+      //   title: (
+      //     <p>
+      //       자소서
+      //       <br />
+      //       피드백 받기
+      //     </p>
+      //   ),
+      //   icon: <Intro6 width={44} height={44} />,
+      //   href: convertReportTypeToLandingPath('PERSONAL_STATEMENT'),
+      //   gaTitle: '자기소개서 피드백 받기',
+      // },
       {
         title: (
           <p>
