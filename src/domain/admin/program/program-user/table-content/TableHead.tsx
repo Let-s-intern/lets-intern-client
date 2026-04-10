@@ -42,7 +42,7 @@ const TableHead = ({ filter, setFilter, programType }: UserTableHeadProps) => {
             <TH>사전질문</TH>
           </>
         )}
-        {programType !== 'GUIDEBOOK' && <TH>쿠폰명</TH>}
+        <TH>쿠폰명</TH>
         {programType === ProgramTypeEnum.enum.CHALLENGE && <TH>결제 상품</TH>}
         <TH>결제금액</TH>
         <TH>환불여부</TH>
