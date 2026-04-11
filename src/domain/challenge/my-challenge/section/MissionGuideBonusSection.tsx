@@ -127,7 +127,7 @@ const MissionGuideBonusSection = ({
                     있습니다.
                     <br />
                     <span className="text-neutral-40">
-                      예시) 2026년 3월 16일 작성 → 2026년 4월 6일 지급
+                      예시) 3월 16일 작성 → 4월 6일 지급
                     </span>
                   </li>
                 </ol>
