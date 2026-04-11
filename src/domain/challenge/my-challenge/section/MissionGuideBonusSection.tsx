@@ -122,6 +122,14 @@ const MissionGuideBonusSection = ({
                   <li>
                     챌린지 운영 매니저가 확인 후 현금 리워드를 지급해드립니다.
                   </li>
+                  <li>
+                    현금 리워드는 작성일자 기준, 익월 6일에 지급해드리고
+                    있습니다.
+                    <br />
+                    <span className="text-neutral-40">
+                      예시) 2026년 3월 16일 작성 → 2026년 4월 6일 지급
+                    </span>
+                  </li>
                 </ol>
               </div>
             </div>
