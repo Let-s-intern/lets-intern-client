@@ -36,6 +36,11 @@ const EMPTY_CONFIG_BY_CATEGORY: Record<
     href: '/program?type=GUIDEBOOK',
     buttonText: '가이드북 둘러보기',
   },
+  VOD: {
+    description: '보유 중인 VOD 클래스가 없어요.',
+    href: '/program?type=VOD',
+    buttonText: 'VOD 클래스 둘러보기',
+  },
 };
 
 const CareerGrowthSection = () => {
