@@ -1,5 +1,5 @@
 import { useGetChallengeOptions } from '@/api/challenge/challengeOption';
-import SelectFormControl from '@/domain/admin/program/SelectFormControl';
+import SelectFormControl from '@/domain/admin/program/ui/form/SelectFormControl';
 import { useUpdateMissionOption } from '@/hooks/useUpdateMissionOption';
 import dayjs from '@/lib/dayjs';
 import { Row } from '@/types/interface';

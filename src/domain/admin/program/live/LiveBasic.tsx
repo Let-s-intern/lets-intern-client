@@ -23,7 +23,7 @@ import {
   liveProgressTypeToText,
   programClassificationToText,
 } from '@/utils/convert';
-import SelectFormControl from './SelectFormControl';
+import SelectFormControl from '../ui/form/SelectFormControl';
 
 interface LiveBasicProps<T extends CreateLiveReq | UpdateLiveReq> {
   defaultValue?: Pick<

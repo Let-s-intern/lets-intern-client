@@ -19,7 +19,7 @@ import {
 } from '@/api/challenge/challengeSchema';
 import { useAdminChallengeMentorListQuery } from '@/api/mentor/mentor';
 import { useIsAdminQuery } from '@/api/user/user';
-import SelectFormControl from '@/domain/admin/program/SelectFormControl';
+import SelectFormControl from '@/domain/admin/program/ui/form/SelectFormControl';
 import useInvalidateQueries from '@/hooks/useInvalidateQueries';
 import { MenuItem, SelectChangeEvent } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
