@@ -46,6 +46,12 @@ const TableHead = ({ filter, setFilter, programType }: UserTableHeadProps) => {
         {programType === ProgramTypeEnum.enum.CHALLENGE && <TH>결제 상품</TH>}
         <TH>결제금액</TH>
         <TH>환불여부</TH>
+        {programType === 'GUIDEBOOK' && (
+          <>
+            <TH>다운로드 여부</TH>
+            <TH>다운로드 일시</TH>
+          </>
+        )}
         <TH>신청일자</TH>
       </tr>
     </thead>

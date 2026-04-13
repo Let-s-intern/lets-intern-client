@@ -1,4 +1,5 @@
 import { useMypageApplicationsQuery } from '@/api/application';
+import { useGetMypageMagnetListQuery } from '@/api/magnet/magnet';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import {
   APPLICATION_CATEGORY_OPTIONS,
@@ -11,7 +12,10 @@ import CareerCard from '../../mypage/career/card/CareerCard';
 import { useCareerDataStatus } from '../contexts/CareerDataStatusContext';
 import CareerGrowthList from '../ui/CareerGrowthList';
 import { toCareerGrowthItems } from '../utils/careerGrowth';
-import { toCareerGrowthCardConfigs } from '../utils/careerGrowthCard';
+import {
+  toCareerGrowthCardConfigs,
+  toLibraryCardConfigs,
+} from '../utils/careerGrowthCard';
 
 const EMPTY_CONFIG_BY_CATEGORY: Record<
   ApplicationCategory,
@@ -44,6 +48,13 @@ const CareerGrowthSection = () => {
   const { setHasCareerData } = useCareerDataStatus();
   const [category, setCategory] = useState<ApplicationCategory>('PROGRAM');
 
+  const isLibraryTab = category === 'LIBRARY';
+
+  const { data: magnetData, isLoading: isMagnetLoading } =
+    useGetMypageMagnetListQuery({
+      enabled: isLibraryTab,
+    });
+
   const items = useMemo(
     () => toCareerGrowthItems(applications ?? []),
     [applications],
@@ -51,21 +62,20 @@ const CareerGrowthSection = () => {
 
   const visibleItems = useMemo(() => {
     if (category === 'GUIDEBOOK') {
-      return items.filter(
-        (program) => program.programTypeKey === 'GUIDEBOOK',
-      );
+      return items.filter((program) => program.programTypeKey === 'GUIDEBOOK');
     }
-    // 무료자료집 탭
     if (category === 'LIBRARY') {
       return [];
     }
     return items.filter((program) => program.programTypeKey !== 'GUIDEBOOK');
   }, [category, items]);
 
-  const cardConfigs = useMemo(
-    () => toCareerGrowthCardConfigs(visibleItems, category),
-    [visibleItems, category],
-  );
+  const cardConfigs = useMemo(() => {
+    if (isLibraryTab) {
+      return toLibraryCardConfigs(magnetData?.magnetList ?? []);
+    }
+    return toCareerGrowthCardConfigs(visibleItems, category);
+  }, [isLibraryTab, magnetData, visibleItems, category]);
 
   // 데이터 존재 여부 확인 (전체 프로그램 기준)
   const hasData = items.length > 0;
@@ -77,7 +87,7 @@ const CareerGrowthSection = () => {
     }
   }, [hasData, setHasCareerData]);
 
-  if (isLoading) {
+  if (isLoading || (isLibraryTab && isMagnetLoading)) {
     return (
       <CareerCard
         title="커리어 성장"

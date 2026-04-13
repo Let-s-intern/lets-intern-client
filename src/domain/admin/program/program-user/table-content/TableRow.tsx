@@ -1,6 +1,7 @@
 import {
   ChallengeApplication,
   ChallengePricePlanEnum,
+  GuidebookApplication,
   LiveApplication,
   ProgramTypeEnum,
   ProgramTypeUpperCase,
@@ -12,13 +13,17 @@ import TD from '../../../ui/table/regacy/TD';
 const { CHALLENGE } = ProgramTypeEnum.enum;
 
 interface Props {
-  applicationItem: ChallengeApplication | LiveApplication;
+  applicationItem:
+    | ChallengeApplication
+    | LiveApplication
+    | GuidebookApplication;
   programType: ProgramTypeUpperCase;
 }
 
 const TableRow = ({ applicationItem, programType }: Props) => {
   const challengeApp = applicationItem as ChallengeApplication;
   const liveAppItem = applicationItem as LiveApplication;
+  const guidebookAppItem = applicationItem as GuidebookApplication;
   const applicationInfo =
     programType === 'CHALLENGE' ? challengeApp.application : liveAppItem;
 
@@ -26,6 +31,8 @@ const TableRow = ({ applicationItem, programType }: Props) => {
     switch (programType) {
       case CHALLENGE:
         return challengeApp.application.createDate;
+      case 'GUIDEBOOK':
+        return guidebookAppItem.createDate;
       default:
         return liveAppItem.created_date;
     }
@@ -33,8 +40,8 @@ const TableRow = ({ applicationItem, programType }: Props) => {
   }, [applicationItem, programType]);
 
   const amount = useMemo(() => {
-    /** 라이브 결제금액 */
-    if (programType === 'LIVE') {
+    /** 라이브/가이드북 결제금액 */
+    if (programType === 'LIVE' || programType === 'GUIDEBOOK') {
       const { couponDiscount, isCanceled, finalPrice } = liveAppItem;
 
       if (couponDiscount === -1) return 0;
@@ -114,6 +121,22 @@ const TableRow = ({ applicationItem, programType }: Props) => {
           <span className="text-gray-300">N</span>
         )}
       </TD>
+      {programType === 'GUIDEBOOK' && (
+        <>
+          <TD>
+            {guidebookAppItem.isDownloaded ? (
+              <span className="font-bold">Y</span>
+            ) : (
+              <span className="text-gray-300">N</span>
+            )}
+          </TD>
+          <TD>
+            {guidebookAppItem.downloadedAt
+              ? guidebookAppItem.downloadedAt.format('YYYY-MM-DD HH:mm')
+              : '-'}
+          </TD>
+        </>
+      )}
       <TD>{createDate.format('YYYY-MM-DD HH:mm')}</TD>
     </tr>
   );

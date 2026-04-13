@@ -4,7 +4,14 @@ import { z } from 'zod';
 const couponType = z.enum(['PARTNERSHIP', 'EVENT', 'GRADE']);
 export type CouponType = z.infer<typeof couponType>;
 
-const couponProgramType = z.enum(['ALL', 'CHALLENGE', 'LIVE', 'VOD', 'REPORT']);
+const couponProgramType = z.enum([
+  'ALL',
+  'CHALLENGE',
+  'LIVE',
+  'VOD',
+  'REPORT',
+  'GUIDEBOOK',
+]);
 export type CouponProgramType = z.infer<typeof couponProgramType>;
 
 export const couponInfoSchema = z

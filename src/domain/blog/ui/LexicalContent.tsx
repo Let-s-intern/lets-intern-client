@@ -17,6 +17,7 @@ import {
   SerializedTextNode,
 } from 'lexical';
 import { SerializedCodeHighlightNode } from '../../admin/lexical/nodes/CodeHighlightNode';
+import CheckBox from './CheckBox';
 import { SerializedCollapsibleContainerNode } from '../../admin/lexical/nodes/CollapsibleContainerNode';
 import { SerializedCollapsibleContentNode } from '../../admin/lexical/nodes/CollapsibleContentNode';
 import { SerializedCollapsibleTitleNode } from '../../admin/lexical/nodes/CollapsibleTitleNode';
@@ -24,6 +25,8 @@ import { SerializedEmojiNode } from '../../admin/lexical/nodes/EmojiNode';
 import { SerializedImageNode } from '../../admin/lexical/nodes/ImageNode';
 import { SerializedLayoutContainerNode } from '../../admin/lexical/nodes/LayoutContainerNode';
 import { SerializedLayoutItemNode } from '../../admin/lexical/nodes/LayoutItemNode';
+import { SerializedFigmaNode } from '../../admin/lexical/nodes/FigmaNode';
+import { SerializedPDFNode } from '../../admin/lexical/nodes/PDFNode';
 import { SerializedYouTubeNode } from '../../admin/lexical/nodes/YouTubeNode';
 
 const parseStyle = (styleString: string) =>
@@ -142,26 +145,19 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       const _node = node as SerializedListItemNode;
       const children = _node.children || [];
       const isNested = children.some((child) => child.type === 'list');
+
+      if (_node.checked !== undefined) {
+        return (
+          <CheckBox initialChecked={_node.checked}>
+            {children.map((child, childIndex) => (
+              <LexicalContent key={childIndex} node={child} />
+            ))}
+          </CheckBox>
+        );
+      }
+
       return (
-        <li
-          className={twMerge(
-            'ml-4',
-            isNested && 'list-none',
-            _node.checked !== undefined &&
-              'ml-0 flex list-none items-start gap-2',
-          )}
-        >
-          {_node.checked !== undefined && (
-            <img
-              src={
-                _node.checked
-                  ? '/icons/checkbox-checked.svg'
-                  : '/icons/checkbox-unchecked-box3.svg'
-              }
-              alt={_node.checked ? '체크' : '체크 안 함'}
-              className="mt-[2px] h-5 w-5 shrink-0"
-            />
-          )}
+        <li className={twMerge('ml-4', isNested && 'list-none')}>
           {children.map((child, childIndex) => (
             <LexicalContent key={childIndex} node={child} />
           ))}
@@ -451,6 +447,49 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             ></iframe>
+          </div>
+        </div>
+      );
+    }
+    case 'figma': {
+      const _node = node as SerializedFigmaNode;
+      const urlType = _node.urlType || 'design';
+      const embedType = urlType === 'file' ? 'design' : urlType;
+      return (
+        <div className="figma my-4 flex w-full items-center justify-center">
+          <div className="relative w-full" style={{ paddingTop: '56.25%' }}>
+            <iframe
+              className="absolute left-0 top-0 h-full w-full"
+              src={`https://embed.figma.com/${embedType}/${_node.documentID}?embed-host=lexical`}
+              allowFullScreen
+            />
+          </div>
+        </div>
+      );
+    }
+    case 'pdf': {
+      const _node = node as SerializedPDFNode;
+      return (
+        <div className="pdf my-4">
+          <div className="overflow-hidden rounded-lg border border-neutral-80">
+            <div className="flex items-center justify-between bg-neutral-95 px-4 py-2">
+              <span className="text-xsmall14 font-semibold text-neutral-20">
+                📄 {_node.fileName}
+              </span>
+              <a
+                href={_node.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xsmall14 text-primary hover:underline"
+              >
+                다운로드
+              </a>
+            </div>
+            <iframe
+              src={_node.url}
+              className="h-[600px] w-full"
+              title={_node.fileName}
+            />
           </div>
         </div>
       );

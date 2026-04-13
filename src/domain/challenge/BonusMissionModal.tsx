@@ -12,7 +12,7 @@ function BonusMissionModal({ isOpen, onClose, onClickModal }: Props) {
     <BaseModal isOpen={isOpen} onClose={onClose} className="mx-5 w-fit">
       <img
         className="h-auto w-full max-w-[380px] cursor-pointer"
-        src="/images/bonus-mission-popup.jpg"
+        src="/images/bonus-mission-popup.png"
         alt="보너스 미션 홍보 이미지"
         onClick={onClickModal}
       />

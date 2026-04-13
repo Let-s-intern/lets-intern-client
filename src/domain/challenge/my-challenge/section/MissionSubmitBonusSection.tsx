@@ -215,7 +215,7 @@ const MissionSubmitBonusSection = ({
           </span>
           <DescriptionBox className="mt-1">
             리워드 받을 은행과 계좌번호를 입력해주세요. 본인 명의가 아닌
-            계좌로는 리워드가 입금되지 않습니다.
+            계좌이거나 올바르지 않은 계좌번호로는 리워드가 입금되지 않습니다.
           </DescriptionBox>
           <div className="mt-3 flex flex-col gap-1 md:flex-row">
             <BankSelectDropdown

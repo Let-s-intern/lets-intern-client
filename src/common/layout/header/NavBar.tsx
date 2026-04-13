@@ -11,6 +11,10 @@ import useAuthStore from '@/store/useAuthStore';
 import { useMediaQuery } from '@mui/material';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import 'swiper/css';
+import 'swiper/css/free-mode';
+import { FreeMode } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
 import ExternalNavList from './ExternalNavList';
 import GlobalNavItem from './GlobalNavItem';
 import GlobalNavTopBar from './GlobalNavTopBar';
@@ -87,7 +91,6 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
       >
         {/* 1단 */}
         <GlobalNavTopBar
-          // eslint-disable-next-line no-restricted-globals
           loginRedirect={encodeURIComponent(pathname)}
           toggleMenu={toggleMenu}
           isLoginPage={isLoginPage}
@@ -99,34 +102,94 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
             getBottomNavBarClassNameByPath(pathname),
           )}
         >
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-4 md:gap-6">
+          {/* 모바일: Swiper */}
+          {isMobile && (
+            <Swiper
+              modules={[FreeMode]}
+              slidesPerView="auto"
+              spaceBetween={16}
+              freeMode={true}
+              grabCursor={true}
+              touchRatio={1}
+              threshold={10}
+              className="!overflow-visible"
+            >
+              <SwiperSlide className="!w-auto">
+                <GlobalNavItem
+                  className="text-xsmall14"
+                  href="/program"
+                  active={activeLink === 'PROGRAM'}
+                >
+                  프로그램
+                </GlobalNavItem>
+              </SwiperSlide>
+              <SwiperSlide className="!w-auto">
+                <GlobalNavItem
+                  className="text-xsmall14"
+                  active={activeLink === 'REPORT'}
+                  href={
+                    reportNavList.length === 0 ? '#' : reportNavList[0].href
+                  }
+                >
+                  서류 피드백 REPORT
+                </GlobalNavItem>
+              </SwiperSlide>
+              <SwiperSlide className="!w-auto">
+                <GlobalNavItem
+                  className="text-xsmall14"
+                  isNew
+                  href="/library/list"
+                  active={activeLink === 'LIBRARY'}
+                  rel="noopener noreferrer"
+                >
+                  무료 자료집
+                </GlobalNavItem>
+              </SwiperSlide>
+              <SwiperSlide className="!w-auto">
+                <GlobalNavItem
+                  className="text-xsmall14"
+                  isNew
+                  href="https://letscareer.liveklass.com/?utm_source=letscareer&utm_medium=website&utm_campaign=GNB"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  취준위키 VOD
+                </GlobalNavItem>
+              </SwiperSlide>
+            </Swiper>
+          )}
+          {/* 데스크톱: 기존 flex 레이아웃 */}
+          <div className="hidden items-center gap-4 md:flex">
+            <div className="flex items-center gap-6">
               <GlobalNavItem
-                className="text-xsmall14 md:text-xsmall16"
+                className="text-xsmall16"
                 href="/program"
                 active={activeLink === 'PROGRAM'}
-                // 모바일은 드롭다운 X
-                {...(!isMobile && {
-                  subNavList: programCategoryWithHref,
-                  showDropdownIcon: true,
-                })}
+                subNavList={programCategoryWithHref}
+                showDropdownIcon={true}
               >
                 프로그램
-                <span className="hidden md:inline">&nbsp;카테고리</span>
+                <span>&nbsp;카테고리</span>
               </GlobalNavItem>
               <GlobalNavItem
-                className="text-xsmall14 md:text-xsmall16"
+                className="text-xsmall16"
                 active={activeLink === 'REPORT'}
                 href={reportNavList.length === 0 ? '#' : reportNavList[0].href}
-                // 모바일은 드롭다운 X
-                {...(!isMobile && {
-                  subNavList: reportNavList,
-                })}
+                subNavList={reportNavList}
               >
                 서류 피드백 REPORT
               </GlobalNavItem>
               <GlobalNavItem
-                className="text-xsmall14 md:text-xsmall16"
+                className="text-xsmall16"
+                isNew
+                href="/library/list"
+                active={activeLink === 'LIBRARY'}
+                rel="noopener noreferrer"
+              >
+                무료 자료집
+              </GlobalNavItem>
+              <GlobalNavItem
+                className="text-xsmall16"
                 isNew
                 href="https://letscareer.liveklass.com/?utm_source=letscareer&utm_medium=website&utm_campaign=GNB"
                 target="_blank"
@@ -155,17 +218,6 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
                 블로그
               </GlobalNavItem>
             </div>
-            <div
-              className="hidden h-[18px] w-[1px] bg-[#D9D9D9] md:block"
-              aria-hidden="true"
-            />
-            <GlobalNavItem
-              className="hidden text-xsmall16 md:inline"
-              href="/about"
-              active={activeLink === 'ABOUT'}
-            >
-              렛츠커리어 스토리
-            </GlobalNavItem>
           </div>
 
           <ExternalNavList isLoggedIn={isLoggedIn} isAdmin={isAdmin} />
@@ -191,6 +243,9 @@ const NavBar = ({ isLoginPage, ...props }: NavBarProps) => {
         <SideNavItem href="/program">전체 프로그램</SideNavItem>
         <SideNavItem href="/review" subNavList={reportNavList}>
           서류 피드백 REPORT
+        </SideNavItem>
+        <SideNavItem href="/library/list" isNew>
+          무료 자료집
         </SideNavItem>
         <SideNavItem
           href="https://letscareer.liveklass.com/?utm_source=letscareer&utm_medium=website&utm_campaign=GNB"

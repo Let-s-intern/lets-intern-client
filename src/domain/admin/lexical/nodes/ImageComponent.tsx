@@ -16,7 +16,7 @@ import type {
 import './ImageNode.css';
 
 import { HashtagNode } from '@lexical/hashtag';
-import { LinkNode } from '@lexical/link';
+import { $createLinkNode, $isLinkNode, LinkNode } from '@lexical/link';
 import { useCollaborationContext } from '@lexical/react/LexicalCollaborationContext';
 import { CollaborationPlugin } from '@lexical/react/LexicalCollaborationPlugin';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -367,6 +367,47 @@ export default function ImageComponent({
     });
   };
 
+  const handleLinkClick = () => {
+    // 현재 링크 URL 읽기
+    let currentUrl = '';
+    editor.getEditorState().read(() => {
+      const node = $getNodeByKey(nodeKey);
+      const parent = node?.getParent();
+      if (parent && $isLinkNode(parent)) {
+        currentUrl = parent.getURL();
+      }
+    });
+
+    const url = window.prompt('링크 URL을 입력하세요', currentUrl);
+    if (url === null) return;
+
+    editor.update(() => {
+      const node = $getNodeByKey(nodeKey);
+      if (!node) return;
+      const parent = node.getParent();
+      if (!parent) return;
+
+      if (url === '') {
+        // 링크 제거: LinkNode를 벗기고 자식을 꺼냄
+        if ($isLinkNode(parent)) {
+          const children = parent.getChildren();
+          for (const child of children) {
+            parent.insertBefore(child);
+          }
+          parent.remove();
+        }
+      } else if ($isLinkNode(parent)) {
+        // 기존 링크 URL 수정
+        parent.setURL(url);
+      } else {
+        // 새 링크 추가: LinkNode로 이미지를 감쌈
+        const linkNode = $createLinkNode(url);
+        node.insertBefore(linkNode);
+        linkNode.append(node);
+      }
+    });
+  };
+
   const onResizeEnd = (
     nextWidth: 'inherit' | number,
     nextHeight: 'inherit' | number,
@@ -474,6 +515,7 @@ export default function ImageComponent({
             onResizeStart={onResizeStart}
             onResizeEnd={onResizeEnd}
             captionsEnabled={!isLoadError && captionsEnabled}
+            onLinkClick={handleLinkClick}
           />
         )}
       </>

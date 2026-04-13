@@ -35,9 +35,6 @@ const CreditDetail = () => {
     discountAmount,
   } = useCredit(paymentId);
 
-  const programType = paymentDetail?.programInfo.programType;
-  const hideCouponDiscount = programType === 'GUIDEBOOK';
-
   const {
     data: userData,
     isLoading: userDataIsLoading,
@@ -228,7 +225,7 @@ const CreditDetail = () => {
                     />
                   )}
                   {/* 환불 내역에서는 숨김 */}
-                  {!isCanceled && !hideCouponDiscount && (
+                  {!isCanceled && (
                     <ReportCreditSubRow
                       title="쿠폰 할인 금액"
                       content={`-${(couponDiscountAmount ?? 0).toLocaleString()}원`}
