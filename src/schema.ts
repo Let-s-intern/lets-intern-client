@@ -185,6 +185,10 @@ const guidebookPriceTypeSchema = z.union([
 
 export type GuidebookPriceType = z.infer<typeof guidebookPriceTypeSchema>;
 
+const vodPriceTypeSchema = z.union([z.literal('CHARGE'), z.literal('FREE')]);
+
+export type VodPriceType = z.infer<typeof vodPriceTypeSchema>;
+
 export const ProgramTypeEnum = z.enum([
   'CHALLENGE',
   'LIVE',
@@ -773,14 +777,24 @@ const vodInfoSchema = z.object({
   title: z.string().nullable().optional(),
   shortDesc: z.string().nullable().optional(),
   thumbnail: z.string().nullable().optional(),
+  desktopThumbnail: z.string().nullable().optional(),
+  contentComposition: z.string().nullable().optional(),
+  accessMethod: z.string().nullable().optional(),
+  recommendedFor: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
   job: z.string().nullable().optional(),
   link: z.string().nullable().optional(),
+  contentUrl: z.string().nullable().optional(),
+  contentFileUrl: z.string().nullable().optional(),
   isVisible: z.boolean().nullable().optional(),
 });
 
-/** GET /api/v1/vod/{id} VOD 상세 조회 (어드민, 유저 겸용) */
+/** GET /api/v1/vod/{id} VOD 상세 조회 (어드민) */
 export const getVodIdSchema = z.object({
   vodInfo: vodInfoSchema,
+  price: z.number().nullable().optional(),
+  discount: z.number().nullable().optional(),
+  vodPriceType: vodPriceTypeSchema.nullable().optional(),
   programTypeInfo: z
     .array(
       z.object({
@@ -801,19 +815,58 @@ export const getVodIdSchema = z.object({
 
 export type VodIdSchema = z.infer<typeof getVodIdSchema>;
 
+/** GET /api/v1/vods/{vodId} VOD 상세 조회 (사용자) */
+export const getPublicVodSchema = z.object({
+  id: z.number(),
+  title: z.string().nullable().optional(),
+  thumbnail: z.string().nullable().optional(),
+  desktopThumbnail: z.string().nullable().optional(),
+  contentComposition: z.string().nullable().optional(),
+  accessMethod: z.string().nullable().optional(),
+  recommendedFor: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
+  priceInfo: z
+    .object({
+      priceId: z.number(),
+      originalPrice: z.number(),
+      discountRate: z.number(),
+      finalPrice: z.number(),
+    })
+    .nullable()
+    .optional(),
+});
+
+export type PublicVodSchema = z.infer<typeof getPublicVodSchema>;
+
 /** POST /api/v1/vod VOD 생성 */
 export type CreateVodReq = {
   title: string;
   shortDesc: string;
   thumbnail: string;
+  desktopThumbnail?: string;
+  contentComposition: string;
+  accessMethod: string;
+  recommendedFor: string;
+  description: string;
   job: string;
-  link: string;
+  link?: string;
+  contentUrl?: string;
+  contentFileUrl?: string;
+  priceInfo: {
+    priceInfo: {
+      price: number;
+      discount: number;
+      accountNumber?: string;
+      deadline?: string;
+      accountType?: AccountType;
+    };
+    vodPriceType?: VodPriceType;
+  };
   programTypeInfo: {
     classificationInfo: {
       programClassification: ProgramClassification;
     };
   }[];
-  // B2 타입
   adminProgramTypeInfo: {
     classificationInfo: {
       programAdminClassification: ProgramAdminClassification;
@@ -821,20 +874,36 @@ export type CreateVodReq = {
   }[];
 };
 
-/** PATCH /api/v1/vod VOD 수정 */
+/** PATCH /api/v1/vod/{vodId} VOD 수정 */
 export type UpdateVodReq = {
   title?: string;
   shortDesc?: string;
   thumbnail?: string;
+  desktopThumbnail?: string;
+  contentComposition?: string;
+  accessMethod?: string;
+  recommendedFor?: string;
+  description?: string;
   job?: string;
   link?: string;
+  contentUrl?: string;
+  contentFileUrl?: string;
   isVisible?: boolean;
+  priceInfo?: {
+    priceInfo: {
+      price: number;
+      discount: number;
+      accountNumber?: string;
+      deadline?: string;
+      accountType?: AccountType;
+    };
+    vodPriceType: VodPriceType;
+  };
   programTypeInfo?: {
     classificationInfo: {
       programClassification: ProgramClassification;
     };
   }[];
-  // B2 타입
   adminProgramTypeInfo?: {
     classificationInfo: {
       programAdminClassification: ProgramAdminClassification;

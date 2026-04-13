@@ -19,6 +19,7 @@ import {
   getLiveIdPrimitiveSchema,
   getLiveIdSchema,
   getPublicGuidebookSchema,
+  getPublicVodSchema,
   getVodIdSchema,
   LiveIdPrimitive,
   LiveIdSchema,
@@ -38,6 +39,7 @@ import {
   ProgramTypeEnum,
   ProgramTypeUpperCase,
   PublicGuidebookSchema,
+  PublicVodSchema,
   UpdateChallengeReq,
   UpdateGuidebookReq,
   UpdateLiveReq,
@@ -519,10 +521,26 @@ export const useGetVodLinks = (vodIds: number[]) => {
   });
 };
 
-/** 1회용으로 사용하기 위한 함수 */
+/** 1회용으로 사용하기 위한 함수 (어드민) */
 export const getVod = async (vodId: number) => {
   const res = await axios.get(`/vod/${vodId}`);
   return getVodIdSchema.parse(res.data.data);
+};
+
+/** GET /api/v1/vods/{vodId} VOD 상세 조회 (사용자용: 자료정보 X) */
+export const fetchPublicVodData = async (
+  vodId: string,
+): Promise<PublicVodSchema> => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_API}/vods/${vodId}`,
+  );
+
+  if (!res.ok) {
+    throw new Error('VOD 상세 조회에 실패했습니다.');
+  }
+
+  const data = await res.json();
+  return getPublicVodSchema.parse(data.data);
 };
 
 export const usePostVodMutation = ({
