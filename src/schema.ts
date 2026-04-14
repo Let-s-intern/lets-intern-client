@@ -1820,6 +1820,44 @@ export type GuidebookApplication = z.infer<
   typeof guidebookApplicationsSchema
 >['applicationList'][number];
 
+/** GET /api/v1/vod/{vodId}/applications [어드민] VOD 참여자 목록 조회 */
+export const vodApplicationsSchema = z
+  .object({
+    applicationList: z.array(
+      z.object({
+        id: z.number(),
+        paymentId: z.number().nullable().optional(),
+        name: z.string().nullable().optional(),
+        email: z.string().nullable().optional(),
+        phoneNum: z.string().nullable().optional(),
+        couponName: z.string().nullable().optional(),
+        couponDiscount: z.number().nullable().optional(),
+        isCanceled: z.boolean().nullable().optional(),
+        isDownloaded: z.boolean().nullable().optional(),
+        downloadedAt: z.string().nullable().optional(),
+        createDate: z.string().nullable().optional(),
+        orderId: z.string().nullable().optional(),
+        finalPrice: z.number().nullable().optional(),
+        programPrice: z.number().nullable().optional(),
+        programDiscount: z.number().nullable().optional(),
+        originalPrice: z.number().nullable().optional(),
+      }),
+    ),
+  })
+  .transform((data) => ({
+    applicationList: data.applicationList.map((application) => ({
+      ...application,
+      createDate: dayjs(application.createDate),
+      downloadedAt: application.downloadedAt
+        ? dayjs(application.downloadedAt)
+        : null,
+    })),
+  }));
+
+export type VodApplication = z.infer<
+  typeof vodApplicationsSchema
+>['applicationList'][number];
+
 /** POST /api/v1/review/{id} */
 export type CreateReviewByLinkReq = {
   programId: number;

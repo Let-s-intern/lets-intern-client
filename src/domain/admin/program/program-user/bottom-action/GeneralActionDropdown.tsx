@@ -2,6 +2,7 @@ import {
   ChallengeApplication,
   GuidebookApplication,
   LiveApplication,
+  VodApplication,
 } from '@/schema';
 import { useState } from 'react';
 import ActionButton from '../../../ui/button/ActionButton';
@@ -11,6 +12,7 @@ interface Props {
     | ChallengeApplication['application']
     | LiveApplication
     | GuidebookApplication
+    | VodApplication
   )[];
   programTitle: string;
 }

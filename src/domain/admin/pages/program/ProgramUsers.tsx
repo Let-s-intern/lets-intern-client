@@ -14,6 +14,8 @@ import {
   guidebookApplicationsSchema,
   LiveApplication,
   liveApplicationsSchema,
+  VodApplication,
+  vodApplicationsSchema,
   ProgramTypeEnum,
   ProgramTypeUpperCase,
 } from '@/schema';
@@ -93,8 +95,27 @@ const ProgramUsers = () => {
     },
   });
 
+  const { data: vodApplications = [], refetch: refetchVodApplications } =
+    useQuery({
+      enabled: programType === VOD,
+      queryKey: ['vod', programId, 'applications'],
+      queryFn: async () => {
+        const res = await axios.get(`/vod/${programId}/applications`);
+        const list = vodApplicationsSchema.parse(res.data.data).applicationList;
+        list.sort((a, b) => {
+          return a.isCanceled === b.isCanceled ? 0 : a.isCanceled ? -1 : 1;
+        });
+        return list;
+      },
+    });
+
   const applicationList = useMemo<
-    (ChallengeApplication | LiveApplication | GuidebookApplication)[]
+    (
+      | ChallengeApplication
+      | LiveApplication
+      | GuidebookApplication
+      | VodApplication
+    )[]
   >(() => {
     if (programType === CHALLENGE) {
       return challengeApplications;
@@ -105,11 +126,15 @@ const ProgramUsers = () => {
     if (programType === GUIDEBOOK) {
       return guidebookApplications;
     }
+    if (programType === VOD) {
+      return vodApplications;
+    }
     return [];
   }, [
     challengeApplications,
     guidebookApplications,
     liveApplications,
+    vodApplications,
     programType,
   ]);
 
@@ -166,7 +191,11 @@ const ProgramUsers = () => {
       ? (filteredApplicationList as ChallengeApplication[]).map(
           (item) => item.application,
         )
-      : (filteredApplicationList as (LiveApplication | GuidebookApplication)[]);
+      : (filteredApplicationList as (
+          | LiveApplication
+          | GuidebookApplication
+          | VodApplication
+        )[]);
 
   const { data: programTitleData } = useQuery({
     queryKey: [programType.toLowerCase(), programId, 'title'],
@@ -194,11 +223,13 @@ const ProgramUsers = () => {
     refetchChallengeApplications();
     refetchLiveApplications();
     refetchGuidebookApplications();
+    refetchVodApplications();
   }, [
     filter,
     refetchChallengeApplications,
     refetchLiveApplications,
     refetchGuidebookApplications,
+    refetchVodApplications,
   ]);
 
   return (
@@ -240,9 +271,7 @@ const ProgramUsers = () => {
       </div>
 
       <main className="mb-20">
-        <Table
-          minWidth={programType === LIVE || programType === VOD ? 2000 : 1000}
-        >
+        <Table minWidth={programType === LIVE ? 2000 : 1000}>
           <TableHead
             filter={filter}
             setFilter={setFilter}
