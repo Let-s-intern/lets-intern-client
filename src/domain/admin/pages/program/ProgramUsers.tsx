@@ -14,16 +14,16 @@ import {
   guidebookApplicationsSchema,
   LiveApplication,
   liveApplicationsSchema,
-  VodApplication,
-  vodApplicationsSchema,
   ProgramTypeEnum,
   ProgramTypeUpperCase,
+  VodApplication,
+  vodApplicationsSchema,
 } from '@/schema';
 import axios from '@/utils/axios';
 import { Button } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 const { CHALLENGE, LIVE, VOD, GUIDEBOOK } = ProgramTypeEnum.enum;
 
@@ -39,10 +39,7 @@ const ProgramUsers = () => {
 
   const programType = searchParams.get('programType') ?? CHALLENGE;
 
-  const {
-    data: challengeApplications = [],
-    refetch: refetchChallengeApplications,
-  } = useQuery({
+  const { data: challengeApplications = [] } = useQuery({
     enabled: programType === CHALLENGE,
     queryKey: ['challenge', programId, 'applications'],
     queryFn: async () => {
@@ -61,26 +58,20 @@ const ProgramUsers = () => {
     },
   });
 
-  const { data: liveApplications = [], refetch: refetchLiveApplications } =
-    useQuery({
-      enabled: programType === LIVE,
-      queryKey: ['live', programId, 'applications'],
-      queryFn: async () => {
-        const res = await axios.get(`/live/${programId}/applications`);
-        const list = liveApplicationsSchema.parse(
-          res.data.data,
-        ).applicationList;
-        list.sort((a, b) => {
-          return a.isCanceled === b.isCanceled ? 0 : a.isCanceled ? -1 : 1;
-        });
-        return list;
-      },
-    });
+  const { data: liveApplications = [] } = useQuery({
+    enabled: programType === LIVE,
+    queryKey: ['live', programId, 'applications'],
+    queryFn: async () => {
+      const res = await axios.get(`/live/${programId}/applications`);
+      const list = liveApplicationsSchema.parse(res.data.data).applicationList;
+      list.sort((a, b) => {
+        return a.isCanceled === b.isCanceled ? 0 : a.isCanceled ? -1 : 1;
+      });
+      return list;
+    },
+  });
 
-  const {
-    data: guidebookApplications = [],
-    refetch: refetchGuidebookApplications,
-  } = useQuery({
+  const { data: guidebookApplications = [] } = useQuery({
     enabled: programType === GUIDEBOOK,
     queryKey: ['guidebook', programId, 'applications'],
     queryFn: async () => {
@@ -95,19 +86,18 @@ const ProgramUsers = () => {
     },
   });
 
-  const { data: vodApplications = [], refetch: refetchVodApplications } =
-    useQuery({
-      enabled: programType === VOD,
-      queryKey: ['vod', programId, 'applications'],
-      queryFn: async () => {
-        const res = await axios.get(`/vod/${programId}/applications`);
-        const list = vodApplicationsSchema.parse(res.data.data).applicationList;
-        list.sort((a, b) => {
-          return a.isCanceled === b.isCanceled ? 0 : a.isCanceled ? -1 : 1;
-        });
-        return list;
-      },
-    });
+  const { data: vodApplications = [] } = useQuery({
+    enabled: programType === VOD,
+    queryKey: ['vod', programId, 'applications'],
+    queryFn: async () => {
+      const res = await axios.get(`/vod/${programId}/applications`);
+      const list = vodApplicationsSchema.parse(res.data.data).applicationList;
+      list.sort((a, b) => {
+        return a.isCanceled === b.isCanceled ? 0 : a.isCanceled ? -1 : 1;
+      });
+      return list;
+    },
+  });
 
   const applicationList = useMemo<
     (
@@ -154,7 +144,7 @@ const ProgramUsers = () => {
             ? 1
             : -1
           : 0;
-    const compareLiveAppName = (a: LiveApplication, b: LiveApplication) =>
+    const compareAppName = (a: LiveApplication, b: LiveApplication) =>
       filter.name === 'ASCENDING'
         ? (a.name ?? '') >= (b.name ?? '')
           ? 1
@@ -165,11 +155,11 @@ const ProgramUsers = () => {
             : -1
           : 0;
 
-    if (filter.name && programType === CHALLENGE) {
-      (result as ChallengeApplication[]).sort(compareChallengeAppName);
-
-      if (filter.name && programType !== CHALLENGE) {
-        (result as LiveApplication[]).sort(compareLiveAppName);
+    if (filter.name) {
+      if (programType === CHALLENGE) {
+        (result as ChallengeApplication[]).sort(compareChallengeAppName);
+      } else {
+        (result as LiveApplication[]).sort(compareAppName);
       }
     }
 
@@ -219,55 +209,44 @@ const ProgramUsers = () => {
 
   const programTitle = programTitleData?.data?.title;
 
-  useEffect(() => {
-    refetchChallengeApplications();
-    refetchLiveApplications();
-    refetchGuidebookApplications();
-    refetchVodApplications();
-  }, [
-    filter,
-    refetchChallengeApplications,
-    refetchLiveApplications,
-    refetchGuidebookApplications,
-    refetchVodApplications,
-  ]);
-
   return (
     <div className="p-8">
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-1.5-bold">참여자 보기 - {programTitle}</h1>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outlined"
-            onClick={() => {
-              navigator.clipboard
-                .writeText(
-                  `${window.location.origin}/live/${programId}/mentor/notification/before?code=${mentorInfo?.mentorPassword}`,
-                )
-                .then(() => {
-                  alert('링크가 클립보드에 복사되었습니다.');
-                })
-                .catch(() => {
-                  alert('복사에 실패했습니다');
-                });
-            }}
-          >
-            클래스 전 안내사항
-          </Button>
-          <Button
-            variant="outlined"
-            onClick={() => {
-              navigator.clipboard
-                .writeText(
-                  `${window.location.origin}/live/${programId}/mentor/notification/after?code=${mentorInfo?.mentorPassword}`,
-                )
-                .then(() => alert('링크가 클립보드에 복사되었습니다.'))
-                .catch(() => alert('복사에 실패했습니다'));
-            }}
-          >
-            클래스 후 안내사항
-          </Button>
-        </div>
+        {programType === LIVE && (
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outlined"
+              onClick={() => {
+                navigator.clipboard
+                  .writeText(
+                    `${window.location.origin}/live/${programId}/mentor/notification/before?code=${mentorInfo?.mentorPassword}`,
+                  )
+                  .then(() => {
+                    alert('링크가 클립보드에 복사되었습니다.');
+                  })
+                  .catch(() => {
+                    alert('복사에 실패했습니다');
+                  });
+              }}
+            >
+              클래스 전 안내사항
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                navigator.clipboard
+                  .writeText(
+                    `${window.location.origin}/live/${programId}/mentor/notification/after?code=${mentorInfo?.mentorPassword}`,
+                  )
+                  .then(() => alert('링크가 클립보드에 복사되었습니다.'))
+                  .catch(() => alert('복사에 실패했습니다'));
+              }}
+            >
+              클래스 후 안내사항
+            </Button>
+          </div>
+        )}
       </div>
 
       <main className="mb-20">
