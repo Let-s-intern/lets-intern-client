@@ -1,18 +1,20 @@
 'use client';
 
 import { usePostGuidebookMutation } from '@/api/program';
-import GuidebookBasicSection from '@/domain/admin/program/guidebook/GuidebookBasicSection';
-import GuidebookDetailContentSection from '@/domain/admin/program/guidebook/GuidebookDetailContentSection';
-import GuidebookPriceSection from '@/domain/admin/program/guidebook/GuidebookPriceSection';
-import GuidebookResourceSection from '@/domain/admin/program/guidebook/GuidebookResourceSection';
-import GuidebookThumbnailSection from '@/domain/admin/program/guidebook/GuidebookThumbnailSection';
+import ProgramContentBasicSection from '@/domain/admin/program/ProgramContentBasicSection';
+import ProgramContentEditorSection from '@/domain/admin/program/ProgramContentEditorSection';
+import ProgramContentPriceSection from '@/domain/admin/program/ProgramContentPriceSection';
+import ProgramContentThumbnailSection from '@/domain/admin/program/ProgramContentThumbnailSection';
+import ProgramContentUrlFileSection from '@/domain/admin/program/ProgramContentUrlFileSection';
 import { useGuidebookForm } from '@/domain/admin/program/guidebook/hooks/useGuidebookForm';
-import FormSection from '@/domain/admin/program/guidebook/ui/FormSection';
-import { buildCreateGuidebookReq } from '@/domain/admin/program/guidebook/utils/guidebookMapping';
+import {
+  buildCreateGuidebookReq,
+  guidebookToFormInput,
+} from '@/domain/admin/program/guidebook/utils/guidebookMapping';
+import FormSection from '@/domain/admin/program/ui/FormSection';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import { guidebookToCreateInput } from '@/hooks/useDuplicateProgram';
 import { getGuidebookIdSchema } from '@/schema';
 import { Button, TextField } from '@mui/material';
 import { useRouter } from 'next/navigation';
@@ -65,9 +67,12 @@ const GuidebookCreate: React.FC = () => {
                 const guidebook = getGuidebookIdSchema.parse(
                   JSON.parse(importJsonString),
                 );
-                const importedInput = guidebookToCreateInput(guidebook);
+                const importedInput = guidebookToFormInput(guidebook);
                 setImportProcessing(true);
-                setInput(importedInput);
+                setInput({
+                  ...importedInput,
+                  title: importedInput.title + ' - 사본',
+                });
                 setResourceSource(
                   importedInput.contentFileUrl && !importedInput.contentUrl
                     ? 'file'
@@ -90,16 +95,17 @@ const GuidebookCreate: React.FC = () => {
 
       <div className="mb-6 mt-3 grid w-full grid-cols-2 gap-3">
         <FormSection title="기본 정보">
-          <GuidebookBasicSection input={input} setInput={setInput} />
+          <ProgramContentBasicSection input={input} setInput={setInput} />
         </FormSection>
         <div className="flex flex-col justify-between">
           <FormSection title="가격 정보">
-            <GuidebookPriceSection input={input} setInput={setInput} />
+            <ProgramContentPriceSection input={input} setInput={setInput} />
           </FormSection>
           <FormSection title="자료 정보" required>
-            <GuidebookResourceSection
+            <ProgramContentUrlFileSection
               input={input}
               setInput={setInput}
+              uploadType="GUIDEBOOK"
               source={resourceSource}
               onChangeSource={setResourceSource}
             />
@@ -109,11 +115,15 @@ const GuidebookCreate: React.FC = () => {
 
       <div className="mb-6">
         <FormSection title="썸네일">
-          <GuidebookThumbnailSection input={input} setInput={setInput} />
+          <ProgramContentThumbnailSection
+            input={input}
+            setInput={setInput}
+            uploadType="GUIDEBOOK"
+          />
         </FormSection>
       </div>
       <FormSection title="상세페이지 콘텐츠">
-        <GuidebookDetailContentSection input={input} setInput={setInput} />
+        <ProgramContentEditorSection input={input} setInput={setInput} />
       </FormSection>
 
       <footer className="mt-8 flex items-center justify-end gap-3">

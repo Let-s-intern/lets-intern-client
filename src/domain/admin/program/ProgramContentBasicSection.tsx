@@ -1,7 +1,6 @@
 import Input from '@/common/input/v1/Input';
 import SelectFormControl from '@/domain/admin/program/ui/form/SelectFormControl';
 import {
-  CreateGuidebookReq,
   liveAndVodJob,
   ProgramAdminClassification,
   ProgramAdminClassificationEnum,
@@ -20,12 +19,14 @@ import {
 import type React from 'react';
 import { useCallback } from 'react';
 
-interface GuidebookBasicSectionProps {
-  input: CreateGuidebookReq;
-  setInput: React.Dispatch<React.SetStateAction<CreateGuidebookReq>>;
+import type { ContentProgramFormInput } from './programContentTypes';
+
+interface ProgramContentBasicSectionProps {
+  input: ContentProgramFormInput;
+  setInput: React.Dispatch<React.SetStateAction<ContentProgramFormInput>>;
 }
 
-const GuidebookBasicSection: React.FC<GuidebookBasicSectionProps> = ({
+const ProgramContentBasicSection: React.FC<ProgramContentBasicSectionProps> = ({
   input,
   setInput,
 }) => {
@@ -61,9 +62,7 @@ const GuidebookBasicSection: React.FC<GuidebookBasicSectionProps> = ({
               ...prev,
               programTypeInfo: (e.target.value as ProgramClassification[]).map(
                 (item) => ({
-                  classificationInfo: {
-                    programClassification: item,
-                  },
+                  classificationInfo: { programClassification: item },
                 }),
               ),
             }))
@@ -96,20 +95,16 @@ const GuidebookBasicSection: React.FC<GuidebookBasicSectionProps> = ({
         labelId="adminProgramTypeInfo"
         label="B2 타입"
         multiple
-        value={
-          input.adminProgramTypeInfo?.map(
-            (info) => info.classificationInfo.programAdminClassification,
-          ) ?? []
-        }
+        value={input.adminProgramTypeInfo.map(
+          (info) => info.classificationInfo.programAdminClassification,
+        )}
         onChange={(e) =>
           setInput((prev) => ({
             ...prev,
             adminProgramTypeInfo: (
               e.target.value as ProgramAdminClassification[]
             ).map((item) => ({
-              classificationInfo: {
-                programAdminClassification: item,
-              },
+              classificationInfo: { programAdminClassification: item },
             })),
           }))
         }
@@ -162,7 +157,6 @@ const GuidebookBasicSection: React.FC<GuidebookBasicSectionProps> = ({
         value={input.title}
         onChange={onChangeText}
       />
-
       <Input
         label="한 줄 설명"
         type="text"
@@ -172,33 +166,30 @@ const GuidebookBasicSection: React.FC<GuidebookBasicSectionProps> = ({
         value={input.shortDesc}
         onChange={onChangeText}
       />
-
       <Input
         label="자료 구성"
         type="text"
         name="contentComposition"
         size="small"
-        placeholder="자료 구성을 입력해주세요."
+        placeholder="자료 구성을 입력해주세요"
         value={input.contentComposition}
         onChange={onChangeText}
       />
-
       <Input
         label="열람 방식"
         type="text"
         name="accessMethod"
         size="small"
-        placeholder="열람 방식을 입력해주세요."
+        placeholder="열람 방식을 입력해주세요"
         value={input.accessMethod}
         onChange={onChangeText}
       />
-
       <Input
         label="추천 대상"
         type="text"
         name="recommendedFor"
         size="small"
-        placeholder="추천 대상을 입력해주세요."
+        placeholder="추천 대상을 입력해주세요"
         value={input.recommendedFor}
         onChange={onChangeText}
       />
@@ -206,4 +197,4 @@ const GuidebookBasicSection: React.FC<GuidebookBasicSectionProps> = ({
   );
 };
 
-export default GuidebookBasicSection;
+export default ProgramContentBasicSection;
