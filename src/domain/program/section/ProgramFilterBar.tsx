@@ -68,10 +68,10 @@ const ProgramFilterBar = ({
         deleteParam(filterKey as string, PROGRAM_QUERY_KEY.TYPE);
         break;
       }
-      case PROGRAM_QUERY_KEY.JOB: {
+      case PROGRAM_QUERY_KEY.JOB_CATEGORY: {
         const filterKey = getKeyByValue(PROGRAM_FILTER_JOB, value);
         jobDispatch({ type: 'uncheck', value: filterKey });
-        deleteParam(filterKey as string, PROGRAM_QUERY_KEY.JOB);
+        deleteParam(filterKey as string, PROGRAM_QUERY_KEY.JOB_CATEGORY);
         break;
       }
     }
@@ -94,7 +94,7 @@ const ProgramFilterBar = ({
     searchParams.getAll(PROGRAM_QUERY_KEY.TYPE).forEach((item) => {
       typeDispatch({ type: 'check', value: item });
     });
-    searchParams.getAll(PROGRAM_QUERY_KEY.JOB).forEach((item) => {
+    searchParams.getAll(PROGRAM_QUERY_KEY.JOB_CATEGORY).forEach((item) => {
       jobDispatch({ type: 'check', value: item });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -103,7 +103,7 @@ const ProgramFilterBar = ({
   const hasActiveFilters =
     searchParams.getAll(PROGRAM_QUERY_KEY.CLASSIFICATION).length > 0 ||
     searchParams.getAll(PROGRAM_QUERY_KEY.TYPE).length > 0 ||
-    searchParams.getAll(PROGRAM_QUERY_KEY.JOB).length > 0;
+    searchParams.getAll(PROGRAM_QUERY_KEY.JOB_CATEGORY).length > 0;
 
   return (
     <section className="flex w-full flex-col gap-3 md:flex-row">
@@ -150,9 +150,9 @@ const ProgramFilterBar = ({
             />
             <div className="text-0.875-semibold text-neutral-40">초기화</div>
           </div>
-          {searchParams.getAll(PROGRAM_QUERY_KEY.JOB).map((item) => (
+          {searchParams.getAll(PROGRAM_QUERY_KEY.JOB_CATEGORY).map((item) => (
             <FilterItem
-              programType={PROGRAM_QUERY_KEY.JOB}
+              programType={PROGRAM_QUERY_KEY.JOB_CATEGORY}
               handleClick={cancelFilter}
               key={item}
               caption={PROGRAM_FILTER_JOB[item as filterJobkey]}
