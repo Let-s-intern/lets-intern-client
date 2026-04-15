@@ -77,7 +77,7 @@ export const PROGRAM_QUERY_KEY = {
   TYPE: 'type',
   CLASSIFICATION: 'classification',
   STATUS: 'status',
-  JOB: 'jobCategory',
+  JOB_CATEGORY: 'jobCategory',
 } as const;
 
 export const REMINDER_LINK = 'https://forms.gle/u6ePSE2WoRYjxyGS6';
