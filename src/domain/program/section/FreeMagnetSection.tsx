@@ -1,6 +1,7 @@
 'use client';
 
 import { useGetUserMagnetListQuery } from '@/api/magnet/magnet';
+import { getLibraryPathname } from '@/utils/url';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -20,7 +21,7 @@ const FreeMagnetSection = () => {
           취준 꿀팁이 담긴 무료 자료집
         </h2>
         <Link
-          href="/library"
+          href="/library/list"
           className="pb-3 pl-3 text-xxsmall12 text-neutral-45 md:text-xsmall16"
         >
           자료집 더보기
@@ -32,7 +33,14 @@ const FreeMagnetSection = () => {
             <div
               key={magnet.magnetId}
               className="flex w-full min-w-[130px] cursor-pointer flex-col overflow-hidden md:min-w-[200px]"
-              onClick={() => router.push(`/library/${magnet.magnetId}`)}
+              onClick={() =>
+                router.push(
+                  getLibraryPathname({
+                    id: magnet.magnetId,
+                    title: magnet.title,
+                  }),
+                )
+              }
             >
               <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-white">
                 <img
