@@ -277,8 +277,7 @@ const IntroSection = () => {
   // 고정 링크 아이템(무료 자료집, 맞춤 프로그램 추천받기)은 first paint에 즉시 뜨지만,
   // 챌린지 타입 아이템은 useIntroSectionB2CChallenges 응답 전까지 isInvalidProgram=true 라
   // 아래 return null 처리되어 API 응답이 올 때마다 아이콘이 하나씩 추가됨.
-  // 또한 useGetChallengeHome을 챌린지 타입별로 5번 따로 호출하고 있어
-  // 네트워크가 느릴수록 체감이 큼.
+  // 또한 useGetChallengeHome을 챌린지 타입별로 5번 따로 호출하고 있음
   // 개선안: (1) 로딩 중 fallback href(/program?type=XXX)로 선렌더 후 응답 도착 시 교체,
   //        (2) RSC에서 prefetchQuery + HydrationBoundary로 하이드레이션 시점에 동기화,
   //        (3) 백엔드에 5개 타입 통합 엔드포인트 요청 (네트워크 6개→2개).
