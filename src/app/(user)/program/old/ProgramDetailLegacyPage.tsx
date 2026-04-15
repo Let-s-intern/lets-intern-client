@@ -21,7 +21,7 @@ import { Dayjs } from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { useEffect, useReducer, useState } from 'react';
 
-type LegacyProgramType = Exclude<ProgramType, 'guidebook'>;
+type LegacyProgramType = Exclude<ProgramType, 'guidebook' | 'vod'>;
 
 interface ProgramDetailProps {
   programType: LegacyProgramType;
