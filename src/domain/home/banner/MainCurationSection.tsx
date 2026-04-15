@@ -40,7 +40,7 @@ export const getProgramUrl = ({
     case 'LIVE':
       return `/program/live/${programId}`;
     case 'VOD':
-      return url ?? '';
+      return `/program/vod/${programId}`;
     case 'REPORT':
       return reportType
         ? `${convertReportTypeToLandingPath(reportType)}${programId ? `/${programId}` : ''}`
