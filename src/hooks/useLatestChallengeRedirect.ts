@@ -112,7 +112,7 @@ export function useLatestChallengeRedirect(type: ChallengeType) {
         const targetChallenge = filteredActive[0] ?? sortedNonActive[0];
         if (targetChallenge?.id) {
           hasRedirectedRef.current = true;
-          router.push(`/program/challenge/${targetChallenge.id}`);
+          router.replace(`/program/challenge/${targetChallenge.id}`);
           return;
         }
 
