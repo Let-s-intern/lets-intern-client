@@ -2,6 +2,7 @@ import { ProgramRecommendItem } from '@/api/blog/blogSchema';
 import {
   fetchChallenge,
   fetchLive,
+  fetchPublicGuidebookData,
   fetchVod,
   getChallengeByKeyword,
 } from '@/api/program';
@@ -10,7 +11,7 @@ import { ProgramTypeEnum } from '@/schema';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const { CHALLENGE, LIVE, VOD } = ProgramTypeEnum.enum;
+const { CHALLENGE, LIVE, VOD, GUIDEBOOK } = ProgramTypeEnum.enum;
 interface Props {
   program: ProgramRecommendItem;
 }
@@ -50,6 +51,12 @@ async function ProgramRecommendCard({ program }: Props) {
             title = vod.vodInfo.title ?? undefined;
             thumbnail = vod.vodInfo.thumbnail ?? '';
             ctaLink = vod.vodInfo.link ?? '';
+            break;
+          case GUIDEBOOK:
+            const guidebook = await fetchPublicGuidebookData(id);
+            title = guidebook.title ?? undefined;
+            thumbnail = guidebook.thumbnail ?? '';
+            ctaLink = `/program/guidebook/${id}`;
             break;
           default:
             // type === REPORT
