@@ -7,6 +7,7 @@ import {
   ChallengePricePlanEnum,
   guidebookApplicationPriceType,
   liveApplicationPriceType,
+  vodApplicationPriceType,
   ProgramStatusEnum,
   ProgramTypeEnum,
   reportTypeSchema,
@@ -33,7 +34,11 @@ export const programApplicationSchema = z.object({
   statusType: ProgramStatusEnum.optional(),
   priceList: z.array(challengeApplicationPriceType).nullable().optional(),
   price: z
-    .union([liveApplicationPriceType, guidebookApplicationPriceType])
+    .union([
+      liveApplicationPriceType,
+      guidebookApplicationPriceType,
+      vodApplicationPriceType,
+    ])
     .nullable()
     .optional(),
 });

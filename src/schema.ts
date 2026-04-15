@@ -1953,6 +1953,13 @@ export const guidebookApplicationPriceType = z.object({
   guideBookPriceType: guidebookPriceTypeSchema,
 });
 
+export const vodApplicationPriceType = z.object({
+  priceId: z.number().nullable().optional(),
+  price: z.number().nullable().optional(),
+  discount: z.number().nullable().optional(),
+  vodPriceType: vodPriceTypeSchema,
+});
+
 export const userAdminDetailType = z.object({
   userInfo: z.object({
     id: z.string(),
