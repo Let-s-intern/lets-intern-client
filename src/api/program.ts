@@ -65,9 +65,13 @@ export const useProgramQuery = ({
     enabled: type === 'challenge' && programId !== -1,
   });
 
-  const guidebookQuery = useGetGuidebookQuery({
-    guidebookId: programId,
+  const guidebookQuery = useQuery({
     enabled: type === 'guidebook' && programId !== -1,
+    queryKey: ['publicGuidebook', programId],
+    queryFn: async () => {
+      const res = await axios.get(`/guidebooks/${programId}`);
+      return getPublicGuidebookSchema.parse(res.data.data);
+    },
   });
 
   switch (type) {
