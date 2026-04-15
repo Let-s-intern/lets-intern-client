@@ -1,5 +1,13 @@
 import { ChallengeComparisonRow, FrequentComparisonItem } from '../types';
 
+// TODO: Record<ProgramId, ChallengeComparisonRow> 로 구조 변경
+// 현재 배열이라 사용처(MobileCompareView, CompareResultCard)에서
+// CHALLENGE_COMPARISON.find((c) => c.programId === id)! 형태로 non-null assertion이 필요함.
+// ProgramId는 유니온 타입 8개로 고정이고 이 배열도 8개 전부 포함하므로 런타임 버그는 없지만,
+// PROGRAMS가 이미 Record<ProgramId, ProgramContent> 로 선언되어 있어 구조가 일관되지 않음.
+// Record로 바꾸면: (1) ! 제거 (2) ProgramId 추가 시 누락 컴파일 타임 감지
+// (3) PROGRAMS와 구조 통일 (4) .find() → O(1) 조회.
+// 단, ChallengeCompareSection의 .slice/.map 순회 로직은 Object.values()로 감싸줘야 함.
 export const CHALLENGE_COMPARISON: ChallengeComparisonRow[] = [
   {
     programId: 'experience',
