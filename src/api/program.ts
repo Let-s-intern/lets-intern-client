@@ -68,6 +68,15 @@ export const useProgramQuery = ({
     },
   });
 
+  const vodQuery = useQuery({
+    enabled: type === 'vod' && programId !== -1,
+    queryKey: ['publicVod', programId],
+    queryFn: async () => {
+      const res = await axios.get(`/vods/${programId}`);
+      return getPublicVodSchema.parse(res.data.data);
+    },
+  });
+
   switch (type) {
     case 'live':
       return {
@@ -75,7 +84,10 @@ export const useProgramQuery = ({
         query: liveQuery,
       };
     case 'vod':
-      throw new Error('Not implemented');
+      return {
+        type: 'vod' as const,
+        query: vodQuery,
+      };
     case 'challenge':
       return {
         type: 'challenge' as const,
