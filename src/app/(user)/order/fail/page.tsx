@@ -56,6 +56,11 @@ const PaymentFailContent = () => {
     programTitle = data?.title ?? '';
     programThumbnail = data?.thumbnail ?? '';
     programAccessMethod = data?.accessMethod ?? '';
+  } else if (programQuery.type === 'vod') {
+    const data = programQuery.query.data;
+    programTitle = data?.title ?? '';
+    programThumbnail = data?.thumbnail ?? '';
+    programAccessMethod = data?.accessMethod ?? '';
   }
 
   const returnLink = useMemo(() => {

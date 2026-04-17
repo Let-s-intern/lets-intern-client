@@ -1,9 +1,4 @@
-import {
-  useMutation,
-  useQueries,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { client } from '@/utils/client';
 import {
@@ -19,10 +14,10 @@ import {
   getLiveIdPrimitiveSchema,
   getLiveIdSchema,
   getPublicGuidebookSchema,
+  getPublicVodSchema,
   getVodIdSchema,
   LiveIdPrimitive,
   LiveIdSchema,
-  liveListResponseSchema,
   liveTitleSchema,
   Program,
   programAdminSchema,
@@ -38,12 +33,11 @@ import {
   ProgramTypeEnum,
   ProgramTypeUpperCase,
   PublicGuidebookSchema,
+  PublicVodSchema,
   UpdateChallengeReq,
   UpdateGuidebookReq,
   UpdateLiveReq,
   UpdateVodReq,
-  VodIdSchema,
-  vodListResponseSchema,
 } from '../schema';
 import { IPageable } from '../types/interface';
 import axios from '../utils/axios';
@@ -65,9 +59,22 @@ export const useProgramQuery = ({
     enabled: type === 'challenge' && programId !== -1,
   });
 
-  const guidebookQuery = useGetGuidebookQuery({
-    guidebookId: programId,
+  const guidebookQuery = useQuery({
     enabled: type === 'guidebook' && programId !== -1,
+    queryKey: ['publicGuidebook', programId],
+    queryFn: async () => {
+      const res = await axios.get(`/guidebooks/${programId}`);
+      return getPublicGuidebookSchema.parse(res.data.data);
+    },
+  });
+
+  const vodQuery = useQuery({
+    enabled: type === 'vod' && programId !== -1,
+    queryKey: ['publicVod', programId],
+    queryFn: async () => {
+      const res = await axios.get(`/vods/${programId}`);
+      return getPublicVodSchema.parse(res.data.data);
+    },
   });
 
   switch (type) {
@@ -77,7 +84,10 @@ export const useProgramQuery = ({
         query: liveQuery,
       };
     case 'vod':
-      throw new Error('Not implemented');
+      return {
+        type: 'vod' as const,
+        query: vodQuery,
+      };
     case 'challenge':
       return {
         type: 'challenge' as const,
@@ -481,7 +491,6 @@ export const useDeleteGuidebookMutation = ({
 };
 
 export const useGetVodQueryKey = 'useGetVodQueryKey';
-export const useGetVodLinksQueryKey = 'useGetVodLinks';
 
 export const useGetVodQuery = ({
   vodId,
@@ -500,27 +509,26 @@ export const useGetVodQuery = ({
   });
 };
 
-// VOD 링크들을 한번에 가져오는 훅
-export const useGetVodLinks = (vodIds: number[]) => {
-  return useQueries({
-    queries: vodIds.map((vodId) => ({
-      queryKey: [useGetVodLinksQueryKey, vodId],
-      queryFn: async () => {
-        const res = await axios.get(`/vod/${vodId}`);
-        const data = getVodIdSchema.parse(res.data.data);
-        return {
-          id: vodId,
-          link: data.vodInfo.link,
-        };
-      },
-    })),
-  });
-};
-
-/** 1회용으로 사용하기 위한 함수 */
+/** 1회용으로 사용하기 위한 함수 (어드민) */
 export const getVod = async (vodId: number) => {
   const res = await axios.get(`/vod/${vodId}`);
   return getVodIdSchema.parse(res.data.data);
+};
+
+/** GET /api/v1/vods/{vodId} VOD 상세 조회 (사용자용: 자료정보 X) */
+export const fetchPublicVodData = async (
+  vodId: string,
+): Promise<PublicVodSchema> => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_API}/vods/${vodId}`,
+  );
+
+  if (!res.ok) {
+    throw new Error('VOD 상세 조회에 실패했습니다.');
+  }
+
+  const data = await res.json();
+  return getPublicVodSchema.parse(data.data);
 };
 
 export const usePostVodMutation = ({
@@ -747,54 +755,6 @@ export const useDeleteProgramBannerMutation = ({
   });
 };
 
-export const useGetLiveListQuery = ({
-  typeList,
-  statusList,
-  pageable,
-  enabled = true,
-}: {
-  typeList?: ProgramClassification[];
-  statusList?: ProgramStatus[];
-  pageable: IPageable;
-  enabled?: boolean;
-}) => {
-  return useQuery({
-    enabled,
-    queryKey: ['live', 'list', typeList, statusList, pageable],
-    queryFn: async () => {
-      const res = await axios.get('/live', {
-        params: {
-          typeList: typeList?.join(','),
-          statusList: statusList?.join(','),
-          ...pageable,
-        },
-      });
-      return liveListResponseSchema.parse(res.data.data);
-    },
-  });
-};
-
-export const useGetVodListQuery = ({
-  type,
-  pageable,
-}: {
-  type?: ProgramClassification;
-  pageable: IPageable;
-}) => {
-  return useQuery({
-    queryKey: ['vod', 'list', type, pageable],
-    queryFn: async () => {
-      const res = await axios.get('/vod', {
-        params: {
-          type,
-          ...pageable,
-        },
-      });
-      return vodListResponseSchema.parse(res.data.data);
-    },
-  });
-};
-
 export const fetchChallenge = async (
   id: string | number,
 ): Promise<ChallengeIdSchema> => {
@@ -802,13 +762,6 @@ export const fetchChallenge = async (
     method: 'GET',
   });
   return getChallengeIdSchema.parse(data);
-};
-
-export const fetchVod = async (id: string | number): Promise<VodIdSchema> => {
-  const data = await client<VodIdSchema>(`/v1/vod/${id}`, {
-    method: 'GET',
-  });
-  return getVodIdSchema.parse(data);
 };
 
 export const fetchLive = async (id: string | number): Promise<LiveIdSchema> => {

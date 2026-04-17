@@ -13,7 +13,7 @@ import PayContent from '../apply/content/PayContent';
 import PaymentInputContent from '../apply/content/PaymentInputContent';
 import ScheduleContent from '../apply/content/ScheduleContent';
 
-type LegacyProgramType = Exclude<ProgramType, 'guidebook'>;
+type LegacyProgramType = Exclude<ProgramType, 'guidebook' | 'vod'>;
 
 interface MobileApplySectionProps {
   programType: LegacyProgramType;

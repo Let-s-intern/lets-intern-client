@@ -12,6 +12,7 @@ import EmptySection from '@/domain/mypage/application/section/EmptySection';
 import GuidebookSection from '@/domain/mypage/application/section/GuidebookSection';
 import LibrarySection from '@/domain/mypage/application/section/LibrarySection';
 import ParticipateSection from '@/domain/mypage/application/section/ParticipateSection';
+import VodClassSection from '@/domain/mypage/application/section/VodClassSection';
 import { useState } from 'react';
 
 const Application = () => {
@@ -20,7 +21,9 @@ const Application = () => {
 
   const programApplications =
     applications?.filter(
-      (application) => application.programType !== 'GUIDEBOOK',
+      (application) =>
+        application.programType !== 'GUIDEBOOK' &&
+        application.programType !== 'VOD',
     ) ?? [];
   const programWaitingList = programApplications.filter(
     (application) => application.programStatusType === 'PREV',
@@ -36,6 +39,10 @@ const Application = () => {
     applications?.filter(
       (application) => application.programType === 'GUIDEBOOK',
     ) ?? [];
+
+  const vodClassApplicationList =
+    applications?.filter((application) => application.programType === 'VOD') ??
+    [];
 
   if (isLoading) return <></>;
 
@@ -81,6 +88,9 @@ const Application = () => {
 
         {category === 'GUIDEBOOK' && (
           <GuidebookSection applicationList={guidebookApplicationList} />
+        )}
+        {category === 'VOD' && (
+          <VodClassSection applicationList={vodClassApplicationList} />
         )}
       </div>
     </main>

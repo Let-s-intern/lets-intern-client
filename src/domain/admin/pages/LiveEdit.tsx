@@ -8,11 +8,11 @@ import {
 } from '@/api/program';
 import EditorApp from '@/domain/admin/lexical/EditorApp';
 import LivePreviewButton from '@/domain/admin/LivePreviewButton';
-import LiveBasic from '@/domain/admin/program/LiveBasic';
-import LiveCurriculum from '@/domain/admin/program/LiveCurriculum';
-import LiveInformation from '@/domain/admin/program/LiveInformation';
-import LiveMentor from '@/domain/admin/program/LiveMentor';
-import LivePrice from '@/domain/admin/program/LivePrice';
+import LiveCurriculum from '@/domain/admin/program/live/LiveCurriculum';
+import LiveInformation from '@/domain/admin/program/live/LiveInformation';
+import LiveMentor from '@/domain/admin/program/live/LiveMentor';
+import LivePrice from '@/domain/admin/program/live/LivePrice';
+import LiveBasic from '@/domain/admin/program/live/LiveBasic';
 import ProgramBestReview from '@/domain/admin/program/ProgramBestReview';
 import ProgramBlogReviewEditor from '@/domain/admin/program/ProgramBlogReviewEditor';
 import ImageUpload from '@/domain/admin/program/ui/form/ImageUpload';

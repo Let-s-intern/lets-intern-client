@@ -1,4 +1,4 @@
-export type ProgramType = 'challenge' | 'live' | 'guidebook';
+export type ProgramType = 'challenge' | 'live' | 'guidebook' | 'vod';
 
 export interface FilterItem {
   caption: string;

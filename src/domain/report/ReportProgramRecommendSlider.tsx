@@ -131,8 +131,8 @@ const ReportProgramRecommendSlider = ({
         backgroundImage: vod?.thumbnail ?? '',
         title: reportProgramRecommend.vod?.title,
         cta: reportProgramRecommend.vod?.cta ?? 'VOD 참여하러 가기',
-        to: `/program/live/${vod?.link}`,
-        onClickButton: () => router.push(`/program/live/${vod?.link}`),
+        to: `/program/vod/${vod?.id}`,
+        onClickButton: () => router.push(`/program/vod/${vod?.id}`),
       });
     }
 

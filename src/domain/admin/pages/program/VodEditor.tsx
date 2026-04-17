@@ -2,7 +2,7 @@
 
 import { fileType, uploadFile } from '@/api/file';
 import Input from '@/common/input/v1/Input';
-import SelectFormControl from '@/domain/admin/program/SelectFormControl';
+import SelectFormControl from '@/domain/admin/program/ui/form/SelectFormControl';
 import ImageUpload from '@/domain/admin/program/ui/form/ImageUpload';
 import {
   CreateVodReq,

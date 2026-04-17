@@ -33,7 +33,7 @@ const TableHead = ({ filter, setFilter, programType }: UserTableHeadProps) => {
         </TH>
         <TH>소통용 이메일</TH>
         <TH>휴대폰 번호</TH>
-        {(programType === 'LIVE' || programType === 'VOD') && (
+        {programType === 'LIVE' && (
           <>
             <TH>학교</TH>
             <TH>학년</TH>
@@ -46,7 +46,7 @@ const TableHead = ({ filter, setFilter, programType }: UserTableHeadProps) => {
         {programType === ProgramTypeEnum.enum.CHALLENGE && <TH>결제 상품</TH>}
         <TH>결제금액</TH>
         <TH>환불여부</TH>
-        {programType === 'GUIDEBOOK' && (
+        {(programType === 'GUIDEBOOK' || programType === 'VOD') && (
           <>
             <TH>다운로드 여부</TH>
             <TH>다운로드 일시</TH>

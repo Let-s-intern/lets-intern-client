@@ -12,16 +12,18 @@ export default function useCredit(paymentId?: string | number) {
   } = usePaymentDetailQuery(String(paymentId));
 
   const isGuidebook = data?.programInfo.programType === 'GUIDEBOOK';
+  const isVod = data?.programInfo.programType === 'VOD';
 
   const { data: downloadStatus, isLoading: isDownloadStatusLoading } =
     useApplicationDownloadQuery({
       applicationId: data?.programInfo?.applicationId ?? null,
-      type: 'GUIDEBOOK',
-      enabled: !!isGuidebook,
+      type: isVod ? 'VOD' : 'GUIDEBOOK',
+      enabled: !!isGuidebook || !!isVod,
     });
 
   const isLoading =
-    isPaymentDetailLoading || (isGuidebook && isDownloadStatusLoading);
+    isPaymentDetailLoading ||
+    ((isGuidebook || isVod) && isDownloadStatusLoading);
 
   // 결제 취소 가능한 프로그램이면 true 아니면 false
   const isCancelable = useMemo(() => {
@@ -33,8 +35,11 @@ export default function useCredit(paymentId?: string | number) {
       return false;
     }
 
-    // 가이드북: 결제 후 7일 이내 + 다운로드 이력 없을 때만 환불 가능 (호출처에서 다운로드 조회 완료 후에만 본문 렌더)
-    if (data.programInfo.programType === 'GUIDEBOOK') {
+    // 가이드북/VOD: 결제 후 7일 이내 + 다운로드 이력 없을 때만 환불 가능 (호출처에서 다운로드 조회 완료 후에만 본문 렌더)
+    if (
+      data.programInfo.programType === 'GUIDEBOOK' ||
+      data.programInfo.programType === 'VOD'
+    ) {
       const within7Days = dayjs().isBefore(
         dayjs(data.paymentInfo?.createDate).add(7, 'day'),
       );
@@ -150,8 +155,11 @@ export default function useCredit(paymentId?: string | number) {
       return 0;
     }
 
-    // 가이드북: 차감 없이 전액 환불
-    if (data.programInfo.programType === 'GUIDEBOOK') {
+    // 가이드북/VOD: 차감 없이 전액 환불
+    if (
+      data.programInfo.programType === 'GUIDEBOOK' ||
+      data.programInfo.programType === 'VOD'
+    ) {
       return data.paymentInfo.finalPrice ?? 0;
     }
 

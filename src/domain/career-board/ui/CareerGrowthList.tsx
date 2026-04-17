@@ -1,7 +1,7 @@
 'use client';
 
 import AlertModal from '@/common/alert/AlertModal';
-import { downloadGuidebookAndTrack } from '@/domain/career-board/utils/guidebookDownload';
+import { downloadContentAndTrack } from '@/domain/career-board/utils/contentDownload';
 import { useDownloadAction } from '@/hooks/useDownloadAction';
 import { twMerge } from '@/lib/twMerge';
 import { useRouter } from 'next/navigation';
@@ -37,10 +37,11 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
   const downloadAction = useDownloadAction({
     isDownloaded: config.isDownloaded ?? false,
     executeDownload: () =>
-      downloadGuidebookAndTrack({
+      downloadContentAndTrack({
         applicationId: config.id,
         contentFileUrl: config.contentFileUrl,
         contentUrl: config.contentUrl,
+        type: config.downloadType,
       }),
   });
 

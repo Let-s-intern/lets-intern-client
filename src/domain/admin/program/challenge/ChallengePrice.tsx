@@ -20,7 +20,7 @@ import {
   SelectProps,
 } from '@mui/material';
 import { ChangeEvent, useMemo, useState } from 'react';
-import OutlinedTextarea from '../OutlinedTextarea';
+import OutlinedTextarea from '@/domain/admin/OutlinedTextarea';
 
 const { BASIC, PREMIUM } = ChallengePricePlanEnum.enum;
 

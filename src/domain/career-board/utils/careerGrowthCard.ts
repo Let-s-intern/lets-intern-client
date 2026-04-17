@@ -1,3 +1,4 @@
+import type { ApplicationDownloadType } from '@/api/application';
 import { MypageMagnetListItem } from '@/api/magnet/magnetSchema';
 import { ApplicationCategory } from '@/domain/mypage/application/constants';
 import dayjs from '@/lib/dayjs';
@@ -19,6 +20,7 @@ export interface CareerGrowthCardConfig {
   isDownloaded?: boolean;
   contentUrl?: string;
   contentFileUrl?: string;
+  downloadType?: ApplicationDownloadType;
   purchasePlanText?: string;
   actionButton?: {
     label: string;
@@ -62,6 +64,40 @@ export const toProgramCardConfig = (
           href: `/challenge/${item.id}/${item.programId}`,
         }
       : undefined,
+  };
+};
+
+/** VOD 탭용 카드 */
+export const toVodCardConfig = (
+  item: CareerGrowthItem,
+): CareerGrowthCardConfig => {
+  const purchaseDateText = item.createDate || item.startDate;
+
+  return {
+    id: item.id,
+    programId: item.programId,
+    thumbnail: item.thumbnail,
+    title: item.title,
+    description: item.description,
+    statusLabel: '구매 완료',
+    categoryLabel: item.programType,
+    dateLabel: '구매일자',
+    dateText: purchaseDateText,
+    contentUrl: item.contentUrl,
+    contentFileUrl: item.contentFileUrl,
+    isDownloaded: item.isDownloaded,
+    downloadType: 'VOD',
+    actionButton: {
+      label: 'VOD 시청',
+      isDownload: true,
+      confirm: {
+        title: 'VOD를 시청하시겠습니까?',
+        description:
+          '디지털 콘텐츠 특성상 시청 이후에는 단순 변심으로 인한 취소 및 환불이 불가능합니다.',
+        confirmText: 'VOD 시청',
+        cancelText: '닫기',
+      },
+    },
   };
 };
 
@@ -158,6 +194,9 @@ export const toCareerGrowthCardConfigs = (
   }
   if (category === 'GUIDEBOOK') {
     return items.map((p) => toGuidebookCardConfig(p));
+  }
+  if (category === 'VOD') {
+    return items.map((p) => toVodCardConfig(p));
   }
   return [];
 };

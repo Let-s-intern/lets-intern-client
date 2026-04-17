@@ -1,16 +1,17 @@
 'use client';
 
 import EditorApp, { emptyEditorState } from '@/domain/admin/lexical/EditorApp';
-import type { CreateGuidebookReq } from '@/schema';
 import type React from 'react';
 
-interface GuidebookDetailContentSectionProps {
-  input: CreateGuidebookReq;
-  setInput: React.Dispatch<React.SetStateAction<CreateGuidebookReq>>;
+import type { ContentProgramFormInput } from './programContentTypes';
+
+interface ProgramContentEditorSectionProps {
+  input: ContentProgramFormInput;
+  setInput: React.Dispatch<React.SetStateAction<ContentProgramFormInput>>;
 }
 
-const GuidebookDetailContentSection: React.FC<
-  GuidebookDetailContentSectionProps
+const ProgramContentEditorSection: React.FC<
+  ProgramContentEditorSectionProps
 > = ({ input, setInput }) => {
   const initialState =
     input.description && input.description.trim().length > 0
@@ -22,14 +23,11 @@ const GuidebookDetailContentSection: React.FC<
       <EditorApp
         initialEditorStateJsonString={initialState}
         onChange={(json) =>
-          setInput((prev) => ({
-            ...prev,
-            description: json,
-          }))
+          setInput((prev) => ({ ...prev, description: json }))
         }
       />
     </section>
   );
 };
 
-export default GuidebookDetailContentSection;
+export default ProgramContentEditorSection;

@@ -2,6 +2,7 @@ import {
   ChallengeApplication,
   GuidebookApplication,
   LiveApplication,
+  VodApplication,
 } from '@/schema';
 import ChallengeActionDropdown from './ChallengeActionDropdown';
 import GeneralActionDropdown from './GeneralActionDropdown';
@@ -11,6 +12,7 @@ interface Props {
     | ChallengeApplication['application']
     | LiveApplication
     | GuidebookApplication
+    | VodApplication
   )[];
   programType: string;
   programTitle: string;

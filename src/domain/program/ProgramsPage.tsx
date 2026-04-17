@@ -76,7 +76,7 @@ const Programs = () => {
   const [filterJob, jobDispatch] = useReducer(filterJobReducer, null, () =>
     createInitialFilterState(
       initialFilterJob,
-      PROGRAM_QUERY_KEY.JOB,
+      PROGRAM_QUERY_KEY.JOB_CATEGORY,
       searchParams,
     ),
   );
@@ -156,14 +156,14 @@ const Programs = () => {
           break;
         }
 
-        case PROGRAM_QUERY_KEY.JOB: {
+        case PROGRAM_QUERY_KEY.JOB_CATEGORY: {
           const filterKey = getKeyByValue(PROGRAM_FILTER_JOB, value);
           const isChecked = filterJob[filterKey as filterJobkey];
           if (isChecked) {
             jobDispatch({ type: 'uncheck', value: filterKey });
-            deleteParam(filterKey as string, PROGRAM_QUERY_KEY.JOB);
+            deleteParam(filterKey as string, PROGRAM_QUERY_KEY.JOB_CATEGORY);
           } else {
-            params.append(PROGRAM_QUERY_KEY.JOB, filterKey as string);
+            params.append(PROGRAM_QUERY_KEY.JOB_CATEGORY, filterKey as string);
             jobDispatch({ type: 'check', value: filterKey });
           }
           break;
@@ -190,7 +190,7 @@ const Programs = () => {
     searchParams.getAll(PROGRAM_QUERY_KEY.TYPE).forEach((item) => {
       typeDispatch({ type: 'check', value: item });
     });
-    searchParams.getAll(PROGRAM_QUERY_KEY.JOB).forEach((item) => {
+    searchParams.getAll(PROGRAM_QUERY_KEY.JOB_CATEGORY).forEach((item) => {
       jobDispatch({ type: 'check', value: item });
     });
 

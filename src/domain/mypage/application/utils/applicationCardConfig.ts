@@ -1,3 +1,4 @@
+import type { ApplicationDownloadType } from '@/api/application';
 import { MypageApplication } from '@/api/application';
 import { getReportThumbnail } from '@/domain/mypage/credit/CreditListItem';
 import dayjs from '@/lib/dayjs';
@@ -21,6 +22,7 @@ export interface MypageApplicationCardConfig {
   isDownloaded?: boolean;
   contentUrl?: string;
   contentFileUrl?: string;
+  downloadType?: ApplicationDownloadType;
   purchasePlanText?: string;
   actionButton?: {
     label: string;
@@ -183,11 +185,69 @@ const toGuidebookCardConfig = (
   };
 };
 
+const toVodCardConfig = (
+  application: MypageApplication,
+): MypageApplicationCardConfig => {
+  const {
+    id,
+    programId,
+    programThumbnail,
+    programTitle,
+    programShortDesc,
+    programType,
+    createDate,
+    programStartDate,
+    contentUrl,
+    contentFileUrl,
+    isDownloaded,
+  } = application;
+
+  const purchaseDateText =
+    (createDate ?? programStartDate)?.format('YY.MM.DD') ?? '';
+
+  const programTypeKey = programType ?? '';
+  const categoryLabel = programTypeKey
+    ? newProgramTypeToText[programTypeKey] || programTypeKey
+    : '';
+
+  return {
+    id: id ?? 0,
+    programId: programId ?? 0,
+    programTypeKey,
+    thumbnail: programThumbnail ?? '',
+    title: programTitle ?? '',
+    description: programShortDesc ?? '',
+    statusLabel: '구매완료',
+    categoryLabel,
+    dateLabel: '구매일자',
+    dateText: purchaseDateText,
+    contentUrl: contentUrl ?? undefined,
+    contentFileUrl: contentFileUrl ?? undefined,
+    isDownloaded: isDownloaded ?? false,
+    downloadType: 'VOD',
+    actionButton: {
+      label: 'VOD 시청',
+      isDownload: true,
+      confirm: {
+        title: 'VOD를 시청하시겠습니까?',
+        description:
+          '디지털 콘텐츠 특성상 시청 이후에는 단순 변심으로 인한 취소 및 환불이 불가능합니다.',
+        confirmText: 'VOD 시청',
+        cancelText: '닫기',
+      },
+    },
+    isCompleted: false,
+  };
+};
+
 export const toMypageApplicationCardConfig = (
   application: MypageApplication,
 ): MypageApplicationCardConfig => {
   if (application.programType === 'GUIDEBOOK') {
     return toGuidebookCardConfig(application);
+  }
+  if (application.programType === 'VOD') {
+    return toVodCardConfig(application);
   }
 
   return toProgramCardConfig(application);

@@ -13,7 +13,7 @@ const BasicInfoRow = ({ icon, title, content }: BasicInfoRowProps) => {
           {title}
         </span>
       </div>
-      <div className="whitespace-pre text-pretty break-all text-xsmall14 font-normal text-neutral-0 xs:text-xsmall16">
+      <div className="whitespace-pre-wrap text-pretty break-all text-xsmall14 font-normal text-neutral-0 xs:text-xsmall16">
         {content}
       </div>
     </div>

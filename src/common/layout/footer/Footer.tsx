@@ -46,13 +46,7 @@ const Footer = (props: FooterProps) => {
               {reportLInk && (
                 <MainLink href={reportLInk}>서류 진단 서비스</MainLink>
               )}
-              <MainLink
-                href="https://letscareer.liveklass.com/?utm_source=letscareer&utm_medium=website&utm_campaign=GNB"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                취준위키 VOD
-              </MainLink>
+              <MainLink href="/program?type=VOD">취준위키 VOD</MainLink>
             </div>
 
             {/* 기타 */}

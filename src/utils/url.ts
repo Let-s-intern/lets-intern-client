@@ -91,6 +91,10 @@ export function getGuidebookTitle({ title }: { title?: string | null }) {
   return `${title} | 가이드북 - 렛츠커리어`;
 }
 
+export function getVodTitle({ title }: { title?: string | null }) {
+  return `${title} | VOD - 렛츠커리어`;
+}
+
 export function getReportLandingTitle(title: string) {
   return `${title} | 서류 진단 - 렛츠커리어`;
 }

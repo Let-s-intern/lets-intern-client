@@ -16,7 +16,7 @@ const ProgramCard = ({
   thumbnailLinkClassName,
   accessMethod,
 }: {
-  type: 'challenge' | 'live' | 'guidebook';
+  type: 'challenge' | 'live' | 'guidebook' | 'vod';
   id: number;
   title: string;
   thumbnail: string;

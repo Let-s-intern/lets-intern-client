@@ -2,7 +2,8 @@ import { ProgramRecommendItem } from '@/api/blog/blogSchema';
 import {
   fetchChallenge,
   fetchLive,
-  fetchVod,
+  fetchPublicGuidebookData,
+  fetchPublicVodData,
   getChallengeByKeyword,
 } from '@/api/program';
 import { convertReportTypeToPathname, fetchReportId } from '@/api/report';
@@ -10,7 +11,7 @@ import { ProgramTypeEnum } from '@/schema';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const { CHALLENGE, LIVE, VOD } = ProgramTypeEnum.enum;
+const { CHALLENGE, LIVE, VOD, GUIDEBOOK } = ProgramTypeEnum.enum;
 interface Props {
   program: ProgramRecommendItem;
 }
@@ -46,10 +47,16 @@ async function ProgramRecommendCard({ program }: Props) {
             ctaLink = `/program/${type.toLowerCase()}/${id}`;
             break;
           case VOD:
-            const vod = await fetchVod(id);
-            title = vod.vodInfo.title ?? undefined;
-            thumbnail = vod.vodInfo.thumbnail ?? '';
-            ctaLink = vod.vodInfo.link ?? '';
+            const vod = await fetchPublicVodData(id);
+            title = vod.title ?? undefined;
+            thumbnail = vod.thumbnail ?? '';
+            ctaLink = `/program/${type.toLowerCase()}/${id}`;
+            break;
+          case GUIDEBOOK:
+            const guidebook = await fetchPublicGuidebookData(id);
+            title = guidebook.title ?? undefined;
+            thumbnail = guidebook.thumbnail ?? '';
+            ctaLink = `/program/guidebook/${id}`;
             break;
           default:
             // type === REPORT

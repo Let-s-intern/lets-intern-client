@@ -8,7 +8,7 @@ import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { Button, TextField, TextFieldProps } from '@mui/material';
 import { ChangeEvent, memo, useEffect, useState } from 'react';
 import { FaTrashCan } from 'react-icons/fa6';
-import Heading2 from '../ui/heading/Heading2';
+import Heading2 from '@/domain/admin/ui/heading/Heading2';
 
 const inputLabelProps = {
   shrink: true,

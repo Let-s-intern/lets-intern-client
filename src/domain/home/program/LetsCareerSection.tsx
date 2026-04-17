@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetUserProgramQuery, useGetVodListQuery } from '@/api/program';
+import { useGetUserProgramQuery } from '@/api/program';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { useEffect, useMemo, useState } from 'react';
 import { getBadgeText, getDuration } from '../banner/MainCurationSection';
@@ -25,10 +25,14 @@ const LetsCareerSection = () => {
     },
   });
 
-  const { data: vodData, isLoading: vodIsLoading } = useGetVodListQuery({
+  const { data: vodData, isLoading: vodIsLoading } = useGetUserProgramQuery({
     pageable: {
-      size: 20,
+      size: MAX_PROGRAMS_PER_CATEGORY,
       page: 1,
+    },
+    searchParams: {
+      type: 'VOD',
+      status: ['PROCEEDING'],
     },
   });
 
@@ -77,18 +81,15 @@ const LetsCareerSection = () => {
 
   const vodPrograms = useMemo(
     () =>
-      vodData?.programList
-        .filter((vod) => vod.title && !vod.title.includes('가이드북'))
-        .map((vod) => ({
-          thumbnail: vod.thumbnail ?? '',
-          title: vod.title ?? '',
-          url: vod.link ?? '',
-          duration: undefined,
-          badge: {
-            text: '즉시 수강 가능',
-          },
-        }))
-        .slice(0, MAX_PROGRAMS_PER_CATEGORY) ?? [],
+      vodData?.programList.map((vod) => ({
+        thumbnail: vod.programInfo.thumbnail ?? '',
+        title: vod.programInfo.title ?? '',
+        url: `/program/vod/${vod.programInfo.id}`,
+        duration: undefined,
+        badge: {
+          text: '즉시 수강 가능',
+        },
+      })) ?? [],
     [vodData],
   );
 

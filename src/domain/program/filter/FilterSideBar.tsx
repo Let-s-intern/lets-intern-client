@@ -88,7 +88,7 @@ const getFilterSectionsConfig = (
     items: Object.values(PROGRAM_FILTER_JOB),
     getIsChecked: (value: string) =>
       filterJob[getKeyByValue(PROGRAM_FILTER_JOB, value) as string],
-    onItemClick: (value: string) => handleClick(PROGRAM_QUERY_KEY.JOB, value),
+    onItemClick: (value: string) => handleClick(PROGRAM_QUERY_KEY.JOB_CATEGORY, value),
   },
   {
     title: '커리어 단계',
