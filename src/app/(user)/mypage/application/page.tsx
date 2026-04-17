@@ -21,7 +21,9 @@ const Application = () => {
 
   const programApplications =
     applications?.filter(
-      (application) => application.programType !== 'GUIDEBOOK',
+      (application) =>
+        application.programType !== 'GUIDEBOOK' &&
+        application.programType !== 'VOD',
     ) ?? [];
   const programWaitingList = programApplications.filter(
     (application) => application.programStatusType === 'PREV',
