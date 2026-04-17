@@ -1,3 +1,4 @@
+import type { ApplicationDownloadType } from '@/api/application';
 import { patchApplicationDownload } from '@/api/application';
 
 function openInNewTab(url: string): void {
@@ -22,7 +23,7 @@ function triggerFileDownload(url: string, fileName: string): void {
 }
 
 function downloadS3File(url: string): void {
-  const rawName = url.split('/').pop()?.split('?')[0] || '가이드북.pdf';
+  const rawName = url.split('/').pop()?.split('?')[0] || 'download';
   let fileName: string;
   try {
     fileName = decodeURIComponent(rawName);
@@ -50,18 +51,20 @@ function downloadS3File(url: string): void {
     });
 }
 
-interface DownloadGuidebookParams {
+interface DownloadContentParams {
   applicationId: number;
   contentFileUrl?: string;
   contentUrl?: string;
+  type?: ApplicationDownloadType;
 }
 
-/** 가이드북 다운로드 실행 + 다운로드 기록 PATCH (동기적으로 다운로드 시작, PATCH promise 반환) */
-export function downloadGuidebookAndTrack({
+/** 콘텐츠 다운로드/시청 실행 + 다운로드 기록 PATCH (동기적으로 다운로드 시작, PATCH promise 반환) */
+export function downloadContentAndTrack({
   applicationId,
   contentFileUrl,
   contentUrl,
-}: DownloadGuidebookParams): Promise<void> {
+  type = 'GUIDEBOOK',
+}: DownloadContentParams): Promise<void> {
   if (contentFileUrl) {
     downloadS3File(contentFileUrl);
   } else if (contentUrl) {
@@ -72,6 +75,6 @@ export function downloadGuidebookAndTrack({
 
   return patchApplicationDownload({
     applicationId,
-    type: 'GUIDEBOOK',
+    type,
   }).catch(() => {});
 }
