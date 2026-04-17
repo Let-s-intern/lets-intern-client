@@ -25,6 +25,7 @@ const OrderProgramInfo = ({
   accessMethod?: string | null;
 }) => {
   const isGuidebook = programType?.toString().toLowerCase() === 'guidebook';
+  const isVod = programType?.toString().toLowerCase() === 'vod';
 
   return (
     <div className="flex w-full flex-col items-start justify-center gap-y-6">
@@ -38,7 +39,7 @@ const OrderProgramInfo = ({
         <div className="flex grow flex-col items-start justify-center gap-y-3">
           <div className="font-semibold">{title}</div>
           <div className="flex w-full flex-col gap-y-1">
-            {isGuidebook ? (
+            {isGuidebook || isVod ? (
               <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
                 <div className="shrink-0 text-neutral-30">열람 방식</div>
                 <div className="text-primary-dark">{accessMethod || '-'}</div>
