@@ -69,10 +69,17 @@ const CareerGrowthSection = () => {
     if (category === 'GUIDEBOOK') {
       return items.filter((program) => program.programTypeKey === 'GUIDEBOOK');
     }
+    if (category === 'VOD') {
+      return items.filter((program) => program.programTypeKey === 'VOD');
+    }
     if (category === 'LIBRARY') {
       return [];
     }
-    return items.filter((program) => program.programTypeKey !== 'GUIDEBOOK');
+    return items.filter(
+      (program) =>
+        program.programTypeKey !== 'GUIDEBOOK' &&
+        program.programTypeKey !== 'VOD',
+    );
   }, [category, items]);
 
   const cardConfigs = useMemo(() => {
