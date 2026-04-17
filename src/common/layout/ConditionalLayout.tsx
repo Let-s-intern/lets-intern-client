@@ -16,7 +16,6 @@ const ConditionalLayout = ({ children }: ConditionalLayoutProps) => {
   const isLoginPage = pathname === '/login';
   const isCurationPage = pathname.startsWith('/curation');
   const isDarkPage = pathname.startsWith('/challenge/feedback-mentoring');
-  const isCurationPage = pathname.startsWith('/curation');
 
   return (
     <div>
