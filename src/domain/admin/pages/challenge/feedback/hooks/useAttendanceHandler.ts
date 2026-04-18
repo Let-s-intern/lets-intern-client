@@ -4,11 +4,9 @@ import {
   usePatchAdminAttendance,
   usePatchAttendanceMentor,
 } from '@/api/attendance/attendance';
-import {
-  ChallengeMissionFeedbackAttendanceQueryKey,
-  MentorMissionFeedbackAttendanceQueryKey,
-} from '@/api/challenge/challenge';
+import { ChallengeMissionFeedbackAttendanceQueryKey } from '@/api/challenge/challenge';
 import { useIsAdminQuery } from '@/api/user/user';
+import { getMentorAttendanceQueryKey } from '@/domain/mentor/feedback/hooks/useMentorAttendanceQuery';
 import useInvalidateQueries from '@/hooks/useInvalidateQueries';
 import { useParams } from 'next/navigation';
 
@@ -21,7 +19,7 @@ const useAttendanceHandler = () => {
 
   const queryKey = isAdmin
     ? [ChallengeMissionFeedbackAttendanceQueryKey, programId, missionId]
-    : [MentorMissionFeedbackAttendanceQueryKey, programId, missionId];
+    : [getMentorAttendanceQueryKey(programId), programId, missionId];
 
   const { mutateAsync: patchAdminAttendance } = usePatchAdminAttendance();
   const { mutateAsync: patchAttendanceMentor } = usePatchAttendanceMentor();

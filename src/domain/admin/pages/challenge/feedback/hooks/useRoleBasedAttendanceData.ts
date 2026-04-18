@@ -1,10 +1,8 @@
 'use client';
 
-import {
-  useChallengeMissionFeedbackAttendanceQuery,
-  useMentorMenteeAttendanceQuery,
-} from '@/api/challenge/challenge';
+import { useChallengeMissionFeedbackAttendanceQuery } from '@/api/challenge/challenge';
 import { useIsAdminQuery } from '@/api/user/user';
+import { useMentorAttendanceQuery } from '@/domain/mentor/feedback/hooks/useMentorAttendanceQuery';
 import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
 
@@ -22,7 +20,7 @@ const useRoleBasedAttendanceData = () => {
     enabled: !!programId && !!missionId && isAdmin === true,
   });
 
-  const { data: dataForMentor } = useMentorMenteeAttendanceQuery({
+  const { data: dataForMentor } = useMentorAttendanceQuery({
     challengeId: programId,
     missionId,
     enabled: !!programId && !!missionId && isAdmin === false,
