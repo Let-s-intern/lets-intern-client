@@ -37,6 +37,10 @@ import {
   mentorMenteeAttendanceListSchema,
 } from './challengeSchema';
 
+const LEGACY_CHALLENGE_THRESHOLD = 230;
+export const isLegacyChallenge = (challengeId: number | string): boolean =>
+  Number(challengeId) < LEGACY_CHALLENGE_THRESHOLD;
+
 const useChallengeQueryKey = 'useChallengeQueryKey';
 
 export const useChallengeQuery = ({
