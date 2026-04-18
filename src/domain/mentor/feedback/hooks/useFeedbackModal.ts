@@ -2,11 +2,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
 import {
-  useMentorMenteeAttendanceQuery,
-  MentorMenteeAttendanceQueryKey,
   useFeedbackAttendanceQuery,
   FeedbackAttendanceQueryKey,
 } from '@/api/challenge/challenge';
+import {
+  useMentorAttendanceQuery,
+  getMentorAttendanceQueryKey,
+} from './useMentorAttendanceQuery';
 import { emptyEditorState } from '@/domain/admin/lexical/EditorApp';
 import mentorConfig from '@/domain/mentor/constants/config';
 
@@ -40,7 +42,7 @@ export function useFeedbackModal({
 
   // Fetch attendance list — /mentee endpoint filters by ChallengeApplication.challengeMentor
   const { data: attendanceData } =
-    useMentorMenteeAttendanceQuery({
+    useMentorAttendanceQuery({
       challengeId,
       missionId,
       enabled: isOpen && !!challengeId && !!missionId,
@@ -126,7 +128,7 @@ export function useFeedbackModal({
   const handleMutationSuccess = useCallback(() => {
     queryClient.invalidateQueries({
       queryKey: [
-        MentorMenteeAttendanceQueryKey,
+        getMentorAttendanceQueryKey(challengeId),
         challengeId,
         missionId,
       ],

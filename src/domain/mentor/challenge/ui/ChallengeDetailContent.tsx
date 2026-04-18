@@ -2,9 +2,7 @@
 
 import { useMemo } from 'react';
 
-import {
-  useMentorMenteeAttendanceQuery,
-} from '@/api/challenge/challenge';
+import { useMentorAttendanceQuery } from '@/domain/mentor/feedback/hooks/useMentorAttendanceQuery';
 import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
 
 const formatDate = (dateStr: string) => {
@@ -33,7 +31,7 @@ const MissionRow = ({
   challengeId: number;
   onClickFeedback: (missionId: number, missionTh: number) => void;
 }) => {
-  const { data } = useMentorMenteeAttendanceQuery({
+  const { data } = useMentorAttendanceQuery({
     challengeId,
     missionId: mission.id,
     enabled: !!challengeId && !!mission.id,
