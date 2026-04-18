@@ -1,5 +1,6 @@
 import { MypageApplication } from '@/api/application';
 import { getReportThumbnail } from '@/domain/mypage/credit/CreditListItem';
+import dayjs from '@/lib/dayjs';
 import {
   challengePricePlanToText,
   newProgramTypeToText,
@@ -16,10 +17,11 @@ export interface MypageApplicationCardConfig {
   categoryLabel: string;
   dateLabel: string;
   dateText: string;
-  purchasePlanText?: string;
+  isHtmlDescription?: boolean;
+  isDownloaded?: boolean;
   contentUrl?: string;
   contentFileUrl?: string;
-  isDownloaded?: boolean;
+  purchasePlanText?: string;
   actionButton?: {
     label: string;
     disabled?: boolean;
@@ -94,13 +96,14 @@ const toProgramCardConfig = (
       ? getReportThumbnail(reportType)
       : (programThumbnail ?? '');
 
-  const isDashboardDisabled = programStatusType !== 'PROCEEDING';
+  const isChallengeDashboardVisible =
+    pricePlanType !== 'LIGHT' && programStartDate?.isBefore(dayjs());
+  const isDashboardVisible = isChallenge ? isChallengeDashboardVisible : isLive;
 
   const actionButton =
-    (isChallenge || isLive) && programType && programId != null && id != null
+    isDashboardVisible && programType && programId != null && id != null
       ? {
           label: isChallenge ? '대시보드 입장' : '클래스 입장',
-          disabled: isDashboardDisabled,
           href: isChallenge
             ? `/challenge/${id}/${programId}`
             : `/program/live/${programId}`,

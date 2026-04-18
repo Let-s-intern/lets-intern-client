@@ -115,9 +115,9 @@ export const TwitterEmbedConfig: PlaygroundEmbedConfig = {
 };
 
 export const FigmaEmbedConfig: PlaygroundEmbedConfig = {
-  contentName: 'Figma Document (개발중)',
+  contentName: 'Figma Document',
 
-  exampleUrl: 'https://www.figma.com/file/LKQ4FJ4bTnCSjedbRpk931/Sample-File',
+  exampleUrl: 'https://www.figma.com/design/LKQ4FJ4bTnCSjedbRpk931/Sample-File',
 
   icon: <i className="icon figma" />,
 
@@ -130,7 +130,7 @@ export const FigmaEmbedConfig: PlaygroundEmbedConfig = {
   // Determine if a given URL is a match and return url data.
   parseUrl: (text: string) => {
     const match =
-      /https:\/\/([\w.-]+\.)?figma.com\/(file|proto)\/([0-9a-zA-Z]{22,128})(?:\/.*)?$/.exec(
+      /https:\/\/([\w.-]+\.)?figma.com\/(file|design|proto|board|slides|deck)\/([0-9a-zA-Z]{22,128})(?:\/.*)?$/.exec(
         text,
       );
 

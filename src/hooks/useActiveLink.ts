@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 type ActiveLinks =
   | 'HOME'
   | 'ABOUT'
+  | 'LIBRARY'
   | 'PROGRAM'
   | 'ADMIN'
   | 'BLOG'
@@ -32,6 +33,8 @@ export default function useActiveLink(pathname: string) {
       setActiveLink('ABOUT');
     } else if (pathname.startsWith('/program')) {
       setActiveLink('PROGRAM');
+    } else if (pathname.startsWith('/library')) {
+      setActiveLink('LIBRARY');
     } else if (pathname.startsWith('/admin')) {
       setActiveLink('ADMIN');
     } else if (pathname.startsWith('/blog')) {

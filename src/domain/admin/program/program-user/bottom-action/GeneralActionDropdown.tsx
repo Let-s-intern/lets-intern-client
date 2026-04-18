@@ -1,9 +1,17 @@
-import { ChallengeApplication, LiveApplication } from '@/schema';
+import {
+  ChallengeApplication,
+  GuidebookApplication,
+  LiveApplication,
+} from '@/schema';
 import { useState } from 'react';
 import ActionButton from '../../../ui/button/ActionButton';
 
 interface Props {
-  applications: (ChallengeApplication['application'] | LiveApplication)[];
+  applications: (
+    | ChallengeApplication['application']
+    | LiveApplication
+    | GuidebookApplication
+  )[];
   programTitle: string;
 }
 

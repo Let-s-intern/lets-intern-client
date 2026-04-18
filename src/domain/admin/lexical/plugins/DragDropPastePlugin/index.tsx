@@ -14,6 +14,7 @@ import { COMMAND_PRIORITY_LOW } from 'lexical';
 import { useEffect } from 'react';
 import { uploadFile } from '../../../../../api/file';
 import { INSERT_IMAGE_COMMAND } from '../ImagesPlugin';
+import { INSERT_PDF_COMMAND } from '../PDFPlugin';
 
 const ACCEPTABLE_IMAGE_TYPES = [
   'image/',
@@ -22,6 +23,8 @@ const ACCEPTABLE_IMAGE_TYPES = [
   'image/gif',
   'image/webp',
 ];
+
+const ACCEPTABLE_PDF_TYPES = ['application/pdf'];
 
 export default function DragDropPaste() {
   const [editor] = useLexicalComposerContext();
@@ -32,17 +35,26 @@ export default function DragDropPaste() {
       DRAG_DROP_PASTE,
       (files) => {
         (async () => {
+          const allTypes = [...ACCEPTABLE_IMAGE_TYPES, ...ACCEPTABLE_PDF_TYPES];
           const filesResult = await mediaFileReader(
             files,
-            [ACCEPTABLE_IMAGE_TYPES].flatMap((x) => x),
+            allTypes,
           );
-          for (const { file, result } of filesResult) {
+          for (const { file } of filesResult) {
             if (isMimeType(file, ACCEPTABLE_IMAGE_TYPES)) {
               uploadFile({ file, type: 'BLOG' }).then((src) => {
                 setSnackbar(`${file.name} 이미지가 업로드되었습니다.`);
                 editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
                   altText: file.name,
                   src,
+                });
+              });
+            } else if (isMimeType(file, ACCEPTABLE_PDF_TYPES)) {
+              uploadFile({ file, type: 'BLOG' }).then((url) => {
+                setSnackbar(`${file.name} PDF가 업로드되었습니다.`);
+                editor.dispatchCommand(INSERT_PDF_COMMAND, {
+                  url,
+                  fileName: file.name,
                 });
               });
             }

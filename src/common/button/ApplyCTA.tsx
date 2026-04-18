@@ -29,12 +29,14 @@ interface ApplyCTAProps {
     beginning: Dayjs | null;
   };
   onApplyClick: () => void;
+  onNotiClick?: () => void;
   isAlreadyApplied: boolean;
 }
 
 export function MobileApplyCTA({
   program,
   onApplyClick,
+  onNotiClick,
   isAlreadyApplied,
 }: ApplyCTAProps) {
   const isOutOfDate =
@@ -64,7 +66,11 @@ export function MobileApplyCTA({
   return (
     <MobileCTA
       className="flex flex-col items-center lg:hidden"
-      title={program?.title ?? ''}
+      title={
+        isOutOfDate
+          ? '다양한 렛츠커리어 프로그램에 참여하고 싶다면?'
+          : (program?.title ?? '')
+      }
       banner={
         showInstagramAlert ? (
           <PaymentErrorNotification className="border-t" />
@@ -72,7 +78,11 @@ export function MobileApplyCTA({
       }
     >
       {isOutOfDate ? (
-        <NotiButton text={'출시알림신청'} className="early_button" />
+        <NotiButton
+          text={'출시알림신청'}
+          className="early_button"
+          onClick={onNotiClick}
+        />
       ) : isAlreadyApplied ? (
         <DisabledButton />
       ) : hasDeadline ? (
@@ -139,6 +149,7 @@ export const MobileCTA = memo(function MobileCTA({
 export function DesktopApplyCTA({
   program,
   onApplyClick,
+  onNotiClick,
   isAlreadyApplied,
 }: ApplyCTAProps) {
   const isOutOfDate =
@@ -151,8 +162,12 @@ export function DesktopApplyCTA({
   return (
     <DesktopCTA className="hidden items-center justify-between lg:flex">
       <div className="flex flex-col gap-1">
-        <span className="font-bold text-neutral-100">{program?.title}</span>
-        {hasDeadline && program.deadline && (
+        <span className="font-bold text-neutral-100">
+          {isOutOfDate
+            ? '다양한 렛츠커리어 프로그램에 참여하고 싶다면?'
+            : program?.title}
+        </span>
+        {!isOutOfDate && hasDeadline && program.deadline && (
           <span className="text-xsmall14 font-medium text-neutral-80">
             {program.deadline.format('M월 D일 (dd)')} 마감까지 🚀
           </span>
@@ -160,7 +175,11 @@ export function DesktopApplyCTA({
       </div>
       <div className="flex min-w-80 max-w-[60rem] items-center justify-end gap-8">
         {isOutOfDate ? (
-          <NotiButton text={'출시알림신청'} className="early_button" />
+          <NotiButton
+            text={'출시알림신청'}
+            className="early_button"
+            onClick={onNotiClick}
+          />
         ) : isAlreadyApplied ? (
           <DisabledButton />
         ) : hasDeadline && program.deadline ? (

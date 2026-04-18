@@ -56,6 +56,10 @@ const navData = [
         name: '멘토 관리',
         url: '/admin/mentors',
       },
+      {
+        name: '리드 관리',
+        url: '/admin/leads/managements',
+      },
     ],
   },
   {
@@ -64,14 +68,6 @@ const navData = [
       {
         name: '홈 큐레이션 관리',
         url: '/admin/home/curation',
-      },
-      {
-        name: '홈 상단 배너 관리',
-        url: '/admin/home/main-banners',
-      },
-      {
-        name: '홈 하단 배너 관리',
-        url: '/admin/home/bottom-banners',
       },
     ],
   },
@@ -83,8 +79,8 @@ const navData = [
         url: '/admin/banner/top-bar-banners',
       },
       {
-        name: '프로그램 배너 관리',
-        url: '/admin/banner/program-banners',
+        name: '통합 배너 관리',
+        url: '/admin/banner/common-banners',
       },
       {
         name: '팝업 관리',
@@ -110,12 +106,17 @@ const navData = [
     ],
   },
   {
-    title: '리드 관리',
+    title: '마그넷',
     itemList: [
       {
-        name: '리드 히스토리',
-        url: '/admin/leads/history',
+        name: '마그넷 관리/등록',
+        url: '/admin/magnet/list',
       },
+    ],
+  },
+  {
+    title: '리드 관리',
+    itemList: [
       {
         name: '리드 이벤트',
         url: '/admin/leads/events',

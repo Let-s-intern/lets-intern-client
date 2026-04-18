@@ -2,6 +2,7 @@ import { ProgramRecommendItem } from '@/api/blog/blogSchema';
 import {
   fetchChallenge,
   fetchLive,
+  fetchPublicGuidebookData,
   fetchVod,
   getChallengeByKeyword,
 } from '@/api/program';
@@ -10,7 +11,7 @@ import { ProgramTypeEnum } from '@/schema';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const { CHALLENGE, LIVE, VOD } = ProgramTypeEnum.enum;
+const { CHALLENGE, LIVE, VOD, GUIDEBOOK } = ProgramTypeEnum.enum;
 interface Props {
   program: ProgramRecommendItem;
 }
@@ -18,7 +19,7 @@ interface Props {
 async function ProgramRecommendCard({ program }: Props) {
   const { title, thumbnail, ctaLink } = await getProgramInfo();
 
-  const isProgramAvailable = title && thumbnail !== '' && ctaLink !== '';
+  const isProgramAvailable = title && ctaLink !== '';
 
   async function getProgramInfo() {
     let title: string | undefined;
@@ -51,6 +52,12 @@ async function ProgramRecommendCard({ program }: Props) {
             thumbnail = vod.vodInfo.thumbnail ?? '';
             ctaLink = vod.vodInfo.link ?? '';
             break;
+          case GUIDEBOOK:
+            const guidebook = await fetchPublicGuidebookData(id);
+            title = guidebook.title ?? undefined;
+            thumbnail = guidebook.thumbnail ?? '';
+            ctaLink = `/program/guidebook/${id}`;
+            break;
           default:
             // type === REPORT
             const report = await fetchReportId(id);
@@ -59,7 +66,7 @@ async function ProgramRecommendCard({ program }: Props) {
             ctaLink = `/report/landing/${convertReportTypeToPathname(report.reportType ?? 'RESUME')}`;
         }
       } catch (err) {
-        console.error('The program is not available.');
+        console.error(`프로그램 조회 실패 (id: ${program.id}):`, err);
       }
     } else if (program.ctaLink?.startsWith('latest')) {
       // latest:{keyword} 사용한 경우
@@ -96,16 +103,18 @@ async function ProgramRecommendCard({ program }: Props) {
         </h3>
       </div>
 
-      <div className="relative h-[3.375rem] w-[4.5rem] shrink-0 bg-neutral-95">
-        <Image
-          unoptimized
-          fill
-          sizes="4.5rem"
-          className="h-full w-full rounded-xxs object-cover"
-          src={thumbnail}
-          alt={title + ' 썸네일'}
-        />
-      </div>
+      {thumbnail && (
+        <div className="relative h-[3.375rem] w-[4.5rem] shrink-0 bg-neutral-95">
+          <Image
+            unoptimized
+            fill
+            sizes="4.5rem"
+            className="h-full w-full rounded-xxs object-cover"
+            src={thumbnail}
+            alt={title + ' 썸네일'}
+          />
+        </div>
+      )}
     </Link>
   );
 }

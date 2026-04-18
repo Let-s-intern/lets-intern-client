@@ -4,8 +4,15 @@ export const PROGRAM_STATUS = {
   POST: '마감',
 } as const;
 
+export const PROGRAM_BADGE_STATUS = {
+  PREV: '모집 예정',
+  PROCEEDING: '모집 중',
+  POST: '모집 완료',
+} as const;
+
 export const PROGRAM_CLASSIFICATION = {
   CAREER_SEARCH: '탐색',
+  EXPERIENCE: '경험',
   DOCUMENT_PREPARATION: '서류',
   MEETING_PREPARATION: '면접',
   PASS: '성장',
@@ -25,10 +32,11 @@ export const PROGRAM_FILTER_STATUS = {
 };
 
 export const PROGRAM_FILTER_CLASSIFICATION = {
-  CAREER_SEARCH: '커리어 탐색',
+  CAREER_SEARCH: '진로/직무 탐색',
+  EXPERIENCE: '경험 정리',
   DOCUMENT_PREPARATION: '서류 준비',
   MEETING_PREPARATION: '면접 준비',
-  PASS: '합격 후 성장',
+  PASS: '온보딩&실무',
 };
 
 export const PROGRAM_FILTER_TYPE = {
@@ -47,6 +55,7 @@ export const PROGRAM_TYPE_KEY = {
 
 export const PROGRAM_CLASSIFICATION_KEY = {
   CAREER_SEARCH: 'CAREER_SEARCH',
+  EXPERIENCE: 'EXPERIENCE',
   DOCUMENT_PREPARATION: 'DOCUMENT_PREPARATION',
   MEETING_PREPARATION: 'MEETING_PREPARATION',
   PASS: 'PASS',
@@ -58,10 +67,17 @@ export const PROGRAM_STATUS_KEY = {
   POST: 'POST',
 } as const;
 
+export const PROGRAM_FILTER_JOB = {
+  MARKETING: '마케팅',
+  HR: 'HR',
+  LARGE_COMPANY: '대기업 공채',
+} as const;
+
 export const PROGRAM_QUERY_KEY = {
   TYPE: 'type',
   CLASSIFICATION: 'classification',
   STATUS: 'status',
+  JOB_CATEGORY: 'jobCategory',
 } as const;
 
 export const REMINDER_LINK = 'https://forms.gle/u6ePSE2WoRYjxyGS6';

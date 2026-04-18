@@ -6,10 +6,12 @@ import { ChallengeIdPrimitive } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import NotiToast from './NotiToast';
 import {
   DesktopApplyCTA,
   MobileApplyCTA,
 } from '../../../common/button/ApplyCTA';
+import NotiModal from '@/domain/program/program-detail/button/NotiModal';
 import PricePlanBottomSheet from '../PricePlanBottomSheet';
 
 const ChallengeCTAButtons = ({
@@ -24,6 +26,8 @@ const ChallengeCTAButtons = ({
   const searchParams = useSearchParams();
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isNotiOpen, setIsNotiOpen] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   const { data: application, refetch } = useProgramApplicationQuery(
     'challenge',
@@ -74,6 +78,7 @@ const ChallengeCTAButtons = ({
               deadline: challenge.deadline ? dayjs(challenge.deadline) : null,
             }}
             onApplyClick={handleOpen}
+            onNotiClick={() => setIsNotiOpen(true)}
             isAlreadyApplied={isAlreadyApplied}
           />
           <MobileApplyCTA
@@ -85,10 +90,25 @@ const ChallengeCTAButtons = ({
               deadline: challenge.deadline ? dayjs(challenge.deadline) : null,
             }}
             onApplyClick={handleOpen}
+            onNotiClick={() => setIsNotiOpen(true)}
             isAlreadyApplied={isAlreadyApplied}
           />
         </>
       )}
+      {/* 출시 알림 신청 모달 */}
+      <NotiModal
+        isOpen={isNotiOpen}
+        onClose={() => setIsNotiOpen(false)}
+        onSuccess={() => setShowToast(true)}
+        programTypeList={['CHALLENGE']}
+        challengeTypeList={
+          challenge.challengeType ? [challenge.challengeType] : undefined
+        }
+      />
+      <NotiToast
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
       {/* 가격 플랜 선택 바텀 시트 */}
       <PricePlanBottomSheet
         isOpen={isOpen}

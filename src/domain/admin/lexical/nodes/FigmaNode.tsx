@@ -7,6 +7,9 @@
  */
 
 import type {
+  DOMConversionMap,
+  DOMConversionOutput,
+  DOMExportOutput,
   EditorConfig,
   ElementFormatType,
   LexicalEditor,
@@ -22,6 +25,13 @@ import {
 } from '@lexical/react/LexicalDecoratorBlockNode';
 import * as React from 'react';
 
+export type FigmaUrlType = 'design' | 'file' | 'proto' | 'board' | 'slides' | 'deck';
+
+function getFigmaEmbedUrl(documentID: string, urlType: FigmaUrlType): string {
+  const embedType = urlType === 'file' ? 'design' : urlType;
+  return `https://embed.figma.com/${embedType}/${documentID}?embed-host=lexical`;
+}
+
 type FigmaComponentProps = Readonly<{
   className: Readonly<{
     base: string;
@@ -30,6 +40,7 @@ type FigmaComponentProps = Readonly<{
   format: ElementFormatType | null;
   nodeKey: NodeKey;
   documentID: string;
+  urlType: FigmaUrlType;
 }>;
 
 function FigmaComponent({
@@ -37,6 +48,7 @@ function FigmaComponent({
   format,
   nodeKey,
   documentID,
+  urlType,
 }: FigmaComponentProps) {
   return (
     <BlockWithAlignableContents
@@ -46,8 +58,7 @@ function FigmaComponent({
       <iframe
         width="560"
         height="315"
-        src={`https://www.figma.com/embed?embed_host=lexical&url=\
-        https://www.figma.com/file/${documentID}`}
+        src={getFigmaEmbedUrl(documentID, urlType)}
         allowFullScreen={true}
       />
     </BlockWithAlignableContents>
@@ -57,23 +68,40 @@ function FigmaComponent({
 export type SerializedFigmaNode = Spread<
   {
     documentID: string;
+    urlType?: FigmaUrlType;
   },
   SerializedDecoratorBlockNode
 >;
 
+function $convertFigmaElement(
+  domNode: HTMLElement,
+): null | DOMConversionOutput {
+  const documentID = domNode.getAttribute('data-lexical-figma');
+  const urlType = (domNode.getAttribute('data-lexical-figma-type') || 'design') as FigmaUrlType;
+  if (documentID) {
+    const node = $createFigmaNode(documentID, urlType);
+    return {node};
+  }
+  return null;
+}
+
 export class FigmaNode extends DecoratorBlockNode {
   __id: string;
+  __urlType: FigmaUrlType;
 
   static getType(): string {
     return 'figma';
   }
 
   static clone(node: FigmaNode): FigmaNode {
-    return new FigmaNode(node.__id, node.__format, node.__key);
+    return new FigmaNode(node.__id, node.__urlType, node.__format, node.__key);
   }
 
   static importJSON(serializedNode: SerializedFigmaNode): FigmaNode {
-    const node = $createFigmaNode(serializedNode.documentID);
+    const node = $createFigmaNode(
+      serializedNode.documentID,
+      serializedNode.urlType || 'design',
+    );
     node.setFormat(serializedNode.format);
     return node;
   }
@@ -82,14 +110,46 @@ export class FigmaNode extends DecoratorBlockNode {
     return {
       ...super.exportJSON(),
       documentID: this.__id,
+      urlType: this.__urlType,
       type: 'figma',
       version: 1,
     };
   }
 
-  constructor(id: string, format?: ElementFormatType, key?: NodeKey) {
+  constructor(
+    id: string,
+    urlType: FigmaUrlType = 'design',
+    format?: ElementFormatType,
+    key?: NodeKey,
+  ) {
     super(format, key);
     this.__id = id;
+    this.__urlType = urlType;
+  }
+
+  exportDOM(): DOMExportOutput {
+    const element = document.createElement('iframe');
+    element.setAttribute('data-lexical-figma', this.__id);
+    element.setAttribute('data-lexical-figma-type', this.__urlType);
+    element.setAttribute('width', '560');
+    element.setAttribute('height', '315');
+    element.setAttribute('src', getFigmaEmbedUrl(this.__id, this.__urlType));
+    element.setAttribute('allowfullscreen', 'true');
+    return {element};
+  }
+
+  static importDOM(): DOMConversionMap | null {
+    return {
+      iframe: (domNode: HTMLElement) => {
+        if (!domNode.hasAttribute('data-lexical-figma')) {
+          return null;
+        }
+        return {
+          conversion: $convertFigmaElement,
+          priority: 1,
+        };
+      },
+    };
   }
 
   updateDOM(): false {
@@ -104,7 +164,7 @@ export class FigmaNode extends DecoratorBlockNode {
     _includeInert?: boolean | undefined,
     _includeDirectionless?: false | undefined,
   ): string {
-    return `https://www.figma.com/file/${this.__id}`;
+    return `https://www.figma.com/${this.__urlType}/${this.__id}`;
   }
 
   decorate(_editor: LexicalEditor, config: EditorConfig): JSX.Element {
@@ -119,13 +179,17 @@ export class FigmaNode extends DecoratorBlockNode {
         format={this.__format}
         nodeKey={this.getKey()}
         documentID={this.__id}
+        urlType={this.__urlType}
       />
     );
   }
 }
 
-export function $createFigmaNode(documentID: string): FigmaNode {
-  return new FigmaNode(documentID);
+export function $createFigmaNode(
+  documentID: string,
+  urlType: FigmaUrlType = 'design',
+): FigmaNode {
+  return new FigmaNode(documentID, urlType);
 }
 
 export function $isFigmaNode(
