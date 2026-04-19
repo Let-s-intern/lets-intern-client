@@ -21,14 +21,17 @@ const CareerList = ({
   handleSubmit,
   handleEdit,
 }: CareerListProps) => {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
 
   const { data } = useGetUserCareerQuery({
     page,
     size: PAGE_SIZE,
   });
 
-  const { userCareers, pageInfo } = data ?? {};
+  const { pageInfo } = data ?? {};
+  const userCareers = [...(data?.userCareers ?? [])].sort((a, b) =>
+    (b.startDate ?? '').localeCompare(a.startDate ?? ''),
+  );
 
   const {
     pageNum: currentPage,
@@ -39,9 +42,9 @@ const CareerList = ({
 
   const handlePageChange = (
     _event: React.ChangeEvent<unknown>,
-    page: number,
+    uiPage: number,
   ) => {
-    setPage(page);
+    setPage(uiPage - 1);
   };
 
   return (

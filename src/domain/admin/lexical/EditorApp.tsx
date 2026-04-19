@@ -196,8 +196,20 @@ function App({
     setOption,
   } = useSettings();
 
+  // 유효한 Lexical JSON만 editorState에 전달, 아니면 빈 에디터
+  const safeEditorState = (() => {
+    if (!initialEditorStateJsonString) return emptyEditorState;
+    try {
+      const parsed = JSON.parse(initialEditorStateJsonString);
+      if (parsed?.root) return initialEditorStateJsonString;
+    } catch {
+      // JSON이 아닌 평문
+    }
+    return emptyEditorState;
+  })();
+
   const initialConfig: InitialConfigType = {
-    editorState: initialEditorStateJsonString.trim() || undefined,
+    editorState: safeEditorState,
     namespace: 'LetsCareerBlog',
     nodes: [...nodes],
     onError: (error: Error) => {

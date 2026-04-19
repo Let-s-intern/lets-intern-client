@@ -7,6 +7,9 @@ export const DEFAULT_CAREER: CareerFormType = {
   employmentTypeOther: '',
   startDate: '',
   endDate: '',
+  field: '',
+  position: '',
+  department: '',
 } as const;
 
 export const DEFAULT_PAGE_INFO = {

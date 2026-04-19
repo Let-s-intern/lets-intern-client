@@ -20,6 +20,9 @@ const CareerCard = ({
     employmentTypeOther,
     startDate,
     endDate,
+    field,
+    position,
+    department,
   },
   handleEdit,
 }: CareerCardProps) => {
@@ -56,16 +59,24 @@ const CareerCard = ({
 
       <div className="text-neutral-0">{company}</div>
 
-      <div className="flex items-center gap-2 text-sm text-neutral-0">
+      <div className="flex flex-wrap items-center gap-2 text-sm text-neutral-0">
         <span>
           {employmentType === '기타(직접입력)'
             ? employmentTypeOther
             : employmentType}
         </span>
         <span className="text-neutral-40">
-          {startDate} - {endDate}
+          {startDate} - {endDate || '재직중'}
         </span>
       </div>
+
+      {(field || position || department) && (
+        <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-sm text-neutral-35">
+          {field && <span>업무분야: {field}</span>}
+          {position && <span>직책: {position}</span>}
+          {department && <span>부서: {department}</span>}
+        </div>
+      )}
 
       <div className="mt-2.5 flex items-center gap-2 text-sm text-neutral-35 md:hidden">
         <span className="cursor-pointer px-2" onClick={() => handleEdit(id!)}>

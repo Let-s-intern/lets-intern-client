@@ -171,6 +171,10 @@ export type PatchUserType = {
   careerType?: string | null;
   isPoolUp?: boolean;
   memo?: string | null;
+  nickname?: string | null;
+  introduction?: string | null;
+  profileImgUrl?: string | null;
+  sns?: string | null;
 };
 
 export const usePatchUserAdminMutation = ({
@@ -226,6 +230,10 @@ const userSchema = z.object({
   careerType: z.enum(['QUALIFIED', 'NONE']).nullable(),
   memo: z.string().nullable(),
   isPoolUp: z.boolean().nullable(),
+  nickname: z.string().nullable().optional(),
+  introduction: z.string().nullable().optional(),
+  profileImgUrl: z.string().nullable().optional(),
+  sns: z.string().nullable().optional(),
 });
 
 export type User = z.infer<typeof userSchema>;
@@ -279,6 +287,10 @@ export type PatchUserBody = {
   accountNum?: string | null;
   accountOwner?: string | null;
   isPoolUp?: boolean;
+  nickname?: string | null;
+  introduction?: string | null;
+  profileImgUrl?: string | null;
+  sns?: string | null;
 };
 
 export const usePatchUser = (
