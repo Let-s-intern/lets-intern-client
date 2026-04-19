@@ -1,6 +1,6 @@
 'use client';
 
-import SelectFormControl from '@/domain/admin/program/SelectFormControl';
+import SelectFormControl from '@/domain/admin/program/ui/form/SelectFormControl';
 import { MenuItem, SelectChangeEvent } from '@mui/material';
 import { GridRenderCellParams } from '@mui/x-data-grid';
 import { useMentorMatchContext } from '../MentorMatchContext';
