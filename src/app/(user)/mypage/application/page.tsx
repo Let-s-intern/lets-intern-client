@@ -53,12 +53,11 @@ const Application = () => {
 
   return (
     <main className="flex w-full flex-col gap-8 md:gap-10">
-      <div>
+      <div className="-mx-5 -mt-[18px] md:mx-0 md:mt-0">
         <CategoryTabs
           options={APPLICATION_CATEGORY_OPTIONS}
           selected={category}
           onChange={setCategory}
-          className="-mx-5 -mt-[18px] md:-mx-0 md:-mt-0"
         />
       </div>
       <div className="flex w-full flex-col gap-16">
