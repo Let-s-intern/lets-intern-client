@@ -6,6 +6,7 @@ export const isAdminSchema = z.boolean();
 
 /** GET /api/v1/challenge-mentor */
 export const challengeMentorVoSchema = z.object({
+  challengeMentorId: z.number(),
   challengeId: z.number(),
   programStatusType: z.string(),
   title: z.string(),

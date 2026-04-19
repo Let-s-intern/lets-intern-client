@@ -1,0 +1,23 @@
+{
+  "short_name": "렛츠커리어 멘토",
+  "name": "렛츠커리어 멘토 마이페이지",
+  "description": "렛츠커리어 멘토 전용 마이페이지입니다.",
+  "icons": [
+    {
+      "src": "/logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/mentor",
+  "scope": "/mentor",
+  "display": "standalone",
+  "theme_color": "#4D55F5",
+  "background_color": "#ffffff",
+  "orientation": "portrait"
+}
