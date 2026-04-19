@@ -19,7 +19,12 @@ const CategoryChips = <Value extends string>({
   className,
 }: CategoryChipsProps<Value>) => {
   return (
-    <div className={clsx('flex gap-3', className)}>
+    <div
+      className={clsx(
+        'flex gap-3 overflow-x-auto whitespace-nowrap scrollbar-hide',
+        className,
+      )}
+    >
       {options.map((option) => {
         const isActive = option.value === selected;
 
@@ -30,7 +35,7 @@ const CategoryChips = <Value extends string>({
             onClick={() => onChange(option.value)}
             className={clsx(
               'rounded-full px-3 py-1.5 text-xsmall14 leading-5',
-              'border transition-colors',
+              'shrink-0 whitespace-nowrap border transition-colors',
               isActive
                 ? 'bg-neutral-10 text-neutral-100'
                 : 'bg-neutral-90 text-neutral-40 hover:bg-neutral-80',
