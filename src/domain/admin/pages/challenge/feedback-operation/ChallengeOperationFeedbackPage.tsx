@@ -1,6 +1,10 @@
 'use client';
 
-import { ChallengeMissionFeedbackAttendanceQueryKey } from '@/api/challenge/challenge';
+import {
+  ChallengeMissionFeedbackAttendanceQueryKey,
+  MentorMissionFeedbackAttendanceQueryKey,
+  MentorMenteeAttendanceQueryKey,
+} from '@/api/challenge/challenge';
 import { useIsAdminQuery } from '@/api/user/user';
 import { useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
@@ -27,6 +31,12 @@ function ChallengeOperationFeedbackPage() {
         });
         queryClient.invalidateQueries({
           queryKey: [ChallengeMissionFeedbackAttendanceQueryKey],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [MentorMissionFeedbackAttendanceQueryKey],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [MentorMenteeAttendanceQueryKey],
         });
       }
       setActiveTab(tab);

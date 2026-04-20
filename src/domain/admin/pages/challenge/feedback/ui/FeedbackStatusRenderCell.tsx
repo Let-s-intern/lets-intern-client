@@ -6,10 +6,8 @@ import {
   FeedbackStatusMapping,
 } from '@/api/challenge/challengeSchema';
 import { usePatchAdminAttendance } from '@/api/attendance/attendance';
-import {
-  ChallengeMissionFeedbackAttendanceQueryKey,
-  MentorMissionFeedbackAttendanceQueryKey,
-} from '@/api/challenge/challenge';
+import { ChallengeMissionFeedbackAttendanceQueryKey } from '@/api/challenge/challenge';
+import { getMentorAttendanceQueryKey } from '@/domain/mentor/feedback/hooks/useMentorAttendanceQuery';
 import { usePatchAttendanceMentorMutation } from '@/api/mentor/mentor';
 import { useIsAdminQuery } from '@/api/user/user';
 import SelectFormControl from '@/domain/admin/program/SelectFormControl';
@@ -67,7 +65,7 @@ const FeedbackStatusRenderCell = (
   const invalidateFeedbackQueries = async () => {
     const feedbackQueryKey = isAdmin
       ? [ChallengeMissionFeedbackAttendanceQueryKey, programId, missionId]
-      : [MentorMissionFeedbackAttendanceQueryKey, programId, missionId];
+      : [getMentorAttendanceQueryKey(programId), programId, missionId];
 
     await queryClient.invalidateQueries({ queryKey: feedbackQueryKey });
   };

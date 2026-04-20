@@ -3,9 +3,9 @@
 import {
   ChallengeApplicationsQueryKey,
   ChallengeMissionFeedbackAttendanceQueryKey,
-  MentorMissionFeedbackAttendanceQueryKey,
   useChallengeApplicationsQuery,
 } from '@/api/challenge/challenge';
+import { getMentorAttendanceQueryKey } from '@/domain/mentor/feedback/hooks/useMentorAttendanceQuery';
 import { usePostAdminChallengeMentorMatch } from '@/api/mentor/mentor';
 import { useIsAdminQuery } from '@/api/user/user';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
@@ -35,7 +35,7 @@ const useFeedbackMentorAssignment = () => {
   const invalidateAttendance = async () => {
     const queryKey = isAdmin
       ? [ChallengeMissionFeedbackAttendanceQueryKey, programId, missionId]
-      : [MentorMissionFeedbackAttendanceQueryKey, programId, missionId];
+      : [getMentorAttendanceQueryKey(programId), programId, missionId];
 
     await queryClient.invalidateQueries({ queryKey });
     await queryClient.invalidateQueries({
