@@ -134,7 +134,7 @@ export default function LibraryMainContent({
         </div>
         <div className="mb-6 text-center text-small18 font-light text-neutral-20">
           렛츠커리어만의{' '}
-          <span className="font-semibold text-primary">취준 꿀팁</span>이
+          <span className="font-semibold text-primary">취준 꿀팁</span>이{' '}
           <br className="block md:hidden" />
           담긴 콘텐츠,
           <br />
