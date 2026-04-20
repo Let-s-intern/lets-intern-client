@@ -729,6 +729,14 @@ export const useMentorMenteeAttendanceQuery = ({
   });
 };
 
+/** 멘토 attendance 쿼리 무효화 시 사용할 키 — legacyChallenge 여부에 따라 분기 */
+export const getMentorAttendanceQueryKey = (
+  challengeId: number | string,
+): string =>
+  isLegacyChallenge(challengeId)
+    ? MentorMissionFeedbackAttendanceQueryKey
+    : MentorMenteeAttendanceQueryKey;
+
 /** [어드민용] 챌린지 신청자 조회 /api/v1/challenge/{challengeId}/applications */
 export const ChallengeApplicationsQueryKey = 'useChallengeApplicationsQuery';
 

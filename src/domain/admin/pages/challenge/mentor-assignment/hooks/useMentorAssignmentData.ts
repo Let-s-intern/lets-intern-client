@@ -13,6 +13,8 @@ import usePaybackParticipants from './usePaybackParticipants';
 import useMentorMatchHandler from './useMentorMatchHandler';
 import type { MentorAssignmentRow } from '../types';
 
+const BASIC_PRICE_PLAN = 'BASIC';
+
 const useMentorAssignmentData = (programId: string) => {
   const { snackbar } = useAdminSnackbar();
   const queryClient = useQueryClient();
@@ -21,10 +23,11 @@ const useMentorAssignmentData = (programId: string) => {
     usePaybackParticipants(programId);
   const { data: mentorData, isLoading: isMentorLoading } =
     useAdminChallengeMentorListQuery(programId);
-  const { data: applicationsData } = useChallengeApplicationsQuery({
-    challengeId: programId,
-    enabled: !!programId,
-  });
+  const { data: applicationsData, isLoading: isApplicationsLoading } =
+    useChallengeApplicationsQuery({
+      challengeId: programId,
+      enabled: !!programId,
+    });
   const { handleMatch, isPending } = useMentorMatchHandler(programId);
 
   const participants = useMemo(
@@ -145,20 +148,24 @@ const useMentorAssignmentData = (programId: string) => {
 
   const rows: MentorAssignmentRow[] = useMemo(
     () =>
-      participants.map((p) => {
-        const details = applicationDetailsMap[p.applicationId];
-        return {
-          id: p.applicationId,
-          name: p.name ?? '-',
-          email: p.email ?? '-',
-          phoneNum: p.phoneNum ?? '-',
-          major: details?.major ?? '-',
-          wishJob: details?.wishJob ?? '-',
-          wishCompany: details?.wishCompany ?? '-',
-          pricePlanType: details?.pricePlanType ?? '-',
-          matchedMentorId: effectiveMentors[p.applicationId] ?? null,
-        };
-      }),
+      participants
+        .filter(
+          (p) => applicationDetailsMap[p.applicationId]?.pricePlanType !== BASIC_PRICE_PLAN,
+        )
+        .map((p) => {
+          const details = applicationDetailsMap[p.applicationId];
+          return {
+            id: p.applicationId,
+            name: p.name ?? '-',
+            email: p.email ?? '-',
+            phoneNum: p.phoneNum ?? '-',
+            major: details?.major ?? '-',
+            wishJob: details?.wishJob ?? '-',
+            wishCompany: details?.wishCompany ?? '-',
+            pricePlanType: details?.pricePlanType ?? '-',
+            matchedMentorId: effectiveMentors[p.applicationId] ?? null,
+          };
+        }),
     [participants, effectiveMentors, applicationDetailsMap],
   );
 
@@ -167,7 +174,7 @@ const useMentorAssignmentData = (programId: string) => {
     mentors,
     effectiveMentors,
     matchCounts,
-    isLoading: isParticipantsLoading || isMentorLoading,
+    isLoading: isParticipantsLoading || isMentorLoading || isApplicationsLoading,
     isPending,
     handleSingleMatch,
     handleBulkMatch,

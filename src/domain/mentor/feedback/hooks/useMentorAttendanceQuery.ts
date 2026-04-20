@@ -1,10 +1,10 @@
 import {
   isLegacyChallenge,
   useMentorMissionFeedbackAttendanceQuery,
-  MentorMissionFeedbackAttendanceQueryKey,
   useMentorMenteeAttendanceQuery,
-  MentorMenteeAttendanceQueryKey,
 } from '@/api/challenge/challenge';
+
+export { getMentorAttendanceQueryKey } from '@/api/challenge/challenge';
 
 /**
  * challengeId < 230 (기존 방식)이면 attendance.mentor_id 기반 API를,
@@ -37,14 +37,3 @@ export const useMentorAttendanceQuery = ({
 
   return isLegacy ? legacyQuery : newQuery;
 };
-
-/**
- * Query invalidation에 사용할 키.
- * challengeId에 따라 적절한 키를 반환.
- */
-export const getMentorAttendanceQueryKey = (
-  challengeId: number | string,
-): string =>
-  isLegacyChallenge(challengeId)
-    ? MentorMissionFeedbackAttendanceQueryKey
-    : MentorMenteeAttendanceQueryKey;
