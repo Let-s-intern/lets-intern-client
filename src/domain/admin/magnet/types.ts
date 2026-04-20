@@ -24,6 +24,7 @@ export const isMagnetManageable = (type: MagnetTypeKey): boolean =>
 const VISIBILITY_MANAGEABLE_TYPES: MagnetTypeKey[] = [
   ...MANAGEABLE_MAGNET_TYPES,
   'LAUNCH_ALERT',
+  'EVENT',
 ];
 
 export const isMagnetVisibilityManageable = (type: MagnetTypeKey): boolean =>
@@ -121,4 +122,3 @@ export interface FormQuestion {
   selectionMethod: FormSelectionMethod;
   items: FormQuestionItem[];
 }
-
