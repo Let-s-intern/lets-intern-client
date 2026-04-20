@@ -6,8 +6,10 @@ import {
   FeedbackStatusMapping,
 } from '@/api/challenge/challengeSchema';
 import { usePatchAdminAttendance } from '@/api/attendance/attendance';
-import { ChallengeMissionFeedbackAttendanceQueryKey } from '@/api/challenge/challenge';
-import { getMentorAttendanceQueryKey } from '@/domain/mentor/feedback/hooks/useMentorAttendanceQuery';
+import {
+  ChallengeMissionFeedbackAttendanceQueryKey,
+  getMentorAttendanceQueryKey,
+} from '@/api/challenge/challenge';
 import { usePatchAttendanceMentorMutation } from '@/api/mentor/mentor';
 import { useIsAdminQuery } from '@/api/user/user';
 import SelectFormControl from '@/domain/admin/program/SelectFormControl';

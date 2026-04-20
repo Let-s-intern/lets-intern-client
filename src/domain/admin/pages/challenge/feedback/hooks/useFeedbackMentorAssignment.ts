@@ -3,9 +3,9 @@
 import {
   ChallengeApplicationsQueryKey,
   ChallengeMissionFeedbackAttendanceQueryKey,
+  getMentorAttendanceQueryKey,
   useChallengeApplicationsQuery,
 } from '@/api/challenge/challenge';
-import { getMentorAttendanceQueryKey } from '@/domain/mentor/feedback/hooks/useMentorAttendanceQuery';
 import { usePostAdminChallengeMentorMatch } from '@/api/mentor/mentor';
 import { useIsAdminQuery } from '@/api/user/user';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';

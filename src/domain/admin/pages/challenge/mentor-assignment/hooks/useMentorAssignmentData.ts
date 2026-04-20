@@ -13,6 +13,8 @@ import usePaybackParticipants from './usePaybackParticipants';
 import useMentorMatchHandler from './useMentorMatchHandler';
 import type { MentorAssignmentRow } from '../types';
 
+const BASIC_PRICE_PLAN = 'BASIC';
+
 const useMentorAssignmentData = (programId: string) => {
   const { snackbar } = useAdminSnackbar();
   const queryClient = useQueryClient();
@@ -148,7 +150,7 @@ const useMentorAssignmentData = (programId: string) => {
     () =>
       participants
         .filter(
-          (p) => applicationDetailsMap[p.applicationId]?.pricePlanType !== 'BASIC',
+          (p) => applicationDetailsMap[p.applicationId]?.pricePlanType !== BASIC_PRICE_PLAN,
         )
         .map((p) => {
           const details = applicationDetailsMap[p.applicationId];
