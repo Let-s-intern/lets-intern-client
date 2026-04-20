@@ -1,6 +1,12 @@
 'use client';
 
 import { MagnetListResponse } from '@/api/magnet/magnetSchema';
+import {
+  createIncludesFilterOperators,
+  formatDateTimeCellValue,
+  MultiSelectFilterInput,
+  MultiSelectFilterOption,
+} from '@/domain/admin/ui/table/TableFilter';
 import dayjs from '@/lib/dayjs';
 import { Button, Checkbox } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
@@ -21,6 +27,17 @@ interface MagnetTableProps {
 
 type Row = MagnetListItem;
 
+const magnetTypeOptions: MultiSelectFilterOption[] = Object.entries(
+  MAGNET_TYPE,
+).map(([value, label]) => ({
+  value,
+  label,
+}));
+
+const magnetTypeOperators = createIncludesFilterOperators((props) => (
+  <MultiSelectFilterInput {...props} options={magnetTypeOptions} />
+));
+
 const MagnetTable = ({
   data,
   onToggleVisibility,
@@ -37,7 +54,10 @@ const MagnetTable = ({
         field: 'type',
         headerName: '타입',
         width: 110,
-        valueGetter: (_, row) => MAGNET_TYPE[row.type],
+        valueGetter: (_, row) => row.type,
+        valueFormatter: (value) =>
+          MAGNET_TYPE[value as keyof typeof MAGNET_TYPE],
+        filterOperators: magnetTypeOperators,
       },
       {
         field: 'title',
@@ -62,28 +82,29 @@ const MagnetTable = ({
       {
         field: 'startDate',
         headerName: '노출 시작일',
+        type: 'dateTime',
         width: 130,
         valueGetter: (_, row) =>
-          !isMagnetVisibilityManageable(row.type)
-            ? '-'
-            : row.startDate
-              ? dayjs(row.startDate).format('YYYY-MM-DD')
-              : '-',
+          isMagnetVisibilityManageable(row.type) && row.startDate
+            ? dayjs(row.startDate).toDate()
+            : null,
+        valueFormatter: (value) => formatDateTimeCellValue(value),
       },
       {
         field: 'endDate',
         headerName: '노출 종료일',
+        type: 'dateTime',
         width: 130,
         valueGetter: (_, row) =>
-          !isMagnetVisibilityManageable(row.type)
-            ? '-'
-            : row.endDate
-              ? dayjs(row.endDate).format('YYYY-MM-DD')
-              : '-',
+          isMagnetVisibilityManageable(row.type) && row.endDate
+            ? dayjs(row.endDate).toDate()
+            : null,
+        valueFormatter: (value) => formatDateTimeCellValue(value),
       },
       {
         field: 'isVisible',
         headerName: '노출여부',
+        type: 'boolean',
         width: 90,
         renderCell: ({ row }) =>
           isMagnetVisibilityManageable(row.type) ? (
@@ -122,6 +143,7 @@ const MagnetTable = ({
         headerName: '관리',
         width: 280,
         sortable: false,
+        filterable: false,
         renderCell: ({ row }) => {
           const manageable = isMagnetManageable(row.type);
           const postEditable = manageable || row.type === 'LAUNCH_ALERT';
@@ -163,9 +185,6 @@ const MagnetTable = ({
       columns={columns}
       getRowId={(row) => row.magnetId}
       hideFooter
-      disableColumnSorting
-      disableColumnFilter
-      disableColumnMenu
       getRowHeight={() => 'auto'}
       sx={{
         '& .MuiDataGrid-cell': {
