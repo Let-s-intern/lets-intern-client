@@ -3,17 +3,40 @@
 import { getColor } from '../../constants/colors';
 import type { PeriodBarData } from '../../types';
 
+interface LiveFeedbackOpenBarProps {
+  bar: PeriodBarData;
+  onMentorOpenClick?: () => void;
+}
+
 /** 라이브 피드백 오픈기간 바 — 멘토 일정 오픈 또는 멘티 신청 단계 */
-const LiveFeedbackOpenBar = ({ bar }: { bar: PeriodBarData }) => {
+const LiveFeedbackOpenBar = ({
+  bar,
+  onMentorOpenClick,
+}: LiveFeedbackOpenBarProps) => {
   const color = getColor(bar.colorIndex ?? 0);
   const isMentorPhase = bar.barType === 'live-feedback-mentor-open';
+  const isMentorOpenClickable = isMentorPhase && !!onMentorOpenClick;
 
   const phaseLabel = isMentorPhase ? '멘토 오픈기간' : '멘티 신청기간';
   const phaseDesc = '라이브 피드백 일정 조율 기간';
   const labelColor = isMentorPhase ? 'text-orange-500' : 'text-sky-500';
 
   return (
-    <div className="relative z-10 flex w-full flex-col overflow-hidden text-left">
+    <div
+      onClick={isMentorOpenClickable ? onMentorOpenClick : undefined}
+      className={`relative z-10 flex w-full flex-col overflow-hidden text-left ${
+        isMentorOpenClickable ? 'cursor-pointer transition-opacity hover:opacity-85' : ''
+      }`}
+      role={isMentorOpenClickable ? 'button' : undefined}
+      tabIndex={isMentorOpenClickable ? 0 : undefined}
+      onKeyDown={(event) => {
+        if (!isMentorOpenClickable) return;
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onMentorOpenClick();
+        }
+      }}
+    >
       {/* Row 1: 단계 배지 + 우측 라인 */}
       <div className="flex h-6 min-w-0 items-center gap-2 overflow-hidden">
         <span

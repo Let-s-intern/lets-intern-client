@@ -15,6 +15,11 @@ import MobileFeedbackPage from '../feedback/ui/MobileFeedbackPage';
 import { useWeeklySummary } from './hooks/useWeeklySummary';
 import { useScheduleData } from './hooks/useScheduleData';
 import { useLiveFeedbackData } from './hooks/useLiveFeedbackData';
+import MentorOpenScheduleModal from './modal/MentorOpenScheduleModal';
+import {
+  MENTOR_OPEN_SCHEDULE_MOCK,
+  type MentorOpenSlot,
+} from './challenge-content/mentorOpenScheduleMock';
 
 const SchedulePage = () => {
   const {
@@ -89,6 +94,11 @@ const SchedulePage = () => {
     missionTh?: number;
   }>({ isOpen: false, challengeId: 0, missionId: 0 });
 
+  const [isMentorOpenModalOpen, setIsMentorOpenModalOpen] = useState(false);
+  const [mentorOpenSlots, setMentorOpenSlots] = useState<MentorOpenSlot[]>(
+    MENTOR_OPEN_SCHEDULE_MOCK,
+  );
+
   const handleBarClick = (challengeId: number, missionId: number) => {
     const bar = allBarsUnfiltered.find(
       (b) => b.challengeId === challengeId && b.missionId === missionId,
@@ -132,6 +142,7 @@ const SchedulePage = () => {
               bars={filteredBarsWithLive}
               allBars={allBarsWithLive}
               onBarClick={handleBarClick}
+              onMentorOpenPeriodClick={() => setIsMentorOpenModalOpen(true)}
               targetScrollDate={targetScrollDate}
             />
           </div>
@@ -170,6 +181,16 @@ const SchedulePage = () => {
           missionTh={feedbackModal.missionTh}
         />
       )}
+
+      <MentorOpenScheduleModal
+        isOpen={isMentorOpenModalOpen}
+        onClose={() => setIsMentorOpenModalOpen(false)}
+        initialSlots={mentorOpenSlots}
+        onSave={(slots) => {
+          // TODO: API 연동 시 이 지점에서 서버 저장으로 교체
+          setMentorOpenSlots(slots);
+        }}
+      />
     </div>
   );
 };

@@ -49,6 +49,7 @@ interface WeeklyCalendarProps {
   bars: PeriodBarData[];
   allBars: PeriodBarData[];
   onBarClick: (challengeId: number, missionId: number) => void;
+  onMentorOpenPeriodClick?: () => void;
   targetScrollDate?: Date | null;
 }
 
@@ -57,6 +58,7 @@ const WeeklyCalendar = ({
   bars,
   allBars,
   onBarClick,
+  onMentorOpenPeriodClick,
   targetScrollDate,
 }: WeeklyCalendarProps) => {
   // 상단 period bar(서면 + 라이브 기간) vs 하단 시간 블록(라이브 개별 세션) 분리
@@ -221,7 +223,14 @@ const WeeklyCalendar = ({
                       <LiveFeedbackPeriodBar bar={bar} />
                     ) : (bar.barType === 'live-feedback-mentor-open' ||
                         bar.barType === 'live-feedback-mentee-open') ? (
-                      <LiveFeedbackOpenBar bar={bar} />
+                      <LiveFeedbackOpenBar
+                        bar={bar}
+                        onMentorOpenClick={
+                          bar.barType === 'live-feedback-mentor-open'
+                            ? onMentorOpenPeriodClick
+                            : undefined
+                        }
+                      />
                     ) : colSpan <= 1 ? (
                       <CompactFeedbackCard bar={bar} onBarClick={onBarClick} />
                     ) : (
