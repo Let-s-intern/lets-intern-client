@@ -19,7 +19,9 @@ import {
 import { useLiveFeedbackData } from './hooks/useLiveFeedbackData';
 import { useScheduleData } from './hooks/useScheduleData';
 import { useWeeklySummary } from './hooks/useWeeklySummary';
+import LiveFeedbackReservationModal from './modal/LiveFeedbackReservationModal';
 import MentorOpenScheduleModal from './modal/MentorOpenScheduleModal';
+import type { PeriodBarData } from './types';
 
 const SchedulePage = () => {
   const {
@@ -96,6 +98,8 @@ const SchedulePage = () => {
   const [mentorOpenSlots, setMentorOpenSlots] = useState<MentorOpenSlot[]>(
     MENTOR_OPEN_SCHEDULE_MOCK,
   );
+  const [selectedLiveFeedbackBar, setSelectedLiveFeedbackBar] =
+    useState<PeriodBarData | null>(null);
 
   const handleBarClick = (challengeId: number, missionId: number) => {
     const bar = allBarsUnfiltered.find(
@@ -141,6 +145,9 @@ const SchedulePage = () => {
               allBars={allBarsWithLive}
               onBarClick={handleBarClick}
               onMentorOpenPeriodClick={() => setIsMentorOpenModalOpen(true)}
+              onLiveFeedbackTimeBlockClick={(bar) =>
+                setSelectedLiveFeedbackBar(bar)
+              }
               targetScrollDate={targetScrollDate}
             />
           </div>
@@ -188,6 +195,13 @@ const SchedulePage = () => {
           // TODO: API 연동 시 이 지점에서 서버 저장으로 교체
           setMentorOpenSlots(slots);
         }}
+      />
+      <LiveFeedbackReservationModal
+        isOpen={!!selectedLiveFeedbackBar}
+        onClose={() => setSelectedLiveFeedbackBar(null)}
+        bar={selectedLiveFeedbackBar}
+        liveFeedbackBars={filteredLiveBars}
+        onSelectBar={setSelectedLiveFeedbackBar}
       />
     </div>
   );

@@ -1,18 +1,11 @@
 'use client';
 
-import type { PeriodBarData } from '../../types';
 import { getColor } from '../../constants/colors';
+import type { PeriodBarData } from '../../types';
 
-/** "09:00" → "오전 9시", "09:30" → "9시 30분". 시작 시각에만 오전/오후 표기. */
+/** "09:00" → "09:00", "18:30" → "18:30" */
 function formatTimeRange(start: string, end: string): string {
-  const [sh, sm] = start.split(':').map(Number);
-  const [eh, em] = end.split(':').map(Number);
-  const period = sh < 12 ? '오전' : '오후';
-  const startHour = sh === 0 ? 12 : sh > 12 ? sh - 12 : sh;
-  const endHour = eh === 0 ? 12 : eh > 12 ? eh - 12 : eh;
-  const startMin = sm !== 0 ? ` ${sm}분` : '';
-  const endMin = em !== 0 ? ` ${em}분` : '';
-  return `${period} ${startHour}시${startMin} ~ ${endHour}시${endMin}`;
+  return `${start} ~ ${end}`;
 }
 
 /**
@@ -84,7 +77,9 @@ export const LiveFeedbackTimeBlock = ({ bar }: { bar: PeriodBarData }) => {
         <span className="shrink-0 text-xxsmall12 font-bold leading-none text-red-500">
           LIVE
         </span>
-        <span className={`min-w-0 flex-1 truncate text-xxsmall12 font-medium leading-none ${isCompleted ? 'text-neutral-40' : 'text-neutral-10'}`}>
+        <span
+          className={`min-w-0 flex-1 truncate text-xxsmall12 font-medium leading-none ${isCompleted ? 'text-neutral-40' : 'text-neutral-10'}`}
+        >
           {lf.menteeName}님
         </span>
         {isCompleted && (

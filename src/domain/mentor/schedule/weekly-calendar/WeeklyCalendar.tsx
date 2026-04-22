@@ -21,14 +21,16 @@ import TodayButton from './ui/TodayButton';
 
 // ─── 시간 그리드 상수 ────────────────────────────────────────────────────────
 const TIME_LABEL_W = 48; // 시간 레이블 열 너비 (px)
-const HOUR_H = 160; // 한 시간당 높이 (px)
+const SLOT_MINUTES = 30;
+const SLOT_H = 80; // 30분당 높이 (px)
 
 /** liveBars에서 표시할 시간 범위를 동적으로 계산한다. */
 function calcTimeRange(liveBars: PeriodBarData[]): {
-  tStart: number;
-  tEnd: number;
+  startMinutes: number;
+  endMinutes: number;
 } {
-  if (liveBars.length === 0) return { tStart: 8, tEnd: 18 };
+  if (liveBars.length === 0)
+    return { startMinutes: 8 * 60, endMinutes: 18 * 60 };
 
   let minMin = Infinity;
   let maxMin = -Infinity;
@@ -41,15 +43,17 @@ function calcTimeRange(liveBars: PeriodBarData[]): {
     if (e > maxMin) maxMin = e;
   }
   return {
-    tStart: Math.floor(minMin / 60),
-    tEnd: Math.ceil(maxMin / 60),
+    startMinutes: Math.floor(minMin / SLOT_MINUTES) * SLOT_MINUTES,
+    endMinutes: Math.ceil(maxMin / SLOT_MINUTES) * SLOT_MINUTES,
   };
 }
 
-function hourLabel(h: number): string {
-  if (h < 12) return `오전 ${h}시`;
-  if (h === 12) return '오후 12시';
-  return `오후 ${h - 12}시`;
+function formatTimeLabel(totalMinutes: number): string {
+  const hour = Math.floor(totalMinutes / 60);
+  const minute = totalMinutes % 60;
+  const hourText = String(hour).padStart(2, '0');
+  const minuteText = String(minute).padStart(2, '0');
+  return `${hourText}:${minuteText}`;
 }
 
 // ─── 타입 ────────────────────────────────────────────────────────────────────
@@ -58,6 +62,7 @@ interface WeeklyCalendarProps {
   allBars: PeriodBarData[];
   onBarClick: (challengeId: number, missionId: number) => void;
   onMentorOpenPeriodClick?: () => void;
+  onLiveFeedbackTimeBlockClick?: (bar: PeriodBarData) => void;
   targetScrollDate?: Date | null;
 }
 
@@ -67,6 +72,7 @@ const WeeklyCalendar = ({
   allBars,
   onBarClick,
   onMentorOpenPeriodClick,
+  onLiveFeedbackTimeBlockClick,
   targetScrollDate,
 }: WeeklyCalendarProps) => {
   // 상단 period bar(서면 + 라이브 기간) vs 하단 시간 블록(라이브 개별 세션) 분리
@@ -109,8 +115,11 @@ const WeeklyCalendar = ({
   }, [targetScrollDate, scrollToDate]);
 
   // 라이브 피드백 시간 범위 (liveBars 기준 동적 계산)
-  const { tStart, tEnd } = useMemo(() => calcTimeRange(liveBars), [liveBars]);
-  const nHours = tEnd - tStart;
+  const { startMinutes, endMinutes } = useMemo(
+    () => calcTimeRange(liveBars),
+    [liveBars],
+  );
+  const slotCount = (endMinutes - startMinutes) / SLOT_MINUTES;
 
   // 서면 피드백 바 레이아웃 (grid 열 위치)
   const barLayouts = useMemo(
@@ -262,26 +271,27 @@ const WeeklyCalendar = ({
               {/* 시간 그리드 — tStart~tEnd 범위만 표시 */}
               <div
                 className="flex border-t border-neutral-80"
-                style={{ height: `${nHours * HOUR_H}px` }}
+                style={{ height: `${slotCount * SLOT_H}px` }}
               >
                 {/* 시간 레이블 열 — sticky left */}
                 <div
                   className="sticky left-0 z-10 shrink-0 border-r border-neutral-80 bg-white"
                   style={{ width: TIME_LABEL_W }}
                 >
-                  {Array.from({ length: nHours }, (_, i) => tStart + i).map(
-                    (h) => (
-                      <div
-                        key={h}
-                        className="flex items-start justify-center pt-2"
-                        style={{ height: HOUR_H }}
-                      >
-                        <span className="text-[10px] leading-none text-neutral-40">
-                          {hourLabel(h)}
-                        </span>
-                      </div>
-                    ),
-                  )}
+                  {Array.from(
+                    { length: slotCount },
+                    (_, i) => startMinutes + i * SLOT_MINUTES,
+                  ).map((minutes) => (
+                    <div
+                      key={minutes}
+                      className="flex items-start justify-center pt-2"
+                      style={{ height: SLOT_H }}
+                    >
+                      <span className="text-[10px] leading-none text-neutral-40">
+                        {formatTimeLabel(minutes)}
+                      </span>
+                    </div>
+                  ))}
                 </div>
 
                 {/* 날짜별 열 */}
@@ -308,11 +318,11 @@ const WeeklyCalendar = ({
                         }`}
                       >
                         {/* 시간 구분선 */}
-                        {Array.from({ length: nHours }, (_, j) => (
+                        {Array.from({ length: slotCount }, (_, j) => (
                           <div
                             key={j}
                             className="border-b border-neutral-95"
-                            style={{ height: HOUR_H }}
+                            style={{ height: SLOT_H }}
                           />
                         ))}
 
@@ -325,18 +335,28 @@ const WeeklyCalendar = ({
                             .liveFeedback!.endTime.split(':')
                             .map(Number);
                           const topPx =
-                            (((sh - tStart) * 60 + sm) / 60) * HOUR_H;
+                            ((sh * 60 + sm - startMinutes) / SLOT_MINUTES) *
+                            SLOT_H;
                           const heightPx =
-                            (((eh - sh) * 60 + (em - sm)) / 60) * HOUR_H;
+                            ((eh * 60 + em - (sh * 60 + sm)) / SLOT_MINUTES) *
+                            SLOT_H;
 
                           return (
-                            <div
+                            <button
                               key={bar.missionId}
-                              className="absolute left-1 right-1 z-10"
+                              type="button"
+                              onClick={() =>
+                                onLiveFeedbackTimeBlockClick?.(bar)
+                              }
+                              className={`absolute left-1 right-1 z-10 text-left ${
+                                onLiveFeedbackTimeBlockClick
+                                  ? 'cursor-pointer'
+                                  : ''
+                              }`}
                               style={{ top: topPx, height: heightPx }}
                             >
                               <LiveFeedbackTimeBlock bar={bar} />
-                            </div>
+                            </button>
                           );
                         })}
                       </div>

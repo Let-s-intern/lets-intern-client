@@ -20,6 +20,8 @@ const LiveFeedbackOpenBar = ({
   const phaseLabel = isMentorPhase ? '멘토 오픈기간' : '멘티 신청기간';
   const phaseDesc = '라이브 피드백 일정 조율 기간';
   const labelColor = isMentorPhase ? 'text-orange-500' : 'text-sky-500';
+  const isMentorOpenCompleted = isMentorPhase && bar.completedCount > 0;
+  const mentorOpenStatusLabel = isMentorOpenCompleted ? '완료' : '미완료';
   const totalApplicantCount =
     bar.submittedCount + bar.notSubmittedCount > 0
       ? bar.submittedCount + bar.notSubmittedCount
@@ -56,6 +58,15 @@ const LiveFeedbackOpenBar = ({
         >
           {phaseLabel}
         </span>
+        {isMentorPhase && (
+          <span
+            className={`shrink-0 whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px] ${
+              isMentorOpenCompleted ? 'text-neutral-10' : 'text-neutral-40'
+            }`}
+          >
+            {mentorOpenStatusLabel}
+          </span>
+        )}
         <div
           className={`flex h-3 min-w-0 flex-1 items-center border-r-2 ${color.border}`}
         >
