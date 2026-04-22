@@ -8,9 +8,12 @@ import FeedbackLayout from '@/domain/mentor/feedback/ui/FeedbackLayout';
 import FeedbackMenteeNavigation from '@/domain/mentor/feedback/ui/FeedbackMenteeNavigation';
 import MenteeList from '@/domain/mentor/feedback/ui/MenteeList';
 
+import { currentNow } from '../constants/mockNow';
 import { getLiveFeedbackReservationMock } from '../challenge-content/liveFeedbackReservationMock';
 import type { PeriodBarData } from '../types';
 import SessionCountdown from './SessionCountdown';
+
+const ONE_HOUR_MS = 60 * 60 * 1000;
 
 interface LiveFeedbackReservationModalProps {
   isOpen: boolean;
@@ -246,20 +249,36 @@ const LiveFeedbackReservationModal = ({
             ))}
           </div>
         }
-        actions={
-          <div className="flex items-center gap-3">
-            <SessionCountdown
-              date={selectedBar.startDate}
-              startTime={selectedBar.liveFeedback?.startTime}
-            />
-            <button
-              type="button"
-              className="rounded-lg bg-neutral-200 px-4 py-2 text-sm font-semibold text-white"
-            >
-              {detail.submitButtonLabel}
-            </button>
-          </div>
-        }
+        actions={(() => {
+          // 세션 시작 1시간 이내면 입장하기 활성화
+          const sessionStart = selectedBar.liveFeedback?.startTime
+            ? new Date(
+                `${selectedBar.startDate}T${selectedBar.liveFeedback.startTime}:00`,
+              ).getTime()
+            : NaN;
+          const diff = sessionStart - currentNow().getTime();
+          const canEnter = diff > 0 && diff <= ONE_HOUR_MS;
+
+          return (
+            <div className="flex items-center gap-3">
+              <SessionCountdown
+                date={selectedBar.startDate}
+                startTime={selectedBar.liveFeedback?.startTime}
+              />
+              <button
+                type="button"
+                disabled={!canEnter}
+                className={
+                  canEnter
+                    ? 'rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-hover'
+                    : 'rounded-lg bg-neutral-200 px-4 py-2 text-sm font-semibold text-white'
+                }
+              >
+                {detail.submitButtonLabel}
+              </button>
+            </div>
+          );
+        })()}
         showExpandToggle={false}
       />
     </BaseModal>

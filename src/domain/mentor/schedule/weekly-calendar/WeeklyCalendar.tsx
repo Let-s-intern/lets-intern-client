@@ -63,6 +63,7 @@ interface WeeklyCalendarProps {
   onBarClick: (challengeId: number, missionId: number) => void;
   onMentorOpenPeriodClick?: () => void;
   onLiveFeedbackTimeBlockClick?: (bar: PeriodBarData) => void;
+  onLiveFeedbackPeriodClick?: (bar: PeriodBarData) => void;
   targetScrollDate?: Date | null;
 }
 
@@ -73,6 +74,7 @@ const WeeklyCalendar = ({
   onBarClick,
   onMentorOpenPeriodClick,
   onLiveFeedbackTimeBlockClick,
+  onLiveFeedbackPeriodClick,
   targetScrollDate,
 }: WeeklyCalendarProps) => {
   // 상단 period bar(서면 + 라이브 기간) vs 하단 시간 블록(라이브 개별 세션) 분리
@@ -176,24 +178,6 @@ const WeeklyCalendar = ({
 
   return (
     <div className="rounded-2xl relative overflow-hidden border border-neutral-80">
-      {/* ── 상단 태그: 일정 타입 범례 ─────────────────────────────────────── */}
-      <div className="flex items-center gap-4 border-b border-neutral-80 bg-white px-4 py-2.5">
-        <div className="flex items-center gap-1.5">
-          <div className="h-2 w-5 rounded-sm bg-primary opacity-40" />
-          <span className="text-xxsmall12 font-medium text-neutral-40">
-            서면 피드백
-          </span>
-        </div>
-        {liveBars.length > 0 && (
-          <div className="flex items-center gap-1.5">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
-            <span className="text-xxsmall12 font-medium text-neutral-40">
-              라이브 피드백
-            </span>
-          </div>
-        )}
-      </div>
-
       {/* ── 수평 스크롤 컨테이너 ───────────────────────────────────────────── */}
       <div ref={containerRef} className="overflow-x-auto">
         <div
@@ -252,7 +236,10 @@ const WeeklyCalendar = ({
                     }}
                   >
                     {bar.barType === 'live-feedback-period' ? (
-                      <LiveFeedbackPeriodBar bar={bar} />
+                      <LiveFeedbackPeriodBar
+                        bar={bar}
+                        onClick={onLiveFeedbackPeriodClick}
+                      />
                     ) : bar.barType === 'live-feedback-mentor-open' ||
                       bar.barType === 'live-feedback-mentee-open' ? (
                       <LiveFeedbackOpenBar

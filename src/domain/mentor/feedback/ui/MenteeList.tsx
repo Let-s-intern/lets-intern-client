@@ -2,6 +2,7 @@
 
 import { twMerge } from '@/lib/twMerge';
 import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
+import { currentNow } from '@/domain/mentor/schedule/constants/mockNow';
 import type { LiveFeedbackInfo } from '@/domain/mentor/schedule/types';
 
 type LiveStatus = NonNullable<LiveFeedbackInfo['status']>;
@@ -114,12 +115,26 @@ function formatDateSeparator(iso: string): string {
 
 function isToday(iso: string): boolean {
   const d = new Date(iso);
-  const now = new Date();
+  const now = currentNow();
   return (
     d.getFullYear() === now.getFullYear() &&
     d.getMonth() === now.getMonth() &&
     d.getDate() === now.getDate()
   );
+}
+
+const ONE_HOUR_MS = 60 * 60 * 1000;
+
+/** 세션 시작이 현재 시각으로부터 1시간 이내(미래)면 true */
+function isSessionImminent(
+  date: string | undefined,
+  startTime: string | undefined,
+): boolean {
+  if (!date || !startTime) return false;
+  const target = new Date(`${date}T${startTime}:00`).getTime();
+  if (Number.isNaN(target)) return false;
+  const diff = target - currentNow().getTime();
+  return diff > 0 && diff <= ONE_HOUR_MS;
 }
 
 const MenteeList = ({
@@ -151,6 +166,10 @@ const MenteeList = ({
                   !!mentee.date &&
                   (!prev?.date || prev.date !== mentee.date);
                 const hasTime = !!(mentee.startTime && mentee.endTime);
+                const imminent = isSessionImminent(
+                  mentee.date,
+                  mentee.startTime,
+                );
 
                 // 라이브 피드백 모드: submissionLabel 또는 liveStatus 제공되면 두 줄 태그
                 const isLiveMode =
@@ -187,11 +206,25 @@ const MenteeList = ({
                       )}
                     >
                       <div className="flex min-w-0 flex-col gap-0.5">
-                        <span className="line-clamp-1 text-sm text-neutral-900">
+                        <span
+                          className={twMerge(
+                            'line-clamp-1 text-sm',
+                            imminent
+                              ? 'font-semibold text-primary'
+                              : 'text-neutral-900',
+                          )}
+                        >
                           {mentee.name}
                         </span>
                         {hasTime && (
-                          <span className="text-[11px] text-neutral-500">
+                          <span
+                            className={twMerge(
+                              'text-[11px]',
+                              imminent
+                                ? 'font-medium text-primary'
+                                : 'text-neutral-500',
+                            )}
+                          >
                             {mentee.startTime} ~ {mentee.endTime}
                           </span>
                         )}

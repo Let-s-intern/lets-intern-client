@@ -3,15 +3,24 @@
 import type { PeriodBarData } from '../../types';
 import { getColor } from '../../constants/colors';
 
+interface LiveFeedbackPeriodBarProps {
+  bar: PeriodBarData;
+  onClick?: (bar: PeriodBarData) => void;
+}
+
 /** 상단 캘린더에 표시되는 라이브 피드백 기간 바 (ChallengePeriodBar와 동일한 라인 구조) */
-const LiveFeedbackPeriodBar = ({ bar }: { bar: PeriodBarData }) => {
+const LiveFeedbackPeriodBar = ({ bar, onClick }: LiveFeedbackPeriodBarProps) => {
   const color = getColor(bar.colorIndex ?? 0);
   const total = bar.submittedCount;
   const completed = bar.completedCount;
   const waiting = bar.waitingCount;
 
-  return (
-    <div className="relative z-10 flex w-full flex-col overflow-hidden text-left">
+  const containerClassName = `relative z-10 flex w-full flex-col overflow-hidden text-left${
+    onClick ? ' cursor-pointer transition-opacity hover:opacity-85' : ''
+  }`;
+
+  const content = (
+    <>
       {/* Row 1: LIVE + 회차 + 카운트 + 우측 라인 */}
       <div className="flex h-6 min-w-0 items-center gap-2 overflow-hidden">
         {/* LIVE 배지 + 회차 */}
@@ -52,8 +61,21 @@ const LiveFeedbackPeriodBar = ({ bar }: { bar: PeriodBarData }) => {
           <span className="text-neutral-10">{total}명</span>
         </div>
       </div>
-    </div>
+    </>
   );
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={() => onClick(bar)}
+        className={containerClassName}
+      >
+        {content}
+      </button>
+    );
+  }
+  return <div className={containerClassName}>{content}</div>;
 };
 
 export default LiveFeedbackPeriodBar;

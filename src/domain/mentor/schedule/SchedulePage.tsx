@@ -155,6 +155,17 @@ const SchedulePage = () => {
               onLiveFeedbackTimeBlockClick={(bar) =>
                 setSelectedLiveFeedbackBar(bar)
               }
+              onLiveFeedbackPeriodClick={(periodBar) => {
+                // 해당 기간의 첫 세션 바를 선택 → 모달이 세션 기반으로 열림
+                const firstSession = allBarsUnfiltered.find(
+                  (b) =>
+                    b.barType === 'live-feedback' &&
+                    b.challengeId === periodBar.challengeId &&
+                    b.startDate >= periodBar.startDate &&
+                    b.startDate <= periodBar.endDate,
+                );
+                if (firstSession) setSelectedLiveFeedbackBar(firstSession);
+              }}
               targetScrollDate={targetScrollDate}
             />
           </div>
