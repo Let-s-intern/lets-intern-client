@@ -77,12 +77,10 @@ export function useTimelineScroll({ allBars }: UseTimelineScrollOptions) {
   useEffect(() => {
     // Use requestAnimationFrame to ensure DOM has rendered the new width
     const raf = requestAnimationFrame(() => {
-      scrollToDate(
-        new Date(),
-        hasScrolledRef.current
-          ? 'smooth'
-          : ('instant' as ScrollBehavior),
-      );
+      const behavior: ScrollBehavior = hasScrolledRef.current
+        ? 'smooth'
+        : 'instant';
+      scrollToDate(new Date(), behavior);
       hasScrolledRef.current = true;
     });
     return () => cancelAnimationFrame(raf);
