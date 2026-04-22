@@ -6,8 +6,15 @@ export interface LiveFeedbackInfo {
   startTime: string;
   /** "HH:mm" 24시간 형식 */
   endTime: string;
-  /** undefined = 대기 중 */
-  status?: 'waiting' | 'completed';
+  /** undefined = 대기 중 (기본) */
+  status?:
+    | 'waiting'
+    | 'in-progress'
+    | 'completed'
+    | 'mentor-absent'
+    | 'mentee-absent'
+    | 'mentor-late'
+    | 'mentee-late';
 }
 
 /** 캘린더 바 데이터 */

@@ -1,7 +1,7 @@
 'use client';
 
 import { getColor } from '../../constants/colors';
-import type { PeriodBarData } from '../../types';
+import type { LiveFeedbackInfo, PeriodBarData } from '../../types';
 
 /** "09:00" → "09:00", "18:30" → "18:30" */
 function formatTimeRange(start: string, end: string): string {
@@ -62,29 +62,70 @@ const LiveFeedbackCard = ({ bar }: { bar: PeriodBarData }) => {
  * 시간별 일정(하단 time grid) 안에 절대 위치로 배치되는 라이브 피드백 블록.
  * 부모의 top/height(세션 시간 길이)에 맞춰 h-full/w-full로 채워진다.
  */
+type BadgeStatus = NonNullable<LiveFeedbackInfo['status']>;
+
+/**
+ * 상태별 태그 스타일 — 종료 상태(완료/미참여)는 dim 처리, 진행 상태(진행중/지각)는 강조.
+ */
+const STATUS_BADGE: Record<
+  Exclude<BadgeStatus, 'waiting'>,
+  { label: string; badge: string; dim: boolean }
+> = {
+  'in-progress': {
+    label: '진행중',
+    badge: 'bg-red-500 text-white',
+    dim: false,
+  },
+  completed: { label: '완료', badge: 'bg-green-500 text-white', dim: true },
+  'mentor-absent': {
+    label: '멘토 미참여',
+    badge: 'bg-neutral-60 text-white',
+    dim: true,
+  },
+  'mentee-absent': {
+    label: '멘티 미참여',
+    badge: 'bg-neutral-60 text-white',
+    dim: true,
+  },
+  'mentor-late': {
+    label: '멘토 지각',
+    badge: 'bg-amber-500 text-white',
+    dim: false,
+  },
+  'mentee-late': {
+    label: '멘티 지각',
+    badge: 'bg-amber-500 text-white',
+    dim: false,
+  },
+};
+
 export const LiveFeedbackTimeBlock = ({ bar }: { bar: PeriodBarData }) => {
   const lf = bar.liveFeedback!;
   const color = getColor(bar.colorIndex ?? 0);
-  const isCompleted = lf.status === 'completed';
+  const badge =
+    lf.status && lf.status !== 'waiting' ? STATUS_BADGE[lf.status] : null;
+  const isDim = badge?.dim ?? false;
 
   return (
     <div
-      className={`flex h-full w-full flex-col justify-between overflow-hidden border-l-[3px] px-2 py-1 ${color.border} ${isCompleted ? 'bg-neutral-95' : color.body}`}
+      className={`flex h-full w-full flex-col justify-between overflow-hidden border-t-[3px] px-2 py-1 ${color.border} ${isDim ? 'bg-neutral-95' : color.body}`}
     >
-      {/* 상단: LIVE + 멘티명 + [완료 배지 오른쪽] */}
+      {/* 상단: LIVE + 멘티명 + [상태 배지 오른쪽] */}
       <div className="flex min-w-0 items-center gap-1">
         <span className="h-1.5 w-1.5 shrink-0 animate-pulse rounded-full bg-red-500" />
         <span className="shrink-0 text-xxsmall12 font-bold leading-none text-red-500">
           LIVE
         </span>
         <span
-          className={`min-w-0 flex-1 truncate text-xxsmall12 font-medium leading-none ${isCompleted ? 'text-neutral-40' : 'text-neutral-10'}`}
+          className={`min-w-0 flex-1 truncate text-xxsmall12 font-medium leading-none ${isDim ? 'text-neutral-40' : 'text-neutral-10'}`}
         >
           {lf.menteeName}님
         </span>
-        {isCompleted && (
-          <span className="shrink-0 rounded-[3px] bg-green-500 px-1 py-0.5 text-[10px] font-bold leading-none text-white">
-            완료
+        {badge && (
+          <span
+            className={`shrink-0 whitespace-nowrap rounded-[3px] px-1 py-0.5 text-[10px] font-bold leading-none ${badge.badge}`}
+          >
+            {badge.label}
           </span>
         )}
       </div>

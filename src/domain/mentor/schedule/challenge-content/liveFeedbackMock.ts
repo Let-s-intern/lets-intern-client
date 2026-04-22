@@ -4,15 +4,20 @@ import type { PeriodBarData } from '../types';
  * 라이브 피드백 목데이터 (1:1 세션).
  * API 연동 시 useLiveFeedbackData 훅의 반환값만 교체하면 됩니다.
  *
- * - barType: 'live-feedback-period' — 상단 3일 기간 바
+ * - barType: 'live-feedback-period' — 상단 기간 바
  * - barType: 'live-feedback'        — 하단 시간 그리드 개별 세션
  * - missionId 음수: 서면 피드백 ID와 충돌 방지
  * - challengeId: API 연동 시 실제 챌린지 ID로 교체 필요
  *
- * 일정 구성
- *   4/28(1일차): 오전 3명 (08:00~11:30)
- *   4/29(2일차): 오후 4명 (16:00~17:00)
- *   4/30(3일차): 오전 3명 + 오후 5명
+ * 일정 구성 — 다양한 스케줄 패턴(느슨/빡빡/핸드오프) 예시 포함
+ *   [챌린지1] 기필코 경험정리 챌린지 21기 (colorIndex 0, 주황)
+ *     4/28: 오전 3명 (1시간 간격, 느슨)
+ *     4/29: 오후 4명 (16:00~17:30 3연속 back-to-back + 18:00 gap)
+ *     4/30: 오전 3명 + 오후 5명 (1시간 간격)
+ *   [챌린지2] 커리어 설계 챌린지 5기 (colorIndex 1, 하늘)
+ *     4/27: 오후 2명 (14:00, 15:00)
+ *     4/28: 11:30 서지안(챌린지1 11:00~11:30 직후 즉시 이어서) + 15:00 조예린
+ *     4/29: 오전 2명 (10:00/10:30 back-to-back, 챌린지1 오후와 분리)
  */
 export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
   // ── 멘토 일정 오픈 (4/24, 1일) ──────────────────────────────────────────
@@ -118,7 +123,7 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
       menteeName: '김민준',
       startTime: '10:00',
       endTime: '10:30',
-      status: 'completed',
+      status: 'mentee-late',
     },
   },
   {
@@ -142,10 +147,11 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
       menteeName: '박서연',
       startTime: '11:00',
       endTime: '11:30',
+      status: 'in-progress',
     },
   },
 
-  // ── 4/29 (2일차): 오후 4명 — 16:00 / 17:00 / 18:00 / 19:00 ──────────
+  // ── 4/29 (2일차): 오후 4명 — 16~17:30 3연속 back-to-back + 18:00 gap ──
   {
     barType: 'live-feedback',
     challengeId: 1,
@@ -189,8 +195,9 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     liveFeedback: {
       id: 202,
       menteeName: '최지훈',
-      startTime: '17:00',
-      endTime: '17:30',
+      startTime: '16:30',
+      endTime: '17:00',
+      status: 'mentor-late',
     },
   },
   {
@@ -212,8 +219,9 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     liveFeedback: {
       id: 203,
       menteeName: '강민서',
-      startTime: '18:00',
-      endTime: '18:30',
+      startTime: '17:00',
+      endTime: '17:30',
+      status: 'mentor-absent',
     },
   },
   {
@@ -235,8 +243,9 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
     liveFeedback: {
       id: 204,
       menteeName: '윤서준',
-      startTime: '19:00',
-      endTime: '19:30',
+      startTime: '18:00',
+      endTime: '18:30',
+      status: 'mentee-absent',
     },
   },
 
@@ -425,6 +434,211 @@ export const LIVE_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
       menteeName: '권태양',
       startTime: '18:00',
       endTime: '18:30',
+    },
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // [챌린지2] 커리어 설계 챌린지 5기 — 오버랩 예시용 (colorIndex: 1, 하늘색)
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // ── 멘토 일정 오픈 (4/22, 1일) ──────────────────────────────────────────
+  {
+    barType: 'live-feedback-mentor-open',
+    challengeId: 2,
+    missionId: -20,
+    challengeTitle: '커리어 설계 챌린지 5기',
+    th: 1,
+    startDate: '2026-04-22',
+    endDate: '2026-04-22',
+    feedbackStartDate: '2026-04-22',
+    feedbackDeadline: '2026-04-22',
+    submittedCount: 0,
+    notSubmittedCount: 0,
+    waitingCount: 0,
+    inProgressCount: 0,
+    completedCount: 1, // 멘토 오픈 완료
+    colorIndex: 1,
+  },
+
+  // ── 멘티 신청 기간 (4/23~4/24, 2일) ──────────────────────────────────────
+  {
+    barType: 'live-feedback-mentee-open',
+    challengeId: 2,
+    missionId: -21,
+    challengeTitle: '커리어 설계 챌린지 5기',
+    th: 1,
+    startDate: '2026-04-23',
+    endDate: '2026-04-24',
+    feedbackStartDate: '2026-04-23',
+    feedbackDeadline: '2026-04-24',
+    submittedCount: 6,
+    notSubmittedCount: 2,
+    waitingCount: 0,
+    inProgressCount: 0,
+    completedCount: 6,
+    colorIndex: 1,
+  },
+
+  // ── 상단 기간 바 (4/27~4/29, 3일) — 챌린지1 기간(4/28~4/30)과 4/28·4/29 겹침 ──
+  {
+    barType: 'live-feedback-period',
+    challengeId: 2,
+    missionId: -2,
+    challengeTitle: '커리어 설계 챌린지 5기',
+    th: 1,
+    startDate: '2026-04-27',
+    endDate: '2026-04-29',
+    feedbackStartDate: '2026-04-27',
+    feedbackDeadline: '2026-04-29',
+    submittedCount: 6,
+    notSubmittedCount: 2,
+    waitingCount: 6,
+    inProgressCount: 0,
+    completedCount: 0,
+    colorIndex: 1,
+  },
+
+  // ── 4/27: 오후 2명 — 14:00 / 15:00 ─────────────────────────────────────
+  {
+    barType: 'live-feedback',
+    challengeId: 2,
+    missionId: -501,
+    challengeTitle: '커리어 설계 챌린지 5기',
+    th: 1,
+    startDate: '2026-04-27',
+    endDate: '2026-04-27',
+    feedbackStartDate: '2026-04-27',
+    feedbackDeadline: '2026-04-27',
+    submittedCount: 0,
+    notSubmittedCount: 0,
+    waitingCount: 0,
+    inProgressCount: 0,
+    completedCount: 0,
+    colorIndex: 1,
+    liveFeedback: {
+      id: 501,
+      menteeName: '문수아',
+      startTime: '14:00',
+      endTime: '14:30',
+    },
+  },
+  {
+    barType: 'live-feedback',
+    challengeId: 2,
+    missionId: -502,
+    challengeTitle: '커리어 설계 챌린지 5기',
+    th: 2,
+    startDate: '2026-04-27',
+    endDate: '2026-04-27',
+    feedbackStartDate: '2026-04-27',
+    feedbackDeadline: '2026-04-27',
+    submittedCount: 0,
+    notSubmittedCount: 0,
+    waitingCount: 0,
+    inProgressCount: 0,
+    completedCount: 0,
+    colorIndex: 1,
+    liveFeedback: {
+      id: 502,
+      menteeName: '장우현',
+      startTime: '15:00',
+      endTime: '15:30',
+    },
+  },
+
+  // ── 4/28: 2명 — 11:30(챌린지1 박서연 11:00~11:30 끝나고 즉시 이어서) / 15:00 ──
+  {
+    barType: 'live-feedback',
+    challengeId: 2,
+    missionId: -601,
+    challengeTitle: '커리어 설계 챌린지 5기',
+    th: 3,
+    startDate: '2026-04-28',
+    endDate: '2026-04-28',
+    feedbackStartDate: '2026-04-28',
+    feedbackDeadline: '2026-04-28',
+    submittedCount: 0,
+    notSubmittedCount: 0,
+    waitingCount: 0,
+    inProgressCount: 0,
+    completedCount: 0,
+    colorIndex: 1,
+    liveFeedback: {
+      id: 601,
+      menteeName: '서지안',
+      startTime: '11:30',
+      endTime: '12:00',
+    },
+  },
+  {
+    barType: 'live-feedback',
+    challengeId: 2,
+    missionId: -602,
+    challengeTitle: '커리어 설계 챌린지 5기',
+    th: 4,
+    startDate: '2026-04-28',
+    endDate: '2026-04-28',
+    feedbackStartDate: '2026-04-28',
+    feedbackDeadline: '2026-04-28',
+    submittedCount: 0,
+    notSubmittedCount: 0,
+    waitingCount: 0,
+    inProgressCount: 0,
+    completedCount: 0,
+    colorIndex: 1,
+    liveFeedback: {
+      id: 602,
+      menteeName: '조예린',
+      startTime: '15:00',
+      endTime: '15:30',
+    },
+  },
+
+  // ── 4/29: 오전 2명 — 10:00/10:30 back-to-back (챌린지1 오후 16~18시와 분리) ──
+  {
+    barType: 'live-feedback',
+    challengeId: 2,
+    missionId: -701,
+    challengeTitle: '커리어 설계 챌린지 5기',
+    th: 5,
+    startDate: '2026-04-29',
+    endDate: '2026-04-29',
+    feedbackStartDate: '2026-04-29',
+    feedbackDeadline: '2026-04-29',
+    submittedCount: 0,
+    notSubmittedCount: 0,
+    waitingCount: 0,
+    inProgressCount: 0,
+    completedCount: 0,
+    colorIndex: 1,
+    liveFeedback: {
+      id: 701,
+      menteeName: '유채린',
+      startTime: '10:00',
+      endTime: '10:30',
+    },
+  },
+  {
+    barType: 'live-feedback',
+    challengeId: 2,
+    missionId: -702,
+    challengeTitle: '커리어 설계 챌린지 5기',
+    th: 6,
+    startDate: '2026-04-29',
+    endDate: '2026-04-29',
+    feedbackStartDate: '2026-04-29',
+    feedbackDeadline: '2026-04-29',
+    submittedCount: 0,
+    notSubmittedCount: 0,
+    waitingCount: 0,
+    inProgressCount: 0,
+    completedCount: 0,
+    colorIndex: 1,
+    liveFeedback: {
+      id: 702,
+      menteeName: '황도경',
+      startTime: '10:30',
+      endTime: '11:00',
     },
   },
 ];
