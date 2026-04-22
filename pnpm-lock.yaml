@@ -50,6 +50,9 @@ importers:
       '@letscareer/types':
         specifier: workspace:*
         version: link:../../packages/types
+      '@letscareer/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@letscareer/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -77,6 +80,9 @@ importers:
       '@lexical/mark':
         specifier: ^0.16.1
         version: 0.16.1
+      '@lexical/markdown':
+        specifier: ^0.16.1
+        version: 0.16.1
       '@lexical/overflow':
         specifier: ^0.16.1
         version: 0.16.1
@@ -95,9 +101,15 @@ importers:
       '@lexical/table':
         specifier: ^0.16.1
         version: 0.16.1
+      '@lexical/text':
+        specifier: ^0.16.1
+        version: 0.16.1
       '@lexical/utils':
         specifier: ^0.16.1
         version: 0.16.1
+      '@lexical/yjs':
+        specifier: ^0.16.1
+        version: 0.16.1(yjs@13.6.27)
       '@mui/material':
         specifier: ^6.4.0
         version: 6.5.0(@emotion/react@11.14.0(@types/react@18.3.27)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.27)(react@18.3.1))(@types/react@18.3.27)(react@18.3.1))(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -380,6 +392,21 @@ importers:
       '@letscareer/tsconfig':
         specifier: workspace:*
         version: link:../config/typescript
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
+  packages/ui:
+    devDependencies:
+      '@letscareer/tsconfig':
+        specifier: workspace:*
+        version: link:../config/typescript
+      '@types/react':
+        specifier: ^18.3.3
+        version: 18.3.27
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
