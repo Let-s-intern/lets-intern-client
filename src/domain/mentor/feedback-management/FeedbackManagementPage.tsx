@@ -225,6 +225,7 @@ const FeedbackManagementPage = () => {
         bar={modalBar}
         liveFeedbackBars={selectedRound?.sessionBars ?? allSessionBars}
         onSelectBar={setModalBar}
+        roundTh={selectedRound?.th}
       />
     </div>
   );

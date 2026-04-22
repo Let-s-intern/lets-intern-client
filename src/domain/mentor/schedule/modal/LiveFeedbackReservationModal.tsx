@@ -17,6 +17,8 @@ interface LiveFeedbackReservationModalProps {
   bar: PeriodBarData | null;
   liveFeedbackBars: PeriodBarData[];
   onSelectBar: (bar: PeriodBarData) => void;
+  /** 라이브 피드백 회차(라운드) — 헤더 "N차 피드백" 표시용. 세션마다 변하지 않음 */
+  roundTh?: number;
 }
 
 const LiveFeedbackReservationModal = ({
@@ -25,6 +27,7 @@ const LiveFeedbackReservationModal = ({
   bar,
   liveFeedbackBars,
   onSelectBar,
+  roundTh,
 }: LiveFeedbackReservationModalProps) => {
   if (!bar) return null;
 
@@ -95,7 +98,7 @@ const LiveFeedbackReservationModal = ({
     >
       <FeedbackHeader
         challengeTitle={detail.challengeTitle}
-        missionTh={selectedBar.th}
+        missionTh={roundTh ?? selectedBar.th}
         totalCount={reservationBars.length}
         waitingCount={waitingCount}
         inProgressCount={inProgressCount}

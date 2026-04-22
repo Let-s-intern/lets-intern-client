@@ -95,6 +95,17 @@ const SchedulePage = () => {
   const [selectedLiveFeedbackBar, setSelectedLiveFeedbackBar] =
     useState<PeriodBarData | null>(null);
 
+  // 선택된 라이브 세션의 라운드 회차(period 바의 th) — 모달 헤더 표시용
+  const selectedRoundTh = useMemo(() => {
+    if (!selectedLiveFeedbackBar) return undefined;
+    const period = allBarsUnfiltered.find(
+      (b) =>
+        b.barType === 'live-feedback-period' &&
+        b.challengeId === selectedLiveFeedbackBar.challengeId,
+    );
+    return period?.th;
+  }, [selectedLiveFeedbackBar, allBarsUnfiltered]);
+
   const handleBarClick = (challengeId: number, missionId: number) => {
     const bar = allBarsUnfiltered.find(
       (b) => b.challengeId === challengeId && b.missionId === missionId,
@@ -196,6 +207,7 @@ const SchedulePage = () => {
         bar={selectedLiveFeedbackBar}
         liveFeedbackBars={filteredLiveSessionBars}
         onSelectBar={setSelectedLiveFeedbackBar}
+        roundTh={selectedRoundTh}
       />
     </div>
   );
