@@ -112,6 +112,16 @@ function formatDateSeparator(iso: string): string {
   return `${d.getMonth() + 1}월 ${d.getDate()}일 (${weekday})`;
 }
 
+function isToday(iso: string): boolean {
+  const d = new Date(iso);
+  const now = new Date();
+  return (
+    d.getFullYear() === now.getFullYear() &&
+    d.getMonth() === now.getMonth() &&
+    d.getDate() === now.getDate()
+  );
+}
+
 const MenteeList = ({
   attendanceList,
   selectedIndex,
@@ -150,8 +160,20 @@ const MenteeList = ({
                 return (
                   <div key={mentee.id ?? `no-attendance-${idx}`}>
                     {showDateHeader && (
-                      <div className="bg-neutral-100 px-4 py-1 text-[11px] font-semibold text-neutral-600">
+                      <div
+                        className={twMerge(
+                          'px-4 py-1 text-[11px] font-semibold',
+                          isToday(mentee.date!)
+                            ? 'border-l-2 border-primary bg-primary-5 text-primary'
+                            : 'bg-neutral-100 text-neutral-600',
+                        )}
+                      >
                         {formatDateSeparator(mentee.date!)}
+                        {isToday(mentee.date!) && (
+                          <span className="ml-1.5 text-[10px] font-bold">
+                            · 오늘
+                          </span>
+                        )}
                       </div>
                     )}
                     <button

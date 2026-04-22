@@ -10,6 +10,7 @@ import MenteeList from '@/domain/mentor/feedback/ui/MenteeList';
 
 import { getLiveFeedbackReservationMock } from '../challenge-content/liveFeedbackReservationMock';
 import type { PeriodBarData } from '../types';
+import SessionCountdown from './SessionCountdown';
 
 interface LiveFeedbackReservationModalProps {
   isOpen: boolean;
@@ -206,14 +207,7 @@ const LiveFeedbackReservationModal = ({
         )}
         editor={
           <section className="rounded-xl border border-gray-200 p-4">
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-xs font-medium text-neutral-400">
-                사전 Q&amp;A
-              </p>
-              <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-xs font-medium text-neutral-500">
-                {selectedMentee.countdownLabel}
-              </span>
-            </div>
+            <p className="text-xs font-medium text-neutral-400">사전 Q&amp;A</p>
             <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-neutral-700">
               {selectedMentee.questionAnswer}
             </p>
@@ -244,12 +238,18 @@ const LiveFeedbackReservationModal = ({
           </div>
         }
         actions={
-          <button
-            type="button"
-            className="rounded-lg bg-neutral-200 px-4 py-2 text-sm font-semibold text-white"
-          >
-            {detail.submitButtonLabel}
-          </button>
+          <div className="flex items-center gap-3">
+            <SessionCountdown
+              date={selectedBar.startDate}
+              startTime={selectedBar.liveFeedback?.startTime}
+            />
+            <button
+              type="button"
+              className="rounded-lg bg-neutral-200 px-4 py-2 text-sm font-semibold text-white"
+            >
+              {detail.submitButtonLabel}
+            </button>
+          </div>
         }
         showExpandToggle={false}
       />
