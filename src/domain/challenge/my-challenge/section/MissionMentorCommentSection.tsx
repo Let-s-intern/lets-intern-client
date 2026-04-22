@@ -2,7 +2,7 @@ import {
   useChallengeMissionAttendanceInfoQuery,
   useChallengeMissionFeedbackQuery,
 } from '@/api/challenge/challenge';
-import LexicalContent from '@/domain/blog/ui/LexicalContent';
+import LexicalContent from '@/common/lexical/LexicalContent';
 import { useParams } from 'next/navigation';
 
 interface Props {

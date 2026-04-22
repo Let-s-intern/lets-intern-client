@@ -21,7 +21,7 @@ import { ChallengeContent } from '@/types/interface';
 
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
-import LexicalContent from '../../blog/ui/LexicalContent';
+import LexicalContent from '@/common/lexical/LexicalContent';
 import ProgramDetailBlogReviewSection from '../../program/ProgramDetailBlogReviewSection';
 import ProgramDetailNavigation, {
   CHALLENGE_DIFFERENT_ID,

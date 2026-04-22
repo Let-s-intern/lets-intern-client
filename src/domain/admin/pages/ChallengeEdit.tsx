@@ -14,7 +14,7 @@ import {
   usePatchChallengeMutation,
 } from '@/api/program';
 import ChallengePreviewButton from '@/domain/admin/ChallengePreviewButton';
-import EditorApp from '@/domain/admin/lexical/EditorApp';
+import EditorApp from '@/common/lexical/EditorApp';
 import ChallengeBasic from '@/domain/admin/program/challenge/ChallengeBasic';
 import ChallengeCurriculumEditor from '@/domain/admin/program/challenge/ChallengeCurriculum';
 import ChallengePointEditor from '@/domain/admin/program/challenge/ChallengePoint';

@@ -10,7 +10,7 @@ import BlogTagSection from '@/domain/admin/blog/section/BlogTagSection';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 
-const EditorApp = dynamic(() => import('@/domain/admin/lexical/EditorApp'), {
+const EditorApp = dynamic(() => import('@/common/lexical/EditorApp'), {
   ssr: false,
 });
 

@@ -6,7 +6,7 @@ import {
   useGetLiveQueryKey,
   usePatchLiveMutation,
 } from '@/api/program';
-import EditorApp from '@/domain/admin/lexical/EditorApp';
+import EditorApp from '@/common/lexical/EditorApp';
 import LivePreviewButton from '@/domain/admin/LivePreviewButton';
 import LiveCurriculum from '@/domain/admin/program/live/LiveCurriculum';
 import LiveInformation from '@/domain/admin/program/live/LiveInformation';

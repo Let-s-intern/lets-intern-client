@@ -39,7 +39,7 @@ import ChallengeLecture from '../program/challenge/ChallengeLecture';
 import ChallengeFaqCategory from './program/ChallengeFaqCategory';
 import ChallengeMentorRegistrationSection from './program/ChallengeMentorRegistrationSection';
 import ProgramSchedule from './program/ProgramSchedule';
-const EditorApp = dynamic(() => import('@/domain/admin/lexical/EditorApp'), {
+const EditorApp = dynamic(() => import('@/common/lexical/EditorApp'), {
   ssr: false,
 });
 

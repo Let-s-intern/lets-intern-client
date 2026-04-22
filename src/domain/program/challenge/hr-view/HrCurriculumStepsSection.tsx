@@ -1,4 +1,4 @@
-import LexicalContent from '@/domain/blog/ui/LexicalContent';
+import LexicalContent from '@/common/lexical/LexicalContent';
 import { ChallengeContent } from '@/types/interface';
 import { ReactNode } from 'react';
 import MainTitle from '../ui/MainTitle';

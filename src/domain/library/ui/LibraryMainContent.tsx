@@ -5,7 +5,7 @@ import {
   useGetUserMagnetListQuery,
   usePatchMagnetViewDateMutation,
 } from '@/api/magnet/magnet';
-import LexicalContent from '@/domain/blog/ui/LexicalContent';
+import LexicalContent from '@/common/lexical/LexicalContent';
 import useAuthStore from '@/store/useAuthStore';
 import { SerializedLexicalNode } from 'lexical';
 import { useRouter } from 'next/navigation';

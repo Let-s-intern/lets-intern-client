@@ -32,7 +32,7 @@ const LiveInformation = dynamic(
   { ssr: false },
 );
 
-const EditorApp = dynamic(() => import('@/domain/admin/lexical/EditorApp'), {
+const EditorApp = dynamic(() => import('@/common/lexical/EditorApp'), {
   ssr: false,
 });
 

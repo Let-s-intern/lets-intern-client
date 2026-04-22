@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import LexicalContent from '@/domain/blog/ui/LexicalContent';
+import LexicalContent from '@/common/lexical/LexicalContent';
 import { useMentorGuideListQuery } from '@/api/challenge-mentor-guide/challengeMentorGuide';
 
 export default function NoticeDetailPage({ noticeId }: { noticeId: string }) {

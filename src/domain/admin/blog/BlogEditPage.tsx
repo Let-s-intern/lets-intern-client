@@ -8,7 +8,7 @@ import BlogProgramRecommendSection from '@/domain/admin/blog/section/BlogProgram
 import BlogPublishDateSection from '@/domain/admin/blog/section/BlogPublishDateSection';
 import BlogRecommendSection from '@/domain/admin/blog/section/BlogRecommendSection';
 import BlogTagSection from '@/domain/admin/blog/section/BlogTagSection';
-import EditorApp from '@/domain/admin/lexical/EditorApp';
+import EditorApp from '@/common/lexical/EditorApp';
 import { useRouter } from 'next/navigation';
 
 interface BlogEditPageProps {

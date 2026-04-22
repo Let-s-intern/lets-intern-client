@@ -9,7 +9,7 @@ import {
   useMentorAttendanceQuery,
   getMentorAttendanceQueryKey,
 } from './useMentorAttendanceQuery';
-import { emptyEditorState } from '@/domain/admin/lexical/EditorApp';
+import { emptyEditorState } from '@/common/lexical/EditorApp';
 import mentorConfig from '@/domain/mentor/constants/config';
 
 interface UseFeedbackModalParams {

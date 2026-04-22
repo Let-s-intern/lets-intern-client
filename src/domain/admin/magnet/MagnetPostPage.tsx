@@ -23,7 +23,7 @@ import {
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import dynamic from 'next/dynamic';
 
-const EditorApp = dynamic(() => import('@/domain/admin/lexical/EditorApp'), {
+const EditorApp = dynamic(() => import('@/common/lexical/EditorApp'), {
   ssr: false,
 });
 

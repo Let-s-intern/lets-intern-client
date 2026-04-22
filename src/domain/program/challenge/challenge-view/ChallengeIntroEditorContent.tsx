@@ -1,4 +1,4 @@
-import LexicalContent from '@/domain/blog/ui/LexicalContent';
+import LexicalContent from '@/common/lexical/LexicalContent';
 import { ChallengeIdPrimitive } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import { useMemo } from 'react';

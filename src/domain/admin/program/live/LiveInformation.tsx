@@ -1,5 +1,5 @@
 import Input from '@/common/input/v1/Input';
-import EditorApp from '@/domain/admin/lexical/EditorApp';
+import EditorApp from '@/common/lexical/EditorApp';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
 import Heading3 from '@/domain/admin/ui/heading/Heading3';
 import { LiveContent } from '@/types/interface';

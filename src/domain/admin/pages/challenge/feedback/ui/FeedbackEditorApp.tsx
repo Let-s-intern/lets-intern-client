@@ -1,7 +1,7 @@
 'use client';
 
-import EditorApp from '@/domain/admin/lexical/EditorApp';
-import LexicalContent from '@/domain/blog/ui/LexicalContent';
+import EditorApp from '@/common/lexical/EditorApp';
+import LexicalContent from '@/common/lexical/LexicalContent';
 import useIsCompleted from '../hooks/useIsCompleted';
 
 interface FeedbackEditorAppProps {

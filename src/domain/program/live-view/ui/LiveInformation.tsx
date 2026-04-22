@@ -2,7 +2,7 @@ import { SerializedEditorState } from 'lexical';
 
 import BubbleTail from '@/assets/bubble_tail.svg?react';
 import ChevronDownIcon from '@/assets/icons/chevron-down.svg?react';
-import LexicalContent from '@/domain/blog/ui/LexicalContent';
+import LexicalContent from '@/common/lexical/LexicalContent';
 import { twMerge } from '@/lib/twMerge';
 
 const title1 = '이번 Live 클래스,\n이런 사람들에게 추천해요!';

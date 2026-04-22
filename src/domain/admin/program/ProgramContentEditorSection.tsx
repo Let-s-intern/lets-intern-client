@@ -1,6 +1,6 @@
 'use client';
 
-import EditorApp, { emptyEditorState } from '@/domain/admin/lexical/EditorApp';
+import EditorApp, { emptyEditorState } from '@/common/lexical/EditorApp';
 import type React from 'react';
 
 import type { ContentProgramFormInput } from './programContentTypes';

@@ -8,7 +8,7 @@ import { LiveContent } from '@/types/interface';
 import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
 import BackHeader from '../../../common/header/BackHeader';
-import LexicalContent from '../../blog/ui/LexicalContent';
+import LexicalContent from '@/common/lexical/LexicalContent';
 import ProgramDetailBlogReviewSection from '../../program/ProgramDetailBlogReviewSection';
 import ProgramDetailNavigation, {
   LIVE_CURRICULUM_ID,

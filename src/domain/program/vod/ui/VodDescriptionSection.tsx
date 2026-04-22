@@ -1,6 +1,6 @@
 'use client';
 
-import LexicalContent from '@/domain/blog/ui/LexicalContent';
+import LexicalContent from '@/common/lexical/LexicalContent';
 import type { SerializedEditorState } from 'lexical';
 
 interface VodDescriptionSectionProps {

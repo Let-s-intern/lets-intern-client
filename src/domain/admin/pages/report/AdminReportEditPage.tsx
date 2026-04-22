@@ -9,7 +9,7 @@ import {
   useGetReportDetailAdminQuery,
   usePatchReportMutation,
 } from '@/api/report';
-import EditorApp from '@/domain/admin/lexical/EditorApp';
+import EditorApp from '@/common/lexical/EditorApp';
 import AdminReportFeedback from '@/domain/admin/report/AdminReportFeedback';
 import ReportProgramRecommendEditor from '@/domain/admin/report/ReportProgramRecommendEditor';
 import ReportReviewEditor from '@/domain/admin/report/ReportReviewEditor';

@@ -9,7 +9,7 @@ import Image from 'next/image';
 import { useRef } from 'react';
 import BlogLinkShareBtn from '../button/BlogLilnkShareBtn';
 import Heading2 from './BlogHeading2';
-import LexicalContent from './LexicalContent';
+import LexicalContent from '@/common/lexical/LexicalContent';
 
 interface Props {
   blogInfo: BlogDetailInfo;

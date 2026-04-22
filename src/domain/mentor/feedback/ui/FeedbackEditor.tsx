@@ -2,8 +2,8 @@
 
 import EditorApp, {
   emptyEditorState,
-} from '@/domain/admin/lexical/EditorApp';
-import LexicalContent from '@/domain/blog/ui/LexicalContent';
+} from '@/common/lexical/EditorApp';
+import LexicalContent from '@/common/lexical/LexicalContent';
 
 interface FeedbackEditorProps {
   initialEditorStateJsonString?: string;
