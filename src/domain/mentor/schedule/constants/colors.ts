@@ -7,8 +7,6 @@ export const CHALLENGE_COLORS = [
     badge: 'bg-[#fdad00]',
     text: 'text-[#a87100]',
     body: 'bg-[#fff3d9]',
-    bodyMid: 'bg-[#fff6e3]',
-    bodyLight: 'bg-[#fffaef]',
   },
   // 2. Sky
   {
@@ -17,8 +15,6 @@ export const CHALLENGE_COLORS = [
     badge: 'bg-[#14bcff]',
     text: 'text-[#006a94]',
     body: 'bg-[#eefaff]',
-    bodyMid: 'bg-[#f2fcff]',
-    bodyLight: 'bg-[#f4fbff]',
   },
   // 3. Green
   {
@@ -27,8 +23,6 @@ export const CHALLENGE_COLORS = [
     badge: 'bg-green-400',
     text: 'text-green-700',
     body: 'bg-green-50',
-    bodyMid: 'bg-[#edfaed]',
-    bodyLight: 'bg-[#f4fbf4]',
   },
   // 4. Purple
   {
@@ -37,8 +31,6 @@ export const CHALLENGE_COLORS = [
     badge: 'bg-purple-400',
     text: 'text-purple-700',
     body: 'bg-purple-50',
-    bodyMid: 'bg-[#f0edf7]',
-    bodyLight: 'bg-[#f7f4fb]',
   },
   // 5. Pink
   {
@@ -47,8 +39,6 @@ export const CHALLENGE_COLORS = [
     badge: 'bg-pink-400',
     text: 'text-pink-700',
     body: 'bg-pink-50',
-    bodyMid: 'bg-pink-50',
-    bodyLight: 'bg-pink-50',
   },
   // 6. Red
   {
@@ -57,8 +47,6 @@ export const CHALLENGE_COLORS = [
     badge: 'bg-red-400',
     text: 'text-red-700',
     body: 'bg-red-50',
-    bodyMid: 'bg-red-50',
-    bodyLight: 'bg-red-50',
   },
   // 7. Teal
   {
@@ -67,8 +55,6 @@ export const CHALLENGE_COLORS = [
     badge: 'bg-teal-400',
     text: 'text-teal-700',
     body: 'bg-teal-50',
-    bodyMid: 'bg-teal-50',
-    bodyLight: 'bg-teal-50',
   },
   // 8. Indigo
   {
@@ -77,8 +63,6 @@ export const CHALLENGE_COLORS = [
     badge: 'bg-indigo-400',
     text: 'text-indigo-700',
     body: 'bg-indigo-50',
-    bodyMid: 'bg-indigo-50',
-    bodyLight: 'bg-indigo-50',
   },
   // 9. Fuchsia
   {
@@ -87,8 +71,6 @@ export const CHALLENGE_COLORS = [
     badge: 'bg-fuchsia-400',
     text: 'text-fuchsia-700',
     body: 'bg-fuchsia-50',
-    bodyMid: 'bg-fuchsia-50',
-    bodyLight: 'bg-fuchsia-50',
   },
   // 10. Lime
   {
@@ -97,8 +79,6 @@ export const CHALLENGE_COLORS = [
     badge: 'bg-lime-400',
     text: 'text-lime-700',
     body: 'bg-lime-50',
-    bodyMid: 'bg-lime-50',
-    bodyLight: 'bg-lime-50',
   },
 ];
 
