@@ -11,6 +11,9 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@letscareer/api": "workspace:*",
+    "@letscareer/hooks": "workspace:*",
+    "@letscareer/store": "workspace:*",
     "@letscareer/types": "workspace:*",
     "@letscareer/utils": "workspace:*",
     "@emotion/react": "^11.11.4",

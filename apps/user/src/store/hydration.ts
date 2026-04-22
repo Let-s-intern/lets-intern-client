@@ -1,4 +1,1 @@
-export interface HydrationStore {
-  _hasHydrated: boolean;
-  setHasHydrated: (state: boolean) => void;
-}
+export type { HydrationStore } from '@letscareer/store/hydration';

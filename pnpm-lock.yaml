@@ -38,6 +38,15 @@ importers:
       '@hookform/resolvers':
         specifier: ^3.3.4
         version: 3.10.0(react-hook-form@7.68.0(react@18.3.1))
+      '@letscareer/api':
+        specifier: workspace:*
+        version: link:../../packages/api
+      '@letscareer/hooks':
+        specifier: workspace:*
+        version: link:../../packages/hooks
+      '@letscareer/store':
+        specifier: workspace:*
+        version: link:../../packages/store
       '@letscareer/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -307,6 +316,21 @@ importers:
         specifier: ^1.6.1
         version: 1.6.1(@edge-runtime/vm@3.2.0)(@types/node@16.18.11)(sass@1.94.2)(terser@5.44.1)
 
+  packages/api:
+    devDependencies:
+      '@letscareer/tsconfig':
+        specifier: workspace:*
+        version: link:../config/typescript
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.19.25
+      axios:
+        specifier: ^1.15.0
+        version: 1.15.0
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
   packages/config/eslint:
     dependencies:
       eslint:
@@ -322,6 +346,34 @@ importers:
   packages/config/tailwind: {}
 
   packages/config/typescript: {}
+
+  packages/hooks:
+    devDependencies:
+      '@letscareer/tsconfig':
+        specifier: workspace:*
+        version: link:../config/typescript
+      '@types/react':
+        specifier: ^18.3.3
+        version: 18.3.27
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
+  packages/store:
+    dependencies:
+      zustand:
+        specifier: '>=4'
+        version: 4.5.7(@types/react@18.3.27)(react@18.3.1)
+    devDependencies:
+      '@letscareer/tsconfig':
+        specifier: workspace:*
+        version: link:../config/typescript
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
 
   packages/types:
     devDependencies:
