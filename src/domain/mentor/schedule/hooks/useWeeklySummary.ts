@@ -25,11 +25,15 @@ export function useWeeklySummary(bars: PeriodBarData[]): WeeklySummaryCounts {
     let completed = 0;
 
     for (const bar of bars) {
+      // 메인 피드백 바만 집계. 보조 단계 바는 중복 방지 스킵.
       if (
         bar.barType === 'live-feedback' ||
         bar.barType === 'live-feedback-mentor-open' ||
-        bar.barType === 'live-feedback-mentee-open'
-      ) continue;
+        bar.barType === 'live-feedback-mentee-open' ||
+        bar.barType === 'written-mission-submit' ||
+        bar.barType === 'written-review'
+      )
+        continue;
 
       const barTotal = bar.submittedCount + bar.notSubmittedCount;
       total += barTotal;

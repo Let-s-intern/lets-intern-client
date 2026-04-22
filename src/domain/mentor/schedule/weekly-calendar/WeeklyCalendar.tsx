@@ -12,6 +12,7 @@ import ChallengePeriodBar from '../calendar-bar/ui/ChallengePeriodBar';
 import { CompactFeedbackCard } from '../calendar-bar/ui/FeedbackCard';
 import { LiveFeedbackTimeBlock } from '../calendar-bar/ui/LiveFeedbackCard';
 import LiveFeedbackOpenBar from '../calendar-bar/ui/LiveFeedbackOpenBar';
+import WrittenPhaseBar from '../calendar-bar/ui/WrittenPhaseBar';
 import LiveFeedbackPeriodBar from '../calendar-bar/ui/LiveFeedbackPeriodBar';
 import type { PeriodBarData } from '../types';
 import { useTimelineScroll } from './hooks/useInfiniteWeekScroll';
@@ -255,6 +256,9 @@ const WeeklyCalendar = ({
                               : undefined
                         }
                       />
+                    ) : bar.barType === 'written-mission-submit' ||
+                      bar.barType === 'written-review' ? (
+                      <WrittenPhaseBar bar={bar} />
                     ) : colSpan <= 1 ? (
                       <CompactFeedbackCard bar={bar} onBarClick={onBarClick} />
                     ) : (

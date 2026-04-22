@@ -98,16 +98,24 @@ export function useScheduleData({ extraBars = [] }: UseScheduleDataOptions = {})
   }, [allBarsUnfiltered, selectedChallengeId]);
 
   /**
-   * 해당 챌린지의 "일정 단위" 시작일을 feedbackStartDate 순으로 반환.
-   * 개별 라이브 세션(barType === 'live-feedback')은 라이브 기간의 하위 요소이므로 제외.
+   * 필터 태그 클릭 네비게이션 — 멘토가 직접 액션하는 바로만 이동.
+   *  포함: 서면 피드백 제출기간 / 라이브 일정 오픈 / 라이브 피드백 기간
+   *  제외: 유저 제출·검수·멘티 신청 (멘토 대기) / 개별 라이브 세션
    */
+  const MENTOR_ACTION_BAR_TYPES = [
+    'written-feedback',
+    'live-feedback-mentor-open',
+    'live-feedback-period',
+  ] as const;
   const getFeedbackDates = useCallback(
     (challengeId: number): Date[] => {
       return allBarsUnfiltered
         .filter(
           (bar) =>
             bar.challengeId === challengeId &&
-            bar.barType !== 'live-feedback',
+            MENTOR_ACTION_BAR_TYPES.includes(
+              bar.barType as (typeof MENTOR_ACTION_BAR_TYPES)[number],
+            ),
         )
         .map((bar) => new Date(bar.feedbackStartDate))
         .sort((a, b) => a.getTime() - b.getTime());

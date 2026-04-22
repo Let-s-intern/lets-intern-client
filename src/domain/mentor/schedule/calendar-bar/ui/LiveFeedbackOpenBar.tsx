@@ -1,104 +1,74 @@
 'use client';
 
-import { getColor } from '../../constants/colors';
 import type { PeriodBarData } from '../../types';
+import { currentNow } from '../../constants/mockNow';
+import PeriodBarRows, { type ProgressCount } from './PeriodBarRows';
 
 interface LiveFeedbackOpenBarProps {
   bar: PeriodBarData;
   onMentorOpenClick?: () => void;
 }
 
-/** 라이브 피드백 오픈기간 바 — 멘토 일정 오픈 또는 멘티 신청 단계 */
+/**
+ * 라이브 피드백 오픈기간 바 — 멘토 오픈 / 멘티 신청 단계.
+ * - 멘토 오픈기간: Row 1 "슬롯 오픈 완료 / 미완료" · Row 2 "대기 중" (멘티 할 일 없음)
+ * - 멘티 신청기간: Row 1 "대기 중" (멘토 할 일 없음) · Row 2 "신청 N / M"
+ */
 const LiveFeedbackOpenBar = ({
   bar,
   onMentorOpenClick,
 }: LiveFeedbackOpenBarProps) => {
-  const color = getColor(bar.colorIndex ?? 0);
   const isMentorPhase = bar.barType === 'live-feedback-mentor-open';
-  const isMentorOpenClickable = isMentorPhase && !!onMentorOpenClick;
+  // 멘토 액션은 글자 크기 상향. 비액션은 기본 크기 유지.
+  const typeBadge = (
+    <span
+      className={`whitespace-nowrap font-bold tracking-[-0.3px] ${
+        isMentorPhase ? 'text-xsmall14' : 'text-xxsmall12'
+      }`}
+    >
+      {isMentorPhase ? '라이브 일정 오픈' : '라이브 일정 신청'}
+    </span>
+  );
 
-  const phaseLabel = isMentorPhase ? '멘토 오픈기간' : '멘티 신청기간';
-  const phaseDesc = '라이브 피드백 일정 조율 기간';
-  const labelColor = isMentorPhase ? 'text-orange-500' : 'text-sky-500';
-  const isMentorOpenCompleted = isMentorPhase && bar.completedCount > 0;
-  const mentorOpenStatusLabel = isMentorOpenCompleted ? '완료' : '미완료';
-  const totalApplicantCount =
+  const totalMentees =
     bar.submittedCount + bar.notSubmittedCount > 0
       ? bar.submittedCount + bar.notSubmittedCount
       : bar.submittedCount;
-  const completedApplicantCount =
-    bar.completedCount > 0 ? bar.completedCount : bar.submittedCount;
-  const notAppliedCount =
-    bar.notSubmittedCount > 0
-      ? bar.notSubmittedCount
-      : Math.max(totalApplicantCount - completedApplicantCount, 0);
+
+  let mentorProgress: ProgressCount | null;
+  let menteeStatus: ProgressCount | null;
+  let phaseCompleted: boolean | undefined;
+
+  if (isMentorPhase) {
+    // 멘토 오픈기간: 멘토가 슬롯을 "저장 완료"했는가가 진행도. 멘티는 대기.
+    const opened = bar.completedCount > 0 ? 1 : 0;
+    mentorProgress = { label: '슬롯 오픈', current: opened, target: 1 };
+    menteeStatus = null;
+  } else {
+    // 멘티 신청기간: 멘토는 대기. 멘티가 신청한 수 / 모집.
+    mentorProgress = null;
+    menteeStatus = {
+      label: '신청',
+      current: bar.submittedCount,
+      target: totalMentees,
+    };
+    phaseCompleted =
+      (totalMentees > 0 && bar.submittedCount >= totalMentees) ||
+      new Date(bar.endDate).getTime() < currentNow().getTime();
+  }
 
   return (
-    <div
-      onClick={isMentorOpenClickable ? onMentorOpenClick : undefined}
-      className={`relative z-10 flex w-full flex-col overflow-hidden text-left ${
-        isMentorOpenClickable
-          ? 'cursor-pointer transition-opacity hover:opacity-85'
-          : ''
-      }`}
-      role={isMentorOpenClickable ? 'button' : undefined}
-      tabIndex={isMentorOpenClickable ? 0 : undefined}
-      onKeyDown={(event) => {
-        if (!isMentorOpenClickable) return;
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          onMentorOpenClick();
-        }
-      }}
-    >
-      {/* Row 1: 단계 배지 + 우측 라인 */}
-      <div className="flex h-6 min-w-0 items-center gap-2 overflow-hidden">
-        <span
-          className={`shrink-0 whitespace-nowrap text-xxsmall12 font-bold tracking-[-0.3px] ${labelColor}`}
-        >
-          {phaseLabel}
-        </span>
-        {isMentorPhase && (
-          <span
-            className={`shrink-0 whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px] ${
-              isMentorOpenCompleted ? 'text-neutral-10' : 'text-neutral-40'
-            }`}
-          >
-            {mentorOpenStatusLabel}
-          </span>
-        )}
-        <div
-          className={`flex h-3 min-w-0 flex-1 items-center border-r-2 ${color.border}`}
-        >
-          <div className={`h-0.5 w-full ${color.line}`} />
-        </div>
-      </div>
-
-      {/* Row 2: 단계 설명 (연속 구간 중복 방지를 위해 멘티 신청 구간은 태그 생략) */}
-      <div
-        className={`flex min-h-11 items-center justify-between gap-2 p-2 ${color.body}`}
-      >
-        {isMentorPhase && (
-          <span
-            className={`min-w-0 truncate rounded-[3px] px-2 py-1 text-xxsmall12 font-medium tracking-[-0.3px] text-white ${color.badge}`}
-          >
-            {bar.challengeTitle}
-          </span>
-        )}
-        <span className="min-w-0 truncate px-1 text-xxsmall12 font-medium tracking-[-0.3px] text-neutral-40">
-          {phaseDesc}
-        </span>
-        {!isMentorPhase && (
-          <div className="flex shrink-0 items-center gap-1 whitespace-nowrap px-1 text-xxsmall12 font-medium tracking-[-0.3px]">
-            <span className="text-neutral-40">미신청</span>
-            <span className="text-neutral-40">{notAppliedCount}</span>
-            <span className="text-neutral-10">·</span>
-            <span className="text-neutral-10">신청완료</span>
-            <span className="text-neutral-10">{completedApplicantCount}</span>
-          </div>
-        )}
-      </div>
-    </div>
+    <PeriodBarRows
+      colorIndex={bar.colorIndex}
+      typeBadge={typeBadge}
+      mentorProgress={mentorProgress}
+      menteeStatus={menteeStatus}
+      challengeTitle={bar.challengeTitle}
+      onClick={
+        isMentorPhase && onMentorOpenClick ? onMentorOpenClick : undefined
+      }
+      phaseCompleted={phaseCompleted}
+    />
   );
 };
 

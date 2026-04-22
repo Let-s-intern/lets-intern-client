@@ -1,125 +1,162 @@
 import type { PeriodBarData } from '../types';
 
 /**
- * 서면 피드백 목데이터 (PeriodBarData[]).
- *
- * 규칙:
- *  1. 같은 챌린지 내부에서 일정이 겹치지 않음 (mission startDate ~ feedbackDeadline 전체 span 기준)
- *  2. 서면 피드백 ↔ 라이브 피드백 간 최소 3일 간격 유지
- *  3. WRITTEN_FEEDBACK_CONFIG 준수:
- *     feedbackStartDate = missionEndDate + 2, feedbackDeadline = missionEndDate + 4
- *
- * [챌린지1] 기필코 경험정리 챌린지 21기 (challengeId: 1, colorIndex: 0)
- *   서면 1회차:  bar 3/28~4/7  (mission 3/28~4/3, feedback 4/5~4/7)
- *   서면 2회차:  bar 4/8~4/18  (mission 4/8~4/14, feedback 4/16~4/18)
- *   └ gap 4/19~4/21 (3일)
- *   라이브 멘토오픈: 4/22 / 멘티신청: 4/23~4/24
- *   └ gap 4/25~4/27 (3일)
- *   라이브 기간:     4/28~4/30
- *   └ gap 5/1~5/3 (3일)
- *   서면 3회차:  bar 5/4~5/14 (mission 5/4~5/10, feedback 5/12~5/14)
- *
- * [챌린지2] 커리어 설계 챌린지 5기 (challengeId: 2, colorIndex: 1)
- *   서면 1회차:  bar 4/7~4/17 (mission 4/7~4/13, feedback 4/15~4/17)
- *   └ gap 4/18~4/20 (3일)
- *   라이브 멘토오픈: 4/21 / 멘티신청: 4/22~4/23
- *   └ gap 4/24~4/26 (3일)
- *   라이브 기간:     4/27~4/29
- *   └ gap 4/30~5/2 (3일)
- *   서면 2회차:  bar 5/3~5/13 (mission 5/3~5/9,  feedback 5/11~5/13)
+ * 서면 피드백 목데이터 — 각 회차를 3개 단계 바로 분할 (멘토 오픈기간 패턴).
+ *   1) written-mission-submit : 유저 제출기간   (멘토 대기)
+ *   2) written-review          : 운영진 검수기간 (멘토 대기)
+ *   3) written-feedback        : 피드백 제출기간 (멘토 액션)
  */
+
+function buildRoundBars(input: {
+  challengeId: number;
+  challengeTitle: string;
+  colorIndex: number;
+  th: number;
+  missionIdBase: number;
+  missionStart: string;
+  missionEnd: string;
+  reviewDate: string;
+  feedbackStart: string;
+  feedbackEnd: string;
+  submittedCount: number;
+  notSubmittedCount: number;
+  waitingCount: number;
+  inProgressCount: number;
+  completedCount: number;
+}): PeriodBarData[] {
+  const common = {
+    challengeId: input.challengeId,
+    challengeTitle: input.challengeTitle,
+    colorIndex: input.colorIndex,
+    th: input.th,
+    submittedCount: input.submittedCount,
+    notSubmittedCount: input.notSubmittedCount,
+    waitingCount: input.waitingCount,
+    inProgressCount: input.inProgressCount,
+    completedCount: input.completedCount,
+  };
+  return [
+    {
+      ...common,
+      barType: 'written-mission-submit',
+      missionId: input.missionIdBase,
+      startDate: input.missionStart,
+      endDate: input.missionEnd,
+      feedbackStartDate: input.missionStart,
+      feedbackDeadline: input.missionEnd,
+    },
+    {
+      ...common,
+      barType: 'written-review',
+      missionId: input.missionIdBase + 1,
+      startDate: input.reviewDate,
+      endDate: input.reviewDate,
+      feedbackStartDate: input.reviewDate,
+      feedbackDeadline: input.reviewDate,
+    },
+    {
+      ...common,
+      barType: 'written-feedback',
+      missionId: input.missionIdBase + 2,
+      startDate: input.feedbackStart,
+      endDate: input.feedbackEnd,
+      feedbackStartDate: input.feedbackStart,
+      feedbackDeadline: input.feedbackEnd,
+    },
+  ];
+}
+
 export const WRITTEN_FEEDBACK_MOCK_DATA: PeriodBarData[] = [
-  // ── Challenge 1: 기필코 경험정리 챌린지 21기 ──────────────────────────────
-  {
-    barType: 'written-feedback',
+  // ── Challenge 1 ───────────────────────────────────────────────
+  ...buildRoundBars({
     challengeId: 1,
-    missionId: 1001,
     challengeTitle: '기필코 경험정리 챌린지 21기',
+    colorIndex: 0,
     th: 1,
-    startDate: '2026-03-28',
-    endDate: '2026-04-03',
-    feedbackStartDate: '2026-04-05',
-    feedbackDeadline: '2026-04-07',
+    missionIdBase: 1001,
+    missionStart: '2026-03-28',
+    missionEnd: '2026-04-03',
+    reviewDate: '2026-04-04',
+    feedbackStart: '2026-04-05',
+    feedbackEnd: '2026-04-07',
     submittedCount: 10,
     notSubmittedCount: 2,
     waitingCount: 0,
     inProgressCount: 2,
     completedCount: 8,
-    colorIndex: 0,
-  },
-  {
-    barType: 'written-feedback',
+  }),
+  ...buildRoundBars({
     challengeId: 1,
-    missionId: 1002,
     challengeTitle: '기필코 경험정리 챌린지 21기',
+    colorIndex: 0,
     th: 2,
-    startDate: '2026-04-08',
-    endDate: '2026-04-14',
-    feedbackStartDate: '2026-04-16',
-    feedbackDeadline: '2026-04-18',
+    missionIdBase: 1011,
+    missionStart: '2026-04-08',
+    missionEnd: '2026-04-14',
+    reviewDate: '2026-04-15',
+    feedbackStart: '2026-04-16',
+    feedbackEnd: '2026-04-18',
     submittedCount: 11,
     notSubmittedCount: 1,
     waitingCount: 3,
     inProgressCount: 4,
     completedCount: 4,
-    colorIndex: 0,
-  },
-  {
-    barType: 'written-feedback',
+  }),
+  ...buildRoundBars({
     challengeId: 1,
-    missionId: 1003,
     challengeTitle: '기필코 경험정리 챌린지 21기',
+    colorIndex: 0,
     th: 3,
-    startDate: '2026-05-04',
-    endDate: '2026-05-10',
-    feedbackStartDate: '2026-05-12',
-    feedbackDeadline: '2026-05-14',
+    missionIdBase: 1021,
+    missionStart: '2026-05-04',
+    missionEnd: '2026-05-10',
+    reviewDate: '2026-05-11',
+    feedbackStart: '2026-05-12',
+    feedbackEnd: '2026-05-14',
     submittedCount: 0,
     notSubmittedCount: 0,
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 0,
-  },
+  }),
 
-  // ── Challenge 2: 커리어 설계 챌린지 5기 ────────────────────────────────────
-  {
-    barType: 'written-feedback',
+  // ── Challenge 2 ───────────────────────────────────────────────
+  ...buildRoundBars({
     challengeId: 2,
-    missionId: 2001,
     challengeTitle: '커리어 설계 챌린지 5기',
+    colorIndex: 1,
     th: 1,
-    startDate: '2026-04-07',
-    endDate: '2026-04-13',
-    feedbackStartDate: '2026-04-15',
-    feedbackDeadline: '2026-04-17',
+    missionIdBase: 2001,
+    missionStart: '2026-04-07',
+    missionEnd: '2026-04-13',
+    reviewDate: '2026-04-14',
+    feedbackStart: '2026-04-15',
+    feedbackEnd: '2026-04-17',
     submittedCount: 7,
     notSubmittedCount: 1,
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 7,
-    colorIndex: 1,
-  },
-  {
-    barType: 'written-feedback',
+  }),
+  ...buildRoundBars({
     challengeId: 2,
-    missionId: 2002,
     challengeTitle: '커리어 설계 챌린지 5기',
+    colorIndex: 1,
     th: 2,
-    startDate: '2026-05-03',
-    endDate: '2026-05-09',
-    feedbackStartDate: '2026-05-11',
-    feedbackDeadline: '2026-05-13',
+    missionIdBase: 2011,
+    missionStart: '2026-05-03',
+    missionEnd: '2026-05-09',
+    reviewDate: '2026-05-10',
+    feedbackStart: '2026-05-11',
+    feedbackEnd: '2026-05-13',
     submittedCount: 0,
     notSubmittedCount: 0,
     waitingCount: 0,
     inProgressCount: 0,
     completedCount: 0,
-    colorIndex: 1,
-  },
+  }),
 ];
 
-/** 챌린지 필터 태그용 목데이터 (라이브 피드백 mock과 challengeId 일치). */
 export const MOCK_CHALLENGE_FILTER_ITEMS = [
   { challengeId: 1, title: '기필코 경험정리 챌린지 21기', colorIndex: 0 },
   { challengeId: 2, title: '커리어 설계 챌린지 5기', colorIndex: 1 },
