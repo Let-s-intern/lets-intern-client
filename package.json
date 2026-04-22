@@ -15,6 +15,7 @@
     "test": "turbo run test"
   },
   "devDependencies": {
+    "@letscareer/prettier-config": "workspace:*",
     "@types/node": "^20.14.9",
     "prettier": "^3.3.2",
     "turbo": "^2.5.6",

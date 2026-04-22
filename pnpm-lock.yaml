@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@letscareer/prettier-config':
+        specifier: workspace:*
+        version: link:packages/config/prettier
       '@types/node':
         specifier: ^20.14.9
         version: 20.19.25
@@ -237,6 +240,18 @@ importers:
       '@eslint/js':
         specifier: ^9.6.0
         version: 9.39.1
+      '@letscareer/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/config/eslint
+      '@letscareer/prettier-config':
+        specifier: workspace:*
+        version: link:../../packages/config/prettier
+      '@letscareer/tailwind-config':
+        specifier: workspace:*
+        version: link:../../packages/config/tailwind
+      '@letscareer/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/config/typescript
       '@types/katex':
         specifier: ^0.16.7
         version: 0.16.7
@@ -285,6 +300,22 @@ importers:
       vitest:
         specifier: ^1.6.1
         version: 1.6.1(@edge-runtime/vm@3.2.0)(@types/node@16.18.11)(sass@1.94.2)(terser@5.44.1)
+
+  packages/config/eslint:
+    dependencies:
+      eslint:
+        specifier: '>=8'
+        version: 9.39.1(jiti@1.21.7)
+
+  packages/config/prettier:
+    dependencies:
+      prettier:
+        specifier: '>=3'
+        version: 3.7.4
+
+  packages/config/tailwind: {}
+
+  packages/config/typescript: {}
 
 packages:
 
